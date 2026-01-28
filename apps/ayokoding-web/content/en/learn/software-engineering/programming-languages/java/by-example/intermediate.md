@@ -460,63 +460,98 @@ class Person {
 
 // REFLECTION USAGE
 Class<?> clazz = Person.class;
-// => Obtain Class metadata object for Person
-// => <?> wildcard: type-safe reflection
+                                 // => Obtain Class metadata object for Person
+                                 // => .class literal retrieves compile-time Class reference
+                                 // => <?> wildcard: type-safe reflection (unknown generic type)
+                                 // => Alternative: Class.forName("Person") loads by string name
+                                 // => Class object contains all runtime type information
 
 // GET CLASS INFORMATION
 String className = clazz.getName();
-// => Returns fully qualified name
-// => Result: "Person" (or "com.example.Person" if in package)
+                                 // => Returns fully qualified name (package + class)
+                                 // => Result: "Person" (or "com.example.Person" if in package)
+                                 // => Includes package prefix for uniqueness
 String simpleName = clazz.getSimpleName();
-// => Returns class name without package
-// => Result: "Person"
+                                 // => Returns class name without package prefix
+                                 // => Result: "Person" (just class name)
+                                 // => Used for display/logging purposes
 
 // INSTANTIATE via reflection
 Constructor<?> constructor = clazz.getConstructor(String.class, int.class);
-// => Finds public constructor matching parameter types
-// => Throws NoSuchMethodException if not found
+                                 // => Finds public constructor matching parameter types
+                                 // => getConstructor() searches public constructors only
+                                 // => Parameter types: String.class, int.class (varargs)
+                                 // => Throws NoSuchMethodException if no matching constructor
+                                 // => Constructor<?> holds reference to constructor metadata
 Object instance = constructor.newInstance("Alice", 30);
-// => Creates instance: new Person("Alice", 30)
-// => Returns Object (needs casting for type safety)
+                                 // => Invokes constructor with arguments
+                                 // => newInstance() calls Constructor with varargs Object[]
+                                 // => Creates instance: new Person("Alice", 30)
+                                 // => Returns Object (generic type, needs casting for type safety)
+                                 // => Throws InstantiationException, IllegalAccessException, InvocationTargetException
 
 // ACCESS FIELDS
 Field ageField = clazz.getField("age");
-// => Gets PUBLIC field named "age"
-// => Throws NoSuchFieldException if not found or not public
+                                 // => Gets PUBLIC field named "age" by string lookup
+                                 // => getField() searches public fields only (not private)
+                                 // => Throws NoSuchFieldException if field not found or not public
+                                 // => Field object wraps field metadata
 int ageValue = (int) ageField.get(instance);
-// => Reads field value from instance
-// => Result: 30
-ageField.set(instance, 31);
-// => Modifies field value
-// => Now age = 31
+                                 // => Reads field value from specific instance
+                                 // => ageField.get() returns Object, requires cast to int
+                                 // => Retrieves value from Person object's age field
+                                 // => Result: 30 (initial value from constructor)
+                                 // => Autoboxing: int → Integer → Object → (int) unbox
+ageField.set(instance, 31);      // => Modifies field value reflectively
+                                 // => ageField.set(object, value) mutates field on instance
+                                 // => Changes age from 30 to 31
+                                 // => Now age = 31 (modified)
+                                 // => Value autoboxed: 31 (int) → Integer → Object
 
 // ACCESS PRIVATE FIELDS
 Field nameField = clazz.getDeclaredField("name");
-// => Gets any field (public or private) by name
-// => getDeclaredField() finds private members
-nameField.setAccessible(true);
-// => Disables Java access control checks
-// => ⚠️ Security risk: breaks encapsulation
+                                 // => Gets any field (public or private) by name
+                                 // => getDeclaredField() finds private members (bypasses normal access)
+                                 // => Searches only this class (not inherited fields)
+                                 // => "name" is private, so getField("name") would fail
+nameField.setAccessible(true);   // => Disables Java access control checks
+                                 // => Allows reading/writing private field
+                                 // => ⚠️ Security risk: breaks encapsulation (violates OOP)
+                                 // => SecurityManager may block this if installed
+                                 // => Equivalent to making field public at runtime
 String nameValue = (String) nameField.get(instance);
-// => Reads private field value
-// => Result: "Alice"
+                                 // => Reads private field value via reflection
+                                 // => nameField.get() returns Object, cast to String
+                                 // => Result: "Alice" (value set in constructor)
+                                 // => Without setAccessible(true): IllegalAccessException
 
 // INVOKE METHODS
 Method getNameMethod = clazz.getMethod("getName");
-// => Finds public method by name and parameter types
+                                 // => Finds public method by name and parameter types
+                                 // => getMethod() searches public methods (including inherited)
+                                 // => Empty parameter array: no arguments for getName()
+                                 // => Returns Method object wrapping method metadata
 String name = (String) getNameMethod.invoke(instance);
-// => Invokes method on instance
-// => Equivalent to: instance.getName()
-// => Result: "Alice"
+                                 // => Invokes method on instance reflectively
+                                 // => invoke(object, args...) calls method with varargs
+                                 // => Equivalent to: instance.getName() (direct call)
+                                 // => Returns Object (generic), cast to String
+                                 // => Result: "Alice" (method return value)
+                                 // => ~3x slower than direct invocation
 
 // INVOKE PRIVATE METHODS
 Method secretMethod = clazz.getDeclaredMethod("secretMethod");
-// => Finds private method
-secretMethod.setAccessible(true);
-// => Bypasses private access modifier
-secretMethod.invoke(instance);
-// => Invokes private method
-// => Output: "Secret: Alice"
+                                 // => Finds private method by name
+                                 // => getDeclaredMethod() searches private methods
+                                 // => getMethod() would fail (private not accessible)
+secretMethod.setAccessible(true);// => Bypasses private access modifier
+                                 // => Allows invoking private method
+                                 // => ⚠️ Breaks encapsulation (testing/framework use)
+secretMethod.invoke(instance);   // => Invokes private method reflectively
+                                 // => Calls secretMethod() on instance
+                                 // => Method executes: prints "Secret: Alice"
+                                 // => Output: "Secret: Alice"
+                                 // => Without setAccessible(true): IllegalAccessException
 
 // LIST ALL METHODS
 for (Method method : clazz.getDeclaredMethods()) {
@@ -582,21 +617,32 @@ class TestSuite {
 Class<?> clazz = TestSuite.class;
                                  // => Get Class object representing TestSuite type
                                  // => clazz is java.lang.Class<TestSuite> (type metadata)
+                                 // => Class object contains all runtime information about TestSuite
+                                 // => Enables introspection of methods, fields, annotations
 
 // Find and execute @Test methods
 for (Method method : clazz.getDeclaredMethods()) {
                                  // => getDeclaredMethods() returns all methods (public + private)
-                                 // => Returns: testAddition, testDivision, helperMethod
+                                 // => Returns Method[] array: testAddition, testDivision, helperMethod
+                                 // => Method object wraps method metadata (name, params, annotations)
+                                 // => Each Method represents one method in the class
     if (method.isAnnotationPresent(Test.class)) {
                                  // => Check if method has @Test annotation at runtime
-                                 // => testAddition: true, testDivision: true, helperMethod: false
+                                 // => Uses reflection to inspect method's annotation metadata
+                                 // => testAddition: true (has @Test), testDivision: true, helperMethod: false
                                  // => Annotation must have RUNTIME retention to be visible
+                                 // => RetentionPolicy.RUNTIME enables runtime discovery
+                                 // => SOURCE/CLASS retention annotations discarded before runtime
         Test testAnnotation = method.getAnnotation(Test.class);
                                  // => Retrieve @Test annotation instance from method
+                                 // => Returns proxy implementing Test interface
                                  // => testAnnotation contains description and timeout parameters
+                                 // => Parameters accessible as method calls (description(), timeout())
         System.out.println("Running test: " + testAnnotation.description());
-                                 // => Access annotation parameter value
+                                 // => Access annotation parameter value via method call
+                                 // => testAnnotation.description() returns String from annotation
                                  // => Output: "Running test: Adds two numbers" (for testAddition)
+                                 // => Output: "Running test: Divides by zero" (for testDivision)
 
         try {
             Object instance = clazz.getDeclaredConstructor().newInstance();

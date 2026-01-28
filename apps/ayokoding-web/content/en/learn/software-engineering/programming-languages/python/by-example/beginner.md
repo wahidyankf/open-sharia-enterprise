@@ -19,22 +19,33 @@ Python's `print()` function outputs text to stdout, supporting multiple argument
 
 ```python
 # Basic print
-print("Hello, World!")           # => Output: Hello, World!
+print("Hello, World!")           # => Calls print() with string argument
+                                  # => Output: Hello, World!
 
 # Multiple arguments (space-separated by default)
-print("Hello", "Python", "3")    # => Output: Hello Python 3
+print("Hello", "Python", "3")    # => print() accepts multiple arguments
+                                  # => Separator defaults to single space
+                                  # => Output: Hello Python 3
 
 # Custom separator
-print("A", "B", "C", sep="-")    # => Output: A-B-C
+print("A", "B", "C", sep="-")    # => sep parameter overrides default space
+                                  # => Joins arguments with hyphen
+                                  # => Output: A-B-C
 
 # Custom end character (default is newline)
-print("Same line", end=" ")      # => Output: Same line (no newline)
-print("continues")                # => Output: continues
+print("Same line", end=" ")      # => end parameter overrides default '\n'
+                                  # => Sets end character to space
+                                  # => Output: Same line (no newline after)
+print("continues")                # => Continues on same line
+                                  # => Output: continues
 
 # Printing variables
 name = "Alice"                    # => name is "Alice" (type: str)
 age = 30                          # => age is 30 (type: int)
-print("Name:", name, "Age:", age) # => Output: Name: Alice Age: 30
+print("Name:", name, "Age:", age) # => Mixes string literals and variables
+                                  # => Automatically converts int to string
+                                  # => Joins with space separator
+                                  # => Output: Name: Alice Age: 30
 ```
 
 **Key Takeaway**: Use `print()` for debugging and simple output - it accepts multiple arguments with customizable separators and handles automatic type-to-string conversion.
@@ -49,24 +60,56 @@ Python uses dynamic typing where variables can reference any type and types are 
 
 ```python
 # Dynamic typing - no type declarations needed
-x = 42                            # => x is 42 (type: int)
-print(type(x))                    # => Output: <class 'int'>
+x = 42                            # => x references integer object 42
+                                  # => type(x) is int
+                                  # => Type inferred from assigned value
+                                  # => No explicit type declaration (unlike Java/C++)
+print(type(x))                    # => type() function returns object's class
+                                  # => Introspects runtime type
+                                  # => Output: <class 'int'>
+                                  # => Confirms x is integer type
 
-# Reassign to different type
-x = "now a string"                # => x is "now a string" (type: str)
-print(type(x))                    # => Output: <class 'str'>
+# Reassign to different type (dynamic typing in action)
+x = "now a string"                # => Same variable name, NEW object
+                                  # => x now references string object
+                                  # => Previous int object (42) eligible for GC
+                                  # => type(x) changes from int to str
+                                  # => Dynamic typing allows type mutation
+print(type(x))                    # => type() called again on same variable
+                                  # => Returns different type now
+                                  # => Output: <class 'str'>
+                                  # => Confirms x is string type now
 
-# Multiple assignment
-a, b, c = 1, 2, 3                 # => a is 1, b is 2, c is 3
-print(a, b, c)                    # => Output: 1 2 3
+# Multiple assignment (tuple unpacking)
+a, b, c = 1, 2, 3                 # => Right side: tuple (1, 2, 3) created implicitly
+                                  # => Left side: unpacking into 3 variables
+                                  # => a references int 1 (type: int)
+                                  # => b references int 2 (type: int)
+                                  # => c references int 3 (type: int)
+                                  # => Single line replaces 3 assignments
+print(a, b, c)                    # => Outputs all 3 values
+                                  # => Output: 1 2 3
 
-# Swap variables (Pythonic idiom)
-a, b = b, a                       # => a is 2, b is 1 (swapped!)
-print(a, b)                       # => Output: 2 1
+# Swap variables (Pythonic idiom - no temp variable!)
+a, b = b, a                       # => Right side evaluated FIRST: creates tuple (2, 1)
+                                  # => Uses current values: b=2, a=1
+                                  # => Left side unpacks: a gets 2, b gets 1
+                                  # => a is now 2 (was 1)
+                                  # => b is now 1 (was 2)
+                                  # => Atomic swap without temp variable
+print(a, b)                       # => Outputs swapped values
+                                  # => Output: 2 1
 
-# Chain assignment
-x = y = z = 0                     # => x, y, z all equal 0
-print(x, y, z)                    # => Output: 0 0 0
+# Chain assignment (single object, multiple references)
+x = y = z = 0                     # => Right-to-left evaluation order
+                                  # => Creates single int object 0
+                                  # => z references that object
+                                  # => y references that same object
+                                  # => x references that same object
+                                  # => All three variables point to SAME 0 object
+                                  # => id(x) == id(y) == id(z) returns True
+print(x, y, z)                    # => All variables output same value
+                                  # => Output: 0 0 0
 ```
 
 **Key Takeaway**: Python's dynamic typing provides flexibility but requires discipline - use descriptive variable names and consider type hints for production code to improve readability and catch errors early.
@@ -84,27 +127,47 @@ Python supports integers (unlimited precision), floats (IEEE 754), and complex n
 a = 10                            # => a is 10 (type: int)
 b = 3                             # => b is 3 (type: int)
 
-print(a + b)                      # => Output: 13 (addition)
-print(a - b)                      # => Output: 7 (subtraction)
-print(a * b)                      # => Output: 30 (multiplication)
-print(a / b)                      # => Output: 3.3333... (float division)
-print(a // b)                     # => Output: 3 (floor division, integer result)
-print(a % b)                      # => Output: 1 (modulo, remainder)
-print(a ** b)                     # => Output: 1000 (exponentiation, 10^3)
+print(a + b)                      # => 10 + 3
+                                  # => Output: 13 (addition)
+print(a - b)                      # => 10 - 3
+                                  # => Output: 7 (subtraction)
+print(a * b)                      # => 10 * 3
+                                  # => Output: 30 (multiplication)
+print(a / b)                      # => 10 / 3
+                                  # => Always returns float
+                                  # => Output: 3.3333... (float division)
+print(a // b)                     # => 10 // 3
+                                  # => Floor division (truncates decimal)
+                                  # => Output: 3 (integer result)
+print(a % b)                      # => 10 % 3
+                                  # => Modulo operation
+                                  # => Output: 1 (remainder)
+print(a ** b)                     # => 10 ** 3
+                                  # => Exponentiation operator
+                                  # => Output: 1000 (10^3)
 
 # Float arithmetic
 pi = 3.14159                      # => pi is 3.14159 (type: float)
 radius = 5.0                      # => radius is 5.0 (type: float)
-area = pi * radius ** 2           # => area is 78.53975 (π × 5²)
-print(f"Area: {area:.2f}")        # => Output: Area: 78.54 (formatted to 2 decimals)
+area = pi * radius ** 2           # => radius ** 2 first (25.0)
+                                  # => Then pi * 25.0
+                                  # => area is 78.53975 (π × 5²)
+print(f"Area: {area:.2f}")        # => f-string with format spec
+                                  # => .2f = 2 decimal places
+                                  # => Output: Area: 78.54
 
 # Integer unlimited precision
-big = 10 ** 100                   # => big is 1 followed by 100 zeros
+big = 10 ** 100                   # => 10 to power of 100
+                                  # => big is 1 followed by 100 zeros
+                                  # => Python ints have arbitrary precision
 print(big)                        # => Output: 100000000000... (no overflow!)
 
 # Complex numbers
 z = 3 + 4j                        # => z is (3+4j) (type: complex)
-print(abs(z))                     # => Output: 5.0 (magnitude: √(3²+4²))
+                                  # => j suffix denotes imaginary part
+print(abs(z))                     # => abs() computes magnitude
+                                  # => √(3²+4²) = √25 = 5
+                                  # => Output: 5.0 (magnitude)
 ```
 
 **Key Takeaway**: Python integers have unlimited precision (no overflow), division `/` always returns float, and floor division `//` returns integer quotient - use `/` for mathematical calculations and `//` when you need integer results.

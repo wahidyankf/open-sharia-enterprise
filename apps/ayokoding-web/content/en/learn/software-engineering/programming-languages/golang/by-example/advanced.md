@@ -1450,47 +1450,59 @@ Build tags enable conditional compilation. Platform-specific code, feature flags
 
 ```go
 // file: server_unix.go
-//go:build unix || linux
-// +build unix linux
+//go:build unix || linux           // => Build constraint: compile only on Unix/Linux systems
+// +build unix linux                // => Legacy format (pre-Go 1.17 compatibility)
+                                    // => Multiple constraints joined with OR (either unix OR linux)
 
 package main
 
 import "fmt"
 
-func getPlatform() string {
-    return "Unix/Linux"            // => Compiled only on Unix/Linux
-}
+func getPlatform() string {         // => Function definition available only on Unix/Linux builds
+    return "Unix/Linux"             // => Compiled only on Unix/Linux
+                                    // => Returns platform identifier string
+}                                   // => On Windows, this function won't exist in binary
 
 // file: server_windows.go
-//+build windows
+//+build windows                    // => Build constraint: compile only on Windows
+                                    // => Without this tag, file is included in ALL builds
 
 package main
 
 import "fmt"
 
-func getPlatform() string {
-    return "Windows"               // => Compiled only on Windows
-}
+func getPlatform() string {         // => Same function signature as Unix version
+    return "Windows"                // => Compiled only on Windows
+                                    // => Platform-specific implementation
+}                                   // => One implementation compiled per platform
 
 // file: main.go
-package main
+package main                        // => No build tags: compiled on ALL platforms
 
-func main() {
-    fmt.Println("Platform:", getPlatform()) // => Platform-specific implementation
-}
+func main() {                       // => main function calls platform-specific getPlatform()
+    fmt.Println("Platform:", getPlatform())
+                                    // => Platform-specific implementation
+                                    // => On Linux: prints "Platform: Unix/Linux"
+                                    // => On Windows: prints "Platform: Windows"
+}                                   // => Linker selects correct implementation at build time
 
-// Usage: go build, go build -tags=feature1, go run -tags="tag1,tag2"
+// Usage: go build                  // => Uses OS-specific files automatically
+// Usage: go build -tags=feature1   // => Enables 'feature1' tag
+// Usage: go run -tags="tag1,tag2"  // => Multiple tags (comma-separated)
 
 // Multiple tags in single file
 //go:build (linux || darwin) && !debug
-// +build linux darwin
-// +build !debug
+                                    // => Complex expression: (Linux OR macOS) AND NOT debug
+                                    // => Compiled only when: (on Linux OR on macOS) AND debug tag NOT set
+// +build linux darwin               // => Legacy format: must match //go:build logic
+// +build !debug                     // => Multiple lines joined with AND
 
 package main
 
-func shouldDebug() bool {
-    return false                   // => Compiled on Linux/Mac without debug tag
-}
+func shouldDebug() bool {           // => Function exists only in non-debug builds
+    return false                    // => Compiled on Linux/Mac without debug tag
+                                    // => debug tag would exclude this file from build
+}                                   // => Production build includes this, debug build doesn't
 ```
 
 **Key Takeaway**: `//go:build expression` (Go 1.16+) controls compilation. `-tags flag` enables tags at build-time. Use for platform-specific code, feature flags, and integration tests that require external services.
@@ -1512,48 +1524,69 @@ import (
 )
 
 func main() {
-    users := []User{
-        {Name: "Alice", Age: 30, Score: 95},
-        {Name: "Bob", Age: 25, Score: 87},
-        {Name: "Charlie", Age: 30, Score: 92},
-    }
+    users := []User{                              // => Create slice of User structs
+        {Name: "Alice", Age: 30, Score: 95},      // => User{Name: "Alice", Age: 30, Score: 95}
+        {Name: "Bob", Age: 25, Score: 87},        // => User{Name: "Bob", Age: 25, Score: 87}
+        {Name: "Charlie", Age: 30, Score: 92},    // => User{Name: "Charlie", Age: 30, Score: 92}
+    }                                             // => users is []User with 3 elements
 
     // Sort by name
-    sort.Sort(ByName(users))
+    sort.Sort(ByName(users))                      // => Convert []User to ByName type
+                                                  // => ByName implements sort.Interface (Len, Swap, Less)
+                                                  // => Sorts in-place by name (Alice, Bob, Charlie)
     fmt.Println("By name:", users)
+                                                  // => Output: By name: [{Alice 30 95} {Bob 25 87} {Charlie 30 92}]
 
     // Sort by score descending
-    sort.Sort(ByScoreDesc(users))
+    sort.Sort(ByScoreDesc(users))                 // => Convert to ByScoreDesc type
+                                                  // => Less compares scores with > (descending order)
+                                                  // => Sorts in-place: Alice(95), Charlie(92), Bob(87)
     fmt.Println("By score desc:", users)
+                                                  // => Output: By score desc: [{Alice 30 95} {Charlie 30 92} {Bob 25 87}]
 
     // Custom sort with Slice (simpler for one-off sorts)
-    sort.Slice(users, func(i, j int) bool {
-        if users[i].Age == users[j].Age {
-            return users[i].Score > users[j].Score // => Age then score desc
+    sort.Slice(users, func(i, j int) bool {      // => sort.Slice accepts custom Less function
+                                                  // => i, j are indices to compare
+        if users[i].Age == users[j].Age {         // => If ages equal, compare scores
+            return users[i].Score > users[j].Score
+                                                  // => Age then score desc
+                                                  // => Higher score comes first
         }
         return users[i].Age < users[j].Age        // => Age ascending
-    })
+                                                  // => Younger users first
+    })                                            // => Multi-field sort: age ASC, then score DESC
     fmt.Println("By age then score:", users)
+                                                  // => Output: [{Bob 25 87} {Alice 30 95} {Charlie 30 92}]
+                                                  // => Bob (25) first, then Alice/Charlie (30) sorted by score
 }
 
 type User struct {
-    Name  string
-    Age   int
-    Score int
+    Name  string                                  // => User name field
+    Age   int                                     // => User age field
+    Score int                                     // => User score field
 }
 
 // Implement sort.Interface
-type ByName []User
+type ByName []User                                // => Type alias: []User named ByName
+                                                  // => Enables implementing methods on slice type
 
-func (b ByName) Len() int           { return len(b) }
-func (b ByName) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
+func (b ByName) Len() int { return len(b) }      // => sort.Interface: returns number of elements
+                                                  // => Required for sorting algorithm
+func (b ByName) Swap(i, j int) { b[i], b[j] = b[j], b[i] }
+                                                  // => sort.Interface: swaps elements at indices i, j
+                                                  // => Simultaneous assignment swaps values
 func (b ByName) Less(i, j int) bool { return b[i].Name < b[j].Name }
+                                                  // => sort.Interface: returns true if i should come before j
+                                                  // => String comparison: lexicographic order
 
-type ByScoreDesc []User
+type ByScoreDesc []User                           // => Another type alias for different sort order
 
-func (b ByScoreDesc) Len() int           { return len(b) }
-func (b ByScoreDesc) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
+func (b ByScoreDesc) Len() int { return len(b) } // => Same Len implementation
+func (b ByScoreDesc) Swap(i, j int) { b[i], b[j] = b[j], b[i] }
+                                                  // => Same Swap implementation
 func (b ByScoreDesc) Less(i, j int) bool { return b[i].Score > b[j].Score }
+                                                  // => Different Less: uses > for descending order
+                                                  // => Higher scores come first (95 before 87)
 ```
 
 **Key Takeaway**: Implement `sort.Interface` (Len, Swap, Less) for custom sorting. Use `sort.Slice()` for one-off sorts with custom comparator. Implement Less such that `Less(i, j)` returns true if element i should come before j.
@@ -1599,50 +1632,70 @@ import (
 
 func main() {
     // Real database
-    db := &RealDB{}
-    userService := NewUserService(db) // => Inject real DB
+    db := &RealDB{}                               // => Create real database instance
+                                                  // => db is *RealDB (concrete type)
+    userService := NewUserService(db)             // => Inject real DB (implicit interface conversion)
+                                                  // => RealDB implements Database interface (Get method)
+                                                  // => userService.db is Database interface pointing to RealDB
 
-    fmt.Println(userService.GetUser(1))
+    fmt.Println(userService.GetUser(1))           // => Calls RealDB.Get(1) through interface
+                                                  // => Output: User 1 from database
 
     // Mock database for testing
-    mockDB := &MockDB{}
-    userService2 := NewUserService(mockDB) // => Inject mock DB
+    mockDB := &MockDB{}                           // => Create mock database instance
+                                                  // => mockDB is *MockDB (concrete type)
+    userService2 := NewUserService(mockDB)        // => Inject mock DB
+                                                  // => MockDB also implements Database interface
+                                                  // => Same constructor, different implementation
 
-    fmt.Println(userService2.GetUser(1))
+    fmt.Println(userService2.GetUser(1))          // => Calls MockDB.Get(1) through interface
+                                                  // => Output: Mock user 1
+                                                  // => No changes to UserService code needed
 }
 
 // Interface for testability
 type Database interface {
-    Get(id int) string
-}
+    Get(id int) string                            // => Single method: Get user by ID
+                                                  // => Any type with Get(int) string satisfies interface
+}                                                 // => Enables multiple implementations
 
 // Real implementation
-type RealDB struct{}
+type RealDB struct{}                              // => Production implementation (connects to real DB)
+                                                  // => Empty struct: no state needed for this example
 
-func (r *RealDB) Get(id int) string {
+func (r *RealDB) Get(id int) string {            // => Implements Database interface
+                                                  // => In production: would execute SQL query
     return fmt.Sprintf("User %d from database", id)
-}
+                                                  // => Returns formatted string with user ID
+}                                                 // => Simulates database retrieval
 
 // Mock for testing
-type MockDB struct{}
+type MockDB struct{}                              // => Test implementation (no external dependencies)
+                                                  // => Used in unit tests for fast, isolated testing
 
-func (m *MockDB) Get(id int) string {
-    return fmt.Sprintf("Mock user %d", id)
+func (m *MockDB) Get(id int) string {            // => Implements same Database interface
+                                                  // => Hardcoded test data (no real DB needed)
+    return fmt.Sprintf("Mock user %d", id)        // => Returns predictable test data
+                                                  // => Tests run fast without DB connection
 }
 
 // Service - depends on Database interface, not concrete type
 type UserService struct {
-    db Database              // => Depend on interface, not concrete type
-}
+    db Database                                   // => Depend on interface, not concrete type
+                                                  // => Enables swapping RealDB/MockDB without code changes
+}                                                 // => Key to dependency injection pattern
 
 // Constructor injection
-func NewUserService(db Database) *UserService { // => Inject dependency
-    return &UserService{db: db}
+func NewUserService(db Database) *UserService {  // => Inject dependency through constructor
+                                                  // => db parameter is interface (accepts any implementation)
+    return &UserService{db: db}                   // => Store injected dependency in struct
+                                                  // => Service doesn't know concrete type (RealDB or MockDB)
 }
 
-func (s *UserService) GetUser(id int) string {
-    return s.db.Get(id)     // => Use injected dependency
-}
+func (s *UserService) GetUser(id int) string {  // => Business logic method
+    return s.db.Get(id)                           // => Use injected dependency
+                                                  // => Calls Get on interface (dispatches to concrete type)
+}                                                 // => Works with RealDB in production, MockDB in tests
 ```
 
 **Key Takeaway**: Depend on interfaces, not concrete types. Pass dependencies through constructors. Enables testing with mock implementations and decouples code from specific implementations.
@@ -1660,69 +1713,89 @@ package main
 
 import "testing"
 
-func TestUserService(t *testing.T) {
+func TestUserService(t *testing.T) {                     // => Parent test function
     // Parent test setup
-    users := setupTestData()
+    users := setupTestData()                             // => Setup shared test data
+                                                         // => users is []*User with 2 elements
+                                                         // => Shared across all subtests in this parent
 
-    t.Run("GetUser", func(t *testing.T) {
-        t.Run("ExistingUser", func(t *testing.T) {
-            user := findUser(users, 1)
-            if user.Name != "Alice" {
+    t.Run("GetUser", func(t *testing.T) {                // => Subtest group for GetUser functionality
+                                                         // => t.Run creates named subtest
+                                                         // => Reports as TestUserService/GetUser
+        t.Run("ExistingUser", func(t *testing.T) {       // => Nested subtest: existing user case
+                                                         // => Reports as TestUserService/GetUser/ExistingUser
+            user := findUser(users, 1)                   // => Find user with ID 1
+                                                         // => user is users[0] = {Name: "Alice", Age: 30}
+            if user.Name != "Alice" {                    // => Assert user name is "Alice"
                 t.Errorf("Expected Alice, got %s", user.Name)
-            }
-        })
+                                                         // => t.Errorf marks test failed but continues
+            }                                            // => Test passes if no errors
+        })                                               // => Subtest complete
 
-        t.Run("NonExistentUser", func(t *testing.T) {
-            user := findUser(users, 999)
-            if user != nil {
-                t.Errorf("Expected nil, got %v", user)
-            }
-        })
-    })
+        t.Run("NonExistentUser", func(t *testing.T) {    // => Nested subtest: non-existent user case
+                                                         // => Reports as TestUserService/GetUser/NonExistentUser
+            user := findUser(users, 999)                 // => Find user with invalid ID 999
+                                                         // => user is nil (ID out of range)
+            if user != nil {                             // => Assert user is nil
+                t.Errorf("Expected nil, got %v", user)   // => Fail if non-nil returned
+            }                                            // => Test passes (user is nil as expected)
+        })                                               // => Subtest complete
+    })                                                   // => GetUser subtest group complete
 
-    t.Run("CreateUser", func(t *testing.T) {
-        newUser := User{Name: "David", Age: 28}
-        created := createUser(newUser)
-        if created.Name != "David" {
+    t.Run("CreateUser", func(t *testing.T) {             // => Separate subtest group for CreateUser
+                                                         // => Reports as TestUserService/CreateUser
+        newUser := User{Name: "David", Age: 28}          // => Create new user struct
+                                                         // => newUser is User{Name: "David", Age: 28}
+        created := createUser(newUser)                   // => Call createUser function
+                                                         // => created is User{Name: "David", Age: 28}
+        if created.Name != "David" {                     // => Assert created user has correct name
             t.Errorf("Expected David, got %s", created.Name)
-        }
-    })
-}
+                                                         // => Fail if name doesn't match
+        }                                                // => Test passes
+    })                                                   // => CreateUser subtest complete
+}                                                        // => All subtests complete
 
 // Parallel subtests
-func TestParallel(t *testing.T) {
-    t.Run("Sequential", func(t *testing.T) {
+func TestParallel(t *testing.T) {                        // => Demonstrates parallel test execution
+    t.Run("Sequential", func(t *testing.T) {             // => Sequential subtest
         // Parent doesn't use t.Parallel(), runs sequentially
+                                                         // => Runs in sequence with other non-parallel tests
+                                                         // => Can safely access shared mutable state
     })
 
-    t.Run("Parallel", func(t *testing.T) {
-        t.Parallel()            // => Can run in parallel with other t.Parallel() tests
+    t.Run("Parallel", func(t *testing.T) {               // => Parallel subtest
+        t.Parallel()                                     // => Can run in parallel with other t.Parallel() tests
+                                                         // => Blocks until parent function completes
+                                                         // => Then runs concurrently with other parallel subtests
         // Parallel test code
-    })
+                                                         // => Must NOT access shared mutable state
+    })                                                   // => Tests with t.Parallel() run faster in CI
 }
 
 type User struct {
-    Name string
-    Age  int
+    Name string                                          // => User name field
+    Age  int                                             // => User age field
 }
 
-func setupTestData() []*User {
-    return []*User{
-        {Name: "Alice", Age: 30},
-        {Name: "Bob", Age: 25},
+func setupTestData() []*User {                           // => Test helper: creates test data
+    return []*User{                                      // => Returns slice of user pointers
+        {Name: "Alice", Age: 30},                        // => First test user
+        {Name: "Bob", Age: 25},                          // => Second test user
+    }                                                    // => Simulates database records
+}
+
+func findUser(users []*User, id int) *User {            // => Find user by ID (1-indexed)
+    if id > 0 && id <= len(users) {                      // => Check ID is in valid range
+                                                         // => id must be 1 or 2 for 2-element slice
+        return users[id-1]                               // => Convert 1-indexed to 0-indexed
+                                                         // => Returns user pointer
     }
+    return nil                                           // => Return nil for invalid IDs
 }
 
-func findUser(users []*User, id int) *User {
-    if id > 0 && id <= len(users) {
-        return users[id-1]
-    }
-    return nil
-}
-
-func createUser(u User) User {
-    return u
-}
+func createUser(u User) User {                           // => Create user (simplified for testing)
+    return u                                             // => Echo back user (real version would save to DB)
+}                                                        // => Returns created user
 ```
 
 **Key Takeaway**: `t.Run()` creates subtests that report individually. Use for organizing tests into logical groups. `t.Parallel()` enables parallel execution for tests without shared state. Subtests can have separate setup/teardown.
@@ -1742,78 +1815,91 @@ import (
     "testing"
 )
 
-func TestUserRepository(t *testing.T) {
+func TestUserRepository(t *testing.T) {                  // => Test function using mock
     // Mock storage
-    mock := &MockStorage{
-        data: map[int]User{
-            1: {ID: 1, Name: "Alice"},
-        },
+    mock := &MockStorage{                                // => Create mock implementation
+                                                         // => mock is *MockStorage (implements Storage interface)
+        data: map[int]User{                              // => Initialize mock's internal data
+            1: {ID: 1, Name: "Alice"},                   // => Seed with test user
+                                                         // => User with ID 1, Name "Alice"
+        },                                               // => No database needed - in-memory map
     }
 
-    repo := NewUserRepository(mock)
+    repo := NewUserRepository(mock)                      // => Inject mock into repository
+                                                         // => repo.storage is Storage interface pointing to MockStorage
+                                                         // => Repository doesn't know it's a mock
 
-    user, err := repo.Get(1)
-    if err != nil {
-        t.Errorf("Unexpected error: %v", err)
+    user, err := repo.Get(1)                             // => Call repository method
+                                                         // => Internally calls mock.Get(1)
+                                                         // => Returns User{ID: 1, Name: "Alice"}
+    if err != nil {                                      // => Check for errors
+        t.Errorf("Unexpected error: %v", err)            // => Should be nil (mock has no errors)
     }
-    if user.Name != "Alice" {
-        t.Errorf("Expected Alice, got %s", user.Name)
-    }
+    if user.Name != "Alice" {                            // => Assert user name
+        t.Errorf("Expected Alice, got %s", user.Name)    // => Verify mock returned correct data
+    }                                                    // => Test passes - mock behaves as expected
 }
 
 type User struct {
-    ID   int
-    Name string
+    ID   int                                             // => User ID field
+    Name string                                          // => User name field
 }
 
 // Interface for testability
 type Storage interface {
-    Get(id int) (User, error)
-    Save(u User) error
-}
+    Get(id int) (User, error)                            // => Get user by ID
+    Save(u User) error                                   // => Save user
+}                                                        // => Both Database and MockStorage implement this
 
 // Real storage
-type Database struct{}
+type Database struct{}                                   // => Production implementation
+                                                         // => Would connect to real database
 
-func (d *Database) Get(id int) (User, error) {
-    // Real database query
-    return User{}, nil
-}
+func (d *Database) Get(id int) (User, error) {          // => Real implementation: query database
+    // Real database query                               // => Would execute: SELECT * FROM users WHERE id = ?
+    return User{}, nil                                   // => Placeholder: real version returns actual data
+}                                                        // => Involves network call, disk I/O, SQL parsing
 
-func (d *Database) Save(u User) error {
-    // Real database write
-    return nil
-}
+func (d *Database) Save(u User) error {                 // => Real implementation: insert/update database
+    // Real database write                               // => Would execute: INSERT INTO users...
+    return nil                                           // => Placeholder: real version handles errors
+}                                                        // => Slow (network latency, disk writes)
 
 // Mock storage
 type MockStorage struct {
-    data map[int]User
-}
+    data map[int]User                                    // => In-memory storage for testing
+                                                         // => No external dependencies
+}                                                        // => Fast - no I/O, pure memory access
 
-func (m *MockStorage) Get(id int) (User, error) {
-    if user, ok := m.data[id]; ok {
-        return user, nil
+func (m *MockStorage) Get(id int) (User, error) {       // => Mock implementation: lookup in map
+    if user, ok := m.data[id];  ok {                     // => Check if user exists in mock data
+                                                         // => ok is true if id exists in map
+        return user, nil                                 // => Return user from map
+                                                         // => Instant - no database query
     }
-    return User{}, nil
-}
+    return User{}, nil                                   // => Return zero value if not found
+}                                                        // => Predictable - always returns same data
 
-func (m *MockStorage) Save(u User) error {
-    m.data[u.ID] = u
-    return nil
-}
+func (m *MockStorage) Save(u User) error {              // => Mock implementation: store in map
+    m.data[u.ID] = u                                     // => Add/update user in map
+                                                         // => No database write - just map assignment
+    return nil                                           // => Never fails (unlike real DB)
+}                                                        // => Tests run fast without DB setup/teardown
 
 // Repository - depends on Storage interface
 type UserRepository struct {
-    storage Storage
-}
+    storage Storage                                      // => Depend on interface
+                                                         // => Can be Database or MockStorage
+}                                                        // => Business logic layer
 
-func NewUserRepository(s Storage) *UserRepository {
-    return &UserRepository{storage: s}
-}
+func NewUserRepository(s Storage) *UserRepository {     // => Constructor injection
+    return &UserRepository{storage: s}                   // => Store injected storage
+}                                                        // => Accepts any Storage implementation
 
-func (r *UserRepository) Get(id int) (User, error) {
-    return r.storage.Get(id)
-}
+func (r *UserRepository) Get(id int) (User, error) {    // => Repository method
+    return r.storage.Get(id)                             // => Delegate to injected storage
+                                                         // => Works with Database in production, MockStorage in tests
+}                                                        // => Same code path tested in both environments
 ```
 
 **Key Takeaway**: Mock implementations satisfy interfaces. Inject mocks into code under test. Mocks enable testing without real external services. Use simple in-memory mocks for fast tests.
@@ -1835,47 +1921,62 @@ import (
 )
 
 // Run fuzzing: go test -fuzz=FuzzParseInt
-func FuzzParseInt(f *testing.F) {
+                                                         // => Fuzzer generates random inputs to find crashes
+func FuzzParseInt(f *testing.F) {                        // => Fuzz function (not regular test)
+                                                         // => f is *testing.F (fuzzing controller)
     // Seed values - good test cases to always include
-    f.Add("0")
-    f.Add("42")
-    f.Add("-100")
-    f.Add("2147483647")
+    f.Add("0")                                           // => Seed corpus: add known-good test case
+                                                         // => Fuzzer always runs with "0" input
+    f.Add("42")                                          // => Add positive integer case
+    f.Add("-100")                                        // => Add negative integer case
+    f.Add("2147483647")                                  // => Add max int32 boundary case
+                                                         // => Fuzzer starts with these, then mutates
 
-    f.Fuzz(func(t *testing.T, input string) { // => Fuzz function
-        // The fuzzer generates many values for input
-        if len(input) == 0 {
-            return                // => Skip empty input
+    f.Fuzz(func(t *testing.T, input string) {            // => Fuzz function receives generated inputs
+                                                         // => input is randomly generated string
+        // The fuzzer generates many values for input    // => Coverage-guided: generates inputs that explore new code paths
+        if len(input) == 0 {                             // => Check for empty string
+            return                                       // => Skip empty input
+                                                         // => Early return: don't test invalid inputs
         }
 
-        result, err := parseInt(input) // => Test with generated input
-        _ = result
-        _ = err
+        result, err := parseInt(input)                   // => Test with generated input
+                                                         // => Fuzzer calls this thousands of times with different inputs
+        _ = result                                       // => Ignore result (unused variable)
+        _ = err                                          // => Ignore error (unused variable)
         // No assertion - fuzzer looks for panics and crashes
-    })
-}
+                                                         // => Fuzz test succeeds if no panic/crash occurs
+    })                                                   // => Fuzzer runs until timeout or finds crash
+}                                                        // => Command: go test -fuzz=FuzzParseInt
 
 // Fuzzing UTF-8 strings
-func FuzzValidUTF8(f *testing.F) {
-    f.Add("hello")
-    f.Add("世界")
+func FuzzValidUTF8(f *testing.F) {                       // => Fuzz test for UTF-8 validation
+    f.Add("hello")                                       // => Seed: ASCII string
+                                                         // => Fuzzer mutates: "hellp", "helo", etc.
+    f.Add("世界")                                         // => Seed: Multi-byte UTF-8 (Chinese characters)
+                                                         // => Fuzzer mutates: byte sequences, invalid UTF-8
 
-    f.Fuzz(func(t *testing.T, input string) {
+    f.Fuzz(func(t *testing.T, input string) {            // => Fuzz function for UTF-8 testing
         // Fuzz will provide valid UTF-8 (f.Add only adds valid strings)
-        // Fuzzer generates variations
-        if !utf8.ValidString(input) {
-            t.Errorf("Invalid UTF-8: %v", input)
-        }
-    })
+                                                         // => f.Add seeds are valid UTF-8
+        // Fuzzer generates variations                   // => Mutations may create invalid UTF-8
+        if !utf8.ValidString(input) {                    // => Check if input is valid UTF-8
+                                                         // => utf8.ValidString returns false for invalid sequences
+            t.Errorf("Invalid UTF-8: %v", input)         // => Fail test if invalid UTF-8 generated
+                                                         // => Should NOT happen (fuzzer generates valid UTF-8 for string type)
+        }                                                // => Verifies fuzzer's string generator is correct
+    })                                                   // => Tests fuzzer's UTF-8 generation quality
 }
 
-func parseInt(s string) (int, error) {
-    // Simple parser for fuzzing
-    if s == "0" {
-        return 0, nil
+func parseInt(s string) (int, error) {                  // => Simple parser for demonstration
+    // Simple parser for fuzzing                         // => Real parser would handle more cases
+    if s == "0" {                                        // => Check for "0" string
+        return 0, nil                                    // => Return zero value
+                                                         // => No error
     }
-    return 1, nil
-}
+    return 1, nil                                        // => Default: return 1
+                                                         // => Simplified logic (real parser would parse digits)
+}                                                        // => Fuzzer finds crashes in complex parsers
 ```
 
 **Key Takeaway**: Fuzzing tests provide generated inputs. Seed values with `f.Add()` include important test cases. The `f.Fuzz()` function receives generated inputs. Fuzzer looks for panics and crashes in your code.
@@ -2044,38 +2145,51 @@ import (
 
 func main() {
     // Memory profiling
-    f, err := os.Create("mem.prof")
-    if err != nil {
-        panic(err)
+    f, err := os.Create("mem.prof")                      // => Create profile file
+                                                         // => f is *os.File for writing profile data
+    if err != nil {                                      // => Check for file creation errors
+        panic(err)                                       // => Fatal error: can't profile without file
     }
-    defer f.Close()
+    defer f.Close()                                      // => Ensure file closed when function exits
+                                                         // => Flushes buffered profile data to disk
 
-    pprof.WriteHeapProfile(f)  // => Capture heap profile
+    pprof.WriteHeapProfile(f)                            // => Capture heap profile (current memory state)
+                                                         // => Writes allocation data to mem.prof file
+                                                         // => Snapshots heap at this moment
 
-    // Run program: go run main.go
-    // Then analyze: go tool pprof mem.prof
-    // Commands in pprof:
-    //   top         - shows top memory allocators
-    //   list        - shows source code with allocations
-    //   web         - generates graph (requires Graphviz)
+    // Run program: go run main.go                       // => Execute program to generate profiles
+    // Then analyze: go tool pprof mem.prof              // => Interactive profiler tool
+    // Commands in pprof:                                // => Profiler shell commands:
+    //   top         - shows top memory allocators       // => Lists functions allocating most memory
+    //   list        - shows source code with allocations // => Annotates source with allocation amounts
+    //   web         - generates graph (requires Graphviz) // => Visual call graph (needs graphviz installed)
 
     // CPU profiling
-    cpuFile, _ := os.Create("cpu.prof")
-    defer cpuFile.Close()
+    cpuFile, _ := os.Create("cpu.prof")                  // => Create CPU profile file
+                                                         // => cpuFile is *os.File for CPU profile data
+    defer cpuFile.Close()                                // => Ensure CPU profile file closed
+                                                         // => Flushes CPU profile data
 
-    pprof.StartCPUProfile(cpuFile) // => Start profiling
-    defer pprof.StopCPUProfile()
+    pprof.StartCPUProfile(cpuFile)                       // => Start profiling CPU usage
+                                                         // => Begins sampling CPU every 10ms
+                                                         // => Records function call stacks
+    defer pprof.StopCPUProfile()                         // => Stop profiling when function exits
+                                                         // => Writes collected CPU data to file
+                                                         // => MUST call Stop to finalize profile
 
     // Run expensive operation here
-    expensiveComputation()
-}
+    expensiveComputation()                               // => Execute work to profile
+                                                         // => Profiler records CPU time spent here
+}                                                        // => Deferred functions execute: Stop, Close files
 
-func expensiveComputation() {
+func expensiveComputation() {                            // => Simulated expensive operation
     // Simulation of work
-    for i := 0; i < 1000000; i++ {
-        _ = i * i
-    }
-}
+    for i := 0; i < 1000000; i++ {                       // => Loop 1 million times
+                                                         // => CPU profiler will show time spent here
+        _ = i * i                                        // => Compute square (discarded)
+                                                         // => Prevents compiler from optimizing away loop
+    }                                                    // => Profiler identifies this as hotspot
+}                                                        // => Real profiling finds actual bottlenecks
 ```
 
 **Key Takeaway**: Use `pprof.WriteHeapProfile()` to capture memory allocations. Use `pprof.StartCPUProfile()` for CPU profiling. Analyze profiles with `go tool pprof`. Profile helps identify bottlenecks and memory leaks.
@@ -2097,41 +2211,56 @@ import (
 )
 
 func main() {
-    var counter int
-    var wg sync.WaitGroup
+    var counter int                                      // => Shared variable (no synchronization)
+                                                         // => counter will be accessed by 10 goroutines
+    var wg sync.WaitGroup                                // => WaitGroup to wait for goroutines
+                                                         // => Ensures all goroutines complete before exiting
 
     // Race condition - multiple goroutines modify counter without sync
-    for i := 0; i < 10; i++ {
-        wg.Add(1)
-        go func() {
-            defer wg.Done()
-            counter++               // => DATA RACE! No synchronization
-        }()
-    }
+    for i := 0; i < 10; i++ {                            // => Spawn 10 goroutines
+        wg.Add(1)                                        // => Increment WaitGroup counter
+                                                         // => Tells WaitGroup to wait for 1 more goroutine
+        go func() {                                      // => Spawn goroutine (runs concurrently)
+            defer wg.Done()                              // => Decrement WaitGroup when goroutine exits
+                                                         // => Signals goroutine completion
+            counter++                                    // => DATA RACE! No synchronization
+                                                         // => Multiple goroutines read/write counter concurrently
+                                                         // => Read-modify-write is NOT atomic
+                                                         // => Race detector will flag this line
+        }()                                              // => Goroutine starts immediately
+    }                                                    // => 10 goroutines running concurrently
 
-    wg.Wait()
-    fmt.Println("Counter:", counter) // => Unpredictable value
+    wg.Wait()                                            // => Block until all goroutines call Done()
+                                                         // => Waits for counter to reach 0
+    fmt.Println("Counter:", counter)                     // => Unpredictable value (should be 10, but race may lose increments)
 
-    // Run with: go run -race main.go
-    // Output includes race condition detection
+    // Run with: go run -race main.go              // => Enable race detector
+                                                         // => Instruments code to detect concurrent access
+    // Output includes race condition detection          // => Reports file:line where race occurred
+                                                         // => Shows goroutine stacks for both accesses
 
     // Fixed version with mutex
-    var mu sync.Mutex
-    counter = 0
+    var mu sync.Mutex                                    // => Mutex for synchronization
+                                                         // => Protects counter from concurrent access
+    counter = 0                                          // => Reset counter
 
-    for i := 0; i < 10; i++ {
-        wg.Add(1)
-        go func() {
-            defer wg.Done()
-            mu.Lock()
-            counter++              // => Protected by mutex
-            mu.Unlock()
-        }()
-    }
+    for i := 0; i < 10; i++ {                            // => Spawn 10 goroutines again
+        wg.Add(1)                                        // => Increment WaitGroup
+        go func() {                                      // => Goroutine with synchronization
+            defer wg.Done()                              // => Decrement WaitGroup on exit
+            mu.Lock()                                    // => Acquire lock (blocks if another goroutine holds it)
+                                                         // => Only one goroutine can hold lock at a time
+            counter++                                    // => Protected by mutex (safe concurrent access)
+                                                         // => No race: only one goroutine modifies at a time
+            mu.Unlock()                                  // => Release lock
+                                                         // => Allows waiting goroutines to acquire lock
+        }()                                              // => Goroutine starts
+    }                                                    // => All goroutines use mutex correctly
 
-    wg.Wait()
-    fmt.Println("Counter (safe):", counter) // => Always 10
-}
+    wg.Wait()                                            // => Wait for all goroutines to complete
+    fmt.Println("Counter (safe):", counter)              // => Always 10 (race-free)
+                                                         // => Mutex ensures all increments happen correctly
+}                                                        // => Race detector shows no warnings for mutex version
 ```
 
 **Key Takeaway**: Run tests with `-race` flag to detect concurrent data access without synchronization. Race detector finds most (but not all) race conditions. Use mutexes, channels, or atomic operations to fix races.

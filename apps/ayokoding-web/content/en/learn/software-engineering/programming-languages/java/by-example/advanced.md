@@ -64,17 +64,23 @@ import java.util.*;
 // ConcurrentHashMap - thread-safe without blocking entire map
 ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>(); // => Empty map, uses lock striping for segments
 
-// putIfAbsent - atomic operation
+// putIfAbsent - atomic operation (check + insert)
 Integer result1 = map.putIfAbsent("key1", 100);
-                                 // => Checks if key1 exists atomically
-                                 // => Key doesn't exist, inserts key1=100
+                                 // => Atomically checks if key1 exists (thread-safe)
+                                 // => CAS-based operation: check-then-act is atomic
+                                 // => Key doesn't exist, inserts key1=100 atomically
                                  // => Returns null (previous value was null/absent)
+                                 // => No race condition: another thread cannot insert between check and insert
 System.out.println(map.get("key1")); // => 100 (key1 now maps to 100)
+                                 // => Volatile read: guarantees visibility across threads
 Integer existing = map.putIfAbsent("key1", 200);
-                                 // => Checks if key1 exists atomically
+                                 // => Atomically checks if key1 exists (thread-safe check)
                                  // => Key exists with value 100, does NOT replace
+                                 // => Atomic constraint: insertion only if key absent
                                  // => Returns 100 (existing value, map unchanged)
+                                 // => Thread-safe: no lost updates even with concurrent calls
 System.out.println(map.get("key1")); // => 100 (unchanged, still 100)
+                                 // => Key value remains 100 (atomic guarantee)
 
 // computeIfAbsent - compute value if absent
 Integer computed = map.computeIfAbsent("key2", k -> k.length() * 10);
@@ -121,39 +127,74 @@ String head = queue.poll(); // => "First" (removed from head, queue now has ["Se
 String head2 = queue.poll(); // => "Second" (removed from head, queue now empty)
 String head3 = queue.poll(); // => null (queue empty)
 
-// BlockingQueue - producer-consumer pattern with blocking
-BlockingQueue<Integer> blockingQueue = new ArrayBlockingQueue<>(10); // => Bounded queue, capacity 10
+// BlockingQueue - producer-consumer pattern with blocking coordination
+BlockingQueue<Integer> blockingQueue = new ArrayBlockingQueue<>(10);
+                                 // => Bounded queue, capacity 10 elements
+                                 // => ArrayBlockingQueue uses single ReentrantLock for put/take
+                                 // => Backed by array, FIFO ordering (first in, first out)
+                                 // => Thread-safe: no external synchronization needed
 
 // Producer thread
 Thread producer = new Thread(() -> { // => Creates producer thread (not started yet)
+                                 // => Lambda implements Runnable.run() method
+                                 // => Closure captures blockingQueue reference
     try {
-        for (int i = 0; i < 5; i++) { // => Will produce items 0-4
+        for (int i = 0; i < 5; i++) { // => Will produce items 0-4 (5 iterations)
+                                 // => i is loop counter (local variable per iteration)
             blockingQueue.put(i); // => Blocks if queue full (capacity 10), waits until space available
-            System.out.println("Produced: " + i); // => Output: "Produced: 0", "Produced: 1", etc.
-            Thread.sleep(100); // => Simulate production work (100ms delay)
+                                 // => put() blocks thread using Condition.await() if full
+                                 // => Wakes up when consumer calls take() (creates space)
+                                 // => Atomically inserts item and signals waiting consumers
+            System.out.println("Produced: " + i);
+                                 // => Output: "Produced: 0", "Produced: 1", etc.
+                                 // => Print happens AFTER successful insertion
+            Thread.sleep(100);   // => Simulate production work (100ms delay)
+                                 // => Yields CPU, allows other threads to run
+                                 // => InterruptedException if thread interrupted during sleep
         }
     } catch (InterruptedException e) {
-        Thread.currentThread().interrupt(); // => Restore interrupted status
+                                 // => Caught if Thread.interrupt() called during put() or sleep()
+        Thread.currentThread().interrupt();
+                                 // => Restore interrupted status (preserve interruption)
+                                 // => Allows caller to detect interruption later
     }
-}); // => Thread created but not running
+}); // => Thread created but not running (must call start())
 
 // Consumer thread
 Thread consumer = new Thread(() -> { // => Creates consumer thread (not started yet)
+                                 // => Separate thread from producer (runs concurrently)
     try {
-        for (int i = 0; i < 5; i++) { // => Will consume 5 items
-            Integer item = blockingQueue.take(); // => Blocks if queue empty, waits until item available
-            System.out.println("Consumed: " + item); // => Output: "Consumed: 0", "Consumed: 1", etc.
-            Thread.sleep(150); // => Simulate consumption work (150ms delay, slower than producer)
+        for (int i = 0; i < 5; i++) { // => Will consume 5 items (matches producer count)
+            Integer item = blockingQueue.take();
+                                 // => Blocks if queue empty, waits until item available
+                                 // => take() blocks thread using Condition.await() if empty
+                                 // => Wakes up when producer calls put() (adds item)
+                                 // => Atomically removes item and signals waiting producers
+            System.out.println("Consumed: " + item);
+                                 // => Output: "Consumed: 0", "Consumed: 1", etc.
+                                 // => item is Integer (autoboxed from queue)
+            Thread.sleep(150);   // => Simulate consumption work (150ms delay)
+                                 // => Slower than producer (150ms vs 100ms)
+                                 // => Creates backpressure: queue fills up over time
         }
     } catch (InterruptedException e) {
-        Thread.currentThread().interrupt(); // => Restore interrupted status
+                                 // => Caught if interrupted during take() or sleep()
+        Thread.currentThread().interrupt();
+                                 // => Restore interrupted status
     }
-}); // => Thread created but not running
+}); // => Thread created but not running (must call start())
 
-producer.start(); // => Start producer thread, begins producing items
-consumer.start(); // => Start consumer thread, begins consuming items
+producer.start();                // => Start producer thread, begins producing items
+                                 // => Calls producer.run() in new thread
+                                 // => Producer thread now executing concurrently
+consumer.start();                // => Start consumer thread, begins consuming items
+                                 // => Calls consumer.run() in new thread
+                                 // => Consumer thread now executing concurrently
 // => Both threads run concurrently, queue coordinates between them
-// => Output order may vary due to concurrent execution
+// => BlockingQueue handles synchronization (no manual locks needed)
+// => Output order may vary due to concurrent execution and scheduling
+// => Typical pattern: producer may produce multiple before consumer starts
+// => Queue acts as buffer between producer and consumer speeds
 ```
 
 **Key Takeaway**: `ConcurrentHashMap` provides thread-safe operations with lock striping. `CopyOnWriteArrayList` is safe for iteration-heavy workloads. `BlockingQueue` enables producer-consumer patterns with blocking operations. These collections offer better performance than `Collections.synchronizedXxx()` wrappers.
@@ -215,20 +256,42 @@ int newValue = counter.incrementAndGet(); // => 12 (increments first, then retur
 System.out.println(counter.get()); // => 12 (counter now 12)
 
 // compareAndSet - atomic compare-and-swap (CAS operation)
-boolean success = counter.compareAndSet(12, 20); // => true (current was 12, set to 20 atomically)
+boolean success = counter.compareAndSet(12, 20);
+                                 // => Hardware-level CAS instruction (CMPXCHG on x86)
+                                 // => Step 1: Read current value (12)
+                                 // => Step 2: Compare with expected (12)
+                                 // => Step 3: If equal, atomically set to 20
+                                 // => All 3 steps happen atomically (single CPU instruction)
+                                 // => true (current was 12, set to 20 atomically)
+                                 // => No race condition: no thread can modify between compare and set
 System.out.println(counter.get()); // => 20 (successfully updated)
-boolean failure = counter.compareAndSet(12, 30); // => false (current is 20, not 12, no update)
+                                 // => Volatile read: guaranteed visibility
+boolean failure = counter.compareAndSet(12, 30);
+                                 // => Attempts CAS with expected value 12
+                                 // => Step 1: Read current value (20, not 12)
+                                 // => Step 2: Compare with expected (20 != 12)
+                                 // => Step 3: Comparison fails, no update performed
+                                 // => false (current is 20, not 12, no update)
+                                 // => Atomic guarantee: all-or-nothing operation
 System.out.println(counter.get()); // => 20 (unchanged, CAS failed)
+                                 // => Value remains 20 (update rejected)
 
 // updateAndGet - atomic update with lambda function
 int updated = counter.updateAndGet(v -> v * 2);
-                                 // => Reads current value: v=20
-                                 // => Applies lambda: 20 * 2 = 40
+                                 // => CAS loop with function application
+                                 // => Iteration 1: Reads current value: v=20
+                                 // => Applies lambda: 20 * 2 = 40 (computes new value)
+                                 // => Attempts compareAndSet(20, 40)
+                                 // => If succeeds: returns 40
+                                 // => If fails (concurrent modification): retry with new value
                                  // => Atomically sets counter to 40 using CAS
-                                 // => Returns new value 40
+                                 // => Returns new value 40 (post-update value)
 System.out.println(counter.get()); // => 40 (counter now 40)
+                                 // => Function successfully applied atomically
 // => Internally uses CAS loop: read, apply function, compareAndSet, retry if failed
 // => Retries if another thread modified counter between read and update
+// => Lock-free algorithm: no blocking, just retry on contention
+// => Eventually succeeds even under high contention (progress guarantee)
 
 // accumulateAndGet - atomic accumulation with binary operator
 int accumulated = counter.accumulateAndGet(5, (curr, update) -> curr + update);
@@ -402,29 +465,56 @@ class SumTask extends RecursiveTask<Long> {
     }
 
     @Override
-    protected Long compute() {
-        int length = end - start;
+    protected Long compute() {   // => Called by ForkJoinPool when task executes
+                                 // => Runs in worker thread (part of thread pool)
+        int length = end - start;// => Calculate subarray size
+                                 // => Determines if task should split further
 
         // Base case: compute directly if small enough
         if (length <= THRESHOLD) {
-            long sum = 0;
+                                 // => THRESHOLD (1000): minimum work unit size
+                                 // => Below threshold: sequential computation faster than forking overhead
+                                 // => Prevents excessive task creation (granularity control)
+            long sum = 0;        // => Accumulator for sequential sum
             for (int i = start; i < end; i++) {
-                sum += array[i];
+                                 // => Sequential loop: no parallelism here
+                sum += array[i]; // => Add array element to sum
+                                 // => Direct memory access (no synchronization needed)
             }
-            return sum;
-        }
+            return sum;          // => Return computed sum for this range
+        }                        // => Base case completes, task finishes
 
         // Recursive case: split into subtasks
         int mid = start + length / 2;
+                                 // => Calculate midpoint for binary split
+                                 // => Divides work evenly: left half + right half
         SumTask leftTask = new SumTask(array, start, mid);
+                                 // => Create left subtask (first half of range)
+                                 // => New RecursiveTask instance (not started yet)
         SumTask rightTask = new SumTask(array, mid, end);
+                                 // => Create right subtask (second half of range)
+                                 // => Separate task for concurrent execution
 
-        leftTask.fork(); // Async execute left
-        long rightResult = rightTask.compute(); // Compute right in current thread
-        long leftResult = leftTask.join(); // Wait for left result
+        leftTask.fork();         // => Async execute left subtask
+                                 // => fork() submits task to ForkJoinPool queue
+                                 // => Other threads can steal this task (work-stealing)
+                                 // => Returns immediately (non-blocking)
+                                 // => Left task runs concurrently in another thread
+        long rightResult = rightTask.compute();
+                                 // => Compute right in current thread (synchronous)
+                                 // => Recursive call: may fork further if still too large
+                                 // => Current thread does useful work (not idle)
+                                 // => Avoids forking overhead for one subtask
+        long leftResult = leftTask.join();
+                                 // => Wait for left result (blocking if not complete)
+                                 // => join() blocks until forked task finishes
+                                 // => Returns computed sum from left subtask
+                                 // => May help with work-stealing while waiting
 
         return leftResult + rightResult;
-    }
+                                 // => Combine results from left and right subtasks
+                                 // => Recursive merge: bubble up results through call stack
+    }                            // => Task completes, returns sum for this range
 }
 
 // Using ForkJoinPool

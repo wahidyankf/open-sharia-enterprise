@@ -1579,10 +1579,11 @@ async fn biased_select() {
 
 // Cancellation safety with select!
 async fn cancellation_safety() {
-    let mut data = vec![1, 2, 3];    // => Mutable vector
+    let mut data = vec![1, 2, 3];    // => Mutable vector (state across iterations)
+                                     // => Cancellation can leave state inconsistent
 
-    tokio::select! {
-        _ = async {
+    tokio::select! {                 // => Racing async operations with mutable state
+        _ = async {                  // => Branch 1: async block mutating data
             data.push(4);            // => Modify data in branch 1
             sleep(Duration::from_millis(100)).await;
             data.push(5);            // => Second modification (might not happen!)
@@ -2130,191 +2131,273 @@ async fn practical_pin_usage() {
 Associated types define placeholder types in traits that implementors specify, improving code clarity over generic parameters.
 
 ```rust
-trait Container {
+trait Container {                    // => Trait defining container behavior
     type Item;                       // => Associated type: placeholder for concrete type
-                                     // => Each implementation specifies one Item type
-                                     // => Cannot have multiple Item types per implementation
+                                     // => Each impl chooses ONE Item type (not multiple)
+                                     // => Simpler than generic parameter at use sites
+                                     // => Cannot have Container<i32> AND Container<String> for same type
 
-    fn get(&self) -> &Self::Item;    // => Method returns reference to Item
-                                     // => Self::Item refers to associated type
+    fn get(&self) -> &Self::Item;    // => Method signature using associated type
+                                     // => Self::Item refers to implementor's chosen type
+                                     // => Returns immutable reference to contained item
 }
 
-struct IntContainer {
-    value: i32,                      // => Container holding i32
+struct IntContainer {                // => Concrete container type
+    value: i32,                      // => Stores single i32 value
 }
 
-impl Container for IntContainer {
-    type Item = i32;                 // => Specify associated type: Item is i32
-                                     // => Only one Item type allowed per impl
-                                     // => Bound to implementation, not use site
+impl Container for IntContainer {    // => Implement Container for IntContainer
+    type Item = i32;                 // => Associate Item with i32 (concrete type)
+                                     // => Only ONE Item type per impl (not like generics)
+                                     // => Bound at implementation, not at call site
+                                     // => Simpler than Container<i32> everywhere
 
-    fn get(&self) -> &Self::Item {   // => Return &i32 (Self::Item = i32)
-        &self.value                  // => Return reference to stored value
+    fn get(&self) -> &Self::Item {   // => Concrete signature: &i32 (Self::Item = i32)
+                                     // => Return type determined by associated type
+        &self.value                  // => Return reference to stored i32
+                                     // => Lifetime tied to self
     }
 }
 
-struct StringContainer {
-    value: String,                   // => Container holding String
+struct StringContainer {             // => Different container type
+    value: String,                   // => Stores heap-allocated String
 }
 
-impl Container for StringContainer {
-    type Item = String;              // => Different Item type: String
-                                     // => Each type chooses its own Item
+impl Container for StringContainer { // => Implement Container for different type
+    type Item = String;              // => Different associated type choice: String
+                                     // => Each implementation picks appropriate Item type
+                                     // => IntContainer chose i32, StringContainer chose String
 
-    fn get(&self) -> &Self::Item {   // => Return &String
-        &self.value
+    fn get(&self) -> &Self::Item {   // => Concrete signature: &String
+                                     // => Return &String (Self::Item = String here)
+        &self.value                  // => Return reference to stored String
     }
 }
 
 fn print_container<C: Container>(container: &C)
+                                     // => Generic function with trait bound
+                                     // => Only ONE type parameter needed (not T + C like generics)
 where
-    C::Item: std::fmt::Debug,        // => Bound on associated type: Item must be Debug
-                                     // => C::Item syntax accesses associated type
+    C::Item: std::fmt::Debug,        // => Constraint on associated type
+                                     // => C::Item syntax: access associated type from C
+                                     // => Item must implement Debug for printing
+                                     // => Works for any Container whose Item is Debug
 {
     println!("{:?}", container.get());
-                                     // => Print the Item (whatever type it is)
+                                     // => Call get() returns &C::Item
+                                     // => Debug format the Item value
 }
 
 fn main() {
     let int_c = IntContainer { value: 42 };
+                                     // => Create IntContainer with value 42
+                                     // => Type: IntContainer (Container::Item = i32)
                                      // => int_c.get() returns &i32
-    print_container(&int_c);         // => Compiler infers C=IntContainer, C::Item=i32
+    print_container(&int_c);         // => Type inference: C = IntContainer
+                                     // => C::Item = i32 (from impl)
+                                     // => i32 implements Debug ✓
                                      // => Output: 42
 
-    let str_c = StringContainer {
-        value: String::from("hello"),
-    };                               // => str_c.get() returns &String
-    print_container(&str_c);         // => Compiler infers C=StringContainer, C::Item=String
+    let str_c = StringContainer {    // => Create StringContainer
+        value: String::from("hello"),// => Heap-allocated String
+    };                               // => Type: StringContainer (Container::Item = String)
+                                     // => str_c.get() returns &String
+    print_container(&str_c);         // => Type inference: C = StringContainer
+                                     // => C::Item = String (from impl)
+                                     // => String implements Debug ✓
                                      // => Output: "hello"
 }
 
 // Comparing associated types vs generic parameters
 // Generic parameter version (more verbose at use sites)
-trait GenericContainer<T> {          // => T is generic parameter
-    fn get_generic(&self) -> &T;
+trait GenericContainer<T> {          // => Trait with generic parameter T
+                                     // => T specified at impl AND use sites
+                                     // => Allows multiple implementations for same type
+    fn get_generic(&self) -> &T;     // => Method returns reference to T
+                                     // => T from trait parameter, not associated
 }
 
 impl GenericContainer<i32> for IntContainer {
-                                     // => Must specify T at impl time
-    fn get_generic(&self) -> &i32 {
-        &self.value
+                                     // => Implement GenericContainer<i32>
+                                     // => Must specify T=i32 at impl time
+                                     // => IntContainer now GenericContainer<i32>
+    fn get_generic(&self) -> &i32 {  // => Concrete return type: &i32
+        &self.value                  // => Return stored i32 reference
     }
 }
 
 impl GenericContainer<String> for IntContainer {
-                                     // => CAN have multiple impls with different T!
-                                     // => IntContainer can be GenericContainer<i32> AND GenericContainer<String>
+                                     // => ALSO implement GenericContainer<String> for same type!
+                                     // => Multiple impls possible with generics (not associated types)
+                                     // => IntContainer is BOTH GenericContainer<i32> AND GenericContainer<String>
+                                     // => Demonstrates key difference from associated types
     fn get_generic(&self) -> &String {
+                                     // => Return &String (but IntContainer stores i32!)
         todo!("Not really possible for IntContainer")
+                                     // => Demonstrates problem: type system allows impossible impl
+                                     // => Associated types prevent this confusion
     }
 }
 
 fn use_generic<T, C: GenericContainer<T>>(container: &C) -> &T {
-                                     // => Must specify T as separate generic parameter
-                                     // => More verbose: need both T and C
-    container.get_generic()
+                                     // => Generic function requires TWO type parameters
+                                     // => T: the contained type
+                                     // => C: the container type with GenericContainer<T> bound
+                                     // => More verbose than associated types
+                                     // => Caller must sometimes specify T explicitly
+    container.get_generic()          // => Call method returning &T
+                                     // => Return type is &T (parameter)
 }
 
 fn use_associated<C: Container>(container: &C) -> &C::Item {
-                                     // => Only need C, Item comes from impl
-                                     // => Less verbose: one type parameter
-                                     // => Cannot have multiple Item types per C
-    container.get()
+                                     // => Generic function needs ONE type parameter
+                                     // => C: the container type (Item inferred from impl)
+                                     // => Cleaner: Item type comes from C's impl automatically
+                                     // => Cannot have multiple Item types (1-to-1 relationship)
+    container.get()                  // => Call method returning &C::Item
+                                     // => Return type is &C::Item (associated type)
 }
 
 // When to use associated types: natural 1-to-1 relationship
-trait Iterator {
-    type Item;                       // => Each iterator type produces ONE item type
-                                     // => Vec<i32>::IntoIter always produces i32
+trait Iterator {                     // => Standard library Iterator trait (simplified)
+    type Item;                       // => Associated type: what the iterator produces
+                                     // => Each iterator type produces EXACTLY ONE Item type
+                                     // => Vec<i32>::IntoIter always produces i32 (not i32 sometimes, String other times)
+                                     // => Natural 1-to-1 relationship: iterator ↔ item type
 
     fn next(&mut self) -> Option<Self::Item>;
+                                     // => Method signature uses associated type
+                                     // => Returns Option<Item> (Some(item) or None)
 }
 
-struct Counter {
-    count: u32,
+struct Counter {                     // => Simple counter iterator
+    count: u32,                      // => Current count state
 }
 
-impl Iterator for Counter {
-    type Item = u32;                 // => Counter iterator produces u32
-                                     // => Makes sense: counter only counts integers
+impl Iterator for Counter {          // => Implement Iterator for Counter
+    type Item = u32;                 // => Associate Item with u32
+                                     // => Counter produces u32 values (counts)
+                                     // => Makes semantic sense: counters produce integers
+                                     // => Cannot also be Iterator with Item = String (1-to-1 rule)
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.count += 1;
-        if self.count < 6 {
-            Some(self.count)         // => Returns u32
-        } else {
-            None
+                                     // => Concrete signature: Option<u32>
+                                     // => Mutates self (increments counter)
+        self.count += 1;             // => Increment internal count
+                                     // => self.count now 1, 2, 3, etc.
+        if self.count < 6 {          // => Stop at 5 (counter produces 1, 2, 3, 4, 5)
+            Some(self.count)         // => Return Some(u32) - next value
+                                     // => Type: Option<u32> (matches Self::Item = u32)
+        } else {                     // => Count reached 6 or beyond
+            None                     // => Iterator exhausted
+                                     // => Type: Option<u32> (None variant)
         }
     }
 }
 
-// Associated types with bounds
-trait Graph {
-    type Node;                       // => Node type (e.g., String, u32)
-    type Edge;                       // => Edge type (e.g., (Node, Node))
+// Associated types with bounds - multiple associated types
+trait Graph {                        // => Graph trait with TWO associated types
+    type Node;                       // => Associated type for node labels
+                                     // => Could be String, u32, struct, etc.
+                                     // => Each graph chooses appropriate node type
+    type Edge;                       // => Associated type for edge representation
+                                     // => Could be (Node, Node), weighted edge struct, etc.
+                                     // => 1-to-1 relationship: graph type → edge type
 
     fn nodes(&self) -> Vec<&Self::Node>;
+                                     // => Return references to all nodes
+                                     // => Self::Node is associated type (not parameter)
     fn edges(&self) -> Vec<&Self::Edge>;
+                                     // => Return references to all edges
+                                     // => Self::Edge is associated type
 }
 
-struct SimpleGraph {
-    nodes: Vec<String>,
-    edges: Vec<(usize, usize)>,      // => Edges as index pairs
+struct SimpleGraph {                 // => Concrete graph implementation
+    nodes: Vec<String>,              // => Nodes stored as Strings
+    edges: Vec<(usize, usize)>,      // => Edges as index pairs (node indices)
+                                     // => Efficient: indices instead of String refs
 }
 
-impl Graph for SimpleGraph {
-    type Node = String;              // => Nodes are Strings
+impl Graph for SimpleGraph {         // => Implement Graph for SimpleGraph
+    type Node = String;              // => Nodes are Strings (label-based graph)
+                                     // => SimpleGraph commits to String nodes
     type Edge = (usize, usize);      // => Edges are index tuples
+                                     // => Represents connections via node indices
+                                     // => Two associated types specified
 
     fn nodes(&self) -> Vec<&Self::Node> {
-        self.nodes.iter().collect()  // => Return references to all nodes
+                                     // => Concrete return: Vec<&String>
+        self.nodes.iter().collect()  // => Collect references to String nodes
+                                     // => Borrows self.nodes elements
     }
 
     fn edges(&self) -> Vec<&Self::Edge> {
-        self.edges.iter().collect()  // => Return references to all edges
+                                     // => Concrete return: Vec<&(usize, usize)>
+        self.edges.iter().collect()  // => Collect references to edge tuples
+                                     // => Borrows self.edges elements
     }
 }
 
 // Using where clauses with associated types
-fn process_graph<G>(graph: &G)
+fn process_graph<G>(graph: &G)       // => Generic function over any Graph
+                                     // => Only one type parameter: G
 where
-    G: Graph,                        // => G must implement Graph
-    G::Node: std::fmt::Display,      // => Associated Node must be Display
-    G::Edge: std::fmt::Debug,        // => Associated Edge must be Debug
+    G: Graph,                        // => G must implement Graph trait
+                                     // => G::Node and G::Edge inferred from impl
+    G::Node: std::fmt::Display,      // => Constraint on associated type Node
+                                     // => Node must implement Display for printing
+                                     // => Works for any graph with Display nodes
+    G::Edge: std::fmt::Debug,        // => Constraint on associated type Edge
+                                     // => Edge must implement Debug for inspection
+                                     // => Separate constraints on different associated types
 {
-    for node in graph.nodes() {
-        println!("Node: {}", node);  // => Display each node
+    for node in graph.nodes() {      // => Iterate over node references
+                                     // => Type: &G::Node (associated type)
+        println!("Node: {}", node);  // => Display each node (requires Display bound)
+                                     // => Uses Display impl for G::Node
     }
-    for edge in graph.edges() {
-        println!("Edge: {:?}", edge);// => Debug each edge
+    for edge in graph.edges() {      // => Iterate over edge references
+                                     // => Type: &G::Edge (associated type)
+        println!("Edge: {:?}", edge);// => Debug each edge (requires Debug bound)
+                                     // => Uses Debug impl for G::Edge
     }
 }
 
-// Default associated types
-trait ProduceAnimal {
-    type Animal = String;            // => Default associated type
-                                     // => Implementations can override or use default
+// Default associated types - convenience feature
+trait ProduceAnimal {                // => Trait with default associated type
+    type Animal = String;            // => Default: Animal is String
+                                     // => Implementations can use default OR override
+                                     // => Provides sensible default to reduce boilerplate
+                                     // => Syntax: type AssocType = DefaultType;
 
     fn produce(&self) -> Self::Animal;
+                                     // => Return associated Animal type
+                                     // => Could be String (default) or overridden type
 }
 
-struct Farm;
+struct Farm;                         // => Zero-sized type (no fields)
 
-impl ProduceAnimal for Farm {
-                                     // => Use default: type Animal = String
+impl ProduceAnimal for Farm {        // => Implement using DEFAULT associated type
+                                     // => Doesn't specify type Animal (uses default String)
+                                     // => Animal = String (from trait default)
     fn produce(&self) -> Self::Animal {
-        String::from("Cow")          // => Returns String (default)
+                                     // => Concrete return: String (from default)
+        String::from("Cow")          // => Create heap-allocated String
+                                     // => Return type: String (default Animal type)
     }
 }
 
-struct Zoo;
+struct Zoo;                          // => Another zero-sized type
 
-impl ProduceAnimal for Zoo {
-    type Animal = &'static str;      // => Override default with different type
-                                     // => Now Animal is &'static str, not String
+impl ProduceAnimal for Zoo {         // => Implement OVERRIDING default associated type
+    type Animal = &'static str;      // => Explicit override: Animal is &'static str (not String)
+                                     // => Overrides trait's default type
+                                     // => Now Animal = &'static str for Zoo
 
     fn produce(&self) -> Self::Animal {
-        "Lion"                       // => Returns &'static str
+                                     // => Concrete return: &'static str (overridden type)
+        "Lion"                       // => String literal (type: &'static str)
+                                     // => Return type matches overridden Animal = &'static str
     }
 }
 ```
@@ -2838,73 +2921,96 @@ Specialization allows providing more specific implementations for generic traits
 
 ```rust
 // Requires nightly: #![feature(specialization)]
-trait Summarize {
-    fn summarize(&self) -> String {
+                                     // => Unstable feature (not in stable Rust yet)
+                                     // => Must use nightly compiler
+trait Summarize {                    // => Trait with default method implementation
+    fn summarize(&self) -> String {  // => Default implementation (can be specialized)
         String::from("(Default summary)")
-                                     // => Default implementation for all types
+                                     // => Generic fallback for all types
+                                     // => Used unless type has specialized impl
     }
 }
 
 // Default (generic) implementation
-impl<T> Summarize for T {}           // => Applies to ALL types T
-                                     // => Blanket impl: every type gets Summarize
+impl<T> Summarize for T {}           // => Blanket impl: applies to ALL types T
+                                     // => Every type automatically gets Summarize
+                                     // => Uses trait's default summarize() method
+                                     // => Most general impl (least specific)
 
 // Specialized implementation (more specific)
-impl Summarize for String {          // => More specific than impl<T>
+impl Summarize for String {          // => Specialized impl for String type specifically
+                                     // => MORE SPECIFIC than blanket impl<T>
                                      // => Specialization: overrides blanket impl for String
-    fn summarize(&self) -> String {
-        format!("String: {}", self)  // => Custom implementation for String
-                                     // => Takes precedence over default
-    }
+                                     // => Compiler chooses most specific impl at call site
+    fn summarize(&self) -> String {  // => Custom implementation for String
+        format!("String: {}", self)  // => String-specific behavior
+                                     // => Takes precedence over default (more specific wins)
+    }                                // => Replaces default impl for String only
 }
 
 // Even more specialized (if i32 also had custom impl)
-// impl Summarize for i32 {
+// impl Summarize for i32 {          // => Another specialized impl (for i32)
 //     fn summarize(&self) -> String {
 //         format!("Number: {}", self)
-//     }
-// }
+                                     // => i32-specific behavior
+//     }                             // => Compiler picks this for i32 calls
+// }                                 // => Overrides default for i32 only
 
 // Using specialization
 fn use_summarize() {
-    let s = String::from("hello");
+    let s = String::from("hello");   // => Create String value
+                                     // => Type: String
     println!("{}", s.summarize());   // => Calls String's specialized impl
+                                     // => Compiler chooses impl Summarize for String
                                      // => Output: String: hello
+                                     // => Most specific impl wins
 
-    let num = 42i32;
-    println!("{}", num.summarize()); // => Calls default impl (no i32 specialization)
+    let num = 42i32;                 // => Create i32 value
+                                     // => Type: i32
+    println!("{}", num.summarize()); // => Calls default impl (no i32 specialization above)
+                                     // => Compiler uses blanket impl<T> for i32
                                      // => Output: (Default summary)
+                                     // => Falls back to generic impl
 
-    let vec = vec![1, 2, 3];
+    let vec = vec![1, 2, 3];         // => Create Vec<i32>
+                                     // => Type: Vec<i32>
     println!("{}", vec.summarize()); // => Calls default impl (no Vec specialization)
+                                     // => Uses blanket impl<T> for Vec<i32>
                                      // => Output: (Default summary)
+                                     // => Generic fallback behavior
 }
 
 // Why specialization is useful: avoiding code duplication
-trait Process {
-    fn process(&self);
+trait Process {                      // => Trait for processing operations
+    fn process(&self);               // => Method signature
 }
 
 // Default slow implementation
-impl<T> Process for T {
-    default fn process(&self) {      // => default keyword: can be specialized
-        println!("Slow processing"); // => Generic slow path
-    }
+impl<T> Process for T {              // => Blanket impl for all types T
+    default fn process(&self) {      // => default keyword: signals can be specialized
+                                     // => Allows more specific impls to override
+                                     // => Without default, specialization compile error
+        println!("Slow processing"); // => Generic slow path (works for any T)
+                                     // => Conservative implementation
+    }                                // => Used unless specialized impl exists
 }
 
 // Fast path for specific types
-impl Process for Vec<u8> {
-    fn process(&self) {
+impl Process for Vec<u8> {           // => Specialized impl for Vec<u8> specifically
+                                     // => More specific than impl<T>
+    fn process(&self) {              // => Custom implementation for Vec<u8>
         println!("Fast processing for Vec<u8>");
-                                     // => Optimized implementation for Vec<u8>
-                                     // => Uses SIMD, specialized algorithms, etc.
-    }
+                                     // => Optimized implementation for this type
+                                     // => Could use SIMD, specialized algorithms, etc.
+                                     // => Overrides default slow path for Vec<u8> only
+    }                                // => Other types still use default impl
 }
 
 // Note: This feature is unstable (as of Rust 1.83)
-// - Soundness issues being worked on
-// - API may change before stabilization
+// - Soundness issues being worked on    => Type system interactions being refined
+// - API may change before stabilization => Syntax/semantics might evolve
 // - Use only with #![feature(specialization)] on nightly
+//                                    => Not available in stable Rust
 ```
 
 **Key Takeaway**: Specialization enables providing more specific trait implementations for particular types, reducing code duplication, but remains unstable and requires nightly Rust.
@@ -3432,101 +3538,131 @@ sequenceDiagram
 ```
 
 ```rust
-use std::fs::File;
-use std::io::Write;
+use std::fs::File;                   // => File type implements Drop for RAII
+use std::io::Write;                  // => Write trait for file operations
 
 // Custom resource with Drop implementation
-struct Resource {
-    name: String,
-    id: u32,
+struct Resource {                    // => Struct representing managed resource
+    name: String,                    // => Resource identifier (heap-allocated)
+    id: u32,                         // => Numeric ID for tracking
 }
 
 impl Resource {
     fn new(name: &str, id: u32) -> Self {
+                                     // => Constructor creating new resource
         println!("Creating resource: {} (ID: {})", name, id);
-                                     // => Track resource creation
+                                     // => Track resource creation with print
+                                     // => Demonstrates allocation order
         Resource {
-            name: name.to_string(), // => name stored as String
-            id,                      // => id stored as u32
-        }
+            name: name.to_string(), // => Clone &str to owned String (heap allocation)
+            id,                      // => Copy u32 value
+        }                            // => Return new Resource instance
     }
 }
 
-impl Drop for Resource {
-    fn drop(&mut self) {
+impl Drop for Resource {             // => Implement Drop trait for custom cleanup
+    fn drop(&mut self) {             // => drop() called automatically when value goes out of scope
+                                     // => &mut self: can access fields for cleanup
         println!("Dropping resource: {} (ID: {})", self.name, self.id);
-                                     // => Called automatically when out of scope
-                                     // => Reverse order of creation
-    }
+                                     // => Log resource destruction
+                                     // => Called in REVERSE order of creation
+                                     // => Deterministic: not GC finalization
+    }                                // => After drop(), memory is freed
 }
 
 // Nested struct demonstrating nested drop order
-struct Container {
-    resource: Resource,              // => Inner resource dropped first
-    name: String,
+struct Container {                   // => Outer resource containing inner resource
+    resource: Resource,              // => Inner Resource field (owns Resource)
+    name: String,                    // => Container's own name field
 }
 
-impl Drop for Container {
-    fn drop(&mut self) {
+impl Drop for Container {            // => Container's Drop implementation
+    fn drop(&mut self) {             // => Called when Container goes out of scope
         println!("Dropping container: {}", self.name);
-                                     // => Called before inner fields dropped
-    }
+                                     // => Container's drop runs FIRST
+                                     // => Then fields drop in declaration order
+    }                                // => After this, self.resource.drop() called automatically
+                                     // => Finally self.name.drop() (String's Drop)
 }
 
 fn main() {
     println!("=== Simple Drop Order ===");
-    {
+    {                                // => Inner scope begins
         let _r1 = Resource::new("First", 1);
+                                     // => Create first resource (stack variable)
                                      // => Output: Creating resource: First (ID: 1)
         let _r2 = Resource::new("Second", 2);
+                                     // => Create second resource (after r1)
                                      // => Output: Creating resource: Second (ID: 2)
         let _r3 = Resource::new("Third", 3);
+                                     // => Create third resource (after r2)
                                      // => Output: Creating resource: Third (ID: 3)
+                                     // => Creation order: r1 → r2 → r3
         println!("All resources created");
                                      // => Output: All resources created
-    }                                // => Scope ends here
+                                     // => All three resources alive in scope
+    }                                // => Scope ends here - drop cascade begins!
+                                     // => Drop order: r3 → r2 → r1 (REVERSE of creation)
                                      // => Output: Dropping resource: Third (ID: 3)
                                      // => Output: Dropping resource: Second (ID: 2)
                                      // => Output: Dropping resource: First (ID: 1)
+                                     // => LIFO destruction: Last-In-First-Out
 
     println!("\n=== Nested Drop Order ===");
-    {
-        let _container = Container {
+    {                                // => New inner scope
+        let _container = Container { // => Create Container with nested Resource
             resource: Resource::new("Inner", 10),
+                                     // => Create inner Resource first
                                      // => Output: Creating resource: Inner (ID: 10)
             name: String::from("Outer"),
-        };
+                                     // => Container name field
+        };                           // => Container owns inner Resource
         println!("Container created");
                                      // => Output: Container created
-    }                                // => Scope ends
+    }                                // => Scope ends - nested drop cascade
+                                     // => Step 1: Container::drop() called
                                      // => Output: Dropping container: Outer
+                                     // => Step 2: Fields dropped in declaration order
+                                     // => self.resource.drop() called next
                                      // => Output: Dropping resource: Inner (ID: 10)
-                                     // => Container drops before its fields
+                                     // => Step 3: self.name.drop() (String cleanup)
 
     println!("\n=== Manual Drop ===");
-    {
+    {                                // => Demonstrating explicit drop()
         let r = Resource::new("Manual", 20);
+                                     // => Create resource normally
                                      // => Output: Creating resource: Manual (ID: 20)
         println!("Before manual drop");
                                      // => Output: Before manual drop
-        drop(r);                     // => Explicit drop call
+        drop(r);                     // => Explicit drop() function call
+                                     // => Moves r into drop(), triggering Drop::drop()
                                      // => Output: Dropping resource: Manual (ID: 20)
+                                     // => r is MOVED and no longer accessible
         println!("After manual drop");
                                      // => Output: After manual drop
-        // r is no longer accessible here
+        // println!("{}", r.name);   // => ERROR: r was moved into drop()
+                                     // => Early cleanup (before scope end)
     }
 
     println!("\n=== RAII File Handling ===");
-    {
+    {                                // => RAII demonstration with File
         let mut file = File::create("/tmp/test.txt").unwrap();
-                                     // => File opened (resource acquired)
+                                     // => File opened, file descriptor acquired
+                                     // => File implements Drop (auto-close)
+                                     // => Type: File (owns OS resource)
         file.write_all(b"Hello").unwrap();
-                                     // => Write data to file
+                                     // => Write bytes to file (b"Hello" is &[u8])
+                                     // => File buffer may cache write
         println!("File written");    // => Output: File written
-    }                                // => File automatically closed (Drop impl)
-                                     // => No explicit close() needed
+                                     // => File still open (not flushed/closed yet)
+    }                                // => Scope ends
+                                     // => File::drop() called automatically
+                                     // => Flushes buffer and closes file descriptor
+                                     // => No explicit close() needed (RAII pattern)
+                                     // => Resource cleanup guaranteed even on panic!
 
     println!("\nEnd of main");       // => Output: End of main
+                                     // => All resources cleaned up automatically
 }
 ```
 
@@ -3541,124 +3677,183 @@ fn main() {
 `PhantomData` enables types to act as if they own or use type parameters without actually storing them, important for lifetime variance.
 
 ```rust
-use std::marker::PhantomData;
+use std::marker::PhantomData;        // => Zero-sized type for compile-time type information
 
 // Type-state pattern using PhantomData
-struct Locked;                       // => Zero-sized marker type
-struct Unlocked;                     // => Zero-sized marker type
+struct Locked;                       // => Zero-sized marker type (no fields)
+                                     // => Size: 0 bytes (optimized away at compile-time)
+                                     // => Represents "locked" state in type system
+struct Unlocked;                     // => Zero-sized marker type for "unlocked" state
+                                     // => Size: 0 bytes (no runtime overhead)
 
-struct Door<State> {
-    id: u32,                         // => Actual data stored
-    _state: PhantomData<State>,      // => Zero-sized marker (no runtime cost)
-}                                    // => State only exists at compile-time
+struct Door<State> {                 // => Generic struct parameterized by state type
+                                     // => State is phantom: not actually stored
+    id: u32,                         // => Actual data: door identifier (4 bytes)
+    _state: PhantomData<State>,      // => Zero-sized marker field
+                                     // => Size: 0 bytes (no runtime cost!)
+                                     // => Tells compiler: "Door acts as if it owns/uses State"
+                                     // => Enables type-level state tracking
+}                                    // => Total size: 4 bytes (just u32, State is phantom)
 
-impl Door<Locked> {
+impl Door<Locked> {                  // => Implementation ONLY for Door<Locked>
+                                     // => Door<Unlocked> doesn't have this method
     fn unlock(self) -> Door<Unlocked> {
-                                     // => Transition from Locked to Unlocked
+                                     // => Consumes Door<Locked>, returns Door<Unlocked>
+                                     // => State transition: Locked → Unlocked
+                                     // => Enforced at compile-time (type system)
         println!("Unlocking door {}", self.id);
+                                     // => Side effect: print action
                                      // => Output: Unlocking door N
-        Door {
-            id: self.id,             // => Transfer data
-            _state: PhantomData,     // => New state marker
-        }
+        Door {                       // => Create NEW Door with different type parameter
+            id: self.id,             // => Transfer same id
+            _state: PhantomData,     // => PhantomData<Unlocked> (different type!)
+        }                            // => Return type: Door<Unlocked> (enforced by signature)
     }
 }
 
-impl Door<Unlocked> {
-    fn open(&self) {
+impl Door<Unlocked> {                // => Implementation ONLY for Door<Unlocked>
+                                     // => Door<Locked> doesn't have open() method!
+    fn open(&self) {                 // => Immutable method (only available on Unlocked)
         println!("Opening door {}", self.id);
-                                     // => Only unlocked doors can open
+                                     // => Only unlocked doors can open (type safety!)
+                                     // => Compile error if called on Door<Locked>
     }
 
-    fn lock(self) -> Door<Locked> {
-                                     // => Transition from Unlocked to Locked
+    fn lock(self) -> Door<Locked> {  // => Reverse transition: Unlocked → Locked
+                                     // => Consumes Door<Unlocked>, returns Door<Locked>
         println!("Locking door {}", self.id);
-        Door {
-            id: self.id,
-            _state: PhantomData,
+                                     // => Output: Locking door N
+        Door {                       // => Create Door with Locked state
+            id: self.id,             // => Same id, different state
+            _state: PhantomData,     // => PhantomData<Locked> (state change!)
         }
     }
 }
 
 // Lifetime variance with PhantomData
-struct Wrapper<'a, T> {
-    data: *const T,                  // => Raw pointer (no lifetime)
-    _marker: PhantomData<&'a T>,     // => Act as if we borrow T with lifetime 'a
-}                                    // => Compiler treats this as borrowing &'a T
+struct Wrapper<'a, T> {              // => Generic over lifetime 'a and type T
+    data: *const T,                  // => Raw pointer to T (NO lifetime tracking!)
+                                     // => Raw pointers don't carry lifetime information
+                                     // => Compiler doesn't know how long data is valid
+    _marker: PhantomData<&'a T>,     // => PhantomData containing &'a T reference
+                                     // => Tells compiler: "act as if we borrow &'a T"
+                                     // => Enables lifetime checking for raw pointer
+}                                    // => Compiler now treats Wrapper as borrowing data for 'a
+                                     // => Size: size_of::<*const T>() (PhantomData is zero-sized)
 
 impl<'a, T> Wrapper<'a, T> {
-    fn new(data: &'a T) -> Self {
+    fn new(data: &'a T) -> Self {    // => Takes reference with lifetime 'a
+                                     // => Lifetime 'a captured in return type
         Wrapper {
-            data: data as *const T,  // => Convert reference to raw pointer
-            _marker: PhantomData,    // => Zero-sized, no storage cost
-        }                            // => Lifetime 'a tied to wrapper
+            data: data as *const T,  // => Convert &'a T to raw *const T
+                                     // => Lifetime information lost in raw pointer!
+            _marker: PhantomData,    // => PhantomData<&'a T> preserves lifetime 'a
+                                     // => Zero runtime cost (optimized away)
+        }                            // => Wrapper<'a, T> now tied to lifetime 'a
     }
 
-    fn get(&self) -> &'a T {
-        unsafe { &*self.data }       // => Dereference raw pointer
-                                     // => Returns reference with original lifetime 'a
-    }
+    fn get(&self) -> &'a T {         // => Return reference with original lifetime 'a
+                                     // => Not tied to &self lifetime (uses 'a from new())
+        unsafe { &*self.data }       // => Dereference raw pointer (unsafe!)
+                                     // => Returns &T, but signature declares &'a T
+                                     // => PhantomData ensures lifetime is correct
+    }                                // => Compiler verifies returned reference valid for 'a
 }
 
 // Ownership variance with PhantomData
-struct OwningWrapper<T> {
-    data: *mut T,                    // => Raw pointer to heap
-    _marker: PhantomData<T>,         // => Act as if we own T
-}                                    // => Enables proper Drop behavior
+struct OwningWrapper<T> {            // => Generic wrapper claiming ownership of T
+    data: *mut T,                    // => Raw mutable pointer to heap data
+                                     // => Raw pointers DON'T imply ownership (unsafe!)
+    _marker: PhantomData<T>,         // => PhantomData<T> tells compiler: "we own T"
+                                     // => Affects Send/Sync traits and Drop behavior
+}                                    // => Without PhantomData, compiler wouldn't call Drop
 
 impl<T> OwningWrapper<T> {
-    fn new(value: T) -> Self {
-        let boxed = Box::new(value); // => Allocate on heap
+    fn new(value: T) -> Self {       // => Takes ownership of value
+        let boxed = Box::new(value); // => Allocate value on heap (Box owns it)
+                                     // => Box<T> implements Drop
         let ptr = Box::into_raw(boxed);
                                      // => Convert Box to raw pointer
+                                     // => Ownership transferred FROM Box TO raw pointer
+                                     // => Box's Drop won't run (manual management now!)
         OwningWrapper {
-            data: ptr,               // => Store raw pointer
-            _marker: PhantomData,    // => Claim ownership
-        }
+            data: ptr,               // => Store raw pointer (no automatic cleanup)
+            _marker: PhantomData,    // => PhantomData<T> marks ownership
+                                     // => Enables proper Drop impl
+        }                            // => Wrapper now responsible for freeing T
     }
 
-    fn get(&self) -> &T {
-        unsafe { &*self.data }       // => Safe: we own the data
+    fn get(&self) -> &T {            // => Borrow the owned data
+        unsafe { &*self.data }       // => Dereference raw pointer to create reference
+                                     // => Safe because we own the data (PhantomData guarantees)
+                                     // => Lifetime tied to &self
     }
 }
 
-impl<T> Drop for OwningWrapper<T> {
-    fn drop(&mut self) {
-        unsafe {
+impl<T> Drop for OwningWrapper<T> { // => Custom Drop for manual resource cleanup
+                                     // => PhantomData<T> ensures this Drop is called
+                                     // => Without PhantomData, Drop might not run for T!
+    fn drop(&mut self) {             // => Called when OwningWrapper goes out of scope
+        unsafe {                     // => Unsafe: reconstructing Box from raw pointer
             let _ = Box::from_raw(self.data);
-                                     // => Reconstruct Box to free memory
-                                     // => PhantomData ensures this is called
-        }
-    }
+                                     // => Reconstruct Box<T> from raw pointer
+                                     // => Box's Drop runs, freeing heap memory
+                                     // => T's Drop also runs if T implements Drop
+        }                            // => PhantomData ensured this cleanup happens
+    }                                // => Memory leak prevented by proper ownership tracking
 }
 
 fn main() {
     // Type-state pattern (compile-time state machine)
-    let door = Door::<Locked> {
-        id: 1,
-        _state: PhantomData,
-    };
-    // door.open();                  // => ERROR: Locked doors can't open
-    let door = door.unlock();        // => Transition to Unlocked state
+    let door = Door::<Locked> {      // => Create door in Locked state
+                                     // => Type: Door<Locked>
+        id: 1,                       // => Door ID = 1
+        _state: PhantomData,         // => PhantomData<Locked> (zero-sized)
+    };                               // => Compile-time state: Locked
+    // door.open();                  // => COMPILE ERROR: method not found!
+                                     // => open() only exists for Door<Unlocked>
+                                     // => Type safety prevents calling open() on locked door
+    let door = door.unlock();        // => Consumes Door<Locked>, returns Door<Unlocked>
+                                     // => Type changes: Door<Locked> → Door<Unlocked>
+                                     // => State transition enforced by type system
                                      // => Output: Unlocking door 1
-    door.open();                     // => OK: Door is unlocked
+    door.open();                     // => OK: door is now Door<Unlocked>
+                                     // => Compiler allows open() for Unlocked state
                                      // => Output: Opening door 1
+                                     // => Type-level state machine prevents invalid calls
 
-    // Lifetime variance
-    let value = 42;                  // => value lives in this scope
+    // Lifetime variance with PhantomData
+    let value = 42;                  // => value allocated on stack (lifetime: main scope)
+                                     // => Type: i32
     let wrapper = Wrapper::new(&value);
                                      // => wrapper borrows value with lifetime 'a
+                                     // => 'a = lifetime of value reference
+                                     // => PhantomData<&'a i32> preserves lifetime in wrapper
+                                     // => Type: Wrapper<'a, i32>
     println!("Wrapped: {}", wrapper.get());
+                                     // => wrapper.get() returns &'a i32
+                                     // => Lifetime tied to value's scope (not wrapper's)
                                      // => Output: Wrapped: 42
-    // wrapper.get() returns &'a i32, tied to value's lifetime
+    // wrapper.get() returns reference valid as long as value lives
+    // Compiler prevents: wrapper outliving value (lifetime violation)
 
-    // Ownership variance
+    // Ownership variance with PhantomData
     let owner = OwningWrapper::new(String::from("Hello"));
-                                     // => Heap-allocate String
-                                     // => PhantomData marks ownership
+                                     // => String::from() creates heap String
+                                     // => OwningWrapper::new() moves String to heap via Box
+                                     // => PhantomData<String> marks ownership
+                                     // => Type: OwningWrapper<String>
+                                     // => Owner responsible for freeing heap memory
     println!("Owned: {}", owner.get());
+                                     // => owner.get() borrows owned String
+                                     // => Returns &String (safe because owner owns data)
                                      // => Output: Owned: Hello
-}                                    // => Drop called: memory freed safely
+}                                    // => Scope ends
+                                     // => OwningWrapper::drop() called
+                                     // => Reconstructs Box<String> from raw pointer
+                                     // => Box drops, freeing heap String
+                                     // => PhantomData ensured proper Drop behavior
+                                     // => Memory cleaned up safely (no leak)
 ```
 
 **Key Takeaway**: `PhantomData` acts as if a type owns or uses type parameters without storing them, enabling correct lifetime variance and Send/Sync trait bounds for types using raw pointers or other unsafe constructs.
@@ -3695,111 +3890,153 @@ log = { version = "0.4", optional = true }
 ```rust
 // Conditional compilation based on features
 
-#[cfg(feature = "basic")]        // => Compiled only if basic feature enabled
-pub fn basic_function() {
+#[cfg(feature = "basic")]        // => cfg attribute: compile-time conditional compilation
+                                 // => Compiled into binary ONLY if 'basic' feature enabled
+                                 // => Removed at compile-time if feature disabled (zero-cost)
+pub fn basic_function() {        // => Public function (if feature enabled)
     println!("Basic feature enabled");
+                                 // => This code exists only when basic feature active
                                  // => Output: Basic feature enabled
 }
 
-#[cfg(feature = "advanced")]     // => Compiled only if advanced feature enabled
+#[cfg(feature = "advanced")]     // => Compiled only if 'advanced' feature enabled
+                                 // => Advanced features often depend on optional crates
 pub fn advanced_function() {
     use serde::{Serialize, Deserialize};
-                                 // => serde available due to feature dependency
+                                 // => serde crate available ONLY because advanced feature
+                                 // => Import from optional dependency
     #[derive(Serialize, Deserialize)]
-    struct Data {
-        value: i32,
-    }
+                                 // => Derive macro from serde crate
+    struct Data {                // => Local struct for demonstration
+        value: i32,              // => Single i32 field
+    }                            // => Can now serialize/deserialize Data
     println!("Advanced feature with serde");
+                                 // => Proves serde is available
                                  // => Output: Advanced feature with serde
 }
 
-#[cfg(feature = "logging")]      // => Compiled only if logging feature enabled
+#[cfg(feature = "logging")]      // => Compiled only if 'logging' feature enabled
+                                 // => Logging infrastructure often optional (binary size reduction)
 pub fn log_function() {
     log::info!("Logging is enabled");
-                                 // => log crate available
+                                 // => log crate macro (optional dependency)
+                                 // => Writes to logger if configured
 }
 
 // Combine multiple feature conditions
 #[cfg(all(feature = "basic", feature = "advanced"))]
-                                 // => Requires both features
+                                 // => all(): requires BOTH features enabled
+                                 // => Logical AND for feature gates
+                                 // => Compiled only if basic AND advanced both enabled
 pub fn combined_function() {
     println!("Both basic and advanced enabled");
+                                 // => Demonstrates feature intersection
 }
 
 #[cfg(any(feature = "logging", feature = "advanced"))]
-                                 // => Requires at least one feature
+                                 // => any(): requires AT LEAST one feature
+                                 // => Logical OR for feature gates
+                                 // => Compiled if logging OR advanced (or both) enabled
 pub fn either_function() {
     println!("Logging or advanced enabled");
+                                 // => Demonstrates feature union
 }
 
-#[cfg(not(feature = "advanced"))]// => Compiled only if advanced NOT enabled
+#[cfg(not(feature = "advanced"))]// => not(): negation of feature condition
+                                 // => Compiled only if advanced NOT enabled
+                                 // => Fallback implementation pattern
 pub fn fallback_function() {
     println!("Advanced feature disabled");
+                                 // => Alternative code path when feature missing
 }
 
 // Platform-specific compilation
-#[cfg(target_os = "linux")]      // => Linux-specific code
-pub fn linux_only() {
+#[cfg(target_os = "linux")]      // => Compiled only on Linux targets
+                                 // => Enables platform-specific APIs
+pub fn linux_only() {            // => Linux-specific system calls available here
     println!("Running on Linux");
+                                 // => Platform detection at compile time
 }
 
-#[cfg(target_os = "windows")]    // => Windows-specific code
-pub fn windows_only() {
+#[cfg(target_os = "windows")]    // => Compiled only on Windows targets
+                                 // => Windows API imports available
+pub fn windows_only() {          // => Windows-specific code
     println!("Running on Windows");
+                                 // => Different implementation per platform
 }
 
-#[cfg(debug_assertions)]         // => Debug build only
-pub fn debug_only() {
-    println!("Debug build");     // => Not in release builds
+#[cfg(debug_assertions)]         // => Debug build detection
+                                 // => Enabled in dev builds, disabled in --release
+pub fn debug_only() {            // => Extra validation/logging for development
+    println!("Debug build");     // => NOT included in release builds (zero overhead)
+                                 // => Assertions, logging, validation here
 }
 
-#[cfg(not(debug_assertions))]    // => Release build only
-pub fn release_only() {
-    println!("Release build");   // => Optimized code
+#[cfg(not(debug_assertions))]    // => Release build detection
+                                 // => Enabled in --release, disabled in dev builds
+pub fn release_only() {          // => Production-optimized code
+    println!("Release build");   // => Aggressive optimizations active
+                                 // => May skip safety checks from debug version
 }
 
 fn main() {
     // Features enabled at compile-time determine which code is included
-    #[cfg(feature = "basic")]
+    #[cfg(feature = "basic")]    // => Inline cfg: applies to next statement
     basic_function();            // => Runs if basic feature enabled
+                                 // => Call removed at compile-time if feature disabled
                                  // => Output: Basic feature enabled
 
-    #[cfg(feature = "advanced")]
+    #[cfg(feature = "advanced")] // => Check at call site
     advanced_function();         // => Runs if advanced feature enabled
+                                 // => Dead code eliminated if feature disabled
 
-    #[cfg(feature = "logging")]
+    #[cfg(feature = "logging")]  // => Logging feature check
     log_function();              // => Runs if logging feature enabled
+                                 // => No-op if feature not compiled in
 
     #[cfg(all(feature = "basic", feature = "advanced"))]
+                                 // => Requires both features
     combined_function();         // => Runs if both features enabled
+                                 // => Shows feature composition
 
     #[cfg(not(feature = "advanced"))]
+                                 // => Inverse check
     fallback_function();         // => Runs if advanced disabled
+                                 // => Fallback code path
 
-    // Platform detection
-    #[cfg(target_os = "linux")]
-    linux_only();                // => Linux-specific execution
+    // Platform detection at compile-time
+    #[cfg(target_os = "linux")]  // => Linux platform check
+    linux_only();                // => Executes on Linux builds
+                                 // => Removed on Windows/macOS builds
 
-    #[cfg(target_os = "windows")]
-    windows_only();              // => Windows-specific execution
+    #[cfg(target_os = "windows")]// => Windows platform check
+    windows_only();              // => Executes on Windows builds
+                                 // => Removed on Linux/macOS builds
 
     // Build type detection
-    #[cfg(debug_assertions)]
-    debug_only();                // => Debug build code
+    #[cfg(debug_assertions)]     // => Debug build check
+    debug_only();                // => Dev build: extra checks enabled
+                                 // => Not in release builds
 
-    #[cfg(not(debug_assertions))]
-    release_only();              // => Release build code
+    #[cfg(not(debug_assertions))]// => Release build check
+    release_only();              // => Release build: optimizations enabled
+                                 // => Not in dev builds
 }
 
 // Usage examples:
-// cargo build                   => Uses default features (basic)
+// cargo build                   // => Uses default features (basic only)
+//                               // => Minimal feature set for fastest compilation
 // cargo build --features advanced
-//                               => Enables basic + advanced (includes serde)
-// cargo build --features full   => Enables all features
+//                               // => Enables default + advanced (includes serde dependency)
+//                               // => Adds serde to dependency tree
+// cargo build --features full   // => Enables all features (basic + advanced + logging)
+//                               // => Full functionality, larger binary
 // cargo build --no-default-features
-//                               => Disables all default features
+//                               // => Disables all default features (minimal build)
+//                               // => Only core functionality
 // cargo build --no-default-features --features advanced
-//                               => Only advanced feature
+//                               // => Only advanced feature (excludes basic)
+//                               // => Precise control over enabled features
 ```
 
 **Key Takeaway**: Cargo features enable compile-time conditional compilation and optional dependencies, allowing libraries to provide flexible configurations and reduce binary size by excluding unused functionality.

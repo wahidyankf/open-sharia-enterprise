@@ -38,117 +38,158 @@ graph TD
 
 ```elixir
 defmodule Counter do
-  use GenServer  # => imports GenServer behavior
+  use GenServer  # => imports GenServer behavior and callbacks
+                 # => defines init/1, handle_call/3, handle_cast/2, handle_info/2
 
   # Client API (public interface)
-  def start_link(initial_value \\ 0) do
+  def start_link(initial_value \\ 0) do  # => default parameter: initial_value = 0 if not provided
     GenServer.start_link(__MODULE__, initial_value, name: __MODULE__)  # => {:ok, #PID<...>} (starts GenServer process)
-    # => name: __MODULE__ registers process as Counter (accessible by atom)
+                                                                         # => __MODULE__ is Counter atom
+                                                                         # => name: Counter registers process globally
   end
 
-  def increment do
+  def increment do  # => public synchronous function wrapping async cast
     GenServer.cast(__MODULE__, :increment)  # => :ok (asynchronous, returns immediately)
-    # => cast sends message without waiting for reply
+                                            # => sends :increment message to Counter process
+                                            # => does not wait for state update to complete
   end
 
-  def get do
+  def get do  # => synchronous read operation
     GenServer.call(__MODULE__, :get)  # => waits for reply from server
-    # => call blocks until server responds with current state
+                                      # => blocks calling process until server responds
+                                      # => returns current counter state value
   end
 
-  def add(value) do
+  def add(value) do  # => synchronous write operation with parameter
     GenServer.call(__MODULE__, {:add, value})  # => returns new value after addition
-    # => synchronous call, waits for new state value
+                                               # => synchronous call waits for new state value
+                                               # => tuple {:add, value} as message payload
   end
 
   # Server Callbacks (private implementation)
-  @impl true
-  def init(initial_value) do
+  @impl true  # => compiler warning if init/1 signature incorrect
+  def init(initial_value) do  # => called when GenServer starts
     {:ok, initial_value}  # => {:ok, 0} (returns initial state to GenServer)
-    # => state is a single integer (counter value)
+                          # => state is a single integer (counter value)
+                          # => GenServer stores this state internally
   end
 
-  @impl true
-  def handle_cast(:increment, state) do
-    {:noreply, state + 1}  # => {:noreply, 1} (updates state asynchronously, no reply to caller)
-    # => increments counter, no response sent back
+  @impl true  # => marks handle_cast/2 as GenServer callback
+  def handle_cast(:increment, state) do  # => pattern matches :increment message
+                                         # => state is current counter value
+    {:noreply, state + 1}  # => {:noreply, 1} (updates state asynchronously)
+                           # => new state = state + 1
+                           # => no reply sent to caller (cast is fire-and-forget)
   end
 
-  @impl true
-  def handle_call(:get, _from, state) do
-    {:reply, state, state}  # => {:reply, 2, 2} (returns current state, state unchanged)
-    # => reads state without modifying it
+  @impl true  # => marks handle_call/3 as GenServer callback
+  def handle_call(:get, _from, state) do  # => :get message for reading state
+                                          # => _from ignored (caller info not needed)
+    {:reply, state, state}  # => {:reply, 2, 2} (returns current state)
+                            # => first state: reply value sent to caller
+                            # => second state: unchanged state for next message
   end
 
-  @impl true
-  def handle_call({:add, value}, _from, state) do
+  @impl true  # => marks handle_call/3 as GenServer callback
+  def handle_call({:add, value}, _from, state) do  # => pattern matches {:add, value} tuple
+                                                   # => extracts value from message
     new_state = state + value  # => new_state is 7 (2 + 5)
+                               # => calculates updated counter value
     {:reply, new_state, new_state}  # => {:reply, 7, 7} (returns new value and updates state)
-    # => adds value to counter and returns result
+                                    # => first new_state: reply value for caller
+                                    # => second new_state: updated state for GenServer
   end
 end
 
-{:ok, _pid} = Counter.start_link(0)  # => {:ok, #PID<...>} (state = 0)
+{:ok, _pid} = Counter.start_link(0)  # => {:ok, #PID<0.123.0>} (state = 0)
+                                     # => starts Counter GenServer with initial value 0
+                                     # => _pid discards process ID (unused)
 Counter.increment()  # => :ok (state becomes 1, asynchronous)
+                     # => cast returns immediately without waiting
 Counter.increment()  # => :ok (state becomes 2)
+                     # => second increment completes asynchronously
 Counter.get()  # => 2 (synchronous call returns current state)
+               # => blocks until server replies with state value
 Counter.add(5)  # => 7 (state becomes 7, returns new value)
+                # => synchronous add waits for state update
 Counter.get()  # => 7
+               # => confirms state updated to 7
 
 defmodule UserRegistry do
   use GenServer  # => imports GenServer behavior
+                 # => implements state management for user registry
 
   # Client API
-  def start_link(_opts) do
+  def start_link(_opts) do  # => _opts ignored (no options needed)
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)  # => {:ok, #PID<...>} (named process)
-    # => registers as UserRegistry atom for easy access
+                                                             # => initial state: empty map %{}
+                                                             # => registers as UserRegistry atom
   end
 
-  def register(name, data) do
+  def register(name, data) do  # => stores user data by name key
     GenServer.call(__MODULE__, {:register, name, data})  # => :ok (synchronous registration)
-    # => stores user data in registry state
+                                                         # => waits for server to store data
+                                                         # => tuple {:register, name, data} as message
   end
 
-  def lookup(name) do
+  def lookup(name) do  # => retrieves user data by name
     GenServer.call(__MODULE__, {:lookup, name})  # => user data or :not_found
-    # => searches registry for user by name
+                                                 # => synchronous read operation
+                                                 # => blocks until server replies
   end
 
-  def list_all do
+  def list_all do  # => returns all registered users
     GenServer.call(__MODULE__, :list_all)  # => map of all registered users
-    # => returns entire registry state
+                                           # => synchronous call returns entire state
   end
 
   # Server callbacks
-  @impl true
-  def init(_initial_state) do
+  @impl true  # => compiler verification for init/1
+  def init(_initial_state) do  # => _initial_state ignored (using empty map)
     {:ok, %{}}  # => {:ok, %{}} (empty map as initial state)
+                # => GenServer stores %{} as registry state
   end
 
-  @impl true
-  def handle_call({:register, name, data}, _from, state) do
-    new_state = Map.put(state, name, data)  # => %{"alice" => %{age: 30, ...}}
+  @impl true  # => marks handle_call/3 implementation
+  def handle_call({:register, name, data}, _from, state) do  # => pattern matches {:register, ...}
+                                                             # => extracts name and data from message
+    new_state = Map.put(state, name, data)  # => %{"alice" => %{age: 30, email: "alice@example.com"}}
+                                            # => adds or updates user entry in map
     {:reply, :ok, new_state}  # => {:reply, :ok, new_state} (confirms registration)
+                              # => :ok sent to caller
+                              # => new_state becomes current GenServer state
   end
 
-  @impl true
-  def handle_call({:lookup, name}, _from, state) do
+  @impl true  # => marks handle_call/3 implementation
+  def handle_call({:lookup, name}, _from, state) do  # => pattern matches {:lookup, name}
+                                                     # => extracts name to search for
     result = Map.get(state, name, :not_found)  # => %{age: 30, ...} or :not_found
+                                               # => retrieves user data or default :not_found
     {:reply, result, state}  # => {:reply, result, state} (state unchanged)
+                             # => returns user data to caller
+                             # => state remains unchanged (read operation)
   end
 
-  @impl true
-  def handle_call(:list_all, _from, state) do
+  @impl true  # => marks handle_call/3 implementation
+  def handle_call(:list_all, _from, state) do  # => pattern matches :list_all message
     {:reply, state, state}  # => {:reply, %{"alice" => ..., "bob" => ...}, state}
+                            # => returns entire registry map to caller
+                            # => state unchanged (read operation)
   end
 end
 
-{:ok, _pid} = UserRegistry.start_link([])  # => {:ok, #PID<...>}
+{:ok, _pid} = UserRegistry.start_link([])  # => {:ok, #PID<0.124.0>}
+                                           # => starts UserRegistry with empty state
 UserRegistry.register("alice", %{age: 30, email: "alice@example.com"})  # => :ok (stores user data)
+                                                                         # => state becomes %{"alice" => %{age: 30, ...}}
 UserRegistry.register("bob", %{age: 25, email: "bob@example.com"})  # => :ok
+                                                                     # => state becomes %{"alice" => ..., "bob" => ...}
 UserRegistry.lookup("alice")  # => %{age: 30, email: "alice@example.com"}
+                              # => retrieves alice's data from state
 UserRegistry.lookup("charlie")  # => :not_found
+                                # => charlie not in registry, returns default
 UserRegistry.list_all()  # => %{"alice" => %{age: 30, email: "alice@example.com"}, "bob" => %{age: 25, email: "bob@example.com"}}
+                         # => returns complete registry map with all users
 ```
 
 **Key Takeaway**: GenServer provides a standard pattern for stateful servers. Use `call` for synchronous requests (wait for reply), `cast` for asynchronous messages (fire and forget). Separate client API from server callbacks.
@@ -189,136 +230,203 @@ graph TD
 
 ```elixir
 defmodule Account do
-  use GenServer
+  use GenServer  # => imports GenServer behavior and callbacks
+                 # => enables state management for account operations
 
   # Struct to represent state
   defstruct balance: 0, transactions: []  # => defines Account state structure
+                                          # => balance: integer (cents or dollars)
+                                          # => transactions: list of tuples
 
   # Client API
-  def start_link(initial_balance) do
+  def start_link(initial_balance) do  # => public function to start Account GenServer
     GenServer.start_link(__MODULE__, initial_balance)  # => {:ok, #PID<...>}
-    # => starts Account GenServer with initial balance
+                                                       # => starts Account GenServer with initial balance
+                                                       # => __MODULE__ is Account atom
   end
 
-  def deposit(pid, amount) when amount > 0 do
+  def deposit(pid, amount) when amount > 0 do  # => guard clause prevents negative deposits
+                                               # => pid: process identifier for account
     GenServer.call(pid, {:deposit, amount})  # => {:ok, new_balance}
-    # => guard ensures amount is positive
+                                             # => guard ensures amount is positive
+                                             # => synchronous call waits for balance update
   end
 
-  def withdraw(pid, amount) when amount > 0 do
+  def withdraw(pid, amount) when amount > 0 do  # => guard clause prevents negative withdrawals
+                                                # => synchronous withdrawal operation
     GenServer.call(pid, {:withdraw, amount})  # => {:ok, new_balance} or {:error, :insufficient_funds}
-    # => synchronous withdrawal request
+                                              # => synchronous withdrawal request
+                                              # => blocks until server validates and processes
   end
 
-  def balance(pid) do
+  def balance(pid) do  # => read-only balance check
     GenServer.call(pid, :balance)  # => current balance integer
+                                   # => synchronous read, no state change
   end
 
-  def transaction_history(pid) do
+  def transaction_history(pid) do  # => retrieves all transactions
     GenServer.call(pid, :transactions)  # => list of transaction tuples
+                                        # => returns chronological history
   end
 
   # Server callbacks
-  @impl true
-  def init(initial_balance) do
+  @impl true  # => compiler verification for init/1
+  def init(initial_balance) do  # => called when GenServer starts
     state = %__MODULE__{balance: initial_balance}  # => %Account{balance: 1000, transactions: []}
+                                                   # => creates Account struct with empty transaction list
     {:ok, state}  # => {:ok, %Account{...}}
+                  # => returns initial state to GenServer
   end
 
-  @impl true
-  def handle_call({:deposit, amount}, _from, state) do
+  @impl true  # => marks handle_call/3 implementation
+  def handle_call({:deposit, amount}, _from, state) do  # => pattern matches {:deposit, amount}
+                                                        # => extracts amount from message tuple
     new_balance = state.balance + amount  # => 1500 (1000 + 500)
-    transaction = {:deposit, amount, DateTime.utc_now()}  # => {:deposit, 500, ~U[...]}
+                                          # => calculates updated balance
+    transaction = {:deposit, amount, DateTime.utc_now()}  # => {:deposit, 500, ~U[2025-12-27 10:30:00Z]}
+                                                          # => records transaction with UTC timestamp
     new_state = %{state | balance: new_balance, transactions: [transaction | state.transactions]}  # => %Account{balance: 1500, transactions: [{:deposit, 500, ...}]}
+                                                                                                    # => immutable update: creates new state struct
+                                                                                                    # => prepends transaction to history list
     {:reply, {:ok, new_balance}, new_state}  # => {:reply, {:ok, 1500}, new_state}
+                                             # => returns success tuple with new balance
+                                             # => updates GenServer state to new_state
   end
 
-  @impl true
-  def handle_call({:withdraw, amount}, _from, state) do
+  @impl true  # => marks handle_call/3 implementation
+  def handle_call({:withdraw, amount}, _from, state) do  # => pattern matches {:withdraw, amount}
+                                                         # => validates withdrawal request
     if state.balance >= amount do  # => check sufficient funds
+                                   # => guards against overdraft
       new_balance = state.balance - amount  # => 1300 (1500 - 200)
-      transaction = {:withdrawal, amount, DateTime.utc_now()}  # => {:withdrawal, 200, ~U[...]}
+                                            # => deducts withdrawal amount
+      transaction = {:withdrawal, amount, DateTime.utc_now()}  # => {:withdrawal, 200, ~U[2025-12-27 10:31:00Z]}
+                                                               # => records withdrawal with timestamp
       new_state = %{state | balance: new_balance, transactions: [transaction | state.transactions]}  # => %Account{balance: 1300, transactions: [{:withdrawal, 200, ...}, ...]}
-      # => prepend transaction to history list
+                                                                                                      # => immutable state update
+                                                                                                      # => prepends transaction to history list
       {:reply, {:ok, new_balance}, new_state}  # => {:reply, {:ok, 1300}, new_state}
+                                               # => returns success with new balance
+                                               # => commits state change
     else  # => insufficient funds case
-      {:reply, {:error, :insufficient_funds}, state}  # => {:reply, {:error, :insufficient_funds}, state} (state unchanged)
-      # => returns error without modifying state
+      {:reply, {:error, :insufficient_funds}, state}  # => {:reply, {:error, :insufficient_funds}, state}
+                                                      # => returns error tuple
+                                                      # => state unchanged (no transaction recorded)
     end
   end
 
-  @impl true
-  def handle_call(:balance, _from, state) do
-    {:reply, state.balance, state}  # => {:reply, 1300, state} (state unchanged)
+  @impl true  # => marks handle_call/3 implementation
+  def handle_call(:balance, _from, state) do  # => pattern matches :balance message
+    {:reply, state.balance, state}  # => {:reply, 1300, state}
+                                    # => returns current balance
+                                    # => state unchanged (read operation)
   end
 
-  @impl true
-  def handle_call(:transactions, _from, state) do
+  @impl true  # => marks handle_call/3 implementation
+  def handle_call(:transactions, _from, state) do  # => pattern matches :transactions message
     {:reply, Enum.reverse(state.transactions), state}  # => {:reply, [{:deposit, 500, ...}, {:withdrawal, 200, ...}], state}
+                                                       # => reverses list for chronological order (oldest first)
+                                                       # => state unchanged (read operation)
   end
 end
 
-{:ok, account} = Account.start_link(1000)  # => {:ok, #PID<...>} (initial balance 1000)
+{:ok, account} = Account.start_link(1000)  # => {:ok, #PID<0.125.0>} (initial balance 1000)
+                                           # => starts Account GenServer with $1000
 Account.deposit(account, 500)  # => {:ok, 1500} (balance becomes 1500)
+                               # => adds $500 to account
 Account.withdraw(account, 200)  # => {:ok, 1300} (balance becomes 1300)
-Account.withdraw(account, 2000)  # => {:error, :insufficient_funds} (rejected, balance stays 1300)
+                                # => removes $200 from account
+Account.withdraw(account, 2000)  # => {:error, :insufficient_funds}
+                                 # => rejected, balance stays 1300
+                                 # => insufficient funds for $2000 withdrawal
 Account.balance(account)  # => 1300
+                          # => retrieves current balance
 Account.transaction_history(account)  # => [{:deposit, 500, ~U[...]}, {:withdrawal, 200, ~U[...]}]
+                                      # => returns chronological transaction history
 
 defmodule TodoList do
   use GenServer  # => imports GenServer behavior
+                 # => enables state management for todo list
 
   defstruct items: [], next_id: 1  # => defines state structure
+                                   # => items: list of todo maps
+                                   # => next_id: integer for auto-incrementing IDs
 
-  def start_link do
+  def start_link do  # => starts TodoList GenServer
     GenServer.start_link(__MODULE__, [])  # => {:ok, #PID<...>}
+                                          # => empty list as init argument (ignored)
   end
 
-  def add_item(pid, description) do
+  def add_item(pid, description) do  # => adds new todo item
     GenServer.call(pid, {:add, description})  # => {:ok, id} (synchronous, returns item ID)
+                                              # => waits for server to create item
   end
 
-  def complete_item(pid, id) do
+  def complete_item(pid, id) do  # => marks todo item as completed
     GenServer.call(pid, {:complete, id})  # => :ok (marks item as done)
+                                          # => synchronous update operation
   end
 
-  def list_items(pid) do
+  def list_items(pid) do  # => retrieves all todo items
     GenServer.call(pid, :list)  # => list of items
+                                # => synchronous read operation
   end
 
-  @impl true
-  def init(_) do
+  @impl true  # => compiler verification for init/1
+  def init(_) do  # => _ ignores empty list argument
     {:ok, %__MODULE__{}}  # => {:ok, %TodoList{items: [], next_id: 1}}
+                          # => initializes empty todo list with ID counter
   end
 
-  @impl true
-  def handle_call({:add, description}, _from, state) do
+  @impl true  # => marks handle_call/3 implementation
+  def handle_call({:add, description}, _from, state) do  # => pattern matches {:add, description}
+                                                         # => extracts description from message
     item = %{id: state.next_id, description: description, completed: false}  # => %{id: 1, description: "Buy groceries", completed: false}
+                                                                             # => creates new todo item map
+                                                                             # => uses current next_id value
     new_items = [item | state.items]  # => prepend to list
+                                      # => adds item to front of items list
     new_state = %{state | items: new_items, next_id: state.next_id + 1}  # => increment ID for next item
+                                                                          # => %TodoList{items: [%{id: 1, ...}], next_id: 2}
+                                                                          # => immutable state update
     {:reply, {:ok, item.id}, new_state}  # => {:reply, {:ok, 1}, %TodoList{items: [%{...}], next_id: 2}}
+                                         # => returns item ID to caller
+                                         # => updates GenServer state
   end
 
-  @impl true
-  def handle_call({:complete, id}, _from, state) do
+  @impl true  # => marks handle_call/3 implementation
+  def handle_call({:complete, id}, _from, state) do  # => pattern matches {:complete, id}
+                                                     # => extracts item ID to mark complete
     new_items = Enum.map(state.items, fn item ->  # => map over items
+                                                  # => transforms each item in list
       if item.id == id, do: %{item | completed: true}, else: item  # => set completed: true for matching ID
+                                                                   # => immutable update for matched item
     end)
     new_state = %{state | items: new_items}  # => update state with modified items
+                                             # => %TodoList{items: [modified_items], ...}
     {:reply, :ok, new_state}  # => {:reply, :ok, %TodoList{...}}
+                              # => confirms completion to caller
+                              # => updates GenServer state
   end
 
-  @impl true
-  def handle_call(:list, _from, state) do
+  @impl true  # => marks handle_call/3 implementation
+  def handle_call(:list, _from, state) do  # => pattern matches :list message
     {:reply, Enum.reverse(state.items), state}  # => {:reply, [oldest...newest], state}
+                                                # => reverses for chronological order
+                                                # => state unchanged (read operation)
   end
 end
 
-{:ok, todo} = TodoList.start_link()  # => {:ok, #PID<...>}
+{:ok, todo} = TodoList.start_link()  # => {:ok, #PID<0.126.0>}
+                                     # => starts TodoList GenServer
 {:ok, id1} = TodoList.add_item(todo, "Buy groceries")  # => {:ok, 1}
+                                                       # => creates first todo item with ID 1
 {:ok, id2} = TodoList.add_item(todo, "Write code")  # => {:ok, 2}
+                                                    # => creates second todo item with ID 2
 TodoList.complete_item(todo, id1)  # => :ok (marks item 1 as completed)
+                                   # => updates first item's completed field to true
 TodoList.list_items(todo)  # => [%{id: 1, description: "Buy groceries", completed: true}, %{id: 2, description: "Write code", completed: false}]
+                           # => returns all items in chronological order
 ```
 
 **Key Takeaway**: GenServer state is immutable—updates return new state. Use structs for complex state to make transformations clear. Every callback returns a tuple specifying the reply (if any) and the new state.
@@ -357,128 +465,181 @@ graph TD
 ```elixir
 defmodule ResilientServer do
   use GenServer  # => imports GenServer behavior
+                 # => defines init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2
 
   def start_link do
-    GenServer.start_link(__MODULE__, [])  # => {:ok, #PID<...>}
+    GenServer.start_link(__MODULE__, [])  # => {:ok, #PID<0.130.0>}
+                                          # => starts ResilientServer process
+                                          # => __MODULE__ is ResilientServer atom
   end
 
   def do_work(pid) do
-    GenServer.call(pid, :work, 10_000)  # => 10 second timeout, returns :done
-    # => third argument is timeout in milliseconds
+    GenServer.call(pid, :work, 10_000)  # => :done (completes within timeout)
+                                         # => 10_000 is 10 second timeout in milliseconds
+                                         # => third argument specifies max wait time
+                                         # => default timeout is 5000ms if omitted
   end
 
   def slow_work(pid) do
-    GenServer.call(pid, :slow_work, 1_000)  # => 1 second timeout (will raise timeout error)
-    # => work takes 2s but timeout is 1s (error!)
+    GenServer.call(pid, :slow_work, 1_000)  # => raises timeout error after 1000ms
+                                             # => 1_000 is 1 second timeout
+                                             # => work takes 2s but timeout is 1s (error!)
+                                             # => caller raises after waiting 1s
   end
 
   def crash_me(pid) do
-    GenServer.cast(pid, :crash)  # => :ok (async, server will crash)
-    # => cast returns immediately, crash happens in server
+    GenServer.cast(pid, :crash)  # => :ok (returns immediately)
+                                 # => async message, no wait for crash
+                                 # => cast returns immediately, crash happens in server
+                                 # => server will terminate after processing message
   end
 
-  @impl true
+  @impl true  # => compiler warning if init/1 signature incorrect
   def init(_) do
     {:ok, %{}}  # => {:ok, %{}} (empty map as state)
+                # => GenServer stores %{} as initial state
+                # => state can be any term (map, struct, list, etc.)
   end
 
-  @impl true
+  @impl true  # => marks handle_call/3 as GenServer callback
   def handle_call(:work, _from, state) do
     # Simulate work
-    :timer.sleep(500)  # => sleep 500ms
-    {:reply, :done, state}  # => {:reply, :done, state} (completes within timeout)
-    # => 500ms < 10s timeout, no error
+    :timer.sleep(500)  # => blocks process for 500ms
+                       # => simulates computation or I/O
+                       # => process cannot handle other messages during sleep
+    {:reply, :done, state}  # => {:reply, :done, %{}}
+                            # => returns :done to caller after 500ms
+                            # => 500ms < 10s timeout, completes successfully
+                            # => state unchanged
   end
 
-  @impl true
+  @impl true  # => marks handle_call/3 as GenServer callback
   def handle_call(:slow_work, _from, state) do
     # Too slow, will timeout
-    :timer.sleep(2_000)  # => sleep 2s (exceeds 1s timeout)
-    {:reply, :done, state}  # => never reached (timeout occurs first)
-    # => caller receives timeout error after 1s
+    :timer.sleep(2_000)  # => blocks for 2000ms (2 seconds)
+                         # => exceeds 1s timeout from caller
+                         # => caller raises timeout error after 1s
+    {:reply, :done, state}  # => never executed (timeout occurs first)
+                            # => caller raises exit signal at 1s mark
+                            # => server continues execution but reply ignored
   end
 
-  @impl true
+  @impl true  # => marks handle_cast/2 as GenServer callback
   def handle_cast(:crash, _state) do
-    raise "Server crashed!"  # => raises error, server terminates
-    # => no reply sent (cast is fire-and-forget)
+    raise "Server crashed!"  # => raises RuntimeError
+                             # => server process terminates
+                             # => terminate/2 called before shutdown
+                             # => no reply sent (cast is fire-and-forget)
   end
 
   # Handle unexpected messages
-  @impl true
+  @impl true  # => marks handle_info/2 as GenServer callback
   def handle_info(msg, state) do
-    Logger.warn("Unexpected message: #{inspect(msg)}")  # => logs warning
-    {:noreply, state}  # => {:noreply, state} (ignores message, continues)
-    # => handle_info catches all non-call/cast messages
+    Logger.warn("Unexpected message: #{inspect(msg)}")  # => logs warning with message content
+                                                        # => inspect converts any term to string
+                                                        # => useful for debugging unexpected sends
+    {:noreply, state}  # => {:noreply, %{}} (state unchanged)
+                       # => ignores message, continues running
+                       # => handle_info catches all non-call/cast messages
+                       # => handles raw send/2 messages, monitor signals, etc.
   end
 
   # Stop callback
-  @impl true
+  @impl true  # => marks terminate/2 as GenServer callback
   def terminate(reason, _state) do
-    Logger.info("Server terminating: #{inspect(reason)}")  # => logs termination reason
+    Logger.info("Server terminating: #{inspect(reason)}")  # => logs reason for termination
+                                                           # => reason could be :normal, :shutdown, {:shutdown, term}, or error
+                                                           # => useful for debugging crashes
     :ok  # => :ok (cleanup complete)
-    # => called before GenServer shuts down
+         # => return value ignored by GenServer
+         # => called before GenServer shuts down
+         # => use for closing files, connections, releasing resources
   end
 end
 
-{:ok, pid} = ResilientServer.start_link()  # => {:ok, #PID<...>}
-ResilientServer.do_work(pid)  # => :done (completes within 10s timeout)
+{:ok, pid} = ResilientServer.start_link()  # => {:ok, #PID<0.130.0>}
+                                           # => starts resilient server
+                                           # => stores PID for later calls
+ResilientServer.do_work(pid)  # => :done (completes successfully)
+                              # => finishes in 500ms, well within 10s timeout
+                              # => synchronous call blocks until reply
 
 try do
-  ResilientServer.slow_work(pid)  # => raises timeout error (exceeds 1s timeout)
-  # => client waits 1s, then raises error
+  ResilientServer.slow_work(pid)  # => raises timeout error after 1s
+                                   # => server still processing after 1s
+                                   # => GenServer.call raises exit signal
+                                   # => exception caught by try/rescue
 rescue
-  e in RuntimeError -> IO.puts("Caught timeout: #{inspect(e)}")  # => Output: Caught timeout: ...
-  # => catches and handles timeout gracefully
+  e in RuntimeError -> IO.puts("Caught timeout: #{inspect(e)}")  # => Output: Caught timeout: %RuntimeError{...}
+                                                                  # => catches and prints timeout error
+                                                                  # => caller continues execution (error handled)
+                                                                  # => server process continues running
 end
 
 defmodule SafeServer do
   use GenServer  # => imports GenServer behavior
+                 # => implements safe error handling patterns
 
   def start_link do
-    GenServer.start_link(__MODULE__, [])  # => {:ok, #PID<...>}
+    GenServer.start_link(__MODULE__, [])  # => {:ok, #PID<0.131.0>}
+                                          # => starts SafeServer process
   end
 
   def divide(pid, a, b) do
-    GenServer.call(pid, {:divide, a, b})  # => calls division handler
-    # => returns {:ok, result} or {:error, :division_by_zero}
+    GenServer.call(pid, {:divide, a, b})  # => calls division handler synchronously
+                                          # => returns {:ok, result} or {:error, :division_by_zero}
+                                          # => tuple {:divide, a, b} as message payload
   end
 
-  @impl true
+  @impl true  # => compiler verification for init/1
   def init(_) do
-    {:ok, %{}}  # => {:ok, %{}} (empty state, stateless division)
+    {:ok, %{}}  # => {:ok, %{}} (empty state)
+                # => stateless server (division doesn't need state)
   end
 
-  @impl true
+  @impl true  # => marks handle_call/3 implementation
   def handle_call({:divide, a, b}, _from, state) do
     try do
-      result = a / b  # => 5.0 or raises ArithmeticError
-      {:reply, {:ok, result}, state}  # => {:reply, {:ok, 5.0}, state}
-      # => successful division returns ok tuple
+      result = a / b  # => 5.0 (normal case) or raises ArithmeticError (b=0)
+                      # => Elixir's / operator raises on division by zero
+      {:reply, {:ok, result}, state}  # => {:reply, {:ok, 5.0}, %{}}
+                                      # => wraps result in :ok tuple
+                                      # => successful division returns ok tuple
+                                      # => state unchanged
     rescue
-      ArithmeticError ->  # => catches division by zero
-        {:reply, {:error, :division_by_zero}, state}  # => {:reply, {:error, :division_by_zero}, state}
-        # => error handled gracefully, server continues
+      ArithmeticError ->  # => catches division by zero error
+                          # => prevents server crash
+        {:reply, {:error, :division_by_zero}, state}  # => {:reply, {:error, :division_by_zero}, %{}}
+                                                      # => returns error tuple instead of crashing
+                                                      # => error handled gracefully, server continues
+                                                      # => caller receives error, can decide how to handle
     end
   end
 
   # Alternative: return error tuple without exceptions (cleaner pattern)
   def handle_call_safe({:divide, _a, 0}, _from, state) do
-    {:reply, {:error, :division_by_zero}, state}  # => pattern matches zero divisor
-    # => no exception raised, just error tuple
+    {:reply, {:error, :division_by_zero}, state}  # => {:reply, {:error, :division_by_zero}, %{}}
+                                                  # => pattern matches zero divisor
+                                                  # => no exception raised, just error tuple
+                                                  # => checked before division (no crash)
   end
   def handle_call_safe({:divide, a, b}, _from, state) do
     {:reply, {:ok, a / b}, state}  # => {:reply, {:ok, result}, state}
-    # => safe division, b is guaranteed non-zero by previous clause
+                                   # => safe division, b is guaranteed non-zero by previous clause
+                                   # => pattern matching ensures only non-zero divisors reach here
   end
 end
 
-{:ok, pid} = SafeServer.start_link()  # => {:ok, #PID<...>}
+{:ok, pid} = SafeServer.start_link()  # => {:ok, #PID<0.131.0>}
+                                      # => starts safe division server
 SafeServer.divide(pid, 10, 2)  # => {:ok, 5.0} (successful division)
-# => 10 / 2 = 5.0, no error
+                               # => 10 / 2 = 5.0, no error
+                               # => returns ok tuple with result
 SafeServer.divide(pid, 10, 0)  # => {:error, :division_by_zero}
-# => division by zero caught, error tuple returned
-# => server remains alive and functional
+                               # => division by zero caught in try/rescue
+                               # => error tuple returned to caller
+                               # => server remains alive and functional
+                               # => can continue serving other requests
 ```
 
 **Key Takeaway**: Handle timeouts with `GenServer.call/3` timeout parameter. Use `try/rescue` or error tuples for error handling. Implement `handle_info/2` for unexpected messages and `terminate/2` for cleanup.
@@ -623,94 +784,147 @@ Well-designed GenServers separate client API from server implementation, keep ca
 # Best Practice 1: Separate client API from server callbacks
 defmodule BestPractices do
   use GenServer  # => imports GenServer behavior
+                 # => defines init/1, handle_call/3, handle_cast/2
 
   # ✅ CLIENT API - Public interface (synchronous functions)
   # Users call these functions (they DON'T call handle_call directly)
   def start_link(opts \\ []) do
-    GenServer.start_link(__MODULE__, opts, name: __MODULE__)  # => {:ok, #PID<...>}
+    GenServer.start_link(__MODULE__, opts, name: __MODULE__)  # => {:ok, #PID<0.170.0>}
+                                                              # => starts GenServer with opts
+                                                              # => name: __MODULE__ registers as BestPractices
+                                                              # => opts passed to init/1
   end
 
   def create_user(name, email) do
     GenServer.call(__MODULE__, {:create_user, name, email})  # => {:ok, user} or {:error, reason}
-    # => Blocks until server replies
+                                                             # => Blocks until server replies
+                                                             # => tuple {:create_user, name, email} as message
+                                                             # => timeout: 5000ms (default)
   end
 
   def get_user(id) do
     GenServer.call(__MODULE__, {:get_user, id})  # => user map or nil
+                                                 # => synchronous read from server state
+                                                 # => tuple {:get_user, id} as message
   end
   # => Client API is CLEAN - no process details, just business operations
+  # => Users never see PIDs, messages, or GenServer internals
 
   # ✅ SERVER CALLBACKS - Private implementation (handle_* functions)
   # These run inside GenServer process, users never call them directly
 
   # Best Practice 2: Use @impl for callback clarity
-  @impl true  # => ✅ declares this is GenServer.init/1 callback (compiler verifies signature)
+  @impl true  # => ✅ declares this is GenServer.init/1 callback
+              # => compiler verifies signature matches behavior
+              # => generates warning if signature wrong
   def init(_opts) do
     # Initialize state
     state = %{users: %{}, next_id: 1}  # => initial state structure
+                                       # => users: map of id → user
+                                       # => next_id: counter for user IDs
     {:ok, state}  # => {:ok, %{users: %{}, next_id: 1}}
+                  # => GenServer stores this as initial state
   end
   # => @impl ensures callback signature matches behavior (compile-time check)
+  # => If you change behavior, @impl catches signature mismatches
 
-  @impl true
+  @impl true  # => marks handle_call/3 as GenServer callback
   def handle_call({:create_user, name, email}, _from, state) do
     # ✅ Best Practice 3: Keep callbacks simple - delegate to private helpers
-    {reply, new_state} = do_create_user(name, email, state)  # => delegates business logic
-    {:reply, reply, new_state}  # => {:reply, {:ok, user}, new_state}
+    {reply, new_state} = do_create_user(name, email, state)  # => delegates business logic to private function
+                                                             # => callback is thin routing layer
+                                                             # => {reply, new_state} unpacked below
+    {:reply, reply, new_state}  # => {:reply, {:ok, %{id: 1, name: "Alice", ...}}, new_state}
+                                # => returns reply to caller
+                                # => updates GenServer state to new_state
   end
   # => Callback is THIN - just message routing, no business logic
+  # => Business logic in do_create_user (easier to test)
 
-  @impl true
+  @impl true  # => marks handle_call/3 as GenServer callback
   def handle_call({:get_user, id}, _from, state) do
-    user = Map.get(state.users, id)  # => retrieves user or nil
+    user = Map.get(state.users, id)  # => retrieves user by id from users map
+                                     # => %{id: 1, name: "Alice", ...} or nil
     {:reply, user, state}  # => {:reply, %{id: 1, name: "Alice", ...}, state}
+                           # => returns user to caller
+                           # => state unchanged (read operation)
   end
 
   # ✅ Best Practice 4: Extract complex logic to private functions
   defp do_create_user(name, email, state) do
-    if valid_email?(email) do  # => validation check
+    if valid_email?(email) do  # => validation check (must contain @)
+                               # => returns true or false
       user = %{id: state.next_id, name: name, email: email}  # => creates user map
-      new_users = Map.put(state.users, state.next_id, user)  # => adds to users map
+                                                             # => %{id: 1, name: "Alice", email: "alice@example.com"}
+      new_users = Map.put(state.users, state.next_id, user)  # => adds user to users map
+                                                             # => %{1 => %{id: 1, name: "Alice", ...}}
       new_state = %{state | users: new_users, next_id: state.next_id + 1}  # => updates state immutably
+                                                                           # => %{users: %{1 => ...}, next_id: 2}
+                                                                           # => increments next_id for next user
       {{:ok, user}, new_state}  # => returns success tuple + new state
+                                # => {{:ok, %{id: 1, ...}}, new_state}
     else
       {{:error, :invalid_email}, state}  # => returns error tuple + unchanged state
+                                         # => {{:error, :invalid_email}, original_state}
+                                         # => state not modified on validation failure
     end
   end
   # => Private helper is TESTABLE - pure function (no side effects)
+  # => Takes explicit inputs (name, email, state), returns explicit outputs (reply, new_state)
+  # => No hidden GenServer state or process magic
 
-  defp valid_email?(email), do: String.contains?(email, "@")  # => simple validation
+  defp valid_email?(email), do: String.contains?(email, "@")  # => simple email validation
+                                                              # => checks if email contains @ symbol
+                                                              # => returns true or false
 
   # ✅ Best Practice 5: Use typespec for documentation
   @spec create_user(String.t(), String.t()) :: {:ok, map()} | {:error, atom()}
-  # => Documents function signature and return types (Dialyzer can verify)
+  # => Documents function signature: two strings in, ok/error tuple out
+  # => Dialyzer can verify callers use correct types
+  # => Self-documenting code (typespec as machine-readable docs)
 end
 
 # Testing GenServer with callbacks
 defmodule BestPracticesTest do
   use ExUnit.Case  # => imports ExUnit test DSL
+                   # => provides assert, test, setup macros
 
-  setup do  # => runs before each test
+  setup do  # => runs before EACH test
+            # => ensures fresh state per test (isolation)
     {:ok, _pid} = BestPractices.start_link()  # => starts GenServer for test
-    :ok  # => return :ok (no context needed)
+                                              # => each test gets independent instance
+                                              # => _pid discards PID (not needed)
+    :ok  # => return :ok (no context needed for tests)
+         # => setup can return {:ok, context} to pass data to tests
   end
   # => Each test gets fresh GenServer instance
+  # => No state leakage between tests
 
   test "creates user with valid email" do
     assert {:ok, user} = BestPractices.create_user("Alice", "alice@example.com")  # => calls client API
-    # => GenServer.call → handle_call → do_create_user → validation → success
-    assert user.name == "Alice"  # => verifies user data
+                                                                                   # => pattern matches {:ok, user} result
+                                                                                   # => assertion passes if match succeeds
+    # => GenServer.call → handle_call → do_create_user → validation passes → success
+    assert user.name == "Alice"  # => verifies user.name field
+                                 # => ensures correct data returned
+    assert user.email == "alice@example.com"  # => verifies user.email field
   end
 
   test "rejects invalid email" do
-    assert {:error, :invalid_email} = BestPractices.create_user("Bob", "invalid")  # => validation fails
+    assert {:error, :invalid_email} = BestPractices.create_user("Bob", "invalid")  # => validation fails (no @)
+                                                                                   # => pattern matches {:error, :invalid_email}
     # => GenServer.call → handle_call → do_create_user → validation fails → error
+    # => State unchanged (user not created)
   end
 
   test "retrieves created user" do
-    {:ok, user} = BestPractices.create_user("Charlie", "charlie@example.com")  # => creates user
-    assert BestPractices.get_user(user.id) == user  # => retrieves created user
+    {:ok, user} = BestPractices.create_user("Charlie", "charlie@example.com")  # => creates user first
+                                                                               # => user.id generated (1)
+    assert BestPractices.get_user(user.id) == user  # => retrieves created user by ID
+                                                    # => same user returned
+                                                    # => proves state persisted
     # => State persists between calls (same GenServer process)
+    # => First call (create) modifies state, second call (get) reads it
   end
 end
 
@@ -718,42 +932,63 @@ end
 defmodule UserLogic do
   # Pure functions - NO side effects (no GenServer, no state, no I/O)
   # Easy to test without processes
+  # All dependencies passed as arguments (explicit, not hidden)
 
   def create_user(users, next_id, name, email) do
-    # => Takes explicit arguments (not hidden state)
-    if valid_email?(email) do
-      user = %{id: next_id, name: name, email: email}  # => creates user
+    # => Takes explicit arguments (not hidden state from GenServer)
+    # => users: current users map
+    # => next_id: next available ID
+    # => name, email: user data
+    if valid_email?(email) do  # => validation check
+                               # => same logic as before, but PURE
+      user = %{id: next_id, name: name, email: email}  # => creates user map
+                                                       # => %{id: 1, name: "Alice", email: "alice@example.com"}
       new_users = Map.put(users, next_id, user)  # => updates users map
-      {{:ok, user}, new_users, next_id + 1}  # => returns result, new users, new ID
+                                                 # => %{1 => %{id: 1, ...}}
+      {{:ok, user}, new_users, next_id + 1}  # => returns 3-tuple: (result, new_users, new_next_id)
+                                             # => {{:ok, %{id: 1, ...}}, %{1 => ...}, 2}
     else
       {{:error, :invalid_email}, users, next_id}  # => error with unchanged state
+                                                  # => users and next_id unchanged
     end
   end
   # => PURE function: same inputs always produce same outputs
+  # => No hidden state, no side effects, no process spawning
   # => Can test with simple assertions (no process spawning)
+  # => Deterministic: create_user(%{}, 1, "Alice", "alice@example.com") always returns same result
 
-  defp valid_email?(email), do: String.contains?(email, "@")
+  defp valid_email?(email), do: String.contains?(email, "@")  # => simple validation
+                                                              # => pure predicate function
 end
 
 # GenServer as thin wrapper around pure business logic
 defmodule UserServer do
-  use GenServer
+  use GenServer  # => imports GenServer behavior
 
   # Client API
-  def start_link(_), do: GenServer.start_link(__MODULE__, %{}, name: __MODULE__)  # => {:ok, #PID<...>}
+  def start_link(_), do: GenServer.start_link(__MODULE__, %{}, name: __MODULE__)  # => {:ok, #PID<0.180.0>}
+                                                                                  # => starts server with empty map
   def create_user(name, email), do: GenServer.call(__MODULE__, {:create, name, email})  # => calls server
+                                                                                        # => delegates to handle_call
 
   # Server callbacks
-  @impl true
+  @impl true  # => marks init/1 as GenServer callback
   def init(_), do: {:ok, %{users: %{}, next_id: 1}}  # => initial state
+                                                     # => %{users: %{}, next_id: 1}
 
-  @impl true
+  @impl true  # => marks handle_call/3 as GenServer callback
   def handle_call({:create, name, email}, _from, state) do
     # ✅ Delegate to pure business logic (UserLogic module)
     {reply, new_users, new_next_id} = UserLogic.create_user(state.users, state.next_id, name, email)
+                                                # => calls PURE function in UserLogic
+                                                # => UserLogic.create_user has NO process dependencies
+                                                # => returns 3-tuple: (reply, new_users, new_next_id)
     # => UserLogic is PURE - takes values, returns values (no process magic)
     new_state = %{state | users: new_users, next_id: new_next_id}  # => reconstructs state from pure results
+                                                                   # => %{users: new_users, next_id: new_next_id}
+                                                                   # => immutable update
     {:reply, reply, new_state}  # => returns to caller
+                                # => {:reply, {:ok, user}, new_state}
   end
   # => GenServer handles ONLY concurrency and state management
   # => UserLogic handles ONLY business rules and validation
@@ -762,9 +997,17 @@ end
 
 # Benefits of this pattern:
 # ✅ Test UserLogic without spawning processes (fast, simple unit tests)
+#    - UserLogic.create_user(%{}, 1, "Alice", "alice@example.com") → assert result
+#    - No GenServer.start_link, no setup, no teardown
 # ✅ Test UserServer for concurrency bugs (slow, complex integration tests)
+#    - Spawn multiple processes calling UserServer simultaneously
+#    - Verify state consistency under load
 # ✅ Reuse UserLogic in other contexts (web controller, CLI, background job)
+#    - Phoenix controller can call UserLogic.create_user directly (no GenServer)
+#    - CLI tool can use UserLogic without OTP application
 # ✅ Clear separation: GenServer = concurrency, Pure modules = business logic
+#    - UserServer = when/where to execute (process, state, messages)
+#    - UserLogic = what to execute (validation, transformation, rules)
 ```
 
 **Key Takeaway**: Separate client API from callbacks, use `@impl` for clarity, extract complex logic to private functions, and delegate business logic to pure modules for easier testing. Keep GenServer focused on state management and concurrency.
@@ -800,88 +1043,148 @@ graph TD
 ```elixir
 defmodule Worker do
   use GenServer  # => imports GenServer behavior
+                 # => defines init/1, handle_call/3, handle_cast/2
 
   # Client API
   def start_link(id) do
-    GenServer.start_link(__MODULE__, id, name: via_tuple(id))  # => {:ok, #PID<...>} (registers worker with Registry)
+    GenServer.start_link(__MODULE__, id, name: via_tuple(id))  # => {:ok, #PID<0.140.0>}
+                                                               # => starts Worker GenServer with id as state
+                                                               # => registers worker with Registry using via_tuple
+                                                               # => name: via_tuple(id) enables process discovery by id
   end
 
   def crash(id) do
-    GenServer.cast(via_tuple(id), :crash)  # => :ok (async crash request)
+    GenServer.cast(via_tuple(id), :crash)  # => :ok (returns immediately)
+                                           # => sends async crash message to worker
+                                           # => via_tuple(id) resolves to PID via Registry
+                                           # => worker will crash when processing message
   end
 
   def ping(id) do
-    GenServer.call(via_tuple(id), :ping)  # => {:pong, 1} (synchronous ping)
+    GenServer.call(via_tuple(id), :ping)  # => {:pong, 1} (synchronous call)
+                                          # => waits for worker reply
+                                          # => via_tuple looks up PID from Registry
   end
 
-  defp via_tuple(id), do: {:via, Registry, {WorkerRegistry, id}}  # => {:via, Registry, {WorkerRegistry, 1}} (name registration via Registry)
+  defp via_tuple(id), do: {:via, Registry, {WorkerRegistry, id}}  # => {:via, Registry, {WorkerRegistry, 1}}
+                                                                   # => special tuple for Registry-based naming
+                                                                   # => Registry is module, WorkerRegistry is registry name
+                                                                   # => id is key to look up in registry
 
   # Server Callbacks
-  @impl true
+  @impl true  # => compiler warning if init/1 signature incorrect
   def init(id) do
-    IO.puts("Worker #{id} starting...")  # => prints "Worker 1 starting..." to console
-    {:ok, id}  # => {:ok, 1} (returns worker ID as initial state)
+    IO.puts("Worker #{id} starting...")  # => Output: Worker 1 starting...
+                                         # => prints to console when worker starts
+                                         # => useful for observing supervisor restarts
+    {:ok, id}  # => {:ok, 1}
+               # => returns worker ID as initial state
+               # => supervisor receives :ok and considers child started
   end
 
-  @impl true
+  @impl true  # => marks handle_call/3 as GenServer callback
   def handle_call(:ping, _from, id) do
-    {:reply, {:pong, id}, id}  # => {:reply, {:pong, 1}, 1} (replies with worker ID, state unchanged)
+    {:reply, {:pong, id}, id}  # => {:reply, {:pong, 1}, 1}
+                               # => replies with {:pong, id} tuple
+                               # => state unchanged (id stays same)
+                               # => caller receives {:pong, 1}
   end
 
-  @impl true
+  @impl true  # => marks handle_cast/2 as GenServer callback
   def handle_cast(:crash, _state) do
-    raise "Worker crashed!"  # => raises RuntimeError, GenServer terminates (supervisor will restart)
+    raise "Worker crashed!"  # => raises RuntimeError
+                             # => GenServer terminates immediately
+                             # => supervisor detects exit signal
+                             # => supervisor restarts worker according to strategy
   end
 end
 
 defmodule MySupervisor do
   use Supervisor  # => imports Supervisor behavior
+                  # => defines init/1 callback
 
   def start_link(_opts) do
-    Supervisor.start_link(__MODULE__, :ok, name: __MODULE__)  # => {:ok, #PID<...>} (starts supervisor with name MySupervisor)
+    Supervisor.start_link(__MODULE__, :ok, name: __MODULE__)  # => {:ok, #PID<0.139.0>}
+                                                              # => starts supervisor process
+                                                              # => name: __MODULE__ registers as MySupervisor atom
+                                                              # => __MODULE__ resolves to MySupervisor
   end
 
-  @impl true
+  @impl true  # => compiler warning if init/1 signature incorrect
   def init(:ok) do
     # Start Registry for worker names
     children = [
-      {Registry, keys: :unique, name: WorkerRegistry},  # => Registry child spec (started first)
+      {Registry, keys: :unique, name: WorkerRegistry},  # => Registry child spec
+                                                        # => keys: :unique means each key maps to one PID
+                                                        # => name: WorkerRegistry is registry identifier
+                                                        # => started FIRST (workers depend on registry)
       # Worker children
-      {Worker, 1},  # => starts Worker with id=1
+      {Worker, 1},  # => {Worker, 1} expands to Worker.start_link(1)
+                    # => starts Worker with id=1
+                    # => registered in WorkerRegistry as key 1
       {Worker, 2},  # => starts Worker with id=2
+                    # => second worker, independent of first
       {Worker, 3}   # => starts Worker with id=3
+                    # => third worker, independent of first two
     ]
 
     # :one_for_one strategy - restart only crashed child
-    Supervisor.init(children, strategy: :one_for_one)  # => {:ok, {supervisor_flags, children}} (configures restart strategy)
-    # => :one_for_one means if Worker 2 crashes, only Worker 2 restarts (Workers 1 and 3 unaffected)
+    Supervisor.init(children, strategy: :one_for_one)  # => {:ok, {supervisor_flags, children}}
+                                                       # => configures supervisor restart strategy
+                                                       # => :one_for_one means if Worker 2 crashes, only Worker 2 restarts
+                                                       # => Workers 1 and 3 remain unaffected
+                                                       # => max_restarts: 3, max_seconds: 5 (default)
   end
 end
 
 # Start supervision tree
-{:ok, _pid} = MySupervisor.start_link([])  # => {:ok, #PID<...>} (supervisor starts all children)
+{:ok, _pid} = MySupervisor.start_link([])  # => {:ok, #PID<0.139.0>}
+                                           # => supervisor starts and initializes
+                                           # => supervisor starts all children in order
+                                           # => _pid discards supervisor PID (unused)
 # => Prints:
 # => Worker 1 starting...
 # => Worker 2 starting...
 # => Worker 3 starting...
+# => All three workers initialized successfully
 
-Worker.ping(1)  # => {:pong, 1} (Worker 1 is alive)
-Worker.crash(2)  # => :ok (Worker 2 crashes and supervisor restarts it)
-# => Supervisor detects crash, restarts Worker 2
+Worker.ping(1)  # => {:pong, 1}
+                # => Worker 1 is alive and responding
+                # => via_tuple(1) resolves PID from Registry
+Worker.crash(2)  # => :ok (returns immediately)
+                 # => sends crash message to Worker 2
+                 # => Worker 2 processes message and raises error
+                 # => Supervisor detects Worker 2 exit signal
+                 # => Supervisor restarts Worker 2 according to :one_for_one strategy
 # => Prints: Worker 2 starting... (restart message)
-:timer.sleep(100)  # => wait for restart to complete
-Worker.ping(2)  # => {:pong, 2} (Worker 2 alive again with clean state!)
-# => Demonstrates fault tolerance: crashed worker automatically recovers
+:timer.sleep(100)  # => pauses for 100ms
+                   # => waits for restart to complete
+                   # => gives supervisor time to restart Worker 2
+Worker.ping(2)  # => {:pong, 2}
+                # => Worker 2 alive again with clean state!
+                # => Demonstrates fault tolerance: crashed worker automatically recovers
+                # => New Worker 2 process with fresh state (id=2)
 
 # Child specification structure
 child_spec = %{
-  id: Worker,  # => unique identifier for child (used to identify which child crashed)
-  start: {Worker, :start_link, [1]},  # => {Module, function, args} tuple for starting child
-  restart: :permanent,  # => :permanent (always restart), :temporary (never restart), :transient (restart only on abnormal exit)
-  shutdown: 5000,       # => 5000ms wait for graceful shutdown before force kill
-  type: :worker         # => :worker or :supervisor (for supervision tree organization)
+  id: Worker,  # => unique identifier for child
+               # => used to identify which child crashed in supervisor
+               # => must be unique among siblings
+  start: {Worker, :start_link, [1]},  # => {Module, function, args} tuple
+                                      # => supervisor calls Worker.start_link(1) to start child
+                                      # => must return {:ok, pid} or {:error, reason}
+  restart: :permanent,  # => :permanent (always restart on exit)
+                        # => :temporary (never restart)
+                        # => :transient (restart only on abnormal exit, not :normal)
+  shutdown: 5000,       # => 5000ms timeout for graceful shutdown
+                        # => supervisor sends exit signal, waits 5s
+                        # => if still alive after 5s, supervisor force-kills child
+  type: :worker         # => :worker (regular process) or :supervisor (nested supervisor)
+                        # => affects shutdown order (supervisors last)
 }
-# => This spec defines HOW supervisor manages this child (restart policy, shutdown timeout, etc.)
+# => This spec defines HOW supervisor manages this child
+# => restart policy, shutdown timeout, start function all configured
+# => supervisor uses this spec to restart crashed children
 
 ```
 
@@ -1114,135 +1417,213 @@ graph TD
 ```elixir
 defmodule DynamicWorker do
   use GenServer  # => imports GenServer behavior
+                 # => defines init/1, handle_call/3
 
   def start_link(id) do
-    GenServer.start_link(__MODULE__, id)  # => {:ok, #PID<...>} (starts worker with id as state)
+    GenServer.start_link(__MODULE__, id)  # => {:ok, #PID<0.150.0>}
+                                          # => starts worker with id as initial state
+                                          # => no name registration (dynamic workers not named)
   end
 
   def get_id(pid) do
     GenServer.call(pid, :get_id)  # => synchronous call to retrieve worker ID
+                                  # => blocks until worker replies with ID
   end
 
-  @impl true
+  @impl true  # => compiler warning if init/1 signature incorrect
   def init(id) do
-    IO.puts("DynamicWorker #{id} started")  # => prints "DynamicWorker 1 started"
-    {:ok, id}  # => {:ok, 1} (stores id as state)
+    IO.puts("DynamicWorker #{id} started")  # => Output: DynamicWorker 1 started
+                                            # => prints when worker initializes
+                                            # => useful for observing dynamic spawning
+    {:ok, id}  # => {:ok, 1}
+               # => stores id as state
+               # => supervisor receives :ok signal
   end
 
-  @impl true
+  @impl true  # => marks handle_call/3 as GenServer callback
   def handle_call(:get_id, _from, id) do
-    {:reply, id, id}  # => {:reply, 1, 1} (returns id, state unchanged)
+    {:reply, id, id}  # => {:reply, 1, 1}
+                      # => returns id to caller
+                      # => state unchanged
   end
 end
 
 defmodule MyDynamicSupervisor do
   use DynamicSupervisor  # => imports DynamicSupervisor behavior
+                         # => different from static Supervisor
+                         # => children started at runtime, not init
 
   def start_link(_opts) do
-    DynamicSupervisor.start_link(__MODULE__, :ok, name: __MODULE__)  # => {:ok, #PID<...>} (starts supervisor with NO children initially)
+    DynamicSupervisor.start_link(__MODULE__, :ok, name: __MODULE__)  # => {:ok, #PID<0.149.0>}
+                                                                     # => starts supervisor with NO children initially
+                                                                     # => name: __MODULE__ registers as MyDynamicSupervisor
   end
   # => Unlike static Supervisor, DynamicSupervisor starts with ZERO children
+  # => Children added dynamically via start_child/2
 
   def start_worker(id) do
-    child_spec = {DynamicWorker, id}  # => child spec: {module, arg}
-    DynamicSupervisor.start_child(__MODULE__, child_spec)  # => {:ok, #PID<...>} (starts child on demand)
+    child_spec = {DynamicWorker, id}  # => {DynamicWorker, 1}
+                                      # => child spec tuple: {module, arg}
+                                      # => expands to DynamicWorker.start_link(id)
+    DynamicSupervisor.start_child(__MODULE__, child_spec)  # => {:ok, #PID<0.150.0>}
+                                                           # => starts child process on demand
+                                                           # => supervisor monitors child after start
   end
   # => Spawns NEW worker process at runtime (not compile time)
+  # => Call this function whenever you need a new worker
 
   def stop_worker(pid) do
-    DynamicSupervisor.terminate_child(__MODULE__, pid)  # => :ok (stops specific child by PID)
+    DynamicSupervisor.terminate_child(__MODULE__, pid)  # => :ok
+                                                        # => stops specific child by PID
+                                                        # => sends shutdown signal to worker
+                                                        # => waits for graceful exit
   end
   # => Gracefully stops worker, supervisor removes it from child list
+  # => Use for scaling down, removing idle workers
 
   def count_workers do
     DynamicSupervisor.count_children(__MODULE__)  # => %{active: 3, specs: 3, supervisors: 0, workers: 3}
+                                                  # => active: currently running children
+                                                  # => specs: total child specs registered
+                                                  # => supervisors: count of supervisor children (0 here)
+                                                  # => workers: count of worker children (3 here)
   end
   # => Returns count of currently supervised children
+  # => Useful for monitoring pool size, load balancing
 
-  @impl true
+  @impl true  # => compiler warning if init/1 signature incorrect
   def init(:ok) do
-    DynamicSupervisor.init(strategy: :one_for_one)  # => {:ok, supervisor_flags}
+    DynamicSupervisor.init(strategy: :one_for_one)  # => {:ok, %{strategy: :one_for_one, ...}}
+                                                    # => configures restart strategy
+                                                    # => :one_for_one restarts only crashed child
   end
   # => Configured but starts with ZERO children (children added via start_child)
+  # => No children list in init (unlike static Supervisor)
 end
 
 # Start supervisor (zero children initially)
-{:ok, _sup} = MyDynamicSupervisor.start_link([])  # => {:ok, #PID<...>} (supervisor running, no children)
+{:ok, _sup} = MyDynamicSupervisor.start_link([])  # => {:ok, #PID<0.149.0>}
+                                                  # => supervisor running, no children yet
+                                                  # => _sup discards supervisor PID
 
 # Add workers dynamically at runtime
-{:ok, worker1} = MyDynamicSupervisor.start_worker(1)  # => {:ok, #PID<0.123.0>} (worker 1 started)
+{:ok, worker1} = MyDynamicSupervisor.start_worker(1)  # => {:ok, #PID<0.150.0>}
+                                                      # => worker 1 started on demand
+                                                      # => stores PID for later reference
 # => Prints: DynamicWorker 1 started
-{:ok, worker2} = MyDynamicSupervisor.start_worker(2)  # => {:ok, #PID<0.124.0>} (worker 2 started)
+# => Supervisor now has 1 child
+{:ok, worker2} = MyDynamicSupervisor.start_worker(2)  # => {:ok, #PID<0.151.0>}
+                                                      # => worker 2 started
 # => Prints: DynamicWorker 2 started
-{:ok, worker3} = MyDynamicSupervisor.start_worker(3)  # => {:ok, #PID<0.125.0>} (worker 3 started)
+# => Supervisor now has 2 children
+{:ok, worker3} = MyDynamicSupervisor.start_worker(3)  # => {:ok, #PID<0.152.0>}
+                                                      # => worker 3 started
 # => Prints: DynamicWorker 3 started
 # => Now supervisor has 3 children (added at runtime, not init time)
+# => Each child started independently via start_child/2
 
-DynamicWorker.get_id(worker1)  # => 1 (retrieves worker 1's ID)
-DynamicWorker.get_id(worker2)  # => 2 (retrieves worker 2's ID)
+DynamicWorker.get_id(worker1)  # => 1
+                               # => retrieves worker 1's ID from state
+                               # => synchronous call to worker1 PID
+DynamicWorker.get_id(worker2)  # => 2
+                               # => retrieves worker 2's ID
 
 MyDynamicSupervisor.count_workers()  # => %{active: 3, specs: 3, supervisors: 0, workers: 3}
-# => 3 workers currently supervised
+                                     # => confirms 3 workers currently supervised
+                                     # => all 3 active and running
 
-MyDynamicSupervisor.stop_worker(worker2)  # => :ok (terminates worker 2)
+MyDynamicSupervisor.stop_worker(worker2)  # => :ok
+                                          # => terminates worker 2 gracefully
+                                          # => supervisor sends shutdown signal
+                                          # => worker 2 removed from child list
 # => Worker 2 process stopped and removed from supervisor
 MyDynamicSupervisor.count_workers()  # => %{active: 2, specs: 2, supervisors: 0, workers: 2}
-# => Now only 2 workers (worker1 and worker3)
+                                     # => Now only 2 workers (worker1 and worker3)
+                                     # => worker2 PID no longer valid
 
 # Connection Pool Example - Practical Use Case
 defmodule Connection do
-  use GenServer
+  use GenServer  # => imports GenServer behavior
 
   def start_link(url) do
-    GenServer.start_link(__MODULE__, url)  # => {:ok, #PID<...>}
+    GenServer.start_link(__MODULE__, url)  # => {:ok, #PID<0.160.0>}
+                                           # => starts connection GenServer
+                                           # => url passed as init argument
   end
 
-  @impl true
+  @impl true  # => compiler verification for init/1
   def init(url) do
     # Simulate connection establishment
     {:ok, %{url: url, connected: true}}  # => {:ok, %{url: "db://localhost", connected: true}}
+                                         # => stores connection state
+                                         # => connected: true simulates successful connection
   end
   # => In real pool: connect to database, open socket, authenticate
+  # => Handle connection errors in init (return {:error, reason} on failure)
 end
 
 defmodule ConnectionPool do
-  use DynamicSupervisor
+  use DynamicSupervisor  # => imports DynamicSupervisor behavior
 
   def start_link(_opts) do
-    DynamicSupervisor.start_link(__MODULE__, :ok, name: __MODULE__)  # => {:ok, #PID<...>} (pool starts with zero connections)
+    DynamicSupervisor.start_link(__MODULE__, :ok, name: __MODULE__)  # => {:ok, #PID<0.159.0>}
+                                                                     # => pool starts with zero connections
+                                                                     # => connections added on demand
   end
 
   def add_connection(url) do
-    DynamicSupervisor.start_child(__MODULE__, {Connection, url})  # => {:ok, #PID<...>} (adds connection to pool)
+    DynamicSupervisor.start_child(__MODULE__, {Connection, url})  # => {:ok, #PID<0.160.0>}
+                                                                  # => adds connection to pool dynamically
+                                                                  # => child spec: {Connection, url}
+                                                                  # => expands to Connection.start_link(url)
   end
   # => Spawns new connection process on demand (e.g., high load)
+  # => Call this when pool needs more capacity
 
   def remove_connection(pid) do
-    DynamicSupervisor.terminate_child(__MODULE__, pid)  # => :ok (removes idle connection)
+    DynamicSupervisor.terminate_child(__MODULE__, pid)  # => :ok
+                                                        # => removes idle connection from pool
+                                                        # => graceful shutdown
   end
   # => Reduces pool size when load decreases
+  # => Call this to scale down, close idle connections
 
-  @impl true
+  @impl true  # => compiler warning if init/1 signature incorrect
   def init(:ok) do
     DynamicSupervisor.init(
-      strategy: :one_for_one,  # => restart crashed connection only (others unaffected)
-      max_restarts: 5,         # => allow 5 connection failures...
-      max_seconds: 10          # => ...within 10 seconds before pool crashes
+      strategy: :one_for_one,  # => :one_for_one restart strategy
+                               # => restart crashed connection only (others unaffected)
+      max_restarts: 5,         # => allow MAX 5 restarts...
+                               # => restart budget to prevent crash loops
+      max_seconds: 10          # => ...within 10 second window
+                               # => if 5 crashes in 10s, pool itself crashes
     )
     # => Prevents cascading failures: if DB unreachable, pool crashes (supervisor restarts pool with fresh state)
+    # => Pool crash escalates to parent supervisor (up supervision tree)
   end
 end
 
 # Usage: Dynamic connection pool
-{:ok, _} = ConnectionPool.start_link([])  # => {:ok, #PID<...>} (pool starts with zero connections)
-{:ok, conn1} = ConnectionPool.add_connection("db://localhost")  # => {:ok, #PID<...>} (connection 1 added)
+{:ok, _} = ConnectionPool.start_link([])  # => {:ok, #PID<0.159.0>}
+                                          # => pool starts with zero connections
+                                          # => connections added on demand
+{:ok, conn1} = ConnectionPool.add_connection("db://localhost")  # => {:ok, #PID<0.160.0>}
+                                                                # => connection 1 added to pool
+                                                                # => connects to local database
 # => Connection to local DB established
-{:ok, conn2} = ConnectionPool.add_connection("db://remote")  # => {:ok, #PID<...>} (connection 2 added)
+# => Pool size: 1 connection
+{:ok, conn2} = ConnectionPool.add_connection("db://remote")  # => {:ok, #PID<0.161.0>}
+                                                            # => connection 2 added to pool
+                                                            # => connects to remote database
 # => Connection to remote DB established
 # => Pool now has 2 active connections
-ConnectionPool.remove_connection(conn1)  # => :ok (closes local connection)
+# => Can handle more concurrent requests
+ConnectionPool.remove_connection(conn1)  # => :ok
+                                         # => closes local connection gracefully
+                                         # => conn1 PID no longer valid
 # => Pool now has 1 active connection (remote only)
 # => Use case: scale pool up/down based on traffic, remove idle connections to save resources
+# => Dynamic pool adapts to load (add connections on high traffic, remove on low traffic)
 ```
 
 **Key Takeaway**: Use DynamicSupervisor for variable numbers of children started at runtime. Start children with `start_child/2`, stop with `terminate_child/2`. Ideal for pools, sessions, and dynamic workloads.
