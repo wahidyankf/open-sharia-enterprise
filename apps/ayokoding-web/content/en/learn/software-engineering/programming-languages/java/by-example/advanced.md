@@ -525,14 +525,21 @@ import java.util.concurrent.*;
 
 // RecursiveTask - returns a result
 class SumTask extends RecursiveTask<Long> {
-    private final long[] array;
-    private final int start, end;
+                                 // => RecursiveTask<Long>: returns Long result
+                                 // => Part of Fork/Join framework
+    private final long[] array;  // => Array to sum
+                                 // => Immutable: shared across tasks safely
+    private final int start, end;// => Task's range: [start, end)
+                                 // => Defines which portion this task processes
     private static final int THRESHOLD = 1000;
+                                 // => Granularity threshold: when to stop splitting
+                                 // => Tasks smaller than this execute sequentially
 
     public SumTask(long[] array, int start, int end) {
-        this.array = array;
-        this.start = start;
-        this.end = end;
+                                 // => Constructor initializes task range
+        this.array = array;      // => Store array reference
+        this.start = start;      // => Store start index
+        this.end = end;          // => Store end index
     }
 
     @Override
@@ -590,46 +597,70 @@ class SumTask extends RecursiveTask<Long> {
 
 // Using ForkJoinPool
 long[] numbers = new long[10000];
+                                 // => Array of 10,000 elements
 for (int i = 0; i < numbers.length; i++) {
-    numbers[i] = i + 1;
+    numbers[i] = i + 1;          // => Populates array: 1, 2, 3, ..., 10000
 }
 
-ForkJoinPool pool = new ForkJoinPool(); // Default: Runtime.availableProcessors() threads
+ForkJoinPool pool = new ForkJoinPool();
+                                 // => Default: Runtime.availableProcessors() threads
+                                 // => Creates thread pool for work-stealing
 SumTask task = new SumTask(numbers, 0, numbers.length);
-long result = pool.invoke(task); // => 50005000 (sum of 1 to 10000)
+                                 // => Creates root task: sum entire array
+long result = pool.invoke(task);// => Executes task, returns result
+                                 // => Output: 50005000 (sum of 1 to 10000)
 
 // RecursiveAction - no result (void)
+                                 // => Use for tasks that perform actions without returning values
 class PrintTask extends RecursiveAction {
-    private final int start, end;
+                                 // => RecursiveAction: no return value
+                                 // => Alternative to RecursiveTask when no result needed
+    private final int start, end;// => Range to process
+                                 // => Defines task boundaries
     private static final int THRESHOLD = 10;
+                                 // => Threshold: stop splitting at 10 elements
+                                 // => Smaller threshold = more fine-grained parallelism
 
     public PrintTask(int start, int end) {
-        this.start = start;
-        this.end = end;
+                                 // => Constructor sets task range
+        this.start = start;      // => Task range start
+        this.end = end;          // => Task range end
     }
 
     @Override
     protected void compute() {
         if (end - start <= THRESHOLD) {
+                                 // => Base case: print directly if small enough
             for (int i = start; i < end; i++) {
                 System.out.println("Processing: " + i);
+                                 // => Sequential processing
             }
-        } else {
+        } else {                 // => Recursive case: split task
             int mid = start + (end - start) / 2;
+                                 // => Calculate midpoint
             PrintTask left = new PrintTask(start, mid);
+                                 // => Left subtask
             PrintTask right = new PrintTask(mid, end);
-            invokeAll(left, right); // Fork both and wait for completion
+                                 // => Right subtask
+            invokeAll(left, right);
+                                 // => Fork both and wait for completion
+                                 // => Parallel execution of both subtasks
         }
     }
 }
 
 PrintTask printTask = new PrintTask(0, 100);
-pool.invoke(printTask); // Prints 0 to 99 in parallel
+                                 // => Create task to print 0-99
+pool.invoke(printTask);          // => Executes task
+                                 // => Prints 0 to 99 in parallel (order non-deterministic)
 
 // Parallel streams use ForkJoinPool.commonPool()
 long parallelSum = java.util.stream.LongStream.range(1, 10001)
-    .parallel() // Uses ForkJoinPool internally
-    .sum(); // => 50005000
+                                 // => Creates LongStream: 1 to 10000
+    .parallel();                 // => Uses ForkJoinPool internally
+                                 // => ForkJoinPool.commonPool() by default
+    .sum();                      // => Parallel reduction
+                                 // => Output: 50005000
 ```
 
 **Key Takeaway**: Fork/Join splits recursive tasks for parallel execution. `RecursiveTask<V>` returns results, `RecursiveAction` doesn't. Work-stealing balances load across threads. Use for divide-and-conquer algorithms. Parallel streams leverage this framework.
@@ -2077,108 +2108,161 @@ String result = good.toString(); // => Convert to immutable String
 
 // ArrayList vs LinkedList
 List<Integer> arrayList = new ArrayList<>();
+                                 // => Array-backed list: contiguous memory
 List<Integer> linkedList = new LinkedList<>();
+                                 // => Node-based list: linked nodes
 
 // ArrayList: O(1) random access, O(n) insertion in middle
-arrayList.get(50); // Fast
-arrayList.add(0, 100); // Slow (shifts elements)
+arrayList.get(50);               // => Fast: array index access O(1)
+                                 // => Direct memory access
+arrayList.add(0, 100);           // => Slow: shifts all elements right O(n)
+                                 // => Array copy: expensive for large lists
 
 // LinkedList: O(n) random access, O(1) insertion if iterator
-linkedList.get(50); // Slow (traverses nodes)
+linkedList.get(50);              // => Slow: traverses 50 nodes O(n)
+                                 // => No random access: sequential traversal
 Iterator<Integer> it = linkedList.iterator();
-it.next();
-((LinkedList<Integer>) linkedList).add(1, 100); // Still O(n) without iterator position
+it.next();                       // => Iterator tracks position
+((LinkedList<Integer>) linkedList).add(1, 100);
+                                 // => Still O(n) without iterator position
+                                 // => Must traverse to position 1
 
 // Prefer ArrayList unless frequent insertions/deletions in middle
+                                 // => ArrayList wins for most use cases
+                                 // => Better cache locality, lower memory overhead
 
 // HashMap resizing - set initial capacity if size known
-Map<String, Integer> inefficient = new HashMap<>(); // Default capacity 16, resizes at 75% load
+Map<String, Integer> inefficient = new HashMap<>();
+                                 // => Default capacity 16, resizes at 75% load
+                                 // => Multiple resizes for 1000 entries: 16 → 32 → 64 → 128 → 256 → 512 → 1024
 for (int i = 0; i < 1000; i++) {
-    inefficient.put("key" + i, i); // Multiple resizes
+    inefficient.put("key" + i, i);
+                                 // => Multiple resizes: expensive rehashing
+                                 // => Each resize: allocate new array, rehash all entries
 }
 
-Map<String, Integer> efficient = new HashMap<>(1000 * 4 / 3); // Avoid resizes
+Map<String, Integer> efficient = new HashMap<>(1000 * 4 / 3);
+                                 // => Initial capacity ~1333: no resize needed for 1000 entries
+                                 // => Load factor 0.75: resize at 1333 * 0.75 = 1000
 for (int i = 0; i < 1000; i++) {
-    efficient.put("key" + i, i); // No resizes
+    efficient.put("key" + i, i); // => No resizes: direct insertion
+                                 // => Much faster: avoids rehashing overhead
 }
 
 // Stream vs for-loop performance
 List<Integer> numbers = new ArrayList<>();
 for (int i = 0; i < 1000000; i++) {
-    numbers.add(i);
+    numbers.add(i);              // => Creates list with 1M integers
 }
 
 // Stream: more readable, potential parallelization, overhead
 long streamSum = numbers.stream()
-    .filter(n -> n % 2 == 0)
-    .mapToLong(n -> n)
-    .sum();
+                                 // => Creates stream from list
+    .filter(n -> n % 2 == 0)     // => Filters even numbers
+                                 // => Lambda + stream overhead
+    .mapToLong(n -> n)           // => Converts Integer to long
+                                 // => Avoids boxing overhead in sum()
+    .sum();                      // => Sums filtered numbers
+                                 // => More readable but slower than loop
 
 // For-loop: faster for simple operations, less overhead
-long loopSum = 0;
-for (int n : numbers) {
-    if (n % 2 == 0) {
-        loopSum += n;
+long loopSum = 0;                // => Accumulator
+for (int n : numbers) {          // => Enhanced for loop
+                                 // => Direct iteration: no stream overhead
+    if (n % 2 == 0) {            // => Filter condition
+        loopSum += n;            // => Accumulate sum
+                                 // => Primitive operations: faster than streams
     }
-}
+}                                // => ~2-3x faster than stream for simple operations
 
 // Parallel stream for CPU-intensive work
 long parallelSum = numbers.parallelStream()
-    .filter(n -> n % 2 == 0)
-    .mapToLong(n -> n)
-    .sum(); // Faster for large datasets, CPU-bound tasks
+                                 // => Creates parallel stream
+                                 // => Uses ForkJoinPool.commonPool()
+    .filter(n -> n % 2 == 0)     // => Parallel filtering
+    .mapToLong(n -> n)           // => Parallel mapping
+    .sum();                      // => Parallel reduction
+                                 // => Faster for large datasets, CPU-bound tasks
+                                 // => Overhead: only worthwhile for large data/expensive operations
 
 // Lazy initialization - delay expensive object creation
 class ExpensiveObject {
     private static ExpensiveObject instance;
+                                 // => Static field: shared across all calls
 
     public static ExpensiveObject getInstance() {
-        if (instance == null) {
-            instance = new ExpensiveObject(); // Created only when needed
+        if (instance == null) {  // => Lazy: check if already created
+            instance = new ExpensiveObject();
+                                 // => Created only when needed
+                                 // => Not thread-safe: race condition possible
         }
-        return instance;
+        return instance;         // => Returns singleton instance
     }
 }
 
 // Thread-safe lazy initialization (double-checked locking)
 class ThreadSafeLazy {
     private static volatile ThreadSafeLazy instance;
+                                 // => volatile: ensures visibility across threads
+                                 // => Prevents partial construction visibility
 
     public static ThreadSafeLazy getInstance() {
-        if (instance == null) { // First check (no locking)
+        if (instance == null) {  // => First check (no locking)
+                                 // => Fast path: if already initialized, skip lock
             synchronized (ThreadSafeLazy.class) {
-                if (instance == null) { // Second check (with lock)
+                                 // => Lock only if instance null
+                                 // => Prevents multiple threads creating instances
+                if (instance == null) {
+                                 // => Second check (with lock)
+                                 // => Prevents race: another thread may have created between checks
                     instance = new ThreadSafeLazy();
+                                 // => Creates instance inside lock
                 }
             }
         }
-        return instance;
+        return instance;         // => Returns singleton instance
+                                 // => Thread-safe: only one instance created
     }
 }
 
 // Object pooling (rarely beneficial in modern JVMs)
 // Modern GC is fast; pooling adds complexity
+                                 // => Modern GC (G1, ZGC) very efficient at allocation
+                                 // => Pooling adds complexity: thread-safety, eviction
 // Only consider for:
-// - JDBC connections
-// - Thread pools
+// - JDBC connections       // => Connection creation expensive (network handshake)
+// - Thread pools            // => Thread creation expensive (OS resources)
 // - Expensive external resources
+                                 // => Native resources: file handles, sockets
+                                 // => Don't pool regular Java objects
 
 // Avoiding unnecessary object creation
 // Bad
-Integer badCount = new Integer(42); // Creates object
-
+Integer badCount = new Integer(42);
+                                 // => Creates new Integer object
+                                 // => Bypasses Integer cache
+                                 // => Deprecated: don't use constructor
 // Good
-Integer goodCount = 42; // Uses Integer.valueOf() cache (-128 to 127)
+Integer goodCount = 42;          // => Uses Integer.valueOf() cache (-128 to 127)
+                                 // => Returns cached Integer for small values
+                                 // => No object creation for cached range
 
 // EnumSet/EnumMap - efficient for enums
 enum Color { RED, GREEN, BLUE }
-Set<Color> colors = EnumSet.of(Color.RED, Color.BLUE); // Bit vector internally
+Set<Color> colors = EnumSet.of(Color.RED, Color.BLUE);
+                                 // => Bit vector internally: very efficient
+                                 // => 64 bits = 64 enums without allocation
+                                 // => Much faster than HashSet for enums
 
 // Effective caching with appropriate eviction
 Map<String, String> cache = new LinkedHashMap<>(100, 0.75f, true) {
+                                 // => LinkedHashMap with access-order mode
+                                 // => true = access-order (LRU), false = insertion-order
     @Override
     protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
-        return size() > 100; // LRU cache with max 100 entries
+        return size() > 100;     // => LRU cache with max 100 entries
+                                 // => Automatically evicts oldest accessed entry
+                                 // => Called after each put: returns true to remove eldest
     }
 };
 ```
@@ -2229,277 +2313,443 @@ import java.util.concurrent.*;
 
 // Database connection interface
 interface DatabaseConnection {
+                                 // => Abstraction for different database types (Strategy pattern)
+                                 // => Enables polymorphism: PostgresConnection, MySQLConnection
     void connect() throws SQLException;
-    void disconnect();
+                                 // => Opens database connection (expensive operation: 100-1000ms)
+                                 // => May throw SQLException for connection failures
+    void disconnect();           // => Closes connection and releases resources
     ResultSet executeQuery(String sql) throws SQLException;
-    boolean isConnected();
-    String getConnectionString();
+                                 // => Executes SQL query, returns result set
+    boolean isConnected();       // => Checks if connection is currently open
+    String getConnectionString();// => Returns JDBC connection string
 }
 
 // PostgreSQL connection implementation
 class PostgresConnection implements DatabaseConnection {
+                                 // => Concrete implementation for PostgreSQL databases
+                                 // => JDBC URL pattern: jdbc:postgresql://host:port/database
     private Connection connection;
+                                 // => Actual JDBC connection object (java.sql.Connection)
+                                 // => null until connect() called
     private final String connString;
+                                 // => Immutable connection string (formatted in constructor)
 
     public PostgresConnection(String host, int port, String database) {
+                                 // => Constructor parameters: host, port, database name
         this.connString = String.format("jdbc:postgresql://%s:%d/%s",
                                        host, port, database);
+                                 // => Example: "jdbc:postgresql://localhost:5432/mydb"
+                                 // => String.format builds JDBC URL from components
     }
 
     @Override
     public void connect() throws SQLException {
+                                 // => Opens connection to PostgreSQL database
         connection = DriverManager.getConnection(connString);
+                                 // => DriverManager finds JDBC driver and establishes connection
+                                 // => Expensive operation: TCP handshake + authentication + initialization
+                                 // => May take 100-1000ms depending on network/database
         System.out.println("Connected to PostgreSQL: " + connString);
+                                 // => Output: "Connected to PostgreSQL: jdbc:postgresql://localhost:5432/mydb"
     }
 
     @Override
-    public void disconnect() {
+    public void disconnect() {   // => Closes connection and releases resources
         try {
             if (connection != null) connection.close();
+                                 // => Closes JDBC connection (releases TCP socket, database session)
+                                 // => null check prevents NPE if connect() never called
             System.out.println("Disconnected from PostgreSQL");
+                                 // => Output: "Disconnected from PostgreSQL"
         } catch (SQLException e) {
-            e.printStackTrace();
+                                 // => Catches errors during disconnect (rare but possible)
+            e.printStackTrace(); // => Logs exception stack trace
         }
     }
 
     @Override
     public ResultSet executeQuery(String sql) throws SQLException {
+                                 // => Executes SELECT query and returns results
         return connection.createStatement().executeQuery(sql);
+                                 // => Creates Statement, executes query, returns ResultSet
+                                 // => ResultSet contains query results (rows and columns)
     }
 
     @Override
     public boolean isConnected() {
+                                 // => Checks if connection is currently open and valid
         try {
             return connection != null && !connection.isClosed();
+                                 // => true if connection exists and not closed
+                                 // => false if null or closed
         } catch (SQLException e) {
-            return false;
+                                 // => isClosed() may throw SQLException (rare)
+            return false;        // => Return false on exception (treat as disconnected)
         }
     }
 
     @Override
     public String getConnectionString() { return connString; }
+                                 // => Returns JDBC connection string (e.g., "jdbc:postgresql://localhost:5432/mydb")
 }
 
 // MySQL connection implementation
 class MySQLConnection implements DatabaseConnection {
+                                 // => Concrete implementation for MySQL databases
+                                 // => JDBC URL pattern: jdbc:mysql://host:port/database
     private Connection connection;
+                                 // => JDBC connection object (null until connect() called)
     private final String connString;
+                                 // => Immutable MySQL connection string
 
     public MySQLConnection(String host, int port, String database) {
+                                 // => Constructor for MySQL connection parameters
         this.connString = String.format("jdbc:mysql://%s:%d/%s",
                                        host, port, database);
+                                 // => Example: "jdbc:mysql://localhost:3306/mydb"
+                                 // => Note: MySQL default port 3306 (vs Postgres 5432)
     }
 
     @Override
     public void connect() throws SQLException {
+                                 // => Opens connection to MySQL database
         connection = DriverManager.getConnection(connString);
+                                 // => DriverManager finds MySQL JDBC driver (com.mysql.cj.jdbc.Driver)
+                                 // => Establishes connection: TCP handshake + authentication + MySQL handshake
         System.out.println("Connected to MySQL: " + connString);
+                                 // => Output: "Connected to MySQL: jdbc:mysql://localhost:3306/mydb"
     }
 
     @Override
-    public void disconnect() {
+    public void disconnect() {   // => Closes MySQL connection
         try {
             if (connection != null) connection.close();
+                                 // => Closes connection, releases MySQL session
             System.out.println("Disconnected from MySQL");
+                                 // => Output: "Disconnected from MySQL"
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // => Logs disconnect errors (rare)
         }
     }
 
     @Override
     public ResultSet executeQuery(String sql) throws SQLException {
+                                 // => Executes SQL query against MySQL database
         return connection.createStatement().executeQuery(sql);
+                                 // => Creates Statement, executes query, returns ResultSet with rows
     }
 
     @Override
     public boolean isConnected() {
+                                 // => Checks MySQL connection status
         try {
             return connection != null && !connection.isClosed();
+                                 // => true if connection valid and open
         } catch (SQLException e) {
-            return false;
+            return false;        // => false on exception or if closed
         }
     }
 
     @Override
     public String getConnectionString() { return connString; }
+                                 // => Returns MySQL JDBC connection string
 }
 
 // Factory for creating database connections
-class ConnectionFactory {
+class ConnectionFactory {        // => Factory pattern: creates objects without exposing creation logic
+                                 // => Centralizes connection creation, supports multiple database types
     public static DatabaseConnection create(String dbType, String host,
                                            int port, String database) {
+                                 // => Static factory method (no instance needed)
+                                 // => Parameters: database type, host, port, database name
         return switch (dbType.toLowerCase()) {
+                                 // => Switch expression on database type (case-insensitive)
+                                 // => Returns appropriate DatabaseConnection implementation
             case "postgres", "postgresql" ->
                 new PostgresConnection(host, port, database);
+                                 // => Returns PostgresConnection for "postgres" or "postgresql"
             case "mysql" ->
                 new MySQLConnection(host, port, database);
+                                 // => Returns MySQLConnection for "mysql"
             default ->
                 throw new IllegalArgumentException("Unsupported database: " + dbType);
+                                 // => Throws exception for unsupported database types
+                                 // => Example error: "Unsupported database: oracle"
         };
     }
 }
 
 // Connection configuration using Builder pattern
-class ConnectionConfig {
-    private final String dbType;
-    private final String host;
-    private final int port;
+class ConnectionConfig {        // => Immutable configuration object (all fields final)
+                                 // => Uses Builder pattern to construct complex configuration
+    private final String dbType; // => Database type: "postgres", "mysql"
+    private final String host;   // => Database host: "localhost", "db.example.com"
+    private final int port;      // => Database port: 5432 (Postgres), 3306 (MySQL)
     private final String database;
-    private final int poolSize;
-    private final int timeout;
+                                 // => Database name: "mydb", "production"
+    private final int poolSize;  // => Number of connections in pool (default: 10)
+    private final int timeout;   // => Connection timeout in seconds (default: 30)
 
     private ConnectionConfig(Builder builder) {
+                                 // => Private constructor (only Builder can create instances)
+                                 // => Ensures Builder pattern enforced
         this.dbType = builder.dbType;
+                                 // => Copies dbType from Builder
         this.host = builder.host;
+                                 // => Copies host from Builder
         this.port = builder.port;
+                                 // => Copies port from Builder (may be default)
         this.database = builder.database;
+                                 // => Copies database name from Builder
         this.poolSize = builder.poolSize;
+                                 // => Copies poolSize from Builder (default: 10)
         this.timeout = builder.timeout;
+                                 // => Copies timeout from Builder (default: 30)
     }
 
     // Fluent Builder
     public static class Builder {
+                                 // => Inner static Builder class (nested within ConnectionConfig)
+                                 // => Provides fluent API for building configuration
         private final String dbType;
+                                 // => Required field: database type (no default)
         private final String host;
+                                 // => Required field: host (no default)
         private final String database;
+                                 // => Required field: database name (no default)
         private int port = 5432; // Default for Postgres
+                                 // => Optional field with default: Postgres port
         private int poolSize = 10;
+                                 // => Optional field with default: 10 connections
         private int timeout = 30;
+                                 // => Optional field with default: 30 seconds
 
         public Builder(String dbType, String host, String database) {
+                                 // => Constructor requires only mandatory fields
+                                 // => Optional fields use defaults (can be overridden with setters)
             this.dbType = dbType;
-            this.host = host;
+                                 // => Sets required database type
+            this.host = host;    // => Sets required host
             this.database = database;
+                                 // => Sets required database name
         }
 
         public Builder port(int port) {
-            this.port = port;
+                                 // => Optional setter for port (overrides default)
+            this.port = port;    // => Sets custom port (e.g., 3306 for MySQL)
             return this; // => Fluent API
+                                 // => Returns this Builder for method chaining
+                                 // => Enables: builder.port(3306).poolSize(20).build()
         }
 
         public Builder poolSize(int size) {
+                                 // => Optional setter for pool size
             this.poolSize = size;
-            return this;
+                                 // => Sets number of connections (e.g., 20, 50)
+            return this;         // => Returns this for chaining
         }
 
         public Builder timeout(int seconds) {
+                                 // => Optional setter for connection timeout
             this.timeout = seconds;
-            return this;
+                                 // => Sets timeout in seconds (e.g., 60, 120)
+            return this;         // => Returns this for chaining
         }
 
         public ConnectionConfig build() {
+                                 // => Terminal operation: creates ConnectionConfig instance
             return new ConnectionConfig(this);
+                                 // => Calls private constructor with this Builder
+                                 // => Returns immutable ConnectionConfig
         }
     }
 
     public String getDbType() { return dbType; }
+                                 // => Getter for database type
     public String getHost() { return host; }
+                                 // => Getter for host
     public int getPort() { return port; }
+                                 // => Getter for port
     public String getDatabase() { return database; }
+                                 // => Getter for database name
     public int getPoolSize() { return poolSize; }
+                                 // => Getter for pool size
     public int getTimeout() { return timeout; }
+                                 // => Getter for timeout
 }
 
 // Connection Pool using Singleton pattern
-class ConnectionPool {
+class ConnectionPool {          // => Singleton pattern: only one pool instance per application
+                                 // => Manages connection reuse (pool), prevents connection exhaustion
     private static volatile ConnectionPool instance; // Singleton instance
+                                 // => volatile: ensures visibility across threads (happens-before)
+                                 // => static: single instance shared across all callers
+                                 // => null initially, created on first getInstance() call
     private final Queue<DatabaseConnection> availableConnections;
+                                 // => Queue of connections available for use (not currently in use)
+                                 // => ConcurrentLinkedQueue: thread-safe, lock-free queue
     private final Set<DatabaseConnection> inUseConnections;
+                                 // => Set of connections currently in use by clients
+                                 // => ConcurrentHashMap.newKeySet(): thread-safe set
     private final ConnectionConfig config;
+                                 // => Configuration: database type, host, pool size, etc.
 
     private ConnectionPool(ConnectionConfig config) {
-        this.config = config;
+                                 // => Private constructor (Singleton: no public instantiation)
+                                 // => Only getInstance() can create instance
+        this.config = config;    // => Saves configuration
         this.availableConnections = new ConcurrentLinkedQueue<>();
+                                 // => Initializes available connections queue (thread-safe)
         this.inUseConnections = ConcurrentHashMap.newKeySet();
+                                 // => Initializes in-use connections set (thread-safe)
 
         // Pre-create pool connections
         for (int i = 0; i < config.getPoolSize(); i++) {
+                                 // => Loops poolSize times (default: 10)
+                                 // => Pre-creates connections to avoid lazy initialization delays
             DatabaseConnection conn = ConnectionFactory.create(
                 config.getDbType(),
                 config.getHost(),
                 config.getPort(),
                 config.getDatabase()
-            );
+            );                   // => Creates connection using Factory pattern
+                                 // => Connection not yet opened (connect() not called)
             availableConnections.offer(conn);
+                                 // => Adds connection to available queue
+                                 // => offer(): adds to tail of queue (non-blocking)
         }
         System.out.println("Connection pool initialized with " +
                          config.getPoolSize() + " connections");
+                                 // => Output: "Connection pool initialized with 10 connections"
     }
 
     // Thread-safe Singleton with double-checked locking
     public static ConnectionPool getInstance(ConnectionConfig config) {
-        if (instance == null) {
+                                 // => Static factory method for Singleton instance
+                                 // => Thread-safe: uses double-checked locking pattern
+        if (instance == null) {  // => First check (no synchronization, fast path)
+                                 // => Avoids synchronization overhead if already initialized
             synchronized (ConnectionPool.class) {
+                                 // => Synchronizes on class object (ensures single instance)
+                                 // => Lock acquired: other threads block here
                 if (instance == null) {
+                                 // => Second check inside synchronized block
+                                 // => Prevents race condition: two threads pass first check
                     instance = new ConnectionPool(config);
+                                 // => Creates Singleton instance (called once)
                 }
             }
         }
-        return instance;
+        return instance;         // => Returns existing instance (all subsequent calls)
     }
 
     public DatabaseConnection acquire() throws InterruptedException {
+                                 // => Acquires connection from pool (blocking if pool exhausted)
         DatabaseConnection conn = availableConnections.poll();
-        if (conn == null) {
+                                 // => poll(): removes and returns head of queue (non-blocking)
+                                 // => Returns null if queue empty (no available connections)
+        if (conn == null) {      // => Pool exhausted: no available connections
             System.out.println("Pool exhausted, creating new connection");
+                                 // => Output: "Pool exhausted, creating new connection"
+                                 // => Indicates pool undersized or connection leak
             conn = ConnectionFactory.create(
                 config.getDbType(),
                 config.getHost(),
                 config.getPort(),
                 config.getDatabase()
-            );
+            );                   // => Creates new connection dynamically (overflow strategy)
+                                 // => Alternative: block until connection available (HikariCP strategy)
         }
         inUseConnections.add(conn);
+                                 // => Adds connection to in-use set
+                                 // => Tracks borrowed connections for leak detection
         return conn; // => Connection from pool or newly created
+                                 // => Caller must call release(conn) when done
+                                 // => Connection leak if release() not called (pool exhaustion)
     }
 
     public void release(DatabaseConnection conn) {
+                                 // => Returns connection to pool for reuse
         if (inUseConnections.remove(conn)) {
+                                 // => Removes from in-use set
+                                 // => Returns true if conn was in set (valid release)
             availableConnections.offer(conn);
+                                 // => Adds connection back to available queue
+                                 // => Connection now available for next acquire() call
             System.out.println("Connection returned to pool");
+                                 // => Output: "Connection returned to pool"
         }
     }
 
-    public void shutdown() {
+    public void shutdown() {     // => Closes all connections and shuts down pool
         for (DatabaseConnection conn : availableConnections) {
-            conn.disconnect();
+                                 // => Iterates available connections
+            conn.disconnect();   // => Closes each available connection
         }
         for (DatabaseConnection conn : inUseConnections) {
-            conn.disconnect();
+                                 // => Iterates in-use connections (may be leaked)
+            conn.disconnect();   // => Closes each in-use connection (cleanup)
         }
         System.out.println("Connection pool shut down");
+                                 // => Output: "Connection pool shut down"
     }
 
     public int getAvailableCount() { return availableConnections.size(); }
+                                 // => Returns number of available connections (not in use)
     public int getInUseCount() { return inUseConnections.size(); }
+                                 // => Returns number of in-use connections (borrowed)
 }
 
 // Usage example combining all patterns
 ConnectionConfig config = new ConnectionConfig.Builder("postgres", "localhost", "mydb")
-    .port(5432)
-    .poolSize(20)
-    .timeout(60)
+                                 // => Creates Builder with required fields: dbType, host, database
+                                 // => Builder pattern: fluent API for complex configuration
+    .port(5432)                  // => Optional: sets port to 5432 (Postgres default)
+                                 // => Method chaining: port() returns Builder
+    .poolSize(20)                // => Optional: sets pool size to 20 connections (default: 10)
+    .timeout(60)                 // => Optional: sets timeout to 60 seconds (default: 30)
     .build(); // => Builder pattern
+                                 // => Terminal operation: builds immutable ConnectionConfig
+                                 // => config is now ready for ConnectionPool.getInstance()
 
 ConnectionPool pool = ConnectionPool.getInstance(config); // => Singleton
+                                 // => Gets Singleton ConnectionPool instance
+                                 // => First call creates pool with 20 pre-initialized connections
+                                 // => Subsequent calls return same instance (Singleton)
 
 // Acquire connection from pool
 DatabaseConnection conn = pool.acquire(); // => Factory creates connection
+                                 // => Acquires connection from available queue
+                                 // => Returns existing connection (fast: ~1ms) or creates new (slow: 100-1000ms)
+                                 // => conn must be released in finally block to avoid leaks
 try {
-    conn.connect();
+    conn.connect();              // => Opens connection (TCP handshake + authentication)
+                                 // => May throw SQLException
     ResultSet rs = conn.executeQuery("SELECT * FROM users");
+                                 // => Executes SQL query, returns ResultSet
+                                 // => rs contains all rows from users table
     // Process results...
-} catch (SQLException e) {
-    e.printStackTrace();
+} catch (SQLException e) {       // => Catches SQL exceptions (connection failures, query errors)
+    e.printStackTrace();         // => Logs exception stack trace
 } finally {
     pool.release(conn); // => Return to pool for reuse
+                                 // => CRITICAL: always release in finally block
+                                 // => Failure to release causes connection leak and pool exhaustion
+                                 // => Connection returned to availableConnections queue
 }
 
 // Pool statistics
 System.out.println("Available: " + pool.getAvailableCount());
+                                 // => Output: "Available: 19" (20 total - 1 in use)
+                                 // => Shows connections ready for reuse
 System.out.println("In use: " + pool.getInUseCount());
+                                 // => Output: "In use: 1" (conn acquired but not released yet)
+                                 // => Shows connections currently borrowed
 
 pool.shutdown(); // Cleanup
+                                 // => Closes all connections (available + in-use)
+                                 // => Call on application shutdown (cleanup resources)
 ```
 
 **Key Takeaway**: This demonstrates all three creational patterns in production context. **Singleton** ensures one connection pool instance (thread-safe with double-checked locking). **Factory** creates database connections by type (Postgres, MySQL) enabling polymorphism. **Builder** constructs complex configuration with fluent API, avoiding telescoping constructors. Connection pooling is essential for production databases—creating connections is expensive (100-1000ms), reusing them is fast (1ms). This pattern appears in all production database libraries (HikariCP, C3P0, Apache DBCP).
@@ -2854,67 +3104,108 @@ Dependency Injection (DI) inverts control, allowing dependencies to be provided 
 ```java
 // Without DI - tight coupling
 class OrderServiceBad {
-    private EmailService emailService = new EmailService(); // Hardcoded dependency
+    private EmailService emailService = new EmailService();
+                                 // => Hardcoded dependency creation
+                                 // => Tight coupling: OrderServiceBad depends on concrete EmailService
+                                 // => Cannot swap implementation without modifying class
+                                 // => Cannot test with mock (EmailService hardcoded)
 
     public void placeOrder(Order order) {
         // Process order
-        emailService.send("Order placed"); // Cannot mock for testing
+        emailService.send("Order placed");
+                                 // => Calls hardcoded EmailService
+                                 // => Cannot mock for unit testing
+                                 // => Cannot change to SMS without code modification
     }
 }
 
 // With DI - loose coupling via interface
 interface NotificationService {
-    void send(String message);
+                                 // => Abstraction: defines contract, not implementation
+                                 // => OrderService depends on interface, not concrete class
+    void send(String message);   // => Abstract method: implementations provide behavior
 }
 
 class EmailService implements NotificationService {
+                                 // => Concrete implementation: email notifications
+                                 // => Implements NotificationService contract
     @Override
     public void send(String message) {
         System.out.println("Email: " + message);
+                                 // => Email-specific implementation
+                                 // => Output: "Email: [message]"
     }
 }
 
 class SMSService implements NotificationService {
+                                 // => Alternative implementation: SMS notifications
+                                 // => Same interface, different behavior
     @Override
     public void send(String message) {
         System.out.println("SMS: " + message);
+                                 // => SMS-specific implementation
+                                 // => Output: "SMS: [message]"
     }
 }
 
 // Constructor injection (preferred for required dependencies)
 class OrderService {
     private final NotificationService notificationService;
+                                 // => Final field: immutable after construction
+                                 // => Dependency must be provided via constructor
+                                 // => Makes dependencies explicit and required
 
     public OrderService(NotificationService notificationService) {
-        this.notificationService = notificationService; // Injected
+                                 // => Constructor receives dependency from outside
+                                 // => Inversion of control: caller provides dependency
+        this.notificationService = notificationService;
+                                 // => Injected dependency stored for use
+                                 // => Can be EmailService, SMSService, or any NotificationService
     }
 
     public void placeOrder(Order order) {
         // Process order
         notificationService.send("Order placed");
+                                 // => Uses injected dependency (EmailService or SMSService)
+                                 // => Actual implementation determined at construction
+                                 // => Polymorphism: interface reference, concrete behavior
     }
 }
 
 // Using the service
 NotificationService emailService = new EmailService();
+                                 // => Creates EmailService instance
 OrderService orderService = new OrderService(emailService);
+                                 // => Injects EmailService into OrderService
+                                 // => OrderService uses email notifications
 orderService.placeOrder(new Order());
+                                 // => Calls placeOrder, sends email notification
+                                 // => Output: "Email: Order placed"
 
 // Easily switch implementation
 NotificationService smsService = new SMSService();
+                                 // => Creates SMSService instance
 OrderService orderService2 = new OrderService(smsService);
+                                 // => Injects SMSService into OrderService
+                                 // => No code change in OrderService needed
+                                 // => Same OrderService code, different behavior
 
 // Setter injection (for optional dependencies)
 class ReportService {
-    private Logger logger;
+    private Logger logger;       // => Optional dependency (not final)
+                                 // => Can be null, service works without it
 
     public void setLogger(Logger logger) {
-        this.logger = logger; // Optional dependency
+        this.logger = logger;    // => Optional dependency injected via setter
+                                 // => Can be called after construction
+                                 // => Allows optional configuration
     }
 
     public void generateReport() {
-        if (logger != null) {
+        if (logger != null) {    // => Check if logger injected
+                                 // => Service degrades gracefully without logger
             logger.log("Report generated");
+                                 // => Uses logger if available
         }
     }
 }
@@ -2922,63 +3213,103 @@ class ReportService {
 // Benefits of DI
 // 1. Testability - inject mocks/stubs
 class MockNotificationService implements NotificationService {
+                                 // => Test double: implements same interface
+                                 // => Used for unit testing OrderService
     public List<String> sentMessages = new ArrayList<>();
+                                 // => Tracks sent messages for assertions
+                                 // => Verification: check what messages sent
 
     @Override
     public void send(String message) {
-        sentMessages.add(message); // Track for assertions
+        sentMessages.add(message);
+                                 // => Records message instead of sending
+                                 // => Enables verification in tests
     }
 }
 
 MockNotificationService mock = new MockNotificationService();
+                                 // => Creates mock for testing
 OrderService testService = new OrderService(mock);
+                                 // => Injects mock into OrderService
+                                 // => OrderService doesn't know it's a mock
 testService.placeOrder(new Order());
+                                 // => Executes order placement with mock
+                                 // => Mock records message instead of sending
 assert mock.sentMessages.contains("Order placed");
+                                 // => Verifies message was sent
+                                 // => Unit test: validates behavior without real email
 
 // 2. Flexibility - change behavior without modifying code
+                                 // => Swap EmailService for SMSService at runtime
+                                 // => Add new NotificationService implementations
 // 3. Maintainability - dependencies explicit in constructor
+                                 // => Constructor signature documents required dependencies
+                                 // => No hidden dependencies (no new inside)
 
 // Manual DI container (simple example)
 class DIContainer {
     private Map<Class<?>, Object> services = new HashMap<>();
+                                 // => Service registry: maps types to instances
+                                 // => Simple service locator pattern
 
     public <T> void register(Class<T> type, T instance) {
+                                 // => Registers service instance for type
+                                 // => Generic method: works for any type
         services.put(type, instance);
+                                 // => Stores instance keyed by class type
     }
 
     @SuppressWarnings("unchecked")
     public <T> T resolve(Class<T> type) {
+                                 // => Retrieves registered service by type
+                                 // => Returns null if not registered
         return (T) services.get(type);
+                                 // => Cast required due to type erasure
+                                 // => SuppressWarnings: we know cast is safe
     }
 }
 
 DIContainer container = new DIContainer();
+                                 // => Creates DI container instance
 container.register(NotificationService.class, new EmailService());
+                                 // => Registers EmailService as NotificationService
+                                 // => Container manages service lifecycle
 NotificationService service = container.resolve(NotificationService.class);
+                                 // => Retrieves NotificationService from container
+                                 // => Returns EmailService instance
+                                 // => Decouples service creation from usage
 
 // Spring Framework DI (conceptual)
 /*
-@Component
+@Component                       // => Spring manages lifecycle
 class OrderService {
     private final NotificationService notificationService;
 
-    @Autowired // Spring injects dependency
+    @Autowired                   // => Spring injects dependency automatically
     public OrderService(NotificationService notificationService) {
         this.notificationService = notificationService;
-    }
+    }                            // => Spring finds NotificationService bean and injects
 }
 
-@Component
+@Component                       // => Spring creates instance automatically
 class EmailService implements NotificationService {
     // Spring creates instance
+                                 // => Spring scans classpath, creates beans
+                                 // => Wires dependencies based on types
 }
 */
 
 // DI principles
 // - Depend on abstractions (interfaces), not concretions
+                                 // => OrderService depends on NotificationService, not EmailService
+                                 // => Enables swapping implementations
 // - Constructor injection for required dependencies
+                                 // => Makes dependencies explicit and immutable
 // - Setter injection for optional dependencies
+                                 // => Allows optional configuration
 // - Avoid service locator pattern (anti-pattern)
+                                 // => Service locator hides dependencies
+                                 // => Constructor injection preferred
 ```
 
 **Key Takeaway**: DI inverts control—dependencies injected, not created internally. Constructor injection for required dependencies, setter for optional. Enhances testability via mock injection. Depend on interfaces for flexibility. DI containers automate wiring in frameworks.
@@ -2995,127 +3326,177 @@ Immutable objects cannot be modified after creation, providing inherent thread s
 
 ```java
 // Immutable class - traditional approach
-final class ImmutablePoint {
-    private final int x;
-    private final int y;
+final class ImmutablePoint {   // => final: class cannot be subclassed
+                                 // => Prevents mutable subclasses breaking immutability
+    private final int x;         // => final field: cannot be reassigned after construction
+    private final int y;         // => Immutable: both fields final
 
     public ImmutablePoint(int x, int y) {
-        this.x = x;
-        this.y = y;
+                                 // => Constructor: only place fields can be set
+        this.x = x;              // => Assigns x once, never changes
+        this.y = y;              // => Assigns y once, never changes
     }
 
     public int getX() { return x; }
+                                 // => Getter: returns value, cannot modify
     public int getY() { return y; }
+                                 // => No setters: state cannot change after construction
 
     // No setters - state cannot change
+                                 // => Immutability guarantee: no mutation methods
 
     // Operations return new instances
     public ImmutablePoint move(int dx, int dy) {
+                                 // => Functional style: returns new instance
         return new ImmutablePoint(x + dx, y + dy);
+                                 // => Creates new ImmutablePoint with updated coordinates
+                                 // => Original object unchanged (immutable)
     }
 
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof ImmutablePoint other)) return false;
+                                 // => Type check with pattern variable
         return x == other.x && y == other.y;
+                                 // => Value equality: compares coordinates
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(x, y);
+                                 // => Stable hash: never changes (immutable)
+                                 // => Safe as HashMap key
     }
 }
 
 ImmutablePoint p1 = new ImmutablePoint(10, 20);
-ImmutablePoint p2 = p1.move(5, 5); // => new ImmutablePoint(15, 25)
-// p1 unchanged: (10, 20)
+                                 // => Creates point at (10, 20)
+ImmutablePoint p2 = p1.move(5, 5);
+                                 // => Returns new ImmutablePoint(15, 25)
+                                 // => p1 unchanged: (10, 20)
+// p1 unchanged: (10, 20)       // => Immutability: original unmodified
 
 // Immutable class with mutable component - defensive copying
 final class ImmutablePerson {
-    private final String name;
-    private final Date birthDate; // Date is mutable!
+    private final String name;   // => String immutable: safe
+    private final Date birthDate;// => Date MUTABLE: requires defensive copy
+                                 // => Risk: caller could mutate Date after passing
 
     public ImmutablePerson(String name, Date birthDate) {
-        this.name = name;
-        this.birthDate = new Date(birthDate.getTime()); // Defensive copy
+        this.name = name;        // => String immutable: direct assignment safe
+        this.birthDate = new Date(birthDate.getTime());
+                                 // => Defensive copy: creates new Date
+                                 // => Prevents caller from mutating our internal state
     }
 
     public String getName() { return name; }
+                                 // => String immutable: safe to return directly
 
     public Date getBirthDate() {
-        return new Date(birthDate.getTime()); // Return copy, not original
+        return new Date(birthDate.getTime());
+                                 // => Defensive copy: returns copy, not original
+                                 // => Prevents caller from mutating internal state
     }
 }
 
-Date date = new Date();
+Date date = new Date();          // => Creates mutable Date
 ImmutablePerson person = new ImmutablePerson("Alice", date);
-date.setTime(0); // Doesn't affect person.birthDate (defensive copy)
+                                 // => Constructor makes defensive copy
+date.setTime(0);                 // => Mutates original Date
+                                 // => Doesn't affect person.birthDate (defensive copy protected)
 
 // Records - immutable data carriers (Java 14+)
 record Point(int x, int y) {
+                                 // => Record: compact immutable class syntax
     // Automatically generates:
     // - private final fields
+                                 // => x and y are final fields
     // - constructor
+                                 // => Point(int x, int y) generated
     // - getters (x(), y())
+                                 // => Accessor methods, not setters
     // - equals(), hashCode(), toString()
+                                 // => Value-based equality
 }
 
-Point p = new Point(10, 20);
-System.out.println(p.x()); // => 10
+Point p = new Point(10, 20);     // => Creates Point record
+System.out.println(p.x());       // => Calls generated accessor
+                                 // => Output: 10
 // No setters - immutable by default
+                                 // => Records cannot have setters
 
 // Compact constructor for validation
 record PositivePoint(int x, int y) {
-    public PositivePoint {
-        if (x < 0 || y < 0) {
+    public PositivePoint {       // => Compact constructor: no parameter list
+                                 // => Runs before field assignment
+        if (x < 0 || y < 0) {    // => Validation: ensures positive coordinates
             throw new IllegalArgumentException("Coordinates must be positive");
+                                 // => Prevents invalid state
         }
-    }
+    }                            // => Fields assigned after validation succeeds
 }
 
 // Immutable collections (Java 9+)
 List<String> immutableList = List.of("A", "B", "C");
-// immutableList.add("D"); // UnsupportedOperationException
+                                 // => Creates immutable list
+// immutableList.add("D");       // => UnsupportedOperationException thrown
+                                 // => Modification attempts fail at runtime
 
 Set<Integer> immutableSet = Set.of(1, 2, 3);
+                                 // => Immutable set: no add/remove operations
 Map<String, Integer> immutableMap = Map.of("one", 1, "two", 2);
+                                 // => Immutable map: no put/remove operations
 
 // Copying to immutable (Java 10+)
 List<String> mutable = new ArrayList<>(List.of("X", "Y"));
-List<String> copy = List.copyOf(mutable); // Immutable copy
+                                 // => Creates mutable ArrayList
+List<String> copy = List.copyOf(mutable);
+                                 // => Creates immutable copy
+                                 // => Changes to mutable don't affect copy
 
 // Benefits of immutability
 // 1. Thread safety - no synchronization needed
 final class SharedCounter {
-    private final int count;
+    private final int count;     // => Immutable: safe to share across threads
 
     public SharedCounter(int count) { this.count = count; }
+                                 // => Constructor initializes immutable state
 
     public SharedCounter increment() {
         return new SharedCounter(count + 1);
+                                 // => Returns new instance with incremented count
     }
 
     public int getCount() { return count; }
 
     // Safe to share across threads without locks
+                                 // => Immutability eliminates race conditions
 }
 
 // 2. Cacheability - hash code never changes
 Map<ImmutablePoint, String> cache = new HashMap<>();
+                                 // => HashMap with immutable keys
 ImmutablePoint key = new ImmutablePoint(5, 10);
-cache.put(key, "Value"); // Safe - key cannot mutate
+                                 // => Immutable key: hash never changes
+cache.put(key, "Value");         // => Safe: key cannot mutate
+                                 // => Hash code stability guarantees correct lookup
 
 // 3. Simplicity - no defensive copying needed
 public void processPoint(ImmutablePoint point) {
+                                 // => Receives immutable object
     // No worry about caller modifying point
+                                 // => Caller cannot mutate point
+                                 // => No need for defensive copy
 }
 
 // 4. Failure atomicity - partially constructed objects impossible
-// (all fields set in constructor before object accessible)
+                                 // => All fields set in constructor before object accessible
+                                 // => No "half-constructed" state visible
 
 // Persistent data structures (conceptual)
-// Immutable collections that share structure for efficiency
+                                 // => Immutable collections share structure for efficiency
 // Example: adding to immutable list creates new list sharing most nodes
+                                 // => Copy-on-write: only modified parts copied
 ```
 
 **Key Takeaway**: Immutable objects use final fields, no setters, and defensive copying for mutable components. Records automate immutable class creation. Immutable collections via `List.of()`, `Set.of()`, `Map.of()`. Benefits: thread safety, simplicity, cacheability, failure atomicity.
@@ -3133,15 +3514,20 @@ SOLID principles guide maintainable object-oriented design. Single Responsibilit
 ```java
 // Single Responsibility Principle (SRP)
 // A class should have one reason to change
+                                 // => Each class has ONE responsibility
+                                 // => Changes to one responsibility don't affect others
 
 // Bad - multiple responsibilities
 class UserServiceBad {
     public void createUser(User user) {
-        // Validate user
-        // Save to database
-        // Send email
-        // Log activity
+        // Validate user         // => Responsibility 1: Validation
+        // Save to database      // => Responsibility 2: Persistence
+        // Send email            // => Responsibility 3: Notification
+        // Log activity          // => Responsibility 4: Logging
         // Multiple reasons to change!
+                                 // => Changes to email format require modifying UserService
+                                 // => Changes to database require modifying UserService
+                                 // => Violates SRP: too many reasons to change
     }
 }
 
@@ -3149,19 +3535,24 @@ class UserServiceBad {
 class UserValidator {
     public boolean validate(User user) {
         // Only validation logic
+                                 // => Single responsibility: validation
         return user.getName() != null && user.getEmail() != null;
+                                 // => Returns true if user data valid
     }
 }
 
 class UserRepository {
     public void save(User user) {
         // Only database operations
+                                 // => Single responsibility: persistence
+                                 // => Database changes isolated to this class
     }
 }
 
 class EmailService {
     public void sendWelcomeEmail(User user) {
-        // Only email sending
+        // Only email sending   // => Single responsibility: email notifications
+                                 // => Email format changes isolated to this class
     }
 }
 
@@ -3169,22 +3560,30 @@ class UserService {
     private final UserValidator validator;
     private final UserRepository repository;
     private final EmailService emailService;
+                                 // => Coordinates single-responsibility classes
+                                 // => Delegates to specialized classes
 
     public void createUser(User user) {
         if (validator.validate(user)) {
+                                 // => Delegates validation
             repository.save(user);
+                                 // => Delegates persistence
             emailService.sendWelcomeEmail(user);
-        }
+                                 // => Delegates notification
+        }                        // => Orchestration: composing single-responsibility classes
     }
 }
 
 // Open/Closed Principle (OCP)
 // Open for extension, closed for modification
+                                 // => Classes open for extension (new features)
+                                 // => Closed for modification (existing code unchanged)
 
 // Bad - modifying class for new behavior
 class AreaCalculatorBad {
     public double calculate(Object shape) {
         if (shape instanceof Circle) {
+                                 // => Type check for each shape type
             Circle c = (Circle) shape;
             return Math.PI * c.radius * c.radius;
         } else if (shape instanceof Rectangle) {
@@ -3192,140 +3591,183 @@ class AreaCalculatorBad {
             return r.width * r.height;
         }
         // Adding new shape requires modifying this method
+                                 // => Violates OCP: must modify class to add Triangle
+                                 // => Each new shape = modify existing code
         return 0;
     }
 }
 
 // Good - extend via polymorphism
-interface Shape {
-    double area();
+interface Shape {              // => Abstraction for all shapes
+    double area();               // => Contract: all shapes calculate area
 }
 
 class Circle implements Shape {
     double radius;
     public double area() { return Math.PI * radius * radius; }
+                                 // => Circle-specific area calculation
 }
 
 class Rectangle implements Shape {
     double width, height;
     public double area() { return width * height; }
+                                 // => Rectangle-specific area calculation
 }
 
 class Triangle implements Shape {
     double base, height;
     public double area() { return 0.5 * base * height; }
+                                 // => Triangle added WITHOUT modifying existing classes
 }
 
 class AreaCalculator {
     public double calculate(Shape shape) {
-        return shape.area(); // No modification needed for new shapes
+        return shape.area();     // => Polymorphism: delegates to shape implementation
+                                 // => No modification needed for new shapes
+                                 // => Open for extension (add Triangle), closed for modification
     }
 }
 
 // Liskov Substitution Principle (LSP)
 // Subtypes must be substitutable for base types
+                                 // => Subclass should be usable wherever parent expected
+                                 // => Subclass must not break parent's contract
 
 // Bad - violates LSP
 class Bird {
     public void fly() { System.out.println("Flying"); }
+                                 // => Contract: all Birds can fly
 }
 
 class Penguin extends Bird {
     @Override
     public void fly() {
         throw new UnsupportedOperationException("Penguins can't fly");
+                                 // => Breaks Bird contract: fly() expected to work
         // Violates LSP: cannot substitute Penguin for Bird
+                                 // => Code expecting Bird will fail with Penguin
+                                 // => Subclass breaks parent's behavioral contract
     }
 }
 
 // Good - respects LSP
-interface Flyable {
-    void fly();
+interface Flyable {              // => Specific capability: flying
+    void fly();                  // => Only flyable things implement this
 }
 
 class Sparrow implements Flyable {
     public void fly() { System.out.println("Sparrow flying"); }
+                                 // => Sparrow fulfills Flyable contract
 }
 
-class Penguin2 {
+class Penguin2 {                 // => Penguin doesn't claim to be Flyable
     public void swim() { System.out.println("Penguin swimming"); }
+                                 // => Penguin has its own capabilities
     // Doesn't implement Flyable - no LSP violation
+                                 // => No false promise: penguin never claimed to fly
 }
 
 // Interface Segregation Principle (ISP)
 // Many specific interfaces better than one general
+                                 // => Clients shouldn't depend on methods they don't use
+                                 // => Many small interfaces > one fat interface
 
 // Bad - fat interface
-interface WorkerBad {
-    void work();
-    void eat();
-    void sleep();
+interface WorkerBad {            // => Single interface with all capabilities
+    void work();                 // => Method 1
+    void eat();                  // => Method 2 (not all workers eat)
+    void sleep();                // => Method 3 (not all workers sleep)
 }
 
 class RobotBad implements WorkerBad {
     public void work() { /* work */ }
+                                 // => Robot can work
     public void eat() { /* robots don't eat - forced to implement */ }
+                                 // => Forced to implement irrelevant method
     public void sleep() { /* robots don't sleep - forced to implement */ }
+                                 // => Violates ISP: depends on methods it doesn't use
 }
 
 // Good - segregated interfaces
-interface Workable {
-    void work();
+interface Workable {             // => Small, focused interface: working
+    void work();                 // => Single capability
 }
 
-interface Eatable {
-    void eat();
+interface Eatable {              // => Small, focused interface: eating
+    void eat();                  // => Single capability
 }
 
-interface Sleepable {
-    void sleep();
+interface Sleepable {            // => Small, focused interface: sleeping
+    void sleep();                // => Single capability
 }
 
 class Human implements Workable, Eatable, Sleepable {
+                                 // => Human implements all three capabilities
     public void work() { /* work */ }
+                                 // => Human can work
     public void eat() { /* eat */ }
+                                 // => Human can eat
     public void sleep() { /* sleep */ }
+                                 // => Human can sleep
 }
 
 class Robot implements Workable {
+                                 // => Robot implements ONLY what it needs
     public void work() { /* work */ }
+                                 // => Robot can work
     // Only implements what it needs
+                                 // => No forced implementation of irrelevant methods
+                                 // => Respects ISP: depends only on Workable
 }
 
 // Dependency Inversion Principle (DIP)
 // Depend on abstractions, not concretions
+                                 // => High-level modules shouldn't depend on low-level modules
+                                 // => Both should depend on abstractions
 
 // Bad - depends on concrete class
 class OrderProcessorBad {
     private MySQLDatabase database = new MySQLDatabase();
+                                 // => Hardcoded dependency on concrete MySQLDatabase
+                                 // => Tightly coupled: cannot switch to PostgreSQL
 
     public void process(Order order) {
-        database.save(order); // Tightly coupled to MySQL
+        database.save(order);    // => Tightly coupled to MySQL
+                                 // => Cannot use different database without code modification
     }
 }
 
 // Good - depends on abstraction
-interface Database {
-    void save(Order order);
+interface Database {             // => Abstraction: defines contract
+    void save(Order order);      // => Contract: save method
 }
 
 class MySQLDatabase implements Database {
+                                 // => Concrete implementation: MySQL
     public void save(Order order) { /* MySQL implementation */ }
+                                 // => MySQL-specific persistence logic
 }
 
 class PostgreSQLDatabase implements Database {
+                                 // => Alternative implementation: PostgreSQL
     public void save(Order order) { /* PostgreSQL implementation */ }
+                                 // => PostgreSQL-specific persistence logic
 }
 
 class OrderProcessor {
     private final Database database;
+                                 // => Depends on abstraction (Database interface)
+                                 // => Not coupled to any specific implementation
 
     public OrderProcessor(Database database) {
-        this.database = database; // Depends on abstraction
+        this.database = database;// => Depends on abstraction
+                                 // => Injected: caller provides concrete implementation
     }
 
     public void process(Order order) {
-        database.save(order); // Works with any Database implementation
+        database.save(order);    // => Works with any Database implementation
+                                 // => Polymorphism: MySQL, PostgreSQL, or any Database
+                                 // => Respects DIP: depends on abstraction, not concretion
     }
 }
 ```
@@ -3372,40 +3814,73 @@ import java.nio.file.*;
 
 // ClassLoader hierarchy
 ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+                                 // => System/Application ClassLoader (loads from classpath)
+                                 // => Loads application classes (-cp, CLASSPATH)
 System.out.println("System: " + systemClassLoader);
 // => sun.misc.Launcher$AppClassLoader
+                                 // => Output: sun.misc.Launcher$AppClassLoader@... (Java 8)
+                                 // => Output: jdk.internal.loader.ClassLoaders$AppClassLoader@... (Java 9+)
 
 ClassLoader platformClassLoader = systemClassLoader.getParent();
+                                 // => Platform ClassLoader (parent of System)
+                                 // => Loads Java SE platform modules (Java 9+)
 System.out.println("Platform: " + platformClassLoader);
 // => sun.misc.Launcher$ExtClassLoader (Java 8) or PlatformClassLoader (Java 9+)
+                                 // => Java 8: ExtClassLoader (loads from jre/lib/ext)
+                                 // => Java 9+: PlatformClassLoader (loads platform modules)
 
 ClassLoader bootstrapClassLoader = platformClassLoader.getParent();
+                                 // => Bootstrap ClassLoader (top of hierarchy)
+                                 // => Loads core Java classes (java.lang, java.util, etc.)
 System.out.println("Bootstrap: " + bootstrapClassLoader);
 // => null (bootstrap loader is native)
+                                 // => Output: null (bootstrap implemented in native code, not Java)
+                                 // => Loads rt.jar (Java 8) or java.base module (Java 9+)
 
 // Delegation model: child delegates to parent before loading
 // Bootstrap -> Platform -> System -> Custom
+                                 // => Parent-first delegation: ask parent before loading yourself
+                                 // => Prevents class conflicts (core classes always from Bootstrap)
+                                 // => Custom → System → Platform → Bootstrap (delegation chain)
 
 // Custom ClassLoader
 class CustomClassLoader extends ClassLoader {
-    private String classPath;
+                                 // => Extends ClassLoader for custom class loading behavior
+                                 // => Override findClass() to define custom loading logic
+    private String classPath;    // => Custom classpath (directory containing .class files)
+                                 // => Example: "/custom/classes/"
 
     public CustomClassLoader(String classPath) {
+                                 // => Constructor: sets custom classpath
         this.classPath = classPath;
+                                 // => Stores path for later use in findClass()
     }
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
+                                 // => Called when class not found in parent loaders
+                                 // => name: fully qualified class name (e.g., "com.example.MyClass")
         try {
             // Convert class name to file path
             String fileName = name.replace('.', '/') + ".class";
+                                 // => Converts com.example.MyClass → com/example/MyClass.class
+                                 // => File path relative to classPath
             Path path = Paths.get(classPath, fileName);
+                                 // => Builds absolute path: classPath + fileName
+                                 // => Example: "/custom/classes/com/example/MyClass.class"
             byte[] classBytes = Files.readAllBytes(path);
+                                 // => Reads .class file bytes from disk
+                                 // => classBytes: bytecode for class definition
 
             // Define class from bytes
             return defineClass(name, classBytes, 0, classBytes.length);
+                                 // => Converts bytecode to Class<?> object
+                                 // => defineClass(): JVM method to create class from bytes
+                                 // => Returns Class<?> ready for instantiation
         } catch (IOException e) {
+                                 // => Catches file read errors
             throw new ClassNotFoundException("Could not load class: " + name, e);
+                                 // => Wraps IOException as ClassNotFoundException
         }
     }
 }
@@ -3635,68 +4110,135 @@ graph TD
 ```java
 // JNI workflow:
 // 1. Declare native method in Java
+                                 // => Mark method with 'native' keyword (no implementation)
 // 2. Compile Java class
+                                 // => javac NativeExample.java produces .class file
 // 3. Generate C header with javah (Java 8) or javac -h (Java 9+)
+                                 // => Creates NativeExample.h with C function signatures
 // 4. Implement native method in C/C++
+                                 // => Write C code implementing JNI functions
 // 5. Compile native code to shared library (.so, .dll, .dylib)
+                                 // => gcc/clang produces platform-specific shared library
 // 6. Load library and call native method
+                                 // => System.loadLibrary() loads library, Java calls C
 
 // Step 1: Declare native method
-class NativeExample {
+class NativeExample {        // => Java class with native methods
+                                 // => Bridges Java application and C/C++ native code
     // Native method declaration
     public native int add(int a, int b);
+                                 // => native: method implemented in C/C++, not Java
+                                 // => No method body in Java (body in C)
+                                 // => Returns int, takes two int parameters
     public native String getMessage();
+                                 // => native method returning String (JNI converts to jstring)
+                                 // => Implemented in C, returns Java String object
 
     // Load native library
-    static {
+    static {                     // => Static initializer block (runs once when class loaded)
+                                 // => Loads native library before any methods called
         System.loadLibrary("native_example"); // Loads libnative_example.so/.dll/.dylib
+                                 // => Searches for library: libnative_example.so (Linux), native_example.dll (Windows), libnative_example.dylib (macOS)
+                                 // => Looks in java.library.path directories
+                                 // => UnsatisfiedLinkError if library not found
     }
 
     public static void main(String[] args) {
+                                 // => Main entry point for testing native methods
         NativeExample example = new NativeExample();
+                                 // => Creates instance (triggers static block, loads library)
         int result = example.add(5, 3); // => 8 (computed in C)
+                                 // => Calls native C function with args 5, 3
+                                 // => C function computes 5 + 3 = 8, returns to Java
+                                 // => JNI boundary crossing: Java → C → Java
         System.out.println("Result: " + result);
+                                 // => Output: "Result: 8"
 
         String message = example.getMessage(); // => "Hello from C"
+                                 // => Calls native C function (no args)
+                                 // => C function creates jstring "Hello from C"
+                                 // => JNI converts jstring to Java String
         System.out.println(message);
+                                 // => Output: "Hello from C"
     }
 }
 
 // Step 2 & 3: Generate header
 // javac -h . NativeExample.java
+                                 // => Compiles Java and generates C header in current directory
+                                 // => -h flag: generate JNI header files
 // Creates: NativeExample.h
+                                 // => Header contains C function prototypes for native methods
+                                 // => Function naming: Java_ClassName_methodName
+                                 // => Example: Java_NativeExample_add
 
 /*
 Step 4: Implement in C (NativeExample.c)
 
 #include <jni.h>
+                                 // => JNI header with types: jint, jstring, JNIEnv, jobject
+                                 // => Defines JNIEXPORT, JNICALL macros
 #include "NativeExample.h"
+                                 // => Generated header with function prototypes
 
 JNIEXPORT jint JNICALL Java_NativeExample_add(JNIEnv *env, jobject obj, jint a, jint b) {
+                                 // => JNIEXPORT: export symbol for dynamic linking
+                                 // => JNICALL: calling convention (platform-specific)
+                                 // => JNIEnv *env: JNI environment pointer (for JNI functions)
+                                 // => jobject obj: 'this' reference (Java object calling method)
+                                 // => jint a, jint b: Java int parameters (32-bit signed)
     return a + b;
+                                 // => Simple C addition: returns sum
+                                 // => jint is C typedef for int32_t
+                                 // => Return value crosses JNI boundary back to Java
 }
 
 JNIEXPORT jstring JNICALL Java_NativeExample_getMessage(JNIEnv *env, jobject obj) {
+                                 // => Native implementation of getMessage()
+                                 // => Returns jstring (JNI type for Java String)
     return (*env)->NewStringUTF(env, "Hello from C");
+                                 // => NewStringUTF: JNI function creates Java String from UTF-8 C string
+                                 // => (*env)->: dereference JNIEnv pointer, access function table
+                                 // => Creates new Java String object on heap (managed by GC)
+                                 // => Returns jstring reference to Java
 }
 */
 
 // Step 5: Compile native code
 // gcc -shared -fPIC -I${JAVA_HOME}/include -I${JAVA_HOME}/include/linux -o libnative_example.so NativeExample.c
+                                 // => gcc: GNU C compiler
+                                 // => -shared: create shared library (not executable)
+                                 // => -fPIC: Position Independent Code (required for shared libraries)
+                                 // => -I: include directories for jni.h and platform-specific headers
+                                 // => -o: output file name (libnative_example.so on Linux)
+                                 // => Platform-specific: .so (Linux), .dll (Windows), .dylib (macOS)
 
 // JNI type mappings
 // Java      -> C
+                                 // => JNI defines C types corresponding to Java primitives/objects
+                                 // => Ensures type safety across JNI boundary
 // boolean   -> jboolean
+                                 // => Java boolean (true/false) → C jboolean (unsigned 8-bit)
 // byte      -> jbyte
+                                 // => Java byte (8-bit signed) → C jbyte (int8_t)
 // char      -> jchar
+                                 // => Java char (16-bit Unicode) → C jchar (uint16_t)
 // short     -> jshort
+                                 // => Java short (16-bit signed) → C jshort (int16_t)
 // int       -> jint
+                                 // => Java int (32-bit signed) → C jint (int32_t)
 // long      -> jlong
+                                 // => Java long (64-bit signed) → C jlong (int64_t)
 // float     -> jfloat
+                                 // => Java float (32-bit IEEE 754) → C jfloat (float)
 // double    -> jdouble
+                                 // => Java double (64-bit IEEE 754) → C jdouble (double)
 // Object    -> jobject
+                                 // => Java Object reference → C jobject (opaque pointer, managed by JVM)
 // String    -> jstring
+                                 // => Java String → C jstring (subtype of jobject)
 // array     -> jarray
+                                 // => Java arrays → C jarray (subtypes: jintArray, jobjectArray, etc.)
 
 // Calling Java methods from C
 /*
@@ -3732,24 +4274,52 @@ if (error) {
 
 // Use cases for JNI
 // 1. Legacy system integration (existing C/C++ code)
+                                 // => Reuse existing C/C++ libraries without rewriting in Java
+                                 // => Example: integrating 20-year-old C banking system
 // 2. Hardware access (device drivers, system calls)
+                                 // => Direct hardware control not available in Java
+                                 // => Example: USB device drivers, GPIO pins (Raspberry Pi)
 // 3. Performance-critical operations (though JIT often matches C)
+                                 // => CPU-bound algorithms where C outperforms Java
+                                 // => Note: Modern JIT (HotSpot) often matches C performance
 // 4. Platform-specific features (Windows API, POSIX)
+                                 // => OS-specific APIs not in Java standard library
+                                 // => Example: Windows registry access, Linux epoll
 
 // Alternatives to JNI
 // 1. Java Native Access (JNA) - easier than JNI, no C code needed
+                                 // => JNA: call native libraries without writing C glue code
+                                 // => Slower than JNI but much easier to use
+                                 // => Example: JNA.invoke("libc.so", "strlen", string)
 // 2. Panama Foreign Function API (Java 19+) - modern replacement
+                                 // => Project Panama: modern, safe, fast foreign function interface
+                                 // => Replaces JNI with safer, easier API
+                                 // => Stable in Java 21+
 // 3. Pure Java implementations - often sufficient with modern JIT
+                                 // => Java performance improved significantly (JIT optimization)
+                                 // => Native code less necessary than 20 years ago
 
 // Performance considerations
 // - JNI calls have overhead (crossing JVM boundary)
+                                 // => JNI call overhead: ~10-50ns per call (context switch, parameter marshalling)
+                                 // => Significant for trivial operations (addition: JNI slower than Java)
 // - Use for computationally intensive operations, not trivial calls
+                                 // => Only use JNI when native work >> JNI overhead
+                                 // => Example: image processing (millions of pixels), not single arithmetic
 // - Batch operations to minimize crossings
+                                 // => Pass arrays instead of individual values (one crossing vs thousands)
+                                 // => Example: processArray(int[] data) better than loop calling processInt(int)
 
 // Memory management
 // - Java GC doesn't manage native memory
+                                 // => Native allocations (malloc, new) invisible to GC
+                                 // => Native memory leaks if not freed manually
 // - Must manually free native allocations
+                                 // => C code must call free() for every malloc()
+                                 // => JNI: use DeleteLocalRef to free JNI references
 // - Use try-finally or try-with-resources pattern
+                                 // => Ensures native resources freed even if exception thrown
+                                 // => Example: acquire native resource in try, free in finally
 
 // Example: Panama Foreign Function API (Java 19+, preview)
 /*
@@ -3786,164 +4356,263 @@ MicroProfile standardizes enterprise Java microservices. Specifications for REST
 ```java
 // MicroProfile specifications overview
 // - JAX-RS: RESTful web services
+                                 // => Standard Java REST API (part of Jakarta EE)
 // - Config: Externalized configuration
+                                 // => Environment variables, properties, cloud config
 // - Health: Health check endpoints
+                                 // => Kubernetes liveness/readiness probes
 // - Metrics: Application metrics
+                                 // => Prometheus-compatible metrics (counters, gauges, timers)
 // - Fault Tolerance: Circuit breaker, retry, bulkhead, timeout
+                                 // => Resilience patterns for microservices
 // - JWT Auth: JSON Web Token authentication
+                                 // => Stateless authentication for microservices
 // - OpenAPI: API documentation
+                                 // => Auto-generated API docs (Swagger/OpenAPI spec)
 // - Rest Client: Type-safe REST clients
+                                 // => Interface-based REST clients (like Feign)
 
 // JAX-RS - REST endpoints
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.*;        // => JAX-RS annotations: @Path, @GET, @POST, @PUT, @DELETE
+import javax.ws.rs.core.*;   // => Core classes: Response, MediaType
 
-@Path("/users")
+@Path("/users")              // => Base path for all methods in this class
+                                 // => Maps to /users endpoint
 @Produces(MediaType.APPLICATION_JSON)
+                                 // => All responses return JSON
 @Consumes(MediaType.APPLICATION_JSON)
-class UserResource {
-    @GET
+                                 // => All requests accept JSON
+class UserResource {         // => JAX-RS resource class (REST controller)
+    @GET                     // => HTTP GET method (retrieve resources)
     public Response getAllUsers() {
+                                 // => GET /users - returns all users
         List<User> users = userService.findAll();
+                                 // => Fetches users from service layer
         return Response.ok(users).build();
+                                 // => Returns HTTP 200 OK with users JSON
     }
 
-    @GET
-    @Path("/{id}")
+    @GET                     // => HTTP GET method
+    @Path("/{id}")           // => Path parameter: /users/123
+                                 // => {id} is placeholder for user ID
     public Response getUser(@PathParam("id") Long id) {
+                                 // => @PathParam extracts {id} from URL
+                                 // => Converts to Long automatically
         User user = userService.find(id);
+                                 // => Fetches user by ID
         return Response.ok(user).build();
+                                 // => Returns HTTP 200 OK with user JSON
     }
 
-    @POST
+    @POST                    // => HTTP POST method (create resource)
     public Response createUser(User user) {
+                                 // => POST /users - creates new user
+                                 // => User deserialized from JSON request body
         userService.create(user);
+                                 // => Persists user to database
         return Response.status(Response.Status.CREATED).entity(user).build();
+                                 // => Returns HTTP 201 Created with created user
     }
 
-    @PUT
-    @Path("/{id}")
+    @PUT                     // => HTTP PUT method (update resource)
+    @Path("/{id}")           // => PUT /users/123
     public Response updateUser(@PathParam("id") Long id, User user) {
+                                 // => Updates user with ID from URL path
         userService.update(id, user);
+                                 // => Updates user in database
         return Response.ok(user).build();
+                                 // => Returns HTTP 200 OK with updated user
     }
 
-    @DELETE
-    @Path("/{id}")
+    @DELETE                  // => HTTP DELETE method (delete resource)
+    @Path("/{id}")           // => DELETE /users/123
     public Response deleteUser(@PathParam("id") Long id) {
+                                 // => Deletes user with specified ID
         userService.delete(id);
+                                 // => Removes user from database
         return Response.noContent().build();
+                                 // => Returns HTTP 204 No Content (successful deletion)
     }
 }
 
 // MicroProfile Config - externalized configuration
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+                                 // => MicroProfile Config annotation for property injection
 
-@ApplicationScoped
+@ApplicationScoped           // => CDI scope: one instance per application
+                                 // => Shared across all requests (singleton-like)
 class ConfigExample {
-    @Inject
+    @Inject                  // => CDI dependency injection
     @ConfigProperty(name = "database.url")
+                                 // => Injects value from config property "database.url"
+                                 // => Checks system properties, env vars, config files
     String databaseUrl; // Injected from config source
+                                 // => databaseUrl = value from DATABASE_URL env var or database.url property
+                                 // => Example: "jdbc:postgresql://localhost:5432/mydb"
 
     @Inject
     @ConfigProperty(name = "database.timeout", defaultValue = "30")
-    int timeout;
+                                 // => Injects "database.timeout" property with default 30
+                                 // => Falls back to 30 if property not found
+    int timeout;             // => timeout = 30 (default) or configured value
 }
 
 // Config sources: system properties, environment variables, microprofile-config.properties
+                                 // => Config priority: system properties > env vars > config files
+                                 // => DATABASE_URL env var overrides database.url property
 
 // Health checks
 import org.eclipse.microprofile.health.*;
+                                 // => MicroProfile Health API for health check endpoints
 
-@Health
-@ApplicationScoped
+@Health                      // => Marks class as health check (deprecated, use @Liveness/@Readiness)
+@ApplicationScoped           // => One instance per application
 class DatabaseHealthCheck implements HealthCheck {
+                                 // => HealthCheck interface: single call() method
     @Override
     public HealthCheckResponse call() {
+                                 // => Called by health check endpoint (GET /health)
         boolean isHealthy = checkDatabaseConnection();
+                                 // => Checks if database connection is alive
         return HealthCheckResponse.named("database")
-            .state(isHealthy)
+                                 // => Health check name: "database"
+            .state(isHealthy)    // => UP if true, DOWN if false
             .withData("connection", "active")
-            .build();
+                                 // => Additional metadata in health response
+            .build();            // => Returns JSON: {"name":"database","state":"UP","data":{"connection":"active"}}
     }
 }
 
 // Liveness vs Readiness
 @Liveness // Pod should be restarted if fails
+                                 // => Liveness probe: checks if app is running
+                                 // => Kubernetes restarts pod if fails (app deadlocked/crashed)
 class LivenessCheck implements HealthCheck { /*...*/ }
+                                 // => GET /health/live - returns UP if app alive
 
 @Readiness // Pod should not receive traffic if fails
+                                 // => Readiness probe: checks if app can handle requests
+                                 // => Kubernetes stops sending traffic if fails (warming up, dependencies down)
 class ReadinessCheck implements HealthCheck { /*...*/ }
+                                 // => GET /health/ready - returns UP if ready for traffic
 
 // Metrics
 import org.eclipse.microprofile.metrics.annotation.*;
+                                 // => MicroProfile Metrics annotations
 
 @ApplicationScoped
 class MetricsExample {
     @Counted(name = "user_requests", description = "Number of user requests")
+                                 // => Counter metric: increments each time method called
+                                 // => Exposed as Prometheus metric: user_requests_total
     @Timed(name = "user_request_time", description = "Time to process user requests")
+                                 // => Timer metric: records execution duration
+                                 // => Exposes p50, p99, max, mean latencies
     public void processUser() {
         // Method execution counted and timed
+                                 // => Each call increments counter and records duration
+                                 // => Metrics available at GET /metrics (Prometheus format)
     }
 
     @Gauge(name = "active_users", unit = MetricUnits.NONE)
+                                 // => Gauge metric: current value (not cumulative)
+                                 // => Polled periodically, returns current active users
     public long getActiveUsers() {
         return userService.countActive();
+                                 // => Returns current count of active users
+                                 // => Gauge value = return value
     }
 }
 
 // Fault Tolerance
 import org.eclipse.microprofile.faultto tolerance.*;
+                                 // => MicroProfile Fault Tolerance for resilience patterns
 
 @ApplicationScoped
 class FaultToleranceExample {
     @Retry(maxRetries = 3, delay = 1000) // Retry up to 3 times, 1 second delay
+                                 // => Automatically retries on exception
+                                 // => maxRetries = 3: tries up to 4 times total (initial + 3 retries)
+                                 // => delay = 1000ms between retry attempts
     public String callExternalService() {
+                                 // => Calls external service with automatic retry
         return externalService.getData();
+                                 // => If fails, retries 3 times with 1 second delay
+                                 // => Total max time: ~3 seconds (3 retries × 1 second)
     }
 
     @CircuitBreaker(
         requestVolumeThreshold = 4,
-        failureRatio = 0.5,
-        delay = 5000
+                                 // => Minimum 4 requests before circuit opens
+                                 // => Circuit doesn't activate until 4 requests received
+        failureRatio = 0.5,      // => Opens if 50% of requests fail
+                                 // => Example: 2 of 4 requests fail → circuit opens
+        delay = 5000             // => Circuit stays open for 5 seconds
+                                 // => After 5 seconds, enters half-open state (allows 1 request)
     )
     public String callUnreliableService() {
         // Circuit opens if 50% of 4 requests fail
         // Opens for 5 seconds before half-open state
+                                 // => While open: immediately throws CircuitBreakerOpenException
+                                 // => Half-open: allows 1 request. Success → closes, failure → opens
         return unreliableService.getData();
+                                 // => Returns data if circuit closed/half-open and request succeeds
     }
 
     @Timeout(1000) // Timeout after 1 second
+                                 // => Throws TimeoutException if method exceeds 1000ms
+                                 // => Interrupts long-running operations
     @Fallback(fallbackMethod = "fallbackMethod")
+                                 // => Calls fallbackMethod if timeout or exception occurs
+                                 // => fallbackMethod must have same signature
     public String callSlowService() {
+                                 // => Calls service with 1 second timeout
         return slowService.getData();
+                                 // => If > 1 second, throws TimeoutException → calls fallbackMethod
     }
 
     public String fallbackMethod() {
-        return "Fallback data";
+                                 // => Fallback method (same signature as callSlowService)
+        return "Fallback data"; // => Returns default data when main method fails
+                                 // => Called on timeout, exception, or circuit breaker open
     }
 
     @Bulkhead(value = 5, waitingTaskQueue = 10)
+                                 // => Limits concurrent executions (semaphore pattern)
+                                 // => value = 5: max 5 concurrent executions
+                                 // => waitingTaskQueue = 10: max 10 waiting requests
     public String limitedConcurrency() {
         // Max 5 concurrent executions, 10 waiting
+                                 // => 6th concurrent request waits in queue (up to 10)
+                                 // => 16th concurrent request immediately rejected (BulkheadException)
         return service.getData();
+                                 // => Returns data if semaphore acquired (not at limit)
     }
 }
 
 // JWT Authentication
 import org.eclipse.microprofile.jwt.*;
+                                 // => MicroProfile JWT for stateless authentication
 
 @ApplicationScoped
 class SecureResource {
     @Inject
-    JsonWebToken jwt;
+    JsonWebToken jwt;            // => Injected JWT token from HTTP Authorization header
+                                 // => Header: "Authorization: Bearer <token>"
+                                 // => JWT contains claims: username, roles, expiration
 
     @GET
-    @Path("/secure")
-    @RolesAllowed("user")
+    @Path("/secure")             // => GET /secure endpoint
+    @RolesAllowed("user")        // => Requires "user" role in JWT
+                                 // => Returns HTTP 403 Forbidden if role not present
     public String secureEndpoint() {
+                                 // => Secured endpoint requiring JWT with "user" role
         String username = jwt.getName();
+                                 // => Extracts username from JWT "sub" (subject) claim
+                                 // => Example: "john.doe"
         return "Hello, " + username;
+                                 // => Returns personalized greeting with username
+                                 // => Example: "Hello, john.doe"
     }
 }
 
@@ -4012,45 +4681,76 @@ graph TD
 ```java
 // Reactive Streams API (Java 9+ Flow API)
 import java.util.concurrent.Flow.*;
+                                 // => Java 9+ standard Reactive Streams API
+                                 // => Classes: Publisher, Subscriber, Subscription, Processor
 
 // Publisher interface
-interface Publisher<T> {
+interface Publisher<T> {        // => Source of data (emits elements)
+                                 // => Generic type T: type of emitted elements
     void subscribe(Subscriber<? super T> subscriber);
+                                 // => Connects subscriber to this publisher
+                                 // => Triggers data flow when subscriber ready
 }
 
 // Subscriber interface
-interface Subscriber<T> {
+interface Subscriber<T> {        // => Consumer of data (receives elements)
     void onSubscribe(Subscription subscription);
-    void onNext(T item);
+                                 // => Called first when subscription starts
+                                 // => Receives Subscription for backpressure control
+    void onNext(T item);         // => Called for each emitted item
+                                 // => Receives one element at a time
     void onError(Throwable throwable);
-    void onComplete();
+                                 // => Called on error (terminal event)
+                                 // => No more onNext calls after onError
+    void onComplete();           // => Called when publisher finished (terminal event)
+                                 // => No more onNext calls after onComplete
 }
 
 // Subscription interface
-interface Subscription {
+interface Subscription {         // => Controls data flow between Publisher and Subscriber
+                                 // => Implements backpressure mechanism
     void request(long n); // Request n items (backpressure)
+                                 // => Subscriber requests n items from Publisher
+                                 // => Publisher sends ≤ n items (respects backpressure)
     void cancel(); // Cancel subscription
+                                 // => Subscriber cancels subscription (no more items)
+                                 // => Publisher stops emitting
 }
 
 // Simple Publisher implementation
 class SimplePublisher implements Publisher<Integer> {
+                                 // => Concrete Publisher emitting Integer values
     @Override
     public void subscribe(Subscriber<? super Integer> subscriber) {
+                                 // => Called when subscriber subscribes
         subscriber.onSubscribe(new Subscription() {
+                                 // => Creates Subscription instance (anonymous inner class)
+                                 // => Sends Subscription to subscriber
             private boolean cancelled = false;
+                                 // => Tracks cancellation state
 
             @Override
             public void request(long n) {
+                                 // => Called when subscriber requests n items
+                                 // => n: number of items requested (backpressure signal)
                 if (cancelled) return;
+                                 // => Don't emit if subscription cancelled
                 for (int i = 0; i < n; i++) {
+                                 // => Emits n integers (0 to n-1)
                     subscriber.onNext(i);
+                                 // => Calls subscriber's onNext for each item
+                                 // => Pushes item to subscriber
                 }
                 subscriber.onComplete();
+                                 // => Signals completion (no more items)
+                                 // => Terminal event
             }
 
             @Override
             public void cancel() {
+                                 // => Called when subscriber cancels
                 cancelled = true;
+                                 // => Sets flag to stop emitting items
             }
         });
     }
@@ -4058,32 +4758,46 @@ class SimplePublisher implements Publisher<Integer> {
 
 // Simple Subscriber implementation
 class SimpleSubscriber implements Subscriber<Integer> {
+                                 // => Concrete Subscriber consuming Integer values
     private Subscription subscription;
+                                 // => Stores Subscription for requesting items
 
     @Override
     public void onSubscribe(Subscription subscription) {
+                                 // => Called first when subscription starts
         this.subscription = subscription;
+                                 // => Saves Subscription for later use
         subscription.request(5); // Request 5 items (backpressure control)
+                                 // => Requests 5 items from Publisher
+                                 // => Backpressure: subscriber controls flow (pulls data)
     }
 
     @Override
     public void onNext(Integer item) {
+                                 // => Called for each item emitted by Publisher
         System.out.println("Received: " + item);
+                                 // => Output: "Received: 0", "Received: 1", ..., "Received: 4"
     }
 
     @Override
     public void onError(Throwable throwable) {
+                                 // => Called if Publisher errors
         System.err.println("Error: " + throwable.getMessage());
+                                 // => Logs error message
     }
 
     @Override
-    public void onComplete() {
+    public void onComplete() {   // => Called when Publisher completes
         System.out.println("Complete");
+                                 // => Output: "Complete"
     }
 }
 
 SimplePublisher publisher = new SimplePublisher();
+                                 // => Creates Publisher instance
 publisher.subscribe(new SimpleSubscriber());
+                                 // => Subscribes SimpleSubscriber to Publisher
+                                 // => Triggers onSubscribe → request(5) → onNext(0..4) → onComplete
 
 // Project Reactor - practical reactive programming (external library)
 /*
@@ -4142,31 +4856,57 @@ hot.connect(); // Start emitting
 // Reactive vs Imperative comparison
 // Imperative (blocking)
 List<String> results = new ArrayList<>();
-for (String url : urls) {
+                                 // => Mutable list to collect results
+for (String url : urls) {        // => Sequential loop (one URL at a time)
+                                 // => Processes URLs serially (not concurrent)
     String data = httpClient.get(url); // Blocks
-    results.add(data);
+                                 // => Blocks thread until HTTP request completes
+                                 // => Thread idle during network I/O (inefficient)
+                                 // => 100 URLs × 100ms each = 10 seconds total
+    results.add(data);           // => Adds result to list
 }
 
 // Reactive (non-blocking)
 /*
-Flux.fromIterable(urls)
+Flux.fromIterable(urls)          // => Creates Flux from URL list
+                                 // => Emits each URL asynchronously
     .flatMap(url -> webClient.get(url)) // Non-blocking, concurrent
-    .collectList()
+                                 // => Concurrent HTTP requests (non-blocking)
+                                 // => Thread not blocked during I/O
+                                 // => 100 URLs concurrent = ~100ms total (100x faster)
+    .collectList()               // => Collects all results into List
+                                 // => Returns Mono<List<String>>
     .subscribe(results -> {
         // All results ready
+                                 // => Callback when all requests complete
+                                 // => results: List<String> with all responses
     });
 */
 
 // Use cases for Reactive Streams
 // 1. High-throughput systems (millions of requests/sec)
+                                 // => Non-blocking I/O scales better than threads
+                                 // => Example: WebFlux handles 100k+ concurrent requests
 // 2. Non-blocking I/O (database, HTTP, message queues)
+                                 // => I/O-bound workloads benefit from non-blocking
+                                 // => Reactive drivers: R2DBC (database), WebClient (HTTP)
 // 3. Event streaming (real-time data pipelines)
+                                 // => Stream processing: Kafka → transform → database
+                                 // => Continuous data flow with backpressure
 // 4. Backpressure handling (prevent overwhelming slow consumers)
+                                 // => Consumer controls rate (request(n))
+                                 // => Prevents OutOfMemoryError from fast producers
 
 // When NOT to use reactive
 // 1. Simple CRUD applications (overkill, complexity not justified)
+                                 // => Traditional blocking I/O sufficient for low traffic
+                                 // => Reactive adds complexity without benefit
 // 2. CPU-bound operations (blocking acceptable)
+                                 // => CPU-bound: reactive provides no benefit (no I/O wait)
+                                 // => Example: heavy computation, image processing
 // 3. Team unfamiliar with reactive paradigm
+                                 // => Steep learning curve (operators, backpressure, debugging)
+                                 // => Training required before adoption
 ```
 
 **Key Takeaway**: Reactive Streams enable async data processing with backpressure. Publisher emits, Subscriber consumes, Subscription controls flow with `request(n)`. Project Reactor provides Flux (0-N) and Mono (0-1) with rich operators. Ideal for high-throughput, non-blocking I/O. Backpressure prevents overwhelming slow consumers.
