@@ -33,7 +33,7 @@ graph TD
 
 **Code**:
 
-````sql
+```sql
 CREATE DATABASE example_31;
 \c example_31;
 -- => Statement execution completes
@@ -52,6 +52,7 @@ VALUES
     ('Charlie', 3000.00, '2025-12-23'),
     ('Bob', 150.00, '2025-12-24');
     -- => Statement execution completes
+
 -- Basic CTE
 WITH high_value_orders AS (
     SELECT customer, total, order_date
@@ -76,6 +77,7 @@ GROUP BY customer;
 -- => Charlie total: 3000.00
 -- => Returns 2 rows: Alice (2300.00), Charlie (3000.00)
 -- => Bob excluded (no high-value orders)
+
 -- Multiple CTEs
 WITH
     order_stats AS (
@@ -121,6 +123,7 @@ LEFT JOIN high_spenders hs ON os.customer = hs.customer;
 -- =>   Bob doesn't join (NULL in hs) → Regular tier
 -- =>   Charlie joins with high_spenders → VIP tier
 -- => Returns 3 rows with customer_tier classification
+
 -- CTE with aggregation and filtering
 WITH monthly_revenue AS (
     SELECT
@@ -150,11 +153,12 @@ FROM monthly_revenue;
 -- => First month: LAG returns NULL (no previous month)
 -- => Subsequent months: LAG returns previous month's revenue
 -- => revenue_change = current_month - previous_month
--- => Shows month-over-month growth/decline```
+-- => Shows month-over-month growth/decline
+```
 
 **Key Takeaway**: CTEs improve readability by naming complex subqueries - use them to break down complex queries into logical steps. Multiple CTEs can reference earlier CTEs, creating a pipeline of transformations.
 
-**Why It Matters**: CTEs make complex queries maintainable by breaking them into named logical steps that document query intent, reducing the "query archaeology" time required when modifying analytics code months after it was written. PostgreSQL's CTE optimizer materializes CTE results, which can improve or hurt performance depending on whether result reuse outweighs materialization cost, making CTE placement a performance tuning decision. The ability to chain CTEs (WITH cte1 AS (...), cte2 AS (SELECT \* FROM cte1)) enables incremental query development where each step can be tested independently before combining into the final query.
+**Why It Matters**: CTEs make complex queries maintainable by breaking them into named logical steps that document query intent, reducing the "query archaeology" time required when modifying analytics code months after it was written. PostgreSQL's CTE optimizer materializes CTE results, which can improve or hurt performance depending on whether result reuse outweighs materialization cost, making CTE placement a performance tuning decision.
 
 ---
 
@@ -187,11 +191,11 @@ graph TD
     style E fill:#CA9161,stroke:#000,color:#fff
     style F fill:#CA9161,stroke:#000,color:#fff
     style G fill:#CA9161,stroke:#000,color:#fff
-````
+```
 
 **Code**:
 
-````sql
+```sql
 CREATE DATABASE example_32;
 \c example_32;
 -- => Statement execution completes
@@ -210,6 +214,7 @@ VALUES
     ('Diana', 'South', 6000),  -- => Tied with Charlie
     ('Eve', 'North', 8000);
     -- => Statement execution completes
+
 -- ROW_NUMBER: sequential numbering (no ties)
 SELECT
     salesperson,
@@ -221,6 +226,7 @@ FROM sales;
 -- => Specifies source table for query
 -- => Eve (1), Bob (2), Charlie (3), Diana (4), Alice (5)
 -- => Diana gets 4 even though tied with Charlie
+
 -- RANK: skips numbers after ties
 SELECT
     salesperson,
@@ -232,6 +238,7 @@ FROM sales;
 -- => Specifies source table for query
 -- => Eve (1), Bob (2), Charlie (3), Diana (3), Alice (5)
 -- => Both Charlie and Diana get 3, next is 5 (skips 4)
+
 -- DENSE_RANK: doesn't skip numbers after ties
 SELECT
     salesperson,
@@ -243,6 +250,7 @@ FROM sales;
 -- => Specifies source table for query
 -- => Eve (1), Bob (2), Charlie (3), Diana (3), Alice (4)
 -- => After tie at 3, next is 4 (no skip)
+
 -- Window function with PARTITION BY
 SELECT
     salesperson,
@@ -255,6 +263,7 @@ FROM sales;
 -- => Separate ranking per region
 -- => North: Eve (1), Bob (2), Alice (3)
 -- => South: Charlie (1), Diana (2)
+
 -- Find top salesperson per region
 WITH ranked_sales AS (
     SELECT
@@ -271,11 +280,12 @@ FROM ranked_sales
 -- => Specifies source table for query
 WHERE rank = 1;
 -- => Applies filter to rows
--- => Eve (North, 8000), Charlie (South, 6000)```
+-- => Eve (North, 8000), Charlie (South, 6000)
+```
 
 **Key Takeaway**: Window functions compute across row sets without collapsing - ROW_NUMBER for sequential numbering, RANK for competitive ranking (ties skip), DENSE_RANK for no skipping. PARTITION BY creates independent windows per group.
 
-**Why It Matters**: Window functions eliminate the need for complex self-joins and correlated subqueries that plague MySQL queries, reducing execution time from minutes to seconds on million-row datasets. Companies like Stripe use window functions to calculate running balances across billions of transactions without loading entire datasets into memory. PostgreSQL's window function implementation is SQL standard-compliant (unlike MySQL's limited support before 8.0), enabling portable analytics code across database systems.
+**Why It Matters**: Window functions eliminate the need for complex self-joins and correlated subqueries that plague MySQL queries, reducing execution time from minutes to seconds on million-row datasets. PostgreSQL's window function implementation is SQL standard-compliant (unlike MySQL's limited support before 8.0), enabling portable analytics code across database systems.
 
 ---
 
@@ -306,11 +316,11 @@ graph TD
     style D fill:#029E73,stroke:#000,color:#fff
     style E fill:#CC78BC,stroke:#000,color:#fff
     style F fill:#CA9161,stroke:#000,color:#fff
-````
+```
 
 **Code**:
 
-````sql
+```sql
 CREATE DATABASE example_33;
 \c example_33;
 -- => Statement execution completes
@@ -331,6 +341,7 @@ VALUES
     ('B', 'Transport', 45.00, '2025-12-21'),
     ('B', 'Food', 80.00, '2025-12-22');
     -- => Statement execution completes
+
 -- Running total per account
 SELECT
     account,
@@ -350,6 +361,7 @@ ORDER BY account, transaction_date;
 -- => Sorts query results
 -- => Account A: 50, 125, 155 (cumulative)
 -- => Account B: 60, 105, 185 (independent cumulative)
+
 -- Running total per account AND category
 SELECT
     account,
@@ -368,6 +380,7 @@ FROM transactions
 ORDER BY account, category, transaction_date;
 -- => Sorts query results
 -- => Separate running totals for A-Food, A-Transport, B-Food, B-Transport
+
 -- Average per partition
 SELECT
     account,
@@ -380,6 +393,7 @@ SELECT
 FROM transactions;
 -- => Specifies source table for query
 -- => Shows average spending per account and per category
+
 -- First and last values in partition
 SELECT
     account,
@@ -402,11 +416,12 @@ FROM transactions
 -- => Specifies source table for query
 ORDER BY account, transaction_date;
 -- => Sorts query results
--- => Shows first and last transaction amount per account```
+-- => Shows first and last transaction amount per account
+```
 
 **Key Takeaway**: PARTITION BY creates independent calculation windows - use it for running totals per group, rankings within categories, or comparative analytics. Combine with ROWS/RANGE clauses to control window frame boundaries.
 
-**Why It Matters**: Window function PARTITION BY enables per-group analytics (running totals per customer, rankings per category) without the performance penalty of grouping and rejoining that characterizes MySQL's pre-8.0 analytics workarounds. The ROWS/RANGE window frame controls enable precise calculations like "sum of last 7 days" or "average of previous 3 rows" essential for moving averages in financial dashboards. PostgreSQL's efficient window function implementation processes billion-row datasets with complex windowing operations in seconds compared to minutes required for equivalent self-join approaches.
+**Why It Matters**: Window function PARTITION BY enables per-group analytics (running totals per customer, rankings per category) without the performance penalty of grouping and rejoining that characterizes MySQL's pre-8.0 analytics workarounds. The ROWS/RANGE window frame controls enable precise calculations like "sum of last 7 days" or "average of previous 3 rows" essential for moving averages in financial dashboards.
 
 ---
 
@@ -445,6 +460,7 @@ VALUES
     -- => Row data inserted
     (7, 'Employee Grace', 5);
     -- => Statement execution completes
+
 -- Find all reports under CEO (all employees)
 WITH RECURSIVE org_chart AS (
     -- Base case: start with CEO
@@ -477,6 +493,7 @@ ORDER BY level, name;
 -- => Sorts query results
 -- => Sorts result set
 -- => Shows org hierarchy with level and path from CEO
+
 -- Generate series (numbers 1 to 10)
 WITH RECURSIVE series AS (
     SELECT 1 AS n  -- => Base case
@@ -490,6 +507,7 @@ SELECT n FROM series;
 -- => Specifies source table for query
 -- => Query executes and returns result set
 -- => 1, 2, 3, ..., 10
+
 -- Find all ancestors of an employee
 WITH RECURSIVE ancestors AS (
     -- Base case: start with specific employee
@@ -508,11 +526,12 @@ WITH RECURSIVE ancestors AS (
 SELECT name FROM ancestors;
 -- => Specifies source table for query
 -- => Query executes and returns result set
--- => Frank, Manager Diana, VP Bob, CEO Alice (upward traversal)```
+-- => Frank, Manager Diana, VP Bob, CEO Alice (upward traversal)
+```
 
 **Key Takeaway**: Recursive CTEs solve hierarchical problems - base case provides starting rows, recursive case references the CTE to traverse relationships. Always include termination conditions to prevent infinite loops.
 
-**Why It Matters**: Recursive CTEs enable hierarchical queries (org charts with unlimited depth, bill of materials with nested components) directly in SQL without application-level recursion that requires O(N) round-trips to the database. PostgreSQL's recursive CTE implementation efficiently traverses graphs and trees using depth-first or breadth-first strategies, making it suitable for social network traversal (friends-of-friends) and dependency resolution (package managers). The mandatory termination condition prevents infinite loops that would crash application-layer recursion, while cycle detection (checking if rows repeat) enables safe traversal of cyclic graphs like circular dependencies.
+**Why It Matters**: Recursive CTEs enable hierarchical queries (org charts with unlimited depth, bill of materials with nested components) directly in SQL without application-level recursion that requires O(N) round-trips to the database. PostgreSQL's recursive CTE implementation efficiently traverses graphs and trees using depth-first or breadth-first strategies, making it suitable for social network traversal (friends-of-friends) and dependency resolution (package managers).
 
 ---
 
@@ -542,6 +561,7 @@ VALUES ('alice@example.com'), ('bob@example.com'), ('charlie@example.com');
 INSERT INTO customers_2025 (email)
 VALUES ('bob@example.com'), ('charlie@example.com'), ('diana@example.com');
 -- => Statement execution completes
+
 -- UNION: combine results, remove duplicates
 SELECT email FROM customers_2024
 -- => Specifies source table for query
@@ -550,6 +570,7 @@ SELECT email FROM customers_2025;
 -- => Specifies source table for query
 -- => alice@example.com, bob@example.com, charlie@example.com, diana@example.com
 -- => Duplicates removed (bob, charlie appear in both)
+
 -- UNION ALL: combine results, keep duplicates
 SELECT email FROM customers_2024
 -- => Specifies source table for query
@@ -557,6 +578,7 @@ UNION ALL
 SELECT email FROM customers_2025;
 -- => Specifies source table for query
 -- => 6 rows (bob and charlie appear twice)
+
 -- INTERSECT: rows in both queries
 SELECT email FROM customers_2024
 -- => Specifies source table for query
@@ -564,6 +586,7 @@ INTERSECT
 SELECT email FROM customers_2025;
 -- => Specifies source table for query
 -- => bob@example.com, charlie@example.com (customers in both years)
+
 -- EXCEPT: rows in first query but not second
 SELECT email FROM customers_2024
 -- => Specifies source table for query
@@ -577,6 +600,7 @@ EXCEPT
 SELECT email FROM customers_2024;
 -- => Specifies source table for query
 -- => diana@example.com (new customer in 2025)
+
 -- Complex example with ORDER BY
 (SELECT email, '2024' AS year FROM customers_2024)
 -- => Specifies source table for query
@@ -585,11 +609,12 @@ UNION
 -- => Specifies source table for query
 ORDER BY email, year;
 -- => Sorts query results
--- => Combined results sorted by email then year```
+-- => Combined results sorted by email then year
+```
 
 **Key Takeaway**: UNION combines queries (removes duplicates), UNION ALL keeps duplicates, INTERSECT finds common rows, EXCEPT finds differences. Queries must have same number of columns with compatible types. Use ORDER BY after set operations to sort final results.
 
-**Why It Matters**: UNION ALL outperforms UNION by 50-90% when duplicates are acceptable because it skips the deduplication step, making it essential for combining large result sets like multi-table aggregations across sharded databases. INTERSECT and EXCEPT enable set-based queries (find users in both premium and trial groups, find products with sales but no inventory) that would require complex joins and filtering, improving query readability. Set operations enable progressive query construction where different filtering/sorting strategies are applied to the same base data and combined, making A/B test result analysis and multi-source data reconciliation queries simpler.
+**Why It Matters**: UNION ALL outperforms UNION by 50-90% when duplicates are acceptable because it skips the deduplication step, making it essential for combining large result sets like multi-table aggregations across sharded databases. INTERSECT and EXCEPT enable set-based queries (find users in both premium and trial groups, find products with sales but no inventory) that would require complex joins and filtering, improving query readability.
 
 ---
 
@@ -624,11 +649,11 @@ graph TD
     style E fill:#029E73,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
     style G fill:#CC78BC,stroke:#000,color:#fff
-````
+```
 
 **Code**:
 
-````sql
+```sql
 CREATE DATABASE example_36;
 \c example_36;
 -- => Statement execution completes
@@ -640,6 +665,7 @@ CREATE TABLE products (
     created_at TIMESTAMP DEFAULT NOW()
 );
 -- => Statement execution completes
+
 -- Insert test data
 INSERT INTO products (name, category, price)
 SELECT
@@ -652,6 +678,7 @@ SELECT
     (random() * 1000)::DECIMAL(10, 2)
 FROM generate_series(1, 10000);
 -- => Specifies source table for query
+
 -- Query without index (slow on large tables)
 EXPLAIN ANALYZE
 SELECT * FROM products
@@ -659,9 +686,11 @@ SELECT * FROM products
 WHERE category = 'Electronics';
 -- => Applies filter to rows
 -- => Seq Scan (sequential scan through entire table)
+
 -- Create B-tree index
 CREATE INDEX idx_products_category ON products(category);
 -- => Creates index on category column
+
 -- Same query with index (fast)
 EXPLAIN ANALYZE
 SELECT * FROM products
@@ -669,6 +698,7 @@ SELECT * FROM products
 WHERE category = 'Electronics';
 -- => Applies filter to rows
 -- => Index Scan using idx_products_category (much faster)
+
 -- Index helps with sorting
 EXPLAIN ANALYZE
 SELECT name, price
@@ -690,6 +720,7 @@ ORDER BY price DESC
 LIMIT 10;
 -- => Restricts number of rows returned
 -- => Index Scan using idx_products_price (avoids full table sort)
+
 -- List all indexes on table
 SELECT indexname, indexdef
 FROM pg_indexes
@@ -697,13 +728,15 @@ FROM pg_indexes
 WHERE tablename = 'products';
 -- => Applies filter to rows
 -- => Shows all indexes including primary key
+
 -- Drop index
 DROP INDEX idx_products_category;
--- => Removes index (queries slower but writes faster)```
+-- => Removes index (queries slower but writes faster)
+```
 
 **Key Takeaway**: B-tree indexes accelerate lookups and range queries - create them on columns frequently used in WHERE, JOIN, and ORDER BY. Primary keys automatically get indexes. Too many indexes slow down writes (INSERT/UPDATE/DELETE).
 
-**Why It Matters**: B-tree indexes reduce query time from O(N) sequential scans to O(log N) index lookups, making the difference between 10-second and 10-millisecond queries on million-row tables used by companies like Shopify. Automatic primary key indexing prevents developers from forgetting to index foreign key columns, a common source of performance problems in MySQL databases where foreign keys don't automatically create indexes. However, each additional index increases INSERT/UPDATE/DELETE time by 10-30% as indexes must be maintained, requiring careful analysis of query patterns versus write performance when deciding which columns to index.
+**Why It Matters**: B-tree indexes reduce query time from O(N) sequential scans to O(log N) index lookups, making the difference between 10-second and 10-millisecond queries on million-row tables used by companies like Shopify. Automatic primary key indexing prevents developers from forgetting to index foreign key columns, a common source of performance problems in MySQL databases where foreign keys don't automatically create indexes.
 
 ---
 
@@ -725,6 +758,7 @@ CREATE TABLE users (
     deleted_at TIMESTAMP
 );
 -- => Statement execution completes
+
 -- Create unique index on username
 CREATE UNIQUE INDEX idx_users_username ON users(username);
 -- => Enforces username uniqueness
@@ -740,6 +774,7 @@ VALUES ('alice', 'alice2@example.com');
 -- => Statement execution completes
 -- => Row data values follow
 -- => ERROR: duplicate key violates unique constraint "idx_users_username"
+
 -- Partial unique index (conditional uniqueness)
 DROP INDEX idx_users_username;
 CREATE UNIQUE INDEX idx_users_username_active
@@ -764,6 +799,7 @@ VALUES ('alice', 'alice3@example.com');
 -- => Statement execution completes
 -- => Row data values follow
 -- => ERROR: duplicate active username
+
 -- Composite unique index
 CREATE TABLE products (
     name VARCHAR(200),
@@ -785,11 +821,12 @@ INSERT INTO products (name, version)
 VALUES ('PostgreSQL', '16');
 -- => Statement execution completes
 -- => Row data values follow
--- => ERROR: duplicate combination```
+-- => ERROR: duplicate combination
+```
 
 **Key Takeaway**: Unique indexes enforce uniqueness constraints - use them for business keys (usernames, emails, codes). Partial unique indexes with WHERE clauses enable conditional uniqueness (active records only). Composite unique indexes enforce uniqueness on column combinations.
 
-**Why It Matters**: Unique indexes provide both data integrity enforcement and query performance optimization in a single database object, eliminating the need for separate constraint checks and index creation. Partial unique indexes enable business rules like "email must be unique for active users only" directly in the database schema, preventing the race conditions that plague application-layer uniqueness checks in concurrent environments. The automatic index creation when declaring UNIQUE constraints means developers get performance benefits without explicitly thinking about indexing, though understanding this behavior is critical when analyzing query performance.
+**Why It Matters**: Unique indexes provide both data integrity enforcement and query performance optimization in a single database object, eliminating the need for separate constraint checks and index creation. Partial unique indexes enable business rules like "email must be unique for active users only" directly in the database schema, preventing the race conditions that plague application-layer uniqueness checks in concurrent environments.
 
 ---
 
@@ -822,11 +859,11 @@ graph TD
     style E fill:#029E73,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
     style G fill:#CA9161,stroke:#000,color:#fff
-````
+```
 
 **Code**:
 
-````sql
+```sql
 CREATE DATABASE example_38;
 \c example_38;
 -- => Statement execution completes
@@ -837,6 +874,7 @@ CREATE TABLE orders (
     created_at TIMESTAMP DEFAULT NOW()
 );
 -- => Statement execution completes
+
 -- Insert test data
 INSERT INTO orders (customer_id, status, created_at)
 SELECT
@@ -849,6 +887,7 @@ SELECT
     NOW() - (random() * 365 || ' days')::INTERVAL
 FROM generate_series(1, 10000);
 -- => Specifies source table for query
+
 -- Common query pattern
 EXPLAIN ANALYZE
 SELECT * FROM orders
@@ -856,6 +895,7 @@ SELECT * FROM orders
 WHERE customer_id = 42 AND status = 'pending';
 -- => Applies filter to rows
 -- => Sequential Scan (no index yet)
+
 -- Create multi-column index
 CREATE INDEX idx_orders_customer_status
 ON orders(customer_id, status);
@@ -867,6 +907,7 @@ SELECT * FROM orders
 WHERE customer_id = 42 AND status = 'pending';
 -- => Applies filter to rows
 -- => Index Scan using idx_orders_customer_status (fast)
+
 -- Query using only first column (uses index)
 EXPLAIN ANALYZE
 SELECT * FROM orders
@@ -874,6 +915,7 @@ SELECT * FROM orders
 WHERE customer_id = 42;
 -- => Applies filter to rows
 -- => Index Scan (uses index, even without status filter)
+
 -- Query using only second column (doesn't use index efficiently)
 EXPLAIN ANALYZE
 SELECT * FROM orders
@@ -881,6 +923,7 @@ SELECT * FROM orders
 WHERE status = 'pending';
 -- => Applies filter to rows
 -- => Seq Scan (cannot use index starting from middle)
+
 -- Create separate index for status-only queries
 CREATE INDEX idx_orders_status ON orders(status);
 EXPLAIN ANALYZE
@@ -889,10 +932,12 @@ SELECT * FROM orders
 WHERE status = 'pending';
 -- => Applies filter to rows
 -- => Index Scan using idx_orders_status
+
 -- Three-column index
 CREATE INDEX idx_orders_customer_status_date
 ON orders(customer_id, status, created_at);
 -- => Statement execution completes
+
 -- Queries benefiting from three-column index
 EXPLAIN ANALYZE
 SELECT * FROM orders
@@ -902,11 +947,12 @@ WHERE customer_id = 42
   AND status = 'pending'
   AND created_at > NOW() - INTERVAL '30 days';
   -- => Statement execution completes
--- => Uses idx_orders_customer_status_date efficiently```
+-- => Uses idx_orders_customer_status_date efficiently
+```
 
 **Key Takeaway**: Multi-column indexes speed up queries filtering on multiple columns - order matters (leftmost columns required). Query `WHERE customer_id = X AND status = Y` uses index on (customer_id, status), but `WHERE status = Y` alone doesn't. Create separate indexes for different query patterns.
 
-**Why It Matters**: Multi-column index column order determines query optimization effectiveness, with leftmost column selectivity being critical - an index on (customer_id, status) cannot be used for queries filtering only on status, requiring duplicate indexes that increase storage and write overhead. PostgreSQL's B-tree multi-column indexes enable covering index optimizations where all query columns exist in the index, eliminating table lookups and achieving 10-100x speedups on analytical queries. The leftmost-prefix rule means careful analysis of query patterns is essential before creating multi-column indexes, as incorrect column ordering can render expensive indexes completely unused.
+**Why It Matters**: Multi-column index column order determines query optimization effectiveness, with leftmost column selectivity being critical - an index on (customer_id, status) cannot be used for queries filtering only on status, requiring duplicate indexes that increase storage and write overhead. PostgreSQL's B-tree multi-column indexes enable covering index optimizations where all query columns exist in the index, eliminating table lookups and achieving 10-100x speedups on analytical queries.
 
 ---
 
@@ -944,6 +990,7 @@ SELECT
     NOW() - (random() * 365 || ' days')::INTERVAL
 FROM generate_series(1, 10000);
 -- => Specifies source table for query
+
 -- Partial index for active orders only
 CREATE INDEX idx_orders_pending
 -- => Creates index idx_orders_pending for faster queries
@@ -960,6 +1007,7 @@ WHERE customer_id = 42 AND status = 'pending';
 -- => Applies filter to rows
 -- => Filter condition for query
 -- => Uses idx_orders_pending
+
 -- Partial index for high-value orders
 CREATE INDEX idx_orders_high_value
 -- => Creates index idx_orders_high_value for faster queries
@@ -981,6 +1029,7 @@ ORDER BY created_at DESC
 LIMIT 10;
 -- => Restricts number of rows returned
 -- => Uses idx_orders_high_value
+
 -- Partial index for recent orders
 CREATE INDEX idx_orders_recent
 -- => Creates index idx_orders_recent for faster queries
@@ -1001,6 +1050,7 @@ GROUP BY customer_id;
 -- => Aggregates rows by specified columns
 -- => Groups rows for aggregation
 -- => May use idx_orders_recent
+
 -- Compare index sizes
 SELECT
     indexname,
@@ -1011,11 +1061,12 @@ FROM pg_indexes
 WHERE tablename = 'orders';
 -- => Applies filter to rows
 -- => Filter condition for query
--- => Partial indexes smaller than full indexes```
+-- => Partial indexes smaller than full indexes
+```
 
 **Key Takeaway**: Partial indexes with WHERE clauses index subsets of rows - use them for queries frequently filtering on specific values (pending orders, active users, recent records). Smaller indexes mean faster searches and less storage.
 
-**Why It Matters**: Partial indexes reduce index size by 70-95% when indexing frequently queried subsets (active records, pending transactions), making index scans faster and reducing storage costs at scale where companies like Uber index billions of recent trips without indexing years of historical data. The WHERE clause in partial indexes enables business logic enforcement (unique email for active users only) directly in index definitions, preventing application-layer race conditions. PostgreSQL's partial index feature has no equivalent in MySQL, making it a unique optimization technique that combines storage efficiency with query performance improvements.
+**Why It Matters**: The WHERE clause in partial indexes enables business logic enforcement (unique email for active users only) directly in index definitions, preventing application-layer race conditions. PostgreSQL's partial index feature has no equivalent in MySQL, making it a unique optimization technique that combines storage efficiency with query performance improvements.
 
 ---
 
@@ -1042,11 +1093,11 @@ graph TD
     style C fill:#029E73,stroke:#000,color:#fff
     style D fill:#CC78BC,stroke:#000,color:#fff
     style E fill:#CA9161,stroke:#000,color:#fff
-````
+```
 
 **Code**:
 
-````sql
+```sql
 CREATE DATABASE example_40;
 \c example_40;
 -- => Statement execution completes
@@ -1068,6 +1119,7 @@ SELECT
     (random() * 1000)::DECIMAL(10, 2)
 FROM generate_series(1, 10000);
 -- => Specifies source table for query
+
 -- EXPLAIN shows execution plan without running query
 EXPLAIN
 SELECT * FROM products
@@ -1077,6 +1129,7 @@ WHERE category = 'Electronics' AND price > 500;
 -- => Shows: Seq Scan on products
 -- => Filter: ((category = 'Electronics') AND (price > 500))
 -- => Cost estimate (not actual timing)
+
 -- EXPLAIN ANALYZE executes and shows actual timings
 EXPLAIN ANALYZE
 SELECT * FROM products
@@ -1085,6 +1138,7 @@ WHERE category = 'Electronics' AND price > 500;
 -- => Applies filter to rows
 -- => Shows: Seq Scan, actual time, rows returned
 -- => Planning Time: X ms, Execution Time: Y ms
+
 -- Create index and compare
 CREATE INDEX idx_products_category_price
 ON products(category, price);
@@ -1096,6 +1150,7 @@ WHERE category = 'Electronics' AND price > 500;
 -- => Applies filter to rows
 -- => Shows: Index Scan using idx_products_category_price
 -- => Much faster execution time
+
 -- Analyze aggregation query
 EXPLAIN ANALYZE
 SELECT category, COUNT(*), AVG(price)
@@ -1106,6 +1161,7 @@ GROUP BY category;
 -- => Aggregates rows by specified columns
 -- => Shows: HashAggregate or GroupAggregate
 -- => Seq Scan on products
+
 -- Analyze join query
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
@@ -1129,21 +1185,24 @@ GROUP BY p.id, p.name;
 -- => Aggregates rows by specified columns
 -- => Shows: Hash Join or Nested Loop
 -- => Execution time for join strategy
+
 -- Check query planner statistics
 ANALYZE products;
 -- => Statement execution completes
 ANALYZE orders;
 -- => Statement execution completes
 -- => Updates table statistics for better query plans
+
 -- View BUFFERS to see cache usage
 EXPLAIN (ANALYZE, BUFFERS)
 SELECT * FROM products WHERE price > 900;
 -- => Specifies source table for query
--- => Shows shared hit (cache) vs read (disk) buffers```
+-- => Shows shared hit (cache) vs read (disk) buffers
+```
 
 **Key Takeaway**: Use EXPLAIN to see execution plans, EXPLAIN ANALYZE to measure actual performance. Look for Seq Scan on large tables (add indexes), high cost estimates, and slow actual times. Run ANALYZE periodically to update statistics for optimal query planning.
 
-**Why It Matters**: EXPLAIN ANALYZE reveals the actual execution plan and timing that distinguish theoretical optimization from real-world performance, exposing cases where PostgreSQL's planner chooses sequential scans over indexes due to outdated statistics or small table sizes. The cost estimates shown in EXPLAIN output guide index creation decisions, with high-cost sequential scans on large tables being the primary indicator for missing indexes that cause 100-1000x performance degradations. Companies like GitLab use EXPLAIN ANALYZE in their database review process to catch performance regressions before they reach production, making it an essential tool for database-driven application development.
+**Why It Matters**: EXPLAIN ANALYZE reveals the actual execution plan and timing that distinguish theoretical optimization from real-world performance, exposing cases where PostgreSQL's planner chooses sequential scans over indexes due to outdated statistics or small table sizes. The cost estimates shown in EXPLAIN output guide index creation decisions, with high-cost sequential scans on large tables being the primary indicator for missing indexes that cause 100-1000x performance degradations.
 
 ---
 
@@ -1165,6 +1224,7 @@ CREATE TABLE articles (
     ratings INTEGER[]         -- => Array of integers
 );
 -- => Statement execution completes
+
 -- Insert arrays
 INSERT INTO articles (title, tags, ratings)
 -- => INSERT into articles table begins
@@ -1176,6 +1236,7 @@ VALUES
     -- => Row data inserted
     ('Kubernetes', ARRAY['k8s', 'orchestration', 'docker'], ARRAY[4, 3, 4, 5, 5]);
     -- => Statement execution completes
+
 -- Alternative array syntax
 INSERT INTO articles (title, tags, ratings)
 -- => INSERT into articles table begins
@@ -1186,6 +1247,7 @@ VALUES
 SELECT * FROM articles;
 -- => Specifies source table for query
 -- => Query executes and returns result set
+
 -- Access array elements (1-indexed!)
 SELECT
     title,
@@ -1194,6 +1256,7 @@ SELECT
     array_length(tags, 1) AS num_tags  -- => Number of elements
 FROM articles;
 -- => Specifies source table for query
+
 -- Check if array contains value
 SELECT title
 FROM articles
@@ -1203,18 +1266,21 @@ WHERE 'docker' = ANY(tags);
 -- => Filter condition for query
 -- => Returns articles with 'docker' in tags
 -- => Docker Basics, Kubernetes
+
 -- Array overlap operator
 SELECT title
 FROM articles
 -- => Specifies source table for query
 WHERE tags && ARRAY['sql', 'database'];  -- => Overlap: shares at least one element
 -- => PostgreSQL Guide, Advanced SQL
+
 -- Array containment
 SELECT title
 FROM articles
 -- => Specifies source table for query
 WHERE tags @> ARRAY['sql'];  -- => Contains all elements in array
 -- => PostgreSQL Guide, Advanced SQL
+
 -- Unnest array to rows
 SELECT
     title,
@@ -1223,6 +1289,7 @@ SELECT
 FROM articles;
 -- => Specifies source table for query
 -- => Returns one row per tag (expands array to multiple rows)
+
 -- Aggregate into array
 SELECT
     ARRAY_AGG(title ORDER BY id) AS all_titles
@@ -1230,6 +1297,7 @@ SELECT
 FROM articles;
 -- => Specifies source table for query
 -- => Collects all titles into single array
+
 -- Array functions
 SELECT
     title,
@@ -1242,11 +1310,12 @@ FROM articles, unnest(ratings) AS r
 GROUP BY id, title;
 -- => Aggregates rows by specified columns
 -- => Groups rows for aggregation
--- => Calculates average rating per article```
+-- => Calculates average rating per article
+```
 
 **Key Takeaway**: Arrays store multiple values in one column - use them for tags, categories, or small ordered lists. Access elements with `[index]` (1-indexed), check membership with `ANY()`, and unnest to rows with `unnest()`. Avoid arrays for frequently queried relationships (use junction tables instead).
 
-**Why It Matters**: PostgreSQL's native array support eliminates the need for junction tables in scenarios like product tags or user permissions, reducing query complexity and storage overhead by 60-80% compared to normalized many-to-many relationships. The GIN index support for arrays enables fast containment queries (find products with tag 'electronics') that would require joins in traditional relational designs, making arrays ideal for lightweight multi-value attributes. However, arrays lack the query optimization capabilities of normalized tables, making them unsuitable for frequently filtered relationships where proper indexing and query planning on junction tables provides better performance at scale.
+**Why It Matters**: PostgreSQL's native array support eliminates the need for junction tables in scenarios like product tags or user permissions, reducing query complexity and storage overhead by 60-80% compared to normalized many-to-many relationships. The GIN index support for arrays enables fast containment queries (find products with tag 'electronics') that would require joins in traditional relational designs, making arrays ideal for lightweight multi-value attributes.
 
 ---
 
@@ -1268,6 +1337,7 @@ CREATE TABLE users (
     preferences JSONB       -- => Binary JSON (faster, indexable)
 );
 -- => Statement execution completes
+
 -- Insert JSON data
 INSERT INTO users (name, metadata, preferences)
 -- => INSERT into users table begins
@@ -1282,6 +1352,7 @@ VALUES
 SELECT * FROM users;
 -- => Specifies source table for query
 -- => Query executes and returns result set
+
 -- JSON vs JSONB differences
 SELECT
     pg_column_size(metadata) AS json_size,
@@ -1294,6 +1365,7 @@ WHERE name = 'Alice';
 -- => Applies filter to rows
 -- => Filter condition for query
 -- => JSONB often larger in storage but faster to query
+
 -- JSON preserves formatting, JSONB normalizes
 INSERT INTO users (name, metadata, preferences)
 -- => INSERT into users table begins
@@ -1306,11 +1378,12 @@ FROM users
 WHERE name = 'Diana';
 -- => Applies filter to rows
 -- => Filter condition for query
--- => JSON keeps extra spaces, JSONB normalizes```
+-- => JSON keeps extra spaces, JSONB normalizes
+```
 
 **Key Takeaway**: Use JSONB for production (faster queries, supports indexing), JSON only when you need exact formatting preservation. JSONB enables efficient queries, indexing, and updates of nested data without separate columns.
 
-**Why It Matters**: JSONB makes PostgreSQL the only traditional RDBMS that can compete with MongoDB for flexible schema applications, enabling companies like Robinhood to store user configurations with varying fields without schema migrations. GIN indexes on JSONB enable millisecond-speed queries on nested JSON documents containing millions of key-value pairs, compared to seconds required for JSON string parsing in MySQL. The binary format reduces storage by 20-30% compared to text-based JSON while enabling 5-10x faster queries, making it ideal for logging systems that ingest terabytes of semi-structured data daily.
+**Why It Matters**: GIN indexes on JSONB enable millisecond-speed queries on nested JSON documents containing millions of key-value pairs, compared to seconds required for JSON string parsing in MySQL.
 
 ---
 
@@ -1341,6 +1414,7 @@ VALUES
     -- => Row data inserted
     ('Tablet', '{"brand": "Samsung", "specs": {"cpu": "Snapdragon", "ram": 8, "storage": 256}, "price": 599.99}');
     -- => Statement execution completes
+
 -- Extract JSON field (returns JSON)
 SELECT
     name,
@@ -1348,6 +1422,7 @@ SELECT
     details ->> 'brand' AS brand_text     -- => Returns text: Dell
 FROM products;
 -- => Specifies source table for query
+
 -- Extract nested fields
 SELECT
     name,
@@ -1356,6 +1431,7 @@ SELECT
     (details -> 'specs' ->> 'ram')::INTEGER AS ram_gb  -- => Cast to integer
 FROM products;
 -- => Specifies source table for query
+
 -- Filter by JSON field
 SELECT name, details ->> 'brand' AS brand
 -- => Creates alias for column/table
@@ -1365,6 +1441,7 @@ WHERE details ->> 'brand' = 'Apple';
 -- => Applies filter to rows
 -- => Filter condition for query
 -- => Phone
+
 -- Filter by nested field
 SELECT name, details -> 'specs' ->> 'ram' AS ram
 -- => Creates alias for column/table
@@ -1374,6 +1451,7 @@ WHERE (details -> 'specs' ->> 'ram')::INTEGER >= 8;
 -- => Applies filter to rows
 -- => Filter condition for query
 -- => Laptop (16 GB), Tablet (8 GB)
+
 -- Extract numeric JSON field for calculation
 SELECT
     name,
@@ -1383,6 +1461,7 @@ SELECT
     -- => Creates alias for column/table
 FROM products;
 -- => Specifies source table for query
+
 -- Check JSON field existence
 SELECT name
 FROM products
@@ -1393,11 +1472,12 @@ SELECT name
 FROM products
 -- => Specifies source table for query
 WHERE details -> 'specs' ? 'gpu';  -- => Has 'gpu' key in specs
--- => None (no products have GPU info)```
+-- => None (no products have GPU info)
+```
 
 **Key Takeaway**: Use `->` to extract JSON (for chaining), `->>` to extract text (for filtering, display). Chain operators for nested access: `column -> 'outer' ->> 'inner'`. Cast `->>` results to appropriate types for calculations and comparisons.
 
-**Why It Matters**: The distinction between `->` (returns JSON) and `->>` (returns text) determines query composability and performance, with `->` enabling method chaining for deep nested access while `->>` enables direct WHERE clause filtering and display without casting. PostgreSQL's JSON path traversal operators eliminate the need for application-layer JSON parsing when filtering on nested values, reducing data transfer and enabling database-side filtering that scales to billions of JSON documents. The automatic text conversion with `->>` simplifies queries but requires explicit casting to numeric/date types for calculations, a common source of type mismatch errors when developers forget the string representation.
+**Why It Matters**: The distinction between `->` (returns JSON) and `->>` (returns text) determines query composability and performance, with `->` enabling method chaining for deep nested access while `->>` enables direct WHERE clause filtering and display without casting. PostgreSQL's JSON path traversal operators eliminate the need for application-layer JSON parsing when filtering on nested values, reducing data transfer and enabling database-side filtering that scales to billions of JSON documents.
 
 ---
 
@@ -1427,11 +1507,11 @@ graph TD
     style D fill:#CC78BC,stroke:#000,color:#fff
     style E fill:#CA9161,stroke:#000,color:#fff
     style F fill:#DE8F05,stroke:#000,color:#fff
-````
+```
 
 **Code**:
 
-````sql
+```sql
 CREATE DATABASE example_44;
 \c example_44;
 -- => Statement execution completes
@@ -1447,6 +1527,7 @@ VALUES
     ('Webinar', '{"location": "Online", "attendees": 1000, "topics": ["DevOps", "Cloud"]}'),
     ('Workshop', '{"location": "Boston", "attendees": 50, "topics": ["SQL", "PostgreSQL"]}');
     -- => Statement execution completes
+
 -- Containment operator @>
 SELECT name
 FROM events
@@ -1454,6 +1535,7 @@ FROM events
 WHERE data @> '{"location": "NYC"}';
 -- => Applies filter to rows
 -- => Conference (data contains {"location": "NYC"})
+
 -- Contained by operator <@
 SELECT name
 FROM events
@@ -1461,6 +1543,7 @@ FROM events
 WHERE '{"attendees": 500}' <@ data;
 -- => Applies filter to rows
 -- => Conference ({"attendees": 500} is contained in data)
+
 -- Key existence ?
 SELECT name
 FROM events
@@ -1468,6 +1551,7 @@ FROM events
 WHERE data ? 'location';
 -- => Applies filter to rows
 -- => All events (all have location key)
+
 -- Any key existence ?|
 SELECT name
 FROM events
@@ -1475,6 +1559,7 @@ FROM events
 WHERE data ?| ARRAY['speakers', 'sponsors'];
 -- => Applies filter to rows
 -- => None (no events have speakers OR sponsors)
+
 -- All keys existence ?&
 SELECT name
 FROM events
@@ -1482,6 +1567,7 @@ FROM events
 WHERE data ?& ARRAY['location', 'attendees'];
 -- => Applies filter to rows
 -- => All events (all have both keys)
+
 -- Array contains element @>
 SELECT name
 FROM events
@@ -1489,6 +1575,7 @@ FROM events
 WHERE data -> 'topics' @> '"Cloud"';
 -- => Applies filter to rows
 -- => Conference, Webinar (topics array contains "Cloud")
+
 -- Update JSONB field
 UPDATE events
 SET data = data || '{"capacity": 1000}'
@@ -1498,6 +1585,7 @@ WHERE name = 'Conference';
 SELECT data FROM events WHERE name = 'Conference';
 -- => Specifies source table for query
 -- => Now includes "capacity": 1000
+
 -- Replace JSONB field
 UPDATE events
 SET data = jsonb_set(data, '{attendees}', '750')
@@ -1507,12 +1595,14 @@ WHERE name = 'Webinar';
 SELECT data FROM events WHERE name = 'Webinar';
 -- => Specifies source table for query
 -- => attendees is now 750
+
 -- Remove JSONB key
 UPDATE events
 SET data = data - 'capacity'
 WHERE name = 'Conference';
 -- => Applies filter to rows
 -- => Removes capacity field
+
 -- JSONB functions
 SELECT
     name,
@@ -1527,11 +1617,12 @@ SELECT
     -- => Creates alias for column/table
 FROM events;
 -- => Specifies source table for query
--- => Pretty-prints JSON for readability```
+-- => Pretty-prints JSON for readability
+```
 
 **Key Takeaway**: JSONB operators enable powerful queries - `@>` for containment, `?` for key existence, `||` for merging. Use `jsonb_set()` to update nested values, `-` to remove keys, and GIN indexes on JSONB columns for fast queries.
 
-**Why It Matters**: JSONB containment operators (@>) enable efficient querying of semi-structured data without schema migrations, making PostgreSQL suitable for applications like Slack where message metadata varies across message types without requiring ALTER TABLE operations. GIN indexes on JSONB columns enable millisecond-speed containment queries on billions of documents, competing directly with MongoDB while maintaining ACID guarantees and relational query capabilities that NoSQL databases lack. The `||` merge operator and `jsonb_set()` function enable partial updates of nested JSON without reading and rewriting entire documents, reducing write amplification by 80-95% compared to full document replacement.
+**Why It Matters**: JSONB containment operators (@>) enable efficient querying of semi-structured data without schema migrations, making PostgreSQL suitable for applications like Slack where message metadata varies across message types without requiring ALTER TABLE operations. The `||` merge operator and `jsonb_set()` function enable partial updates of nested JSON without reading and rewriting entire documents, reducing write amplification by 80-95% compared to full document replacement.
 
 ---
 
@@ -1558,6 +1649,7 @@ CREATE TABLE price_tiers (
     order_count INT4RANGE    -- => Integer range
 );
 -- => Statement execution completes
+
 -- Insert date ranges
 INSERT INTO reservations (room, guest, stay)
 VALUES
@@ -1565,6 +1657,7 @@ VALUES
     ('102', 'Bob', '[2025-12-22, 2025-12-27)'),
     ('101', 'Charlie', '[2025-12-26, 2025-12-30)');
     -- => Statement execution completes
+
 -- Insert integer ranges
 INSERT INTO price_tiers (tier_name, order_count)
 VALUES
@@ -1579,6 +1672,7 @@ FROM reservations
 WHERE stay @> '2025-12-24'::DATE;
 -- => Applies filter to rows
 -- => Alice, Bob (ranges containing Dec 24)
+
 -- Check if ranges overlap
 SELECT r1.guest AS guest1, r2.guest AS guest2
 -- => Creates alias for column/table
@@ -1590,6 +1684,7 @@ WHERE r1.id < r2.id
   AND r1.stay && r2.stay;
   -- => Statement execution completes
 -- => Alice and Bob (overlapping stays in room 101)
+
 -- Find tier for order count
 SELECT tier_name
 FROM price_tiers
@@ -1597,6 +1692,7 @@ FROM price_tiers
 WHERE order_count @> 25;
 -- => Applies filter to rows
 -- => Silver (25 is in range [10, 50))
+
 -- Range functions
 SELECT
     room,
@@ -1608,6 +1704,7 @@ SELECT
 FROM reservations;
 -- => Specifies source table for query
 -- => Calculates number of nights
+
 -- Check range boundaries
 SELECT
     tier_name,
@@ -1616,6 +1713,7 @@ SELECT
 FROM price_tiers;
 -- => Specifies source table for query
 -- => Shows which boundaries are inclusive
+
 -- Merge overlapping ranges
 SELECT room, range_agg(stay) AS all_bookings
 -- => Creates alias for column/table
@@ -1624,6 +1722,7 @@ FROM reservations
 GROUP BY room;
 -- => Aggregates rows by specified columns
 -- => ERROR: range_agg doesn't exist (need extension or custom aggregate)
+
 -- Check for gaps in reservations
 SELECT
     room,
@@ -1635,11 +1734,12 @@ FROM reservations
 -- => Specifies source table for query
 ORDER BY room, lower(stay);
 -- => Sorts query results
--- => Shows gaps between reservations```
+-- => Shows gaps between reservations
+```
 
 **Key Takeaway**: Range types store intervals with precise boundary semantics - use `@>` to check containment, `&&` for overlap detection. DATERANGE perfect for reservations and scheduling, INT4RANGE for tiered pricing and quotas. Boundaries can be inclusive `[` or exclusive `)`.
 
-**Why It Matters**: Range types enable booking systems to detect conflicting reservations with simple overlap queries (`&&` operator) that would require complex date comparison logic in applications lacking native range support, preventing double-bookings that cause customer service nightmares. The inclusive/exclusive boundary semantics (`[start, end)`) match real-world scenarios where checkout time equals next checkin time, making DATERANGE('2025-01-01', '2025-01-03') naturally exclude 2025-01-03 for non-conflicting consecutive bookings. GiST indexes on range columns enable sub-millisecond overlap detection across millions of reservations, making PostgreSQL the database of choice for hotel and scheduling systems requiring instant availability checks.
+**Why It Matters**: Range types enable booking systems to detect conflicting reservations with simple overlap queries (`&&` operator) that would require complex date comparison logic in applications lacking native range support, preventing double-bookings that cause customer service nightmares. The inclusive/exclusive boundary semantics (`[start, end)`) match real-world scenarios where checkout time equals next checkin time, making DATERANGE('2025-01-01', '2025-01-03') naturally exclude 2025-01-03 for non-conflicting consecutive bookings.
 
 ---
 
@@ -1669,11 +1769,11 @@ graph TD
     style D fill:#029E73,stroke:#000,color:#fff
     style E fill:#CC78BC,stroke:#000,color:#fff
     style F fill:#CA9161,stroke:#000,color:#fff
-````
+```
 
 **Code**:
 
-````sql
+```sql
 CREATE DATABASE example_46;
 \c example_46;
 -- => Statement execution completes
@@ -1686,6 +1786,7 @@ CREATE TABLE accounts (
 INSERT INTO accounts (name, balance)
 VALUES ('Alice', 1000.00), ('Bob', 500.00);
 -- => Statement execution completes
+
 -- Successful transaction
 BEGIN;
 -- => Statement execution completes
@@ -1701,12 +1802,14 @@ COMMIT;
 SELECT name, balance FROM accounts;
 -- => Specifies source table for query
 -- => Alice: 900.00, Bob: 600.00
+
 -- Failed transaction with ROLLBACK
 BEGIN;
 -- => Statement execution completes
 UPDATE accounts SET balance = balance - 200 WHERE name = 'Alice';
 -- => Applies filter to rows
 -- => Alice: 700.00 (in transaction)
+
 -- Simulate error condition
 UPDATE accounts SET balance = balance + 200 WHERE name = 'NonExistent';
 -- => Applies filter to rows
@@ -1717,18 +1820,22 @@ ROLLBACK;
 SELECT name, balance FROM accounts;
 -- => Specifies source table for query
 -- => Alice: 900.00, Bob: 600.00 (unchanged - transaction rolled back)
+
 -- Automatic rollback on error
 BEGIN;
 -- => Statement execution completes
 UPDATE accounts SET balance = balance - 100 WHERE name = 'Alice';
 -- => Applies filter to rows
+
 -- This will cause error (negative balance)
 UPDATE accounts SET balance = -9999 WHERE name = 'Bob';
 -- => Applies filter to rows
 -- => Violates business logic (if CHECK constraint exists)
+
 -- If error occurs, ROLLBACK manually or connection closes
 ROLLBACK;
 -- => Statement execution completes
+
 -- Transaction with multiple operations
 BEGIN;
 -- => Statement execution completes
@@ -1742,11 +1849,12 @@ COMMIT;
 -- => All three operations saved atomically
 SELECT name, balance FROM accounts;
 -- => Specifies source table for query
--- => Alice: 850.00, Bob: 600.00, Charlie: 350.00```
+-- => Alice: 850.00, Bob: 600.00, Charlie: 350.00
+```
 
 **Key Takeaway**: Wrap related operations in BEGIN/COMMIT for atomicity - either all succeed or all fail. Use ROLLBACK to undo changes when errors occur. Transactions prevent partial updates that leave data inconsistent.
 
-**Why It Matters**: Transactions ensure atomic money transfers where debit and credit operations either both succeed or both fail, preventing the financial disasters that occur when systems crash mid-operation leaving accounts in inconsistent states. PostgreSQL's MVCC implementation allows concurrent transactions to proceed without locking, enabling thousands of transactions per second on systems like payment processors where traditional locking would create bottlenecks. The automatic rollback on errors eliminates entire classes of data corruption bugs that require manual database recovery in systems without proper transaction support.
+**Why It Matters**: Transactions ensure atomic money transfers where debit and credit operations either both succeed or both fail, preventing the financial disasters that occur when systems crash mid-operation leaving accounts in inconsistent states. PostgreSQL's MVCC implementation allows concurrent transactions to proceed without locking, enabling thousands of transactions per second on systems like payment processors where traditional locking would create bottlenecks.
 
 ---
 
@@ -1779,11 +1887,11 @@ graph TD
     style E fill:#CA9161,stroke:#000,color:#fff
     style F fill:#CA9161,stroke:#000,color:#fff
     style G fill:#CA9161,stroke:#000,color:#fff
-````
+```
 
 **Code**:
 
-````sql
+```sql
 CREATE DATABASE example_47;
 \c example_47;
 -- => Statement execution completes
@@ -1796,6 +1904,7 @@ CREATE TABLE inventory (
 INSERT INTO inventory (product, quantity)
 VALUES ('Laptop', 10);
 -- => Statement execution completes
+
 -- Demonstration requires two concurrent sessions
 -- Session 1 and Session 2 shown sequentially
 -- READ COMMITTED (default isolation level)
@@ -1805,6 +1914,7 @@ BEGIN;
 SELECT quantity FROM inventory WHERE product = 'Laptop';
 -- => Specifies source table for query
 -- => 10
+
 -- Session 2 (concurrent):
 BEGIN;
 -- => Statement execution completes
@@ -1813,12 +1923,14 @@ UPDATE inventory SET quantity = 8 WHERE product = 'Laptop';
 COMMIT;
 -- => Statement execution completes
 -- => Changes committed
+
 -- Session 1 (continued):
 SELECT quantity FROM inventory WHERE product = 'Laptop';
 -- => Specifies source table for query
 -- => 8 (sees committed changes from Session 2)
 COMMIT;
 -- => Statement execution completes
+
 -- REPEATABLE READ (snapshot isolation)
 -- Session 1:
 BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ;
@@ -1826,6 +1938,7 @@ BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ;
 SELECT quantity FROM inventory WHERE product = 'Laptop';
 -- => Specifies source table for query
 -- => 8
+
 -- Session 2:
 BEGIN;
 -- => Statement execution completes
@@ -1833,16 +1946,19 @@ UPDATE inventory SET quantity = 6 WHERE product = 'Laptop';
 -- => Applies filter to rows
 COMMIT;
 -- => Statement execution completes
+
 -- Session 1 (continued):
 SELECT quantity FROM inventory WHERE product = 'Laptop';
 -- => Specifies source table for query
 -- => 8 (still sees old value - snapshot at transaction start)
 COMMIT;
 -- => Statement execution completes
+
 -- Now see updated value
 SELECT quantity FROM inventory WHERE product = 'Laptop';
 -- => Specifies source table for query
 -- => 6
+
 -- SERIALIZABLE (strictest isolation)
 -- Session 1:
 BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
@@ -1850,6 +1966,7 @@ BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 SELECT quantity FROM inventory WHERE product = 'Laptop';
 -- => Specifies source table for query
 -- => 6
+
 -- Session 2:
 BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 -- => Statement execution completes
@@ -1857,23 +1974,27 @@ UPDATE inventory SET quantity = quantity - 2 WHERE product = 'Laptop';
 -- => Applies filter to rows
 COMMIT;
 -- => Statement execution completes
+
 -- Session 1 (continued):
 UPDATE inventory SET quantity = quantity - 1 WHERE product = 'Laptop';
 -- => Applies filter to rows
 -- => ERROR: could not serialize access (serialization failure)
 ROLLBACK;
 -- => Statement execution completes
+
 -- Default isolation level check
 SHOW default_transaction_isolation;
 -- => Statement execution completes
 -- => read committed
+
 -- Set session default
 SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL REPEATABLE READ;
--- => Creates alias for column/table```
+-- => Creates alias for column/table
+```
 
 **Key Takeaway**: READ COMMITTED sees latest committed data (may change within transaction), REPEATABLE READ sees snapshot at transaction start (no phantom reads), SERIALIZABLE prevents all anomalies (may cause serialization errors). Choose based on consistency needs vs. concurrency requirements.
 
-**Why It Matters**: Isolation levels determine whether analytical reports see consistent snapshots or inconsistent mid-transaction states, with REPEATABLE READ preventing the "phantom read" anomalies that cause financial reports to show mismatched totals when run twice. READ COMMITTED (default) maximizes concurrency for web applications where seeing slightly stale data is acceptable, while SERIALIZABLE prevents all anomalies at the cost of transaction retry overhead (5-20% performance penalty). The choice between isolation levels represents the fundamental trade-off between data consistency and system throughput that every database-backed application must navigate.
+**Why It Matters**: Isolation levels determine whether analytical reports see consistent snapshots or inconsistent mid-transaction states, with REPEATABLE READ preventing the "phantom read" anomalies that cause financial reports to show mismatched totals when run twice. READ COMMITTED (default) maximizes concurrency for web applications where seeing slightly stale data is acceptable, while SERIALIZABLE prevents all anomalies at the cost of transaction retry overhead (5-20% performance penalty).
 
 ---
 
@@ -1899,9 +2020,11 @@ INSERT INTO accounts (name, balance)
 VALUES ('Alice', 1000.00), ('Bob', 500.00);
 -- => Statement execution completes
 -- => Row data values follow
+
 -- Atomicity: all-or-nothing
 BEGIN;
 -- => Statement execution completes
+
 -- Transfer $200 from Alice to Bob
 UPDATE accounts SET balance = balance - 200 WHERE name = 'Alice';
 -- => Applies filter to rows
@@ -1909,6 +2032,7 @@ UPDATE accounts SET balance = balance - 200 WHERE name = 'Alice';
 UPDATE accounts SET balance = balance + 200 WHERE name = 'Bob';
 -- => Applies filter to rows
 -- => Updates rows matching condition
+
 -- If either fails, both rollback (atomicity)
 COMMIT;
 -- => Statement execution completes
@@ -1917,6 +2041,7 @@ SELECT SUM(balance) FROM accounts;
 -- => Specifies source table for query
 -- => Query executes and returns result set
 -- => 1500.00 (total unchanged - money not created or lost)
+
 -- Consistency: constraints enforced
 BEGIN;
 -- => Statement execution completes
@@ -1932,6 +2057,7 @@ SELECT balance FROM accounts WHERE name = 'Alice';
 -- => Specifies source table for query
 -- => Query executes and returns result set
 -- => 800.00 (unchanged due to constraint violation)
+
 -- Isolation: concurrent transactions don't interfere
 -- PostgreSQL supports READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SERIALIZABLE isolation levels
 -- Durability: committed data survives crashes
@@ -1944,15 +2070,17 @@ COMMIT;
 -- => Statement execution completes
 -- => Changes written to disk (write-ahead log)
 -- => Survives database restart
+
 -- Verify durability (simulate restart by reconnecting)
 SELECT name, balance FROM accounts;
 -- => Specifies source table for query
 -- => Query executes and returns result set
--- => Bob: 800.00 (changes persisted)```
+-- => Bob: 800.00 (changes persisted)
+```
 
 **Key Takeaway**: ACID properties ensure reliable data - Atomicity prevents partial updates, Consistency enforces constraints, Isolation protects concurrent transactions, Durability guarantees persistence. PostgreSQL's transaction system implements all four automatically.
 
-**Why It Matters**: ACID guarantees make PostgreSQL suitable for financial systems where partial transactions or data loss would cause regulatory violations and legal liability, compared to NoSQL databases that trade ACID compliance for performance. Durability ensures that committed transactions survive crashes and power failures through write-ahead logging, eliminating the data loss windows that plague systems relying on eventual consistency models. The combination of all four ACID properties enables applications to trust that database state reflects business logic execution, simplifying application code that would otherwise need to implement complex error recovery and consistency checking.
+**Why It Matters**: ACID guarantees make PostgreSQL suitable for financial systems where partial transactions or data loss would cause regulatory violations and legal liability, compared to NoSQL databases that trade ACID compliance for performance. Durability ensures that committed transactions survive crashes and power failures through write-ahead logging, eliminating the data loss windows that plague systems relying on eventual consistency models.
 
 ---
 
@@ -1977,6 +2105,7 @@ BEGIN;
 -- => Statement execution completes
 INSERT INTO logs (message) VALUES ('Transaction started');
 -- => INSERT into logs table begins
+
 -- Create savepoint after first insert
 SAVEPOINT after_first_insert;
 -- => Statement execution completes
@@ -1984,11 +2113,13 @@ INSERT INTO logs (message) VALUES ('Second operation');
 -- => INSERT into logs table begins
 INSERT INTO logs (message) VALUES ('Third operation');
 -- => INSERT into logs table begins
+
 -- Create another savepoint
 SAVEPOINT after_third_insert;
 -- => Statement execution completes
 INSERT INTO logs (message) VALUES ('Fourth operation');
 -- => INSERT into logs table begins
+
 -- Rollback to second savepoint (undo fourth insert)
 ROLLBACK TO SAVEPOINT after_third_insert;
 -- => Statement execution completes
@@ -2005,6 +2136,7 @@ SELECT message FROM logs ORDER BY id;
 -- => Specifies source table for query
 -- => Query executes and returns result set
 -- => Shows 4 messages (fourth is alternative version)
+
 -- Savepoint with error recovery
 TRUNCATE logs;
 -- => Statement execution completes
@@ -2018,10 +2150,12 @@ INSERT INTO logs (message) VALUES ('Operation 2');
 -- => INSERT into logs table begins
 SAVEPOINT after_op2;
 -- => Statement execution completes
+
 -- Simulate error
 INSERT INTO logs (id, message) VALUES (1, 'Duplicate ID');
 -- => INSERT into logs table begins
 -- => ERROR: duplicate key (if id=1 already exists)
+
 -- Rollback just the failed operation
 ROLLBACK TO SAVEPOINT after_op2;
 -- => Statement execution completes
@@ -2033,6 +2167,7 @@ SELECT message FROM logs ORDER BY id;
 -- => Specifies source table for query
 -- => Query executes and returns result set
 -- => Operation 1, Operation 2, Operation 3 (error recovered)
+
 -- Release savepoint (no longer needed)
 BEGIN;
 -- => Statement execution completes
@@ -2044,11 +2179,12 @@ INSERT INTO logs (message) VALUES ('Step 2');
 -- => INSERT into logs table begins
 RELEASE SAVEPOINT step1;  -- => Cannot rollback to step1 anymore
 COMMIT;
--- => Statement execution completes```
+-- => Statement execution completes
+```
 
 **Key Takeaway**: Savepoints enable partial rollback within transactions - create checkpoints with SAVEPOINT, rollback to them with ROLLBACK TO SAVEPOINT. Useful for error recovery without aborting entire transaction.
 
-**Why It Matters**: Savepoints enable complex multi-step transactions to recover from individual step failures without abandoning all work, making batch processing systems resilient where processing 10,000 records with occasional errors can rollback just the failed record instead of restarting from zero. The ability to create nested transaction checkpoints enables framework-level error handling (ORM savepoints around each operation) that provides granular rollback without application-layer complexity. Savepoints combined with exception handling enable the "process as much as possible" pattern where batch jobs continue despite errors, logging failures for later review instead of failing completely.
+**Why It Matters**: Savepoints enable complex multi-step transactions to recover from individual step failures without abandoning all work, making batch processing systems resilient where processing 10,000 records with occasional errors can rollback just the failed record instead of restarting from zero. The ability to create nested transaction checkpoints enables framework-level error handling (ORM savepoints around each operation) that provides granular rollback without application-layer complexity.
 
 ---
 
@@ -2071,6 +2207,7 @@ CREATE TABLE accounts (
 INSERT INTO accounts (name, balance)
 VALUES ('Alice', 1000.00), ('Bob', 500.00);
 -- => Statement execution completes
+
 -- Deadlock scenario requires two concurrent sessions
 -- Session 1 and Session 2 shown sequentially
 -- Session 1:
@@ -2079,27 +2216,33 @@ BEGIN;
 UPDATE accounts SET balance = balance - 100 WHERE name = 'Alice';
 -- => Applies filter to rows
 -- => Acquires lock on Alice's row
+
 -- Session 2 (concurrent):
 BEGIN;
 -- => Statement execution completes
 UPDATE accounts SET balance = balance - 50 WHERE name = 'Bob';
 -- => Applies filter to rows
 -- => Acquires lock on Bob's row
+
 -- Session 1 (continued):
 UPDATE accounts SET balance = balance + 100 WHERE name = 'Bob';
 -- => Applies filter to rows
 -- => Waits for Bob's lock (held by Session 2)
+
 -- Session 2 (continued):
 UPDATE accounts SET balance = balance + 50 WHERE name = 'Alice';
 -- => Applies filter to rows
 -- => ERROR: deadlock detected
 -- => One transaction aborted (deadlock victim)
+
 -- Session 2 must ROLLBACK
 ROLLBACK;
 -- => Statement execution completes
+
 -- Session 1 can now proceed
 COMMIT;
 -- => Statement execution completes
+
 -- Avoiding deadlocks: consistent lock order
 -- Always update accounts in ID order
 -- Session 1:
@@ -2109,11 +2252,13 @@ UPDATE accounts SET balance = balance - 100 WHERE id = 1;  -- => Alice
 UPDATE accounts SET balance = balance + 100 WHERE id = 2;  -- => Bob
 COMMIT;
 -- => Statement execution completes
+
 -- Session 2:
 BEGIN;
 -- => Statement execution completes
 UPDATE accounts SET balance = balance - 50 WHERE id = 1;  -- => Alice (waits)
 -- => No deadlock: both sessions acquire locks in same order
+
 -- View locks
 SELECT
     pid,
@@ -2126,6 +2271,7 @@ FROM pg_locks
 WHERE relation = 'accounts'::regclass;
 -- => Applies filter to rows
 -- => Shows active locks on accounts table
+
 -- Timeout to prevent long waits
 SET lock_timeout = '5s';  -- => Abort if lock not acquired in 5 seconds
 BEGIN;
@@ -2134,11 +2280,12 @@ UPDATE accounts SET balance = balance - 100 WHERE name = 'Alice';
 -- => Applies filter to rows
 -- => If lock held by another session for >5s, ERROR: lock timeout
 ROLLBACK;
--- => Statement execution completes```
+-- => Statement execution completes
+```
 
 **Key Takeaway**: PostgreSQL detects deadlocks and aborts one transaction (victim). Prevent deadlocks by acquiring locks in consistent order (e.g., by ID). Use lock_timeout to prevent indefinite waiting. Retry aborted transactions in application code.
 
-**Why It Matters**: Deadlock detection automatically recovers from circular lock dependencies that would otherwise freeze database systems indefinitely, aborting one transaction to allow others to proceed rather than requiring manual intervention. Consistent lock ordering (always lock records by ascending ID) prevents deadlocks in concurrent financial systems where simultaneous transfers between the same accounts in opposite directions would otherwise create circular wait conditions. The deadlock_timeout setting (default 1 second) balances detection speed against false positives from slow queries, with automatic victim selection preferring to abort smaller transactions that have done less work.
+**Why It Matters**: Deadlock detection automatically recovers from circular lock dependencies that would otherwise freeze database systems indefinitely, aborting one transaction to allow others to proceed rather than requiring manual intervention. Consistent lock ordering (always lock records by ascending ID) prevents deadlocks in concurrent financial systems where simultaneous transfers between the same accounts in opposite directions would otherwise create circular wait conditions.
 
 ---
 
@@ -2173,6 +2320,7 @@ VALUES
     -- => Row data inserted
     ('Diana', 'Sales', 80000, '2018-11-20');
     -- => Statement execution completes
+
 -- Create simple view
 CREATE VIEW engineering_employees AS
 SELECT id, name, salary, hire_date
@@ -2182,11 +2330,13 @@ WHERE department = 'Engineering';
 -- => Applies filter to rows
 -- => Filter condition for query
 -- => View shows only engineering employees
+
 -- Query view like a table
 SELECT * FROM engineering_employees;
 -- => Specifies source table for query
 -- => Query executes and returns result set
 -- => Alice, Charlie
+
 -- Create view with calculations
 CREATE VIEW employee_stats AS
 SELECT
@@ -2209,6 +2359,7 @@ SELECT * FROM employee_stats;
 -- => Query executes and returns result set
 -- => Engineering: 2 employees, 100000 avg
 -- => Sales: 2 employees, 77500 avg
+
 -- Create view with joins
 CREATE TABLE projects (
     name VARCHAR(100),
@@ -2240,6 +2391,7 @@ SELECT * FROM employee_projects;
 -- => Specifies source table for query
 -- => Query executes and returns result set
 -- => Alice (Engineering, Project A), Alice (Engineering, Project B), Charlie (Engineering, Project C)
+
 -- Modify view (CREATE OR REPLACE)
 CREATE OR REPLACE VIEW engineering_employees AS
 SELECT id, name, salary, hire_date, EXTRACT(YEAR FROM AGE(hire_date)) AS years_employed
@@ -2254,13 +2406,15 @@ SELECT * FROM engineering_employees;
 -- => Specifies source table for query
 -- => Query executes and returns result set
 -- => Now includes years_employed column
+
 -- Drop view
 DROP VIEW employee_projects;
--- => Removes view definition```
+-- => Removes view definition
+```
 
 **Key Takeaway**: Views are saved queries that act like tables - use them to simplify complex queries, hide columns for security, or provide stable interfaces. CREATE OR REPLACE updates views without dropping. Views don't store data (computed on each query).
 
-**Why It Matters**: Views encapsulate complex join logic behind simple table-like interfaces, enabling application refactoring without query changes across dozens of codebases that query the database. Security-focused views hide sensitive columns (salary, SSN) from developers who need access to other user data, implementing column-level security without application-layer filtering. CREATE OR REPLACE enables schema evolution where view definitions change (adding computed columns, changing join strategies) without breaking dependent queries, making views a stability layer between applications and evolving database schemas.
+**Why It Matters**: Views encapsulate complex join logic behind simple table-like interfaces, enabling application refactoring without query changes across dozens of codebases that query the database. Security-focused views hide sensitive columns (salary, SSN) from developers who need access to other user data, implementing column-level security without application-layer filtering.
 
 ---
 
@@ -2291,11 +2445,11 @@ graph TD
     style D fill:#CC78BC,stroke:#000,color:#fff
     style E fill:#DE8F05,stroke:#000,color:#fff
     style F fill:#CA9161,stroke:#000,color:#fff
-````
+```
 
 **Code**:
 
-````sql
+```sql
 CREATE DATABASE example_52;
 \c example_52;
 -- => Statement execution completes
@@ -2306,6 +2460,7 @@ CREATE TABLE sales (
     sale_date DATE
 );
 -- => Statement execution completes
+
 -- Insert test data
 INSERT INTO sales (product, amount, sale_date)
 SELECT
@@ -2318,6 +2473,7 @@ SELECT
     NOW() - (random() * 365 || ' days')::INTERVAL
 FROM generate_series(1, 10000);
 -- => Specifies source table for query
+
 -- Create materialized view
 CREATE MATERIALIZED VIEW monthly_sales AS
 SELECT
@@ -2335,17 +2491,21 @@ GROUP BY DATE_TRUNC('month', sale_date), product
 ORDER BY month DESC, product;
 -- => Sorts query results
 -- => Computes and stores results
+
 -- Query materialized view (fast - reads stored data)
 SELECT * FROM monthly_sales LIMIT 10;
 -- => Specifies source table for query
+
 -- Insert more sales
 INSERT INTO sales (product, amount, sale_date)
 VALUES ('Laptop', 1200.00, CURRENT_DATE);
 -- => Statement execution completes
+
 -- Materialized view still shows old data
 SELECT * FROM monthly_sales WHERE month = DATE_TRUNC('month', CURRENT_DATE);
 -- => Specifies source table for query
 -- => Doesn't include new sale yet
+
 -- Refresh materialized view
 REFRESH MATERIALIZED VIEW monthly_sales;
 -- => Statement execution completes
@@ -2353,10 +2513,12 @@ REFRESH MATERIALIZED VIEW monthly_sales;
 SELECT * FROM monthly_sales WHERE month = DATE_TRUNC('month', CURRENT_DATE);
 -- => Specifies source table for query
 -- => Now includes new sale
+
 -- Concurrent refresh (doesn't block reads)
 REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_sales;
 -- => Statement execution completes
 -- => Requires unique index on materialized view
+
 -- Create index on materialized view
 CREATE UNIQUE INDEX idx_monthly_sales_month_product
 ON monthly_sales(month, product);
@@ -2364,12 +2526,14 @@ ON monthly_sales(month, product);
 REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_sales;
 -- => Statement execution completes
 -- => Readers can query while refreshing
+
 -- Drop materialized view
-DROP MATERIALIZED VIEW monthly_sales;```
+DROP MATERIALIZED VIEW monthly_sales;
+```
 
 **Key Takeaway**: Materialized views store query results physically - much faster than regular views for expensive queries, but require REFRESH to update. Use for aggregations, reports, or dashboards on slowly-changing data. CONCURRENTLY allows reads during refresh.
 
-**Why It Matters**: Materialized views turn 30-second dashboard queries into 50-millisecond lookups by pre-computing aggregations across billions of rows, making real-time analytics dashboards responsive without expensive caching infrastructure. REFRESH MATVIEW CONCURRENTLY enables zero-downtime updates where users continue querying stale data while refresh builds new version in parallel, eliminating the query blackout windows required for non-concurrent refreshes. The trade-off between data freshness and query performance makes materialized views ideal for hourly/daily reporting where slight staleness is acceptable for 100-1000x query speedups.
+**Why It Matters**: Materialized views turn 30-second dashboard queries into 50-millisecond lookups by pre-computing aggregations across billions of rows, making real-time analytics dashboards responsive without expensive caching infrastructure. REFRESH MATVIEW CONCURRENTLY enables zero-downtime updates where users continue querying stale data while refresh builds new version in parallel, eliminating the query blackout windows required for non-concurrent refreshes.
 
 ---
 
@@ -2385,6 +2549,7 @@ CREATE DATABASE example_53;
 \c example_53;
 -- => Statement execution completes
 -- => Switches connection to example_53 database
+
 -- Simple function with no parameters
 CREATE FUNCTION get_current_time()
 RETURNS TEXT AS $$
@@ -2397,6 +2562,7 @@ $$ LANGUAGE plpgsql;
 -- => Statement execution completes
 SELECT get_current_time();
 -- => 'Current time: 2025-12-29 ...'
+
 -- Function with parameters
 CREATE FUNCTION calculate_tax(amount DECIMAL, tax_rate DECIMAL)
 RETURNS DECIMAL AS $$
@@ -2409,6 +2575,7 @@ $$ LANGUAGE plpgsql;
 -- => Statement execution completes
 SELECT calculate_tax(100.00, 0.08);
 -- => 8.00
+
 -- Function with conditional logic
 CREATE FUNCTION categorize_price(price DECIMAL)
 RETURNS TEXT AS $$
@@ -2463,6 +2630,7 @@ SELECT * FROM get_expensive_products(50.00);
 -- => Specifies source table for query
 -- => Query executes and returns result set
 -- => Laptop (999.99), Keyboard (79.99)
+
 -- Function with variables
 CREATE FUNCTION calculate_discount(original_price DECIMAL, discount_percent INTEGER)
 -- => Aggregate function computes summary value
@@ -2485,11 +2653,12 @@ $$ LANGUAGE plpgsql;
 SELECT * FROM calculate_discount(100.00, 20);
 -- => Specifies source table for query
 -- => Query executes and returns result set
--- => original: 100.00, discount: 20.00, final: 80.00```
+-- => original: 100.00, discount: 20.00, final: 80.00
+```
 
 **Key Takeaway**: Functions encapsulate logic for reuse - use RETURNS for return type, `$$` for function body delimiter. PL/pgSQL supports variables, conditionals, loops, and queries. RETURNS TABLE for returning multiple rows.
 
-**Why It Matters**: Database functions execute closer to data compared to application-layer functions, eliminating network round-trips and enabling set-based operations that process millions of rows where equivalent application code requires expensive row-by-row iteration. PL/pgSQL functions enable complex business logic (tax calculations, inventory allocation) to be versioned and deployed atomically with database schema changes, preventing the logic-data mismatches that occur when application and database deployments drift. RETURNS TABLE functions enable server-side data transformations that return ready-to-display datasets, reducing application complexity and ensuring consistent business logic across multiple client applications.
+**Why It Matters**: Database functions execute closer to data compared to application-layer functions, eliminating network round-trips and enabling set-based operations that process millions of rows where equivalent application code requires expensive row-by-row iteration. PL/pgSQL functions enable complex business logic (tax calculations, inventory allocation) to be versioned and deployed atomically with database schema changes, preventing the logic-data mismatches that occur when application and database deployments drift.
 
 ---
 
@@ -2505,6 +2674,7 @@ CREATE DATABASE example_54;
 \c example_54;
 -- => Statement execution completes
 -- => Switches connection to example_54 database
+
 -- Function returning single value (scalar)
 CREATE FUNCTION add_numbers(a INTEGER, b INTEGER)
 RETURNS INTEGER AS $$
@@ -2517,6 +2687,7 @@ $$ LANGUAGE plpgsql;
 -- => Statement execution completes
 SELECT add_numbers(10, 20);
 -- => 30
+
 -- Function with OUT parameters
 CREATE FUNCTION divide_with_remainder(
     dividend INTEGER,
@@ -2537,6 +2708,7 @@ SELECT * FROM divide_with_remainder(17, 5);
 -- => Specifies source table for query
 -- => Query executes and returns result set
 -- => quotient: 3, remainder: 2
+
 -- Function returning composite type
 CREATE TYPE employee_summary AS (
     total_employees INTEGER,
@@ -2574,6 +2746,7 @@ SELECT * FROM get_employee_summary();
 -- => Specifies source table for query
 -- => Query executes and returns result set
 -- => total_employees: 3, avg_salary: 91666.67
+
 -- Function with default parameters
 CREATE FUNCTION greet(name TEXT, greeting TEXT DEFAULT 'Hello')
 RETURNS TEXT AS $$
@@ -2609,11 +2782,12 @@ $$ LANGUAGE plpgsql;
 SELECT sum_all(1, 2, 3, 4, 5);
 -- => 15
 SELECT sum_all(10, 20);
--- => 30```
+-- => 30
+```
 
 **Key Takeaway**: Functions support flexible parameters - OUT for returning multiple values, DEFAULT for optional parameters, VARIADIC for variable arguments. Return types include scalars, composite types, or TABLE for multiple rows.
 
-**Why It Matters**: OUT parameters enable functions to return multiple related values (latitude, longitude, address) without creating custom composite types, simplifying function signatures and reducing boilerplate. DEFAULT parameter values enable backward-compatible function evolution where new parameters are added without breaking existing function calls across the codebase, making database API evolution safer. VARIADIC parameters enable flexible functions like calculate_average(VARIADIC values NUMERIC[]) that accept any number of arguments, matching the flexibility of application-layer variadic functions while executing server-side for performance.
+**Why It Matters**: OUT parameters enable functions to return multiple related values (latitude, longitude, address) without creating custom composite types, simplifying function signatures and reducing boilerplate. DEFAULT parameter values enable backward-compatible function evolution where new parameters are added without breaking existing function calls across the codebase, making database API evolution safer.
 
 ---
 
@@ -2640,11 +2814,11 @@ graph TD
     style C fill:#029E73,stroke:#000,color:#fff
     style D fill:#CC78BC,stroke:#000,color:#fff
     style E fill:#CA9161,stroke:#000,color:#fff
-````
+```
 
 **Code**:
 
-````sql
+```sql
 CREATE DATABASE example_55;
 \c example_55;
 -- => Statement execution completes
@@ -2664,6 +2838,7 @@ CREATE TABLE audit_log (
     new_data JSONB
 );
 -- => Statement execution completes
+
 -- Trigger function to update updated_at
 CREATE FUNCTION update_timestamp()
 RETURNS TRIGGER AS $$
@@ -2676,6 +2851,7 @@ END;
 -- => Statement execution completes
 $$ LANGUAGE plpgsql;
 -- => Statement execution completes
+
 -- Create BEFORE UPDATE trigger
 CREATE TRIGGER set_updated_at
 BEFORE UPDATE ON products
@@ -2690,6 +2866,7 @@ UPDATE products SET price = 899.99 WHERE name = 'Laptop';
 -- => updated_at automatically set to current time
 SELECT name, price, updated_at FROM products;
 -- => Specifies source table for query
+
 -- Audit trail trigger
 CREATE FUNCTION audit_changes()
 RETURNS TRIGGER AS $$
@@ -2718,6 +2895,7 @@ END;
 -- => Statement execution completes
 $$ LANGUAGE plpgsql;
 -- => Statement execution completes
+
 -- Create AFTER triggers for INSERT, UPDATE, DELETE
 CREATE TRIGGER audit_products_insert
 AFTER INSERT ON products
@@ -2734,6 +2912,7 @@ AFTER DELETE ON products
 FOR EACH ROW
 EXECUTE FUNCTION audit_changes();
 -- => Statement execution completes
+
 -- Test audit trail
 INSERT INTO products (name, price, updated_at)
 VALUES ('Mouse', 29.99, NOW());
@@ -2745,12 +2924,14 @@ DELETE FROM products WHERE name = 'Mouse';
 SELECT * FROM audit_log ORDER BY changed_at;
 -- => Specifies source table for query
 -- => Shows INSERT, UPDATE, DELETE operations with old/new data
+
 -- Drop trigger
-DROP TRIGGER audit_products_insert ON products;```
+DROP TRIGGER audit_products_insert ON products;
+```
 
 **Key Takeaway**: Triggers execute functions automatically on data changes - use BEFORE for validation/modification, AFTER for auditing/notifications. Access OLD (previous row) and NEW (updated row) in trigger functions. TG_OP shows operation type (INSERT/UPDATE/DELETE).
 
-**Why It Matters**: Triggers enforce business rules (audit logging, denormalization updates, cascade notifications) directly in the database where they cannot be bypassed by rogue applications or forgotten during manual data fixes. BEFORE triggers enable data validation and transformation (normalizing phone numbers, computing derived fields) that executes atomically with the write operation, ensuring data quality without application-layer checks that can be skipped. The automatic execution on every write makes triggers powerful but dangerous - poorly performing trigger functions can cause 10-100x write slowdowns, requiring careful testing before production deployment.
+**Why It Matters**: Triggers enforce business rules (audit logging, denormalization updates, cascade notifications) directly in the database where they cannot be bypassed by rogue applications or forgotten during manual data fixes. BEFORE triggers enable data validation and transformation (normalizing phone numbers, computing derived fields) that executes atomically with the write operation, ensuring data quality without application-layer checks that can be skipped.
 
 ---
 
@@ -2773,12 +2954,14 @@ CREATE TABLE users (
     last_login TIMESTAMP
 );
 -- => Statement execution completes
+
 -- Insert initial user
 INSERT INTO users (email, name, login_count, last_login)
 -- => INSERT into users table begins
 VALUES ('alice@example.com', 'Alice', 1, NOW());
 -- => Statement execution completes
 -- => Row data values follow
+
 -- Upsert: update if exists, insert if doesn't
 INSERT INTO users (email, name, login_count, last_login)
 -- => INSERT into users table begins
@@ -2792,6 +2975,7 @@ SELECT * FROM users WHERE email = 'alice@example.com';
 -- => Specifies source table for query
 -- => Query executes and returns result set
 -- => login_count: 2 (incremented), last_login updated
+
 -- Upsert with nothing (ignore conflicts)
 INSERT INTO users (email, name)
 -- => INSERT into users table begins
@@ -2803,6 +2987,7 @@ SELECT * FROM users WHERE email = 'alice@example.com';
 -- => Specifies source table for query
 -- => Query executes and returns result set
 -- => No changes (conflict ignored)
+
 -- Bulk upsert
 INSERT INTO users (email, name, login_count, last_login)
 -- => INSERT into users table begins
@@ -2823,6 +3008,7 @@ SELECT email, login_count FROM users ORDER BY email;
 -- => Specifies source table for query
 -- => Query executes and returns result set
 -- => Alice: 3 (updated), Bob: 1 (inserted), Charlie: 1 (inserted)
+
 -- Upsert with WHERE clause
 INSERT INTO users (email, name, login_count, last_login)
 -- => INSERT into users table begins
@@ -2839,11 +3025,12 @@ WHERE users.login_count < EXCLUDED.login_count;
 SELECT login_count FROM users WHERE email = 'alice@example.com';
 -- => Specifies source table for query
 -- => Query executes and returns result set
--- => 10 (updated because 10 > 3)```
+-- => 10 (updated because 10 > 3)
+```
 
 **Key Takeaway**: ON CONFLICT enables upserts (insert or update) - specify conflict target (email), then DO UPDATE or DO NOTHING. EXCLUDED refers to values from failed insert. Use WHERE to conditionally update.
 
-**Why It Matters**: ON CONFLICT makes data synchronization idempotent, enabling safe retry logic where the same upsert statement can be executed multiple times with identical results, eliminating complex application-layer "check if exists then update else insert" logic prone to race conditions. The EXCLUDED keyword provides access to would-be-inserted values, enabling updates like "increment counter by attempted increment" (SET counter = counter + EXCLUDED.delta) essential for conflict-free distributed counters. DO NOTHING enables efficient duplicate suppression without triggering constraint violation errors, making bulk imports resilient to partial failures and enabling continuous ingestion pipelines that replay data without deduplication overhead.
+**Why It Matters**: ON CONFLICT makes data synchronization idempotent, enabling safe retry logic where the same upsert statement can be executed multiple times with identical results, eliminating complex application-layer "check if exists then update else insert" logic prone to race conditions. The EXCLUDED keyword provides access to would-be-inserted values, enabling updates like "increment counter by attempted increment" (SET counter = counter + EXCLUDED.delta) essential for conflict-free distributed counters.
 
 ---
 
@@ -2889,11 +3076,11 @@ graph TD
     style H fill:#DE8F05,stroke:#000,color:#fff
     style I fill:#CA9161,stroke:#000,color:#fff
     style J fill:#029E73,stroke:#000,color:#fff
-````
+```
 
 **Code**:
 
-````sql
+```sql
 CREATE DATABASE example_57;
 \c example_57;
 -- => Statement execution completes
@@ -2904,6 +3091,7 @@ CREATE TABLE products (
     price DECIMAL(10, 2)
 );
 -- => Statement execution completes
+
 -- COPY from stdin (manual data entry)
 COPY products (id, name, category, price) FROM stdin WITH (FORMAT csv);
 -- => Specifies source table for query
@@ -2915,6 +3103,7 @@ COPY products (id, name, category, price) FROM stdin WITH (FORMAT csv);
 SELECT * FROM products;
 -- => Specifies source table for query
 -- => 3 rows inserted
+
 -- COPY from file (requires server filesystem access)
 -- Note: This requires a CSV file on the PostgreSQL server filesystem
 -- Example CSV content (products.csv):
@@ -2922,17 +3111,21 @@ SELECT * FROM products;
 -- 5,Chair,Furniture,199.99
 -- COPY products FROM '/path/to/products.csv' WITH (FORMAT csv);
 -- => Loads from file
+
 -- COPY with header row
 -- COPY products FROM '/path/to/products_with_header.csv' WITH (FORMAT csv, HEADER true);
 -- => Skips first row
+
 -- COPY to file (export)
 COPY products TO stdout WITH (FORMAT csv, HEADER true);
 -- => Statement execution completes
 -- => Outputs CSV to stdout with headers
+
 -- COPY with specific delimiter
 COPY products TO stdout WITH (FORMAT text, DELIMITER '|');
 -- => Restricts number of rows returned
 -- => Pipe-delimited output
+
 -- Generate test data with COPY
 TRUNCATE products;
 -- => Statement execution completes
@@ -2953,13 +3146,15 @@ SELECT
 FROM generate_series(1, 10000);
 -- => Specifies source table for query
 -- => 10000 rows inserted quickly
+
 -- Alternative: COPY for PostgreSQL client tools
 -- \copy products FROM 'products.csv' WITH (FORMAT csv);
--- => \copy works in psql, reads from client filesystem```
+-- => \copy works in psql, reads from client filesystem
+```
 
 **Key Takeaway**: COPY is fastest for bulk imports - much faster than individual INSERTs. Use WITH (FORMAT csv, HEADER true) for CSV files with headers. COPY FROM loads data, COPY TO exports. `\copy` in psql reads from client filesystem.
 
-**Why It Matters**: COPY achieves 10-100x faster bulk data loading compared to individual INSERT statements by bypassing SQL parsing and using optimized binary protocols, making it essential for data migration and nightly ETL jobs processing millions of rows. The CSV format support with automatic header detection enables direct import from Excel exports and data warehouse extracts without preprocessing, while COPY TO provides matching export functionality for data pipeline integration. However, COPY locks tables during import and triggers fire for each row, making it unsuitable for importing into heavily-used production tables without careful planning around maintenance windows.
+**Why It Matters**: The CSV format support with automatic header detection enables direct import from Excel exports and data warehouse extracts without preprocessing, while COPY TO provides matching export functionality for data pipeline integration. However, COPY locks tables during import and triggers fire for each row, making it unsuitable for importing into heavily-used production tables without careful planning around maintenance windows.
 
 ---
 
@@ -2975,16 +3170,19 @@ CREATE DATABASE example_58;
 \c example_58;
 -- => Statement execution completes
 -- => Switches connection to example_58 database
+
 -- Generate integer series
 SELECT * FROM generate_series(1, 10);
 -- => Specifies source table for query
 -- => Query executes and returns result set
 -- => Returns 1, 2, 3, ..., 10
+
 -- Generate series with step
 SELECT * FROM generate_series(0, 100, 10);
 -- => Specifies source table for query
 -- => Query executes and returns result set
 -- => Returns 0, 10, 20, ..., 100
+
 -- Generate date series
 SELECT * FROM generate_series(
 -- => Specifies source table for query
@@ -2995,6 +3193,7 @@ SELECT * FROM generate_series(
 );
 -- => Statement execution completes
 -- => Returns all dates in December 2025
+
 -- Create test table
 CREATE TABLE orders (
     customer_id INTEGER,
@@ -3002,6 +3201,7 @@ CREATE TABLE orders (
     order_date DATE
 );
 -- => Statement execution completes
+
 -- Generate 10,000 test orders
 INSERT INTO orders (id, customer_id, amount, order_date)
 -- => INSERT into orders table begins
@@ -3020,6 +3220,7 @@ SELECT COUNT(*) FROM orders;
 -- => Specifies source table for query
 -- => Query executes and returns result set
 -- => 10,000 rows
+
 -- Generate realistic email addresses
 CREATE TABLE users (
     email VARCHAR(100),
@@ -3040,6 +3241,7 @@ FROM generate_series(1, 1000);
 SELECT * FROM users LIMIT 5;
 -- => Specifies source table for query
 -- => Query executes and returns result set
+
 -- Generate time series data
 CREATE TABLE metrics (
     value DECIMAL(10, 2)
@@ -3062,6 +3264,7 @@ SELECT COUNT(*) FROM metrics;
 -- => Specifies source table for query
 -- => Query executes and returns result set
 -- => 1,440 rows (one per minute for 24 hours)
+
 -- Generate hierarchical test data
 CREATE TABLE categories (
     parent_id INTEGER,
@@ -3082,11 +3285,12 @@ FROM generate_series(1, 100);
 SELECT id, parent_id, name FROM categories WHERE parent_id IS NULL;
 -- => Specifies source table for query
 -- => Query executes and returns result set
--- => 10 top-level categories```
+-- => 10 top-level categories
+```
 
 **Key Takeaway**: GENERATE_SERIES creates numeric, date, or timestamp sequences - combine with random() for realistic test data. Use for populating development databases, performance testing, or creating time series data.
 
-**Why It Matters**: GENERATE_SERIES eliminates the need for external data generation scripts when creating test datasets, enabling single-query population of millions of realistic test records with proper distributions and relationships for load testing. The date/timestamp series generation enables creation of complete time series datasets without gaps (one row per hour for a year), essential for testing time-series queries and ensuring calendar logic handles edge cases like daylight saving transitions. Combined with random() and array constructors, GENERATE_SERIES creates representative test data directly in SQL without application code, making database performance testing reproducible and independent of application deployment.
+**Why It Matters**: GENERATE_SERIES eliminates the need for external data generation scripts when creating test datasets, enabling single-query population of millions of realistic test records with proper distributions and relationships for load testing. The date/timestamp series generation enables creation of complete time series datasets without gaps (one row per hour for a year), essential for testing time-series queries and ensuring calendar logic handles edge cases like daylight saving transitions.
 
 ---
 
@@ -3135,6 +3339,7 @@ VALUES
     -- => Row data inserted
     (3, 'Toaster', 39.99);
     -- => Statement execution completes
+
 -- Get top 2 most expensive products per category
 SELECT
     c.name AS category,
@@ -3161,6 +3366,7 @@ ORDER BY c.name, p.price DESC;
 -- => Electronics: Laptop (999.99), Keyboard (79.99)
 -- => Furniture: Desk (299.99), Chair (199.99)
 -- => Kitchen: Blender (89.99), Toaster (39.99)
+
 -- Alternative with LEFT JOIN LATERAL (includes categories with no products)
 SELECT
     c.name AS category,
@@ -3188,6 +3394,7 @@ ORDER BY c.name;
 -- => Sorts query results
 -- => Sorts result set
 -- => Shows top product per category (NULL if no products)
+
 -- LATERAL with aggregation
 SELECT
     c.name AS category,
@@ -3215,6 +3422,7 @@ ORDER BY c.name;
 -- => Electronics: 3 products, avg 369.99, max 999.99
 -- => Furniture: 2 products, avg 249.99, max 299.99
 -- => Kitchen: 2 products, avg 64.99, max 89.99
+
 -- LATERAL for row numbers per group
 SELECT
     category_id,
@@ -3235,11 +3443,12 @@ LATERAL (
 WHERE row_num = 1;
 -- => Applies filter to rows
 -- => Filter condition for query
--- => Alternative to window functions for ranking```
+-- => Alternative to window functions for ranking
+```
 
 **Key Takeaway**: LATERAL enables subqueries to reference preceding FROM items - use for "top N per group", correlated aggregations, or complex per-row computations. More flexible than window functions for some use cases.
 
-**Why It Matters**: LATERAL joins solve the "top N per group" problem (find 3 most recent orders per customer) efficiently without window functions or self-joins, making complex queries more readable and often faster through better query plan optimization. The ability to reference outer query columns in FROM clause subqueries enables per-row calculations that would otherwise require inefficient correlated subqueries or application-level iteration, reducing query complexity by 50-80% for certain patterns. LATERAL's flexibility makes it the preferred solution for queries requiring dynamic row-level computation, though window functions remain simpler and more efficient for standard ranking and aggregation tasks.
+**Why It Matters**: LATERAL joins solve the "top N per group" problem (find 3 most recent orders per customer) efficiently without window functions or self-joins, making complex queries more readable and often faster through better query plan optimization. The ability to reference outer query columns in FROM clause subqueries enables per-row calculations that would otherwise require inefficient correlated subqueries or application-level iteration, reducing query complexity by 50-80% for certain patterns.
 
 ---
 
@@ -3255,6 +3464,7 @@ CREATE DATABASE example_60;
 \c example_60;
 -- => Statement execution completes
 -- => Switches connection to example_60 database
+
 -- Create composite type
 CREATE TYPE address AS (
     street VARCHAR(200),
@@ -3269,12 +3479,14 @@ CREATE TYPE contact_info AS (
     home_address address  -- => Nested composite type
 );
 -- => Statement execution completes
+
 -- Use composite type in table
 CREATE TABLE customers (
     name VARCHAR(100),
     contact contact_info
 );
 -- => Statement execution completes
+
 -- Insert with composite type
 INSERT INTO customers (name, contact)
 -- => INSERT into customers table begins
@@ -3288,6 +3500,7 @@ VALUES (
     )::contact_info
 );
 -- => Statement execution completes
+
 -- Access composite type fields
 SELECT
     name,
@@ -3302,6 +3515,7 @@ SELECT
 FROM customers;
 -- => Specifies source table for query
 -- => Alice, alice@example.com, 555-1234, New York, NY
+
 -- Update composite type field
 UPDATE customers
 -- => Updates rows matching condition
@@ -3314,6 +3528,7 @@ SELECT name, (contact).email FROM customers;
 -- => Specifies source table for query
 -- => Query executes and returns result set
 -- => alice.new@example.com
+
 -- Function returning composite type
 CREATE FUNCTION get_customer_summary(customer_id INTEGER)
 RETURNS TABLE(
@@ -3339,6 +3554,7 @@ $$ LANGUAGE plpgsql;
 SELECT * FROM get_customer_summary(1);
 -- => Specifies source table for query
 -- => Query executes and returns result set
+
 -- Array of composite types
 CREATE TABLE orders (
     customer_id INTEGER,
@@ -3364,11 +3580,12 @@ SELECT
     -- => Creates alias for column/table
 FROM orders;
 -- => Specifies source table for query
+
 -- Drop composite type
 DROP TYPE IF EXISTS contact_info CASCADE;
--- => CASCADE drops dependent objects (tables using this type)```
+-- => CASCADE drops dependent objects (tables using this type)
+```
 
 **Key Takeaway**: Composite types combine multiple fields into structured types - use for addresses, coordinates, or domain concepts. Access nested fields with parentheses: `(column).field`. Composite types can be nested and stored in arrays.
 
-**Why It Matters**: Composite types enable domain modeling directly in the database schema (address type with street/city/zip fields) that enforces consistency across tables without duplicating column definitions, making schema evolution safer when address format changes affect 20+ tables. The ability to store composite types in arrays enables efficient representation of one-to-many relationships (product with array of price tiers) without junction tables when the nested data is always accessed together. However, composite types trade query flexibility for schema organization - filtering on nested fields requires verbose (column).field syntax and may prevent index usage, making them suitable for display-oriented data rather than heavily-queried attributes.
-````
+**Why It Matters**: Composite types enable domain modeling directly in the database schema (address type with street/city/zip fields) that enforces consistency across tables without duplicating column definitions, making schema evolution safer when address format changes affect 20+ tables. The ability to store composite types in arrays enables efficient representation of one-to-many relationships (product with array of price tiers) without junction tables when the nested data is always accessed together.
