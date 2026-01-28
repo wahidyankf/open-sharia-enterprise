@@ -657,17 +657,23 @@ func main() {
 
     // Select blocks until ANY case is ready
     // If multiple cases ready simultaneously, select chooses randomly
-    ready1 := make(chan int, 1)
-    ready2 := make(chan int, 1)
-    ready1 <- 1                        // => Both channels have data
-    ready2 := 2
+    ready1 := make(chan int, 1)        // => Buffered channel, capacity 1
+    ready2 := make(chan int, 1)        // => Buffered channel, capacity 1
+    ready1 <- 1                        // => Send 1 to ready1 (buffer now full)
+    ready2 <- 2                        // => Send 2 to ready2 (buffer now full)
+    // => Both channels have data available
 
     select {
     case v := <-ready1:                // => Both cases ready
+        // => v is 1 (type: int)
         fmt.Println("Got from ready1:", v)
+        // => Output: Got from ready1: 1
     case v := <-ready2:                // => Both cases ready
+        // => v is 2 (type: int)
         fmt.Println("Got from ready2:", v)
+        // => Output: Got from ready2: 2
     }
+    // => select chooses randomly when multiple cases ready
     // => Output: randomly "Got from ready1: 1" OR "Got from ready2: 2"
 }
 ```

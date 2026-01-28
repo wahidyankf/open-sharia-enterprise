@@ -32,16 +32,27 @@ graph TD
 
 ```java
 // File: HelloWorld.java (filename must match public class name)
+// => Filename MUST equal public class name (HelloWorld.java for class HelloWorld)
 public class HelloWorld {                          // => Public class, accessible from other packages
+                                                   // => Only ONE public class allowed per .java file
     public static void main(String[] args) {       // => Entry point: public static void main(String[])
-        System.out.println("Hello, World!");       // => Output: Hello, World!
-    }                                              // => println adds newline after text
-}
+                                                   // => JVM calls this method first when program starts
+                                                   // => String[] args holds command-line arguments
+        System.out.println("Hello, World!");       // => System.out is PrintStream (standard output)
+                                                   // => println() prints text + newline character
+                                                   // => Output: Hello, World!
+    }                                              // => Method execution completes, program ends
+}                                                  // => End of class definition
 
 // Compilation: javac HelloWorld.java → HelloWorld.class (bytecode)
-// => javac compiles .java source to platform-independent .class bytecode
+// => javac is Java compiler (converts .java source to .class bytecode)
+// => HelloWorld.class contains platform-independent JVM bytecode
+// => Bytecode is intermediate representation (not native machine code)
 // Execution: java HelloWorld → JVM loads .class and runs main()
+// => java is JVM launcher (loads bytecode and executes it)
+// => JVM interprets bytecode OR JIT-compiles to native code for performance
 // => Same .class file runs on Windows, Linux, macOS (write once, run anywhere)
+// => Platform-specific JVM handles OS-level details (file I/O, memory, threads)
 ```
 
 **Key Takeaway**: Java code is organized into classes with filenames matching public class names. The `public static void main(String[] args)` method is the fixed entry point recognized by the JVM. Code compiles to platform-independent bytecode (`.class` files) executed by the platform-specific JVM, enabling "write once, run anywhere" portability.
@@ -58,26 +69,85 @@ Java is statically typed with two categories: primitive types (stored on stack) 
 
 ```java
 // PRIMITIVE TYPES (8 total, stored on stack, cannot be null)
-byte b = 127;                    // => 8-bit signed integer, range: -128 to 127
-short s = 32000;                 // => 16-bit signed integer, range: -32,768 to 32,767
-int i = 42;                      // => 32-bit signed integer (DEFAULT for whole numbers)
-long l = 1000000L;               // => 64-bit signed integer, requires L suffix
-float f = 3.14f;                 // => 32-bit floating-point, requires f suffix
-double d = 3.14159;              // => 64-bit floating-point (DEFAULT for decimals)
-boolean bool = true;             // => true or false (NOT 0/1 like C)
-char c = 'A';                    // => 16-bit Unicode character (single quotes only)
+// => Primitives are NOT objects (no methods, cannot be null)
+// => Stored directly in stack memory (fast access, no heap allocation)
+// => Stack memory auto-managed (no GC overhead for primitives)
+byte b = 127;                    // => b is 127 (type: byte)
+                                 // => 8-bit signed integer, range: -128 to 127
+                                 // => Smallest integer type (1 byte memory)
+                                 // => Overflow: byte b = 128 would cause compile error
+                                 // => Max value: Byte.MAX_VALUE (127), min: Byte.MIN_VALUE (-128)
+short s = 32000;                 // => s is 32000 (type: short)
+                                 // => 16-bit signed integer, range: -32,768 to 32,767
+                                 // => 2 bytes memory (larger than byte, smaller than int)
+                                 // => Used for memory optimization in large arrays
+int i = 42;                      // => i is 42 (type: int)
+                                 // => 32-bit signed integer (DEFAULT for whole numbers)
+                                 // => Most common integer type (4 bytes)
+                                 // => Range: -2,147,483,648 to 2,147,483,647
+                                 // => No suffix needed for int literals (default)
+long l = 1000000L;               // => l is 1000000 (type: long)
+                                 // => 64-bit signed integer, requires L suffix for literals
+                                 // => Without L suffix, compiler treats as int (may overflow)
+                                 // => 8 bytes (largest primitive integer type)
+                                 // => Range: -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
+float f = 3.14f;                 // => f is 3.14 (type: float, approximation due to binary representation)
+                                 // => 32-bit floating-point, requires f suffix for literals
+                                 // => Less precision than double (4 bytes, ~7 decimal digits precision)
+                                 // => Without f suffix: 3.14 treated as double (compile error)
+double d = 3.14159;              // => d is 3.14159 (type: double)
+                                 // => 64-bit floating-point (DEFAULT for decimal literals)
+                                 // => Higher precision than float (8 bytes, ~15 decimal digits precision)
+                                 // => Preferred for most calculations requiring decimals
+boolean bool = true;             // => bool is true (type: boolean)
+                                 // => Only true or false (NOT 0/1 like C/C++)
+                                 // => Cannot cast to int (unlike C: if(bool) compiles, if(1) doesn't)
+                                 // => 1 byte memory (though only needs 1 bit logically)
+                                 // => JVM implementation uses 1 byte for addressability
+char c = 'A';                    // => c is 'A' (type: char)
+                                 // => 16-bit Unicode character (single quotes only)
+                                 // => Numeric value: 65 (ASCII/Unicode code point)
+                                 // => Supports international characters beyond ASCII (2 bytes)
+                                 // => Can store Unicode from \u0000 to \uFFFF
 
 // REFERENCE TYPES (stored on heap, can be null)
-String str = "Hello";            // => Reference to String object in heap
-                                 // => Literal "Hello" stored in string pool (shared memory)
-int[] array = {1, 2, 3};         // => Reference to array object, array.length is 3
+// => Reference variables hold memory addresses (pointers to heap objects)
+// => Objects allocated on heap (managed by garbage collector)
+// => Heap memory persists beyond method scope (unlike stack)
+// => Garbage collector reclaims unreachable objects automatically
+String str = "Hello";            // => str holds reference to String object in heap
+                                 // => str variable on stack (4/8 bytes depending on JVM)
+                                 // => "Hello" object on heap (object header + char array)
+                                 // => Literal "Hello" stored in string pool (shared memory optimization)
+                                 // => String pool avoids duplicate string objects (deduplication)
+                                 // => str points to pooled String instance
+int[] array = {1, 2, 3};         // => array holds reference to array object in heap
+                                 // => array.length is 3 (property, not method!)
+                                 // => Array elements stored contiguously in heap
+                                 // => Each element occupies 4 bytes (int size)
+                                 // => Total heap: object header + (3 × 4 bytes) + padding
 
 // TYPE INFERENCE with var (Java 10+, local variables only)
-var num = 100;                   // => Type inferred as int at compile time
-var text = "World";              // => Type inferred as String (still statically typed)
+// => var keyword tells compiler to infer type from initializer
+// => Type determined at compile time (NOT runtime like JavaScript)
+// => Still statically typed (cannot reassign different type)
+// => Cannot use var without initializer: var x; ← compile error
+var num = 100;                   // => Type inferred as int at compile time (literal 100 is int)
+                                 // => num is 100 (type: int, inferred)
+                                 // => Equivalent to: int num = 100;
+                                 // => num = "text" ← compile error (cannot change type)
+var text = "World";              // => Type inferred as String at compile time
+                                 // => text is "World" (type: String, inferred)
+                                 // => Equivalent to: String text = "World";
+                                 // => Compiler analyzes initializer expression for type
 
-System.out.println(i);           // => Output: 42
-System.out.println(str);         // => Output: Hello
+System.out.println(i);           // => Calls println with int argument
+                                 // => Converts int to String automatically (Integer.toString())
+                                 // => Autoboxing: int → Integer → toString() → String
+                                 // => Output: 42
+System.out.println(str);         // => Calls println with String argument
+                                 // => No conversion needed (already String)
+                                 // => Output: Hello
 ```
 
 **Key Takeaway**: Java has 8 primitive types (stored on stack, cannot be null) and reference types (stored on heap, can be null). Use `var` for type inference in local variables while maintaining static type safety—the compiler infers types at compile time, not runtime.
@@ -107,26 +177,55 @@ graph TD
 
 ```java
 import java.util.Scanner;        // => Scanner from java.util (not auto-imported)
+                                 // => java.lang.* auto-imported (String, System, Integer)
+                                 // => All other packages require explicit import
 
 Scanner scanner = new Scanner(System.in);
+                                 // => new Scanner() creates Scanner object on heap
 // => scanner wraps System.in (console input stream)
+// => System.in is InputStream reading bytes from console
+// => Scanner converts byte stream to typed values
 // => Provides type-safe parsing methods (nextInt, nextDouble, nextLine)
+// => Internal buffer stores input until parsed
 
 System.out.print("Enter your name: ");
 // => print() does NOT add newline (cursor stays on same line)
+// => println() adds \n after output (moves cursor to next line)
+// => System.out is PrintStream for console output
 String name = scanner.nextLine(); // => Reads entire line until Enter (\n)
-                                  // => Input: "Alice" → name is "Alice"
+                                  // => Blocks waiting for user input
+                                  // => Newline character consumed (not included in result)
+                                  // => Input: "Alice\n" → name is "Alice" (without \n)
+                                  // => Returns String object allocated on heap
 
 System.out.print("Enter your age: ");
-int age = scanner.nextInt();     // => Reads next integer token
-                                 // => Input: 25 → age is 25
+// => Prompt user for numeric input
+int age = scanner.nextInt();     // => Reads next integer token (whitespace-delimited)
+                                 // => Blocks waiting for integer input
+                                 // => Parses numeric characters until whitespace
+                                 // => Input: "25\n" → age is 25
+                                 // => CRITICAL: newline \n remains in buffer (not consumed!)
+                                 // => NumberFormatException if non-numeric (e.g., "abc")
 scanner.nextLine();              // => Consume leftover newline after nextInt()
+                                 // => REQUIRED: nextInt() doesn't consume \n
+                                 // => Without this: next nextLine() returns empty string
+                                 // => Reads from current position to end of line
+                                 // => Discards the leftover \n character
 
 System.out.println("Hello, " + name + "! You are " + age + " years old.");
+// => String concatenation using + operator
+// => Compiler converts: "Hello, " + name → StringBuilder append chain
+// => age (int) auto-converted to String via Integer.toString()
+// => Final concatenated String passed to println()
 // => Output: Hello, Alice! You are 25 years old.
+// => println() adds \n after output
 
 scanner.close();                 // => Close scanner to release resources
+                                 // => Flushes internal buffer
+                                 // => Releases file descriptor
                                  // => Also closes underlying System.in stream
+                                 // => CAUTION: System.in.close() affects entire JVM
+                                 // => Cannot read from System.in after closing
 ```
 
 **Key Takeaway**: Use `Scanner` for reading console input with type-safe parsing methods (`nextInt`, `nextDouble`, `nextLine`). Always call `scanner.nextLine()` after `nextInt()` or similar methods to consume leftover newlines that would otherwise interfere with subsequent `nextLine()` calls.
@@ -142,43 +241,66 @@ Java provides `if/else` for conditional branching and `switch` for multi-way bra
 **Code**:
 
 ```java
-int score = 85;
+int score = 85;                  // => score initialized to 85 (int primitive on stack)
 
-// IF/ELSE - traditional conditional
-if (score >= 90) {               // => Condition is false (85 < 90)
+// IF/ELSE - traditional conditional branching
+if (score >= 90) {               // => Evaluates boolean expression: 85 >= 90
+                                 // => Condition is false (85 < 90)
+                                 // => Skips this block, moves to next else if
     System.out.println("Grade: A");
-} else if (score >= 80) {        // => Condition is true (85 >= 80)
+} else if (score >= 80) {        // => Evaluates: 85 >= 80
+                                 // => Condition is true (85 >= 80)
+                                 // => Enters this block, executes println
     System.out.println("Grade: B");
-    // => Output: Grade: B (execution stops after first true branch)
-} else if (score >= 70) {        // => Skipped (previous branch executed)
+    // => Output: Grade: B
+    // => Execution stops after first true branch (no more conditions checked)
+} else if (score >= 70) {        // => Not evaluated (previous branch taken)
+                                 // => Skipped (previous branch executed)
     System.out.println("Grade: C");
-} else {                         // => Skipped
+} else {                         // => Catch-all for remaining cases
+                                 // => Skipped (previous branch executed)
     System.out.println("Grade: F");
-}
+}                                // => Control flow exits if/else chain
 
 // SWITCH STATEMENT - multi-way branch (traditional, Java 1.0+)
-String day = "Monday";
-switch (day) {                   // => Switch on String (Java 7+)
-    case "Monday":               // => Matches (day equals "Monday")
+String day = "Monday";           // => day holds reference to String "Monday" in string pool
+switch (day) {                   // => Switch on String (Java 7+, earlier versions: int/char/enum only)
+                                 // => Internally uses String.hashCode() + equals() for matching
+                                 // => Generates efficient bytecode (hash table or lookup switch)
+    case "Monday":               // => Compares: day.equals("Monday")
+                                 // => Matches (day equals "Monday")
+                                 // => Enters this case block
         System.out.println("Start of work week");
-        break;                   // => Exit switch (without break, falls through!)
-        // => Output: Start of work week
-    case "Friday":               // => Skipped (Monday already matched)
+                                 // => Output: Start of work week
+        break;                   // => Exit switch immediately (jump to closing brace)
+                                 // => WITHOUT break: falls through to next case (executes "TGIF!")
+    case "Friday":               // => Not evaluated (break in previous case)
+                                 // => Skipped (Monday already matched)
         System.out.println("TGIF!");
-        break;
-    default:                     // => Skipped
+        break;                   // => Exit switch
+    default:                     // => Matches any value not covered by cases
+                                 // => Skipped (Monday already matched)
+                                 // => Optional (no compile error if omitted)
         System.out.println("Midweek");
-}
+}                                // => End of switch statement
 
-// SWITCH EXPRESSION - modern syntax (Java 14+)
-int numLetters = switch (day) {  // => Switch as expression (returns value)
-    case "Monday", "Friday" -> 6; // => Arrow syntax (no fall-through)
-    case "Tuesday" -> 7;
-    case "Wednesday" -> 9;
-    default -> 0;
-};
+// SWITCH EXPRESSION - modern syntax (Java 14+, preview → Java 17 stable)
+int numLetters = switch (day) {  // => Switch as expression (MUST return value)
+                                 // => Entire switch expression evaluated to single int
+                                 // => Exhaustive: all cases must be covered (compile error if not)
+    case "Monday", "Friday" -> 6; // => Arrow syntax (implicit break, no fall-through)
+                                  // => Multiple labels: comma-separated ("Monday" OR "Friday")
+                                  // => Evaluates to 6 (counts letters in "Monday")
+                                  // => No break needed (arrow -> prevents fall-through)
+    case "Tuesday" -> 7;          // => Returns 7 for "Tuesday" (7 letters)
+    case "Wednesday" -> 9;        // => Returns 9 for "Wednesday" (9 letters)
+    default -> 0;                 // => Returns 0 for all other values
+                                  // => Required for exhaustiveness (compiler enforces)
+};                               // => Result assigned to numLetters
 // => numLetters is 6 ("Monday" has 6 letters)
-System.out.println(numLetters);  // => Output: 6
+// => Assignment completes here
+System.out.println(numLetters);  // => Prints the computed value
+                                 // => Output: 6
 ```
 
 **Key Takeaway**: Use `if/else` for simple boolean conditions and modern switch expressions for multi-way branching based on discrete values. Switch expressions with arrow syntax (`->`) eliminate fall-through bugs and enable value-returning switches, making code safer and more concise than traditional switch statements.
@@ -346,41 +468,81 @@ graph TD
 
 ```java
 // CLASS DEFINITION
-public class Person {            // => Blueprint for Person objects
+public class Person {            // => public: class accessible from any package
+                                 // => Blueprint for Person objects (template)
+                                 // => Defines structure: fields (state) + methods (behavior)
+                                 // => Each instance gets own copy of fields
     // FIELDS (instance variables, state)
-    String name;                 // => Each Person object has its own name field
-    int age;                     // => Default: null for String, 0 for int
+    String name;                 // => Package-private field (no modifier = package access)
+                                 // => Each Person object has its own name field (heap memory)
+                                 // => Instance variable: belongs to object, not class
+    int age;                     // => Default values auto-initialized
+                                 // => null for reference types (String)
+                                 // => 0 for int, false for boolean, etc.
+                                 // => Initialized before constructor body executes
 
     // CONSTRUCTOR - special method to initialize new objects
     public Person(String name, int age) {
+                                 // => Constructor name MUST match class name (Person)
+                                 // => No return type (not even void)
                                  // => Called when: new Person("Alice", 30)
-        this.name = name;        // => this.name refers to instance field, name refers to parameter
-        this.age = age;          // => Assigns parameter value to instance field
-    }
+                                 // => Parameters shadow instance fields (name parameter vs this.name field)
+        this.name = name;        // => this: reference to current object being constructed
+                                 // => this.name: instance field (object state)
+                                 // => name: parameter (local variable)
+                                 // => Assigns parameter value "Alice" to instance field
+        this.age = age;          // => this.age: instance field (object state)
+                                 // => age: parameter (local variable)
+                                 // => Assigns parameter value 30 to instance field
+    }                            // => Constructor completes, object initialization done
+                                 // => Object now fully initialized and usable
 
     // METHOD - defines behavior
-    public void introduce() {    // => void = no return value
+    public void introduce() {    // => public: accessible from anywhere
+                                 // => void: no return value (side-effect method)
+                                 // => Instance method: operates on specific object (requires this)
         System.out.println("Hi, I'm " + name + " and I'm " + age + " years old.");
+                                 // => name implicitly this.name (refers to calling object's field)
+                                 // => age implicitly this.age
         // => Can access instance fields directly (name, age implicitly refer to this.name, this.age)
-    }
-}
+        // => String concatenation: "Hi, I'm " + this.name + " and I'm " + this.age + " years old."
+        // => Compiler uses StringBuilder for efficient concatenation
+    }                            // => Method returns (void, no return statement needed)
+}                                // => End of class definition
 
 // CREATING OBJECTS (instantiation)
 Person alice = new Person("Alice", 30);
-                                 // => new keyword allocates memory on heap for Person object
-                                 // => Calls Person constructor with arguments "Alice", 30
-                                 // => alice variable stores reference (memory address) to object
+                                 // => new keyword triggers object creation on heap
+                                 // => Step 1: Allocate heap memory (object header + 2 fields)
+                                 // => Step 2: Initialize fields to defaults (name=null, age=0)
+                                 // => Step 3: Call constructor Person(String, int)
+                                 // => Step 4: Constructor sets name="Alice", age=30
+                                 // => alice variable on stack holds reference (memory address)
                                  // => Object has independent state: alice.name="Alice", alice.age=30
+                                 // => Reference type: alice holds pointer, not actual object
 Person bob = new Person("Bob", 25);
+                                 // => new Person() allocates SEPARATE object on heap
                                  // => Separate object with different state
                                  // => bob.name="Bob", bob.age=25 (independent from alice)
+                                 // => bob and alice references point to different heap objects
+                                 // => Modifying bob doesn't affect alice (independent instances)
 
 // CALLING METHODS
-alice.introduce();               // => Output: Hi, I'm Alice and I'm 30 years old.
-bob.introduce();                 // => Output: Hi, I'm Bob and I'm 25 years old.
+alice.introduce();               // => Calls introduce() on alice object
+                                 // => Inside method: this refers to alice object
+                                 // => Accesses alice.name ("Alice") and alice.age (30)
+                                 // => Output: Hi, I'm Alice and I'm 30 years old.
+bob.introduce();                 // => Calls introduce() on bob object
+                                 // => Inside method: this refers to bob object
+                                 // => Accesses bob.name ("Bob") and bob.age (25)
+                                 // => Output: Hi, I'm Bob and I'm 25 years old.
+                                 // => Same method code, different object state (polymorphism)
 
 // FIELD ACCESS
-System.out.println(alice.name);  // => Output: Alice (direct field access)
+System.out.println(alice.name);  // => Direct field access via dot operator
+                                 // => alice.name dereferences alice pointer, accesses name field
+                                 // => Output: Alice (direct field access)
+                                 // => No encapsulation (public field would allow arbitrary modification)
 ```
 
 **Key Takeaway**: Classes define object templates with fields (state) and methods (behavior). Constructors initialize objects via `new` keyword. Each object has independent state—modifying one object doesn't affect others. Use `this` keyword to distinguish instance fields from parameters when names collide.
@@ -1110,67 +1272,119 @@ Generics enable type-safe collections and methods by parameterizing types. They 
 **Code**:
 
 ```java
-import java.util.*;
+import java.util.*;              // => Imports ArrayList, List, Arrays, Collectors, etc.
 
 // GENERIC COLLECTIONS
 ArrayList<String> strings = new ArrayList<>();
-                                 // => <String> specifies element type
-strings.add("hello");            // => Type-safe: only String allowed
-strings.add("world");
+                                 // => <String> specifies element type at compile time
+                                 // => Generic type parameter: compile-time type checking
+                                 // => Diamond operator <> (Java 7+): infers type from left side
+                                 // => Equivalent: new ArrayList<String>() (explicit)
+                                 // => Type erasure: becomes ArrayList at runtime (backwards compatibility)
+strings.add("hello");            // => Type-safe: compiler verifies argument is String
+                                 // => Compile-time check: add(String) called with String
+                                 // => No runtime type check needed (already verified at compile time)
+strings.add("world");            // => Another String added to list
 // strings.add(42);              // => Compile error: incompatible types
+                                 // => Cannot add Integer to List<String>
+                                 // => Type safety prevents ClassCastException at runtime
 
-String first = strings.get(0);   // => No cast needed (compiler knows type is String)
+String first = strings.get(0);   // => get() returns String (type inferred from generic)
+                                 // => No cast needed (compiler knows type is String)
+                                 // => Pre-generics required: (String) list.get(0)
+                                 // => Type safety: cannot accidentally assign to wrong type
 
 // PRE-GENERICS (Java 1.4 and earlier)
 ArrayList rawList = new ArrayList();
                                  // => Raw type (no generic parameter)
-rawList.add("text");
-rawList.add(123);                // => Accepts any type (no compile-time safety)
+                                 // => Compiler warning: unchecked operations
+                                 // => All elements stored as Object type
+                                 // => No compile-time type safety
+rawList.add("text");             // => Accepts String (autoboxed to Object)
+rawList.add(123);                // => Accepts Integer (autoboxed to Object)
+                                 // => Accepts any type (no compile-time safety)
+                                 // => Type heterogeneity: mixed types in same list
 String str = (String) rawList.get(0);
-                                 // => Requires explicit cast (runtime ClassCastException risk)
+                                 // => Requires explicit cast from Object to String
+                                 // => Runtime type check: ClassCastException if wrong type
+                                 // => get(0) returns "text" (stored as Object)
+                                 // => Cast succeeds: Object → String
+// Integer fail = (Integer) rawList.get(0); // => ClassCastException at runtime!
 
 // GENERIC METHODS
 public static <T> void printArray(T[] array) {
-                                 // => <T> declares type parameter
+                                 // => <T> declares type parameter (method-level generics)
+                                 // => T is placeholder for any reference type
                                  // => T can be any type (String, Integer, etc.)
-    for (T element : array) {
+                                 // => Compiler infers T from argument type when called
+                                 // => T[] array: array of T elements
+    for (T element : array) {    // => Enhanced for-loop iterates array
+                                 // => element has type T (inferred at call site)
         System.out.print(element + " ");
+                                 // => element.toString() called automatically
+                                 // => Works for any type with toString()
     }
-    System.out.println();
+    System.out.println();        // => Newline after array elements
 }
 
-Integer[] numbers = {1, 2, 3};
+Integer[] numbers = {1, 2, 3};   // => Array of Integer wrapper objects (not int[])
 String[] words = {"hello", "world"};
-printArray(numbers);             // => T inferred as Integer, Output: 1 2 3
-printArray(words);               // => T inferred as String, Output: hello world
+printArray(numbers);             // => T inferred as Integer at call site
+                                 // => Compiler substitutes Integer for T throughout method
+                                 // => Calls printArray<Integer>(Integer[])
+                                 // => Output: 1 2 3
+printArray(words);               // => T inferred as String from argument type
+                                 // => Compiler substitutes String for T
+                                 // => Calls printArray<String>(String[])
+                                 // => Output: hello world
 
 // BOUNDED TYPE PARAMETERS
 public static <T extends Number> double sum(List<T> list) {
-                                 // => T must be Number or subclass (Integer, Double, etc.)
-    double total = 0;
-    for (T num : list) {
+                                 // => <T extends Number>: bounded type parameter
+                                 // => T must be Number or subclass (Integer, Double, Long, etc.)
+                                 // => Cannot call with List<String> (compile error)
+                                 // => Upper bound enables calling Number methods on T
+    double total = 0;            // => Accumulator for sum
+    for (T num : list) {         // => Iterate elements (type T)
+                                 // => num has type T (which extends Number)
         total += num.doubleValue();
-                                 // => Can call Number methods (T extends Number)
+                                 // => Can call Number methods (T extends Number constraint)
+                                 // => doubleValue() converts any Number subclass to double
+                                 // => Integer.doubleValue(), Double.doubleValue(), etc.
+                                 // => Accumulated in total
     }
-    return total;
+    return total;                // => Return accumulated sum as double
 }
 
 List<Integer> ints = Arrays.asList(1, 2, 3);
-double result = sum(ints);       // => result is 6.0
+                                 // => Arrays.asList() creates immutable List<Integer>
+double result = sum(ints);       // => T inferred as Integer (fits Number bound)
+                                 // => Calls sum<Integer>(List<Integer>)
+                                 // => 1.doubleValue() + 2.doubleValue() + 3.doubleValue()
+                                 // => result is 6.0
 
 // WILDCARD TYPES
 public static void printList(List<?> list) {
                                  // => ? is wildcard (unknown type)
+                                 // => Unbounded wildcard: accepts List of any type
                                  // => Can accept List<String>, List<Integer>, etc.
+                                 // => Cannot add elements (type unknown, type safety)
+                                 // => Can only read as Object
     for (Object elem : list) {   // => Elements treated as Object (unknown type)
+                                 // => elem type is Object (greatest common type)
+                                 // => Cannot cast to specific type (unknown at compile time)
         System.out.print(elem + " ");
+                                 // => elem.toString() called (Object method)
     }
 }
 
 List<String> names = Arrays.asList("Alice", "Bob");
 List<Integer> nums = Arrays.asList(1, 2, 3);
-printList(names);                // => Output: Alice Bob
-printList(nums);                 // => Output: 1 2 3
+printList(names);                // => ? resolves to String at runtime
+                                 // => Output: Alice Bob
+printList(nums);                 // => ? resolves to Integer at runtime
+                                 // => Output: 1 2 3
+                                 // => Wildcard enables method to accept any List type
 ```
 
 **Key Takeaway**: Generics provide compile-time type safety for collections and methods, eliminating runtime ClassCastException errors. Use `<T>` for type parameters in generic classes/methods. Use bounded types (`<T extends Class>`) to restrict acceptable types. Use wildcards (`<?>`) for flexible method parameters accepting any generic type.

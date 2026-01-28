@@ -365,85 +365,106 @@ Traits define shared behavior across types, similar to interfaces in other langu
 
 ```rust
 // Define trait - shared behavior contract
-trait Summary {
+trait Summary {                      // => Trait defines shared interface
+                                     // => Similar to interface in Java/C#, protocol in Swift
     fn summarize(&self) -> String;   // => Method signature (no implementation yet)
                                      // => &self means: method takes immutable reference to self
                                      // => Types implementing this trait MUST provide implementation
+                                     // => Return type: String (owned, heap-allocated)
 }
 
 // First type implementing Summary
-struct NewsArticle {
-    headline: String,                // => Owned String fields
-    content: String,
-}
+struct NewsArticle {                 // => Define NewsArticle type
+    headline: String,                // => Owned String fields (heap-allocated)
+    content: String,                 // => Each NewsArticle owns its strings
+}                                    // => No trait implementation yet
 
 impl Summary for NewsArticle {       // => Implement Summary trait for NewsArticle
                                      // => "impl TraitName for TypeName" syntax
+                                     // => NewsArticle now satisfies Summary contract
     fn summarize(&self) -> String {  // => Provide concrete implementation
                                      // => Must match trait signature exactly
+                                     // => self is &NewsArticle (immutable borrow)
         format!("{}: {}", self.headline, self.content)
-                                     // => format! creates new String
-                                     // => Combines headline and content with ": "
+                                     // => format! creates new String (heap allocation)
+                                     // => Combines headline and content with ": " separator
+                                     // => Returns owned String to caller
     }
-}
+}                                    // => NewsArticle implementation complete
 
 // Second type implementing Summary (different implementation)
-struct Tweet {
-    username: String,
-    content: String,
-}
+struct Tweet {                       // => Define Tweet type (different from NewsArticle)
+    username: String,                // => Owned String (heap-allocated)
+    content: String,                 // => Tweet-specific fields (username instead of headline)
+}                                    // => Different structure, same trait capability
 
 impl Summary for Tweet {             // => Same trait, different type
+                                     // => Tweet now also satisfies Summary contract
     fn summarize(&self) -> String {  // => Different implementation than NewsArticle
+                                     // => Same signature, different behavior
         format!("@{}: {}", self.username, self.content)
-                                     // => Uses @ prefix for username
-                                     // => Different format than NewsArticle
+                                     // => Uses @ prefix for username (Twitter-style)
+                                     // => Different format than NewsArticle version
+                                     // => Returns owned String
     }
-}
+}                                    // => Two types, one trait, different implementations
 
 // Function accepting any type implementing Summary
 fn notify(item: &impl Summary) {     // => item can be ANY type implementing Summary
                                      // => "impl Trait" syntax (syntactic sugar)
                                      // => Desugars to: fn notify<T: Summary>(item: &T)
+                                     // => Accepts NewsArticle, Tweet, or any Summary implementer
     println!("Breaking news: {}", item.summarize());
                                      // => Call summarize() - works for any Summary type
                                      // => Polymorphism: method dispatch determined at compile time
-}
+                                     // => No runtime overhead (monomorphization)
+}                                    // => item borrow ends, no ownership transfer
 
 fn main() {
-    let article = NewsArticle {
+    let article = NewsArticle {      // => Create NewsArticle instance
         headline: String::from("Breaking News"),
+                                     // => Heap-allocate "Breaking News"
         content: String::from("Something happened"),
-    };                               // => article type: NewsArticle
+                                     // => Heap-allocate "Something happened"
+    };                               // => article type: NewsArticle (owns both strings)
     println!("{}", article.summarize());
                                      // => Call NewsArticle's summarize implementation
+                                     // => Returns new String: "Breaking News: Something happened"
                                      // => Output: Breaking News: Something happened
 
-    let tweet = Tweet {
+    let tweet = Tweet {              // => Create Tweet instance
         username: String::from("user123"),
+                                     // => Heap-allocate "user123"
         content: String::from("Hello world"),
-    };                               // => tweet type: Tweet
+                                     // => Heap-allocate "Hello world"
+    };                               // => tweet type: Tweet (owns both strings)
     println!("{}", tweet.summarize());
                                      // => Call Tweet's summarize implementation
+                                     // => Returns new String: "@user123: Hello world"
                                      // => Output: @user123: Hello world
 
     // Polymorphism - same function, different types
-    notify(&article);                // => Passes NewsArticle (implements Summary)
+    notify(&article);                // => Passes &NewsArticle (implements Summary)
+                                     // => Compiler monomorphizes: generates notify::<NewsArticle>
                                      // => Output: Breaking news: Breaking News: Something happened
-    notify(&tweet);                  // => Passes Tweet (implements Summary)
+    notify(&tweet);                  // => Passes &Tweet (implements Summary)
+                                     // => Compiler monomorphizes: generates notify::<Tweet>
                                      // => Output: Breaking news: @user123: Hello world
-}
+}                                    // => article, tweet dropped (heap memory freed)
 
 // Multiple traits on same type
-trait Display {
-    fn display(&self) -> String;
-}
+trait Display {                      // => Define second trait (independent from Summary)
+    fn display(&self) -> String;     // => Different method name and purpose
+}                                    // => Types can implement multiple traits
 
 impl Display for Tweet {             // => Tweet can implement multiple traits
-    fn display(&self) -> String {
+                                     // => Tweet now satisfies BOTH Summary and Display
+    fn display(&self) -> String {    // => Provide Display implementation
         format!("Tweet by {}", self.username)
+                                     // => Different behavior than summarize()
+                                     // => Returns "Tweet by <username>"
     }
-}
+}                                    // => Tweet has two trait implementations
 ```
 
 **Key Takeaway**: Traits enable polymorphism by defining shared method signatures that multiple types can implement differently, allowing generic code to work with any type implementing the trait. Trait dispatch is resolved at compile time (monomorphization), providing zero-cost abstraction.
@@ -458,93 +479,121 @@ Traits can provide default method implementations that types can use or override
 
 ```rust
 // Trait with required and default methods
-trait Summary {
+trait Summary {                      // => Trait with mixed method types
     fn summarize_author(&self) -> String;
                                      // => Required method (no default)
-                                     // => Types MUST implement this
+                                     // => No {} body - types MUST implement this
+                                     // => Abstract method (must be provided)
 
     fn summarize(&self) -> String {  // => Default implementation provided
-                                     // => Types CAN override, but don't have to
+                                     // => Has {} body - types CAN override, but don't have to
+                                     // => Concrete method (optional override)
         format!("(Read more from {}...)", self.summarize_author())
                                      // => Default calls required method
                                      // => Composition: default uses other trait methods
+                                     // => Creates String: "(Read more from <author>...)"
     }
-}
+}                                    // => Trait complete: 1 required + 1 default
 
-struct Tweet {
-    username: String,
+struct Tweet {                       // => Define Tweet type
+    username: String,                // => Owned fields
     content: String,
-}
+}                                    // => No trait implementation yet
 
-impl Summary for Tweet {
+impl Summary for Tweet {             // => Implement Summary for Tweet
+                                     // => Must provide summarize_author (required)
+                                     // => Can inherit summarize (has default)
     fn summarize_author(&self) -> String {
                                      // => Implement ONLY required method
+                                     // => Minimal implementation strategy
         format!("@{}", self.username)
-                                     // => Returns "@user123"
+                                     // => Returns "@user123" (Twitter-style username)
+                                     // => Creates new String (heap allocation)
     }                                // => summarize() inherited from default
                                      // => No need to implement summarize() - uses default
-}
+}                                    // => Tweet implementation complete (1 method)
 
-struct Article {
-    title: String,
+struct Article {                     // => Define Article type (different from Tweet)
+    title: String,                   // => Article-specific fields
     author: String,
-}
+}                                    // => Different structure, same trait
 
-impl Summary for Article {
+impl Summary for Article {           // => Implement Summary for Article
+                                     // => Will override default behavior
     fn summarize_author(&self) -> String {
                                      // => Implement required method
-        self.author.clone()          // => Clone author string
-    }
+                                     // => Must provide this (no default available)
+        self.author.clone()          // => Clone author string (creates new String)
+                                     // => Returns owned String (not &str)
+    }                                // => Required method complete
 
     fn summarize(&self) -> String {  // => Override default implementation
+                                     // => Replaces default behavior with custom
         format!("{} by {}", self.title, self.author)
-                                     // => Custom format, ignores default
+                                     // => Custom format: "title by author"
+                                     // => Ignores default "Read more from..." format
+                                     // => Creates new String
     }
-}
+}                                    // => Article implementation complete (2 methods)
 
 fn main() {
-    let tweet = Tweet {
+    let tweet = Tweet {              // => Create Tweet instance
         username: String::from("user123"),
+                                     // => Heap-allocate username
         content: String::from("Hello"),
+                                     // => Heap-allocate content
     };                               // => tweet uses default summarize()
     println!("{}", tweet.summarize());
-                                     // => Calls default implementation
-                                     // => Default calls summarize_author() -> "@user123"
+                                     // => Calls default implementation (not overridden)
+                                     // => Default calls tweet.summarize_author() -> "@user123"
+                                     // => Returns: "(Read more from @user123...)"
                                      // => Output: (Read more from @user123...)
 
-    let article = Article {
+    let article = Article {          // => Create Article instance
         title: String::from("Rust Traits"),
+                                     // => Heap-allocate title
         author: String::from("Alice"),
+                                     // => Heap-allocate author
     };                               // => article overrides summarize()
     println!("{}", article.summarize());
-                                     // => Calls overridden implementation
+                                     // => Calls overridden implementation (custom)
+                                     // => Returns: "Rust Traits by Alice"
                                      // => Output: Rust Traits by Alice
-}
+}                                    // => tweet, article dropped (heap freed)
 
 // Default methods can call other defaults
-trait Advanced {
+trait Advanced {                     // => Trait with all default methods
+                                     // => No required methods (unusual but valid)
     fn process(&self) -> String {    // => Default implementation 1
+                                     // => Calls another default method (prepare)
         self.prepare() + " processed"
-                                     // => Calls another default method
-    }
+                                     // => String concatenation (prepare() + " processed")
+                                     // => Creates new String
+    }                                // => Default chaining example
 
     fn prepare(&self) -> String {    // => Default implementation 2
-        String::from("data")
+                                     // => Provides base data
+        String::from("data")         // => Returns "data" string
+                                     // => Heap-allocated String
     }
-}
+}                                    // => Trait with composable defaults
 
-struct Handler;
+struct Handler;                      // => Unit-like struct (no fields)
+                                     // => Zero-sized type (no memory overhead)
 
 impl Advanced for Handler {}         // => Implement trait WITHOUT any methods
-                                     // => Uses BOTH defaults
+                                     // => Empty impl block (valid!)
+                                     // => Uses BOTH defaults (process and prepare)
+                                     // => Minimal boilerplate implementation
 
-fn advanced_example() {
-    let handler = Handler;
+fn advanced_example() {              // => Demonstrate default chaining
+    let handler = Handler;           // => Create Handler instance (zero size)
     println!("{}", handler.process());
-                                     // => Uses default process()
-                                     // => Which calls default prepare()
+                                     // => Calls default process()
+                                     // => process() calls default prepare() -> "data"
+                                     // => Returns: "data processed"
                                      // => Output: data processed
-}
+}                                    // => handler dropped (no-op, zero-sized)
 ```
 
 **Key Takeaway**: Default trait implementations reduce code duplication by providing common behavior that types can inherit or override, enabling flexible trait-based abstraction. Default methods can call other trait methods, creating composable behavior hierarchies.
@@ -577,95 +626,114 @@ graph TD
 ```
 
 ```rust
-trait Summary {
-    fn summarize(&self) -> String;
-}
+trait Summary {                      // => Trait defining summarization capability
+    fn summarize(&self) -> String;   // => Method signature (no implementation)
+}                                    // => Types implementing this can be summarized
 
-struct Article { title: String }
+struct Article { title: String }    // => Struct with single String field
 
-impl Summary for Article {
-    fn summarize(&self) -> String {
-        self.title.clone()           // => Clone String from article
+impl Summary for Article {           // => Implement Summary trait for Article type
+                                     // => Makes Article "summarizable"
+    fn summarize(&self) -> String {  // => Provide concrete implementation
+        self.title.clone()           // => Clone heap String from article.title
+                                     // => Returns owned String copy
     }
 }
 
 // Trait bound syntax: T must implement Summary
-fn notify<T: Summary>(item: &T) {    // => Generic type T with trait bound
-                                     // => Constraint: T MUST implement Summary
-                                     // => Compiler verifies at call site
+fn notify<T: Summary>(item: &T) {    // => Generic function with type parameter T
+                                     // => Trait bound: T: Summary (T MUST implement Summary)
+                                     // => Compiler verifies at call site (compile-time check)
+                                     // => item is immutable reference to any T
     println!("News: {}", item.summarize());
-                                     // => Can call summarize() because of bound
-                                     // => Compile error if T doesn't implement Summary
+                                     // => Can call summarize() because bound guarantees it exists
+                                     // => Compile error if called with non-Summary type
 }
 
 // Alternative syntax: impl Trait (syntactic sugar)
 fn notify_impl(item: &impl Summary) { // => Equivalent to notify<T: Summary>
-                                     // => Shorter syntax for simple cases
+                                     // => Shorter syntax for single trait bound
+                                     // => Compiler desugars to generic with bound
     println!("News: {}", item.summarize());
+                                     // => Same behavior as notify()
 }
 
 // Multiple trait bounds with + operator
 fn notify_display<T: Summary + std::fmt::Display>(item: &T) {
                                      // => T must implement BOTH Summary AND Display
-                                     // => Multiple bounds separated by +
-    println!("{}", item);            // => Uses Display trait
+                                     // => Multiple bounds separated by + operator
+                                     // => Intersection of trait requirements
+    println!("{}", item);            // => Uses Display trait implementation
+                                     // => Compile error if T doesn't implement Display
     println!("Summary: {}", item.summarize());
-                                     // => Uses Summary trait
+                                     // => Uses Summary trait implementation
+                                     // => Both methods available due to + bound
 }
 
 // where clause for complex bounds (more readable)
 fn complex<T, U>(t: &T, u: &U) -> String
-where
+where                                // => where clause: separates bounds from signature
     T: Summary + Clone,              // => T implements Summary AND Clone
-    U: Summary,                      // => U implements Summary (not Clone)
-                                     // => where clause separates bounds from signature
+    U: Summary,                      // => U implements Summary (not Clone required)
+                                     // => More readable than inline bounds for multiple params
 {
-    let cloned = t.clone();          // => Can clone t (Clone bound)
+    let cloned = t.clone();          // => Can clone t (Clone bound guarantees clone() exists)
+                                     // => Creates owned copy of t
     format!("{} - {}", t.summarize(), u.summarize())
                                      // => Can call summarize on both (Summary bound)
+                                     // => Returns formatted String
 }
 
 // Returning types with trait bounds
 fn returns_summarizable() -> impl Summary {
-                                     // => Return type implements Summary
+                                     // => Return type: "some type implementing Summary"
                                      // => Actual type hidden (opaque type)
-                                     // => Must return single concrete type
-    Article {
+                                     // => MUST return single concrete type (not multiple different types)
+                                     // => Caller can only use Summary trait methods
+    Article {                        // => Create Article instance
         title: String::from("Return type"),
-    }
+    }                                // => Article implements Summary, so valid return
 }
 
 fn main() {
     let article = Article { title: String::from("Rust") };
+                                     // => article owns Article with title "Rust"
     notify(&article);                // => Type check: Article implements Summary ✓
+                                     // => Compiler verifies trait bound at compile time
                                      // => Output: News: Rust
 
-    notify_impl(&article);           // => Same as notify (different syntax)
+    notify_impl(&article);           // => Same as notify (different syntax sugar)
+                                     // => Both desugar to same generic code
                                      // => Output: News: Rust
 
     let returned = returns_summarizable();
-                                     // => returned type: impl Summary (opaque)
-                                     // => Can call trait methods
+                                     // => returned type: impl Summary (opaque Article)
+                                     // => Concrete type hidden by impl trait
     println!("{}", returned.summarize());
+                                     // => Can call trait methods on opaque type
                                      // => Output: Return type
 }
 
 // Blanket implementations - implement trait for all types with bounds
-trait AsString {
-    fn as_string(&self) -> String;
+trait AsString {                     // => Custom trait for string conversion
+    fn as_string(&self) -> String;   // => Method signature
 }
 
 impl<T: std::fmt::Display> AsString for T {
-                                     // => Implement AsString for ALL types implementing Display
-                                     // => Blanket impl: applies to infinite types
-    fn as_string(&self) -> String {
-        format!("{}", self)          // => Use Display to create String
+                                     // => Blanket impl: for ALL types T implementing Display
+                                     // => Applies to infinite set of types (i32, String, etc.)
+                                     // => Conditional trait implementation
+    fn as_string(&self) -> String {  // => Provide implementation using Display
+        format!("{}", self)          // => Use Display trait to create String
+                                     // => Works for any T with Display
     }
 }
 
 fn blanket_example() {
-    let num = 42;                    // => i32 implements Display
-    println!("{}", num.as_string()); // => Can use AsString (via blanket impl)
+    let num = 42;                    // => i32 value
+                                     // => i32 implements Display (std library)
+    println!("{}", num.as_string()); // => Can use AsString via blanket impl
+                                     // => Trait available because i32: Display
                                      // => Output: 42
 }
 ```
@@ -952,33 +1020,55 @@ Closures have unique anonymous types inferred from usage, implementing `Fn`, `Fn
 ```rust
 fn main() {
     // Compiler infers closure types
-    let add = |x, y| x + y;          // => Type inferred from usage
-    println!("{}", add(1, 2));       // => Output: 3
-    // println!("{}", add(1.0, 2.0)); // => ERROR: type already inferred as integers
+    let add = |x, y| x + y;          // => Closure with inferred parameter and return types
+                                     // => Type: impl Fn(i32, i32) -> i32 (inferred from first use)
+                                     // => Captures nothing from environment
+    println!("{}", add(1, 2));       // => First call: compiler infers x, y as i32
+                                     // => Executes: 1 + 2 = 3
+                                     // => Output: 3
+    // println!("{}", add(1.0, 2.0)); // => ERROR: type already locked to i32 from first call
+                                     // => Can't call with f64 after i32 inference
 
     // FnOnce: consumes captured variables
-    let consume_list = || {
-        let list = vec![1, 2, 3];
-        list                         // => Return list (move)
+    let consume_list = || {          // => Closure that moves ownership
+                                     // => Type: impl FnOnce() -> Vec<i32>
+        let list = vec![1, 2, 3];    // => Creates local Vec
+        list                         // => Moves ownership of list out of closure
+                                     // => Closure consumes itself when called
     };
-    let list = consume_list();       // => list is [1, 2, 3]
-    // consume_list();               // => ERROR: closure already called
+    let list = consume_list();       // => Calls closure, receives moved Vec
+                                     // => list is [1, 2, 3]
+                                     // => consume_list moved (FnOnce consumed)
+    // consume_list();               // => ERROR: closure was FnOnce, already consumed
+                                     // => Can only call FnOnce closures once
 
     // FnMut: mutates captured variables
-    let mut count = 0;
+    let mut count = 0;               // => Mutable variable in outer scope
     let mut increment = || count += 1;
-                                     // => Captures count mutably
-    increment();
-    increment();
-    println!("Count: {}", count);    // => Output: Count: 2
+                                     // => Closure captures &mut count
+                                     // => Type: impl FnMut() (mutably borrows environment)
+                                     // => Modifies captured count
+    increment();                     // => First call: count becomes 1
+                                     // => Mutates through mutable borrow
+    increment();                     // => Second call: count becomes 2
+                                     // => Can call multiple times (FnMut, not FnOnce)
+    println!("Count: {}", count);    // => Mutable borrow ends, can access count
+                                     // => Output: Count: 2
 
     // Fn: borrows immutably
     let message = String::from("Hello");
+                                     // => message owns heap-allocated string
     let print = || println!("{}", message);
-                                     // => Captures message immutably
-    print();                         // => Output: Hello
-    print();                         // => Can call multiple times
-    println!("{}", message);         // => message still accessible
+                                     // => Closure captures &message (immutable borrow)
+                                     // => Type: impl Fn() (borrows immutably, can call many times)
+                                     // => Does NOT move or mutate message
+    print();                         // => First call: borrows message
+                                     // => Output: Hello
+    print();                         // => Second call: borrows again (Fn allows repeated calls)
+                                     // => Output: Hello
+    println!("{}", message);         // => message still owned by outer scope
+                                     // => Immutable borrow compatible with other reads
+                                     // => Output: Hello
 }
 ```
 
@@ -995,29 +1085,54 @@ Iterator methods enable declarative data processing with methods like `map()`, `
 ```rust
 fn main() {
     let numbers = vec![1, 2, 3, 4, 5];
+                                     // => numbers owns heap vector [1, 2, 3, 4, 5]
+                                     // => Type: Vec<i32>
 
     // map: transform elements
     let doubled: Vec<i32> = numbers.iter()
-        .map(|x| x * 2)              // => [2, 4, 6, 8, 10]
-        .collect();
+                                     // => Creates iterator over &i32 references
+                                     // => Borrows numbers immutably
+        .map(|x| x * 2)              // => Closure takes &i32, returns i32
+                                     // => Lazy: transforms [1, 2, 3, 4, 5] → [2, 4, 6, 8, 10]
+                                     // => Returns Map<Iter, Closure> iterator adapter
+        .collect();                  // => Consumes iterator, executes map closure
+                                     // => Collects transformed values into Vec<i32>
+                                     // => doubled is [2, 4, 6, 8, 10]
     println!("{:?}", doubled);       // => Output: [2, 4, 6, 8, 10]
 
     // filter: select elements
     let evens: Vec<&i32> = numbers.iter()
-        .filter(|x| *x % 2 == 0)     // => [2, 4]
-        .collect();
-    println!("{:?}", evens);         // => Output: [2, 4]
+                                     // => Creates new iterator over &i32
+        .filter(|x| *x % 2 == 0)     // => Closure checks if **x is even
+                                     // => Lazy: keeps only [&2, &4] references
+                                     // => Returns Filter<Iter, Closure> adapter
+        .collect();                  // => Consumes iterator, applies filter predicate
+                                     // => Collects references: Vec<&i32> containing [&2, &4]
+    println!("{:?}", evens);         // => Output: [2, 4] (derefs for display)
 
     // fold: accumulate
-    let sum = numbers.iter()
-        .fold(0, |acc, x| acc + x);  // => 0 + 1 + 2 + 3 + 4 + 5 = 15
+    let sum = numbers.iter()         // => Iterator over &i32
+        .fold(0, |acc, x| acc + x);  // => fold(initial, |accumulator, element| ...)
+                                     // => Step 1: acc=0, x=&1 → 0+1=1
+                                     // => Step 2: acc=1, x=&2 → 1+2=3
+                                     // => Step 3: acc=3, x=&3 → 3+3=6
+                                     // => Step 4: acc=6, x=&4 → 6+4=10
+                                     // => Step 5: acc=10, x=&5 → 10+5=15
+                                     // => Returns final accumulator: 15 (type: i32)
     println!("Sum: {}", sum);        // => Output: Sum: 15
 
     // Method chaining
     let result: i32 = numbers.iter()
-        .filter(|x| *x % 2 == 0)     // => [2, 4]
-        .map(|x| x * x)              // => [4, 16]
-        .sum();                      // => 20
+                                     // => Start with iterator over [1, 2, 3, 4, 5]
+        .filter(|x| *x % 2 == 0)     // => Lazy: filter to [&2, &4] (even numbers only)
+                                     // => Still an iterator, no computation yet
+        .map(|x| x * x)              // => Lazy: square each → [4, 16]
+                                     // => Chains: Filter → Map adapters
+        .sum();                      // => Consuming adapter: executes entire chain
+                                     // => Applies filter: [&2, &4]
+                                     // => Applies map: [4, 16]
+                                     // => Sums: 4 + 16 = 20
+                                     // => Type inference: i32 from annotation
     println!("Result: {}", result);  // => Output: Result: 20
 }
 ```

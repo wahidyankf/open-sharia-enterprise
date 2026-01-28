@@ -2384,116 +2384,60 @@ Generics enable type-safe containers and functions that work with multiple types
 
 ```kotlin
 // Generic class
-                                     // => Box: class name
-}
+class Box<T>(val value: T)           // => T: type parameter, value: T type
 
 // Generic function
+fun <T> printItem(item: T?) {        // => T?: nullable type parameter
     println("Item: $item (type: ${item!!::class.simpleName})")
-                                     // => "Item: $item": string template with item
-                                     // => item!!: non-null assertion (assumes not null)
-                                     // => !!: throws NullPointerException if null
-                                     // => ::class: reflection to get class reference
-                                     // => .simpleName: gets class name without package
+                                     // => !!: non-null assertion operator
+                                     // => ::class.simpleName: gets class name via reflection
 }
 
 // Generic function with constraint
-fun <T : Number> double(value: T): Double {
-                                     // => Number: abstract superclass of numeric types
-                                     // => : Double: return type is always Double
-    return value.toDouble() * 2      // => value.toDouble(): converts T to Double
-                                     // => toDouble(): available because T : Number
-                                     // => * 2: multiplies by 2
+fun <T : Number> double(value: T): Double {  // => T : Number: constraint to numeric types
+    return value.toDouble() * 2      // => toDouble() available because T : Number
 }
 
 // Generic function with multiple type parameters
-fun <K, V> createMap(key: K, value: V): Map<K, V> {
-                                     // => K: convention for "Key" type
-                                     // => V: convention for "Value" type
-                                     // => : Map<K, V>: return type is Map with K, V
-                                     // => Map: standard library interface
-                                     // => Single-entry map: {key=value}
-                                     // => Type-safe: preserves K and V types
+fun <K, V> createMap(key: K, value: V): Map<K, V> {  // => K, V: multiple type parameters
+    return mapOf(key to value)       // => Creates single-entry map
 }
 
-fun main() {                         // => Entry point of program
+fun main() {
     // Generic class usage
-                                     // => Type inference: T = Int (from 42)
-                                     // => intBox is Box<Int>
-                                     // => Stores Int value 42
-                                     // => No need for Box<Int>(42)
-                                     // => Type inference: T = String (from "Kotlin")
-                                     // => strBox is Box<String>
-                                     // => Stores String value "Kotlin"
-                                     // => Different type than intBox
-                                     // => <Double>: specifies T = Double
-                                     // => doubleBox is Box<Double>
-                                     // => Explicit type when inference ambiguous
-                                     // => Stores Double value 3.14
+    val intBox = Box(42)             // => Type inference: T = Int, intBox is Box<Int>
+    val strBox = Box("Kotlin")       // => Type inference: T = String, strBox is Box<String>
+    val doubleBox = Box<Double>(3.14)  // => Explicit type parameter when inference ambiguous
 
-                                     // => Type-safe: return type is Int
-                                     // => Output: 42
-                                     // => Type-safe: return type is String
-                                     // => Output: Kotlin
-                                     // => Type-safe: return type is Double
-                                     // => Output: 3.14
+    println(intBox.value)            // => Output: 42
+    println(strBox.value)            // => Output: Kotlin
+    println(doubleBox.value)         // => Output: 3.14
 
     // Generic function usage
-                                     // => Type inference: T = Int
-                                     // => Type inference: T = String
-                                     // => Different invocation, different type
-                                     // => Type inference: T = List<Int>
+    printItem(100)                   // => T = Int, Output: Item: 100 (type: Int)
+    printItem("Hello")               // => T = String, Output: Item: Hello (type: String)
+    printItem(listOf(1, 2, 3))       // => T = List<Int>, Output: Item: [1, 2, 3] (type: ArrayList)
 
     // Constrained generic function
-                                     // => 5: Int value
-                                     // => Int is subtype of Number (valid)
-                                     // => Type inference: T = Int
-                                     // => 5.toDouble(): converts to 5.0
-                                     // => 5.0 * 2: calculates 10.0
-                                     // => Output: 10.0
-                                     // => 3.5: Double value
-                                     // => Double is subtype of Number (valid)
-                                     // => Type inference: T = Double
-                                     // => 3.5 * 2: calculates 7.0
-                                     // => Output: 7.0
-    // println(double("test"))       // => "test": String value
-                                     // => String is NOT subtype of Number
-                                     // => Violates constraint T : Number
-                                     // => Type safety: prevents invalid types
+    println(double(5))               // => T = Int, 5.toDouble() * 2 = 10.0, Output: 10.0
+    println(double(3.5))             // => T = Double, 3.5 * 2 = 7.0, Output: 7.0
+    // println(double("test"))       // => Compile error: String is not a Number
 
     // Multiple type parameters
-    val map1 = createMap("name", "Alice")
-                                     // => Type inference: K = String, V = String
-                                     // => map1 is Map<String, String>
-                                     // => Single entry: {name=Alice}
-                                     // => Type inference: K = Int, V = String
-                                     // => map2 is Map<Int, String>
-                                     // => Different types from map1
-                                     // => Single entry: {1=One}
+    val map1 = createMap("name", "Alice")  // => K = String, V = String, map1 is Map<String, String>
+    val map2 = createMap(1, "One")   // => K = Int, V = String, map2 is Map<Int, String>
 
-    println(map1)                    // => map1: Map<String, String>
-                                     // => Output: {name=Alice}
-    println(map2)                    // => map2: Map<Int, String>
-                                     // => Different type than map1
-                                     // => Output: {1=One}
+    println(map1)                    // => Output: {name=Alice}
+    println(map2)                    // => Output: {1=One}
 
     // Generic collection functions
-    val numbers = listOf(1, 2, 3, 4, 5)
-                                     // => 1, 2, 3, 4, 5: Int values
-                                     // => Type inference: List<Int>
-                                     // => numbers is List<Int>
-                                     // => Contains 5 elements
-    val strings = numbers.map { it.toString() }
-                                     // => .toString(): converts Int to String
-                                     // => Type transformation: List<Int> → List<String>
-                                     // => strings is List<String>
-                                     // => Contains ["1", "2", "3", "4", "5"]
-    println(strings)                 // => strings: List<String>
-                                     // => Output: [1, 2, 3, 4, 5]
-                                     // => String values, not Int
+    val numbers = listOf(1, 2, 3, 4, 5)  // => numbers is List<Int>
+    val strings = numbers.map { it.toString() }  // => List<Int> → List<String> transformation
+                                     // => strings is ["1", "2", "3", "4", "5"]
+    println(strings)                 // => Output: [1, 2, 3, 4, 5]
 
-    val firstOrNull = numbers.firstOrNull { it > 3 }
-                                     // => Value is 4 (not null)
-                                     // => Output: 4
+    val firstOrNull = numbers.firstOrNull { it > 3 }  // => firstOrNull is 4 (first element > 3)
+    println(firstOrNull)             // => Output: 4
 ```
 
 **Key Takeaway**: Use generics for type-safe containers and functions, constrain type parameters with `:` when you need specific capabilities, and leverage type inference to reduce verbosity.

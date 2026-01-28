@@ -37,32 +37,40 @@ graph TD
 ```
 
 ```clojure
-(defmacro debug-all [& forms]
-  `(do
-     ~@(map (fn [form]
-              `(let [result# ~form]
+(defmacro debug-all [& forms]            ;; => Macro accepts variable args
+  `(do                                   ;; => Wraps in do block
+     ~@(map (fn [form]                   ;; => Map over each form
+              `(let [result# ~form]      ;; => Eval form, bind to gensym
                  (println '~form "=>" result#)
-                 result#))
-            forms)))
+                                         ;; => Print quoted form and result
+                 result#))               ;; => Return result
+            forms)))                     ;; => #'user/debug-all
 
-(debug-all
-  (+ 1 2)
-  (* 3 4)
-  (/ 10 2))
-;; => (+ 1 2) => 3
-;; => (* 3 4) => 12
-;; => (/ 10 2) => 5
+(debug-all                               ;; => Invoke debug macro
+  (+ 1 2)                                ;; => First form: addition
+  (* 3 4)                                ;; => Second form: multiplication
+  (/ 10 2))                              ;; => Third form: division
+;; => Output: (+ 1 2) => 3
+;; => Output: (* 3 4) => 12
+;; => Output: (/ 10 2) => 5
+;; => Returns: 5 (last result)
 
 ;; Recursive code walker
-(defn walk-expr [form transform]
+(defn walk-expr [form transform]         ;; => Recursively walk AST
   (cond
     (seq? form) (map #(walk-expr % transform) form)
+                                         ;; => Recursively walk sequences
     (vector? form) (vec (map #(walk-expr % transform) form))
+                                         ;; => Walk vectors, keep vector type
     (map? form) (into {} (map (fn [[k v]] [k (walk-expr v transform)]) form))
-    :else (transform form)))
+                                         ;; => Walk map entries, keep map type
+    :else (transform form)))             ;; => Transform leaf nodes
+                                         ;; => #'user/walk-expr
 
 (walk-expr '(+ 1 (* 2 3)) #(if (number? %) (* % 10) %))
-;; => (+ 10 (* 20 30))
+                                         ;; => Walk expression tree
+                                         ;; => Transform numbers by * 10
+;; => (+ 10 (* 20 30)) (all numbers scaled)
 ```
 
 **Key Takeaway**: Code walkers enable deep transformation of arbitrarily nested code structures.
@@ -92,27 +100,37 @@ graph TD
 ```
 
 ```clojure
-(defmacro when-valid [test & body]
-  `(if ~test
-     (do ~@body)
-     (println "Validation failed")))
+(defmacro when-valid [test & body]       ;; => Custom validation macro
+  `(if ~test                             ;; => Check condition
+     (do ~@body)                         ;; => Execute body if valid
+     (println "Validation failed")))     ;; => Else print failure
+                                         ;; => #'user/when-valid
 
 ;; Expand once
 (macroexpand-1 '(when-valid (pos? 5) (println "Valid")))
+                                         ;; => Expand single macro level
 ;; => (if (pos? 5) (do (println "Valid")) (println "Validation failed"))
+                                         ;; => Shows first expansion only
 
 ;; Expand all nested macros
 (macroexpand '(when-valid (pos? 5) (println "Valid")))
+                                         ;; => Recursively expand all macros
+                                         ;; => Same result (no nested macros here)
 
 ;; Use macroexpand-1 to see single level expansion
-(defmacro unless [test & body]
-  `(when-valid (not ~test) ~@body))
+(defmacro unless [test & body]           ;; => Inverse of when-valid
+  `(when-valid (not ~test) ~@body))      ;; => Negate test, delegate to when-valid
+                                         ;; => #'user/unless
 
 (macroexpand-1 '(unless false (println "OK")))
+                                         ;; => Expand unless once
 ;; => (when-valid (not false) (println "OK"))
+                                         ;; => Shows when-valid call (not expanded)
 
 (macroexpand '(unless false (println "OK")))
+                                         ;; => Fully expand unless
 ;; => (if (not false) (do (println "OK")) (println "Validation failed"))
+                                         ;; => Shows final code after all expansions
 ```
 
 **Key Takeaway**: macroexpand/macroexpand-1 reveal generated code for debugging macro behavior.
@@ -125,25 +143,30 @@ Write portable code targeting Clojure and ClojureScript.
 
 ```clojure
 ;; .cljc file (Clojure common)
-(ns myapp.utils)
+(ns myapp.utils)                         ;; => Multiplatform namespace
 
-(defn current-time []
-  #?(:clj  (System/currentTimeMillis)        ;; => JVM implementation
-     :cljs (.getTime (js/Date.))))           ;; => JS implementation
+(defn current-time []                    ;; => Cross-platform time function
+  #?(:clj  (System/currentTimeMillis)    ;; => JVM: milliseconds since epoch
+     :cljs (.getTime (js/Date.))))       ;; => JS: Date.getTime() method
+                                         ;; => #'myapp.utils/current-time
 
-(defn log [message]
-  #?(:clj  (println message)                 ;; => JVM println
-     :cljs (.log js/console message)))       ;; => JS console.log
+(defn log [message]                      ;; => Cross-platform logging
+  #?(:clj  (println message)             ;; => JVM: uses println
+     :cljs (.log js/console message)))   ;; => JS: uses console.log
+                                         ;; => #'myapp.utils/log
 
 ;; Reader conditional splice
-(defn process-data [data]
-  [data
-   #?@(:clj  [(str "JVM: " data)]
-       :cljs [(str "JS: " data)])])          ;; => Splices into vector
+(defn process-data [data]                ;; => Platform-specific processing
+  [data                                  ;; => Original data always included
+   #?@(:clj  [(str "JVM: " data)]        ;; => JVM: splice single item
+       :cljs [(str "JS: " data)])])      ;; => JS: splice single item
+                                         ;; => #'myapp.utils/process-data
+                                         ;; => Returns 2-element vector
 
 ;; Feature expressions
-#?(:clj (import 'java.util.Date)
-   :cljs (def Date js/Date))
+#?(:clj (import 'java.util.Date)         ;; => JVM: import Java Date class
+   :cljs (def Date js/Date))             ;; => JS: bind JS Date to Clojure var
+                                         ;; => Enables uniform Date usage
 ```
 
 **Key Takeaway**: Reader conditionals enable shared code with platform-specific implementations.
@@ -175,26 +198,35 @@ graph TD
 
 ```clojure
 ;; Without type hints (reflection warning)
-(defn slow-add [a b]
-  (.add a b))                                ;; => Reflection on .add
+(defn slow-add [a b]                     ;; => No type information
+  (.add a b))                            ;; => Reflection: runtime method lookup
+                                         ;; => #'user/slow-add (slow execution)
 
 ;; With type hints (no reflection)
 (defn fast-add [^java.math.BigDecimal a ^java.math.BigDecimal b]
-  (.add a b))                                ;; => Direct method call
+                                         ;; => Type hints on parameters
+  (.add a b))                            ;; => Direct method call (no reflection)
+                                         ;; => #'user/fast-add (fast execution)
 
 ;; Return type hint
-(defn compute ^long []
-  (+ 1 2))                                   ;; => Returns primitive long
+(defn compute ^long []                   ;; => Return type: primitive long
+  (+ 1 2))                               ;; => Returns 3 as long
+                                         ;; => #'user/compute (no boxing)
 
 ;; Array type hints
-(defn sum-array ^long [^longs arr]           ;; => long[] array
-  (aget arr 0))                              ;; => Fast array access
+(defn sum-array ^long [^longs arr]       ;; => Parameter: long[] array, returns long
+  (aget arr 0))                          ;; => Fast primitive array access
+                                         ;; => #'user/sum-array (optimized)
 
 ;; Set compiler warnings
-(set! *warn-on-reflection* true)             ;; => Enable reflection warnings
+(set! *warn-on-reflection* true)         ;; => true (warnings now enabled)
+                                         ;; => Compiler will warn on reflection
 
 ;; Measure performance
 (time (dotimes [_ 1000000] (fast-add (bigdec 1) (bigdec 2))))
+                                         ;; => Benchmark 1M iterations
+                                         ;; => Output: "Elapsed time: X msecs"
+                                         ;; => Shows performance with type hints
 ```
 
 **Key Takeaway**: Type hints eliminate reflection overhead for significant performance improvements.
@@ -228,37 +260,41 @@ sequenceDiagram
 ```
 
 ```clojure
-(defn dedupe-consecutive []
-  (fn [rf]
-    (let [prev (volatile! ::none)]           ;; => Volatile for transducer state
-      (fn
-        ([] (rf))
-        ([result] (rf result))
-        ([result input]
-         (let [p @prev]
-           (vreset! prev input)
-           (if (= p input)
-             result                          ;; => Skip duplicate
-             (rf result input))))))))
+(defn dedupe-consecutive []              ;; => Stateful transducer factory
+  (fn [rf]                               ;; => Returns transducer function
+    (let [prev (volatile! ::none)]       ;; => Volatile state: previous value
+      (fn                                ;; => 3-arity reducing function
+        ([] (rf))                        ;; => 0-arity: init
+        ([result] (rf result))           ;; => 1-arity: completion
+        ([result input]                  ;; => 2-arity: step
+         (let [p @prev]                  ;; => p is previous value
+           (vreset! prev input)          ;; => Update prev to current input
+           (if (= p input)               ;; => Check if duplicate
+             result                      ;; => Skip duplicate (no emit)
+             (rf result input))))))))    ;; => Emit if different
 
 (into [] (dedupe-consecutive) [1 1 2 2 2 3 3 1])
-;; => [1 2 3 1] (consecutive duplicates removed)
+                                         ;; => Apply transducer to collection
+                                         ;; => State tracks consecutive values
+;; => [1 2 3 1] (consecutive duplicates removed, non-consecutive kept)
 
 ;; Running average transducer
-(defn running-average []
-  (fn [rf]
-    (let [sum (volatile! 0)
-          count (volatile! 0)]
-      (fn
-        ([] (rf))
-        ([result] (rf result))
-        ([result input]
-         (vswap! sum + input)
-         (vswap! count inc)
+(defn running-average []                 ;; => Stateful transducer: cumulative avg
+  (fn [rf]                               ;; => Returns transducer function
+    (let [sum (volatile! 0)              ;; => Volatile state: running sum
+          count (volatile! 0)]           ;; => Volatile state: element count
+      (fn                                ;; => 3-arity reducing function
+        ([] (rf))                        ;; => 0-arity: init
+        ([result] (rf result))           ;; => 1-arity: completion
+        ([result input]                  ;; => 2-arity: step
+         (vswap! sum + input)            ;; => Add input to sum
+         (vswap! count inc)              ;; => Increment count
          (rf result (/ @sum @count)))))))
+                                         ;; => Emit running average
 
-(into [] (running-average) [1 2 3 4 5])
-;; => [1 3/2 2 5/2 3] (running averages)
+(into [] (running-average) [1 2 3 4 5]) ;; => Apply running average transducer
+                                         ;; => [1/1, 3/2, 6/3, 10/4, 15/5]
+;; => [1 3/2 2 5/2 3] (running averages as rationals)
 ```
 
 **Key Takeaway**: Volatile refs enable efficient mutable state within transducers.
@@ -293,31 +329,38 @@ graph TD
 
 ```clojure
 (require '[clojure.core.reducers :as r])
+                                         ;; => Load reducers namespace
 
 ;; Transform large collection in parallel
-(defn parallel-process [n]
-  (->> (range n)
-       vec                                   ;; => Must be vector for fold
-       (r/map inc)
-       (r/filter even?)
-       (r/fold +)))                          ;; => Fork-join parallel reduce
+(defn parallel-process [n]              ;; => Process n elements in parallel
+  (->> (range n)                        ;; => Generate 0 to n-1
+       vec                              ;; => Convert to vector (required for fold)
+       (r/map inc)                      ;; => Increment each (lazy, parallel-ready)
+       (r/filter even?)                 ;; => Keep even numbers (lazy)
+       (r/fold +)))                     ;; => Fork-join parallel sum
+                                        ;; => #'user/parallel-process
 
-(time (parallel-process 10000000))           ;; => Faster with fold
+(time (parallel-process 10000000))      ;; => Benchmark 10M elements
+                                        ;; => Output: "Elapsed time: X msecs"
+                                        ;; => Utilizes multiple cores
 
 ;; Custom combiner
-(defn parallel-max [coll]
+(defn parallel-max [coll]               ;; => Find max in parallel
   (r/fold
-    max                                      ;; => Combine function (associative)
-    (fn ([acc x] (max acc x)))               ;; => Reduce function
-    coll))
+    max                                 ;; => Combine function (merges chunks)
+    (fn ([acc x] (max acc x)))          ;; => Reduce function (within chunks)
+    coll))                              ;; => #'user/parallel-max
 
-(parallel-max (vec (shuffle (range 1000000)))) ;; => 999999
+(parallel-max (vec (shuffle (range 1000000))))
+                                        ;; => Find max of shuffled 1M elements
+;; => 999999 (max value found in parallel)
 
 ;; Control parallelism
-(r/fold 512                                  ;; => Chunk size
-        +                                    ;; => Combine
-        (fn [acc x] (+ acc x))               ;; => Reduce
-        (vec (range 1000000)))
+(r/fold 512                             ;; => Chunk size: 512 elements per task
+        +                               ;; => Combine function: sum chunks
+        (fn [acc x] (+ acc x))          ;; => Reduce function: sum within chunk
+        (vec (range 1000000)))          ;; => Process 1M elements
+                                        ;; => Returns sum with controlled chunking
 ```
 
 **Key Takeaway**: Reducers enable automatic parallelization with fork-join for CPU-bound operations.
@@ -349,32 +392,39 @@ graph TD
 ```
 
 ```clojure
-(defprotocol Serializable
-  (serialize [this])
-  (deserialize [this data]))
+(defprotocol Serializable                ;; => Protocol definition
+  (serialize [this])                     ;; => Convert to serialized form
+  (deserialize [this data]))             ;; => Reconstruct from data
+                                         ;; => #'user/Serializable
 
 ;; Extend to existing types
-(extend-protocol Serializable
-  java.lang.String
-  (serialize [s] (.getBytes s))
-  (deserialize [_ data] (String. data))
+(extend-protocol Serializable            ;; => Extend multiple types at once
+  java.lang.String                       ;; => String implementation
+  (serialize [s] (.getBytes s))          ;; => s converted to byte array
+  (deserialize [_ data] (String. data))  ;; => data (bytes) to String
 
-  clojure.lang.PersistentVector
-  (serialize [v] (pr-str v))
+  clojure.lang.PersistentVector          ;; => Vector implementation
+  (serialize [v] (pr-str v))             ;; => v converted to string "[1 2 3]"
   (deserialize [_ data] (read-string data)))
+                                         ;; => data (string) to vector
+                                         ;; => nil (extend-protocol returns nil)
 
-(serialize "Hello")                          ;; => byte array
-(serialize [1 2 3])                          ;; => "[1 2 3]"
+(serialize "Hello")                      ;; => #<byte[] [B@...>
+                                         ;; => Byte array representation
+(serialize [1 2 3])                      ;; => "[1 2 3]"
+                                         ;; => String representation
 
 ;; Inline extension
-(extend-type java.util.Date
-  Serializable
-  (serialize [d] (.getTime d))
+(extend-type java.util.Date              ;; => Extend single type
+  Serializable                           ;; => Implement Serializable protocol
+  (serialize [d] (.getTime d))           ;; => d converted to epoch millis (long)
   (deserialize [_ data] (java.util.Date. data)))
+                                         ;; => data (long) to Date
+                                         ;; => nil (extend-type returns nil)
 
 ;; Check protocol implementation
-(satisfies? Serializable "text")             ;; => true
-(satisfies? Serializable 42)                 ;; => false
+(satisfies? Serializable "text")         ;; => true (String implements it)
+(satisfies? Serializable 42)             ;; => false (Integer doesn't)
 ```
 
 **Key Takeaway**: Protocols enable extensible polymorphism for existing and new types.
@@ -407,28 +457,39 @@ graph TD
 
 ```clojure
 ;; Define hierarchy
-(derive ::dog ::animal)
-(derive ::cat ::animal)
-(derive ::parrot ::animal)
-(derive ::parrot ::bird)
+(derive ::dog ::animal)                  ;; => ::dog is a ::animal
+                                         ;; => nil (derive returns nil)
+(derive ::cat ::animal)                  ;; => ::cat is a ::animal
+(derive ::parrot ::animal)               ;; => ::parrot is a ::animal
+(derive ::parrot ::bird)                 ;; => ::parrot is also a ::bird
+                                         ;; => Multiple inheritance supported
 
 ;; Multimethod using hierarchy
 (defmulti speak (fn [animal] (:type animal)))
+                                         ;; => Dispatch on :type key
+                                         ;; => #'user/speak
 
-(defmethod speak ::dog [_] "Woof!")
-(defmethod speak ::cat [_] "Meow!")
-(defmethod speak ::animal [_] "Some sound")  ;; => Default for animals
+(defmethod speak ::dog [_] "Woof!")      ;; => Method for ::dog
+                                         ;; => #multifn[speak ...]
+(defmethod speak ::cat [_] "Meow!")      ;; => Method for ::cat
+(defmethod speak ::animal [_] "Some sound")
+                                         ;; => Fallback for any ::animal subtype
 
-(speak {:type ::dog})                        ;; => "Woof!"
-(speak {:type ::parrot})                     ;; => "Some sound" (via ::animal)
+(speak {:type ::dog})                    ;; => {:type ::dog} dispatches to ::dog
+                                         ;; => "Woof!"
+(speak {:type ::parrot})                 ;; => {:type ::parrot} no direct method
+                                         ;; => Inherits from ::animal
+                                         ;; => "Some sound"
 
 ;; Check relationships
-(isa? ::dog ::animal)                        ;; => true
-(isa? ::parrot ::bird)                       ;; => true
+(isa? ::dog ::animal)                    ;; => true (::dog derived from ::animal)
+(isa? ::parrot ::bird)                   ;; => true (::parrot derived from ::bird)
 
 ;; Get parents/ancestors
-(parents ::parrot)                           ;; => #{::animal ::bird}
-(ancestors ::dog)                            ;; => #{::animal}
+(parents ::parrot)                       ;; => #{:user/animal :user/bird}
+                                         ;; => Direct parents only
+(ancestors ::dog)                        ;; => #{:user/animal}
+                                         ;; => All ancestors (transitive)
 ```
 
 **Key Takeaway**: Hierarchies enable rich inheritance relationships for multimethod dispatch.
