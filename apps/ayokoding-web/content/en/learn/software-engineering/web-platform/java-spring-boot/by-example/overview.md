@@ -125,6 +125,60 @@ Understanding where by-example fits in the tutorial ecosystem helps you choose t
 
 **No prior Spring experience required** - This guide assumes Java competency but teaches Spring Boot from scratch. You don't need to know the Spring Framework's XML configuration or traditional Spring setup. We start with Spring Boot's modern annotation-based approach.
 
+## Learning Strategies
+
+Different developer backgrounds benefit from different learning paths through these examples. Choose the strategy matching your experience:
+
+### For Java Developers New to Spring
+
+You already know Java but haven't used Spring Boot. Focus on understanding Spring's conventions and patterns:
+
+- **Start with dependency injection** (Examples 1-5) - Master `@Component`, `@Autowired`, `@Bean` before moving to REST APIs
+- **Focus on annotations** - Spring Boot is annotation-driven; understand `@RestController`, `@Service`, `@Repository` semantics
+- **Run every example** - See how auto-configuration works by observing startup logs and bean creation
+- **Recommended path**: Examples 1-25 (Beginner) → 26-30 (Security basics) → 31-35 (Testing patterns)
+
+### For Python/Ruby Developers Switching to Java/Spring
+
+You're learning both Java and Spring Boot simultaneously. Expect a steeper learning curve:
+
+- **Master Java syntax first** - Complete Java basics (types, classes, generics, streams) before tackling Spring Boot
+- **Understand static typing** - Java's compile-time type checking differs from Python/Ruby's runtime duck typing
+- **Focus on Spring's magic** - Auto-configuration and dependency injection replace Django's explicit imports or Rails' conventions
+- **Compare patterns** - Map Spring's `@RestController` to Django views or Rails controllers; Spring Data JPA to ActiveRecord
+- **Recommended path**: Java fundamentals → Examples 1-10 (Core concepts) → Examples 15-20 (REST APIs) → Examples 40-45 (Database access)
+
+### For C# Developers Coming from .NET
+
+Spring Boot resembles ASP.NET Core. Leverage your .NET knowledge:
+
+- **Map annotations** - `@Autowired` = `[Inject]`, `@RestController` = `[ApiController]`, `@Bean` = service registration
+- **Understand differences** - Spring's IoC container works similarly to .NET's DI container; focus on Java-specific patterns
+- **Compare ecosystems** - Spring Data JPA similar to Entity Framework; MockMvc similar to WebApplicationFactory testing
+- **Skip basics** - You understand MVC, REST, dependency injection; focus on Spring Boot-specific conventions
+- **Recommended path**: Examples 1-5 (Spring IoC) → Examples 10-15 (REST patterns) → Examples 25-30 (Spring Security vs ASP.NET Identity)
+
+### For Node.js/Express Developers Switching to JVM
+
+Spring Boot's structure differs significantly from Express. Focus on understanding Spring's opinionated architecture:
+
+- **Understand synchronous by default** - Spring Boot MVC is blocking (thread-per-request); use WebFlux for Express-like async patterns
+- **Learn dependency injection** - Spring's IoC container replaces Express's manual require/import and middleware chaining
+- **Grasp static typing** - Java requires type declarations; if you know TypeScript, Java will feel familiar but more verbose
+- **Focus on Spring conventions** - Spring Boot is more opinionated than Express; learn its structure instead of fighting it
+- **Recommended path**: Examples 1-10 (Spring fundamentals) → Examples 15-25 (REST APIs) → Examples 70-75 (WebFlux for async patterns)
+
+### For Complete Framework Beginners
+
+You're new to both Java and web frameworks. Take a methodical, sequential approach:
+
+- **Master Java first** - Complete Java fundamentals (OOP, collections, streams, annotations) before starting Spring Boot
+- **Follow sequential order** - Read Examples 1-85 in order; each builds on previous concepts
+- **Run every example** - Don't just read; copy-paste into your IDE and run each example to see framework behavior
+- **Build small projects** - After completing Beginner examples, build a simple CRUD app to consolidate understanding
+- **Use Spring Initializr** - Generate projects via start.spring.io to see proper dependency setup and project structure
+- **Recommended path**: Examples 1-25 (Beginner) → Build simple CRUD app → Examples 26-55 (Intermediate) → Build REST API project → Examples 56-85 (Advanced)
+
 ## Structure of Each Example
 
 Every example follows this consistent format:
