@@ -187,6 +187,64 @@ Use this guide as a reference when building features. Search for relevant exampl
 - **Elixir expertise**: We assume beginner-to-intermediate Elixir knowledge
 - **Web framework experience**: Not necessary, but helpful
 
+## Learning Strategies
+
+Different developer backgrounds benefit from customized learning paths through Phoenix. Choose the strategy matching your experience:
+
+### For Elixir Developers New to Phoenix
+
+You know Elixir but haven't used Phoenix. Focus on understanding Phoenix conventions and web patterns:
+
+- **Start with routing and controllers** (Examples 1-5) - Understand request-response cycle before diving into LiveView
+- **Master LiveView early** (Examples 10-15) - Phoenix's LiveView is unique; grasp its stateful nature and socket assigns
+- **Focus on contexts** (Examples 8-12) - Phoenix contexts define boundaries; understand context design for clean architecture
+- **Leverage Ecto knowledge** - If you know Ecto, Examples 16-20 reinforce query patterns and changesets in Phoenix context
+- **Recommended path**: Examples 1-25 (Beginner) → 30-35 (Authentication) → 40-45 (Real-time patterns)
+
+### For Ruby/Rails Developers Switching to Phoenix
+
+Phoenix borrows concepts from Rails but differs in fundamental ways. Focus on understanding functional paradigm shifts:
+
+- **Map MVC to Phoenix** - Controllers similar but functional; views are function components (not classes); models are Ecto schemas (not ActiveRecord)
+- **Understand contexts vs Rails models** - Phoenix contexts explicitly define boundaries; Rails uses implicit model associations
+- **Learn pattern matching** - Replaces conditional logic common in Rails controllers; see Examples 3-7 for Phoenix patterns
+- **Grasp LiveView vs Hotwire** - LiveView is server-rendered interactivity (similar to Hotwire) but more powerful; see Examples 10-15
+- **Focus on immutability** - Elixir's immutable data structures require different mental model than Rails' mutable ActiveRecord objects
+- **Recommended path**: Examples 1-10 (Phoenix fundamentals) → Examples 20-25 (Ecto vs ActiveRecord) → Examples 30-40 (LiveView patterns)
+
+### For Python/Django Developers Switching to Phoenix
+
+Phoenix's architecture resembles Django but with functional programming at its core:
+
+- **Map Django concepts** - Phoenix contexts similar to Django apps; Ecto schemas similar to Django models; templates use similar syntax
+- **Understand functional programming** - Immutable data and pattern matching replace Python's imperative style
+- **Learn process-based concurrency** - BEAM's lightweight processes different from Django's threading/async views; see Examples 50-55
+- **Compare Ecto to Django ORM** - Ecto uses changesets for validation (separate from schemas); Django combines them in models
+- **Focus on LiveView** - Server-rendered interactivity without JavaScript complexity; see Examples 10-20
+- **Recommended path**: Examples 1-15 (Core Phoenix) → Examples 20-30 (Ecto patterns) → Examples 35-45 (LiveView vs Django templates)
+
+### For Node.js Developers Switching to Phoenix
+
+Phoenix's concurrency model and functional approach differ significantly from Node.js:
+
+- **Understand process concurrency** - BEAM's lightweight processes replace Node.js event loop; see Examples 50-60 for GenServer patterns
+- **Learn LiveView vs React/Vue** - Server-rendered interactivity eliminates need for client-side frameworks; see Examples 10-25
+- **Grasp functional patterns** - Elixir's immutability and pattern matching replace JavaScript's imperative/functional hybrid
+- **Compare Ecto to Sequelize/Prisma** - Different query building approach; Ecto more composable via pipe operator
+- **Focus on Channels** - Similar to Socket.io but integrated into Phoenix; see Examples 45-50
+- **Recommended path**: Examples 1-10 (Phoenix basics) → Examples 10-20 (LiveView) → Examples 45-55 (Channels and real-time)
+
+### For Complete Framework Beginners
+
+You're new to Elixir, Phoenix, and web frameworks. Take a methodical, sequential approach:
+
+- **Master Elixir first** - Complete Elixir fundamentals (pattern matching, pipe operator, functions, modules) before starting Phoenix
+- **Learn OTP basics** - Understand GenServer, Supervisor, process communication for Phoenix's fault tolerance (Examples 55-60 show this)
+- **Follow sequential order** - Read Examples 1-80 in order; each builds on previous concepts and Phoenix conventions
+- **Run every example** - Don't just read; run Phoenix generators (`mix phx.gen.html`, `mix phx.gen.live`) to see idiomatic code
+- **Build small projects** - After Beginner examples, build a simple CRUD app with LiveView to consolidate learning
+- **Recommended path**: Elixir fundamentals → OTP basics → Examples 1-25 (Beginner) → Build simple LiveView app → Examples 26-50 (Intermediate) → Build real-time feature → Examples 51-80 (Advanced)
+
 ## Structure of Each Example
 
 All examples follow a consistent 4-part format:
