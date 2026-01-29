@@ -8,6 +8,7 @@ draft: false
 - [Overview](/en/learn/software-engineering/data/overview)
 - [Databases](/en/learn/software-engineering/data/databases)
   - [Overview](/en/learn/software-engineering/data/databases/overview)
+  - [Datomic](/en/learn/software-engineering/data/databases/datomic)
   - [SQL](/en/learn/software-engineering/data/databases/sql)
   - [PostgreSQL](/en/learn/software-engineering/data/databases/postgresql)
 - [Tools](/en/learn/software-engineering/data/tools)

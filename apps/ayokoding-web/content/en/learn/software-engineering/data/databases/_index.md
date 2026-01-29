@@ -8,6 +8,9 @@ layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/data/databases/overview)
+- [Datomic](/en/learn/software-engineering/data/databases/datomic)
+  - [By Example](/en/learn/software-engineering/data/databases/datomic/by-example)
+  - [Overview](/en/learn/software-engineering/data/databases/datomic/overview)
 - [SQL](/en/learn/software-engineering/data/databases/sql)
   - [By Example](/en/learn/software-engineering/data/databases/sql/by-example)
   - [Overview](/en/learn/software-engineering/data/databases/sql/overview)
