@@ -3,15 +3,15 @@ title: "Overview"
 date: 2026-01-29T00:00:00+07:00
 draft: false
 weight: 10000000
-description: "Learn Datomic through 80 annotated Clojure examples covering 95% of the database - ideal for experienced developers exploring immutable databases"
-tags: ["datomic", "database", "tutorial", "by-example", "datalog", "clojure", "code-first"]
+description: "Learn Datomic through 80 annotated examples in Java and Clojure covering 95% of the database - ideal for experienced developers exploring immutable databases"
+tags: ["datomic", "database", "tutorial", "by-example", "datalog", "java", "clojure", "code-first"]
 ---
 
-**Want to quickly master Datomic through working examples?** This by-example guide teaches 95% of Datomic through 80 annotated Clojure examples organized by complexity level.
+**Want to quickly master Datomic through working examples?** This by-example guide teaches 95% of Datomic through 80 annotated examples in **both Java and Clojure** organized by complexity level.
 
 ## What Is By-Example Learning?
 
-By-example learning is an **example-first approach** where you learn through annotated, runnable Clojure code rather than narrative explanations. Each example is self-contained, immediately executable in a Datomic REPL, and heavily commented to show:
+By-example learning is an **example-first approach** where you learn through annotated, runnable code rather than narrative explanations. Each example is self-contained, immediately executable with Datomic, and heavily commented to show:
 
 - **What each statement does** - Inline comments explain the purpose and mechanism
 - **Expected outputs** - Using `;; =>` notation to show query results
@@ -93,20 +93,59 @@ This by-example guide provides **95% coverage of Datomic** through practical, an
 
 ## Structure of Each Example
 
-Every example follows a consistent five-part format:
+Every example follows a consistent format:
 
 1. **Brief Explanation** (2-3 sentences): What the example demonstrates and why it matters
 2. **Mermaid Diagram** (optional): Visual clarification when concept relationships benefit from visualization
-3. **Heavily Annotated Code**: Every significant statement includes a comment explaining what it does and what it produces (using `;; =>` notation)
-4. **Key Takeaway** (1-2 sentences): The core insight you should retain from this example
+3. **Java Implementation**: Heavily annotated Java code with comments explaining each statement
+4. **Clojure Implementation**: Heavily annotated Clojure code showing the same concept (using `;; =>` notation for outputs)
+5. **Key Takeaway** (1-2 sentences): The core insight you should retain from this example
 
-This structure minimizes context switching - explanation, visual aid, runnable code, and distilled essence all in one place.
+This structure minimizes context switching - explanation, visual aid, runnable code in both languages, and distilled essence all in one place.
+
+### Dual-Language Approach
+
+**All 80 examples include both Java and Clojure implementations side-by-side.** This allows you to:
+
+- **Learn in your preferred language** - Choose Java or Clojure and focus on those examples
+- **Compare idioms** - See how the same Datomic operations look in different languages
+- **Switch between languages** - Use Java for production apps while learning Clojure patterns, or vice versa
+- **Understand equivalence** - Both APIs access identical Datomic functionality
+
+The Java API and Clojure API are equivalent in power - all Datomic features are available in both languages. Examples demonstrate this equivalence explicitly.
 
 ## Execution Environment
 
 All examples use **Datomic Free** for reproducible, accessible execution across all platforms (Windows, macOS, Linux). Datomic Free runs locally via the peer library, requiring no separate server process.
 
 **One-time setup** (run once before starting examples):
+
+**Java Setup:**
+
+```java
+// Add to pom.xml (Maven)
+<dependency>
+  <groupId>com.datomic</groupId>
+  <artifactId>datomic-free</artifactId>
+  <version>0.9.5697</version>
+</dependency>
+
+// Or add to build.gradle (Gradle)
+dependencies {
+    implementation 'com.datomic:datomic-free:0.9.5697'
+}
+
+// Create connection in your Java code
+import datomic.Peer;
+import datomic.Connection;
+
+String uri = "datomic:mem://tutorial";
+Peer.createDatabase(uri);
+Connection conn = Peer.connect(uri);
+// => conn is your connection for running all examples
+```
+
+**Clojure Setup:**
 
 ```clojure
 ;; Add to deps.edn
@@ -125,7 +164,7 @@ clj
 ;; => conn is your connection for running all examples
 ```
 
-**Every example is copy-paste runnable** in this environment. Each example creates its own database or clearly indicates dependencies on previous examples.
+**Every example is copy-paste runnable** in either language. Each example creates its own database or clearly indicates dependencies on previous examples.
 
 ## Relationship to Other Tutorials
 
@@ -145,12 +184,21 @@ The 95% coverage represents depth and breadth of topics you'll encounter in prod
 
 ## Prerequisites
 
-- Basic Clojure knowledge (let, defn, vectors, maps) or willingness to learn through examples
+**For Java developers:**
+
+- Java 8+ installed (Datomic runs on the JVM)
+- Maven or Gradle for dependency management
+- Familiarity with Java collections and generics
+- IDE with Java support (IntelliJ IDEA, Eclipse, VS Code)
+
+**For Clojure developers:**
+
 - Java 8+ installed (Datomic runs on the JVM)
 - Leiningen or Clojure CLI tools for project setup
+- Basic Clojure knowledge (let, defn, vectors, maps) or willingness to learn
 - Familiarity with REPL-driven development (helpful but not required)
 
-You don't need to understand Datomic's architecture, datalog theory, or distributed systems yet - this tutorial teaches those through examples. You just need comfort running Clojure code in a REPL.
+You don't need to understand Datomic's architecture, datalog theory, or distributed systems yet - this tutorial teaches those through examples. Choose your preferred language (Java or Clojure) and follow along with those examples.
 
 ## Comparison with By-Example for Other Technologies
 
@@ -164,9 +212,13 @@ The Datomic version follows the same philosophy and structure but emphasizes Dat
 
 ## Learning Strategies
 
+### For Java Developers
+
+Datomic's Java API provides full access to all features through familiar object-oriented patterns. Focus on schema definition (Examples 1-5), the Peer API (Examples 6-10), and datalog queries (Examples 15-25). The Java examples use standard Java collections (List, Map, Set) for data structures.
+
 ### For Clojure Developers
 
-Datomic's datalog queries feel natural in Clojure. Focus on schema definition (Examples 1-5), datalog queries (Examples 15-25), and time queries (Examples 35-45).
+Datomic's datalog queries feel natural in Clojure. Focus on schema definition (Examples 1-5), datalog queries (Examples 15-25), and time queries (Examples 35-45). The Clojure examples leverage immutable data structures and REPL-driven development.
 
 ### For SQL Developers
 
@@ -185,9 +237,10 @@ Start from Example 1 and progress through all 30 beginner examples for a structu
 This tutorial prioritizes working code over theoretical discussion:
 
 - **No lengthy prose**: Concepts are demonstrated, not explained at length
-- **Runnable examples**: Every example runs in a Datomic Free REPL
-- **Learn by doing**: Understanding comes from running and modifying Clojure code
+- **Runnable examples**: Every example runs with Datomic Free in your preferred language
+- **Learn by doing**: Understanding comes from running and modifying code
 - **Pattern recognition**: See the same patterns in different contexts across 80 examples
+- **Dual-language approach**: All examples provided in both Java and Clojure
 
 If you prefer narrative explanations, consider the **by-concept tutorial** (available separately). By-example learning works best when you learn through experimentation.
 

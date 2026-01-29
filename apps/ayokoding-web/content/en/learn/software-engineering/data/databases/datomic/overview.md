@@ -60,7 +60,7 @@ Through our Datomic tutorials, you'll master:
 
 ### By-Example Tutorial (Code-First)
 
-Learn Datomic through **80 annotated Clojure examples** covering 95% of the database - ideal for experienced developers who prefer learning through working code rather than narrative explanations.
+Learn Datomic through **80 annotated examples in both Java and Clojure** covering 95% of the database - ideal for experienced developers who prefer learning through working code rather than narrative explanations.
 
 - **[Datomic By-Example](/en/learn/software-engineering/data/databases/datomic/by-example)** - Start here for rapid, hands-on learning
 
@@ -76,16 +76,47 @@ What you'll get:
 
 ### Prerequisites
 
-- Basic Clojure knowledge (let, defn, vectors, maps) or willingness to learn alongside Datomic
+**For Java developers:**
+
+- Java 8+ installed (Datomic runs on the JVM)
+- Maven or Gradle for dependency management
+- Familiarity with Java collections and generics
+- IDE with Java support (IntelliJ IDEA, Eclipse, VS Code)
+
+**For Clojure developers:**
+
 - Java 8+ installed (Datomic runs on the JVM)
 - Leiningen or Clojure CLI tools for project setup
+- Basic Clojure knowledge (let, defn, vectors, maps) or willingness to learn
 - Familiarity with REPL-driven development
 
-No prior Datomic or database experience required - our tutorials start from fundamentals and progress to advanced topics.
+No prior Datomic or database experience required - our tutorials start from fundamentals and progress to advanced topics. All examples are provided in both Java and Clojure so you can learn in your preferred language.
 
 ### Quick Start
 
 Get Datomic Free running locally:
+
+**Java Setup (Maven):**
+
+```xml
+<!-- Add to pom.xml -->
+<dependency>
+  <groupId>com.datomic</groupId>
+  <artifactId>datomic-free</artifactId>
+  <version>0.9.5697</version>
+</dependency>
+```
+
+**Java Setup (Gradle):**
+
+```gradle
+// Add to build.gradle
+dependencies {
+    implementation 'com.datomic:datomic-free:0.9.5697'
+}
+```
+
+**Clojure Setup:**
 
 ```clojure
 ;; Add to deps.edn dependencies
@@ -95,7 +126,21 @@ Get Datomic Free running locally:
 [com.datomic/datomic-free "0.9.5697"]
 ```
 
-Start a REPL and connect:
+**Java: Connect to Database:**
+
+```java
+import datomic.Peer;
+import datomic.Connection;
+
+// Create in-memory database
+String uri = "datomic:mem://tutorial";
+Peer.createDatabase(uri);
+Connection conn = Peer.connect(uri);
+
+// You're ready to run examples
+```
+
+**Clojure: Connect to Database:**
 
 ```clojure
 (require '[datomic.api :as d])
@@ -108,7 +153,7 @@ Start a REPL and connect:
 ;; You're ready to run examples
 ```
 
-Now you're ready to follow along with our by-example tutorials.
+Now you're ready to follow along with our by-example tutorials in your preferred language.
 
 ## Why Datomic
 

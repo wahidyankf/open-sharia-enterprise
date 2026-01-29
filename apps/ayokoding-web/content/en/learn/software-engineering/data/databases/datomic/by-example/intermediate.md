@@ -31,7 +31,45 @@ graph TD
     style D fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-**Code**:
+**Java Code**:
+
+```java
+Database db = conn.db();
+
+// Pull with bounded recursion
+Map result = (Map) Peer.pull(
+    db,
+    "[:person/name {:person/manager 2}]",
+    Util.list(":person/email", "grace@example.com")
+);
+// => {:person/name "Grace Kim"
+//     :person/manager {:person/name "Frank Lee"
+//                      :person/manager {:person/name "Eve Johnson"}}}
+// => {:person/manager N} recursively follows manager references N levels deep
+
+// Pull with unbounded recursion
+Map result2 = (Map) Peer.pull(
+    db,
+    "[:person/name {:person/manager ...}]",
+    Util.list(":person/email", "grace@example.com")
+);
+// => Follows manager references until no more managers
+// => ... means "recurse indefinitely"
+// => Returns nested maps up the management chain
+
+// Pull reverse references recursively
+Map result3 = (Map) Peer.pull(
+    db,
+    "[{:person/_manager ...}]",
+    Util.list(":person/email", "eve@example.com")
+);
+// => {:person/_manager
+//     [{:person/name "Frank Lee"
+//       :person/_manager [{:person/name "Grace Kim"}]}]}
+// => Recursively pulls all reports (direct and indirect)
+```
+
+**Clojure Code**:
 
 ```clojure
 (def db (d/db conn))
@@ -73,7 +111,36 @@ graph TD
 
 Pull patterns can rename attributes in results using map specifications. Useful for API responses and data shaping.
 
-**Code**:
+**Java Code**:
+
+```java
+// Pull with attribute aliases
+Map result = (Map) Peer.pull(
+    db,
+    "[(:person/name :as :fullName) " +
+    " (:person/email :as :emailAddress) " +
+    " (:person/age :as :yearsOld)]",
+    Util.list(":person/email", "alice@example.com")
+);
+// => {:fullName "Alice Johnson"
+//     :emailAddress "alice@example.com"
+//     :yearsOld 33}
+// => (:attribute :as :new-key) renames attribute in result
+
+// Pull with default and limit
+Map result2 = (Map) Peer.pull(
+    db,
+    "[(default :person/phone \"No phone\") " +
+    " (limit :person/favorite-colors 2)]",
+    Util.list(":person/email", "alice@example.com")
+);
+// => {:person/phone "No phone"
+//     :person/favorite-colors #{"blue" "green"}}
+// => (default :attr value) provides fallback when attribute absent
+// => (limit :attr n) returns max n values from cardinality-many attribute
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Pull with attribute aliases
@@ -106,7 +173,41 @@ Pull patterns can rename attributes in results using map specifications. Useful 
 
 Define custom aggregates beyond built-in `count`, `sum`, etc. Implement domain-specific calculations.
 
-**Code**:
+**Java Code**:
+
+```java
+// Custom aggregate: standard deviation
+// Define as Java function implementing clojure.lang.IFn
+public static class StdDev implements clojure.lang.IFn {
+    public Object invoke(Object vals) {
+        Collection<Number> numbers = (Collection<Number>) vals;
+        double sum = 0;
+        for (Number n : numbers) sum += n.doubleValue();
+        double mean = sum / numbers.size();
+        double variance = 0;
+        for (Number n : numbers) {
+            variance += Math.pow(n.doubleValue() - mean, 2);
+        }
+        variance /= numbers.size();
+        return Math.sqrt(variance);
+    }
+}
+
+// Register and use aggregate in query
+Collection results = Peer.q(
+    "[:find (my.ns.StdDev/invoke ?age) " +
+    " :where [?e :person/age ?age]]",
+    db
+);
+// => [[2.449...]]
+// => Custom Java function called as aggregate
+// => Function receives collection of all ?age values
+
+// Note: For production, define Java classes as static methods
+// and reference them in queries via namespace/method syntax
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Custom aggregate: standard deviation
@@ -145,7 +246,54 @@ Define custom aggregates beyond built-in `count`, `sum`, etc. Implement domain-s
 
 Directly access Datomic indexes for low-level queries and performance optimization. Four indexes: EAVT, AEVT, AVET, VAET.
 
-**Code**:
+**Java Code**:
+
+```java
+// EAVT: Entity-Attribute-Value-Transaction (primary index)
+Iterable eavtDatoms = db.datoms(
+    Peer.EAVT,
+    Util.list(":person/email", "alice@example.com")
+);
+// => Iterable of datoms for specific entity
+// => Datom: [entity-id attribute value tx-id added?]
+
+// Take first 3 datoms
+Iterator it = eavtDatoms.iterator();
+for (int i = 0; i < 3 && it.hasNext(); i++) {
+    datomic.Datom datom = (datomic.Datom) it.next();
+    // datom.e() => entity ID
+    // datom.a() => attribute
+    // datom.v() => value
+    // datom.tx() => transaction ID
+}
+// => Shows all attributes for Alice
+
+// AVET: Attribute-Value-Entity-Transaction (value lookup)
+Iterable avetDatoms = db.datoms(
+    Peer.AVET,
+    ":person/age",
+    28
+);
+// => Finds all entities with age = 28
+// => Efficient for value-based lookups
+
+// Convert datoms to entities
+for (Object obj : avetDatoms) {
+    datomic.Datom datom = (datomic.Datom) obj;
+    Entity entity = db.entity(datom.e());
+    // Work with entity
+}
+
+// AEVT: Attribute-Entity-Value-Transaction (attribute scan)
+Iterable aevtDatoms = db.datoms(
+    Peer.AEVT,
+    ":person/name"
+);
+// => All entities with :person/name attribute
+// => Useful for "find all entities of type X" queries
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; EAVT: Entity-Attribute-Value-Transaction (primary index)
@@ -185,7 +333,30 @@ Directly access Datomic indexes for low-level queries and performance optimizati
 
 Index-range queries efficiently find datoms within value ranges. Essential for numeric, string, and temporal queries.
 
-**Code**:
+**Java Code**:
+
+```java
+// Find people with ages between 28 and 32 (inclusive)
+Iterable rangeDatoms = db.indexRange(":person/age", 28, 32);
+// => Iterable of datoms with age in [28, 32]
+// => More efficient than query with predicate for large datasets
+
+// Extract entities from range
+for (Object obj : rangeDatoms) {
+    datomic.Datom datom = (datomic.Datom) obj;
+    Object value = datom.v();
+    Object entityId = datom.e();
+    // value => age (28, 29, 30, etc.)
+    // entityId => entity ID
+}
+
+// String prefix search
+Iterable nameDatoms = db.indexRange(":person/name", "A", "B");
+// => Finds all names starting with "A" (up to but not including "B")
+// => String ranges useful for prefix searches
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Find people with ages between 28 and 32 (inclusive)
@@ -213,7 +384,55 @@ Index-range queries efficiently find datoms within value ranges. Essential for n
 
 Attributes marked `:db.unique/identity` enable upserts. Transactions automatically update existing entities or create new ones.
 
-**Code**:
+**Java Code**:
+
+```java
+// Initial transaction (creates new entity)
+conn.transact(
+    Util.list(
+        Util.map(":person/email", "igor@example.com",
+                 ":person/name", "Igor Volkov",
+                 ":person/age", 40)
+    )
+).get();
+
+Database db = conn.db();
+Object age = Peer.q(
+    "[:find ?age . :where [?e :person/email \"igor@example.com\"] [?e :person/age ?age]]",
+    db
+);
+// => 40
+
+// Upsert (updates existing entity)
+conn.transact(
+    Util.list(
+        Util.map(":person/email", "igor@example.com",
+                 ":person/age", 41)
+    )
+).get();
+// => Matches existing entity by :person/email (unique identity)
+// => Updates age from 40 to 41 (doesn't create duplicate)
+
+db = conn.db();
+age = Peer.q(
+    "[:find ?age . :where [?e :person/email \"igor@example.com\"] [?e :person/age ?age]]",
+    db
+);
+// => 41
+
+// Upsert creates if not exists
+conn.transact(
+    Util.list(
+        Util.map(":person/email", "judy@example.com",
+                 ":person/name", "Judy Chen",
+                 ":person/age", 29)
+    )
+).get();
+// => No existing entity with judy@example.com
+// => Creates new entity
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Initial transaction (creates new entity)
@@ -254,7 +473,37 @@ Attributes marked `:db.unique/identity` enable upserts. Transactions automatical
 
 Batch multiple operations in single transactions for better performance and atomicity.
 
-**Code**:
+**Java Code**:
+
+```java
+// Generate batch data
+List batchPeople = new ArrayList();
+for (int i = 0; i < 1000; i++) {
+    batchPeople.add(
+        Util.map(":person/email", "user" + i + "@example.com",
+                 ":person/name", "User " + i,
+                 ":person/age", 20 + (int)(Math.random() * 40))
+    );
+}
+
+// Single transaction with 1000 entities
+long start = System.currentTimeMillis();
+conn.transact(batchPeople).get();
+long elapsed = System.currentTimeMillis() - start;
+// => "Elapsed time: 120 msecs" (example)
+// => Much faster than 1000 individual transactions
+// => All 1000 entities created atomically
+
+// Verify batch insert
+Database db = conn.db();
+Object count = Peer.q(
+    "[:find (count ?e) . :where [?e :person/email]]",
+    db
+);
+// => 1008 (original people + 1000 batch)
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Generate batch data
@@ -285,7 +534,48 @@ Batch multiple operations in single transactions for better performance and atom
 
 Retract specific values from cardinality-many attributes without removing the attribute entirely.
 
-**Code**:
+**Java Code**:
+
+```java
+// Alice has favorite colors: blue, green, purple
+Database db = conn.db();
+Entity alice = db.entity(Util.list(":person/email", "alice@example.com"));
+alice.get(":person/favorite-colors");
+// => #{"blue" "green" "purple"}
+
+// Retract only "blue"
+conn.transact(
+    Util.list(
+        Util.list(":db/retract",
+                  Util.list(":person/email", "alice@example.com"),
+                  ":person/favorite-colors",
+                  "blue")
+    )
+).get();
+
+// Verify selective retraction
+db = conn.db();
+alice = db.entity(Util.list(":person/email", "alice@example.com"));
+alice.get(":person/favorite-colors");
+// => #{"green" "purple"}
+// => "blue" removed, others remain
+
+// Add new color
+conn.transact(
+    Util.list(
+        Util.list(":db/add",
+                  Util.list(":person/email", "alice@example.com"),
+                  ":person/favorite-colors",
+                  "red")
+    )
+).get();
+
+alice = conn.db().entity(Util.list(":person/email", "alice@example.com"));
+alice.get(":person/favorite-colors");
+// => #{"green" "purple" "red"}
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Alice has favorite colors: blue, green, purple
@@ -319,7 +609,38 @@ Retract specific values from cardinality-many attributes without removing the at
 
 Transaction functions execute inside transactions with access to database value. Enable complex conditional logic.
 
-**Code**:
+**Java Code**:
+
+```java
+// Note: Transaction functions are typically written in Clojure
+// For Java, implement logic in application layer before transaction
+
+// Alternative: Call application logic then transact
+Database db = conn.db();
+Entity alice = db.entity(Util.list(":person/email", "alice@example.com"));
+int currentAge = (Integer) alice.get(":person/age");
+// => 33
+
+// Compute new value
+int newAge = currentAge + 1;
+
+// Execute conditional transaction
+conn.transact(
+    Util.list(
+        Util.map(":db/id", Util.list(":person/email", "alice@example.com"),
+                 ":person/age", newAge)
+    )
+).get();
+
+alice = conn.db().entity(Util.list(":person/email", "alice@example.com"));
+alice.get(":person/age");
+// => 34
+
+// For complex conditional logic, use :db/cas (compare-and-swap)
+// or implement logic in Java before calling transact()
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Define transaction function in database
@@ -359,7 +680,54 @@ Transaction functions execute inside transactions with access to database value.
 
 `with` applies transactions to database value without committing. Test transaction effects before committing.
 
-**Code**:
+**Java Code**:
+
+```java
+Database db = conn.db();
+
+// Speculative transaction
+Map withResult = db.with(
+    Util.list(
+        Util.map(":person/email", "test@example.com",
+                 ":person/name", "Test User",
+                 ":person/age", 25)
+    )
+);
+Database speculativeDb = (Database) withResult.get(Keyword.intern("db-after"));
+// => with returns same structure as transact but doesn't commit
+// => :db-after is hypothetical database value
+
+// Query speculative database
+Object name = Peer.q(
+    "[:find ?name . :where [?e :person/email \"test@example.com\"] [?e :person/name ?name]]",
+    speculativeDb
+);
+// => "Test User"
+// => Data exists in speculative database
+
+// Original database unchanged
+Object name2 = Peer.q(
+    "[:find ?name . :where [?e :person/email \"test@example.com\"] [?e :person/name ?name]]",
+    db
+);
+// => null
+// => Original database has no test user
+
+// Use with for validation
+try {
+    Map result = db.with(
+        Util.list(
+            Util.map(":person/email", "duplicate@example.com",
+                     ":person/name", "Duplicate")
+        )
+    );
+    // Transaction valid, can proceed
+} catch (Exception e) {
+    // Transaction would fail, handle error
+}
+```
+
+**Clojure Code**:
 
 ```clojure
 (def db (d/db conn))
@@ -407,7 +775,38 @@ Transaction functions execute inside transactions with access to database value.
 
 The transaction log contains every transaction in chronological order. Essential for replication, auditing, event sourcing.
 
-**Code**:
+**Java Code**:
+
+```java
+// Get transaction log
+datomic.Log log = conn.log();
+// => Log is append-only structure of all transactions
+
+// Read recent transactions
+Iterable recentTxs = log.txRange(null, null);
+// => Iterable of transaction maps
+// => null null means "from beginning to end"
+
+// Examine first transaction
+Iterator it = recentTxs.iterator();
+if (it.hasNext()) {
+    Map firstTx = (Map) it.next();
+    Object t = firstTx.get(Keyword.intern("t"));
+    // => Transaction's basis-t value
+
+    Collection data = (Collection) firstTx.get(Keyword.intern("data"));
+    // => Collection of datoms added in this transaction
+    // => [datom[entity attr value tx added?] ...]
+}
+
+// Filter transactions by time range
+long txIdStart = Peer.toTx(1000);
+long txIdEnd = Peer.toTx(2000);
+Iterable timeRangeTxs = log.txRange(txIdStart, txIdEnd);
+// => Transactions between basis-t 1000 and 2000
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Get transaction log
@@ -443,7 +842,33 @@ The transaction log contains every transaction in chronological order. Essential
 
 Use `_` (blank/underscore) to pattern-match without binding variables. Improves query performance when values aren't needed.
 
-**Code**:
+**Java Code**:
+
+```java
+// Find people with any age (don't need age value)
+Collection results = Peer.q(
+    "[:find ?name " +
+    " :where [?e :person/name ?name] " +
+    "        [?e :person/age _]]",
+    db
+);
+// => Returns names of people who have age attribute
+// => _ matches any value but doesn't bind it
+// => More efficient than binding unused variable
+
+// Find entities with at least 3 attributes
+Collection results2 = Peer.q(
+    "[:find ?e " +
+    " :where [?e :person/name _] " +
+    "        [?e :person/email _] " +
+    "        [?e :person/age _]]",
+    db
+);
+// => Finds entities with all three attributes
+// => Doesn't bind attribute values (not needed)
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Find people with any age (don't need age value)
@@ -473,7 +898,42 @@ Use `_` (blank/underscore) to pattern-match without binding variables. Improves 
 
 Paginate large result sets using `:offset` and `:limit` in find specs (Datomic Pro/Cloud feature).
 
-**Code**:
+**Java Code**:
+
+```java
+// Note: :offset and :limit require Datomic Pro or Cloud
+// For Datomic Free, implement pagination in application code
+
+// Get all people
+Collection allPeople = Peer.q(
+    "[:find ?name ?email " +
+    " :where [?e :person/name ?name] " +
+    "        [?e :person/email ?email]]",
+    db
+);
+
+// Application-level pagination - Page 1 (first 10 results)
+int pageSize = 10;
+int pageNum = 1;
+List results = new ArrayList();
+Iterator it = allPeople.iterator();
+int skip = pageSize * (pageNum - 1);
+int take = pageSize;
+int index = 0;
+while (it.hasNext()) {
+    Object item = it.next();
+    if (index >= skip && index < skip + take) {
+        results.add(item);
+    }
+    index++;
+    if (index >= skip + take) break;
+}
+// => First 10 people
+
+// Page 2 (next 10 results) - adjust skip and take values
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Note: :offset and :limit require Datomic Pro or Cloud
@@ -509,7 +969,46 @@ Paginate large result sets using `:offset` and `:limit` in find specs (Datomic P
 
 Datomic supports full-text search on string attributes marked with `:db/fulltext`.
 
-**Code**:
+**Java Code**:
+
+```java
+// Add fulltext attribute
+conn.transact(
+    Util.list(
+        Util.map(":db/ident", ":person/bio",
+                 ":db/valueType", ":db.type/string",
+                 ":db/cardinality", ":db.cardinality/one",
+                 ":db/fulltext", true,
+                 ":db/doc", "Person biography (fulltext searchable)")
+    )
+).get();
+
+// Add bios
+conn.transact(
+    Util.list(
+        Util.map(":person/email", "alice@example.com",
+                 ":person/bio", "Software engineer passionate about functional programming and databases"),
+        Util.map(":person/email", "bob@example.com",
+                 ":person/bio", "Product manager with experience in e-commerce and retail")
+    )
+).get();
+
+// Fulltext search
+Database db = conn.db();
+Collection results = Peer.q(
+    "[:find ?name ?bio " +
+    " :in $ ?search " +
+    " :where [(fulltext $ :person/bio ?search) [[?e ?bio]]] " +
+    "        [?e :person/name ?name]]",
+    db,
+    "functional programming"
+);
+// => #{["Alice Johnson" "Software engineer passionate about functional programming and databases"]}
+// => (fulltext $ attr search-term) finds matches
+// => Returns [entity text-value] tuples
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Add fulltext attribute
@@ -548,7 +1047,40 @@ Datomic supports full-text search on string attributes marked with `:db/fulltext
 
 Query transaction times to build audit trails. Every fact is timestamped with its transaction.
 
-**Code**:
+**Java Code**:
+
+```java
+// Query when Alice's age was last updated
+Collection results = Peer.q(
+    "[:find ?tx ?instant " +
+    " :where [?e :person/email \"alice@example.com\"] " +
+    "        [?e :person/age _ ?tx] " +
+    "        [?tx :db/txInstant ?instant]]",
+    db
+);
+// => [[tx-id #inst "2026-01-29T12:34:56.789-00:00"]]
+// => ?tx is transaction entity ID
+// => :db/txInstant is transaction timestamp
+
+// Find all changes to Alice in last hour
+Date oneHourAgo = new Date(new Date().getTime() - (60 * 60 * 1000));
+
+Collection results2 = Peer.q(
+    "[:find ?attr ?value ?instant " +
+    " :in $ ?email ?since " +
+    " :where [?e :person/email ?email] " +
+    "        [?e ?a ?value ?tx] " +
+    "        [?tx :db/txInstant ?instant] " +
+    "        [(> ?instant ?since)] " +
+    "        [?a :db/ident ?attr]]",
+    db,
+    "alice@example.com",
+    oneHourAgo
+);
+// => Returns all attribute changes in last hour with timestamps
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Query when Alice's age was last updated
@@ -586,7 +1118,61 @@ Query transaction times to build audit trails. Every fact is timestamped with it
 
 Combine cardinality-many with ref attributes to model many-to-many relationships.
 
-**Code**:
+**Java Code**:
+
+```java
+// Define project schema
+conn.transact(
+    Util.list(
+        Util.map(":db/ident", ":project/name",
+                 ":db/valueType", ":db.type/string",
+                 ":db/cardinality", ":db.cardinality/one",
+                 ":db/unique", ":db.unique/identity"),
+        Util.map(":db/ident", ":project/members",
+                 ":db/valueType", ":db.type/ref",
+                 ":db/cardinality", ":db.cardinality/many",
+                 ":db/doc", "Project members (many-to-many with persons)")
+    )
+).get();
+
+// Create projects with members
+conn.transact(
+    Util.list(
+        Util.map(":project/name", "Project Alpha",
+                 ":project/members", Util.list(
+                     Util.list(":person/email", "alice@example.com"),
+                     Util.list(":person/email", "bob@example.com"))),
+        Util.map(":project/name", "Project Beta",
+                 ":project/members", Util.list(
+                     Util.list(":person/email", "alice@example.com"),
+                     Util.list(":person/email", "dave@example.com")))
+    )
+).get();
+
+// Query: Find all projects for Alice
+Database db = conn.db();
+Collection results = Peer.q(
+    "[:find ?project-name " +
+    " :where [?p :person/email \"alice@example.com\"] " +
+    "        [?proj :project/members ?p] " +
+    "        [?proj :project/name ?project-name]]",
+    db
+);
+// => #{["Project Alpha"] ["Project Beta"]}
+// => Alice is in both projects
+
+// Query: Find all members of Project Alpha
+Collection results2 = Peer.q(
+    "[:find ?member-name " +
+    " :where [?proj :project/name \"Project Alpha\"] " +
+    "        [?proj :project/members ?member] " +
+    "        [?member :person/name ?member-name]]",
+    db
+);
+// => #{["Alice Johnson"] ["Bob Smith"]}
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Define project schema
@@ -636,7 +1222,38 @@ Combine cardinality-many with ref attributes to model many-to-many relationships
 
 Filter entities by attribute presence to simulate entity types without explicit type attributes.
 
-**Code**:
+**Java Code**:
+
+```java
+// Find all "person" entities (have :person/name)
+Collection results = Peer.q(
+    "[:find ?e " +
+    " :where [?e :person/name]]",
+    db
+);
+// => Returns all person entity IDs
+// => Attribute presence implies type
+
+// Find all "project" entities
+Collection results2 = Peer.q(
+    "[:find ?e " +
+    " :where [?e :project/name]]",
+    db
+);
+// => Returns all project entity IDs
+
+// Polymorphic query: entities with name (person OR project)
+Collection results3 = Peer.q(
+    "[:find ?name " +
+    " :where (or [?e :person/name ?name] " +
+    "            [?e :project/name ?name])]",
+    db
+);
+// => Returns names from both persons and projects
+// => Datomic uses attribute namespaces to organize, not enforce types
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Find all "person" entities (have :person/name)
@@ -669,7 +1286,49 @@ Filter entities by attribute presence to simulate entity types without explicit 
 
 Understand how Datomic selects indexes to optimize query performance.
 
-**Code**:
+**Java Code**:
+
+```java
+// Inefficient: starts with unbound variable
+long start = System.currentTimeMillis();
+Collection results = Peer.q(
+    "[:find ?name " +
+    " :where [?e :person/age ?age] " +
+    "        [(> ?age 30)] " +
+    "        [?e :person/name ?name]]",
+    db
+);
+long elapsed = System.currentTimeMillis() - start;
+// => Scans all ages, then filters, then joins to names
+// => Slower on large datasets
+
+// Efficient: start with most selective pattern
+start = System.currentTimeMillis();
+Collection results2 = Peer.q(
+    "[:find ?name " +
+    " :where [?e :person/name ?name] " +
+    "        [?e :person/age ?age] " +
+    "        [(> ?age 30)]]",
+    db
+);
+elapsed = System.currentTimeMillis() - start;
+// => Scans names first (uses AEVT index), then filters by age
+// => Generally faster due to better index usage
+
+// Most efficient: use indexed value if available
+start = System.currentTimeMillis();
+Collection results3 = Peer.q(
+    "[:find ?name " +
+    " :where [?e :person/email \"alice@example.com\"] " +
+    "        [?e :person/name ?name]]",
+    db
+);
+elapsed = System.currentTimeMillis() - start;
+// => Uses AVET index on unique :person/email
+// => Near-instant lookup
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Inefficient: starts with unbound variable
@@ -710,7 +1369,47 @@ Understand how Datomic selects indexes to optimize query performance.
 
 Choose between entity maps (convenient) and explicit datoms (precise control) for transactions.
 
-**Code**:
+**Java Code**:
+
+```java
+// Entity map syntax (convenient for create/update)
+conn.transact(
+    Util.list(
+        Util.map(":person/email", "kyle@example.com",
+                 ":person/name", "Kyle Brown",
+                 ":person/age", 31)
+    )
+).get();
+// => Concise, readable
+// => Automatically generates :db/add operations
+
+// Explicit datom syntax (precise control)
+Object kyleId = Util.list(":person/email", "kyle@example.com");
+conn.transact(
+    Util.list(
+        Util.list(":db/add", kyleId, ":person/age", 32),
+        Util.list(":db/retract", kyleId, ":person/age", 31)
+    )
+).get();
+// => Explicit operations: add new value, retract old value
+// => More verbose but complete control
+
+// Mix both styles
+conn.transact(
+    Util.list(
+        Util.map(":person/email", "lisa@example.com",
+                 ":person/name", "Lisa Wong"),
+        Util.list(":db/add",
+                  Util.list(":person/email", "lisa@example.com"),
+                  ":person/age",
+                  27)
+    )
+).get();
+// => Entity map creates/updates
+// => Explicit datom adds additional attribute
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Entity map syntax (convenient for create/update)
@@ -746,7 +1445,39 @@ Choose between entity maps (convenient) and explicit datoms (precise control) fo
 
 Compare database states at different times using multiple database inputs.
 
-**Code**:
+**Java Code**:
+
+```java
+// Capture database at two points in time
+Database dbT1 = conn.db();
+
+conn.transact(
+    Util.list(
+        Util.map(":person/email", "alice@example.com",
+                 ":person/age", 34),
+        Util.map(":person/email", "bob@example.com",
+                 ":person/age", 30)
+    )
+).get();
+
+Database dbT2 = conn.db();
+
+// Query differences between time points
+Collection results = Peer.q(
+    "[:find ?name ?age-before ?age-after " +
+    " :in $before $after " +
+    " :where [$before ?e :person/name ?name] " +
+    "        [$before ?e :person/age ?age-before] " +
+    "        [$after ?e :person/age ?age-after] " +
+    "        [(not= ?age-before ?age-after)]]",
+    dbT1,
+    dbT2
+);
+// => #{["Alice Johnson" 33 34] ["Bob Smith" 28 30]}
+// => Shows entities where age changed between t1 and t2
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Capture database at two points in time
@@ -781,7 +1512,44 @@ Compare database states at different times using multiple database inputs.
 
 Tuple types store fixed-size composite values in single attributes (Datomic Cloud/Pro feature).
 
-**Code**:
+**Java Code**:
+
+```java
+// Note: Tuples require Datomic Cloud or Pro
+// For Datomic Free, use multiple attributes or refs
+
+// Composite value pattern (Datomic Free alternative)
+conn.transact(
+    Util.list(
+        Util.map(":db/ident", ":person/location-lat",
+                 ":db/valueType", ":db.type/double",
+                 ":db/cardinality", ":db.cardinality/one"),
+        Util.map(":db/ident", ":person/location-lon",
+                 ":db/valueType", ":db.type/double",
+                 ":db/cardinality", ":db.cardinality/one")
+    )
+).get();
+
+conn.transact(
+    Util.list(
+        Util.map(":person/email", "alice@example.com",
+                 ":person/location-lat", 45.5231,
+                 ":person/location-lon", -122.6765)
+    )
+).get();
+
+// Query both coordinates
+Collection results = Peer.q(
+    "[:find ?lat ?lon " +
+    " :where [?e :person/email \"alice@example.com\"] " +
+    "        [?e :person/location-lat ?lat] " +
+    "        [?e :person/location-lon ?lon]]",
+    db
+);
+// => [[45.5231 -122.6765]]
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Note: Tuples require Datomic Cloud or Pro
@@ -818,7 +1586,44 @@ Tuple types store fixed-size composite values in single attributes (Datomic Clou
 
 Bind collections in `:in` clause for parameterized queries over multiple values.
 
-**Code**:
+**Java Code**:
+
+```java
+// Relation binding: rows of data
+Collection results = Peer.q(
+    "[:find ?person-name ?project-name " +
+    " :in $ [[?person-email ?project-name]] " +
+    " :where [?p :person/email ?person-email] " +
+    "        [?p :person/name ?person-name]]",
+    db,
+    Util.list(
+        Util.list("alice@example.com", "Project Alpha"),
+        Util.list("bob@example.com", "Project Beta"),
+        Util.list("dave@example.com", "Project Gamma")
+    )
+);
+// => #{["Alice Johnson" "Project Alpha"]
+//      ["Bob Smith" "Project Beta"]
+//      ["Dave Lee" "Project Gamma"]}
+// => [[binding]] passes relation (table of rows)
+// => Each row binds multiple variables
+
+// Tuple binding: single row
+Collection results2 = Peer.q(
+    "[:find ?name ?age " +
+    " :in $ [?email ?expected-age] " +
+    " :where [?e :person/email ?email] " +
+    "        [?e :person/name ?name] " +
+    "        [?e :person/age ?age] " +
+    "        [(= ?age ?expected-age)]]",
+    db,
+    Util.list("alice@example.com", 34)
+);
+// => #{["Alice Johnson" 34]}
+// => [binding] passes single tuple
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Relation binding: rows of data
@@ -857,7 +1662,60 @@ Bind collections in `:in` clause for parameterized queries over multiple values.
 
 Use `:db/cas` to conditionally retract values, ensuring correctness in concurrent environments.
 
-**Code**:
+**Java Code**:
+
+```java
+// Current state: Alice is 34
+Database db = conn.db();
+Entity alice = db.entity(Util.list(":person/email", "alice@example.com"));
+alice.get(":person/age");
+// => 34
+
+// CAS retraction: remove age only if it's 34
+conn.transact(
+    Util.list(
+        Util.list(":db/cas",
+                  Util.list(":person/email", "alice@example.com"),
+                  ":person/age",
+                  34,
+                  null)
+    )
+).get();
+// => Retracts age (sets to null) only if current value is 34
+// => Transaction succeeds
+
+// Verify retraction
+db = conn.db();
+alice = db.entity(Util.list(":person/email", "alice@example.com"));
+alice.get(":person/age");
+// => null
+// => Age retracted
+
+// CAS retraction with wrong value fails
+conn.transact(
+    Util.list(
+        Util.map(":person/email", "bob@example.com",
+                 ":person/age", 30)
+    )
+).get();
+
+try {
+    conn.transact(
+        Util.list(
+            Util.list(":db/cas",
+                      Util.list(":person/email", "bob@example.com"),
+                      ":person/age",
+                      28,
+                      null)
+        )
+    ).get();
+} catch (Exception e) {
+    // => "CAS failed"
+    // => Current age is 30, not 28 - retraction aborted
+}
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Current state: Alice is 34
@@ -899,7 +1757,51 @@ Use `:db/cas` to conditionally retract values, ensuring correctness in concurren
 
 Database filters limit query visibility to subset of facts. Useful for multi-tenancy and security.
 
-**Code**:
+**Java Code**:
+
+```java
+// Add tenant attribute
+conn.transact(
+    Util.list(
+        Util.map(":db/ident", ":person/tenant",
+                 ":db/valueType", ":db.type/string",
+                 ":db/cardinality", ":db.cardinality/one")
+    )
+).get();
+
+conn.transact(
+    Util.list(
+        Util.map(":person/email", "alice@example.com",
+                 ":person/tenant", "acme"),
+        Util.map(":person/email", "bob@example.com",
+                 ":person/tenant", "globex")
+    )
+).get();
+
+// Create filtered database (only Acme tenant)
+// Note: Filter implementation in Java requires implementing Clojure IFn interface
+Database acmeDb = conn.db().filter(new clojure.lang.IFn() {
+    public Object invoke(Object dbArg, Object datomArg) {
+        Database db = (Database) dbArg;
+        datomic.Datom datom = (datomic.Datom) datomArg;
+        Object tenantAttr = db.entid(":person/tenant");
+        return !datom.a().equals(tenantAttr) || datom.v().equals("acme");
+    }
+});
+// => Filter function sees each datom
+// => Return true to include, false to exclude
+
+// Query filtered database
+Collection results = Peer.q(
+    "[:find ?name " +
+    " :where [?e :person/name ?name]]",
+    acmeDb
+);
+// => #{["Alice Johnson"]}
+// => Only Acme tenant data visible
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Add tenant attribute
@@ -941,7 +1843,43 @@ Database filters limit query visibility to subset of facts. Useful for multi-ten
 
 Database values are immutable - cache them for read-heavy workloads without stale data risk.
 
-**Code**:
+**Java Code**:
+
+```java
+// Cache database value
+Database cachedDb = conn.db();
+// => Immutable value - safe to cache indefinitely
+
+// Read from cache (no connection overhead)
+Map getPersonByEmail(Database db, String email) {
+    return (Map) Peer.pull(db, "[*]", Util.list(":person/email", email));
+}
+
+getPersonByEmail(cachedDb, "alice@example.com");
+// => {:person/name "Alice Johnson" :person/email "alice@example.com" ...}
+// => Reading from cached db value
+
+// New transaction
+conn.transact(
+    Util.list(
+        Util.map(":person/email", "new-person@example.com",
+                 ":person/name", "New Person")
+    )
+).get();
+
+// Cached db doesn't see new data (as expected)
+getPersonByEmail(cachedDb, "new-person@example.com");
+// => null
+// => Cached db is snapshot from before transaction
+
+// Refresh cache to see new data
+cachedDb = conn.db();
+getPersonByEmail(cachedDb, "new-person@example.com");
+// => {:person/name "New Person" ...}
+// => New cache sees updated data
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Cache database value
@@ -981,7 +1919,49 @@ Database values are immutable - cache them for read-heavy workloads without stal
 
 Understand query performance characteristics for optimization.
 
-**Code**:
+**Java Code**:
+
+```java
+// Enable query statistics (Datomic Pro/Cloud)
+// For Datomic Free, use System.currentTimeMillis() for basic timing
+
+// Simple timing
+long start = System.currentTimeMillis();
+Collection results = Peer.q("[:find ?e :where [?e :person/name]]", db);
+int count = results.size();
+long elapsed = System.currentTimeMillis() - start;
+System.out.println("Elapsed time: " + elapsed + " msecs");
+// => "Elapsed time: 2 msecs" (example)
+// => 1008 entities scanned
+
+// Measure index access
+start = System.currentTimeMillis();
+int datomsCount = 0;
+for (Object d : db.datoms(Peer.AEVT, ":person/name")) {
+    datomsCount++;
+}
+elapsed = System.currentTimeMillis() - start;
+// => Direct index access faster than query
+
+// Benchmark pull vs query
+start = System.currentTimeMillis();
+for (int i = 0; i < 1000; i++) {
+    Peer.pull(db, "[*]", Util.list(":person/email", "alice@example.com"));
+}
+elapsed = System.currentTimeMillis() - start;
+System.out.println("Pull: " + elapsed + " msecs");
+// => Measure pull performance
+
+start = System.currentTimeMillis();
+for (int i = 0; i < 1000; i++) {
+    Peer.q("[:find ?name . :where [?e :person/email \"alice@example.com\"] [?e :person/name ?name]]", db);
+}
+elapsed = System.currentTimeMillis() - start;
+System.out.println("Query: " + elapsed + " msecs");
+// => Compare with equivalent query
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Enable query statistics (Datomic Pro/Cloud)
@@ -1022,7 +2002,78 @@ Understand query performance characteristics for optimization.
 
 Use Clojure specs to validate entities before transactions.
 
-**Code**:
+**Java Code**:
+
+```java
+// For Java, use validation libraries like Bean Validation (javax.validation)
+// or implement custom validators
+
+// Custom validation function
+static class PersonValidator {
+    public static boolean isValidEmail(String email) {
+        return email != null && email.matches(".+@.+\\..+");
+    }
+
+    public static Map<String, Object> validate(Map<String, Object> personData) {
+        List<String> errors = new ArrayList<>();
+
+        // Validate name
+        if (!personData.containsKey(":person/name")) {
+            errors.add("Missing :person/name");
+        }
+
+        // Validate email
+        Object email = personData.get(":person/email");
+        if (!personData.containsKey(":person/email")) {
+            errors.add("Missing :person/email");
+        } else if (!isValidEmail((String) email)) {
+            errors.add("Invalid email format");
+        }
+
+        // Validate age if present
+        Object age = personData.get(":person/age");
+        if (age != null) {
+            int ageValue = (Integer) age;
+            if (ageValue < 0 || ageValue >= 150) {
+                errors.add("Age must be between 0 and 150");
+            }
+        }
+
+        if (errors.isEmpty()) {
+            return Util.map(":valid", true);
+        } else {
+            return Util.map(":valid", false, ":errors", errors);
+        }
+    }
+}
+
+// Valid entity
+Map validation = PersonValidator.validate(
+    Util.map(":person/name", "Valid Person",
+             ":person/email", "valid@example.com",
+             ":person/age", 30)
+);
+// => {:valid true}
+
+// Invalid entity (bad email)
+Map validation2 = PersonValidator.validate(
+    Util.map(":person/name", "Invalid Person",
+             ":person/email", "not-an-email")
+);
+// => {:valid false :errors [...]}
+
+// Validate before transaction
+void safeTransact(Connection conn, Map data) throws Exception {
+    Map validation = PersonValidator.validate(data);
+    if ((Boolean) validation.get(":valid")) {
+        conn.transact(Util.list(data)).get();
+    } else {
+        throw new IllegalArgumentException("Validation failed: " + validation.get(":errors"));
+    }
+}
+```
+
+**Clojure Code**:
 
 ```clojure
 (require '[clojure.spec.alpha :as s])
@@ -1067,7 +2118,62 @@ Use Clojure specs to validate entities before transactions.
 
 Ensure uniqueness across multiple attributes using transaction functions (Datomic lacks built-in composite unique constraints).
 
-**Code**:
+**Java Code**:
+
+```java
+// For Java, implement composite unique checks in application layer before transaction
+// Transaction functions are Clojure-specific
+
+// Check for composite uniqueness before transaction
+void ensureUniqueEmailTenant(Connection conn, String email, String tenant) throws Exception {
+    Database db = conn.db();
+    Object existing = Peer.q(
+        "[:find ?e . " +
+        " :in $ ?email ?tenant " +
+        " :where [?e :person/email ?email] " +
+        "        [?e :person/tenant ?tenant]]",
+        db,
+        email,
+        tenant
+    );
+
+    if (existing != null) {
+        throw new IllegalStateException("Duplicate email-tenant combination: " + email + " / " + tenant);
+    }
+}
+
+// Use before transaction
+try {
+    ensureUniqueEmailTenant(conn, "new@example.com", "acme");
+    conn.transact(
+        Util.list(
+            Util.map(":person/email", "new@example.com",
+                     ":person/tenant", "acme",
+                     ":person/name", "New User")
+        )
+    ).get();
+    // => Succeeds (no duplicate)
+} catch (Exception e) {
+    // Handle duplicate
+}
+
+// Attempt duplicate
+try {
+    ensureUniqueEmailTenant(conn, "new@example.com", "acme");
+    conn.transact(
+        Util.list(
+            Util.map(":person/email", "new@example.com",
+                     ":person/tenant", "acme",
+                     ":person/name", "Duplicate User")
+        )
+    ).get();
+} catch (IllegalStateException e) {
+    // => "Duplicate email-tenant combination"
+    // => Transaction prevented
+}
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Transaction function for composite unique check
@@ -1118,7 +2224,41 @@ Ensure uniqueness across multiple attributes using transaction functions (Datomi
 
 Build domain-specific indexes incrementally using transaction listeners (Datomic Pro/Cloud).
 
-**Code**:
+**Java Code**:
+
+```java
+// For Datomic Free, poll for new transactions periodically
+
+// Track last processed transaction
+AtomicLong lastProcessedT = new AtomicLong(0);
+
+void processNewTransactions(Connection conn) {
+    Database db = conn.db();
+    long currentT = db.basisT();
+    Database sinceDb = db.since(lastProcessedT.get());
+
+    // Process new datoms
+    Object personAgeAttr = db.entid(":person/age");
+    for (Object obj : sinceDb.datoms(Peer.EAVT)) {
+        datomic.Datom datom = (datomic.Datom) obj;
+        if (datom.a().equals(personAgeAttr)) {
+            System.out.println("Age change detected: " + datom.e() + " -> " + datom.v());
+        }
+    }
+
+    // Update checkpoint
+    lastProcessedT.set(currentT);
+}
+
+// Run periodically (e.g., every second)
+// ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+// scheduler.scheduleAtFixedRate(() -> processNewTransactions(conn), 0, 1, TimeUnit.SECONDS);
+
+// Example output after age change:
+// Age change detected: 17592186045418 -> 35
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; For Datomic Free, poll for new transactions periodically
@@ -1151,7 +2291,45 @@ Build domain-specific indexes incrementally using transaction listeners (Datomic
 
 Create disposable in-memory databases for tests. Fast, isolated, no cleanup required.
 
-**Code**:
+**Java Code**:
+
+```java
+Connection testDbFixture(List personSchema) throws Exception {
+    String uri = "datomic:mem://test-" + java.util.UUID.randomUUID();
+    Peer.createDatabase(uri);
+    Connection conn = Peer.connect(uri);
+    // Install schema
+    conn.transact(personSchema).get();
+    return conn;
+}
+
+// Use in tests
+void testPersonCreation() throws Exception {
+    Connection conn = testDbFixture(personSchema);
+
+    // Test transaction
+    conn.transact(
+        Util.list(
+            Util.map(":person/name", "Test User",
+                     ":person/email", "test@example.com",
+                     ":person/age", 25)
+        )
+    ).get();
+
+    // Verify
+    Database db = conn.db();
+    Entity testUser = db.entity(Util.list(":person/email", "test@example.com"));
+    assert testUser.get(":person/name").equals("Test User");
+
+    // Database automatically disposed when conn goes out of scope
+    System.out.println("Test passed");
+}
+
+testPersonCreation();
+// => Test passed
+```
+
+**Clojure Code**:
 
 ```clojure
 (defn test-db-fixture []
