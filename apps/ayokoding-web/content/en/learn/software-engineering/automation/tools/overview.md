@@ -3,8 +3,8 @@ title: "Overview"
 weight: 100000
 date: 2025-12-29T00:00:00+07:00
 draft: false
-description: "Explore popular workflow automation and integration platforms including n8n, Zapier, Make, and other tools for building automated workflows"
-tags: ["automation", "workflow", "integration", "tools", "n8n", "zapier", "make"]
+description: "Explore popular workflow automation and integration platforms including Zapier, Make, and other tools for building automated workflows"
+tags: ["automation", "workflow", "integration", "tools", "zapier", "make"]
 ---
 
 ## Automation Tools Landscape
@@ -24,9 +24,9 @@ Workflow automation tools enable connecting applications, moving data between sy
 
 **Examples**:
 
-- **n8n** - Visual workflow builder with 200+ integrations
 - **Huginn** - Agent-based automation for monitoring and data processing
 - **Node-RED** - Flow-based development for IoT and integration
+- **Windmill** - Developer-centric workflow engine with script execution
 
 ### Cloud-Based SaaS Platforms
 
@@ -49,19 +49,15 @@ Some platforms offer both self-hosted and cloud options, combining control with 
 
 ## Tools Covered
 
-Currently covered:
-
-- **[n8n](/en/learn/software-engineering/automation/tools/n8n)** - Open-source workflow automation platform
-
-Additional tools coming soon.
+Additional automation tools will be added to this section in the future.
 
 ## Choosing an Automation Tool
 
-**Consider n8n or other open-source tools if**:
+**Consider open-source tools if**:
 
 - Data privacy and self-hosting are priorities
 - Need unlimited workflow executions without per-task pricing
-- Want to extend functionality with custom nodes
+- Want to extend functionality with custom integrations
 - Building automations for technical teams
 
 **Consider cloud SaaS platforms if**:
@@ -86,4 +82,4 @@ Automation tools excel at:
 
 ## Getting Started
 
-Start with **[n8n](/en/learn/software-engineering/automation/tools/n8n)** to learn core automation concepts with an open-source, self-hosted platform. Skills learned with n8n translate to other automation tools.
+Choose an automation tool that aligns with your requirements for control, scalability, and integration needs. Core automation concepts learned with one platform translate well to others.
