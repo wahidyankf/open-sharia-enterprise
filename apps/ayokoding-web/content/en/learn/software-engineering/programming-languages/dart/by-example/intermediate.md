@@ -11,7 +11,7 @@ Master intermediate Dart patterns through 25 heavily annotated examples using Is
 
 ## Examples 26-35: Async Programming
 
-### Example 26: Future Basics (Coverage: 33.8%)
+### Example 26: Future Basics
 
 Asynchronous operations with Future for delayed computations.
 
@@ -83,7 +83,7 @@ Zakat: Rp112500.0
 
 **Common Pitfalls**: Forgetting `await` returns Future, not value. `async` functions always return Future. Unhandled Future errors cause silent failures.
 
-### Example 27: Future.wait - Parallel Execution (Coverage: 35.1%)
+### Example 27: Future.wait - Parallel Execution
 
 Execute multiple asynchronous operations in parallel.
 
@@ -179,105 +179,105 @@ Partial results: 2
 
 ## Examples 28-35: Async Programming (Continued)
 
-### Example 28: Async Error Handling (Coverage: 36.4%)
+### Example 28: Async Error Handling
 
 Proper error handling patterns in async code with try-catch and Future.catchError.
 
-### Example 29: Future Timeouts (Coverage: 37.7%)
+### Example 29: Future Timeouts
 
 Using Future.timeout() to prevent indefinite waits on async operations.
 
-### Example 30: Completer for Manual Future Control (Coverage: 39%)
+### Example 30: Completer for Manual Future Control
 
 Creating and completing Futures manually with Completer class.
 
-### Example 31: Stream Basics (Coverage: 40.3%)
+### Example 31: Stream Basics
 
 Asynchronous sequence of events with Stream and listen().
 
-### Example 32: Stream Transformations (Coverage: 41.6%)
+### Example 32: Stream Transformations
 
 Transforming streams with map(), where(), and take() methods.
 
-### Example 33: StreamController (Coverage: 42.9%)
+### Example 33: StreamController
 
 Creating custom streams with StreamController for event publishing.
 
-### Example 34: Async Generators (async\*) (Coverage: 44.2%)
+### Example 34: Async Generators (async\*)
 
 Generating asynchronous sequences with async\* generators and yield.
 
-### Example 35: Stream Subscription Management (Coverage: 45.5%)
+### Example 35: Stream Subscription Management
 
 Managing stream subscriptions with pause(), resume(), and cancel().
 
 ## Examples 36-45: Advanced Object-Oriented Programming
 
-### Example 36: Inheritance Basics (Coverage: 46.8%)
+### Example 36: Inheritance Basics
 
 Extending classes with inheritance, super constructors, and method overriding.
 
-### Example 37: Abstract Classes and Methods (Coverage: 48.1%)
+### Example 37: Abstract Classes and Methods
 
 Defining contracts with abstract classes that must be implemented by subclasses.
 
-### Example 38: Interfaces with implements (Coverage: 49.4%)
+### Example 38: Interfaces with implements
 
 Implementing multiple interfaces for flexible class design.
 
-### Example 39: Mixins for Code Reuse (Coverage: 50.7%)
+### Example 39: Mixins for Code Reuse
 
 Sharing functionality across classes with mixin keyword and composition.
 
-### Example 40: Extension Methods (Coverage: 52%)
+### Example 40: Extension Methods
 
 Adding methods to existing classes without inheritance using extensions.
 
-### Example 41: Operator Overloading (Coverage: 53.3%)
+### Example 41: Operator Overloading
 
 Defining custom operators for classes (==, +, [], etc.).
 
-### Example 42: Cascade Notation (Coverage: 54.6%)
+### Example 42: Cascade Notation
 
 Chaining method calls with cascade operator (..) for fluent APIs.
 
-### Example 43: Generics Basics (Coverage: 55.9%)
+### Example 43: Generics Basics
 
 Type-safe generic classes and functions with type parameters <T>.
 
-### Example 44: Generic Constraints (Coverage: 57.2%)
+### Example 44: Generic Constraints
 
 Restricting generic types with extends keyword for bounded type parameters.
 
-### Example 45: Callable Classes (Coverage: 58.5%)
+### Example 45: Callable Classes
 
 Making class instances callable like functions with call() method.
 
 ## Examples 46-50: File I/O and JSON
 
-### Example 46: File Reading (Coverage: 59.8%)
+### Example 46: File Reading
 
 Reading text files synchronously and asynchronously with File class.
 
-### Example 47: File Writing (Coverage: 61.1%)
+### Example 47: File Writing
 
 Writing and appending to files with proper resource management.
 
-### Example 48: Directory Operations (Coverage: 62.4%)
+### Example 48: Directory Operations
 
 Listing, creating, and managing directories with Directory class.
 
-### Example 49: JSON Encoding (Coverage: 63.7%)
+### Example 49: JSON Encoding
 
 Converting Dart objects to JSON strings with jsonEncode().
 
-### Example 50: JSON Decoding and Parsing (Coverage: 65%)
+### Example 50: JSON Decoding and Parsing
 
 Parsing JSON strings to Dart objects with jsonDecode() and type casting.
 
 ## Detailed Examples 28-50
 
-### Example 28: Async Error Handling (Coverage: 36.4%)
+### Example 28: Async Error Handling
 
 ```dart
 import 'dart:async';
@@ -324,7 +324,7 @@ Chain error: Invalid argument(s): Negative wealth
 
 **Common Pitfalls**: Unhandled async errors can crash app. `catchError` must be in Future chain. Try-catch only works with `await`.
 
-### Example 31: Stream Basics (Coverage: 40.3%)
+### Example 31: Stream Basics
 
 ```dart
 import 'dart:async';
@@ -390,7 +390,7 @@ Listen complete
 
 **Common Pitfalls**: `await for` blocks until stream completes. `listen()` is non-blocking. Streams can only be listened to once (use broadcast for multiple listeners).
 
-### Example 36: Inheritance Basics (Coverage: 46.8%)
+### Example 36: Inheritance Basics
 
 ```dart
 // Base class
@@ -469,7 +469,7 @@ Total: Rp1450000.0
 
 **Common Pitfalls**: Forgetting `super()` in subclass constructor. Can only extend one class (single inheritance). `@override` is optional but recommended.
 
-### Example 39: Mixins for Code Reuse (Coverage: 50.7%)
+### Example 39: Mixins for Code Reuse
 
 ```dart
 // Mixin definition
@@ -543,7 +543,7 @@ Audit entries: 2
 
 **Common Pitfalls**: Mixins can't have constructors. Order matters with `with` (later mixins override earlier). Mixin methods can't call `super` unless using `on` clause.
 
-### Example 43: Generics Basics (Coverage: 55.9%)
+### Example 43: Generics Basics
 
 ```dart
 // Generic class
@@ -619,7 +619,7 @@ First amount: 500000
 
 **Common Pitfalls**: Forgetting type parameter creates dynamic type. Type inference reduces verbosity. Generics erased at runtime (no type checking at runtime).
 
-### Example 49: JSON Encoding (Coverage: 63.7%)
+### Example 49: JSON Encoding
 
 ```dart
 import 'dart:convert';                  // => Import for JSON functions
@@ -703,7 +703,7 @@ Array JSON: [{"donorName":"Ahmad",...},{"donorName":"Ali",...}]
 
 **Common Pitfalls**: Objects need `toJson()` method. DateTime not directly JSON serializable. Circular references cause infinite loop.
 
-### Example 50: JSON Decoding and Parsing (Coverage: 65%)
+### Example 50: JSON Decoding and Parsing
 
 ```dart
 import 'dart:convert';

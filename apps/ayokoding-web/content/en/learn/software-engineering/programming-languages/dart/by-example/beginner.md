@@ -11,7 +11,7 @@ Master Dart fundamentals through 25 heavily annotated examples using Islamic fin
 
 ## Examples 1-10: Basic Syntax and Types
 
-### Example 1: Variable Declaration and Type Inference (Coverage: 1.3%)
+### Example 1: Variable Declaration and Type Inference
 
 Variables store data using explicit types or type inference with `var`.
 
@@ -52,7 +52,7 @@ Ahmad donated: Rp500000
 
 **Common Pitfalls**: Using `var` without initialization causes compile error. Type cannot change after declaration.
 
-### Example 2: Null Safety Basics (Coverage: 2.6%)
+### Example 2: Null Safety Basics
 
 Dart enforces null safety, preventing null reference errors at compile time.
 
@@ -99,7 +99,7 @@ Phone length: null
 
 **Common Pitfalls**: Using `!` operator on null value throws runtime error. Always verify value is non-null before using `!`.
 
-### Example 3: String Manipulation (Coverage: 3.9%)
+### Example 3: String Manipulation
 
 Strings support interpolation, concatenation, and various manipulation methods.
 
@@ -154,7 +154,7 @@ Length: 16
 
 **Common Pitfalls**: Forgetting `{}` around complex expressions in interpolation. Strings are immutable - methods create new instances.
 
-### Example 4: Basic Arithmetic and Operators (Coverage: 5.2%)
+### Example 4: Basic Arithmetic and Operators
 
 Dart provides standard arithmetic operators and operator precedence.
 
@@ -213,7 +213,7 @@ Eligible for Zakat: true
 
 **Common Pitfalls**: Mixing `int` and `double` works in Dart (auto-promoted), but `~/` truncates to int. Order of operations matters.
 
-### Example 5: Control Flow - If/Else (Coverage: 6.5%)
+### Example 5: Control Flow - If/Else
 
 Conditional statements execute code blocks based on boolean conditions.
 
@@ -274,7 +274,7 @@ Zakat status: Optional
 
 **Common Pitfalls**: Forgetting braces with single statements works but reduces readability. Ternary operator should be simple - use if-else for complex logic.
 
-### Example 6: Control Flow - For Loops (Coverage: 7.8%)
+### Example 6: Control Flow - For Loops
 
 For loops iterate a fixed number of times with counter variable.
 
@@ -361,7 +361,7 @@ Rp300000 Rp600000 Rp900000 Rp1200000
 
 **Common Pitfalls**: Off-by-one errors with loop conditions. Forgetting to increment counter causes infinite loop. Modifying collection during for-in loop causes error.
 
-### Example 7: Control Flow - While and Do-While (Coverage: 9.1%)
+### Example 7: Control Flow - While and Do-While
 
 While loops execute code repeatedly while condition remains true.
 
@@ -473,7 +473,7 @@ Valid donors: 3
 
 **Common Pitfalls**: Infinite loops when condition never becomes false. Do-while executes at least once even if condition initially false.
 
-### Example 8: Switch Statements (Coverage: 10.4%)
+### Example 8: Switch Statements
 
 Switch statements match a value against multiple cases for multi-way branching.
 
@@ -595,7 +595,7 @@ Zakat al-Mal (Wealth): 2.5%
 
 **Common Pitfalls**: Forgetting `break` causes fall-through to next case. Switch only works with compile-time constants.
 
-### Example 9: Lists - Creation and Basic Operations (Coverage: 11.7%)
+### Example 9: Lists - Creation and Basic Operations
 
 Lists are ordered collections of elements with dynamic or fixed length.
 
@@ -702,7 +702,7 @@ Payments: [500000.0, 750000.0, 1000000.0]
 
 **Common Pitfalls**: Index out of range throws error. Lists are zero-based (first element is index 0). Modifying list during iteration causes error.
 
-### Example 10: Maps - Key-Value Storage (Coverage: 13%)
+### Example 10: Maps - Key-Value Storage
 
 Maps store data as key-value pairs for efficient lookups.
 
@@ -826,7 +826,7 @@ Wealth Zakat rate: 2.5%
 
 ## Examples 11-20: Functions and Classes
 
-### Example 11: Function Basics (Coverage: 14.3%)
+### Example 11: Function Basics
 
 Functions encapsulate reusable code with parameters and return values.
 
@@ -934,7 +934,7 @@ Nisab threshold: Rp85000000.0
 
 **Common Pitfalls**: Named parameters are optional unless marked `required`. Positional parameters come before named parameters. Arrow functions limited to single expression.
 
-### Example 12: Function Advanced - First-Class Functions (Coverage: 15.6%)
+### Example 12: Function Advanced - First-Class Functions
 
 Functions are first-class objects that can be assigned, passed, and returned.
 
@@ -1051,7 +1051,7 @@ Callback: Processed Rp750000.0
 
 **Common Pitfalls**: Closures capture variables by reference - modifications visible. Anonymous functions need proper syntax. Function type compatibility matters.
 
-### Example 13: Classes and Objects Basics (Coverage: 16.9%)
+### Example 13: Classes and Objects Basics
 
 Classes define object blueprints with properties and methods.
 
@@ -1147,7 +1147,7 @@ Fatimah: Gold
 
 **Common Pitfalls**: Forgetting `new` keyword is fine in Dart (optional). Getters called without `()`. Each instance has own field values.
 
-### Example 14: Classes - Named Constructors and Factory (Coverage: 18.2%)
+### Example 14: Classes - Named Constructors and Factory
 
 Classes can have multiple constructors and factory constructors for flexible object creation.
 
@@ -1292,7 +1292,7 @@ Agriculture Zakat calculated: Rp5000000.0
 
 **Common Pitfalls**: Named constructor syntax is `ClassName.name`. Initializer list uses `:` not `{}`. Factory constructors must return instance.
 
-### Example 15: Classes - Getters and Setters (Coverage: 19.5%)
+### Example 15: Classes - Getters and Setters
 
 Getters and setters provide controlled access to object properties with validation.
 
@@ -1435,7 +1435,7 @@ Final balance: Rp12000000.0
 
 **Common Pitfalls**: Setters called like assignment (`obj.field = value`), not like methods. Private fields need getters for external access. Computed getters recalculate each access.
 
-### Example 16: Enums - Type-Safe Constants (Coverage: 20.8%)
+### Example 16: Enums - Type-Safe Constants
 
 Enums define fixed sets of named constant values for type safety.
 
@@ -1592,7 +1592,7 @@ Gold donors: 15
 
 **Common Pitfalls**: Enum values accessed with dot notation. Enhanced enums require const constructor. Enum values are compile-time constants.
 
-### Example 17: Collections - Sets (Coverage: 22.1%)
+### Example 17: Collections - Sets
 
 Sets store unique unordered elements with efficient membership checking.
 
@@ -1714,7 +1714,7 @@ Empty set: true
 
 **Common Pitfalls**: Sets are unordered - iteration order may vary. Empty set needs type: `<Type>{}` or `Set<Type>()`. Adding duplicate returns false but doesn't error.
 
-### Example 18: Exception Handling Basics (Coverage: 23.4%)
+### Example 18: Exception Handling Basics
 
 Try-catch blocks handle runtime errors gracefully.
 
@@ -1853,7 +1853,7 @@ Assertion passed
 
 **Common Pitfalls**: Order matters - specific catches before generic. Finally executes even with return in try/catch. Assertions only active in debug mode.
 
-### Example 19: String Advanced - Pattern Matching (Coverage: 24.7%)
+### Example 19: String Advanced - Pattern Matching
 
 Advanced string operations including regular expressions and pattern matching.
 
@@ -2008,7 +2008,7 @@ Pad right: 42---
 
 **Common Pitfalls**: `substring` end index is exclusive. Regular expression raw strings use `r` prefix. `tryParse` returns null on failure (not exception).
 
-### Example 20: Type Conversion and Casting (Coverage: 26%)
+### Example 20: Type Conversion and Casting
 
 Converting between types and checking runtime types.
 
@@ -2173,7 +2173,7 @@ Donor: Ahmad, Amount: 500000, Paid: true
 
 ## Examples 21-25: Advanced Basics
 
-### Example 21: Collection Iteration Methods (Coverage: 27.3%)
+### Example 21: Collection Iteration Methods
 
 Advanced iteration methods for transforming and filtering collections.
 
@@ -2337,7 +2337,7 @@ Average large: Rp1583333.33
 
 (continuing with remaining 4 examples in next message due to length)
 
-### Example 22: DateTime Basics (Coverage: 28.6%)
+### Example 22: DateTime Basics
 
 Working with dates and times for timestamps and scheduling.
 
@@ -2438,7 +2438,7 @@ Local: 2025-01-29 12:34:56.789
 
 **Common Pitfalls**: Months are 1-indexed (January = 1). DateTime is immutable - methods return new instances. Timezone conversions affect displayed time.
 
-### Example 23: Classes - Static Members (Coverage: 29.9%)
+### Example 23: Classes - Static Members
 
 Static fields and methods belong to the class itself, not instances.
 
@@ -2560,7 +2560,7 @@ Final count: 2
 
 **Common Pitfalls**: Static methods can't access `this` (no instance). Static fields are class-level, not instance-level. Static factory methods common pattern for validation.
 
-### Example 24: Command-Line Input/Output (Coverage: 31.2%)
+### Example 24: Command-Line Input/Output
 
 Reading user input and writing formatted output to console.
 
@@ -2664,7 +2664,7 @@ Payment confirmed!
 
 **Common Pitfalls**: `readLineSync()` is blocking (waits for input). Always validate and parse user input. Input is always String - convert for numbers.
 
-### Example 25: Comments and Documentation (Coverage: 32.5%)
+### Example 25: Comments and Documentation
 
 Best practices for code comments and documentation.
 
