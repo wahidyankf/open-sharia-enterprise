@@ -15,6 +15,29 @@ Master advanced Dart patterns through 25 heavily annotated examples using Islami
 
 Parallel execution with isolates for CPU-intensive work without blocking main thread.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant Main as Main Isolate<br/>Memory Space 1
+    participant Worker as Worker Isolate<br/>Memory Space 2
+
+    Main->>Main: Create ReceivePort
+    Main->>Worker: Isolate.spawn(function, sendPort)
+    Note over Worker: Separate memory<br/>True parallelism
+
+    Worker->>Main: Send SendPort
+    Note over Main,Worker: Bi-directional<br/>communication established
+
+    Main->>Worker: Send data via SendPort
+    Worker->>Worker: Process data<br/>(CPU-intensive work)
+    Worker->>Main: Send result via SendPort
+
+    Main->>Main: Receive result
+    Main->>Worker: Kill isolate
+
+    Note over Main,Worker: No shared memory<br/>Message passing only
+```
+
 ```dart
 import 'dart:isolate';                  // => Import for Isolate
 
@@ -380,6 +403,31 @@ Amount (with fallback): Rp600000.0
 
 Ensuring single instance of class with factory constructor.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant C1 as Client 1
+    participant Factory as Factory Constructor
+    participant Instance as Single Instance
+    participant C2 as Client 2
+
+    C1->>Factory: new Singleton()
+    Factory->>Factory: Check _instance
+    Note over Factory: _instance is null
+
+    Factory->>Instance: Create instance
+    Instance-->>Factory: Return reference
+    Factory-->>C1: Return reference
+
+    C2->>Factory: new Singleton()
+    Factory->>Factory: Check _instance
+    Note over Factory: _instance exists
+
+    Factory-->>C2: Return existing reference
+
+    Note over C1,C2: Both clients share<br/>same instance
+```
+
 ```dart
 class ZakatCalculatorService {          // => Singleton service
   // Private static instance
@@ -558,6 +606,34 @@ Total: Rp1010000.0
 ### Example 58: Observer Pattern with Streams
 
 Implementing observer pattern using Dart Streams for event notification.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant Subject as DonationTracker<br/>(Subject)
+    participant Stream as StreamController
+    participant O1 as EmailNotifier<br/>(Observer 1)
+    participant O2 as AuditLogger<br/>(Observer 2)
+    participant O3 as StatsCalculator<br/>(Observer 3)
+
+    O1->>Stream: listen()
+    O2->>Stream: listen()
+    O3->>Stream: listen()
+    Note over Stream: Multiple listeners<br/>(broadcast stream)
+
+    Subject->>Stream: add(donation)
+    Stream->>O1: notify(donation)
+    Stream->>O2: notify(donation)
+    Stream->>O3: notify(donation)
+
+    par All observers react
+        O1->>O1: Send email
+        O2->>O2: Log transaction
+        O3->>O3: Update statistics
+    end
+
+    Note over Subject,O3: Decoupled communication<br/>Subject doesn't know observers
+```
 
 ```dart
 import 'dart:async';

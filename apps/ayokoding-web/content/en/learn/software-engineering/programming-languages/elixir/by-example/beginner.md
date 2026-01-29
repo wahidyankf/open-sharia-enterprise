@@ -894,6 +894,24 @@ Example.func(3, 4)             # => Calls func/2 with 3 and 4
 
 The pipe operator `|>` takes the result of an expression and passes it as the first argument to the next function. This enables readable left-to-right data transformations instead of nested function calls.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    Input["'  hello  '<br/>(input)"] -->|"|>"| Trim["String.trim()<br/>Result: 'hello'"]
+    Trim -->|"|>"| Upcase["String.upcase()<br/>Result: 'HELLO'"]
+    Upcase --> Final["'HELLO'<br/>(output)"]
+
+    Nested["Nested:<br/>upcase(trim('  hello  '))<br/>❌ Inside-out reading"]
+    Pipeline["Pipeline:<br/>'  hello  ' |> trim() |> upcase()<br/>✅ Left-to-right flow"]
+
+    style Input fill:#0173B2,color:#fff
+    style Trim fill:#DE8F05,color:#fff
+    style Upcase fill:#029E73,color:#fff
+    style Final fill:#029E73,color:#fff
+    style Nested fill:#CC78BC,color:#fff
+    style Pipeline fill:#029E73,color:#fff
+```
+
 **Code**:
 
 ```elixir

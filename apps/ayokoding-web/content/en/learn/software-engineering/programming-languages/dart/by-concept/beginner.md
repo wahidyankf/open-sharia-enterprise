@@ -108,6 +108,24 @@ Output: `As-salamu alaykum!`
 
 Dart offers multiple ways to declare variables with different mutability and type specification:
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart TD
+    Start[Declare Variable] --> Question{Known at<br/>compile time?}
+    Question -->|Yes| Const[const<br/>Compile-time constant]
+    Question -->|No| Question2{Will value<br/>change?}
+    Question2 -->|No| Final[final<br/>Runtime constant]
+    Question2 -->|Yes| Question3{Type<br/>obvious?}
+    Question3 -->|Yes| Var[var<br/>Type inferred]
+    Question3 -->|No| Explicit[Explicit type<br/>int, String, etc.]
+
+    style Const fill:#029E73
+    style Final fill:#0173B2
+    style Var fill:#DE8F05
+    style Explicit fill:#CC78BC
+    style Start fill:#CA9161
+```
+
 ```dart
 void main() {
   // Explicit type (immutable)
@@ -164,6 +182,31 @@ void main() {
 ```
 
 ## Data Types
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Types[Dart Data Types] --> Numeric[Numeric Types]
+    Types --> Text[Text Types]
+    Types --> Boolean[Boolean Type]
+    Types --> Collection[Collection Types]
+
+    Numeric --> Int[int<br/>Whole numbers<br/>42, -10, 0]
+    Numeric --> Double[double<br/>Decimal numbers<br/>3.14, -0.5, 2.0]
+
+    Text --> String[String<br/>Text sequences<br/>'Hello', "World"]
+
+    Boolean --> Bool[bool<br/>True or false<br/>true, false]
+
+    Collection --> List[List<br/>Ordered elements]
+    Collection --> Set[Set<br/>Unique elements]
+    Collection --> Map[Map<br/>Key-value pairs]
+
+    style Int fill:#0173B2
+    style Double fill:#029E73
+    style String fill:#DE8F05
+    style Bool fill:#CC78BC
+```
 
 ### Numbers
 
@@ -276,6 +319,27 @@ void main() {
 
 ### If/Else Statements
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart TD
+    Start[Start] --> Condition{Condition<br/>true?}
+    Condition -->|true| TrueBlock[Execute<br/>if block]
+    Condition -->|false| ElseCheck{Has<br/>else?}
+
+    TrueBlock --> AfterIf[Continue after if]
+    ElseCheck -->|No| AfterIf
+    ElseCheck -->|Yes| ElseBlock[Execute<br/>else block]
+    ElseBlock --> AfterIf
+
+    AfterIf --> End[End]
+
+    style TrueBlock fill:#029E73
+    style ElseBlock fill:#DE8F05
+    style Condition fill:#0173B2
+    style Start fill:#CA9161
+    style End fill:#CA9161
+```
+
 Conditional execution based on boolean expressions:
 
 ```dart
@@ -307,6 +371,36 @@ void main() {
 ```
 
 ### Loops
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart TD
+    Start[Start Loop] --> ForLoop{Loop Type}
+
+    ForLoop -->|for i = 0| Init[Initialize counter]
+    Init --> Check1{Condition<br/>true?}
+    Check1 -->|Yes| Execute1[Execute body]
+    Execute1 --> Increment[Increment counter]
+    Increment --> Check1
+    Check1 -->|No| End[End]
+
+    ForLoop -->|for item in| GetNext[Get next item]
+    GetNext --> HasItem{Has<br/>item?}
+    HasItem -->|Yes| Execute2[Execute body<br/>with item]
+    Execute2 --> GetNext
+    HasItem -->|No| End
+
+    ForLoop -->|while| Check2{Condition<br/>true?}
+    Check2 -->|Yes| Execute3[Execute body]
+    Execute3 --> Check2
+    Check2 -->|No| End
+
+    style Execute1 fill:#029E73
+    style Execute2 fill:#029E73
+    style Execute3 fill:#029E73
+    style End fill:#CA9161
+    style Start fill:#CA9161
+```
 
 #### For Loop
 
@@ -398,6 +492,29 @@ void main() {
 ## Functions
 
 ### Basic Functions
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart TD
+    Call[Function Call] --> Params[Pass Parameters]
+    Params --> Execute[Execute Function Body]
+    Execute --> Return{Returns<br/>value?}
+
+    Return -->|Yes| RetValue[Return value<br/>to caller]
+    Return -->|No void| RetVoid[Return to caller<br/>no value]
+
+    RetValue --> Caller[Caller uses<br/>returned value]
+    RetVoid --> CallerVoid[Caller continues]
+
+    Caller --> End[End]
+    CallerVoid --> End
+
+    style Execute fill:#0173B2
+    style RetValue fill:#029E73
+    style Params fill:#DE8F05
+    style Call fill:#CA9161
+    style End fill:#CA9161
+```
 
 Functions encapsulate reusable logic:
 
@@ -550,6 +667,23 @@ double Function(double) createMultiplier(double factor) {
 
 ## Collections
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Collections[Dart Collections] --> List[List<br/>Ordered, indexed]
+    Collections --> Set[Set<br/>Unique, unordered]
+    Collections --> Map[Map<br/>Key-value pairs]
+
+    List --> ListOps[add, insert<br/>remove, sort<br/>first, last]
+    Set --> SetOps[add, remove<br/>union, intersection<br/>difference]
+    Map --> MapOps[Bracket access<br/>putIfAbsent<br/>keys, values]
+
+    style List fill:#0173B2
+    style Set fill:#029E73
+    style Map fill:#DE8F05
+    style Collections fill:#CC78BC
+```
+
 ### Lists
 
 Ordered collections with indexed access:
@@ -681,6 +815,30 @@ Dart's null safety prevents null reference errors at compile time.
 
 ### Nullable vs Non-Nullable Types
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart TD
+    Declare[Declare Variable] --> Question{Can be<br/>null?}
+    Question -->|No| NonNull[Non-nullable Type<br/>String, int, bool]
+    Question -->|Yes| Null[Nullable Type<br/>String?, int?, bool?]
+
+    NonNull --> MustInit[Must initialize<br/>before use]
+    Null --> DefaultNull[Defaults to null<br/>if not initialized]
+
+    MustInit --> UseDirectly[Use directly<br/>No null checks needed]
+    DefaultNull --> NullCheck{Null check<br/>required}
+
+    NullCheck -->|if != null| Safe[Safe to use<br/>Type promoted]
+    NullCheck -->|Use ??| Provide[Provide default<br/>value ?? default]
+    NullCheck -->|Use !| Assert[Assert non-null<br/>Throws if null]
+    NullCheck -->|Use ?.| Conditional[Conditional access<br/>Returns null if null]
+
+    style NonNull fill:#029E73
+    style Null fill:#DE8F05
+    style Safe fill:#0173B2
+    style UseDirectly fill:#029E73
+```
+
 ```dart
 void main() {
   // Non-nullable (default) - CANNOT be null
@@ -763,6 +921,28 @@ String expensiveOperation() {
 ## Classes and Objects
 
 ### Basic Classes
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+classDiagram
+    class ZakatCalculator {
+        +double wealth
+        +int monthsHeld
+        +ZakatCalculator(wealth, monthsHeld)
+        +calculateZakat() double
+        +isEligible() bool
+    }
+
+    class Instance {
+        wealth = 100000000
+        monthsHeld = 12
+    }
+
+    ZakatCalculator <.. Instance : instantiates
+
+    note for ZakatCalculator "Class defines blueprint<br/>Fields store state<br/>Methods provide behavior"
+    note for Instance "Object is instance of class<br/>Has actual values<br/>Can call methods"
+```
 
 Classes define custom types with fields and methods:
 
@@ -915,6 +1095,28 @@ void main() {
 
 ### Inheritance
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+classDiagram
+    class Account {
+        +String accountNumber
+        +double balance
+        +deposit(amount)
+        +printInfo()
+    }
+
+    class SavingsAccount {
+        +double interestRate
+        +applyInterest()
+        +printInfo() override
+    }
+
+    Account <|-- SavingsAccount : extends
+
+    note for Account "Base class<br/>Defines common behavior"
+    note for SavingsAccount "Derived class<br/>Inherits from Account<br/>Adds new fields/methods<br/>Can override methods"
+```
+
 Extend classes to create specialized versions:
 
 ```dart
@@ -1019,6 +1221,28 @@ void main() {
 ## Basic Async Programming
 
 ### Future and async/await
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant Main as Main Thread
+    participant Future as Future Operation
+    participant Result as Result
+
+    Main->>Future: Call async function
+    Note over Main: Program continues<br/>(non-blocking)
+    Future->>Future: Processing...
+    Note over Future: Network request,<br/>file I/O, timer, etc.
+    Main->>Future: await keyword
+    Note over Main: Pauses execution<br/>until Future completes
+    Future->>Result: Operation completes
+    Result-->>Main: Returns value
+    Note over Main: Execution resumes<br/>with result
+
+    rect rgb(1, 115, 178, 0.1)
+        Note over Main,Result: async/await provides<br/>synchronous-looking async code
+    end
+```
 
 Handle asynchronous operations:
 

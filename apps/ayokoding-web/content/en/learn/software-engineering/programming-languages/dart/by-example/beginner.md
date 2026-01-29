@@ -56,6 +56,29 @@ Ahmad donated: Rp500000
 
 Dart enforces null safety, preventing null reference errors at compile time.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart TD
+    VarType{Variable Type} -->|Non-nullable| NonNull[String, int, bool]
+    VarType -->|Nullable| Nullable[String?, int?, bool?]
+
+    NonNull --> MustInit[Must initialize<br/>Cannot be null]
+    Nullable --> CanNull[Can be null<br/>Default: null]
+
+    MustInit --> DirectUse[Use directly<br/>No checks needed]
+    CanNull --> CheckRequired{Check before use}
+
+    CheckRequired -->|if != null| TypePromote[Type promoted<br/>Safe to use]
+    CheckRequired -->|Use ??| DefaultVal[Provide default<br/>value ?? 'default']
+    CheckRequired -->|Use !| AssertNonNull[Assert non-null<br/>Throws if null]
+    CheckRequired -->|Use ?.| SafeAccess[Safe access<br/>Returns null if null]
+
+    style NonNull fill:#029E73
+    style Nullable fill:#DE8F05
+    style TypePromote fill:#0173B2
+    style DirectUse fill:#029E73
+```
+
 ```dart
 void main() {
   // Non-nullable types (default)
@@ -829,6 +852,23 @@ Wealth Zakat rate: 2.5%
 ### Example 11: Function Basics
 
 Functions encapsulate reusable code with parameters and return values.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart LR
+    Params[Input Parameters] --> Function[Function Body<br/>Execute logic]
+    Function --> Return{Has return<br/>type?}
+
+    Return -->|Yes| ReturnVal[return value<br/>Must match type]
+    Return -->|No void| NoReturn[No return<br/>void function]
+
+    ReturnVal --> Caller[Caller receives<br/>returned value]
+    NoReturn --> CallerVoid[Caller continues<br/>no value received]
+
+    style Function fill:#0173B2
+    style ReturnVal fill:#029E73
+    style Params fill:#DE8F05
+```
 
 ```dart
 // Function with explicit types
