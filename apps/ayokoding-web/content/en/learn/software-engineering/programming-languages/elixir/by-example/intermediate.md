@@ -960,6 +960,40 @@ MapSet.intersection(post1_tags, post2_tags)
 
 Module attributes are compile-time constants defined with `@`. They're commonly used for documentation (`@moduledoc`, `@doc`), compile-time configuration, and storing values computed during compilation.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    CompileTime["Compile Time"] --> Attrs["Module Attributes Evaluated"]
+    Attrs --> Version["@version = '1.0.0'"]
+    Attrs --> Timeout["@default_timeout = 5000"]
+    Attrs --> Languages["@languages = [...list...]"]
+    Languages --> Count["@language_count = 3<br/>(computed: length list)"]
+
+    Runtime["Runtime"] --> Inline["Attributes inlined"]
+    Inline --> VersionFunc["version() -> '1.0.0'<br/>(zero-cost constant)"]
+    Inline --> TimeoutFunc["wait(5000)<br/>(default from @default_timeout)"]
+    Inline --> CountFunc["language_count() -> 3<br/>(pre-computed)"]
+
+    Reserved["Reserved Attributes"] --> ModuleDoc["@moduledoc<br/>(documentation)"]
+    Reserved --> Doc["@doc<br/>(function docs)"]
+    Reserved --> Behaviour["@behaviour<br/>(callback verification)"]
+    Reserved --> Impl["@impl<br/>(marks callbacks)"]
+
+    style CompileTime fill:#0173B2,color:#fff
+    style Attrs fill:#DE8F05,color:#fff
+    style Version fill:#029E73,color:#fff
+    style Timeout fill:#029E73,color:#fff
+    style Languages fill:#029E73,color:#fff
+    style Count fill:#029E73,color:#fff
+    style Runtime fill:#CC78BC,color:#fff
+    style Inline fill:#DE8F05,color:#fff
+    style Reserved fill:#CA9161,color:#fff
+    style ModuleDoc fill:#CA9161,color:#fff
+    style Doc fill:#CA9161,color:#fff
+    style Behaviour fill:#CA9161,color:#fff
+    style Impl fill:#CA9161,color:#fff
+```
+
 **Code**:
 
 ```elixir
@@ -1089,6 +1123,28 @@ MyModule.colors()
 ## Example 38: Import, Alias, Require
 
 `import`, `alias`, and `require` control how modules are referenced in your code. They reduce verbosity and manage namespaces cleanly.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Alias["alias MyApp.User"] --> Short["User -> MyApp.User<br/>Shorten module names"]
+    Import["import Enum, only: [map: 2]"] --> NoPrefix["map(list, fn) -> Enum.map<br/>Remove module prefix"]
+    Require["require Logger"] --> Macros["Logger.info -> Macro<br/>Enable macro expansion"]
+
+    ModLevel["Module-level<br/>(outside def)"] --> AllFuncs["Available in all functions"]
+    FuncLevel["Function-level<br/>(inside def)"] --> OnlyFunc["Available in that function only"]
+
+    style Alias fill:#0173B2,color:#fff
+    style Import fill:#DE8F05,color:#fff
+    style Require fill:#029E73,color:#fff
+    style Short fill:#0173B2,color:#fff
+    style NoPrefix fill:#DE8F05,color:#fff
+    style Macros fill:#029E73,color:#fff
+    style ModLevel fill:#CC78BC,color:#fff
+    style FuncLevel fill:#CA9161,color:#fff
+    style AllFuncs fill:#CC78BC,color:#fff
+    style OnlyFunc fill:#CA9161,color:#fff
+```
 
 ### Directive Comparison
 
@@ -1456,6 +1512,27 @@ Describable.describe([1, 2, 3])
 ## Example 40: Result Tuples (:ok/:error)
 
 Elixir idiomatically uses tagged tuples `{:ok, value}` or `{:error, reason}` to represent success and failure. This explicit error handling is preferred over exceptions for expected error cases.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Call["Function Call:<br/>divide(10, 2)"] --> Check{" Result?"}
+    Check -->|Success| OK["{:ok, 5.0}<br/>Return success tuple"]
+    Check -->|Failure| Error["{:error, :reason}<br/>Return error tuple"]
+
+    Caller["Caller"] --> Match{"Pattern Match"}
+    Match -->|" {:ok, value}"| HandleSuccess["Use value<br/>Continue execution"]
+    Match -->|" {:error, reason}"| HandleError["Handle error<br/>Recover or propagate"]
+
+    style Call fill:#0173B2,color:#fff
+    style Check fill:#DE8F05,color:#fff
+    style OK fill:#029E73,color:#fff
+    style Error fill:#CC78BC,color:#fff
+    style Caller fill:#0173B2,color:#fff
+    style Match fill:#DE8F05,color:#fff
+    style HandleSuccess fill:#029E73,color:#fff
+    style HandleError fill:#CC78BC,color:#fff
+```
 
 **Code**:
 
@@ -1902,6 +1979,30 @@ end
 ## Example 42: Raise and Custom Exceptions
 
 Use `raise` to throw exceptions. Define custom exception modules for domain-specific errors. Exceptions should be for unexpected situations, not control flow.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    SafeFunc["Safe Function:<br/>fetch(key)"] --> Check{" Key exists?"}
+    Check -->|Yes| OkTuple["{:ok, value}<br/>Explicit success"]
+    Check -->|No| ErrorTuple["{:error, :not_found}<br/>Explicit error"]
+
+    BangFunc["Bang Function:<br/>fetch!(key)"] --> Check2{" Key exists?"}
+    Check2 -->|Yes| Value["value<br/>Return value directly"]
+    Check2 -->|No| Raise["raise KeyError<br/>Exception thrown"]
+
+    Caller["Caller handles:"] --> Pattern["Pattern match<br/>{:ok, v} or {:error, r}"]
+    Caller2["Caller handles:"] --> TryRescue["try/rescue<br/>or let it crash"]
+
+    style SafeFunc fill:#0173B2,color:#fff
+    style BangFunc fill:#0173B2,color:#fff
+    style OkTuple fill:#029E73,color:#fff
+    style ErrorTuple fill:#DE8F05,color:#fff
+    style Value fill:#029E73,color:#fff
+    style Raise fill:#CC78BC,color:#fff
+    style Pattern fill:#029E73,color:#fff
+    style TryRescue fill:#CC78BC,color:#fff
+```
 
 ### Exception Conventions
 
@@ -2487,6 +2588,32 @@ flush()
 
 Process monitoring allows you to detect when other processes crash or exit. Use `Process.monitor/1` to watch a process and receive a message when it exits.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    subgraph Linking["Process Linking (Bidirectional)"]
+        P1["Process A"] -->|link| P2["Process B"]
+        P2 -->|link| P1
+        P2Crash["Process B crashes 💥"] --> BothDie["Both processes terminate"]
+    end
+
+    subgraph Monitoring["Process Monitoring (Unidirectional)"]
+        M1["Monitor Process"] -->|monitor| M2["Monitored Process"]
+        M2Crash["Monitored crashes 💥"] --> DownMsg["Monitor receives<br/>{:DOWN, ref, :process, pid, reason}"]
+        DownMsg --> MonitorSurvives["Monitor survives,<br/>handles :DOWN message"]
+    end
+
+    style P1 fill:#0173B2,color:#fff
+    style P2 fill:#029E73,color:#fff
+    style P2Crash fill:#CC78BC,color:#fff
+    style BothDie fill:#CC78BC,color:#fff
+    style M1 fill:#0173B2,color:#fff
+    style M2 fill:#029E73,color:#fff
+    style M2Crash fill:#CC78BC,color:#fff
+    style DownMsg fill:#DE8F05,color:#fff
+    style MonitorSurvives fill:#029E73,color:#fff
+```
+
 ### Monitoring vs Linking
 
 | Feature           | Monitoring                                  | Linking                             |
@@ -2652,6 +2779,32 @@ TimeoutHelper.call_with_timeout(fn -> :timer.sleep(2000); 42 end, 1000)  # => {:
 ## Example 46: Task Module (Async/Await)
 
 The `Task` module provides a simple abstraction for spawning processes and awaiting results. It's built on processes but handles boilerplate for async/await patterns.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Main["Main Process"] --> Async["Task.async(fn)"]
+    Async --> Task1["Task Process<br/>Execute function"]
+    Task1 --> Await["Task.await(task)"]
+    Await --> Result["Return result to main"]
+
+    Main2["Main Process"] --> AsyncStream["Task.async_stream"]
+    AsyncStream --> Pool["Process Pool"]
+    Pool --> T1["Task 1"]
+    Pool --> T2["Task 2"]
+    Pool --> T3["Task 3"]
+
+    style Main fill:#0173B2,color:#fff
+    style Main2 fill:#0173B2,color:#fff
+    style Async fill:#DE8F05,color:#fff
+    style Task1 fill:#029E73,color:#fff
+    style Await fill:#CC78BC,color:#fff
+    style AsyncStream fill:#DE8F05,color:#fff
+    style Pool fill:#CA9161,color:#fff
+    style T1 fill:#029E73,color:#fff
+    style T2 fill:#029E73,color:#fff
+    style T3 fill:#029E73,color:#fff
+```
 
 ### Task Functions Comparison
 

@@ -76,6 +76,40 @@ GenServer provides:
 - **Info messages**: Handle arbitrary messages with `handle_info/2`
 - **Lifecycle hooks**: Initialize, terminate, code change
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Start["GenServer.start_link"] --> Init["init/1<br/>Return {:ok, initial_state}"]
+    Init --> Running["Running State:<br/>Process waiting for messages"]
+
+    Client1["Client: call(server, msg)"] --> HandleCall["handle_call(msg, from, state)"]
+    HandleCall --> Reply["Return {:reply, response, new_state}"]
+    Reply --> Running
+
+    Client2["Client: cast(server, msg)"] --> HandleCast["handle_cast(msg, state)"]
+    HandleCast --> NoReply["Return {:noreply, new_state}"]
+    NoReply --> Running
+
+    Send["send(server, msg)"] --> HandleInfo["handle_info(msg, state)"]
+    HandleInfo --> Running
+
+    Crash["Exception/Exit"] --> Terminate["terminate(reason, state)<br/>Cleanup"]
+    Running --> Crash
+    Terminate --> Dead["Process Terminates"]
+
+    style Start fill:#0173B2,color:#fff
+    style Init fill:#DE8F05,color:#fff
+    style Running fill:#029E73,color:#fff
+    style HandleCall fill:#CC78BC,color:#fff
+    style HandleCast fill:#CA9161,color:#fff
+    style HandleInfo fill:#CA9161,color:#fff
+    style Reply fill:#029E73,color:#fff
+    style NoReply fill:#029E73,color:#fff
+    style Crash fill:#CC78BC,color:#fff
+    style Terminate fill:#DE8F05,color:#fff
+    style Dead fill:#CC78BC,color:#fff
+```
+
 ### Basic GenServer Implementation
 
 Create a simple counter service:
@@ -408,17 +442,37 @@ end
 
 **Supervision Tree Visualization**:
 
-```
-Application.Supervisor (:one_for_one)
-├── Repo
-├── Endpoint
-├── BusinessSupervisor (:one_for_one)
-│   ├── UserCache
-│   ├── SessionManager
-│   └── NotificationService
-└── JobSupervisor (:one_for_one)
-    ├── EmailWorker
-    └── ReportWorker
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    App["Application.Supervisor<br/>(:one_for_one)"] --> Repo["Repo<br/>(Database Pool)"]
+    App --> Endpoint["Endpoint<br/>(Phoenix Web)"]
+    App --> BizSup["BusinessSupervisor<br/>(:one_for_one)"]
+    App --> JobSup["JobSupervisor<br/>(:one_for_one)"]
+
+    BizSup --> UserCache["UserCache<br/>(GenServer)"]
+    BizSup --> SessionMgr["SessionManager<br/>(GenServer)"]
+    BizSup --> NotifSvc["NotificationService<br/>(GenServer)"]
+
+    JobSup --> EmailWorker["EmailWorker<br/>(GenServer)"]
+    JobSup --> ReportWorker["ReportWorker<br/>(GenServer)"]
+
+    Crash["UserCache crashes 💥"] --> Restart["Supervisor restarts<br/>UserCache only"]
+    Restart --> NewCache["New UserCache<br/>(clean state)"]
+
+    style App fill:#0173B2,color:#fff
+    style BizSup fill:#DE8F05,color:#fff
+    style JobSup fill:#DE8F05,color:#fff
+    style Repo fill:#029E73,color:#fff
+    style Endpoint fill:#029E73,color:#fff
+    style UserCache fill:#CC78BC,color:#fff
+    style SessionMgr fill:#029E73,color:#fff
+    style NotifSvc fill:#029E73,color:#fff
+    style EmailWorker fill:#029E73,color:#fff
+    style ReportWorker fill:#029E73,color:#fff
+    style Crash fill:#CC78BC,color:#fff
+    style Restart fill:#DE8F05,color:#fff
+    style NewCache fill:#029E73,color:#fff
 ```
 
 ### Dynamic Supervisor
@@ -668,6 +722,37 @@ Applications start in dependency order:
 
 Task and Agent provide simpler abstractions for common patterns.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    subgraph Task["Task (Concurrent Computation)"]
+        AsyncTask["Task.async(fn)"] --> TaskProcess["Spawns linked process"]
+        TaskProcess --> TaskWork["Executes function"]
+        TaskWork --> Await["Task.await(task)"]
+        Await --> TaskResult["Returns result"]
+    end
+
+    subgraph Agent["Agent (Simple State)"]
+        AgentStart["Agent.start_link(fn -> state end)"] --> AgentState["Process with state"]
+        AgentUpdate["Agent.update(agent, fn)"] --> AgentState
+        AgentGet["Agent.get(agent, fn)"] --> AgentState
+        AgentState --> AgentReply["Returns value"]
+    end
+
+    GenServer["GenServer<br/>(Complex state & logic)"] -.->|"Simpler alternative"| Agent
+    Process["spawn/Task.start<br/>(Fire and forget)"] -.->|"With result"| Task
+
+    style AsyncTask fill:#0173B2,color:#fff
+    style TaskProcess fill:#DE8F05,color:#fff
+    style Await fill:#029E73,color:#fff
+    style AgentStart fill:#0173B2,color:#fff
+    style AgentState fill:#DE8F05,color:#fff
+    style AgentUpdate fill:#029E73,color:#fff
+    style AgentGet fill:#029E73,color:#fff
+    style GenServer fill:#CC78BC,color:#fff
+    style Process fill:#CC78BC,color:#fff
+```
+
 ### Task - Concurrent Computation
 
 Execute work concurrently:
@@ -785,6 +870,33 @@ Counter.get()  # 2
 ## Section 5: Phoenix Framework - Web Development
 
 Phoenix is the leading Elixir web framework.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    Request["HTTP Request"] --> Endpoint["Endpoint<br/>(Port 4000)"]
+    Endpoint --> Router["Router<br/>(Pattern match URL)"]
+    Router --> Pipeline["Pipeline<br/>(Plugs)"]
+    Pipeline --> Controller["Controller<br/>(Business logic)"]
+    Controller --> Context["Context<br/>(Domain logic)"]
+    Context --> Repo["Repo<br/>(Database)"]
+    Repo --> Context
+    Context --> Controller
+    Controller --> View["View<br/>(Render template)"]
+    View --> Template["Template<br/>(HTML/JSON)"]
+    Template --> Response["HTTP Response"]
+
+    style Request fill:#0173B2,color:#fff
+    style Endpoint fill:#DE8F05,color:#fff
+    style Router fill:#029E73,color:#fff
+    style Pipeline fill:#DE8F05,color:#fff
+    style Controller fill:#CC78BC,color:#fff
+    style Context fill:#CA9161,color:#fff
+    style Repo fill:#CA9161,color:#fff
+    style View fill:#029E73,color:#fff
+    style Template fill:#029E73,color:#fff
+    style Response fill:#0173B2,color:#fff
+```
 
 ### Creating a Phoenix Project
 
@@ -1195,6 +1307,41 @@ end
 ## Section 7: Ecto - Database Layer
 
 Ecto is Elixir's database wrapper and query generator.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Schema["Schema Definition<br/>(user.ex)"] --> Changeset["Changeset<br/>(Validation)"]
+    Changeset -->|Valid| Repo["Repo<br/>(Database Operations)"]
+    Changeset -->|Invalid| Error["Return {:error, changeset}"]
+
+    Query["Ecto.Query"] --> Repo
+    Repo --> DB["Database<br/>(PostgreSQL/MySQL)"]
+
+    Migration["Migration<br/>(Schema changes)"] --> DB
+
+    Write["Write Operations"] --> Insert["Repo.insert"]
+    Write --> Update["Repo.update"]
+    Write --> Delete["Repo.delete"]
+
+    Read["Read Operations"] --> Get["Repo.get/get!"]
+    Read --> All["Repo.all"]
+    Read --> One["Repo.one"]
+
+    style Schema fill:#0173B2,color:#fff
+    style Changeset fill:#DE8F05,color:#fff
+    style Repo fill:#029E73,color:#fff
+    style DB fill:#CA9161,color:#fff
+    style Query fill:#0173B2,color:#fff
+    style Migration fill:#CC78BC,color:#fff
+    style Error fill:#CC78BC,color:#fff
+    style Insert fill:#029E73,color:#fff
+    style Update fill:#029E73,color:#fff
+    style Delete fill:#CC78BC,color:#fff
+    style Get fill:#029E73,color:#fff
+    style All fill:#029E73,color:#fff
+    style One fill:#029E73,color:#fff
+```
 
 ### Defining Schemas
 

@@ -652,6 +652,38 @@ SafeServer.divide(pid, 10, 0)  # => {:error, :division_by_zero}
 
 Named GenServers can be referenced by atom name instead of PID. This enables easier process discovery and module-level APIs that don't require passing PIDs around.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    subgraph PID["PID-Based (Manual Tracking)"]
+        StartPID["start_link() -> {:ok, pid}"] --> StorePID["Store PID in state/ETS"]
+        StorePID --> PassPID["Pass PID to every function"]
+        PassPID --> CallPID["GenServer.call(pid, msg)"]
+    end
+
+    subgraph Named["Name-Based (Automatic Discovery)"]
+        StartNamed["start_link(name: :cache)"] --> Register["Process Registry<br/>:cache -> PID"]
+        Register --> CallNamed["GenServer.call(:cache, msg)"]
+        CallNamed --> Lookup["Lookup PID by :cache<br/>(automatic)"]
+        Lookup --> Execute["Execute on found PID"]
+    end
+
+    Benefits["✅ Benefits:<br/>• No PID passing<br/>• Singleton pattern<br/>• Process discovery"]
+    Tradeoffs["⚠️ Tradeoffs:<br/>• Global atom namespace<br/>• Name conflicts crash<br/>• ~1M atom limit"]
+
+    style StartPID fill:#CC78BC,color:#fff
+    style StorePID fill:#CC78BC,color:#fff
+    style PassPID fill:#CC78BC,color:#fff
+    style CallPID fill:#CC78BC,color:#fff
+    style StartNamed fill:#0173B2,color:#fff
+    style Register fill:#DE8F05,color:#fff
+    style CallNamed fill:#029E73,color:#fff
+    style Lookup fill:#DE8F05,color:#fff
+    style Execute fill:#029E73,color:#fff
+    style Benefits fill:#029E73,color:#fff
+    style Tradeoffs fill:#CA9161,color:#fff
+```
+
 **Code**:
 
 ```elixir
@@ -1641,16 +1673,30 @@ Applications are OTP's top-level component. They bundle code, define dependencie
 graph TD
     Start["Application.start"] --> Init["MyApp.Application.start/2"]
     Init --> SupTree["Start Supervision Tree"]
-    SupTree --> Workers["Start Workers under Supervisor"]
+    SupTree --> RootSup["Root Supervisor"]
+    RootSup --> Registry["Registry<br/>Process Discovery"]
+    RootSup --> Cache["Cache<br/>GenServer"]
+    RootSup --> Worker1["Worker 1<br/>GenServer"]
+    RootSup --> Worker2["Worker 2<br/>GenServer"]
 
-    Stop["Application.stop"] --> Terminate["Supervisor stops children"]
-    Terminate --> Cleanup["MyApp.Application.stop/1"]
+    Stop["Application.stop"] --> StopWorkers["Stop Workers (reverse order)"]
+    StopWorkers --> StopCache["Stop Cache"]
+    StopCache --> StopRegistry["Stop Registry"]
+    StopRegistry --> Cleanup["MyApp.Application.stop/1"]
 
     style Start fill:#0173B2,color:#fff
     style Init fill:#DE8F05,color:#fff
     style SupTree fill:#029E73,color:#fff
-    style Workers fill:#029E73,color:#fff
+    style RootSup fill:#0173B2,color:#fff
+    style Registry fill:#029E73,color:#fff
+    style Cache fill:#029E73,color:#fff
+    style Worker1 fill:#029E73,color:#fff
+    style Worker2 fill:#029E73,color:#fff
     style Stop fill:#CC78BC,color:#fff
+    style StopWorkers fill:#DE8F05,color:#fff
+    style StopCache fill:#DE8F05,color:#fff
+    style StopRegistry fill:#DE8F05,color:#fff
+    style Cleanup fill:#CC78BC,color:#fff
 ```
 
 **Code**:
@@ -2166,6 +2212,32 @@ Macro.expand(quote(do: unless true, do: :no), __ENV__)  # => expands unless macr
 ## Example 73: Writing Simple Macros
 
 Macros receive code as AST and return transformed AST. They run at compile time, enabling code generation and custom syntax.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    CallSite["Call Site:<br/>double(5)"] --> CompileTime["Compile Time"]
+    CompileTime --> MacroReceives["Macro receives:<br/>AST of 5"]
+    MacroReceives --> MacroReturns["Macro returns:<br/>{:*, [], [5, 2]}"]
+    MacroReturns --> Inject["Compiler injects AST<br/>at call site"]
+    Inject --> Runtime["Runtime:<br/>Executes 5 * 2"]
+    Runtime --> Result["Result: 10"]
+
+    Function["Regular Function:<br/>Receives value 5"] --> FuncRuntime["Runtime evaluation"]
+    Macro["Macro:<br/>Receives AST"] --> MacroCompile["Compile time transformation"]
+
+    style CallSite fill:#0173B2,color:#fff
+    style CompileTime fill:#DE8F05,color:#fff
+    style MacroReceives fill:#DE8F05,color:#fff
+    style MacroReturns fill:#029E73,color:#fff
+    style Inject fill:#029E73,color:#fff
+    style Runtime fill:#CC78BC,color:#fff
+    style Result fill:#029E73,color:#fff
+    style Function fill:#0173B2,color:#fff
+    style Macro fill:#DE8F05,color:#fff
+    style FuncRuntime fill:#CC78BC,color:#fff
+    style MacroCompile fill:#DE8F05,color:#fff
+```
 
 **Code**:
 
@@ -2932,6 +3004,37 @@ Agent.stop(agent)
 ## Example 78: Registry for Process Discovery
 
 Registry maps keys to processes, enabling process lookup and pub/sub patterns. Use it to avoid global names and support multiple processes per key.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Registry["Registry<br/>MyApp.Registry"] --> Unique["Unique Keys<br/>One PID per key"]
+    Registry --> Duplicate["Duplicate Keys<br/>Multiple PIDs per key"]
+
+    Register1["Registry.register(registry, key, value)"] --> Map1["key1 -> PID1"]
+    Register2["Registry.register(registry, key1, value)"] --> Map1
+    Register3["Registry.register(registry, key2, value)"] --> Map2["key2 -> PID2"]
+
+    Lookup["Registry.lookup(registry, key1)"] --> Return["[{PID1, value}]"]
+
+    PubSub["Registry (duplicate keys)"] --> Sub1["Subscriber 1"]
+    PubSub --> Sub2["Subscriber 2"]
+    PubSub --> Sub3["Subscriber 3"]
+    Dispatch["dispatch(topic, message)"] --> Sub1
+    Dispatch --> Sub2
+    Dispatch --> Sub3
+
+    style Registry fill:#0173B2,color:#fff
+    style Unique fill:#029E73,color:#fff
+    style Duplicate fill:#DE8F05,color:#fff
+    style Map1 fill:#029E73,color:#fff
+    style Map2 fill:#029E73,color:#fff
+    style PubSub fill:#0173B2,color:#fff
+    style Dispatch fill:#CC78BC,color:#fff
+    style Sub1 fill:#029E73,color:#fff
+    style Sub2 fill:#029E73,color:#fff
+    style Sub3 fill:#029E73,color:#fff
+```
 
 **Code**:
 

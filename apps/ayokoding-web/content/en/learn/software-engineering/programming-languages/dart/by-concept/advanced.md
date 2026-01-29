@@ -65,6 +65,28 @@ This tutorial provides **85-95% coverage** of Dart knowledge, achieving mastery 
 
 Dart isolates provide true parallelism (unlike async/await which is concurrent but not parallel).
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Main[Main Isolate<br/>Separate Memory] --> Spawn[Spawn New Isolate]
+    Spawn --> Worker[Worker Isolate<br/>Separate Memory]
+
+    Main -->|SendPort| Send1[Send Message]
+    Send1 --> Port1[ReceivePort<br/>in Worker]
+    Port1 --> Process[Process Data]
+    Process --> Send2[Send Result]
+    Send2 -->|SendPort| Port2[ReceivePort<br/>in Main]
+
+    Main -.No Shared Memory.-> Worker
+    Worker -.True Parallelism.-> Main
+
+    style Main fill:#0173B2
+    style Worker fill:#029E73
+    style Process fill:#DE8F05
+    style Port1 fill:#CC78BC
+    style Port2 fill:#CC78BC
+```
+
 ### Understanding Isolates
 
 ```dart
@@ -334,6 +356,33 @@ void main() async {
 
 ## Generics and Type Parameters
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+classDiagram
+    class Result~T~ {
+        +T? value
+        +String? error
+        +Result.success(value)
+        +Result.failure(error)
+        +bool isSuccess
+        +R match~R~(onSuccess, onFailure)
+    }
+
+    class ResultDouble {
+        Result~double~
+    }
+
+    class ResultString {
+        Result~String~
+    }
+
+    Result <|-- ResultDouble : instantiate with double
+    Result <|-- ResultString : instantiate with String
+
+    note for Result "Generic class<br/>Type parameter T<br/>Works with any type<br/>Type-safe"
+    note for ResultDouble "Concrete instance<br/>T = double<br/>Type checked at compile time"
+```
+
 ### Generic Classes
 
 ```dart
@@ -446,6 +495,27 @@ void main() {
 
 ### Records
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart TD
+    Record[Record Type] --> Positional[Positional Fields<br/>dollar-sign1, dollar-sign2, dollar-sign3]
+    Record --> Named[Named Fields<br/>name:, amount:, date:]
+    Record --> Mixed[Mixed<br/>Positional + Named]
+
+    Positional --> PosAccess[Access: record.dollar-sign1]
+    Named --> NameAccess[Access: record.name]
+    Mixed --> MixAccess[Access: record.dollar-sign1<br/>or record.name]
+
+    PosAccess --> Destructure[Pattern Matching<br/>var dollar-sign1, dollar-sign2 = record]
+    NameAccess --> Destructure
+    MixAccess --> Destructure
+
+    style Positional fill:#0173B2
+    style Named fill:#029E73
+    style Mixed fill:#DE8F05
+    style Destructure fill:#CC78BC
+```
+
 Compound values with named and positional fields:
 
 ```dart
@@ -489,6 +559,28 @@ void main() {
 ```
 
 ### Pattern Matching
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart TD
+    Value[Value to Match] --> Switch{Switch Expression}
+
+    Switch -->|Type Pattern| TypeMatch[Success dollar-sign-identifier<br/>Extract fields]
+    Switch -->|Record Pattern| RecordMatch[dollar-sign1, dollar-sign2 = record<br/>Destructure]
+    Switch -->|Conditional| WhenMatch[Pattern when condition<br/>Guard clause]
+    Switch -->|Default| DefaultMatch[Underscore catch-all]
+
+    TypeMatch --> Result[Return Result]
+    RecordMatch --> Result
+    WhenMatch --> Result
+    DefaultMatch --> Result
+
+    style Switch fill:#0173B2
+    style TypeMatch fill:#029E73
+    style RecordMatch fill:#DE8F05
+    style WhenMatch fill:#CC78BC
+    style Result fill:#029E73
+```
 
 Powerful pattern matching with switch expressions and destructuring:
 
@@ -548,6 +640,25 @@ void main() {
 ```
 
 ### Sealed Classes and Class Modifiers
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Modifiers[Class Modifiers<br/>Dart 3.0+] --> Sealed[sealed<br/>Exhaustive subtypes]
+    Modifiers --> Final[final<br/>Cannot extend]
+    Modifiers --> Base[base<br/>Cannot implement]
+    Modifiers --> Interface[interface<br/>Cannot extend]
+
+    Sealed --> SealedUse[Compiler checks<br/>all cases handled<br/>in pattern matching]
+    Final --> FinalUse[Immutable API<br/>No subclassing<br/>Prevents misuse]
+    Base --> BaseUse[Only extend<br/>Control inheritance<br/>Implementation required]
+    Interface --> InterfaceUse[Only implement<br/>Contract only<br/>No implementation reuse]
+
+    style Sealed fill:#0173B2
+    style Final fill:#029E73
+    style Base fill:#DE8F05
+    style Interface fill:#CC78BC
+```
 
 ```dart
 // Sealed class - exhaustive subtype checking
@@ -619,6 +730,35 @@ void main() {
 ```
 
 ## Performance Optimization
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart TD
+    Start[Performance Issue] --> Profile[Profile Code<br/>Identify bottleneck]
+    Profile --> Analyze{Bottleneck Type}
+
+    Analyze -->|CPU-bound| CPUOpt[CPU Optimization<br/>Algorithms, caching]
+    Analyze -->|Memory-bound| MemOpt[Memory Optimization<br/>Reduce allocations]
+    Analyze -->|I/O-bound| IOOpt[I/O Optimization<br/>Async, batching]
+
+    CPUOpt --> Techniques1[Use efficient algorithms<br/>Memoization<br/>Lazy evaluation]
+    MemOpt --> Techniques2[Object pooling<br/>const constructors<br/>Immutability]
+    IOOpt --> Techniques3[Async/await<br/>Isolates<br/>Stream processing]
+
+    Techniques1 --> Benchmark[Benchmark Results]
+    Techniques2 --> Benchmark
+    Techniques3 --> Benchmark
+
+    Benchmark --> Improved{Performance<br/>improved?}
+    Improved -->|Yes| Done[Done]
+    Improved -->|No| Profile
+
+    style Profile fill:#DE8F05
+    style CPUOpt fill:#0173B2
+    style MemOpt fill:#029E73
+    style IOOpt fill:#CC78BC
+    style Done fill:#029E73
+```
 
 ### Profiling and Benchmarking
 
@@ -744,6 +884,28 @@ class NumberFormat {
 
 ## Functional Programming Patterns
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    FP[Functional Programming] --> Immutable[Immutability<br/>Data never changes]
+    FP --> Pure[Pure Functions<br/>No side effects]
+    FP --> Compose[Function Composition<br/>Combine functions]
+    FP --> HigherOrder[Higher-Order Functions<br/>Functions as values]
+
+    Immutable --> ImmBenefit[Benefits:<br/>Thread-safe<br/>Predictable<br/>Easier testing]
+
+    Pure --> PureBenefit[Benefits:<br/>Same input = same output<br/>No hidden state<br/>Referentially transparent]
+
+    Compose --> ComposeBenefit[Benefits:<br/>Modular<br/>Reusable<br/>Declarative]
+
+    HigherOrder --> HOBenefit[Benefits:<br/>Abstraction<br/>map, filter, fold<br/>Callback patterns]
+
+    style Immutable fill:#0173B2
+    style Pure fill:#029E73
+    style Compose fill:#DE8F05
+    style HigherOrder fill:#CC78BC
+```
+
 ### Immutability and Pure Functions
 
 ```dart
@@ -845,6 +1007,28 @@ void main() {
 ```
 
 ## Design Patterns in Dart
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Patterns[Design Patterns] --> Creational[Creational<br/>Object creation]
+    Patterns --> Structural[Structural<br/>Composition]
+    Patterns --> Behavioral[Behavioral<br/>Communication]
+
+    Creational --> Singleton[Singleton<br/>Single instance]
+    Creational --> Factory[Factory<br/>Create without specifying class]
+
+    Structural --> Adapter[Adapter<br/>Interface compatibility]
+    Structural --> Decorator[Decorator<br/>Add behavior dynamically]
+
+    Behavioral --> Observer[Observer<br/>Notify dependents of changes]
+    Behavioral --> Strategy[Strategy<br/>Interchangeable algorithms]
+
+    style Singleton fill:#0173B2
+    style Factory fill:#029E73
+    style Observer fill:#DE8F05
+    style Strategy fill:#CC78BC
+```
 
 ### Singleton Pattern
 
