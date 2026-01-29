@@ -14,13 +14,6 @@ skills:
 - **Created**: 2025-12-20
 - **Last Updated**: 2026-01-03
 
-## Tool Usage
-
-**Required Tools**: read, grep
-
-- **read**: Load files for analysis
-- **grep**: Search content across files
-
 # LinkedIn Post Maker Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:

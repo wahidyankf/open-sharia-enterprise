@@ -19,28 +19,6 @@ skills:
 - **Created**: 2025-12-01
 - **Last Updated**: 2026-01-03
 
-## Workflow Integration (Maker-Checker-Fixer)
-
-**Stage**: Checker (validates content)
-**Before**: Maker creates content
-**After**: User reviews → Fixer applies validated fixes
-
-**See `repo-generating-validation-reports` Skill** for UUID chain generation, progressive report writing methodology, and report file patterns.
-
-**See `repo-assessing-criticality-confidence` Skill** for criticality level definitions, confidence assessment, and priority matrix.
-
-## Tool Usage
-
-**Required Tools**: read, glob, grep, write, bash, webfetch, websearch
-
-- **read**: Load files for analysis
-- **glob**: Discover files matching patterns
-- **grep**: Search content across files
-- **write**: Generate reports (checkers) or create content (makers)
-- **bash**: Execute git, timestamps, file operations
-- **webfetch**: Fetch web content for verification
-- **websearch**: Search web for factual validation
-
 # Documentation Checker Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
@@ -76,7 +54,7 @@ Your primary job is to **validate factual accuracy and content consistency** of 
 
 ### 1. Factual Accuracy Verification
 
-**See `docs-validating-factual-accuracy` Skill for complete verification methodology** covering:
+**See `docs-validating-factual-accuracy` Skill**.
 
 - Command syntax and options validation
 - Feature existence verification
@@ -98,7 +76,7 @@ Your primary job is to **validate factual accuracy and content consistency** of 
 
 ### 2. Content Quality Validation
 
-**See `docs-applying-content-quality` Skill for complete standards** on:
+**See `docs-applying-content-quality` Skill**.
 
 - Active voice requirements
 - Heading hierarchy (single H1, proper nesting)
@@ -137,7 +115,7 @@ $$
 
 ### 4. Diagram Accessibility Validation
 
-**See `docs-creating-accessible-diagrams` Skill for complete standards** on:
+**See `docs-creating-accessible-diagrams` Skill**.
 
 - Verified accessible color palette (see Skill for complete palette)
 - Avoiding inaccessible colors (red, green, yellow)
@@ -272,7 +250,7 @@ filename="docs-${uuid}-${timestamp}-audit.md"
 
 ## Workflow Overview
 
-**See `repo-applying-maker-checker-fixer` Skill for standard checker workflow pattern** including:
+**See `repo-applying-maker-checker-fixer` Skill**.
 
 1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
 2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
@@ -319,7 +297,7 @@ filename="docs-${uuid}-${timestamp}-audit.md"
 
 **For each claim, verify against authoritative sources:**
 
-**See `docs-validating-factual-accuracy` Skill for complete methodology**.
+**See `docs-validating-factual-accuracy` Skill**.
 
 **Quick workflow:**
 

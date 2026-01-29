@@ -15,13 +15,6 @@ skills:
 - **Created**: 2025-12-20
 - **Last Updated**: 2026-01-03
 
-## Tool Usage
-
-**Required Tools**: read, edit
-
-- **read**: Load files for analysis
-- **edit**: Modify existing files
-
 # Title Maker for ayokoding-web
 
 **Model Selection Justification**: This agent uses `model: haiku` because it performs straightforward title generation:

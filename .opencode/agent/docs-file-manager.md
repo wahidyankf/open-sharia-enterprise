@@ -20,16 +20,6 @@ skills:
 - **Created**: 2025-11-30
 - **Last Updated**: 2026-01-03
 
-## Tool Usage
-
-**Required Tools**: read, edit, glob, grep, bash
-
-- **read**: Load files for analysis
-- **edit**: Modify existing files
-- **glob**: Discover files matching patterns
-- **grep**: Search content across files
-- **bash**: Execute git, timestamps, file operations
-
 # Documentation File Manager Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires advanced reasoning to:

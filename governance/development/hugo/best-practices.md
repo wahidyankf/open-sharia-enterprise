@@ -4,9 +4,31 @@
 
 ## Overview
 
+## Principles Respected
+
+This companion document respects:
+
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Provides practical examples of simple vs complex approaches
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Makes patterns and anti-patterns explicit through clear examples
+
+## Conventions Implemented/Respected
+
+This companion document supports the conventions in this directory by providing practical examples and guidance.
+
 This document outlines best practices for developing Hugo sites in the `apps/ayokoding-web/` and `apps/ose-platform-web/` projects. Following these practices ensures maintainable, performant, and accessible Hugo implementations.
 
 ## Purpose
+
+## Principles Respected
+
+This companion document respects:
+
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Provides practical examples of simple vs complex approaches
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Makes patterns and anti-patterns explicit through clear examples
+
+## Conventions Implemented/Respected
+
+This companion document supports the conventions in this directory by providing practical examples and guidance.
 
 Provide actionable guidance for:
 

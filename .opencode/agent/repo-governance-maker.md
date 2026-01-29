@@ -18,16 +18,6 @@ skills:
 - **Created**: 2025-12-01
 - **Last Updated**: 2026-01-03
 
-## Tool Usage
-
-**Required Tools**: read, write, edit, glob, grep
-
-- **read**: Load files for analysis
-- **write**: Generate reports (checkers) or create content (makers)
-- **edit**: Modify existing files
-- **glob**: Discover files matching patterns
-- **grep**: Search content across files
-
 # Repository Governance Maker Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:

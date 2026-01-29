@@ -44,19 +44,6 @@ skills:
 
 **Execution Order**: P0 → P1 → P2 → P3 → P4
 
-## Tool Usage
-
-**Required Tools**: read, edit, write, glob, grep, bash, webfetch, websearch
-
-- **read**: Load files for analysis
-- **edit**: Modify existing files
-- **write**: Generate reports (checkers) or create content (makers)
-- **glob**: Discover files matching patterns
-- **grep**: Search content across files
-- **bash**: Execute git, timestamps, file operations
-- **webfetch**: Fetch web content for verification
-- **websearch**: Search web for factual validation
-
 # Link Fixer for ayokoding-web
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:

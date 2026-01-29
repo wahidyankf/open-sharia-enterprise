@@ -25,6 +25,12 @@ This convention respects the following core principles:
 
 - **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Single-level subagent spawning prevents complex nested agent hierarchies. Skills remain simple knowledge containers that work everywhere, avoiding architectural complexity.
 
+## Conventions Implemented/Respected
+
+This development practice implements/respects the following conventions:
+
+- **[AI Agents Convention](./ai-agents.md)**: By establishing the architectural constraint that skills must be inline-compatible, this practice ensures agents can reliably compose skills without runtime failures. The AI Agents Convention defines agent structure and tool usage; this architecture ensures skills integrate seamlessly with that structure across both main conversation and subagent contexts.
+
 ## Purpose
 
 This architectural decision establishes that all skills stored in the `.claude/skills/` directory must remain compatible with both main conversation agents and subagents. Since subagents cannot spawn other subagents (architectural constraint of Claude Code and OpenCode), skills with `context: fork` would be unusable in subagent contexts.

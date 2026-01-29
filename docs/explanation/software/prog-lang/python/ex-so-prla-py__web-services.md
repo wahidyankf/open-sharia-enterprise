@@ -19,7 +19,6 @@ related:
   - ./ex-so-prla-py__type-safety.md
 principles:
   - explicit-over-implicit
-  - security-first
 last_updated: 2025-01-23
 ---
 

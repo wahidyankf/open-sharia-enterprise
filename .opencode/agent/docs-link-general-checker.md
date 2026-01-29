@@ -24,12 +24,6 @@ skills:
 - **Created**: 2025-11-29
 - **Last Updated**: 2026-01-03
 
-## Workflow Integration (Maker-Checker-Fixer)
-
-**Stage**: Checker (validates content)
-**Before**: Maker creates content
-**After**: User reviews → Fixer applies validated fixes
-
 ### Progressive Report Writing (MANDATORY)
 
 1. **Initialize**: `generated-reports/{agent}__{uuid}__{YYYY-MM-DD--HH-MM}__audit.md`
@@ -57,19 +51,6 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 - 🟢 **LOW**: Suggestions, nice-to-have
 
 **Execution Order**: CRITICAL → HIGH → MEDIUM → LOW
-
-## Tool Usage
-
-**Required Tools**: read, glob, grep, webfetch, websearch, write, edit, bash
-
-- **read**: Load files for analysis
-- **glob**: Discover files matching patterns
-- **grep**: Search content across files
-- **webfetch**: Fetch web content for verification
-- **websearch**: Search web for factual validation
-- **write**: Generate reports (checkers) or create content (makers)
-- **edit**: Modify existing files
-- **bash**: Execute git, timestamps, file operations
 
 # Documentation Links Checker Agent
 

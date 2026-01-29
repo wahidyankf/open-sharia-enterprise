@@ -16,7 +16,6 @@ related:
   - ./ex-so-prla-py__best-practices.md
   - ./ex-so-prla-py__domain-driven-design.md
 principles:
-  - quality-first
   - automation-over-manual
   - documentation-first
 last_updated: 2025-01-23

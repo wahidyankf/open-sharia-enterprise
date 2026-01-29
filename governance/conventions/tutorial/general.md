@@ -140,8 +140,6 @@ updated: 2026-01-01
 - [Learning objective 2]
 - [Learning objective 3]
 
-**Time to complete**: ~[X] hours
-
 **What makes this valuable**: [Real-world impact or application]
 ```
 
@@ -1519,8 +1517,6 @@ updated: 2026-01-01
 - [Learning objective 1]
 - [Learning objective 2]
 - [Learning objective 3]
-
-**Time to complete**: ~[X] hours
 
 **What makes this valuable**: [Real-world impact]
 

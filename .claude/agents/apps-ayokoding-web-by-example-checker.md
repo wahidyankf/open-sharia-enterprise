@@ -19,26 +19,6 @@ skills:
 - **Created**: 2025-12-20
 - **Last Updated**: 2026-01-03
 
-## Workflow Integration (Maker-Checker-Fixer)
-
-**Stage**: Checker (validates content)
-**Before**: Maker creates content
-**After**: User reviews → Fixer applies validated fixes
-
-See `repo-generating-validation-reports` Skill for progressive report writing, UUID chain generation, and timestamp formatting.
-
-See `repo-assessing-criticality-confidence` Skill for criticality level definitions and assessment criteria.
-
-## Tool Usage
-
-**Required Tools**: read, glob, grep, write, bash
-
-- **read**: Load files for analysis
-- **glob**: Discover files matching patterns
-- **grep**: Search content across files
-- **write**: Generate reports (checkers) or create content (makers)
-- **bash**: Execute git, timestamps, file operations
-
 # By Example Tutorial Checker for ayokoding-web
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
@@ -113,7 +93,7 @@ The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specifi
 
 ## Workflow Overview
 
-**See `repo-applying-maker-checker-fixer` Skill for standard checker workflow pattern** including:
+**See `repo-applying-maker-checker-fixer` Skill**.
 
 1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
 2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)

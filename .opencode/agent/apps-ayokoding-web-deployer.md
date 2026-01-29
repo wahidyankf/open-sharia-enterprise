@@ -15,13 +15,6 @@ skills:
 - **Created**: 2025-12-20
 - **Last Updated**: 2026-01-05
 
-## Tool Usage
-
-**Required Tools**: bash, grep
-
-- **bash**: Execute git, timestamps, file operations
-- **grep**: Search content across files
-
 # Deployer for ayokoding-web
 
 **Model Selection Justification**: This agent uses `model: haiku` because it performs straightforward deployment tasks:

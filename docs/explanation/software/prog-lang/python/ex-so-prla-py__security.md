@@ -14,7 +14,6 @@ related:
   - ./ex-so-prla-py__web-services.md
   - ./ex-so-prla-py__best-practices.md
 principles:
-  - security-first
   - explicit-over-implicit
 last_updated: 2025-01-23
 ---

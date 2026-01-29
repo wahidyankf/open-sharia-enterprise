@@ -43,16 +43,6 @@ skills:
 
 **Execution Order**: P0 → P1 → P2 → P3 → P4
 
-## Tool Usage
-
-**Required Tools**: read, glob, grep, write, bash
-
-- **read**: Load files for analysis
-- **glob**: Discover files matching patterns
-- **grep**: Search content across files
-- **write**: Generate reports (checkers) or create content (makers)
-- **bash**: Execute git, timestamps, file operations
-
 # Repository Governance Fixer Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:

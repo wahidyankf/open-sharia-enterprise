@@ -17,7 +17,6 @@ related:
   - ./ex-so-prla-py__release-3.14.md
   - ./ex-so-prla-py__performance.md
 principles:
-  - measure-first-optimize-later
   - explicit-over-implicit
 last_updated: 2025-01-23
 ---
