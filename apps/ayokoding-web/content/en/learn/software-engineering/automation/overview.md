@@ -4,7 +4,7 @@ weight: 10000
 date: 2025-12-29T00:00:00+07:00
 draft: false
 description: "Learn about workflow automation, integration platforms, and tools that help automate repetitive tasks in software engineering"
-tags: ["automation", "workflow", "integration", "n8n", "zapier", "make"]
+tags: ["automation", "workflow", "integration", "zapier", "make"]
 ---
 
 ## What Is Automation in Software Engineering
@@ -33,8 +33,8 @@ This section covers:
 
 Start with automation tools to build practical workflows:
 
-1. **[n8n](/en/learn/software-engineering/automation/tools/n8n)** - Open-source workflow automation platform with visual workflow builder
-2. Explore additional automation tools and platforms (coming soon)
+1. Explore automation tools and platforms (coming soon)
+2. Learn workflow design patterns and best practices (coming soon)
 3. Learn advanced workflow patterns and integration strategies (coming soon)
 
 ## Prerequisites
