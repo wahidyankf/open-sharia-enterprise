@@ -23,3 +23,8 @@ layout: list
   - [Initial Setup](/en/learn/software-engineering/web-platform/fe-react/initial-setup)
   - [Quick Start](/en/learn/software-engineering/web-platform/fe-react/quick-start)
   - [By Example](/en/learn/software-engineering/web-platform/fe-react/by-example)
+- [Next.js + TypeScript](/en/learn/software-engineering/web-platform/fe-nextjs)
+  - [Overview](/en/learn/software-engineering/web-platform/fe-nextjs/overview)
+  - [Initial Setup](/en/learn/software-engineering/web-platform/fe-nextjs/initial-setup)
+  - [Quick Start](/en/learn/software-engineering/web-platform/fe-nextjs/quick-start)
+  - [By Example](/en/learn/software-engineering/web-platform/fe-nextjs/by-example)
