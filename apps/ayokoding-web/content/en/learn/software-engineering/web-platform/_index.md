@@ -18,3 +18,8 @@ layout: list
   - [Initial Setup](/en/learn/software-engineering/web-platform/jvm-spring-boot/initial-setup)
   - [Quick Start](/en/learn/software-engineering/web-platform/jvm-spring-boot/quick-start)
   - [By Example](/en/learn/software-engineering/web-platform/jvm-spring-boot/by-example)
+- [React + TypeScript](/en/learn/software-engineering/web-platform/fe-react)
+  - [Overview](/en/learn/software-engineering/web-platform/fe-react/overview)
+  - [Initial Setup](/en/learn/software-engineering/web-platform/fe-react/initial-setup)
+  - [Quick Start](/en/learn/software-engineering/web-platform/fe-react/quick-start)
+  - [By Example](/en/learn/software-engineering/web-platform/fe-react/by-example)
