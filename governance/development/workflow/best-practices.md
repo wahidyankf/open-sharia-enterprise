@@ -385,6 +385,94 @@ git push
 - Respect team's time
 - Green CI
 
+### Practice 11: Pull Latest Main Before Pushing
+
+**Principle**: Always pull latest changes from remote main before pushing to prevent push failures and conflicts.
+
+**Good Example:**
+
+```bash
+# Work completed locally with commits
+git status
+# On branch main
+# Your branch is ahead of 'origin/main' by 1 commit
+
+# Pull latest main BEFORE pushing
+git pull origin main
+
+# If there are remote changes, Git merges automatically
+# Or prompts for merge conflict resolution
+
+# Now push your changes
+git push origin main
+# Success!
+```
+
+**Bad Example:**
+
+```bash
+# Work completed locally
+git push origin main
+
+# Push rejected!
+# error: failed to push some refs to 'origin'
+# hint: Updates were rejected because the remote contains work that you do
+# hint: not have locally. This is usually caused by another repository pushing
+# hint: to the same ref.
+
+# Now forced to pull and resolve
+git pull origin main
+# Merge required - could have been avoided!
+```
+
+**Rationale:**
+
+- Prevents push failures when remote has diverged
+- Identifies conflicts early before pushing
+- Allows you to resolve issues locally first
+- Cleaner history with deliberate integration
+- Respects Trunk Based Development by integrating frequently
+- Reduces friction in collaborative environments
+
+**When Remote Has New Commits:**
+
+If the remote has advanced while you were working locally:
+
+```bash
+# You have 1 local commit, remote has 4 new commits
+git pull origin main
+
+# Git creates merge commit automatically (if no conflicts)
+# Or prompts you to resolve conflicts locally
+
+# Review the merge
+git log --oneline --graph -10
+
+# Push the integrated changes
+git push origin main
+```
+
+**Best Practice in Daily Workflow:**
+
+```bash
+# Start of day: Get latest
+git checkout main
+git pull origin main
+
+# Make changes
+# ... work work work ...
+
+# Commit locally
+git add .
+git commit -m "feat(auth): add validation"
+
+# Before pushing: Pull again (main may have advanced)
+git pull origin main
+
+# Now push
+git push origin main
+```
+
 ## Related Documentation
 
 - [Trunk Based Development Convention](./trunk-based-development.md) - Complete TBD workflow
@@ -407,6 +495,7 @@ Following these best practices ensures:
 8. Use environment-specific configuration
 9. Split commits by domain
 10. Test before committing
+11. Pull latest main before pushing
 
 Workflows built following these practices are efficient, predictable, and high-quality.
 

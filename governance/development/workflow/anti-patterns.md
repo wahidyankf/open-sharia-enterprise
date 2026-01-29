@@ -393,20 +393,70 @@ git push
 - Catch simple issues early
 - Higher quality commits
 
+### Anti-Pattern 11: Pushing Without Pulling Latest Main
+
+**Problem**: Pushing to main without first pulling latest changes causes push failures and forced merge situations.
+
+**Bad Example:**
+
+```bash
+# You have local commits
+git commit -m "feat(api): add endpoint"
+
+# Push directly without pulling
+git push origin main
+
+# Push rejected!
+# error: failed to push some refs to 'origin'
+# hint: Updates were rejected because the remote contains work that you do
+# hint: not have locally.
+
+# Now must pull and merge
+git pull origin main
+# Forced merge situation - conflicts may occur
+# Could have been handled more deliberately
+```
+
+**Solution:**
+
+```bash
+# You have local commits
+git commit -m "feat(api): add endpoint"
+
+# Pull BEFORE pushing
+git pull origin main
+# Integrates remote changes locally first
+# Resolve any conflicts in controlled way
+
+# Now push merged result
+git push origin main
+# Success!
+```
+
+**Rationale:**
+
+- Prevents push rejection errors
+- Allows deliberate conflict resolution locally
+- Cleaner integration workflow
+- Respects Trunk Based Development principles
+- Better collaboration in team environments
+- Reduces merge friction
+
 ## Summary of Anti-Patterns
 
-| Anti-Pattern               | Problem                     | Solution                        |
-| -------------------------- | --------------------------- | ------------------------------- |
-| **Long-Lived Branches**    | Merge conflicts, delays     | Work on main with feature flags |
-| **Large Commits**          | Hard to review, unclear     | Small, frequent commits         |
-| **Vague Messages**         | Unclear history             | Conventional Commits            |
-| **No Feature Flags**       | Branch complexity           | Hide incomplete with flags      |
-| **Premature Optimization** | Wasted effort               | Work → right → fast             |
-| **Unpinned Dependencies**  | Inconsistent builds         | Lock versions, commit lock file |
-| **Ignoring Broken CI**     | Blocks team                 | Fix or revert immediately       |
-| **Mixed Concerns**         | Confusing commits           | Split by domain                 |
-| **Hardcoded Config**       | Security issues, inflexible | Environment variables           |
-| **Skipping Local Tests**   | Slow feedback               | Test before pushing             |
+| Anti-Pattern                | Problem                     | Solution                        |
+| --------------------------- | --------------------------- | ------------------------------- |
+| **Long-Lived Branches**     | Merge conflicts, delays     | Work on main with feature flags |
+| **Large Commits**           | Hard to review, unclear     | Small, frequent commits         |
+| **Vague Messages**          | Unclear history             | Conventional Commits            |
+| **No Feature Flags**        | Branch complexity           | Hide incomplete with flags      |
+| **Premature Optimization**  | Wasted effort               | Work → right → fast             |
+| **Unpinned Dependencies**   | Inconsistent builds         | Lock versions, commit lock file |
+| **Ignoring Broken CI**      | Blocks team                 | Fix or revert immediately       |
+| **Mixed Concerns**          | Confusing commits           | Split by domain                 |
+| **Hardcoded Config**        | Security issues, inflexible | Environment variables           |
+| **Skipping Local Tests**    | Slow feedback               | Test before pushing             |
+| **Pushing Without Pulling** | Push failures, forced merge | Pull latest before pushing      |
 
 ## Related Documentation
 
