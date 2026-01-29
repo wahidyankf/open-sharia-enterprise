@@ -10,7 +10,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-updated: 2026-01-03
+updated: 2026-01-29
 ---
 
 # AI Agents Convention
@@ -77,11 +77,18 @@ This repository maintains **dual compatibility** with both Claude Code and OpenC
 
 This practice respects the following core principles:
 
+- **[Deliberate Problem-Solving](../../principles/software-engineering/deliberate-problem-solving.md)**: Agents must verify assumptions using Read, Grep, and Glob tools before acting. When multiple valid approaches exist (e.g., different markdown formatting options), agents present options rather than choosing silently. Agents stop and ask questions when requirements are unclear, rather than guessing implementation details. Agents advocate for simpler solutions when appropriate (e.g., suggesting flat structure over nested hierarchy). All agents follow the "Information Accuracy and Verification" requirements: verify facts with tools, state confidence levels explicitly, ask when uncertain.
+
 - **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Agent tool permissions are explicitly whitelisted in frontmatter (not implicitly granted). Each agent declares exactly which tools it can access. Agent responsibilities are explicitly documented, not inferred. Frontmatter fields (name, description, tools, model, color) make agent capabilities transparent and discoverable through simple grep operations.
 
-- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Agents follow single-responsibility principle - one clear, focused purpose per agent. Flat directory structure (no subdirectories). Simple naming convention (kebab-case). Standard document structure across all agents. Rather than creating "Swiss Army knife" agents with dozens of capabilities, we create focused agents that do one thing well.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Agents follow single-responsibility principle - one clear, focused purpose per agent. Flat directory structure (no subdirectories). Simple naming convention (kebab-case). Standard document structure across all agents. Rather than creating "Swiss Army knife" agents with dozens of capabilities, we create focused agents that do one thing well. See the principle's "For AI Agents" section for implementation guidelines on avoiding over-engineering:
+  - Only implement what was requested (no speculative features)
+  - Avoid premature abstractions (inline first, extract when needed)
+  - Trust type systems and frameworks (no defensive code for guaranteed scenarios)
+  - Apply the senior engineer test (question complexity proactively)
+  - Prefer boring solutions (battle-tested patterns over clever code)
 
-- \*\*[Automation Over Manual](../../principles/software-engineering/rules-checker` automates validation. Agents transform manual processes into repeatable, consistent automated workflows.
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Agents transform manual processes into automated workflows. Instead of manually validating 200+ markdown files, `repo__rules-checker` automates validation. Agents transform manual processes into repeatable, consistent automated workflows.
 
 ## Token Budget Philosophy
 
@@ -2422,10 +2429,11 @@ See [Skills README](../../../.claude/skills/README.md) for complete catalog.
 - [File Naming Convention](../../conventions/meta/file-naming.md) - How to name files
 - [Linking Convention](../../conventions/formatting/linking.md) - How to link between files
 - [Diátaxis Framework](../../conventions/meta/diataxis-framework.md) - Documentation organization
+- [Implementation Workflow Convention](../workflow/implementation.md) - Surgical changes (touch only what you must) and goal-driven execution (define success criteria, loop until verified) practices for agents
 
 ---
 
-**Last Updated**: 2026-01-03
+**Last Updated**: 2026-01-29
 
 ---
 
