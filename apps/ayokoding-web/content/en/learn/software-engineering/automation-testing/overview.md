@@ -3,8 +3,8 @@ title: "Overview"
 weight: 10000
 date: 2025-12-29T00:00:00+07:00
 draft: false
-description: "Learn about workflow automation, integration platforms, and tools that help automate repetitive tasks in software engineering"
-tags: ["automation", "workflow", "integration", "zapier", "make"]
+description: "Learn about test automation, workflow automation, integration platforms, and tools that help automate repetitive tasks in software engineering"
+tags: ["automation", "testing", "workflow", "integration", "playwright", "zapier", "make"]
 ---
 
 ## What Is Automation in Software Engineering
@@ -28,6 +28,12 @@ This section covers:
 - **Workflow Automation**: Designing, implementing, and maintaining automated processes
 - **No-Code/Low-Code Solutions**: Building automations without extensive programming
 - **Best Practices**: Error handling, monitoring, security, and maintainability
+
+## Test Automation Tools
+
+This section will cover browser automation and end-to-end testing frameworks:
+
+- **Playwright** (coming soon) - Modern browser automation and testing framework for web applications
 
 ## Learning Path
 
