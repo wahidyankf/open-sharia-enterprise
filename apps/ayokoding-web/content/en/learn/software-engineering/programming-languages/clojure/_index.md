@@ -8,6 +8,8 @@ layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/programming-languages/clojure/overview)
+- [Initial Setup](/en/learn/software-engineering/programming-languages/clojure/initial-setup)
+- [Quick Start](/en/learn/software-engineering/programming-languages/clojure/quick-start)
 - [By Example](/en/learn/software-engineering/programming-languages/clojure/by-example)
   - [Overview](/en/learn/software-engineering/programming-languages/clojure/by-example/overview)
   - [Beginner](/en/learn/software-engineering/programming-languages/clojure/by-example/beginner)

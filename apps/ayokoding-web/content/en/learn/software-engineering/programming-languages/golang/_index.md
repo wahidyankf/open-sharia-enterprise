@@ -9,6 +9,8 @@ layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/programming-languages/golang/overview)
+- [Initial Setup](/en/learn/software-engineering/programming-languages/golang/initial-setup)
+- [Quick Start](/en/learn/software-engineering/programming-languages/golang/quick-start)
 - [By Example](/en/learn/software-engineering/programming-languages/golang/by-example)
   - [Overview](/en/learn/software-engineering/programming-languages/golang/by-example/overview)
   - [Beginner](/en/learn/software-engineering/programming-languages/golang/by-example/beginner)

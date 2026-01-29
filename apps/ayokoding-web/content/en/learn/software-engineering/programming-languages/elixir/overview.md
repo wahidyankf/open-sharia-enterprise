@@ -37,6 +37,15 @@ This guide serves:
 - **Backend Engineers**: Building scalable web services
 - **System Architects**: Designing fault-tolerant distributed systems
 
+## Getting Started
+
+Before diving into comprehensive tutorials, get up and running:
+
+1. **[Initial Setup](/en/learn/software-engineering/programming-languages/elixir/initial-setup)** - Install Elixir, configure your environment, set up Phoenix, verify your setup
+2. **[Quick Start](/en/learn/software-engineering/programming-languages/elixir/quick-start)** - Your first Elixir program, IEx basics, pattern matching introduction
+
+These foundational tutorials (0-30% coverage) prepare you for the complete learning path.
+
 ## Learning Path
 
 We provide progressive content organized by the Diataxis framework:

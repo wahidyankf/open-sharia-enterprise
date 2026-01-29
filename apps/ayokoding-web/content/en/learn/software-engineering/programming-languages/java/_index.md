@@ -9,6 +9,8 @@ layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/programming-languages/java/overview)
+- [Initial Setup](/en/learn/software-engineering/programming-languages/java/initial-setup)
+- [Quick Start](/en/learn/software-engineering/programming-languages/java/quick-start)
 - [By Example](/en/learn/software-engineering/programming-languages/java/by-example)
   - [Overview](/en/learn/software-engineering/programming-languages/java/by-example/overview)
   - [Beginner](/en/learn/software-engineering/programming-languages/java/by-example/beginner)
