@@ -87,6 +87,29 @@ graph TD
 
 Structured concurrency ensures coroutines are properly managed and cancelled.
 
+```mermaid
+sequenceDiagram
+    participant Main as Main Coroutine
+    participant Scope as coroutineScope
+    participant User as async{fetchUserData}
+    participant Products as async{fetchProducts}
+
+    Main->>Scope: Start coroutineScope
+    Scope->>User: Launch async (1000ms)
+    Scope->>Products: Launch async (1500ms)
+
+    Note over User,Products: Both run concurrently
+
+    User-->>Scope: Return "User data"
+    Products-->>Scope: Return "Products"
+    Scope-->>Main: Return combined result (~1500ms)
+
+    style Main fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style Scope fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style User fill:#029E73,stroke:#000000,color:#FFFFFF
+    style Products fill:#CC78BC,stroke:#000000,color:#FFFFFF
+```
+
 ```kotlin
 import kotlinx.coroutines.*
 
@@ -115,6 +138,34 @@ fun main() = runBlocking {
 **Key point**: `coroutineScope` waits for all children to complete before returning.
 
 ### Coroutine Dispatchers
+
+```mermaid
+graph TD
+    A["Coroutine Dispatchers"] --> B["Dispatchers.Default"]
+    A --> C["Dispatchers.IO"]
+    A --> D["Dispatchers.Main"]
+    A --> E["Dispatchers.Unconfined"]
+
+    B --> F["CPU-intensive work<br/>(calculations, sorting)"]
+    C --> G["I/O operations<br/>(network, database, files)"]
+    D --> H["UI updates<br/>(Android, Desktop)"]
+    E --> I["No specific thread<br/>(advanced use)"]
+
+    F --> J["Thread pool:<br/>CPU cores"]
+    G --> K["Thread pool:<br/>64 threads (default)"]
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#029E73,stroke:#000000,color:#FFFFFF
+    style C fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style D fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style E fill:#CA9161,stroke:#000000,color:#FFFFFF
+    style F fill:#029E73,stroke:#000000,color:#FFFFFF
+    style G fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style H fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style I fill:#CA9161,stroke:#000000,color:#FFFFFF
+    style J fill:#029E73,stroke:#000000,color:#FFFFFF
+    style K fill:#DE8F05,stroke:#000000,color:#FFFFFF
+```
 
 ```kotlin
 import kotlinx.coroutines.*
@@ -436,6 +487,25 @@ fun main() {
 
 ### Delegation Pattern with By Keyword
 
+```mermaid
+graph LR
+    A["Logger class"] --> B["implements Printer<br/>by delegation"]
+    B --> C["ConsolePrinter<br/>(delegate)"]
+    C --> D["print() implementation"]
+
+    E["logger.print()"] --> F["Delegated to<br/>ConsolePrinter.print()"]
+    G["logger.log()"] --> H["Custom method<br/>uses delegated print()"]
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style C fill:#029E73,stroke:#000000,color:#FFFFFF
+    style D fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style E fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style F fill:#029E73,stroke:#000000,color:#FFFFFF
+    style G fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style H fill:#DE8F05,stroke:#000000,color:#FFFFFF
+```
+
 ```kotlin
 interface Printer {
     fun print(message: String)
@@ -726,6 +796,26 @@ fun Application.configureErrorHandling() {
 ## Part 5: Performance Optimization
 
 ### Inline Functions for Zero Overhead
+
+```mermaid
+graph TD
+    A["Regular Function"] --> B["Function call<br/>overhead"]
+    B --> C["Stack frame<br/>allocation"]
+    C --> D["Parameter passing"]
+
+    E["Inline Function"] --> F["Code copied to<br/>call site"]
+    F --> G["No function call<br/>(zero overhead)"]
+    G --> H["Optimized by<br/>compiler"]
+
+    style A fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style B fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style C fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style D fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style E fill:#029E73,stroke:#000000,color:#FFFFFF
+    style F fill:#029E73,stroke:#000000,color:#FFFFFF
+    style G fill:#029E73,stroke:#000000,color:#FFFFFF
+    style H fill:#029E73,stroke:#000000,color:#FFFFFF
+```
 
 ```kotlin
 inline fun <T> measureTime(block: () -> T): Pair<T, Long> {

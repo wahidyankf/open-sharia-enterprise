@@ -148,7 +148,37 @@ print(db1 is db2)  # True
 
 ### Descriptors
 
-Descriptors control attribute access:
+Descriptors control attribute access through the descriptor protocol:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart TD
+    A[Access Attribute<br/>person.age] --> B{Is age a<br/>descriptor?}
+    B -->|Yes| C[Call __get__<br/>Descriptor Protocol]
+    B -->|No| D[Return value<br/>from __dict__]
+
+    E[Set Attribute<br/>person.age = 30] --> F{Is age a<br/>descriptor?}
+    F -->|Yes| G[Call __set__<br/>Validate & Store]
+    F -->|No| H[Store in __dict__<br/>directly]
+
+    G --> I{Validation<br/>passed?}
+    I -->|Yes| J[Store value]
+    I -->|No| K[Raise ValueError]
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style B fill:#CC78BC,stroke:#000000,stroke-width:2px
+    style C fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style D fill:#CA9161,stroke:#000000,stroke-width:2px
+    style E fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style F fill:#CC78BC,stroke:#000000,stroke-width:2px
+    style G fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style H fill:#CA9161,stroke:#000000,stroke-width:2px
+    style I fill:#CC78BC,stroke:#000000,stroke-width:2px
+    style J fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style K fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+**Descriptor implementation**:
 
 ```python
 class Validator:
@@ -358,7 +388,48 @@ for p in processes:
 
 ### Asyncio
 
-Modern async/await for concurrent I/O:
+Modern async/await for concurrent I/O using the event loop:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart TD
+    A[Event Loop<br/>asyncio.run] --> B[Task 1: fetch URL1<br/>await response]
+    A --> C[Task 2: fetch URL2<br/>await response]
+    A --> D[Task 3: fetch URL3<br/>await response]
+
+    B --> E{I/O Ready?}
+    C --> F{I/O Ready?}
+    D --> G{I/O Ready?}
+
+    E -->|Waiting| H[Suspend Task 1<br/>Switch to Task 2]
+    F -->|Waiting| I[Suspend Task 2<br/>Switch to Task 3]
+    G -->|Waiting| J[Suspend Task 3<br/>Switch to Task 1]
+
+    E -->|Ready| K[Resume Task 1<br/>Process result]
+    F -->|Ready| L[Resume Task 2<br/>Process result]
+    G -->|Ready| M[Resume Task 3<br/>Process result]
+
+    K --> N[All Tasks Complete<br/>Return results]
+    L --> N
+    M --> N
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:3px
+    style B fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style C fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style D fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style E fill:#CC78BC,stroke:#000000,stroke-width:2px
+    style F fill:#CC78BC,stroke:#000000,stroke-width:2px
+    style G fill:#CC78BC,stroke:#000000,stroke-width:2px
+    style H fill:#CA9161,stroke:#000000,stroke-width:2px
+    style I fill:#CA9161,stroke:#000000,stroke-width:2px
+    style J fill:#CA9161,stroke:#000000,stroke-width:2px
+    style K fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style L fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style M fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style N fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+**Asyncio example**:
 
 ```python
 import asyncio

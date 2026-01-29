@@ -459,6 +459,52 @@ people = [
 sorted_by_age = sorted(people, key=lambda p: p["age"])
 ```
 
+### Function Decorators Introduction
+
+Decorators are functions that modify other functions:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A[Original Function<br/>greet name] --> B[Decorator Wraps It<br/>@timer]
+    B --> C[Enhanced Function<br/>greet + timing]
+    C --> D[Call greet Alice]
+    D --> E[Output:<br/>Hello, Alice!<br/>Time: 0.0001s]
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style B fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style C fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style D fill:#CC78BC,stroke:#000000,stroke-width:2px
+    style E fill:#CA9161,stroke:#000000,stroke-width:2px
+```
+
+**Basic decorator example**:
+
+```python
+import functools
+import time
+
+def timer(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        print(f"Time: {end - start:.4f}s")
+        return result
+    return wrapper
+
+@timer
+def greet(name):
+    print(f"Hello, {name}!")
+    return f"Greeted {name}"
+
+greet("Alice")
+# Output:
+# Hello, Alice!
+# Time: 0.0001s
+```
+
 ### ✅ Checkpoint: Functions
 
 Before moving forward, ensure you can:
@@ -473,6 +519,36 @@ Before moving forward, ensure you can:
 **Quick Check**: Can you write a function that takes a list of dictionaries (each with "name" and "score" keys) and returns a sorted list by score (highest first)?
 
 ## 🎭 Object-Oriented Programming
+
+Python objects are dynamic and flexible:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    subgraph "Variable Assignment"
+        A[Variable: x = 42] --> B[Object: int 42<br/>in memory]
+        C[Variable: y = x] --> B
+    end
+
+    subgraph "When Object Changes"
+        D[x = 100] --> E[New Object: int 100]
+        F[y still points to] --> B
+    end
+
+    B -->|Reference count: 1| G[Automatic Memory<br/>Garbage Collection]
+    E -->|Reference count: 1| H[x now references 100]
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style B fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style C fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style D fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style E fill:#CC78BC,stroke:#000000,stroke-width:2px
+    style F fill:#CA9161,stroke:#000000,stroke-width:2px
+    style G fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style H fill:#CC78BC,stroke:#000000,stroke-width:2px
+```
+
+**Important**: In Python, variables are references to objects, not the objects themselves. Assigning a variable creates a reference, not a copy.
 
 ### Classes and Objects
 
@@ -705,6 +781,30 @@ except InsufficientFundsError as e:
 ```
 
 ### Context Managers
+
+Context managers automatically handle resource setup and cleanup:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    A[Enter Context<br/>__enter__ called] --> B[Resource Setup<br/>Open file/connection]
+    B --> C[Execute Code Block<br/>Your code runs]
+    C --> D{Exception?}
+    D -->|No| E[Exit Context<br/>__exit__ called]
+    D -->|Yes| E
+    E --> F[Resource Cleanup<br/>Close file/connection]
+    F --> G[Done<br/>Resources released]
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style B fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style C fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style D fill:#CC78BC,stroke:#000000,stroke-width:2px
+    style E fill:#CA9161,stroke:#000000,stroke-width:2px
+    style F fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style G fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+**Context manager examples**:
 
 ```python
 with open("data.txt", "w") as file:

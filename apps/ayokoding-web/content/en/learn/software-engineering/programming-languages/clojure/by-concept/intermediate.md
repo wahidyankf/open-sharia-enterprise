@@ -142,6 +142,28 @@ This tutorial provides **60-85% coverage** of Clojure knowledge, preparing you f
 
 Transducers are composable, efficient data transformation pipelines.
 
+### Transducer Pipeline Visualization
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart LR
+    Input["Input Collection<br/>[1 2 3 4 5 6]"] --> Filter["filter even?<br/>[2 4 6]"]
+    Filter --> Map["map inc<br/>[3 5 7]"]
+    Map --> Reduce["reduce +<br/>15"]
+    Reduce --> Output["Final Result<br/>15"]
+
+    Traditional["Traditional:<br/>3 intermediate<br/>collections"]
+    Transducer["Transducer:<br/>Single pass,<br/>no intermediates"]
+
+    style Input fill:#0173B2
+    style Filter fill:#CC78BC
+    style Map fill:#DE8F05
+    style Reduce fill:#CA9161
+    style Output fill:#029E73
+    style Traditional fill:#CC78BC
+    style Transducer fill:#029E73
+```
+
 ### Basic Transducers
 
 ```clojure
@@ -208,6 +230,41 @@ Transducers are composable, efficient data transformation pipelines.
 **Reusability**: Same transducer works with different contexts (reduce, into, sequence, core.async channels)
 
 ## State Management: Refs and Agents
+
+### State Management Strategy Overview
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    State["Mutable State<br/>Reference Types"]
+
+    Atom["Atom<br/>Uncoordinated, Sync<br/>Single value"]
+    Ref["Ref<br/>Coordinated, Sync<br/>Multiple values (STM)"]
+    Agent["Agent<br/>Uncoordinated, Async<br/>Independent state"]
+    Var["Var<br/>Thread-local<br/>Dynamic binding"]
+
+    State --> Atom
+    State --> Ref
+    State --> Agent
+    State --> Var
+
+    AtomUse["✓ Counters<br/>✓ Config<br/>✓ Cache"]
+    RefUse["✓ Bank transfers<br/>✓ Coordinated updates<br/>✓ Multi-value consistency"]
+    AgentUse["✓ Logging<br/>✓ Background tasks<br/>✓ Event processing"]
+
+    Atom -.-> AtomUse
+    Ref -.-> RefUse
+    Agent -.-> AgentUse
+
+    style State fill:#0173B2
+    style Atom fill:#CC78BC
+    style Ref fill:#DE8F05
+    style Agent fill:#029E73
+    style Var fill:#CA9161
+    style AtomUse fill:#CC78BC
+    style RefUse fill:#DE8F05
+    style AgentUse fill:#029E73
+```
 
 ### Refs and Software Transactional Memory (STM)
 
@@ -298,6 +355,34 @@ Agents provide asynchronous, independent state updates:
 ;;     {:amount 750000 :donor "Fatimah" :timestamp ...}]
 ```
 
+### Core.async Channels and Go Blocks
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant Producer as Producer<br/>(go block)
+    participant Channel as Channel
+    participant Consumer as Consumer<br/>(go block)
+
+    Producer->>Channel: >! (put value)
+    Note over Channel: Buffered/unbuffered
+
+    Channel->>Consumer: <! (take value)
+    Consumer->>Consumer: Process value
+
+    Producer->>Channel: >! (put value)
+    Channel->>Consumer: <! (take value)
+
+    Producer->>Channel: close!
+    Note over Channel: Closed
+
+    Channel->>Consumer: nil (channel closed)
+
+    rect rgb(1, 115, 178, 0.1)
+    Note over Producer,Consumer: CSP: Communicating Sequential Processes
+    end
+```
+
 ### State Management Strategy
 
 **Atoms**: Uncoordinated, synchronous updates to single value
@@ -311,6 +396,42 @@ Agents provide asynchronous, independent state updates:
 ## Java Interoperability
 
 Clojure runs on JVM with seamless Java integration.
+
+### Java Interop Layers
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    Clojure["Clojure Code<br/>(Functional, Immutable)"]
+
+    Interop["Java Interop Layer"]
+
+    Static["Static Methods<br/>Math/sqrt, System/getProperty"]
+    Instance["Instance Methods<br/>.toUpperCase, .substring"]
+    Constructor["Constructors<br/>Date., BigDecimal."]
+    Fields["Fields<br/>(.-x point)"]
+
+    JVM["JVM<br/>(Java Virtual Machine)"]
+
+    Clojure --> Interop
+    Interop --> Static
+    Interop --> Instance
+    Interop --> Constructor
+    Interop --> Fields
+
+    Static --> JVM
+    Instance --> JVM
+    Constructor --> JVM
+    Fields --> JVM
+
+    style Clojure fill:#0173B2
+    style Interop fill:#DE8F05
+    style Static fill:#CC78BC
+    style Instance fill:#CC78BC
+    style Constructor fill:#CC78BC
+    style Fields fill:#CC78BC
+    style JVM fill:#029E73
+```
 
 ### Calling Java Methods
 

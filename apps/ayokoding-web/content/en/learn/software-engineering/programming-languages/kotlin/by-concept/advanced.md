@@ -87,6 +87,32 @@ graph TD
 
 Kotlin 2.x uses the K2 compiler with significant performance improvements.
 
+```mermaid
+graph LR
+    A["Source Code<br/>(.kt files)"] --> B["1. Parsing"]
+    B --> C["AST<br/>(Abstract Syntax Tree)"]
+    C --> D["2. Frontend"]
+    D --> E["Type resolution<br/>Inference<br/>Diagnostics"]
+    E --> F["3. IR Generation"]
+    F --> G["IR<br/>(Platform-independent)"]
+    G --> H["4. Backend"]
+    H --> I["JVM Bytecode"]
+    H --> J["JavaScript"]
+    H --> K["Native Code"]
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style C fill:#029E73,stroke:#000000,color:#FFFFFF
+    style D fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style E fill:#CA9161,stroke:#000000,color:#FFFFFF
+    style F fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style G fill:#029E73,stroke:#000000,color:#FFFFFF
+    style H fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style I fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style J fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style K fill:#CC78BC,stroke:#000000,color:#FFFFFF
+```
+
 **Compilation Phases**:
 
 1. **Parsing** - Source code → Abstract Syntax Tree (AST)
@@ -935,6 +961,40 @@ Kotlin Multiplatform enables code sharing across platforms (JVM, JavaScript, Nat
 ### Multiplatform Project Structure
 
 Organize multiplatform modules with expect/actual pattern.
+
+```mermaid
+graph TD
+    A["Common Code<br/>(expect)"] --> B["Platform API<br/>Declaration"]
+
+    B --> C["JVM<br/>(actual)"]
+    B --> D["iOS<br/>(actual)"]
+    B --> E["JavaScript<br/>(actual)"]
+    B --> F["Native<br/>(actual)"]
+
+    C --> G["JVM Implementation"]
+    D --> H["iOS Implementation"]
+    E --> I["JS Implementation"]
+    F --> J["Native Implementation"]
+
+    K["Compiler"] --> L["Selects correct<br/>actual at build time"]
+    L --> C
+    L --> D
+    L --> E
+    L --> F
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style C fill:#029E73,stroke:#000000,color:#FFFFFF
+    style D fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style E fill:#CA9161,stroke:#000000,color:#FFFFFF
+    style F fill:#029E73,stroke:#000000,color:#FFFFFF
+    style G fill:#029E73,stroke:#000000,color:#FFFFFF
+    style H fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style I fill:#CA9161,stroke:#000000,color:#FFFFFF
+    style J fill:#029E73,stroke:#000000,color:#FFFFFF
+    style K fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style L fill:#0173B2,stroke:#000000,color:#FFFFFF
+```
 
 ```kotlin
 // Common module (shared code)

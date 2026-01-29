@@ -37,7 +37,7 @@ By the end of this tutorial, you will:
 
 ## Prerequisites
 
-- Completed [Beginner's Guide to Java](beginner) - Comfortable with OOP, collections, testing
+- Completed [Beginner's Guide to Java](/en/learn/software-engineering/programming-languages/java/by-concept/beginner) - Comfortable with OOP, collections, testing
 - Or equivalent Java experience with classes, inheritance, interfaces
 
 ## Learning Path Overview
@@ -66,6 +66,36 @@ Design patterns are proven solutions to common problems. They make code more reu
 ### 1.1 Singleton Pattern
 
 **Singleton** ensures a class has only one instance.
+
+#### Singleton Pattern Flow
+
+```mermaid
+sequenceDiagram
+    participant C1 as Client 1
+    participant C2 as Client 2
+    participant S as Singleton Class
+    participant I as Single Instance
+
+    C1->>S: getInstance()
+    S->>S: Check if instance exists
+    alt Instance doesn't exist
+        S->>I: Create instance
+    end
+    S-->>C1: Return instance
+
+    C2->>S: getInstance()
+    S->>S: Check if instance exists
+    S-->>C2: Return same instance
+
+    Note over C1,C2: Both clients share the same instance
+
+    style C1 fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style C2 fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style S fill:#029E73,stroke:#000000,color:#FFFFFF
+    style I fill:#DE8F05
+```
+
+All clients receive the same instance, ensuring global state consistency and resource efficiency.
 
 #### Example: Singleton
 
@@ -318,6 +348,40 @@ public class StrategyDemo {
 
 **Dependency Injection** provides dependencies rather than creating them internally.
 
+#### Dependency Injection Concept
+
+```mermaid
+graph TD
+    subgraph "Without DI (Tight Coupling)"
+        A1["OrderService"]
+        B1["EmailService<br/>(hardcoded)"]
+        A1 -->|creates internally| B1
+    end
+
+    subgraph "With DI (Loose Coupling)"
+        A2["OrderService"]
+        B2["NotificationService<br/>(interface)"]
+        C1["EmailService"]
+        C2["SMSService"]
+        C3["PushService"]
+
+        A2 -->|depends on| B2
+        B2 -.->|implementation 1| C1
+        B2 -.->|implementation 2| C2
+        B2 -.->|implementation 3| C3
+    end
+
+    style A1 fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style B1 fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style A2 fill:#029E73,stroke:#000000,color:#FFFFFF
+    style B2 fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style C1 fill:#DE8F05
+    style C2 fill:#DE8F05
+    style C3 fill:#DE8F05
+```
+
+Dependency injection decouples service from implementation, allowing easy swapping and testing with mock implementations.
+
 #### Bad: Tight Coupling
 
 ```java
@@ -474,6 +538,43 @@ Each operation transforms the data and passes it to the next stage. This is imme
 
 **Concurrency** allows multiple tasks to execute simultaneously.
 
+#### Thread Execution Model
+
+```mermaid
+sequenceDiagram
+    participant M as Main Thread
+    participant T1 as Thread 1
+    participant T2 as Thread 2
+
+    M->>M: Start program
+    M->>T1: start()
+    M->>T2: start()
+
+    par Thread 1 execution
+        T1->>T1: task 1
+        T1->>T1: task 2
+        T1->>T1: task 3
+    and Thread 2 execution
+        T2->>T2: task A
+        T2->>T2: task B
+        T2->>T2: task C
+    end
+
+    M->>T1: join() (wait)
+    M->>T2: join() (wait)
+
+    T1-->>M: completed
+    T2-->>M: completed
+
+    M->>M: Continue execution
+
+    style M fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style T1 fill:#029E73,stroke:#000000,color:#FFFFFF
+    style T2 fill:#DE8F05
+```
+
+Threads execute independently and concurrently. The main thread uses `join()` to wait for worker threads to complete before continuing.
+
 #### Example: Creating Threads
 
 ```java
@@ -625,6 +726,45 @@ public class AtomicCounter {
 ### 3.3 Concurrent Collections
 
 **Concurrent collections** are thread-safe without explicit synchronization.
+
+#### Producer-Consumer Pattern with BlockingQueue
+
+```mermaid
+graph LR
+    subgraph "Producer Thread"
+        P1["Generate<br/>item1"]
+        P2["Generate<br/>item2"]
+        P3["Generate<br/>item3"]
+    end
+
+    subgraph "BlockingQueue"
+        Q["Thread-Safe Queue"]
+    end
+
+    subgraph "Consumer Thread"
+        C1["Process<br/>item1"]
+        C2["Process<br/>item2"]
+        C3["Process<br/>item3"]
+    end
+
+    P1 -->|put()| Q
+    P2 -->|put()| Q
+    P3 -->|put()| Q
+
+    Q -->|take()| C1
+    Q -->|take()| C2
+    Q -->|take()| C3
+
+    style P1 fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style P2 fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style P3 fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style Q fill:#029E73,stroke:#000000,color:#FFFFFF
+    style C1 fill:#DE8F05
+    style C2 fill:#DE8F05
+    style C3 fill:#DE8F05
+```
+
+BlockingQueue handles thread coordination automatically - producers and consumers can work independently without explicit synchronization.
 
 #### Example: Concurrent Collections
 
@@ -1107,20 +1247,12 @@ Excellent progress! You've covered 60-85% of Java knowledge for professional dev
 
 ### Next: Advanced Java
 
-Continue with [Advanced Java](advanced) for:
+Continue with [Advanced Java](/en/learn/software-engineering/programming-languages/java/by-concept/advanced) for:
 
 - JVM internals and architecture
 - Garbage collection tuning
 - Advanced concurrency patterns
 - Reflection and annotations
 - Bytecode analysis
-
-### For Day-to-Day Solutions
-
-Use [Java Cookbook](cookbook) for:
-
-- Quick patterns and recipes
-- Common problems and solutions
-- Copy-paste code snippets
 
 ---

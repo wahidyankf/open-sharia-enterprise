@@ -102,6 +102,24 @@ clojure hello.clj
 
 Output: `As-salamu alaykum!`
 
+### REPL-Driven Development Cycle
+
+The REPL (Read-Eval-Print Loop) is central to Clojure development:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart LR
+    Read["📖 Read<br/>Parse Expression"] --> Eval["⚙️ Eval<br/>Execute Code"]
+    Eval --> Print["📤 Print<br/>Display Result"]
+    Print --> Loop["🔄 Loop<br/>Wait for Input"]
+    Loop --> Read
+
+    style Read fill:#0173B2
+    style Eval fill:#DE8F05
+    style Print fill:#029E73
+    style Loop fill:#CC78BC
+```
+
 ### Start REPL
 
 ```bash
@@ -390,6 +408,20 @@ Unordered collections of unique elements:
 
 All Clojure data structures are **immutable** - they never change after creation.
 
+### Immutability Concept
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart LR
+    Original[Original Data<br/>[1 2 3]] -->|"conj 4"| Operation{Transform}
+    Operation -->|Returns| New[New Data<br/>[1 2 3 4]]
+    Operation -.->|"Original Unchanged"| Original
+
+    style Original fill:#0173B2
+    style New fill:#029E73
+    style Operation fill:#DE8F05
+```
+
 ### Immutability in Action
 
 ```clojure
@@ -409,6 +441,40 @@ updated       ;; => [1 2 3 4] (new vector)
 account          ;; => {:name "Ahmad" :balance 1000000} (unchanged!)
 updated-account  ;; => {:name "Ahmad" :balance 2000000} (new map)
 ```
+
+### Persistent Data Structures - Structural Sharing
+
+Clojure achieves efficient immutability through structural sharing:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    V1["Vector v1<br/>[1 2 3]"]
+    V2["Vector v2<br/>[1 2 3 4]"]
+
+    N1["Node: 1"]
+    N2["Node: 2"]
+    N3["Node: 3"]
+    N4["Node: 4"]
+
+    V1 --> N1
+    V1 --> N2
+    V1 --> N3
+
+    V2 --> N1
+    V2 --> N2
+    V2 --> N3
+    V2 --> N4
+
+    style V1 fill:#0173B2
+    style V2 fill:#029E73
+    style N1 fill:#CC78BC
+    style N2 fill:#CC78BC
+    style N3 fill:#CC78BC
+    style N4 fill:#DE8F05
+```
+
+Both vectors share nodes 1, 2, 3. Only the new element (4) requires additional memory.
 
 ### Why Immutability?
 
@@ -512,6 +578,22 @@ Functions that take or return other functions:
 ### Function Composition
 
 Combine simple functions into complex ones:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart LR
+    Input["Input: 5"] --> F1["f1: (* 2 %)<br/>Result: 10"]
+    F1 --> F2["f2: inc<br/>Result: 11"]
+    F2 --> Output["Output: 11"]
+
+    style Input fill:#0173B2
+    style F1 fill:#CC78BC
+    style F2 fill:#DE8F05
+    style Output fill:#029E73
+
+    Note["comp applies<br/>right to left"]
+    style Note fill:#CA9161
+```
 
 ```clojure
 ;; comp - compose functions (right to left)
@@ -635,6 +717,28 @@ Sequences are logical abstractions over collections:
 ### Lazy Evaluation
 
 Sequences are lazy - computed only when needed:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant Code
+    participant LazySeq as Lazy Sequence
+    participant Compute
+
+    Code->>LazySeq: Create (range 1000000)
+    Note over LazySeq: Not computed yet
+
+    Code->>LazySeq: (take 3 ...)
+    LazySeq->>Compute: Compute first 3
+    Compute-->>LazySeq: [1 2 3]
+    LazySeq-->>Code: Returns [1 2 3]
+
+    Note over LazySeq: Remaining 999997<br/>never computed!
+
+    rect rgb(1, 115, 178, 0.1)
+    Note over Code,Compute: Efficient: Only compute what you need
+    end
+```
 
 ```clojure
 ;; range creates lazy sequence
