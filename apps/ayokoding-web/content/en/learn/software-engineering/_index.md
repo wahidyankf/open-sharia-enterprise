@@ -38,4 +38,4 @@ weight: 102
 - [Web Platform](/en/learn/software-engineering/web-platform)
   - [Overview](/en/learn/software-engineering/web-platform/overview)
   - [Elixir Phoenix](/en/learn/software-engineering/web-platform/elixir-phoenix)
-  - [Java Spring Boot](/en/learn/software-engineering/web-platform/java-spring-boot)
+  - [JVM Spring Boot](/en/learn/software-engineering/web-platform/jvm-spring-boot)

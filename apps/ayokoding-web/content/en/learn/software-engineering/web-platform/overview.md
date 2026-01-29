@@ -35,9 +35,9 @@ Web platforms provide comprehensive frameworks for building modern web applicati
 
 ## Available Platforms
 
-### Java Spring Boot - JVM Web Framework
+### JVM Spring Boot - Java & Kotlin Web Framework
 
-**[Java Spring Boot](/en/learn/software-engineering/web-platform/java-spring-boot)** simplifies enterprise web development:
+**[JVM Spring Boot](/en/learn/software-engineering/web-platform/jvm-spring-boot)** simplifies enterprise web development with Java and Kotlin:
 
 - **Auto-Configuration** - Minimal setup with sensible defaults
 - **REST APIs** - Build RESTful web services with Spring MVC
@@ -131,7 +131,7 @@ Learn through practical, annotated code examples you can run immediately. The co
 
 Choose the platform matching your language and requirements:
 
-- **Java developers** → [Java Spring Boot](/en/learn/software-engineering/web-platform/java-spring-boot)
+- **Java/Kotlin developers** → [JVM Spring Boot](/en/learn/software-engineering/web-platform/jvm-spring-boot)
 - **Elixir developers** → [Elixir Phoenix](/en/learn/software-engineering/web-platform/elixir-phoenix)
 - **Need real-time features** → Phoenix with LiveView or Channels
 - **Enterprise applications** → Spring Boot with Spring ecosystem
