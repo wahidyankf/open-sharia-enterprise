@@ -11,7 +11,7 @@ Master advanced Dart patterns through 25 heavily annotated examples using Islami
 
 ## Examples 51-60: Advanced Async and Isolates
 
-### Example 51: Isolates Basics (Coverage: 66.3%)
+### Example 51: Isolates Basics
 
 Parallel execution with isolates for CPU-intensive work without blocking main thread.
 
@@ -72,7 +72,7 @@ Main thread continues
 
 **Common Pitfalls**: Can't share objects between isolates. Only send/receive primitive types or special types. Heavy isolate spawn cost - reuse for multiple tasks.
 
-### Example 52: Isolate Communication (Coverage: 67.6%)
+### Example 52: Isolate Communication
 
 Bidirectional communication between isolates with multiple messages.
 
@@ -152,7 +152,7 @@ All calculations complete
 
 **Common Pitfalls**: SendPort not serializable - exchange via initial message. Isolates don't auto-terminate - send exit signal. Message order not guaranteed.
 
-### Example 53: Compute Function (Coverage: 68.9%)
+### Example 53: Compute Function
 
 Simplified isolate usage with compute() helper for single computations.
 
@@ -211,7 +211,7 @@ Total Zakat (run): Rp17500000.0
 
 **Common Pitfalls**: `compute()` for single tasks only (not continuous processing). Function must be top-level or static. `Isolate.run()` allows closures but requires Dart 2.19+.
 
-### Example 54: Stream.periodic for Recurring Tasks (Coverage: 70.2%)
+### Example 54: Stream.periodic for Recurring Tasks
 
 Creating periodic streams for scheduled operations.
 
@@ -294,7 +294,7 @@ Stream timed out
 
 **Common Pitfalls**: Periodic streams are infinite - always limit. Transform function receives increasing count. Don't forget `await for` or stream won't execute.
 
-### Example 55: Future.any and Future.race (Coverage: 71.5%)
+### Example 55: Future.any and Future.race
 
 Racing multiple Futures to get first completion.
 
@@ -376,7 +376,7 @@ Amount (with fallback): Rp600000.0
 
 ## Examples 56-65: Design Patterns and Architecture
 
-### Example 56: Singleton Pattern (Coverage: 72.8%)
+### Example 56: Singleton Pattern
 
 Ensuring single instance of class with factory constructor.
 
@@ -443,7 +443,7 @@ Count from service2: 2
 
 **Common Pitfalls**: Singletons complicate testing (global state). Consider dependency injection instead. Thread-safe by default in Dart (single-threaded).
 
-### Example 57: Factory Pattern (Coverage: 74.1%)
+### Example 57: Factory Pattern
 
 Creating objects without specifying exact class with factory methods.
 
@@ -555,7 +555,7 @@ Total: Rp1010000.0
 
 **Common Pitfalls**: Factory can become complex switch statement. Consider using Map<String, Function> for extensibility. Abstract classes can't be instantiated.
 
-### Example 58: Observer Pattern with Streams (Coverage: 75.4%)
+### Example 58: Observer Pattern with Streams
 
 Implementing observer pattern using Dart Streams for event notification.
 
@@ -664,7 +664,7 @@ Recording: Fatimah - Rp1000000.0
 
 ## Examples 59-70: Testing and Quality
 
-### Example 59: Unit Testing Basics (Coverage: 76.7%)
+### Example 59: Unit Testing Basics
 
 Writing unit tests with package:test framework.
 
@@ -742,7 +742,7 @@ void main() {
 
 **Common Pitfalls**: Don't share state between tests. Use `setUp()` for fresh instances. Test exceptions with closures. Mock external dependencies.
 
-### Example 60: Integration Testing (Coverage: 78%)
+### Example 60: Integration Testing
 
 Testing multiple components together with async operations.
 
@@ -834,7 +834,7 @@ void main() {
 
 ## Examples 61-70: Performance and Production Patterns
 
-### Example 61: Lazy Initialization (Coverage: 79.3%)
+### Example 61: Lazy Initialization
 
 Deferring expensive initialization until first use.
 
