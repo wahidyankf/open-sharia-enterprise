@@ -3,10 +3,12 @@ title: Overview
 weight: 100000
 date: 2025-12-30T00:00:00+07:00
 draft: false
-description: Build production-ready enterprise applications with Spring Boot on the JVM platform
+description: Build production-ready enterprise applications with Spring Boot using Java or Kotlin on the JVM platform
 ---
 
-Spring Boot is an opinionated framework built on the Spring ecosystem that simplifies the creation of production-ready, stand-alone Spring applications. It provides convention-over-configuration defaults while maintaining full flexibility for customization.
+Spring Boot is an opinionated framework built on the Spring ecosystem that simplifies the creation of production-ready, stand-alone Spring applications using Java or Kotlin. It provides convention-over-configuration defaults while maintaining full flexibility for customization.
+
+**Java or Kotlin?** Both languages are first-class citizens in Spring Boot. All examples in this guide are provided in both Java and Kotlin, allowing you to learn Spring Boot concepts in your preferred JVM language.
 
 ## What You'll Learn
 
@@ -107,14 +109,14 @@ Spring Boot provides pre-configured starter dependencies that eliminate manual d
 
 ## Prerequisites
 
-### For Java Developers New to Spring
+### For Java/Kotlin Developers New to Spring
 
-- **Java 17+ installed** - Spring Boot 3.x requires Java 17 minimum (Java 21+ recommended for latest features)
-- **Maven or Gradle** - Understanding of dependency management and build tools (Maven 3.6+ or Gradle 7.5+)
-- **Java fundamentals** - OOP principles, collections, streams, lambda expressions, annotations, generics
+- **Java 17+ or Kotlin 1.9+ installed** - Spring Boot 3.x requires Java 17 minimum (Java 21+ recommended) or Kotlin 1.9+
+- **Maven or Gradle** - Understanding of dependency management and build tools (Maven 3.6+ or Gradle 7.5+, Gradle recommended for Kotlin)
+- **Java or Kotlin fundamentals** - OOP principles, collections, streams/sequences, lambda expressions/higher-order functions, annotations, generics
 - **HTTP and REST** - HTTP methods (GET, POST, PUT, DELETE), status codes (200, 404, 500), JSON serialization
 - **SQL basics** - SELECT, INSERT, UPDATE, DELETE, JOINs for database examples
-- **IDE** - IntelliJ IDEA, Eclipse, or VS Code with Java extensions for code completion and debugging
+- **IDE** - IntelliJ IDEA (best Kotlin support), Eclipse, or VS Code with Java/Kotlin extensions
 
 ### For Python/Ruby Developers Switching to Java/Spring
 

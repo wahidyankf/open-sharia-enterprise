@@ -69,6 +69,80 @@ public class UserApiClient {
 record User(Long id, String name, String email, String phone) {}
 ```
 
+**Code (Kotlin)**:
+
+```kotlin
+@Configuration
+class RestTemplateConfig {
+  @Bean  // => Configure RestTemplate bean
+  fun restTemplate(builder: RestTemplateBuilder): RestTemplate {  // => Inject autoconfigured builder
+    return builder  // => Customize RestTemplate
+      .setConnectTimeout(Duration.ofSeconds(5))  // => Max time to establish TCP connection
+      .setReadTimeout(Duration.ofSeconds(10))  // => Max time to read response after connection
+      .defaultHeader("User-Agent", "SpringBootApp/1.0")  // => Add User-Agent header to all requests
+      .errorHandler(object : DefaultResponseErrorHandler() {
+        override fun handleError(response: ClientHttpResponse) {  // => Custom HTTP error handler
+          // => Custom error handling (replace default behavior)
+          if (response.statusCode.is5xxServerError) {  // => Check if status code is 500-599
+            throw ServiceUnavailableException("Backend service down")  // => Throw custom exception for 5xx errors
+          }
+          super.handleError(response)  // => Delegate to default handler for non-5xx errors
+        }
+      })
+      .build()
+  }
+}
+
+@Service
+class UserApiClient(
+  private val restTemplate: RestTemplate
+) {
+  companion object {
+    private const val BASE_URL = "https://jsonplaceholder.typicode.com"
+  }
+
+  fun getUser(id: Long): User? {  // => Fetch user by ID
+    return restTemplate.getForObject("$BASE_URL/users/{id}", User::class.java, id)
+    // => GET request, deserialize JSON to User, blocks until response
+  }
+
+  fun createUser(user: User): User? {  // => Create new user
+    return restTemplate.postForObject("$BASE_URL/users", user, User::class.java)
+    // => POST request with JSON body, return created user with ID
+  }
+
+  fun updateUser(id: Long, user: User) {  // => Update existing user
+    restTemplate.put("$BASE_URL/users/{id}", user, id)
+    // => PUT request, void return (no response body expected)
+  }
+
+  fun deleteUser(id: Long) {  // => Delete user
+    restTemplate.delete("$BASE_URL/users/{id}", id)
+    // => DELETE request, void return
+  }
+
+  fun getAllUsers(): List<User> {  // => Fetch all users
+    val users = restTemplate.getForObject("$BASE_URL/users", Array<User>::class.java)
+    // => GET request, deserialize JSON array to User[]
+    return users?.toList() ?: emptyList()
+    // => Convert array to list, handle null response with safe call
+  }
+}
+
+data class User(
+  val id: Long? = null,
+  val name: String,
+  val email: String,
+  val phone: String
+)
+
+// Kotlin-specific: Use companion object for constants, string templates for URLs, safe calls (?.)
+// Alternative with extension function for typed GET:
+// inline fun <reified T> RestTemplate.getTyped(url: String, vararg uriVariables: Any): T? =
+//   getForObject(url, T::class.java, *uriVariables)
+// val user = restTemplate.getTyped<User>("$BASE_URL/users/{id}", id)
+```
+
 **Key Takeaway**: Use `RestTemplate` for synchronous HTTP calls when blocking is acceptable, but prefer WebClient for reactive non-blocking communication in high-throughput microservices.
 
 **Why It Matters**: RestTemplate's blocking model simplifies HTTP communication for traditional request/response patterns, but each concurrent external API call consumes one thread until the response returns—under 100 concurrent calls, thread pools exhaust causing request queuing. Production systems prefer WebClient for external API calls to achieve higher concurrency, reserving RestTemplate for legacy integrations or simple scripts where blocking simplicity outweighs performance needs.
@@ -122,6 +196,69 @@ public class ReactiveUserClient {
             .bodyToMono(User.class); // => Deserialize created user from response
     }
 }
+```
+
+**Code (Kotlin)**:
+
+```kotlin
+@Configuration
+class WebClientConfig {
+  @Bean  // => Configure WebClient bean
+  fun webClient(builder: WebClient.Builder): WebClient {  // => Inject autoconfigured builder
+    return builder  // => Customize WebClient
+      .baseUrl("https://jsonplaceholder.typicode.com")  // => Base URL for all requests
+      .defaultHeader(HttpHeaders.USER_AGENT, "SpringBoot-WebClient/1.0")  // => Add User-Agent header
+      .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)  // => Default Content-Type: application/json
+      .build()
+  }
+}
+
+@Service
+class ReactiveUserClient(
+  private val webClient: WebClient
+) {
+  fun getUser(id: Long): Mono<User> {  // => Fetch user by ID (reactive)
+    return webClient.get()  // => Create GET request
+      .uri("/users/{id}", id)  // => Build URI with path variable
+      .retrieve()  // => Execute request
+      .bodyToMono(User::class.java)  // => Deserialize response to Mono<User> (single value)
+      .timeout(Duration.ofSeconds(5))  // => Fail if response not received within 5 seconds
+  }
+
+  fun getAllUsers(): Flux<User> {  // => Fetch all users (reactive stream)
+    return webClient.get()  // => Create GET request
+      .uri("/users")  // => URI without parameters
+      .retrieve()  // => Execute request
+      .bodyToFlux(User::class.java)  // => Deserialize response to Flux<User> (stream of values)
+      .onErrorResume {  // => Fallback on error (circuit breaker pattern)
+        // => Return empty flux on error instead of failing
+        Flux.empty()  // => Empty stream (no users)
+      }
+  }
+
+  fun createUser(user: User): Mono<User> {  // => Create user (reactive)
+    return webClient.post()  // => Create POST request
+      .uri("/users")  // => POST endpoint
+      .bodyValue(user)  // => Serialize user to JSON body
+      .retrieve()  // => Execute request
+      .bodyToMono(User::class.java)  // => Deserialize created user from response
+  }
+}
+
+// Kotlin-specific: Lambda with no parameters uses 'it', or can be omitted entirely
+// Alternative with Kotlin Coroutines (more idiomatic):
+// @Service
+// class CoroutineUserClient(private val webClient: WebClient) {
+//   suspend fun getUser(id: Long): User? = webClient.get()
+//     .uri("/users/{id}", id)
+//     .retrieve()
+//     .awaitBodyOrNull<User>()  // Suspends instead of returning Mono
+//
+//   fun getAllUsersFlow(id: Long): Flow<User> = webClient.get()
+//     .uri("/users")
+//     .retrieve()
+//     .bodyToFlow()  // Returns Flow instead of Flux
+// }
 ```
 
 ```mermaid
@@ -194,6 +331,67 @@ public class UserService {
 //         readTimeout: 10000
 ```
 
+**Code (Kotlin)**:
+
+```kotlin
+// build.gradle.kts: implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+
+@SpringBootApplication
+@EnableFeignClients  // => Enable component scanning for Feign clients
+open class Application  // => Main application class
+
+fun main(args: Array<String>) {
+  runApplication<Application>(*args)
+}
+
+@FeignClient(name = "user-service", url = "https://jsonplaceholder.typicode.com")
+// => Declarative HTTP client (name for load balancing, url for direct connection)
+interface UserFeignClient {  // => Interface methods map to HTTP endpoints
+  @GetMapping("/users/{id}")  // => GET /users/{id} endpoint
+  fun getUser(@PathVariable id: Long): User
+  // => Path variable injected into URL, returns deserialized User
+
+  @GetMapping("/users")  // => GET /users endpoint
+  fun getAllUsers(): List<User>
+  // => Returns list of users (JSON array deserialized)
+
+  @PostMapping("/users")  // => POST /users endpoint
+  fun createUser(@RequestBody user: User): User
+  // => Request body serialized to JSON, response deserialized to User
+
+  @DeleteMapping("/users/{id}")  // => DELETE /users/{id} endpoint
+  fun deleteUser(@PathVariable id: Long)
+  // => No response body expected
+}
+
+@Service
+class UserService(
+  private val userClient: UserFeignClient
+) {
+  fun fetchUser(id: Long): User {  // => Fetch user via Feign client
+    return userClient.getUser(id)
+    // => Feign generates HTTP call implementation (blocks until response)
+  }
+}
+
+// application.yml
+// feign:
+//   client:
+//     config:
+//       default:
+//         connectTimeout: 5000
+//         readTimeout: 10000
+
+// Kotlin-specific: Interface methods in Kotlin don't need 'fun' keyword repetition
+// Alternative with suspend functions for coroutines support:
+// @FeignClient(name = "user-service", url = "...")
+// interface CoroutineUserClient {
+//   @GetMapping("/users/{id}")
+//   suspend fun getUser(@PathVariable id: Long): User  // Non-blocking with coroutines
+// }
+// Note: Requires spring-cloud-openfeign-kotlin extension
+```
+
 **Key Takeaway**: Feign eliminates HTTP client boilerplate through declarative interfaces—define methods with Spring MVC annotations and Feign generates implementations automatically.
 
 **Why It Matters**: Feign eliminates HTTP client boilerplate—define interface methods with Spring MVC annotations and Feign generates implementations automatically, reducing microservice integration code by 70% compared to manual RestTemplate calls. However, Feign's default blocking client (uses RestTemplate internally) limits concurrency—production systems configure Feign with reactive HTTP clients (WebClient) for non-blocking calls that scale to thousands of concurrent requests without thread exhaustion.
@@ -249,6 +447,69 @@ public class OrderController {
 //       defaultZone: http://localhost:8761/eureka/
 //   instance:
 //     preferIpAddress: true
+```
+
+**Code (Kotlin)**:
+
+```kotlin
+// build.gradle.kts: implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+
+@SpringBootApplication
+@EnableDiscoveryClient  // => Enable Eureka client registration
+open class Application  // => Main application class
+
+fun main(args: Array<String>) {
+  runApplication<Application>(*args)
+}
+
+@RestController
+@RequestMapping("/api")
+class OrderController(
+  private val discoveryClient: DiscoveryClient,  // => Inject discovery client for querying service registry
+  @LoadBalanced private val restTemplate: RestTemplate  // => Load-balanced RestTemplate (resolves service names to instances)
+) {
+  @GetMapping("/services")  // => Endpoint: GET /api/services
+  fun getServices(): List<String> {  // => Query Eureka registry
+    return discoveryClient.services.toList()
+    // => Returns service names (e.g., ["order-service", "user-service", "payment-service"])
+  }
+
+  @GetMapping("/order/{id}")  // => Endpoint: GET /api/order/{id}
+  fun getOrder(@PathVariable id: Long): Order {  // => Fetch order with user data
+    // => Call user-service by service name (Eureka resolves to actual instance IP:port)
+    val user = restTemplate.getForObject(  // => Load-balanced HTTP call
+      "http://user-service/api/users/{id}", User::class.java, id
+    )  // => "user-service" resolved by Eureka (round-robin load balancing)
+    return Order(id, user)  // => Compose order response with user data
+  }
+}
+
+data class Order(val id: Long, val user: User?)
+
+// application.yml
+// spring:
+//   application:
+//     name: order-service
+// eureka:
+//   client:
+//     serviceUrl:
+//       defaultZone: http://localhost:8761/eureka/
+//   instance:
+//     preferIpAddress: true
+
+// Kotlin-specific: Use toList() to convert services collection, primary constructor injection
+// Alternative with WebClient for reactive service discovery:
+// @Service
+// class ReactiveOrderService(
+//   private val webClientBuilder: WebClient.Builder,
+//   @LoadBalanced private val loadBalancedBuilder: WebClient.Builder  // Load-balanced WebClient
+// ) {
+//   fun getUser(id: Long): Mono<User> = loadBalancedBuilder.build()
+//     .get()
+//     .uri("http://user-service/api/users/{id}", id)
+//     .retrieve()
+//     .bodyToMono<User>()
+// }
 ```
 
 ```mermaid
@@ -329,6 +590,69 @@ public class MetricsController {
 // GET /actuator/info => Application info
 ```
 
+**Code (Kotlin)**:
+
+```kotlin
+// build.gradle.kts: implementation("org.springframework.boot:spring-boot-starter-actuator")
+
+@Component
+class CustomHealthIndicator : HealthIndicator {
+  override fun health(): Health {  // => Custom health check logic
+    val databaseUp = checkDatabaseConnection()  // => Check database connectivity
+    return if (databaseUp) {  // => Database healthy
+      Health.up()  // => Health status: UP
+        .withDetail("database", "PostgreSQL")  // => Add metadata to health response
+        .withDetail("version", "15.0")  // => Database version detail
+        .build()  // => Build Health object
+    } else {
+      Health.down()  // => Health status: DOWN
+        .withDetail("error", "Database connection failed")  // => Error detail for debugging
+        .build()  // => Build Health object (triggers pod restart in Kubernetes)
+    }
+  }
+
+  private fun checkDatabaseConnection(): Boolean {  // => Verify database connectivity
+    return true  // => Placeholder (production: execute SELECT 1 query)
+  }
+}
+
+@RestController
+@RequestMapping("/api")
+class MetricsController {
+  @GetMapping("/process")
+  fun processRequest(): String {
+    return "Processed"
+  }
+}
+
+// application.yml
+// management:
+//   endpoints:
+//     web:
+//       exposure:
+//         include: health,metrics,info,prometheus
+//   endpoint:
+//     health:
+//       show-details: always
+//   metrics:
+//     tags:
+//       application: ${spring.application.name}
+
+// Available endpoints:
+// GET /actuator/health => {"status":"UP","components":{"custom":{"status":"UP"}}}
+// GET /actuator/metrics => List of available metrics
+// GET /actuator/metrics/jvm.memory.used => Memory usage
+// GET /actuator/info => Application info
+
+// Kotlin-specific: Use expression body for simple health() implementation
+// Alternative with when expression for multiple health states:
+// override fun health(): Health = when {
+//   databaseUp && cacheUp -> Health.up().withDetail("all", "ok").build()
+//   databaseUp -> Health.degraded().withDetail("cache", "down").build()
+//   else -> Health.down().withDetail("database", "down").build()
+// }
+```
+
 **Key Takeaway**: Actuator exposes production-ready endpoints for monitoring—use custom `HealthIndicator` implementations to expose application-specific health checks beyond Spring Boot's auto-configured probes.
 
 **Why It Matters**: Actuator endpoints expose production-ready metrics (JVM memory, thread pools, database connections) and health checks (database connectivity, disk space) without custom instrumentation, integrating with monitoring tools (Prometheus, Grafana) via standardized formats. Production Kubernetes deployments use actuator health endpoints for liveness probes (restart unhealthy pods) and readiness probes (remove pods from load balancer rotation), enabling zero-downtime deployments where unhealthy instances stop receiving traffic before termination.
@@ -382,6 +706,58 @@ public class OrderMetricsService {
 // GET /actuator/metrics/orders.active
 // GET /actuator/metrics/orders.processing.time
 // GET /actuator/prometheus => Prometheus exposition format
+```
+
+**Code (Kotlin)**:
+
+```kotlin
+@Service
+class OrderMetricsService(registry: MeterRegistry) {  // => Inject Micrometer registry
+  private val orderCounter: Counter = Counter.builder("orders.created")  // => Create counter metric
+    .description("Total orders created")  // => Metric description for monitoring dashboards
+    .tag("type", "online")  // => Tag for filtering/grouping (e.g., online vs in-store orders)
+    .register(registry)  // => Register metric with Micrometer
+
+  private val activeOrderCount = AtomicInteger(0)
+
+  private val activeOrders: Gauge = Gauge.builder("orders.active", activeOrderCount) { it.get().toDouble() }
+    // => Create gauge metric (current value)
+    .description("Active orders count")  // => Metric description
+    .register(registry)  // => Register gauge (tracks activeOrderCount value)
+
+  private val orderProcessingTimer: Timer = Timer.builder("orders.processing.time")
+    // => Create timer metric (measures duration)
+    .description("Order processing duration")  // => Metric description
+    .register(registry)  // => Register timer (tracks min/max/mean/percentiles)
+
+  fun createOrder(order: Order) {  // => Process order creation
+    orderCounter.increment()  // => Increment total orders counter (monotonic increase)
+    activeOrderCount.incrementAndGet()  // => Increment active orders gauge
+
+    orderProcessingTimer.record {  // => Measure execution time
+      // => Timer tracks duration of lambda execution
+      processOrder(order)  // => Business logic
+    }
+
+    activeOrderCount.decrementAndGet()  // => Decrement active orders after processing complete
+  }
+
+  private fun processOrder(order: Order) {
+    // Processing logic
+  }
+}
+
+// Access metrics:
+// GET /actuator/metrics/orders.created
+// GET /actuator/metrics/orders.active
+// GET /actuator/metrics/orders.processing.time
+// GET /actuator/prometheus => Prometheus exposition format
+
+// Kotlin-specific: Use trailing lambda syntax for timer.record { }
+// Alternative with extension function for cleaner metric registration:
+// fun MeterRegistry.counter(name: String, tags: Map<String, String> = emptyMap()): Counter =
+//   Counter.builder(name).tags(Tags.of(tags.map { Tag.of(it.key, it.value) })).register(this)
+// val orderCounter = registry.counter("orders.created", mapOf("type" to "online"))
 ```
 
 **Key Takeaway**: Micrometer provides vendor-neutral instrumentation—use `Counter`, `Gauge`, and `Timer` to track business metrics and export to monitoring systems like Prometheus without vendor lock-in.
@@ -438,6 +814,68 @@ public class OrderTracingController {
 //       endpoint: http://localhost:9411/api/v2/spans
 
 // Trace ID in logs: [appName,traceId,spanId]
+```
+
+**Code (Kotlin)**:
+
+```kotlin
+// build.gradle.kts: implementation("io.micrometer:micrometer-tracing-bridge-brave")
+// implementation("io.zipkin.reporter2:zipkin-reporter-brave")
+
+@Configuration
+class TracingConfig {
+  @Bean
+  fun defaultSampler(): Sampler {
+    return Sampler.ALWAYS_SAMPLE  // => Sample all requests (production: use probability)
+  }
+}
+
+@RestController
+@RequestMapping("/api")
+class OrderTracingController(
+  private val tracer: Tracer,
+  private val restTemplate: RestTemplate
+) {
+  @GetMapping("/order/{id}")
+  fun getOrder(@PathVariable id: Long): Order {
+    val span = tracer.nextSpan().name("get-order").start()
+    return tracer.withSpan(span).use {  // => Auto-closes span with use block
+      span.tag("order.id", id.toString())
+
+      // => Trace ID automatically propagated to downstream services
+      val user = restTemplate.getForObject(
+        "http://user-service/api/users/{id}", User::class.java, id
+      )
+
+      span.event("user-fetched")
+      Order(id, user)  // => Compose order response with user data
+    }.also {
+      span.end()
+    }
+  }
+}
+
+// application.yml
+// management:
+//   tracing:
+//     sampling:
+//       probability: 1.0
+//   zipkin:
+//     tracing:
+//       endpoint: http://localhost:9411/api/v2/spans
+
+// Trace ID in logs: [appName,traceId,spanId]
+
+// Kotlin-specific: Use 'use' extension function for auto-closeable resources
+// Alternative with inline function for cleaner span handling:
+// inline fun <T> Tracer.trace(name: String, block: (Span) -> T): T {
+//   val span = nextSpan().name(name).start()
+//   return withSpan(span).use { block(span) }.also { span.end() }
+// }
+// fun getOrder(id: Long) = tracer.trace("get-order") { span ->
+//   span.tag("order.id", id.toString())
+//   // business logic
+// }
 ```
 
 ```mermaid
@@ -519,6 +957,68 @@ public class OrderLoggingController {
 //  "requestId":"uuid","path":"/orders","orderId":"1","userId":"123"}
 ```
 
+**Code (Kotlin)**:
+
+```kotlin
+// build.gradle.kts: implementation("net.logstash.logback:logstash-logback-encoder")
+
+@Component
+class LoggingFilter : Filter {
+  override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
+    val httpRequest = request as HttpServletRequest
+
+    MDC.put("requestId", UUID.randomUUID().toString())
+    MDC.put("path", httpRequest.requestURI)
+    MDC.put("method", httpRequest.method)
+
+    try {
+      chain.doFilter(request, response)
+    } finally {
+      MDC.clear()  // => Cleanup MDC
+    }
+  }
+}
+
+@RestController
+class OrderLoggingController {
+  private val log = LoggerFactory.getLogger(javaClass)
+
+  @PostMapping("/orders")
+  fun createOrder(@RequestBody order: Order): Order {
+    log.info("Creating order",
+      kv("orderId", order.id),
+      kv("userId", order.user?.id))  // => Structured key-value pairs
+
+    return try {
+      // Process order
+      log.info("Order created successfully")
+      order
+    } catch (e: Exception) {
+      log.error("Order creation failed", e)
+      throw e
+    }
+  }
+}
+
+// logback-spring.xml
+// <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+//   <includeContext>true</includeContext>
+//   <includeMdc>true</includeMdc>
+// </encoder>
+
+// JSON output:
+// {"@timestamp":"2024-12-24T10:00:00.000+07:00","level":"INFO","message":"Creating order",
+//  "requestId":"uuid","path":"/orders","orderId":"1","userId":"123"}
+
+// Kotlin-specific: Use safe call (?.) for nullable properties in logging
+// Alternative with extension function for MDC context:
+// inline fun <T> withMdc(vararg pairs: Pair<String, String>, block: () -> T): T {
+//   pairs.forEach { MDC.put(it.first, it.second) }
+//   return try { block() } finally { MDC.clear() }
+// }
+// withMdc("requestId" to uuid, "path" to path) { /* request handling */ }
+```
+
 **Key Takeaway**: Structured logging with MDC enables correlation—use Logstash encoder for JSON output and MDC for request-scoped context like trace IDs, making logs searchable in centralized logging systems.
 
 **Why It Matters**: Structured logging with JSON format and MDC (Mapped Diagnostic Context) enables centralized log aggregation (ELK stack, Datadog) where engineers query logs by trace ID to reconstruct request flows across microservices. Production systems use MDC to propagate correlation IDs, user IDs, and tenant IDs through all log statements, enabling queries like "show all logs for user 12345 in the last hour" that would be impossible with unstructured text logs, reducing incident investigation time from hours (grep logs across 50 servers) to minutes (single query).
@@ -562,6 +1062,55 @@ public class UserServiceClient {
 //         permittedNumberOfCallsInHalfOpenState: 3
 
 // Circuit Breaker States: CLOSED (normal) -> OPEN (failing) -> HALF_OPEN (testing) -> CLOSED
+```
+
+**Code (Kotlin)**:
+
+```kotlin
+// build.gradle.kts: implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
+
+@Service
+class UserServiceClient(
+  private val circuitBreakerFactory: CircuitBreakerFactory<*, *>,
+  private val restTemplate: RestTemplate
+) {
+  fun getUser(id: Long): User {
+    val circuitBreaker = circuitBreakerFactory.create("user-service")
+
+    return circuitBreaker.run(
+      { restTemplate.getForObject("http://user-service/users/{id}", User::class.java, id) },
+      { getFallbackUser(id) }  // => Fallback on failure
+    ) ?: getFallbackUser(id)  // => Null safety fallback
+  }
+
+  private fun getFallbackUser(id: Long): User {
+    return User(id, "Fallback User", "fallback@example.com", null)
+  }
+}
+
+// application.yml
+// resilience4j:
+//   circuitbreaker:
+//     instances:
+//       user-service:
+//         slidingWindowSize: 10
+//         minimumNumberOfCalls: 5
+//         failureRateThreshold: 50
+//         waitDurationInOpenState: 10s
+//         permittedNumberOfCallsInHalfOpenState: 3
+
+// Circuit Breaker States: CLOSED (normal) -> OPEN (failing) -> HALF_OPEN (testing) -> CLOSED
+
+// Kotlin-specific: Use elvis operator (?:) for null-safe fallback chaining
+// Alternative with extension function for cleaner circuit breaker usage:
+// inline fun <T> CircuitBreakerFactory<*, *>.execute(
+//   name: String,
+//   fallback: (Throwable) -> T,
+//   block: () -> T
+// ): T = create(name).run(block, fallback)
+// val user = circuitBreakerFactory.execute("user-service", ::getFallbackUser) {
+//   restTemplate.getForObject<User>(...)
+// }
 ```
 
 ```mermaid
@@ -623,6 +1172,56 @@ record PaymentRequest(Long orderId, BigDecimal amount) {}
 record Payment(Long id, String status, String message) {}
 ```
 
+**Code (Kotlin)**:
+
+```kotlin
+@Service
+class PaymentServiceClient(
+  private val restTemplate: RestTemplate
+) {
+  @Retry(name = "payment-service", fallbackMethod = "paymentFallback")
+  fun processPayment(request: PaymentRequest): Payment {
+    return restTemplate.postForObject(
+      "http://payment-service/payments", request, Payment::class.java
+    ) ?: throw IllegalStateException("Null response")
+  }
+
+  @Suppress("UNUSED_PARAMETER")
+  private fun paymentFallback(request: PaymentRequest, e: Exception): Payment {
+    // => Fallback method signature must match original + Exception parameter
+    // => Fallback invoked after max retries exhausted (3 attempts)
+    return Payment(null, "FAILED", "Service unavailable")  // => Graceful degradation response
+  }
+}
+
+// application.yml
+// resilience4j:
+//   retry:
+//     instances:
+//       payment-service:
+//         maxAttempts: 3
+//         waitDuration: 1s
+//         exponentialBackoffMultiplier: 2
+//         retryExceptions:
+//           - org.springframework.web.client.ResourceAccessException
+//         ignoreExceptions:
+//           - java.lang.IllegalArgumentException
+
+// Retry sequence: 1s -> 2s -> 4s (exponential backoff)
+
+data class PaymentRequest(val orderId: Long, val amount: BigDecimal)
+data class Payment(val id: Long?, val status: String, val message: String)
+
+// Kotlin-specific: Use @Suppress for unused fallback parameters
+// Alternative with inline function for retry logic:
+// inline fun <T> retryWithBackoff(maxAttempts: Int = 3, block: () -> T): T {
+//   repeat(maxAttempts - 1) { attempt ->
+//     try { return block() } catch (e: Exception) { delay(2.0.pow(attempt).toLong() * 1000) }
+//   }
+//   return block()  // Final attempt without catch
+// }
+```
+
 **Key Takeaway**: Retry with exponential backoff handles transient failures—configure max attempts and backoff multiplier to automatically retry failed operations with increasing delays between attempts.
 
 **Why It Matters**: Retry with exponential backoff handles transient failures (network blips, database connection pool exhaustion) without overwhelming failing services with retry storms that prevent recovery. Production retry configurations use jittered exponential backoff (1s, 2s, 4s + random jitter) to prevent thundering herd where 1000 clients retry simultaneously every 5 seconds, with max attempts tuned based on error type—retry network errors 3 times but fail fast on business validation errors.
@@ -670,6 +1269,62 @@ public class ApiController {
 record ApiResponse(String status, String message) {}
 ```
 
+**Code (Kotlin)**:
+
+```kotlin
+@Service
+class ApiRateLimitService {
+  @RateLimiter(name = "api-limiter", fallbackMethod = "rateLimitFallback")
+  // => Apply rate limiting (10 req/sec from config)
+  fun callExternalApi(endpoint: String): ApiResponse {  // => Method protected by rate limiter
+    // => If rate limit exceeded, fallback method invoked
+    return ApiResponse("success", "Data from $endpoint")  // => Normal response when within rate limit
+  }
+
+  @Suppress("UNUSED_PARAMETER")
+  private fun rateLimitFallback(endpoint: String, e: Exception): ApiResponse {
+    // => Fallback when rate limit exceeded
+    return ApiResponse("error", "Rate limit exceeded. Try again later.")  // => Return 429-equivalent response
+  }
+}
+
+@RestController
+class ApiController(
+  private val apiService: ApiRateLimitService
+) {
+  @GetMapping("/api/data")  // => Endpoint: GET /api/data
+  fun getData(): ApiResponse {  // => Delegate to rate-limited service
+    return apiService.callExternalApi("/external/endpoint")  // => Calls method protected by @RateLimiter
+  }
+}
+
+// application.yml
+// resilience4j:
+//   ratelimiter:
+//     instances:
+//       api-limiter:
+//         limitForPeriod: 10
+//         limitRefreshPeriod: 1s
+//         timeoutDuration: 0s
+
+// Allows 10 requests per second. Additional requests are rejected.
+
+data class ApiResponse(val status: String, val message: String)
+
+// Kotlin-specific: Use string templates in response construction
+// Alternative with custom annotation and aspect for rate limiting:
+// @Target(AnnotationTarget.FUNCTION)
+// annotation class RateLimit(val requestsPerSecond: Int)
+// @Aspect
+// class RateLimitAspect(private val rateLimiter: RateLimiter) {
+//   @Around("@annotation(rateLimit)")
+//   fun checkRateLimit(joinPoint: ProceedingJoinPoint, rateLimit: RateLimit): Any? {
+//     return if (rateLimiter.tryAcquire()) joinPoint.proceed()
+//     else throw TooManyRequestsException()
+//   }
+// }
+```
+
 **Key Takeaway**: Rate limiting protects APIs from abuse—use `@RateLimiter` to enforce request quotas per time window, preventing service degradation from excessive traffic.
 
 **Why It Matters**: Rate limiting protects APIs from abuse and prevents resource exhaustion when clients retry aggressively during failures—without rate limiting, a single misconfigured client retry loop can generate 10,000 requests/second causing database connection pool exhaustion that affects all users. Production APIs use tiered rate limits (1000 req/hour for free tier, 100,000 req/hour for premium tier) to monetize API access while preventing service degradation, returning 429 Too Many Requests with Retry-After headers that guide clients.
@@ -713,6 +1368,44 @@ public class ReportService {
 //         keepAliveDuration: 20s
 
 record Report(Long userId, String title, LocalDateTime generatedAt) {}
+```
+
+**Code (Kotlin)**:
+
+```kotlin
+@Service
+class ReportService {
+  @Bulkhead(name = "report-generation", type = Bulkhead.Type.THREADPOOL, fallbackMethod = "reportFallback")
+  // => Isolate with dedicated thread pool, fallback when bulkhead full
+  fun generateReport(userId: Long): CompletableFuture<Report> {  // => Async method (returns CompletableFuture)
+    // => Executes in isolated 5-thread pool (from config)
+    return CompletableFuture.supplyAsync {  // => Execute asynchronously
+      // => Heavy computation (CPU-intensive, long-running)
+      Report(userId, "Monthly Report", LocalDateTime.now())  // => Generate report
+    }
+  }
+
+  @Suppress("UNUSED_PARAMETER")
+  private fun reportFallback(userId: Long, e: Exception): CompletableFuture<Report> {
+    // => Fallback when bulkhead exhausted
+    return CompletableFuture.completedFuture(  // => Return immediately completed future
+      Report(userId, "Cached Report", LocalDateTime.now().minusDays(1))  // => Return cached/stale report
+    )
+  }
+}
+
+// application.yml - Same as Java
+
+data class Report(val userId: Long, val title: String, val generatedAt: LocalDateTime)
+
+// Kotlin-specific: Use trailing lambda for supplyAsync
+// Alternative with Coroutines (more idiomatic):
+// @Service
+// class ReportService(private val scope: CoroutineScope) {
+//   suspend fun generateReport(userId: Long): Report = withContext(Dispatchers.IO) {
+//     Report(userId, "Monthly Report", LocalDateTime.now())
+//   }
+// }
 ```
 
 **Key Takeaway**: Bulkhead pattern isolates thread pools—use `@Bulkhead` with thread pool type to prevent resource exhaustion from one failing service, ensuring failures don't cascade across the application.
@@ -775,6 +1468,42 @@ public class CustomAutoConfiguration {
 //     apiKey: secret-key
 ```
 
+**Code (Kotlin)**:
+
+```kotlin
+// Module: my-custom-starter
+// CustomProperties.kt
+@ConfigurationProperties(prefix = "custom.feature")
+@Validated
+data class CustomProperties(
+  @field:NotBlank var apiKey: String = "",
+  var enabled: Boolean = true,
+  var timeout: Duration = Duration.ofSeconds(30)
+)
+
+// CustomService.kt
+class CustomService(private val properties: CustomProperties) {
+  fun performAction(): String = "Action performed with API key: ${properties.apiKey}"
+}
+
+// CustomAutoConfiguration.kt
+@Configuration
+@EnableConfigurationProperties(CustomProperties::class)
+@ConditionalOnProperty(prefix = "custom.feature", name = ["enabled"], havingValue = "true")
+open class CustomAutoConfiguration {
+  @Bean
+  @ConditionalOnMissingBean
+  open fun customService(properties: CustomProperties) = CustomService(properties)
+}
+
+// META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
+// com.example.starter.CustomAutoConfiguration
+
+// Usage - Same as Java
+
+// Kotlin-specific: Use data class with var for @ConfigurationProperties binding, expression body for single-line methods
+```
+
 **Key Takeaway**: Create custom starters to encapsulate reusable auto-configuration—define `@ConfigurationProperties`, auto-configuration classes, and register in `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` for distribution.
 
 **Why It Matters**: Custom starters enable organizational best practices (logging format, metrics collection, security headers) to be shared across 50+ microservices through dependency inclusion, eliminating copy-paste configuration that diverges over time. Production platform teams create internal starters that auto-configure database connections with company-wide connection pool settings, distributed tracing with correlation ID propagation, and security headers (CSP, HSTS) that satisfy compliance requirements, reducing per-service configuration from 200 lines to zero.
@@ -823,6 +1552,41 @@ interface CacheService {
     void put(String key, Object value);
     Object get(String key);
 }
+```
+
+**Code (Kotlin)**:
+
+```kotlin
+@Configuration
+open class ConditionalBeansConfig {
+  @Bean
+  @ConditionalOnClass(name = ["com.redis.RedisClient"])  // => Only create if Redis client JAR present
+  open fun redisCacheService(): CacheService = RedisCacheService()  // => Created only when Redis available
+
+  @Bean
+  @ConditionalOnMissingClass("com.redis.RedisClient")  // => Only create if Redis client NOT on classpath
+  open fun memoryCacheService(): CacheService = MemoryCacheService()  // => In-memory fallback
+
+  @Bean
+  @ConditionalOnProperty(name = ["feature.advanced"], havingValue = "true")
+  open fun advancedFeature() = AdvancedFeature()  // => Created based on application.yml
+
+  @Bean
+  @ConditionalOnMissingBean(DataSource::class)  // => Only create if no other DataSource exists
+  open fun defaultDataSource(): DataSource = EmbeddedDatabaseBuilder()
+    .setType(EmbeddedDatabaseType.H2).build()  // => Auto-configured embedded H2
+
+  @Bean
+  @ConditionalOnBean(EntityManagerFactory::class)  // => Only create if EntityManagerFactory exists
+  open fun transactionManager(emf: EntityManagerFactory) = JpaTransactionManager(emf)
+}
+
+interface CacheService {
+  fun put(key: String, value: Any)
+  fun get(key: String): Any?
+}
+
+// Kotlin-specific: Use expression bodies for simple bean definitions, Any? for nullable returns
 ```
 
 **Key Takeaway**: Conditional beans enable context-aware configuration—use `@ConditionalOnClass`, `@ConditionalOnProperty`, and `@ConditionalOnMissingBean` to create or skip beans based on classpath, properties, or existing bean presence.
@@ -898,6 +1662,46 @@ public class MailConfig {
 //       reset: password-reset.html
 ```
 
+**Code (Kotlin)**:
+
+```kotlin
+@ConfigurationProperties(prefix = "app.mail")
+@Validated
+data class MailProperties(
+  @field:NotBlank var host: String = "",
+  @field:Min(1) @field:Max(65535) var port: Int = 587,
+  @field:Email var from: String = "",
+  var smtp: SmtpProperties = SmtpProperties(),
+  var templates: TemplatesProperties = TemplatesProperties()
+) {
+  data class SmtpProperties(
+    var auth: Boolean = true,
+    var starttls: Boolean = true,
+    var username: String = "",
+    var password: String = ""
+  )
+  data class TemplatesProperties(
+    var welcome: String = "welcome.html",
+    var reset: String = "password-reset.html"
+  )
+}
+
+@Configuration
+@EnableConfigurationProperties(MailProperties::class)
+open class MailConfig {
+  @Bean
+  open fun javaMailSender(props: MailProperties): JavaMailSender =
+    JavaMailSenderImpl().apply {
+      host = props.host; port = props.port
+      username = props.smtp.username; password = props.smtp.password
+      javaMailProperties["mail.smtp.auth"] = props.smtp.auth.toString()
+      javaMailProperties["mail.smtp.starttls.enable"] = props.smtp.starttls.toString()
+    }
+}
+
+// Kotlin-specific: Use nested data classes for hierarchical properties, apply scope function for configuration
+```
+
 **Key Takeaway**: Use `@ConfigurationProperties` for type-safe configuration—bind hierarchical properties to POJOs with validation, enabling compile-time safety and IDE autocomplete for application settings.
 
 **Why It Matters**: Type-safe configuration properties prevent runtime failures from typos (datasource.urll vs datasource.url) and type mismatches (port: "abc" instead of port: 8080) through compile-time validation, catching configuration errors during build instead of production deployment. Production systems use nested configuration properties (@ConfigurationProperties with inner classes) to organize related settings (database: {url, username, password, pool: {min, max}}) that validate as a unit, failing fast on startup rather than discovering missing configuration when code first executes.
@@ -952,6 +1756,39 @@ record ApplicationInfo(String name, String[] profiles, int beanCount, String jav
 // GET /actuator/application-info
 // POST /actuator/application-info/{key}
 // DELETE /actuator/application-info/{cacheName}
+```
+
+**Code (Kotlin)**:
+
+```kotlin
+@Endpoint(id = "application-info")
+@Component
+class ApplicationInfoEndpoint(
+  private val context: ApplicationContext,
+  private val environment: Environment
+) {
+  @ReadOperation  // => Maps to GET /actuator/application-info
+  fun info() = ApplicationInfo(
+    context.applicationName,
+    environment.activeProfiles,
+    context.beanDefinitionCount,
+    System.getProperty("java.version")
+  )
+
+  @WriteOperation  // => Maps to POST /actuator/application-info/{key}
+  fun updateSetting(@Selector key: String, value: String) {
+    System.setProperty("app.$key", value)
+  }
+
+  @DeleteOperation  // => Maps to DELETE /actuator/application-info/{cacheName}
+  fun clearCache(@Selector cacheName: String) {
+    println("Clearing cache: $cacheName")
+  }
+}
+
+data class ApplicationInfo(val name: String, val profiles: Array<String>, val beanCount: Int, val javaVersion: String)
+
+// Kotlin-specific: Use expression body for info(), string templates in operations
 ```
 
 **Key Takeaway**: Custom actuator endpoints expose application-specific metrics—use `@Endpoint`, `@ReadOperation`, `@WriteOperation`, and `@DeleteOperation` to create management endpoints beyond Spring Boot's default actuators.
@@ -1020,6 +1857,40 @@ flowchart TD
     style E fill:#CA9161,stroke:#000,color:#000
     style F fill:#0173B2,stroke:#000,color:#fff
     style G fill:#DE8F05,stroke:#000,color:#000
+```
+
+**Note**: Dockerfile syntax is identical for Kotlin Spring Boot applications. The layered JAR extraction and multi-stage build process works the same way for both Java and Kotlin compiled JARs.
+
+**Code (Kotlin)**:
+
+```kotlin
+// build.gradle.kts: Enable layered JARs in Gradle Kotlin DSL
+// Kotlin projects typically use Gradle instead of Maven
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+
+tasks.named<BootJar>("bootJar") {
+    // Enable layered JAR format
+    // Layers separate dependencies from application code for better Docker caching
+    layered {
+        enabled = true
+        // Default layers: dependencies, spring-boot-loader, snapshot-dependencies, application
+        // Custom layers can be defined in layers.idx file
+    }
+}
+```
+
+```bash
+# Build and verify layers with Gradle
+./gradlew clean bootJar
+docker build -t myapp:latest .
+docker run -p 8080:8080 myapp:latest
+
+# List layers in the JAR
+java -Djarmode=layertools -jar build/libs/myapp.jar list
+# => dependencies
+# => spring-boot-loader
+# => snapshot-dependencies
+# => application
 ```
 
 **Key Takeaway**: Layered JARs with Docker multi-stage builds optimize image caching—dependencies layer rarely changes, enabling faster rebuilds and smaller image transfers when only application code updates.
@@ -1100,6 +1971,32 @@ public class ExternalApiHealthIndicator implements HealthIndicator {
 //     port: 8080
 ```
 
+**Code (Kotlin)**:
+
+```kotlin
+@Component
+class DatabaseHealthIndicator(private val dataSource: DataSource) : HealthIndicator {
+  override fun health(): Health = try {
+    dataSource.connection.use { conn ->
+      if (conn.isValid(1)) Health.up().withDetail("database", "PostgreSQL").build()
+      else Health.down().build()
+    }
+  } catch (e: Exception) {
+    Health.down(e).build()
+  }
+}
+
+@Component
+class ReadinessIndicator : HealthIndicator {
+  private var isReady = false
+  @EventListener(ApplicationReadyEvent::class)
+  fun onReady() { isReady = true }
+  override fun health() = if (isReady) Health.up().build() else Health.outOfService().build()
+}
+
+// Kotlin-specific: Use 'use' extension for auto-closeable resources, expression body for health()
+```
+
 **Key Takeaway**: Separate liveness and readiness probes in Kubernetes—liveness checks if application should restart (basic health), readiness checks if application can serve traffic (database connections, external dependencies).
 
 **Why It Matters**: Liveness probes detect deadlocks and infinite loops that leave applications running but unable to serve requests—Kubernetes restarts unhealthy pods automatically instead of requiring manual intervention. Readiness probes prevent traffic routing to instances with degraded dependencies (database connection pool exhausted), removing them from load balancer rotation until recovered, enabling zero-downtime deployments where new pods don't receive traffic until health checks pass while old pods continue serving requests during rollout.
@@ -1157,6 +2054,28 @@ public class LongRunningController {
 // 2. Waits up to 30s for active requests to complete
 // 3. Executes @PreDestroy methods
 // 4. Shuts down
+```
+
+**Code (Kotlin)**:
+
+```kotlin
+// application.yml - Same as Java
+
+@Component
+class GracefulShutdownListener : ApplicationListener<ContextClosedEvent> {
+  private val log = LoggerFactory.getLogger(javaClass)
+  override fun onApplicationEvent(event: ContextClosedEvent) {
+    log.info("Graceful shutdown initiated, waiting for requests to complete...")
+  }
+}
+
+@Configuration
+open class GracefulShutdownConfig {
+  @Bean
+  open fun gracefulShutdown() = TomcatConnectorCustomizer { connector -> connector.pause() }
+}
+
+// Kotlin-specific: Use expression body for listener, lambda for customizer
 ```
 
 **Key Takeaway**: Enable graceful shutdown with `server.shutdown=graceful`—Spring Boot waits for in-flight requests to complete (up to configured timeout) before shutting down, preventing abrupt connection closures during deployments.
@@ -1230,6 +2149,33 @@ public class ConfigClientController {
 //     application-prod.yml    # Production environment
 
 // Refresh config: POST /actuator/refresh
+```
+
+**Code (Kotlin)**:
+
+```kotlin
+// Config Server Application
+@SpringBootApplication
+@EnableConfigServer
+open class ConfigServerApplication
+
+fun main(args: Array<String>) {
+  runApplication<ConfigServerApplication>(*args)
+}
+
+// Client Application
+@RestController
+@RefreshScope
+class ConfigController(@Value("\${app.message}") private var message: String) {
+  @GetMapping("/message")
+  fun getMessage() = mapOf("message" to message)
+
+  @GetMapping("/feature")
+  fun featureToggle(@Value("\${app.feature.enabled}") featureEnabled: Boolean) =
+    mapOf("feature" to "demo", "enabled" to featureEnabled)
+}
+
+// Kotlin-specific: Use @RefreshScope with var for dynamic property refresh, mapOf for response
 ```
 
 **Key Takeaway**: Spring Cloud Config Server centralizes configuration—applications fetch environment-specific properties from a Git repository, enabling configuration changes without redeployment using `@RefreshScope` and actuator refresh endpoint.
@@ -1366,6 +2312,34 @@ graph TD
     style Secret fill:#DE8F05,color:#000
     style Pod1 fill:#CC78BC,color:#000
     style App1 fill:#CA9161,color:#000
+```
+
+**Code (Kotlin)**:
+
+```kotlin
+// Kubernetes YAML - Same for all languages
+
+@Configuration
+@ConfigurationProperties(prefix = "database")
+data class DatabaseConfig(
+  var host: String = "",
+  var port: Int = 5432,
+  var name: String = ""
+)
+
+@RestController
+class ConfigMapController(
+  private val config: DatabaseConfig,
+  @Value("\${api.key}") private val apiKey: String
+) {
+  @GetMapping("/config")
+  fun getConfig() = mapOf(
+    "database" to config,
+    "hasApiKey" to apiKey.isNotEmpty()
+  )
+}
+
+// Kotlin-specific: Use data class for configuration, expression body, mapOf for response
 ```
 
 **Key Takeaway**: Use Kubernetes ConfigMaps for non-sensitive configuration and Secrets for credentials—Spring Cloud Kubernetes automatically reloads configuration when ConfigMaps/Secrets change without pod restarts.
@@ -1511,6 +2485,33 @@ flowchart TD
     style Filters fill:#0173B2,color:#fff
 ```
 
+**Code (Kotlin)**:
+
+```kotlin
+@Configuration
+open class GatewayConfig {
+  @Bean
+  open fun customRouteLocator(builder: RouteLocatorBuilder): RouteLocator =
+    builder.routes()
+      .route("user-service") { r -> r.path("/users/**").uri("lb://user-service") }
+      .route("order-service") { r -> r.path("/orders/**")
+        .filters { f -> f.addRequestHeader("X-Gateway", "CloudGateway") }
+        .uri("lb://order-service") }
+      .build()
+}
+
+@Component
+class AuthGatewayFilter : GlobalFilter {
+  override fun filter(exchange: ServerWebExchange, chain: GatewayFilterChain): Mono<Void> {
+    val token = exchange.request.headers.getFirst("Authorization")
+    return if (token != null) chain.filter(exchange)
+    else Mono.error(UnauthorizedException())
+  }
+}
+
+// Kotlin-specific: Use expression body for routes, if-expression for auth check
+```
+
 **Key Takeaway**: Spring Cloud Gateway centralizes routing, authentication, rate limiting, and circuit breaking—use predicates for routing logic and filters for cross-cutting concerns across all microservices.
 
 **Why It Matters**: API Gateway consolidates cross-cutting concerns (authentication, rate limiting, circuit breakers) into a single entry point instead of duplicating logic across 50 microservices, reducing security vulnerabilities from inconsistent authentication implementations. Production gateways route 1,000,000+ requests/minute across hundreds of backend services with <10ms latency overhead, implementing dynamic routing (A/B testing, canary releases), request transformation (legacy SOAP to REST conversion), and protocol translation (HTTP to gRPC) without modifying backend services.
@@ -1641,6 +2642,61 @@ record OrderItem(String productId, int quantity, BigDecimal price) {}
 enum OrderStatus { PLACED, SHIPPED, CANCELLED }
 ```
 
+**Code (Kotlin)**:
+
+```kotlin
+sealed class OrderEvent {
+  abstract val orderId: String
+  abstract val timestamp: LocalDateTime
+}
+
+data class OrderCreatedEvent(
+  override val orderId: String,
+  override val timestamp: LocalDateTime,
+  val userId: String,
+  val items: List<OrderItem>
+) : OrderEvent()
+
+data class OrderCancelledEvent(
+  override val orderId: String,
+  override val timestamp: LocalDateTime
+) : OrderEvent()
+
+@Entity
+open class EventStore(
+  @Id @GeneratedValue var id: Long? = null,
+  var aggregateId: String = "",
+  var eventType: String = "",
+  var eventData: String = "",
+  var timestamp: LocalDateTime = LocalDateTime.now()
+)
+
+@Service
+class OrderEventService(
+  private val eventStoreRepo: EventStoreRepository,
+  private val objectMapper: ObjectMapper
+) {
+  fun saveEvent(event: OrderEvent) {
+    val eventStore = EventStore(
+      aggregateId = event.orderId,
+      eventType = event::class.simpleName ?: "",
+      eventData = objectMapper.writeValueAsString(event),
+      timestamp = event.timestamp
+    )
+    eventStoreRepo.save(eventStore)
+  }
+
+  fun getEvents(orderId: String): List<OrderEvent> =
+    eventStoreRepo.findByAggregateIdOrderByTimestamp(orderId)
+      .map { objectMapper.readValue(it.eventData, OrderEvent::class.java) }
+}
+
+data class OrderItem(val productId: String, val quantity: Int, val price: BigDecimal)
+enum class OrderStatus { PLACED, SHIPPED, CANCELLED }
+
+// Kotlin-specific: Use sealed class for event hierarchy, expression body for getEvents
+```
+
 **Key Takeaway**: Event sourcing persists state changes as immutable events—rebuild aggregate state by replaying events, enabling complete audit trails, time travel debugging, and event-driven architectures.
 
 **Why It Matters**: Event sourcing creates complete audit trails where every state change persists as an event, enabling time-travel debugging ("what was order 12345's state at 2pm?") and regulatory compliance (financial audit trails). Production event-sourced systems at banks and healthcare providers use event replay to recover from bugs that corrupted current state by rebuilding from historical events, and support complex business intelligence queries ("how many users cancelled after payment failure?") that current-state-only systems cannot answer.
@@ -1766,6 +2822,50 @@ public class OrderReadModelUpdater {
 
 record CreateOrderCommand(String customerId, BigDecimal totalAmount) {}
 record OrderCreatedEvent(String orderId, String customerId, BigDecimal totalAmount) {}
+```
+
+**Code (Kotlin)**:
+
+```kotlin
+// Command side
+data class CreateOrderCommand(val userId: String, val items: List<OrderItem>)
+
+@Service
+class OrderCommandService(
+  private val orderRepo: OrderRepository,
+  private val eventPublisher: ApplicationEventPublisher
+) {
+  @Transactional
+  fun createOrder(command: CreateOrderCommand): Order {
+    val order = Order(userId = command.userId, items = command.items)
+    orderRepo.save(order)
+    eventPublisher.publishEvent(OrderCreatedEvent(order.id!!, LocalDateTime.now()))
+    return order
+  }
+}
+
+// Query side
+data class OrderSummary(val orderId: String, val userId: String, val totalAmount: BigDecimal, val itemCount: Int)
+
+@Service
+class OrderQueryService(private val orderSummaryRepo: OrderSummaryRepository) {
+  fun getOrderSummary(orderId: String): OrderSummary? =
+    orderSummaryRepo.findById(orderId).orElse(null)
+
+  fun getUserOrders(userId: String): List<OrderSummary> =
+    orderSummaryRepo.findByUserId(userId)
+}
+
+@Component
+class OrderEventHandler(private val orderSummaryRepo: OrderSummaryRepository) {
+  @EventListener
+  fun handleOrderCreated(event: OrderCreatedEvent) {
+    val summary = OrderSummary(event.orderId, event.userId, event.totalAmount, event.items.size)
+    orderSummaryRepo.save(summary)
+  }
+}
+
+// Kotlin-specific: Use data classes for commands/queries, expression body, nullable return
 ```
 
 ```mermaid
@@ -1917,6 +3017,41 @@ public class ProductController {
 }
 ```
 
+**Code (Kotlin)**:
+
+```kotlin
+@Component
+class TenantContext {
+  companion object {
+    private val tenantId = ThreadLocal<String>()
+    fun setTenantId(id: String) = tenantId.set(id)
+    fun getTenantId(): String = tenantId.get() ?: "default"
+    fun clear() = tenantId.remove()
+  }
+}
+
+@Component
+@Order(1)
+class TenantFilter : Filter {
+  override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
+    val tenantId = (request as HttpServletRequest).getHeader("X-Tenant-ID") ?: "default"
+    TenantContext.setTenantId(tenantId)
+    try { chain.doFilter(request, response) }
+    finally { TenantContext.clear() }
+  }
+}
+
+abstract class MultiTenantHikariDataSource : HikariDataSource() {
+  override fun getConnection(): Connection {
+    val tenantId = TenantContext.getTenantId()
+    schema = "tenant_$tenantId"
+    return super.getConnection()
+  }
+}
+
+// Kotlin-specific: Use companion object for ThreadLocal, expression body for getTenantId
+```
+
 **Key Takeaway**: Choose multi-tenancy strategy based on isolation needs—separate databases for strong isolation, separate schemas for moderate isolation, or discriminator columns for maximum resource sharing with application-level filtering.
 
 **Why It Matters**: Multi-tenancy enables SaaS applications to serve thousands of customers from a single application instance, reducing infrastructure costs by 80% compared to per-customer deployments. Production multi-tenant SaaS platforms choose tenant isolation strategy based on requirements—shared schema with discriminator column for maximum efficiency (10,000+ tenants per instance), separate schemas for data isolation without separate databases (100-1000 tenants), or separate databases for strict compliance requirements (healthcare, finance), balancing cost against security and regulatory requirements.
@@ -2013,6 +3148,36 @@ spring:
     enabled: true
   main:
     lazy-initialization: true
+```
+
+**Code (Kotlin)**:
+
+```kotlin
+// build.gradle.kts
+plugins {
+  id("org.springframework.boot") version "3.2.0"
+  id("org.graalvm.buildtools.native") version "0.9.28"
+  kotlin("jvm") version "1.9.21"
+  kotlin("plugin.spring") version "1.9.21"
+}
+
+@SpringBootApplication
+open class NativeApplication
+
+fun main(args: Array<String>) {
+  runApplication<NativeApplication>(*args)
+}
+
+@RestController
+class HelloController {
+  @GetMapping("/hello")
+  fun hello() = "Hello from Native Image!"
+}
+
+// Build: ./gradlew nativeCompile
+// Startup: 0.05s vs 2s JVM, Memory: 20MB vs 200MB JVM
+
+// Kotlin-specific: Same Gradle Native plugin configuration
 ```
 
 **Key Takeaway**: GraalVM native images provide instant startup (~50ms vs ~2s) and minimal memory footprint (~20MB vs ~200MB)—ideal for serverless, containers, and microservices, but with longer build times and reflection/proxy limitations.
@@ -2189,6 +3354,168 @@ graph TD
     style DB fill:#0173B2,color:#fff
 ```
 
+**Code (Kotlin)**:
+
+```kotlin
+// GraphQL Schema (same for Java/Kotlin): src/main/resources/graphql/schema.graphqls
+// type Query {
+//   bookById(id: ID!): Book
+//   allBooks: [Book]
+// }
+// type Mutation {
+//   createBook(title: String!, authorId: ID!): Book
+// }
+// type Book {
+//   id: ID!
+//   title: String!
+//   author: Author
+// }
+// type Author {
+//   id: ID!
+//   name: String!
+//   books: [Book]
+// }
+
+// Data classes for GraphQL types
+// Kotlin data classes provide concise value objects with automatic equals/hashCode/toString
+data class Book(
+    val id: String,
+    val title: String,
+    val authorId: String
+)
+
+data class Author(
+    val id: String,
+    val name: String
+)
+
+// GraphQL Controller with Query and Mutation Resolvers
+// @QueryMapping maps to GraphQL queries, @MutationMapping maps to mutations
+@Controller
+class BookController(
+    private val bookRepository: BookRepository,  // Primary constructor injection - no @Autowired needed
+    private val authorRepository: AuthorRepository
+) {
+    // Query resolver - returns single book by ID
+    // @Argument annotation maps GraphQL argument to method parameter
+    // Expression body for concise single-expression functions
+    @QueryMapping
+    fun bookById(@Argument id: String): Book? = bookRepository.findById(id)
+
+    // Query resolver - returns all books
+    // Expression body returns repository result directly
+    @QueryMapping
+    fun allBooks(): List<Book> = bookRepository.findAll()
+
+    // Mutation resolver - creates new book
+    // Accepts GraphQL arguments for book creation
+    @MutationMapping
+    fun createBook(@Argument title: String, @Argument authorId: String): Book {
+        val book = Book(
+            id = UUID.randomUUID().toString(),  // Generate unique ID
+            title = title,
+            authorId = authorId
+        )
+        return bookRepository.save(book)  // Save and return created book
+    }
+
+    // Field resolver - fetches author for a book (nested query)
+    // @SchemaMapping links this resolver to Book.author field
+    // Prevents N+1 queries when combined with DataLoader
+    @SchemaMapping
+    fun author(book: Book): Author? = authorRepository.findById(book.authorId)
+}
+
+// Author Controller for author-related queries
+@Controller
+class AuthorController(
+    private val authorRepository: AuthorRepository,
+    private val bookRepository: BookRepository
+) {
+    // Field resolver - fetches books for an author (one-to-many relationship)
+    // @SchemaMapping(typeName = "Author") maps to Author.books field in schema
+    // Returns list of books authored by this author
+    @SchemaMapping(typeName = "Author")
+    fun books(author: Author): List<Book> = bookRepository.findByAuthorId(author.id)
+}
+
+// DataLoader Configuration for batch loading (prevents N+1 queries)
+// DataLoader batches multiple requests into single database query
+@Configuration
+open class DataLoaderConfiguration {
+    // Bean for batching author loads
+    // MappedBatchLoader receives multiple keys and returns map of key->value
+    @Bean
+    open fun authorDataLoader(authorRepository: AuthorRepository): MappedBatchLoader<String, Author> {
+        // Lambda receives list of author IDs and returns map of ID->Author
+        // Single query fetches all authors instead of N individual queries
+        return MappedBatchLoader { authorIds, _ ->
+            // Mono wraps asynchronous result for reactive GraphQL execution
+            Mono.just(
+                authorRepository.findAllById(authorIds)  // Batch fetch all authors
+                    .associateBy { it.id }  // Convert list to map for O(1) lookups
+            )
+        }
+    }
+
+    // DataLoader registration - makes loader available to resolvers
+    @Bean
+    open fun dataLoaderRegistry(authorDataLoader: MappedBatchLoader<String, Author>): DataLoaderRegistry {
+        val registry = DataLoaderRegistry()
+        // Register author loader with name for resolver access
+        registry.register("author", DataLoader.newMappedDataLoader(authorDataLoader))
+        return registry
+    }
+}
+
+// Using DataLoader in resolver (alternative to direct repository call)
+@Controller
+class OptimizedBookController(
+    private val bookRepository: BookRepository
+) {
+    // Field resolver using DataLoader for batch loading authors
+    // DataLoader automatically batches concurrent author requests
+    @SchemaMapping
+    fun author(book: Book, dataLoader: DataLoader<String, Author>): CompletableFuture<Author?> {
+        // Load author through DataLoader instead of direct repository call
+        // Multiple concurrent calls batched into single query
+        return dataLoader.load(book.authorId)
+    }
+}
+
+// Repositories (same as Java, Kotlin interface syntax)
+interface BookRepository : JpaRepository<Book, String> {
+    // Query method derived from method name
+    fun findByAuthorId(authorId: String): List<Book>
+}
+
+interface AuthorRepository : JpaRepository<Author, String>
+
+// Alternative: Using Kotlin Coroutines for async GraphQL resolvers
+// Requires spring-boot-starter-graphql with coroutines support
+@Controller
+class CoroutineBookController(
+    private val bookRepository: BookRepository,
+    private val authorRepository: AuthorRepository
+) {
+    // Suspend function for async query execution
+    // GraphQL framework automatically wraps in coroutine context
+    @QueryMapping
+    suspend fun bookById(@Argument id: String): Book? {
+        // Simulated async database call
+        return withContext(Dispatchers.IO) {
+            bookRepository.findById(id)
+        }
+    }
+
+    // Suspend function for async field resolution
+    @SchemaMapping
+    suspend fun author(book: Book): Author? = withContext(Dispatchers.IO) {
+        authorRepository.findById(book.authorId)
+    }
+}
+```
+
 **Key Takeaway**: GraphQL enables clients to request exactly the fields they need—use `@QueryMapping` and `@MutationMapping` for resolvers, and `DataLoader` to prevent N+1 queries when fetching nested relationships.
 
 **Why It Matters**: GraphQL enables clients to request exactly the fields they need, reducing over-fetching (REST returns 20 fields when client needs 3) and under-fetching (REST requires 3 API calls to get related data) that plague REST APIs. Production mobile apps use GraphQL to minimize bandwidth usage (request only name+email instead of full user profile) critical for slow networks, while BFF (Backend for Frontend) pattern enables web and mobile clients to query the same GraphQL API with different field selections optimized for each platform's needs.
@@ -2315,6 +3642,251 @@ record ReservationResponse(String reservationId, boolean success) {}
 record PaymentRequest(String customerId, BigDecimal amount) {}
 record PaymentResponse(String transactionId, boolean success) {}
 record RefundRequest(String orderId) {}
+```
+
+**Code (Kotlin)**:
+
+```kotlin
+// Orchestration-based Saga - central coordinator manages transaction flow
+// Saga orchestrator sends commands to services and handles compensation on failure
+@Service
+class OrderSaga(
+    private val restTemplate: RestTemplate,  // Primary constructor injection
+    private val kafkaTemplate: KafkaTemplate<String, String>
+) {
+    // Process order through saga steps with compensating transactions on failure
+    fun processOrder(request: OrderRequest) {
+        val orderId = UUID.randomUUID().toString()  // Generate unique order ID
+
+        try {
+            // Step 1: Reserve inventory
+            // Call inventory service to reserve products
+            val reservation = reserveInventory(request.productId, request.quantity)
+
+            // Step 2: Process payment
+            // Call payment service to charge customer
+            val payment = processPayment(request.customerId, request.totalAmount)
+
+            // Step 3: Create order
+            // Store order with reservation and payment references
+            createOrder(orderId, request, reservation.reservationId, payment.transactionId)
+
+            // Step 4: Send notification
+            // Notify customer of successful order
+            sendNotification(request.customerId, "Order $orderId placed successfully")
+
+            // Publish success event to event bus
+            kafkaTemplate.send("order-events", "OrderCompleted", orderId)
+        } catch (e: Exception) {
+            // Compensating transactions (rollback) - undo all completed steps
+            compensate(orderId, e)
+        }
+    }
+
+    // Reserve inventory in inventory service
+    private fun reserveInventory(productId: String, quantity: Int): ReservationResponse {
+        // POST request to inventory service
+        val response = restTemplate.postForEntity(
+            "http://inventory-service/api/reservations",
+            ReservationRequest(productId, quantity),
+            ReservationResponse::class.java
+        )
+
+        // Validate response status
+        if (!response.statusCode.is2xxSuccessful) {
+            throw SagaException("Inventory reservation failed")
+        }
+
+        // Elvis operator provides safe unwrapping with exception on null
+        return response.body ?: throw SagaException("Empty response from inventory service")
+    }
+
+    // Process payment in payment service
+    private fun processPayment(customerId: String, amount: BigDecimal): PaymentResponse {
+        // POST request to payment service
+        val response = restTemplate.postForEntity(
+            "http://payment-service/api/payments",
+            PaymentRequest(customerId, amount),
+            PaymentResponse::class.java
+        )
+
+        // Validate response status
+        if (!response.statusCode.is2xxSuccessful) {
+            throw SagaException("Payment processing failed")
+        }
+
+        return response.body ?: throw SagaException("Empty response from payment service")
+    }
+
+    // Compensating transactions - rollback completed steps when saga fails
+    private fun compensate(orderId: String, cause: Exception) {
+        // Cancel inventory reservation (DELETE request)
+        // Compensates step 1 - releases reserved inventory
+        restTemplate.delete("http://inventory-service/api/reservations/$orderId")
+
+        // Refund payment (POST request)
+        // Compensates step 2 - returns money to customer
+        restTemplate.postForEntity(
+            "http://payment-service/api/refunds",
+            RefundRequest(orderId),
+            Void::class.java
+        )
+
+        // Publish failure event to event bus
+        // Allows other services to react to order failure
+        kafkaTemplate.send("order-events", "OrderFailed", orderId)
+    }
+
+    // Helper methods (implementation omitted for brevity)
+    private fun createOrder(
+        orderId: String,
+        request: OrderRequest,
+        reservationId: String,
+        transactionId: String
+    ) { /* ... */ }
+
+    private fun sendNotification(customerId: String, message: String) { /* ... */ }
+}
+
+// Choreography-based Saga - decentralized event-driven coordination
+// Services listen to events and trigger next steps autonomously
+@Service
+class InventoryService(
+    private val kafkaTemplate: KafkaTemplate<String, String>
+) {
+    // Listen for order created events
+    // Each service reacts to events and publishes new events
+    @KafkaListener(topics = ["order-created"])
+    fun handleOrderCreated(orderId: String) {
+        try {
+            // Reserve inventory for order
+            reserveInventory(orderId)
+            // Publish success event - triggers payment service
+            kafkaTemplate.send("inventory-reserved", orderId)
+        } catch (e: Exception) {
+            // Publish failure event - triggers compensation
+            kafkaTemplate.send("inventory-reservation-failed", orderId)
+        }
+    }
+
+    // Listen for order cancelled events (compensation)
+    // Choreography allows any service to trigger compensation
+    @KafkaListener(topics = ["order-cancelled"])
+    fun handleOrderCancelled(orderId: String) {
+        // Release reserved inventory (compensating transaction)
+        releaseInventory(orderId)
+    }
+
+    // Helper methods
+    private fun reserveInventory(orderId: String) { /* ... */ }
+    private fun releaseInventory(orderId: String) { /* ... */ }
+}
+
+@Service
+class PaymentService(
+    private val kafkaTemplate: KafkaTemplate<String, String>
+) {
+    // Listen for inventory reserved events
+    // Payment service only acts after inventory is successfully reserved
+    @KafkaListener(topics = ["inventory-reserved"])
+    fun handleInventoryReserved(orderId: String) {
+        try {
+            // Process payment for order
+            processPayment(orderId)
+            // Publish success event - order complete
+            kafkaTemplate.send("payment-completed", orderId)
+        } catch (e: Exception) {
+            // Publish failure events
+            kafkaTemplate.send("payment-failed", orderId)
+            // Trigger compensation in inventory service
+            kafkaTemplate.send("order-cancelled", orderId)
+        }
+    }
+
+    private fun processPayment(orderId: String) { /* ... */ }
+}
+
+// Data classes for saga requests/responses
+// Kotlin data classes provide concise value objects
+data class OrderRequest(
+    val customerId: String,
+    val productId: String,
+    val quantity: Int,
+    val totalAmount: BigDecimal
+)
+
+data class ReservationRequest(val productId: String, val quantity: Int)
+data class ReservationResponse(val reservationId: String, val success: Boolean)
+data class PaymentRequest(val customerId: String, val amount: BigDecimal)
+data class PaymentResponse(val transactionId: String, val success: Boolean)
+data class RefundRequest(val orderId: String)
+
+// Custom exception for saga failures
+class SagaException(message: String) : RuntimeException(message)
+
+// Alternative: Using Kotlin Coroutines for async saga execution
+// Suspend functions enable sequential-looking async code
+@Service
+class CoroutineOrderSaga(
+    private val webClient: WebClient,  // Reactive client for async HTTP
+    private val kafkaTemplate: KafkaTemplate<String, String>
+) {
+    // Suspend function for non-blocking saga execution
+    suspend fun processOrder(request: OrderRequest) {
+        val orderId = UUID.randomUUID().toString()
+
+        try {
+            // Async inventory reservation with coroutine
+            // awaitBody() suspends until response arrives
+            val reservation = webClient.post()
+                .uri("http://inventory-service/api/reservations")
+                .bodyValue(ReservationRequest(request.productId, request.quantity))
+                .retrieve()
+                .awaitBody<ReservationResponse>()
+
+            // Async payment processing
+            val payment = webClient.post()
+                .uri("http://payment-service/api/payments")
+                .bodyValue(PaymentRequest(request.customerId, request.totalAmount))
+                .retrieve()
+                .awaitBody<PaymentResponse>()
+
+            // Complete order
+            createOrder(orderId, request, reservation.reservationId, payment.transactionId)
+            kafkaTemplate.send("order-events", "OrderCompleted", orderId)
+        } catch (e: Exception) {
+            compensate(orderId, e)
+        }
+    }
+
+    private suspend fun compensate(orderId: String, cause: Exception) {
+        // Async compensation with coroutines
+        // launch enables fire-and-forget async operations
+        coroutineScope {
+            launch {
+                webClient.delete()
+                    .uri("http://inventory-service/api/reservations/$orderId")
+                    .retrieve()
+                    .awaitBodilessEntity()
+            }
+            launch {
+                webClient.post()
+                    .uri("http://payment-service/api/refunds")
+                    .bodyValue(RefundRequest(orderId))
+                    .retrieve()
+                    .awaitBodilessEntity()
+            }
+        }
+        kafkaTemplate.send("order-events", "OrderFailed", orderId)
+    }
+
+    private fun createOrder(
+        orderId: String,
+        request: OrderRequest,
+        reservationId: String,
+        transactionId: String
+    ) { /* ... */ }
+}
 ```
 
 **Key Takeaway**: Saga pattern manages distributed transactions through orchestration (central coordinator) or choreography (event-driven)—implement compensating transactions for rollback, as distributed ACID transactions aren't feasible across microservices.
@@ -2453,6 +4025,165 @@ management:
     export:
       prometheus:
         enabled: true
+```
+
+**Code (Kotlin)**:
+
+```kotlin
+// JVM tuning (same for Java/Kotlin)
+// -Xms512m -Xmx2g              # Heap size (min 512MB, max 2GB)
+// -XX:MaxMetaspaceSize=256m    # Metaspace limit
+// -XX:+UseG1GC                 # G1 garbage collector
+// -XX:MaxGCPauseMillis=200     # GC pause target
+// -XX:+HeapDumpOnOutOfMemoryError  # Dump on OOM
+// -Xlog:gc*:file=gc.log        # GC logging
+
+// Spring Boot optimizations with Kotlin configuration
+@Configuration
+open class PerformanceConfig {
+    // Connection pool tuning for HikariCP (high-performance JDBC pool)
+    // Pool size affects database connection utilization vs. request throughput
+    @Bean
+    open fun hikariConfig() = HikariConfig().apply {  // apply for builder-style configuration
+        maximumPoolSize = 20      // Max DB connections (tune based on core count * 2 for I/O-bound)
+        minimumIdle = 5           // Minimum idle connections (prevents connection creation overhead)
+        connectionTimeout = 30000 // 30 seconds - max wait time for connection from pool
+        idleTimeout = 600000      // 10 minutes - idle connections closed after timeout
+        maxLifetime = 1800000     // 30 minutes - max connection lifetime before refresh
+    }
+
+    // Async executor tuning for @Async tasks
+    // Thread pool size affects concurrent task handling vs. context switching overhead
+    @Bean
+    open fun taskExecutor() = ThreadPoolTaskExecutor().apply {
+        corePoolSize = 10         // Core threads always kept alive
+        maxPoolSize = 50          // Max threads during traffic spikes
+        queueCapacity = 100       // Tasks queued when all threads busy
+        threadNamePrefix = "async-"  // Prefix for thread names (helps debugging)
+        setRejectedExecutionHandler(ThreadPoolExecutor.CallerRunsPolicy())  // Caller runs task when pool full
+        initialize()              // Initialize thread pool
+    }
+
+    // HTTP client tuning for RestTemplate
+    // Timeout configuration prevents hanging requests from blocking threads
+    @Bean
+    open fun restTemplate(): RestTemplate {
+        // HttpComponents factory for configurable timeouts
+        val factory = HttpComponentsClientHttpRequestFactory().apply {
+            setConnectTimeout(5000)  // 5 seconds - max time to establish connection
+            setReadTimeout(10000)    // 10 seconds - max time to read response
+        }
+        return RestTemplate(factory)
+    }
+}
+
+// Caching strategy - reduces database load for frequently accessed data
+// Spring Cache abstraction works with Redis, Caffeine, EhCache, etc.
+@Service
+class ProductService(
+    private val productRepository: ProductRepository  // Primary constructor injection
+) {
+    // @Cacheable stores result in cache on first call
+    // Subsequent calls with same ID return cached value without DB query
+    @Cacheable(value = ["products"], key = "#id")  // Array syntax for Kotlin
+    fun getProduct(id: Long): Product {
+        // Expensive operation cached (database query avoided after first call)
+        return productRepository.findById(id).orElseThrow()
+    }
+
+    // @CachePut updates cache entry after saving
+    // Ensures cache stays synchronized with database
+    @CachePut(value = ["products"], key = "#product.id")
+    fun updateProduct(product: Product): Product {
+        return productRepository.save(product)
+    }
+
+    // @CacheEvict removes entry from cache when entity deleted
+    @CacheEvict(value = ["products"], key = "#id")
+    fun deleteProduct(id: Long) {
+        productRepository.deleteById(id)
+    }
+}
+
+// Lazy initialization - defer bean creation until first use
+// Speeds up startup but slows down first request
+@SpringBootApplication
+@EnableCaching  // Enable Spring Cache abstraction
+open class Application
+
+fun main(args: Array<String>) {
+    // System property for lazy initialization
+    System.setProperty("spring.main.lazy-initialization", "true")
+    // => Faster startup (beans created on demand), but slower first request
+    runApplication<Application>(*args)  // Spread operator for varargs
+}
+
+// Actuator metrics - custom business metrics for monitoring
+@Component
+class PerformanceMetrics(
+    private val registry: MeterRegistry  // Micrometer registry for metrics
+) {
+    // Record order processing duration as timer metric
+    // Micrometer automatically calculates percentiles (p50, p95, p99)
+    fun recordOrderProcessing(durationMs: Long) {
+        registry.timer("order.processing.time")
+            .record(durationMs, TimeUnit.MILLISECONDS)
+    }
+
+    // Increment error counter
+    // Monitors error rate for alerting
+    fun incrementErrorCount() {
+        registry.counter("orders.errors").increment()
+    }
+}
+
+// Alternative: Using expression bodies for concise configuration
+@Configuration
+open class ConcisePerformanceConfig {
+    // Expression body for HikariConfig - returns configured instance
+    @Bean
+    open fun hikariConfig() = HikariConfig().apply {
+        maximumPoolSize = 20
+        minimumIdle = 5
+    }
+
+    // Expression body for TaskExecutor
+    @Bean
+    open fun taskExecutor() = ThreadPoolTaskExecutor().apply {
+        corePoolSize = 10
+        maxPoolSize = 50
+        initialize()
+    }
+}
+```
+
+```yaml
+# application-prod.yml (same for Java/Kotlin)
+spring:
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 20 # Batch inserts (reduces DB round trips)
+          fetch_size: 50 # Rows fetched per query (tune for memory vs. latency)
+        order_inserts: true # Group inserts for better batching
+        order_updates: true # Group updates for better batching
+    hibernate:
+      ddl-auto: none # Don't auto-create schema in production (use migrations)
+
+server:
+  tomcat:
+    threads:
+      max: 200 # Max request threads (tune based on load testing)
+      min-spare: 10 # Minimum spare threads
+    max-connections: 10000 # Max concurrent connections
+    accept-count: 100 # Queue size when max connections reached
+
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true # Export metrics to Prometheus
 ```
 
 **Key Takeaway**: Tune JVM (heap size, GC), connection pools (HikariCP), thread pools (async executor), and enable caching to optimize Spring Boot performance—monitor with Actuator metrics and adjust based on production load patterns.
@@ -2641,6 +4372,230 @@ graph TD
     style Loki fill:#CC78BC,color:#000
     style Grafana fill:#CA9161,color:#000
     style User fill:#0173B2,color:#fff
+```
+
+**Code (Kotlin)**:
+
+```kotlin
+// pom.xml dependencies (same for Java/Kotlin):
+// spring-boot-starter-actuator
+// micrometer-registry-prometheus
+// micrometer-tracing-bridge-brave
+// zipkin-reporter-brave
+
+@SpringBootApplication
+open class ObservableApplication
+
+fun main(args: Array<String>) {
+    runApplication<ObservableApplication>(*args)  // Spread operator for varargs
+}
+
+// Custom metrics with Micrometer
+// Metrics track application performance and business KPIs
+@RestController
+@RequestMapping("/api/orders")
+class OrderController(
+    registry: MeterRegistry  // Micrometer registry injected via primary constructor
+) {
+    // Counter tracks total orders created
+    // Counters only increment (monotonically increasing)
+    private val orderCounter: Counter = Counter.builder("orders.created")
+        .description("Total orders created")  // Metric description for documentation
+        .tags("service", "order-service")     // Tags for filtering/grouping metrics
+        .register(registry)
+
+    // Timer tracks order processing duration
+    // Timers record duration and count, calculate percentiles
+    private val orderTimer: Timer = Timer.builder("orders.processing.time")
+        .description("Order processing duration")
+        .publishPercentiles(0.5, 0.95, 0.99)  // Publish p50, p95, p99 percentiles
+        .register(registry)
+
+    @PostMapping
+    fun createOrder(@RequestBody request: OrderRequest): ResponseEntity<Order> {
+        // record() measures execution time of lambda
+        // Automatically tracks duration and increments count
+        return orderTimer.record {
+            val order = processOrder(request)
+            orderCounter.increment()  // Increment counter after successful processing
+            ResponseEntity.ok(order)
+        }
+        // => Metrics: orders.created (count), orders.processing.time (percentiles)
+    }
+
+    private fun processOrder(request: OrderRequest): Order {
+        // Process order logic
+        return Order(UUID.randomUUID().toString(), request.customerId)
+    }
+}
+
+// Distributed tracing with Micrometer Tracing
+// Traces track requests across microservices with trace ID propagation
+@Service
+class OrderService(
+    private val restTemplate: RestTemplate  // Auto-instrumented for tracing
+) {
+    // @NewSpan creates custom span for detailed tracing
+    // Span tracks specific operation within a trace
+    @NewSpan("process-order")
+    fun processOrder(request: OrderRequest): Order {
+        // Trace ID automatically propagated to downstream services via HTTP headers
+        // Each service adds spans to the same trace for end-to-end visibility
+        val payment = restTemplate.postForObject(
+            "http://payment-service/api/payments",
+            request,
+            PaymentResponse::class.java
+        )
+
+        val inventory = restTemplate.postForObject(
+            "http://inventory-service/api/reserve",
+            request,
+            InventoryResponse::class.java
+        )
+
+        return Order(UUID.randomUUID().toString(), request.customerId)
+    }
+}
+
+// Structured logging with MDC (Mapped Diagnostic Context)
+// MDC adds contextual information (trace ID, span ID) to all log statements
+@Component
+class RequestLoggingFilter(
+    private val tracer: Tracer  // Brave tracer for accessing current span
+) : OncePerRequestFilter() {
+    companion object {
+        // Companion object for logger (similar to static logger in Java)
+        private val log = LoggerFactory.getLogger(RequestLoggingFilter::class.java)
+    }
+
+    override fun doFilterInternal(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain
+    ) {
+        // Extract trace and span IDs from current span
+        val traceId = tracer.currentSpan()?.context()?.traceId() ?: "unknown"
+        val spanId = tracer.currentSpan()?.context()?.spanId() ?: "unknown"
+
+        // Put context into MDC - available to all log statements in this thread
+        MDC.put("traceId", traceId)
+        MDC.put("spanId", spanId)
+        MDC.put("path", request.requestURI)
+
+        try {
+            // Continue filter chain
+            filterChain.doFilter(request, response)
+        } finally {
+            // Log request completion with MDC context
+            // MDC fields automatically included in log output
+            log.info(
+                "Request completed: {} {} - Status: {}",
+                request.method,
+                request.requestURI,
+                response.status
+            )
+            // => {"traceId":"abc123","spanId":"def456","path":"/api/orders","level":"INFO",...}
+
+            // Clear MDC to prevent memory leaks (thread pool reuses threads)
+            MDC.clear()
+        }
+    }
+}
+
+// Alternative: Extension function for MDC context management
+// Kotlin extension functions enable cleaner MDC usage
+fun <T> withMDC(vararg pairs: Pair<String, String>, block: () -> T): T {
+    // Put all key-value pairs into MDC
+    pairs.forEach { (key, value) -> MDC.put(key, value) }
+    try {
+        return block()  // Execute block with MDC context
+    } finally {
+        // Remove all keys from MDC
+        pairs.forEach { (key, _) -> MDC.remove(key) }
+    }
+}
+
+// Usage of MDC extension function
+@Service
+class ServiceWithMDC {
+    companion object {
+        private val log = LoggerFactory.getLogger(ServiceWithMDC::class.java)
+    }
+
+    fun processWithContext(userId: String) {
+        // Extension function automatically cleans up MDC
+        withMDC("userId" to userId, "operation" to "process") {
+            log.info("Processing for user")  // userId and operation in MDC
+            // ... business logic
+        }
+        // MDC automatically cleared after block
+    }
+}
+
+// Data classes for observability
+data class OrderRequest(val customerId: String, val productId: String, val amount: BigDecimal)
+data class Order(val id: String, val customerId: String)
+data class PaymentResponse(val transactionId: String, val success: Boolean)
+data class InventoryResponse(val reservationId: String, val available: Boolean)
+```
+
+```yaml
+# application.yml - Observability configuration (same for Java/Kotlin)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus,metrics,info # Expose actuator endpoints
+  metrics:
+    export:
+      prometheus:
+        enabled: true # Export metrics to Prometheus
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true # Histogram for HTTP request percentiles
+  tracing:
+    sampling:
+      probability: 1.0 # 100% sampling (reduce to 0.1 in production for performance)
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans # Zipkin collector endpoint
+
+logging:
+  pattern:
+    # Log pattern includes MDC fields (traceId, spanId)
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{traceId},%X{spanId}] %logger{36} - %msg%n"
+  level:
+    root: INFO
+    com.example.demo: DEBUG
+```
+
+```yaml
+# docker-compose.yml - Observability stack (same for Java/Kotlin)
+version: "3"
+services:
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+
+  loki:
+    image: grafana/loki
+    ports:
+      - "3100:3100"
 ```
 
 **Key Takeaway**: Comprehensive observability requires metrics (Prometheus), traces (Zipkin), and logs (Loki)—use Micrometer for metrics, automatic span propagation for distributed tracing, and structured logging with MDC for trace correlation.

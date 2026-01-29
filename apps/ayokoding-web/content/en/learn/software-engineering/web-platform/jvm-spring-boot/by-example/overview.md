@@ -3,12 +3,12 @@ title: "Overview"
 date: 2025-12-24T00:00:00+07:00
 draft: false
 weight: 10000000
-description: "Learn Spring Boot through 75-90 annotated code examples covering dependency injection, REST APIs, data access, security, and production patterns"
+description: "Learn Spring Boot through 75-90 annotated code examples in Java and Kotlin covering dependency injection, REST APIs, data access, security, and production patterns"
 categories: ["learn"]
-tags: ["spring-boot", "java", "tutorial", "by-example", "rest-api", "microservices", "web-framework"]
+tags: ["spring-boot", "java", "kotlin", "tutorial", "by-example", "rest-api", "microservices", "web-framework"]
 ---
 
-**Want to master Spring Boot through working examples?** This by-example guide teaches 95% of Spring Boot through 75-90 annotated code examples organized by complexity level.
+**Want to master Spring Boot through working examples?** This by-example guide teaches 95% of Spring Boot through 75-90 annotated code examples in both Java and Kotlin, organized by complexity level.
 
 ## What Is By-Example Learning?
 
@@ -19,7 +19,9 @@ By-example learning is an **example-first approach** where you learn through ann
 - **Framework mechanics** - How Spring Boot's auto-configuration, dependency injection, and lifecycle work
 - **Key takeaways** - 1-2 sentence summaries of patterns and best practices
 
-This approach is **ideal for experienced Java developers** who already understand Java syntax and OOP concepts, and want to quickly master Spring Boot's conventions, annotations, and architectural patterns through working code.
+**Every example is provided in both Java and Kotlin**, allowing you to learn Spring Boot patterns in your preferred JVM language. The examples demonstrate idiomatic code for each language while maintaining conceptual equivalence.
+
+This approach is **ideal for experienced Java or Kotlin developers** who already understand their language's syntax and OOP concepts, and want to quickly master Spring Boot's conventions, annotations, and architectural patterns through working code.
 
 Unlike narrative tutorials that build understanding through explanation and storytelling, by-example learning lets you **see the code first, run it second, and understand it through direct interaction**. You learn Spring Boot patterns by running actual Spring Boot applications.
 
@@ -112,9 +114,9 @@ Understanding where by-example fits in the tutorial ecosystem helps you choose t
 
 **Required**:
 
-- **Java 17+ installed** - Spring Boot 3.x requires Java 17 minimum
-- **Maven or Gradle basics** - Understanding of dependency management and build commands
-- **Java programming experience** - Comfortable with OOP, collections, streams, annotations
+- **Java 17+ or Kotlin 1.9+ installed** - Spring Boot 3.x requires Java 17 minimum or Kotlin 1.9+
+- **Maven or Gradle basics** - Understanding of dependency management and build commands (Gradle recommended for Kotlin)
+- **Java or Kotlin programming experience** - Comfortable with OOP, collections, streams/sequences, annotations
 - **HTTP and REST concepts** - Understanding of HTTP methods, status codes, JSON
 
 **Recommended (helpful but not required)**:
@@ -190,7 +192,7 @@ Brief explanation of the Spring Boot concept in 2-3 sentences. Explains **what**
 
 [OPTIONAL: Mermaid diagram when request flow, bean relationships, or architecture needs visualization]
 
-**Code**:
+**Code (Java)**:
 
 ```java
 // Comment explaining what this Spring Boot component does
@@ -206,6 +208,26 @@ public class ExampleController {
     public ResponseEntity<Resource> getResource() {
         Resource resource = service.fetch(); // => Resource{id=1, name="example"}
         return ResponseEntity.ok(resource); // => HTTP 200, JSON response body
+    }
+}
+```
+
+**Code (Kotlin)**:
+
+```kotlin
+// Comment explaining what this Spring Boot component does
+@RestController
+@RequestMapping("/api")
+class ExampleController(
+    // Constructor injection - Kotlin's concise syntax
+    // No @Autowired needed with single constructor
+    private val service: ExampleService
+) {
+
+    @GetMapping("/resource")
+    fun getResource(): ResponseEntity<Resource> {
+        val resource = service.fetch() // => Resource(id=1, name="example")
+        return ResponseEntity.ok(resource) // => HTTP 200, JSON response body
     }
 }
 ```
@@ -231,8 +253,8 @@ Mermaid diagrams appear when **visual representation clarifies request flows, be
 
 Jump into the beginner examples to start learning Spring Boot through code:
 
-- [Beginner Examples (1-25)](/en/learn/software-engineering/web-platform/java-spring-boot/by-example/beginner) - Dependency injection, REST controllers, Spring Data JPA, configuration, file handling, CORS
-- [Intermediate Examples (26-55)](/en/learn/software-engineering/web-platform/java-spring-boot/by-example/intermediate) - Security, testing, caching, async processing, WebSocket, API versioning, advanced patterns
-- [Advanced Examples (56-85)](/en/learn/software-engineering/web-platform/java-spring-boot/by-example/advanced) - Microservices, Kubernetes, event sourcing, CQRS, API Gateway, performance tuning, observability
+- [Beginner Examples (1-25)](/en/learn/software-engineering/web-platform/jvm-spring-boot/by-example/beginner) - Dependency injection, REST controllers, Spring Data JPA, configuration, file handling, CORS
+- [Intermediate Examples (26-55)](/en/learn/software-engineering/web-platform/jvm-spring-boot/by-example/intermediate) - Security, testing, caching, async processing, WebSocket, API versioning, advanced patterns
+- [Advanced Examples (56-85)](/en/learn/software-engineering/web-platform/jvm-spring-boot/by-example/advanced) - Microservices, Kubernetes, event sourcing, CQRS, API Gateway, performance tuning, observability
 
 Each example is self-contained and runnable as a Spring Boot application or test class. Start with Example 1, or jump to topics that interest you most.
