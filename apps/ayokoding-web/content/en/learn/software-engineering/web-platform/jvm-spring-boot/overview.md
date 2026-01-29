@@ -19,6 +19,29 @@ Spring Boot is an opinionated framework built on the Spring ecosystem that simpl
 - **Testing** - Unit tests, integration tests, and test containers
 - **Production Features** - Actuator, monitoring, logging, and deployment
 
+## Prerequisites
+
+**Before learning Spring Boot, you should understand Spring Framework fundamentals:**
+
+Spring Boot is built on top of the Spring Framework and provides auto-configuration and opinionated defaults. To effectively use Spring Boot, you need to understand the core Spring concepts that Spring Boot builds upon.
+
+**Required Foundation**: [JVM Spring Framework](/en/learn/software-engineering/web-platform/jvm-spring)
+
+Understanding these Spring Framework concepts is essential:
+
+- **Inversion of Control (IoC)** - How Spring manages object lifecycles
+- **Dependency Injection** - Constructor injection, @Autowired, bean wiring
+- **Bean Configuration** - @Configuration, @Bean, @ComponentScan
+- **ApplicationContext** - The core Spring container
+- **Bean Lifecycle** - Initialization, destruction, scopes
+- **Aspect-Oriented Programming (AOP)** - Transaction management, cross-cutting concerns
+- **Spring Data Access** - JdbcTemplate, transaction management
+- **Spring MVC** - Web layer fundamentals, DispatcherServlet
+
+**Spring Boot adds**: Auto-configuration, embedded servers, starter dependencies, production-ready features (Actuator), and opinionated defaults on top of these core Spring concepts.
+
+**If you're new to Spring**, start with [JVM Spring Framework](/en/learn/software-engineering/web-platform/jvm-spring) to learn the foundational concepts, then return to Spring Boot to learn how it simplifies Spring application development.
+
 ## Platform Characteristics
 
 ### Convention Over Configuration

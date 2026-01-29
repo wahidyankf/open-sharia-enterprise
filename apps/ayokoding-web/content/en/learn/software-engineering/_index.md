@@ -38,6 +38,7 @@ weight: 102
 - [Web Platform](/en/learn/software-engineering/web-platform)
   - [Overview](/en/learn/software-engineering/web-platform/overview)
   - [Elixir Phoenix](/en/learn/software-engineering/web-platform/elixir-phoenix)
+  - [JVM Spring Framework](/en/learn/software-engineering/web-platform/jvm-spring)
   - [JVM Spring Boot](/en/learn/software-engineering/web-platform/jvm-spring-boot)
   - [React + TypeScript](/en/learn/software-engineering/web-platform/fe-react)
   - [Next.js + TypeScript](/en/learn/software-engineering/web-platform/fe-nextjs)
