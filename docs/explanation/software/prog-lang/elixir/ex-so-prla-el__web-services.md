@@ -18,7 +18,6 @@ related:
   - ./ex-so-prla-el__concurrency-and-parallelism.md
 principles:
   - simplicity-over-complexity
-  - security-first
 last_updated: 2026-01-23
 ---
 

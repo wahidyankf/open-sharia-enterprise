@@ -19,12 +19,6 @@ skills:
 - **Created**: 2025-12-20
 - **Last Updated**: 2026-01-03
 
-## Workflow Integration (Maker-Checker-Fixer)
-
-**Stage**: Checker (validates content)
-**Before**: Maker creates content
-**After**: User reviews → Fixer applies validated fixes
-
 ### Progressive Report Writing (MANDATORY)
 
 1. **Initialize**: `generated-reports/{agent}__{uuid}__{YYYY-MM-DD--HH-MM}__audit.md`
@@ -52,18 +46,6 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 - 🟢 **LOW**: Suggestions, nice-to-have
 
 **Execution Order**: CRITICAL → HIGH → MEDIUM → LOW
-
-## Tool Usage
-
-**Required Tools**: read, glob, grep, webfetch, websearch, write, bash
-
-- **read**: Load files for analysis
-- **glob**: Discover files matching patterns
-- **grep**: Search content across files
-- **webfetch**: Fetch web content for verification
-- **websearch**: Search web for factual validation
-- **write**: Generate reports (checkers) or create content (makers)
-- **bash**: Execute git, timestamps, file operations
 
 # Link Checker for ayokoding-web
 
@@ -93,7 +75,7 @@ The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specifi
 
 ## Workflow Overview
 
-**See `repo-applying-maker-checker-fixer` Skill for standard checker workflow pattern** including:
+**See `repo-applying-maker-checker-fixer` Skill**.
 
 1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
 2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)

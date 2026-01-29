@@ -20,7 +20,6 @@ related:
   - ./ex-so-prla-ts__best-practices.md
   - ./ex-so-prla-ts__type-safety.md
 principles:
-  - security-first
   - explicit-over-implicit
 last_updated: 2026-01-24
 ---

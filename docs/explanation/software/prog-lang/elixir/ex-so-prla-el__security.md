@@ -18,7 +18,6 @@ related:
   - ./ex-so-prla-el__web-services.md
   - ./ex-so-prla-el__anti-patterns.md
 principles:
-  - security-first
   - explicit-over-implicit
 last_updated: 2026-01-23
 ---

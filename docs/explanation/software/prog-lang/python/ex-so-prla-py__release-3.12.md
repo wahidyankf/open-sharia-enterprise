@@ -18,7 +18,6 @@ related:
   - ./ex-so-prla-py__type-safety.md
 principles:
   - explicit-over-implicit
-  - measure-first-optimize-later
 last_updated: 2025-01-23
 ---
 

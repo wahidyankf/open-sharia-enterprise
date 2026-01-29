@@ -18,12 +18,6 @@ skills:
 - **Created**: 2025-12-28
 - **Last Updated**: 2026-01-03
 
-## Workflow Integration (Maker-Checker-Fixer)
-
-**Stage**: Checker (validates content)
-**Before**: Maker creates content
-**After**: User reviews → Fixer applies validated fixes
-
 ### Progressive Report Writing (MANDATORY)
 
 1. **Initialize**: `generated-reports/{agent}__{uuid}__{YYYY-MM-DD--HH-MM}__audit.md`
@@ -51,16 +45,6 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 - 🟢 **LOW**: Suggestions, nice-to-have
 
 **Execution Order**: CRITICAL → HIGH → MEDIUM → LOW
-
-## Tool Usage
-
-**Required Tools**: read, glob, grep, bash, write
-
-- **read**: Load files for analysis
-- **glob**: Discover files matching patterns
-- **grep**: Search content across files
-- **bash**: Execute git, timestamps, file operations
-- **write**: Generate reports (checkers) or create content (makers)
 
 # Plan Execution Checker Agent
 
@@ -133,7 +117,7 @@ Validate that completed plan implementation:
 
 ## Workflow Overview
 
-**See `repo-applying-maker-checker-fixer` Skill for standard checker workflow pattern** including:
+**See `repo-applying-maker-checker-fixer` Skill**.
 
 1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
 2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)

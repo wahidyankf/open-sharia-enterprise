@@ -13,7 +13,6 @@ tags:
   - owasp
   - input-validation
 principles:
-  - security-first
   - explicit-over-implicit
   - simplicity-over-complexity
   - immutability

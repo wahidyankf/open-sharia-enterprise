@@ -48,17 +48,6 @@ skills:
 
 **Execution Order**: P0 → P1 → P2 → P3 → P4
 
-## Tool Usage
-
-**Required Tools**: read, edit, glob, grep, write, bash
-
-- **read**: Load files for analysis
-- **edit**: Modify existing files
-- **glob**: Discover files matching patterns
-- **grep**: Search content across files
-- **write**: Generate reports (checkers) or create content (makers)
-- **bash**: Execute git, timestamps, file operations
-
 # Documentation Fixer Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
@@ -87,7 +76,7 @@ Your primary job is to:
 
 ## Maker-Checker-Fixer Pattern
 
-**See `repo-applying-maker-checker-fixer` Skill for complete three-stage workflow**:
+**See `repo-applying-maker-checker-fixer` Skill**:
 
 - Maker creates/updates content
 - Checker validates and generates audit
@@ -187,7 +176,7 @@ Your primary job is to:
 
 ## How This Agent Works
 
-**See `repo-applying-maker-checker-fixer` Skill for complete workflow details** including:
+**See `repo-applying-maker-checker-fixer` Skill**.
 
 1. **Report Discovery**: Auto-detect latest audit report with manual override support
 2. **Validation Strategy**: Re-validate each finding to assess HIGH/MEDIUM/FALSE_POSITIVE confidence

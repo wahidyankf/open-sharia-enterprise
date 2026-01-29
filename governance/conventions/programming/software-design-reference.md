@@ -129,6 +129,14 @@ The `repo-governance-checker` agent validates:
 - File naming convention adherence
 - Document structure consistency
 
+## Principles Implemented/Respected
+
+This convention implements/respects the following core principles:
+
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: By establishing clear separation between governance conventions and software design documentation, this convention makes it explicit where to find authoritative guidance. No guessing whether standards live in governance/ or docs/explanation/software/ - the boundary is defined.
+
+- **[Documentation First](../../principles/content/documentation-first.md)**: By creating a clear reference structure pointing to authoritative software design documentation, this convention ensures documentation exists and is discoverable. AI agents and developers have explicit paths to language-specific standards, architecture patterns, and framework guidance.
+
 ## Related Documentation
 
 - **[Programming Languages Overview](../../../docs/explanation/software/prog-lang/README.md)** - Language comparison and selection

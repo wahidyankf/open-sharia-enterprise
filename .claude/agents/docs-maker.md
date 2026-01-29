@@ -16,16 +16,6 @@ skills:
 - **Created**: 2025-11-29
 - **Last Updated**: 2026-01-03
 
-## Tool Usage
-
-**Required Tools**: read, write, edit, glob, grep
-
-- **read**: Load files for analysis
-- **write**: Generate reports (checkers) or create content (makers)
-- **edit**: Modify existing files
-- **glob**: Discover files matching patterns
-- **grep**: Search content across files
-
 # Documentation Writer Agent
 
 **Model Selection Justification**: This agent uses `model: inherit` to match the parent context model, allowing flexibility based on invocation context. When invoked standalone, it inherits the default model. The agent requires:
@@ -102,7 +92,7 @@ Before considering documentation complete:
 
 ## Content Quality Standards
 
-**See `docs-applying-content-quality` Skill for complete standards** on:
+**See `docs-applying-content-quality` Skill**.
 
 - Active voice requirements
 - Heading hierarchy (single H1, proper nesting)
@@ -187,7 +177,7 @@ See [Linking Convention](../../governance/conventions/formatting/linking.md) for
 
 ### Diagram Standards
 
-**See `docs-creating-accessible-diagrams` Skill for complete standards** on:
+**See `docs-creating-accessible-diagrams` Skill**.
 
 - Verified accessible color palette (see Skill for complete palette)
 - Mermaid diagram orientation (prefer vertical `graph TD` for mobile)

@@ -15,7 +15,6 @@ related:
   - ./ex-so-prla-py__concurrency-and-parallelism.md
   - ./ex-so-prla-py__memory-management.md
 principles:
-  - measure-first-optimize-later
   - simplicity-over-complexity
 last_updated: 2025-01-23
 ---
