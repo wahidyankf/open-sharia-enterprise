@@ -47,6 +47,7 @@ draft: false
   - [Initial Setup](/en/learn/software-engineering/programming-languages/clojure/initial-setup)
   - [Quick Start](/en/learn/software-engineering/programming-languages/clojure/quick-start)
   - [By Example](/en/learn/software-engineering/programming-languages/clojure/by-example)
+  - [By Concept](/en/learn/software-engineering/programming-languages/clojure/by-concept)
 - [Dart](/en/learn/software-engineering/programming-languages/dart)
   - [Overview](/en/learn/software-engineering/programming-languages/dart/overview)
   - [Initial Setup](/en/learn/software-engineering/programming-languages/dart/initial-setup)
