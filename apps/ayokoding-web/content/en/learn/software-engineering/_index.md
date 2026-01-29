@@ -15,6 +15,7 @@ weight: 102
   - [Rust](/en/learn/software-engineering/programming-languages/rust)
   - [Elixir](/en/learn/software-engineering/programming-languages/elixir)
   - [Clojure](/en/learn/software-engineering/programming-languages/clojure)
+  - [Dart](/en/learn/software-engineering/programming-languages/dart)
 - [Data](/en/learn/software-engineering/data)
   - [Overview](/en/learn/software-engineering/data/overview)
   - [Databases](/en/learn/software-engineering/data/databases)
