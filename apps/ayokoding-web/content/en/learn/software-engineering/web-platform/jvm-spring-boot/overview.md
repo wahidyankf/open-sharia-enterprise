@@ -39,6 +39,13 @@ Spring Data JPA abstracts database interactions with repository patterns support
 
 ## Getting Started
 
+Before diving into Spring Boot development, get up and running:
+
+1. **[Initial Setup](/en/learn/software-engineering/web-platform/jvm-spring-boot/initial-setup)** - Install Java/Kotlin, Maven/Gradle, IDE, Spring Initializr, verify your setup
+2. **[Quick Start](/en/learn/software-engineering/web-platform/jvm-spring-boot/quick-start)** - Your first Spring Boot app, basic REST API, essential patterns
+
+These foundational tutorials (0-30% coverage) prepare you for comprehensive Spring Boot learning in both Java and Kotlin.
+
 Spring Boot development typically progresses through:
 
 1. **Project Initialization** - Spring Initializr and dependency management

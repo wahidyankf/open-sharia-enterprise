@@ -16,6 +16,15 @@ description: Complete learning path from installation to expert mastery - 5 comp
 
 **Learning path progression**: Python → [Java](/en/learn/software-engineering/programming-languages/java) → [Kotlin](/en/learn/software-engineering/programming-languages/kotlin) → [Golang](/en/learn/software-engineering/programming-languages/golang). See [Programming Languages Overview](/en/learn/software-engineering/programming-languages/overview) for the complete pedagogical rationale.
 
+## 🚀 Getting Started
+
+Before diving into comprehensive tutorials, get up and running:
+
+1. **[Initial Setup](/en/learn/software-engineering/programming-languages/python/initial-setup)** - Install Python, configure your environment, verify your setup
+2. **[Quick Start](/en/learn/software-engineering/programming-languages/python/quick-start)** - Your first Python program, basic syntax touchpoints, essential concepts
+
+These foundational tutorials (0-30% coverage) prepare you for the complete learning path.
+
 ## 📚 Complete Full Set (Sequential Learning Path)
 
 The 3-tutorial sequential track provides a complete learning journey from beginner to expert:

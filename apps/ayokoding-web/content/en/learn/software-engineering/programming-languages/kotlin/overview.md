@@ -16,6 +16,15 @@ description: Complete learning path from zero to expert Kotlin development - 6 c
 
 **What's next?** After mastering Kotlin, explore [Golang](/en/learn/software-engineering/programming-languages/golang) for a completely different paradigm focused on simplicity and concurrency. See [Programming Languages Overview](/en/learn/software-engineering/programming-languages/overview) for the complete learning path.
 
+## Getting Started
+
+Before diving into comprehensive tutorials, get up and running:
+
+1. **[Initial Setup](/en/learn/software-engineering/programming-languages/kotlin/initial-setup)** - Install Kotlin, configure environment, set up IDE, verify your setup
+2. **[Quick Start](/en/learn/software-engineering/programming-languages/kotlin/quick-start)** - Your first Kotlin program, null safety basics, essential syntax
+
+These foundational tutorials (0-30% coverage) prepare you for the complete learning path.
+
 ## Complete Learning Path
 
 ### All Tutorials Complete

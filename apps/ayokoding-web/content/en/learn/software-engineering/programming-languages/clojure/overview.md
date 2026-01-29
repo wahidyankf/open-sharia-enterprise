@@ -41,6 +41,15 @@ Clojure excels in domains requiring robust data processing, complex business log
 - **Real-time Systems**: Handle concurrent events with CSP-style core.async
 - **Full-Stack Development**: Share code between server (Clojure) and client (ClojureScript)
 
+## Getting Started
+
+Before diving into comprehensive tutorials, get up and running:
+
+1. **[Initial Setup](/en/learn/software-engineering/programming-languages/clojure/initial-setup)** - Install Clojure, Leiningen, configure REPL, verify your setup
+2. **[Quick Start](/en/learn/software-engineering/programming-languages/clojure/quick-start)** - Your first Clojure program, REPL basics, fundamental syntax
+
+These foundational tutorials (0-30% coverage) prepare you for the complete learning path.
+
 ## Learning Path
 
 This content follows a **by-example approach**: code-first learning with 80 annotated, runnable examples covering beginner through advanced topics. Perfect for experienced developers who want to explore Clojure through practical code.

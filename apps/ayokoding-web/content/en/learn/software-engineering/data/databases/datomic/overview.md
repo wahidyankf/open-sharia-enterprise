@@ -1,6 +1,6 @@
 ---
 title: Overview
-weight: 1000000
+weight: 100000
 date: 2026-01-29T00:00:00+07:00
 draft: false
 description: Learn Datomic, the immutable database with time-travel queries and datalog
@@ -71,6 +71,15 @@ What you'll get:
 - Progressive complexity: Beginner (30 examples) → Intermediate (30 examples) → Advanced (20 examples)
 - Production-ready patterns and best practices
 - Mermaid diagrams for complex concepts
+
+## Getting Started
+
+Start your Datomic learning journey with these foundational tutorials:
+
+1. **[Initial Setup](/en/learn/software-engineering/data/databases/datomic/initial-setup)** - Install Datomic Free, configure Java/Clojure environment, connect to database
+2. **[Quick Start](/en/learn/software-engineering/data/databases/datomic/quick-start)** - Your first transactions, basic datalog queries, essential patterns
+
+These foundational tutorials (0-30% coverage) prepare you for comprehensive by-example learning in both Java and Clojure.
 
 ## Prerequisites and Getting Started
 

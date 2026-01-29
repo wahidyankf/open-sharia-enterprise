@@ -1,6 +1,6 @@
 ---
 title: Overview
-weight: 1000000
+weight: 100000
 date: 2025-12-29T08:08:50+07:00
 draft: false
 description: Learn PostgreSQL, the powerful open-source relational database
@@ -67,6 +67,15 @@ What you'll get:
 - Progressive complexity: Beginner (30 examples) → Intermediate (30 examples) → Advanced (25 examples)
 - Production-ready patterns and best practices
 - Mermaid diagrams for complex concepts
+
+## Getting Started
+
+Start your PostgreSQL learning journey with these foundational tutorials:
+
+1. **[Initial Setup](/en/learn/software-engineering/data/databases/postgresql/initial-setup)** - Install PostgreSQL, configure Docker environment, connect with psql
+2. **[Quick Start](/en/learn/software-engineering/data/databases/postgresql/quick-start)** - Your first queries, basic CRUD operations, essential patterns
+
+These foundational tutorials (0-30% coverage) prepare you for comprehensive by-example learning.
 
 ## Prerequisites and Getting Started
 

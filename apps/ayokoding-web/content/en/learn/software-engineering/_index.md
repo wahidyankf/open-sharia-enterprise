@@ -19,7 +19,7 @@ weight: 102
   - [Overview](/en/learn/software-engineering/data/overview)
   - [Databases](/en/learn/software-engineering/data/databases)
   - [Tools](/en/learn/software-engineering/data/tools)
-- [Automation](/en/learn/software-engineering/automation-testing)
+- [Automation Testing](/en/learn/software-engineering/automation-testing)
   - [Overview](/en/learn/software-engineering/automation-testing/overview)
   - [Tools](/en/learn/software-engineering/automation-testing/tools)
 - [Infrastructure](/en/learn/software-engineering/infrastructure)

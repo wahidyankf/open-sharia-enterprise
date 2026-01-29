@@ -8,6 +8,8 @@ layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/web-platform/elixir-phoenix/overview)
+- [Initial Setup](/en/learn/software-engineering/web-platform/elixir-phoenix/initial-setup)
+- [Quick Start](/en/learn/software-engineering/web-platform/elixir-phoenix/quick-start)
 - [By Example](/en/learn/software-engineering/web-platform/elixir-phoenix/by-example)
   - [Overview](/en/learn/software-engineering/web-platform/elixir-phoenix/by-example/overview)
   - [Beginner](/en/learn/software-engineering/web-platform/elixir-phoenix/by-example/beginner)

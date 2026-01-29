@@ -9,6 +9,8 @@ layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/programming-languages/python/overview)
+- [Initial Setup](/en/learn/software-engineering/programming-languages/python/initial-setup)
+- [Quick Start](/en/learn/software-engineering/programming-languages/python/quick-start)
 - [By Example](/en/learn/software-engineering/programming-languages/python/by-example)
   - [Overview](/en/learn/software-engineering/programming-languages/python/by-example/overview)
   - [Beginner](/en/learn/software-engineering/programming-languages/python/by-example/beginner)

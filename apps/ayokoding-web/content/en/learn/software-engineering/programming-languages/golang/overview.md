@@ -18,6 +18,15 @@ description: Complete learning path from installation to expert mastery - 6 comp
 
 **Prerequisites recommended**: Familiarity with at least one other language (Python or Java) helps you appreciate Go's design choices. See [Programming Languages Overview](/en/learn/software-engineering/programming-languages/overview) for the complete learning path.
 
+## Getting Started
+
+Before diving into comprehensive tutorials, get up and running:
+
+1. **[Initial Setup](/en/learn/software-engineering/programming-languages/golang/initial-setup)** - Install Go, configure your environment, verify your setup
+2. **[Quick Start](/en/learn/software-engineering/programming-languages/golang/quick-start)** - Your first Go program, basic syntax touchpoints, essential concepts
+
+These foundational tutorials (0-30% coverage) prepare you for the complete learning path.
+
 ## Complete Full Set (Sequential Learning Path)
 
 The 3-tutorial sequential track provides a complete learning journey from beginner to expert:

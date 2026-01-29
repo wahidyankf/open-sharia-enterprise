@@ -9,6 +9,8 @@ layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/programming-languages/rust/overview)
+- [Initial Setup](/en/learn/software-engineering/programming-languages/rust/initial-setup)
+- [Quick Start](/en/learn/software-engineering/programming-languages/rust/quick-start)
 - [By Example](/en/learn/software-engineering/programming-languages/rust/by-example)
   - [Overview](/en/learn/software-engineering/programming-languages/rust/by-example/overview)
   - [Beginner](/en/learn/software-engineering/programming-languages/rust/by-example/beginner)

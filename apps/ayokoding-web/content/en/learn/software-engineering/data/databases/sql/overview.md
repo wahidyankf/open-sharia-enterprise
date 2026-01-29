@@ -1,6 +1,6 @@
 ---
 title: Overview
-weight: 1000000
+weight: 100000
 date: 2025-12-29T09:07:25+07:00
 draft: false
 description: Learn SQL, the standard language for relational databases
@@ -77,8 +77,8 @@ Choose your learning approach based on experience and goals:
 
 Start with foundational tutorials:
 
-1. **Quick Start** (Coming Soon) - Get up and running in minutes
-2. **Beginner Tutorial** (Coming Soon) - Learn SQL from scratch
+1. **[Initial Setup](/en/learn/software-engineering/data/databases/sql/initial-setup)** - Install SQLite, configure Docker environment, verify your setup
+2. **[Quick Start](/en/learn/software-engineering/data/databases/sql/quick-start)** - Your first queries, basic CRUD operations, essential patterns
 3. **By Example** - [85 annotated examples](/en/learn/software-engineering/data/databases/sql/by-example) (code-first approach)
 
 ### For Experienced Developers

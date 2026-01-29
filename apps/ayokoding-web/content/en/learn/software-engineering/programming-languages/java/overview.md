@@ -16,6 +16,15 @@ description: Complete learning path from zero to expert Java development - 6 com
 
 **What's next?** After mastering Java, you're ready for [Kotlin](/en/learn/software-engineering/programming-languages/kotlin) (modern JVM language) or [Golang](/en/learn/software-engineering/programming-languages/golang) (systems programming). See [Programming Languages Overview](/en/learn/software-engineering/programming-languages/overview) for the complete learning path.
 
+## Getting Started
+
+Before diving into comprehensive tutorials, get up and running:
+
+1. **[Initial Setup](/en/learn/software-engineering/programming-languages/java/initial-setup)** - Install JDK, configure environment variables, set up IDE, verify your setup
+2. **[Quick Start](/en/learn/software-engineering/programming-languages/java/quick-start)** - Your first Java program, basic syntax touchpoints, essential OOP concepts
+
+These foundational tutorials (0-30% coverage) prepare you for the complete learning path.
+
 ## Complete Learning Path
 
 ### All Tutorials Complete

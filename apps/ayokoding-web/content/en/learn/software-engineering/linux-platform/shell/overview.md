@@ -83,6 +83,15 @@ Extended shell with advanced features like better tab completion, theme support,
 
 Modern shell with user-friendly features out-of-the-box, including syntax highlighting, autosuggestions, and web-based configuration.
 
+## Getting Started
+
+Before diving into comprehensive command-line learning, get up and running:
+
+1. **[Initial Setup](/en/learn/software-engineering/linux-platform/shell/initial-setup)** - Configure shell environment, essential tools, verify your setup
+2. **[Quick Start](/en/learn/software-engineering/linux-platform/shell/quick-start)** - Your first commands, basic navigation, essential patterns
+
+These foundational tutorials (0-30% coverage) prepare you for comprehensive shell mastery.
+
 ## Learning Path
 
 Command-line proficiency develops through stages:
