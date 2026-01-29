@@ -1,6 +1,6 @@
 ---
 title: "Overview"
-weight: 11000000
+weight: 10000000
 date: 2025-12-25T16:18:56+07:00
 draft: false
 description: Learn Elixir Phoenix through 80+ production-ready annotated examples covering routing, LiveView, authentication, and deployment - achieving 95% framework mastery
