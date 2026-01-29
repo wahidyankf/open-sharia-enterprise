@@ -617,7 +617,7 @@ function ZakatCalculator() {
       <p>Wealth: ${wealth.toFixed(2)}</p>
       {/* => toFixed(2) formats to 2 decimal places */}
 
-      <button onClick={() => addWealthCorrect(1000)}>Add $1000</button>
+      <button onClick={() => addWealthCorrect(1000)}>Add \$1000</button>
       {/* => Functional update handles rapid clicks correctly */}
 
       <button onClick={calculateZakat}>Calculate Zakat (2.5%)</button>
@@ -633,7 +633,7 @@ export default ZakatCalculator;
 
 **Key Takeaway**: Use functional updates (`setState(prev => newValue)`) when new state depends on previous state. Prevents stale closure bugs. Use direct values when state is independent.
 
-**Expected Output**: Counter starting at $0.00. "Add $1000" increases by $1000 each click. "Calculate Zakat" applies 2.5% rate. "Reset" returns to $0.00.
+**Expected Output**: Counter starting at \$0.00. "Add \$1000" increases by \$1000 each click. "Calculate Zakat" applies 2.5% rate. "Reset" returns to \$0.00.
 
 **Common Pitfalls**: Not using functional updates for derived state (stale closures), overusing functional updates when unnecessary (adds complexity), or misunderstanding when state updates happen (asynchronous).
 
@@ -1070,21 +1070,21 @@ function DonationButton() {
         {/* => onClick expects function, not function call */}
         {/* => Correct: onClick={handleDonation} */}
         {/* => Wrong: onClick={handleDonation()} - calls immediately */}
-        Donate $1
+        Donate \$1
       </button>
 
       <button onClick={handleDonationWithEvent}>
-        Donate $1 (with event)
+        Donate \$1 (with event)
       </button>
 
       <button onClick={() => handleDonationAmount(5)}>
         {/* => Inline arrow function to pass parameter */}
         {/* => Arrow function delays execution until click */}
-        Donate $5
+        Donate \$5
       </button>
 
       <button onClick={() => handleDonationAmount(10)}>
-        Donate $10
+        Donate \$10
       </button>
     </div>
   );
@@ -1095,7 +1095,7 @@ export default DonationButton;
 
 **Key Takeaway**: Pass function reference to event handlers, not function call. Use arrow functions for handlers with parameters. React synthetic events wrap browser events with consistent API.
 
-**Expected Output**: Counter starts at 0. Each button increments by its amount ($1, $5, $10). Console logs click events with position and details.
+**Expected Output**: Counter starts at 0. Each button increments by its amount (\$1, \$5, \$10). Console logs click events with position and details.
 
 **Common Pitfalls**: Calling function immediately in JSX (`onClick={handleClick()}` - runs on render), forgetting arrow function wrapper for parameters, or misunderstanding event object properties.
 
@@ -2014,8 +2014,8 @@ function IslamicDashboard() {
         </Panel>
 
         <Panel title="Charity Given" color="#DE8F05">
-          <p>Total donations: $150</p>
-          <p>Monthly goal: $200</p>
+          <p>Total donations: \$150</p>
+          <p>Monthly goal: \$200</p>
         </Panel>
       </Panel>
     </div>
@@ -2074,7 +2074,7 @@ function ZakatCalculator() {
   const zakatableWealth = Math.max(0, totalWealth - debts);
   // => Total wealth minus debts, minimum 0
 
-  // => Nisab threshold (85g gold at ~$60/g = $5,100)
+  // => Nisab threshold (85g gold at ~\$60/g = \$5,100)
   const nisabThreshold = 5100;
 
   // => Derived state: Check if Zakat is due
