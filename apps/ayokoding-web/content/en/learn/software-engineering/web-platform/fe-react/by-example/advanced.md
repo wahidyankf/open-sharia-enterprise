@@ -866,9 +866,9 @@ function DonationTracker() {
 
       {/* => Quick donate buttons */}
       <div>
-        <button onClick={() => handleQuickDonate(10)}>Donate $10</button>
-        <button onClick={() => handleQuickDonate(25)}>Donate $25</button>
-        <button onClick={() => handleQuickDonate(50)}>Donate $50</button>
+        <button onClick={() => handleQuickDonate(10)}>Donate \$10</button>
+        <button onClick={() => handleQuickDonate(25)}>Donate \$25</button>
+        <button onClick={() => handleQuickDonate(50)}>Donate \$50</button>
         <button onClick={() => clearDonations()}>Clear All</button>
       </div>
 
@@ -893,7 +893,7 @@ export default DonationTracker;
 
 **Key Takeaway**: Zustand provides lightweight global state with minimal boilerplate. Define state interface, create store with actions, subscribe to slices in components. Components automatically re-render when selected state changes.
 
-**Expected Output**: Page displays total donation amount (initially $0), quick donate buttons ($10, $25, $50, Clear All), and list of donations with timestamps and remove buttons. Clicking donate buttons adds donations to list and updates total. Remove buttons delete individual donations. Clear All resets everything.
+**Expected Output**: Page displays total donation amount (initially \$0), quick donate buttons (\$10, \$25, \$50, Clear All), and list of donations with timestamps and remove buttons. Clicking donate buttons adds donations to list and updates total. Remove buttons delete individual donations. Clear All resets everything.
 
 **Common Pitfalls**: Mutating state directly instead of using `set()` (breaks reactivity), selecting entire store in component (causes unnecessary re-renders), forgetting to type store interface (loses type safety), not using selector functions (performance issues with large stores).
 
@@ -1052,7 +1052,7 @@ function FinancialDashboard() {
       <div>
         <h3>Donations: ${donationTotal}</h3>
         <button onClick={() => addDonation(100, 'Aisha')}>
-          Add $100 Donation
+          Add \$100 Donation
         </button>
         <ul>
           {donations.map((d) => (
@@ -1067,7 +1067,7 @@ function FinancialDashboard() {
       <div>
         <h3>Zakat: ${zakatTotal}</h3>
         <button onClick={() => addZakatPayment(10000, 125, 'Omar')}>
-          Add $125 Zakat Payment
+          Add \$125 Zakat Payment
         </button>
         <ul>
           {zakatPayments.map((p) => (
@@ -1086,7 +1086,7 @@ export default FinancialDashboard;
 
 **Key Takeaway**: Organize large Zustand stores into slices for separation of concerns. Each slice defines its own state and actions. Combine slices into single store with proper TypeScript typing. Components select from any slice seamlessly.
 
-**Expected Output**: Page displays grand total (sum of donations and zakat), two sections with individual totals. Donation section shows list and "Add $100 Donation" button. Zakat section shows list and "Add $125 Zakat Payment" button. Clicking buttons adds items to respective lists and updates totals.
+**Expected Output**: Page displays grand total (sum of donations and zakat), two sections with individual totals. Donation section shows list and "Add \$100 Donation" button. Zakat section shows list and "Add \$125 Zakat Payment" button. Clicking buttons adds items to respective lists and updates totals.
 
 **Common Pitfalls**: Incorrect StateCreator typing (breaks type inference), slices modifying other slice's state (breaks separation), not combining slices properly (missing state or actions), over-slicing small stores (unnecessary complexity).
 
@@ -1242,10 +1242,10 @@ function PersistedDonationTracker() {
       {/* => Action buttons */}
       <div>
         <button onClick={() => addDonation(10, 'Anonymous')}>
-          Donate $10
+          Donate \$10
         </button>
         <button onClick={() => addDonation(25, 'Anonymous')}>
-          Donate $25
+          Donate \$25
         </button>
         <button onClick={() => clearDonations()}>
           Clear All
@@ -1496,7 +1496,7 @@ function DonationDashboard() {
               disabled={createMutation.isPending}
             >
               {/* => Mutation state from React Query */}
-              {createMutation.isPending ? 'Adding...' : 'Add $100 Donation'}
+              {createMutation.isPending ? 'Adding...' : 'Add \$100 Donation'}
             </button>
 
             <ul>
@@ -1520,7 +1520,7 @@ export default DonationDashboard;
 
 **Key Takeaway**: Separate client state (UI concerns, managed by Zustand) from server state (API data, managed by React Query). Client state controls UI elements like sidebar visibility and sort order. Server state handles API data with automatic caching, refetching, and synchronization. Never duplicate server data in Zustand.
 
-**Expected Output**: Page displays sidebar with sort order dropdown and minimum amount filter, main area with donation list. Sidebar toggle button shows/hides filters. Sort order and filter update list immediately (client state). "Add $100 Donation" button triggers server mutation, shows "Adding..." during request, then refetches and updates list automatically (server state).
+**Expected Output**: Page displays sidebar with sort order dropdown and minimum amount filter, main area with donation list. Sidebar toggle button shows/hides filters. Sort order and filter update list immediately (client state). "Add \$100 Donation" button triggers server mutation, shows "Adding..." during request, then refetches and updates list automatically (server state).
 
 **Common Pitfalls**: Storing server data in Zustand (causes synchronization issues), not invalidating queries after mutations (stale data), using client state for data that should come from server (loses single source of truth), over-fetching by not leveraging React Query's caching.
 
@@ -1725,7 +1725,7 @@ function DonationStateMachine() {
               })
             }
           >
-            Quick Donate $100
+            Quick Donate \$100
           </button>
         </div>
       )}
@@ -1852,7 +1852,7 @@ export default DonationStateMachine;
 
 **Key Takeaway**: State machines model complex workflows with explicit states and allowed transitions. XState provides TypeScript-safe state machines with context for data, guards for conditional transitions, and invoke for async operations. Prevents impossible states and makes workflows predictable.
 
-**Expected Output**: Page shows current state indicator. In idle state, displays "Quick Donate $100" button. Entering state shows form fields and "Review Donation" button. Confirming state displays entered details with "Submit Donation" and "Edit Details" buttons. Processing state shows loading spinner. Success state displays confirmation code. Failure state shows error message with "Retry Payment" button.
+**Expected Output**: Page shows current state indicator. In idle state, displays "Quick Donate \$100" button. Entering state shows form fields and "Review Donation" button. Confirming state displays entered details with "Submit Donation" and "Edit Details" buttons. Processing state shows loading spinner. Success state displays confirmation code. Failure state shows error message with "Retry Payment" button.
 
 **Common Pitfalls**: Not defining exhaustive states (allows undefined states), forgetting to assign context in actions (context doesn't update), using state machine for simple boolean states (over-engineering), not typing events properly (loses TypeScript safety).
 
@@ -2219,8 +2219,8 @@ function ReportsPage() {
       {/* => ReportsPage content split into separate bundle */}
       <div>
         <h2>Monthly Summary</h2>
-        <p>Total donations: $2,500</p>
-        <p>Total zakat: $1,250</p>
+        <p>Total donations: \$2,500</p>
+        <p>Total zakat: \$1,250</p>
       </div>
       {/* => Only loaded when user navigates to /reports route */}
     </div>
@@ -2467,7 +2467,7 @@ function generateDonations(count: number): Donation[] {
     donations.push({
       id: `donation-${i}`,
       amount: Math.floor(Math.random() * 500) + 10,
-      // => Random amount between $10-$510
+      // => Random amount between \$10-\$510
       donor: `Donor ${i + 1}`,
       timestamp: new Date(
         Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000
@@ -4152,7 +4152,7 @@ export function DonationForm({ onSubmit }: DonationFormProps) {
 
     // => Validation
     if (amount <= 0) {
-      setError('Amount must be greater than $0');
+      setError('Amount must be greater than \$0');
       return;
     }
 
@@ -4274,7 +4274,7 @@ describe('DonationForm', () => {
     await user.click(submitButton);
 
     // => Assert: error message shown, onSubmit not called
-    expect(screen.getByRole('alert')).toHaveTextContent('Amount must be greater than $0');
+    expect(screen.getByRole('alert')).toHaveTextContent('Amount must be greater than \$0');
     // => Error message displayed in alert role
     expect(mockOnSubmit).not.toHaveBeenCalled();
     // => onSubmit should not be called on validation error
@@ -4392,7 +4392,7 @@ export function useDonationForm(): UseDonationFormReturn {
   const submitDonation = (): boolean => {
     // => Validate amount
     if (amount <= 0) {
-      setError("Amount must be greater than $0");
+      setError("Amount must be greater than \$0");
       return false;
     }
 
@@ -4526,7 +4526,7 @@ describe("useDonationForm", () => {
     // => Assert: submission failed, error set
     expect(submitResult).toBe(false);
     // => submitDonation returns false
-    expect(result.current.error).toBe("Amount must be greater than $0");
+    expect(result.current.error).toBe("Amount must be greater than \$0");
     // => Error message set
   });
 
@@ -5322,7 +5322,7 @@ export const useZakatStore = create<ZakatState>()(
       wealth: [],
       payments: [],
       nisabThreshold: 5000,
-      // => Default nisab: $5000 (approximate)
+      // => Default nisab: \$5000 (approximate)
 
       // => Add wealth entry
       addWealth: (wealth) => {
@@ -5434,7 +5434,7 @@ export function WealthForm() {
 
     // => Validate amount
     if (amount <= 0) {
-      setError('Amount must be greater than $0');
+      setError('Amount must be greater than \$0');
       return;
     }
 
@@ -5687,7 +5687,7 @@ function ZakatManagementSystem() {
           Zakat is one of the Five Pillars of Islam. It's an obligatory charity paid annually by Muslims who meet the nisab threshold (minimum wealth required).
         </p>
         <ul>
-          <li><strong>Nisab:</strong> Minimum wealth threshold ($5000 approximate, based on gold/silver value)</li>
+          <li><strong>Nisab:</strong> Minimum wealth threshold (\$5000 approximate, based on gold/silver value)</li>
           <li><strong>Rate:</strong> 2.5% of wealth exceeding nisab</li>
           <li><strong>Assets:</strong> Cash, gold, silver, investments, business assets</li>
           <li><strong>Timing:</strong> Once lunar year (Hawl) passes from reaching nisab</li>
