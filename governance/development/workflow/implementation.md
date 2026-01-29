@@ -9,8 +9,11 @@ tags:
   - implementation
   - optimization
   - refactoring
+  - surgical-changes
+  - goal-driven
+  - test-driven
 created: 2025-12-15
-updated: 2025-12-15
+updated: 2026-01-29
 ---
 
 # Implementation Workflow
@@ -26,6 +29,11 @@ The implementation workflow follows three sequential stages:
 3. **Make it fast** - Optimize performance ONLY if proven necessary by measurements
 
 **Key principle**: Each stage is complete before moving to the next. Don't skip stages or combine them.
+
+Additionally, this workflow includes two cross-cutting practices:
+
+- **Surgical Changes** - Touch only what you must when editing existing code
+- **Goal-Driven Execution** - Define success criteria, loop until verified
 
 ## Why
 
@@ -207,6 +215,465 @@ function calculateOrderTotalOptimized(items: OrderItem[]): number {
 ```
 
 **When you're done**: Performance meets requirements, code still clean, optimizations justified by data.
+
+## Surgical Changes
+
+### Principle: Touch Only What You Must
+
+When editing existing code, practice surgical precision. Clean up only your own mess.
+
+**Core Rules**:
+
+1. **Don't "improve" adjacent code**
+   - No fixing nearby formatting
+   - No refactoring unrelated code
+   - No updating comments you didn't change
+   - No type annotation additions to unchanged code
+
+2. **Don't refactor things that aren't broken**
+   - If it works and isn't part of your task, leave it
+   - "While I'm here" is a red flag
+   - Separate refactoring from feature work
+
+3. **Match existing style, even if you'd do it differently**
+   - Use tabs if the file uses tabs
+   - Follow existing naming conventions
+   - Match indentation patterns
+   - Consistency > your preferences
+
+4. **Dead code handling**
+   - If you notice unrelated dead code, mention it - don't delete it
+   - Only remove what YOUR changes made unused
+   - Don't remove pre-existing dead code unless asked
+
+**The Test**: Every changed line should trace directly to the user's request.
+
+### Application Examples
+
+#### Example 1: Bug Fix in Payment Module
+
+**FAIL - Scope creep**:
+
+```typescript
+function processPayment(amount: number, userId: string) {
+-  const fee = calculateFee(amount)  // Fixed typo in function name
++  const fee = calculateFee(amount)
+-  const total = amount + fee         // Reformatted this line
++  const total = amount + fee
+-  // TODO: Add validation             // Removed unrelated TODO
+-  const user = getUser(userId)        // Refactored to use new helper
++  const user = await getUserById(userId)
+  return chargeCard(user, total)
+}
+
+// Added new helper function (scope creep)
++async function getUserById(id: string) {
++  return await db.users.findOne({ id })
++}
+```
+
+**PASS - Surgical change**:
+
+```typescript
+function processPayment(amount: number, userId: string) {
+-  const fee = calculateFee(amount)  // Fixed the actual bug only
++  const fee = calculateFee(amount)
+  const total = amount + fee
+  // TODO: Add validation             // Left unrelated TODO
+  const user = getUser(userId)        // Left existing code alone
+  return chargeCard(user, total)
+}
+```
+
+#### Example 2: Adding Validation
+
+**FAIL - While I'm here syndrome**:
+
+```typescript
+function createUser(email: string, name: string) {
++  // Added validation (requested)
++  if (!email || !email.includes('@')) {
++    throw new Error('Invalid email')
++  }
+-  // Create user                      // "Improved" comment
++  // Creates a new user in the database
+-  const user = { email, name }        // "Improved" structure
++  const user = {
++    email: email.toLowerCase(),       // Added normalization (not asked)
++    name: name.trim(),                // Added trimming (not asked)
++    createdAt: new Date(),            // Added timestamp (not asked)
++  }
+-  return db.save(user)                // Refactored to async/await
++  return await db.users.insert(user)
+}
+```
+
+**PASS - Only what was asked**:
+
+```typescript
+function createUser(email: string, name: string) {
++  // Added validation (requested)
++  if (!email || !email.includes('@')) {
++    throw new Error('Invalid email')
++  }
+  // Create user                       // Left existing comment
+  const user = { email, name }         // Left existing structure
+  return db.save(user)                 // Left existing implementation
+}
+```
+
+### When YOUR Changes Create Orphans
+
+**Do remove**:
+
+- Imports that YOUR changes made unused
+- Variables that YOUR changes made unused
+- Functions that YOUR changes made unused
+
+**Don't remove**:
+
+- Pre-existing dead code
+- Imports used elsewhere (verify with Grep)
+- Code that might be used by other modules
+
+#### Example: Import Cleanup
+
+**PASS - Clean up your own mess**:
+
+```typescript
+-import { oldFormatter, calculateTotal } from './utils'  // Removed oldFormatter (you stopped using it)
++import { calculateTotal } from './utils'
+
+function processOrder(items: Item[]) {
+-  const formatted = oldFormatter(items)  // You removed this line
+-  return calculateTotal(formatted)
++  return calculateTotal(items)          // You changed to this
+}
+
+// Note: calculateTotal is still used, so import stays
+```
+
+**FAIL - Removing unrelated dead code**:
+
+```typescript
+-import { oldFormatter, calculateTotal, unusedHelper } from './utils'
++import { calculateTotal } from './utils'
+
+// Removed unusedHelper from import even though YOUR changes didn't affect it
+// Don't do this - mention it instead
+```
+
+### Surgical Changes Checklist
+
+Before committing:
+
+- [ ] Every changed line traces to the user's request
+- [ ] No "improvements" to adjacent code
+- [ ] No refactoring of unrelated code
+- [ ] Existing style matched consistently
+- [ ] Only orphans created BY YOUR changes were removed
+- [ ] Pre-existing issues were mentioned, not silently fixed
+
+### Relationship to Principles
+
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Minimal changes reduce complexity
+- **[Deliberate Problem-Solving](../../principles/software-engineering/deliberate-problem-solving.md)**: Explicit scope boundaries prevent scope creep
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Clear traceability from request to change
+
+### For AI Agents
+
+Agents must practice surgical precision by:
+
+1. **Scoping changes** to exactly what was requested
+2. **Avoiding refactoring** unrelated code
+3. **Matching existing patterns** rather than imposing preferences
+4. **Mentioning (not fixing)** unrelated issues
+5. **Cleaning up only** what their changes made unused
+
+This practice is especially important in large codebases where unintended changes can introduce bugs or merge conflicts.
+
+## Goal-Driven Execution
+
+### Principle: Define Success Criteria, Loop Until Verified
+
+Transform every task into verifiable goals with clear success criteria.
+
+**Core Process**:
+
+1. **Define the goal** with measurable success criteria
+2. **Execute** the implementation
+3. **Verify** against success criteria
+4. **Loop** until verification passes
+
+### Transforming Tasks into Verifiable Goals
+
+**Pattern**: `[Task]` → `[Verifiable Goal with Test]`
+
+#### Example Transformations
+
+**Task: "Add validation"**
+
+```
+❌ Weak: "Add validation" (what counts as success?)
+✅ Strong: "Write tests for invalid inputs (empty string, null, malformed), then make them pass"
+```
+
+**Task: "Fix the bug"**
+
+```
+❌ Weak: "Fix the bug" (how do you know it's fixed?)
+✅ Strong: "Write a test that reproduces the bug, verify it fails, then make it pass"
+```
+
+**Task: "Refactor X"**
+
+```
+❌ Weak: "Refactor X" (how do you verify it's safe?)
+✅ Strong: "Ensure all tests pass before refactoring, refactor, ensure all tests still pass"
+```
+
+**Task: "Optimize performance"**
+
+```
+❌ Weak: "Make it faster" (faster by how much?)
+✅ Strong: "Measure current performance, optimize, measure again, verify ≥20% improvement"
+```
+
+### Multi-Step Task Planning
+
+For complex tasks, state a brief plan with verification steps.
+
+**Format**:
+
+```
+1. [Step] → verify: [check]
+2. [Step] → verify: [check]
+3. [Step] → verify: [check]
+```
+
+#### Example: Adding Authentication
+
+**Plan**:
+
+```
+1. Add login endpoint → verify: curl returns 200 for valid credentials, 401 for invalid
+2. Add JWT generation → verify: token decodes correctly and contains user ID
+3. Add auth middleware → verify: protected routes reject requests without valid token
+4. Add logout endpoint → verify: invalidated tokens are rejected
+```
+
+Each step has a clear, testable verification criterion.
+
+### Strong vs Weak Success Criteria
+
+| Weak (requires clarification) | Strong (enables independent work)                                              |
+| ----------------------------- | ------------------------------------------------------------------------------ |
+| "Make it work"                | "All tests pass and API returns expected JSON"                                 |
+| "Add error handling"          | "Invalid input returns 400 with error message, network errors retry 3x"        |
+| "Improve UX"                  | "Form validation shows errors on blur, submit disabled until valid"            |
+| "Update docs"                 | "README has install steps, example usage, and API reference"                   |
+| "Deploy"                      | "Application accessible at URL, health check returns 200, logs show no errors" |
+
+**Key difference**: Strong criteria let you verify success independently. Weak criteria require asking "Is this what you meant?"
+
+### Verification-First Development (Test-Driven)
+
+**Pattern**:
+
+1. **Write the test first** (defines success)
+2. **Run the test** (verify it fails)
+3. **Implement** (make it pass)
+4. **Run the test again** (verify it passes)
+5. **Refactor** if needed (verify tests still pass)
+
+#### Example: Adding Email Validation
+
+**Step 1: Write the test**
+
+```typescript
+describe("validateEmail", () => {
+  it("accepts valid email", () => {
+    expect(validateEmail("user@example.com")).toBe(true);
+  });
+
+  it("rejects email without @", () => {
+    expect(validateEmail("userexample.com")).toBe(false);
+  });
+
+  it("rejects empty string", () => {
+    expect(validateEmail("")).toBe(false);
+  });
+});
+```
+
+**Step 2: Run test (expect failure)**
+
+```bash
+$ npm test
+FAIL: validateEmail is not defined
+```
+
+**Step 3: Implement**
+
+```typescript
+function validateEmail(email: string): boolean {
+  return email.includes("@") && email.length > 0;
+}
+```
+
+**Step 4: Run test again (expect success)**
+
+```bash
+$ npm test
+PASS: All tests passed
+```
+
+**Step 5: Refactor (if needed)**
+
+```typescript
+function validateEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+}
+
+// Verify tests still pass
+$ npm test
+PASS: All tests passed
+```
+
+### Loop Until Verified
+
+**Anti-pattern (no verification)**:
+
+```
+1. Implement feature
+2. Assume it works
+3. Move on
+4. Bug reports later
+```
+
+**Goal-driven pattern (continuous verification)**:
+
+```
+1. Define success criteria
+2. Implement
+3. Verify against criteria
+4. If verification fails → fix and repeat step 3
+5. If verification passes → done
+```
+
+### Application Examples
+
+#### Example 1: API Endpoint Addition
+
+**Goal**: Add `/users/{id}` endpoint
+
+**Success Criteria**:
+
+- Returns 200 with user JSON for valid ID
+- Returns 404 for non-existent ID
+- Returns 400 for invalid ID format
+
+**Execution**:
+
+```bash
+# Step 1: Write tests
+$ cat > test/api/users.test.ts
+
+# Step 2: Run tests (expect failures)
+$ npm test
+FAIL: 3 tests (endpoint not implemented)
+
+# Step 3: Implement endpoint
+$ # ... code changes ...
+
+# Step 4: Run tests again
+$ npm test
+FAIL: 1 test (404 case not handling correctly)
+
+# Step 5: Fix and verify
+$ # ... fix 404 handling ...
+$ npm test
+PASS: All tests passed ✓
+
+# Step 6: Manual verification
+$ curl http://localhost:3000/users/123
+{"id": 123, "name": "John"} ✓
+```
+
+#### Example 2: Bug Fix
+
+**Goal**: Fix "cart total incorrect when discount applied"
+
+**Success Criteria**:
+
+- Test reproduces the bug (fails initially)
+- Fix makes test pass
+- All existing tests still pass
+
+**Execution**:
+
+```bash
+# Step 1: Write test that reproduces bug
+describe('Cart total with discount', () => {
+  it('applies 10% discount correctly', () => {
+    const cart = { items: [{ price: 100 }], discount: 0.1 }
+    expect(calculateTotal(cart)).toBe(90) // Currently fails: returns 100
+  })
+})
+
+# Step 2: Verify test fails (confirms bug exists)
+$ npm test
+FAIL: expected 90, got 100 ✓ (bug confirmed)
+
+# Step 3: Fix the bug
+function calculateTotal(cart) {
+  const subtotal = cart.items.reduce((sum, item) => sum + item.price, 0)
+-  return subtotal
++  return subtotal * (1 - cart.discount)
+}
+
+# Step 4: Verify test passes
+$ npm test
+PASS: applies 10% discount correctly ✓
+
+# Step 5: Verify no regressions
+$ npm test
+PASS: All 47 tests passed ✓
+```
+
+### Goal-Driven Execution Checklist
+
+Before starting any task:
+
+- [ ] Success criteria defined and measurable
+- [ ] Verification method identified (test, manual check, measurement)
+- [ ] Multi-step tasks broken into verified stages
+- [ ] Each stage has clear pass/fail criteria
+
+During execution:
+
+- [ ] Write tests before implementation (when applicable)
+- [ ] Verify at each step
+- [ ] Loop until verification passes
+- [ ] Don't move to next step until current step verified
+
+### Relationship to Principles
+
+- **[Deliberate Problem-Solving](../../principles/software-engineering/deliberate-problem-solving.md)**: Clear goals prevent confusion and rework
+- **[Reproducibility](../../principles/software-engineering/reproducibility.md)**: Automated tests ensure reproducible verification
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Automated tests > manual verification
+
+### For AI Agents
+
+Agents must practice goal-driven execution by:
+
+1. **Transforming tasks** into verifiable goals with clear success criteria
+2. **Writing tests first** when implementing features or fixing bugs
+3. **Stating brief plans** for multi-step tasks with verification steps
+4. **Verifying continuously** rather than assuming success
+5. **Looping until verified** rather than moving on prematurely
+
+This practice enables agents to work more independently by having clear, objective measures of success rather than needing constant clarification on "is this right?"
 
 ## Anti-Patterns
 
@@ -474,4 +941,4 @@ function processVideoFrame(frame: Frame): ProcessedFrame {
 
 ---
 
-**Last Updated**: 2025-12-15
+**Last Updated**: 2026-01-29
