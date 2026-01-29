@@ -56,6 +56,36 @@ This tutorial provides **85-95% coverage** of Clojure knowledge, completing your
 
 Macros transform code at compile time, enabling powerful abstractions.
 
+### Macro Expansion Process
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant Source as Source Code
+    participant Reader as Reader
+    participant MacroExp as Macro Expander
+    participant Compiler as Compiler
+    participant Runtime as Runtime
+
+    Source->>Reader: (when-not-nil x<br/>(println "hi"))
+    Reader->>MacroExp: AST (unevaluated)
+
+    Note over MacroExp: Detect macro call
+
+    MacroExp->>MacroExp: Execute macro at<br/>compile time
+    MacroExp->>MacroExp: Transform code
+
+    MacroExp->>Compiler: (if (not (nil? x))<br/>(do (println "hi")))
+
+    Note over Compiler: Compile expanded code
+
+    Compiler->>Runtime: Bytecode
+
+    rect rgb(1, 115, 178, 0.1)
+    Note over Source,Runtime: Macros run at COMPILE time,<br/>not runtime
+    end
+```
+
 ### Basic Macro Concepts
 
 ```clojure
@@ -319,6 +349,29 @@ Core.async brings Communicating Sequential Processes to Clojure.
 
 ## Spec - Validation and Testing
 
+### Spec Validation Pipeline
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart LR
+    Input["Input Data<br/>{:amount -100}"] --> Validate["s/valid?<br/>Check spec"]
+    Validate --> Check{"Passes<br/>predicates?"}
+
+    Check -->|"Yes"| Valid["Return true<br/>Data is valid"]
+    Check -->|"No"| Invalid["Return false<br/>Data is invalid"]
+
+    Invalid --> Explain["s/explain<br/>Detailed error"]
+    Explain --> Report["val: -100<br/>fails: pos?"]
+
+    style Input fill:#0173B2
+    style Validate fill:#DE8F05
+    style Check fill:#CA9161
+    style Valid fill:#029E73
+    style Invalid fill:#CC78BC
+    style Explain fill:#DE8F05
+    style Report fill:#CC78BC
+```
+
 ### Defining Specs
 
 ```clojure
@@ -389,6 +442,34 @@ Core.async brings Communicating Sequential Processes to Clojure.
 ```
 
 ## STM Deep Dive
+
+### STM Transaction Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+flowchart TD
+    Start["dosync begins<br/>Transaction"] --> ReadRefs["Read ref values<br/>(snapshot)"]
+    ReadRefs --> Execute["Execute transaction<br/>body"]
+    Execute --> Check{"Conflict<br/>detected?"}
+
+    Check -->|"No conflict"| Commit["Commit changes<br/>atomically"]
+    Check -->|"Conflict"| Retry["Retry transaction<br/>(automatic)"]
+
+    Retry --> ReadRefs
+
+    Commit --> Success["Transaction<br/>complete"]
+
+    Concurrent["Concurrent<br/>Transaction"] -.->|"Modifies same refs"| Check
+
+    style Start fill:#0173B2
+    style ReadRefs fill:#CC78BC
+    style Execute fill:#DE8F05
+    style Check fill:#CA9161
+    style Commit fill:#029E73
+    style Retry fill:#DE8F05
+    style Success fill:#029E73
+    style Concurrent fill:#CC78BC
+```
 
 ### Transaction Retry and Consistency
 

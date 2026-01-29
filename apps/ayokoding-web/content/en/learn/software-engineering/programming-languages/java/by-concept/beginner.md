@@ -37,8 +37,8 @@ By the end of this tutorial, you will:
 
 ## Prerequisites
 
-- Completed [Initial Setup for Java](initial-setup) (Java installed and working)
-- Completed [Java Quick Start](quick-start) (familiar with basic syntax)
+- Completed [Initial Setup for Java](/en/learn/software-engineering/programming-languages/java/initial-setup) (Java installed and working)
+- Completed [Java Quick Start](/en/learn/software-engineering/programming-languages/java/quick-start) (familiar with basic syntax)
 - Or completed just the Initial Setup and comfortable with basic programming
 
 ## Learning Path Overview
@@ -140,6 +140,30 @@ public class BankAccountDemo {
 ### 1.2 Encapsulation and Access Modifiers
 
 **Encapsulation** means hiding internal details and only exposing what's necessary.
+
+#### Encapsulation Concept
+
+```mermaid
+graph LR
+    subgraph "External Code"
+        A["Client Code<br/>(uses Person class)"]
+    end
+
+    subgraph "Person Class Boundary"
+        B["Public Methods<br/>getName()<br/>setAge()"]
+        C["Private Fields<br/>name<br/>age<br/>salary"]
+    end
+
+    A -->|Can access| B
+    A -.->|Cannot access| C
+    B -->|Validates & controls| C
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#029E73,stroke:#000000,color:#FFFFFF
+    style C fill:#DE8F05,stroke:#000000,color:#FFFFFF
+```
+
+This diagram shows how encapsulation creates a protective boundary - external code can only interact through public methods, never directly with private fields.
 
 #### Example: Encapsulation with Private and Public
 
@@ -638,6 +662,47 @@ Use abstract classes when classes share a common base. Use interfaces when defin
 
 The **Collections Framework** provides data structures like List, Set, and Map. **Generics** allow type-safe collections.
 
+#### Collections Framework Hierarchy
+
+```mermaid
+graph TD
+    A["Collection<br/>Interface"]
+    B["List<br/>(ordered, duplicates allowed)"]
+    C["Set<br/>(unordered, no duplicates)"]
+    D["Map<br/>(key-value pairs)"]
+
+    E["ArrayList"]
+    F["LinkedList"]
+    G["HashSet"]
+    H["TreeSet"]
+    I["HashMap"]
+    J["TreeMap"]
+
+    A --> B
+    A --> C
+    D
+
+    B --> E
+    B --> F
+    C --> G
+    C --> H
+    D --> I
+    D --> J
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#029E73,stroke:#000000,color:#FFFFFF
+    style C fill:#029E73,stroke:#000000,color:#FFFFFF
+    style D fill:#029E73,stroke:#000000,color:#FFFFFF
+    style E fill:#DE8F05
+    style F fill:#DE8F05
+    style G fill:#DE8F05
+    style H fill:#DE8F05
+    style I fill:#DE8F05
+    style J fill:#DE8F05
+```
+
+The Collections Framework organizes data structures into interfaces (List, Set, Map) and concrete implementations (ArrayList, HashSet, HashMap). Choose based on your needs.
+
 #### Example: List (ArrayList)
 
 ```java
@@ -780,6 +845,53 @@ public class CollectionMethods {
 ### 5.1 Try-Catch-Finally
 
 **Exception handling** allows graceful error recovery.
+
+#### Exception Hierarchy
+
+```mermaid
+graph TD
+    A["Throwable"]
+    B["Error<br/>(system errors)"]
+    C["Exception"]
+    D["RuntimeException<br/>(unchecked)"]
+    E["IOException<br/>(checked)"]
+    F["SQLException<br/>(checked)"]
+
+    G["OutOfMemoryError"]
+    H["StackOverflowError"]
+
+    I["NullPointerException"]
+    J["ArithmeticException"]
+    K["ArrayIndexOutOfBoundsException"]
+
+    A --> B
+    A --> C
+
+    B --> G
+    B --> H
+
+    C --> D
+    C --> E
+    C --> F
+
+    D --> I
+    D --> J
+    D --> K
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style C fill:#029E73,stroke:#000000,color:#FFFFFF
+    style D fill:#DE8F05
+    style E fill:#DE8F05
+    style F fill:#DE8F05
+    style G fill:#CA9161
+    style H fill:#CA9161
+    style I fill:#029E73,stroke:#000000,color:#FFFFFF
+    style J fill:#029E73,stroke:#000000,color:#FFFFFF
+    style K fill:#029E73,stroke:#000000,color:#FFFFFF
+```
+
+**Key distinction**: `RuntimeException` (unchecked) - compiler doesn't force handling. Other `Exception` types (checked) - must be caught or declared with `throws`.
 
 #### Example: Exception Handling
 
@@ -968,6 +1080,30 @@ public class CalculatorTest {
 ### 7.1 Introduction to Streams
 
 **Streams** allow functional-style data processing on collections.
+
+#### Stream Processing Pipeline
+
+```mermaid
+graph LR
+    A["📊 Data Source<br/>List of 1-10"]
+    B["filter()<br/>Keep evens<br/>2,4,6,8,10"]
+    C["map()<br/>Square each<br/>4,16,36,64,100"]
+    D["collect()<br/>To List"]
+    E["✅ Result<br/>[4,16,36,64,100]"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#DE8F05
+    style C fill:#DE8F05
+    style D fill:#029E73,stroke:#000000,color:#FFFFFF
+    style E fill:#029E73,stroke:#000000,color:#FFFFFF
+```
+
+Streams transform data through a pipeline: **source → intermediate operations → terminal operation**. Operations are lazy - they don't execute until a terminal operation is called.
 
 #### Example: Streams
 
@@ -1525,7 +1661,7 @@ Congratulations! You've mastered Java fundamentals (0-60% coverage).
 
 ### Next Steps
 
-**For Production Development** → Continue with [Intermediate Java](intermediate):
+**For Production Development** → Continue with [Intermediate Java](/en/learn/software-engineering/programming-languages/java/by-concept/intermediate):
 
 - Design patterns (Singleton, Factory, Observer, etc.)
 - SOLID principles in depth
@@ -1533,13 +1669,7 @@ Congratulations! You've mastered Java fundamentals (0-60% coverage).
 - Performance optimization
 - Database with JDBC
 
-**For Quick Reference** → Use [Java Cookbook](cookbook) for:
-
-- Common patterns and solutions
-- Day-to-day recipes
-- Code snippets you can copy
-
-**For Expert Mastery** → Eventually [Advanced Java](advanced):
+**For Expert Mastery** → Eventually [Advanced Java](/en/learn/software-engineering/programming-languages/java/by-concept/advanced):
 
 - JVM internals
 - Garbage collection

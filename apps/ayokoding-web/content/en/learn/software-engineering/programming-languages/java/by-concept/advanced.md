@@ -39,7 +39,7 @@ By the end of this tutorial, you will:
 
 ## Prerequisites
 
-- Completed [Intermediate Java](intermediate) - Comfortable with design patterns, concurrency basics
+- Completed [Intermediate Java](/en/learn/software-engineering/programming-languages/java/by-concept/intermediate) - Comfortable with design patterns, concurrency basics
 - Or equivalent professional experience with production Java
 
 ## Learning Path Overview
@@ -155,15 +155,31 @@ public class GCMonitoring {
 
 The **ClassLoader** hierarchy loads classes at runtime.
 
+#### ClassLoader Delegation Model
+
+```mermaid
+graph TD
+    A["Bootstrap ClassLoader<br/>(JDK core: java.lang.*)"]
+    B["Platform ClassLoader<br/>(JDK extensions: java.sql.*)"]
+    C["Application ClassLoader<br/>(User classes: your code)"]
+    D["Custom ClassLoader<br/>(e.g., plugin loader)"]
+
+    D -->|Delegate upward| C
+    C -->|Delegate upward| B
+    B -->|Delegate upward| A
+
+    D -.->|Load if not found| D
+    C -.->|Load if not found| C
+    B -.->|Load if not found| B
+    A -.->|Load if not found| A
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#029E73,stroke:#000000,color:#FFFFFF
+    style C fill:#DE8F05
+    style D fill:#CA9161
 ```
-Bootstrap ClassLoader (JDK internals)
-    ↓
-Platform ClassLoader (extensions)
-    ↓
-Application ClassLoader (your code)
-    ↓
-Custom ClassLoaders
-```
+
+ClassLoader uses **parent delegation** - first delegates to parent, then loads itself if parent fails. This prevents malicious code from replacing core classes.
 
 #### Example: Custom Class Loader
 
@@ -201,6 +217,42 @@ public class CustomClassLoader extends ClassLoader {
 ### 2.1 Reflection API
 
 **Reflection** allows inspecting and manipulating classes at runtime.
+
+#### Reflection Mechanism
+
+```mermaid
+graph LR
+    A["Runtime Code"]
+    B["Reflection API"]
+    C["Class Metadata"]
+    D["Methods"]
+    E["Fields"]
+    F["Constructors"]
+    G["Annotations"]
+
+    A -->|Query via| B
+    B -->|Access| C
+
+    C --> D
+    C --> E
+    C --> F
+    C --> G
+
+    B -.->|Invoke| D
+    B -.->|Get/Set| E
+    B -.->|Create instance| F
+    B -.->|Read| G
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#029E73,stroke:#000000,color:#FFFFFF
+    style C fill:#DE8F05
+    style D fill:#CA9161
+    style E fill:#CA9161
+    style F fill:#CA9161
+    style G fill:#CA9161
+```
+
+Reflection provides runtime access to class structure, enabling frameworks to inspect and manipulate code dynamically without compile-time knowledge.
 
 #### Example: Reflection
 

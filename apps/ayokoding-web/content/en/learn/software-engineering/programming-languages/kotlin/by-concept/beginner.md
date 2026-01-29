@@ -206,6 +206,22 @@ fun main() {
 
 Kotlin's type system distinguishes between nullable and non-nullable types.
 
+```mermaid
+graph LR
+    A["Type System"] --> B["Non-Nullable<br/>String"]
+    A --> C["Nullable<br/>String?"]
+    B --> D["Always has value<br/>Safe to call methods"]
+    C --> E["May be null<br/>Requires safe access"]
+    E --> F["Safe call: ?.<br/>Elvis: ?:<br/>Let: ?.let"]
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#029E73,stroke:#000000,color:#FFFFFF
+    style C fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style D fill:#029E73,stroke:#000000,color:#FFFFFF
+    style E fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style F fill:#CC78BC,stroke:#000000,color:#FFFFFF
+```
+
 ```kotlin
 fun main() {
     // Non-nullable (default) - CANNOT be null
@@ -700,6 +716,34 @@ fun main() {
 
 Data classes automatically generate `equals()`, `hashCode()`, `toString()`, `copy()`, and destructuring.
 
+```mermaid
+graph TD
+    A["data class User<br/>(name, age, email)"] --> B["Auto-generated<br/>Functions"]
+    B --> C["equals()"]
+    B --> D["hashCode()"]
+    B --> E["toString()"]
+    B --> F["copy()"]
+    B --> G["componentN()"]
+
+    C --> H["Structural<br/>equality"]
+    D --> H
+    E --> I["String<br/>representation"]
+    F --> J["Immutable<br/>updates"]
+    G --> K["Destructuring<br/>support"]
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style C fill:#029E73,stroke:#000000,color:#FFFFFF
+    style D fill:#029E73,stroke:#000000,color:#FFFFFF
+    style E fill:#029E73,stroke:#000000,color:#FFFFFF
+    style F fill:#029E73,stroke:#000000,color:#FFFFFF
+    style G fill:#029E73,stroke:#000000,color:#FFFFFF
+    style H fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style I fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style J fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style K fill:#CC78BC,stroke:#000000,color:#FFFFFF
+```
+
 ```kotlin
 data class User(val name: String, val age: Int, val email: String)
 
@@ -726,6 +770,28 @@ fun main() {
 ### Sealed Classes
 
 Sealed classes restrict inheritance to a known set of subclasses.
+
+```mermaid
+graph TD
+    A["sealed class Result"] --> B["Success<br/>(data class)"]
+    A --> C["Error<br/>(data class)"]
+    A --> D["Loading<br/>(object)"]
+
+    E["when (result)"] --> F["is Success → ..."]
+    E --> G["is Error → ..."]
+    E --> H["is Loading → ..."]
+    E --> I["No 'else' needed<br/>(exhaustive)"]
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#029E73,stroke:#000000,color:#FFFFFF
+    style C fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style D fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style E fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style F fill:#029E73,stroke:#000000,color:#FFFFFF
+    style G fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style H fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style I fill:#CA9161,stroke:#000000,color:#FFFFFF
+```
 
 ```kotlin
 sealed class Result {
@@ -1193,6 +1259,22 @@ class Example {
 
 ### Creating Extensions
 
+Extension functions add new methods to existing classes without inheritance.
+
+```mermaid
+graph LR
+    A["String class"] --> B["Built-in methods:<br/>length, uppercase, etc."]
+    C["Extension Function"] --> D["fun String.isPalindrome()"]
+    D --> E["Adds new capability<br/>without modifying class"]
+    A -.-> E
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#029E73,stroke:#000000,color:#FFFFFF
+    style C fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style D fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style E fill:#CA9161,stroke:#000000,color:#FFFFFF
+```
+
 ```kotlin
 // Extend String
 fun String.isPalindrome(): Boolean {
@@ -1353,6 +1435,33 @@ fun main() {
 **Use case**: Side effects (logging, debugging) while maintaining chaining.
 
 ### Choosing the Right Scope Function
+
+```mermaid
+graph TD
+    A["Scope Functions"] --> B["let<br/>(it, returns result)"]
+    A --> C["run<br/>(this, returns result)"]
+    A --> D["with<br/>(this, returns result)"]
+    A --> E["apply<br/>(this, returns object)"]
+    A --> F["also<br/>(it, returns object)"]
+
+    B --> G["Null-safe operations<br/>Transform value"]
+    C --> H["Execute block<br/>Compute result"]
+    D --> I["Group function calls"]
+    E --> J["Configure object<br/>(builder pattern)"]
+    F --> K["Side effects<br/>(logging, debugging)"]
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#029E73,stroke:#000000,color:#FFFFFF
+    style C fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style D fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style E fill:#CA9161,stroke:#000000,color:#FFFFFF
+    style F fill:#029E73,stroke:#000000,color:#FFFFFF
+    style G fill:#029E73,stroke:#000000,color:#FFFFFF
+    style H fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style I fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style J fill:#CA9161,stroke:#000000,color:#FFFFFF
+    style K fill:#029E73,stroke:#000000,color:#FFFFFF
+```
 
 | Function | Object Reference | Return Value   | Use Case                      |
 | -------- | ---------------- | -------------- | ----------------------------- |
