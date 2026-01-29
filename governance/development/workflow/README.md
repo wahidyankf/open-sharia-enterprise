@@ -25,7 +25,7 @@ These standards define **HOW to execute development workflows**, covering the th
 ## Documents
 
 - [Commit Message Convention](./commit-messages.md) - Understanding Conventional Commits, commit granularity, and why we use them
-- [Implementation Workflow Convention](./implementation.md) - Three-stage development workflow: make it work, make it right, make it fast
+- [Implementation Workflow Convention](./implementation.md) - Three-stage development workflow: make it work, make it right, make it fast. Includes surgical changes (touch only what you must) and goal-driven execution (define success criteria, loop until verified)
 - [Reproducible Environments Convention](./reproducible-environments.md) - Practices for creating consistent, reproducible development and build environments
 - [Trunk Based Development Convention](./trunk-based-development.md) - Git workflow using Trunk Based Development for continuous integration
 
@@ -54,4 +54,4 @@ This set of development practices respects the following conventions:
 
 ---
 
-**Last Updated**: 2026-01-01
+**Last Updated**: 2026-01-29

@@ -10,7 +10,7 @@ tags:
   - yagni
   - over-engineering
 created: 2025-12-15
-updated: 2025-12-24
+updated: 2026-01-29
 ---
 
 # Simplicity Over Complexity
@@ -472,6 +472,202 @@ ex-co__color-accessibility.md
 - FAIL: Custom DSL for conventions
 - FAIL: Code generation framework
 
+## Implementation Guidelines
+
+### Minimum Code, Maximum Clarity
+
+Write the minimum code that solves the problem. Nothing speculative.
+
+**Core Rules:**
+
+1. **No features beyond what was asked**
+   - Don't add "nice to have" functionality
+   - Don't anticipate future requirements
+   - Don't build flexibility that wasn't requested
+
+2. **No abstractions for single-use code**
+   - Three similar lines are better than premature abstraction
+   - Don't create helpers for one-time operations
+   - Don't design for hypothetical reuse
+
+3. **No unnecessary configurability**
+   - Don't add configuration options that weren't requested
+   - Hard-code when appropriate
+   - Avoid feature flags for non-existent use cases
+
+4. **No error handling for impossible scenarios**
+   - Trust internal code and framework guarantees
+   - Only validate at system boundaries (user input, external APIs)
+   - Don't add defensive code for scenarios that can't happen
+
+5. **Length as a smell**
+   - If you write 200 lines and it could be 50, rewrite it
+   - More code = more bugs, more maintenance
+   - Brevity is a virtue when clarity is maintained
+
+### The Senior Engineer Test
+
+**Ask yourself**: "Would a senior engineer say this is overcomplicated?"
+
+If yes, simplify. Keep asking until the answer is no.
+
+**Warning signs of over-engineering:**
+
+- Helper functions used once
+- Configuration for scenarios that don't exist
+- Abstractions that obscure rather than clarify
+- Error handling for impossible conditions
+- "Flexibility" that adds complexity without clear benefit
+- Code doing more than requested
+
+## Application Examples
+
+### Example 1: Feature Request - "Add a dark mode toggle"
+
+**FAIL: Over-engineered**:
+
+```typescript
+// 200+ lines with theme system, configuration, persistence, animation...
+interface ThemeConfig {
+  mode: "light" | "dark" | "auto";
+  customColors?: ColorPalette;
+  transitionDuration?: number;
+  persistenceStrategy?: "localStorage" | "cookie" | "api";
+}
+
+class ThemeManager {
+  // Complex abstraction for a simple boolean toggle
+}
+```
+
+**PASS: Minimal solution**:
+
+```typescript
+// 20 lines - just what was asked
+const [isDark, setIsDark] = useState(false);
+
+return (
+  <button onClick={() => setIsDark(!isDark)}>
+    Toggle {isDark ? 'Light' : 'Dark'} Mode
+  </button>
+);
+```
+
+### Example 2: API Error Handling
+
+**FAIL: Defensive for impossible scenarios**:
+
+```typescript
+async function getUser(id: string) {
+  if (!id) throw new Error("ID required"); // ID is required by type system
+  if (typeof id !== "string") throw new Error("ID must be string"); // TypeScript guarantees this
+  if (id.length === 0) throw new Error("ID cannot be empty"); // Already checked above
+
+  try {
+    const response = await api.get(`/users/${id}`);
+    if (!response) throw new Error("No response"); // Fetch never returns undefined
+    if (!response.data) throw new Error("No data"); // API contract guarantees data
+    return response.data;
+  } catch (error) {
+    // Complex retry logic, fallbacks, logging that wasn't requested
+  }
+}
+```
+
+**PASS: Validate at boundaries only**:
+
+```typescript
+async function getUser(id: string) {
+  // Trust internal code - TypeScript and API contract guarantee correctness
+  const response = await api.get(`/users/${id}`);
+  return response.data;
+
+  // Handle errors at system boundary (API call)
+  // Let framework handle network errors
+}
+```
+
+### Example 3: Utility Functions
+
+**FAIL: Premature abstraction**:
+
+```typescript
+// Created utility for one use case
+function formatUserDisplay(user: User, options?: DisplayOptions): string {
+  const { includeEmail, includeRole, separator = " - " } = options || {};
+  const parts = [user.name];
+  if (includeEmail) parts.push(user.email);
+  if (includeRole) parts.push(user.role);
+  return parts.join(separator);
+}
+
+// Used once
+const display = formatUserDisplay(user, { includeEmail: true });
+```
+
+**PASS: Inline for single use**:
+
+```typescript
+// Just write it inline
+const display = `${user.name} - ${user.email}`;
+
+// If needed multiple times later, THEN extract
+```
+
+## Relationship to Other Principles
+
+- **[Deliberate Problem-Solving](../software-engineering/deliberate-problem-solving.md)**: Suggesting simpler approaches is part of deliberate problem-solving
+- **[Explicit Over Implicit](../software-engineering/explicit-over-implicit.md)**: Simple code is often more explicit than complex abstractions
+- **[Automation Over Manual](../software-engineering/automation-over-manual.md)**: Automate what's repetitive, but don't over-engineer the automation
+- **[Progressive Disclosure](../content/progressive-disclosure.md)**: Start simple, layer complexity only when proven necessary
+
+## For AI Agents
+
+All agents must follow this principle by:
+
+1. **Only implementing what was requested** - no speculative features
+2. **Avoiding premature abstractions** - inline first, extract when needed
+3. **Trusting type systems and frameworks** - no defensive code for guaranteed scenarios
+4. **Applying the senior engineer test** - questioning complexity proactively
+5. **Preferring boring solutions** - battle-tested patterns over clever code
+
+See the "Principles Respected" section in [AI Agents Convention](../../development/agents/ai-agents.md#principles-respected) for how agents apply this principle.
+
+## Common Violations
+
+### Violation 1: Anticipating Future Requirements
+
+```
+FAIL: "I'll make this configurable in case you need different behavior later"
+PASS: "Here's the solution for your current requirement. We can make it configurable if needed."
+```
+
+### Violation 2: Creating Abstractions Prematurely
+
+```
+FAIL: [Creates BaseRepository class and generic CRUD utilities for one model]
+PASS: [Writes direct database calls. Extracts patterns after third similar implementation]
+```
+
+### Violation 3: Defensive Programming for Type-Safe Code
+
+```
+FAIL: if (typeof user.id === 'number') { ... } // TypeScript already guarantees this
+PASS: const userId = user.id; // Trust the type system
+```
+
+## Summary
+
+Simplicity Over Complexity means:
+
+- **Minimal** code that solves the current problem
+- **No speculation** about future requirements
+- **Trust** type systems and framework guarantees
+- **Inline** first, abstract when patterns emerge
+- **Question** complexity at every step
+
+The right amount of complexity is the **minimum needed** for the current task.
+
 ## Related Principles
 
 - [Explicit Over Implicit](../software-engineering/explicit-over-implicit.md) - Simple explicit configuration
@@ -507,4 +703,4 @@ ex-co__color-accessibility.md
 
 ---
 
-**Last Updated**: 2025-12-15
+**Last Updated**: 2026-01-29

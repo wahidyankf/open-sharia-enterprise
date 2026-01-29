@@ -100,7 +100,7 @@ Development practices in this directory fall into several categories:
 
 ### Workflow Documentation
 
-- [Implementation Workflow Convention](./workflow/implementation.md) - Three-stage development workflow: make it work (functionality first), make it right (refactor for quality), make it fast (optimize only if needed). Implements Simplicity Over Complexity, YAGNI, and Progressive Disclosure principles
+- [Implementation Workflow Convention](./workflow/implementation.md) - Three-stage development workflow: make it work (functionality first), make it right (refactor for quality), make it fast (optimize only if needed). Includes surgical changes (touch only what you must when editing) and goal-driven execution (define success criteria, loop until verified). Implements Simplicity Over Complexity, YAGNI, and Progressive Disclosure principles
 - [Trunk Based Development Convention](./workflow/trunk-based-development.md) - Git workflow using Trunk Based Development for continuous integration
 - [Commit Message Convention](./workflow/commit-messages.md) - Understanding Conventional Commits, commit granularity, and why we use them
 - [Reproducible Environments Convention](./workflow/reproducible-environments.md) - Practices for creating consistent, reproducible development and build environments. Covers runtime version management (Volta), dependency locking, environment configuration, and containerization
@@ -141,4 +141,4 @@ Development practices in this directory fall into several categories:
 
 ---
 
-**Last Updated**: 2026-01-22
+**Last Updated**: 2026-01-29
