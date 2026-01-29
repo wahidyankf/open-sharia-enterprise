@@ -32,7 +32,48 @@ graph TD
     style D fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-**Code**:
+**Java Code**:
+
+```java
+// Note: Client API requires Datomic Cloud or Peer Server
+// For Datomic Free, use peer library as shown in earlier examples
+
+// Connect via client API (Datomic Cloud example)
+import datomic.client.api.Client;
+import datomic.client.api.Datomic;
+
+Client client = Datomic.clientCloud(
+    Util.map("server-type", "cloud",
+             "region", "us-east-1",
+             "system", "my-system",
+             "endpoint", "https://...")
+);
+// => Creates client connection to Datomic Cloud
+
+Connection conn = client.connect(Util.map("db-name", "tutorial"));
+// => Connect to specific database
+
+// Query via client API (same datalog)
+Collection results = client.q(
+    Util.map("query", "[:find ?name :where [?e :person/name ?name]]",
+             "args", Util.list(client.db(conn)))
+);
+// => Client API uses same query language as peer
+// => Queries execute remotely on peer server or Cloud
+
+// Transaction via client API
+Map txResult = client.transact(
+    conn,
+    Util.map("tx-data", Util.list(
+        Util.map(":person/name", "Remote User",
+                 ":person/email", "remote@example.com")
+    ))
+);
+// => :tx-data key wraps transaction data
+// => Returns transaction result map
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Note: Client API requires Datomic Cloud or Peer Server
@@ -73,7 +114,53 @@ graph TD
 
 Excision permanently removes data from database history. Use for legal requirements like GDPR "right to be forgotten".
 
-**Code**:
+**Java Code**:
+
+```java
+// Note: Excision requires Datomic Pro or Cloud
+// Datomic Free doesn't support excision
+
+// Mark entity for excision (Datomic Pro/Cloud example)
+// WARNING: Excision is irreversible - data permanently deleted
+
+// Query entity to excise
+Object entityToExcise = Peer.q(
+    "[:find ?e . " +
+    " :where [?e :person/email \"excise-me@example.com\"]]",
+    db
+);
+
+// Submit excision request (Datomic Cloud API with client)
+// client.transact(
+//     conn,
+//     Util.map("tx-data", Util.list(
+//         Util.list(":db/excise", entityToExcise)
+//     ))
+// );
+// => Schedules excision of entity
+// => Background process removes all datoms for this entity from history
+// => Cannot be undone - use with extreme caution
+
+// Alternative: Soft delete for Datomic Free
+conn.transact(
+    Util.list(
+        Util.map(":db/ident", ":person/deleted",
+                 ":db/valueType", ":db.type/boolean",
+                 ":db/cardinality", ":db.cardinality/one")
+    )
+).get();
+
+conn.transact(
+    Util.list(
+        Util.map(":db/id", Util.list(":person/email", "alice@example.com"),
+                 ":person/deleted", true)
+    )
+).get();
+// => Mark as deleted instead of excising
+// => Filter deleted entities in queries
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Note: Excision requires Datomic Pro or Cloud
@@ -116,7 +203,53 @@ Excision permanently removes data from database history. Use for legal requireme
 
 Combine multiple aggregates and grouping for analytical workloads.
 
-**Code**:
+**Java Code**:
+
+```java
+// Statistics by tenant
+Collection results = Peer.q(
+    "[:find ?tenant (count ?e) (avg ?age) (min ?age) (max ?age) " +
+    " :where [?e :person/tenant ?tenant] " +
+    "        [?e :person/age ?age]]",
+    db
+);
+// => [["acme" 15 32.5 22 55]
+//     ["globex" 12 29.3 21 48]]
+// => Returns tenant, count, average age, min age, max age
+
+// Age distribution (histogram bins)
+Collection results2 = Peer.q(
+    "[:find ?age-bin (count ?e) " +
+    " :where [?e :person/age ?age] " +
+    "        [(quot ?age 10) ?age-bin]]",
+    db
+);
+// => [[2 450] [3 380] [4 178]]
+// => Groups by decade: 20s, 30s, 40s
+
+// Custom aggregate: percentile (implement as Java function)
+public static class Percentile implements clojure.lang.IFn {
+    private double p;
+    public Percentile(double p) { this.p = p; }
+    public Object invoke(Object vals) {
+        List<Number> numbers = new ArrayList<>((Collection<Number>) vals);
+        Collections.sort(numbers, Comparator.comparingDouble(Number::doubleValue));
+        int idx = (int) (p * (numbers.size() - 1));
+        return numbers.get(idx);
+    }
+}
+
+// Use in query (requires registering function)
+// Collection results3 = Peer.q(
+//     "[:find (my.ns.Percentile/invoke 0.95 ?age) " +
+//     " :where [?e :person/age ?age]]",
+//     db
+// );
+// => [[52]]
+// => 95th percentile age
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Statistics by tenant
@@ -157,7 +290,51 @@ Combine multiple aggregates and grouping for analytical workloads.
 
 Process large query results as lazy sequences to avoid memory issues.
 
-**Code**:
+**Java Code**:
+
+```java
+// Query returns Collection (not lazy in Java, but can be streamed)
+Collection allPeople = Peer.q(
+    "[:find ?e ?name " +
+    " :where [?e :person/name ?name]]",
+    db
+);
+// => Collection of results
+
+// Process in chunks
+int chunkSize = 100;
+List<Object> chunk = new ArrayList<>();
+Iterator it = allPeople.iterator();
+while (it.hasNext()) {
+    chunk.add(it.next());
+    if (chunk.size() >= chunkSize) {
+        System.out.println("Processing " + chunk.size() + " people");
+        // Process chunk
+        for (Object item : chunk) {
+            // Do something with each person
+        }
+        chunk.clear();
+    }
+}
+// Process remaining
+if (!chunk.isEmpty()) {
+    System.out.println("Processing " + chunk.size() + " people");
+}
+// => Processes 100 entities at a time
+// => Keeps memory usage bounded
+
+// Transform with streams (Java 8+)
+allPeople.stream()
+    .map(tuple -> ((List) tuple).get(0))  // Get entity ID
+    .map(e -> db.entity(e))                // Convert to entity
+    .filter(entity -> ((Integer) entity.get(":person/age")) > 30)
+    .limit(10)
+    .collect(Collectors.toList());
+// => Stream transformation pipeline
+// => Only processes first 10 matching results
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Query returns lazy sequence
@@ -195,7 +372,55 @@ Process large query results as lazy sequences to avoid memory issues.
 
 Build materialized views or custom indexes for frequently-accessed patterns.
 
-**Code**:
+**Java Code**:
+
+```java
+// Materialize age-to-people index in Map
+Map<Integer, List<Object>> ageIndex = new ConcurrentHashMap<>();
+
+void rebuildAgeIndex(Database db) {
+    ageIndex.clear();
+    Collection results = Peer.q(
+        "[:find ?e ?age " +
+        " :where [?e :person/age ?age]]",
+        db
+    );
+    for (Object obj : results) {
+        List tuple = (List) obj;
+        Object entityId = tuple.get(0);
+        Integer age = (Integer) tuple.get(1);
+        ageIndex.computeIfAbsent(age, k -> new ArrayList<>()).add(entityId);
+    }
+}
+
+rebuildAgeIndex(db);
+
+// Query custom index (O(1) lookup)
+List<Object> people30 = ageIndex.get(30);
+// => [entity-id-1, entity-id-2, ...]
+// => Instant lookup vs query scan
+
+// Update index incrementally after transactions
+void updateAgeIndex(Collection txData) {
+    for (Object obj : txData) {
+        datomic.Datom datom = (datomic.Datom) obj;
+        if (datom.a().equals(db.entid(":person/age"))) {
+            Integer age = (Integer) datom.v();
+            Object entityId = datom.e();
+            if ((Boolean) datom.added()) {
+                ageIndex.computeIfAbsent(age, k -> new ArrayList<>()).add(entityId);
+            } else {
+                List<Object> entities = ageIndex.get(age);
+                if (entities != null) {
+                    entities.remove(entityId);
+                }
+            }
+        }
+    }
+}
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Materialize age-to-people index in atom
@@ -234,7 +459,48 @@ Build materialized views or custom indexes for frequently-accessed patterns.
 
 Coordinate transactions across multiple Datomic databases using application-level coordination.
 
-**Code**:
+**Java Code**:
+
+```java
+// Note: Datomic doesn't support distributed transactions across databases
+// Use application-level coordination (e.g., outbox pattern)
+
+// Two databases
+String uri1 = "datomic:mem://db1";
+String uri2 = "datomic:mem://db2";
+Peer.createDatabase(uri1);
+Peer.createDatabase(uri2);
+Connection conn1 = Peer.connect(uri1);
+Connection conn2 = Peer.connect(uri2);
+
+// Application-level two-phase commit simulation
+Map distributedTransact(Connection conn1, List tx1, Connection conn2, List tx2) {
+    try {
+        // Phase 1: Prepare (validate transactions)
+        conn1.db().with(tx1);
+        conn2.db().with(tx2);
+
+        // Phase 2: Commit (both or neither)
+        Map result1 = conn1.transact(tx1).get();
+        Map result2 = conn2.transact(tx2).get();
+
+        return Util.map(":success", true,
+                       ":results", Util.list(result1, result2));
+    } catch (Exception e) {
+        // Rollback if either fails
+        return Util.map(":success", false,
+                       ":error", e.getMessage());
+    }
+}
+
+// Use with care - not true distributed transactions
+distributedTransact(
+    conn1, Util.list(Util.map(":person/name", "User in DB1")),
+    conn2, Util.list(Util.map(":project/name", "Project in DB2"))
+);
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Note: Datomic doesn't support distributed transactions across databases
@@ -278,7 +544,44 @@ Coordinate transactions across multiple Datomic databases using application-leve
 
 Optimize peer memory settings for query performance and cache hit rates.
 
-**Code**:
+**Java Code**:
+
+```java
+// Note: Memory tuning applies to Datomic Pro/Cloud peer servers
+// For Datomic Free embedded peer, use JVM heap settings
+
+// JVM settings for peer (example)
+// -Xmx4g -Xms4g              (4GB heap)
+// -Ddatomic.objectCacheMax=1g (1GB object cache)
+// -Ddatomic.memoryIndexMax=512m (512MB memory index)
+
+// Monitor cache statistics (Datomic Pro)
+// Map metrics = (Map) Peer.metrics(conn);
+// => Returns metrics including cache hit rates
+
+// Application-level caching of database values
+static class DbCache {
+    private volatile Database db;
+    private volatile long validUntil;
+
+    public synchronized Database getCachedDb(Connection conn, long cacheMs) {
+        long now = System.currentTimeMillis();
+        if (now > validUntil) {
+            db = conn.db();
+            validUntil = now + cacheMs;
+        }
+        return db;
+    }
+}
+
+DbCache dbCache = new DbCache();
+
+// Use cached db (refreshes every 1 second)
+Database cachedDb = dbCache.getCachedDb(conn, 1000);
+// => Returns cached database value (saves connection overhead)
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Note: Memory tuning applies to Datomic Pro/Cloud peer servers
@@ -319,7 +622,84 @@ Optimize peer memory settings for query performance and cache hit rates.
 
 Manage schema evolution across versions using additive schema changes and migration functions.
 
-**Code**:
+**Java Code**:
+
+```java
+// Schema versioning attribute
+conn.transact(
+    Util.list(
+        Util.map(":db/ident", ":schema/version",
+                 ":db/valueType", ":db.type/long",
+                 ":db/cardinality", ":db.cardinality/one")
+    )
+).get();
+
+// Initial schema (v1)
+List schemaV1 = Util.list(
+    Util.map(":db/ident", ":person/full-name",
+             ":db/valueType", ":db.type/string",
+             ":db/cardinality", ":db.cardinality/one")
+);
+
+List combined = new ArrayList(schemaV1);
+combined.add(Util.map(":db/ident", ":schema/version", ":schema/version", 1));
+conn.transact(combined).get();
+
+// Schema v2: Split full-name into first-name and last-name
+List schemaV2 = Util.list(
+    Util.map(":db/ident", ":person/first-name",
+             ":db/valueType", ":db.type/string",
+             ":db/cardinality", ":db.cardinality/one"),
+    Util.map(":db/ident", ":person/last-name",
+             ":db/valueType", ":db.type/string",
+             ":db/cardinality", ":db.cardinality/one")
+);
+
+// Migration function
+void migrateV1ToV2(Connection conn) throws Exception {
+    // Add new attributes
+    conn.transact(schemaV2).get();
+
+    // Transform data
+    Database db = conn.db();
+    Collection people = Peer.q(
+        "[:find ?e ?full-name " +
+        " :where [?e :person/full-name ?full-name]]",
+        db
+    );
+
+    List txData = new ArrayList();
+    for (Object obj : people) {
+        List tuple = (List) obj;
+        Object e = tuple.get(0);
+        String fullName = (String) tuple.get(1);
+        String[] parts = fullName.split(" ");
+        String firstName = parts[0];
+        String lastName = parts.length > 1 ? parts[parts.length - 1] : parts[0];
+
+        txData.add(Util.map(":db/id", e,
+                           ":person/first-name", firstName,
+                           ":person/last-name", lastName));
+    }
+    conn.transact(txData).get();
+
+    // Update version
+    conn.transact(Util.list(
+        Util.map(":db/ident", ":schema/version", ":schema/version", 2)
+    )).get();
+}
+
+// Check current version
+Entity schemaVersionEntity = conn.db().entity(":schema/version");
+Integer currentVersion = (Integer) schemaVersionEntity.get(":schema/version");
+
+// Run migration if needed
+if (currentVersion < 2) {
+    migrateV1ToV2(conn);
+}
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Schema versioning attribute
@@ -382,7 +762,65 @@ Manage schema evolution across versions using additive schema changes and migrat
 
 Monitor transaction log for anomalies, trigger alerts on suspicious patterns.
 
-**Code**:
+**Java Code**:
+
+```java
+void monitorLargeTransactions(Connection conn, int threshold) {
+    datomic.Log log = conn.log();
+    Iterable recentTxs = log.txRange(null, null);
+
+    int count = 0;
+    for (Object obj : recentTxs) {
+        if (count++ >= 100) break;
+
+        Map tx = (Map) obj;
+        Collection data = (Collection) tx.get(Keyword.intern("data"));
+        int datomCount = data.size();
+
+        if (datomCount > threshold) {
+            System.out.println("ALERT: Large transaction detected: " +
+                             "tx-id " + tx.get(Keyword.intern("t")) +
+                             " datoms " + datomCount);
+            // Trigger alert (send to monitoring system)
+        }
+    }
+}
+
+// Run monitoring
+monitorLargeTransactions(conn, 1000);
+// => Alerts on transactions with >1000 datoms
+
+// Monitor specific attribute changes
+void monitorSensitiveAttributes(Connection conn, Set<String> attributes) {
+    Database db = conn.db();
+    datomic.Log log = conn.log();
+    Iterable recentTxs = log.txRange(null, null);
+
+    int count = 0;
+    for (Object obj : recentTxs) {
+        if (count++ >= 100) break;
+
+        Map tx = (Map) obj;
+        Collection data = (Collection) tx.get(Keyword.intern("data"));
+
+        for (Object datomObj : data) {
+            datomic.Datom datom = (datomic.Datom) datomObj;
+            Object attr = db.ident(datom.a());
+
+            if (attributes.contains(attr.toString())) {
+                System.out.println("ALERT: Sensitive attribute changed: " +
+                                 "entity " + datom.e() +
+                                 " attribute " + attr +
+                                 " tx " + tx.get(Keyword.intern("t")));
+            }
+        }
+    }
+}
+
+monitorSensitiveAttributes(conn, new HashSet<>(Arrays.asList(":person/email", ":person/password-hash")));
+```
+
+**Clojure Code**:
 
 ```clojure
 (defn monitor-large-transactions [conn threshold]
@@ -426,7 +864,44 @@ Monitor transaction log for anomalies, trigger alerts on suspicious patterns.
 
 Create backups and restore to specific points in time.
 
-**Code**:
+**Java Code**:
+
+```java
+// Note: Backup strategies differ by storage backend
+// Datomic Free (dev storage): backup not supported (in-memory or local files)
+// Datomic Pro: use backup-db API
+// Datomic Cloud: AWS backup snapshots
+
+// Datomic Pro backup example (requires Pro license)
+// Peer.backupDb(conn, "s3://my-bucket/backups/tutorial");
+
+// For Datomic Free: export data manually
+void exportDatabase(Connection conn, String outputFile) throws IOException {
+    Database db = conn.db(); // Get current database value
+    Iterable datoms = db.datoms(Peer.EAVT); // Get all datoms in EAVT index order
+
+    try (PrintWriter w = new PrintWriter(new FileWriter(outputFile))) {
+        for (Object obj : datoms) {
+            datomic.Datom datom = (datomic.Datom) obj; // Cast to Datom
+            w.println(datom.toString()); // Write datom as string
+        }
+    }
+}
+
+// Export all data
+exportDatabase(conn, "backup-2026-01-29.edn"); // Create backup file
+
+// Point-in-time query (no restore needed - just query)
+Database dbYesterday = conn.db().asOf(yesterdayTxId); // Get database as of yesterday
+Long count = (Long) Peer.q(
+    "[:find (count ?e) . :where [?e :person/name]]", // Count people
+    dbYesterday
+);
+// => Count of people as of yesterday
+// => No restore needed - immutability enables time-travel
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Note: Backup strategies differ by storage backend
@@ -464,7 +939,62 @@ Create backups and restore to specific points in time.
 
 Publish database changes to message queues for downstream processing.
 
-**Code**:
+**Java Code**:
+
+```java
+// Simulate message queue (use real queue in production)
+List<Map<String, Object>> messageQueue = new ArrayList<>(); // In-memory queue
+
+void publishChangeEvent(Long entityId, Keyword attribute,
+                       Object oldValue, Object newValue) {
+    Map<String, Object> event = new HashMap<>(); // Create event map
+    event.put("entity", entityId); // Entity ID
+    event.put("attribute", attribute); // Attribute changed
+    event.put("old", oldValue); // Old value (null if new)
+    event.put("new", newValue); // New value
+    event.put("timestamp", new java.util.Date()); // Event timestamp
+    messageQueue.add(event); // Add to queue
+}
+
+// Process transactions and publish changes
+void processTransactionForEvents(Map txResult) {
+    Database dbBefore = (Database) txResult.get(Keyword.intern("db-before")); // DB before tx
+    Database dbAfter = (Database) txResult.get(Keyword.intern("db-after")); // DB after tx
+    Collection txData = (Collection) txResult.get(Keyword.intern("tx-data")); // Transaction data
+
+    for (Object obj : txData) {
+        datomic.Datom datom = (datomic.Datom) obj; // Cast to Datom
+        Long e = datom.e(); // Entity ID
+        Object a = datom.a(); // Attribute
+        Object v = datom.v(); // Value
+        boolean added = datom.added(); // Was added (not retracted)
+
+        Keyword attrIdent = (Keyword) dbAfter.ident(a); // Get attribute ident
+        if (added && "person".equals(attrIdent.getNamespace())) { // Filter person namespace
+            Object oldValue = dbBefore.entity(e).get(attrIdent); // Get old value
+            publishChangeEvent(e, attrIdent, oldValue, v); // Publish event
+        }
+    }
+}
+
+// Transact and publish
+Map txResult = conn.transact(
+    Util.list(
+        Util.map(":person/email", "queue-test@example.com",
+                 ":person/name", "Queue Test",
+                 ":person/age", 35)
+    )
+).get(); // Block for result
+
+processTransactionForEvents(txResult); // Process and publish events
+
+// Check message queue
+System.out.println(messageQueue);
+// => [{entity=123, attribute=:person/name, old=null, new=Queue Test, ...}
+//     {entity=123, attribute=:person/age, old=null, new=35, ...}]
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Simulate message queue (use real queue in production)
@@ -512,7 +1042,48 @@ Publish database changes to message queues for downstream processing.
 
 Understand Datomic's MVCC model: reads never block writes, writes never block reads.
 
-**Code**:
+**Java Code**:
+
+```java
+// Thread 1: Long-running read
+Database readerDb = conn.db(); // Capture immutable database snapshot
+new Thread(() -> {
+    try {
+        Thread.sleep(5000); // Simulate slow processing
+        Long count = (Long) Peer.q(
+            "[:find (count ?e) . :where [?e :person/name]]", // Count people
+            readerDb // Using captured snapshot
+        );
+        System.out.println("Reader sees count: " + count); // Print count
+    } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+    }
+}).start(); // Start reader thread
+
+// Thread 2: Write during read
+Thread.sleep(1000); // Wait 1 second
+conn.transact(
+    Util.list(
+        Util.map(":person/email", "concurrent@example.com",
+                 ":person/name", "Concurrent User")
+    )
+).get(); // Block for result
+
+// Output:
+// Reader sees count: 1008
+// => Reader's database value is immutable
+// => Unaffected by concurrent writes
+
+// New reader sees updated count
+Long newCount = (Long) Peer.q(
+    "[:find (count ?e) . :where [?e :person/name]]", // Count people
+    conn.db() // Get current database value
+);
+// => 1009
+// => New database value includes concurrent write
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Thread 1: Long-running read
@@ -547,7 +1118,71 @@ Understand Datomic's MVCC model: reads never block writes, writes never block re
 
 Handle attributes with thousands of values efficiently.
 
-**Code**:
+**Java Code**:
+
+```java
+// Large cardinality-many attribute (e.g., followers)
+conn.transact(
+    Util.list(
+        Util.map(":db/ident", ":person/followers",
+                 ":db/valueType", ":db.type/ref",
+                 ":db/cardinality", ":db.cardinality/many",
+                 ":db/doc", "People who follow this person")
+    )
+).get(); // Define followers attribute
+
+// Add many followers
+List influencerId = Util.list(":person/email", "influencer@example.com"); // Lookup ref
+conn.transact(
+    Util.list(
+        Util.map(":person/email", "influencer@example.com",
+                 ":person/name", "Influencer")
+    )
+).get(); // Create influencer
+
+// Add 10k followers
+List<Map> followers = new ArrayList<>(); // List of follower entities
+List<List> followerIds = new ArrayList<>(); // List of lookup refs
+for (int i = 0; i < 10000; i++) {
+    String email = "follower" + i + "@example.com";
+    followers.add(Util.map(":person/email", email,
+                           ":person/name", "Follower " + email)); // Create entity
+    followerIds.add(Util.list(":person/email", email)); // Create lookup ref
+}
+
+conn.transact(followers).get(); // Create all followers
+conn.transact(
+    Util.list(
+        Util.map(":db/id", influencerId,
+                 ":person/followers", followerIds) // Add all followers
+    )
+).get(); // Link followers to influencer
+
+// Query followers efficiently (use limit in pull)
+long start = System.currentTimeMillis();
+Map result = (Map) Peer.pull(
+    db,
+    "[{(:person/followers {:limit 100}) [*]}]", // Pull pattern with limit
+    influencerId
+);
+long elapsed = System.currentTimeMillis() - start;
+// => Returns first 100 followers
+// => Faster than pulling all 10k
+
+// Count followers without loading all
+start = System.currentTimeMillis();
+Collection countResult = Peer.q(
+    "[:find (count ?follower) " + // Count aggregate
+    " :where [?influencer :person/email \"influencer@example.com\"] " +
+    "        [?influencer :person/followers ?follower]]",
+    db
+);
+elapsed = System.currentTimeMillis() - start;
+// => [[10000]]
+// => Count aggregation doesn't materialize all values
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Large cardinality-many attribute (e.g., followers)
@@ -598,7 +1233,67 @@ Handle attributes with thousands of values efficiently.
 
 Implement reactive queries that update automatically on database changes.
 
-**Code**:
+**Java Code**:
+
+```java
+// Note: Java doesn't have core.async built-in
+// Use java.util.concurrent for reactive patterns
+
+// Create blocking queue for database updates
+BlockingQueue<Database> dbQueue = new LinkedBlockingQueue<>(); // Thread-safe queue
+
+// Polling function (simulates tx-report-queue in Datomic Pro)
+void pollForUpdates(Connection conn, long intervalMs) {
+    new Thread(() -> {
+        long lastT = conn.db().basisT(); // Get initial basis-t
+        while (true) {
+            try {
+                Thread.sleep(intervalMs); // Wait for interval
+                Database currentDb = conn.db(); // Get current database
+                long currentT = currentDb.basisT(); // Get current basis-t
+                if (currentT > lastT) { // Database changed
+                    dbQueue.put(currentDb); // Send to queue
+                    lastT = currentT; // Update last-t
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+    }).start(); // Start polling thread
+}
+
+// Start polling
+pollForUpdates(conn, 1000); // Poll every 1 second
+
+// Reactive query consumer
+new Thread(() -> {
+    while (true) {
+        try {
+            Database db = dbQueue.take(); // Block for next database
+            Long count = (Long) Peer.q(
+                "[:find (count ?e) . :where [?e :person/name]]", // Count people
+                db
+            );
+            System.out.println("Person count updated: " + count); // Print update
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            break;
+        }
+    }
+}).start(); // Start consumer thread
+
+// Trigger update
+conn.transact(
+    Util.list(
+        Util.map(":person/email", "reactive@example.com",
+                 ":person/name", "Reactive User")
+    )
+).get(); // Create reactive user
+// => Output (after 1s): "Person count updated: 1010"
+```
+
+**Clojure Code**:
 
 ```clojure
 (require '[clojure.core.async :as async])
@@ -640,7 +1335,57 @@ Implement reactive queries that update automatically on database changes.
 
 Implement attribute-level access control using database filters.
 
-**Code**:
+**Java Code**:
+
+```java
+// Define sensitive attributes
+Set<Keyword> sensitiveAttrs = new HashSet<>(); // Set of sensitive keywords
+sensitiveAttrs.add(Keyword.intern("person", "password-hash")); // Password hash
+sensitiveAttrs.add(Keyword.intern("person", "ssn")); // Social security number
+
+// Create filtered database (removes sensitive attributes)
+Database createRestrictedDb(Database db, String userRole) {
+    if ("admin".equals(userRole)) {
+        return db; // Admins see everything
+    }
+
+    // Filter for non-admin users
+    return db.filter(new Database.Predicate<datomic.Datom>() { // Filter predicate
+        @Override
+        public boolean apply(Database filterDb, datomic.Datom datom) {
+            Keyword attr = (Keyword) filterDb.ident(datom.a()); // Get attribute ident
+            return !sensitiveAttrs.contains(attr); // Include if not sensitive
+        }
+    });
+}
+
+// User query (non-admin)
+Database userDb = createRestrictedDb(conn.db(), "user"); // Create filtered DB
+Map userResult = (Map) Peer.pull(
+    userDb,
+    "[*]", // Pull all attributes
+    Util.list(":person/email", "alice@example.com") // Lookup ref
+);
+// => {:person/name "Alice Johnson"
+//     :person/email "alice@example.com"
+//     :person/age 34}
+// => No :person/password-hash (filtered out)
+
+// Admin query
+Database adminDb = createRestrictedDb(conn.db(), "admin"); // Unfiltered DB
+Map adminResult = (Map) Peer.pull(
+    adminDb,
+    "[*]", // Pull all attributes
+    Util.list(":person/email", "alice@example.com") // Lookup ref
+);
+// => {:person/name "Alice Johnson"
+//     :person/email "alice@example.com"
+//     :person/age 34
+//     :person/password-hash "..."}
+// => Includes sensitive attributes
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Define sensitive attributes
@@ -681,7 +1426,54 @@ Implement attribute-level access control using database filters.
 
 Understand query execution plans to optimize performance.
 
-**Code**:
+**Java Code**:
+
+```java
+// Note: :explain is experimental and may vary by Datomic version
+
+// Add :explain to query (example)
+Collection result = Peer.q(
+    "[:find ?name " + // Find name
+    " :where [?e :person/email \"alice@example.com\"] " +
+    "        [?e :person/name ?name]]",
+    db
+);
+// => Standard query execution
+
+// Datomic Pro query explanation (not available in Free)
+// Map queryArg = Util.map(":db", db, ":explain", true);
+// Object explanation = Peer.q(
+//     "[:find ?name " +
+//     " :where [?e :person/email \"alice@example.com\"] " +
+//     "        [?e :person/name ?name]]",
+//     queryArg
+// );
+// => Returns execution plan showing index selection
+
+// Manual analysis: check if unique attribute is used
+boolean queryUsesUniqueAttr(String queryStr, Database db) {
+    // Parse query string (simplified example)
+    // In real code, parse the query properly
+    if (queryStr.contains(":person/email")) { // Check for email attribute
+        Object attrId = db.entid(Keyword.intern("person", "email")); // Get attribute ID
+        if (attrId != null) {
+            datomic.Entity attr = db.entity(attrId); // Get attribute entity
+            Object unique = attr.get(Keyword.intern("db", "unique")); // Get :db/unique
+            return unique != null; // Returns true if unique
+        }
+    }
+    return false;
+}
+
+boolean usesUnique = queryUsesUniqueAttr(
+    "[:find ?name :where [?e :person/email \"alice@example.com\"] " +
+    "[?e :person/name ?name]]",
+    db
+);
+// => true (:person/email is unique)
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Note: :explain is experimental and may vary by Datomic version
@@ -724,7 +1516,70 @@ Understand query execution plans to optimize performance.
 
 Model complex aggregates using component attributes for lifecycle coupling.
 
-**Code**:
+**Java Code**:
+
+```java
+// Order-OrderLine aggregate
+conn.transact(
+    Util.list(
+        Util.map(":db/ident", ":order/id",
+                 ":db/valueType", ":db.type/string",
+                 ":db/cardinality", ":db.cardinality/one",
+                 ":db/unique", ":db.unique/identity"), // Unique order ID
+        Util.map(":db/ident", ":order/lines",
+                 ":db/valueType", ":db.type/ref",
+                 ":db/cardinality", ":db.cardinality/many",
+                 ":db/isComponent", true), // Component relationship
+        Util.map(":db/ident", ":order-line/product",
+                 ":db/valueType", ":db.type/string",
+                 ":db/cardinality", ":db.cardinality/one"), // Product name
+        Util.map(":db/ident", ":order-line/quantity",
+                 ":db/valueType", ":db.type/long",
+                 ":db/cardinality", ":db.cardinality/one") // Quantity
+    )
+).get(); // Define schema
+
+// Create order with lines
+conn.transact(
+    Util.list(
+        Util.map(":order/id", "ORD-001",
+                 ":order/lines", Util.list( // Nested entities
+                     Util.map(":order-line/product", "Widget",
+                              ":order-line/quantity", 5), // First line
+                     Util.map(":order-line/product", "Gadget",
+                              ":order-line/quantity", 3)  // Second line
+                 ))
+    )
+).get(); // Create order with lines
+
+// Pull complete aggregate
+Database db = conn.db();
+Map order = (Map) Peer.pull(
+    db,
+    "[* {:order/lines [*]}]", // Pull order and nested lines
+    Util.list(":order/id", "ORD-001") // Lookup ref
+);
+// => {:order/id "ORD-001"
+//     :order/lines [{:order-line/product "Widget" :order-line/quantity 5}
+//                   {:order-line/product "Gadget" :order-line/quantity 3}]}
+
+// Retract order - lines automatically retracted
+conn.transact(
+    Util.list(
+        Util.list(":db/retractEntity", Util.list(":order/id", "ORD-001")) // Retract order
+    )
+).get(); // Component lines retracted too
+
+// Verify lines are gone
+Collection products = Peer.q(
+    "[:find ?product :where [?line :order-line/product ?product]]", // Find products
+    conn.db()
+);
+// => #{}
+// => Component lines retracted with parent
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Order-OrderLine aggregate
@@ -778,7 +1633,84 @@ Model complex aggregates using component attributes for lifecycle coupling.
 
 Use Datomic's immutable log as event store for event sourcing architecture.
 
-**Code**:
+**Java Code**:
+
+```java
+// Event schema
+conn.transact(
+    Util.list(
+        Util.map(":db/ident", ":event/type",
+                 ":db/valueType", ":db.type/keyword",
+                 ":db/cardinality", ":db.cardinality/one"), // Event type
+        Util.map(":db/ident", ":event/aggregate-id",
+                 ":db/valueType", ":db.type/uuid",
+                 ":db/cardinality", ":db.cardinality/one"), // Aggregate ID
+        Util.map(":db/ident", ":event/payload",
+                 ":db/valueType", ":db.type/string",
+                 ":db/cardinality", ":db.cardinality/one") // Event payload
+    )
+).get(); // Define event schema
+
+// Record events
+UUID aggregateId = UUID.randomUUID(); // Generate aggregate ID
+
+conn.transact(
+    Util.list(
+        Util.map(":event/type", ":order/created",
+                 ":event/aggregate-id", aggregateId,
+                 ":event/payload", "{:order-id \"ORD-001\" :customer \"Alice\"}")
+    )
+).get(); // Record order created event
+
+conn.transact(
+    Util.list(
+        Util.map(":event/type", ":order/item-added",
+                 ":event/aggregate-id", aggregateId,
+                 ":event/payload", "{:product \"Widget\" :quantity 5}")
+    )
+).get(); // Record item added event
+
+conn.transact(
+    Util.list(
+        Util.map(":event/type", ":order/completed",
+                 ":event/aggregate-id", aggregateId,
+                 ":event/payload", "{:total 150.00}")
+    )
+).get(); // Record order completed event
+
+// Replay events for aggregate
+Collection replayEvents(Database db, UUID aggregateId) {
+    return Peer.q(
+        "[:find ?type ?payload ?tx " + // Find event details
+        " :in $ ?aggregate-id " +
+        " :where [?e :event/aggregate-id ?aggregate-id] " +
+        "        [?e :event/type ?type] " +
+        "        [?e :event/payload ?payload] " +
+        "        [?e _ _ ?tx] " + // Get transaction ID
+        " :order ?tx]", // Order by transaction
+        db,
+        aggregateId
+    );
+}
+
+Collection events = replayEvents(conn.db(), aggregateId); // Get events in order
+// => [[:order/created "{:order-id ...}" tx1]
+//     [:order/item-added "{:product ...}" tx2]
+//     [:order/completed "{:total ...}" tx3]]
+
+// Rebuild aggregate state from events
+Map<String, Object> state = new HashMap<>(); // Initial state
+for (Object obj : events) {
+    List event = (List) obj; // Cast to list
+    Keyword eventType = (Keyword) event.get(0); // Event type
+    String payload = (String) event.get(1); // Payload string
+    // Apply event to state (simplified - parse payload properly in real code)
+    System.out.println("Apply event: " + eventType + " -> " + payload);
+}
+// => {:order-id "ORD-001" :customer "Alice" :product "Widget" :quantity 5 :total 150.00}
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Event schema
@@ -845,7 +1777,69 @@ Use Datomic's immutable log as event store for event sourcing architecture.
 
 Manage schema in multi-team environments using namespaced attributes and schema registries.
 
-**Code**:
+**Java Code**:
+
+```java
+// Team A: User service schema
+List teamASchema = Util.list(
+    Util.map(":db/ident", ":user-service/user-id",
+             ":db/valueType", ":db.type/uuid",
+             ":db/cardinality", ":db.cardinality/one",
+             ":db/unique", ":db.unique/identity"), // Unique user ID
+    Util.map(":db/ident", ":user-service/username",
+             ":db/valueType", ":db.type/string",
+             ":db/cardinality", ":db.cardinality/one") // Username
+);
+
+// Team B: Order service schema
+List teamBSchema = Util.list(
+    Util.map(":db/ident", ":order-service/order-id",
+             ":db/valueType", ":db.type/uuid",
+             ":db/cardinality", ":db.cardinality/one",
+             ":db/unique", ":db.unique/identity"), // Unique order ID
+    Util.map(":db/ident", ":order-service/user-id",
+             ":db/valueType", ":db.type/ref",
+             ":db/cardinality", ":db.cardinality/one",
+             ":db/doc", "References :user-service/user-id") // Cross-service ref
+);
+
+// Install schemas (no conflicts due to namespacing)
+conn.transact(teamASchema).get(); // Install team A schema
+conn.transact(teamBSchema).get(); // Install team B schema
+
+// Cross-service reference
+conn.transact(
+    Util.list(
+        Util.map(":user-service/user-id", UUID.randomUUID(),
+                 ":user-service/username", "alice")
+    )
+).get(); // Create user
+
+Long aliceUserId = (Long) Peer.q(
+    "[:find ?user . " + // Find user entity ID
+    " :where [?user :user-service/username \"alice\"]]",
+    conn.db()
+);
+
+conn.transact(
+    Util.list(
+        Util.map(":order-service/order-id", UUID.randomUUID(),
+                 ":order-service/user-id", aliceUserId) // Reference user
+    )
+).get(); // Create order
+
+// Query across services
+Collection result = Peer.q(
+    "[:find ?username ?order-id " + // Find username and order ID
+    " :where [?order :order-service/user-id ?user] " + // Join order to user
+    "        [?user :user-service/username ?username] " +
+    "        [?order :order-service/order-id ?order-id]]",
+    conn.db()
+);
+// => [["alice" #uuid "..."]]
+```
+
+**Clojure Code**:
 
 ```clojure
 ;; Team A: User service schema
@@ -904,7 +1898,86 @@ Manage schema in multi-team environments using namespaced attributes and schema 
 
 Implement health checks and monitoring for production Datomic deployments.
 
-**Code**:
+**Java Code**:
+
+```java
+Map<String, Object> healthCheck(Connection conn) {
+    try {
+        // Test connection
+        Database db = conn.db(); // Get database value
+
+        // Test query
+        Long personCount = (Long) Peer.q(
+            "[:find (count ?e) . :where [?e :person/name]]", // Count people
+            db
+        );
+
+        // Test transaction
+        Object tempId = Peer.tempid(":db.part/user"); // Create temp ID
+        Map txResult = conn.transact(
+            Util.list(
+                Util.list(":db/add", tempId, ":db/doc", "Health check") // Test tx
+            )
+        ).get(); // Block for result
+
+        // Verify transaction committed
+        Database dbAfter = (Database) txResult.get(Keyword.intern("db-after")); // Get db-after
+        Map tempIds = (Map) txResult.get(Keyword.intern("tempids")); // Get tempids
+        Long txId = (Long) Peer.resolveTempid(dbAfter, tempIds, tempId); // Resolve temp ID
+
+        return Util.map(
+            "healthy", true,
+            "person-count", personCount,
+            "test-tx-id", txId,
+            "timestamp", new java.util.Date()
+        );
+    } catch (Exception e) {
+        return Util.map(
+            "healthy", false,
+            "error", e.getMessage(),
+            "timestamp", new java.util.Date()
+        );
+    }
+}
+
+// Run health check
+Map healthResult = healthCheck(conn);
+// => {healthy=true, person-count=1010, test-tx-id=17592186045999,
+//     timestamp=#inst "2026-01-29T..."}
+
+// Monitoring metrics
+Map<String, Object> collectMetrics(Connection conn) {
+    Database db = conn.db(); // Get database value
+
+    Long entityCount = (Long) Peer.q(
+        "[:find (count ?e) . :where [?e :db/ident]]", // Count idents
+        db
+    );
+
+    Long personCount = (Long) Peer.q(
+        "[:find (count ?e) . :where [?e :person/name]]", // Count people
+        db
+    );
+
+    Long databaseSize = db.basisT(); // Get basis-t (database size indicator)
+
+    return Util.map(
+        "entity-count", entityCount,
+        "person-count", personCount,
+        "database-size", databaseSize,
+        "timestamp", new java.util.Date()
+    );
+}
+
+Map metrics = collectMetrics(conn);
+// => {entity-count=1523, person-count=1010,
+//     database-size=13194139534330, timestamp=#inst "2026-01-29T..."}
+
+// Export to monitoring system (Prometheus, Datadog, etc.)
+// sendToMonitoring(collectMetrics(conn));
+```
+
+**Clojure Code**:
 
 ```clojure
 (defn health-check [conn]
