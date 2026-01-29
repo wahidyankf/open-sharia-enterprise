@@ -156,6 +156,17 @@ Phoenix provides project generator options for different application types:
 - **Build projects** - Create small Phoenix apps (blog, todo list, chat) for hands-on practice
 - **Use Phoenix generators** - Run `mix phx.gen.html` and `mix phx.gen.live` to see idiomatic code structure
 
+## Community and Resources
+
+- [Official Phoenix Documentation](https://hexdocs.pm/phoenix/overview.html)
+- [Phoenix LiveView Documentation](https://hexdocs.pm/phoenix_live_view/)
+- [Elixir Forum](https://elixirforum.com/) - Active community discussion board
+- [Phoenix GitHub](https://github.com/phoenixframework/phoenix) - Source code and issue tracking
+- [Elixir Slack](https://elixir-slackin.herokuapp.com/) - Real-time community chat
+- [Awesome Phoenix](https://github.com/droptheplot/awesome-phoenix) - Curated list of Phoenix resources
+- [Phoenix Blog](https://www.phoenixframework.org/blog) - Official announcements and updates
+- [ElixirConf Talks](https://www.youtube.com/c/ElixirConf) - Conference presentations and Phoenix content
+
 ## Next Steps
 
 Explore the tutorials section to start building with Phoenix, from initial setup through advanced real-time features and production deployment strategies.

@@ -149,6 +149,17 @@ Spring Boot provides pre-configured starter dependencies that eliminate manual d
 - **Build projects** - Hands-on practice essential; theory alone insufficient for framework mastery
 - **Use Spring Initializr** - Start projects via start.spring.io for proper dependency setup
 
+## Community and Resources
+
+- [Official Spring Boot Documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/)
+- [Spring Guides](https://spring.io/guides) - Getting Started guides and tutorials
+- [Spring Blog](https://spring.io/blog) - Official announcements, releases, and articles
+- [Spring Boot GitHub](https://github.com/spring-projects/spring-boot) - Source code and issue tracking
+- [Stack Overflow Spring Boot Tag](https://stackoverflow.com/questions/tagged/spring-boot)
+- [Baeldung Spring Tutorials](https://www.baeldung.com/spring-boot) - In-depth tutorials and examples
+- [Spring Academy](https://spring.academy/) - Official training and certification
+- [Spring Community Forum](https://github.com/spring-projects/spring-boot/discussions)
+
 ## Next Steps
 
 Explore the tutorials section to begin building with Spring Boot, from initial project setup through REST API development, database integration, security, and production deployment.
