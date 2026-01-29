@@ -417,46 +417,96 @@ git pull origin main
 # Could have been handled more deliberately
 ```
 
-**Solution:**
+**Additional Anti-Pattern: Using Merge When Rebase Would Be Cleaner**
+
+```bash
+# Small change, no conflicts expected
+git commit -m "fix(typo): correct documentation spelling"
+
+# Using merge creates unnecessary merge commit
+git pull origin main  # Creates merge commit
+git push origin main
+
+# Result: Cluttered history with merge commits for trivial integrations
+# git log shows merge commits for every pull
+```
+
+**Solution (Recommended for TBD):**
 
 ```bash
 # You have local commits
 git commit -m "feat(api): add endpoint"
 
-# Pull BEFORE pushing
-git pull origin main
-# Integrates remote changes locally first
-# Resolve any conflicts in controlled way
+# Pull with rebase BEFORE pushing (recommended for TBD)
+git pull --rebase origin main
+# Replays your commits on top of remote changes
+# Linear history, no merge commits
 
-# Now push merged result
+# Now push clean result
 git push origin main
-# Success!
+# Success! Clean linear history
+```
+
+**Alternative Solution (When Merge is Appropriate):**
+
+```bash
+# Large divergence or many conflicts expected
+git commit -m "feat(api): add endpoint"
+
+# Use merge when safer
+git pull origin main  # Merge strategy
+# Resolve conflicts in one merge commit
+
+# Push merged result
+git push origin main
+```
+
+**Additional Anti-Pattern: Not Configuring Pull Strategy**
+
+```bash
+# No pull strategy configured - behavior inconsistent
+git pull origin main
+# Uses default (merge on some systems, rebase on others)
+# Team members have different history results
+```
+
+**Solution:**
+
+```bash
+# Configure pull strategy for main branch
+git config branch.main.rebase true
+
+# Now consistent behavior for entire team
+git pull origin main  # Always rebases for main branch
 ```
 
 **Rationale:**
 
 - Prevents push rejection errors
 - Allows deliberate conflict resolution locally
-- Cleaner integration workflow
-- Respects Trunk Based Development principles
+- **Rebase creates cleaner linear history for TBD workflow**
+- **Reduces merge commit noise in git log**
+- **Consistent pull strategy across team**
+- Respects Trunk Based Development principles (small, frequent commits integrate cleanly)
 - Better collaboration in team environments
 - Reduces merge friction
+- **Professional appearance with linear commit history**
 
 ## Summary of Anti-Patterns
 
-| Anti-Pattern                | Problem                     | Solution                        |
-| --------------------------- | --------------------------- | ------------------------------- |
-| **Long-Lived Branches**     | Merge conflicts, delays     | Work on main with feature flags |
-| **Large Commits**           | Hard to review, unclear     | Small, frequent commits         |
-| **Vague Messages**          | Unclear history             | Conventional Commits            |
-| **No Feature Flags**        | Branch complexity           | Hide incomplete with flags      |
-| **Premature Optimization**  | Wasted effort               | Work → right → fast             |
-| **Unpinned Dependencies**   | Inconsistent builds         | Lock versions, commit lock file |
-| **Ignoring Broken CI**      | Blocks team                 | Fix or revert immediately       |
-| **Mixed Concerns**          | Confusing commits           | Split by domain                 |
-| **Hardcoded Config**        | Security issues, inflexible | Environment variables           |
-| **Skipping Local Tests**    | Slow feedback               | Test before pushing             |
-| **Pushing Without Pulling** | Push failures, forced merge | Pull latest before pushing      |
+| Anti-Pattern                | Problem                      | Solution                        |
+| --------------------------- | ---------------------------- | ------------------------------- |
+| **Long-Lived Branches**     | Merge conflicts, delays      | Work on main with feature flags |
+| **Large Commits**           | Hard to review, unclear      | Small, frequent commits         |
+| **Vague Messages**          | Unclear history              | Conventional Commits            |
+| **No Feature Flags**        | Branch complexity            | Hide incomplete with flags      |
+| **Premature Optimization**  | Wasted effort                | Work → right → fast             |
+| **Unpinned Dependencies**   | Inconsistent builds          | Lock versions, commit lock file |
+| **Ignoring Broken CI**      | Blocks team                  | Fix or revert immediately       |
+| **Mixed Concerns**          | Confusing commits            | Split by domain                 |
+| **Hardcoded Config**        | Security issues, inflexible  | Environment variables           |
+| **Skipping Local Tests**    | Slow feedback                | Test before pushing             |
+| **Pushing Without Pulling** | Push failures, merge commits | Pull with rebase before pushing |
 
 ## Related Documentation
 

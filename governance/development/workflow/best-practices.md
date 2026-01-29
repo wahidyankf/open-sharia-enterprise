@@ -385,11 +385,15 @@ git push
 - Respect team's time
 - Green CI
 
-### Practice 11: Pull Latest Main Before Pushing
+### Practice 11: Pull with Rebase Before Pushing
 
-**Principle**: Always pull latest changes from remote main before pushing to prevent push failures and conflicts.
+**Principle**: Always pull latest changes from remote main before pushing, preferring rebase for clean linear history in Trunk Based Development.
 
-**Good Example:**
+**Default Strategy: Rebase**
+
+For Trunk Based Development with small, frequent commits, rebase creates cleaner linear history:
+
+**Good Example (Rebase):**
 
 ```bash
 # Work completed locally with commits
@@ -397,15 +401,18 @@ git status
 # On branch main
 # Your branch is ahead of 'origin/main' by 1 commit
 
-# Pull latest main BEFORE pushing
-git pull origin main
+# Pull with rebase BEFORE pushing (recommended for TBD)
+git pull --rebase origin main
 
-# If there are remote changes, Git merges automatically
-# Or prompts for merge conflict resolution
+# If there are remote changes, Git replays your commits on top
+# Linear history: no merge commits
+
+# Review the result
+git log --oneline --graph -10
 
 # Now push your changes
 git push origin main
-# Success!
+# Success! Clean linear history preserved
 ```
 
 **Bad Example:**
@@ -425,39 +432,293 @@ git pull origin main
 # Merge required - could have been avoided!
 ```
 
-**Rationale:**
+**Rationale for Rebase-First Approach:**
 
-- Prevents push failures when remote has diverged
-- Identifies conflicts early before pushing
-- Allows you to resolve issues locally first
-- Cleaner history with deliberate integration
-- Respects Trunk Based Development by integrating frequently
-- Reduces friction in collaborative environments
+- **Linear history**: No merge commits cluttering git log in TBD workflow
+- **Cleaner visualization**: `git log --oneline` shows straight line of development
+- **Better for TBD**: Small, frequent commits integrate cleanly without merge noise
+- **Easier bisect**: `git bisect` works better with linear history
+- **Simpler to understand**: Each commit applies directly on top of previous
+- **Professional appearance**: Enterprise projects favor linear commit history
 
-**When Remote Has New Commits:**
+### When to Use Merge vs Rebase
 
-If the remote has advanced while you were working locally:
+#### Default: Use Rebase
+
+**For normal Trunk Based Development workflow**:
 
 ```bash
-# You have 1 local commit, remote has 4 new commits
-git pull origin main
-
-# Git creates merge commit automatically (if no conflicts)
-# Or prompts you to resolve conflicts locally
-
-# Review the merge
-git log --oneline --graph -10
-
-# Push the integrated changes
+# Daily workflow with rebase (RECOMMENDED)
+git pull --rebase origin main
 git push origin main
 ```
 
-**Best Practice in Daily Workflow:**
+**When rebase is ideal**:
+
+- Small, frequent commits (TBD standard workflow)
+- Few local commits (1-3 commits)
+- Working on main branch
+- No conflicts expected
+- Clean linear history desired
+- Normal day-to-day development
+
+#### When to Use Merge Instead
+
+**Switch to merge when you encounter:**
+
+**1. Heavy conflicts** - Easier to resolve all conflicts at once:
 
 ```bash
-# Start of day: Get latest
+# Many conflicts during rebase? Abort and merge instead
+git rebase --abort
+git pull origin main  # Uses merge
+# Resolve all conflicts in one merge commit
+```
+
+**2. Large divergence** - Many commits on both sides:
+
+```bash
+# You have 10 local commits, remote has 15 new commits
+# Rebase would require resolving conflicts 10+ times
+git pull origin main  # Merge is safer here
+```
+
+**3. Preserve parallel work timing** - Want to show work happened in parallel:
+
+```bash
+# Documenting simultaneous development by multiple developers
+git pull origin main  # Merge preserves parallel history
+```
+
+**4. Safety preference** - When unsure, merge is safer:
+
+```bash
+# Unsure about conflicts or impact?
+git pull origin main  # Merge doesn't rewrite history
+```
+
+**5. Already pushed commits** - NEVER rebase commits others have pulled:
+
+```bash
+# CRITICAL: If you've pushed and others pulled, ONLY merge
+git pull origin main  # Never rebase shared commits!
+```
+
+### Git Configuration for Rebase
+
+**Option 1: Configure main branch only (RECOMMENDED)**
+
+```bash
+# Make main branch always use rebase for pulls
+git config branch.main.rebase true
+
+# Verify configuration
+git config branch.main.rebase
+# Output: true
+
+# Now `git pull` on main automatically rebases
+git pull origin main  # Automatically uses --rebase
+```
+
+**Why branch-specific is recommended**: Predictable for main branch (TBD), but merge is still default for other branches.
+
+**Option 2: Global configuration (all branches)**
+
+```bash
+# Make rebase default for all branches in this repository
+git config pull.rebase true
+
+# Or globally for all repositories
+git config --global pull.rebase true
+
+# Now all `git pull` commands use rebase by default
+git pull origin main  # Automatically rebases
+```
+
+**Why global might be too aggressive**: Some branches (experimental, external PRs) may benefit from merge commits.
+
+**Option 3: Explicit flag (most explicit)**
+
+```bash
+# Always specify strategy explicitly
+git pull --rebase origin main  # Rebase
+git pull origin main           # Merge (default)
+
+# Add shell alias for convenience
+git config --global alias.pr 'pull --rebase'
+git pr origin main  # Shorthand for pull --rebase
+```
+
+**Recommendation**: Start with Option 1 (branch-specific for main), then expand to Option 2 if team is comfortable.
+
+### Conflict Resolution Workflows
+
+#### Resolving Rebase Conflicts
+
+**Rebase applies commits one at a time**, so conflicts are resolved incrementally:
+
+```bash
+# Start rebase
+git pull --rebase origin main
+
+# Conflict in first commit being replayed
+# CONFLICT (content): Merge conflict in src/auth.ts
+# error: could not apply abc1234... feat(auth): add validation
+
+# Resolve conflict in the file
+# ... edit src/auth.ts to resolve conflict ...
+
+# Stage the resolved file
+git add src/auth.ts
+
+# Continue rebase to next commit
+git rebase --continue
+
+# If another conflict appears, repeat:
+# - Resolve conflict
+# - git add <file>
+# - git rebase --continue
+
+# If too many conflicts, abort and use merge instead
+git rebase --abort
+git pull origin main  # Falls back to merge
+```
+
+**Rebase workflow**:
+
+1. Conflict appears for ONE commit at a time
+2. Resolve conflict
+3. `git add` resolved files
+4. `git rebase --continue`
+5. Repeat until all commits applied
+6. Or `git rebase --abort` to start over
+
+#### Resolving Merge Conflicts
+
+**Merge resolves all conflicts at once** in a single merge commit:
+
+```bash
+# Start merge
+git pull origin main  # Default merge strategy
+
+# Conflicts in multiple files
+# CONFLICT (content): Merge conflict in src/auth.ts
+# CONFLICT (content): Merge conflict in src/user.ts
+# Automatic merge failed; fix conflicts and then commit the result.
+
+# Resolve ALL conflicts in ALL files
+# ... edit src/auth.ts ...
+# ... edit src/user.ts ...
+
+# Stage all resolved files
+git add src/auth.ts src/user.ts
+
+# Complete the merge with a merge commit
+git commit -m "Merge remote-tracking branch 'origin/main'"
+
+# Push merged result
+git push origin main
+```
+
+**Merge workflow**:
+
+1. All conflicts appear at once
+2. Resolve all conflicts
+3. `git add` all resolved files
+4. `git commit` to complete merge
+5. Creates one merge commit
+
+#### Decision Tree: Rebase vs Merge Conflicts
+
+```
+Conflict during rebase?
+├─ Few conflicts (1-2 files)
+│  └─ Continue with rebase (resolve commit-by-commit)
+│
+├─ Many conflicts (3+ files) OR same file multiple times
+│  └─ Abort rebase, use merge instead
+│     └─ git rebase --abort
+│     └─ git pull origin main
+│
+└─ Unsure or stuck
+   └─ Abort rebase, use merge (safer)
+      └─ git rebase --abort
+      └─ git pull origin main
+```
+
+### Safety Considerations
+
+#### Never Rebase Public Commits
+
+**CRITICAL RULE**: Never rebase commits that others have pulled.
+
+**Why this is dangerous:**
+
+```bash
+# You pushed commits yesterday
+git push origin main
+# Teammate pulled your commits
+# Their work builds on your commits
+
+# WRONG: Rebase commits you already pushed
+git pull --rebase origin main  # Rewrites history
+git push --force origin main   # BREAKS teammate's repository!
+
+# Teammate's commits now based on non-existent history
+# Their `git pull` will fail or create duplicate commits
+```
+
+**Safe approach**: Only rebase LOCAL commits never pushed:
+
+```bash
+# Safe: Rebase local commits before first push
+git commit -m "feat: add feature"  # Local only
+git pull --rebase origin main      # Safe - rewrites local commit
+git push origin main               # First push - safe
+
+# Unsafe: Rebase after pushing
+git push origin main               # Others may have pulled
+git pull --rebase origin main      # DANGEROUS - don't rewrite pushed commits
+```
+
+#### When Unsure, Merge is Safer
+
+**If you're uncertain about impact**:
+
+```bash
+# Safe default: merge preserves all history
+git pull origin main  # Merge strategy (default)
+
+# No history rewriting
+# No breaking others' repositories
+# Can always clean up history later if needed
+```
+
+#### Aborting Operations
+
+**Always have an escape path:**
+
+```bash
+# Abort rebase if things go wrong
+git rebase --abort
+# Returns to state before rebase started
+
+# Abort merge if conflicts are overwhelming
+git merge --abort
+# Returns to state before merge started
+```
+
+### Best Practice in Daily Workflow
+
+**Start of day workflow with rebase:**
+
+```bash
+# Configure main branch for rebase (one-time setup)
+git config branch.main.rebase true
+
+# Start of day: Get latest with rebase
 git checkout main
-git pull origin main
+git pull origin main  # Automatically rebases due to config
 
 # Make changes
 # ... work work work ...
@@ -466,11 +727,31 @@ git pull origin main
 git add .
 git commit -m "feat(auth): add validation"
 
-# Before pushing: Pull again (main may have advanced)
+# Before pushing: Pull with rebase again (main may have advanced)
+git pull origin main  # Automatically rebases due to config
+
+# Review history (should be linear)
+git log --oneline --graph -10
+
+# Push your changes
+git push origin main
+# Success! Linear history maintained
+```
+
+**When conflicts appear:**
+
+```bash
+# Pull with rebase
 git pull origin main
 
-# Now push
-git push origin main
+# Conflict in one file
+# Resolve conflict, then:
+git add <resolved-file>
+git rebase --continue
+
+# If conflicts too complex:
+git rebase --abort
+git pull origin main  # Use merge instead
 ```
 
 ## Related Documentation
@@ -495,7 +776,7 @@ Following these best practices ensures:
 8. Use environment-specific configuration
 9. Split commits by domain
 10. Test before committing
-11. Pull latest main before pushing
+11. Pull with rebase before pushing (linear history for TBD)
 
 Workflows built following these practices are efficient, predictable, and high-quality.
 
