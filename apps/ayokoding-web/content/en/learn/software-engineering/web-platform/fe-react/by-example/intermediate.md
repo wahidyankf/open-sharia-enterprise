@@ -127,14 +127,14 @@ function DonationCounter() {
       {/* => Displays current count from state */}
 
       <div>
-        <button onClick={handleDonate10}>Donate $10</button>
+        <button onClick={handleDonate10}>Donate \$10</button>
         <button onClick={() => dispatch({ type: 'increment', payload: 25 })}>
-          Donate $25
+          Donate \$25
         </button>
         {/* => Inline dispatch with literal action object */}
 
         <button onClick={() => dispatch({ type: 'decrement', payload: 5 })}>
-          Refund $5
+          Refund \$5
         </button>
 
         <button onClick={handleUndo}>
@@ -166,7 +166,7 @@ export default DonationCounter;
 
 **Key Takeaway**: Use `useReducer` for complex state with multiple related values and transitions. Reducer function centralizes state logic. Discriminated unions provide type-safe actions.
 
-**Expected Output**: Donation counter starting at $0. Buttons add/subtract amounts and update history list. Undo button reverts to previous value. Reset clears to $0.
+**Expected Output**: Donation counter starting at \$0. Buttons add/subtract amounts and update history list. Undo button reverts to previous value. Reset clears to \$0.
 
 **Common Pitfalls**: Mutating state in reducer (must return new state), forgetting to handle all action types (TypeScript helps), or using useReducer for simple state (useState simpler).
 
@@ -474,7 +474,7 @@ function DonationFormWithFocus() {
 
     // => Create interval and store ID in ref
     intervalRef.current = setInterval(() => {
-      setAmount(prev => prev + 10);          // => Increment by $10 every second
+      setAmount(prev => prev + 10);          // => Increment by \$10 every second
     }, 1000);
     // => Store interval ID for cleanup
   };
@@ -531,7 +531,7 @@ function DonationFormWithFocus() {
       </div>
 
       <div>
-        <button onClick={startAutoIncrement}>Start Auto-Increment ($10/sec)</button>
+        <button onClick={startAutoIncrement}>Start Auto-Increment (\$10/sec)</button>
         <button onClick={stopAutoIncrement}>Stop Auto-Increment</button>
         {/* => Interval ID stored in ref persists across renders */}
       </div>
@@ -1017,13 +1017,13 @@ function SadaqahTracker() {
 
       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
         <button onClick={() => handleDonate(5)} style={{ padding: '8px' }}>
-          Donate $5
+          Donate \$5
         </button>
         <button onClick={() => handleDonate(10)} style={{ padding: '8px' }}>
-          Donate $10
+          Donate \$10
         </button>
         <button onClick={() => handleDonate(25)} style={{ padding: '8px' }}>
-          Donate $25
+          Donate \$25
         </button>
       </div>
 
@@ -4019,9 +4019,9 @@ function DonationsPage() {
     <div style={{ padding: '20px' }}>
       <h2>Donations</h2>
       <ul>
-        <li>Zakat Collection: $5,000</li>
-        <li>Sadaqah Fund: $3,200</li>
-        <li>General Donations: $1,800</li>
+        <li>Zakat Collection: \$5,000</li>
+        <li>Sadaqah Fund: \$3,200</li>
+        <li>General Donations: \$1,800</li>
       </ul>
     </div>
   );
@@ -4520,9 +4520,9 @@ function DashboardPage() {
       <div style={{ padding: '16px', backgroundColor: '#e3f2fd', borderRadius: '8px', marginTop: '16px' }}>
         <h3>Recent Donations</h3>
         <ul>
-          <li>Zakat: $500 - Aisha Ahmed</li>
-          <li>Sadaqah: $250 - Omar Hassan</li>
-          <li>General: $100 - Fatima Ali</li>
+          <li>Zakat: \$500 - Aisha Ahmed</li>
+          <li>Sadaqah: \$250 - Omar Hassan</li>
+          <li>General: \$100 - Fatima Ali</li>
         </ul>
       </div>
     </div>
@@ -4844,7 +4844,7 @@ function DonationCalculator() {
           onClick={() => calculateZakat('1000')}
           style={{ padding: '8px 16px', marginRight: '8px' }}
         >
-          Calculate (Valid: $1000)
+          Calculate (Valid: \$1000)
         </button>
 
         <button
