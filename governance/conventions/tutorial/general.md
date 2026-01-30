@@ -30,7 +30,7 @@ This convention implements the following core principles:
 
 ## Purpose
 
-This convention establishes comprehensive standards for tutorial content across all tutorial types (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook, By Example). It ensures tutorials are learning-oriented, progressively structured, and free of time estimates, providing effective educational experiences.
+This convention establishes comprehensive standards for tutorial content across all tutorial types (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook, By Example). These types combine to form the **Full Set Tutorial Package** for programming languages - a complete educational bundle with 5 mandatory components. See [Tutorial Naming Convention](./naming.md) for the complete architecture and [Programming Language Structure](./programming-language-structure.md) for directory organization.
 
 **Note**: The By Example tutorial type has specialized standards defined in [By-Example Tutorial Convention](./by-example.md) that extend the general requirements in this document for code-first learning.
 
@@ -39,10 +39,12 @@ This convention establishes comprehensive standards for tutorial content across 
 ### What This Convention Covers
 
 - **Seven tutorial types** - Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook, By Example
-- **Coverage percentages** - What percentage of topic each level covers
+- **Coverage percentages** - What percentage of topic each type covers
 - **Tutorial structure** - Required sections and content patterns
 - **Learning progression** - How tutorials build on each other
-- **No time estimates** - Why tutorials don't include time-based framing
+- **Full Set Tutorial Package** - How 5 components combine for complete content (see [Tutorial Naming](./naming.md))
+- **Component relationships** - How foundational, learning tracks, and cookbook interact
+- **No time estimates** - Why tutorials use coverage percentages instead of time-based framing
 - **Tutorial quality** - Standards for effective learning content
 
 ### What This Convention Does NOT Cover

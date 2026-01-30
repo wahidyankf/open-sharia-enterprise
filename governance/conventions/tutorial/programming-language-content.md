@@ -17,7 +17,7 @@ updated: 2025-12-23
 
 **Defines the universal content architecture for programming language education on ayokoding-web.**
 
-All programming language content on ayokoding-web follows a standardized structure, coverage model, and quality baseline. This convention establishes the benchmark derived from Golang, Python, and Java implementations - a production-tested framework that scales across different programming paradigms.
+All programming language content on ayokoding-web follows a standardized **Full Set Tutorial Package** architecture: 5 mandatory components (foundational tutorials, by-concept track, by-example track, cookbook, plus supporting documentation) providing complete language education from 0% to 95% coverage through multiple learning modalities.
 
 ## Principles Implemented/Respected
 
@@ -56,22 +56,26 @@ Every programming language MUST follow this structure:
 ├── overview.md                                # Content (weight: 100000, level 6 - content inside level 5 folder)
 ├── tutorials/                                 # Folder (weight: 100002, level 6 - represents the folder)
 │   ├── _index.md                             # Folder (weight: 100002, level 6 - represents the folder)
-│   ├── overview.md                           # Content (weight: 1000000, level 7 - content inside level 6 folder)
-│   ├── initial-setup.md                      # Content (weight: 1000001, level 7 - Level 1: 0-5%)
-│   ├── quick-start.md                        # Content (weight: 1000002, level 7 - Level 2: 5-30%)
-│   ├── beginner.md                           # Content (weight: 1000003, level 7 - Level 3: 0-60%)
-│   ├── intermediate.md                       # Content (weight: 1000004, level 7 - Level 4: 60-85%)
-│   ├── advanced.md                           # Content (weight: 1000005, level 7 - Level 5: 85-95%)
-│   └── by-example/                           # Folder (weight: 1000006, level 7 - 7th item in tutorials/, represents the folder)
-│       ├── _index.md                         # Folder (weight: 1000006, level 7 - represents the folder)
-│       ├── overview.md                       # Content (weight: 10000000, level 8 - content inside level 7 folder)
-│       ├── beginner.md                       # Content (weight: 10000001, level 8 - Examples 1-15)
-│       ├── intermediate.md                   # Content (weight: 10000002, level 8 - Examples 16-35)
-│       └── advanced.md                       # Content (weight: 10000003, level 8 - Examples 36-60)
+│   ├── by-example/                           # COMPONENT 3: Code-first path (Level 7 folder) - PRIORITY
+│   │   ├── _index.md                         # Folder (weight: 1000000, level 7 - represents the folder)
+│   │   ├── overview.md                       # Content (weight: 10000000, level 8 - content inside level 7 folder)
+│   │   ├── beginner.md                       # Content (weight: 10000001, level 8 - Examples 1-25)
+│   │   ├── intermediate.md                   # Content (weight: 10000002, level 8 - Examples 26-50)
+│   │   └── advanced.md                       # Content (weight: 10000003, level 8 - Examples 51-75)
+│   ├── by-concept/                           # COMPONENT 4: Narrative-driven path (Level 7 folder)
+│   │   ├── _index.md                         # Folder (weight: 1000001, level 7 - represents the folder)
+│   │   ├── overview.md                       # Content (weight: 10000000, level 8 - content inside level 7 folder)
+│   │   ├── beginner.md                       # Content (weight: 10000001, level 8 - 0-40% coverage)
+│   │   ├── intermediate.md                   # Content (weight: 10000002, level 8 - 40-75% coverage)
+│   │   └── advanced.md                       # Content (weight: 10000003, level 8 - 75-95% coverage)
+│   ├── cookbook/                             # COMPONENT 5: Practical recipes (Level 7 folder)
+│   │   └── _index.md                         # Folder (weight: 1000002, level 7 - represents the folder)
+│   ├── initial-setup.md                      # COMPONENT 1: Foundational (0-5%, weight: 1000003, level 7)
+│   └── quick-start.md                        # COMPONENT 2: Foundational (5-30%, weight: 1000004, level 7)
 ├── how-to/                                    # Folder (weight: 100003, level 6 - represents the folder)
 │   ├── _index.md                             # Folder (weight: 100003, level 6 - represents the folder)
 │   ├── overview.md                           # Content (weight: 1000000, level 7 - content inside level 6 folder)
-│   ├── cookbook.md                           # Content (weight: 1000001, level 7 - Position 3 ← IMPORTANT)
+│   ├── best-practices.md                     # Content (weight: 1000001, level 7 - MOVED UP from position 3)
 │   └── [12-18 problem-solving guides]        # Content (weight: 1000002+, level 7)
 ├── explanation/                               # Folder (weight: 100004, level 6 - represents the folder)
 │   ├── _index.md                             # Folder (weight: 100004, level 6 - represents the folder)
@@ -122,10 +126,12 @@ The level-based weight system uses a two-part rule:
 - **Level 7 content** (files INSIDE the level 6 category folders):
   - Content inside level 6 folders is one level deeper → uses **level 7 base: 1000000** (level 7 range: 1000000-9999999)
   - **CRITICAL: Weights RESET per parent** - Each category folder's children independently start at 1000000
-  - `tutorials/overview.md`: **1000000** (content inside tutorials/ folder, level 7 base)
-  - `tutorials/initial-setup.md`: **1000001** (second content file in tutorials/)
+  - `tutorials/by-example/`: **1000000** (first folder in tutorials/, Component 3 - PRIORITY)
+  - `tutorials/by-concept/`: **1000001** (second folder in tutorials/, Component 4)
+  - `tutorials/cookbook/`: **1000002** (third folder in tutorials/, Component 5)
+  - `tutorials/initial-setup.md`: **1000003** (fourth item, Component 1)
+  - `tutorials/quick-start.md`: **1000004** (fifth item, Component 2)
   - `how-to/overview.md`: **1000000** (RESET - different parent, content inside how-to/ folder)
-  - `how-to/cookbook.md`: **1000001** (second content file in how-to/)
   - `explanation/overview.md`: **1000000** (RESET - different parent, content inside explanation/ folder)
   - `reference/overview.md`: **1000000** (RESET - different parent, content inside reference/ folder)
 
@@ -145,56 +151,44 @@ For complete details on the level-based weight system, see [Hugo Content Convent
 - All directories require `_index.md` and `overview.md`
 - Weights follow powers of 10 progression: 10, 100, 1000, 10000, 100000, 1000000...
 
-### Cookbook Position Rule
+### Cookbook Location Change
 
-**CRITICAL PEDAGOGICAL REQUIREMENT:** In `how-to/` directories, `cookbook.md` MUST always be at position 3 (weight: 1000001), immediately after `overview.md` (weight: 1000000).
+**CRITICAL UPDATE (2026-01-30):** Cookbook has **MOVED** from `how-to/cookbook.md` to `tutorials/cookbook/` folder as **Component 5** of the Full Set Tutorial Package.
 
-**Why Cookbook Comes Third (Not Last):**
+**Old Location (DEPRECATED):** `how-to/cookbook.md` at position 3 (weight: 1000001)
+**New Location:** `tutorials/cookbook/` folder (weight: 1000002)
 
-1. **Immediate Practical Value**: Learners get hands-on examples immediately after understanding what how-to guides offer
-2. **Example-Driven Learning**: Follows "Hook → Engage → Teach" model:
-   - `_index.md` = Navigation (weight: 100003, level 6 - represents the how-to folder)
-   - `overview.md` = Hook (explains what how-to guides are, weight: 1000000, level 7)
-   - `cookbook.md` = Engage (shows quick wins with 30+ practical examples, weight: 1000001, level 7)
-   - Detailed guides = Teach (deep problem-solving patterns, weight: 1000002+, level 7)
-3. **Quick Wins and Motivation**: Seeing 30+ working examples early motivates continued learning
-4. **Ongoing Reference**: Cookbook serves as reference while studying detailed guides
+**Rationale for Move:**
 
-**Anti-Pattern (Don't Do This):**
+1. **Part of Complete Educational Package**: Cookbook complements both learning tracks (by-concept and by-example)
+2. **Used Alongside Tutorials**: Learners reference cookbook while studying tutorials, not as separate how-to guide
+3. **Practical Learning Component**: Bridges theory (tutorials) with real-world problem-solving
+4. **Consistent Organization**: All tutorial-related content in one location
 
-```
-# FAIL: BAD: Cookbook at the end
-how-to/
-├── _index.md           (100003) ← Level 6 (represents folder)
-├── overview.md         (1000000) ← Level 7 base
-├── guide-1.md          (1000001)
-├── guide-2.md          (1000002)
-├── ...                 (1000003-1000015)
-└── cookbook.md         (1000016) ← WRONG! Too late, learners miss early engagement
-```
+**Migration Impact**: Languages currently with `how-to/cookbook.md` need migration to `tutorials/cookbook/` folder.
 
-**Correct Pattern:**
+**New Cookbook Structure:**
 
 ```
-# PASS: GOOD: Cookbook at position 3 with correct level-based weights
-how-to/
-├── _index.md           (100003) ← Level 6 (represents the how-to folder)
-├── overview.md         (1000000) ← Level 7 base (first content inside folder)
-├── cookbook.md         (1000001) ← Level 7 base + 1 (Position 3, immediate engagement!)
-├── guide-1.md          (1000002) ← Level 7 base + 2
-├── guide-2.md          (1000003) ← Level 7 base + 3
-└── ...                 (1000004+)
+# PASS: GOOD: Cookbook in tutorials/ folder as Component 5
+tutorials/
+├── _index.md           (100002) ← Level 6 (represents tutorials folder)
+├── by-example/         (1000000) ← Level 7 (Component 3 - PRIORITY)
+├── by-concept/         (1000001) ← Level 7 (Component 4)
+├── cookbook/           (1000002) ← Level 7 (Component 5, NEW LOCATION)
+│   ├── _index.md       (1000002) ← Represents cookbook folder
+│   └── (recipes)       (10000000+) ← Level 8 content
+├── initial-setup.md    (1000003) ← Level 7 (Component 1)
+└── quick-start.md      (1000004) ← Level 7 (Component 2)
 ```
 
-**Why These Specific Weight Values?**
+**Weight Calculation:**
 
-Path calculation: `/en/` (1) → `/learn/` (2) → `/swe/` (3) → `/prog-lang/` (4) → `/golang/` (5) → `/how-to/` (6)
+Path: `/en/` (1) → `/learn/` (2) → `/swe/` (3) → `/prog-lang/` (4) → `/[language]/` (5) → `/tutorials/` (6) → `/cookbook/` (7)
 
-- `how-to/` is a **level 6 folder** (6 steps from language root /en/)
-- `how-to/_index.md` represents THIS folder at level 6 → **weight: 100003** (level 6 range: 100000-999999)
-  - Why 100003? It's the 4th sibling among category folders (overview.md=100000, ikhtisar.md=100001, tutorials/=100002, how-to/=100003)
-- `overview.md` is content INSIDE the level 6 folder → **weight: 1000000** (level 7 base for children of level 6)
-- `cookbook.md` is also content inside → **weight: 1000001** (level 7 base + 1)
+- `cookbook/` is a **level 7 folder** (child of tutorials/)
+- `cookbook/_index.md` represents the folder at level 7 → **weight: 1000002** (3rd child in tutorials/)
+- Recipe files inside cookbook/ → **weight: 10000000+** (level 8 content)
 
 **Understanding Weight Resets Across Sibling Folders:**
 
@@ -232,15 +226,13 @@ reference/
 
 Each tutorial level targets a specific knowledge coverage range:
 
-| Level             | Coverage       | Purpose                              | Target Learner                                 | Typical Length    |
-| ----------------- | -------------- | ------------------------------------ | ---------------------------------------------- | ----------------- |
-| **Initial Setup** | 0-5%           | Installation and verification        | Complete beginners with no language experience | 300-500 lines     |
-| **Quick Start**   | 5-30%          | Touchpoints for rapid exploration    | Experienced developers learning new language   | 600-900 lines     |
-| **Beginner**      | 0-60%          | Comprehensive fundamentals           | Developers wanting deep foundation             | 1,200-2,300 lines |
-| **Intermediate**  | 60-85%         | Production-grade techniques          | Building real-world projects                   | 1,000-1,700 lines |
-| **Advanced**      | 85-95%         | Expert mastery and internals         | Optimization and deep understanding            | 1,000-1,500 lines |
-| **Cookbook**      | Parallel track | Practical recipes for daily use      | Reference alongside tutorials                  | 4,000-5,500 lines |
-| **By Example**    | 90%            | Learn through 60+ annotated examples | Experienced developers picking up new language | 3,500-4,500 lines |
+| Component                | Coverage  | Purpose                                          | Length            |
+| ------------------------ | --------- | ------------------------------------------------ | ----------------- |
+| **FULL SET PACKAGE**     | **0-95%** | **Complete language education**                  | **13K-18K lines** |
+| ↳ Foundational (2 files) | 0-30%     | Prerequisites for all learning                   | 900-1,400 lines   |
+| ↳ By-Example (3 files)   | 95%       | **PRIORITY:** Code-first, move fast (75-85 ex's) | 3,500-4,500 lines |
+| ↳ By-Concept (3 files)   | 95%       | Narrative-driven, learn deep                     | 3,200-5,500 lines |
+| ↳ Cookbook (1+ files)    | Practical | Problem-solving recipes                          | 4,000-5,500 lines |
 
 **Critical Understanding:**
 
@@ -534,31 +526,46 @@ Best practices and anti-patterns MUST include:
 
 ## Content Completeness Criteria
 
-A programming language is **production-ready** when it has:
+A programming language has a **Full Set Tutorial Package** (complete) when all 5 mandatory components exist:
 
-- PASS: All 5 tutorial levels (initial-setup, quick-start, beginner, intermediate, advanced)
-- PASS: Tutorial overview.md explaining the full set and learning paths
-- PASS: By-example track with 3 files (beginner, intermediate, advanced) containing 60+ annotated examples
-- PASS: By-example overview.md explaining example-driven learning approach
-- PASS: Cookbook with 30+ recipes (4,000+ lines)
+**Component 1-2: Foundational Tutorials** ✅ Mandatory
+
+- PASS: initial-setup.md (0-5% coverage, 300-500 lines)
+- PASS: quick-start.md (5-30% coverage, 600-900 lines)
+
+**Component 3: By-Example Track** ✅ Mandatory - **PRIORITY for fast learning**
+
+- PASS: by-example/ folder with 3 files containing 75-85 annotated examples:
+  - beginner.md (0-40% coverage, 1,000-1,400 lines, examples 1-25)
+  - intermediate.md (40-75% coverage, 1,400-1,800 lines, examples 26-50)
+  - advanced.md (75-95% coverage, 1,100-1,700 lines, examples 51-75)
+- PASS: by-example/overview.md explaining code-first approach
+- PASS: by-example/\_index.md for navigation
+
+**Component 4: By-Concept Track** ✅ Mandatory
+
+- PASS: by-concept/ folder with 3 files:
+  - beginner.md (0-40% coverage, 1,200-2,300 lines)
+  - intermediate.md (40-75% coverage, 1,000-1,700 lines)
+  - advanced.md (75-95% coverage, 1,000-1,500 lines)
+- PASS: by-concept/overview.md explaining narrative-driven approach
+- PASS: by-concept/\_index.md for navigation
+
+**Component 5: Cookbook** ✅ Mandatory (NEW LOCATION)
+
+- PASS: cookbook/ folder with 30+ recipes (4,000-5,500 lines total)
+- PASS: cookbook/\_index.md for navigation
+- PASS: Organized by category (can be single file or multiple files)
+- PASS: Positioned at weight 1000002 (after by-example, before initial-setup)
+
+**Supporting Documentation** (Mandatory):
+
 - PASS: 12+ how-to guides covering language-specific patterns
 - PASS: Best practices document (500+ lines)
 - PASS: Anti-patterns document (500+ lines)
 - PASS: All \_index.md files for navigation
-- PASS: All overview.md files for section introduction
-- PASS: Mermaid diagrams using color-blind friendly palette
-- PASS: Cross-references between all documents
-- PASS: Factual accuracy verified (by ayokoding-web-facts-checker)
 
-**Minimum Viable Language (MVL):**
-
-If resources are limited, minimum viable content is:
-
-- Initial Setup + Quick Start + Beginner tutorials
-- 8 how-to guides
-- Cookbook with 20 recipes
-- Best practices document
-- **OR** By-example track (if target audience is experienced developers) instead of Quick Start + Beginner
+**Status**: Language is NOT complete if any of the 5 components are missing. A language can be production-ready with subset of components but needs all 5 for Full Set completeness.
 
 This provides value while allowing iterative expansion.
 

@@ -17,7 +17,7 @@ updated: 2025-12-30
 
 **Defines the dual-path tutorial directory organization for programming language content on ayokoding-web.**
 
-This convention standardizes how programming language tutorials are organized with two complementary learning paths: narrative-driven by-concept tutorials for deep understanding and code-first by-example tutorials for rapid language pickup.
+This convention standardizes how programming language tutorials are organized as a **Full Set Tutorial Package** with 5 mandatory components: foundational tutorials (initial-setup, quick-start), two complementary learning tracks (narrative-driven by-concept and code-first by-example, both achieving 95% coverage), and practical cookbook for problem-solving. All 5 components are required for complete language content.
 
 ## Principles Implemented/Respected
 
@@ -31,11 +31,11 @@ This convention implements the following core principles:
 
 This convention ensures:
 
-- **Consistent Structure**: All programming languages follow same dual-path organization
+- **Consistent Structure**: All programming languages follow same Full Set Tutorial Package organization
 - **Learner Choice**: Multiple entry points serve different experience levels and learning styles
 - **Clear Navigation**: Directory structure signals learning path differences
-- **Optional Scalability**: By-example path is optional when demand doesn't justify creation
-- **Pedagogical Clarity**: Foundational content (Initial Setup, Quick Start) remains accessible at root level
+- **Complete Education**: All 5 components required for complete language content
+- **Pedagogical Clarity**: Foundational content (Initial Setup, Quick Start) remains accessible at tutorials root level
 
 ## Scope
 
@@ -59,20 +59,25 @@ Languages with both learning paths:
 ```
 [language]/tutorials/                          # Level 6 folder
 ├── _index.md                                  # Navigation hub (weight: 100002)
-├── by-concept/                                # Narrative-driven path (Level 7 folder)
+├── by-example/                                # COMPONENT 3: Code-first path (Level 7 folder) - PRIORITY
 │   ├── _index.md                              # Navigation hub (weight: 1000000)
 │   ├── overview.md                            # Path introduction (weight: 10000000)
-│   ├── beginner.md                            # 0-60% coverage (weight: 10000001)
-│   ├── intermediate.md                        # 60-85% coverage (weight: 10000002)
-│   └── advanced.md                            # 85-95% coverage (weight: 10000003)
-├── by-example/                                # Code-first path (Level 7 folder, OPTIONAL)
+│   ├── beginner.md                            # Examples 1-25 (weight: 10000001)
+│   ├── intermediate.md                        # Examples 26-50 (weight: 10000002)
+│   └── advanced.md                            # Examples 51-75 (weight: 10000003)
+├── by-concept/                                # COMPONENT 4: Narrative-driven path (Level 7 folder)
 │   ├── _index.md                              # Navigation hub (weight: 1000001)
 │   ├── overview.md                            # Path introduction (weight: 10000000)
-│   ├── beginner.md                            # Examples 1-15 (weight: 10000001)
-│   ├── intermediate.md                        # Examples 16-35 (weight: 10000002)
-│   └── advanced.md                            # Examples 36-60 (weight: 10000003)
-├── initial-setup.md                           # Foundational (0-5%, weight: 1000002)
-└── quick-start.md                             # Foundational (5-30%, weight: 1000003)
+│   ├── beginner.md                            # 0-40% coverage (weight: 10000001)
+│   ├── intermediate.md                        # 40-75% coverage (weight: 10000002)
+│   └── advanced.md                            # 75-95% coverage (weight: 10000003)
+├── cookbook/                                  # COMPONENT 5: Practical recipes (Level 7 folder)
+│   ├── _index.md                              # Navigation hub (weight: 1000002)
+│   └── (recipe files organized by category)
+├── initial-setup.md                           # COMPONENT 1: Foundational (0-5%, weight: 1000003)
+└── quick-start.md                             # COMPONENT 2: Foundational (5-30%, weight: 1000004)
+
+Note: By-example prioritized (weight 1000000) before by-concept (weight 1000001) for faster learning
 ```
 
 ### Single-Path Languages (Kotlin, Python, Rust)
@@ -92,18 +97,100 @@ Languages with only by-concept path (by-example not yet created):
 └── quick-start.md                             # Foundational (5-30%, weight: 1000003)
 ```
 
-## The Two Tutorial Paths
+## The Full Set Tutorial Package Components
 
-### By Concept Path (Mandatory)
+A complete programming language on ayokoding-web requires **all 5 mandatory components**:
 
-**Purpose**: Deep understanding through comprehensive narrative-driven tutorials
+### Component 1-2: Foundational Tutorials (Mandatory)
+
+**Files**: `initial-setup.md`, `quick-start.md` at root level
+
+**Coverage**: 0-30% cumulative
+
+**Purpose**: Prerequisites for both learning tracks
+
+**Initial Setup (0-5%)**:
+
+- Installation instructions (platform-specific)
+- Version verification
+- First "Hello, World!" program
+- Basic tool setup (compiler/interpreter, package manager)
+
+**Quick Start (5-30%)**:
+
+- 8-12 core concepts in order of importance
+- Mermaid learning path diagram
+- Runnable code for each touchpoint
+- Links to by-example Beginner for rapid pickup
+
+### Component 3: By-Example Track (Mandatory - PRIORITY)
+
+**Location**: `by-example/` folder with 3 files
+
+**Coverage**: 95% through 75-85 annotated code examples
+
+**Priority**: **First learning track** - prioritized for fast learning ("move fast")
+
+**Purpose**: Rapid language pickup through heavily annotated code examples
+
+**Characteristics:**
+
+- **Code-first approach** with minimal prose
+- **75-85 heavily annotated examples** achieving 95% coverage
+- **Self-contained examples** runnable without dependencies
+- **Educational comments** showing outputs, states, intermediate values
+- **Mermaid diagrams** when appropriate for concept relationships
+- **Five-part structure** per example: brief explanation, optional diagram, heavily commented code, key takeaway
+
+**Target Audience:**
+
+- Experienced developers (seasonal programmers, software engineers)
+- Already know at least one programming language well
+- Want quick language pickup without extensive narrative
+- Prefer learning through working code
+- Need 95% coverage efficiently
+
+**File Structure:**
+
+```
+by-example/
+├── _index.md        # Navigation hub
+├── overview.md      # Explains code-first approach
+├── beginner.md      # Examples 1-25 (basics: syntax, control flow, functions)
+├── intermediate.md  # Examples 26-50 (data structures, OOP/functional, modules)
+└── advanced.md      # Examples 51-75 (concurrency, metaprogramming, internals)
+```
+
+**Content Requirements:**
+
+See [By Example Tutorial Convention](./by-example.md) for complete by-example standards including:
+
+- Five-part example structure
+- Self-containment rules
+- Educational comment standards (`// =>` notation)
+- Coverage progression (0-40%, 40-75%, 75-95%)
+- Mermaid diagram usage
+
+**NOT a replacement for:**
+
+- By-concept tutorials (which provide deep explanations for complete beginners)
+- Quick Start (which is 5-30% coverage touchpoints)
+- Cookbook (which is problem-solving oriented, not learning-oriented)
+
+### Component 4: By-Concept Track (Mandatory)
+
+**Location**: `by-concept/` folder with 3 files
+
+**Coverage**: 95% through narrative-driven tutorials
+
+**Purpose**: Deep understanding through comprehensive narrative-driven tutorials ("learn deep")
 
 **Characteristics:**
 
 - **Comprehensive explanations** with rationale and context
 - **Progressive examples** building on previous concepts
 - **Diagrams and visualizations** for complex concepts
-- **0-95% coverage** through three levels (beginner 0-60%, intermediate 60-85%, advanced 85-95%)
+- **0-95% coverage** through three levels (beginner 0-40%, intermediate 40-75%, advanced 75-95%)
 - **Methodical learning** for deep foundation
 
 **Target Audience:**
@@ -119,9 +206,9 @@ Languages with only by-concept path (by-example not yet created):
 by-concept/
 ├── _index.md        # Navigation hub
 ├── overview.md      # Explains narrative-driven approach
-├── beginner.md      # Fundamentals with detailed explanations
-├── intermediate.md  # Production patterns with context
-└── advanced.md      # Expert mastery with internals
+├── beginner.md      # Fundamentals with detailed explanations (0-40%)
+├── intermediate.md  # Production patterns with context (40-75%)
+└── advanced.md      # Expert mastery with internals (75-95%)
 ```
 
 **Content Requirements:**
@@ -136,53 +223,28 @@ See [Programming Language Content Standard](./programming-language-content.md) f
 - Hands-on exercises
 - Cross-references
 
-### By Example Path (Optional)
+### Component 5: Cookbook (Mandatory)
 
-**Purpose**: Rapid language pickup through heavily annotated code examples
+**Location**: `cookbook/` folder (NEW LOCATION - moved from how-to/)
 
-**Characteristics:**
+**Purpose**: Practical problem-solving recipes
 
-- **Code-first approach** with minimal prose
-- **75-90 heavily annotated examples** achieving 95% coverage
-- **Self-contained examples** runnable without dependencies
-- **Educational comments** showing outputs, states, intermediate values
-- **Mermaid diagrams** when appropriate for concept relationships
-- **Five-part structure** per example: brief explanation, optional diagram, heavily commented code, key takeaway
+**Structure**:
 
-**Target Audience:**
+- 30+ recipes organized by category
+- Problem → Solution → How It Works pattern
+- Copy-paste ready code examples
 
-- Experienced developers (seasonal programmers, software engineers)
-- Already know at least one programming language well
-- Want quick language pickup without extensive narrative
-- Prefer learning through working code
-- Need 90% coverage efficiently
+**Organization**:
 
-**File Structure:**
+- Can use single file (`cookbook.md`) or multiple files by category
+- Positioned at weight 1000002 (after by-example, before initial-setup)
 
-```
-by-example/
-├── _index.md        # Navigation hub
-├── overview.md      # Explains code-first approach
-├── beginner.md      # Examples 1-15 (basics: syntax, control flow, functions)
-├── intermediate.md  # Examples 16-35 (data structures, OOP/functional, modules)
-└── advanced.md      # Examples 36-60 (concurrency, metaprogramming, internals)
-```
+**Why in tutorials/ folder now**:
 
-**Content Requirements:**
-
-See [By Example Tutorial Convention](./by-example.md) for complete by-example standards including:
-
-- Five-part example structure
-- Self-containment rules
-- Educational comment standards (`// =>` notation)
-- Coverage progression (0-40%, 40-75%, 75-95%)
-- Mermaid diagram usage
-
-**NOT a replacement for:**
-
-- Beginner tutorial (which provides deep explanations for complete beginners)
-- Quick Start (which is 5-30% coverage touchpoints)
-- Cookbook (which is problem-solving oriented, not learning-oriented)
+- Part of complete educational package
+- Complements both learning tracks
+- Used alongside tutorials (not separate reference)
 
 ## Foundational Tutorials at Root
 
@@ -214,39 +276,31 @@ tutorials/
   - 8-12 core concepts in order of importance
   - Mermaid learning path diagram
   - Runnable code for each touchpoint
-  - Links to by-concept Beginner for depth
+  - Links to by-example Beginner for fast pickup
 
 ## Navigation Pattern
 
 ### Navigation Ordering
 
-**CRITICAL**: By Concept and By Example sections appear FIRST in tutorials navigation (before Initial Setup and Quick Start).
+**CRITICAL**: By-Example appears FIRST in tutorials navigation (prioritized for fast learning), followed by By-Concept, then foundational tutorials.
 
 **Rationale:**
 
-- **Learning path choice comes first**: Learners choose narrative-driven vs code-first BEFORE starting
-- **Prerequisites come second**: After choosing path, learners complete foundational setup
-- **Pedagogical progression**: Choice → Setup → Learn
+- **Move fast first**: By-Example prioritized for experienced developers wanting rapid pickup
+- **Learn deep second**: By-Concept for those wanting comprehensive understanding
+- **Prerequisites last**: Foundational setup available when needed
+- **Pedagogical progression**: Fast Track → Deep Track → Setup
 
-**Navigation Example (Java with dual-path):**
+**Navigation Example (All languages now have Full Set):**
 
 ```markdown
 <!-- File: tutorials/_index.md -->
 
-- [By Concept](/en/learn/software-engineering/programming-language/java/tutorials/by-concept)
-- [By Example](/en/learn/software-engineering/programming-language/java/tutorials/by-example)
+- [By Example](/en/learn/software-engineering/programming-language/java/tutorials/by-example) # PRIORITY - Move fast
+- [By Concept](/en/learn/software-engineering/programming-language/java/tutorials/by-concept) # Learn deep
+- [Cookbook](/en/learn/software-engineering/programming-language/java/tutorials/cookbook)
 - [Initial Setup](/en/learn/software-engineering/programming-language/java/tutorials/initial-setup)
 - [Quick Start](/en/learn/software-engineering/programming-language/java/tutorials/quick-start)
-```
-
-**Navigation Example (Kotlin with single-path):**
-
-```markdown
-<!-- File: tutorials/_index.md -->
-
-- [By Concept](/en/learn/software-engineering/programming-language/kotlin/tutorials/by-concept)
-- [Initial Setup](/en/learn/software-engineering/programming-language/kotlin/tutorials/initial-setup)
-- [Quick Start](/en/learn/software-engineering/programming-language/kotlin/tutorials/quick-start)
 ```
 
 ### Weight Values
@@ -264,40 +318,47 @@ Uses ayokoding-web's level-based weight system with powers of 10 ranges:
 - `tutorials/_index.md`: `weight: 100002` (level 6 - represents the folder)
 - Content INSIDE tutorials/ uses level 7 (1000000, 1000001, 1000002...)
 
+**by-example/ is level 7 folder** (child of tutorials/) - **PRIORITY**:
+
+- `by-example/_index.md`: `weight: 1000000` (level 7 - first child, represents folder)
+- Content INSIDE by-example/ uses level 8 (10000000, 10000001...)
+
 **by-concept/ is level 7 folder** (child of tutorials/):
 
-- `by-concept/_index.md`: `weight: 1000000` (level 7 - first child, represents folder)
+- `by-concept/_index.md`: `weight: 1000001` (level 7 - second child, represents folder)
 - Content INSIDE by-concept/ uses level 8 (10000000, 10000001...)
 
-**by-example/ is level 7 folder** (child of tutorials/):
+**cookbook/ is level 7 folder** (child of tutorials/):
 
-- `by-example/_index.md`: `weight: 1000001` (level 7 - second child, represents folder)
-- Content INSIDE by-example/ uses level 8 (10000000, 10000001...)
+- `cookbook/_index.md`: `weight: 1000002` (level 7 - third child, represents folder)
+- Content INSIDE cookbook/ uses level 8 (10000000, 10000001...)
 
 **Foundational files are level 7 content** (children of tutorials/):
 
-- `initial-setup.md`: `weight: 1000002` (level 7 - third child)
-- `quick-start.md`: `weight: 1000003` (level 7 - fourth child)
+- `initial-setup.md`: `weight: 1000003` (level 7 - fourth child)
+- `quick-start.md`: `weight: 1000004` (level 7 - fifth child)
 
-**Complete Weight Example (Java dual-path):**
+**Complete Weight Example (Full Set Tutorial Package):**
 
 ```
 tutorials/
 ├── _index.md                # weight: 100002 (level 6 - represents folder)
-├── by-concept/
+├── by-example/              # Component 3 - PRIORITY (move fast)
 │   ├── _index.md            # weight: 1000000 (level 7 - first child, represents folder)
-│   ├── overview.md          # weight: 10000000 (level 8 - content inside by-concept/)
+│   ├── overview.md          # weight: 10000000 (level 8 - content inside by-example/)
 │   ├── beginner.md          # weight: 10000001 (level 8)
 │   ├── intermediate.md      # weight: 10000002 (level 8)
 │   └── advanced.md          # weight: 10000003 (level 8)
-├── by-example/
+├── by-concept/              # Component 4 - learn deep
 │   ├── _index.md            # weight: 1000001 (level 7 - second child, represents folder)
 │   ├── overview.md          # weight: 10000000 (level 8 - RESET, different parent)
 │   ├── beginner.md          # weight: 10000001 (level 8)
 │   ├── intermediate.md      # weight: 10000002 (level 8)
 │   └── advanced.md          # weight: 10000003 (level 8)
-├── initial-setup.md         # weight: 1000002 (level 7 - third child)
-└── quick-start.md           # weight: 1000003 (level 7 - fourth child)
+├── cookbook/                # Component 5 - practical recipes
+│   └── _index.md            # weight: 1000002 (level 7 - third child)
+├── initial-setup.md         # Component 1 - weight: 1000003 (level 7 - fourth child)
+└── quick-start.md           # Component 2 - weight: 1000004 (level 7 - fifth child)
 ```
 
 **Key Rules:**
@@ -308,41 +369,25 @@ tutorials/
 
 See [Hugo Content Convention - ayokoding](../hugo/ayokoding.md) for complete level-based weight system details.
 
-## Optional By-Example Path
+## Full Set Completeness Requirements
 
-**CRITICAL**: The by-example path is OPTIONAL. Not all languages require it.
+**All 5 components are mandatory** for complete Full Set Tutorial Package:
 
-**When to Create By-Example:**
+✅ **Component 1**: initial-setup.md (0-5% coverage)
+✅ **Component 2**: quick-start.md (5-30% coverage)
+✅ **Component 3**: by-example/ folder (95% coverage, code-first) - **PRIORITY**
+✅ **Component 4**: by-concept/ folder (95% coverage, narrative-driven)
+✅ **Component 5**: cookbook/ folder (practical recipes)
 
-PASS: **Create when:**
+**Creation Order** (recommended for fast learning):
 
-- Demand exists from experienced developers wanting rapid pickup
-- Language has sufficient community interest
-- Resources available for creating 75-90 annotated examples
-- By-concept path is complete (don't create by-example before by-concept)
+1. Initial Setup (minimal viable content)
+2. Quick Start (core concepts)
+3. By-Example (75-85 annotated examples for fast pickup) - **CREATE FIRST for speed**
+4. Cookbook (30+ recipes alongside by-example development)
+5. By-Concept (complete beginner → intermediate → advanced for deep learning)
 
-FAIL: **Skip when:**
-
-- Language is new to platform (focus on by-concept first)
-- Limited resources (prioritize by-concept completion)
-- Low demand from target audience
-- By-concept tutorials already serve experienced developers well
-
-**Current Status (as of 2025-12-27):**
-
-- **With by-example**: Java, Elixir, Golang
-- **Without by-example**: Kotlin, Python, Rust
-
-**Migration Path:**
-
-Languages start with by-concept only:
-
-```
-1. Create by-concept tutorials (beginner, intermediate, advanced)
-2. Monitor demand from experienced developers
-3. If demand justifies, create by-example path
-4. Update tutorials/_index.md to show both paths
-```
+**Quality Gate**: A language is NOT complete until all 5 components exist and pass validation. Languages can be production-ready with a subset of components.
 
 ## Hugo Requirements
 
@@ -622,15 +667,16 @@ java/tutorials/
 └── initial-setup.md     # Missing by-concept/
 ```
 
-PASS: **Correct: By-concept foundation first**
+PASS: **Correct: By-example prioritized first**
 
 ```
-# RIGHT! By-concept foundation, then optional by-example
+# RIGHT! By-example first (move fast), then by-concept (learn deep) - both mandatory
 java/tutorials/
-├── by-concept/          # Created first (mandatory)
-├── by-example/          # Created later (optional)
-├── initial-setup.md
-└── quick-start.md
+├── by-example/          # Component 3 - PRIORITY (mandatory)
+├── by-concept/          # Component 4 (mandatory)
+├── cookbook/            # Component 5 (mandatory)
+├── initial-setup.md     # Component 1 (mandatory)
+└── quick-start.md       # Component 2 (mandatory)
 ```
 
 ---
@@ -660,46 +706,62 @@ by-concept/
 
 ## Migration Guide
 
-### Adding By-Example to Existing Language
+### Completing Full Set Tutorial Package for Existing Language
 
-If a language currently has only by-concept, follow these steps to add by-example:
+If a language is missing components (created before Full Set requirement), follow these steps:
 
-**Step 1: Create directory structure**
+**Step 1: Audit current state**
 
 ```bash
 cd apps/ayokoding-web/content/en/learn/software-engineering/programming-language/[language]/tutorials/
-mkdir -p by-example
+ls -la  # Check what exists
 ```
 
-**Step 2: Create files with weights**
+**Step 2: Create missing components in priority order**
 
 ```bash
-# Navigation hub
-touch by-example/_index.md         # weight: 1000001
-
-# Content files
+# Component 3 (PRIORITY) - by-example/ if missing
+mkdir -p by-example
+touch by-example/_index.md         # weight: 1000000
 touch by-example/overview.md       # weight: 10000000
-touch by-example/beginner.md       # weight: 10000001
-touch by-example/intermediate.md   # weight: 10000002
-touch by-example/advanced.md       # weight: 10000003
+touch by-example/beginner.md       # weight: 10000001 (Examples 1-25)
+touch by-example/intermediate.md   # weight: 10000002 (Examples 26-50)
+touch by-example/advanced.md       # weight: 10000003 (Examples 51-75)
+
+# Component 4 - by-concept/ if missing
+mkdir -p by-concept
+touch by-concept/_index.md         # weight: 1000001
+touch by-concept/overview.md       # weight: 10000000
+touch by-concept/beginner.md       # weight: 10000001 (0-40%)
+touch by-concept/intermediate.md   # weight: 10000002 (40-75%)
+touch by-concept/advanced.md       # weight: 10000003 (75-95%)
+
+# Component 5 - cookbook/ if missing
+mkdir -p cookbook
+touch cookbook/_index.md           # weight: 1000002
 ```
 
-**Step 3: Update tutorials/\_index.md**
+**Step 3: Update tutorials/\_index.md navigation**
 
-Add by-example link BEFORE initial-setup/quick-start:
+Ensure correct order (by-example first):
 
 ```markdown
-- [By Concept](/en/.../by-concept)
-- [By Example](/en/.../by-example) # NEW!
-- [Initial Setup](/en/.../initial-setup)
-- [Quick Start](/en/.../quick-start)
+- [By Example](/en/.../by-example) # Component 3 - PRIORITY
+- [By Concept](/en/.../by-concept) # Component 4
+- [Cookbook](/en/.../cookbook) # Component 5
+- [Initial Setup](/en/.../initial-setup) # Component 1
+- [Quick Start](/en/.../quick-start) # Component 2
 ```
 
-**Step 4: Update foundational file weights**
+**Step 4: Verify all component weights**
 
 ```bash
-# initial-setup.md: change weight from 1000001 to 1000002
-# quick-start.md: change weight from 1000002 to 1000003
+# Verify weight values:
+# by-example/_index.md → 1000000
+# by-concept/_index.md → 1000001
+# cookbook/_index.md → 1000002
+# initial-setup.md → 1000003
+# quick-start.md → 1000004
 ```
 
 **Step 5: Write content**
