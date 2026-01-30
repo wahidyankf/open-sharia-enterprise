@@ -607,8 +607,6 @@ Prompt returns to normal (no `(myenv)` prefix).
 
 **Want comprehensive fundamentals?**
 
-- [Beginner Tutorial](/en/learn/software-engineering/programming-languages/python/by-concept/beginner) (0-60% coverage) - Deep dive into Python basics with extensive practice
-
 **Prefer code-first learning?**
 
 - [By-Example Tutorial](/en/learn/software-engineering/programming-languages/python/by-example) - Learn through heavily annotated examples

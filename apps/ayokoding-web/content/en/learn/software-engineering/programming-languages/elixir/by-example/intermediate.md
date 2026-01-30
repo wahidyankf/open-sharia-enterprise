@@ -5464,5 +5464,3 @@ You've completed the intermediate examples covering advanced pattern matching, d
 - [Beginner Examples (1-30)](/en/learn/software-engineering/programming-languages/elixir/by-example/beginner) - Review fundamentals if needed
 
 **Deepen your understanding**:
-
-- [Intermediate Tutorial](/en/learn/software-engineering/programming-languages/elixir/by-concept/intermediate) - Narrative explanations of intermediate concepts

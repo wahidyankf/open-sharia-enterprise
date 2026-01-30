@@ -16,8 +16,3 @@ layout: list
   - [Beginner](/en/learn/software-engineering/programming-languages/golang/by-example/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-languages/golang/by-example/intermediate)
   - [Advanced](/en/learn/software-engineering/programming-languages/golang/by-example/advanced)
-- [By Concept](/en/learn/software-engineering/programming-languages/golang/by-concept)
-  - [Advanced](/en/learn/software-engineering/programming-languages/golang/by-concept/advanced)
-  - [Beginner](/en/learn/software-engineering/programming-languages/golang/by-concept/beginner)
-  - [Intermediate](/en/learn/software-engineering/programming-languages/golang/by-concept/intermediate)
-  - [Overview](/en/learn/software-engineering/programming-languages/golang/by-concept/overview)

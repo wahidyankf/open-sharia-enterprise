@@ -785,8 +785,6 @@ Should format code (no errors).
 
 **Want comprehensive fundamentals?**
 
-- [Beginner Tutorial](/en/learn/software-engineering/programming-languages/rust/by-concept/beginner) (0-60% coverage) - Deep dive into Rust basics including ownership system
-
 **Prefer code-first learning?**
 
 - [By-Example Tutorial](/en/learn/software-engineering/programming-languages/rust/by-example) - Learn through heavily annotated examples

@@ -9,8 +9,6 @@ tags: ["golang", "go", "quick-start", "beginner", "concurrency", "programming"]
 
 **Want to learn Go fundamentals quickly?** This quick start touches 8-12 core Go concepts with one example each. By the end, you'll have practical touchpoints for the most important language features.
 
-This tutorial provides 5-30% coverage - rapid exposure to core concepts. For comprehensive mastery, continue to [Beginner Tutorial](/en/learn/software-engineering/programming-languages/golang/by-concept/beginner) (0-60% coverage) or explore [By-Example](/en/learn/software-engineering/programming-languages/golang/by-example) for heavily annotated code.
-
 ## Prerequisites
 
 Before starting, you should have:
@@ -151,8 +149,6 @@ func main() {
 
 **Key concepts**: `package`, `import`, `func`, multiple return values, variadic functions
 
-**When to explore deeper**: [Beginner Tutorial - Functions](/en/learn/software-engineering/programming-languages/golang/by-concept/beginner#functions)
-
 ## Concept 2: Variables and Types - Store Data
 
 Go uses static typing with type inference.
@@ -219,8 +215,6 @@ func main() {
 ```
 
 **Key concepts**: `var`, `:=`, type inference, zero values, constants, `iota`
-
-**When to explore deeper**: [Beginner Tutorial - Variables and Types](/en/learn/software-engineering/programming-languages/golang/by-concept/beginner#variables-types)
 
 ## Concept 3: Structs - Custom Data Types
 
@@ -315,8 +309,6 @@ func main() {
 
 **Key concepts**: `struct`, methods, value/pointer receivers, embedded structs
 
-**When to explore deeper**: [Beginner Tutorial - Structs](/en/learn/software-engineering/programming-languages/golang/by-concept/beginner#structs)
-
 ## Concept 4: Pointers - Reference Types
 
 Pointers hold memory addresses, enabling pass-by-reference.
@@ -383,8 +375,6 @@ func main() {
 ```
 
 **Key concepts**: `*` (dereference), `&` (address), `new()`, pointer receivers
-
-**When to explore deeper**: [Beginner Tutorial - Pointers](/en/learn/software-engineering/programming-languages/golang/by-concept/beginner#pointers)
 
 ## Concept 5: Interfaces - Define Contracts
 
@@ -490,8 +480,6 @@ func main() {
 ```
 
 **Key concepts**: `interface`, implicit implementation, empty interface `interface{}`, type assertion
-
-**When to explore deeper**: [Beginner Tutorial - Interfaces](/en/learn/software-engineering/programming-languages/golang/by-concept/beginner#interfaces)
 
 ## Concept 6: Error Handling - Return Errors
 
@@ -602,8 +590,6 @@ func main() {
 
 **Key concepts**: Error return values, `error` interface, custom errors, error wrapping
 
-**When to explore deeper**: [Beginner Tutorial - Error Handling](/en/learn/software-engineering/programming-languages/golang/by-concept/beginner#error-handling)
-
 ## Concept 7: Arrays and Slices - Collections
 
 Arrays have fixed size, slices are dynamic.
@@ -678,8 +664,6 @@ func main() {
 ```
 
 **Key concepts**: Arrays `[n]type`, slices `[]type`, `make()`, `append()`, `len()`, `cap()`
-
-**When to explore deeper**: [Beginner Tutorial - Slices and Arrays](/en/learn/software-engineering/programming-languages/golang/by-concept/beginner#slices-arrays)
 
 ## Concept 8: Maps - Key-Value Storage
 
@@ -756,8 +740,6 @@ func main() {
 ```
 
 **Key concepts**: `map[keyType]valueType`, `make()`, key existence check, `delete()`
-
-**When to explore deeper**: [Beginner Tutorial - Maps](/en/learn/software-engineering/programming-languages/golang/by-concept/beginner#maps)
 
 ## Concept 9: Goroutines - Concurrent Execution
 
@@ -840,8 +822,6 @@ func main() {
 ```
 
 **Key concepts**: `go` keyword, concurrent execution, lightweight threads
-
-**When to explore deeper**: [Beginner Tutorial - Goroutines](/en/learn/software-engineering/programming-languages/golang/by-concept/beginner#goroutines)
 
 ## Concept 10: Channels - Goroutine Communication
 
@@ -956,8 +936,6 @@ func worker(jobs <-chan int, done chan<- bool) {
 
 **Key concepts**: `make(chan type)`, `<-` (send/receive), buffered channels, `select`, `close()`
 
-**When to explore deeper**: [Beginner Tutorial - Channels](/en/learn/software-engineering/programming-languages/golang/by-concept/beginner#channels)
-
 ## Summary
 
 **What you've touched**:
@@ -1015,8 +993,6 @@ value := <-ch   // Receive
 ## Next Steps
 
 **Want comprehensive Go mastery?**
-
-- [Beginner Tutorial](/en/learn/software-engineering/programming-languages/golang/by-concept/beginner) (0-60% coverage) - Deep dive into Go fundamentals with extensive practice
 
 **Prefer code-first learning?**
 

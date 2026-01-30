@@ -290,7 +290,7 @@ This tutorial prioritizes working code over theoretical discussion:
 - **Learn by doing**: Understanding comes from running and modifying code
 - **Pattern recognition**: See the same patterns in different contexts across 80 examples
 
-If you prefer narrative explanations, consider the **by-concept tutorial** (available separately). By-example learning works best when you learn through experimentation.
+If you prefer narrative explanations. By-example learning works best when you learn through experimentation.
 
 ## What You'll Learn
 

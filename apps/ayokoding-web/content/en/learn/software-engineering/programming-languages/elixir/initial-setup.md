@@ -941,8 +941,6 @@ Tests should pass.
 
 **Want comprehensive fundamentals?**
 
-- [Beginner Tutorial](/en/learn/software-engineering/programming-languages/elixir/by-concept/beginner) (0-60% coverage) - Deep dive into Elixir basics with extensive practice
-
 **Prefer code-first learning?**
 
 - [By-Example Tutorial](/en/learn/software-engineering/programming-languages/elixir/by-example) - Learn through heavily annotated examples

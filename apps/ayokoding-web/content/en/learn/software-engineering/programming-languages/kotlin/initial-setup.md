@@ -439,8 +439,6 @@ This tutorial focuses on Kotlin/JVM.
 
 **Want comprehensive fundamentals?**
 
-- [Beginner Tutorial](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner) (0-60% coverage) - Deep dive into Kotlin basics with extensive practice
-
 **Prefer code-first learning?**
 
 - [By-Example Tutorial](/en/learn/software-engineering/programming-languages/kotlin/by-example) - Learn through heavily annotated examples

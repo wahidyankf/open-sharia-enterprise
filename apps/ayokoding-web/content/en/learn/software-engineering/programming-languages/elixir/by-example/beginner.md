@@ -3463,5 +3463,3 @@ You've completed the beginner examples covering Elixir's fundamental syntax and 
 - [Advanced Examples (61-90)](/en/learn/software-engineering/programming-languages/elixir/by-example/advanced) - GenServer, Supervisor, metaprogramming, OTP
 
 **Deepen your understanding**:
-
-- [Beginner Tutorial](/en/learn/software-engineering/programming-languages/elixir/by-concept/beginner) - Narrative explanations of concepts

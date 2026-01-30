@@ -15,8 +15,3 @@ layout: list
   - [Beginner](/en/learn/software-engineering/programming-languages/clojure/by-example/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-languages/clojure/by-example/intermediate)
   - [Advanced](/en/learn/software-engineering/programming-languages/clojure/by-example/advanced)
-- [By Concept](/en/learn/software-engineering/programming-languages/clojure/by-concept)
-  - [Overview](/en/learn/software-engineering/programming-languages/clojure/by-concept/overview)
-  - [Beginner](/en/learn/software-engineering/programming-languages/clojure/by-concept/beginner)
-  - [Intermediate](/en/learn/software-engineering/programming-languages/clojure/by-concept/intermediate)
-  - [Advanced](/en/learn/software-engineering/programming-languages/clojure/by-concept/advanced)

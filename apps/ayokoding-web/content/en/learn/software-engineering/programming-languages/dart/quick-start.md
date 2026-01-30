@@ -742,4 +742,4 @@ Congratulations! You've built a complete Zakat Calculator and learned:
 - Implement prayer time reminders
 - Add Sadaqah (voluntary charity) tracking
 
-Proceed to [By Example](/en/learn/software-engineering/programming-languages/dart/by-example) to learn through annotated code examples, or explore [By Concept](/en/learn/software-engineering/programming-languages/dart/by-concept) for narrative tutorials.
+Proceed to [By Example](/en/learn/software-engineering/programming-languages/dart/by-example) to learn through annotated code examples,.

@@ -31,7 +31,6 @@ The 3-tutorial sequential track provides a complete learning journey from beginn
 
 ### 1. **Complete Beginner's Guide to Python** 📖
 
-- **File**: [beginner](/en/learn/software-engineering/programming-languages/python/by-concept/beginner)
 - **Coverage**: 0-60% (Comprehensive fundamentals)
 - **What you'll learn**: Complete coverage of Python basics with 4 levels of hands-on exercises
 - **Goal**: Build a solid foundation for real applications
@@ -39,7 +38,6 @@ The 3-tutorial sequential track provides a complete learning journey from beginn
 
 ### 2. **Intermediate Python Programming** 💼
 
-- **File**: [intermediate](/en/learn/software-engineering/programming-languages/python/by-concept/intermediate)
 - **Coverage**: 60-85% (Production-grade techniques)
 - **What you'll learn**: Advanced OOP, concurrency patterns, design patterns, FastAPI, testing, performance optimization
 - **Goal**: Build production-grade systems
@@ -47,7 +45,6 @@ The 3-tutorial sequential track provides a complete learning journey from beginn
 
 ### 3. **Advanced Python Programming** 🎓
 
-- **File**: [advanced](/en/learn/software-engineering/programming-languages/python/by-concept/advanced)
 - **Coverage**: 85-95% (Expert mastery)
 - **What you'll learn**: Python internals, GIL, bytecode, metaprogramming, C extensions, advanced optimization
 - **Goal**: Achieve expert-level mastery
@@ -57,7 +54,6 @@ The 3-tutorial sequential track provides a complete learning journey from beginn
 
 In addition to the sequential path, use this reference for specific patterns:
 
-- **Prerequisites**: Complete the [Beginner](/en/learn/software-engineering/programming-languages/python/by-concept/beginner) tutorial
 - Comprehension patterns, concurrency recipes, error handling, design patterns, web development
 
 ## 🎯 How to Choose Your Starting Point

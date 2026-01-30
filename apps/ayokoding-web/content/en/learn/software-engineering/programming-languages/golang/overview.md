@@ -33,7 +33,6 @@ The 3-tutorial sequential track provides a complete learning journey from beginn
 
 ### 1. Complete Beginner's Guide to Go
 
-- **File**: [beginner](/en/learn/software-engineering/programming-languages/golang/by-concept/beginner)
 - **Coverage**: 0-60% (Comprehensive fundamentals)
 - **What you'll learn**: Complete coverage of Go basics with 4 levels of hands-on exercises
 - **Goal**: Build a solid foundation for real applications
@@ -41,7 +40,6 @@ The 3-tutorial sequential track provides a complete learning journey from beginn
 
 ### 2. Intermediate Go Programming
 
-- **File**: [intermediate](/en/learn/software-engineering/programming-languages/golang/by-concept/intermediate)
 - **Coverage**: 60-85% (Production-grade techniques)
 - **What you'll learn**: Advanced concurrency, error handling, testing, architecture patterns, performance optimization, security, deployment
 - **Goal**: Build production-grade systems
@@ -49,7 +47,6 @@ The 3-tutorial sequential track provides a complete learning journey from beginn
 
 ### 3. Advanced Go Programming
 
-- **File**: [advanced](/en/learn/software-engineering/programming-languages/golang/by-concept/advanced)
 - **Coverage**: 85-95% (Expert mastery)
 - **What you'll learn**: Runtime internals, memory optimization, lock-free concurrency, reflection, system design patterns, debugging
 - **Goal**: Achieve expert-level mastery
@@ -59,7 +56,6 @@ The 3-tutorial sequential track provides a complete learning journey from beginn
 
 In addition to the sequential path, use this reference for specific patterns:
 
-- **Prerequisites**: Complete the [Beginner](/en/learn/software-engineering/programming-languages/golang/by-concept/beginner) tutorial
 - Generics patterns, concurrency recipes, error handling, design patterns, web development
 
 ## How to Choose Your Starting Point

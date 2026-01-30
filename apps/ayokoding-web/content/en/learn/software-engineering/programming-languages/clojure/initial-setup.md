@@ -878,8 +878,6 @@ Should run successfully and print output.
 
 **Want comprehensive fundamentals?**
 
-- [Beginner Tutorial](/en/learn/software-engineering/programming-languages/clojure/by-concept/beginner) (0-60% coverage) - Deep dive into Clojure basics with extensive practice
-
 **Prefer code-first learning?**
 
 - [By-Example Tutorial](/en/learn/software-engineering/programming-languages/clojure/by-example) - Learn through 80 heavily annotated examples

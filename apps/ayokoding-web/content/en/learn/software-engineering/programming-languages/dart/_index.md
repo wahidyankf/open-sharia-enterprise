@@ -15,8 +15,3 @@ layout: list
   - [Beginner](/en/learn/software-engineering/programming-languages/dart/by-example/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-languages/dart/by-example/intermediate)
   - [Advanced](/en/learn/software-engineering/programming-languages/dart/by-example/advanced)
-- [By Concept](/en/learn/software-engineering/programming-languages/dart/by-concept)
-  - [Overview](/en/learn/software-engineering/programming-languages/dart/by-concept/overview)
-  - [Beginner](/en/learn/software-engineering/programming-languages/dart/by-concept/beginner)
-  - [Intermediate](/en/learn/software-engineering/programming-languages/dart/by-concept/intermediate)
-  - [Advanced](/en/learn/software-engineering/programming-languages/dart/by-concept/advanced)

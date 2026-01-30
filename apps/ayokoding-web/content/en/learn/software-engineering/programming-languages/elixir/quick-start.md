@@ -9,8 +9,6 @@ tags: ["elixir", "quick-start", "fundamentals", "functional-programming", "concu
 
 **Ready to learn Elixir quickly?** This quick start tutorial provides a fast-paced tour through Elixir's core concepts. By the end, you'll understand the fundamentals and be ready to build real applications.
 
-This tutorial provides 5-30% coverage - touching all essential concepts without deep dives. For 0-5% coverage (installation only), see [Initial Setup](/en/learn/software-engineering/programming-languages/elixir/initial-setup). For deep dives, continue to [Beginner Tutorial](/en/learn/software-engineering/programming-languages/elixir/by-concept/beginner) (0-60% coverage).
-
 ## Prerequisites
 
 Before starting this tutorial, you need:
@@ -1024,9 +1022,6 @@ mix new url_shortener_app
 ## Next Steps
 
 **Ready for comprehensive learning?**
-
-- [Beginner Tutorial](/en/learn/software-engineering/programming-languages/elixir/by-concept/beginner) (0-60% coverage) - Deep dive into fundamentals with extensive practice
-- [Intermediate Tutorial](/en/learn/software-engineering/programming-languages/elixir/by-concept/intermediate) (60-85% coverage) - Advanced OTP, supervision, and real-world patterns
 
 **Prefer code-first learning?**
 

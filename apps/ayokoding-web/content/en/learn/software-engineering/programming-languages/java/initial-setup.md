@@ -479,8 +479,6 @@ Java uses a two-step execution model:
 
 **Want comprehensive fundamentals?**
 
-- [Beginner Tutorial](/en/learn/software-engineering/programming-languages/java/by-concept/beginner) (0-60% coverage) - Deep dive into Java basics with extensive practice
-
 **Prefer code-first learning?**
 
 - [By-Example Tutorial](/en/learn/software-engineering/programming-languages/java/by-example) - Learn through heavily annotated examples
