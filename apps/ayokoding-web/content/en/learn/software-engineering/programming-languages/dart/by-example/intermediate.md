@@ -179,24 +179,6 @@ sequenceDiagram
     Note over Main,Wait: Total time = max(F1, F2, F3)<br/>NOT sum(F1, F2, F3)
 ```
 
-<<<<<<< Updated upstream
-Fetching donation...
-Amount: Rp4500000.0
-Result: Completed
-Error: Payment failed
-Fetched: Rp4500000.0
-Zakat: Rp112500.0
-
-````
-
-**Common Pitfalls**: Forgetting `await` returns Future, not value. `async` functions always return Future. Unhandled Future errors cause silent failures.
-
-### Example 27: Future.wait - Parallel Execution
-
-Execute multiple asynchronous operations in parallel.
-=======
->>>>>>> Stashed changes
-
 ```dart
 import 'dart:async';                    // => Import for Future operations
 
@@ -294,7 +276,7 @@ void main() async {
                                         // => Output: Partial results: 3
                                         // => Contains: mix of successful Maps and error object
 }
-````
+```
 
 **Performance Comparison**:
 
@@ -310,124 +292,16 @@ void main() async {
 
 ---
 
-<<<<<<< Updated upstream
-
-### Example 28: Async Error Handling
-
-=======
-
 ## Example 28: Async Error Handling
-
-> > > > > > > Stashed changes
 
 Proper error handling patterns in async code with try-catch and Future.catchError. Critical for production reliability—unhandled async errors crash applications silently.
 
-<<<<<<< Updated upstream
-
-### Example 29: Future Timeouts
-
-Using Future.timeout() to prevent indefinite waits on async operations.
-
-### Example 30: Completer for Manual Future Control
-
-Creating and completing Futures manually with Completer class.
-
-### Example 31: Stream Basics
-
-Asynchronous sequence of events with Stream and listen().
-
-### Example 32: Stream Transformations
-
-Transforming streams with map(), where(), and take() methods.
-
-### Example 33: StreamController
-
-Creating custom streams with StreamController for event publishing.
-
-### Example 34: Async Generators (async\*)
-
-Generating asynchronous sequences with async\* generators and yield.
-
-### Example 35: Stream Subscription Management
-
-Managing stream subscriptions with pause(), resume(), and cancel().
-
-## Examples 36-45: Advanced Object-Oriented Programming
-
-### Example 36: Inheritance Basics
-
-Extending classes with inheritance, super constructors, and method overriding.
-
-### Example 37: Abstract Classes and Methods
-
-Defining contracts with abstract classes that must be implemented by subclasses.
-
-### Example 38: Interfaces with implements
-
-Implementing multiple interfaces for flexible class design.
-
-### Example 39: Mixins for Code Reuse
-
-Sharing functionality across classes with mixin keyword and composition.
-
-### Example 40: Extension Methods
-
-Adding methods to existing classes without inheritance using extensions.
-
-### Example 41: Operator Overloading
-
-Defining custom operators for classes (==, +, [], etc.).
-
-### Example 42: Cascade Notation
-
-Chaining method calls with cascade operator (..) for fluent APIs.
-
-### Example 43: Generics Basics
-
-Type-safe generic classes and functions with type parameters <T>.
-
-### Example 44: Generic Constraints
-
-Restricting generic types with extends keyword for bounded type parameters.
-
-### Example 45: Callable Classes
-
-Making class instances callable like functions with call() method.
-
-## Examples 46-50: File I/O and JSON
-
-### Example 46: File Reading
-
-Reading text files synchronously and asynchronously with File class.
-
-### Example 47: File Writing
-
-Writing and appending to files with proper resource management.
-
-### Example 48: Directory Operations
-
-Listing, creating, and managing directories with Directory class.
-
-### Example 49: JSON Encoding
-
-Converting Dart objects to JSON strings with jsonEncode().
-
-### Example 50: JSON Decoding and Parsing
-
-Parsing JSON strings to Dart objects with jsonDecode() and type casting.
-
-## Detailed Examples 28-50
-
-### Example 28: Async Error Handling
-
-=======
 **Error Handling Strategies**:
 
 - **try-catch with await**: Synchronous-style error handling (most readable)
 - **catchError on Future**: Functional-style error handling (for then() chains)
 - **on Type catch**: Catch specific exception types for granular handling
 - **finally**: Cleanup code (runs whether success or failure)
-  > > > > > > > Stashed changes
 
 ```dart
 import 'dart:async';                    // => Import for Future
@@ -630,12 +504,6 @@ void main() async {
 ```
 
 **Timeout Strategies**:
-
-<<<<<<< Updated upstream
-
-### Example 31: Stream Basics
-
-=======
 
 | Strategy     | Timeout Duration         | onTimeout Behavior | Use Case                                        |
 | ------------ | ------------------------ | ------------------ | ----------------------------------------------- |
@@ -931,7 +799,6 @@ Transforming streams with map(), where(), and take() methods. Stream transformat
 - **skip**: Skip first N values
 - **expand**: Emit multiple values for each input value
 - **fold**: Reduce stream to single value (awaits completion)
-  > > > > > > > Stashed changes
 
 ```dart
 import 'dart:async';
@@ -1219,11 +1086,6 @@ void main() async {
 
 **Why It Matters**: Event-driven architectures (message buses, pub-sub systems, reactive state management) require manual stream control that async\* generators can't provide. In Flutter, StreamController powers BLoC pattern (Business Logic Component) for state management, where UI events trigger stream emissions that update app state. Critical for building custom reactive systems, WebSocket abstractions, and event aggregation pipelines.
 
-<<<<<<< Updated upstream
-
-### Example 36: Inheritance Basics
-
-=======
 **Common Pitfalls**: Forgetting to `close()` causes memory leaks. Single-subscription streams throw StateError with multiple listeners (use broadcast()). Adding values after close() throws StateError. Not handling pause/resume in high-volume streams causes unbounded buffering (memory pressure).
 
 ---
@@ -1238,7 +1100,6 @@ Generating asynchronous sequences with async\* generators and yield. Enables cle
 - **async\***: Returns `Stream<T>` (multiple values over time)
 - **yield**: Emit value and continue (like return but doesn't exit function)
 - **yield\***: Emit all values from another Stream
-  > > > > > > > Stashed changes
 
 ```dart
 import 'dart:async';
@@ -1775,11 +1636,6 @@ classDiagram
 
 **Key Takeaway**: Use `extends` for inheritance. Subclass inherits all public members. `super` accesses parent constructor/methods. `@override` marks overridden methods. Polymorphism enables treating subclasses as parent type.
 
-<<<<<<< Updated upstream
-
-### Example 39: Mixins for Code Reuse
-
-=======
 **Why It Matters**: Inheritance eliminates code duplication across similar classes, enabling the DRY principle (Don't Repeat Yourself). In Flutter, all widgets inherit from Widget/StatelessWidget/StatefulWidget, allowing framework code to treat all widgets uniformly while enabling custom behavior. In business applications, inheritance models real-world hierarchies (Employee → Manager → Executive), reducing maintenance burden when shared logic changes.
 
 **Common Pitfalls**: Forgetting `super()` in subclass constructor causes error. Can only extend one class (single inheritance). Deep inheritance hierarchies (>3 levels) reduce maintainability—prefer composition. `@override` is optional but prevents typos in method names.
@@ -1796,7 +1652,6 @@ Defining contracts with abstract classes that must be implemented by subclasses.
 - **Abstract methods**: No implementation, subclass must override
 - **Concrete methods**: Have implementation, subclass can use or override
 - **Partial implementation**: Mix abstract and concrete methods
-  > > > > > > > Stashed changes
 
 ```dart
 // Abstract base class for payment processors
@@ -2260,124 +2115,10 @@ class Donation with Timestamped, Auditable, Serializable {
   }
 }
 
-<<<<<<< Updated upstream
-void main() {
-  Donation donation = Donation('Ahmad', 500000.0);
-                                        // => Create instance
-                                        // => Has methods from both mixins
-
-  donation.process();                   // => Call regular method
-                                        // => Uses mixin methods internally
-
-  print('Audit entries: ${donation.auditLog.length}');
-                                        // => Access mixin getter
-}
-```
-
-**Key Takeaway**: Mixins add functionality to classes without inheritance. Use `mixin` keyword to define, `with` to apply. Can apply multiple mixins. Mixins can't have constructors. Good for cross-cutting concerns.
-
-**Expected Output**:
-
-```
-Timestamp: 2025-01-29 12:34:56.789
-Logged: Donation created
-Logged: Processing donation
-Ahmad: Rp500000.0
-Timestamp: 2025-01-29 12:34:56.890
-Audit entries: 2
-```
-
-**Common Pitfalls**: Mixins can't have constructors. Order matters with `with` (later mixins override earlier). Mixin methods can't call `super` unless using `on` clause.
-
-### Example 43: Generics Basics
-
-```dart
-// Generic class
-class DonationRecord<T> {               // => Type parameter T
-  T donorId;                            // => T can be any type
-  double amount;                        // => Fixed type field
-
-  DonationRecord(this.donorId, this.amount);
-                                        // => Constructor
-
-  void display() {                      // => Method using T
-    print('Donor $donorId: Rp$amount');  // => T used in string interpolation
-  }
-
-  T getId() => donorId;                 // => Return type T
-}
-
-// Generic function
-T getFirst<T>(List<T> items) {          // => Generic function
-                                        // => T inferred from argument
-  if (items.isEmpty) {                  // => Check empty
-    throw StateError('List is empty');
-  }
-  return items.first;                   // => Return first element
-}
-
-void main() {
-  // Generic class with String
-  DonationRecord<String> record1 = DonationRecord<String>('DONOR-001', 500000.0);
-                                        // => T is String
-  record1.display();                    // => Output: Donor DONOR-001: Rp500000.0
-
-  String id1 = record1.getId();         // => Returns String
-  print('ID: $id1');                    // => Type-safe
-
-  // Generic class with int
-  DonationRecord<int> record2 = DonationRecord<int>(12345, 1000000.0);
-                                        // => T is int
-  record2.display();                    // => Output: Donor 12345: Rp1000000.0
-
-  int id2 = record2.getId();            // => Returns int
-  print('ID: $id2');
-
-  // Type inference
-  var record3 = DonationRecord('AUTO', 750000.0);
-                                        // => T inferred as String
-  record3.display();
-
-  // Generic function
-  List<String> names = ['Ahmad', 'Fatimah', 'Ali'];
-  String first = getFirst(names);       // => T inferred as String
-  print('First: $first');               // => Output: First: Ahmad
-
-  List<int> amounts = [500000, 1000000, 750000];
-  int firstAmount = getFirst(amounts);  // => T inferred as int
-  print('First amount: $firstAmount');  // => Output: First amount: 500000
-}
-```
-
-**Key Takeaway**: Generics provide type safety without code duplication. Use `<T>` for type parameters. Dart infers type from usage. Generic classes, functions, and methods all supported.
-
-**Expected Output**:
-
-```
-Donor DONOR-001: Rp500000.0
-ID: DONOR-001
-Donor 12345: Rp1000000.0
-ID: 12345
-Donor AUTO: Rp750000.0
-First: Ahmad
-First amount: 500000
-```
-
-**Common Pitfalls**: Forgetting type parameter creates dynamic type. Type inference reduces verbosity. Generics erased at runtime (no type checking at runtime).
-
-### Example 49: JSON Encoding
-
-```dart
-import 'dart:convert';                  // => Import for JSON functions
-
-class Donation {                        // => Class to serialize
-  String donorName;
-=======
 // Different class using subset of mixins
 class Transaction with Timestamped, Auditable {
                                         // => Only 2 mixins (not Serializable)
   String transactionId;
->>>>>>> Stashed changes
   double amount;
 
   Transaction(this.transactionId, this.amount) {
@@ -2452,26 +2193,7 @@ void main() {
 
 **Mixin Application Order**:
 
-<<<<<<< Updated upstream
-**Expected Output**:
-
-```
-String JSON: "Hello"
-Number JSON: 42
-List JSON: [500000,1000000,750000]
-Map JSON: {"name":"Ahmad","amount":500000,"active":true}
-Object JSON: {"donorName":"Fatimah","amount":1000000.0,"date":"2025-01-29T00:00:00.000"}
-Array JSON: [{"donorName":"Ahmad",...},{"donorName":"Ali",...}]
-```
-
-**Common Pitfalls**: Objects need `toJson()` method. DateTime not directly JSON serializable. Circular references cause infinite loop.
-
-### Example 50: JSON Decoding and Parsing
-
-=======
 When multiple mixins define the same method, **later mixins override earlier**:
-
-> > > > > > > Stashed changes
 
 ```dart
 mixin A {
