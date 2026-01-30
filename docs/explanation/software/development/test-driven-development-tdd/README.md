@@ -203,39 +203,39 @@ This documentation is organized into foundational concepts, core practices, adva
 
 Core TDD concepts and workflow:
 
-- **[01. Introduction and Philosophy](./ex-so-de-tedrdeve__01-introduction-and-philosophy.md)** - Overview, history, when to use TDD, benefits, misconceptions
-- **[02. Red-Green-Refactor Cycle](./ex-so-de-tedrdeve__02-red-green-refactor-cycle.md)** - The fundamental TDD workflow ⭐ **Most Important**
-- **[03. Test Types and Pyramid](./ex-so-de-tedrdeve__03-test-types-and-pyramid.md)** - Unit, integration, E2E tests and testing strategy
+- **[01. Introduction and Philosophy](ex-so-de-tedrdetd__01-introduction-and-philosophy.md)** - Overview, history, when to use TDD, benefits, misconceptions
+- **[02. Red-Green-Refactor Cycle](ex-so-de-tedrdetd__02-red-green-refactor-cycle.md)** - The fundamental TDD workflow ⭐ **Most Important**
+- **[03. Test Types and Pyramid](ex-so-de-tedrdetd__03-test-types-and-pyramid.md)** - Unit, integration, E2E tests and testing strategy
 - **[README (this file)]** - Navigation and learning paths
 
 ### Core Practices
 
 Essential TDD techniques for everyday development:
 
-- **[04. Unit Testing Fundamentals](./ex-so-de-tedrdeve__04-unit-testing-fundamentals.md)** - Test structure, isolation, AAA pattern
-- **[05. Test Doubles](./ex-so-de-tedrdeve__05-test-doubles.md)** - Mocks, stubs, spies, fakes - when to use each
-- **[06. Testing Patterns](./ex-so-de-tedrdeve__06-testing-patterns.md)** - AAA, Given-When-Then, table-driven tests, snapshot testing
-- **[07. Test Data Builders](./ex-so-de-tedrdeve__07-test-data-builders.md)** - Builder pattern and Object Mother for test fixtures
-- **[08. Assertion Patterns](./ex-so-de-tedrdeve__08-assertion-patterns.md)** - Effective assertions, custom matchers, mutation testing
-- **[09. Integration Testing](./ex-so-de-tedrdeve__09-integration-testing.md)** - Testing with databases, APIs, and contract testing
-- **[10. End-to-End Testing](./ex-so-de-tedrdeve__10-end-to-end-testing.md)** - Full system verification, when to use sparingly
+- **[04. Unit Testing Fundamentals](ex-so-de-tedrdetd__04-unit-testing-fundamentals.md)** - Test structure, isolation, AAA pattern
+- **[05. Test Doubles](ex-so-de-tedrdetd__05-test-doubles.md)** - Mocks, stubs, spies, fakes - when to use each
+- **[06. Testing Patterns](ex-so-de-tedrdetd__06-testing-patterns.md)** - AAA, Given-When-Then, table-driven tests, snapshot testing
+- **[07. Test Data Builders](ex-so-de-tedrdetd__07-test-data-builders.md)** - Builder pattern and Object Mother for test fixtures
+- **[08. Assertion Patterns](ex-so-de-tedrdetd__08-assertion-patterns.md)** - Effective assertions, custom matchers, mutation testing
+- **[09. Integration Testing](ex-so-de-tedrdetd__09-integration-testing.md)** - Testing with databases, APIs, and contract testing
+- **[10. End-to-End Testing](ex-so-de-tedrdetd__10-end-to-end-testing.md)** - Full system verification, when to use sparingly
 
 ### Advanced Integration
 
 TDD in complex contexts:
 
-- **[11. TDD and Functional Programming](./ex-so-de-tedrdeve__11-tdd-and-functional-programming.md)** - Testing pure functions, property-based testing
-- **[12. TDD and DDD](./ex-so-de-tedrdeve__12-tdd-and-ddd.md)** - Testing aggregates, value objects, domain events, repositories
-- **[13. Legacy Code and Characterization Tests](./ex-so-de-tedrdeve__13-legacy-code-and-characterization-tests.md)** - Adding tests to existing code, approval testing
-- **[14. Refactoring with Tests](./ex-so-de-tedrdeve__14-refactoring-with-tests.md)** - Safe refactoring patterns with test coverage
+- **[11. TDD and Functional Programming](ex-so-de-tedrdetd__11-tdd-and-functional-programming.md)** - Testing pure functions, property-based testing
+- **[12. TDD and DDD](ex-so-de-tedrdetd__12-tdd-and-ddd.md)** - Testing aggregates, value objects, domain events, repositories
+- **[13. Legacy Code and Characterization Tests](ex-so-de-tedrdetd__13-legacy-code-and-characterization-tests.md)** - Adding tests to existing code, approval testing
+- **[14. Refactoring with Tests](ex-so-de-tedrdetd__14-refactoring-with-tests.md)** - Safe refactoring patterns with test coverage
 
 ### Meta & Guidance
 
 Best practices and anti-patterns:
 
-- **[15. Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md)** - When to use each test type, coverage strategies, test observability
-- **[16. TDD in Nx Monorepo](./ex-so-de-tedrdeve__16-tdd-in-nx-monorepo.md)** - Testing in Nx workspace, affected tests, shared utilities
-- **[17. FAQ](./ex-so-de-tedrdeve__17-faq.md)** - Common questions about TDD practice
+- **[15. Decision Trees and Best Practices](ex-so-de-tedrdetd__15-decision-trees-and-best-practices.md)** - When to use each test type, coverage strategies, test observability
+- **[16. TDD in Nx Monorepo](ex-so-de-tedrdetd__16-tdd-in-nx-monorepo.md)** - Testing in Nx workspace, affected tests, shared utilities
+- **[17. FAQ](ex-so-de-tedrdetd__17-faq.md)** - Common questions about TDD practice
 
 ## Learning Paths
 
@@ -259,11 +259,11 @@ Choose a learning path based on your goals and available time.
 **Path**:
 
 1. **Core Cycle** (10 minutes)
-   - [Red-Green-Refactor Cycle](./ex-so-de-tedrdeve__02-red-green-refactor-cycle.md) - The fundamental TDD workflow
+   - [Red-Green-Refactor Cycle](ex-so-de-tedrdetd__02-red-green-refactor-cycle.md) - The fundamental TDD workflow
 
 2. **Testing Fundamentals** (15 minutes)
-   - [Unit Testing Fundamentals](./ex-so-de-tedrdeve__04-unit-testing-fundamentals.md) - Test structure and isolation (10 min)
-   - [Testing Patterns - AAA](./ex-so-de-tedrdeve__06-testing-patterns.md#arrange-act-assert-pattern) - Arrange-Act-Assert pattern (5 min)
+   - [Unit Testing Fundamentals](ex-so-de-tedrdetd__04-unit-testing-fundamentals.md) - Test structure and isolation (10 min)
+   - [Testing Patterns - AAA](ex-so-de-tedrdetd__06-testing-patterns.md#arrange-act-assert-pattern) - Arrange-Act-Assert pattern (5 min)
 
 3. **Apply** (5 minutes)
    - Write one test for tax threshold validation
@@ -277,27 +277,27 @@ Choose a learning path based on your goals and available time.
 
 **Foundation** (30 minutes):
 
-1. [Introduction and Philosophy](./ex-so-de-tedrdeve__01-introduction-and-philosophy.md) (10 min)
-2. [Red-Green-Refactor Cycle](./ex-so-de-tedrdeve__02-red-green-refactor-cycle.md) (15 min)
-3. [Test Types and Pyramid](./ex-so-de-tedrdeve__03-test-types-and-pyramid.md) (5 min)
+1. [Introduction and Philosophy](ex-so-de-tedrdetd__01-introduction-and-philosophy.md) (10 min)
+2. [Red-Green-Refactor Cycle](ex-so-de-tedrdetd__02-red-green-refactor-cycle.md) (15 min)
+3. [Test Types and Pyramid](ex-so-de-tedrdetd__03-test-types-and-pyramid.md) (5 min)
 
 **Core Practices** (60 minutes):
 
-1. [Unit Testing Fundamentals](./ex-so-de-tedrdeve__04-unit-testing-fundamentals.md) (12 min)
-2. [Test Doubles](./ex-so-de-tedrdeve__05-test-doubles.md) - Mocks, stubs, spies (12 min)
-3. [Testing Patterns](./ex-so-de-tedrdeve__06-testing-patterns.md) (10 min)
-4. [Test Data Builders](./ex-so-de-tedrdeve__07-test-data-builders.md) (8 min)
-5. [Assertion Patterns](./ex-so-de-tedrdeve__08-assertion-patterns.md) (8 min)
-6. [Integration Testing](./ex-so-de-tedrdeve__09-integration-testing.md) (10 min)
+1. [Unit Testing Fundamentals](ex-so-de-tedrdetd__04-unit-testing-fundamentals.md) (12 min)
+2. [Test Doubles](ex-so-de-tedrdetd__05-test-doubles.md) - Mocks, stubs, spies (12 min)
+3. [Testing Patterns](ex-so-de-tedrdetd__06-testing-patterns.md) (10 min)
+4. [Test Data Builders](ex-so-de-tedrdetd__07-test-data-builders.md) (8 min)
+5. [Assertion Patterns](ex-so-de-tedrdetd__08-assertion-patterns.md) (8 min)
+6. [Integration Testing](ex-so-de-tedrdetd__09-integration-testing.md) (10 min)
 
 **Integration** (20 minutes):
 
-1. [TDD and Functional Programming](./ex-so-de-tedrdeve__11-tdd-and-functional-programming.md) OR [TDD and DDD](./ex-so-de-tedrdeve__12-tdd-and-ddd.md) (15 min)
-2. [Refactoring with Tests](./ex-so-de-tedrdeve__14-refactoring-with-tests.md) (5 min)
+1. [TDD and Functional Programming](ex-so-de-tedrdetd__11-tdd-and-functional-programming.md) OR [TDD and DDD](ex-so-de-tedrdetd__12-tdd-and-ddd.md) (15 min)
+2. [Refactoring with Tests](ex-so-de-tedrdetd__14-refactoring-with-tests.md) (5 min)
 
 **Best Practices** (10 minutes):
 
-1. [Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md) (7 min)
+1. [Decision Trees and Best Practices](ex-so-de-tedrdetd__15-decision-trees-and-best-practices.md) (7 min)
 
 **Outcome**: Full understanding of TDD workflow, testing patterns, and when to apply different test types.
 
@@ -307,23 +307,23 @@ Choose a learning path based on your goals and available time.
 
 Traditional TDD with class-based examples:
 
-1. [Introduction and Philosophy](./ex-so-de-tedrdeve__01-introduction-and-philosophy.md)
-2. [Red-Green-Refactor Cycle](./ex-so-de-tedrdeve__02-red-green-refactor-cycle.md)
-3. [Unit Testing Fundamentals](./ex-so-de-tedrdeve__04-unit-testing-fundamentals.md) - Focus on OOP examples
-4. [Test Doubles](./ex-so-de-tedrdeve__05-test-doubles.md) - Mocking dependencies in classes
-5. [TDD and DDD](./ex-so-de-tedrdeve__12-tdd-and-ddd.md) - Testing aggregates and entities
-6. [Testing Patterns](./ex-so-de-tedrdeve__06-testing-patterns.md) - AAA pattern for methods
+1. [Introduction and Philosophy](ex-so-de-tedrdetd__01-introduction-and-philosophy.md)
+2. [Red-Green-Refactor Cycle](ex-so-de-tedrdetd__02-red-green-refactor-cycle.md)
+3. [Unit Testing Fundamentals](ex-so-de-tedrdetd__04-unit-testing-fundamentals.md) - Focus on OOP examples
+4. [Test Doubles](ex-so-de-tedrdetd__05-test-doubles.md) - Mocking dependencies in classes
+5. [TDD and DDD](ex-so-de-tedrdetd__12-tdd-and-ddd.md) - Testing aggregates and entities
+6. [Testing Patterns](ex-so-de-tedrdetd__06-testing-patterns.md) - AAA pattern for methods
 
 **For FP Developers**:
 
 TDD adapted for functional programming:
 
-1. [Introduction and Philosophy](./ex-so-de-tedrdeve__01-introduction-and-philosophy.md)
-2. [Red-Green-Refactor Cycle](./ex-so-de-tedrdeve__02-red-green-refactor-cycle.md)
-3. [TDD and Functional Programming](./ex-so-de-tedrdeve__11-tdd-and-functional-programming.md) ⭐ **Start Here**
-4. [Unit Testing Fundamentals](./ex-so-de-tedrdeve__04-unit-testing-fundamentals.md) - Testing pure functions
-5. [Testing Patterns](./ex-so-de-tedrdeve__06-testing-patterns.md) - Property-based testing
-6. [Test Data Builders](./ex-so-de-tedrdeve__07-test-data-builders.md) - Immutable fixture builders
+1. [Introduction and Philosophy](ex-so-de-tedrdetd__01-introduction-and-philosophy.md)
+2. [Red-Green-Refactor Cycle](ex-so-de-tedrdetd__02-red-green-refactor-cycle.md)
+3. [TDD and Functional Programming](ex-so-de-tedrdetd__11-tdd-and-functional-programming.md) ⭐ **Start Here**
+4. [Unit Testing Fundamentals](ex-so-de-tedrdetd__04-unit-testing-fundamentals.md) - Testing pure functions
+5. [Testing Patterns](ex-so-de-tedrdetd__06-testing-patterns.md) - Property-based testing
+6. [Test Data Builders](ex-so-de-tedrdetd__07-test-data-builders.md) - Immutable fixture builders
 
 **Key Differences**:
 
@@ -336,44 +336,44 @@ TDD adapted for functional programming:
 
 Focus on API and business logic testing:
 
-1. [Red-Green-Refactor Cycle](./ex-so-de-tedrdeve__02-red-green-refactor-cycle.md)
-2. [Unit Testing Fundamentals](./ex-so-de-tedrdeve__04-unit-testing-fundamentals.md) - Testing business logic
-3. [Test Doubles](./ex-so-de-tedrdeve__05-test-doubles.md) - Mocking external services
-4. [Integration Testing](./ex-so-de-tedrdeve__09-integration-testing.md) - Database and API integration
-5. [TDD and DDD](./ex-so-de-tedrdeve__12-tdd-and-ddd.md) - Domain model testing
-6. [TDD in Nx Monorepo](./ex-so-de-tedrdeve__16-tdd-in-nx-monorepo.md) - Backend service testing
+1. [Red-Green-Refactor Cycle](ex-so-de-tedrdetd__02-red-green-refactor-cycle.md)
+2. [Unit Testing Fundamentals](ex-so-de-tedrdetd__04-unit-testing-fundamentals.md) - Testing business logic
+3. [Test Doubles](ex-so-de-tedrdetd__05-test-doubles.md) - Mocking external services
+4. [Integration Testing](ex-so-de-tedrdetd__09-integration-testing.md) - Database and API integration
+5. [TDD and DDD](ex-so-de-tedrdetd__12-tdd-and-ddd.md) - Domain model testing
+6. [TDD in Nx Monorepo](ex-so-de-tedrdetd__16-tdd-in-nx-monorepo.md) - Backend service testing
 
 **For Frontend Developers**:
 
 Focus on component and UI testing:
 
-1. [Red-Green-Refactor Cycle](./ex-so-de-tedrdeve__02-red-green-refactor-cycle.md)
-2. [Unit Testing Fundamentals](./ex-so-de-tedrdeve__04-unit-testing-fundamentals.md) - Component logic testing
-3. [Test Doubles](./ex-so-de-tedrdeve__05-test-doubles.md) - Mocking API calls
-4. [Testing Patterns](./ex-so-de-tedrdeve__06-testing-patterns.md) - Snapshot testing for components
-5. [End-to-End Testing](./ex-so-de-tedrdeve__10-end-to-end-testing.md) - User flow testing with Playwright
-6. [Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md) - When to use E2E vs integration tests
+1. [Red-Green-Refactor Cycle](ex-so-de-tedrdetd__02-red-green-refactor-cycle.md)
+2. [Unit Testing Fundamentals](ex-so-de-tedrdetd__04-unit-testing-fundamentals.md) - Component logic testing
+3. [Test Doubles](ex-so-de-tedrdetd__05-test-doubles.md) - Mocking API calls
+4. [Testing Patterns](ex-so-de-tedrdetd__06-testing-patterns.md) - Snapshot testing for components
+5. [End-to-End Testing](ex-so-de-tedrdetd__10-end-to-end-testing.md) - User flow testing with Playwright
+6. [Decision Trees and Best Practices](ex-so-de-tedrdetd__15-decision-trees-and-best-practices.md) - When to use E2E vs integration tests
 
 **For QA Engineers**:
 
 Focus on comprehensive testing strategies:
 
-1. [Test Types and Pyramid](./ex-so-de-tedrdeve__03-test-types-and-pyramid.md) - Testing strategy overview
-2. [Integration Testing](./ex-so-de-tedrdeve__09-integration-testing.md) - Cross-component verification
-3. [End-to-End Testing](./ex-so-de-tedrdeve__10-end-to-end-testing.md) - Full system testing
-4. [Testing Patterns](./ex-so-de-tedrdeve__06-testing-patterns.md) - Table-driven and parameterized tests
-5. [Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md) - Coverage strategies
+1. [Test Types and Pyramid](ex-so-de-tedrdetd__03-test-types-and-pyramid.md) - Testing strategy overview
+2. [Integration Testing](ex-so-de-tedrdetd__09-integration-testing.md) - Cross-component verification
+3. [End-to-End Testing](ex-so-de-tedrdetd__10-end-to-end-testing.md) - Full system testing
+4. [Testing Patterns](ex-so-de-tedrdetd__06-testing-patterns.md) - Table-driven and parameterized tests
+5. [Decision Trees and Best Practices](ex-so-de-tedrdetd__15-decision-trees-and-best-practices.md) - Coverage strategies
 
 **For Software Architects**:
 
 Focus on testing strategies and system design:
 
-1. [Introduction and Philosophy](./ex-so-de-tedrdeve__01-introduction-and-philosophy.md) - TDD benefits for design
-2. [Test Types and Pyramid](./ex-so-de-tedrdeve__03-test-types-and-pyramid.md) - Architectural testing strategy
-3. [Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md) - Test observability, coverage planning
-4. [Integration Testing](./ex-so-de-tedrdeve__09-integration-testing.md) - Contract testing for bounded contexts
-5. [TDD and DDD](./ex-so-de-tedrdeve__12-tdd-and-ddd.md) - Aligning tests with domain boundaries
-6. [TDD in Nx Monorepo](./ex-so-de-tedrdeve__16-tdd-in-nx-monorepo.md) - Monorepo testing architecture
+1. [Introduction and Philosophy](ex-so-de-tedrdetd__01-introduction-and-philosophy.md) - TDD benefits for design
+2. [Test Types and Pyramid](ex-so-de-tedrdetd__03-test-types-and-pyramid.md) - Architectural testing strategy
+3. [Decision Trees and Best Practices](ex-so-de-tedrdetd__15-decision-trees-and-best-practices.md) - Test observability, coverage planning
+4. [Integration Testing](ex-so-de-tedrdetd__09-integration-testing.md) - Contract testing for bounded contexts
+5. [TDD and DDD](ex-so-de-tedrdetd__12-tdd-and-ddd.md) - Aligning tests with domain boundaries
+6. [TDD in Nx Monorepo](ex-so-de-tedrdetd__16-tdd-in-nx-monorepo.md) - Monorepo testing architecture
 
 ### By Codebase Maturity: Greenfield vs. Brownfield
 
@@ -381,23 +381,23 @@ Focus on testing strategies and system design:
 
 Full TDD from day one:
 
-1. [Introduction and Philosophy](./ex-so-de-tedrdeve__01-introduction-and-philosophy.md) - Why TDD from the start
-2. [Red-Green-Refactor Cycle](./ex-so-de-tedrdeve__02-red-green-refactor-cycle.md) - Establish rhythm early
-3. [Unit Testing Fundamentals](./ex-so-de-tedrdeve__04-unit-testing-fundamentals.md) - Build testable code from start
-4. [Test Data Builders](./ex-so-de-tedrdeve__07-test-data-builders.md) - Set up fixture infrastructure
+1. [Introduction and Philosophy](ex-so-de-tedrdetd__01-introduction-and-philosophy.md) - Why TDD from the start
+2. [Red-Green-Refactor Cycle](ex-so-de-tedrdetd__02-red-green-refactor-cycle.md) - Establish rhythm early
+3. [Unit Testing Fundamentals](ex-so-de-tedrdetd__04-unit-testing-fundamentals.md) - Build testable code from start
+4. [Test Data Builders](ex-so-de-tedrdetd__07-test-data-builders.md) - Set up fixture infrastructure
 5. Establish team TDD practices and workflow
-6. [TDD in Nx Monorepo](./ex-so-de-tedrdeve__16-tdd-in-nx-monorepo.md) - Configure testing from start
+6. [TDD in Nx Monorepo](ex-so-de-tedrdetd__16-tdd-in-nx-monorepo.md) - Configure testing from start
 
 **For Brownfield Projects** (existing codebase without tests):
 
 Incremental adoption of TDD:
 
-1. [Legacy Code and Characterization Tests](./ex-so-de-tedrdeve__13-legacy-code-and-characterization-tests.md) ⭐ **Start Here** - Working with untested code
-2. [Red-Green-Refactor Cycle](./ex-so-de-tedrdeve__02-red-green-refactor-cycle.md) - Apply TDD to new features
-3. [Refactoring with Tests](./ex-so-de-tedrdeve__14-refactoring-with-tests.md) - Safe improvement of existing code
-4. [Integration Testing](./ex-so-de-tedrdeve__09-integration-testing.md) - High-level tests for legacy boundaries
+1. [Legacy Code and Characterization Tests](ex-so-de-tedrdetd__13-legacy-code-and-characterization-tests.md) ⭐ **Start Here** - Working with untested code
+2. [Red-Green-Refactor Cycle](ex-so-de-tedrdetd__02-red-green-refactor-cycle.md) - Apply TDD to new features
+3. [Refactoring with Tests](ex-so-de-tedrdetd__14-refactoring-with-tests.md) - Safe improvement of existing code
+4. [Integration Testing](ex-so-de-tedrdetd__09-integration-testing.md) - High-level tests for legacy boundaries
 5. Prioritize critical paths and plan test coverage
-6. [Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md) - Practical strategies for incremental adoption
+6. [Decision Trees and Best Practices](ex-so-de-tedrdetd__15-decision-trees-and-best-practices.md) - Practical strategies for incremental adoption
 
 **Migration Strategy**:
 
@@ -413,12 +413,12 @@ Incremental adoption of TDD:
 
 Testing regulated business rules:
 
-1. [Introduction and Philosophy](./ex-so-de-tedrdeve__01-introduction-and-philosophy.md) - TDD for regulatory compliance
-2. [Red-Green-Refactor Cycle](./ex-so-de-tedrdeve__02-red-green-refactor-cycle.md) - Tax calculation example
-3. [TDD and DDD](./ex-so-de-tedrdeve__12-tdd-and-ddd.md) - Financial domain models (Loans, Securities)
-4. [Test Data Builders](./ex-so-de-tedrdeve__07-test-data-builders.md) - Builders for financial instruments
-5. [Testing Patterns](./ex-so-de-tedrdeve__06-testing-patterns.md) - Table-driven tests for multiple income types
-6. [TDD and Functional Programming](./ex-so-de-tedrdeve__11-tdd-and-functional-programming.md) - Property-based testing for compliance rules
+1. [Introduction and Philosophy](ex-so-de-tedrdetd__01-introduction-and-philosophy.md) - TDD for regulatory compliance
+2. [Red-Green-Refactor Cycle](ex-so-de-tedrdetd__02-red-green-refactor-cycle.md) - Tax calculation example
+3. [TDD and DDD](ex-so-de-tedrdetd__12-tdd-and-ddd.md) - Financial domain models (Loans, Securities)
+4. [Test Data Builders](ex-so-de-tedrdetd__07-test-data-builders.md) - Builders for financial instruments
+5. [Testing Patterns](ex-so-de-tedrdetd__06-testing-patterns.md) - Table-driven tests for multiple income types
+6. [TDD and Functional Programming](ex-so-de-tedrdetd__11-tdd-and-functional-programming.md) - Property-based testing for compliance rules
 
 **Example Domains Covered**:
 
@@ -441,7 +441,7 @@ TDD integrates with other software design approaches in this repository:
 **[Domain-Driven Design Documentation](../../architecture/domain-driven-design-ddd/README.md)**
 
 - **Strategic Testing**: Tests verify bounded context boundaries and integration patterns
-- **Aggregate Testing**: TDD ensures aggregate invariants are enforced ([File 12](./ex-so-de-tedrdeve__12-tdd-and-ddd.md))
+- **Aggregate Testing**: TDD ensures aggregate invariants are enforced ([File 12](ex-so-de-tedrdetd__12-tdd-and-ddd.md))
 - **Value Object Testing**: Immutability and equality tests for domain primitives
 - **Domain Events**: Event-driven testing verifies business occurrences
 - **Ubiquitous Language**: Test names use domain terminology from glossary
@@ -455,7 +455,7 @@ TDD integrates with other software design approaches in this repository:
 - **Component Testing**: Unit tests align with C4 Component diagrams
 - **Container Testing**: Integration tests verify container interactions
 - **System Testing**: E2E tests validate system context behavior
-- **Test Mapping**: [File 16](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md) maps test types to C4 levels
+- **Test Mapping**: [File 16](ex-so-de-tedrdetd__15-decision-trees-and-best-practices.md) maps test types to C4 levels
 
 **Test Coverage by C4 Level**:
 
@@ -468,7 +468,7 @@ TDD integrates with other software design approaches in this repository:
 
 **[Functional Programming Principles](../../../../../governance/development/pattern/functional-programming.md)**
 
-- **Pure Function Testing**: Simple assertions without mocking ([File 11](./ex-so-de-tedrdeve__11-tdd-and-functional-programming.md))
+- **Pure Function Testing**: Simple assertions without mocking ([File 11](ex-so-de-tedrdetd__11-tdd-and-functional-programming.md))
 - **Property-Based Testing**: Verify invariants across input ranges with fast-check
 - **Immutability Testing**: Value equality and structural sharing
 - **Railway-Oriented Programming**: Testing Result/Either types for error handling

@@ -59,7 +59,7 @@ FSMs are powerful yet often misunderstood. This documentation aims to:
 
 Establish FSM fundamentals, core concepts, and taxonomy of FSM types.
 
-1. **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**
+1. **[Introduction and Philosophy](ex-so-ar-fistmafs__01-introduction-and-philosophy.md)**
    - What is an FSM (formal definition and intuitive understanding)
    - Historical context (automata theory to modern frameworks)
    - Why FSMs matter (explicit state, bug prevention, testability, audit trails)
@@ -67,7 +67,7 @@ Establish FSM fundamentals, core concepts, and taxonomy of FSM types.
    - When NOT to use FSMs (over-engineering warnings)
    - Real-world examples: Zakat assessment, donation campaigns, contract approval
 
-2. **[Core Concepts and Terminology](./ex-so-ar-fsm__02-core-concepts-and-terminology.md)**
+2. **[Core Concepts and Terminology](ex-so-ar-fistmafs__02-core-concepts-and-terminology.md)**
    - States (initial, intermediate, final, entry/exit/do activities)
    - Transitions (anatomy, guards, actions, self vs internal)
    - Events (signal, call, time, change events, deferred events)
@@ -77,7 +77,7 @@ Establish FSM fundamentals, core concepts, and taxonomy of FSM types.
    - Deterministic vs non-deterministic FSMs
    - FSM notation standards (UML, Harel, SCXML)
 
-3. **[FSM Types and Classifications](./ex-so-ar-fsm__03-fsm-types-and-classifications.md)**
+3. **[FSM Types and Classifications](ex-so-ar-fistmafs__03-fsm-types-and-classifications.md)**
    - Mealy vs Moore machines (outputs on transitions vs states)
    - Deterministic (DFA) vs Non-deterministic (NFA) automata
    - Hierarchical State Machines (nested composite states)
@@ -90,7 +90,7 @@ Establish FSM fundamentals, core concepts, and taxonomy of FSM types.
 
 Address complexity management, hierarchical patterns, transition mechanics, and proven design patterns.
 
-1. **[State Explosion and Mitigation](./ex-so-ar-fsm__04-state-explosion-and-mitigation.md)**
+1. **[State Explosion and Mitigation](ex-so-ar-fistmafs__04-state-explosion-and-mitigation.md)**
    - Understanding state explosion (combinatorial growth formulas)
    - Recognition test (detecting state explosion early)
    - Mitigation strategy 1: Hierarchical decomposition
@@ -100,7 +100,7 @@ Address complexity management, hierarchical patterns, transition mechanics, and 
    - Combined mitigation example (Zakat assessment with 12 states vs 384)
    - Anti-patterns (encoding data in states, premature nesting)
 
-2. **[Hierarchical and Nested States](./ex-so-ar-fsm__05-hierarchical-and-nested-states.md)**
+2. **[Hierarchical and Nested States](ex-so-ar-fistmafs__05-hierarchical-and-nested-states.md)**
    - Composite states and sub-states (tree structure)
    - Entry/exit semantics in hierarchies (execution order)
    - History states (shallow vs deep, resuming after interruption)
@@ -108,14 +108,14 @@ Address complexity management, hierarchical patterns, transition mechanics, and 
    - Scope and visibility (context access, event propagation)
    - When to nest vs flatten (decision matrix)
 
-3. **[Events, Guards, and Actions](./ex-so-ar-fsm__06-events-guards-and-actions.md)**
+3. **[Events, Guards, and Actions](ex-so-ar-fistmafs__06-events-guards-and-actions.md)**
    - Event types deep dive (signal, call, time, change)
    - Guard condition patterns (pure functions, complex guards, choice pseudo-states)
    - Action execution semantics (entry/exit/transition order, idempotency)
    - Deferred events and event queues
    - Best practices (short actions, error handling, separate concerns)
 
-4. **[Design Patterns and Best Practices](./ex-so-ar-fsm__07-design-patterns-and-best-practices.md)**
+4. **[Design Patterns and Best Practices](ex-so-ar-fistmafs__07-design-patterns-and-best-practices.md)**
    - State Pattern (GoF) vs FSM libraries
    - Workflow pattern (linear progression with checkpoints)
    - Approval chain pattern (multi-step validation)
@@ -128,7 +128,7 @@ Address complexity management, hierarchical patterns, transition mechanics, and 
 
 Explore how FSMs are implemented in different programming paradigms.
 
-1. **[OOP Implementation Patterns](./ex-so-ar-fsm__08-oop-implementation-patterns.md)**
+1. **[OOP Implementation Patterns](ex-so-ar-fistmafs__08-oop-implementation-patterns.md)**
    - State Pattern (GoF): Context + State interface + Concrete states
    - Enum-based state machines
    - Builder pattern for FSM construction
@@ -136,7 +136,7 @@ Explore how FSMs are implemented in different programming paradigms.
    - Polymorphic transition handlers
    - OSE examples: Contract approval (Java), Zakat calculator (TypeScript)
 
-2. **[FP Implementation Patterns](./ex-so-ar-fsm__09-fp-implementation-patterns.md)**
+2. **[FP Implementation Patterns](ex-so-ar-fistmafs__09-fp-implementation-patterns.md)**
    - Algebraic Data Types (ADTs) for states and events
    - Pattern matching for transitions
    - Pure transition functions: `(State, Event) → (State, Effects)`
@@ -144,7 +144,7 @@ Explore how FSMs are implemented in different programming paradigms.
    - Effect handling and side effect isolation
    - OSE examples: Loan approval (Haskell), Zakat calculation (Elm)
 
-3. **[Declarative and DSL Approaches](./ex-so-ar-fsm__10-declarative-and-dsl-approaches.md)**
+3. **[Declarative and DSL Approaches](ex-so-ar-fistmafs__10-declarative-and-dsl-approaches.md)**
    - JSON/YAML FSM definitions
    - SCXML (State Chart XML) standard
    - Custom DSLs for domain-specific FSMs
@@ -152,7 +152,7 @@ Explore how FSMs are implemented in different programming paradigms.
    - Trade-offs: Flexibility vs type safety
    - OSE examples: Contract workflow (YAML), Zakat rule engine (JSON)
 
-4. **[Event-Driven and Reactive FSM](./ex-so-ar-fsm__11-event-driven-and-reactive-fsm.md)**
+4. **[Event-Driven and Reactive FSM](ex-so-ar-fistmafs__11-event-driven-and-reactive-fsm.md)**
    - Event sourcing with FSMs
    - CQRS integration: Command → FSM → Events
    - Reactive Streams and FSM
@@ -164,7 +164,7 @@ Explore how FSMs are implemented in different programming paradigms.
 
 Comprehensive coverage of FSM frameworks and testing approaches.
 
-1. **[Testing FSM Implementations](./ex-so-ar-fsm__12-testing-fsm-implementations.md)**
+1. **[Testing FSM Implementations](ex-so-ar-fistmafs__12-testing-fsm-implementations.md)**
    - State transition table testing
    - State coverage (all states reachable)
    - Transition coverage (all transitions exercised)
@@ -173,13 +173,13 @@ Comprehensive coverage of FSM frameworks and testing approaches.
    - Property-based testing for FSMs
    - Model-based testing from FSM definitions
 
-2. **[Framework: Spring State Machine & XState](./ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md)**
+2. **[Framework: Spring State Machine & XState](ex-so-ar-fistmafs__13-framework-spring-state-machine-xstate.md)**
    - Spring State Machine (Java/Spring Boot): Configuration DSL, persistence, hierarchical config
    - XState (JavaScript/TypeScript): Machine configuration, interpreter, React/Vue integration
    - Comparison matrix and framework decision tree
    - OSE examples: Contract approval (Spring SSM), Campaign dashboard (XState)
 
-3. **[Framework: Statecharts & Temporal/Cadence](./ex-so-ar-fsm__14-framework-statecharts-temporal-cadence.md)**
+3. **[Framework: Statecharts & Temporal/Cadence](ex-so-ar-fistmafs__14-framework-statecharts-temporal-cadence.md)**
    - Statecharts (SCXML, Commons SCXML)
    - Temporal/Cadence (durable workflow engines): Workflow as code, long-running workflows, saga patterns
    - When to use workflow engines vs FSM libraries
@@ -189,14 +189,14 @@ Comprehensive coverage of FSM frameworks and testing approaches.
 
 Debugging, decision-making, best practices, and architectural integration.
 
-1. **[Debugging and Visualization](./ex-so-ar-fsm__15-debugging-and-visualization.md)**
+1. **[Debugging and Visualization](ex-so-ar-fistmafs__15-debugging-and-visualization.md)**
    - State transition logging and tracing
    - FSM visualization tools (XState Viz, PlantUML, Mermaid)
    - Debugging invalid transitions
    - State history and time-travel debugging
    - Performance profiling (transition bottlenecks)
 
-2. **[Decision Trees and Guidelines](./ex-so-ar-fsm__16-decision-trees-and-guidelines.md)**
+2. **[Decision Trees and Guidelines](ex-so-ar-fistmafs__16-decision-trees-and-guidelines.md)**
    - Should I use an FSM? (decision flowchart)
    - Flat vs hierarchical FSM (decision tree)
    - Which paradigm? (OOP vs FP vs Declarative)
@@ -204,12 +204,12 @@ Debugging, decision-making, best practices, and architectural integration.
    - Library vs hand-rolled implementation
    - Migration strategies (refactoring to FSM)
 
-3. **[Best Practices and Common Mistakes](./ex-so-ar-fsm__17-best-practices.md)**
+3. **[Best Practices and Common Mistakes](ex-so-ar-fistmafs__17-best-practices.md)**
    - Best practices: Start simple, explicit state, pure guards, separate concerns, immutability, logging
    - Common mistakes: State explosion, business logic in FSM, mutable shared state, missing error states, over-complication
    - OSE examples: Well-designed contract FSM, bloated Zakat FSM anti-pattern
 
-4. **[Integration with DDD and Architecture](./ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md)**
+4. **[Integration with DDD and Architecture](ex-so-ar-fistmafs__19-integration-with-ddd-and-architecture.md)**
    - FSM in DDD Aggregates (entity lifecycle)
    - FSM as domain events source
    - FSM in bounded contexts
@@ -220,7 +220,7 @@ Debugging, decision-making, best practices, and architectural integration.
 
 ### Group 6: Meta Files
 
-1. **[FAQ](./ex-so-ar-fsm__20-faq.md)**
+1. **[FAQ](ex-so-ar-fistmafs__20-faq.md)**
    - When should I use FSM vs switch statements?
    - How do I handle concurrent state machines?
    - Can FSMs model infinite states?
@@ -242,9 +242,9 @@ Debugging, decision-making, best practices, and architectural integration.
 
 For a rapid understanding of FSM basics:
 
-1. Read **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)** - What is FSM section (first 200 lines)
-2. Review decision matrix: "Should I use an FSM?" in **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**
-3. Glance at **[Decision Trees and Guidelines](./ex-so-ar-fsm__16-decision-trees-and-guidelines.md)** flowcharts
+1. Read **[Introduction and Philosophy](ex-so-ar-fistmafs__01-introduction-and-philosophy.md)** - What is FSM section (first 200 lines)
+2. Review decision matrix: "Should I use an FSM?" in **[Introduction and Philosophy](ex-so-ar-fistmafs__01-introduction-and-philosophy.md)**
+3. Glance at **[Decision Trees and Guidelines](ex-so-ar-fistmafs__16-decision-trees-and-guidelines.md)** flowcharts
 
 **Outcome**: Understand what FSMs are and when to use them.
 
@@ -252,12 +252,12 @@ For a rapid understanding of FSM basics:
 
 For developers ready to implement their first FSM:
 
-1. **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)** - Full read
-2. **[Core Concepts and Terminology](./ex-so-ar-fsm__02-core-concepts-and-terminology.md)** - States, transitions, events, guards
+1. **[Introduction and Philosophy](ex-so-ar-fistmafs__01-introduction-and-philosophy.md)** - Full read
+2. **[Core Concepts and Terminology](ex-so-ar-fistmafs__02-core-concepts-and-terminology.md)** - States, transitions, events, guards
 3. **Choose paradigm**:
-   - OOP → **[OOP Implementation Patterns](./ex-so-ar-fsm__08-oop-implementation-patterns.md)**
-   - FP → **[FP Implementation Patterns](./ex-so-ar-fsm__09-fp-implementation-patterns.md)**
-   - Declarative → **[Declarative and DSL Approaches](./ex-so-ar-fsm__10-declarative-and-dsl-approaches.md)**
+   - OOP → **[OOP Implementation Patterns](ex-so-ar-fistmafs__08-oop-implementation-patterns.md)**
+   - FP → **[FP Implementation Patterns](ex-so-ar-fistmafs__09-fp-implementation-patterns.md)**
+   - Declarative → **[Declarative and DSL Approaches](ex-so-ar-fistmafs__10-declarative-and-dsl-approaches.md)**
 4. Design state machine diagram with clear states and transitions
 
 **Outcome**: Can design and implement a basic FSM in your chosen paradigm.
@@ -267,19 +267,19 @@ For developers ready to implement their first FSM:
 For architects and senior developers designing complex FSMs:
 
 1. **Foundation**:
-   - **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**
-   - **[Core Concepts and Terminology](./ex-so-ar-fsm__02-core-concepts-and-terminology.md)**
-   - **[FSM Types and Classifications](./ex-so-ar-fsm__03-fsm-types-and-classifications.md)**
+   - **[Introduction and Philosophy](ex-so-ar-fistmafs__01-introduction-and-philosophy.md)**
+   - **[Core Concepts and Terminology](ex-so-ar-fistmafs__02-core-concepts-and-terminology.md)**
+   - **[FSM Types and Classifications](ex-so-ar-fistmafs__03-fsm-types-and-classifications.md)**
 2. **Complexity Management**:
-   - **[State Explosion and Mitigation](./ex-so-ar-fsm__04-state-explosion-and-mitigation.md)**
-   - **[Hierarchical and Nested States](./ex-so-ar-fsm__05-hierarchical-and-nested-states.md)**
+   - **[State Explosion and Mitigation](ex-so-ar-fistmafs__04-state-explosion-and-mitigation.md)**
+   - **[Hierarchical and Nested States](ex-so-ar-fistmafs__05-hierarchical-and-nested-states.md)**
 3. **Implementation**:
-   - Read all paradigm chapters ([OOP](./ex-so-ar-fsm__08-oop-implementation-patterns.md), [FP](./ex-so-ar-fsm__09-fp-implementation-patterns.md), [Declarative](./ex-so-ar-fsm__10-declarative-and-dsl-approaches.md), [Event-Driven](./ex-so-ar-fsm__11-event-driven-and-reactive-fsm.md)) or focus on your paradigm
-   - Read framework chapters ([Spring SSM & XState](./ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md), [Statecharts & Temporal](./ex-so-ar-fsm__14-framework-statecharts-temporal-cadence.md)) for framework selection
+   - Read all paradigm chapters ([OOP](ex-so-ar-fistmafs__08-oop-implementation-patterns.md), [FP](ex-so-ar-fistmafs__09-fp-implementation-patterns.md), [Declarative](ex-so-ar-fistmafs__10-declarative-and-dsl-approaches.md), [Event-Driven](ex-so-ar-fistmafs__11-event-driven-and-reactive-fsm.md)) or focus on your paradigm
+   - Read framework chapters ([Spring SSM & XState](ex-so-ar-fistmafs__13-framework-spring-state-machine-xstate.md), [Statecharts & Temporal](ex-so-ar-fistmafs__14-framework-statecharts-temporal-cadence.md)) for framework selection
 4. **Best Practices**:
-   - **[Testing FSM Implementations](./ex-so-ar-fsm__12-testing-fsm-implementations.md)**
-   - **[Best Practices and Common Mistakes](./ex-so-ar-fsm__17-best-practices.md)**
-   - **[Integration with DDD and Architecture](./ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md)**
+   - **[Testing FSM Implementations](ex-so-ar-fistmafs__12-testing-fsm-implementations.md)**
+   - **[Best Practices and Common Mistakes](ex-so-ar-fistmafs__17-best-practices.md)**
+   - **[Integration with DDD and Architecture](ex-so-ar-fistmafs__19-integration-with-ddd-and-architecture.md)**
 
 **Outcome**: Can design, implement, and integrate complex FSMs in enterprise systems.
 
@@ -287,41 +287,41 @@ For architects and senior developers designing complex FSMs:
 
 #### Object-Oriented (OOP) Path
 
-1. **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**
-2. **[Core Concepts and Terminology](./ex-so-ar-fsm__02-core-concepts-and-terminology.md)**
-3. **[OOP Implementation Patterns](./ex-so-ar-fsm__08-oop-implementation-patterns.md)**
-4. **[Framework: Spring State Machine & XState](./ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md)** - Spring SSM section
-5. **[Testing FSM Implementations](./ex-so-ar-fsm__12-testing-fsm-implementations.md)**
+1. **[Introduction and Philosophy](ex-so-ar-fistmafs__01-introduction-and-philosophy.md)**
+2. **[Core Concepts and Terminology](ex-so-ar-fistmafs__02-core-concepts-and-terminology.md)**
+3. **[OOP Implementation Patterns](ex-so-ar-fistmafs__08-oop-implementation-patterns.md)**
+4. **[Framework: Spring State Machine & XState](ex-so-ar-fistmafs__13-framework-spring-state-machine-xstate.md)** - Spring SSM section
+5. **[Testing FSM Implementations](ex-so-ar-fistmafs__12-testing-fsm-implementations.md)**
 
 **OSE Examples**: Contract approval (Java State Pattern), Zakat calculator (TypeScript enums)
 
 #### Functional Programming (FP) Path
 
-1. **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**
-2. **[Core Concepts and Terminology](./ex-so-ar-fsm__02-core-concepts-and-terminology.md)** - Focus on immutability and pure functions
-3. **[FP Implementation Patterns](./ex-so-ar-fsm__09-fp-implementation-patterns.md)**
-4. **[Event-Driven and Reactive FSM](./ex-so-ar-fsm__11-event-driven-and-reactive-fsm.md)** - Functional reactive patterns
-5. **[Testing FSM Implementations](./ex-so-ar-fsm__12-testing-fsm-implementations.md)** - Property-based testing
+1. **[Introduction and Philosophy](ex-so-ar-fistmafs__01-introduction-and-philosophy.md)**
+2. **[Core Concepts and Terminology](ex-so-ar-fistmafs__02-core-concepts-and-terminology.md)** - Focus on immutability and pure functions
+3. **[FP Implementation Patterns](ex-so-ar-fistmafs__09-fp-implementation-patterns.md)**
+4. **[Event-Driven and Reactive FSM](ex-so-ar-fistmafs__11-event-driven-and-reactive-fsm.md)** - Functional reactive patterns
+5. **[Testing FSM Implementations](ex-so-ar-fistmafs__12-testing-fsm-implementations.md)** - Property-based testing
 
 **OSE Examples**: Loan approval (Haskell ADTs), Zakat calculation (Elm architecture)
 
 #### Declarative/DSL Path
 
-1. **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**
-2. **[Core Concepts and Terminology](./ex-so-ar-fsm__02-core-concepts-and-terminology.md)** - Focus on notation standards (SCXML)
-3. **[Declarative and DSL Approaches](./ex-so-ar-fsm__10-declarative-and-dsl-approaches.md)**
-4. **[Framework: Statecharts & Temporal/Cadence](./ex-so-ar-fsm__14-framework-statecharts-temporal-cadence.md)** - SCXML section
-5. **[Debugging and Visualization](./ex-so-ar-fsm__15-debugging-and-visualization.md)** - Visual FSM designers
+1. **[Introduction and Philosophy](ex-so-ar-fistmafs__01-introduction-and-philosophy.md)**
+2. **[Core Concepts and Terminology](ex-so-ar-fistmafs__02-core-concepts-and-terminology.md)** - Focus on notation standards (SCXML)
+3. **[Declarative and DSL Approaches](ex-so-ar-fistmafs__10-declarative-and-dsl-approaches.md)**
+4. **[Framework: Statecharts & Temporal/Cadence](ex-so-ar-fistmafs__14-framework-statecharts-temporal-cadence.md)** - SCXML section
+5. **[Debugging and Visualization](ex-so-ar-fistmafs__15-debugging-and-visualization.md)** - Visual FSM designers
 
 **OSE Examples**: Contract workflow (YAML), Zakat rule engine (JSON FSM)
 
 #### Event-Driven Path
 
-1. **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**
-2. **[Core Concepts and Terminology](./ex-so-ar-fsm__02-core-concepts-and-terminology.md)** - Focus on events and event sourcing
-3. **[Event-Driven and Reactive FSM](./ex-so-ar-fsm__11-event-driven-and-reactive-fsm.md)**
-4. **[Integration with DDD and Architecture](./ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md)** - Event sourcing + CQRS
-5. **[Framework: Temporal/Cadence](./ex-so-ar-fsm__14-framework-statecharts-temporal-cadence.md)** - Saga patterns
+1. **[Introduction and Philosophy](ex-so-ar-fistmafs__01-introduction-and-philosophy.md)**
+2. **[Core Concepts and Terminology](ex-so-ar-fistmafs__02-core-concepts-and-terminology.md)** - Focus on events and event sourcing
+3. **[Event-Driven and Reactive FSM](ex-so-ar-fistmafs__11-event-driven-and-reactive-fsm.md)**
+4. **[Integration with DDD and Architecture](ex-so-ar-fistmafs__19-integration-with-ddd-and-architecture.md)** - Event sourcing + CQRS
+5. **[Framework: Temporal/Cadence](ex-so-ar-fistmafs__14-framework-statecharts-temporal-cadence.md)** - Saga patterns
 
 **OSE Examples**: Multi-step loan approval saga, Zakat collection with event sourcing
 
@@ -329,47 +329,47 @@ For architects and senior developers designing complex FSMs:
 
 #### Spring State Machine (Java/Spring Boot)
 
-1. **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**
-2. **[OOP Implementation Patterns](./ex-so-ar-fsm__08-oop-implementation-patterns.md)** - State Pattern foundation
-3. **[Framework: Spring State Machine & XState](./ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md)** - Spring SSM section
-4. **[Testing FSM Implementations](./ex-so-ar-fsm__12-testing-fsm-implementations.md)**
+1. **[Introduction and Philosophy](ex-so-ar-fistmafs__01-introduction-and-philosophy.md)**
+2. **[OOP Implementation Patterns](ex-so-ar-fistmafs__08-oop-implementation-patterns.md)** - State Pattern foundation
+3. **[Framework: Spring State Machine & XState](ex-so-ar-fistmafs__13-framework-spring-state-machine-xstate.md)** - Spring SSM section
+4. **[Testing FSM Implementations](ex-so-ar-fistmafs__12-testing-fsm-implementations.md)**
 5. Integrate with Spring State Machine framework
 
 #### XState (JavaScript/TypeScript)
 
-1. **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**
-2. **[Core Concepts and Terminology](./ex-so-ar-fsm__02-core-concepts-and-terminology.md)**
-3. **[Framework: Spring State Machine & XState](./ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md)** - XState section
-4. **[Debugging and Visualization](./ex-so-ar-fsm__15-debugging-and-visualization.md)** - XState Viz
+1. **[Introduction and Philosophy](ex-so-ar-fistmafs__01-introduction-and-philosophy.md)**
+2. **[Core Concepts and Terminology](ex-so-ar-fistmafs__02-core-concepts-and-terminology.md)**
+3. **[Framework: Spring State Machine & XState](ex-so-ar-fistmafs__13-framework-spring-state-machine-xstate.md)** - XState section
+4. **[Debugging and Visualization](ex-so-ar-fistmafs__15-debugging-and-visualization.md)** - XState Viz
 5. Integrate with XState framework
 
 #### Temporal/Cadence (Workflow Orchestration)
 
-1. **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)** - FSM vs workflow engines
-2. **[Event-Driven and Reactive FSM](./ex-so-ar-fsm__11-event-driven-and-reactive-fsm.md)** - Saga patterns
-3. **[Framework: Statecharts & Temporal/Cadence](./ex-so-ar-fsm__14-framework-statecharts-temporal-cadence.md)** - Temporal section
+1. **[Introduction and Philosophy](ex-so-ar-fistmafs__01-introduction-and-philosophy.md)** - FSM vs workflow engines
+2. **[Event-Driven and Reactive FSM](ex-so-ar-fistmafs__11-event-driven-and-reactive-fsm.md)** - Saga patterns
+3. **[Framework: Statecharts & Temporal/Cadence](ex-so-ar-fistmafs__14-framework-statecharts-temporal-cadence.md)** - Temporal section
 4. Apply Event-Driven Saga patterns
 
 ### By Architecture
 
 #### DDD Integration
 
-1. **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**
-2. **[Integration with DDD and Architecture](./ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md)**
+1. **[Introduction and Philosophy](ex-so-ar-fistmafs__01-introduction-and-philosophy.md)**
+2. **[Integration with DDD and Architecture](ex-so-ar-fistmafs__19-integration-with-ddd-and-architecture.md)**
 3. **[DDD Aggregates](../domain-driven-design-ddd/ex-so-ar-dodrdedd__09-aggregates.md)** - FSMs in aggregates
 
 #### Microservices
 
-1. **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**
-2. **[FSM Types and Classifications](./ex-so-ar-fsm__03-fsm-types-and-classifications.md)** - Concurrent regions
-3. **[Event-Driven and Reactive FSM](./ex-so-ar-fsm__11-event-driven-and-reactive-fsm.md)** - Distributed FSMs
-4. **[Integration with DDD and Architecture](./ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md)** - Microservices section
+1. **[Introduction and Philosophy](ex-so-ar-fistmafs__01-introduction-and-philosophy.md)**
+2. **[FSM Types and Classifications](ex-so-ar-fistmafs__03-fsm-types-and-classifications.md)** - Concurrent regions
+3. **[Event-Driven and Reactive FSM](ex-so-ar-fistmafs__11-event-driven-and-reactive-fsm.md)** - Distributed FSMs
+4. **[Integration with DDD and Architecture](ex-so-ar-fistmafs__19-integration-with-ddd-and-architecture.md)** - Microservices section
 
 #### CQRS + Event Sourcing
 
-1. **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**
-2. **[Event-Driven and Reactive FSM](./ex-so-ar-fsm__11-event-driven-and-reactive-fsm.md)** - Event sourcing with FSMs
-3. **[Integration with DDD and Architecture](./ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md)** - CQRS + Event Sourcing
+1. **[Introduction and Philosophy](ex-so-ar-fistmafs__01-introduction-and-philosophy.md)**
+2. **[Event-Driven and Reactive FSM](ex-so-ar-fistmafs__11-event-driven-and-reactive-fsm.md)** - Event sourcing with FSMs
+3. **[Integration with DDD and Architecture](ex-so-ar-fistmafs__19-integration-with-ddd-and-architecture.md)** - CQRS + Event Sourcing
 4. Apply Event-Driven Saga patterns
 
 ## OSE Domain Examples Index
@@ -383,7 +383,7 @@ All examples in this documentation use the Open Sharia Enterprise domain (Islami
 - **Annual Zakat Cycle**: Long-running workflow spanning 1 year
 - **Zakat Distribution**: `PLANNING` → `DISTRIBUTING` → `COMPLETED`
 
-**Files**: 01, 02, 03, 04, 05, [FP Implementation](./ex-so-ar-fsm__09-fp-implementation-patterns.md), [Event-Driven](./ex-so-ar-fsm__11-event-driven-and-reactive-fsm.md), [Temporal/Cadence](./ex-so-ar-fsm__14-framework-statecharts-temporal-cadence.md)
+**Files**: 01, 02, 03, 04, 05, [FP Implementation](ex-so-ar-fistmafs__09-fp-implementation-patterns.md), [Event-Driven](ex-so-ar-fistmafs__11-event-driven-and-reactive-fsm.md), [Temporal/Cadence](ex-so-ar-fistmafs__14-framework-statecharts-temporal-cadence.md)
 
 ### Islamic Contracts (Murabaha, Ijara, Mudarabah)
 
@@ -392,7 +392,7 @@ All examples in this documentation use the Open Sharia Enterprise domain (Islami
 - **Contract Signing with Timeout**: `APPROVED` → `EXPIRED` if not signed within 30 days
 - **Long-Term Financing (Ijara)**: Multi-year workflow with periodic payments
 
-**Files**: 01, 02, 03, 04, 05, [OOP Implementation](./ex-so-ar-fsm__08-oop-implementation-patterns.md), [Spring SSM & XState](./ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md), [DDD Integration](./ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md)
+**Files**: 01, 02, 03, 04, 05, [OOP Implementation](ex-so-ar-fistmafs__08-oop-implementation-patterns.md), [Spring SSM & XState](ex-so-ar-fistmafs__13-framework-spring-state-machine-xstate.md), [DDD Integration](ex-so-ar-fistmafs__19-integration-with-ddd-and-architecture.md)
 
 ### Donation Campaigns
 
@@ -401,7 +401,7 @@ All examples in this documentation use the Open Sharia Enterprise domain (Islami
 - **Campaign with Parallel Compliance**: Shariah, Legal, Financial checks run concurrently
 - **Campaign Funding Progress**: EFSM with `totalRaised` and `goalAmount` context
 
-**Files**: 01, 02, 03, 04, [Spring SSM & XState](./ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md), [Debugging and Visualization](./ex-so-ar-fsm__15-debugging-and-visualization.md)
+**Files**: 01, 02, 03, 04, [Spring SSM & XState](ex-so-ar-fistmafs__13-framework-spring-state-machine-xstate.md), [Debugging and Visualization](ex-so-ar-fistmafs__15-debugging-and-visualization.md)
 
 ### Qard Hasan (Interest-Free Loans)
 
@@ -409,14 +409,14 @@ All examples in this documentation use the Open Sharia Enterprise domain (Islami
 - **Multi-Step Loan Approval Saga**: Distributed workflow with compensation
 - **Loan Default Handling**: `REPAYING` → `GRACE_PERIOD` → `DEFAULTED`
 
-**Files**: 01, [FP Implementation](./ex-so-ar-fsm__09-fp-implementation-patterns.md), [Event-Driven](./ex-so-ar-fsm__11-event-driven-and-reactive-fsm.md), [Temporal/Cadence](./ex-so-ar-fsm__14-framework-statecharts-temporal-cadence.md)
+**Files**: 01, [FP Implementation](ex-so-ar-fistmafs__09-fp-implementation-patterns.md), [Event-Driven](ex-so-ar-fistmafs__11-event-driven-and-reactive-fsm.md), [Temporal/Cadence](ex-so-ar-fistmafs__14-framework-statecharts-temporal-cadence.md)
 
 ### Beneficiary Management
 
 - **Beneficiary Onboarding**: `APPLICATION` → `DOCUMENT_VERIFICATION` → `BACKGROUND_CHECK` → `APPROVED` → `ACTIVE`
 - **Fund Distribution**: `REQUESTED` → `VERIFIED` → `APPROVED` → `SCHEDULED` → `DISBURSED`
 
-**Files**: 01, [Declarative and DSL](./ex-so-ar-fsm__10-declarative-and-dsl-approaches.md), [Testing](./ex-so-ar-fsm__12-testing-fsm-implementations.md)
+**Files**: 01, [Declarative and DSL](ex-so-ar-fistmafs__10-declarative-and-dsl-approaches.md), [Testing](ex-so-ar-fistmafs__12-testing-fsm-implementations.md)
 
 ## Relationship to Other Documentation
 
@@ -456,13 +456,13 @@ Ready to design your first FSM? Follow this checklist:
 
 ### 1. Understand Fundamentals
 
-- [ ] Read **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**
-- [ ] Understand states, transitions, events from **[Core Concepts](./ex-so-ar-fsm__02-core-concepts-and-terminology.md)**
+- [ ] Read **[Introduction and Philosophy](ex-so-ar-fistmafs__01-introduction-and-philosophy.md)**
+- [ ] Understand states, transitions, events from **[Core Concepts](ex-so-ar-fistmafs__02-core-concepts-and-terminology.md)**
 - [ ] Review OSE domain examples that match your use case
 
 ### 2. Validate FSM is Appropriate
 
-- [ ] Use decision matrix in **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**: "Should I use an FSM?"
+- [ ] Use decision matrix in **[Introduction and Philosophy](ex-so-ar-fistmafs__01-introduction-and-philosophy.md)**: "Should I use an FSM?"
 - [ ] Confirm: Entity has 3+ distinct lifecycle stages
 - [ ] Confirm: Transitions between states have business meaning
 - [ ] Confirm: State-dependent validation or behavior exists
@@ -472,7 +472,7 @@ Ready to design your first FSM? Follow this checklist:
 - [ ] **Simple lifecycle (3-7 states)**: Use flat FSM
 - [ ] **State explosion risk (8+ states)**: Use hierarchical FSM or EFSM with context
 - [ ] **Independent parallel concerns**: Use concurrent/orthogonal regions
-- [ ] Review **[FSM Types and Classifications](./ex-so-ar-fsm__03-fsm-types-and-classifications.md)**
+- [ ] Review **[FSM Types and Classifications](ex-so-ar-fistmafs__03-fsm-types-and-classifications.md)**
 
 ### 4. Design FSM
 
@@ -487,8 +487,8 @@ Ready to design your first FSM? Follow this checklist:
 
 - [ ] **Paradigm**: OOP, FP, Declarative, or Event-Driven?
 - [ ] **Framework**: Spring SSM, XState, Temporal, or hand-rolled?
-- [ ] Review decision trees in **[Decision Trees and Guidelines](./ex-so-ar-fsm__16-decision-trees-and-guidelines.md)**
-- [ ] Read paradigm-specific chapter ([OOP](./ex-so-ar-fsm__08-oop-implementation-patterns.md), [FP](./ex-so-ar-fsm__09-fp-implementation-patterns.md), [Declarative](./ex-so-ar-fsm__10-declarative-and-dsl-approaches.md), [Event-Driven](./ex-so-ar-fsm__11-event-driven-and-reactive-fsm.md))
+- [ ] Review decision trees in **[Decision Trees and Guidelines](ex-so-ar-fistmafs__16-decision-trees-and-guidelines.md)**
+- [ ] Read paradigm-specific chapter ([OOP](ex-so-ar-fistmafs__08-oop-implementation-patterns.md), [FP](ex-so-ar-fistmafs__09-fp-implementation-patterns.md), [Declarative](ex-so-ar-fistmafs__10-declarative-and-dsl-approaches.md), [Event-Driven](ex-so-ar-fistmafs__11-event-driven-and-reactive-fsm.md))
 
 ### 6. Implement
 
@@ -523,6 +523,6 @@ This Finite State Machine documentation provides:
 5. **Paradigm-complete**: OOP, FP, Declarative, Event-Driven approaches
 6. **Framework-comprehensive**: Spring State Machine, XState, Statecharts, Temporal/Cadence
 
-**Next step**: Begin with **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)** or jump to your chosen learning path above.
+**Next step**: Begin with **[Introduction and Philosophy](ex-so-ar-fistmafs__01-introduction-and-philosophy.md)** or jump to your chosen learning path above.
 
-**Questions?**: See **[FAQ](./ex-so-ar-fsm__20-faq.md)** or review decision trees in **[Decision Trees and Guidelines](./ex-so-ar-fsm__16-decision-trees-and-guidelines.md)**.
+**Questions?**: See **[FAQ](ex-so-ar-fistmafs__20-faq.md)** or review decision trees in **[Decision Trees and Guidelines](ex-so-ar-fistmafs__16-decision-trees-and-guidelines.md)**.

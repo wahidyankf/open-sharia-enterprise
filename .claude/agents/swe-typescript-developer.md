@@ -89,9 +89,9 @@ All TypeScript code MUST follow the platform coding standards:
 **Coding Standards** (Authoritative):
 
 - [docs/explanation/software/prog-lang/typescript/README.md](../../docs/explanation/software/prog-lang/typescript/README.md)
-- [docs/explanation/software/prog-lang/typescript/ex-so-prla-ts\_\_idioms.md](../../docs/explanation/software/prog-lang/typescript/ex-so-prla-ts__idioms.md)
-- [docs/explanation/software/prog-lang/typescript/ex-so-prla-ts\_\_best-practices.md](../../docs/explanation/software/prog-lang/typescript/ex-so-prla-ts__best-practices.md)
-- [docs/explanation/software/prog-lang/typescript/ex-so-prla-ts\_\_anti-patterns.md](../../docs/explanation/software/prog-lang/typescript/ex-so-prla-ts__anti-patterns.md)
+- [docs/explanation/software/prog-lang/typescript/ex-so-prla-ts\_\_idioms.md](../../docs/explanation/software/prog-lang/typescript/ex-so-prla-ty__idioms.md)
+- [docs/explanation/software/prog-lang/typescript/ex-so-prla-ts\_\_best-practices.md](../../docs/explanation/software/prog-lang/typescript/ex-so-prla-ty__best-practices.md)
+- [docs/explanation/software/prog-lang/typescript/ex-so-prla-ts\_\_anti-patterns.md](../../docs/explanation/software/prog-lang/typescript/ex-so-prla-ty__anti-patterns.md)
 
 **Development Practices**:
 

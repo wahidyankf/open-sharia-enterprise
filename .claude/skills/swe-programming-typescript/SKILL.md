@@ -132,9 +132,9 @@ it("should return user", () => {
 
 For detailed guidance, refer to:
 
-- **[Idioms](../../../docs/explanation/software/prog-lang/typescript/ex-so-prla-ts__idioms.md)** - TypeScript-specific patterns
-- **[Best Practices](../../../docs/explanation/software/prog-lang/typescript/ex-so-prla-ts__best-practices.md)** - Clean code standards
-- **[Anti-Patterns](../../../docs/explanation/software/prog-lang/typescript/ex-so-prla-ts__anti-patterns.md)** - Common mistakes
+- **[Idioms](../../../docs/explanation/software/prog-lang/typescript/ex-so-prla-ty__idioms.md)** - TypeScript-specific patterns
+- **[Best Practices](../../../docs/explanation/software/prog-lang/typescript/ex-so-prla-ty__best-practices.md)** - Clean code standards
+- **[Anti-Patterns](../../../docs/explanation/software/prog-lang/typescript/ex-so-prla-ty__anti-patterns.md)** - Common mistakes
 
 ## Related Skills
 

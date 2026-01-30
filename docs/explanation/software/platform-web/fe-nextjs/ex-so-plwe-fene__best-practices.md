@@ -17,7 +17,7 @@ updated: 2026-01-29
 
 This document provides comprehensive best practices for building production-ready Next.js applications with TypeScript. These guidelines emphasize maintainability, type safety, performance, accessibility, and security for enterprise applications using Next.js 14+ with the App Router.
 
-**Prerequisites**: Familiarity with [React best practices](../fe-react/ex-so-plwe-fera__best-practices.md) and [Next.js fundamentals](./README.md).
+**Prerequisites**: Familiarity with [React best practices](../fe-react/ex-so-plwe-fere__best-practices.md) and [Next.js fundamentals](./README.md).
 
 ## 📐 Project Structure
 
@@ -905,7 +905,7 @@ export function ZakatForm() {
 
 **React Foundation**:
 
-- [React Best Practices](../fe-react/ex-so-plwe-fera__best-practices.md) - React standards
+- [React Best Practices](../fe-react/ex-so-plwe-fere__best-practices.md) - React standards
 
 **Official Resources**:
 

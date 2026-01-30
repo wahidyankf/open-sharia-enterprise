@@ -17,7 +17,7 @@ updated: 2026-01-29
 
 This document provides framework-specific patterns for writing idiomatic Next.js applications with TypeScript. These idioms represent the "Next.js way" of solving common problems, following the framework's conventions and leveraging its unique features effectively.
 
-**Prerequisites**: Familiarity with [React idioms](../fe-react/ex-so-plwe-fera__idioms.md), [Server Components](./ex-so-plwe-fene__server-components.md), and [TypeScript](../../prog-lang/typescript/README.md).
+**Prerequisites**: Familiarity with [React idioms](../fe-react/ex-so-plwe-fere__idioms.md), [Server Components](./ex-so-plwe-fene__server-components.md), and [TypeScript](../../prog-lang/typescript/README.md).
 
 ## 🖥️ Server Component Patterns
 
@@ -813,7 +813,7 @@ export async function calculateZakat(formData: FormData): Promise<CalculateZakat
 
 **React Foundation**:
 
-- [React Idioms](../fe-react/ex-so-plwe-fera__idioms.md) - React patterns
+- [React Idioms](../fe-react/ex-so-plwe-fere__idioms.md) - React patterns
 
 **Official Resources**:
 

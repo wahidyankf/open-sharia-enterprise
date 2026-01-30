@@ -42,11 +42,11 @@ This documentation covers React 18+ with TypeScript 5+ and Vite 5+ for building 
 
 All React applications MUST follow the patterns and practices documented here:
 
-1. **[Idioms](./ex-so-plwe-fera__idioms.md)** - React + TypeScript-specific patterns
-2. **[Best Practices](./ex-so-plwe-fera__best-practices.md)** - Framework standards
-3. **[Anti-Patterns](./ex-so-plwe-fera__anti-patterns.md)** - Common mistakes to avoid
-4. **[Component Architecture](./ex-so-plwe-fera__component-architecture.md)** - Component design principles
-5. **[Configuration](./ex-so-plwe-fera__configuration.md)** - Build and environment configuration
+1. **[Idioms](ex-so-plwe-fere__idioms.md)** - React + TypeScript-specific patterns
+2. **[Best Practices](ex-so-plwe-fere__best-practices.md)** - Framework standards
+3. **[Anti-Patterns](ex-so-plwe-fere__anti-patterns.md)** - Common mistakes to avoid
+4. **[Component Architecture](ex-so-plwe-fere__component-architecture.md)** - Component design principles
+5. **[Configuration](ex-so-plwe-fere__configuration.md)** - Build and environment configuration
 
 **For Agents**: Reference this documentation when building React applications.
 
@@ -55,11 +55,11 @@ All React applications MUST follow the patterns and practices documented here:
 ### Quick Standards Reference
 
 - **Project Structure**: See [Architecture Integration](#architecture-integration)
-- **Components**: See [Component Architecture](./ex-so-plwe-fera__component-architecture.md)
-- **State Management**: See [State Management](./ex-so-plwe-fera__state-management.md)
-- **Data Fetching**: See [Data Fetching](./ex-so-plwe-fera__data-fetching.md)
-- **Security**: See [Security](./ex-so-plwe-fera__security.md)
-- **Testing**: See [Testing](./ex-so-plwe-fera__testing.md)
+- **Components**: See [Component Architecture](ex-so-plwe-fere__component-architecture.md)
+- **State Management**: See [State Management](ex-so-plwe-fere__state-management.md)
+- **Data Fetching**: See [Data Fetching](ex-so-plwe-fere__data-fetching.md)
+- **Security**: See [Security](ex-so-plwe-fere__security.md)
+- **Testing**: See [Testing](ex-so-plwe-fere__testing.md)
 
 ## Software Engineering Principles
 
@@ -71,7 +71,7 @@ React with TypeScript usage in this platform follows the five software engineeri
 4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Apply functional component model: pure render functions, side effects in hooks (useEffect), predictable state transformations
 5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - React enables through version pinning (package-lock.json), Vite configuration, environment-specific builds, Docker containerization
 
-**See Also**: [Component Architecture](./ex-so-plwe-fera__component-architecture.md) for FP patterns with React.
+**See Also**: [Component Architecture](ex-so-plwe-fere__component-architecture.md) for FP patterns with React.
 
 ## Quick Reference
 
@@ -95,21 +95,21 @@ React with TypeScript usage in this platform follows the five software engineeri
 
 **Core Documentation:**
 
-- [Idioms](./ex-so-plwe-fera__idioms.md) - React + TypeScript patterns (hooks, components, context)
-- [Best Practices](./ex-so-plwe-fera__best-practices.md) - Framework coding standards
-- [Anti-Patterns](./ex-so-plwe-fera__anti-patterns.md) - Common React mistakes
-- [Component Architecture](./ex-so-plwe-fera__component-architecture.md) - Component design patterns
-- [Configuration](./ex-so-plwe-fera__configuration.md) - Vite config, environment variables
-- [State Management](./ex-so-plwe-fera__state-management.md) - useState, useReducer, Context, Zustand
-- [Data Fetching](./ex-so-plwe-fera__data-fetching.md) - API calls, React Query, SWR
-- [Hooks](./ex-so-plwe-fera__hooks.md) - Custom hooks patterns and built-in hooks
-- [REST APIs](./ex-so-plwe-fera__rest-apis.md) - Consuming REST APIs with Fetch/Axios
-- [Security](./ex-so-plwe-fera__security.md) - XSS prevention, CSRF, authentication
-- [Testing](./ex-so-plwe-fera__testing.md) - Vitest, React Testing Library
-- [Observability](./ex-so-plwe-fera__observability.md) - Error boundaries, Sentry, analytics
-- [Performance](./ex-so-plwe-fera__performance.md) - Code splitting, lazy loading, memoization
-- [Deployment](./ex-so-plwe-fera__deployment.md) - Vercel, Docker, CDN deployment
-- [Version Migration](./ex-so-plwe-fera__version-migration.md) - Upgrading React versions
+- [Idioms](ex-so-plwe-fere__idioms.md) - React + TypeScript patterns (hooks, components, context)
+- [Best Practices](ex-so-plwe-fere__best-practices.md) - Framework coding standards
+- [Anti-Patterns](ex-so-plwe-fere__anti-patterns.md) - Common React mistakes
+- [Component Architecture](ex-so-plwe-fere__component-architecture.md) - Component design patterns
+- [Configuration](ex-so-plwe-fere__configuration.md) - Vite config, environment variables
+- [State Management](ex-so-plwe-fere__state-management.md) - useState, useReducer, Context, Zustand
+- [Data Fetching](ex-so-plwe-fere__data-fetching.md) - API calls, React Query, SWR
+- [Hooks](ex-so-plwe-fere__hooks.md) - Custom hooks patterns and built-in hooks
+- [REST APIs](ex-so-plwe-fere__rest-apis.md) - Consuming REST APIs with Fetch/Axios
+- [Security](ex-so-plwe-fere__security.md) - XSS prevention, CSRF, authentication
+- [Testing](ex-so-plwe-fere__testing.md) - Vitest, React Testing Library
+- [Observability](ex-so-plwe-fere__observability.md) - Error boundaries, Sentry, analytics
+- [Performance](ex-so-plwe-fere__performance.md) - Code splitting, lazy loading, memoization
+- [Deployment](ex-so-plwe-fere__deployment.md) - Vercel, Docker, CDN deployment
+- [Version Migration](ex-so-plwe-fere__version-migration.md) - Upgrading React versions
 
 ## React Version Strategy
 
@@ -168,7 +168,7 @@ timeline
 
 ## Documentation Structure
 
-### [React with TypeScript Idioms](./ex-so-plwe-fera__idioms.md)
+### [React with TypeScript Idioms](ex-so-plwe-fere__idioms.md)
 
 Framework-specific patterns for writing idiomatic React applications with TypeScript.
 
@@ -185,7 +185,7 @@ Framework-specific patterns for writing idiomatic React applications with TypeSc
 - Event handling with TypeScript
 - Conditional rendering patterns
 
-### [React Best Practices](./ex-so-plwe-fera__best-practices.md)
+### [React Best Practices](ex-so-plwe-fere__best-practices.md)
 
 Proven approaches for building production-ready React applications.
 
@@ -202,7 +202,7 @@ Proven approaches for building production-ready React applications.
 - Environment variable management
 - API integration patterns
 
-### [React Anti-Patterns](./ex-so-plwe-fera__anti-patterns.md)
+### [React Anti-Patterns](ex-so-plwe-fere__anti-patterns.md)
 
 Common mistakes and problematic patterns to avoid.
 
@@ -265,7 +265,7 @@ flowchart TD
 
 Deep-dive documentation on critical React areas:
 
-#### [Component Architecture](./ex-so-plwe-fera__component-architecture.md)
+#### [Component Architecture](ex-so-plwe-fere__component-architecture.md)
 
 Comprehensive guide to component design and organization.
 
@@ -282,7 +282,7 @@ Comprehensive guide to component design and organization.
 - Design system integration
 - Storybook for component documentation
 
-#### [State Management](./ex-so-plwe-fera__state-management.md)
+#### [State Management](ex-so-plwe-fere__state-management.md)
 
 Comprehensive guide to state management in React applications.
 
@@ -299,7 +299,7 @@ Comprehensive guide to state management in React applications.
 - Derived state patterns
 - State persistence strategies
 
-#### [Data Fetching](./ex-so-plwe-fera__data-fetching.md)
+#### [Data Fetching](ex-so-plwe-fere__data-fetching.md)
 
 Comprehensive guide to fetching and managing server data.
 
@@ -316,7 +316,7 @@ Comprehensive guide to fetching and managing server data.
 - Prefetching data
 - Authentication with tokens
 
-#### [Custom Hooks](./ex-so-plwe-fera__hooks.md)
+#### [Custom Hooks](ex-so-plwe-fere__hooks.md)
 
 Comprehensive guide to React hooks and custom hook patterns.
 
@@ -333,7 +333,7 @@ Comprehensive guide to React hooks and custom hook patterns.
 - TypeScript with hooks
 - Hook best practices
 
-#### [REST APIs Integration](./ex-so-plwe-fera__rest-apis.md)
+#### [REST APIs Integration](ex-so-plwe-fere__rest-apis.md)
 
 Comprehensive guide to consuming REST APIs in React applications.
 
@@ -351,7 +351,7 @@ Comprehensive guide to consuming REST APIs in React applications.
 - Rate limiting and retries
 - Financial examples: Zakat API, Murabaha API calls
 
-#### [Security](./ex-so-plwe-fera__security.md)
+#### [Security](ex-so-plwe-fere__security.md)
 
 Comprehensive guide to React application security.
 
@@ -368,7 +368,7 @@ Comprehensive guide to React application security.
 - Security headers
 - Third-party script safety
 
-#### [Testing](./ex-so-plwe-fera__testing.md)
+#### [Testing](ex-so-plwe-fere__testing.md)
 
 Comprehensive guide to testing React applications.
 
@@ -385,7 +385,7 @@ Comprehensive guide to testing React applications.
 - Coverage requirements
 - TDD workflow with React
 
-#### [Observability](./ex-so-plwe-fera__observability.md)
+#### [Observability](ex-so-plwe-fere__observability.md)
 
 Comprehensive guide to monitoring and debugging React applications.
 
@@ -402,7 +402,7 @@ Comprehensive guide to monitoring and debugging React applications.
 - Custom error reporting
 - User session replay
 
-#### [Performance Optimization](./ex-so-plwe-fera__performance.md)
+#### [Performance Optimization](ex-so-plwe-fere__performance.md)
 
 Comprehensive guide to optimizing React application performance.
 
@@ -419,7 +419,7 @@ Comprehensive guide to optimizing React application performance.
 - Avoiding unnecessary re-renders
 - Debouncing and throttling
 
-#### [Deployment](./ex-so-plwe-fera__deployment.md)
+#### [Deployment](ex-so-plwe-fere__deployment.md)
 
 Comprehensive guide to deploying React applications.
 
@@ -436,7 +436,7 @@ Comprehensive guide to deploying React applications.
 - Monitoring and rollback strategies
 - Zero-downtime deployments
 
-#### [Version Migration](./ex-so-plwe-fera__version-migration.md)
+#### [Version Migration](ex-so-plwe-fere__version-migration.md)
 
 Comprehensive guide to upgrading React versions.
 
@@ -864,7 +864,7 @@ test("complete zakat calculation flow", async ({ page }) => {
 
 ### 1. Start with Idioms
 
-Read [React Idioms](./ex-so-plwe-fera__idioms.md) to understand framework patterns:
+Read [React Idioms](ex-so-plwe-fere__idioms.md) to understand framework patterns:
 
 - Functional components with TypeScript
 - Hook patterns (useState, useEffect, etc.)
@@ -874,7 +874,7 @@ Read [React Idioms](./ex-so-plwe-fera__idioms.md) to understand framework patter
 
 ### 2. Apply Best Practices
 
-Read [React Best Practices](./ex-so-plwe-fera__best-practices.md) for production standards:
+Read [React Best Practices](ex-so-plwe-fere__best-practices.md) for production standards:
 
 - Component organization
 - State management strategies
@@ -885,7 +885,7 @@ Read [React Best Practices](./ex-so-plwe-fera__best-practices.md) for production
 
 ### 3. Avoid Anti-Patterns
 
-Read [React Anti-Patterns](./ex-so-plwe-fera__anti-patterns.md) to prevent common mistakes:
+Read [React Anti-Patterns](ex-so-plwe-fere__anti-patterns.md) to prevent common mistakes:
 
 - Prop drilling
 - Unnecessary re-renders
@@ -897,9 +897,9 @@ Read [React Anti-Patterns](./ex-so-plwe-fera__anti-patterns.md) to prevent commo
 
 Read complementary documentation:
 
-- [Component Architecture](./ex-so-plwe-fera__component-architecture.md)
-- [State Management](./ex-so-plwe-fera__state-management.md)
-- [Data Fetching](./ex-so-plwe-fera__data-fetching.md)
+- [Component Architecture](ex-so-plwe-fere__component-architecture.md)
+- [State Management](ex-so-plwe-fere__state-management.md)
+- [Data Fetching](ex-so-plwe-fere__data-fetching.md)
 
 ## Code Examples from Platform
 
@@ -1443,29 +1443,29 @@ CMD ["pnpm", "dev", "--host"]
 
 ### Core React Documentation
 
-- **[React Idioms](./ex-so-plwe-fera__idioms.md)** - Framework patterns
-- **[React Best Practices](./ex-so-plwe-fera__best-practices.md)** - Production standards
-- **[React Anti-Patterns](./ex-so-plwe-fera__anti-patterns.md)** - Common mistakes
+- **[React Idioms](ex-so-plwe-fere__idioms.md)** - Framework patterns
+- **[React Best Practices](ex-so-plwe-fere__best-practices.md)** - Production standards
+- **[React Anti-Patterns](ex-so-plwe-fere__anti-patterns.md)** - Common mistakes
 
 ### Application Layer Documentation
 
-- **[Component Architecture](./ex-so-plwe-fera__component-architecture.md)** - Component design
-- **[State Management](./ex-so-plwe-fera__state-management.md)** - State patterns
-- **[Data Fetching](./ex-so-plwe-fera__data-fetching.md)** - API integration
-- **[Hooks](./ex-so-plwe-fera__hooks.md)** - Custom hooks
+- **[Component Architecture](ex-so-plwe-fere__component-architecture.md)** - Component design
+- **[State Management](ex-so-plwe-fere__state-management.md)** - State patterns
+- **[Data Fetching](ex-so-plwe-fere__data-fetching.md)** - API integration
+- **[Hooks](ex-so-plwe-fere__hooks.md)** - Custom hooks
 
 ### Advanced Topics
 
-- **[Security](./ex-so-plwe-fera__security.md)** - React security
-- **[Testing](./ex-so-plwe-fera__testing.md)** - Testing strategies
-- **[Observability](./ex-so-plwe-fera__observability.md)** - Monitoring and debugging
-- **[Performance](./ex-so-plwe-fera__performance.md)** - Optimization
+- **[Security](ex-so-plwe-fere__security.md)** - React security
+- **[Testing](ex-so-plwe-fere__testing.md)** - Testing strategies
+- **[Observability](ex-so-plwe-fere__observability.md)** - Monitoring and debugging
+- **[Performance](ex-so-plwe-fere__performance.md)** - Optimization
 
 ### Integration Documentation
 
-- **[REST APIs](./ex-so-plwe-fera__rest-apis.md)** - API consumption
-- **[Deployment](./ex-so-plwe-fera__deployment.md)** - Deployment strategies
-- **[Version Migration](./ex-so-plwe-fera__version-migration.md)** - Upgrading versions
+- **[REST APIs](ex-so-plwe-fere__rest-apis.md)** - API consumption
+- **[Deployment](ex-so-plwe-fere__deployment.md)** - Deployment strategies
+- **[Version Migration](ex-so-plwe-fere__version-migration.md)** - Upgrading versions
 
 ### Platform Documentation
 

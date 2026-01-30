@@ -17,7 +17,7 @@ updated: 2026-01-29
 
 This document identifies common mistakes and problematic patterns to avoid when building Next.js applications with TypeScript. Learning what NOT to do is as important as learning best practices. These anti-patterns can lead to performance issues, security vulnerabilities, poor user experience, and maintenance nightmares.
 
-**Prerequisites**: Familiarity with [Next.js best practices](./ex-so-plwe-fene__best-practices.md), [Server Components](./ex-so-plwe-fene__server-components.md), and [React anti-patterns](../fe-react/ex-so-plwe-fera__anti-patterns.md).
+**Prerequisites**: Familiarity with [Next.js best practices](./ex-so-plwe-fene__best-practices.md), [Server Components](./ex-so-plwe-fene__server-components.md), and [React anti-patterns](../fe-react/ex-so-plwe-fere__anti-patterns.md).
 
 ## 🚫 Server Component Misuse
 
@@ -974,7 +974,7 @@ export default async function MurabahaPage() {
 
 **React Foundation**:
 
-- [React Anti-Patterns](../fe-react/ex-so-plwe-fera__anti-patterns.md) - React-specific anti-patterns
+- [React Anti-Patterns](../fe-react/ex-so-plwe-fere__anti-patterns.md) - React-specific anti-patterns
 
 **Official Resources**:
 

@@ -585,7 +585,7 @@ Read [Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md) to prevent common m
 Read complementary documentation:
 
 - [Domain-Driven Design](../../architecture/domain-driven-design-ddd/README.md)
-- [TDD with Java](../../development/test-driven-development-tdd/ex-so-de-tedrdeve__11-tdd-and-functional-programming.md)
+- [TDD with Java](../../development/test-driven-development-tdd/ex-so-de-tedrdetd__11-tdd-and-functional-programming.md)
 - [Functional Programming](../../../../../governance/development/pattern/functional-programming.md)
 
 ## Code Examples from Platform

@@ -38,11 +38,11 @@ This documentation covers Next.js 14+ with the App Router, TypeScript 5+, and Re
 
 All Next.js applications MUST follow the patterns and practices documented here:
 
-1. **[Idioms](./ex-so-plwe-tsnext__idioms.md)** - Next.js-specific patterns
-2. **[Best Practices](./ex-so-plwe-tsnext__best-practices.md)** - Framework standards
-3. **[Anti-Patterns](./ex-so-plwe-tsnext__anti-patterns.md)** - Common mistakes
-4. **[App Router](./ex-so-plwe-tsnext__app-router.md)** - App Router architecture
-5. **[Server Components](./ex-so-plwe-tsnext__server-components.md)** - Server Components patterns
+1. **[Idioms](ex-so-plwe-tsne__idioms.md)** - Next.js-specific patterns
+2. **[Best Practices](ex-so-plwe-tsne__best-practices.md)** - Framework standards
+3. **[Anti-Patterns](ex-so-plwe-tsne__anti-patterns.md)** - Common mistakes
+4. **[App Router](ex-so-plwe-tsne__app-router.md)** - App Router architecture
+5. **[Server Components](ex-so-plwe-tsne__server-components.md)** - Server Components patterns
 
 **For Agents**: Reference this documentation when building Next.js applications.
 
@@ -51,10 +51,10 @@ All Next.js applications MUST follow the patterns and practices documented here:
 ### Quick Standards Reference
 
 - **Project Structure**: See [Architecture Integration](#architecture-integration)
-- **Routing**: See [Routing](./ex-so-plwe-tsnext__routing.md)
-- **Data Fetching**: See [Data Fetching](./ex-so-plwe-tsnext__data-fetching.md)
-- **Testing**: See [Testing](./ex-so-plwe-tsnext__testing.md)
-- **Performance**: See [Performance](./ex-so-plwe-tsnext__performance.md)
+- **Routing**: See [Routing](ex-so-plwe-tsne__routing.md)
+- **Data Fetching**: See [Data Fetching](ex-so-plwe-tsne__data-fetching.md)
+- **Testing**: See [Testing](ex-so-plwe-tsne__testing.md)
+- **Performance**: See [Performance](ex-so-plwe-tsne__performance.md)
 
 ## Software Engineering Principles
 
@@ -66,7 +66,7 @@ Next.js usage in this platform follows the five software engineering principles 
 4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Server Components are pure, Server Actions handle side effects, functional core patterns
 5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Next.js enables through Volta pinning, package-lock.json, consistent builds, predictable caching
 
-**See Also**: [Functional Programming](./ex-so-plwe-tsnext__functional-programming.md) for FP patterns with Next.js.
+**See Also**: [Functional Programming](ex-so-plwe-tsne__functional-programming.md) for FP patterns with Next.js.
 
 ## Quick Reference
 
@@ -90,27 +90,27 @@ Next.js usage in this platform follows the five software engineering principles 
 
 **Core Documentation:**
 
-- [Idioms](./ex-so-plwe-tsnext__idioms.md) - Next.js patterns (App Router, Server Components, Server Actions)
-- [Best Practices](./ex-so-plwe-tsnext__best-practices.md) - Framework coding standards
-- [Anti-Patterns](./ex-so-plwe-tsnext__anti-patterns.md) - Common Next.js mistakes
-- [App Router](./ex-so-plwe-tsnext__app-router.md) - File-system routing, layouts, loading states
-- [Routing](./ex-so-plwe-tsnext__routing.md) - Dynamic routes, route groups, parallel routes
-- [Server Components](./ex-so-plwe-tsnext__server-components.md) - RSC patterns, composition, streaming
-- [Data Fetching](./ex-so-plwe-tsnext__data-fetching.md) - Server-side fetching, caching, revalidation
-- [Rendering](./ex-so-plwe-tsnext__rendering.md) - SSR, SSG, ISR, CSR strategies
-- [API Routes](./ex-so-plwe-tsnext__api-routes.md) - Route handlers, API design
-- [Middleware](./ex-so-plwe-tsnext__middleware.md) - Edge middleware, request modification
-- [Performance](./ex-so-plwe-tsnext__performance.md) - Optimization strategies
-- [Testing](./ex-so-plwe-tsnext__testing.md) - Testing Next.js applications
-- [Deployment](./ex-so-plwe-tsnext__deployment.md) - Vercel, self-hosting, Docker
-- [Configuration](./ex-so-plwe-tsnext__configuration.md) - next.config.js, environment variables
-- [Styling](./ex-so-plwe-tsnext__styling.md) - CSS Modules, Tailwind, CSS-in-JS
-- [TypeScript](./ex-so-plwe-tsnext__typescript.md) - TypeScript integration
-- [Security](./ex-so-plwe-tsnext__security.md) - Security best practices
-- [Accessibility](./ex-so-plwe-tsnext__accessibility.md) - WCAG compliance
-- [Domain-Driven Design](./ex-so-plwe-tsnext__domain-driven-design.md) - DDD with Next.js
-- [Functional Programming](./ex-so-plwe-tsnext__functional-programming.md) - FP patterns
-- [Version Migration](./ex-so-plwe-tsnext__version-migration.md) - Upgrading Next.js
+- [Idioms](ex-so-plwe-tsne__idioms.md) - Next.js patterns (App Router, Server Components, Server Actions)
+- [Best Practices](ex-so-plwe-tsne__best-practices.md) - Framework coding standards
+- [Anti-Patterns](ex-so-plwe-tsne__anti-patterns.md) - Common Next.js mistakes
+- [App Router](ex-so-plwe-tsne__app-router.md) - File-system routing, layouts, loading states
+- [Routing](ex-so-plwe-tsne__routing.md) - Dynamic routes, route groups, parallel routes
+- [Server Components](ex-so-plwe-tsne__server-components.md) - RSC patterns, composition, streaming
+- [Data Fetching](ex-so-plwe-tsne__data-fetching.md) - Server-side fetching, caching, revalidation
+- [Rendering](ex-so-plwe-tsne__rendering.md) - SSR, SSG, ISR, CSR strategies
+- [API Routes](ex-so-plwe-tsne__api-routes.md) - Route handlers, API design
+- [Middleware](ex-so-plwe-tsne__middleware.md) - Edge middleware, request modification
+- [Performance](ex-so-plwe-tsne__performance.md) - Optimization strategies
+- [Testing](ex-so-plwe-tsne__testing.md) - Testing Next.js applications
+- [Deployment](ex-so-plwe-tsne__deployment.md) - Vercel, self-hosting, Docker
+- [Configuration](ex-so-plwe-tsne__configuration.md) - next.config.js, environment variables
+- [Styling](ex-so-plwe-tsne__styling.md) - CSS Modules, Tailwind, CSS-in-JS
+- [TypeScript](ex-so-plwe-tsne__typescript.md) - TypeScript integration
+- [Security](ex-so-plwe-tsne__security.md) - Security best practices
+- [Accessibility](ex-so-plwe-tsne__accessibility.md) - WCAG compliance
+- [Domain-Driven Design](ex-so-plwe-tsne__domain-driven-design.md) - DDD with Next.js
+- [Functional Programming](ex-so-plwe-tsne__functional-programming.md) - FP patterns
+- [Version Migration](ex-so-plwe-tsne__version-migration.md) - Upgrading Next.js
 
 ## Next.js Version Strategy
 
@@ -183,7 +183,7 @@ Projects will migrate to Next.js 15 when:
 
 ## Documentation Structure
 
-### [Next.js Idioms](./ex-so-plwe-tsnext__idioms.md)
+### [Next.js Idioms](ex-so-plwe-tsne__idioms.md)
 
 Framework-specific patterns for writing idiomatic Next.js applications.
 
@@ -200,7 +200,7 @@ Framework-specific patterns for writing idiomatic Next.js applications.
 - Streaming with Suspense
 - Edge and Node.js runtimes
 
-### [Next.js Best Practices](./ex-so-plwe-tsnext__best-practices.md)
+### [Next.js Best Practices](ex-so-plwe-tsne__best-practices.md)
 
 Proven approaches for building production-ready Next.js applications.
 
@@ -219,7 +219,7 @@ Proven approaches for building production-ready Next.js applications.
 - Security considerations (CSRF, XSS)
 - Deployment strategies
 
-### [Next.js Anti-Patterns](./ex-so-plwe-tsnext__anti-patterns.md)
+### [Next.js Anti-Patterns](ex-so-plwe-tsne__anti-patterns.md)
 
 Common mistakes and problematic patterns to avoid.
 
@@ -290,7 +290,7 @@ flowchart TD
 
 Deep-dive documentation on critical Next.js areas:
 
-#### [Next.js App Router](./ex-so-plwe-tsnext__app-router.md)
+#### [Next.js App Router](ex-so-plwe-tsne__app-router.md)
 
 Comprehensive guide to the App Router architecture.
 
@@ -311,7 +311,7 @@ Comprehensive guide to the App Router architecture.
 - Template vs Layout differences
 - Route segment configuration
 
-#### [Next.js Routing](./ex-so-plwe-tsnext__routing.md)
+#### [Next.js Routing](ex-so-plwe-tsne__routing.md)
 
 Comprehensive guide to routing patterns and navigation.
 
@@ -330,7 +330,7 @@ Comprehensive guide to routing patterns and navigation.
 - Route segment config (dynamic, revalidate)
 - TypeScript types for params and searchParams
 
-#### [Next.js Server Components](./ex-so-plwe-tsnext__server-components.md)
+#### [Next.js Server Components](ex-so-plwe-tsne__server-components.md)
 
 Comprehensive guide to React Server Components in Next.js.
 
@@ -349,7 +349,7 @@ Comprehensive guide to React Server Components in Next.js.
 - Third-party library integration
 - Server Actions integration
 
-#### [Next.js Data Fetching](./ex-so-plwe-tsnext__data-fetching.md)
+#### [Next.js Data Fetching](ex-so-plwe-tsne__data-fetching.md)
 
 Comprehensive guide to data fetching strategies.
 
@@ -368,7 +368,7 @@ Comprehensive guide to data fetching strategies.
 - Data fetching in Server Components vs Route Handlers
 - Database access patterns (direct queries, ORMs)
 
-#### [Next.js Rendering](./ex-so-plwe-tsnext__rendering.md)
+#### [Next.js Rendering](ex-so-plwe-tsne__rendering.md)
 
 Comprehensive guide to rendering strategies.
 
@@ -386,7 +386,7 @@ Comprehensive guide to rendering strategies.
 - Force dynamic with unstable_noStore
 - Runtime configuration (edge, nodejs)
 
-#### [Next.js API Routes](./ex-so-plwe-tsnext__api-routes.md)
+#### [Next.js API Routes](ex-so-plwe-tsne__api-routes.md)
 
 Comprehensive guide to API routes and route handlers.
 
@@ -406,7 +406,7 @@ Comprehensive guide to API routes and route handlers.
 - File uploads
 - API versioning strategies
 
-#### [Next.js Middleware](./ex-so-plwe-tsnext__middleware.md)
+#### [Next.js Middleware](ex-so-plwe-tsne__middleware.md)
 
 Comprehensive guide to Edge middleware.
 
@@ -425,7 +425,7 @@ Comprehensive guide to Edge middleware.
 - Middleware performance considerations
 - Chaining middleware logic
 
-#### [Next.js Performance](./ex-so-plwe-tsnext__performance.md)
+#### [Next.js Performance](ex-so-plwe-tsne__performance.md)
 
 Comprehensive guide to performance optimization.
 
@@ -445,7 +445,7 @@ Comprehensive guide to performance optimization.
 - Performance profiling
 - Edge vs Node.js runtime decisions
 
-#### [Next.js Testing](./ex-so-plwe-tsnext__testing.md)
+#### [Next.js Testing](ex-so-plwe-tsne__testing.md)
 
 Comprehensive guide to testing Next.js applications.
 
@@ -464,7 +464,7 @@ Comprehensive guide to testing Next.js applications.
 - Testing metadata generation
 - Testing with different rendering strategies
 
-#### [Next.js Deployment](./ex-so-plwe-tsnext__deployment.md)
+#### [Next.js Deployment](ex-so-plwe-tsne__deployment.md)
 
 Comprehensive guide to deployment strategies.
 
@@ -483,7 +483,7 @@ Comprehensive guide to deployment strategies.
 - Error tracking (Sentry integration)
 - CI/CD integration
 
-#### [Next.js Configuration](./ex-so-plwe-tsnext__configuration.md)
+#### [Next.js Configuration](ex-so-plwe-tsne__configuration.md)
 
 Comprehensive guide to Next.js configuration.
 
@@ -502,7 +502,7 @@ Comprehensive guide to Next.js configuration.
 - Runtime configuration
 - Output configuration (standalone, export)
 
-#### [Next.js Styling](./ex-so-plwe-tsnext__styling.md)
+#### [Next.js Styling](ex-so-plwe-tsne__styling.md)
 
 Comprehensive guide to styling approaches.
 
@@ -521,7 +521,7 @@ Comprehensive guide to styling approaches.
 - Animation and transitions
 - Styling Server vs Client Components
 
-#### [Next.js TypeScript](./ex-so-plwe-tsnext__typescript.md)
+#### [Next.js TypeScript](ex-so-plwe-tsne__typescript.md)
 
 Comprehensive guide to TypeScript integration.
 
@@ -540,7 +540,7 @@ Comprehensive guide to TypeScript integration.
 - Typing external libraries
 - Common TypeScript patterns in Next.js
 
-#### [Next.js Security](./ex-so-plwe-tsnext__security.md)
+#### [Next.js Security](ex-so-plwe-tsne__security.md)
 
 Comprehensive guide to security best practices.
 
@@ -559,7 +559,7 @@ Comprehensive guide to security best practices.
 - Input validation and sanitization
 - OWASP Top 10 for Next.js applications
 
-#### [Next.js Accessibility](./ex-so-plwe-tsnext__accessibility.md)
+#### [Next.js Accessibility](ex-so-plwe-tsne__accessibility.md)
 
 Comprehensive guide to accessibility.
 
@@ -578,7 +578,7 @@ Comprehensive guide to accessibility.
 - WCAG AA compliance checklist
 - Testing accessibility (axe, Lighthouse)
 
-#### [Next.js Domain-Driven Design](./ex-so-plwe-tsnext__domain-driven-design.md)
+#### [Next.js Domain-Driven Design](ex-so-plwe-tsne__domain-driven-design.md)
 
 Comprehensive guide to DDD patterns with Next.js.
 
@@ -596,7 +596,7 @@ Comprehensive guide to DDD patterns with Next.js.
 - CQRS patterns with Next.js
 - Financial examples: Zakat, Murabaha, Waqf features
 
-#### [Next.js Functional Programming](./ex-so-plwe-tsnext__functional-programming.md)
+#### [Next.js Functional Programming](ex-so-plwe-tsne__functional-programming.md)
 
 Comprehensive guide to FP patterns.
 
@@ -613,7 +613,7 @@ Comprehensive guide to FP patterns.
 - Functional testing strategies
 - FP libraries integration (fp-ts, Effect)
 
-#### [Next.js Version Migration](./ex-so-plwe-tsnext__version-migration.md)
+#### [Next.js Version Migration](ex-so-plwe-tsne__version-migration.md)
 
 Comprehensive guide to upgrading Next.js versions.
 
@@ -1200,7 +1200,7 @@ test.describe("Zakat Calculator", () => {
 
 ### 1. Start with Idioms
 
-Read [Next.js Idioms](./ex-so-plwe-tsnext__idioms.md) to understand framework patterns:
+Read [Next.js Idioms](ex-so-plwe-tsne__idioms.md) to understand framework patterns:
 
 - App Router conventions
 - Server Components vs Client Components
@@ -1210,7 +1210,7 @@ Read [Next.js Idioms](./ex-so-plwe-tsnext__idioms.md) to understand framework pa
 
 ### 2. Apply Best Practices
 
-Read [Next.js Best Practices](./ex-so-plwe-tsnext__best-practices.md) for production standards:
+Read [Next.js Best Practices](ex-so-plwe-tsne__best-practices.md) for production standards:
 
 - Project structure
 - Rendering strategies
@@ -1220,7 +1220,7 @@ Read [Next.js Best Practices](./ex-so-plwe-tsnext__best-practices.md) for produc
 
 ### 3. Avoid Anti-Patterns
 
-Read [Next.js Anti-Patterns](./ex-so-plwe-tsnext__anti-patterns.md) to prevent mistakes:
+Read [Next.js Anti-Patterns](ex-so-plwe-tsne__anti-patterns.md) to prevent mistakes:
 
 - Unnecessary Client Components
 - Improper data fetching
@@ -1231,18 +1231,18 @@ Read [Next.js Anti-Patterns](./ex-so-plwe-tsnext__anti-patterns.md) to prevent m
 
 Read architecture documentation:
 
-- [App Router](./ex-so-plwe-tsnext__app-router.md)
-- [Server Components](./ex-so-plwe-tsnext__server-components.md)
-- [Data Fetching](./ex-so-plwe-tsnext__data-fetching.md)
-- [Rendering](./ex-so-plwe-tsnext__rendering.md)
+- [App Router](ex-so-plwe-tsne__app-router.md)
+- [Server Components](ex-so-plwe-tsne__server-components.md)
+- [Data Fetching](ex-so-plwe-tsne__data-fetching.md)
+- [Rendering](ex-so-plwe-tsne__rendering.md)
 
 ### 5. Integrate with DDD
 
 Read complementary documentation:
 
-- [Domain-Driven Design](./ex-so-plwe-tsnext__domain-driven-design.md)
-- [Functional Programming](./ex-so-plwe-tsnext__functional-programming.md)
-- [TypeScript DDD Patterns](../../prog-lang/typescript/ex-so-prla-ts__domain-driven-design.md)
+- [Domain-Driven Design](ex-so-plwe-tsne__domain-driven-design.md)
+- [Functional Programming](ex-so-plwe-tsne__functional-programming.md)
+- [TypeScript DDD Patterns](../../prog-lang/typescript/ex-so-prla-ty__domain-driven-design.md)
 
 ## Code Examples from Platform
 
@@ -1346,7 +1346,7 @@ export const config = {
 ### TypeScript and React Standards
 
 - **[TypeScript](../../prog-lang/typescript/README.md)** - Core TypeScript documentation
-- **[TypeScript Idioms](../../prog-lang/typescript/ex-so-prla-ts__idioms.md)** - Modern TypeScript patterns
+- **[TypeScript Idioms](../../prog-lang/typescript/ex-so-prla-ty__idioms.md)** - Modern TypeScript patterns
 - **[React](../ts-react/README.md)** - React framework documentation
 - **[React Best Practices](../ts-react/ex-so-plwe-tsre__best-practices.md)** - React standards
 
@@ -1549,29 +1549,29 @@ CMD ["node", "server.js"]
 
 ### Core Next.js Documentation
 
-- **[Next.js Idioms](./ex-so-plwe-tsnext__idioms.md)** - Framework patterns
-- **[Next.js Best Practices](./ex-so-plwe-tsnext__best-practices.md)** - Production standards
-- **[Next.js Anti-Patterns](./ex-so-plwe-tsnext__anti-patterns.md)** - Common mistakes
+- **[Next.js Idioms](ex-so-plwe-tsne__idioms.md)** - Framework patterns
+- **[Next.js Best Practices](ex-so-plwe-tsne__best-practices.md)** - Production standards
+- **[Next.js Anti-Patterns](ex-so-plwe-tsne__anti-patterns.md)** - Common mistakes
 
 ### Architecture Documentation
 
-- **[App Router](./ex-so-plwe-tsnext__app-router.md)** - Routing architecture
-- **[Server Components](./ex-so-plwe-tsnext__server-components.md)** - RSC patterns
-- **[Data Fetching](./ex-so-plwe-tsnext__data-fetching.md)** - Data strategies
-- **[Rendering](./ex-so-plwe-tsnext__rendering.md)** - Rendering modes
+- **[App Router](ex-so-plwe-tsne__app-router.md)** - Routing architecture
+- **[Server Components](ex-so-plwe-tsne__server-components.md)** - RSC patterns
+- **[Data Fetching](ex-so-plwe-tsne__data-fetching.md)** - Data strategies
+- **[Rendering](ex-so-plwe-tsne__rendering.md)** - Rendering modes
 
 ### Advanced Topics
 
-- **[Performance](./ex-so-plwe-tsnext__performance.md)** - Optimization
-- **[Testing](./ex-so-plwe-tsnext__testing.md)** - Testing strategies
-- **[Security](./ex-so-plwe-tsnext__security.md)** - Security practices
-- **[Deployment](./ex-so-plwe-tsnext__deployment.md)** - Deployment patterns
+- **[Performance](ex-so-plwe-tsne__performance.md)** - Optimization
+- **[Testing](ex-so-plwe-tsne__testing.md)** - Testing strategies
+- **[Security](ex-so-plwe-tsne__security.md)** - Security practices
+- **[Deployment](ex-so-plwe-tsne__deployment.md)** - Deployment patterns
 
 ### Integration Documentation
 
-- **[Domain-Driven Design](./ex-so-plwe-tsnext__domain-driven-design.md)** - DDD with Next.js
-- **[Functional Programming](./ex-so-plwe-tsnext__functional-programming.md)** - FP patterns
-- **[Version Migration](./ex-so-plwe-tsnext__version-migration.md)** - Upgrading
+- **[Domain-Driven Design](ex-so-plwe-tsne__domain-driven-design.md)** - DDD with Next.js
+- **[Functional Programming](ex-so-plwe-tsne__functional-programming.md)** - FP patterns
+- **[Version Migration](ex-so-plwe-tsne__version-migration.md)** - Upgrading
 
 ### Platform Documentation
 

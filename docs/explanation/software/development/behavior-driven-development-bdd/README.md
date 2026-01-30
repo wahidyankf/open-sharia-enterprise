@@ -172,43 +172,43 @@ This documentation is organized into foundation (core concepts), collaboration (
 
 Core BDD concepts and philosophy:
 
-- **[01. Introduction and Philosophy](./ex-so-de-bdd__01-introduction-and-philosophy.md)** - Overview, history, when to use BDD, decision matrix, benefits, BDD vs. TDD
-- **[02. Gherkin Syntax and Scenarios](./ex-so-de-bdd__02-gherkin-syntax-and-scenarios.md)** - Feature files, scenarios, Given-When-Then keywords, Background, Scenario Outline
-- **[03. Given-When-Then Pattern](./ex-so-de-bdd__03-given-when-then-pattern.md)** - GWT structure, context/action/outcome, common patterns
+- **[01. Introduction and Philosophy](ex-so-de-bedrdebd__01-introduction-and-philosophy.md)** - Overview, history, when to use BDD, decision matrix, benefits, BDD vs. TDD
+- **[02. Gherkin Syntax and Scenarios](ex-so-de-bedrdebd__02-gherkin-syntax-and-scenarios.md)** - Feature files, scenarios, Given-When-Then keywords, Background, Scenario Outline
+- **[03. Given-When-Then Pattern](ex-so-de-bedrdebd__03-given-when-then-pattern.md)** - GWT structure, context/action/outcome, common patterns
 - **[README (this file)]** - Navigation, decision matrix, learning paths
 
 ### Collaboration
 
 BDD's unique value through stakeholder involvement:
 
-- **[04. Three Amigos Practice](./ex-so-de-bdd__04-three-amigos-practice.md)** - Business/Dev/QA collaboration, session structure, facilitation, Islamic Finance with Compliance scholars
-- **[05. Example Mapping](./ex-so-de-bdd__05-example-mapping.md)** - Color-coded cards (blue/yellow/green/red), 25-minute sessions, visual discovery, facilitating workshops
-- **[06. Specification by Example](./ex-so-de-bdd__06-specification-by-example.md)** - Concrete examples over abstract requirements, living documentation, example-driven design
-- **[07. Discovery and Formulation](./ex-so-de-bdd__07-discovery-and-formulation.md)** - Outside-in development, discovering requirements through conversation, formulation vs. automation
+- **[04. Three Amigos Practice](ex-so-de-bedrdebd__04-three-amigos-practice.md)** - Business/Dev/QA collaboration, session structure, facilitation, Islamic Finance with Compliance scholars
+- **[05. Example Mapping](ex-so-de-bedrdebd__05-example-mapping.md)** - Color-coded cards (blue/yellow/green/red), 25-minute sessions, visual discovery, facilitating workshops
+- **[06. Specification by Example](ex-so-de-bedrdebd__06-specification-by-example.md)** - Concrete examples over abstract requirements, living documentation, example-driven design
+- **[07. Discovery and Formulation](ex-so-de-bedrdebd__07-discovery-and-formulation.md)** - Outside-in development, discovering requirements through conversation, formulation vs. automation
 
 ### Implementation
 
 Technical BDD practices and automation:
 
-- **[08. Feature Files and Organization](./ex-so-de-bdd__08-feature-files-and-organization.md)** - Directory structure, feature file anatomy, organizing by bounded context, naming conventions
-- **[09. Step Definitions](./ex-so-de-bdd__09-step-definitions.md)** - Implementing Given/When/Then steps, reusable steps, parameter binding, step organization
-- **[10. Living Documentation](./ex-so-de-bdd__10-living-documentation.md)** - Executable specifications, documentation dashboards, keeping specs current, reporting
-- **[11. BDD Frameworks](./ex-so-de-bdd__11-bdd-frameworks.md)** - Cucumber, SpecFlow, Behave, Jest-Cucumber comparison, choosing frameworks
-- **[12. Automation Strategies](./ex-so-de-bdd__12-automation-strategies.md)** - CI/CD integration, test data management, parallel execution, maintenance strategies
+- **[08. Feature Files and Organization](ex-so-de-bedrdebd__08-feature-files-and-organization.md)** - Directory structure, feature file anatomy, organizing by bounded context, naming conventions
+- **[09. Step Definitions](ex-so-de-bedrdebd__09-step-definitions.md)** - Implementing Given/When/Then steps, reusable steps, parameter binding, step organization
+- **[10. Living Documentation](ex-so-de-bedrdebd__10-living-documentation.md)** - Executable specifications, documentation dashboards, keeping specs current, reporting
+- **[11. BDD Frameworks](ex-so-de-bedrdebd__11-bdd-frameworks.md)** - Cucumber, SpecFlow, Behave, Jest-Cucumber comparison, choosing frameworks
+- **[12. Automation Strategies](ex-so-de-bedrdebd__12-automation-strategies.md)** - CI/CD integration, test data management, parallel execution, maintenance strategies
 
 ### Integration
 
 BDD with other methodologies and architectures:
 
-- **[13. BDD and TDD](./ex-so-de-bdd__13-bdd-and-tdd.md)** - Complementary relationship, outside-in with inner TDD loop, acceptance + unit tests
-- **[14. BDD and DDD](./ex-so-de-bdd__14-bdd-and-ddd.md)** - Ubiquitous language in scenarios, features per bounded context, domain events
-- **[15. BDD in Nx Monorepo](./ex-so-de-bdd__15-bdd-in-nx-monorepo.md)** - Running BDD tests with Nx, affected features, organizing in monorepo
+- **[13. BDD and TDD](ex-so-de-bedrdebd__13-bdd-and-tdd.md)** - Complementary relationship, outside-in with inner TDD loop, acceptance + unit tests
+- **[14. BDD and DDD](ex-so-de-bedrdebd__14-bdd-and-ddd.md)** - Ubiquitous language in scenarios, features per bounded context, domain events
+- **[15. BDD in Nx Monorepo](ex-so-de-bedrdebd__15-bdd-in-nx-monorepo.md)** - Running BDD tests with Nx, affected features, organizing in monorepo
 
 ### Meta & Guidance
 
 Best practices and common issues:
 
-- **[16. FAQ](./ex-so-de-bdd__16-faq.md)** - Common questions, misconceptions, troubleshooting BDD adoption
+- **[16. FAQ](ex-so-de-bedrdebd__16-faq.md)** - Common questions, misconceptions, troubleshooting BDD adoption
 
 ## Learning Paths
 
@@ -232,8 +232,8 @@ Choose a learning path based on your goals and available time.
 **Path**:
 
 1. **Core Syntax**
-   - [Gherkin Syntax and Scenarios](./ex-so-de-bdd__02-gherkin-syntax-and-scenarios.md) - Feature files and scenario structure
-   - [Given-When-Then Pattern](./ex-so-de-bdd__03-given-when-then-pattern.md) - Context/action/outcome pattern
+   - [Gherkin Syntax and Scenarios](ex-so-de-bedrdebd__02-gherkin-syntax-and-scenarios.md) - Feature files and scenario structure
+   - [Given-When-Then Pattern](ex-so-de-bedrdebd__03-given-when-then-pattern.md) - Context/action/outcome pattern
 
 2. **Apply**
    - Write one feature file for Tax threshold threshold validation
@@ -248,21 +248,21 @@ Choose a learning path based on your goals and available time.
 
 **Foundation**:
 
-1. [Introduction and Philosophy](./ex-so-de-bdd__01-introduction-and-philosophy.md)
-2. [Gherkin Syntax and Scenarios](./ex-so-de-bdd__02-gherkin-syntax-and-scenarios.md)
-3. [Given-When-Then Pattern](./ex-so-de-bdd__03-given-when-then-pattern.md)
+1. [Introduction and Philosophy](ex-so-de-bedrdebd__01-introduction-and-philosophy.md)
+2. [Gherkin Syntax and Scenarios](ex-so-de-bedrdebd__02-gherkin-syntax-and-scenarios.md)
+3. [Given-When-Then Pattern](ex-so-de-bedrdebd__03-given-when-then-pattern.md)
 
 **Collaboration**:
 
-1. [Three Amigos Practice](./ex-so-de-bdd__04-three-amigos-practice.md) - Cross-functional collaboration
-2. [Example Mapping](./ex-so-de-bdd__05-example-mapping.md) - Visual requirements discovery
-3. [Specification by Example](./ex-so-de-bdd__06-specification-by-example.md) - Concrete over abstract
+1. [Three Amigos Practice](ex-so-de-bedrdebd__04-three-amigos-practice.md) - Cross-functional collaboration
+2. [Example Mapping](ex-so-de-bedrdebd__05-example-mapping.md) - Visual requirements discovery
+3. [Specification by Example](ex-so-de-bedrdebd__06-specification-by-example.md) - Concrete over abstract
 
 **Implementation**:
 
-1. [Feature Files and Organization](./ex-so-de-bdd__08-feature-files-and-organization.md)
-2. [Step Definitions](./ex-so-de-bdd__09-step-definitions.md)
-3. [BDD Frameworks](./ex-so-de-bdd__11-bdd-frameworks.md)
+1. [Feature Files and Organization](ex-so-de-bedrdebd__08-feature-files-and-organization.md)
+2. [Step Definitions](ex-so-de-bedrdebd__09-step-definitions.md)
+3. [BDD Frameworks](ex-so-de-bedrdebd__11-bdd-frameworks.md)
 
 **Best Practices**:
 
@@ -274,52 +274,52 @@ Choose a learning path based on your goals and available time.
 
 Focus on collaboration and requirements:
 
-1. [Introduction and Philosophy](./ex-so-de-bdd__01-introduction-and-philosophy.md) - Understanding BDD value
-2. [Three Amigos Practice](./ex-so-de-bdd__04-three-amigos-practice.md) - Facilitating collaborative sessions
-3. [Example Mapping](./ex-so-de-bdd__05-example-mapping.md) - Visual requirements workshop
-4. [Specification by Example](./ex-so-de-bdd__06-specification-by-example.md) - Concrete examples technique
-5. [Gherkin Syntax](./ex-so-de-bdd__02-gherkin-syntax-and-scenarios.md) - Writing acceptance criteria
-6. [Living Documentation](./ex-so-de-bdd__10-living-documentation.md) - Keeping specs current
+1. [Introduction and Philosophy](ex-so-de-bedrdebd__01-introduction-and-philosophy.md) - Understanding BDD value
+2. [Three Amigos Practice](ex-so-de-bedrdebd__04-three-amigos-practice.md) - Facilitating collaborative sessions
+3. [Example Mapping](ex-so-de-bedrdebd__05-example-mapping.md) - Visual requirements workshop
+4. [Specification by Example](ex-so-de-bedrdebd__06-specification-by-example.md) - Concrete examples technique
+5. [Gherkin Syntax](ex-so-de-bedrdebd__02-gherkin-syntax-and-scenarios.md) - Writing acceptance criteria
+6. [Living Documentation](ex-so-de-bedrdebd__10-living-documentation.md) - Keeping specs current
 
 **For Developers**:
 
 Focus on implementation and automation:
 
-1. [Introduction and Philosophy](./ex-so-de-bdd__01-introduction-and-philosophy.md)
-2. [Gherkin Syntax and Scenarios](./ex-so-de-bdd__02-gherkin-syntax-and-scenarios.md)
-3. [Given-When-Then Pattern](./ex-so-de-bdd__03-given-when-then-pattern.md)
-4. [Feature Files and Organization](./ex-so-de-bdd__08-feature-files-and-organization.md)
-5. [Step Definitions](./ex-so-de-bdd__09-step-definitions.md) - Implementing steps
-6. [BDD Frameworks](./ex-so-de-bdd__11-bdd-frameworks.md) - Choosing tools
-7. [Automation Strategies](./ex-so-de-bdd__12-automation-strategies.md)
-8. [BDD and TDD](./ex-so-de-bdd__13-bdd-and-tdd.md) - Complementary practices
-9. [BDD and DDD](./ex-so-de-bdd__14-bdd-and-ddd.md) - Domain modeling
-10. [BDD in Nx Monorepo](./ex-so-de-bdd__15-bdd-in-nx-monorepo.md)
+1. [Introduction and Philosophy](ex-so-de-bedrdebd__01-introduction-and-philosophy.md)
+2. [Gherkin Syntax and Scenarios](ex-so-de-bedrdebd__02-gherkin-syntax-and-scenarios.md)
+3. [Given-When-Then Pattern](ex-so-de-bedrdebd__03-given-when-then-pattern.md)
+4. [Feature Files and Organization](ex-so-de-bedrdebd__08-feature-files-and-organization.md)
+5. [Step Definitions](ex-so-de-bedrdebd__09-step-definitions.md) - Implementing steps
+6. [BDD Frameworks](ex-so-de-bedrdebd__11-bdd-frameworks.md) - Choosing tools
+7. [Automation Strategies](ex-so-de-bedrdebd__12-automation-strategies.md)
+8. [BDD and TDD](ex-so-de-bedrdebd__13-bdd-and-tdd.md) - Complementary practices
+9. [BDD and DDD](ex-so-de-bedrdebd__14-bdd-and-ddd.md) - Domain modeling
+10. [BDD in Nx Monorepo](ex-so-de-bedrdebd__15-bdd-in-nx-monorepo.md)
 
 **For QA Engineers**:
 
 Focus on testing strategy and automation:
 
-1. [Introduction and Philosophy](./ex-so-de-bdd__01-introduction-and-philosophy.md)
-2. [Three Amigos Practice](./ex-so-de-bdd__04-three-amigos-practice.md) - Collaborative testing
-3. [Gherkin Syntax and Scenarios](./ex-so-de-bdd__02-gherkin-syntax-and-scenarios.md)
-4. [Example Mapping](./ex-so-de-bdd__05-example-mapping.md) - Discovering edge cases
-5. [Feature Files and Organization](./ex-so-de-bdd__08-feature-files-and-organization.md)
-6. [Step Definitions](./ex-so-de-bdd__09-step-definitions.md)
-7. [BDD Frameworks](./ex-so-de-bdd__11-bdd-frameworks.md)
-8. [Automation Strategies](./ex-so-de-bdd__12-automation-strategies.md)
-9. [Living Documentation](./ex-so-de-bdd__10-living-documentation.md)
+1. [Introduction and Philosophy](ex-so-de-bedrdebd__01-introduction-and-philosophy.md)
+2. [Three Amigos Practice](ex-so-de-bedrdebd__04-three-amigos-practice.md) - Collaborative testing
+3. [Gherkin Syntax and Scenarios](ex-so-de-bedrdebd__02-gherkin-syntax-and-scenarios.md)
+4. [Example Mapping](ex-so-de-bedrdebd__05-example-mapping.md) - Discovering edge cases
+5. [Feature Files and Organization](ex-so-de-bedrdebd__08-feature-files-and-organization.md)
+6. [Step Definitions](ex-so-de-bedrdebd__09-step-definitions.md)
+7. [BDD Frameworks](ex-so-de-bedrdebd__11-bdd-frameworks.md)
+8. [Automation Strategies](ex-so-de-bedrdebd__12-automation-strategies.md)
+9. [Living Documentation](ex-so-de-bedrdebd__10-living-documentation.md)
 
 **For Software Architects**:
 
 Focus on strategic BDD and integration:
 
-1. [Introduction and Philosophy](./ex-so-de-bdd__01-introduction-and-philosophy.md) - BDD adoption strategy
-2. [Discovery and Formulation](./ex-so-de-bdd__07-discovery-and-formulation.md) - Outside-in development
-3. [BDD and DDD](./ex-so-de-bdd__14-bdd-and-ddd.md) - Strategic alignment
-4. [Feature Files and Organization](./ex-so-de-bdd__08-feature-files-and-organization.md) - Architectural organization
-5. [BDD in Nx Monorepo](./ex-so-de-bdd__15-bdd-in-nx-monorepo.md) - Monorepo testing architecture
-6. [Living Documentation](./ex-so-de-bdd__10-living-documentation.md) - Documentation strategy
+1. [Introduction and Philosophy](ex-so-de-bedrdebd__01-introduction-and-philosophy.md) - BDD adoption strategy
+2. [Discovery and Formulation](ex-so-de-bedrdebd__07-discovery-and-formulation.md) - Outside-in development
+3. [BDD and DDD](ex-so-de-bedrdebd__14-bdd-and-ddd.md) - Strategic alignment
+4. [Feature Files and Organization](ex-so-de-bedrdebd__08-feature-files-and-organization.md) - Architectural organization
+5. [BDD in Nx Monorepo](ex-so-de-bedrdebd__15-bdd-in-nx-monorepo.md) - Monorepo testing architecture
+6. [Living Documentation](ex-so-de-bedrdebd__10-living-documentation.md) - Documentation strategy
 
 ### By Team Structure: Co-located vs. Distributed
 
@@ -327,24 +327,24 @@ Focus on strategic BDD and integration:
 
 Leverage face-to-face collaboration:
 
-1. [Three Amigos Practice](./ex-so-de-bdd__04-three-amigos-practice.md) - In-person collaboration sessions
-2. [Example Mapping](./ex-so-de-bdd__05-example-mapping.md) - Physical card-based workshops
-3. [Specification by Example](./ex-so-de-bdd__06-specification-by-example.md)
-4. [Discovery and Formulation](./ex-so-de-bdd__07-discovery-and-formulation.md)
-5. [Gherkin Syntax](./ex-so-de-bdd__02-gherkin-syntax-and-scenarios.md) - Documenting conversations
-6. [Living Documentation](./ex-so-de-bdd__10-living-documentation.md)
+1. [Three Amigos Practice](ex-so-de-bedrdebd__04-three-amigos-practice.md) - In-person collaboration sessions
+2. [Example Mapping](ex-so-de-bedrdebd__05-example-mapping.md) - Physical card-based workshops
+3. [Specification by Example](ex-so-de-bedrdebd__06-specification-by-example.md)
+4. [Discovery and Formulation](ex-so-de-bedrdebd__07-discovery-and-formulation.md)
+5. [Gherkin Syntax](ex-so-de-bedrdebd__02-gherkin-syntax-and-scenarios.md) - Documenting conversations
+6. [Living Documentation](ex-so-de-bedrdebd__10-living-documentation.md)
 
 **For Distributed Teams**:
 
 Emphasize asynchronous collaboration and clear documentation:
 
-1. [Introduction and Philosophy](./ex-so-de-bdd__01-introduction-and-philosophy.md) - Understanding BDD value for distributed teams
-2. [Gherkin Syntax and Scenarios](./ex-so-de-bdd__02-gherkin-syntax-and-scenarios.md) - Clear written specs
-3. [Specification by Example](./ex-so-de-bdd__06-specification-by-example.md) - Concrete examples reduce ambiguity
-4. [Three Amigos Practice](./ex-so-de-bdd__04-three-amigos-practice.md) - Remote collaboration techniques
-5. [Example Mapping](./ex-so-de-bdd__05-example-mapping.md) - Virtual workshops (Miro, Mural)
-6. [Living Documentation](./ex-so-de-bdd__10-living-documentation.md) - Shared source of truth
-7. [Feature Files and Organization](./ex-so-de-bdd__08-feature-files-and-organization.md)
+1. [Introduction and Philosophy](ex-so-de-bedrdebd__01-introduction-and-philosophy.md) - Understanding BDD value for distributed teams
+2. [Gherkin Syntax and Scenarios](ex-so-de-bedrdebd__02-gherkin-syntax-and-scenarios.md) - Clear written specs
+3. [Specification by Example](ex-so-de-bedrdebd__06-specification-by-example.md) - Concrete examples reduce ambiguity
+4. [Three Amigos Practice](ex-so-de-bedrdebd__04-three-amigos-practice.md) - Remote collaboration techniques
+5. [Example Mapping](ex-so-de-bedrdebd__05-example-mapping.md) - Virtual workshops (Miro, Mural)
+6. [Living Documentation](ex-so-de-bedrdebd__10-living-documentation.md) - Shared source of truth
+7. [Feature Files and Organization](ex-so-de-bedrdebd__08-feature-files-and-organization.md)
 
 ### By Domain: Islamic Finance, Business Logic, APIs
 
@@ -352,12 +352,12 @@ Emphasize asynchronous collaboration and clear documentation:
 
 BDD with Compliance scholars and complex rules:
 
-1. [Introduction and Philosophy](./ex-so-de-bdd__01-introduction-and-philosophy.md) - BDD for religious compliance
-2. [Three Amigos Practice](./ex-so-de-bdd__04-three-amigos-practice.md) - Collaborating with Compliance scholars
-3. [Example Mapping](./ex-so-de-bdd__05-example-mapping.md) - Discovering Tax edge cases
-4. [Specification by Example](./ex-so-de-bdd__06-specification-by-example.md) - Concrete Tax calculations
-5. [BDD and DDD](./ex-so-de-bdd__14-bdd-and-ddd.md) - Ubiquitous language for Islamic Finance
-6. [Given-When-Then Pattern](./ex-so-de-bdd__03-given-when-then-pattern.md) - Tax scenario patterns
+1. [Introduction and Philosophy](ex-so-de-bedrdebd__01-introduction-and-philosophy.md) - BDD for religious compliance
+2. [Three Amigos Practice](ex-so-de-bedrdebd__04-three-amigos-practice.md) - Collaborating with Compliance scholars
+3. [Example Mapping](ex-so-de-bedrdebd__05-example-mapping.md) - Discovering Tax edge cases
+4. [Specification by Example](ex-so-de-bedrdebd__06-specification-by-example.md) - Concrete Tax calculations
+5. [BDD and DDD](ex-so-de-bedrdebd__14-bdd-and-ddd.md) - Ubiquitous language for Islamic Finance
+6. [Given-When-Then Pattern](ex-so-de-bedrdebd__03-given-when-then-pattern.md) - Tax scenario patterns
 
 **Example Domains Covered**:
 
@@ -501,12 +501,12 @@ Scenario: Certify product with permitted ingredients
 Ready to apply BDD to your project? Start here:
 
 1. **Assess suitability**: Use [Decision Matrix](#when-to-use-bdd-decision-matrix) to score your project
-2. **Learn Gherkin**: Read [Gherkin Syntax](./ex-so-de-bdd__02-gherkin-syntax-and-scenarios.md) and write first scenario
+2. **Learn Gherkin**: Read [Gherkin Syntax](ex-so-de-bedrdebd__02-gherkin-syntax-and-scenarios.md) and write first scenario
 3. **Run Three Amigos**: Schedule session with Business, Development, and QA representatives
-4. **Try Example Mapping**: Visual workshop using [Example Mapping Guide](./ex-so-de-bdd__05-example-mapping.md)
-5. **Choose framework**: Review [BDD Frameworks](./ex-so-de-bdd__11-bdd-frameworks.md) comparison
+4. **Try Example Mapping**: Visual workshop using [Example Mapping Guide](ex-so-de-bedrdebd__05-example-mapping.md)
+5. **Choose framework**: Review [BDD Frameworks](ex-so-de-bedrdebd__11-bdd-frameworks.md) comparison
 6. **Write first feature**: Create feature file with Given-When-Then scenarios
-7. **Implement steps**: Follow [Step Definitions Guide](./ex-so-de-bdd__09-step-definitions.md)
+7. **Implement steps**: Follow [Step Definitions Guide](ex-so-de-bedrdebd__09-step-definitions.md)
 
 ## Related Principles
 
