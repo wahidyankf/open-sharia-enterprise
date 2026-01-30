@@ -1222,12 +1222,6 @@ export const DonationDashboard: React.FC = () => {
 
 ## Integration with Other Documentation
 
-### TypeScript Language Standards
-
-- **[TypeScript](../../prog-lang/typescript/README.md)** - Core TypeScript documentation
-- **[TypeScript Idioms](../../prog-lang/typescript/ex-so-prla-ty__idioms.md)** - Modern TypeScript patterns
-- **[TypeScript Best Practices](../../prog-lang/typescript/ex-so-prla-ty__best-practices.md)** - TypeScript coding standards
-
 ### Architecture Patterns
 
 - **[Domain-Driven Design](../../architecture/domain-driven-design-ddd/README.md)** - DDD patterns in frontend

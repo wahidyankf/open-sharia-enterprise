@@ -1548,14 +1548,10 @@ describe("useFetchDonations", () => {
 
 **Related Documentation**:
 
-- [React Component Patterns](./ex-so-plwe-fera__component-patterns.md) - Component composition patterns
-- [React State Management](ex-so-plwe-fere__state-management.md) - Advanced state management strategies
-- [React Performance Optimization](./ex-so-plwe-fera__performance-optimization.md) - Performance best practices
-
-**Core Principles**:
-
-- [Functional Programming](../../../../development/pattern/functional-programming.md) - Pure functions and immutability
-- [Accessibility First](../../../../principles/content/accessibility-first.md) - Accessibility standards (useId for ARIA)
+- [React Component Architecture](./ex-so-plwe-fere__component-architecture.md) - Component design patterns
+- [React State Management](./ex-so-plwe-fere__state-management.md) - Advanced state management strategies
+- [React Performance](./ex-so-plwe-fere__performance.md) - Performance best practices
+- [React Idioms](./ex-so-plwe-fere__idioms.md) - React + TypeScript patterns
 
 ---
 

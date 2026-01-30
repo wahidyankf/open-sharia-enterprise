@@ -11,8 +11,8 @@ tags:
   - hooks
   - components
 related:
-  - ./ex-so-plwe-fera__best-practices.md
-  - ./ex-so-plwe-fera__anti-patterns.md
+  - ./ex-so-plwe-fere__best-practices.md
+  - ./ex-so-plwe-fere__anti-patterns.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -53,8 +53,8 @@ last_updated: 2026-01-29
 
 ### Related Documentation
 
-- [Best Practices](ex-so-plwe-fere__best-practices.md)
-- [Anti-Patterns](ex-so-plwe-fere__anti-patterns.md)
+- [Best Practices](./ex-so-plwe-fere__best-practices.md)
+- [Anti-Patterns](./ex-so-plwe-fere__anti-patterns.md)
 - [TypeScript Best Practices](../../prog-lang/typescript/ex-so-prla-ty__best-practices.md)
 - [Functional Programming](../../prog-lang/typescript/ex-so-prla-ty__functional-programming.md)
 
@@ -1901,12 +1901,10 @@ function App(): JSX.Element {
 
 ## Related Documentation
 
-- **[React Best Practices](ex-so-plwe-fere__best-practices.md)** - Production standards
-- **[React Anti-Patterns](ex-so-plwe-fere__anti-patterns.md)** - Common mistakes
+- **[React Best Practices](./ex-so-plwe-fere__best-practices.md)** - Production standards
+- **[React Anti-Patterns](./ex-so-plwe-fere__anti-patterns.md)** - Common mistakes
 - **[TypeScript Best Practices](../../prog-lang/typescript/ex-so-prla-ty__best-practices.md)** - TypeScript standards
 - **[Functional Programming](../../prog-lang/typescript/ex-so-prla-ty__functional-programming.md)** - FP patterns
-- **[Immutability Principle](../../../../governance/principles/software-engineering/immutability.md)** - Immutability over mutability
-- **[Pure Functions Principle](../../../../governance/principles/software-engineering/pure-functions.md)** - Pure functions over side effects
 
 ---
 

@@ -1796,17 +1796,11 @@ export const WithCallbacks: Story = {
 - [React Query](https://tanstack.com/query/latest) - Data fetching and caching
 - [Testing Library](https://testing-library.com/react) - Component testing
 
-**Repository Conventions**:
-
-- [Functional Programming Convention](../../../../governance/development/pattern/functional-programming.md) - Functional patterns in TypeScript/React
-- [Code Quality Principles](../../../../governance/conventions/writing/quality.md) - Universal quality standards
-- [Accessibility First Principle](../../../../governance/principles/content/accessibility-first.md) - Accessibility requirements
-
 **Related Documentation**:
 
-- [TypeScript + Vite Setup Guide](../../../how-to/software/platform-web/fe-react/hoto-so-plwe-fera__setup-typescript-vite.md) - Initial project setup (to be created)
-- [React Testing Guide](../../../how-to/software/platform-web/fe-react/hoto-so-plwe-fera__testing-react-components.md) - Comprehensive testing guide (to be created)
-- [React Performance Optimization](../../../how-to/software/platform-web/fe-react/hoto-so-plwe-fera__performance-optimization.md) - Performance tuning guide (to be created)
+- [React Idioms](./ex-so-plwe-fere__idioms.md) - React + TypeScript patterns
+- [React Anti-Patterns](./ex-so-plwe-fere__anti-patterns.md) - Common mistakes
+- [React Configuration](./ex-so-plwe-fere__configuration.md) - Build and environment setup
 
 ---
 

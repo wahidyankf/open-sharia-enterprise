@@ -835,9 +835,9 @@ Render components in background without displaying:
 
 **Related Explanation Documents**:
 
-- [React Core Concepts](./ex-so-plwe-fera__core-concepts.md) - Fundamental React concepts
-- [React Component Patterns](./ex-so-plwe-fera__component-patterns.md) - Modern component patterns
-- [React Performance Optimization](ex-so-plwe-fere__performance.md) - Performance best practices
+- [React Idioms](./ex-so-plwe-fere__idioms.md) - React + TypeScript patterns
+- [React Component Architecture](./ex-so-plwe-fere__component-architecture.md) - Modern component patterns
+- [React Performance](./ex-so-plwe-fere__performance.md) - Performance best practices
 
 **Testing**:
 

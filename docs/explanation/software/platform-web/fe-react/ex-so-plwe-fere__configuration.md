@@ -875,9 +875,9 @@ Key settings:
 
 ## 🔗 Related Documentation
 
-- [React Project Structure](./ex-so-plwe-fera__project-structure.md) - File and folder organization
-- [React State Management](ex-so-plwe-fere__state-management.md) - State management patterns
-- [React Development Environment Setup](../../../../../../how-to/software/platform-web/fe-react/hoto-so-plwe-fera__setup-dev-environment.md) - Setting up development environment
+- [React State Management](./ex-so-plwe-fere__state-management.md) - State management patterns
+- [React Testing](./ex-so-plwe-fere__testing.md) - Testing configuration
+- [React Deployment](./ex-so-plwe-fere__deployment.md) - Deployment strategies
 
 ## 📚 References
 

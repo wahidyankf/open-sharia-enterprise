@@ -11,9 +11,9 @@ tags:
   - mistakes
   - avoid
 related:
-  - ./ex-so-plwe-fera__idioms.md
-  - ./ex-so-plwe-fera__best-practices.md
-  - ./ex-so-plwe-fera__performance.md
+  - ./ex-so-plwe-fere__idioms.md
+  - ./ex-so-plwe-fere__best-practices.md
+  - ./ex-so-plwe-fere__performance.md
 principles:
   - explicit-over-implicit
   - immutability

@@ -1265,9 +1265,9 @@ export const zakatService = {
 
 **Related Documentation**:
 
-- [API Integration Guide](../../../how-to/software/platform-web/fe-react/hoto-so-plwe-fera__api-integration.md) - Step-by-step API setup (to be created)
-- [Authentication Flow](../../../how-to/software/platform-web/fe-react/hoto-so-plwe-fera__authentication.md) - Auth implementation guide (to be created)
-- [Testing API Integration](../../../how-to/software/platform-web/fe-react/hoto-so-plwe-fera__testing-apis.md) - Testing strategies (to be created)
+- [React Data Fetching](./ex-so-plwe-fere__data-fetching.md) - Data fetching patterns
+- [React Security](./ex-so-plwe-fere__security.md) - Authentication and authorization
+- [React Testing](./ex-so-plwe-fere__testing.md) - Testing API integrations
 
 ---
 

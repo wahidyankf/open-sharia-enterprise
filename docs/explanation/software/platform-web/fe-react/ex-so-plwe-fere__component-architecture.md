@@ -1107,8 +1107,8 @@ graph TD
 
 **Related Documentation**:
 
-- [Accessibility First Principle](../../../../governance/principles/content/accessibility-first.md) - Foundational accessibility requirements
-- [Functional Programming Convention](../../../../governance/development/pattern/functional-programming.md) - Functional patterns in React
+- [React Idioms](./ex-so-plwe-fere__idioms.md) - React + TypeScript patterns
+- [React Best Practices](./ex-so-plwe-fere__best-practices.md) - Production standards
 
 ---
 
