@@ -31,8 +31,9 @@ These conventions define **HOW to create and structure tutorials**, covering tut
 
 ## Conventions
 
-- [By Example Tutorial](./by-example.md) - Standards for code-first by-example tutorials (Component 3 of Full Set - PRIORITY) with 75-85 heavily annotated examples
 - [By Concept Tutorial](./by-concept.md) - Standards for narrative-driven by-concept tutorials (Component 4 of Full Set)
+- [By Example Tutorial](./by-example.md) - Standards for code-first by-example tutorials (Component 3 of Full Set - PRIORITY) with 75-85 heavily annotated examples
+- [Cookbook Tutorial](./cookbook.md) - Standards for problem-focused cookbook tutorials (Component 5 of Full Set) with 30+ practical recipes organized by problem type
 - [General Tutorial Convention](./general.md) - Standards for creating learning-oriented tutorials with narrative flow and progressive scaffolding
 - [Programming Language Content Standard](./programming-language-content.md) - Full Set Tutorial Package architecture for programming language education
 - [Programming Language Tutorial Structure](./programming-language-structure.md) - Complete directory structure for Full Set (5 mandatory components)
