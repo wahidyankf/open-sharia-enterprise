@@ -827,15 +827,15 @@ flowchart TD
 
 ### Templates
 
-- [Hierarchical State Machine Diagram](./templates/ex-so-ar-fsm-te__hierarchical-state-machine-diagram.md) - Template for nested states
-- [State Machine Specification](./templates/ex-so-ar-fsm-te__state-machine-specification.md) - Document FSM type and rationale
+- Hierarchical State Machine Diagram (TODO: ./templates/ex-so-ar-fsm-te\_\_hierarchical-state-machine-diagram.md) - Template for nested states
+- State Machine Specification (TODO: ./templates/ex-so-ar-fsm-te\_\_state-machine-specification.md) - Document FSM type and rationale
 
 ## Next Steps
 
 1. **Avoid state explosion**: Read [State Explosion and Mitigation](ex-so-ar-fistmafs__04-state-explosion-and-mitigation.md)
 2. **Master hierarchical states**: Read [Hierarchical and Nested States](ex-so-ar-fistmafs__05-hierarchical-and-nested-states.md)
 3. **Learn transition mechanics**: Read [Events, Guards, and Actions](ex-so-ar-fistmafs__06-events-guards-and-actions.md)
-4. **Design your FSM**: Use [State Machine Specification](./templates/ex-so-ar-fsm-te__state-machine-specification.md) template
+4. **Design your FSM**: Use State Machine Specification (TODO: ./templates/ex-so-ar-fsm-te\_\_state-machine-specification.md) template
 
 ## Summary
 

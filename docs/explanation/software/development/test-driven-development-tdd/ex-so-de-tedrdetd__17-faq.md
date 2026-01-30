@@ -1466,7 +1466,8 @@ describe("ModernTaxCalculator", () => {
 
 **Next Steps**:
 
-- Review [Templates](./templates/) for standardized test structures
+<!-- TODO: Create templates directory ./templates/ with standardized test structures -->
+
 - Explore [Decision Trees and Best Practices](ex-so-de-tedrdetd__15-decision-trees-and-best-practices.md)
 
 **Related Resources**:

@@ -589,7 +589,7 @@ Subdomain distillation ensures teams focus on what truly matters: the Core Domai
 - **[Context Mapping](./ex-so-ar-dodrdedd__04-context-mapping.md)** - Map relationships between subdomains/contexts
 - **[Bounded Contexts](./ex-so-ar-dodrdedd__03-bounded-contexts.md)** - Design solution-space models for subdomains
 - **[Strategic Design Process](./ex-so-ar-dodrdedd__06-strategic-design-process.md)** - Discover subdomains through Event Storming
-- **[Subdomain Classification Template](./templates/README.md)** - Document your subdomain analysis
+- **<!-- TODO: Create templates/README.md -->** - Document your subdomain analysis
 
 ## References
 

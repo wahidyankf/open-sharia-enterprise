@@ -40,10 +40,10 @@ This convention establishes the Diátaxis framework as the organizational struct
 
 ### What This Convention Does NOT Cover
 
-- **How to write content within categories** - Covered in category-specific conventions (e.g., [Tutorial Naming Convention](../tutorial/naming.md), [README Quality Convention](../content/readme-quality.md))
+- **How to write content within categories** - Covered in category-specific conventions (e.g., [Tutorial Naming Convention](../tutorials/naming.md), [README Quality Convention](../writing/readme-quality.md))
 - **File naming within categories** - Covered in [File Naming Convention](./file-naming.md)
 - **Hugo site structure** - Covered in Hugo content conventions
-- **Content quality standards** - Covered in [Content Quality Principles](../content/quality.md)
+- **Content quality standards** - Covered in [Content Quality Principles](../writing/quality.md)
 
 ## What is Diátaxis?
 
@@ -386,7 +386,7 @@ Start here
 - [Conventions Index](../README.md) - Overview of all documentation conventions
 - [File Naming Convention](./file-naming.md) - How to name files with category prefixes
 - [Linking Convention](../formatting/linking.md) - How to link between documents
-- [OSS Documentation Convention](../content/oss-documentation.md) - Repository-level documentation (README, CONTRIBUTING, ADRs) - complements Diátaxis internal docs structure
+- [OSS Documentation Convention](../writing/oss-documentation.md) - Repository-level documentation (README, CONTRIBUTING, ADRs) - complements Diátaxis internal docs structure
 
 ## External Resources
 

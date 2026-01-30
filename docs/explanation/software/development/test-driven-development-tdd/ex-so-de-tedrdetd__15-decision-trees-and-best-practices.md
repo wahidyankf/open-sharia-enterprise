@@ -1716,7 +1716,7 @@ describe("TaxCalculator", () => {
 
 - Review [TDD in Nx Monorepo](ex-so-de-tedrdetd__16-tdd-in-nx-monorepo.md) for monorepo-specific testing strategies
 - Explore [FAQ](ex-so-de-tedrdetd__17-faq.md) for answers to common TDD questions
-- Use [Templates](./templates/) for standardized test structures
+<!-- TODO: Create templates directory ./templates/ with standardized test structures -->
 
 **Related Resources**:
 

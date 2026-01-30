@@ -259,7 +259,7 @@ If you have a UTC timestamp and need to convert to WIB:
 
 ## Related Conventions
 
-- [File Naming Convention](../meta/file-naming.md) - Date format in filenames
+- [File Naming Convention](../structure/file-naming.md) - Date format in filenames
 
 ## See Also
 

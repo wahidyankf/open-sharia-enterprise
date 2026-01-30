@@ -1356,9 +1356,9 @@ Renders as: "HashMap<K, V> / O(1) lookup / Values: [1, 2, 3] / Dict: {a: 1}"
 ## Related Documentation
 
 - [Color Accessibility Convention](./color-accessibility.md) - Master reference for accessible color palette, WCAG standards, and testing tools (comprehensive guide for all color usage)
-- [File Naming Convention](../meta/file-naming.md) - How to name documentation files
+- [File Naming Convention](../structure/file-naming.md) - How to name documentation files
 - [Linking Convention](./linking.md) - How to link between files
-- [Diátaxis Framework](../meta/diataxis-framework.md) - Documentation organization principles
+- [Diátaxis Framework](../structure/diataxis-framework.md) - Documentation organization principles
 - [Conventions Index](../README.md) - Overview of all conventions
 
 ## External Resources

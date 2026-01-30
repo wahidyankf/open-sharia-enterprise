@@ -394,7 +394,9 @@ infrastructure/
 
 ## Bounded Context Canvas
 
-Document each bounded context using the [Bounded Context Canvas template](./templates/ex-so-ar-dodrdedd-te__bounded-context-canvas.md):
+Document each bounded context using the Bounded Context Canvas template:
+
+<!-- TODO: Create template at ./templates/ex-so-ar-dodrdedd-te__bounded-context-canvas.md -->
 
 - **Name** and **Description**
 - **Strategic Classification** (Core, Supporting, Generic)
@@ -404,7 +406,7 @@ Document each bounded context using the [Bounded Context Canvas template](./temp
 - **Dependencies** (inbound and outbound)
 - **Events** (published and consumed)
 
-See [Bounded Context Canvas Template](./templates/ex-so-ar-dodrdedd-te__bounded-context-canvas.md) for a complete template.
+<!-- TODO: Create Bounded Context Canvas Template at ./templates/ex-so-ar-dodrdedd-te__bounded-context-canvas.md -->
 
 ## Integration Between Bounded Contexts
 
@@ -508,7 +510,7 @@ Once identified, document each context clearly and integrate them through the pa
 - **[Context Mapping](./ex-so-ar-dodrdedd__04-context-mapping.md)** - Learn 9 patterns for integrating bounded contexts
 - **[Subdomains](./ex-so-ar-dodrdedd__05-subdomains.md)** - Classify contexts as Core, Supporting, or Generic
 - **[Strategic Design Process](./ex-so-ar-dodrdedd__06-strategic-design-process.md)** - Run Event Storming workshops to discover contexts
-- **[Bounded Context Canvas Template](./templates/ex-so-ar-dodrdedd-te__bounded-context-canvas.md)** - Document your contexts
+<!-- TODO: Bounded Context Canvas Template - ./templates/ex-so-ar-dodrdedd-te__bounded-context-canvas.md - Document your contexts -->
 
 ## References
 

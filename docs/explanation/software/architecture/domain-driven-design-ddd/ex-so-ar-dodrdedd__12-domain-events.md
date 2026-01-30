@@ -345,7 +345,7 @@ sequenceDiagram
     Note over Aggregate,Handler2: Handlers execute asynchronously<br/>outside aggregate transaction
 ```
 
-**Note**: This diagram uses WCAG AA-compliant colors. See [Color Palette Template](./templates/ex-so-ar-dodrdedd-te__color-palette.md).
+**Note**: This diagram uses WCAG AA-compliant colors. <!-- TODO: Color Palette Template - ./templates/ex-so-ar-dodrdedd-te__color-palette.md -->.
 
 **Lifecycle Steps:**
 
@@ -1139,7 +1139,7 @@ Domain events capture significant business occurrences:
 - **[Bounded Contexts](./ex-so-ar-dodrdedd__03-bounded-contexts.md)** - Integration via events
 - **[Context Mapping](./ex-so-ar-dodrdedd__04-context-mapping.md)** - Event publishing patterns
 - **[DDD and Functional Programming](./ex-so-ar-dodrdedd__14-ddd-and-functional-programming.md)** - FP-style events
-- **[Domain Event Catalog Template](./templates/ex-so-ar-dodrdedd-te__domain-event-catalog.md)** - Document your events
+- <!-- TODO: Domain Event Catalog Template - ./templates/ex-so-ar-dodrdedd-te__domain-event-catalog.md - Document your events -->
 
 ## References
 

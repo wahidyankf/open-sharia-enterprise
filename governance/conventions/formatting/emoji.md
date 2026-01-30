@@ -698,9 +698,9 @@ When reviewing emoji usage, verify:
 
 ## Related Conventions
 
-- [File Naming Convention](../meta/file-naming.md)
+- [File Naming Convention](../structure/file-naming.md)
 - [Linking Convention](./linking.md)
-- [Diátaxis Framework](../meta/diataxis-framework.md)
+- [Diátaxis Framework](../structure/diataxis-framework.md)
 - [AI Agents Convention](../../development/agents/ai-agents.md) - For agent color categorization using colored square emojis
 - [Color Accessibility Convention](./color-accessibility.md) - For accessible color palette and WCAG standards
 

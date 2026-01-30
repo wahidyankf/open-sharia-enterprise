@@ -23,9 +23,9 @@ This convention standardizes how programming language tutorials are organized as
 
 This convention implements the following core principles:
 
-- **[Progressive Disclosure](../../../principles/content/progressive-disclosure.md)**: Dual-path structure allows learners to choose their entry point based on experience level. By-concept path for gradual learning, by-example path for rapid exploration.
-- **[Accessibility First](../../../principles/content/accessibility-first.md)**: Multiple learning paths serve diverse learning styles - narrative-driven for methodical learners, code-first for experienced developers.
-- **[Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md)**: Clear directory structure makes learning path choices obvious. Foundational tutorials at root signal prerequisite status.
+- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Dual-path structure allows learners to choose their entry point based on experience level. By-concept path for gradual learning, by-example path for rapid exploration.
+- **[Accessibility First](../../principles/content/accessibility-first.md)**: Multiple learning paths serve diverse learning styles - narrative-driven for methodical learners, code-first for experienced developers.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Clear directory structure makes learning path choices obvious. Foundational tutorials at root signal prerequisite status.
 
 ## Purpose
 
@@ -54,7 +54,7 @@ This convention ensures:
 - `ayokoding-web-structure-checker` (validates directory organization)
 - `docs-tutorial-checker` (validates docs/ tutorial quality)
 
-**Implementation Notes**: The Full Set Tutorial Package structure is universal. Hugo-specific implementation details (weight values, frontmatter, navigation) are covered in [Hugo conventions](../../hugo/)
+**Implementation Notes**: The Full Set Tutorial Package structure is universal. Hugo-specific implementation details (weight values, frontmatter, navigation) are covered in [Hugo conventions](../hugo/)
 
 ## Directory Structure Pattern
 
@@ -373,7 +373,7 @@ tutorials/
 2. **Content INSIDE folder** is one level deeper → uses level N+1 base weight
 3. **Weights RESET per parent**: by-concept/ and by-example/ both start at 10000000 for overview.md (different parents, independent sequences)
 
-See [Hugo Content Convention - ayokoding](../../hugo/ayokoding.md) for complete level-based weight system details.
+See [Hugo Content Convention - ayokoding](../hugo/ayokoding.md) for complete level-based weight system details.
 
 ## Full Set Completeness Requirements
 
@@ -446,7 +446,7 @@ tags: ["language-name", "tutorial-type", "skill-level"]
 - Absolute paths work from ANY page context
 - Language prefix ensures correct bilingual routing
 
-See [Hugo Content Convention - ayokoding](../../hugo/ayokoding.md#internal-link-requirements) for complete details.
+See [Hugo Content Convention - ayokoding](../hugo/ayokoding.md#internal-link-requirements) for complete details.
 
 ### Overview Files
 
@@ -782,10 +782,10 @@ Run `ayokoding-web-by-example-checker` to verify structure and content quality.
 
 - **[Programming Language Content Standard](./programming-language-content.md)** - Universal content architecture for programming languages (5 tutorial levels, coverage philosophy, quality metrics, pedagogical patterns)
 - **[By Example Tutorial Convention](./by-example.md)** - Complete standards for creating code-first by-example tutorials (five-part structure, self-containment, educational comments, coverage progression)
-- **[Hugo Content Convention - ayokoding](../../hugo/ayokoding.md)** - Hextra theme specifics (level-based weights, absolute paths, navigation depth, frontmatter requirements)
+- **[Hugo Content Convention - ayokoding](../hugo/ayokoding.md)** - Hextra theme specifics (level-based weights, absolute paths, navigation depth, frontmatter requirements)
 - **[Tutorial Naming Convention](./naming.md)** - Tutorial type definitions (Initial Setup, Quick Start, Beginner, Intermediate, Advanced coverage percentages)
-- **[Content Quality Principles](../quality.md)** - Universal markdown quality standards (active voice, heading hierarchy, accessibility)
-- **[Diátaxis Framework](../../meta/diataxis-framework.md)** - Documentation categorization (tutorials vs how-to vs reference vs explanation)
+- **[Content Quality Principles](../writing/quality.md)** - Universal markdown quality standards (active voice, heading hierarchy, accessibility)
+- **[Diátaxis Framework](../structure/diataxis-framework.md)** - Documentation categorization (tutorials vs how-to vs reference vs explanation)
 
 ## Version History
 

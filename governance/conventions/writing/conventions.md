@@ -379,7 +379,7 @@ Convention documents vary in length based on complexity:
 
 ## Naming Convention
 
-Convention files follow the [File Naming Convention](../meta/file-naming.md):
+Convention files follow the [File Naming Convention](../structure/file-naming.md):
 
 **Pattern:** `ex-co__[content-identifier].md`
 
@@ -432,7 +432,7 @@ If a convention becomes obsolete:
 Looking for inspiration? These conventions exemplify different structural approaches:
 
 - **[Color Accessibility Convention](../formatting/color-accessibility.md)** - Comprehensive reference convention with detailed palette specifications, contrast ratios, and tool-specific guidance
-- **[Tutorial Naming Convention](./tutorial/naming.md)** - Decision-tree convention with structured types, coverage percentages, and clear selection criteria
+- **[Tutorial Naming Convention](../tutorials/naming.md)** - Decision-tree convention with structured types, coverage percentages, and clear selection criteria
 - **[Indentation Convention](../formatting/indentation.md)** - Simple, focused convention addressing a single technical standard with clear examples
 
 ## Examples
@@ -569,11 +569,11 @@ When creating a convention:
 **Related Meta-Documentation:**
 
 - [Content Quality Principles](./quality.md) - Universal quality standards for all markdown content
-- [Diátaxis Framework](../meta/diataxis-framework.md) - Four-category documentation organization framework
+- [Diátaxis Framework](../structure/diataxis-framework.md) - Four-category documentation organization framework
 
 **File Conventions:**
 
-- [File Naming Convention](../meta/file-naming.md) - How to name files with hierarchical prefixes
+- [File Naming Convention](../structure/file-naming.md) - How to name files with hierarchical prefixes
 - [Linking Convention](../formatting/linking.md) - How to link between documentation files
 
 **Development Practices:**

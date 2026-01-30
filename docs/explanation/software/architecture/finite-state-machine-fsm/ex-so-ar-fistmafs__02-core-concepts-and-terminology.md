@@ -876,15 +876,15 @@ flowchart TD
 
 ### Templates
 
-- [Blank State Machine Diagram](./templates/ex-so-ar-fsm-te__blank-state-machine-diagram.md) - Create your first FSM diagram
-- [State Transition Table](./templates/ex-so-ar-fsm-te__state-transition-table.md) - Document transitions in tabular format
+- Blank State Machine Diagram (TODO: ./templates/ex-so-ar-fsm-te\_\_blank-state-machine-diagram.md) - Create your first FSM diagram
+- State Transition Table (TODO: ./templates/ex-so-ar-fsm-te\_\_state-transition-table.md) - Document transitions in tabular format
 
 ## Next Steps
 
 1. **Understand FSM variants**: Read [FSM Types and Classifications](ex-so-ar-fistmafs__03-fsm-types-and-classifications.md)
 2. **Learn state explosion mitigation**: Read [State Explosion and Mitigation](ex-so-ar-fistmafs__04-state-explosion-and-mitigation.md)
 3. **Master hierarchical states**: Read [Hierarchical and Nested States](ex-so-ar-fistmafs__05-hierarchical-and-nested-states.md)
-4. **Design your first FSM**: Use [State Machine Specification](./templates/ex-so-ar-fsm-te__state-machine-specification.md) template
+4. **Design your first FSM**: Use State Machine Specification (TODO: ./templates/ex-so-ar-fsm-te\_\_state-machine-specification.md) template
 
 ## Summary
 

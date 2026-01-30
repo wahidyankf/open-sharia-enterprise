@@ -888,8 +888,8 @@ When setting up a new repository:
 
 ## Related Documentation
 
-- [Diátaxis Framework](../meta/diataxis-framework.md) - Organization of internal documentation
-- [File Naming Convention](../meta/file-naming.md) - Naming files within `docs/`
+- [Diátaxis Framework](../structure/diataxis-framework.md) - Organization of internal documentation
+- [File Naming Convention](../structure/file-naming.md) - Naming files within `docs/`
 - [Linking Convention](../formatting/linking.md) - How to link between documentation
 - [Commit Message Convention](../../development/workflow/commit-messages.md) - Git commit standards
 - [Trunk Based Development](../../development/workflow/trunk-based-development.md) - Git workflow

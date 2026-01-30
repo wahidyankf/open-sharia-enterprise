@@ -590,7 +590,7 @@ A structured template for documenting a bounded context:
 - None (core domain, fully internal)
 ```
 
-See [Bounded Context Canvas Template](./templates/ex-so-ar-dodrdedd-te__bounded-context-canvas.md) for full template.
+<!-- TODO: Create Bounded Context Canvas Template at ./templates/ex-so-ar-dodrdedd-te__bounded-context-canvas.md -->
 
 ## Facilitation Techniques
 
@@ -735,7 +735,7 @@ graph TD
 
 Use the standardized template to run your own Event Storming workshops:
 
-- [Event Storming Template](./templates/ex-so-ar-dodrdedd-te__event-storming-output.md)
+- Event Storming Template (TODO: ./templates/ex-so-ar-dodrdedd-te\_\_event-storming-output.md)
 
 **Template includes:**
 
@@ -767,8 +767,8 @@ Start your DDD journey with Event Storming. It's the fastest, most effective way
 
 ## Next Steps
 
-- **[Event Storming Template](./templates/ex-so-ar-dodrdedd-te__event-storming-output.md)** - Run your first Event Storming workshop
-- **[Bounded Context Canvas Template](./templates/ex-so-ar-dodrdedd-te__bounded-context-canvas.md)** - Document each bounded context
+- **Event Storming Template (TODO: ./templates/ex-so-ar-dodrdedd-te\_\_event-storming-output.md)** - Run your first Event Storming workshop
+- <!-- TODO: Bounded Context Canvas Template - ./templates/ex-so-ar-dodrdedd-te__bounded-context-canvas.md - Document each bounded context -->
 - **[Ubiquitous Language](./ex-so-ar-dodrdedd__02-ubiquitous-language.md)** - Refine terminology from workshops
 - **[Bounded Contexts](./ex-so-ar-dodrdedd__03-bounded-contexts.md)** - Deepen understanding of context boundaries
 - **[Context Mapping](./ex-so-ar-dodrdedd__04-context-mapping.md)** - Formalize context relationships

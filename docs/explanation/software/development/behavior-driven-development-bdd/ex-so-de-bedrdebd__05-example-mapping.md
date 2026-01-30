@@ -873,7 +873,7 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
   - [04. Three Amigos Practice](ex-so-de-bedrdebd__04-three-amigos-practice.md) - Collaborative conversation
   - [06. Specification by Example](ex-so-de-bedrdebd__06-specification-by-example.md) - Concrete examples philosophy
   - [07. Discovery and Formulation](ex-so-de-bedrdebd__07-discovery-and-formulation.md) - Requirements discovery process
-  - [Templates: Example Mapping Session](./templates/ex-so-de-bdd-te__example-mapping-session.md) - Session template
+  - Example Mapping Session Template (TODO: ./templates/ex-so-de-bdd-te\_\_example-mapping-session.md) - Session template
 - **Prerequisites**: Understanding of Three Amigos practice from File 04
 - **Next Steps**: Read [Specification by Example](ex-so-de-bedrdebd__06-specification-by-example.md) for philosophical foundation
 - **Last Updated**: 2026-01-20

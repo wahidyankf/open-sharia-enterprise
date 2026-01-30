@@ -384,7 +384,7 @@ stateDiagram-v2
     style Archived fill:#808080,stroke:#000,color:#000000
 ```
 
-**Note**: This diagram uses WCAG AA-compliant colors. See [Color Palette Template](./templates/ex-so-ar-dodrdedd-te__color-palette.md).
+**Note**: This diagram uses WCAG AA-compliant colors. <!-- TODO: Color Palette Template - ./templates/ex-so-ar-dodrdedd-te__color-palette.md -->.
 
 ### Lifecycle Example: Permitted Certification
 

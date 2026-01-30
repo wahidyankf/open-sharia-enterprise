@@ -1004,4 +1004,4 @@ end
 - **[Data Access Guide](./ex-so-plwe-elph__data-access.md)** - Database operations
 - **[Best Practices](./ex-so-plwe-elph__best-practices.md)** - Testing patterns
 - **[ExUnit Documentation](https://hexdocs.pm/ex_unit)** - Official testing framework
-- **[Test Templates](./templates/ex-so-plwe-elph-te__test-template.md)** - Test starters
+- **Test Templates (TODO: ./templates/ex-so-plwe-elph-te\_\_test-template.md)** - Test starters

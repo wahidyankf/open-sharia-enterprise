@@ -652,7 +652,7 @@ In DDD terms, state is often a **Value Object** or part of an **Entity's identit
 2. **Choose FSM type**: Read [FSM Types and Classifications](ex-so-ar-fistmafs__03-fsm-types-and-classifications.md)
 3. **Select paradigm**: Choose OOP, FP, Declarative, or Event-Driven approach (files 08-11)
 4. **Pick a framework**: Review Spring State Machine, XState, or workflow engines (files 13-14)
-5. **Design your FSM**: Use templates in [templates/](./templates/)
+5. **Design your FSM**: Use templates (TODO: create ./templates/ directory)
 
 ## Summary
 

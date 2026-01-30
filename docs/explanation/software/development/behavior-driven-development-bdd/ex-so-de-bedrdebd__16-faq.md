@@ -2442,7 +2442,8 @@ Team sees value of BDD, ready for second feature
 
 **Next Steps**:
 
-- Explore [Templates](./templates/) for ready-to-use scenario structures
+<!-- TODO: Create templates directory ./templates/ with ready-to-use scenario structures -->
+
 - Review [Three Amigos Practice](ex-so-de-bedrdebd__04-three-amigos-practice.md) for collaboration techniques
 - Study [Best Practices](ex-so-de-bedrdebd__17-best-practices.md) and [Antipatterns](ex-so-de-bedrdebd__18-anti-patterns.md) to avoid common mistakes
 
@@ -2476,6 +2477,6 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
   - [13. BDD and TDD](ex-so-de-bedrdebd__13-bdd-and-tdd.md) - Complementary practices
   - [17. Best Practices](ex-so-de-bedrdebd__17-best-practices.md) - BDD best practices
   - [18. Antipatterns](ex-so-de-bedrdebd__18-anti-patterns.md) - Common mistakes to avoid
-  - [Templates Directory](./templates/) - Practical BDD templates
+  <!-- TODO: Templates Directory ./templates/ - Practical BDD templates -->
 - **Prerequisites**: Basic understanding of BDD concepts from earlier files
 - **Next Steps**: Review templates and start applying BDD to your project

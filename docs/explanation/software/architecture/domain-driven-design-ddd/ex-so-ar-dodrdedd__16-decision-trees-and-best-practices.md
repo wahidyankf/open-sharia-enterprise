@@ -1005,7 +1005,7 @@ Good DDD decisions require:
 - **[Value Objects](./ex-so-ar-dodrdedd__08-value-objects.md)** - Replacing primitives with Value Objects
 - **[DDD and Functional Programming](./ex-so-ar-dodrdedd__14-ddd-and-functional-programming.md)** - Immutability and pure functions
 - **[Layered Architecture](./ex-so-ar-dodrdedd__15-layered-architecture.md)** - Organizing layers correctly
-- **[Aggregate Design Template](./templates/ex-so-ar-dodrdedd-te__aggregate-design-template.md)** - Document your aggregates
+- <!-- TODO: Aggregate Design Template - ./templates/ex-so-ar-dodrdedd-te__aggregate-design-template.md - Document your aggregates -->
 
 ## References
 
