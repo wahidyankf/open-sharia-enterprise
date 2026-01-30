@@ -1143,15 +1143,15 @@ const { data } = useTypedQuery(["contracts", "123"], () => getMurabahaContract("
 
 **Repository Conventions**:
 
-- [React Best Practices](ex-so-plwe-fere__best-practices.md) - Production-ready React patterns
+- [React Best Practices](./ex-so-plwe-fere__best-practices.md) - Production-ready React patterns
 - [TypeScript Best Practices](../../prog-lang/typescript/ex-so-prla-ty__best-practices.md) - TypeScript standards
 - [Error Handling Patterns](../../prog-lang/typescript/ex-so-prla-ty__error-handling.md) - Error handling in TypeScript
 
 **Related Documentation**:
 
-- [React State Management](ex-so-plwe-fere__state-management.md) - State patterns (to be created)
-- [API Integration Guide](../../../how-to/software/platform-web/fe-react/hoto-so-plwe-fera__api-integration.md) - Step-by-step API setup (to be created)
-- [Authentication Flow](../../../how-to/software/platform-web/fe-react/hoto-so-plwe-fera__authentication.md) - Auth implementation guide (to be created)
+- [React State Management](./ex-so-plwe-fere__state-management.md) - State patterns
+- [React REST APIs](./ex-so-plwe-fere__rest-apis.md) - Consuming REST APIs
+- [React Security](./ex-so-plwe-fere__security.md) - Authentication and authorization
 
 ---
 

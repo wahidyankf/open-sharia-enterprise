@@ -1643,11 +1643,10 @@ function MurabahaContractPage() {
 
 ## 🔗 Related Documentation
 
-- [Authentication Patterns](../../backend/be-node/ex-so-beno__authentication.md)
-- [API Security](../../backend/be-node/ex-so-beno__api-security.md)
-- [CORS Configuration](../../backend/be-node/ex-so-beno__cors.md)
-- [Session Management](../../backend/be-node/ex-so-beno__sessions.md)
-- [Data Validation](../../backend/be-node/ex-so-beno__validation.md)
+- [React REST APIs](./ex-so-plwe-fere__rest-apis.md) - Consuming REST APIs securely
+- [React Data Fetching](./ex-so-plwe-fere__data-fetching.md) - API integration patterns
+- [React Configuration](./ex-so-plwe-fere__configuration.md) - Environment variables and secrets
+- [React Deployment](./ex-so-plwe-fere__deployment.md) - Secure deployment practices
 
 ---
 

@@ -2055,10 +2055,10 @@ const [state, setState] = useState(() => expensiveCalculation());
 
 **Related Documentation**:
 
-- [Component Composition](./ex-so-plwe-fera__component-composition.md) - Component design patterns
-- [Performance Optimization](ex-so-plwe-fere__performance.md) - React performance best practices
-- [TypeScript Patterns](./ex-so-plwe-fera__typescript.md) - TypeScript in React
-- [Testing React Apps](ex-so-plwe-fere__testing.md) - Testing strategies
+- [React Component Architecture](./ex-so-plwe-fere__component-architecture.md) - Component design patterns
+- [React Performance](./ex-so-plwe-fere__performance.md) - React performance best practices
+- [React Hooks](./ex-so-plwe-fere__hooks.md) - React hooks patterns
+- [React Testing](./ex-so-plwe-fere__testing.md) - Testing strategies
 
 ---
 

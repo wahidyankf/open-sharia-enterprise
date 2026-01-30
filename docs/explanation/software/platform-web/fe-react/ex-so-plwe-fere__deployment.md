@@ -1002,21 +1002,12 @@ location = /service-worker.js {
 
 ## 📚 Related Resources
 
-**Conventions**:
-
-- [Hugo Conventions](../../../../governance/conventions/hugo/README.md) - Hugo-specific deployment patterns
-- [Content Quality](../../../../governance/conventions/writing/quality.md) - Documentation standards
-
-**Principles**:
-
-- [Automation Over Manual](../../../../governance/principles/process/automation-over-manual.md) - CI/CD automation philosophy
-- [Explicit Over Implicit](../../../../governance/principles/technical/explicit-over-implicit.md) - Configuration explicitness
-
 **Related Explanations**:
 
-- [State Management](ex-so-plwe-fere__state-management.md) - Managing application state
-- [Performance Optimization](./ex-so-plwe-fera__performance-optimization.md) - Frontend performance techniques
-- [Security](ex-so-plwe-fere__security.md) - Frontend security best practices
+- [State Management](./ex-so-plwe-fere__state-management.md) - Managing application state
+- [Performance](./ex-so-plwe-fere__performance.md) - Frontend performance techniques
+- [Security](./ex-so-plwe-fere__security.md) - Frontend security best practices
+- [Configuration](./ex-so-plwe-fere__configuration.md) - Build and environment configuration
 
 ---
 

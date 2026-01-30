@@ -739,10 +739,10 @@ const store = configureStore({
 
 ## 🔗 Related Documentation
 
-- [React State Management](ex-so-plwe-fere__state-management.md) - Managing application state with observability context
-- [React Testing](ex-so-plwe-fere__testing.md) - Testing strategies complementing observability
-- [Frontend Architecture](../../../architecture/ex-ar-__frontend-architecture.md) - Architectural patterns for observable systems
-- [Privacy and Security](../../../../governance/principles/security/ex-pr-se__privacy-first.md) - Privacy considerations for monitoring
+- [React State Management](./ex-so-plwe-fere__state-management.md) - Managing application state with observability context
+- [React Testing](./ex-so-plwe-fere__testing.md) - Testing strategies complementing observability
+- [React Performance](./ex-so-plwe-fere__performance.md) - Performance monitoring and optimization
+- [React Security](./ex-so-plwe-fere__security.md) - Security and privacy considerations
 
 ## 📚 References
 
