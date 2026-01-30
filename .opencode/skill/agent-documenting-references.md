@@ -266,7 +266,7 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 **Project Guidance**:
 
 - [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../../governance/conventions/project/plans-organization.md)
+- [Plans Organization Convention](../../../governance/conventions/content/project/plans-organization.md)
 
 **Related Agents**:
 
@@ -278,7 +278,7 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 
 **Related Conventions**:
 
-- [Plans Organization Convention](../../../governance/conventions/project/plans-organization.md)
+- [Plans Organization Convention](../../../governance/conventions/content/project/plans-organization.md)
 - [Gherkin Acceptance Criteria](../../../governance/development/infra/acceptance-criteria.md)
 
 **Skills**:

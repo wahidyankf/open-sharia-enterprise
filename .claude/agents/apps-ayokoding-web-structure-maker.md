@@ -58,4 +58,4 @@ Create folder structure and \_index.md files for ayokoding-web.
 **Related Conventions**:
 
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
-- [Tutorial Folder Arrangement](../../governance/conventions/tutorial/programming-language-structure.md)
+- [Tutorial Folder Arrangement](../../governance/conventions/content/tutorial/programming-language-structure.md)

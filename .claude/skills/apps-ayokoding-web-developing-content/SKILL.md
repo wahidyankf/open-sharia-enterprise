@@ -426,8 +426,8 @@ Vercel automatically:
 
 **Related Conventions**:
 
-- [Programming Language Tutorial Structure](../../../governance/conventions/tutorial/programming-language-structure.md) - Dual-path organization
-- [By Example Tutorial Convention](../../../governance/conventions/tutorial/by-example.md) - Annotation standards
+- [Programming Language Tutorial Structure](../../../governance/conventions/content/tutorial/programming-language-structure.md) - Dual-path organization
+- [By Example Tutorial Convention](../../../governance/conventions/content/tutorial/by-example.md) - Annotation standards
 - [Hugo Content Shared](../../../governance/conventions/hugo/shared.md) - Shared Hugo patterns
 - [Content Quality Principles](../../../governance/conventions/content/quality.md) - Universal quality standards
 

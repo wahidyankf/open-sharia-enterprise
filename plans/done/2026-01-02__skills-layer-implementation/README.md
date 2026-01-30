@@ -149,7 +149,7 @@ This plan implements Skills infrastructure through 2 sequential phases with dire
 
 **Key Conventions:**
 
-- [Plans Organization Convention](../../governance/conventions/project/plans-organization.md) - Multi-file structure for complex plans
+- [Plans Organization Convention](../../governance/conventions/content/project/plans-organization.md) - Multi-file structure for complex plans
 - [AI Agents Convention](../../governance/development/agents/ai-agents.md) - Agent structure, frontmatter, Skills references
 - [Repository Architecture](../../governance/repository-governance-architecture.md) - Six-layer hierarchy (unchanged)
 

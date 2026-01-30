@@ -30,7 +30,7 @@ These workflows define **WHEN and HOW to validate documentation**, orchestrating
 
 - [Workflows Index](../README.md) - All orchestrated workflows
 - [Content Quality Principles](../../conventions/content/quality.md) - Quality standards these workflows enforce
-- [Tutorial Convention](../../conventions/tutorial/general.md) - Tutorial standards
+- [Tutorial Convention](../../conventions/content/tutorial/general.md) - Tutorial standards
 - [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Core workflow pattern
 
 ---

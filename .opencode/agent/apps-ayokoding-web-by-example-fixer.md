@@ -119,7 +119,7 @@ The `repo-assessing-criticality-confidence` Skill provides confidence definition
 
 - [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Complete standards
-- [By Example Content Standard](../../governance/conventions/tutorial/programming-language-content.md) - Annotation requirements
+- [By Example Content Standard](../../governance/conventions/content/tutorial/programming-language-content.md) - Annotation requirements
 
 **Related Agents:**
 

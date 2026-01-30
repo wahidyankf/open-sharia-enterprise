@@ -538,7 +538,7 @@ go processRequest(req)  // => Goroutine spawned (runs concurrently with minimal 
 - Keep code annotations focused on state tracking (`// =>` notation)
 - Reserve extensive explanations for "Brief Explanation" and "Why It Matters" sections
 
-**Note**: This annotation density standard (1-2.25 per example) is the general [ayokoding-web code annotation standard](../hugo/ayokoding.md#code-annotation-standards) applied to all content. By-example tutorials follow the same standard as other tutorial types, with additional requirements for self-containment and five-part format.
+**Note**: This annotation density standard (1-2.25 per example) is the general [ayokoding-web code annotation standard](../../hugo/ayokoding.md#code-annotation-standards) applied to all content. By-example tutorials follow the same standard as other tutorial types, with additional requirements for self-containment and five-part format.
 
 ### Output Annotation Pattern
 
@@ -1023,11 +1023,11 @@ This convention reflects standards validated by **7 production languages** (75-8
 
 This convention implements and respects:
 
-- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Automated validation via ayokoding-web-by-example-checker agent
-- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
-- **[No Time Estimates](../../principles/content/no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
-- **[Accessibility First](../../principles/content/accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Self-contained examples with explicit imports and clear context
+- **[Automation Over Manual](../../../principles/software-engineering/automation-over-manual.md)**: Automated validation via ayokoding-web-by-example-checker agent
+- **[Progressive Disclosure](../../../principles/content/progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
+- **[No Time Estimates](../../../principles/content/no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
+- **[Accessibility First](../../../principles/content/accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
+- **[Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md)**: Self-contained examples with explicit imports and clear context
 
 ## Scope
 
@@ -1038,7 +1038,7 @@ This convention implements and respects:
 - **apps/ose-platform-web/content/** - Platform tutorials using by-example approach
 - **Any other location** - By-example tutorials regardless of directory
 
-**Implementation Notes**: While these standards apply universally, Hugo-specific details (frontmatter, weights, navigation) are covered in [Hugo conventions](../hugo/)
+**Implementation Notes**: While these standards apply universally, Hugo-specific details (frontmatter, weights, navigation) are covered in [Hugo conventions](../../hugo/)
 
 ### What This Convention Covers
 
@@ -1054,17 +1054,17 @@ This convention implements and respects:
 
 - **General tutorial standards** - Covered in [Tutorials Convention](./general.md)
 - **Tutorial naming** - Covered in [Tutorial Naming Convention](./naming.md)
-- **Hugo-specific implementation** - Frontmatter, weights, navigation covered in [Hugo conventions](../hugo/)
+- **Hugo-specific implementation** - Frontmatter, weights, navigation covered in [Hugo conventions](../../hugo/)
 - **Code quality** - Source code standards in development conventions
 - **Tutorial validation** - Covered by apps**ayokoding-web**by-example-checker agent
 
 ## Related Documentation
 
 - [Tutorial Naming Convention](./naming.md): Tutorial type definitions and naming standards
-- [Content Quality Principles](../content/quality.md): General content quality standards
-- [Diagrams Convention](../formatting/diagrams.md): Mermaid diagram standards
-- [Color Accessibility Convention](../formatting/color-accessibility.md): Color-blind friendly palette
-- [Diátaxis Framework](../meta/diataxis-framework.md): Tutorial categorization framework
+- [Content Quality Principles](../quality.md): General content quality standards
+- [Diagrams Convention](../../formatting/diagrams.md): Mermaid diagram standards
+- [Color Accessibility Convention](../../formatting/color-accessibility.md): Color-blind friendly palette
+- [Diátaxis Framework](../../meta/diataxis-framework.md): Tutorial categorization framework
 
 ## Multiple Code Blocks Pattern
 

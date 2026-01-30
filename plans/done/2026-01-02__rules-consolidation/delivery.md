@@ -197,7 +197,7 @@ Create 7 new Skills to cover all agent domains. Use gerund naming pattern. Inclu
   - [x] Create `.claude/skills/creating-project-plans/` directory
   - [x] Create `SKILL.md` with frontmatter and content
   - [x] Add `allowed-tools: Read, Write, Edit, Glob, Grep`
-  - [x] Reference `governance/conventions/project/plans-organization.md`
+  - [x] Reference `governance/conventions/content/project/plans-organization.md`
   - **Date**: 2026-01-02
   - **Status**: Completed
 

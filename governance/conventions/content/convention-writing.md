@@ -68,7 +68,7 @@ Does this define HOW TO WRITE OR FORMAT DOCUMENTATION?
 | ------------------------------------------------- | ----------------------------------------------- | ------------------------------------ |
 | How to write Hugo content (frontmatter, markdown) | `conventions/hugo/hugo-content-ose-platform.md` | About **writing** content            |
 | How to develop Hugo themes (layouts, templates)   | `development/hugo/development.md`               | About **building** infrastructure    |
-| How to format tutorials                           | `conventions/tutorial/general.md`               | About **writing** tutorials          |
+| How to format tutorials                           | `conventions/content/tutorial/general.md`       | About **writing** tutorials          |
 | How to write acceptance criteria                  | `development/infra/acceptance-criteria.md`      | About **software quality** process   |
 | How to name files                                 | `conventions/meta/file-naming.md`               | About **documentation** organization |
 | How to write commit messages                      | `development/workflow/commit-messages.md`       | About **git workflow**               |
@@ -432,7 +432,7 @@ If a convention becomes obsolete:
 Looking for inspiration? These conventions exemplify different structural approaches:
 
 - **[Color Accessibility Convention](../formatting/color-accessibility.md)** - Comprehensive reference convention with detailed palette specifications, contrast ratios, and tool-specific guidance
-- **[Tutorial Naming Convention](../tutorial/naming.md)** - Decision-tree convention with structured types, coverage percentages, and clear selection criteria
+- **[Tutorial Naming Convention](./tutorial/naming.md)** - Decision-tree convention with structured types, coverage percentages, and clear selection criteria
 - **[Indentation Convention](../formatting/indentation.md)** - Simple, focused convention addressing a single technical standard with clear examples
 
 ## Examples

@@ -229,7 +229,7 @@ After implementation steps, add validation:
 
 ## References
 
-**Primary Convention**: [Plans Organization Convention](../../../governance/conventions/project/plans-organization.md)
+**Primary Convention**: [Plans Organization Convention](../../../governance/conventions/content/project/plans-organization.md)
 
 **Related Conventions**:
 

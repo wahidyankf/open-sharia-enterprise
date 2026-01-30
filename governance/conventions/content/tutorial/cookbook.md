@@ -525,11 +525,11 @@ file, err := os.Open(filepath)
 
 This convention implements and respects:
 
-- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Automated validation via ayokoding-web-general-checker agent
-- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Recipes organized by problem complexity within categories
-- **[No Time Estimates](../../principles/content/no-time-estimates.md)**: Focus on problem solved, not time to implement
-- **[Accessibility First](../../principles/content/accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Clear problem statements and complete, runnable code
+- **[Automation Over Manual](../../../principles/software-engineering/automation-over-manual.md)**: Automated validation via ayokoding-web-general-checker agent
+- **[Progressive Disclosure](../../../principles/content/progressive-disclosure.md)**: Recipes organized by problem complexity within categories
+- **[No Time Estimates](../../../principles/content/no-time-estimates.md)**: Focus on problem solved, not time to implement
+- **[Accessibility First](../../../principles/content/accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
+- **[Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md)**: Clear problem statements and complete, runnable code
 
 ## Scope
 
@@ -540,7 +540,7 @@ This convention implements and respects:
 - **apps/ose-platform-web/content/** - Platform cookbooks using recipe approach
 - **Any other location** - Cookbook tutorials regardless of directory
 
-**Implementation Notes**: While these standards apply universally, Hugo-specific details (frontmatter, weights, navigation) are covered in [Hugo conventions](../hugo/)
+**Implementation Notes**: While these standards apply universally, Hugo-specific details (frontmatter, weights, navigation) are covered in [Hugo conventions](../../hugo/)
 
 ### What This Convention Covers
 
@@ -556,7 +556,7 @@ This convention implements and respects:
 
 - **General tutorial standards** - Covered in [Tutorials Convention](./general.md)
 - **Tutorial naming** - Covered in [Tutorial Naming Convention](./naming.md)
-- **Hugo-specific implementation** - Covered in [Hugo conventions](../hugo/)
+- **Hugo-specific implementation** - Covered in [Hugo conventions](../../hugo/)
 - **How-to guides** - Goal-oriented guides in how-to/ directory (different from cookbook)
 - **By-example tutorials** - Sequential learning examples (different structure)
 - **By-concept tutorials** - Comprehensive concept coverage (different organization)

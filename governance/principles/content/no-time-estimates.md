@@ -337,7 +337,7 @@ FAIL: Try to complete each section in 30 minutes to stay on track.
 
 ### Tutorial Naming Convention
 
-**Location**: `governance/conventions/tutorial/naming.md`
+**Location**: `governance/conventions/content/tutorial/naming.md`
 
 **Outcome-focused language**:
 
@@ -432,8 +432,8 @@ Focus on WHAT needs to be done or learned, not HOW LONG it takes.
 
 ## Related Conventions
 
-- [Tutorial Naming Convention](../../conventions/tutorial/naming.md) - Coverage percentages, not time estimates
-- [Tutorial Convention](../../conventions/tutorial/general.md) - Outcome-focused tutorial structure
+- [Tutorial Naming Convention](../../conventions/content/tutorial/naming.md) - Coverage percentages, not time estimates
+- [Tutorial Convention](../../conventions/content/tutorial/general.md) - Outcome-focused tutorial structure
 - [Content Quality Principles](../../conventions/content/quality.md) - Explicit no-time-estimates rule
 
 ## References

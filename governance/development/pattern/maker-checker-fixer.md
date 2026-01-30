@@ -676,7 +676,7 @@ The maker-checker-fixer pattern integrates with repository conventions:
 | [Repository Validation Methodology](../quality/repository-validation.md)    | Standard validation patterns used by checker/fixer              |
 | [Content Quality Principles](../../conventions/content/quality.md)          | What checkers validate (quality standards)                      |
 | [Hugo Content Convention](../../conventions/hugo/shared.md)                 | What ayokoding/ose-platform makers/checkers enforce             |
-| [Tutorial Convention](../../conventions/tutorial/general.md)                | What docs\_\_tutorial-maker/checker enforce                     |
+| [Tutorial Convention](../../conventions/content/tutorial/general.md)        | What docs\_\_tutorial-maker/checker enforce                     |
 | [README Quality Convention](../../conventions/content/readme-quality.md)    | What readme\_\_maker/checker enforce                            |
 | [Temporary Files Convention](../infra/temporary-files.md)                   | Where checker/fixer reports are stored                          |
 
@@ -700,7 +700,7 @@ The maker-checker-fixer pattern integrates with repository conventions:
 - [Hugo Content Convention - Shared](../../conventions/hugo/shared.md) - Hugo content standards
 - [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - ayokoding-web specifics
 - [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - ose-platform-web specifics
-- [Tutorial Convention](../../conventions/tutorial/general.md) - Tutorial quality standards
+- [Tutorial Convention](../../conventions/content/tutorial/general.md) - Tutorial quality standards
 - [README Quality Convention](../../conventions/content/readme-quality.md) - README standards
 
 **Agent Examples**:
