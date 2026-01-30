@@ -39,14 +39,14 @@ By-concept tutorials adapt the general [Tutorial Convention](./general.md) struc
    - Hook and motivation (why this language/framework matters)
    - Prerequisites (programming experience level)
    - Learning path diagram (visual roadmap)
-   - Coverage explanation (0-60% beginner, 60-85% intermediate, 85-95% advanced)
+   - Coverage explanation (0-40% beginner, 40-75% intermediate, 75-95% advanced)
    - Links to by-example path for code-first alternative
 
 2. **Concept sections** (replace sequential examples):
    - 15-25 concept sections per level (beginner/intermediate/advanced)
    - Each section teaches one major concept through narrative + annotated code
    - Concepts build progressively from fundamentals to advanced patterns
-   - Coverage: beginner (0-60%), intermediate (60-85%), advanced (85-95%)
+   - Coverage: beginner (0-40%), intermediate (40-75%), advanced (75-95%)
 
 3. **Hands-on elements integrated into sections**:
    - Code examples within each concept section
@@ -66,7 +66,7 @@ By-concept tutorials MUST follow these general tutorial standards:
 - PASS: **Progressive Disclosure**: Complexity increases gradually (beginner → intermediate → advanced)
 - PASS: **Visual completeness**: Diagrams when appropriate (30-50 diagrams total)
 - PASS: **Hands-on elements**: Every section has runnable code examples
-- PASS: **No time estimates**: Use coverage percentages (0-60%, 60-85%, 85-95%), not time
+- PASS: **No time estimates**: Use coverage percentages (0-40%, 40-75%, 75-95%), not time
 - PASS: **Accessibility**: Color-blind friendly diagrams, clear structure
 - PASS: **Real-world relevance**: Connect concepts to production use cases
 
@@ -126,9 +126,9 @@ Sections prioritize:
 
 **Distribution across levels**:
 
-- **Beginner**: 15-25 sections (0-60% coverage) - Fundamentals and core concepts
-- **Intermediate**: 12-20 sections (60-85% coverage) - Production patterns
-- **Advanced**: 10-20 sections (85-95% coverage) - Expert mastery
+- **Beginner**: 15-25 sections (0-40% coverage) - Fundamentals and core concepts
+- **Intermediate**: 12-20 sections (40-75% coverage) - Production patterns
+- **Advanced**: 10-20 sections (75-95% coverage) - Expert mastery
 
 **Actual ranges observed in production** (ayokoding-web):
 
@@ -442,7 +442,7 @@ print(y)                          # => Output: 84
 
 **Production standards** (ayokoding-web enhanced target):
 
-- **Beginner level**: 10-15 diagrams (50-60% of 15-25 sections)
+- **Beginner level**: 10-15 diagrams (50-40% of 15-25 sections)
 - **Intermediate level**: 10-15 diagrams (60-75% of 12-20 sections)
 - **Advanced level**: 10-15 diagrams (60-75% of 10-20 sections)
 
@@ -478,7 +478,7 @@ graph LR
 
 ## Coverage Progression by Level
 
-### Beginner (0-60% coverage)
+### Beginner (0-40% coverage)
 
 **Focus**: Language/framework fundamentals and core concepts
 
@@ -495,7 +495,7 @@ graph LR
 
 **Section count**: 15-25 sections
 
-### Intermediate (60-85% coverage)
+### Intermediate (40-75% coverage)
 
 **Focus**: Production patterns and framework features
 
@@ -515,7 +515,7 @@ graph LR
 
 **Rationale for variance**: Some languages have simpler production patterns requiring fewer sections, while others with richer ecosystems need more coverage.
 
-### Advanced (85-95% coverage)
+### Advanced (75-95% coverage)
 
 **Focus**: Expert mastery and optimization
 
@@ -548,9 +548,9 @@ content/
                     └── tutorials/
                         └── by-concept/
                             ├── _index.md          # Landing page
-                            ├── beginner.md        # Sections 1-25 (0-60%)
-                            ├── intermediate.md    # Sections 26-45 (60-85%)
-                            └── advanced.md        # Sections 46-60 (85-95%)
+                            ├── beginner.md        # Sections 1-25 (0-40%)
+                            ├── intermediate.md    # Sections 26-45 (40-75%)
+                            └── advanced.md        # Sections 46-60 (75-95%)
 ```
 
 ### File Naming Pattern
@@ -594,9 +594,9 @@ Before publishing by-concept content, verify:
 ### Coverage
 
 - [ ] 40-60 total sections across three levels
-- [ ] Beginner: 15-25 sections (0-60% coverage)
-- [ ] Intermediate: 12-20 sections (60-85% coverage, varies by language)
-- [ ] Advanced: 10-20 sections (85-95% coverage)
+- [ ] Beginner: 15-25 sections (0-40% coverage)
+- [ ] Intermediate: 12-20 sections (40-75% coverage, varies by language)
+- [ ] Advanced: 10-20 sections (75-95% coverage)
 - [ ] 95% coverage of language/framework achieved
 - [ ] Coverage gaps documented and justified
 
@@ -621,7 +621,7 @@ Before publishing by-concept content, verify:
 ### Diagrams
 
 - [ ] 30-50 total diagrams across all three levels
-- [ ] Beginner: 10-15 diagrams (50-60% of sections)
+- [ ] Beginner: 10-15 diagrams (50-40% of sections)
 - [ ] Intermediate: 10-15 diagrams (60-75% of sections)
 - [ ] Advanced: 10-15 diagrams (60-75% of sections)
 - [ ] Diagrams use color-blind friendly palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161)
@@ -672,11 +672,11 @@ By-concept tutorials complement other learning approaches:
 | ----------------- | ---------------- | ------------- | ----------------------- | -------------------------- |
 | **Initial Setup** | 0-5%             | 1-3           | Environment setup       | All users                  |
 | **Quick Start**   | 5-30%            | 5-10          | Project-based           | Newcomers                  |
-| **Beginner**      | 0-60%            | 15-25         | Narrative explanations  | Complete beginners         |
+| **Beginner**      | 0-40%            | 15-25         | Narrative explanations  | Complete beginners         |
 | **By Concept**    | **95%**          | **40-60**     | **Narrative + code**    | **Comprehensive learners** |
 | **By Example**    | **95%**          | **75-85**     | **Code-first examples** | **Experienced developers** |
-| **Intermediate**  | 60-85%           | 20-30         | Production patterns     | Past basics                |
-| **Advanced**      | 85-95%           | 15-25         | Expert topics           | Experienced users          |
+| **Intermediate**  | 40-75%           | 20-30         | Production patterns     | Past basics                |
+| **Advanced**      | 75-95%           | 15-25         | Expert topics           | Experienced users          |
 | **Cookbook**      | Problem-specific | Varies        | Recipe solutions        | All levels                 |
 
 **Key distinction**: By-concept achieves 95% coverage through 40-60 narrative-driven sections while by-example achieves 95% through 75-85 code-first examples. By-concept groups related features into conceptual sections (fewer but broader sections), while by-example demonstrates each feature individually (more but focused examples). Both paths reach the same comprehensive coverage through different pedagogical approaches.
@@ -708,13 +708,13 @@ This convention reflects standards that should be achieved by by-concept tutoria
 
 **Section Count**: 40-60 total
 
-- Beginner: 15-25 sections (0-60% coverage)
-- Intermediate: 12-20 sections (60-85% coverage, varies by language)
-- Advanced: 10-20 sections (85-95% coverage)
+- Beginner: 15-25 sections (0-40% coverage)
+- Intermediate: 12-20 sections (40-75% coverage, varies by language)
+- Advanced: 10-20 sections (75-95% coverage)
 
 **Diagram Density**: 30-50 total diagrams per language (same as by-example)
 
-- Beginner: 10-15 diagrams (50-60% of sections)
+- Beginner: 10-15 diagrams (50-40% of sections)
 - Intermediate: 10-15 diagrams (60-75% of sections)
 - Advanced: 10-15 diagrams (60-75% of sections)
 
@@ -764,7 +764,7 @@ This convention implements and respects:
 - **Target audience** - Comprehensive learners preferring narrative explanations
 - **Code annotation** - 1.0-2.25 comment density per code block with `// =>` notation
 - **Section organization** - Concept hierarchy (not numbered examples)
-- **Coverage distribution** - 0-60% (beginner), 60-85% (intermediate), 85-95% (advanced)
+- **Coverage distribution** - 0-40% (beginner), 40-75% (intermediate), 75-95% (advanced)
 - **Diagram standards** - 30-50 total diagrams using accessible color palette
 - **Section structure** - Intro, narrative, code, takeaway, why it matters
 
