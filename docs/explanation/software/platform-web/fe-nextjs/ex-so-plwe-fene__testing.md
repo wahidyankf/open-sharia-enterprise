@@ -18,7 +18,7 @@ updated: 2026-01-29
 
 This document provides comprehensive guidance on testing Next.js applications with TypeScript. Testing ensures code quality, prevents regressions, and enables confident refactoring. Next.js works well with modern testing tools like Vitest for unit tests and Playwright for end-to-end tests.
 
-**Prerequisites**: Familiarity with [Server Components](./ex-so-plwe-fene__server-components.md), [React testing practices](../fe-react/ex-so-plwe-fera__testing.md), and [TypeScript](../../prog-lang/typescript/README.md).
+**Prerequisites**: Familiarity with [Server Components](./ex-so-plwe-fene__server-components.md), [React testing practices](../fe-react/ex-so-plwe-fere__testing.md), and [TypeScript](../../prog-lang/typescript/README.md).
 
 ## 🧪 Testing Strategy
 
@@ -749,7 +749,7 @@ describe("ContractService", () => {
 
 **React Testing**:
 
-- [React Testing](../fe-react/ex-so-plwe-fera__testing.md) - React testing patterns
+- [React Testing](../fe-react/ex-so-plwe-fere__testing.md) - React testing patterns
 
 **Official Resources**:
 

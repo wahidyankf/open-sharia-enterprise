@@ -13,7 +13,7 @@ Evaluation app specifications provide:
 
 ## Current Specification: IAM System
 
-### [IAM System](./re-eas__iam-overview.md)
+### [IAM System](re-evapsp__iam-overview.md)
 
 Identity and Access Management system with authentication, authorization, and audit trails.
 
@@ -30,7 +30,7 @@ Identity and Access Management system with authentication, authorization, and au
 
 **Metrics**: Medium Complexity | FSM Depth ⭐⭐⭐⭐ | Security Focus ⭐⭐⭐⭐⭐
 
-See the [IAM overview](./re-eas__iam-overview.md) for complete details on features, technology requirements, and planned implementations.
+See the [IAM overview](re-evapsp__iam-overview.md) for complete details on features, technology requirements, and planned implementations.
 
 ## Planned Implementations
 
@@ -47,7 +47,7 @@ apps-labs/
 
 **Note**: `go-raw` uses Go standard library without a web framework to evaluate language ergonomics and built-in capabilities.
 
-See [IAM Overview - Planned Implementations](./re-eas__iam-overview.md#planned-implementations) for detailed evaluation focus, expected strengths, and challenges for each implementation.
+See [IAM Overview - Planned Implementations](re-evapsp__iam-overview.md#planned-implementations) for detailed evaluation focus, expected strengths, and challenges for each implementation.
 
 ## Requirements Framework
 

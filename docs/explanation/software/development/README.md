@@ -71,13 +71,13 @@ Test-Driven Development is a software development approach where tests are writt
 
 **Key Documentation:**
 
-- [Introduction and Philosophy](./test-driven-development-tdd/ex-so-de-tedrdeve__01-introduction-and-philosophy.md) - Overview, history, when to use TDD
-- [Red-Green-Refactor Cycle](./test-driven-development-tdd/ex-so-de-tedrdeve__02-red-green-refactor-cycle.md) - The fundamental TDD workflow ⭐
-- [Test Types and Pyramid](./test-driven-development-tdd/ex-so-de-tedrdeve__03-test-types-and-pyramid.md) - Unit, integration, E2E tests
-- [Unit Testing Fundamentals](./test-driven-development-tdd/ex-so-de-tedrdeve__04-unit-testing-fundamentals.md) - Test structure and isolation
-- [Test Doubles](./test-driven-development-tdd/ex-so-de-tedrdeve__05-test-doubles.md) - Mocks, stubs, spies, fakes
-- [TDD and Functional Programming](./test-driven-development-tdd/ex-so-de-tedrdeve__11-tdd-and-functional-programming.md) - Testing pure functions
-- [TDD and DDD](./test-driven-development-tdd/ex-so-de-tedrdeve__12-tdd-and-ddd.md) - Testing domain models
+- [Introduction and Philosophy](test-driven-development-tdd/ex-so-de-tedrdetd__01-introduction-and-philosophy.md) - Overview, history, when to use TDD
+- [Red-Green-Refactor Cycle](test-driven-development-tdd/ex-so-de-tedrdetd__02-red-green-refactor-cycle.md) - The fundamental TDD workflow ⭐
+- [Test Types and Pyramid](test-driven-development-tdd/ex-so-de-tedrdetd__03-test-types-and-pyramid.md) - Unit, integration, E2E tests
+- [Unit Testing Fundamentals](test-driven-development-tdd/ex-so-de-tedrdetd__04-unit-testing-fundamentals.md) - Test structure and isolation
+- [Test Doubles](test-driven-development-tdd/ex-so-de-tedrdetd__05-test-doubles.md) - Mocks, stubs, spies, fakes
+- [TDD and Functional Programming](test-driven-development-tdd/ex-so-de-tedrdetd__11-tdd-and-functional-programming.md) - Testing pure functions
+- [TDD and DDD](test-driven-development-tdd/ex-so-de-tedrdetd__12-tdd-and-ddd.md) - Testing domain models
 
 **Use TDD when you want to:**
 
@@ -95,14 +95,14 @@ Behavior-Driven Development extends TDD by focusing on behavior specification th
 
 **Key Documentation:**
 
-- [Introduction and Philosophy](./behavior-driven-development-bdd/ex-so-de-bdd__01-introduction-and-philosophy.md) - Overview, when to use BDD
-- [Gherkin Syntax and Scenarios](./behavior-driven-development-bdd/ex-so-de-bdd__02-gherkin-syntax-and-scenarios.md) - Feature files and Given-When-Then
-- [Three Amigos Practice](./behavior-driven-development-bdd/ex-so-de-bdd__04-three-amigos-practice.md) - Collaborative discovery sessions
-- [Example Mapping](./behavior-driven-development-bdd/ex-so-de-bdd__05-example-mapping.md) - Visual discovery workshop technique
-- [Specification by Example](./behavior-driven-development-bdd/ex-so-de-bdd__06-specification-by-example.md) - Concrete examples over abstract requirements
-- [Feature Files and Organization](./behavior-driven-development-bdd/ex-so-de-bdd__08-feature-files-and-organization.md) - Directory structure and conventions
-- [BDD and TDD](./behavior-driven-development-bdd/ex-so-de-bdd__13-bdd-and-tdd.md) - Complementary relationship
-- [BDD and DDD](./behavior-driven-development-bdd/ex-so-de-bdd__14-bdd-and-ddd.md) - Ubiquitous language in scenarios
+- [Introduction and Philosophy](behavior-driven-development-bdd/ex-so-de-bedrdebd__01-introduction-and-philosophy.md) - Overview, when to use BDD
+- [Gherkin Syntax and Scenarios](behavior-driven-development-bdd/ex-so-de-bedrdebd__02-gherkin-syntax-and-scenarios.md) - Feature files and Given-When-Then
+- [Three Amigos Practice](behavior-driven-development-bdd/ex-so-de-bedrdebd__04-three-amigos-practice.md) - Collaborative discovery sessions
+- [Example Mapping](behavior-driven-development-bdd/ex-so-de-bedrdebd__05-example-mapping.md) - Visual discovery workshop technique
+- [Specification by Example](behavior-driven-development-bdd/ex-so-de-bedrdebd__06-specification-by-example.md) - Concrete examples over abstract requirements
+- [Feature Files and Organization](behavior-driven-development-bdd/ex-so-de-bedrdebd__08-feature-files-and-organization.md) - Directory structure and conventions
+- [BDD and TDD](behavior-driven-development-bdd/ex-so-de-bedrdebd__13-bdd-and-tdd.md) - Complementary relationship
+- [BDD and DDD](behavior-driven-development-bdd/ex-so-de-bedrdebd__14-bdd-and-ddd.md) - Ubiquitous language in scenarios
 
 **Use BDD when you have:**
 
@@ -172,38 +172,38 @@ graph TD
 
 **Legend**: 🟢 Teal = Passing tests (GREEN) | 🟠 Orange = Failing tests (RED) | 🟤 Brown = Refactoring
 
-See [BDD and TDD Integration](./behavior-driven-development-bdd/ex-so-de-bdd__13-bdd-and-tdd.md) for comprehensive examples.
+See [BDD and TDD Integration](behavior-driven-development-bdd/ex-so-de-bedrdebd__13-bdd-and-tdd.md) for comprehensive examples.
 
 ## Learning Paths
 
 ### For Developers New to Testing
 
-1. **Start with TDD fundamentals** - Read [Red-Green-Refactor Cycle](./test-driven-development-tdd/ex-so-de-tedrdeve__02-red-green-refactor-cycle.md)
-2. **Practice unit testing** - Read [Unit Testing Fundamentals](./test-driven-development-tdd/ex-so-de-tedrdeve__04-unit-testing-fundamentals.md)
-3. **Learn BDD basics** - Read [Gherkin Syntax](./behavior-driven-development-bdd/ex-so-de-bdd__02-gherkin-syntax-and-scenarios.md)
-4. **Understand the relationship** - Read [BDD and TDD](./behavior-driven-development-bdd/ex-so-de-bdd__13-bdd-and-tdd.md)
+1. **Start with TDD fundamentals** - Read [Red-Green-Refactor Cycle](test-driven-development-tdd/ex-so-de-tedrdetd__02-red-green-refactor-cycle.md)
+2. **Practice unit testing** - Read [Unit Testing Fundamentals](test-driven-development-tdd/ex-so-de-tedrdetd__04-unit-testing-fundamentals.md)
+3. **Learn BDD basics** - Read [Gherkin Syntax](behavior-driven-development-bdd/ex-so-de-bedrdebd__02-gherkin-syntax-and-scenarios.md)
+4. **Understand the relationship** - Read [BDD and TDD](behavior-driven-development-bdd/ex-so-de-bedrdebd__13-bdd-and-tdd.md)
 
 ### For Teams Adopting BDD
 
-1. **Understand BDD philosophy** - Read [BDD Introduction](./behavior-driven-development-bdd/ex-so-de-bdd__01-introduction-and-philosophy.md)
-2. **Learn discovery techniques** - Read [Three Amigos](./behavior-driven-development-bdd/ex-so-de-bdd__04-three-amigos-practice.md) and [Example Mapping](./behavior-driven-development-bdd/ex-so-de-bdd__05-example-mapping.md)
+1. **Understand BDD philosophy** - Read [BDD Introduction](behavior-driven-development-bdd/ex-so-de-bedrdebd__01-introduction-and-philosophy.md)
+2. **Learn discovery techniques** - Read [Three Amigos](behavior-driven-development-bdd/ex-so-de-bedrdebd__04-three-amigos-practice.md) and [Example Mapping](behavior-driven-development-bdd/ex-so-de-bedrdebd__05-example-mapping.md)
 3. **Practice Gherkin writing** - Practice writing Given-When-Then scenarios for your domain
-4. **Integrate with TDD** - Read [BDD and TDD](./behavior-driven-development-bdd/ex-so-de-bdd__13-bdd-and-tdd.md)
-5. **Connect to domain modeling** - Read [BDD and DDD](./behavior-driven-development-bdd/ex-so-de-bdd__14-bdd-and-ddd.md)
+4. **Integrate with TDD** - Read [BDD and TDD](behavior-driven-development-bdd/ex-so-de-bedrdebd__13-bdd-and-tdd.md)
+5. **Connect to domain modeling** - Read [BDD and DDD](behavior-driven-development-bdd/ex-so-de-bedrdebd__14-bdd-and-ddd.md)
 
 ### For Architects and Technical Leads
 
-1. **Understand testing strategy** - Read [Test Types and Pyramid](./test-driven-development-tdd/ex-so-de-tedrdeve__03-test-types-and-pyramid.md)
+1. **Understand testing strategy** - Read [Test Types and Pyramid](test-driven-development-tdd/ex-so-de-tedrdetd__03-test-types-and-pyramid.md)
 2. **Learn when to use each approach** - Review decision matrices in both intro docs
-3. **Integrate with architecture** - Read [TDD and DDD](./test-driven-development-tdd/ex-so-de-tedrdeve__12-tdd-and-ddd.md)
-4. **Avoid common pitfalls** - Read [TDD Best Practices](./test-driven-development-tdd/ex-so-de-tedrdeve__18-best-practices.md), [TDD Antipatterns](./test-driven-development-tdd/ex-so-de-tedrdeve__19-anti-patterns.md), [BDD Best Practices](./behavior-driven-development-bdd/ex-so-de-bdd__17-best-practices.md), and [BDD Antipatterns](./behavior-driven-development-bdd/ex-so-de-bdd__18-anti-patterns.md)
+3. **Integrate with architecture** - Read [TDD and DDD](test-driven-development-tdd/ex-so-de-tedrdetd__12-tdd-and-ddd.md)
+4. **Avoid common pitfalls** - Read [TDD Best Practices](test-driven-development-tdd/ex-so-de-tedrdetd__18-best-practices.md), [TDD Antipatterns](test-driven-development-tdd/ex-so-de-tedrdetd__19-anti-patterns.md), [BDD Best Practices](behavior-driven-development-bdd/ex-so-de-bedrdebd__17-best-practices.md), and [BDD Antipatterns](behavior-driven-development-bdd/ex-so-de-bedrdebd__18-anti-patterns.md)
 
 ### For QA Engineers and Business Analysts
 
-1. **Learn BDD collaboration** - Read [Three Amigos Practice](./behavior-driven-development-bdd/ex-so-de-bdd__04-three-amigos-practice.md)
-2. **Master Gherkin writing** - Read [Gherkin Syntax](./behavior-driven-development-bdd/ex-so-de-bdd__02-gherkin-syntax-and-scenarios.md)
-3. **Practice example mapping** - Read [Example Mapping](./behavior-driven-development-bdd/ex-so-de-bdd__05-example-mapping.md)
-4. **Understand automation** - Read [Automation Strategies](./behavior-driven-development-bdd/ex-so-de-bdd__12-automation-strategies.md)
+1. **Learn BDD collaboration** - Read [Three Amigos Practice](behavior-driven-development-bdd/ex-so-de-bedrdebd__04-three-amigos-practice.md)
+2. **Master Gherkin writing** - Read [Gherkin Syntax](behavior-driven-development-bdd/ex-so-de-bedrdebd__02-gherkin-syntax-and-scenarios.md)
+3. **Practice example mapping** - Read [Example Mapping](behavior-driven-development-bdd/ex-so-de-bedrdebd__05-example-mapping.md)
+4. **Understand automation** - Read [Automation Strategies](behavior-driven-development-bdd/ex-so-de-bedrdebd__12-automation-strategies.md)
 
 ## Practices in This Repository
 

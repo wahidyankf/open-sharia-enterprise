@@ -24,7 +24,7 @@ Technical reference documentation for the open-sharia-enterprise project. These 
 ### Evaluation & Specifications
 
 - [Evaluation App Specifications](./eval-app-specs/README.md) - Mini app specifications for evaluating programming languages and frameworks
-  - [IAM System Overview](./eval-app-specs/re-eas__iam-overview.md) - Identity and Access Management specification
+  - [IAM System Overview](eval-app-specs/re-evapsp__iam-overview.md) - Identity and Access Management specification
 
 ---
 

@@ -1210,14 +1210,14 @@ export default function NotFound() {
 ### React Foundation
 
 - **[React with TypeScript](../fe-react/README.md)** - Core React documentation (prerequisite)
-- **[React Idioms](../fe-react/ex-so-plwe-fera__idioms.md)** - React patterns used in Next.js
-- **[React Best Practices](../fe-react/ex-so-plwe-fera__best-practices.md)** - React standards
+- **[React Idioms](../fe-react/ex-so-plwe-fere__idioms.md)** - React patterns used in Next.js
+- **[React Best Practices](../fe-react/ex-so-plwe-fere__best-practices.md)** - React standards
 
 ### TypeScript Language Standards
 
 - **[TypeScript](../../prog-lang/typescript/README.md)** - Core TypeScript documentation
-- **[TypeScript Idioms](../../prog-lang/typescript/ex-so-prla-ts__idioms.md)** - Modern TypeScript patterns
-- **[TypeScript Best Practices](../../prog-lang/typescript/ex-so-prla-ts__best-practices.md)** - TypeScript coding standards
+- **[TypeScript Idioms](../../prog-lang/typescript/ex-so-prla-ty__idioms.md)** - Modern TypeScript patterns
+- **[TypeScript Best Practices](../../prog-lang/typescript/ex-so-prla-ty__best-practices.md)** - TypeScript coding standards
 
 ### Architecture Patterns
 

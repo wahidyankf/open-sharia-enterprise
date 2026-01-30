@@ -1203,7 +1203,7 @@ Read specialized documentation:
 Read complementary documentation:
 
 - [Domain-Driven Design](./ex-so-plwe-tsre__domain-driven-design.md)
-- [TypeScript DDD Patterns](../../prog-lang/typescript/ex-so-prla-ts__domain-driven-design.md)
+- [TypeScript DDD Patterns](../../prog-lang/typescript/ex-so-prla-ty__domain-driven-design.md)
 - [Functional Programming](./ex-so-plwe-tsre__functional-programming.md)
 
 ## Code Examples from Platform
@@ -1439,10 +1439,10 @@ export const Button: React.FC<ButtonProps> = ({
 ### TypeScript Language Standards
 
 - **[TypeScript](../../prog-lang/typescript/README.md)** - Core TypeScript documentation
-- **[TypeScript Idioms](../../prog-lang/typescript/ex-so-prla-ts__idioms.md)** - Modern TypeScript patterns
-- **[TypeScript Best Practices](../../prog-lang/typescript/ex-so-prla-ts__best-practices.md)** - TypeScript coding standards
-- **[TypeScript Security](../../prog-lang/typescript/ex-so-prla-ts__security.md)** - Secure TypeScript coding
-- **[TypeScript Performance](../../prog-lang/typescript/ex-so-prla-ts__performance.md)** - Performance optimization
+- **[TypeScript Idioms](../../prog-lang/typescript/ex-so-prla-ty__idioms.md)** - Modern TypeScript patterns
+- **[TypeScript Best Practices](../../prog-lang/typescript/ex-so-prla-ty__best-practices.md)** - TypeScript coding standards
+- **[TypeScript Security](../../prog-lang/typescript/ex-so-prla-ty__security.md)** - Secure TypeScript coding
+- **[TypeScript Performance](../../prog-lang/typescript/ex-so-prla-ty__performance.md)** - Performance optimization
 
 ### Architecture Patterns
 
