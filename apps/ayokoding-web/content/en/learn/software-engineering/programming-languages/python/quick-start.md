@@ -9,8 +9,6 @@ tags: ["python", "quick-start", "beginner", "programming"]
 
 **Want to learn Python fundamentals quickly?** This quick start touches 8-12 core Python concepts with one example each. By the end, you'll have practical touchpoints for the most important language features.
 
-This tutorial provides 5-30% coverage - rapid exposure to core concepts. For comprehensive mastery, continue to [Beginner Tutorial](/en/learn/software-engineering/programming-languages/python/by-concept/beginner) (0-60% coverage) or explore [By-Example](/en/learn/software-engineering/programming-languages/python/by-example) for heavily annotated code.
-
 ## Prerequisites
 
 Before starting, you should have:
@@ -104,8 +102,6 @@ print(float_str)        # "3.14"
 
 **Key types**: `int`, `float`, `str`, `bool`, `None`
 
-**When to explore deeper**: [Beginner Tutorial - Variables and Types](/en/learn/software-engineering/programming-languages/python/by-concept/beginner#variables-types)
-
 ## Concept 2: Control Flow - Make Decisions and Loop
 
 Control program execution with conditionals and loops.
@@ -145,8 +141,6 @@ for num in range(10):
 ```
 
 **Key keywords**: `if`, `elif`, `else`, `for`, `while`, `break`, `continue`, `range()`
-
-**When to explore deeper**: [Beginner Tutorial - Control Flow](/en/learn/software-engineering/programming-languages/python/by-concept/beginner#control-flow)
 
 ## Concept 3: Functions - Organize Reusable Code
 
@@ -193,8 +187,6 @@ display_info(name="Alice", age=30, city="NYC")
 
 **Key concepts**: `def`, parameters, `return`, default values, `*args`, `**kwargs`
 
-**When to explore deeper**: [Beginner Tutorial - Functions](/en/learn/software-engineering/programming-languages/python/by-concept/beginner#functions)
-
 ## Concept 4: Data Structures - Collections of Data
 
 Python provides powerful built-in data structures.
@@ -235,8 +227,6 @@ print(my_list[1:3])     # [2, 3] (slicing)
 ```
 
 **Key structures**: `list`, `dict`, `tuple`, `set`
-
-**When to explore deeper**: [Beginner Tutorial - Data Structures](/en/learn/software-engineering/programming-languages/python/by-concept/beginner#data-structures)
 
 ## Concept 5: String Operations - Manipulate Text
 
@@ -280,8 +270,6 @@ print("@" in email)               # True
 
 **Key methods**: `strip()`, `lower()`, `upper()`, `split()`, `join()`, `replace()`, f-strings
 
-**When to explore deeper**: [Beginner Tutorial - Strings](/en/learn/software-engineering/programming-languages/python/by-concept/beginner#strings)
-
 ## Concept 6: File I/O - Read and Write Files
 
 Work with files to persist and retrieve data.
@@ -321,8 +309,6 @@ with open("data.json", "r") as file:
 ```
 
 **Key concepts**: `open()`, `with` statement, `read()`, `write()`, `json` module
-
-**When to explore deeper**: [Beginner Tutorial - File I/O](/en/learn/software-engineering/programming-languages/python/by-concept/beginner#file-io)
 
 ## Concept 7: Error Handling - Handle Exceptions Gracefully
 
@@ -374,8 +360,6 @@ except ValueError as e:
 
 **Key keywords**: `try`, `except`, `else`, `finally`, `raise`
 
-**When to explore deeper**: [Beginner Tutorial - Error Handling](/en/learn/software-engineering/programming-languages/python/by-concept/beginner#error-handling)
-
 ## Concept 8: List Comprehensions - Concise List Creation
 
 Create lists in a single line using comprehensions.
@@ -411,8 +395,6 @@ print(next(large_numbers))  # 1
 ```
 
 **Key concept**: `[expression for item in iterable if condition]`
-
-**When to explore deeper**: [Beginner Tutorial - List Comprehensions](/en/learn/software-engineering/programming-languages/python/by-concept/beginner#list-comprehensions)
 
 ## Concept 9: Classes and Objects - Object-Oriented Programming
 
@@ -477,8 +459,6 @@ print(circle.area)      # 314.159
 
 **Key concepts**: `class`, `__init__`, `self`, inheritance, `@property`
 
-**When to explore deeper**: [Beginner Tutorial - Classes and OOP](/en/learn/software-engineering/programming-languages/python/by-concept/beginner#classes-oop)
-
 ## Concept 10: Modules and Imports - Organize and Reuse Code
 
 Use modules to organize code and leverage the standard library.
@@ -521,8 +501,6 @@ print(os.listdir('.'))  # List files in current directory
 
 **Key modules**: `math`, `datetime`, `random`, `json`, `os`, `sys`, `collections`
 
-**When to explore deeper**: [Beginner Tutorial - Modules](/en/learn/software-engineering/programming-languages/python/by-concept/beginner#modules)
-
 ## Concept 11: Lambda Functions - Anonymous Functions
 
 Create small anonymous functions for quick operations.
@@ -557,8 +535,6 @@ print(result)  # [6, 10, 25]
 ```
 
 **Key concepts**: `lambda`, `map()`, `filter()`, `sorted()` with `key`
-
-**When to explore deeper**: [Beginner Tutorial - Lambda Functions](/en/learn/software-engineering/programming-languages/python/by-concept/beginner#lambda-functions)
 
 ## Concept 12: Working with External Packages - Pip and Virtual Environments
 
@@ -612,8 +588,6 @@ print(df["age"].mean())  # 30.0
 
 **Key commands**: `pip install`, `pip freeze`, `python -m venv`
 
-**When to explore deeper**: [Beginner Tutorial - Packages and Pip](/en/learn/software-engineering/programming-languages/python/by-concept/beginner#packages-pip)
-
 ## Summary
 
 **What you've touched**:
@@ -666,8 +640,6 @@ from collections import Counter
 ## Next Steps
 
 **Want comprehensive Python mastery?**
-
-- [Beginner Tutorial](/en/learn/software-engineering/programming-languages/python/by-concept/beginner) (0-60% coverage) - Deep dive into Python fundamentals with extensive practice
 
 **Prefer code-first learning?**
 

@@ -4238,5 +4238,3 @@ You've completed all 60 advanced examples covering GenServer, Supervisor, OTP ap
 - [Awesome Elixir](https://github.com/h4cc/awesome-elixir)
 
 **Related Content**:
-
-- [Advanced Tutorial](/en/learn/software-engineering/programming-languages/elixir/by-concept/advanced) - Narrative deep dives

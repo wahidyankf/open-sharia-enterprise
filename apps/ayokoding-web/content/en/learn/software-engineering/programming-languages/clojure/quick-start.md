@@ -9,8 +9,6 @@ tags: ["clojure", "quick-start", "beginner", "functional-programming", "lisp", "
 
 **Want to learn Clojure fundamentals quickly?** This quick start touches 10 core Clojure concepts with one example each. By the end, you'll have practical touchpoints for the most important language features.
 
-This tutorial provides 5-30% coverage - rapid exposure to core concepts. For comprehensive mastery, continue to [Beginner Tutorial](/en/learn/software-engineering/programming-languages/clojure/by-concept/beginner) (0-60% coverage) or explore [By-Example](/en/learn/software-engineering/programming-languages/clojure/by-example) for heavily annotated code.
-
 ## Prerequisites
 
 Before starting, you should have:
@@ -145,8 +143,6 @@ Clojure has built-in immutable data structures with simple literal syntax.
 
 **Key concepts**: Lists `'()`, vectors `[]`, maps `{}`, sets `#{}`, keywords `:keyword`, immutability
 
-**When to explore deeper**: [Beginner Tutorial - Data Structures](/en/learn/software-engineering/programming-languages/clojure/by-concept/beginner#data-structures)
-
 ## Concept 2: Functions - First-Class Values
 
 Functions are first-class values that can be passed, returned, and composed.
@@ -241,8 +237,6 @@ Functions are first-class values that can be passed, returned, and composed.
 
 **Key concepts**: `defn`, `fn`, anonymous functions `#()`, `comp`, `partial`, threading macros `->` and `->>`
 
-**When to explore deeper**: [Beginner Tutorial - Functions](/en/learn/software-engineering/programming-languages/clojure/by-concept/beginner#functions)
-
 ## Concept 3: Immutability and Persistent Data - Efficient Updates
 
 All Clojure data structures are immutable with structural sharing for efficiency.
@@ -322,8 +316,6 @@ updated-company
 ```
 
 **Key concepts**: Immutability, structural sharing, `assoc`, `dissoc`, `update`, `update-in`, transients
-
-**When to explore deeper**: [Beginner Tutorial - Immutability](/en/learn/software-engineering/programming-languages/clojure/by-concept/beginner#immutability)
 
 ## Concept 4: Sequences and Lazy Evaluation - Infinite Possibilities
 
@@ -422,8 +414,6 @@ Sequences provide uniform interface to collections with lazy evaluation.
 ```
 
 **Key concepts**: `map`, `filter`, `reduce`, lazy sequences, `take`, `iterate`, infinite sequences
-
-**When to explore deeper**: [Beginner Tutorial - Sequences](/en/learn/software-engineering/programming-languages/clojure/by-concept/beginner#sequences)
 
 ## Concept 5: Destructuring - Pattern Matching for Data
 
@@ -525,8 +515,6 @@ Destructuring extracts values from data structures with concise syntax.
 
 **Key concepts**: Vector destructuring `[a b]`, map destructuring `{:keys [...]}`, `:or` defaults, `:as` binding
 
-**When to explore deeper**: [Beginner Tutorial - Destructuring](/en/learn/software-engineering/programming-languages/clojure/by-concept/beginner#destructuring)
-
 ## Concept 6: Namespaces and Vars - Code Organization
 
 Namespaces organize code and manage dependencies.
@@ -619,8 +607,6 @@ Namespaces organize code and manage dependencies.
 ```
 
 **Key concepts**: `ns`, `:require`, `:as`, `:refer`, namespace-qualified keywords `::`, `def`, metadata
-
-**When to explore deeper**: [Beginner Tutorial - Namespaces](/en/learn/software-engineering/programming-languages/clojure/by-concept/beginner#namespaces)
 
 ## Concept 7: Macros - Code as Data
 
@@ -733,8 +719,6 @@ Macros transform code at compile time, enabling language extension.
 ```
 
 **Key concepts**: `defmacro`, syntax quoting `` ` ``, unquote `~`, unquote-splicing `~@`, gensym `#`
-
-**When to explore deeper**: [Beginner Tutorial - Macros](/en/learn/software-engineering/programming-languages/clojure/by-concept/beginner#macros)
 
 ## Concept 8: State Management - Controlled Mutability
 
@@ -855,8 +839,6 @@ Atoms, refs, and agents provide thread-safe mutable state.
 
 **Key concepts**: `atom`, `swap!`, `reset!`, `ref`, `dosync`, `alter`, `agent`, `send`, `send-off`
 
-**When to explore deeper**: [Beginner Tutorial - State Management](/en/learn/software-engineering/programming-languages/clojure/by-concept/beginner#state)
-
 ## Concept 9: Concurrency - Software Transactional Memory
 
 Clojure provides safe, composable concurrency primitives.
@@ -975,8 +957,6 @@ Clojure provides safe, composable concurrency primitives.
 
 **Key concepts**: `atom` (atomic), `ref` + `dosync` (STM), `agent` (async), `future`, `promise`, `pmap`
 
-**When to explore deeper**: [Beginner Tutorial - Concurrency](/en/learn/software-engineering/programming-languages/clojure/by-concept/beginner#concurrency)
-
 ## Concept 10: Java Interop - Seamless Integration
 
 Clojure runs on JVM with full access to Java libraries.
@@ -1094,8 +1074,6 @@ Integer/MAX_VALUE  ;; => 2147483647
 
 **Key concepts**: `.method`, `ClassName.`, `ClassName/staticMethod`, `import`, `proxy`, `reify`, `doto`
 
-**When to explore deeper**: [Beginner Tutorial - Java Interop](/en/learn/software-engineering/programming-languages/clojure/by-concept/beginner#java-interop)
-
 ## Summary
 
 **What you've touched**:
@@ -1147,8 +1125,6 @@ ClassName/method    ;; Static method
 ## Next Steps
 
 **Want comprehensive Clojure mastery?**
-
-- [Beginner Tutorial](/en/learn/software-engineering/programming-languages/clojure/by-concept/beginner) (0-60% coverage) - Deep dive into Clojure fundamentals with REPL-driven practice
 
 **Prefer code-first learning?**
 

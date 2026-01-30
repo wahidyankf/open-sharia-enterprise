@@ -9,8 +9,6 @@ tags: ["rust", "quick-start", "beginner", "systems-programming", "memory-safety"
 
 **Want to learn Rust fundamentals quickly?** This quick start touches 8-12 core Rust concepts with one example each. By the end, you'll have practical touchpoints for the most important language features.
 
-This tutorial provides 5-30% coverage - rapid exposure to core concepts. For comprehensive mastery, continue to [Beginner Tutorial](/en/learn/software-engineering/programming-languages/rust/by-concept/beginner) (0-60% coverage) or explore [By-Example](/en/learn/software-engineering/programming-languages/rust/by-example) for heavily annotated code.
-
 ## Prerequisites
 
 Before starting, you should have:
@@ -114,11 +112,7 @@ fn main() {
 
 **Key concepts**: `let`, `mut`, shadowing, `const`, type inference
 
-**When to explore deeper**: [Beginner Tutorial - Variables](/en/learn/software-engineering/programming-languages/rust/by-concept/beginner#variables-mutability)
-
 **Key concepts**: `let`, `mut`, shadowing, `const`, type inference
-
-**When to explore deeper**: [Beginner Tutorial - Variables](/en/learn/software-engineering/programming-languages/rust/by-concept/beginner#variables-mutability)
 
 ## Concept 2: Ownership - Rust's Core Feature
 
@@ -167,8 +161,6 @@ fn gives_ownership() -> String {
 ```
 
 **Key concepts**: Ownership, move semantics, `Copy` trait, `clone()`
-
-**When to explore deeper**: [Beginner Tutorial - Ownership](/en/learn/software-engineering/programming-languages/rust/by-concept/beginner#ownership)
 
 ## Concept 3: Borrowing and References - Temporary Access
 
@@ -225,8 +217,6 @@ fn no_dangle_example() -> String {
 ```
 
 **Key concepts**: `&` (immutable reference), `&mut` (mutable reference), borrowing rules
-
-**When to explore deeper**: [Beginner Tutorial - Borrowing](/en/learn/software-engineering/programming-languages/rust/by-concept/beginner#borrowing-references)
 
 ## Concept 4: Structs - Custom Data Types
 
@@ -314,8 +304,6 @@ fn main() {
 
 **Key concepts**: `struct`, `impl`, methods, associated functions, field init shorthand
 
-**When to explore deeper**: [Beginner Tutorial - Structs](/en/learn/software-engineering/programming-languages/rust/by-concept/beginner#structs)
-
 ## Concept 5: Enums and Pattern Matching - Sum Types
 
 Enums represent data that can be one of several variants.
@@ -396,8 +384,6 @@ fn main() {
 
 **Key concepts**: `enum`, `match`, pattern matching, `if let`
 
-**When to explore deeper**: [Beginner Tutorial - Enums](/en/learn/software-engineering/programming-languages/rust/by-concept/beginner#enums-pattern-matching)
-
 ## Concept 6: Error Handling - Result and Option
 
 Rust uses Result and Option for explicit error handling.
@@ -472,8 +458,6 @@ fn divide(a: f64, b: f64) -> Result<f64, String> {
 ```
 
 **Key concepts**: `Option<T>`, `Result<T, E>`, `match`, `unwrap`, `expect`, `?` operator
-
-**When to explore deeper**: [Beginner Tutorial - Error Handling](/en/learn/software-engineering/programming-languages/rust/by-concept/beginner#error-handling)
 
 ## Concept 7: Traits - Shared Behavior
 
@@ -552,8 +536,6 @@ fn main() {
 
 **Key concepts**: `trait`, `impl Trait for Type`, trait bounds, default implementations
 
-**When to explore deeper**: [Beginner Tutorial - Traits](/en/learn/software-engineering/programming-languages/rust/by-concept/beginner#traits)
-
 ## Concept 8: Vectors and Collections - Dynamic Data
 
 Rust provides powerful collection types.
@@ -625,8 +607,6 @@ fn main() {
 
 **Key concepts**: `Vec<T>`, `HashMap<K, V>`, `HashSet<T>`, `push`, `get`, `insert`
 
-**When to explore deeper**: [Beginner Tutorial - Collections](/en/learn/software-engineering/programming-languages/rust/by-concept/beginner#collections)
-
 ## Concept 9: Iterators - Functional Iteration
 
 Iterators enable functional-style data processing.
@@ -675,8 +655,6 @@ fn main() {
 ```
 
 **Key concepts**: `iter()`, `map`, `filter`, `fold`, `collect`, lazy evaluation
-
-**When to explore deeper**: [Beginner Tutorial - Iterators](/en/learn/software-engineering/programming-languages/rust/by-concept/beginner#iterators)
 
 ## Concept 10: Lifetimes - Reference Validity
 
@@ -730,8 +708,6 @@ fn main() {
 ```
 
 **Key concepts**: Lifetime annotations `'a`, lifetime elision, `'static`
-
-**When to explore deeper**: [Beginner Tutorial - Lifetimes](/en/learn/software-engineering/programming-languages/rust/by-concept/beginner#lifetimes)
 
 ## Summary
 
@@ -794,8 +770,6 @@ fn divide(a: f64, b: f64) -> Result<f64, String> {
 ## Next Steps
 
 **Want comprehensive Rust mastery?**
-
-- [Beginner Tutorial](/en/learn/software-engineering/programming-languages/rust/by-concept/beginner) (0-60% coverage) - Deep dive into Rust fundamentals
 
 **Prefer code-first learning?**
 

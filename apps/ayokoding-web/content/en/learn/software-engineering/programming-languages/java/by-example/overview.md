@@ -59,7 +59,6 @@ This by-example guide provides **95% coverage of Java** through practical, annot
 
 This guide focuses on **learning-oriented examples**, not problem-solving recipes or production deployment. For additional topics:
 
-- **Production deployment patterns** - See [Intermediate Tutorial](/en/learn/software-engineering/programming-languages/java/by-concept/intermediate) and [Advanced Tutorial](/en/learn/software-engineering/programming-languages/java/by-concept/advanced)
 - **Deep framework knowledge** - Spring, Hibernate, JavaFX covered at introductory level only
 
 The 95% coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core concepts that unlock the remaining 5%** through your own exploration and project work.
@@ -182,7 +181,7 @@ This tutorial prioritizes working code over theoretical discussion:
 - **Learn by doing**: Understanding comes from running and modifying code
 - **Pattern recognition**: See the same patterns in different contexts across 75 examples
 
-If you prefer narrative explanations, consider the **by-concept tutorial** (available separately). By-example learning works best when you learn through experimentation.
+If you prefer narrative explanations. By-example learning works best when you learn through experimentation.
 
 ## Ready to Start?
 

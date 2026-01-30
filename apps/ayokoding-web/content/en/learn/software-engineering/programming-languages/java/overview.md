@@ -33,15 +33,9 @@ All 4 tutorials in the Java Full Set are now available:
 
 #### Level 1: Beginner (0-60%)
 
-[Complete Beginner's Guide to Java](/en/learn/software-engineering/programming-languages/java/by-concept/beginner) - Comprehensive OOP, collections, testing, streams.
-
 #### Level 2: Intermediate (60-85%)
 
-[Intermediate Java](/en/learn/software-engineering/programming-languages/java/by-concept/intermediate) - Design patterns, SOLID, concurrency, Maven/Gradle, JDBC.
-
 #### Level 3: Advanced (85-95%)
-
-[Advanced Java](/en/learn/software-engineering/programming-languages/java/by-concept/advanced) - JVM internals, GC, reflection, system design.
 
 #### Cookbook: Practical Recipes (Reference)
 
@@ -62,11 +56,6 @@ All 4 tutorials in the Java Full Set are now available:
 ## Learning Recommendations
 
 ### Start Here
-
-- **Complete beginner**: [Beginner](/en/learn/software-engineering/programming-languages/java/by-concept/beginner)
-- **Programmer new to Java**: [Beginner](/en/learn/software-engineering/programming-languages/java/by-concept/beginner)
-- **Professional developer**: [Intermediate](/en/learn/software-engineering/programming-languages/java/by-concept/intermediate)
-- **Expert seeking mastery**: [Advanced](/en/learn/software-engineering/programming-languages/java/by-concept/advanced)
 
 ### Use Anytime
 

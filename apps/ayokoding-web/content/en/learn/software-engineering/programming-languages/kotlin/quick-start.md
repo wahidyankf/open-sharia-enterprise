@@ -9,8 +9,6 @@ tags: ["kotlin", "quick-start", "beginner", "jvm", "android", "programming"]
 
 **Want to learn Kotlin fundamentals quickly?** This quick start touches 10 core Kotlin concepts with one example each. By the end, you'll have practical touchpoints for the most important language features.
 
-This tutorial provides 5-30% coverage - rapid exposure to core concepts. For comprehensive mastery, continue to [Beginner Tutorial](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner) (0-60% coverage) or explore [By-Example](/en/learn/software-engineering/programming-languages/kotlin/by-example) for heavily annotated code.
-
 ## Prerequisites
 
 Before starting, you should have:
@@ -150,8 +148,6 @@ fun main() {
 
 **Key concepts**: `fun`, `val`/`var`, type inference, default parameters, named arguments, string templates
 
-**When to explore deeper**: [Beginner Tutorial - Functions](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner#functions)
-
 ## Concept 2: Null Safety - Avoid NullPointerException
 
 Kotlin's type system distinguishes nullable and non-nullable types.
@@ -244,8 +240,6 @@ fun main() {
 ```
 
 **Key concepts**: Nullable types `Type?`, safe call `?.`, Elvis operator `?:`, `let`, non-null assertion `!!`
-
-**When to explore deeper**: [Beginner Tutorial - Null Safety](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner#null-safety)
 
 ## Concept 3: Classes and Objects - OOP Made Easy
 
@@ -366,8 +360,6 @@ fun main() {
 
 **Key concepts**: Primary constructor, `data class`, `companion object`, `object`, inheritance with `open`/`override`
 
-**When to explore deeper**: [Beginner Tutorial - Classes](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner#classes)
-
 ## Concept 4: Control Flow - Expressive Conditionals
 
 Kotlin's `when` expression is more powerful than `switch`, and smart casts eliminate redundant casting.
@@ -486,8 +478,6 @@ fun main() {
 
 **Key concepts**: `when` expression, ranges `..`, `in` operator, smart casts, expression-based control flow
 
-**When to explore deeper**: [Beginner Tutorial - Control Flow](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner#control-flow)
-
 ## Concept 5: Collections - Functional Operations
 
 Kotlin's collection API is rich with functional programming operations.
@@ -583,8 +573,6 @@ fun main() {
 ```
 
 **Key concepts**: `listOf`/`mutableListOf`, `setOf`, `mapOf`, `map`, `filter`, `reduce`, `fold`, chaining
-
-**When to explore deeper**: [Beginner Tutorial - Collections](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner#collections)
 
 ## Concept 6: Extension Functions - Add Functions to Existing Types
 
@@ -687,8 +675,6 @@ fun main() {
 ```
 
 **Key concepts**: Extension functions, extension properties, generic extensions, nullable receiver, `infix`
-
-**When to explore deeper**: [Beginner Tutorial - Extension Functions](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner#extensions)
 
 ## Concept 7: Higher-Order Functions - Functions as Values
 
@@ -805,8 +791,6 @@ fun main() {
 ```
 
 **Key concepts**: Function types `(Int) -> Int`, lambda parameters, returning functions, `inline`, `reified`
-
-**When to explore deeper**: [Beginner Tutorial - Higher-Order Functions](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner#higher-order)
 
 ## Concept 8: Lambdas and Functional Programming - Concise Expressions
 
@@ -931,8 +915,6 @@ fun main() {
 
 **Key concepts**: Lambda syntax `{ }`, `it` parameter, trailing lambda, closures, function references `::`
 
-**When to explore deeper**: [Beginner Tutorial - Lambdas](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner#lambdas)
-
 ## Concept 9: Coroutines - Structured Concurrency
 
 Kotlin coroutines provide lightweight, structured concurrency.
@@ -1051,8 +1033,6 @@ fun main() = runBlocking {
 ```
 
 **Key concepts**: `suspend fun`, `delay`, `async`/`await`, `launch`, `runBlocking`, `coroutineScope`, `Flow`
-
-**When to explore deeper**: [Beginner Tutorial - Coroutines](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner#coroutines)
 
 ## Concept 10: Sealed Classes - Type-Safe State
 
@@ -1202,8 +1182,6 @@ fun main() {
 
 **Key concepts**: `sealed class`, exhaustive `when`, type-safe state, restricted hierarchies
 
-**When to explore deeper**: [Beginner Tutorial - Sealed Classes](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner#sealed-classes)
-
 ## Summary
 
 **What you've touched**:
@@ -1259,8 +1237,6 @@ suspend fun fetchData(): String { ... }
 ## Next Steps
 
 **Want comprehensive Kotlin mastery?**
-
-- [Beginner Tutorial](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner) (0-60% coverage) - Deep dive into Kotlin fundamentals with extensive practice
 
 **Prefer code-first learning?**
 

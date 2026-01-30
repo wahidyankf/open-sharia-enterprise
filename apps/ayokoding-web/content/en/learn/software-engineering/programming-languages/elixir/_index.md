@@ -13,8 +13,3 @@ weight: 10006
   - [Beginner](/en/learn/software-engineering/programming-languages/elixir/by-example/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-languages/elixir/by-example/intermediate)
   - [Advanced](/en/learn/software-engineering/programming-languages/elixir/by-example/advanced)
-- [By Concept](/en/learn/software-engineering/programming-languages/elixir/by-concept)
-  - [Advanced](/en/learn/software-engineering/programming-languages/elixir/by-concept/advanced)
-  - [Beginner](/en/learn/software-engineering/programming-languages/elixir/by-concept/beginner)
-  - [Intermediate](/en/learn/software-engineering/programming-languages/elixir/by-concept/intermediate)
-  - [Overview](/en/learn/software-engineering/programming-languages/elixir/by-concept/overview)

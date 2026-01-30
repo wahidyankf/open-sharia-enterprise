@@ -132,4 +132,4 @@ All examples run on Elixir 1.14+ and are forward-compatible with newer versions.
 
 Each tutorial builds on previous knowledge. Cross-references link related content.
 
-Ready to start? Begin with the [Beginner tutorial](/en/learn/software-engineering/programming-languages/elixir/by-concept/beginner).
+Ready to start? Begin with the By Example tutorial.

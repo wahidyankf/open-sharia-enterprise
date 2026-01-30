@@ -33,15 +33,9 @@ All 4 tutorials in the Rust Full Set are now available:
 
 #### Level 1: Beginner (0-60%)
 
-[Complete Beginner's Guide to Rust](/en/learn/software-engineering/programming-languages/rust/by-concept/beginner) - Comprehensive ownership system, borrowing, lifetimes, pattern matching, error handling, collections, modules, testing.
-
 #### Level 2: Intermediate (60-85%)
 
-[Intermediate Rust](/en/learn/software-engineering/programming-languages/rust/by-concept/intermediate) - Advanced traits, lifetime deep-dive, smart pointers, concurrency, async/await, iterators, closures, error handling patterns.
-
 #### Level 3: Advanced (85-95%)
-
-[Advanced Rust](/en/learn/software-engineering/programming-languages/rust/by-concept/advanced) - Unsafe Rust, macros, advanced traits, memory layout, performance optimization, type-level programming, WebAssembly.
 
 #### Cookbook: Practical Recipes (Reference)
 
@@ -62,11 +56,6 @@ All 4 tutorials in the Rust Full Set are now available:
 ## Learning Recommendations
 
 ### Start Here
-
-- **Complete beginner**: [Beginner](/en/learn/software-engineering/programming-languages/rust/by-concept/beginner)
-- **Programmer new to Rust**: [Beginner](/en/learn/software-engineering/programming-languages/rust/by-concept/beginner)
-- **Professional developer**: [Intermediate](/en/learn/software-engineering/programming-languages/rust/by-concept/intermediate)
-- **Expert seeking mastery**: [Advanced](/en/learn/software-engineering/programming-languages/rust/by-concept/advanced)
 
 ### Use Anytime
 

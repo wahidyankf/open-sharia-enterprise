@@ -16,8 +16,3 @@ layout: list
   - [Beginner](/en/learn/software-engineering/programming-languages/rust/by-example/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-languages/rust/by-example/intermediate)
   - [Advanced](/en/learn/software-engineering/programming-languages/rust/by-example/advanced)
-- [By Concept](/en/learn/software-engineering/programming-languages/rust/by-concept)
-  - [Advanced](/en/learn/software-engineering/programming-languages/rust/by-concept/advanced)
-  - [Beginner](/en/learn/software-engineering/programming-languages/rust/by-concept/beginner)
-  - [Intermediate](/en/learn/software-engineering/programming-languages/rust/by-concept/intermediate)
-  - [Overview](/en/learn/software-engineering/programming-languages/rust/by-concept/overview)

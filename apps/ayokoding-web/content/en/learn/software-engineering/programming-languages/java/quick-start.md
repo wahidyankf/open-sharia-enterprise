@@ -9,8 +9,6 @@ tags: ["java", "quick-start", "beginner", "oop", "programming"]
 
 **Want to learn Java fundamentals quickly?** This quick start touches 8-12 core Java concepts with one example each. By the end, you'll have practical touchpoints for the most important language features.
 
-This tutorial provides 5-30% coverage - rapid exposure to core concepts. For comprehensive mastery, continue to [Beginner Tutorial](/en/learn/software-engineering/programming-languages/java/by-concept/beginner) (0-60% coverage) or explore [By-Example](/en/learn/software-engineering/programming-languages/java/by-example) for heavily annotated code.
-
 ## Prerequisites
 
 Before starting, you should have:
@@ -133,8 +131,6 @@ public class Main {
 
 **Key concepts**: `class`, fields, constructors, methods, `this`, getters/setters, `new`
 
-**When to explore deeper**: [Beginner Tutorial - Classes and Objects](/en/learn/software-engineering/programming-languages/java/by-concept/beginner#classes-objects)
-
 ## Concept 2: Methods and Overloading - Organize Behavior
 
 Define methods with different signatures.
@@ -190,8 +186,6 @@ public class Main {
 ```
 
 **Key concepts**: Method overloading, `static`, varargs (`int...`)
-
-**When to explore deeper**: [Beginner Tutorial - Methods](/en/learn/software-engineering/programming-languages/java/by-concept/beginner#methods)
 
 ## Concept 3: Inheritance and Polymorphism - Code Reuse
 
@@ -274,8 +268,6 @@ public class Main {
 
 **Key concepts**: `extends`, `super`, `@Override`, polymorphism, `instanceof`, casting
 
-**When to explore deeper**: [Beginner Tutorial - Inheritance](/en/learn/software-engineering/programming-languages/java/by-concept/beginner#inheritance)
-
 ## Concept 4: Interfaces - Define Contracts
 
 Interfaces specify what a class must do, not how.
@@ -349,8 +341,6 @@ public class Main {
 
 **Key concepts**: `interface`, `implements`, abstract methods, `default` methods
 
-**When to explore deeper**: [Beginner Tutorial - Interfaces](/en/learn/software-engineering/programming-languages/java/by-concept/beginner#interfaces)
-
 ## Concept 5: Collections Framework - Data Structures
 
 Java provides rich collection classes for storing data.
@@ -402,8 +392,6 @@ public class Main {
 ```
 
 **Key classes**: `ArrayList`, `HashSet`, `HashMap`, `LinkedList`, `TreeSet`, `TreeMap`
-
-**When to explore deeper**: [Beginner Tutorial - Collections](/en/learn/software-engineering/programming-languages/java/by-concept/beginner#collections)
 
 ## Concept 6: Exception Handling - Handle Errors Gracefully
 
@@ -484,8 +472,6 @@ class InvalidInputException extends Exception {
 
 **Key concepts**: `try`, `catch`, `finally`, `throw`, `throws`, checked vs unchecked exceptions
 
-**When to explore deeper**: [Beginner Tutorial - Exception Handling](/en/learn/software-engineering/programming-languages/java/by-concept/beginner#exception-handling)
-
 ## Concept 7: Streams API - Functional Programming
 
 Process collections with functional operations (Java 8+).
@@ -554,8 +540,6 @@ public class Main {
 ```
 
 **Key operations**: `filter`, `map`, `reduce`, `collect`, `findFirst`, `sorted`, `distinct`
-
-**When to explore deeper**: [Beginner Tutorial - Streams API](/en/learn/software-engineering/programming-languages/java/by-concept/beginner#streams-api)
 
 ## Concept 8: File I/O - Read and Write Files
 
@@ -628,8 +612,6 @@ public class Main {
 ```
 
 **Key classes**: `BufferedReader`, `PrintWriter`, `Files`, `Paths`, try-with-resources
-
-**When to explore deeper**: [Beginner Tutorial - File I/O](/en/learn/software-engineering/programming-languages/java/by-concept/beginner#file-io)
 
 ## Concept 9: Generics - Type-Safe Code
 
@@ -713,8 +695,6 @@ public class Main {
 
 **Key concepts**: `<T>`, type parameters, bounded types, type safety, generic methods
 
-**When to explore deeper**: [Beginner Tutorial - Generics](/en/learn/software-engineering/programming-languages/java/by-concept/beginner#generics)
-
 ## Concept 10: Testing with JUnit - Write Unit Tests
 
 Write automated tests to verify code correctness.
@@ -789,8 +769,6 @@ mvn test
 
 **Key concepts**: `@Test`, assertions (`assertEquals`, `assertTrue`, `assertThrows`), test methods
 
-**When to explore deeper**: [Beginner Tutorial - Testing with JUnit](/en/learn/software-engineering/programming-languages/java/by-concept/beginner#testing-junit)
-
 ## Summary
 
 **What you've touched**:
@@ -858,8 +836,6 @@ try {
 ## Next Steps
 
 **Want comprehensive Java mastery?**
-
-- [Beginner Tutorial](/en/learn/software-engineering/programming-languages/java/by-concept/beginner) (0-60% coverage) - Deep dive into Java fundamentals with extensive practice
 
 **Prefer code-first learning?**
 

@@ -580,8 +580,6 @@ Should output paths to Go installation and workspace.
 
 **Want comprehensive fundamentals?**
 
-- [Beginner Tutorial](/en/learn/software-engineering/programming-languages/golang/by-concept/beginner) (0-60% coverage) - Deep dive into Go basics with extensive practice
-
 **Prefer code-first learning?**
 
 - [By-Example Tutorial](/en/learn/software-engineering/programming-languages/golang/by-example) - Learn through 75+ heavily annotated examples

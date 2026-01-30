@@ -16,8 +16,3 @@ layout: list
   - [Beginner](/en/learn/software-engineering/programming-languages/kotlin/by-example/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-languages/kotlin/by-example/intermediate)
   - [Advanced](/en/learn/software-engineering/programming-languages/kotlin/by-example/advanced)
-- [By Concept](/en/learn/software-engineering/programming-languages/kotlin/by-concept)
-  - [Advanced](/en/learn/software-engineering/programming-languages/kotlin/by-concept/advanced)
-  - [Beginner](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner)
-  - [Intermediate](/en/learn/software-engineering/programming-languages/kotlin/by-concept/intermediate)
-  - [Overview](/en/learn/software-engineering/programming-languages/kotlin/by-concept/overview)

@@ -33,15 +33,9 @@ All 4 tutorials in the Kotlin Full Set are now available:
 
 #### Level 1: Beginner (0-60%)
 
-[Complete Beginner's Guide to Kotlin](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner) - Comprehensive type system, OOP, functional programming, collections, testing.
-
 #### Level 2: Intermediate (60-85%)
 
-[Intermediate Kotlin](/en/learn/software-engineering/programming-languages/kotlin/by-concept/intermediate) - Coroutines, design patterns, performance, databases, REST APIs.
-
 #### Level 3: Advanced (85-95%)
-
-[Advanced Kotlin](/en/learn/software-engineering/programming-languages/kotlin/by-concept/advanced) - Compiler internals, reflection, metaprogramming, advanced coroutines, optimization.
 
 #### Cookbook: Practical Recipes (Reference)
 
@@ -62,11 +56,6 @@ All 4 tutorials in the Kotlin Full Set are now available:
 ## Learning Recommendations
 
 ### Start Here
-
-- **Complete beginner**: [Beginner](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner)
-- **Programmer new to Kotlin**: [Beginner](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner)
-- **Professional developer**: [Intermediate](/en/learn/software-engineering/programming-languages/kotlin/by-concept/intermediate)
-- **Expert seeking mastery**: [Advanced](/en/learn/software-engineering/programming-languages/kotlin/by-concept/advanced)
 
 ### Use Anytime
 
