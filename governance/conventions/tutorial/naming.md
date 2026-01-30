@@ -61,9 +61,9 @@ This convention implements the following core principles:
 graph TB
  A["<b>Initial Setup</b><br/>0-5%"]
  B["<b>Quick Start</b><br/>5-30%"]
- C["<b>Beginner</b><br/>0-60%"]
- D["<b>Intermediate</b><br/>60-85%"]
- E["<b>Advanced</b><br/>85-95%"]
+ C["<b>Beginner</b><br/>0-40%"]
+ D["<b>Intermediate</b><br/>40-75%"]
+ E["<b>Advanced</b><br/>75-95%"]
  F["<b>Cookbook</b><br/>Practical"]
  G["<b>By Example</b><br/>95%"]
 
