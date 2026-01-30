@@ -41,7 +41,10 @@ This convention ensures:
 
 **Applies to:**
 
-- All programming language content under `apps/ayokoding-web/content/[lang]/learn/software-engineering/programming-language/[language]/tutorials/`
+- **All programming language tutorial structures** across the repository:
+  - **ayokoding-web** (`apps/ayokoding-web/content/[lang]/learn/software-engineering/programming-language/[language]/tutorials/`)
+  - **docs/** (`docs/tutorials/software-engineering/programming-languages/[language]/`)
+  - **Any other location** where programming language tutorials are organized
 - Languages: Java, Elixir, Golang, Kotlin, Python, Rust (and future additions)
 
 **Enforced by:**
@@ -49,6 +52,9 @@ This convention ensures:
 - `ayokoding-web-general-checker` (validates by-concept structure)
 - `ayokoding-web-by-example-checker` (validates by-example structure)
 - `ayokoding-web-structure-checker` (validates directory organization)
+- `docs-tutorial-checker` (validates docs/ tutorial quality)
+
+**Implementation Notes**: The Full Set Tutorial Package structure is universal. Hugo-specific implementation details (weight values, frontmatter, navigation) are covered in [Hugo conventions](../hugo/)
 
 ## Directory Structure Pattern
 

@@ -30,19 +30,21 @@ This convention implements the following core principles:
 
 ### What This Convention Covers
 
-- **Tutorial type naming** - 00-initial-setup, 01-quick-start, 02-beginner, etc.
-- **Numeric prefixes** - How tutorial order is encoded
-- **Content identifier format** - Kebab-case naming for tutorial content
-- **Coverage percentages** - What each tutorial level covers
+- **Tutorial type naming** - Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook, By Example
+- **Full Set Tutorial Package definition** - All 5 mandatory components for complete language content
+- **Coverage percentages** - What each tutorial level covers (0-5%, 5-30%, 0-95%)
+- **Component relationships** - How foundational, learning tracks, and cookbook interact
 - **Decision tree** - How to choose the right tutorial type
-- **File naming pattern** - Complete tutorial file naming structure
+- **Universal applicability** - Applies to **all tutorial content** (docs/, ayokoding-web, ose-platform-web, anywhere)
 
 ### What This Convention Does NOT Cover
 
 - **Tutorial content structure** - Covered in [Tutorials Convention](./general.md)
 - **General file naming** - Non-tutorial files covered in [File Naming Convention](../meta/file-naming.md)
-- **Hugo navigation** - Weight and ordering in Hugo sites
+- **Hugo-specific implementation** - Frontmatter, weights, navigation covered in [Hugo conventions](../hugo/)
 - **Tutorial validation** - Covered by docs\_\_tutorial-checker agent
+
+**Note**: These naming standards apply universally to all tutorial content regardless of location. Hugo-specific details (numeric prefixes like `00-`, weight values) are implementation details covered in site-specific conventions
 
 ## Purpose
 

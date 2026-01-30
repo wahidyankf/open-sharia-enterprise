@@ -758,6 +758,15 @@ This convention implements and respects:
 
 ## Scope
 
+**Universal Application**: This convention applies to **all by-concept tutorial content** across the repository:
+
+- **docs/tutorials/** - Programming language tutorials in docs
+- **apps/ayokoding-web/content/** - Programming language tutorials (Java, Golang, Python, etc.)
+- **apps/ose-platform-web/content/** - Platform tutorials using by-concept approach
+- **Any other location** - By-concept tutorials regardless of directory
+
+**Implementation Notes**: While these standards apply universally, Hugo-specific details (frontmatter, weights, navigation) are covered in [Hugo conventions](../hugo/)
+
 ### What This Convention Covers
 
 - **By Concept tutorial structure** - 40-60 narrative-driven sections achieving 95% coverage
@@ -772,6 +781,7 @@ This convention implements and respects:
 
 - **General tutorial standards** - Covered in [Tutorials Convention](./general.md)
 - **Tutorial naming** - Covered in [Tutorial Naming Convention](./naming.md)
+- **Hugo-specific implementation** - Covered in [Hugo conventions](../hugo/)
 - **Hugo implementation** - Hextra specifics in [ayokoding-web convention](../hugo/ayokoding.md)
 - **Code quality** - Source code standards in development conventions
 - **Tutorial validation** - Covered by ayokoding-web-general-checker agent

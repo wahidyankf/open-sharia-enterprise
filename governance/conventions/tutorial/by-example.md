@@ -1031,6 +1031,15 @@ This convention implements and respects:
 
 ## Scope
 
+**Universal Application**: This convention applies to **all by-example tutorial content** across the repository:
+
+- **docs/tutorials/** - Programming language tutorials in docs
+- **apps/ayokoding-web/content/** - Programming language tutorials (Java, Golang, Python, etc.)
+- **apps/ose-platform-web/content/** - Platform tutorials using by-example approach
+- **Any other location** - By-example tutorials regardless of directory
+
+**Implementation Notes**: While these standards apply universally, Hugo-specific details (frontmatter, weights, navigation) are covered in [Hugo conventions](../hugo/)
+
 ### What This Convention Covers
 
 - **By Example tutorial structure** - 75-85 heavily annotated code examples achieving 95% coverage
@@ -1045,7 +1054,7 @@ This convention implements and respects:
 
 - **General tutorial standards** - Covered in [Tutorials Convention](./general.md)
 - **Tutorial naming** - Covered in [Tutorial Naming Convention](./naming.md)
-- **Hugo implementation** - Hextra specifics in [ayokoding-web convention](../hugo/ayokoding.md)
+- **Hugo-specific implementation** - Frontmatter, weights, navigation covered in [Hugo conventions](../hugo/)
 - **Code quality** - Source code standards in development conventions
 - **Tutorial validation** - Covered by apps**ayokoding-web**by-example-checker agent
 

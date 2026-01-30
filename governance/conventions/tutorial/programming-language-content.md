@@ -42,9 +42,14 @@ This convention ensures:
 
 This convention applies to:
 
-- All programming language content under `apps/ayokoding-web/content/[lang]/learn/swe/prog-lang/[language]/`
-- Includes: tutorials, how-to guides, cookbooks, best practices, anti-patterns
+- **All programming language tutorial content** across the repository:
+  - **ayokoding-web** (`apps/ayokoding-web/content/[lang]/learn/swe/prog-lang/[language]/`)
+  - **docs/** (`docs/tutorials/software-engineering/programming-languages/[language]/`)
+  - **Any other location** where programming language tutorials exist
+- Includes: tutorials (foundational, by-concept, by-example, cookbook), how-to guides, best practices, anti-patterns
 - Enforced by: `ayokoding-web-general-checker`, `ayokoding-web-by-example-checker`, `ayokoding-web-general-maker`, `ayokoding-web-by-example-maker`, `ayokoding-web-facts-checker` agents
+
+**Implementation Notes**: While the Full Set Tutorial Package architecture applies universally, Hugo-specific implementation details (frontmatter, weight values, navigation) are covered in [Hugo conventions](../hugo/)
 
 ## Universal Directory Structure
 
