@@ -72,7 +72,6 @@ Skills are direct copies from `.claude/skills/`. For complete documentation, see
 - **Repository Pattern Skills** (7): repo-applying-maker-checker-fixer, repo-applying-fixer-workflow, repo-assessing-criticality-confidence, repo-defining-workflows, repo-executing-checker-workflow, repo-generating-validation-reports, repo-practicing-trunk-based-development, repo-understanding-repository-architecture
 - **Application-Specific Skills** (2): apps-ayokoding-web-developing-content, apps-ose-platform-web-developing-content
 - **Frontend Skills** (1): frontend-design
-- **Multi-File Template** (1): repo-multi-file-template
 
 ---
 
