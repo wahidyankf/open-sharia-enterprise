@@ -253,5 +253,5 @@ This plan is organized into four documents:
 ## References
 
 - Repository Governance Architecture (will be at `/governance/ex-ru__repository-governance-architecture.md` after move)
-- [Plans Organization](../../governance/conventions/project/plans-organization.md)
+- [Plans Organization](../../governance/conventions/content/project/plans-organization.md)
 - [Agent and Skill Definitions as Documentation Source of Truth](../2026-01-04__agents-docs-source-of-truth/) - Separate plan handling `governance/agents/`

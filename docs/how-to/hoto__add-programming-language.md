@@ -25,7 +25,7 @@ Before starting, ensure you have:
 - [ ] **Deep expertise** in the target language (5+ years experience recommended)
 - [ ] **Access to repository** with write permissions to `apps/ayokoding-web/`
 - [ ] **Familiarity with conventions**:
-  - [Programming Language Content Standard](../../governance/conventions/tutorial/programming-language-content.md)
+  - [Programming Language Content Standard](../../governance/conventions/content/tutorial/programming-language-content.md)
   - [Hugo Content Convention - ayokoding](../../governance/conventions/hugo/ayokoding.md)
   - [Content Quality Principles](../../governance/conventions/content/quality.md)
 - [ ] **AI agents available**:
@@ -905,9 +905,9 @@ Use this final checklist to verify completion:
 
 ## Related Documentation
 
-- [Programming Language Content Standard](../../governance/conventions/tutorial/programming-language-content.md) - Complete standard definition
+- [Programming Language Content Standard](../../governance/conventions/content/tutorial/programming-language-content.md) - Complete standard definition
 - [Hugo Content Convention - ayokoding](../../governance/conventions/hugo/ayokoding.md) - Hextra theme specifics
 - [Content Quality Principles](../../governance/conventions/content/quality.md) - Quality requirements
-- [Tutorial Naming Convention](../../governance/conventions/tutorial/naming.md) - Tutorial level definitions
+- [Tutorial Naming Convention](../../governance/conventions/content/tutorial/naming.md) - Tutorial level definitions
 - [Factual Validation Convention](../../governance/conventions/content/factual-validation.md) - Fact-checking methodology
 - [Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md) - Approved color palette

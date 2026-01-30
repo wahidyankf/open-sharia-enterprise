@@ -235,7 +235,7 @@ All workflows must respect core principles:
 - [Fixer Confidence Levels](../development/quality/fixer-confidence-levels.md) - How fixers assess changes
 - [Content Preservation](../development/quality/content-preservation.md) - Preserving meaning during fixes
 - [Temporary Files](../development/infra/temporary-files.md) - Where workflow outputs go
-- [Plans Organization](../conventions/project/plans-organization.md) - How plans relate to workflows
+- [Plans Organization](../conventions/content/project/plans-organization.md) - How plans relate to workflows
 
 ### Layer Documentation
 

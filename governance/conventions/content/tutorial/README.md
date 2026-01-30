@@ -23,11 +23,13 @@ These conventions define **HOW to create and structure tutorials**, covering tut
 
 **❌ Does NOT Cover:**
 
-- General content quality (that's content/)
-- Markdown formatting (that's formatting/)
-- Hugo-specific implementation details (that's hugo/)
+- Universal content quality standards (that's `../` - parent directory)
+- Markdown formatting (that's `../../formatting/`)
+- Hugo-specific implementation details (that's `../../hugo/`)
 
-**Note**: These are **content conventions** defining WHAT to write and HOW to structure tutorials. Hugo-specific implementation details (frontmatter, weights, navigation) are covered in [Hugo conventions](../hugo/)
+**Relationship to Universal Standards**: These tutorial-specific conventions **build upon and extend** the universal content standards defined in the parent directory (`../quality.md`, `../factual-validation.md`). All tutorial content must comply with both universal standards AND tutorial-specific requirements.
+
+**Note**: These are **content conventions** defining WHAT to write and HOW to structure tutorials. Hugo-specific implementation details (frontmatter, weights, navigation) are covered in [Hugo conventions](../../hugo/)
 
 ## Conventions
 
@@ -62,20 +64,20 @@ A language is **NOT complete** until all 5 components exist and pass validation.
 
 ## Related Documentation
 
-- [Conventions Index](../README.md) - All documentation conventions
-- [Progressive Disclosure Principle](../../principles/content/progressive-disclosure.md) - Why layered complexity matters
-- [No Time Estimates Principle](../../principles/content/no-time-estimates.md) - Why we use coverage percentages
-- [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
+- [Conventions Index](../../README.md) - All documentation conventions
+- [Progressive Disclosure Principle](../../../principles/content/progressive-disclosure.md) - Why layered complexity matters
+- [No Time Estimates Principle](../../../principles/content/no-time-estimates.md) - Why we use coverage percentages
+- [Repository Architecture](../../../repository-governance-architecture.md) - Six-layer governance model
 
 ## Principles Implemented/Respected
 
 This set of conventions implements/respects the following core principles:
 
-- **[No Time Estimates](../../principles/content/no-time-estimates.md)**: Tutorial conventions use coverage percentages and depth levels rather than time estimates, focusing on learning outcomes rather than duration.
+- **[No Time Estimates](../../../principles/content/no-time-estimates.md)**: Tutorial conventions use coverage percentages and depth levels rather than time estimates, focusing on learning outcomes rather than duration.
 
-- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Tutorial naming conventions and depth levels (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook) enable progressive learning based on user's current knowledge level.
+- **[Progressive Disclosure](../../../principles/content/progressive-disclosure.md)**: Tutorial naming conventions and depth levels (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook) enable progressive learning based on user's current knowledge level.
 
-- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: By-example tutorial approach provides code-first learning with simple, annotated examples rather than complex theoretical explanations.
+- **[Simplicity Over Complexity](../../../principles/general/simplicity-over-complexity.md)**: By-example tutorial approach provides code-first learning with simple, annotated examples rather than complex theoretical explanations.
 
 ---
 

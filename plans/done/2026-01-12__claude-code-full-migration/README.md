@@ -349,7 +349,7 @@ This plan is organized into four documents:
 - [Converting Claude Subagents to OpenCode](https://claude-plugins.dev/skills/@edheltzel/dotfiles/converting-claude-subagents)
 - [AI Agents Convention](../../../governance/development/agents/ai-agents.md)
 - [Repository Governance Architecture](../../../governance/ex-ru__repository-governance-architecture.md)
-- [Plans Organization Convention](../../../governance/conventions/project/plans-organization.md)
+- [Plans Organization Convention](../../../governance/conventions/content/project/plans-organization.md)
 - Current conversion scripts: `scripts/convert-agents-to-opencode.py`, `scripts/validate-opencode-agents.py`, `scripts/sync-claude-opencode.py`
 - Existing dual-format plan: `plans/backlog/2026-01-04__agents-docs-source-of-truth/` (alternative approach rejected)
 

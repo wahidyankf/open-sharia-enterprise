@@ -54,7 +54,7 @@ Plans follow single-file or multi-file structure based on size:
 - **Single-File** (≤1000 lines): All content in README.md
 - **Multi-File** (>1000 lines): Separate README.md, requirements.md, tech-docs.md, delivery.md
 
-See [Plans Organization Convention](../../governance/conventions/project/plans-organization.md) for complete structure details.
+See [Plans Organization Convention](../../governance/conventions/content/project/plans-organization.md) for complete structure details.
 
 ## Planning Workflow
 
@@ -167,7 +167,7 @@ See [Trunk Based Development Convention](../../governance/development/workflow/t
 **Project Guidance:**
 
 - [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../governance/conventions/project/plans-organization.md) - Plan structure and organization
+- [Plans Organization Convention](../../governance/conventions/content/project/plans-organization.md) - Plan structure and organization
 - [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) - Git workflow
 
 **Related Agents:**

@@ -62,4 +62,4 @@ Create by-concept tutorials and general content for ayokoding-web.
 **Related Conventions**:
 
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
-- [Programming Language Content](../../governance/conventions/tutorial/programming-language-content.md)
+- [Programming Language Content](../../governance/conventions/content/tutorial/programming-language-content.md)
