@@ -823,6 +823,6 @@
 - [OpenCode Agent Format](https://opencode.ai/docs/agents)
 - [OpenCode Skills Documentation](https://opencode.ai/docs/skills)
 - [Maker-Checker-Fixer Pattern](../../../governance/development/pattern/maker-checker-fixer.md)
-- [Plans Organization Convention](../../../governance/conventions/content/project/plans-organization.md)
+- [Plans Organization Convention](../../../governance/conventions/structure/plans.md)
 - Migration test suite: `tests/migration-validation.ts`
 - Schema validator: `scripts/validate-opencode-schema.py`

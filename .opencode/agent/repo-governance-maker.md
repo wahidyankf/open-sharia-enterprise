@@ -32,7 +32,7 @@ Create repository rules and conventions.
 
 ## Reference
 
-- [Convention Writing Convention](../../governance/conventions/content/convention-writing.md)
+- [Convention Writing Convention](../../governance/conventions/writing/conventions.md)
 - Skills: `docs-applying-diataxis-framework`, `docs-applying-content-quality`
 
 ## Workflow
@@ -53,5 +53,5 @@ Document standards following convention structure (Purpose, Standards, Examples,
 
 **Related Conventions**:
 
-- [Convention Writing Convention](../../governance/conventions/content/convention-writing.md)
+- [Convention Writing Convention](../../governance/conventions/writing/conventions.md)
 - [AI Agents Convention](../../governance/development/agents/ai-agents.md)

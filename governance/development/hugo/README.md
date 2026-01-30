@@ -20,7 +20,7 @@ These standards define **HOW to develop Hugo themes and layouts**, covering them
 
 - Hugo content writing (that's conventions/hugo/)
 - General markdown formatting (that's conventions/formatting/)
-- Content quality standards (that's conventions/content/)
+- Content quality standards (that's conventions/writing/)
 
 ## Documents
 

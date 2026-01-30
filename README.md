@@ -273,7 +273,7 @@ Documentation is organized using the [Diátaxis framework](https://diataxis.fr/)
 
 **Viewing Tip**: The `docs/` folder works as an [Obsidian](https://obsidian.md/) vault for enhanced navigation and graph view.
 
-For complete documentation framework details, see [Diátaxis Framework](./governance/conventions/meta/diataxis-framework.md) and [`docs/README.md`](./docs/README.md).
+For complete documentation framework details, see [Diátaxis Framework](./governance/conventions/structure/diataxis-framework.md) and [`docs/README.md`](./docs/README.md).
 
 ## 📜 License
 

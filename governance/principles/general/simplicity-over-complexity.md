@@ -679,7 +679,7 @@ The right amount of complexity is the **minimum needed** for the current task.
 - [Implementation Workflow](../../development/workflow/implementation.md) - Start simple (make it work), then refine (make it right), then optimize (make it fast)
 - [Monorepo Structure](../../../docs/reference/re__monorepo-structure.md) - Flat library organization
 - [AI Agents Convention](../../development/agents/ai-agents.md) - Single-purpose agents
-- [Diátaxis Framework](../../conventions/meta/diataxis-framework.md) - Four simple categories
+- [Diátaxis Framework](../../conventions/structure/diataxis-framework.md) - Four simple categories
 
 ## References
 

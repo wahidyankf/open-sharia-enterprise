@@ -449,7 +449,7 @@ cover:
 **Related Conventions**:
 
 - [Hugo Content Shared](../../../governance/conventions/hugo/shared.md) - Shared Hugo patterns
-- [Content Quality Principles](../../../governance/conventions/content/quality.md) - Universal quality standards
+- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Universal quality standards
 
 **Related Skills**:
 
@@ -541,7 +541,7 @@ Vercel automatically:
 **Related Conventions**:
 
 - [Hugo Content Shared](../../../governance/conventions/hugo/shared.md) - Shared Hugo patterns
-- [Content Quality Principles](../../../governance/conventions/content/quality.md) - Universal quality standards
+- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Universal quality standards
 
 **Related Skills**:
 

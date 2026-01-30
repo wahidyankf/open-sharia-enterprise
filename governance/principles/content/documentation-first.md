@@ -239,7 +239,7 @@ PASS: **Every convention** has a document explaining:
 
 FAIL: **Anti-pattern**: "We just follow this convention, everyone knows it"
 
-**Example**: Instead of just enforcing file naming via checker agents, we have [File Naming Convention](../../conventions/meta/file-naming.md) explaining:
+**Example**: Instead of just enforcing file naming via checker agents, we have [File Naming Convention](../../conventions/structure/file-naming.md) explaining:
 
 - The pattern: `[prefix]__[content-identifier].[extension]`
 - The why: Hierarchical organization, searchability, automation
@@ -502,7 +502,7 @@ Organize documentation into four categories:
 - **Reference**: Information-oriented (technical specifications, API details)
 - **Explanation**: Understanding-oriented (concepts, architecture, decisions)
 
-See [Diátaxis Framework](../../conventions/meta/diataxis-framework.md) for complete details.
+See [Diátaxis Framework](../../conventions/structure/diataxis-framework.md) for complete details.
 
 **Why this works**: Different audiences need different documentation types. Organizing by purpose makes information findable.
 
@@ -577,9 +577,9 @@ Every piece of documentation should include examples:
 
 Every convention is fully documented:
 
-- [File Naming Convention](../../conventions/meta/file-naming.md) - Explains pattern, rationale, examples
+- [File Naming Convention](../../conventions/structure/file-naming.md) - Explains pattern, rationale, examples
 - [Linking Convention](../../conventions/formatting/linking.md) - GitHub-compatible links, two-tier formatting
-- [Diátaxis Framework](../../conventions/meta/diataxis-framework.md) - How to organize documentation
+- [Diátaxis Framework](../../conventions/structure/diataxis-framework.md) - How to organize documentation
 - [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - Accessible color palette, WCAG compliance
 
 **Why this works**: Contributors understand conventions deeply. Checker agents can validate against documented standards.
@@ -665,10 +665,10 @@ function validateMurabahahContract(contract: MurabahahContract): ValidationResul
 
 ## Related Conventions
 
-- [Diátaxis Framework](../../conventions/meta/diataxis-framework.md) - How to organize documentation into four categories
-- [Content Quality Principles](../../conventions/content/quality.md) - Quality standards for all markdown content
-- [README Quality Convention](../../conventions/content/readme-quality.md) - Standards for README files
-- [Convention Writing Convention](../../conventions/content/convention-writing.md) - How to write convention documents
+- [Diátaxis Framework](../../conventions/structure/diataxis-framework.md) - How to organize documentation into four categories
+- [Content Quality Principles](../../conventions/writing/quality.md) - Quality standards for all markdown content
+- [README Quality Convention](../../conventions/writing/readme-quality.md) - Standards for README files
+- [Convention Writing Convention](../../conventions/writing/conventions.md) - How to write convention documents
 
 ## References
 

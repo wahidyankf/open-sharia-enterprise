@@ -595,9 +595,9 @@ Good vs Bad code examples...
 
 **Required Conventions**:
 
-- [File Naming Convention](../../../governance/conventions/meta/file-naming.md)
-- [Content Quality Convention](../../../governance/conventions/content/quality.md)
-- [Diátaxis Framework](../../../governance/conventions/meta/diataxis-framework.md)
+- [File Naming Convention](../../../governance/conventions/structure/file-naming.md)
+- [Content Quality Convention](../../../governance/conventions/writing/quality.md)
+- [Diátaxis Framework](../../../governance/conventions/structure/diataxis-framework.md)
 - [Diagrams Convention](../../../governance/conventions/formatting/diagrams.md)
 - [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)
 
@@ -1534,9 +1534,9 @@ Scenario: Documentation matches quality standards
 
 **Conventions**:
 
-- [File Naming Convention](../../../governance/conventions/meta/file-naming.md)
-- [Content Quality Convention](../../../governance/conventions/content/quality.md)
-- [Diátaxis Framework](../../../governance/conventions/meta/diataxis-framework.md)
+- [File Naming Convention](../../../governance/conventions/structure/file-naming.md)
+- [Content Quality Convention](../../../governance/conventions/writing/quality.md)
+- [Diátaxis Framework](../../../governance/conventions/structure/diataxis-framework.md)
 - [Diagrams Convention](../../../governance/conventions/formatting/diagrams.md)
 - [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)
 

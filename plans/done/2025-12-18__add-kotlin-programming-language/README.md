@@ -10,7 +10,7 @@
 
 ## Overview
 
-This plan outlines the addition of comprehensive Kotlin programming language content to ayokoding-web following the [Programming Language Content Standard](../../../governance/conventions/tutorial/programming-language-content.md). Kotlin will be implemented with all 5 tutorial levels, cookbook, how-to guides, and explanation documents, targeting 12,000-15,000 lines of production-ready educational content.
+This plan outlines the addition of comprehensive Kotlin programming language content to ayokoding-web following the [Programming Language Content Standard](../../../governance/conventions/tutorials/programming-language-content.md). Kotlin will be implemented with all 5 tutorial levels, cookbook, how-to guides, and explanation documents, targeting 12,000-15,000 lines of production-ready educational content.
 
 ### Goals
 

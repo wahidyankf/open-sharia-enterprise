@@ -334,7 +334,7 @@ That's it. Two diagrams. This covers 80% of what stakeholders need.
 
 **Documentation Standards**:
 
-- [Diátaxis Framework](../../../../../governance/conventions/meta/diataxis-framework.md) - Documentation organization
+- [Diátaxis Framework](../../../../../governance/conventions/structure/diataxis-framework.md) - Documentation organization
 - [Diagrams Convention](../../../../../governance/conventions/formatting/diagrams.md) - Mermaid diagram standards
 - [Accessible Diagrams Skill](../../../../../.claude/skills/docs-creating-accessible-diagrams/SKILL.md) - WCAG-compliant color palette
 

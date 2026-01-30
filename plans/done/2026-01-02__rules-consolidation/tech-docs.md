@@ -57,10 +57,10 @@ The following 7 Skills need "References" sections added (using new gerund names)
 
 | Skill (New Name)                     | Authoritative Source                                                                                                |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
-| `creating-by-example-tutorials`      | `governance/conventions/tutorial/by-example.md`                                                                     |
+| `creating-by-example-tutorials`      | `governance/conventions/tutorials/by-example.md`                                                                     |
 | `assessing-criticality-confidence`   | `governance/development/quality/criticality-levels.md`, `governance/development/quality/fixer-confidence-levels.md` |
 | `developing-ayokoding-content`       | `governance/conventions/hugo/ayokoding.md`                                                                          |
-| `validating-factual-accuracy`        | `governance/conventions/content/factual-validation.md`                                                              |
+| `validating-factual-accuracy`        | `governance/conventions/writing/factual-validation.md`                                                              |
 | `writing-gherkin-criteria`           | `governance/development/infra/acceptance-criteria.md`                                                               |
 | `developing-ose-content`             | `governance/conventions/hugo/ose-platform.md`                                                                       |
 | `practicing-trunk-based-development` | `governance/development/workflow/trunk-based-development.md`                                                        |
@@ -494,6 +494,6 @@ This plan uses only existing repository tools and patterns. No new npm packages,
 ## Related Documentation
 
 - [Repository Governance Architecture](../../../governance/repository-governance-architecture.md)
-- [Convention Writing Convention](../../../governance/conventions/content/convention-writing.md)
+- [Convention Writing Convention](../../../governance/conventions/writing/conventions.md)
 - [AI Agents Convention](../../../governance/development/agents/ai-agents.md)
 - [Skills Directory](../../../.claude/skills/README.md)

@@ -257,7 +257,7 @@ grep -E "(is|are|was|were|be|been) (controlled|managed|handled|processed|utilize
 
 ## Validation Re-implementation Guide
 
-**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../governance/development/quality/repository-validation.md) and [README Quality Convention](../../governance/conventions/content/readme-quality.md).
+**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../governance/development/quality/repository-validation.md) and [README Quality Convention](../../governance/conventions/writing/readme-quality.md).
 
 **Key points:**
 
@@ -317,7 +317,7 @@ Always provide:
 
 - [Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md) - Universal confidence assessment system
 - [Maker-Checker-Fixer Pattern Convention](../../governance/development/pattern/maker-checker-fixer.md) - Three-stage quality workflow
-- [README Quality Convention](../../governance/conventions/content/readme-quality.md) - Complete README standards (primary reference)
+- [README Quality Convention](../../governance/conventions/writing/readme-quality.md) - Complete README standards (primary reference)
 - [Repository Validation Methodology Convention](../../governance/development/quality/repository-validation.md) - Standard validation patterns
 - [Temporary Files Convention](../../governance/development/infra/temporary-files.md) - Where to store fix reports
 

@@ -349,24 +349,24 @@ When renaming a directory in `docs/`, you **must rename all files within that di
 3. Update any markdown links that reference those files
 4. Update related index files (`README.md`)
 
-**Example**: Renaming `governance/conventions/meta/` to `governance/conventions/standards/`:
+**Example**: Renaming `governance/conventions/formatting/` to `governance/conventions/style/`:
 
 **Before**:
 
 ```
-governance/conventions/meta/
+governance/conventions/formatting/
 ├── README.md
-├── file-naming.md
-└── diataxis-framework.md
+├── linking.md
+└── indentation.md
 ```
 
 **After**:
 
 ```
-governance/conventions/standards/
+governance/conventions/style/
 ├── README.md
-├── file-naming.md
-└── diataxis-framework.md
+├── linking.md
+└── indentation.md
 ```
 
 **Changes required**:

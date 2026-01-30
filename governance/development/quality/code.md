@@ -34,7 +34,7 @@ This practice implements/respects the following conventions:
 
 - **[Indentation Convention](../../conventions/formatting/indentation.md)**: Prettier enforces consistent indentation (2 spaces for YAML frontmatter) across all formatted file types.
 
-- **[File Naming Convention](../../conventions/meta/file-naming.md)**: Pre-commit hook formats all files matching the repository's file naming patterns without altering the naming structure.
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Pre-commit hook formats all files matching the repository's file naming patterns without altering the naming structure.
 
 ## Overview
 

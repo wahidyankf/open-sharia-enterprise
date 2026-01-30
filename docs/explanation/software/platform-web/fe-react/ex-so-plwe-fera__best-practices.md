@@ -1799,7 +1799,7 @@ export const WithCallbacks: Story = {
 **Repository Conventions**:
 
 - [Functional Programming Convention](../../../../governance/development/pattern/functional-programming.md) - Functional patterns in TypeScript/React
-- [Code Quality Principles](../../../../governance/conventions/content/quality.md) - Universal quality standards
+- [Code Quality Principles](../../../../governance/conventions/writing/quality.md) - Universal quality standards
 - [Accessibility First Principle](../../../../governance/principles/content/accessibility-first.md) - Accessibility requirements
 
 **Related Documentation**:

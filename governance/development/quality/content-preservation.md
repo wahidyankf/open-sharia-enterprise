@@ -31,11 +31,11 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Convention Writing Convention](../../conventions/content/convention-writing.md)**: Content offload targets (convention and development docs) follow the structure and quality standards defined in this convention.
+- **[Convention Writing Convention](../../conventions/writing/conventions.md)**: Content offload targets (convention and development docs) follow the structure and quality standards defined in this convention.
 
 - **[Linking Convention](../../conventions/formatting/linking.md)**: All offload summaries include relative links with .md extension to comprehensive convention documents, ensuring GitHub-compatible navigation.
 
-- **[File Naming Convention](../../conventions/meta/file-naming.md)**: New convention and development documents created during offload follow the ex-co**and ex-de** prefix patterns.
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: New convention and development documents created during offload follow the ex-co**and ex-de** prefix patterns.
 
 ## Purpose
 
@@ -87,7 +87,7 @@ After (AGENTS.md - 3 lines):
 
 ## File Naming Convention
 
-Files follow the pattern `[prefix]__[content-identifier].md` where prefix encodes the directory path. See [File Naming Convention](../../conventions/meta/file-naming.md) for complete details.
+Files follow the pattern `[prefix]__[content-identifier].md` where prefix encodes the directory path. See [File Naming Convention](../../conventions/structure/file-naming.md) for complete details.
 
 Result: Content preserved in ex-co\_\_file-naming-convention.md (comprehensive)
 ```
@@ -368,7 +368,7 @@ Before completing a content offload, verify:
 - [ ] Convention doc is comprehensive
 - [ ] Frontmatter complete and accurate
 - [ ] Updated date reflects changes
-- [ ] Structure follows convention patterns (see [Convention Writing Convention](../../conventions/content/convention-writing.md))
+- [ ] Structure follows convention patterns (see [Convention Writing Convention](../../conventions/writing/conventions.md))
 - [ ] Examples include PASS: good and FAIL: bad
 
 ### Original File Updates
@@ -546,10 +546,10 @@ Problem: Convention polluted with implementation details
 
 ## References
 
-- [Convention Writing Convention](../../conventions/content/convention-writing.md) - How to write convention documents (target for offloaded content)
+- [Convention Writing Convention](../../conventions/writing/conventions.md) - How to write convention documents (target for offloaded content)
 - [AI Agents Convention](../agents/ai-agents.md) - Agent standards (agents apply content preservation principles)
 - [Trunk Based Development Convention](../workflow/trunk-based-development.md) - Git workflow example of development convention
-- [File Naming Convention](../../conventions/meta/file-naming.md) - Example of content convention
+- [File Naming Convention](../../conventions/structure/file-naming.md) - Example of content convention
 
 ## Agent Usage
 
@@ -586,4 +586,4 @@ When creating new convention or development documents during offload, `docs__mak
 
 - [AGENTS.md Maintenance](../../../AGENTS.md#claudemd-maintenance) - Size limits and condensation triggers
 - [AI Agents Convention](../agents/ai-agents.md) - Agent file size tiers and condensation
-- [Convention Writing Convention](../../conventions/content/convention-writing.md) - How to structure convention documents
+- [Convention Writing Convention](../../conventions/writing/conventions.md) - How to structure convention documents

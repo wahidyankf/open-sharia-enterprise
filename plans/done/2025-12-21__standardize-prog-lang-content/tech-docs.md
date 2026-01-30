@@ -2,7 +2,7 @@
 
 ## Architecture Overview
 
-This plan follows a **standardized content architecture** pattern established by the [Programming Language Content Standard](../../../governance/conventions/tutorial/programming-language-content.md).
+This plan follows a **standardized content architecture** pattern established by the [Programming Language Content Standard](../../../governance/conventions/tutorials/programming-language-content.md).
 
 ### Content Structure Pattern
 
@@ -558,11 +558,11 @@ graph TD
 
 ## Related Documentation
 
-- [Programming Language Content Standard](../../../governance/conventions/tutorial/programming-language-content.md) - Universal content architecture
+- [Programming Language Content Standard](../../../governance/conventions/tutorials/programming-language-content.md) - Universal content architecture
 - [Hugo Content Convention - ayokoding](../../../governance/conventions/hugo/ayokoding.md) - Hextra theme specifics
 - [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md) - Color palette requirements
-- [Content Quality Principles](../../../governance/conventions/content/quality.md) - Quality standards
-- [Factual Validation Convention](../../../governance/conventions/content/factual-validation.md) - Fact-checking methodology
+- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Quality standards
+- [Factual Validation Convention](../../../governance/conventions/writing/factual-validation.md) - Fact-checking methodology
 
 ---
 

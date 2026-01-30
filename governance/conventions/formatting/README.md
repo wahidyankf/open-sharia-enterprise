@@ -18,9 +18,9 @@ These conventions define **HOW to format markdown content** including indentatio
 
 **❌ Does NOT Belong:**
 
-- Content quality standards (that's content/)
-- Writing style guidelines (that's content/)
-- Tutorial structure (that's tutorial/)
+- Content quality standards (that's writing/)
+- Writing style guidelines (that's writing/)
+- Tutorial structure (that's tutorials/)
 - Hugo content rules (that's hugo/)
 
 ## Conventions
@@ -38,7 +38,7 @@ These conventions define **HOW to format markdown content** including indentatio
 
 - [Conventions Index](../README.md) - All documentation conventions
 - [Accessibility First Principle](../../principles/content/accessibility-first.md) - Why accessibility matters
-- [Content Conventions](../content/README.md) - Content quality and writing standards
+- [Writing Conventions](../writing/README.md) - Content quality and writing standards
 - [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
 
 ## Principles Implemented/Respected
@@ -53,4 +53,4 @@ This set of conventions implements/respects the following core principles:
 
 ---
 
-**Last Updated**: 2026-01-01
+**Last Updated**: 2026-01-30

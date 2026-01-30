@@ -41,7 +41,7 @@ This convention establishes the standard linking format for all markdown files i
 ### What This Convention Does NOT Cover
 
 - **Link validation** - Covered by docs\_\_link-general-checker and ayokoding-web-link-checker agents
-- **Link text quality** - Descriptive link text is covered in [Content Quality Principles](../content/quality.md)
+- **Link text quality** - Descriptive link text is covered in [Content Quality Principles](../writing/quality.md)
 - **Hugo site URLs** - Hugo-specific linking covered in Hugo content conventions
 - **Anchor links** - Deep linking to specific sections (implementation detail)
 
@@ -78,8 +78,8 @@ Use standard markdown link syntax with relative paths:
    - **Important**: The number of `../` depends on your file's nesting depth (see [Nested Directory Linking](#nested-directory-linking))
 
 3. **Use descriptive link text instead of filename identifiers**
-   - PASS: `[File Naming Convention](../meta/file-naming.md)`
-   - FAIL: `[ex-co__file-naming-convention](../meta/file-naming.md)`
+   - PASS: `[File Naming Convention](../structure/file-naming.md)`
+   - FAIL: `[ex-co__file-naming-convention](../structure/file-naming.md)`
 
 4. **Avoid Obsidian-only wiki link syntax**
    - FAIL: `[[filename]]`
@@ -99,7 +99,7 @@ Use standard markdown link syntax with relative paths:
 
 <!-- Link to nested files -->
 
-[File Naming Convention](../meta/file-naming.md)
+[File Naming Convention](../structure/file-naming.md)
 [Conventions Index](../README.md)
 ```
 
@@ -126,7 +126,7 @@ Use standard markdown link syntax with relative paths:
 ```markdown
 <!-- Link to sibling files in same directory -->
 
-[File Naming Convention](../meta/file-naming.md)
+[File Naming Convention](../structure/file-naming.md)
 [Linking Convention](./linking.md)
 
 <!-- Link to parent directory -->
@@ -149,13 +149,13 @@ Use standard markdown link syntax with relative paths:
 ```markdown
 <!-- Descriptive text with relative path and .md extension -->
 
-[Understanding the Diátaxis Framework](../meta/diataxis-framework.md)
+[Understanding the Diátaxis Framework](../structure/diataxis-framework.md)
 [Monorepo Structure](../../../docs/reference/re__monorepo-structure.md)
 [AI Agents Convention](../../development/agents/ai-agents.md)
 
 <!-- Links with context -->
 
-See the [file naming convention](../meta/file-naming.md) for details.
+See the [file naming convention](../structure/file-naming.md) for details.
 For more information, refer to our [automation principle](../../principles/software-engineering/automation-over-manual.md).
 ```
 
@@ -177,7 +177,7 @@ For more information, refer to our [automation principle](../../principles/softw
 
 <!-- Using filename as link text -->
 
-[ex-co\_\_file-naming-convention.md](../meta/file-naming.md)
+[ex-co\_\_file-naming-convention.md](../structure/file-naming.md)
 
 <!-- Wrong number of ../ for nesting depth -->
 <!-- From governance/conventions/formatting/linking.md (2 levels deep) -->
@@ -256,7 +256,7 @@ Understanding relative paths is crucial when linking from files at different nes
 
 <!-- To sibling files (same directory) -->
 
-[File Naming Convention](../meta/file-naming.md)
+[File Naming Convention](../structure/file-naming.md)
 ```
 
 #### From 3-Level Deep Files (`governance/principles/software-engineering/explicit-over-implicit.md`)
@@ -287,16 +287,16 @@ To verify your relative path is correct:
 3. **Count each `/dirname/` as going down one level**
 4. **Verify you end at the target file**
 
-Example from `governance/conventions/meta/file-naming.md` to `docs/tutorials/README.md`:
+Example from `governance/conventions/structure/file-naming.md` to `docs/tutorials/README.md`:
 
 ```
-Start:  governance/conventions/meta/file-naming.md
+Start:  governance/conventions/structure/file-naming.md
   ../   governance/conventions/       (up 1)
   ../   docs/explanation/                   (up 2)
   ../   docs/                               (up 3 - wait, only need 2!)
 
 Actually:
-Start:  governance/conventions/meta/file-naming.md
+Start:  governance/conventions/structure/file-naming.md
   ../   docs/explanation/                   (up 1)
   ../   docs/                               (up 2)
   tutorials/  docs/tutorials/               (down 1)
@@ -361,7 +361,7 @@ When creating documentation, verify links by:
 
 ## Related Documentation
 
-- [File Naming Convention](../meta/file-naming.md) - How to name documentation files
+- [File Naming Convention](../structure/file-naming.md) - How to name documentation files
 - [Conventions Index](../README.md) - Overview of all documentation conventions
 
 ---
@@ -417,7 +417,7 @@ This feature implements the [Linking Convention](./linking.md) by using relative
 ```markdown
 ## Standards Compliance
 
-All documentation follows the [File Naming Convention](../meta/file-naming.md) and [Linking Convention](./linking.md). The `File Naming Convention` defines prefix patterns, while the `Linking Convention` specifies link syntax. Both `File Naming Convention` and `Linking Convention` are validated by docs-checker.
+All documentation follows the [File Naming Convention](../structure/file-naming.md) and [Linking Convention](./linking.md). The `File Naming Convention` defines prefix patterns, while the `Linking Convention` specifies link syntax. Both `File Naming Convention` and `Linking Convention` are validated by docs-checker.
 ```
 
 **Analysis:**

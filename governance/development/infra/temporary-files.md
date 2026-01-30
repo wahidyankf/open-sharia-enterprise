@@ -34,7 +34,7 @@ This practice implements/respects the following conventions:
 
 - **[Timestamp Format Convention](../../conventions/formatting/timestamp.md)**: Report filenames use UTC+7 timestamps in format YYYY-MM-DD--HH-MM (hyphen-separated for filesystem compatibility).
 
-- **[File Naming Convention](../../conventions/meta/file-naming.md)**: Report files follow 4-part pattern {agent-family}**{uuid-chain}**{timestamp}\_\_{type}.md with double-underscore separators. UUID chain enables parallel execution without file collisions.
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Report files follow 4-part pattern {agent-family}**{uuid-chain}**{timestamp}\_\_{type}.md with double-underscore separators. UUID chain enables parallel execution without file collisions.
 
 ## Overview
 
@@ -749,9 +749,9 @@ The rule includes "unless specified otherwise by other governance/conventions":
 
 ## Related Conventions
 
-- [File Naming Convention](../../conventions/meta/file-naming.md) - For permanent documentation files
+- [File Naming Convention](../../conventions/structure/file-naming.md) - For permanent documentation files
 - [AI Agents Convention](../agents/ai-agents.md) - For agent design and tool access
-- [Diátaxis Framework](../../conventions/meta/diataxis-framework.md) - For documentation organization
+- [Diátaxis Framework](../../conventions/structure/diataxis-framework.md) - For documentation organization
 
 ## Benefits
 

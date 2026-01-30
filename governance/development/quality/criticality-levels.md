@@ -1137,7 +1137,7 @@ subcategory: development
 **Reason for Flag**: Cannot determine correct link target automatically
 **Action Required**: Manually select correct target from:
 
-- `governance/conventions/meta/file-naming.md`
+- `governance/conventions/structure/file-naming.md`
 - `governance/development/infra/file-organization.md`
 
 ---
@@ -1305,7 +1305,7 @@ This convention builds upon and references:
 - Filename pattern: `{agent-family}__{uuid-chain}__{timestamp}__audit.md`
 - Progressive writing requirement ensures reports survive context compaction
 
-### [Content Quality Principles Convention](../../conventions/content/quality.md)
+### [Content Quality Principles Convention](../../conventions/writing/quality.md)
 
 **Relationship**: Content quality violations are categorized by criticality.
 

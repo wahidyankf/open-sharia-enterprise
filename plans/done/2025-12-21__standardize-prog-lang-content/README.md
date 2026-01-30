@@ -7,7 +7,7 @@
 
 ## Overview
 
-Bring all 5 programming languages in ayokoding-web (Golang, Java, Kotlin, Python, Rust) to the highest standard defined in the [Programming Language Content Standard](/Users/alami/wkf-repos/wahidyankf/open-sharia-enterprise/governance/conventions/tutorial/programming-language-content.md).
+Bring all 5 programming languages in ayokoding-web (Golang, Java, Kotlin, Python, Rust) to the highest standard defined in the [Programming Language Content Standard](/Users/alami/wkf-repos/wahidyankf/open-sharia-enterprise/governance/conventions/tutorials/programming-language-content.md).
 
 **Current State**: Significant quality gaps exist across languages.
 
@@ -63,7 +63,7 @@ Detailed documentation in separate files:
 
 ## Context
 
-This plan implements the [Programming Language Content Standard](../../../governance/conventions/tutorial/programming-language-content.md) which establishes:
+This plan implements the [Programming Language Content Standard](../../../governance/conventions/tutorials/programming-language-content.md) which establishes:
 
 - Universal directory structure for all programming languages
 - Coverage philosophy (0-95% proficiency scale)
@@ -109,11 +109,11 @@ The standard was derived from benchmark analysis of Golang, Python, and Java imp
 
 **Must Follow**:
 
-- [Programming Language Content Standard](../../../governance/conventions/tutorial/programming-language-content.md)
+- [Programming Language Content Standard](../../../governance/conventions/tutorials/programming-language-content.md)
 - [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)
 - [Hugo Content Convention - ayokoding](../../../governance/conventions/hugo/ayokoding.md)
-- [Content Quality Principles](../../../governance/conventions/content/quality.md)
-- [Factual Validation Convention](../../../governance/conventions/content/factual-validation.md)
+- [Content Quality Principles](../../../governance/conventions/writing/quality.md)
+- [Factual Validation Convention](../../../governance/conventions/writing/factual-validation.md)
 
 **Resource Constraints**:
 

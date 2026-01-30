@@ -797,6 +797,6 @@ This convention respects:
 
 - [AI Agents Convention](../../development/agents/ai-agents.md) - How agents work
 - [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Core workflow pattern
-- [Plans Organization](../../conventions/content/project/plans-organization.md) - How plans relate to workflows
+- [Plans Organization](../../conventions/structure/plans.md) - How plans relate to workflows
 - [Implementation Workflow](../../development/workflow/implementation.md) - Development process workflow
 - [Workflows Index](../README.md) - All available workflows

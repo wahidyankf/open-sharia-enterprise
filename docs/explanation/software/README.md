@@ -49,6 +49,10 @@ Language-specific idioms, best practices, and antipatterns:
 
 - **[Java](./prog-lang/java/README.md)** - Modern Java development (Java 17+) with records, pattern matching, and virtual threads
 
+### 📚 Cross-References
+
+- **[Software Design Reference](./ex-so__software-design-reference.md)** - Cross-reference index to all software design documentation. Links architecture patterns, development practices, and language-specific standards
+
 ## Why This Structure?
 
 **Three complementary dimensions of software design:**
@@ -168,7 +172,7 @@ The open-sharia-enterprise project applies both C4 and DDD principles:
 
 - [Functional Programming](../../../governance/development/pattern/functional-programming.md) - Immutability and pure functions
 - [Repository Governance Architecture](../../../governance/repository-governance-architecture.md) - Six-layer hierarchy
-- [Diátaxis Framework](../../../governance/conventions/meta/diataxis-framework.md) - Documentation organization
+- [Diátaxis Framework](../../../governance/conventions/structure/diataxis-framework.md) - Documentation organization
 
 ## Learning Paths
 
@@ -198,7 +202,7 @@ The open-sharia-enterprise project applies both C4 and DDD principles:
 - **[Repository Governance Architecture](../../../governance/repository-governance-architecture.md)** - Six-layer governance hierarchy
 - **[Functional Programming Principles](../../../governance/development/pattern/functional-programming.md)** - FP practices in this repository
 - **[Diagram Standards](../../../governance/conventions/formatting/diagrams.md)** - Mermaid and accessibility requirements
-- **[Content Quality Standards](../../../governance/conventions/content/quality.md)** - Documentation writing guidelines
+- **[Content Quality Standards](../../../governance/conventions/writing/quality.md)** - Documentation writing guidelines
 
 ---
 

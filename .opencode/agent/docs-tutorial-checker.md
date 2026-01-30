@@ -82,8 +82,8 @@ The `repo-generating-validation-reports` Skill provides:
 
 This agent validates tutorials against standards defined in:
 
-- [Tutorial Convention](../../governance/conventions/content/tutorial/general.md) - Complete tutorial standards and validation criteria
-- [Tutorial Naming Convention](../../governance/conventions/content/tutorial/naming.md) - Standardized tutorial types and depth levels
+- [Tutorial Convention](../../governance/conventions/tutorials/general.md) - Complete tutorial standards and validation criteria
+- [Tutorial Naming Convention](../../governance/conventions/tutorials/naming.md) - Standardized tutorial types and depth levels
 
 The Tutorial Convention defines what to validate:
 
@@ -124,7 +124,7 @@ Validate tutorial documents to ensure they are **learning-oriented, well-narrate
 
 ## Validation Criteria
 
-This agent validates using criteria from [Tutorial Convention - Validation Criteria](../../governance/conventions/content/tutorial/general.md#-validation-criteria).
+This agent validates using criteria from [Tutorial Convention - Validation Criteria](../../governance/conventions/tutorials/general.md#-validation-criteria).
 
 **Validation Categories:**
 
@@ -139,7 +139,7 @@ See convention for complete checklist and pass/fail criteria.
 
 ### Quick Reference - Key Checks
 
-All validation criteria are defined in [Tutorial Convention - Validation Criteria](../../governance/conventions/content/tutorial/general.md#-validation-criteria).
+All validation criteria are defined in [Tutorial Convention - Validation Criteria](../../governance/conventions/tutorials/general.md#-validation-criteria).
 
 **Six Validation Categories:**
 
@@ -356,7 +356,7 @@ See `repo-generating-validation-reports` Skill for complete report template stru
 
 ## Anti-Patterns to Check For
 
-Validate against common mistakes defined in [Tutorial Convention - Anti-Patterns](../../governance/conventions/content/tutorial/general.md#-anti-patterns).
+Validate against common mistakes defined in [Tutorial Convention - Anti-Patterns](../../governance/conventions/tutorials/general.md#-anti-patterns).
 
 **Key anti-patterns include:**
 
@@ -406,7 +406,7 @@ Your goal: Help make tutorials that **teach effectively** and **inspire learners
 **Project Guidance**:
 
 - [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [Tutorial Convention](../../governance/conventions/content/tutorial/general.md)
+- [Tutorial Convention](../../governance/conventions/tutorials/general.md)
 
 **Related Agents**:
 
@@ -416,6 +416,6 @@ Your goal: Help make tutorials that **teach effectively** and **inspire learners
 
 **Related Conventions**:
 
-- [Tutorial Convention](../../governance/conventions/content/tutorial/general.md)
-- [Tutorial Naming Convention](../../governance/conventions/content/tutorial/naming.md)
-- [Content Quality Principles](../../governance/conventions/content/quality.md)
+- [Tutorial Convention](../../governance/conventions/tutorials/general.md)
+- [Tutorial Naming Convention](../../governance/conventions/tutorials/naming.md)
+- [Content Quality Principles](../../governance/conventions/writing/quality.md)

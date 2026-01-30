@@ -436,7 +436,7 @@ Your primary job is to:
 
 **Documentation Conventions**:
 
-- `governance/conventions/content/factual-validation.md` - Factual validation methodology
+- `governance/conventions/writing/factual-validation.md` - Factual validation methodology
 - `governance/conventions/formatting/mathematical-notation.md` - LaTeX notation rules
 - `governance/conventions/formatting/color-accessibility.md` - Accessible color palette
 

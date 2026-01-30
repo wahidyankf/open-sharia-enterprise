@@ -225,8 +225,8 @@ This plan was executed in 3 phases:
 - [x] **3.4 Update all convention documents referencing agents/skills**
 
   **Files Updated**:
-  - `governance/conventions/meta/diataxis-framework.md`
-  - `governance/conventions/content/convention-writing.md`
+  - `governance/conventions/structure/diataxis-framework.md`
+  - `governance/conventions/writing/conventions.md`
   - `governance/development/pattern/maker-checker-fixer.md`
   - `governance/development/quality/repository-validation.md`
   - `.claude/skills/README.md`

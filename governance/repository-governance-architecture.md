@@ -515,7 +515,7 @@ Delivery (serves knowledge, dual-mode):
 - Vision supported: Transparency enables verification of Shariah compliance
 - Key value: Code should be transparent and understandable
 
-**Layer 2 - Convention**: [File Naming Convention](./conventions/meta/file-naming.md)
+**Layer 2 - Convention**: [File Naming Convention](./conventions/structure/file-naming.md)
 
 - Implements: Explicit Over Implicit principle
 - Rule: Prefix encodes directory path explicitly (`ex-co__` = explanation/governance/conventions/)
@@ -546,7 +546,7 @@ Delivery (serves knowledge, dual-mode):
 - Vision supported: Automation ensures consistent Shariah compliance validation
 - Key value: Machines handle repetitive tasks, humans focus on creative work
 
-**Layer 2 - Convention**: [Content Quality Principles](./conventions/content/quality.md)
+**Layer 2 - Convention**: [Content Quality Principles](./conventions/writing/quality.md)
 
 - Implements: Automation Over Manual principle
 - Rule: Automated validation of active voice, heading hierarchy, alt text
@@ -744,8 +744,8 @@ This architecture document implements/respects the following principles:
 
 **Meta-Documentation**:
 
-- [Diátaxis Framework](./conventions/meta/diataxis-framework.md) - Four documentation types
-- [Convention Writing Convention](./conventions/content/convention-writing.md) - How to write conventions
+- [Diátaxis Framework](./conventions/structure/diataxis-framework.md) - Four documentation types
+- [Convention Writing Convention](./conventions/writing/conventions.md) - How to write conventions
 - [AI Agents Convention](./development/agents/ai-agents.md) - How to create agents
 
 ---

@@ -1344,9 +1344,9 @@ strict = true
 ### Governance and Conventions
 
 - [Repository Principles](../../../../../governance/principles/README.md) - Core principles
-- [File Naming Convention](../../../../../governance/conventions/meta/file-naming.md) - Documentation standards
-- [Content Quality Convention](../../../../../governance/conventions/content/quality.md) - Writing standards
-- [Diátaxis Framework](../../../../../governance/conventions/meta/diataxis-framework.md) - Documentation organization
+- [File Naming Convention](../../../../../governance/conventions/structure/file-naming.md) - Documentation standards
+- [Content Quality Convention](../../../../../governance/conventions/writing/quality.md) - Writing standards
+- [Diátaxis Framework](../../../../../governance/conventions/structure/diataxis-framework.md) - Documentation organization
 - [Color Accessibility Convention](../../../../../governance/conventions/formatting/color-accessibility.md) - WCAG AA compliance
 
 ### Community Resources

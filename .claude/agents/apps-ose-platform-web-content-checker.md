@@ -83,4 +83,4 @@ Skill: `repo-generating-validation-reports`
 **Related Conventions**:
 
 - [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
-- [Content Quality Principles](../../governance/conventions/content/quality.md)
+- [Content Quality Principles](../../governance/conventions/writing/quality.md)
