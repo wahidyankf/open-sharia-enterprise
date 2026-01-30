@@ -252,7 +252,7 @@ See [Strategic Design Process](./ex-so-ar-dodrdedd__06-strategic-design-process.
 - Wiki or knowledge base
 - Bounded Context Canvas documents
 
-See [Glossary Template](./templates/ex-so-ar-dodrdedd-te__ubiquitous-language-glossary.md) for a complete template.
+<!-- TODO: Create Glossary Template at ./templates/ex-so-ar-dodrdedd-te__ubiquitous-language-glossary.md -->
 
 ## Islamic Finance Examples
 
@@ -627,7 +627,7 @@ See [Bounded Contexts](./ex-so-ar-dodrdedd__03-bounded-contexts.md) for detailed
 
 Use the standardized template to document your Ubiquitous Language:
 
-- [Glossary Template](./templates/ex-so-ar-dodrdedd-te__ubiquitous-language-glossary.md)
+<!-- TODO: Glossary Template - ./templates/ex-so-ar-dodrdedd-te__ubiquitous-language-glossary.md -->
 
 **Template includes**:
 
@@ -677,7 +677,7 @@ Start building your Ubiquitous Language today through knowledge crunching sessio
 - **[Bounded Contexts](./ex-so-ar-dodrdedd__03-bounded-contexts.md)** - Define where your Ubiquitous Language applies
 - **[Context Mapping](./ex-so-ar-dodrdedd__04-context-mapping.md)** - Integrate contexts with different languages
 - **[Strategic Design Process](./ex-so-ar-dodrdedd__06-strategic-design-process.md)** - Run Event Storming to discover terminology
-- **[Glossary Template](./templates/ex-so-ar-dodrdedd-te__ubiquitous-language-glossary.md)** - Document your language
+<!-- TODO: Glossary Template - ./templates/ex-so-ar-dodrdedd-te__ubiquitous-language-glossary.md - Document your language -->
 
 ## References
 

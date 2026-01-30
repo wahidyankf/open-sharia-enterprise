@@ -409,24 +409,24 @@ Before committing markdown with nested fences:
 
 This convention works with:
 
-- **[Content Quality Principles](../content/quality.md)**: Proper code block formatting is part of content quality
+- **[Content Quality Principles](../writing/quality.md)**: Proper code block formatting is part of content quality
 - **[Indentation Convention](./indentation.md)**: Code blocks use language-specific indentation
 - **[Hugo Content Convention - Shared](../hugo/shared.md)**: Hugo sites need nested fences for markdown examples
-- **[Tutorial Convention](../tutorial/general.md)**: Tutorials often demonstrate markdown syntax
+- **[Tutorial Convention](../tutorials/general.md)**: Tutorials often demonstrate markdown syntax
 
 ## Related Conventions
 
 **Formatting Standards**:
 
-- [Content Quality Principles](../content/quality.md) - Code block formatting standards
+- [Content Quality Principles](../writing/quality.md) - Code block formatting standards
 - [Indentation Convention](./indentation.md) - Code block indentation rules
 - [Mathematical Notation Convention](./mathematical-notation.md) - LaTeX in markdown (no nesting needed)
 
 **Context-Specific**:
 
 - [Hugo Content Convention - Shared](../hugo/shared.md) - Hugo markdown specifics
-- [Tutorial Convention](../tutorial/general.md) - Teaching markdown syntax in tutorials
-- [README Quality Convention](../content/readme-quality.md) - Code examples in README files
+- [Tutorial Convention](../tutorials/general.md) - Teaching markdown syntax in tutorials
+- [README Quality Convention](../writing/readme-quality.md) - Code examples in README files
 
 ## Examples in Documentation Types
 
@@ -505,7 +505,7 @@ calculate(value: number): number
 
 **Related Standards**:
 
-- [Content Quality Principles](../content/quality.md) - Universal content standards
+- [Content Quality Principles](../writing/quality.md) - Universal content standards
 - [Conventions Index](../README.md) - All documentation conventions
 
 ---

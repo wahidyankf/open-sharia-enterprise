@@ -609,7 +609,7 @@ C4Context
     Rel(system, external, "Calls", "HTTPS/JSON")
 ```
 
-**WCAG AA-Compliant Colors** (from [Color Palette](./templates/ex-so-ar-dodrdedd-te__color-palette.md)):
+**WCAG AA-Compliant Colors** (TODO: Color Palette - ./templates/ex-so-ar-dodrdedd-te\_\_color-palette.md):
 
 - Blue `#0173B2`: Bounded Contexts, Aggregate Roots
 - Teal `#029E73`: Entities, Supporting Subdomains
@@ -741,7 +741,7 @@ sequenceDiagram
 
 ### 5. Link Aggregate Design Templates to Component Diagrams
 
-**Template**: [Aggregate Design Template](./templates/ex-so-ar-dodrdedd-te__aggregate-design-template.md)
+**Template**: Aggregate Design Template (TODO: ./templates/ex-so-ar-dodrdedd-te\_\_aggregate-design-template.md)
 
 **Component Diagram**: Shows aggregate boundaries visually
 

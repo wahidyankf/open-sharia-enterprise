@@ -47,8 +47,8 @@ This convention defines content creation standards specific to the ayokoding-web
 ### What This Convention Does NOT Cover
 
 - **Shared Hugo conventions** - Covered in [Hugo Content Shared Convention](./shared.md)
-- **Programming language content structure** - Covered in [Programming Language Content Standard](../tutorial/programming-language-content.md)
-- **Tutorial naming** - Covered in [Tutorial Naming Convention](../tutorial/naming.md)
+- **Programming language content structure** - Covered in [Programming Language Content Standard](../tutorials/programming-language-content.md)
+- **Tutorial naming** - Covered in [Tutorial Naming Convention](../tutorials/naming.md)
 - **Hugo theme development** - Covered in [Hugo Development Convention](../../development/hugo/development.md)
 - **Deployment** - Covered by ayokoding-web-deployer agent
 
@@ -153,7 +153,7 @@ System.out.println(result);      // => Output: 10-transformed
 - Complex operations get detailed breakdowns
 - Avoid repetitive patterns across similar code
 
-## **Detailed guidance**: See [By-Example Tutorial Convention](../tutorial/by-example.md#educational-comment-standards) for comprehensive annotation patterns and examples
+## **Detailed guidance**: See [By-Example Tutorial Convention](../tutorials/by-example.md#educational-comment-standards) for comprehensive annotation patterns and examples
 
 ## Hextra Theme
 
@@ -977,7 +977,7 @@ Partial coverage (showing only some children) is a violation.
 - Diátaxis subdirectories: `/en/learn/swe/infosec/concepts/tutorials/` (contains only tutorial content files)
 - Any folder where all contents are content files (no subdirectories)
 
-**Note**: Programming language folders now require Full Set Tutorial Package structure with 5 components in subfolders. See [Programming Language Tutorial Structure](../tutorial/programming-language-structure.md).
+**Note**: Programming language folders now require Full Set Tutorial Package structure with 5 components in subfolders. See [Programming Language Tutorial Structure](../tutorials/programming-language-structure.md).
 
 **Examples of Non-Terminal Directories** (NOT exempt, MUST show 2 layers with COMPLETE coverage):
 
@@ -1226,7 +1226,7 @@ tutorials/                           # Level 6 folder
 
 **Migration Required**: Languages currently with `how-to/cookbook.md` need migration to `tutorials/cookbook/`.
 
-**See**: [Programming Language Content Standard](../tutorial/programming-language-content.md) for Full Set Tutorial Package architecture.
+**See**: [Programming Language Content Standard](../tutorials/programming-language-content.md) for Full Set Tutorial Package architecture.
 
 #### Title Format for Overview/Ikhtisar Files
 
@@ -1292,7 +1292,7 @@ content/en/learn/swe/prog-lang/golang/
 └── explanation/     # Folder (weight: 100004, level 6)
 ```
 
-**See**: [Programming Language Tutorial Structure](../tutorial/programming-language-structure.md) for complete Full Set Tutorial Package organization.
+**See**: [Programming Language Tutorial Structure](../tutorials/programming-language-structure.md) for complete Full Set Tutorial Package organization.
 
 **Example `_index.md` (navigation hub for Full Set structure)**:
 
@@ -1395,7 +1395,7 @@ content/en/learn/swe/prog-lang/golang/
 
 **Note**: This pattern is OPTIONAL. Each topic decides independently based on content volume and diversity.
 
-**Programming Language Content**: For programming languages specifically (e.g., Golang, Python, Java, Kotlin, TypeScript, Rust), Full Set Tutorial Package structure is MANDATORY and follows the [Programming Language Content Standard](../tutorial/programming-language-content.md). See that convention for complete requirements including:
+**Programming Language Content**: For programming languages specifically (e.g., Golang, Python, Java, Kotlin, TypeScript, Rust), Full Set Tutorial Package structure is MANDATORY and follows the [Programming Language Content Standard](../tutorials/programming-language-content.md). See that convention for complete requirements including:
 
 - Full Set Tutorial Package with 5 mandatory components (foundational tutorials, by-concept track, by-example track, cookbook in tutorials/cookbook/, supporting docs)
 - Coverage philosophy (0-30% foundational, 95% learning tracks, practical recipes)

@@ -29,9 +29,9 @@ This document defines the standards for organizing project planning documents in
 
 This convention implements the following core principles:
 
-- **[Simplicity Over Complexity](../../../principles/general/simplicity-over-complexity.md)**: Flat structure with three clear states (backlog, in-progress, done). No complex nested hierarchies or status tracking systems.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Flat structure with three clear states (backlog, in-progress, done). No complex nested hierarchies or status tracking systems.
 
-- \*\*[Explicit Over Implicit](../../../principles/software-engineering/[identifier]`) making chronological order explicit. File location indicates status - no hidden metadata or databases.
+- \*\*[Explicit Over Implicit](../../principles/software-engineering/[identifier]`) making chronological order explicit. File location indicates status - no hidden metadata or databases.
 
 ## Purpose
 
@@ -227,7 +227,7 @@ Plans can use either **single-file** or **multi-file** structure depending on si
 - **tech-docs.md**: Architecture diagrams, API design, data models, technical decisions
 - **delivery.md**: Milestones, deliverables, success metrics, validation checklist
 
-**Acceptance Criteria**: All user stories in requirements.md must include testable acceptance criteria using Gherkin format. See [Acceptance Criteria Convention](../../../development/infra/acceptance-criteria.md) for complete details.
+**Acceptance Criteria**: All user stories in requirements.md must include testable acceptance criteria using Gherkin format. See [Acceptance Criteria Convention](../../development/infra/acceptance-criteria.md) for complete details.
 
 ### Important Note on File Naming
 
@@ -294,7 +294,7 @@ Files in `plans/` folder should use **Mermaid diagrams** as the primary format (
 - **Primary Format**: Mermaid diagrams for all flowcharts, architecture diagrams, sequences
 - **ASCII Art**: Optional, only for simple directory trees or rare edge cases
 - **Orientation**: Prefer vertical (top-down or bottom-top) for mobile-friendly viewing
-- **Colors**: Use color-blind friendly palette from [Color Accessibility Convention](../../formatting/color-accessibility.md)
+- **Colors**: Use color-blind friendly palette from [Color Accessibility Convention](../formatting/color-accessibility.md)
 
 **Why Mermaid**:
 
@@ -303,24 +303,24 @@ Files in `plans/` folder should use **Mermaid diagrams** as the primary format (
 - Easy to update and maintain
 - Supports multiple diagram types (flowchart, sequence, class, ER, etc.)
 
-For complete diagram standards, see [Diagram and Schema Convention](../../formatting/diagrams.md).
+For complete diagram standards, see [Diagram and Schema Convention](../formatting/diagrams.md).
 
 ## Related Documentation
 
 **Decision Guides**:
 
-- [How to Organize Your Work](../../../../docs/how-to/hoto__organize-work.md) - Decision guide for choosing between plans/ and docs/
+- [How to Organize Your Work](../../../docs/how-to/hoto__organize-work.md) - Decision guide for choosing between plans/ and docs/
 
 **Related Conventions**:
 
-- [Acceptance Criteria Convention](../../../development/infra/acceptance-criteria.md) - Writing testable acceptance criteria using Gherkin format
-- [Diátaxis Framework](../../meta/diataxis-framework.md) - Organization of `docs/` directory
-- [File Naming Convention](../../meta/file-naming.md) - Naming files within `docs/` (not applicable to plans/)
-- [Diagram and Schema Convention](../../formatting/diagrams.md) - Standards for Mermaid diagrams
+- [Acceptance Criteria Convention](../../development/infra/acceptance-criteria.md) - Writing testable acceptance criteria using Gherkin format
+- [Diátaxis Framework](./diataxis-framework.md) - Organization of `docs/` directory
+- [File Naming Convention](./file-naming.md) - Naming files within `docs/` (not applicable to plans/)
+- [Diagram and Schema Convention](../formatting/diagrams.md) - Standards for Mermaid diagrams
 
 **Development Guides**:
 
-- [AI Agents Convention](../../../development/agents/ai-agents.md) - Standards for AI agents (including plan**maker and plan**executor)
+- [AI Agents Convention](../../development/agents/ai-agents.md) - Standards for AI agents (including plan**maker and plan**executor)
 
 ## Best Practices
 

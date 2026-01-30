@@ -1384,4 +1384,4 @@ end
 - **[Security Guide](./ex-so-plwe-elph__security.md)** - Authentication and authorization
 - **[Performance Guide](./ex-so-plwe-elph__performance.md)** - Optimization techniques
 - **[Phoenix LiveView Documentation](https://hexdocs.pm/phoenix_live_view)** - Official reference
-- **[LiveView Templates](./templates/ex-so-plwe-elph-te__liveview-template.md)** - Starter templates
+- **LiveView Templates (TODO: ./templates/ex-so-plwe-elph-te\_\_liveview-template.md)** - Starter templates

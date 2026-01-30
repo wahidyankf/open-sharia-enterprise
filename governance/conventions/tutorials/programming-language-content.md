@@ -23,10 +23,10 @@ All programming language content on ayokoding-web follows a standardized **Full 
 
 This convention implements the following core principles:
 
-- **[Progressive Disclosure](../../../principles/content/progressive-disclosure.md)**: Coverage levels (0-5%, 5-30%, 0-60%, 60-85%, 85-95%) implement gradual complexity layering, allowing learners to build knowledge incrementally without overwhelming them with advanced concepts too early.
-- **[Accessibility First](../../../principles/content/accessibility-first.md)**: Standardized structure aids diverse learners with predictable navigation, color-blind friendly palettes in all diagrams, and WCAG-compliant content formatting.
-- **[Simplicity Over Complexity](../../../principles/general/simplicity-over-complexity.md)**: Flat directory structure with consistent file naming across all languages, avoiding nested hierarchies that add cognitive overhead.
-- **[Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md)**: Clear coverage percentages define scope boundaries, explicit quality metrics provide objective benchmarks, and documented standards eliminate guesswork.
+- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Coverage levels (0-5%, 5-30%, 0-60%, 60-85%, 85-95%) implement gradual complexity layering, allowing learners to build knowledge incrementally without overwhelming them with advanced concepts too early.
+- **[Accessibility First](../../principles/content/accessibility-first.md)**: Standardized structure aids diverse learners with predictable navigation, color-blind friendly palettes in all diagrams, and WCAG-compliant content formatting.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Flat directory structure with consistent file naming across all languages, avoiding nested hierarchies that add cognitive overhead.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Clear coverage percentages define scope boundaries, explicit quality metrics provide objective benchmarks, and documented standards eliminate guesswork.
 
 ## Purpose
 
@@ -49,7 +49,7 @@ This convention applies to:
 - Includes: tutorials (foundational, by-concept, by-example, cookbook), how-to guides, best practices, anti-patterns
 - Enforced by: `ayokoding-web-general-checker`, `ayokoding-web-by-example-checker`, `ayokoding-web-general-maker`, `ayokoding-web-by-example-maker`, `ayokoding-web-facts-checker` agents
 
-**Implementation Notes**: While the Full Set Tutorial Package architecture applies universally, Hugo-specific implementation details (frontmatter, weight values, navigation) are covered in [Hugo conventions](../../hugo/)
+**Implementation Notes**: While the Full Set Tutorial Package architecture applies universally, Hugo-specific implementation details (frontmatter, weight values, navigation) are covered in [Hugo conventions](../hugo/)
 
 ## Universal Directory Structure
 
@@ -147,7 +147,7 @@ The level-based weight system uses a two-part rule:
 
 The rule connects them: folder at directory depth N uses weight range N, content inside uses weight range N+1.
 
-For complete details on the level-based weight system, see [Hugo Content Convention - ayokoding](../../hugo/ayokoding.md).
+For complete details on the level-based weight system, see [Hugo Content Convention - ayokoding](../hugo/ayokoding.md).
 
 **Notes:**
 
@@ -713,7 +713,7 @@ To add a new programming language:
 9. **Validate against metrics** (line counts, cross-references, code examples)
 10. **Run validation agents** (content-checker, facts-checker, link-checker)
 
-See [How to Add a Programming Language](../../../../docs/how-to/hoto__add-programming-language.md) for detailed step-by-step instructions.
+See [How to Add a Programming Language](../../../docs/how-to/hoto__add-programming-language.md) for detailed step-by-step instructions.
 
 ## Examples from Benchmark Languages
 
@@ -800,18 +800,18 @@ Even Elixir, the highest standard, has gaps:
 
 ## Related Conventions
 
-- [Hugo Content Convention - Shared](../../hugo/shared.md) - Base Hugo content rules
-- [Hugo Content Convention - ayokoding](../../hugo/ayokoding.md) - Hextra theme specifics
+- [Hugo Content Convention - Shared](../hugo/shared.md) - Base Hugo content rules
+- [Hugo Content Convention - ayokoding](../hugo/ayokoding.md) - Hextra theme specifics
 - [Tutorial Naming Convention](./naming.md) - Tutorial level definitions
-- [Content Quality Principles](../quality.md) - Quality standards
-- [Diátaxis Framework](../../meta/diataxis-framework.md) - Documentation categorization
-- [Color Accessibility Convention](../../formatting/color-accessibility.md) - Approved color palette
-- [Diagrams Convention](../../formatting/diagrams.md) - Mermaid diagram standards
-- [Factual Validation Convention](../factual-validation.md) - Fact-checking methodology
+- [Content Quality Principles](../writing/quality.md) - Quality standards
+- [Diátaxis Framework](../structure/diataxis-framework.md) - Documentation categorization
+- [Color Accessibility Convention](../formatting/color-accessibility.md) - Approved color palette
+- [Diagrams Convention](../formatting/diagrams.md) - Mermaid diagram standards
+- [Factual Validation Convention](../writing/factual-validation.md) - Fact-checking methodology
 
 ## Related How-To Guides
 
-- [How to Add a Programming Language](../../../../docs/how-to/hoto__add-programming-language.md) - Step-by-step implementation guide
+- [How to Add a Programming Language](../../../docs/how-to/hoto__add-programming-language.md) - Step-by-step implementation guide
 
 ## Version History
 

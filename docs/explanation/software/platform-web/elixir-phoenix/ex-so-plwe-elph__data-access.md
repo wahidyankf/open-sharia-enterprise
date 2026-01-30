@@ -1161,4 +1161,4 @@ end
 - **[Testing Guide](./ex-so-plwe-elph__testing.md)** - Database testing
 - **[Best Practices](./ex-so-plwe-elph__best-practices.md)** - General patterns
 - **[Ecto Documentation](https://hexdocs.pm/ecto)** - Official reference
-- **[Schema Template](./templates/ex-so-plwe-elph-te__schema-template.md)** - Schema starter
+- **Schema Template (TODO: ./templates/ex-so-plwe-elph-te\_\_schema-template.md)** - Schema starter

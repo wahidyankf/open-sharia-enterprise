@@ -980,7 +980,7 @@ LaTeX math has good accessibility:
 
 - [Diagram and Schema Convention](./diagrams.md) - When to use Mermaid diagrams vs ASCII art (plain text for diagrams, LaTeX for math)
 - [Emoji Usage Convention](./emoji.md) - Semantic emoji usage in documentation
-- [File Naming Convention](../meta/file-naming.md) - How to name documentation files
+- [File Naming Convention](../structure/file-naming.md) - How to name documentation files
 - [Conventions Index](../README.md) - Overview of all conventions
 
 ## External Resources

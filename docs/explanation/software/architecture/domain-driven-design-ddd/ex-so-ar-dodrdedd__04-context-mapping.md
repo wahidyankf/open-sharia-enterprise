@@ -882,7 +882,7 @@ Well-designed context maps help teams:
 - **[Subdomains](./ex-so-ar-dodrdedd__05-subdomains.md)** - Classify contexts as Core, Supporting, or Generic
 - **[Strategic Design Process](./ex-so-ar-dodrdedd__06-strategic-design-process.md)** - Discover contexts and relationships through Event Storming
 - **[Bounded Contexts](./ex-so-ar-dodrdedd__03-bounded-contexts.md)** - Understand the contexts being mapped
-- **[Context Map Template](./templates/ex-so-ar-dodrdedd-te__context-map-diagram.md)** - Document your context maps
+- **Context Map Template (TODO: ./templates/ex-so-ar-dodrdedd-te\_\_context-map-diagram.md)** - Document your context maps
 
 ## References
 

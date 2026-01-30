@@ -903,7 +903,7 @@ Well-designed aggregates make domain models robust, testable, and scalable.
 - **[Repositories](./ex-so-ar-dodrdedd__10-repositories.md)** - Persistence abstraction for aggregates
 - **[Domain Events](./ex-so-ar-dodrdedd__12-domain-events.md)** - Eventual consistency between aggregates
 - **[Decision Trees and Best Practices](./ex-so-ar-dodrdedd__16-decision-trees-and-best-practices.md)** - Practical aggregate design guidance
-- **[Aggregate Design Template](./templates/ex-so-ar-dodrdedd-te__aggregate-design-template.md)** - Document your aggregates
+- <!-- TODO: Aggregate Design Template - ./templates/ex-so-ar-dodrdedd-te__aggregate-design-template.md - Document your aggregates -->
 
 ## References
 

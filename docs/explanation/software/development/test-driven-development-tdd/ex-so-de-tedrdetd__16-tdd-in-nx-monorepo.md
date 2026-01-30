@@ -1283,7 +1283,7 @@ jobs:
 **Next Steps**:
 
 - Review [FAQ](ex-so-de-tedrdetd__17-faq.md) for common TDD questions
-- Explore [Templates](./templates/) for standardized test structures
+<!-- TODO: Create templates directory ./templates/ with standardized test structures -->
 
 **Related Resources**:
 

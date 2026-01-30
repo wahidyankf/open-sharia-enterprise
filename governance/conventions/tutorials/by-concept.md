@@ -750,11 +750,11 @@ This convention reflects standards that should be achieved by by-concept tutoria
 
 This convention implements and respects:
 
-- **[Automation Over Manual](../../../principles/software-engineering/automation-over-manual.md)**: Automated validation via ayokoding-web-general-checker agent
-- **[Progressive Disclosure](../../../principles/content/progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
-- **[No Time Estimates](../../../principles/content/no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
-- **[Accessibility First](../../../principles/content/accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
-- **[Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md)**: Narrative explanations with explicit imports and clear context
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Automated validation via ayokoding-web-general-checker agent
+- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
+- **[No Time Estimates](../../principles/content/no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
+- **[Accessibility First](../../principles/content/accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Narrative explanations with explicit imports and clear context
 
 ## Scope
 
@@ -765,7 +765,7 @@ This convention implements and respects:
 - **apps/ose-platform-web/content/** - Platform tutorials using by-concept approach
 - **Any other location** - By-concept tutorials regardless of directory
 
-**Implementation Notes**: While these standards apply universally, Hugo-specific details (frontmatter, weights, navigation) are covered in [Hugo conventions](../../hugo/)
+**Implementation Notes**: While these standards apply universally, Hugo-specific details (frontmatter, weights, navigation) are covered in [Hugo conventions](../hugo/)
 
 ### What This Convention Covers
 
@@ -781,8 +781,8 @@ This convention implements and respects:
 
 - **General tutorial standards** - Covered in [Tutorials Convention](./general.md)
 - **Tutorial naming** - Covered in [Tutorial Naming Convention](./naming.md)
-- **Hugo-specific implementation** - Covered in [Hugo conventions](../../hugo/)
-- **Hugo implementation** - Hextra specifics in [ayokoding-web convention](../../hugo/ayokoding.md)
+- **Hugo-specific implementation** - Covered in [Hugo conventions](../hugo/)
+- **Hugo implementation** - Hextra specifics in [ayokoding-web convention](../hugo/ayokoding.md)
 - **Code quality** - Source code standards in development conventions
 - **Tutorial validation** - Covered by ayokoding-web-general-checker agent
 
@@ -790,7 +790,7 @@ This convention implements and respects:
 
 - [By-Example Tutorial Convention](./by-example.md): Code-first alternative achieving same 95% coverage
 - [Tutorial Naming Convention](./naming.md): Tutorial type definitions and naming standards
-- [Content Quality Principles](../quality.md): General content quality standards
-- [Diagrams Convention](../../formatting/diagrams.md): Mermaid diagram standards
-- [Color Accessibility Convention](../../formatting/color-accessibility.md): Color-blind friendly palette
-- [Diátaxis Framework](../../meta/diataxis-framework.md): Tutorial categorization framework
+- [Content Quality Principles](../writing/quality.md): General content quality standards
+- [Diagrams Convention](../formatting/diagrams.md): Mermaid diagram standards
+- [Color Accessibility Convention](../formatting/color-accessibility.md): Color-blind friendly palette
+- [Diátaxis Framework](../structure/diataxis-framework.md): Tutorial categorization framework

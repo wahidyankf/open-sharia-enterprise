@@ -50,7 +50,7 @@ All applications using the frameworks documented here MUST follow the patterns a
 - Common framework antipatterns
 - Testing approaches
 
-**Governance**: See [Software Design Reference](../../../../governance/docs/explanation/software/ex-so__software-design-reference.md) for the relationship between this documentation and repository governance.
+<!-- TODO: Software Design Reference - Create governance documentation for software design principles -->
 
 **Language Standards**: Also follow language-specific standards from [prog-lang](../prog-lang/README.md).
 

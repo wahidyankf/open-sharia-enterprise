@@ -884,15 +884,15 @@ stateDiagram-v2
 
 ### Templates
 
-- [Hierarchical State Machine Diagram](./templates/ex-so-ar-fsm-te__hierarchical-state-machine-diagram.md) - Template for nested state diagrams
-- [State Machine Specification](./templates/ex-so-ar-fsm-te__state-machine-specification.md) - Document hierarchical structure
+- Hierarchical State Machine Diagram (TODO: ./templates/ex-so-ar-fsm-te\_\_hierarchical-state-machine-diagram.md) - Template for nested state diagrams
+- State Machine Specification (TODO: ./templates/ex-so-ar-fsm-te\_\_state-machine-specification.md) - Document hierarchical structure
 
 ## Next Steps
 
 1. **Learn transition mechanics**: Read [Events, Guards, and Actions](ex-so-ar-fistmafs__06-events-guards-and-actions.md)
 2. **Study design patterns**: Read [Design Patterns and Best Practices](ex-so-ar-fistmafs__07-design-patterns-and-best-practices.md)
 3. **Choose implementation approach**: Read paradigm-specific chapters (08-11)
-4. **Design your FSM**: Use [Hierarchical State Machine Diagram](./templates/ex-so-ar-fsm-te__hierarchical-state-machine-diagram.md) template
+4. **Design your FSM**: Use Hierarchical State Machine Diagram (TODO: ./templates/ex-so-ar-fsm-te\_\_hierarchical-state-machine-diagram.md) template
 
 ## Summary
 

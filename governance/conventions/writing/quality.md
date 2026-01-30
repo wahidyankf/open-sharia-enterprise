@@ -895,10 +895,10 @@ Before committing markdown content, verify:
 - [Hugo Content Convention - Shared](../hugo/shared.md) - Shared Hugo content standards
 - [Hugo Content Convention - ayokoding](../hugo/ayokoding.md) - ayokoding-web specific standards
 - [Hugo Content Convention - OSE Platform](../hugo/ose-platform.md) - ose-platform-web specific standards
-- [File Naming Convention](../meta/file-naming.md) - File naming standards
+- [File Naming Convention](../structure/file-naming.md) - File naming standards
 - [Linking Convention](../formatting/linking.md) - Internal and external linking
-- [Tutorial Convention](../tutorial/general.md) - Tutorial structure and pedagogy
-- [Diátaxis Framework](../meta/diataxis-framework.md) - Documentation organization
+- [Tutorial Convention](../tutorials/general.md) - Tutorial structure and pedagogy
+- [Diátaxis Framework](../structure/diataxis-framework.md) - Documentation organization
 
 ## References
 

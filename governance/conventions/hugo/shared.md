@@ -274,7 +274,7 @@ lastmod: 2025-12-07T15:45:00+07:00
 
 ### 6. Tutorial Convention
 
-**Reference**: [Tutorial Convention](../tutorial/general.md)
+**Reference**: [Tutorial Convention](../tutorials/general.md)
 
 **Application to Hugo**: Applies to learning content in **ayokoding-web only**.
 
@@ -324,7 +324,7 @@ Let's start by creating a new project...
 
 ### 7. Tutorial Naming Convention
 
-**Reference**: [Tutorial Naming Convention](../tutorial/naming.md)
+**Reference**: [Tutorial Naming Convention](../tutorials/naming.md)
 
 **Application to Hugo**: Use standardized tutorial types in **ayokoding-web learning content only**.
 
@@ -354,7 +354,7 @@ content/id/belajar/nodejs/
 
 ### 8. No Time Estimates in Educational Content
 
-**Reference**: [Content Quality Principles - No Time Estimates](../content/quality.md#no-time-estimates)
+**Reference**: [Content Quality Principles - No Time Estimates](../writing/quality.md#no-time-estimates)
 
 **Application to Hugo**: Do NOT include time estimates in educational/tutorial content.
 
@@ -540,7 +540,7 @@ FAIL: Wrong: [Tutorial](/learn/nodejs) <!-- Missing language prefix -->
 
 ### 3. File Naming Convention
 
-**Reference**: [File Naming Convention](../meta/file-naming.md)
+**Reference**: [File Naming Convention](../structure/file-naming.md)
 
 **Adaptation for Hugo**:
 
@@ -1003,13 +1003,13 @@ Before publishing Hugo content, verify:
 - [Diagrams and Schema Convention](../formatting/diagrams.md)
 - [Emoji Usage Convention](../formatting/emoji.md)
 - [Timestamp Format Convention](../formatting/timestamp.md)
-- [Tutorial Convention](../tutorial/general.md)
-- [Tutorial Naming Convention](../tutorial/naming.md)
-- [Content Quality Principles](../content/quality.md)
+- [Tutorial Convention](../tutorials/general.md)
+- [Tutorial Naming Convention](../tutorials/naming.md)
+- [Content Quality Principles](../writing/quality.md)
 
 **Related Conventions**:
 
-- [File Naming Convention](../meta/file-naming.md)
+- [File Naming Convention](../structure/file-naming.md)
 - [Linking Convention](../formatting/linking.md)
 - [Indentation Convention](../formatting/indentation.md)
 

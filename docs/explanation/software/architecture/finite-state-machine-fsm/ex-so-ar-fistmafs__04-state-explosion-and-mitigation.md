@@ -712,15 +712,15 @@ When refactoring to mitigate state explosion:
 
 ### Templates
 
-- [State Machine Specification](./templates/ex-so-ar-fsm-te__state-machine-specification.md) - Document state count and mitigation strategies
-- [State Transition Table](./templates/ex-so-ar-fsm-te__state-transition-table.md) - Analyze transition patterns
+- State Machine Specification (TODO: ./templates/ex-so-ar-fsm-te\_\_state-machine-specification.md) - Document state count and mitigation strategies
+- State Transition Table (TODO: ./templates/ex-so-ar-fsm-te\_\_state-transition-table.md) - Analyze transition patterns
 
 ## Next Steps
 
 1. **Master hierarchical states**: Read [Hierarchical and Nested States](ex-so-ar-fistmafs__05-hierarchical-and-nested-states.md)
 2. **Learn event mechanics**: Read [Events, Guards, and Actions](ex-so-ar-fistmafs__06-events-guards-and-actions.md)
 3. **Study design patterns**: Read [Design Patterns and Best Practices](ex-so-ar-fistmafs__07-design-patterns-and-best-practices.md)
-4. **Refactor your FSM**: Use [State Machine Specification](./templates/ex-so-ar-fsm-te__state-machine-specification.md) template
+4. **Refactor your FSM**: Use State Machine Specification (TODO: ./templates/ex-so-ar-fsm-te\_\_state-machine-specification.md) template
 
 ## Summary
 

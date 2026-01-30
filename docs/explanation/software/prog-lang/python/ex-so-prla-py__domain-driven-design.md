@@ -659,7 +659,7 @@ graph TD
 
 - [Classes and Protocols](./ex-so-prla-py__classes-and-protocols.md) - OOP patterns
 - [Type Safety](./ex-so-prla-py__type-safety.md) - Pydantic validation
-- [Templates](./templates/) - DDD code templates
+<!-- TODO: Create templates directory ./templates/ with DDD code templates -->
 
 ---
 
