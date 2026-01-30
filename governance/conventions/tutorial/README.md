@@ -24,7 +24,7 @@ These conventions define **HOW to create and structure tutorials**, covering tut
 
 ## Conventions
 
-- [By Example Tutorial](./by-example.md) - Standards for code-first by-example tutorials with 75-90 heavily annotated examples achieving 95% coverage
+- [By Example Tutorial](./by-example.md) - Standards for code-first by-example tutorials with 75-85 heavily annotated examples achieving 95% coverage
 - [General Tutorial Convention](./general.md) - Standards for creating learning-oriented tutorials with narrative flow and progressive scaffolding
 - [Programming Language Content Standard](./programming-language-content.md) - Universal content architecture for programming language education on ayokoding-web
 - [Programming Language Tutorial Structure](./programming-language-structure.md) - Dual-path tutorial organization (by-concept and by-example) for programming languages

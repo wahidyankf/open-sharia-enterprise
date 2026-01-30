@@ -99,7 +99,7 @@ graph TB
 
 - **Full Set**: The 5 sequential learning levels (Initial Setup → Quick Start → Beginner → Intermediate → Advanced) that provide comprehensive mastery from 0% to 95% coverage
 - **Cookbook**: A parallel, practical reference track for solving specific problems at any skill level
-- **By Example**: A parallel, example-driven learning track for experienced developers who want to quickly pick up a new language through 75-90 annotated, self-contained code examples (95% coverage)
+- **By Example**: A parallel, example-driven learning track for experienced developers who want to quickly pick up a new language through 75-85 annotated, self-contained code examples (95% coverage)
 
 ---
 
@@ -322,13 +322,13 @@ Collection of practical recipes and patterns for solving common real-world probl
 **Goal**: Quick pickup for experienced developers learning new languages
 
 **Description**:
-Example-driven learning path for experienced developers (seasonal programmers/software engineers) who want to quickly pick up a new language through heavily annotated code examples. Covers 95% of language concepts through 75-90 self-contained, progressively complex examples organized into three levels.
+Example-driven learning path for experienced developers (seasonal programmers/software engineers) who want to quickly pick up a new language through heavily annotated code examples. Covers 95% of language concepts through 75-85 self-contained, progressively complex examples organized into three levels.
 
 **Prerequisites**: Programming experience required (not for complete beginners)
 
 **Structure**:
 
-- Total: 75-90 annotated examples organized into 3 files
+- Total: 75-85 annotated examples organized into 3 files
 - **beginner.md**: Examples 1-25/30 (Basics, 0-40% coverage) - fundamental syntax and core concepts
 - **intermediate.md**: Examples 26-50/60 (Intermediate, 40-75% coverage) - practical patterns and production features
 - **advanced.md**: Examples 51-75/90 (Advanced, 75-95% coverage) - complex features, optimization, and internals
@@ -437,7 +437,7 @@ graph TB
 | **Intermediate**  | 60-85%    | Building production systems                                |
 | **Advanced**      | 85-95%    | Need expert-level mastery                                  |
 | **Cookbook**      | Practical | Solving specific problems                                  |
-| **By Example**    | 95%       | Experienced dev, learn new language through 75-90 examples |
+| **By Example**    | 95%       | Experienced dev, learn new language through 75-85 examples |
 
 **Note**: The first 5 types (Initial Setup through Advanced) form the "Full Set" - a sequential learning path from 0% to 95% coverage. Cookbook and By Example are parallel tracks for different learning approaches.
 
