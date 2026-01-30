@@ -58,9 +58,17 @@ Study cases should be:
 - **Technology-neutral**: Discuss components generically (e.g., "cache" not "Redis", "database" not "PostgreSQL")
 - **Comprehensive**: Cover requirements, architecture, data models, APIs, scalability, and trade-offs
 
-## 📚 Available Study Cases
+## 📚 Content Organization
 
-- [**AI-Powered Personal Finance Advisor**](/en/learn/software-engineering/system-design/ai-personal-finance-advisor) - Design a system where users upload payment receipts and receive AI-generated financial insights, spending patterns, and budget recommendations
+This section focuses on case studies and practical system design:
+
+- [**Case Studies**](/en/learn/software-engineering/system-design/cases) - Work through real-world system design scenarios with progressive scaling from startup to planet-scale
+
+For architectural patterns and methodologies, see [**Architecture**](/en/learn/software-engineering/architecture) section.
+
+### Available Case Studies
+
+- [**AI-Powered Personal Finance Advisor**](/en/learn/software-engineering/system-design/cases/ai-personal-finance-advisor) - Design a system where users upload payment receipts and receive AI-generated financial insights, spending patterns, and budget recommendations
 
 ## 🏗️ Structure of a Study Case
 
