@@ -419,7 +419,7 @@ This skill delegates research to the Explore agent in an isolated context.
 - **Content Creation**: applying-content-quality, creating-by-example-tutorials, developing-ayokoding-content, developing-ose-content, writing-readme-files
 - **Quality Assurance**: applying-maker-checker-fixer, assessing-criticality-confidence, validating-factual-accuracy, validating-links, generating-validation-reports
 - **Standards Application**: applying-diataxis-framework, creating-accessible-diagrams, writing-gherkin-criteria
-- **Process Execution**: creating-project-plans, defining-workflows, practicing-trunk-based-development, executing-checker-workflow, applying-fixer-workflow, multi-file-template
+- **Process Execution**: creating-project-plans, defining-workflows, practicing-trunk-based-development, executing-checker-workflow, applying-fixer-workflow
 - **Technical Knowledge**: developing-agents, understanding-repository-architecture, documenting-references, selecting-models
 
 See [CLAUDE.md](../CLAUDE.md) for Claude Code details and [AGENTS.md](../AGENTS.md) for OpenCode details.
