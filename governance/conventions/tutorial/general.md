@@ -60,7 +60,14 @@ Tutorials are **learning-oriented** documentation that guide learners through ac
 
 **Purpose**: This convention defines the requirements and standards for creating tutorials that both `docs__tutorial-maker` creates and `docs__tutorial-checker` validates. It serves as the single source of truth for tutorial quality.
 
-**Scope**: Applies to all tutorials in `docs/tutorials/` directory, including: - Business and Finance tutorials (`docs/tutorials/business-and-finance/`) - AI Engineering tutorials (`docs/tutorials/ai-engineering/`) - Software Engineering tutorials (`docs/tutorials/software-engineering/`) - Domain-specific tutorials organized by subject area
+**Scope**: Applies to **all tutorial content in the repository**, including:
+
+- **docs/tutorials/** - Business, AI Engineering, Software Engineering tutorials
+- **apps/ayokoding-web/content/** - Programming language tutorials (Java, Golang, Python, etc.)
+- **apps/ose-platform-web/content/** - Platform tutorials and guides
+- **Any other location** - Tutorial content regardless of directory
+
+**Implementation Notes**: While these standards apply universally, implementation details (Hugo frontmatter, weight values, navigation structure) vary by platform and are covered in site-specific conventions ([ayokoding-web](../hugo/ayokoding.md), [ose-platform-web](../hugo/ose-platform.md))
 
 ## Diátaxis Principles for Tutorials
 

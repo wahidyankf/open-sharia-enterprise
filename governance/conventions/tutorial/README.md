@@ -4,23 +4,30 @@ Tutorial creation, structure, naming, and content standards for educational cont
 
 ## Purpose
 
-These conventions define **HOW to create and structure tutorials**, covering tutorial types, depth levels, naming standards, programming language content architecture, and by-example tutorial formats. These standards ensure consistent, high-quality learning experiences.
+These conventions define **HOW to create and structure tutorials**, covering tutorial types, depth levels, naming standards, programming language content architecture, and by-example tutorial formats. These standards ensure consistent, high-quality learning experiences **across all tutorial content in the repository**.
 
 ## Scope
 
-**✅ Belongs Here:**
+**✅ Applies To:**
 
+- **All tutorial content** in the repository:
+  - `docs/tutorials/` - Business, AI, Software Engineering tutorials
+  - `apps/ayokoding-web/content/` - Programming language tutorials
+  - `apps/ose-platform-web/content/` - Platform tutorials
+  - Any other location with tutorial content
 - Tutorial structure and organization
 - Tutorial naming and depth levels
-- Programming language education architecture
-- By-example tutorial standards
+- Programming language education architecture (Full Set Tutorial Package)
+- By-example and by-concept tutorial standards
 - Tutorial quality requirements
 
-**❌ Does NOT Belong:**
+**❌ Does NOT Cover:**
 
 - General content quality (that's content/)
 - Markdown formatting (that's formatting/)
-- Hugo-specific content rules (that's hugo/)
+- Hugo-specific implementation details (that's hugo/)
+
+**Note**: These are **content conventions** defining WHAT to write and HOW to structure tutorials. Hugo-specific implementation details (frontmatter, weights, navigation) are covered in [Hugo conventions](../hugo/)
 
 ## Conventions
 
