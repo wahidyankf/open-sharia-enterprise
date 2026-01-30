@@ -222,11 +222,11 @@ License type with link to LICENSE file
 
 ## References
 
-**Primary Convention**: [README Quality Convention](../../../governance/conventions/content/readme-quality.md)
+**Primary Convention**: [README Quality Convention](../../../governance/conventions/writing/readme-quality.md)
 
 **Related Conventions**:
 
-- [Content Quality Principles](../../../governance/conventions/content/quality.md) - Universal markdown standards
+- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Universal markdown standards
 - [Accessibility First Principle](../../../governance/principles/content/accessibility-first.md) - Accessibility requirements
 
 **Related Skills**:

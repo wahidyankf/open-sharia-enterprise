@@ -40,7 +40,7 @@ This practice implements/respects the following conventions:
 
 - **[Code Quality Convention](../quality/code.md)**: Commit message validation is enforced through git hooks (Husky + Commitlint) as part of the automated code quality workflow.
 
-- **[Content Quality Principles](../../conventions/content/quality.md)**: Commit messages use active voice (imperative mood) and clear, concise descriptions - aligning with content quality standards for communication.
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Commit messages use active voice (imperative mood) and clear, concise descriptions - aligning with content quality standards for communication.
 
 ## What are Conventional Commits?
 

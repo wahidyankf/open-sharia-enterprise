@@ -89,7 +89,7 @@ This convention builds upon and references:
 - [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - ose-platform-web content standards
 - [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - Accessible color palette for themes
 - [Diagram Convention](../../conventions/formatting/diagrams.md) - Mermaid diagrams in documentation (includes Mermaid comment syntax)
-- [Content Quality Principles](../../conventions/content/quality.md) - Universal markdown standards
+- [Content Quality Principles](../../conventions/writing/quality.md) - Universal markdown standards
 
 ## ️ Theme Development
 
@@ -2192,7 +2192,7 @@ Wrong:   {{% shortcode %}}  <!-- Only for shortcodes that return markdown -->
 - [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - ayokoding-web content standards
 - [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - ose-platform-web content standards
 - [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - Accessible colors
-- [Content Quality Principles](../../conventions/content/quality.md) - Universal standards
+- [Content Quality Principles](../../conventions/writing/quality.md) - Universal standards
 
 ---
 

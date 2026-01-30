@@ -117,7 +117,7 @@ Add "References" section to 7 Skills that are missing it.
 ### Implementation Steps
 
 - [x] **1.1 Add References to creating-by-example-tutorials**
-  - [x] Add section linking to `governance/conventions/tutorial/by-example.md`
+  - [x] Add section linking to `governance/conventions/tutorials/by-example.md`
   - **Implementation Notes**: Renamed existing "Reference Documentation" section to "References" and updated skill name references within.
   - **Date**: 2026-01-02
   - **Status**: Completed
@@ -136,7 +136,7 @@ Add "References" section to 7 Skills that are missing it.
   - **Status**: Completed
 
 - [x] **1.4 Add References to validating-factual-accuracy**
-  - [x] Add section linking to `governance/conventions/content/factual-validation.md`
+  - [x] Add section linking to `governance/conventions/writing/factual-validation.md`
   - **Implementation Notes**: Added new "References" section with links to primary convention and related conventions/skills.
   - **Date**: 2026-01-02
   - **Status**: Completed
@@ -181,7 +181,7 @@ Create 7 new Skills to cover all agent domains. Use gerund naming pattern. Inclu
   - [x] Create `.claude/skills/applying-content-quality/` directory
   - [x] Create `SKILL.md` with frontmatter and content
   - [x] Add `allowed-tools: Read, Write, Edit, Glob, Grep`
-  - [x] Reference `governance/conventions/content/quality.md`
+  - [x] Reference `governance/conventions/writing/quality.md`
   - **Date**: 2026-01-02
   - **Status**: Completed
 
@@ -189,7 +189,7 @@ Create 7 new Skills to cover all agent domains. Use gerund naming pattern. Inclu
   - [x] Create `.claude/skills/applying-diataxis-framework/` directory
   - [x] Create `SKILL.md` with frontmatter and content
   - [x] Add `allowed-tools: Read, Write, Edit, Glob, Grep`
-  - [x] Reference `governance/conventions/meta/diataxis-framework.md`
+  - [x] Reference `governance/conventions/structure/diataxis-framework.md`
   - **Date**: 2026-01-02
   - **Status**: Completed
 
@@ -197,7 +197,7 @@ Create 7 new Skills to cover all agent domains. Use gerund naming pattern. Inclu
   - [x] Create `.claude/skills/creating-project-plans/` directory
   - [x] Create `SKILL.md` with frontmatter and content
   - [x] Add `allowed-tools: Read, Write, Edit, Glob, Grep`
-  - [x] Reference `governance/conventions/content/project/plans-organization.md`
+  - [x] Reference `governance/conventions/structure/plans.md`
   - **Date**: 2026-01-02
   - **Status**: Completed
 
@@ -205,7 +205,7 @@ Create 7 new Skills to cover all agent domains. Use gerund naming pattern. Inclu
   - [x] Create `.claude/skills/writing-readme-files/` directory
   - [x] Create `SKILL.md` with frontmatter and content
   - [x] Add `allowed-tools: Read, Write, Edit, Glob, Grep`
-  - [x] Reference `governance/conventions/content/readme-quality.md`
+  - [x] Reference `governance/conventions/writing/readme-quality.md`
   - **Date**: 2026-01-02
   - **Status**: Completed
 

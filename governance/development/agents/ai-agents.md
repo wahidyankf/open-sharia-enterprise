@@ -127,7 +127,7 @@ When working with agents:
 
 This practice implements/respects the following conventions:
 
-- **[File Naming Convention](../../conventions/meta/file-naming.md)**: Agents follow kebab-case naming pattern (`agent-name.md`). Agent names must match frontmatter `name` field.
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Agents follow kebab-case naming pattern (`agent-name.md`). Agent names must match frontmatter `name` field.
 
 - **[Linking Convention](../../conventions/formatting/linking.md)**: All references to conventions and other documents use relative paths with `.md` extension. Ensures GitHub-compatible markdown across all agent files.
 
@@ -411,7 +411,7 @@ skills:
 
 **Conventions:**
 
-- `governance/conventions/content/quality.md` - Content Quality Principles
+- `governance/conventions/writing/quality.md` - Content Quality Principles
 - `governance/conventions/formatting/linking.md` - Linking Convention
 ```
 
@@ -2061,7 +2061,7 @@ The `.claude/agents/README.md` (primary) and `.opencode/agent/README.md` (second
 - Lists all available agents with descriptions
 - Explains agent workflow and best practices
 - Provides guidance on when to use each agent
-- Follows the naming exception for README.md files (documented in [File Naming Convention](../../conventions/meta/file-naming.md))
+- Follows the naming exception for README.md files (documented in [File Naming Convention](../../conventions/structure/file-naming.md))
 
 ### Agent Versioning
 
@@ -2426,9 +2426,9 @@ See [Skills README](../../../.claude/skills/README.md) for complete catalog.
 - [Development Index](../README.md) - Overview of development conventions
 - [Conventions Index](../../conventions/README.md) - Documentation conventions
 - [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - Master reference for all color usage (agent categorization, diagrams, accessibility standards)
-- [File Naming Convention](../../conventions/meta/file-naming.md) - How to name files
+- [File Naming Convention](../../conventions/structure/file-naming.md) - How to name files
 - [Linking Convention](../../conventions/formatting/linking.md) - How to link between files
-- [Diátaxis Framework](../../conventions/meta/diataxis-framework.md) - Documentation organization
+- [Diátaxis Framework](../../conventions/structure/diataxis-framework.md) - Documentation organization
 - [Implementation Workflow Convention](../workflow/implementation.md) - Surgical changes (touch only what you must) and goal-driven execution (define success criteria, loop until verified) practices for agents
 
 ---

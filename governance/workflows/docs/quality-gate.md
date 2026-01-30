@@ -377,7 +377,7 @@ The AI will execute with scoped validation:
 - Fix issues in that scope only
 
 ```
-User: "Run documentation quality gate workflow for governance/conventions/meta/file-naming.md"
+User: "Run documentation quality gate workflow for governance/conventions/structure/file-naming.md"
 ```
 
 The AI will execute with single-file scope:

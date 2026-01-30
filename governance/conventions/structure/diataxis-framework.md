@@ -370,7 +370,7 @@ Start here
 
 ### Explanation Example: This Document
 
-**Location**: `governance/conventions/meta/diataxis-framework.md`
+**Location**: `governance/conventions/structure/diataxis-framework.md`
 
 **Structure**:
 

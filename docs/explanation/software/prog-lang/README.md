@@ -81,7 +81,7 @@ All code written in the languages documented here MUST follow the standards, pat
 - `swe-programming-python` - Python standards quick reference
 - `swe-programming-elixir` - Elixir standards quick reference
 
-**Governance**: See [Software Design Reference](../../../../governance/conventions/programming/software-design-reference.md) for the relationship between this documentation and repository governance.
+**Governance**: See [Software Design Reference](../../../../governance/docs/explanation/software/ex-so__software-design-reference.md) for the relationship between this documentation and repository governance.
 
 ## Documentation Structure
 

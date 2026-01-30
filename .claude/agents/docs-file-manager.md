@@ -61,7 +61,7 @@ Use this agent when:
 
 ## File Naming Convention Review
 
-Before any operation, understand the [File Naming Convention](../../governance/conventions/meta/file-naming.md):
+Before any operation, understand the [File Naming Convention](../../governance/conventions/structure/file-naming.md):
 
 ### Pattern
 
@@ -616,7 +616,7 @@ Proceed anyway? (Please confirm)
 **Documentation Conventions:**
 
 - `governance/conventions/README.md` - Index of all conventions
-- `governance/conventions/meta/file-naming.md` - How to name files with hierarchical prefixes (required reading)
+- `governance/conventions/structure/file-naming.md` - How to name files with hierarchical prefixes (required reading)
 - `governance/conventions/formatting/linking.md` - How to link between files with GitHub-compatible markdown (required reading)
 - `governance/conventions/formatting/emoji.md` - When and where to use emojis
 

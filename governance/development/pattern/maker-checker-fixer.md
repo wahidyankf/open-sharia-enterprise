@@ -42,7 +42,7 @@ This practice implements/respects the following conventions:
 
 - **[Timestamp Format Convention](../../conventions/formatting/timestamp.md)**: Report filenames use UTC+7 timestamps in format `YYYY-MM-DD--HH-MM` (hyphen-separated for filesystem compatibility).
 
-- **[Content Quality Principles](../../conventions/content/quality.md)**: Checker agents validate content against quality standards (active voice, heading hierarchy, alt text, WCAG compliance). Fixer agents apply quality improvements when findings have HIGH confidence.
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Checker agents validate content against quality standards (active voice, heading hierarchy, alt text, WCAG compliance). Fixer agents apply quality improvements when findings have HIGH confidence.
 
 ## Overview
 
@@ -674,10 +674,10 @@ The maker-checker-fixer pattern integrates with repository conventions:
 | [Criticality Levels Convention](../quality/criticality-levels.md)           | Checkers categorize by criticality, fixers use for priority     |
 | [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md) | Fixers assess confidence, combine with criticality for priority |
 | [Repository Validation Methodology](../quality/repository-validation.md)    | Standard validation patterns used by checker/fixer              |
-| [Content Quality Principles](../../conventions/content/quality.md)          | What checkers validate (quality standards)                      |
+| [Content Quality Principles](../../conventions/writing/quality.md)          | What checkers validate (quality standards)                      |
 | [Hugo Content Convention](../../conventions/hugo/shared.md)                 | What ayokoding/ose-platform makers/checkers enforce             |
-| [Tutorial Convention](../../conventions/content/tutorial/general.md)        | What docs\_\_tutorial-maker/checker enforce                     |
-| [README Quality Convention](../../conventions/content/readme-quality.md)    | What readme\_\_maker/checker enforce                            |
+| [Tutorial Convention](../../conventions/tutorials/general.md)               | What docs\_\_tutorial-maker/checker enforce                     |
+| [README Quality Convention](../../conventions/writing/readme-quality.md)    | What readme\_\_maker/checker enforce                            |
 | [Temporary Files Convention](../infra/temporary-files.md)                   | Where checker/fixer reports are stored                          |
 
 **Key Point**: The pattern is a **workflow framework**. The conventions define **what** to validate/enforce.
@@ -696,12 +696,12 @@ The maker-checker-fixer pattern integrates with repository conventions:
 
 **Domain-Specific Standards**:
 
-- [Content Quality Principles](../../conventions/content/quality.md) - Universal content standards
+- [Content Quality Principles](../../conventions/writing/quality.md) - Universal content standards
 - [Hugo Content Convention - Shared](../../conventions/hugo/shared.md) - Hugo content standards
 - [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - ayokoding-web specifics
 - [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - ose-platform-web specifics
-- [Tutorial Convention](../../conventions/content/tutorial/general.md) - Tutorial quality standards
-- [README Quality Convention](../../conventions/content/readme-quality.md) - README standards
+- [Tutorial Convention](../../conventions/tutorials/general.md) - Tutorial quality standards
+- [README Quality Convention](../../conventions/writing/readme-quality.md) - README standards
 
 **Agent Examples**:
 

@@ -535,7 +535,7 @@ Before pushing to `main`:
 
 - [Commit Message Convention](../../../governance/development/workflow/commit-messages.md) - Conventional Commits format
 - [Implementation Workflow](../../../governance/development/workflow/implementation.md) - Development workflow stages
-- [Plans Organization](../../../governance/conventions/content/project/plans-organization.md) - Git workflow in plans
+- [Plans Organization](../../../governance/conventions/structure/plans.md) - Git workflow in plans
 
 **Related Skills**:
 

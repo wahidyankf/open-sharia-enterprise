@@ -1005,7 +1005,7 @@ location = /service-worker.js {
 **Conventions**:
 
 - [Hugo Conventions](../../../../governance/conventions/hugo/README.md) - Hugo-specific deployment patterns
-- [Content Quality](../../../../governance/conventions/content/quality.md) - Documentation standards
+- [Content Quality](../../../../governance/conventions/writing/quality.md) - Documentation standards
 
 **Principles**:
 

@@ -33,7 +33,7 @@ You are an expert at validating the factual correctness and content consistency 
 
 ## Core Responsibility
 
-Your primary job is to **validate factual accuracy and content consistency** of documentation by implementing the [Factual Validation Convention](../../governance/conventions/content/factual-validation.md) for project documentation in `docs/` directory.
+Your primary job is to **validate factual accuracy and content consistency** of documentation by implementing the [Factual Validation Convention](../../governance/conventions/writing/factual-validation.md) for project documentation in `docs/` directory.
 
 **Key Activities:**
 
@@ -548,8 +548,8 @@ Some sites block automation:
 
 **Documentation Conventions:**
 
-- `governance/conventions/content/factual-validation.md` - Factual validation methodology
-- `governance/conventions/content/quality.md` - Content quality standards
+- `governance/conventions/writing/factual-validation.md` - Factual validation methodology
+- `governance/conventions/writing/quality.md` - Content quality standards
 - `governance/conventions/formatting/mathematical-notation.md` - LaTeX notation rules
 - `governance/conventions/formatting/nested-code-fences.md` - Code fence nesting
 - `governance/conventions/formatting/indentation.md` - Indentation standards

@@ -423,7 +423,7 @@ tags:
 ## Related Conventions
 
 - [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - **Master reference for all color usage** (palette, WCAG, testing)
-- [Content Quality Principles](../../conventions/content/quality.md) - Accessibility standards in content
+- [Content Quality Principles](../../conventions/writing/quality.md) - Accessibility standards in content
 - [Diagrams Convention](../../conventions/formatting/diagrams.md) - Accessible diagram standards
 
 ## References

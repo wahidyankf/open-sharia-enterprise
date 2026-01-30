@@ -16,7 +16,7 @@ updated: 2026-01-20
 
 ## What is Explanation Documentation?
 
-Per the [Diátaxis framework](../../governance/conventions/meta/diataxis-framework.md), Explanation documentation:
+Per the [Diátaxis framework](../../governance/conventions/structure/diataxis-framework.md), Explanation documentation:
 
 - **Deepens understanding** of concepts, design decisions, and systems
 - **Answers "why?"** questions and provides context

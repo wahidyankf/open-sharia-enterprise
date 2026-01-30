@@ -1476,8 +1476,8 @@ async function processDonation(data: DonationInput): Promise<Result<Donation, Er
 
 ### OSE Platform Conventions
 
-- [File Naming Convention](../../../../../governance/conventions/meta/file-naming.md)
-- [Diátaxis Framework](../../../../../governance/conventions/meta/diataxis-framework.md)
+- [File Naming Convention](../../../../../governance/conventions/structure/file-naming.md)
+- [Diátaxis Framework](../../../../../governance/conventions/structure/diataxis-framework.md)
 - [Functional Programming Principle](../../../../../governance/development/pattern/functional-programming.md)
 - [Reproducibility Principle](../../../../../governance/principles/software-engineering/reproducibility.md)
 

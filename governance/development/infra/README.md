@@ -45,9 +45,9 @@ This set of development practices implements/respects the following core princip
 
 This set of development practices respects the following conventions:
 
-- **[Plans Organization Convention](../../conventions/content/project/plans-organization.md)**: Acceptance criteria format aligns with Gherkin standard used for project planning and requirement specification.
+- **[Plans Organization Convention](../../conventions/structure/plans.md)**: Acceptance criteria format aligns with Gherkin standard used for project planning and requirement specification.
 
-- **[File Naming Convention](../../conventions/meta/file-naming.md)**: Temporary files follow naming patterns with UUID chains and timestamps for traceability and collision prevention.
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Temporary files follow naming patterns with UUID chains and timestamps for traceability and collision prevention.
 
 ---
 

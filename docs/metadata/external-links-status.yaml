@@ -8,14 +8,14 @@ links:
     finalUrl: https://adr.github.io/
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://aws.amazon.com/blogs/architecture/master-architecture-decision-records-adrs-best-practices-for-effective-decision-making/
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://aws.amazon.com/blogs/architecture/master-architecture-decision-records-adrs-best-practices-for-effective-decision-making/
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://aws.amazon.com/textract/
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
@@ -92,7 +92,7 @@ links:
     finalUrl: https://contributing.md/how-to-build-contributing-md/
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://cwe.mitre.org/top25/
     lastChecked: 2025-11-30 22:45:00+07:00
     statusCode: 200
@@ -129,7 +129,7 @@ links:
     usedIn:
       - docs/README.md
       - governance/conventions/formatting/diagrams.md
-      - governance/conventions/meta/diataxis-framework.md
+      - governance/conventions/structure/diataxis-framework.md
       - governance/conventions/formatting/emoji.md
       - governance/conventions/formatting/linking.md
       - docs/how-to/hoto__organize-work.md
@@ -214,21 +214,21 @@ links:
     finalUrl: https://github.com/jehna/readme-best-practices
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://github.com/RichardLitt/standard-readme
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://github.com/RichardLitt/standard-readme
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://github.com/stumpsyn/policies/blob/master/citizen_code_of_conduct.md
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://github.com/stumpsyn/policies/blob/master/citizen_code_of_conduct.md
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://github.com/tesseract-ocr/tesseract
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
@@ -255,7 +255,7 @@ links:
     finalUrl: https://gist.github.com/PurpleBooth/b24679402957c63ec426
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://go.dev/blog
     lastChecked: 2025-12-03 12:00:00+07:00
     statusCode: 200
@@ -348,21 +348,21 @@ links:
     finalUrl: https://keepachangelog.com/
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://keepachangelog.com/en/1.0.0/
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://keepachangelog.com/en/1.0.0/
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://learn.microsoft.com/en-us/azure/well-architected/architect-role/architecture-decision-record
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://learn.microsoft.com/en-us/azure/well-architected/architect-role/architecture-decision-record
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://learn.microsoft.com/en-us/style-guide/welcome/
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
@@ -418,14 +418,14 @@ links:
     finalUrl: https://www.contributor-covenant.org/
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://www.contribution-guide.org/
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://www.contribution-guide.org/
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://www.conventionalcommits.org/
     lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
@@ -439,7 +439,7 @@ links:
     finalUrl: https://www.finos.org/
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://www.instructionaldesign.org/theories/cognitive-load/
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
@@ -458,14 +458,14 @@ links:
     finalUrl: https://www.linuxfoundation.org/research/the-2023-state-of-open-source-in-financial-services
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://www.makeareadme.com/
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://www.makeareadme.com/
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://www.mathjax.org/
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
@@ -503,7 +503,7 @@ links:
     finalUrl: https://www.readmecodegen.com/blog/beginner-friendly-readme-guide-open-source-projects
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://www.retrievalpractice.org/make-it-stick
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
@@ -564,14 +564,14 @@ links:
     finalUrl: https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/best-practices.html
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://docs.github.com/en/code-security/security-advisories
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://docs.github.com/en/code-security/security-advisories
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://github.blog/2022-05-19-math-support-in-markdown/
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
@@ -585,14 +585,14 @@ links:
     finalUrl: https://nx.dev/blog/new-nx-experience-for-typescript-monorepos
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://nx.dev/blog/managing-ts-packages-in-monorepos
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://nx.dev/blog/managing-ts-packages-in-monorepos
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://openjdk.org/
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
@@ -703,7 +703,7 @@ links:
     finalUrl: https://semver.org/spec/v2.0.0.html
     redirectChain: null
     usedIn:
-      - governance/conventions/content/oss-documentation.md
+      - governance/conventions/writing/oss-documentation.md
   - url: https://spec.commonmark.org/0.30/#list-items
     lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200

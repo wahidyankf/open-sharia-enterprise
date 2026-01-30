@@ -174,13 +174,13 @@ Husky + lint-staged enforce quality:
 
 **Examples**:
 
-- `file-naming.md` (explanation/governance/conventions/meta)
+- `file-naming.md` (governance/conventions/structure)
 - `tu__getting-started.md` (tutorials)
 - `hoto__deploy-docker.md` (how-to)
 
 **Exception**: Index files use `README.md` for GitHub compatibility
 
-**See**: [governance/conventions/meta/file-naming.md](./governance/conventions/meta/file-naming.md), [governance/conventions/meta/diataxis-framework.md](./governance/conventions/meta/diataxis-framework.md)
+**See**: [governance/conventions/structure/file-naming.md](./governance/conventions/structure/file-naming.md), [governance/conventions/structure/diataxis-framework.md](./governance/conventions/structure/diataxis-framework.md)
 
 ## Core Principles
 
@@ -201,7 +201,7 @@ All work follows 10 foundational principles from `governance/principles/`:
 Pattern: `[prefix]__[content-identifier].md` encoding directory path
 Exception: `README.md` for index files, `docs/metadata/` files
 
-**See**: [governance/conventions/meta/file-naming.md](./governance/conventions/meta/file-naming.md)
+**See**: [governance/conventions/structure/file-naming.md](./governance/conventions/structure/file-naming.md)
 
 ### Linking
 
@@ -235,7 +235,7 @@ Mermaid diagrams with color-blind friendly palette, proper accessibility
 
 Active voice, single H1, proper heading nesting, alt text for images, WCAG AA color contrast
 
-**See**: [governance/conventions/content/quality.md](./governance/conventions/content/quality.md)
+**See**: [governance/conventions/writing/quality.md](./governance/conventions/writing/quality.md)
 
 ## Development Practices
 
@@ -333,7 +333,7 @@ Six-layer governance hierarchy:
 
 - **Layer 0: Vision** - WHY we exist (democratize Shariah-compliant enterprise)
 - **Layer 1: Principles** - WHY we value approaches (10 core principles)
-- **Layer 2: Conventions** - WHAT documentation rules (24 standards)
+- **Layer 2: Conventions** - WHAT documentation rules (26 standards)
 - **Layer 3: Development** - HOW we develop (15 practices)
 - **Layer 4: AI Agents** - WHO enforces rules (45 specialized agents)
 - **Layer 5: Workflows** - WHEN we run processes (orchestrated sequences)
@@ -406,7 +406,7 @@ Project planning in `plans/` folder:
 
 **Folder naming**: `YYYY-MM-DD__[project-identifier]/`
 
-**See**: [governance/conventions/project/plans-organization.md](./governance/conventions/project/plans-organization.md)
+**See**: [governance/conventions/structure/plans.md](./governance/conventions/structure/plans.md)
 
 ## Important Notes
 
@@ -418,7 +418,7 @@ Project planning in `plans/` folder:
 
 ## Related Documentation
 
-- **Conventions Index**: [governance/conventions/README.md](./governance/conventions/README.md) - 24 documentation standards
+- **Conventions Index**: [governance/conventions/README.md](./governance/conventions/README.md) - 26 documentation standards
 - **Development Index**: [governance/development/README.md](./governance/development/README.md) - 15 software practices
 - **Principles Index**: [governance/principles/README.md](./governance/principles/README.md) - 10 foundational principles
 - **Agents Index**: [.claude/agents/README.md](./.claude/agents/README.md) - 45 specialized agents

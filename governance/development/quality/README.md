@@ -49,7 +49,7 @@ This set of development practices implements/respects the following core princip
 
 This set of development practices respects the following conventions:
 
-- **[Content Quality Principles](../../conventions/content/quality.md)**: Quality validation standards align with documentation quality requirements for active voice, accessibility, and proper structure.
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Quality validation standards align with documentation quality requirements for active voice, accessibility, and proper structure.
 
 - **[Timestamp Format](../../conventions/formatting/timestamp.md)**: Quality reports and validation artifacts use standard UTC+7 timestamps for consistency and traceability.
 

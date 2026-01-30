@@ -30,9 +30,9 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Plans Organization Convention](../../conventions/content/project/plans-organization.md)**: Acceptance criteria are written in requirements.md files within plan folders following the Gherkin format defined by this convention.
+- **[Plans Organization Convention](../../conventions/structure/plans.md)**: Acceptance criteria are written in requirements.md files within plan folders following the Gherkin format defined by this convention.
 
-- **[Content Quality Principles](../../conventions/content/quality.md)**: Gherkin scenarios use active voice, clear structure, and concrete examples - aligning with content quality standards for clarity and testability.
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Gherkin scenarios use active voice, clear structure, and concrete examples - aligning with content quality standards for clarity and testability.
 
 - **[Diagrams Convention](../../conventions/formatting/diagrams.md)**: When visualizing acceptance criteria workflows, use Mermaid diagrams with accessible colors as demonstrated in this document's Gherkin workflow diagram.
 
@@ -341,7 +341,7 @@ Then something happens
 
 - **Requirements files** (`plans/*/requirements.md`): Define acceptance criteria for each user story
 - **Delivery checklists**: Validate implementation against Gherkin scenarios
-- See [Plans Organization Convention](../../conventions/content/project/plans-organization.md)
+- See [Plans Organization Convention](../../conventions/structure/plans.md)
 
 ### PASS: Feature Specifications
 
@@ -476,9 +476,9 @@ graph TD
 
 ## Related Conventions
 
-- [Plans Organization Convention](../../conventions/content/project/plans-organization.md) - Where to use acceptance criteria in plans
-- [Tutorial Convention](../../conventions/content/tutorial/general.md) - Acceptance criteria for tutorial quality
-- [Content Quality Principles](../../conventions/content/quality.md) - Writing clear, testable content
+- [Plans Organization Convention](../../conventions/structure/plans.md) - Where to use acceptance criteria in plans
+- [Tutorial Convention](../../conventions/tutorials/general.md) - Acceptance criteria for tutorial quality
+- [Content Quality Principles](../../conventions/writing/quality.md) - Writing clear, testable content
 
 ## Summary
 

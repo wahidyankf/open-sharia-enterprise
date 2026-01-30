@@ -70,4 +70,4 @@ Skill: `repo-generating-validation-reports`
 **Related Conventions**:
 
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
-- [Content Quality Principles](../../governance/conventions/content/quality.md)
+- [Content Quality Principles](../../governance/conventions/writing/quality.md)

@@ -153,7 +153,7 @@ See [DDD and C4 Integration](./domain-driven-design-ddd/ex-so-ar-dodrdedd__17-dd
 - **[Repository Governance Architecture](../../../../governance/repository-governance-architecture.md)** - Six-layer governance hierarchy
 - **[Functional Programming Principles](../../../../governance/development/pattern/functional-programming.md)** - FP practices in this repository
 - **[Diagram Standards](../../../../governance/conventions/formatting/diagrams.md)** - Mermaid and accessibility requirements
-- **[Content Quality Standards](../../../../governance/conventions/content/quality.md)** - Documentation writing guidelines
+- **[Content Quality Standards](../../../../governance/conventions/writing/quality.md)** - Documentation writing guidelines
 
 ---
 

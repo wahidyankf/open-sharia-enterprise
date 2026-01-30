@@ -126,7 +126,7 @@ The `repo-assessing-criticality-confidence` Skill provides complete confidence l
 **Project Guidance:**
 
 - [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../governance/conventions/content/project/plans-organization.md) - Plan standards
+- [Plans Organization Convention](../../governance/conventions/structure/plans.md) - Plan standards
 
 **Related Agents:**
 

@@ -109,4 +109,4 @@ Update status to "Complete", add summary.
 
 - [AGENTS.md](../../CLAUDE.md)
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
-- [Factual Validation Convention](../../governance/conventions/content/factual-validation.md)
+- [Factual Validation Convention](../../governance/conventions/writing/factual-validation.md)

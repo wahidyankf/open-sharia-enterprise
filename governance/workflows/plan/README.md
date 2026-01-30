@@ -30,7 +30,7 @@ These workflows define **WHEN and HOW to validate and execute plans**, orchestra
 ## Related Documentation
 
 - [Workflows Index](../README.md) - All orchestrated workflows
-- [Plans Organization Convention](../../conventions/content/project/plans-organization.md) - Plan structure standards
+- [Plans Organization Convention](../../conventions/structure/plans.md) - Plan structure standards
 - [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Core workflow pattern
 - [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
 

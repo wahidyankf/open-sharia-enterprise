@@ -428,7 +428,7 @@ npx lint-staged
 ## Related Conventions
 
 - [AI Agents Convention](../../development/agents/ai-agents.md) - Explicit tool permissions
-- [File Naming Convention](../../conventions/meta/file-naming.md) - Explicit prefixes
+- [File Naming Convention](../../conventions/structure/file-naming.md) - Explicit prefixes
 - [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - Explicit hex codes
 - [Code Quality Convention](../../development/quality/code.md) - Explicit git hooks
 

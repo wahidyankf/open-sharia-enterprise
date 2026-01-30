@@ -51,7 +51,7 @@ flowchart TD
 
 ### docs/ - Permanent Documentation
 
-**Purpose:** Long-term, structured documentation using the [Diátaxis framework](../../governance/conventions/meta/diataxis-framework.md)
+**Purpose:** Long-term, structured documentation using the [Diátaxis framework](../../governance/conventions/structure/diataxis-framework.md)
 
 **Key Characteristics:**
 
@@ -281,7 +281,7 @@ See [CLAUDE.md Plans Organization](../../CLAUDE.md#plans-organization) for full 
 
    - Write comprehensive explanation
    - Include examples and rationale
-   - Follow [Diátaxis framework](../../governance/conventions/meta/diataxis-framework.md)
+   - Follow [Diátaxis framework](../../governance/conventions/structure/diataxis-framework.md)
 
 2. **Update CLAUDE.md** (If it affects project workflow)
    - Add reference to new convention
@@ -309,7 +309,7 @@ See [CLAUDE.md Plans Organization](../../CLAUDE.md#plans-organization) for full 
    - System architecture → `docs/explanation/`
    - Setup instructions → `docs/how-to/`
    - API specifications → `docs/reference/`
-2. Create appropriate docs following [Diátaxis framework](../../governance/conventions/meta/diataxis-framework.md)
+2. Create appropriate docs following [Diátaxis framework](../../governance/conventions/structure/diataxis-framework.md)
 3. Link from plan README to the permanent docs
 4. Move plan to `plans/done/` for archival
 
@@ -403,8 +403,8 @@ This project is complete. See the following documentation:
 
 ## Related Documentation
 
-- [Diátaxis Framework](../../governance/conventions/meta/diataxis-framework.md) - Understanding the four documentation types
-- [File Naming Convention](../../governance/conventions/meta/file-naming.md) - How to name files in `docs/`
+- [Diátaxis Framework](../../governance/conventions/structure/diataxis-framework.md) - Understanding the four documentation types
+- [File Naming Convention](../../governance/conventions/structure/file-naming.md) - How to name files in `docs/`
 - [Diagram and Schema Convention](../../governance/conventions/formatting/diagrams.md) - When to use Mermaid vs ASCII art
 - [CLAUDE.md - Plans Organization](../../CLAUDE.md#plans-organization) - Detailed guide to the plans/ folder
 - [CLAUDE.md - Documentation Organization](../../CLAUDE.md#documentation-organization) - Overview of docs/ structure

@@ -1960,7 +1960,7 @@ useEffect(() => {
 
 - **[Functional Programming](../../../../../governance/development/pattern/functional-programming.md)** - FP principles
 - **[Software Design](../../README.md)** - Architecture patterns
-- **[Content Quality Standards](../../../../../governance/conventions/content/quality.md)** - Accessibility requirements
+- **[Content Quality Standards](../../../../../governance/conventions/writing/quality.md)** - Accessibility requirements
 
 ## React vs Other Frontend Libraries
 
@@ -1979,7 +1979,7 @@ useEffect(() => {
 - **[Libraries and Frameworks Index](../README.md)** - Parent frameworks documentation
 - **[Software Design](../../README.md)** - Architecture and development practices
 - **[Functional Programming](../../../../../governance/development/pattern/functional-programming.md)** - FP principles
-- **[Accessibility Standards](../../../../../governance/conventions/content/quality.md)** - WCAG guidelines
+- **[Accessibility Standards](../../../../../governance/conventions/writing/quality.md)** - WCAG guidelines
 
 ---
 

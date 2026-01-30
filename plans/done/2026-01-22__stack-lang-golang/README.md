@@ -169,7 +169,7 @@ Create `templates/` directory with:
 
 **NFR1: Content Quality**
 
-- All content follows [Content Quality Convention](../../../governance/conventions/content/quality.md)
+- All content follows [Content Quality Convention](../../../governance/conventions/writing/quality.md)
 - Active voice throughout
 - Professional, welcoming tone
 - Exactly one H1 heading per file
@@ -194,7 +194,7 @@ Create `templates/` directory with:
 
 **NFR4: Repository Conventions**
 
-- File naming follows [File Naming Convention](../../../governance/conventions/meta/file-naming.md)
+- File naming follows [File Naming Convention](../../../governance/conventions/structure/file-naming.md)
 - Links follow [Linking Convention](../../../governance/conventions/formatting/linking.md)
 - Indentation follows [Indentation Convention](../../../governance/conventions/formatting/indentation.md)
 - Markdown formatted with Prettier
@@ -432,9 +432,9 @@ Templates: Variable based on examples
 
 **Internal Dependencies**:
 
-- [Content Quality Convention](../../../governance/conventions/content/quality.md) - Universal standards
-- [File Naming Convention](../../../governance/conventions/meta/file-naming.md) - Naming rules
-- [Diátaxis Framework](../../../governance/conventions/meta/diataxis-framework.md) - Documentation structure
+- [Content Quality Convention](../../../governance/conventions/writing/quality.md) - Universal standards
+- [File Naming Convention](../../../governance/conventions/structure/file-naming.md) - Naming rules
+- [Diátaxis Framework](../../../governance/conventions/structure/diataxis-framework.md) - Documentation structure
 - [Diagrams Convention](../../../governance/conventions/formatting/diagrams.md) - Mermaid diagram standards
 - [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md) - WCAG colors
 
@@ -1064,9 +1064,9 @@ When marking steps complete, add the following metadata:
 ## Related Documentation
 
 - [Java Documentation](../../../docs/explanation/software/stack-lang/java/README.md) - Reference structure
-- [Content Quality Convention](../../../governance/conventions/content/quality.md) - Quality standards
-- [Diátaxis Framework](../../../governance/conventions/meta/diataxis-framework.md) - Documentation structure
-- [File Naming Convention](../../../governance/conventions/meta/file-naming.md) - Naming rules
+- [Content Quality Convention](../../../governance/conventions/writing/quality.md) - Quality standards
+- [Diátaxis Framework](../../../governance/conventions/structure/diataxis-framework.md) - Documentation structure
+- [File Naming Convention](../../../governance/conventions/structure/file-naming.md) - Naming rules
 - [Diagrams Convention](../../../governance/conventions/formatting/diagrams.md) - Mermaid standards
 - [Software Engineering Principles](../../../governance/principles/software-engineering/README.md) - Core principles
 

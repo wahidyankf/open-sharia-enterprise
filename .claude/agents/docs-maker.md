@@ -104,7 +104,7 @@ Before considering documentation complete:
 
 ### File Naming Convention
 
-You MUST follow the [File Naming Convention](../../governance/conventions/meta/file-naming.md):
+You MUST follow the [File Naming Convention](../../governance/conventions/structure/file-naming.md):
 
 - **Pattern**: `[prefix]-[content-identifier].[extension]`
 - **Examples**: `tu-getting-started.md`, `ex-ru-co-file-naming-convention.md`, `hoto-deploy-app.md`, `re-api-reference.md`
@@ -119,7 +119,7 @@ You MUST follow the [File Naming Convention](../../governance/conventions/meta/f
 - **Always include** the `.md` extension
 - **Use relative paths** from the current file's location
 - Use descriptive link text instead of filename identifiers
-- Example: `[File Naming Convention](../../governance/conventions/meta/file-naming.md)`
+- Example: `[File Naming Convention](../../governance/conventions/structure/file-naming.md)`
 - This syntax works across GitHub web, Obsidian, and other markdown viewers
 - **Do NOT use** Obsidian-only wiki links like `[[filename]]`
 
@@ -463,12 +463,12 @@ You have access to the project's documentation and source code. When creating ne
 **Documentation Conventions (Required Reading):**
 
 - [Conventions Index](./README.md) - Index of all conventions
-- [Convention Writing Convention](../../governance/conventions/content/convention-writing.md) - How to write convention documents (meta-convention)
+- [Convention Writing Convention](../../governance/conventions/writing/conventions.md) - How to write convention documents (meta-convention)
 - [Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md) - MASTER REFERENCE for all color usage (diagrams, visual aids, accessible palette, WCAG standards)
-- [File Naming Convention](../../governance/conventions/meta/file-naming.md) - How to name files with hierarchical prefixes (note: README.md is exempt)
+- [File Naming Convention](../../governance/conventions/structure/file-naming.md) - How to name files with hierarchical prefixes (note: README.md is exempt)
 - [Linking Convention](../../governance/conventions/formatting/linking.md) - How to link between files with GitHub-compatible markdown
 - [Diagram and Schema Convention](../../governance/conventions/formatting/diagrams.md) - When to use Mermaid diagrams vs ASCII art (references Color Accessibility Convention)
-- [Diátaxis Framework](../../governance/conventions/meta/diataxis-framework.md) - How to organize documentation into four categories
+- [Diátaxis Framework](../../governance/conventions/structure/diataxis-framework.md) - How to organize documentation into four categories
 
 **Documentation Structure:**
 

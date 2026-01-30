@@ -295,7 +295,7 @@ Configuration has been tuned to disable overly strict rules. If you still see ma
 
 ## Related Documentation
 
-- [Content Quality Convention](../../conventions/content/quality.md)
+- [Content Quality Convention](../../conventions/writing/quality.md)
 - [Indentation Convention](../../conventions/formatting/indentation.md)
 - [Linking Convention](../../conventions/formatting/linking.md)
 - [Code Quality Convention](./code.md)
@@ -380,7 +380,7 @@ This practice enforces and aligns with the following documentation conventions:
 - MD031: Ensures code block formatting (technical clarity)
 - Disabled MD013: Allows long links (convention compliance)
 
-See [Content Quality Convention](../../conventions/content/quality.md) for quality standards.
+See [Content Quality Convention](../../conventions/writing/quality.md) for quality standards.
 
 ### Indentation Convention
 

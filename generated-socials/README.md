@@ -181,7 +181,7 @@ LinkedIn serves as the primary professional social channel:
 
 Posts reference platform documentation:
 
-- **[Content Guidelines](../governance/conventions/content/quality.md)** - Content quality standards
+- **[Content Guidelines](../governance/conventions/writing/quality.md)** - Content quality standards
 - **[OSE Platform Web](../apps/ose-platform-web/README.md)** - Main website documentation
 
 ## Best Practices
@@ -271,7 +271,7 @@ Potential improvements to the social media workflow:
 ## Related Documentation
 
 - **[OSE Platform Web](../apps/ose-platform-web/README.md)** - Main marketing website
-- **[Content Quality Standards](../governance/conventions/content/quality.md)** - Writing guidelines
+- **[Content Quality Standards](../governance/conventions/writing/quality.md)** - Writing guidelines
 - **[Emoji Usage](../governance/conventions/formatting/emoji.md)** - Emoji in content
 - **[Repository Architecture](../governance/repository-governance-architecture.md)** - Overall project structure
 

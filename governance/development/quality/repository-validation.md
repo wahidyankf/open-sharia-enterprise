@@ -32,7 +32,7 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[File Naming Convention](../../conventions/meta/file-naming.md)**: Validation methods verify files follow the [prefix]\_\_[content-identifier].md pattern using bash pattern matching and path analysis.
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Validation methods verify files follow the [prefix]\_\_[content-identifier].md pattern using bash pattern matching and path analysis.
 
 - **[Linking Convention](../../conventions/formatting/linking.md)**: Link validation checks verify relative paths with .md extension exist and target files are accessible.
 
@@ -314,7 +314,7 @@ fi
 
 **Key details:**
 
-- Compute expected prefix from directory path (see [File Naming Convention](../../conventions/meta/file-naming.md))
+- Compute expected prefix from directory path (see [File Naming Convention](../../conventions/structure/file-naming.md))
 - Extract actual prefix using `cut -d_ -f1-2` (two underscores in `prefix__`)
 - Handle special cases: `README.md`, `docs/metadata/`
 - Account for subdirectories (hyphenated names → concatenated prefixes)
@@ -499,7 +499,7 @@ grep -F "^$field:" frontmatter.txt
 ## Related Conventions
 
 - [AI Agents Convention](../agents/ai-agents.md) - Agents that use these validation methods
-- [File Naming Convention](../../conventions/meta/file-naming.md) - What we validate (naming patterns)
+- [File Naming Convention](../../conventions/structure/file-naming.md) - What we validate (naming patterns)
 - [Linking Convention](../../conventions/formatting/linking.md) - What we validate (link formats)
 - [Temporary Files Convention](../infra/temporary-files.md) - Where validation reports are stored
 

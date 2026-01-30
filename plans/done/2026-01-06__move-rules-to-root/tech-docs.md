@@ -122,13 +122,13 @@ find .claude/agents -name "*.md" -type f -exec sed -i 's|governance/|governance/
 
 **Pattern Examples**:
 
-- `See: [convention writing](governance/conventions/content/convention-writing.md)`
+- `See: [convention writing](governance/conventions/writing/conventions.md)`
 - `[Reference docs](../../../governance/conventions/)`
 - `Rules location: governance/`
 
 **After**:
 
-- `See: [convention writing](governance/conventions/content/convention-writing.md)`
+- `See: [convention writing](governance/conventions/writing/conventions.md)`
 - `[Reference docs](../../../governance/conventions/)`
 - `Rules location: governance/`
 

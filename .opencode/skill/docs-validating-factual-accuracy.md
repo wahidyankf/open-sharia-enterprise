@@ -481,11 +481,11 @@ Step 3: Compare and classify
 
 ## Reference Documentation
 
-**Primary Convention**: [Factual Validation Convention](../../../governance/conventions/content/factual-validation.md)
+**Primary Convention**: [Factual Validation Convention](../../../governance/conventions/writing/factual-validation.md)
 
 **Related Conventions**:
 
-- [Content Quality Principles](../../../governance/conventions/content/quality.md) - Universal content standards
+- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Universal content standards
 - [Criticality Levels](../../../governance/development/quality/criticality-levels.md) - Severity classification system
 - [Timestamp Format](../../../governance/conventions/formatting/timestamp.md) - Validation metadata timestamps
 
@@ -505,11 +505,11 @@ This Skill packages critical factual validation methodology for maintaining accu
 
 ## References
 
-**Primary Convention**: [Factual Validation Convention](../../../governance/conventions/content/factual-validation.md)
+**Primary Convention**: [Factual Validation Convention](../../../governance/conventions/writing/factual-validation.md)
 
 **Related Conventions**:
 
-- [Content Quality Principles](../../../governance/conventions/content/quality.md) - Universal content standards
+- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Universal content standards
 - [Criticality Levels](../../../governance/development/quality/criticality-levels.md) - Severity classification
 - [Timestamp Format](../../../governance/conventions/formatting/timestamp.md) - Validation metadata timestamps
 

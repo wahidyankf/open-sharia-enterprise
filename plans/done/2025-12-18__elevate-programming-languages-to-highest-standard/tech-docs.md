@@ -934,11 +934,11 @@ interface Issue {
 
 ### Conventions
 
-- [Programming Language Content Standard](../../../governance/conventions/tutorial/programming-language-content.md) - Master reference
+- [Programming Language Content Standard](../../../governance/conventions/tutorials/programming-language-content.md) - Master reference
 - [Hugo Content Convention - ayokoding](../../../governance/conventions/hugo/ayokoding.md) - Hextra theme specifics
 - [Hugo Content Convention - Shared](../../../governance/conventions/hugo/shared.md) - Base Hugo rules
-- [Content Quality Principles](../../../governance/conventions/content/quality.md) - Quality standards
-- [Tutorial Naming Convention](../../../governance/conventions/tutorial/naming.md) - Tutorial level definitions
+- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Quality standards
+- [Tutorial Naming Convention](../../../governance/conventions/tutorials/naming.md) - Tutorial level definitions
 - [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md) - Approved color palette
 - [Diagrams Convention](../../../governance/conventions/formatting/diagrams.md) - Mermaid standards
 

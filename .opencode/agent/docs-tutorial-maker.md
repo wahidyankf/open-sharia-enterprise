@@ -55,7 +55,7 @@ Seven tutorial types with progressive coverage depth:
 6. **Cookbook** (varies) - Common recipes and solutions
 7. **By Example** (75-90% coverage) - Heavily annotated code examples for experienced developers
 
-**Coverage percentages** indicate topic depth, NOT time to complete. See [Tutorial Naming Convention](../../governance/conventions/content/tutorial/naming.md) for complete details.
+**Coverage percentages** indicate topic depth, NOT time to complete. See [Tutorial Naming Convention](../../governance/conventions/tutorials/naming.md) for complete details.
 
 **CRITICAL: Never suggest time estimates** in tutorial content. Coverage percentages indicate comprehensiveness, not duration. Let users learn at their own pace.
 
@@ -293,7 +293,7 @@ return db.users.create({ username, hash });
 - Discuss design decisions, alternatives, and implications
 - Reference related examples or documentation
 
-See [Tutorial Naming Convention - By Example Requirements](../../governance/conventions/content/tutorial/naming.md#by-example-requirements) for complete annotation standards.
+See [Tutorial Naming Convention - By Example Requirements](../../governance/conventions/tutorials/naming.md#by-example-requirements) for complete annotation standards.
 
 ## File Naming
 
@@ -305,7 +305,7 @@ Tutorial files follow the pattern: `tu-[content-identifier].md`
 - `tu-quick-start-express-server.md`
 - `tu-by-example-react-hooks.md`
 
-See [File Naming Convention](../../governance/conventions/meta/file-naming.md) for complete details.
+See [File Naming Convention](../../governance/conventions/structure/file-naming.md) for complete details.
 
 ## Linking Standards
 
@@ -325,7 +325,7 @@ See [Linking Convention](../../governance/conventions/formatting/linking.md) for
 
 ## Content Quality Standards
 
-All tutorial content must meet quality standards defined in [Content Quality Principles](../../governance/conventions/content/quality.md):
+All tutorial content must meet quality standards defined in [Content Quality Principles](../../governance/conventions/writing/quality.md):
 
 - Active voice and clear language
 - Single H1 (title from frontmatter, don't repeat in body)
@@ -494,20 +494,20 @@ When updating tutorials:
 
 **Tutorial Standards**:
 
-- [Tutorial Naming Convention](../../governance/conventions/content/tutorial/naming.md) - Types, coverage levels, naming patterns
-- [By Example Content Standard](../../governance/conventions/content/tutorial/programming-language-content.md) - Annotation requirements
+- [Tutorial Naming Convention](../../governance/conventions/tutorials/naming.md) - Types, coverage levels, naming patterns
+- [By Example Content Standard](../../governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
 
 **Content Standards**:
 
-- [Content Quality Principles](../../governance/conventions/content/quality.md) - Quality checklist
-- [Diátaxis Framework](../../governance/conventions/meta/diataxis-framework.md) - Documentation organization
+- [Content Quality Principles](../../governance/conventions/writing/quality.md) - Quality checklist
+- [Diátaxis Framework](../../governance/conventions/structure/diataxis-framework.md) - Documentation organization
 
 **Formatting Standards**:
 
 - [Diagrams Convention](../../governance/conventions/formatting/diagrams.md) - Mermaid and accessibility
 - [Mathematical Notation Convention](../../governance/conventions/formatting/mathematical-notation.md) - LaTeX syntax
 - [Linking Convention](../../governance/conventions/formatting/linking.md) - Link format rules
-- [File Naming Convention](../../governance/conventions/meta/file-naming.md) - Naming patterns
+- [File Naming Convention](../../governance/conventions/structure/file-naming.md) - Naming patterns
 
 **Related Agents**:
 

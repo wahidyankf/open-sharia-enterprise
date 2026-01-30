@@ -45,7 +45,7 @@ This set of development practices implements/respects the following core princip
 
 This set of development practices respects the following conventions:
 
-- **[Content Quality Principles](../../conventions/content/quality.md)**: Pattern documentation follows active voice, clear structure, and proper formatting standards.
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Pattern documentation follows active voice, clear structure, and proper formatting standards.
 
 - **[Criticality Levels Convention](../quality/criticality-levels.md)**: Maker-Checker-Fixer pattern integrates with criticality assessment to prioritize and validate fixes systematically.
 

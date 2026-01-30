@@ -45,9 +45,9 @@ This set of development practices implements/respects the following core princip
 
 This set of development practices respects the following conventions:
 
-- **[Content Quality Principles](../../conventions/content/quality.md)**: Agent frontmatter and documentation follow active voice, proper heading hierarchy, and accessibility standards.
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Agent frontmatter and documentation follow active voice, proper heading hierarchy, and accessibility standards.
 
-- **[File Naming Convention](../../conventions/meta/file-naming.md)**: Agent files use kebab-case naming with explicit prefixes following repository naming standards.
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Agent files use kebab-case naming with explicit prefixes following repository naming standards.
 
 ---
 

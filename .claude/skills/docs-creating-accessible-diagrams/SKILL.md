@@ -249,7 +249,7 @@ This Skill integrates with:
 
 - **[Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)** - Complete color accessibility standards
 - **[Diagrams Convention](../../../governance/conventions/formatting/diagrams.md)** - Mermaid diagram standards, comment syntax, special character escaping
-- **[Content Quality Principles](../../../governance/conventions/content/quality.md)** - Quality standards for all content including diagrams
+- **[Content Quality Principles](../../../governance/conventions/writing/quality.md)** - Quality standards for all content including diagrams
 
 ## Quick Reference
 

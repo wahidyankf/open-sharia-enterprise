@@ -41,8 +41,8 @@ READMEs are the entry point for understanding code. Without them, codebases are 
 
 **CRITICAL - Read these first**:
 
-- [README Quality Convention](../../governance/conventions/content/readme-quality.md) - MASTER reference for all README standards
-- [Content Quality Principles](../../governance/conventions/content/quality.md) - General content quality standards
+- [README Quality Convention](../../governance/conventions/writing/readme-quality.md) - MASTER reference for all README standards
+- [Content Quality Principles](../../governance/conventions/writing/quality.md) - General content quality standards
 - [Emoji Usage Convention](../../governance/conventions/formatting/emoji.md) - Emoji guidelines
 
 ## Core Principles
@@ -262,8 +262,8 @@ Use this agent when:
 **Project Guidance:**
 
 - [AGENTS.md](../../CLAUDE.md) - Primary guidance for all agents
-- [README Quality Convention](../../governance/conventions/content/readme-quality.md) - Complete README standards
-- [Content Quality Principles](../../governance/conventions/content/quality.md) - General content quality
+- [README Quality Convention](../../governance/conventions/writing/readme-quality.md) - Complete README standards
+- [Content Quality Principles](../../governance/conventions/writing/quality.md) - General content quality
 - [Documentation First](../../governance/principles/content/documentation-first.md) - Documentation requirements
 
 **Related Agents:**

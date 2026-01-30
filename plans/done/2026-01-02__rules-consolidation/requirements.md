@@ -301,7 +301,7 @@ And CLAUDE.md agent list includes it
 
 ```gherkin
 Given tutorial convention documents have been consolidated
-When I check governance/conventions/tutorial/
+When I check governance/conventions/tutorials/
 Then programming-language-structure.md contains both content and structure guidance
 And programming-language-content.md no longer exists
 And all references to the old file point to the consolidated file

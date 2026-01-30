@@ -863,14 +863,14 @@ This section provides comprehensive listing of ALL components affected by Skills
 
 | Convention Document                                                 | Impact Description                                    | Phase   |
 | ------------------------------------------------------------------- | ----------------------------------------------------- | ------- |
-| `governance/conventions/content/quality.md`                         | Skills content must follow (no changes to convention) | N/A     |
+| `governance/conventions/writing/quality.md`                         | Skills content must follow (no changes to convention) | N/A     |
 | `governance/conventions/formatting/linking.md`                      | Skills must follow linking conventions (no changes)   | N/A     |
 | `governance/conventions/formatting/diagrams.md`                     | Referenced by color-accessibility-diagrams Skill      | Phase 1 |
 | `governance/conventions/formatting/color-accessibility.md`          | Referenced by color-accessibility-diagrams Skill      | Phase 1 |
 | `governance/conventions/hugo/ayokoding.md`                          | Referenced by hugo-ayokoding-development Skill        | Phase 2 |
 | `governance/conventions/hugo/ose-platform.md`                       | Referenced by hugo-ose-development Skill (optional)   | Phase 2 |
-| `governance/conventions/tutorial/programming-language-structure.md` | Referenced by by-example-tutorial-creation Skill      | Phase 2 |
-| `governance/conventions/content/factual-validation.md`              | Referenced by factual-validation-methodology Skill    | Phase 2 |
+| `governance/conventions/tutorials/programming-language-structure.md` | Referenced by by-example-tutorial-creation Skill      | Phase 2 |
+| `governance/conventions/writing/factual-validation.md`              | Referenced by factual-validation-methodology Skill    | Phase 2 |
 
 ### Development Documents Affected
 
