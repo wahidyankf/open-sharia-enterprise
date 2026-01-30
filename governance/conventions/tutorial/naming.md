@@ -57,49 +57,71 @@ This convention implements the following core principles:
 ## Tutorial Types Overview
 
 ```mermaid
-%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% Full Set Tutorial Package Architecture
 graph TB
- A["<b>Initial Setup</b><br/>0-5%"]
- B["<b>Quick Start</b><br/>5-30%"]
- C["<b>Beginner</b><br/>0-40%"]
- D["<b>Intermediate</b><br/>40-75%"]
- E["<b>Advanced</b><br/>75-95%"]
- F["<b>Cookbook</b><br/>Practical"]
- G["<b>By Example</b><br/>95%"]
+    subgraph "FULL SET TUTORIAL PACKAGE"
+        subgraph "Foundational (0-30%)"
+            A["Initial Setup<br/>0-5%"]
+            B["Quick Start<br/>5-30%"]
+        end
 
- A --> B
- B --> C
- C --> D
- D --> E
+        subgraph "Learning Tracks (95%)"
+            D["By-Example<br/>PRIORITY: Move fast"]
+            C["By-Concept<br/>Learn deep"]
+        end
 
- C -.-> F
- D -.-> F
- E -.-> F
+        E["Cookbook<br/>Practical recipes"]
+    end
 
- B -.-> G
- C -.-> G
- D -.-> G
+    A --> B
+    B --> D
+    B --> C
+    D -.-> E
+    C -.-> E
 
- style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
- style B fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
- style C fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
- style D fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
- style E fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
- style F fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
- style G fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style C fill:#029E73,color:#fff
+    style E fill:#CA9161,color:#fff
 ```
 
 **Legend**:
 
-- Solid arrows (→) show linear progression within the "Full Set" (5 sequential levels)
-- Dotted arrows (⋯→) show parallel tracks that can be used at multiple skill levels
+- Solid arrows (→) show linear progression within the "Sequential Learning Path" (5 levels in by-concept/)
+- Dotted arrows (⋯→) show complementary learning components used alongside sequential path
 - Percentages indicate depth of domain knowledge coverage
 
-**Full Set vs Parallel Tracks**:
+**Full Set Tutorial Package**:
 
-- **Full Set**: The 5 sequential learning levels (Initial Setup → Quick Start → Beginner → Intermediate → Advanced) that provide comprehensive mastery from 0% to 95% coverage
-- **Cookbook**: A parallel, practical reference track for solving specific problems at any skill level
-- **By Example**: A parallel, example-driven learning track for experienced developers who want to quickly pick up a new language through 75-85 annotated, self-contained code examples (95% coverage)
+A **Full Set Tutorial Package** is a complete educational bundle with all 5 mandatory components providing 0-95% coverage through multiple learning modalities:
+
+1. **Component 1-2: Foundational Tutorials** (0-30% coverage)
+   - `initial-setup.md` (0-5%): Installation, verification, Hello World
+   - `quick-start.md` (5-30%): Core concepts for independent exploration
+
+2. **Component 3: By-Example Track** (95% coverage) - **PRIORITIZED for fast learning**
+   - `by-example/` folder: Code-first learning through annotated examples
+   - 3 files: beginner.md (1-25), intermediate.md (26-50), advanced.md (51-75)
+   - 75-85 examples total with 1-2.25 annotation density
+   - **Move fast**: Experienced developers learn quickly through working code
+
+3. **Component 4: By-Concept Track** (95% coverage)
+   - `by-concept/` folder: Narrative-driven comprehensive tutorials
+   - 3 files: beginner.md (0-40%), intermediate.md (40-75%), advanced.md (75-95%)
+   - 40-60 sections total achieving deep understanding
+   - **Learn deep**: Complete beginners get full explanations
+
+4. **Component 5: Cookbook** (Practical recipes)
+   - `cookbook/` folder: Problem-solving reference
+   - 30+ recipes organized by category
+   - Complements both learning tracks
+
+**Sequential Learning Path** (within by-concept/ folder):
+
+- The 5 progressive levels in by-concept/ for deep learning
+- Beginner → Intermediate → Advanced progression (0-95%)
+- Provides narrative-driven foundation for complete beginners
 
 ---
 
@@ -429,17 +451,17 @@ graph TB
 
 ### Quick Reference Table
 
-| Tutorial Type     | Coverage  | Use When                                                   |
-| ----------------- | --------- | ---------------------------------------------------------- |
-| **Initial Setup** | 0-5%      | Need quick verification setup works                        |
-| **Quick Start**   | 5-30%     | Want to explore independently                              |
-| **Beginner**      | 0-60%     | Complete beginner, need foundation                         |
-| **Intermediate**  | 60-85%    | Building production systems                                |
-| **Advanced**      | 85-95%    | Need expert-level mastery                                  |
-| **Cookbook**      | Practical | Solving specific problems                                  |
-| **By Example**    | 95%       | Experienced dev, learn new language through 75-85 examples |
-
-**Note**: The first 5 types (Initial Setup through Advanced) form the "Full Set" - a sequential learning path from 0% to 95% coverage. Cookbook and By Example are parallel tracks for different learning approaches.
+| Tutorial Component            | Coverage  | Purpose                               |
+| ----------------------------- | --------- | ------------------------------------- |
+| **FULL SET TUTORIAL PACKAGE** | **0-95%** | **All 5 components for completeness** |
+| ↳ Foundational                |           |                                       |
+| Initial Setup                 | 0-5%      | Installation and verification         |
+| Quick Start                   | 5-30%     | Core concepts for exploration         |
+| ↳ Learning Tracks             |           |                                       |
+| By-Example (3 files)          | 95%       | **PRIORITY:** Code-first, move fast   |
+| By-Concept (3 files)          | 95%       | Narrative-driven, learn deep          |
+| ↳ Practical Reference         |           |                                       |
+| Cookbook                      | Practical | Problem-solving recipes               |
 
 ---
 

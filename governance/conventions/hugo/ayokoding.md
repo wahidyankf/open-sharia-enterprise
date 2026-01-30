@@ -973,9 +973,11 @@ Partial coverage (showing only some children) is a violation.
 
 **Examples of Terminal Directories** (exempt from 2-layer rule):
 
-- Language topic folders: `/en/learn/swe/prog-lang/golang/` (contains only content files: overview.md, initial-setup.md, quick-start.md, beginner.md, intermediate.md, advanced.md, cookbook.md)
+- **DEPRECATED EXAMPLE**: Language root folders no longer terminal due to Full Set Tutorial Package structure (tutorials/, how-to/, explanation/ subfolders required)
 - Diátaxis subdirectories: `/en/learn/swe/infosec/concepts/tutorials/` (contains only tutorial content files)
 - Any folder where all contents are content files (no subdirectories)
+
+**Note**: Programming language folders now require Full Set Tutorial Package structure with 5 components in subfolders. See [Programming Language Tutorial Structure](../tutorial/programming-language-structure.md).
 
 **Examples of Non-Terminal Directories** (NOT exempt, MUST show 2 layers with COMPLETE coverage):
 
@@ -1195,42 +1197,36 @@ title: Business # WRONG! Too generic (missing context)
 - `ayokoding-web-structure-checker` agent validates compliance with this system for ALL `_index.md` files
 - Violations are flagged as CRITICAL errors in audit reports
 
-#### Cookbook Weight Ordering Requirement
+#### Cookbook Location (Updated 2026-01-30)
 
-**CRITICAL RULE**: In folders containing both `overview.md`/`ikhtisar.md` and `cookbook.md` files, the cookbook MUST have a higher weight value than the overview (cookbook appears AFTER overview in navigation order).
+**CRITICAL UPDATE**: Cookbook has **MOVED** from `how-to/cookbook.md` to `tutorials/cookbook/` folder as **Component 5** of the Full Set Tutorial Package.
 
-**Rationale**: Overview provides context before practical examples; ensures consistent navigation experience.
+**New Location**: `tutorials/cookbook/` (weight: 1000002 at level 7)
 
-**Applies to**: All Diátaxis-structured folders (e.g., `/en/learn/swe/prog-lang/golang/how-to/`)
+**Old Location (DEPRECATED)**: `how-to/cookbook.md` (legacy location, migration required)
 
-**Weight Pattern**:
+**New Structure**:
 
-- `overview.md`/`ikhtisar.md`: Base weight for content level (e.g., 1000000 for level 7)
-- `cookbook.md`: Base weight + 1 or higher (e.g., 1000001 for level 7)
-
-**Example (Level 7 how-to folder)**:
-
-PASS: **Good (cookbook after overview)**:
-
-```yaml
-# /en/learn/swe/prog-lang/golang/how-to/overview.md
-weight: 1000000  # Level 7 base
-
-# /en/learn/swe/prog-lang/golang/how-to/cookbook.md
-weight: 1000001  # Level 7 base + 1 (appears after overview)
+```
+tutorials/                           # Level 6 folder
+├── by-example/                      # Component 3 - PRIORITY (weight: 1000000)
+├── by-concept/                      # Component 4 (weight: 1000001)
+├── cookbook/                        # Component 5 (weight: 1000002)
+│   ├── _index.md                    # Navigation hub
+│   └── (recipe files)               # Can be single file or multiple by category
+├── initial-setup.md                 # Component 1 (weight: 1000003)
+└── quick-start.md                   # Component 2 (weight: 1000004)
 ```
 
-FAIL: **Bad (cookbook before overview)**:
+**Rationale for Move**:
 
-```yaml
-# /en/learn/swe/prog-lang/golang/how-to/overview.md
-weight: 1000000  # Level 7 base
+- Part of complete educational package (all tutorial-related content in one location)
+- Complements both learning tracks (by-concept and by-example)
+- Used alongside tutorials, not as separate how-to guide
 
-# /en/learn/swe/prog-lang/golang/how-to/cookbook.md
-weight: 999999   # WRONG! Would appear before overview
-```
+**Migration Required**: Languages currently with `how-to/cookbook.md` need migration to `tutorials/cookbook/`.
 
-**Note**: This complements the [Programming Language Content Standard](../tutorial/programming-language-content.md) which mandates cookbook at position 3 in how-to directories (overview at position 1, cookbook at position 3 = weight 1000001).
+**See**: [Programming Language Content Standard](../tutorial/programming-language-content.md) for Full Set Tutorial Package architecture.
 
 #### Title Format for Overview/Ikhtisar Files
 
@@ -1275,49 +1271,41 @@ title: "Ikhtisar Penyimpanan Data Dalam Memori" # WRONG! Too descriptive
 
 #### Example Structure
 
-**English Structure** (golang/ is level 5 folder, content inside uses level 6):
+**DEPRECATED STRUCTURE** (Old flat structure, replaced by Full Set Tutorial Package):
+
+The examples below show the old flat structure. Programming languages now use Full Set Tutorial Package structure with 5 mandatory components in subfolders.
+
+**New Structure** (golang/ is level 5 folder, Full Set Tutorial Package):
 
 ```
 content/en/learn/swe/prog-lang/golang/
-├── _index.md        # Folder (weight: 10002, level 5 - represents golang/ folder)
-├── overview.md      # Content (weight: 100000, level 6 - content inside level 5 folder)
-├── initial-setup.md # Content (weight: 100001, level 6)
-├── quick-start.md   # Content (weight: 100002, level 6)
-├── beginner.md      # Content (weight: 100003, level 6)
-├── intermediate.md  # Content (weight: 100004, level 6)
-├── advanced.md      # Content (weight: 100005, level 6)
-└── cookbook.md      # Content (weight: 100006, level 6)
+├── _index.md        # Folder (weight: 10002, level 5)
+├── overview.md      # Content (weight: 100000, level 6)
+├── tutorials/       # Folder (weight: 100002, level 6)
+│   ├── _index.md
+│   ├── by-example/  # Component 3 - PRIORITY
+│   ├── by-concept/  # Component 4
+│   ├── cookbook/    # Component 5 (NEW LOCATION)
+│   ├── initial-setup.md  # Component 1
+│   └── quick-start.md    # Component 2
+├── how-to/          # Folder (weight: 100003, level 6)
+└── explanation/     # Folder (weight: 100004, level 6)
 ```
 
-**Indonesian Structure** (golang/ is level 5 folder, content inside uses level 6):
+**See**: [Programming Language Tutorial Structure](../tutorial/programming-language-structure.md) for complete Full Set Tutorial Package organization.
 
-```
-content/id/belajar/swe/prog-lang/golang/
-├── _index.md        # Folder (weight: 10002, level 5 - represents golang/ folder)
-├── ikhtisar.md      # Content (weight: 100000, level 6 - content inside level 5 folder)
-├── initial-setup.md # Content (weight: 100001, level 6)
-├── quick-start.md   # Content (weight: 100002, level 6)
-├── beginner.md      # Content (weight: 100003, level 6)
-├── intermediate.md  # Content (weight: 100004, level 6)
-├── advanced.md      # Content (weight: 100005, level 6)
-└── cookbook.md      # Content (weight: 100006, level 6)
-```
-
-**Example `_index.md` (navigation only with overview link first)**:
+**Example `_index.md` (navigation hub for Full Set structure)**:
 
 ```markdown
 ---
 title: Golang
-weight: 10002 # Level 5 - represents the level 5 folder
+weight: 10002 # Level 5 - represents the golang/ folder
 ---
 
-- [Overview](/learn/swe/prog-lang/golang/overview) # MUST be first
-- [Initial Setup](/learn/swe/prog-lang/golang/initial-setup)
-- [Quick Start](/learn/swe/prog-lang/golang/quick-start)
-- [Beginner Guide](/learn/swe/prog-lang/golang/beginner)
-- [Intermediate Guide](/learn/swe/prog-lang/golang/intermediate)
-- [Advanced Guide](/learn/swe/prog-lang/golang/advanced)
-- [Cookbook](/learn/swe/prog-lang/golang/cookbook)
+- [Overview](/en/learn/swe/prog-lang/golang/overview)
+- [Tutorials](/en/learn/swe/prog-lang/golang/tutorials)
+- [How-To Guides](/en/learn/swe/prog-lang/golang/how-to)
+- [Explanation](/en/learn/swe/prog-lang/golang/explanation)
 ```
 
 **Example `overview.md` (English intro content)**:
@@ -1396,7 +1384,7 @@ content/en/learn/swe/prog-lang/golang/
 ├── how-to/
 │   ├── _index.md                       # How-to section index
 │   ├── overview.md                     # How-to overview
-│   └── cookbook.md                     # Practical recipes
+│   └── (problem-solving guides)        # Specific how-to guides
 ├── reference/
 │   ├── _index.md                       # Reference section
 │   └── overview.md                     # Reference overview
@@ -1407,10 +1395,10 @@ content/en/learn/swe/prog-lang/golang/
 
 **Note**: This pattern is OPTIONAL. Each topic decides independently based on content volume and diversity.
 
-**Programming Language Content**: For programming languages specifically (e.g., Golang, Python, Java, Kotlin, TypeScript, Rust), this Diátaxis structure is MANDATORY and follows the [Programming Language Content Standard](../tutorial/programming-language-content.md). See that convention for complete requirements including:
+**Programming Language Content**: For programming languages specifically (e.g., Golang, Python, Java, Kotlin, TypeScript, Rust), Full Set Tutorial Package structure is MANDATORY and follows the [Programming Language Content Standard](../tutorial/programming-language-content.md). See that convention for complete requirements including:
 
-- Universal directory structure (5 tutorial levels, cookbook, how-to guides, best practices, anti-patterns)
-- Coverage philosophy (0-5%, 5-30%, 0-60%, 60-85%, 85-95%, cookbook)
+- Full Set Tutorial Package with 5 mandatory components (foundational tutorials, by-concept track, by-example track, cookbook in tutorials/cookbook/, supporting docs)
+- Coverage philosophy (0-30% foundational, 95% learning tracks, practical recipes)
 - Quality metrics and pedagogical patterns
 - Step-by-step implementation guide: [How to Add a Programming Language](../../../docs/how-to/hoto__add-programming-language.md)
 

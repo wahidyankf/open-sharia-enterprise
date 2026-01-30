@@ -24,11 +24,33 @@ These conventions define **HOW to create and structure tutorials**, covering tut
 
 ## Conventions
 
-- [By Example Tutorial](./by-example.md) - Standards for code-first by-example tutorials with 75-85 heavily annotated examples achieving 95% coverage
+- [By Example Tutorial](./by-example.md) - Standards for code-first by-example tutorials (Component 3 of Full Set - PRIORITY) with 75-85 heavily annotated examples
+- [By Concept Tutorial](./by-concept.md) - Standards for narrative-driven by-concept tutorials (Component 4 of Full Set)
 - [General Tutorial Convention](./general.md) - Standards for creating learning-oriented tutorials with narrative flow and progressive scaffolding
-- [Programming Language Content Standard](./programming-language-content.md) - Universal content architecture for programming language education on ayokoding-web
-- [Programming Language Tutorial Structure](./programming-language-structure.md) - Dual-path tutorial organization (by-concept and by-example) for programming languages
-- [Tutorial Naming](./naming.md) - Standardized tutorial types and depth levels (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook)
+- [Programming Language Content Standard](./programming-language-content.md) - Full Set Tutorial Package architecture for programming language education
+- [Programming Language Tutorial Structure](./programming-language-structure.md) - Complete directory structure for Full Set (5 mandatory components)
+- [Tutorial Naming](./naming.md) - Full Set Tutorial Package definition and tutorial type standards
+
+## Full Set Tutorial Package
+
+A **Full Set Tutorial Package** represents complete language content with **all 5 mandatory components**:
+
+1. **Component 1-2: Foundational** - initial-setup.md + quick-start.md (0-30% coverage)
+2. **Component 3: By-Example Track** - by-example/ folder with 75-85 code examples (0-95% coverage through beginner/intermediate/advanced) - **PRIORITY for fast learning**
+3. **Component 4: By-Concept Track** - by-concept/ folder with narrative-driven tutorials (0-95% coverage through beginner/intermediate/advanced)
+4. **Component 5: Cookbook** - cookbook/ folder with practical recipes (complements both tracks)
+5. **Supporting Docs** - best-practices, anti-patterns, additional how-to guides
+
+**Key Changes**:
+
+- **By-example prioritized**: Component 3 (was Component 4) - appears first for "move fast" learning
+- **By-concept second**: Component 4 (was Component 3) - for "learn deep" understanding
+- **Cookbook location**: Moved from `how-to/cookbook.md` to `tutorials/cookbook/` folder
+- **By-example status**: Now mandatory (was optional)
+- **Full Set definition**: Changed from "5 sequential levels" to "5 mandatory components"
+- **Old terminology**: "Full Set" (5 levels) renamed to "Sequential Learning Path" (within by-concept/)
+
+A language is **NOT complete** until all 5 components exist and pass validation. Languages can be production-ready with a subset of components.
 
 ## Related Documentation
 
