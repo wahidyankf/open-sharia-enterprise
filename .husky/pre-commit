@@ -19,8 +19,19 @@ git add apps/ayokoding-web/content/ 2>/dev/null || true
 # 4. Run lint-staged for formatting
 npx lint-staged
 
-# 5. Validate markdown links in staged files
+# 5. Validate and auto-fix docs file naming conventions (if docs/ affected)
+if git diff --cached --name-only | grep -qE '^docs/'; then
+  echo "🔍 Validating and fixing documentation file naming..."
+  CGO_ENABLED=0 go run -C apps/rhino-cli main.go validate-docs-naming --staged-only --fix --apply || exit 1
+  # Stage any files modified by link updates and renames
+  git add docs/ governance/ .claude/ 2>/dev/null || true
+  echo "✅ Documentation naming validation passed"
+else
+  echo "⏭️  Skipping docs naming validation (no docs/ changes in staged files)"
+fi
+
+# 6. Validate markdown links in staged files
 CGO_ENABLED=0 go run -C apps/rhino-cli main.go validate-links --staged-only || exit 1
 
-# 6. Validate all markdown files
+# 7. Validate all markdown files
 npm run lint:md || exit 1
