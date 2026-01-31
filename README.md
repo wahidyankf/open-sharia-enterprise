@@ -16,7 +16,7 @@
 Building repository infrastructure, governance, and launching initial websites:
 
 - 🌐 **Live sites**: [ayokoding.com](https://ayokoding.com) (educational) and [oseplatform.com](https://oseplatform.com) (marketing)
-- 🛠️ **CLI tools**: ayokoding-cli and rhino-cli (Golang - foundation for security infrastructure)
+- 🛠️ **CLI tools**: [ayokoding-cli](./apps/ayokoding-cli/) and [rhino-cli](./apps/rhino-cli/) (Golang - foundation for security infrastructure)
 - 📚 **Infrastructure**: 45 AI agents, documentation framework, governance, planning systems
 
 **Next Phase: Phase 1 (Organic Lever)** - Individual productivity tracker to test deployment and knowledge base patterns before SMB/enterprise.
@@ -67,7 +67,7 @@ For the complete roadmap including all phases, tech stack, and strategic approac
 
 - Node.js 24.11.1 & npm 11.6.3 (via Volta) - Tooling and development infrastructure
 - Hugo (Extended) - Static sites (ayokoding-web, ose-platform-web)
-- Golang - CLI tools (ayokoding-cli, rhino-cli) and future security infrastructure
+- Golang - CLI tools ([ayokoding-cli](./apps/ayokoding-cli/), [rhino-cli](./apps/rhino-cli/)) and future security infrastructure
 
 **Phase 1 (Planned - Organic Lever):**
 
@@ -117,7 +117,7 @@ open-sharia-enterprise/
 
 This project uses **Nx** to manage applications and libraries:
 
-- **`apps/`** - Deployable applications (current: `ose-platform-web`, `ayokoding-web`, `ayokoding-cli`)
+- **`apps/`** - Deployable applications (current: `ose-platform-web`, `ayokoding-web`, [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/))
 - **`libs/`** - Reusable libraries with language prefixes (`ts-*`, future: `java-*`, `py-*`) - currently empty
 - **`apps-labs/`** - Experimental apps and POCs (framework evaluation, language exploration) - currently empty
 
