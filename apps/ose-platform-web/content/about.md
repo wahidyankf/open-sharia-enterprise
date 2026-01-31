@@ -176,7 +176,7 @@ While we're not accepting contributions during the pre-alpha phase, you can stay
 - **GitHub Repository**: [open-sharia-enterprise](https://github.com/wahidyankf/open-sharia-enterprise)
   - ⭐ Star the repository to show your support
   - 👀 Watch for updates and release announcements
-  - 📋 Read the [detailed roadmap](https://github.com/wahidyankf/open-sharia-enterprise#readme) and planning documents
+  - 📋 Read the [detailed roadmap](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/ROADMAP.md) and planning documents
 
 ### Learn and Explore
 
