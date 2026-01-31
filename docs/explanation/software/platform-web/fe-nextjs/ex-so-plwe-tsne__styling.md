@@ -2027,7 +2027,7 @@ import styles from './Component.module.css'; // Only loaded with component
 - [Next.js Performance](ex-so-plwe-tsne__performance.md) - Optimization strategies
 - [Next.js Accessibility](ex-so-plwe-tsne__accessibility.md) - WCAG compliance
 - [TypeScript Guide](ex-so-plwe-tsne__typescript.md) - TypeScript integration
-- [React Styling](../ts-react/ex-so-plwe-tsre__styling.md) - React styling patterns
+- [React Styling](../fe-react/ex-so-plwe-tsre__styling.md) - React styling patterns
 
 ---
 
