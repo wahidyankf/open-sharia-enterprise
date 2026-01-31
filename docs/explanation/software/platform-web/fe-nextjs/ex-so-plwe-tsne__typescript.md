@@ -2069,7 +2069,7 @@ export function Button({ variant = "primary", size = "md", children, onClick, di
 - [Next.js API Routes](ex-so-plwe-tsne__api-routes.md) - Type-safe API handlers
 - [Next.js Configuration](ex-so-plwe-tsne__configuration.md) - TypeScript config setup
 - [Next.js Data Fetching](ex-so-plwe-tsne__data-fetching.md) - Type-safe data patterns
-- [React TypeScript](../ts-react/ex-so-plwe-tsre__typescript.md) - React-specific typing patterns
+- [React TypeScript](../fe-react/ex-so-plwe-tsre__typescript.md) - React-specific typing patterns
 
 ---
 

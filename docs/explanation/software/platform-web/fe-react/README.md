@@ -1,15 +1,16 @@
 ---
-title: React with TypeScript Framework
-description: Modern frontend framework for building scalable, type-safe user interfaces with React and TypeScript
+title: React Framework
+description: Modern library for building component-based user interfaces with TypeScript for scalable, maintainable frontend applications
 category: explanation
 subcategory: platform-web
 tags:
   - react
   - typescript
   - frontend
-  - framework
-  - hooks
   - components
+  - hooks
+  - ui
+  - framework
   - index
 principles:
   - automation-over-manual
@@ -17,36 +18,31 @@ principles:
   - immutability
   - pure-functions
   - reproducibility
-created: 2026-01-29
-updated: 2026-01-29
+created: 2026-01-25
+updated: 2026-01-25
 ---
 
-# React with TypeScript Framework
+# React Framework
 
-**Understanding-oriented documentation** for React with TypeScript framework in the open-sharia-enterprise platform.
+**Understanding-oriented documentation** for React framework in the open-sharia-enterprise platform.
 
 ## Overview
 
-React with TypeScript is a powerful combination for building modern, type-safe frontend applications. React provides a component-based UI library with a declarative approach, while TypeScript adds static typing, enhanced IDE support, and compile-time error detection. Together, they enable building scalable, maintainable user interfaces with excellent developer experience.
+React is a declarative, component-based library for building user interfaces. It enables creating interactive, performant web applications through composable components, unidirectional data flow, and a virtual DOM. Combined with TypeScript, React provides type-safe UI development with excellent tooling and developer experience.
 
-This documentation covers React 18+ with TypeScript 5+ and Vite 5+ for building production-ready single-page applications (SPAs), dashboards, and interactive frontends.
-
-**Version**: React 18+ (targeting latest stable release)
-**TypeScript Version**: TypeScript 5+
-**Build Tool**: Vite 5+
-**Package Manager**: npm/pnpm
+This documentation covers React 18+ with TypeScript 5+, focusing on functional components, hooks, and modern React patterns for building enterprise-grade financial applications.
 
 ## Framework Standards
 
-**This documentation is the authoritative reference** for React with TypeScript usage standards in the open-sharia-enterprise platform.
+**This documentation is the authoritative reference** for React usage standards in the open-sharia-enterprise platform.
 
 All React applications MUST follow the patterns and practices documented here:
 
-1. **[Idioms](ex-so-plwe-fere__idioms.md)** - React + TypeScript-specific patterns
-2. **[Best Practices](ex-so-plwe-fere__best-practices.md)** - Framework standards
-3. **[Anti-Patterns](ex-so-plwe-fere__anti-patterns.md)** - Common mistakes to avoid
-4. **[Component Architecture](ex-so-plwe-fere__component-architecture.md)** - Component design principles
-5. **[Configuration](ex-so-plwe-fere__configuration.md)** - Build and environment configuration
+1. **[Idioms](./ex-so-plwe-tsre__idioms.md)** - React-specific patterns
+2. **[Best Practices](./ex-so-plwe-tsre__best-practices.md)** - Framework standards
+3. **[Anti-Patterns](./ex-so-plwe-tsre__anti-patterns.md)** - Common mistakes
+4. **[Component Architecture](./ex-so-plwe-tsre__component-architecture.md)** - Component design
+5. **[State Management](./ex-so-plwe-tsre__state-management.md)** - State patterns
 
 **For Agents**: Reference this documentation when building React applications.
 
@@ -55,61 +51,64 @@ All React applications MUST follow the patterns and practices documented here:
 ### Quick Standards Reference
 
 - **Project Structure**: See [Architecture Integration](#architecture-integration)
-- **Components**: See [Component Architecture](ex-so-plwe-fere__component-architecture.md)
-- **State Management**: See [State Management](ex-so-plwe-fere__state-management.md)
-- **Data Fetching**: See [Data Fetching](ex-so-plwe-fere__data-fetching.md)
-- **Security**: See [Security](ex-so-plwe-fere__security.md)
-- **Testing**: See [Testing](ex-so-plwe-fere__testing.md)
+- **Component Patterns**: See [Component Architecture](./ex-so-plwe-tsre__component-architecture.md)
+- **State Management**: See [State Management](./ex-so-plwe-tsre__state-management.md)
+- **Testing**: See [Testing](./ex-so-plwe-tsre__testing.md)
+- **Performance**: See [Performance](./ex-so-plwe-tsre__performance.md)
 
 ## Software Engineering Principles
 
-React with TypeScript usage in this platform follows the five software engineering principles from [governance/principles/software-engineering/](../../../../../governance/principles/software-engineering/README.md):
+React usage in this platform follows the five software engineering principles from [governance/principles/software-engineering/](../../../../../governance/principles/software-engineering/README.md):
 
-1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - React automates through Vite hot module replacement, automatic TypeScript compilation, ESLint/Prettier integration, automated testing with Vitest
-2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - React with TypeScript enforces through explicit prop types, clear component interfaces, explicit state declarations, visible dependencies
-3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Use immutable state updates, functional components, pure functions for state transformations, readonly TypeScript types
-4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Apply functional component model: pure render functions, side effects in hooks (useEffect), predictable state transformations
-5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - React enables through version pinning (package-lock.json), Vite configuration, environment-specific builds, Docker containerization
+1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - React automates through Fast Refresh, ESLint plugins, automated testing, build optimization
+2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - React enforces through explicit props typing, clear component contracts, TypeScript integration
+3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - React requires immutable state updates, pure components, functional updates
+4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - React encourages pure rendering logic, effects isolation in useEffect, functional components
+5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - React enables through Volta pinning, package-lock.json, deterministic builds, snapshot testing
 
-**See Also**: [Component Architecture](ex-so-plwe-fere__component-architecture.md) for FP patterns with React.
+**See Also**: [Functional Programming](./ex-so-plwe-tsre__functional-programming.md) for FP patterns with React.
 
 ## Quick Reference
 
 **Jump to:**
 
-- [Overview](#overview) - React with TypeScript in the platform
+- [Overview](#overview) - React in the platform
 - [Software Engineering Principles](#software-engineering-principles) - Five core principles
-- [React Version Strategy](#react-version-strategy) - Version timeline and management
+- [React Version Strategy](#react-version-strategy) - Version management
 - [Documentation Structure](#documentation-structure) - Guide to documentation files
 - [Key Capabilities](#key-capabilities) - Framework features
 - [Use Cases](#use-cases) - When to use React
-- [Architecture Integration](#architecture-integration) - Component architecture, state patterns
+- [Architecture Integration](#architecture-integration) - Component architecture, DDD
 - [Development Workflow](#development-workflow) - Setup, configuration, testing
 - [Learning Path](#learning-path) - Recommended reading order
 - [Code Examples from Platform](#code-examples-from-platform) - Real implementations
 - [Integration with Other Documentation](#integration-with-other-documentation) - Cross-references
-- [React Ecosystem](#react-ecosystem) - React libraries and tools
+- [React Ecosystem](#react-ecosystem) - Libraries and tools
 - [Tools and Development Environment](#tools-and-development-environment) - Build tools, IDEs
 - [Resources and References](#resources-and-references) - External resources
 - [Related Documentation](#related-documentation) - Cross-references
 
 **Core Documentation:**
 
-- [Idioms](ex-so-plwe-fere__idioms.md) - React + TypeScript patterns (hooks, components, context)
-- [Best Practices](ex-so-plwe-fere__best-practices.md) - Framework coding standards
-- [Anti-Patterns](ex-so-plwe-fere__anti-patterns.md) - Common React mistakes
-- [Component Architecture](ex-so-plwe-fere__component-architecture.md) - Component design patterns
-- [Configuration](ex-so-plwe-fere__configuration.md) - Vite config, environment variables
-- [State Management](ex-so-plwe-fere__state-management.md) - useState, useReducer, Context, Zustand
-- [Data Fetching](ex-so-plwe-fere__data-fetching.md) - API calls, React Query, SWR
-- [Hooks](ex-so-plwe-fere__hooks.md) - Custom hooks patterns and built-in hooks
-- [REST APIs](ex-so-plwe-fere__rest-apis.md) - Consuming REST APIs with Fetch/Axios
-- [Security](ex-so-plwe-fere__security.md) - XSS prevention, CSRF, authentication
-- [Testing](ex-so-plwe-fere__testing.md) - Vitest, React Testing Library
-- [Observability](ex-so-plwe-fere__observability.md) - Error boundaries, Sentry, analytics
-- [Performance](ex-so-plwe-fere__performance.md) - Code splitting, lazy loading, memoization
-- [Deployment](ex-so-plwe-fere__deployment.md) - Vercel, Docker, CDN deployment
-- [Version Migration](ex-so-plwe-fere__version-migration.md) - Upgrading React versions
+- [Idioms](./ex-so-plwe-tsre__idioms.md) - React patterns (functional components, hooks, composition)
+- [Best Practices](./ex-so-plwe-tsre__best-practices.md) - Framework coding standards
+- [Anti-Patterns](./ex-so-plwe-tsre__anti-patterns.md) - Common React mistakes
+- [Component Architecture](./ex-so-plwe-tsre__component-architecture.md) - Component design patterns
+- [State Management](./ex-so-plwe-tsre__state-management.md) - State patterns and tools
+- [Hooks](./ex-so-plwe-tsre__hooks.md) - useState, useEffect, custom hooks
+- [TypeScript](./ex-so-plwe-tsre__typescript.md) - TypeScript integration
+- [Testing](./ex-so-plwe-tsre__testing.md) - React Testing Library, Jest
+- [Performance](./ex-so-plwe-tsre__performance.md) - Optimization strategies
+- [Routing](./ex-so-plwe-tsre__routing.md) - React Router patterns
+- [Forms](./ex-so-plwe-tsre__forms.md) - Form handling and validation
+- [Data Fetching](./ex-so-plwe-tsre__data-fetching.md) - API integration
+- [Styling](./ex-so-plwe-tsre__styling.md) - CSS strategies
+- [Accessibility](./ex-so-plwe-tsre__accessibility.md) - WCAG compliance
+- [Security](./ex-so-plwe-tsre__security.md) - Security best practices
+- [Build & Deployment](./ex-so-plwe-tsre__build-deployment.md) - Build tools and deployment
+- [Version Migration](./ex-so-plwe-tsre__version-migration.md) - Upgrading React versions
+- [Domain-Driven Design](./ex-so-plwe-tsre__domain-driven-design.md) - DDD with React
+- [Functional Programming](./ex-so-plwe-tsre__functional-programming.md) - FP patterns with React
 
 ## React Version Strategy
 
@@ -118,106 +117,116 @@ React with TypeScript usage in this platform follows the five software engineeri
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 timeline
-    title React Version Timeline #40;2016-2026#41;
-    2016-09 : React 15 : Initial stable release
-    2017-09 : React 16.0 : Fiber architecture : Error boundaries
-    2018-10 : React 16.8 : Hooks introduced : Functional components preferred
-    2020-10 : React 17 : No new features : Gradual upgrades enabled
-    2022-03 : React 18.0 : Concurrent rendering : Automatic batching : Suspense
-    2023-05 : React 18.2 : Stable concurrent features
-    2024-01 : React 18.3 : Performance improvements
-    2026-Q2 : React 19 #40;Planned#41; : React Compiler : Server Components : Improved Suspense
+    title React Version Timeline (2018-2026)
+    2018-09 : React 16.8 : Hooks introduction : useState, useEffect
+    2020-10 : React 17.0 : No new features : Gradual upgrades support
+    2022-03 : React 18.0 : Concurrent rendering : Automatic batching : Suspense improvements
+    2023-05 : React 18.2 : useId hook : useTransition improvements
+    2024-04 : React 19 Beta : React Compiler : Server Components stable
+    2024-12 : React 19.0 : Compiler stable : Actions : useFormStatus, useFormState
+    2025-06 : React 19.2 (Expected) : Further compiler optimizations
+    2026-Q1 : React 20 (Planned) : Next generation features
 ```
 
-**Platform Strategy**: React 18.3+ (current) → React 19 (future)
+**Platform Strategy**: React 18.2+ (current) → React 19.x → React 20 (future)
 
-### Current Version: React 18.3+
+### Current Version: React 18.2+
 
-**Platform Standard**: React 18.3 is the target version for all React projects.
+**Platform Standard**: React 18.2 is the target version for all React projects.
 
 **Rationale**:
 
-- Concurrent rendering for responsive UIs
-- Automatic batching for better performance
-- Suspense for data fetching
-- Improved TypeScript support
-- Stable hook APIs
-- Server Components preparation (experimental)
+- Concurrent rendering for improved responsiveness
+- Automatic batching reduces unnecessary re-renders
+- Suspense for data fetching (experimental)
+- useId for server-side rendering compatibility
+- Mature ecosystem and library support
+- Stable foundation for modern React patterns
 
 **Key Features**:
 
-- **Concurrent Rendering** - Non-blocking rendering for better UX
-- **Automatic Batching** - Multiple setState calls batched automatically
-- **startTransition** - Mark non-urgent updates
-- **useDeferredValue** - Defer expensive re-renders
-- **useId** - Generate unique IDs for accessibility
-- **Suspense** - Declarative loading states
+- Concurrent rendering with startTransition
+- Automatic batching of state updates
+- Streaming SSR with Suspense
+- useId for unique IDs in SSR
+- useDeferredValue for non-urgent updates
+- useTransition for UI transitions
 
-### Future: React 19
+### Future: React 19+
 
-**Expected**: Q2 2026 (speculative)
+**Released**: December 2024
 
-**Anticipated Changes**:
+**Major Changes**:
 
-- React Compiler for automatic optimization
-- Server Components as default
-- Enhanced Suspense with streaming SSR
-- Improved concurrent features
-- Better TypeScript integration
-- Actions and useActionState for forms
+- React Compiler - automatic memoization (no manual useMemo/useCallback)
+- React Server Components stable
+- Actions for form handling and mutations
+- useFormStatus and useFormState hooks
+- useOptimistic for optimistic updates
+- use hook for reading context and promises
+- ref as prop (no forwardRef needed)
+
+**Migration Path**:
+
+Projects will migrate to React 19 when:
+
+- React Compiler provides proven performance benefits
+- Critical libraries support React 19
+- Server Components pattern is adopted
+- Migration guide is validated
 
 ## Documentation Structure
 
-### [React with TypeScript Idioms](ex-so-plwe-fere__idioms.md)
+### [React Idioms](./ex-so-plwe-tsre__idioms.md)
 
-Framework-specific patterns for writing idiomatic React applications with TypeScript.
+Framework-specific patterns for writing idiomatic React applications.
 
 **Covers**:
 
-- Functional components with TypeScript
-- Hook patterns (useState, useEffect, useCallback, useMemo)
-- Custom hooks for reusable logic
-- Context API for state sharing
+- Functional components over class components
+- Hooks patterns (useState, useEffect, useContext, useReducer)
 - Component composition patterns
-- Props with TypeScript interfaces
-- Generic components
-- Ref forwarding and useImperativeHandle
-- Event handling with TypeScript
+- Props spreading and destructuring
+- Children patterns (render props, compound components)
+- Custom hooks for reusable logic
 - Conditional rendering patterns
+- List rendering with keys
+- Event handling in React
+- Controlled vs uncontrolled components
 
-### [React Best Practices](ex-so-plwe-fere__best-practices.md)
+### [React Best Practices](./ex-so-plwe-tsre__best-practices.md)
 
 Proven approaches for building production-ready React applications.
 
 **Covers**:
 
-- Component organization and file structure
+- Project structure and organization
+- Component design principles (SRP, composition)
 - State management strategies
-- Performance optimization (memoization, code splitting)
-- Accessibility (ARIA, semantic HTML, keyboard navigation)
-- Error handling and boundaries
-- Testing strategies
-- TypeScript best practices for React
+- TypeScript integration best practices
+- Error boundaries and error handling
+- Performance optimization strategies
+- Accessibility standards (ARIA, semantic HTML)
+- Testing strategies (unit, integration, E2E)
 - Code splitting and lazy loading
-- Environment variable management
-- API integration patterns
+- Security best practices
 
-### [React Anti-Patterns](ex-so-plwe-fere__anti-patterns.md)
+### [React Anti-Patterns](./ex-so-plwe-tsre__anti-patterns.md)
 
 Common mistakes and problematic patterns to avoid.
 
 **Covers**:
 
-- Prop drilling anti-pattern
+- Prop drilling without context
 - Unnecessary re-renders
-- Missing dependency arrays in hooks
-- Mutating state directly
-- Using indexes as keys
-- Overusing useEffect
-- Missing error boundaries
-- Inline function definitions in JSX
-- Not leveraging TypeScript types
-- State duplication
+- Misuse of useEffect (missing dependencies, race conditions)
+- Direct DOM manipulation
+- Incorrect key usage in lists
+- State management anti-patterns
+- Performance anti-patterns (premature optimization)
+- TypeScript anti-patterns (any types, type assertions)
+- Testing anti-patterns
+- Security vulnerabilities (XSS, injection)
 
 ### Documentation Organization
 
@@ -228,14 +237,16 @@ Common mistakes and problematic patterns to avoid.
 flowchart TD
     A["React Documentation"]:::blue
     B["Core Patterns"]:::teal
-    C["Application Layers"]:::teal
+    C["Architecture"]:::teal
     D["Advanced Topics"]:::purple
     E["Integration"]:::orange
+    F["Specialized"]:::purple
 
     A --> B
     A --> C
     A --> D
     A --> E
+    A --> F
 
     B --> B1["Idioms"]
     B --> B2["Best Practices"]
@@ -243,17 +254,23 @@ flowchart TD
 
     C --> C1["Component Architecture"]
     C --> C2["State Management"]
-    C --> C3["Data Fetching"]
-    C --> C4["Hooks"]
+    C --> C3["Hooks"]
+    C --> C4["TypeScript"]
 
-    D --> D1["Security"]
+    D --> D1["Performance"]
     D --> D2["Testing"]
-    D --> D3["Observability"]
-    D --> D4["Performance"]
+    D --> D3["Accessibility"]
+    D --> D4["Security"]
 
-    E --> E1["REST APIs"]
-    E --> E2["Deployment"]
-    E --> E3["Version Migration"]
+    E --> E1["Routing"]
+    E --> E2["Forms"]
+    E --> E3["Data Fetching"]
+    E --> E4["Styling"]
+
+    F --> F1["Build & Deployment"]
+    F --> F2["Domain-Driven Design"]
+    F --> F3["Functional Programming"]
+    F --> F4["Version Migration"]
 
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
@@ -265,431 +282,670 @@ flowchart TD
 
 Deep-dive documentation on critical React areas:
 
-#### [Component Architecture](ex-so-plwe-fere__component-architecture.md)
+#### [React Component Architecture](./ex-so-plwe-tsre__component-architecture.md)
 
-Comprehensive guide to component design and organization.
+Comprehensive guide to component design patterns.
 
 **Covers**:
 
-- Atomic design principles (atoms, molecules, organisms)
-- Container vs Presentational components
-- Compound component pattern
-- Render props and higher-order components (HOCs)
+- Component design principles (SRP, composition over inheritance)
+- Presentational vs container components
+- Compound components pattern
+- Render props pattern
+- Higher-order components (HOCs)
+- Custom hooks pattern
 - Component composition strategies
-- Props interface design with TypeScript
-- Component file structure
-- Feature-based organization
-- Design system integration
-- Storybook for component documentation
+- Component library organization
+- Atomic design methodology
+- Component testing strategies
 
-#### [State Management](ex-so-plwe-fere__state-management.md)
+#### [React State Management](./ex-so-plwe-tsre__state-management.md)
 
-Comprehensive guide to state management in React applications.
+Comprehensive guide to state management patterns.
 
 **Covers**:
 
 - Local state with useState
-- Complex state with useReducer
+- Reducer pattern with useReducer
 - Context API for global state
-- Zustand for lightweight state management
+- State lifting and prop drilling
+- Zustand for simple global state
+- Redux Toolkit (if needed for complex state)
 - React Query for server state
-- State colocation principles
-- Avoiding prop drilling
-- State lifting patterns
-- Derived state patterns
-- State persistence strategies
-
-#### [Data Fetching](ex-so-plwe-fere__data-fetching.md)
-
-Comprehensive guide to fetching and managing server data.
-
-**Covers**:
-
-- Fetch API and Axios
-- React Query for server state management
-- SWR (stale-while-revalidate)
-- Error handling strategies
-- Loading states and suspense
+- State management best practices
 - Optimistic updates
-- Caching strategies
-- Pagination and infinite scroll
-- Prefetching data
-- Authentication with tokens
+- State testing strategies
 
-#### [Custom Hooks](ex-so-plwe-fere__hooks.md)
+#### [React Hooks](./ex-so-plwe-tsre__hooks.md)
 
-Comprehensive guide to React hooks and custom hook patterns.
+Comprehensive guide to React hooks.
 
 **Covers**:
 
-- Built-in hooks (useState, useEffect, useContext, useReducer, etc.)
-- Custom hook creation patterns
-- Hook composition
-- useCallback and useMemo optimization
-- Hook testing strategies
-- Hook dependency arrays
-- Hook ordering rules
-- Common custom hooks (useLocalStorage, useDebounce, useFetch)
-- TypeScript with hooks
-- Hook best practices
+- useState for local state
+- useEffect for side effects
+- useContext for context consumption
+- useReducer for complex state logic
+- useMemo for memoization
+- useCallback for function memoization
+- useRef for mutable refs
+- useImperativeHandle for ref customization
+- useLayoutEffect for synchronous effects
+- Custom hooks patterns
+- Hooks rules and best practices
+- Hooks testing strategies
 
-#### [REST APIs Integration](ex-so-plwe-fere__rest-apis.md)
+#### [React TypeScript Integration](./ex-so-plwe-tsre__typescript.md)
 
-Comprehensive guide to consuming REST APIs in React applications.
-
-**Covers**:
-
-- Fetch API basics
-- Axios configuration
-- Request/response interceptors
-- Error handling
-- TypeScript types for API responses
-- Authentication headers
-- CORS handling
-- API client abstraction
-- Request cancellation
-- Rate limiting and retries
-- Financial examples: Zakat API, Murabaha API calls
-
-#### [Security](ex-so-plwe-fere__security.md)
-
-Comprehensive guide to React application security.
+Comprehensive guide to TypeScript with React.
 
 **Covers**:
 
-- XSS (Cross-Site Scripting) prevention
-- CSRF protection
-- Content Security Policy (CSP)
-- Authentication patterns (JWT, OAuth2)
-- Secure token storage
-- HTTPS enforcement
-- Input sanitization
-- Dependency vulnerability scanning
-- Security headers
-- Third-party script safety
+- Typing functional components
+- Typing props with interfaces
+- Typing state with generics
+- Typing events (onClick, onChange, onSubmit)
+- Typing refs (useRef with HTMLElement)
+- Typing context providers and consumers
+- Generic components
+- Typing custom hooks
+- React.FC vs function component
+- Children typing patterns
+- Discriminated unions in props
+- TypeScript best practices
 
-#### [Testing](ex-so-plwe-fere__testing.md)
+#### [React Testing](./ex-so-plwe-tsre__testing.md)
 
 Comprehensive guide to testing React applications.
 
 **Covers**:
 
-- Vitest for unit testing
-- React Testing Library for component testing
-- Testing hooks with @testing-library/react-hooks
-- Integration testing strategies
-- E2E testing with Playwright
-- Mocking API calls
+- React Testing Library fundamentals
+- Jest configuration and setup
+- Component testing strategies
+- Hooks testing with renderHook
+- Integration testing
+- Mocking (API calls, modules, timers)
+- Testing user interactions
+- Testing asynchronous behavior
 - Testing custom hooks
-- Snapshot testing
-- Coverage requirements
+- Snapshot testing (when appropriate)
+- E2E testing with Playwright/Cypress
 - TDD workflow with React
 
-#### [Observability](ex-so-plwe-fere__observability.md)
+#### [React Performance](./ex-so-plwe-tsre__performance.md)
 
-Comprehensive guide to monitoring and debugging React applications.
-
-**Covers**:
-
-- Error boundaries for graceful error handling
-- Sentry integration for error tracking
-- React DevTools for debugging
-- Performance monitoring with Web Vitals
-- User analytics (Google Analytics, Mixpanel)
-- Logging strategies
-- Source maps for production debugging
-- Performance profiling
-- Custom error reporting
-- User session replay
-
-#### [Performance Optimization](ex-so-plwe-fere__performance.md)
-
-Comprehensive guide to optimizing React application performance.
+Comprehensive guide to React performance optimization.
 
 **Covers**:
 
+- React.memo for component memoization
+- useMemo for expensive computations
+- useCallback for function memoization
 - Code splitting with React.lazy
-- Route-based code splitting
-- Memoization (React.memo, useMemo, useCallback)
-- Virtual scrolling for large lists
-- Image optimization and lazy loading
+- Lazy loading routes and components
+- Virtualization (react-window, react-virtual)
 - Bundle size optimization
-- Web Vitals monitoring (LCP, FID, CLS)
-- React Profiler usage
+- Profiling with React DevTools
+- Performance monitoring (Web Vitals)
+- Image optimization
 - Avoiding unnecessary re-renders
-- Debouncing and throttling
+- Optimization strategies and trade-offs
 
-#### [Deployment](ex-so-plwe-fere__deployment.md)
+#### [React Routing](./ex-so-plwe-tsre__routing.md)
 
-Comprehensive guide to deploying React applications.
+Comprehensive guide to routing with React Router.
 
 **Covers**:
 
-- Vercel deployment (recommended)
-- Docker containerization
-- CDN deployment (Cloudflare, AWS CloudFront)
-- Environment-specific builds
-- CI/CD with GitHub Actions
-- Build optimization
-- Static site generation
-- Progressive Web App (PWA) setup
-- Monitoring and rollback strategies
-- Zero-downtime deployments
+- React Router v6 fundamentals
+- Route configuration and nesting
+- Navigation with Link and Navigate
+- Route parameters and query strings
+- Protected routes and authentication
+- Programmatic navigation
+- Route guards and middleware
+- Nested routes
+- 404 and error routes
+- TypeScript with React Router
+- Testing routes
 
-#### [Version Migration](ex-so-plwe-fere__version-migration.md)
+#### [React Forms](./ex-so-plwe-tsre__forms.md)
+
+Comprehensive guide to form handling in React.
+
+**Covers**:
+
+- Controlled vs uncontrolled components
+- React Hook Form library
+- Formik alternative
+- Form validation strategies
+- Error handling and display
+- Field arrays (dynamic fields)
+- File uploads
+- Form submission patterns
+- Async validation
+- TypeScript with forms
+- Accessibility in forms
+- Testing forms
+
+#### [React Data Fetching](./ex-so-plwe-tsre__data-fetching.md)
+
+Comprehensive guide to data fetching patterns.
+
+**Covers**:
+
+- Fetch API and axios
+- TanStack Query (React Query) for server state
+- SWR alternative
+- Loading states and skeletons
+- Error handling and retry logic
+- Caching strategies
+- Optimistic updates
+- Infinite scrolling and pagination
+- Prefetching data
+- Mutations with React Query
+- WebSocket integration
+- TypeScript with data fetching
+
+#### [React Styling](./ex-so-plwe-tsre__styling.md)
+
+Comprehensive guide to styling React applications.
+
+**Covers**:
+
+- CSS Modules for scoped styles
+- Tailwind CSS integration
+- styled-components for CSS-in-JS
+- Emotion alternative
+- CSS variables for theming
+- Responsive design patterns
+- Dark mode implementation
+- CSS architecture (BEM, ITCSS)
+- Animation and transitions
+- Typography and spacing systems
+- Styling best practices
+- Performance considerations
+
+#### [React Accessibility](./ex-so-plwe-tsre__accessibility.md)
+
+Comprehensive guide to accessibility in React.
+
+**Covers**:
+
+- ARIA attributes and roles
+- Semantic HTML in JSX
+- Keyboard navigation
+- Focus management
+- Screen reader support
+- Alt text for images
+- Form accessibility
+- WCAG AA compliance
+- Color contrast requirements
+- Testing accessibility (axe, jest-axe)
+- Accessibility in component libraries
+- Accessibility best practices
+
+#### [React Security](./ex-so-plwe-tsre__security.md)
+
+Comprehensive guide to security in React applications.
+
+**Covers**:
+
+- XSS prevention (dangerouslySetInnerHTML, sanitization)
+- CSRF protection patterns
+- Authentication patterns (JWT, OAuth)
+- Authorization and protected routes
+- Secure API communication (HTTPS, CORS)
+- Input validation and sanitization
+- Content Security Policy (CSP)
+- Dependency security (npm audit)
+- Secret management (environment variables)
+- Security headers
+- OWASP Top 10 for frontend
+- Security testing
+
+#### [React Build & Deployment](./ex-so-plwe-tsre__build-deployment.md)
+
+Comprehensive guide to building and deploying React applications.
+
+**Covers**:
+
+- Build tools (Vite, Create React App, Next.js)
+- Environment variables and configuration
+- Production builds and optimization
+- Deployment strategies (Vercel, Netlify, AWS)
+- CI/CD integration (GitHub Actions)
+- Docker containerization
+- Server-side rendering (SSR) with Next.js
+- Static site generation (SSG)
+- Progressive Web Apps (PWA)
+- Monitoring and error tracking (Sentry)
+- Performance monitoring
+
+#### [React Version Migration](./ex-so-plwe-tsre__version-migration.md)
 
 Comprehensive guide to upgrading React versions.
 
 **Covers**:
 
+- Migrating from class to functional components
+- Adopting hooks from lifecycle methods
 - React 16 to React 17 migration
 - React 17 to React 18 migration
-- Concurrent features adoption
+- React 18 to React 19 migration
 - Breaking changes and deprecations
-- Codemod usage for automated migration
-- Testing migration changes
-- TypeScript compatibility updates
+- Codemod tools for automated migration
+- Gradual migration strategies
+- Testing during migration
 - Third-party library compatibility
-- Step-by-step migration checklist
+
+#### [React Domain-Driven Design](./ex-so-plwe-tsre__domain-driven-design.md)
+
+Comprehensive guide to DDD patterns in React.
+
+**Covers**:
+
+- Organizing components by domain
+- Bounded contexts in frontend
+- Domain models in TypeScript
+- Feature-based folder structure
+- Separation of concerns (UI vs domain logic)
+- Repository pattern for data access
+- Domain events in React
+- CQRS patterns in frontend
+- Hexagonal architecture for React apps
+- Financial examples: Zakat, Murabaha, Waqf UIs
+
+#### [React Functional Programming](./ex-so-plwe-tsre__functional-programming.md)
+
+Comprehensive guide to FP patterns in React.
+
+**Covers**:
+
+- Pure components and pure functions
+- Immutability in state updates
+- Function composition patterns
+- Higher-order components as higher-order functions
+- Hooks as functional abstractions
+- Functional error handling (Result/Either)
+- Function currying in event handlers
+- Declarative vs imperative code
+- Functional testing strategies
+- FP libraries (fp-ts, Ramda)
 
 ## Key Capabilities
 
-### Component Model
+### Component-Based Architecture
 
-React's declarative component model enables building complex UIs from small, reusable pieces:
+React excels at building UIs from composable components:
 
 - **Functional Components** - Modern, hooks-based components
-- **JSX** - JavaScript syntax extension for describing UI
-- **Props** - Data flow from parent to child
-- **State** - Component-local reactive data
-- **Lifecycle** - Hooks for side effects (useEffect)
-- **Composition** - Building complex UIs from simple components
+- **JSX** - Declarative UI syntax
+- **Composition** - Building complex UIs from simple pieces
+- **Props** - Component communication
+- **Children** - Component nesting
+- **Reusability** - DRY principle through components
 
-### Hooks
+### Declarative UI
 
-React Hooks enable state and side effects in functional components:
+React uses declarative programming for UI:
+
+- **State-Driven Rendering** - UI derives from state
+- **Virtual DOM** - Efficient DOM updates
+- **Reconciliation** - Smart diffing algorithm
+- **One-Way Data Flow** - Predictable state changes
+- **Reactive Updates** - Automatic UI updates
+
+### Modern Hooks
+
+React hooks enable powerful patterns:
 
 - **useState** - Local component state
 - **useEffect** - Side effects and lifecycle
-- **useContext** - Consume context values
-- **useReducer** - Complex state management
-- **useCallback** - Memoize functions
-- **useMemo** - Memoize expensive calculations
-- **useRef** - Mutable references
+- **useContext** - Global state access
+- **useReducer** - Complex state logic
+- **useMemo/useCallback** - Performance optimization
 - **Custom Hooks** - Reusable stateful logic
 
 ### TypeScript Integration
 
-TypeScript provides type safety and excellent developer experience:
+First-class TypeScript support:
 
-- **Component Props** - Type-safe prop interfaces
-- **Event Handlers** - Typed event handlers
-- **Hooks** - Type inference for hooks
-- **Generic Components** - Reusable typed components
-- **API Responses** - Type-safe API integration
-- **State** - Typed state management
+- **Type-Safe Props** - Compile-time prop validation
+- **Generic Components** - Flexible, reusable components
+- **Type Inference** - Automatic type detection
+- **IDE Support** - Excellent autocomplete and IntelliSense
+- **Refactoring Safety** - Confident refactoring
 
-### Routing
+### Rich Ecosystem
 
-React Router for client-side navigation:
+Extensive library ecosystem:
 
-- **Declarative Routing** - Route configuration
-- **Nested Routes** - Hierarchical routing
-- **Lazy Loading** - Code splitting by route
-- **Route Protection** - Authentication guards
-- **URL Parameters** - Dynamic routes
+- **Routing** - React Router
+- **State Management** - Redux, Zustand, Jotai
+- **Forms** - React Hook Form, Formik
+- **Data Fetching** - TanStack Query, SWR
+- **Styling** - Tailwind, styled-components, Emotion
+- **Testing** - React Testing Library, Jest
 
-### Forms
+### Performance
 
-Form handling and validation:
+Built-in performance features:
 
-- **Controlled Components** - React-controlled form inputs
-- **React Hook Form** - Performant form library
-- **Validation** - Schema validation with Zod/Yup
-- **Error Handling** - Field-level error messages
-- **File Uploads** - Multi-part form data
+- **Virtual DOM** - Minimal actual DOM operations
+- **React.memo** - Component memoization
+- **Code Splitting** - Load code on demand
+- **Lazy Loading** - Defer non-critical components
+- **Suspense** - Loading state management
+- **Concurrent Rendering** - Non-blocking rendering
 
 ## Use Cases
 
 **Use React when you need:**
 
-✅ Single-page applications (SPAs) with rich interactions
-✅ Admin dashboards and data-heavy interfaces
-✅ Real-time collaborative applications
+✅ Interactive user interfaces with complex state
+✅ Single-page applications (SPAs)
+✅ Component reusability across projects
+✅ Type-safe UI development with TypeScript
+✅ Large ecosystem of libraries and tools
+✅ Server-side rendering (with Next.js)
 ✅ Progressive Web Apps (PWAs)
-✅ Component-based UI architecture
-✅ Strong TypeScript integration
-✅ Large ecosystem and community support
-✅ Interactive forms with complex validation
-✅ Mobile-responsive web applications
+✅ Cross-platform development (React Native)
+✅ Strong community and hiring pool
 
 **Consider alternatives when:**
 
-❌ Building static content-heavy websites - use Next.js/Hugo instead
-❌ SEO is critical from day one - use Next.js with SSR/SSG
-❌ You need native mobile apps - use React Native instead
-❌ Server-side rendering is required - use Next.js/Remix
-❌ Team has no JavaScript/TypeScript experience - consider server-rendered apps
+❌ Building simple static websites (use plain HTML/CSS)
+❌ SEO-critical marketing sites (use Astro, Next.js SSG)
+❌ You need native mobile performance (consider Swift/Kotlin)
+❌ Team has no JavaScript/TypeScript experience
+❌ Bundle size is critical for low-bandwidth users (consider Preact, Svelte)
 
 ## Architecture Integration
 
-### Component Architecture
+### Component-Based Architecture
 
-Typical React application structure aligned with atomic design:
+React naturally encourages component-based design:
 
 ```
 src/
-├── components/              # Reusable UI components
-│   ├── atoms/              # Basic building blocks (Button, Input)
-│   ├── molecules/          # Simple component groups (FormField, Card)
-│   ├── organisms/          # Complex components (Header, DonationForm)
-│   └── templates/          # Page layouts
-├── features/               # Feature-based modules
-│   ├── zakat/              # Zakat calculation feature
-│   │   ├── components/    # Feature-specific components
-│   │   ├── hooks/         # Custom hooks for this feature
-│   │   ├── api/           # API calls for this feature
-│   │   ├── types.ts       # TypeScript types
-│   │   └── index.tsx      # Feature entry point
-│   ├── murabaha/          # Murabaha contracts feature
-│   └── donations/         # Donations feature
-├── shared/                 # Shared utilities
-│   ├── hooks/             # Reusable custom hooks
-│   ├── utils/             # Utility functions
-│   ├── types/             # Shared TypeScript types
-│   └── constants.ts       # Application constants
-├── api/                    # API client and configuration
-│   ├── client.ts          # Axios/Fetch configuration
-│   ├── endpoints.ts       # API endpoint definitions
-│   └── interceptors.ts    # Request/response interceptors
-├── store/                  # State management (if using Zustand/Redux)
-│   ├── slices/            # State slices
-│   └── index.ts           # Store configuration
-├── routes/                 # Route definitions
-│   ├── AppRoutes.tsx      # Route configuration
-│   └── PrivateRoute.tsx   # Authentication guards
-├── layouts/                # Page layouts
-│   ├── MainLayout.tsx
-│   └── AuthLayout.tsx
-└── pages/                  # Page components
-    ├── HomePage.tsx
-    ├── ZakatCalculatorPage.tsx
-    └── DonationDashboardPage.tsx
+├── features/                 # Feature-based organization
+│   ├── zakat/               # Zakat calculation feature
+│   │   ├── components/      # Feature-specific components
+│   │   │   ├── ZakatForm.tsx
+│   │   │   ├── ZakatResult.tsx
+│   │   │   └── ZakatHistory.tsx
+│   │   ├── hooks/           # Feature-specific hooks
+│   │   │   ├── useZakatCalculation.ts
+│   │   │   └── useZakatHistory.ts
+│   │   ├── api/             # API integration
+│   │   │   └── zakatApi.ts
+│   │   ├── types/           # TypeScript types
+│   │   │   └── zakat.types.ts
+│   │   └── utils/           # Feature utilities
+│   │       └── zakatRules.ts
+│   ├── donations/           # Donations feature
+│   └── loans/               # Murabaha loans feature
+├── shared/                  # Shared across features
+│   ├── components/          # Reusable components
+│   │   ├── Button/
+│   │   ├── Card/
+│   │   ├── Form/
+│   │   └── Layout/
+│   ├── hooks/               # Reusable hooks
+│   │   ├── useAuth.ts
+│   │   ├── useFetch.ts
+│   │   └── useLocalStorage.ts
+│   ├── utils/               # Utility functions
+│   │   ├── formatters.ts
+│   │   └── validators.ts
+│   └── types/               # Shared types
+│       └── common.types.ts
+└── core/                    # Core application
+    ├── api/                 # API client
+    ├── auth/                # Authentication
+    ├── routing/             # Routing configuration
+    └── store/               # Global state
 ```
 
-### Functional Programming Patterns
+### Functional Programming
 
-Apply functional principles in React applications:
-
-**Immutable State Updates**:
-
-```typescript
-// ❌ Bad - Mutating state
-const [items, setItems] = useState<Item[]>([]);
-items.push(newItem); // WRONG!
-
-// ✅ Good - Immutable update
-setItems([...items, newItem]);
-
-// ✅ Good - Using functional update
-setItems((prevItems) => [...prevItems, newItem]);
-```
+React embraces functional programming principles:
 
 **Pure Components**:
 
 ```typescript
-// Pure component - same props always produce same output
+// Pure functional component
 interface ZakatResultProps {
   wealth: number;
   nisab: number;
-  zakatAmount: number;
+  rate: number;
 }
 
-const ZakatResult: React.FC<ZakatResultProps> = ({ wealth, nisab, zakatAmount }) => {
-  const eligible = wealth >= nisab;
+export const ZakatResult: React.FC<ZakatResultProps> = ({ wealth, nisab, rate }) => {
+  // Pure calculation - no side effects
+  const zakatAmount = wealth >= nisab ? wealth * rate : 0;
+  const isEligible = wealth >= nisab;
 
   return (
-    <div>
-      <p>Wealth: ${wealth}</p>
-      <p>Nisab: ${nisab}</p>
-      <p>Eligible: {eligible ? 'Yes' : 'No'}</p>
-      {eligible && <p>Zakat Amount: ${zakatAmount}</p>}
+    <div className="zakat-result">
+      <h3>Zakat Calculation Result</h3>
+      <p>Wealth: {wealth}</p>
+      <p>Nisab: {nisab}</p>
+      <p>Eligible: {isEligible ? 'Yes' : 'No'}</p>
+      {isEligible && <p>Zakat Amount: {zakatAmount}</p>}
     </div>
   );
 };
 ```
 
-**Custom Hooks for Side Effects**:
+**Immutable State Updates**:
 
 ```typescript
-// Encapsulate side effects in custom hooks
-function useZakatCalculation(wealth: number, nisab: number) {
+interface Donation {
+  id: string;
+  amount: number;
+  category: string;
+  date: Date;
+}
+
+const [donations, setDonations] = useState<Donation[]>([]);
+
+// Immutable add
+const addDonation = (donation: Donation) => {
+  setDonations((prev) => [...prev, donation]); // Create new array
+};
+
+// Immutable update
+const updateDonation = (id: string, updates: Partial<Donation>) => {
+  setDonations((prev) =>
+    prev.map((donation) =>
+      donation.id === id
+        ? { ...donation, ...updates } // Create new object
+        : donation,
+    ),
+  );
+};
+
+// Immutable remove
+const removeDonation = (id: string) => {
+  setDonations((prev) => prev.filter((donation) => donation.id !== id));
+};
+```
+
+**Function Composition**:
+
+```typescript
+// Composable validation functions
+type Validator<T> = (value: T) => string | undefined;
+
+const required: Validator<string> = (value) => (value.trim() === "" ? "This field is required" : undefined);
+
+const minLength =
+  (min: number): Validator<string> =>
+  (value) =>
+    value.length < min ? `Minimum length is ${min}` : undefined;
+
+const maxLength =
+  (max: number): Validator<string> =>
+  (value) =>
+    value.length > max ? `Maximum length is ${max}` : undefined;
+
+const isNumber: Validator<string> = (value) => (isNaN(Number(value)) ? "Must be a number" : undefined);
+
+// Compose validators
+const compose =
+  <T>(...validators: Validator<T>[]): Validator<T> =>
+  (value) => {
+    for (const validator of validators) {
+      const error = validator(value);
+      if (error) return error;
+    }
+    return undefined;
+  };
+
+// Usage
+const validateZakatAmount = compose(required, isNumber, minLength(1), maxLength(10));
+```
+
+### Domain-Driven Design
+
+React components can implement DDD patterns:
+
+**Domain Models as Types**:
+
+```typescript
+// Value Objects
+export interface Money {
+  readonly amount: number;
+  readonly currency: string;
+}
+
+export interface NisabThreshold {
+  readonly goldGrams: number;
+  readonly silverGrams: number;
+  readonly equivalentMoney: Money;
+}
+
+// Entity
+export interface ZakatCalculation {
+  readonly id: string;
+  readonly userId: string;
+  readonly wealth: Money;
+  readonly nisab: NisabThreshold;
+  readonly zakatAmount: Money;
+  readonly eligible: boolean;
+  readonly calculationDate: Date;
+  readonly hijriDate: string;
+}
+
+// Aggregate
+export interface MurabahaContract {
+  readonly id: string;
+  readonly assetCost: Money;
+  readonly downPayment: Money;
+  readonly profitRate: number;
+  readonly termMonths: number;
+  readonly payments: Payment[];
+  readonly status: ContractStatus;
+  readonly createdAt: Date;
+}
+```
+
+**Feature-Based Organization**:
+
+```typescript
+// features/zakat/components/ZakatCalculator.tsx
+export const ZakatCalculator: React.FC = () => {
+  const { calculate, loading, error } = useZakatCalculation();
+  const [formData, setFormData] = useState<ZakatFormData>({
+    wealth: 0,
+    nisab: 0,
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await calculate(formData);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      {/* Form fields */}
+    </form>
+  );
+};
+
+// features/zakat/hooks/useZakatCalculation.ts
+export const useZakatCalculation = () => {
   const [result, setResult] = useState<ZakatCalculation | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const calculate = async () => {
-      setLoading(true);
-      try {
-        const response = await api.calculateZakat({ wealth, nisab });
-        setResult(response.data);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (wealth > 0 && nisab > 0) {
-      calculate();
+  const calculate = async (data: ZakatFormData) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const calculation = await zakatApi.calculate(data);
+      setResult(calculation);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-  }, [wealth, nisab]);
+  };
 
-  return { result, loading, error };
-}
+  return { result, calculate, loading, error };
+};
 ```
 
 ## Development Workflow
 
 ### Project Setup
 
-**Create new React + TypeScript application with Vite:**
+**Create new React application in Nx workspace:**
 
 ```bash
-# Using npm
-npm create vite@latest zakat-calculator -- --template react-ts
+# Generate React application with Nx
+nx generate @nx/react:application ose-platform-web-app
 
-# Using pnpm (recommended)
-pnpm create vite zakat-calculator --template react-ts
+# Or use Vite directly
+npm create vite@latest ose-platform-web-app -- --template react-ts
 
-# Navigate and install dependencies
-cd zakat-calculator
-pnpm install
+# Install dependencies
+npm install
 
 # Start development server
-pnpm dev
+nx serve ose-platform-web-app
+
+# Or with Vite
+npm run dev
 ```
 
-**Using Nx workspace:**
+**Project Structure**:
 
-```bash
-# Generate React app in Nx workspace
-nx generate @nx/react:application zakat-calculator
-
-# Development server
-nx serve zakat-calculator
-
-# Build for production
-nx build zakat-calculator
-
-# Run tests
-nx test zakat-calculator
+```
+apps/ose-platform-web-app/
+├── src/
+│   ├── features/          # Feature modules
+│   ├── shared/            # Shared code
+│   ├── core/              # Core application
+│   ├── assets/            # Static assets
+│   ├── App.tsx            # Root component
+│   ├── main.tsx           # Entry point
+│   └── vite-env.d.ts      # Vite types
+├── public/                # Public assets
+├── index.html             # HTML template
+├── vite.config.ts         # Vite configuration
+├── tsconfig.json          # TypeScript configuration
+├── tsconfig.app.json      # App-specific TS config
+├── tsconfig.node.json     # Node-specific TS config
+└── package.json           # Dependencies
 ```
 
 ### Configuration
 
-**vite.config.ts**:
+**Vite Configuration** (`vite.config.ts`):
 
 ```typescript
 import { defineConfig } from "vite";
@@ -701,22 +957,16 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "@components": path.resolve(__dirname, "./src/components"),
       "@features": path.resolve(__dirname, "./src/features"),
       "@shared": path.resolve(__dirname, "./src/shared"),
+      "@core": path.resolve(__dirname, "./src/core"),
     },
   },
   server: {
     port: 3000,
-    proxy: {
-      "/api": {
-        target: "http://localhost:8080",
-        changeOrigin: true,
-      },
-    },
+    open: true,
   },
   build: {
-    outDir: "dist",
     sourcemap: true,
     rollupOptions: {
       output: {
@@ -729,47 +979,30 @@ export default defineConfig({
 });
 ```
 
-**Environment Variables (.env)**:
-
-```bash
-# .env.development
-VITE_API_BASE_URL=http://localhost:8080/api
-VITE_APP_NAME=Zakat Calculator
-
-# .env.production
-VITE_API_BASE_URL=https://api.oseplatform.com
-VITE_APP_NAME=Zakat Calculator
-```
-
-**TypeScript Configuration (tsconfig.json)**:
+**TypeScript Configuration** (`tsconfig.json`):
 
 ```json
 {
   "compilerOptions": {
     "target": "ES2020",
-    "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
-
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@components/*": ["./src/components/*"],
       "@features/*": ["./src/features/*"],
-      "@shared/*": ["./src/shared/*"]
+      "@shared/*": ["./src/shared/*"],
+      "@core/*": ["./src/core/*"]
     }
   },
   "include": ["src"],
@@ -777,43 +1010,80 @@ VITE_APP_NAME=Zakat Calculator
 }
 ```
 
+**ESLint Configuration** (`.eslintrc.cjs`):
+
+```javascript
+module.exports = {
+  root: true,
+  env: { browser: true, es2020: true },
+  extends: [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:react-hooks/recommended",
+    "plugin:jsx-a11y/recommended",
+  ],
+  ignorePatterns: ["dist", ".eslintrc.cjs"],
+  parser: "@typescript-eslint/parser",
+  plugins: ["react-refresh"],
+  rules: {
+    "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
+    "react/prop-types": "off", // TypeScript handles this
+    "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+  },
+  settings: {
+    react: {
+      version: "detect",
+    },
+  },
+};
+```
+
 ### Testing Strategy
 
 **1. Component Tests** (React Testing Library):
 
 ```typescript
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+// ZakatCalculator.test.tsx
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { ZakatCalculator } from './ZakatCalculator';
 
 describe('ZakatCalculator', () => {
-  it('calculates zakat correctly', () => {
+  it('calculates zakat correctly', async () => {
+    const user = userEvent.setup();
     render(<ZakatCalculator />);
 
-    const wealthInput = screen.getByLabelText('Wealth Amount');
-    const nisabInput = screen.getByLabelText('Nisab Threshold');
-    const calculateButton = screen.getByRole('button', { name: 'Calculate' });
+    // Fill form
+    const wealthInput = screen.getByLabelText(/wealth/i);
+    const nisabInput = screen.getByLabelText(/nisab/i);
+    await user.type(wealthInput, '10000');
+    await user.type(nisabInput, '5000');
 
-    fireEvent.change(wealthInput, { target: { value: '10000' } });
-    fireEvent.change(nisabInput, { target: { value: '5000' } });
-    fireEvent.click(calculateButton);
+    // Submit
+    const submitButton = screen.getByRole('button', { name: /calculate/i });
+    await user.click(submitButton);
 
-    expect(screen.getByText(/Zakat Amount: \$250/)).toBeInTheDocument();
-    expect(screen.getByText(/Eligible: Yes/)).toBeInTheDocument();
+    // Assert result
+    await waitFor(() => {
+      expect(screen.getByText(/zakat amount: 250/i)).toBeInTheDocument();
+    });
   });
 
-  it('shows not eligible when wealth below nisab', () => {
+  it('shows error for invalid input', async () => {
+    const user = userEvent.setup();
     render(<ZakatCalculator />);
 
-    fireEvent.change(screen.getByLabelText('Wealth Amount'), {
-      target: { value: '3000' },
-    });
-    fireEvent.change(screen.getByLabelText('Nisab Threshold'), {
-      target: { value: '5000' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'Calculate' }));
+    const wealthInput = screen.getByLabelText(/wealth/i);
+    await user.type(wealthInput, '-100');
 
-    expect(screen.getByText(/Eligible: No/)).toBeInTheDocument();
+    const submitButton = screen.getByRole('button', { name: /calculate/i });
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(/wealth must be positive/i)).toBeInTheDocument();
+    });
   });
 });
 ```
@@ -821,42 +1091,67 @@ describe('ZakatCalculator', () => {
 **2. Hook Tests**:
 
 ```typescript
+// useZakatCalculation.test.ts
 import { renderHook, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
 import { useZakatCalculation } from "./useZakatCalculation";
 
 describe("useZakatCalculation", () => {
-  it("calculates zakat when wealth and nisab provided", async () => {
-    const { result } = renderHook(() => useZakatCalculation(10000, 5000));
+  it("calculates zakat successfully", async () => {
+    const { result } = renderHook(() => useZakatCalculation());
 
-    expect(result.current.loading).toBe(true);
+    expect(result.current.loading).toBe(false);
+    expect(result.current.result).toBeNull();
+
+    await result.current.calculate({ wealth: 10000, nisab: 5000 });
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
+      expect(result.current.result?.zakatAmount.amount).toBe(250);
     });
+  });
 
-    expect(result.current.result).toEqual({
-      zakatAmount: 250,
-      eligible: true,
+  it("handles errors", async () => {
+    const { result } = renderHook(() => useZakatCalculation());
+
+    await result.current.calculate({ wealth: -100, nisab: 5000 });
+
+    await waitFor(() => {
+      expect(result.current.error).toBeTruthy();
+      expect(result.current.result).toBeNull();
     });
   });
 });
 ```
 
-**3. Integration Tests** (Playwright):
+**3. Integration Tests**:
 
 ```typescript
-import { test, expect } from "@playwright/test";
+// App.test.tsx
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { App } from './App';
+import { server } from './mocks/server';
+import { rest } from 'msw';
 
-test("complete zakat calculation flow", async ({ page }) => {
-  await page.goto("http://localhost:3000");
+describe('App Integration', () => {
+  it('completes zakat calculation flow', async () => {
+    const user = userEvent.setup();
+    render(<App />);
 
-  await page.fill('input[name="wealth"]', "10000");
-  await page.fill('input[name="nisab"]', "5000");
-  await page.click('button:has-text("Calculate")');
+    // Navigate to calculator
+    const calculatorLink = screen.getByRole('link', { name: /zakat calculator/i });
+    await user.click(calculatorLink);
 
-  await expect(page.locator("text=Zakat Amount: $250")).toBeVisible();
-  await expect(page.locator("text=Eligible: Yes")).toBeVisible();
+    // Fill and submit form
+    await user.type(screen.getByLabelText(/wealth/i), '10000');
+    await user.type(screen.getByLabelText(/nisab/i), '5000');
+    await user.click(screen.getByRole('button', { name: /calculate/i }));
+
+    // Verify result
+    await waitFor(() => {
+      expect(screen.getByText(/zakat amount: 250/i)).toBeInTheDocument();
+    });
+  });
 });
 ```
 
@@ -864,373 +1159,300 @@ test("complete zakat calculation flow", async ({ page }) => {
 
 ### 1. Start with Idioms
 
-Read [React Idioms](ex-so-plwe-fere__idioms.md) to understand framework patterns:
+Read [React Idioms](./ex-so-plwe-tsre__idioms.md) to understand framework patterns:
 
-- Functional components with TypeScript
-- Hook patterns (useState, useEffect, etc.)
-- Custom hooks
-- Context API
+- Functional components
+- Hooks basics (useState, useEffect, useContext)
 - Component composition
+- JSX patterns
+- Props and children
 
 ### 2. Apply Best Practices
 
-Read [React Best Practices](ex-so-plwe-fere__best-practices.md) for production standards:
+Read [React Best Practices](./ex-so-plwe-tsre__best-practices.md) for production standards:
 
-- Component organization
-- State management strategies
-- Performance optimization
-- Accessibility compliance
-- Error handling
+- Project structure
+- Component design
+- State management
+- TypeScript integration
 - Testing strategies
+- Performance optimization
 
 ### 3. Avoid Anti-Patterns
 
-Read [React Anti-Patterns](ex-so-plwe-fere__anti-patterns.md) to prevent common mistakes:
+Read [React Anti-Patterns](./ex-so-plwe-tsre__anti-patterns.md) to prevent common mistakes:
 
 - Prop drilling
 - Unnecessary re-renders
-- Missing dependencies
-- Mutating state
-- Key anti-patterns
+- useEffect misuse
+- Direct DOM manipulation
+- Key prop mistakes
 
-### 4. Deep Dive into Architecture
+### 4. Master Advanced Topics
+
+Read specialized documentation:
+
+- [Component Architecture](./ex-so-plwe-tsre__component-architecture.md)
+- [State Management](./ex-so-plwe-tsre__state-management.md)
+- [Hooks](./ex-so-plwe-tsre__hooks.md)
+- [TypeScript](./ex-so-plwe-tsre__typescript.md)
+- [Performance](./ex-so-plwe-tsre__performance.md)
+
+### 5. Integrate with DDD
 
 Read complementary documentation:
 
-- [Component Architecture](ex-so-plwe-fere__component-architecture.md)
-- [State Management](ex-so-plwe-fere__state-management.md)
-- [Data Fetching](ex-so-plwe-fere__data-fetching.md)
+- [Domain-Driven Design](./ex-so-plwe-tsre__domain-driven-design.md)
+- [TypeScript DDD Patterns](../../prog-lang/typescript/ex-so-prla-ty__domain-driven-design.md)
+- [Functional Programming](./ex-so-plwe-tsre__functional-programming.md)
 
 ## Code Examples from Platform
 
-### Complete Zakat Calculator Component
+### Complete Feature Component
 
 ```typescript
+// features/zakat/components/ZakatCalculator.tsx
 import React, { useState } from 'react';
-import { calculateZakat } from '@shared/utils/zakat';
-
-interface ZakatCalculation {
-  wealth: number;
-  nisab: number;
-  zakatAmount: number;
-  eligible: boolean;
-}
+import { useZakatCalculation } from '../hooks/useZakatCalculation';
+import { ZakatFormData, ZakatCalculation } from '../types/zakat.types';
+import { Button } from '@shared/components/Button';
+import { Input } from '@shared/components/Input';
+import { Card } from '@shared/components/Card';
 
 export const ZakatCalculator: React.FC = () => {
-  const [wealth, setWealth] = useState<string>('');
-  const [nisab, setNisab] = useState<string>('');
+  const { calculate, loading, error } = useZakatCalculation();
   const [result, setResult] = useState<ZakatCalculation | null>(null);
+  const [formData, setFormData] = useState<ZakatFormData>({
+    wealth: '',
+    nisab: '',
+    currency: 'USD',
+  });
 
-  const handleCalculate = () => {
-    const wealthNum = parseFloat(wealth);
-    const nisabNum = parseFloat(nisab);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-    if (isNaN(wealthNum) || isNaN(nisabNum)) {
-      return;
-    }
-
-    const eligible = wealthNum >= nisabNum;
-    const zakatAmount = eligible ? wealthNum * 0.025 : 0;
-
-    setResult({
-      wealth: wealthNum,
-      nisab: nisabNum,
-      zakatAmount,
-      eligible,
+    const calculation = await calculate({
+      wealth: Number(formData.wealth),
+      nisab: Number(formData.nisab),
+      currency: formData.currency,
     });
+
+    if (calculation) {
+      setResult(calculation);
+    }
+  };
+
+  const handleChange = (field: keyof ZakatFormData) => (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setFormData(prev => ({ ...prev, [field]: e.target.value }));
   };
 
   return (
     <div className="zakat-calculator">
-      <h2>Zakat Calculator</h2>
+      <h1>Zakat Calculator</h1>
 
-      <div className="form-group">
-        <label htmlFor="wealth">Wealth Amount ($)</label>
-        <input
-          id="wealth"
-          type="number"
-          value={wealth}
-          onChange={(e) => setWealth(e.target.value)}
-          placeholder="Enter your wealth"
-        />
-      </div>
+      <Card>
+        <form onSubmit={handleSubmit}>
+          <Input
+            label="Total Wealth"
+            type="number"
+            value={formData.wealth}
+            onChange={handleChange('wealth')}
+            placeholder="Enter your total wealth"
+            required
+          />
 
-      <div className="form-group">
-        <label htmlFor="nisab">Nisab Threshold ($)</label>
-        <input
-          id="nisab"
-          type="number"
-          value={nisab}
-          onChange={(e) => setNisab(e.target.value)}
-          placeholder="Enter nisab threshold"
-        />
-      </div>
+          <Input
+            label="Nisab Threshold"
+            type="number"
+            value={formData.nisab}
+            onChange={handleChange('nisab')}
+            placeholder="Enter nisab threshold"
+            required
+          />
 
-      <button onClick={handleCalculate}>Calculate Zakat</button>
+          <Input
+            label="Currency"
+            type="text"
+            value={formData.currency}
+            onChange={handleChange('currency')}
+            placeholder="USD"
+            required
+          />
+
+          {error && <div className="error">{error}</div>}
+
+          <Button type="submit" loading={loading}>
+            Calculate Zakat
+          </Button>
+        </form>
+      </Card>
 
       {result && (
-        <div className="result">
-          <h3>Result</h3>
-          <p>
-            <strong>Eligible:</strong> {result.eligible ? 'Yes' : 'No'}
-          </p>
-          {result.eligible && (
-            <p>
-              <strong>Zakat Amount:</strong> ${result.zakatAmount.toFixed(2)}
-            </p>
-          )}
-        </div>
+        <Card>
+          <h2>Calculation Result</h2>
+          <div className="result">
+            <p>Wealth: {result.wealth.amount} {result.wealth.currency}</p>
+            <p>Nisab: {result.nisab.equivalentMoney.amount} {result.nisab.equivalentMoney.currency}</p>
+            <p>Eligible: {result.eligible ? 'Yes' : 'No'}</p>
+            {result.eligible && (
+              <p className="zakat-amount">
+                Zakat Amount: {result.zakatAmount.amount} {result.zakatAmount.currency}
+              </p>
+            )}
+            <p>Calculation Date: {new Date(result.calculationDate).toLocaleDateString()}</p>
+            <p>Hijri Date: {result.hijriDate}</p>
+          </div>
+        </Card>
       )}
     </div>
   );
 };
 ```
 
-### Custom Hook for API Data Fetching
+### Custom Hook with API Integration
 
 ```typescript
-import { useState, useEffect } from "react";
-import axios, { AxiosError } from "axios";
+// features/zakat/hooks/useZakatCalculation.ts
+import { useState } from "react";
+import { zakatApi } from "../api/zakatApi";
+import { ZakatCalculation, ZakatFormData } from "../types/zakat.types";
 
-interface UseFetchResult<T> {
-  data: T | null;
-  loading: boolean;
-  error: Error | null;
-  refetch: () => void;
-}
+export const useZakatCalculation = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-export function useFetch<T>(url: string): UseFetchResult<T> {
-  const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const [refetchKey, setRefetchKey] = useState(0);
+  const calculate = async (data: ZakatFormData): Promise<ZakatCalculation | null> => {
+    setLoading(true);
+    setError(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const response = await axios.get<T>(url);
-        setData(response.data);
-      } catch (err) {
-        setError(err as AxiosError);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [url, refetchKey]);
-
-  const refetch = () => {
-    setRefetchKey((prev) => prev + 1);
+    try {
+      const result = await zakatApi.calculate(data);
+      return result;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Calculation failed";
+      setError(message);
+      return null;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  return { data, loading, error, refetch };
-}
-```
-
-### Murabaha Contract Form with Validation
-
-```typescript
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-
-const murabahaSchema = z.object({
-  assetCost: z.number().positive('Asset cost must be positive'),
-  downPayment: z.number().min(0, 'Down payment cannot be negative'),
-  profitRate: z.number().min(0).max(100, 'Profit rate must be 0-100%'),
-  termMonths: z.number().int().positive('Term must be positive'),
-});
-
-type MurabahaFormData = z.infer<typeof murabahaSchema>;
-
-export const MurabahaContractForm: React.FC = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<MurabahaFormData>({
-    resolver: zodResolver(murabahaSchema),
-  });
-
-  const onSubmit = (data: MurabahaFormData) => {
-    console.log('Contract data:', data);
-    // API call to create contract
-  };
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <h2>Murabaha Contract Application</h2>
-
-      <div>
-        <label htmlFor="assetCost">Asset Cost ($)</label>
-        <input id="assetCost" type="number" {...register('assetCost', { valueAsNumber: true })} />
-        {errors.assetCost && <span className="error">{errors.assetCost.message}</span>}
-      </div>
-
-      <div>
-        <label htmlFor="downPayment">Down Payment ($)</label>
-        <input
-          id="downPayment"
-          type="number"
-          {...register('downPayment', { valueAsNumber: true })}
-        />
-        {errors.downPayment && <span className="error">{errors.downPayment.message}</span>}
-      </div>
-
-      <div>
-        <label htmlFor="profitRate">Profit Rate (%)</label>
-        <input
-          id="profitRate"
-          type="number"
-          step="0.1"
-          {...register('profitRate', { valueAsNumber: true })}
-        />
-        {errors.profitRate && <span className="error">{errors.profitRate.message}</span>}
-      </div>
-
-      <div>
-        <label htmlFor="termMonths">Term (Months)</label>
-        <input
-          id="termMonths"
-          type="number"
-          {...register('termMonths', { valueAsNumber: true })}
-        />
-        {errors.termMonths && <span className="error">{errors.termMonths.message}</span>}
-      </div>
-
-      <button type="submit">Submit Application</button>
-    </form>
-  );
+  return { calculate, loading, error };
 };
 ```
 
-### Donation Dashboard with React Query
+### TypeScript Types
 
 ```typescript
+// features/zakat/types/zakat.types.ts
+export interface Money {
+  readonly amount: number;
+  readonly currency: string;
+}
+
+export interface NisabThreshold {
+  readonly goldGrams: number;
+  readonly silverGrams: number;
+  readonly equivalentMoney: Money;
+}
+
+export interface ZakatCalculation {
+  readonly id: string;
+  readonly userId: string;
+  readonly wealth: Money;
+  readonly nisab: NisabThreshold;
+  readonly zakatAmount: Money;
+  readonly eligible: boolean;
+  readonly calculationDate: Date;
+  readonly hijriDate: string;
+}
+
+export interface ZakatFormData {
+  wealth: string | number;
+  nisab: string | number;
+  currency: string;
+}
+
+export interface ZakatApiRequest {
+  wealth: number;
+  nisab: number;
+  currency: string;
+}
+```
+
+### Reusable Component
+
+```typescript
+// shared/components/Button/Button.tsx
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import './Button.css';
 
-interface Donation {
-  id: string;
-  amount: number;
-  category: string;
-  donorName: string;
-  date: string;
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'danger';
+  size?: 'small' | 'medium' | 'large';
+  loading?: boolean;
+  children: React.ReactNode;
 }
 
-interface DonationSummary {
-  total: number;
-  count: number;
-  categories: Record<string, number>;
-}
-
-const fetchDonations = async (): Promise<Donation[]> => {
-  const { data } = await axios.get('/api/v1/donations');
-  return data;
-};
-
-const fetchSummary = async (): Promise<DonationSummary> => {
-  const { data } = await axios.get('/api/v1/donations/summary');
-  return data;
-};
-
-export const DonationDashboard: React.FC = () => {
-  const {
-    data: donations,
-    isLoading: donationsLoading,
-    error: donationsError,
-  } = useQuery({
-    queryKey: ['donations'],
-    queryFn: fetchDonations,
-  });
-
-  const {
-    data: summary,
-    isLoading: summaryLoading,
-    error: summaryError,
-  } = useQuery({
-    queryKey: ['donations', 'summary'],
-    queryFn: fetchSummary,
-  });
-
-  if (donationsLoading || summaryLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (donationsError || summaryError) {
-    return <div>Error loading donations</div>;
-  }
+export const Button: React.FC<ButtonProps> = ({
+  variant = 'primary',
+  size = 'medium',
+  loading = false,
+  disabled,
+  children,
+  className = '',
+  ...props
+}) => {
+  const classNames = [
+    'button',
+    `button--${variant}`,
+    `button--${size}`,
+    loading && 'button--loading',
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
-    <div className="donation-dashboard">
-      <h1>Donation Dashboard</h1>
-
-      <div className="summary">
-        <div className="summary-card">
-          <h3>Total Donations</h3>
-          <p>${summary?.total.toFixed(2)}</p>
-        </div>
-        <div className="summary-card">
-          <h3>Total Count</h3>
-          <p>{summary?.count}</p>
-        </div>
-      </div>
-
-      <div className="categories">
-        <h2>By Category</h2>
-        {Object.entries(summary?.categories || {}).map(([category, amount]) => (
-          <div key={category} className="category-item">
-            <span>{category}</span>
-            <span>${amount.toFixed(2)}</span>
-          </div>
-        ))}
-      </div>
-
-      <div className="donations-list">
-        <h2>Recent Donations</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Donor</th>
-              <th>Amount</th>
-              <th>Category</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {donations?.map((donation) => (
-              <tr key={donation.id}>
-                <td>{donation.donorName}</td>
-                <td>${donation.amount.toFixed(2)}</td>
-                <td>{donation.category}</td>
-                <td>{new Date(donation.date).toLocaleDateString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <button
+      className={classNames}
+      disabled={disabled || loading}
+      {...props}
+    >
+      {loading ? (
+        <>
+          <span className="button__spinner" />
+          <span>Loading...</span>
+        </>
+      ) : (
+        children
+      )}
+    </button>
   );
 };
 ```
 
 ## Integration with Other Documentation
 
+### TypeScript Language Standards
+
+- **[TypeScript](../../prog-lang/typescript/README.md)** - Core TypeScript documentation
+- **[TypeScript Idioms](../../prog-lang/typescript/ex-so-prla-ty__idioms.md)** - Modern TypeScript patterns
+- **[TypeScript Best Practices](../../prog-lang/typescript/ex-so-prla-ty__best-practices.md)** - TypeScript coding standards
+- **[TypeScript Security](../../prog-lang/typescript/ex-so-prla-ty__security.md)** - Secure TypeScript coding
+- **[TypeScript Performance](../../prog-lang/typescript/ex-so-prla-ty__performance.md)** - Performance optimization
+
 ### Architecture Patterns
 
-- **[Domain-Driven Design](../../architecture/domain-driven-design-ddd/README.md)** - DDD patterns in frontend
+- **[Domain-Driven Design](../../architecture/domain-driven-design-ddd/README.md)** - DDD tactical patterns
 - **[C4 Architecture Model](../../architecture/c4-architecture-model/README.md)** - System documentation
 
 ### Development Practices
 
 - **[Test-Driven Development](../../development/test-driven-development-tdd/README.md)** - TDD with React
-- **[Behavior-Driven Development](../../development/behavior-driven-development-bdd/README.md)** - BDD with Cucumber
+- **[Behavior-Driven Development](../../development/behavior-driven-development-bdd/README.md)** - BDD with React Testing Library
 - **[Functional Programming](../../../../../governance/development/pattern/functional-programming.md)** - FP principles
 
 ### Code Quality
@@ -1241,170 +1463,241 @@ export const DonationDashboard: React.FC = () => {
 
 ## React Ecosystem
 
-### Core React
+### Core React Libraries
 
-**React Core**:
+**React**:
 
-- React - Component library
-- React DOM - Browser rendering
-- React Hooks - Stateful logic in functional components
-- React DevTools - Debugging extension
+- React Core - Components, hooks, JSX
+- React DOM - DOM rendering
+- React DevTools - Browser extension for debugging
+
+**React Router**:
+
+- Declarative routing
+- Nested routes
+- Navigation components
+- Route protection
 
 ### State Management
 
 **Local State**:
 
-- useState - Built-in local state
-- useReducer - Complex state management
-- Context API - Global state without libraries
+- useState - Component state
+- useReducer - Complex state logic
+- useContext - Context API
 
-**External Libraries**:
+**Global State**:
 
-- Zustand - Lightweight state management (recommended)
-- React Query / TanStack Query - Server state management
-- Jotai - Atomic state management
-- Redux Toolkit - Traditional Redux with less boilerplate
+- **Zustand** (Recommended) - Simple, unopinionated
+- **Redux Toolkit** - Full-featured, opinionated
+- **Jotai** - Atomic state management
+- **Recoil** - Facebook's state library
 
-### Routing
+**Server State**:
 
-- React Router v6 - Client-side routing (recommended)
-- TanStack Router - Type-safe routing
-- Wouter - Minimalist routing
-
-### Data Fetching
-
-- React Query / TanStack Query - Server state (recommended)
-- SWR - Stale-while-revalidate pattern
-- Axios - HTTP client
-- Fetch API - Native browser API
+- **TanStack Query** (React Query) - Recommended for server state
+- **SWR** - Vercel's data fetching library
 
 ### Forms
 
-- React Hook Form - Performant forms (recommended)
-- Formik - Comprehensive form library
-- Zod - Schema validation
-- Yup - Schema validation
+- **React Hook Form** (Recommended) - Performance-focused
+- **Formik** - Full-featured alternative
+- **Zod** - Schema validation
+- **Yup** - Alternative validation
 
-### UI Components
+### Styling
 
-- shadcn/ui - Accessible component primitives (recommended)
-- Material-UI (MUI) - Comprehensive component library
-- Ant Design - Enterprise UI library
-- Chakra UI - Accessible component system
+**CSS-in-JS**:
+
+- **styled-components** - Popular CSS-in-JS
+- **Emotion** - Performance-focused alternative
+
+**Utility-First**:
+
+- **Tailwind CSS** (Recommended) - Utility-first framework
+- **UnoCSS** - Instant on-demand atomic CSS
+
+**CSS Modules**:
+
+- Scoped CSS
+- Type-safe class names
+
+### UI Component Libraries
+
+- **shadcn/ui** (Recommended) - Customizable components
+- **Radix UI** - Unstyled, accessible primitives
+- **Headless UI** - Tailwind-focused components
+- **Material-UI (MUI)** - Google Material Design
+- **Ant Design** - Enterprise-focused
 
 ### Testing
 
-- Vitest - Fast unit testing (recommended)
-- React Testing Library - Component testing
-- Playwright - E2E testing
-- Cypress - E2E testing (alternative)
+- **React Testing Library** (Recommended) - User-centric testing
+- **Jest** - Test runner and assertions
+- **Vitest** - Vite-powered test runner
+- **Playwright** - E2E testing
+- **Cypress** - E2E alternative
 
 ### Build Tools
 
-- Vite - Fast development and build (recommended)
-- Create React App - Official scaffolding (deprecated)
-- Next.js - Full-stack React framework
+- **Vite** (Recommended) - Fast, modern build tool
+- **Create React App** - Official React starter (maintenance mode)
+- **Next.js** - React framework with SSR/SSG
+- **Remix** - Full-stack React framework
 
 ## Tools and Development Environment
 
-### Package Managers
+### Build Tools
 
-**pnpm** (Recommended):
+**Vite** (Recommended):
 
-```bash
-pnpm create vite my-app --template react-ts
-pnpm install
-pnpm dev
-```
+```typescript
+// vite.config.ts
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
 
-**npm** (Alternative):
-
-```bash
-npm create vite@latest my-app -- --template react-ts
-npm install
-npm run dev
-```
-
-**yarn** (Alternative):
-
-```bash
-yarn create vite my-app --template react-ts
-yarn
-yarn dev
+export default defineConfig({
+  plugins: [
+    react({
+      // Enable React Fast Refresh
+      fastRefresh: true,
+      // Babel plugins
+      babel: {
+        plugins: [],
+      },
+    }),
+  ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  server: {
+    port: 3000,
+    host: true,
+    open: true,
+  },
+  build: {
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom"],
+          router: ["react-router-dom"],
+        },
+      },
+    },
+  },
+  test: {
+    globals: true,
+    environment: "jsdom",
+    setupFiles: ["./src/test/setup.ts"],
+  },
+});
 ```
 
 ### Development Environment
 
 **VS Code** (Recommended):
 
-- ESLint extension
-- Prettier extension
+Extensions:
+
+- ESLint
+- Prettier
 - ES7+ React/Redux/React-Native snippets
-- TypeScript and JavaScript Language Features
-- Auto Import extension
+- TypeScript React code snippets
+- Tailwind CSS IntelliSense
+- Auto Rename Tag
+- Auto Close Tag
 - Path Intellisense
 
-**WebStorm** (Alternative):
+**WebStorm**:
 
-- Built-in React and TypeScript support
-- Excellent refactoring tools
-- Integrated testing runner
+- Built-in React support
+- Excellent TypeScript integration
+- Debugging tools
 
 ### Code Quality Tools
 
-- **ESLint** - Linting (with typescript-eslint)
-- **Prettier** - Code formatting
-- **TypeScript** - Static type checking
-- **Vitest** - Unit testing
-- **React DevTools** - Component inspection
+**ESLint**:
 
-### Reproducible React Development
+```bash
+npm install -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin
+npm install -D eslint-plugin-react eslint-plugin-react-hooks
+npm install -D eslint-plugin-jsx-a11y
+```
 
-**Version Management**:
+**Prettier**:
 
 ```json
 {
-  "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
-  },
-  "volta": {
-    "node": "20.11.0",
-    "npm": "10.2.4"
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "es5",
+  "printWidth": 100,
+  "arrowParens": "avoid"
+}
+```
+
+**TypeScript**:
+
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
   }
 }
 ```
 
-**Dependency Pinning**:
+### Reproducible React Development
+
+**Version Management** (Volta):
+
+```json
+{
+  "volta": {
+    "node": "24.11.1",
+    "npm": "11.6.3"
+  }
+}
+```
+
+**Dependency Management**:
 
 ```bash
-# Use package-lock.json (npm) or pnpm-lock.yaml (pnpm)
-# Commit lock file to git
-git add package-lock.json
-git commit -m "chore: update dependencies"
+# Lock file for reproducible builds
+npm install  # Creates package-lock.json
+
+# CI environment
+npm ci  # Installs from lock file
 ```
 
 **Docker Development Container**:
 
 ```dockerfile
-FROM node:20-alpine
+FROM node:24-alpine
 
 WORKDIR /app
 
 # Copy package files
-COPY package.json pnpm-lock.yaml ./
+COPY package*.json ./
 
 # Install dependencies
-RUN corepack enable pnpm && pnpm install --frozen-lockfile
+RUN npm ci
 
 # Copy source
 COPY . .
 
-# Expose development port
+# Expose port
 EXPOSE 3000
 
-# Start development server
-CMD ["pnpm", "dev", "--host"]
+# Development command
+CMD ["npm", "run", "dev"]
 ```
 
 ## Resources and References
@@ -1412,54 +1705,48 @@ CMD ["pnpm", "dev", "--host"]
 ### Official Documentation
 
 - [React Documentation](https://react.dev/)
-- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
-- [Vite Documentation](https://vitejs.dev/)
+- [React TypeScript Cheatsheet](https://react-typescript-cheatsheet.netlify.app/)
 - [React Router Documentation](https://reactrouter.com/)
+- [TanStack Query Documentation](https://tanstack.com/query/latest)
 
 ### Best Practices
 
-- [React TypeScript Cheatsheet](https://react-typescript-cheatsheet.netlify.app/)
-- [Patterns.dev - React Patterns](https://www.patterns.dev/posts#react)
-- [Kent C. Dodds - React Articles](https://kentcdodds.com/blog?q=react)
-
-### Books
-
-- "Learning React" by Alex Banks and Eve Porcello
-- "React and React Native" by Adam Boduch
-- "Fluent React" by Tejas Kumar
+- [React Patterns](https://reactpatterns.com/)
+- [React Testing Library](https://testing-library.com/react)
+- [React Performance](https://react.dev/learn/render-and-commit)
 
 ### Migration Guides
 
 - [React 18 Upgrade Guide](https://react.dev/blog/2022/03/08/react-18-upgrade-guide)
-- [React 17 to 18 Migration](https://react.dev/blog/2022/03/29/react-v18)
+- [React 19 Upgrade Guide](https://react.dev/blog/2024/12/05/react-19)
 
 ## Related Documentation
 
 ### Core React Documentation
 
-- **[React Idioms](ex-so-plwe-fere__idioms.md)** - Framework patterns
-- **[React Best Practices](ex-so-plwe-fere__best-practices.md)** - Production standards
-- **[React Anti-Patterns](ex-so-plwe-fere__anti-patterns.md)** - Common mistakes
+- **[React Idioms](./ex-so-plwe-tsre__idioms.md)** - Framework patterns
+- **[React Best Practices](./ex-so-plwe-tsre__best-practices.md)** - Production standards
+- **[React Anti-Patterns](./ex-so-plwe-tsre__anti-patterns.md)** - Common mistakes
 
 ### Application Layer Documentation
 
-- **[Component Architecture](ex-so-plwe-fere__component-architecture.md)** - Component design
-- **[State Management](ex-so-plwe-fere__state-management.md)** - State patterns
-- **[Data Fetching](ex-so-plwe-fere__data-fetching.md)** - API integration
-- **[Hooks](ex-so-plwe-fere__hooks.md)** - Custom hooks
+- **[Component Architecture](./ex-so-plwe-tsre__component-architecture.md)** - Component design
+- **[State Management](./ex-so-plwe-tsre__state-management.md)** - State patterns
+- **[Hooks](./ex-so-plwe-tsre__hooks.md)** - React hooks
+- **[TypeScript](./ex-so-plwe-tsre__typescript.md)** - TypeScript integration
 
 ### Advanced Topics
 
-- **[Security](ex-so-plwe-fere__security.md)** - React security
-- **[Testing](ex-so-plwe-fere__testing.md)** - Testing strategies
-- **[Observability](ex-so-plwe-fere__observability.md)** - Monitoring and debugging
-- **[Performance](ex-so-plwe-fere__performance.md)** - Optimization
+- **[Performance](./ex-so-plwe-tsre__performance.md)** - Optimization
+- **[Testing](./ex-so-plwe-tsre__testing.md)** - Testing strategies
+- **[Accessibility](./ex-so-plwe-tsre__accessibility.md)** - WCAG compliance
+- **[Security](./ex-so-plwe-tsre__security.md)** - Security best practices
 
 ### Integration Documentation
 
-- **[REST APIs](ex-so-plwe-fere__rest-apis.md)** - API consumption
-- **[Deployment](ex-so-plwe-fere__deployment.md)** - Deployment strategies
-- **[Version Migration](ex-so-plwe-fere__version-migration.md)** - Upgrading versions
+- **[Domain-Driven Design](./ex-so-plwe-tsre__domain-driven-design.md)** - DDD with React
+- **[Functional Programming](./ex-so-plwe-tsre__functional-programming.md)** - FP patterns
+- **[Version Migration](./ex-so-plwe-tsre__version-migration.md)** - Upgrading versions
 
 ### Platform Documentation
 
@@ -1470,6 +1757,230 @@ CMD ["pnpm", "dev", "--host"]
 
 ---
 
-**Last Updated**: 2026-01-29
-**React Version**: 18.3+ (TypeScript 5+, Vite 5+)
+**Last Updated**: 2026-01-25
+**React Version**: 18.2+ (TypeScript 5+, targeting React 19)
 **Maintainers**: Platform Documentation Team
+
+## Best Practices
+
+### Component Design
+
+- Keep components small and focused
+- Use TypeScript interfaces for props
+- Prefer functional components over class components
+- Compose components rather than inherit
+- Extract custom hooks for reusable logic
+
+### TypeScript Usage
+
+```typescript
+// Define clear prop types
+interface ButtonProps {
+  variant: "primary" | "secondary";
+  onClick: () => void;
+  children: React.ReactNode;
+  disabled?: boolean;
+}
+
+// Use FC type with props
+const Button: React.FC<ButtonProps> = ({ variant, onClick, children, disabled = false }) => {
+  // Implementation
+};
+```
+
+### Hooks
+
+- Follow Rules of Hooks (only call at top level)
+- Use custom hooks for reusable logic
+- Name custom hooks with `use` prefix
+- Keep effects focused (one concern per effect)
+- Clean up side effects properly
+
+### Performance
+
+- Use `React.memo` for expensive pure components
+- Memoize callbacks with `useCallback`
+- Memoize computed values with `useMemo`
+- Lazy load components with `React.lazy`
+- Split code with dynamic imports
+
+### Accessibility
+
+- Use semantic HTML elements
+- Provide ARIA labels where needed
+- Ensure keyboard navigation works
+- Test with screen readers
+- Follow WCAG AA guidelines
+
+## Common Antipatterns
+
+### ❌ Props Drilling
+
+**Problem**: Passing props through many layers
+
+```typescript
+// Bad
+<App data={data}>
+  <Layout data={data}>
+    <Page data={data}>
+      <Component data={data} />  {/* Props drilling */}
+    </Page>
+  </Layout>
+</App>
+```
+
+**Solution**: Use Context API or state management
+
+```typescript
+// Good
+const DataContext = createContext<Data | null>(null);
+
+function App() {
+  return (
+    <DataContext.Provider value={data}>
+      <Layout>
+        <Page>
+          <Component />
+        </Page>
+      </Layout>
+    </DataContext.Provider>
+  );
+}
+
+function Component() {
+  const data = useContext(DataContext);  // Access directly
+  // ...
+}
+```
+
+### ❌ Overusing `useEffect`
+
+**Problem**: Using effects for derived state
+
+```typescript
+// Bad
+const [total, setTotal] = useState(0);
+
+useEffect(() => {
+  setTotal(items.reduce((sum, item) => sum + item.price, 0));
+}, [items]); // Unnecessary effect
+```
+
+**Solution**: Calculate during render
+
+```typescript
+// Good
+const total = items.reduce((sum, item) => sum + item.price, 0);
+```
+
+### ❌ Mutating State Directly
+
+**Problem**: Updating state object properties directly
+
+```typescript
+// Bad
+const handleUpdate = () => {
+  user.name = "New Name"; // Direct mutation!
+  setUser(user);
+};
+```
+
+**Solution**: Create new objects/arrays
+
+```typescript
+// Good
+const handleUpdate = () => {
+  setUser({ ...user, name: "New Name" }); // Immutable update
+};
+```
+
+### ❌ Missing Dependencies in `useEffect`
+
+**Problem**: Stale closures and bugs
+
+```typescript
+// Bad
+useEffect(() => {
+  doSomething(value); // 'value' not in dependencies
+}, []); // Missing dependency
+```
+
+**Solution**: Include all dependencies
+
+```typescript
+// Good
+useEffect(() => {
+  doSomething(value);
+}, [value]); // Complete dependencies
+```
+
+## React Ecosystem
+
+### Meta-Frameworks
+
+- **Next.js** - React framework with SSR, SSG, and routing
+- **Remix** - Full-stack React framework
+- **Gatsby** - Static site generator
+
+### State Management
+
+- **Zustand** - Minimalist state management
+- **Redux Toolkit** - Redux with less boilerplate
+- **Jotai** - Atomic state management
+- **React Query** - Server state management
+
+### UI Libraries
+
+- **shadcn/ui** - Copy-paste component library (Radix + Tailwind)
+- **Radix UI** - Headless, accessible components
+- **Chakra UI** - Component library with themes
+- **Material-UI** - Material Design components
+
+### Forms
+
+- **React Hook Form** - Performant form library
+- **Formik** - Forms with validation
+- **Zod** - TypeScript-first schema validation
+
+## Learning Resources
+
+### Official Documentation
+
+- [React Documentation](https://react.dev/)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
+- [Next.js Documentation](https://nextjs.org/docs)
+
+### Books and Courses
+
+- "The Road to React" by Robin Wieruch
+- "Effective TypeScript" by Dan Vanderkam
+- React Official Tutorial
+
+### Platform-Specific Documentation
+
+- **[Functional Programming](../../../../../governance/development/pattern/functional-programming.md)** - FP principles
+- **[Software Design](../../README.md)** - Architecture patterns
+- **[Content Quality Standards](../../../../../governance/conventions/writing/quality.md)** - Accessibility requirements
+
+## React vs Other Frontend Libraries
+
+| Feature            | React     | Vue      | Svelte   | Angular  |
+| ------------------ | --------- | -------- | -------- | -------- |
+| Learning Curve     | Medium    | Gentle   | Gentle   | Steep    |
+| TypeScript Support | Excellent | Good     | Good     | Native   |
+| Ecosystem Size     | Largest   | Large    | Growing  | Large    |
+| Bundle Size        | Medium    | Small    | Smallest | Large    |
+| State Management   | External  | Built-in | Built-in | Built-in |
+| Performance        | Fast      | Fast     | Fastest  | Fast     |
+| Community          | Huge      | Large    | Growing  | Large    |
+
+## Related Documentation
+
+- **[Libraries and Frameworks Index](../README.md)** - Parent frameworks documentation
+- **[Software Design](../../README.md)** - Architecture and development practices
+- **[Functional Programming](../../../../../governance/development/pattern/functional-programming.md)** - FP principles
+- **[Accessibility Standards](../../../../../governance/conventions/writing/quality.md)** - WCAG guidelines
+
+---
+
+**Last Updated**: 2026-01-25

@@ -64,7 +64,7 @@ Each stack directory contains documentation for frameworks and libraries specifi
 platform-web/
 ├── jvm-spring-boot/     # Spring Boot framework (Java/Kotlin)
 ├── elixir-phoenix/      # Phoenix framework (Elixir)
-└── ts-react/            # React library (TypeScript)
+└── fe-react/            # React library (TypeScript)
 ```
 
 ### Document Organization
@@ -147,7 +147,7 @@ Phoenix is a web framework for building scalable, fault-tolerant real-time appli
 - Functional programming with immutability
 - Productive development with hot code reloading
 
-### ⚛️ [React (TypeScript)](./ts-react/README.md)
+### ⚛️ [React (TypeScript)](./fe-react/README.md)
 
 **Component-based library for building user interfaces**
 
@@ -217,7 +217,7 @@ Frameworks in this documentation are chosen based on:
 ### For Frontend Developers
 
 1. **React/TypeScript path**:
-   - Read [React Overview](./ts-react/README.md)
+   - Read [React Overview](./fe-react/README.md)
    - Study React component patterns
    - Apply [TypeScript idioms](../prog-lang/typescript/README.md) (when available)
    - Learn state management approaches
