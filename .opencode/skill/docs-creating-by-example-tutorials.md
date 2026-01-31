@@ -1,6 +1,6 @@
 ---
 name: docs-creating-by-example-tutorials
-description: Comprehensive guide for creating by-example tutorials - code-first learning path with 75-90 heavily annotated examples achieving 95% language coverage. Covers five-part example structure, annotation density standards (1-2.25 comments per code line PER EXAMPLE), self-containment rules, and multiple code blocks for comparisons. Essential for creating by-example tutorials for programming languages on educational platforms
+description: Comprehensive guide for creating by-example tutorials - code-first learning path with 75-90 heavily annotated examples achieving 95% language coverage. Covers five-part example structure, annotation density standards (1.0-2.25 comments per code line PER EXAMPLE), self-containment rules, and multiple code blocks for comparisons. Essential for creating by-example tutorials for programming languages on educational platforms
 ---
 
 # By-Example Tutorial Creation Skill
@@ -15,7 +15,7 @@ This Skill provides comprehensive guidance for creating **by-example tutorials**
 - Writing heavily annotated code examples for education
 - Designing code-first learning paths
 - Achieving 95% language coverage through examples
-- Meeting annotation density standards (1-2.25 comments per code line)
+- Meeting annotation density standards (1.0-2.25 comments per code line)
 - Targeting experienced developers who know at least one language well
 
 ## Core Concepts
@@ -56,14 +56,14 @@ Each example follows a consistent five-part structure:
 
 ## Annotation Density Standards
 
-### The 1-2.25 Rule
+### The 1.0-2.25 Rule
 
 **CRITICAL**: Target 1.0-2.25 comment lines per code line **PER EXAMPLE**
 
 **Measurement**: Each code block is measured independently
 
 - **Minimum**: 1.0 (examples below this need enhancement)
-- **Optimal**: 1-2.25 (target range for educational value)
+- **Optimal**: 1.0-2.25 (target range for educational value)
 - **Upper bound**: 2.5 (examples exceeding this need reduction)
 
 ### Annotation Pattern
@@ -227,7 +227,7 @@ By-example tutorials are split into three difficulty levels:
 
 ### Total Coverage Target
 
-**Goal**: 75-90 examples achieving 95% language coverage
+**Goal**: 75-85 examples achieving 95% language coverage
 
 **Not covered** (remaining 5%):
 
@@ -384,7 +384,7 @@ try (BufferedReader reader = new BufferedReader(new FileReader("data.txt"))) {
 1. **Identify concept**: What specific feature/pattern to demonstrate?
 2. **Write working code**: Ensure it compiles and runs
 3. **Make self-contained**: Remove external dependencies
-4. **Add annotations**: 1-2.25 comments per code line
+4. **Add annotations**: 1.0-2.25 comments per code line
 5. **Verify output**: Run code, document actual output
 6. **Add diagram** (if complex): Use accessible colors
 7. **Write takeaway**: 1-2 sentence lesson summary
