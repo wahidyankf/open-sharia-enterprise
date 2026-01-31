@@ -1582,80 +1582,123 @@ List comprehensions provide concise syntax for creating lists by transforming an
 
 ```python
 # Basic list comprehension: [expression for item in iterable]
-numbers = [1, 2, 3, 4, 5]         # => numbers is [1, 2, 3, 4, 5]
+numbers = [1, 2, 3, 4, 5]         # => numbers is [1, 2, 3, 4, 5] (type: list)
+                                  # => Source data for transformation
 squares = [x ** 2 for x in numbers]
-                                  # => squares is [1, 4, 9, 16, 25]
+                                  # => Iterates: x=1, x=2, x=3, x=4, x=5
+                                  # => Applies: 1**2=1, 2**2=4, 3**2=9, 4**2=16, 5**2=25
+                                  # => squares is [1, 4, 9, 16, 25] (type: list)
 print(squares)                    # => Output: [1, 4, 9, 16, 25]
 
 # Comprehension with condition: [expression for item in iterable if condition]
 evens = [x for x in numbers if x % 2 == 0]
-                                  # => evens is [2, 4]
+                                  # => Tests each: 1%2!=0 (skip), 2%2==0 (keep), 3%2!=0 (skip), 4%2==0 (keep), 5%2!=0 (skip)
+                                  # => Filters to: [2, 4]
+                                  # => evens is [2, 4] (type: list)
 print(evens)                      # => Output: [2, 4]
 
 # Transform and filter combined
 even_squares = [x ** 2 for x in numbers if x % 2 == 0]
-                                  # => even_squares is [4, 16] (2^2, 4^2)
+                                  # => First filters evens: [2, 4]
+                                  # => Then squares: 2**2=4, 4**2=16
+                                  # => even_squares is [4, 16] (type: list)
 print(even_squares)               # => Output: [4, 16]
 
 # Comprehension from string
-word = "Python"                   # => word is "Python"
+word = "Python"                   # => word is "Python" (type: str)
+                                  # => Strings are iterable (6 characters)
 upper_chars = [char.upper() for char in word]
-                                  # => upper_chars is ['P', 'Y', 'T', 'H', 'O', 'N']
+                                  # => Iterates: P, y, t, h, o, n
+                                  # => Transforms: P.upper()='P', y.upper()='Y', etc.
+                                  # => upper_chars is ['P', 'Y', 'T', 'H', 'O', 'N'] (type: list)
 print(upper_chars)                # => Output: ['P', 'Y', 'T', 'H', 'O', 'N']
 
 # Comprehension with range
 first_ten_squares = [x ** 2 for x in range(1, 11)]
-                                  # => first_ten_squares is [1, 4, 9, ..., 100]
+                                  # => range(1, 11) generates: 1, 2, 3, ..., 10
+                                  # => Squares each: 1, 4, 9, 16, 25, 36, 49, 64, 81, 100
+                                  # => first_ten_squares is [1, 4, 9, ..., 100] (10 elements)
 print(first_ten_squares)          # => Output: [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 
 # Nested comprehension (flattening)
-matrix = [[1, 2], [3, 4], [5, 6]] # => matrix is [[1, 2], [3, 4], [5, 6]]
+matrix = [[1, 2], [3, 4], [5, 6]] # => matrix is list of 3 lists (type: list of lists)
+                                  # => Nested structure: 2D -> 1D conversion
 flattened = [num for row in matrix for num in row]
-                                  # => flattened is [1, 2, 3, 4, 5, 6]
+                                  # => Outer: row=[1,2], then row=[3,4], then row=[5,6]
+                                  # => Inner: num=1, num=2, then num=3, num=4, then num=5, num=6
+                                  # => flattened is [1, 2, 3, 4, 5, 6] (type: list, 1D)
 print(flattened)                  # => Output: [1, 2, 3, 4, 5, 6]
 
 # Equivalent nested loop for comparison
-flattened_loop = []
-for row in matrix:                # => Outer loop: [1,2], [3,4], [5,6]
-    for num in row:               # => Inner loop: 1, 2, then 3, 4, then 5, 6
-        flattened_loop.append(num)
-                                  # => flattened_loop is [1, 2, 3, 4, 5, 6]
+flattened_loop = []               # => flattened_loop is [] (empty list)
+                                  # => Manual approach for comparison
+for row in matrix:                # => Outer loop iterates: [1,2], [3,4], [5,6]
+                                  # => row variable holds each sublist
+    for num in row:               # => Inner loop iterates elements: 1, 2 (first), 3, 4 (second), 5, 6 (third)
+                                  # => num variable holds each element
+        flattened_loop.append(num)# => Appends: 1, 2, 3, 4, 5, 6 sequentially
+                                  # => flattened_loop grows: [1], [1,2], [1,2,3], ..., [1,2,3,4,5,6]
 print(flattened_loop)             # => Output: [1, 2, 3, 4, 5, 6]
+                                  # => Same result as comprehension version
 
 # Comprehension with multiple conditions
-numbers = range(1, 21)            # => numbers is 1 to 20
+numbers = range(1, 21)            # => numbers is range(1, 21) (generates 1-20)
+                                  # => Range object (lazy evaluation)
 special = [x for x in numbers if x % 2 == 0 if x % 3 == 0]
-                                  # => special is [6, 12, 18] (divisible by both 2 and 3)
+                                  # => First filter: divisible by 2 → [2,4,6,8,10,12,14,16,18,20]
+                                  # => Second filter: divisible by 3 → [6,12,18]
+                                  # => special is [6, 12, 18] (both conditions met)
 print(special)                    # => Output: [6, 12, 18]
 
 # Conditional expression in comprehension
-nums = [-2, -1, 0, 1, 2]          # => nums is [-2, -1, 0, 1, 2]
+nums = [-2, -1, 0, 1, 2]          # => nums is [-2, -1, 0, 1, 2] (type: list)
+                                  # => Mix of negative, zero, positive
 absolute = [x if x >= 0 else -x for x in nums]
-                                  # => absolute is [2, 1, 0, 1, 2]
+                                  # => Evaluates: -2>=0? No, use -(-2)=2
+                                  # => Evaluates: -1>=0? No, use -(-1)=1
+                                  # => Evaluates: 0>=0? Yes, use 0
+                                  # => Evaluates: 1>=0? Yes, use 1
+                                  # => Evaluates: 2>=0? Yes, use 2
+                                  # => absolute is [2, 1, 0, 1, 2] (all non-negative)
 print(absolute)                   # => Output: [2, 1, 0, 1, 2]
 
 # Comprehension with function calls
 words = ["hello", "world", "python"]
-                                  # => words is ["hello", "world", "python"]
+                                  # => words is ["hello", "world", "python"] (type: list of str)
+                                  # => Three strings to measure
 lengths = [len(word) for word in words]
-                                  # => lengths is [5, 5, 6]
+                                  # => Calls len("hello")=5, len("world")=5, len("python")=6
+                                  # => lengths is [5, 5, 6] (type: list of int)
 print(lengths)                    # => Output: [5, 5, 6]
 
 # Nested list comprehension (2D matrix)
 matrix_2d = [[i * j for j in range(1, 4)] for i in range(1, 4)]
-                                  # => Creates 3x3 multiplication table
+                                  # => Outer: i=1, i=2, i=3
+                                  # => Inner (i=1): 1*1=1, 1*2=2, 1*3=3 → [1,2,3]
+                                  # => Inner (i=2): 2*1=2, 2*2=4, 2*3=6 → [2,4,6]
+                                  # => Inner (i=3): 3*1=3, 3*2=6, 3*3=9 → [3,6,9]
+                                  # => matrix_2d is [[1,2,3], [2,4,6], [3,6,9]] (3x3 multiplication table)
 print(matrix_2d)                  # => Output: [[1, 2, 3], [2, 4, 6], [3, 6, 9]]
 
 # When NOT to use comprehensions (too complex - use loops)
 # Bad (hard to read):
 # complex = [x if x > 0 else -x for x in range(-10, 10) if abs(x) % 2 == 0 if x != 0]
+                                  # => Too many conditions and transformations
+                                  # => Difficult to understand intent
 
 # Better (use regular loop for complex logic):
-complex = []
-for x in range(-10, 10):
-    if x != 0 and abs(x) % 2 == 0:
+complex = []                      # => complex is [] (empty list)
+                                  # => Explicit loop more readable for complex logic
+for x in range(-10, 10):          # => Iterates: -10, -9, ..., 8, 9
+                                  # => 20 total values
+    if x != 0 and abs(x) % 2 == 0:# => Filters: non-zero AND even absolute value
+                                  # => Keeps: -10, -8, -6, -4, -2, 2, 4, 6, 8
         complex.append(x if x > 0 else -x)
-print(complex)                    # => Output: [2, 4, 6, 8, 10, 2, 4, 6, 8]
+                                  # => If positive (2,4,6,8): keep as is
+                                  # => If negative (-10,-8,-6,-4,-2): negate to positive
+                                  # => Appends: 10, 8, 6, 4, 2, 2, 4, 6, 8
+print(complex)                    # => Output: [10, 8, 6, 4, 2, 2, 4, 6, 8]
+                                  # => Clear logic flow beats compact syntax
 ```
 
 **Key Takeaway**: List comprehensions are more Pythonic and often faster than equivalent loops for simple transformations and filtering - but use regular loops when logic becomes complex enough to hurt readability (if you need comments to explain a comprehension, it's too complex).
@@ -1670,78 +1713,117 @@ Python supports comprehensions for dictionaries and sets with similar syntax to 
 
 ```python
 # Dictionary comprehension: {key_expr: value_expr for item in iterable}
-numbers = [1, 2, 3, 4, 5]         # => numbers is [1, 2, 3, 4, 5]
+numbers = [1, 2, 3, 4, 5]         # => numbers is [1, 2, 3, 4, 5] (type: list)
+                                  # => Source for key-value pairs
 squares_dict = {x: x ** 2 for x in numbers}
-                                  # => squares_dict is {1: 1, 2: 4, 3: 9, 4: 16, 5: 25}
+                                  # => Iterates: x=1, x=2, x=3, x=4, x=5
+                                  # => Creates pairs: 1:1, 2:4, 3:9, 4:16, 5:25
+                                  # => squares_dict is {1: 1, 2: 4, 3: 9, 4: 16, 5: 25} (type: dict)
 print(squares_dict)               # => Output: {1: 1, 2: 4, 3: 9, 4: 16, 5: 25}
 
 # Dictionary comprehension with condition
 even_squares = {x: x ** 2 for x in numbers if x % 2 == 0}
-                                  # => even_squares is {2: 4, 4: 16}
+                                  # => Filters: 1%2=1 (skip), 2%2=0 (keep), 3%2=1 (skip), 4%2=0 (keep), 5%2=1 (skip)
+                                  # => Creates pairs: 2:4, 4:16
+                                  # => even_squares is {2: 4, 4: 16} (type: dict)
 print(even_squares)               # => Output: {2: 4, 4: 16}
 
 # Dictionary from two lists using zip
 names = ["Alice", "Bob", "Charlie"]
-                                  # => names is ["Alice", "Bob", "Charlie"]
-ages = [25, 30, 35]               # => ages is [25, 30, 35]
+                                  # => names is ["Alice", "Bob", "Charlie"] (type: list)
+ages = [25, 30, 35]               # => ages is [25, 30, 35] (type: list)
+                                  # => Parallel arrays to combine
 people = {name: age for name, age in zip(names, ages)}
-                                  # => people is {"Alice": 25, "Bob": 30, "Charlie": 35}
+                                  # => zip() pairs: ("Alice",25), ("Bob",30), ("Charlie",35)
+                                  # => Unpacks each: name="Alice", age=25, etc.
+                                  # => people is {"Alice": 25, "Bob": 30, "Charlie": 35} (type: dict)
 print(people)                     # => Output: {'Alice': 25, 'Bob': 30, 'Charlie': 35}
 
 # Swapping keys and values
 original = {"a": 1, "b": 2, "c": 3}
-                                  # => original is {"a": 1, "b": 2, "c": 3}
+                                  # => original is {"a": 1, "b": 2, "c": 3} (type: dict)
+                                  # => Keys become values, values become keys
 swapped = {value: key for key, value in original.items()}
-                                  # => swapped is {1: "a", 2: "b", 3: "c"}
+                                  # => original.items() yields: ("a",1), ("b",2), ("c",3)
+                                  # => Creates pairs: 1:"a", 2:"b", 3:"c" (value:key)
+                                  # => swapped is {1: "a", 2: "b", 3: "c"} (type: dict)
 print(swapped)                    # => Output: {1: 'a', 2: 'b', 3: 'c'}
 
 # Dictionary comprehension with string manipulation
 words = ["apple", "banana", "cherry"]
-                                  # => words is ["apple", "banana", "cherry"]
+                                  # => words is ["apple", "banana", "cherry"] (type: list)
+                                  # => Mapping words to their lengths
 word_lengths = {word: len(word) for word in words}
-                                  # => word_lengths is {"apple": 5, "banana": 6, "cherry": 6}
+                                  # => Iterates: "apple", "banana", "cherry"
+                                  # => Calls len(): len("apple")=5, len("banana")=6, len("cherry")=6
+                                  # => word_lengths is {"apple": 5, "banana": 6, "cherry": 6} (type: dict)
 print(word_lengths)               # => Output: {'apple': 5, 'banana': 6, 'cherry': 6}
 
 # Set comprehension: {expression for item in iterable}
-numbers = [1, 2, 2, 3, 3, 3, 4, 5]# => numbers is [1, 2, 2, 3, 3, 3, 4, 5]
+numbers = [1, 2, 2, 3, 3, 3, 4, 5]# => numbers is [1, 2, 2, 3, 3, 3, 4, 5] (type: list)
+                                  # => Contains duplicates: two 2s, three 3s
 unique_squares = {x ** 2 for x in numbers}
-                                  # => unique_squares is {1, 4, 9, 16, 25} (no duplicates)
+                                  # => Iterates: 1, 2, 2, 3, 3, 3, 4, 5
+                                  # => Squares: 1, 4, 4, 9, 9, 9, 16, 25
+                                  # => Set removes duplicates automatically
+                                  # => unique_squares is {1, 4, 9, 16, 25} (type: set, 5 unique values)
 print(unique_squares)             # => Output: {1, 4, 9, 16, 25}
 
 # Set comprehension with condition
 even_set = {x for x in numbers if x % 2 == 0}
-                                  # => even_set is {2, 4} (unique even numbers)
+                                  # => Filters: 1 (skip), 2 (keep), 2 (keep), 3 (skip), 3 (skip), 3 (skip), 4 (keep), 5 (skip)
+                                  # => Keeps: [2, 2, 4]
+                                  # => Set removes duplicates: {2, 4}
+                                  # => even_set is {2, 4} (type: set)
 print(even_set)                   # => Output: {2, 4}
 
 # Set comprehension from string (unique characters)
-text = "hello"                    # => text is "hello"
+text = "hello"                    # => text is "hello" (type: str)
+                                  # => Contains duplicate 'l' characters
 unique_chars = {char for char in text}
-                                  # => unique_chars is {'h', 'e', 'l', 'o'} (unique only)
+                                  # => Iterates: 'h', 'e', 'l', 'l', 'o'
+                                  # => Set keeps unique only: 'h', 'e', 'l', 'o'
+                                  # => unique_chars is {'h', 'e', 'l', 'o'} (type: set, 4 chars)
 print(unique_chars)               # => Output: {'h', 'e', 'l', 'o'}
 
 # Case-insensitive unique characters
-text = "Hello World"              # => text is "Hello World"
+text = "Hello World"              # => text is "Hello World" (type: str)
+                                  # => Mixed case, contains spaces
 unique_lower = {char.lower() for char in text if char.isalpha()}
-                                  # => unique_lower is {'h', 'e', 'l', 'o', 'w', 'r', 'd'}
+                                  # => Filters: H(alpha), e(alpha), l(alpha), l(alpha), o(alpha), space(skip), W(alpha), o(alpha), r(alpha), l(alpha), d(alpha)
+                                  # => Converts: h, e, l, l, o, w, o, r, l, d
+                                  # => Set deduplicates: h, e, l, o, w, r, d
+                                  # => unique_lower is {'h', 'e', 'l', 'o', 'w', 'r', 'd'} (type: set, 7 chars)
 print(unique_lower)               # => Output: {'h', 'e', 'l', 'o', 'w', 'r', 'd'}
 
 # Dictionary comprehension with conditional values
-numbers = range(1, 6)             # => numbers is 1 to 5
+numbers = range(1, 6)             # => numbers is range(1, 6) (generates 1-5)
+                                  # => Classifying each number by parity
 parity = {x: "even" if x % 2 == 0 else "odd" for x in numbers}
-                                  # => parity is {1: "odd", 2: "even", 3: "odd", 4: "even", 5: "odd"}
+                                  # => Evaluates: 1%2=1→"odd", 2%2=0→"even", 3%2=1→"odd", 4%2=0→"even", 5%2=1→"odd"
+                                  # => Creates pairs: 1:"odd", 2:"even", 3:"odd", 4:"even", 5:"odd"
+                                  # => parity is {1: "odd", 2: "even", 3: "odd", 4: "even", 5: "odd"} (type: dict)
 print(parity)                     # => Output: {1: 'odd', 2: 'even', 3: 'odd', 4: 'even', 5: 'odd'}
 
 # Nested dictionary comprehension
 matrix = {
     i: {j: i * j for j in range(1, 4)}
     for i in range(1, 4)
-}                                 # => Creates nested dict multiplication table
+}                                 # => Outer: i=1, i=2, i=3
+                                  # => Inner (i=1): {1:1, 2:2, 3:3}
+                                  # => Inner (i=2): {1:2, 2:4, 3:6}
+                                  # => Inner (i=3): {1:3, 2:6, 3:9}
+                                  # => matrix is {1: {1:1, 2:2, 3:3}, 2: {1:2, 2:4, 3:6}, 3: {1:3, 2:6, 3:9}}
 print(matrix)                     # => Output: {1: {1: 1, 2: 2, 3: 3}, 2: {1: 2, 2: 4, 3: 6}, 3: {1: 3, 2: 6, 3: 9}}
 
 # Filtering existing dictionary
 grades = {"Alice": 95, "Bob": 72, "Charlie": 88, "David": 65}
+                                  # => grades is {"Alice": 95, "Bob": 72, "Charlie": 88, "David": 65} (type: dict)
+                                  # => Filtering students with passing grades
 passing = {name: grade for name, grade in grades.items() if grade >= 75}
-                                  # => passing is {"Alice": 95, "Charlie": 88}
+                                  # => grades.items(): ("Alice",95), ("Bob",72), ("Charlie",88), ("David",65)
+                                  # => Filters: Alice(95>=75,keep), Bob(72>=75,skip), Charlie(88>=75,keep), David(65>=75,skip)
+                                  # => passing is {"Alice": 95, "Charlie": 88} (type: dict, 2 entries)
 print(passing)                    # => Output: {'Alice': 95, 'Charlie': 88}
 ```
 
@@ -2058,133 +2140,267 @@ Python provides simple file operations with automatic resource management using 
 ```python
 # Writing to a file
 def write_example():
-    # Create and write to file
+    # => Function demonstrates basic file writing
+    # => Creates new file or overwrites existing
     with open("example.txt", "w") as file:
+                                  # => open("example.txt", "w") creates file handle
+                                  # => "w" mode = write (truncates if exists)
+                                  # => 'as file' assigns handle to variable
+                                  # => Context manager ensures file.close() called automatically
         file.write("Hello, World!\n")
+                                  # => Writes 14 characters to file
+                                  # => \n adds newline character
+                                  # => Returns number of characters written (14)
         file.write("This is line 2.\n")
+                                  # => Writes second line (17 characters)
+                                  # => Appends to existing content in buffer
         file.write("This is line 3.")
-    # => File automatically closed when with block exits
+                                  # => Writes third line (16 characters, no newline)
+                                  # => Total file size: 47 characters
+    # => with block exits here
+    # => file.close() called automatically (context manager cleanup)
+    # => All buffered data flushed to disk
     print("File written successfully")
+                                  # => Confirms write operation completed
+                                  # => Output: File written successfully
 
-write_example()                   # => Creates example.txt with 3 lines
+write_example()                   # => Calls function
+                                  # => Creates example.txt with 3 lines in current directory
 
 # Reading entire file
 def read_entire_file():
+    # => Function demonstrates reading complete file content
+    # => Uses try-except for error handling
     try:
+        # => Attempt to open file (may raise FileNotFoundError)
         with open("example.txt", "r") as file:
-            content = file.read() # => content is all text as single string
-            print(content)
+                                  # => open("example.txt", "r") opens for reading
+                                  # => "r" mode = read (file must exist)
+                                  # => Raises FileNotFoundError if file missing
+            content = file.read() # => read() loads entire file into memory
+                                  # => content is "Hello, World!\nThis is line 2.\nThis is line 3."
+                                  # => Type: str (all 47 characters)
+            print(content)        # => Outputs all file content
+                                  # => Preserves newlines in output
     except FileNotFoundError:
-        print("File not found")
+        # => Catches specific exception when file doesn't exist
+        # => Prevents program crash with graceful handling
+        print("File not found")  # => User-friendly error message
+                                  # => No stack trace shown
 
-read_entire_file()
+read_entire_file()                # => Calls function
+                                  # => File exists from write_example()
 # => Output: Hello, World!
 #    This is line 2.
 #    This is line 3.
 
 # Reading line by line
 def read_lines():
+    # => Function demonstrates memory-efficient line iteration
+    # => Useful for large files (doesn't load all into memory)
     try:
+        # => Attempt to open file
         with open("example.txt", "r") as file:
-            for line in file:     # => Iterate over lines (memory-efficient)
-                print(line.strip())# => strip() removes trailing newline
+                                  # => Opens file for reading
+                                  # => File object is iterator over lines
+            for line in file:     # => Iterates over lines: "Hello, World!\n", "This is line 2.\n", "This is line 3."
+                                  # => Each line retains trailing newline (except possibly last)
+                                  # => Memory-efficient: reads one line at a time
+                print(line.strip())
+                                  # => strip() removes leading/trailing whitespace
+                                  # => Removes \n from end of line
+                                  # => Outputs clean text without extra newline
     except FileNotFoundError:
-        print("File not found")
+        # => Handles missing file case
+        print("File not found")  # => Graceful error handling
 
-read_lines()
+read_lines()                      # => Calls function
+                                  # => Iterates through all 3 lines
 # => Output: Hello, World!
 #    This is line 2.
 #    This is line 3.
 
 # Reading into list
 def read_as_list():
+    # => Function demonstrates loading all lines into list
+    # => Trade-off: more memory, but can manipulate lines
     try:
+        # => Attempt to open file
         with open("example.txt", "r") as file:
+                                  # => Opens file for reading
             lines = file.readlines()
-                                  # => lines is ['Hello, World!\n', 'This is line 2.\n', ...]
-            print(lines)
+                                  # => readlines() returns list of all lines
+                                  # => Each line includes trailing \n
+                                  # => lines is ['Hello, World!\n', 'This is line 2.\n', 'This is line 3.']
+                                  # => Type: list (3 elements)
+                                  # => All content loaded into memory at once
+            print(lines)          # => Outputs list representation
+                                  # => Shows quotes and \n characters
     except FileNotFoundError:
-        print("File not found")
+        # => Handles missing file case
+        print("File not found")  # => Graceful error handling
 
-read_as_list()
+read_as_list()                    # => Calls function
+                                  # => Loads all lines into memory
 # => Output: ['Hello, World!\n', 'This is line 2.\n', 'This is line 3.']
 
 # Appending to file
 def append_example():
+    # => Function demonstrates appending to existing file
+    # => Preserves existing content
     with open("example.txt", "a") as file:
+                                  # => open("example.txt", "a") opens for appending
+                                  # => "a" mode = append (creates if doesn't exist)
+                                  # => File pointer positioned at end
+                                  # => Existing content preserved
         file.write("\nAppended line.")
-                                  # => Adds to end of file
-    print("Line appended")
+                                  # => Writes newline first (4th line)
+                                  # => Then writes "Appended line." (15 characters)
+                                  # => Total added: 16 characters
+                                  # => New file size: 63 characters (47 + 16)
+    # => Context manager closes file, flushes buffers
+    print("Line appended")        # => Confirms append completed
+                                  # => Output: Line appended
 
-append_example()                  # => example.txt now has 4 lines
+append_example()                  # => Calls function
+                                  # => example.txt now has 4 lines
 
 # Reading and writing (r+, w+, a+)
 def read_write_example():
+    # => Function demonstrates read+write mode
+    # => Can both read and write in same handle
     with open("example.txt", "r+") as file:
-        content = file.read()     # => Read existing content
+                                  # => "r+" mode = read and write
+                                  # => File must exist (like "r")
+                                  # => File pointer starts at beginning
+        content = file.read()     # => Reads all existing content
+                                  # => File pointer now at end after read()
+                                  # => content contains all 4 lines (63 chars)
         file.write("\nAdditional line")
-                                  # => Write at end
+                                  # => Writes at current position (end)
+                                  # => Adds newline + "Additional line" (17 chars)
+                                  # => New file size: 80 characters
+    # => Context manager closes file
     print("Read and write complete")
+                                  # => Confirms operation completed
+                                  # => Output: Read and write complete
 
-read_write_example()
+read_write_example()              # => Calls function
+                                  # => example.txt now has 5 lines
 
 # File modes summary:
-# "r"  - Read (default, file must exist)
-# "w"  - Write (creates file, truncates if exists)
-# "a"  - Append (creates file if doesn't exist)
-# "r+" - Read and write (file must exist)
-# "w+" - Write and read (creates file, truncates if exists)
-# "a+" - Append and read (creates file if doesn't exist)
+# "r"  - Read (default, file must exist, pointer at start)
+# "w"  - Write (creates file, truncates if exists, pointer at start)
+# "a"  - Append (creates if doesn't exist, pointer at end)
+# "r+" - Read and write (file must exist, pointer at start)
+# "w+" - Write and read (creates file, truncates if exists, pointer at start)
+# "a+" - Append and read (creates if doesn't exist, pointer at end)
 # "b"  - Binary mode (combine with above: "rb", "wb", etc.)
 
 # Binary file operations
 def binary_example():
+    # => Function demonstrates binary file operations
+    # => Binary mode for non-text data (images, audio, etc.)
+
     # Write binary data
     with open("binary.dat", "wb") as file:
-        data = bytes([65, 66, 67])# => data is b'ABC' (bytes object)
-        file.write(data)
+                                  # => "wb" mode = write binary
+                                  # => Creates new binary file
+        data = bytes([65, 66, 67])# => Creates bytes object from list of integers
+                                  # => ASCII: 65='A', 66='B', 67='C'
+                                  # => data is b'ABC' (type: bytes, 3 bytes)
+        file.write(data)          # => Writes 3 bytes to file
+                                  # => Returns 3 (bytes written)
+                                  # => binary.dat size: 3 bytes
+    # => File closed, data flushed
 
     # Read binary data
     with open("binary.dat", "rb") as file:
-        content = file.read()     # => content is b'ABC'
-        print(content)            # => Output: b'ABC'
-        print(list(content))      # => Output: [65, 66, 67]
+                                  # => "rb" mode = read binary
+                                  # => Opens existing binary file
+        content = file.read()     # => Reads all bytes from file
+                                  # => content is b'ABC' (type: bytes)
+                                  # => 3 bytes loaded into memory
+        print(content)            # => Outputs bytes representation
+                                  # => Output: b'ABC'
+        print(list(content))      # => Converts bytes to list of integers
+                                  # => list(content) is [65, 66, 67]
+                                  # => Output: [65, 66, 67]
 
-binary_example()
+binary_example()                  # => Calls function
+                                  # => Creates and reads binary.dat
 
 # File operations without context manager (manual close - not recommended)
 def manual_close_example():
+    # => Demonstrates old-style file handling
+    # => Error-prone: must remember to close
     file = open("example.txt", "r")
+                                  # => Opens file, returns file handle
+                                  # => No automatic cleanup
+                                  # => Caller responsible for closing
     try:
-        content = file.read()
-        print(content)
+        # => try-finally ensures cleanup even on error
+        content = file.read()     # => Reads file content
+                                  # => If exception here, finally still runs
+        print(content)            # => Outputs content
     finally:
-        file.close()              # => Must manually close!
+        # => finally block ALWAYS runs
+        # => Even if exception in try block
+        file.close()              # => Manually closes file
+                                  # => Releases file handle to OS
+                                  # => Must remember to call!
 
 # Better: Use with statement (automatic cleanup)
 def context_manager_example():
+    # => Modern Pythonic approach
+    # => Context manager handles cleanup automatically
     with open("example.txt", "r") as file:
-        content = file.read()
-        print(content)
-    # => File automatically closed, even if exception occurs
+                                  # => with calls file.__enter__()
+                                  # => Returns file handle
+        content = file.read()     # => Reads content
+                                  # => If exception, cleanup still happens
+        print(content)            # => Outputs content
+    # => with calls file.__exit__() automatically
+    # => Guarantees file.close() even if exception
+    # => No manual close() needed
+    # => Exception-safe, concise
 
 # Check if file exists before opening
-import os
+import os                         # => Imports os module for filesystem operations
+                                  # => Provides os.path utilities
 
 def safe_read(filename):
-    if os.path.exists(filename):
+    # => Function with pre-opening validation
+    # => Avoids exception handling for expected case
+    if os.path.exists(filename):  # => Checks if file exists on filesystem
+                                  # => Returns True if file/directory exists
+                                  # => Avoids FileNotFoundError
         with open(filename, "r") as file:
-            return file.read()
+                                  # => Opens existing file for reading
+                                  # => Safe to open (exists check passed)
+            return file.read()    # => Reads and returns file content
+                                  # => Returns str with file contents
     else:
+        # => File doesn't exist case
+        # => Handles gracefully without exception
         print(f"{filename} does not exist")
-        return None
+                                  # => User-friendly message
+                                  # => Shows which file missing
+        return None               # => Returns None to indicate failure
+                                  # => Caller can check for None
 
-result = safe_read("example.txt")
+result = safe_read("example.txt")# => Calls with existing file
+                                  # => os.path.exists() returns True
+                                  # => File opened and read
+                                  # => result contains file content (str)
 # => Returns content if file exists
 
 result = safe_read("nonexistent.txt")
+                                  # => Calls with missing file
+                                  # => os.path.exists() returns False
+                                  # => Enters else block
 # => Output: nonexistent.txt does not exist
-# => Returns None
+# => result is None (no content returned)
 ```
 
 **Key Takeaway**: Always use context managers (`with` statement) for file operations - they automatically handle closing files even if exceptions occur. Use `"r"`/`"w"`/`"a"` modes appropriately (write truncates, append preserves), and iterate over file objects directly for memory-efficient line-by-line reading.
@@ -3125,102 +3341,183 @@ Python offers multiple string formatting approaches: f-strings (modern, preferre
 
 ```python
 # F-strings (Python 3.6+, recommended)
-name = "Alice"                    # => name is "Alice"
-age = 30                          # => age is 30
+name = "Alice"                    # => name is "Alice" (type: str)
+                                  # => Variable for interpolation
+age = 30                          # => age is 30 (type: int)
+                                  # => Variable for interpolation
 
 # Basic f-string
 message = f"My name is {name} and I am {age} years old"
+                                  # => f-string interpolates variables at runtime
+                                  # => {name} replaced with "Alice"
+                                  # => {age} replaced with 30 (auto-converted to str)
                                   # => message is "My name is Alice and I am 30 years old"
 print(message)                    # => Output: My name is Alice and I am 30 years old
 
 # Expressions in f-strings
-print(f"{name.upper()}")          # => Output: ALICE (expression evaluated)
+print(f"{name.upper()}")          # => {name.upper()} calls method inside {}
+                                  # => Evaluates "Alice".upper() → "ALICE"
+                                  # => Output: ALICE
 print(f"Next year I'll be {age + 1}")
+                                  # => {age + 1} evaluates expression
+                                  # => Computes 30 + 1 = 31
                                   # => Output: Next year I'll be 31
 
 # Formatting numbers
-pi = 3.14159265359                # => pi is 3.14159265359
+pi = 3.14159265359                # => pi is 3.14159265359 (type: float)
+                                  # => Many decimal places to demonstrate rounding
 
 print(f"Pi to 2 decimals: {pi:.2f}")
+                                  # => :.2f = format specifier
+                                  # => .2 = 2 decimal places (precision)
+                                  # => f = float type
+                                  # => Rounds 3.14159... to 3.14
                                   # => Output: Pi to 2 decimals: 3.14
 print(f"Pi to 4 decimals: {pi:.4f}")
+                                  # => :.4f = 4 decimal places
+                                  # => Rounds 3.14159... to 3.1416
                                   # => Output: Pi to 4 decimals: 3.1416
 
 # Width and alignment
-print(f"{'left':<10}|")           # => Output: left      | (left-aligned, width 10)
-print(f"{'center':^10}|")         # => Output:   center  | (center-aligned)
-print(f"{'right':>10}|")          # => Output:      right| (right-aligned)
+print(f"{'left':<10}|")           # => :<10 = left-align, width 10
+                                  # => "left" padded with 6 spaces on right
+                                  # => Total width: 10 characters
+                                  # => Output: left      | (6 spaces after "left")
+print(f"{'center':^10}|")         # => :^10 = center-align, width 10
+                                  # => "center" (6 chars) padded with 2 spaces each side
+                                  # => Output:   center  | (2 spaces before, 2 after)
+print(f"{'right':>10}|")          # => :>10 = right-align, width 10
+                                  # => "right" (5 chars) padded with 5 spaces on left
+                                  # => Output:      right| (5 spaces before "right")
 
 # Padding with zeros
-number = 42                       # => number is 42
-print(f"{number:05}")             # => Output: 00042 (pad with zeros, width 5)
+number = 42                       # => number is 42 (type: int)
+                                  # => Two digits, need padding for width 5
+print(f"{number:05}")             # => :05 = width 5, pad with zeros
+                                  # => 42 becomes 00042 (3 zeros prepended)
+                                  # => Output: 00042
 
 # Thousands separator
-large = 1000000                   # => large is 1000000
-print(f"{large:,}")               # => Output: 1,000,000 (comma separator)
+large = 1000000                   # => large is 1000000 (type: int)
+                                  # => One million (hard to read without separators)
+print(f"{large:,}")               # => :, adds thousands separator
+                                  # => Inserts comma every 3 digits
+                                  # => 1000000 becomes 1,000,000
+                                  # => Output: 1,000,000
 
 # Percentage
-ratio = 0.75                      # => ratio is 0.75
+ratio = 0.75                      # => ratio is 0.75 (type: float)
+                                  # => Decimal representation of 75%
 print(f"Success rate: {ratio:.1%}")
+                                  # => :.1% = format as percentage with 1 decimal
+                                  # => Multiplies 0.75 by 100 = 75.0
+                                  # => Adds % symbol
                                   # => Output: Success rate: 75.0%
 
 # Binary, octal, hexadecimal
-num = 255                         # => num is 255
-print(f"Binary: {num:b}")         # => Output: Binary: 11111111
-print(f"Octal: {num:o}")          # => Output: Octal: 377
-print(f"Hex: {num:x}")            # => Output: Hex: ff
-print(f"HEX: {num:X}")            # => Output: HEX: FF (uppercase)
+num = 255                         # => num is 255 (type: int)
+                                  # => Decimal value to convert to different bases
+print(f"Binary: {num:b}")         # => :b = binary format
+                                  # => 255 in binary: 11111111 (8 ones)
+                                  # => Output: Binary: 11111111
+print(f"Octal: {num:o}")          # => :o = octal format (base 8)
+                                  # => 255 in octal: 377
+                                  # => Output: Octal: 377
+print(f"Hex: {num:x}")            # => :x = hexadecimal (lowercase)
+                                  # => 255 in hex: ff
+                                  # => Output: Hex: ff
+print(f"HEX: {num:X}")            # => :X = hexadecimal (uppercase)
+                                  # => 255 in hex: FF
+                                  # => Output: HEX: FF
 
 # .format() method (older, still valid)
-template = "Name: {}, Age: {}"    # => template with positional placeholders
-print(template.format(name, age)) # => Output: Name: Alice, Age: 30
+template = "Name: {}, Age: {}"    # => template is str with {} placeholders
+                                  # => Positional placeholders (no indices)
+print(template.format(name, age)) # => format() fills {} in order
+                                  # => First {} gets name ("Alice")
+                                  # => Second {} gets age (30)
+                                  # => Output: Name: Alice, Age: 30
 
 # Named placeholders
-template2 = "Name: {n}, Age: {a}"
+template2 = "Name: {n}, Age: {a}" # => template with named placeholders
+                                  # => {n} and {a} reference keywords
 print(template2.format(n=name, a=age))
+                                  # => n=name maps {n} to "Alice"
+                                  # => a=age maps {a} to 30
+                                  # => Order-independent (uses names)
                                   # => Output: Name: Alice, Age: 30
 
 # Indexed placeholders
-template3 = "{1} is {0} years old"
-print(template3.format(age, name))# => Output: Alice is 30 years old
+template3 = "{1} is {0} years old"# => template with indexed placeholders
+                                  # => {0} = first arg, {1} = second arg
+print(template3.format(age, name))# => format(age, name): age is [0], name is [1]
+                                  # => {1} gets name ("Alice")
+                                  # => {0} gets age (30)
+                                  # => Output: Alice is 30 years old
 
 # Formatting with .format()
-print("Pi: {:.3f}".format(pi))    # => Output: Pi: 3.142
-print("{:>10}".format("right"))   # => Output:      right
+print("Pi: {:.3f}".format(pi))    # => {:.3f} = 3 decimal places
+                                  # => format(pi) supplies value
+                                  # => Rounds to 3.142
+                                  # => Output: Pi: 3.142
+print("{:>10}".format("right"))   # => {:>10} = right-align, width 10
+                                  # => "right" (5 chars) padded with 5 spaces left
+                                  # => Output:      right
 
 # % formatting (legacy, avoid in new code)
 print("Name: %s, Age: %d" % (name, age))
+                                  # => %s = string placeholder
+                                  # => %d = decimal (integer) placeholder
+                                  # => % (name, age) supplies values in order
+                                  # => Legacy C-style formatting
                                   # => Output: Name: Alice, Age: 30
-print("Pi: %.2f" % pi)            # => Output: Pi: 3.14
+print("Pi: %.2f" % pi)            # => %.2f = float with 2 decimals
+                                  # => Rounds pi to 3.14
+                                  # => Output: Pi: 3.14
 
 # Template strings (from string module)
-from string import Template
+from string import Template       # => Import Template class
+                                  # => Alternative formatting approach
 
 template = Template("$name is $age years old")
+                                  # => Template with $variable syntax
+                                  # => $name and $age are placeholders
 result = template.substitute(name=name, age=age)
+                                  # => substitute() replaces $name with "Alice"
+                                  # => Replaces $age with 30
                                   # => result is "Alice is 30 years old"
 print(result)                     # => Output: Alice is 30 years old
 
 # safe_substitute (doesn't error on missing keys)
 template2 = Template("Name: $name, City: $city")
+                                  # => Template with two placeholders
+                                  # => $city will be missing
 result2 = template2.safe_substitute(name=name)
-                                  # => result2 is "Name: Alice, City: $city" (city missing)
+                                  # => safe_substitute() only replaces $name
+                                  # => $city not provided, left unchanged
+                                  # => Doesn't raise KeyError (unlike substitute())
+                                  # => result2 is "Name: Alice, City: $city"
 print(result2)                    # => Output: Name: Alice, City: $city
 
 # Multiline f-strings
 data = {
-    "product": "Laptop",
-    "price": 1200,
-    "quantity": 3
-}
+    "product": "Laptop",          # => data is dict with product details
+    "price": 1200,                # => Price in dollars
+    "quantity": 3                 # => Quantity ordered
+}                                 # => Type: dict (3 key-value pairs)
 
 report = f"""
 Product: {data['product']}
 Price: ${data['price']:,}
 Quantity: {data['quantity']}
 Total: ${data['price'] * data['quantity']:,}
-"""                               # => report is multiline string with formatting
-print(report)
+"""                               # => Triple-quoted f-string (multiline)
+                                  # => {data['product']} = "Laptop"
+                                  # => {data['price']:,} = 1,200 (comma separator)
+                                  # => {data['quantity']} = 3
+                                  # => {data['price'] * data['quantity']:,} = 1200*3=3600 → 3,600
+                                  # => report is multiline formatted string
+print(report)                     # => Outputs formatted report
 # => Output:
 # Product: Laptop
 # Price: $1,200
@@ -3228,22 +3525,34 @@ print(report)
 # Total: $3,600
 
 # Debug f-strings (Python 3.8+)
-x = 10                            # => x is 10
-y = 20                            # => y is 20
-print(f"{x=}")                    # => Output: x=10 (variable name and value)
-print(f"{x + y=}")                # => Output: x + y=30 (expression and result)
+x = 10                            # => x is 10 (type: int)
+y = 20                            # => y is 20 (type: int)
+print(f"{x=}")                    # => {x=} syntax shows variable name AND value
+                                  # => Debugging shorthand (Python 3.8+)
+                                  # => Output: x=10
+print(f"{x + y=}")                # => {x + y=} shows expression AND result
+                                  # => Evaluates x + y = 30
+                                  # => Output: x + y=30
 
 # Format specification mini-language summary:
 # {value:width.precision type}
-# width: minimum field width
+# width: minimum field width (total characters)
 # precision: decimal places for floats
 # type: s (string), d (decimal), f (float), e (scientific), % (percentage)
 # alignment: < (left), > (right), ^ (center)
-# fill: character to pad with
+# fill: character to pad with (default space)
 # sign: + (always show), - (only negative), space (space for positive)
 
-value = 42.7                      # => value is 42.7
-print(f"{value:+08.2f}")          # => Output: +0042.70 (sign, zero-pad, width 8, 2 decimals)
+value = 42.7                      # => value is 42.7 (type: float)
+                                  # => Demonstrating complex format spec
+print(f"{value:+08.2f}")          # => Format breakdown:
+                                  # => + = show sign (always)
+                                  # => 0 = pad with zeros (not spaces)
+                                  # => 8 = total width 8 characters
+                                  # => .2 = 2 decimal places
+                                  # => f = float type
+                                  # => Result: +0042.70 (sign + zero-padding + 2 decimals)
+                                  # => Output: +0042.70
 ```
 
 **Key Takeaway**: Use f-strings for all new code - they're fastest, most readable, and support inline expressions and formatting. For simple formatting, f-strings with format specifiers (`:width.precisiontype`) handle most needs without external libraries.

@@ -3,8 +3,8 @@ title: "Intermediate"
 weight: 10000002
 date: 2025-01-29T00:00:00+07:00
 draft: false
-description: "Examples 26-41: async/await, streams, advanced OOP, mixins, generics, extension methods (40-75% coverage) - 16 examples"
-tags: ["dart", "intermediate", "async", "streams", "generics", "mixins", "by-example"]
+description: "Examples 26-50: async/await, streams, advanced OOP, mixins, generics, callable classes, records, operator overloading (40-75% coverage) - 25 examples"
+tags: ["dart", "intermediate", "async", "streams", "generics", "mixins", "records", "by-example"]
 ---
 
 Master intermediate Dart patterns through 16 heavily annotated examples using Islamic finance contexts. Each example maintains 1-2.25 annotation density and demonstrates production patterns for Flutter and server applications.
@@ -2559,9 +2559,1474 @@ void main() {
 
 ---
 
+## Example 42: Generic Functions and Methods
+
+Generic type parameters on individual functions and methods for flexible, type-safe operations without creating generic classes.
+
+**Generic Function Use Cases**:
+
+- **Utility functions**: Work with any type (sorting, filtering, mapping)
+- **Type-safe operations**: Maintain type information through transformations
+- **API design**: Create flexible methods without losing type safety
+- **Collection operations**: Generic algorithms for lists, sets, maps
+
+```dart
+// Generic function with type parameter
+T getFirst<T>(List<T> items) {          // => Type parameter: T (inferred from argument)
+                                        // => Parameter: List<T> (list of any type)
+                                        // => Return: T (same type as list elements)
+  if (items.isEmpty) {                  // => Guard: prevent index error
+    throw StateError('List is empty');  // => Error: no first element
+  }
+  return items.first;                   // => Return: first element (type T)
+}                                       // => Inference: Dart infers T from usage
+
+// Generic function with multiple type parameters
+Map<K, V> createMap<K, V>(List<K> keys, List<V> values) {
+                                        // => Two type parameters: K (key), V (value)
+                                        // => Parameters: separate key/value lists
+                                        // => Return: Map<K, V> (type-safe map)
+  if (keys.length != values.length) {   // => Guard: ensure equal lengths
+    throw ArgumentError('Keys and values must have same length');
+  }
+
+  Map<K, V> result = {};                // => Create: empty typed map
+  for (int i = 0; i < keys.length; i++) {  // => Iterate: parallel traversal
+    result[keys[i]] = values[i];        // => Populate: key-value pairs
+  }                                     // => Loop: complete
+  return result;                        // => Return: populated map
+}
+
+// Generic method in class
+class ZakatCalculator {
+  // Generic method with constraint
+  double calculateTotal<T extends num>(List<T> amounts) {
+                                        // => Generic method: works on instance
+                                        // => Constraint: T extends num (int or double)
+                                        // => Enables: arithmetic operations on T
+    double total = 0.0;                 // => Accumulator: double for precision
+    for (T amount in amounts) {         // => Type: T (int or double)
+      total += amount.toDouble();       // => Convert: num has toDouble() method
+                                        // => Accumulate: add to total
+    }
+    return total;                       // => Return: sum as double
+  }
+}
+
+void main() {
+  // Generic function with type inference
+  List<String> donors = ['Ahmad', 'Fatimah', 'Ali'];
+                                        // => Type: List<String> (explicit)
+  String firstDonor = getFirst(donors); // => Inference: T = String (from List<String>)
+                                        // => firstDonor: 'Ahmad' (type String)
+  print('First donor: $firstDonor');    // => Output: First donor: Ahmad
+
+  List<int> amounts = [100000, 200000, 150000];
+                                        // => Type: List<int>
+  int firstAmount = getFirst(amounts);  // => Inference: T = int (from List<int>)
+                                        // => firstAmount: 100000 (type int)
+  print('First amount: Rp$firstAmount'); // => Output: First amount: Rp100000
+
+  // Explicit type argument (override inference)
+  var firstExplicit = getFirst<String>(['A', 'B']);
+                                        // => Explicit: <String> (override inference)
+                                        // => Result: 'A' (type String)
+  print('Explicit: $firstExplicit');    // => Output: Explicit: A
+
+  // Generic function with multiple type parameters
+  List<String> keys = ['donor1', 'donor2', 'donor3'];
+  List<double> values = [100000.0, 200000.0, 150000.0];
+  Map<String, double> donationMap = createMap(keys, values);
+                                        // => Inference: K = String, V = double
+                                        // => donationMap: {donor1: 100000.0, ...}
+  print('Donation map: $donationMap');  // => Output: {donor1: 100000.0, donor2: 200000.0, donor3: 150000.0}
+
+  // Generic method usage
+  ZakatCalculator calculator = ZakatCalculator();
+  List<int> intAmounts = [100000, 200000, 150000];
+  double totalInt = calculator.calculateTotal(intAmounts);
+                                        // => Inference: T = int (from List<int>)
+                                        // => Conversion: each int converted to double
+                                        // => totalInt: 450000.0
+  print('Total (int): Rp$totalInt');    // => Output: Total (int): Rp450000.0
+
+  List<double> doubleAmounts = [100000.5, 200000.75, 150000.25];
+  double totalDouble = calculator.calculateTotal(doubleAmounts);
+                                        // => Inference: T = double (from List<double>)
+                                        // => totalDouble: 450001.5
+  print('Total (double): Rp$totalDouble'); // => Output: Total (double): Rp450001.5
+}
+```
+
+**Key Takeaway**: Use generic type parameters `<T>` on functions and methods for type-safe operations without creating generic classes. Dart infers types from arguments. Use constraints (`extends`) to enable specific operations. Multiple type parameters enable complex transformations.
+
+**Why It Matters**: Generic functions eliminate code duplication while maintaining compile-time type safety. Without generics, you'd need separate `getFirstString()`, `getFirstInt()`, `getFirstDouble()` functions, violating DRY principle. In Flutter, generic functions power widget builders (`ListView.builder<T>`), data transformations (`map<T, R>`), and state management. Type inference reduces boilerplate while catching type errors at compile time.
+
+**Common Pitfalls**: Forgetting constraints on type parameters prevents using type-specific methods (`T.toDouble()` fails without `extends num`). Explicit type arguments sometimes needed when inference fails. Generic functions can't access type-specific members without constraints.
+
+---
+
+## Example 43: Callable Classes with call() Method
+
+Making class instances callable like functions using the `call()` method. Enables function-like syntax while maintaining state and additional methods.
+
+**Callable Class Benefits**:
+
+- **Function objects**: Objects that act like functions
+- **Stateful functions**: Functions with persistent state
+- **Strategy pattern**: Swappable function-like objects
+- **Fluent APIs**: Natural function call syntax
+
+```dart
+// Callable class for Zakat calculation
+class ZakatRate {
+  final double percentage;              // => Field: Zakat rate (e.g., 2.5% = 0.025)
+                                        // => Immutable: final prevents changes
+
+  const ZakatRate(this.percentage);     // => Constructor: initialize rate
+                                        // => const: compile-time constant
+
+  // call() method makes instances callable
+  double call(double wealth) {          // => Special method: enables () syntax
+                                        // => Parameter: wealth amount to calculate Zakat
+                                        // => Return: Zakat amount
+    return wealth * percentage;         // => Calculate: wealth * rate
+  }                                     // => Usage: instance(wealth)
+
+  // Additional methods still available
+  String describe() {                   // => Regular method: not callable syntax
+    return 'Zakat rate: ${percentage * 100}%';
+                                        // => Description: percentage as percent
+  }
+}
+
+// Callable class with state
+class DonationCounter {
+  int _count = 0;                       // => Private field: donation count
+  double _total = 0.0;                  // => Private field: total amount
+
+  // call() with named parameters
+  void call({required String donor, required double amount}) {
+                                        // => Named parameters: clarity in usage
+                                        // => call(): invoked with () syntax
+    _count++;                           // => Increment: count donations
+    _total += amount;                   // => Accumulate: sum amounts
+    print('$donor donated Rp$amount');  // => Log: donation received
+  }                                     // => State: persists between calls
+
+  int get count => _count;              // => Getter: expose count
+  double get total => _total;           // => Getter: expose total
+}
+
+// Callable class for validation
+class EmailValidator {
+  final RegExp _emailRegex = RegExp(    // => Regular expression: email pattern
+    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+  );                                    // => Pattern: basic email validation
+
+  bool call(String email) {             // => call(): validate email
+                                        // => Return: true if valid
+    return _emailRegex.hasMatch(email); // => Test: email matches pattern
+  }                                     // => Usage: validator(email)
+}
+
+void main() {
+  // Use callable class like function
+  ZakatRate standardRate = ZakatRate(0.025);
+                                        // => Create instance: 2.5% Zakat rate
+                                        // => standardRate: callable object
+
+  double wealth = 10000000.0;           // => Wealth: 10 million IDR
+  double zakatDue = standardRate(wealth); // => Call: instance(wealth) syntax
+                                          // => Invokes: call() method
+                                          // => zakatDue: 250000.0 (10M * 0.025)
+  print('Zakat due: Rp$zakatDue');      // => Output: Zakat due: Rp250000.0
+
+  // Still access regular methods
+  print(standardRate.describe());       // => Output: Zakat rate: 2.5%
+
+  // Different rates as separate instances
+  ZakatRate goldRate = ZakatRate(0.025);   // => Gold: 2.5%
+  ZakatRate agricultureRate = ZakatRate(0.10);  // => Agriculture: 10%
+
+  double goldWealth = 5000000.0;
+  print('Gold Zakat: Rp${goldRate(goldWealth)}');
+                                        // => Output: Gold Zakat: Rp125000.0
+
+  double cropValue = 8000000.0;
+  print('Agriculture Zakat: Rp${agricultureRate(cropValue)}');
+                                        // => Output: Agriculture Zakat: Rp800000.0
+
+  // Callable class with state
+  DonationCounter counter = DonationCounter();
+                                        // => Create: stateful callable object
+
+  counter(donor: 'Ahmad', amount: 100000.0);
+                                        // => Call: named parameters
+                                        // => Output: Ahmad donated Rp100000.0
+                                        // => State: count=1, total=100000.0
+
+  counter(donor: 'Fatimah', amount: 200000.0);
+                                        // => Output: Fatimah donated Rp200000.0
+                                        // => State: count=2, total=300000.0
+
+  counter(donor: 'Ali', amount: 150000.0);
+                                        // => Output: Ali donated Rp150000.0
+                                        // => State: count=3, total=450000.0
+
+  print('Total donations: ${counter.count}');
+                                        // => Output: Total donations: 3
+  print('Total amount: Rp${counter.total}');
+                                        // => Output: Total amount: Rp450000.0
+
+  // Callable validator
+  EmailValidator validator = EmailValidator();
+                                        // => Create: email validator
+
+  String email1 = 'donor@example.com';
+  print('$email1 is valid: ${validator(email1)}');
+                                        // => Call: validator(email)
+                                        // => Output: donor@example.com is valid: true
+
+  String email2 = 'invalid-email';
+  print('$email2 is valid: ${validator(email2)}');
+                                        // => Output: invalid-email is valid: false
+}
+```
+
+**Key Takeaway**: Implement `call()` method to make class instances callable with `()` syntax. Combine function-like interface with state and additional methods. Use for strategy pattern, stateful functions, and fluent APIs.
+
+**Why It Matters**: Callable classes bridge object-oriented and functional programming paradigms. They enable strategy pattern implementation where different calculation strategies (Zakat rates) are swappable objects with identical call signatures. In Flutter, callable classes power callback handlers with state (FormValidators, EventHandlers). They provide cleaner syntax than explicit method calls (`rate(100)` vs `rate.calculate(100)`) while maintaining object benefits (multiple methods, state, inheritance).
+
+**Common Pitfalls**: Forgetting that `call()` is just a method—can be overridden in subclasses. Callable classes aren't actual functions—can't use `is Function` type check. Overusing callable classes for simple functions adds unnecessary complexity.
+
+---
+
+## Example 44: Typedef for Function Types
+
+Creating type aliases for function signatures using typedef for clearer code and better type safety when working with higher-order functions.
+
+**Typedef Benefits**:
+
+- **Readable signatures**: Name complex function types
+- **Type safety**: Catch signature mismatches at compile time
+- **Documentation**: Self-documenting function parameter types
+- **Reusability**: Define once, use many times
+
+```dart
+// Define function type aliases
+typedef ZakatCalculation = double Function(double wealth);
+                                        // => Typedef: name for function type
+                                        // => Function: takes double, returns double
+                                        // => Usage: anywhere function type needed
+
+typedef DonationValidator = bool Function(String donor, double amount);
+                                        // => Function: takes String & double, returns bool
+                                        // => Use case: validate donation before processing
+
+typedef TransactionProcessor = Future<void> Function(Map<String, dynamic> data);
+                                        // => Async function: returns Future<void>
+                                        // => Parameter: transaction data map
+
+// Use typedef in function parameters
+class DonationService {
+  final ZakatCalculation _calculator;  // => Field: function type
+                                        // => Any function matching signature works
+
+  DonationService(this._calculator);    // => Constructor: inject calculation function
+                                        // => Dependency injection: strategy pattern
+
+  double processZakat(double wealth) {  // => Method: uses injected calculator
+    return _calculator(wealth);         // => Call: injected function
+                                        // => Result: calculated Zakat
+  }
+}
+
+// Function that takes typedef as parameter
+void processDonation(
+  String donor,
+  double amount,
+  DonationValidator validator,         // => Parameter: function matching typedef
+  TransactionProcessor processor,       // => Parameter: async function
+) async {                               // => async: needed for await
+  if (validator(donor, amount)) {       // => Validate: call validator function
+    print('Processing donation from $donor');
+    Map<String, dynamic> data = {       // => Transaction data: map
+      'donor': donor,
+      'amount': amount,
+      'timestamp': DateTime.now().toString(),
+    };
+    await processor(data);              // => Process: call async function
+                                        // => await: wait for completion
+  } else {
+    print('Invalid donation: $donor - Rp$amount');
+                                        // => Validation failed
+  }
+}
+
+// Functions matching typedefs
+double calculateStandardZakat(double wealth) {
+                                        // => Matches: ZakatCalculation typedef
+  return wealth * 0.025;                // => Standard rate: 2.5%
+}
+
+double calculateGoldZakat(double wealth) {
+                                        // => Also matches: ZakatCalculation typedef
+  return wealth * 0.025;                // => Same signature, different name
+}
+
+bool validateMinimumAmount(String donor, double amount) {
+                                        // => Matches: DonationValidator typedef
+  return donor.isNotEmpty && amount >= 10000;
+                                        // => Rules: donor not empty, amount >= 10k
+}
+
+Future<void> logTransaction(Map<String, dynamic> data) async {
+                                        // => Matches: TransactionProcessor typedef
+  await Future.delayed(Duration(milliseconds: 100));
+                                        // => Simulate: database write
+  print('Transaction logged: $data');   // => Log: transaction data
+}
+
+void main() async {
+  // Use typedef with dependency injection
+  DonationService service1 = DonationService(calculateStandardZakat);
+                                        // => Inject: standard calculator
+                                        // => service1: uses 2.5% rate
+
+  double zakat1 = service1.processZakat(10000000.0);
+  print('Zakat (standard): Rp$zakat1'); // => Output: Zakat (standard): Rp250000.0
+
+  DonationService service2 = DonationService(calculateGoldZakat);
+                                        // => Inject: gold calculator
+                                        // => Different implementation, same typedef
+
+  double zakat2 = service2.processZakat(10000000.0);
+  print('Zakat (gold): Rp$zakat2');     // => Output: Zakat (gold): Rp250000.0
+
+  // Use typedef in function parameters
+  await processDonation(
+    'Ahmad',
+    100000.0,
+    validateMinimumAmount,              // => Validator: function reference
+    logTransaction,                     // => Processor: async function reference
+  );                                    // => Output: Processing donation from Ahmad
+                                        // =>         Transaction logged: {donor: Ahmad, ...}
+
+  await processDonation(
+    'Fatimah',
+    5000.0,                             // => Amount: below minimum (10000)
+    validateMinimumAmount,
+    logTransaction,
+  );                                    // => Output: Invalid donation: Fatimah - Rp5000.0
+
+  // Inline function matching typedef
+  await processDonation(
+    'Ali',
+    150000.0,
+    (donor, amount) => amount > 0,      // => Inline validator: anonymous function
+                                        // => Matches: DonationValidator signature
+    (data) async {                      // => Inline processor: anonymous async
+      print('Custom processing: $data');
+    },
+  );                                    // => Output: Processing donation from Ali
+                                        // =>         Custom processing: {donor: Ali, ...}
+
+  // Typedef improves readability
+  List<ZakatCalculation> calculators = [
+    calculateStandardZakat,
+    calculateGoldZakat,
+    (wealth) => wealth * 0.10,          // => Agriculture rate: 10%
+  ];                                    // => List: functions matching typedef
+                                        // => Type: List<ZakatCalculation>
+
+  double wealth = 5000000.0;
+  for (ZakatCalculation calc in calculators) {
+                                        // => Iterate: each calculator function
+    print('Zakat: Rp${calc(wealth)}');  // => Call: function from list
+  }                                     // => Output: Rp125000.0, Rp125000.0, Rp500000.0
+}
+```
+
+**Key Takeaway**: Use `typedef` to create named aliases for function types, improving code readability and type safety. Typedefs work with dependency injection, higher-order functions, and collections of functions.
+
+**Why It Matters**: Typedef eliminates verbose function type annotations (`double Function(double)`) with readable names (`ZakatCalculation`), making code self-documenting. In Flutter, typedefs standardize callback signatures (`VoidCallback`, `ValueChanged<T>`), ensuring widgets receive compatible callbacks. For business logic, typedefs enable strategy pattern where calculation/validation functions are interchangeable, improving testability (inject mock functions) and flexibility (swap implementations without changing consumer code).
+
+**Common Pitfalls**: Typedef creates alias, not new type—`ZakatCalculation` and `double Function(double)` are identical at runtime. Overusing typedef for simple one-time function parameters adds noise. Typedef doesn't enforce function implementation—only signature matching.
+
+---
+
+## Example 45: Cascade Notation (.., ?..)
+
+Using cascade notation to perform multiple operations on the same object without repeating the object reference. Enables fluent, builder-style code.
+
+**Cascade Variants**:
+
+- **`..`**: Standard cascade (throws if null)
+- **`?..`**: Null-safe cascade (no-op if null)
+- **Return value**: Returns target object, not last operation result
+
+```dart
+class Donation {
+  String? donor;                        // => Nullable: donor name
+  double? amount;                       // => Nullable: donation amount
+  String? category;                     // => Nullable: donation category
+  DateTime? timestamp;                  // => Nullable: donation time
+
+  void setDonor(String name) {          // => Setter method: assign donor
+    donor = name;
+  }
+
+  void setAmount(double value) {        // => Setter method: assign amount
+    amount = value;
+  }
+
+  void setCategory(String cat) {        // => Setter method: assign category
+    category = cat;
+  }
+
+  void setTimestamp(DateTime time) {    // => Setter method: assign timestamp
+    timestamp = time;
+  }
+
+  void log() {                          // => Method: log donation details
+    print('Donation: $donor - Rp$amount ($category) at $timestamp');
+  }
+}
+
+class DonationBuilder {
+  String _donor = '';                   // => Private field: builder pattern
+  double _amount = 0.0;
+  String _category = '';
+
+  DonationBuilder withDonor(String donor) {
+                                        // => Builder method: set donor
+    _donor = donor;
+    return this;                        // => Return this: enable method chaining
+  }
+
+  DonationBuilder withAmount(double amount) {
+    _amount = amount;
+    return this;                        // => Return this: chain continues
+  }
+
+  DonationBuilder withCategory(String category) {
+    _category = category;
+    return this;
+  }
+
+  Donation build() {                    // => Build method: create final object
+    return Donation()
+      ..donor = _donor                  // => Cascade: set multiple properties
+      ..amount = _amount
+      ..category = _category
+      ..timestamp = DateTime.now();     // => Final property: set timestamp
+  }                                     // => Return: configured Donation object
+}
+
+void main() {
+  // Without cascade (verbose, repetitive)
+  Donation donation1 = Donation();
+  donation1.setDonor('Ahmad');          // => Repetition: donation1 repeated
+  donation1.setAmount(100000.0);
+  donation1.setCategory('Zakat');
+  donation1.setTimestamp(DateTime.now());
+  donation1.log();
+
+  // With cascade notation (clean, fluent)
+  Donation donation2 = Donation()
+    ..setDonor('Fatimah')               // => Cascade: operates on Donation instance
+                                        // => No repetition: target inferred
+    ..setAmount(200000.0)               // => Each line: method on same object
+    ..setCategory('Sadaqah')
+    ..setTimestamp(DateTime.now())
+    ..log();                            // => Final operation: log() called
+                                        // => Return value: Donation instance (not void from log)
+
+  // Cascade with field access
+  Donation donation3 = Donation()
+    ..donor = 'Ali'                     // => Direct field assignment
+    ..amount = 150000.0                 // => Simpler than setter methods
+    ..category = 'Infaq'
+    ..timestamp = DateTime.now();       // => Cascade: works with fields and methods
+  donation3.log();                      // => Separate statement: no cascade
+
+  // Null-aware cascade (?..
+  Donation? nullableDonation = null;    // => Nullable: might be null
+  nullableDonation
+    ?..setDonor('Umar')                 // => Null-aware cascade: no-op if null
+    ?..setAmount(250000.0)              // => Safe: doesn't throw on null
+    ?..log();                           // => Result: nothing happens (null safe)
+
+  // Cascade returns target object
+  var result = Donation()
+    ..donor = 'Khadijah'
+    ..amount = 300000.0
+    ..log();                            // => log() returns void
+                                        // => But cascade returns Donation instance
+  print('Result type: ${result.runtimeType}');
+                                        // => Output: Result type: Donation
+                                        // => NOT void: cascade returns target
+
+  // Builder pattern with cascade
+  Donation donation4 = DonationBuilder()
+    ..withDonor('Bilal')                // => Builder cascade: method chaining
+    ..withAmount(175000.0)              // => Each method: returns builder
+    ..withCategory('Zakat')             // => Fluent API: readable sequence
+    .build()                            // => build(): returns Donation (breaks cascade)
+    ..log();                            // => New cascade: on returned Donation
+                                        // => Output: Donation: Bilal - Rp175000.0 (Zakat) at [time]
+
+  // Cascade in list operations
+  List<int> amounts = []
+    ..add(100000)                       // => Cascade on list: add operations
+    ..add(200000)                       // => Fluent: multiple adds
+    ..add(150000)
+    ..sort();                           // => sort(): void return
+                                        // => Cascade: returns list
+  print('Sorted amounts: $amounts');    // => Output: [100000, 150000, 200000]
+
+  // Mixed cascade and regular operations
+  StringBuffer buffer = StringBuffer()
+    ..write('Donations: ')              // => Cascade: StringBuffer operations
+    ..write('Ahmad: Rp100000, ')
+    ..write('Fatimah: Rp200000');
+  String result2 = buffer.toString();   // => Regular call: break cascade
+  print(result2);                       // => Output: Donations: Ahmad: Rp100000, Fatimah: Rp200000
+}
+```
+
+**Key Takeaway**: Use cascade notation (`..`) to perform multiple operations on same object without repeating variable name. Use null-aware cascade (`?..`) for nullable objects. Cascade returns target object, not last operation result.
+
+**Why It Matters**: Cascade notation eliminates repetitive object references, making code more readable and less error-prone (can't accidentally reference wrong object). In Flutter, cascades are essential for widget configuration (`TextEditingController()..text = 'value'`), builders, and setting multiple properties. For domain models, cascades enable fluent initialization without verbose setter calls. Null-aware cascades prevent null checks before operations.
+
+**Common Pitfalls**: Cascade returns target object, NOT last method's return value—`var x = list..add(1)` assigns list to x, not bool from add(). Can't break cascade to use intermediate result—must end cascade first. Forgetting null-aware cascade (`?..`) on nullable objects throws null errors.
+
+---
+
+## Example 46: Metadata and Annotations
+
+Using metadata annotations (@) to add declarative information to code elements. Enables code generation, documentation, framework integration, and runtime reflection.
+
+**Built-in Annotations**:
+
+- **@override**: Indicates method overrides superclass/interface method
+- **@deprecated**: Marks code as deprecated with optional message
+- **@pragma**: Compiler hints for optimization and behavior
+- **Custom annotations**: User-defined metadata for frameworks
+
+```dart
+// Custom annotation classes
+class ValidateAmount {                  // => Custom annotation: validation metadata
+  final double minAmount;               // => Field: minimum amount constraint
+  final double maxAmount;               // => Field: maximum amount constraint
+
+  const ValidateAmount({                // => const constructor: compile-time constant
+    required this.minAmount,
+    required this.maxAmount,
+  });                                   // => Usage: @ValidateAmount(min: 0, max: 1000000)
+}
+
+class Auditable {                       // => Marker annotation: no parameters
+  const Auditable();                    // => const: enables compile-time usage
+}                                       // => Usage: @Auditable() or @auditable
+
+const auditable = Auditable();          // => Constant instance: shorthand usage
+                                        // => Use: @auditable instead of @Auditable()
+
+class Donation {
+  @ValidateAmount(minAmount: 10000, maxAmount: 10000000)
+                                        // => Annotation on field: validation metadata
+                                        // => Code generators: can read this metadata
+                                        // => Runtime: available via reflection (mirrors)
+  double amount;
+
+  @auditable                            // => Marker: this field tracked in audit log
+  String donor;
+
+  Donation(this.amount, this.donor);
+}
+
+class ZakatCalculator {
+  @deprecated                           // => Built-in: marks method as deprecated
+  double calculate(double wealth) {     // => Analyzer warning: when method called
+                                        // => Migration: indicates old API
+    return wealth * 0.025;              // => Old implementation
+  }
+
+  @Deprecated('Use calculateZakat instead')
+                                        // => Custom message: deprecation reason
+  double computeZakat(double wealth) {
+    return wealth * 0.025;
+  }
+
+  double calculateZakat(double wealth) {  // => New method: replacement API
+    return wealth * 0.025;
+  }
+
+  @override                             // => Annotation: marks override
+  String toString() {                   // => Overrides: Object.toString()
+                                        // => Analyzer: warns if not actually overriding
+    return 'ZakatCalculator';
+  }
+}
+
+// Abstract class with override annotations
+abstract class PaymentProcessor {
+  void processPayment(double amount);   // => Abstract method: must override
+}
+
+class CashPayment implements PaymentProcessor {
+  @override                             // => Required: implements interface method
+  void processPayment(double amount) {  // => Implementation: concrete method
+    print('Processing cash: Rp$amount');
+  }
+}
+
+class CardPayment implements PaymentProcessor {
+  @override
+  void processPayment(double amount) {
+    print('Processing card: Rp$amount');
+  }
+
+  // Typo: missing 's' in processPayment
+  // @override would cause compile error here
+  // void procesPayment(double amount) {} ← Won't compile with @override
+}
+
+void main() {
+  // Using class with annotations
+  Donation donation = Donation(150000.0, 'Ahmad');
+                                        // => Object: has annotated fields
+                                        // => Metadata: available at runtime
+  print('Donation: ${donation.donor} - Rp${donation.amount}');
+                                        // => Output: Donation: Ahmad - Rp150000.0
+
+  // Deprecated method usage (analyzer warning)
+  ZakatCalculator calculator = ZakatCalculator();
+  double zakat1 = calculator.calculate(10000000.0);
+                                        // => Warning: calculate is deprecated
+                                        // => IDE: shows strikethrough
+  print('Zakat (old): Rp$zakat1');      // => Output: Zakat (old): Rp250000.0
+
+  double zakat2 = calculator.computeZakat(10000000.0);
+                                        // => Warning: Use calculateZakat instead
+  print('Zakat (deprecated): Rp$zakat2');
+
+  double zakat3 = calculator.calculateZakat(10000000.0);
+                                        // => No warning: current API
+  print('Zakat (current): Rp$zakat3');  // => Output: Zakat (current): Rp250000.0
+
+  // Override annotation benefits
+  PaymentProcessor cashPayment = CashPayment();
+  cashPayment.processPayment(100000.0); // => Output: Processing cash: Rp100000.0
+
+  PaymentProcessor cardPayment = CardPayment();
+  cardPayment.processPayment(200000.0); // => Output: Processing card: Rp200000.0
+
+  // Custom annotation usage (metadata only, no runtime effect without reflection)
+  print('Donation annotation: ValidateAmount(10000-10000000)');
+                                        // => Metadata: available for code generation
+                                        // => Reflection: mirrors API can read annotations
+                                        // => Build tools: can generate validation code
+}
+```
+
+**Common Annotations**:
+
+| Annotation  | Purpose                  | Effect                              | Example                       |
+| ----------- | ------------------------ | ----------------------------------- | ----------------------------- |
+| @override   | Mark method override     | Compile error if not overriding     | `@override void method()`     |
+| @deprecated | Mark deprecated API      | Analyzer warning on usage           | `@deprecated double calc()`   |
+| @Deprecated | Deprecated with message  | Warning with custom message         | `@Deprecated('msg') void f()` |
+| @pragma     | Compiler hints           | Optimization and behavior control   | `@pragma('vm:inline')`        |
+| Custom      | Domain-specific metadata | Code generation, documentation, etc | `@ValidateAmount(min, max)`   |
+
+**Key Takeaway**: Use annotations to add metadata to code elements. `@override` prevents typos in method overriding. `@deprecated` guides API migration. Custom annotations enable code generation and framework integration.
+
+**Why It Matters**: Annotations provide machine-readable metadata that tools can process. `@override` catches refactoring errors (rename superclass method, subclass override forgotten). In Flutter, annotations drive code generation (`@JsonSerializable`, `@freezed`), reducing boilerplate. For APIs, `@deprecated` smoothly migrates users from old to new APIs with clear guidance. Custom annotations enable domain-specific frameworks (validation rules, ORM mappings, routing).
+
+**Common Pitfalls**: Annotations are metadata only—don't affect runtime behavior without reflection or code generation. `@override` is optional but strongly recommended (catches typos). Forgetting `const` constructor in custom annotations prevents compile-time usage.
+
+---
+
+## Example 47: Assert Statements for Development-Time Checks
+
+Using assert statements to validate assumptions during development, automatically disabled in production builds for zero runtime cost.
+
+**Assert Characteristics**:
+
+- **Development only**: Enabled in debug mode, disabled in release
+- **Zero production cost**: No performance impact in production
+- **Fail fast**: Catch bugs early during development
+- **Documentation**: Express invariants and preconditions
+
+```dart
+class Donation {
+  final String donor;                   // => Donor name: must not be empty
+  final double amount;                  // => Amount: must be positive
+  final DateTime timestamp;             // => Timestamp: must not be future
+
+  Donation({
+    required this.donor,
+    required this.amount,
+    required this.timestamp,
+  }) : assert(donor.isNotEmpty, 'Donor name cannot be empty'),
+                                        // => Assert: precondition check
+                                        // => Debug mode: throws AssertionError if false
+                                        // => Release mode: completely removed
+                                        // => Message: failure explanation
+       assert(amount > 0, 'Amount must be positive, got: $amount'),
+                                        // => Variable in message: shows actual value
+       assert(!timestamp.isAfter(DateTime.now()), 'Timestamp cannot be in future');
+                                        // => Invariant: timestamp constraint
+
+  // Method with assertions
+  void addBonus(double bonusPercent) {
+    assert(bonusPercent >= 0 && bonusPercent <= 100,
+        'Bonus percent must be between 0 and 100, got: $bonusPercent');
+                                        // => Precondition: valid percentage range
+    double bonus = amount * (bonusPercent / 100);
+                                        // => Calculate: bonus amount
+    print('Bonus: Rp$bonus');
+  }
+}
+
+double calculateZakat(double wealth, double rate) {
+  assert(wealth >= 0, 'Wealth cannot be negative: $wealth');
+                                        // => Parameter validation: development check
+  assert(rate >= 0 && rate <= 1, 'Rate must be between 0 and 1: $rate');
+                                        // => Rate constraint: percentage as decimal
+
+  double nisab = 8500000.0;             // => Nisab: minimum wealth threshold (85g gold)
+  assert(nisab > 0, 'Nisab must be positive');
+                                        // => Invariant: nisab constraint
+
+  if (wealth < nisab) {                 // => Check: wealth below threshold
+    return 0.0;                         // => No Zakat: below nisab
+  }
+
+  double zakat = wealth * rate;
+  assert(zakat >= 0, 'Calculated Zakat cannot be negative: $zakat');
+                                        // => Postcondition: result validation
+  assert(zakat <= wealth, 'Zakat cannot exceed wealth');
+                                        // => Sanity check: zakat ≤ wealth
+
+  return zakat;
+}
+
+class DonationList {
+  final List<Donation> _donations = []; // => Internal list: donations
+
+  void add(Donation donation) {
+    int oldLength = _donations.length;  // => Capture: length before add
+
+    _donations.add(donation);
+
+    assert(_donations.length == oldLength + 1,
+        'List length should increase by 1');
+                                        // => Postcondition: verify add succeeded
+    assert(_donations.last == donation,
+        'Last element should be added donation');
+                                        // => Invariant: last element check
+  }
+
+  Donation operator [](int index) {     // => Index operator: get donation
+    assert(index >= 0, 'Index cannot be negative: $index');
+                                        // => Precondition: valid index range
+    assert(index < _donations.length,
+        'Index out of bounds: $index >= ${_donations.length}');
+                                        // => Range check: prevent index error
+    return _donations[index];
+  }
+
+  int get length {
+    assert(_donations.length >= 0, 'Length cannot be negative');
+                                        // => Invariant: sanity check (always true)
+    return _donations.length;
+  }
+}
+
+void main() {
+  // Valid donation (assertions pass in debug mode)
+  Donation donation1 = Donation(
+    donor: 'Ahmad',
+    amount: 100000.0,
+    timestamp: DateTime.now(),
+  );                                    // => All assertions pass
+  print('Valid donation: ${donation1.donor} - Rp${donation1.amount}');
+
+  // Assertions in method calls
+  donation1.addBonus(10);               // => 10% bonus: valid
+                                        // => Output: Bonus: Rp10000.0
+
+  // Invalid inputs (fail in debug mode, ignored in release)
+  // Uncomment to see assertion failures in debug:
+  // Donation donation2 = Donation(
+  //   donor: '',                       // ← AssertionError: Donor name cannot be empty
+  //   amount: 100000.0,
+  //   timestamp: DateTime.now(),
+  // );
+
+  // Donation donation3 = Donation(
+  //   donor: 'Fatimah',
+  //   amount: -50000.0,                // ← AssertionError: Amount must be positive
+  //   timestamp: DateTime.now(),
+  // );
+
+  // Donation donation4 = Donation(
+  //   donor: 'Ali',
+  //   amount: 100000.0,
+  //   timestamp: DateTime.now().add(Duration(days: 1)),
+  //                                    // ← AssertionError: Timestamp cannot be in future
+  // );
+
+  // Function assertions
+  double zakat = calculateZakat(10000000.0, 0.025);
+                                        // => All assertions pass
+  print('Zakat: Rp$zakat');             // => Output: Zakat: Rp250000.0
+
+  // Invalid function inputs (fail in debug)
+  // double zakat2 = calculateZakat(-1000.0, 0.025);
+  //                                  // ← AssertionError: Wealth cannot be negative
+
+  // double zakat3 = calculateZakat(10000000.0, 1.5);
+  //                                  // ← AssertionError: Rate must be between 0 and 1
+
+  // Assertions in class operations
+  DonationList list = DonationList();
+  list.add(donation1);                  // => Assertions: verify list state
+  print('List length: ${list.length}'); // => Output: List length: 1
+
+  Donation retrieved = list[0];         // => Index assertions: valid range
+  print('Retrieved: ${retrieved.donor}');
+                                        // => Output: Retrieved: Ahmad
+
+  // Invalid index (fails in debug)
+  // Donation invalid = list[10];      // ← AssertionError: Index out of bounds
+
+  print('All assertions passed (debug mode) or disabled (release mode)');
+}
+```
+
+**Assert Best Practices**:
+
+| Use Case                 | Example                    | Rationale                     |
+| ------------------------ | -------------------------- | ----------------------------- |
+| Preconditions            | `assert(amount > 0)`       | Validate function inputs      |
+| Postconditions           | `assert(result != null)`   | Verify function outputs       |
+| Invariants               | `assert(list.length >= 0)` | Check class state consistency |
+| Control flow assumptions | `assert(index < length)`   | Document expected conditions  |
+| Development-time checks  | `assert(!inProduction)`    | Catch misconfigurations early |
+
+**Key Takeaway**: Use `assert()` to validate assumptions during development. Assertions are automatically disabled in production builds (zero runtime cost). Include descriptive messages. Use for preconditions, postconditions, and invariants.
+
+**Why It Matters**: Assertions catch bugs early during development without impacting production performance. Unlike exceptions, assertions document assumptions directly in code (executable documentation). In Flutter, assertions validate widget state transitions and constraint violations during UI development. For business logic, assertions verify calculation invariants (Zakat ≤ wealth) that should never be false if code is correct, distinguishing programmer errors from runtime errors.
+
+**Common Pitfalls**: Assertions are disabled in production—never use for input validation that must happen in production (use `if` + `throw` instead). Side effects in assertions are lost in production (`assert(list.remove(item))` breaks in release mode). Assertions shouldn't replace tests—they complement testing.
+
+---
+
+## Example 48: Factory Constructors and Named Constructors
+
+Using factory constructors to control instance creation and named constructors for clarity. Factory constructors enable singletons, caching, and polymorphic instance creation.
+
+**Constructor Types**:
+
+- **Standard constructor**: Always creates new instance
+- **Named constructor**: Descriptive alternative constructor
+- **Factory constructor**: Can return cached or subclass instances
+- **Const constructor**: Creates compile-time constant
+
+```dart
+class Donation {
+  final String donor;
+  final double amount;
+  final String category;
+
+  // Standard constructor
+  Donation(this.donor, this.amount, this.category);
+                                        // => Always creates: new instance
+
+  // Named constructor for clarity
+  Donation.zakat(String donor, double amount)
+      : this(donor, amount, 'Zakat');  // => Delegates to standard constructor
+                                        // => Category: automatically set to 'Zakat'
+
+  Donation.sadaqah(String donor, double amount)
+      : this(donor, amount, 'Sadaqah');
+
+  Donation.infaq(String donor, double amount)
+      : this(donor, amount, 'Infaq');
+
+  // Factory constructor for validation
+  factory Donation.validated(String donor, double amount, String category) {
+                                        // => Factory: can return null or cached instance
+                                        // => Validation: check before creation
+    if (donor.isEmpty) {
+      throw ArgumentError('Donor cannot be empty');
+    }                                   // => Validation: donor check
+    if (amount <= 0) {
+      throw ArgumentError('Amount must be positive');
+    }                                   // => Validation: amount check
+
+    return Donation(donor, amount, category);
+                                        // => Create: only if validation passes
+                                        // => Return: new instance
+  }
+
+  // Factory constructor with caching
+  static final Map<String, Donation> _cache = {};
+                                        // => Static cache: shared across instances
+
+  factory Donation.cached(String key, String donor, double amount, String category) {
+                                        // => Factory: return cached if exists
+    if (_cache.containsKey(key)) {      // => Check: key in cache
+      print('Returning cached donation: $key');
+      return _cache[key]!;              // => Return: cached instance (not new)
+    }
+
+    print('Creating new donation: $key');
+    Donation donation = Donation(donor, amount, category);
+    _cache[key] = donation;             // => Cache: store instance
+    return donation;                    // => Return: newly created
+  }
+
+  @override
+  String toString() => '$category from $donor: Rp$amount';
+}
+
+// Factory pattern for polymorphic creation
+abstract class PaymentMethod {
+  void process(double amount);
+
+  // Factory constructor returns subclass instance
+  factory PaymentMethod.create(String type) {
+                                        // => Factory: polymorphic creation
+                                        // => Return type: PaymentMethod (abstract)
+                                        // => Actual type: Cash or Card (concrete)
+    switch (type) {
+      case 'cash':
+        return CashPayment();           // => Return: CashPayment instance
+      case 'card':
+        return CardPayment();           // => Return: CardPayment instance
+      default:
+        throw ArgumentError('Unknown payment type: $type');
+    }                                   // => Pattern: factory decides concrete type
+  }
+}
+
+class CashPayment implements PaymentMethod {
+  @override
+  void process(double amount) {
+    print('Processing cash payment: Rp$amount');
+  }
+}
+
+class CardPayment implements PaymentMethod {
+  @override
+  void process(double amount) {
+    print('Processing card payment: Rp$amount');
+  }
+}
+
+// Singleton pattern with factory
+class DonationService {
+  static DonationService? _instance;    // => Static: shared instance
+
+  // Private constructor prevents external instantiation
+  DonationService._internal();          // => Named constructor: internal use only
+                                        // => Private: leading underscore
+
+  // Factory constructor returns singleton
+  factory DonationService() {           // => Factory: return singleton
+    _instance ??= DonationService._internal();
+                                        // => Null-aware: create only if null
+                                        // => ??=: assign if _instance is null
+    return _instance!;                  // => Return: always same instance
+  }
+
+  void processDonation(Donation donation) {
+    print('Service processing: $donation');
+  }
+}
+
+void main() {
+  // Named constructors for clarity
+  Donation donation1 = Donation.zakat('Ahmad', 100000.0);
+                                        // => Named constructor: clear intent
+                                        // => Category: automatically 'Zakat'
+  print(donation1);                     // => Output: Zakat from Ahmad: Rp100000.0
+
+  Donation donation2 = Donation.sadaqah('Fatimah', 200000.0);
+  print(donation2);                     // => Output: Sadaqah from Fatimah: Rp200000.0
+
+  // Factory constructor with validation
+  try {
+    Donation donation3 = Donation.validated('Ali', 150000.0, 'Infaq');
+    print(donation3);                   // => Output: Infaq from Ali: Rp150000.0
+
+    Donation donation4 = Donation.validated('', 100000.0, 'Zakat');
+                                        // => Validation fails: empty donor
+  } catch (e) {
+    print('Validation error: $e');      // => Output: Validation error: Invalid argument(s): Donor cannot be empty
+  }
+
+  // Factory constructor with caching
+  Donation cached1 = Donation.cached('donor1', 'Umar', 175000.0, 'Zakat');
+                                        // => Output: Creating new donation: donor1
+  print('First call: $cached1');        // => Output: First call: Zakat from Umar: Rp175000.0
+
+  Donation cached2 = Donation.cached('donor1', 'Different', 999999.0, 'Different');
+                                        // => Output: Returning cached donation: donor1
+                                        // => Returns: same instance as cached1
+  print('Second call: $cached2');       // => Output: Second call: Zakat from Umar: Rp175000.0
+                                        // => Same values: cached instance
+
+  print('Same instance: ${identical(cached1, cached2)}');
+                                        // => Output: Same instance: true
+                                        // => identical(): checks reference equality
+
+  // Factory for polymorphic creation
+  PaymentMethod cash = PaymentMethod.create('cash');
+                                        // => Factory: returns CashPayment instance
+  cash.process(100000.0);               // => Output: Processing cash payment: Rp100000.0
+
+  PaymentMethod card = PaymentMethod.create('card');
+                                        // => Factory: returns CardPayment instance
+  card.process(200000.0);               // => Output: Processing card payment: Rp200000.0
+
+  // Singleton pattern
+  DonationService service1 = DonationService();
+                                        // => First call: creates instance
+  DonationService service2 = DonationService();
+                                        // => Second call: returns same instance
+
+  print('Singleton: ${identical(service1, service2)}');
+                                        // => Output: Singleton: true
+                                        // => Always same instance
+
+  service1.processDonation(donation1);  // => Output: Service processing: Zakat from Ahmad: Rp100000.0
+}
+```
+
+**Constructor Comparison**:
+
+| Constructor Type | New Instance | Return Type      | Use Case                     |
+| ---------------- | ------------ | ---------------- | ---------------------------- |
+| Standard         | Always       | Declared class   | Default object creation      |
+| Named            | Always       | Declared class   | Descriptive alternatives     |
+| Factory          | Maybe        | Declared or sub  | Caching, validation, factory |
+| Const            | Compile-time | Declared (const) | Immutable compile constants  |
+
+**Key Takeaway**: Use named constructors for descriptive alternatives. Use factory constructors for caching, validation, polymorphic creation, and singletons. Factory constructors can return cached instances or subclass instances.
+
+**Why It Matters**: Named constructors make code self-documenting (`Donation.zakat()` vs `Donation('donor', 100, 'Zakat')`). Factory constructors enable patterns impossible with standard constructors: singletons (DonationService), object pools (cached instances), polymorphic factories (PaymentMethod.create), and validation before creation. In Flutter, factory constructors implement widget builders and state management patterns.
+
+**Common Pitfalls**: Factory constructors can't initialize final fields directly (must delegate to standard constructor). Forgetting to cache in factory defeats caching purpose. Private named constructors (`._internal()`) required for singleton pattern. Factory constructors can't be const.
+
+---
+
+## Example 49: Operator Overloading
+
+Implementing custom behavior for operators (+, -, \*, ==, [], etc.) to make domain objects work naturally with standard operators.
+
+**Overloadable Operators**:
+
+- **Arithmetic**: `+`, `-`, `*`, `/`, `%`, `~/`
+- **Comparison**: `==`, `<`, `>`, `<=`, `>=`
+- **Index**: `[]`, `[]=`
+- **Unary**: `-` (negation), `~` (bitwise NOT)
+- **Other**: `&`, `|`, `^`, `<<`, `>>`
+
+**Non-overloadable**: `&&`, `||`, `?.`, `..`, `?.` , `!`, `is`, `as`, `?`
+
+```dart
+class Money {
+  final double amount;                  // => Amount: in IDR
+  final String currency;                // => Currency: IDR, USD, etc.
+
+  const Money(this.amount, [this.currency = 'IDR']);
+                                        // => Constructor: amount required, currency optional
+                                        // => Default: IDR
+
+  // Arithmetic operator: addition
+  Money operator +(Money other) {       // => Operator method: + overload
+                                        // => Parameter: other Money instance
+                                        // => Return: new Money instance
+    if (currency != other.currency) {   // => Validate: same currency
+      throw ArgumentError('Cannot add different currencies');
+    }
+    return Money(amount + other.amount, currency);
+                                        // => New instance: sum of amounts
+                                        // => Immutable: original instances unchanged
+  }
+
+  // Arithmetic operator: subtraction
+  Money operator -(Money other) {
+    if (currency != other.currency) {
+      throw ArgumentError('Cannot subtract different currencies');
+    }
+    return Money(amount - other.amount, currency);
+  }
+
+  // Arithmetic operator: multiplication (by scalar)
+  Money operator *(double multiplier) { // => Parameter: numeric multiplier
+                                        // => Use case: calculate percentage, multiples
+    return Money(amount * multiplier, currency);
+  }
+
+  // Arithmetic operator: division (by scalar)
+  Money operator /(double divisor) {
+    if (divisor == 0) {
+      throw ArgumentError('Cannot divide by zero');
+    }
+    return Money(amount / divisor, currency);
+  }
+
+  // Comparison operator: equality
+  @override
+  bool operator ==(Object other) {      // => Override: Object.operator==
+                                        // => Parameter: Object (not Money)
+                                        // => Must override hashCode too
+    if (identical(this, other)) return true;
+                                        // => Same instance: always equal
+    return other is Money &&            // => Type check: must be Money
+        amount == other.amount &&       // => Compare: amount
+        currency == other.currency;     // => Compare: currency
+  }
+
+  @override
+  int get hashCode => Object.hash(amount, currency);
+                                        // => Required: with operator==
+                                        // => Hash: combination of fields
+                                        // => Consistent: equal objects same hash
+
+  // Comparison operator: less than
+  bool operator <(Money other) {
+    if (currency != other.currency) {
+      throw ArgumentError('Cannot compare different currencies');
+    }
+    return amount < other.amount;
+  }
+
+  // Comparison operator: greater than
+  bool operator >(Money other) {
+    if (currency != other.currency) {
+      throw ArgumentError('Cannot compare different currencies');
+    }
+    return amount > other.amount;
+  }
+
+  // Unary operator: negation
+  Money operator -() {                  // => Unary operator: no parameter
+                                        // => Usage: -money
+    return Money(-amount, currency);    // => Negate: reverse sign
+  }
+
+  @override
+  String toString() => '$currency $amount';
+}
+
+class DonationList {
+  final List<Money> _donations = [];
+
+  // Index operator: read
+  Money operator [](int index) {        // => Bracket operator: read access
+                                        // => Usage: list[0]
+    return _donations[index];           // => Return: donation at index
+  }
+
+  // Index operator: write
+  void operator []=(int index, Money donation) {
+                                        // => Bracket operator: write access
+                                        // => Usage: list[0] = donation
+    _donations[index] = donation;       // => Set: donation at index
+  }
+
+  // Custom operator: addition (add donation)
+  void operator +(Money donation) {     // => Custom meaning: add to list
+                                        // => Usage: donationList + donation
+    _donations.add(donation);
+  }
+
+  int get length => _donations.length;
+
+  Money get total {
+    if (_donations.isEmpty) return Money(0);
+    Money sum = _donations[0];
+    for (int i = 1; i < _donations.length; i++) {
+      sum = sum + _donations[i];        // => Use: overloaded + operator
+    }
+    return sum;
+  }
+}
+
+void main() {
+  // Arithmetic operators
+  Money donation1 = Money(100000);
+  Money donation2 = Money(200000);
+
+  Money total = donation1 + donation2;  // => Use: overloaded + operator
+                                        // => total: Money(300000, 'IDR')
+  print('Total: $total');               // => Output: Total: IDR 300000.0
+
+  Money difference = donation2 - donation1;
+                                        // => Use: overloaded - operator
+  print('Difference: $difference');     // => Output: Difference: IDR 100000.0
+
+  Money zakatRate = Money(10000000) * 0.025;
+                                        // => Multiplication: calculate Zakat
+  print('Zakat (2.5%): $zakatRate');    // => Output: Zakat (2.5%): IDR 250000.0
+
+  Money split = Money(600000) / 3;      // => Division: split amount
+  print('Split (3 ways): $split');      // => Output: Split (3 ways): IDR 200000.0
+
+  // Comparison operators
+  Money amount1 = Money(150000);
+  Money amount2 = Money(150000);
+  Money amount3 = Money(200000);
+
+  print('amount1 == amount2: ${amount1 == amount2}');
+                                        // => Output: true (same value)
+  print('amount1 == amount3: ${amount1 == amount3}');
+                                        // => Output: false (different value)
+
+  print('amount1 < amount3: ${amount1 < amount3}');
+                                        // => Output: true (150000 < 200000)
+  print('amount3 > amount1: ${amount3 > amount1}');
+                                        // => Output: true (200000 > 150000)
+
+  // Unary operator
+  Money debt = Money(500000);
+  Money negated = -debt;                // => Unary: negate amount
+  print('Negated: $negated');           // => Output: Negated: IDR -500000.0
+
+  // Index operators
+  DonationList list = DonationList();
+  list + Money(100000);                 // => Custom +: add to list
+  list + Money(200000);
+  list + Money(150000);
+
+  print('First donation: ${list[0]}');  // => Index read: []
+                                        // => Output: First donation: IDR 100000.0
+
+  list[1] = Money(250000);              // => Index write: []=
+  print('Updated second: ${list[1]}');  // => Output: Updated second: IDR 250000.0
+
+  print('Total donations: ${list.total}');
+                                        // => Output: Total donations: IDR 500000.0
+
+  // Operator chaining
+  Money result = Money(1000000) + Money(500000) - Money(200000);
+                                        // => Chain: multiple operators
+                                        // => result: 1300000
+  print('Chained result: $result');     // => Output: Chained result: IDR 1300000.0
+
+  Money compound = Money(5000000) * 0.025 + Money(100000);
+                                        // => Complex: multiplication then addition
+                                        // => 125000 + 100000 = 225000
+  print('Compound: $compound');         // => Output: Compound: IDR 225000.0
+}
+```
+
+**Operator Overloading Best Practices**:
+
+| Guideline              | Rationale                                  | Example                      |
+| ---------------------- | ------------------------------------------ | ---------------------------- |
+| Preserve expectations  | `+` should add, not subtract               | `money1 + money2` adds       |
+| Maintain immutability  | Return new instance, don't modify original | `return Money(amount + ...)` |
+| Handle edge cases      | Division by zero, null checks              | `if (divisor == 0) throw`    |
+| Override hashCode      | Required when overriding `==`              | `int get hashCode => ...`    |
+| Use for domain objects | Natural operators for domain concepts      | Money, Vector, Point         |
+
+**Key Takeaway**: Overload operators to make domain objects work naturally with standard operators. Maintain operator semantics (+ adds, - subtracts). Override hashCode when overriding ==. Return new instances for immutability.
+
+**Why It Matters**: Operator overloading makes domain code readable and natural (`money1 + money2` vs `money1.add(money2)`). For value objects (Money, Duration, Point), operators express mathematical relationships clearly. In Flutter, operator overloading powers layout constraints (`BoxConstraints.tight()` uses operators), animations (`Tween<double>` interpolation), and custom data types. Well-designed operators reduce cognitive load by matching mathematical intuition.
+
+**Common Pitfalls**: Violating operator semantics (using + for concatenation when it should add). Forgetting to override hashCode with `==` breaks collections (`Set`, `Map`). Mutating original instance instead of returning new (violates immutability). Can't overload `&&`, `||`, `?.` (compile error).
+
+---
+
+## Example 50: Record Types (Dart 3.0+)
+
+Using record types for lightweight, immutable, typed tuples without creating custom classes. Records enable multiple return values, pattern matching, and structured data.
+
+**Record Features**:
+
+- **Positional fields**: Accessed by position ($1, $2, ...)
+- **Named fields**: Accessed by name
+- **Mixed records**: Combine positional and named fields
+- **Type safety**: Each field has specific type
+- **Immutable**: Field values can't change after creation
+- **Structural typing**: Records with same structure are same type
+
+```dart
+// Function returning positional record
+(String, double) getDonation() {        // => Return type: record (String, double)
+                                        // => Positional: two fields
+  return ('Ahmad', 100000.0);           // => Record literal: (value1, value2)
+}                                       // => Immutable: can't modify fields
+
+// Function returning named record
+({String donor, double amount, String category}) getDonationDetails() {
+                                        // => Named record: {name: type, ...}
+                                        // => Field access: by name
+  return (
+    donor: 'Fatimah',                   // => Named field: donor
+    amount: 200000.0,                   // => Named field: amount
+    category: 'Zakat',                  // => Named field: category
+  );                                    // => Return: named record
+}
+
+// Function returning mixed record
+(int, String, {double amount, bool verified}) processDonation(String donor, double amount) {
+                                        // => Mixed: positional + named
+                                        // => Positional first, then named
+  int id = donor.hashCode;              // => Generate: donation ID
+  String status = amount > 0 ? 'valid' : 'invalid';
+
+  return (
+    id,                                 // => Positional field 1: id
+    status,                             // => Positional field 2: status
+    amount: amount,                     // => Named field: amount
+    verified: amount >= 10000,          // => Named field: verified
+  );
+}
+
+// Function using record destructuring
+void printDonation((String, double) donation) {
+                                        // => Parameter: record type
+  var (donor, amount) = donation;       // => Destructure: extract fields
+                                        // => donor: $1, amount: $2
+  print('Donor: $donor, Amount: Rp$amount');
+}
+
+// Record in data structures
+typedef DonationRecord = ({String donor, double amount, DateTime timestamp});
+                                        // => Typedef: name for record type
+                                        // => Usage: reusable type alias
+
+void main() {
+  // Positional record
+  var donation1 = getDonation();        // => Type: (String, double)
+  print('Positional record: $donation1');
+                                        // => Output: (Ahmad, 100000.0)
+
+  // Access positional fields
+  String donor1 = donation1.$1;         // => Field 1: $1 accessor
+  double amount1 = donation1.$2;        // => Field 2: $2 accessor
+  print('Donor: $donor1, Amount: Rp$amount1');
+                                        // => Output: Donor: Ahmad, Amount: Rp100000.0
+
+  // Named record
+  var donation2 = getDonationDetails(); // => Type: ({String donor, double amount, String category})
+  print('Named record: $donation2');    // => Output: (donor: Fatimah, amount: 200000.0, category: Zakat)
+
+  // Access named fields
+  String donor2 = donation2.donor;      // => Field: .donor accessor
+  double amount2 = donation2.amount;    // => Field: .amount accessor
+  String category2 = donation2.category;// => Field: .category accessor
+  print('$category2 from $donor2: Rp$amount2');
+                                        // => Output: Zakat from Fatimah: Rp200000.0
+
+  // Mixed record
+  var result = processDonation('Ali', 150000.0);
+                                        // => Type: (int, String, {double amount, bool verified})
+  print('Mixed record: $result');       // => Output: (hashcode, valid, amount: 150000.0, verified: true)
+
+  int id = result.$1;                   // => Positional: $1
+  String status = result.$2;            // => Positional: $2
+  double amount = result.amount;        // => Named: .amount
+  bool verified = result.verified;      // => Named: .verified
+  print('ID: $id, Status: $status, Amount: Rp$amount, Verified: $verified');
+
+  // Record destructuring
+  var (extractedDonor, extractedAmount) = getDonation();
+                                        // => Pattern matching: extract fields
+  print('Destructured: $extractedDonor - Rp$extractedAmount');
+
+  // Named record destructuring
+  var (donor: donorName, amount: donationAmount, category: cat) = getDonationDetails();
+                                        // => Named destructuring: extract by name
+  print('Named destructured: $cat from $donorName - Rp$donationAmount');
+
+  // Record in collections
+  List<(String, double)> donations = [
+    ('Ahmad', 100000.0),
+    ('Fatimah', 200000.0),
+    ('Ali', 150000.0),
+  ];                                    // => List: of positional records
+                                        // => Type: List<(String, double)>
+
+  for (var donation in donations) {
+    print('Donor: ${donation.$1}, Amount: Rp${donation.$2}');
+  }                                     // => Iterate: access positional fields
+
+  // Record with typedef
+  DonationRecord record1 = (
+    donor: 'Umar',
+    amount: 175000.0,
+    timestamp: DateTime.now(),
+  );                                    // => Type: DonationRecord (typedef)
+
+  print('Typedef record: ${record1.donor} - Rp${record1.amount}');
+
+  // Record equality (structural)
+  var rec1 = ('Ahmad', 100000.0);
+  var rec2 = ('Ahmad', 100000.0);
+  var rec3 = ('Fatimah', 100000.0);
+
+  print('rec1 == rec2: ${rec1 == rec2}');
+                                        // => Output: true (same structure and values)
+  print('rec1 == rec3: ${rec1 == rec3}');
+                                        // => Output: false (different values)
+
+  // Records are immutable
+  // rec1.$1 = 'Different'; // ← Compile error: can't modify record fields
+
+  // Record in switch expression (pattern matching)
+  String describeRecord((String, double) record) {
+    return switch (record) {
+      ('Ahmad', var amount) => 'Ahmad donated Rp$amount',
+                                        // => Pattern: match first field, bind second
+      (var donor, 200000.0) => '$donor donated exactly Rp200000',
+                                        // => Pattern: bind first field, match second
+      (var donor, var amount) when amount > 100000 =>
+        '$donor donated large amount: Rp$amount',
+                                        // => Guard: when clause for condition
+      _ => 'Other donation',            // => Default: catch-all
+    };
+  }
+
+  print(describeRecord(('Ahmad', 100000.0)));
+                                        // => Output: Ahmad donated Rp100000.0
+  print(describeRecord(('Fatimah', 200000.0)));
+                                        // => Output: Fatimah donated exactly Rp200000.0
+  print(describeRecord(('Ali', 150000.0)));
+                                        // => Output: Ali donated large amount: Rp150000.0
+}
+```
+
+**Record Type Syntax**:
+
+| Type       | Syntax                             | Access        | Example                 |
+| ---------- | ---------------------------------- | ------------- | ----------------------- |
+| Positional | `(Type1, Type2, ...)`              | `$1, $2, ...` | `(String, int)`         |
+| Named      | `({String name1, int name2, ...})` | `.name1, ...` | `({String donor, ...})` |
+| Mixed      | `(Type1, {String name, ...})`      | `$1, .name`   | `(int, {bool flag})`    |
+
+**Key Takeaway**: Use record types for lightweight structured data without creating classes. Records support positional and named fields, destructuring, pattern matching, and structural equality. Immutable and type-safe.
+
+**Why It Matters**: Records eliminate boilerplate classes for simple data grouping. Returning multiple values from functions becomes natural (`(String, int)` instead of creating `Result` class). In Flutter, records simplify widget builders returning multiple values and state destructuring. Pattern matching with records enables expressive conditional logic. Structural typing means identical record shapes are interchangeable.
+
+**Common Pitfalls**: Records are immutable—can't modify fields after creation. Positional field access (`$1, $2`) is less readable than named fields for complex records. Records with different field order are different types (`(String, int)` ≠ `(int, String)`). Can't add methods to records (use classes for behavior).
+
+---
+
 ## Final Summary
 
-You've mastered **16 comprehensive intermediate Dart examples** covering **35% more** of the language (40-75% total coverage):
+You've mastered **25 comprehensive intermediate Dart examples** covering **35% more** of the language (40-75% total coverage):
 
 **Async Programming** (Examples 26-35):
 
@@ -2570,17 +4035,26 @@ You've mastered **16 comprehensive intermediate Dart examples** covering **35% m
 - Streams, transformations, StreamController, async generators
 - Stream subscription management (pause/resume/cancel)
 
-**Advanced OOP** (Examples 36-40):
+**Advanced OOP** (Examples 36-41):
 
 - Inheritance with method overriding
 - Abstract classes defining contracts
 - Multiple interface implementation
 - Mixins for composition without inheritance
 - Extension methods adding functionality to existing types
-
-**Generics & Advanced Patterns** (Example 41):
-
 - Generic classes with type constraints for type-safe collections
+
+**Advanced Language Features** (Examples 42-50):
+
+- Generic functions and methods for flexible operations
+- Callable classes with call() method
+- Typedef for function type aliases
+- Cascade notation (.., ?..) for fluent APIs
+- Metadata and annotations (@override, @deprecated, custom)
+- Assert statements for development-time validation
+- Factory constructors and named constructors
+- Operator overloading for domain objects
+- Record types for lightweight structured data (Dart 3.0+)
 
 **Production Patterns Covered**:
 
@@ -2589,8 +4063,12 @@ You've mastered **16 comprehensive intermediate Dart examples** covering **35% m
 - ✅ Abstract classes for polymorphism
 - ✅ Mixins for cross-cutting concerns
 - ✅ Extensions for fluent APIs
-- ✅ Generics for type-safe collections
+- ✅ Generics for type-safe collections and functions
+- ✅ Factory pattern for controlled instance creation
+- ✅ Callable classes for strategy pattern
+- ✅ Operator overloading for natural domain syntax
+- ✅ Records for multiple return values and pattern matching
 
-**Intermediate Mastery**: You now understand Dart's core async patterns, advanced OOP features, and generic programming—essential for Flutter development and server-side Dart applications. These patterns form the foundation for building scalable, maintainable applications.
+**Intermediate Mastery**: You now understand Dart's core async patterns, advanced OOP features, generic programming, and sophisticated language features—essential for Flutter development and server-side Dart applications. These patterns form the foundation for building scalable, maintainable applications with clean, expressive code.
 
-**Next Step**: **Advanced** (Examples 42-65+) covers isolates for parallelism, advanced async patterns (zones, microtasks), design patterns (factory, singleton, observer), performance optimization, and Dart internals for expert-level mastery.
+**Next Step**: **Advanced** (Examples 51-75) covers isolates for parallelism, advanced async patterns, design patterns (singleton, factory, observer), performance optimization, testing strategies, and production patterns for expert-level mastery.

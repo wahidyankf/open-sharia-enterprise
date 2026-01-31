@@ -62,25 +62,30 @@ Before writing automation, verify Ansible installation and Python environment. T
 ```yaml
 ---
 # verify.yml
-- name: Verify Ansible Installation
-  hosts: localhost
+- name: Verify Ansible Installation # => Play declaration with descriptive name
+  hosts: localhost # => Execute tasks on local machine only
   gather_facts: true # => Collect system information (default behavior)
+  # => Fact gathering runs setup module automatically before tasks
 
   tasks:
-    - name: Display Ansible version
-      ansible.builtin.debug:
-        msg: "Ansible version: {{ ansible_version.full }}"
-      # => Output: Ansible version: 2.15.0 (reads from gathered facts)
+    - name: Display Ansible version # => Task 1: Show installed Ansible version
+      ansible.builtin.debug: # => Debug module for output (no state changes)
+        msg: "Ansible version: {{ ansible_version.full }}" # => Jinja2 variable interpolation
+      # => Reads ansible_version from facts dictionary
+      # => Output: Ansible version: 2.15.0 (from gathered facts)
 
-    - name: Display Python version
+    - name: Display Python version # => Task 2: Show Python interpreter version
       ansible.builtin.debug:
-        msg: "Python version: {{ ansible_python_version }}"
+        msg: "Python version: {{ ansible_python_version }}" # => Python version fact
+      # => Ansible requires Python 2.7+ or 3.5+ on target hosts
       # => Output: Python version: 3.11.6 (Python interpreter used by Ansible)
 
-    - name: Display operating system
+    - name: Display operating system # => Task 3: Show OS distribution information
       ansible.builtin.debug:
-        msg: "OS: {{ ansible_distribution }} {{ ansible_distribution_version }}"
-      # => Output: OS: Ubuntu 22.04 (detected from system facts)
+        msg: "OS: {{ ansible_distribution }} {{ ansible_distribution_version }}" # => Combines two facts
+      # => ansible_distribution: Ubuntu, Debian, RedHat, CentOS, etc.
+      # => ansible_distribution_version: 22.04, 20.04, 9, etc.
+      # => Output: OS: Ubuntu 22.04 (detected from /etc/os-release)
 ```
 
 **Run**: `ansible-playbook verify.yml`
@@ -102,42 +107,51 @@ Playbooks execute tasks sequentially from top to bottom. Each task runs a module
 ```yaml
 ---
 # multi_task.yml
-- name: Multi-Task Playbook Example
-  hosts: localhost
-  gather_facts: false
+- name: Multi-Task Playbook Example # => Sequential task execution demonstration
+  hosts: localhost # => Target only local machine
+  gather_facts: false # => Skip fact gathering for faster execution
 
   tasks:
-    - name: Task 1 - Create directory
-      ansible.builtin.file:
+    - name: Task 1 - Create directory # => First task in sequence
+      ansible.builtin.file: # => File module manages filesystem objects
         path: /tmp/ansible_demo # => Directory path to create
         state: directory # => Ensure path is a directory (idempotent)
-        mode: "0755" # => Permissions (rwxr-xr-x)
+        # => Idempotent: running twice produces same result
+        mode: "0755" # => Permissions (rwxr-xr-x: owner rwx, group rx, others rx)
       # => changed: [localhost] (creates directory if missing)
       # => ok: [localhost] (if directory already exists with correct permissions)
+      # => Task fails if parent directory /tmp doesn't exist
 
-    - name: Task 2 - Create file in directory
-      ansible.builtin.file:
-        path: /tmp/ansible_demo/test.txt
-        state: touch # => Create empty file or update timestamp
-        mode: "0644" # => Permissions (rw-r--r--)
+    - name: Task 2 - Create file in directory # => Second task depends on task 1
+      ansible.builtin.file: # => Same module, different state parameter
+        path: /tmp/ansible_demo/test.txt # => Full file path inside created directory
+        state: touch # => Create empty file or update timestamp (like Linux touch command)
+        mode: "0644" # => Permissions (rw-r--r--: owner rw, group r, others r)
       # => changed: [localhost] (creates file or updates mtime)
+      # => Updates access and modification times if file exists
 
-    - name: Task 3 - Write content to file
-      ansible.builtin.copy:
-        dest: /tmp/ansible_demo/test.txt
+    - name: Task 3 - Write content to file # => Third task writes data
+      ansible.builtin.copy: # => Copy module can write content directly
+        dest: /tmp/ansible_demo/test.txt # => Destination file path
         content: "Hello from Ansible\n" # => Content to write (overwrites existing)
+        # => Can also use 'src' parameter to copy from file
       # => changed: [localhost] (writes content to file)
+      # => Replaces entire file content with this string
 
-    - name: Task 4 - Display file content
-      ansible.builtin.command:
-        cmd: cat /tmp/ansible_demo/test.txt
+    - name: Task 4 - Display file content # => Fourth task reads result
+      ansible.builtin.command: # => Command module executes shell commands
+        cmd: cat /tmp/ansible_demo/test.txt # => Read file content
       register: file_content # => Save command output to variable
-      # => changed: [localhost] (command always reports changed)
+      # => Stores stdout, stderr, return code in file_content dict
+      # => changed: [localhost] (command always reports changed even if idempotent)
+      # => Command module doesn't parse idempotency - use changed_when to override
 
-    - name: Task 5 - Print file content
-      ansible.builtin.debug:
-        msg: "File content: {{ file_content.stdout }}"
+    - name: Task 5 - Print file content # => Final task displays captured output
+      ansible.builtin.debug: # => Debug module for non-destructive output
+        msg: "File content: {{ file_content.stdout }}" # => Access stdout from registered variable
+      # => file_content is dictionary with keys: stdout, stderr, rc, cmd
       # => Output: File content: Hello from Ansible
+      # => Debug tasks never report 'changed' status
 ```
 
 **Run**: `ansible-playbook multi_task.yml`
@@ -157,44 +171,58 @@ YAML is whitespace-sensitive and uses indentation (2 spaces) for structure. List
 ```yaml
 ---
 # yaml_syntax.yml
-- name: YAML Syntax Demonstration
-  hosts: localhost
-  gather_facts: false
+- name: YAML Syntax Demonstration # => Play demonstrating YAML data structures
+  hosts: localhost # => Execute on local machine only
+  gather_facts: false # => Skip fact gathering (not needed for demo)
 
   # Variables section (dictionary)
-  vars:
+  vars: # => Play-level variable definitions
+    # => All vars are accessible in tasks via Jinja2 {{ var_name }}
     simple_string: "Hello" # => String value (quotes optional for simple strings)
-    simple_number: 42 # => Integer value
-    simple_bool: true # => Boolean value (true/false, yes/no)
+    # => Without special chars, "Hello" same as Hello
+    simple_number: 42 # => Integer value (no quotes)
+    # => YAML infers type from format
+    simple_bool: true # => Boolean value (true/false, yes/no, on/off all valid)
+    # => Booleans are case-insensitive in YAML
 
     # List syntax (array)
-    simple_list: # => List declaration
-      - item1 # => First list element
-      - item2 # => Second list element
-      - item3 # => Third list element
+    simple_list: # => List declaration using dash syntax
+      # => Lists are ordered sequences of items
+      - item1 # => First list element (index 0)
+      - item2 # => Second list element (index 1)
+      - item3 # => Third list element (index 2)
+      # => Access via {{ simple_list[0] }} for first item
 
     # Dictionary syntax (hash/map)
-    simple_dict: # => Dictionary declaration
+    simple_dict: # => Dictionary declaration using key-value pairs
+      # => Dictionaries are unordered collections of keys and values
       key1: value1 # => First key-value pair
+      # => Access via {{ simple_dict.key1 }} or {{ simple_dict['key1'] }}
       key2: value2 # => Second key-value pair
+      # => Keys must be unique within dictionary
 
     # Multi-line string (folded - joins lines with spaces)
-    folded_string: >
+    folded_string: > # => Folded block scalar (> symbol)
       This is a long string
       that will be folded into
       a single line with spaces.
-    # => "This is a long string that will be folded into a single line with spaces."
+    # => Result: "This is a long string that will be folded into a single line with spaces."
+    # => Newlines become spaces, trailing newline added
+    # => Useful for long text that should be single line
+
     # Multi-line string (literal - preserves newlines)
-    literal_string: |
+    literal_string: | # => Literal block scalar (| symbol)
       Line 1
       Line 2
       Line 3
-    # => "Line 1\nLine 2\nLine 3\n" (preserves line breaks)
+    # => Result: "Line 1\nLine 2\nLine 3\n" (preserves line breaks)
+    # => Each line preserved with \n separators
+    # => Useful for config files, scripts, formatted text
 
   tasks:
-    - name: Display variables
-      ansible.builtin.debug:
-        msg: |
+    - name: Display variables # => Task to output all variable values
+      ansible.builtin.debug: # => Debug module for output (no state changes)
+        msg: | # => Multi-line literal message
           String: {{ simple_string }}
           Number: {{ simple_number }}
           Bool: {{ simple_bool }}
@@ -202,7 +230,9 @@ YAML is whitespace-sensitive and uses indentation (2 spaces) for structure. List
           Dict: {{ simple_dict }}
           Folded: {{ folded_string }}
           Literal: {{ literal_string }}
+      # => Jinja2 interpolates {{ variable }} expressions
       # => Prints all variable values with proper formatting
+      # => Output shows actual values and data structures
 ```
 
 **Run**: `ansible-playbook yaml_syntax.yml`
@@ -238,37 +268,46 @@ graph TD
 ---
 # multi_play.yml
 # Play 1: Setup phase (localhost)
-- name: Play 1 - Setup Phase
-  hosts: localhost
-  gather_facts: false
+- name: Play 1 - Setup Phase # => First play in playbook sequence
+  hosts: localhost # => Execute on local machine
+  gather_facts: false # => Skip facts for speed (not needed in setup)
+  # => Each play can have independent gather_facts setting
 
-  tasks:
-    - name: Initialize setup
-      ansible.builtin.debug:
-        msg: "Starting multi-play playbook"
+  tasks: # => Task list for this play only
+    - name: Initialize setup # => Setup task declaration
+      ansible.builtin.debug: # => Debug module for output
+        msg: "Starting multi-play playbook" # => Informational message
       # => Output: Starting multi-play playbook
+      # => Debug tasks execute immediately, no state changes
 
 # Play 2: Configuration phase (localhost simulating remote)
-- name: Play 2 - Configuration Phase
-  hosts: localhost
-  gather_facts: true # => This play gathers facts
+- name: Play 2 - Configuration Phase # => Second play starts after Play 1 completes
+  hosts: localhost # => Target same host, but separate play context
+  gather_facts: true # => This play gathers facts (independent setting)
+  # => Facts collected here are available to Play 2 and Play 3 tasks
+  # => Setup module runs automatically before Play 2 tasks
 
-  tasks:
-    - name: Display hostname
+  tasks: # => New task list (Play 2 scope)
+    - name: Display hostname # => Use fact collected during gather_facts
       ansible.builtin.debug:
-        msg: "Configuring {{ ansible_hostname }}"
+        msg: "Configuring {{ ansible_hostname }}" # => Jinja2 variable from facts
+      # => ansible_hostname populated by setup module
       # => Output: Configuring localhost (from gathered facts)
+      # => Facts persist across remaining plays in playbook
 
 # Play 3: Reporting phase (localhost)
-- name: Play 3 - Reporting Phase
-  hosts: localhost
+- name: Play 3 - Reporting Phase # => Third play executes after Play 2
+  hosts: localhost # => Same host, new play context
   gather_facts: false # => This play skips fact gathering
+  # => Reuses facts from Play 2 (facts persist in memory)
+  # => Skipping improves performance
 
-  tasks:
-    - name: Generate report
+  tasks: # => Final task list (Play 3 scope)
+    - name: Generate report # => Final reporting task
       ansible.builtin.debug:
-        msg: "Playbook execution complete"
+        msg: "Playbook execution complete" # => Summary message
       # => Output: Playbook execution complete
+      # => Playbook exits successfully after this task
 ```
 
 **Run**: `ansible-playbook multi_play.yml`
@@ -312,32 +351,41 @@ graph TD
 ```yaml
 ---
 # variables.yml
-- name: Variable Precedence Example
-  hosts: localhost
-  gather_facts: false
+- name: Variable Precedence Example # => Demonstrates variable precedence hierarchy
+  hosts: localhost # => Execute on local machine
+  gather_facts: false # => Skip fact gathering (not needed)
 
   # Play-level variables (precedence: 15)
-  vars:
+  vars: # => Variable declarations at play scope
+    # => 22 levels of precedence exist in Ansible
     environment: "development" # => Default value defined in playbook
+    # => Can be overridden by higher precedence sources
     app_name: "MyApp" # => Another play-level variable
-    app_port: 8080 # => Integer variable
+    # => String value, accessible in all tasks
+    app_port: 8080 # => Integer variable (no quotes)
+    # => YAML infers integer type
 
-  tasks:
-    - name: Display variables
-      ansible.builtin.debug:
-        msg: |
+  tasks: # => Task list begins
+    - name: Display variables # => Show current variable values
+      ansible.builtin.debug: # => Debug module for output
+        msg: | # => Multi-line literal message
           Environment: {{ environment }}
           App: {{ app_name }}
           Port: {{ app_port }}
-      # => Shows current values (can be overridden by CLI)
+      # => Jinja2 interpolates {{ }} expressions
+      # => Shows current values (can be overridden by CLI -e flag)
+      # => Output depends on precedence resolution
 
     # Task-level variable (highest precedence except extra-vars)
-    - name: Override with task vars
-      ansible.builtin.debug:
-        msg: "Task-level environment: {{ task_env }}"
-      vars:
+    - name: Override with task vars # => Task-scoped variable demonstration
+      ansible.builtin.debug: # => Debug output module
+        msg: "Task-level environment: {{ task_env }}" # => References task var
+      vars: # => Task-scoped variables (precedence: 21)
         task_env: "production" # => Task-scoped variable (precedence: 21)
+        # => Only accessible within this task
+        # => Higher precedence than play vars (15)
       # => Output: Task-level environment: production
+      # => task_env variable not accessible in other tasks
 ```
 
 **Run**:
@@ -396,16 +444,22 @@ db_port=5432
 ```yaml
 ---
 # inventory_demo.yml
-- name: Use Inventory Groups
+- name: Use Inventory Groups # => Demonstrate inventory-based targeting
   hosts: webservers # => Target all hosts in webservers group
-  gather_facts: false
+  # => Expands to: web1, web2, web3 from inventory file
+  # => Ansible connects to each host via SSH sequentially or parallel (forks)
+  gather_facts: false # => Skip fact gathering for speed
 
-  tasks:
-    - name: Display host information
-      ansible.builtin.debug:
-        msg: "Host {{ inventory_hostname }} on port {{ http_port }}"
-      # => Runs on web1, web2, web3
+  tasks: # => Tasks execute on ALL hosts in webservers group
+    - name: Display host information # => Show per-host information
+      ansible.builtin.debug: # => Debug module runs on each target host
+        msg: "Host {{ inventory_hostname }} on port {{ http_port }}" # => inventory_hostname is built-in variable
+      # => inventory_hostname contains current host's name from inventory
+      # => http_port comes from [webservers:vars] section (value: 80)
+      # => Runs on web1, web2, web3 (all webservers group members)
       # => Output: Host web1.example.com on port 80
+      # => Output: Host web2.example.com on port 80
+      # => Output: Host web3.example.com on port 80
 ```
 
 **Run**: `ansible-playbook -i inventory.ini inventory_demo.yml`
@@ -478,48 +532,76 @@ Ansible supports powerful patterns for targeting hosts: wildcards, ranges, union
 ---
 # patterns.yml
 # Pattern examples (use with existing inventory)
+# => Demonstrates host targeting patterns without inventory modification
 
 # Target single host
-- name: Single Host
-  hosts: web1.example.com
+- name: Single Host # => Most specific targeting
+  hosts: web1.example.com # => Exact hostname match from inventory
+  # => Targets only this specific host, no pattern matching
+  # => Use for one-off operations on individual servers
   tasks:
-    - ansible.builtin.debug: msg="Single host"
+    - ansible.builtin.debug: msg="Single host" # => Executes only on web1
+    # => Output: ok: [web1.example.com] => { "msg": "Single host" }
 
 # Target all hosts in group
-- name: All Webservers
-  hosts: webservers
+- name: All Webservers # => Group-based targeting
+  hosts: webservers # => All members of webservers group
+  # => Expands to all hosts defined in [webservers] section
+  # => web1.example.com, web2.example.com, web3.example.com
   tasks:
-    - ansible.builtin.debug: msg="All webservers"
+    - ansible.builtin.debug: msg="All webservers" # => Executes on each webserver
+    # => Output appears 3 times (once per host)
 
 # Wildcard pattern (all hosts starting with 'web')
-- name: Wildcard Pattern
-  hosts: web*
+- name: Wildcard Pattern # => Glob-style pattern matching
+  hosts: web* # => Matches any hostname starting with 'web'
+  # => Asterisk (*) wildcard matches zero or more characters
+  # => Matches: web1, web2, web3, webserver, web-prod, etc.
+  # => Does NOT match groups, only individual hostnames
   tasks:
-    - ansible.builtin.debug: msg="Wildcard match"
+    - ansible.builtin.debug: msg="Wildcard match" # => Runs on all web* hosts
+    # => Pattern matching happens at inventory parsing time
 
 # Union of groups (hosts in EITHER group)
-- name: Union Pattern
-  hosts: webservers:databases
+- name: Union Pattern # => Combine multiple groups
+  hosts: webservers:databases # => Colon (:) operator creates union
+  # => Targets hosts in webservers OR databases (logical OR)
+  # => Includes: web1, web2, web3, db1, db2 (5 hosts total)
+  # => Duplicates removed automatically if host in both groups
   tasks:
-    - ansible.builtin.debug: msg="Web or DB servers"
+    - ansible.builtin.debug: msg="Web or DB servers" # => Runs on union set
+    # => 5 separate task executions
 
 # Intersection of groups (hosts in BOTH groups)
-- name: Intersection Pattern
-  hosts: webservers:&production
+- name: Intersection Pattern # => Hosts in multiple groups
+  hosts: webservers:&production # => Colon-ampersand (:&) creates intersection
+  # => Targets hosts in webservers AND production (logical AND)
+  # => Only includes hosts that are members of BOTH groups
+  # => Useful for filtering by environment (dev/staging/prod)
   tasks:
-    - ansible.builtin.debug: msg="Webservers in production"
+    - ansible.builtin.debug: msg="Webservers in production" # => Runs on intersection
+    # => Fewer hosts than webservers alone
 
 # Exclusion pattern (hosts in first group but NOT second)
-- name: Exclusion Pattern
-  hosts: webservers:!web3.example.com
+- name: Exclusion Pattern # => Subtract hosts from targeting
+  hosts: webservers:!web3.example.com # => Colon-exclamation (:!) excludes hosts
+  # => Targets webservers EXCEPT web3.example.com (logical subtraction)
+  # => Includes: web1, web2 (excludes web3)
+  # => Exclusion can be hostname or group name
   tasks:
-    - ansible.builtin.debug: msg="Webservers except web3"
+    - ansible.builtin.debug: msg="Webservers except web3" # => Runs on web1, web2 only
+    # => web3 skipped entirely, not even shown in output
 
 # Complex pattern combining operations
-- name: Complex Pattern
-  hosts: webservers:&production:!web3.example.com
+- name: Complex Pattern # => Multi-operation pattern
+  hosts: webservers:&production:!web3.example.com # => Combines intersection and exclusion
+  # => Read left-to-right: (webservers ∩ production) - web3
+  # => Step 1: Hosts in webservers AND production
+  # => Step 2: Remove web3.example.com from result
+  # => Useful for maintenance windows, canary deployments
   tasks:
-    - ansible.builtin.debug: msg="Production webservers except web3"
+    - ansible.builtin.debug: msg="Production webservers except web3" # => Surgical targeting
+    # => Targets production webservers with one host excluded
 ```
 
 **Run**: `ansible-playbook -i inventory.yml patterns.yml --list-hosts` (shows matched hosts without running tasks)
@@ -556,48 +638,68 @@ Create dynamic inventory script `inventory.py`:
 ```python
 #!/usr/bin/env python3
 # inventory.py (executable: chmod +x inventory.py)
-import json
-import sys
+# => Dynamic inventory script that outputs JSON
+# => Must be executable: chmod +x inventory.py
+import json # => JSON output required by Ansible
+import sys # => Command-line argument parsing
 
 def get_inventory():
     """Return inventory in Ansible's expected JSON format"""
+    # => Ansible expects specific JSON structure with groups and hosts
     inventory = {
-        "_meta": {                       # => Meta section for host variables
-            "hostvars": {
-                "web1.local": {
-                    "ansible_host": "192.168.1.10",
-                    "http_port": 8080
+        "_meta": {                       # => Meta section for host variables (performance optimization)
+            # => Including hostvars here prevents Ansible from calling --host for each host
+            # => Without _meta, Ansible calls --host N times (slow for large inventories)
+            "hostvars": { # => Host-specific variables dictionary
+                "web1.local": { # => First host's variables
+                    "ansible_host": "192.168.1.10", # => SSH connection IP
+                    # => Overrides DNS resolution
+                    "http_port": 8080 # => Custom variable for application
+                    # => Accessible in playbooks as {{ http_port }}
                 },
-                "web2.local": {
-                    "ansible_host": "192.168.1.11",
-                    "http_port": 8080
+                "web2.local": { # => Second host's variables
+                    "ansible_host": "192.168.1.11", # => Different SSH IP
+                    "http_port": 8080 # => Same port as web1
                 }
             }
         },
-        "webservers": {                  # => Group definition
-            "hosts": ["web1.local", "web2.local"],
-            "vars": {
-                "environment": "production"
+        "webservers": {                  # => Group definition (logical grouping)
+            # => Groups enable targeting via hosts: webservers
+            "hosts": ["web1.local", "web2.local"], # => List of group member hostnames
+            # => Hostnames must match keys in hostvars dictionary
+            "vars": { # => Group-level variables (apply to all group members)
+                "environment": "production" # => Accessible as {{ environment }}
+                # => All hosts in webservers inherit this variable
             }
         },
-        "all": {                         # => Special 'all' group
-            "vars": {
-                "ansible_python_interpreter": "/usr/bin/python3"
+        "all": {                         # => Special 'all' group (implicit in all inventories)
+            # => Variables here apply to ALL hosts across all groups
+            "vars": { # => Global variables
+                "ansible_python_interpreter": "/usr/bin/python3" # => Python path for all hosts
+                # => Ensures Python 3 usage on all target systems
             }
         }
     }
-    return inventory
+    return inventory # => Return complete inventory dictionary
 
 if __name__ == "__main__":
+    # => Ansible invokes script with two possible command-line modes
     if len(sys.argv) == 2 and sys.argv[1] == "--list":
-        inventory = get_inventory()
-        print(json.dumps(inventory, indent=2))
+        # => --list mode: Return complete inventory (groups, hosts, vars)
+        # => Ansible calls this ONCE per playbook run
+        inventory = get_inventory() # => Generate inventory data
+        print(json.dumps(inventory, indent=2)) # => Output JSON to stdout
+        # => Ansible parses stdout as inventory data
     elif len(sys.argv) == 3 and sys.argv[1] == "--host":
-        # Return empty dict (hostvars already in --list)
-        print(json.dumps({}))
+        # => --host mode: Return variables for specific host
+        # => Ansible calls --host <hostname> for each host if _meta missing
+        # => hostname = sys.argv[2]
+        print(json.dumps({})) # => Return empty dict (hostvars already in --list)
+        # => Performance optimization: hostvars in _meta section eliminates --host calls
     else:
-        print("Usage: inventory.py --list or --host <hostname>")
-        sys.exit(1)
+        # => Invalid usage: neither --list nor --host provided
+        print("Usage: inventory.py --list or --host <hostname>") # => Error message
+        sys.exit(1) # => Non-zero exit code signals error to Ansible
 ```
 
 **Run**:

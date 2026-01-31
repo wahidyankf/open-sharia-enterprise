@@ -19,47 +19,77 @@ Shell job control manages background processes, foreground/background switching,
 
 ```bash
 # Run command in background
-sleep 60 &                      # => [1] 12345 (job number and PID)
-                                # => & sends process to background
+sleep 60 &                      # => Executes sleep command in background
+                                # => Shell immediately returns to prompt
+                                # => Output: [1] 12345
+                                # => [1] is job number, 12345 is PID
+                                # => & operator detaches from foreground
 
 # List background jobs
-jobs                            # => [1]+ Running  sleep 60 &
-                                # => + indicates current job
+jobs                            # => Shows all background jobs for current shell
+                                # => Output: [1]+ Running  sleep 60 &
+                                # => [1] is job number
+                                # => + indicates most recent job (current)
+                                # => - would indicate previous job
 
 # Bring job to foreground
 fg %1                           # => Brings job 1 to foreground
-                                # => Blocks until complete or Ctrl+Z
+                                # => %1 is job specifier (not PID)
+                                # => Shell now waits for job to complete
+                                # => Job receives terminal input/output
+                                # => Press Ctrl+Z to suspend, Ctrl+C to terminate
 
 # Send foreground job to background
-# First suspend with Ctrl+Z
-sleep 120                       # Press Ctrl+Z
-                                # => [1]+ Stopped  sleep 120
-bg %1                           # => [1]+ sleep 120 &
-                                # => Resumes in background
+sleep 120                       # => Start command in foreground
+                                # => Shell blocks until complete
+                                # Press Ctrl+Z (suspend signal SIGTSTP)
+                                # => Output: [1]+ Stopped  sleep 120
+                                # => Job paused but still in memory
+bg %1                           # => Send job 1 to background
+                                # => Output: [1]+ sleep 120 &
+                                # => Job resumes execution in background
+                                # => Shell returns to prompt immediately
 
 # Kill background job
-kill %1                         # => Terminates job 1
-                                # => %1 refers to job number, not PID
+kill %1                         # => Send SIGTERM (signal 15) to job 1
+                                # => %1 references job number from job table
+                                # => Could also use PID: kill 12345
+                                # => Job terminates gracefully (cleanup allowed)
+                                # => Use kill -9 %1 for force kill (SIGKILL)
 
 # Wait for background jobs
-command1 &                      # => Start background job
-command2 &                      # => Start another
+command1 &                      # => Start first background job
+                                # => Job 1 running in background
+command2 &                      # => Start second background job
+                                # => Job 2 running in background
+                                # => Both jobs executing in parallel
 wait                            # => Wait for ALL background jobs
-                                # => Blocks until all complete
+                                # => Shell blocks until all jobs complete
+                                # => Returns exit code of last job to fail (or 0)
 
 # Wait for specific job
-command &                       # => [1] 12345
+command &                       # => Start background job
+                                # => Output: [1] 12345
 wait %1                         # => Wait only for job 1
+                                # => Other background jobs continue
+                                # => Returns exit code of job 1
 
 # Disown job (continue after shell exit)
-sleep 600 &                     # => [1] 12346
-disown %1                       # => Remove from job table
-                                # => Process continues after logout
+sleep 600 &                     # => Start 10-minute background sleep
+                                # => Output: [1] 12346
+disown %1                       # => Remove job 1 from shell's job table
+                                # => Job no longer receives SIGHUP on logout
+                                # => Process continues after shell exits
+                                # => Can't use %1 anymore (not in job table)
 
 # Run command immune to hangup (SIGHUP)
 nohup ./long-running-script.sh &
-                                # => Redirects stdout/stderr to nohup.out
-                                # => Continues after terminal closes
+                                # => nohup ignores SIGHUP signal
+                                # => Redirects stdout to nohup.out
+                                # => Redirects stderr to nohup.out (or stdout)
+                                # => Process continues after terminal closes
+                                # => & runs in background
+                                # => Combined: logout-immune background execution
 ```
 
 **Key Takeaway**: Use `&` for background execution, `jobs` to list, `fg/bg` to control, `wait` to synchronize, and `nohup` for logout-immune processes. Job control is essential for parallel processing and long-running tasks.
@@ -78,59 +108,92 @@ Trap handlers execute code when signals are received, enabling cleanup on exit, 
 
 # Define cleanup function
 cleanup() {
-    echo "Cleaning up..."         # => Execute on exit
-    rm -f /tmp/script.$$.*        # => Remove temp files (PID-specific)
-    echo "Done."
+    echo "Cleaning up..."         # => Print cleanup message
+                                  # => Executed when trap fires
+    rm -f /tmp/script.$$.*        # => $$ expands to current PID
+                                  # => Removes files like /tmp/script.12345.tmp
+                                  # => -f prevents error if files don't exist
+    echo "Done."                  # => Indicate cleanup complete
 }
 
 # Register trap for EXIT signal
-trap cleanup EXIT               # => Calls cleanup() when script exits
-                                # => Runs on normal exit or error
+trap cleanup EXIT               # => Register cleanup function for EXIT
+                                # => EXIT fires when script exits (any reason)
+                                # => Runs on: normal exit, exit command, error
+                                # => Does NOT fire on kill -9 (SIGKILL)
 
 # Trap interrupt (Ctrl+C)
 trap 'echo "Interrupted!"; exit 130' INT
-                                # => INT = SIGINT (signal 2)
-                                # => Exit code 130 = 128 + 2
+                                # => INT is SIGINT (signal number 2)
+                                # => Fired when user presses Ctrl+C
+                                # => Inline command: echo then exit
+                                # => Exit code 130 = 128 + signal_number(2)
+                                # => Standard convention for signal exits
 
 # Trap termination
 trap 'echo "Terminated!"; cleanup; exit 143' TERM
-                                # => TERM = SIGTERM (signal 15)
-                                # => Exit code 143 = 128 + 15
+                                # => TERM is SIGTERM (signal number 15)
+                                # => Default signal sent by kill command
+                                # => Calls cleanup function explicitly
+                                # => Exit code 143 = 128 + signal_number(15)
+                                # => Allows graceful shutdown
 
 # Ignore signal
-trap '' HUP                     # => Ignore SIGHUP (hang up)
-                                # => Empty string ignores signal
+trap '' HUP                     # => HUP is SIGHUP (hangup signal)
+                                # => Empty string '' means ignore signal
+                                # => Signal sent when terminal disconnects
+                                # => Process continues running after hangup
 
 # Reset trap to default
-trap - INT                      # => - resets INT to default behavior
+trap - INT                      # => - (dash) resets to default behavior
+                                # => INT will now terminate script (default)
+                                # => Use after critical section complete
 
 # Multiple signals in one trap
 trap cleanup EXIT INT TERM      # => Same handler for 3 signals
+                                # => cleanup runs on EXIT, INT, or TERM
+                                # => Simplifies signal handling code
+                                # => All three trigger same cleanup logic
 
 # Temporary file with automatic cleanup
-temp_file=$(mktemp)             # => Create temp file
-trap "rm -f $temp_file" EXIT    # => Auto-delete on exit
+temp_file=$(mktemp)             # => Create secure temp file
+                                # => Returns path like /tmp/tmp.XxX123
+                                # => Unique filename prevents conflicts
+trap "rm -f $temp_file" EXIT    # => Delete temp file on any exit
+                                # => Double quotes expand $temp_file now
+                                # => Trap captures specific filename
 
 # Use temp file
-echo "data" > "$temp_file"      # => Write to temp file
+echo "data" > "$temp_file"      # => Write data to temp file
+                                # => temp_file contains "data\n"
 # ... process data ...
-                                # => temp_file deleted on exit automatically
+                                # => temp_file automatically deleted on exit
+                                # => No manual cleanup needed
 
 # Prevent Ctrl+C during critical section
-trap '' INT                     # => Ignore INT
-# ... critical code ...
-trap - INT                      # => Restore INT
+trap '' INT                     # => Ignore INT (Ctrl+C)
+                                # => User cannot interrupt during critical code
+# ... critical code ...         # => Database transaction, file update, etc.
+                                # => Ctrl+C pressed here has no effect
+trap - INT                      # => Restore default INT behavior
+                                # => Ctrl+C works again after critical section
 
 # Debugging trap (execute before each command)
 trap 'echo "Executing: $BASH_COMMAND"' DEBUG
-                                # => Print each command before execution
-                                # => Useful for script debugging
+                                # => DEBUG trap fires before EVERY command
+                                # => $BASH_COMMAND contains command to execute
+                                # => Shows command with variable expansion
+                                # => Useful for script debugging/tracing
 
 # Return trap (execute when function returns)
 function_with_trap() {
     trap 'echo "Function exiting"' RETURN
-    # ... function code ...
-}                               # => RETURN trap fires when function exits
+                                # => RETURN trap fires when function returns
+                                # => Executes before function exit
+                                # => Scope limited to this function
+    # ... function code ...     # => Function body executes normally
+}                               # => RETURN trap fires here
+                                # => "Function exiting" printed
 ```
 
 **Key Takeaway**: Traps ensure cleanup code runs on exit, interrupt, or termination. Use `trap 'code' SIGNAL` to register handlers, `trap '' SIGNAL` to ignore signals, and `trap - SIGNAL` to reset. Essential for production scripts that manage resources.
@@ -145,86 +208,155 @@ Bash parameter expansion provides powerful string manipulation, default values, 
 
 ```bash
 # Default values
-name=${USER:-"guest"}           # => Use $USER, or "guest" if unset/empty
-                                # => :- provides default value
+name=${USER:-"guest"}           # => If $USER is set and non-empty, use it
+                                # => If $USER is unset or empty, use "guest"
+                                # => :- tests for unset OR empty
+                                # => name="alice" if USER="alice"
+                                # => name="guest" if USER="" or unset
 
-name=${USER-"guest"}            # => Use $USER, or "guest" if unset (NOT if empty)
-                                # => - checks only unset, not empty
+name=${USER-"guest"}            # => If $USER is set (even if empty), use it
+                                # => If $USER is unset, use "guest"
+                                # => - tests only for unset (not empty)
+                                # => name="" if USER="" (empty but set)
+                                # => name="guest" if USER is unset
 
 # Assign default if unset
-name=${USER:="defaultuser"}     # => Sets $name AND $USER to "defaultuser" if unset
-                                # => := assigns default
+name=${USER:="defaultuser"}     # => If $USER unset/empty, set both variables
+                                # => Sets $name to "defaultuser"
+                                # => ALSO sets $USER to "defaultuser"
+                                # => := assigns default to original variable
+                                # => Side effect: modifies environment
 
 # Error if unset
-name=${USER:?"USER not set"}    # => Prints error and exits if $USER unset
-                                # => :? for required variables
+name=${USER:?"USER not set"}    # => If $USER unset/empty, print error and exit
+                                # => Error message: "USER not set"
+                                # => Script exits with code 1
+                                # => :? enforces required variables
+                                # => Prevents running with missing config
 
 # Use alternative value
-name=${USER:+"logged in"}       # => Use "logged in" if $USER is set
-                                # => :+ opposite of :-
+name=${USER:+"logged in"}       # => If $USER is set and non-empty, use "logged in"
+                                # => If $USER is unset or empty, use empty string
+                                # => :+ is opposite of :-
+                                # => name="logged in" if USER="alice"
+                                # => name="" if USER="" or unset
 
 # String length
-file="document.txt"
-length=${#file}                 # => 12 (length of string)
+file="document.txt"             # => Assign string to file variable
+length=${#file}                 # => Get length of string
+                                # => Counts characters in $file
+                                # => length=12 ("document.txt" has 12 chars)
 
 # Substring extraction
 path="/home/user/documents/file.txt"
-${path:0:5}                     # => "/home" (from index 0, length 5)
-${path:6:4}                     # => "user" (from index 6, length 4)
-${path:11}                      # => "documents/file.txt" (from index 11 to end)
-${path: -8}                     # => "file.txt" (last 8 characters, note space before -)
+                                # => path contains 28-character string
+${path:0:5}                     # => Start at index 0, extract 5 characters
+                                # => Result: "/home"
+                                # => Syntax: ${var:offset:length}
+${path:6:4}                     # => Start at index 6, extract 4 characters
+                                # => Result: "user"
+                                # => Index starts at 0
+${path:11}                      # => Start at index 11, extract to end
+                                # => Result: "documents/file.txt"
+                                # => No length specified means "to end"
+${path: -8}                     # => Last 8 characters
+                                # => Result: "file.txt"
+                                # => SPACE before - is required
+                                # => Without space: interpreted as default value
 
 # Remove prefix pattern (shortest match)
-${path#*/}                      # => "home/user/documents/file.txt" (removes "*/")
-                                # => # removes shortest matching prefix
+${path#*/}                      # => Remove shortest match of "*/" from start
+                                # => Pattern "*/" matches up to first /
+                                # => Result: "home/user/documents/file.txt"
+                                # => Single # removes shortest prefix
+                                # => Useful for removing one directory level
 
 # Remove prefix pattern (longest match)
-${path##*/}                     # => "file.txt" (removes everything up to last /)
-                                # => ## removes longest matching prefix
+${path##*/}                     # => Remove longest match of "*/" from start
+                                # => Pattern "*/" matches up to last /
+                                # => Result: "file.txt"
+                                # => Double ## removes longest prefix
+                                # => Extracts filename from path (like basename)
 
 # Remove suffix pattern (shortest match)
-${path%/*}                      # => "/home/user/documents" (removes "/*")
-                                # => % removes shortest matching suffix
+${path%/*}                      # => Remove shortest match of "/*" from end
+                                # => Pattern "/*" matches from last /
+                                # => Result: "/home/user/documents"
+                                # => Single % removes shortest suffix
+                                # => Extracts directory path (like dirname)
 
 # Remove suffix pattern (longest match)
-${path%%/*}                     # => "" (removes everything from first /)
-                                # => %% removes longest matching suffix
+${path%%/*}                     # => Remove longest match of "/*" from end
+                                # => Pattern "/*" matches from first /
+                                # => Result: "" (everything removed)
+                                # => Double %% removes longest suffix
+                                # => On "/home/user", removes from first /
 
 # Pattern replacement (first match)
-file="test.txt.backup"
-${file/.txt/.md}                # => "test.md.backup" (replaces first .txt)
-                                # => /pattern/replacement
+file="test.txt.backup"          # => file contains "test.txt.backup"
+${file/.txt/.md}                # => Replace first occurrence of ".txt"
+                                # => Pattern ".txt" matches first instance
+                                # => Replace with ".md"
+                                # => Result: "test.md.backup"
+                                # => Single / replaces first match only
 
 # Pattern replacement (all matches)
-${file//.txt/.md}               # => "test.md.backup" (replaces all .txt)
-                                # => //pattern/replacement (global)
+${file//.txt/.md}               # => Replace all occurrences of ".txt"
+                                # => Double // means global replacement
+                                # => Result: "test.md.backup"
+                                # => In this case, only one .txt exists
+                                # => Would replace multiple if present
 
 # Pattern replacement at start
-${file/#test/demo}              # => "demo.txt.backup" (replace at start only)
-                                # => /#pattern/replacement
+${file/#test/demo}              # => Replace "test" only at start
+                                # => /# anchors pattern to beginning
+                                # => Result: "demo.txt.backup"
+                                # => If "test" not at start, no replacement
 
 # Pattern replacement at end
-${file/%backup/copy}            # => "test.txt.copy" (replace at end only)
-                                # => /%pattern/replacement
+${file/%backup/copy}            # => Replace "backup" only at end
+                                # => /% anchors pattern to end of string
+                                # => Result: "test.txt.copy"
+                                # => If "backup" not at end, no replacement
 
 # Case conversion (Bash 4+)
-name="Alice"
-${name,,}                       # => "alice" (lowercase all)
-${name^^}                       # => "ALICE" (uppercase all)
-${name,}                        # => "alice" (lowercase first character)
-${name^}                        # => "Alice" (uppercase first character)
+name="Alice"                    # => name contains "Alice"
+${name,,}                       # => Convert all characters to lowercase
+                                # => Result: "alice"
+                                # => Double ,, means all characters
+${name^^}                       # => Convert all characters to uppercase
+                                # => Result: "ALICE"
+                                # => Double ^^ means all characters
+${name,}                        # => Convert first character to lowercase
+                                # => Result: "alice"
+                                # => Single , means first character only
+${name^}                        # => Convert first character to uppercase
+                                # => Result: "Alice"
+                                # => Single ^ means first character only
 
 # Array expansion
-files=(a.txt b.txt c.txt)
-${files[@]}                     # => "a.txt b.txt c.txt" (all elements)
-${files[*]}                     # => "a.txt b.txt c.txt" (all elements as single word)
-${files[0]}                     # => "a.txt" (first element)
-${#files[@]}                    # => 3 (array length)
+files=(a.txt b.txt c.txt)       # => Create array with 3 elements
+                                # => files[0]="a.txt", files[1]="b.txt", files[2]="c.txt"
+${files[@]}                     # => Expand all elements as separate words
+                                # => Result: "a.txt" "b.txt" "c.txt"
+                                # => @ preserves word boundaries
+                                # => Use in quotes: "${files[@]}"
+${files[*]}                     # => Expand all elements as single word
+                                # => Result: "a.txt b.txt c.txt"
+                                # => * joins with IFS (space by default)
+${files[0]}                     # => Access first element (index 0)
+                                # => Result: "a.txt"
+${#files[@]}                    # => Get array length (number of elements)
+                                # => Result: 3
+                                # => # prefix means length
 
 # Indirect expansion
-var="USER"
-echo ${!var}                    # => Value of $USER (indirect reference)
-                                # => ! dereferences variable name
+var="USER"                      # => var contains string "USER"
+echo ${!var}                    # => Indirect variable reference
+                                # => ! dereferences the variable name
+                                # => First expands $var to "USER"
+                                # => Then expands $USER to its value
+                                # => Example: if USER="alice", output is "alice"
 ```
 
 **Key Takeaway**: Parameter expansion eliminates external commands like `sed`, `cut`, `basename`, `dirname` for string operations. Use `${var:-default}` for defaults, `${var#pattern}` for prefix removal, `${var%pattern}` for suffix removal, and `${var//pattern/replacement}` for substitution. Faster and more portable than external tools.
@@ -239,55 +371,94 @@ Process substitution creates temporary named pipes to use command output as file
 
 ```bash
 # Compare output of two commands
-diff <(ls dir1) <(ls dir2)      # => <(command) creates temporary file with output
-                                # => diff reads from two "files"
-                                # => Equivalent to: ls dir1 > /tmp/a; ls dir2 > /tmp/b; diff /tmp/a /tmp/b
+diff <(ls dir1) <(ls dir2)      # => <(ls dir1) creates /dev/fd/63 (temp file descriptor)
+                                # => <(ls dir2) creates /dev/fd/62
+                                # => Shell runs: ls dir1 and ls dir2
+                                # => Pipes output to temp files
+                                # => diff reads from both file descriptors
+                                # => Shows differences between directory listings
+                                # => No manual temp file creation/cleanup needed
 
 # Process substitution as input
-while read line; do
-    echo "Line: $line"
-done < <(find . -name "*.txt")  # => Read from command output
-                                # => <(command) provides file descriptor
+while read line; do             # => Read loop reads line by line
+    echo "Line: $line"          # => Print each line with prefix
+done < <(find . -name "*.txt")  # => First < redirects input
+                                # => Second <(find...) creates file descriptor
+                                # => find runs, outputs to /dev/fd/63
+                                # => while loop reads from that descriptor
+                                # => Processes all .txt files found
 
 # Multiple input sources
-paste <(seq 1 5) <(seq 10 14)   # => 1 10
-                                # => 2 11
-                                # => Combines two command outputs side-by-side
+paste <(seq 1 5) <(seq 10 14)   # => seq 1 5 outputs: 1\n2\n3\n4\n5
+                                # => seq 10 14 outputs: 10\n11\n12\n13\n14
+                                # => <(seq 1 5) becomes /dev/fd/63
+                                # => <(seq 10 14) becomes /dev/fd/62
+                                # => paste joins line by line with tab
+                                # => Output: "1\t10\n2\t11\n3\t12\n4\t13\n5\t14"
 
 # Output redirection with process substitution
 echo "data" > >(tee file1.txt file2.txt)
                                 # => >(command) creates output file descriptor
-                                # => Write to multiple destinations
+                                # => echo writes "data" to descriptor
+                                # => tee reads from that descriptor
+                                # => tee writes to file1.txt
+                                # => tee also writes to file2.txt
+                                # => Data written to two files simultaneously
 
 # Join two sorted outputs
 join <(sort file1) <(sort file2)
-                                # => Sort and join in single command
-                                # => No intermediate files
+                                # => sort file1 outputs sorted lines to /dev/fd/63
+                                # => sort file2 outputs sorted lines to /dev/fd/62
+                                # => join reads from both descriptors
+                                # => Matches lines with common first field
+                                # => No intermediate temp files created
+                                # => Single command pipeline
 
 # Named pipes (FIFO)
-mkfifo /tmp/mypipe              # => Create named pipe
-                                # => Acts as file but no disk I/O
+mkfifo /tmp/mypipe              # => Create FIFO special file
+                                # => File type 'p' (pipe)
+                                # => No actual disk storage used
+                                # => Acts as communication channel
+                                # => Visible in filesystem: ls -l shows prw-r--r--
 
 # Write to named pipe (background)
-cat file.txt > /tmp/mypipe &    # => Blocks until reader connects
+cat file.txt > /tmp/mypipe &    # => Open pipe for writing
+                                # => cat blocks until reader connects
+                                # => & runs in background (non-blocking shell)
+                                # => Data waits in kernel buffer
 
 # Read from named pipe
-cat < /tmp/mypipe               # => Read data from pipe
-                                # => Unblocks writer
+cat < /tmp/mypipe               # => Open pipe for reading
+                                # => Connects to waiting writer
+                                # => Writer unblocks and sends data
+                                # => Reader receives and outputs data
+                                # => Both processes synchronized via pipe
 
 # Named pipe for inter-process communication
-mkfifo /tmp/logpipe
-tail -f /tmp/logpipe &          # => Reader in background
-echo "Log message" > /tmp/logpipe  # => Writer sends message
-                                # => tail receives and displays
+mkfifo /tmp/logpipe             # => Create pipe for logging
+tail -f /tmp/logpipe &          # => Start reader in background
+                                # => tail -f follows pipe indefinitely
+                                # => Waits for data to arrive
+echo "Log message" > /tmp/logpipe
+                                # => Writer sends message to pipe
+                                # => tail receives and displays immediately
+                                # => IPC without network sockets
 
 # Cleanup named pipe
-rm /tmp/mypipe                  # => Remove FIFO file
+rm /tmp/mypipe                  # => Remove FIFO from filesystem
+                                # => unlink() system call
+                                # => No disk space freed (none was used)
+                                # => File descriptor removed
 
 # Process substitution with tee (log and process)
 command | tee >(grep ERROR > errors.log) >(grep WARN > warnings.log)
-                                # => Send output to 3 destinations:
-                                # => stdout, errors.log (ERRORs only), warnings.log (WARNs only)
+                                # => command output goes to tee
+                                # => tee sends to stdout (terminal)
+                                # => tee sends to first >(grep ERROR...)
+                                # => tee sends to second >(grep WARN...)
+                                # => grep ERROR filters and writes errors.log
+                                # => grep WARN filters and writes warnings.log
+                                # => Three destinations from single output
 ```
 
 **Key Takeaway**: Process substitution `<(command)` and `>(command)` treat command output/input as files. Named pipes (FIFOs) enable inter-process communication. Both eliminate temporary file creation and simplify complex pipelines.
@@ -302,86 +473,121 @@ Bash provides multiple looping constructs beyond basic `for` and `while`, includ
 
 ```bash
 # C-style for loop
-for ((i=0; i<10; i++)); do
-    echo "Iteration $i"         # => Prints 0 through 9
-done                            # => C-style: for ((init; condition; increment))
+for ((i=0; i<10; i++)); do      # => i=0: Initialize counter to 0
+                                # => i<10: Continue while i less than 10
+                                # => i++: Increment i after each iteration
+    echo "Iteration $i"         # => Prints: "Iteration 0", "Iteration 1", ..., "Iteration 9"
+done                            # => Executes 10 times (0 through 9)
+                                # => C-style: for ((init; condition; increment))
 
 # Loop with step
-for ((i=0; i<=100; i+=10)); do
-    echo $i                     # => 0, 10, 20, ..., 100
-done                            # => i+=10 increments by 10
+for ((i=0; i<=100; i+=10)); do  # => i=0: Start at 0
+                                # => i<=100: Continue while i <= 100
+                                # => i+=10: Increment by 10 each iteration
+    echo $i                     # => Output: 0, 10, 20, 30, ..., 100
+done                            # => Executes 11 times (0, 10, 20...100)
+                                # => Useful for progress indicators
 
 # Loop over array indices
-arr=(a b c d)
-for i in "${!arr[@]}"; do
-    echo "Index $i: ${arr[$i]}" # => Index 0: a, Index 1: b, etc.
-done                            # => ${!arr[@]} expands to indices
+arr=(a b c d)                   # => Create array: arr[0]=a, arr[1]=b, arr[2]=c, arr[3]=d
+for i in "${!arr[@]}"; do       # => ${!arr[@]} expands to indices: 0 1 2 3
+                                # => Quotes prevent word splitting
+    echo "Index $i: ${arr[$i]}" # => Output: "Index 0: a", "Index 1: b", etc.
+done                            # => Iterates over 0, 1, 2, 3
+                                # => Access both index and value
 
 # Loop until condition
-count=0
-until [ $count -ge 5 ]; do
-    echo "Count: $count"        # => Loops while condition is FALSE
-    ((count++))
-done                            # => until is opposite of while
+count=0                         # => Initialize counter to 0
+until [ $count -ge 5 ]; do      # => Condition: $count >= 5
+                                # => Loops while condition is FALSE
+                                # => Opposite of while (executes until true)
+    echo "Count: $count"        # => Output: "Count: 0", "Count: 1", ..., "Count: 4"
+    ((count++))                 # => Increment count: 0→1, 1→2, 2→3, 3→4, 4→5
+done                            # => Stops when count=5 (condition becomes true)
 
 # Loop over command output (word splitting)
-for word in $(cat file.txt); do
-    echo "Word: $word"          # => Splits on whitespace
-done                            # => WARNING: breaks on spaces in data
+for word in $(cat file.txt); do # => $(cat file.txt) expands to file contents
+                                # => Shell splits on IFS (whitespace: space, tab, newline)
+    echo "Word: $word"          # => Each word becomes separate iteration
+done                            # => WARNING: "hello world" becomes two iterations
+                                # => Breaks on filenames with spaces
 
 # Loop over lines (safe, preserves spaces)
-while IFS= read -r line; do
-    echo "Line: $line"          # => Reads line-by-line
-done < file.txt                 # => IFS= prevents trimming, -r preserves backslashes
+while IFS= read -r line; do     # => IFS= prevents leading/trailing whitespace trim
+                                # => -r prevents backslash interpretation
+                                # => read reads one line into $line
+    echo "Line: $line"          # => Preserves exact line content
+done < file.txt                 # => Redirect file to stdin
+                                # => Reads line by line until EOF
+                                # => SAFE for lines with spaces
 
 # Loop with custom field separator
 while IFS=: read -r user pass uid gid rest; do
+                                # => IFS=: sets field separator to colon
+                                # => Reads line and splits on :
+                                # => Assigns to variables: user, pass, uid, gid, rest
     echo "User: $user, UID: $uid"
-done < /etc/passwd              # => IFS=: splits on colons
-                                # => Reads fields into separate variables
+                                # => user="root", uid="0" (for first line of /etc/passwd)
+done < /etc/passwd              # => Parse colon-delimited file
+                                # => rest captures remaining fields
 
 # Infinite loop with break
-while true; do
+while true; do                  # => true always returns 0 (success)
+                                # => Infinite loop (no exit condition)
     read -p "Enter command (q to quit): " cmd
-    [ "$cmd" = "q" ] && break   # => Exit loop on 'q'
-    echo "You entered: $cmd"
-done
+                                # => -p displays prompt
+                                # => Waits for user input
+    [ "$cmd" = "q" ] && break   # => If input is "q", exit loop
+                                # => && chains: if test succeeds, run break
+    echo "You entered: $cmd"    # => Echo input back to user
+done                            # => Loop continues until 'q' entered
 
 # Continue to next iteration
-for i in {1..10}; do
-    [ $((i % 2)) -eq 0 ] && continue  # => Skip even numbers
-    echo $i                     # => Prints only odd numbers
-done
+for i in {1..10}; do            # => Brace expansion: 1 2 3 4 5 6 7 8 9 10
+    [ $((i % 2)) -eq 0 ] && continue
+                                # => $((i % 2)): modulo operation (remainder)
+                                # => Even numbers: remainder is 0
+                                # => continue skips to next iteration
+    echo $i                     # => Only executes for odd numbers
+done                            # => Output: 1 3 5 7 9
 
 # Nested loops with labels (Bash 4+)
-outer=0
-while [ $outer -lt 3 ]; do
-    inner=0
-    while [ $inner -lt 3 ]; do
+outer=0                         # => Initialize outer counter
+while [ $outer -lt 3 ]; do      # => Outer loop: 0, 1, 2
+    inner=0                     # => Initialize inner counter
+    while [ $inner -lt 3 ]; do  # => Inner loop: 0, 1, 2
         if [ $inner -eq 1 ]; then
-            break 2             # => Break out of 2 loops (outer)
+                                # => When inner reaches 1
+            break 2             # => Break out of 2 loops (inner and outer)
+                                # => Default break is 1 (current loop only)
         fi
-        echo "$outer,$inner"
-        ((inner++))
+        echo "$outer,$inner"    # => Output: "0,0" then breaks
+        ((inner++))             # => Never reaches this (breaks before increment)
     done
-    ((outer++))
+    ((outer++))                 # => Never reaches this (breaks from outer too)
 done
 
 # Parallel processing with background jobs
-for file in *.txt; do
-    process_file "$file" &      # => Each iteration in background
+for file in *.txt; do           # => Glob expands to all .txt files
+    process_file "$file" &      # => & runs process_file in background
+                                # => Each iteration starts immediately
+                                # => All files processed in parallel
 done
-wait                            # => Wait for all background jobs
+wait                            # => Wait for ALL background jobs to complete
+                                # => Blocks until all process_file instances finish
 
 # Limit parallel jobs
-max_jobs=4
-for file in *.txt; do
+max_jobs=4                      # => Maximum concurrent jobs
+for file in *.txt; do           # => Loop over all .txt files
     while [ $(jobs -r | wc -l) -ge $max_jobs ]; do
-        sleep 0.1               # => Wait if at limit
-    done
-    process_file "$file" &      # => Start next job
-done
-wait
+                                # => jobs -r lists running jobs
+                                # => wc -l counts lines (number of jobs)
+                                # => If count >= 4, wait
+        sleep 0.1               # => Wait 100ms before checking again
+    done                        # => Busy-wait until slot available
+    process_file "$file" &      # => Start next job in background
+done                            # => Maintains max 4 concurrent jobs
+wait                            # => Wait for final batch to complete
 ```
 
 **Key Takeaway**: Use C-style `for ((i=0; i<n; i++))` for numeric iteration, `while IFS= read -r` for line-by-line processing, `until` for loops that run while condition is false, and background jobs with `wait` for parallel processing. Always use `-r` with `read` to preserve backslashes.
@@ -399,137 +605,228 @@ Production scripts require robust error handling, debugging capabilities, and fa
 # Production script template with error handling
 
 # Exit on error
-set -e                          # => Exit immediately if command fails
-                                # => Prevents cascading failures
+set -e                          # => Exit immediately if any command returns non-zero
+                                # => set -e makes shell fail-fast
+                                # => Prevents cascading failures in pipelines
+                                # => Does NOT catch errors in: functions, subshells, conditionals
+                                # => Use with caution: can hide errors in complex scripts
 
 # Exit on undefined variable
-set -u                          # => Error if accessing undefined variable
-                                # => Catches typos and missing vars
+set -u                          # => Treat unset variables as error
+                                # => Accessing $UNDEFINED_VAR exits script
+                                # => Catches typos: $USRE instead of $USER
+                                # => Prevents bugs from missing environment vars
+                                # => Use ${VAR:-default} for optional variables
 
 # Fail on pipe errors
-set -o pipefail                 # => Pipeline fails if ANY command fails
-                                # => Without this: "false | true" succeeds
+set -o pipefail                 # => Pipeline exit code = last failing command
+                                # => Without: "false | true" returns 0 (true's exit code)
+                                # => With: "false | true" returns 1 (false's exit code)
+                                # => Critical for: command | tee log.txt
+                                # => Detects failures in middle of pipeline
 
 # Combined (common production pattern)
 set -euo pipefail               # => Enable all three safety checks
+                                # => -e: exit on error
+                                # => -u: exit on undefined variable
+                                # => -o pipefail: catch pipeline failures
+                                # => Production scripts should start with this
 
 # Debug mode (print each command before execution)
-set -x                          # => Enable xtrace (print commands)
-                                # => Shows variable expansion
+set -x                          # => Enable xtrace (also called debug mode)
+                                # => Prints each command to stderr before execution
+                                # => Shows variable expansion: echo $HOME → echo /home/user
+                                # => Prefixes lines with +
+                                # => Critical for debugging complex scripts
 
 # Conditional debug
 [ "${DEBUG:-}" = "1" ] && set -x
-                                # => Enable debug if DEBUG=1 set
+                                # => ${DEBUG:-} returns $DEBUG or "" if unset
+                                # => Avoids error from set -u
+                                # => If DEBUG=1, enable xtrace
+                                # => Usage: DEBUG=1 ./script.sh
+                                # => Otherwise, run normally without xtrace
 
 # Disable debug for section
-{ set +x; } 2>/dev/null         # => Disable xtrace, suppress trace of set +x itself
-# ... code without debug ...
-set -x                          # => Re-enable debug
+{ set +x; } 2>/dev/null         # => set +x disables xtrace
+                                # => { } groups command
+                                # => 2>/dev/null suppresses xtrace of "set +x" itself
+                                # => Prevents: "+ set +x" appearing in output
+# ... code without debug ...    # => Commands here don't print debug output
+                                # => Useful for sections with sensitive data
+set -x                          # => Re-enable xtrace
+                                # => Debug resumes after sensitive section
 
 # Error line number
 trap 'echo "Error on line $LINENO"' ERR
-                                # => Print line number where error occurred
-                                # => $LINENO is Bash built-in variable
+                                # => ERR trap fires when command fails (if set -e active)
+                                # => $LINENO expands to line number of error
+                                # => Output: "Error on line 42"
+                                # => Helps locate failure in long scripts
 
 # Full error context
 trap 'echo "Error: Command \"$BASH_COMMAND\" failed with exit code $? on line $LINENO"' ERR
-                                # => $BASH_COMMAND is the failing command
-                                # => $? is exit code of failed command
+                                # => $BASH_COMMAND contains the failing command text
+                                # => $? contains exit code of failed command
+                                # => $LINENO contains line number
+                                # => Output: "Error: Command \"curl http://...\" failed with exit code 7 on line 42"
+                                # => Comprehensive error diagnostics
 
 # Validate required commands exist
 require_command() {
     command -v "$1" >/dev/null 2>&1 || {
+                                # => command -v checks if command exists
+                                # => $1 is command name to check
+                                # => >/dev/null 2>&1 suppresses all output
+                                # => || executes if command not found
         echo "Error: Required command '$1' not found" >&2
-        exit 1
+                                # => Print error to stderr
+                                # => >&2 redirects stdout to stderr
+        exit 1                  # => Exit script with failure code
     }
 }
 
-require_command jq              # => Ensure jq is installed
-require_command curl            # => Check for curl
+require_command jq              # => Ensure jq (JSON processor) is installed
+                                # => Exits script if not found
+require_command curl            # => Check for curl (HTTP client)
+                                # => Validation before script logic runs
 
 # Validate required variables
 : "${API_KEY:?Error: API_KEY not set}"
-                                # => Exit with error if API_KEY unset
-                                # => : is null command, only evaluates parameter
+                                # => : is null command (does nothing)
+                                # => Only evaluates parameter expansion
+                                # => ${API_KEY:?msg} exits if API_KEY unset
+                                # => Error message printed to stderr
+                                # => Script exits with code 1
 
 # Function with error handling
 safe_operation() {
-    local file=$1
+    local file=$1               # => $1 is first argument (filename)
+                                # => local makes variable function-scoped
 
     # Check preconditions
-    [ -f "$file" ] || {
+    [ -f "$file" ] || {         # => -f tests if file exists and is regular file
+                                # => || executes if test fails
         echo "Error: File $file not found" >&2
-        return 1
+                                # => Print error to stderr
+        return 1                # => Return exit code 1 (failure)
+                                # => Different from exit (doesn't terminate script)
     }
 
     # Perform operation with error checking
     if ! grep "pattern" "$file" > /dev/null; then
+                                # => ! negates exit code of grep
+                                # => grep exits 0 if found, 1 if not found
+                                # => > /dev/null suppresses grep output
         echo "Warning: Pattern not found in $file" >&2
-        return 2
+                                # => Non-fatal warning to stderr
+        return 2                # => Return code 2 (different from failure)
+                                # => Caller can distinguish failure types
     fi
 
-    return 0                    # => Explicit success
+    return 0                    # => Explicit success exit code
+                                # => Best practice: always return from functions
 }
 
 # Call with error handling
 if ! safe_operation "data.txt"; then
-    echo "Operation failed"
-    exit 1
-fi
+                                # => ! negates exit code
+                                # => if executes block when function fails
+                                # => Catches both return 1 and return 2
+    echo "Operation failed"     # => Handle error
+    exit 1                      # => Exit script with failure
+fi                              # => Continue only if safe_operation succeeded
 
 # Dry-run mode
-DRY_RUN=${DRY_RUN:-0}           # => Default to 0 (execute)
+DRY_RUN=${DRY_RUN:-0}           # => ${DRY_RUN:-0} defaults to 0 if unset
+                                # => DRY_RUN=1 ./script.sh enables dry-run
+                                # => Shows commands without executing
 
 run_cmd() {
     if [ "$DRY_RUN" = "1" ]; then
-        echo "DRY-RUN: $*"      # => Print instead of executing
-    else
-        "$@"                    # => Execute command
+                                # => Check if dry-run mode enabled
+        echo "DRY-RUN: $*"      # => $* expands all arguments as single string
+                                # => Print command that WOULD execute
+    else                        # => Normal execution mode
+        "$@"                    # => $@ expands arguments as separate words
+                                # => Preserves quoting and special characters
+                                # => Actually executes the command
     fi
 }
 
-run_cmd rm important-file.txt   # => Safe: shows command if DRY_RUN=1
+run_cmd rm important-file.txt   # => If DRY_RUN=1: prints "DRY-RUN: rm important-file.txt"
+                                # => If DRY_RUN=0: actually deletes file
+                                # => Safe testing of destructive operations
 
 # Verbose mode
-VERBOSE=${VERBOSE:-0}
+VERBOSE=${VERBOSE:-0}           # => ${VERBOSE:-0} defaults to 0 if unset
+                                # => VERBOSE=1 ./script.sh enables logging
 
 log() {
     [ "$VERBOSE" = "1" ] && echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*" >&2
+                                # => Test if VERBOSE is 1
+                                # => && executes echo only if test succeeds
+                                # => $(date ...) expands to timestamp
+                                # => $* is message to log
+                                # => >&2 sends log to stderr (not stdout)
 }
 
-log "Starting process"          # => Prints if VERBOSE=1
+log "Starting process"          # => If VERBOSE=1: "[2025-01-31 10:30:45] Starting process"
+                                # => If VERBOSE=0: no output
+                                # => Conditional logging without if statements
 
 # Assert function
 assert() {
-    if ! "$@"; then
+    if ! "$@"; then             # => Execute command passed as arguments
+                                # => ! negates exit code
+                                # => If command fails, enter block
         echo "Assertion failed: $*" >&2
-        exit 1
+                                # => Print failed assertion to stderr
+                                # => $* shows the command that failed
+        exit 1                  # => Exit script immediately
+                                # => Assertions are hard requirements
     fi
 }
 
 assert [ -d "/expected/directory" ]
-                                # => Exit if directory doesn't exist
+                                # => Runs: [ -d "/expected/directory" ]
+                                # => If directory doesn't exist, exits script
+                                # => Output: "Assertion failed: [ -d /expected/directory ]"
 
 # Retry logic
 retry() {
-    local max_attempts=$1
-    shift
-    local attempt=1
+    local max_attempts=$1       # => First argument is retry count
+                                # => local makes variable function-scoped
+    shift                       # => Remove first argument
+                                # => $@ now contains command to retry
+    local attempt=1             # => Initialize attempt counter
 
     while [ $attempt -le $max_attempts ]; do
-        if "$@"; then
-            return 0            # => Success
+                                # => Loop while attempt <= max_attempts
+                                # => -le is "less than or equal"
+        if "$@"; then           # => Execute command ($@)
+                                # => If succeeds (exit code 0), enter block
+            return 0            # => Success on any attempt
+                                # => Exit function immediately
         fi
         echo "Attempt $attempt failed, retrying..." >&2
-        ((attempt++))
+                                # => Log failure to stderr
+        ((attempt++))           # => Increment attempt: 1→2, 2→3, 3→4
         sleep $((attempt * 2))  # => Exponential backoff
-    done
+                                # => Attempt 1: sleep 2s
+                                # => Attempt 2: sleep 4s
+                                # => Attempt 3: sleep 6s
+    done                        # => Try again
 
-    return 1                    # => All attempts failed
+    return 1                    # => All attempts exhausted
+                                # => Return failure code
 }
 
 retry 3 curl -f https://api.example.com/health
-                                # => Retry up to 3 times
+                                # => Retry curl up to 3 times
+                                # => -f makes curl fail on HTTP errors
+                                # => Waits 2s, 4s, 6s between attempts
+                                # => Returns 0 on any success, 1 if all fail
 ```
 
 **Key Takeaway**: Use `set -euo pipefail` for fail-fast behavior, trap ERR to log failures, validate preconditions with `command -v` and parameter expansion, implement retry logic for network operations, and use `DRY_RUN` for safe testing. Production scripts must fail loudly, never silently.

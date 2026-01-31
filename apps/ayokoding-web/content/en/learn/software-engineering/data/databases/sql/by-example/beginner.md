@@ -81,23 +81,31 @@ Tables store related data in rows and columns. Each column has a name and data t
 -- Create a simple table
 CREATE TABLE users (
     id INTEGER,           -- => Integer column for user ID
+                          -- => Stores whole numbers from -9.2e18 to 9.2e18
     name TEXT,            -- => Text column for user name
+                          -- => Stores variable-length character data
     email TEXT,           -- => Text column for email address
+                          -- => No length limit in SQLite TEXT type
     age INTEGER           -- => Integer column for age
+                          -- => SQLite flexible typing allows NULL by default
 );
 -- => Table 'users' created with 4 columns
+-- => Table exists in database but contains no rows yet
 
 -- List all tables
 .tables
 -- => Shows: users
+-- => SQLite command (starts with .) lists all tables in database
 
 -- Show table structure
 .schema users
 -- => Displays CREATE TABLE statement
+-- => Shows column names, types, and constraints
 
 -- Verify table is empty
 SELECT COUNT(*) FROM users;
 -- => Returns 0 (no rows yet)
+-- => COUNT(*) counts all rows in table
 ```
 
 **Key Takeaway**: Use `CREATE TABLE` to define structure before storing data. Each column needs a name and type (INTEGER, TEXT, REAL, BLOB). Tables start empty - use INSERT to add rows.
@@ -115,11 +123,12 @@ SELECT retrieves data from tables. The asterisk (`*`) selects all columns, while
 ```sql
 -- Create table and insert sample data
 CREATE TABLE products (
-    id INTEGER,
-    name TEXT,
-    price REAL,
-    category TEXT
+    id INTEGER,          -- => Unique identifier for each product
+    name TEXT,           -- => Product name (variable length)
+    price REAL,          -- => Product price (floating point)
+    category TEXT        -- => Product category grouping
 );
+-- => Table structure defined, ready for data
 
 INSERT INTO products (id, name, price, category)
 VALUES
@@ -128,18 +137,25 @@ VALUES
     (3, 'Desk Chair', 199.99, 'Furniture'),
     (4, 'Monitor', 299.99, 'Electronics');
 -- => 4 rows inserted
+-- => Each row represents one product with all four columns populated
 
 -- Select all columns, all rows
 SELECT * FROM products;
 -- => Returns all 4 rows with columns: id | name | price | category
+-- => Asterisk (*) means "all columns"
+-- => No WHERE clause means "all rows"
 
 -- Select specific columns
 SELECT name, price FROM products;
 -- => Returns only 'name' and 'price' columns for all rows
+-- => Order of columns matches SELECT clause order
+-- => Reduces data transfer compared to SELECT *
 
 -- Select with expressions
 SELECT name, price, price * 1.10 AS price_with_tax FROM products;
 -- => Calculates new column showing 10% tax
+-- => price * 1.10 computes tax for each row
+-- => AS price_with_tax names the computed column
 -- => Laptop: 1099.99, Mouse: 32.99, Desk Chair: 219.99, Monitor: 329.99
 ```
 
@@ -175,16 +191,20 @@ graph TD
 
 ```sql
 CREATE TABLE inventory (
-    id INTEGER,
-    item TEXT,
-    quantity INTEGER,
-    warehouse TEXT
+    id INTEGER,           -- => Inventory item identifier
+    item TEXT,            -- => Item name/description
+    quantity INTEGER,     -- => Stock quantity (number of units)
+    warehouse TEXT        -- => Warehouse location code
 );
+-- => Table structure defined for inventory tracking
+-- => No constraints defined, all columns nullable by default
 
 -- Insert single row with all columns
 INSERT INTO inventory (id, item, quantity, warehouse)
 VALUES (1, 'Widget A', 100, 'North');
--- => 1 row inserted
+-- => Inserts 1 row into inventory table
+-- => Explicitly specifies all 4 column values
+-- => Row state: id=1, item='Widget A', quantity=100, warehouse='North'
 
 -- Insert multiple rows at once (more efficient)
 INSERT INTO inventory (id, item, quantity, warehouse)
@@ -192,16 +212,24 @@ VALUES
     (2, 'Widget B', 200, 'South'),
     (3, 'Widget C', 150, 'East'),
     (4, 'Widget D', 75, 'West');
--- => 3 rows inserted in single statement
+-- => Inserts 3 rows in single statement
+-- => Single INSERT reduces database round-trips
+-- => More efficient than 3 separate INSERT statements
+-- => Table now contains 4 rows total
 
 -- Insert partial columns (others become NULL)
 INSERT INTO inventory (id, item)
 VALUES (5, 'Widget E');
--- => Inserts row with id=5, item='Widget E', quantity=NULL, warehouse=NULL
+-- => Inserts row with only id and item specified
+-- => quantity and warehouse columns become NULL
+-- => Row state: id=5, item='Widget E', quantity=NULL, warehouse=NULL
+-- => NULL represents missing/unknown data
 
 -- Verify data
 SELECT * FROM inventory;
 -- => Returns all 5 rows
+-- => Displays: id, item, quantity, warehouse for each row
+-- => Row 5 shows NULL values for quantity and warehouse
 ```
 
 **Key Takeaway**: INSERT adds rows to tables - specify columns and values explicitly for clarity. Multi-row inserts are more efficient than multiple single-row inserts. Columns not specified get NULL unless a default value is defined.
@@ -218,52 +246,76 @@ UPDATE modifies existing rows matching a WHERE condition. DELETE removes rows. B
 
 ```sql
 CREATE TABLE stock (
-    id INTEGER,
-    product TEXT,
-    quantity INTEGER,
-    price REAL
+    id INTEGER,           -- => Stock item identifier
+    product TEXT,         -- => Product name
+    quantity INTEGER,     -- => Current stock quantity
+    price REAL            -- => Unit price in dollars
 );
+-- => Table for inventory stock management
+-- => Tracks product quantities and pricing
 
 INSERT INTO stock (id, product, quantity, price)
 VALUES
     (1, 'Apples', 100, 1.50),
     (2, 'Bananas', 150, 0.75),
     (3, 'Oranges', 80, 2.00);
+-- => Inserts 3 products with initial quantities and prices
+-- => Table state: 3 rows with complete data
 
 -- Update single row
 UPDATE stock
 SET quantity = 120
 WHERE id = 1;
 -- => Updates Apples quantity to 120 (only row with id=1)
+-- => WHERE clause targets specific row by id
+-- => Before: quantity=100, After: quantity=120
+-- => Other columns (product, price) unchanged
 
 -- Update multiple columns
 UPDATE stock
 SET quantity = 200, price = 0.80
 WHERE product = 'Bananas';
 -- => Updates both quantity and price for Bananas
+-- => SET clause specifies multiple column changes
+-- => Before: quantity=150, price=0.75
+-- => After: quantity=200, price=0.80
 
 -- Update with calculation
 UPDATE stock
 SET price = price * 1.10
 WHERE price < 2.00;
 -- => Increases price by 10% for items under $2.00
--- => Apples: 1.50 -> 1.65, Bananas: 0.80 -> 0.88
+-- => WHERE filters rows: Apples (1.50) and Bananas (0.80) qualify
+-- => Apples: price 1.50 -> 1.65 (1.50 * 1.10)
+-- => Bananas: price 0.80 -> 0.88 (0.80 * 1.10)
+-- => Oranges unchanged (price 2.00 not < 2.00)
 
 -- Verify updates
 SELECT * FROM stock;
+-- => Returns all rows showing updated values
+-- => Displays current state after all UPDATE operations
 
 -- Delete specific row
 DELETE FROM stock
 WHERE id = 3;
 -- => Removes Oranges (id=3)
+-- => WHERE clause targets single row by id
+-- => Table now contains 2 rows (Apples, Bananas)
+-- => Deleted row permanently removed
 
 -- DANGEROUS: Update without WHERE affects ALL rows
 UPDATE stock SET quantity = 0;
 -- => Sets quantity to 0 for ALL remaining items (Apples, Bananas)
+-- => No WHERE clause means operation applies to every row
+-- => Both products now have quantity=0
+-- => Prices unchanged (only SET quantity affected)
 
 -- DANGEROUS: Delete without WHERE removes ALL rows
 DELETE FROM stock;
 -- => Removes all rows from table (table structure remains)
+-- => No WHERE clause means delete every row
+-- => Table still exists but contains 0 rows
+-- => Table structure (columns, constraints) preserved
 ```
 
 **Key Takeaway**: Always use WHERE clauses with UPDATE and DELETE to target specific rows - omitting WHERE modifies or removes ALL rows. Test your WHERE clause with SELECT before running UPDATE or DELETE.
@@ -1131,23 +1183,28 @@ graph TD
 
 ```sql
 CREATE TABLE customers (
-    id INTEGER,
-    name TEXT,
-    email TEXT
+    id INTEGER,           -- => Customer identifier
+    name TEXT,            -- => Customer name
+    email TEXT            -- => Customer email address
 );
+-- => Customers table stores customer information
 
 CREATE TABLE orders (
-    id INTEGER,
-    customer_id INTEGER,
-    product TEXT,
-    amount REAL
+    id INTEGER,           -- => Order identifier
+    customer_id INTEGER,  -- => Links to customers.id (foreign key concept)
+    product TEXT,         -- => Product purchased
+    amount REAL           -- => Order amount in dollars
 );
+-- => Orders table stores purchase transactions
+-- => customer_id creates relationship to customers table
 
 INSERT INTO customers (id, name, email)
 VALUES
     (1, 'Alice', 'alice@example.com'),
     (2, 'Bob', 'bob@example.com'),
     (3, 'Charlie', 'charlie@example.com');
+-- => Inserts 3 customers
+-- => Customer ids: 1, 2, 3
 
 INSERT INTO orders (id, customer_id, product, amount)
 VALUES
@@ -1155,6 +1212,10 @@ VALUES
     (2, 2, 'Mouse', 50.00),
     (3, 1, 'Keyboard', 100.00),
     (4, 4, 'Monitor', 300.00);  -- customer_id=4 doesn't exist in customers
+-- => Inserts 4 orders
+-- => Orders 1 and 3 link to Alice (customer_id=1)
+-- => Order 2 links to Bob (customer_id=2)
+-- => Order 4 links to non-existent customer (id=4)
 
 -- INNER JOIN: Only matching rows
 SELECT
@@ -1164,30 +1225,48 @@ SELECT
     orders.amount
 FROM customers
 INNER JOIN orders ON customers.id = orders.customer_id;
+-- => Joins customers and orders tables
+-- => ON clause specifies join condition (how rows match)
+-- => For each order, find customer where customers.id = orders.customer_id
+-- => Only includes rows with matches in BOTH tables
 -- => Returns 3 rows:
--- => Alice, alice@example.com, Laptop, 1000.00
--- => Bob, bob@example.com, Mouse, 50.00
--- => Alice, alice@example.com, Keyboard, 100.00
--- => Note: Charlie (no orders) and order 4 (no customer) are excluded
+-- => Alice, alice@example.com, Laptop, 1000.00 (customers.id=1 matches orders.customer_id=1)
+-- => Bob, bob@example.com, Mouse, 50.00 (customers.id=2 matches orders.customer_id=2)
+-- => Alice, alice@example.com, Keyboard, 100.00 (customers.id=1 matches orders.customer_id=1 again)
+-- => Charlie excluded (no matching orders.customer_id=3)
+-- => Order 4 (Monitor) excluded (no matching customers.id=4)
 
 -- Table aliases for shorter syntax
 SELECT c.name, o.product, o.amount
 FROM customers c
 INNER JOIN orders o ON c.id = o.customer_id;
+-- => Same join as above with shorter table names
+-- => 'c' is alias for customers table
+-- => 'o' is alias for orders table
+-- => Improves readability in complex queries
 
 -- Multiple conditions in join
 SELECT c.name, o.product, o.amount
 FROM customers c
 INNER JOIN orders o ON c.id = o.customer_id AND o.amount > 100;
+-- => Combines join condition with filter condition
+-- => ON c.id = o.customer_id: matches customer to order
+-- => AND o.amount > 100: filters to orders over $100
 -- => Returns: Alice/Laptop/1000.00 (only order over $100)
+-- => Alice's Keyboard order (100.00) excluded (not > 100)
 
 -- Aggregation with INNER JOIN
 SELECT c.name, COUNT(o.id) AS num_orders, SUM(o.amount) AS total_spent
 FROM customers c
 INNER JOIN orders o ON c.id = o.customer_id
 GROUP BY c.id, c.name;
--- => Alice: 2 orders, $1100.00 total
--- => Bob: 1 order, $50.00 total
+-- => Joins customers with orders
+-- => GROUP BY groups results per customer
+-- => COUNT(o.id) counts orders per customer
+-- => SUM(o.amount) totals order amounts per customer
+-- => Alice: 2 orders (Laptop + Keyboard), $1100.00 total (1000 + 100)
+-- => Bob: 1 order (Mouse), $50.00 total
+-- => Charlie excluded (no orders to join with)
 ```
 
 **Key Takeaway**: INNER JOIN combines tables where join conditions match. Only rows with matches in BOTH tables appear. Use table aliases (AS) for cleaner syntax. Rows without matches are excluded.

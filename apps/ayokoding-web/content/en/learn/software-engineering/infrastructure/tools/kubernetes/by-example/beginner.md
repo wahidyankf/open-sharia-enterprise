@@ -46,21 +46,33 @@ graph TD
 ```
 
 ```yaml
-apiVersion: v1 # => Uses core Kubernetes API v1
-kind: Pod # => Resource type: Pod
+apiVersion:
+  v1 # => Uses core Kubernetes API v1
+  # => v1 is stable, production-ready API version
+kind:
+  Pod # => Resource type: Pod
+  # => Smallest deployable unit in Kubernetes
 metadata:
-  name: hello-world # => Pod name: "hello-world"
+  name:
+    hello-world # => Pod name: "hello-world"
+    # => Must be unique within namespace
   labels:
-    app: hello # => Label for identification and selection
+    app:
+      hello # => Label for identification and selection
+      # => Labels are key-value pairs for organization
 spec:
   containers:
-    - name: nginx # => Container name: "nginx"
+    - name:
+        nginx # => Container name: "nginx"
+        # => Each container needs unique name within Pod
       image:
         nginx:1.24 # => Uses nginx 1.24 from Docker Hub
-        # => Image pulled automatically if not present
+        # => Image pulled automatically if not present locally
+        # => Format: [registry/]image[:tag]
       ports:
         - containerPort:
             80 # => Exposes port 80 inside container
+            # => Documentation only, doesn't create network access
             # => Does not expose to outside cluster
 ```
 
