@@ -1,5 +1,5 @@
 ---
-description: Creates By Example tutorial content for ayokoding-web with 75-90 heavily annotated code examples following five-part structure. Ensures bilingual navigation and level-based weight system compliance.
+description: Creates By Example tutorial content for ayokoding-web with 75-85 heavily annotated code examples following five-part structure. Ensures bilingual navigation and level-based weight system compliance.
 model: zai/glm-4.7
 tools:
   bash: true
@@ -25,7 +25,7 @@ skills:
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
 - Advanced reasoning to create well-structured By Example tutorials
-- Sophisticated content generation for 75-90 annotated code examples
+- Sophisticated content generation for 75-85 annotated code examples
 - Deep understanding of programming language pedagogy
 - Complex decision-making for annotation density (1-2.25 ratio per example)
 - Multi-step content creation orchestration
@@ -43,6 +43,7 @@ Create By Example tutorial content in `apps/ayokoding-web/content/` following ay
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Hextra theme, bilingual, weights, navigation
 - [By Example Content Standard](../../governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
 - [Tutorial Naming Convention](../../governance/conventions/tutorials/naming.md) - By Example type definition
+- [By-Example Tutorial Convention](../../governance/conventions/tutorials/by-example.md) - Primary authority for by-example standards
 
 ## When to Use This Agent
 
@@ -62,9 +63,14 @@ Use this agent when:
 
 The `docs-creating-by-example-tutorials` Skill provides complete By Example standards:
 
-- **75-90 annotated code examples** per tutorial
-- **1-2.25 comment lines per line of code PER EXAMPLE** (not tutorial-wide)
-- **Five-part structure**: Context → Code → Annotation → Output → Discussion
+- **75-85 annotated code examples** per tutorial
+- **1.0-2.25 comment lines per code line PER EXAMPLE** (not tutorial-wide)
+- **Five-part structure** for each example:
+  1. Brief Explanation (2-3 sentences)
+  2. Mermaid Diagram (when appropriate)
+  3. Heavily Annotated Code
+  4. Key Takeaway (1-2 sentences)
+  5. Why It Matters (50-100 words)
 - **Progressive complexity** within themed groups
 - **Example grouping** (Basic Operations, Error Handling, Advanced Patterns, etc.)
 
@@ -88,7 +94,7 @@ The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specifi
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
 - Advanced reasoning to create well-structured By Example tutorials
-- Sophisticated content generation for 75-90 annotated code examples
+- Sophisticated content generation for 75-85 annotated code examples
 - Deep understanding of programming language pedagogy
 - Complex decision-making for annotation density (1-2.25 ratio per example)
 - Multi-step content creation orchestration
@@ -99,7 +105,7 @@ apps/ayokoding-web/content/docs/[language]/by-example/[topic].md
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
 - Advanced reasoning to create well-structured By Example tutorials
-- Sophisticated content generation for 75-90 annotated code examples
+- Sophisticated content generation for 75-85 annotated code examples
 - Deep understanding of programming language pedagogy
 - Complex decision-making for annotation density (1-2.25 ratio per example)
 - Multi-step content creation orchestration
@@ -108,7 +114,7 @@ apps/ayokoding-web/content/docs/[language]/by-example/[topic].md
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
 - Advanced reasoning to create well-structured By Example tutorials
-- Sophisticated content generation for 75-90 annotated code examples
+- Sophisticated content generation for 75-85 annotated code examples
 - Deep understanding of programming language pedagogy
 - Complex decision-making for annotation density (1-2.25 ratio per example)
 - Multi-step content creation orchestration

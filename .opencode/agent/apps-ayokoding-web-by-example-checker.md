@@ -1,5 +1,5 @@
 ---
-description: Validates By Example tutorial quality including annotation density (1-2.25 ratio per example), five-part structure, example count (75-90), and ayokoding-web compliance. Use when reviewing By Example content.
+description: Validates By Example tutorial quality including annotation density (1.0-2.25 ratio per example), five-part structure, example count (75-85), and ayokoding-web compliance. Use when reviewing By Example content.
 model: zai/glm-4.7
 tools:
   bash: true
@@ -46,6 +46,8 @@ The `repo-generating-validation-reports` Skill provides UUID generation, timesta
 
 **CRITICAL - Read these first**:
 
+- [By-Example Tutorial Convention](../../governance/conventions/tutorials/by-example.md) - Primary validation authority
+
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Hextra theme standards
 - [By Example Content Standard](../../governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
 - [Tutorial Naming Convention](../../governance/conventions/tutorials/naming.md) - By Example definition
@@ -57,12 +59,12 @@ The `docs-creating-by-example-tutorials` Skill provides complete By Example vali
 ### 1. Example Count Validation
 
 - Minimum 75 annotated code examples
-- Target 75-90 examples
+- Target 75-85 examples
 - Each example follows five-part structure
 
 ### 2. Annotation Density Validation
 
-- **CRITICAL**: 1-2.25 comment lines per code line PER EXAMPLE
+- **CRITICAL**: 1.0-2.25 comment lines per code line PER EXAMPLE
 - Count measured per individual example, not tutorial-wide average
 - Comments explain WHY, not WHAT
 
@@ -70,19 +72,27 @@ The `docs-creating-by-example-tutorials` Skill provides complete By Example vali
 
 Five-part structure for each example:
 
-1. Context (what it demonstrates)
-2. Code (with heavy annotation)
-3. Annotation (inline comments)
-4. Output (expected result)
-5. Discussion (design decisions)
+1. Brief Explanation (2-3 sentences)
+2. Mermaid Diagram (when appropriate)
+3. Heavily Annotated Code
+4. Key Takeaway (1-2 sentences)
+5. Why It Matters (50-100 words)
 
-### 4. Example Grouping Validation
+### 4. Self-Containment Validation
+
+- Examples runnable within chapter scope (copy-paste-runnable)
+- Full imports present (no "assume this is imported")
+- Helper functions included in-place
+- No external references required to run code
+- Self-contained even while building on earlier concepts
+
+### 5. Example Grouping Validation
 
 - Thematic grouping (Basic, Error Handling, Advanced, etc.)
 - Progressive complexity within groups
 - Clear group headers
 
-### 5. ayokoding-web Compliance
+### 6. ayokoding-web Compliance
 
 The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specific validation:
 

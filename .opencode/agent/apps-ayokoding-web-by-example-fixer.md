@@ -100,6 +100,10 @@ The `repo-assessing-criticality-confidence` Skill provides confidence definition
 - Annotation density <1.0 or >2.25 per example (calculable)
 - Missing frontmatter field (objective)
 - Incorrect weight calculation (formula-based)
+- Diagram count outside 30-50 total range (objective count)
+- Color palette violations in diagrams (non-accessible colors detected)
+- "Why It Matters" length outside 50-100 words (word count)
+- Missing imports in self-contained examples (syntax-verifiable)
 
 **MEDIUM Confidence** (Manual review):
 
@@ -116,6 +120,8 @@ The `repo-assessing-criticality-confidence` Skill provides confidence definition
 ## Reference Documentation
 
 **Project Guidance:**
+
+- [By-Example Tutorial Convention](../../governance/conventions/tutorials/by-example.md) - Standards for fix validation
 
 - [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Complete standards
