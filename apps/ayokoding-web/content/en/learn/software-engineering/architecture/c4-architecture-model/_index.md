@@ -1,5 +1,5 @@
 ---
-title: "C4 Model"
+title: "C4 Architecture Model"
 weight: 10000000
 date: 2026-01-30T00:00:00+07:00
 draft: false

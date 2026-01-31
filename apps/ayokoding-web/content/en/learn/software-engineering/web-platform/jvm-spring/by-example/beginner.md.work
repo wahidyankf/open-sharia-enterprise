@@ -2901,56 +2901,52 @@ import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
-class LinuxCondition implements Condition {  // => Custom condition implementation
-    // => Checks if operating system is Linux
+class LinuxCondition implements Condition {
+    // => Custom condition checking if OS is Linux
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        // => Spring calls this at bean registration time
-        String os = System.getProperty("os.name").toLowerCase();  // => Gets OS name
-                                                                   // => Converts to lowercase
-        return os.contains("linux");  // => Returns true if Linux detected
-                                       // => Bean registered only if returns true
+        String os = System.getProperty("os.name").toLowerCase();
+        // => Reads system property
+        return os.contains("linux");  // => Returns true if Linux
+        // => Bean registered only if this returns true
     }
 }
 
-class FileService {  // => File service with OS-specific path
-    private final String basePath;  // => Base path for file operations
+class FileService {
+    private final String basePath;
 
-    public FileService(String basePath) {  // => Constructor sets path
-        this.basePath = basePath;  // => Stores base path
+    public FileService(String basePath) {
+        this.basePath = basePath;
     }
 
-    public void printPath() {  // => Displays configured path
-        System.out.println("Base path: " + basePath);  // => Prints path
+    public void printPath() {
+        System.out.println("Base path: " + basePath);
     }
 }
 
-@Configuration  // => Spring configuration source
+@Configuration
 class AppConfig {
-    @Bean  // => Defines FileService bean for Linux
-    @Conditional(LinuxCondition.class)  // => Conditional registration
-    // => Bean registered only if LinuxCondition.matches() returns true
-    // => Spring evaluates condition before creating bean
+    @Bean
+    @Conditional(LinuxCondition.class)
+    // => Bean only registered if LinuxCondition.matches() returns true
     public FileService linuxFileService() {
-        return new FileService("/var/data");  // => Linux path convention
-                                                // => Used on Linux systems
+        return new FileService("/var/data");
+        // => Linux-specific path
     }
 
-    @Bean  // => Defines FileService bean for Windows
-    @Conditional(WindowsCondition.class)  // => Conditional registration
-    // => Bean registered only if WindowsCondition matches
+    @Bean
+    @Conditional(WindowsCondition.class)
     public FileService windowsFileService() {
-        return new FileService("C:\\Data");  // => Windows path convention
-                                              // => Used on Windows systems
+        return new FileService("C:\\Data");
+        // => Windows-specific path
     }
 }
 
-class WindowsCondition implements Condition {  // => Custom condition for Windows
+class WindowsCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        // => Checks if OS is Windows
-        String os = System.getProperty("os.name").toLowerCase();  // => Gets OS name
-        return os.contains("windows");  // => Returns true if Windows
+        String os = System.getProperty("os.name").toLowerCase();
+        return os.contains("windows");
     }
 }
 
@@ -2958,17 +2954,14 @@ public class Example23 {
     public static void main(String[] args) {
         AnnotationConfigApplicationContext context =
             new AnnotationConfigApplicationContext(AppConfig.class);
-        // => Spring evaluates conditions at startup
-        // => Registers only matching bean (Linux OR Windows)
 
         FileService service = context.getBean(FileService.class);
-        // => Retrieves the one registered FileService bean
-        service.printPath();  // => Displays OS-appropriate path
+        service.printPath();
         // => Output on Linux: Base path: /var/data
         // => Output on Windows: Base path: C:\Data
-        // => Only one bean exists in container
+        // => Only one bean registered based on OS
 
-        context.close();  // => Cleanup resources
+        context.close();
     }
 }
 ```
@@ -2984,64 +2977,57 @@ import org.springframework.context.annotation.Condition
 import org.springframework.context.annotation.ConditionContext
 import org.springframework.core.type.AnnotatedTypeMetadata
 
-class LinuxCondition : Condition {  // => Custom condition implementation
-    // => Checks if operating system is Linux
+class LinuxCondition : Condition {
+    // => Custom condition checking if OS is Linux
     override fun matches(context: ConditionContext, metadata: AnnotatedTypeMetadata): Boolean {
-        // => Spring calls this at bean registration time
-        val os = System.getProperty("os.name").lowercase()  // => Gets OS name
-                                                             // => Converts to lowercase
-        return os.contains("linux")  // => Returns true if Linux detected
-                                      // => Bean registered only if returns true
+        val os = System.getProperty("os.name").lowercase()
+        // => Reads system property
+        return os.contains("linux")  // => Returns true if Linux
+        // => Bean registered only if this returns true
     }
 }
 
-class WindowsCondition : Condition {  // => Custom condition for Windows
+class WindowsCondition : Condition {
     override fun matches(context: ConditionContext, metadata: AnnotatedTypeMetadata): Boolean {
-        // => Checks if OS is Windows
-        val os = System.getProperty("os.name").lowercase()  // => Gets OS name
-        return os.contains("windows")  // => Returns true if Windows
+        val os = System.getProperty("os.name").lowercase()
+        return os.contains("windows")
     }
 }
 
-class FileService(private val basePath: String) {  // => File service with OS-specific path
-    fun printPath() {  // => Displays configured path
-        println("Base path: $basePath")  // => Prints path
+class FileService(private val basePath: String) {
+    fun printPath() {
+        println("Base path: $basePath")
     }
 }
 
-@Configuration  // => Spring configuration source
+@Configuration
 class AppConfig {
-    @Bean  // => Defines FileService bean for Linux
-    @Conditional(LinuxCondition::class)  // => Conditional registration
-    // => Bean registered only if LinuxCondition.matches() returns true
-    // => Spring evaluates condition before creating bean
+    @Bean
+    @Conditional(LinuxCondition::class)
+    // => Bean only registered if LinuxCondition.matches() returns true
     fun linuxFileService(): FileService {
-        return FileService("/var/data")  // => Linux path convention
-                                          // => Used on Linux systems
+        return FileService("/var/data")
+        // => Linux-specific path
     }
 
-    @Bean  // => Defines FileService bean for Windows
-    @Conditional(WindowsCondition::class)  // => Conditional registration
-    // => Bean registered only if WindowsCondition matches
+    @Bean
+    @Conditional(WindowsCondition::class)
     fun windowsFileService(): FileService {
-        return FileService("C:\\Data")  // => Windows path convention
-                                         // => Used on Windows systems
+        return FileService("C:\\Data")
+        // => Windows-specific path
     }
 }
 
 fun main() {
     val context = AnnotationConfigApplicationContext(AppConfig::class.java)
-    // => Spring evaluates conditions at startup
-    // => Registers only matching bean (Linux OR Windows)
 
     val service = context.getBean(FileService::class.java)
-    // => Retrieves the one registered FileService bean
-    service.printPath()  // => Displays OS-appropriate path
+    service.printPath()
     // => Output on Linux: Base path: /var/data
     // => Output on Windows: Base path: C:\Data
-    // => Only one bean exists in container
+    // => Only one bean registered based on OS
 
-    context.close()  // => Cleanup resources
+    context.close()
 }
 ```
 

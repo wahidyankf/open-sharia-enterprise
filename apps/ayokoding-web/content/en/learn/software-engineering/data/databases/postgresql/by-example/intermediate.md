@@ -55,17 +55,25 @@ VALUES
 
 -- Basic CTE
 WITH high_value_orders AS (
+    -- => WITH clause defines named temporary result set (CTE)
+    -- => CTE named 'high_value_orders' exists only for this query
     SELECT customer, total, order_date
+    -- => Retrieves three columns from orders table
     FROM orders
     -- => Specifies source table for query
-    WHERE total >= 500  -- => Only orders $500 or more
+    WHERE total >= 500
+    -- => Filters rows to keep only orders $500 or more
+    -- => Excludes Bob's orders (200, 150 both < 500)
 )
 SELECT customer, SUM(total) AS total_high_value
--- => Creates alias for column/table
+-- => Aggregates total column using SUM function
+-- => Creates alias 'total_high_value' for summed amounts
 FROM high_value_orders
--- => Specifies source table for query
+-- => Specifies CTE as source (treats it like a table)
+-- => CTE contains only high-value orders: Alice (1500, 800), Charlie (3000)
 GROUP BY customer;
--- => Aggregates rows by specified columns
+-- => Aggregates rows by customer column
+-- => Combines multiple rows per customer into single summary row
 -- => WITH clause defines CTE named 'high_value_orders' (temporary result set)
 -- => CTE query filters orders: total >= 500
 -- =>   Alice: 1500.00 and 800.00 (both >= 500)
@@ -218,69 +226,107 @@ VALUES
 -- ROW_NUMBER: sequential numbering (no ties)
 SELECT
     salesperson,
+    -- => Retrieves salesperson name column
     region,
+    -- => Retrieves region column
     amount,
+    -- => Retrieves sales amount column
     ROW_NUMBER() OVER (ORDER BY amount DESC) AS row_num
-    -- => Sorts query results
+    -- => Window function assigns sequential numbers starting from 1
+    -- => OVER clause defines window scope (all rows)
+    -- => ORDER BY amount DESC sorts high to low within window
+    -- => Even tied values get different sequential numbers
 FROM sales;
 -- => Specifies source table for query
--- => Eve (1), Bob (2), Charlie (3), Diana (4), Alice (5)
--- => Diana gets 4 even though tied with Charlie
+-- => Result rows: Eve (8000, row_num=1), Bob (7000, row_num=2)
+-- => Charlie (6000, row_num=3), Diana (6000, row_num=4)
+-- => Alice (5000, row_num=5)
+-- => Diana gets 4 even though tied with Charlie (sequential)
 
 -- RANK: skips numbers after ties
 SELECT
     salesperson,
+    -- => Retrieves salesperson name column
     region,
+    -- => Retrieves region column
     amount,
+    -- => Retrieves sales amount column
     RANK() OVER (ORDER BY amount DESC) AS rank
-    -- => Sorts query results
+    -- => Window function ranks values, tied rows get same rank
+    -- => OVER clause defines window scope
+    -- => ORDER BY amount DESC for high-to-low ranking
+    -- => After ties, skips numbers equal to tie count
 FROM sales;
 -- => Specifies source table for query
--- => Eve (1), Bob (2), Charlie (3), Diana (3), Alice (5)
--- => Both Charlie and Diana get 3, next is 5 (skips 4)
+-- => Result rows: Eve (8000, rank=1), Bob (7000, rank=2)
+-- => Charlie (6000, rank=3), Diana (6000, rank=3) [tied]
+-- => Alice (5000, rank=5) [skips 4 because 2 rows at rank 3]
+-- => Competitive ranking: 1st, 2nd, 3rd-3rd (tie), 5th
 
 -- DENSE_RANK: doesn't skip numbers after ties
 SELECT
     salesperson,
+    -- => Retrieves salesperson name column
     region,
+    -- => Retrieves region column
     amount,
+    -- => Retrieves sales amount column
     DENSE_RANK() OVER (ORDER BY amount DESC) AS dense_rank
-    -- => Sorts query results
+    -- => Window function ranks without skipping after ties
+    -- => OVER clause defines window scope
+    -- => ORDER BY amount DESC for high-to-low ranking
+    -- => After ties, continues with next sequential number
 FROM sales;
 -- => Specifies source table for query
--- => Eve (1), Bob (2), Charlie (3), Diana (3), Alice (4)
--- => After tie at 3, next is 4 (no skip)
+-- => Result rows: Eve (8000, dense_rank=1), Bob (7000, dense_rank=2)
+-- => Charlie (6000, dense_rank=3), Diana (6000, dense_rank=3) [tied]
+-- => Alice (5000, dense_rank=4) [no skip, continues from 3]
+-- => Dense ranking: 1st, 2nd, 3rd-3rd (tie), 4th
 
 -- Window function with PARTITION BY
 SELECT
     salesperson,
+    -- => Retrieves salesperson name column
     region,
+    -- => Retrieves region column
     amount,
+    -- => Retrieves sales amount column
     ROW_NUMBER() OVER (PARTITION BY region ORDER BY amount DESC) AS region_rank
-    -- => Sorts query results
+    -- => Window function with PARTITION BY clause
+    -- => PARTITION BY region creates independent windows per region
+    -- => Each partition gets separate numbering (resets to 1)
+    -- => ORDER BY amount DESC within each partition
 FROM sales;
 -- => Specifies source table for query
--- => Separate ranking per region
--- => North: Eve (1), Bob (2), Alice (3)
--- => South: Charlie (1), Diana (2)
+-- => North partition: Eve (8000, rank=1), Bob (7000, rank=2), Alice (5000, rank=3)
+-- => South partition: Charlie (6000, rank=1), Diana (6000, rank=2)
+-- => Ranking resets per region, independent calculations
 
 -- Find top salesperson per region
 WITH ranked_sales AS (
     SELECT
         salesperson,
+        -- => Retrieves salesperson name
         region,
+        -- => Retrieves region name
         amount,
+        -- => Retrieves sales amount
         ROW_NUMBER() OVER (PARTITION BY region ORDER BY amount DESC) AS rank
-        -- => Sorts query results
+        -- => Assigns rank within each region independently
+        -- => PARTITION BY region separates North from South
+        -- => ORDER BY amount DESC ranks high to low per partition
     FROM sales
     -- => Specifies source table for query
 )
 SELECT salesperson, region, amount
+-- => Retrieves three columns from CTE
 FROM ranked_sales
--- => Specifies source table for query
+-- => Specifies CTE as source table
 WHERE rank = 1;
+-- => Filters to keep only top-ranked row per partition
 -- => Applies filter to rows
--- => Eve (North, 8000), Charlie (South, 6000)
+-- => Result: Eve (North, 8000, rank=1), Charlie (South, 6000, rank=1)
+-- => Gets best performer from each region
 ```
 
 **Key Takeaway**: Window functions compute across row sets without collapsing - ROW_NUMBER for sequential numbering, RANK for competitive ranking (ties skip), DENSE_RANK for no skipping. PARTITION BY creates independent windows per group.
@@ -345,41 +391,62 @@ VALUES
 -- Running total per account
 SELECT
     account,
+    -- => Retrieves account column
     category,
+    -- => Retrieves category column
     amount,
+    -- => Retrieves transaction amount
     transaction_date,
+    -- => Retrieves date column
     SUM(amount) OVER (
-    -- => Aggregate function computes summary value
+        -- => Window aggregate sums amounts within window frame
+        -- => OVER clause without frame = cumulative from partition start
         PARTITION BY account
+        -- => Creates independent windows per account (A separate from B)
+        -- => Each account gets its own running total calculation
         ORDER BY transaction_date
-        -- => Sorts query results
+        -- => Within partition, processes rows in date order
+        -- => Earlier dates contribute to later dates' running totals
     ) AS running_total
-    -- => Creates alias for column/table
+    -- => Creates alias 'running_total' for cumulative sum column
 FROM transactions
 -- => Specifies source table for query
 ORDER BY account, transaction_date;
--- => Sorts query results
--- => Account A: 50, 125, 155 (cumulative)
--- => Account B: 60, 105, 185 (independent cumulative)
+-- => Final sort: first by account, then by date (for readability)
+-- => Account A rows: 50.00 (total=50), 75.00 (total=125), 30.00 (total=155)
+-- => Account B rows: 60.00 (total=60), 45.00 (total=105), 80.00 (total=185)
+-- => Each account's running total independent (partition isolation)
 
 -- Running total per account AND category
 SELECT
     account,
+    -- => Retrieves account column
     category,
+    -- => Retrieves category column
     amount,
+    -- => Retrieves transaction amount
     transaction_date,
+    -- => Retrieves date column
     SUM(amount) OVER (
-    -- => Aggregate function computes summary value
+        -- => Window aggregate computes cumulative sum
         PARTITION BY account, category
+        -- => Creates windows for each account+category combination
+        -- => Four partitions: A-Food, A-Transport, B-Food, B-Transport
+        -- => Each partition maintains independent running total
         ORDER BY transaction_date
-        -- => Sorts query results
+        -- => Within each partition, processes rows chronologically
+        -- => Running total accumulates only within same account+category
     ) AS category_running_total
-    -- => Creates alias for column/table
+    -- => Creates alias for the category-specific running total
 FROM transactions
 -- => Specifies source table for query
 ORDER BY account, category, transaction_date;
--- => Sorts query results
--- => Separate running totals for A-Food, A-Transport, B-Food, B-Transport
+-- => Final sort: account → category → date (groups same categories)
+-- => A-Food: 50 (total=50), 75 (total=125)
+-- => A-Transport: 30 (total=30, separate from Food)
+-- => B-Food: 60 (total=60), 80 (total=140, separate from A-Food)
+-- => B-Transport: 45 (total=45, separate from B-Food)
+-- => Each account+category pair maintains isolated running total
 
 -- Average per partition
 SELECT
@@ -397,26 +464,44 @@ FROM transactions;
 -- First and last values in partition
 SELECT
     account,
+    -- => Retrieves account column
     transaction_date,
+    -- => Retrieves transaction date
     amount,
+    -- => Retrieves transaction amount
     FIRST_VALUE(amount) OVER (
+        -- => Window function returns first value in ordered partition
         PARTITION BY account
+        -- => Creates separate windows per account
+        -- => Each account gets independent first value calculation
         ORDER BY transaction_date
-        -- => Sorts query results
+        -- => Orders rows by date within each partition
+        -- => First value determined by earliest transaction_date
+        -- => Default frame: RANGE UNBOUNDED PRECEDING to CURRENT ROW
     ) AS first_amount,
-    -- => Creates alias for column/table
+    -- => Aliased as 'first_amount' column
+    -- => Account A: all rows show first amount (50.00 from Dec 20)
+    -- => Account B: all rows show first amount (60.00 from Dec 20)
     LAST_VALUE(amount) OVER (
+        -- => Window function returns last value in ordered partition
         PARTITION BY account
+        -- => Separate windows per account
         ORDER BY transaction_date
-        -- => Sorts query results
+        -- => Orders by date within partition
         ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+        -- => CRITICAL: Custom frame includes ALL rows in partition
+        -- => Default frame only goes to current row (not full partition)
+        -- => UNBOUNDED FOLLOWING ensures last row of partition included
     ) AS last_amount
-    -- => Creates alias for column/table
+    -- => Aliased as 'last_amount' column
+    -- => Account A: all rows show last amount (30.00 from Dec 22)
+    -- => Account B: all rows show last amount (80.00 from Dec 22)
 FROM transactions
 -- => Specifies source table for query
 ORDER BY account, transaction_date;
--- => Sorts query results
--- => Shows first and last transaction amount per account
+-- => Final sort: account, then date
+-- => Shows first and last transaction amounts alongside each transaction
+-- => Useful for comparing current transaction to account's first/last
 ```
 
 **Key Takeaway**: PARTITION BY creates independent calculation windows - use it for running totals per group, rankings within categories, or comparative analytics. Combine with ROWS/RANGE clauses to control window frame boundaries.
@@ -438,8 +523,12 @@ CREATE DATABASE example_34;
 -- => Statement execution completes
 -- => Switches connection to example_34 database
 CREATE TABLE employees (
+    id SERIAL PRIMARY KEY,
+    -- => Auto-incrementing integer column, uniquely identifies each employee
     name VARCHAR(100),
+    -- => Employee name, up to 100 characters
     manager_id INTEGER
+    -- => References id of manager (NULL for CEO, no manager)
 );
 -- => Statement execution completes
 INSERT INTO employees (id, name, manager_id)
@@ -463,70 +552,109 @@ VALUES
 
 -- Find all reports under CEO (all employees)
 WITH RECURSIVE org_chart AS (
+    -- => WITH RECURSIVE allows CTE to reference itself
+    -- => CTE named 'org_chart' will build organization hierarchy
     -- Base case: start with CEO
     SELECT id, name, manager_id, 1 AS level, name AS path
-    -- => Creates alias for column/table
+    -- => Retrieves CEO row: id=1, name='CEO Alice', manager_id=NULL
+    -- => level=1 indicates top of hierarchy (CEO level)
+    -- => path=name initializes as just CEO name (start of path string)
     FROM employees
     -- => Specifies source table for query
-    WHERE manager_id IS NULL  -- => CEO has no manager
+    WHERE manager_id IS NULL
+    -- => Filters to CEO only (no manager, manager_id is NULL)
+    -- => This is the base case (starting point for recursion)
     UNION ALL
+    -- => Combines base case with recursive results, keeps duplicates
+    -- => UNION ALL required for recursion (UNION without ALL forbidden)
     -- Recursive case: find employees managed by previous results
     SELECT
         e.id,
+        -- => Current employee's id
         e.name,
+        -- => Current employee's name
         e.manager_id,
+        -- => Current employee's manager reference
         oc.level + 1,
+        -- => Increments level by 1 (child one level deeper than parent)
         oc.path || ' > ' || e.name
+        -- => Concatenates parent's path with ' > ' separator and child name
+        -- => Builds breadcrumb trail from CEO to current employee
     FROM employees e
-    -- => Specifies source table for query
+    -- => Specifies employees table, aliased as 'e'
     INNER JOIN org_chart oc ON e.manager_id = oc.id
-    -- => Combines rows from multiple tables
+    -- => Joins recursively: find employees whose manager is in previous iteration
+    -- => oc references org_chart CTE itself (recursive self-reference)
+    -- => Each iteration finds next level down in hierarchy
 )
 SELECT
     id,
+    -- => Retrieves employee id
     name,
+    -- => Retrieves employee name
     level,
+    -- => Retrieves hierarchy level (1=CEO, 2=VP, 3=Manager, 4=Employee)
     path
+    -- => Retrieves full path from CEO to this employee
 FROM org_chart
--- => Specifies source table for query
+-- => Specifies recursive CTE as source table
 ORDER BY level, name;
--- => Sorts query results
--- => Sorts result set
--- => Shows org hierarchy with level and path from CEO
+-- => Sorts first by level (CEO→VP→Manager→Employee), then alphabetically
+-- => Result shows full org hierarchy with levels and paths
+-- => Row 1: Alice (level=1, path='CEO Alice')
+-- => Rows 2-3: Bob, Charlie (level=2, paths='CEO Alice > VP Bob/Charlie')
+-- => Rows 4-5: Diana, Eve (level=3, paths include VP)
+-- => Rows 6-7: Frank, Grace (level=4, full paths to CEO)
 
 -- Generate series (numbers 1 to 10)
 WITH RECURSIVE series AS (
-    SELECT 1 AS n  -- => Base case
+    -- => WITH RECURSIVE for number sequence generation
+    SELECT 1 AS n
+    -- => Base case: starts with n=1
+    -- => Creates column 'n' with initial value 1
     UNION ALL
+    -- => Combines base case with recursive results
     SELECT n + 1
+    -- => Recursive case: adds 1 to previous n value
+    -- => First iteration: 1+1=2, second: 2+1=3, etc.
     FROM series
-    -- => Specifies source table for query
-    WHERE n < 10   -- => Termination condition
+    -- => Self-reference: uses previous iteration's results
+    WHERE n < 10
+    -- => Termination condition: stops when n reaches 10
+    -- => CRITICAL: without this, infinite loop occurs
 )
 SELECT n FROM series;
--- => Specifies source table for query
--- => Query executes and returns result set
--- => 1, 2, 3, ..., 10
+-- => Retrieves all generated numbers
+-- => Result: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 (ten rows)
+-- => Useful for generating test data or date ranges
 
 -- Find all ancestors of an employee
 WITH RECURSIVE ancestors AS (
+    -- => WITH RECURSIVE for upward hierarchy traversal
     -- Base case: start with specific employee
     SELECT id, name, manager_id
+    -- => Retrieves Frank's record: id=6, name='Employee Frank', manager_id=4
     FROM employees
     -- => Specifies source table for query
-    WHERE id = 6  -- => Frank
+    WHERE id = 6
+    -- => Filters to employee Frank (id=6)
+    -- => Base case starts at leaf node (bottom of hierarchy)
     UNION ALL
+    -- => Combines base case with recursive results
     -- Recursive case: find manager of previous results
     SELECT e.id, e.name, e.manager_id
+    -- => Retrieves manager's id, name, and their manager_id
     FROM employees e
-    -- => Specifies source table for query
+    -- => Specifies employees table, aliased as 'e'
     INNER JOIN ancestors a ON a.manager_id = e.id
-    -- => Combines rows from multiple tables
+    -- => Joins where employee's id matches ancestor's manager_id
+    -- => Walks up hierarchy: finds Frank's manager (Diana), then Diana's (Bob), then Bob's (Alice)
+    -- => Recursion stops when manager_id is NULL (reached CEO)
 )
 SELECT name FROM ancestors;
--- => Specifies source table for query
--- => Query executes and returns result set
--- => Frank, Manager Diana, VP Bob, CEO Alice (upward traversal)
+-- => Retrieves just names from ancestor chain
+-- => Result rows: 'Employee Frank', 'Manager Diana', 'VP Bob', 'CEO Alice'
+-- => Shows complete reporting chain from employee to CEO (bottom-up)
 ```
 
 **Key Takeaway**: Recursive CTEs solve hierarchical problems - base case provides starting rows, recursive case references the CTE to traverse relationships. Always include termination conditions to prevent infinite loops.
@@ -564,42 +692,65 @@ VALUES ('bob@example.com'), ('charlie@example.com'), ('diana@example.com');
 
 -- UNION: combine results, remove duplicates
 SELECT email FROM customers_2024
--- => Specifies source table for query
+-- => Retrieves all email addresses from 2024 table
+-- => Returns: alice, bob, charlie (3 rows)
 UNION
+-- => Combines results from both queries, removes duplicate rows
+-- => Uses hash/sort to identify duplicates (slower than UNION ALL)
 SELECT email FROM customers_2025;
--- => Specifies source table for query
--- => alice@example.com, bob@example.com, charlie@example.com, diana@example.com
--- => Duplicates removed (bob, charlie appear in both)
+-- => Retrieves all email addresses from 2025 table
+-- => Returns: bob, charlie, diana (3 rows)
+-- => Result: alice, bob, charlie, diana (4 unique rows)
+-- => bob and charlie deduplicated (appeared in both tables)
 
 -- UNION ALL: combine results, keep duplicates
 SELECT email FROM customers_2024
--- => Specifies source table for query
+-- => Retrieves all email addresses from 2024 table
+-- => Returns: alice, bob, charlie (3 rows)
 UNION ALL
+-- => Combines results from both queries, keeps all duplicate rows
+-- => No deduplication, faster than UNION (no hash/sort)
 SELECT email FROM customers_2025;
--- => Specifies source table for query
--- => 6 rows (bob and charlie appear twice)
+-- => Retrieves all email addresses from 2025 table
+-- => Returns: bob, charlie, diana (3 rows)
+-- => Result: alice, bob, charlie, bob, charlie, diana (6 rows total)
+-- => bob and charlie appear twice (once from each table)
 
 -- INTERSECT: rows in both queries
 SELECT email FROM customers_2024
--- => Specifies source table for query
+-- => Retrieves all email addresses from 2024 table
+-- => Set A: alice, bob, charlie
 INTERSECT
+-- => Returns rows that appear in BOTH query results (set intersection)
+-- => Computes A ∩ B (mathematical intersection)
 SELECT email FROM customers_2025;
--- => Specifies source table for query
--- => bob@example.com, charlie@example.com (customers in both years)
+-- => Retrieves all email addresses from 2025 table
+-- => Set B: bob, charlie, diana
+-- => Result: bob, charlie (2 rows, common to both tables)
+-- => alice excluded (only in 2024), diana excluded (only in 2025)
 
 -- EXCEPT: rows in first query but not second
 SELECT email FROM customers_2024
--- => Specifies source table for query
+-- => Retrieves all email addresses from 2024 table
+-- => Set A: alice, bob, charlie
 EXCEPT
+-- => Returns rows in first query NOT in second query (set difference)
+-- => Computes A - B (elements in A but not in B)
 SELECT email FROM customers_2025;
--- => Specifies source table for query
--- => alice@example.com (2024 customer who didn't return in 2025)
+-- => Retrieves all email addresses from 2025 table
+-- => Set B: bob, charlie, diana
+-- => Result: alice (1 row, in 2024 but not 2025)
+-- => 2024 customer who didn't return in 2025 (churned)
 SELECT email FROM customers_2025
--- => Specifies source table for query
+-- => Retrieves all email addresses from 2025 table
+-- => Set B: bob, charlie, diana
 EXCEPT
+-- => Computes B - A (elements in B but not in A)
 SELECT email FROM customers_2024;
--- => Specifies source table for query
--- => diana@example.com (new customer in 2025)
+-- => Retrieves all email addresses from 2024 table
+-- => Set A: alice, bob, charlie
+-- => Result: diana (1 row, in 2025 but not 2024)
+-- => New customer acquired in 2025
 
 -- Complex example with ORDER BY
 (SELECT email, '2024' AS year FROM customers_2024)
@@ -668,70 +819,104 @@ CREATE TABLE products (
 
 -- Insert test data
 INSERT INTO products (name, category, price)
+-- => Inserts 10000 rows into products table
 SELECT
     'Product ' || generate_series,
+    -- => Concatenates 'Product ' with number (1, 2, 3, ...)
+    -- => Creates names: 'Product 1', 'Product 2', ..., 'Product 10000'
     CASE (generate_series % 3)
+        -- => Modulo 3 gives remainder (0, 1, 2) for cycling categories
         WHEN 0 THEN 'Electronics'
         WHEN 1 THEN 'Furniture'
         ELSE 'Kitchen'
+        -- => ELSE handles remainder 2
     END,
+    -- => Distributes products evenly across three categories
     (random() * 1000)::DECIMAL(10, 2)
+    -- => Generates random price between 0 and 1000
+    -- => :: casts float to DECIMAL(10,2) format
 FROM generate_series(1, 10000);
--- => Specifies source table for query
+-- => Generates rows numbered 1 to 10000 (set-returning function)
+-- => Creates 10000 products with varied categories and random prices
 
 -- Query without index (slow on large tables)
 EXPLAIN ANALYZE
+-- => Shows query plan AND executes query with timing
+-- => EXPLAIN shows plan without executing, ANALYZE executes and measures
 SELECT * FROM products
--- => Specifies source table for query
+-- => Retrieves all columns from products table
 WHERE category = 'Electronics';
--- => Applies filter to rows
--- => Seq Scan (sequential scan through entire table)
+-- => Filters rows where category equals 'Electronics'
+-- => Without index, must scan ALL 10000 rows (Seq Scan)
+-- => Execution time ~50-100ms on 10000 rows (hardware dependent)
 
 -- Create B-tree index
 CREATE INDEX idx_products_category ON products(category);
--- => Creates index on category column
+-- => Creates B-tree index on category column
+-- => Index name: idx_products_category (convention: idx_table_column)
+-- => B-tree organizes category values for O(log N) lookups
+-- => Index takes additional disk space (~10-20% of table size)
 
 -- Same query with index (fast)
 EXPLAIN ANALYZE
+-- => Shows query plan AND executes with timing
 SELECT * FROM products
--- => Specifies source table for query
+-- => Retrieves all columns from products table
 WHERE category = 'Electronics';
--- => Applies filter to rows
--- => Index Scan using idx_products_category (much faster)
+-- => Filters rows where category equals 'Electronics'
+-- => With index, uses Index Scan (O(log N) lookup then fetch rows)
+-- => Execution time ~1-5ms on 10000 rows (50-100x faster)
+-- => Query plan shows "Index Scan using idx_products_category"
 
 -- Index helps with sorting
 EXPLAIN ANALYZE
+-- => Shows query plan and timing for sort operation
 SELECT name, price
+-- => Retrieves only name and price columns (lighter than SELECT *)
 FROM products
 -- => Specifies source table for query
 ORDER BY price DESC
--- => Sorts query results
+-- => Sorts results by price descending (highest first)
+-- => Without index, requires full table scan then sort (expensive)
 LIMIT 10;
--- => Restricts number of rows returned
--- => May use sequential scan without index on price
+-- => Restricts result to top 10 rows only
+-- => Even with LIMIT, must sort all rows first without index
+-- => Execution time includes full table scan + sort: ~100-200ms
 CREATE INDEX idx_products_price ON products(price DESC);
--- => Creates index optimized for descending sort
+-- => Creates B-tree index on price with DESC ordering
+-- => Index stores prices pre-sorted in descending order
+-- => Optimized for ORDER BY price DESC queries
 EXPLAIN ANALYZE
+-- => Shows query plan with index present
 SELECT name, price
+-- => Retrieves name and price columns
 FROM products
 -- => Specifies source table for query
 ORDER BY price DESC
--- => Sorts query results
+-- => Sorts by price descending
 LIMIT 10;
--- => Restricts number of rows returned
--- => Index Scan using idx_products_price (avoids full table sort)
+-- => Top 10 rows only
+-- => Index Scan reads first 10 entries from index (already sorted)
+-- => No full table scan, no sort operation needed
+-- => Execution time ~1-2ms (100x faster, avoids sorting all rows)
 
 -- List all indexes on table
 SELECT indexname, indexdef
+-- => Retrieves index name and full CREATE INDEX statement
 FROM pg_indexes
--- => Specifies source table for query
+-- => PostgreSQL system catalog containing index metadata
+-- => System table listing all indexes in database
 WHERE tablename = 'products';
--- => Applies filter to rows
--- => Shows all indexes including primary key
+-- => Filters to indexes on 'products' table only
+-- => Result shows: products_pkey (primary key), idx_products_price
+-- => indexdef column shows full CREATE INDEX SQL for each index
 
 -- Drop index
 DROP INDEX idx_products_category;
--- => Removes index (queries slower but writes faster)
+-- => Removes idx_products_category index from database
+-- => Frees disk space used by index (~10-20% of table size)
+-- => Queries using category filter become slower (Seq Scan)
+-- => INSERT/UPDATE/DELETE become faster (no index maintenance)
 ```
 
 **Key Takeaway**: B-tree indexes accelerate lookups and range queries - create them on columns frequently used in WHERE, JOIN, and ORDER BY. Primary keys automatically get indexes. Too many indexes slow down writes (INSERT/UPDATE/DELETE).
@@ -877,58 +1062,84 @@ CREATE TABLE orders (
 
 -- Insert test data
 INSERT INTO orders (customer_id, status, created_at)
+-- => Inserts 10000 order rows with randomized data
 SELECT
     (random() * 100)::INTEGER + 1,
+    -- => Generates random customer_id between 1 and 101
+    -- => random() returns 0.0 to 1.0, * 100 gives 0 to 100
+    -- => ::INTEGER casts to integer, + 1 shifts to 1-101 range
     CASE (random() * 3)::INTEGER
+        -- => Generates random 0, 1, or 2 for status selection
         WHEN 0 THEN 'pending'
         WHEN 1 THEN 'completed'
         ELSE 'cancelled'
+        -- => ELSE handles 2 (random() * 3 capped at 2.999...)
     END,
+    -- => Distributes orders across three statuses
     NOW() - (random() * 365 || ' days')::INTERVAL
+    -- => Generates random timestamp within past 365 days
+    -- => || concatenates number with ' days' string
+    -- => ::INTERVAL converts to time interval, subtracted from NOW()
 FROM generate_series(1, 10000);
--- => Specifies source table for query
+-- => Generates 10000 rows (set-returning function)
 
 -- Common query pattern
 EXPLAIN ANALYZE
+-- => Shows query plan and execution timing
 SELECT * FROM orders
--- => Specifies source table for query
+-- => Retrieves all columns from orders table
 WHERE customer_id = 42 AND status = 'pending';
--- => Applies filter to rows
--- => Sequential Scan (no index yet)
+-- => Filters rows: customer 42's pending orders only
+-- => Without index, sequential scan checks all 10000 rows (slow)
+-- => Execution time ~50-100ms (scans entire table)
 
 -- Create multi-column index
 CREATE INDEX idx_orders_customer_status
 ON orders(customer_id, status);
--- => Statement execution completes
--- => Index on (customer_id, status) in that order
+-- => Creates composite B-tree index on two columns
+-- => Column order critical: customer_id first, status second
+-- => Index organized as: customer_id → status within each customer
+-- => Like a phone book: sorted by last name (customer_id), then first name (status)
 EXPLAIN ANALYZE
+-- => Shows query plan with new index
 SELECT * FROM orders
--- => Specifies source table for query
+-- => Retrieves all columns from orders table
 WHERE customer_id = 42 AND status = 'pending';
--- => Applies filter to rows
--- => Index Scan using idx_orders_customer_status (fast)
+-- => Filters on both indexed columns in order
+-- => Index Scan: navigates to customer_id=42, then finds status='pending'
+-- => Execution time ~1-5ms (100x faster, O(log N) lookup)
 
 -- Query using only first column (uses index)
 EXPLAIN ANALYZE
+-- => Shows query plan using leftmost column only
 SELECT * FROM orders
--- => Specifies source table for query
+-- => Retrieves all columns from orders table
 WHERE customer_id = 42;
--- => Applies filter to rows
--- => Index Scan (uses index, even without status filter)
+-- => Filters on first indexed column only (leftmost prefix rule)
+-- => Index Scan: uses index to find customer_id=42, returns all statuses
+-- => Multi-column index works like single-column index for leftmost column
+-- => Execution time ~2-10ms (still benefits from index)
 
 -- Query using only second column (doesn't use index efficiently)
 EXPLAIN ANALYZE
+-- => Shows query plan when leftmost column missing
 SELECT * FROM orders
--- => Specifies source table for query
+-- => Retrieves all columns from orders table
 WHERE status = 'pending';
--- => Applies filter to rows
--- => Seq Scan (cannot use index starting from middle)
+-- => Filters on second indexed column only (no customer_id filter)
+-- => Sequential Scan: cannot use index (needs leftmost column first)
+-- => Index organized by customer_id, cannot jump to status directly
+-- => Like searching phone book by first name only (must scan all pages)
+-- => Execution time ~50-100ms (no index benefit)
 
 -- Create separate index for status-only queries
 CREATE INDEX idx_orders_status ON orders(status);
+-- => Creates single-column B-tree index on status column
+-- => Dedicated index for queries filtering by status alone
 EXPLAIN ANALYZE
+-- => Shows query plan with status-only index
 SELECT * FROM orders
--- => Specifies source table for query
+-- => Retrieves all columns from orders table
 WHERE status = 'pending';
 -- => Applies filter to rows
 -- => Index Scan using idx_orders_status
@@ -1122,45 +1333,62 @@ FROM generate_series(1, 10000);
 
 -- EXPLAIN shows execution plan without running query
 EXPLAIN
+-- => Shows query plan without executing query (no actual data)
+-- => Displays cost estimates, scan type, filter conditions
 SELECT * FROM products
--- => Specifies source table for query
+-- => Retrieves all columns from products table
 WHERE category = 'Electronics' AND price > 500;
--- => Applies filter to rows
--- => Shows: Seq Scan on products
--- => Filter: ((category = 'Electronics') AND (price > 500))
--- => Cost estimate (not actual timing)
+-- => Filters rows: Electronics category AND price over $500
+-- => Output shows: "Seq Scan on products" (sequential table scan)
+-- => Output shows: Filter condition verbatim
+-- => Cost format: cost=start..total rows=estimate width=bytes
+-- => Does NOT execute query, so no actual timing data
 
 -- EXPLAIN ANALYZE executes and shows actual timings
 EXPLAIN ANALYZE
+-- => Shows query plan AND executes query with real timing
+-- => Provides actual time, actual rows, planning time, execution time
 SELECT * FROM products
--- => Specifies source table for query
+-- => Retrieves all columns from products table
 WHERE category = 'Electronics' AND price > 500;
--- => Applies filter to rows
--- => Shows: Seq Scan, actual time, rows returned
--- => Planning Time: X ms, Execution Time: Y ms
+-- => Filters rows: Electronics AND price > 500
+-- => Output shows: "Seq Scan on products"
+-- => Output shows: "actual time=X..Y ms rows=N loops=1"
+-- => Planning Time: ~1-5ms (optimizer's work)
+-- => Execution Time: ~50-100ms (actual query execution on 10000 rows)
+-- => ANALYZE keyword makes EXPLAIN actually run the query
 
 -- Create index and compare
 CREATE INDEX idx_products_category_price
 ON products(category, price);
--- => Statement execution completes
+-- => Creates composite B-tree index on category, then price
+-- => Index organized: category groups, price sorted within each category
 EXPLAIN ANALYZE
+-- => Shows query plan with index present
 SELECT * FROM products
--- => Specifies source table for query
+-- => Retrieves all columns from products table
 WHERE category = 'Electronics' AND price > 500;
--- => Applies filter to rows
--- => Shows: Index Scan using idx_products_category_price
--- => Much faster execution time
+-- => Filters on both indexed columns in index order
+-- => Output shows: "Index Scan using idx_products_category_price"
+-- => Actual time: ~1-5ms (90-95% faster with index)
+-- => Rows returned: same number but via index lookup (O(log N))
+-- => Index avoids scanning non-Electronics rows entirely
 
 -- Analyze aggregation query
 EXPLAIN ANALYZE
+-- => Shows plan for aggregation operation
 SELECT category, COUNT(*), AVG(price)
--- => Aggregate function computes summary value
+-- => Groups by category, counts rows, averages price per group
+-- => COUNT(*) counts all rows in group
+-- => AVG(price) computes mean price per category
 FROM products
 -- => Specifies source table for query
 GROUP BY category;
--- => Aggregates rows by specified columns
--- => Shows: HashAggregate or GroupAggregate
--- => Seq Scan on products
+-- => Aggregates rows by category column (three groups)
+-- => Output shows: "HashAggregate" (uses hash table) or "GroupAggregate" (sorted)
+-- => HashAggregate faster for unsorted data, uses memory
+-- => Seq Scan feeds rows to aggregation (must read all rows)
+-- => Execution time ~50-100ms (must scan entire table)
 
 -- Analyze join query
 CREATE TABLE orders (
@@ -1418,61 +1646,100 @@ VALUES
 -- Extract JSON field (returns JSON)
 SELECT
     name,
-    details -> 'brand' AS brand_json,     -- => Returns JSON: "Dell"
-    details ->> 'brand' AS brand_text     -- => Returns text: Dell
+    -- => Retrieves product name column
+    details -> 'brand' AS brand_json,
+    -- => -> operator extracts JSON value (keeps JSON type with quotes)
+    -- => Returns JSON string: "Dell", "Apple", "Samsung" (with quotes)
+    -- => Result column type: jsonb
+    details ->> 'brand' AS brand_text
+    -- => ->> operator extracts as text (strips JSON quotes)
+    -- => Returns plain text: Dell, Apple, Samsung (no quotes)
+    -- => Result column type: text
 FROM products;
 -- => Specifies source table for query
+-- => Laptop: brand_json="Dell" (JSON), brand_text=Dell (text)
+-- => Phone: brand_json="Apple" (JSON), brand_text=Apple (text)
 
 -- Extract nested fields
 SELECT
     name,
-    details -> 'specs' -> 'cpu' AS cpu_json,      -- => Returns JSON: "i7"
-    details -> 'specs' ->> 'cpu' AS cpu_text,     -- => Returns text: i7
-    (details -> 'specs' ->> 'ram')::INTEGER AS ram_gb  -- => Cast to integer
+    -- => Retrieves product name
+    details -> 'specs' -> 'cpu' AS cpu_json,
+    -- => First -> extracts 'specs' object (returns JSON object)
+    -- => Second -> extracts 'cpu' from that object (returns JSON string)
+    -- => Result: "i7", "A15", "Snapdragon" (JSON strings with quotes)
+    details -> 'specs' ->> 'cpu' AS cpu_text,
+    -- => First -> extracts 'specs' object (returns JSON)
+    -- => ->> extracts 'cpu' as text (strips quotes)
+    -- => Result: i7, A15, Snapdragon (plain text)
+    (details -> 'specs' ->> 'ram')::INTEGER AS ram_gb
+    -- => Extracts 'specs' object, then 'ram' as text
+    -- => ::INTEGER casts text to integer type for arithmetic
+    -- => Result: 16, 6, 8 (integer type, no quotes)
 FROM products;
 -- => Specifies source table for query
+-- => Nested path traversal: details → specs → cpu/ram
 
 -- Filter by JSON field
 SELECT name, details ->> 'brand' AS brand
--- => Creates alias for column/table
+-- => Retrieves name column and brand as text
+-- => ->> extracts brand as text for display
 FROM products
 -- => Specifies source table for query
 WHERE details ->> 'brand' = 'Apple';
--- => Applies filter to rows
--- => Filter condition for query
--- => Phone
+-- => Filters rows where brand text equals 'Apple'
+-- => ->> returns text, so = compares text (not JSON)
+-- => Must use ->> (text) for equality comparison, not -> (JSON)
+-- => Result: Phone (only Apple product)
 
 -- Filter by nested field
 SELECT name, details -> 'specs' ->> 'ram' AS ram
--- => Creates alias for column/table
+-- => Retrieves name and RAM value as text
+-- => Chains -> for 'specs', then ->> for 'ram' text
 FROM products
 -- => Specifies source table for query
 WHERE (details -> 'specs' ->> 'ram')::INTEGER >= 8;
--- => Applies filter to rows
--- => Filter condition for query
--- => Laptop (16 GB), Tablet (8 GB)
+-- => Extracts specs.ram as text, casts to INTEGER for comparison
+-- => Filters where RAM >= 8 GB
+-- => ::INTEGER cast required for numeric comparison (text '8' < '16' fails)
+-- => Result: Laptop (16 GB), Tablet (8 GB)
+-- => Phone excluded (6 GB < 8)
 
 -- Extract numeric JSON field for calculation
 SELECT
     name,
+    -- => Retrieves product name
     (details ->> 'price')::DECIMAL AS price,
-    -- => Creates alias for column/table
+    -- => Extracts price as text, casts to DECIMAL for display
+    -- => :: cast converts text '999.99' to DECIMAL type
     (details ->> 'price')::DECIMAL * 0.9 AS discounted_price
-    -- => Creates alias for column/table
+    -- => Extracts price as text, casts to DECIMAL, multiplies by 0.9
+    -- => Applies 10% discount calculation
+    -- => DECIMAL type required for arithmetic (*  operator)
 FROM products;
 -- => Specifies source table for query
+-- => Laptop: price=999.99, discounted=899.99
+-- => Phone: price=899.99, discounted=809.99
+-- => Tablet: price=599.99, discounted=539.99
 
 -- Check JSON field existence
 SELECT name
+-- => Retrieves product name
 FROM products
 -- => Specifies source table for query
-WHERE details ? 'price';  -- => Has 'price' key
--- => All products
+WHERE details ? 'price';
+-- => ? operator checks if JSONB object contains key 'price'
+-- => Returns true if key exists (regardless of value)
+-- => Result: all 3 products (all have 'price' key)
 SELECT name
+-- => Retrieves product name
 FROM products
 -- => Specifies source table for query
-WHERE details -> 'specs' ? 'gpu';  -- => Has 'gpu' key in specs
--- => None (no products have GPU info)
+WHERE details -> 'specs' ? 'gpu';
+-- => First -> extracts 'specs' object (JSON)
+-- => ? checks if specs object contains 'gpu' key
+-- => Result: none (no products have 'gpu' in specs)
+-- => Useful for schema-less data validation
 ```
 
 **Key Takeaway**: Use `->` to extract JSON (for chaining), `->>` to extract text (for filtering, display). Chain operators for nested access: `column -> 'outer' ->> 'inner'`. Cast `->>` results to appropriate types for calculations and comparisons.
@@ -1530,34 +1797,49 @@ VALUES
 
 -- Containment operator @>
 SELECT name
+-- => Retrieves event name
 FROM events
 -- => Specifies source table for query
 WHERE data @> '{"location": "NYC"}';
--- => Applies filter to rows
--- => Conference (data contains {"location": "NYC"})
+-- => @> operator checks if left JSONB contains right JSONB
+-- => Filters events whose data contains location='NYC' key-value pair
+-- => Right side must match exactly (key AND value)
+-- => Result: Conference (only event with location='NYC')
+-- => Webinar excluded (location='Online'), Workshop excluded (location='Boston')
 
 -- Contained by operator <@
 SELECT name
+-- => Retrieves event name
 FROM events
 -- => Specifies source table for query
 WHERE '{"attendees": 500}' <@ data;
--- => Applies filter to rows
--- => Conference ({"attendees": 500} is contained in data)
+-- => <@ operator checks if left JSONB is contained in right JSONB
+-- => Filters events whose data contains attendees=500
+-- => Reverse of @> operator (flipped operands)
+-- => Result: Conference (data includes {"attendees": 500})
+-- => Semantically equivalent to: data @> '{"attendees": 500}'
 
 -- Key existence ?
 SELECT name
+-- => Retrieves event name
 FROM events
 -- => Specifies source table for query
 WHERE data ? 'location';
--- => Applies filter to rows
--- => All events (all have location key)
+-- => ? operator checks if JSONB object has specific key
+-- => Returns true if 'location' key exists (ignores value)
+-- => Does NOT check value, only key presence
+-- => Result: all 3 events (Conference, Webinar, Workshop all have location)
 
 -- Any key existence ?|
 SELECT name
+-- => Retrieves event name
 FROM events
 -- => Specifies source table for query
 WHERE data ?| ARRAY['speakers', 'sponsors'];
--- => Applies filter to rows
+-- => ?| operator checks if ANY of the array keys exist
+-- => ARRAY['speakers', 'sponsors'] specifies keys to search for
+-- => Returns true if 'speakers' OR 'sponsors' key exists
+-- => Logical OR across all array elements
 -- => None (no events have speakers OR sponsors)
 
 -- All keys existence ?&
@@ -1667,52 +1949,86 @@ VALUES
     ('Platinum', '[100,)');     -- => 100 and above (unbounded)
 -- Check if range contains value
 SELECT room, guest
+-- => Retrieves room number and guest name
 FROM reservations
 -- => Specifies source table for query
 WHERE stay @> '2025-12-24'::DATE;
--- => Applies filter to rows
--- => Alice, Bob (ranges containing Dec 24)
+-- => @> operator checks if range contains specific value
+-- => '2025-12-24'::DATE casts string to DATE type
+-- => Filters stays that include December 24
+-- => Alice's stay: [2025-12-20, 2025-12-25) includes 12-24 ✓
+-- => Bob's stay: [2025-12-22, 2025-12-27) includes 12-24 ✓
+-- => Charlie's stay: [2025-12-26, 2025-12-30) excludes 12-24 ✗
+-- => Result: Alice, Bob (both staying on Dec 24)
 
 -- Check if ranges overlap
 SELECT r1.guest AS guest1, r2.guest AS guest2
--- => Creates alias for column/table
+-- => Retrieves guest names from both tables with aliases
 FROM reservations r1, reservations r2
--- => Specifies source table for query
+-- => Cross join creates all combinations of reservations
+-- => r1 and r2 are aliases for same table (self-join)
 WHERE r1.id < r2.id
--- => Applies filter to rows
+-- => Filters to avoid duplicate pairs (r1,r2) and (r2,r1)
+-- => Also excludes comparing reservation with itself (r1.id ≠ r2.id)
   AND r1.room = r2.room
+  -- => Filters to same room (conflicts only within same room)
   AND r1.stay && r2.stay;
-  -- => Statement execution completes
--- => Alice and Bob (overlapping stays in room 101)
+  -- => && operator checks if ranges overlap (have common dates)
+  -- => Alice [12-20, 12-25) vs Bob [12-22, 12-27): overlaps on 12-22 to 12-24
+  -- => Alice [12-20, 12-25) vs Charlie [12-26, 12-30): no overlap (Charlie after Alice)
+-- => Result: Alice and Bob (overlapping stays in room 101)
+-- => Useful for detecting double-booking conflicts
 
 -- Find tier for order count
 SELECT tier_name
+-- => Retrieves tier name
 FROM price_tiers
 -- => Specifies source table for query
 WHERE order_count @> 25;
--- => Applies filter to rows
--- => Silver (25 is in range [10, 50))
+-- => @> operator checks if integer range contains value 25
+-- => Bronze [0, 10): 0-9, excludes 25
+-- => Silver [10, 50): 10-49, includes 25 ✓
+-- => Gold [50, 100): 50-99, excludes 25
+-- => Platinum [100,): 100+, excludes 25
+-- => Result: Silver (tier containing 25 orders)
 
 -- Range functions
 SELECT
     room,
+    -- => Retrieves room number
     guest,
-    lower(stay) AS check_in,     -- => Start date
-    upper(stay) AS check_out,    -- => End date
+    -- => Retrieves guest name
+    lower(stay) AS check_in,
+    -- => lower() extracts start bound of range (2025-12-20)
+    -- => Returns DATE type from DATERANGE
+    upper(stay) AS check_out,
+    -- => upper() extracts end bound of range (2025-12-25)
+    -- => Returns DATE type from DATERANGE
     upper(stay) - lower(stay) AS nights
-    -- => Creates alias for column/table
+    -- => Subtracts dates to get interval
+    -- => For Alice: 2025-12-25 - 2025-12-20 = 5 days
+    -- => Result is INTEGER (number of days)
 FROM reservations;
 -- => Specifies source table for query
--- => Calculates number of nights
+-- => Alice: check_in=2025-12-20, check_out=2025-12-25, nights=5
+-- => Bob: check_in=2025-12-22, check_out=2025-12-27, nights=5
+-- => Charlie: check_in=2025-12-26, check_out=2025-12-30, nights=4
 
 -- Check range boundaries
 SELECT
     tier_name,
-    lower_inc(order_count) AS inclusive_start,  -- => true/false
-    upper_inc(order_count) AS inclusive_end     -- => true/false
+    -- => Retrieves tier name
+    lower_inc(order_count) AS inclusive_start,
+    -- => lower_inc() checks if start bound is inclusive ([) vs exclusive (()
+    -- => Returns true for [ (inclusive), false for ( (exclusive)
+    upper_inc(order_count) AS inclusive_end
+    -- => upper_inc() checks if end bound is inclusive (]) vs exclusive ())
+    -- => Returns true for ] (inclusive), false for ) (exclusive)
 FROM price_tiers;
 -- => Specifies source table for query
--- => Shows which boundaries are inclusive
+-- => Bronze [0, 10): inclusive_start=true (includes 0), inclusive_end=false (excludes 10)
+-- => Platinum [100,): inclusive_start=true, inclusive_end=false (unbounded=exclusive)
+-- => Shows which boundary values are included in range
 
 -- Merge overlapping ranges
 SELECT room, range_agg(stay) AS all_bookings
@@ -2463,61 +2779,95 @@ CREATE TABLE sales (
 
 -- Insert test data
 INSERT INTO sales (product, amount, sale_date)
+-- => Inserts 10000 sales rows with randomized data
 SELECT
     CASE (random() * 3)::INTEGER
+        -- => Generates random 0, 1, or 2
         WHEN 0 THEN 'Laptop'
         WHEN 1 THEN 'Mouse'
         ELSE 'Keyboard'
+        -- => ELSE handles 2
     END,
+    -- => Distributes sales across three products
     (random() * 1000)::DECIMAL(10, 2),
+    -- => Generates random amount between 0 and 1000
+    -- => ::DECIMAL(10,2) casts to money format (two decimal places)
     NOW() - (random() * 365 || ' days')::INTERVAL
+    -- => Generates random date within past 365 days
+    -- => || concatenates random number with ' days' string
+    -- => ::INTERVAL converts to time duration, subtracted from NOW()
 FROM generate_series(1, 10000);
--- => Specifies source table for query
+-- => Generates 10000 rows for insertion
 
 -- Create materialized view
 CREATE MATERIALIZED VIEW monthly_sales AS
+-- => Creates view that STORES query results physically (unlike regular views)
+-- => View named 'monthly_sales' persists aggregated data on disk
 SELECT
     DATE_TRUNC('month', sale_date) AS month,
-    -- => Creates alias for column/table
+    -- => DATE_TRUNC('month', ...) rounds date down to first day of month
+    -- => 2025-12-24 becomes 2025-12-01 (groups entire month)
+    -- => Creates month column for grouping
     product,
+    -- => Product name column for grouping
     COUNT(*) AS num_sales,
-    -- => Creates alias for column/table
+    -- => Counts number of sales rows per month+product combination
+    -- => Aggregates across all sales in each group
     SUM(amount) AS total_revenue
-    -- => Creates alias for column/table
+    -- => Sums all sale amounts per month+product combination
+    -- => Computes total revenue for each group
 FROM sales
--- => Specifies source table for query
+-- => Specifies source table for aggregation
 GROUP BY DATE_TRUNC('month', sale_date), product
--- => Aggregates rows by specified columns
+-- => Groups by month AND product (creates combinations)
+-- => Each unique (month, product) pair gets one output row
 ORDER BY month DESC, product;
--- => Sorts query results
--- => Computes and stores results
+-- => Sorts by month descending (newest first), then alphabetically by product
+-- => Results computed ONCE at creation, stored on disk
+-- => Unlike regular view, doesn't re-compute on every SELECT
 
 -- Query materialized view (fast - reads stored data)
 SELECT * FROM monthly_sales LIMIT 10;
--- => Specifies source table for query
+-- => Reads from stored materialized view data (no aggregation)
+-- => Fast: O(10) scan, no GROUP BY computation needed
+-- => Returns 10 pre-computed rows instantly (~1-5ms)
+-- => Unlike regular view which would re-aggregate 10000 rows (~50-100ms)
 
 -- Insert more sales
 INSERT INTO sales (product, amount, sale_date)
+-- => Adds new sale to base sales table
 VALUES ('Laptop', 1200.00, CURRENT_DATE);
--- => Statement execution completes
+-- => Inserts: Laptop sale for $1200 today
+-- => CURRENT_DATE is current date (e.g., 2025-12-31)
 
 -- Materialized view still shows old data
 SELECT * FROM monthly_sales WHERE month = DATE_TRUNC('month', CURRENT_DATE);
--- => Specifies source table for query
--- => Doesn't include new sale yet
+-- => Queries materialized view for current month
+-- => Filters to current month's row
+-- => Returns OLD data (created at view creation time)
+-- => New Laptop sale NOT reflected (view snapshot is stale)
+-- => Materialized views don't auto-update (manual refresh required)
 
 -- Refresh materialized view
 REFRESH MATERIALIZED VIEW monthly_sales;
--- => Statement execution completes
--- => Recomputes and updates stored results
+-- => Recomputes entire view from scratch using base query
+-- => Deletes old stored data, runs SELECT query again, stores new results
+-- => BLOCKS reads during refresh (table locked for update)
+-- => Updates stored results to include new Laptop sale
+-- => Execution time same as initial creation (~50-100ms for 10000 rows)
 SELECT * FROM monthly_sales WHERE month = DATE_TRUNC('month', CURRENT_DATE);
--- => Specifies source table for query
--- => Now includes new sale
+-- => Queries refreshed materialized view
+-- => Filters to current month
+-- => NOW includes new Laptop sale (data updated)
+-- => Shows current month with new $1200 Laptop included in total_revenue
 
 -- Concurrent refresh (doesn't block reads)
 REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_sales;
--- => Statement execution completes
--- => Requires unique index on materialized view
+-- => Refreshes view WITHOUT blocking concurrent SELECT queries
+-- => CONCURRENTLY keyword allows reads during refresh
+-- => Builds new data snapshot in background, swaps atomically when done
+-- => REQUIRES unique index on materialized view (for atomic swap)
+-- => Slower than regular refresh but allows continuous query access
 
 -- Create index on materialized view
 CREATE UNIQUE INDEX idx_monthly_sales_month_product
@@ -2552,52 +2902,82 @@ CREATE DATABASE example_53;
 
 -- Simple function with no parameters
 CREATE FUNCTION get_current_time()
+-- => Defines function named 'get_current_time' with no input parameters
+-- => Function signature: get_current_time() (empty parentheses)
 RETURNS TEXT AS $$
+-- => Function returns TEXT type (string result)
+-- => $$ delimiters mark start of function body (dollar quoting)
 BEGIN
+-- => Marks start of PL/pgSQL code block
     RETURN 'Current time: ' || NOW()::TEXT;
-    -- => Statement execution completes
+    -- => RETURN statement specifies function output value
+    -- => NOW() gets current timestamp (TIMESTAMP WITH TIME ZONE)
+    -- => ::TEXT casts timestamp to text string
+    -- => || concatenates 'Current time: ' prefix with timestamp string
 END;
--- => Statement execution completes
+-- => Marks end of PL/pgSQL code block
 $$ LANGUAGE plpgsql;
--- => Statement execution completes
+-- => $$ closes function body, LANGUAGE specifies PL/pgSQL (procedural SQL)
+-- => Function is now created and available for use
 SELECT get_current_time();
--- => 'Current time: 2025-12-29 ...'
+-- => Calls function (no arguments), returns concatenated time string
+-- => Example output: 'Current time: 2025-12-29 14:35:22.123456+00'
 
 -- Function with parameters
 CREATE FUNCTION calculate_tax(amount DECIMAL, tax_rate DECIMAL)
+-- => Defines function with two input parameters (both DECIMAL type)
+-- => First parameter: amount (base price)
+-- => Second parameter: tax_rate (tax percentage as decimal, e.g., 0.08 for 8%)
 RETURNS DECIMAL AS $$
+-- => Returns DECIMAL type (numeric result with precision)
 BEGIN
+-- => Starts function body
     RETURN amount * tax_rate;
-    -- => Statement execution completes
+    -- => Multiplies amount by tax_rate
+    -- => Example: 100.00 * 0.08 = 8.00
+    -- => Returns calculated tax amount
 END;
--- => Statement execution completes
+-- => Ends function body
 $$ LANGUAGE plpgsql;
--- => Statement execution completes
+-- => Specifies PL/pgSQL language
 SELECT calculate_tax(100.00, 0.08);
--- => 8.00
+-- => Calls function with amount=100.00, tax_rate=0.08 (8% tax)
+-- => Returns 8.00 (tax amount)
 
 -- Function with conditional logic
 CREATE FUNCTION categorize_price(price DECIMAL)
+-- => Defines function with single parameter 'price' (DECIMAL type)
 RETURNS TEXT AS $$
+-- => Returns TEXT category label
 BEGIN
+-- => Starts function body with conditional logic
     IF price < 100 THEN
+        -- => First condition: checks if price is less than $100
         RETURN 'Budget';
-        -- => Statement execution completes
+        -- => Returns 'Budget' category for prices under $100
+        -- => Function exits immediately (no further checks)
     ELSIF price < 500 THEN
+        -- => Second condition: checks if price < $500 (only if first failed)
+        -- => ELSIF combines ELSE and IF (checks range $100-$499)
         RETURN 'Mid-Range';
-        -- => Statement execution completes
+        -- => Returns 'Mid-Range' for prices $100-$499
     ELSE
+        -- => Final fallback: executes if all conditions failed
+        -- => Handles prices >= $500
         RETURN 'Premium';
-        -- => Statement execution completes
+        -- => Returns 'Premium' for prices $500 and above
     END IF;
-    -- => Statement execution completes
+    -- => Closes IF statement (required in PL/pgSQL)
 END;
--- => Statement execution completes
+-- => Ends function body
 $$ LANGUAGE plpgsql;
--- => Statement execution completes
-SELECT categorize_price(50.00);   -- => 'Budget'
-SELECT categorize_price(250.00);  -- => 'Mid-Range'
-SELECT categorize_price(1000.00); -- => 'Premium'
+-- => Specifies PL/pgSQL language
+SELECT categorize_price(50.00);
+-- => Calls function with price=50.00, returns 'Budget' (< 100)
+SELECT categorize_price(250.00);
+-- => Calls with price=250.00, returns 'Mid-Range' (100 <= price < 500)
+SELECT categorize_price(1000.00);
+-- => Calls with price=1000.00, returns 'Premium' (>= 500)
 -- Function with table queries
 CREATE TABLE products (
     name VARCHAR(100),
@@ -2690,24 +3070,39 @@ SELECT add_numbers(10, 20);
 
 -- Function with OUT parameters
 CREATE FUNCTION divide_with_remainder(
+    -- => Function with multiple return values using OUT parameters
     dividend INTEGER,
+    -- => Input parameter: number to divide (numerator)
     divisor INTEGER,
+    -- => Input parameter: number to divide by (denominator)
     OUT quotient INTEGER,
+    -- => OUT parameter: result of integer division (no RETURNS needed)
+    -- => OUT parameters automatically included in return type
     OUT remainder INTEGER
+    -- => OUT parameter: remainder from division
+    -- => Function returns record with (quotient, remainder) columns
 ) AS $$
 BEGIN
+-- => Starts function body
     quotient := dividend / divisor;
-    -- => Statement execution completes
+    -- => := is assignment operator in PL/pgSQL (not = or ==)
+    -- => / performs integer division for INTEGER types
+    -- => Example: 17 / 5 = 3 (truncates decimal)
+    -- => Assigns result to OUT parameter quotient
     remainder := dividend % divisor;
-    -- => Statement execution completes
+    -- => % is modulo operator (returns remainder)
+    -- => Example: 17 % 5 = 2 (17 = 5*3 + 2)
+    -- => Assigns remainder to OUT parameter remainder
+    -- => No explicit RETURN needed (OUT params auto-returned)
 END;
--- => Statement execution completes
+-- => Ends function body
 $$ LANGUAGE plpgsql;
--- => Statement execution completes
+-- => Specifies PL/pgSQL language
 SELECT * FROM divide_with_remainder(17, 5);
--- => Specifies source table for query
--- => Query executes and returns result set
--- => quotient: 3, remainder: 2
+-- => Calls function with dividend=17, divisor=5
+-- => Treats function as table (FROM clause), returns record
+-- => Returns: (quotient=3, remainder=2)
+-- => Multiple return values accessible as columns
 
 -- Function returning composite type
 CREATE TYPE employee_summary AS (
@@ -2726,39 +3121,63 @@ VALUES ('Alice', 95000), ('Bob', 75000), ('Charlie', 105000);
 -- => Statement execution completes
 -- => Row data values follow
 CREATE FUNCTION get_employee_summary()
+-- => Function with no parameters, returns custom composite type
 RETURNS employee_summary AS $$
+-- => Returns employee_summary composite (total_employees, avg_salary)
 DECLARE
+-- => DECLARE section for local variables
     result employee_summary;
-    -- => Statement execution completes
+    -- => Declares variable 'result' of type employee_summary
+    -- => Variable will hold composite value with two fields
+    -- => Initialized to NULL (default for composite types)
 BEGIN
+-- => Starts function body
     SELECT COUNT(*), AVG(salary)
-    -- => Aggregate function computes summary value
+    -- => COUNT(*) counts all employee rows
+    -- => AVG(salary) computes average salary across all rows
     INTO result.total_employees, result.avg_salary
+    -- => INTO clause assigns query results to variable fields
+    -- => COUNT(*) result → result.total_employees (INTEGER)
+    -- => AVG(salary) result → result.avg_salary (DECIMAL)
+    -- => INTO populates composite type fields directly
     FROM employees;
-    -- => Specifies source table for query
+    -- => Queries employees table for aggregation
+    -- => Processes all 3 rows (Alice, Bob, Charlie)
     RETURN result;
-    -- => Statement execution completes
+    -- => Returns populated employee_summary composite
+    -- => Contains: total_employees=3, avg_salary=91666.67
 END;
--- => Statement execution completes
+-- => Ends function body
 $$ LANGUAGE plpgsql;
--- => Statement execution completes
+-- => Specifies PL/pgSQL language
 SELECT * FROM get_employee_summary();
--- => Specifies source table for query
--- => Query executes and returns result set
+-- => Calls function and expands composite result as table
+-- => Returns single row with two columns: (3, 91666.67)
 -- => total_employees: 3, avg_salary: 91666.67
 
 -- Function with default parameters
 CREATE FUNCTION greet(name TEXT, greeting TEXT DEFAULT 'Hello')
+-- => Function with two parameters, second has default value
+-- => DEFAULT 'Hello' makes greeting parameter optional
+-- => If caller omits greeting, 'Hello' used automatically
 RETURNS TEXT AS $$
+-- => Returns TEXT (string result)
 BEGIN
+-- => Starts function body
     RETURN greeting || ', ' || name || '!';
-    -- => Statement execution completes
+    -- => Concatenates greeting, comma-space, name, exclamation
+    -- => || is string concatenation operator
+    -- => Example: 'Hello' || ', ' || 'Alice' || '!' = 'Hello, Alice!'
 END;
--- => Statement execution completes
+-- => Ends function body
 $$ LANGUAGE plpgsql;
--- => Statement execution completes
-SELECT greet('Alice');              -- => 'Hello, Alice!'
-SELECT greet('Bob', 'Hi');          -- => 'Hi, Bob!'
+-- => Specifies PL/pgSQL language
+SELECT greet('Alice');
+-- => Calls with one argument (greeting defaults to 'Hello')
+-- => Returns 'Hello, Alice!'
+SELECT greet('Bob', 'Hi');
+-- => Calls with two arguments (overrides default greeting)
+-- => Returns 'Hi, Bob!'
 -- Function with variadic parameters (variable arguments)
 CREATE FUNCTION sum_all(VARIADIC numbers INTEGER[])
 RETURNS INTEGER AS $$
@@ -2841,60 +3260,98 @@ CREATE TABLE audit_log (
 
 -- Trigger function to update updated_at
 CREATE FUNCTION update_timestamp()
+-- => Defines trigger function (special function type)
+-- => Trigger functions have no explicit parameters
 RETURNS TRIGGER AS $$
+-- => TRIGGER return type required for trigger functions
+-- => Return value determines if operation proceeds (RETURN NEW/OLD) or aborts (RETURN NULL)
 BEGIN
+-- => Starts function body
     NEW.updated_at = NOW();
-    -- => Statement execution completes
+    -- => NEW is special variable containing new row being inserted/updated
+    -- => Modifies updated_at column of NEW row to current timestamp
+    -- => = assignment in trigger context (modifies NEW record)
+    -- => NOW() returns current timestamp with timezone
     RETURN NEW;
-    -- => Statement execution completes
+    -- => Returns modified NEW record (operation proceeds with changes)
+    -- => RETURN NEW required for BEFORE triggers (row gets updated)
+    -- => Returning NULL would cancel the operation entirely
 END;
--- => Statement execution completes
+-- => Ends function body
 $$ LANGUAGE plpgsql;
--- => Statement execution completes
+-- => Specifies PL/pgSQL language
 
 -- Create BEFORE UPDATE trigger
 CREATE TRIGGER set_updated_at
+-- => Creates trigger named 'set_updated_at'
 BEFORE UPDATE ON products
+-- => BEFORE: executes BEFORE database modifies row (can modify NEW)
+-- => UPDATE: trigger fires only on UPDATE operations (not INSERT/DELETE)
+-- => ON products: specifies target table
 FOR EACH ROW
+-- => Fires once PER ROW updated (vs FOR EACH STATEMENT)
+-- => Each updated row gets separate trigger invocation
 EXECUTE FUNCTION update_timestamp();
--- => Statement execution completes
+-- => Specifies trigger function to call (must return TRIGGER type)
+-- => Parentheses required even with no parameters
 INSERT INTO products (name, price, updated_at)
 VALUES ('Laptop', 999.99, NOW());
--- => Statement execution completes
+-- => Inserts initial product with explicit updated_at
+-- => Trigger does NOT fire (only on UPDATE, not INSERT)
 UPDATE products SET price = 899.99 WHERE name = 'Laptop';
--- => Applies filter to rows
--- => updated_at automatically set to current time
+-- => Updates Laptop price from 999.99 to 899.99
+-- => BEFORE UPDATE trigger fires: calls update_timestamp()
+-- => Trigger modifies NEW.updated_at to NOW() before row updated
+-- => Final row has price=899.99 AND updated_at=current timestamp
 SELECT name, price, updated_at FROM products;
--- => Specifies source table for query
+-- => Retrieves product data with auto-updated timestamp
+-- => Shows Laptop with updated price and current updated_at
 
 -- Audit trail trigger
 CREATE FUNCTION audit_changes()
+-- => Defines general-purpose audit trigger function
 RETURNS TRIGGER AS $$
+-- => TRIGGER return type
 BEGIN
+-- => Starts function body with conditional logic
     IF TG_OP = 'INSERT' THEN
+        -- => TG_OP is special variable containing operation type string
+        -- => Checks if operation is INSERT ('INSERT' string)
         INSERT INTO audit_log (table_name, operation, new_data)
+        -- => Records audit entry for INSERT operation
         VALUES (TG_TABLE_NAME, TG_OP, row_to_json(NEW));
-        -- => Statement execution completes
+        -- => TG_TABLE_NAME: special variable with table name ('products')
+        -- => TG_OP: operation type ('INSERT')
+        -- => row_to_json(NEW): converts NEW row to JSON (inserted data)
+        -- => OLD not available for INSERT (no previous row)
         RETURN NEW;
-        -- => Statement execution completes
+        -- => Returns NEW record (INSERT proceeds normally)
     ELSIF TG_OP = 'UPDATE' THEN
+        -- => Checks if operation is UPDATE
         INSERT INTO audit_log (table_name, operation, old_data, new_data)
+        -- => Records both old and new data for UPDATE
         VALUES (TG_TABLE_NAME, TG_OP, row_to_json(OLD), row_to_json(NEW));
-        -- => Statement execution completes
+        -- => OLD: row before update, NEW: row after update
+        -- => Both converted to JSON for audit trail
+        -- => Captures what changed (diff between OLD and NEW)
         RETURN NEW;
-        -- => Statement execution completes
+        -- => Returns NEW record (UPDATE proceeds)
     ELSIF TG_OP = 'DELETE' THEN
+        -- => Checks if operation is DELETE
         INSERT INTO audit_log (table_name, operation, old_data)
+        -- => Records deleted data
         VALUES (TG_TABLE_NAME, TG_OP, row_to_json(OLD));
-        -- => Statement execution completes
+        -- => OLD contains deleted row data
+        -- => NEW not available for DELETE (no new row)
         RETURN OLD;
-        -- => Statement execution completes
+        -- => Returns OLD record (DELETE proceeds)
+        -- => For DELETE, must return OLD not NEW
     END IF;
-    -- => Statement execution completes
+    -- => Closes conditional logic
 END;
--- => Statement execution completes
+-- => Ends function body
 $$ LANGUAGE plpgsql;
--- => Statement execution completes
+-- => Specifies PL/pgSQL language
 
 -- Create AFTER triggers for INSERT, UPDATE, DELETE
 CREATE TRIGGER audit_products_insert
@@ -3173,26 +3630,35 @@ CREATE DATABASE example_58;
 
 -- Generate integer series
 SELECT * FROM generate_series(1, 10);
--- => Specifies source table for query
--- => Query executes and returns result set
--- => Returns 1, 2, 3, ..., 10
+-- => generate_series(start, stop) is set-returning function
+-- => Returns table with one column containing sequence values
+-- => Parameters: start=1 (inclusive), stop=10 (inclusive)
+-- => Generates: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 (10 rows)
+-- => Each number is separate row in result set
+-- => Useful for loops, test data, filling gaps
 
 -- Generate series with step
 SELECT * FROM generate_series(0, 100, 10);
--- => Specifies source table for query
--- => Query executes and returns result set
--- => Returns 0, 10, 20, ..., 100
+-- => generate_series(start, stop, step) with custom increment
+-- => start=0, stop=100 (inclusive), step=10 (increment by 10)
+-- => Generates: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 (11 rows)
+-- => Step can be negative for descending sequences
+-- => Example negative step: generate_series(10, 1, -1) → 10,9,8,...,1
 
 -- Generate date series
 SELECT * FROM generate_series(
--- => Specifies source table for query
--- => Query executes and returns result set
+    -- => generate_series works with DATE and TIMESTAMP types
     '2025-12-01'::DATE,
+    -- => Start date: December 1, 2025 (::DATE casts string to DATE)
     '2025-12-31'::DATE,
+    -- => End date: December 31, 2025 (inclusive)
     '1 day'::INTERVAL
+    -- => Step interval: 1 day increment (::INTERVAL casts string)
+    -- => Can use '1 week', '1 month', '2 hours', etc.
 );
--- => Statement execution completes
--- => Returns all dates in December 2025
+-- => Returns all 31 dates in December 2025 (one row per day)
+-- => Useful for generating calendar tables, filling date gaps
+-- => Format: 2025-12-01, 2025-12-02, ..., 2025-12-31
 
 -- Create test table
 CREATE TABLE orders (
@@ -3343,85 +3809,111 @@ VALUES
 -- Get top 2 most expensive products per category
 SELECT
     c.name AS category,
-    -- => Creates alias for column/table
+    -- => Retrieves category name from outer table
+    -- => Aliased as 'category' for display
     p.name AS product,
-    -- => Creates alias for column/table
+    -- => Retrieves product name from lateral subquery
+    -- => Aliased as 'product' for display
     p.price
+    -- => Retrieves price from lateral subquery
 FROM categories c,
--- => Specifies source table for query
+-- => Categories table aliased as 'c' (outer table)
+-- => Comma syntax for cross join with lateral subquery
 LATERAL (
+    -- => LATERAL keyword allows subquery to reference c from outer FROM clause
+    -- => Without LATERAL, subquery cannot reference c.id
+    -- => Subquery executes ONCE PER ROW of categories table
     SELECT name, price
+    -- => Selects name and price from products
     FROM products
-    -- => Specifies source table for query
-    WHERE category_id = c.id  -- => References c from outer query
+    -- => Products table as data source for subquery
+    WHERE category_id = c.id
+    -- => CRITICAL: References c.id from outer query (requires LATERAL)
+    -- => Filters products belonging to current category iteration
     ORDER BY price DESC
-    -- => Sorts query results
-    -- => Sorts result set
+    -- => Sorts products by price descending (most expensive first)
     LIMIT 2
-    -- => Restricts number of rows returned
+    -- => Restricts to top 2 most expensive products per category
+    -- => Subquery returns 0-2 rows per category
 ) p
+-- => Subquery results aliased as 'p'
+-- => For each category, gets 2 rows (top 2 products)
 ORDER BY c.name, p.price DESC;
--- => Sorts query results
--- => Sorts result set
--- => Electronics: Laptop (999.99), Keyboard (79.99)
+-- => Final sort: alphabetically by category, then by price descending
+-- => Electronics: Laptop (999.99), Keyboard (79.99) [Mouse excluded, 3rd]
 -- => Furniture: Desk (299.99), Chair (199.99)
 -- => Kitchen: Blender (89.99), Toaster (39.99)
 
 -- Alternative with LEFT JOIN LATERAL (includes categories with no products)
 SELECT
     c.name AS category,
-    -- => Creates alias for column/table
+    -- => Retrieves category name
     p.name AS product,
-    -- => Creates alias for column/table
+    -- => Retrieves product name (NULL if category has no products)
     p.price
+    -- => Retrieves price (NULL if category has no products)
 FROM categories c
--- => Specifies source table for query
+-- => Categories as left table in LEFT JOIN
 LEFT JOIN LATERAL (
--- => Combines rows from multiple tables
+    -- => LEFT JOIN LATERAL preserves all categories rows
+    -- => Regular LATERAL (comma) excludes categories with no matching products
+    -- => LEFT JOIN keeps category even if subquery returns 0 rows
     SELECT name, price
+    -- => Selects product name and price
     FROM products
-    -- => Specifies source table for query
+    -- => Products table as data source
     WHERE category_id = c.id
-    -- => Applies filter to rows
-    -- => Filter condition for query
+    -- => References outer table c.id (requires LATERAL)
+    -- => Filters to products in current category
     ORDER BY price DESC
-    -- => Sorts query results
-    -- => Sorts result set
+    -- => Sorts by price descending (most expensive first)
     LIMIT 1
-    -- => Restricts number of rows returned
+    -- => Restricts to single most expensive product
+    -- => Subquery returns 0 or 1 row per category
 ) p ON true
+-- => ON true is required syntax for LEFT JOIN LATERAL
+-- => Condition always true (join happens if subquery returns rows)
+-- => If subquery empty, p.name and p.price are NULL
 ORDER BY c.name;
--- => Sorts query results
--- => Sorts result set
--- => Shows top product per category (NULL if no products)
+-- => Sorts alphabetically by category name
+-- => Electronics: Laptop (999.99), Furniture: Desk (299.99), Kitchen: Blender (89.99)
+-- => If category empty, shows: category_name, NULL, NULL
 
 -- LATERAL with aggregation
 SELECT
     c.name AS category,
-    -- => Creates alias for column/table
+    -- => Retrieves category name
     stats.*
+    -- => Expands all columns from stats subquery result
+    -- => Includes num_products, avg_price, max_price
 FROM categories c,
--- => Specifies source table for query
+-- => Categories table as outer table
 LATERAL (
+    -- => Lateral subquery runs ONCE per category row
+    -- => Computes aggregates per category
     SELECT
         COUNT(*) AS num_products,
-        -- => Creates alias for column/table
+        -- => Counts number of products in current category
+        -- => Returns 0 if WHERE filters out all rows
         AVG(price) AS avg_price,
-        -- => Creates alias for column/table
+        -- => Computes average price for products in current category
+        -- => Returns NULL if no products (AVG of empty set)
         MAX(price) AS max_price
-        -- => Creates alias for column/table
+        -- => Finds maximum price for products in current category
+        -- => Returns NULL if no products
     FROM products
-    -- => Specifies source table for query
+    -- => Products table as data source
     WHERE category_id = c.id
-    -- => Applies filter to rows
-    -- => Filter condition for query
+    -- => Filters products to current category (references outer c.id)
+    -- => Each category iteration gets different filtered set
 ) stats
+-- => Aggregation results aliased as 'stats'
 ORDER BY c.name;
--- => Sorts query results
--- => Sorts result set
--- => Electronics: 3 products, avg 369.99, max 999.99
--- => Furniture: 2 products, avg 249.99, max 299.99
--- => Kitchen: 2 products, avg 64.99, max 89.99
+-- => Sorts alphabetically by category name
+-- => Electronics: num_products=3, avg_price=369.99, max_price=999.99
+-- => Furniture: num_products=2, avg_price=249.99, max_price=299.99
+-- => Kitchen: num_products=2, avg_price=64.99, max_price=89.99
+-- => Enables per-category statistics without GROUP BY
 
 -- LATERAL for row numbers per group
 SELECT
@@ -3489,45 +3981,66 @@ CREATE TABLE customers (
 
 -- Insert with composite type
 INSERT INTO customers (name, contact)
--- => INSERT into customers table begins
+-- => Inserts row into customers table
 VALUES (
--- => Row data values follow
+-- => Provides values for name and contact columns
     'Alice',
+    -- => Simple VARCHAR value for name column
     ROW(
+        -- => ROW constructor creates composite type value
+        -- => Builds contact_info value from individual components
         'alice@example.com',
+        -- => First field: email (VARCHAR)
         '555-1234',
+        -- => Second field: phone (VARCHAR)
         ROW('123 Main St', 'New York', 'NY', '10001')
+        -- => Nested ROW for home_address field (composite within composite)
+        -- => Inner ROW creates address type with 4 fields
     )::contact_info
+    -- => ::contact_info casts ROW to contact_info type
+    -- => Type cast validates structure matches contact_info definition
 );
--- => Statement execution completes
+-- => Inserts one row with nested composite value
 
 -- Access composite type fields
 SELECT
     name,
+    -- => Retrieves name column (simple VARCHAR)
     (contact).email AS email,
-    -- => Creates alias for column/table
+    -- => (contact).email accesses email field of contact composite
+    -- => Parentheses required around column name when accessing fields
+    -- => Without parens: contact.email would be table.column syntax
     (contact).phone AS phone,
-    -- => Creates alias for column/table
+    -- => Accesses phone field of contact composite
+    -- => Returns VARCHAR value '555-1234'
     ((contact).home_address).city AS city,
-    -- => Creates alias for column/table
+    -- => Double nesting: first access home_address, then city
+    -- => (contact).home_address returns address composite
+    -- => ((contact).home_address).city accesses city from that composite
+    -- => Inner parens group first access, outer parens required for second
     ((contact).home_address).state AS state
-    -- => Creates alias for column/table
+    -- => Accesses state field from nested address composite
+    -- => Same double-nesting pattern as city
 FROM customers;
--- => Specifies source table for query
--- => Alice, alice@example.com, 555-1234, New York, NY
+-- => Specifies customers table as source
+-- => Result: Alice, alice@example.com, 555-1234, New York, NY
+-- => Composite fields expanded into separate columns
 
 -- Update composite type field
 UPDATE customers
--- => Updates rows matching condition
+-- => Updates existing rows in customers table
 SET contact.email = 'alice.new@example.com'
--- => Specifies new values for columns
+-- => Updates email field within contact composite
+-- => Dot notation contact.email for SET clause (different from SELECT)
+-- => Updates single field, leaves phone and home_address unchanged
+-- => Partial update of composite type (not replacing entire composite)
 WHERE name = 'Alice';
--- => Applies filter to rows
--- => Filter condition for query
+-- => Filters to Alice's row only
 SELECT name, (contact).email FROM customers;
--- => Specifies source table for query
--- => Query executes and returns result set
--- => alice.new@example.com
+-- => Retrieves name and updated email field
+-- => Parentheses required in SELECT for field access
+-- => Result: Alice, alice.new@example.com (email changed)
+-- => Verifies field-level update worked
 
 -- Function returning composite type
 CREATE FUNCTION get_customer_summary(customer_id INTEGER)
@@ -3557,33 +4070,58 @@ SELECT * FROM get_customer_summary(1);
 
 -- Array of composite types
 CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    -- => Auto-incrementing integer primary key
     customer_id INTEGER,
-    shipping_addresses address[]  -- => Array of composite types
+    -- => Reference to customer
+    shipping_addresses address[]
+    -- => Column type: array of address composite types
+    -- => address[] syntax: array of composite (not array of primitive)
+    -- => Can store multiple addresses per order
 );
--- => Statement execution completes
+-- => Creates orders table
 INSERT INTO orders (customer_id, shipping_addresses)
--- => INSERT into orders table begins
+-- => Inserts order with array of addresses
 VALUES (
--- => Row data values follow
+-- => Provides values for customer_id and shipping_addresses
     1,
+    -- => customer_id = 1
     ARRAY[
+        -- => ARRAY constructor creates array of composites
+        -- => Square brackets contain array elements
         ROW('456 Oak Ave', 'Boston', 'MA', '02101')::address,
+        -- => First array element: Boston address composite
+        -- => ROW(...) creates address, ::address casts to address type
         ROW('789 Pine Rd', 'Chicago', 'IL', '60601')::address
+        -- => Second array element: Chicago address composite
+        -- => Array contains two address composites
     ]
+    -- => shipping_addresses column gets 2-element array
 );
--- => Statement execution completes
+-- => Inserts one order with two shipping addresses
 SELECT
     id,
+    -- => Retrieves order id
     shipping_addresses[1] AS first_address,
-    -- => Creates alias for column/table
+    -- => Array indexing: [1] accesses first element (1-based indexing)
+    -- => Returns first address composite entire value
+    -- => Result: ('456 Oak Ave', 'Boston', 'MA', '02101')
     (shipping_addresses[1]).city AS first_city
-    -- => Creates alias for column/table
+    -- => Accesses city field from first array element
+    -- => shipping_addresses[1] gets composite, .city gets field
+    -- => Parentheses required for field access on array element
+    -- => Result: 'Boston'
 FROM orders;
--- => Specifies source table for query
+-- => Queries orders table
+-- => Shows order id, first address composite, and first city
 
 -- Drop composite type
 DROP TYPE IF EXISTS contact_info CASCADE;
--- => CASCADE drops dependent objects (tables using this type)
+-- => Drops contact_info type if it exists
+-- => IF EXISTS prevents error if type doesn't exist
+-- => CASCADE automatically drops dependent objects
+-- => Dependent: customers table (uses contact_info column)
+-- => Without CASCADE, drop fails if dependencies exist
 ```
 
 **Key Takeaway**: Composite types combine multiple fields into structured types - use for addresses, coordinates, or domain concepts. Access nested fields with parentheses: `(column).field`. Composite types can be nested and stored in arrays.

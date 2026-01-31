@@ -34,100 +34,113 @@ graph TD
 **Code**:
 
 ```sql
-CREATE TABLE employee_salaries (
-    id INTEGER,
-    name TEXT,
-    salary REAL
+-- Create table for salary analysis
+CREATE TABLE employee_salaries (  -- => Stores employee compensation data
+    id INTEGER,                    -- => Unique employee identifier
+    name TEXT,                     -- => Employee name for reporting
+    salary REAL                    -- => Annual salary in dollars
 );
 
+-- Generate 100 sample employees with varied salaries
 INSERT INTO employee_salaries (id, name, salary)
 SELECT
-    value,
-    'Employee ' || value,
-    50000 + (value * 1000) + (value % 10) * 2000
+    value,                                              -- => Employee ID from 1-100
+    'Employee ' || value,                               -- => Name: "Employee 1", "Employee 2", etc.
+    50000 + (value * 1000) + (value % 10) * 2000        -- => Base $50k + progression + variance
+                                                         -- => Creates realistic salary distribution ($51k-$168k range)
 FROM (
-    WITH RECURSIVE nums AS (
-        SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 100
+    WITH RECURSIVE nums AS (                            -- => Recursive CTE generates number sequence
+        SELECT 1 AS value                               -- => Start at 1
+        UNION ALL                                       -- => Combine with next iteration
+        SELECT value + 1 FROM nums WHERE value < 100    -- => Increment until 100
     )
-    SELECT value FROM nums
+    SELECT value FROM nums                              -- => Return sequence 1-100
 );
 
--- Divide into quartiles using NTILE
+-- Example A: Divide into quartiles using NTILE
 SELECT
-    name,
-    salary,
-    NTILE(4) OVER (ORDER BY salary) AS quartile
+    name,                                               -- => Employee identifier
+    salary,                                             -- => Actual salary value
+    NTILE(4) OVER (ORDER BY salary) AS quartile         -- => Assigns quartile group (1-4) based on salary rank
+                                                         -- => Divides 100 employees into 4 groups of 25 each
 FROM employee_salaries
-ORDER BY salary;
--- => Q1: Bottom 25%, Q2: 25-50%, Q3: 50-75%, Q4: Top 25%
+ORDER BY salary;                                        -- => Sort results low to high for readability
+-- => Output shows each employee with their quartile assignment
+-- => Q1: Bottom 25% (lowest earners), Q2: 25-50%, Q3: 50-75%, Q4: Top 25% (highest earners)
 
--- Calculate quartile boundaries
-WITH quartiles AS (
+-- Example B: Calculate quartile boundaries
+WITH quartiles AS (                                     -- => CTE assigns quartile to each salary
     SELECT
-        salary,
-        NTILE(4) OVER (ORDER BY salary) AS quartile
+        salary,                                         -- => Salary value
+        NTILE(4) OVER (ORDER BY salary) AS quartile     -- => Quartile assignment (1-4)
     FROM employee_salaries
 )
 SELECT
-    quartile,
-    MIN(salary) AS min_salary,
-    MAX(salary) AS max_salary
+    quartile,                                           -- => Quartile number (1, 2, 3, 4)
+    MIN(salary) AS min_salary,                          -- => Lowest salary in this quartile
+    MAX(salary) AS max_salary                           -- => Highest salary in this quartile
 FROM quartiles
-GROUP BY quartile
-ORDER BY quartile;
--- => Shows salary range for each quartile
+GROUP BY quartile                                       -- => Aggregate by quartile group
+ORDER BY quartile;                                      -- => Display Q1 through Q4
+-- => Output: Salary ranges for each quartile
+-- => Example: Q1: $51k-$75k, Q2: $76k-$100k, Q3: $101k-$125k, Q4: $126k-$168k
 
--- Calculate percentiles (deciles - 10% buckets)
+-- Example C: Calculate percentiles (deciles - 10% buckets)
 SELECT
-    name,
-    salary,
-    NTILE(10) OVER (ORDER BY salary) AS decile
+    name,                                               -- => Employee identifier
+    salary,                                             -- => Salary value
+    NTILE(10) OVER (ORDER BY salary) AS decile          -- => Assigns decile group (1-10)
+                                                         -- => Each decile represents 10% of population
 FROM employee_salaries
-ORDER BY salary;
--- => Divides into 10 groups (1st decile = bottom 10%, 10th = top 10%)
+ORDER BY salary;                                        -- => Sort for readability
+-- => Divides into 10 groups: Decile 1 = bottom 10%, Decile 10 = top 10%
+-- => Useful for finer-grained analysis than quartiles
 
--- Find median salary (50th percentile)
-WITH ordered AS (
+-- Example D: Find median salary (50th percentile)
+WITH ordered AS (                                       -- => CTE with row numbering
     SELECT
-        salary,
-        ROW_NUMBER() OVER (ORDER BY salary) AS row_num,
-        COUNT(*) OVER () AS total_count
+        salary,                                         -- => Salary value
+        ROW_NUMBER() OVER (ORDER BY salary) AS row_num, -- => Position in sorted list (1-100)
+        COUNT(*) OVER () AS total_count                 -- => Total number of salaries (100)
     FROM employee_salaries
 )
-SELECT AVG(salary) AS median_salary
+SELECT AVG(salary) AS median_salary                     -- => Average handles both odd and even counts
 FROM ordered
-WHERE row_num IN (
-    (total_count + 1) / 2,
-    (total_count + 2) / 2
-);
+WHERE row_num IN (                                      -- => Select middle position(s)
+    (total_count + 1) / 2,                              -- => For 100: position 50 (middle-low)
+    (total_count + 2) / 2                               -- => For 100: position 51 (middle-high)
+);                                                      -- => Averages two middle values for even count
 -- => Returns median (middle value or average of two middle values)
+-- => For 100 employees, median is average of salaries at positions 50 and 51
 
--- Calculate 90th percentile salary
-WITH ordered AS (
+-- Example E: Calculate 90th percentile salary
+WITH ordered AS (                                       -- => CTE with row numbering
     SELECT
-        salary,
-        ROW_NUMBER() OVER (ORDER BY salary) AS row_num,
-        COUNT(*) OVER () AS total_count
+        salary,                                         -- => Salary value
+        ROW_NUMBER() OVER (ORDER BY salary) AS row_num, -- => Position in sorted list
+        COUNT(*) OVER () AS total_count                 -- => Total count for percentage calculation
     FROM employee_salaries
 )
-SELECT MAX(salary) AS percentile_90
+SELECT MAX(salary) AS percentile_90                     -- => Highest salary in bottom 90%
 FROM ordered
-WHERE row_num <= CAST(total_count * 0.90 AS INTEGER);
--- => Returns 90th percentile (salary where 90% earn less)
+WHERE row_num <= CAST(total_count * 0.90 AS INTEGER);   -- => First 90 employees (90% of 100)
+-- => Returns 90th percentile (salary where 90% of employees earn less)
+-- => Example: If 90th percentile is $150k, only 10% earn more
 
--- Identify outliers (below 10th or above 90th percentile)
-WITH percentiles AS (
+-- Example F: Identify outliers (below 10th or above 90th percentile)
+WITH percentiles AS (                                   -- => CTE assigns deciles
     SELECT
-        name,
-        salary,
-        NTILE(10) OVER (ORDER BY salary) AS decile
+        name,                                           -- => Employee identifier
+        salary,                                         -- => Salary value
+        NTILE(10) OVER (ORDER BY salary) AS decile      -- => Decile assignment (1-10)
     FROM employee_salaries
 )
-SELECT name, salary, decile
+SELECT name, salary, decile                             -- => Return outlier details
 FROM percentiles
-WHERE decile = 1 OR decile = 10
-ORDER BY salary;
--- => Returns outliers in bottom and top 10%
+WHERE decile = 1 OR decile = 10                         -- => Filter for extreme deciles only
+ORDER BY salary;                                        -- => Sort low to high
+-- => Returns outliers: Bottom 10% (decile 1) and top 10% (decile 10)
+-- => Useful for identifying compensation anomalies or exceptional performers
 ```
 
 **Key Takeaway**: Use NTILE(n) to divide data into n equal groups. NTILE(4) creates quartiles, NTILE(100) approximates percentiles. Calculate exact percentiles using ROW_NUMBER and position formulas. Essential for statistical analysis and outlier detection.
@@ -143,104 +156,127 @@ Cohort analysis groups users by shared characteristics (signup date) and tracks 
 **Code**:
 
 ```sql
-CREATE TABLE users (
-    id INTEGER,
-    email TEXT,
-    signup_date TEXT
+-- Create users table for cohort tracking
+CREATE TABLE users (              -- => Stores user signup information
+    id INTEGER,                   -- => Unique user identifier
+    email TEXT,                   -- => User email address
+    signup_date TEXT              -- => Date user signed up (ISO format)
 );
 
-CREATE TABLE purchases (
-    id INTEGER,
-    user_id INTEGER,
-    purchase_date TEXT,
-    amount REAL
+-- Create purchases table for behavior tracking
+CREATE TABLE purchases (          -- => Tracks user purchase activity
+    id INTEGER,                   -- => Unique purchase identifier
+    user_id INTEGER,              -- => Foreign key to users table
+    purchase_date TEXT,           -- => Date of purchase (ISO format)
+    amount REAL                   -- => Purchase amount in dollars
 );
 
--- Insert users with staggered signup dates
+-- Generate 100 users with staggered signup dates
 INSERT INTO users (id, email, signup_date)
 SELECT
-    value,
-    'user' || value || '@example.com',
-    date('2025-01-01', '+' || ((value - 1) / 10) || ' days')
+    value,                                              -- => User ID from 1-100
+    'user' || value || '@example.com',                  -- => Email: "user1@example.com", etc.
+    date('2025-01-01', '+' || ((value - 1) / 10) || ' days')  -- => Signup dates spread over 10 days
+                                                         -- => IDs 1-10 signup Jan 1, 11-20 signup Jan 2, etc.
 FROM (
-    WITH RECURSIVE nums AS (
-        SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 100
+    WITH RECURSIVE nums AS (                            -- => Generate number sequence
+        SELECT 1 AS value                               -- => Start at 1
+        UNION ALL                                       -- => Combine iterations
+        SELECT value + 1 FROM nums WHERE value < 100    -- => Increment to 100
     )
-    SELECT value FROM nums
+    SELECT value FROM nums                              -- => Return 1-100
 );
 
--- Insert purchases (30% of users make purchases)
+-- Generate purchases for 30% of users
 INSERT INTO purchases (id, user_id, purchase_date, amount)
 SELECT
-    value,
-    value,
+    value,                                              -- => Purchase ID from 1-30
+    value,                                              -- => User ID (first 30 users make purchases)
     date((SELECT signup_date FROM users WHERE id = value), '+' || (value % 30) || ' days'),
-    50 + (value * 10)
+                                                         -- => Purchase 0-29 days after signup
+                                                         -- => Simulates varied purchase timing
+    50 + (value * 10)                                   -- => Amount from $60-$350
 FROM (
-    WITH RECURSIVE nums AS (
-        SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 30
+    WITH RECURSIVE nums AS (                            -- => Generate 30 purchases
+        SELECT 1 AS value
+        UNION ALL
+        SELECT value + 1 FROM nums WHERE value < 30
     )
     SELECT value FROM nums
 );
 
--- Cohort analysis: User retention by signup week
-WITH cohorts AS (
+-- Example A: Cohort retention table by signup week
+WITH cohorts AS (                                       -- => CTE assigns each user to cohort
     SELECT
-        id AS user_id,
-        signup_date,
+        id AS user_id,                                  -- => User identifier
+        signup_date,                                    -- => Original signup date
         DATE(signup_date, 'weekday 0', '-6 days') AS cohort_week
+                                                         -- => Round to start of week (Sunday)
+                                                         -- => All users signing up same week grouped together
     FROM users
 ),
-purchase_weeks AS (
+purchase_weeks AS (                                     -- => CTE calculates weeks since signup
     SELECT
-        user_id,
+        user_id,                                        -- => User who made purchase
         DATE(purchase_date, 'weekday 0', '-6 days') AS purchase_week,
+                                                         -- => Round purchase to week start
         CAST((JULIANDAY(purchase_date) - JULIANDAY((SELECT signup_date FROM users WHERE id = user_id))) / 7 AS INTEGER) AS weeks_since_signup
+                                                         -- => Calculate whole weeks between signup and purchase
+                                                         -- => 0 = same week, 1 = next week, etc.
     FROM purchases
 )
 SELECT
-    c.cohort_week,
-    COUNT(DISTINCT c.user_id) AS cohort_size,
+    c.cohort_week,                                      -- => Week cohort signed up
+    COUNT(DISTINCT c.user_id) AS cohort_size,           -- => Total users in this cohort
     COUNT(DISTINCT CASE WHEN pw.weeks_since_signup = 0 THEN c.user_id END) AS week_0_active,
+                                                         -- => Users who purchased in signup week
     COUNT(DISTINCT CASE WHEN pw.weeks_since_signup = 1 THEN c.user_id END) AS week_1_active,
+                                                         -- => Users who purchased in week 1 after signup
     COUNT(DISTINCT CASE WHEN pw.weeks_since_signup = 2 THEN c.user_id END) AS week_2_active,
+                                                         -- => Week 2 active users
     COUNT(DISTINCT CASE WHEN pw.weeks_since_signup = 3 THEN c.user_id END) AS week_3_active
+                                                         -- => Week 3 active users
 FROM cohorts c
-LEFT JOIN purchase_weeks pw ON c.user_id = pw.user_id
-GROUP BY c.cohort_week
-ORDER BY c.cohort_week;
--- => Shows how many users from each cohort made purchases in weeks 0-3
+LEFT JOIN purchase_weeks pw ON c.user_id = pw.user_id  -- => Include users with no purchases (LEFT JOIN)
+GROUP BY c.cohort_week                                  -- => Aggregate by cohort
+ORDER BY c.cohort_week;                                 -- => Chronological order
+-- => Output: Retention table showing active users per week for each cohort
+-- => Example row: 2025-01-01 | 70 | 10 | 8 | 6 | 5
 
--- Calculate retention percentages
-WITH cohorts AS (
+-- Example B: Calculate retention percentages
+WITH cohorts AS (                                       -- => Assign users to cohorts
     SELECT
         id AS user_id,
         DATE(signup_date, 'weekday 0', '-6 days') AS cohort_week
     FROM users
 ),
-purchase_weeks AS (
+purchase_weeks AS (                                     -- => Calculate weeks since signup
     SELECT
         user_id,
         CAST((JULIANDAY(purchase_date) - JULIANDAY((SELECT signup_date FROM users WHERE id = user_id))) / 7 AS INTEGER) AS weeks_since_signup
     FROM purchases
 ),
-cohort_stats AS (
+cohort_stats AS (                                       -- => Aggregate cohort metrics
     SELECT
-        c.cohort_week,
-        COUNT(DISTINCT c.user_id) AS cohort_size,
+        c.cohort_week,                                  -- => Cohort identifier
+        COUNT(DISTINCT c.user_id) AS cohort_size,       -- => Total cohort size (denominator)
         COUNT(DISTINCT CASE WHEN pw.weeks_since_signup = 1 THEN c.user_id END) AS week_1_active
+                                                         -- => Week 1 active count (numerator)
     FROM cohorts c
     LEFT JOIN purchase_weeks pw ON c.user_id = pw.user_id
     GROUP BY c.cohort_week
 )
 SELECT
-    cohort_week,
-    cohort_size,
-    week_1_active,
+    cohort_week,                                        -- => Cohort identifier
+    cohort_size,                                        -- => Total users in cohort
+    week_1_active,                                      -- => Users active in week 1
     ROUND(100.0 * week_1_active / cohort_size, 2) AS week_1_retention_pct
+                                                         -- => Percentage retained: (active / total) * 100
+                                                         -- => Rounded to 2 decimal places
 FROM cohort_stats
-ORDER BY cohort_week;
--- => Shows week-1 retention percentage for each cohort
+ORDER BY cohort_week;                                   -- => Chronological order
+-- => Output: Retention percentage for each cohort
+-- => Example: 2025-01-01 | 70 | 8 | 11.43 (11.43% retained after 1 week)
 ```
 
 **Key Takeaway**: Cohort analysis groups users by signup period and tracks behavior over time. Use date functions to calculate cohort periods and time since signup. Pivot with CASE to show retention by week/month. Essential for SaaS metrics and user engagement analysis.
@@ -256,53 +292,58 @@ Funnel analysis tracks conversion through multi-step processes. Calculate drop-o
 **Code**:
 
 ```sql
-CREATE TABLE user_events (
-    id INTEGER,
-    user_id INTEGER,
-    event_type TEXT,
-    event_timestamp TEXT
+-- Create events table for funnel tracking
+CREATE TABLE user_events (         -- => Tracks user actions through conversion funnel
+    id INTEGER,                    -- => Unique event identifier
+    user_id INTEGER,               -- => User who triggered event
+    event_type TEXT,               -- => Event type: 'visit', 'signup', 'purchase'
+    event_timestamp TEXT           -- => When event occurred (ISO format)
 );
 
--- Simulate user journey: visit -> signup -> purchase
+-- Generate 300 events simulating user journeys
 INSERT INTO user_events (id, user_id, event_type, event_timestamp)
 SELECT
-    value,
-    (value + 2) / 3,  -- Groups of 3 events per user
-    CASE value % 3
-        WHEN 1 THEN 'visit'
-        WHEN 2 THEN 'signup'
-        WHEN 0 THEN 'purchase'
+    value,                                              -- => Event ID from 1-300
+    (value + 2) / 3,                                    -- => Groups events in threes (user 1: events 1-3, user 2: events 4-6)
+                                                         -- => Creates 100 users
+    CASE value % 3                                      -- => Rotate through event types
+        WHEN 1 THEN 'visit'                             -- => First event in group: visit
+        WHEN 2 THEN 'signup'                            -- => Second event: signup
+        WHEN 0 THEN 'purchase'                          -- => Third event: purchase
     END,
-    datetime('2025-01-01', '+' || value || ' minutes')
+    datetime('2025-01-01', '+' || value || ' minutes')  -- => Events spaced 1 minute apart
 FROM (
-    WITH RECURSIVE nums AS (
-        SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 300
+    WITH RECURSIVE nums AS (                            -- => Generate 300 events
+        SELECT 1 AS value
+        UNION ALL
+        SELECT value + 1 FROM nums WHERE value < 300
     )
     SELECT value FROM nums
 );
 
--- Basic funnel: Count users at each stage
+-- Example A: Basic funnel counts
 SELECT
-    event_type AS stage,
-    COUNT(DISTINCT user_id) AS users,
-    RANK() OVER (ORDER BY
-        CASE event_type
-            WHEN 'visit' THEN 1
-            WHEN 'signup' THEN 2
-            WHEN 'purchase' THEN 3
+    event_type AS stage,                                -- => Funnel stage name
+    COUNT(DISTINCT user_id) AS users,                   -- => Unique users at this stage
+    RANK() OVER (ORDER BY                               -- => Assign rank for ordering
+        CASE event_type                                 -- => Map events to numeric order
+            WHEN 'visit' THEN 1                         -- => Visit is first
+            WHEN 'signup' THEN 2                        -- => Signup is second
+            WHEN 'purchase' THEN 3                      -- => Purchase is third
         END
-    ) AS stage_order
+    ) AS stage_order                                    -- => Funnel stage sequence
 FROM user_events
-GROUP BY event_type
-ORDER BY stage_order;
--- => visit: 100, signup: 100, purchase: 100 (or fewer if some don't complete)
+GROUP BY event_type                                     -- => Aggregate by stage
+ORDER BY stage_order;                                   -- => Display in funnel order
+-- => Output: visit | 100 | 1, signup | 100 | 2, purchase | 100 | 3
+-- => Shows user count at each funnel stage
 
--- Funnel with conversion rates
-WITH funnel_stages AS (
+-- Example B: Funnel with conversion rates
+WITH funnel_stages AS (                                 -- => CTE calculates stage metrics
     SELECT
-        event_type AS stage,
-        COUNT(DISTINCT user_id) AS users,
-        CASE event_type
+        event_type AS stage,                            -- => Stage name
+        COUNT(DISTINCT user_id) AS users,               -- => Users at this stage
+        CASE event_type                                 -- => Stage ordering
             WHEN 'visit' THEN 1
             WHEN 'signup' THEN 2
             WHEN 'purchase' THEN 3
@@ -310,65 +351,78 @@ WITH funnel_stages AS (
     FROM user_events
     GROUP BY event_type
 ),
-total_visits AS (
-    SELECT users AS visit_count
+total_visits AS (                                       -- => CTE extracts total visits (funnel top)
+    SELECT users AS visit_count                         -- => Total users who started funnel
     FROM funnel_stages
-    WHERE stage = 'visit'
+    WHERE stage = 'visit'                               -- => First stage only
 )
 SELECT
-    fs.stage,
-    fs.users,
-    tv.visit_count,
+    fs.stage,                                           -- => Stage name
+    fs.users,                                           -- => Users at this stage
+    tv.visit_count,                                     -- => Total funnel entries (denominator)
     ROUND(100.0 * fs.users / tv.visit_count, 2) AS conversion_pct,
+                                                         -- => Overall conversion from top: (stage / total) * 100
     LAG(fs.users) OVER (ORDER BY fs.stage_order) AS prev_stage_users,
+                                                         -- => Users in previous stage
     ROUND(100.0 * fs.users / NULLIF(LAG(fs.users) OVER (ORDER BY fs.stage_order), 0), 2) AS stage_conversion_pct
+                                                         -- => Stage-to-stage conversion: (current / previous) * 100
+                                                         -- => NULLIF prevents division by zero
 FROM funnel_stages fs, total_visits tv
-ORDER BY fs.stage_order;
--- => Shows overall conversion from visit and stage-to-stage conversion
+ORDER BY fs.stage_order;                                -- => Display in funnel sequence
+-- => Output shows both overall and step-wise conversion rates
+-- => Example: signup | 80 | 100 | 80.00 | 100 | 80.00 (80% of visits converted to signup)
 
--- Time-to-conversion analysis
-WITH user_journey AS (
+-- Example C: Time-to-conversion analysis
+WITH user_journey AS (                                  -- => CTE pivots events to columns
     SELECT
-        user_id,
+        user_id,                                        -- => User identifier
         MIN(CASE WHEN event_type = 'visit' THEN event_timestamp END) AS visit_time,
+                                                         -- => First visit timestamp for this user
         MIN(CASE WHEN event_type = 'signup' THEN event_timestamp END) AS signup_time,
+                                                         -- => First signup timestamp
         MIN(CASE WHEN event_type = 'purchase' THEN event_timestamp END) AS purchase_time
+                                                         -- => First purchase timestamp
     FROM user_events
-    GROUP BY user_id
+    GROUP BY user_id                                    -- => One row per user
 )
 SELECT
-    user_id,
+    user_id,                                            -- => User identifier
     CAST((JULIANDAY(signup_time) - JULIANDAY(visit_time)) * 24 * 60 AS INTEGER) AS visit_to_signup_minutes,
+                                                         -- => Minutes between visit and signup
+                                                         -- => JULIANDAY converts to days, multiply by 1440 for minutes
     CAST((JULIANDAY(purchase_time) - JULIANDAY(signup_time)) * 24 * 60 AS INTEGER) AS signup_to_purchase_minutes
+                                                         -- => Minutes between signup and purchase
 FROM user_journey
-WHERE purchase_time IS NOT NULL
+WHERE purchase_time IS NOT NULL                         -- => Only users who completed purchase
 ORDER BY user_id
-LIMIT 10;
--- => Shows time spent at each funnel stage
+LIMIT 10;                                               -- => Show first 10 for readability
+-- => Output: Time spent at each funnel stage in minutes
+-- => Example: user 1 | 1 | 1 (1 minute visit→signup, 1 minute signup→purchase)
 
--- Drop-off analysis: Users who didn't complete
-WITH user_max_stage AS (
+-- Example D: Drop-off analysis
+WITH user_max_stage AS (                                -- => CTE finds furthest stage reached
     SELECT
-        user_id,
-        MAX(CASE event_type
-            WHEN 'visit' THEN 1
-            WHEN 'signup' THEN 2
-            WHEN 'purchase' THEN 3
-        END) AS max_stage
+        user_id,                                        -- => User identifier
+        MAX(CASE event_type                             -- => Highest stage number reached
+            WHEN 'visit' THEN 1                         -- => Visit = stage 1
+            WHEN 'signup' THEN 2                        -- => Signup = stage 2
+            WHEN 'purchase' THEN 3                      -- => Purchase = stage 3
+        END) AS max_stage                               -- => Maximum stage this user reached
     FROM user_events
-    GROUP BY user_id
+    GROUP BY user_id                                    -- => One row per user
 )
 SELECT
-    CASE max_stage
-        WHEN 1 THEN 'Dropped at Visit'
-        WHEN 2 THEN 'Dropped at Signup'
-        WHEN 3 THEN 'Completed Purchase'
+    CASE max_stage                                      -- => Convert stage number to label
+        WHEN 1 THEN 'Dropped at Visit'                  -- => Never signed up
+        WHEN 2 THEN 'Dropped at Signup'                 -- => Signed up but never purchased
+        WHEN 3 THEN 'Completed Purchase'                -- => Full funnel completion
     END AS outcome,
-    COUNT(*) AS user_count
+    COUNT(*) AS user_count                              -- => Users in each category
 FROM user_max_stage
-GROUP BY max_stage
-ORDER BY max_stage;
--- => Shows where users dropped off
+GROUP BY max_stage                                      -- => Aggregate by max stage
+ORDER BY max_stage;                                     -- => Order by funnel progression
+-- => Output: Drop-off distribution
+-- => Example: Dropped at Visit | 20, Dropped at Signup | 30, Completed | 50
 ```
 
 **Key Takeaway**: Funnel analysis requires tracking user progression through stages. Use CASE with aggregates to count users at each stage. Calculate conversion rates (stage/total and stage/previous). Identify drop-off points to optimize conversion. Essential for e-commerce, SaaS onboarding, and user flows.
@@ -384,96 +438,116 @@ Sessionization groups events into sessions using time-based windows. Essential f
 **Code**:
 
 ```sql
-CREATE TABLE page_views (
-    id INTEGER,
-    user_id INTEGER,
-    page TEXT,
-    view_timestamp TEXT
+-- Create page views table for session tracking
+CREATE TABLE page_views (          -- => Stores user browsing activity
+    id INTEGER,                    -- => Unique page view identifier
+    user_id INTEGER,               -- => User who viewed the page
+    page TEXT,                     -- => Page identifier
+    view_timestamp TEXT            -- => When page was viewed (ISO format)
 );
 
--- Insert page views with varying gaps
+-- Generate 60 page views across 4 users
 INSERT INTO page_views (id, user_id, page, view_timestamp)
 SELECT
-    value,
-    (value - 1) / 15 + 1,  -- 15 views per user
-    'page_' || (value % 5 + 1),
+    value,                                              -- => View ID from 1-60
+    (value - 1) / 15 + 1,                               -- => User ID: 15 views per user (1-4)
+                                                         -- => Views 1-15 = user 1, 16-30 = user 2, etc.
+    'page_' || (value % 5 + 1),                         -- => Page name: page_1 through page_5 (cyclic)
     datetime('2025-01-01', '+' || (value * 2 + (value % 5) * 20) || ' minutes')
+                                                         -- => Variable time gaps (2 min base + 0-80 min variance)
+                                                         -- => Creates some gaps > 30min (new session)
 FROM (
-    WITH RECURSIVE nums AS (
-        SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 60
+    WITH RECURSIVE nums AS (                            -- => Generate 60 events
+        SELECT 1 AS value
+        UNION ALL
+        SELECT value + 1 FROM nums WHERE value < 60
     )
     SELECT value FROM nums
 );
 
--- Define session: Views within 30 minutes of previous view
-WITH view_gaps AS (
+-- Example A: Sessionize views (30-minute timeout)
+WITH view_gaps AS (                                     -- => CTE identifies session boundaries
     SELECT
-        user_id,
-        page,
-        view_timestamp,
+        user_id,                                        -- => User identifier
+        page,                                           -- => Page viewed
+        view_timestamp,                                 -- => Current view time
         LAG(view_timestamp) OVER (PARTITION BY user_id ORDER BY view_timestamp) AS prev_timestamp,
+                                                         -- => Previous view time for this user
+                                                         -- => NULL for first view
         CASE
             WHEN (JULIANDAY(view_timestamp) - JULIANDAY(LAG(view_timestamp) OVER (PARTITION BY user_id ORDER BY view_timestamp))) * 24 * 60 > 30
+                                                         -- => Gap > 30 minutes from previous view
                 OR LAG(view_timestamp) OVER (PARTITION BY user_id ORDER BY view_timestamp) IS NULL
-            THEN 1
-            ELSE 0
-        END AS new_session
+                                                         -- => OR first view for user
+            THEN 1                                       -- => Mark as new session start
+            ELSE 0                                       -- => Same session continues
+        END AS new_session                               -- => Binary flag for session boundary
     FROM page_views
 ),
-session_starts AS (
+session_starts AS (                                     -- => CTE assigns session IDs
     SELECT
-        user_id,
-        view_timestamp,
+        user_id,                                        -- => User identifier
+        view_timestamp,                                 -- => View timestamp
         SUM(new_session) OVER (PARTITION BY user_id ORDER BY view_timestamp) AS session_id
+                                                         -- => Running sum creates unique session IDs
+                                                         -- => Example: 0, 0, 0, 1, 1, 2 (3 sessions)
     FROM view_gaps
 )
 SELECT
-    user_id,
-    session_id,
-    COUNT(*) AS page_views_in_session,
-    MIN(view_timestamp) AS session_start,
-    MAX(view_timestamp) AS session_end,
+    user_id,                                            -- => User identifier
+    session_id,                                         -- => Session number for this user
+    COUNT(*) AS page_views_in_session,                  -- => Number of pages viewed in session
+    MIN(view_timestamp) AS session_start,               -- => First view in session
+    MAX(view_timestamp) AS session_end,                 -- => Last view in session
     ROUND((JULIANDAY(MAX(view_timestamp)) - JULIANDAY(MIN(view_timestamp))) * 24 * 60, 2) AS session_duration_minutes
+                                                         -- => Duration from first to last view in minutes
 FROM session_starts
-GROUP BY user_id, session_id
-ORDER BY user_id, session_id;
--- => Shows sessions with start, end, duration, and page view count
+GROUP BY user_id, session_id                            -- => Aggregate by session
+ORDER BY user_id, session_id;                           -- => Display chronologically
+-- => Output: One row per session with metrics
+-- => Example: user 1 | session 0 | 5 views | 2025-01-01 00:02 | 2025-01-01 00:42 | 40.0 min
 
--- Average session metrics
-WITH view_gaps AS (
+-- Example B: Average session metrics across all users
+WITH view_gaps AS (                                     -- => Identify session boundaries
     SELECT
         user_id,
         view_timestamp,
         CASE
             WHEN (JULIANDAY(view_timestamp) - JULIANDAY(LAG(view_timestamp) OVER (PARTITION BY user_id ORDER BY view_timestamp))) * 24 * 60 > 30
                 OR LAG(view_timestamp) OVER (PARTITION BY user_id ORDER BY view_timestamp) IS NULL
-            THEN 1
-            ELSE 0
+            THEN 1                                       -- => New session marker
+            ELSE 0                                       -- => Continuing session
         END AS new_session
     FROM page_views
 ),
-sessions AS (
+sessions AS (                                           -- => Assign session IDs
     SELECT
         user_id,
         view_timestamp,
         SUM(new_session) OVER (PARTITION BY user_id ORDER BY view_timestamp) AS session_id
+                                                         -- => Session identifier per user
     FROM view_gaps
 ),
-session_metrics AS (
+session_metrics AS (                                    -- => Calculate per-session metrics
     SELECT
         user_id,
         session_id,
-        COUNT(*) AS views_per_session,
+        COUNT(*) AS views_per_session,                  -- => Page views in this session
         ROUND((JULIANDAY(MAX(view_timestamp)) - JULIANDAY(MIN(view_timestamp))) * 24 * 60, 2) AS duration_minutes
+                                                         -- => Session duration in minutes
     FROM sessions
-    GROUP BY user_id, session_id
+    GROUP BY user_id, session_id                        -- => One row per session
 )
 SELECT
     ROUND(AVG(views_per_session), 2) AS avg_views_per_session,
+                                                         -- => Mean page views across all sessions
     ROUND(AVG(duration_minutes), 2) AS avg_duration_minutes,
+                                                         -- => Mean session duration in minutes
     COUNT(DISTINCT user_id || '-' || session_id) AS total_sessions
-FROM session_metrics;
--- => Shows average session length and duration
+                                                         -- => Total number of sessions created
+FROM session_metrics;                                   -- => Aggregate across all sessions
+-- => Output: Summary statistics for all sessions
+-- => Example: 4.5 views/session | 12.3 min/session | 20 total sessions
 ```
 
 **Key Takeaway**: Sessionization uses LAG to calculate time gaps between events. New session starts when gap exceeds threshold (e.g., 30 minutes). Use running SUM of session starts to assign session IDs. Calculate session metrics (duration, page views) with GROUP BY. Essential for web analytics.
@@ -489,100 +563,123 @@ Survival analysis tracks how long entities (customers, products) remain active. 
 **Code**:
 
 ```sql
-CREATE TABLE customers (
-    id INTEGER,
-    signup_date TEXT,
-    churn_date TEXT  -- NULL if still active
+-- Create customers table for survival tracking
+CREATE TABLE customers (                    -- => Tracks customer lifecycle
+    id INTEGER,                             -- => Unique customer identifier
+    signup_date TEXT,                       -- => When customer signed up (ISO format)
+    churn_date TEXT                         -- => When customer churned (NULL if still active)
 );
 
--- Insert customers with varying lifespans
+-- Generate 100 customers with varied lifespans
 INSERT INTO customers (id, signup_date, churn_date)
 SELECT
-    value,
+    value,                                              -- => Customer ID from 1-100
     date('2024-01-01', '+' || ((value - 1) / 10) || ' days'),
+                                                         -- => Signup dates spread over 10 days
+                                                         -- => IDs 1-10 signup Jan 1, 11-20 Jan 2, etc.
     CASE
-        WHEN value % 3 = 0 THEN date('2024-01-01', '+' || ((value - 1) / 10 + 30 + value % 60) || ' days')
-        ELSE NULL
+        WHEN value % 3 = 0                              -- => Every 3rd customer churns (33%)
+        THEN date('2024-01-01', '+' || ((value - 1) / 10 + 30 + value % 60) || ' days')
+                                                         -- => Churn 30-90 days after signup
+        ELSE NULL                                        -- => 67% remain active (NULL churn date)
     END
 FROM (
-    WITH RECURSIVE nums AS (
-        SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 100
+    WITH RECURSIVE nums AS (                            -- => Generate customer IDs
+        SELECT 1 AS value
+        UNION ALL
+        SELECT value + 1 FROM nums WHERE value < 100
     )
     SELECT value FROM nums
 );
 
--- Calculate customer lifetime in days
-WITH customer_lifetime AS (
+-- Example A: Calculate customer lifetime in days
+WITH customer_lifetime AS (                             -- => CTE computes lifetime metrics
     SELECT
-        id,
-        signup_date,
-        COALESCE(churn_date, date('now')) AS end_date,
+        id,                                             -- => Customer identifier
+        signup_date,                                    -- => Original signup date
+        COALESCE(churn_date, date('now')) AS end_date,  -- => Use current date if still active
+                                                         -- => COALESCE returns first non-NULL value
         CAST(JULIANDAY(COALESCE(churn_date, date('now'))) - JULIANDAY(signup_date) AS INTEGER) AS lifetime_days,
+                                                         -- => Days from signup to churn (or now)
+                                                         -- => JULIANDAY converts to numeric days
         CASE WHEN churn_date IS NULL THEN 1 ELSE 0 END AS is_active
+                                                         -- => Binary flag: 1 = active, 0 = churned
     FROM customers
 )
 SELECT
-    id,
-    signup_date,
-    lifetime_days,
+    id,                                                 -- => Customer identifier
+    signup_date,                                        -- => When they joined
+    lifetime_days,                                      -- => How long they've been/were active
     CASE WHEN is_active = 1 THEN 'Active' ELSE 'Churned' END AS status
+                                                         -- => Human-readable status
 FROM customer_lifetime
-ORDER BY lifetime_days DESC
-LIMIT 10;
--- => Shows top 10 customers by lifetime
+ORDER BY lifetime_days DESC                             -- => Sort by longest lifetime first
+LIMIT 10;                                               -- => Show top 10 customers
+-- => Output: Top 10 customers by lifetime with current status
+-- => Example: 42 | 2024-01-05 | 397 | Active
 
--- Survival curve: Percentage surviving at each time point
-WITH customer_lifetime AS (
+-- Example B: Survival curve (percentage surviving over time)
+WITH customer_lifetime AS (                             -- => Calculate lifetime for each customer
     SELECT
         id,
         signup_date,
         CAST(JULIANDAY(COALESCE(churn_date, date('now'))) - JULIANDAY(signup_date) AS INTEGER) AS lifetime_days
+                                                         -- => Days active (current or until churn)
     FROM customers
 ),
-lifetime_buckets AS (
+lifetime_buckets AS (                                   -- => Group customers into 30-day buckets
     SELECT
-        (lifetime_days / 30) * 30 AS days_bucket,
-        COUNT(*) AS customers_at_risk
+        (lifetime_days / 30) * 30 AS days_bucket,       -- => Round down to 30-day intervals (0, 30, 60, 90...)
+                                                         -- => Example: 45 days → 30-day bucket, 92 days → 90-day bucket
+        COUNT(*) AS customers_at_risk                   -- => Customers in this bucket
     FROM customer_lifetime
-    GROUP BY days_bucket
+    GROUP BY days_bucket                                -- => Aggregate by time bucket
 ),
-total_customers AS (
+total_customers AS (                                    -- => Get total customer count for percentages
     SELECT COUNT(*) AS total FROM customers
 )
 SELECT
-    lb.days_bucket,
-    lb.customers_at_risk,
-    tc.total,
+    lb.days_bucket,                                     -- => Time interval (days)
+    lb.customers_at_risk,                               -- => Customers in this bucket
+    tc.total,                                           -- => Total customers (denominator)
     ROUND(100.0 * SUM(lb.customers_at_risk) OVER (ORDER BY lb.days_bucket DESC) / tc.total, 2) AS survival_pct
+                                                         -- => Running sum from highest to lowest bucket
+                                                         -- => Shows % surviving AT LEAST this long
+                                                         -- => Example: 90-day bucket shows % surviving 90+ days
 FROM lifetime_buckets lb, total_customers tc
-ORDER BY lb.days_bucket;
--- => Shows percentage of customers surviving to each time bucket
+ORDER BY lb.days_bucket;                                -- => Display chronologically
+-- => Output: Survival curve showing % surviving at each time point
+-- => Example: 30 | 20 | 100 | 80.00 (80% survive past 30 days)
 
--- Cohort-based churn analysis
-WITH cohorts AS (
+-- Example C: Cohort-based churn analysis
+WITH cohorts AS (                                       -- => Assign customers to monthly cohorts
     SELECT
-        id,
+        id,                                             -- => Customer identifier
         DATE(signup_date, 'start of month') AS cohort_month,
-        churn_date
+                                                         -- => Round signup to month start (2024-01-01)
+        churn_date                                      -- => Churn date (NULL if active)
     FROM customers
 ),
-cohort_stats AS (
+cohort_stats AS (                                       -- => Calculate metrics per cohort
     SELECT
-        cohort_month,
-        COUNT(*) AS cohort_size,
-        COUNT(churn_date) AS churned_count
+        cohort_month,                                   -- => Cohort identifier (month)
+        COUNT(*) AS cohort_size,                        -- => Total customers in cohort
+        COUNT(churn_date) AS churned_count              -- => Churned customers (COUNT ignores NULL)
+                                                         -- => Active customers have NULL churn_date
     FROM cohorts
-    GROUP BY cohort_month
+    GROUP BY cohort_month                               -- => Aggregate by cohort
 )
 SELECT
-    cohort_month,
-    cohort_size,
-    churned_count,
-    cohort_size - churned_count AS still_active,
+    cohort_month,                                       -- => Month cohort signed up
+    cohort_size,                                        -- => Total in cohort
+    churned_count,                                      -- => How many churned
+    cohort_size - churned_count AS still_active,        -- => How many still active
     ROUND(100.0 * churned_count / cohort_size, 2) AS churn_rate_pct
+                                                         -- => Churn percentage for this cohort
 FROM cohort_stats
-ORDER BY cohort_month;
--- => Shows churn rate by signup month
+ORDER BY cohort_month;                                  -- => Chronological order
+-- => Output: Churn rates by signup month
+-- => Example: 2024-01-01 | 100 | 33 | 67 | 33.00 (33% churn rate for January cohort)
 ```
 
 **Key Takeaway**: Survival analysis calculates lifetime from start date to end date (or current date for active). Use COALESCE to treat active customers as surviving until now. Bucket lifetimes and calculate survival percentages. Essential for churn prediction, product lifecycle analysis, and retention metrics.
@@ -598,64 +695,79 @@ One-to-many relationships link one parent record to multiple child records. Use 
 **Code**:
 
 ```sql
--- Enable foreign keys
-PRAGMA foreign_keys = ON;
+-- Enable foreign key constraints (SQLite specific)
+PRAGMA foreign_keys = ON;                              -- => Enables referential integrity enforcement
+                                                         -- => Without this, foreign keys are ignored
 
--- Parent table: Authors
-CREATE TABLE authors (
-    id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,
-    email TEXT UNIQUE
+-- Parent table: Authors (the "one" side)
+CREATE TABLE authors (                                  -- => Stores author information
+    id INTEGER PRIMARY KEY,                             -- => Unique author identifier
+    name TEXT NOT NULL,                                 -- => Author name (required)
+    email TEXT UNIQUE                                   -- => Email address (must be unique across authors)
 );
 
--- Child table: Books (many books per author)
-CREATE TABLE books (
-    id INTEGER PRIMARY KEY,
-    title TEXT NOT NULL,
-    author_id INTEGER NOT NULL,
-    published_year INTEGER,
+-- Child table: Books (the "many" side)
+CREATE TABLE books (                                    -- => Stores book information
+    id INTEGER PRIMARY KEY,                             -- => Unique book identifier
+    title TEXT NOT NULL,                                -- => Book title (required)
+    author_id INTEGER NOT NULL,                         -- => Foreign key to authors table
+                                                         -- => Links each book to exactly one author
+    published_year INTEGER,                             -- => Year published (optional)
     FOREIGN KEY (author_id) REFERENCES authors(id) ON DELETE CASCADE
+                                                         -- => Enforces referential integrity
+                                                         -- => CASCADE: Deleting author deletes all their books
 );
 
+-- Insert authors (parent records)
 INSERT INTO authors (id, name, email)
 VALUES
-    (1, 'Alice Author', 'alice@books.com'),
-    (2, 'Bob Writer', 'bob@books.com');
+    (1, 'Alice Author', 'alice@books.com'),             -- => Author with ID 1
+    (2, 'Bob Writer', 'bob@books.com');                 -- => Author with ID 2
 
+-- Insert books (child records linked to authors)
 INSERT INTO books (id, title, author_id, published_year)
 VALUES
-    (1, 'SQL Mastery', 1, 2020),
-    (2, 'Database Design', 1, 2021),
-    (3, 'Query Optimization', 1, 2022),
-    (4, 'Data Modeling', 2, 2021);
+    (1, 'SQL Mastery', 1, 2020),                        -- => Alice's first book
+    (2, 'Database Design', 1, 2021),                    -- => Alice's second book
+    (3, 'Query Optimization', 1, 2022),                 -- => Alice's third book
+    (4, 'Data Modeling', 2, 2021);                      -- => Bob's only book
+-- => Alice (ID 1) has 3 books, Bob (ID 2) has 1 book
 
--- Query with JOIN to show relationship
+-- Example A: Query with INNER JOIN to show relationships
 SELECT
-    a.name AS author,
-    b.title AS book,
-    b.published_year
+    a.name AS author,                                   -- => Author name from parent table
+    b.title AS book,                                    -- => Book title from child table
+    b.published_year                                    -- => Publication year
 FROM authors a
-INNER JOIN books b ON a.id = b.author_id
-ORDER BY a.name, b.published_year;
--- => Alice Author: SQL Mastery (2020), Database Design (2021), Query Optimization (2022)
--- => Bob Writer: Data Modeling (2021)
+INNER JOIN books b ON a.id = b.author_id                -- => Match books to their authors
+                                                         -- => INNER JOIN excludes authors without books
+ORDER BY a.name, b.published_year;                      -- => Sort by author, then chronologically
+-- => Output: Alice Author | SQL Mastery | 2020
+-- =>         Alice Author | Database Design | 2021
+-- =>         Alice Author | Query Optimization | 2022
+-- =>         Bob Writer | Data Modeling | 2021
 
--- Count books per author
+-- Example B: Count books per author (including authors with zero books)
 SELECT
-    a.name AS author,
-    COUNT(b.id) AS num_books
+    a.name AS author,                                   -- => Author name
+    COUNT(b.id) AS num_books                            -- => Number of books by this author
+                                                         -- => COUNT(column) returns 0 for NULL (no books)
 FROM authors a
-LEFT JOIN books b ON a.id = b.author_id
-GROUP BY a.id, a.name
-ORDER BY num_books DESC;
--- => Alice Author: 3 books, Bob Writer: 1 book
+LEFT JOIN books b ON a.id = b.author_id                 -- => Include ALL authors (even without books)
+                                                         -- => LEFT JOIN keeps authors with NULL book matches
+GROUP BY a.id, a.name                                   -- => Aggregate by author
+ORDER BY num_books DESC;                                -- => Most prolific authors first
+-- => Output: Alice Author | 3, Bob Writer | 1
+-- => If Alice had no books, still shows: Alice Author | 0
 
--- CASCADE delete: Remove author and all their books
-DELETE FROM authors WHERE id = 1;
--- => Deletes Alice and all 3 of her books (CASCADE)
+-- Example C: CASCADE delete demonstration
+DELETE FROM authors WHERE id = 1;                       -- => Delete Alice Author
+-- => CASCADE effect: Automatically deletes all books with author_id = 1
+-- => Books 1, 2, 3 are deleted because they reference deleted author
 
-SELECT * FROM books;
--- => Only Bob's book remains (id=4)
+SELECT * FROM books;                                    -- => Query remaining books
+-- => Output: Only Bob's book remains (id=4, title='Data Modeling')
+-- => Alice's 3 books were cascaded deleted
 ```
 
 **Key Takeaway**: One-to-many uses foreign keys in child table pointing to parent's primary key. Use ON DELETE CASCADE to automatically delete children when parent is deleted. LEFT JOIN shows parents without children. Essential pattern for orders/items, posts/comments, categories/products.
@@ -686,98 +798,115 @@ graph TD
 **Code**:
 
 ```sql
-PRAGMA foreign_keys = ON;
+-- Enable foreign key enforcement
+PRAGMA foreign_keys = ON;                              -- => Required for referential integrity
 
 -- First entity: Students
-CREATE TABLE students (
-    id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,
-    email TEXT UNIQUE
+CREATE TABLE students (                                 -- => Stores student information
+    id INTEGER PRIMARY KEY,                             -- => Unique student identifier
+    name TEXT NOT NULL,                                 -- => Student name (required)
+    email TEXT UNIQUE                                   -- => Email address (must be unique)
 );
 
 -- Second entity: Courses
-CREATE TABLE courses (
-    id INTEGER PRIMARY KEY,
-    title TEXT NOT NULL,
-    credits INTEGER
+CREATE TABLE courses (                                  -- => Stores course information
+    id INTEGER PRIMARY KEY,                             -- => Unique course identifier
+    title TEXT NOT NULL,                                -- => Course title (required)
+    credits INTEGER                                     -- => Credit hours for this course
 );
 
--- Junction table: Links students and courses
-CREATE TABLE enrollments (
-    id INTEGER PRIMARY KEY,
-    student_id INTEGER NOT NULL,
-    course_id INTEGER NOT NULL,
-    enrollment_date TEXT,
+-- Junction table: Enables many-to-many relationship
+CREATE TABLE enrollments (                              -- => Links students to courses
+    id INTEGER PRIMARY KEY,                             -- => Unique enrollment identifier
+    student_id INTEGER NOT NULL,                        -- => Foreign key to students
+    course_id INTEGER NOT NULL,                         -- => Foreign key to courses
+    enrollment_date TEXT,                               -- => When student enrolled (optional metadata)
     FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+                                                         -- => Deleting student removes their enrollments
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
-    UNIQUE(student_id, course_id)  -- Prevent duplicate enrollments
+                                                         -- => Deleting course removes all enrollments
+    UNIQUE(student_id, course_id)                       -- => Prevent duplicate enrollments
+                                                         -- => Student can't enroll in same course twice
 );
 
+-- Insert students
 INSERT INTO students (id, name, email)
 VALUES
-    (1, 'Alice', 'alice@university.edu'),
-    (2, 'Bob', 'bob@university.edu'),
-    (3, 'Charlie', 'charlie@university.edu');
+    (1, 'Alice', 'alice@university.edu'),               -- => Student 1
+    (2, 'Bob', 'bob@university.edu'),                   -- => Student 2
+    (3, 'Charlie', 'charlie@university.edu');           -- => Student 3
 
+-- Insert courses
 INSERT INTO courses (id, title, credits)
 VALUES
-    (1, 'Database Systems', 3),
-    (2, 'Web Development', 3),
-    (3, 'Machine Learning', 4);
+    (1, 'Database Systems', 3),                         -- => 3-credit course
+    (2, 'Web Development', 3),                          -- => 3-credit course
+    (3, 'Machine Learning', 4);                         -- => 4-credit course
 
+-- Insert enrollments (many-to-many links)
 INSERT INTO enrollments (student_id, course_id, enrollment_date)
 VALUES
-    (1, 1, '2025-01-01'),  -- Alice -> Database Systems
-    (1, 2, '2025-01-01'),  -- Alice -> Web Development
-    (2, 1, '2025-01-02'),  -- Bob -> Database Systems
-    (2, 3, '2025-01-02'),  -- Bob -> Machine Learning
-    (3, 2, '2025-01-03'),  -- Charlie -> Web Development
-    (3, 3, '2025-01-03');  -- Charlie -> Machine Learning
+    (1, 1, '2025-01-01'),                               -- => Alice enrolled in Database Systems
+    (1, 2, '2025-01-01'),                               -- => Alice enrolled in Web Development
+    (2, 1, '2025-01-02'),                               -- => Bob enrolled in Database Systems
+    (2, 3, '2025-01-02'),                               -- => Bob enrolled in Machine Learning
+    (3, 2, '2025-01-03'),                               -- => Charlie enrolled in Web Development
+    (3, 3, '2025-01-03');                               -- => Charlie enrolled in Machine Learning
+-- => Alice: 2 courses, Bob: 2 courses, Charlie: 2 courses
+-- => Database Systems: 2 students, Web Development: 2 students, Machine Learning: 2 students
 
--- Find all courses for a student
+-- Example A: Find all courses for a specific student
 SELECT
-    s.name AS student,
-    c.title AS course,
-    c.credits
+    s.name AS student,                                  -- => Student name
+    c.title AS course,                                  -- => Course title
+    c.credits                                           -- => Credit hours
 FROM students s
-INNER JOIN enrollments e ON s.id = e.student_id
-INNER JOIN courses c ON e.course_id = c.id
-WHERE s.name = 'Alice';
--- => Returns: Database Systems (3), Web Development (3)
+INNER JOIN enrollments e ON s.id = e.student_id         -- => Join student to enrollments
+INNER JOIN courses c ON e.course_id = c.id              -- => Join enrollments to courses
+                                                         -- => Two JOINs traverse the many-to-many
+WHERE s.name = 'Alice';                                 -- => Filter for specific student
+-- => Output: Database Systems | 3, Web Development | 3
+-- => Shows Alice's enrolled courses with credit hours
 
--- Find all students in a course
+-- Example B: Find all students in a specific course
 SELECT
-    c.title AS course,
-    s.name AS student,
-    e.enrollment_date
+    c.title AS course,                                  -- => Course title
+    s.name AS student,                                  -- => Student name
+    e.enrollment_date                                   -- => When they enrolled
 FROM courses c
-INNER JOIN enrollments e ON c.id = e.course_id
-INNER JOIN students s ON e.student_id = s.id
-WHERE c.title = 'Database Systems'
-ORDER BY e.enrollment_date;
--- => Returns: Alice (2025-01-01), Bob (2025-01-02)
+INNER JOIN enrollments e ON c.id = e.course_id          -- => Join course to enrollments
+INNER JOIN students s ON e.student_id = s.id            -- => Join enrollments to students
+WHERE c.title = 'Database Systems'                      -- => Filter for specific course
+ORDER BY e.enrollment_date;                             -- => Chronological enrollment order
+-- => Output: Database Systems | Alice | 2025-01-01
+-- =>         Database Systems | Bob | 2025-01-02
 
--- Count enrollments
+-- Example C: Count courses and total credits per student
 SELECT
-    s.name AS student,
-    COUNT(e.id) AS num_courses,
-    SUM(c.credits) AS total_credits
+    s.name AS student,                                  -- => Student name
+    COUNT(e.id) AS num_courses,                         -- => Number of enrolled courses
+    SUM(c.credits) AS total_credits                     -- => Sum of all enrolled course credits
 FROM students s
-LEFT JOIN enrollments e ON s.id = e.student_id
-LEFT JOIN courses c ON e.course_id = c.id
-GROUP BY s.id, s.name;
--- => Alice: 2 courses (6 credits), Bob: 2 courses (7 credits), Charlie: 2 courses (7 credits)
+LEFT JOIN enrollments e ON s.id = e.student_id          -- => Include students with no enrollments
+LEFT JOIN courses c ON e.course_id = c.id               -- => Get course details
+GROUP BY s.id, s.name;                                  -- => Aggregate by student
+-- => Output: Alice | 2 | 6 (Database 3 + Web 3)
+-- =>         Bob | 2 | 7 (Database 3 + ML 4)
+-- =>         Charlie | 2 | 7 (Web 3 + ML 4)
 
--- Find students enrolled in same courses as Alice
-WITH alice_courses AS (
+-- Example D: Find students sharing courses with Alice
+WITH alice_courses AS (                                 -- => CTE gets Alice's course IDs
     SELECT course_id FROM enrollments WHERE student_id = 1
+                                                         -- => Returns course IDs 1 and 2
 )
-SELECT DISTINCT s.name
+SELECT DISTINCT s.name                                  -- => Distinct student names
 FROM students s
-INNER JOIN enrollments e ON s.id = e.student_id
+INNER JOIN enrollments e ON s.id = e.student_id         -- => Get all enrollments
 WHERE e.course_id IN (SELECT course_id FROM alice_courses)
-  AND s.id != 1;
--- => Returns: Bob, Charlie (share at least one course with Alice)
+                                                         -- => Filter for Alice's courses
+  AND s.id != 1;                                        -- => Exclude Alice herself
+-- => Output: Bob (shares Database Systems), Charlie (shares Web Development)
+-- => Shows students with at least one common course
 ```
 
 **Key Takeaway**: Many-to-many requires junction table with foreign keys to both entities. Add UNIQUE constraint on (entity1_id, entity2_id) to prevent duplicates. Use two JOINs to traverse relationship. Junction table can store additional attributes (enrollment_date, role, status). Essential for tags, permissions, product categories.
@@ -793,79 +922,95 @@ Self-referencing tables model hierarchical relationships (employees/managers, ca
 **Code**:
 
 ```sql
-PRAGMA foreign_keys = ON;
+-- Enable foreign key enforcement
+PRAGMA foreign_keys = ON;                              -- => Required for cascade operations
 
-CREATE TABLE categories (
-    id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,
-    parent_id INTEGER,
+-- Self-referencing table for hierarchical data
+CREATE TABLE categories (                               -- => Stores category hierarchy
+    id INTEGER PRIMARY KEY,                             -- => Unique category identifier
+    name TEXT NOT NULL,                                 -- => Category name
+    parent_id INTEGER,                                  -- => Foreign key to parent category (same table)
+                                                         -- => NULL for top-level categories
     FOREIGN KEY (parent_id) REFERENCES categories(id) ON DELETE CASCADE
+                                                         -- => Self-reference: points to another row in same table
+                                                         -- => CASCADE: Deleting parent deletes all children
 );
 
--- Insert hierarchical categories
+-- Insert hierarchical category data
 INSERT INTO categories (id, name, parent_id)
 VALUES
-    (1, 'Electronics', NULL),          -- Top level
-    (2, 'Computers', 1),                -- Electronics > Computers
-    (3, 'Laptops', 2),                  -- Electronics > Computers > Laptops
-    (4, 'Desktops', 2),                 -- Electronics > Computers > Desktops
-    (5, 'Phones', 1),                   -- Electronics > Phones
-    (6, 'Smartphones', 5),              -- Electronics > Phones > Smartphones
-    (7, 'Feature Phones', 5),           -- Electronics > Phones > Feature Phones
-    (8, 'Home & Garden', NULL),         -- Top level
-    (9, 'Furniture', 8);                -- Home & Garden > Furniture
+    (1, 'Electronics', NULL),                           -- => Top level (no parent)
+    (2, 'Computers', 1),                                -- => Child of Electronics
+    (3, 'Laptops', 2),                                  -- => Child of Computers (grandchild of Electronics)
+    (4, 'Desktops', 2),                                 -- => Child of Computers
+    (5, 'Phones', 1),                                   -- => Child of Electronics
+    (6, 'Smartphones', 5),                              -- => Child of Phones
+    (7, 'Feature Phones', 5),                           -- => Child of Phones
+    (8, 'Home & Garden', NULL),                         -- => Top level (separate tree)
+    (9, 'Furniture', 8);                                -- => Child of Home & Garden
+-- => Creates two tree structures: Electronics (7 nodes) and Home & Garden (2 nodes)
 
--- Find all direct children of a category
+-- Example A: Find direct children of a specific category
 SELECT
-    c.name AS category,
-    p.name AS parent
+    c.name AS category,                                 -- => Child category name
+    p.name AS parent                                    -- => Parent category name
 FROM categories c
-LEFT JOIN categories p ON c.parent_id = p.id
-WHERE c.parent_id = 1
-ORDER BY c.name;
--- => Returns: Computers, Phones (direct children of Electronics)
+LEFT JOIN categories p ON c.parent_id = p.id           -- => Self-join: join table to itself
+                                                         -- => Alias 'c' for child, 'p' for parent
+WHERE c.parent_id = 1                                   -- => Filter for Electronics' children only
+ORDER BY c.name;                                        -- => Alphabetical sort
+-- => Output: Computers | Electronics, Phones | Electronics
+-- => Shows immediate children, not all descendants
 
--- Find all top-level categories (no parent)
-SELECT name
+-- Example B: Find all top-level categories (roots of hierarchy trees)
+SELECT name                                             -- => Category name
 FROM categories
-WHERE parent_id IS NULL;
--- => Returns: Electronics, Home & Garden
+WHERE parent_id IS NULL;                                -- => No parent means top level
+-- => Output: Electronics, Home & Garden
+-- => These are the roots of two separate hierarchy trees
 
--- Find full path to category (using recursive CTE)
-WITH RECURSIVE category_path AS (
-    -- Base case: Start with Laptops
-    SELECT id, name, parent_id, name AS path
+-- Example C: Build full path to category using recursive CTE
+WITH RECURSIVE category_path AS (                       -- => Recursive CTE builds path upward
+    -- Base case: Start with target category (Laptops)
+    SELECT id, name, parent_id, name AS path            -- => Initial path is just the category name
     FROM categories
-    WHERE id = 3
+    WHERE id = 3                                        -- => Starting point: Laptops (ID 3)
 
-    UNION ALL
+    UNION ALL                                           -- => Combine base case with recursive case
 
-    -- Recursive case: Add parent to path
+    -- Recursive case: Prepend parent to path
     SELECT c.id, c.name, c.parent_id, c.name || ' > ' || cp.path
+                                                         -- => Build path: "Parent > Child"
+                                                         -- => Example: "Computers > Laptops"
     FROM categories c
-    INNER JOIN category_path cp ON c.id = cp.parent_id
+    INNER JOIN category_path cp ON c.id = cp.parent_id  -- => Join current path to its parent
+                                                         -- => Walks up the tree one level per iteration
 )
-SELECT path
+SELECT path                                             -- => Final path string
 FROM category_path
-WHERE parent_id IS NULL;
--- => Returns: Electronics > Computers > Laptops
+WHERE parent_id IS NULL;                                -- => Stop at root (no parent)
+-- => Output: Electronics > Computers > Laptops
+-- => Shows complete ancestry from root to target
 
--- Count descendants at all levels
-WITH RECURSIVE descendants AS (
-    -- Base case: Electronics and all descendants
-    SELECT id, name, 0 AS level
+-- Example D: Count all descendants of a category
+WITH RECURSIVE descendants AS (                         -- => Recursive CTE finds all descendants
+    -- Base case: Start with target category (Electronics)
+    SELECT id, name, 0 AS level                         -- => Root starts at level 0
     FROM categories
-    WHERE id = 1
+    WHERE id = 1                                        -- => Electronics (ID 1)
 
-    UNION ALL
+    UNION ALL                                           -- => Combine with recursive results
 
-    SELECT c.id, c.name, d.level + 1
+    -- Recursive case: Find children and increment level
+    SELECT c.id, c.name, d.level + 1                    -- => Increment depth level
     FROM categories c
-    INNER JOIN descendants d ON c.parent_id = d.id
+    INNER JOIN descendants d ON c.parent_id = d.id      -- => Find children of current level
+                                                         -- => Walks down the tree, level by level
 )
-SELECT COUNT(*) - 1 AS num_descendants  -- Exclude root
-FROM descendants;
--- => Returns: 5 (Computers, Laptops, Desktops, Phones, Smartphones, Feature Phones)
+SELECT COUNT(*) - 1 AS num_descendants                  -- => Count all nodes
+FROM descendants;                                       -- => Subtract 1 to exclude root itself
+-- => Output: 5 (Computers, Laptops, Desktops, Phones, Smartphones, Feature Phones)
+-- => Excludes Electronics itself from count
 ```
 
 **Key Takeaway**: Self-referencing foreign keys use parent_id pointing to same table's id. Use recursive CTEs to traverse hierarchies (find ancestors, descendants, paths). Essential for org charts, category trees, comment threads, file systems.
@@ -882,91 +1027,112 @@ Polymorphic associations allow one table to reference multiple parent tables. Im
 
 ```sql
 -- Parent table 1: Posts
-CREATE TABLE posts (
-    id INTEGER PRIMARY KEY,
-    title TEXT,
-    content TEXT
+CREATE TABLE posts (                                    -- => First parent entity type
+    id INTEGER PRIMARY KEY,                             -- => Unique post identifier
+    title TEXT,                                         -- => Post title
+    content TEXT                                        -- => Post content
 );
 
 -- Parent table 2: Photos
-CREATE TABLE photos (
-    id INTEGER PRIMARY KEY,
-    url TEXT,
-    caption TEXT
+CREATE TABLE photos (                                   -- => Second parent entity type
+    id INTEGER PRIMARY KEY,                             -- => Unique photo identifier
+    url TEXT,                                           -- => Photo URL
+    caption TEXT                                        -- => Photo caption
 );
 
--- Polymorphic child: Comments can belong to posts OR photos
-CREATE TABLE comments (
-    id INTEGER PRIMARY KEY,
-    content TEXT,
-    commentable_type TEXT,  -- 'post' or 'photo'
-    commentable_id INTEGER, -- References posts.id or photos.id
-    created_at TEXT
+-- Polymorphic child table
+CREATE TABLE comments (                                 -- => Can reference posts OR photos
+    id INTEGER PRIMARY KEY,                             -- => Unique comment identifier
+    content TEXT,                                       -- => Comment text
+    commentable_type TEXT,                              -- => Type discriminator: 'post' or 'photo'
+                                                         -- => Determines which parent table to join
+    commentable_id INTEGER,                             -- => ID in parent table (posts.id or photos.id)
+                                                         -- => Cannot use foreign key - ambiguous reference
+    created_at TEXT                                     -- => Comment timestamp
 );
+-- => Polymorphic pattern: type + id columns replace foreign key
+-- => Trade-off: Flexibility vs. referential integrity
 
+-- Insert sample posts
 INSERT INTO posts (id, title, content)
 VALUES
-    (1, 'SQL Tutorial', 'Learn SQL basics'),
-    (2, 'Advanced Queries', 'Master complex queries');
+    (1, 'SQL Tutorial', 'Learn SQL basics'),            -- => Post ID 1
+    (2, 'Advanced Queries', 'Master complex queries');  -- => Post ID 2
 
+-- Insert sample photos
 INSERT INTO photos (id, url, caption)
 VALUES
-    (1, 'https://example.com/photo1.jpg', 'Sunset'),
-    (2, 'https://example.com/photo2.jpg', 'Mountain');
+    (1, 'https://example.com/photo1.jpg', 'Sunset'),    -- => Photo ID 1
+    (2, 'https://example.com/photo2.jpg', 'Mountain');  -- => Photo ID 2
 
+-- Insert polymorphic comments
 INSERT INTO comments (id, content, commentable_type, commentable_id, created_at)
 VALUES
     (1, 'Great post!', 'post', 1, '2025-01-15 10:00:00'),
+                                                         -- => Comment on post ID 1
     (2, 'Very helpful', 'post', 1, '2025-01-15 11:00:00'),
+                                                         -- => Another comment on post ID 1
     (3, 'Beautiful photo', 'photo', 1, '2025-01-15 12:00:00'),
+                                                         -- => Comment on photo ID 1
     (4, 'Amazing view', 'photo', 2, '2025-01-15 13:00:00');
+                                                         -- => Comment on photo ID 2
+-- => Same comments table serves both posts and photos
 
--- Find all comments on a specific post
+-- Example A: Find comments on a specific post
 SELECT
-    c.content AS comment,
-    c.created_at
+    c.content AS comment,                               -- => Comment text
+    c.created_at                                        -- => Comment timestamp
 FROM comments c
-WHERE c.commentable_type = 'post'
-  AND c.commentable_id = 1
-ORDER BY c.created_at;
--- => Returns: 'Great post!', 'Very helpful'
+WHERE c.commentable_type = 'post'                       -- => Filter for post comments only
+  AND c.commentable_id = 1                              -- => Specific post ID
+ORDER BY c.created_at;                                  -- => Chronological order
+-- => Output: 'Great post!' | 2025-01-15 10:00:00
+-- =>         'Very helpful' | 2025-01-15 11:00:00
 
--- Find all comments on a specific photo
+-- Example B: Find comments on a specific photo
 SELECT
-    c.content AS comment,
-    c.created_at
+    c.content AS comment,                               -- => Comment text
+    c.created_at                                        -- => Comment timestamp
 FROM comments c
-WHERE c.commentable_type = 'photo'
-  AND c.commentable_id = 1;
--- => Returns: 'Beautiful photo'
+WHERE c.commentable_type = 'photo'                      -- => Filter for photo comments only
+  AND c.commentable_id = 1;                             -- => Specific photo ID
+-- => Output: 'Beautiful photo' | 2025-01-15 12:00:00
 
--- Join comments with their parent entities (UNION pattern)
+-- Example C: Join comments with parent entities (UNION pattern)
 SELECT
-    'post' AS type,
-    p.title AS title,
-    c.content AS comment
+    'post' AS type,                                     -- => Literal type label
+    p.title AS title,                                   -- => Post title
+    c.content AS comment                                -- => Comment text
 FROM posts p
 INNER JOIN comments c ON c.commentable_type = 'post' AND c.commentable_id = p.id
+                                                         -- => Join comments with type='post' to posts table
+                                                         -- => Two conditions: type match + ID match
 
-UNION ALL
+UNION ALL                                               -- => Combine with photo comments
 
 SELECT
-    'photo' AS type,
-    ph.caption AS title,
-    c.content AS comment
+    'photo' AS type,                                    -- => Literal type label
+    ph.caption AS title,                                -- => Photo caption
+    c.content AS comment                                -- => Comment text
 FROM photos ph
 INNER JOIN comments c ON c.commentable_type = 'photo' AND c.commentable_id = ph.id
+                                                         -- => Join comments with type='photo' to photos table
 
-ORDER BY type, title;
--- => Returns all comments with their parent entity
+ORDER BY type, title;                                   -- => Sort by entity type, then title
+-- => Output: photo | Mountain | Amazing view
+-- =>         photo | Sunset | Beautiful photo
+-- =>         post | Advanced Queries | ...
+-- =>         post | SQL Tutorial | Great post!
+-- =>         post | SQL Tutorial | Very helpful
 
--- Count comments by type
+-- Example D: Count comments by parent entity type
 SELECT
-    commentable_type AS type,
-    COUNT(*) AS num_comments
+    commentable_type AS type,                           -- => Entity type (post/photo)
+    COUNT(*) AS num_comments                            -- => Count comments per type
 FROM comments
-GROUP BY commentable_type;
--- => post: 2, photo: 2
+GROUP BY commentable_type;                              -- => Aggregate by type
+-- => Output: photo | 2, post | 2
+-- => Shows distribution of comments across entity types
 ```
 
 **Key Takeaway**: Polymorphic associations use type and id columns to reference multiple parent tables. Cannot enforce with foreign keys - relies on application logic. Use UNION to join with different parent types. Common in ORMs (Rails, Laravel) for likes, comments, attachments that apply to multiple models.
@@ -982,84 +1148,102 @@ Type 2 SCDs track historical changes by creating new rows with effective dates. 
 **Code**:
 
 ```sql
-CREATE TABLE customer_scd (
-    id INTEGER PRIMARY KEY,
-    customer_id INTEGER NOT NULL,
-    name TEXT NOT NULL,
-    email TEXT,
-    address TEXT,
-    effective_date TEXT NOT NULL,
-    end_date TEXT,            -- NULL for current record
-    is_current INTEGER NOT NULL DEFAULT 1,  -- 1 = current, 0 = historical
-    CHECK (is_current IN (0, 1))
+-- Slowly Changing Dimension (Type 2) table
+CREATE TABLE customer_scd (                             -- => Historical customer data tracking
+    id INTEGER PRIMARY KEY,                             -- => Unique row identifier (not customer ID)
+    customer_id INTEGER NOT NULL,                       -- => Business key (same across versions)
+    name TEXT NOT NULL,                                 -- => Customer name
+    email TEXT,                                         -- => Customer email (may change)
+    address TEXT,                                       -- => Customer address (may change)
+    effective_date TEXT NOT NULL,                       -- => When this version became effective
+    end_date TEXT,                                      -- => When this version ended (NULL = current)
+    is_current INTEGER NOT NULL DEFAULT 1,              -- => Flag: 1 = current, 0 = historical
+                                                         -- => Enables fast current-state queries
+    CHECK (is_current IN (0, 1))                        -- => Constraint: only 0 or 1 allowed
 );
 
--- Initial customer record
+-- Insert initial customer version
 INSERT INTO customer_scd (id, customer_id, name, email, address, effective_date, end_date, is_current)
 VALUES (1, 100, 'Alice Smith', 'alice@old.com', '123 Old St', '2024-01-01', NULL, 1);
+-- => Row ID 1, customer 100, first version, currently active
 
--- Customer changes email (create new row, close old row)
-BEGIN TRANSACTION;
+-- Example A: Customer changes email (version 1 → version 2)
+BEGIN TRANSACTION;                                      -- => Ensure atomicity of update + insert
 
--- Close previous record
+-- Step 1: Close previous version
 UPDATE customer_scd
-SET end_date = '2024-06-01', is_current = 0
-WHERE customer_id = 100 AND is_current = 1;
+SET end_date = '2024-06-01',                            -- => Mark when old version expired
+    is_current = 0                                      -- => Flag as historical
+WHERE customer_id = 100 AND is_current = 1;             -- => Find current version for customer 100
+-- => Row 1 now shows: effective='2024-01-01', end='2024-06-01', is_current=0
 
--- Insert new current record
+-- Step 2: Insert new current version
 INSERT INTO customer_scd (id, customer_id, name, email, address, effective_date, end_date, is_current)
 VALUES (2, 100, 'Alice Smith', 'alice@new.com', '123 Old St', '2024-06-01', NULL, 1);
+                                                         -- => New row with updated email
+                                                         -- => effective_date matches old row's end_date
+-- => Row 2 shows: effective='2024-06-01', end=NULL, is_current=1
 
-COMMIT;
+COMMIT;                                                 -- => Commit both operations atomically
 
--- Customer changes address (another change)
+-- Example B: Customer changes address (version 2 → version 3)
 BEGIN TRANSACTION;
 
 UPDATE customer_scd
-SET end_date = '2025-01-01', is_current = 0
-WHERE customer_id = 100 AND is_current = 1;
+SET end_date = '2025-01-01',                            -- => Close version 2
+    is_current = 0
+WHERE customer_id = 100 AND is_current = 1;             -- => Find current version
 
 INSERT INTO customer_scd (id, customer_id, name, email, address, effective_date, end_date, is_current)
 VALUES (3, 100, 'Alice Smith', 'alice@new.com', '456 New Ave', '2025-01-01', NULL, 1);
-
+                                                         -- => New row with updated address
 COMMIT;
+-- => Now have 3 versions: Row 1 (old email), Row 2 (new email), Row 3 (new address)
 
--- View current customer data
-SELECT customer_id, name, email, address
+-- Example C: Query current customer state
+SELECT customer_id, name, email, address                -- => Current attributes
 FROM customer_scd
-WHERE is_current = 1;
--- => Returns: customer_id=100, email='alice@new.com', address='456 New Ave'
+WHERE is_current = 1;                                   -- => Filter for active versions only
+-- => Output: 100 | Alice Smith | alice@new.com | 456 New Ave
+-- => Fast query using is_current index
 
--- View full history for customer
+-- Example D: View full historical timeline
 SELECT
     customer_id,
     email,
     address,
-    effective_date,
-    COALESCE(end_date, 'Current') AS end_date,
+    effective_date,                                     -- => When version started
+    COALESCE(end_date, 'Current') AS end_date,          -- => When version ended (or 'Current')
     CASE WHEN is_current = 1 THEN 'Yes' ELSE 'No' END AS is_current
+                                                         -- => Human-readable current flag
 FROM customer_scd
-WHERE customer_id = 100
-ORDER BY effective_date;
--- => Returns 3 rows showing full history
+WHERE customer_id = 100                                 -- => All versions of customer 100
+ORDER BY effective_date;                                -- => Chronological order
+-- => Output: 3 rows showing complete change history
+-- => Row 1: old email, old address, 2024-01-01 to 2024-06-01
+-- => Row 2: new email, old address, 2024-06-01 to 2025-01-01
+-- => Row 3: new email, new address, 2025-01-01 to Current
 
--- Point-in-time query: What was address on 2024-08-01?
+-- Example E: Point-in-time query (historical state reconstruction)
 SELECT customer_id, name, email, address
 FROM customer_scd
 WHERE customer_id = 100
-  AND effective_date <= '2024-08-01'
-  AND (end_date IS NULL OR end_date > '2024-08-01')
+  AND effective_date <= '2024-08-01'                    -- => Version must have started by this date
+  AND (end_date IS NULL OR end_date > '2024-08-01')     -- => Version must still be active on this date
+                                                         -- => Finds version valid on 2024-08-01
 LIMIT 1;
--- => Returns: email='alice@new.com', address='123 Old St' (state on 2024-08-01)
+-- => Output: 100 | Alice Smith | alice@new.com | 123 Old St
+-- => Shows state as of 2024-08-01 (version 2: new email, old address)
 
--- Create view for current records only
-CREATE VIEW customers_current AS
+-- Example F: Create view for simplified current-state access
+CREATE VIEW customers_current AS                        -- => Virtual table showing only current versions
 SELECT customer_id, name, email, address, effective_date
 FROM customer_scd
-WHERE is_current = 1;
+WHERE is_current = 1;                                   -- => Filters for active versions
 
-SELECT * FROM customers_current;
--- => Simplified access to current state
+SELECT * FROM customers_current;                        -- => Query like a regular customer table
+-- => Output: 100 | Alice Smith | alice@new.com | 456 New Ave | 2025-01-01
+-- => Hides SCD complexity from applications needing only current state
 ```
 
 **Key Takeaway**: Type 2 SCD maintains history by creating new rows for changes. Use effective_date and end_date to track validity periods. is_current flag enables fast current-state queries. Point-in-time queries use date range conditions. Essential for data warehouses, audit trails, and historical reporting.
@@ -1075,99 +1259,130 @@ EXPLAIN QUERY PLAN reveals query execution strategy. Identify inefficiencies lik
 **Code**:
 
 ```sql
-CREATE TABLE orders (
-    id INTEGER PRIMARY KEY,
-    customer_id INTEGER,
-    order_date TEXT,
-    total REAL,
-    status TEXT
+-- Create orders table for performance testing
+CREATE TABLE orders (                                   -- => Stores order data
+    id INTEGER PRIMARY KEY,                             -- => Unique order identifier
+    customer_id INTEGER,                                -- => Customer reference (will test JOIN performance)
+    order_date TEXT,                                    -- => Order date
+    total REAL,                                         -- => Order total amount
+    status TEXT                                         -- => Order status (will test filter performance)
 );
 
-CREATE TABLE customers (
-    id INTEGER PRIMARY KEY,
-    name TEXT,
-    email TEXT,
-    country TEXT
+-- Create customers table for JOIN testing
+CREATE TABLE customers (                                -- => Stores customer data
+    id INTEGER PRIMARY KEY,                             -- => Unique customer identifier
+    name TEXT,                                          -- => Customer name
+    email TEXT,                                         -- => Customer email
+    country TEXT                                        -- => Customer country (will test filter performance)
 );
 
--- Insert large dataset for realistic analysis
+-- Generate 10,000 orders for realistic performance testing
 INSERT INTO orders (id, customer_id, order_date, total, status)
 SELECT
-    value,
-    (value % 1000) + 1,
+    value,                                              -- => Order ID from 1-10000
+    (value % 1000) + 1,                                 -- => Customer ID (1-1000, distributed evenly)
     date('2024-01-01', '+' || (value % 365) || ' days'),
-    50 + (value % 500),
-    CASE value % 4 WHEN 0 THEN 'completed' WHEN 1 THEN 'pending' WHEN 2 THEN 'cancelled' ELSE 'shipped' END
+                                                         -- => Dates spread across 365 days
+    50 + (value % 500),                                 -- => Totals from $50-$550
+    CASE value % 4                                      -- => Status distribution: 25% each
+        WHEN 0 THEN 'completed'
+        WHEN 1 THEN 'pending'
+        WHEN 2 THEN 'cancelled'
+        ELSE 'shipped'
+    END
 FROM (
-    WITH RECURSIVE nums AS (
-        SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 10000
+    WITH RECURSIVE nums AS (                            -- => Generate 10,000 rows
+        SELECT 1 AS value
+        UNION ALL
+        SELECT value + 1 FROM nums WHERE value < 10000
     )
     SELECT value FROM nums
 );
 
+-- Generate 1,000 customers
 INSERT INTO customers (id, name, email, country)
 SELECT
-    value,
-    'Customer ' || value,
-    'customer' || value || '@example.com',
-    CASE value % 5 WHEN 0 THEN 'USA' WHEN 1 THEN 'UK' WHEN 2 THEN 'Canada' WHEN 3 THEN 'Australia' ELSE 'Germany' END
+    value,                                              -- => Customer ID from 1-1000
+    'Customer ' || value,                               -- => Name: "Customer 1", etc.
+    'customer' || value || '@example.com',              -- => Email: "customer1@example.com"
+    CASE value % 5                                      -- => Country distribution: 20% each
+        WHEN 0 THEN 'USA'
+        WHEN 1 THEN 'UK'
+        WHEN 2 THEN 'Canada'
+        WHEN 3 THEN 'Australia'
+        ELSE 'Germany'
+    END
 FROM (
     WITH RECURSIVE nums AS (
-        SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 1000
+        SELECT 1 AS value
+        UNION ALL
+        SELECT value + 1 FROM nums WHERE value < 1000
     )
     SELECT value FROM nums
 );
 
--- Query 1: Filter without index (slow)
+-- Example A: Query WITHOUT index (inefficient)
+EXPLAIN QUERY PLAN                                      -- => Shows execution strategy
+SELECT * FROM orders WHERE status = 'completed';        -- => Filter for completed orders
+-- => Output: "SCAN TABLE orders"
+-- => Database must read all 10,000 rows to find matches
+-- => No index available, so full table scan required
+
+-- Create index on status column
+CREATE INDEX idx_orders_status ON orders(status);       -- => Build B-tree index on status
+                                                         -- => Enables fast lookup by status value
+
+-- Example B: Same query WITH index (efficient)
 EXPLAIN QUERY PLAN
 SELECT * FROM orders WHERE status = 'completed';
--- => Output: SCAN TABLE orders
--- => Must check all 10,000 rows
+-- => Output: "SEARCH TABLE orders USING INDEX idx_orders_status (status=?)"
+-- => Database uses index to jump directly to matching rows
+-- => Dramatic performance improvement (milliseconds vs seconds)
 
--- Create index on status
-CREATE INDEX idx_orders_status ON orders(status);
-
--- Query 1 with index (fast)
-EXPLAIN QUERY PLAN
-SELECT * FROM orders WHERE status = 'completed';
--- => Output: SEARCH TABLE orders USING INDEX idx_orders_status (status=?)
--- => Uses index for fast lookup
-
--- Query 2: JOIN without index
-EXPLAIN QUERY PLAN
-SELECT c.name, o.total
+-- Example C: JOIN query without indexes (slow)
+EXPLAIN QUERY PLAN                                      -- => Analyze join strategy
+SELECT c.name, o.total                                  -- => Get customer name and order total
 FROM customers c
-INNER JOIN orders o ON c.id = o.customer_id
-WHERE c.country = 'USA';
--- => May show inefficient join strategy
+INNER JOIN orders o ON c.id = o.customer_id             -- => Join on customer ID
+WHERE c.country = 'USA';                                -- => Filter for USA customers
+-- => Output: May show "SCAN TABLE" for both tables
+-- => No index on country or customer_id means full scans
 
--- Create indexes to optimize JOIN
+-- Create indexes for JOIN optimization
 CREATE INDEX idx_customers_country ON customers(country);
+                                                         -- => Index on filter column
 CREATE INDEX idx_orders_customer_id ON orders(customer_id);
+                                                         -- => Index on join column
 
+-- Example D: Same JOIN query with indexes (fast)
 EXPLAIN QUERY PLAN
 SELECT c.name, o.total
 FROM customers c
 INNER JOIN orders o ON c.id = o.customer_id
 WHERE c.country = 'USA';
--- => Now uses indexes efficiently
+-- => Output: "SEARCH TABLE customers USING INDEX idx_customers_country"
+-- =>         "SEARCH TABLE orders USING INDEX idx_orders_customer_id"
+-- => Both tables use indexes for efficient access
 
--- Query 3: Complex query with subquery
-EXPLAIN QUERY PLAN
+-- Example E: Subquery execution plan
+EXPLAIN QUERY PLAN                                      -- => Analyze subquery strategy
 SELECT c.name, c.email
 FROM customers c
-WHERE c.id IN (
-    SELECT customer_id FROM orders WHERE total > 300
+WHERE c.id IN (                                         -- => IN clause with subquery
+    SELECT customer_id FROM orders WHERE total > 300    -- => Find customers with large orders
 );
--- => Shows how subquery is executed (may use temp B-tree)
+-- => Output: May show "USE TEMP B-TREE FOR IN-subquery"
+-- => Database creates temporary index for IN operation
 
--- Rewrite as JOIN (often faster)
+-- Example F: Rewrite subquery as JOIN (often faster)
 EXPLAIN QUERY PLAN
-SELECT DISTINCT c.name, c.email
+SELECT DISTINCT c.name, c.email                         -- => DISTINCT removes duplicates
 FROM customers c
-INNER JOIN orders o ON c.id = o.customer_id
-WHERE o.total > 300;
--- => Compare query plans to choose faster approach
+INNER JOIN orders o ON c.id = o.customer_id             -- => Join instead of IN
+WHERE o.total > 300;                                    -- => Same filter condition
+-- => Output: Shows join-based execution plan
+-- => Compare with subquery plan to determine which is faster
+-- => JOIN often more efficient than IN with subquery
 ```
 
 **Key Takeaway**: EXPLAIN QUERY PLAN shows execution strategy - look for SCAN (bad) vs SEARCH (good). Create indexes on columns in WHERE, JOIN, ORDER BY. Compare query plans for different approaches (subquery vs JOIN). Index creation dramatically improves performance for large datasets.
@@ -1183,79 +1398,110 @@ Indexes speed reads but slow writes. Choose index types and columns strategicall
 **Code**:
 
 ```sql
-CREATE TABLE products (
-    id INTEGER PRIMARY KEY,
-    sku TEXT,
-    name TEXT,
-    category TEXT,
-    price REAL,
-    stock INTEGER,
-    created_at TEXT
+-- Create products table for index strategy testing
+CREATE TABLE products (                                 -- => Product catalog
+    id INTEGER PRIMARY KEY,                             -- => Unique product ID
+    sku TEXT,                                           -- => Stock keeping unit (unique code)
+    name TEXT,                                          -- => Product name
+    category TEXT,                                      -- => Product category
+    price REAL,                                         -- => Product price
+    stock INTEGER,                                      -- => Inventory quantity
+    created_at TEXT                                     -- => When product was added
 );
 
--- Insert test data
+-- Generate 5,000 test products
 INSERT INTO products (id, sku, name, category, price, stock, created_at)
 SELECT
-    value,
-    'SKU-' || printf('%06d', value),
-    'Product ' || value,
-    CASE value % 5 WHEN 0 THEN 'Electronics' WHEN 1 THEN 'Clothing' WHEN 2 THEN 'Food' WHEN 3 THEN 'Furniture' ELSE 'Sports' END,
-    10 + (value % 1000),
-    value % 100,
+    value,                                              -- => Product ID from 1-5000
+    'SKU-' || printf('%06d', value),                    -- => SKU: "SKU-000001", "SKU-000002", etc.
+    'Product ' || value,                                -- => Name: "Product 1", etc.
+    CASE value % 5                                      -- => 5 categories (20% each)
+        WHEN 0 THEN 'Electronics'
+        WHEN 1 THEN 'Clothing'
+        WHEN 2 THEN 'Food'
+        WHEN 3 THEN 'Furniture'
+        ELSE 'Sports'
+    END,
+    10 + (value % 1000),                                -- => Prices from $10-$1010
+    value % 100,                                        -- => Stock from 0-99 units
     datetime('2024-01-01', '+' || (value % 365) || ' days')
+                                                         -- => Dates spread across 365 days
 FROM (
     WITH RECURSIVE nums AS (
-        SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 5000
+        SELECT 1 AS value
+        UNION ALL
+        SELECT value + 1 FROM nums WHERE value < 5000
     )
     SELECT value FROM nums
 );
 
 -- Strategy 1: Single-column index (basic filtering)
 CREATE INDEX idx_products_category ON products(category);
+                                                         -- => B-tree index on category column
+                                                         -- => Fast lookup for single-column WHERE
 
-EXPLAIN QUERY PLAN
-SELECT * FROM products WHERE category = 'Electronics';
--- => Uses index for fast category lookup
+EXPLAIN QUERY PLAN                                      -- => Verify index usage
+SELECT * FROM products WHERE category = 'Electronics';  -- => Filter by category
+-- => Output: "SEARCH TABLE products USING INDEX idx_products_category"
+-- => Index enables fast lookup (~1000 of 5000 rows)
 
--- Strategy 2: Composite index (multiple WHERE conditions)
+-- Strategy 2: Composite index (multi-column WHERE clauses)
 CREATE INDEX idx_products_category_price ON products(category, price);
+                                                         -- => Composite index: category first, then price
+                                                         -- => Order matters! category is more selective
 
 EXPLAIN QUERY PLAN
 SELECT * FROM products WHERE category = 'Electronics' AND price > 500;
--- => Uses composite index (more efficient than separate indexes)
+-- => Uses composite index for both conditions
+-- => More efficient than using two separate single-column indexes
+-- => Index stores (category, price) pairs sorted for fast range scans
 
--- Strategy 3: Covering index (includes SELECT columns)
-DROP INDEX idx_products_category_price;
+-- Strategy 3: Covering index (includes all SELECT columns)
+DROP INDEX idx_products_category_price;                 -- => Remove old index
 CREATE INDEX idx_products_category_price_name ON products(category, price, name);
+                                                         -- => Covering index: includes name column
+                                                         -- => All query data available in index
 
 EXPLAIN QUERY PLAN
 SELECT category, price, name FROM products WHERE category = 'Electronics';
--- => COVERING INDEX - doesn't need to access table
+-- => Output includes "USING COVERING INDEX"
+-- => Database reads ONLY index (no table access needed)
+-- => Significant performance boost for read-heavy queries
 
--- Strategy 4: Partial index (index subset of rows)
+-- Strategy 4: Partial index (indexes only subset of rows)
 CREATE INDEX idx_products_low_stock ON products(stock) WHERE stock < 10;
+                                                         -- => Partial index: only products with stock < 10
+                                                         -- => Smaller index size (fewer rows)
+                                                         -- => Faster to search and maintain
 
 EXPLAIN QUERY PLAN
-SELECT * FROM products WHERE stock < 10;
--- => Uses partial index (smaller, faster)
+SELECT * FROM products WHERE stock < 10;                -- => Query matches index condition
+-- => Uses partial index (smaller, faster than full index)
+-- => Useful for queries that filter on same condition repeatedly
 
--- Strategy 5: Expression index (index computed value)
+-- Strategy 5: Expression index (indexes computed values)
 CREATE INDEX idx_products_price_with_tax ON products((price * 1.1));
+                                                         -- => Index on expression: price + 10% tax
+                                                         -- => Stores computed values
 
 EXPLAIN QUERY PLAN
-SELECT * FROM products WHERE (price * 1.1) > 100;
--- => Uses expression index (without it, function prevents index usage)
+SELECT * FROM products WHERE (price * 1.1) > 100;       -- => Query uses same expression
+-- => Uses expression index for fast lookup
+-- => Without this, function in WHERE prevents index usage
 
 -- Measure index overhead
 SELECT
-    name AS index_name,
-    tbl_name AS table_name
+    name AS index_name,                                 -- => Index name
+    tbl_name AS table_name                              -- => Table name
 FROM sqlite_master
-WHERE type = 'index' AND tbl_name = 'products';
--- => Shows all indexes on products table
+WHERE type = 'index' AND tbl_name = 'products';         -- => Filter for products indexes
+-- => Output: Lists all indexes (including auto-created primary key)
+-- => More indexes = faster reads, slower writes, more disk space
 
--- Drop unused indexes to improve write performance
-DROP INDEX idx_products_category;  -- Redundant (covered by composite index)
+-- Drop redundant indexes
+DROP INDEX idx_products_category;                       -- => Remove single-column index
+-- => Composite index idx_products_category_price_name covers this use case
+-- => Reduces write overhead and disk space
 ```
 
 **Key Takeaway**: Single-column indexes for simple filters, composite indexes for multi-column WHERE (order matters: most selective first). Covering indexes include SELECT columns to avoid table access. Partial indexes reduce size for filtered queries. Expression indexes enable indexing computed values. Balance read speed vs write overhead.
@@ -1271,90 +1517,118 @@ Rewrite queries to use indexes, avoid functions in WHERE, and leverage database 
 **Code**:
 
 ```sql
-CREATE TABLE events (
-    id INTEGER PRIMARY KEY,
-    event_name TEXT,
-    event_date TEXT,
-    user_id INTEGER,
-    category TEXT
+-- Create events table for query rewriting examples
+CREATE TABLE events (                                   -- => Event log table
+    id INTEGER PRIMARY KEY,                             -- => Unique event ID
+    event_name TEXT,                                    -- => Event description
+    event_date TEXT,                                    -- => Event timestamp
+    user_id INTEGER,                                    -- => User who triggered event
+    category TEXT                                       -- => Event category
 );
 
+-- Generate 10,000 test events
 INSERT INTO events (id, event_name, event_date, user_id, category)
 SELECT
-    value,
-    'Event ' || value,
+    value,                                              -- => Event ID from 1-10000
+    'Event ' || value,                                  -- => Name: "Event 1", etc.
     date('2024-01-01', '+' || (value % 365) || ' days'),
-    (value % 100) + 1,
-    CASE value % 3 WHEN 0 THEN 'System' WHEN 1 THEN 'User' ELSE 'Admin' END
+                                                         -- => Dates spread across 365 days
+    (value % 100) + 1,                                  -- => User IDs from 1-100
+    CASE value % 3                                      -- => 3 categories
+        WHEN 0 THEN 'System'
+        WHEN 1 THEN 'User'
+        ELSE 'Admin'
+    END
 FROM (
     WITH RECURSIVE nums AS (
-        SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 10000
+        SELECT 1 AS value
+        UNION ALL
+        SELECT value + 1 FROM nums WHERE value < 10000
     )
     SELECT value FROM nums
 );
 
-CREATE INDEX idx_events_date ON events(event_date);
-CREATE INDEX idx_events_user ON events(user_id);
-CREATE INDEX idx_events_category ON events(category);
+-- Create indexes for optimization testing
+CREATE INDEX idx_events_date ON events(event_date);     -- => Index on date column
+CREATE INDEX idx_events_user ON events(user_id);        -- => Index on user ID
+CREATE INDEX idx_events_category ON events(category);   -- => Index on category
 
--- SLOW: Function in WHERE prevents index usage
+-- Anti-pattern A: Function in WHERE clause
 SELECT * FROM events
-WHERE DATE(event_date) = '2024-06-15';
--- => DATE() function prevents idx_events_date usage
+WHERE DATE(event_date) = '2024-06-15';                  -- => DATE() function wraps column
+-- => Function prevents index usage (must eval function for every row)
+-- => Full table scan required
 
--- FAST: Rewrite using range comparison
+-- Pattern A: Rewrite as range query
 SELECT * FROM events
 WHERE event_date >= '2024-06-15' AND event_date < '2024-06-16';
--- => Uses idx_events_date
+                                                         -- => Column unwrapped (direct comparison)
+-- => Uses idx_events_date for fast lookup
+-- => Finds all events on 2024-06-15
 
--- SLOW: OR conditions often don't use indexes efficiently
+-- Anti-pattern B: Multiple OR conditions
 SELECT * FROM events
-WHERE user_id = 10 OR user_id = 20 OR user_id = 30;
+WHERE user_id = 10 OR user_id = 20 OR user_id = 30;     -- => Three OR conditions
+-- => Database may not use index efficiently
+-- => Some optimizers scan table multiple times
 
--- FAST: Use IN clause (optimizer can use index)
+-- Pattern B: Use IN clause
 SELECT * FROM events
-WHERE user_id IN (10, 20, 30);
--- => Uses idx_events_user
+WHERE user_id IN (10, 20, 30);                          -- => Equivalent to OR
+-- => Optimizer can use idx_events_user
+-- => Single index scan for multiple values
 
--- SLOW: NOT IN with subquery (NULL issues + poor performance)
+-- Anti-pattern C: NOT IN with subquery
 SELECT * FROM events
 WHERE category NOT IN (SELECT category FROM events WHERE user_id = 1);
+-- => Problems: NULL handling issues, poor performance
+-- => If subquery returns NULL, result is empty set
 
--- FAST: Use LEFT JOIN anti-pattern
-SELECT e.*
+-- Pattern C: LEFT JOIN anti-pattern (NULL-safe)
+SELECT e.*                                              -- => Select from main table
 FROM events e
 LEFT JOIN (SELECT DISTINCT category FROM events WHERE user_id = 1) sub
-  ON e.category = sub.category
-WHERE sub.category IS NULL;
--- => More efficient and NULL-safe
+  ON e.category = sub.category                          -- => Join on category
+WHERE sub.category IS NULL;                             -- => Keep only non-matches
+-- => More efficient, NULL-safe
+-- => Returns events in categories user 1 never used
 
--- SLOW: LIKE with leading wildcard (cannot use index)
-SELECT * FROM events WHERE event_name LIKE '%Event';
+-- Anti-pattern D: LIKE with leading wildcard
+SELECT * FROM events WHERE event_name LIKE '%Event';    -- => Wildcard at start
+-- => Cannot use index (must scan entire table)
+-- => No prefix to narrow search
 
--- FAST: LIKE with trailing wildcard (can use index)
-CREATE INDEX idx_events_name ON events(event_name);
-SELECT * FROM events WHERE event_name LIKE 'Event%';
--- => Uses idx_events_name
+-- Pattern D: LIKE with trailing wildcard
+CREATE INDEX idx_events_name ON events(event_name);     -- => Index on name column
+SELECT * FROM events WHERE event_name LIKE 'Event%';    -- => Wildcard at end
+-- => Uses idx_events_name (searches by prefix)
+-- => Finds all names starting with "Event"
 
--- SLOW: SELECT DISTINCT with no index
-SELECT DISTINCT category FROM events;
+-- Anti-pattern E: SELECT DISTINCT
+SELECT DISTINCT category FROM events;                   -- => Get unique categories
+-- => May require full table scan and sort
 
--- FAST: GROUP BY (semantically equivalent, may optimize differently)
-SELECT category FROM events GROUP BY category;
--- => May use idx_events_category
+-- Pattern E: GROUP BY (often faster)
+SELECT category FROM events GROUP BY category;          -- => Semantically equivalent
+-- => May use idx_events_category more efficiently
+-- => Some optimizers handle GROUP BY better
 
--- SLOW: Subquery in SELECT for every row
+-- Anti-pattern F: Correlated subquery in SELECT
 SELECT
     e.event_name,
     (SELECT COUNT(*) FROM events e2 WHERE e2.category = e.category) AS cat_count
+                                                         -- => Subquery runs PER ROW
 FROM events e;
+-- => 10,000 rows = 10,000 subquery executions
+-- => Extremely slow for large datasets
 
--- FAST: Use window function
+-- Pattern F: Window function (single pass)
 SELECT
     event_name,
-    COUNT(*) OVER (PARTITION BY category) AS cat_count
-FROM events;
--- => Single pass instead of per-row subqueries
+    COUNT(*) OVER (PARTITION BY category) AS cat_count  -- => Window function
+FROM events;                                            -- => Single table scan
+-- => Calculates counts in one pass
+-- => Dramatically faster than correlated subquery
 ```
 
 **Key Takeaway**: Avoid functions in WHERE (use ranges instead). Use IN instead of OR for multiple values. Replace NOT IN with LEFT JOIN for NULL safety and performance. Trailing wildcards (LIKE 'abc%') use indexes, leading wildcards ('%abc') don't. Window functions outperform correlated subqueries.
@@ -1370,72 +1644,92 @@ Batch operations in transactions dramatically improve performance. Use pragmas a
 **Code**:
 
 ```sql
-CREATE TABLE metrics (
-    id INTEGER PRIMARY KEY,
-    metric_name TEXT,
-    value REAL,
-    recorded_at TEXT
+-- Create metrics table for batch operation testing
+CREATE TABLE metrics (                                  -- => Time-series metrics storage
+    id INTEGER PRIMARY KEY,                             -- => Unique metric ID
+    metric_name TEXT,                                   -- => Metric type (cpu, memory, disk)
+    value REAL,                                         -- => Metric value
+    recorded_at TEXT                                    -- => Timestamp
 );
 
--- SLOW: Individual inserts (auto-commit per statement)
--- Don't run this for 10,000 rows - would take minutes
+-- Anti-pattern: Individual inserts (DON'T DO THIS for bulk data)
 -- INSERT INTO metrics (metric_name, value, recorded_at)
 -- VALUES ('cpu', 50.5, datetime('now'));
 -- ... repeated 10,000 times
+-- => 10,000 individual transactions (auto-commit per statement)
+-- => Each insert flushes to disk
+-- => Takes minutes for 10,000 rows
 
--- FAST: Single transaction with multi-row INSERT
-BEGIN TRANSACTION;
+-- Pattern A: Single transaction with bulk INSERT
+BEGIN TRANSACTION;                                      -- => Start transaction
 
 INSERT INTO metrics (metric_name, value, recorded_at)
 SELECT
-    CASE value % 3 WHEN 0 THEN 'cpu' WHEN 1 THEN 'memory' ELSE 'disk' END,
-    RANDOM() % 100,
-    datetime('2025-01-01', '+' || value || ' seconds')
+    CASE value % 3                                      -- => Rotate through metric types
+        WHEN 0 THEN 'cpu'
+        WHEN 1 THEN 'memory'
+        ELSE 'disk'
+    END,
+    RANDOM() % 100,                                     -- => Random value 0-99
+    datetime('2025-01-01', '+' || value || ' seconds')  -- => Sequential timestamps
 FROM (
-    WITH RECURSIVE nums AS (
-        SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 10000
+    WITH RECURSIVE nums AS (                            -- => Generate 10,000 rows
+        SELECT 1 AS value
+        UNION ALL
+        SELECT value + 1 FROM nums WHERE value < 10000
     )
     SELECT value FROM nums
 );
 
-COMMIT;
--- => Inserts 10,000 rows in milliseconds
+COMMIT;                                                 -- => Commit all inserts at once
+-- => Single disk flush for all 10,000 rows
+-- => Inserts complete in milliseconds instead of minutes
 
--- Optimize for bulk loading (use with caution - test thoroughly)
-PRAGMA synchronous = OFF;     -- Disable sync (faster but risky)
-PRAGMA journal_mode = MEMORY;  -- In-memory journaling (faster, less safe)
-PRAGMA temp_store = MEMORY;    -- In-memory temp tables
+-- Pattern B: Optimize for bulk loading (CAUTION: Less safe)
+PRAGMA synchronous = OFF;                               -- => Disable fsync after commit
+                                                         -- => Faster but risks corruption on crash
+PRAGMA journal_mode = MEMORY;                           -- => Keep rollback journal in RAM
+                                                         -- => Faster but loses crash recovery
+PRAGMA temp_store = MEMORY;                             -- => Temporary tables in RAM
+                                                         -- => Faster temp operations
 
-BEGIN TRANSACTION;
+BEGIN TRANSACTION;                                      -- => Start bulk load transaction
 
 INSERT INTO metrics (metric_name, value, recorded_at)
 SELECT
-    'bulk_' || (value % 3),
-    value,
-    datetime('now')
+    'bulk_' || (value % 3),                             -- => Bulk metric names
+    value,                                              -- => Sequential values
+    datetime('now')                                     -- => Current timestamp
 FROM (
     WITH RECURSIVE nums AS (
-        SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 50000
+        SELECT 1 AS value
+        UNION ALL
+        SELECT value + 1 FROM nums WHERE value < 50000  -- => 50,000 rows
     )
     SELECT value FROM nums
 );
 
-COMMIT;
+COMMIT;                                                 -- => Commit bulk load
+-- => Extremely fast (50,000 rows in ~1 second)
+-- => Use only for one-time data loads, not production
 
--- Restore safe settings
-PRAGMA synchronous = FULL;
-PRAGMA journal_mode = DELETE;
-PRAGMA temp_store = DEFAULT;
+-- Restore safe settings after bulk load
+PRAGMA synchronous = FULL;                              -- => Re-enable fsync (safe)
+PRAGMA journal_mode = DELETE;                           -- => File-based journal (safe)
+PRAGMA temp_store = DEFAULT;                            -- => Default temp storage
 
--- Batch updates
-BEGIN TRANSACTION;
+-- Pattern C: Batch multiple operations in one transaction
+BEGIN TRANSACTION;                                      -- => Batch updates and deletes
 
 UPDATE metrics SET value = value * 1.1 WHERE metric_name = 'cpu';
+                                                         -- => Adjust all CPU metrics
 UPDATE metrics SET value = value * 0.9 WHERE metric_name = 'memory';
+                                                         -- => Adjust all memory metrics
 DELETE FROM metrics WHERE recorded_at < datetime('now', '-30 days');
-
-COMMIT;
--- => All changes atomic and fast
+                                                         -- => Remove old metrics
+COMMIT;                                                 -- => Single commit for all operations
+-- => Much faster than 3 separate transactions
+-- => Consistent: all changes succeed or all fail
 
 -- Batch deletes (delete in chunks for large tables)
 BEGIN TRANSACTION;
