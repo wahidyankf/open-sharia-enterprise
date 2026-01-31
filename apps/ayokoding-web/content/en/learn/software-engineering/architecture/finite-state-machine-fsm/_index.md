@@ -6,3 +6,4 @@ draft: false
 ---
 
 - [Overview](/en/learn/software-engineering/architecture/finite-state-machine-fsm/overview)
+- [By Example](/en/learn/software-engineering/architecture/finite-state-machine-fsm/by-example)
