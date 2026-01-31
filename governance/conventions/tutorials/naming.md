@@ -399,6 +399,8 @@ Example-driven learning path for experienced developers (seasonal programmers/so
 - **Complements** the Full Set by providing an alternative learning path for experienced developers
 - **Higher coverage than Advanced tutorials**: By Example reaches 95% through examples while Advanced tutorials reach 85-95% through deep dives
 
+**See**: [By-Example Tutorial Convention](./by-example.md) for complete standards including annotation density, self-containment rules, and diagram requirements.
+
 ---
 
 ## Choosing the Right Tutorial Type

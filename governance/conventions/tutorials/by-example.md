@@ -1066,6 +1066,20 @@ This convention implements and respects:
 - [Color Accessibility Convention](../formatting/color-accessibility.md): Color-blind friendly palette
 - [Diátaxis Framework](../structure/diataxis-framework.md): Tutorial categorization framework
 
+## Related Agents
+
+- [apps-ayokoding-web-by-example-maker](../../../.opencode/agent/apps-ayokoding-web-by-example-maker.md) - Creates by-example content
+- [apps-ayokoding-web-by-example-checker](../../../.opencode/agent/apps-ayokoding-web-by-example-checker.md) - Validates by-example standards
+- [apps-ayokoding-web-by-example-fixer](../../../.opencode/agent/apps-ayokoding-web-by-example-fixer.md) - Applies validated fixes
+
+## Related Workflows
+
+- [ayokoding-web-by-example-quality-gate](../../workflows/ayokoding-web/ayokoding-web-by-example-quality-gate.md) - Quality assurance workflow for by-example tutorials
+
+## Related Skills
+
+- [docs-creating-by-example-tutorials](../../../.claude/skills/docs-creating-by-example-tutorials/SKILL.md) - Skill package for creating by-example tutorials
+
 ## Multiple Code Blocks Pattern
 
 **CRITICAL NEW RULE**: Examples comparing multiple approaches, libraries, or implementations should use MULTIPLE CODE BLOCKS with markdown text between them, NOT cramming all explanations into comments within a single code block.
