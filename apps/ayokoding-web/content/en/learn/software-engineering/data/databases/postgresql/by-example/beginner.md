@@ -427,42 +427,71 @@ PostgreSQL provides three text types: VARCHAR with length limit, TEXT for unlimi
 
 ```sql
 CREATE DATABASE example_7;
--- => Creates database 'example_7'
+-- => Creates new database named 'example_7' with UTF8 encoding
 \c example_7;
--- => Switches connection to example_7 database
+-- => Connects to example_7 database (disconnects from previous database)
 CREATE TABLE text_types (
-    fixed_char CHAR(5),      -- => Exactly 5 characters, space-padded if shorter
-    var_char VARCHAR(50),    -- => Up to 50 characters, no padding
-    unlimited_text TEXT      -- => Unlimited length (practical limit: 1 GB)
+    fixed_char CHAR(5),
+    -- => Exactly 5 characters, space-padded if shorter (e.g., 'AB' becomes 'AB   ')
+    -- => Rarely used in modern applications due to padding behavior
+    var_char VARCHAR(50),
+    -- => Variable-length string up to 50 characters (no padding)
+    -- => Storage size = actual string length + 1 byte for length tracking
+    unlimited_text TEXT
+    -- => Unlimited length text (practical limit: 1 GB per field)
+    -- => Same performance as VARCHAR, no length restriction needed
 );
+-- => Creates text_types table with 3 columns demonstrating text type differences
 INSERT INTO text_types (fixed_char, var_char, unlimited_text)
--- => INSERT into text_types table begins
+-- => Inserts rows into text_types table with text values
 VALUES
--- => Row data values follow
     ('AB', 'Hello', 'This is a very long text that can be as long as needed without worrying about length limits'),
-    -- => Row data inserted
+    -- => Row 1: fixed_char is 'AB' (will be padded to 'AB   ')
+    -- => var_char is 'Hello' (5 chars, no padding)
+    -- => unlimited_text is 109 characters long
     ('ABCDE', 'World', 'Another long text example');
--- => fixed_char 'AB' becomes 'AB   ' (padded to 5 chars)
+    -- => Row 2: fixed_char is 'ABCDE' (exactly 5 chars, no padding needed)
+    -- => var_char is 'World' (5 chars)
+    -- => unlimited_text is 27 characters long
+-- => Two rows inserted successfully with different text values
+
 SELECT
     fixed_char,
-    LENGTH(fixed_char) AS char_len,   -- => Returns 5 (includes padding)
+    -- => Returns fixed_char values: 'AB   ' and 'ABCDE' (note padding on first row)
+    LENGTH(fixed_char) AS char_len,
+    -- => Returns length including padding: 5 for both rows
+    -- => CHAR always returns full declared length
     var_char,
-    LENGTH(var_char) AS varchar_len,  -- => Returns actual length
+    -- => Returns var_char values: 'Hello' and 'World' (no padding)
+    LENGTH(var_char) AS varchar_len,
+    -- => Returns actual string length: 5 for both rows
+    -- => VARCHAR returns only used characters
     unlimited_text
+    -- => Returns full text content without truncation
 FROM text_types;
--- String concatenation
+-- => Retrieves all columns to demonstrate text type behaviors
+
+-- String concatenation using || operator
 SELECT
     var_char || ' ' || 'PostgreSQL' AS concatenated
+    -- => Concatenates var_char value + space + 'PostgreSQL'
+    -- => Row 1 result: 'Hello PostgreSQL'
+    -- => Row 2 result: 'World PostgreSQL'
 FROM text_types;
--- => 'Hello PostgreSQL', 'World PostgreSQL'
+-- => Returns 2 rows with concatenated strings
 
--- CHAR padding demonstration
+-- CHAR padding comparison demonstration
 SELECT
-    fixed_char = 'AB' AS equals_without_padding,      -- => false (AB vs 'AB   ')
-    TRIM(fixed_char) = 'AB' AS equals_with_trim       -- => true
+    fixed_char = 'AB' AS equals_without_padding,
+    -- => Compares 'AB   ' with 'AB' (includes padding in comparison)
+    -- => Returns false because 'AB   ' ≠ 'AB'
+    TRIM(fixed_char) = 'AB' AS equals_with_trim
+    -- => TRIM removes trailing spaces: TRIM('AB   ') = 'AB'
+    -- => Returns true because trimmed value matches
 FROM text_types
-WHERE id = 1;
--- => Filter condition for query
+WHERE fixed_char = 'AB   ';
+-- => Filters for rows where fixed_char is 'AB   ' (with padding)
+-- => Returns 1 row demonstrating padding comparison issue
 ```
 
 **Key Takeaway**: Use VARCHAR when you need a length limit, TEXT when length is unpredictable. Avoid CHAR unless you specifically need fixed-length, space-padded strings - it's rarely the right choice for modern applications.
@@ -503,20 +532,37 @@ graph TD
 
 ```sql
 CREATE DATABASE example_8;
+-- => Creates new database named 'example_8' with UTF8 encoding
 \c example_8;
+-- => Connects to example_8 database (disconnects from previous database)
 CREATE TABLE events (
     id SERIAL,
-    event_date DATE,                    -- => Date only (YYYY-MM-DD)
-    event_time TIME,                    -- => Time only (HH:MM:SS)
-    created_at TIMESTAMP,               -- => Date and time, no timezone
-    updated_at TIMESTAMPTZ,             -- => Date and time with timezone
-    duration INTERVAL                   -- => Time span (days, hours, minutes, etc.)
+    -- => Auto-incrementing integer column (starts at 1)
+    event_date DATE,
+    -- => Date only (YYYY-MM-DD format, no time component)
+    event_time TIME,
+    -- => Time only (HH:MM:SS format, no date component)
+    created_at TIMESTAMP,
+    -- => Date and time without timezone (local time)
+    updated_at TIMESTAMPTZ,
+    -- => Date and time with timezone (stores UTC, displays in client timezone)
+    duration INTERVAL
+    -- => Time span (supports days, hours, minutes, seconds, microseconds)
 );
+-- => Creates events table with 6 columns for different temporal types
 INSERT INTO events (event_date, event_time, created_at, updated_at, duration)
+-- => Inserts rows into events table with specific columns
 VALUES
     ('2025-12-29', '14:30:00', '2025-12-29 14:30:00', '2025-12-29 14:30:00+07', '2 hours 30 minutes'),
+    -- => Row 1: event_date is 2025-12-29, event_time is 14:30:00
+    -- => created_at is 2025-12-29 14:30:00 (no timezone)
+    -- => updated_at is 2025-12-29 14:30:00+07 (timezone +07:00 specified)
+    -- => duration is 2 hours 30 minutes interval
     ('2025-12-30', '09:00:00', NOW(), NOW(), '1 day 3 hours');
--- => NOW() returns current timestamp with timezone
+    -- => Row 2: event_date is 2025-12-30, event_time is 09:00:00
+    -- => NOW() returns current timestamp with timezone (called twice)
+    -- => duration is 1 day 3 hours interval
+-- => Two rows inserted successfully
 SELECT
     event_date,
     event_time,
@@ -524,19 +570,36 @@ SELECT
     updated_at,
     duration
 FROM events;
--- Date arithmetic
+-- => Retrieves all columns from events table (2 rows returned)
+-- => Shows date/time values in their respective formats
+
+-- Date arithmetic operations
 SELECT
     event_date + INTERVAL '7 days' AS one_week_later,
+    -- => Adds 7 days to event_date using INTERVAL
+    -- => 2025-12-29 becomes 2026-01-05, 2025-12-30 becomes 2026-01-06
     updated_at - INTERVAL '1 hour' AS one_hour_ago,
+    -- => Subtracts 1 hour from updated_at timestamp
+    -- => Timezone preserved in result
     event_date + 7 AS seven_days_later_shorthand
+    -- => Shorthand: adding integer adds days to DATE type
+    -- => Same as INTERVAL '7 days' but more concise
 FROM events;
--- Extract parts of date/time
+-- => Returns 3 computed columns showing date arithmetic results
+
+-- Extract date/time components
 SELECT
     EXTRACT(YEAR FROM event_date) AS year,
+    -- => Extracts year component from event_date (returns 2025)
     EXTRACT(MONTH FROM event_date) AS month,
+    -- => Extracts month component (returns 12 for December)
     EXTRACT(DAY FROM event_date) AS day,
+    -- => Extracts day of month (returns 29, 30)
     EXTRACT(HOUR FROM event_time) AS hour
+    -- => Extracts hour component from event_time (returns 14, 9)
 FROM events;
+-- => Returns 4 integer columns with extracted date/time parts
+-- => Useful for grouping by year/month or filtering by hour
 ```
 
 **Key Takeaway**: Use DATE for dates without time, TIMESTAMPTZ for complete timestamps (stores with timezone), and INTERVAL for durations. TIMESTAMPTZ is preferred over TIMESTAMP for most applications to avoid timezone ambiguity.
@@ -553,48 +616,65 @@ BOOLEAN stores true/false values. UUID stores universally unique identifiers - u
 
 ```sql
 CREATE DATABASE example_9;
--- => Creates database 'example_9'
+-- => Creates new database named 'example_9' with UTF8 encoding
 \c example_9;
--- => Switches connection to example_9 database
+-- => Connects to example_9 database (disconnects from previous database)
 CREATE TABLE users (
     username VARCHAR(50),
-    is_active BOOLEAN,                 -- => true, false, or NULL
-    is_verified BOOLEAN DEFAULT false  -- => Defaults to false if not specified
+    -- => Variable-length string up to 50 characters for username
+    is_active BOOLEAN,
+    -- => Boolean column: accepts true, false, or NULL values
+    -- => Storage: 1 byte per value (efficient for flag columns)
+    is_verified BOOLEAN DEFAULT false
+    -- => Boolean with default value of false
+    -- => If is_verified not specified in INSERT, automatically set to false
 );
+-- => Creates users table with 3 columns including boolean flags
 INSERT INTO users (username, is_active)
--- => INSERT into users table begins
+-- => Inserts rows specifying only username and is_active columns
+-- => is_verified will use default value (false)
 VALUES
--- => Row data values follow
     ('alice', true),
-    -- => Row data inserted
+    -- => Row 1: username='alice', is_active=true, is_verified=false (default)
     ('bob', false),
-    -- => Row data inserted
+    -- => Row 2: username='bob', is_active=false, is_verified=false (default)
     ('charlie', true);
--- => id auto-generated, is_verified defaults to false
+    -- => Row 3: username='charlie', is_active=true, is_verified=false (default)
+-- => Three rows inserted successfully with mixed boolean values
 SELECT * FROM users;
--- => Query executes and returns result set
--- => id column shows UUIDs like 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'
+-- => Retrieves all columns from users table (3 rows returned)
+-- => Shows username, is_active, and is_verified values
+-- => All is_verified values are false (from DEFAULT)
 
--- Boolean comparisons
+-- Boolean comparisons: explicit true comparison
 SELECT username, is_active
 FROM users
 WHERE is_active = true;
--- => Filter condition for query
--- => Returns alice and charlie
+-- => Filters rows where is_active column explicitly equals true
+-- => Returns 2 rows: alice and charlie
+-- => bob is excluded (is_active=false)
+
 SELECT username, is_active
 FROM users
 WHERE is_active;
--- => Filter condition for query
--- => Shorthand for is_active = true
+-- => Filters rows where is_active is truthy
+-- => Shorthand syntax: no '= true' comparison needed
+-- => Returns same 2 rows: alice and charlie
+-- => More idiomatic than 'WHERE is_active = true'
+
 SELECT username, is_verified
 FROM users
 WHERE NOT is_verified;
--- => Filter condition for query
--- => Returns all users (all have is_verified = false)
+-- => Filters rows where is_verified is NOT true (false or NULL)
+-- => Returns all 3 users (all have is_verified = false)
+-- => NOT operator negates boolean value
 
--- Generate UUID manually
+-- Generate UUID manually using built-in function
 SELECT gen_random_uuid() AS random_id;
--- => Generates new UUID each time called
+-- => Calls gen_random_uuid() function to generate random UUID
+-- => Returns single row with UUID like 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'
+-- => Each call generates different UUID (cryptographically random)
+-- => UUID format: 32 hex digits separated by hyphens (8-4-4-4-12)
 ```
 
 **Key Takeaway**: BOOLEAN stores true/false explicitly - use it instead of integers or strings for clarity. UUID provides globally unique identifiers without coordination, essential for distributed systems and avoiding ID conflicts during data merges.
@@ -896,71 +976,91 @@ graph TD
 
 ```sql
 CREATE DATABASE example_13;
+-- => Creates new database named 'example_13' with UTF8 encoding
 \c example_13;
+-- => Connects to example_13 database (disconnects from previous database)
 CREATE TABLE articles (
     id SERIAL,
+    -- => Auto-incrementing integer primary key column
     title VARCHAR(200),
+    -- => Article title (variable-length string, max 200 characters)
     views INTEGER,
+    -- => View count (32-bit signed integer)
     published_date DATE
+    -- => Publication date (DATE type, format YYYY-MM-DD)
 );
+-- => Creates articles table with 4 columns for article metadata
 INSERT INTO articles (title, views, published_date)
+-- => Inserts 8 sample article rows (id auto-generated by SERIAL)
 VALUES
     ('Introduction to SQL', 1500, '2025-01-01'),
+    -- => Row 1: title, views=1500, published on Jan 1, 2025
     ('Advanced Queries', 2300, '2025-01-05'),
+    -- => Row 2: views=2300, published 4 days after row 1
     ('Database Design', 1800, '2025-01-10'),
+    -- => Row 3: views=1800, published 5 days after row 2
     ('Performance Tuning', 3200, '2025-01-15'),
+    -- => Row 4: views=3200 (highest), published 5 days after row 3
     ('Indexing Strategies', 2700, '2025-01-20'),
+    -- => Row 5: views=2700, published 5 days after row 4
     ('Backup and Recovery', 1200, '2025-01-25'),
+    -- => Row 6: views=1200 (lowest), published 5 days after row 5
     ('Security Best Practices', 2900, '2025-02-01'),
+    -- => Row 7: views=2900, published 7 days after row 6 (new month)
     ('Replication Setup', 1600, '2025-02-05');
+    -- => Row 8: views=1600, published 4 days after row 7
+-- => Eight rows inserted successfully with varying views and dates
+
 -- Get top 3 most viewed articles
 SELECT title, views
 FROM articles
 ORDER BY views DESC
+-- => Sorts all 8 rows by views descending (3200, 2900, 2700, 2300, 1800, 1600, 1500, 1200)
 LIMIT 3;
--- => First sorts all 8 rows by views descending
--- => ORDER BY views DESC: 3200, 2900, 2700, 2300, 1800, 1600, 1500, 1200
--- => LIMIT 3 stops after first 3 rows (doesn't scan remaining 5 rows if index used)
+-- => Returns only first 3 rows from sorted result
+-- => If index on views exists, PostgreSQL can stop after reading 3 rows
 -- => Returns: Performance Tuning (3200), Security Best Practices (2900), Indexing Strategies (2700)
 
--- Pagination: Page 1 (first 3 articles)
+-- Pagination: Page 1 (first 3 articles by date)
 SELECT title, published_date
 FROM articles
 ORDER BY published_date
+-- => Sorts 8 rows by published_date ascending (default, oldest first)
 LIMIT 3 OFFSET 0;
--- => Sorts 8 rows by published_date ascending (oldest first)
--- => OFFSET 0 skips 0 rows (start at beginning)
--- => LIMIT 3 returns first 3 rows
+-- => OFFSET 0 skips 0 rows (starts at row 1)
+-- => LIMIT 3 returns first 3 rows after offset
 -- => Returns rows 1-3: Introduction to SQL (2025-01-01), Advanced Queries (2025-01-05), Database Design (2025-01-10)
 
 -- Pagination: Page 2 (next 3 articles)
 SELECT title, published_date
 FROM articles
 ORDER BY published_date
+-- => Same sort order as page 1 (published_date ascending)
 LIMIT 3 OFFSET 3;
--- => Sorts same 8 rows by published_date
 -- => OFFSET 3 skips first 3 rows (Introduction, Advanced, Database Design)
--- => LIMIT 3 returns next 3 rows
+-- => LIMIT 3 returns next 3 rows (rows 4-6)
 -- => Returns rows 4-6: Performance Tuning (2025-01-15), Indexing Strategies (2025-01-20), Backup and Recovery (2025-01-25)
 
--- Pagination: Page 3 (final 2 articles)
+-- Pagination: Page 3 (final 2 articles - partial page)
 SELECT title, published_date
 FROM articles
 ORDER BY published_date
+-- => Same sort order (published_date ascending)
 LIMIT 3 OFFSET 6;
--- => OFFSET 6 skips first 6 rows
+-- => OFFSET 6 skips first 6 rows (rows 1-6)
 -- => LIMIT 3 requests 3 rows but only 2 remain (rows 7-8)
 -- => Returns rows 7-8: Security Best Practices (2025-02-01), Replication Setup (2025-02-05)
--- => Partial page (2 rows instead of 3)
+-- => Partial page demonstrates handling of last page with fewer rows
 
--- Get oldest 5 articles
+-- Get oldest 5 articles (explicit ASC)
 SELECT title, published_date
 FROM articles
 ORDER BY published_date ASC
+-- => Explicit ASC (ascending) sort - same as default ORDER BY behavior
+-- => Oldest articles appear first
 LIMIT 5;
--- => ORDER BY published_date ASC sorts oldest to newest (explicit ASC, same as default)
--- => LIMIT 5 returns first 5 rows
--- => No OFFSET means start at row 1
+-- => Returns first 5 rows from sorted result
+-- => No OFFSET clause means OFFSET 0 (start at row 1)
 -- => Returns rows 1-5: Introduction (2025-01-01), Advanced (2025-01-05), Database Design (2025-01-10), Performance (2025-01-15), Indexing (2025-01-20)
 ```
 

@@ -313,27 +313,39 @@ import asyncio
 
 async def fetch_data(url):
     """Simulated async HTTP request"""
-    print(f"Fetching {url}...")
+    print(f"Fetching {url}...")              # => Output: Fetching https://api1.com...
+                                               # => Does NOT block other coroutines
     await asyncio.sleep(1)                    # => Simulate I/O (yields control)
-    print(f"Completed {url}")
-    return f"Data from {url}"                 # => Return result
+                                               # => Event loop switches to other tasks
+                                               # => NOT time.sleep (which blocks entire thread)
+    print(f"Completed {url}")                 # => Output: Completed https://api1.com
+                                               # => After 1 second I/O wait
+    return f"Data from {url}"                 # => Return result string
+                                               # => Becomes result in gather list
 
 async def main():
     """Run multiple async operations concurrently"""
-    # Sequential (slow)
-    # result1 = await fetch_data("https://api1.com")
-    # result2 = await fetch_data("https://api2.com")
+    # Sequential (slow) - NOT concurrent
+    # result1 = await fetch_data("https://api1.com")  # => Wait 1s for api1
+    # result2 = await fetch_data("https://api2.com")  # => Wait 1s for api2
+    # => Total time: 2 seconds (sequential)
 
-    # Concurrent (fast)
-    results = await asyncio.gather(           # => Run concurrently
-        fetch_data("https://api1.com"),
-        fetch_data("https://api2.com"),
-        fetch_data("https://api3.com")
-    )
-    print(results)  # => List of results
+    # Concurrent (fast) - ALL run simultaneously
+    results = await asyncio.gather(           # => Schedule all coroutines concurrently
+                                               # => Waits for ALL to complete
+        fetch_data("https://api1.com"),       # => Starts immediately
+        fetch_data("https://api2.com"),       # => Starts immediately (parallel)
+        fetch_data("https://api3.com")        # => Starts immediately (parallel)
+    )                                         # => Total time: 1 second (max of 3x 1s operations)
+                                               # => Results collected in order
+    print(results)                            # => Output: ['Data from https://api1.com', 'Data from https://api2.com', 'Data from https://api3.com']
+                                               # => List preserves call order
 
 # Run the event loop
-asyncio.run(main())  # => Starts event loop, runs main()
+asyncio.run(main())                           # => Creates event loop
+                                               # => Runs main() coroutine until completion
+                                               # => Closes event loop
+                                               # => Total execution: ~1 second
 ```
 
 **Key Takeaway**: asyncio enables concurrent I/O with async/await; gather runs multiple coroutines concurrently.
@@ -642,42 +654,62 @@ import pstats
 
 def fibonacci(n):
     """Inefficient recursive Fibonacci"""
-    if n < 2:                                 # => Base case
-        return n                               # => Returns 0 or 1
-    return fibonacci(n-1) + fibonacci(n-2)     # => Recursive calls
-                                               # => VERY inefficient (exponential time)
+    if n < 2:                                 # => Base case check
+                                               # => True for n=0 or n=1
+        return n                               # => Returns 0 for n=0, 1 for n=1
+                                               # => Stops recursion
+    return fibonacci(n-1) + fibonacci(n-2)     # => Two recursive calls per invocation
+                                               # => fibonacci(24) calls fibonacci(23) + fibonacci(22)
+                                               # => Exponential time: O(2^n)
+                                               # => MASSIVE duplicate computation
 
 def calculate_sequence():
     """Calculate multiple Fibonacci numbers"""
-    results = [fibonacci(i) for i in range(25)]  # => Calls fibonacci 25 times
-                                                  # => fibonacci(24) alone makes millions of calls
-    return results                            # => Returns list of results
+    results = [fibonacci(i) for i in range(25)]  # => Calls fibonacci(0), fibonacci(1), ..., fibonacci(24)
+                                                  # => fibonacci(24) alone makes ~46,368 recursive calls
+                                                  # => Total across all: 150,000+ function calls
+    return results                            # => Returns [0, 1, 1, 2, 3, 5, 8, ...]
+                                               # => List of first 25 Fibonacci numbers
 
-# Profile function
+# Profile function execution
 profiler = cProfile.Profile()                 # => Create profiler object
+                                               # => Low-overhead profiler (~5% slowdown)
 profiler.enable()                             # => Start profiling
-                                               # => Records all function calls from here
+                                               # => Records all function calls from this point
+                                               # => Tracks: function name, call count, time spent
 result = calculate_sequence()                 # => Execute code to profile
-                                               # => Profiler tracks every function call
+                                               # => Profiler tracks EVERY fibonacci() call
+                                               # => ~150,000 calls recorded
 profiler.disable()                            # => Stop profiling
-                                               # => Data collected in profiler object
+                                               # => Stops recording function calls
+                                               # => All data stored in profiler object
 
-# Print statistics
-stats = pstats.Stats(profiler)                # => Create statistics object
+# Analyze and print statistics
+stats = pstats.Stats(profiler)                # => Create statistics object from profiler
+                                               # => Provides sorting and formatting
 stats.sort_stats('cumulative')                # => Sort by cumulative time
-                                               # => Shows functions with most total time
+                                               # => Cumulative: total time including subcalls
+                                               # => Shows functions with most total time first
 stats.print_stats(10)                         # => Print top 10 slowest functions
-                                               # => Output shows call counts and timing
+                                               # => Output table with columns:
+                                               # => ncalls, tottime, percall, cumtime, percall, filename:lineno(function)
 
-# Output shows (example):
-# ncalls: 150049 (fibonacci called 150,049 times!)  # => Number of function calls
-# tottime: 0.05s (time spent in fibonacci itself)   # => Excluding subcalls
-# cumtime: 0.05s (total time including subcalls)    # => Including recursive calls
-# filename:lineno(function)
+# Example output interpretation:
+# ncalls: 150049                              # => fibonacci() called 150,049 times!
+                                               # => Massive number for just 25 calls
+# tottime: 0.05s                              # => Time in fibonacci() itself (excluding subcalls)
+                                               # => Only the arithmetic and comparisons
+# cumtime: 0.05s                              # => Total time including ALL recursive subcalls
+                                               # => Nearly identical to tottime (lightweight function)
+# filename:lineno(function)                   # => Source file location
 
-# Key insight: fibonacci() called 150K+ times for just 25 numbers
-# => Identifies this as performance bottleneck
-# => Solution: use memoization or iterative approach
+# Performance bottleneck identified:
+# => fibonacci() dominates execution with 150K+ calls
+# => Exponential time complexity O(2^n)
+# => Solutions:
+#    1. Memoization: Cache results (DP)
+#    2. Iterative approach: O(n) time
+#    3. Matrix exponentiation: O(log n)
 ```
 
 **Key Takeaway**: cProfile reveals performance hotspots showing call counts and time per function.
@@ -691,22 +723,45 @@ Track memory usage with memory_profiler to identify memory leaks.
 ```python
 from memory_profiler import profile
 
-@profile                                      # => Decorate to profile memory
+@profile                                      # => Decorator instruments function for memory profiling
+                                               # => Tracks line-by-line memory usage
+                                               # => Adds ~2x slowdown during profiling
 def process_large_data():
     """Function that uses memory"""
-    data = [i ** 2 for i in range(1000000)]  # => Allocate large list
-    filtered = [x for x in data if x % 2 == 0]  # => Another large list
-    result = sum(filtered)                    # => Process data
-    return result
+    data = [i ** 2 for i in range(1000000)]  # => Create list of 1 million integers
+                                               # => Computes [0, 1, 4, 9, 16, ...]
+                                               # => Each int ~28 bytes in Python
+                                               # => Total: ~38 MiB for data
+    filtered = [x for x in data if x % 2 == 0]  # => Filter even numbers only
+                                               # => Creates SECOND list (not in-place)
+                                               # => ~500,000 even numbers
+                                               # => Additional ~37.7 MiB allocated
+    result = sum(filtered)                    # => Sum all filtered values
+                                               # => Single integer result
+                                               # => No additional memory allocation
+    return result                             # => Returns integer sum
+                                               # => Lists remain in memory until GC
 
-# Run function (memory usage printed line by line)
-# result = process_large_data()
+# Run function with memory profiling
+# result = process_large_data()               # => Execute with @profile decorator active
+                                               # => Prints line-by-line memory report
 
-# Output shows memory increase per line:
-# Line    Mem usage    Increment
-#     3     50.5 MiB     50.5 MiB   data = [...]
-#     4     88.2 MiB     37.7 MiB   filtered = [...]
-#     5     88.2 MiB      0.0 MiB   result = sum(...)
+# Example output interpretation:
+# Line    Mem usage    Increment   Line Contents
+# ====    =========    =========   =============
+#     3     50.5 MiB     50.5 MiB   data = [...]          # => Initial allocation (38 MiB data + overhead)
+                                                            # => Memory usage jumps significantly
+#     4     88.2 MiB     37.7 MiB   filtered = [...]      # => Second large allocation
+                                                            # => Additional 37.7 MiB for filtered list
+                                                            # => Total: 88.2 MiB (both lists in memory)
+#     5     88.2 MiB      0.0 MiB   result = sum(...)     # => No new allocation
+                                                            # => Just iterates and sums (O(1) space)
+
+# Memory optimization insights:
+# => Two large lists exist simultaneously (88 MiB total)
+# => Could use generator expressions for streaming: (x for x in ... if x % 2 == 0)
+# => Generator would reduce peak memory to ~50 MiB (only data list needed)
+# => Trade-off: streaming uses less memory but may be slower
 ```
 
 **Key Takeaway**: memory_profiler shows line-by-line memory usage revealing allocation hotspots.
@@ -905,35 +960,53 @@ import time
 
 def cpu_intensive_task(n):
     """CPU-bound computation"""
-    total = 0                                 # => Initialize accumulator
-    for i in range(n):                        # => Loop 10 million times
-        total += i ** 2                       # => Heavy computation (no I/O)
-                                               # => Pure CPU work
+    total = 0                                 # => Initialize accumulator to 0
+                                               # => Will store sum of squares
+    for i in range(n):                        # => Loop 10 million times (n=10,000,000)
+                                               # => Pure CPU computation (no I/O waits)
+        total += i ** 2                       # => Compute square: i * i
+                                               # => Add to accumulator
+                                               # => CPU-bound: GIL blocks parallel execution in threads
     return total                              # => Return computed sum
+                                               # => Result: sum(i^2 for i in 0..9999999)
+                                               # => = 333,333,283,333,335,000
 
-if __name__ == '__main__':                    # => Required for multiprocessing
-                                               # => Prevents recursive process spawning
-    # Sequential (slow on multi-core)
+if __name__ == '__main__':                    # => Guard required for multiprocessing
+                                               # => Prevents recursive process spawning on Windows
+                                               # => Entry point protection
+    # Sequential (slow) - single core utilization
     # results = [cpu_intensive_task(10**7) for _ in range(4)]
-    # => One task at a time
-    # => GIL blocks parallel execution
-    # => Only uses 1 CPU core
-    # => Total time: ~4x single task time
+    # => Calls cpu_intensive_task() 4 times sequentially
+    # => GIL blocks parallel execution (one task at a time)
+    # => Only 1 CPU core used (other cores idle)
+    # => Total time: ~4x single task time (e.g., 8 seconds)
 
-    # Parallel with process pool
-    with Pool(processes=4) as pool:           # => Create 4 separate processes
-                                               # => Each has own Python interpreter
-                                               # => Each has own GIL (no GIL contention!)
-                                               # => Context manager ensures cleanup
+    # Parallel with process pool (fast) - multi-core utilization
+    with Pool(processes=4) as pool:           # => Create process pool with 4 workers
+                                               # => Spawns 4 separate Python processes
+                                               # => Each process: own Python interpreter + own GIL
+                                               # => NO GIL contention (separate interpreters!)
+                                               # => Context manager handles pool.close() + pool.join()
         results = pool.map(cpu_intensive_task, [10**7] * 4)
-        # => Distributes 4 tasks across 4 processes
-        # => Each process runs cpu_intensive_task(10**7)
-        # => True parallel execution on 4 CPU cores
-        # => Results collected and returned as list
-        # => Total time: ~1x single task time (4x speedup)
+        # => pool.map(func, iterable) distributes work
+        # => Argument list: [10000000, 10000000, 10000000, 10000000]
+        # => Process 1: cpu_intensive_task(10**7) on CPU core 1
+        # => Process 2: cpu_intensive_task(10**7) on CPU core 2
+        # => Process 3: cpu_intensive_task(10**7) on CPU core 3
+        # => Process 4: cpu_intensive_task(10**7) on CPU core 4
+        # => TRUE parallel execution (all cores running simultaneously)
+        # => Results serialized and returned as list
+        # => Total time: ~1x single task time (4x speedup on 4-core CPU)
 
-    print(f"Results: {results}")              # => Output: [333333283333335000, ...] (4 identical sums)
-                                               # => All results from parallel computation
+    print(f"Results: {results}")              # => Output: [333333283333335000, 333333283333335000, 333333283333335000, 333333283333335000]
+                                               # => All 4 processes computed same sum
+                                               # => List preserves order from input iterable
+
+# Multiprocessing overhead considerations:
+# => Process creation: ~100ms startup cost per process
+# => Inter-process communication: pickling/unpickling results
+# => Memory: each process has own memory space (no shared state)
+# => Only worth it for CPU-bound tasks taking >100ms
 ```
 
 **Key Takeaway**: Multiprocessing achieves true parallelism for CPU-bound tasks using separate processes.
@@ -1143,24 +1216,44 @@ import inspect
 def greet(name: str, greeting: str = "Hello") -> str:
     """Greet someone"""
     return f"{greeting}, {name}!"             # => Simple greeting function
+                                               # => Type hints: name (str), greeting (str), return (str)
 
-# Function signature
-sig = inspect.signature(greet)                # => Get function signature object
+# Function signature introspection
+sig = inspect.signature(greet)                # => Get Signature object
+                                               # => Contains all parameter metadata
 print(sig)                                    # => Output: (name: str, greeting: str = 'Hello') -> str
-                                               # => Shows parameters and return type
+                                               # => Full signature with annotations and defaults
 
-# Parameter details
-for param_name, param in sig.parameters.items():  # => Iterate over parameters
-                                               # => param_name: 'name', 'greeting'
-                                               # => param: Parameter object
+# Parameter details (iterate parameters)
+for param_name, param in sig.parameters.items():  # => OrderedDict of parameters
+                                               # => param_name: str ('name', 'greeting')
+                                               # => param: Parameter object with metadata
     print(f"{param_name}: {param.annotation}, default={param.default}")
-    # => Output line 1: name: <class 'str'>, default=<class 'inspect._empty'>
-    # => Output line 2: greeting: <class 'str'>, default=Hello
+    # => Parameter 1: name
+    #    annotation: <class 'str'> (type hint)
+    #    default: <class 'inspect._empty'> (no default value)
+    # => Output: name: <class 'str'>, default=<class 'inspect._empty'>
+    # => Parameter 2: greeting
+    #    annotation: <class 'str'> (type hint)
+    #    default: 'Hello' (has default)
+    # => Output: greeting: <class 'str'>, default=Hello
 
-# Source code
-source = inspect.getsource(greet)             # => Get source code as string
-print(source)                                 # => Output: def greet(name: str, ...) ...
-                                               # => Entire function source
+# Return annotation
+print(sig.return_annotation)                  # => Output: <class 'str'>
+                                               # => Return type hint from -> str
+
+# Source code introspection
+source = inspect.getsource(greet)             # => Get full source code as string
+                                               # => Reads from module's .py file
+print(source)                                 # => Output: def greet(name: str, greeting: str = "Hello") -> str:\n    """Greet someone"""\n    return f"{greeting}, {name}!"
+                                               # => Complete function definition
+                                               # => Useful for documentation generation
+
+# Module and file location
+print(inspect.getmodule(greet))               # => Output: <module '__main__' from '...'>
+                                               # => Module where function defined
+print(inspect.getfile(greet))                 # => Output: /path/to/file.py
+                                               # => File path where function defined
 
 # Call stack introspection
 def outer():
@@ -1168,13 +1261,24 @@ def outer():
     def inner():
         """Inner function"""
         frame = inspect.currentframe()        # => Get current stack frame
-                                               # => Frame object for inner()
-        info = inspect.getframeinfo(frame)    # => Get frame information
-        print(inspect.getframeinfo(frame).function)  # => Get function name
-                                               # => Output: 'inner'
-    inner()                                   # => Call inner function
+                                               # => FrameType object (snapshot of execution)
+        info = inspect.getframeinfo(frame)    # => Get FrameInfo (file, line, function)
+        print(f"Function: {info.function}")   # => Output: Function: inner
+                                               # => Current function name
+        print(f"Line: {info.lineno}")         # => Output: Line: [line number]
+                                               # => Current line number in source
+        print(f"File: {info.filename}")       # => Output: File: /path/to/file.py
+                                               # => Source file path
+    inner()                                   # => Call inner to demonstrate
 
-outer()                                       # => Execute to demonstrate
+outer()                                       # => Execute outer → inner → introspection
+                                               # => Stack: outer() → inner() → currentframe()
+
+# Practical use cases:
+# => Automatic API documentation generation (Sphinx, pdoc)
+# => Validation frameworks (check parameter types at runtime)
+# => Debugging tools (inspect call stack during errors)
+# => Metaprogramming (generate code based on function signatures)
 ```
 
 **Key Takeaway**: inspect enables runtime exploration of functions, classes, and call stack for metaprogramming.
@@ -1186,44 +1290,72 @@ outer()                                       # => Execute to demonstrate
 Execute Python code dynamically using eval, exec, and compile.
 
 ```python
-# eval: Evaluate single expression
-expr = "2 + 3 * 4"                            # => String containing expression
-result = eval(expr)                           # => Parse and evaluate expression
-                                               # => Follows operator precedence
+# eval: Evaluate single expression (returns value)
+expr = "2 + 3 * 4"                            # => String containing Python expression
+                                               # => Must be single expression (no statements)
+result = eval(expr)                           # => Parse string to AST
+                                               # => Evaluate expression
+                                               # => Follows operator precedence (* before +)
                                                # => result = 14 (3*4=12, 2+12=14)
+print(result)                                 # => Output: 14
 
-# exec: Execute statements (multiple lines, no return value)
+# eval with namespace (variable access)
+eval_result = eval("x * 2", {'x': 10})        # => Namespace dict provides 'x' variable
+                                               # => x * 2 → 10 * 2 = 20
+                                               # => eval_result = 20
+
+# exec: Execute statements (no return value, modifies namespace)
 code = """
 def dynamic_function(x):
     return x ** 2
 
 result = dynamic_function(5)
 """                                           # => Multi-line code string
-namespace = {}                                # => Isolated namespace dict
-exec(code, namespace)                         # => Execute code in namespace
-                                               # => Creates 'dynamic_function' in namespace
-                                               # => Calls function, stores result
-print(namespace['result'])                    # => Access result from namespace
-                                               # => Output: 25 (5**2)
+                                               # => Can contain statements (def, if, for, etc.)
+                                               # => NOT limited to single expression
+namespace = {}                                # => Empty dict for isolated namespace
+                                               # => Prevents pollution of global namespace
+exec(code, namespace)                         # => Execute code in namespace dict
+                                               # => Parses and runs all statements
+                                               # => Creates 'dynamic_function' key in namespace
+                                               # => Creates 'result' key in namespace
+print(namespace['result'])                    # => Access 'result' variable from namespace
+                                               # => Output: 25 (5**2 = 25)
+print(namespace['dynamic_function'](10))      # => Access function from namespace
+                                               # => Output: 100 (10**2)
 
-# compile: Compile code for reuse (performance optimization)
-compiled = compile("x + y", "<string>", "eval")  # => Compile to bytecode
+# compile: Compile code to bytecode (performance optimization)
+compiled = compile("x + y", "<string>", "eval")  # => Compile to code object
+                                               # => Source: "x + y" expression
+                                               # => Filename: "<string>" (placeholder)
                                                # => Mode: "eval" for expressions
-                                               # => "<string>": fake filename
-result = eval(compiled, {'x': 10, 'y': 5})    # => Evaluate with namespace
+                                               # => Returns code object (bytecode)
+result = eval(compiled, {'x': 10, 'y': 5})    # => Evaluate compiled bytecode
+                                               # => Namespace: {'x': 10, 'y': 5}
                                                # => result = 15 (10 + 5)
-                                               # => Faster if reused multiple times
+                                               # => Faster if reused multiple times (no re-parsing)
 
-# Security warning: Never eval/exec untrusted input!
-# => Code injection vulnerability
-# => Attacker can execute arbitrary Python code
+# compile modes: "eval" (expression), "exec" (statements), "single" (interactive)
+compiled_exec = compile("print('Hello')", "<string>", "exec")
+                                               # => Mode: "exec" for statements
+exec(compiled_exec)                           # => Output: Hello
 
-# Use ast.literal_eval for safe literal evaluation
+# CRITICAL SECURITY WARNING: Never eval/exec untrusted input!
+# user_input = "os.system('rm -rf /')"       # => Malicious code injection
+# eval(user_input)                            # => DANGEROUS! Executes arbitrary code
+                                               # => Can delete files, steal data, install malware
+                                               # => NEVER run untrusted eval/exec
+
+# Safe alternative: ast.literal_eval (only for literals)
 import ast
-safe_dict = ast.literal_eval("{'a': 1, 'b': 2}")  # => Only evaluates literals
+safe_dict = ast.literal_eval("{'a': 1, 'b': 2}")  # => Parses Python literals only
                                                # => safe_dict = {'a': 1, 'b': 2}
-                                               # => Rejects code execution
-# ast.literal_eval("os.system('rm -rf /')")   # => ValueError (not a literal)
+                                               # => Supports: strings, bytes, numbers, tuples, lists, dicts, sets, booleans, None
+                                               # => NO code execution allowed
+safe_list = ast.literal_eval("[1, 2, 3]")    # => Output: [1, 2, 3]
+# ast.literal_eval("os.system('rm -rf /')")   # => ValueError: malformed node or string
+                                               # => Safe rejection of code
+                                               # => Use for parsing JSON-like config data
 ```
 
 **Key Takeaway**: eval/exec enable dynamic code execution but require careful security considerations.
@@ -1243,34 +1375,80 @@ def add(a, b):
 
 result = add(2, 3)
 """                                           # => Python source code as string
+                                               # => Contains function definition + function call
 
-# Parse code into AST
-tree = ast.parse(code)                        # => Parse source to Abstract Syntax Tree
-                                               # => Tree structure representing code
-                                               # => Does NOT execute code
+# Parse code into AST (Abstract Syntax Tree)
+tree = ast.parse(code)                        # => Parse source to AST
+                                               # => Returns Module node (root of tree)
+                                               # => Tree structure: Module → [FunctionDef, Assign]
+                                               # => Does NOT execute code (only parses syntax)
+print(type(tree))                             # => Output: <class '_ast.Module'>
+                                               # => Root node type
 
-# Walk AST nodes (traverse tree structure)
-for node in ast.walk(tree):                   # => Iterate all nodes in tree
-    if isinstance(node, ast.FunctionDef):     # => Check node type
-        print(f"Function: {node.name}")       # => Output: Function: add
-                                               # => Found function definition
-    elif isinstance(node, ast.Return):
+# Walk AST nodes (breadth-first traversal)
+for node in ast.walk(tree):                   # => Iterate ALL nodes recursively
+                                               # => Visits: Module, FunctionDef, arguments, Return, BinOp, Assign, Call, etc.
+    if isinstance(node, ast.FunctionDef):     # => Check if node is function definition
+        print(f"Function: {node.name}")       # => Access function name attribute
+                                               # => Output: Function: add
+        print(f"  Arguments: {[arg.arg for arg in node.args.args]}")
+                                               # => Output:   Arguments: ['a', 'b']
+                                               # => Extract parameter names
+    elif isinstance(node, ast.Return):        # => Check if node is return statement
         print("Found return statement")       # => Output: Found return statement
-                                               # => Found return node
+                                               # => Located return node in AST
+    elif isinstance(node, ast.BinOp):         # => Binary operation (+ - * / etc.)
+        print(f"Binary operation: {type(node.op).__name__}")
+                                               # => Output: Binary operation: Add
+                                               # => Identifies 'a + b' as Add operation
+
+# Access specific node attributes
+func_def = tree.body[0]                       # => Get first statement (FunctionDef)
+                                               # => tree.body is list of top-level statements
+print(f"Function defined at line: {func_def.lineno}")
+                                               # => Output: Function defined at line: 2
+                                               # => Line number in source code
 
 # Compile AST to bytecode (safe transformation)
 compiled = compile(tree, "<string>", "exec")  # => Compile AST to bytecode
-                                               # => Mode: "exec" for statements
-namespace = {}                                # => Isolated namespace
-exec(compiled, namespace)                     # => Execute bytecode
-                                               # => Runs add() function
-print(namespace['result'])                    # => Access result
+                                               # => tree: AST object (NOT string)
+                                               # => filename: "<string>" (placeholder)
+                                               # => mode: "exec" for statements
+                                               # => Returns code object
+namespace = {}                                # => Empty namespace for execution
+exec(compiled, namespace)                     # => Execute bytecode in namespace
+                                               # => Defines 'add' function
+                                               # => Executes 'result = add(2, 3)'
+                                               # => Stores result = 5 in namespace
+print(namespace['result'])                    # => Access 'result' variable
                                                # => Output: 5 (2 + 3)
 
-# Safer than exec for code transformation
-# => Can analyze/modify AST before execution
-# => Enables linters, formatters, code generators
-# => Parse → Analyze → Transform → Compile → Execute
+# AST transformation example (code modification)
+class DoubleNumbers(ast.NodeTransformer):
+    """AST transformer that doubles numeric literals"""
+    def visit_Num(self, node):
+        """Visit Num nodes and double their value"""
+        node.n *= 2                           # => Double the numeric value
+                                               # => Modifies AST in place
+        return node                            # => Return modified node
+
+tree2 = ast.parse("x = 10 + 5")               # => Parse source code
+DoubleNumbers().visit(tree2)                  # => Transform AST (10→20, 5→10)
+                                               # => Modified tree: x = 20 + 10
+ast.fix_missing_locations(tree2)              # => Fix line numbers after transformation
+                                               # => Required for compilation
+compiled2 = compile(tree2, "<string>", "exec")
+namespace2 = {}
+exec(compiled2, namespace2)                   # => Execute transformed code
+print(namespace2['x'])                        # => Output: 30 (20 + 10, not 15)
+                                               # => Demonstrates AST transformation power
+
+# Practical use cases:
+# => Linters: Analyze code structure without execution (pylint, flake8)
+# => Formatters: Parse → Transform → Regenerate (black, autopep8)
+# => Code generators: Programmatically create Python code
+# => Static analysis: Find bugs, security issues, type errors
+# => Safer than exec: Can inspect/modify before execution
 ```
 
 **Key Takeaway**: AST module enables safe code parsing and transformation without executing untrusted code.
@@ -1580,52 +1758,103 @@ Embrace Python's EAFP (Easier to Ask Forgiveness than Permission) and duck typin
 
 ```python
 # EAFP: Easier to Ask for Forgiveness than Permission
+# Pythonic approach: Try operation, catch exceptions
 def process_file(filename):
-    """EAFP approach"""
+    """EAFP approach (Pythonic)"""
     try:
-        with open(filename) as f:             # => Try operation directly
-                                               # => Assume file exists and is readable
-            return f.read()                    # => Return file contents
-    except FileNotFoundError:                 # => Handle specific exception
+        with open(filename) as f:             # => Try opening file directly
+                                               # => No pre-checks (existence, permissions)
+                                               # => Assumes success (optimistic)
+            return f.read()                    # => Read entire file contents
+                                               # => Return as string
+    except FileNotFoundError:                 # => Catch specific exception type
+                                               # => Only if file doesn't exist
         return "File not found"                # => Graceful error handling
-    except PermissionError:
-        return "Permission denied"             # => Handle another exception
+                                               # => Return error message
+    except PermissionError:                   # => Catch permission denied
+                                               # => Only if no read access
+        return "Permission denied"             # => Return different error message
+    except IOError as e:                      # => Catch other I/O errors
+                                               # => Disk full, network issues, etc.
+        return f"I/O error: {e}"               # => Return detailed error
 
-# LBYL (Look Before You Leap) - less Pythonic
-# if os.path.exists(filename) and os.access(filename, os.R_OK):
-#     with open(filename) as f:               # => Check BEFORE operation
-#         return f.read()
-# => Problems: Race condition (file deleted between check and open)
-# => More verbose, duplicates checks
-# => Not Pythonic
+# LBYL (Look Before You Leap) - less Pythonic, NOT recommended
+# import os
+# def process_file_lbyl(filename):
+#     if os.path.exists(filename):            # => Check 1: File exists?
+#         if os.access(filename, os.R_OK):    # => Check 2: Readable?
+#             with open(filename) as f:       # => THEN open
+#                 return f.read()
+# => PROBLEMS:
+#    1. Race condition: File deleted BETWEEN check and open (TOCTOU)
+#    2. More verbose: 2 checks + 1 operation vs 1 try block
+#    3. Duplicates logic: os.path.exists + open both check existence
+#    4. Not Pythonic: Defensive programming, not exception handling
+# => Use EAFP instead!
 
 # Duck typing: "If it walks like a duck and quacks like a duck, it's a duck"
+# Accept any object with required behavior (no type checking)
 def print_items(items):
-    """Accept any iterable (list, tuple, set, generator, custom)"""
-    for item in items:                        # => Requires __iter__ method only
+    """Accept any iterable (list, tuple, set, generator, custom class)"""
+    for item in items:                        # => Requires __iter__() method only
                                                # => Duck typing: assumes iterable
+                                               # => No isinstance() check
+                                               # => No type annotation
         print(item)                            # => Output: item value
+                                               # => Works for ANY object with __iter__
 
-print_items([1, 2, 3])                        # => Works (list has __iter__)
+print_items([1, 2, 3])                        # => Works: list has __iter__
+                                               # => Output: 1
+                                               # => Output: 2
+                                               # => Output: 3
+print_items((1, 2, 3))                        # => Works: tuple has __iter__
                                                # => Output: 1, 2, 3
-print_items((1, 2, 3))                        # => Works (tuple has __iter__)
-print_items({1, 2, 3})                        # => Works (set has __iter__)
-print_items(x for x in range(3))              # => Works (generator has __iter__)
+print_items({1, 2, 3})                        # => Works: set has __iter__
+                                               # => Output: 1, 2, 3 (unordered)
+print_items(x for x in range(3))              # => Works: generator has __iter__
                                                # => Output: 0, 1, 2
+print_items("abc")                            # => Works: str has __iter__
+                                               # => Output: a, b, c
 
-# Type checking reduces flexibility
-# def print_list(items: list):                # => Too restrictive
-#     ...                                      # => Rejects tuple, set, generator
-                                               # => Forces unnecessary type conversions
+# Custom class with __iter__ also works
+class MyIterable:
+    def __iter__(self):
+        return iter([10, 20, 30])             # => Return iterator
+print_items(MyIterable())                     # => Works: has __iter__
+                                               # => Output: 10, 20, 30
 
-# Prefer protocols or abstract types
+# Type checking reduces flexibility (anti-pattern)
+# def print_list(items: list):                # => TOO restrictive
+#     for item in items:
+#         print(item)
+# print_list((1, 2, 3))                       # => TypeError: expected list, got tuple
+                                               # => Rejects tuple despite being iterable
+                                               # => Forces list(tuple) conversion (inefficient)
+                                               # => Not Pythonic (rigid type requirements)
+
+# Better: Use protocols or abstract types for flexible type hints
 from typing import Iterable
-def print_items_typed(items: Iterable):       # => Flexible with type safety
-                                               # => Accepts ANY iterable
-                                               # => Type checker validates __iter__
+def print_items_typed(items: Iterable):       # => Generic iterable type
+                                               # => Accepts ANY object with __iter__
+                                               # => Type checker validates __iter__ presence
+                                               # => Static type safety + runtime flexibility
     for item in items:
-        print(item)                            # => Same flexibility as duck typing
-                                               # => Plus static type checking
+        print(item)                            # => Same behavior as duck typing
+                                               # => Plus IDE autocomplete support
+                                               # => Plus mypy validation
+
+print_items_typed([1, 2, 3])                  # => mypy: ✓ list is Iterable
+print_items_typed((1, 2, 3))                  # => mypy: ✓ tuple is Iterable
+print_items_typed({1, 2, 3})                  # => mypy: ✓ set is Iterable
+print_items_typed("abc")                      # => mypy: ✓ str is Iterable
+# print_items_typed(123)                      # => mypy error: int is not Iterable
+                                               # => Static type checking catches error
+
+# EAFP + Duck typing = Pythonic code
+# => Optimistic: Try operations, catch exceptions
+# => Flexible: Accept any compatible object
+# => Robust: Graceful error handling
+# => Fast: No redundant checks
 ```
 
 **Key Takeaway**: EAFP and duck typing embrace Python's dynamic nature for cleaner, more flexible code.

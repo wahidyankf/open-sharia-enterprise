@@ -566,27 +566,46 @@ Pathlib provides object-oriented path manipulation replacing os.path functions.
 from pathlib import Path
 
 # Path creation and properties
-p = Path('/home/user/documents/file.txt')
-print(p.name)       # => 'file.txt'
-print(p.stem)       # => 'file' (without extension)
-print(p.suffix)     # => '.txt'
-print(p.parent)     # => '/home/user/documents'
+p = Path('/home/user/documents/file.txt')     # => Creates Path object
+                                              # => p is Path instance (not string)
+print(p.name)                                 # => Output: 'file.txt'
+                                              # => Basename with extension
+print(p.stem)                                 # => Output: 'file'
+                                              # => Basename without extension
+print(p.suffix)                               # => Output: '.txt'
+                                              # => File extension including dot
+print(p.parent)                               # => Output: Path('/home/user/documents')
+                                              # => Parent directory as Path object
 
 # Path operations
-config = Path.home() / '.config' / 'app.conf'  # => Path joining with /
-print(config.exists())                          # => True/False
+config = Path.home() / '.config' / 'app.conf'  # => Path.home() = user's home directory
+                                              # => / operator joins paths
+                                              # => config = Path('/home/user/.config/app.conf')
+print(config.exists())                        # => Check if path exists on filesystem
+                                              # => Returns True or False
 
 # Create directories
-logs_dir = Path('logs')
-logs_dir.mkdir(parents=True, exist_ok=True)    # => Create with parents
+logs_dir = Path('logs')                       # => Creates Path object (relative)
+                                              # => logs_dir = Path('logs')
+logs_dir.mkdir(parents=True, exist_ok=True)   # => Create directory
+                                              # => parents=True: create parent dirs
+                                              # => exist_ok=True: no error if exists
 
 # Read/write files
-config_file = Path('config.ini')
-config_file.write_text('[Settings]\ntheme=dark')  # => Write text
-content = config_file.read_text()                 # => Read text
+config_file = Path('config.ini')              # => Path object for config file
+                                              # => config_file = Path('config.ini')
+config_file.write_text('[Settings]\ntheme=dark')  # => Write string to file
+                                              # => Creates/overwrites file
+                                              # => Returns number of bytes written
+content = config_file.read_text()             # => Read entire file as string
+                                              # => content = '[Settings]\ntheme=dark'
 
 # Glob patterns
-py_files = list(Path('.').glob('**/*.py'))     # => All .py files recursively
+py_files = list(Path('.').glob('**/*.py'))    # => Path('.') = current directory
+                                              # => glob('**/*.py') = recursive search
+                                              # => Returns generator of Path objects
+                                              # => list() materializes to list
+                                              # => py_files = [Path('script.py'), Path('src/main.py'), ...]
 ```
 
 **Key Takeaway**: Pathlib unifies path operations with intuitive / operator and chainable methods.
@@ -601,23 +620,43 @@ namedtuple creates lightweight immutable classes with named fields.
 from collections import namedtuple
 
 # Define namedtuple
-Point = namedtuple('Point', ['x', 'y'])       # => Class with x, y fields
+Point = namedtuple('Point', ['x', 'y'])       # => Creates new class 'Point'
+                                              # => Class has fields: x, y
+                                              # => Point is a callable factory
+                                              # => Subclass of tuple
 
-p1 = Point(3, 4)                              # => Create instance
-print(p1.x, p1.y)  # => 3 4 (field access by name)
-print(p1[0], p1[1])  # => 3 4 (also accessible by index)
+p1 = Point(3, 4)                              # => Call Point factory
+                                              # => Creates Point instance
+                                              # => p1 is tuple-like object
+                                              # => p1.x = 3, p1.y = 4
+print(p1.x, p1.y)                             # => Access by name
+                                              # => Output: 3 4
+                                              # => Named field access
+print(p1[0], p1[1])                           # => Access by index (tuple interface)
+                                              # => Output: 3 4
+                                              # => p1[0] = x, p1[1] = y
 
 # Unpacking
 x, y = p1                                     # => Tuple unpacking works
+                                              # => x = 3, y = 4
+                                              # => Unpacks like regular tuple
 
 # Immutable (like tuples)
-# p1.x = 5  # => AttributeError: can't set attribute
+# p1.x = 5                                    # => AttributeError: can't set attribute
+                                              # => Namedtuples are immutable
+                                              # => Fields cannot be changed
 
 # _replace for creating modified copies
-p2 = p1._replace(x=5)                         # => Point(x=5, y=4)
+p2 = p1._replace(x=5)                         # => Creates NEW Point instance
+                                              # => p2.x = 5, p2.y = 4
+                                              # => p1 unchanged (immutable)
+                                              # => Returns Point(x=5, y=4)
 
 # _asdict for conversion to dict
-print(p1._asdict())  # => {'x': 3, 'y': 4}
+dict_form = p1._asdict()                      # => Converts to OrderedDict
+                                              # => dict_form = {'x': 3, 'y': 4}
+print(dict_form)                              # => Output: {'x': 3, 'y': 4}
+                                              # => Useful for serialization
 ```
 
 **Key Takeaway**: namedtuples provide tuple efficiency with struct-like field access for readable code.
@@ -633,19 +672,40 @@ from collections import Counter
 
 # Count occurrences
 words = ['apple', 'banana', 'apple', 'cherry', 'banana', 'apple']
-counts = Counter(words)                       # => Counter({'apple': 3, 'banana': 2, ...})
+                                              # => List of strings to count
+counts = Counter(words)                       # => Create Counter from iterable
+                                              # => Counts each unique element
+                                              # => counts = Counter({'apple': 3, 'banana': 2, 'cherry': 1})
+                                              # => Counter is dict subclass
 
-print(counts['apple'])     # => 3
-print(counts['orange'])    # => 0 (missing keys default to 0)
+print(counts['apple'])                        # => Access count for 'apple'
+                                              # => Output: 3
+                                              # => Regular dict-like access
+print(counts['orange'])                       # => Key doesn't exist
+                                              # => Output: 0
+                                              # => Returns 0 (not KeyError!)
 
 # Most common elements
-print(counts.most_common(2))  # => [('apple', 3), ('banana', 2)]
+top_two = counts.most_common(2)               # => Get 2 most frequent items
+                                              # => Returns list of (element, count) tuples
+                                              # => Sorted by count descending
+print(top_two)                                # => Output: [('apple', 3), ('banana', 2)]
+                                              # => Useful for rankings
 
 # Arithmetic operations
-c1 = Counter(['a', 'b', 'c', 'a'])
-c2 = Counter(['a', 'b', 'd'])
-print(c1 + c2)  # => Counter({'a': 3, 'b': 2, 'c': 1, 'd': 1})
-print(c1 - c2)  # => Counter({'a': 1, 'c': 1}) (removes common counts)
+c1 = Counter(['a', 'b', 'c', 'a'])           # => c1 = Counter({'a': 2, 'b': 1, 'c': 1})
+                                              # => Count each element
+c2 = Counter(['a', 'b', 'd'])                # => c2 = Counter({'a': 1, 'b': 1, 'd': 1})
+                                              # => Another counter
+sum_counters = c1 + c2                        # => Add counts element-wise
+                                              # => 'a': 2+1=3, 'b': 1+1=2, 'c': 1, 'd': 1
+print(sum_counters)                           # => Output: Counter({'a': 3, 'b': 2, 'c': 1, 'd': 1})
+                                              # => Union of elements
+diff_counters = c1 - c2                       # => Subtract counts element-wise
+                                              # => 'a': 2-1=1, 'b': 1-1=0 (removed), 'c': 1-0=1
+                                              # => Negative/zero counts removed
+print(diff_counters)                          # => Output: Counter({'a': 1, 'c': 1})
+                                              # => Only positive counts remain
 ```
 
 **Key Takeaway**: Counter simplifies frequency counting with arithmetic operations and most_common method.
@@ -741,24 +801,48 @@ graph TD
 from collections import deque
 
 # Create deque
-d = deque([1, 2, 3])                          # => deque([1, 2, 3])
+d = deque([1, 2, 3])                          # => Create deque from list
+                                              # => d = deque([1, 2, 3])
+                                              # => Double-ended queue (doubly-linked list)
 
 # Add to both ends (O(1))
-d.append(4)                                   # => deque([1, 2, 3, 4])
-d.appendleft(0)                               # => deque([0, 1, 2, 3, 4])
+d.append(4)                                   # => Add to right end
+                                              # => O(1) time complexity
+                                              # => d = deque([1, 2, 3, 4])
+d.appendleft(0)                               # => Add to left end
+                                              # => O(1) time (list.insert(0) is O(n))
+                                              # => d = deque([0, 1, 2, 3, 4])
 
 # Remove from both ends (O(1))
-d.pop()                                       # => 4, deque([0, 1, 2, 3])
-d.popleft()                                   # => 0, deque([1, 2, 3])
+right_val = d.pop()                           # => Remove from right end
+                                              # => right_val = 4
+                                              # => d = deque([0, 1, 2, 3])
+left_val = d.popleft()                        # => Remove from left end
+                                              # => O(1) time (list.pop(0) is O(n))
+                                              # => left_val = 0
+                                              # => d = deque([1, 2, 3])
 
 # Rotation
-d.rotate(1)                                   # => deque([3, 1, 2]) (rotate right)
-d.rotate(-1)                                  # => deque([1, 2, 3]) (rotate left)
+d.rotate(1)                                   # => Rotate right by 1 position
+                                              # => Last element moves to front
+                                              # => d = deque([3, 1, 2])
+                                              # => rotate(n) moves n items from right to left
+d.rotate(-1)                                  # => Rotate left by 1 position
+                                              # => First element moves to end
+                                              # => d = deque([1, 2, 3])
+                                              # => rotate(-n) moves n items from left to right
 
 # Bounded deque (circular buffer)
-buffer = deque(maxlen=3)                      # => Fixed size
-buffer.extend([1, 2, 3])                      # => deque([1, 2, 3])
-buffer.append(4)                              # => deque([2, 3, 4]) (1 dropped)
+buffer = deque(maxlen=3)                      # => Create bounded deque
+                                              # => Maximum size = 3
+                                              # => Auto-evicts when full
+buffer.extend([1, 2, 3])                      # => Add multiple items
+                                              # => buffer = deque([1, 2, 3], maxlen=3)
+                                              # => Now at capacity
+buffer.append(4)                              # => Add new item
+                                              # => Evicts oldest (1) automatically
+                                              # => buffer = deque([2, 3, 4], maxlen=3)
+                                              # => Circular buffer behavior
 ```
 
 **Key Takeaway**: deque optimizes both-end operations; maxlen creates circular buffers for sliding windows.
@@ -897,21 +981,44 @@ graph TD
 from itertools import chain, cycle, islice, combinations, groupby
 
 # Chain multiple iterables
-chained = chain([1, 2], [3, 4], [5])         # => 1, 2, 3, 4, 5
+chained = chain([1, 2], [3, 4], [5])         # => Creates iterator over all items
+                                              # => Flattens multiple iterables
+                                              # => chained yields: 1, 2, 3, 4, 5
+                                              # => Lazy evaluation (no list created)
+result = list(chained)                        # => Materialize to list
+                                              # => result = [1, 2, 3, 4, 5]
 
 # Infinite cycling
-counter = cycle(['A', 'B', 'C'])             # => A, B, C, A, B, C, ...
-first_6 = list(islice(counter, 6))           # => ['A', 'B', 'C', 'A', 'B', 'C']
+counter = cycle(['A', 'B', 'C'])             # => Infinite iterator
+                                              # => Repeats: A, B, C, A, B, C, ...
+                                              # => Never raises StopIteration
+first_6 = list(islice(counter, 6))           # => islice(iterable, stop)
+                                              # => Takes first 6 elements
+                                              # => Stops infinite cycle
+                                              # => first_6 = ['A', 'B', 'C', 'A', 'B', 'C']
 
 # Combinations
-combos = list(combinations([1, 2, 3], 2))    # => [(1, 2), (1, 3), (2, 3)]
+combos = list(combinations([1, 2, 3], 2))    # => All 2-element combinations
+                                              # => Order doesn't matter (not permutations)
+                                              # => combos = [(1, 2), (1, 3), (2, 3)]
+                                              # => C(3,2) = 3 combinations
 
 # Group consecutive items
 data = [('A', 1), ('A', 2), ('B', 3), ('B', 4)]
+                                              # => Sorted/grouped data
+                                              # => CRITICAL: data must be sorted by key
 for key, group in groupby(data, key=lambda x: x[0]):
-    print(key, list(group))
-    # => A [('A', 1), ('A', 2)]
-    # => B [('B', 3), ('B', 4)]
+                                              # => groupby groups consecutive items
+                                              # => key function extracts grouping key
+                                              # => lambda x: x[0] = first element of tuple
+                                              # => Iteration 1: key='A', group=iterator
+                                              # => Iteration 2: key='B', group=iterator
+    group_list = list(group)                  # => Materialize group iterator
+                                              # => MUST consume before next iteration
+                                              # => Iteration 1: [('A', 1), ('A', 2)]
+                                              # => Iteration 2: [('B', 3), ('B', 4)]
+    print(key, group_list)                    # => Output: A [('A', 1), ('A', 2)]
+                                              # => Output: B [('B', 3), ('B', 4)]
 ```
 
 **Key Takeaway**: itertools functions compose for complex iterations without intermediate lists.
@@ -927,24 +1034,47 @@ from datetime import datetime, date, time, timedelta
 
 # Current datetime
 now = datetime.now()                          # => Current local datetime
-today = date.today()                          # => Current date (no time)
+                                              # => now = datetime(2025, 12, 30, 15, 45, 23, ...)
+                                              # => Includes year, month, day, hour, minute, second, microsecond
+today = date.today()                          # => Current date only (no time)
+                                              # => today = date(2025, 12, 30)
+                                              # => No hour/minute/second fields
 
 # Creating specific datetime
-dt = datetime(2025, 12, 30, 14, 30, 0)       # => 2025-12-30 14:30:00
+dt = datetime(2025, 12, 30, 14, 30, 0)       # => datetime(year, month, day, hour, minute, second)
+                                              # => dt = datetime(2025, 12, 30, 14, 30, 0)
+                                              # => December 30, 2025 at 2:30 PM
 
 # Formatting (strftime = string from time)
-formatted = dt.strftime("%Y-%m-%d %H:%M")    # => '2025-12-30 14:30'
+formatted = dt.strftime("%Y-%m-%d %H:%M")    # => Convert datetime to string
+                                              # => %Y = 4-digit year, %m = month, %d = day
+                                              # => %H = 24-hour, %M = minute
+                                              # => formatted = '2025-12-30 14:30'
 
 # Parsing (strptime = string parse time)
-parsed = datetime.strptime("2025-12-30", "%Y-%m-%d")  # => datetime object
+parsed = datetime.strptime("2025-12-30", "%Y-%m-%d")
+                                              # => Parse string to datetime object
+                                              # => Format string must match input
+                                              # => parsed = datetime(2025, 12, 30, 0, 0)
+                                              # => Time defaults to midnight
 
 # Timedelta (duration)
-tomorrow = today + timedelta(days=1)         # => Add 1 day
-next_week = now + timedelta(weeks=1)         # => Add 7 days
-difference = dt - now                        # => timedelta object
+tomorrow = today + timedelta(days=1)         # => Add duration to date
+                                              # => timedelta(days=1) = 1 day duration
+                                              # => tomorrow = date(2025, 12, 31)
+next_week = now + timedelta(weeks=1)         # => Add 1 week (7 days)
+                                              # => timedelta(weeks=1) = timedelta(days=7)
+                                              # => next_week = now + 7 days
+difference = dt - now                        # => Subtract datetimes
+                                              # => Returns timedelta object
+                                              # => difference = negative/positive duration
 
-print(difference.days)      # => Number of days
-print(difference.seconds)   # => Remaining seconds (< 1 day)
+print(difference.days)                        # => Total days in timedelta
+                                              # => Output: -365 or 10 (depends on now)
+                                              # => Can be negative
+print(difference.seconds)                     # => Remaining seconds after days
+                                              # => Output: 0-86399 (< 1 day)
+                                              # => Does NOT include days
 ```
 
 **Key Takeaway**: Use datetime for timestamps, date for calendar dates, timedelta for durations and arithmetic.
@@ -1067,29 +1197,53 @@ from enum import Enum, auto
 
 class Status(Enum):
     """Order status enumeration"""
-    PENDING = 1
-    PROCESSING = 2
-    SHIPPED = 3
-    DELIVERED = 4
+    PENDING = 1                               # => Enum member with value 1
+                                              # => Status.PENDING is singleton
+    PROCESSING = 2                            # => Enum member with value 2
+    SHIPPED = 3                               # => Enum member with value 3
+    DELIVERED = 4                             # => Enum member with value 4
 
 # Access by name or value
-print(Status.PENDING)        # => Status.PENDING
-print(Status.PENDING.value)  # => 1
-print(Status(2))             # => Status.PROCESSING
+print(Status.PENDING)                         # => Access by name
+                                              # => Output: Status.PENDING
+                                              # => Returns enum member (not int)
+print(Status.PENDING.value)                   # => Access underlying value
+                                              # => Output: 1
+                                              # => .value attribute holds int
+print(Status(2))                              # => Lookup by value
+                                              # => Output: Status.PROCESSING
+                                              # => Value 2 maps to PROCESSING member
 
 # Iteration
-for status in Status:
-    print(status.name, status.value)  # => PENDING 1, PROCESSING 2, ...
+for status in Status:                         # => Iterate all enum members
+                                              # => Order: PENDING, PROCESSING, SHIPPED, DELIVERED
+    print(status.name, status.value)          # => .name = string name
+                                              # => .value = underlying value
+                                              # => Output: PENDING 1
+                                              # => Output: PROCESSING 2
+                                              # => Output: SHIPPED 3
+                                              # => Output: DELIVERED 4
 
 # Auto values
 class Priority(Enum):
-    LOW = auto()      # => 1
-    MEDIUM = auto()   # => 2
-    HIGH = auto()     # => 3
+    """Priority levels with auto-assigned values"""
+    LOW = auto()                              # => auto() generates 1
+                                              # => First auto value starts at 1
+    MEDIUM = auto()                           # => auto() generates 2
+                                              # => Increments from previous
+    HIGH = auto()                             # => auto() generates 3
+                                              # => Increments from previous
 
 # Comparison
-if Status.PENDING == Status.PENDING:  # => True
-    print("Same status")
+if Status.PENDING == Status.PENDING:          # => Identity comparison
+                                              # => Enum members are singletons
+                                              # => Same instance always
+                                              # => Result: True
+    print("Same status")                      # => Output: Same status
+
+# Cannot compare different enums
+# Status.PENDING == Priority.LOW              # => False (different enum classes)
+                                              # => Type-safe: different enums never equal
 ```
 
 **Key Takeaway**: Enums replace magic numbers/strings with type-safe constants that prevent invalid values.

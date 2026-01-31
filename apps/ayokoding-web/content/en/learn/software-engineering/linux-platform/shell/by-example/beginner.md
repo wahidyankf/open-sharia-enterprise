@@ -19,21 +19,33 @@ The `echo` command outputs text to stdout, supporting variable expansion, escape
 
 ```bash
 # Basic echo
-echo "Hello, World!"           # => Output: Hello, World!
+echo "Hello, World!"           # => Writes to stdout (file descriptor 1)
+                                # => Output: Hello, World!
+                                # => Exit code: 0 (success)
 
 # Echo without newline
-echo -n "No newline"            # => Output: No newline (cursor stays on same line)
+echo -n "No newline"            # => -n flag suppresses trailing newline
+                                # => Output: No newline (cursor stays on same line)
+                                # => Prompt appears immediately after text
 
 # Echo with escape sequences (requires -e flag)
-echo -e "Line 1\nLine 2"        # => Output: Line 1
-                                # => Line 2 (newline interpreted)
+echo -e "Line 1\nLine 2"        # => -e enables interpretation of backslash escapes
+                                # => \n is converted to actual newline character
+                                # => Output: Line 1
+                                # =>         Line 2
 
 # Echo variables
-USER_NAME="Alice"               # => USER_NAME is "Alice"
-echo "Hello, $USER_NAME"        # => Output: Hello, Alice (variable expanded)
+USER_NAME="Alice"               # => USER_NAME variable stores string "Alice"
+                                # => Variable lives in current shell session
+echo "Hello, $USER_NAME"        # => $USER_NAME expands to "Alice" before echo runs
+                                # => Double quotes allow variable expansion
+                                # => Output: Hello, Alice
 
 # Echo with command substitution
-echo "Current directory: $(pwd)" # => Output: Current directory: /home/user (pwd output)
+echo "Current directory: $(pwd)" # => $(pwd) executes pwd command first
+                                # => pwd returns absolute path string
+                                # => Result substituted into echo command
+                                # => Output: Current directory: /home/user
 ```
 
 **Key Takeaway**: Use `echo` for simple output and debugging - it automatically expands variables in double quotes and supports escape sequences with `-e` flag.
@@ -48,26 +60,43 @@ Shell variables store strings by default, with no type declarations. Variable na
 
 ```bash
 # Variable assignment (no spaces around =)
-name="Bob"                      # => name is "Bob"
-age=30                          # => age is "30" (stored as string)
-echo "$name is $age years old"  # => Output: Bob is 30 years old
+name="Bob"                      # => Variable 'name' created in current shell
+                                # => Stores string "Bob" (shell variables are strings by default)
+                                # => Spaces around = would cause syntax error
+age=30                          # => Variable 'age' stores "30" as string, not number
+                                # => Shell treats everything as strings unless arithmetic context
+echo "$name is $age years old"  # => Variables expanded within double quotes
+                                # => $name becomes "Bob", $age becomes "30"
+                                # => Output: Bob is 30 years old
 
 # Variable expansion in double quotes
-greeting="Hello, $name"         # => greeting is "Hello, Bob" (expanded)
-echo "$greeting"                # => Output: Hello, Bob
+greeting="Hello, $name"         # => $name expands to "Bob" during assignment
+                                # => greeting stores "Hello, Bob" (expansion happens once)
+                                # => Variable expansion occurs at assignment time
+echo "$greeting"                # => No further expansion needed
+                                # => Output: Hello, Bob
 
 # Single quotes prevent expansion
-literal='$name'                 # => literal is literally "$name" (not expanded)
-echo "$literal"                 # => Output: $name
+literal='$name'                 # => Single quotes treat everything literally
+                                # => literal stores the 5 characters: $ n a m e
+                                # => No variable expansion occurs
+echo "$literal"                 # => Output: $name (literal dollar sign and name)
 
 # Command substitution
-current_date=$(date +%Y-%m-%d)  # => current_date is "2025-12-30" (date command output)
-echo "Today: $current_date"     # => Output: Today: 2025-12-30
+current_date=$(date +%Y-%m-%d)  # => $(date +%Y-%m-%d) executes date command
+                                # => date +%Y-%m-%d formats as 2025-12-30
+                                # => Command output captured and assigned to variable
+                                # => current_date is "2025-12-30"
+echo "Today: $current_date"     # => Variable expanded in string
+                                # => Output: Today: 2025-12-30
 
 # Arithmetic with $(( ))
-x=10                            # => x is "10"
-y=20                            # => y is "20"
-sum=$((x + y))                  # => sum is "30" (arithmetic evaluation)
+x=10                            # => x stores string "10"
+y=20                            # => y stores string "20"
+sum=$((x + y))                  # => $(( )) forces arithmetic context
+                                # => x and y interpreted as numbers: 10 + 20
+                                # => Result 30 converted back to string
+                                # => sum stores "30"
 echo "Sum: $sum"                # => Output: Sum: 30
 ```
 
@@ -136,31 +165,67 @@ Directory navigation uses `pwd` to show current location, `cd` to change directo
 
 ```bash
 # Show current directory
-pwd                             # => Output: /home/user (absolute path)
+pwd                             # => pwd = "print working directory"
+                                # => Shell maintains current working directory in memory
+                                # => Queries OS for current directory path
+                                # => Returns absolute path from root (/)
+                                # => Output: /home/user
+                                # => Also available as $PWD environment variable
 
 # List current directory contents
-ls                              # => Output: file1.txt  file2.txt  directory1
+ls                              # => Lists files/directories in current working directory
+                                # => Queries filesystem for directory entries
+                                # => Shows only visible files (not starting with .)
+                                # => Output: file1.txt  file2.txt  directory1
+                                # => Space-separated list (default format)
 
 # List with details
-ls -l                           # => Output: Shows permissions, owner, size, date
+ls -l                           # => -l flag: long format with metadata
+                                # => Each file shown on separate line
+                                # => Format: permissions links owner group size date name
                                 # => -rw-r--r-- 1 user group 1234 Dec 30 08:00 file1.txt
+                                # =>   -rw-r--r--: file type + permissions
+                                # =>   1: number of hard links
+                                # =>   user: owner name, group: group name
+                                # =>   1234: size in bytes
+                                # =>   Dec 30 08:00: last modification time
 
 # List hidden files (start with .)
-ls -a                           # => Output: .  ..  .bashrc  .profile  file1.txt
+ls -a                           # => -a flag: show "all" files including hidden
+                                # => Hidden files: names starting with .
+                                # => Output: .  ..  .bashrc  .profile  file1.txt
+                                # =>   .: current directory (self-reference)
+                                # =>   ..: parent directory
+                                # =>   .bashrc, .profile: hidden config files
 
 # Change to home directory
-cd ~                            # => Current directory is now /home/user
-cd                              # => Same as cd ~ (defaults to home)
+cd ~                            # => ~ expands to $HOME environment variable
+                                # => $HOME typically /home/username
+                                # => Shell changes working directory to /home/user
+                                # => $PWD updated to /home/user
+cd                              # => cd with no arguments defaults to $HOME
+                                # => Equivalent to cd ~
 
 # Change to absolute path
-cd /var/log                     # => Current directory is now /var/log
+cd /var/log                     # => Absolute path: starts with /
+                                # => Shell changes working directory to /var/log
+                                # => $PWD updated to /var/log
+                                # => $OLDPWD stores previous directory
 
 # Change to relative path
-cd ../..                        # => Moves up two directories
-                                # => If was in /var/log, now in /
+cd ../..                        # => Relative path: doesn't start with /
+                                # => ..: parent directory
+                                # => ../.. : parent's parent
+                                # => If current: /var/log, parent: /var, parent's parent: /
+                                # => Shell resolves relative to current working directory
+                                # => New working directory: /
 
 # Change to subdirectory
-cd documents/work               # => Moves to documents/work under current dir
+cd documents/work               # => Relative path: no leading /
+                                # => Shell looks for documents/ in current directory
+                                # => Then work/ inside documents/
+                                # => If current is /home/user:
+                                # =>   New directory: /home/user/documents/work
 
 # Return to previous directory
 cd -                            # => Switches to previous directory
@@ -381,38 +446,58 @@ graph TD
 
 ```bash
 # View permissions
-ls -l file.txt                  # => Output: -rw-r--r-- 1 user group 1234 Dec 30 file.txt
-                                # => -rw-r--r-- breaks down:
-                                # => -: file type (- = regular file, d = directory)
-                                # => rw-: owner permissions (read, write, no execute)
-                                # => r--: group permissions (read only)
-                                # => r--: others permissions (read only)
+ls -l file.txt                  # => Lists file metadata including permissions
+                                # => Output: -rw-r--r-- 1 user group 1234 Dec 30 file.txt
+                                # => Permission string breakdown (10 characters):
+                                # =>   Position 1: file type
+                                # =>     -: regular file, d: directory, l: symlink
+                                # =>   Positions 2-4: owner permissions (user)
+                                # =>     rw-: read yes, write yes, execute no
+                                # =>   Positions 5-7: group permissions
+                                # =>     r--: read yes, write no, execute no
+                                # =>   Positions 8-10: others permissions
+                                # =>     r--: read yes, write no, execute no
 
 # Permission meanings
 # r (read) = 4: View file contents or list directory
 # w (write) = 2: Modify file or create/delete files in directory
 # x (execute) = 1: Run file as program or enter directory
+                                # => Octal values: r=4, w=2, x=1
+                                # => Combinations: rwx=7, rw-=6, r-x=5, r--=4
 
 # Make file executable
-chmod +x script.sh              # => Adds execute permission for all (owner, group, others)
-                                # => Now can run: ./script.sh
+chmod +x script.sh              # => + adds permission without removing existing
+                                # => x: execute bit
+                                # => No prefix (u/g/o): applies to all three classes
+                                # => Owner, group, others all get execute bit set
+                                # => Before: -rw-r--r--, After: -rwxr-xr-x
 
 # Remove write permission from group and others
-chmod go-w file.txt             # => g=group, o=others, -w removes write
-                                # => Owner keeps all permissions
+chmod go-w file.txt             # => g: group, o: others
+                                # => - removes permission
+                                # => w: write bit
+                                # => Owner (u) permissions unchanged
+                                # => Before: -rw-rw-rw-, After: -rw-r--r--
 
 # Set specific permissions with octal
-chmod 644 file.txt              # => 6=rw- (owner), 4=r-- (group), 4=r-- (others)
-                                # => 644 = owner read/write, others read-only
-                                # => Common for regular files
+chmod 644 file.txt              # => Octal notation: three digits (owner, group, others)
+                                # => 6 = 4+2 = rw- (read + write)
+                                # => 4 = 4 = r-- (read only)
+                                # => 4 = 4 = r-- (read only)
+                                # => Result: -rw-r--r--
+                                # => Common for data files (owner can modify, others read)
 
-chmod 755 script.sh             # => 7=rwx (owner), 5=r-x (group), 5=r-x (others)
-                                # => 755 = owner full access, others read/execute
-                                # => Common for executable scripts
+chmod 755 script.sh             # => 7 = 4+2+1 = rwx (all permissions)
+                                # => 5 = 4+1 = r-x (read + execute, no write)
+                                # => 5 = 4+1 = r-x (read + execute, no write)
+                                # => Result: -rwxr-xr-x
+                                # => Common for scripts (owner modifies, all execute)
 
-chmod 700 private.txt           # => 7=rwx (owner), 0=--- (group), 0=--- (others)
-                                # => Only owner can access
-                                # => Common for private files
+chmod 700 private.txt           # => 7 = 4+2+1 = rwx (owner: full access)
+                                # => 0 = 0 = --- (group: no access)
+                                # => 0 = 0 = --- (others: no access)
+                                # => Result: -rwx------
+                                # => Private files (only owner access)
 
 # Set permissions recursively
 chmod -R 755 public_html/       # => Sets 755 on directory and all contents
@@ -457,48 +542,77 @@ graph TD
 
 ```bash
 # Redirect stdout to file (overwrite)
-echo "Hello, World" > output.txt # => Creates/overwrites output.txt with "Hello, World"
-                                # => File now contains: Hello, World
+echo "Hello, World" > output.txt # => stdout (FD 1) redirected to output.txt
+                                # => If output.txt exists, truncated to 0 bytes first
+                                # => "Hello, World" written to file
+                                # => File descriptor closed after command completes
+                                # => output.txt contents: "Hello, World\n" (14 bytes)
+                                # => Terminal displays nothing (stdout went to file)
 
 # Redirect stdout to file (append)
-echo "Second line" >> output.txt # => Appends "Second line" to output.txt
-                                # => File now contains:
-                                # => Hello, World
-                                # => Second line
+echo "Second line" >> output.txt # => >> opens output.txt in append mode
+                                # => File pointer positioned at end of file
+                                # => "Second line\n" added after existing content
+                                # => output.txt now contains:
+                                # => "Hello, World\nSecond line\n" (27 bytes)
+                                # => Original content preserved
 
 # Redirect stderr to file
-ls /nonexistent 2> error.log    # => Redirects error message to error.log
-                                # => 2>: file descriptor 2 (stderr)
-                                # => error.log contains: ls: cannot access '/nonexistent': No such file or directory
+ls /nonexistent 2> error.log    # => ls attempts to access /nonexistent
+                                # => Fails, writes error to stderr (FD 2)
+                                # => 2> redirects only stderr to error.log
+                                # => stdout (FD 1) still goes to terminal (nothing on stdout)
+                                # => error.log receives: "ls: cannot access '/nonexistent': No such file or directory\n"
+                                # => Terminal shows nothing (error went to file)
 
 # Redirect both stdout and stderr
-command &> all_output.txt       # => Redirects both stdout and stderr to all_output.txt
-                                # => &>: shorthand for >all_output.txt 2>&1
+command &> all_output.txt       # => &> is bash shorthand for combined redirection
+                                # => Equivalent to: >all_output.txt 2>&1
+                                # => Both FD 1 (stdout) and FD 2 (stderr) write to same file
+                                # => Success messages and errors mixed in all_output.txt
 
 # Redirect stdout and stderr separately
-command >output.log 2>error.log # => stdout to output.log, stderr to error.log
-                                # => Separates normal output from errors
+command >output.log 2>error.log # => stdout (FD 1) redirected to output.log
+                                # => stderr (FD 2) redirected to error.log
+                                # => Normal output and errors stored separately
+                                # => Useful for separating expected output from diagnostics
 
 # Discard output (send to /dev/null)
-command > /dev/null             # => Discards stdout (silent execution)
-command 2> /dev/null            # => Discards stderr (hide errors)
-command &> /dev/null            # => Discards both stdout and stderr
+command > /dev/null             # => stdout redirected to /dev/null (black hole device)
+                                # => All stdout data discarded (silent execution)
+                                # => stderr still visible on terminal
+command 2> /dev/null            # => stderr redirected to /dev/null
+                                # => Error messages suppressed
+                                # => stdout still visible on terminal
+command &> /dev/null            # => Both stdout and stderr discarded
+                                # => Completely silent execution (no output visible)
 
 # Redirect stdin from file
-wc -l < input.txt               # => wc reads from input.txt instead of waiting for keyboard
-                                # => Counts lines in input.txt
-                                # => Output: 42 (just the number, no filename)
+wc -l < input.txt               # => < redirects stdin (FD 0) from input.txt
+                                # => wc reads from FD 0 instead of keyboard
+                                # => File contents fed to wc as if typed
+                                # => wc -l counts newlines in input
+                                # => Output: 42 (just number, no filename shown)
+                                # => Compare: wc -l input.txt shows "42 input.txt"
 
 # Here document (multi-line input)
-cat > config.txt << EOF         # => Writes everything until EOF to config.txt
-line 1
-line 2
+cat > config.txt << EOF         # => stdout redirected to config.txt
+                                # => stdin redirected from here document
+                                # => Shell reads lines until EOF delimiter
+line 1                          # => These lines stored in temporary buffer
+line 2                          # => Fed to cat's stdin
 line 3
-EOF                             # => config.txt now contains 3 lines
+EOF                             # => EOF delimiter signals end of input
+                                # => cat receives 3 lines on stdin, writes to config.txt
+                                # => config.txt contains: "line 1\nline 2\nline 3\n"
 
 # Combine redirection
-sort < unsorted.txt > sorted.txt # => Reads from unsorted.txt, writes sorted output to sorted.txt
-                                # => unsorted.txt remains unchanged
+sort < unsorted.txt > sorted.txt # => stdin redirected from unsorted.txt
+                                # => sort reads file contents from FD 0
+                                # => Sorts lines in memory
+                                # => stdout redirected to sorted.txt
+                                # => Sorted output written to file
+                                # => unsorted.txt unchanged (read-only operation)
 ```
 
 **Key Takeaway**: Use `>` to redirect output to files (overwrites), `>>` to append, `2>` for error messages, and `<` for input - remember that `> /dev/null` discards output, useful for silent execution.
@@ -513,56 +627,71 @@ Pipes connect commands by sending stdout of one command to stdin of the next, en
 
 ```bash
 # Basic pipe
-ls -l | wc -l                   # => Counts lines from ls output
-                                # => ls -l produces file listing
-                                # => wc -l counts lines
-                                # => Output: 42 (number of files/dirs)
+ls -l | wc -l                   # => ls -l executes first, stdout goes to pipe
+                                # => Pipe buffer holds directory listing lines
+                                # => wc -l reads from pipe stdin, counts lines
+                                # => wc -l processes all input then outputs count
+                                # => Output: 42 (number of files/dirs including header)
+                                # => Exit code: 0 if both commands succeed
 
 # Chain multiple commands
 cat file.txt | grep "error" | wc -l
-                                # => cat reads file
-                                # => grep filters lines containing "error"
-                                # => wc -l counts filtered lines
-                                # => Output: 5 (number of error lines)
+                                # => cat reads file.txt, sends to stdout
+                                # => First pipe carries all file lines to grep
+                                # => grep filters, keeping only lines with "error"
+                                # => Second pipe carries filtered lines to wc
+                                # => wc -l counts lines in filtered output
+                                # => Output: 5 (number of error lines in file)
 
 # Sort and unique
-cat names.txt | sort | uniq     # => Removes duplicate lines
-                                # => sort: alphabetically sorts lines
-                                # => uniq: removes consecutive duplicates (requires sorted input)
+cat names.txt | sort | uniq     # => cat sends names.txt content to pipe
+                                # => sort reads lines, sorts alphabetically
+                                # => sort outputs: Alice, Alice, Bob, Charlie, Charlie
+                                # => uniq receives sorted input
+                                # => uniq removes consecutive duplicates only
+                                # => Output: Alice, Bob, Charlie (duplicates removed)
 
 # Head and tail through pipe
-ls -lt | head -10               # => Shows 10 most recently modified files
-                                # => ls -lt: list sorted by modification time
-                                # => head -10: take first 10 lines
+ls -lt | head -10               # => ls -lt sorts by modification time (newest first)
+                                # => Full listing sent through pipe
+                                # => head -10 reads from pipe, takes first 10 lines
+                                # => Remaining lines discarded (never processed)
+                                # => Output: 10 most recently modified items
 
 # Complex processing pipeline
 cat access.log | grep "404" | awk '{print $7}' | sort | uniq -c | sort -nr
-                                # => Analyzes 404 errors in web log
-                                # => grep "404": filter 404 status lines
-                                # => awk '{print $7}': extract URL (7th field)
-                                # => sort: alphabetically sort URLs
-                                # => uniq -c: count occurrences
-                                # => sort -nr: numeric reverse sort (most common first)
+                                # => Stage 1: cat sends all log lines to pipe
+                                # => Stage 2: grep filters, keeps only 404 status lines
+                                # => Stage 3: awk extracts 7th field (URL path)
+                                # => URLs flow through: /page1, /page2, /page1, /page3
+                                # => Stage 4: sort orders alphabetically: /page1, /page1, /page2, /page3
+                                # => Stage 5: uniq -c counts: "2 /page1", "1 /page2", "1 /page3"
+                                # => Stage 6: sort -nr orders by count descending
+                                # => Output: Most frequently 404'd URLs first
 
 # Tee - write to file AND continue pipe
-ls -l | tee listing.txt | wc -l # => Saves ls output to file AND counts lines
-                                # => tee: writes to file and passes to next command
-                                # => listing.txt contains full listing
-                                # => Output: 42 (line count)
+ls -l | tee listing.txt | wc -l # => ls -l output flows into tee
+                                # => tee writes copy to listing.txt (file created/overwritten)
+                                # => tee simultaneously passes same data to stdout
+                                # => wc -l receives identical copy from tee
+                                # => listing.txt contains full directory listing
+                                # => Output: 42 (line count displayed to terminal)
 
 # Multiple pipes for data transformation
 echo "  HELLO WORLD  " | tr '[:upper:]' '[:lower:]' | sed 's/^  *//' | sed 's/  *$//'
-                                # => Transforms text through pipeline
-                                # => tr: converts uppercase to lowercase
-                                # => sed 1: removes leading spaces
-                                # => sed 2: removes trailing spaces
-                                # => Output: hello world
+                                # => echo outputs: "  HELLO WORLD  " (with spaces)
+                                # => tr receives, converts to lowercase: "  hello world  "
+                                # => First sed removes leading spaces: "hello world  "
+                                # => Second sed removes trailing spaces: "hello world"
+                                # => Output: hello world (cleaned string)
 
 # Pipe with xargs (convert stdin to arguments)
-find . -name "*.tmp" | xargs rm # => Deletes all .tmp files
-                                # => find: produces list of .tmp files
-                                # => xargs rm: converts list to rm arguments
-                                # => Equivalent to: rm file1.tmp file2.tmp ...
+find . -name "*.tmp" | xargs rm # => find outputs each .tmp file on separate line
+                                # => Output: ./file1.tmp, ./dir/file2.tmp, ./file3.tmp
+                                # => Pipe carries filenames to xargs
+                                # => xargs reads stdin, builds argument list
+                                # => xargs executes: rm ./file1.tmp ./dir/file2.tmp ./file3.tmp
+                                # => More efficient than running rm for each file separately
 ```
 
 **Key Takeaway**: Pipes enable command composition by connecting stdout to stdin - use them to build powerful data processing workflows from simple commands, and remember that pipe order matters (process left to right).
@@ -577,27 +706,41 @@ The `find` command locates files and directories based on name, type, size, time
 
 ```bash
 # Find by name
-find . -name "*.txt"            # => Finds all .txt files in current directory and subdirectories
-                                # => . means start from current directory
-                                # => Output: ./file1.txt, ./subdir/file2.txt
+find . -name "*.txt"            # => Starts at . (current directory)
+                                # => Recursively descends into all subdirectories
+                                # => Tests each file/directory against pattern "*.txt"
+                                # => -name does case-sensitive glob matching
+                                # => Matches: file1.txt, ./subdir/file2.txt, ./a/b/c/data.txt
+                                # => Doesn't match: FILE.TXT, doc.TXT, report.text
+                                # => Output: One file per line with relative path
 
 # Find case-insensitive
-find . -iname "*.TXT"           # => Finds *.txt, *.TXT, *.Txt (case-insensitive)
-                                # => -iname: ignore case
+find . -iname "*.TXT"           # => -iname: case-insensitive name matching
+                                # => Pattern "*.TXT" matches any case combination
+                                # => Matches: file.txt, FILE.TXT, File.Txt, data.tXt
+                                # => Useful for case-insensitive filesystems or mixed-case files
 
 # Find by type
-find /var/log -type f           # => Finds only regular files (not directories)
-                                # => -type f: files
-find /var/log -type d           # => Finds only directories
-                                # => -type d: directories
-find /tmp -type l               # => Finds symbolic links
-                                # => -type l: links
+find /var/log -type f           # => Starts at /var/log directory
+                                # => -type f: test if regular file
+                                # => Regular file: normal file with data (not directory/link/device)
+                                # => Matches: /var/log/syslog, /var/log/apache/access.log
+                                # => Skips: directories, symlinks, device files
+find /var/log -type d           # => -type d: test if directory
+                                # => Matches: /var/log, /var/log/apache, /var/log/nginx
+                                # => Skips: regular files and other types
+find /tmp -type l               # => -type l: test if symbolic link
+                                # => Matches only symlinks (files pointing to other files)
+                                # => Skips: regular files and directories
 
 # Find by size
-find . -size +10M               # => Files larger than 10 megabytes
-                                # => +10M: greater than 10MB
-find . -size -1k                # => Files smaller than 1 kilobyte
-                                # => -1k: less than 1KB
+find . -size +10M               # => -size tests file size
+                                # => +10M: greater than 10 megabytes (10 * 1024 * 1024 bytes)
+                                # => Matches files: 10485761 bytes and larger
+                                # => M suffix: megabytes, k: kilobytes, G: gigabytes
+find . -size -1k                # => -1k: less than 1 kilobyte (1024 bytes)
+                                # => Matches files: 0 to 1023 bytes
+                                # => Useful for finding empty or tiny files
 
 # Find by modification time
 find . -mtime -7                # => Files modified in last 7 days
@@ -650,28 +793,48 @@ The `grep` command searches for patterns in text files using regular expressions
 
 ```bash
 # Basic search
-grep "error" logfile.txt        # => Finds lines containing "error"
-                                # => Output: Lines with "error" (case-sensitive)
+grep "error" logfile.txt        # => Opens logfile.txt for reading
+                                # => Reads file line by line into buffer
+                                # => For each line: searches for substring "error"
+                                # => Pattern match: case-sensitive substring search
+                                # => Matches: "error", "errors", "error_code", "an error"
+                                # => Doesn't match: "Error", "ERROR", "err"
+                                # => Outputs complete lines containing pattern
+                                # => Exit code: 0 if found, 1 if not found, 2 if error
 
 # Case-insensitive search
-grep -i "error" logfile.txt     # => Finds "error", "Error", "ERROR"
-                                # => -i: ignore case
+grep -i "error" logfile.txt     # => -i flag: ignore case during matching
+                                # => Pattern "error" matches any case variation
+                                # => Matches: "error", "Error", "ERROR", "ErRoR"
+                                # => Converts both pattern and text to lowercase for comparison
+                                # => Original case preserved in output
 
 # Show line numbers
-grep -n "error" logfile.txt     # => Output: 42:error occurred at startup
-                                # => -n: prefix with line number
+grep -n "error" logfile.txt     # => -n flag: prepend line number to output
+                                # => grep tracks line counter while reading file
+                                # => Output format: line_number:matched_line
+                                # => Example: 42:error occurred at startup
+                                # => Line 42 contains the pattern
 
 # Invert match (lines NOT containing pattern)
-grep -v "debug" logfile.txt     # => Shows all lines WITHOUT "debug"
-                                # => -v: invert match
+grep -v "debug" logfile.txt     # => -v flag: inverts match logic
+                                # => Shows lines where pattern NOT found
+                                # => Useful for filtering out unwanted content
+                                # => Example: remove debug messages, keep all others
 
 # Count matching lines
-grep -c "warning" logfile.txt   # => Output: 15 (number of matching lines)
-                                # => -c: count
+grep -c "warning" logfile.txt   # => -c flag: count mode (suppress normal output)
+                                # => grep maintains counter of matching lines
+                                # => Reads entire file, increments counter per match
+                                # => Output: 15 (just the count number)
+                                # => Doesn't show the actual matching lines
 
 # Show only matching part
-grep -o "error" logfile.txt     # => Output: error (one per line, just the match)
-                                # => -o: only matching
+grep -o "error" logfile.txt     # => -o flag: extract only matched substring
+                                # => Doesn't show rest of line
+                                # => One match per line of output
+                                # => Line: "fatal error in module" outputs: error
+                                # => Useful with regex to extract specific patterns
 
 # Multiple files
 grep "error" *.log              # => Searches all .log files
@@ -727,31 +890,46 @@ Text processing tools slice (`cut`), reorder (`sort`), and deduplicate (`uniq`) 
 ```bash
 # Cut by delimiter (CSV/TSV processing)
 echo "Alice,30,Engineer" | cut -d',' -f1
+                                # => echo outputs: "Alice,30,Engineer"
+                                # => Pipe sends to cut's stdin
+                                # => -d',' sets comma as field delimiter
+                                # => cut splits into fields: ["Alice", "30", "Engineer"]
+                                # => -f1 selects first field
                                 # => Output: Alice
-                                # => -d',': delimiter is comma
-                                # => -f1: field 1 (first column)
 
 echo "Alice,30,Engineer" | cut -d',' -f2,3
-                                # => Output: 30,Engineer
-                                # => -f2,3: fields 2 and 3
+                                # => cut splits: ["Alice", "30", "Engineer"]
+                                # => -f2,3 selects fields 2 and 3
+                                # => Output joined with delimiter: "30,Engineer"
+                                # => Original delimiter preserved in output
 
 # Cut by character position
-echo "Hello World" | cut -c1-5  # => Output: Hello
-                                # => -c1-5: characters 1 through 5
+echo "Hello World" | cut -c1-5  # => cut receives string "Hello World"
+                                # => -c1-5: extract characters at positions 1-5
+                                # => Character 1='H', 2='e', 3='l', 4='l', 5='o'
+                                # => Output: Hello
 
 # Process file with cut
-cut -d':' -f1,7 /etc/passwd     # => Extracts username and shell from /etc/passwd
+cut -d':' -f1,7 /etc/passwd     # => Each line format: user:pass:uid:gid:gecos:home:shell
+                                # => -d':' splits on colon delimiter
+                                # => Example line: "root:x:0:0:root:/root:/bin/bash"
+                                # => Fields: ["root", "x", "0", "0", "root", "/root", "/bin/bash"]
+                                # => -f1,7 selects field 1 (username) and 7 (shell)
                                 # => Output: root:/bin/bash
 
 # Sort lines alphabetically
-cat names.txt | sort            # => Sorts lines A-Z
-                                # => Input: Charlie, Alice, Bob
-                                # => Output: Alice, Bob, Charlie
+cat names.txt | sort            # => cat sends: "Charlie\nAlice\nBob\n"
+                                # => sort reads all lines into memory
+                                # => Performs lexicographic comparison (byte-by-byte)
+                                # => Alphabetical order: Alice < Bob < Charlie
+                                # => Output: Alice\nBob\nCharlie
 
 # Sort numerically
-cat numbers.txt | sort -n       # => Sorts numbers correctly
-                                # => -n: numeric sort
-                                # => Without -n: 10 comes before 2 (lexical)
+cat numbers.txt | sort -n       # => Without -n: "10" < "2" (string comparison)
+                                # => -n forces numeric interpretation
+                                # => Converts strings to numbers: 2, 10, 100
+                                # => Numeric comparison: 2 < 10 < 100
+                                # => Output: 2\n10\n100 (correct numeric order)
 
 # Sort in reverse
 cat numbers.txt | sort -nr      # => Numeric sort, largest first
@@ -817,36 +995,63 @@ graph TD
 
 ```bash
 # Command substitution - capture output
-current_date=$(date +%Y-%m-%d) # => Executes date, captures "2025-12-30"
-echo "Today is $current_date"  # => Output: Today is 2025-12-30
+current_date=$(date +%Y-%m-%d) # => Shell creates subshell to run date command
+                                # => date +%Y-%m-%d executes, outputs "2025-12-30" to stdout
+                                # => Subshell exits, stdout captured
+                                # => Trailing newline stripped from output
+                                # => current_date variable assigned "2025-12-30"
+echo "Today is $current_date"  # => Variable expands to "2025-12-30"
+                                # => Output: Today is 2025-12-30
 
 # Old syntax (backticks, deprecated)
-files=`ls *.txt`                # => Works but harder to nest
-echo "Files: $files"            # => Use $() instead
+files=`ls *.txt`                # => Backtick syntax `...` for command substitution
+                                # => Equivalent to $(ls *.txt)
+                                # => Harder to nest: `echo \`date\`` vs $(echo $(date))
+echo "Files: $files"            # => Prefer $() for readability and nesting
 
 # Nested substitution
 backup_name="backup_$(date +%Y%m%d)_$(hostname).tar.gz"
-                                # => backup_20251230_server1.tar.gz
-echo "$backup_name"             # => Multiple substitutions in one expression
+                                # => First $(date +%Y%m%d) executes, returns "20251230"
+                                # => Second $(hostname) executes, returns "server1"
+                                # => String assembled: "backup_20251230_server1.tar.gz"
+                                # => backup_name assigned complete string
+echo "$backup_name"             # => Output: backup_20251230_server1.tar.gz
 
 # Use in command arguments
 echo "User count: $(wc -l < /etc/passwd)"
+                                # => wc -l < /etc/passwd executes first
+                                # => Counts lines in passwd file, outputs "42"
+                                # => Substitution replaces $(wc...) with "42"
+                                # => echo receives "User count: 42"
                                 # => Output: User count: 42
 
 # Arithmetic with substitution
 total_size=$(du -sb /var/log | cut -f1)
-                                # => Captures total size in bytes
+                                # => du -sb /var/log calculates total bytes
+                                # => Pipes to cut which extracts first field
+                                # => Output: "1048576" (1MB in bytes)
+                                # => total_size assigned "1048576"
 echo "Log size: $total_size bytes"
+                                # => Output: Log size: 1048576 bytes
 
 # Subshell (isolated environment)
-(cd /tmp && ls)                 # => Changes to /tmp, lists, returns to original
-pwd                             # => Still in original directory!
-                                # => Subshell doesn't affect parent
+(cd /tmp && ls)                 # => Parentheses create subshell (child process)
+                                # => Subshell inherits parent's environment
+                                # => cd /tmp changes subshell's working directory
+                                # => ls executes in /tmp
+                                # => Subshell exits, directory change lost
+pwd                             # => Parent shell's working directory unchanged
+                                # => Output: /home/user (wherever we started)
 
 # Subshell preserves parent variables
-x=10                            # => x is 10 in parent shell
-(x=20; echo "Inside: $x")       # => Output: Inside: 20 (changed in subshell)
-echo "Outside: $x"              # => Output: Outside: 10 (parent unchanged!)
+x=10                            # => x=10 in parent shell's memory
+(x=20; echo "Inside: $x")       # => Subshell inherits x=10
+                                # => Subshell modifies its copy: x=20
+                                # => echo sees subshell's x=20
+                                # => Output: Inside: 20
+                                # => Subshell exits, its x=20 destroyed
+echo "Outside: $x"              # => Parent shell's x still 10 (unchanged)
+                                # => Output: Outside: 10
 
 # Subshell for grouped commands
 (echo "Starting backup"; tar -czf backup.tar.gz /data; echo "Backup done")
@@ -885,29 +1090,53 @@ Environment variables store configuration and system information, passed to chil
 
 ```bash
 # Set local variable (not in environment)
-MY_VAR="hello"                  # => MY_VAR is "hello" in current shell only
-echo "$MY_VAR"                  # => Output: hello
+MY_VAR="hello"                  # => Creates variable in current shell's memory
+                                # => Variable exists only in this shell process
+                                # => Not in environment table (not inherited by children)
+echo "$MY_VAR"                  # => Current shell accesses its own variable
+                                # => Output: hello
 
 # Local variables NOT passed to subshells
 bash -c 'echo "Subshell: $MY_VAR"'
-                                # => Output: Subshell: (empty!)
+                                # => bash -c spawns child shell process
+                                # => Child inherits environment variables only
+                                # => MY_VAR is local (not in environment), not inherited
+                                # => Child's $MY_VAR lookup returns empty
+                                # => Output: Subshell: (empty string)
 
 # Export variable to environment
-export MY_VAR="hello"           # => Now MY_VAR is in environment
+export MY_VAR="hello"           # => Marks MY_VAR for export to child processes
+                                # => Adds MY_VAR to environment table
+                                # => Future child processes inherit this variable
 bash -c 'echo "Subshell: $MY_VAR"'
-                                # => Output: Subshell: hello (available!)
+                                # => Child shell spawned
+                                # => Environment copied to child (includes MY_VAR)
+                                # => Child's $MY_VAR resolves to "hello"
+                                # => Output: Subshell: hello
 
 # Export in one line
-export DB_HOST="localhost"      # => Define and export simultaneously
+export DB_HOST="localhost"      # => Assignment + export in single statement
+                                # => DB_HOST="localhost" creates variable
+                                # => export marks for environment inheritance
 
 # View all environment variables
-env                             # => Lists all environment variables
-                                # => Output: HOME=/home/user, PATH=/usr/bin:..., etc.
+env                             # => Queries current process environment table
+                                # => Lists all variables marked for export
+                                # => Format: NAME=value (one per line)
+                                # => Output: HOME=/home/user
+                                # =>         PATH=/usr/bin:/bin
+                                # =>         USER=alice
+                                # =>         ... (all exported variables)
 
 # View specific variable
-echo "$HOME"                    # => Output: /home/user (home directory)
-echo "$USER"                    # => Output: alice (current username)
-echo "$SHELL"                   # => Output: /bin/bash (current shell)
+echo "$HOME"                    # => $HOME expands to value of HOME variable
+                                # => HOME typically set by login process
+                                # => Points to user's home directory
+                                # => Output: /home/user
+echo "$USER"                    # => USER contains current username
+                                # => Output: alice
+echo "$SHELL"                   # => SHELL contains path to user's login shell
+                                # => Output: /bin/bash
 
 # PATH - command search directories
 echo "$PATH"                    # => Output: /usr/local/bin:/usr/bin:/bin
@@ -957,32 +1186,56 @@ Logical operators control command execution flow: `&&` runs next command only if
 
 ```bash
 # AND operator (&&) - run next if previous succeeds
-mkdir testdir && cd testdir     # => cd only if mkdir succeeds
-                                # => Creates directory, then changes into it
-                                # => If mkdir fails, cd doesn't run
+mkdir testdir && cd testdir     # => mkdir testdir executes first
+                                # => If testdir already exists: mkdir returns 1 (failure)
+                                # =>   cd doesn't execute (short-circuit)
+                                # => If testdir created: mkdir returns 0 (success)
+                                # =>   && triggers cd execution
+                                # =>   cd testdir changes into new directory
 
 # Chain multiple commands with AND
 cd /var/log && grep "error" syslog && echo "Errors found"
-                                # => Each command runs only if previous succeeds
-                                # => Stops at first failure
+                                # => Stage 1: cd /var/log executes
+                                # =>   If cd fails (returns 1): chain stops, grep and echo skip
+                                # =>   If cd succeeds (returns 0): continue to stage 2
+                                # => Stage 2: grep "error" syslog executes
+                                # =>   If grep finds nothing (returns 1): chain stops, echo skips
+                                # =>   If grep finds match (returns 0): continue to stage 3
+                                # => Stage 3: echo executes
+                                # => First non-zero exit breaks chain
 
 # OR operator (||) - run next if previous fails
 cd /nonexistent || echo "Failed to change directory"
-                                # => cd fails, so echo runs
+                                # => cd /nonexistent attempts to change directory
+                                # => /nonexistent doesn't exist
+                                # => cd returns 2 (non-zero = failure)
+                                # => || triggers on failure
+                                # => echo executes
                                 # => Output: Failed to change directory
 
 # Default value pattern
 [ -f config.txt ] || echo "Config not found"
-                                # => If config.txt doesn't exist, print message
+                                # => [ -f config.txt ] tests if file exists
+                                # => If file exists: test returns 0, || doesn't execute echo
+                                # => If file missing: test returns 1, || executes echo
+                                # => Pattern: "do nothing on success, warn on failure"
 
 # Semicolon (;) - unconditional execution
-cd /tmp; ls; pwd                # => All three commands run regardless of success
-                                # => ; separates independent commands
+cd /tmp; ls; pwd                # => cd /tmp executes (may succeed or fail)
+                                # => ; separator ignores exit code
+                                # => ls executes regardless of cd result
+                                # => pwd executes regardless of ls result
+                                # => All three commands run independently
 
 # Combine AND and OR
 command && echo "Success" || echo "Failed"
-                                # => If command succeeds: prints "Success"
-                                # => If command fails: prints "Failed"
+                                # => command executes first
+                                # => If command returns 0 (success):
+                                # =>   && triggers: echo "Success" runs, returns 0
+                                # =>   || sees success: echo "Failed" skipped
+                                # => If command returns non-zero (failure):
+                                # =>   && short-circuits: echo "Success" skipped
+                                # =>   || triggers: echo "Failed" runs
 
 # Create directory with fallback
 mkdir /var/myapp 2>/dev/null || mkdir ~/myapp
@@ -1021,67 +1274,90 @@ Conditional testing evaluates expressions for file existence, string comparison,
 
 ```bash
 # File tests
-if [ -f file.txt ]; then        # => -f tests if regular file exists
+if [ -f file.txt ]; then        # => [ calls test command with -f operator
+                                # => -f checks: file exists AND is regular file (not directory/link)
+                                # => Returns exit code 0 if true, 1 if false
+                                # => if executes body when exit code is 0
     echo "File exists"
 fi
 
-if [ -d /var/log ]; then        # => -d tests if directory exists
+if [ -d /var/log ]; then        # => -d checks: path exists AND is directory
+                                # => Returns 0 if /var/log is a directory
+                                # => Returns 1 if doesn't exist or is a file
     echo "Directory exists"
 fi
 
-if [ -r file.txt ]; then        # => -r tests if readable
+if [ -r file.txt ]; then        # => -r checks: file exists AND current user has read permission
+                                # => Tests effective permissions (considers user, group, other)
     echo "File is readable"
 fi
 
-if [ -w file.txt ]; then        # => -w tests if writable
+if [ -w file.txt ]; then        # => -w checks: file exists AND current user has write permission
+                                # => Returns 0 only if actual write access available
     echo "File is writable"
 fi
 
-if [ -x script.sh ]; then       # => -x tests if executable
+if [ -x script.sh ]; then       # => -x checks: file exists AND has execute permission
+                                # => For directories: checks if searchable
     echo "File is executable"
 fi
 
 # String tests
-name="Alice"
-if [ "$name" = "Alice" ]; then  # => = tests string equality (single =)
-    echo "Name is Alice"        # => Note: quote variables!
+name="Alice"                    # => name variable stores "Alice"
+if [ "$name" = "Alice" ]; then  # => [ is alias for test command
+                                # => Quotes essential: prevents word splitting if variable empty
+                                # => = compares strings character by character
+                                # => Returns 0 if strings identical, 1 otherwise
+    echo "Name is Alice"        # => Executes only if comparison returned 0
 fi
 
 if [ "$name" != "Bob" ]; then   # => != tests string inequality
+                                # => "Alice" != "Bob" evaluates to true (exit 0)
     echo "Name is not Bob"
 fi
 
-if [ -z "$empty" ]; then        # => -z tests if string is empty
+if [ -z "$empty" ]; then        # => -z tests: string length is zero
+                                # => $empty is unset/empty, expands to ""
+                                # => [ -z "" ] returns 0 (true)
     echo "Variable is empty"
 fi
 
-if [ -n "$name" ]; then         # => -n tests if string is non-empty
+if [ -n "$name" ]; then         # => -n tests: string length is non-zero
+                                # => "$name" expands to "Alice" (5 characters)
+                                # => [ -n "Alice" ] returns 0 (true)
     echo "Variable is not empty"
 fi
 
 # Numeric tests
-age=25
-if [ "$age" -eq 25 ]; then      # => -eq tests numeric equality
+age=25                          # => age stores "25" as string
+if [ "$age" -eq 25 ]; then      # => -eq forces arithmetic comparison
+                                # => Converts "25" string to number 25
+                                # => Compares 25 == 25, returns 0 (true)
     echo "Age is 25"
 fi
 
-if [ "$age" -ne 30 ]; then      # => -ne: not equal
+if [ "$age" -ne 30 ]; then      # => -ne: numeric not equal
+                                # => 25 != 30 evaluates to true (exit 0)
     echo "Age is not 30"
 fi
 
-if [ "$age" -lt 30 ]; then      # => -lt: less than
+if [ "$age" -lt 30 ]; then      # => -lt: numeric less than
+                                # => 25 < 30 is true (exit 0)
     echo "Age less than 30"
 fi
 
 if [ "$age" -le 25 ]; then      # => -le: less than or equal
+                                # => 25 <= 25 is true (equal satisfies condition)
     echo "Age at most 25"
 fi
 
-if [ "$age" -gt 20 ]; then      # => -gt: greater than
+if [ "$age" -gt 20 ]; then      # => -gt: numeric greater than
+                                # => 25 > 20 is true (exit 0)
     echo "Age greater than 20"
 fi
 
 if [ "$age" -ge 25 ]; then      # => -ge: greater than or equal
+                                # => 25 >= 25 is true (equal satisfies condition)
     echo "Age at least 25"
 fi
 
@@ -1242,39 +1518,73 @@ The `for` loop iterates over lists, ranges, files, or command output, executing 
 ```bash
 # Loop over list
 for fruit in apple banana cherry; do
-    echo "Fruit: $fruit"        # => Executes 3 times
-done                            # => Output: Fruit: apple, Fruit: banana, Fruit: cherry
+                                # => Iteration 1: fruit="apple"
+    echo "Fruit: $fruit"        # => Output: Fruit: apple
+                                # => Iteration 2: fruit="banana"
+                                # => Output: Fruit: banana
+                                # => Iteration 3: fruit="cherry"
+                                # => Output: Fruit: cherry
+done                            # => Loop completes after 3 iterations
+                                # => fruit variable retains last value: "cherry"
 
 # Loop over files (glob pattern)
-for file in *.txt; do
-    echo "Processing $file"     # => Loops over all .txt files in current directory
-    wc -l "$file"               # => Counts lines in each file
+for file in *.txt; do           # => Glob expands before loop starts
+                                # => If directory has: report.txt, data.txt
+                                # => Loop executes with file="report.txt", then file="data.txt"
+    echo "Processing $file"     # => Iteration 1: Processing report.txt
+                                # => Iteration 2: Processing data.txt
+    wc -l "$file"               # => Counts lines in current file
+                                # => Quotes protect against spaces in filenames
 done
 
 # Loop over command output
 for user in $(cut -d: -f1 /etc/passwd); do
-    echo "User: $user"          # => Loops over all usernames
+                                # => $(cut ...) executes first, produces word list
+                                # => Output: root daemon bin sys ... (space-separated)
+                                # => Each word becomes one iteration
+    echo "User: $user"          # => First iteration: User: root
+                                # => Second iteration: User: daemon
+                                # => Continues for all usernames
 done
 
 # C-style for loop (numeric range)
-for ((i=1; i<=5; i++)); do
-    echo "Number: $i"           # => Output: Number: 1, Number: 2, ..., Number: 5
-done                            # => Note: double parentheses for C-style
-
-# Loop with break
-for i in {1..10}; do
-    if [ $i -eq 5 ]; then
-        break                   # => Exit loop when i is 5
-    fi
-    echo "i: $i"                # => Output: i: 1, i: 2, i: 3, i: 4
+for ((i=1; i<=5; i++)); do      # => Initialization: i=1
+                                # => Condition check: i<=5 (true, enter loop)
+                                # => Iteration 1: i=1, echo runs
+    echo "Number: $i"           # => Output: Number: 1
+                                # => Increment: i++ makes i=2
+                                # => Check: 2<=5 (true), Iteration 2: i=2
+                                # => Output: Number: 2
+                                # => Repeats until i=6
+                                # => Check: 6<=5 (false), loop exits
 done
 
-# Loop with continue
-for i in {1..5}; do
-    if [ $i -eq 3 ]; then
-        continue                # => Skip iteration when i is 3
+# Loop with break
+for i in {1..10}; do            # => Brace expansion: 1 2 3 4 5 6 7 8 9 10
+    if [ $i -eq 5 ]; then       # => Iteration 1: 1==5? false, continue
+                                # => Iteration 2: 2==5? false, continue
+                                # => Iteration 3: 3==5? false, continue
+                                # => Iteration 4: 4==5? false, continue
+                                # => Iteration 5: 5==5? true, execute break
+        break                   # => Immediately exits for loop
+                                # => Remaining iterations (6-10) never execute
     fi
-    echo "i: $i"                # => Output: i: 1, i: 2, i: 4, i: 5 (skips 3)
+    echo "i: $i"                # => Iteration 1-4 only: i: 1, i: 2, i: 3, i: 4
+done                            # => Loop terminates early at i=5
+
+# Loop with continue
+for i in {1..5}; do             # => Values: 1 2 3 4 5
+    if [ $i -eq 3 ]; then       # => Iteration 1: 1==3? false, skip continue
+                                # => Iteration 2: 2==3? false, skip continue
+                                # => Iteration 3: 3==3? true, execute continue
+        continue                # => Skips remaining code, jumps to next iteration
+                                # => echo below doesn't run for i=3
+    fi
+    echo "i: $i"                # => Iteration 1: i: 1
+                                # => Iteration 2: i: 2
+                                # => Iteration 3: skipped (continue executed)
+                                # => Iteration 4: i: 4
+                                # => Iteration 5: i: 5
 done
 
 # Nested loops
@@ -1320,27 +1630,46 @@ The `while` loop repeats while a condition is true, and `until` repeats while fa
 
 ```bash
 # Basic while loop
-count=1
-while [ $count -le 5 ]; do
-    echo "Count: $count"        # => Output: Count: 1, Count: 2, ..., Count: 5
-    count=$((count + 1))        # => Increment counter
+count=1                         # => count initialized to 1
+while [ $count -le 5 ]; do      # => Iteration 1: test [ 1 -le 5 ] returns 0 (true), enter loop
+    echo "Count: $count"        # =>   Output: Count: 1
+    count=$((count + 1))        # =>   count becomes 2
+                                # => Iteration 2: test [ 2 -le 5 ] returns 0, continue
+                                # =>   Output: Count: 2
+                                # =>   count becomes 3
+                                # => ...iterations 3, 4, 5 similar...
+                                # => After iteration 5: count becomes 6
+                                # => Test [ 6 -le 5 ] returns 1 (false)
+                                # => Loop exits
 done
 
 # Until loop (opposite of while)
-count=1
-until [ $count -gt 5 ]; do      # => Runs until condition becomes true
-    echo "Count: $count"        # => Output: Count: 1, Count: 2, ..., Count: 5
-    count=$((count + 1))
+count=1                         # => count initialized to 1
+until [ $count -gt 5 ]; do      # => Iteration 1: test [ 1 -gt 5 ] returns 1 (false)
+                                # =>   until runs on false condition, enter loop
+    echo "Count: $count"        # =>   Output: Count: 1
+    count=$((count + 1))        # =>   count becomes 2
+                                # => Iteration 2: test [ 2 -gt 5 ] returns 1 (false), continue
+                                # => ...iterations continue while condition false...
+                                # => After iteration 5: count becomes 6
+                                # => Test [ 6 -gt 5 ] returns 0 (true)
+                                # => until stops when condition true
 done
 
 # Infinite loop with break
-while true; do
+while true; do                  # => true command always returns 0 (success)
+                                # => Condition never false: infinite loop
     echo "Enter 'quit' to exit"
-    read input                  # => Read user input
+    read input                  # => Blocks waiting for user input
+                                # => User types text, presses Enter
+                                # => input variable receives user's text
     if [ "$input" = "quit" ]; then
-        break                   # => Exit loop
+                                # => Test if input exactly matches "quit"
+        break                   # => break immediately exits while loop
+                                # => No further iterations
     fi
-    echo "You entered: $input"
+    echo "You entered: $input"  # => Only executes if input != "quit"
+                                # => Loop repeats, waits for next input
 done
 
 # Read file line by line
@@ -1434,29 +1763,34 @@ graph TD
 
 ```bash
 # Basic case statement
-fruit="apple"
-case "$fruit" in
-    apple)
-        echo "It's an apple"    # => Executes this branch
-        ;;                      # => ;; terminates branch
-    banana)
+fruit="apple"                   # => fruit variable set to "apple"
+case "$fruit" in                # => case evaluates "$fruit" once
+                                # => Compares against each pattern in order
+    apple)                      # => Pattern 1: exact match "apple"
+                                # => $fruit ("apple") == "apple"? YES
+        echo "It's an apple"    # => Match found, execute this block
+        ;;                      # => ;; exits case (no further patterns tested)
+    banana)                     # => Pattern 2: never reached (already matched)
         echo "It's a banana"
         ;;
-    *)
-        echo "Unknown fruit"    # => * is default/catch-all
+    *)                          # => Pattern 3: wildcard (matches anything)
+        echo "Unknown fruit"    # => Never reached (earlier match found)
         ;;
-esac                            # => esac closes case statement (case backwards)
+esac                            # => esac ends case block (case spelled backward)
 
 # Multiple patterns (OR)
-animal="dog"
-case "$animal" in
-    cat|dog|hamster)            # => | means OR
-        echo "Common pet"       # => Matches cat, dog, or hamster
-        ;;
-    lion|tiger|bear)
+animal="dog"                    # => animal variable set to "dog"
+case "$animal" in               # => case evaluates "$animal" once
+    cat|dog|hamster)            # => Pattern: cat OR dog OR hamster
+                                # => Tests: $animal == "cat"? NO
+                                # => Tests: $animal == "dog"? YES
+                                # => | provides multiple alternatives in one pattern
+        echo "Common pet"       # => Matched "dog", execute this block
+        ;;                      # => Exit case (remaining patterns skipped)
+    lion|tiger|bear)            # => Never tested (already matched above)
         echo "Wild animal"
         ;;
-    *)
+    *)                          # => Default pattern (never reached)
         echo "Unknown animal"
         ;;
 esac
@@ -1564,33 +1898,55 @@ Functions encapsulate reusable code blocks, accept arguments via `$1, $2, ...`, 
 
 ```bash
 # Basic function
-greet() {
-    echo "Hello, World!"
+greet() {                       # => Defines function named 'greet'
+                                # => Function body stored, not executed yet
+    echo "Hello, World!"        # => Command to execute when function called
 }
-greet                           # => Output: Hello, World!
+greet                           # => Function call executes body
+                                # => echo runs in function context
+                                # => Output: Hello, World!
+                                # => Function returns exit code 0 (echo's exit code)
 
 # Function with arguments
-greet_person() {
-    echo "Hello, $1!"           # => $1 is first argument
+greet_person() {                # => Function definition with no parameter list
+                                # => Parameters accessed via $1, $2, etc. at runtime
+    echo "Hello, $1!"           # => $1 references first argument passed to function
 }
-greet_person "Alice"            # => Output: Hello, Alice!
+greet_person "Alice"            # => Function call with argument
+                                # => "Alice" becomes $1 inside function
+                                # => $1 expands to "Alice"
+                                # => Output: Hello, Alice!
+                                # => Exit code: 0 (from echo)
 
 # Multiple arguments
 add() {
-    sum=$(($1 + $2))            # => $1 and $2 are first and second arguments
-    echo "$sum"
+    sum=$(($1 + $2))            # => $1 is first arg, $2 is second arg
+                                # => Arithmetic context evaluates expression
 }
-result=$(add 10 20)             # => Capture output with command substitution
+result=$(add 10 20)             # => Calls add with arguments 10 and 20
+                                # => Inside add: $1=10, $2=20
+                                # => sum = 10 + 20 = 30
+                                # => echo outputs "30" to stdout
+                                # => $() captures stdout into result variable
+                                # => result="30"
 echo "Sum: $result"             # => Output: Sum: 30
 
 # Local variables (function scope)
 my_function() {
-    local x=10                  # => x is local to function
-    echo "Inside: x=$x"
-}
-x=5                             # => x in outer scope
-my_function                     # => Output: Inside: x=10
-echo "Outside: x=$x"            # => Output: Outside: x=5 (unchanged)
+    local x=10                  # => 'local' creates function-scoped variable
+                                # => x=10 exists only within this function
+                                # => Shadows any outer x variable
+    echo "Inside: x=$x"         # => References function's local x
+                                # => Output: Inside: x=10
+}                               # => Local x destroyed when function exits
+x=5                             # => Global/outer scope variable x=5
+my_function                     # => Function call
+                                # => Creates local x=10 (shadows outer x)
+                                # => Function sees x=10
+                                # => Local x destroyed on return
+echo "Outside: x=$x"            # => References outer scope x
+                                # => Still x=5 (unchanged by function)
+                                # => Output: Outside: x=5
 
 # Return exit code
 is_even() {
@@ -1745,28 +2101,48 @@ Every command returns an exit code (0-255) where 0 indicates success and non-zer
 
 ```bash
 # Check exit code
-ls /etc > /dev/null
-echo "Exit code: $?"            # => Output: Exit code: 0 (success)
+ls /etc > /dev/null             # => ls command executes successfully
+                                # => /etc directory exists and is accessible
+                                # => ls returns exit code 0 to shell
+                                # => $? variable immediately updated to 0
+echo "Exit code: $?"            # => $? expands to "0"
+                                # => Output: Exit code: 0 (success)
+                                # => echo itself returns 0, overwriting $?
 
-ls /nonexistent 2> /dev/null
-echo "Exit code: $?"            # => Output: Exit code: 2 (failure)
+ls /nonexistent 2> /dev/null    # => ls attempts to access /nonexistent
+                                # => Directory doesn't exist
+                                # => ls encounters error, returns non-zero code
+                                # => Specific code: 2 (indicating "not found" error)
+                                # => $? updated to 2
+echo "Exit code: $?"            # => $? expands to "2"
+                                # => Output: Exit code: 2 (failure)
 
 # Use in conditional
 if grep -q "error" logfile.txt; then
-    echo "Found errors"         # => grep returns 0 if found
+                                # => grep searches logfile.txt for "error"
+                                # => -q suppresses output (quiet mode)
+                                # => If pattern found: grep returns 0
+                                # => If pattern not found: grep returns 1
+                                # => if tests exit code (0 = true, non-zero = false)
+    echo "Found errors"         # => Executes if grep returned 0
 else
-    echo "No errors"            # => grep returns 1 if not found
+    echo "No errors"            # => Executes if grep returned 1 or higher
 fi
 
 # Explicit exit in script
 #!/bin/bash
-if [ ! -f "$1" ]; then
-    echo "File not found"
-    exit 1                      # => Exit with error code 1
+if [ ! -f "$1" ]; then          # => Tests if first argument is NOT a regular file
+                                # => If file doesn't exist: condition true (exit 0)
+    echo "File not found"       # => Error message to stderr
+    exit 1                      # => Terminates script immediately
+                                # => Returns exit code 1 to parent process
+                                # => No further lines execute
 fi
 
-echo "Processing file..."
-exit 0                          # => Exit with success code 0
+echo "Processing file..."       # => Only executes if file exists (exit 1 not reached)
+exit 0                          # => Explicit success exit
+                                # => Returns 0 to parent process
+                                # => Good practice for clarity
 
 # Common exit codes
 # 0 = success
@@ -1832,32 +2208,64 @@ Quoting controls word splitting, glob expansion, and variable expansion. Double 
 
 ```bash
 # Word splitting without quotes
-files=one two three
-echo $files                     # => Output: one two three (three words)
-echo "$files"                   # => Output: one two three (single string)
+files=one two three             # => files="one two three" (single string with spaces)
+echo $files                     # => Unquoted: shell performs word splitting on spaces
+                                # => $files expands to: one two three (three separate words)
+                                # => echo receives three arguments: "one", "two", "three"
+                                # => Output: one two three
+echo "$files"                   # => Quotes prevent word splitting
+                                # => $files expands as single argument: "one two three"
+                                # => echo receives one argument
+                                # => Output: one two three (same visual, different mechanism)
 
 # Glob expansion
-echo *.txt                      # => Output: file1.txt file2.txt (expanded)
-echo "*.txt"                    # => Output: *.txt (literal, not expanded)
+echo *.txt                      # => Unquoted: shell expands glob pattern
+                                # => *.txt matches: file1.txt, file2.txt in current directory
+                                # => echo receives two arguments: "file1.txt", "file2.txt"
+                                # => Output: file1.txt file2.txt
+echo "*.txt"                    # => Quotes prevent glob expansion
+                                # => *.txt treated as literal string
+                                # => echo receives one argument: "*.txt"
+                                # => Output: *.txt
 
 # Variable expansion
-name="Alice"
-echo $name                      # => Output: Alice (expanded)
-echo '$name'                    # => Output: $name (single quotes prevent expansion)
-echo "$name"                    # => Output: Alice (double quotes allow expansion)
+name="Alice"                    # => name stores "Alice"
+echo $name                      # => Unquoted: variable expands to "Alice"
+                                # => Output: Alice
+echo '$name'                    # => Single quotes: everything literal
+                                # => No variable expansion occurs
+                                # => echo receives literal string "$name"
+                                # => Output: $name
+echo "$name"                    # => Double quotes: variable expansion occurs
+                                # => $name expands to "Alice"
+                                # => Output: Alice
 
 # Escape sequences in double quotes
-echo "Line 1\nLine 2"           # => Output: Line 1\nLine 2 (backslash literal)
-echo -e "Line 1\nLine 2"        # => Output: Line 1
-                                # => Line 2 (with -e, \n is interpreted)
+echo "Line 1\nLine 2"           # => Without -e: \n treated as two literal characters
+                                # => Backslash doesn't start escape sequence
+                                # => Output: Line 1\nLine 2
+echo -e "Line 1\nLine 2"        # => -e flag enables escape sequence interpretation
+                                # => \n converted to newline character (ASCII 10)
+                                # => Output: Line 1
+                                # =>         Line 2
 
 # Command substitution in quotes
-echo "Today is $(date)"         # => Output: Today is Mon Dec 30 ... (expanded)
-echo 'Today is $(date)'         # => Output: Today is $(date) (literal)
+echo "Today is $(date)"         # => Double quotes: command substitution occurs
+                                # => $(date) executes date command
+                                # => Output captured: "Mon Dec 30 10:30:00 UTC 2025"
+                                # => Substituted into string
+                                # => Output: Today is Mon Dec 30 10:30:00 UTC 2025
+echo 'Today is $(date)'         # => Single quotes: command substitution prevented
+                                # => $(date) treated as literal text
+                                # => Output: Today is $(date)
 
 # Backslash escaping
-echo "Price: \$10"              # => Output: Price: $10 ($ escaped)
-echo "Quote: \"Hello\""         # => Output: Quote: "Hello" (" escaped)
+echo "Price: \$10"              # => Backslash escapes $ in double quotes
+                                # => \$ becomes literal $ character (prevents variable expansion)
+                                # => Output: Price: $10
+echo "Quote: \"Hello\""         # => \" escapes double quote character
+                                # => Allows quotes inside quoted string
+                                # => Output: Quote: "Hello"
 
 # Space in filenames
 touch "my file.txt"             # => Creates file with space in name
@@ -1908,29 +2316,40 @@ Here documents (`<<`) allow multi-line input to commands, while here strings (`<
 
 ```bash
 # Basic here document
-cat << EOF
-This is line 1
-This is line 2
-This is line 3
-EOF
-# => Output: Three lines exactly as written
+cat << EOF                      # => << signals here document start
+                                # => EOF is delimiter (can be any word)
+                                # => Shell reads stdin until line containing only "EOF"
+This is line 1                  # => Line 1 accumulated in buffer
+This is line 2                  # => Line 2 accumulated in buffer
+This is line 3                  # => Line 3 accumulated in buffer
+EOF                             # => Delimiter found, here document ends
+                                # => Entire buffer fed to cat's stdin
+                                # => cat outputs all three lines to stdout
+# => Output: This is line 1\nThis is line 2\nThis is line 3
 
 # Here document with variable expansion
-name="Alice"
-cat << EOF
-Hello, $name!
+name="Alice"                    # => name variable in shell
+cat << EOF                      # => Unquoted delimiter allows expansion
+Hello, $name!                   # => Shell expands $name to "Alice" before feeding to cat
 Your current directory is: $(pwd)
-EOF
+                                # => $(pwd) executes, returns "/home/user"
+                                # => Expanded line: "Your current directory is: /home/user"
+EOF                             # => cat receives already-expanded text
+                                # => cat sees: "Hello, Alice!\nYour current directory is: /home/user"
 # => Output: Hello, Alice!
-# => Your current directory is: /home/user
+# =>         Your current directory is: /home/user
 
 # Here document without expansion (quote delimiter)
-cat << 'EOF'
+cat << 'EOF'                    # => Quoted delimiter 'EOF' disables all expansion
+                                # => Single or double quotes work: 'EOF' or "EOF"
 Variables like $name are not expanded
+                                # => $name treated as literal characters
+                                # => No variable lookup occurs
 Command substitution like $(pwd) is literal
-EOF
+                                # => $(pwd) not executed, stays as text
+EOF                             # => cat receives literal text with $ and $()
 # => Output: Variables like $name are not expanded
-# => Command substitution like $(pwd) is literal
+# =>         Command substitution like $(pwd) is literal
 
 # Here document with indentation (use <<-)
 if true; then
@@ -2024,30 +2443,52 @@ Brace expansion generates sequences or combinations of strings, useful for creat
 
 ```bash
 # Basic brace expansion (list)
-echo {apple,banana,cherry}      # => Output: apple banana cherry
-                                # => Expands to three separate words
+echo {apple,banana,cherry}      # => Brace expansion happens BEFORE echo runs
+                                # => Shell expands {apple,banana,cherry} to three words
+                                # => Expansion: apple banana cherry
+                                # => echo receives three arguments
+                                # => Output: apple banana cherry (space-separated)
 
 # Use in commands
-touch file{1,2,3}.txt           # => Creates: file1.txt, file2.txt, file3.txt
+touch file{1,2,3}.txt           # => Expansion: file{1,2,3}.txt → file1.txt file2.txt file3.txt
+                                # => Prefix "file" and suffix ".txt" added to each item
+                                # => touch receives three arguments
+                                # => Creates three separate files
+                                # => Result: file1.txt, file2.txt, file3.txt in current directory
 
 # Numeric range
-echo {1..5}                     # => Output: 1 2 3 4 5
-echo {10..15}                   # => Output: 10 11 12 13 14 15
+echo {1..5}                     # => Range syntax: {start..end}
+                                # => Generates sequence: 1, 2, 3, 4, 5
+                                # => Expansion: 1 2 3 4 5
+                                # => Output: 1 2 3 4 5
+echo {10..15}                   # => Generates: 10, 11, 12, 13, 14, 15
+                                # => Output: 10 11 12 13 14 15
 
 # Descending range
-echo {5..1}                     # => Output: 5 4 3 2 1
+echo {5..1}                     # => start > end: generates descending sequence
+                                # => Expansion: 5, 4, 3, 2, 1
+                                # => Output: 5 4 3 2 1
 
 # Range with step (bash 4+)
-echo {0..10..2}                 # => Output: 0 2 4 6 8 10
-                                # => {start..end..step}
+echo {0..10..2}                 # => Three-part syntax: {start..end..increment}
+                                # => Starts at 0, increments by 2, stops at 10
+                                # => Generates: 0, 2, 4, 6, 8, 10
+                                # => Output: 0 2 4 6 8 10
 
 # Character range
-echo {a..e}                     # => Output: a b c d e
-echo {A..F}                     # => Output: A B C D E
+echo {a..e}                     # => Character range: ASCII sequence
+                                # => Generates: a, b, c, d, e
+                                # => Output: a b c d e
+echo {A..F}                     # => Uppercase range: A through F
+                                # => Output: A B C D E F
 
 # Nested braces
-echo {A,B}{1,2}                 # => Output: A1 A2 B1 B2
-                                # => Cartesian product
+echo {A,B}{1,2}                 # => Two brace expansions combined
+                                # => First expands: A, B
+                                # => Second expands: 1, 2
+                                # => Cartesian product: A combined with each of {1,2}, B combined with each of {1,2}
+                                # => Result: A1, A2, B1, B2
+                                # => Output: A1 A2 B1 B2
 
 # Multiple levels
 echo {a,b}{1,2}{x,y}            # => Output: a1x a1y a2x a2y b1x b1y b2x b2y
@@ -2103,33 +2544,51 @@ Glob patterns use wildcards to match filenames: `*` matches any characters, `?` 
 
 ```bash
 # Asterisk (*) - matches zero or more characters
-ls *.txt                        # => Lists all .txt files
-                                # => Matches: file.txt, document.txt, a.txt
+ls *.txt                        # => Shell expands *.txt before ls runs
+                                # => Scans current directory for matching names
+                                # => * matches any sequence: "" (empty), "file", "document", etc.
+                                # => .txt must match literally at end
+                                # => Matches: file.txt (0 chars), data.txt, report.txt
+                                # => Shell replaces *.txt with matched filenames
+                                # => ls receives: file.txt data.txt report.txt
 
-echo file*                      # => Output: file1.txt file2.txt file_backup.txt
-                                # => Matches anything starting with "file"
+echo file*                      # => file* pattern: "file" literal + * wildcard
+                                # => * matches: "1.txt", "2.txt", "_backup.txt", "" (empty)
+                                # => Matches: file (0 extra chars), file1.txt, file_backup.txt
+                                # => echo receives expanded list
+                                # => Output: file file1.txt file2.txt file_backup.txt
 
 # Question mark (?) - matches exactly one character
-ls file?.txt                    # => Matches: file1.txt, fileA.txt
-                                # => Does NOT match: file.txt, file10.txt
+ls file?.txt                    # => Pattern: "file" + ? + ".txt"
+                                # => ? must match exactly 1 character
+                                # => Matches: file1.txt (1='1'), fileA.txt (?='A')
+                                # => Does NOT match: file.txt (no char), file10.txt (2 chars)
 
-ls ???.txt                      # => Matches files with exactly 3 characters + .txt
-                                # => Matches: abc.txt, 123.txt
-                                # => Does NOT match: ab.txt, abcd.txt
+ls ???.txt                      # => Three ?'s: each matches exactly one character
+                                # => Total: 3 chars + ".txt"
+                                # => Matches: abc.txt (a,b,c), 123.txt (1,2,3)
+                                # => Does NOT match: ab.txt (only 2 chars), abcd.txt (4 chars)
 
 # Character sets [...]
-ls file[123].txt                # => Matches: file1.txt, file2.txt, file3.txt
-                                # => Does NOT match: file4.txt
+ls file[123].txt                # => [123] matches any single char from set {1,2,3}
+                                # => Pattern: "file" + one_of{1,2,3} + ".txt"
+                                # => Matches: file1.txt, file2.txt, file3.txt
+                                # => Does NOT match: file4.txt (4 not in set)
 
-ls file[a-z].txt                # => Matches: filea.txt, fileb.txt, ..., filez.txt
-                                # => Range of characters
+ls file[a-z].txt                # => [a-z] is range: matches a,b,c,...,z (26 possibilities)
+                                # => Pattern: "file" + one_lowercase_letter + ".txt"
+                                # => Matches: filea.txt, fileb.txt, ..., filez.txt
+                                # => Does NOT match: fileA.txt (uppercase), file1.txt (digit)
 
-ls file[0-9].txt                # => Matches: file0.txt, file1.txt, ..., file9.txt
+ls file[0-9].txt                # => [0-9] matches single digit: 0,1,2,3,4,5,6,7,8,9
+                                # => Pattern: "file" + one_digit + ".txt"
+                                # => Matches: file0.txt through file9.txt
 
 # Negation [!...]
-ls file[!0-9].txt               # => Matches files where character is NOT 0-9
-                                # => Matches: filea.txt, fileX.txt
-                                # => Does NOT match: file1.txt
+ls file[!0-9].txt               # => [!0-9] matches any char EXCEPT digits
+                                # => ! inside [] means "not in this set"
+                                # => Matches: filea.txt (?='a'), fileX.txt (?='X')
+                                # => Does NOT match: file1.txt (1 is digit)
 
 # Combine patterns
 ls *.[ch]                       # => Matches .c and .h files
@@ -2273,42 +2732,69 @@ stateDiagram-v2
 
 ```bash
 # Run in background (with &)
-sleep 60 &                      # => Runs sleep in background
-                                # => Output: [1] 12345 (job number and PID)
-                                # => Shell prompt returns immediately
+sleep 60 &                      # => & tells shell to run command in background
+                                # => Shell forks new process for sleep
+                                # => Process ID (PID) 12345 assigned by OS
+                                # => Shell assigns job number [1]
+                                # => Output: [1] 12345 (job_number PID)
+                                # => Parent shell continues immediately
+                                # => Prompt returns while sleep runs asynchronously
 
 # List jobs
-jobs                            # => Output: [1]+ Running sleep 60 &
-                                # => Lists all background/suspended jobs
+jobs                            # => Shell queries its job table
+                                # => Shows all jobs started in current shell session
+                                # => Output: [1]+ Running sleep 60 &
+                                # =>   [1]: job number
+                                # =>   +: most recent background job
+                                # =>   Running: current state (not stopped/terminated)
+                                # =>   sleep 60: command being executed
 
 # Bring job to foreground
-fg                              # => Brings most recent job to foreground
-                                # => Job blocks shell until complete
+fg                              # => Selects most recent background job (marked with +)
+                                # => Sends SIGCONT signal if job was stopped
+                                # => Process reconnects to terminal's stdin/stdout
+                                # => Shell waits for job to complete or suspend
+                                # => Prompt doesn't return until job finishes
 
-fg %1                           # => Brings job 1 to foreground
-                                # => %1 is job identifier
+fg %1                           # => %1 specifies job number 1 explicitly
+                                # => Job 1 moved to foreground
+                                # => Shell blocks on this job
 
 # Suspend foreground job (Ctrl+Z)
 # Run: sleep 60
-# Press: Ctrl+Z                 # => Output: [1]+ Stopped sleep 60
-                                # => Job is suspended (paused)
+# Press: Ctrl+Z                 # => Terminal sends SIGTSTP (terminal stop) signal
+                                # => sleep process receives signal, suspends execution
+                                # => Process state changes to "Stopped" (T in ps)
+                                # => Shell regains control
+                                # => Output: [1]+ Stopped sleep 60
+                                # => Process still in memory, not consuming CPU
 
 # Resume in background
-bg                              # => Resumes most recent suspended job in background
+bg                              # => Selects most recent stopped job (+)
+                                # => Sends SIGCONT signal to resume execution
+                                # => Process continues running in background
+                                # => Job state changes from "Stopped" to "Running"
                                 # => Output: [1]+ sleep 60 &
+                                # => Shell prompt available immediately
 
-bg %1                           # => Resumes job 1 in background
+bg %1                           # => Explicitly resumes job 1 in background
 
 # Multiple background jobs
-sleep 30 &                      # => [1] 12345
-sleep 60 &                      # => [2] 12346
-sleep 90 &                      # => [3] 12347
+sleep 30 &                      # => Job [1] created, PID 12345
+                                # => Current job marker (+) on job 1
+sleep 60 &                      # => Job [2] created, PID 12346
+                                # => Job 1 marker changes from + to -
+                                # => Job 2 becomes current (+)
+sleep 90 &                      # => Job [3] created, PID 12347
+                                # => Job 2 marker changes to -
+                                # => Job 3 becomes current (+)
 
-jobs                            # => Lists all three jobs
-                                # => [1]  Running  sleep 30 &
-                                # => [2]- Running  sleep 60 &
-                                # => [3]+ Running  sleep 90 &
-                                # => + = most recent, - = second most recent
+jobs                            # => Output: [1]  Running  sleep 30 &
+                                # =>         [2]- Running  sleep 60 &
+                                # =>         [3]+ Running  sleep 90 &
+                                # => + = most recent (default for bg/fg)
+                                # => - = second most recent (fg %- brings this)
+                                # => (no mark) = older jobs
 
 # Kill background job
 kill %1                         # => Kills job 1
