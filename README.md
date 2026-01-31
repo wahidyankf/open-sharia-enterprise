@@ -13,7 +13,7 @@
 
 **The Opportunity**: Islamic enterprise (finance, commerce, cooperatives, and beyond) represents a multi-trillion dollar global market, creating massive demand for Sharia-compliant business systems. While purpose-built platforms exist, they're typically proprietary, expensive, and limited to specific domains. Many organizations struggle with legacy systems retrofitted for Sharia compliance. The gap? Accessible, open-source solutions with built-in compliance and radical transparency—serving the entire spectrum of Islamic business needs.
 
-**Our Solution**: We're building a global open-source platform with Sharia-compliance at its core—starting with ERP foundations and expanding across enterprise domains (finance, commerce, cooperatives, supply chain, and more). We're making trustworthy, transparent business systems accessible to any organization worldwide—regardless of size, region, or industry.
+**Our Solution**: We're building a global open-source platform with Sharia-compliance at its core—following a progressive complexity approach from individual users (Phase 1: Organic Lever productivity tracker) to SMB (Phase 2) to enterprise (Phase 3: full ERP and domain expansion). Each phase generates revenue to fund the next, with Phase 1/2 success funding Phase 3's significant certification budget. We're making trustworthy, transparent business systems accessible to any organization worldwide—regardless of size, region, or industry.
 
 **What We Believe:**
 
@@ -45,11 +45,13 @@ This project is open-source and licensed under the **MIT License**. This means y
 
 ## 🗺️ Development Roadmap
 
-This project follows a phased approach from foundational research through ERP implementation to full enterprise domain expansion.
+This project follows a **progressive complexity approach** - starting simple, testing thoroughly, and scaling up systematically from individual users to SMB to enterprise.
 
-**Current Phase: Phase 0 (Setup and Research)** - Establishing infrastructure and conducting compliance, security, and AI research.
+**Current Phase: Phase 0 (Repository Setup & Knowledge Base)** - Establishing repository infrastructure, governance, and launching initial static websites (ayokoding.com, oseplatform.com).
 
-For the complete roadmap including all phases and strategic approach, see **[ROADMAP.md](./ROADMAP.md)**.
+**Next Phase: Phase 1 (Organic Lever - Productivity Tracker)** - Individual productivity application to test deployment, security, and knowledge base patterns at small scale before SMB/enterprise.
+
+For the complete roadmap including all phases, tech stack, and strategic approach, see **[ROADMAP.md](./ROADMAP.md)**.
 
 ## 🤝 Contributing
 
@@ -202,24 +204,35 @@ This project is licensed under the **MIT License** - see the [Freedom to Use](#-
 
 ⚠️ **PRE-ALPHA** - This project is in early development and **NOT ready for production use**.
 
-**Current Phase: Phase 0 (Setup and Research)**
+**Current Phase: Phase 0 (Repository Setup & Knowledge Base)**
 
-We are establishing foundational infrastructure and conducting research to inform architectural decisions. **Two parallel tracks are running simultaneously:**
+Establishing the foundational infrastructure, governance, and launching initial static websites to build online presence.
 
-**Enterprise Platform Track:**
+**Repository Infrastructure:**
 
-- 🔨 Core infrastructure setup (Volta, code formatting, commit validation, documentation structure)
-- 📋 Project planning and architecture design
-- 🏗️ Foundation patterns being established
-- 🔍 Researching global Islamic standards and multi-jurisdiction compliance frameworks
-- 🤖 AI research and integration exploration
+- 🛠️ Development tooling & processes (Volta, formatting, git hooks, CI/CD)
+- 📚 Documentation framework (Diátaxis structure, Obsidian compatibility)
+- 🤖 AI agents & automation (45 specialized agents for content creation, validation, fixing)
+- 📋 Governance structure (conventions, principles, development practices)
+- 📝 Planning systems (project planning workflows, delivery tracking)
 
-**Security & Compliance Infrastructure Track (IN PARALLEL):**
+**Website Launches:**
 
-- 🛡️ Building security operations tooling from the ground up
-- 🎯 Developing red teaming infrastructure to test platform defenses
-- 📋 Creating compliance automation and audit trail systems
-- 🔒 Researching DevSecOps frameworks and threat modeling approaches
+- 🌐 **ayokoding.com** - Bilingual educational platform (Indonesian/English) with programming tutorials, AI guides, security content
+- 🏢 **oseplatform.com** - Platform marketing website with project updates and announcements
+
+**CLI Tools:**
+
+- 🛠️ **ayokoding-cli** - Golang CLI for content automation (title updates, navigation generation)
+- 🦏 **rhino-cli** - Golang CLI for repository management (Repository Hygiene & INtegration Orchestrator)
+- 🔐 **Golang Foundation** - Golang will be used extensively on the information security side
+
+**Strategic Value:**
+
+- Early online presence and SEO building
+- Educational content establishment (ayokoding.com shares our research and learning)
+- Deployment pipeline validation with low-risk static sites
+- Audience building before Phase 1 product launch (Organic Lever)
 
 **Not Yet Available:**
 

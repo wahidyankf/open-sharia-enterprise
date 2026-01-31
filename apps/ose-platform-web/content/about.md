@@ -20,7 +20,7 @@ Islamic finance is a multi-trillion dollar industry growing at double-digit rate
 
 Our mission is to democratize access to **trustworthy**, Sharia-compliant enterprise technology for organizations of all sizes, regardless of region or industry.
 
-We're building an open-source platform with Sharia-compliance at its core—starting with Indonesian regulations and ERP foundations, expanding across enterprise domains (finance, commerce, cooperatives) and global markets.
+We're building an open-source platform with Sharia-compliance at its core—following a progressive complexity approach from individual users (Phase 1: Organic Lever productivity tracker) to SMB (Phase 2) to enterprise (Phase 3: full ERP and global expansion). Each phase generates revenue to fund the next, ensuring sustainable growth.
 
 ## Why Open Source Matters
 
@@ -69,64 +69,68 @@ We document our journey and share knowledge through [**AyoKoding**](https://ayok
 
 ### Current Status
 
-**Phase 0: Research and Setup** - We're establishing foundations before building features:
+**Phase 0: Repository Setup & Knowledge Base** - Establishing foundations and launching initial websites:
 
-- Infrastructure, documentation framework, and planning systems
-- Research into Indonesian regulations (OJK, DSN-MUI, PBI, PDP)
-- Security and DevSecOps foundations
-- AI/ML exploration and integration research
+- Repository infrastructure (development tooling, documentation, AI agents, governance)
+- **ayokoding.com** - Educational platform sharing our research and learning
+- **oseplatform.com** - Platform marketing website (this site!)
+- **ayokoding-cli** & **rhino-cli** - Golang CLI tools for automation and repository management
+- Golang foundation for information security infrastructure
+- Building online presence before Phase 1 product launch
 
 ⚠️ **Pre-Alpha** - Not yet production ready. No stable APIs, no security hardening, not accepting contributions yet.
 
 ## Development Roadmap
 
-### Phase 0: Setup and Research
+Our progressive complexity approach - start simple, test thoroughly, scale systematically:
 
-Establishing the foundational infrastructure and conducting research:
+### Phase 0: Repository Setup & Knowledge Base (Current)
 
-- 🛠️ **Development Tooling & Processes** - Infrastructure, documentation framework, AI agents, planning system
-- 🏗️ **Architecture & Design** - Monorepo architecture, core patterns, technology evaluation, security foundations
-- 🤖 **AI Research** - AI/ML applications, LLM integration, intelligent automation
-- 🔍 **Sharia Compliance Research** - Indonesian regulations (OJK, DSN-MUI, PBI, PDP)
-- 🛡️ **Security & DevSecOps Research** - Information security frameworks, threat modeling, compliance as code
-- ☁️ **Infrastructure Creation** - Cloud infrastructure, deployment pipelines, CI/CD setup
+Establishing repository infrastructure and launching initial websites:
 
-### Phase 1: ERP Foundation
+- 🛠️ **Repository Infrastructure** - Development tooling, documentation, AI agents, governance, planning systems
+- 🌐 **Website Launches** - ayokoding.com (educational) and oseplatform.com (marketing)
+- 🔧 **CLI Tools** - ayokoding-cli and rhino-cli (Golang) for automation and repository management
+- 🔐 **Golang Foundation** - Golang will be used extensively on the information security side
+- 📊 **Strategic Value** - Early online presence, audience building, deployment validation
 
-Building a solid enterprise foundation with ERP capabilities:
+### Phase 1: Organic Lever - Productivity Tracker (Individual Users)
 
-- 💰 **Financial Management** - Accounting & finance, asset management, reporting & analytics with Sharia compliance
-- 🔗 **Operations Management** - Supply chain (halal-compliant), inventory control, procurement & vendor management
-- 👥 **People & Customer Management** - HR & payroll (Sharia-compliant), sales & CRM, customer relationships
-- 🕌 **Execution & Compliance** - Project management, resource allocation, Sharia compliance framework
+First application release to test infrastructure at small scale:
 
-### Phase 2: Enterprise Domain Expansion
+- 📱 **Product** - organiclever.com (web) + Android + iOS apps
+- ⚡ **Tech Stack** - Java + Spring Boot, Next.js + TypeScript, Flutter + Dart, Kubernetes
+- 📚 **Learning Focus** - Small-scale knowledge base patterns, deployment mastery, security practice
+- 💰 **Revenue Generation** - Fund Phase 2 expansion and Phase 3 certification costs
 
-Expanding across enterprise domains with Indonesian regulatory alignment:
+### Phase 2: SMB Application (Small & Medium Business)
 
-- 🏦 **Regulatory Compliance** - Indonesian Banking Authority (OJK) and National Sharia Board (DSN-MUI) integration
-- 📚 **Financial Services Standards** - Indonesian best practices and implementation guidelines for banking, payments, and cooperatives
-- 📈 **Market Monitoring** - Enterprise technology trends, regulatory changes, and market needs
-- 💳 **Domain Implementation** - Financial services (payments, lending, banking), commerce, and cooperative management
+Building on Phase 1 foundation with moderate complexity:
 
-### Phase 3: Global Expansion
+- 🏢 **Scope** - TBD based on Phase 1 learnings
+- 🔧 **Tech** - Likely additions: Elixir middleware, Kotlin or F#, modular services architecture
+- ☸️ **Infrastructure** - Building on Phase 1 Kubernetes experience for multi-service orchestration
+- 💰 **Critical Revenue** - Must fund Phase 3's significant certification budget
 
-Extending the platform to support multiple jurisdictions:
+### Phase 3: Enterprise Application (Large Organizations)
 
-- 🕌 **International Islamic finance standards** - Accounting (AAOIFI) and prudential (IFSB) standards
-- 🌏 **Multi-jurisdiction compliance** for various countries and regions
-- 📖 **Regional variations** in Sharia interpretations and requirements
-- ✈️ **Cross-border enterprise operations** support
+Full enterprise capabilities with maximum scale:
+
+- 🌐 **Scope** - Full ERP, financial services, multi-jurisdiction compliance
+- 🏗️ **Architecture** - Distributed microservices, event-driven, service mesh
+- 📜 **Certifications** - Multi-jurisdiction compliance, Sharia certifications, financial regulations (funded by Phase 1/2 success)
+- 🌏 **Global Expansion** - International Islamic standards, cross-border operations
 
 ## Why This Approach?
 
-- 🔬 **Research before building** - Phase 0 establishes foundations through compliance, security, and AI research before implementation
-- 🇮🇩 **Indonesian market first** - Deep focus on local regulations (OJK, DSN-MUI, PBI, PDP) before global expansion
-- 🏗️ **ERP as foundation** - Enterprise Resource Planning provides core infrastructure for all business operations
-- 🕌 **Sharia-compliance from day one** - Built-in compliance architecture, not bolt-on features
-- 🛡️ **Security by design** - DevSecOps and compliance-as-code integrated from the start
-- 📈 **Scalable architecture** - Standards-based design enables extension to new regions
-- ⚖️ **Gradual expansion** - Phased approach reduces complexity while ensuring quality
+- 📈 **Progressive Complexity** - Start simple (individuals), scale to moderate (SMB), then enterprise
+- 🧪 **Real-World Testing** - Each phase validates with actual users before scaling up
+- 💰 **Financial Sustainability** - Phase 3 requires significant certifications; Phase 1/2 revenue funds this
+- 📚 **Knowledge Base Learning** - Test patterns at small scale before enterprise ERP
+- 🔄 **Learn and Iterate** - Feedback from retail informs SMB; SMB learnings inform enterprise
+- 🎯 **Minimum Risk** - Organic Lever tests infrastructure without enterprise stakes
+- 🛡️ **Security by Design** - Practice security early in low-stakes environment
+- ⚖️ **Proven Foundation** - Each phase proves architecture works before adding complexity
 
 ## Core Principles
 
@@ -141,16 +145,15 @@ Extending the platform to support multiple jurisdictions:
 
 ⚠️ **PRE-ALPHA** - This project is in early development and **NOT ready for production use**.
 
-**Current Phase: Phase 0 (Setup and Research)**
+**Current Phase: Phase 0 (Repository Setup & Knowledge Base)**
 
-We are establishing foundational infrastructure and conducting research to inform architectural decisions:
+Establishing foundational infrastructure and launching initial websites:
 
-- 🔨 Core infrastructure setup
-- 📋 Project planning and architecture design
-- 🏗️ Foundation patterns being established
-- 🔍 Researching Indonesian regulations (OJK, DSN-MUI, PBI, PDP)
-- 🛡️ Security and DevSecOps research
-- 🤖 AI research and integration exploration
+- 🔨 Repository infrastructure (tooling, documentation, AI agents, governance)
+- 🌐 ayokoding.com - Educational platform (live)
+- 🏢 oseplatform.com - Marketing website (this site, live)
+- 🔧 ayokoding-cli & rhino-cli - Golang CLI tools (Golang foundation for security)
+- 📋 Building online presence before Phase 1 product launch (Organic Lever)
 
 **Not Yet Available:**
 
