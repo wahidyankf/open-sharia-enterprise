@@ -6,7 +6,6 @@ weight: 10000003
 description: "Advanced Spring Boot through 30 examples: microservices, observability, resilience, Kubernetes, event sourcing, CQRS, API Gateway, and production patterns"
 tags:
   ["spring-boot", "tutorial", "by-example", "advanced", "microservices", "observability", "resilience", "production"]
-categories: ["learn"]
 ---
 
 Master advanced Spring Boot patterns through 30 examples covering microservices, observability, resilience, Kubernetes integration, event sourcing, CQRS, API Gateway patterns, and production deployment.

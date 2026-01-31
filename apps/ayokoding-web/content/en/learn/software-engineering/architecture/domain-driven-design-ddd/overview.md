@@ -1,5 +1,5 @@
 ---
-title: "Domain-Driven Design (DDD) Overview"
+title: "Overview"
 date: 2026-01-30T00:00:00+07:00
 draft: false
 weight: 10000000

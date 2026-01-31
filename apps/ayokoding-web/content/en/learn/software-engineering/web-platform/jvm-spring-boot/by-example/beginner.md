@@ -4,7 +4,6 @@ date: 2026-01-02T06:21:48+07:00
 draft: false
 weight: 10000001
 description: "Spring Boot basics through 25 examples in Java and Kotlin: dependency injection, beans, auto-configuration, REST controllers, data access, file handling, and CORS"
-categories: ["learn"]
 tags:
   [
     "spring-boot",

@@ -4,7 +4,6 @@ date: 2025-12-29T23:43:13+07:00
 draft: false
 weight: 10000002
 description: "Examples 29-56: Terraform production patterns covering modules, remote state, workspaces, provisioners, dynamic blocks, and state manipulation (40-75% coverage)"
-categories: ["learn"]
 tags: ["terraform", "tutorial", "by-example", "intermediate", "modules", "state", "workspaces", "iac"]
 ---
 

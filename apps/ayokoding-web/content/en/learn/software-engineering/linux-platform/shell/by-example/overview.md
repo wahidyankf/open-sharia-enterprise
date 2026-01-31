@@ -3,7 +3,7 @@ title: "Overview"
 weight: 10000000
 date: 2025-12-30T07:56:02+07:00
 draft: false
-description: "Learn Linux shell through 30 annotated code examples covering 75% of essential command-line skills - ideal for experienced developers"
+description: "Learn Linux shell through 80 annotated code examples covering 95% of essential command-line skills - ideal for experienced developers"
 tags: ["linux", "shell", "bash", "tutorial", "by-example", "examples", "code-first"]
 ---
 
@@ -46,9 +46,9 @@ No prior shell scripting experience required - the examples teach through demons
 
 ## Coverage Overview
 
-This tutorial provides **75% coverage** of essential Linux shell skills through **30 annotated examples**, organized into two levels:
+This tutorial provides **95% coverage** of essential Linux shell skills through **80 annotated examples**, organized into three levels:
 
-### Beginner Level (Examples 1-20, 0-40% Coverage)
+### Beginner Level (Examples 1-30, 0-40% Coverage)
 
 - **Basic Commands**: echo, ls, cd, pwd, mkdir, rm, cp, mv, touch, cat
 - **File Viewing**: less, head, tail, wc
@@ -59,7 +59,7 @@ This tutorial provides **75% coverage** of essential Linux shell skills through 
 - **Loops**: for, while, arrays
 - **Functions**: definition, arguments, return values
 
-### Intermediate Level (Examples 21-30, 40-75% Coverage)
+### Intermediate Level (Examples 31-55, 40-75% Coverage)
 
 - **Text Processing**: sed, awk for log analysis and data transformation
 - **Scripting Patterns**: argument parsing, error handling, exit codes
@@ -69,6 +69,16 @@ This tutorial provides **75% coverage** of essential Linux shell skills through 
 - **Network**: curl, wget, ssh, scp, rsync
 - **Scheduling**: cron, at for automation
 - **Best Practices**: production-ready script patterns
+
+### Advanced Level (Examples 56-80, 75-95% Coverage)
+
+- **Advanced Scripting**: Complex automation, error handling patterns
+- **Signal Handling**: Trap commands, process lifecycle management
+- **Performance**: Optimization techniques, parallel processing
+- **Debugging**: Advanced troubleshooting, script profiling
+- **System Administration**: User management, service configuration
+- **Security**: Secure scripting patterns, permission handling
+- **Production Patterns**: Enterprise-grade scripts, monitoring integration
 
 ## How to Use This Tutorial
 
@@ -103,11 +113,10 @@ By-example tutorials are **code-first learning materials** designed for experien
 
 ## Tutorial Structure
 
-- **Example 1-20 (Beginner)**: Core commands, file operations, basic scripting
-- **Example 21-30 (Intermediate)**: Text processing, automation, production patterns
-
-Future expansion will add Examples 31-90 for advanced topics (90% coverage), including performance optimization, debugging, system administration, and security patterns.
+- **Examples 1-30 (Beginner)**: Core commands, file operations, basic scripting (0-40% coverage)
+- **Examples 31-55 (Intermediate)**: Text processing, automation, production patterns (40-75% coverage)
+- **Examples 56-80 (Advanced)**: Performance, debugging, system administration, security patterns (75-95% coverage)
 
 ## Next Steps
 
-Start with [Beginner](/en/learn/software-engineering/linux-platform/shell/by-example/beginner) examples for fundamentals, then progress to [Intermediate](/en/learn/software-engineering/linux-platform/shell/by-example/intermediate) for production patterns.
+Start with [Beginner](/en/learn/software-engineering/linux-platform/shell/by-example/beginner) examples for fundamentals, then progress to [Intermediate](/en/learn/software-engineering/linux-platform/shell/by-example/intermediate) for production patterns, and finally [Advanced](/en/learn/software-engineering/linux-platform/shell/by-example/advanced) for expert-level techniques.

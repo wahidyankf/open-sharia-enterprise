@@ -21,7 +21,7 @@ tags:
 
 Master advanced Java concepts through 25 annotated code examples. Build on intermediate foundations to explore advanced concurrency, JVM internals, design patterns, and modern Java features.
 
-## Example 61: Concurrent Collections
+## Example 51: Concurrent Collections
 
 Concurrent collections provide thread safety with better performance than synchronized wrappers. `ConcurrentHashMap` offers lock striping. `BlockingQueue` supports producer-consumer patterns.
 
@@ -203,7 +203,7 @@ consumer.start();                // => Start consumer thread, begins consuming i
 
 ---
 
-## Example 62: Atomic Variables
+## Example 52: Atomic Variables
 
 Atomic variables use hardware-level Compare-And-Swap (CAS) operations for lock-free concurrency. They provide better performance than synchronized blocks for simple state updates. Ideal for counters, flags, and references.
 
@@ -347,7 +347,7 @@ System.out.println("Final count: " + sharedCounter.get());
 
 ---
 
-## Example 63: CountDownLatch and CyclicBarrier
+## Example 53: CountDownLatch and CyclicBarrier
 
 `CountDownLatch` allows threads to wait until a set of operations completes. `CyclicBarrier` synchronizes threads at a common barrier point. Both coordinate multi-threaded workflows but serve different patterns.
 
@@ -514,7 +514,7 @@ for (int i = 0; i < 5; i++) {
 
 ---
 
-## Example 64: Fork/Join Framework
+## Example 54: Fork/Join Framework
 
 Fork/Join framework enables efficient parallel processing of recursive tasks. It uses work-stealing queues where idle threads steal work from busy threads. Powers parallel streams under the hood.
 
@@ -669,7 +669,7 @@ long parallelSum = java.util.stream.LongStream.range(1, 10001)
 
 ---
 
-## Example 65: Annotations and Reflection
+## Example 55: Annotations and Reflection
 
 Annotations add metadata to code for compile-time and runtime processing. Reflection inspects and manipulates code at runtime. Together they enable frameworks like Spring and JUnit to work their magic.
 
@@ -850,7 +850,7 @@ class Example {
 
 ---
 
-## Example 66: Enums with Behavior
+## Example 56: Enums with Behavior
 
 Enums are type-safe constants that can have fields, methods, and constant-specific behavior. They're more powerful than simple integer constants and integrate seamlessly with switch statements.
 
@@ -1031,7 +1031,7 @@ schedule.put(Day.WEDNESDAY, "Code review");
 
 ---
 
-## Example 67: Sealed Classes and Pattern Matching
+## Example 57: Sealed Classes and Pattern Matching
 
 Sealed classes restrict which classes can extend or implement them, enabling exhaustive pattern matching. Pattern matching eliminates casts and enables type-safe, concise code. Available in Java 17+.
 
@@ -1249,7 +1249,7 @@ String message = switch (result) {
 
 ---
 
-## Example 68: Modules (Java Platform Module System)
+## Example 58: Modules (Java Platform Module System)
 
 Modules provide stronger encapsulation than packages, enabling better dependency management and smaller runtime images. Defined via `module-info.java`, modules explicitly declare dependencies and exports.
 
@@ -1401,7 +1401,7 @@ public class InternalUtil {      // => Public class BUT in non-exported package
 
 ---
 
-## Example 69: var and Type Inference
+## Example 59: var and Type Inference
 
 `var` enables local variable type inference, reducing boilerplate while preserving static typing. The compiler infers types from initializers. Use for readability when types are obvious, avoid when clarity suffers.
 
@@ -1547,7 +1547,7 @@ var number = 1;                  // => Inferred as int, but could be long
 
 ---
 
-## Example 70: Garbage Collection Basics
+## Example 60: Garbage Collection Basics
 
 Garbage collection automatically reclaims memory from unreachable objects. The generational hypothesis (most objects die young) drives GC design. Understanding GC helps optimize application performance.
 
@@ -1757,7 +1757,7 @@ class Resource {
 
 ---
 
-## Example 71: Memory Management and Reference Types
+## Example 61: Memory Management and Reference Types
 
 Java provides four reference types to control GC behavior. Strong references prevent collection. Soft references enable memory-sensitive caches. Weak references allow collection despite references. Phantom references enable pre-mortem cleanup.
 
@@ -1938,7 +1938,7 @@ class MetadataCache {
 
 ---
 
-## Example 72: Performance Monitoring and Profiling
+## Example 62: Performance Monitoring and Profiling
 
 Java provides rich tools for monitoring and profiling applications. JMX exposes runtime metrics. JFR enables low-overhead production profiling. JMH provides accurate microbenchmarks. Profile before optimizing.
 
@@ -2079,7 +2079,7 @@ public void benchmarkMethod() {
 
 ---
 
-## Example 73: Common Performance Patterns
+## Example 63: Common Performance Patterns
 
 Choosing appropriate data structures and algorithms dramatically impacts performance. StringBuilder for string building. ArrayList for indexed access. HashMap for lookups. Lazy initialization for expensive objects. Profile before optimizing.
 
@@ -2273,7 +2273,7 @@ Map<String, String> cache = new LinkedHashMap<>(100, 0.75f, true) {
 
 ---
 
-## Example 74: Connection Pool Factory Pattern
+## Example 64: Connection Pool Factory Pattern
 
 Production database applications use connection pooling to reuse expensive database connections. This example demonstrates Singleton (pool manager), Factory (connection creation), and Builder (configuration) patterns in a real-world context.
 
@@ -2758,7 +2758,7 @@ pool.shutdown(); // Cleanup
 
 ---
 
-## Example 75: Strategy, Observer, Decorator
+## Example 65: Strategy, Observer, Decorator
 
 Behavioral patterns define communication between objects. Strategy encapsulates algorithms. Observer enables one-to-many notifications. Decorator adds responsibilities dynamically without subclassing.
 
@@ -3095,7 +3095,7 @@ System.out.println(coffee.cost()); // => 2.7
 
 ---
 
-## Example 76: Dependency Injection Basics
+## Example 66: Dependency Injection Basics
 
 Dependency Injection (DI) inverts control, allowing dependencies to be provided externally rather than created internally. Enhances testability, flexibility, and maintainability. Constructor injection preferred for required dependencies.
 
@@ -3318,7 +3318,7 @@ class EmailService implements NotificationService {
 
 ---
 
-## Example 77: Immutability Patterns
+## Example 67: Immutability Patterns
 
 Immutable objects cannot be modified after creation, providing inherent thread safety and simplicity. Use final fields, no setters, defensive copying for mutable components. Records automate immutable class creation.
 
@@ -3505,7 +3505,7 @@ public void processPoint(ImmutablePoint point) {
 
 ---
 
-## Example 78: SOLID Principles in Java
+## Example 68: SOLID Principles in Java
 
 SOLID principles guide maintainable object-oriented design. Single Responsibility (one reason to change). Open/Closed (open for extension, closed for modification). Liskov Substitution (subtypes substitutable). Interface Segregation (many specific interfaces). Dependency Inversion (depend on abstractions).
 
@@ -3778,7 +3778,7 @@ class OrderProcessor {
 
 ---
 
-## Example 79: Custom ClassLoaders
+## Example 69: Custom ClassLoaders
 
 ClassLoaders dynamically load classes into the JVM. The delegation model ensures core classes load first. Custom loaders enable plugins, hot-reloading, and bytecode manipulation. Each loader creates an isolation boundary.
 
@@ -3947,7 +3947,7 @@ thread.setContextClassLoader(new CustomClassLoader("/custom/path"));
 
 ---
 
-## Example 80: Bytecode Manipulation with ASM/ByteBuddy
+## Example 70: Bytecode Manipulation with ASM/ByteBuddy
 
 Bytecode manipulation enables runtime code generation, proxying, and instrumentation. ASM provides low-level bytecode control. ByteBuddy offers high-level API. Used in AOP frameworks, mocking libraries, and profilers.
 
@@ -4084,7 +4084,7 @@ proxy.sayHello("Alice");
 
 ---
 
-## Example 81: JNI and Native Code
+## Example 71: JNI and Native Code
 
 Java Native Interface (JNI) bridges Java and native code (C/C++). Useful for legacy system integration, hardware access, and performance-critical operations. Adds complexity and platform dependency.
 
@@ -4347,7 +4347,7 @@ MethodHandle strlen = linker.downcallHandle(
 
 ---
 
-## Example 82: MicroProfile and Cloud-Native Java
+## Example 72: MicroProfile and Cloud-Native Java
 
 MicroProfile standardizes enterprise Java microservices. Specifications for REST, configuration, health checks, metrics, fault tolerance, and JWT authentication. Enables cloud-native Java with containers and Kubernetes.
 
@@ -4656,7 +4656,7 @@ spec:
 
 ---
 
-## Example 83: Reactive Programming with Reactive Streams
+## Example 73: Reactive Programming with Reactive Streams
 
 Reactive Streams enable asynchronous data processing with backpressure. Publishers emit data, Subscribers consume, Subscriptions control flow. Project Reactor (Flux/Mono) provides practical implementation. Ideal for high-throughput, non-blocking I/O.
 
@@ -4915,7 +4915,7 @@ Flux.fromIterable(urls)          // => Creates Flux from URL list
 
 ---
 
-## Example 84: Virtual Threads (Project Loom, Java 21+)
+## Example 74: Virtual Threads (Project Loom, Java 21+)
 
 Virtual threads enable millions of lightweight threads with low overhead. M:N mapping to platform threads. Ideal for I/O-bound workloads. Simplifies concurrent code without callbacks. Available in Java 21+.
 
@@ -5061,7 +5061,7 @@ ExecutorService newEx = Executors.newVirtualThreadPerTaskExecutor();
 
 ---
 
-## Example 85: Modern Java Best Practices
+## Example 75: Modern Java Best Practices
 
 Modern Java emphasizes immutability, composition, type safety, and simplicity. Records for data, sealed classes for domain modeling, pattern matching for cleaner code. Testing and modularity are essential. Streams and Optional improve expressiveness.
 

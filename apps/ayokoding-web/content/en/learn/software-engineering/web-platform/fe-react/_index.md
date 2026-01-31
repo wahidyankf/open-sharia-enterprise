@@ -1,5 +1,5 @@
 ---
-title: "React + TypeScript"
+title: "Fe React"
 weight: 100004
 ---
 

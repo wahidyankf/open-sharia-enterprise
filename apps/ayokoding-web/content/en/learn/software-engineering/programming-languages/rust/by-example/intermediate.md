@@ -3802,91 +3802,122 @@ fn main() {
 
 ```rust
 use std::collections::HashSet;       // => HashSet requires Eq + Hash
+                                     // => Import from standard library collections module
 
 // Point with derived PartialEq
 #[derive(Debug, PartialEq, Eq, Hash)] // => Auto-implement equality traits
+                                     // => derive attribute macro generates code at compile-time
+                                     // => Debug: enables {:?} formatting
                                      // => PartialEq: == and != operators
                                      // => Eq: marker trait (reflexive equality)
                                      // => Hash: enables use in HashMap/HashSet
 struct Point {                       // => Simple coordinate struct
-    x: i32,                          // => i32 implements PartialEq + Eq
-    y: i32,                          // => i32 implements PartialEq + Eq
+    x: i32,                          // => i32 implements PartialEq + Eq + Hash
+    y: i32,                          // => i32 implements PartialEq + Eq + Hash
 }                                    // => Point derives all traits
+                                     // => Derived PartialEq compares all fields
 
 // Person with custom PartialEq
 #[derive(Debug)]                     // => Only Debug, no PartialEq
-struct Person {
-    name: String,                    // => Person name
-    age: u32,                        // => Person age
-    id: u64,                         // => Unique identifier
-}
+                                     // => Manual PartialEq impl below
+struct Person {                      // => Person struct definition
+    name: String,                    // => Person name (owned String)
+    age: u32,                        // => Person age (unsigned 32-bit)
+    id: u64,                         // => Unique identifier (unsigned 64-bit)
+}                                    // => 3 fields but equality based on id only
 
 impl PartialEq for Person {          // => Manual PartialEq implementation
+                                     // => Implements PartialEq trait for Person type
     fn eq(&self, other: &Self) -> bool {
+                                     // => Trait method signature (required)
                                      // => Compare two Person instances
-                                     // => self: left operand
-                                     // => other: right operand
+                                     // => self: left operand (immutable borrow)
+                                     // => other: right operand (immutable borrow)
+                                     // => Returns bool (true if equal)
         self.id == other.id          // => Compare only by id
                                      // => Ignore name and age
                                      // => Same id = same person
-    }                                // => Return bool
-}
+                                     // => Custom equality logic (not field-by-field)
+    }                                // => Return bool (true/false)
+}                                    // => Person now has == and != operators
 
 // Temperature: PartialEq but NOT Eq (contains f64)
-#[derive(Debug, PartialEq)]          // => Can't derive Eq
+#[derive(Debug, PartialEq)]          // => Can't derive Eq (f64 is not Eq)
+                                     // => derive(Eq) would fail compilation
                                      // => f64 is PartialEq but not Eq
-                                     // => NaN != NaN in floating point
-struct Temperature {
+                                     // => NaN != NaN in floating point (violates reflexivity)
+struct Temperature {                 // => Temperature wrapper around f64
     celsius: f64,                    // => f64 implements PartialEq only
+                                     // => f64 is NOT Eq due to NaN behavior
 }                                    // => Temperature is PartialEq, not Eq
+                                     // => Cannot be used in HashSet (requires Eq)
 
 // Custom comparison logic
-#[derive(Debug)]
-struct CaseInsensitiveString {
-    value: String,                   // => Internal string storage
-}
+#[derive(Debug)]                     // => Debug only, custom PartialEq below
+struct CaseInsensitiveString {       // => String wrapper with custom equality
+    value: String,                   // => Internal string storage (owned)
+}                                    // => Struct holds one field
 
 impl PartialEq for CaseInsensitiveString {
+                                     // => Manual PartialEq with custom logic
                                      // => Case-insensitive comparison
     fn eq(&self, other: &Self) -> bool {
+                                     // => Takes two &Self references
+                                     // => Returns true if equal (ignoring case)
         self.value.to_lowercase() == other.value.to_lowercase()
                                      // => Convert both to lowercase
-                                     // => "Hello" == "HELLO"
-    }
-}
+                                     // => Compare normalized values
+                                     // => "Hello" == "HELLO" (true)
+                                     // => "hello" == "world" (false)
+    }                                // => Return comparison result
+}                                    // => CaseInsensitiveString now has == operator
 
-fn main() {
+fn main() {                          // => Example program demonstrating PartialEq/Eq
     // Using derived PartialEq
-    let p1 = Point { x: 1, y: 2 };   // => p1: Point
+    let p1 = Point { x: 1, y: 2 };   // => p1: Point at (1, 2)
+                                     // => Type: Point (derived PartialEq + Eq + Hash)
     let p2 = Point { x: 1, y: 2 };   // => p2: same coordinates as p1
+                                     // => Separate instance, same values
     let p3 = Point { x: 2, y: 3 };   // => p3: different coordinates
+                                     // => Different values from p1 and p2
 
     println!("{}", p1 == p2);        // => == operator calls PartialEq::eq
-                                     // => Field-by-field comparison
-                                     // => x == x && y == y
+                                     // => Field-by-field comparison (derived impl)
+                                     // => p1.x == p2.x && p1.y == p2.y
+                                     // => 1 == 1 && 2 == 2
                                      // => Output: true
     println!("{}", p1 == p3);        // => Compare p1 and p3
+                                     // => 1 != 2 (x differs)
                                      // => Output: false
     println!("{}", p1 != p3);        // => != operator is !PartialEq::eq
+                                     // => !(p1 == p3) = !false = true
                                      // => Output: true
 
     // PartialEq enables comparisons in conditions
     if p1 == p2 {                    // => Use in if statement
+                                     // => Condition evaluates to true
         println!("p1 and p2 are equal");
                                      // => Output: p1 and p2 are equal
-    }
+                                     // => This branch executes
+    }                                // => if body completes
 
     // Using in collections (requires Eq + Hash)
-    let mut points = HashSet::new(); // => HashSet<Point>
-                                     // => Requires Point: Eq + Hash
-    points.insert(p1);               // => Insert p1
+    let mut points = HashSet::new(); // => Create empty HashSet
+                                     // => HashSet<Point> (type inferred from inserts)
+                                     // => Requires Point: Eq + Hash (both derived)
+    points.insert(p1);               // => Insert p1 (owns p1, moves it)
+                                     // => Set now contains Point { x: 1, y: 2 }
     points.insert(p2);               // => Insert p2 (duplicate of p1)
+                                     // => Hash and equality check detect duplicate
                                      // => Only one Point { x: 1, y: 2 } stored
+                                     // => p2 not inserted (already present)
     points.insert(p3);               // => Insert p3 (different)
+                                     // => Set now has 2 unique points
 
     println!("Points in set: {}", points.len());
+                                     // => len() returns number of unique elements
                                      // => Output: Points in set: 2
-                                     // => p1 and p2 are equal (same point)
+                                     // => p1 and p2 are equal (same point, deduplicated)
 
     // Custom PartialEq: Person compared by id only
     let alice1 = Person {

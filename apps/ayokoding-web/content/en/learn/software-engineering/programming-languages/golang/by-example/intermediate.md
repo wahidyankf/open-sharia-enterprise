@@ -404,6 +404,8 @@ type APIResponse struct {
 
 **Key Takeaway**: Struct tags control JSON field mapping - essential when Go names differ from JSON names. Struct field names must be capitalized for JSON encoding. Use `json.Marshal()` for compact JSON and `json.MarshalIndent()` for pretty-printed JSON.
 
+**Why It Matters**: JSON handling is mission-critical for API services, microservices communication, and configuration management in production. Every REST API endpoint marshals responses to JSON, every webhook consumes JSON payloads, and every configuration file uses JSON format. Struct tags control exact field naming (snake_case, camelCase), omit empty fields (`omitempty`), and enable versioned APIs where Go structs evolve independently from JSON contracts. Production teams rely on `json.Marshal` for HTTP responses, `json.Unmarshal` for request parsing, and struct tags for API compatibility across service boundaries.
+
 ## Example 34: Goroutines
 
 Goroutines are lightweight threads managed by the Go runtime. Unlike OS threads, thousands of goroutines can run concurrently without overwhelming system resources. The `go` keyword starts a goroutine that runs concurrently with code that follows.

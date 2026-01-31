@@ -160,7 +160,7 @@ You understand static typing and compilation. Java simplifies memory management:
 - **No header files**: Single compilation unit per class
 - **Platform independence**: Write once, run anywhere via JVM
 
-Focus on Examples 61-75 (JVM internals) and Examples 45-55 (concurrency) to leverage your systems knowledge.
+Focus on Examples 51-75 (JVM internals) and Examples 45-55 (concurrency) to leverage your systems knowledge.
 
 ### For Kotlin/Scala Developers
 
@@ -189,6 +189,6 @@ Jump into the beginner examples to start learning Java through code:
 
 - [Beginner Examples (1-30)](/en/learn/software-engineering/programming-languages/java/by-example/beginner) - Basic syntax, OOP fundamentals, collections, control flow
 - [Intermediate Examples (31-60)](/en/learn/software-engineering/programming-languages/java/by-example/intermediate) - Advanced OOP, generics, functional programming, concurrency
-- [Advanced Examples (61-85)](/en/learn/software-engineering/programming-languages/java/by-example/advanced) - JVM internals, design patterns, modern Java features
+- [Advanced Examples (51-75)](/en/learn/software-engineering/programming-languages/java/by-example/advanced) - JVM internals, design patterns, modern Java features
 
 Each example is self-contained and runnable. Start with Example 1, or jump to topics that interest you most.

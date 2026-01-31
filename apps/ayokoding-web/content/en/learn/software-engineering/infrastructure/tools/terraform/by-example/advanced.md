@@ -4,7 +4,6 @@ date: 2025-12-29T23:43:13+07:00
 draft: false
 weight: 10000003
 description: "Examples 57-84: Advanced Terraform patterns covering custom providers, testing, production patterns, security, and CI/CD integration (75-95% coverage)"
-categories: ["learn"]
 tags: ["terraform", "tutorial", "by-example", "advanced", "testing", "security", "cicd", "providers"]
 ---
 

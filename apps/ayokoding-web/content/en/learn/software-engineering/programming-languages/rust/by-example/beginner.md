@@ -22,9 +22,10 @@ Every Rust program starts with a `main` function, which is the entry point the R
 **Build and run**: Compile with `rustc main.rs` (creates executable `main`), then run with `./main`. Rust compiles to native code without a VM like Java/C#.
 
 ```rust
-fn main() {
-    println!("Hello, World!");       // => Output: Hello, World!
-}                                     // => main returns (), program exits with code 0
+fn main() {                          // => Program entry point (called by Rust runtime)
+    println!("Hello, World!");       // => Macro expands at compile-time, prints to stdout
+                                     // => Output: Hello, World!
+}                                    // => main returns (), program exits with code 0
 ```
 
 **Key Takeaway**: Rust programs require a `main()` function as the entry point, and macros (identified by `!`) provide compile-time code generation for common operations like formatted printing. Rust compiles directly to native code without runtime overhead.
@@ -1223,7 +1224,9 @@ fn main() {
 
     // Field init shorthand (when variable name matches field name)
     let username = String::from("shorthand");
+                                     // => username variable created (type: String)
     let email = String::from("short@example.com");
+                                     // => email variable created (type: String)
 
     let user3 = User {
         username,                    // => Shorthand for username: username
@@ -1805,33 +1808,40 @@ graph TD
 
 ```rust
 // Define enum with multiple variants
-enum Coin {
-    Penny,                           // => 1 cent coin
-    Nickel,                          // => 5 cent coin
-    Dime,                            // => 10 cent coin
-    Quarter,                         // => 25 cent coin
-}
+enum Coin {                          // => Enum type declaration
+    Penny,                           // => 1 cent coin (unit variant, no data)
+    Nickel,                          // => 5 cent coin (unit variant)
+    Dime,                            // => 10 cent coin (unit variant)
+    Quarter,                         // => 25 cent coin (unit variant)
+}                                    // => All variants have same type: Coin
 
 // Function using match expression
 fn value_in_cents(coin: Coin) -> u8 {
                                      // => coin: Coin enum (any variant)
                                      // => Returns u8 (cent value)
+                                     // => Function owns coin (moved from caller)
 
     // match: exhaustive pattern matching expression
     // Unlike if/else, match is an EXPRESSION (returns value)
     match coin {                     // => Match against coin variants
                                      // => Compiler enforces exhaustiveness
                                      // => Must handle ALL variants
+                                     // => Tests each arm top-to-bottom until match found
 
         // Pattern arms: pattern => expression
         Coin::Penny => 1,            // => If coin is Penny, return 1
                                      // => Expression (no semicolon)
+                                     // => Type: u8
         Coin::Nickel => 5,           // => If coin is Nickel, return 5
+                                     // => All arms must return same type
         Coin::Dime => 10,            // => If coin is Dime, return 10
+                                     // => Pattern matches exactly one variant
         Coin::Quarter => 25,         // => If coin is Quarter, return 25
+                                     // => Last arm, no comma needed
 
     }                                // => match returns value from matching arm
                                      // => Compiler verifies all 4 variants covered
+                                     // => Return type: u8 (inferred from arms)
 
     // If we forget a variant:
     // match coin {
@@ -1841,13 +1851,15 @@ fn value_in_cents(coin: Coin) -> u8 {
     //     // Missing Quarter!
     // }                             // => ERROR: non-exhaustive patterns
                                      // => Compiler forces us to handle all cases
+                                     // => Prevents logic errors at compile time
 
-}
+}                                    // => Function ends, coin dropped (consumed by match)
 
-fn main() {
+fn main() {                          // => Example program entry point
     // Create enum instance
     let coin = Coin::Dime;           // => coin is Dime variant
                                      // => Type: Coin
+                                     // => Stored on stack (zero-size variant)
 
     // Call function (ownership transfer)
     let value = value_in_cents(coin);// => coin moved into function
@@ -1855,32 +1867,37 @@ fn main() {
                                      // => value is 10 (type: u8)
     println!("Value: {} cents", value);
                                      // => Output: Value: 10 cents
+                                     // => Formats u8 as decimal
 
     // Match with pattern destructuring
 
     // Enum with data
-    enum UsState {
-        Alaska,
-        Alabama,
-        // ...
-    }
+    enum UsState {                   // => State enumeration
+        Alaska,                      // => Alaska state
+        Alabama,                     // => Alabama state
+        // ...                       // => Other states omitted for brevity
+    }                                // => Each variant is unit type (no data)
 
-    enum Coin2 {
-        Penny,
-        Nickel,
-        Dime,
-        Quarter(UsState),            // => Quarter variant holds UsState
-    }
+    enum Coin2 {                     // => Enhanced coin enum with data
+        Penny,                       // => Unit variant (no data)
+        Nickel,                      // => Unit variant
+        Dime,                        // => Unit variant
+        Quarter(UsState),            // => Tuple variant holds UsState
+                                     // => Quarter carries which state it's from
+    }                                // => Mixed enum: some variants with data, some without
 
     fn value_in_cents2(coin: Coin2) -> u8 {
-        match coin {
-            Coin2::Penny => 1,
-            Coin2::Nickel => 5,
-            Coin2::Dime => 10,
+                                     // => Takes Coin2 enum (any variant)
+                                     // => Returns u8 (cent value)
+        match coin {                 // => Pattern match on Coin2
+            Coin2::Penny => 1,       // => Simple pattern (no data to extract)
+            Coin2::Nickel => 5,      // => Returns 5 for Nickel
+            Coin2::Dime => 10,       // => Returns 10 for Dime
             // Pattern with data extraction
             Coin2::Quarter(state) => {
+                                     // => Destructure Quarter variant
                                      // => Extract state from Quarter variant
-                                     // => state: UsState
+                                     // => state: UsState (pattern binding)
                 println!("Quarter from state!");
                 25                   // => Return value
             }
@@ -2327,40 +2344,49 @@ fn main() {
 The `?` operator propagates errors up the call stack, returning early with `Err` if present. It makes error handling concise without nested `match` statements. Only works in functions that return `Result` or `Option`.
 
 ```rust
-use std::fs::File;
-use std::io::{self, Read};
+use std::fs::File;                   // => Import File type from filesystem module
+use std::io::{self, Read};           // => Import io module and Read trait
+                                     // => self creates io:: namespace, Read enables read_to_string
 
 // Function must return Result to use ? operator
 fn read_username_from_file() -> Result<String, io::Error> {
+                                     // => Returns Result<T, E> type
+                                     // => Success type: String (file contents)
+                                     // => Error type: io::Error (I/O failures)
     // Attempt to open file with ? operator
     let mut f = File::open("hello.txt")?;
-    // => If Err: immediately return Err(io::Error) from function
-    // => If Ok(file): unwrap File and continue
-    // => f is File (not Result<File, Error>)
-    // => Equivalent to: let mut f = match File::open(...) {
-    //        Ok(file) => file,
-    //        Err(e) => return Err(e),
-    //    };
+                                     // => File::open returns Result<File, io::Error>
+                                     // => ? operator: if Err, return Err immediately
+                                     // => If Err: immediately return Err(io::Error) from function
+                                     // => If Ok(file): unwrap File and continue
+                                     // => f is File (not Result<File, Error>)
+                                     // => Equivalent to: let mut f = match File::open(...) {
+                                     //        Ok(file) => file,
+                                     //        Err(e) => return Err(e),
+                                     //    };
 
     // Create empty String to hold file contents
-    let mut s = String::new();
-    // => s is String, empty (length 0)
+    let mut s = String::new();       // => s is String, empty (length 0)
+                                     // => Type: String (heap-allocated, mutable)
+                                     // => Capacity: 0 bytes initially (will grow)
 
     // Read file contents into string with ? operator
-    f.read_to_string(&mut s)?;
-    // => If Err: return Err(io::Error) from function
-    // => If Ok(bytes): s now contains file contents
-    // => Returns number of bytes read, which we ignore
-    // => Equivalent to: match f.read_to_string(&mut s) {
-    //        Ok(_) => (),
-    //        Err(e) => return Err(e),
-    //    };
+    f.read_to_string(&mut s)?;       // => Mutably borrow s, populate with file contents
+                                     // => read_to_string returns Result<usize, io::Error>
+                                     // => ? operator: if Err, return Err
+                                     // => If Err: return Err(io::Error) from function
+                                     // => If Ok(bytes): s now contains file contents
+                                     // => Returns number of bytes read, which we ignore
+                                     // => Equivalent to: match f.read_to_string(&mut s) {
+                                     //        Ok(_) => (),
+                                     //        Err(e) => return Err(e),
+                                     //    };
 
     // Wrap success value in Ok variant
-    Ok(s)
-    // => Return Ok(String) containing file contents
-    // => s is moved into Ok (ownership transferred)
-}
+    Ok(s)                            // => Construct Ok(String) variant
+                                     // => Return Ok(String) containing file contents
+                                     // => s is moved into Ok (ownership transferred)
+}                                    // => Function returns Result<String, io::Error>
 
 fn main() {
     // Call function and handle Result
@@ -2382,46 +2408,65 @@ fn main() {
 
     // Chaining ? operators for concise error handling
     fn read_first_line() -> Result<String, io::Error> {
+                                     // => Returns Result<String, io::Error>
         // Multiple ? operators in sequence
         let mut file = File::open("data.txt")?;
-        // => Return early if open fails
+                                     // => Attempt to open file
+                                     // => Return early if open fails
+                                     // => file is File if successful
 
         let mut contents = String::new();
+                                     // => Create empty String for file contents
         file.read_to_string(&mut contents)?;
-        // => Return early if read fails
+                                     // => Read entire file into string
+                                     // => Return early if read fails
+                                     // => contents now has full file data
 
-        let first_line = contents
-            .lines()
-            .next()
+        let first_line = contents   // => Extract first line from contents
+            .lines()                 // => Iterator over lines (splits on '\n')
+                                     // => Returns Lines iterator
+            .next()                  // => Get first line
+                                     // => Returns Option<&str> (None if empty)
             .ok_or(io::Error::new(io::ErrorKind::Other, "Empty file"))?;
-        // => ok_or converts Option to Result
-        // => next() returns Option<&str>
-        // => If None: create custom Error
-        // => ? propagates the error
+                                     // => ok_or converts Option to Result
+                                     // => next() returns Option<&str>
+                                     // => If None: create custom Error
+                                     // => If Some(line): unwrap to &str
+                                     // => ? propagates the error
+                                     // => first_line is &str
 
-        Ok(first_line.to_string())
-        // => Return Ok with first line
-    }
+        Ok(first_line.to_string())   // => Convert &str to owned String
+                                     // => Return Ok with first line
+                                     // => Allocates new String on heap
+    }                                // => Function returns Result<String, io::Error>
 
     // ? operator with Option (requires Option return type)
     fn get_first_element(vec: Vec<i32>) -> Option<i32> {
-        let first = vec.get(0)?;
-        // => If None: return None from function
-        // => If Some(&value): unwrap to &i32 and continue
-        // => first is &i32
+                                     // => Takes Vec, returns Option<i32>
+                                     // => vec is moved (ownership transfer)
+        let first = vec.get(0)?;     // => get(0) returns Option<&i32>
+                                     // => If None: return None from function
+                                     // => If Some(&value): unwrap to &i32 and continue
+                                     // => first is &i32 (reference to first element)
 
-        Some(*first)
-        // => Dereference and wrap in Some
-    }
+        Some(*first)                 // => Dereference first to get i32 value
+                                     // => Wrap in Some variant
+                                     // => Returns Some(i32)
+    }                                // => Function returns Option<i32>
 
-    let numbers = vec![10, 20, 30];
-    // => numbers is Vec<i32> with 3 elements
+    let numbers = vec![10, 20, 30];  // => Create Vec with 3 elements
+                                     // => numbers is Vec<i32> with 3 elements
+                                     // => Type: Vec<i32> (heap-allocated)
 
     match get_first_element(numbers) {
+                                     // => numbers moved into function
+                                     // => Pattern match on Option<i32>
         Some(n) => println!("First: {}", n),
-        // => Output: First: 10
+                                     // => n is first element (10)
+                                     // => Output: First: 10
         None => println!("Empty vector"),
-    }
+                                     // => Would execute if vector was empty
+    }                                // => Match ensures all cases handled
 
     // ? cannot be used in main() unless main returns Result
     // This is INVALID:

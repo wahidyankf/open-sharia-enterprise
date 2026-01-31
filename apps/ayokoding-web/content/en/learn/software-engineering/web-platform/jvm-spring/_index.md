@@ -1,5 +1,5 @@
 ---
-title: "JVM Spring Framework"
+title: "Jvm Spring"
 weight: 100002
 date: 2025-01-29T00:00:00+07:00
 draft: false

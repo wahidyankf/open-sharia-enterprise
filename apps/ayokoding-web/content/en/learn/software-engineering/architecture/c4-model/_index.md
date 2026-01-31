@@ -10,4 +10,4 @@ draft: false
   - [Beginner](/en/learn/software-engineering/architecture/c4-model/by-example/beginner)
   - [Intermediate](/en/learn/software-engineering/architecture/c4-model/by-example/intermediate)
   - [Advanced](/en/learn/software-engineering/architecture/c4-model/by-example/advanced)
-- [C4 Model Overview](/en/learn/software-engineering/architecture/c4-model/overview)
+- [Overview](/en/learn/software-engineering/architecture/c4-model/overview)
