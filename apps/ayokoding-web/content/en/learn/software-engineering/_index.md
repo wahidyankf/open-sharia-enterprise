@@ -44,7 +44,7 @@ weight: 102
   - [Fe React](/en/learn/software-engineering/web-platform/fe-react)
   - [Fe Nextjs](/en/learn/software-engineering/web-platform/fe-nextjs)
 - [Architecture](/en/learn/software-engineering/architecture)
-  - [C4 Model](/en/learn/software-engineering/architecture/c4-architecture-model)
+  - [C4 Architecture Model](/en/learn/software-engineering/architecture/c4-architecture-model)
   - [Overview](/en/learn/software-engineering/architecture/overview)
   - [Domain Driven Design Ddd](/en/learn/software-engineering/architecture/domain-driven-design-ddd)
   - [Finite State Machine Fsm](/en/learn/software-engineering/architecture/finite-state-machine-fsm)

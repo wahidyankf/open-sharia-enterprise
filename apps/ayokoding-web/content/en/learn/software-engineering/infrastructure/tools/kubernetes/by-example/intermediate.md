@@ -56,59 +56,73 @@ metadata:
   name: database # => Headless Service for StatefulSet
 spec:
   clusterIP:
-    None # => Headless (no cluster IP)
+    None # => Headless (no cluster IP allocated)
     # => DNS returns Pod IPs directly
+    # => Enables individual Pod addressing
   selector:
-    app: database
+    app: database # => Matches StatefulSet Pods
   ports:
-    - port: 5432
-      name: postgres
+    - port: 5432 # => PostgreSQL port
+      name: postgres # => Named port for clarity
 
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: database
+  name: database # => StatefulSet name
 spec:
   serviceName:
-    database # => Associates with headless Service
+    database # => Associates with headless Service above
     # => Enables predictable DNS names
-  replicas: 3 # => Creates 3 Pods: database-0, database-1, database-2
+    # => Required field for StatefulSet
+  replicas:
+    3 # => Creates 3 Pods: database-0, database-1, database-2
+    # => Each Pod gets unique ordinal suffix
   selector:
     matchLabels:
-      app: database
+      app: database # => Must match template labels
   template:
     metadata:
       labels:
-        app: database
+        app: database # => Labels for Service selector and Pod identity
     spec:
       containers:
-        - name: postgres
-          image: postgres:15
+        - name: postgres # => Container name
+          image: postgres:15 # => PostgreSQL 15 image
           ports:
-            - containerPort: 5432
-              name: postgres
+            - containerPort: 5432 # => PostgreSQL listening port
+              name: postgres # => Named port matches Service
           volumeMounts:
             - name: data # => References volumeClaimTemplate below
-              mountPath: /var/lib/postgresql/data
+              mountPath:
+                /var/lib/postgresql/data # => PostgreSQL data directory
+                # => Data persists across restarts
           env:
             - name: POSTGRES_PASSWORD
-              value: "example" # => Use Secret in production
-  volumeClaimTemplates: # => Creates PVC per Pod
+              value:
+                "example" # => Database password
+                # => Use Secret in production for security
+  volumeClaimTemplates: # => Creates PVC per Pod automatically
     - metadata:
-        name: data # => PVC name pattern: data-database-0, data-database-1, etc.
+        name:
+          data # => PVC name pattern: data-database-0, data-database-1, data-database-2
+          # => Unique PVC per Pod instance
       spec:
-        accessModes: ["ReadWriteOnce"] # => Single node read-write
+        accessModes:
+          ["ReadWriteOnce"] # => Single node read-write access
+          # => Most common for databases
         resources:
           requests:
-            storage: 10Gi # => Each Pod gets 10 GiB persistent storage
-
+            storage:
+              10Gi # => Each Pod gets dedicated 10 GiB volume
+              # => Independent storage per database instance
 
 # StatefulSet guarantees:
 # => Pods created in order: database-0, then database-1, then database-2
 # => Pods deleted in reverse order: database-2, then database-1, then database-0
 # => Each Pod has stable hostname: database-0.database.default.svc.cluster.local
 # => PVCs persist across Pod restarts and rescheduling
+# => Pod identity preserved across rescheduling to different nodes
 ```
 
 **Key Takeaway**: Use StatefulSets for databases, message queues, and applications requiring stable network identities and persistent storage; StatefulSets guarantee ordered deployment/scaling and maintain PVC associations across Pod restarts.
@@ -125,42 +139,48 @@ StatefulSets support RollingUpdate (default) and OnDelete update strategies. Rol
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: web-stateful
+  name: web-stateful # => StatefulSet name
 spec:
-  serviceName: web
-  replicas: 4
+  serviceName: web # => Headless Service name
+  replicas: 4 # => Total Pods: web-stateful-0, 1, 2, 3
   updateStrategy:
     type:
       RollingUpdate # => Rolling update strategy (default)
       # => Updates Pods in reverse order: 3→2→1→0
+      # => Alternative: OnDelete (manual Pod deletion)
     rollingUpdate:
       partition:
         2 # => Only update Pods with ordinal >= partition
-        # => Pods 2 and 3 update, Pods 0 and 1 stay old version
+        # => Pods 2 and 3 get new version
+        # => Pods 0 and 1 stay old version
         # => Useful for canary testing
   selector:
     matchLabels:
-      app: web-stateful
+      app: web-stateful # => Must match template labels
   template:
     metadata:
       labels:
-        app: web-stateful
+        app: web-stateful # => Pod labels
     spec:
       containers:
-        - name: nginx
+        - name: nginx # => Container name
           image:
-            nginx:1.24 # => Update to nginx:1.25 to trigger rolling update
+            nginx:1.24 # => Current version
+            # => Update to nginx:1.25 to trigger rolling update
             # => Pod 3 updates first, then Pod 2
           ports:
-            - containerPort: 80
+            - containerPort: 80 # => HTTP port
+
 
 # Update behavior with partition=2:
 # => kubectl set image statefulset/web-stateful nginx=nginx:1.25
-# => Pod web-stateful-3: updated to nginx:1.25
-# => Pod web-stateful-2: updated to nginx:1.25
-# => Pod web-stateful-1: remains at nginx:1.24 (ordinal < partition)
-# => Pod web-stateful-0: remains at nginx:1.24 (ordinal < partition)
-# => Set partition=0 to complete update
+# => Pod web-stateful-3: updated to nginx:1.25 (ordinal 3 >= partition 2)
+# => Pod web-stateful-2: updated to nginx:1.25 (ordinal 2 >= partition 2)
+# => Pod web-stateful-1: remains at nginx:1.24 (ordinal 1 < partition 2)
+# => Pod web-stateful-0: remains at nginx:1.24 (ordinal 0 < partition 2)
+# => Observe canary Pods (2, 3) for issues
+# => Set partition=0 to complete update to all Pods
+# => Rollback: kubectl rollout undo statefulset/web-stateful
 ```
 
 **Key Takeaway**: Use partition in RollingUpdate strategy for canary deployments on StatefulSets; update high-ordinal Pods first while keeping low-ordinal Pods on stable version for gradual rollout validation.
@@ -177,62 +197,72 @@ Init containers in StatefulSets can prepare persistent volumes, wait for depende
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: redis-cluster
+  name: redis-cluster # => StatefulSet name
 spec:
-  serviceName: redis
-  replicas: 3
+  serviceName: redis # => Headless Service for cluster
+  replicas: 3 # => Three Redis instances: redis-cluster-0, 1, 2
   selector:
     matchLabels:
-      app: redis
+      app: redis # => Must match template labels
   template:
     metadata:
       labels:
-        app: redis
+        app: redis # => Pod labels
     spec:
       initContainers:
-        - name: init-redis # => Prepares Redis configuration
-          image: redis:7
+        - name: init-redis # => Prepares Redis configuration before main container
+          image: redis:7 # => Same image as main container
           command:
-            - sh
-            - -c
-            - |
+            - sh # => Shell interpreter
+            - -c # => Execute following script
+            - | # => Multi-line script
               echo "Initializing Redis config for Pod $POD_NAME"
               cp /config/redis.conf /data/redis.conf
               sed -i "s/POD_NAME/${POD_NAME}/g" /data/redis.conf
+              # => Copies template config to data volume
+              # => Replaces POD_NAME placeholder with actual Pod name
           env:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.name # => Gets Pod name: redis-cluster-0
+                  fieldPath:
+                    metadata.name # => Gets Pod name: redis-cluster-0
+                    # => Uses Downward API
           volumeMounts:
-            - name: config
-              mountPath: /config
-            - name: data
-              mountPath: /data
+            - name: config # => Reads from ConfigMap
+              mountPath: /config # => Mount point for config template
+            - name: data # => Writes to PVC
+              mountPath: /data # => Shared with main container
 
       containers:
-        - name: redis
-          image: redis:7
-          command: ["redis-server", "/data/redis.conf"]
+        - name: redis # => Main Redis container
+          image: redis:7 # => Redis 7 image
+          command:
+            ["redis-server", "/data/redis.conf"] # => Starts with custom config
+            # => Config prepared by init container
           ports:
-            - containerPort: 6379
+            - containerPort: 6379 # => Redis port
           volumeMounts:
             - name: data # => Same volume as init container
-              mountPath: /data # => Reads config prepared by init
+              mountPath:
+                /data # => Reads config prepared by init
+                # => Stores Redis data
 
       volumes:
-        - name: config
+        - name: config # => ConfigMap volume
           configMap:
-            name: redis-config
+            name:
+              redis-config # => References ConfigMap with template
+              # => Contains redis.conf template
 
   volumeClaimTemplates:
     - metadata:
-        name: data
+        name: data # => PVC name pattern: data-redis-cluster-0, 1, 2
       spec:
-        accessModes: ["ReadWriteOnce"]
+        accessModes: ["ReadWriteOnce"] # => Single node access
         resources:
           requests:
-            storage: 5Gi
+            storage: 5Gi # => Each Redis instance gets 5 GiB
 ```
 
 **Key Takeaway**: Use init containers in StatefulSets for data initialization, configuration templating, or dependency waiting; init containers have access to volumeClaimTemplates volumes and Pod metadata for per-instance customization.
@@ -249,36 +279,42 @@ Pod Management Policy controls whether StatefulSet creates/deletes Pods sequenti
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: parallel-stateful
+  name: parallel-stateful # => StatefulSet name
 spec:
-  serviceName: parallel
-  replicas: 10
+  serviceName: parallel # => Headless Service name
+  replicas: 10 # => Pods: parallel-stateful-0 through parallel-stateful-9
   podManagementPolicy:
     Parallel # => Parallel Pod creation/deletion
     # => Default: OrderedReady (sequential)
     # => Parallel: all Pods created simultaneously
     # => Faster scaling but no ordering guarantee
+    # => Use for independent workloads
   selector:
     matchLabels:
-      app: parallel
+      app: parallel # => Must match template labels
   template:
     metadata:
       labels:
-        app: parallel
+        app: parallel # => Pod labels
     spec:
       containers:
-        - name: nginx
-          image: nginx:1.24
+        - name: nginx # => Container name
+          image: nginx:1.24 # => Nginx web server
+
 
 # OrderedReady (default):
 # => Scale 0→10: creates Pods 0,1,2,3,4,5,6,7,8,9 sequentially
 # => Each Pod must be Ready before next starts
+# => Pod 1 waits for Pod 0 Ready, Pod 2 waits for Pod 1 Ready, etc.
 # => Scale 10→0: deletes in reverse order 9,8,7,6,5,4,3,2,1,0
+# => Each deletion waits for previous Pod termination
 
 # Parallel:
 # => Scale 0→10: creates all 10 Pods simultaneously
-# => No waiting for Ready status
+# => No waiting for Ready status between Pods
+# => All Pods start in parallel, reaching Ready independently
 # => Scale 10→0: deletes all 10 Pods simultaneously
+# => Terminates entire StatefulSet quickly
 ```
 
 **Key Takeaway**: Use Parallel podManagementPolicy for faster scaling when Pod ordering is not critical; keep OrderedReady (default) for databases and applications requiring sequential initialization.
@@ -295,46 +331,55 @@ PersistentVolumeClaim retention policy controls whether PVCs are deleted when St
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: retained-stateful
+  name: retained-stateful # => StatefulSet name
 spec:
-  serviceName: retained
-  replicas: 3
+  serviceName: retained # => Headless Service name
+  replicas: 3 # => Three Pods with persistent storage
   persistentVolumeClaimRetentionPolicy:
     whenDeleted:
       Retain # => Retain PVCs when StatefulSet deleted
-      # => Alternative: Delete (removes PVCs)
+      # => Prevents accidental data loss
+      # => Alternative: Delete (removes PVCs automatically)
     whenScaled:
       Retain # => Retain PVCs when scaling down
+      # => PVCs persist for scale-up reattachment
       # => Alternative: Delete (removes PVCs of deleted Pods)
   selector:
     matchLabels:
-      app: retained
+      app: retained # => Must match template labels
   template:
     metadata:
       labels:
-        app: retained
+        app: retained # => Pod labels
     spec:
       containers:
-        - name: nginx
-          image: nginx:1.24
+        - name: nginx # => Container name
+          image: nginx:1.24 # => Nginx web server
           volumeMounts:
-            - name: data
-              mountPath: /usr/share/nginx/html
+            - name: data # => References volumeClaimTemplate
+              mountPath:
+                /usr/share/nginx/html # => Web root directory
+                # => Data persists across restarts
 
   volumeClaimTemplates:
     - metadata:
-        name: data
+        name: data # => PVC name pattern: data-retained-stateful-0, 1, 2
       spec:
-        accessModes: ["ReadWriteOnce"]
+        accessModes: ["ReadWriteOnce"] # => Single node access
         resources:
           requests:
-            storage: 5Gi
+            storage: 5Gi # => Each Pod gets 5 GiB persistent storage
+
 
 # Retention behavior:
 # => Scale 3→1: Pods 2 and 1 deleted, but PVCs data-retained-stateful-2 and data-retained-stateful-1 retained
+# => PVCs remain Available (not Bound) after Pod deletion
 # => Scale 1→3: Pods 1 and 2 recreated, attach to existing PVCs (data preserved)
+# => Original data automatically recovered on scale-up
 # => kubectl delete statefulset retained-stateful: StatefulSet deleted, PVCs retained
+# => PVCs become orphaned (no owner) but still exist
 # => Manual cleanup required: kubectl delete pvc data-retained-stateful-0 data-retained-stateful-1 data-retained-stateful-2
+# => Prevents storage cost accumulation from abandoned volumes
 ```
 
 **Key Takeaway**: Use Retain policy for production databases to prevent accidental data loss during scaling or deletion; remember to manually clean up PVCs when no longer needed to avoid storage costs.
@@ -369,49 +414,63 @@ graph TD
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: log-collector
+  name: log-collector # => DaemonSet name
   labels:
-    app: log-collector
+    app: log-collector # => DaemonSet labels
 spec:
   selector:
     matchLabels:
-      app: log-collector
+      app: log-collector # => Must match template labels
   template:
     metadata:
       labels:
-        app: log-collector
+        app: log-collector # => Pod labels
     spec:
       containers:
-        - name: fluentd
-          image: fluent/fluentd:v1.16 # => Log forwarding agent
+        - name: fluentd # => Container name
+          image:
+            fluent/fluentd:v1.16 # => Log forwarding agent
+            # => Fluentd version 1.16
           volumeMounts:
             - name: varlog # => Mounts node's /var/log
-              mountPath: /var/log
-              readOnly: true
+              mountPath: /var/log # => Container path
+              readOnly:
+                true # => Read-only access for safety
+                # => Prevents accidental log modification
             - name: varlibdockercontainers # => Mounts Docker container logs
-              mountPath: /var/lib/docker/containers
-              readOnly: true
+              mountPath: /var/lib/docker/containers # => Docker log directory
+              readOnly: true # => Read-only access
           resources:
             limits:
-              memory: 200Mi
+              memory:
+                200Mi # => Maximum memory usage
+                # => OOM kill if exceeded
             requests:
-              cpu: 100m
-              memory: 200Mi
+              cpu:
+                100m # => Minimum CPU allocation
+                # => 0.1 CPU cores guaranteed
+              memory:
+                200Mi # => Minimum memory allocation
+                # => Scheduling guarantee
 
       volumes:
-        - name: varlog
+        - name: varlog # => Volume name
           hostPath:
-            path: /var/log # => Node's /var/log directory
-        - name: varlibdockercontainers
+            path:
+              /var/log # => Node's /var/log directory
+              # => Accesses node filesystem
+        - name: varlibdockercontainers # => Volume name
           hostPath:
-            path: /var/lib/docker/containers # => Node's container logs
-
+            path:
+              /var/lib/docker/containers # => Node's container logs
+              # => Docker/containerd logs
 
 # DaemonSet behavior:
 # => Creates 1 Pod per node automatically
-# => New node joins cluster → Pod created on new node
-# => Node removed → Pod deleted
+# => New node joins cluster → Pod created on new node within seconds
+# => Node removed → Pod deleted automatically
 # => kubectl get daemonset shows: DESIRED=3, CURRENT=3, READY=3 (3 nodes)
+# => DESIRED equals number of nodes matching nodeSelector (all nodes if no selector)
 ```
 
 **Key Takeaway**: Use DaemonSets for node-level services requiring presence on every node; DaemonSets automatically handle node additions/removals and support node selectors for subset deployment.
@@ -445,34 +504,45 @@ graph TD
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: gpu-monitor
+  name: gpu-monitor # => DaemonSet name
 spec:
   selector:
     matchLabels:
-      app: gpu-monitor
+      app: gpu-monitor # => Must match template labels
   template:
     metadata:
       labels:
-        app: gpu-monitor
+        app: gpu-monitor # => Pod labels
     spec:
       nodeSelector:
         accelerator:
           nvidia-gpu # => Only runs on nodes with this label
           # => kubectl label nodes node-1 accelerator=nvidia-gpu
+          # => Filters nodes for GPU-equipped hosts
       containers:
-        - name: dcgm-exporter # => NVIDIA GPU monitoring
-          image: nvidia/dcgm-exporter:3.1.3
+        - name:
+            dcgm-exporter # => NVIDIA GPU monitoring
+            # => Data Center GPU Manager exporter
+          image:
+            nvidia/dcgm-exporter:3.1.3 # => NVIDIA official image
+            # => Version 3.1.3
           ports:
-            - containerPort: 9400
+            - containerPort:
+                9400 # => Prometheus metrics port
+                # => Exposes GPU metrics
           securityContext:
-            privileged: true # => Required for GPU access
-
+            privileged:
+              true # => Required for GPU access
+              # => Allows device access
+              # => Security trade-off for hardware monitoring
 
 # DaemonSet with node selector:
 # => Only creates Pods on nodes matching nodeSelector
 # => 10 nodes total, 3 GPU nodes → DESIRED=3, CURRENT=3
-# => New GPU node added → Pod created automatically
-# => Node label removed → Pod deleted
+# => 7 nodes ignored (no nvidia-gpu label)
+# => New GPU node added → Pod created automatically on new node
+# => Node label removed → Pod deleted automatically
+# => kubectl label nodes node-1 accelerator- (removes label, deletes Pod)
 ```
 
 **Key Takeaway**: Use nodeSelector or node affinity in DaemonSets to run specialized workloads only on appropriate nodes; label nodes based on hardware capabilities, regions, or roles for targeted DaemonSet deployment.
@@ -489,45 +559,54 @@ Jobs run Pods to completion, suitable for batch processing, data migration, or o
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: data-migration
+  name: data-migration # => Job name
 spec:
   completions:
     1 # => Number of successful completions required
     # => Job completes after 1 successful Pod
+    # => completions=5 requires 5 successful Pods
   parallelism:
     1 # => Number of Pods running in parallel
     # => parallelism=3 runs 3 Pods simultaneously
+    # => parallelism ≤ completions
   backoffLimit:
     3 # => Maximum retries before marking Job failed
     # => Retries with exponential backoff
+    # => Default: 6 retries
   template:
     metadata:
       labels:
-        app: migration
+        app: migration # => Pod labels for tracking
     spec:
       restartPolicy:
         Never # => Never or OnFailure (not Always)
         # => Always invalid for Jobs
+        # => Never creates new Pod on failure
+        # => OnFailure restarts container in same Pod
       containers:
-        - name: migrator
-          image: busybox:1.36
+        - name: migrator # => Container name
+          image: busybox:1.36 # => Lightweight Linux utilities
           command:
-            - sh
-            - -c
-            - |
+            - sh # => Shell interpreter
+            - -c # => Execute following script
+            - | # => Multi-line script
               echo "Starting data migration..."
               sleep 10
               echo "Migration completed successfully"
-              exit 0                      # => Exit 0 signals success
-                                          # => Exit 1+ triggers retry (up to backoffLimit)
+              exit 0 # => Exit 0 signals success
+                     # => Exit 1+ triggers retry (up to backoffLimit)
+                     # => Job controller creates new Pod on failure
 
 # Job lifecycle:
 # => Pod created and runs to completion
-# => Exit 0 → Job marked Complete
+# => Exit 0 → Job marked Complete (completions: 1/1)
 # => Exit 1+ → Pod recreated (up to backoffLimit retries)
-# => After 3 failures → Job marked Failed
+# => Attempt 1 fails → wait 10s, retry
+# => Attempt 2 fails → wait 20s, retry
+# => Attempt 3 fails → wait 40s, retry
+# => After 3 failures → Job marked Failed (status.failed=3)
 # => kubectl get jobs shows: COMPLETIONS=1/1, DURATION=15s
-# => kubectl delete job data-migration  # Cleanup
+# => kubectl delete job data-migration  # Cleanup (removes Pods)
 ```
 
 **Key Takeaway**: Use Jobs for one-time or periodic batch tasks; set appropriate completions, parallelism, and backoffLimit based on workload requirements; Jobs do not support restartPolicy: Always.
@@ -564,36 +643,44 @@ graph TD
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: parallel-processing
+  name: parallel-processing # => Job name
 spec:
-  completions: 10 # => Total successful Pods required: 10
+  completions:
+    10 # => Total successful Pods required: 10
+    # => Job completes after 10 Pods succeed
   parallelism:
     3 # => Run 3 Pods in parallel
     # => Creates Pods in batches: 3, then 3, then 3, then 1
+    # => Maintains max 3 Pods running simultaneously
   template:
     spec:
       restartPolicy:
         OnFailure # => Retry failed Pods within same Pod object
         # => Never creates new Pod for each retry
+        # => Container restarts in same Pod
       containers:
-        - name: worker
-          image: busybox:1.36
+        - name: worker # => Container name
+          image: busybox:1.36 # => Lightweight Linux utilities
           command:
-            - sh
-            - -c
-            - |
+            - sh # => Shell interpreter
+            - -c # => Execute following script
+            - | # => Multi-line script
               TASK_ID=$((RANDOM % 1000))
               echo "Processing task $TASK_ID"
               sleep $((5 + RANDOM % 10))
               echo "Task $TASK_ID completed"
+              # => Simulates variable-duration work
+              # => Each Pod processes independent task
 
 # Parallel execution:
 # => Pods 1,2,3 start immediately (parallelism=3)
-# => Pod 1 completes → Pod 4 starts (maintains parallelism)
-# => Pod 2 completes → Pod 5 starts
+# => Pod 1 completes (1/10) → Pod 4 starts (maintains parallelism=3)
+# => Pod 2 completes (2/10) → Pod 5 starts
+# => Pod 3 completes (3/10) → Pod 6 starts
 # => Continues until 10 successful completions
-# => kubectl get pods shows 3 Running, 7 remaining
+# => kubectl get pods shows 3 Running, 7 Completed
 # => kubectl get jobs shows: COMPLETIONS=7/10 (7 completed, 3 running)
+# => Job controller maintains parallelism by creating new Pods
 ```
 
 **Key Takeaway**: Use parallel Jobs for distributed batch processing; adjust parallelism based on cluster capacity and completions based on total work items; consider work queue pattern for dynamic task distribution.
@@ -629,7 +716,7 @@ graph TD
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: backup-job
+  name: backup-job # => CronJob name
 spec:
   schedule:
     "0 2 * * *" # => Cron syntax: minute hour day month weekday
@@ -640,31 +727,41 @@ spec:
     Forbid # => Prevents concurrent Job runs
     # => Allow: permits concurrent executions
     # => Replace: cancels current and starts new
-  successfulJobsHistoryLimit: 3 # => Keeps 3 successful Jobs
-  failedJobsHistoryLimit: 1 # => Keeps 1 failed Job
+    # => Use Forbid for backups to prevent conflicts
+  successfulJobsHistoryLimit:
+    3 # => Keeps 3 successful Jobs
+    # => Older successful Jobs auto-deleted
+    # => Limits resource consumption
+  failedJobsHistoryLimit:
+    1 # => Keeps 1 failed Job
+    # => Enables debugging recent failures
   jobTemplate:
     spec:
       template:
         spec:
-          restartPolicy: OnFailure
+          restartPolicy: OnFailure # => Retry on container failure
           containers:
-            - name: backup
-              image: busybox:1.36
+            - name: backup # => Container name
+              image: busybox:1.36 # => Lightweight Linux utilities
               command:
-                - sh
-                - -c
-                - |
+                - sh # => Shell interpreter
+                - -c # => Execute following script
+                - | # => Multi-line script
                   echo "Starting backup at $(date)"
                   # Backup logic here
                   sleep 30
                   echo "Backup completed at $(date)"
+                  # => Simulates backup operation
 
 # CronJob behavior:
-# => Creates Job at scheduled time
+# => Creates Job at scheduled time (2:00 AM daily)
 # => Job creates Pod to run backup
-# => After successfulJobsHistoryLimit, old Jobs deleted
+# => Pod completes → Job marked successful
+# => After successfulJobsHistoryLimit (3), old Jobs deleted
+# => Keeps: backup-job-27891234 (oldest), backup-job-27891235, backup-job-27891236 (newest)
 # => kubectl get cronjobs shows: SCHEDULE, SUSPEND, ACTIVE, LAST SCHEDULE
 # => kubectl create job --from=cronjob/backup-job manual-backup  # Manual trigger
+# => Suspend CronJob: kubectl patch cronjob backup-job -p '{"spec":{"suspend":true}}'
 ```
 
 **Key Takeaway**: Use CronJobs for scheduled recurring tasks with appropriate concurrencyPolicy to handle overlapping executions; set history limits to prevent accumulation of completed Jobs.
@@ -700,23 +797,28 @@ graph TD
 ```yaml
 # First, install Ingress Controller (nginx example):
 # => kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.1/deploy/static/provider/cloud/deploy.yaml
+# => Creates Ingress Controller Deployment and Service
+# => LoadBalancer Service exposes Ingress to external traffic
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: app-ingress
+  name: app-ingress # => Ingress name
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target:
-      /
-      # => Rewrites /api/users → /users before forwarding
+      / # => Rewrites /api/users → /users before forwarding
+      # => Strips path prefix
+      # => Backend receives /users
 spec:
   ingressClassName:
     nginx # => Uses nginx Ingress Controller
     # => Required in Kubernetes 1.18+
+    # => Multiple controllers can coexist
   rules:
     - host:
         app.example.com # => Host-based routing
         # => Matches Host header in requests
+        # => DNS must point to Ingress Controller IP
       http:
         paths:
           - path: /api # => Path-based routing
@@ -728,9 +830,9 @@ spec:
               service:
                 name: api-service # => Routes to api-service
                 port:
-                  number: 80
-          - path: /web
-            pathType: Prefix
+                  number: 80 # => Service port (not targetPort)
+          - path: /web # => Different path
+            pathType: Prefix # => Matches /web, /web/, /web/home
             backend:
               service:
                 name: web-service # => Routes to web-service
@@ -738,9 +840,10 @@ spec:
                   number: 80
 
 # Access patterns:
-# => http://app.example.com/api/users → api-service
-# => http://app.example.com/web/home → web-service
-# => http://other.example.com/api → no match (404)
+# => http://app.example.com/api/users → api-service (path rewritten to /users)
+# => http://app.example.com/web/home → web-service (path rewritten to /home)
+# => http://other.example.com/api → no match (404 from Ingress Controller)
+# => Direct IP access http://INGRESS-IP/api → no match (host header doesn't match)
 ```
 
 **Key Takeaway**: Ingress provides cost-effective HTTP/HTTPS routing compared to multiple LoadBalancer Services; install an Ingress Controller first, then create Ingress resources for routing rules.
@@ -756,37 +859,46 @@ Ingress supports TLS termination using Secrets containing certificates and priva
 ```yaml
 # Create TLS Secret:
 # => kubectl create secret tls tls-secret --cert=tls.crt --key=tls.key
+# => tls.crt: certificate file (public key)
+# => tls.key: private key file
+# => Secret type: kubernetes.io/tls
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: tls-ingress
+  name: tls-ingress # => Ingress name
 spec:
-  ingressClassName: nginx
+  ingressClassName: nginx # => Ingress Controller to use
   tls:
     - hosts:
         - secure.example.com # => TLS applies to this host
+          # => Certificate must match this domain
       secretName:
         tls-secret # => References TLS Secret
         # => Secret must exist in same namespace
         # => Contains tls.crt and tls.key
+        # => Ingress Controller reads certificate from Secret
   rules:
-    - host: secure.example.com
+    - host: secure.example.com # => Must match TLS hosts
       http:
         paths:
-          - path: /
-            pathType: Prefix
+          - path: / # => Root path
+            pathType: Prefix # => Matches all paths
             backend:
               service:
-                name: web-service
+                name: web-service # => Backend service
                 port:
-                  number: 80
+                  number: 80 # => HTTP port (TLS already terminated)
+
 
 # TLS behavior:
 # => https://secure.example.com → TLS termination at Ingress Controller
+# => Ingress Controller decrypts HTTPS, validates certificate
 # => Ingress Controller → web-service over HTTP (cluster-internal)
+# => Backend receives plain HTTP (no TLS overhead)
 # => http://secure.example.com → redirected to HTTPS (nginx default)
-# => Certificate validation required for production
+# => 301 Moved Permanently redirect
+# => Certificate validation required for production (browsers check)
 ```
 
 **Key Takeaway**: Use TLS Ingress for production HTTPS; obtain certificates from Let's Encrypt via cert-manager for automated certificate management and renewal; TLS terminates at Ingress Controller, not backend Services.
@@ -980,20 +1092,27 @@ metadata:
   name: pv-example # => PV name (cluster-wide resource)
 spec:
   capacity:
-    storage: 10Gi # => Total storage capacity
+    storage:
+      10Gi # => Total storage capacity available
+      # => PVC can request up to this size
   accessModes:
     - ReadWriteOnce # => Single node read-write
       # => ReadOnlyMany: multiple nodes read-only
       # => ReadWriteMany: multiple nodes read-write
+      # => Most common: ReadWriteOnce
   persistentVolumeReclaimPolicy:
-    Retain
-    # => Retain: manual reclamation after PVC deletion
+    Retain # => Manual reclamation after PVC deletion
+    # => PV not auto-deleted
     # => Delete: auto-delete storage (cloud volumes)
     # => Recycle: deprecated (use Delete)
-  storageClassName: manual # => Storage class name for binding
+  storageClassName:
+    manual # => Storage class name for binding
+    # => PVC must match this class
   hostPath: # => Host path volume (testing only)
-    path: /mnt/data
-    type: DirectoryOrCreate
+    path: /mnt/data # => Directory on node
+    type:
+      DirectoryOrCreate # => Create if doesn't exist
+      # => Not for production (node-specific)
 
 ---
 apiVersion: v1
@@ -1003,34 +1122,44 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce # => Must match PV access mode
+      # => Binds to PV with compatible mode
   resources:
     requests:
-      storage: 5Gi # => Requests 5 GiB (PV has 10 GiB)
-  storageClassName: manual # => Binds to PV with same storage class
+      storage:
+        5Gi # => Requests 5 GiB (PV has 10 GiB)
+        # => PVC gets full 10 GiB (PV indivisible)
+  storageClassName:
+    manual # => Binds to PV with same storage class
+    # => Empty string binds to no-class PVs
 
 ---
 apiVersion: v1
 kind: Pod
 metadata:
-  name: pv-pod
+  name: pv-pod # => Pod name
 spec:
   containers:
-    - name: app
-      image: nginx:1.24
+    - name: app # => Container name
+      image: nginx:1.24 # => Nginx web server
       volumeMounts:
-        - name: storage
-          mountPath: /usr/share/nginx/html
+        - name: storage # => References volume below
+          mountPath:
+            /usr/share/nginx/html # => Mount point in container
+            # => Nginx serves from this directory
   volumes:
-    - name: storage
+    - name: storage # => Volume name
       persistentVolumeClaim:
-        claimName: pvc-example # => References PVC
-
+        claimName:
+          pvc-example # => References PVC above
+          # => Kubernetes binds PVC to PV
 
 # PV/PVC lifecycle:
 # => kubectl get pv → shows PV status (Available → Bound)
 # => kubectl get pvc → shows PVC status (Pending → Bound)
 # => PVC binds to PV with matching capacity, access mode, and storage class
+# => Binding is one-to-one (one PVC per PV)
 # => Pod mounts PVC, data persists across Pod restarts
+# => Pod reschedules to different node → reattaches same PVC
 ```
 
 **Key Takeaway**: Use PV/PVC for persistent storage across Pod restarts; cloud providers offer dynamic provisioning via StorageClasses, eliminating manual PV creation for production use.
@@ -1052,46 +1181,60 @@ provisioner:
   kubernetes.io/aws-ebs # => Cloud provider provisioner
   # => kubernetes.io/gce-pd (GCP)
   # => kubernetes.io/azure-disk (Azure)
+  # => Talks to cloud API to create volumes
 parameters:
   type:
     gp3 # => AWS EBS type: gp3 (SSD)
     # => gp2, io1, io2, sc1, st1
-  iops: "3000" # => Provisioned IOPS
-  throughput: "125" # => Throughput in MiB/s
-  encrypted: "true" # => Encrypt volume
+    # => gp3: latest generation SSD
+  iops:
+    "3000" # => Provisioned IOPS (input/output per second)
+    # => gp3 default: 3000, max: 16000
+  throughput:
+    "125" # => Throughput in MiB/s
+    # => gp3 default: 125, max: 1000
+  encrypted:
+    "true" # => Encrypt volume at rest
+    # => AWS KMS encryption
 reclaimPolicy:
   Delete # => Delete PV when PVC deleted
+  # => Prevents orphaned volumes
   # => Retain: keep PV after PVC deletion
 volumeBindingMode:
-  WaitForFirstConsumer
-  # => Delay PV binding until Pod scheduled
+  WaitForFirstConsumer # => Delay PV binding until Pod scheduled
   # => Ensures PV created in same zone as Pod
+  # => Prevents cross-zone attach failures
   # => Immediate: bind PV immediately
 allowVolumeExpansion:
   true # => Allow PVC size increase
   # => Resize PVC without recreating
+  # => Requires CSI driver support
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: dynamic-pvc
+  name: dynamic-pvc # => PVC name
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteOnce # => Single node access
   storageClassName:
-    fast-storage # => References StorageClass
+    fast-storage # => References StorageClass above
     # => Triggers dynamic provisioning
+    # => No manual PV creation
   resources:
     requests:
-      storage: 20Gi # => Requests 20 GiB
-
+      storage:
+        20Gi # => Requests 20 GiB
+        # => StorageClass creates PV with this size
 
 # Dynamic provisioning:
 # => PVC created → StorageClass provisions new PV automatically
+# => Cloud API called to create EBS volume
+# => PV created and bound to PVC
 # => No manual PV creation needed
 # => PV deleted automatically when PVC deleted (reclaimPolicy: Delete)
-# => kubectl get pv → shows auto-created PV
+# => kubectl get pv → shows auto-created PV (name: pvc-<uuid>)
 ```
 
 **Key Takeaway**: Use StorageClasses for production storage with dynamic provisioning; configure WaitForFirstConsumer for multi-zone clusters to ensure PV and Pod are in the same availability zone.
@@ -1461,24 +1604,32 @@ graph TD
 ```yaml
 # Install metrics-server first:
 # => kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+# => Metrics-server collects resource metrics from kubelets
+# => Required for CPU/memory-based autoscaling
 
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: web-hpa
+  name: web-hpa # => HPA name
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: web-app # => Target Deployment to scale
-  minReplicas: 2 # => Minimum replicas (never scale below)
-  maxReplicas: 10 # => Maximum replicas (never scale above)
+    apiVersion: apps/v1 # => API version of target
+    kind: Deployment # => Resource kind (Deployment, ReplicaSet, StatefulSet)
+    name:
+      web-app # => Target Deployment to scale
+      # => HPA modifies this Deployment's replicas
+  minReplicas:
+    2 # => Minimum replicas (never scale below)
+    # => Ensures minimum availability
+  maxReplicas:
+    10 # => Maximum replicas (never scale above)
+    # => Prevents runaway scaling
   metrics:
-    - type: Resource
+    - type: Resource # => Resource metric type (CPU, memory)
       resource:
-        name: cpu
+        name: cpu # => CPU utilization metric
         target:
-          type: Utilization
+          type: Utilization # => Percentage utilization
           averageUtilization:
             70 # => Target 70% average CPU utilization
             # => Above 70% → scale up
@@ -1489,8 +1640,10 @@ spec:
 # => Current CPU: 85% (above 70% target)
 # => Calculates: desiredReplicas = ceil(currentReplicas * currentMetric / targetMetric)
 # => Example: ceil(2 * 85 / 70) = ceil(2.43) = 3 replicas
+# => Scales up by 1 replica (2→3)
 # => Gradually scales up to avoid flapping
-# => kubectl get hpa shows: TARGETS=85%/70%, REPLICAS=3
+# => Waits 3 minutes before next scale-up (cooldown)
+# => kubectl get hpa shows: TARGETS=85%/70%, REPLICAS=3, MINPODS=2, MAXPODS=10
 ```
 
 **Key Takeaway**: Use HPA for automatic scaling based on demand; set appropriate min/max replicas to prevent over-scaling costs or under-scaling unavailability; requires resource requests for CPU metrics.
@@ -1625,32 +1778,43 @@ graph TD
 apiVersion: v1
 kind: Pod
 metadata:
-  name: readiness-pod
+  name: readiness-pod # => Pod name
   labels:
-    app: web
+    app: web # => Labels for Service selector
 spec:
   containers:
-    - name: nginx
-      image: nginx:1.24
+    - name: nginx # => Container name
+      image: nginx:1.24 # => Nginx web server
       ports:
-        - containerPort: 80
+        - containerPort: 80 # => HTTP port
       readinessProbe: # => Checks if Pod ready for traffic
         httpGet:
-          path: /ready # => Endpoint returning 200 when ready
-          port: 80
-        initialDelaySeconds: 5 # => Wait 5s after start before first probe
-        periodSeconds: 5 # => Probe every 5 seconds
-        successThreshold: 1 # => 1 success → mark Ready
+          path:
+            /ready # => Endpoint returning 200 when ready
+            # => Application defines readiness logic
+          port: 80 # => Port to probe
+        initialDelaySeconds:
+          5 # => Wait 5s after start before first probe
+          # => Gives container time to start
+        periodSeconds:
+          5 # => Probe every 5 seconds
+          # => More frequent than liveness
+        successThreshold:
+          1 # => 1 success → mark Ready
+          # => Consecutive successes required
         failureThreshold:
           3 # => 3 failures → mark NotReady
           # => Pod removed from Service endpoints
+          # => No container restart
 
 # Readiness vs Liveness:
 # => Readiness failure → removes from Service, no restart
 # => Liveness failure → restarts container
 # => Use readiness for temporary unavailability (loading data, dependencies down)
 # => kubectl get pods shows: READY=0/1 (readiness failed)
-# => kubectl describe pod shows: Readiness probe failed
+# => Service endpoints updated automatically
+# => kubectl describe pod shows: Readiness probe failed: HTTP probe failed with statuscode: 503
+# => Traffic stops flowing to this Pod
 ```
 
 **Key Takeaway**: Use readiness probes to prevent traffic to Pods that are starting up or temporarily unavailable; failed readiness checks remove Pods from load balancing without restarting them.
@@ -1688,30 +1852,32 @@ graph TD
 apiVersion: v1
 kind: Pod
 metadata:
-  name: startup-pod
+  name: startup-pod # => Pod name
 spec:
   containers:
-    - name: slow-app
-      image: slow-starting-app:1.0
+    - name: slow-app # => Container name
+      image: slow-starting-app:1.0 # => Application with long initialization
       ports:
-        - containerPort: 8080
+        - containerPort: 8080 # => Application port
       startupProbe: # => Checks if application started
         httpGet:
-          path: /startup
+          path: /startup # => Startup health endpoint
           port: 8080
-        initialDelaySeconds: 10
+        initialDelaySeconds: 10 # => Wait 10s before first probe
         periodSeconds: 10 # => Check every 10 seconds
         failureThreshold:
           30 # => Allow 30 failures = 300 seconds (5 min)
           # => After 5 min → kubelet restarts container
+          # => Gives app time to initialize
 
       livenessProbe: # => Begins after startup probe succeeds
         httpGet:
-          path: /healthz
+          path: /healthz # => Liveness health endpoint
           port: 8080
         periodSeconds: 5 # => Frequent checks after startup
-        failureThreshold: 3 # => Restart after 15 seconds of failure
-
+        failureThreshold:
+          3 # => Restart after 15 seconds of failure
+          # => Faster recovery post-startup
 
 # Probe sequence:
 # 1. Container starts
@@ -1724,7 +1890,9 @@ spec:
 # => Slow app takes 3 min to start
 # => Liveness probe failureThreshold=3, periodSeconds=5 → fails after 15s
 # => Container restarted repeatedly (CrashLoopBackOff)
+# => Never completes initialization
 # => Startup probe gives sufficient time for initialization
+# => Liveness stays disabled until startup succeeds
 ```
 
 **Key Takeaway**: Use startup probes for slow-starting applications to prevent premature liveness probe failures; configure longer failureThreshold \* periodSeconds than application startup time; liveness probes begin only after startup success.
@@ -1741,62 +1909,70 @@ Production Pods should use all three probes: startup for initialization, livenes
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: production-app
+  name: production-app # => Deployment name
 spec:
-  replicas: 3
+  replicas: 3 # => Three Pods for high availability
   selector:
     matchLabels:
-      app: production
+      app: production # => Must match template labels
   template:
     metadata:
       labels:
-        app: production
+        app: production # => Pod labels
     spec:
       containers:
-        - name: app
-          image: production-app:1.0
+        - name: app # => Container name
+          image: production-app:1.0 # => Production application image
           ports:
-            - containerPort: 8080
+            - containerPort: 8080 # => Application port
 
           startupProbe: # => Phase 1: Initialization (0-2 min)
             httpGet:
-              path: /startup
+              path: /startup # => Startup endpoint
               port: 8080
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            failureThreshold: 12 # => 120s max startup time
+            initialDelaySeconds: 10 # => Wait 10s after start
+            periodSeconds: 10 # => Check every 10s
+            failureThreshold:
+              12 # => 120s max startup time
+              # => 12 failures × 10s = 120s
 
           livenessProbe: # => Phase 2: Deadlock detection
             httpGet:
-              path: /healthz
+              path: /healthz # => Liveness endpoint
               port: 8080
             initialDelaySeconds: 0 # => Starts after startup succeeds
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3 # => Restart after 30s failure
+            periodSeconds: 10 # => Check every 10s
+            timeoutSeconds: 5 # => 5s response timeout
+            failureThreshold:
+              3 # => Restart after 30s failure
+              # => 3 failures × 10s = 30s
 
           readinessProbe: # => Phase 3: Traffic control
             httpGet:
-              path: /ready
+              path: /ready # => Readiness endpoint
               port: 8080
-            initialDelaySeconds: 0
+            initialDelaySeconds: 0 # => Starts immediately
             periodSeconds: 5 # => More frequent than liveness
-            timeoutSeconds: 3
-            successThreshold: 1
-            failureThreshold: 2 # => Remove from Service after 10s
+            timeoutSeconds: 3 # => 3s response timeout
+            successThreshold: 1 # => Mark Ready after 1 success
+            failureThreshold:
+              2 # => Remove from Service after 10s
+              # => 2 failures × 5s = 10s
 
           resources:
             requests:
-              cpu: 250m
-              memory: 256Mi
+              cpu: 250m # => Guaranteed CPU
+              memory: 256Mi # => Guaranteed memory
             limits:
-              cpu: 500m
-              memory: 512Mi
+              cpu: 500m # => Maximum CPU
+              memory: 512Mi # => Maximum memory (OOM kill if exceeded)
+
 
 # Health check endpoints should return:
 # => /startup: 200 when initialization complete (DB connected, cache loaded)
 # => /healthz: 200 when application functional (no deadlocks, core services ok)
 # => /ready: 200 when ready for traffic (dependencies healthy, not overloaded)
+# => Non-200 status triggers probe failure
 ```
 
 **Key Takeaway**: Implement all three probe types for production workloads; startup for slow initialization, liveness for crash recovery, readiness for traffic control; design separate health check endpoints with appropriate logic for each probe type.
@@ -1813,41 +1989,50 @@ Kubernetes supports three probe handlers: HTTP GET, TCP socket, and exec command
 apiVersion: v1
 kind: Pod
 metadata:
-  name: probe-handlers
+  name: probe-handlers # => Pod name
 spec:
   containers:
     # HTTP GET probe (most common)
-    - name: web-app
-      image: nginx:1.24
+    - name: web-app # => Container name
+      image: nginx:1.24 # => Nginx web server
       livenessProbe:
         httpGet:
-          path: /healthz # => Sends HTTP GET request
-          port: 80
+          path:
+            /healthz # => Sends HTTP GET request to this path
+            # => Returns 200-399 = success, others = failure
+          port: 80 # => Port to connect
           httpHeaders:
             - name: Custom-Header
-              value: HealthCheck # => Optional custom headers
-          scheme: HTTP # => HTTP or HTTPS
-        periodSeconds: 10
+              value:
+                HealthCheck # => Optional custom headers
+                # => Useful for auth or routing
+          scheme:
+            HTTP # => HTTP or HTTPS
+            # => HTTPS validates certificates
+        periodSeconds: 10 # => Check every 10s
 
     # TCP socket probe (for non-HTTP services)
-    - name: database
-      image: postgres:15
+    - name: database # => Container name
+      image: postgres:15 # => PostgreSQL database
       livenessProbe:
         tcpSocket:
           port:
             5432 # => Attempts TCP connection
-            # => Success if port open
-        periodSeconds: 10
+            # => Success if port open and accepts connection
+            # => No data exchanged
+        periodSeconds: 10 # => Check every 10s
 
     # Exec probe (command-based)
-    - name: cache
-      image: redis:7
+    - name: cache # => Container name
+      image: redis:7 # => Redis cache
       livenessProbe:
         exec:
           command: # => Runs command inside container
-            - redis-cli
-            - ping # => Exit 0 = success, non-zero = failure
-        periodSeconds: 10
+            - redis-cli # => Redis CLI tool
+            - ping # => Returns PONG if healthy
+              # => Exit 0 = success, non-zero = failure
+        periodSeconds: 10 # => Check every 10s
+
 
 # Probe handler selection:
 # => HTTP: applications with HTTP endpoints (web apps, APIs)
@@ -1855,9 +2040,10 @@ spec:
 # => Exec: custom health checks requiring commands (CLI tools, scripts)
 
 # Performance considerations:
-# => HTTP: moderate overhead (HTTP processing)
-# => TCP: minimal overhead (connection test only)
-# => Exec: highest overhead (fork/exec, command execution)
+# => HTTP: moderate overhead (HTTP processing, parsing)
+# => TCP: minimal overhead (connection test only, fastest)
+# => Exec: highest overhead (fork/exec, command execution, slowest)
+# => Prefer HTTP/TCP for production scale
 ```
 
 **Key Takeaway**: Use HTTP probes for web applications with health endpoints, TCP probes for non-HTTP network services, and exec probes only when necessary due to execution overhead; prefer HTTP/TCP for performance.

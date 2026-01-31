@@ -33,58 +33,68 @@ graph TD
 
 **Code**:
 
-```sql
-CREATE TABLE sales (
-    id INTEGER,
-    product TEXT,
-    amount REAL,
-    sale_date TEXT
+````sql
+-- Create sales table
+CREATE TABLE sales (               -- => Table definition
+    id INTEGER,                     -- => Unique sale identifier
+    product TEXT,                   -- => Product name
+    amount REAL,                    -- => Sale amount in dollars
+    sale_date TEXT                  -- => Sale date (ISO8601 format)
 );
+-- => Table created: sales
 
+-- Insert sample data
 INSERT INTO sales (id, product, amount, sale_date)
 VALUES
-    (1, 'Laptop', 1000, '2025-01-15'),
-    (2, 'Mouse', 50, '2025-01-16'),
-    (3, 'Laptop', 1200, '2025-01-17'),
-    (4, 'Keyboard', 100, '2025-01-18'),
-    (5, 'Mouse', 45, '2025-01-19');
+    (1, 'Laptop', 1000, '2025-01-15'),   -- => First laptop sale
+    (2, 'Mouse', 50, '2025-01-16'),      -- => Mouse sale
+    (3, 'Laptop', 1200, '2025-01-17'),   -- => Second laptop sale
+    (4, 'Keyboard', 100, '2025-01-18'),  -- => Keyboard sale
+    (5, 'Mouse', 45, '2025-01-19');      -- => Another mouse sale
+-- => 5 rows inserted
 
 -- Basic CTE: Calculate total sales per product
-WITH product_totals AS (
-    SELECT product, SUM(amount) AS total_sales
-    FROM sales
-    GROUP BY product
-)
-SELECT * FROM product_totals WHERE total_sales > 100;
--- => CTE creates temporary table with aggregated sales
--- => Main query filters CTE results
--- => Returns: Laptop (2200), Keyboard (100 not > 100 so excluded)
+WITH product_totals AS (            -- => Named temporary result set
+    SELECT product,                 -- => Product name column
+           SUM(amount) AS total_sales -- => Aggregate sales per product
+    FROM sales                      -- => Source table
+    GROUP BY product                -- => Group by product name
+)                                   -- => CTE: product_totals defined
+SELECT * FROM product_totals        -- => Query CTE
+WHERE total_sales > 100;            -- => Filter for significant sales
+-- => Returns: Laptop (2200), Mouse (95 - filtered out)
+-- => Keyboard (100 - not > 100, excluded)
 
 -- Multiple CTEs in single query
 WITH
-laptop_sales AS (
-    SELECT SUM(amount) AS total FROM sales WHERE product = 'Laptop'
-),
-mouse_sales AS (
-    SELECT SUM(amount) AS total FROM sales WHERE product = 'Mouse'
-)
+laptop_sales AS (                   -- => First CTE for laptops
+    SELECT SUM(amount) AS total     -- => Sum laptop sales
+    FROM sales                      -- => From sales table
+    WHERE product = 'Laptop'        -- => Filter to Laptop rows
+),                                  -- => laptop_sales = 2200
+mouse_sales AS (                    -- => Second CTE for mice
+    SELECT SUM(amount) AS total     -- => Sum mouse sales
+    FROM sales                      -- => From sales table
+    WHERE product = 'Mouse'         -- => Filter to Mouse rows
+)                                   -- => mouse_sales = 95
 SELECT
-    (SELECT total FROM laptop_sales) AS laptop_total,
-    (SELECT total FROM mouse_sales) AS mouse_total;
+    (SELECT total FROM laptop_sales) AS laptop_total,  -- => Extract laptop total
+    (SELECT total FROM mouse_sales) AS mouse_total;    -- => Extract mouse total
 -- => Returns: laptop_total=2200, mouse_total=95
 
 -- CTE with JOIN
-WITH high_value_sales AS (
-    SELECT * FROM sales WHERE amount > 100
-)
+WITH high_value_sales AS (          -- => CTE filtering high-value sales
+    SELECT *                        -- => All columns
+    FROM sales                      -- => From sales table
+    WHERE amount > 100              -- => Only sales above $100
+)                                   -- => Temporary table: 3 rows (2 Laptop, 1 Keyboard)
 SELECT
-    hvs.product,
-    COUNT(*) AS num_high_value,
-    SUM(hvs.amount) AS total_high_value
-FROM high_value_sales hvs
-GROUP BY hvs.product;
--- => Returns: Laptop (2 sales, 2200 total), Keyboard (1 sale, 100 total)
-```
+    hvs.product,                    -- => Product name
+    COUNT(*) AS num_high_value,     -- => Count high-value sales per product
+    SUM(hvs.amount) AS total_high_value  -- => Sum amounts per product
+FROM high_value_sales hvs           -- => Query CTE with alias
+GROUP BY hvs.product;               -- => Group by product
+-- => Returns: Laptop (count=2, total=2200), Keyboard (count=1, total=100)
 
 **Key Takeaway**: CTEs use WITH to define temporary named result sets. They improve query readability by breaking complex logic into named steps. CTEs exist only for the query duration and can be referenced multiple times.
 
@@ -126,70 +136,98 @@ graph TD
     style F fill:#CA9161,stroke:#000,color:#fff
     style G fill:#CA9161,stroke:#000,color:#fff
     style H fill:#0173B2,stroke:#000,color:#fff
-```
+````
 
 **Code**:
 
 ```sql
-CREATE TABLE employees (
-    id INTEGER,
-    name TEXT,
-    manager_id INTEGER
+-- Create employees table with hierarchical structure
+CREATE TABLE employees (           -- => Table for org chart
+    id INTEGER,                     -- => Employee identifier
+    name TEXT,                      -- => Employee name
+    manager_id INTEGER              -- => References manager's id (NULL for CEO)
 );
+-- => Table created: employees
 
+-- Insert organizational hierarchy
 INSERT INTO employees (id, name, manager_id)
 VALUES
-    (1, 'CEO Alice', NULL),
-    (2, 'VP Bob', 1),
-    (3, 'VP Charlie', 1),
-    (4, 'Manager Diana', 2),
-    (5, 'Manager Eve', 2),
-    (6, 'Engineer Frank', 4),
-    (7, 'Engineer Grace', 4);
+    (1, 'CEO Alice', NULL),         -- => CEO has no manager
+    (2, 'VP Bob', 1),               -- => Reports to Alice
+    (3, 'VP Charlie', 1),           -- => Reports to Alice
+    (4, 'Manager Diana', 2),        -- => Reports to Bob
+    (5, 'Manager Eve', 2),          -- => Reports to Bob
+    (6, 'Engineer Frank', 4),       -- => Reports to Diana
+    (7, 'Engineer Grace', 4);       -- => Reports to Diana
+-- => 7 rows inserted: 4-level hierarchy
 
 -- Recursive CTE: Find all employees under CEO
-WITH RECURSIVE org_chart AS (
+WITH RECURSIVE org_chart AS (      -- => RECURSIVE keyword enables self-reference
     -- Base case: Start with CEO
-    SELECT id, name, manager_id, 1 AS level
-    FROM employees
-    WHERE manager_id IS NULL
-
-    UNION ALL
+    SELECT id,                      -- => Employee id
+           name,                    -- => Employee name
+           manager_id,              -- => Manager reference
+           1 AS level               -- => CEO is level 1
+    FROM employees                  -- => Source table
+    WHERE manager_id IS NULL        -- => Only CEO has NULL manager
+                                    -- => Base: 1 row (CEO Alice)
+    UNION ALL                       -- => Combine base with recursive case
 
     -- Recursive case: Find direct reports
-    SELECT e.id, e.name, e.manager_id, oc.level + 1
-    FROM employees e
-    INNER JOIN org_chart oc ON e.manager_id = oc.id
-)
-SELECT name, level FROM org_chart ORDER BY level, name;
--- => Returns:
--- => CEO Alice (level 1)
--- => VP Bob, VP Charlie (level 2)
--- => Manager Diana, Manager Eve (level 3)
--- => Engineer Frank, Engineer Grace (level 4)
+    SELECT e.id,                    -- => Child employee id
+           e.name,                  -- => Child employee name
+           e.manager_id,            -- => Child's manager
+           oc.level + 1             -- => Increment level depth
+    FROM employees e                -- => All employees
+    INNER JOIN org_chart oc         -- => Join to previous iteration results
+        ON e.manager_id = oc.id     -- => Find employees reporting to current level
+)                                   -- => Iterates until no more matches
+SELECT name, level                  -- => Select name and hierarchy level
+FROM org_chart                      -- => From complete recursion result
+ORDER BY level, name;               -- => Order by depth, then alphabetically
+-- => Iteration 1: CEO Alice (level 1)
+-- => Iteration 2: VP Bob, VP Charlie (level 2)
+-- => Iteration 3: Manager Diana, Manager Eve (level 3)
+-- => Iteration 4: Engineer Frank, Engineer Grace (level 4)
+-- => Returns all 7 employees with their levels
 
 -- Find all employees reporting to specific manager (direct and indirect)
-WITH RECURSIVE subordinates AS (
-    SELECT id, name, manager_id
-    FROM employees
-    WHERE id = 2  -- Start with VP Bob
+WITH RECURSIVE subordinates AS (   -- => Recursive CTE for subordinates
+    SELECT id, name, manager_id     -- => Starting point columns
+    FROM employees                  -- => From employees table
+    WHERE id = 2                    -- => Base case: Start with VP Bob (id=2)
+                                    -- => Base: Bob only
+    UNION ALL                       -- => Combine with recursive case
 
-    UNION ALL
-
-    SELECT e.id, e.name, e.manager_id
-    FROM employees e
-    INNER JOIN subordinates s ON e.manager_id = s.id
-)
-SELECT name FROM subordinates WHERE id != 2;
--- => Returns: Manager Diana, Manager Eve, Engineer Frank, Engineer Grace
+    SELECT e.id,                    -- => Subordinate's id
+           e.name,                  -- => Subordinate's name
+           e.manager_id             -- => Subordinate's manager
+    FROM employees e                -- => All employees
+    INNER JOIN subordinates s       -- => Join to previous results
+        ON e.manager_id = s.id      -- => Find reports of current subordinates
+)                                   -- => Recursively traverses reporting chain
+SELECT name                         -- => Select names only
+FROM subordinates                   -- => From complete recursion
+WHERE id != 2;                      -- => Exclude Bob himself
+-- => Iteration 1: VP Bob
+-- => Iteration 2: Manager Diana, Manager Eve
+-- => Iteration 3: Engineer Frank, Engineer Grace
+-- => Returns: Diana, Eve, Frank, Grace (4 subordinates)
 
 -- Generate number sequence using recursive CTE
-WITH RECURSIVE numbers AS (
-    SELECT 1 AS n
-    UNION ALL
-    SELECT n + 1 FROM numbers WHERE n < 10
-)
-SELECT * FROM numbers;
+WITH RECURSIVE numbers AS (         -- => Recursive number generator
+    SELECT 1 AS n                   -- => Base case: start at 1
+                                    -- => Base: n=1
+    UNION ALL                       -- => Combine with recursive case
+    SELECT n + 1                    -- => Increment by 1
+    FROM numbers                    -- => Self-reference to previous n
+    WHERE n < 10                    -- => Termination condition
+)                                   -- => Generates 1,2,3,...,10
+SELECT * FROM numbers;              -- => Select all generated numbers
+-- => Iteration 1: 1
+-- => Iteration 2: 2
+-- => ...
+-- => Iteration 10: 10
 -- => Returns: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 ```
 
@@ -206,55 +244,57 @@ CTEs simplify multi-step aggregations by breaking logic into readable stages. Ea
 **Code**:
 
 ```sql
-CREATE TABLE orders (
-    id INTEGER,
-    customer_id INTEGER,
-    product TEXT,
-    quantity INTEGER,
-    price REAL,
-    order_date TEXT
+-- Create orders table
+CREATE TABLE orders (               -- => Table for order records
+    id INTEGER,                     -- => Order identifier
+    customer_id INTEGER,            -- => Customer reference
+    product TEXT,                   -- => Product name
+    quantity INTEGER,               -- => Number of items
+    price REAL,                     -- => Price per item
+    order_date TEXT                 -- => Order date
 );
+-- => Table created: orders
 
+-- Insert sample orders
 INSERT INTO orders (id, customer_id, product, quantity, price, order_date)
 VALUES
-    (1, 1, 'Laptop', 1, 1000, '2025-01-15'),
-    (2, 2, 'Mouse', 2, 25, '2025-01-16'),
-    (3, 1, 'Keyboard', 1, 100, '2025-01-17'),
-    (4, 3, 'Monitor', 1, 300, '2025-01-18'),
-    (5, 2, 'Laptop', 1, 1000, '2025-01-19');
+    (1, 1, 'Laptop', 1, 1000, '2025-01-15'),   -- => Customer 1, $1000
+    (2, 2, 'Mouse', 2, 25, '2025-01-16'),      -- => Customer 2, 2x$25
+    (3, 1, 'Keyboard', 1, 100, '2025-01-17'),  -- => Customer 1, $100
+    (4, 3, 'Monitor', 1, 300, '2025-01-18'),   -- => Customer 3, $300
+    (5, 2, 'Laptop', 1, 1000, '2025-01-19');   -- => Customer 2, $1000
+-- => 5 orders inserted for 3 customers
 
 -- Multi-stage aggregation: Find customers with above-average spending
 WITH
-order_totals AS (
-    -- Stage 1: Calculate total per order
+order_totals AS (                   -- => Stage 1: Calculate per-order totals
     SELECT
-        id,
-        customer_id,
-        quantity * price AS order_total
-    FROM orders
-),
-customer_totals AS (
-    -- Stage 2: Sum totals per customer
+        id,                         -- => Order id
+        customer_id,                -- => Customer reference
+        quantity * price AS order_total  -- => Multiply quantity × price
+    FROM orders                     -- => Source table
+),                                  -- => Result: 5 rows with order_total column
+customer_totals AS (                -- => Stage 2: Aggregate per customer
     SELECT
-        customer_id,
-        SUM(order_total) AS total_spent
-    FROM order_totals
-    GROUP BY customer_id
-),
-avg_spending AS (
-    -- Stage 3: Calculate average spending
-    SELECT AVG(total_spent) AS avg_total
-    FROM customer_totals
-)
+        customer_id,                -- => Customer identifier
+        SUM(order_total) AS total_spent  -- => Sum all orders per customer
+    FROM order_totals               -- => From previous CTE
+    GROUP BY customer_id            -- => Group by customer
+),                                  -- => Result: 3 rows (customer 1: 1100, 2: 1050, 3: 300)
+avg_spending AS (                   -- => Stage 3: Calculate overall average
+    SELECT AVG(total_spent) AS avg_total  -- => Average of customer totals
+    FROM customer_totals            -- => From previous CTE
+)                                   -- => Result: avg_total ≈ 816.67
 SELECT
-    ct.customer_id,
-    ct.total_spent
-FROM customer_totals ct, avg_spending av
-WHERE ct.total_spent > av.avg_total;
--- => Customer 1: 1100 (Laptop + Keyboard)
--- => Customer 2: 1050 (2 Mouse + Laptop)
--- => Average: ~817 ((1100 + 1050 + 300) / 3)
--- => Returns: Customer 1 and 2 (above average)
+    ct.customer_id,                 -- => Customer id
+    ct.total_spent                  -- => Customer's total spending
+FROM customer_totals ct,            -- => From customer totals
+     avg_spending av                -- => Cross join with average
+WHERE ct.total_spent > av.avg_total;  -- => Filter for above-average
+-- => Customer 1: 1100 > 816.67 ✓
+-- => Customer 2: 1050 > 816.67 ✓
+-- => Customer 3: 300 < 816.67 ✗
+-- => Returns: Customer 1 (1100), Customer 2 (1050)
 ```
 
 **Key Takeaway**: Chain CTEs to break complex aggregations into logical steps. Each CTE represents one transformation stage. This improves readability and debugging compared to nested subqueries.
@@ -288,56 +328,83 @@ graph TD
 **Code**:
 
 ```sql
-CREATE TABLE products (
-    id INTEGER,
-    name TEXT,
-    category TEXT,
-    price REAL
+-- Create products table
+CREATE TABLE products (             -- => Table for product catalog
+    id INTEGER,                     -- => Product identifier
+    name TEXT,                      -- => Product name
+    category TEXT,                  -- => Product category
+    price REAL                      -- => Product price
 );
+-- => Table created: products
 
+-- Insert sample products
 INSERT INTO products (id, name, category, price)
 VALUES
-    (1, 'Laptop Pro', 'Electronics', 1500),
-    (2, 'Laptop Air', 'Electronics', 1200),
-    (3, 'Desktop', 'Electronics', 800),
-    (4, 'Office Desk', 'Furniture', 300),
-    (5, 'Office Chair', 'Furniture', 200),
-    (6, 'Standing Desk', 'Furniture', 500);
+    (1, 'Laptop Pro', 'Electronics', 1500),    -- => Most expensive
+    (2, 'Laptop Air', 'Electronics', 1200),    -- => Second highest
+    (3, 'Desktop', 'Electronics', 800),        -- => Third
+    (4, 'Office Desk', 'Furniture', 300),      -- => Mid-price furniture
+    (5, 'Office Chair', 'Furniture', 200),     -- => Cheapest
+    (6, 'Standing Desk', 'Furniture', 500);    -- => Most expensive furniture
+-- => 6 rows inserted: 3 Electronics, 3 Furniture
 
--- ROW_NUMBER: Number all rows
+-- ROW_NUMBER: Number all rows globally
 SELECT
-    name,
-    price,
-    ROW_NUMBER() OVER (ORDER BY price DESC) AS price_rank
-FROM products;
--- => Returns products numbered 1-6 by price descending
--- => Laptop Pro: 1, Laptop Air: 2, Desktop: 3, Standing Desk: 4, Office Desk: 5, Office Chair: 6
+    name,                           -- => Product name
+    price,                          -- => Product price
+    ROW_NUMBER() OVER (ORDER BY price DESC) AS price_rank  -- => Sequential numbering
+FROM products;                      -- => Source table
+-- => ROW_NUMBER assigns 1,2,3,... to rows based on ORDER BY
+-- => OVER clause defines window (all rows, sorted by price descending)
+-- => Laptop Pro: rank=1 (price=1500, highest)
+-- => Laptop Air: rank=2 (price=1200)
+-- => Desktop: rank=3 (price=800)
+-- => Standing Desk: rank=4 (price=500)
+-- => Office Desk: rank=5 (price=300)
+-- => Office Chair: rank=6 (price=200, lowest)
+-- => Returns 6 rows with unique ranks
 
 -- ROW_NUMBER with PARTITION: Number within categories
 SELECT
-    name,
-    category,
-    price,
-    ROW_NUMBER() OVER (PARTITION BY category ORDER BY price DESC) AS rank_in_category
-FROM products;
--- => Electronics: Laptop Pro (1), Laptop Air (2), Desktop (3)
--- => Furniture: Standing Desk (1), Office Desk (2), Office Chair (3)
+    name,                           -- => Product name
+    category,                       -- => Product category
+    price,                          -- => Product price
+    ROW_NUMBER() OVER (             -- => Window function
+        PARTITION BY category       -- => Separate numbering per category
+        ORDER BY price DESC         -- => Within each partition, sort by price
+    ) AS rank_in_category           -- => Rank within category
+FROM products;                      -- => Source table
+-- => PARTITION BY creates independent windows per category
+-- => Electronics partition (3 rows):
+-- =>   Laptop Pro: rank_in_category=1 (1500 highest in Electronics)
+-- =>   Laptop Air: rank_in_category=2 (1200)
+-- =>   Desktop: rank_in_category=3 (800)
+-- => Furniture partition (3 rows):
+-- =>   Standing Desk: rank_in_category=1 (500 highest in Furniture, resets to 1)
+-- =>   Office Desk: rank_in_category=2 (300)
+-- =>   Office Chair: rank_in_category=3 (200)
+-- => Returns 6 rows, ranks reset per category
 
 -- Use ROW_NUMBER to find top N per category
-WITH ranked_products AS (
+WITH ranked_products AS (           -- => CTE for ranking
     SELECT
-        name,
-        category,
-        price,
-        ROW_NUMBER() OVER (PARTITION BY category ORDER BY price DESC) AS rank
-    FROM products
-)
-SELECT name, category, price
-FROM ranked_products
-WHERE rank <= 2;
--- => Returns top 2 products per category
--- => Electronics: Laptop Pro, Laptop Air
--- => Furniture: Standing Desk, Office Desk
+        name,                       -- => Product name
+        category,                   -- => Product category
+        price,                      -- => Product price
+        ROW_NUMBER() OVER (         -- => Ranking window function
+            PARTITION BY category   -- => Separate ranking per category
+            ORDER BY price DESC     -- => Highest price first
+        ) AS rank                   -- => Rank number
+    FROM products                   -- => Source table
+)                                   -- => CTE contains all 6 products with ranks
+SELECT name, category, price        -- => Select columns
+FROM ranked_products                -- => From CTE
+WHERE rank <= 2;                    -- => Filter for top 2 per category
+-- => rank <= 2 keeps ranks 1 and 2 within each partition
+-- => Electronics top 2: Laptop Pro (rank=1), Laptop Air (rank=2)
+-- => Furniture top 2: Standing Desk (rank=1), Office Desk (rank=2)
+-- => Returns 4 rows total (2 per category)
+-- => Pattern: "Top N per group" requires PARTITION BY + filter on rank
 ```
 
 **Key Takeaway**: ROW_NUMBER assigns unique sequential numbers to rows. PARTITION BY creates separate numbering for each group. Use with CTE to filter top N per category - a pattern impossible with GROUP BY alone.
@@ -353,56 +420,86 @@ RANK and DENSE_RANK handle ties differently. RANK skips numbers after ties, DENS
 **Code**:
 
 ```sql
-CREATE TABLE exam_scores (
-    id INTEGER,
-    student TEXT,
-    score INTEGER
+-- Create exam scores table
+CREATE TABLE exam_scores (          -- => Table for student scores
+    id INTEGER,                     -- => Record identifier
+    student TEXT,                   -- => Student name
+    score INTEGER                   -- => Exam score
 );
+-- => Table created: exam_scores
 
+-- Insert student scores with a tie
 INSERT INTO exam_scores (id, student, score)
 VALUES
-    (1, 'Alice', 95),
-    (2, 'Bob', 90),
-    (3, 'Charlie', 90),
-    (4, 'Diana', 85),
-    (5, 'Eve', 80);
+    (1, 'Alice', 95),               -- => Highest score
+    (2, 'Bob', 90),                 -- => Tied for second
+    (3, 'Charlie', 90),             -- => Tied for second
+    (4, 'Diana', 85),               -- => Fourth place
+    (5, 'Eve', 80);                 -- => Fifth place
+-- => 5 rows inserted: 1 unique top, 2-way tie, 2 unique below
 
 -- Compare ROW_NUMBER, RANK, and DENSE_RANK
 SELECT
-    student,
-    score,
-    ROW_NUMBER() OVER (ORDER BY score DESC) AS row_num,
-    RANK() OVER (ORDER BY score DESC) AS rank,
-    DENSE_RANK() OVER (ORDER BY score DESC) AS dense_rank
-FROM exam_scores;
--- => Returns:
--- => Alice: row_num=1, rank=1, dense_rank=1 (score 95)
--- => Bob: row_num=2, rank=2, dense_rank=2 (score 90)
--- => Charlie: row_num=3, rank=2, dense_rank=2 (score 90, tied with Bob)
--- => Diana: row_num=4, rank=4, dense_rank=3 (score 85, RANK skips 3)
--- => Eve: row_num=5, rank=5, dense_rank=4 (score 80)
+    student,                        -- => Student name
+    score,                          -- => Exam score
+    ROW_NUMBER() OVER (ORDER BY score DESC) AS row_num,      -- => Always unique
+    RANK() OVER (ORDER BY score DESC) AS rank,               -- => Skips after ties
+    DENSE_RANK() OVER (ORDER BY score DESC) AS dense_rank    -- => No gaps
+FROM exam_scores;                   -- => Source table
+-- => All three use same ORDER BY (score DESC)
+-- => Alice (score=95):
+-- =>   row_num=1 (first row)
+-- =>   rank=1 (highest score)
+-- =>   dense_rank=1 (first distinct score)
+-- => Bob (score=90):
+-- =>   row_num=2 (second row, arbitrary order among ties)
+-- =>   rank=2 (second highest score)
+-- =>   dense_rank=2 (second distinct score)
+-- => Charlie (score=90, tied with Bob):
+-- =>   row_num=3 (third row, ROW_NUMBER always unique)
+-- =>   rank=2 (same score as Bob, RANK assigns same rank)
+-- =>   dense_rank=2 (same score, DENSE_RANK assigns same rank)
+-- => Diana (score=85):
+-- =>   row_num=4 (fourth row)
+-- =>   rank=4 (RANK skips 3 because 2 students at rank 2)
+-- =>   dense_rank=3 (DENSE_RANK continues sequentially, no skip)
+-- => Eve (score=80):
+-- =>   row_num=5, rank=5, dense_rank=4
+-- => Key difference: RANK skips after ties, DENSE_RANK doesn't
 
 -- Use RANK to find students in top 3 ranks
-WITH ranked_students AS (
+WITH ranked_students AS (           -- => CTE with RANK
     SELECT
-        student,
-        score,
-        RANK() OVER (ORDER BY score DESC) AS rank
-    FROM exam_scores
-)
-SELECT student, score, rank
-FROM ranked_students
-WHERE rank <= 3;
--- => Returns: Alice (1), Bob (2), Charlie (2)
--- => Diana excluded even though row_num=4 because rank=4
+        student,                    -- => Student name
+        score,                      -- => Exam score
+        RANK() OVER (ORDER BY score DESC) AS rank  -- => Rank with gaps
+    FROM exam_scores                -- => Source table
+)                                   -- => CTE: 5 rows with ranks 1,2,2,4,5
+SELECT student, score, rank         -- => Select all columns
+FROM ranked_students                -- => From CTE
+WHERE rank <= 3;                    -- => Filter for rank 1, 2, or 3
+-- => rank <= 3 includes ranks 1, 2, 2 (no rank 3 exists due to tie)
+-- => Alice: rank=1 ✓ (included)
+-- => Bob: rank=2 ✓ (included)
+-- => Charlie: rank=2 ✓ (included)
+-- => Diana: rank=4 ✗ (excluded, even though row_num=4)
+-- => Returns 3 students: Alice, Bob, Charlie
+-- => Use case: "Top 3 ranks" includes all tied students
 
 -- DENSE_RANK for continuous rankings
 SELECT
-    student,
-    score,
-    DENSE_RANK() OVER (ORDER BY score DESC) AS rank
-FROM exam_scores;
--- => Ranks: 1, 2, 2, 3, 4 (no gaps)
+    student,                        -- => Student name
+    score,                          -- => Exam score
+    DENSE_RANK() OVER (ORDER BY score DESC) AS rank  -- => Continuous ranking
+FROM exam_scores;                   -- => Source table
+-- => DENSE_RANK never skips numbers
+-- => Alice: rank=1 (score=95)
+-- => Bob: rank=2 (score=90)
+-- => Charlie: rank=2 (score=90, tied)
+-- => Diana: rank=3 (score=85, next sequential number, no gap)
+-- => Eve: rank=4 (score=80)
+-- => Returns ranks: 1, 2, 2, 3, 4 (continuous sequence)
+-- => Use case: "How many distinct score levels?" = MAX(DENSE_RANK)
 ```
 
 **Key Takeaway**: RANK assigns same rank to ties and skips subsequent numbers. DENSE_RANK assigns same rank to ties but continues sequentially. ROW_NUMBER always unique. Choose based on business rules: sports use RANK, leaderboards often use DENSE_RANK.
@@ -433,59 +530,73 @@ graph TD
 **Code**:
 
 ```sql
-CREATE TABLE stock_prices (
-    id INTEGER,
-    date TEXT,
-    price REAL
+-- Create stock prices table
+CREATE TABLE stock_prices (         -- => Table for daily stock data
+    id INTEGER,                     -- => Row identifier
+    date TEXT,                      -- => Trading date
+    price REAL                      -- => Closing price
 );
+-- => Table created: stock_prices
 
+-- Insert 5 days of price data
 INSERT INTO stock_prices (id, date, price)
 VALUES
-    (1, '2025-01-15', 100.00),
-    (2, '2025-01-16', 105.00),
-    (3, '2025-01-17', 103.00),
-    (4, '2025-01-18', 108.00),
-    (5, '2025-01-19', 107.00);
+    (1, '2025-01-15', 100.00),      -- => Day 1: $100
+    (2, '2025-01-16', 105.00),      -- => Day 2: $105 (up $5)
+    (3, '2025-01-17', 103.00),      -- => Day 3: $103 (down $2)
+    (4, '2025-01-18', 108.00),      -- => Day 4: $108 (up $5)
+    (5, '2025-01-19', 107.00);      -- => Day 5: $107 (down $1)
+-- => 5 rows inserted
 
 -- LAG: Compare with previous day
 SELECT
-    date,
-    price,
-    LAG(price) OVER (ORDER BY date) AS prev_price,
-    price - LAG(price) OVER (ORDER BY date) AS daily_change
-FROM stock_prices;
--- => Returns:
--- => 2025-01-15: price=100.00, prev_price=NULL, daily_change=NULL
--- => 2025-01-16: price=105.00, prev_price=100.00, daily_change=5.00
--- => 2025-01-17: price=103.00, prev_price=105.00, daily_change=-2.00
--- => 2025-01-18: price=108.00, prev_price=103.00, daily_change=5.00
--- => 2025-01-19: price=107.00, prev_price=108.00, daily_change=-1.00
+    date,                           -- => Trading date
+    price,                          -- => Current price
+    LAG(price) OVER (ORDER BY date) AS prev_price,     -- => Previous day's price
+    price - LAG(price) OVER (ORDER BY date) AS daily_change  -- => Price change
+FROM stock_prices;                  -- => Source table
+-- => Window function accesses previous row per ORDER BY date
+-- => Row 1 (2025-01-15): price=100.00, prev_price=NULL (no previous), daily_change=NULL
+-- => Row 2 (2025-01-16): price=105.00, prev_price=100.00, daily_change=+5.00
+-- => Row 3 (2025-01-17): price=103.00, prev_price=105.00, daily_change=-2.00
+-- => Row 4 (2025-01-18): price=108.00, prev_price=103.00, daily_change=+5.00
+-- => Row 5 (2025-01-19): price=107.00, prev_price=108.00, daily_change=-1.00
 
 -- LEAD: Compare with next day
 SELECT
-    date,
-    price,
-    LEAD(price) OVER (ORDER BY date) AS next_price,
-    LEAD(price) OVER (ORDER BY date) - price AS next_day_change
-FROM stock_prices;
--- => First row shows change to next day, last row shows NULL
+    date,                           -- => Trading date
+    price,                          -- => Current price
+    LEAD(price) OVER (ORDER BY date) AS next_price,    -- => Next day's price
+    LEAD(price) OVER (ORDER BY date) - price AS next_day_change  -- => Forward change
+FROM stock_prices;                  -- => Source table
+-- => Window function accesses next row per ORDER BY date
+-- => Row 1: next_price=105.00, next_day_change=+5.00
+-- => Row 5: next_price=NULL (no next day), next_day_change=NULL
 
 -- LAG with default value (avoid NULL for first row)
 SELECT
-    date,
-    price,
-    LAG(price, 1, 0) OVER (ORDER BY date) AS prev_price
-FROM stock_prices;
--- => 2025-01-15: prev_price=0 (default instead of NULL)
+    date,                           -- => Trading date
+    price,                          -- => Current price
+    LAG(price, 1, 0) OVER (ORDER BY date) AS prev_price  -- => LAG(col, offset, default)
+FROM stock_prices;                  -- => Source table
+-- => LAG parameters: price (column), 1 (offset), 0 (default for NULL)
+-- => Row 1 (2025-01-15): prev_price=0 (default value, not NULL)
+-- => Row 2: prev_price=100.00
+-- => Useful for calculations that can't handle NULL
 
 -- LAG with offset > 1 (compare with 2 days ago)
 SELECT
-    date,
-    price,
-    LAG(price, 2) OVER (ORDER BY date) AS two_days_ago,
-    price - LAG(price, 2) OVER (ORDER BY date) AS change_vs_two_days
-FROM stock_prices;
--- => 2025-01-17: two_days_ago=100.00, change_vs_two_days=3.00
+    date,                           -- => Trading date
+    price,                          -- => Current price
+    LAG(price, 2) OVER (ORDER BY date) AS two_days_ago,  -- => Price 2 rows back
+    price - LAG(price, 2) OVER (ORDER BY date) AS change_vs_two_days  -- => 2-day change
+FROM stock_prices;                  -- => Source table
+-- => LAG offset=2 accesses row 2 positions earlier
+-- => Row 1: two_days_ago=NULL (offset beyond start)
+-- => Row 2: two_days_ago=NULL (offset beyond start)
+-- => Row 3 (2025-01-17): two_days_ago=100.00, change_vs_two_days=+3.00
+-- => Row 4 (2025-01-18): two_days_ago=105.00, change_vs_two_days=+3.00
+-- => Row 5 (2025-01-19): two_days_ago=103.00, change_vs_two_days=+4.00
 ```
 
 **Key Takeaway**: LAG(column, offset, default) accesses previous row value, LEAD accesses next row. Default offset is 1. Use for time-series analysis, calculating changes, or comparing consecutive events.
@@ -501,70 +612,91 @@ Aggregate functions become window functions when used with OVER. They compute ru
 **Code**:
 
 ```sql
-CREATE TABLE monthly_revenue (
-    id INTEGER,
-    month TEXT,
-    revenue REAL
+-- Create monthly revenue table
+CREATE TABLE monthly_revenue (      -- => Table for revenue tracking
+    id INTEGER,                     -- => Record identifier
+    month TEXT,                     -- => Month (YYYY-MM format)
+    revenue REAL                    -- => Revenue amount
 );
+-- => Table created: monthly_revenue
 
+-- Insert 5 months of revenue data
 INSERT INTO monthly_revenue (id, month, revenue)
 VALUES
-    (1, '2025-01', 10000),
-    (2, '2025-02', 12000),
-    (3, '2025-03', 11000),
-    (4, '2025-04', 15000),
-    (5, '2025-05', 13000);
+    (1, '2025-01', 10000),          -- => January revenue
+    (2, '2025-02', 12000),          -- => February revenue (up 2000)
+    (3, '2025-03', 11000),          -- => March revenue (down 1000)
+    (4, '2025-04', 15000),          -- => April revenue (up 4000, highest)
+    (5, '2025-05', 13000);          -- => May revenue (down 2000)
+-- => 5 rows inserted, total=61000
 
 -- Running total (cumulative sum)
 SELECT
-    month,
-    revenue,
-    SUM(revenue) OVER (ORDER BY month) AS cumulative_revenue
-FROM monthly_revenue;
--- => Returns:
--- => 2025-01: revenue=10000, cumulative=10000
--- => 2025-02: revenue=12000, cumulative=22000 (10000+12000)
--- => 2025-03: revenue=11000, cumulative=33000
--- => 2025-04: revenue=15000, cumulative=48000
--- => 2025-05: revenue=13000, cumulative=61000
+    month,                          -- => Month identifier
+    revenue,                        -- => Current month revenue
+    SUM(revenue) OVER (ORDER BY month) AS cumulative_revenue  -- => Running sum
+FROM monthly_revenue;               -- => Source table
+-- => Window function: SUM across all rows up to current row
+-- => ORDER BY month defines cumulative order
+-- => Default frame: RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+-- => 2025-01: cumulative=10000 (first month only)
+-- => 2025-02: cumulative=22000 (10000+12000)
+-- => 2025-03: cumulative=33000 (10000+12000+11000)
+-- => 2025-04: cumulative=48000 (10000+12000+11000+15000)
+-- => 2025-05: cumulative=61000 (sum of all 5 months)
+-- => Returns 5 rows with running totals
 
 -- Moving average (3-month window)
 SELECT
-    month,
-    revenue,
-    AVG(revenue) OVER (
-        ORDER BY month
-        ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
-    ) AS moving_avg_3month
-FROM monthly_revenue;
--- => 2025-01: moving_avg=10000 (only 1 row)
--- => 2025-02: moving_avg=11000 ((10000+12000)/2)
--- => 2025-03: moving_avg=11000 ((10000+12000+11000)/3)
--- => 2025-04: moving_avg=12667 ((12000+11000+15000)/3)
--- => 2025-05: moving_avg=13000 ((11000+15000+13000)/3)
+    month,                          -- => Month identifier
+    revenue,                        -- => Current month revenue
+    ROUND(AVG(revenue) OVER (       -- => Moving average
+        ORDER BY month              -- => Process in chronological order
+        ROWS BETWEEN 2 PRECEDING AND CURRENT ROW  -- => 3-row window
+    ), 2) AS moving_avg_3month      -- => Rounded to 2 decimals
+FROM monthly_revenue;               -- => Source table
+-- => ROWS BETWEEN: Physical row-based window (not value-based)
+-- => 2 PRECEDING: Include 2 rows before current row
+-- => CURRENT ROW: Include current row
+-- => Total window size: up to 3 rows
+-- => 2025-01: window=[10000], avg=10000/1=10000 (only 1 row available)
+-- => 2025-02: window=[10000,12000], avg=22000/2=11000 (2 rows)
+-- => 2025-03: window=[10000,12000,11000], avg=33000/3=11000 (3 rows, full window)
+-- => 2025-04: window=[12000,11000,15000], avg=38000/3=12666.67 (slides forward)
+-- => 2025-05: window=[11000,15000,13000], avg=39000/3=13000
+-- => Returns smoothed revenue trend
 
--- Running min/max
+-- Running min/max (record tracking)
 SELECT
-    month,
-    revenue,
-    MIN(revenue) OVER (ORDER BY month) AS min_so_far,
-    MAX(revenue) OVER (ORDER BY month) AS max_so_far
-FROM monthly_revenue;
--- => 2025-01: min=10000, max=10000
--- => 2025-02: min=10000, max=12000
--- => 2025-03: min=10000, max=12000
--- => 2025-04: min=10000, max=15000 (new maximum)
--- => 2025-05: min=10000, max=15000
+    month,                          -- => Month identifier
+    revenue,                        -- => Current month revenue
+    MIN(revenue) OVER (ORDER BY month) AS min_so_far,  -- => Lowest to date
+    MAX(revenue) OVER (ORDER BY month) AS max_so_far   -- => Highest to date
+FROM monthly_revenue;               -- => Source table
+-- => MIN/MAX aggregate all rows up to current row
+-- => 2025-01: min=10000, max=10000 (first month, same value)
+-- => 2025-02: min=10000 (10000<12000), max=12000 (12000>10000, new max)
+-- => 2025-03: min=10000 (unchanged), max=12000 (11000<12000, unchanged)
+-- => 2025-04: min=10000 (unchanged), max=15000 (15000>12000, new record high)
+-- => 2025-05: min=10000 (unchanged), max=15000 (13000<15000, unchanged)
+-- => Tracks record lows and highs over time
 
 -- Percentage of total (window aggregate without ORDER)
 SELECT
-    month,
-    revenue,
-    SUM(revenue) OVER () AS total_revenue,
-    ROUND(revenue * 100.0 / SUM(revenue) OVER (), 2) AS pct_of_total
-FROM monthly_revenue;
--- => Total: 61000
--- => Each row shows its percentage: 16.39%, 19.67%, 18.03%, 24.59%, 21.31%
+    month,                          -- => Month identifier
+    revenue,                        -- => Current month revenue
+    SUM(revenue) OVER () AS total_revenue,  -- => Grand total (all rows)
+    ROUND(revenue * 100.0 / SUM(revenue) OVER (), 2) AS pct_of_total  -- => Percentage
+FROM monthly_revenue;               -- => Source table
+-- => Empty OVER() processes entire result set (no partitions, no order)
+-- => SUM(revenue) OVER() = 61000 (same for all rows)
+-- => Percentage calculation per row:
+-- => 2025-01: 10000*100/61000 = 16.39%
+-- => 2025-02: 12000*100/61000 = 19.67%
+-- => 2025-03: 11000*100/61000 = 18.03%
+-- => 2025-04: 15000*100/61000 = 24.59%
+-- => 2025-05: 13000*100/61000 = 21.31%
+-- => Returns each month's contribution to total
 ```
 
 **Key Takeaway**: Window aggregates preserve individual rows while computing across groups. Use ROWS BETWEEN for moving windows. Empty OVER() computes across all rows. Running totals and moving averages are common patterns.
@@ -606,65 +738,89 @@ graph TD
 **Code**:
 
 ```sql
-CREATE TABLE sales_by_region (
-    id INTEGER,
-    region TEXT,
-    month TEXT,
-    revenue REAL
+-- Create sales by region table
+CREATE TABLE sales_by_region (      -- => Table for regional sales
+    id INTEGER,                     -- => Record identifier
+    region TEXT,                    -- => Sales region
+    month TEXT,                     -- => Month (YYYY-MM format)
+    revenue REAL                    -- => Monthly revenue
 );
+-- => Table created: sales_by_region
 
+-- Insert sales data for 2 regions over 3 months
 INSERT INTO sales_by_region (id, region, month, revenue)
 VALUES
-    (1, 'North', '2025-01', 10000),
-    (2, 'North', '2025-02', 12000),
-    (3, 'North', '2025-03', 11000),
-    (4, 'South', '2025-01', 8000),
-    (5, 'South', '2025-02', 9000),
-    (6, 'South', '2025-03', 10000);
+    (1, 'North', '2025-01', 10000), -- => North Jan: 10000
+    (2, 'North', '2025-02', 12000), -- => North Feb: 12000 (up 2000)
+    (3, 'North', '2025-03', 11000), -- => North Mar: 11000 (down 1000)
+    (4, 'South', '2025-01', 8000),  -- => South Jan: 8000
+    (5, 'South', '2025-02', 9000),  -- => South Feb: 9000 (up 1000)
+    (6, 'South', '2025-03', 10000); -- => South Mar: 10000 (up 1000)
+-- => 6 rows inserted: 3 per region
+-- => North total: 33000, South total: 27000
 
--- Running total per region
+-- Running total per region (independent running sums)
 SELECT
-    region,
-    month,
-    revenue,
-    SUM(revenue) OVER (
-        PARTITION BY region
-        ORDER BY month
-    ) AS cumulative_revenue
-FROM sales_by_region
-ORDER BY region, month;
--- => North: 10000, 22000, 33000 (separate running total)
--- => South: 8000, 17000, 27000 (separate running total, resets for South)
+    region,                         -- => Sales region
+    month,                          -- => Month identifier
+    revenue,                        -- => Monthly revenue
+    SUM(revenue) OVER (             -- => Cumulative sum window function
+        PARTITION BY region         -- => Separate windows per region
+        ORDER BY month              -- => Chronological order within partition
+    ) AS cumulative_revenue         -- => Running total per region
+FROM sales_by_region                -- => Source table
+ORDER BY region, month;             -- => Sort output by region, then month
+-- => PARTITION BY creates 2 independent windows: North, South
+-- => Each partition has its own running total starting at 0
+-- => North partition (3 rows):
+-- =>   2025-01: cumulative=10000 (first month)
+-- =>   2025-02: cumulative=22000 (10000+12000)
+-- =>   2025-03: cumulative=33000 (10000+12000+11000)
+-- => South partition (3 rows):
+-- =>   2025-01: cumulative=8000 (resets to first month)
+-- =>   2025-02: cumulative=17000 (8000+9000)
+-- =>   2025-03: cumulative=27000 (8000+9000+10000)
+-- => Returns 6 rows with per-region running totals
 
--- Rank within each region
+-- Rank within each region (independent rankings)
 SELECT
-    region,
-    month,
-    revenue,
-    RANK() OVER (
-        PARTITION BY region
-        ORDER BY revenue DESC
-    ) AS rank_in_region
-FROM sales_by_region;
--- => North: February (1), March (2), January (3)
--- => South: March (1), February (2), January (3)
+    region,                         -- => Sales region
+    month,                          -- => Month identifier
+    revenue,                        -- => Monthly revenue
+    RANK() OVER (                   -- => Ranking window function
+        PARTITION BY region         -- => Separate rankings per region
+        ORDER BY revenue DESC       -- => Highest revenue first within partition
+    ) AS rank_in_region             -- => Rank within region
+FROM sales_by_region;               -- => Source table
+-- => PARTITION BY creates 2 independent ranking systems
+-- => North partition (ordered by revenue DESC):
+-- =>   February: revenue=12000, rank_in_region=1 (highest in North)
+-- =>   March: revenue=11000, rank_in_region=2
+-- =>   January: revenue=10000, rank_in_region=3 (lowest in North)
+-- => South partition (ordered by revenue DESC):
+-- =>   March: revenue=10000, rank_in_region=1 (highest in South, resets to 1)
+-- =>   February: revenue=9000, rank_in_region=2
+-- =>   January: revenue=8000, rank_in_region=3
+-- => Returns 6 rows with per-region rankings
 
--- Compare to region average
+-- Compare to region average (partition-level aggregate)
 SELECT
-    region,
-    month,
-    revenue,
-    AVG(revenue) OVER (PARTITION BY region) AS region_avg,
-    revenue - AVG(revenue) OVER (PARTITION BY region) AS vs_avg
-FROM sales_by_region;
--- => North avg: 11000
--- =>   January: revenue=10000, vs_avg=-1000
--- =>   February: revenue=12000, vs_avg=1000
--- =>   March: revenue=11000, vs_avg=0
--- => South avg: 9000
--- =>   January: revenue=8000, vs_avg=-1000
--- =>   February: revenue=9000, vs_avg=0
--- =>   March: revenue=10000, vs_avg=1000
+    region,                         -- => Sales region
+    month,                          -- => Month identifier
+    revenue,                        -- => Monthly revenue
+    AVG(revenue) OVER (PARTITION BY region) AS region_avg,  -- => Average per region
+    revenue - AVG(revenue) OVER (PARTITION BY region) AS vs_avg  -- => Deviation
+FROM sales_by_region;               -- => Source table
+-- => AVG without ORDER BY computes over entire partition
+-- => North partition average: (10000+12000+11000)/3 = 11000
+-- =>   January: revenue=10000, region_avg=11000, vs_avg=-1000 (below avg)
+-- =>   February: revenue=12000, region_avg=11000, vs_avg=+1000 (above avg)
+-- =>   March: revenue=11000, region_avg=11000, vs_avg=0 (at avg)
+-- => South partition average: (8000+9000+10000)/3 = 9000
+-- =>   January: revenue=8000, region_avg=9000, vs_avg=-1000 (below avg)
+-- =>   February: revenue=9000, region_avg=9000, vs_avg=0 (at avg)
+-- =>   March: revenue=10000, region_avg=9000, vs_avg=+1000 (above avg)
+-- => Returns 6 rows with variance from regional average
 ```
 
 **Key Takeaway**: PARTITION BY creates independent groups for window functions. Running totals, rankings, and averages reset for each partition. Combine with ORDER BY for per-group sequential operations.
@@ -680,65 +836,104 @@ String functions extract substrings, replace text, remove whitespace, and transf
 **Code**:
 
 ```sql
-CREATE TABLE user_data (
-    id INTEGER,
-    email TEXT,
-    phone TEXT,
-    bio TEXT
+-- Create user data table with messy strings
+CREATE TABLE user_data (            -- => Table for user information
+    id INTEGER,                     -- => User identifier
+    email TEXT,                     -- => Email address (inconsistent case)
+    phone TEXT,                     -- => Phone number (with whitespace)
+    bio TEXT                        -- => User biography
 );
+-- => Table created: user_data
 
+-- Insert users with messy data
 INSERT INTO user_data (id, email, phone, bio)
 VALUES
     (1, 'ALICE@EXAMPLE.COM', '  555-1234  ', 'Software Engineer with 10 years experience'),
+        -- => Email uppercase, phone has leading/trailing spaces
     (2, 'bob@test.org', '555-5678', 'Data Scientist focused on ML');
+        -- => Email lowercase, phone clean
+-- => 2 rows inserted with inconsistent formatting
 
--- Extract substring
+-- Extract substring (parse email into parts)
 SELECT
-    email,
-    SUBSTR(email, 1, INSTR(email, '@') - 1) AS username,
-    SUBSTR(email, INSTR(email, '@') + 1) AS domain
-FROM user_data;
--- => alice@example.com: username='ALICE', domain='EXAMPLE.COM'
--- => bob@test.org: username='bob', domain='test.org'
+    email,                          -- => Full email address
+    SUBSTR(email, 1, INSTR(email, '@') - 1) AS username,  -- => Before @
+    SUBSTR(email, INSTR(email, '@') + 1) AS domain        -- => After @
+FROM user_data;                     -- => Source table
+-- => INSTR(email, '@') finds position of @ character
+-- => SUBSTR(text, start, length) extracts substring
+-- => Row 1: email='ALICE@EXAMPLE.COM'
+-- =>   INSTR returns 6 (@ is at position 6)
+-- =>   SUBSTR(email, 1, 5) = 'ALICE' (positions 1-5)
+-- =>   SUBSTR(email, 7) = 'EXAMPLE.COM' (from position 7 to end)
+-- => Row 2: email='bob@test.org'
+-- =>   INSTR returns 4
+-- =>   username='bob', domain='test.org'
 
--- Case conversion
+-- Case conversion (normalize casing)
 SELECT
-    email,
-    LOWER(email) AS lowercase,
-    UPPER(email) AS uppercase
-FROM user_data;
--- => ALICE@EXAMPLE.COM: lowercase='alice@example.com', uppercase='ALICE@EXAMPLE.COM'
+    email,                          -- => Original email
+    LOWER(email) AS lowercase,      -- => Convert to lowercase
+    UPPER(email) AS uppercase       -- => Convert to uppercase
+FROM user_data;                     -- => Source table
+-- => LOWER('ALICE@EXAMPLE.COM') = 'alice@example.com'
+-- => UPPER('ALICE@EXAMPLE.COM') = 'ALICE@EXAMPLE.COM' (already uppercase)
+-- => LOWER('bob@test.org') = 'bob@test.org' (already lowercase)
+-- => UPPER('bob@test.org') = 'BOB@TEST.ORG'
+-- => Returns 2 rows with case variations
 
--- Trim whitespace
+-- Trim whitespace (remove leading/trailing spaces)
 SELECT
-    phone,
-    TRIM(phone) AS trimmed,
-    LENGTH(phone) AS original_length,
-    LENGTH(TRIM(phone)) AS trimmed_length
-FROM user_data;
--- => '  555-1234  ': trimmed='555-1234', original_length=12, trimmed_length=8
+    phone,                          -- => Original phone (may have spaces)
+    TRIM(phone) AS trimmed,         -- => Remove leading/trailing whitespace
+    LENGTH(phone) AS original_length,  -- => Length before trim
+    LENGTH(TRIM(phone)) AS trimmed_length  -- => Length after trim
+FROM user_data;                     -- => Source table
+-- => Row 1: phone='  555-1234  ' (2 spaces each side)
+-- =>   TRIM removes leading/trailing spaces only
+-- =>   trimmed='555-1234'
+-- =>   original_length=12 (2+8+2)
+-- =>   trimmed_length=8 (just the phone number)
+-- => Row 2: phone='555-5678' (no spaces)
+-- =>   trimmed='555-5678' (unchanged)
+-- =>   Both lengths=8
 
--- Replace text
+-- Replace text (remove characters)
 SELECT
-    phone,
-    REPLACE(phone, '-', '') AS digits_only
-FROM user_data;
--- => '555-1234': digits_only='5551234'
+    phone,                          -- => Original phone
+    REPLACE(phone, '-', '') AS digits_only  -- => Remove hyphens
+FROM user_data;                     -- => Source table
+-- => REPLACE(text, find, replacement) replaces all occurrences
+-- => Row 1: REPLACE('  555-1234  ', '-', '') = '  5551234  ' (removes hyphen)
+-- => Row 2: REPLACE('555-5678', '-', '') = '5555678'
+-- => Note: REPLACE doesn't remove spaces, only the hyphen
 
--- Multiple string operations combined
+-- Multiple string operations combined (full normalization)
 SELECT
-    email,
-    LOWER(TRIM(email)) AS normalized_email,
-    REPLACE(REPLACE(phone, '-', ''), ' ', '') AS clean_phone
-FROM user_data;
--- => Normalizes email to lowercase, removes spaces from phone
+    email,                          -- => Original email
+    LOWER(TRIM(email)) AS normalized_email,  -- => Trim then lowercase
+    REPLACE(REPLACE(phone, '-', ''), ' ', '') AS clean_phone  -- => Remove - then spaces
+FROM user_data;                     -- => Source table
+-- => Nested function calls: inner executes first
+-- => Row 1 email: TRIM('ALICE@EXAMPLE.COM') = 'ALICE@EXAMPLE.COM' (no spaces)
+-- =>              LOWER('ALICE@EXAMPLE.COM') = 'alice@example.com'
+-- => Row 1 phone: REPLACE('  555-1234  ', '-', '') = '  5551234  '
+-- =>              REPLACE('  5551234  ', ' ', '') = '5551234' (all spaces removed)
+-- => Returns normalized data for database storage
 
--- Extract first N characters
+-- Extract first N characters (create preview)
 SELECT
-    bio,
-    SUBSTR(bio, 1, 50) || '...' AS preview
-FROM user_data;
--- => 'Software Engineer with 10 years experience': preview='Software Engineer with 10 years experience' (under 50 chars)
+    bio,                            -- => Full biography
+    SUBSTR(bio, 1, 50) || '...' AS preview  -- => First 50 chars + ellipsis
+FROM user_data;                     -- => Source table
+-- => SUBSTR(text, 1, 50) gets first 50 characters
+-- => || concatenates strings
+-- => Row 1: bio length=46 chars
+-- =>   SUBSTR returns full string (< 50)
+-- =>   preview='Software Engineer with 10 years experience...'
+-- => Row 2: bio length=31 chars
+-- =>   preview='Data Scientist focused on ML...'
+-- => Always adds '...' regardless of actual length
 ```
 
 **Key Takeaway**: Use SUBSTR for extraction, REPLACE for text substitution, TRIM for whitespace removal, UPPER/LOWER for case conversion. Combine multiple functions for data normalization and cleaning.
@@ -754,69 +949,107 @@ Date functions enable date calculations, formatting, and extraction of date comp
 **Code**:
 
 ```sql
-CREATE TABLE events (
-    id INTEGER,
-    name TEXT,
-    event_date TEXT,
-    event_time TEXT
+-- Create events table
+CREATE TABLE events (               -- => Table for scheduled events
+    id INTEGER,                     -- => Event identifier
+    name TEXT,                      -- => Event name
+    event_date TEXT,                -- => Event date (YYYY-MM-DD)
+    event_time TEXT                 -- => Event time (HH:MM:SS)
 );
+-- => Table created: events
 
+-- Insert upcoming events
 INSERT INTO events (id, name, event_date, event_time)
 VALUES
-    (1, 'Conference', '2025-06-15', '09:00:00'),
-    (2, 'Workshop', '2025-07-20', '14:30:00'),
-    (3, 'Seminar', '2025-08-10', '10:00:00');
+    (1, 'Conference', '2025-06-15', '09:00:00'),   -- => June conference
+    (2, 'Workshop', '2025-07-20', '14:30:00'),     -- => July workshop
+    (3, 'Seminar', '2025-08-10', '10:00:00');      -- => August seminar
+-- => 3 rows inserted: events in Jun, Jul, Aug 2025
 
--- Current date/time
+-- Current date/time functions
 SELECT
-    date('now') AS today,
-    time('now') AS current_time,
-    datetime('now') AS current_datetime;
--- => today='2025-12-29', current_time='02:07:25', current_datetime='2025-12-29 02:07:25'
+    date('now') AS today,           -- => Current date only
+    time('now') AS current_time,    -- => Current time only
+    datetime('now') AS current_datetime;  -- => Current date and time
+-- => 'now' is SQLite keyword for current timestamp (UTC)
+-- => date('now') returns 'YYYY-MM-DD'
+-- => time('now') returns 'HH:MM:SS'
+-- => datetime('now') returns 'YYYY-MM-DD HH:MM:SS'
+-- => Example output: today='2025-12-29', current_time='02:07:25', current_datetime='2025-12-29 02:07:25'
 
--- Date arithmetic
+-- Date arithmetic (modify dates)
 SELECT
-    name,
-    event_date,
-    date(event_date, '+7 days') AS one_week_later,
-    date(event_date, '-1 month') AS one_month_earlier,
-    date(event_date, '+1 year') AS next_year
-FROM events;
--- => Conference: one_week_later='2025-06-22', one_month_earlier='2025-05-15', next_year='2026-06-15'
+    name,                           -- => Event name
+    event_date,                     -- => Original event date
+    date(event_date, '+7 days') AS one_week_later,     -- => Add 7 days
+    date(event_date, '-1 month') AS one_month_earlier, -- => Subtract 1 month
+    date(event_date, '+1 year') AS next_year           -- => Add 1 year
+FROM events;                        -- => Source table
+-- => date() function: date(value, modifier1, modifier2, ...)
+-- => Modifiers: '+N days', '-N months', '+N years', etc.
+-- => Conference (2025-06-15):
+-- =>   +7 days: 2025-06-22 (June 22)
+-- =>   -1 month: 2025-05-15 (back to May 15)
+-- =>   +1 year: 2026-06-15 (same date, next year)
+-- => Returns 3 rows with calculated dates
 
--- Extract date components
+-- Extract date components (parse dates)
 SELECT
-    name,
-    event_date,
-    STRFTIME('%Y', event_date) AS year,
-    STRFTIME('%m', event_date) AS month,
-    STRFTIME('%d', event_date) AS day,
-    STRFTIME('%w', event_date) AS day_of_week
-FROM events;
--- => Conference: year='2025', month='06', day='15', day_of_week='0' (Sunday)
--- => %w: 0=Sunday, 1=Monday, etc.
+    name,                           -- => Event name
+    event_date,                     -- => Original date
+    STRFTIME('%Y', event_date) AS year,        -- => Extract year
+    STRFTIME('%m', event_date) AS month,       -- => Extract month
+    STRFTIME('%d', event_date) AS day,         -- => Extract day
+    STRFTIME('%w', event_date) AS day_of_week  -- => Day of week (0-6)
+FROM events;                        -- => Source table
+-- => STRFTIME(format, date) extracts components using format codes
+-- => Format codes: %Y=year, %m=month, %d=day, %w=day of week
+-- => Conference (2025-06-15):
+-- =>   year='2025' (4-digit year)
+-- =>   month='06' (01-12, zero-padded)
+-- =>   day='15' (01-31, zero-padded)
+-- =>   day_of_week='0' (0=Sunday, 1=Monday, ..., 6=Saturday)
+-- => Returns components as TEXT
 
--- Calculate days between dates
+-- Calculate days between dates (date difference)
 SELECT
-    name,
-    event_date,
+    name,                           -- => Event name
+    event_date,                     -- => Event date
     CAST(JULIANDAY(event_date) - JULIANDAY('2025-01-01') AS INTEGER) AS days_from_new_year
-FROM events;
--- => Conference: ~165 days from January 1
+FROM events;                        -- => Source table
+-- => JULIANDAY(date) converts date to Julian day number (continuous count)
+-- => Julian day difference = days between dates
+-- => CAST to INTEGER removes fractional days
+-- => Conference: JULIANDAY('2025-06-15') - JULIANDAY('2025-01-01')
+-- =>   June 15 is day 166 of 2025
+-- =>   Returns ~165 days (Jan 1 = day 1)
+-- => Workshop: ~201 days, Seminar: ~222 days
 
--- Format dates
+-- Format dates (custom display format)
 SELECT
-    name,
-    STRFTIME('%d/%m/%Y', event_date) AS formatted_date,
+    name,                           -- => Event name
+    STRFTIME('%d/%m/%Y', event_date) AS formatted_date,  -- => DD/MM/YYYY format
     STRFTIME('%Y-%m-%d %H:%M:%S', event_date || ' ' || event_time) AS full_datetime
-FROM events;
--- => Conference: formatted_date='15/06/2025', full_datetime='2025-06-15 09:00:00'
+        -- => Combine date and time
+FROM events;                        -- => Source table
+-- => STRFTIME formats dates for display
+-- => || concatenates strings
+-- => Conference:
+-- =>   event_date || ' ' || event_time = '2025-06-15 09:00:00'
+-- =>   formatted_date='15/06/2025' (European format)
+-- =>   full_datetime='2025-06-15 09:00:00' (ISO8601 with time)
+-- => Returns formatted date strings
 
--- Find events in next 60 days
-SELECT name, event_date
-FROM events
+-- Find events in next 60 days (date filtering)
+SELECT name, event_date             -- => Event name and date
+FROM events                         -- => Source table
 WHERE JULIANDAY(event_date) - JULIANDAY('now') BETWEEN 0 AND 60;
--- => Returns events within 60 days from today
+-- => Filter by date range using Julian days
+-- => JULIANDAY('now') = today's Julian day
+-- => Difference 0-60 = events 0-60 days from today
+-- => BETWEEN 0 AND 60: future events only (>= 0), within 60 days (<= 60)
+-- => Returns events happening in next 2 months
+-- => Example: if today is 2025-04-20, no events match (all > 60 days away)
 ```
 
 **Key Takeaway**: Use date() for date arithmetic (+/- days/months/years), STRFTIME for formatting and component extraction, JULIANDAY for date differences. Store dates as TEXT in ISO8601 format (YYYY-MM-DD) for consistency.
@@ -832,68 +1065,87 @@ COALESCE returns first non-NULL value from a list. NULLIF returns NULL if two va
 **Code**:
 
 ```sql
-CREATE TABLE products (
-    id INTEGER,
-    name TEXT,
-    list_price REAL,
-    sale_price REAL,
-    stock INTEGER
+-- Create products table with nullable columns
+CREATE TABLE products (             -- => Table for product catalog
+    id INTEGER,                     -- => Product identifier
+    name TEXT,                      -- => Product name
+    list_price REAL,                -- => Regular price
+    sale_price REAL,                -- => Discounted price (nullable)
+    stock INTEGER                   -- => Inventory count (nullable)
 );
+-- => Table created: products
 
+-- Insert products with various NULL values
 INSERT INTO products (id, name, list_price, sale_price, stock)
 VALUES
-    (1, 'Laptop', 1000, 800, 5),
-    (2, 'Mouse', 50, NULL, 0),
-    (3, 'Keyboard', 100, NULL, 10),
-    (4, 'Monitor', 300, 250, NULL);
+    (1, 'Laptop', 1000, 800, 5),    -- => On sale, in stock
+    (2, 'Mouse', 50, NULL, 0),      -- => No sale, out of stock
+    (3, 'Keyboard', 100, NULL, 10), -- => No sale, in stock
+    (4, 'Monitor', 300, 250, NULL); -- => On sale, stock unknown
+-- => 4 rows inserted with mixed NULL values
 
 -- COALESCE: Use sale price if available, otherwise list price
 SELECT
-    name,
-    list_price,
-    sale_price,
-    COALESCE(sale_price, list_price) AS effective_price
-FROM products;
--- => Laptop: effective_price=800 (has sale_price)
--- => Mouse: effective_price=50 (NULL sale_price, uses list_price)
--- => Keyboard: effective_price=100
--- => Monitor: effective_price=250
+    name,                           -- => Product name
+    list_price,                     -- => Regular price
+    sale_price,                     -- => Discounted price (may be NULL)
+    COALESCE(sale_price, list_price) AS effective_price  -- => First non-NULL value
+FROM products;                      -- => Source table
+-- => COALESCE checks arguments left-to-right, returns first non-NULL
+-- => Laptop: sale_price=800 (not NULL), effective_price=800
+-- => Mouse: sale_price=NULL, list_price=50, effective_price=50
+-- => Keyboard: sale_price=NULL, list_price=100, effective_price=100
+-- => Monitor: sale_price=250 (not NULL), effective_price=250
 
 -- COALESCE with multiple fallbacks
 SELECT
-    name,
-    stock,
-    COALESCE(stock, 0) AS stock_display,
-    COALESCE(sale_price, list_price, 0) AS price_display
-FROM products;
--- => Monitor: stock_display=0 (NULL -> 0)
+    name,                           -- => Product name
+    stock,                          -- => Inventory (may be NULL)
+    COALESCE(stock, 0) AS stock_display,  -- => NULL → 0
+    COALESCE(sale_price, list_price, 0) AS price_display  -- => 3 fallbacks
+FROM products;                      -- => Source table
+-- => COALESCE can take many arguments
+-- => Monitor: stock=NULL, stock_display=0 (fallback to 0)
+-- => price_display tries: sale_price → list_price → 0
 
 -- NULLIF: Return NULL if values match
 SELECT
-    name,
-    stock,
-    NULLIF(stock, 0) AS non_zero_stock
-FROM products;
--- => Mouse: non_zero_stock=NULL (stock=0, converted to NULL)
--- => Laptop: non_zero_stock=5 (stock != 0)
+    name,                           -- => Product name
+    stock,                          -- => Inventory count
+    NULLIF(stock, 0) AS non_zero_stock  -- => NULL if stock=0, else stock
+FROM products;                      -- => Source table
+-- => NULLIF(value, match) returns NULL when value=match
+-- => Mouse: stock=0, NULLIF(0,0)=NULL (converts 0 to NULL)
+-- => Laptop: stock=5, NULLIF(5,0)=5 (5≠0, returns 5)
+-- => Keyboard: stock=10, non_zero_stock=10
+-- => Monitor: stock=NULL, non_zero_stock=NULL (NULL≠0 but output NULL)
 
 -- NULLIF to avoid division by zero
 SELECT
-    name,
-    sale_price,
-    list_price,
+    name,                           -- => Product name
+    sale_price,                     -- => Discounted price
+    list_price,                     -- => Regular price
     ROUND((list_price - COALESCE(sale_price, list_price)) * 100.0 /
-          NULLIF(list_price, 0), 2) AS discount_pct
-FROM products;
--- => Laptop: discount_pct=20.00 ((1000-800)*100/1000)
--- => Mouse: discount_pct=0.00 (no sale price)
+          NULLIF(list_price, 0), 2) AS discount_pct  -- => Safe division
+FROM products;                      -- => Source table
+-- => NULLIF(list_price, 0) prevents division by zero
+-- => Returns NULL if list_price=0 instead of error
+-- => Laptop: (1000-800)*100/1000 = 200/1000*100 = 20.00%
+-- => Mouse: (50-50)*100/50 = 0/50*100 = 0.00% (no discount)
+-- => Keyboard: (100-100)*100/100 = 0.00%
+-- => Monitor: (300-250)*100/300 = 16.67%
 
 -- Combine COALESCE and NULLIF
 SELECT
-    name,
+    name,                           -- => Product name
     COALESCE(NULLIF(sale_price, list_price), list_price) AS final_price
-FROM products;
--- => Returns sale_price unless it equals list_price, then uses list_price
+FROM products;                      -- => Source table
+-- => Complex NULL logic: if sale_price=list_price, use list_price
+-- => NULLIF converts matching sale_price to NULL
+-- => COALESCE then falls back to list_price
+-- => Laptop: NULLIF(800, 1000)=800 (800≠1000), COALESCE(800,...)=800
+-- => Mouse: NULLIF(NULL, 50)=NULL (already NULL), COALESCE(NULL,50)=50
+-- => Ensures sale price shown only when different from list
 ```
 
 **Key Takeaway**: COALESCE provides default values for NULL columns. NULLIF converts specific values to NULL (useful for avoiding division by zero or treating zero as missing). Combine both for sophisticated NULL handling logic.
@@ -932,59 +1184,104 @@ graph TD
 **Code**:
 
 ```sql
-CREATE TABLE customers_2024 (
-    id INTEGER,
-    name TEXT,
-    email TEXT
+-- Create customer tables for different years
+CREATE TABLE customers_2024 (       -- => 2024 customers
+    id INTEGER,                     -- => Customer ID
+    name TEXT,                      -- => Customer name
+    email TEXT                      -- => Email address
 );
+-- => Table created: customers_2024
 
-CREATE TABLE customers_2025 (
-    id INTEGER,
-    name TEXT,
-    email TEXT
+CREATE TABLE customers_2025 (       -- => 2025 customers
+    id INTEGER,                     -- => Customer ID
+    name TEXT,                      -- => Customer name
+    email TEXT                      -- => Email address
 );
+-- => Table created: customers_2025
 
+-- Insert 2024 customers
 INSERT INTO customers_2024 (id, name, email)
 VALUES
-    (1, 'Alice', 'alice@example.com'),
-    (2, 'Bob', 'bob@example.com');
+    (1, 'Alice', 'alice@example.com'),    -- => Only in 2024
+    (2, 'Bob', 'bob@example.com');        -- => In both years
+-- => 2 rows inserted into 2024 table
 
+-- Insert 2025 customers
 INSERT INTO customers_2025 (id, name, email)
 VALUES
-    (2, 'Bob', 'bob@example.com'),  -- Duplicate
-    (3, 'Charlie', 'charlie@example.com');
+    (2, 'Bob', 'bob@example.com'),        -- => Duplicate (also in 2024)
+    (3, 'Charlie', 'charlie@example.com'); -- => Only in 2025
+-- => 2 rows inserted into 2025 table
+-- => Bob appears in both tables (duplicate data)
 
 -- UNION: Combine and remove duplicates
-SELECT name, email FROM customers_2024
-UNION
-SELECT name, email FROM customers_2025;
--- => Returns 3 rows: Alice, Bob (once), Charlie
+SELECT name, email FROM customers_2024   -- => Query 1: 2 rows
+UNION                                     -- => Combine with deduplication
+SELECT name, email FROM customers_2025;  -- => Query 2: 2 rows
+-- => UNION removes duplicate rows (same values in all columns)
+-- => Result set comparison:
+-- =>   From 2024: Alice, Bob
+-- =>   From 2025: Bob (duplicate, removed), Charlie
+-- => Returns 3 unique rows: Alice, Bob (once), Charlie
+-- => UNION performs implicit DISTINCT (slower than UNION ALL)
 
 -- UNION ALL: Combine and keep duplicates
-SELECT name, email FROM customers_2024
-UNION ALL
-SELECT name, email FROM customers_2025;
--- => Returns 4 rows: Alice, Bob (twice), Charlie
+SELECT name, email FROM customers_2024   -- => Query 1: 2 rows
+UNION ALL                                 -- => Combine without deduplication
+SELECT name, email FROM customers_2025;  -- => Query 2: 2 rows
+-- => UNION ALL keeps all rows including duplicates
+-- => Returns 4 rows total:
+-- =>   Alice (from 2024)
+-- =>   Bob (from 2024)
+-- =>   Bob (from 2025, duplicate kept)
+-- =>   Charlie (from 2025)
+-- => UNION ALL faster than UNION (no deduplication step)
 
 -- UNION with ORDER BY (applies to combined result)
-SELECT name, 'Old' AS customer_type FROM customers_2024
-UNION
-SELECT name, 'New' AS customer_type FROM customers_2025
-ORDER BY name;
--- => Returns: Alice (Old), Bob (appears twice if using UNION ALL), Charlie (New)
+SELECT name,                        -- => Customer name
+       'Old' AS customer_type       -- => Literal value for source
+FROM customers_2024                 -- => First query
+UNION                               -- => Deduplicate
+SELECT name,
+       'New' AS customer_type       -- => Different literal value
+FROM customers_2025                 -- => Second query
+ORDER BY name;                      -- => Sort final combined result
+-- => ORDER BY applies AFTER UNION (not to individual queries)
+-- => Columns must match in count and type between queries
+-- => With UNION (deduplicate):
+-- =>   Returns: Alice (Old), Bob (one row, labeled 'Old' or 'New'), Charlie (New)
+-- => With UNION ALL (keep duplicates):
+-- =>   Returns: Alice (Old), Bob (Old), Bob (New), Charlie (New)
+-- => ORDER BY sorts alphabetically: Alice, Bob, Charlie
 
--- UNION with different literal values
-SELECT id, name, '2024' AS year FROM customers_2024
-UNION ALL
-SELECT id, name, '2025' AS year FROM customers_2025
-ORDER BY year, name;
--- => Combines with year indicator, keeps duplicates
+-- UNION with different literal values (year indicator)
+SELECT id, name,                    -- => Customer data
+       '2024' AS year               -- => Year label
+FROM customers_2024                 -- => First query
+UNION ALL                           -- => Keep duplicates
+SELECT id, name,
+       '2025' AS year               -- => Year label
+FROM customers_2025                 -- => Second query
+ORDER BY year, name;                -- => Sort by year then name
+-- => UNION ALL preserves all 4 rows
+-- => Returns:
+-- =>   (1, Alice, 2024)
+-- =>   (2, Bob, 2024)
+-- =>   (2, Bob, 2025) - duplicate Bob with different year
+-- =>   (3, Charlie, 2025)
+-- => Useful for combining time-partitioned data
 
--- Find customers in both tables (intersection using INNER JOIN)
-SELECT c1.name, c1.email
-FROM customers_2024 c1
-INNER JOIN customers_2025 c2 ON c1.email = c2.email;
+-- Find customers in both tables (intersection alternative using JOIN)
+SELECT c1.name, c1.email            -- => Customer data
+FROM customers_2024 c1              -- => 2024 table
+INNER JOIN customers_2025 c2        -- => Join with 2025 table
+    ON c1.email = c2.email;         -- => Match on email
+-- => INNER JOIN returns rows with matches in both tables
+-- => Alice: no match in 2025 (excluded)
+-- => Bob: match found (bob@example.com in both tables)
+-- => Charlie: no match in 2024 (excluded)
 -- => Returns: Bob (appears in both tables)
+-- => Alternative to INTERSECT (which SQLite also supports)
 ```
 
 **Key Takeaway**: UNION removes duplicates (slower), UNION ALL keeps duplicates (faster). Both require same number of columns with compatible types. Use UNION for set operations, UNION ALL for combining datasets.
@@ -1000,81 +1297,117 @@ INTERSECT returns rows present in both queries. EXCEPT returns rows in first que
 **Code**:
 
 ```sql
-CREATE TABLE products_store_a (
-    product_id INTEGER,
-    name TEXT
+-- Create product inventory tables for two stores
+CREATE TABLE products_store_a (     -- => Store A inventory
+    product_id INTEGER,             -- => Product identifier
+    name TEXT                       -- => Product name
 );
+-- => Table created: products_store_a
 
-CREATE TABLE products_store_b (
-    product_id INTEGER,
-    name TEXT
+CREATE TABLE products_store_b (     -- => Store B inventory
+    product_id INTEGER,             -- => Product identifier
+    name TEXT                       -- => Product name
 );
+-- => Table created: products_store_b
 
+-- Insert Store A products
 INSERT INTO products_store_a (product_id, name)
 VALUES
-    (1, 'Laptop'),
-    (2, 'Mouse'),
-    (3, 'Keyboard');
+    (1, 'Laptop'),                  -- => Only in Store A
+    (2, 'Mouse'),                   -- => In both stores
+    (3, 'Keyboard');                -- => In both stores
+-- => 3 rows inserted into Store A
 
+-- Insert Store B products
 INSERT INTO products_store_b (product_id, name)
 VALUES
-    (2, 'Mouse'),
-    (3, 'Keyboard'),
-    (4, 'Monitor');
+    (2, 'Mouse'),                   -- => In both stores (overlap)
+    (3, 'Keyboard'),                -- => In both stores (overlap)
+    (4, 'Monitor');                 -- => Only in Store B
+-- => 3 rows inserted into Store B
+-- => 2 products overlap, 1 unique per store
 
--- INTERSECT: Products in both stores
-SELECT name FROM products_store_a
-INTERSECT
-SELECT name FROM products_store_b;
--- => Returns: Mouse, Keyboard (present in both)
+-- INTERSECT: Products in both stores (set intersection)
+SELECT name FROM products_store_a   -- => Query A: Laptop, Mouse, Keyboard
+INTERSECT                           -- => Set intersection operator
+SELECT name FROM products_store_b;  -- => Query B: Mouse, Keyboard, Monitor
+-- => INTERSECT returns rows present in BOTH queries
+-- => Comparison: Row-by-row equality check on all columns
+-- => Laptop: in A, not in B ✗
+-- => Mouse: in A, in B ✓
+-- => Keyboard: in A, in B ✓
+-- => Monitor: not in A, in B ✗
+-- => Returns: Mouse, Keyboard (common products)
+-- => Automatically removes duplicates (like UNION)
 
--- EXCEPT: Products only in Store A
-SELECT name FROM products_store_a
-EXCEPT
-SELECT name FROM products_store_b;
--- => Returns: Laptop (only in Store A)
+-- EXCEPT: Products only in Store A (set difference)
+SELECT name FROM products_store_a   -- => Query A: Laptop, Mouse, Keyboard
+EXCEPT                              -- => Set difference operator
+SELECT name FROM products_store_b;  -- => Query B: Mouse, Keyboard, Monitor
+-- => EXCEPT returns rows in first query NOT in second query
+-- => A - B (set subtraction)
+-- => Laptop: in A, not in B ✓ (keep)
+-- => Mouse: in A, in B ✗ (remove)
+-- => Keyboard: in A, in B ✗ (remove)
+-- => Returns: Laptop (exclusive to Store A)
 
--- EXCEPT: Products only in Store B
-SELECT name FROM products_store_b
-EXCEPT
-SELECT name FROM products_store_a;
--- => Returns: Monitor (only in Store B)
+-- EXCEPT: Products only in Store B (reverse set difference)
+SELECT name FROM products_store_b   -- => Query B: Mouse, Keyboard, Monitor
+EXCEPT                              -- => Set difference operator
+SELECT name FROM products_store_a;  -- => Query A: Laptop, Mouse, Keyboard
+-- => EXCEPT is NOT commutative: B - A ≠ A - B
+-- => B - A (reverse subtraction)
+-- => Mouse: in B, in A ✗ (remove)
+-- => Keyboard: in B, in A ✗ (remove)
+-- => Monitor: in B, not in A ✓ (keep)
+-- => Returns: Monitor (exclusive to Store B)
 
--- Combine set operations
-SELECT name FROM products_store_a
-UNION
-SELECT name FROM products_store_b
-EXCEPT
-SELECT name FROM (
+-- Combine set operations (symmetric difference)
+SELECT name FROM products_store_a   -- => All products from A
+UNION                               -- => Combine both stores
+SELECT name FROM products_store_b   -- => All products from B
+EXCEPT                              -- => Remove...
+SELECT name FROM (                  -- => Subquery for intersection
     SELECT name FROM products_store_a
     INTERSECT
     SELECT name FROM products_store_b
-);
--- => Returns products in exactly one store (Laptop, Monitor)
--- => Equivalent to symmetric difference
+);                                  -- => Products in both stores
+-- => (A UNION B) - (A INTERSECT B) = symmetric difference
+-- => A UNION B = {Laptop, Mouse, Keyboard, Monitor}
+-- => A INTERSECT B = {Mouse, Keyboard}
+-- => Result = {Laptop, Mouse, Keyboard, Monitor} - {Mouse, Keyboard}
+-- => Returns: Laptop, Monitor (products in exactly one store)
+-- => Equivalent to (A - B) UNION (B - A)
 
--- Use with aggregation
-SELECT 'Only in Store A' AS category, COUNT(*) AS count
-FROM (
+-- Use with aggregation (inventory summary)
+SELECT 'Only in Store A' AS category,  -- => Category label
+       COUNT(*) AS count            -- => Count products
+FROM (                              -- => Subquery for A-only products
     SELECT name FROM products_store_a
     EXCEPT
     SELECT name FROM products_store_b
-)
-UNION ALL
-SELECT 'Only in Store B', COUNT(*)
-FROM (
+)                                   -- => Result: {Laptop}
+UNION ALL                           -- => Combine results
+SELECT 'Only in Store B',           -- => Category label
+       COUNT(*)                     -- => Count products
+FROM (                              -- => Subquery for B-only products
     SELECT name FROM products_store_b
     EXCEPT
     SELECT name FROM products_store_a
-)
+)                                   -- => Result: {Monitor}
 UNION ALL
-SELECT 'In Both Stores', COUNT(*)
-FROM (
+SELECT 'In Both Stores',            -- => Category label
+       COUNT(*)                     -- => Count products
+FROM (                              -- => Subquery for common products
     SELECT name FROM products_store_a
     INTERSECT
     SELECT name FROM products_store_b
-);
--- => Returns summary: Only in A (1), Only in B (1), In Both (2)
+);                                  -- => Result: {Mouse, Keyboard}
+-- => Returns summary report:
+-- =>   Only in Store A: count=1 (Laptop)
+-- =>   Only in Store B: count=1 (Monitor)
+-- =>   In Both Stores: count=2 (Mouse, Keyboard)
+-- => 3 rows total: comprehensive inventory analysis
 ```
 
 **Key Takeaway**: INTERSECT finds common rows between queries. EXCEPT finds rows in first query not in second. Order matters for EXCEPT (A EXCEPT B ≠ B EXCEPT A). All set operations remove duplicates.
@@ -1090,71 +1423,105 @@ Correlated subqueries reference columns from outer query. They execute once per 
 **Code**:
 
 ```sql
-CREATE TABLE employees (
-    id INTEGER,
-    name TEXT,
-    department TEXT,
-    salary REAL
+-- Create employees table with departments
+CREATE TABLE employees (            -- => Table for employee data
+    id INTEGER,                     -- => Employee identifier
+    name TEXT,                      -- => Employee name
+    department TEXT,                -- => Department name
+    salary REAL                     -- => Annual salary
 );
+-- => Table created: employees
 
+-- Insert employees across departments
 INSERT INTO employees (id, name, department, salary)
 VALUES
-    (1, 'Alice', 'Engineering', 120000),
-    (2, 'Bob', 'Engineering', 90000),
-    (3, 'Charlie', 'Sales', 80000),
-    (4, 'Diana', 'Sales', 95000),
-    (5, 'Eve', 'Engineering', 85000);
+    (1, 'Alice', 'Engineering', 120000),  -- => Highest in Engineering
+    (2, 'Bob', 'Engineering', 90000),     -- => Mid in Engineering
+    (3, 'Charlie', 'Sales', 80000),       -- => Lower in Sales
+    (4, 'Diana', 'Sales', 95000),         -- => Highest in Sales
+    (5, 'Eve', 'Engineering', 85000);     -- => Lowest in Engineering
+-- => 5 rows inserted: 3 Engineering, 2 Sales
+-- => Engineering avg: (120000+90000+85000)/3 = 98333.33
+-- => Sales avg: (80000+95000)/2 = 87500
 
 -- Find employees earning more than their department average
 SELECT
-    name,
-    department,
-    salary
-FROM employees e1
-WHERE salary > (
-    SELECT AVG(salary)
-    FROM employees e2
-    WHERE e2.department = e1.department
-);
--- => Subquery executes per row, comparing to department average
--- => Returns: Alice (120000 > 98333 Engineering avg), Diana (95000 > 87500 Sales avg)
+    name,                           -- => Employee name
+    department,                     -- => Department
+    salary                          -- => Salary
+FROM employees e1                   -- => Outer query (alias e1)
+WHERE salary > (                    -- => Compare to...
+    SELECT AVG(salary)              -- => Average salary
+    FROM employees e2               -- => Inner query (alias e2)
+    WHERE e2.department = e1.department  -- => CORRELATED: references outer row
+);                                  -- => Subquery executes once per outer row
+-- => Correlated subquery execution per row:
+-- => Alice (Engineering): AVG where dept='Engineering' = 98333.33
+-- =>   120000 > 98333.33 ✓ (included)
+-- => Bob (Engineering): AVG where dept='Engineering' = 98333.33
+-- =>   90000 > 98333.33 ✗ (excluded)
+-- => Charlie (Sales): AVG where dept='Sales' = 87500
+-- =>   80000 > 87500 ✗ (excluded)
+-- => Diana (Sales): AVG where dept='Sales' = 87500
+-- =>   95000 > 87500 ✓ (included)
+-- => Eve (Engineering): AVG where dept='Engineering' = 98333.33
+-- =>   85000 > 98333.33 ✗ (excluded)
+-- => Returns 2 rows: Alice, Diana (above department average)
 
 -- Find highest-paid employee per department
 SELECT
-    name,
-    department,
-    salary
-FROM employees e1
-WHERE salary = (
-    SELECT MAX(salary)
-    FROM employees e2
-    WHERE e2.department = e1.department
-);
+    name,                           -- => Employee name
+    department,                     -- => Department
+    salary                          -- => Salary
+FROM employees e1                   -- => Outer query
+WHERE salary = (                    -- => Salary equals...
+    SELECT MAX(salary)              -- => Highest salary
+    FROM employees e2               -- => Inner query
+    WHERE e2.department = e1.department  -- => In same department
+);                                  -- => Correlated on department
+-- => Per-row execution:
+-- => Alice: MAX(salary) where dept='Engineering' = 120000
+-- =>   120000 = 120000 ✓ (top earner in Engineering)
+-- => Bob: MAX(salary) where dept='Engineering' = 120000
+-- =>   90000 = 120000 ✗ (not top earner)
+-- => Diana: MAX(salary) where dept='Sales' = 95000
+-- =>   95000 = 95000 ✓ (top earner in Sales)
 -- => Returns: Alice (Engineering), Diana (Sales)
 
 -- Count employees in same department
 SELECT
-    name,
-    department,
-    (SELECT COUNT(*) FROM employees e2 WHERE e2.department = e1.department) AS dept_size
-FROM employees e1;
--- => Alice: dept_size=3 (Engineering has 3 employees)
--- => Bob: dept_size=3
--- => Charlie: dept_size=2 (Sales has 2 employees)
+    name,                           -- => Employee name
+    department,                     -- => Department
+    (SELECT COUNT(*)                -- => Scalar subquery in SELECT
+     FROM employees e2              -- => Count employees
+     WHERE e2.department = e1.department) AS dept_size  -- => Same department
+FROM employees e1;                  -- => Outer query
+-- => Scalar subquery returns single value per outer row
+-- => Alice (Engineering): COUNT where dept='Engineering' = 3
+-- => Bob (Engineering): COUNT where dept='Engineering' = 3
+-- => Eve (Engineering): COUNT where dept='Engineering' = 3
+-- => Charlie (Sales): COUNT where dept='Sales' = 2
+-- => Diana (Sales): COUNT where dept='Sales' = 2
+-- => Returns 5 rows with department size
 
--- EXISTS with correlated subquery
+-- EXISTS with correlated subquery (check existence)
 SELECT
-    name,
-    department
-FROM employees e1
-WHERE EXISTS (
-    SELECT 1
-    FROM employees e2
-    WHERE e2.department = e1.department
-      AND e2.salary > e1.salary
-);
--- => Returns employees with at least one colleague earning more in same department
--- => Bob, Eve (Alice earns more in Engineering), Charlie (Diana earns more in Sales)
+    name,                           -- => Employee name
+    department                      -- => Department
+FROM employees e1                   -- => Outer query
+WHERE EXISTS (                      -- => EXISTS returns TRUE if subquery has rows
+    SELECT 1                        -- => Dummy column (value doesn't matter)
+    FROM employees e2               -- => Inner query
+    WHERE e2.department = e1.department  -- => Same department
+      AND e2.salary > e1.salary     -- => Someone earns more
+);                                  -- => Returns TRUE if higher earner exists
+-- => EXISTS short-circuits: stops after finding first match
+-- => Alice: EXISTS(salary > 120000 in Engineering) = FALSE ✗ (no one earns more)
+-- => Bob: EXISTS(salary > 90000 in Engineering) = TRUE ✓ (Alice earns more)
+-- => Charlie: EXISTS(salary > 80000 in Sales) = TRUE ✓ (Diana earns more)
+-- => Diana: EXISTS(salary > 95000 in Sales) = FALSE ✗ (no one earns more)
+-- => Eve: EXISTS(salary > 85000 in Engineering) = TRUE ✓ (Alice, Bob earn more)
+-- => Returns: Bob, Charlie, Eve (have higher-paid colleagues)
 ```
 
 **Key Takeaway**: Correlated subqueries reference outer query columns and execute once per outer row. Use for row-specific comparisons against group aggregates. EXISTS often more efficient than IN for correlated lookups.
@@ -1170,66 +1537,111 @@ Scalar subqueries return single values and can appear in SELECT clauses. They ad
 **Code**:
 
 ```sql
-CREATE TABLE orders (
-    id INTEGER,
-    customer_id INTEGER,
-    order_date TEXT,
-    total REAL
+-- Create orders table
+CREATE TABLE orders (               -- => Table for order records
+    id INTEGER,                     -- => Order identifier
+    customer_id INTEGER,            -- => Customer reference
+    order_date TEXT,                -- => Order date
+    total REAL                      -- => Order total amount
 );
+-- => Table created: orders
 
-CREATE TABLE customers (
-    id INTEGER,
-    name TEXT,
-    email TEXT
+-- Create customers table
+CREATE TABLE customers (            -- => Table for customer data
+    id INTEGER,                     -- => Customer identifier
+    name TEXT,                      -- => Customer name
+    email TEXT                      -- => Email address
 );
+-- => Table created: customers
 
+-- Insert customers
 INSERT INTO customers (id, name, email)
-VALUES (1, 'Alice', 'alice@example.com'), (2, 'Bob', 'bob@example.com');
+VALUES
+    (1, 'Alice', 'alice@example.com'),  -- => Customer 1
+    (2, 'Bob', 'bob@example.com');      -- => Customer 2
+-- => 2 customers inserted
 
+-- Insert orders
 INSERT INTO orders (id, customer_id, order_date, total)
 VALUES
-    (1, 1, '2025-01-15', 100),
-    (2, 1, '2025-01-20', 150),
-    (3, 2, '2025-01-18', 200);
+    (1, 1, '2025-01-15', 100),      -- => Alice's first order
+    (2, 1, '2025-01-20', 150),      -- => Alice's second order
+    (3, 2, '2025-01-18', 200);      -- => Bob's order
+-- => 3 orders inserted: Alice (2), Bob (1)
 
 -- Scalar subquery: Add customer name to orders
 SELECT
-    o.id,
-    o.order_date,
-    o.total,
-    (SELECT name FROM customers c WHERE c.id = o.customer_id) AS customer_name
-FROM orders o;
--- => Returns: order 1 (Alice), order 2 (Alice), order 3 (Bob)
+    o.id,                           -- => Order ID
+    o.order_date,                   -- => Order date
+    o.total,                        -- => Order total
+    (SELECT name FROM customers c   -- => Scalar subquery (returns 1 value)
+     WHERE c.id = o.customer_id) AS customer_name  -- => Lookup customer
+FROM orders o;                      -- => Outer query: orders
+-- => Scalar subquery executes once per order row
+-- => Must return exactly 1 row, 1 column (or NULL)
+-- => Order 1: SELECT name WHERE id=1 → 'Alice'
+-- => Order 2: SELECT name WHERE id=1 → 'Alice'
+-- => Order 3: SELECT name WHERE id=2 → 'Bob'
+-- => Returns 3 rows: orders with customer names added
+-- => Alternative to LEFT JOIN for simple lookups
 
--- Multiple scalar subqueries
+-- Multiple scalar subqueries (add multiple computed columns)
 SELECT
-    o.id,
-    o.total,
-    (SELECT name FROM customers c WHERE c.id = o.customer_id) AS customer_name,
-    (SELECT COUNT(*) FROM orders o2 WHERE o2.customer_id = o.customer_id) AS customer_order_count
-FROM orders o;
--- => Alice's orders show customer_order_count=2
--- => Bob's order shows customer_order_count=1
+    o.id,                           -- => Order ID
+    o.total,                        -- => Order total
+    (SELECT name FROM customers c   -- => First scalar subquery
+     WHERE c.id = o.customer_id) AS customer_name,
+    (SELECT COUNT(*) FROM orders o2  -- => Second scalar subquery
+     WHERE o2.customer_id = o.customer_id) AS customer_order_count
+FROM orders o;                      -- => Outer query
+-- => Two independent scalar subqueries per row
+-- => Order 1 (customer_id=1):
+-- =>   customer_name: SELECT name WHERE id=1 → 'Alice'
+-- =>   customer_order_count: COUNT WHERE customer_id=1 → 2
+-- => Order 2 (customer_id=1):
+-- =>   customer_name: 'Alice'
+-- =>   customer_order_count: 2 (same customer, same count)
+-- => Order 3 (customer_id=2):
+-- =>   customer_name: 'Bob'
+-- =>   customer_order_count: 1
+-- => Returns 3 rows with enriched data
 
--- Scalar subquery with aggregate
+-- Scalar subquery with aggregate (customer summary)
 SELECT
-    name,
-    email,
-    (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id) AS num_orders,
-    (SELECT SUM(total) FROM orders o WHERE o.customer_id = c.id) AS total_spent
-FROM customers c;
--- => Alice: num_orders=2, total_spent=250
--- => Bob: num_orders=1, total_spent=200
+    name,                           -- => Customer name
+    email,                          -- => Customer email
+    (SELECT COUNT(*) FROM orders o  -- => Count orders
+     WHERE o.customer_id = c.id) AS num_orders,
+    (SELECT SUM(total) FROM orders o  -- => Sum order totals
+     WHERE o.customer_id = c.id) AS total_spent
+FROM customers c;                   -- => Outer query: customers
+-- => Scalar aggregates per customer
+-- => Alice (id=1):
+-- =>   num_orders: COUNT WHERE customer_id=1 → 2 orders
+-- =>   total_spent: SUM(total) WHERE customer_id=1 → 100+150=250
+-- => Bob (id=2):
+-- =>   num_orders: COUNT WHERE customer_id=2 → 1 order
+-- =>   total_spent: SUM(total) WHERE customer_id=2 → 200
+-- => Returns 2 rows with customer statistics
 
--- COALESCE with scalar subquery (handle NULL when no orders)
+-- COALESCE with scalar subquery (handle NULL for zero orders)
 SELECT
-    name,
-    COALESCE(
-        (SELECT SUM(total) FROM orders o WHERE o.customer_id = c.id),
-        0
-    ) AS total_spent
-FROM customers c;
--- => Returns 0 for customers with no orders instead of NULL
+    name,                           -- => Customer name
+    COALESCE(                       -- => Return first non-NULL value
+        (SELECT SUM(total)          -- => Scalar subquery
+         FROM orders o
+         WHERE o.customer_id = c.id),  -- => Sum customer orders
+        0                           -- => Default if NULL (no orders)
+    ) AS total_spent                -- => Total spent or 0
+FROM customers c;                   -- => Outer query
+-- => SUM returns NULL for 0 rows (not 0)
+-- => COALESCE converts NULL to 0 for display
+-- => If customer has no orders:
+-- =>   SELECT SUM(total) WHERE customer_id=X → NULL
+-- =>   COALESCE(NULL, 0) → 0
+-- => Alice: COALESCE(250, 0) → 250
+-- => Bob: COALESCE(200, 0) → 200
+-- => Returns customer spending with 0 for inactive customers
 ```
 
 **Key Takeaway**: Scalar subqueries return single values and can appear anywhere a single value is expected. Use in SELECT to add computed columns. Must return exactly one row, one column - use LIMIT 1 or aggregates to ensure this.
@@ -1245,73 +1657,113 @@ IN tests if value exists in subquery results. NOT IN tests if value doesn't exis
 **Code**:
 
 ```sql
-CREATE TABLE products (
-    id INTEGER,
-    name TEXT,
-    category TEXT,
-    price REAL
+-- Create products table
+CREATE TABLE products (             -- => Table for product catalog
+    id INTEGER,                     -- => Product identifier
+    name TEXT,                      -- => Product name
+    category TEXT,                  -- => Product category
+    price REAL                      -- => Product price
 );
+-- => Table created: products
 
-CREATE TABLE orders (
-    id INTEGER,
-    product_id INTEGER,
-    quantity INTEGER
+-- Create orders table
+CREATE TABLE orders (               -- => Table for order records
+    id INTEGER,                     -- => Order identifier
+    product_id INTEGER,             -- => Product reference
+    quantity INTEGER                -- => Quantity ordered
 );
+-- => Table created: orders
 
+-- Insert products
 INSERT INTO products (id, name, category, price)
 VALUES
-    (1, 'Laptop', 'Electronics', 1000),
-    (2, 'Mouse', 'Electronics', 50),
-    (3, 'Desk', 'Furniture', 300),
-    (4, 'Chair', 'Furniture', 200);
+    (1, 'Laptop', 'Electronics', 1000),   -- => Will be ordered
+    (2, 'Mouse', 'Electronics', 50),      -- => Will be ordered
+    (3, 'Desk', 'Furniture', 300),        -- => Never ordered
+    (4, 'Chair', 'Furniture', 200);       -- => Never ordered
+-- => 4 products inserted
 
+-- Insert orders
 INSERT INTO orders (id, product_id, quantity)
 VALUES
-    (1, 1, 2),
-    (2, 2, 5),
-    (3, 1, 1);
+    (1, 1, 2),                      -- => 2 Laptops
+    (2, 2, 5),                      -- => 5 Mice
+    (3, 1, 1);                      -- => 1 Laptop (repeat)
+-- => 3 orders inserted: products 1 and 2 ordered
 
--- Find products that have been ordered
-SELECT name, category, price
-FROM products
-WHERE id IN (SELECT DISTINCT product_id FROM orders);
--- => Returns: Laptop, Mouse (have orders)
+-- Find products that have been ordered (IN operator)
+SELECT name, category, price        -- => Product details
+FROM products                       -- => Outer query: products table
+WHERE id IN (                       -- => id matches any value in...
+    SELECT DISTINCT product_id      -- => Subquery: ordered product IDs
+    FROM orders                     -- => From orders table
+);                                  -- => IN checks membership in set
+-- => Subquery returns: {1, 2} (DISTINCT removes duplicate 1)
+-- => IN (1, 2) equivalent to: id = 1 OR id = 2
+-- => Product 1 (Laptop): id=1 IN {1,2} ✓
+-- => Product 2 (Mouse): id=2 IN {1,2} ✓
+-- => Product 3 (Desk): id=3 IN {1,2} ✗
+-- => Product 4 (Chair): id=4 IN {1,2} ✗
+-- => Returns 2 rows: Laptop, Mouse (have orders)
 
--- Find products never ordered
-SELECT name, category, price
-FROM products
-WHERE id NOT IN (SELECT product_id FROM orders);
--- => Returns: Desk, Chair (no orders)
+-- Find products never ordered (NOT IN operator)
+SELECT name, category, price        -- => Product details
+FROM products                       -- => Outer query
+WHERE id NOT IN (                   -- => id NOT in...
+    SELECT product_id               -- => Subquery: ordered products
+    FROM orders                     -- => From orders
+);                                  -- => NOT IN checks non-membership
+-- => Subquery returns: {1, 2, 1} (with duplicate, but still {1,2})
+-- => NOT IN (1, 2) equivalent to: id != 1 AND id != 2
+-- => Product 3 (Desk): id=3 NOT IN {1,2} ✓
+-- => Product 4 (Chair): id=4 NOT IN {1,2} ✓
+-- => Returns 2 rows: Desk, Chair (never ordered)
 
--- IN with multiple columns (limited support, use tuples)
-CREATE TABLE product_prices (
-    product_id INTEGER,
-    region TEXT,
-    price REAL
+-- IN with multiple columns (tuple matching)
+CREATE TABLE product_prices (       -- => Regional pricing table
+    product_id INTEGER,             -- => Product reference
+    region TEXT,                    -- => Sales region
+    price REAL                      -- => Regional price
 );
+-- => Table created: product_prices
 
 INSERT INTO product_prices (product_id, region, price)
 VALUES
-    (1, 'US', 1000),
-    (1, 'EU', 1100),
-    (2, 'US', 50);
+    (1, 'US', 1000),                -- => Laptop US price
+    (1, 'EU', 1100),                -- => Laptop EU price
+    (2, 'US', 50);                  -- => Mouse US price
+-- => 3 rows inserted
 
-SELECT product_id, region, price
-FROM product_prices
-WHERE (product_id, region) IN (
-    SELECT product_id, 'US'
-    FROM products
-    WHERE category = 'Electronics'
+SELECT product_id, region, price    -- => Price details
+FROM product_prices                 -- => Source table
+WHERE (product_id, region) IN (     -- => Tuple comparison
+    SELECT product_id, 'US'         -- => Subquery returns tuples
+    FROM products                   -- => From products table
+    WHERE category = 'Electronics'  -- => Only Electronics
+);                                  -- => Match both columns
+-- => Subquery returns: {(1, 'US'), (2, 'US')}
+-- => Row (1, 'US', 1000): (1, 'US') IN result ✓
+-- => Row (1, 'EU', 1100): (1, 'EU') NOT IN result ✗
+-- => Row (2, 'US', 50): (2, 'US') IN result ✓
+-- => Returns 2 rows: US prices for Electronics
+
+-- NOT IN with NULL gotcha (dangerous behavior)
+CREATE TABLE test_values (value INTEGER);  -- => Test table
+INSERT INTO test_values VALUES (1), (2), (NULL);  -- => Include NULL
+-- => 3 rows: {1, 2, NULL}
+
+SELECT 'Yes'                        -- => Test output
+WHERE 3 NOT IN (                    -- => Check if 3 NOT in...
+    SELECT value FROM test_values   -- => Returns {1, 2, NULL}
 );
--- => Returns US prices for Electronics products
-
--- NOT IN with NULL gotcha
-CREATE TABLE test_values (value INTEGER);
-INSERT INTO test_values VALUES (1), (2), (NULL);
-
-SELECT 'Yes' WHERE 3 NOT IN (SELECT value FROM test_values);
--- => Returns no rows! NOT IN with NULL always returns no matches
--- => Use NOT EXISTS instead for NULL-safe exclusion
+-- => NOT IN with NULL uses three-valued logic
+-- => 3 NOT IN (1, 2, NULL) means:
+-- =>   3 != 1 (TRUE) AND 3 != 2 (TRUE) AND 3 != NULL (UNKNOWN)
+-- =>   TRUE AND TRUE AND UNKNOWN = UNKNOWN
+-- => WHERE UNKNOWN is treated as FALSE
+-- => Returns NO ROWS (silent failure!)
+-- => CRITICAL BUG: NOT IN with NULL always fails
+-- => Solution: Use NOT EXISTS or filter NULL: WHERE value IS NOT NULL
 ```
 
 **Key Takeaway**: IN checks membership in subquery results. NOT IN excludes matching values. Beware: NOT IN with NULL values returns no results - use NOT EXISTS for NULL-safe exclusion. DISTINCT in subquery improves performance.
@@ -1349,65 +1801,88 @@ graph TD
 
 ```sql
 -- Enable JSON1 extension (usually enabled by default in modern SQLite)
-CREATE TABLE users (
-    id INTEGER,
-    name TEXT,
-    metadata TEXT  -- Stores JSON data
+-- Create users table with JSON metadata
+CREATE TABLE users (                -- => Table for user data
+    id INTEGER,                     -- => User identifier
+    name TEXT,                      -- => User name
+    metadata TEXT                   -- => JSON data stored as TEXT
 );
+-- => Table created: users with TEXT column for JSON
 
+-- Insert users with JSON metadata
 INSERT INTO users (id, name, metadata)
 VALUES
     (1, 'Alice', '{"age": 30, "city": "NYC", "skills": ["Python", "SQL"]}'),
+        -- => JSON object with age, city, skills array
     (2, 'Bob', '{"age": 25, "city": "LA", "skills": ["Java", "Go"]}');
+        -- => JSON object with age, city, skills array
+-- => 2 rows inserted with JSON metadata
 
--- Extract JSON values
+-- Extract JSON values using JSON_EXTRACT
 SELECT
-    name,
-    JSON_EXTRACT(metadata, '$.age') AS age,
-    JSON_EXTRACT(metadata, '$.city') AS city
-FROM users;
--- => Alice: age=30, city='NYC'
--- => Bob: age=25, city='LA'
+    name,                           -- => User name
+    JSON_EXTRACT(metadata, '$.age') AS age,      -- => Extract age field
+    JSON_EXTRACT(metadata, '$.city') AS city     -- => Extract city field
+FROM users;                         -- => Source table
+-- => JSON path syntax: $ = root, .field = object property
+-- => Alice: JSON_EXTRACT('{"age": 30, ...}', '$.age') = 30
+-- => Alice: JSON_EXTRACT('{"age": 30, ...}', '$.city') = "NYC"
+-- => Bob: age=25, city="LA"
+-- => Returns scalar values from JSON objects
 
--- Extract array elements
+-- Extract array elements by index
 SELECT
-    name,
-    JSON_EXTRACT(metadata, '$.skills[0]') AS first_skill,
-    JSON_EXTRACT(metadata, '$.skills[1]') AS second_skill
-FROM users;
--- => Alice: first_skill='Python', second_skill='SQL'
--- => Bob: first_skill='Java', second_skill='Go'
+    name,                           -- => User name
+    JSON_EXTRACT(metadata, '$.skills[0]') AS first_skill,   -- => Array index 0
+    JSON_EXTRACT(metadata, '$.skills[1]') AS second_skill   -- => Array index 1
+FROM users;                         -- => Source table
+-- => Array access: [index] syntax (0-based)
+-- => Alice: skills=["Python","SQL"], skills[0]="Python", skills[1]="SQL"
+-- => Bob: skills[0]="Java", skills[1]="Go"
+-- => Returns array elements as scalar values
 
--- Create JSON objects
+-- Create JSON objects with JSON_OBJECT
 SELECT
-    JSON_OBJECT(
-        'name', name,
-        'age', JSON_EXTRACT(metadata, '$.age'),
-        'city', JSON_EXTRACT(metadata, '$.city')
-    ) AS user_json
-FROM users;
--- => Returns: {"name":"Alice","age":30,"city":"NYC"}
+    JSON_OBJECT(                    -- => Construct JSON object
+        'name', name,               -- => Key 'name', value from name column
+        'age', JSON_EXTRACT(metadata, '$.age'),    -- => Key 'age'
+        'city', JSON_EXTRACT(metadata, '$.city')   -- => Key 'city'
+    ) AS user_json                  -- => Output as TEXT
+FROM users;                         -- => Source table
+-- => JSON_OBJECT(key1, val1, key2, val2, ...) creates {"key1":"val1",...}
+-- => Alice: {"name":"Alice","age":30,"city":"NYC"}
+-- => Bob: {"name":"Bob","age":25,"city":"LA"}
+-- => Returns well-formed JSON text
 
--- Create JSON arrays
+-- Create JSON arrays with JSON_ARRAY
 SELECT
-    JSON_ARRAY(
-        name,
-        JSON_EXTRACT(metadata, '$.age'),
-        JSON_EXTRACT(metadata, '$.city')
-    ) AS user_array
-FROM users;
--- => Returns: ["Alice",30,"NYC"]
+    JSON_ARRAY(                     -- => Construct JSON array
+        name,                       -- => Element 0: name
+        JSON_EXTRACT(metadata, '$.age'),     -- => Element 1: age
+        JSON_EXTRACT(metadata, '$.city')     -- => Element 2: city
+    ) AS user_array                 -- => Output as TEXT
+FROM users;                         -- => Source table
+-- => JSON_ARRAY(val1, val2, ...) creates [val1, val2, ...]
+-- => Alice: ["Alice",30,"NYC"]
+-- => Bob: ["Bob",25,"LA"]
+-- => Returns JSON array text
 
--- Filter by JSON field
-SELECT name
-FROM users
-WHERE JSON_EXTRACT(metadata, '$.age') > 25;
--- => Returns: Alice (age 30 > 25)
+-- Filter by JSON field value
+SELECT name                         -- => User name
+FROM users                          -- => Source table
+WHERE JSON_EXTRACT(metadata, '$.age') > 25;  -- => Age comparison
+-- => Extracts age, compares as number
+-- => Alice: age=30 > 25 ✓
+-- => Bob: age=25 > 25 ✗
+-- => Returns: Alice
 
 -- Check if JSON path exists
-SELECT name
-FROM users
-WHERE JSON_EXTRACT(metadata, '$.city') IS NOT NULL;
+SELECT name                         -- => User name
+FROM users                          -- => Source table
+WHERE JSON_EXTRACT(metadata, '$.city') IS NOT NULL;  -- => Path existence
+-- => JSON_EXTRACT returns NULL for non-existent paths
+-- => Alice: $.city exists, returns "NYC" (not NULL)
+-- => Bob: $.city exists, returns "LA" (not NULL)
 -- => Returns: Alice, Bob (both have city field)
 ```
 
@@ -1424,68 +1899,115 @@ JSON arrays can be queried, filtered, and transformed using JSON functions. Use 
 **Code**:
 
 ```sql
-CREATE TABLE projects (
-    id INTEGER,
-    name TEXT,
-    tags TEXT  -- JSON array
+-- Create projects table with JSON array tags
+CREATE TABLE projects (             -- => Table for project management
+    id INTEGER,                     -- => Project identifier
+    name TEXT,                      -- => Project name
+    tags TEXT                       -- => JSON array of tags (stored as TEXT)
 );
+-- => Table created: projects
 
+-- Insert projects with JSON tag arrays
 INSERT INTO projects (id, name, tags)
 VALUES
     (1, 'Project A', '["urgent", "backend", "api"]'),
+        -- => 3 tags: urgent, backend, api
     (2, 'Project B', '["frontend", "ui", "react"]'),
+        -- => 3 tags: frontend, ui, react
     (3, 'Project C', '["backend", "database", "optimization"]');
+        -- => 3 tags: backend, database, optimization
+-- => 3 projects inserted with JSON arrays
 
--- Get array length
+-- Get array length (count elements)
 SELECT
-    name,
-    JSON_ARRAY_LENGTH(tags) AS num_tags
-FROM projects;
--- => Project A: 3, Project B: 3, Project C: 3
+    name,                           -- => Project name
+    JSON_ARRAY_LENGTH(tags) AS num_tags  -- => Count array elements
+FROM projects;                      -- => Source table
+-- => JSON_ARRAY_LENGTH(json_array) returns element count
+-- => Project A: JSON_ARRAY_LENGTH('["urgent","backend","api"]') = 3
+-- => Project B: JSON_ARRAY_LENGTH('["frontend","ui","react"]') = 3
+-- => Project C: JSON_ARRAY_LENGTH('["backend","database","optimization"]') = 3
+-- => Returns 3 rows with tag counts
 
--- Check if array contains value
-SELECT name
-FROM projects
-WHERE JSON_EXTRACT(tags, '$') LIKE '%backend%';
--- => Returns: Project A, Project C (contain 'backend' tag)
+-- Check if array contains value (substring search)
+SELECT name                         -- => Project name
+FROM projects                       -- => Source table
+WHERE JSON_EXTRACT(tags, '$') LIKE '%backend%';  -- => Text search
+-- => JSON_EXTRACT(tags, '$') returns full array as text
+-- => LIKE '%backend%' does substring match
+-- => Project A: '["urgent","backend","api"]' LIKE '%backend%' ✓
+-- => Project B: '["frontend","ui","react"]' LIKE '%backend%' ✗
+-- => Project C: '["backend","database","optimization"]' LIKE '%backend%' ✓
+-- => Returns 2 rows: Project A, Project C (contain 'backend')
+-- => WARNING: Substring match, could false-positive on partial matches
 
 -- Unnest JSON array to rows using JSON_EACH
 SELECT
-    p.name AS project,
-    j.value AS tag
-FROM projects p, JSON_EACH(p.tags) j;
--- => Returns 9 rows (3 tags per project):
--- => Project A, urgent
--- => Project A, backend
--- => Project A, api
--- => Project B, frontend
--- => ...
+    p.name AS project,              -- => Project name
+    j.value AS tag                  -- => Individual tag value
+FROM projects p,                    -- => Projects table
+     JSON_EACH(p.tags) j;           -- => Unnest JSON array
+-- => JSON_EACH(array) creates virtual table with columns: key, value, type, etc.
+-- => CROSS JOIN unnests array: 1 project row → N tag rows
+-- => Project A: 3 rows (urgent, backend, api)
+-- => Project B: 3 rows (frontend, ui, react)
+-- => Project C: 3 rows (backend, database, optimization)
+-- => Returns 9 rows total (3 × 3):
+-- =>   (Project A, urgent), (Project A, backend), (Project A, api),
+-- =>   (Project B, frontend), (Project B, ui), (Project B, react),
+-- =>   (Project C, backend), (Project C, database), (Project C, optimization)
 
--- Find projects with specific tag
-SELECT name
-FROM projects p
-WHERE EXISTS (
-    SELECT 1
-    FROM JSON_EACH(p.tags)
-    WHERE value = 'backend'
-);
--- => Returns: Project A, Project C
+-- Find projects with specific tag (exact match)
+SELECT name                         -- => Project name
+FROM projects p                     -- => Source table
+WHERE EXISTS (                      -- => Check if any tag matches
+    SELECT 1                        -- => Dummy column
+    FROM JSON_EACH(p.tags)          -- => Unnest tags
+    WHERE value = 'backend'         -- => Exact match on 'backend'
+);                                  -- => Returns TRUE if found
+-- => Safer than LIKE (exact match, no false positives)
+-- => Project A: EXISTS(value='backend' in tags) ✓
+-- => Project B: EXISTS(value='backend' in tags) ✗
+-- => Project C: EXISTS(value='backend' in tags) ✓
+-- => Returns 2 rows: Project A, Project C
 
--- Count projects per tag
+-- Count projects per tag (tag frequency analysis)
 SELECT
-    j.value AS tag,
-    COUNT(*) AS project_count
-FROM projects p, JSON_EACH(p.tags) j
-GROUP BY j.value
-ORDER BY project_count DESC;
--- => Returns: backend (2), urgent (1), api (1), frontend (1), ui (1), react (1), database (1), optimization (1)
+    j.value AS tag,                 -- => Tag name
+    COUNT(*) AS project_count       -- => Number of projects with tag
+FROM projects p,                    -- => Projects table
+     JSON_EACH(p.tags) j            -- => Unnest all tags
+GROUP BY j.value                    -- => Group by tag value
+ORDER BY project_count DESC;        -- => Most common tags first
+-- => Unnests 9 tag occurrences
+-- => Groups by tag value:
+-- =>   backend: appears in Project A, Project C (count=2)
+-- =>   urgent: appears in Project A (count=1)
+-- =>   api: appears in Project A (count=1)
+-- =>   frontend: appears in Project B (count=1)
+-- =>   ui: appears in Project B (count=1)
+-- =>   react: appears in Project B (count=1)
+-- =>   database: appears in Project C (count=1)
+-- =>   optimization: appears in Project C (count=1)
+-- => Returns 8 rows ordered by frequency
 
 -- Add element to JSON array (immutable - creates new array)
 SELECT
-    name,
-    JSON_INSERT(tags, '$[' || JSON_ARRAY_LENGTH(tags) || ']', 'new-tag') AS updated_tags
-FROM projects;
--- => Appends 'new-tag' to each array (doesn't modify table)
+    name,                           -- => Project name
+    JSON_INSERT(                    -- => Insert into JSON
+        tags,                       -- => Original array
+        '$[' || JSON_ARRAY_LENGTH(tags) || ']',  -- => Path to append position
+        'new-tag'                   -- => Value to insert
+    ) AS updated_tags               -- => New array (original unchanged)
+FROM projects;                      -- => Source table
+-- => JSON arrays are immutable: JSON_INSERT returns NEW array
+-- => Path construction: '$[' + array_length + ']' = append position
+-- => Project A: '$[3]' appends after indices 0,1,2
+-- =>   Original: '["urgent","backend","api"]'
+-- =>   Updated: '["urgent","backend","api","new-tag"]'
+-- => Does NOT modify projects table (read-only query)
+-- => Returns 3 rows with extended arrays
+-- => To persist: UPDATE projects SET tags = JSON_INSERT(...)
 ```
 
 **Key Takeaway**: Use JSON_EACH to unnest arrays into rows for querying. JSON_ARRAY_LENGTH counts elements. JSON arrays are immutable - modifications create new arrays. Combine JSON_EACH with standard SQL for powerful array queries.
@@ -1501,72 +2023,112 @@ FTS5 (Full-Text Search) enables fast text search across large documents. Create 
 **Code**:
 
 ```sql
--- Create FTS5 virtual table
+-- Create FTS5 virtual table (full-text search enabled)
 CREATE VIRTUAL TABLE articles_fts USING fts5(
-    title,
-    content,
-    author
+    title,                          -- => Searchable title column
+    content,                        -- => Searchable content column
+    author                          -- => Searchable author column
 );
+-- => Virtual table created with FTS5 search index
+-- => Not a regular table: optimized for text search
 
--- Insert documents
+-- Insert documents into FTS5 table
 INSERT INTO articles_fts (title, content, author)
 VALUES
     ('Introduction to SQL', 'SQL is a powerful language for managing relational databases. It supports queries, updates, and schema design.', 'Alice'),
+        -- => Article 1: SQL basics
     ('Advanced SQL Techniques', 'Window functions and CTEs enable complex analytical queries in SQL. These features are essential for data analysis.', 'Bob'),
+        -- => Article 2: Advanced SQL
     ('Database Design Principles', 'Good database design ensures data integrity, performance, and scalability. Normalization reduces redundancy.', 'Charlie');
+        -- => Article 3: Database design
+-- => 3 articles inserted and indexed for search
 
--- Simple full-text search
-SELECT title, author
-FROM articles_fts
-WHERE articles_fts MATCH 'SQL';
--- => Returns: 'Introduction to SQL', 'Advanced SQL Techniques'
+-- Simple full-text search (search all columns)
+SELECT title, author               -- => Article title and author
+FROM articles_fts                   -- => FTS5 virtual table
+WHERE articles_fts MATCH 'SQL';     -- => MATCH operator for full-text search
+-- => MATCH searches all indexed columns (title, content, author)
+-- => Case-insensitive by default
+-- => Returns articles containing 'SQL' anywhere:
+-- =>   'Introduction to SQL' (Alice) - 'SQL' in title and content
+-- =>   'Advanced SQL Techniques' (Bob) - 'SQL' in title and content
+-- => 'Database Design Principles' excluded (no 'SQL' match)
 
--- Search in specific column
-SELECT title, author
-FROM articles_fts
-WHERE articles_fts MATCH 'title:SQL';
--- => Returns only articles with 'SQL' in title
+-- Search in specific column (column prefix)
+SELECT title, author               -- => Article details
+FROM articles_fts                   -- => FTS5 table
+WHERE articles_fts MATCH 'title:SQL';  -- => Search only title column
+-- => Column-specific search: column_name:search_term
+-- => Only searches title column, ignores content and author
+-- => Returns articles with 'SQL' in title:
+-- =>   'Introduction to SQL' (Alice) ✓
+-- =>   'Advanced SQL Techniques' (Bob) ✓
+-- => More precise than full-text search
 
 -- Phrase search (exact match)
-SELECT title
-FROM articles_fts
-WHERE articles_fts MATCH '"database design"';
--- => Returns: 'Database Design Principles' (exact phrase match)
+SELECT title                        -- => Article title
+FROM articles_fts                   -- => FTS5 table
+WHERE articles_fts MATCH '"database design"';  -- => Exact phrase in quotes
+-- => Phrase search requires exact word order and adjacency
+-- => "database design" must appear as consecutive words
+-- => Returns: 'Database Design Principles' ✓
+-- =>   (title contains "Database Design" as phrase)
+-- => 'Introduction to SQL' ✗ (no phrase match)
 
 -- Boolean operators: AND, OR, NOT
-SELECT title
-FROM articles_fts
-WHERE articles_fts MATCH 'SQL AND queries';
--- => Returns: 'Introduction to SQL' (contains both terms)
+SELECT title                        -- => Article title
+FROM articles_fts                   -- => FTS5 table
+WHERE articles_fts MATCH 'SQL AND queries';  -- => Both terms required
+-- => AND operator: both terms must appear
+-- => Returns: 'Introduction to SQL' ✓
+-- =>   (contains both 'SQL' and 'queries' in content)
+-- => 'Advanced SQL Techniques' ✗ (has 'SQL' but not 'queries')
 
-SELECT title
-FROM articles_fts
-WHERE articles_fts MATCH 'SQL NOT advanced';
--- => Returns: 'Introduction to SQL' (contains SQL but not advanced)
+SELECT title                        -- => Article title
+FROM articles_fts                   -- => FTS5 table
+WHERE articles_fts MATCH 'SQL NOT advanced';  -- => Exclude term
+-- => NOT operator: exclude documents with term
+-- => Returns: 'Introduction to SQL' ✓
+-- =>   (contains 'SQL' but not 'advanced')
+-- => 'Advanced SQL Techniques' ✗ (contains 'advanced', excluded)
 
--- Prefix search with *
-SELECT title
-FROM articles_fts
-WHERE articles_fts MATCH 'dat*';
--- => Returns: 'Advanced SQL Techniques' (matches 'data'), 'Database Design Principles' (matches 'database')
+-- Prefix search with * (wildcard)
+SELECT title                        -- => Article title
+FROM articles_fts                   -- => FTS5 table
+WHERE articles_fts MATCH 'dat*';    -- => Prefix match
+-- => Asterisk (*) matches any suffix
+-- => 'dat*' matches: data, database, dated, etc.
+-- => Returns:
+-- =>   'Advanced SQL Techniques' ✓ (contains 'data')
+-- =>   'Database Design Principles' ✓ (contains 'database')
+-- => Prefix search useful for autocomplete
 
--- Get search result ranking
+-- Get search result ranking (relevance scoring)
 SELECT
-    title,
-    author,
-    rank
-FROM articles_fts
-WHERE articles_fts MATCH 'SQL database'
-ORDER BY rank;
--- => Returns results sorted by relevance (lower rank = better match)
+    title,                          -- => Article title
+    author,                         -- => Article author
+    rank                            -- => Relevance score (lower = better)
+FROM articles_fts                   -- => FTS5 table
+WHERE articles_fts MATCH 'SQL database'  -- => Search for both terms
+ORDER BY rank;                      -- => Sort by relevance
+-- => FTS5 ranks results by relevance using BM25 algorithm
+-- => Lower rank values = better match (more relevant)
+-- => Considers: term frequency, document length, term rarity
+-- => Returns articles ordered by relevance to query
 
--- Highlight matching terms (requires FTS5 snippet function)
+-- Highlight matching terms (snippet function)
 SELECT
-    title,
+    title,                          -- => Article title
     snippet(articles_fts, 1, '<b>', '</b>', '...', 20) AS highlighted_content
-FROM articles_fts
-WHERE articles_fts MATCH 'SQL';
--- => Returns excerpts with matching terms highlighted in <b> tags
+        -- => Extract excerpt with highlighting
+FROM articles_fts                   -- => FTS5 table
+WHERE articles_fts MATCH 'SQL';     -- => Search term
+-- => snippet(table, column_index, start_tag, end_tag, ellipsis, max_tokens)
+-- => column_index=1: content column (0=title, 1=content, 2=author)
+-- => Wraps matching terms in <b> tags
+-- => Returns ~20 tokens around match with ellipsis
+-- => Example output: "...a powerful language for managing <b>SQL</b> databases..."
+-- => Useful for search result previews
 ```
 
 **Key Takeaway**: FTS5 virtual tables enable fast full-text search. Use MATCH operator with search syntax (phrases, boolean operators, prefix search). Ranking and highlighting improve search UX. Ideal for document search, article catalogs, product descriptions.
@@ -1582,63 +2144,109 @@ FTS5 supports proximity search, column weighting, and custom tokenizers. These f
 **Code**:
 
 ```sql
--- Create FTS5 table with custom options
+-- Create FTS5 table with custom tokenizer
 CREATE VIRTUAL TABLE documents_fts USING fts5(
-    title,
-    content,
-    tokenize = 'porter'  -- Porter stemming (searches for 'run' match 'running')
+    title,                          -- => Searchable title
+    content,                        -- => Searchable content
+    tokenize = 'porter'             -- => Porter stemming algorithm
 );
+-- => Virtual table created with stemming tokenizer
+-- => Porter stemming: reduces words to root form
+-- => 'running', 'runs', 'ran' all stem to 'run'
 
+-- Insert sample documents
 INSERT INTO documents_fts (title, content)
 VALUES
     ('Running Tutorial', 'Learn how to start running for beginners. Running improves health.'),
+        -- => Contains: running (2x)
     ('Database Running', 'Database engines run queries efficiently. Performance optimization is key.'),
+        -- => Contains: run (1x)
     ('Marathon Training', 'Training for marathons requires dedication. Runners need proper nutrition.');
+        -- => Contains: runners (1x)
+-- => 3 documents inserted
 
--- Stemming: 'running' matches 'run', 'runners'
-SELECT title
-FROM documents_fts
-WHERE documents_fts MATCH 'run';
--- => Returns all 3 documents (stemming matches 'running', 'run', 'runners')
+-- Stemming: Search finds word variations (stem matching)
+SELECT title                        -- => Document title
+FROM documents_fts                  -- => FTS5 table with porter stemmer
+WHERE documents_fts MATCH 'run';    -- => Search for 'run' stem
+-- => Porter stemmer converts 'run' to stem 'run'
+-- => Matches all documents containing run/running/runners:
+-- =>   'Running Tutorial' ✓ (running → run stem, matches)
+-- =>   'Database Running' ✓ (run → run stem, matches)
+-- =>   'Marathon Training' ✓ (runners → run stem, matches)
+-- => Returns all 3 documents (stemming expands search)
+-- => Without stemming: only 'Database Running' would match
 
 -- Proximity search: NEAR(term1 term2, distance)
-SELECT title, content
-FROM documents_fts
+SELECT title, content               -- => Document details
+FROM documents_fts                  -- => FTS5 table
 WHERE documents_fts MATCH 'NEAR(database performance, 5)';
--- => Returns documents where 'database' and 'performance' appear within 5 words
+-- => NEAR(term1 term2, N) finds terms within N words of each other
+-- => Searches for 'database' within 5 words of 'performance'
+-- => 'Database Running': "Database engines run queries efficiently. Performance..."
+-- =>   'database' at position 0, 'performance' at position 5
+-- =>   Distance = 5 words ✓ (within limit)
+-- => Returns: 'Database Running' (terms close together)
+-- => Useful for finding related concepts
 
--- Column weights (boost title matches)
+-- Create FTS5 table for column weighting demonstration
 CREATE VIRTUAL TABLE weighted_fts USING fts5(
-    title,
-    content
+    title,                          -- => Title column
+    content                         -- => Content column
 );
+-- => Table created without explicit column weights
+-- => FTS5 implicitly boosts title matches
 
 INSERT INTO weighted_fts (title, content)
 VALUES
     ('SQL Basics', 'Introduction to databases'),
+        -- => 'SQL' in title
     ('Advanced Topics', 'SQL window functions and CTEs');
+        -- => 'SQL' in content only
+-- => 2 documents inserted
 
--- Search with implicit column boosting
+-- Search with implicit column boosting (title preferred)
 SELECT
-    title,
-    rank
-FROM weighted_fts
-WHERE weighted_fts MATCH 'SQL'
-ORDER BY rank;
--- => 'SQL Basics' ranks higher (SQL in title)
--- => 'Advanced Topics' ranks lower (SQL only in content)
+    title,                          -- => Document title
+    rank                            -- => Relevance score
+FROM weighted_fts                   -- => FTS5 table
+WHERE weighted_fts MATCH 'SQL'      -- => Search for 'SQL'
+ORDER BY rank;                      -- => Sort by relevance (lower = better)
+-- => FTS5 implicitly weights title higher than content
+-- => 'SQL Basics': 'SQL' in title → lower rank (better)
+-- => 'Advanced Topics': 'SQL' in content → higher rank (worse)
+-- => Returns documents ordered:
+-- =>   1. 'SQL Basics' (rank ≈ -2.0, title match)
+-- =>   2. 'Advanced Topics' (rank ≈ -1.0, content match)
+-- => Title matches rank higher than content matches
 
--- Combine multiple search criteria
-SELECT title
-FROM documents_fts
+-- Combine multiple search criteria (complex boolean logic)
+SELECT title                        -- => Document title
+FROM documents_fts                  -- => FTS5 table
 WHERE documents_fts MATCH '(running OR marathon) AND NOT database';
+-- => Boolean operators: OR, AND, NOT
+-- => Parentheses for grouping: (running OR marathon) evaluated first
+-- => Then AND NOT database applied
+-- => 'Running Tutorial': (running ✓ OR marathon ✗) AND NOT database ✓
+-- =>   Result: ✓ (included)
+-- => 'Database Running': (running ✓ OR marathon ✗) AND NOT database ✗
+-- =>   Result: ✗ (excluded, contains 'database')
+-- => 'Marathon Training': (running ✗ OR marathon ✓) AND NOT database ✓
+-- =>   Result: ✓ (included)
 -- => Returns: 'Running Tutorial', 'Marathon Training'
 
--- Case-insensitive search (FTS5 default)
-SELECT title
-FROM documents_fts
-WHERE documents_fts MATCH 'RUNNING';
--- => Returns same results as 'running' (case-insensitive)
+-- Case-insensitive search (FTS5 default behavior)
+SELECT title                        -- => Document title
+FROM documents_fts                  -- => FTS5 table
+WHERE documents_fts MATCH 'RUNNING';  -- => Uppercase search term
+-- => FTS5 performs case-insensitive matching by default
+-- => 'RUNNING' matches 'running', 'Running', 'RUNNING'
+-- => Porter stemmer: RUNNING → run stem
+-- => Returns same results as lowercase 'running'
+-- =>   'Running Tutorial' ✓
+-- =>   'Database Running' ✓
+-- =>   'Marathon Training' ✓
+-- => Case doesn't affect search results
 ```
 
 **Key Takeaway**: FTS5 supports stemming (porter tokenizer), proximity search (NEAR), and column weighting. Configure tokenizers for language-specific behavior. Combine boolean operators for complex queries. FTS5 is production-ready for search features.
@@ -1676,74 +2284,104 @@ graph TD
 **Code**:
 
 ```sql
-CREATE TABLE customers (
-    id INTEGER PRIMARY KEY,
-    email TEXT,
-    name TEXT,
-    country TEXT
+-- Create customers table
+CREATE TABLE customers (            -- => Table for customer data
+    id INTEGER PRIMARY KEY,         -- => Primary key (automatic index)
+    email TEXT,                     -- => Email address (no index yet)
+    name TEXT,                      -- => Customer name
+    country TEXT                    -- => Country code
 );
+-- => Table created with PRIMARY KEY index on id
 
--- Insert test data
+-- Insert test data (100 customers)
 INSERT INTO customers (email, name, country)
 SELECT
-    'user' || value || '@example.com',
-    'User ' || value,
-    CASE WHEN value % 2 = 0 THEN 'USA' ELSE 'UK' END
+    'user' || value || '@example.com',  -- => Generated email
+    'User ' || value,               -- => Generated name
+    CASE WHEN value % 2 = 0 THEN 'USA' ELSE 'UK' END  -- => Alternating countries
 FROM (
-    WITH RECURSIVE nums AS (
+    WITH RECURSIVE nums AS (        -- => Generate numbers 1-100
         SELECT 1 AS value
         UNION ALL
         SELECT value + 1 FROM nums WHERE value < 100
     )
     SELECT value FROM nums
 );
+-- => 100 rows inserted: 50 USA, 50 UK
 
--- Query without index
+-- Query without index (full table scan)
 EXPLAIN QUERY PLAN
 SELECT * FROM customers WHERE email = 'user50@example.com';
--- => Output: SCAN TABLE customers
--- => Scans all 100 rows to find match (slow for large tables)
+-- => EXPLAIN QUERY PLAN shows execution strategy without running query
+-- => Output: "SCAN TABLE customers"
+-- => SCAN = full table scan (checks every row)
+-- => Without index on email: O(N) linear search
+-- => Checks all 100 rows to find matching email
+-- => Slow for large tables (millions of rows)
 
--- Create index on email
+-- Create index on email column
 CREATE INDEX idx_customers_email ON customers(email);
+-- => Index created: B-tree structure for fast email lookups
+-- => Index stores: email → rowid mapping
+-- => Enables O(log N) lookups instead of O(N)
 
--- Same query with index
+-- Same query with index (indexed search)
 EXPLAIN QUERY PLAN
 SELECT * FROM customers WHERE email = 'user50@example.com';
--- => Output: SEARCH TABLE customers USING INDEX idx_customers_email (email=?)
--- => Uses index for fast lookup (log N time complexity)
+-- => Output: "SEARCH TABLE customers USING INDEX idx_customers_email (email=?)"
+-- => SEARCH = index-based lookup (fast)
+-- => Uses idx_customers_email for WHERE email = ?
+-- => O(log N) time complexity
+-- => Checks ~7 index nodes for 100 rows (log₂ 100 ≈ 7)
+-- => Dramatic performance improvement over SCAN
 
--- Query plan for JOIN
-CREATE TABLE orders (
-    id INTEGER PRIMARY KEY,
-    customer_id INTEGER,
-    total REAL
+-- Create orders table for JOIN demonstration
+CREATE TABLE orders (               -- => Table for orders
+    id INTEGER PRIMARY KEY,         -- => Order identifier
+    customer_id INTEGER,            -- => Customer reference (no FK index)
+    total REAL                      -- => Order total
 );
+-- => Table created
 
+-- Insert test orders
 INSERT INTO orders (customer_id, total)
-SELECT value, value * 10.0 FROM (
+SELECT value, value * 10.0          -- => customer_id and total
+FROM (
     WITH RECURSIVE nums AS (
         SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 50
     )
     SELECT value FROM nums
 );
+-- => 50 orders inserted (customers 1-50)
 
+-- Query plan for JOIN (before optimization)
 EXPLAIN QUERY PLAN
-SELECT c.name, o.total
-FROM customers c
-INNER JOIN orders o ON c.id = o.customer_id
-WHERE c.country = 'USA';
--- => Shows scan/search strategy for both tables and join method
+SELECT c.name, o.total              -- => Customer name and order total
+FROM customers c                    -- => Customers table
+INNER JOIN orders o ON c.id = o.customer_id  -- => Join condition
+WHERE c.country = 'USA';            -- => Filter for USA
+-- => Shows multi-step execution plan:
+-- =>   1. SCAN customers WHERE country = 'USA' (no country index)
+-- =>   2. SEARCH orders USING PRIMARY KEY (for each customer)
+-- => Scans all customers to filter by country (inefficient)
 
 -- Create composite index for better performance
 CREATE INDEX idx_customers_country_id ON customers(country, id);
+-- => Composite index: (country, id)
+-- => Enables fast lookups WHERE country = X
+-- => Also useful for ORDER BY country, id
 
 EXPLAIN QUERY PLAN
-SELECT c.name, o.total
-FROM customers c
-INNER JOIN orders o ON c.id = o.customer_id
-WHERE c.country = 'USA';
--- => Now uses composite index for faster country filtering
+SELECT c.name, o.total              -- => Customer name and order total
+FROM customers c                    -- => Customers table
+INNER JOIN orders o ON c.id = o.customer_id  -- => Join condition
+WHERE c.country = 'USA';            -- => Filter for USA
+-- => Improved execution plan:
+-- =>   1. SEARCH customers USING INDEX idx_customers_country_id (country=?)
+-- =>   2. SEARCH orders USING PRIMARY KEY
+-- => Uses composite index for fast country filtering
+-- => Only processes matching rows (50 instead of 100)
+-- => Significant performance improvement
 ```
 
 **Key Takeaway**: EXPLAIN QUERY PLAN reveals query execution strategy. Look for SCAN (slow, checks every row) vs SEARCH (fast, uses index). Create indexes on columns used in WHERE, JOIN, and ORDER BY to convert scans to searches.
@@ -1759,70 +2397,94 @@ Covering indexes include all columns needed by a query, eliminating the need to 
 **Code**:
 
 ```sql
-CREATE TABLE products (
-    id INTEGER PRIMARY KEY,
-    name TEXT,
-    category TEXT,
-    price REAL,
-    stock INTEGER,
-    description TEXT
+-- Create products table
+CREATE TABLE products (             -- => Table for product catalog
+    id INTEGER PRIMARY KEY,         -- => Product identifier
+    name TEXT,                      -- => Product name
+    category TEXT,                  -- => Product category
+    price REAL,                     -- => Product price
+    stock INTEGER,                  -- => Stock quantity
+    description TEXT                -- => Product description (large text)
 );
+-- => Table created
 
--- Insert test data
+-- Insert test data (100 products)
 INSERT INTO products (name, category, price, stock, description)
 SELECT
-    'Product ' || value,
+    'Product ' || value,            -- => Product name
     CASE WHEN value % 3 = 0 THEN 'Electronics'
          WHEN value % 3 = 1 THEN 'Furniture'
-         ELSE 'Clothing' END,
-    value * 10.0,
-    value * 5,
-    'Description for product ' || value
+         ELSE 'Clothing' END,       -- => Rotate categories
+    value * 10.0,                   -- => Price
+    value * 5,                      -- => Stock
+    'Description for product ' || value  -- => Description
 FROM (
     WITH RECURSIVE nums AS (
         SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 100
     )
     SELECT value FROM nums
 );
+-- => 100 products inserted: ~33 per category
 
--- Query selecting category and price
-SELECT category, price
-FROM products
-WHERE category = 'Electronics';
+-- Query selecting category and price (potential for covering index)
+SELECT category, price              -- => Select only category and price
+FROM products                       -- => Source table
+WHERE category = 'Electronics';     -- => Filter by category
+-- => Query needs: category (WHERE), price (SELECT)
+-- => Without covering index: SEARCH index + access table for price
 
 -- Create covering index (includes all queried columns)
 CREATE INDEX idx_products_covering ON products(category, price);
--- => Index contains both category (WHERE) and price (SELECT)
+-- => Covering index: includes all columns needed by query
+-- => Index stores: (category, price, rowid)
+-- => Query can be satisfied entirely from index
+-- => No need to access main table (saves I/O)
 
 EXPLAIN QUERY PLAN
-SELECT category, price
-FROM products
-WHERE category = 'Electronics';
--- => Uses covering index, doesn't need to access table
--- => Output: SEARCH TABLE products USING COVERING INDEX idx_products_covering
+SELECT category, price              -- => Columns in index
+FROM products                       -- => Source table
+WHERE category = 'Electronics';     -- => Filter in index
+-- => Output: "SEARCH TABLE products USING COVERING INDEX idx_products_covering"
+-- => COVERING INDEX = index contains all needed columns
+-- => Entire query satisfied from index data
+-- => No table access required (maximum performance)
+-- => Reads only index pages, not data pages
 
--- Compare to non-covering index
+-- Compare to non-covering index (requires table access)
 CREATE INDEX idx_products_category_only ON products(category);
+-- => Non-covering index: only includes category
+-- => Index stores: (category, rowid)
+-- => Missing: price, name (must fetch from table)
 
 EXPLAIN QUERY PLAN
-SELECT category, price, name
-FROM products
-WHERE category = 'Electronics';
--- => Index doesn't include 'name', must access table
--- => Output: SEARCH TABLE products USING INDEX idx_products_category_only
--- =>         (then accesses table for 'name' column)
+SELECT category, price, name        -- => Needs name (not in category index)
+FROM products                       -- => Source table
+WHERE category = 'Electronics';     -- => Filter uses index
+-- => Output: "SEARCH TABLE products USING INDEX idx_products_category_only (category=?)"
+-- => Uses index for WHERE category = 'Electronics'
+-- => Then accesses table to fetch price and name
+-- => Two-step process: index lookup + table access
+-- => Slower than covering index
 
--- Create multi-column covering index
-DROP INDEX idx_products_covering;
+-- Create multi-column covering index (covers more queries)
+DROP INDEX idx_products_covering;   -- => Remove old index
 CREATE INDEX idx_products_category_price_name ON products(category, price, name);
+-- => Covering index with 3 columns
+-- => Covers: WHERE category, SELECT price/name, ORDER BY price
+-- => Larger index (more storage) but faster queries
 
 EXPLAIN QUERY PLAN
-SELECT category, price, name
-FROM products
-WHERE category = 'Electronics'
-ORDER BY price;
--- => Covering index satisfies WHERE, SELECT, and ORDER BY
--- => No table access needed, maximum performance
+SELECT category, price, name        -- => All columns in index
+FROM products                       -- => Source table
+WHERE category = 'Electronics'      -- => Filter in index
+ORDER BY price;                     -- => Sort in index
+-- => Output: "SEARCH TABLE products USING COVERING INDEX idx_products_category_price_name"
+-- => Covering index satisfies:
+-- =>   1. WHERE category = 'Electronics' (first column)
+-- =>   2. SELECT category, price, name (all in index)
+-- =>   3. ORDER BY price (second column, pre-sorted)
+-- => No table access, no additional sorting
+-- => Maximum performance: index-only query
 ```
 
 **Key Takeaway**: Covering indexes include all columns used in query (WHERE, SELECT, ORDER BY). They eliminate table access, reducing I/O. Trade-off: larger index size. Use for frequently-run queries on specific column sets.
@@ -1838,60 +2500,87 @@ Partial indexes index only rows matching a condition. They reduce index size and
 **Code**:
 
 ```sql
-CREATE TABLE orders (
-    id INTEGER PRIMARY KEY,
-    customer_id INTEGER,
-    status TEXT,
-    total REAL,
-    order_date TEXT
+-- Create orders table
+CREATE TABLE orders (               -- => Table for order tracking
+    id INTEGER PRIMARY KEY,         -- => Order identifier
+    customer_id INTEGER,            -- => Customer reference
+    status TEXT,                    -- => Order status
+    total REAL,                     -- => Order total
+    order_date TEXT                 -- => Order date
 );
+-- => Table created
 
--- Insert test data
+-- Insert test data (200 orders with status distribution)
 INSERT INTO orders (customer_id, status, total, order_date)
 SELECT
-    value % 50 + 1,
-    CASE WHEN value % 10 = 0 THEN 'pending'
-         WHEN value % 10 < 8 THEN 'completed'
-         ELSE 'cancelled' END,
-    value * 25.0,
-    date('2025-01-01', '+' || value || ' days')
+    value % 50 + 1,                 -- => Customer 1-50 (circular)
+    CASE WHEN value % 10 = 0 THEN 'pending'      -- => 10% pending
+         WHEN value % 10 < 8 THEN 'completed'    -- => 70% completed
+         ELSE 'cancelled' END,      -- => 20% cancelled
+    value * 25.0,                   -- => Order total
+    date('2025-01-01', '+' || value || ' days')  -- => Sequential dates
 FROM (
     WITH RECURSIVE nums AS (
         SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 200
     )
     SELECT value FROM nums
 );
+-- => 200 orders inserted: 20 pending, 140 completed, 40 cancelled
 
 -- Full index on status (indexes all rows)
 CREATE INDEX idx_orders_status_full ON orders(status);
+-- => Full index: indexes all 200 rows
+-- => Covers all status values: pending, completed, cancelled
+-- => Larger index size, slower writes
 
--- Partial index on pending orders only
-CREATE INDEX idx_orders_status_pending ON orders(status) WHERE status = 'pending';
--- => Only indexes pending orders (10% of data)
+-- Partial index on pending orders only (filtered index)
+CREATE INDEX idx_orders_status_pending ON orders(status)
+WHERE status = 'pending';           -- => Index filter condition
+-- => Partial index: only indexes rows WHERE status = 'pending'
+-- => Indexes only 20 rows (10% of data)
+-- => Smaller index: faster writes, less storage
+-- => Can only be used for queries matching filter condition
 
 -- Query for pending orders (uses partial index)
 EXPLAIN QUERY PLAN
 SELECT * FROM orders WHERE status = 'pending';
--- => Uses idx_orders_status_pending (smaller, faster)
+-- => Query matches partial index filter (status = 'pending')
+-- => Output: "SEARCH TABLE orders USING INDEX idx_orders_status_pending"
+-- => Uses smaller, faster partial index
+-- => 20 index entries vs 200 in full index
+-- => Better performance for this specific query
 
--- Query for completed orders (cannot use pending-only index)
+-- Query for completed orders (cannot use pending-only partial index)
 EXPLAIN QUERY PLAN
 SELECT * FROM orders WHERE status = 'completed';
--- => Uses idx_orders_status_full or table scan
+-- => Query does NOT match partial index filter
+-- => Partial index on pending can't help with completed query
+-- => Output: "SEARCH TABLE orders USING INDEX idx_orders_status_full"
+-- => Falls back to full index (or table scan if no full index)
 
--- Partial index with complex condition
+-- Partial index with complex condition (multiple filters)
 CREATE INDEX idx_orders_high_value_recent ON orders(customer_id, total)
 WHERE total > 1000 AND order_date > date('now', '-30 days');
--- => Only indexes recent high-value orders
+-- => Partial index with two conditions
+-- => Only indexes: high-value (>1000) AND recent (<30 days) orders
+-- => Very selective: maybe 10-20 rows from 200
+-- => Tiny index for specific use case
 
 SELECT * FROM orders
 WHERE total > 1000 AND order_date > date('now', '-30 days');
--- => Uses partial index (much smaller than full index on customer_id, total)
+-- => Query exactly matches partial index filter
+-- => Uses idx_orders_high_value_recent
+-- => Much smaller than full index on (customer_id, total)
+-- => Optimized for "hot" recent high-value data
 
--- Partial index with NOT NULL condition
+-- Partial index with NOT NULL condition (exclude nulls)
 CREATE INDEX idx_orders_customer_nonnull ON orders(customer_id)
-WHERE customer_id IS NOT NULL;
--- => Excludes NULL customer_id rows from index
+WHERE customer_id IS NOT NULL;      -- => Exclude NULL values
+-- => Partial index: only indexes rows with non-NULL customer_id
+-- => If customer_id sometimes NULL (guest orders):
+-- =>   Partial index smaller, excludes guest orders
+-- => Useful when most queries filter customer_id IS NOT NULL
+-- => Saves space by not indexing NULL values
 ```
 
 **Key Takeaway**: Partial indexes use WHERE clause to index subset of rows. They reduce index size and improve write performance. Use for queries that consistently filter on same condition (active records, recent data, specific categories).
@@ -1907,88 +2596,132 @@ Combine multiple optimization strategies to improve query performance: proper in
 **Code**:
 
 ```sql
-CREATE TABLE logs (
-    id INTEGER PRIMARY KEY,
-    timestamp TEXT,
-    level TEXT,
-    message TEXT,
-    user_id INTEGER
+-- Create logs table
+CREATE TABLE logs (                 -- => Table for application logs
+    id INTEGER PRIMARY KEY,         -- => Log identifier
+    timestamp TEXT,                 -- => Log timestamp
+    level TEXT,                     -- => Log level (ERROR, WARNING, INFO)
+    message TEXT,                   -- => Log message
+    user_id INTEGER                 -- => User who triggered log
 );
+-- => Table created
 
--- Insert test data
+-- Insert test data (1000 log entries)
 INSERT INTO logs (timestamp, level, message, user_id)
 SELECT
-    datetime('2025-01-01', '+' || value || ' hours'),
-    CASE WHEN value % 10 = 0 THEN 'ERROR'
-         WHEN value % 5 = 0 THEN 'WARNING'
-         ELSE 'INFO' END,
-    'Log message ' || value,
-    value % 100 + 1
+    datetime('2025-01-01', '+' || value || ' hours'),  -- => Sequential timestamps
+    CASE WHEN value % 10 = 0 THEN 'ERROR'      -- => 10% errors
+         WHEN value % 5 = 0 THEN 'WARNING'     -- => 10% warnings
+         ELSE 'INFO' END,           -- => 80% info
+    'Log message ' || value,        -- => Log message
+    value % 100 + 1                 -- => User 1-100
 FROM (
     WITH RECURSIVE nums AS (
         SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 1000
     )
     SELECT value FROM nums
 );
+-- => 1000 logs inserted
 
 -- SLOW: Function in WHERE clause prevents index usage
 SELECT * FROM logs
 WHERE DATE(timestamp) = '2025-01-15';
--- => DATE() function prevents index on timestamp from being used
+-- => DATE(timestamp) applies function to EVERY row
+-- => Function prevents index usage on timestamp
+-- => Forces full table scan (checks all 1000 rows)
+-- => SLOW: O(N) scan
 
--- FAST: Use range comparison instead
+-- FAST: Use range comparison instead (sargable query)
 CREATE INDEX idx_logs_timestamp ON logs(timestamp);
+-- => Index created on timestamp
 
 SELECT * FROM logs
 WHERE timestamp >= '2025-01-15' AND timestamp < '2025-01-16';
--- => Uses index, much faster
+-- => Range comparison allows index usage
+-- => Sargable: Search ARGument ABLE (index-friendly)
+-- => Uses idx_logs_timestamp for fast lookup
+-- => FAST: O(log N) index seek + sequential scan within range
+-- => Retrieves same results as DATE() but much faster
 
 -- SLOW: SELECT * retrieves unnecessary columns
 SELECT * FROM logs WHERE level = 'ERROR';
+-- => SELECT * fetches all columns: id, timestamp, level, message, user_id
+-- => Transfers unnecessary data (message can be large)
+-- => Cannot use covering index (all columns rarely in index)
 
 -- FAST: Select only needed columns
 SELECT id, timestamp, message FROM logs WHERE level = 'ERROR';
--- => Reduces data transfer, enables covering index
+-- => Selects only required columns
+-- => Reduces data transfer (less I/O)
+-- => Enables covering index possibility
 
--- Create covering index
+-- Create covering index for common query
 CREATE INDEX idx_logs_level_covering ON logs(level, id, timestamp, message);
+-- => Covering index with frequently queried columns
+-- => Satisfies WHERE level + SELECT id, timestamp, message
+-- => Index-only scan (no table access)
 
--- SLOW: ORDER BY without index
+-- SLOW: ORDER BY without supporting index
 SELECT * FROM logs
-WHERE user_id = 50
-ORDER BY timestamp DESC;
+WHERE user_id = 50                  -- => Filter by user
+ORDER BY timestamp DESC;            -- => Sort by timestamp
+-- => Query uses: WHERE user_id, ORDER BY timestamp
+-- => Without composite index: searches user_id, then sorts results
+-- => Sorting is expensive for large result sets
 
--- FAST: Create composite index
+-- FAST: Create composite index matching query pattern
 CREATE INDEX idx_logs_user_timestamp ON logs(user_id, timestamp DESC);
--- => Satisfies both WHERE and ORDER BY
+-- => Composite index: (user_id, timestamp DESC)
+-- => Satisfies both WHERE user_id = 50 AND ORDER BY timestamp DESC
+-- => Index already sorted in DESC order
+-- => No additional sorting needed (pre-sorted results)
 
--- Use LIMIT to reduce result set
+-- Use LIMIT to reduce result set (early termination)
 SELECT * FROM logs
-WHERE level IN ('ERROR', 'WARNING')
-ORDER BY timestamp DESC
-LIMIT 10;
--- => Stops after finding 10 matches (early termination)
+WHERE level IN ('ERROR', 'WARNING')  -- => Filter for errors/warnings
+ORDER BY timestamp DESC             -- => Most recent first
+LIMIT 10;                           -- => Only need 10 rows
+-- => LIMIT enables early termination optimization
+-- => Stops after finding 10 matching rows
+-- => Doesn't process entire result set
+-- => Significant speedup when LIMIT << result set size
 
 -- SLOW: OR conditions often don't use indexes efficiently
 SELECT * FROM logs WHERE user_id = 10 OR user_id = 20;
+-- => OR condition may prevent optimal index usage
+-- => Some databases scan both conditions separately, others do full scan
+-- => Index range scans for OR can be suboptimal
 
--- FAST: Use UNION for OR conditions
-SELECT * FROM logs WHERE user_id = 10
-UNION ALL
-SELECT * FROM logs WHERE user_id = 20;
--- => Each query uses index separately
+-- FAST: Use UNION ALL for OR conditions
+SELECT * FROM logs WHERE user_id = 10   -- => First query: uses index
+UNION ALL                           -- => Combine without deduplication
+SELECT * FROM logs WHERE user_id = 20;  -- => Second query: uses index
+-- => Each query independently uses index on user_id
+-- => Two fast index seeks: O(log N) + O(log N)
+-- => More predictable performance than OR
+-- => UNION ALL (no dedup) faster than UNION
 
 -- Avoid NOT IN with subqueries (NULL issues + performance)
 SELECT * FROM logs
 WHERE user_id NOT IN (SELECT user_id FROM logs WHERE level = 'ERROR');
+-- => NOT IN with subquery has two problems:
+-- =>   1. NULL in subquery → entire query returns no rows
+-- =>   2. Subquery may execute multiple times (correlated)
+-- => Dangerous and slow
 
--- Use LEFT JOIN instead
-SELECT l.*
-FROM logs l
-LEFT JOIN (SELECT DISTINCT user_id FROM logs WHERE level = 'ERROR') e
-    ON l.user_id = e.user_id
-WHERE e.user_id IS NULL;
--- => More efficient and NULL-safe
+-- Use LEFT JOIN instead (NULL-safe and faster)
+SELECT l.*                          -- => All log columns
+FROM logs l                         -- => Main table
+LEFT JOIN (                         -- => Anti-join pattern
+    SELECT DISTINCT user_id         -- => Error users (deduplicated)
+    FROM logs
+    WHERE level = 'ERROR'
+) e ON l.user_id = e.user_id        -- => Match on user_id
+WHERE e.user_id IS NULL;            -- => Keep only non-matches
+-- => LEFT JOIN with WHERE IS NULL = anti-join (exclude matches)
+-- => NULL-safe: works correctly even with NULL user_id
+-- => More efficient: subquery executes once, not per row
+-- => Clear intent: "exclude users who had errors"
 ```
 
 **Key Takeaway**: Avoid functions in WHERE (prevents index usage). Select only needed columns. Use range conditions instead of functions. Create composite indexes for WHERE + ORDER BY. Use LIMIT for early termination. Replace NOT IN with LEFT JOIN for better performance.
@@ -2004,75 +2737,99 @@ Batch operations in transactions improve performance dramatically. Single transa
 **Code**:
 
 ```sql
--- Create test table
-CREATE TABLE metrics (
-    id INTEGER PRIMARY KEY,
-    metric_name TEXT,
-    value REAL,
-    recorded_at TEXT
+-- Create metrics table
+CREATE TABLE metrics (              -- => Table for system metrics
+    id INTEGER PRIMARY KEY,         -- => Metric identifier
+    metric_name TEXT,               -- => Metric type
+    value REAL,                     -- => Metric value
+    recorded_at TEXT                -- => Recording timestamp
 );
+-- => Table created
 
--- SLOW: Individual inserts (each auto-commits)
--- This would take seconds for 1000 inserts
+-- SLOW: Individual inserts (each auto-commits separately)
 INSERT INTO metrics (metric_name, value, recorded_at)
 VALUES ('cpu_usage', 45.2, datetime('now'));
+-- => Auto-commit: writes to disk immediately
+-- => Transaction overhead: BEGIN, INSERT, COMMIT per row
 INSERT INTO metrics (metric_name, value, recorded_at)
 VALUES ('memory_usage', 78.5, datetime('now'));
--- ... 998 more individual inserts ...
+-- => Another auto-commit: disk write
+-- ... 998 more individual inserts with auto-commits ...
+-- => 1000 separate transactions
+-- => 1000 disk syncs (fsync calls)
+-- => VERY SLOW: ~1 second for 1000 rows
 
 -- FAST: Batch inserts in single transaction
-BEGIN TRANSACTION;
+BEGIN TRANSACTION;                  -- => Start transaction (one BEGIN)
 
 INSERT INTO metrics (metric_name, value, recorded_at)
 SELECT
-    'cpu_usage',
-    RANDOM() % 100,
-    datetime('2025-01-01', '+' || value || ' minutes')
+    'cpu_usage',                    -- => Metric name
+    RANDOM() % 100,                 -- => Random value 0-99
+    datetime('2025-01-01', '+' || value || ' minutes')  -- => Sequential timestamps
 FROM (
     WITH RECURSIVE nums AS (
         SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 1000
     )
     SELECT value FROM nums
 );
+-- => 1000 rows inserted in single INSERT statement
 
-COMMIT;
--- => 1000 inserts in milliseconds instead of seconds
+COMMIT;                             -- => Commit transaction (one COMMIT)
+-- => Single transaction: 1 BEGIN, 1000 inserts, 1 COMMIT
+-- => Single disk sync at commit
+-- => FAST: ~10-50ms for 1000 rows (100x faster than individual inserts)
+-- => Atomicity: all 1000 rows or none (rollback on error)
 
--- FAST: Multi-row INSERT
-BEGIN TRANSACTION;
+-- FAST: Multi-row INSERT (alternative syntax)
+BEGIN TRANSACTION;                  -- => Start transaction
 
 INSERT INTO metrics (metric_name, value, recorded_at)
 VALUES
-    ('cpu_usage', 45.2, datetime('now')),
-    ('memory_usage', 78.5, datetime('now')),
-    ('disk_io', 120.3, datetime('now')),
-    ('network_rx', 950.7, datetime('now'));
--- ... more rows ...
+    ('cpu_usage', 45.2, datetime('now')),      -- => Row 1
+    ('memory_usage', 78.5, datetime('now')),   -- => Row 2
+    ('disk_io', 120.3, datetime('now')),       -- => Row 3
+    ('network_rx', 950.7, datetime('now'));    -- => Row 4
+-- => Multi-row VALUES: single INSERT for multiple rows
+-- ... more rows in same VALUES ...
 
-COMMIT;
--- => Faster than individual inserts
+COMMIT;                             -- => Commit transaction
+-- => Faster than individual inserts, not as fast as SELECT-based INSERT
+-- => Good for: application-generated data, mixed values
 
--- Batch updates in transaction
-BEGIN TRANSACTION;
+-- Batch updates in transaction (atomic multi-operation)
+BEGIN TRANSACTION;                  -- => Start transaction
 
 UPDATE metrics SET value = value * 1.1 WHERE metric_name = 'cpu_usage';
+-- => Update all cpu_usage metrics (+10%)
 UPDATE metrics SET value = value * 0.9 WHERE metric_name = 'memory_usage';
+-- => Update all memory_usage metrics (-10%)
 DELETE FROM metrics WHERE recorded_at < datetime('now', '-30 days');
+-- => Delete old metrics (>30 days ago)
 
-COMMIT;
--- => All changes atomic and fast
+COMMIT;                             -- => Commit all changes atomically
+-- => All 3 operations succeed or fail together
+-- => Single disk sync for all changes
+-- => Consistent state: no partial updates visible
 
 -- Use PRAGMA for even better insert performance
-PRAGMA synchronous = OFF;     -- Faster but risky (disable for benchmarks only)
-PRAGMA journal_mode = WAL;    -- Write-Ahead Logging (safe and fast)
-PRAGMA cache_size = -64000;   -- 64MB cache
+PRAGMA synchronous = OFF;           -- => Disable fsync (DANGEROUS: data loss risk)
+-- => OFF: no fsync, maximum speed, data loss on crash
+-- => WARNING: Use only for benchmarks or rebuilding from backup
+PRAGMA journal_mode = WAL;          -- => Write-Ahead Logging
+-- => WAL mode: writes to separate log file, better concurrency
+-- => Readers don't block writers
+PRAGMA cache_size = -64000;         -- => 64MB cache (negative = kilobytes)
+-- => Larger cache: fewer disk reads, faster queries
 
-BEGIN TRANSACTION;
--- ... bulk inserts ...
-COMMIT;
+BEGIN TRANSACTION;                  -- => Start transaction with optimized settings
+-- ... bulk inserts ...              => Fast inserts with PRAGMA optimizations
+COMMIT;                             -- => Commit transaction
 
--- Restore safe settings
-PRAGMA synchronous = FULL;
+-- Restore safe settings (IMPORTANT: re-enable after bulk load)
+PRAGMA synchronous = FULL;          -- => Restore full durability
+-- => FULL: guaranteed fsync, no data loss on crash
+-- => Always restore FULL for production use
 ```
 
 **Key Takeaway**: Wrap bulk operations in transactions for dramatic performance improvement. Single transaction commits once instead of per-statement. Use multi-row INSERT for batches. Consider PRAGMA settings for production optimization but test carefully.
@@ -2088,72 +2845,110 @@ Pivoting transforms rows into columns using CASE expressions and GROUP BY. Commo
 **Code**:
 
 ```sql
-CREATE TABLE sales (
-    id INTEGER,
-    product TEXT,
-    quarter TEXT,
-    revenue REAL
+-- Create sales table with quarterly data
+CREATE TABLE sales (                -- => Table for quarterly sales
+    id INTEGER,                     -- => Record identifier
+    product TEXT,                   -- => Product name
+    quarter TEXT,                   -- => Quarter (Q1-Q4)
+    revenue REAL                    -- => Quarterly revenue
 );
+-- => Table created
 
+-- Insert quarterly sales for 2 products
 INSERT INTO sales (id, product, quarter, revenue)
 VALUES
-    (1, 'Widget A', 'Q1', 10000),
-    (2, 'Widget A', 'Q2', 12000),
-    (3, 'Widget A', 'Q3', 11000),
-    (4, 'Widget A', 'Q4', 15000),
-    (5, 'Widget B', 'Q1', 8000),
-    (6, 'Widget B', 'Q2', 9000),
-    (7, 'Widget B', 'Q3', 10000),
-    (8, 'Widget B', 'Q4', 11000);
+    (1, 'Widget A', 'Q1', 10000),   -- => Widget A Q1
+    (2, 'Widget A', 'Q2', 12000),   -- => Widget A Q2
+    (3, 'Widget A', 'Q3', 11000),   -- => Widget A Q3
+    (4, 'Widget A', 'Q4', 15000),   -- => Widget A Q4
+    (5, 'Widget B', 'Q1', 8000),    -- => Widget B Q1
+    (6, 'Widget B', 'Q2', 9000),    -- => Widget B Q2
+    (7, 'Widget B', 'Q3', 10000),   -- => Widget B Q3
+    (8, 'Widget B', 'Q4', 11000);   -- => Widget B Q4
+-- => 8 rows inserted: 4 quarters × 2 products
 
--- Pivot: Quarters as columns
+-- Pivot: Transform quarters from rows to columns
 SELECT
-    product,
+    product,                        -- => Product name (row)
     SUM(CASE WHEN quarter = 'Q1' THEN revenue ELSE 0 END) AS Q1,
+        -- => Sum revenue where quarter='Q1', else 0
     SUM(CASE WHEN quarter = 'Q2' THEN revenue ELSE 0 END) AS Q2,
+        -- => Sum revenue where quarter='Q2', else 0
     SUM(CASE WHEN quarter = 'Q3' THEN revenue ELSE 0 END) AS Q3,
+        -- => Sum revenue where quarter='Q3', else 0
     SUM(CASE WHEN quarter = 'Q4' THEN revenue ELSE 0 END) AS Q4,
-    SUM(revenue) AS total
-FROM sales
-GROUP BY product;
--- => Returns:
+        -- => Sum revenue where quarter='Q4', else 0
+    SUM(revenue) AS total           -- => Total across all quarters
+FROM sales                          -- => Source table
+GROUP BY product;                   -- => One row per product
+-- => CASE WHEN creates conditional column per quarter
+-- => SUM aggregates values per product per quarter
 -- => Widget A: Q1=10000, Q2=12000, Q3=11000, Q4=15000, total=48000
 -- => Widget B: Q1=8000, Q2=9000, Q3=10000, Q4=11000, total=38000
+-- => Returns 2 rows with quarters as columns (pivoted)
 
--- Pivot with averages
+-- Pivot with averages (half-year metrics)
 SELECT
-    product,
+    product,                        -- => Product name
     AVG(CASE WHEN quarter IN ('Q1', 'Q2') THEN revenue END) AS H1_avg,
+        -- => Average revenue for first half (Q1, Q2)
     AVG(CASE WHEN quarter IN ('Q3', 'Q4') THEN revenue END) AS H2_avg
-FROM sales
-GROUP BY product;
--- => Widget A: H1_avg=11000, H2_avg=13000 (half-year averages)
+        -- => Average revenue for second half (Q3, Q4)
+FROM sales                          -- => Source table
+GROUP BY product;                   -- => One row per product
+-- => CASE WHEN returns revenue for matching quarters, NULL otherwise
+-- => AVG ignores NULL values
+-- => Widget A:
+-- =>   H1_avg: AVG(10000, 12000) = 11000
+-- =>   H2_avg: AVG(11000, 15000) = 13000
+-- => Widget B:
+-- =>   H1_avg: AVG(8000, 9000) = 8500
+-- =>   H2_avg: AVG(10000, 11000) = 10500
+-- => Returns half-year averages
 
--- Count pivot
-CREATE TABLE survey_responses (
-    id INTEGER,
-    question TEXT,
-    answer TEXT
+-- Count pivot (frequency distribution)
+CREATE TABLE survey_responses (     -- => Table for survey data
+    id INTEGER,                     -- => Response identifier
+    question TEXT,                  -- => Question name
+    answer TEXT                     -- => Answer value
 );
+-- => Table created
 
+-- Insert survey responses
 INSERT INTO survey_responses VALUES
-    (1, 'Satisfaction', 'High'),
-    (2, 'Satisfaction', 'Medium'),
-    (3, 'Satisfaction', 'High'),
-    (4, 'Recommendation', 'Yes'),
-    (5, 'Recommendation', 'No'),
-    (6, 'Recommendation', 'Yes');
+    (1, 'Satisfaction', 'High'),    -- => Satisfaction: High
+    (2, 'Satisfaction', 'Medium'),  -- => Satisfaction: Medium
+    (3, 'Satisfaction', 'High'),    -- => Satisfaction: High (duplicate)
+    (4, 'Recommendation', 'Yes'),   -- => Recommendation: Yes
+    (5, 'Recommendation', 'No'),    -- => Recommendation: No
+    (6, 'Recommendation', 'Yes');   -- => Recommendation: Yes (duplicate)
+-- => 6 responses: 3 per question
 
 SELECT
-    question,
+    question,                       -- => Question name (row)
     COUNT(CASE WHEN answer = 'High' THEN 1 END) AS high,
+        -- => Count High answers (Satisfaction only)
     COUNT(CASE WHEN answer = 'Medium' THEN 1 END) AS medium,
+        -- => Count Medium answers (Satisfaction only)
     COUNT(CASE WHEN answer = 'Yes' THEN 1 END) AS yes,
+        -- => Count Yes answers (Recommendation only)
     COUNT(CASE WHEN answer = 'No' THEN 1 END) AS no
-FROM survey_responses
-GROUP BY question;
--- => Satisfaction: high=2, medium=1, yes=0, no=0
--- => Recommendation: high=0, medium=0, yes=2, no=1
+        -- => Count No answers (Recommendation only)
+FROM survey_responses               -- => Source table
+GROUP BY question;                  -- => One row per question
+-- => COUNT(CASE WHEN ... THEN 1 END) counts non-NULL values
+-- => CASE returns 1 when condition matches, NULL otherwise
+-- => Satisfaction row:
+-- =>   high=2 (2 High responses)
+-- =>   medium=1 (1 Medium response)
+-- =>   yes=0 (no Yes for Satisfaction)
+-- =>   no=0 (no No for Satisfaction)
+-- => Recommendation row:
+-- =>   high=0 (no High for Recommendation)
+-- =>   medium=0 (no Medium for Recommendation)
+-- =>   yes=2 (2 Yes responses)
+-- =>   no=1 (1 No response)
+-- => Returns frequency distribution matrix
 ```
 
 **Key Takeaway**: Use CASE with aggregate functions to pivot rows to columns. Each CASE WHEN becomes a column. GROUP BY determines rows. Common for reports, crosstabs, and matrix displays.
@@ -2169,81 +2964,116 @@ Window functions with frame specifications compute running totals and moving ave
 **Code**:
 
 ```sql
-CREATE TABLE daily_sales (
-    id INTEGER,
-    sale_date TEXT,
-    amount REAL
+-- Create daily sales table
+CREATE TABLE daily_sales (          -- => Table for daily sales data
+    id INTEGER,                     -- => Record identifier
+    sale_date TEXT,                 -- => Sale date
+    amount REAL                     -- => Daily sales amount
 );
+-- => Table created
 
+-- Insert 30 days of sales data
 INSERT INTO daily_sales (id, sale_date, amount)
 SELECT
-    value,
-    date('2025-01-01', '+' || (value - 1) || ' days'),
-    100 + (value * 10) + (value % 7) * 20
+    value,                          -- => Row number (1-30)
+    date('2025-01-01', '+' || (value - 1) || ' days'),  -- => Sequential dates
+    100 + (value * 10) + (value % 7) * 20  -- => Varying amounts with pattern
 FROM (
     WITH RECURSIVE nums AS (
         SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 30
     )
     SELECT value FROM nums
 );
+-- => 30 rows inserted: 2025-01-01 to 2025-01-30
 
--- Running total (cumulative sum)
+-- Running total (cumulative sum over time)
 SELECT
-    sale_date,
-    amount,
+    sale_date,                      -- => Date
+    amount,                         -- => Daily amount
     SUM(amount) OVER (ORDER BY sale_date) AS running_total
-FROM daily_sales
-ORDER BY sale_date;
--- => Each row shows cumulative sum up to that date
+        -- => Cumulative sum up to current row
+FROM daily_sales                    -- => Source table
+ORDER BY sale_date;                 -- => Chronological order
+-- => Window function: SUM over all rows up to current
+-- => Default frame: RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+-- => Jan 1: running_total = 110 (first day only)
+-- => Jan 2: running_total = 110 + 130 = 240
+-- => Jan 3: running_total = 240 + 150 = 390
+-- => Jan 30: running_total = sum of all 30 days
+-- => Returns cumulative progression
 
--- 7-day moving average
+-- 7-day moving average (trailing window)
 SELECT
-    sale_date,
-    amount,
-    ROUND(AVG(amount) OVER (
-        ORDER BY sale_date
-        ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
-    ), 2) AS moving_avg_7day
-FROM daily_sales
-ORDER BY sale_date;
--- => Each row shows average of current + previous 6 days
+    sale_date,                      -- => Date
+    amount,                         -- => Daily amount
+    ROUND(AVG(amount) OVER (        -- => Average of 7-day window
+        ORDER BY sale_date          -- => Chronological order
+        ROWS BETWEEN 6 PRECEDING AND CURRENT ROW  -- => 7-row window
+    ), 2) AS moving_avg_7day        -- => Rounded to 2 decimals
+FROM daily_sales                    -- => Source table
+ORDER BY sale_date;                 -- => Chronological order
+-- => ROWS BETWEEN 6 PRECEDING AND CURRENT ROW: up to 7 rows
+-- => Jan 1-6: partial window (fewer than 7 days available)
+-- =>   Jan 1: AVG([110]) = 110.00 (1 day)
+-- =>   Jan 2: AVG([110, 130]) = 120.00 (2 days)
+-- =>   Jan 3: AVG([110, 130, 150]) = 130.00 (3 days)
+-- => Jan 7+: full 7-day window
+-- =>   Jan 7: AVG(last 7 days) = smoothed average
+-- => Returns smoothed trend (reduces noise)
 
--- Running min/max
+-- Running min/max (record tracking)
 SELECT
-    sale_date,
-    amount,
+    sale_date,                      -- => Date
+    amount,                         -- => Daily amount
     MIN(amount) OVER (ORDER BY sale_date) AS min_so_far,
+        -- => Lowest value seen so far
     MAX(amount) OVER (ORDER BY sale_date) AS max_so_far
-FROM daily_sales
-ORDER BY sale_date;
--- => Track record lows and highs over time
+        -- => Highest value seen so far
+FROM daily_sales                    -- => Source table
+ORDER BY sale_date;                 -- => Chronological order
+-- => Running MIN/MAX: aggregate from start to current row
+-- => Jan 1: min=110, max=110 (first day)
+-- => Jan 2: min=110 (unchanged), max=130 (new high)
+-- => Continues updating when new records found
+-- => Tracks all-time lows and highs up to each date
 
--- Calculate day-over-day change
+-- Calculate day-over-day change (daily delta)
 SELECT
-    sale_date,
-    amount,
+    sale_date,                      -- => Date
+    amount,                         -- => Current day amount
     LAG(amount) OVER (ORDER BY sale_date) AS prev_day,
+        -- => Previous day amount
     amount - LAG(amount) OVER (ORDER BY sale_date) AS daily_change,
+        -- => Absolute change
     ROUND(
         100.0 * (amount - LAG(amount) OVER (ORDER BY sale_date)) /
         NULLIF(LAG(amount) OVER (ORDER BY sale_date), 0),
         2
-    ) AS pct_change
-FROM daily_sales
-ORDER BY sale_date;
--- => Shows absolute and percentage change vs previous day
+    ) AS pct_change                 -- => Percentage change
+FROM daily_sales                    -- => Source table
+ORDER BY sale_date;                 -- => Chronological order
+-- => LAG(amount) accesses previous row's amount
+-- => Jan 1: prev_day=NULL (no previous), daily_change=NULL, pct_change=NULL
+-- => Jan 2: prev_day=110, daily_change=130-110=20, pct_change=18.18%
+-- => NULLIF prevents division by zero
+-- => Shows volatility: large changes indicate unstable sales
 
--- Centered moving average (3-day: previous, current, next)
+-- Centered moving average (symmetric window)
 SELECT
-    sale_date,
-    amount,
-    ROUND(AVG(amount) OVER (
-        ORDER BY sale_date
-        ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING
-    ), 2) AS centered_avg_3day
-FROM daily_sales
-ORDER BY sale_date;
--- => Smooths data using centered window
+    sale_date,                      -- => Date
+    amount,                         -- => Daily amount
+    ROUND(AVG(amount) OVER (        -- => Average of 3-day centered window
+        ORDER BY sale_date          -- => Chronological order
+        ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING  -- => Centered 3-day window
+    ), 2) AS centered_avg_3day      -- => Rounded average
+FROM daily_sales                    -- => Source table
+ORDER BY sale_date;                 -- => Chronological order
+-- => ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING: [-1, 0, +1]
+-- => Includes: previous day, current day, next day
+-- => Jan 1: AVG([Jan 1, Jan 2]) = partial window (no previous)
+-- => Jan 2-29: AVG([day-1, day, day+1]) = full 3-day window
+-- => Jan 30: AVG([Jan 29, Jan 30]) = partial window (no next)
+-- => Centered smoothing: better for trend analysis (less lag)
 ```
 
 **Key Takeaway**: Use window functions with ROWS BETWEEN for running calculations. `ROWS BETWEEN n PRECEDING AND CURRENT ROW` creates moving windows. Common patterns: running totals (cumulative SUM), moving averages (AVG with window), day-over-day changes (LAG).
@@ -2259,66 +3089,82 @@ Upsert operations insert new rows or update existing ones. SQLite provides INSER
 **Code**:
 
 ```sql
-CREATE TABLE user_settings (
-    user_id INTEGER PRIMARY KEY,
-    theme TEXT,
-    language TEXT,
-    notifications INTEGER,  -- 0 or 1 (boolean)
-    updated_at TEXT
+-- Create user settings table
+CREATE TABLE user_settings (       -- => Table for user preferences
+    user_id INTEGER PRIMARY KEY,    -- => User identifier (unique)
+    theme TEXT,                     -- => UI theme preference
+    language TEXT,                  -- => Language code
+    notifications INTEGER,          -- => Boolean: 0=off, 1=on
+    updated_at TEXT                 -- => Last update timestamp
 );
+-- => Table created with PRIMARY KEY constraint on user_id
 
 -- Initial insert
 INSERT INTO user_settings (user_id, theme, language, notifications, updated_at)
-VALUES (1, 'dark', 'en', 1, datetime('now'));
+VALUES (1, 'dark', 'en', 1, datetime('now'));  -- => First insert
+-- => Row inserted: user_id=1, theme='dark', language='en'
 
--- Try to insert same user_id (fails due to PRIMARY KEY)
+-- Try to insert same user_id (violates PRIMARY KEY constraint)
 INSERT INTO user_settings (user_id, theme, language, notifications, updated_at)
-VALUES (1, 'light', 'es', 0, datetime('now'));
+VALUES (1, 'light', 'es', 0, datetime('now'));  -- => Duplicate user_id
 -- => ERROR: UNIQUE constraint failed: user_settings.user_id
+-- => INSERT fails, no changes made
 
--- INSERT OR REPLACE: Replace existing row
+-- INSERT OR REPLACE: Delete + insert (replaces entire row)
 INSERT OR REPLACE INTO user_settings (user_id, theme, language, notifications, updated_at)
-VALUES (1, 'light', 'es', 0, datetime('now'));
--- => Replaces entire row with user_id=1
+VALUES (1, 'light', 'es', 0, datetime('now'));  -- => Upsert operation
+-- => Deletes existing row with user_id=1
+-- => Inserts new row with provided values
+-- => Atomic operation (appears as single update)
 
 SELECT * FROM user_settings WHERE user_id = 1;
--- => theme='light', language='es', notifications=0 (all updated)
+-- => Returns: user_id=1, theme='light', language='es', notifications=0
+-- => Entire row replaced
 
--- INSERT ... ON CONFLICT (more flexible)
+-- INSERT ... ON CONFLICT (more flexible, true upsert)
 INSERT INTO user_settings (user_id, theme, language, notifications, updated_at)
-VALUES (2, 'dark', 'en', 1, datetime('now'))
-ON CONFLICT(user_id) DO UPDATE SET
-    theme = excluded.theme,
-    language = excluded.language,
-    notifications = excluded.notifications,
-    updated_at = excluded.updated_at;
--- => Inserts if user_id=2 doesn't exist, updates if it does
+VALUES (2, 'dark', 'en', 1, datetime('now'))    -- => Try to insert
+ON CONFLICT(user_id) DO UPDATE SET  -- => If conflict on user_id...
+    theme = excluded.theme,         -- => Update theme to new value
+    language = excluded.language,   -- => Update language to new value
+    notifications = excluded.notifications,  -- => Update notifications
+    updated_at = excluded.updated_at;        -- => Update timestamp
+-- => excluded = virtual table with conflicting row values
+-- => If user_id=2 exists: updates it
+-- => If user_id=2 doesn't exist: inserts it
 
--- Partial update on conflict
+-- Partial update on conflict (selective column updates)
 INSERT INTO user_settings (user_id, theme, language, notifications, updated_at)
-VALUES (1, 'system', 'en', 1, datetime('now'))
-ON CONFLICT(user_id) DO UPDATE SET
-    theme = excluded.theme,
-    updated_at = excluded.updated_at;
--- => Only updates theme and updated_at, preserves language and notifications
+VALUES (1, 'system', 'en', 1, datetime('now'))  -- => Try to insert
+ON CONFLICT(user_id) DO UPDATE SET  -- => On conflict...
+    theme = excluded.theme,         -- => Update only theme
+    updated_at = excluded.updated_at;  -- => Update only timestamp
+-- => language and notifications NOT in UPDATE SET
+-- => Preserves existing values for non-updated columns
+-- => User 1: theme='system', updated_at=now, language/notifications unchanged
 
--- Bulk upsert
+-- Bulk upsert (insert multiple rows, update on conflicts)
 INSERT INTO user_settings (user_id, theme, language, notifications, updated_at)
 VALUES
-    (1, 'dark', 'en', 1, datetime('now')),
-    (2, 'light', 'es', 0, datetime('now')),
-    (3, 'system', 'fr', 1, datetime('now'))
-ON CONFLICT(user_id) DO UPDATE SET
-    theme = excluded.theme,
-    language = excluded.language,
+    (1, 'dark', 'en', 1, datetime('now')),      -- => Upsert user 1
+    (2, 'light', 'es', 0, datetime('now')),     -- => Upsert user 2
+    (3, 'system', 'fr', 1, datetime('now'))     -- => Upsert user 3
+ON CONFLICT(user_id) DO UPDATE SET  -- => For any conflicts...
+    theme = excluded.theme,         -- => Update all columns
+    language = excluded.language,   -- => from new values
     notifications = excluded.notifications,
     updated_at = excluded.updated_at;
--- => Inserts new users, updates existing ones in single statement
+-- => Processes all 3 rows in single statement
+-- => Existing users updated, new users inserted
+-- => Atomic: all-or-nothing operation
 
--- Ignore conflicts (insert only if not exists)
+-- Ignore conflicts (insert only if not exists, skip if exists)
 INSERT OR IGNORE INTO user_settings (user_id, theme, language, notifications, updated_at)
-VALUES (1, 'ignored', 'ignored', 0, datetime('now'));
--- => Silently ignores if user_id=1 exists (no error, no update)
+VALUES (1, 'ignored', 'ignored', 0, datetime('now'));  -- => Try to insert
+-- => If user_id=1 exists: silently skips (no error, no update)
+-- => If user_id=1 doesn't exist: inserts
+-- => Returns without error regardless of conflict
+-- => Useful for "insert if new" without caring about existing rows
 ```
 
 **Key Takeaway**: Use INSERT OR REPLACE for complete row replacement. Use INSERT ... ON CONFLICT for granular control over updates. ON CONFLICT DO UPDATE SET allows partial updates. Combine with bulk inserts for efficient data merging.
@@ -2334,85 +3180,116 @@ Generate sequences of numbers or dates using recursive CTEs. Useful for filling 
 **Code**:
 
 ```sql
--- Generate number sequence 1-10
-WITH RECURSIVE numbers AS (
-    SELECT 1 AS n
-    UNION ALL
-    SELECT n + 1 FROM numbers WHERE n < 10
-)
-SELECT * FROM numbers;
+-- Generate number sequence 1-10 (recursive CTE)
+WITH RECURSIVE numbers AS (         -- => Recursive number generator
+    SELECT 1 AS n                   -- => Base case: start at 1
+    UNION ALL                       -- => Combine base with recursive case
+    SELECT n + 1                    -- => Recursive case: increment by 1
+    FROM numbers                    -- => Self-reference to previous row
+    WHERE n < 10                    -- => Termination condition
+)                                   -- => Generates sequence until n=10
+SELECT * FROM numbers;              -- => Select all generated numbers
+-- => Execution:
+-- =>   Iteration 1: n=1 (base case)
+-- =>   Iteration 2: n=2 (1+1)
+-- =>   Iteration 3: n=3 (2+1)
+-- =>   ...
+-- =>   Iteration 10: n=10 (9+1, stops at WHERE n<10 is false)
 -- => Returns: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 
 -- Generate date range (all days in January 2025)
-WITH RECURSIVE dates AS (
-    SELECT date('2025-01-01') AS date
-    UNION ALL
-    SELECT date(date, '+1 day')
-    FROM dates
-    WHERE date < '2025-01-31'
-)
-SELECT * FROM dates;
+WITH RECURSIVE dates AS (           -- => Recursive date generator
+    SELECT date('2025-01-01') AS date  -- => Base: January 1
+    UNION ALL                       -- => Combine base with recursive
+    SELECT date(date, '+1 day')     -- => Recursive: add 1 day
+    FROM dates                      -- => Self-reference
+    WHERE date < '2025-01-31'       -- => Stop before February
+)                                   -- => Generates 31 dates
+SELECT * FROM dates;                -- => Select all dates
+-- => Execution:
+-- =>   Day 1: 2025-01-01 (base)
+-- =>   Day 2: 2025-01-02 (add 1 day)
+-- =>   ...
+-- =>   Day 31: 2025-01-31 (add 1 day, stops)
 -- => Returns: 2025-01-01, 2025-01-02, ..., 2025-01-31
 
 -- Fill gaps in data (show all dates even with no sales)
-CREATE TABLE actual_sales (
-    sale_date TEXT,
-    amount REAL
+CREATE TABLE actual_sales (         -- => Table for actual sales
+    sale_date TEXT,                 -- => Sale date
+    amount REAL                     -- => Sale amount
 );
+-- => Table created
 
 INSERT INTO actual_sales (sale_date, amount)
 VALUES
-    ('2025-01-01', 100),
-    ('2025-01-03', 150),
-    ('2025-01-05', 200);
+    ('2025-01-01', 100),            -- => Sale on Jan 1
+    ('2025-01-03', 150),            -- => Sale on Jan 3 (gap: Jan 2 missing)
+    ('2025-01-05', 200);            -- => Sale on Jan 5 (gap: Jan 4 missing)
+-- => 3 sales with gaps
 
-WITH RECURSIVE all_dates AS (
-    SELECT date('2025-01-01') AS date
+WITH RECURSIVE all_dates AS (       -- => Generate complete date range
+    SELECT date('2025-01-01') AS date  -- => Start: Jan 1
     UNION ALL
-    SELECT date(date, '+1 day')
+    SELECT date(date, '+1 day')     -- => Add 1 day
     FROM all_dates
-    WHERE date < '2025-01-07'
-)
+    WHERE date < '2025-01-07'       -- => End: Jan 7
+)                                   -- => Generates 7 consecutive dates
 SELECT
-    ad.date,
-    COALESCE(s.amount, 0) AS amount
-FROM all_dates ad
-LEFT JOIN actual_sales s ON ad.date = s.sale_date
-ORDER BY ad.date;
--- => Returns all dates 01-07, with 0 for days without sales
+    ad.date,                        -- => All dates (including gaps)
+    COALESCE(s.amount, 0) AS amount -- => Amount if exists, else 0
+FROM all_dates ad                   -- => Generated date series
+LEFT JOIN actual_sales s            -- => Left join preserves all dates
+    ON ad.date = s.sale_date        -- => Match on date
+ORDER BY ad.date;                   -- => Chronological order
+-- => Returns all dates 2025-01-01 to 2025-01-07:
+-- =>   2025-01-01: amount=100 (actual sale)
+-- =>   2025-01-02: amount=0 (gap filled with 0)
+-- =>   2025-01-03: amount=150 (actual sale)
+-- =>   2025-01-04: amount=0 (gap filled with 0)
+-- =>   2025-01-05: amount=200 (actual sale)
+-- =>   2025-01-06: amount=0 (gap filled)
+-- =>   2025-01-07: amount=0 (gap filled)
+-- => No missing dates in output (complete time series)
 
--- Generate hourly time series
-WITH RECURSIVE hours AS (
-    SELECT datetime('2025-01-01 00:00:00') AS hour
+-- Generate hourly time series (24 hours)
+WITH RECURSIVE hours AS (           -- => Recursive hour generator
+    SELECT datetime('2025-01-01 00:00:00') AS hour  -- => Base: midnight
     UNION ALL
-    SELECT datetime(hour, '+1 hour')
+    SELECT datetime(hour, '+1 hour')  -- => Add 1 hour
     FROM hours
-    WHERE hour < datetime('2025-01-01 23:00:00')
-)
-SELECT hour FROM hours;
+    WHERE hour < datetime('2025-01-01 23:00:00')  -- => Stop at 23:00
+)                                   -- => Generates 24 hours
+SELECT hour FROM hours;             -- => Select all hours
 -- => Returns: 2025-01-01 00:00:00, 01:00:00, ..., 23:00:00
+-- => 24 rows for full day
 
--- Create multiplication table
+-- Create multiplication table (Cartesian product)
 WITH RECURSIVE
-x AS (SELECT 1 AS n UNION ALL SELECT n+1 FROM x WHERE n < 10),
-y AS (SELECT 1 AS n UNION ALL SELECT n+1 FROM y WHERE n < 10)
-SELECT x.n, y.n, x.n * y.n AS product
-FROM x, y
-ORDER BY x.n, y.n;
--- => Returns: (1,1,1), (1,2,2), ..., (10,10,100)
+x AS (                              -- => First dimension (1-10)
+    SELECT 1 AS n UNION ALL SELECT n+1 FROM x WHERE n < 10
+),
+y AS (                              -- => Second dimension (1-10)
+    SELECT 1 AS n UNION ALL SELECT n+1 FROM y WHERE n < 10
+)
+SELECT x.n, y.n, x.n * y.n AS product  -- => x, y, product
+FROM x, y                           -- => Cartesian product (cross join)
+ORDER BY x.n, y.n;                  -- => Order by both dimensions
+-- => Cartesian product: 10 × 10 = 100 rows
+-- => Returns: (1,1,1), (1,2,2), (1,3,3), ..., (10,10,100)
+-- => Multiplication table 1-10
 
 -- Generate calendar with weekday names
-WITH RECURSIVE dates AS (
+WITH RECURSIVE dates AS (           -- => Generate dates
     SELECT date('2025-01-01') AS date
     UNION ALL
     SELECT date(date, '+1 day')
     FROM dates
     WHERE date < '2025-01-31'
-)
+)                                   -- => 31 dates for January
 SELECT
-    date,
-    STRFTIME('%w', date) AS day_of_week_num,
-    CASE CAST(STRFTIME('%w', date) AS INTEGER)
+    date,                           -- => Date value
+    STRFTIME('%w', date) AS day_of_week_num,  -- => Day number (0-6)
+    CASE CAST(STRFTIME('%w', date) AS INTEGER)  -- => Convert to day name
         WHEN 0 THEN 'Sunday'
         WHEN 1 THEN 'Monday'
         WHEN 2 THEN 'Tuesday'
@@ -2420,9 +3297,15 @@ SELECT
         WHEN 4 THEN 'Thursday'
         WHEN 5 THEN 'Friday'
         WHEN 6 THEN 'Saturday'
-    END AS day_name
-FROM dates;
--- => Returns calendar with day names for January 2025
+    END AS day_name                 -- => Day name
+FROM dates;                         -- => From generated dates
+-- => STRFTIME('%w', date) returns day of week: 0=Sunday, 6=Saturday
+-- => CASE converts numeric day to name
+-- => Returns calendar for January 2025:
+-- =>   2025-01-01: day_of_week_num=3, day_name='Wednesday'
+-- =>   2025-01-02: day_of_week_num=4, day_name='Thursday'
+-- =>   ...
+-- => 31 rows with dates and weekday names
 ```
 
 **Key Takeaway**: Recursive CTEs generate sequences (numbers, dates, times). Use for filling data gaps, creating calendars, test data generation, or reports requiring complete time ranges. Combine with LEFT JOIN to show periods with zero activity.
@@ -2438,100 +3321,119 @@ Aggregate data at multiple levels simultaneously using window functions and GROU
 **Code**:
 
 ```sql
-CREATE TABLE regional_sales (
-    id INTEGER,
-    region TEXT,
-    country TEXT,
-    city TEXT,
-    revenue REAL
+-- Create regional sales table
+CREATE TABLE regional_sales (       -- => Table for multi-level sales data
+    id INTEGER,                     -- => Record identifier
+    region TEXT,                    -- => Geographic region
+    country TEXT,                   -- => Country within region
+    city TEXT,                      -- => City within country
+    revenue REAL                    -- => Sales revenue
 );
+-- => Table created with 4-level hierarchy: region > country > city > revenue
 
+-- Insert sales data across regions
 INSERT INTO regional_sales (id, region, country, city, revenue)
 VALUES
-    (1, 'EMEA', 'UK', 'London', 10000),
-    (2, 'EMEA', 'UK', 'Manchester', 5000),
-    (3, 'EMEA', 'France', 'Paris', 12000),
-    (4, 'EMEA', 'France', 'Lyon', 6000),
-    (5, 'APAC', 'Japan', 'Tokyo', 15000),
-    (6, 'APAC', 'Japan', 'Osaka', 8000),
-    (7, 'APAC', 'Australia', 'Sydney', 9000);
+    (1, 'EMEA', 'UK', 'London', 10000),      -- => EMEA/UK/London
+    (2, 'EMEA', 'UK', 'Manchester', 5000),   -- => EMEA/UK/Manchester
+    (3, 'EMEA', 'France', 'Paris', 12000),   -- => EMEA/France/Paris
+    (4, 'EMEA', 'France', 'Lyon', 6000),     -- => EMEA/France/Lyon
+    (5, 'APAC', 'Japan', 'Tokyo', 15000),    -- => APAC/Japan/Tokyo
+    (6, 'APAC', 'Japan', 'Osaka', 8000),     -- => APAC/Japan/Osaka
+    (7, 'APAC', 'Australia', 'Sydney', 9000); -- => APAC/Australia/Sydney
+-- => 7 cities, 4 countries, 2 regions
+-- => EMEA total: 33000, APAC total: 32000, Grand total: 65000
 
 -- Multi-level aggregation using UNION ALL (simulates GROUPING SETS)
-SELECT region, country, city, SUM(revenue) AS total, 'City' AS level
+SELECT region, country, city,       -- => City-level detail
+       SUM(revenue) AS total,       -- => City total
+       'City' AS level              -- => Level label
+FROM regional_sales                 -- => Source table
+GROUP BY region, country, city      -- => Group by all 3 dimensions
+                                    -- => Returns 7 rows (one per city)
+
+UNION ALL                           -- => Combine with country-level
+
+SELECT region, country,             -- => Country-level aggregation
+       NULL AS city,                -- => NULL indicates aggregation level
+       SUM(revenue),                -- => Country total
+       'Country'                    -- => Level label
 FROM regional_sales
-GROUP BY region, country, city
+GROUP BY region, country            -- => Group by region and country
+                                    -- => Returns 4 rows (UK, France, Japan, Australia)
 
-UNION ALL
+UNION ALL                           -- => Combine with region-level
 
-SELECT region, country, NULL AS city, SUM(revenue), 'Country'
+SELECT region,                      -- => Region-level aggregation
+       NULL,                        -- => NULL for country
+       NULL,                        -- => NULL for city
+       SUM(revenue),                -- => Region total
+       'Region'                     -- => Level label
 FROM regional_sales
-GROUP BY region, country
+GROUP BY region                     -- => Group by region only
+                                    -- => Returns 2 rows (EMEA, APAC)
 
-UNION ALL
+UNION ALL                           -- => Combine with grand total
 
-SELECT region, NULL, NULL, SUM(revenue), 'Region'
-FROM regional_sales
-GROUP BY region
-
-UNION ALL
-
-SELECT NULL, NULL, NULL, SUM(revenue), 'Grand Total'
-FROM regional_sales
-
-ORDER BY
-    COALESCE(region, 'ZZZ'),
-    COALESCE(country, 'ZZZ'),
-    COALESCE(city, 'ZZZ');
--- => Returns hierarchical totals:
--- => APAC, Australia, Sydney: 9000 (City)
--- => APAC, Australia, NULL: 9000 (Country)
--- => APAC, Japan, Tokyo: 15000 (City)
--- => APAC, Japan, Osaka: 8000 (City)
--- => APAC, Japan, NULL: 23000 (Country)
--- => APAC, NULL, NULL: 32000 (Region)
--- => EMEA, France, Paris: 12000 (City)
--- => ...
--- => NULL, NULL, NULL: 65000 (Grand Total)
+SELECT NULL,                        -- => NULL for region
+       NULL,                        -- => NULL for country
+       NULL,                        -- => NULL for city
+       SUM(revenue),                -- => Grand total
+       'Grand Total'                -- => Level label
+FROM regional_sales;                -- => No GROUP BY (aggregate all)
+                                    -- => Returns 1 row (global total)
+-- => Total: 7+4+2+1 = 14 rows with hierarchical totals
+-- => NULL values indicate aggregation level
+-- => COALESCE in ORDER BY sorts NULLs last
 
 -- Use window functions for running subtotals within groups
 SELECT
-    region,
-    country,
-    city,
-    revenue,
-    SUM(revenue) OVER (
-        PARTITION BY region, country
-        ORDER BY city
-    ) AS country_running_total,
-    SUM(revenue) OVER (
-        PARTITION BY region
-        ORDER BY country, city
-    ) AS region_running_total
-FROM regional_sales
-ORDER BY region, country, city;
--- => Shows running totals at country and region levels
+    region,                         -- => Region name
+    country,                        -- => Country name
+    city,                           -- => City name
+    revenue,                        -- => City revenue
+    SUM(revenue) OVER (             -- => Country running total
+        PARTITION BY region, country  -- => Separate total per country
+        ORDER BY city               -- => Accumulate by city name
+    ) AS country_running_total,     -- => Running total within country
+    SUM(revenue) OVER (             -- => Region running total
+        PARTITION BY region         -- => Separate total per region
+        ORDER BY country, city      -- => Accumulate by country, then city
+    ) AS region_running_total       -- => Running total within region
+FROM regional_sales                 -- => Source table
+ORDER BY region, country, city;     -- => Order by hierarchy
+-- => Shows cumulative totals at each level
+-- => EMEA/UK/London: country_running=10000, region_running=10000
+-- => EMEA/UK/Manchester: country_running=15000, region_running=15000
+-- => EMEA/France/Paris: country_running=12000, region_running=27000 (resets country, continues region)
 
--- Percent of total at each level
-WITH totals AS (
+-- Percent of total at each level (contribution analysis)
+WITH totals AS (                    -- => CTE for grand total
     SELECT SUM(revenue) AS grand_total FROM regional_sales
-),
-region_totals AS (
-    SELECT region, SUM(revenue) AS region_total
+),                                  -- => grand_total = 65000
+region_totals AS (                  -- => CTE for region totals
+    SELECT region,
+           SUM(revenue) AS region_total
     FROM regional_sales
     GROUP BY region
-)
+)                                   -- => EMEA: 33000, APAC: 32000
 SELECT
-    rs.region,
-    rs.country,
-    rs.city,
-    rs.revenue,
+    rs.region,                      -- => Region name
+    rs.country,                     -- => Country name
+    rs.city,                        -- => City name
+    rs.revenue,                     -- => City revenue
     ROUND(100.0 * rs.revenue / rt.region_total, 2) AS pct_of_region,
+        -- => City revenue as % of region total
     ROUND(100.0 * rs.revenue / t.grand_total, 2) AS pct_of_total
-FROM regional_sales rs
-CROSS JOIN totals t
-INNER JOIN region_totals rt ON rs.region = rt.region
-ORDER BY rs.region, rs.country, rs.city;
--- => Shows each city's percentage of region and grand total
+        -- => City revenue as % of grand total
+FROM regional_sales rs              -- => Main data
+CROSS JOIN totals t                 -- => Join with grand total (all rows)
+INNER JOIN region_totals rt         -- => Join with region totals
+    ON rs.region = rt.region        -- => Match on region
+ORDER BY rs.region, rs.country, rs.city;  -- => Hierarchical order
+-- => London (EMEA): pct_of_region=30.30% (10000/33000), pct_of_total=15.38% (10000/65000)
+-- => Tokyo (APAC): pct_of_region=46.88% (15000/32000), pct_of_total=23.08% (15000/65000)
+-- => Shows contribution at multiple levels for drill-down analysis
 ```
 
 **Key Takeaway**: Use UNION ALL with multiple GROUP BY levels for hierarchical aggregation (simulates GROUPING SETS). Window functions provide running subtotals within groups. Combine CTEs for percentage calculations at multiple levels. Essential for financial reports and multi-level analytics.
