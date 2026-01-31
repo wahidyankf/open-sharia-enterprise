@@ -20,16 +20,11 @@ Docker's hello-world image verifies your installation and demonstrates the basic
 ```bash
 # Pull and run hello-world image
 docker run hello-world
-# => Unable to find image 'hello-world:latest' locally
-# => latest: Pulling from library/hello-world
-# => Status: Downloaded newer image for hello-world:latest
-# => Output: Hello from Docker!
-# => Output: This message shows that your installation appears to be working correctly.
+# => Pulls image from Docker Hub, creates container, executes, displays "Hello from Docker!", then exits
 
 # List all containers (including stopped)
 docker ps -a
-# => CONTAINER ID   IMAGE         COMMAND    CREATED        STATUS                    PORTS     NAMES
-# => abc123def456   hello-world   "/hello"   5 seconds ago  Exited (0) 4 seconds ago            quirky_name
+# => Shows container with status "Exited (0)" - main process completed successfully
 ```
 
 **Key Takeaway**: The `docker run` command combines image pulling, container creation, and execution into one operation. Containers automatically exit when their main process completes.
@@ -45,9 +40,7 @@ Interactive containers allow you to run commands inside a container with termina
 ```bash
 # Run Ubuntu container with interactive shell
 docker run -it ubuntu:22.04 bash
-# => Unable to find image 'ubuntu:22.04' locally
-# => Status: Downloaded newer image for ubuntu:22.04
-# => Prompt changes to: root@container_id:/#
+# => Downloads image, starts container, drops you into bash shell as root
 
 # Inside container: Check OS version
 cat /etc/os-release
@@ -59,8 +52,7 @@ ls /
 
 # Exit container (stops it)
 exit
-# => Returns to host shell
-# => Container stops when interactive shell exits
+# => Exits shell and stops container (main process terminated)
 ```
 
 **Key Takeaway**: Use `-it` flags for interactive containers requiring shell access. Exiting the shell stops the container because the main process (bash) terminates.
@@ -78,28 +70,23 @@ A Dockerfile defines the steps to build a container image. Each instruction crea
 
 # Base image with Node.js runtime
 FROM node:18-alpine
-# => Pulls official Node.js 18 image based on Alpine Linux (~40MB)
-# => Alpine provides minimal footprint for production containers
+# => Official Node.js 18 on Alpine Linux (~40MB, minimal footprint)
 
 # Set working directory
 WORKDIR /app
-# => Creates /app directory if it doesn't exist
-# => All subsequent commands run in /app
+# => Creates /app, all subsequent commands run here
 
 # Copy application file
 COPY server.js .
-# => Copies server.js from build context to /app/
-# => Creates a layer with the file
+# => Copies server.js to /app/
 
 # Expose port (documentation only)
 EXPOSE 3000
-# => Documents that container listens on port 3000
-# => Does NOT actually publish the port (need -p flag)
+# => Documents port 3000, does NOT publish (use -p flag at runtime)
 
 # Default command
 CMD ["node", "server.js"]
-# => Command executed when container starts
-# => Can be overridden with docker run arguments
+# => Runs when container starts, can be overridden
 ```
 
 ```javascript
@@ -119,17 +106,11 @@ server.listen(3000, () => {
 ```bash
 # Build image
 docker build -t my-node-app .
-# => Sends build context to Docker daemon
-# => Step 1/4: FROM node:18-alpine (base layer)
-# => Step 2/4: WORKDIR /app (filesystem layer)
-# => Step 3/4: COPY server.js . (application layer)
-# => Step 4/4: CMD ["node", "server.js"] (metadata only)
-# => Successfully tagged my-node-app:latest
+# => Executes Dockerfile steps, creates image tagged "my-node-app:latest"
 
 # Run container with port mapping
 docker run -p 3000:3000 my-node-app
-# => Output: Server running on port 3000
-# => Maps host port 3000 to container port 3000
+# => Maps host:3000 to container:3000, starts server
 
 # Test from host (in another terminal)
 curl http://localhost:3000
@@ -169,32 +150,22 @@ graph TD
 # File: Dockerfile
 
 FROM node:18-alpine
-# => Base image with Node.js runtime
-
 WORKDIR /app
-# => Working directory for all subsequent commands
 
 # Copy package files first (separate layer for caching)
 COPY package*.json ./
-# => Copies package.json and package-lock.json to /app/
-# => This layer is cached unless package files change
+# => This layer cached unless package files change
 
 # Install dependencies
 RUN npm ci --only=production
-# => npm ci installs exact versions from package-lock.json
-# => --only=production skips devDependencies
-# => Creates layer with node_modules/ (can be large)
+# => Installs exact versions, skips devDependencies, creates node_modules/ layer
 
 # Copy source code (changes frequently)
 COPY . .
-# => Copies all remaining files to /app/
 # => Separate layer allows rebuilding without reinstalling dependencies
 
 EXPOSE 8080
-# => Documents container port
-
 CMD ["node", "app.js"]
-# => Starts application
 ```
 
 ```json
@@ -225,22 +196,13 @@ app.listen(8080, () => {
 ```bash
 # First build (installs dependencies)
 docker build -t my-express-app .
-# => [1/5] FROM node:18-alpine
-# => [2/5] WORKDIR /app
-# => [3/5] COPY package*.json ./
-# => [4/5] RUN npm ci --only=production (takes ~30 seconds)
-# => [5/5] COPY . .
-# => Build time: ~35 seconds
+# => Executes all steps, npm ci takes ~30 seconds, total build time: ~35 seconds
 
 # Modify app.js and rebuild
 echo "// Updated" >> app.js
 docker build -t my-express-app .
-# => [1/5] FROM node:18-alpine (cached)
-# => [2/5] WORKDIR /app (cached)
-# => [3/5] COPY package*.json ./ (cached)
-# => [4/5] RUN npm ci --only=production (cached - package files unchanged!)
-# => [5/5] COPY . . (rebuilds - source changed)
-# => Build time: ~2 seconds (dependency layer cached!)
+# => Steps 1-4 cached (package files unchanged), only COPY . . rebuilds
+# => Build time: ~2 seconds (dependency layer reused!)
 ```
 
 **Key Takeaway**: Copy dependency manifests before source code to leverage Docker's layer caching. This dramatically speeds up builds when only source code changes, as dependencies aren't reinstalled.
@@ -257,17 +219,14 @@ ARG instructions define build-time variables that can be passed during image bui
 # File: Dockerfile
 
 FROM node:18-alpine
-# => Base image
 
 # Define build argument with default value
 ARG NODE_ENV=production
-# => Declares NODE_ENV variable available during build
-# => Default value is "production" if not overridden
+# => Available during build, default "production" if not overridden
 
 # Use build argument during build
 RUN echo "Building for environment: $NODE_ENV"
-# => Accesses ARG value during image build
-# => Output shows during docker build execution
+# => Outputs during build execution
 
 WORKDIR /app
 COPY package*.json ./
@@ -278,16 +237,13 @@ RUN if [ "$NODE_ENV" = "development" ]; then \
     else \
       npm ci --only=production; \
     fi
-# => Installs all dependencies for development
-# => Skips devDependencies for production
-# => Bash conditional statement inside RUN
+# => Installs all deps for dev, skips devDependencies for prod
 
 COPY . .
 
 # Convert ARG to ENV for runtime access
 ENV NODE_ENV=$NODE_ENV
-# => Makes NODE_ENV available at runtime
-# => ARG alone would not be available when container runs
+# => Makes variable available at runtime (ARG alone wouldn't persist)
 
 EXPOSE 8080
 CMD ["node", "app.js"]
@@ -296,15 +252,11 @@ CMD ["node", "app.js"]
 ```bash
 # Build with default ARG value (production)
 docker build -t my-app:prod .
-# => Uses ARG NODE_ENV=production (default)
-# => Output: Building for environment: production
-# => Installs only production dependencies
+# => Uses default NODE_ENV=production, installs production deps only
 
 # Build with custom ARG value (development)
 docker build --build-arg NODE_ENV=development -t my-app:dev .
-# => Overrides NODE_ENV to "development"
-# => Output: Building for environment: development
-# => Installs all dependencies including devDependencies
+# => Overrides to "development", installs all deps including devDependencies
 
 # Inspect environment variables in running container
 docker run --rm my-app:prod printenv NODE_ENV
@@ -342,8 +294,6 @@ graph TD
 # File: Dockerfile
 
 FROM node:18-alpine
-# => Base image
-
 WORKDIR /app
 
 # Set environment variables (persist at runtime)
@@ -431,23 +381,14 @@ LABEL instructions add metadata to images as key-value pairs. Labels document im
 # File: Dockerfile
 
 FROM python:3.11-slim
-# => Base image with Python runtime
 
 # Add metadata labels
 LABEL maintainer="devops@example.com"
-# => Contact information for image maintainer
-
 LABEL version="1.0.0"
-# => Semantic version of this image
-
 LABEL description="Python web application with Flask"
-# => Human-readable description
-
 LABEL org.opencontainers.image.source="https://github.com/example/repo"
-# => Source repository URL (OCI standard)
-
+# => OCI standard labels for source and licensing
 LABEL org.opencontainers.image.licenses="MIT"
-# => License information (OCI standard)
 
 WORKDIR /app
 
@@ -483,18 +424,11 @@ Flask==2.3.0
 ```bash
 # Build image with labels
 docker build -t my-flask-app:1.0.0 .
-# => Successfully tagged my-flask-app:1.0.0
+# => Tags image with labels embedded
 
 # Inspect image labels
 docker inspect my-flask-app:1.0.0 --format='{{json .Config.Labels}}' | jq
-# => Output (formatted JSON):
-# => {
-# =>   "maintainer": "devops@example.com",
-# =>   "version": "1.0.0",
-# =>   "description": "Python web application with Flask",
-# =>   "org.opencontainers.image.source": "https://github.com/example/repo",
-# =>   "org.opencontainers.image.licenses": "MIT"
-# => }
+# => Shows all labels as JSON: maintainer, version, description, source, licenses
 
 # Filter images by label
 docker images --filter "label=version=1.0.0"
@@ -522,15 +456,11 @@ Docker provides commands to list, inspect, tag, and remove images. Understanding
 ```bash
 # List all images
 docker images
-# => REPOSITORY       TAG       IMAGE ID       CREATED         SIZE
-# => my-flask-app     1.0.0     abc123def456   2 minutes ago   145MB
-# => node             18-alpine 789ghi012jkl   2 weeks ago     119MB
-# => python           3.11-slim 345mno678pqr   1 month ago     126MB
+# => Shows repository, tag, image ID, creation time, size
 
 # List images with digests (immutable identifier)
 docker images --digests
-# => Shows SHA256 digest after tag column
-# => Digest uniquely identifies image content
+# => Adds SHA256 digest column for content-based identification
 
 # Filter images by name
 docker images my-flask-app
@@ -538,42 +468,31 @@ docker images my-flask-app
 
 # Filter dangling images (untagged intermediate layers)
 docker images --filter "dangling=true"
-# => Lists images not referenced by any tag
-# => Often left over from rebuilds
+# => Lists untagged images from rebuilds
 
 # Show image history (layer details)
 docker history my-flask-app:1.0.0
-# => IMAGE          CREATED        CREATED BY                                      SIZE
-# => abc123def456   5 minutes ago  CMD ["python" "app.py"]                         0B
-# => <missing>      5 minutes ago  EXPOSE 5000                                     0B
-# => <missing>      5 minutes ago  COPY app.py . # buildkit                        1.2kB
-# => <missing>      5 minutes ago  RUN pip install --no-cache-dir -r requirements  15MB
-# => Shows each layer with size and command
+# => Shows each layer with size and Dockerfile command that created it
 
 # Tag image with additional name
 docker tag my-flask-app:1.0.0 my-flask-app:latest
-# => Creates new tag pointing to same image
-# => No disk space used (same image ID)
+# => New tag points to same image (same ID, no disk space used)
 
 # Remove specific image tag
 docker rmi my-flask-app:1.0.0
-# => Untagged: my-flask-app:1.0.0
-# => Image still exists as my-flask-app:latest
+# => Untags image, doesn't delete if other tags exist (my-flask-app:latest remains)
 
 # Remove image and all tags
 docker rmi $(docker images my-flask-app -q)
-# => Removes all tags for my-flask-app
-# => -q returns only image IDs
+# => -q returns image IDs only, removes all tags
 
 # Prune dangling images (cleanup)
 docker image prune
-# => Removes all dangling images
-# => Frees disk space
+# => Removes untagged images, frees disk space
 
 # Prune all unused images
 docker image prune -a
-# => Removes all images not used by containers
-# => Use with caution - removes ALL unused images
+# => Removes ALL images not used by containers (use with caution)
 ```
 
 **Key Takeaway**: Regularly prune unused images to free disk space. Use tags to organize image versions, and inspect image history to understand layer sizes and optimize Dockerfiles.
@@ -629,26 +548,19 @@ docker ps
 
 # Pause running container (freezes all processes)
 docker pause my-nginx
-# => Container state: Paused
-# => Processes suspended but container still exists
-# => Port still mapped but requests hang
+# => Suspends processes, requests hang, container still exists
 
 # Unpause container
 docker unpause my-nginx
-# => Resumes all processes
-# => Container returns to Running state
+# => Resumes processes, returns to Running state
 
 # Stop container gracefully (SIGTERM, then SIGKILL after 10s)
 docker stop my-nginx
-# => Sends SIGTERM to main process
-# => Waits up to 10 seconds for graceful shutdown
-# => Sends SIGKILL if still running after timeout
-# => Container state: Exited
+# => Sends SIGTERM, waits 10s, then SIGKILL if needed, state becomes Exited
 
 # Restart stopped container
 docker restart my-nginx
 # => Equivalent to docker stop + docker start
-# => Container returns to Running state
 
 # Stop container with custom timeout
 docker stop -t 30 my-nginx
@@ -656,18 +568,15 @@ docker stop -t 30 my-nginx
 
 # Kill container immediately (SIGKILL, no graceful shutdown)
 docker kill my-nginx
-# => Sends SIGKILL immediately
-# => Use when container doesn't respond to stop
+# => Immediate SIGKILL, use when container doesn't respond
 
 # Remove stopped container
 docker rm my-nginx
-# => Deletes container completely
-# => Cannot be started again
+# => Deletes container, cannot be restarted
 
 # Remove running container (force)
 docker rm -f my-nginx
-# => Stops (SIGKILL) and removes in one command
-# => Use with caution - no graceful shutdown
+# => Stops (SIGKILL) and removes in one command (use with caution)
 ```
 
 **Key Takeaway**: Use `docker stop` for graceful shutdown (allows cleanup), and `docker kill` only when necessary. Always remove stopped containers to free disk space and avoid name conflicts.
@@ -683,40 +592,31 @@ Container logs capture stdout and stderr from the main process. Inspection provi
 ```bash
 # Run container that generates logs
 docker run -d --name web-app -p 8080:80 nginx:alpine
-# => Container ID: abc123def456
-# => Runs in background (-d detached mode)
+# => Runs in background, returns container ID
 
 # View logs (stdout and stderr)
 docker logs web-app
-# => /docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
-# => /docker-entrypoint.sh: Configuration complete; ready for start up
 # => Shows all logs since container start
 
 # Follow logs in real-time (like tail -f)
 docker logs -f web-app
-# => Streams new log lines as they appear
-# => Press Ctrl+C to stop following
+# => Streams new log lines (Ctrl+C to stop)
 
 # Show timestamps with logs
 docker logs -t web-app
-# => 2025-12-29T10:30:15.123456789Z /docker-entrypoint.sh: Launching...
-# => 2025-12-29T10:30:15.234567890Z Configuration complete
 # => Each line prefixed with RFC3339 timestamp
 
 # Show only last N lines
 docker logs --tail 20 web-app
-# => Shows last 20 log lines
-# => Useful for large log volumes
+# => Shows last 20 lines (useful for large logs)
 
 # Show logs since specific time
 docker logs --since 10m web-app
-# => Shows logs from last 10 minutes
-# => Accepts format: 10s, 5m, 2h, 2023-12-29T10:00:00
+# => Logs from last 10 minutes (accepts: 10s, 5m, 2h, or full timestamp)
 
 # Inspect container details (JSON output)
 docker inspect web-app
-# => Returns JSON with full container configuration
-# => Includes: networking, volumes, environment, state, etc.
+# => Returns full container config JSON (networking, volumes, environment, state)
 
 # Extract specific information with format
 docker inspect --format='{{.State.Status}}' web-app
@@ -726,22 +626,18 @@ docker inspect --format='{{.NetworkSettings.IPAddress}}' web-app
 # => Output: 172.17.0.2 (container IP on bridge network)
 
 docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' web-app
-# => Output: 172.17.0.2
 # => More reliable for multiple networks
 
 docker inspect --format='{{json .Config.Env}}' web-app | jq
-# => Shows environment variables as formatted JSON
+# => Environment variables as formatted JSON
 
 # View container stats (CPU, memory, network, I/O)
 docker stats web-app
-# => CONTAINER ID   NAME      CPU %   MEM USAGE / LIMIT   MEM %   NET I/O       BLOCK I/O
-# => abc123def456   web-app   0.01%   5.5MiB / 7.77GiB    0.07%   1.2kB / 0B    0B / 0B
-# => Updates every second (live monitoring)
+# => Shows live stats updating every second
 
 # View stats once (no streaming)
 docker stats --no-stream web-app
-# => Shows current stats snapshot
-# => Exits immediately
+# => Current stats snapshot, exits immediately
 ```
 
 **Key Takeaway**: Use `docker logs` for troubleshooting application issues. Use `docker inspect` to understand container configuration and networking. Use `docker stats` to monitor resource usage in real-time.
@@ -761,63 +657,48 @@ docker run -d --name web-server -p 8080:80 nginx:alpine
 
 # Execute single command in container
 docker exec web-server ls -la /usr/share/nginx/html
-# => total 8
-# => drwxr-xr-x 2 root root 4096 Dec 29 10:00 .
-# => drwxr-xr-x 3 root root 4096 Dec 29 10:00 ..
-# => -rw-r--r-- 1 root root  615 Nov 10 12:00 index.html
 # => Lists files in nginx web root
 
 # Execute command with output redirection
 docker exec web-server sh -c 'echo "Hello Docker" > /tmp/greeting.txt'
-# => Creates file inside container
-# => Returns no output (stdout redirected to file)
+# => Creates file inside container (no output, redirected to file)
 
 docker exec web-server cat /tmp/greeting.txt
 # => Output: Hello Docker
 
 # Start interactive shell in running container
 docker exec -it web-server sh
-# => Opens interactive shell inside container
-# => Prompt changes to: / #
+# => Opens shell, prompt changes to: / #
 
 # Inside container: Install debugging tools
 apk add curl
-# => Installs curl inside container
-# => Changes persist only while container runs
+# => Installs curl (persists only while container runs)
 
 curl http://localhost
 # => Tests nginx from inside container
-# => Output: <!DOCTYPE html>...
 
 exit
-# => Returns to host shell
-# => Container keeps running (exec doesn't affect main process)
+# => Returns to host, container keeps running (exec doesn't affect main process)
 
 # Execute command as specific user
 docker exec -u nginx web-server whoami
-# => Output: nginx
-# => Runs command as nginx user instead of root
+# => Output: nginx (runs as nginx user instead of root)
 
 # Execute command with environment variables
 docker exec -e DEBUG=true web-server sh -c 'echo $DEBUG'
-# => Output: true
-# => Temporary environment variable for this exec only
+# => Output: true (temporary env var for this exec only)
 
 # Execute command in specific working directory
 docker exec -w /etc/nginx web-server pwd
-# => Output: /etc/nginx
-# => Sets working directory for command
+# => Output: /etc/nginx (sets working directory)
 
 # Run background process inside container
 docker exec -d web-server sh -c 'while true; do date >> /tmp/heartbeat.log; sleep 5; done'
-# => Starts background process inside container
-# => Returns immediately (detached)
+# => Starts background process (returns immediately, detached)
 
 # Check background process output
 docker exec web-server tail -5 /tmp/heartbeat.log
-# => Sun Dec 29 10:30:15 UTC 2025
-# => Sun Dec 29 10:30:20 UTC 2025
-# => Shows last 5 entries
+# => Shows last 5 timestamped entries
 ```
 
 **Key Takeaway**: Use `docker exec -it` for interactive debugging and `docker exec` for automation scripts. Changes made via exec are temporary and lost when container stops unless they modify mounted volumes.
@@ -844,22 +725,18 @@ graph TD
 ```bash
 # Run container with single port mapping
 docker run -d --name web1 -p 8080:80 nginx:alpine
-# => Maps host port 8080 to container port 80 (TCP default)
-# => Accessible at http://localhost:8080
+# => Maps host:8080 to container:80 (TCP default), accessible at localhost:8080
 
 # Run with specific host IP
 docker run -d --name web2 -p 127.0.0.1:8081:80 nginx:alpine
 # => Only accessible from localhost (not external network)
-# => Accessible at http://127.0.0.1:8081
 
 # Run with random host port
 docker run -d --name web3 -p 80 nginx:alpine
 # => Docker assigns random available host port
-# => Check with: docker port web3
 
 docker port web3
-# => 80/tcp -> 0.0.0.0:32768
-# => Host port 32768 mapped to container port 80
+# => 80/tcp -> 0.0.0.0:32768 (shows assigned random port)
 
 # Map multiple ports
 docker run -d --name app \
@@ -870,8 +747,7 @@ docker run -d --name app \
 
 # Map UDP port
 docker run -d --name dns-server -p 53:53/udp my-dns-image
-# => Maps UDP port 53
-# => Requires /udp suffix (default is /tcp)
+# => Maps UDP port 53 (requires /udp suffix, default is /tcp)
 
 # Map both TCP and UDP for same port
 docker run -d --name multi-protocol \

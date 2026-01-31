@@ -4,7 +4,6 @@ date: 2025-12-29T23:43:13+07:00
 draft: false
 weight: 10000000
 description: "Learn Terraform through 84 annotated code examples covering infrastructure as code, HCL syntax, providers, state management, and cloud provisioning patterns"
-categories: ["learn"]
 tags: ["terraform", "iac", "infrastructure", "tutorial", "by-example", "devops", "cloud", "hcl"]
 ---
 

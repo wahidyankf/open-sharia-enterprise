@@ -3,11 +3,11 @@ title: "Intermediate"
 weight: 10000002
 date: 2025-01-29T00:00:00+07:00
 draft: false
-description: "Examples 26-50: async/await, streams, advanced OOP, mixins, generics, extension methods, file I/O, JSON handling, and error handling patterns (40-75% coverage)"
+description: "Examples 26-41: async/await, streams, advanced OOP, mixins, generics, extension methods (40-75% coverage) - 16 examples"
 tags: ["dart", "intermediate", "async", "streams", "generics", "mixins", "by-example"]
 ---
 
-Master intermediate Dart patterns through 25 heavily annotated examples using Islamic finance contexts. Each example maintains 1-2.25 annotation density and demonstrates production patterns for Flutter and server applications.
+Master intermediate Dart patterns through 16 heavily annotated examples using Islamic finance contexts. Each example maintains 1-2.25 annotation density and demonstrates production patterns for Flutter and server applications.
 
 ## Example 26: Future Basics - async/await
 

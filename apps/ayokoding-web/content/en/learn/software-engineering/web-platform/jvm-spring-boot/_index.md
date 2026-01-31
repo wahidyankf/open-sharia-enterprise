@@ -1,5 +1,5 @@
 ---
-title: "JVM Spring Boot"
+title: "Jvm Spring Boot"
 weight: 100003
 date: 2025-12-23T00:00:00+07:00
 draft: false

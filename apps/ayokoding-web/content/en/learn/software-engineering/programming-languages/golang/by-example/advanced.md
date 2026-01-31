@@ -2093,36 +2093,64 @@ Workspaces enable multi-module development. Develop multiple modules together wi
 
 **Code**:
 
-```
-// go.work file
-go 1.21
+```go
+// go.work file (workspace configuration)
+// Filename: go.work
+// Location: project root directory
+go 1.21                    // => Minimum Go version for workspace
 
-use (
-    ./cmd/api              // => Include local module
-    ./cmd/cli
-    ./libs/common
-)
+use (                      // => Declare modules in this workspace
+    ./cmd/api              // => Include cmd/api module (relative path)
+                           // => Go uses local version instead of published
+    ./cmd/cli              // => Include cmd/cli module
+                           // => Changes reflected immediately in builds
+    ./libs/common          // => Include libs/common module
+                           // => Shared library for api and cli
+)                          // => All modules use local versions
 
-// Directory structure:
+// Directory structure demonstrates workspace layout:
 // project/
-// ├── go.work            // Workspace definition
+// ├── go.work            // => Workspace definition file (this file)
+//                        // => Created with: go work init ./cmd/api ./cmd/cli ./libs/common
 // ├── cmd/
 // │   ├── api/
-// │   │   └── go.mod
+// │   │   ├── go.mod     // => Module: example.com/api
+//     │   │   └── main.go    // => Can import "example.com/common" (uses local libs/common)
 // │   └── cli/
-// │       └── go.mod
+// │       ├── go.mod     // => Module: example.com/cli
+//         │       └── main.go    // => Can import "example.com/common" (uses local libs/common)
 // └── libs/
 //     └── common/
-//         └── go.mod
+//         ├── go.mod     // => Module: example.com/common
+//             └── util.go    // => Shared utilities used by api and cli
 
-// Benefits:
-// - Develop multiple modules together
+// Benefits of workspace mode:
+// - Develop multiple modules together in single repository
+//                        // => Edit common/util.go, immediately available in api/main.go
 // - Changes in libs/common reflected immediately in cmd/api
-// - No need to publish intermediate versions
-// - All modules tested together
+//                        // => No need to commit, tag, push libs/common first
+// - No need to publish intermediate versions to test integration
+//                        // => Test cross-module changes before publishing
+// - All modules tested together with: go test ./...
+//                        // => Ensures changes don't break dependent modules
+// - Build uses local versions: go build ./cmd/api
+//                        // => api binary uses local libs/common code
+// - Replace directive not needed for local development
+//                        // => Workspace replaces modules automatically
 
-// Usage: go test ./... (tests all modules)
-//        go build ./cmd/api (builds api using local libs)
+// Workflow example:
+// 1. go work init ./cmd/api ./cmd/cli ./libs/common
+//                        // => Creates go.work file
+// 2. Edit libs/common/util.go (add new function)
+//                        // => Changes not yet committed
+// 3. Import new function in cmd/api/main.go
+//                        // => Uses local version immediately
+// 4. go test ./...       // => Tests all modules with local changes
+//                        // => Verifies integration before publishing
+// 5. go build ./cmd/api  // => Builds api with local libs/common
+//                        // => Binary includes unpublished changes
+// 6. Publish libs/common, update go.mod in api/cli
+//                        // => After testing, publish and update dependencies
 ```
 
 **Key Takeaway**: Workspaces allow multi-module development without publishing. Define workspace with `go.work` file. Use `use()` to include local modules. All modules use local versions instead of published versions.

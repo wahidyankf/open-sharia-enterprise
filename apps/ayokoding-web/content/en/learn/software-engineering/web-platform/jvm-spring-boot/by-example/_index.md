@@ -4,7 +4,6 @@ weight: 100003
 date: 2025-12-24T00:00:00+07:00
 draft: false
 description: "Learn Spring Boot through 85 annotated examples in Java and Kotlin - quickest path for JVM developers"
-categories: ["learn"]
 type: docs
 layout: list
 ---

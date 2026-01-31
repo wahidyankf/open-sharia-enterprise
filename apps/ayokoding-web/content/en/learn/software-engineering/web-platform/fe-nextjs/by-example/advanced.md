@@ -20,7 +20,7 @@ Before starting, ensure you understand:
 
 ## Group 1: Static Site Generation (SSG) & ISR
 
-### Example 41: Static Site Generation with generateStaticParams
+### Example 51: Static Site Generation with generateStaticParams
 
 Use generateStaticParams to pre-render dynamic routes at build time. Creates static HTML for all specified parameter combinations.
 
@@ -76,7 +76,7 @@ export const dynamicParams = false;
 
 **Common Pitfalls**: Forgetting to return array of params objects (wrong format), or not setting dynamicParams correctly (unexpected 404s or slow pages).
 
-### Example 42: Incremental Static Regeneration (ISR)
+### Example 52: Incremental Static Regeneration (ISR)
 
 Combine static generation with time-based revalidation. Serve stale content instantly while regenerating in background.
 
@@ -150,7 +150,7 @@ export async function POST(request: NextRequest) {
 
 **Common Pitfalls**: Setting revalidate too low (increases server load), or not securing on-demand revalidation webhooks (security risk).
 
-### Example 43: Static Export for CDN Hosting
+### Example 53: Static Export for CDN Hosting
 
 Export fully static site (no Node.js server required). Perfect for deploying to CDN or static hosting.
 
@@ -223,7 +223,7 @@ export default function PostPage({
 
 ## Group 2: Streaming & Suspense
 
-### Example 44: Streaming with Suspense Boundaries
+### Example 54: Streaming with Suspense Boundaries
 
 Stream page sections independently to show content as it loads. Improves perceived performance and user experience.
 
@@ -312,7 +312,7 @@ export default function DashboardPage() {
 
 **Common Pitfalls**: Single Suspense wrapping all slow content (loses independent streaming), or not providing fallback (required prop).
 
-### Example 45: Nested Suspense for Progressive Loading
+### Example 55: Nested Suspense for Progressive Loading
 
 Nest Suspense boundaries to create progressive loading experiences. Outer boundary for page structure, inner boundaries for details.
 
@@ -407,7 +407,7 @@ export default function PostPage({
 
 **Common Pitfalls**: Not nesting Suspense (all-or-nothing loading), or too many boundaries (choppy UX with many loading states).
 
-### Example 46: Suspense with Skeleton UI
+### Example 56: Suspense with Skeleton UI
 
 Use skeleton components as Suspense fallbacks for better perceived performance. Shows content structure while loading.
 
@@ -525,7 +525,7 @@ export default function PostsPage() {
 
 ## Group 3: Advanced Caching Strategies
 
-### Example 47: Custom Cache with unstable_cache
+### Example 57: Custom Cache with unstable_cache
 
 Use unstable_cache to cache expensive operations with custom keys and revalidation rules. Perfect for database queries or computations.
 
@@ -604,7 +604,7 @@ export async function updateGoldPrice() {
 
 **Common Pitfalls**: Using unstable_cache on frequently changing data (stale cache), or not setting appropriate revalidate time (too aggressive or too stale).
 
-### Example 48: Request Memoization with React cache()
+### Example 58: Request Memoization with React cache()
 
 Use React cache() to deduplicate identical function calls within a single request. Different from Next.js caching (doesn't persist across requests).
 
@@ -694,7 +694,7 @@ export default function UserPage({
 
 **Common Pitfalls**: Confusing React cache() with Next.js caching (different scopes), or expecting cache to persist across requests (it doesn't).
 
-### Example 49: Force Dynamic Rendering
+### Example 59: Force Dynamic Rendering
 
 Use dynamic rendering modes to opt out of static generation for specific pages. Perfect for user-specific or time-sensitive content.
 
@@ -746,7 +746,7 @@ export default async function ProfilePage() {
 
 ## Group 4: Performance Optimization
 
-### Example 50: Image Optimization with Blur Placeholder
+### Example 60: Image Optimization with Blur Placeholder
 
 Use blur placeholder for better perceived performance during image loading. Creates inline base64 blur preview.
 
@@ -816,7 +816,7 @@ export default function GalleryPage() {
 
 **Common Pitfalls**: Using blur placeholder on remote images without blurDataURL (error), or not setting sizes prop on responsive images (suboptimal optimization).
 
-### Example 51: Font Optimization with next/font
+### Example 61: Font Optimization with next/font
 
 Use next/font for automatic font optimization. Self-hosts fonts, eliminates external requests, enables font swapping.
 
@@ -884,7 +884,7 @@ const customFont = localFont({
 
 **Common Pitfalls**: Loading too many font weights/subsets (larger bundle), or not setting display strategy (default may cause FOIT).
 
-### Example 52: Script Optimization with next/script
+### Example 62: Script Optimization with next/script
 
 Use next/script for optimal third-party script loading. Controls when and how scripts load without blocking rendering.
 
@@ -975,7 +975,7 @@ export function CustomWidget() {
 
 ## Group 5: Advanced Metadata & SEO
 
-### Example 53: Dynamic OpenGraph Images
+### Example 63: Dynamic OpenGraph Images
 
 Generate dynamic OpenGraph images for social media sharing. Perfect for blog posts, product pages, dynamic content.
 
@@ -1077,7 +1077,7 @@ export default function BlogPostPage() {
 
 **Common Pitfalls**: Not using Edge Runtime (slower response), or wrong image dimensions (social platforms crop incorrectly).
 
-### Example 54: JSON-LD Structured Data for SEO
+### Example 64: JSON-LD Structured Data for SEO
 
 Add JSON-LD structured data for rich search results. Helps search engines understand content type and display rich snippets.
 
@@ -1183,7 +1183,7 @@ export default function BlogPostPage() {
 
 ## Group 6: Deployment & Production Patterns
 
-### Example 55: Environment Variables with Type Safety
+### Example 65: Environment Variables with Type Safety
 
 Use environment variables with TypeScript validation for type-safe configuration. Prevents runtime errors from missing/invalid env vars.
 
@@ -1268,7 +1268,7 @@ export async function connectToDatabase() {
 
 **Common Pitfalls**: Not validating env vars (runtime errors in production), or exposing secrets (only NEXT*PUBLIC* variables safe in browser).
 
-### Example 56: Monitoring with OpenTelemetry
+### Example 66: Monitoring with OpenTelemetry
 
 Add OpenTelemetry instrumentation for observability. Tracks requests, database queries, external API calls.
 
@@ -1350,7 +1350,7 @@ export async function GET() {
 
 **Common Pitfalls**: Over-instrumenting (too many spans slow down app), or not instrumenting critical paths (can't debug performance issues).
 
-### Example 57: Rate Limiting with Upstash
+### Example 67: Rate Limiting with Upstash
 
 Implement rate limiting to protect API routes from abuse. Uses Upstash Redis for distributed rate limiting.
 
@@ -1447,7 +1447,7 @@ export async function POST(request: NextRequest) {
 
 ## Group 7: Advanced Patterns
 
-### Example 58: Server-Only Code Protection
+### Example 68: Server-Only Code Protection
 
 Use 'server-only' package to ensure code never bundles in client. Prevents accidental exposure of secrets or server logic.
 
@@ -1511,7 +1511,7 @@ export function getLocalStorage(key: string) {
 
 **Common Pitfalls**: Not using server-only for sensitive code (secrets might leak to client bundle), or forgetting to install package (no protection).
 
-### Example 59: Partial Prerendering (PPR) Pattern
+### Example 69: Partial Prerendering (PPR) Pattern
 
 Combine static shell with dynamic content for best of both worlds. Static parts load instantly, dynamic parts stream in.
 
@@ -1599,7 +1599,7 @@ export default function DashboardPage() {
 
 **Common Pitfalls**: Not wrapping dynamic parts in Suspense (entire page becomes dynamic), or putting static content inside Suspense (defeats purpose).
 
-### Example 60: Middleware Chaining Pattern
+### Example 70: Middleware Chaining Pattern
 
 Chain multiple middleware functions for composable request processing. Cleaner than single monolithic middleware.
 
@@ -1695,7 +1695,7 @@ export const config = {
 
 ## Group 8: Multi-Step Forms & Background Jobs
 
-### Example 61: Multi-Step Form with Server Actions
+### Example 71: Multi-Step Form with Server Actions
 
 Implement multi-step form wizard using Server Actions and session storage. Maintains state across steps with validation.
 
@@ -1874,7 +1874,7 @@ export default async function Step2Page() {
 
 **Common Pitfalls**: Not validating step order (users skip steps), or storing sensitive data in cookies without encryption (security risk).
 
-### Example 62: Background Jobs with Server Actions
+### Example 72: Background Jobs with Server Actions
 
 Trigger background jobs from Server Actions using queue systems. Returns immediately while job processes asynchronously.
 
@@ -2039,7 +2039,7 @@ export default function ReportsPage() {
 
 ## Group 9: Advanced Authentication & Authorization
 
-### Example 63: Role-Based Access Control (RBAC)
+### Example 73: Role-Based Access Control (RBAC)
 
 Implement role-based access control with middleware and Server Components. Restricts access based on user roles.
 
@@ -2189,7 +2189,7 @@ export default async function ModerationPage() {
 
 **Common Pitfalls**: Only checking roles in middleware (bypass via direct component access), or not implementing defense in depth (single point of failure).
 
-### Example 64: Advanced API Rate Limiting Patterns
+### Example 74: Advanced API Rate Limiting Patterns
 
 Implement sophisticated rate limiting with different tiers, key strategies, and bypass mechanisms.
 
@@ -2358,7 +2358,7 @@ export async function POST(request: NextRequest) {
 
 ## Group 10: Advanced Database Patterns
 
-### Example 65: Database Transactions with Prisma
+### Example 75: Database Transactions with Prisma
 
 Use Prisma transactions for atomic multi-table operations. Ensures data consistency across related operations.
 

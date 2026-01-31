@@ -1,5 +1,5 @@
 ---
-title: "Next.js + TypeScript"
+title: "Fe Nextjs"
 weight: 100005
 ---
 

@@ -99,6 +99,10 @@ class DonationRestController {
 - Type-safe response bodies
 - RESTful status codes (200, 201, 400, etc.)
 
+**Related Documentation**:
+
+- [REST Controller Documentation](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-rest.html)
+
 ---
 
 ### Example 52: Content Negotiation (Coverage: 78.0%)
@@ -177,6 +181,10 @@ class ContentNegotiationController {
 - Jackson handles JSON automatically
 - JAXB for XML serialization
 
+**Related Documentation**:
+
+- [Content Negotiation Documentation](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-config/content-negotiation.html)
+
 ---
 
 ### Example 53: CORS Configuration (Coverage: 79.5%)
@@ -233,6 +241,10 @@ class CorsController {
 - Specify allowed origins, methods, headers
 - Method-level or class-level annotation
 - Global CORS config also possible
+
+**Related Documentation**:
+
+- [CORS Documentation](https://docs.spring.io/spring-framework/reference/web/webmvc-cors.html)
 
 ---
 
@@ -310,6 +322,10 @@ data class DonationResponse(val message: String)
 - Separate controllers per version
 - Maintains backward compatibility
 - Can deprecate old versions gradually
+
+**Related Documentation**:
+
+- [API Versioning Documentation](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-requestmapping.html#mvc-ann-requestmapping-consumes-produces)
 
 ---
 
@@ -395,6 +411,10 @@ class GlobalExceptionHandler {
 - Multiple @ExceptionHandler methods
 - Prioritizes specific exceptions over general
 
+**Related Documentation**:
+
+- [Global Exception Handler Documentation](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-advice.html)
+
 ---
 
 ## Spring Security (Examples 56-60)
@@ -471,6 +491,10 @@ class SecurityConfig {
 - permitAll(), authenticated(), denyAll() control access
 - httpBasic() enables basic authentication
 
+**Related Documentation**:
+
+- [Security Configuration Documentation](https://docs.spring.io/spring-security/reference/servlet/configuration/java.html)
+
 ---
 
 ### Example 57: Method Security (Coverage: 85.5%)
@@ -543,6 +567,10 @@ class SecureService {
 - SpEL expressions for complex rules
 - hasRole(), hasAnyRole() for role checks
 - Access method parameters in expressions
+
+**Related Documentation**:
+
+- [Method Security Documentation](https://docs.spring.io/spring-security/reference/servlet/authorization/method-security.html)
 
 ---
 
@@ -621,6 +649,10 @@ class CustomUserDetailsService : UserDetailsService {
 - Called automatically during authentication
 - Return UserDetails with username, password, authorities
 - UsernameNotFoundException for unknown users
+
+**Related Documentation**:
+
+- [UserDetailsService Documentation](https://docs.spring.io/spring-security/reference/servlet/authentication/passwords/user-details-service.html)
 
 ---
 
@@ -708,6 +740,10 @@ class JwtService {
 - Tokens contain claims (subject, expiration)
 - Signed with secret key
 - Requires JJWT library dependency
+
+**Related Documentation**:
+
+- [JWT Token Authentication Documentation](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html)
 
 ---
 
@@ -806,6 +842,10 @@ class PasswordService(private val encoder: PasswordEncoder) {
 - Random salt prevents rainbow table attacks
 - matches() for verification
 
+**Related Documentation**:
+
+- [Password Encoding Documentation](https://docs.spring.io/spring-security/reference/features/authentication/password-storage.html)
+
 ---
 
 ## Advanced Patterns (Examples 61-65)
@@ -902,6 +942,10 @@ class DonationCacheService {
 - @CacheEvict removes from cache
 - @EnableCaching required
 
+**Related Documentation**:
+
+- [Spring Cache Abstraction Documentation](https://docs.spring.io/spring-framework/reference/integration/cache.html)
+
 ---
 
 ### Example 62: Async Method Execution (Coverage: 93.0%)
@@ -991,6 +1035,10 @@ class NotificationService {
 - void methods fire-and-forget
 - CompletableFuture for async results
 - @EnableAsync required
+
+**Related Documentation**:
+
+- [Async Method Execution Documentation](https://docs.spring.io/spring-framework/reference/integration/scheduling.html#scheduling-annotation-support-async)
 
 ---
 
@@ -1096,6 +1144,10 @@ class DonationEventListener {
 - @EventListener to handle events
 - Decouples components
 
+**Related Documentation**:
+
+- [Application Events Documentation](https://docs.spring.io/spring-framework/reference/core/beans/context-introduction.html#context-functionality-events)
+
 ---
 
 ### Example 64: Scheduled Tasks (Coverage: 96.0%)
@@ -1181,6 +1233,10 @@ class ScheduledTasks {
 - fixedRate for fixed intervals
 - cron for complex schedules
 - @EnableScheduling required
+
+**Related Documentation**:
+
+- [Scheduled Tasks Documentation](https://docs.spring.io/spring-framework/reference/integration/scheduling.html#scheduling-annotation-support-scheduled)
 
 ---
 
@@ -1305,6 +1361,10 @@ class DatabaseService(type: String) {
 - @ConditionalOnClass for classpath checks
 - Enables flexible auto-configuration
 
+**Related Documentation**:
+
+- [Conditional Bean Registration Documentation](https://docs.spring.io/spring-framework/reference/core/beans/java/bean-annotation.html#beans-java-conditional)
+
 ---
 
 ## Testing (Examples 66-70)
@@ -1383,6 +1443,10 @@ class CalculatorServiceTest {
 - @Autowired injects beans into tests
 - Full integration testing
 - Slower than unit tests
+
+**Related Documentation**:
+
+- [TestContext Framework Documentation](https://docs.spring.io/spring-framework/reference/testing/testcontext-framework.html)
 
 ---
 
@@ -1473,6 +1537,10 @@ class GreetingControllerTest {
 - Test request/response without server
 - Faster than full integration tests
 
+**Related Documentation**:
+
+- [MockMvc Documentation](https://docs.spring.io/spring-framework/reference/testing/spring-mvc-test-framework.html)
+
 ---
 
 ### Example 68: @Transactional in Tests (Coverage: 100.0%)
@@ -1562,6 +1630,10 @@ class DatabaseTest {
 - Database remains clean
 - Enables repeatable tests
 
+**Related Documentation**:
+
+- [Transactional Tests Documentation](https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/tx.html)
+
 ---
 
 ### Example 69: Test Profiles (Coverage: 100.0%)
@@ -1628,6 +1700,10 @@ class ProfileTest {
 - application-test.properties for test data
 - Separate test/production config
 - H2 in-memory DB common for tests
+
+**Related Documentation**:
+
+- [Test Profiles Documentation](https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/ctx-management/env-profiles.html)
 
 ---
 
@@ -1736,6 +1812,10 @@ class MockBeanTest {
 - Test without external dependencies
 - Fast, isolated unit tests
 
+**Related Documentation**:
+
+- [MockBean Documentation](https://docs.spring.io/spring-boot/api/java/org/springframework/boot/test/mock/mockito/MockBean.html)
+
 ---
 
 ## Production Patterns (Examples 71-75)
@@ -1824,6 +1904,10 @@ class CustomHealthIndicator : HealthIndicator {
 - Health.up() or Health.down() status
 - Include diagnostic details
 
+**Related Documentation**:
+
+- [Custom Health Indicator Documentation](https://docs.spring.io/spring-boot/reference/actuator/endpoints.html#actuator.endpoints.health)
+
 ---
 
 ### Example 72: Custom Metrics (Coverage: 100.0%)
@@ -1900,6 +1984,10 @@ class DonationMetricsService(registry: MeterRegistry) {
 - Counter, Gauge, Timer available
 - Tags for dimensional metrics
 - Exposed via Actuator
+
+**Related Documentation**:
+
+- [Custom Metrics Documentation](https://docs.spring.io/spring-boot/reference/actuator/metrics.html#actuator.metrics.export.custom)
 
 ---
 
@@ -2010,6 +2098,10 @@ class WebConfig(
 - afterCompletion() after response
 - Configure via WebMvcConfigurer
 
+**Related Documentation**:
+
+- [Request/Response Logging Interceptor Documentation](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-config/interceptors.html)
+
 ---
 
 ### Example 74: Connection Pooling with HikariCP (Coverage: 100.0%)
@@ -2109,6 +2201,10 @@ class DataSourceConfig {
 - Connection reuse improves performance
 - Spring Boot auto-configures if properties set
 
+**Related Documentation**:
+
+- [HikariCP Configuration Documentation](https://github.com/brettwooldridge/HikariCP#configuration-knobs-baby)
+
 ---
 
 ### Example 75: Custom Validation Annotation (Coverage: 100.0%)
@@ -2196,6 +2292,10 @@ data class DonationForm(
 - Implement ConstraintValidator interface
 - Reusable across application
 - Works with Bean Validation (@Valid)
+
+**Related Documentation**:
+
+- [Custom Validation Annotation Documentation](https://docs.spring.io/spring-framework/reference/core/validation/validator.html#validation-custom-constraints)
 
 ---
 

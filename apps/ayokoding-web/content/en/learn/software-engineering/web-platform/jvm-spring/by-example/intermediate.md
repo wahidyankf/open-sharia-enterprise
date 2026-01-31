@@ -1160,6 +1160,10 @@ class PerformanceAspect {
 - Can modify arguments and return values
 - Most powerful advice type
 
+**Related Documentation**:
+
+- [Around Advice Documentation](https://docs.spring.io/spring-framework/reference/core/aop/ataspectj/advice.html#aop-ataspectj-around-advice)
+
 ---
 
 ### Example 34: Pointcut Expressions (Coverage: 75.5%)
@@ -1227,6 +1231,10 @@ class SecurityAspect {
 - args() captures method parameters
 - execution() matches method signatures
 
+**Related Documentation**:
+
+- [Pointcut Expressions Documentation](https://docs.spring.io/spring-framework/reference/core/aop/ataspectj/pointcuts.html)
+
 ---
 
 ### Example 35: @AfterThrowing Exception Handling (Coverage: 77.0%)
@@ -1287,6 +1295,10 @@ class ErrorAspect {
 - Does not prevent exception propagation
 - Useful for logging and monitoring
 - Can filter by exception type
+
+**Related Documentation**:
+
+- [AfterThrowing Advice Documentation](https://docs.spring.io/spring-framework/reference/core/aop/ataspectj/advice.html#aop-ataspectj-after-throwing-advice)
 
 ---
 
@@ -1358,6 +1370,10 @@ class AccountService {
 - Automatic commit on success
 - Automatic rollback on unchecked exceptions
 - Requires @EnableTransactionManagement
+
+**Related Documentation**:
+
+- [Transactional Annotation Documentation](https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html)
 
 ---
 
@@ -1438,6 +1454,10 @@ class OrderService {
 - MANDATORY: Must have existing
 - SUPPORTS, NOT_SUPPORTED, NEVER also available
 
+**Related Documentation**:
+
+- [Transaction Propagation Documentation](https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/tx-propagation.html)
+
 ---
 
 ### Example 38: Transaction Isolation (Coverage: 81.5%)
@@ -1515,6 +1535,10 @@ class InventoryService {
 - REPEATABLE_READ: Prevents non-repeatable reads
 - SERIALIZABLE: Full isolation (slowest)
 
+**Related Documentation**:
+
+- [Transaction Isolation Documentation](https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/tx-propagation.html#tx-propagation-isolation)
+
 ---
 
 ### Example 39: Rollback Rules (Coverage: 83.0%)
@@ -1590,6 +1614,10 @@ class PaymentService {
 - rollbackFor: specify additional exception types
 - noRollbackFor: prevent rollback for specific types
 - Useful for business rule exceptions
+
+**Related Documentation**:
+
+- [Rollback Rules Documentation](https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html#transaction-declarative-attransactional-settings)
 
 ---
 
@@ -1667,6 +1695,10 @@ class BatchService(
 - execute() method starts transaction
 - Return value or setRollbackOnly() controls outcome
 - More control than @Transactional
+
+**Related Documentation**:
+
+- [Programmatic Transaction Management Documentation](https://docs.spring.io/spring-framework/reference/data-access/transaction/programmatic.html)
 
 ---
 
@@ -1750,6 +1782,10 @@ class DonationRepository(
 - queryForObject() for single results
 - update() for INSERT/UPDATE/DELETE
 - Automatic resource management
+
+**Related Documentation**:
+
+- [JdbcTemplate Documentation](https://docs.spring.io/spring-framework/reference/data-access/jdbc/core.html#jdbc-JdbcTemplate)
 
 ---
 
@@ -1838,6 +1874,10 @@ class DonationRepository(private val jdbc: JdbcTemplate) {
 - Lambda syntax for concise mapping
 - Reusable rowMapper instance
 
+**Related Documentation**:
+
+- [RowMapper Documentation](https://docs.spring.io/spring-framework/reference/data-access/jdbc/core.html#jdbc-RowMapper)
+
 ---
 
 ### Example 43: NamedParameterJdbcTemplate (Coverage: 89.0%)
@@ -1909,6 +1949,10 @@ class ZakatRepository(
 - Order-independent parameter binding
 - Better for complex queries
 
+**Related Documentation**:
+
+- [NamedParameterJdbcTemplate Documentation](https://docs.spring.io/spring-framework/reference/data-access/jdbc/core.html#jdbc-NamedParameterJdbcTemplate)
+
 ---
 
 ### Example 44: Batch Operations (Coverage: 90.5%)
@@ -1974,6 +2018,10 @@ class BulkRepository(private val jdbc: JdbcTemplate) {
 - Much faster than individual inserts
 - Single database roundtrip
 - Callback sets parameters per row
+
+**Related Documentation**:
+
+- [Batch Operations Documentation](https://docs.spring.io/spring-framework/reference/data-access/jdbc/core.html#jdbc-advanced-batch)
 
 ---
 
@@ -2058,6 +2106,10 @@ class StatisticsRepository(private val jdbc: JdbcTemplate) {
 - Build custom data structures (Map, etc.)
 - More flexible than RowMapper
 
+**Related Documentation**:
+
+- [ResultSetExtractor Documentation](https://docs.spring.io/spring-framework/reference/data-access/jdbc/core.html#jdbc-ResultSetExtractor)
+
 ---
 
 ## Spring MVC Basics (Examples 46-50)
@@ -2112,6 +2164,10 @@ class DonationController {
 - @GetMapping for GET requests
 - @ResponseBody converts return to HTTP body
 - Combine with @PostMapping, @PutMapping, etc.
+
+**Related Documentation**:
+
+- [Controller Documentation](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller.html)
 
 ---
 
@@ -2186,6 +2242,10 @@ class ZakatController {
 - defaultValue for optional parameters
 - Type conversion automatic
 
+**Related Documentation**:
+
+- [Request Mapping Documentation](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-requestmapping.html)
+
 ---
 
 ### Example 48: @RequestBody and JSON (Coverage: 96.5%)
@@ -2257,6 +2317,10 @@ class DonationApiController {
 - @RequestBody deserializes JSON
 - Automatic Jackson serialization
 - POJOs/data classes for request/response
+
+**Related Documentation**:
+
+- [Request Body Documentation](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-methods/requestbody.html)
 
 ---
 
@@ -2336,6 +2400,10 @@ class TransferController {
 - @ResponseStatus sets HTTP status code
 - Controller-level exception handling
 - Clean error response to clients
+
+**Related Documentation**:
+
+- [Exception Handling Documentation](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-exceptionhandler.html)
 
 ---
 
@@ -2421,6 +2489,10 @@ class FormController {
 - Validation annotations on fields (@NotBlank, @Min, etc.)
 - Automatic validation before method execution
 - MethodArgumentNotValidException on failure
+
+**Related Documentation**:
+
+- [Bean Validation Documentation](https://docs.spring.io/spring-framework/reference/core/validation/beanvalidation.html)
 
 ---
 

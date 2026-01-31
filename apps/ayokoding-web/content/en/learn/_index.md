@@ -16,6 +16,8 @@ weight: 10
   - [System Design](/en/learn/software-engineering/system-design)
   - [Linux Platform](/en/learn/software-engineering/linux-platform)
   - [Web Platform](/en/learn/software-engineering/web-platform)
+  - [Architecture](/en/learn/software-engineering/architecture)
+  - [Development](/en/learn/software-engineering/development)
 - [Information Security](/en/learn/information-security)
   - [Overview](/en/learn/information-security/overview)
   - [Concepts](/en/learn/information-security/concepts)

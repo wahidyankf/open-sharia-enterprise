@@ -1705,69 +1705,98 @@ sequenceDiagram
 
 ```rust
 use tokio::sync::mpsc;               // => mpsc: multi-producer, single-consumer channel
+                                     // => Import from Tokio async runtime
 
-#[tokio::main]                       // => Create Tokio runtime
-async fn main() {
+#[tokio::main]                       // => Macro creates Tokio runtime
+                                     // => Expands to runtime creation and block_on call
+                                     // => Enables async main function
+async fn main() {                    // => Async main function (requires #[tokio::main])
     let (tx, mut rx) = mpsc::channel(32);
                                      // => Create bounded channel with capacity 32
+                                     // => Returns (Sender, Receiver) tuple
                                      // => tx: Sender<i32> (clonable for multiple producers)
                                      // => rx: Receiver<i32> (NOT clonable - single consumer)
                                      // => Capacity 32: at most 32 messages buffered
                                      // => When full, send() awaits until space available (backpressure)
 
-    tokio::spawn(async move {        // => Spawn producer task (owns tx via move)
-        for i in 0..5 {              // => Send 5 messages (0, 1, 2, 3, 4)
+    tokio::spawn(async move {        // => Spawn async task on Tokio runtime
+                                     // => Spawn producer task (owns tx via move)
+                                     // => move captures tx from outer scope
+                                     // => Returns JoinHandle (task handle)
+        for i in 0..5 {              // => Loop 5 iterations
+                                     // => Send 5 messages (0, 1, 2, 3, 4)
+                                     // => i is i32 (inferred from channel type)
             tx.send(i).await.unwrap();
                                      // => send() is async: returns Future<Result<(), SendError>>
                                      // => .await suspends if channel full (backpressure)
                                      // => unwrap() panics if receiver dropped (Err(SendError))
                                      // => Channel not full (5 < 32), no blocking
-            println!("Sent: {}", i); // => Output: Sent: 0, Sent: 1, ..., Sent: 4
+                                     // => Message sent successfully
+            println!("Sent: {}", i); // => Print confirmation
+                                     // => Output: Sent: 0, Sent: 1, ..., Sent: 4
                                      // => Prints after successful send
         }                            // => Loop ends, tx dropped (closes channel)
-    });                              // => Producer task runs independently
+                                     // => All senders dropped, signals channel closed
+    });                              // => Task spawned, runs concurrently
+                                     // => Producer task runs independently
 
     while let Some(value) = rx.recv().await {
+                                     // => while let pattern: loop while recv returns Some
                                      // => recv() is async: returns Future<Option<T>>
                                      // => .await suspends until message available
                                      // => Returns Some(value) when message received
                                      // => Returns None when all senders dropped (channel closed)
+                                     // => Exits loop on None
         println!("Received: {}", value);
+                                     // => Print received value
                                      // => Output: Received: 0, Received: 1, ..., Received: 4
                                      // => Processes each message sequentially
     }                                // => Loop exits when producer drops tx (None received)
                                      // => All messages consumed, channel closed
-}
+}                                    // => Main exits, runtime shuts down
 
 // Demonstrating backpressure with small buffer
-async fn backpressure_demo() {
+async fn backpressure_demo() {      // => Async function demonstrating backpressure
     let (tx, mut rx) = mpsc::channel(2);
                                      // => Small buffer: only 2 messages
+                                     // => Capacity 2 (vs 32 in previous example)
                                      // => Forces backpressure when sender fast, receiver slow
 
-    tokio::spawn(async move {
-        for i in 0..5 {
+    tokio::spawn(async move {        // => Spawn fast producer task
+                                     // => Owns tx via move
+        for i in 0..5 {              // => Attempt to send 5 messages
+                                     // => More messages than buffer capacity
             println!("Attempting to send {}", i);
                                      // => Prints before send attempt
+                                     // => Shows when send starts
             tx.send(i).await.unwrap();
+                                     // => send() awaits when buffer full
                                      // => Blocks after buffer full (i=2)
                                      // => i=0,1 sent immediately (buffer has space)
                                      // => i=2 awaits until receiver consumes one
+                                     // => Backpressure applied here
             println!("Sent {}", i);  // => Confirms successful send
-        }
-    });
+                                     // => Prints after send completes
+        }                            // => Loop ends, tx dropped
+    });                              // => Producer spawned
 
     tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
+                                     // => Main task sleeps 100ms
                                      // => Main sleeps 100ms (simulates slow consumer)
                                      // => Producer blocked waiting for space
+                                     // => Messages 0,1 in buffer, producer waiting to send 2
 
     while let Some(value) = rx.recv().await {
+                                     // => Receive messages one by one
         println!("Received: {}", value);
+                                     // => Print received value
         tokio::time::sleep(tokio::time::Duration::from_millis(50)).await;
+                                     // => Sleep 50ms after each message
                                      // => Slow consumer (50ms per message)
+                                     // => Each recv() frees buffer space
                                      // => Each recv() unblocks one waiting send()
-    }
-}
+    }                                // => Loop until all messages received
+}                                    // => Function completes
 
 // Multiple producers, single consumer
 async fn multiple_producers() {
@@ -2842,71 +2871,102 @@ fn performance_comparison() {
 Traits must be object-safe to be used as trait objects, requiring no generic methods, no Self return types, and no associated functions.
 
 ```rust
-trait NotObjectSafe {
+trait NotObjectSafe {                // => Trait with object-safety violations
     fn generic<T>(&self, x: T);      // => Generic method: T unknown at runtime
                                      // => NOT object-safe: vtable can't store all possible T
                                      // => Would need infinite vtable entries!
+                                     // => Each T instantiation needs separate vtable entry
     fn returns_self(&self) -> Self;  // => Returns Self: size unknown for trait object
                                      // => NOT object-safe: what size to return?
-}
+                                     // => dyn Trait has unknown size (size_of_val varies)
+}                                    // => Trait cannot be used as dyn NotObjectSafe
 
-trait ObjectSafe {
+trait ObjectSafe {                   // => Trait satisfying object-safety requirements
     fn method(&self) -> i32;         // => Method with &self: object-safe
                                      // => No generics, known return size (i32)
                                      // => Can store in vtable: fn(&Self) -> i32
-}
+                                     // => Signature compatible with dynamic dispatch
+}                                    // => Can be used as dyn ObjectSafe
 
-struct MyType;
+struct MyType;                       // => Unit struct (zero-size type)
+                                     // => Simple concrete type implementing ObjectSafe
 
-impl ObjectSafe for MyType {
-    fn method(&self) -> i32 {
-        42                           // => Simple implementation
-    }
-}
+impl ObjectSafe for MyType {         // => Implement ObjectSafe for MyType
+    fn method(&self) -> i32 {        // => Implement required method
+        42                           // => Simple implementation (returns constant)
+                                     // => Return value has known size (i32)
+    }                                // => Method completes
+}                                    // => MyType now implements ObjectSafe
 
-fn main() {
+fn main() {                          // => Demonstration of object safety
     let obj: Box<dyn ObjectSafe> = Box::new(MyType);
+                                     // => Create trait object (type erasure)
                                      // => Valid: ObjectSafe is object-safe
                                      // => Boxed trait object: (data_ptr, vtable_ptr)
+                                     // => data_ptr points to MyType instance on heap
+                                     // => vtable_ptr points to ObjectSafe impl for MyType
+                                     // => Type: Box<dyn ObjectSafe> (fat pointer: 16 bytes)
     println!("{}", obj.method());    // => Dynamic dispatch via vtable
+                                     // => Calls MyType::method through vtable lookup
                                      // => Output: 42
+                                     // => Runtime overhead: one pointer indirection
 
     // let bad: Box<dyn NotObjectSafe> = Box::new(MyType);
                                      // => ERROR: NotObjectSafe cannot be made into an object
                                      // => Compiler prevents at compile time
-}
+                                     // => Compile error: trait NotObjectSafe is not object-safe
+}                                    // => obj dropped (heap allocation freed)
 
 // Using where Self: Sized to hide methods from trait object
-trait MixedSafety {
-    fn object_safe_method(&self);    // => In vtable (object-safe)
+trait MixedSafety {                  // => Trait mixing object-safe and non-object-safe methods
+    fn object_safe_method(&self);    // => Object-safe method (no generics, returns known size)
+                                     // => In vtable (object-safe)
+                                     // => Available on both concrete types and dyn MixedSafety
 
     fn non_object_safe<T>(&self, x: T)
+                                     // => Generic method (NOT object-safe normally)
     where
-        Self: Sized,                 // => Excluded from vtable!
+        Self: Sized,                 // => Constraint: Self must have known size
+                                     // => Excluded from vtable!
                                      // => Trait is still object-safe (method hidden)
-    {
-        // Implementation
-    }
-}
+                                     // => dyn MixedSafety is NOT Sized (unsized type)
+    {                                // => Default implementation provided
+        // Implementation            // => Can be overridden by implementors
+    }                                // => Only callable on concrete Sized types
+}                                    // => Trait is object-safe despite generic method
 
-struct Concrete;
+struct Concrete;                     // => Zero-size concrete type
+                                     // => Implements MixedSafety
 
-impl MixedSafety for Concrete {
-    fn object_safe_method(&self) {
-        println!("Object-safe");
-    }
-}
+impl MixedSafety for Concrete {      // => Implement required method
+    fn object_safe_method(&self) {   // => Object-safe method implementation
+        println!("Object-safe");     // => Simple print statement
+    }                                // => Method completes
+}                                    // => non_object_safe inherits default impl
 
-fn use_mixed() {
-    let concrete = Concrete;
-    concrete.object_safe_method();   // => Works: Concrete is Sized
-    concrete.non_object_safe(42);    // => Works: Concrete is Sized
+fn use_mixed() {                     // => Demonstrate mixed safety usage
+    let concrete = Concrete;         // => Concrete instance (Sized type)
+                                     // => Type: Concrete (zero-size)
+    concrete.object_safe_method();   // => Call object-safe method
+                                     // => Works: Concrete is Sized
+                                     // => Output: Object-safe
+    concrete.non_object_safe(42);    // => Call generic method
+                                     // => Works: Concrete is Sized
+                                     // => T inferred as i32
+                                     // => Self: Sized constraint satisfied
 
     let obj: &dyn MixedSafety = &concrete;
+                                     // => Create trait object (reference)
                                      // => OK: MixedSafety is object-safe
-    obj.object_safe_method();        // => Works: in vtable
+                                     // => obj is fat pointer: (&Concrete, &vtable)
+                                     // => Type: &dyn MixedSafety (unsized)
+    obj.object_safe_method();        // => Call through vtable
+                                     // => Works: in vtable
+                                     // => Output: Object-safe
     // obj.non_object_safe(42);      // => ERROR: method not available on dyn
-}
+                                     // => dyn MixedSafety is NOT Sized
+                                     // => where Self: Sized excludes this from vtable
+}                                    // => Function completes
 ```
 
 **Key Takeaway**: Object safety requirements (no generic methods, no `Self` returns, no associated functions) ensure trait objects can be constructed with valid vtables, with violations caught at compile time.
@@ -3359,28 +3419,43 @@ SIMD (Single Instruction Multiple Data) enables data parallelism at the CPU inst
 
 ```rust
 // Using portable SIMD (unstable feature, requires nightly)
-// #![feature(portable_simd)]
+// #![feature(portable_simd)]        // => Enable portable_simd feature (nightly only)
 use std::simd::f32x4;                // => SIMD vector of 4 f32 values
+                                     // => Single Instruction Multiple Data type
+                                     // => Operates on 4 floats simultaneously
 
 // SIMD vectorized addition
 fn simd_add(a: &[f32], b: &[f32]) -> Vec<f32> {
-    let mut result = Vec::new();     // => Initialize result vector
+                                     // => Takes two slices, returns vector
+                                     // => a and b must have same length
+    let mut result = Vec::new();     // => Initialize result vector (heap-allocated)
+                                     // => Type: Vec<f32>
     for i in (0..a.len()).step_by(4) {
+                                     // => Iterate in steps of 4 (SIMD width)
                                      // => Process 4 elements at once
+                                     // => i = 0, 4, 8, 12, ...
         let va = f32x4::from_slice(&a[i..]);
                                      // => Load 4 floats into SIMD register
+                                     // => from_slice reads [a[i], a[i+1], a[i+2], a[i+3]]
                                      // => va = [a[i], a[i+1], a[i+2], a[i+3]]
+                                     // => Type: f32x4 (SIMD vector)
         let vb = f32x4::from_slice(&b[i..]);
                                      // => Load 4 floats from b
                                      // => vb = [b[i], b[i+1], b[i+2], b[i+3]]
+                                     // => Both vectors loaded into CPU SIMD registers
         let sum = va + vb;           // => SIMD addition (4 operations in 1 instruction)
-                                     // => sum = [va[0]+vb[0], va[1]+vb[1], ...]
+                                     // => Vector addition: element-wise
+                                     // => sum = [va[0]+vb[0], va[1]+vb[1], va[2]+vb[2], va[3]+vb[3]]
+                                     // => Single CPU instruction (e.g., vaddps on x86)
                                      // => ~4x faster than scalar addition
         result.extend_from_slice(&sum.to_array());
+                                     // => Convert SIMD result back to array
+                                     // => to_array() converts f32x4 to [f32; 4]
+                                     // => extend_from_slice appends to result Vec
                                      // => Convert SIMD result back to slice
-    }
-    result                           // => Return vectorized results
-}
+    }                                // => Loop completes, all elements processed
+    result                           // => Return vectorized results (Vec<f32>)
+}                                    // => Function completes
 
 // Scalar comparison (non-SIMD)
 fn scalar_add(a: &[f32], b: &[f32]) -> Vec<f32> {
@@ -4084,85 +4159,134 @@ Profiling identifies performance bottlenecks, while benchmarking measures code p
 ```rust
 // Main code to benchmark (in src/lib.rs)
 pub fn fibonacci_recursive(n: u64) -> u64 {
-    match n {
+                                     // => Public function (callable from benchmarks)
+                                     // => Takes u64, returns u64
+    match n {                        // => Pattern match on n
         0 => 0,                      // => Base case: fib(0) = 0
         1 => 1,                      // => Base case: fib(1) = 1
         n => fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2),
+                                     // => Recursive case (n >= 2)
                                      // => Recursive: fib(n) = fib(n-1) + fib(n-2)
+                                     // => Makes 2 recursive calls per level
                                      // => Exponential time complexity O(2^n)
-    }
-}
+                                     // => Very slow for large n (duplicate computations)
+    }                                // => Match returns u64
+}                                    // => Function completes
 
 pub fn fibonacci_iterative(n: u64) -> u64 {
-    if n <= 1 {
+                                     // => Optimized iterative version
+                                     // => Public function for benchmarking
+    if n <= 1 {                      // => Handle base cases (0 and 1)
         return n;                    // => Early return for base cases
-    }
+                                     // => fib(0) = 0, fib(1) = 1
+    }                                // => Continue to iterative calculation
     let mut a = 0;                   // => Previous value (fib(n-2))
+                                     // => Mutable state for iteration
     let mut b = 1;                   // => Current value (fib(n-1))
+                                     // => Mutable state for iteration
     for _ in 1..n {                  // => Iterate n-1 times
+                                     // => Loop from 1 to n-1 (inclusive)
         let temp = a + b;            // => Next fibonacci number
+                                     // => Calculate fib(n) = fib(n-1) + fib(n-2)
         a = b;                       // => Shift: previous becomes current
+                                     // => Update for next iteration
         b = temp;                    // => Shift: current becomes next
-    }
-    b                                // => Return final result
+                                     // => Update for next iteration
+    }                                // => Loop completes after n-1 iterations
+    b                                // => Return final result (fib(n))
                                      // => Linear time complexity O(n)
-}
+                                     // => ~650x faster than recursive for n=20
+}                                    // => Function completes
 
 pub fn sum_vector(data: &[i32]) -> i32 {
+                                     // => Sum all elements in slice
+                                     // => Public function for benchmarking
     data.iter().sum()                // => Iterator-based sum
-                                     // => Zero-cost abstraction
-}
+                                     // => iter() creates iterator over &i32
+                                     // => sum() consumes iterator, returns i32
+                                     // => Zero-cost abstraction (compiles to loop)
+}                                    // => Function completes
 
 // Criterion benchmark file (in benches/benchmark.rs)
 use criterion::{black_box, criterion_group, criterion_main, Criterion, BenchmarkId};
+                                     // => Import Criterion types
+                                     // => black_box prevents compiler optimizations
+                                     // => criterion_group/criterion_main are macros
 
 // Import functions to benchmark
 use mylib::{fibonacci_recursive, fibonacci_iterative, sum_vector};
+                                     // => Import from library crate
 
 fn fibonacci_benchmarks(c: &mut Criterion) {
+                                     // => Benchmark function (receives Criterion instance)
+                                     // => c is mutable borrow
     let mut group = c.benchmark_group("fibonacci");
+                                     // => Create benchmark group (named "fibonacci")
                                      // => Create benchmark group
+                                     // => Groups related benchmarks together
 
     // Benchmark recursive implementation
     group.bench_function("recursive", |b| {
+                                     // => Register benchmark named "recursive"
+                                     // => b is Bencher (closure parameter)
         b.iter(|| fibonacci_recursive(black_box(20)));
+                                     // => iter runs closure multiple times
+                                     // => black_box prevents optimization of constant 20
                                      // => black_box prevents optimization
+                                     // => Criterion measures time per iteration
                                      // => Measures actual execution
-    });
+    });                              // => Benchmark registered
 
     // Benchmark iterative implementation
     group.bench_function("iterative", |b| {
+                                     // => Second benchmark in group
         b.iter(|| fibonacci_iterative(black_box(20)));
+                                     // => Same input (20) for fair comparison
                                      // => Compare against recursive
                                      // => Should be much faster
-    });
+                                     // => Expected: ~650x faster than recursive
+    });                              // => Benchmark registered
 
     group.finish();                  // => Complete benchmark group
-}
+                                     // => Finalize measurements and reporting
+}                                    // => Function completes
 
 fn sum_benchmarks(c: &mut Criterion) {
+                                     // => Benchmark function for sum operations
     let data: Vec<i32> = (0..1000).collect();
                                      // => Generate test data: [0,1,2,...,999]
+                                     // => Create Vec with 1000 elements
 
     // Parameterized benchmark (different input sizes)
     for size in [100, 500, 1000].iter() {
-        c.bench_with_input(
+                                     // => Test with 3 different input sizes
+                                     // => Observe scaling behavior
+        c.bench_with_input(           // => Parameterized benchmark
             BenchmarkId::new("sum_vector", size),
+                                     // => Create unique ID (includes parameter)
                                      // => Benchmark ID with parameter
-            size,
-            |b, &size| {
+                                     // => Names: "sum_vector/100", "sum_vector/500", etc.
+            size,                    // => Pass size as input parameter
+            |b, &size| {             // => Closure receives Bencher and size
                 let data: Vec<i32> = (0..size).collect();
                                      // => Create data of specified size
+                                     // => Generate fresh data for each size
                 b.iter(|| sum_vector(black_box(&data)));
+                                     // => Benchmark sum_vector with this data
                                      // => Measure sum operation
-            },
-        );
-    }
-}
+                                     // => black_box prevents optimization of data
+            },                       // => Benchmark closure ends
+        );                           // => Benchmark registered
+    }                                // => Loop completes (3 benchmarks registered)
+}                                    // => Function completes
 
 criterion_group!(benches, fibonacci_benchmarks, sum_benchmarks);
+                                     // => Macro creates benchmark group
                                      // => Group benchmarks together
-criterion_main!(benches);            // => Generate main function
+                                     // => Registers fibonacci_benchmarks and sum_benchmarks
+criterion_main!(benches);            // => Macro generates main function
+                                     // => Generate main function
+                                     // => Entry point for cargo bench
 
 // Run benchmarks with:
 // cargo bench                       => Runs all benchmarks

@@ -3021,114 +3021,161 @@ graph TD
 **Code**:
 
 ```elixir
-defmodule MathTest do
-  use ExUnit.Case
-  # => Imports test macros (test, assert, refute, setup)
+defmodule MathTest do                  # => Defines test module MathTest
+  use ExUnit.Case                       # => Imports test macros (test, assert, refute, setup)
+                                        # => Required in all test modules
 
-  test "addition works" do
-    assert 1 + 1 == 2
-    # => Passes if expression truthy
-  end
+  test "addition works" do              # => Defines test case with description
+                                        # => Each test is independent
+    assert 1 + 1 == 2                   # => Asserts 1 + 1 equals 2
+                                        # => Passes if expression evaluates to true
+                                        # => Returns true on success
+  end                                   # => End test definition
 
-  test "subtraction works" do
-    assert 5 - 3 == 2
-    # => Tests run in random order
-  end
+  test "subtraction works" do           # => Second test case (independent)
+                                        # => Tests run in random order for isolation
+    assert 5 - 3 == 2                   # => Asserts 5 - 3 equals 2
+                                        # => Returns true on success
+  end                                   # => End test definition
 
-  test "multiplication and division" do
-    assert 2 * 3 == 6
-    # => Multiple assertions per test
-    assert 10 / 2 == 5.0
-    # => Division returns float
-    assert rem(10, 3) == 1
-    # => rem/2: remainder function
-  end
+  test "multiplication and division" do # => Test with multiple assertions
+                                        # => All assertions must pass
+    assert 2 * 3 == 6                   # => Asserts multiplication result
+                                        # => 2 * 3 = 6, returns true
+    assert 10 / 2 == 5.0                # => Asserts division result
+                                        # => Division (/) always returns float
+                                        # => 10 / 2 = 5.0 (not 5)
+    assert rem(10, 3) == 1              # => Asserts remainder result
+                                        # => rem/2 calculates modulo
+                                        # => 10 % 3 = 1, returns true
+  end                                   # => End test definition
 
-  test "boolean assertions" do
-    assert true
-    # => Verifies truthy value
-    refute false
-    # => Verifies falsy value (inverse of assert)
-    assert 1 < 2
-    refute 1 > 2
-  end
+  test "boolean assertions" do          # => Test demonstrating assert/refute
+    assert true                         # => Asserts true is truthy
+                                        # => Always passes
+    refute false                        # => Refutes false (inverse of assert)
+                                        # => Passes if expression is falsy
+                                        # => Returns true on success
+    assert 1 < 2                        # => Asserts comparison is true
+                                        # => 1 < 2 evaluates to true
+    refute 1 > 2                        # => Refutes comparison
+                                        # => 1 > 2 is false, so refute passes
+  end                                   # => End test definition
 
-  test "pattern matching" do
-    assert {:ok, value} = {:ok, 42}
-    # => Pattern match in assertion
-    assert value == 42
-    # => value bound to 42
-  end
+  test "pattern matching" do            # => Test using pattern matching in assertions
+    assert {:ok, value} = {:ok, 42}     # => Pattern matches and binds value
+                                        # => {:ok, value} matches {:ok, 42}
+                                        # => value binds to 42
+                                        # => Returns true on successful match
+    assert value == 42                  # => Asserts value equals 42
+                                        # => value was bound to 42 in previous line
+                                        # => Returns true
+  end                                   # => End test definition
 
-  test "raises exception" do
-    assert_raise ArithmeticError, fn ->
-      1 / 0
-      # => Division by zero raises ArithmeticError
-    end
-  end
+  test "raises exception" do            # => Test verifying exception is raised
+    assert_raise ArithmeticError, fn -> # => Expects ArithmeticError exception
+                                        # => Takes exception type and function
+      1 / 0                             # => Division by zero operation
+                                        # => Raises ArithmeticError
+                                        # => Test passes if error raised
+    end                                 # => End assert_raise block
+                                        # => Returns true if exception raised
+  end                                   # => End test definition
 
-  test "raises with message" do
-    assert_raise ArgumentError, "Invalid", fn ->
-      raise ArgumentError, "Invalid"
-      # => Exact message match required
-    end
-  end
+  test "raises with message" do         # => Test verifying exception with message
+    assert_raise ArgumentError, "Invalid", fn ->  # => Expects specific message
+                                                   # => Verifies exception type AND message
+      raise ArgumentError, "Invalid"    # => Raises ArgumentError with message "Invalid"
+                                        # => Message must match exactly
+                                        # => Test passes if both match
+    end                                 # => End assert_raise block
+                                        # => Returns true if exception and message match
+  end                                   # => End test definition
 
-  setup do
-    {:ok, user: %{name: "Alice", age: 30}}
-    # => Runs before EACH test, returns context
-  end
+  setup do                              # => Setup callback runs before EACH test
+                                        # => Used for per-test initialization
+    {:ok, user: %{name: "Alice", age: 30}}  # => Returns context map
+                                             # => Tagged tuple with :ok
+                                             # => user key contains map with name and age
+                                             # => Available to all tests in this module
+  end                                   # => End setup definition
 
-  test "uses setup data", %{user: user} do
-    assert user.name == "Alice"
-    # => Pattern matches context from setup
-    assert user.age == 30
-  end
-end
+  test "uses setup data", %{user: user} do  # => Test receives context from setup
+                                             # => Pattern matches user from context map
+                                             # => user binds to %{name: "Alice", age: 30}
+    assert user.name == "Alice"         # => Accesses name field from user map
+                                        # => user.name is "Alice"
+                                        # => Returns true
+    assert user.age == 30               # => Accesses age field from user map
+                                        # => user.age is 30
+                                        # => Returns true
+  end                                   # => End test definition
+end                                     # => End module definition
 
-defmodule Calculator do
-  def add(a, b), do: a + b
-  def subtract(a, b), do: a - b
-  def multiply(a, b), do: a * b
-  def divide(_a, 0), do: {:error, :division_by_zero}
-  # => First clause: handles div by zero
-  def divide(a, b), do: {:ok, a / b}
-  # => Second clause: normal division
-end
+defmodule Calculator do                 # => Defines Calculator module for testing
+  def add(a, b), do: a + b              # => Addition function (one-line syntax)
+                                        # => Returns sum of a and b
+  def subtract(a, b), do: a - b         # => Subtraction function
+                                        # => Returns difference of a and b
+  def multiply(a, b), do: a * b         # => Multiplication function
+                                        # => Returns product of a and b
+  def divide(_a, 0), do: {:error, :division_by_zero}  # => First clause: catches div by zero
+                                                       # => Pattern matches when b is 0
+                                                       # => Returns error tuple
+  def divide(a, b), do: {:ok, a / b}    # => Second clause: normal division
+                                        # => Only called if b is not 0
+                                        # => Returns ok tuple with float result
+end                                     # => End module definition
 
-defmodule CalculatorTest do
-  use ExUnit.Case
+defmodule CalculatorTest do             # => Test module for Calculator
+  use ExUnit.Case                       # => Imports test macros
+                                        # => Required for test definitions
 
-  test "add/2 adds two numbers" do
-    assert Calculator.add(2, 3) == 5
-    assert Calculator.add(-1, 1) == 0
-  end
+  test "add/2 adds two numbers" do      # => Test Calculator.add/2 function
+                                        # => Verifies addition works correctly
+    assert Calculator.add(2, 3) == 5    # => Calls add with 2 and 3
+                                        # => 2 + 3 = 5, returns true
+    assert Calculator.add(-1, 1) == 0   # => Tests negative numbers
+                                        # => -1 + 1 = 0, returns true
+  end                                   # => End test definition
 
-  test "divide/2 returns ok tuple" do
-    assert Calculator.divide(10, 2) == {:ok, 5.0}
-    # => Success case: {:ok, float}
-  end
+  test "divide/2 returns ok tuple" do   # => Test successful division
+                                        # => Verifies normal case returns :ok
+    assert Calculator.divide(10, 2) == {:ok, 5.0}  # => Calls divide with 10 and 2
+                                                    # => Second clause matches (b != 0)
+                                                    # => 10 / 2 = 5.0 (float)
+                                                    # => Returns {:ok, 5.0}
+                                                    # => Assertion passes
+  end                                   # => End test definition
 
-  test "divide/2 handles division by zero" do
-    assert Calculator.divide(10, 0) == {:error, :division_by_zero}
-    # => Error case: {:error, atom}
-  end
+  test "divide/2 handles division by zero" do  # => Test error handling
+                                               # => Verifies div by zero returns error
+    assert Calculator.divide(10, 0) == {:error, :division_by_zero}  # => Calls divide with b=0
+                                                                      # => First clause matches (b is 0)
+                                                                      # => Returns {:error, :division_by_zero}
+                                                                      # => Assertion passes
+  end                                   # => End test definition
 
-  @tag :slow
-  # => Tag for selective test execution
-  test "slow test" do
-    :timer.sleep(2000)
-    # => Use: mix test --only slow OR --exclude slow
-    assert true
-  end
+  @tag :slow                            # => Module attribute tags test
+                                        # => Categorizes as :slow test
+                                        # => Use for selective test execution
+  test "slow test" do                   # => Test with :slow tag
+    :timer.sleep(2000)                  # => Sleeps for 2000ms (2 seconds)
+                                        # => Simulates slow operation
+                                        # => Run with: mix test --only slow
+                                        # => Exclude with: mix test --exclude slow
+    assert true                         # => Always passes
+                                        # => Returns true
+  end                                   # => End test definition
 
-  @tag :skip
-  # => Skips test execution
-  test "skipped test" do
-    assert false
-    # => Use: mix test --include skip to run
-  end
-end
+  @tag :skip                            # => Tags test to skip
+                                        # => Test will not run by default
+  test "skipped test" do                # => Skipped test (won't execute)
+    assert false                        # => This would fail if executed
+                                        # => Run with: mix test --include skip
+                                        # => Useful for work-in-progress tests
+  end                                   # => End test definition
+end                                     # => End module definition
 ```
 
 **Key Takeaway**: ExUnit provides testing with `assert`, `refute`, and `assert_raise`. Tests are organized in modules with `use ExUnit.Case`. Use `setup` for per-test initialization and tags to organize tests.
@@ -3168,88 +3215,130 @@ my_app/
 **Code**:
 
 ```elixir
-# mix.exs - project configuration
-defmodule MyApp.MixProject do
-  use Mix.Project
-  # => Imports Mix project macros
+# mix.exs - project configuration file at project root
+                                        # => Required for all Mix projects
+defmodule MyApp.MixProject do           # => Mix project module (convention: AppName.MixProject)
+  use Mix.Project                       # => Imports Mix.Project behavior
+                                        # => Provides project/0 and application/0 callbacks
+                                        # => Required for Mix to recognize this as project
 
-  def project do
-    [
-      app: :my_app,
-      # => Application name (atom)
-      version: "0.1.0",
-      # => Semantic versioning: MAJOR.MINOR.PATCH
-      elixir: "~> 1.15",
-      # => ~> 1.15: allows 1.15.x (pessimistic constraint)
-      start_permanent: Mix.env() == :prod,
-      # => Restart on crash in :prod only
-      deps: deps()
-      # => Dependencies defined below
-    ]
-  end
+  def project do                        # => Returns keyword list of project config
+                                        # => Called by Mix during compilation
+    [                                   # => Keyword list starts here
+      app: :my_app,                     # => Application name as atom
+                                        # => Used for .beam file naming
+                                        # => Must match folder name convention
+      version: "0.1.0",                 # => Semantic version string
+                                        # => Format: MAJOR.MINOR.PATCH
+                                        # => Incremented when releasing
+      elixir: "~> 1.15",                # => Minimum Elixir version requirement
+                                        # => ~> is pessimistic constraint operator
+                                        # => ~> 1.15 allows 1.15.x but not 1.16.0
+                                        # => Ensures compatibility
+      start_permanent: Mix.env() == :prod,  # => Determines application restart strategy
+                                             # => Mix.env() returns :dev, :test, or :prod
+                                             # => true in :prod: restart on crash
+                                             # => false in :dev/:test: don't restart
+      deps: deps()                      # => Calls deps/0 function below
+                                        # => Returns list of dependencies
+    ]                                   # => End keyword list
+  end                                   # => End project/0 function
 
-  def application do
-    [
-      extra_applications: [:logger]
-      # => Start Logger before this app
-    ]
-  end
+  def application do                    # => Returns OTP application configuration
+                                        # => Called when starting application
+    [                                   # => Keyword list for application config
+      extra_applications: [:logger]     # => OTP applications to start BEFORE this app
+                                        # => :logger starts Elixir's logging system
+                                        # => Runs in application's supervision tree
+    ]                                   # => End keyword list
+  end                                   # => End application/0 function
 
-  defp deps do
-    [
-      {:httpoison, "~> 2.0"},               # HTTP client
-      {:jason, "~> 1.4"},                   # JSON parser
-      {:ex_doc, "~> 0.30", only: :dev}      # Docs (dev only)
-      # => Fetched from Hex.pm package registry
-    ]
-  end
-end
+  defp deps do                          # => Private function returns dependency list
+                                        # => Called by project/0 deps: field
+    [                                   # => List of dependency tuples
+      {:httpoison, "~> 2.0"},           # => HTTP client library
+                                        # => Tuple: {package_atom, version_requirement}
+                                        # => ~> 2.0 allows 2.x (not 3.0)
+      {:jason, "~> 1.4"},               # => JSON encoder/decoder library
+                                        # => ~> 1.4 allows 1.4.x (not 1.5)
+      {:ex_doc, "~> 0.30", only: :dev}  # => Documentation generator
+                                        # => only: :dev means dev environment only
+                                        # => Not included in :prod builds
+                                        # => Reduces production dependencies
+    ]                                   # => Fetched from Hex.pm package registry
+                                        # => Downloaded to deps/ folder
+  end                                   # => End deps/0 function
+end                                     # => End module definition
 
-# lib/my_app.ex - main module
-defmodule MyApp do
-  @moduledoc """
-  Documentation for `MyApp`.
-  """
-  # => Module-level docs (appears in ExDoc)
+# lib/my_app.ex - main application module
+                                        # => Located in lib/ directory (convention)
+defmodule MyApp do                      # => Main module for application
+  @moduledoc """                        # => Module documentation attribute
+  Documentation for `MyApp`.            # => Markdown syntax supported
+  """                                   # => End module doc string
+                                        # => Appears in generated ExDoc
+                                        # => Accessible via IEx h(MyApp)
 
-  @doc """
-  Hello world function.
-  """
-  # => Function-level docs
-  def hello do
-    :world
-    # => Returns :world atom
-  end
-end
+  @doc """                              # => Function documentation attribute
+  Hello world function.                 # => Describes what function does
+  """                                   # => End function doc string
+                                        # => Appears in ExDoc and IEx h(MyApp.hello)
+  def hello do                          # => Public function (no parameters)
+                                        # => Callable as MyApp.hello()
+    :world                              # => Returns atom :world
+                                        # => Last expression is return value
+                                        # => Type: atom
+  end                                   # => End function definition
+end                                     # => End module definition
 
-# test/my_app_test.exs - tests
-defmodule MyAppTest do
-  use ExUnit.Case
-  doctest MyApp
-  # => Runs doctests from @doc comments
+# test/my_app_test.exs - test file
+                                        # => Located in test/ directory
+                                        # => .exs extension: not compiled (evaluated)
+defmodule MyAppTest do                  # => Test module (convention: ModuleNameTest)
+  use ExUnit.Case                       # => Imports ExUnit test macros
+                                        # => Enables test, assert, refute
+  doctest MyApp                         # => Runs doctests from @doc comments
+                                        # => Extracts code examples from docs
+                                        # => Verifies examples work as shown
+                                        # => Keeps docs in sync with code
 
-  test "greets the world" do
-    assert MyApp.hello() == :world
-  end
-end
+  test "greets the world" do            # => Test case definition
+                                        # => Description: "greets the world"
+    assert MyApp.hello() == :world      # => Calls MyApp.hello() function
+                                        # => Expects return value :world
+                                        # => Test passes if assertion true
+  end                                   # => End test definition
+end                                     # => End module definition
 
-# config/config.exs - configuration
-import Config
-# => Imports config/3 macro
+# config/config.exs - application configuration file
+                                        # => Located in config/ directory
+import Config                           # => Imports Config module
+                                        # => Provides config/2 and config/3 macros
+                                        # => Required for configuration
 
-config :my_app,
-  api_key: "development_key",
-  # => Available via Application.get_env/2
-  timeout: 5000
+config :my_app,                         # => Configures :my_app application
+                                        # => First arg: application atom
+  api_key: "development_key",           # => Sets api_key config value
+                                        # => String value for development
+                                        # => Retrieved via Application.get_env/2
+  timeout: 5000                         # => Sets timeout config value
+                                        # => Integer 5000 (5 seconds)
+                                        # => Accessible at runtime
 
-import_config "#{Mix.env()}.exs"
-# => Loads dev.exs, test.exs, or prod.exs
+import_config "#{Mix.env()}.exs"        # => Dynamically imports environment-specific config
+                                        # => Mix.env() returns :dev, :test, or :prod
+                                        # => Loads dev.exs, test.exs, or prod.exs
+                                        # => Environment configs override this file
 
-# Runtime config access
-api_key = Application.get_env(:my_app, :api_key)
-# => Returns "development_key" or nil
-timeout = Application.get_env(:my_app, :timeout, 3000)
-# => Returns 5000 or default 3000
+# Runtime config access examples
+                                        # => These show how to READ config at runtime
+api_key = Application.get_env(:my_app, :api_key)  # => Reads api_key from :my_app config
+                                                    # => Returns "development_key"
+                                                    # => Returns nil if not set
+timeout = Application.get_env(:my_app, :timeout, 3000)  # => Reads timeout with default
+                                                         # => Returns 5000 (configured value)
+                                                         # => Returns 3000 if not configured
+                                                         # => Third arg is default value
 ```
 
 **Key Takeaway**: Mix provides project scaffolding, dependency management, and build tools. Standard structure: `lib/` for code, `test/` for tests, `mix.exs` for configuration. Use `mix` commands to compile, test, and manage projects.

@@ -3,11 +3,11 @@ title: "Advanced"
 weight: 10000003
 date: 2025-01-29T00:00:00+07:00
 draft: false
-description: "Master advanced Dart through 25 heavily annotated examples covering isolates, design patterns, testing, performance optimization, and production patterns"
+description: "Examples 51-61: isolates, design patterns, testing, performance optimization - 11 advanced examples covering production patterns (75-95% coverage)"
 tags: ["dart", "advanced", "isolates", "testing", "performance", "by-example"]
 ---
 
-Master advanced Dart patterns through 25 heavily annotated examples using Islamic finance contexts. Each example maintains 1-2.25 annotation density and demonstrates sophisticated patterns for production-grade applications.
+Master advanced Dart patterns through 11 heavily annotated examples using Islamic finance contexts. Each example maintains 1-2.25 annotation density and demonstrates sophisticated patterns for production-grade applications.
 
 ## Examples 51-60: Advanced Async and Isolates
 

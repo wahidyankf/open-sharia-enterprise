@@ -4,7 +4,6 @@ date: 2025-12-29T23:43:13+07:00
 draft: false
 weight: 10000001
 description: "Examples 1-28: Terraform fundamentals covering HCL syntax, providers, resources, variables, data sources, and state management basics (0-40% coverage)"
-categories: ["learn"]
 tags: ["terraform", "tutorial", "by-example", "beginner", "hcl", "providers", "resources", "iac"]
 ---
 

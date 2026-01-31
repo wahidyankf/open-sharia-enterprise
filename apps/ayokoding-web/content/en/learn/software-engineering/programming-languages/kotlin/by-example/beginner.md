@@ -1882,6 +1882,10 @@ fun main() {
     println(message)                 // => Output: Got: Data loaded successfully
 }
 
+**Key Takeaway**: Sealed classes enable compile-time exhaustive `when` expressions by restricting hierarchies to a known set of subclasses, eliminating the need for `else` branches and preventing unexpected subtypes.
+
+**Why It Matters**: Java's inheritance allows any class to extend your types at runtime, forcing defensive programming with default cases that should never execute but clutter code and hide bugs. Sealed classes make state modeling type-safe at compile time - adding a new API response state or workflow step causes compile errors in all pattern matches, preventing production defects where new states are silently ignored. This design powers modern Android architecture (UI states, navigation events) and Kotlin's Result type, providing safety guarantees impossible in Java enums (no data) or open classes (unlimited subtypes).
+
 ---
 
 ## Example 22: Extension Functions
