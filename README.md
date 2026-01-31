@@ -7,100 +7,82 @@
 - **OSE Platform** ([oseplatform.com](https://oseplatform.com)) - Main platform website (under construction)
 - **AyoKoding** ([ayokoding.com](https://ayokoding.com)) - Shares the technological research and domain knowledge we develop for this project. What we learn while building Open Sharia Enterprise becomes accessible to the wider community through educational content
 
-> ⚠️ **PRE-ALPHA STATUS**: This project is in early development and **NOT ready for production use**. Core architecture and patterns are still being established. APIs and implementations may change significantly. **Contributions and pull requests are not being accepted** at this time.
+## 🚧 Project Status
+
+> ⚠️ **PRE-ALPHA** - This project is in early development and **NOT ready for production use**. Core architecture and patterns are still being established. APIs and implementations may change significantly. **Contributions and pull requests are not being accepted** at this time.
+
+**Current Phase: Phase 0 (Repository Setup & Knowledge Base)**
+
+Building repository infrastructure, governance, and launching initial websites:
+
+- 🌐 **Live sites**: [ayokoding.com](https://ayokoding.com) (educational) and [oseplatform.com](https://oseplatform.com) (marketing)
+- 🛠️ **CLI tools**: [ayokoding-cli](./apps/ayokoding-cli/) and [rhino-cli](./apps/rhino-cli/)
+- 📚 **Infrastructure**: AI agents, documentation framework, governance, planning systems
+
+**Next Phase: Phase 1 (Organic Lever)** - Individual productivity tracker to test deployment and knowledge base patterns before SMB/enterprise.
+
+**What to Expect:**
+
+- 🔄 Breaking changes without notice
+- 📐 Architecture still evolving
+- 🧪 Experimental implementations
+- ❌ Not accepting public contributions yet
+
+⚠️ **Do NOT use for production.** See **[ROADMAP.md](./ROADMAP.md)** for complete development phases and strategy.
 
 ## 🎯 Motivation
 
 **The Opportunity**: Islamic enterprise (finance, commerce, cooperatives, and beyond) represents a multi-trillion dollar global market, creating massive demand for Sharia-compliant business systems. While purpose-built platforms exist, they're typically proprietary, expensive, and limited to specific domains. Many organizations struggle with legacy systems retrofitted for Sharia compliance. The gap? Accessible, open-source solutions with built-in compliance and radical transparency—serving the entire spectrum of Islamic business needs.
 
-**Our Solution**: We're building a global open-source platform with Sharia-compliance at its core—starting with ERP foundations and expanding across enterprise domains (finance, commerce, cooperatives, supply chain, and more). We're making trustworthy, transparent business systems accessible to any organization worldwide—regardless of size, region, or industry.
+**Our Solution**: We're building a global open-source platform with Sharia-compliance at its core—following a progressive complexity approach from individual users (Phase 1: Organic Lever productivity tracker) to SMB (Phase 2) to enterprise (Phase 3: full ERP and domain expansion). Each phase generates revenue to fund the next, with Phase 1/2 success funding Phase 3's significant certification budget. We're making trustworthy, transparent business systems accessible to any organization worldwide—regardless of size, region, or industry.
 
 **What We Believe:**
 
-- 🕌 **Sharia-compliance as a foundation** should be built into enterprise solutions from the ground up, not bolted on later
-- 🔓 **Transparency and openness** in the code helps build trust in Sharia-compliant enterprise solutions
-- 🌐 **Open source by default** - We believe in radical transparency unless it compromises security and/or privacy protection
-- 🤖 **AI-assisted development, not vibe-coding** - We use AI tools systematically to enhance productivity and code quality, not as a substitute for thoughtful engineering
-- 🤝 **Community collaboration** can accelerate the development of accessible and culturally sensitive business tools
-- 💡 **Innovation** across enterprise domains (financial services, supply chain, HR, and more) should be driven by open standards and shared knowledge
-- 📚 **Share what we learn** - The research and technological knowledge we develop gets shared through [ayokoding.com](https://ayokoding.com), making our learning journey useful to the wider community
-- 🛡️ **Governance and security from day one** are essential for enterprise solutions - good governance and sound security practices must be architectural foundations, not afterthoughts
-- 🎯 **Production ready from beta** - Every feature follows clear quality stages: Alpha (experimental, not production ready), Beta (production ready: secure, scalable, documented), Stable (battle-tested, proven in production)
-- 🏗️ **Long-term foundation over quick wins** - This is a life-long project building solid foundations now
-- 🔐 **Parallel infrastructure development** - Security operations, compliance automation, and red teaming tools are being built ALONGSIDE the enterprise platform from day one, not added later as afterthoughts
+- 🕌 **Sharia-compliance as a foundation** - Built in from the ground up, not bolted on later
+- 🔓 **Transparency builds trust** - Open source code enables community verification of Sharia compliance
+- 🤖 **AI-assisted development** - Systematic use of AI tools to enhance productivity and code quality
+- 🛡️ **Security and governance from day one** - Architectural foundations, not afterthoughts
+- 📚 **Learning in public** - Share our research and knowledge through [ayokoding.com](https://ayokoding.com)
+- 🏗️ **Long-term foundation over quick wins** - Building solid foundations for a life-long project
+
+For complete principles, see [governance/principles/](./governance/principles/README.md).
 
 🚀 Our mission is to democratize access to trustworthy, Sharia-compliant enterprise technology for organizations of all sizes, regardless of region or industry.
 
-## 📜 Freedom to Use
-
-This project is open-source and licensed under the **MIT License**. This means you are free to use this project for:
-
-- 🎯 **Commercial projects** - Build commercial products and services
-- 🏢 **Enterprise solutions** - Deploy in enterprise environments
-- 🔬 **Research and education** - Use for academic and educational purposes
-- 🛠️ **Modifications and derivatives** - Fork, modify, and create derivative works
-- 📦 **Distribution** - Include in your own projects or distribute freely
-
-✅ **No restrictions.** You can use this code for anything you want, with complete freedom and flexibility. The MIT License grants you broad rights while maintaining proper attribution.
-
 ## 🗺️ Development Roadmap
 
-This project follows a phased approach from foundational research through ERP implementation to full enterprise domain expansion.
+This project follows a **progressive complexity approach** - starting simple, testing thoroughly, and scaling up systematically from individual users to SMB to enterprise.
 
-**Current Phase: Phase 0 (Setup and Research)** - Establishing infrastructure and conducting compliance, security, and AI research.
+**Current Phase: Phase 0 (Repository Setup & Knowledge Base)** - Establishing repository infrastructure, governance, and launching initial static websites (ayokoding.com, oseplatform.com).
 
-For the complete roadmap including all phases and strategic approach, see **[ROADMAP.md](./ROADMAP.md)**.
+**Next Phase: Phase 1 (Organic Lever - Productivity Tracker)** - Individual productivity application to test deployment, security, and knowledge base patterns at small scale before SMB/enterprise.
 
-## 🤝 Contributing
-
-🔒 **Contributions are currently closed** until the project patterns and architecture are stable enough to accept external contributions. This ensures we maintain code quality and regulatory compliance as we build the foundation.
-
-However, 🎉 **you are welcome to fork this repository!** Feel free to:
-
-- 🍴 Create your own fork for your region or use case
-- 🧪 Experiment with extensions and modifications
-- 🏗️ Build upon this project for your specific needs
-- 📤 Share your improvements with the community
-
-✨ Once the core patterns are established and the project is mature enough, we will open the contribution process. We look forward to collaborating with the community in the future!
+For the complete roadmap including all phases, tech stack, and strategic approach, see **[ROADMAP.md](./ROADMAP.md)**.
 
 ## 🛠️ Tech Stack
 
-🎯 **Guiding Principle:**
-We choose technologies that keep you free. Your data stays yours, in open formats you can take anywhere. No vendor traps, no proprietary formats, no forced dependencies.
+**Guiding Principle**: Technologies that keep you free - open formats, portable data, no vendor lock-in.
 
-**What this means:**
+**Current Phase 0:**
 
-- 📁 **Your data is portable** - Plain text and open formats you can read anywhere
-- ☁️ **No forced dependencies** - Pick your own hosting, database, or infrastructure
-- 📤 **Easy migration** - Export and move to alternatives anytime
-- 🔐 **Community ownership** - You control your technology choices
+- Node.js 24.11.1 & npm 11.6.3 (via Volta) - Tooling and development infrastructure
+- Hugo (Extended) - Static sites (ayokoding-web, ose-platform-web)
+- Golang - CLI tools ([ayokoding-cli](./apps/ayokoding-cli/), [rhino-cli](./apps/rhino-cli/)) and future security infrastructure
 
-We prefer open-source tools, but we'll use non-open-source software if it respects these principles.
+**Phase 1 (Planned - Organic Lever):**
 
-💡 **Example:** We use [Obsidian](https://obsidian.md/) for documentation (not open-source), but all docs are plain markdown files. You can open them in any text editor—no lock-in, complete freedom.
+- Backend: Java + Spring Boot
+- Frontend: Next.js + TypeScript
+- Mobile: Flutter + Dart
+- Infrastructure: Kubernetes
 
-📦 **Project Tooling:**
-
-- ⚙️ Node.js & npm - Project management, development tools, and scripts
-- 🎨 Prettier - Code formatting
-- 🪝 Husky & lint-staged - Git hooks and automated checks
-- ✅ Commitlint - Commit message validation
-
-🚀 **Main Service:**
-The tech stack for the main enterprise platform is currently being evaluated. Updates will be provided as architectural decisions are finalized. Technology selection will follow our open-source principles and keep you free to choose.
+See **[ROADMAP.md](./ROADMAP.md)** for complete tech stack evolution across all phases.
 
 ## 🚀 Getting Started
 
 ### 📋 Prerequisites
 
-🔧 **Project Tooling & Infrastructure:**
-
-- 📦 **Node.js**: 24.11.1 LTS (pinned via Volta)
-- 📦 **npm**: 11.6.3 (pinned via Volta)
-- ⚡ **Volta**: [Install Volta](https://docs.volta.sh/guide/getting-started) for automatic Node.js/npm version management
-
-> 💡 **Note:** Node.js is used for project tooling, infrastructure, and development tools. The tech stack for the main enterprise platform is currently being decided and may be implemented in a different technology.
+- **Node.js** 24.11.1 LTS & **npm** 11.6.3 (managed via [Volta](https://docs.volta.sh/guide/getting-started))
 
 ### 📥 Installation
 
@@ -135,7 +117,7 @@ open-sharia-enterprise/
 
 This project uses **Nx** to manage applications and libraries:
 
-- **`apps/`** - Deployable applications (current: `ose-platform-web`, `ayokoding-web`, `ayokoding-cli`)
+- **`apps/`** - Deployable applications (current: [`ose-platform-web`](./apps/ose-platform-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/))
 - **`libs/`** - Reusable libraries with language prefixes (`ts-*`, future: `java-*`, `py-*`) - currently empty
 - **`apps-labs/`** - Experimental apps and POCs (framework evaluation, language exploration) - currently empty
 
@@ -157,84 +139,41 @@ nx graph                # Visualize dependencies
 
 ## 💻 Development
 
-### ✨ Code Quality & Git Hooks
+**Code Quality**: Automated checks run on every commit (Prettier formatting, Commitlint validation, markdown linting).
 
-This project uses automated tools to maintain code quality:
+**Common Commands**:
 
-- 🎨 **Prettier** - Automatic code formatting
-- 🪝 **Husky** - Git hooks for automated checks
-- 📋 **Lint-staged** - Run formatters on staged files only
-- ✅ **Commitlint** - Enforce [Conventional Commits](https://www.conventionalcommits.org/)
+```bash
+npm run build          # Build all projects
+npm run test           # Run tests
+npm run lint           # Lint code
+nx dev [app-name]      # Start development server
+nx build [app-name]    # Build specific project
+```
 
-**Automated Checks**:
+See [Code Quality](./governance/development/quality/code.md) and [Commit Messages](./governance/development/workflow/commit-messages.md) for details.
 
-- **Pre-commit**:
-  - Formats staged files (JS/TS, JSON, Markdown, YAML, CSS, HTML)
-  - **ayokoding-web automation** (when content changes detected):
-    - Rebuilds `ayokoding-cli` (~250ms cached)
-    - Updates titles from filenames (~40ms)
-    - Regenerates navigation (~25ms)
-    - Auto-stages changes
-- **Commit-msg**: Validates commit message format
+## 🤝 Contributing
 
-For complete details on tools, hook workflow, and troubleshooting, see [Code Quality Convention](./governance/development/quality/code.md) and [Commit Message Convention](./governance/development/workflow/commit-messages.md). For ayokoding-web automation details, see [Pre-commit Automation](./apps/ayokoding-cli/README.md#pre-commit-automation).
+🔒 **Contributions are currently closed** until the project patterns and architecture are stable enough to accept external contributions. This ensures we maintain code quality and regulatory compliance as we build the foundation.
+
+However, 🎉 **you are welcome to fork this repository!** Feel free to:
+
+- 🍴 Create your own fork for your region or use case
+- 🧪 Experiment with extensions and modifications
+- 🏗️ Build upon this project for your specific needs
+- 📤 Share your improvements with the community
+
+✨ Once the core patterns are established and the project is mature enough, we will open the contribution process. We look forward to collaborating with the community in the future!
 
 ## 📚 Documentation
 
-Documentation is organized using the [Diátaxis framework](https://diataxis.fr/) with four categories: Tutorials (learning), How-To (problem-solving), Reference (lookup), and Explanation (understanding).
+Organized using the [Diátaxis framework](https://diataxis.fr/): [Tutorials](./docs/tutorials/) (learning), [How-To](./docs/how-to/) (problem-solving), [Reference](./docs/reference/) (lookup), [Explanation](./docs/explanation/) (understanding).
 
-### 📂 Quick Navigation
+**Viewing Tip**: The `docs/` folder works as an [Obsidian](https://obsidian.md/) vault.
 
-- 🎓 [Tutorials](./docs/tutorials/) - Learning-oriented guides
-- 🔧 [How-To](./docs/how-to/) - Problem-solving guides
-- 📖 [Reference](./docs/reference/) - Technical reference
-- 💡 [Explanation](./docs/explanation/) - Conventions and concepts
-
-**Viewing Tip**: The `docs/` folder works as an [Obsidian](https://obsidian.md/) vault for enhanced navigation and graph view.
-
-For complete documentation framework details, see [Diátaxis Framework](./governance/conventions/structure/diataxis-framework.md) and [`docs/README.md`](./docs/README.md).
+See [`docs/README.md`](./docs/README.md) for details.
 
 ## 📜 License
 
-This project is licensed under the **MIT License** - see the [Freedom to Use](#-freedom-to-use) section for details on what you can do with this code.
-
-## 🚧 Project Status
-
-⚠️ **PRE-ALPHA** - This project is in early development and **NOT ready for production use**.
-
-**Current Phase: Phase 0 (Setup and Research)**
-
-We are establishing foundational infrastructure and conducting research to inform architectural decisions. **Two parallel tracks are running simultaneously:**
-
-**Enterprise Platform Track:**
-
-- 🔨 Core infrastructure setup (Volta, code formatting, commit validation, documentation structure)
-- 📋 Project planning and architecture design
-- 🏗️ Foundation patterns being established
-- 🔍 Researching global Islamic standards and multi-jurisdiction compliance frameworks
-- 🤖 AI research and integration exploration
-
-**Security & Compliance Infrastructure Track (IN PARALLEL):**
-
-- 🛡️ Building security operations tooling from the ground up
-- 🎯 Developing red teaming infrastructure to test platform defenses
-- 📋 Creating compliance automation and audit trail systems
-- 🔒 Researching DevSecOps frameworks and threat modeling approaches
-
-**Not Yet Available:**
-
-- ❌ No production code
-- ❌ No stable APIs
-- ❌ No security hardening
-- ❌ No deployment infrastructure
-- ❌ No compliance certifications
-- ❌ Not accepting contributions or pull requests from public
-
-**What to Expect:**
-
-- 🔄 Breaking changes without notice
-- 📐 Architecture and design still evolving
-- 🧪 Experimental implementations
-- 📚 Documentation is work-in-progress
-
-⚠️ **Do NOT use this project for production systems.** Wait for a stable release before considering production deployment.
+**MIT License** - Complete freedom to use, modify, and distribute for any purpose including commercial projects, enterprise solutions, and education. No restrictions. See [LICENSE](./LICENSE) for details.
