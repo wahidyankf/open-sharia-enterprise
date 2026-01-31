@@ -65,13 +65,13 @@ graph TB
 
 **Website Launches:**
 
-- 🌐 **ayokoding.com** (`apps/ayokoding-web`) - Bilingual educational platform (Indonesian/English) using Hugo + Hextra theme. Programming tutorials, AI guides, security content
-- 🏢 **oseplatform.com** (`apps/ose-platform-web`) - Platform marketing website using Hugo + PaperMod theme. Project updates, announcements, landing page
+- 🌐 **ayokoding.com** ([`apps/ayokoding-web/`](./apps/ayokoding-web/)) - Bilingual educational platform (Indonesian/English) using Hugo + Hextra theme. Programming tutorials, AI guides, security content
+- 🏢 **oseplatform.com** ([`apps/ose-platform-web/`](./apps/ose-platform-web/)) - Platform marketing website using Hugo + PaperMod theme. Project updates, announcements, landing page
 
 **CLI Tools:**
 
-- 🛠️ **ayokoding-cli** (`apps/ayokoding-cli`) - Golang CLI for content automation (title updates, navigation generation)
-- 🦏 **rhino-cli** (`apps/rhino-cli`) - Golang CLI for repository management (Repository Hygiene & INtegration Orchestrator)
+- 🛠️ **ayokoding-cli** ([`apps/ayokoding-cli/`](./apps/ayokoding-cli/)) - Golang CLI for content automation (title updates, navigation generation)
+- 🦏 **rhino-cli** ([`apps/rhino-cli/`](./apps/rhino-cli/)) - Golang CLI for repository management (Repository Hygiene & INtegration Orchestrator)
 - 🔐 **Golang Foundation** - Golang will be used extensively on the information security side of the platform
 
 **Strategic Value:**
