@@ -7,3 +7,5 @@ draft: false
 
 - [Overview](/en/learn/software-engineering/system-design/overview)
 - [Cases](/en/learn/software-engineering/system-design/cases)
+  - [AI Personal Finance Advisor](/en/learn/software-engineering/system-design/cases/ai-personal-finance-advisor)
+  - [Cases Overview](/en/learn/software-engineering/system-design/cases/overview)
