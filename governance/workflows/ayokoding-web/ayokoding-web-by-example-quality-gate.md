@@ -1,7 +1,7 @@
 ---
 name: ayokoding-web-by-example-quality-gate
 goal: Validate by-example tutorial quality and apply fixes iteratively until EXCELLENT status achieved with zero mechanical issues
-termination: Tutorial achieves EXCELLENT status with 75-90 examples, 95% coverage, and zero mechanical issues (runs indefinitely until achieved unless max-iterations provided)
+termination: Tutorial achieves EXCELLENT status with 75-85 examples, 95% coverage, and zero mechanical issues (runs indefinitely until achieved unless max-iterations provided)
 inputs:
   - name: tutorial-path
     type: string
@@ -62,7 +62,7 @@ outputs:
 
 # AyoKoding Content By-Example Quality Gate Workflow
 
-**Purpose**: Validate and improve by-example tutorial quality through iterative checking and fixing until tutorials achieve 95% coverage with 75-90 self-contained, annotated examples.
+**Purpose**: Validate and improve by-example tutorial quality through iterative checking and fixing until tutorials achieve 95% coverage with 75-85 self-contained, annotated examples.
 
 **When to use**:
 
@@ -91,7 +91,7 @@ The AI will:
 1. Execute apps\_\_ayokoding-web\_\_by-example-checker logic directly (validate tutorial, write audit)
 2. User reviews audit report and decides on fixes (manual decision point)
 3. Execute apps\_\_ayokoding-web\_\_by-example-fixer logic directly (read audit, apply fixes, write fix report)
-4. Iterate until EXCELLENT status achieved (zero findings, 75-90 examples, 95% coverage)
+4. Iterate until EXCELLENT status achieved (zero findings, 75-85 examples, 95% coverage)
 5. Show git status with modified files
 6. Wait for user commit approval
 
@@ -147,7 +147,7 @@ graph TB
 **Outputs**:
 
 - Tutorial files: overview.md, beginner.md, intermediate.md, advanced.md
-- 75-90 examples across three levels
+- 75-85 examples across three levels
 - Mermaid diagrams where appropriate
 - Educational annotations and comments
 
@@ -169,12 +169,12 @@ prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/progr
 
 **Validation areas**:
 
-1. **Coverage and count**: 95% coverage, 75-90 examples
-2. **Annotation density**: 1-2.25 comment lines per code line (target: 1-2.25, upper bound: 2.5)
+1. **Coverage and count**: 95% coverage, 75-85 examples
+2. **Annotation density**: 1.0-2.25 comment lines per code line (target: 1.0-2.25, upper bound: 2.5)
 3. **Self-containment**: Copy-paste-runnable within chapter scope
 4. **Annotations**: `// =>` notation for outputs and states
-5. **Diagrams**: 30-50% frequency, color-blind palette
-6. **Format**: Five-part structure (explanation, diagram, code, takeaway, why it matters)
+5. **Diagrams**: 30-50 total diagrams (approximately 35-60% of 75-85 examples), color-blind palette
+6. **Format**: Five-part structure: (1) Brief Explanation (2-3 sentences), (2) Mermaid Diagram (when appropriate), (3) Heavily Annotated Code, (4) Key Takeaway (1-2 sentences), (5) Why It Matters (50-100 words)
 7. **Frontmatter**: Complete and correct
 
 **Outputs**:
@@ -381,7 +381,7 @@ Report final status and summary.
 
 **Status determination**:
 
-- **Excellent** (`excellent`): Zero threshold-level findings after final validation, 75-90 examples, 95% coverage achieved (below-threshold findings may exist and are acceptable)
+- **Excellent** (`excellent`): Zero threshold-level findings after final validation, 75-85 examples, 95% coverage achieved (below-threshold findings may exist and are acceptable)
 - **Needs Improvement** (`needs-improvement`): Threshold-level findings remain after max-iterations OR below example/coverage targets
 - **Failing** (`failing`): Major structural issues prevent auto-fixing, requires maker rework
 
@@ -391,10 +391,10 @@ Report final status and summary.
 
 **Success** (`excellent`):
 
-- **lax**: Zero CRITICAL findings, 75-90 examples, 95% coverage (HIGH/MEDIUM/LOW may exist)
-- **normal**: Zero CRITICAL/HIGH findings, 75-90 examples, 95% coverage (MEDIUM/LOW may exist)
-- **strict**: Zero CRITICAL/HIGH/MEDIUM findings, 75-90 examples, 95% coverage (LOW may exist)
-- **ocd**: Zero findings at all levels, 75-90 examples, 95% coverage
+- **lax**: Zero CRITICAL findings, 75-85 examples, 95% coverage (HIGH/MEDIUM/LOW may exist)
+- **normal**: Zero CRITICAL/HIGH findings, 75-85 examples, 95% coverage (MEDIUM/LOW may exist)
+- **strict**: Zero CRITICAL/HIGH/MEDIUM findings, 75-85 examples, 95% coverage (LOW may exist)
+- **ocd**: Zero findings at all levels, 75-85 examples, 95% coverage
 
 **Partial** (`needs-improvement`):
 
@@ -426,7 +426,7 @@ apps-ayokoding-web-by-example-checker validates golang by-example
 
 **Results**:
 
-- 60 examples (target: 75-90) ️
+- 60 examples (target: 75-85) ️
 - Self-containment: 90%
 - Annotations: 70% coverage ️
 - Diagrams: 20% frequency ️
@@ -449,7 +449,7 @@ apps-ayokoding-web-by-example-fixer applies fixes from audit
 **Fixes applied**:
 
 - Added 5 missing imports (HIGH)
-- Added annotations to meet 1-2.25 comment lines per code line density (target: 1-2.25, upper bound: 2.5) (MEDIUM, re-validated)
+- Added annotations to meet 1.0-2.25 comment lines per code line density (target: 1.0-2.25, upper bound: 2.5) (MEDIUM, re-validated)
 - Fixed 3 color violations (HIGH)
 - Added 2 missing key takeaways (MEDIUM)
 
@@ -487,7 +487,7 @@ apps-ayokoding-web-by-example-checker validates elixir by-example
 
 **Results**:
 
-- 70 examples (target: 75-90) ️
+- 70 examples (target: 75-85) ️
 - New examples missing imports
 - New examples no annotations
 - Status: **NEEDS IMPROVEMENT**
@@ -535,7 +535,7 @@ apps-ayokoding-web-by-example-checker validates java by-example
 
 **Results**:
 
-- 45 examples (target: 75-90) FAIL: MAJOR GAP
+- 45 examples (target: 75-85) FAIL: MAJOR GAP
 - Coverage: 60% (target: 95%) FAIL: MAJOR GAP
 - Self-containment: 40% FAIL: MAJOR ISSUE
 - Status: **FAILING**
