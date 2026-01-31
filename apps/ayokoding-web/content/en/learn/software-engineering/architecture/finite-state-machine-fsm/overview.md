@@ -371,7 +371,7 @@ fsm.Event("confirm") // Transition to confirmed
 
 ## 🔗 Related Content
 
-- [**C4 Model**](/en/learn/software-engineering/architecture/c4-model) - Use Component diagrams to show FSM within system architecture
+- [**C4 Model**](/en/learn/software-engineering/architecture/c4-architecture-model) - Use Component diagrams to show FSM within system architecture
 - [**Domain-Driven Design**](/en/learn/software-engineering/architecture/domain-driven-design-ddd) - FSMs often model entity lifecycles in DDD
 - [**System Design Cases**](/en/learn/software-engineering/system-design/cases) - See FSMs in real-world system workflows
 

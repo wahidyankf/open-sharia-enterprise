@@ -376,7 +376,7 @@ DDD typically uses layered architecture to separate concerns:
 
 ## 🔗 Related Content
 
-- [**C4 Model**](/en/learn/software-engineering/architecture/c4-model) - Use for visualizing DDD bounded contexts and architecture
+- [**C4 Model**](/en/learn/software-engineering/architecture/c4-architecture-model) - Use for visualizing DDD bounded contexts and architecture
 - [**System Design Cases**](/en/learn/software-engineering/system-design/cases) - See DDD principles in real-world system designs
 - [**Finite State Machine**](/en/learn/software-engineering/architecture/finite-state-machine-fsm) - Useful for modeling entity state transitions
 

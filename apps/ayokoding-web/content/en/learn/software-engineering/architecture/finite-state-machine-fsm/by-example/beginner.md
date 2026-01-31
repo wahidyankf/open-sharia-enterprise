@@ -889,7 +889,7 @@ console.log(inventory.getCurrentState()); // => Output: Available (50 > 20)
 
 **Key Takeaway**: Event guards (conditions) determine whether events are allowed. Guards check data beyond state (stock levels, permissions, quotas). Failed guards prevent transitions and may throw errors.
 
-**Why It Matters**: Guards enforce business rules. When Amazon implemented shopping cart FSMs, guards prevented "checkout" event unless cart total exceeded minimum ($25 for free shipping). Guard-based validation reduced customer support contacts about failed checkouts by 80% because errors were clear ("Add $10 more for checkout") instead of cryptic. Guards centralize validation logic that would otherwise scatter across UI components.
+**Why It Matters**: Guards enforce business rules. When Amazon implemented shopping cart FSMs, guards prevented "checkout" event unless cart total exceeded minimum (\$25 for free shipping). Guard-based validation reduced customer support contacts about failed checkouts by 80% because errors were clear ("Add \$10 more for checkout") instead of cryptic. Guards centralize validation logic that would otherwise scatter across UI components.
 
 ## Guards and Conditions (Examples 14-18)
 
@@ -1245,7 +1245,7 @@ class LoanApproval {
 
     // Composite guard using AND/OR logic
     const hasGoodCredit = data.creditScore >= 700; // => Guard: credit >= 700
-    const hasStableIncome = data.income >= 50000; // => Guard: income >= $50k
+    const hasStableIncome = data.income >= 50000; // => Guard: income >= \$50k
     const reasonableDebtRatio = data.loanAmount / data.income <= 3; // => Guard: loan <= 3x income
 
     // Approval logic:
@@ -1900,18 +1900,18 @@ const cart = new ShoppingCart(); // => state: "Empty"
 cart.handleEvent("add_item", { id: "laptop", price: 1200 }); // => Empty → HasItems
 // => Output:
 // → Transition: Add first item
-//   Cart created with laptop ($1200)
+//   Cart created with laptop (\$1200)
 //   → Analytics: cart_started
 
 cart.handleEvent("add_item", { id: "mouse", price: 25 }); // => HasItems → HasItems
 // => Output:
 // → Transition: Add item to existing cart
-//   Added mouse, new total: $1225
+//   Added mouse, new total: \$1225
 
 cart.handleEvent("checkout"); // => HasItems → CheckingOut
 // => Output:
 // → Transition: Start checkout process
-//   Cart total: $1225 (2 items)
+//   Cart total: \$1225 (2 items)
 //   → Validate item availability
 //   → Calculate tax
 

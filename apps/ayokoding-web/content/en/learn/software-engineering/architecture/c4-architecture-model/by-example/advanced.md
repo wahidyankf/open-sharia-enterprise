@@ -95,7 +95,7 @@ classDiagram
 
 **Key Takeaway**: Use code diagrams to document domain model aggregates. Show entity relationships, value objects, and business methods. This level of detail guides implementation and ensures domain invariants are enforced consistently.
 
-**Why It Matters**: Domain models encode business rules in type systems. When Amazon refactored their order processing, code diagrams showing aggregate boundaries revealed that 60% of bugs came from calculating totals outside the Order aggregate (leading to inconsistencies). Enforcing aggregate boundaries—all total calculations through `Order.calculateTotal()`—reduced financial discrepancies from 0.5% of orders to 0.001%, saving $50M annually in reconciliation and customer refunds.
+**Why It Matters**: Domain models encode business rules in type systems. When Amazon refactored their order processing, code diagrams showing aggregate boundaries revealed that 60% of bugs came from calculating totals outside the Order aggregate (leading to inconsistencies). Enforcing aggregate boundaries—all total calculations through `Order.calculateTotal()`—reduced financial discrepancies from 0.5% of orders to 0.001%, saving \$50M annually in reconciliation and customer refunds.
 
 ### Example 62: State Machine Implementation
 
@@ -165,7 +165,7 @@ stateDiagram-v2
 
 **Key Takeaway**: Model complex workflows as state machines. Define all valid states and transitions. Implement as enum-based state pattern where each state is a class implementing allowed transitions. This makes business rules explicit and prevents invalid operations.
 
-**Why It Matters**: State machines encode business rules in type systems that compilers enforce. When Walmart implemented order state machine, code diagrams showing valid transitions prevented 95% of order processing bugs. Previously, developers could accidentally skip payment confirmation and ship orders—resulting in $200K monthly losses from unconfirmed orders. State machine made this impossible at compile time.
+**Why It Matters**: State machines encode business rules in type systems that compilers enforce. When Walmart implemented order state machine, code diagrams showing valid transitions prevented 95% of order processing bugs. Previously, developers could accidentally skip payment confirmation and ship orders—resulting in \$200K monthly losses from unconfirmed orders. State machine made this impossible at compile time.
 
 ### Example 63: Repository Pattern Implementation
 
@@ -512,7 +512,7 @@ components:
 
 **Key Takeaway**: Define API contracts in OpenAPI format. Include idempotency headers for write operations. Use schemas with validation rules (minimum, pattern). Version APIs in URL path (/v1, /v2). Generate client SDKs and server stubs from specification ensuring consistency.
 
-**Why It Matters**: API contracts prevent integration failures and enable parallel development. When Stripe documented their payment API in OpenAPI, code generation produced SDKs for 8 languages automatically—reducing SDK development time from 6 months to 1 week. Validation rules in schemas caught 80% of integration errors before deployment (previously discovered in production). Idempotency-Key header eliminated duplicate charges that previously cost $2M annually in refunds and support.
+**Why It Matters**: API contracts prevent integration failures and enable parallel development. When Stripe documented their payment API in OpenAPI, code generation produced SDKs for 8 languages automatically—reducing SDK development time from 6 months to 1 week. Validation rules in schemas caught 80% of integration errors before deployment (previously discovered in production). Idempotency-Key header eliminated duplicate charges that previously cost \$2M annually in refunds and support.
 
 ## Complex Multi-System Architectures (Examples 66-72)
 
@@ -963,7 +963,7 @@ graph TD
 
 **Key Takeaway**: Implement chaos engineering platform (Chaos Mesh, Gremlin). Run experiments in production with limited blast radius. Monitor SLOs during experiments. Automate rollback if SLO violated. Test hypotheses like "Service maintains availability during database failover" or "API latency stays under 200ms when cache fails." This builds confidence in production resilience.
 
-**Why It Matters**: Chaos engineering prevents major outages by finding weaknesses proactively. When Netflix implemented Chaos Monkey (terminates random instances), architecture diagrams showing chaos infrastructure revealed they could reduce MTTR from 4 hours to 20 minutes. Developers learned to build resilient services (retries, circuit breakers, graceful degradation) because chaos experiments ran daily. Major outages decreased from 5/year (before chaos engineering) to 0.5/year (after), saving $50M annually in lost revenue and reputation damage.
+**Why It Matters**: Chaos engineering prevents major outages by finding weaknesses proactively. When Netflix implemented Chaos Monkey (terminates random instances), architecture diagrams showing chaos infrastructure revealed they could reduce MTTR from 4 hours to 20 minutes. Developers learned to build resilient services (retries, circuit breakers, graceful degradation) because chaos experiments ran daily. Major outages decreased from 5/year (before chaos engineering) to 0.5/year (after), saving \$50M annually in lost revenue and reputation damage.
 
 ### Example 71: Data Pipeline Architecture (Lambda Architecture)
 
@@ -1151,7 +1151,7 @@ graph TD
 
 **Key Takeaway**: Use Kubernetes namespaces for tenant isolation. Set resource quotas to prevent noisy neighbors. Configure network policies to block cross-tenant traffic. Route traffic by subdomain or header. Tier resources based on tenant pricing (premium gets more resources). This achieves strong isolation with cost efficiency.
 
-**Why It Matters**: Multi-tenancy economics determine SaaS profitability. When Shopify analyzed their multi-tenant architecture, deployment diagrams showing namespace isolation revealed they could serve 1M stores on 500 Kubernetes nodes (2000 stores per node average). Dedicated cluster per store would require 1M nodes costing $500M/year. Namespace isolation cost $250K/year (2000x cheaper). Resource quotas prevented outages where one store's traffic spike affected others—reducing cross-tenant incidents from 50/month to 2/month.
+**Why It Matters**: Multi-tenancy economics determine SaaS profitability. When Shopify analyzed their multi-tenant architecture, deployment diagrams showing namespace isolation revealed they could serve 1M stores on 500 Kubernetes nodes (2000 stores per node average). Dedicated cluster per store would require 1M nodes costing \$500M/year. Namespace isolation cost \$250K/year (2000x cheaper). Resource quotas prevented outages where one store's traffic spike affected others—reducing cross-tenant incidents from 50/month to 2/month.
 
 ## Microservices Patterns - Advanced (Examples 73-77)
 
@@ -1541,7 +1541,7 @@ graph TD
 
 **Key Takeaway**: Separate thread pools for critical vs standard vs analytics operations. Size pools based on SLO (critical gets guaranteed capacity). Configure circuit breakers per pool. Monitor pool saturation. Route requests to appropriate pool based on operation type. This prevents low-priority operations from starving high-priority operations.
 
-**Why It Matters**: Bulkheads prevent cascade failures from resource exhaustion. When Netflix analyzed outages, architecture diagrams showing shared thread pool revealed that expensive recommendation queries (taking 5 seconds) consumed all threads, blocking video playback API (taking 50ms). Implementing bulkhead pattern (separate pools for playback vs recommendations) isolated failures—when recommendations saturated their pool (10 threads), playback remained responsive (using separate 50-thread pool). This reduced major outages from 3/month to 0.5/month, saving $10M annually in lost streaming revenue.
+**Why It Matters**: Bulkheads prevent cascade failures from resource exhaustion. When Netflix analyzed outages, architecture diagrams showing shared thread pool revealed that expensive recommendation queries (taking 5 seconds) consumed all threads, blocking video playback API (taking 50ms). Implementing bulkhead pattern (separate pools for playback vs recommendations) isolated failures—when recommendations saturated their pool (10 threads), playback remained responsive (using separate 50-thread pool). This reduced major outages from 3/month to 0.5/month, saving \$10M annually in lost streaming revenue.
 
 ## Scaling Patterns (Examples 78-81)
 
@@ -1814,7 +1814,7 @@ graph TD
 
 **Key Takeaway**: Implement cache warming as deployment step. Identify hot data (top 1K products, VIP users, popular queries). Pre-load cache before switching traffic. Monitor cache hit rate to validate warming effectiveness. Use parallel bulk writes for fast warming (<2 minutes). This eliminates cache cold starts and maintains consistent performance across deployments.
 
-**Why It Matters**: Cache warming prevents post-deployment performance degradation. When Pinterest deployed new recommendation service, deployment diagrams showing cache warming revealed they could prevent 30-minute cold start period where p95 latency spiked to 2 seconds. Pre-warming cache with top 10K pins (60% of traffic) and top 1K boards (30% of traffic) achieved 90% hit rate immediately. Cold start period eliminated, saving 30 minutes × $50K/hour revenue during peak traffic = $25K per deployment (100 deployments/year = $2.5M annually).
+**Why It Matters**: Cache warming prevents post-deployment performance degradation. When Pinterest deployed new recommendation service, deployment diagrams showing cache warming revealed they could prevent 30-minute cold start period where p95 latency spiked to 2 seconds. Pre-warming cache with top 10K pins (60% of traffic) and top 1K boards (30% of traffic) achieved 90% hit rate immediately. Cold start period eliminated, saving 30 minutes × \$50K/hour revenue during peak traffic = \$25K per deployment (100 deployments/year = \$2.5M annually).
 
 ### Example 81: Content Delivery Network (CDN) Architecture
 
@@ -1905,7 +1905,7 @@ graph TD
 
 **Key Takeaway**: Deploy multi-tier CDN with edge layer (global, low latency) and shield layer (regional, origin protection). Configure cache TTLs appropriately (edge: 1 hour, shield: 24 hours). Monitor cache hit ratio at each tier. Use origin shielding to reduce origin load by 10-100x. This achieves low latency globally while protecting origin infrastructure.
 
-**Why It Matters**: CDN architecture determines global performance and origin cost. When Shopify served Black Friday traffic (10M requests/second), CDN diagrams showing shield layer revealed they could reduce origin requests from 10M/sec to 100K/sec (100x reduction). Without shield, 10M/sec would require 50,000 origin servers costing $10M/month. With shield, 100K/sec required 500 servers costing $100K/month (100x cost savings). Shield layer also prevented origin overload—99.9% of requests served from CDN, origin remained healthy during 10x traffic spike.
+**Why It Matters**: CDN architecture determines global performance and origin cost. When Shopify served Black Friday traffic (10M requests/second), CDN diagrams showing shield layer revealed they could reduce origin requests from 10M/sec to 100K/sec (100x reduction). Without shield, 10M/sec would require 50,000 origin servers costing \$10M/month. With shield, 100K/sec required 500 servers costing \$100K/month (100x cost savings). Shield layer also prevented origin overload—99.9% of requests served from CDN, origin remained healthy during 10x traffic spike.
 
 ## Security and Compliance Patterns (Examples 82-85)
 
@@ -2003,7 +2003,7 @@ graph TD
 
 **Key Takeaway**: Implement zero-trust architecture with mTLS for all communication. Use SPIFFE for workload identity (automatic certificate issuance). Centralize authorization in OPA (policy-as-code). Encrypt data at rest and in transit. Log all access to immutable audit log. Integrate with SIEM for anomaly detection. This achieves defense-in-depth where breach of one component doesn't compromise entire system.
 
-**Why It Matters**: Zero-trust prevents lateral movement and reduces breach blast radius. When Capital One experienced data breach (2019, $100M fine), security diagrams revealed that compromising one EC2 instance gave access to all S3 buckets (network-based trust). Zero-trust architecture with mTLS and certificate-based S3 access would have prevented lateral movement—attacker would need to compromise certificate authority (much harder). Google's BeyondCorp (zero-trust implementation) reduced security incidents from 50/year (network-based trust) to 5/year (zero-trust), saving $20M annually in breach costs.
+**Why It Matters**: Zero-trust prevents lateral movement and reduces breach blast radius. When Capital One experienced data breach (2019, \$100M fine), security diagrams revealed that compromising one EC2 instance gave access to all S3 buckets (network-based trust). Zero-trust architecture with mTLS and certificate-based S3 access would have prevented lateral movement—attacker would need to compromise certificate authority (much harder). Google's BeyondCorp (zero-trust implementation) reduced security incidents from 50/year (network-based trust) to 5/year (zero-trust), saving \$20M annually in breach costs.
 
 ### Example 83: Data Privacy and Compliance Architecture (GDPR)
 
@@ -2337,7 +2337,7 @@ graph TD
 
 **Key Takeaway**: Implement SOC 2 controls as infrastructure code (policy-as-code). Use compliance scanner to detect violations hourly (not annually). Auto-remediate common violations (public buckets, missing encryption). Collect evidence automatically (access logs, change history, backup tests). Test controls continuously with automated tests. Store evidence in immutable storage for 7 years. This achieves continuous compliance instead of point-in-time compliance.
 
-**Why It Matters**: Compliance-as-code reduces audit costs and time. When Stripe implemented compliance-as-code for SOC 2, architecture diagrams showing automated controls revealed they could reduce audit preparation from 3 months to 1 week (12x faster). Continuous testing caught 95% of violations before auditors arrived. Evidence collection automated (vs manual spreadsheet gathering). Audit cost reduced from $500K (manual evidence collection) to $100K (automated, auditors just validated). Always-compliant posture enabled faster customer onboarding (SOC 2 report ready instantly, not "wait 3 months for audit").
+**Why It Matters**: Compliance-as-code reduces audit costs and time. When Stripe implemented compliance-as-code for SOC 2, architecture diagrams showing automated controls revealed they could reduce audit preparation from 3 months to 1 week (12x faster). Continuous testing caught 95% of violations before auditors arrived. Evidence collection automated (vs manual spreadsheet gathering). Audit cost reduced from \$500K (manual evidence collection) to \$100K (automated, auditors just validated). Always-compliant posture enabled faster customer onboarding (SOC 2 report ready instantly, not "wait 3 months for audit").
 
 ---
 
