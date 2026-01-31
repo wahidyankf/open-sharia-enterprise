@@ -6,3 +6,4 @@ draft: false
 ---
 
 - [Overview](/en/learn/software-engineering/architecture/c4-model/overview)
+- [By Example](/en/learn/software-engineering/architecture/c4-model/by-example)
