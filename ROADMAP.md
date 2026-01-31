@@ -65,8 +65,8 @@ graph TB
 
 **Website Launches:**
 
-- 🌐 **ayokoding.com** ([`apps/ayokoding-web/`](./apps/ayokoding-web/)) - Bilingual educational platform (Indonesian/English) using Hugo + Hextra theme. Programming tutorials, AI guides, security content
-- 🏢 **oseplatform.com** ([`apps/ose-platform-web/`](./apps/ose-platform-web/)) - Platform marketing website using Hugo + PaperMod theme. Project updates, announcements, landing page
+- 🌐 [**ayokoding.com**](https://ayokoding.com) ([`apps/ayokoding-web/`](./apps/ayokoding-web/)) - Bilingual educational platform (Indonesian/English) using Hugo + Hextra theme. Programming tutorials, AI guides, security content
+- 🏢 [**oseplatform.com**](https://oseplatform.com) ([`apps/ose-platform-web/`](./apps/ose-platform-web/)) - Platform marketing website using Hugo + PaperMod theme. Project updates, announcements, landing page
 
 **CLI Tools:**
 
@@ -88,7 +88,7 @@ graph TB
 
 **Product Deliverables:**
 
-- 🌐 **organiclever.com** - Marketing website and web application
+- 🌐 [**organiclever.com**](https://organiclever.com) - Marketing website and web application
 - 📱 **Android App** - Mobile productivity tracker
 - 🍎 **iOS App** - Mobile productivity tracker
 
