@@ -199,7 +199,7 @@ console.log(`Audit trail: ${JSON.stringify(workflow.getContext().history)}`);
 
 Workflow engines need conditional branching based on runtime data (order value, user role, region). FSMs handle this through guard conditions on transitions.
 
-**Why It Matters**: At Amazon, the order fulfillment workflow FSM processes 1.6M orders/hour during peak with conditional branching based on order value, destination, Prime membership, and inventory availability. Orders over $500 require fraud review (adds 2-4 hours), international shipments require customs clearance (adds 24-48 hours), and Prime orders get priority routing. Without FSM's guard conditions, implementing 47 branching rules would create unmaintainable if-else chains.
+**Why It Matters**: At Amazon, the order fulfillment workflow FSM processes 1.6M orders/hour during peak with conditional branching based on order value, destination, Prime membership, and inventory availability. Orders over \$500 require fraud review (adds 2-4 hours), international shipments require customs clearance (adds 24-48 hours), and Prime orders get priority routing. Without FSM's guard conditions, implementing 47 branching rules would create unmaintainable if-else chains.
 
 ```typescript
 // Workflow engine with guard conditions for conditional branching
@@ -228,11 +228,11 @@ class OrderWorkflow {
         if (event === "validate") {
           // Guard condition: high-value orders go to fraud check
           if (this.context.totalAmount > 500) {
-            // => Order > $500: fraud check required
+            // => Order > \$500: fraud check required
             this.state = "FraudCheck";
             console.log("High-value order → Fraud check");
           } else {
-            // => Order ≤ $500: skip fraud check
+            // => Order ≤ \$500: skip fraud check
             this.state = "Processing";
             console.log("Standard order → Processing");
           }
@@ -273,14 +273,14 @@ class OrderWorkflow {
 
 // Usage: Conditional branching based on order value
 const lowValueOrder = new OrderWorkflow("ORD-001", 45.99, false, "US");
-// => totalAmount: $45.99, not Prime
+// => totalAmount: \$45.99, not Prime
 
 lowValueOrder.transition("validate");
 // => Pending → Processing (skips fraud check)
 console.log(lowValueOrder.getState()); // => Output: Processing
 
 const highValueOrder = new OrderWorkflow("ORD-002", 1200.5, true, "US");
-// => totalAmount: $1200.50, Prime member
+// => totalAmount: \$1200.50, Prime member
 
 highValueOrder.transition("validate");
 // => Pending → FraudCheck (high-value requires fraud check)
@@ -297,7 +297,7 @@ console.log(highValueOrder.getState()); // => Output: Processing
 
 Workflows need compensation logic when errors occur mid-flow (payment failed, inventory unavailable). FSMs track states for rollback to consistent states.
 
-**Why It Matters**: At Stripe, payment workflow FSMs handle 50M+ transactions daily with automatic rollback when errors occur. If a $10,000 payment moves from Pending → Authorized → Captured but the capture fails, the FSM automatically executes compensation: Captured → Refunding → Pending, releasing the authorized funds. Without FSM-based compensation, 2-3% of failed transactions (1M+ daily) would leave funds in inconsistent states requiring manual resolution at $15/incident cost.
+**Why It Matters**: At Stripe, payment workflow FSMs handle 50M+ transactions daily with automatic rollback when errors occur. If a \$10,000 payment moves from Pending → Authorized → Captured but the capture fails, the FSM automatically executes compensation: Captured → Refunding → Pending, releasing the authorized funds. Without FSM-based compensation, 2-3% of failed transactions (1M+ daily) would leave funds in inconsistent states requiring manual resolution at \$15/incident cost.
 
 ```typescript
 // Workflow with compensation (undo/rollback) logic
@@ -392,7 +392,7 @@ console.log(payment.getState()); // => Output: Pending
 
 Long-running workflows need timeout handling (user didn't complete checkout, approval didn't happen in SLA). FSMs track timing for automatic state transitions.
 
-**Why It Matters**: At Airbnb, booking workflows FSM use timeout-based state transitions to auto-cancel reservations after 10 minutes of inactivity in the Pending state. This releases $450M+ in held inventory daily (600K pending bookings × average $750/booking). Without timeout handling, pending bookings would block inventory indefinitely, reducing availability by 15-20% and costing $2.8M daily in lost bookings.
+**Why It Matters**: At Airbnb, booking workflows FSM use timeout-based state transitions to auto-cancel reservations after 10 minutes of inactivity in the Pending state. This releases \$450M+ in held inventory daily (600K pending bookings × average \$750/booking). Without timeout handling, pending bookings would block inventory indefinitely, reducing availability by 15-20% and costing \$2.8M daily in lost bookings.
 
 ```typescript
 // Workflow with timeout-based state transitions
@@ -756,7 +756,7 @@ console.log(player.getState()); // => Output: Paused
 
 FSMs with expensive state entry/exit actions benefit from caching computed results to avoid redundant operations.
 
-**Why It Matters**: At Shopify, product availability FSM recalculates inventory levels on every entry to the CheckingStock state. With 50K product lookups/second, this created 800K database queries/second. By caching inventory levels for 5 seconds, they reduced queries by 94% (48K → 3K queries/second) while maintaining 99.9% accuracy. Cache hit rate of 94% saved $120K/month in database costs.
+**Why It Matters**: At Shopify, product availability FSM recalculates inventory levels on every entry to the CheckingStock state. With 50K product lookups/second, this created 800K database queries/second. By caching inventory levels for 5 seconds, they reduced queries by 94% (48K → 3K queries/second) while maintaining 99.9% accuracy. Cache hit rate of 94% saved \$120K/month in database costs.
 
 ```typescript
 // FSM with state result caching
@@ -1145,7 +1145,7 @@ console.log(`node-1: ${node1.getState()}`); // => Output: Leader
 
 Distributed FSMs need distributed locks (Redis, ZooKeeper) to prevent concurrent state modifications from multiple processes.
 
-**Why It Matters**: At DoorDash, delivery FSMs coordinate across 50K+ active dashers with distributed locks preventing race conditions. When two dashers simultaneously try claiming the same delivery, the FSM uses Redis locks to ensure only one succeeds (lock acquisition timeout: 50ms). Without distributed locking, 3-5% of deliveries would experience double-assignment, costing $8M+ annually in redundant trips and customer refunds.
+**Why It Matters**: At DoorDash, delivery FSMs coordinate across 50K+ active dashers with distributed locks preventing race conditions. When two dashers simultaneously try claiming the same delivery, the FSM uses Redis locks to ensure only one succeeds (lock acquisition timeout: 50ms). Without distributed locking, 3-5% of deliveries would experience double-assignment, costing \$8M+ annually in redundant trips and customer refunds.
 
 ```typescript
 // FSM with distributed locking (simulated Redis lock)
@@ -1791,7 +1791,7 @@ runSagaWithRetries();
 
 Sagas need idempotent service calls to safely retry failed steps without duplicate side effects (double-charging, duplicate emails).
 
-**Why It Matters**: At Stripe, payment sagas use idempotency keys to prevent duplicate charges when retrying failed requests. Each saga step generates unique idempotency key (order_id + step_name + attempt_number) sent with API calls. If retry reaches Stripe after original succeeded, Stripe returns cached response (no duplicate charge). With 5-8% of payment requests retried, idempotency prevents $50M+ monthly in duplicate charges and customer complaints.
+**Why It Matters**: At Stripe, payment sagas use idempotency keys to prevent duplicate charges when retrying failed requests. Each saga step generates unique idempotency key (order_id + step_name + attempt_number) sent with API calls. If retry reaches Stripe after original succeeded, Stripe returns cached response (no duplicate charge). With 5-8% of payment requests retried, idempotency prevents \$50M+ monthly in duplicate charges and customer complaints.
 
 ```typescript
 // Saga with idempotency guarantees
@@ -2356,7 +2356,7 @@ testCircuit();
 
 FSMs integrate with ML models to make state transition decisions based on predictions (fraud detection, anomaly detection).
 
-**Why It Matters**: At PayPal, fraud detection FSMs use ML models to score transactions and determine state transitions. Transactions move through: Initiated → MLScoring → (Low Risk → Approved | Medium Risk → ManualReview | High Risk → Rejected). ML model predicts fraud probability (0-1 score) in real-time (<50ms latency). With 450M daily transactions, ML-FSM integration catches 92% of fraud (vs 78% rule-based) while reducing false positives by 40%, saving $400M+ annually in fraud losses and customer friction.
+**Why It Matters**: At PayPal, fraud detection FSMs use ML models to score transactions and determine state transitions. Transactions move through: Initiated → MLScoring → (Low Risk → Approved | Medium Risk → ManualReview | High Risk → Rejected). ML model predicts fraud probability (0-1 score) in real-time (<50ms latency). With 450M daily transactions, ML-FSM integration catches 92% of fraud (vs 78% rule-based) while reducing false positives by 40%, saving \$400M+ annually in fraud losses and customer friction.
 
 ```typescript
 // FSM with ML model integration for state transitions

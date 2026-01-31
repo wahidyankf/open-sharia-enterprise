@@ -69,7 +69,7 @@ graph TD
 
 **Key Takeaway**: Organize monoliths by domain modules with separate database schemas. Use anti-corruption layers for cross-module communication. This architecture enables incremental extraction to microservices when scaling demands it.
 
-**Why It Matters**: Modular monoliths prevent "big ball of mud" while deferring microservices complexity. When Shopify analyzed their architecture before scaling, Component diagrams showing tangled dependencies (every module calling every other module directly) revealed they couldn't extract microservices safely. Refactoring to modular monolith with anti-corruption layers took 6 months but enabled extracting checkout service (15% of traffic) as separate microservice without breaking existing functionality—generating $2B additional revenue by handling Black Friday traffic that would have overwhelmed the monolith.
+**Why It Matters**: Modular monoliths prevent "big ball of mud" while deferring microservices complexity. When Shopify analyzed their architecture before scaling, Component diagrams showing tangled dependencies (every module calling every other module directly) revealed they couldn't extract microservices safely. Refactoring to modular monolith with anti-corruption layers took 6 months but enabled extracting checkout service (15% of traffic) as separate microservice without breaking existing functionality—generating \$2B additional revenue by handling Black Friday traffic that would have overwhelmed the monolith.
 
 ### Example 32: Event Sourcing Components
 
@@ -121,7 +121,7 @@ graph TD
 
 **Key Takeaway**: Store events (state changes) rather than current state. Rebuild state by replaying events. Maintain separate read models for query performance. This enables temporal queries ("what was state at time T?") and complete audit trails.
 
-**Why It Matters**: Event sourcing is critical for domains requiring audit trails and temporal queries. When HSBC implemented event sourcing for trade settlements, Component diagrams showing event flow revealed they could reduce settlement disputes by 80% because they had complete history of every state change with timestamp. Previously, disputes required manual investigation (3-5 days); with event sourcing, replaying events to disputed timestamp proved state definitively (5 minutes). This saved $200M annually in dispute resolution costs.
+**Why It Matters**: Event sourcing is critical for domains requiring audit trails and temporal queries. When HSBC implemented event sourcing for trade settlements, Component diagrams showing event flow revealed they could reduce settlement disputes by 80% because they had complete history of every state change with timestamp. Previously, disputes required manual investigation (3-5 days); with event sourcing, replaying events to disputed timestamp proved state definitively (5 minutes). This saved \$200M annually in dispute resolution costs.
 
 ### Example 33: Hexagonal Architecture (Ports and Adapters)
 
@@ -348,7 +348,7 @@ graph TD
 
 **Key Takeaway**: Implement rate limiting at API gateway layer. Use distributed store (Redis) for counters. Enforce per-user quotas with different limits for free vs paid tiers. Return 429 status with Retry-After header when limit exceeded.
 
-**Why It Matters**: Rate limiting prevents denial-of-service scenarios and enables business models. When Twitter API implemented rate limiting, Component diagrams showing quota enforcement revealed they could differentiate free tier (300 requests/15min) from paid tier (unlimited). This generated $150M annual API revenue while protecting infrastructure from abuse. Without rate limiting, single malicious user could exhaust resources affecting all users—rate limiting reduced outages caused by API abuse from weekly to zero.
+**Why It Matters**: Rate limiting prevents denial-of-service scenarios and enables business models. When Twitter API implemented rate limiting, Component diagrams showing quota enforcement revealed they could differentiate free tier (300 requests/15min) from paid tier (unlimited). This generated \$150M annual API revenue while protecting infrastructure from abuse. Without rate limiting, single malicious user could exhaust resources affecting all users—rate limiting reduced outages caused by API abuse from weekly to zero.
 
 ### Example 37: Cache Layers and Invalidation
 
@@ -538,7 +538,7 @@ graph TD
 
 **Key Takeaway**: Deploy containers across multiple availability zones for high availability. Use managed services (RDS, S3, CloudFront) to reduce operational overhead. Specify instance types to communicate capacity planning.
 
-**Why It Matters**: Deployment topology affects availability and cost. When a startup deployed all instances in one availability zone, Component diagrams showing single-AZ deployment helped them realize that AWS AZ failures (quarterly) caused total outages. Multi-AZ deployment increased costs by 10% but improved availability from 99% to 99.9%, reducing revenue loss from outages by $500K annually.
+**Why It Matters**: Deployment topology affects availability and cost. When a startup deployed all instances in one availability zone, Component diagrams showing single-AZ deployment helped them realize that AWS AZ failures (quarterly) caused total outages. Multi-AZ deployment increased costs by 10% but improved availability from 99% to 99.9%, reducing revenue loss from outages by \$500K annually.
 
 ### Example 40: Kubernetes Deployment
 
@@ -809,7 +809,7 @@ graph TD
 
 **Key Takeaway**: Deploy identical application stacks in multiple regions. Use GeoDNS to route users to nearest region. Implement global database replication for data availability. Use distributed cache to minimize cross-region latency.
 
-**Why It Matters**: Multi-region active-active architecture provides both performance and disaster recovery. When AWS US-East-1 experienced major outage (2021), companies with multi-region deployment remained operational—traffic automatically routed to EU and Asia regions. Companies with single-region deployment experienced 100% downtime (4 hours, $10M revenue loss). Multi-region deployment costs 3x infrastructure but provides 99.99% availability vs 99.9% single-region (52 minutes downtime/year vs 9 hours).
+**Why It Matters**: Multi-region active-active architecture provides both performance and disaster recovery. When AWS US-East-1 experienced major outage (2021), companies with multi-region deployment remained operational—traffic automatically routed to EU and Asia regions. Companies with single-region deployment experienced 100% downtime (4 hours, \$10M revenue loss). Multi-region deployment costs 3x infrastructure but provides 99.99% availability vs 99.9% single-region (52 minutes downtime/year vs 9 hours).
 
 ### Example 44: Serverless Deployment (AWS Lambda)
 
@@ -874,7 +874,7 @@ graph TD
 
 **Key Takeaway**: Deploy business logic as Lambda functions. Use API Gateway for HTTP endpoints. Use EventBridge for event-driven invocations. Specify runtime and memory for each function. Leverage auto-scaling—no capacity planning needed.
 
-**Why It Matters**: Serverless economics change cost structure from fixed to variable. When a news site implemented serverless architecture, deployment diagrams showing Lambda functions enabled them to handle traffic spikes (breaking news: 10,000 RPS) without provisioning infrastructure. Costs during normal traffic (100 RPS): $50/month. Costs during spike: $500/day (vs $5,000/month reserved EC2 instances sitting idle 95% of time). Serverless reduced average monthly costs by 80% while improving spike handling.
+**Why It Matters**: Serverless economics change cost structure from fixed to variable. When a news site implemented serverless architecture, deployment diagrams showing Lambda functions enabled them to handle traffic spikes (breaking news: 10,000 RPS) without provisioning infrastructure. Costs during normal traffic (100 RPS): \$50/month. Costs during spike: \$500/day (vs \$5,000/month reserved EC2 instances sitting idle 95% of time). Serverless reduced average monthly costs by 80% while improving spike handling.
 
 ### Example 45: Hybrid Cloud Deployment
 
@@ -1000,7 +1000,7 @@ sequenceDiagram
     Client->>OrderService: 1. POST /orders
     OrderService->>OrderService: 2. Create order (status: pending)
     OrderService->>PaymentService: 3. POST /payments/reserve
-    PaymentService->>PaymentService: 4. Reserve $100
+    PaymentService->>PaymentService: 4. Reserve \$100
     PaymentService->>OrderService: 5. Payment reserved (payment_id: 123)
 
     OrderService->>InventoryService: 6. POST /inventory/reserve
@@ -1010,7 +1010,7 @@ sequenceDiagram
     Note over OrderService: Saga failure - begin compensation
 
     OrderService->>PaymentService: 9. POST /payments/123/cancel
-    PaymentService->>PaymentService: 10. Release $100 reservation
+    PaymentService->>PaymentService: 10. Release \$100 reservation
     PaymentService->>OrderService: 11. Payment cancelled
 
     OrderService->>OrderService: 12. Update order (status: failed)
@@ -1044,7 +1044,7 @@ sequenceDiagram
     participant AnalyticsService
 
     OrderService->>OrderService: 1. Create order (order_id: 456)
-    OrderService->>EventBus: 2. Publish event<br/>Topic: orders<br/>Event: order.created<br/>Payload: {order_id: 456, user_id: 789, total: $50}
+    OrderService->>EventBus: 2. Publish event<br/>Topic: orders<br/>Event: order.created<br/>Payload: {order_id: 456, user_id: 789, total: \$50}
 
     EventBus->>InventoryService: 3. Deliver event (offset: 12345)
     EventBus->>EmailService: 4. Deliver event (offset: 12345)
@@ -1056,7 +1056,7 @@ sequenceDiagram
     EmailService->>EmailService: 8. Send confirmation email<br/>(user_id: 789)
     EmailService->>EventBus: 9. Commit offset 12345
 
-    AnalyticsService->>AnalyticsService: 10. Update metrics<br/>(total: $50)
+    AnalyticsService->>AnalyticsService: 10. Update metrics<br/>(total: \$50)
     AnalyticsService->>EventBus: 11. Commit offset 12345
 
     Note over EventBus: All consumers processed event successfully
@@ -1088,7 +1088,7 @@ sequenceDiagram
     participant Transaction
     participant Database
 
-    Client->>AppServer: 1. POST /transfer<br/>{from: A, to: B, amount: $100}
+    Client->>AppServer: 1. POST /transfer<br/>{from: A, to: B, amount: \$100}
     AppServer->>DatabasePool: 2. Get connection
     DatabasePool->>AppServer: 3. Connection acquired
 
@@ -1096,8 +1096,8 @@ sequenceDiagram
     Transaction->>Database: 5. Start transaction<br/>(isolation: READ COMMITTED)
 
     AppServer->>Transaction: 6. SELECT balance FROM accounts WHERE id=A FOR UPDATE
-    Transaction->>Database: 7. Lock row A, read balance ($150)
-    Database->>AppServer: 8. balance: $150
+    Transaction->>Database: 7. Lock row A, read balance (\$150)
+    Database->>AppServer: 8. balance: \$150
 
     AppServer->>Transaction: 9. UPDATE accounts SET balance=50 WHERE id=A
     Transaction->>Database: 10. Write to transaction log (uncommitted)
@@ -1119,17 +1119,17 @@ sequenceDiagram
 
 1-3. **Connection management**: Client requests transfer, AppServer gets database connection
 4-5. **Transaction start**: BEGIN TRANSACTION starts transaction with READ COMMITTED isolation
-6-8. **Row locking**: SELECT FOR UPDATE locks account A row, reads balance ($150)
-9-10. **Tentative update**: UPDATE modifies balance to $50 (uncommitted, in transaction log)
+6-8. **Row locking**: SELECT FOR UPDATE locks account A row, reads balance (\$150)
+9-10. **Tentative update**: UPDATE modifies balance to \$50 (uncommitted, in transaction log)
 11-13. **Deadlock**: Attempt to lock account B times out (another transaction holds lock)
-14-15. **Rollback**: ROLLBACK discards transaction log, releases locks, restores balance to $150
+14-15. **Rollback**: ROLLBACK discards transaction log, releases locks, restores balance to \$150
 16-17. **Error handling**: Connection returned to pool, error returned to client
 
 **Design Rationale**: SELECT FOR UPDATE pessimistically locks rows preventing concurrent modifications. Transaction log enables rollback—uncommitted changes exist only in log, not database. Deadlock detection prevents infinite waits.
 
 **Key Takeaway**: Show transaction lifecycle (BEGIN, operations, COMMIT/ROLLBACK) in sequence diagrams. Include locking (SELECT FOR UPDATE), rollback scenarios, and connection pool management. Transactions ensure atomicity.
 
-**Why It Matters**: Transaction boundaries affect correctness and performance. When a fintech company analyzed their transfer logic, sequence diagrams revealed they forgot SELECT FOR UPDATE locks—concurrent transfers could read same balance ($100), both decrement by $50, both write $50 (losing one transfer). Adding SELECT FOR UPDATE prevented race conditions, reducing "lost transfers" from 0.1% (100/day at 100K daily transfers) to zero.
+**Why It Matters**: Transaction boundaries affect correctness and performance. When a fintech company analyzed their transfer logic, sequence diagrams revealed they forgot SELECT FOR UPDATE locks—concurrent transfers could read same balance (\$100), both decrement by \$50, both write \$50 (losing one transfer). Adding SELECT FOR UPDATE prevented race conditions, reducing "lost transfers" from 0.1% (100/day at 100K daily transfers) to zero.
 
 ### Example 50: API Rate Limiting with Backoff
 
@@ -1823,7 +1823,7 @@ Database:      50-500ms   (disk I/O, query execution)
 
 **Key Takeaway**: Implement multiple cache tiers with different TTLs. Check caches in order of speed (L1 → L2 → L3 → DB). Populate higher tiers on lower-tier hits. Use cache warmer for predictable hot data. This optimizes both read latency and database load.
 
-**Why It Matters**: Multi-tier caching dramatically reduces costs at scale. When Pinterest analyzed their caching architecture, Component diagrams showing 3-tier cache (L1 in-memory, L2 Redis, L3 memcache) revealed 99.9% of requests served from cache (only 0.1% hit database). This reduced database load from 500K QPS to 500 QPS, deferring $2M database scaling costs for 2 years. L1 cache (in-memory) alone prevented 80% of Redis calls, reducing Redis costs by $100K annually.
+**Why It Matters**: Multi-tier caching dramatically reduces costs at scale. When Pinterest analyzed their caching architecture, Component diagrams showing 3-tier cache (L1 in-memory, L2 Redis, L3 memcache) revealed 99.9% of requests served from cache (only 0.1% hit database). This reduced database load from 500K QPS to 500 QPS, deferring \$2M database scaling costs for 2 years. L1 cache (in-memory) alone prevented 80% of Redis calls, reducing Redis costs by \$100K annually.
 
 ### Example 60: Zero-Downtime Deployment Pipeline
 

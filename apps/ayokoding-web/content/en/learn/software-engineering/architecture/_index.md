@@ -5,9 +5,9 @@ date: 2026-01-30T00:00:00+07:00
 draft: false
 ---
 
-- [C4 Model](/en/learn/software-engineering/architecture/c4-model)
-  - [By Example](/en/learn/software-engineering/architecture/c4-model/by-example)
-  - [Overview](/en/learn/software-engineering/architecture/c4-model/overview)
+- [C4 Model](/en/learn/software-engineering/architecture/c4-architecture-model)
+  - [By Example](/en/learn/software-engineering/architecture/c4-architecture-model/by-example)
+  - [Overview](/en/learn/software-engineering/architecture/c4-architecture-model/overview)
 - [Overview](/en/learn/software-engineering/architecture/overview)
 - [Domain Driven Design Ddd](/en/learn/software-engineering/architecture/domain-driven-design-ddd)
   - [By Example](/en/learn/software-engineering/architecture/domain-driven-design-ddd/by-example)
