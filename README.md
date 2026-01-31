@@ -117,7 +117,7 @@ open-sharia-enterprise/
 
 This project uses **Nx** to manage applications and libraries:
 
-- **`apps/`** - Deployable applications (current: `ose-platform-web`, `ayokoding-web`, [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/))
+- **`apps/`** - Deployable applications (current: [`ose-platform-web`](./apps/ose-platform-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/))
 - **`libs/`** - Reusable libraries with language prefixes (`ts-*`, future: `java-*`, `py-*`) - currently empty
 - **`apps-labs/`** - Experimental apps and POCs (framework evaluation, language exploration) - currently empty
 
