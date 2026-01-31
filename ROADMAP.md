@@ -1,88 +1,272 @@
 # 🗺️ Development Roadmap
 
-This project is being developed with a **phased approach** to establish strong Sharia-compliance foundations and gradually expand enterprise capabilities:
+This project is being developed with a **progressive complexity approach** - starting simple, testing thoroughly, and scaling up systematically:
 
-## 🔬 Phase 0: Setup and Research
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2', 'primaryTextColor':'#000', 'primaryBorderColor':'#000', 'lineColor':'#029E73', 'secondaryColor':'#DE8F05', 'tertiaryColor':'#CC78BC', 'clusterBkg':'#f5f5f5', 'clusterBorder':'#000', 'edgeLabelBackground':'#fff'}}}%%
+graph TB
+    Start([Start]) --> Phase0
 
-Establishing the foundational infrastructure and conducting research to inform architectural decisions. This phase is building the solid foundation for a life-long project—thoughtful groundwork now ensures we can build a trustworthy, secure, and compliant enterprise platform.
+    Phase0["<b>Phase 0</b><br/>Repository Setup &<br/>Knowledge Base<br/><i>(Current Phase)</i>"]
+    Phase0 --> P0Output["✅ Repository Infrastructure<br/>✅ AI Agents & Governance<br/>✅ ayokoding.com Launch<br/>✅ oseplatform.com Launch"]
+    P0Output --> Phase1
 
-**Two parallel tracks running simultaneously:**
+    Phase1["<b>Phase 1</b><br/>Organic Lever<br/><i>Productivity Tracker</i><br/>(Individual Users)"]
+    Phase1 --> P1Output["✅ organiclever.com Launch<br/>✅ Android & iOS Apps<br/>✅ Deployment Mastery<br/>✅ Security Practice Ground"]
+    P1Output --> Decision1{Learnings<br/>Applied?}
+    Decision1 -->|Yes| Phase2
+    Decision1 -->|Iterate| Phase1
 
-**🏗️ Enterprise Platform Track:**
+    Phase2["<b>Phase 2</b><br/>SMB Application<br/><i>Small & Medium Business</i><br/>(Team Users)"]
+    Phase2 --> P2Output["✅ Business Operations<br/>✅ Multi-user Validated<br/>✅ Moderate Complexity<br/>✅ SMB Patterns"]
+    P2Output --> Decision2{Learnings<br/>Applied?}
+    Decision2 -->|Yes| Phase3
+    Decision2 -->|Iterate| Phase2
 
-- 🛠️ **Development Tooling & Processes** - Infrastructure (Volta, formatting, git hooks), documentation framework (Diátaxis, Obsidian), AI agents, planning system
-- 🏗️ **Architecture & Design** - Monorepo architecture (Nx workspace), core patterns, technology evaluation
-- 🤖 **AI Research** - AI/ML applications, LLM integration, intelligent automation, AI-assisted development
-- 🔍 **Sharia Compliance Research** - Evaluating global Islamic standards, regional variations, and multi-jurisdiction requirements
-- ☁️ **Infrastructure Creation** - Cloud infrastructure, deployment pipelines, CI/CD setup
+    Phase3["<b>Phase 3</b><br/>Enterprise Application<br/><i>Large Organizations</i><br/>(Enterprise Scale)"]
+    Phase3 --> P3Output["✅ Full ERP Capabilities<br/>✅ Multi-jurisdiction<br/>✅ Enterprise Security<br/>✅ Complete Platform"]
 
-**🔐 Security & Compliance Infrastructure Track (IN PARALLEL):**
+    P3Output --> End([Platform Complete])
 
-- 🛡️ **Security Operations Tooling** - Building monitoring, incident response, and security testing capabilities from the ground up
-- 🎯 **Red Teaming Infrastructure** - Offensive security tools to continuously test and strengthen platform defenses as we build
-- 📋 **Compliance Automation** - Automated validation, audit trails, and regulatory reporting tools being developed alongside platform features
-- 🔒 **DevSecOps Research** - Information security frameworks, threat modeling, compliance as code, security operations foundations
+    Phase1 -.->|As Needed| Sharia1["Sharia Compliance<br/>Individual Use Cases"]
+    Phase1 -.->|As Needed| Security1["Security<br/>Retail Scale"]
 
-## 📊 Phase 1: ERP Foundation
+    Phase2 -.->|As Needed| Sharia2["Sharia Compliance<br/>Business Operations"]
+    Phase2 -.->|As Needed| Security2["Security<br/>SMB Scale"]
 
-Building a solid enterprise foundation with ERP capabilities to support core business operations:
+    Phase3 -.->|As Needed| Sharia3["Sharia Compliance<br/>Enterprise Scenarios"]
+    Phase3 -.->|As Needed| Security3["Security<br/>Enterprise Grade"]
 
-- 💰 **Financial Management** - Accounting & finance, asset management, reporting & analytics with Sharia compliance
-- 🔗 **Operations Management** - Supply chain (halal-compliant), inventory control, procurement & vendor management
-- 👥 **People & Customer Management** - HR & payroll (Sharia-compliant), sales & CRM, customer relationships
-- 🕌 **Execution & Compliance** - Project management, resource allocation, Sharia compliance framework
+    style Phase0 fill:#0173B2,stroke:#000,stroke-width:2px,color:#fff
+    style Phase1 fill:#029E73,stroke:#000,stroke-width:2px,color:#fff
+    style Phase2 fill:#DE8F05,stroke:#000,stroke-width:2px,color:#000
+    style Phase3 fill:#CC78BC,stroke:#000,stroke-width:2px,color:#000
+    style Start fill:#f5f5f5,stroke:#000,stroke-width:2px
+    style End fill:#f5f5f5,stroke:#000,stroke-width:2px
 
-## 🌍 Phase 2: Enterprise Domain Expansion
+    classDef outputStyle fill:#ECE133,stroke:#000,stroke-width:1px,color:#000
+    class P0Output,P1Output,P2Output,P3Output outputStyle
 
-Expand across all enterprise domains following established Islamic standards:
+    classDef asNeededStyle fill:#56B4E9,stroke:#000,stroke-width:1px,stroke-dasharray: 5 5,color:#000
+    class Sharia1,Sharia2,Sharia3,Security1,Security2,Security3 asNeededStyle
+```
 
-**🏦 Financial Services:**
+## 🏗️ Phase 0: Repository Setup & Knowledge Base
 
-- 💳 Payments and transaction processing (halal-compliant)
-- 🏦 Banking services and lending (Sharia-compliant contracts: murabaha, ijarah, etc.)
-- 📊 Investment and wealth management (Islamic finance principles)
-- 💰 Zakat calculation and distribution systems
+**Current Phase** - Establishing the foundational infrastructure, governance, and launching initial static websites to build online presence.
 
-**🛍️ Commerce & Trade:**
+**Repository Infrastructure:**
 
-- 🛒 E-commerce platforms (halal product verification)
-- 📦 Supply chain management (halal certification tracking)
-- 🤝 B2B marketplaces (Shariah-compliant contracts)
-- 🌐 Cross-border trade (Islamic trade finance)
+- 🛠️ **Development Tooling & Processes** - Infrastructure (Volta, formatting, git hooks), CI/CD pipelines
+- 📚 **Documentation Framework** - Diátaxis structure, Obsidian compatibility, markdown standards
+- 🤖 **AI Agents & Automation** - Specialized agents for content creation, validation, and fixing
+- 📋 **Governance Structure** - Conventions, principles, development practices
+- 📝 **Planning Systems** - Project planning workflows, delivery tracking
 
-**🤝 Cooperatives & Community:**
+**Website Launches:**
 
-- 🏘️ Islamic cooperatives management (musharakah, mudharabah)
-- 💝 Community finance and mutual aid (takaful principles)
-- 📱 Microfinance and social impact (Shariah-compliant)
-- 🎯 Waqf and endowment management
+- 🌐 [**ayokoding.com**](https://ayokoding.com) ([`apps/ayokoding-web/`](./apps/ayokoding-web/)) - Bilingual educational platform (Indonesian/English) using Hugo + Hextra theme. Programming tutorials, AI guides, security content
+- 🏢 [**oseplatform.com**](https://oseplatform.com) ([`apps/ose-platform-web/`](./apps/ose-platform-web/)) - Platform marketing website using Hugo + PaperMod theme. Project updates, announcements, landing page
 
-**🌏 Global Compliance Framework:**
+**CLI Tools:**
 
-- 🕌 International Islamic standards (based on Phase 0 research)
-- 🌍 Multi-jurisdiction compliance (various countries and regions)
-- 📖 Regional Shariah interpretations and requirements
-- ✈️ Cross-border operations and regulatory harmonization
+- 🛠️ **ayokoding-cli** ([`apps/ayokoding-cli/`](./apps/ayokoding-cli/)) - Golang CLI for content automation (title updates, navigation generation)
+- 🦏 **rhino-cli** ([`apps/rhino-cli/`](./apps/rhino-cli/)) - Golang CLI for repository management (Repository Hygiene & INtegration Orchestrator)
+- 🔐 **Golang Foundation** - Golang will be used extensively on the information security side of the platform
 
-## 🔐 Security & Compliance Infrastructure (Evolving in Parallel)
+**Strategic Value:**
 
-**These capabilities are being developed ALONGSIDE the enterprise platform from Phase 0 onward—not as future additions, but as parallel infrastructure that grows with the platform:**
+- Early online presence and SEO building
+- Educational content establishment (ayokoding.com)
+- Platform marketing and visibility (oseplatform.com)
+- Deployment pipeline validation with low-risk static sites
+- Audience building before Phase 1 product launch
 
-- 🛡️ **Security Operations Tooling** - Built-in monitoring and incident response capabilities to protect the enterprise platform and its users
-- 🎯 **Red Teaming Infrastructure** - Offensive security tools to continuously test and strengthen platform defenses as we build
-- 📋 **Compliance Automation** - Automated validation, audit trails, and regulatory reporting to maintain Sharia and regulatory compliance across the platform
-- 🔐 **Enterprise-Grade Security** - Robust security operations built-in from the start, not bolted on later
+## 🚀 Phase 1: Organic Lever - Productivity Tracker (Retail/Individual)
 
-**Parallel Development Approach:** As we build each platform feature (ERP modules, financial services, commerce, cooperatives), the corresponding security monitoring, compliance validation, and testing tools are developed in tandem. Security and compliance infrastructure evolves with the platform, ensuring they're architected together from day one.
+**First Application Release** - Full-stack productivity tracking application for individual users. Low-risk foundation building with real-world validation.
+
+**Product Deliverables:**
+
+- 🌐 [**organiclever.com**](https://organiclever.com) - Marketing website and web application
+- 📱 **Android App** - Mobile productivity tracker
+- 🍎 **iOS App** - Mobile productivity tracker
+
+**Tech Stack:**
+
+- ☕ **Backend**: Java + Spring Boot
+  - **Strategic Choice**: Testing acceptability and preference of this widely-used financial industry stack
+  - Evaluating suitability for future financial applications (Phase 2/3) in low-stakes environment
+- ⚛️ **Web Frontend**: Next.js + TypeScript
+- 📱 **Mobile**: Flutter + Dart (single codebase for Android & iOS)
+
+**Architecture:**
+
+- 🏛️ **Monolith** - Single deployable service ("until it hurts")
+  - Simpler development, deployment, and maintenance
+  - Faster iteration and learning
+  - Appropriate for individual user scale
+  - Avoid premature optimization and over-engineering
+
+**Infrastructure:**
+
+- ☸️ **Kubernetes** - Container orchestration introduced early
+  - Learn K8s deployment, scaling, and management in low-stakes environment
+  - Establish monitoring and alerting practices from day one
+  - Build K8s familiarity before modular services in Phase 2
+  - Even monoliths benefit from K8s features (auto-scaling, health checks, rolling updates)
+- 🔄 **Production CI/CD Foundation** - Establish production-grade continuous integration and deployment
+  - Automated testing and deployment pipelines
+  - Build and release automation for web, Android, and iOS
+  - Production deployment practices and rollback strategies
+  - Foundation for Phase 2/3 multi-service deployments
+
+**Strategic Value:**
+
+- ✅ **Knowledge Base Exploration** - Productivity tracking requires storing/querying productivity data, patterns, and insights - this is a "small-scale knowledge base" that teaches fundamentals before enterprise ERP scale
+  - ERP is the core of enterprise and tightly related to knowledge base management
+  - Learn knowledge structuring, querying, and retrieval at individual scale
+  - Test knowledge management patterns that will scale to Phase 3 ERP
+- ✅ **Revenue Generation** - Generate revenue from individual users to fund Phase 2 expansion and contribute to Phase 3 certification budget
+- ✅ **Small-Scale Deployment Learning** - Master website + mobile app deployment processes before SMB/enterprise scale
+- ✅ **Scratch Your Own Itch** - Individual productivity is immediately useful for day-to-day work, ensuring real-world testing
+- ✅ **Security Practice Ground** - Learn and apply security measures in low-stakes environment with minimum risk
+- ✅ **Full-Stack Validation** - Prove web + mobile architecture works before scaling to business applications
+- ✅ **Pattern Establishment** - Development practices that scale to SMB and enterprise phases
+- ✅ **Foundation Testing** - Validate monorepo, AI agents, CI/CD pipelines in production
+
+**Core Features:**
+
+- 📊 Productivity tracking and analytics
+- ⏱️ Time management and goal setting
+- 📈 Personal performance insights
+- 🕌 Sharia-compliant productivity (prayer time integration, halal activity tracking)
+- 📱 Cross-platform sync (web, Android, iOS)
+
+**Technical Learning Objectives:**
+
+- **Tech Stack Evaluation** - Validate Java + Spring Boot acceptability for future financial applications
+- **Kubernetes Fundamentals** - Master K8s deployment, scaling, monitoring, and alerting in low-stakes environment
+- Mobile app deployment (Google Play Store, Apple App Store)
+- Cross-platform development and architecture
+- Observability practices (monitoring, logging, alerting, distributed tracing)
+- Security appropriate for retail scale (developed as needed)
+- Sharia compliance patterns for individual use cases (developed as needed)
+- App store review processes and compliance
+
+## 📊 Phase 2: SMB Application (Small & Medium Business)
+
+**Second Product Release** - Building on Organic Lever's foundation, expanding to business operations with moderate complexity.
+
+**Scope:** TBD based on Phase 1 learnings
+
+**Tech Stack:** TBD based on Phase 1 learnings and evaluation
+
+**Likely Additions:**
+
+- 💧 **Elixir** - Middleware layer for scalability, fault tolerance, and real-time processing
+  - Message processing and event streaming
+  - Concurrent operations for multi-user SMB scenarios
+  - Building on BEAM VM capabilities for high availability
+- ⚡ **Kotlin or F#** - Modern language for business logic and domain modeling
+  - **Kotlin**: JVM-based, seamless integration with Java ecosystem, functional + OO hybrid
+  - **F#**: .NET-based, functional-first, strong type safety for financial logic
+  - Choice determined by Phase 1 Java evaluation and SMB requirements
+
+**Architecture:**
+
+- 🏗️ **Modular Services** - Transition from Phase 1 monolith to modular architecture
+  - Break apart monolith as scaling and complexity demands
+  - Service-oriented thinking and boundaries
+  - Foundation for microservices in Phase 3
+
+**Infrastructure:**
+
+- ☸️ **Kubernetes** - Building on Phase 1 K8s experience
+- Apply K8s knowledge to orchestrate multiple modular services
+- Scale monitoring and alerting for multi-service architecture
+- Advanced K8s patterns for SMB scale (resource quotas, network policies)
+
+**Strategic Value:**
+
+- 💰 **Critical Revenue Generation** - SMB customer revenue must fund Phase 3's significant certification budget (compliance, regulatory, security certifications)
+- 📈 **Business Model Validation** - Prove sustainable business model at SMB scale before enterprise investment
+
+**Progressive Development:**
+
+- **Medium-Scale Knowledge Base** - Building on Phase 1 knowledge management patterns
+  - Business operations data and workflows
+  - Multi-user knowledge sharing and collaboration
+  - More complex queries and relationships
+- Sharia compliance for business operations (developed as needed)
+- Security infrastructure for SMB scale (developed as needed)
+- Multi-user capabilities and team collaboration
+- Business-specific features and workflows
+
+## 🏢 Phase 3: Enterprise Application (Large Organizations)
+
+**Final Product Release** - Full enterprise-grade capabilities with maximum complexity and scale.
+
+**Scope:** TBD based on Phase 2 learnings
+
+**Tech Stack:** TBD based on Phase 2 learnings and evaluation
+
+**Critical Business Reality:**
+
+- 💰 **Significant Certification Budget Required**
+  - Multi-jurisdiction compliance certifications
+  - Sharia compliance certifications from various Islamic authorities
+  - Financial services regulatory certifications (banking, payments, investment)
+  - Security certifications (ISO 27001, SOC 2, PCI DSS, etc.)
+  - Industry-specific compliance and audit requirements
+- ⚠️ **Phase 1 and Phase 2 Success is Critical** - Revenue from individual users (Phase 1) and SMB customers (Phase 2) must fund Phase 3 certification costs
+- 📊 **Sustainable Business Model** - Each phase must generate sufficient revenue to fund the next phase's requirements
+
+**Likely Continuations:**
+
+- 💧 **Elixir** - Advanced middleware patterns from Phase 2, scaled for enterprise
+  - Distributed systems and microservices architecture
+  - High-throughput financial transaction processing
+  - Enterprise-grade fault tolerance and reliability
+- ⚡ **Kotlin or F#** - Continuation from Phase 2 with enterprise-scale patterns
+  - Complex business logic for financial services and ERP
+  - Multi-jurisdiction compliance and regulatory requirements
+  - Advanced domain modeling for enterprise operations
+
+**Architecture:**
+
+- 🌐 **Distributed Microservices** - Mature modular architecture from Phase 2
+  - Domain-driven design and bounded contexts
+  - Event-driven architecture for complex workflows
+  - Service mesh for inter-service communication
+
+**Infrastructure:**
+
+- ☸️ **Kubernetes** - Building on Phase 2 K8s experience for enterprise scale
+- Advanced orchestration, multi-cluster, and high-availability configurations
+- Service mesh, observability, and distributed tracing
+
+**Progressive Development:**
+
+- **Enterprise-Scale Knowledge Base** - Core of ERP functionality
+  - Full ERP capabilities built on mature knowledge management patterns from Phase 1/2
+  - Complex knowledge graphs for financial services, operations, compliance
+  - Multi-jurisdiction regulatory and compliance knowledge
+  - Domain-driven knowledge modeling for enterprise operations
+- Complete Sharia compliance research for enterprise scenarios (developed as needed)
+- Enterprise-grade security and compliance automation (developed as needed)
+- Multi-jurisdiction support and international standards
+- Advanced financial services, ERP, and domain-specific modules
 
 ## 💭 Why This Approach?
 
-- 🔬 **Research before building** - Phase 0 establishes foundations through global compliance, security, and AI research before implementation
-- 🌍 **Global from the start** - Designed for multi-jurisdiction support and international Islamic standards from day one
-- 🏗️ **ERP as foundation** - Enterprise Resource Planning provides core infrastructure for all business operations across domains
-- 🕌 **Sharia-compliance from day one** - Built-in compliance architecture following established Islamic standards, not bolt-on features
-- 🔐 **Parallel security infrastructure** - Security operations, red teaming tools, and compliance automation are developed ALONGSIDE platform features from Phase 0 onward—not added later, but built together from the start
-- 🛡️ **Security by design** - DevSecOps and compliance-as-code integrated from the start, ensuring security and compliance are architectural foundations
-- 📈 **Domain expansion over geographic expansion** - Start with ERP core, then expand to finance, commerce, cooperatives globally rather than one region at a time
-- ⚖️ **Gradual expansion** - Phased approach reduces complexity while ensuring quality across all enterprise domains
-- 🏗️ **Long-term thinking** - Building solid global enterprise foundations now, with security and compliance infrastructure that evolves in parallel with the platform
+- 📈 **Progressive Complexity** - Start simple (individuals), scale to moderate (SMB), then tackle enterprise complexity
+- 🧪 **Real-World Testing** - Each phase validates the system with actual users before scaling up
+- 🎯 **Minimum Risk** - Organic Lever tests infrastructure without enterprise stakes
+- 🔄 **Learn and Iterate** - Feedback from retail informs SMB; SMB learnings inform enterprise
+- 💰 **Financial Sustainability** - Phase 3 requires significant certification budget (multi-jurisdiction compliance, Sharia certifications, financial services regulations, security certifications). Phase 1 and Phase 2 revenue must fund Phase 3 certification costs - making early-phase success critical for long-term viability
+- 🛠️ **Just-in-Time Research** - Sharia compliance and security developed as needed for each phase, not upfront
+- 🏗️ **Foundation First** - Phase 0 establishes repository governance before building products
+- ⚖️ **Proven Foundation** - Each phase proves the architecture works before adding complexity
+- 🚀 **Early Validation** - Get to market faster with Organic Lever, validate before enterprise investment
+- 📊 **Revenue-Funded Growth** - Each phase generates revenue to fund the next phase's requirements, ensuring sustainable expansion
