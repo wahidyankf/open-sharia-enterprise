@@ -7,7 +7,28 @@
 - **OSE Platform** ([oseplatform.com](https://oseplatform.com)) - Main platform website (under construction)
 - **AyoKoding** ([ayokoding.com](https://ayokoding.com)) - Shares the technological research and domain knowledge we develop for this project. What we learn while building Open Sharia Enterprise becomes accessible to the wider community through educational content
 
-> ⚠️ **PRE-ALPHA STATUS**: This project is in early development and **NOT ready for production use**. Core architecture and patterns are still being established. APIs and implementations may change significantly. **Contributions and pull requests are not being accepted** at this time.
+## 🚧 Project Status
+
+> ⚠️ **PRE-ALPHA** - This project is in early development and **NOT ready for production use**. Core architecture and patterns are still being established. APIs and implementations may change significantly. **Contributions and pull requests are not being accepted** at this time.
+
+**Current Phase: Phase 0 (Repository Setup & Knowledge Base)**
+
+Building repository infrastructure, governance, and launching initial websites:
+
+- 🌐 **Live sites**: [ayokoding.com](https://ayokoding.com) (educational) and [oseplatform.com](https://oseplatform.com) (marketing)
+- 🛠️ **CLI tools**: ayokoding-cli and rhino-cli (Golang - foundation for security infrastructure)
+- 📚 **Infrastructure**: 45 AI agents, documentation framework, governance, planning systems
+
+**Next Phase: Phase 1 (Organic Lever)** - Individual productivity tracker to test deployment and knowledge base patterns before SMB/enterprise.
+
+**What to Expect:**
+
+- 🔄 Breaking changes without notice
+- 📐 Architecture still evolving
+- 🧪 Experimental implementations
+- ❌ Not accepting public contributions yet
+
+⚠️ **Do NOT use for production.** See **[ROADMAP.md](./ROADMAP.md)** for complete development phases and strategy.
 
 ## 🎯 Motivation
 
@@ -28,10 +49,6 @@ For complete principles, see [governance/principles/](./governance/principles/RE
 
 🚀 Our mission is to democratize access to trustworthy, Sharia-compliant enterprise technology for organizations of all sizes, regardless of region or industry.
 
-## 📜 License
-
-**MIT License** - Complete freedom to use, modify, and distribute for any purpose including commercial projects, enterprise solutions, and education. No restrictions. See [LICENSE](./LICENSE) for details.
-
 ## 🗺️ Development Roadmap
 
 This project follows a **progressive complexity approach** - starting simple, testing thoroughly, and scaling up systematically from individual users to SMB to enterprise.
@@ -41,19 +58,6 @@ This project follows a **progressive complexity approach** - starting simple, te
 **Next Phase: Phase 1 (Organic Lever - Productivity Tracker)** - Individual productivity application to test deployment, security, and knowledge base patterns at small scale before SMB/enterprise.
 
 For the complete roadmap including all phases, tech stack, and strategic approach, see **[ROADMAP.md](./ROADMAP.md)**.
-
-## 🤝 Contributing
-
-🔒 **Contributions are currently closed** until the project patterns and architecture are stable enough to accept external contributions. This ensures we maintain code quality and regulatory compliance as we build the foundation.
-
-However, 🎉 **you are welcome to fork this repository!** Feel free to:
-
-- 🍴 Create your own fork for your region or use case
-- 🧪 Experiment with extensions and modifications
-- 🏗️ Build upon this project for your specific needs
-- 📤 Share your improvements with the community
-
-✨ Once the core patterns are established and the project is mature enough, we will open the contribution process. We look forward to collaborating with the community in the future!
 
 ## 🛠️ Tech Stack
 
@@ -149,6 +153,19 @@ nx build [app-name]    # Build specific project
 
 See [Code Quality](./governance/development/quality/code.md) and [Commit Messages](./governance/development/workflow/commit-messages.md) for details.
 
+## 🤝 Contributing
+
+🔒 **Contributions are currently closed** until the project patterns and architecture are stable enough to accept external contributions. This ensures we maintain code quality and regulatory compliance as we build the foundation.
+
+However, 🎉 **you are welcome to fork this repository!** Feel free to:
+
+- 🍴 Create your own fork for your region or use case
+- 🧪 Experiment with extensions and modifications
+- 🏗️ Build upon this project for your specific needs
+- 📤 Share your improvements with the community
+
+✨ Once the core patterns are established and the project is mature enough, we will open the contribution process. We look forward to collaborating with the community in the future!
+
 ## 📚 Documentation
 
 Organized using the [Diátaxis framework](https://diataxis.fr/): [Tutorials](./docs/tutorials/) (learning), [How-To](./docs/how-to/) (problem-solving), [Reference](./docs/reference/) (lookup), [Explanation](./docs/explanation/) (understanding).
@@ -157,25 +174,6 @@ Organized using the [Diátaxis framework](https://diataxis.fr/): [Tutorials](./d
 
 See [`docs/README.md`](./docs/README.md) for details.
 
-## 🚧 Project Status
+## 📜 License
 
-⚠️ **PRE-ALPHA** - Early development, **NOT ready for production use**.
-
-**Current Phase: Phase 0 (Repository Setup & Knowledge Base)**
-
-Building repository infrastructure, governance, and launching initial websites:
-
-- 🌐 **Live sites**: [ayokoding.com](https://ayokoding.com) (educational) and [oseplatform.com](https://oseplatform.com) (marketing)
-- 🛠️ **CLI tools**: ayokoding-cli and rhino-cli (Golang - foundation for security infrastructure)
-- 📚 **Infrastructure**: 45 AI agents, documentation framework, governance, planning systems
-
-**Next Phase: Phase 1 (Organic Lever)** - Individual productivity tracker to test deployment and knowledge base patterns before SMB/enterprise.
-
-**What to Expect:**
-
-- 🔄 Breaking changes without notice
-- 📐 Architecture still evolving
-- 🧪 Experimental implementations
-- ❌ Not accepting public contributions yet
-
-⚠️ **Do NOT use for production.** See **[ROADMAP.md](./ROADMAP.md)** for complete development phases and strategy.
+**MIT License** - Complete freedom to use, modify, and distribute for any purpose including commercial projects, enterprise solutions, and education. No restrictions. See [LICENSE](./LICENSE) for details.
