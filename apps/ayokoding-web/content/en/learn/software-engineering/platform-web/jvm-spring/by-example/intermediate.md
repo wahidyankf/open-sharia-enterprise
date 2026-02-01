@@ -2520,4 +2520,4 @@ This intermediate tutorial covered **25 Spring Framework examples** (26-50) achi
 
 - @Controller, request parameters, JSON handling, exception handling, validation
 
-**Next Steps**: Progress to [Advanced](/en/learn/software-engineering/web-platform/jvm-spring/by-example/advanced) tutorial (75-95% coverage) for REST APIs, Security, caching, async processing, and testing strategies.
+**Next Steps**: Progress to [Advanced](/en/learn/software-engineering/platform-web/jvm-spring/by-example/advanced) tutorial (75-95% coverage) for REST APIs, Security, caching, async processing, and testing strategies.

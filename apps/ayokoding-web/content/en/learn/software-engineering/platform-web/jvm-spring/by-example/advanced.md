@@ -10,7 +10,7 @@ tags: ["spring", "java", "kotlin", "advanced", "rest", "security", "testing"]
 This tutorial provides 25 advanced Spring Framework examples (51-75) covering production-ready patterns. Focus includes REST APIs, Security, caching, async execution, and comprehensive testing strategies.
 
 **Coverage**: 75-95% of Spring Framework features
-**Prerequisites**: Complete [Beginner](/en/learn/software-engineering/web-platform/jvm-spring/by-example/beginner) and [Intermediate](/en/learn/software-engineering/web-platform/jvm-spring/by-example/intermediate) tutorials first
+**Prerequisites**: Complete [Beginner](/en/learn/software-engineering/platform-web/jvm-spring/by-example/beginner) and [Intermediate](/en/learn/software-engineering/platform-web/jvm-spring/by-example/intermediate) tutorials first
 
 ## REST API Development (Examples 51-55)
 

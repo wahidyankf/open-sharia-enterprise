@@ -9,7 +9,7 @@ tags: ["nextjs", "typescript", "setup", "installation", "development-environment
 
 **Ready to set up Next.js?** This guide walks through installing Next.js with TypeScript, creating your first project, and understanding the development environment.
 
-**Prerequisites**: You should understand [React fundamentals](/en/learn/software-engineering/web-platform/fe-react) before starting with Next.js.
+**Prerequisites**: You should understand [React fundamentals](/en/learn/software-engineering/platform-web/fe-react) before starting with Next.js.
 
 ## Prerequisites Check
 
@@ -43,7 +43,7 @@ Next.js is built on React. Ensure you understand:
 - **Effects** - useEffect hook for side effects
 - **Event handling** - onClick, onChange, onSubmit
 
-**Not familiar?** Complete [React Initial Setup](/en/learn/software-engineering/web-platform/fe-react/initial-setup) and [Quick Start](/en/learn/software-engineering/web-platform/fe-react/quick-start) first.
+**Not familiar?** Complete [React Initial Setup](/en/learn/software-engineering/platform-web/fe-react/initial-setup) and [Quick Start](/en/learn/software-engineering/platform-web/fe-react/quick-start) first.
 
 ## Create Next.js Project
 
@@ -516,7 +516,7 @@ Ensure your Next.js development environment is properly configured.
 - [ ] `npm run lint` executes successfully
 - [ ] `npm run build` creates .next directory
 
-**All checked?** You're ready for [Quick Start](/en/learn/software-engineering/web-platform/fe-nextjs/quick-start).
+**All checked?** You're ready for [Quick Start](/en/learn/software-engineering/platform-web/fe-nextjs/quick-start).
 
 ## Common Issues
 
@@ -583,10 +583,10 @@ npm install --save-dev typescript@latest
 
 **Environment configured?** Continue your Next.js journey:
 
-- **[Quick Start](/en/learn/software-engineering/web-platform/fe-nextjs/quick-start)** - Build first Next.js application with Server Components and Server Actions
-- **[Overview](/en/learn/software-engineering/web-platform/fe-nextjs/overview)** - Understand Next.js architecture and concepts
+- **[Quick Start](/en/learn/software-engineering/platform-web/fe-nextjs/quick-start)** - Build first Next.js application with Server Components and Server Actions
+- **[Overview](/en/learn/software-engineering/platform-web/fe-nextjs/overview)** - Understand Next.js architecture and concepts
 
 **Need React fundamentals?**
 
-- **[React Initial Setup](/en/learn/software-engineering/web-platform/fe-react/initial-setup)** - Set up React development environment
-- **[React Quick Start](/en/learn/software-engineering/web-platform/fe-react/quick-start)** - Learn React basics first
+- **[React Initial Setup](/en/learn/software-engineering/platform-web/fe-react/initial-setup)** - Set up React development environment
+- **[React Quick Start](/en/learn/software-engineering/platform-web/fe-react/quick-start)** - Learn React basics first

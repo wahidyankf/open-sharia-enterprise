@@ -205,8 +205,8 @@ For these topics, see dedicated tutorials and framework documentation.
 
 Before starting the examples, ensure you have basic environment setup:
 
-1. **Review Initial Setup**: [Initial Setup](/en/learn/software-engineering/web-platform/fe-react/initial-setup) - Install Node.js, npm, and create React + TypeScript project
-2. **Try Quick Start**: [Quick Start](/en/learn/software-engineering/web-platform/fe-react/quick-start) - Build a simple todo app to understand React basics
+1. **Review Initial Setup**: [Initial Setup](/en/learn/software-engineering/platform-web/fe-react/initial-setup) - Install Node.js, npm, and create React + TypeScript project
+2. **Try Quick Start**: [Quick Start](/en/learn/software-engineering/platform-web/fe-react/quick-start) - Build a simple todo app to understand React basics
 
 These tutorials provide hands-on foundation before diving into by-example learning.
 
@@ -254,8 +254,8 @@ Use this guide as a reference when building features. Search for relevant exampl
 
 While we prepare this content, you can:
 
-- **Start with Initial Setup**: [Initial Setup](/en/learn/software-engineering/web-platform/fe-react/initial-setup) - Set up your React + TypeScript development environment
-- **Try Quick Start**: [Quick Start](/en/learn/software-engineering/web-platform/fe-react/quick-start) - Build your first React application
+- **Start with Initial Setup**: [Initial Setup](/en/learn/software-engineering/platform-web/fe-react/initial-setup) - Set up your React + TypeScript development environment
+- **Try Quick Start**: [Quick Start](/en/learn/software-engineering/platform-web/fe-react/quick-start) - Build your first React application
 - **Check back soon**: Examples will be added progressively, starting with Beginner section
 
 ## Ready to Start?

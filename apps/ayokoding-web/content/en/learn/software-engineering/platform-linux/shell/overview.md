@@ -87,8 +87,8 @@ Modern shell with user-friendly features out-of-the-box, including syntax highli
 
 Before diving into comprehensive command-line learning, get up and running:
 
-1. **[Initial Setup](/en/learn/software-engineering/linux-platform/shell/initial-setup)** - Configure shell environment, essential tools, verify your setup
-2. **[Quick Start](/en/learn/software-engineering/linux-platform/shell/quick-start)** - Your first commands, basic navigation, essential patterns
+1. **[Initial Setup](/en/learn/software-engineering/platform-linux/shell/initial-setup)** - Configure shell environment, essential tools, verify your setup
+2. **[Quick Start](/en/learn/software-engineering/platform-linux/shell/quick-start)** - Your first commands, basic navigation, essential patterns
 
 These foundational tutorials (0-30% coverage) prepare you for comprehensive shell mastery.
 
@@ -118,4 +118,4 @@ Comprehensive by-example tutorials covering command-line fundamentals, shell scr
 
 ## Next Steps
 
-Explore the [by-example section](/en/learn/software-engineering/linux-platform/shell/by-example) to begin your command-line journey, starting with fundamental operations and progressing to advanced shell scripting and automation techniques.
+Explore the [by-example section](/en/learn/software-engineering/platform-linux/shell/by-example) to begin your command-line journey, starting with fundamental operations and progressing to advanced shell scripting and automation techniques.

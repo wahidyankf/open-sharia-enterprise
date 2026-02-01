@@ -9,9 +9,9 @@ tags: ["nextjs", "react", "typescript", "ssr", "ssg", "fullstack", "web-developm
 
 **Want to understand Next.js + TypeScript?** This overview explains what Next.js is, why it exists, and when you should use it over plain React.
 
-**Critical prerequisite**: Next.js is built on React. You should understand React fundamentals before learning Next.js. See [React + TypeScript](/en/learn/software-engineering/web-platform/fe-react) first if you're new to React.
+**Critical prerequisite**: Next.js is built on React. You should understand React fundamentals before learning Next.js. See [React + TypeScript](/en/learn/software-engineering/platform-web/fe-react) first if you're new to React.
 
-**Coverage note**: This overview provides context and big-picture understanding. For hands-on learning, continue to [Initial Setup](/en/learn/software-engineering/web-platform/fe-nextjs/initial-setup).
+**Coverage note**: This overview provides context and big-picture understanding. For hands-on learning, continue to [Initial Setup](/en/learn/software-engineering/platform-web/fe-nextjs/initial-setup).
 
 ## What is Next.js?
 
@@ -557,16 +557,16 @@ Ready to build with Next.js?
 
 **Prerequisites**:
 
-- **React fundamentals** - Components, props, state, hooks ([React tutorial](/en/learn/software-engineering/web-platform/fe-react) if needed)
+- **React fundamentals** - Components, props, state, hooks ([React tutorial](/en/learn/software-engineering/platform-web/fe-react) if needed)
 - **TypeScript** - Basic type annotations and interfaces
 - **JavaScript** - ES6+ syntax (async/await, destructuring, modules)
 - **Node.js** - For development tools (npm, build tools)
 
 **Learning path**:
 
-1. **[Initial Setup](/en/learn/software-engineering/web-platform/fe-nextjs/initial-setup)** - Install Node.js, create first Next.js app
-2. **[Quick Start](/en/learn/software-engineering/web-platform/fe-nextjs/quick-start)** - Build first Server Component, Server Action, and Client Component
-3. **[By Example](/en/learn/software-engineering/web-platform/fe-nextjs/by-example)** - Learn through practical, annotated code examples
+1. **[Initial Setup](/en/learn/software-engineering/platform-web/fe-nextjs/initial-setup)** - Install Node.js, create first Next.js app
+2. **[Quick Start](/en/learn/software-engineering/platform-web/fe-nextjs/quick-start)** - Build first Server Component, Server Action, and Client Component
+3. **[By Example](/en/learn/software-engineering/platform-web/fe-nextjs/by-example)** - Learn through practical, annotated code examples
 
 **Recommended approach**: Ensure you understand React fundamentals first. Then start with Initial Setup to configure your development environment, work through Quick Start to understand Server vs Client Components, and use By Example section for deep, hands-on learning.
 
@@ -574,9 +574,9 @@ Ready to build with Next.js?
 
 **Begin your Next.js journey**:
 
-- **[Initial Setup](/en/learn/software-engineering/web-platform/fe-nextjs/initial-setup)** - Set up development environment (0-5% coverage)
-- **[Quick Start](/en/learn/software-engineering/web-platform/fe-nextjs/quick-start)** - Build first Next.js application (5-30% coverage)
-- **[By Example](/en/learn/software-engineering/web-platform/fe-nextjs/by-example)** - Master Next.js through annotated examples (30-95% coverage)
+- **[Initial Setup](/en/learn/software-engineering/platform-web/fe-nextjs/initial-setup)** - Set up development environment (0-5% coverage)
+- **[Quick Start](/en/learn/software-engineering/platform-web/fe-nextjs/quick-start)** - Build first Next.js application (5-30% coverage)
+- **[By Example](/en/learn/software-engineering/platform-web/fe-nextjs/by-example)** - Master Next.js through annotated examples (30-95% coverage)
 
 **External resources**:
 

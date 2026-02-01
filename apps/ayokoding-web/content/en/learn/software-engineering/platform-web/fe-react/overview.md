@@ -9,7 +9,7 @@ tags: ["react", "typescript", "frontend", "javascript", "web-development"]
 
 **Want to understand React + TypeScript?** This overview explains what React is, why it exists, and when you should use it.
 
-**Coverage note**: This overview provides context and big-picture understanding. For hands-on learning, continue to [Initial Setup](/en/learn/software-engineering/web-platform/fe-react/initial-setup).
+**Coverage note**: This overview provides context and big-picture understanding. For hands-on learning, continue to [Initial Setup](/en/learn/software-engineering/platform-web/fe-react/initial-setup).
 
 ## What is React?
 
@@ -376,9 +376,9 @@ Ready to build with React?
 
 **Learning path**:
 
-1. **[Initial Setup](/en/learn/software-engineering/web-platform/fe-react/initial-setup)** - Install Node.js, create first React app with Vite
-2. **[Quick Start](/en/learn/software-engineering/web-platform/fe-react/quick-start)** - Build first component, understand JSX, props, and state
-3. **[By Example](/en/learn/software-engineering/web-platform/fe-react/by-example)** - Learn through practical, annotated code examples
+1. **[Initial Setup](/en/learn/software-engineering/platform-web/fe-react/initial-setup)** - Install Node.js, create first React app with Vite
+2. **[Quick Start](/en/learn/software-engineering/platform-web/fe-react/quick-start)** - Build first component, understand JSX, props, and state
+3. **[By Example](/en/learn/software-engineering/platform-web/fe-react/by-example)** - Learn through practical, annotated code examples
 
 **Recommended approach**: Start with Initial Setup to configure your development environment, then work through Quick Start to understand fundamentals. The By Example section provides deep, hands-on learning for mastering React + TypeScript.
 
@@ -386,9 +386,9 @@ Ready to build with React?
 
 **Begin your React journey**:
 
-- **[Initial Setup](/en/learn/software-engineering/web-platform/fe-react/initial-setup)** - Set up development environment (0-5% coverage)
-- **[Quick Start](/en/learn/software-engineering/web-platform/fe-react/quick-start)** - Build first React component (5-30% coverage)
-- **[By Example](/en/learn/software-engineering/web-platform/fe-react/by-example)** - Master React through annotated examples (30-95% coverage)
+- **[Initial Setup](/en/learn/software-engineering/platform-web/fe-react/initial-setup)** - Set up development environment (0-5% coverage)
+- **[Quick Start](/en/learn/software-engineering/platform-web/fe-react/quick-start)** - Build first React component (5-30% coverage)
+- **[By Example](/en/learn/software-engineering/platform-web/fe-react/by-example)** - Master React through annotated examples (30-95% coverage)
 
 **External resources**:
 

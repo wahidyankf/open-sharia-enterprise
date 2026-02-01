@@ -31,7 +31,7 @@ Before starting, ensure you understand:
 - Form handling and controlled components
 - Event handling patterns
 
-If you need to review fundamentals, see [Beginner](/en/learn/software-engineering/web-platform/fe-react/by-example/beginner).
+If you need to review fundamentals, see [Beginner](/en/learn/software-engineering/platform-web/fe-react/by-example/beginner).
 
 ## Group 1: Advanced Hooks (5 examples)
 

@@ -3060,4 +3060,4 @@ These 25 beginner examples cover fundamental Next.js concepts:
 
 **Annotation Density**: All examples enhanced to 1.0-2.25 comments per code line for optimal learning.
 
-**Next**: [Intermediate examples](/en/learn/software-engineering/web-platform/fe-nextjs/by-example/intermediate) for production patterns, authentication, database integration, and advanced data fetching.
+**Next**: [Intermediate examples](/en/learn/software-engineering/platform-web/fe-nextjs/by-example/intermediate) for production patterns, authentication, database integration, and advanced data fetching.

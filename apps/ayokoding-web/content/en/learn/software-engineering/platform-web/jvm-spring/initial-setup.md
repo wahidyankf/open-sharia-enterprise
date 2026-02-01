@@ -637,6 +637,6 @@ Setup complete! You now have:
 
 **Continue to**:
 
-**[Quick Start](/en/learn/software-engineering/web-platform/jvm-spring/quick-start)** - Build a complete Zakat Calculator application demonstrating Spring Framework core features
+**[Quick Start](/en/learn/software-engineering/platform-web/jvm-spring/quick-start)** - Build a complete Zakat Calculator application demonstrating Spring Framework core features
 
-**[By Example](/en/learn/software-engineering/web-platform/jvm-spring/by-example)** - Learn through heavily annotated code examples
+**[By Example](/en/learn/software-engineering/platform-web/jvm-spring/by-example)** - Learn through heavily annotated code examples

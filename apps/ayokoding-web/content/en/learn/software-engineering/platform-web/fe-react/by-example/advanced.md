@@ -31,7 +31,7 @@ Before starting, ensure you understand:
 - Performance concepts (memoization, lazy loading, code splitting)
 - Testing fundamentals (unit tests, integration tests)
 
-If you need to review, see [Beginner](/en/learn/software-engineering/web-platform/fe-react/by-example/beginner) and [Intermediate](/en/learn/software-engineering/web-platform/fe-react/by-example/intermediate).
+If you need to review, see [Beginner](/en/learn/software-engineering/platform-web/fe-react/by-example/beginner) and [Intermediate](/en/learn/software-engineering/platform-web/fe-react/by-example/intermediate).
 
 ## Group 1: Advanced TypeScript Patterns (5 examples)
 

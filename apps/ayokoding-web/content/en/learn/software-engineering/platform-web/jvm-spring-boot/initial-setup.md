@@ -9,7 +9,7 @@ tags: ["spring-boot", "java", "kotlin", "setup", "installation", "web-framework"
 
 **Want to start building with Spring Boot?** This initial setup guide gets Spring Boot installed and working on your system in minutes. By the end, you'll have Spring Boot running and will create your first web application.
 
-This tutorial provides 0-5% coverage - just enough to get Spring Boot working on your machine. For deeper learning, continue to [Quick Start](/en/learn/software-engineering/web-platform/jvm-spring-boot/quick-start) (5-30% coverage).
+This tutorial provides 0-5% coverage - just enough to get Spring Boot working on your machine. For deeper learning, continue to [Quick Start](/en/learn/software-engineering/platform-web/jvm-spring-boot/quick-start) (5-30% coverage).
 
 ## Prerequisites
 
@@ -758,19 +758,19 @@ Should return JSON with message and timestamp.
 
 **Ready to learn Spring Boot fundamentals?**
 
-- [Quick Start](/en/learn/software-engineering/web-platform/jvm-spring-boot/quick-start) (5-30% coverage) - Touch all core Spring Boot concepts in a fast-paced tour
+- [Quick Start](/en/learn/software-engineering/platform-web/jvm-spring-boot/quick-start) (5-30% coverage) - Touch all core Spring Boot concepts in a fast-paced tour
 
 **Want comprehensive Spring Boot mastery?**
 
-- [Beginner Tutorial](/en/learn/software-engineering/web-platform/jvm-spring-boot/by-concept/beginner) (0-60% coverage) - Deep dive into Spring Boot with extensive practice
+- [Beginner Tutorial](/en/learn/software-engineering/platform-web/jvm-spring-boot/by-concept/beginner) (0-60% coverage) - Deep dive into Spring Boot with extensive practice
 
 **Prefer code-first learning?**
 
-- [By-Example Tutorial](/en/learn/software-engineering/web-platform/jvm-spring-boot/by-example) - Learn through heavily annotated examples in Java and Kotlin
+- [By-Example Tutorial](/en/learn/software-engineering/platform-web/jvm-spring-boot/by-example) - Learn through heavily annotated examples in Java and Kotlin
 
 **Want to understand Spring Boot's design philosophy?**
 
-- [Overview](/en/learn/software-engineering/web-platform/jvm-spring-boot/overview) - Why Spring Boot exists and when to use it
+- [Overview](/en/learn/software-engineering/platform-web/jvm-spring-boot/overview) - Why Spring Boot exists and when to use it
 
 ## Troubleshooting Common Issues
 

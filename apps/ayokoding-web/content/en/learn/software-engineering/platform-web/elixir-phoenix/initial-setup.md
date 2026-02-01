@@ -9,7 +9,7 @@ tags: ["phoenix", "elixir", "setup", "installation", "web-framework", "beginner"
 
 **Want to start building with Phoenix Framework?** This initial setup guide gets Phoenix installed and working on your system in minutes. By the end, you'll have Phoenix running and will create your first web application.
 
-This tutorial provides 0-5% coverage - just enough to get Phoenix working on your machine. For deeper learning, continue to [Quick Start](/en/learn/software-engineering/web-platform/elixir-phoenix/quick-start) (5-30% coverage).
+This tutorial provides 0-5% coverage - just enough to get Phoenix working on your machine. For deeper learning, continue to [Quick Start](/en/learn/software-engineering/platform-web/elixir-phoenix/quick-start) (5-30% coverage).
 
 ## Prerequisites
 
@@ -718,19 +718,19 @@ Open browser to `http://localhost:4000` - should see Phoenix welcome page.
 
 **Ready to learn Phoenix fundamentals?**
 
-- [Quick Start](/en/learn/software-engineering/web-platform/elixir-phoenix/quick-start) (5-30% coverage) - Touch all core Phoenix concepts in a fast-paced tour
+- [Quick Start](/en/learn/software-engineering/platform-web/elixir-phoenix/quick-start) (5-30% coverage) - Touch all core Phoenix concepts in a fast-paced tour
 
 **Want comprehensive Phoenix mastery?**
 
-- [Beginner Tutorial](/en/learn/software-engineering/web-platform/elixir-phoenix/by-concept/beginner) (0-60% coverage) - Deep dive into Phoenix with extensive practice
+- [Beginner Tutorial](/en/learn/software-engineering/platform-web/elixir-phoenix/by-concept/beginner) (0-60% coverage) - Deep dive into Phoenix with extensive practice
 
 **Prefer code-first learning?**
 
-- [By-Example Tutorial](/en/learn/software-engineering/web-platform/elixir-phoenix/by-example) - Learn through heavily annotated examples
+- [By-Example Tutorial](/en/learn/software-engineering/platform-web/elixir-phoenix/by-example) - Learn through heavily annotated examples
 
 **Want to understand Phoenix's design philosophy?**
 
-- [Overview](/en/learn/software-engineering/web-platform/elixir-phoenix/overview) - Why Phoenix exists and when to use it
+- [Overview](/en/learn/software-engineering/platform-web/elixir-phoenix/overview) - Why Phoenix exists and when to use it
 
 ## Troubleshooting Common Issues
 

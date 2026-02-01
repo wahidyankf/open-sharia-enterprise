@@ -147,9 +147,9 @@ All files properly linked in series:
 
 Cross-references use absolute paths:
 
-- `/en/learn/software-engineering/web-platform/jvm-spring/by-example/beginner`
-- `/en/learn/software-engineering/web-platform/jvm-spring/by-example/intermediate`
-- `/en/learn/software-engineering/web-platform/jvm-spring/by-example/advanced`
+- `/en/learn/software-engineering/platform-web/jvm-spring/by-example/beginner`
+- `/en/learn/software-engineering/platform-web/jvm-spring/by-example/intermediate`
+- `/en/learn/software-engineering/platform-web/jvm-spring/by-example/advanced`
 
 ---
 

@@ -119,4 +119,4 @@ By-example tutorials are **code-first learning materials** designed for experien
 
 ## Next Steps
 
-Start with [Beginner](/en/learn/software-engineering/linux-platform/shell/by-example/beginner) examples for fundamentals, then progress to [Intermediate](/en/learn/software-engineering/linux-platform/shell/by-example/intermediate) for production patterns, and finally [Advanced](/en/learn/software-engineering/linux-platform/shell/by-example/advanced) for expert-level techniques.
+Start with [Beginner](/en/learn/software-engineering/platform-linux/shell/by-example/beginner) examples for fundamentals, then progress to [Intermediate](/en/learn/software-engineering/platform-linux/shell/by-example/intermediate) for production patterns, and finally [Advanced](/en/learn/software-engineering/platform-linux/shell/by-example/advanced) for expert-level techniques.
