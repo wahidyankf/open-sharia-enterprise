@@ -2,7 +2,7 @@
 title: "Advanced"
 date: 2026-02-01T23:00:00+07:00
 draft: false
-weight: 10000003
+weight: 100000003
 description: "Examples 61-85: Production patterns, debugging tools, CI/CD integration, and enterprise testing (75-95% coverage)"
 tags: ["playwright", "tutorial", "by-example", "advanced", "patterns", "ci-cd", "production"]
 ---

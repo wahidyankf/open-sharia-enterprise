@@ -2,20 +2,20 @@
 title: "Quick Start"
 date: 2026-02-01T00:00:00+07:00
 draft: false
-weight: 100002
+weight: 10000002
 description: "Rapid tour of Playwright essentials - locators, interactions, assertions, page objects, and debugging in one comprehensive tutorial"
 tags: ["playwright", "quick-start", "testing", "automation", "typescript", "e2e"]
 ---
 
 **Ready to test with Playwright?** This quick start tutorial provides a fast-paced tour through Playwright's core capabilities. By the end, you'll build a complete login test with form validation, error handling, and best practices.
 
-This tutorial provides 5-30% coverage—practical hands-on experience with essential Playwright features. For comprehensive learning, continue to [By Example](/en/learn/software-engineering/automation-testing/playwright/by-example) (95% coverage).
+This tutorial provides 5-30% coverage—practical hands-on experience with essential Playwright features. For comprehensive learning, continue to [By Example](/en/learn/software-engineering/automation-testing/tools/playwright/by-example) (95% coverage).
 
 ## Prerequisites
 
 Before starting this tutorial, you need:
 
-- Playwright installed (see [Initial Setup](/en/learn/software-engineering/automation-testing/playwright/initial-setup))
+- Playwright installed (see [Initial Setup](/en/learn/software-engineering/automation-testing/tools/playwright/initial-setup))
 - Basic JavaScript or TypeScript knowledge
 - Understanding of async/await syntax
 - Familiarity with HTML/CSS selectors
@@ -541,7 +541,7 @@ export default defineConfig({
 
 Now that you understand Playwright basics:
 
-1. **[By Example](/en/learn/software-engineering/automation-testing/playwright/by-example)** - 85 annotated examples covering 95% of Playwright
+1. **[By Example](/en/learn/software-engineering/automation-testing/tools/playwright/by-example)** - 85 annotated examples covering 95% of Playwright
 2. **Practice with your project** - Apply Playwright to your actual application
 3. **Official Documentation** - Advanced features, best practices, CI/CD integration
 
@@ -561,4 +561,4 @@ You've learned:
 
 **Coverage**: 5-30% of Playwright features - practical foundation for real-world testing.
 
-**Next**: Explore [By Example](/en/learn/software-engineering/automation-testing/playwright/by-example) for comprehensive 95% coverage through 85 annotated examples.
+**Next**: Explore [By Example](/en/learn/software-engineering/automation-testing/tools/playwright/by-example) for comprehensive 95% coverage through 85 annotated examples.

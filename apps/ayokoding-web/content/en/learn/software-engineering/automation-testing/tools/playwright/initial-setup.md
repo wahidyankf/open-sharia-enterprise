@@ -2,14 +2,14 @@
 title: "Initial Setup"
 date: 2026-02-01T00:00:00+07:00
 draft: false
-weight: 100001
+weight: 10000001
 description: "Get Playwright installed and running - Node.js setup, Playwright installation, browser installation, and your first test"
 tags: ["playwright", "installation", "setup", "testing", "automation", "beginner"]
 ---
 
 **Want to start testing with Playwright?** This initial setup guide gets Playwright installed and working on your system in minutes. By the end, you'll have Playwright running with all browsers and will execute your first test.
 
-This tutorial provides 0-5% coverage—just enough to get Playwright working on your machine. For deeper learning, continue to [Quick Start](/en/learn/software-engineering/automation-testing/playwright/quick-start) (5-30% coverage).
+This tutorial provides 0-5% coverage—just enough to get Playwright working on your machine. For deeper learning, continue to [Quick Start](/en/learn/software-engineering/automation-testing/tools/playwright/quick-start) (5-30% coverage).
 
 ## Prerequisites
 
@@ -423,8 +423,8 @@ Playwright support built-in (2023.1+):
 
 Now that Playwright is installed:
 
-1. **[Quick Start](/en/learn/software-engineering/automation-testing/playwright/quick-start)** - Build a complete test with step-by-step walkthrough
-2. **[By Example](/en/learn/software-engineering/automation-testing/playwright/by-example)** - Learn through 85 annotated code examples
+1. **[Quick Start](/en/learn/software-engineering/automation-testing/tools/playwright/quick-start)** - Build a complete test with step-by-step walkthrough
+2. **[By Example](/en/learn/software-engineering/automation-testing/tools/playwright/by-example)** - Learn through 85 annotated code examples
 3. **Playwright Documentation** - Official docs for advanced features
 
 **Recommended workflow**: Quick Start → practice with your own projects → use By Example as reference.
@@ -441,4 +441,4 @@ You now have:
 
 **Total setup time**: ~5-10 minutes (including browser downloads)
 
-**Next**: Try the [Quick Start](/en/learn/software-engineering/automation-testing/playwright/quick-start) tutorial to build a real-world test scenario.
+**Next**: Try the [Quick Start](/en/learn/software-engineering/automation-testing/tools/playwright/quick-start) tutorial to build a real-world test scenario.

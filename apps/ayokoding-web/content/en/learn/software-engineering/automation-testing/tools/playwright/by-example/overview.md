@@ -2,7 +2,7 @@
 title: "Overview"
 date: 2025-02-01T22:30:00+07:00
 draft: false
-weight: 10000000
+weight: 100000000
 description: "Learn Playwright through 85 annotated code examples covering 95% of the framework - ideal for experienced testers and developers switching from Selenium or Cypress"
 tags: ["playwright", "tutorial", "by-example", "examples", "testing", "automation"]
 ---
@@ -211,8 +211,8 @@ If you prefer narrative explanations, complement this guide with comprehensive t
 
 Jump into the beginner examples to start learning Playwright through code:
 
-- [Beginner Examples (1-30)](/en/learn/software-engineering/automation-testing/playwright/by-example/beginner) - Core fundamentals, selectors, basic interactions
-- [Intermediate Examples (31-60)](/en/learn/software-engineering/automation-testing/playwright/by-example/intermediate) - Form handling, advanced assertions, API testing, test organization
-- [Advanced Examples (61-85)](/en/learn/software-engineering/automation-testing/playwright/by-example/advanced) - Advanced patterns, debugging, CI/CD, production patterns
+- [Beginner Examples (1-30)](/en/learn/software-engineering/automation-testing/tools/playwright/by-example/beginner) - Core fundamentals, selectors, basic interactions
+- [Intermediate Examples (31-60)](/en/learn/software-engineering/automation-testing/tools/playwright/by-example/intermediate) - Form handling, advanced assertions, API testing, test organization
+- [Advanced Examples (61-85)](/en/learn/software-engineering/automation-testing/tools/playwright/by-example/advanced) - Advanced patterns, debugging, CI/CD, production patterns
 
 Each example is self-contained and runnable. Start with Example 1, or jump to topics that interest you most.

@@ -6,3 +6,4 @@ draft: false
 ---
 
 - [Overview](/en/learn/software-engineering/automation-testing/tools/overview)
+- [Playwright](/en/learn/software-engineering/automation-testing/tools/playwright)
