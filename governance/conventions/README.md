@@ -12,7 +12,7 @@ updated: 2026-01-30
 
 # Conventions
 
-Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, written, and formatted. Contains 26 conventions covering all aspects of documentation.
+Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, written, and formatted. Contains conventions across 5 categories covering all aspects of documentation.
 
 **Governance**: All conventions in this directory serve the [Vision](../vision/open-sharia-enterprise.md) (Layer 0) and implement the [Core Principles](../principles/README.md) (Layer 1) as part of the six-layer architecture. Each convention MUST include a "Principles Implemented/Respected" section that explicitly traces back to foundational principles. See [Repository Governance Architecture](../repository-governance-architecture.md) for complete governance model and [Convention Writing Convention](./writing/conventions.md) for structure requirements.
 
