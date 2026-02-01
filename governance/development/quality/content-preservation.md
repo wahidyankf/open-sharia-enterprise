@@ -584,6 +584,5 @@ When creating new convention or development documents during offload, `docs__mak
 
 ## Related Conventions
 
-- [AGENTS.md Maintenance](../../../AGENTS.md#claudemd-maintenance) - Size limits and condensation triggers
 - [AI Agents Convention](../agents/ai-agents.md) - Agent file size tiers and condensation
 - [Convention Writing Convention](../../conventions/writing/conventions.md) - How to structure convention documents

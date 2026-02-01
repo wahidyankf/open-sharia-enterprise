@@ -40,7 +40,7 @@ This repository maintains **dual compatibility** with both Claude Code and OpenC
 
 ## Agent Organization
 
-**45 specialized agents** organized into **7 families**:
+**50 specialized agents** organized into **7 families**:
 
 1. **Documentation** (8 agents): `docs-maker`, `docs-checker`, `docs-fixer`, `docs-tutorial-maker`, `docs-tutorial-checker`, `docs-tutorial-fixer`, `docs-link-general-checker`, `docs-file-manager`
 2. **README** (3 agents): `readme-maker`, `readme-checker`, `readme-fixer`
@@ -91,7 +91,7 @@ Three-stage quality workflow:
 
 ## Skills Integration
 
-**23 skill packages** serve agents through two modes:
+**26 skill packages** serve agents through two modes:
 
 **Inline Skills** (default) - Knowledge injection:
 
@@ -145,6 +145,6 @@ All agents follow 10 foundational principles:
 
 ---
 
-**Total Agents**: 45
-**Total Skills**: 23
+**Total Agents**: 50
+**Total Skills**: 26
 **Last Updated**: 2026-01-16
