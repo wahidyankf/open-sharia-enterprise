@@ -9,7 +9,7 @@ tags:
   - testing
   - requirements
 created: 2025-12-07
-updated: 2025-12-07
+updated: 2026-02-02
 ---
 
 # Acceptance Criteria Convention
@@ -19,6 +19,8 @@ This convention defines how to write testable acceptance criteria using **Gherki
 ## Principles Respected
 
 This practice respects the following core principles:
+
+- **[Deliberate Problem-Solving](../../principles/general/deliberate-problem-solving.md)**: Writing acceptance criteria forces explicit definition of success before implementation. Gherkin's Given-When-Then structure surfaces assumptions (Given), clarifies actions (When), and makes expected outcomes explicit (Then) - preventing vague requirements that hide confusion.
 
 - **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Gherkin syntax (Given-When-Then) explicitly states preconditions, actions, and expected outcomes. No ambiguous requirements like "should work well" - everything is concrete and verifiable.
 

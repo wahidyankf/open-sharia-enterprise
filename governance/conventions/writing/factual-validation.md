@@ -10,7 +10,7 @@ tags:
   - accuracy
   - quality-assurance
 created: 2025-12-16
-updated: 2025-12-16
+updated: 2026-02-02
 ---
 
 # Factual Validation Convention
@@ -20,6 +20,8 @@ This document defines the **universal methodology** for validating factual corre
 ## Principles Implemented/Respected
 
 This convention respects the following core principles:
+
+- **[Deliberate Problem-Solving](../../principles/general/deliberate-problem-solving.md)**: Factual validation requires verifying assumptions against authoritative sources rather than proceeding with hidden uncertainty. Makers surface unknown facts, Checkers verify claims using WebSearch/WebFetch tools, and both make verification status explicit rather than implicit.
 
 - **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Web-based verification (WebSearch + WebFetch) automates fact-checking against authoritative sources. Machines verify command syntax, version numbers, and API accuracy - humans focus on content creation and strategic decisions.
 
