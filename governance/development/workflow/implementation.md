@@ -377,7 +377,7 @@ Before committing:
 ### Relationship to Principles
 
 - **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Minimal changes reduce complexity
-- **[Deliberate Problem-Solving](../../principles/software-engineering/deliberate-problem-solving.md)**: Explicit scope boundaries prevent scope creep
+- **[Deliberate Problem-Solving](../../principles/general/deliberate-problem-solving.md)**: Explicit scope boundaries prevent scope creep
 - **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Clear traceability from request to change
 
 ### For AI Agents
@@ -659,7 +659,7 @@ During execution:
 
 ### Relationship to Principles
 
-- **[Deliberate Problem-Solving](../../principles/software-engineering/deliberate-problem-solving.md)**: Clear goals prevent confusion and rework
+- **[Deliberate Problem-Solving](../../principles/general/deliberate-problem-solving.md)**: Clear goals prevent confusion and rework
 - **[Reproducibility](../../principles/software-engineering/reproducibility.md)**: Automated tests ensure reproducible verification
 - **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Automated tests > manual verification
 

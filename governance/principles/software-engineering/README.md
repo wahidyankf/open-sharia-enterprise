@@ -24,7 +24,6 @@ These principles define **WHY we value specific approaches to software developme
 ## Principles
 
 - [Automation Over Manual](./automation-over-manual.md) - Automate repetitive tasks to ensure consistency and reduce human error
-- [Deliberate Problem-Solving](./deliberate-problem-solving.md) - Think before coding - surface assumptions, tradeoffs, and confusion rather than hiding them
 - [Explicit Over Implicit](./explicit-over-implicit.md) - Choose explicit composition and configuration over magic, convenience, and hidden behavior
 - [Immutability Over Mutability](./immutability.md) - Prefer immutable data structures over mutable state
 - [Pure Functions Over Side Effects](./pure-functions.md) - Prefer pure functions (deterministic, no side effects) over functions with side effects

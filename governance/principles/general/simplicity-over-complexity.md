@@ -616,7 +616,7 @@ const display = `${user.name} - ${user.email}`;
 
 ## Relationship to Other Principles
 
-- **[Deliberate Problem-Solving](../software-engineering/deliberate-problem-solving.md)**: Suggesting simpler approaches is part of deliberate problem-solving
+- **[Deliberate Problem-Solving](./deliberate-problem-solving.md)**: Suggesting simpler approaches is part of deliberate problem-solving
 - **[Explicit Over Implicit](../software-engineering/explicit-over-implicit.md)**: Simple code is often more explicit than complex abstractions
 - **[Automation Over Manual](../software-engineering/automation-over-manual.md)**: Automate what's repetitive, but don't over-engineer the automation
 - **[Progressive Disclosure](../content/progressive-disclosure.md)**: Start simple, layer complexity only when proven necessary
