@@ -23,9 +23,14 @@ Every Rust program starts with a `main` function, which is the entry point the R
 
 ```rust
 fn main() {                          // => Program entry point (called by Rust runtime)
-    println!("Hello, World!");       // => Macro expands at compile-time, prints to stdout
+                                     // => Function signature: fn main() -> ()
+                                     // => No parameters, returns unit type ()
+    println!("Hello, World!");       // => println! is a macro (note the !)
+                                     // => Expands at compile-time to formatting code
+                                     // => Prints to stdout with newline
                                      // => Output: Hello, World!
-}                                    // => main returns (), program exits with code 0
+}                                    // => main returns () implicitly
+                                     // => Program exits with code 0 (success)
 ```
 
 **Key Takeaway**: Rust programs require a `main()` function as the entry point, and macros (identified by `!`) provide compile-time code generation for common operations like formatted printing. Rust compiles directly to native code without runtime overhead.
@@ -44,18 +49,26 @@ Rust variables are immutable by default, requiring explicit `mut` keyword for mu
 
 ```rust
 fn main() {
-    let x = 5;                       // => x is 5 (type: i32, inferred)
-                                     // => x is immutable (default)
-    println!("x = {}", x);           // => Output: x = 5
+    let x = 5;                       // => x is 5 (type: i32, inferred from literal)
+                                     // => x is immutable by default
+                                     // => Cannot reassign x later (compile error)
+    println!("x = {}", x);           // => Reads x, prints value
+                                     // => Output: x = 5
 
     // x = 6;                        // => ERROR: cannot assign twice to immutable variable
+                                     // => Compile error prevents accidental mutation
 
-    let mut y = 10;                  // => y is 10 (mutable)
+    let mut y = 10;                  // => y is 10 (type: i32)
+                                     // => mut keyword allows mutation
+                                     // => y stored on stack, mutable location
     println!("y = {}", y);           // => Output: y = 10
 
-    y = 15;                          // => y is now 15 (previous value discarded)
+    y = 15;                          // => Reassignment allowed (y is mut)
+                                     // => y is now 15, previous value 10 discarded
+                                     // => Same memory location, new value
     println!("y = {}", y);           // => Output: y = 15
-}                                    // => x and y dropped (memory freed)
+}                                    // => x and y go out of scope
+                                     // => Stack memory automatically freed (no GC needed)
 ```
 
 **Key Takeaway**: Immutability by default prevents bugs from unexpected state changes, while explicit `mut` keyword makes mutable state clearly visible in code. The compiler enforces this at compile-time with zero runtime cost.
@@ -130,32 +143,49 @@ Rust has scalar types (integers, floats, booleans, characters) and compound type
 
 ```rust
 fn main() {
-    let integer: i32 = 42;           // => 42 (type: i32)
-    let float: f64 = 3.14;           // => 3.14 (type: f64)
-    let boolean: bool = true;        // => true (type: bool)
-    let character: char = '🦀';      // => '🦀' (type: char)
+    let integer: i32 = 42;           // => integer is 42 (type: i32, 4 bytes)
+                                     // => Stored on stack at compile-time known address
+    let float: f64 = 3.14;           // => float is 3.14 (type: f64, 8 bytes IEEE 754)
+                                     // => Default float type for better precision
+    let boolean: bool = true;        // => boolean is true (type: bool, 1 byte)
+                                     // => Only values: true or false
+    let character: char = '🦀';      // => character is '🦀' (type: char, 4 bytes Unicode)
+                                     // => char can hold any Unicode scalar value
 
-    println!("Integer: {}", integer);     // => Output: Integer: 42
+    println!("Integer: {}", integer);     // => Formats integer into string
+                                          // => Output: Integer: 42
     println!("Float: {}", float);         // => Output: Float: 3.14
     println!("Boolean: {}", boolean);     // => Output: Boolean: true
     println!("Character: {}", character); // => Output: Character: 🦀
 
     let tuple: (i32, f64, char) = (42, 3.14, '🦀');
-                                     // => Tuple with 3 elements (different types)
-    let (x, y, z) = tuple;           // => Pattern matching extracts values
+                                     // => tuple is (42, 3.14, '🦀')
+                                     // => Type: (i32, f64, char), heterogeneous elements
+                                     // => Size: 4 + 8 + 4 = 16 bytes (with alignment)
+    let (x, y, z) = tuple;           // => Destructuring assignment
+                                     // => x=42 (i32), y=3.14 (f64), z='🦀' (char)
     println!("Tuple: ({}, {}, {})", x, y, z);
                                      // => Output: Tuple: (42, 3.14, 🦀)
 
-    let first = tuple.0;             // => 42 (access first element)
-    let second = tuple.1;            // => 3.14 (access second element)
+    let first = tuple.0;             // => Accesses first element by index
+                                     // => first is 42 (type: i32)
+    let second = tuple.1;            // => Accesses second element by index
+                                     // => second is 3.14 (type: f64)
 
-    let array: [i32; 3] = [1, 2, 3]; // => [1, 2, 3] (type: [i32; 3])
-    println!("Array: {:?}", array);  // => Output: Array: [1, 2, 3]
+    let array: [i32; 3] = [1, 2, 3]; // => array is [1, 2, 3]
+                                     // => Type: [i32; 3], length=3 known at compile-time
+                                     // => Size: 3 * 4 = 12 bytes, homogeneous elements
+    println!("Array: {:?}", array);  // => {:?} uses Debug formatting
+                                     // => Output: Array: [1, 2, 3]
 
-    let first_element = array[0];    // => 1 (arrays are zero-indexed)
-    let second_element = array[1];   // => 2
+    let first_element = array[0];    // => first_element is 1
+                                     // => Arrays zero-indexed, bounds checked at runtime
+    let second_element = array[1];   // => second_element is 2
+                                     // => Out-of-bounds access panics (memory safe)
 
-    let zeros = [0; 5];              // => [0, 0, 0, 0, 0] (syntax: [value; length])
+    let zeros = [0; 5];              // => zeros is [0, 0, 0, 0, 0]
+                                     // => Syntax: [value; length] creates array
+                                     // => Type: [i32; 5], all elements same value
 }
 ```
 
@@ -177,33 +207,41 @@ Functions use `fn` keyword with explicit parameter types and optional return typ
 
 ```rust
 fn main() {
-    let result = add(5, 7);          // => Call add(5, 7), returns 12
+    let result = add(5, 7);          // => Calls add function with x=5, y=7
+                                     // => result is 12 (type: i32, returned value)
     println!("5 + 7 = {}", result);  // => Output: 5 + 7 = 12
 
-    let greeting = greet("Alice");   // => Call greet("Alice"), returns String
+    let greeting = greet("Alice");   // => Calls greet with name="Alice"
+                                     // => greeting is "Hello, Alice!" (type: String)
     println!("{}", greeting);        // => Output: Hello, Alice!
 
-    print_sum(10, 20);               // => Calls print_sum, returns ()
+    print_sum(10, 20);               // => Calls print_sum with a=10, b=20
+                                     // => Function returns () (unit type)
                                      // => Output: Sum is 30
 
-    let doubled = double_explicit(5);// => doubled is 10
+    let doubled = double_explicit(5);// => Calls double_explicit with x=5
+                                     // => doubled is 10 (5 * 2)
     println!("Doubled: {}", doubled);// => Output: Doubled: 10
 }
 
 fn add(x: i32, y: i32) -> i32 {
-    x + y                            // => Returns x + y (expression)
+    x + y                            // => Evaluates 5 + 7 = 12
+                                     // => Returns 12 (expression without semicolon)
 }
 
 fn greet(name: &str) -> String {
-    format!("Hello, {}!", name)      // => Returns String to caller
+    format!("Hello, {}!", name)      // => Creates String "Hello, Alice!"
+                                     // => Returns String to caller (expression)
 }
 
 fn print_sum(a: i32, b: i32) {
-    println!("Sum is {}", a + b);    // => Output: Sum is 30
-}
+    println!("Sum is {}", a + b);    // => Computes 10 + 20 = 30
+                                     // => Output: Sum is 30
+}                                    // => Returns () implicitly (no return type annotation)
 
 fn double_explicit(x: i32) -> i32 {
-    return x * 2;                    // => Returns x * 2 explicitly
+    return x * 2;                    // => Computes 5 * 2 = 10
+                                     // => Returns 10 with explicit return keyword
 }
 ```
 

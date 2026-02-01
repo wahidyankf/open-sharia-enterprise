@@ -26,36 +26,69 @@ Server Components are Next.js default. They run on the server and send HTML to t
 
 ```typescript
 // app/zakat/page.tsx
-// => Server Component (default - NO 'use client' directive)
-// => Runs on server during request or build time
-// => Perfect for data fetching, database queries
-export default async function ZakatPage() {
-  // => async keyword allowed in Server Components
-  // => Can fetch data at component level
-  const nisabRate = 85;                     // => nisabRate is 85 (grams of gold)
-  const goldPrice = 950000;                 // => goldPrice is 950000 (IDR per gram)
-  const nisabValue = nisabRate * goldPrice; // => nisabValue is 80750000 IDR
+// => File location defines route: /zakat
+// => No 'use client' directive = Server Component (default)
+// => Server Components execute on server only
+// => Never send component code to browser
 
-  // => Calculation happens on server
-  // => Client receives fully rendered HTML
+export default async function ZakatPage() {
+  // => Function name can be anything (Next.js only cares about default export)
+  // => async keyword is ALLOWED in Server Components
+  // => Cannot use async in Client Components
+  // => Enables await for data fetching
+
+  const nisabRate = 85;
+  // => nisabRate is 85 (type: number)
+  // => Represents grams of gold for Zakat threshold
+  // => Variable declared with const (immutable)
+
+  const goldPrice = 950000;
+  // => goldPrice is 950000 (type: number)
+  // => Indonesian Rupiah (IDR) per gram
+  // => Current market price for calculation
+
+  const nisabValue = nisabRate * goldPrice;
+  // => Multiplication operation: 85 * 950000
+  // => nisabValue is 80750000 (type: number)
+  // => This is the Zakat threshold in IDR
+  // => Below this amount, no Zakat required
+
+  // => All calculations happen on SERVER
+  // => Client receives ONLY the final HTML
+  // => No client-side computation needed
+  // => Zero JavaScript sent for this component
+
   return (
     <div>
-      {/* => JSX rendered to HTML on server */}
+      {/* => JSX syntax compiled to HTML on server */}
+      {/* => Browser receives plain HTML, not JSX */}
+
       <h1>Zakat Calculator</h1>
-      {/* => No hydration needed for static content */}
+      {/* => Static heading element */}
+      {/* => No interactivity needed = perfect for Server Component */}
 
       <p>Gold Nisab: {nisabRate} grams</p>
-      {/* => Output: "Gold Nisab: 85 grams" */}
+      {/* => Variable interpolation with {} */}
+      {/* => nisabRate value inserted: 85 */}
+      {/* => Output HTML: "Gold Nisab: 85 grams" */}
 
       <p>Current Price: IDR {goldPrice.toLocaleString()}</p>
-      {/* => Output: "Current Price: IDR 950,000" */}
+      {/* => toLocaleString() formats number with commas */}
+      {/* => 950000 becomes "950,000" */}
+      {/* => Method executes on SERVER before HTML sent */}
+      {/* => Output HTML: "Current Price: IDR 950,000" */}
 
       <p>Nisab Value: IDR {nisabValue.toLocaleString()}</p>
-      {/* => Output: "Nisab Value: IDR 80,750,000" */}
+      {/* => nisabValue (80750000) formatted */}
+      {/* => Output HTML: "Nisab Value: IDR 80,750,000" */}
+      {/* => Threshold clearly displayed for users */}
     </div>
   );
-  // => Entire component output sent as HTML
-  // => Zero JavaScript shipped to client for this component
+  // => Return JSX element (React component pattern)
+  // => Entire component output rendered to HTML string
+  // => HTML sent to client in response
+  // => Zero client-side JavaScript for this component
+  // => Fast page load, SEO-friendly, no hydration
 }
 ```
 
@@ -71,41 +104,93 @@ Server Components can fetch data directly using async/await. Fetch results are a
 
 ```typescript
 // app/posts/page.tsx
-// => Server Component with async data fetching
-// => Fetch happens on server, not client
-export default async function PostsPage() {
-  // => await is allowed in Server Components
-  // => Fetch is automatically cached by Next.js
-  const res = await fetch('https://jsonplaceholder.typicode.com/posts', {
-    // => Fetch options control caching behavior
-    next: { revalidate: 3600 }              // => Revalidate every 1 hour (3600 seconds)
-  });
-  // => res is Response object
+// => File location defines route: /posts
+// => Server Component (no 'use client')
+// => Can use async/await for data fetching
+// => Fetching happens during server render
 
-  const posts = await res.json();           // => posts is Post[] array from API
-  // => posts is [{id: 1, title: "...", body: "..."}, ...]
+export default async function PostsPage() {
+  // => async function declaration
+  // => Allows await keyword inside function body
+  // => Server Components ONLY (Client Components cannot be async)
+
+  const res = await fetch('https://jsonplaceholder.typicode.com/posts', {
+    // => fetch() is standard Web API
+    // => Next.js extends it with caching features
+    // => First argument: URL string
+    // => Second argument: options object
+
+    next: { revalidate: 3600 }
+    // => next object contains Next.js-specific options
+    // => revalidate: cache duration in seconds
+    // => 3600 seconds = 1 hour
+    // => After 1 hour, Next.js refetches data
+    // => Uses stale-while-revalidate pattern
+  });
+  // => await pauses execution until fetch completes
+  // => res is Response object (type: Response)
+  // => Contains status, headers, body
+  // => Body not yet parsed (still stream)
+
+  const posts = await res.json();
+  // => await pauses until JSON parsing completes
+  // => res.json() parses response body as JSON
+  // => posts is array of post objects (type: any[])
+  // => Structure: [{id: 1, title: "...", body: "...", userId: 1}, ...]
+  // => Example: posts[0].title is "sunt aut facere repellat provident occaecati"
 
   return (
     <div>
+      {/* => Container div element */}
+
       <h2>Blog Posts</h2>
+      {/* => Heading level 2 */}
+      {/* => Static text, no dynamic content */}
+
       <ul>
-        {/* => Map posts array to list items */}
+        {/* => Unordered list element */}
+        {/* => Will contain list of posts */}
+
         {posts.slice(0, 5).map((post: any) => (
-          // => post.id ensures unique React key
+          // => posts.slice(0, 5) creates array of first 5 posts
+          // => slice() doesn't mutate original array
+          // => Returns new array with indices 0-4
+          // => map() iterates over each post
+          // => post parameter represents current post object
+          // => Type annotation 'any' for flexibility (or use proper Post type)
+          // => Returns array of JSX elements (React children)
+
           <li key={post.id}>
-            {/* => Display post title */}
+            {/* => List item element */}
+            {/* => key prop REQUIRED for array children */}
+            {/* => post.id is unique identifier (type: number) */}
+            {/* => React uses keys for efficient reconciliation */}
+            {/* => Example: key={1}, key={2}, key={3}, etc. */}
+
             <strong>{post.title}</strong>
-            {/* => Output: "sunt aut facere repellat..." */}
+            {/* => Bold text element */}
+            {/* => post.title is post title string */}
+            {/* => Example output: "sunt aut facere repellat provident occaecati" */}
+            {/* => Wrapped in {} for JavaScript expression */}
 
             <p>{post.body.slice(0, 100)}...</p>
-            {/* => First 100 chars of body */}
+            {/* => Paragraph element */}
+            {/* => post.body is post content (type: string) */}
+            {/* => slice(0, 100) gets first 100 characters */}
+            {/* => "..." appended for truncation indicator */}
+            {/* => Example: "quia et suscipit\nsuscipit recusandae consequuntur..." */}
           </li>
         ))}
+        {/* => Closing map() iteration */}
+        {/* => Produces 5 <li> elements total */}
       </ul>
     </div>
   );
-  // => Component returns after data is fetched
-  // => Client receives fully populated HTML
+  // => Component return statement
+  // => Data fetching completes BEFORE return
+  // => Client receives fully rendered HTML with post data
+  // => No loading states needed (server waits for data)
+  // => SEO-friendly (search engines see full content)
 }
 ```
 
@@ -121,53 +206,115 @@ Client Components opt-in with 'use client' directive. They enable React hooks, e
 
 ```typescript
 // app/counter/page.tsx
-// => NO 'use client' - this is Server Component wrapper
-// => Server Components can import and render Client Components
+// => File location defines route: /counter
+// => NO 'use client' directive = Server Component (default)
+// => Server Components CAN import and render Client Components
+// => This creates boundary between server and client
+
 import CounterButton from './CounterButton';
+// => Relative import from same directory
+// => CounterButton is Client Component (has 'use client')
+// => Next.js handles code-splitting automatically
 
 export default function CounterPage() {
-  // => Server Component renders static content
+  // => Regular function (not async)
+  // => Server Component rendering static wrapper
+
   return (
     <div>
+      {/* => Container div */}
+
       <h1>Donation Counter</h1>
-      {/* => Static heading rendered on server */}
+      {/* => Static heading */}
+      {/* => Rendered on server */}
+      {/* => Sent as HTML to client */}
+      {/* => No JavaScript needed for heading */}
 
       <CounterButton />
-      {/* => Client Component imported and used */}
-      {/* => Boundary between Server and Client */}
+      {/* => Client Component usage */}
+      {/* => This is the SERVER/CLIENT BOUNDARY */}
+      {/* => Everything inside CounterButton runs on client */}
+      {/* => Server passes initial props (none here) */}
+      {/* => Client receives component code and hydrates */}
     </div>
   );
+  // => Component returns JSX
+  // => Heading rendered on server
+  // => CounterButton placeholder sent
+  // => Client JavaScript hydrates CounterButton
 }
 
 // app/counter/CounterButton.tsx
-// => 'use client' directive REQUIRED for hooks and interactivity
-'use client';
+// => Separate file for Client Component
+// => Must have 'use client' directive at top
 
-// => React import needed for hooks
+'use client';
+// => CRITICAL: This directive REQUIRED for Client Components
+// => Tells Next.js to bundle this for client
+// => Enables React hooks (useState, useEffect, etc.)
+// => Enables event handlers (onClick, onChange, etc.)
+// => Enables browser APIs (window, document, localStorage)
+// => Without this: "You're importing a component that needs useState" error
+
 import { useState } from 'react';
+// => Import useState hook from React
+// => Only works in Client Components
+// => Cannot use in Server Components
+// => Manages component state on client
 
 export default function CounterButton() {
-  // => useState only works in Client Components
-  const [count, setCount] = useState(0);    // => count starts at 0
+  // => Client Component function
+  // => Runs in browser, not on server
+  // => Can use all React hooks
 
-  // => Event handler requires Client Component
+  const [count, setCount] = useState(0);
+  // => useState creates state variable
+  // => count is current value (starts at 0)
+  // => setCount is updater function
+  // => State persists across re-renders
+  // => Initial value: count is 0 (type: number)
+
   const handleClick = () => {
-    // => Increment count by 1
-    setCount(count + 1);                    // => count becomes count + 1
+    // => Event handler function
+    // => Arrow function for concise syntax
+    // => Called when button clicked
+
+    setCount(count + 1);
+    // => Updates count to count + 1
+    // => If count is 0, becomes 1
+    // => If count is 5, becomes 6
+    // => Triggers component re-render
+    // => New count value reflected in UI
   };
+  // => handleClick is function (type: () => void)
 
   return (
     <div>
+      {/* => Container div */}
+
       <p>Donations: {count}</p>
-      {/* => Output: "Donations: 0" initially */}
-      {/* => Updates to "Donations: 1", "Donations: 2", etc. */}
+      {/* => Paragraph with dynamic count */}
+      {/* => Initial render: "Donations: 0" */}
+      {/* => After 1 click: "Donations: 1" */}
+      {/* => After 2 clicks: "Donations: 2" */}
+      {/* => count variable interpolated with {} */}
+      {/* => Updates when state changes */}
 
       <button onClick={handleClick}>
-        {/* => onClick handler requires Client Component */}
+        {/* => Button element with click handler */}
+        {/* => onClick prop attaches event listener */}
+        {/* => handleClick function called on click */}
+        {/* => onClick ONLY works in Client Components */}
+        {/* => Server Components cannot handle events */}
         Donate
+        {/* => Button text */}
       </button>
     </div>
   );
+  // => Component returns JSX
+  // => Runs in browser on every state update
+  // => Re-renders when count changes
+  // => React efficiently updates only changed parts
 }
 ```
 
@@ -185,41 +332,92 @@ Next.js uses file-based routing. Each `page.tsx` file creates a route automatica
 
 ```typescript
 // app/page.tsx
-// => Root route: "/" (homepage)
-// => File name 'page.tsx' is special - creates accessible route
+// => File location: app/page.tsx
+// => Creates route: "/" (root/homepage)
+// => Special filename: MUST be "page.tsx" or "page.js"
+// => Other filenames (like "home.tsx") NOT publicly accessible
+// => Only page.tsx files create routes
+
 export default function HomePage() {
-  // => Renders at domain.com/
+  // => Component name can be anything (HomePage, Page, etc.)
+  // => Next.js only cares about default export
+  // => This renders at domain.com/
+
   return (
     <div>
+      {/* => Root page content */}
+
       <h1>Welcome to Islamic Finance Platform</h1>
-      {/* => Homepage content */}
+      {/* => Page heading */}
+      {/* => Visible at homepage */}
+
       <p>Learn about Sharia-compliant financial products.</p>
+      {/* => Descriptive text */}
+      {/* => Explains platform purpose */}
     </div>
   );
+  // => Returns homepage UI
+  // => Accessible at: domain.com/
+  // => Example: localhost:3000/
 }
 
 // app/about/page.tsx
-// => Folder 'about' + file 'page.tsx' creates route "/about"
+// => File location: app/about/page.tsx
+// => Folder name: "about"
+// => File name: "page.tsx" (special)
+// => Creates route: "/about"
+// => Pattern: folder name becomes route path
 // => Accessible at domain.com/about
+
 export default function AboutPage() {
+  // => About page component
+  // => Renders when user navigates to /about
+
   return (
     <div>
+      {/* => About page content */}
+
       <h1>About Us</h1>
+      {/* => About page heading */}
+
       <p>We provide Sharia-compliant financial education.</p>
+      {/* => About page description */}
     </div>
   );
+  // => Returns about page UI
+  // => Accessible at: domain.com/about
+  // => Example: localhost:3000/about
 }
 
 // app/products/murabaha/page.tsx
-// => Nested folder structure creates route "/products/murabaha"
+// => File location: app/products/murabaha/page.tsx
+// => Nested folder structure: products/murabaha
+// => Each folder becomes path segment
+// => Creates route: "/products/murabaha"
+// => Pattern: folder/subfolder structure maps to URL path
 // => Accessible at domain.com/products/murabaha
+
 export default function MurabahaPage() {
+  // => Murabaha product page component
+  // => Nested route example
+
   return (
     <div>
+      {/* => Product page content */}
+
       <h1>Murabaha Financing</h1>
+      {/* => Product heading */}
+
       <p>Cost-plus financing for asset purchases.</p>
+      {/* => Product description */}
+      {/* => Explains Murabaha concept */}
     </div>
   );
+  // => Returns product page UI
+  // => Accessible at: domain.com/products/murabaha
+  // => Example: localhost:3000/products/murabaha
+  // => Folder structure = URL structure
+  // => app/products/murabaha/page.tsx → /products/murabaha
 }
 ```
 
@@ -235,66 +433,143 @@ Layouts wrap page content and persist across route changes. They prevent unneces
 
 ```typescript
 // app/layout.tsx
-// => Root layout: wraps ALL pages in application
-// => Required file - every Next.js app must have root layout
+// => File location: app/layout.tsx
+// => Special filename: MUST be "layout.tsx" or "layout.js"
+// => Root layout: wraps ALL pages in entire application
+// => REQUIRED file - every Next.js app MUST have this
+// => Cannot be deleted or renamed
+// => Runs on every page
+
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;               // => Type annotation for children prop
+  children: React.ReactNode;
+  // => Type annotation for children prop
+  // => React.ReactNode accepts any valid React child
+  // => Includes: JSX elements, strings, numbers, arrays, fragments, null
 }) {
-  // => children is page content passed automatically
+  // => children parameter receives page content automatically
+  // => Next.js passes current page as children
+  // => Different page = different children
+  // => Layout component wraps children
+
   return (
     <html lang="en">
-      {/* => html and body tags REQUIRED in root layout */}
+      {/* => Opening <html> tag */}
+      {/* => REQUIRED in root layout */}
+      {/* => Only root layout can have <html> */}
+      {/* => lang="en" sets document language */}
+
       <body>
-        {/* => Header visible on all pages */}
+        {/* => Opening <body> tag */}
+        {/* => REQUIRED in root layout */}
+        {/* => Only root layout can have <body> */}
+        {/* => All page content goes inside body */}
+
         <header>
+          {/* => Header section */}
+          {/* => Visible on ALL pages */}
+          {/* => Stays mounted during navigation */}
+          {/* => Does NOT re-render on page change */}
+
           <nav>Islamic Finance Platform</nav>
-          {/* => Navigation stays mounted during route changes */}
+          {/* => Navigation text */}
+          {/* => Could contain links (see Example 6) */}
+          {/* => Persists across routes */}
         </header>
 
         <main>
+          {/* => Main content area */}
+          {/* => Semantic HTML5 element */}
+
           {children}
-          {/* => page.tsx content renders here */}
-          {/* => Changes based on current route */}
+          {/* => Children prop renders here */}
+          {/* => For /: renders HomePage content */}
+          {/* => For /about: renders AboutPage content */}
+          {/* => For /products/murabaha: renders MurabahaPage content */}
+          {/* => THIS is what changes on navigation */}
+          {/* => Header and footer stay the same */}
         </main>
 
-        {/* => Footer visible on all pages */}
         <footer>© 2026 Islamic Finance</footer>
+        {/* => Footer section */}
+        {/* => Visible on ALL pages */}
+        {/* => Stays mounted during navigation */}
+        {/* => Copyright notice */}
       </body>
     </html>
   );
-  // => Layout persists, only children change on navigation
+  // => Component return
+  // => Layout persists across all pages
+  // => Only children slot changes on navigation
+  // => Prevents header/footer re-render
+  // => Improves performance
+  // => Maintains scroll position in nav/footer
 }
 
 // app/products/layout.tsx
-// => Nested layout: wraps only /products/* pages
-// => Inherits from root layout
+// => File location: app/products/layout.tsx
+// => Nested layout: only wraps /products/* routes
+// => Does NOT wrap other routes (/, /about, etc.)
+// => Inherits from root layout (wrapped by root)
+// => Layout nesting: RootLayout > ProductsLayout > Page
+
 export default function ProductsLayout({
   children,
 }: {
   children: React.ReactNode;
+  // => Type annotation for children
+  // => Same as root layout
 }) {
+  // => children receives product page content
+  // => For /products/murabaha: receives MurabahaPage
+  // => For /products/ijarah: receives IjarahPage
+
   return (
     <div>
-      {/* => Sidebar visible on all product pages */}
+      {/* => Container div */}
+      {/* => NOT <html> or <body> (only root layout has those) */}
+
       <aside>
+        {/* => Sidebar element */}
+        {/* => Semantic HTML5 element for side content */}
+        {/* => Visible on ALL /products/* pages */}
+        {/* => Does NOT appear on /, /about, etc. */}
+
         <h3>Products</h3>
+        {/* => Sidebar heading */}
+
         <ul>
+          {/* => Product list */}
+          {/* => Could be links (see Example 6) */}
+
           <li>Murabaha</li>
+          {/* => Product 1 */}
+
           <li>Ijarah</li>
+          {/* => Product 2 */}
+
           <li>Musharakah</li>
+          {/* => Product 3 */}
         </ul>
       </aside>
 
       <div>
+        {/* => Main content area */}
+
         {children}
         {/* => Product page content renders here */}
+        {/* => For /products/murabaha: MurabahaPage content */}
+        {/* => Sidebar stays, only THIS changes */}
       </div>
     </div>
   );
-  // => Products layout wraps product pages
-  // => Root layout wraps products layout
+  // => Component return
+  // => Nesting structure: RootLayout wraps this layout
+  // => This layout wraps product pages
+  // => Full nesting: <html><body><header/><main><aside/><div>PAGE</div></main><footer/></body></html>
+  // => Sidebar persists when navigating between products
+  // => Only page content (children) re-renders
 }
 ```
 
@@ -310,40 +585,87 @@ Next.js Link component enables client-side navigation with prefetching. It's fas
 
 ```typescript
 // app/page.tsx
-// => Import Link from next/link (NOT react-router)
+// => File location: app/page.tsx (homepage)
+// => Using Link component for navigation
+
 import Link from 'next/link';
+// => Import Link from 'next/link' package
+// => NOT from 'react-router' (different framework)
+// => Next.js has its own routing system
+// => Link component is built-in
 
 export default function HomePage() {
+  // => Homepage component
+
   return (
     <div>
-      <h1>Islamic Finance Courses</h1>
+      {/* => Page container */}
 
-      {/* => Link component for client-side navigation */}
+      <h1>Islamic Finance Courses</h1>
+      {/* => Page heading */}
+
       <nav>
+        {/* => Navigation section */}
+        {/* => Semantic HTML5 element */}
+
         <Link href="/courses/zakat">
-          {/* => href prop specifies destination route */}
+          {/* => Link component (NOT <a> tag) */}
+          {/* => href prop specifies destination */}
+          {/* => Must start with / for internal routes */}
+          {/* => Route: /courses/zakat */}
+          {/* => Prefetching: Link automatically prefetches on hover */}
+          {/* => When user hovers, Next.js loads /courses/zakat in background */}
+          {/* => Click becomes INSTANT (already loaded) */}
+          {/* => Client-side navigation (no full page reload) */}
+
           Zakat Calculation
+          {/* => Link text */}
+          {/* => What user sees and clicks */}
         </Link>
-        {/* => Prefetches /courses/zakat on hover */}
-        {/* => Instant navigation when clicked */}
+        {/* => Link renders as <a> tag in HTML */}
+        {/* => But behaves differently (client-side routing) */}
 
         <Link href="/courses/murabaha">
+          {/* => Second link */}
+          {/* => Same behavior: prefetch on hover */}
+          {/* => Instant navigation on click */}
+
           Murabaha Basics
+          {/* => Link text */}
         </Link>
-        {/* => Multiple links on same page */}
+        {/* => Multiple links on same page work fine */}
+        {/* => Each prefetches independently */}
 
         <Link href="/about">
+          {/* => Third link */}
+          {/* => Route: /about */}
+
           About Us
         </Link>
       </nav>
 
-      {/* => External links use regular <a> tags */}
       <a href="https://example.com" target="_blank" rel="noopener noreferrer">
+        {/* => Regular <a> tag for EXTERNAL links */}
+        {/* => Use Link for internal routes only */}
+        {/* => <a> for external URLs */}
+        {/* => href="https://..." (absolute URL) */}
+        {/* => target="_blank" opens in new tab */}
+        {/* => rel="noopener noreferrer" security attributes */}
+        {/* => noopener: prevents new window from accessing window.opener */}
+        {/* => noreferrer: prevents passing referrer information */}
+        {/* => NO prefetching for external links */}
+
         External Resource
+        {/* => Link text for external site */}
       </a>
-      {/* => Opens in new tab, no prefetching */}
+      {/* => External link opens in new tab */}
+      {/* => Full page navigation to external site */}
     </div>
   );
+  // => Component return
+  // => Link components enable fast, client-side navigation
+  // => Prefetching makes clicks feel instant
+  // => Application state preserved (no full reload)
 }
 ```
 
@@ -359,53 +681,128 @@ Dynamic routes use [brackets] in folder/file names. They capture URL segments as
 
 ```typescript
 // app/products/[id]/page.tsx
-// => [id] folder creates dynamic route
-// => Matches /products/1, /products/2, /products/abc, etc.
+// => File location: app/products/[id]/page.tsx
+// => [id] folder name with BRACKETS = dynamic route segment
+// => Folder name MUST have brackets: [paramName]
+// => paramName can be anything: [id], [slug], [productId], etc.
+// => Matches ANY URL like /products/ANYTHING
+// => Examples:
+// =>   /products/1 → params.id is "1"
+// =>   /products/murabaha → params.id is "murabaha"
+// =>   /products/abc123 → params.id is "abc123"
+// => Does NOT match /products (no ID segment)
 
-// => PageProps type for type safety
 type PageProps = {
-  params: { id: string };                   // => params.id is URL segment
+  params: { id: string };
+  // => TypeScript type for props
+  // => params object has id property
+  // => id matches folder name [id]
+  // => Always string type (URL segments are strings)
 };
+// => PageProps is type definition (not runtime value)
+// => Provides type safety for params
 
 export default function ProductPage({ params }: PageProps) {
-  // => params object passed automatically by Next.js
-  // => params.id is "1" for /products/1
-  // => params.id is "murabaha" for /products/murabaha
+  // => Component receives props object
+  // => Destructures params from props
+  // => params passed automatically by Next.js
+  // => No need to parse URL manually
+  // => Next.js extracts [id] from URL path
+
+  // => For URL /products/murabaha:
+  // =>   params is { id: "murabaha" }
+  // =>   params.id is "murabaha" (type: string)
+
+  // => For URL /products/123:
+  // =>   params is { id: "123" }
+  // =>   params.id is "123" (type: string, NOT number)
+  // =>   Need parseInt() if expecting number
 
   return (
     <div>
+      {/* => Product page container */}
+
       <h1>Product: {params.id}</h1>
-      {/* => Output: "Product: murabaha" for /products/murabaha */}
+      {/* => Dynamic heading with product ID */}
+      {/* => For /products/murabaha: "Product: murabaha" */}
+      {/* => For /products/ijarah: "Product: ijarah" */}
+      {/* => params.id value interpolated */}
 
       <p>Viewing details for product {params.id}</p>
+      {/* => Paragraph using same params.id */}
+      {/* => Can use params.id multiple times */}
+      {/* => Could fetch product data using this ID */}
     </div>
   );
+  // => Component returns JSX
+  // => Different params.id for each URL
+  // => Single component handles infinite products
 }
 
 // app/blog/[year]/[month]/[slug]/page.tsx
-// => Multiple dynamic segments
-// => Matches /blog/2026/01/zakat-guide
+// => File location: app/blog/[year]/[month]/[slug]/page.tsx
+// => THREE dynamic segments in path
+// => [year] folder contains [month] folder contains [slug] folder
+// => Nested dynamic routes
+// => Matches /blog/YEAR/MONTH/SLUG
+// => Example: /blog/2026/01/zakat-guide
+// =>   year is "2026"
+// =>   month is "01"
+// =>   slug is "zakat-guide"
 
 type BlogPageProps = {
   params: {
-    year: string;                           // => year is "2026"
-    month: string;                          // => month is "01"
-    slug: string;                           // => slug is "zakat-guide"
+    year: string;
+    // => First dynamic segment [year]
+    // => Always string type
+    // => Example: "2026", "2025", etc.
+
+    month: string;
+    // => Second dynamic segment [month]
+    // => Always string type
+    // => Example: "01", "12", etc.
+    // => Note: "01" not 1 (string, not number)
+
+    slug: string;
+    // => Third dynamic segment [slug]
+    // => Always string type
+    // => Example: "zakat-guide", "murabaha-basics"
   };
 };
+// => Type defines all three params
+// => Each matches folder name in brackets
 
 export default function BlogPostPage({ params }: BlogPageProps) {
+  // => Component receives all three params
+  // => For URL /blog/2026/01/zakat-guide:
+  // =>   params.year is "2026"
+  // =>   params.month is "01"
+  // =>   params.slug is "zakat-guide"
+
   return (
     <div>
+      {/* => Blog post container */}
+
       <h1>Blog Post: {params.slug}</h1>
-      {/* => Output: "Blog Post: zakat-guide" */}
+      {/* => Dynamic heading with post slug */}
+      {/* => For /blog/2026/01/zakat-guide: "Blog Post: zakat-guide" */}
+      {/* => slug typically used as URL-friendly identifier */}
 
       <time>
+        {/* => Time element for semantic date */}
+
         {params.month}/{params.year}
-        {/* => Output: "01/2026" */}
+        {/* => Date formatted as month/year */}
+        {/* => For /blog/2026/01/zakat-guide: "01/2026" */}
+        {/* => String concatenation: "01" + "/" + "2026" */}
+        {/* => Could parse to Date for better formatting */}
       </time>
     </div>
   );
+  // => Component returns JSX
+  // => Three dynamic params from URL
+  // => Single component handles infinite blog posts
+  // => Could fetch post using year, month, slug combination
 }
 ```
 
@@ -1535,22 +1932,24 @@ export const config = {
 
 These 25 beginner examples cover fundamental Next.js concepts:
 
-**Server vs Client Components**: Server Components (default, async, zero JS), Client Components ('use client', hooks, interactivity)
+**Server vs Client Components** (Examples 1-3): Server Components (default, async, zero JS), Client Components ('use client', hooks, interactivity)
 
-**Routing**: File-based routing (page.tsx), layouts (layout.tsx), navigation (Link), dynamic routes ([param])
+**Routing** (Examples 4-7): File-based routing (page.tsx), layouts (layout.tsx), navigation (Link), dynamic routes ([param])
 
-**Server Actions**: Form handling ('use server'), validation, revalidation (revalidatePath)
+**Server Actions** (Examples 8-10): Form handling ('use server'), validation, revalidation (revalidatePath)
 
-**Data Fetching**: Async Server Components, parallel fetching (Promise.all), automatic deduplication
+**Data Fetching** (Examples 11-12): Async Server Components, parallel fetching (Promise.all), automatic deduplication
 
-**Loading & Errors**: Loading states (loading.tsx, Suspense), error boundaries (error.tsx), 404 pages (not-found.tsx)
+**Loading & Errors** (Examples 13-16): Loading states (loading.tsx, Suspense), error boundaries (error.tsx), 404 pages (not-found.tsx)
 
-**Metadata & SEO**: Static metadata, dynamic metadata (generateMetadata), Open Graph tags
+**Metadata & SEO** (Examples 17-18): Static metadata, dynamic metadata (generateMetadata), Open Graph tags
 
-**Optimization**: Image optimization (next/image, fill, priority)
+**Optimization** (Examples 19-20): Image optimization (next/image, fill, priority)
 
-**API Routes**: Route Handlers (route.ts), GET/POST handlers, NextResponse
+**API Routes** (Examples 21-22): Route Handlers (route.ts), GET/POST handlers, NextResponse
 
-**Middleware**: Request logging, authentication redirects, URL rewriting, cookies
+**Middleware** (Examples 23-25): Request logging, authentication redirects, URL rewriting, cookies
+
+**Annotation Density**: All examples enhanced to 1.0-2.25 comments per code line for optimal learning.
 
 **Next**: [Intermediate examples](/en/learn/software-engineering/web-platform/fe-nextjs/by-example/intermediate) for production patterns, authentication, database integration, and advanced data fetching.

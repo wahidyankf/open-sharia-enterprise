@@ -63,36 +63,48 @@ Elixir variables don't hold values—they **bind** to values. The `=` operator i
 ```elixir
 x = 1                          # => Match operator binds x to value 1
                                # => x is now 1 (type: integer)
+                               # => = is NOT assignment, it's pattern matching
 x                              # => Returns current binding: 1
+                               # => Variable evaluation returns bound value
 
 x = 2                          # => Rebinds x to new value 2 (old binding discarded)
                                # => x is now 2 (variable rebound, not mutated)
+                               # => Previous value 1 is garbage collected if unreferenced
 x                              # => Returns current binding: 2
 
 y = 1                          # => Binds y to value 1
                                # => y is 1 (type: integer)
+                               # => New variable, independent from x
 x = 2                          # => Rebinds x again to 2
                                # => x is 2, y is still 1 (independent bindings)
+                               # => Rebinding x doesn't affect y
 
 user_name = "Alice"            # => Binds user_name to string "Alice"
                                # => user_name is "Alice" (type: binary/string)
+                               # => Strings in Elixir are UTF-8 binaries
 user_age = 30                  # => Binds user_age to integer 30
                                # => user_age is 30 (type: integer)
+                               # => Arbitrary precision integers (no overflow)
 
 a = b = c = 5                  # => Right-to-left evaluation: c=5, b=c, a=b
                                # => All three variables bound to value 5
+                               # => Single value shared by all three variables
 a                              # => Returns 5
 b                              # => Returns 5
 c                              # => Returns 5
 
 list = [1, 2, 3]               # => Binds list to new list structure [1, 2, 3]
                                # => list is [1, 2, 3] (linked list in memory)
+                               # => Elixir lists are singly-linked lists
 new_list = [0 | list]          # => Prepends 0 to list using cons operator |
                                # => Creates NEW list structure [0, 1, 2, 3]
                                # => Structural sharing: [1,2,3] portion reused
+                               # => Efficient memory use: only new head allocated
 list                           # => Original list unchanged: [1, 2, 3]
                                # => Immutability: original data never modified
+                               # => list still points to original structure
 new_list                       # => New list with prepended element: [0, 1, 2, 3]
+                               # => new_list shares tail with list (structural sharing)
 ```
 
 **Key Takeaway**: Variables bind to values (they don't contain values), and data is immutable. You create new data structures instead of modifying existing ones, which enables safe concurrency.
@@ -110,12 +122,16 @@ Elixir has several basic types: integers, floats, booleans, atoms, and strings. 
 ```elixir
 integer = 42                   # => Binds integer to value 42
                                # => integer is 42 (type: integer, arbitrary precision)
+                               # => Integers can be arbitrarily large (no overflow)
 large_integer = 1_000_000_000_000  # => Underscores for readability (ignored by compiler)
                                     # => large_integer is 1000000000000 (1 trillion)
+                                    # => Underscores can appear anywhere in number
 hex = 0x1F                     # => Hexadecimal literal (0x prefix)
                                # => hex is 31 (decimal equivalent)
+                               # => 1F in hex = 1×16 + 15 = 31
 binary = 0b1010                # => Binary literal (0b prefix)
                                # => binary is 10 (decimal equivalent)
+                               # => 1010 in binary = 8 + 2 = 10
 
 float = 3.14                   # => Floating point number
                                # => float is 3.14 (type: float, 64-bit)
@@ -236,6 +252,7 @@ x = 1                          # => Binds x to value 1
 1 = x                          # => Pattern 1 matches value of x (which is 1)
                                # => Match succeeds, returns 1
                                # => No new bindings (1 is literal, not variable)
+                               # => Assertion-style matching: fails if x != 1
 
 {a, b, c} = {1, 2, 3}          # => Tuple pattern {a,b,c} matches tuple {1,2,3}
                                # => Destructures: a=1, b=2, c=3
@@ -916,14 +933,19 @@ graph LR
 
 ```elixir
 result = String.upcase(String.trim("  hello  "))  # => Nested function calls (inside-out reading)
+                                                    # => Must read innermost first (String.trim)
                                                     # => String.trim("  hello  ") returns "hello"
+                                                    # => Then outer function: String.upcase("hello")
                                                     # => String.upcase("hello") returns "HELLO"
                                                     # => result is "HELLO" (hard to read flow)
 
-result = "  hello  "         # => Starts with input string
+result = "  hello  "         # => Starts with input string (data at top)
+                             # => Pipeline processes data top-to-bottom
          |> String.trim()    # => Pipe passes "  hello  " as first arg to String.trim()
+                             # => Operator |> takes left value, passes to right function
                              # => Returns "hello" (whitespace trimmed)
          |> String.upcase()  # => Pipe passes "hello" as first arg to String.upcase()
+                             # => Continues pipeline with previous result
                              # => Returns "HELLO"
                              # => result is "HELLO" (readable left-to-right flow)
 
@@ -1003,81 +1025,118 @@ result = value                # => Starts pipeline with 42
 
 ```elixir
 user_status = {:ok, "Alice"}   # => Creates tagged tuple for user status
-                                # => user_status is {:ok, "Alice"}
+                                # => user_status is {:ok, "Alice"} (type: tuple)
 
 result = case user_status do   # => Pattern matches on user_status value
-  {:ok, name} -> "Welcome, #{name}!"  # => First clause matches {:ok, "Alice"}
-                                       # => name binds to "Alice"
-                                       # => Returns "Welcome, Alice!"
-  {:error, reason} -> "Error: #{reason}"  # => Second clause (not matched)
-  _ -> "Unknown status"        # => Catch-all clause (not matched)
-end                            # => case expression evaluates to first match
-                                # => result is "Welcome, Alice!"
-result                         # => Returns "Welcome, Alice!"
+                                # => case evaluates clauses top-to-bottom
+  {:ok, name} ->                # => First clause: matches {:ok, "Alice"}
+                                # => Destructures tuple, name binds to "Alice"
+    "Welcome, #{name}!"         # => String interpolation: "Welcome, Alice!"
+                                # => This clause returns the interpolated string
+  {:error, reason} ->           # => Second clause: expects {:error, _}
+                                # => Not matched (tag is :ok, not :error)
+    "Error: #{reason}"          # => Would interpolate reason if matched
+  _ ->                          # => Catch-all clause for any other value
+    "Unknown status"            # => Returns if no other clause matches
+end                             # => case expression returns first match result
+                                # => result is "Welcome, Alice!" (type: String)
+result                          # => Returns "Welcome, Alice!"
 
-number = 15                    # => Binds number to 15 for classification
+number = 15                     # => Binds number to 15 (type: integer)
+                                # => Will classify this number by range
 
-classification = case number do  # => Matches number against guard patterns
-  n when n < 0 -> "negative"   # => Guard: n < 0 (false for 15, not matched)
-  0 -> "zero"                  # => Exact match: 0 (false for 15, not matched)
-  n when n > 0 and n <= 10 -> "small positive"  # => Guard: 0 < n ≤ 10 (false, not matched)
-  n when n > 10 and n <= 100 -> "medium positive"  # => Guard: 10 < n ≤ 100 (TRUE for 15)
-                                                    # => n binds to 15
-                                                    # => Returns "medium positive"
-  n when n > 100 -> "large positive"  # => Not evaluated (already matched)
-end                            # => classification is "medium positive"
-classification                 # => Returns "medium positive"
+classification = case number do # => Matches number against guard patterns
+                                # => Guards enable conditional matching
+  n when n < 0 ->               # => Guard: n < 0 (15 < 0 is false)
+    "negative"                  # => Not matched, not evaluated
+  0 ->                          # => Exact match: literal 0
+    "zero"                      # => Not matched (15 ≠ 0)
+  n when n > 0 and n <= 10 ->   # => Guard: 0 < n ≤ 10 (15 > 10 is false)
+    "small positive"            # => Not matched
+  n when n > 10 and n <= 100 -> # => Guard: 10 < n ≤ 100 (TRUE for 15)
+                                # => n binds to 15
+    "medium positive"           # => Returns this string
+  n when n > 100 ->             # => Guard: n > 100
+    "large positive"            # => Not evaluated (already matched above)
+end                             # => classification is "medium positive"
+classification                  # => Returns "medium positive"
 
-age = 25                       # => Binds age to 25 for condition checking
+age = 25                        # => Binds age to 25 (type: integer)
+                                # => Will categorize by age range
 
-description = cond do          # => Evaluates conditions top-to-bottom
-  age < 13 -> "child"          # => 25 < 13 is false, not matched
-  age < 20 -> "teenager"       # => 25 < 20 is false, not matched
-  age < 60 -> "adult"          # => 25 < 60 is TRUE, first match
-                                # => Returns "adult"
-  age >= 60 -> "senior"        # => Not evaluated (already matched)
-  true -> "unknown"            # => Default case (always true if reached)
-end                            # => description is "adult"
-description                    # => Returns "adult"
+description = cond do           # => Evaluates boolean conditions top-to-bottom
+                                # => Returns result of first truthy condition
+  age < 13 ->                   # => 25 < 13 evaluates to false
+    "child"                     # => Not executed
+  age < 20 ->                   # => 25 < 20 evaluates to false
+    "teenager"                  # => Not executed
+  age < 60 ->                   # => 25 < 60 evaluates to TRUE (first match)
+    "adult"                     # => Returns this string
+  age >= 60 ->                  # => Not evaluated (already matched)
+    "senior"                    # => Would return if age >= 60
+  true ->                       # => Default case: always evaluates to true
+    "unknown"                   # => Executes only if all above conditions false
+end                             # => description is "adult" (type: String)
+description                     # => Returns "adult"
 
-score = 85                     # => Binds score to 85 for grading
+score = 85                      # => Binds score to 85 (type: integer)
+                                # => Will convert to letter grade
 
-grade = cond do                # => Evaluates grade conditions
-  score >= 90 -> "A"           # => 85 >= 90 is false, not matched
-  score >= 80 -> "B"           # => 85 >= 80 is TRUE, first match
-                                # => Returns "B"
-  score >= 70 -> "C"           # => Not evaluated (already matched)
-  score >= 60 -> "D"           # => Not evaluated
-  true -> "F"                  # => Default case (not reached)
-end                            # => grade is "B"
-grade                          # => Returns "B"
+grade = cond do                 # => Evaluates grade range conditions
+  score >= 90 ->                # => 85 >= 90 evaluates to false
+    "A"                         # => Not executed
+  score >= 80 ->                # => 85 >= 80 evaluates to TRUE (first match)
+    "B"                         # => Returns this grade
+  score >= 70 ->                # => Not evaluated (already matched)
+    "C"                         # => Would return if 70 ≤ score < 80
+  score >= 60 ->                # => Not evaluated
+    "D"                         # => Would return if 60 ≤ score < 70
+  true ->                       # => Default case (F grade)
+    "F"                         # => Would execute if all above false
+end                             # => grade is "B" (type: String)
+grade                           # => Returns "B"
 
 http_response = {:ok, 200, "Success"}  # => Creates 3-element HTTP response tuple
+                                        # => Tagged with :ok atom for success
                                         # => http_response is {:ok, 200, "Success"}
 
-message = case http_response do  # => Pattern matches on response structure
-  {:ok, 200, body} -> "OK: #{body}"  # => Matches {:ok, 200, "Success"}
-                                      # => body binds to "Success"
-                                      # => Returns "OK: Success"
-  {:ok, 404, _} -> "Not Found"  # => Not matched (status is 200, not 404)
-  {:ok, 500, _} -> "Server Error"  # => Not matched (status is 200, not 500)
-  {:error, reason} -> "Failed: #{reason}"  # => Not matched (tag is :ok, not :error)
-  _ -> "Unknown response"      # => Catch-all (not reached)
-end                            # => message is "OK: Success"
-message                        # => Returns "OK: Success"
+message = case http_response do # => Pattern matches on response structure
+                                # => Destructures tuple elements
+  {:ok, 200, body} ->           # => Matches {:ok, 200, _}
+                                # => body binds to "Success" (3rd element)
+    "OK: #{body}"               # => String interpolation: "OK: Success"
+                                # => Returns interpolated string
+  {:ok, 404, _} ->              # => Would match {:ok, 404, _}
+    "Not Found"                 # => Not matched (status is 200)
+  {:ok, 500, _} ->              # => Would match {:ok, 500, _}
+    "Server Error"              # => Not matched (status is 200)
+  {:error, reason} ->           # => Would match {:error, _}
+                                # => Not matched (tag is :ok, not :error)
+    "Failed: #{reason}"         # => Would interpolate error reason
+  _ ->                          # => Catch-all for any other response
+    "Unknown response"          # => Not reached (matched above)
+end                             # => message is "OK: Success" (type: String)
+message                         # => Returns "OK: Success"
 
-income = 50000                 # => Binds income to 50000
-has_debt = false               # => Binds has_debt to false
+income = 50000                  # => Binds income to 50000 (type: integer)
+has_debt = false                # => Binds has_debt to false (type: boolean)
+                                # => Will evaluate loan eligibility
 
-loan_status = cond do          # => Evaluates loan eligibility conditions
-  income < 20000 -> "Not eligible - income too low"  # => 50000 < 20000 is false
-  has_debt -> "Not eligible - existing debt"  # => false is false, not matched
-  income >= 20000 and income < 50000 -> "Eligible for $10k loan"  # => 50000 >= 20000 and 50000 < 50000 is false
-  income >= 50000 -> "Eligible for $50k loan"  # => 50000 >= 50000 is TRUE, first match
-                                                # => Returns "Eligible for $50k loan"
-  true -> "Unknown status"     # => Default case (not reached)
-end                            # => loan_status is "Eligible for $50k loan"
-loan_status                    # => Returns "Eligible for $50k loan"
+loan_status = cond do           # => Evaluates loan eligibility conditions
+                                # => Checks income thresholds and debt status
+  income < 20000 ->             # => 50000 < 20000 evaluates to false
+    "Not eligible - income too low"  # => Not executed
+  has_debt ->                   # => false evaluates to false
+    "Not eligible - existing debt"   # => Not executed
+  income >= 20000 and income < 50000 -> # => 50000 >= 20000 (true) and 50000 < 50000 (false)
+                                        # => Combined with AND: false
+    "Eligible for $10k loan"    # => Not executed
+  income >= 50000 ->            # => 50000 >= 50000 evaluates to TRUE (first match)
+    "Eligible for $50k loan"    # => Returns this string
+  true ->                       # => Default case (fallback)
+    "Unknown status"            # => Not reached (matched above)
+end                             # => loan_status is "Eligible for $50k loan"
+loan_status                     # => Returns "Eligible for $50k loan"
 ```
 
 **Key Takeaway**: Use `case` for pattern matching on values, `cond` for evaluating multiple conditions. Both require at least one clause to match, providing exhaustiveness checking.
