@@ -2389,71 +2389,118 @@ CASE implements conditional logic in queries - like if/else statements. Use simp
 
 ```sql
 CREATE DATABASE example_29;
--- => Creates database 'example_29'
+-- => Creates database 'example_29' for CASE expression examples
 \c example_29;
 -- => Switches connection to example_29 database
+
 CREATE TABLE orders (
     customer VARCHAR(100),
+    -- => customer: customer name (up to 100 characters)
     total DECIMAL(10, 2),
+    -- => total: order amount (10 digits total, 2 after decimal)
     status VARCHAR(20)
+    -- => status: order status (completed, pending, cancelled)
 );
+-- => Creates orders table with 3 columns
+
 INSERT INTO orders (customer, total, status)
--- => INSERT into orders table begins
 VALUES
--- => Row data values follow
     ('Alice', 1500.00, 'completed'),
-    -- => Row data inserted
+    -- => Alice: $1500 order, completed status
     ('Bob', 200.00, 'pending'),
-    -- => Row data inserted
+    -- => Bob: $200 order, pending status
     ('Charlie', 50.00, 'cancelled'),
-    -- => Row data inserted
+    -- => Charlie: $50 order, cancelled status
     ('Diana', 800.00, 'completed'),
-    -- => Row data inserted
+    -- => Diana: $800 order, completed status
     ('Eve', 3000.00, 'pending');
+    -- => Eve: $3000 order, pending status
+-- => Inserts 5 orders with different statuses and totals
+
 -- Simple CASE (equality check)
 SELECT
     customer,
+    -- => Customer column from orders table
     status,
+    -- => Original status value ('completed', 'pending', 'cancelled')
     CASE status
+        -- => CASE evaluates status column value
         WHEN 'completed' THEN 'Delivered'
+        -- => If status = 'completed', return 'Delivered'
         WHEN 'pending' THEN 'In Progress'
+        -- => If status = 'pending', return 'In Progress'
         WHEN 'cancelled' THEN 'Refunded'
+        -- => If status = 'cancelled', return 'Refunded'
         ELSE 'Unknown'
+        -- => If none match, return 'Unknown' (default case)
     END AS status_description
+    -- => END closes CASE expression, aliases result as status_description
 FROM orders;
+-- => Returns 5 rows with translated status descriptions
+
 -- Searched CASE (complex conditions)
 SELECT
     customer,
+    -- => Customer name
     total,
+    -- => Order total amount
     CASE
+        -- => Searched CASE (no column after CASE keyword)
         WHEN total >= 1000 THEN 'High Value'
+        -- => If total >= 1000, categorize as 'High Value'
+        -- => Alice ($1500), Eve ($3000) match this condition
         WHEN total >= 500 THEN 'Medium Value'
+        -- => If total >= 500 (but < 1000), categorize as 'Medium Value'
+        -- => Diana ($800) matches this condition
         ELSE 'Low Value'
+        -- => If total < 500, categorize as 'Low Value'
+        -- => Bob ($200), Charlie ($50) match this default
     END AS order_category
+    -- => Result column named order_category
 FROM orders;
--- => Alice: High Value, Bob: Low Value, Diana: Medium Value
+-- => Alice: 'High Value' ($1500 >= 1000)
+-- => Bob: 'Low Value' ($200 < 500)
+-- => Diana: 'Medium Value' ($800 >= 500)
+-- => Searched CASE evaluates conditions sequentially (first match wins)
 
 -- CASE in aggregate functions
 SELECT
     COUNT(*) AS total_orders,
+    -- => Counts all rows (5 orders)
     COUNT(CASE WHEN status = 'completed' THEN 1 END) AS completed_orders,
+    -- => Counts rows where status = 'completed'
+    -- => CASE returns 1 for completed, NULL otherwise
+    -- => COUNT ignores NULLs (counts only 1 values)
+    -- => Result: 2 (Alice, Diana)
     COUNT(CASE WHEN status = 'pending' THEN 1 END) AS pending_orders,
+    -- => Counts rows where status = 'pending'
+    -- => Result: 2 (Bob, Eve)
     SUM(CASE WHEN status = 'completed' THEN total ELSE 0 END) AS completed_revenue
+    -- => Sums total for completed orders only
+    -- => CASE returns total for completed, 0 otherwise
+    -- => Alice: 1500 + Diana: 800 = 2300.00
 FROM orders;
--- => total: 5, completed: 2, pending: 2, revenue: 2300.00
+-- => Returns single row with 4 aggregated values
+-- => total_orders: 5, completed_orders: 2, pending_orders: 2, completed_revenue: 2300.00
 
 -- CASE with ORDER BY
 SELECT customer, total
+-- => Returns customer name and order total
 FROM orders
 ORDER BY
--- => Sorts result set
+    -- => Custom sort order using CASE expression
     CASE
         WHEN status = 'completed' THEN 1
+        -- => Completed orders: sort key = 1 (highest priority)
         WHEN status = 'pending' THEN 2
+        -- => Pending orders: sort key = 2 (medium priority)
         ELSE 3
+        -- => Other statuses (cancelled): sort key = 3 (lowest priority)
     END,
+    -- => First sort by status priority (1, 2, 3)
     total DESC;
--- => Orders by status priority, then by total descending
+    -- => Then sort by total descending within each priority group
+-- => Result order: completed (highest total first), then pending, then cancelled
 ```
 
 **Key Takeaway**: CASE expressions enable conditional logic in SELECT, WHERE, and ORDER BY clauses. Use simple CASE for equality checks, searched CASE for complex conditions. CASE can be used in aggregations for conditional counting and summing.
@@ -2470,78 +2517,119 @@ Subqueries are queries nested inside other queries - use them in SELECT (scalar 
 
 ```sql
 CREATE DATABASE example_30;
--- => Creates database 'example_30'
+-- => Creates database 'example_30' for subquery examples
 \c example_30;
 -- => Switches connection to example_30 database
+
 CREATE TABLE products (
     name VARCHAR(100),
+    -- => name: product name (up to 100 characters)
     category VARCHAR(50),
+    -- => category: product category (Electronics, Furniture, etc.)
     price DECIMAL(10, 2)
+    -- => price: product price (10 digits total, 2 after decimal)
 );
+-- => Creates products table with 3 columns
+
 INSERT INTO products (name, category, price)
--- => INSERT into products table begins
 VALUES
--- => Row data values follow
     ('Laptop', 'Electronics', 999.99),
-    -- => Row data inserted
+    -- => Laptop: Electronics category, $999.99 price
     ('Mouse', 'Electronics', 29.99),
-    -- => Row data inserted
+    -- => Mouse: Electronics category, $29.99 price
     ('Desk', 'Furniture', 299.99),
-    -- => Row data inserted
+    -- => Desk: Furniture category, $299.99 price
     ('Chair', 'Furniture', 199.99),
-    -- => Row data inserted
+    -- => Chair: Furniture category, $199.99 price
     ('Monitor', 'Electronics', 349.99);
+    -- => Monitor: Electronics category, $349.99 price
+-- => Inserts 5 products with 2 categories
+
 -- Scalar subquery in SELECT (single value)
 SELECT
     name,
+    -- => Product name from products table
     price,
+    -- => Product price
     (SELECT AVG(price) FROM products) AS avg_price,
+    -- => Subquery: computes average price across ALL products
+    -- => Scalar subquery (returns single value): (999.99+29.99+299.99+199.99+349.99)/5 = 375.99
+    -- => Same value repeated for EVERY row (subquery executed once)
     price - (SELECT AVG(price) FROM products) AS price_diff
+    -- => Computes difference between product price and average
+    -- => Laptop: 999.99 - 375.99 = 624.00
+    -- => Mouse: 29.99 - 375.99 = -346.00 (below average)
 FROM products;
--- => Shows each product's price difference from average
+-- => Returns 5 rows with avg_price and price_diff columns
+-- => Shows each product's price deviation from average
 
 -- Subquery in WHERE (filtering)
 SELECT name, price
+-- => Selects product name and price
 FROM products
 WHERE price > (SELECT AVG(price) FROM products);
--- => Filter condition for query
--- => Products above average price
--- => Laptop (999.99), Desk (299.99), Monitor (349.99)
+-- => WHERE clause filters using subquery result
+-- => Subquery: SELECT AVG(price) FROM products = 375.99
+-- => Filters to products with price > 375.99
+-- => Result: Laptop (999.99), Desk (299.99), Monitor (349.99)
+-- => 3 products above average price
 
 -- Correlated subquery (references outer query)
 SELECT
     p1.name,
+    -- => Product name from outer query (p1 alias)
     p1.category,
+    -- => Product category from outer query
     p1.price,
+    -- => Product price from outer query
     (SELECT AVG(p2.price)
-    -- => Row data inserted
+     -- => Subquery computes average price
      FROM products p2
+     -- => p2 alias: separate table reference (SAME table, different instance)
      WHERE p2.category = p1.category) AS category_avg_price
-     -- => Filter condition for query
+     -- => CORRELATED: p2.category = p1.category links to outer query
+     -- => Subquery executes ONCE PER ROW in outer query (not once total)
+     -- => Electronics avg: (999.99 + 29.99 + 349.99) / 3 = 459.99
+     -- => Furniture avg: (299.99 + 199.99) / 2 = 249.99
 FROM products p1;
--- => Shows each product with its category's average price
+-- => Returns 5 rows with category-specific averages
+-- => Laptop: category_avg = 459.99 (Electronics avg)
+-- => Mouse: category_avg = 459.99 (Electronics avg)
+-- => Desk: category_avg = 249.99 (Furniture avg)
 
 -- Subquery with IN
 SELECT name, price
+-- => Selects product name and price
 FROM products
 WHERE category IN (SELECT category FROM products WHERE price > 500);
--- => Filter condition for query
--- => Products in categories containing items over $500
--- => All Electronics (Laptop over 500)
+-- => IN clause: checks if category exists in subquery result set
+-- => Subquery: SELECT category FROM products WHERE price > 500
+-- => Subquery finds: 'Electronics' (Laptop at 999.99 > 500)
+-- => Main query filters to products in 'Electronics' category
+-- => Result: Laptop, Mouse, Monitor (all Electronics products)
+-- => Finds all products in categories containing expensive items (> $500)
 
 -- Subquery in FROM (derived table)
 SELECT
     category,
+    -- => Category name from derived table
     AVG(price) AS avg_price
+    -- => Computes average price per category
 FROM (
     SELECT category, price
+    -- => Inner query selects category and price
     FROM products
     WHERE price > 100
-    -- => Filter condition for query
+    -- => Filters to products with price > 100
+    -- => Excludes Mouse ($29.99 < 100)
+    -- => Keeps: Laptop, Desk, Chair, Monitor
 ) AS expensive_products
+-- => AS: derived table alias (required for subquery in FROM)
 GROUP BY category;
--- => Groups rows for aggregation
--- => Average price by category for products over $100
+-- => Groups by category (Electronics, Furniture)
+-- => Electronics avg: (999.99 + 349.99) / 2 = 674.99
+-- => Furniture avg: (299.99 + 199.99) / 2 = 249.99
+-- => Two-step process: filter first, then aggregate
 ```
 
 **Key Takeaway**: Subqueries enable complex filtering and calculations - scalar subqueries return single values for SELECT clauses, WHERE subqueries filter based on dynamic conditions, and FROM subqueries create derived tables. Correlated subqueries reference outer query values but can be slower than joins.

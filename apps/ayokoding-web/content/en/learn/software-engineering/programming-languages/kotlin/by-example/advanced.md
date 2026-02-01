@@ -9,7 +9,7 @@ tags: ["kotlin", "tutorial", "by-example", "advanced", "coroutines", "multiplatf
 
 This section covers advanced Kotlin techniques from examples 55-81, achieving 75-95% topic coverage.
 
-## Example 55: SupervisorScope for Independent Failure Handling
+### Example 55: SupervisorScope for Independent Failure Handling
 
 SupervisorScope prevents child coroutine failures from cancelling siblings, enabling independent error handling. Unlike coroutineScope which cancels all children on any failure, supervisorScope isolates failures to individual child jobs while keeping the parent scope and sibling coroutines alive.
 
@@ -193,7 +193,7 @@ fun main() = runBlocking {
 
 ---
 
-## Example 56: CoroutineContext and Job Hierarchy
+### Example 56: CoroutineContext and Job Hierarchy
 
 CoroutineContext is an indexed set of elements (Job, Dispatcher, Name, ExceptionHandler) that define coroutine behavior. Understanding context composition enables advanced coroutine control including custom dispatchers, structured lifecycle management, and centralized error handling through job hierarchy.
 
@@ -377,7 +377,7 @@ fun main() = runBlocking {
 
 ---
 
-## Example 57: Exception Handling in Coroutines
+### Example 57: Exception Handling in Coroutines
 
 Coroutine exception handling has distinct propagation rules: launch propagates exceptions upward to parent scope (caught by CoroutineExceptionHandler), async stores exceptions in Deferred until await() is called (requires try-catch), and supervisorScope isolates child failures. Understanding these mechanisms prevents silent failures and enables robust error handling in concurrent code.
 
@@ -564,7 +564,7 @@ fun main() = runBlocking {
 
 ---
 
-## Example 58: Reflection - KClass and Class Inspection
+### Example 58: Reflection - KClass and Class Inspection
 
 Kotlin reflection provides runtime access to class metadata, properties, functions, and annotations. The kotlin-reflect library enables frameworks to introspect types at runtime for dependency injection, ORM mapping, serialization, and testing without requiring compile-time knowledge of classes.
 
@@ -750,7 +750,7 @@ fun main() {
 
 ---
 
-## Example 59: Reflection - Property Modification
+### Example 59: Reflection - Property Modification
 
 Modify properties reflectively with proper handling of mutability and visibility. Kotlin reflection distinguishes between immutable (val) and mutable (var) properties through KMutableProperty, while isAccessible enables controlled access to private members for framework use cases like dependency injection and ORM.
 
@@ -890,7 +890,7 @@ fun main() {
 
 ---
 
-## Example 60: Annotations and Processing
+### Example 60: Annotations and Processing
 
 Define custom annotations and process them reflectively for metadata-driven frameworks. Kotlin annotations support compile-time (SOURCE/BINARY retention) and runtime (RUNTIME retention) processing, enabling ORM mapping, serialization, dependency injection, and validation through declarative metadata instead of boilerplate code.
 
@@ -1142,7 +1142,7 @@ fun main() {
 
 ---
 
-## Example 61: Inline Reified Advanced - Type-Safe JSON Parsing
+### Example 61: Inline Reified Advanced - Type-Safe JSON Parsing
 
 Combine inline and reified for type-safe generic operations without class parameter passing. Reified type parameters preserve generic type information at runtime by inlining function bytecode at call sites, eliminating Java's type erasure limitation that forces explicit Class<T> parameter passing in generic APIs.
 
@@ -1275,7 +1275,7 @@ fun main() {
 
 ---
 
-## Example 62: Multiplatform Common Declarations
+### Example 62: Multiplatform Common Declarations
 
 Define shared business logic in common module with expect/actual mechanism for platform-specific implementations. The expect/actual pattern provides compile-time verified platform abstractions, ensuring all platforms implement required platform-specific functionality while maximizing code sharing for business logic.
 
@@ -1386,7 +1386,7 @@ fun main() {
 
 ---
 
-## Example 63: Gradle Kotlin DSL Configuration
+### Example 63: Gradle Kotlin DSL Configuration
 
 Configure Kotlin multiplatform project using type-safe Gradle Kotlin DSL. Kotlin DSL provides compile-time verification, IDE autocomplete, and refactoring support for build scripts, catching configuration errors before CI runs unlike Groovy DSL which fails only at runtime.
 
@@ -1573,7 +1573,7 @@ tasks.register("printTargets") {
 
 ---
 
-## Example 64: Serialization with kotlinx.serialization
+### Example 64: Serialization with kotlinx.serialization
 
 Serialize data classes to JSON with compile-time safety and zero reflection overhead.
 
@@ -1739,7 +1739,7 @@ fun main() {
 
 ---
 
-## Example 65: Custom Serializers
+### Example 65: Custom Serializers
 
 Implement custom serializers for types without built-in serialization support.
 
@@ -1923,7 +1923,7 @@ fun main() {
 
 ---
 
-## Example 66: Ktor Server Basics
+### Example 66: Ktor Server Basics
 
 Build HTTP servers with Ktor using coroutine-based routing and type-safe DSL.
 
@@ -2048,7 +2048,7 @@ fun main() {                                 // => Entry point for Ktor server
 
 ---
 
-## Example 67: Ktor Content Negotiation and Serialization
+### Example 67: Ktor Content Negotiation and Serialization
 
 Automatic JSON serialization/deserialization with content negotiation plugin.
 
@@ -2264,7 +2264,7 @@ GET /users/abc/details
 
 ---
 
-## Example 68: Arrow Either for Functional Error Handling
+### Example 68: Arrow Either for Functional Error Handling
 
 Use Arrow's Either type for type-safe error handling without exceptions.
 
@@ -2563,7 +2563,7 @@ fun main() {
 
 ---
 
-## Example 69: Arrow Validated for Accumulating Errors
+### Example 69: Arrow Validated for Accumulating Errors
 
 Validated accumulates all validation errors instead of failing fast like Either.
 
@@ -2880,7 +2880,7 @@ fun main() {
 
 ---
 
-## Example 70: Performance - Inline Classes (Value Classes)
+### Example 70: Performance - Inline Classes (Value Classes)
 
 Use inline classes to eliminate allocation overhead for wrapper types.
 
@@ -3068,7 +3068,7 @@ fun main() {
 
 ## **Why It Matters**: Wrapper types for domain modeling (UserId, Email, Money) improve type safety but Java's Integer/String wrappers cause heap allocations and garbage collection pressure in hot loops processing millions of records. Value classes provide compile-time type safety (can't mix UserId with OrderId) with zero runtime cost through inlining, achieving the same performance as primitives. This enables rich domain modeling without performance penalties, critical in high-throughput systems (payment processing, analytics, gaming) where allocation overhead directly impacts latency and throughput
 
-## Example 71: Performance - Sequences for Lazy Evaluation
+### Example 71: Performance - Sequences for Lazy Evaluation
 
 Use sequences for large collections to avoid intermediate allocations.
 
@@ -3274,7 +3274,7 @@ fun main() {
 
 **Why It Matters**: Processing large datasets with eager collections creates intermediate lists at each transformation step, exhausting heap memory and triggering garbage collection pauses that stall production servers. Sequences evaluate lazily element-by-element, avoiding intermediate allocations and enabling processing of datasets larger than available memory through streaming. This pattern is essential for ETL pipelines, log processing, and data analytics where materializing full datasets (millions of records) would cause OutOfMemoryError crashes, while sequences handle unlimited data with constant memory usage.
 
-## Example 72: Testing with Kotest
+### Example 72: Testing with Kotest
 
 Write expressive tests using Kotest's specification styles and rich matchers.
 
@@ -3690,7 +3690,7 @@ fun validateEmail(email: String): Boolean = email.contains("@")
 
 **Why It Matters**: JUnit's annotation-based testing feels verbose and Java-centric, while Kotest provides Kotlin-idiomatic specification styles (StringSpec for simple tests, DescribeSpec for BDD) that read like natural language. Rich matchers (shouldStartWith, shouldContainExactly) eliminate assertion boilerplate and provide descriptive failure messages, reducing debugging time when tests fail. Multiple specification styles let teams choose testing DSLs matching their methodology (BDD, TDD, property-based), making tests more maintainable and readable for teams transitioning from Java to Kotlin-first testing practices.
 
-## Example 73: Testing Coroutines with runTest
+### Example 73: Testing Coroutines with runTest
 
 Test coroutines with virtual time using runTest from kotlinx-coroutines-test. The runTest function creates a test environment where delays execute instantly and time advances programmatically, enabling deterministic testing of time-dependent coroutine logic without real wall-clock delays that slow down test suites.
 
@@ -3925,7 +3925,7 @@ class CoroutineTest {
 
 ---
 
-## Example 74: Mocking with MockK
+### Example 74: Mocking with MockK
 
 Create test doubles using MockK for Kotlin-friendly mocking with DSL. MockK provides Kotlin-idiomatic syntax for stubbing method behavior, verifying interactions, and testing suspend functions, solving the problem of Java-based mocking frameworks (like Mockito) lacking support for Kotlin coroutines and language features.
 
@@ -4106,7 +4106,7 @@ class UserServiceTest {
 
 ---
 
-## Example 75: Gradle Custom Tasks
+### Example 75: Gradle Custom Tasks
 
 Define custom Gradle tasks using Kotlin DSL for build automation. Gradle Kotlin DSL provides type-safe task definition with compile-time validation, replacing Groovy's runtime-checked dynamic typing with Kotlin's static type system. This enables IDE autocomplete, refactoring support, and early error detection for complex build automation workflows.
 
@@ -4367,7 +4367,7 @@ customConfig.apply {
 
 ---
 
-## Example 76: Best Practices - Immutability and Data Classes
+### Example 76: Best Practices - Immutability and Data Classes
 
 Embrace immutability with data classes and copy for safe concurrent programming.
 
@@ -4573,7 +4573,7 @@ fun main() {
 
 ---
 
-## Example 77: Best Practices - Extension Functions Organization
+### Example 77: Best Practices - Extension Functions Organization
 
 Organize extension functions in separate files for clean code architecture.
 
@@ -4791,7 +4791,7 @@ fun main() {
 
 ---
 
-## Example 78: Delegation Pattern with by Keyword
+### Example 78: Delegation Pattern with by Keyword
 
 Implement interfaces by delegating to contained objects using by keyword, eliminating boilerplate forwarding methods.
 
@@ -4969,7 +4969,7 @@ fun main() {
 
 ---
 
-## Example 79: Context Receivers (Experimental)
+### Example 79: Context Receivers (Experimental)
 
 Context receivers enable implicit context passing without wrapper classes (experimental feature).
 
@@ -5112,7 +5112,7 @@ fun main() {
 
 ---
 
-## Example 80: Advanced Generics - Variance and Star Projection
+### Example 80: Advanced Generics - Variance and Star Projection
 
 Master variance (in/out) and star projection for flexible generic types.
 
@@ -5289,7 +5289,7 @@ fun main() {
 
 ---
 
-## Example 81: Best Practices - Scope Functions Usage
+### Example 81: Best Practices - Scope Functions Usage
 
 Master scope functions (let, run, with, apply, also) for concise and expressive code.
 

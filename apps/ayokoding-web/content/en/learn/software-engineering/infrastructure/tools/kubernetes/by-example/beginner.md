@@ -1728,38 +1728,83 @@ spec:
 LimitRange sets default resource requests/limits and enforces minimum/maximum constraints per Pod or container in a namespace. This prevents resource-hungry Pods and ensures baseline resource allocation without manual configuration.
 
 ```yaml
-apiVersion: v1
-kind: LimitRange
+apiVersion: v1 # => Core Kubernetes API
+kind: LimitRange # => LimitRange resource
 metadata:
-  name: resource-limits
-  namespace: development
+  name:
+    resource-limits # => LimitRange name
+    # => Default resource policy
+  namespace:
+    development # => Namespace scope
+    # => Applies to all Pods in development
 spec:
+  # => LimitRange specification
   limits:
+    # => Limit constraints list
     - max:
-        cpu: "2" # => Maximum CPU per container: 2 cores
-        memory: 4Gi # => Maximum memory per container: 4 GiB
+        # => Maximum values per container
+        cpu:
+          "2" # => Maximum CPU per container: 2 cores
+          # => Requests/limits cannot exceed
+        memory:
+          4Gi # => Maximum memory per container: 4 GiB
+          # => Upper bound enforcement
       min:
-        cpu: 100m # => Minimum CPU per container: 100 millicores
-        memory: 128Mi # => Minimum memory per container: 128 MiB
+        # => Minimum values per container
+        cpu:
+          100m # => Minimum CPU per container: 100 millicores
+          # => 0.1 cores minimum
+        memory:
+          128Mi # => Minimum memory per container: 128 MiB
+          # => Lower bound enforcement
       default:
-        cpu: 500m # => Default CPU limit if not specified
-        memory: 512Mi # => Default memory limit if not specified
+        # => Default limits (applied if omitted)
+        cpu:
+          500m # => Default CPU limit if not specified
+          # => 0.5 cores default
+        memory:
+          512Mi # => Default memory limit if not specified
+          # => Applied automatically
       defaultRequest:
-        cpu: 250m # => Default CPU request if not specified
-        memory: 256Mi # => Default memory request if not specified
-      type: Container # => Applies to containers
+        # => Default requests (applied if omitted)
+        cpu:
+          250m # => Default CPU request if not specified
+          # => 0.25 cores guaranteed
+        memory:
+          256Mi # => Default memory request if not specified
+          # => Guaranteed memory
+      type:
+        Container # => Applies to containers
+        # => Per-container limits
 
     - max:
-        cpu: "4" # => Maximum CPU per Pod: 4 cores
-        memory: 8Gi # => Maximum memory per Pod: 8 GiB
-      type: Pod # => Applies to Pods (sum of all containers)
-
+        # => Maximum values per Pod
+        cpu:
+          "4" # => Maximum CPU per Pod: 4 cores
+          # => Sum of all containers
+        memory:
+          8Gi # => Maximum memory per Pod: 8 GiB
+          # => Total across containers
+      type:
+        Pod # => Applies to Pods (sum of all containers)
+        # => Pod-level aggregation
 
 # LimitRange behavior:
 # => Containers without limits get default values
+# => Automatically injected during creation
 # => Containers exceeding max are rejected
+# => Admission controller validates
 # => Containers below min are rejected
+# => Enforces minimum resource allocation
 # => kubectl describe limitrange resource-limits -n development
+# => Shows constraints and defaults
+
+# LimitRange vs ResourceQuota:
+# => LimitRange: per-Pod/container constraints and defaults
+# => ResourceQuota: namespace-wide total limits
+# => Use together: LimitRange sets defaults, ResourceQuota caps totals
+# => LimitRange prevents individual outliers
+# => ResourceQuota prevents namespace-wide overconsumption
 ```
 
 **Key Takeaway**: Use LimitRange to enforce default resource requests and limits in namespaces, ensuring all Pods have baseline resource allocation and preventing outliers that could destabilize the cluster.

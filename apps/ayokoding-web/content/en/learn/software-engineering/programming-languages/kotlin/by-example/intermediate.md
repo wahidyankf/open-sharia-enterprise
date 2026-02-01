@@ -9,7 +9,7 @@ tags: ["kotlin", "tutorial", "by-example", "intermediate", "coroutines", "collec
 
 This section covers production Kotlin patterns from examples 28-54, achieving 40-75% topic coverage.
 
-## Example 28: Basic Coroutines - Launch and RunBlocking
+### Example 28: Basic Coroutines - Launch and RunBlocking
 
 Coroutines enable asynchronous programming without blocking threads. `runBlocking` creates a coroutine scope that blocks the current thread until all child coroutines complete. `launch` starts a fire-and-forget coroutine that runs concurrently.
 
@@ -103,7 +103,7 @@ fun main() = runBlocking {
 
 ---
 
-## Example 29: Async and Await for Returning Results
+### Example 29: Async and Await for Returning Results
 
 `async` creates a coroutine that returns a `Deferred<T>` result. `await()` suspends until the result is ready. Use `async` for parallel computations that return values.
 
@@ -217,7 +217,7 @@ fun main() = runBlocking {
 
 ---
 
-## Example 30: Structured Concurrency with CoroutineScope
+### Example 30: Structured Concurrency with CoroutineScope
 
 Structured concurrency ensures child coroutines are cancelled when the parent scope is cancelled, preventing coroutine leaks. `coroutineScope` creates a child scope that waits for all children to complete.
 
@@ -401,7 +401,7 @@ fun main() = runBlocking {
 
 ---
 
-## Example 31: Coroutine Context and Dispatchers
+### Example 31: Coroutine Context and Dispatchers
 
 Dispatchers control which thread pool executes coroutines.
 
@@ -503,7 +503,7 @@ fun main() = runBlocking {           // => Blocks main thread until complete
 
 ---
 
-## Example 32: Channels for Communication Between Coroutines
+### Example 32: Channels for Communication Between Coroutines
 
 Channels enable safe communication between coroutines. `send()` suspends when buffer is full, `receive()` suspends when channel is empty. Channels are hot streams.
 
@@ -677,7 +677,7 @@ fun main() = runBlocking {
 
 ---
 
-## Example 33: Flow for Cold Asynchronous Streams
+### Example 33: Flow for Cold Asynchronous Streams
 
 Flow is a cold asynchronous stream that emits values on demand. Unlike channels (hot), flows don't produce values until collected. Flows support backpressure and transformation operators.
 
@@ -794,7 +794,7 @@ fun main() = runBlocking {
 
 ---
 
-## Example 34: Flow Operators - Transform, Buffer, Conflate
+### Example 34: Flow Operators - Transform, Buffer, Conflate
 
 Flow operators enable complex asynchronous data processing. `transform` emits multiple values per input, `buffer` decouples producer/consumer, `conflate` drops intermediate values.
 
@@ -1047,7 +1047,7 @@ fun main() = runBlocking {
 
 ---
 
-## Example 35: StateFlow and SharedFlow for Hot Streams
+### Example 35: StateFlow and SharedFlow for Hot Streams
 
 `StateFlow` holds a single state value with initial state; subscribers get current state immediately. `SharedFlow` broadcasts events to all collectors without state retention.
 
@@ -1228,7 +1228,7 @@ fun main() = runBlocking {
 
 **Why It Matters**: Android's LiveData and RxJava's BehaviorSubject serve similar purposes but lack coroutine integration and type safety. StateFlow provides the observable state pattern critical for MVVM architectures with built-in coroutine support, conflation (latest value wins) preventing UI overload, and compile-time null safety unlike LiveData's runtime nullability. SharedFlow replaces EventBus libraries with type-safe event broadcasting, eliminating reflection-based coupling and enabling multi-subscriber patterns for cross-component communication in modular architectures.
 
-## Example 36: Collection Operations - Map, Filter, Reduce
+### Example 36: Collection Operations - Map, Filter, Reduce
 
 Kotlin provides rich functional operations on collections. These operations don't modify original collections but return new ones.
 
@@ -1348,7 +1348,7 @@ fun main() {
 
 **Why It Matters**: Java 8 Streams introduced functional collection operations late, but Kotlin's collection methods are simpler (no .stream().collect() ceremony) and work on all collections by default. The immutable-by-default approach prevents accidental mutations during transformations that corrupt shared data structures in multi-threaded services, while fold's ability to handle empty collections with default values prevents the NoSuchElementException crashes that plague Java's Stream.reduce() when processing empty result sets from databases or API responses.
 
-## Example 37: Collection Operations - GroupBy, Partition, Associate
+### Example 37: Collection Operations - GroupBy, Partition, Associate
 
 Advanced collection operations enable complex data transformations and grouping.
 
@@ -1468,7 +1468,7 @@ fun main() {
 
 **Why It Matters**: Data aggregation and grouping operations are common in business logic (grouping orders by customer, partitioning users by subscription tier), yet Java's Collectors.groupingBy() syntax is notoriously complex with nested collectors. Kotlin's groupBy returns a simple Map<K, List<V>> without ceremony, while partition's destructuring assignment (val (paid, free) = users.partition { it.isPaid }) makes conditional splits self-documenting, reducing cognitive load in analytics code that processes thousands of records to generate business insights.
 
-## Example 38: Sequences for Lazy Evaluation
+### Example 38: Sequences for Lazy Evaluation
 
 Sequences compute elements lazily, avoiding intermediate collection creation. Use sequences for multi-step transformations on large collections.
 
@@ -1649,7 +1649,7 @@ fun main() {
 
 ---
 
-## Example 39: Property Delegation - Lazy and Observable
+### Example 39: Property Delegation - Lazy and Observable
 
 Delegate property implementations to reusable delegate objects. `lazy` computes value on first access, `observable` triggers callbacks on changes.
 
@@ -1791,7 +1791,7 @@ fun main() {
 
 ---
 
-## Example 40: Custom Property Delegates
+### Example 40: Custom Property Delegates
 
 Create custom delegates by implementing `getValue` and `setValue` operators. Delegates encapsulate property access logic.
 
@@ -1928,7 +1928,7 @@ fun main() {
 
 ---
 
-## Example 41: Extension Functions and Properties
+### Example 41: Extension Functions and Properties
 
 Add methods and properties to existing classes without modifying source code. Extensions are resolved statically based on declared type.
 
@@ -2059,7 +2059,7 @@ fun main() {
 
 ---
 
-## Example 42: Inline Functions and Reified Type Parameters
+### Example 42: Inline Functions and Reified Type Parameters
 
 Inline functions eliminate lambda allocation overhead by inlining bytecode. Reified type parameters preserve generic type information at runtime.
 
@@ -2206,7 +2206,7 @@ fun main() {
 
 ---
 
-## Example 43: Operator Overloading
+### Example 43: Operator Overloading
 
 Override operators like `+`, `-`, `*`, `[]`, `in` to create domain-specific syntax. Operators are implemented as member or extension functions with specific names.
 
@@ -2451,7 +2451,7 @@ fun main() {
 
 ---
 
-## Example 44: DSL Building with Lambda with Receiver
+### Example 44: DSL Building with Lambda with Receiver
 
 Create type-safe DSLs using lambda with receiver. The receiver provides implicit `this` context within the lambda, enabling fluent builder APIs with compile-time validation and IDE autocomplete support.
 
@@ -2665,7 +2665,7 @@ fun main() {
 
 ---
 
-## Example 45: Sealed Classes and When Expressions
+### Example 45: Sealed Classes and When Expressions
 
 Sealed classes restrict inheritance to a known set of subclasses defined in the same file, enabling exhaustive `when` expressions without `else` branches. The compiler knows all possible subtypes at compile time, providing type-safe state machines and algebraic data types with guaranteed pattern matching completeness.
 
@@ -2848,7 +2848,7 @@ fun main() {
 
 ---
 
-## Example 46: Data Class Advanced Features - Copy and Destructuring
+### Example 46: Data Class Advanced Features - Copy and Destructuring
 
 Data classes automatically generate `copy()` for immutable updates with named parameters, `componentN()` for destructuring declarations, and value-based `equals()`/`hashCode()`/`toString()` for structural equality and debugging. These features enable functional programming patterns without boilerplate, making immutable data transformations concise and type-safe.
 
@@ -2978,7 +2978,7 @@ fun main() {
 
 ---
 
-## Example 47: Destructuring in Lambdas and Map Operations
+### Example 47: Destructuring in Lambdas and Map Operations
 
 Destructure data class parameters in lambda expressions and work with map entries.
 
@@ -3102,7 +3102,7 @@ fun main() {
 
 ---
 
-## Example 48: Inline Classes (Value Classes) for Type Safety
+### Example 48: Inline Classes (Value Classes) for Type Safety
 
 Inline classes provide zero-overhead type-safe wrappers. They're inlined to underlying type at runtime, avoiding object allocation.
 
@@ -3264,7 +3264,7 @@ fun main() {
 
 ---
 
-## Example 49: Contracts for Smart Casts
+### Example 49: Contracts for Smart Casts
 
 Contracts inform the compiler about function behavior, enabling smart casts and improved type inference.
 
@@ -3424,7 +3424,7 @@ fun main() {
 
 ---
 
-## Example 50: Type Aliases for Readability
+### Example 50: Type Aliases for Readability
 
 Type aliases create alternative names for existing types, improving code readability without runtime overhead. Unlike value classes that create new types at compile time, type aliases are purely compile-time substitutions with zero runtime cost.
 
@@ -3607,7 +3607,7 @@ fun main() {
 
 ---
 
-## Example 51: Nothing Type for Exhaustiveness
+### Example 51: Nothing Type for Exhaustiveness
 
 `Nothing` is Kotlin's bottom type representing computation that never returns normally (always throws exception or enters infinite loop). It's a subtype of every type, enabling smart casts and exhaustive when expressions without dummy values.
 
@@ -3754,7 +3754,7 @@ fun main() {
 
 ---
 
-## Example 52: Companion Object Extensions
+### Example 52: Companion Object Extensions
 
 Companion object extensions add static-like factory methods to existing classes without modifying source code. They enable extending third-party library classes with custom constructors while preserving namespace clarity (Class.method() syntax).
 
@@ -3913,7 +3913,7 @@ fun main() {
 
 ---
 
-## Example 53: Delegation Pattern with by Keyword
+### Example 53: Delegation Pattern with by Keyword
 
 Implement interfaces by delegating to contained objects using `by` keyword, eliminating boilerplate forwarding methods.
 
@@ -4121,7 +4121,7 @@ fun main() {
 
 ---
 
-## Example 54: Destructuring Declarations Advanced
+### Example 54: Destructuring Declarations Advanced
 
 Destructuring works with any class providing `componentN()` functions. Customize destructuring for domain objects.
 

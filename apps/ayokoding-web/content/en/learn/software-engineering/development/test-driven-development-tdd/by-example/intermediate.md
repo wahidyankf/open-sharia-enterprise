@@ -9,7 +9,7 @@ tags: ["tdd", "tutorial", "by-example", "intermediate", "mocking", "async-testin
 
 This tutorial covers intermediate TDD techniques including test doubles, asynchronous testing, dependency injection, and production testing patterns used in real-world applications.
 
-## Example 31: Introduction to Test Doubles - Stubs
+### Example 31: Introduction to Test Doubles - Stubs
 
 Stubs replace dependencies with controlled implementations that return predetermined values. They enable testing code in isolation from external systems.
 
@@ -74,7 +74,7 @@ test("getUserName returns name from repository", () => {
 
 **Why It Matters**: Stubs enable fast, isolated unit tests without databases or APIs. Google's testing infrastructure research shows stubbed tests run 100-1000x faster than integration tests, enabling rapid Red-Green-Refactor cycles that maintain development velocity.
 
-## Example 32: Test Doubles - Mocks
+### Example 32: Test Doubles - Mocks
 
 Mocks verify that specific methods were called with expected arguments. Unlike stubs (which provide data), mocks verify behavior and interactions.
 
@@ -191,7 +191,7 @@ test("notifyUser sends email to user address", () => {
 
 **Why It Matters**: Mock verification catches integration bugs early. Netflix's microservices architecture relies heavily on mock testing to verify service interactions without deploying full environments, reducing integration testing time from hours to minutes.
 
-## Example 33: Test Doubles - Spies
+### Example 33: Test Doubles - Spies
 
 Spies wrap real implementations to track calls while preserving actual behavior. They combine real functionality with call verification.
 
@@ -287,7 +287,7 @@ test("processOrder logs start and completion", () => {
 
 **Why It Matters**: Spies enable testing side effects without mocking. Airbnb's testing guidelines prefer spies over mocks for logging and analytics because spies catch real implementation bugs while still verifying interactions.
 
-## Example 34: Test Doubles - Fakes
+### Example 34: Test Doubles - Fakes
 
 Fakes are lightweight, working implementations that replace complex dependencies. They behave realistically but use simplified logic.
 
@@ -396,7 +396,7 @@ test("createUser stores and retrieves user", () => {
 
 **Why It Matters**: Fakes enable fast integration testing without infrastructure setup. Martin Fowler's testing patterns show that fake implementations reduce test suite execution time by 90% compared to real databases while maintaining high confidence in integration logic.
 
-## Example 35: Dependency Injection for Testability
+### Example 35: Dependency Injection for Testability
 
 Dependency injection makes code testable by allowing dependencies to be swapped with test doubles. Constructor injection is the most explicit pattern.
 
@@ -518,7 +518,7 @@ test("process handles large amounts", () => {
 
 **Why It Matters**: Hard-coded dependencies make testing impossible without hitting real services. Spotify's architecture guidelines mandate dependency injection after discovering that untestable code with hard-coded dependencies accumulated 3x more bugs than injectable code.
 
-## Example 36: Testing Promises - Basic Resolution
+### Example 36: Testing Promises - Basic Resolution
 
 Promises represent asynchronous operations. TDD requires testing both resolution and rejection paths with proper async handling.
 
@@ -593,7 +593,7 @@ describe("fetchUser", () => {
 
 **Why It Matters**: Untested promise rejections cause unhandled errors in production. Node.js processes crash on unhandled promise rejections by default - Uber's incident reports show 35% of their service outages stemmed from untested async error paths.
 
-## Example 37: Testing Async/Await Patterns
+### Example 37: Testing Async/Await Patterns
 
 Async/await makes asynchronous code readable but requires careful error handling. TDD ensures try-catch blocks work correctly.
 
@@ -697,7 +697,7 @@ test("fetchAndProcess chains async operations", async () => {
 
 **Why It Matters**: Async error handling bugs cascade through promise chains. Airbnb's frontend reliability improved 50% after implementing mandatory async error path testing, catching errors before they reached users.
 
-## Example 38: Testing Callbacks
+### Example 38: Testing Callbacks
 
 Callbacks represent older async patterns. TDD with callbacks requires done callbacks in test frameworks to handle asynchronous assertions.
 
@@ -808,7 +808,7 @@ describe("readFile", () => {
 
 **Why It Matters**: Callback testing requires explicit completion signaling. Forgotten `done()` calls cause tests to timeout instead of passing/failing, creating false positives that Netflix's testing team identified as 15% of their flaky tests.
 
-## Example 39: Testing Timers and Delays
+### Example 39: Testing Timers and Delays
 
 Code with timers (setTimeout, setInterval) runs slowly in tests. Use fake timers to control time and test time-based logic instantly.
 
@@ -943,7 +943,7 @@ describe("debounce", () => {
 
 **Why It Matters**: Real timers make tests slow and flaky. Google's testing infrastructure uses fake timers universally, reducing timer-based test execution from minutes to milliseconds while eliminating timing-related flakiness.
 
-## Example 40: Testing HTTP Requests - Mocking Fetch
+### Example 40: Testing HTTP Requests - Mocking Fetch
 
 HTTP requests need mocking in unit tests to avoid network dependencies. Mock fetch to test HTTP client logic without real API calls.
 
@@ -1085,7 +1085,7 @@ test("fetchUserData uses HTTP client", async () => {
 
 **Why It Matters**: Real HTTP calls make tests slow, flaky, and dependent on external services. Twitter's testing guidelines mandate HTTP mocking after measuring that mocked tests run 50x faster and have 99% fewer transient failures than tests hitting real APIs.
 
-## Example 41: Testing with In-Memory Databases
+### Example 41: Testing with In-Memory Databases
 
 Database tests are faster with in-memory databases than real databases. In-memory DBs provide realistic behavior without I/O overhead.
 
@@ -1208,7 +1208,7 @@ describe("UserRepository", () => {
 
 **Why It Matters**: In-memory databases enable rapid testing without infrastructure setup. LinkedIn's data team reports 100x speedup using in-memory databases for tests versus Docker-based database instances, enabling developers to run full test suites in seconds instead of minutes.
 
-## Example 42: Property-Based Testing Introduction
+### Example 42: Property-Based Testing Introduction
 
 Property-based testing generates random inputs to verify properties hold for all cases. It catches edge cases traditional example-based tests miss.
 
@@ -1303,7 +1303,7 @@ describe("reverse", () => {
 
 **Why It Matters**: Property-based testing finds edge cases developers don't think of. Dropbox discovered critical file sync bugs using property-based tests that ran billions of scenarios, catching race conditions that would take years to encounter in manual testing.
 
-## Example 43: Mutation Testing Concepts
+### Example 43: Mutation Testing Concepts
 
 Mutation testing verifies test quality by introducing bugs (mutations) and checking if tests catch them. It identifies weak test coverage.
 
@@ -1386,7 +1386,7 @@ function calculateDiscount(price: number, rate: number): number {
 
 **Why It Matters**: Weak tests create false confidence. Facebook's testing research shows that codebases with high mutation score (95%+ of mutations caught) have 60% fewer production bugs than codebases with low mutation scores despite similar line coverage.
 
-## Example 44: Test Coverage Analysis
+### Example 44: Test Coverage Analysis
 
 Test coverage measures which code is executed during tests. Aim for high coverage but recognize that 100% coverage doesn't guarantee correct behavior.
 
@@ -1480,7 +1480,7 @@ test("high coverage doesn't guarantee correctness", () => {
 
 **Why It Matters**: Coverage is a necessary but insufficient quality metric. Google requires 80% minimum coverage but emphasizes assertion quality over raw numbers. Teams with high coverage AND strong assertions have 70% fewer bugs than high-coverage teams with weak tests.
 
-## Example 45: TDD with Express.js Routes
+### Example 45: TDD with Express.js Routes
 
 Web applications require testing HTTP endpoints. TDD with Express uses supertest to test routes without starting a server.
 
@@ -1573,7 +1573,7 @@ describe("POST /users", () => {
 
 **Why It Matters**: API testing without actual servers keeps tests fast and isolated. Stripe's API testing framework using supertest runs 10,000+ endpoint tests in under 30 seconds, enabling rapid iteration without infrastructure overhead.
 
-## Example 46: TDD with React Components
+### Example 46: TDD with React Components
 
 React components require testing rendering, props, and user interactions. Use React Testing Library to test components from a user's perspective.
 
@@ -1649,7 +1649,7 @@ describe("Button", () => {
 
 **Why It Matters**: Component testing prevents UI regressions. Airbnb's frontend testing strategy using React Testing Library reduced user-reported UI bugs by 80% because tests verify actual user interactions rather than implementation details.
 
-## Example 47: Testing Event-Driven Code
+### Example 47: Testing Event-Driven Code
 
 Event-driven code (EventEmitter, observers) requires testing that events are emitted and handled correctly with proper ordering.
 
@@ -1779,7 +1779,7 @@ describe("OrderProcessor events", () => {
 
 **Why It Matters**: Event-driven bugs are hard to debug because execution is non-linear. Slack's real-time messaging infrastructure relies heavily on tested event handling - their testing discipline caught 90% of race conditions during development that would have been catastrophic in production.
 
-## Example 48: Testing State Machines
+### Example 48: Testing State Machines
 
 State machines model workflows with discrete states and transitions. TDD ensures valid transitions and prevents invalid state changes.
 
@@ -1893,7 +1893,7 @@ describe("Document state machine", () => {
 
 **Why It Matters**: State machine bugs cause data corruption. Amazon's order processing system uses extensively tested state machines - their discipline prevents orders from entering invalid states (like shipping before payment), which would cost millions in fulfillment errors.
 
-## Example 49: Parameterized Tests (test.each)
+### Example 49: Parameterized Tests (test.each)
 
 Parameterized tests eliminate duplication when testing multiple inputs with the same logic. Use `test.each` to run the same test with different data.
 
@@ -1977,7 +1977,7 @@ describe("FizzBuzz with parameterized tests", () => {
 
 **Why It Matters**: Parameterized tests reduce maintenance burden while increasing test coverage. JetBrains' IDE testing uses parameterized tests extensively, covering thousands of input combinations with minimal code duplication.
 
-## Example 50: Snapshot Testing Use Cases
+### Example 50: Snapshot Testing Use Cases
 
 Snapshot testing captures output and detects unintended changes. Use for complex outputs like rendered components or JSON responses, but verify snapshots manually.
 
@@ -2067,7 +2067,7 @@ describe("Snapshot testing appropriate use cases", () => {
 
 **Why It Matters**: Snapshot tests catch regressions in complex outputs but create false security if blindly updated. Instagram's testing team requires manual review of all snapshot changes after discovering that 40% of their UI bugs came from approved snapshots that developers didn't actually examine.
 
-## Example 51: Testing File I/O Operations
+### Example 51: Testing File I/O Operations
 
 File operations require mocking the filesystem to avoid actual file writes. Use virtual filesystems or mock fs module for fast, isolated tests.
 
@@ -2184,7 +2184,7 @@ describe("DataStore with fake filesystem", () => {
 
 **Why It Matters**: Real file I/O makes tests slow and fragile. GitHub's test suite mocks all filesystem operations, running 50,000+ tests in minutes that would take hours with real file writes.
 
-## Example 52: Testing with Environment Variables
+### Example 52: Testing with Environment Variables
 
 Environment variables affect behavior but pollute test scope. Save and restore process.env to ensure test isolation.
 
@@ -2288,7 +2288,7 @@ describe("ApiClient", () => {
 
 **Why It Matters**: Environment variable pollution causes flaky tests. Heroku's testing infrastructure mandates env var isolation after discovering that 20% of test failures were caused by tests interfering with each other's environment settings.
 
-## Example 53: CI/CD Integration for TDD
+### Example 53: CI/CD Integration for TDD
 
 Continuous Integration runs tests automatically on every commit. Configure CI to fail builds when tests fail, maintaining quality gates.
 
@@ -2378,7 +2378,7 @@ describe("CI environment detection", () => {
 
 **Why It Matters**: Automated testing catches bugs before code review. CircleCI's research shows teams with CI-enforced testing catch 95% of bugs before production versus 60% for teams relying on manual testing.
 
-## Example 54: Test Performance Optimization
+### Example 54: Test Performance Optimization
 
 Slow tests reduce development velocity. Optimize test performance with parallel execution, test isolation, and selective test runs.
 
@@ -2468,7 +2468,7 @@ function multiply(a: number, b: number): number {
 
 **Why It Matters**: Fast tests enable rapid Red-Green-Refactor cycles. Google's test infrastructure runs millions of tests in parallel, providing feedback in seconds rather than hours, maintaining developer flow state.
 
-## Example 55: Flaky Test Detection and Fixes
+### Example 55: Flaky Test Detection and Fixes
 
 Flaky tests pass/fail inconsistently. Identify flakiness with repeated test runs and fix root causes (timing, shared state, random data).
 
@@ -2568,7 +2568,7 @@ describe("Flaky test patterns", () => {
 
 **Why It Matters**: Flaky tests destroy trust in test suites. Google's testing research shows that teams with >5% flaky tests stop running tests regularly, negating TDD benefits. Their policy mandates immediate quarantine of flaky tests.
 
-## Example 56: Test Data Builders Pattern
+### Example 56: Test Data Builders Pattern
 
 Test data builders create complex test objects with readable, maintainable code. Builders provide defaults and allow customization of specific fields.
 
@@ -2664,7 +2664,7 @@ test("processes order without discount", () => {
 
 **Why It Matters**: Test data builders reduce test duplication and improve readability. LinkedIn's testing guidelines mandate builders for objects with >3 fields after measuring 40% reduction in test maintenance time.
 
-## Example 57: Object Mother Pattern
+### Example 57: Object Mother Pattern
 
 Object mothers provide named factory methods for common test scenarios. Similar to builders but focused on predefined scenarios rather than customization.
 
@@ -2764,7 +2764,7 @@ describe("calculateShipping", () => {
 
 **Why It Matters**: Object mothers document domain scenarios through code. Thoughtworks' testing patterns show that named factory methods improve test readability by making scenarios explicit rather than buried in object literals.
 
-## Example 58: London vs Chicago TDD Schools
+### Example 58: London vs Chicago TDD Schools
 
 Two TDD approaches differ in interaction testing (London/mockist) versus state testing (Chicago/classicist). Both are valid with different tradeoffs.
 

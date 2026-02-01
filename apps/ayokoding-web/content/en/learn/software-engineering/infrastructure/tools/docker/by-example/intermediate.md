@@ -7,7 +7,7 @@ description: "Examples 28-54: Multi-stage builds, Docker Compose orchestration, 
 tags: ["docker", "tutorial", "by-example", "intermediate", "multi-stage", "health-checks"]
 ---
 
-## Examples 28-54: Production Patterns
+### Examples 28-54: Production Patterns
 
 This chapter covers production Docker patterns through 27 examples, achieving 40-75% coverage. You'll learn multi-stage builds, Docker Compose service orchestration, health checks, resource limits, and logging strategies.
 

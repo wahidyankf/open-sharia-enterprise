@@ -7,7 +7,7 @@ description: "Examples 55-79: Docker Swarm orchestration, security hardening, CI
 tags: ["docker", "tutorial", "by-example", "advanced", "swarm", "security", "production"]
 ---
 
-## Examples 55-79: Production Mastery
+### Examples 55-79: Production Mastery
 
 This chapter covers advanced Docker patterns through 25 examples, achieving 75-95% coverage. You'll learn Docker Swarm basics, security best practices, registry operations, CI/CD integration, and production deployment patterns.
 

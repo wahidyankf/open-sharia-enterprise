@@ -9,7 +9,7 @@ tags: ["tdd", "tutorial", "by-example", "beginner", "red-green-refactor", "unit-
 
 This tutorial introduces Test-Driven Development through 30 annotated examples covering fundamental concepts, the Red-Green-Refactor cycle, and essential testing patterns.
 
-## Example 1: Your First Test (Hello World TDD)
+### Example 1: Your First Test (Hello World TDD)
 
 Writing tests before code is the foundation of TDD. Start with a failing test that describes expected behavior, then write just enough code to make it pass.
 
@@ -41,7 +41,7 @@ function greet(name: string): string {
 
 **Why It Matters**: Test-first development catches requirements misunderstandings immediately, before wasting time implementing the wrong solution. Studies at Microsoft show that teams practicing TDD produce 40-90% fewer defects compared to test-after development, reducing costly debugging cycles and customer-reported bugs.
 
-## Example 2: Red-Green-Refactor Cycle
+### Example 2: Red-Green-Refactor Cycle
 
 TDD follows a three-phase rhythm: Red (failing test), Green (passing test), Refactor (improve design). Each phase has a distinct purpose in the development workflow.
 
@@ -92,7 +92,7 @@ function add(a: number, b: number): number {
 
 **Why It Matters**: The three-phase rhythm creates a safety net for continuous design improvement. Google's testing team found that disciplined refactoring during TDD reduces long-term maintenance costs by 50% while maintaining feature velocity, because clean code is easier to extend and modify than accumulated hacks.
 
-## Example 3: Testing Primitive Types (Numbers)
+### Example 3: Testing Primitive Types (Numbers)
 
 TDD works with all data types. Start with the simplest cases to establish patterns before moving to complex scenarios.
 
@@ -135,7 +135,7 @@ function multiply(a: number, b: number): number {
 
 **Why It Matters**: Starting with simple cases builds confidence in the TDD workflow without cognitive overload. Research from Industrial Logic shows developers new to TDD achieve 3x faster learning when starting with primitive operations rather than jumping to complex domains.
 
-## Example 4: Testing Strings
+### Example 4: Testing Strings
 
 String operations require attention to edge cases like empty strings, whitespace, and case sensitivity. TDD helps identify these cases systematically.
 
@@ -182,7 +182,7 @@ function reverse(str: string): string {
 
 **Why It Matters**: Systematic edge case testing prevents production bugs in boundary conditions. Stripe's payment processing team reports that 70% of their critical bugs occurred in edge cases that weren't covered by tests, emphasizing the value of comprehensive test coverage even for simple operations.
 
-## Example 5: Testing Booleans and Truthiness
+### Example 5: Testing Booleans and Truthiness
 
 Boolean logic requires clear test cases for true/false paths. TDD helps ensure both branches are tested and working correctly.
 
@@ -237,7 +237,7 @@ function isEven(num: number): boolean {
 
 **Why It Matters**: Untested boolean branches create hidden bugs. Amazon's deployment pipeline analysis revealed that 23% of production incidents stemmed from untested conditional branches, making explicit true/false path testing critical for reliability.
 
-## Example 6: Testing Arrays - Basic Operations
+### Example 6: Testing Arrays - Basic Operations
 
 Array operations are core to most applications. TDD ensures transformations preserve data integrity and handle empty arrays gracefully.
 
@@ -279,7 +279,7 @@ function doubleAll(numbers: number[]): number[] {
 
 **Why It Matters**: Array operations are mutation-prone. Facebook's React team requires 100% test coverage of array transformations after discovering that 40% of state management bugs involved incorrect array mutations or missing empty array handling.
 
-## Example 7: Testing Objects - Property Access
+### Example 7: Testing Objects - Property Access
 
 Object testing requires deep equality checks and validation of nested properties. TDD helps ensure object transformations maintain expected structure.
 
@@ -328,7 +328,7 @@ function createPerson(name: string, age: number): Person {
 
 **Why It Matters**: Type-safe object handling prevents runtime errors. Microsoft's TypeScript team data shows that adding type annotations to tested code catches 15% more bugs at compile time, reducing production incidents without additional test writing.
 
-## Example 8: Test Fixtures - Setup and Teardown
+### Example 8: Test Fixtures - Setup and Teardown
 
 Tests often need common setup. Fixtures eliminate duplication and ensure consistent test state. TDD helps identify when setup extraction improves clarity.
 
@@ -398,7 +398,7 @@ describe("Rectangle calculations", () => {
 
 **Why It Matters**: Test fixtures reduce duplication and improve maintainability. Kent Beck's research on test patterns shows that proper fixture use reduces test suite maintenance time by 60% as codebases grow, because setup changes need updating in only one place.
 
-## Example 9: Single Responsibility Principle in Tests
+### Example 9: Single Responsibility Principle in Tests
 
 Each test should verify one behavior. Multiple assertions are acceptable if they validate a single concept. TDD naturally guides toward focused tests.
 
@@ -465,7 +465,7 @@ test("validates email format", () => {
 
 **Why It Matters**: Focused tests provide clear failure messages. When a test breaks, you immediately know which behavior regressed. Spotify's testing guidelines emphasize single-purpose tests because they reduced root cause identification time by 75% during incident response.
 
-## Example 10: Testing Edge Cases - Null and Undefined
+### Example 10: Testing Edge Cases - Null and Undefined
 
 Edge cases like null and undefined cause runtime errors. TDD helps identify these cases early through systematic boundary testing.
 
@@ -519,7 +519,7 @@ function getLength(str: string | null): number {
 
 **Why It Matters**: Null reference errors cost billions in production incidents. Tony Hoare called null his "billion-dollar mistake." Systematic null testing in TDD prevents these crashes - Airbnb's engineering team reports 90% reduction in null pointer exceptions after implementing mandatory null case testing.
 
-## Example 11: Testing Boundaries - Numbers
+### Example 11: Testing Boundaries - Numbers
 
 Boundary conditions often reveal off-by-one errors and edge case bugs. TDD systematically explores these critical test points.
 
@@ -585,7 +585,7 @@ function getAgeGroup(age: number): string {
 
 **Why It Matters**: Boundary bugs cause critical production failures. NASA's Mars Climate Orbiter crashed due to boundary conversion errors. Systematic boundary testing prevented similar issues in SpaceX's flight software, where TDD boundary tests caught 95% of numerical precision bugs during development.
 
-## Example 12: Testing Error Conditions
+### Example 12: Testing Error Conditions
 
 Error handling is critical production behavior. TDD ensures errors are thrown correctly and caught appropriately for invalid inputs.
 
@@ -650,7 +650,7 @@ function validateAge(age: number): number {
 
 **Why It Matters**: Proper error handling prevents cascading failures. Netflix's Chaos Engineering team found that 80% of production outages started with unhandled errors in edge cases, making explicit error testing critical for system resilience.
 
-## Example 13: Arrange-Act-Assert (AAA) Pattern
+### Example 13: Arrange-Act-Assert (AAA) Pattern
 
 The AAA pattern provides clear test structure: Arrange (setup), Act (execute), Assert (verify). This pattern improves test readability and maintenance.
 
@@ -737,7 +737,7 @@ describe("ShoppingCart", () => {
 
 **Why It Matters**: Consistent test structure accelerates debugging and maintenance. Google's testing style guide mandates AAA pattern because it reduces time-to-understand for unfamiliar tests by 65%, critical for large team collaboration.
 
-## Example 14: Given-When-Then Test Structure
+### Example 14: Given-When-Then Test Structure
 
 Given-When-Then is an alternative to AAA that emphasizes behavioral specification. It's particularly useful for describing user-facing behavior.
 
@@ -837,7 +837,7 @@ describe("Authentication", () => {
 
 **Why It Matters**: Given-When-Then bridges technical tests and business requirements. Dan North's BDD research shows teams using Given-When-Then reduce requirement misunderstandings by 40% because tests read as executable specifications that stakeholders can review.
 
-## Example 15: Test Organization - Describe Blocks
+### Example 15: Test Organization - Describe Blocks
 
 Describe blocks group related tests, providing hierarchical organization and shared context. TDD benefits from clear test suite structure as complexity grows.
 
@@ -916,7 +916,7 @@ describe("String transformations", () => {
 
 **Why It Matters**: Organized test suites scale to thousands of tests without confusion. Atlassian's testing guidelines show that hierarchical organization reduces test navigation time by 80% and improves failure diagnosis speed in large codebases.
 
-## Example 16: Test Naming Conventions
+### Example 16: Test Naming Conventions
 
 Clear test names document behavior and improve failure diagnostics. TDD benefits from descriptive names that explain the "should" of each test.
 
@@ -979,7 +979,7 @@ function isValid(str: string): boolean {
 
 **Why It Matters**: Descriptive test names serve as living documentation. When tests fail in CI/CD pipelines, the test name is often the only context engineers see. Shopify's testing standards require full sentence test names after discovering 50% of CI debugging time was spent deciphering cryptic test names.
 
-## Example 17: DRY Principle in Tests
+### Example 17: DRY Principle in Tests
 
 Don't Repeat Yourself applies to tests, but maintainability trumps extreme DRY. Extract helpers for complex setup while keeping test intent clear.
 
@@ -1058,7 +1058,7 @@ describe("formatPhone", () => {
 
 **Why It Matters**: Excessive test duplication makes maintenance expensive, but over-abstraction obscures test intent. Martin Fowler's test patterns research suggests extracting helpers when duplication exceeds three instances, maintaining the balance between DRY and readability.
 
-## Example 18: Testing Pure Functions
+### Example 18: Testing Pure Functions
 
 Pure functions (same input always produces same output, no side effects) are ideal for TDD. Their predictability makes testing straightforward and reliable.
 
@@ -1118,7 +1118,7 @@ test("calculates discount impurely", () => {
 
 **Why It Matters**: Pure functions reduce test complexity and improve reliability. Functional programming languages like Haskell achieve 99%+ test coverage because pure functions require minimal test setup, while object-oriented codebases average 60-70% coverage due to state management complexity.
 
-## Example 19: Testing with Multiple Assertions (Same Concept)
+### Example 19: Testing with Multiple Assertions (Same Concept)
 
 Multiple assertions in one test are acceptable when validating a single concept. Distinguish between testing one behavior with multiple checks versus testing multiple behaviors.
 
@@ -1198,7 +1198,7 @@ test("creates user with complete profile", () => {
 
 **Why It Matters**: Proper assertion grouping improves test maintainability. Uncle Bob Martin's test guidelines suggest grouping assertions that fail together for the same root cause, reducing the cognitive load of debugging when multiple tests break simultaneously.
 
-## Example 20: Test-First Thinking Exercise
+### Example 20: Test-First Thinking Exercise
 
 TDD changes how you think about requirements. Writing tests first forces clarity about expected behavior before implementation details distract you.
 
@@ -1285,7 +1285,7 @@ function calculateShipping(weight: number, distance: number, orderValue: number 
 
 **Why It Matters**: Test-first thinking catches requirement gaps early. IBM's System Sciences Institute research shows fixing requirements defects after release costs 100x more than catching them during design, making test-first requirement validation a high-ROI practice.
 
-## Example 21: TDD Workflow Demonstration
+### Example 21: TDD Workflow Demonstration
 
 A complete TDD cycle shows the rhythm: write failing test, make it pass, refactor, repeat. This example demonstrates the full workflow for a realistic feature.
 
@@ -1417,7 +1417,7 @@ class TodoList {
 
 **Why It Matters**: Incremental development via TDD reduces integration problems. Microsoft's Windows division reported 20-30% reduction in integration time when teams adopted TDD's small-step approach versus big-bang feature development.
 
-## Example 22: Common Beginner Mistake - Testing Implementation
+### Example 22: Common Beginner Mistake - Testing Implementation
 
 Testing implementation details makes tests brittle. Test behavior instead - what the code does, not how it does it.
 
@@ -1514,7 +1514,7 @@ class Stack<T> {
 
 **Why It Matters**: Implementation-coupled tests create massive refactoring resistance. Netflix's testing retrospective showed that teams with implementation-focused tests spent 70% of their time updating tests during refactorings, versus 10% for teams testing behavior.
 
-## Example 23: Testing Function Return Values
+### Example 23: Testing Function Return Values
 
 Return value testing is the foundation of TDD. Verify functions produce expected outputs for given inputs, covering typical and edge cases.
 
@@ -1566,7 +1566,7 @@ describe("double", () => {
 
 **Why It Matters**: Comprehensive return value testing catches precision errors and edge cases. The Ariane 5 rocket explosion was caused by an unchecked floating point conversion overflow - proper return value edge case testing would have caught this $370 million disaster.
 
-## Example 24: Testing Side Effects (State Changes)
+### Example 24: Testing Side Effects (State Changes)
 
 Some functions modify state rather than returning values. Test state changes by verifying observable effects through public interfaces.
 
@@ -1653,7 +1653,7 @@ class Counter {
 
 **Why It Matters**: State management bugs cause subtle production issues. Amazon's DynamoDB team requires explicit state transition testing after discovering that 60% of their data corruption incidents originated from untested state change sequences.
 
-## Example 25: Testing Output Messages
+### Example 25: Testing Output Messages
 
 Functions that produce console output or logs need verification. Capture and test output to ensure correct formatting and content.
 
@@ -1720,7 +1720,7 @@ test("logs multiple greetings", () => {
 
 **Why It Matters**: Untested logging code creates production debugging blindspots. Datadog's observability research shows applications with tested logging code have 90% faster incident resolution times because engineers can trust logged output during outages.
 
-## Example 26: Testing with Simple Assertions
+### Example 26: Testing with Simple Assertions
 
 Start with the simplest assertions that validate your code. Complex assertions can wait - prove basic behavior works first.
 
@@ -1774,7 +1774,7 @@ describe("sum", () => {
 
 **Why It Matters**: Simple assertions reduce test complexity and improve reliability. Google's testing philosophy emphasizes "clear assertions over clever assertions" - their data shows that tests with simple assertions have 85% fewer false positives than tests with complex custom matchers.
 
-## Example 27: Basic Refactoring with Tests
+### Example 27: Basic Refactoring with Tests
 
 Tests enable safe refactoring. With comprehensive tests, you can improve code structure knowing the tests will catch any behavioral changes.
 
@@ -1835,7 +1835,7 @@ function circleCircumference(radius: number): number {
 
 **Why It Matters**: Test-enabled refactoring prevents regression bugs. Fowler's "Refactoring" book demonstrates that codebases with comprehensive tests can undergo major structural changes safely, while untested code accumulates technical debt because refactoring is too risky.
 
-## Example 28: Testing Collections - Filtering
+### Example 28: Testing Collections - Filtering
 
 Array filtering is a common operation requiring edge case coverage. TDD ensures filters work correctly for empty arrays, no matches, all matches, and partial matches.
 
@@ -1890,7 +1890,7 @@ describe("filterEven", () => {
 
 **Why It Matters**: Filter bugs cause data loss in production. LinkedIn's data pipeline team found that 45% of their data quality incidents stemmed from incorrect filtering logic, making comprehensive filter testing critical for data integrity.
 
-## Example 29: Testing Transformations (Map)
+### Example 29: Testing Transformations (Map)
 
 Array transformations require verification that each element is correctly modified. TDD ensures transformations handle all input types properly.
 
@@ -1957,7 +1957,7 @@ function capitalizeAll(words: string[]): string[] {
 
 **Why It Matters**: Transformation bugs corrupt data silently. Spotify's recommendation engine relies on tested transformations after discovering that untested data normalization caused 30% of their machine learning model accuracy degradation.
 
-## Example 30: Testing Aggregation (Reduce)
+### Example 30: Testing Aggregation (Reduce)
 
 Array aggregation operations combine elements into a single value. TDD ensures correct accumulation logic and proper handling of empty arrays.
 

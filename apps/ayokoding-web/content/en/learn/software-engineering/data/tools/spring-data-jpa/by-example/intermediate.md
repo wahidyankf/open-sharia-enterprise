@@ -8,7 +8,7 @@ categories: ["learn"]
 tags: ["spring-data-jpa", "tutorial", "by-example", "intermediate", "jpql", "pagination", "transactions", "locking"]
 ---
 
-## Example 31: @Query with JPQL
+### Example 31: @Query with JPQL
 
 The @Query annotation enables custom JPQL queries directly in repository interfaces. This provides fine-grained control over query logic.
 
@@ -92,7 +92,7 @@ public class UserService {                                    // => Service laye
 
 **Why It Matters**: @Query with JPQL provides fine-grained query control unavailable in derived query methods, handling complex joins and subqueries that would require unwieldy 200-character method names. Named parameters (:email) prevent SQL injection and improve query readability compared to positional parameters (?1, ?2), reducing maintenance burden by 40%. Production teams report 30% reduction in query bugs after standardizing on @Query with named parameters for all multi-condition queries.
 
-## Example 32: Native SQL Queries
+### Example 32: Native SQL Queries
 
 Native SQL queries execute database-specific SQL directly, bypassing JPQL abstraction. Use for database-specific features or performance optimization.
 
@@ -162,7 +162,7 @@ public class ProductService {                                 // => Service laye
 
 **Why It Matters**: Native SQL queries enable database-specific optimizations like PostgreSQL's array operators, MySQL's JSON functions, and Oracle's advanced analytics, improving query performance by 100-1000x when vendor features outperform JPQL. However, native queries sacrifice database portability and bypass JPA's second-level cache, increasing coupling and maintenance burden. Production teams limit native SQL to <10% of queries, reserving it for performance-critical paths where JPQL's abstraction costs measurably impact throughput.
 
-## Example 33: @Modifying Queries
+### Example 33: @Modifying Queries
 
 @Modifying annotation enables UPDATE and DELETE queries through @Query. Requires @Transactional for execution.
 
@@ -242,7 +242,7 @@ public class UserService {
 
 **Why It Matters**: @Modifying bulk operations execute UPDATE/DELETE as single SQL statements affecting thousands of rows in milliseconds, compared to iterating entities which generates N individual queries taking seconds. However, bulk operations bypass entity lifecycle callbacks and dirty checking, requiring manual persistence context clearing to avoid stale cached data. Applications using @Modifying correctly for batch status updates report 95% reduction in execution time, while improper use without clearAutomatically causes data consistency bugs affecting 15-20% of subsequent queries in same transaction.
 
-## Example 34: Constructor Expressions (DTO Projections)
+### Example 34: Constructor Expressions (DTO Projections)
 
 Constructor expressions in JPQL enable direct DTO mapping without fetching full entities. Improves performance for read-only views.
 
@@ -322,7 +322,7 @@ public class UserService {
 
 **Why It Matters**: DTO projections reduce memory consumption by 60-80% compared to loading full entities, critical for large result sets where entities contain lazy-loaded collections or BLOB fields. Constructor expressions enable compile-time type safety unlike Object[] which defer errors to runtime, preventing ClassCastException that plague 25% of projection implementations. High-traffic API endpoints using DTOs report 40% reduction in garbage collection pressure and 3x improvement in response times for list operations returning 100+ records.
 
-## Example 35: JOIN Queries
+### Example 35: JOIN Queries
 
 JPQL supports INNER JOIN, LEFT JOIN, and fetch joins for loading related entities efficiently.
 
@@ -376,7 +376,7 @@ public class OrderService {
 
 **Why It Matters**: JOIN FETCH solves N+1 query problems by eagerly loading relationships in single SQL statement with LEFT OUTER JOIN, transforming 101 queries (1 parent + 100 children) into 1 query that executes 50-100x faster. However, JOIN FETCH creates Cartesian products with multiple collections, potentially loading duplicate parent data and consuming excess memory. Production applications combine JOIN FETCH with DISTINCT and batch size limits to balance performance and memory, achieving 90% reduction in lazy loading exceptions while preventing OutOfMemoryError on large datasets.
 
-## Example 36: Subqueries in JPQL
+### Example 36: Subqueries in JPQL
 
 Subqueries enable complex filtering based on aggregations or existence checks within the main query.
 
@@ -428,7 +428,7 @@ public class ProductService {
 
 **Why It Matters**: JPQL subqueries enable complex business logic like 'products priced above category average' in single database round-trip, eliminating application-side processing that requires loading entire datasets into memory. Correlated subqueries execute once per outer row and can degrade to O(N²) complexity on large tables, requiring careful WHERE clause optimization and indexes. Enterprise reporting systems using subqueries correctly report 80% reduction in data transfer overhead, while poorly optimized subqueries cause 10-100x performance degradation requiring query plan analysis.
 
-## Example 37: Named Queries
+### Example 37: Named Queries
 
 Named queries define reusable JPQL queries on entity classes. Improves query organization and enables validation at startup.
 
@@ -508,7 +508,7 @@ public class UserService {
 
 **Why It Matters**: Named queries validate JPQL syntax at EntityManagerFactory creation during application startup, catching query errors in development that would crash production at runtime after deployment. This fail-fast approach prevents 60-70% of query-related production incidents caused by typos, missing aliases, or invalid entity references. However, named queries lack composability compared to Specifications, making them ideal for static queries but inflexible for dynamic search filters requiring conditional WHERE clauses.
 
-## Example 38: Dynamic Queries with Specifications
+### Example 38: Dynamic Queries with Specifications
 
 Specifications enable type-safe dynamic query building using JPA Criteria API. Useful for complex search filters.
 
@@ -632,7 +632,7 @@ public class UserService {
 
 **Why It Matters**: Specifications enable type-safe dynamic queries through Criteria API, eliminating string concatenation vulnerabilities that cause 40% of SQL injection attacks in legacy codebases. The compositional nature allows building complex search filters from optional parameters without if-else chains, reducing cyclomatic complexity by 50-70%. E-commerce product search features using Specifications report 95% code coverage in unit tests versus 40% for string-based dynamic queries, as Specifications are pure functions testable without database.
 
-## Example 39: Basic Pagination with PageRequest
+### Example 39: Basic Pagination with PageRequest
 
 PageRequest enables offset-based pagination through page number and size parameters. Returns Page object with metadata.
 
@@ -711,7 +711,7 @@ public class UserService {
 
 **Why It Matters**: Page objects provide total count, total pages, and hasNext indicators essential for pagination UI without separate COUNT queries, improving API response times by 30-40% compared to manual pagination. Spring Data's PageRequest automatically generates database-portable LIMIT/OFFSET SQL across PostgreSQL, MySQL, Oracle, and SQL Server, eliminating vendor-specific pagination syntax. However, deep pagination (offset > 10,000) degrades linearly as databases scan and discard offset rows - use cursor-based pagination for infinite scroll and large dataset navigation.
 
-## Example 40: Sorting with Pageable
+### Example 40: Sorting with Pageable
 
 PageRequest.of() accepts Sort parameter for combined pagination and sorting. Supports single and multi-field sorting.
 
@@ -769,7 +769,7 @@ public class ProductService {
 
 **Why It Matters**: Pageable's Sort abstraction generates type-safe ORDER BY clauses validated against entity metadata, preventing SQL injection through user-controlled sort parameters that plague 30% of legacy pagination implementations. Multi-field sorting enables complex sort logic without string concatenation, reducing maintenance burden by 60%. However, sorting by non-indexed columns causes full table scans on million-row tables - combine with database query analysis to identify missing indexes causing 100x slowdowns.
 
-## Example 41: Page vs Slice
+### Example 41: Page vs Slice
 
 Page performs count query for total elements. Slice skips count query for better performance when total count is unnecessary.
 
@@ -832,7 +832,7 @@ public class UserService {
 
 **Why It Matters**: Slice pagination avoids expensive COUNT queries that scan entire tables, improving performance by 50-90% for infinite scroll UIs where total count isn't needed. The lighter-weight Slice executes single SELECT with LIMIT offset+1, checking for additional records without counting all rows. Mobile apps and activity feeds using Slice report 70% reduction in database CPU compared to Page, while maintaining responsive pagination for datasets with millions of records.
 
-## Example 42: Custom Sorting Directions
+### Example 42: Custom Sorting Directions
 
 Sort.Order enables fine-grained control over sort direction, null handling, and case sensitivity per field.
 
@@ -910,7 +910,7 @@ public class ProductService {
 
 **Why It Matters**: Custom query methods with Pageable enable complex business logic with automatic pagination support, eliminating duplicate code for paginated vs non-paginated variants of same query. The pattern handles edge cases like empty results and single-page datasets consistently, preventing off-by-one errors that cause 40% of pagination bugs in manual implementations. Production APIs with 50+ paginated endpoints report 80% code reduction by leveraging Spring Data's pagination infrastructure versus hand-rolled pagination logic.
 
-## Example 43: Pagination with Specifications
+### Example 43: Pagination with Specifications
 
 Combine Specifications with Pageable for dynamic filtered pagination. Enables complex search with pagination.
 
@@ -968,7 +968,7 @@ public class UserService {
 
 **Why It Matters**: Query derivation with Pageable combines method name DSL with pagination in single declaration, eliminating 200+ lines of repository boilerplate for typical CRUD interfaces. The automatic integration means adding pagination to existing findByX methods requires only changing return type from List to Page, enabling gradual migration of APIs without breaking changes. However, paginated derived queries can't optimize COUNT queries separately - use @Query for complex joins where COUNT executes faster than query with all JOINs.
 
-## Example 44: Infinite Scroll with Slice
+### Example 44: Infinite Scroll with Slice
 
 Implement infinite scroll UI pattern using Slice for efficient pagination without total count.
 
@@ -1073,7 +1073,7 @@ public class ProductController {
 
 **Why It Matters**: @ManyToMany relationships eliminate manual join table management, mapping complex many-to-many domain models (Students-Courses, Tags-Posts) with single @JoinTable annotation. Spring Data generates CRUD operations for both sides automatically, reducing code by 70% compared to explicit join entity approaches. However, @ManyToMany creates hidden performance traps: loading collections triggers N+1 queries, and clearing large collections executes DELETE for every relationship row - use JOIN FETCH and batch operations for production performance.
 
-## Example 45: @ManyToMany Relationships
+### Example 45: @ManyToMany Relationships
 
 @ManyToMany defines bidirectional or unidirectional many-to-many relationships using a join table. Requires @JoinTable configuration.
 
@@ -1205,7 +1205,7 @@ public class EnrollmentService {
 
 **Why It Matters**: Proper @JoinTable configuration prevents JPA from auto-generating cryptic join table names that complicate database migrations and break existing schemas. Explicit joinColumns and inverseJoinColumns provide self-documenting schema mapping, reducing onboarding time for new developers by 40%. However, @ManyToMany with additional join table columns requires refactoring to explicit join entity - plan data model carefully to avoid costly schema redesigns.
 
-## Example 46: @EntityGraph for Fetch Optimization
+### Example 46: @EntityGraph for Fetch Optimization
 
 @EntityGraph controls eager/lazy loading at query level, overriding entity-level fetch strategies. Prevents N+1 queries.
 
@@ -1324,7 +1324,7 @@ public class OrderService {
 
 **Why It Matters**: Bidirectional @ManyToMany with mappedBy enables navigation from both sides without duplicate join tables, preventing database constraint violations from JPA creating two separate relationship tables. The owning/inverse pattern ensures cascade operations execute predictably, avoiding orphaned join table rows that cause referential integrity violations. However, bidirectional relationships require synchronization helper methods to maintain consistency - forgetting to update both sides causes LazyInitializationException and stale data bugs affecting 35% of relationship operations.
 
-## Example 47: N+1 Query Problem Demonstration
+### Example 47: N+1 Query Problem Demonstration
 
 The N+1 problem occurs when fetching a collection triggers 1 query for the parent and N queries for children. Severely impacts performance.
 
@@ -1417,7 +1417,7 @@ public class OrderService {
 
 **Why It Matters**: CascadeType.PERSIST propagates save operations from parent to children, enabling single repository.save(order) to persist order and all items automatically, reducing transaction code by 60%. This models true composition (order owns items) correctly, ensuring consistent database state without explicit cascade management. However, PERSIST doesn't cascade updates or deletes - combine with MERGE/REMOVE carefully or orphaned children persist after parent deletion, causing storage leaks requiring manual cleanup in 25% of production applications.
 
-## Example 48: @Embeddable Composite Objects
+### Example 48: @Embeddable Composite Objects
 
 @Embeddable creates reusable value objects embedded in entity tables. Fields are flattened into parent table columns.
 
@@ -1529,7 +1529,7 @@ public class UserService {
 
 **Why It Matters**: CascadeType.ALL automatically propagates all persistence operations (PERSIST, MERGE, REMOVE, REFRESH, DETACH), reducing transaction management code by 80% for true composition relationships. This pattern ensures database consistency for aggregates like Order→OrderItems where children have no independent existence. However, ALL includes REMOVE which deletes children when removing from collection, causing accidental data loss if applied to independent entities - 40% of cascade-related production bugs stem from using ALL on looser associations.
 
-## Example 49: Cascading Operations
+### Example 49: Cascading Operations
 
 Cascade types define which operations propagate from parent to child entities. Simplifies management of entity graphs.
 
@@ -1659,7 +1659,7 @@ public class OrderService {
 
 **Why It Matters**: FetchType.LAZY prevents loading entire object graphs unnecessarily, reducing memory consumption by 70-90% and query execution time by 50-80% for large relationship collections. Lazy loading enables on-demand data access, fetching related entities only when accessed through getter methods. However, accessing lazy collections outside transactions triggers LazyInitializationException, the most common JPA error affecting 50% of developers, requiring explicit JOIN FETCH, EntityGraphs, or Open Session in View patterns.
 
-## Example 50: Bidirectional Relationship Management
+### Example 50: Bidirectional Relationship Management
 
 Bidirectional relationships require synchronization on both sides. Helper methods ensure consistency and prevent bugs.
 
@@ -1778,7 +1778,7 @@ public class OrderService {
 
 **Why It Matters**: FetchType.EAGER automatically loads relationships in every query regardless of usage, simplifying code by eliminating lazy loading exceptions but causing 100-1000x performance degradation when unneeded data loads. The pattern generates LEFT OUTER JOIN for @ManyToOne/@OneToOne and separate SELECT for collections, creating N+1 problems invisible until production scale. Database query logs from eager loading mishaps show 80%+ of queries fetching unused relationships - use @EntityGraph or JOIN FETCH for selective eager loading instead of blanket EAGER configuration.
 
-## Example 51: @Transactional Propagation
+### Example 51: @Transactional Propagation
 
 Propagation defines how transactions behave when a transactional method calls another transactional method. Controls transaction boundaries.
 
@@ -1920,7 +1920,7 @@ public class BusinessService {
 
 **Why It Matters**: @Transactional ensures ACID properties for database operations, automatically committing successful operations and rolling back on exceptions, preventing partial updates that corrupt data. Spring's declarative transactions eliminate 90% of manual connection, commit, and rollback code compared to JDBC, reducing transaction management bugs by 80%. However, transaction boundaries define persistence context scope - detached entities outside transactions cause LazyInitializationException and lost updates, requiring careful service layer design and read-only transaction optimization.
 
-## Example 52: Transaction Isolation Levels
+### Example 52: Transaction Isolation Levels
 
 Isolation levels control concurrent transaction visibility and prevent phenomena like dirty reads, non-repeatable reads, and phantom reads.
 
@@ -2064,7 +2064,7 @@ public class ConcurrencyDemo {
 
 **Why It Matters**: Transaction propagation controls how methods interact with existing transactions, enabling fine-grained transaction control for complex workflows. REQUIRED (default) joins existing transactions enabling multi-method operations, while REQUIRES_NEW creates independent transactions for audit logging that must succeed even if main operation fails. However, nested REQUIRES_NEW transactions don't roll back parents when children fail, causing data inconsistency bugs in 30% of improper usage - combine with proper exception handling and compensating transactions.
 
-## Example 53: Rollback Rules and Exceptions
+### Example 53: Rollback Rules and Exceptions
 
 @Transactional rollback behavior differs for checked vs unchecked exceptions. Custom rollback rules provide fine-grained control.
 
@@ -2201,7 +2201,7 @@ public class BusinessService {
 
 **Why It Matters**: Transaction isolation levels balance consistency vs performance, preventing dirty reads, non-repeatable reads, and phantom reads based on business requirements. READ_COMMITTED (default) prevents reading uncommitted data while allowing concurrent modifications, suitable for 80% of applications. However, financial transactions requiring repeatable reads need SERIALIZABLE isolation despite 10-100x throughput reduction, while read-heavy analytics benefit from READ_UNCOMMITTED accepting stale data for 5-10x performance gain.
 
-## Example 54: Read-Only Transactions
+### Example 54: Read-Only Transactions
 
 Read-only transactions optimize performance for queries and prevent accidental modifications. Enable database query optimizations.
 
@@ -2285,7 +2285,7 @@ public class BusinessService {
 
 **Why It Matters**: Read-only transactions optimize performance by 30-50% through disabled dirty checking and flush modes, signaling databases to use read replicas and skip lock acquisition. The pattern enables safe concurrent reads without blocking writers, critical for high-throughput reporting queries and API endpoints. However, accidentally modifying entities in read-only transactions causes silent data loss as changes don't flush, requiring code reviews and integration tests to prevent bugs affecting 15% of read-only transaction usage.
 
-## Example 55: Programmatic Transaction Management
+### Example 55: Programmatic Transaction Management
 
 TransactionTemplate provides programmatic transaction control for scenarios where declarative @Transactional is insufficient.
 
@@ -2395,7 +2395,7 @@ public class AdvancedTransactionService {
 
 **Why It Matters**: Rollback rules customize which exceptions trigger rollback, enabling fine-grained error handling for business logic that throws checked exceptions. The rollbackFor pattern ensures checked exceptions roll back transactions unlike default behavior (runtime-only rollback), preventing data corruption from silent failures. However, catching exceptions without re-throwing bypasses rollback rules, causing transaction commits with inconsistent state - improper exception handling causes 40% of transaction-related production bugs.
 
-## Example 56: Nested Transactions with NESTED Propagation
+### Example 56: Nested Transactions with NESTED Propagation
 
 NESTED propagation creates savepoints within outer transaction, enabling partial rollback without affecting entire transaction.
 
@@ -2541,7 +2541,7 @@ public class PropagationComparison {
 
 **Why It Matters**: Optimistic locking with @Version prevents lost updates in concurrent scenarios through automatic version checking, detecting conflicts at commit time and throwing OptimisticLockException. This enables high-concurrency applications (1000+ concurrent users) without database-level locks that limit throughput to 10-20 transactions/second. However, version conflicts require retry logic in UI layer - applications without proper conflict handling show 70% user error rates when concurrent edits increase beyond 5% of total operations.
 
-## Example 57: Optimistic Locking with @Version
+### Example 57: Optimistic Locking with @Version
 
 @Version enables optimistic locking using version numbers. Prevents lost updates when multiple transactions modify the same entity concurrently.
 
@@ -2631,7 +2631,7 @@ public class ProductService {
 
 **Why It Matters**: Pessimistic WRITE locks prevent concurrent modifications by acquiring exclusive database locks (SELECT FOR UPDATE), guaranteeing conflict-free updates for critical operations like inventory management. The pattern eliminates optimistic lock exceptions in high-conflict scenarios (>20% concurrent edits) where retries degrade user experience. However, pessimistic locks reduce throughput by 80-95% compared to optimistic locking and cause deadlocks when lock acquisition order isn't consistent across transactions, requiring careful database deadlock detection.
 
-## Example 58: Pessimistic Locking (PESSIMISTIC_READ)
+### Example 58: Pessimistic Locking (PESSIMISTIC_READ)
 
 Pessimistic locking acquires database locks to prevent concurrent modifications. PESSIMISTIC_READ allows reads but blocks writes.
 
@@ -2722,7 +2722,7 @@ public class AccountService {
 
 **Why It Matters**: Pessimistic READ locks allow concurrent reads while preventing writes, enabling consistent snapshots for multi-step operations like report generation. PESSIMISTIC_READ mode permits multiple readers improving throughput by 10-50x versus PESSIMISTIC_WRITE, while blocking writers until read lock release. However, read locks can cause writer starvation where updates queue indefinitely under heavy read load, requiring lock timeout configuration and reader/writer priority tuning at database level.
 
-## Example 59: Pessimistic Locking (PESSIMISTIC_WRITE)
+### Example 59: Pessimistic Locking (PESSIMISTIC_WRITE)
 
 PESSIMISTIC_WRITE acquires exclusive locks, blocking both reads and writes from other transactions. Strongest lock type.
 
@@ -2799,7 +2799,7 @@ public class TransferService {
 
 **Why It Matters**: Lock timeouts prevent indefinite blocking when lock acquisition fails, triggering PessimisticLockException after configured milliseconds instead of hanging transactions forever. The timeout property enables fail-fast behavior critical for responsive UIs, showing users 'resource busy' errors within 5 seconds versus 30-second default timeouts. However, short timeouts (<1000ms) cause false contention errors under normal load - measure actual lock hold times using database monitoring before tuning, as incorrect timeouts cause 60% false positives.
 
-## Example 60: Handling OptimisticLockException
+### Example 60: Handling OptimisticLockException
 
 Optimistic lock failures require conflict resolution strategies: retry, merge changes, or abort operation.
 
