@@ -35,6 +35,14 @@
         ],
         "parallel": false
       }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./build.sh",
+        "cwd": "apps/ayokoding-web"
+      },
+      "outputs": ["{projectRoot}/public"]
     }
   }
 }
