@@ -94,7 +94,20 @@ graph TD
 
 Universal principles that apply to all problem-solving contexts - beyond software, content, or any specific domain.
 
-#### 1. [Simplicity Over Complexity](./general/simplicity-over-complexity.md)
+#### 1. [Deliberate Problem-Solving](./general/deliberate-problem-solving.md)
+
+Think before coding. Don't assume. Don't hide confusion. Surface tradeoffs. Make assumptions explicit, present multiple interpretations, suggest simpler approaches, and stop to ask when unclear.
+
+**Key applications**:
+
+- State assumptions explicitly before implementation
+- Present multiple valid approaches when they exist
+- Suggest simpler alternatives to complex solutions
+- Use verification tools (Read, Grep, WebSearch) to validate assumptions
+- Ask questions rather than guessing requirements
+- Advocate for simplicity and push back on unnecessary complexity
+
+#### 2. [Simplicity Over Complexity](./general/simplicity-over-complexity.md)
 
 Favor minimum viable abstraction and avoid over-engineering. Start simple and add complexity only when proven necessary.
 
@@ -110,7 +123,7 @@ Favor minimum viable abstraction and avoid over-engineering. Start simple and ad
 
 Principles specific to documentation, education, and communication - how we write, teach, and share knowledge.
 
-#### 2. [Accessibility First](./content/accessibility-first.md)
+#### 3. [Accessibility First](./content/accessibility-first.md)
 
 Design for universal access from the start - WCAG compliance, color-blind friendly palettes, alt text, screen reader support. Accessibility benefits everyone.
 
@@ -122,7 +135,7 @@ Design for universal access from the start - WCAG compliance, color-blind friend
 - Semantic HTML
 - WCAG AA contrast standards
 
-#### 3. [Documentation First](./content/documentation-first.md)
+#### 4. [Documentation First](./content/documentation-first.md)
 
 Documentation is not optional - it is mandatory. Every system, convention, feature, and architectural decision must be documented. Undocumented knowledge is lost knowledge.
 
@@ -135,7 +148,7 @@ Documentation is not optional - it is mandatory. Every system, convention, featu
 - No "self-documenting code" excuse
 - Documentation written BEFORE or WITH code
 
-#### 4. [No Time Estimates](./content/no-time-estimates.md)
+#### 5. [No Time Estimates](./content/no-time-estimates.md)
 
 People work and learn at vastly different speeds. Focus on outcomes and deliverables, not arbitrary time constraints.
 
@@ -147,7 +160,7 @@ People work and learn at vastly different speeds. Focus on outcomes and delivera
 - Outcomes-focused language
 - Plan deliverables (not timelines)
 
-#### 5. [Progressive Disclosure](./content/progressive-disclosure.md)
+#### 6. [Progressive Disclosure](./content/progressive-disclosure.md)
 
 Start simple and layer complexity gradually. Beginners see simple patterns, experts access advanced features when needed.
 
@@ -163,7 +176,7 @@ Start simple and layer complexity gradually. Beginners see simple patterns, expe
 
 Principles specific to software development practices - configuration, automation, and code organization.
 
-#### 6. [Automation Over Manual](./software-engineering/automation-over-manual.md)
+#### 7. [Automation Over Manual](./software-engineering/automation-over-manual.md)
 
 Automate repetitive tasks to ensure consistency and reduce human error. Humans should focus on creative work, machines on repetitive tasks.
 
@@ -175,7 +188,7 @@ Automate repetitive tasks to ensure consistency and reduce human error. Humans s
 - Commitlint (message validation)
 - Link verification cache
 
-#### 7. [Explicit Over Implicit](./software-engineering/explicit-over-implicit.md)
+#### 8. [Explicit Over Implicit](./software-engineering/explicit-over-implicit.md)
 
 Choose explicit composition and configuration over magic, convenience, and hidden behavior. Code should be transparent and understandable.
 
@@ -186,7 +199,7 @@ Choose explicit composition and configuration over magic, convenience, and hidde
 - Explicit frontmatter fields (not defaults)
 - Explicit color hex codes (not CSS color names)
 
-#### 8. [Immutability Over Mutability](./software-engineering/immutability.md)
+#### 9. [Immutability Over Mutability](./software-engineering/immutability.md)
 
 Prefer immutable data structures over mutable state. Modifications create new values instead of changing existing ones.
 
@@ -198,7 +211,7 @@ Prefer immutable data structures over mutable state. Modifications create new va
 - Immer library for complex nested updates
 - Object.freeze for runtime immutability
 
-#### 9. [Pure Functions Over Side Effects](./software-engineering/pure-functions.md)
+#### 10. [Pure Functions Over Side Effects](./software-engineering/pure-functions.md)
 
 Prefer pure functions (deterministic, no side effects) over functions with side effects. Same inputs always produce same outputs.
 
@@ -210,7 +223,7 @@ Prefer pure functions (deterministic, no side effects) over functions with side 
 - Easy testing without mocks
 - Composable function pipelines
 
-#### 10. [Reproducibility First](./software-engineering/reproducibility.md)
+#### 11. [Reproducibility First](./software-engineering/reproducibility.md)
 
 Development environments and builds should be reproducible from the start. Eliminate "works on my machine" problems.
 
