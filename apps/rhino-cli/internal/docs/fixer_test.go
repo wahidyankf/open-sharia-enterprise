@@ -378,10 +378,10 @@ func TestFix_NoViolations(t *testing.T) {
 	tempDir := t.TempDir()
 
 	validationResult := &ValidationResult{
-		TotalFiles:      5,
-		ValidFiles:      5,
-		ViolationCount:  0,
-		Violations:      []NamingViolation{},
+		TotalFiles:       5,
+		ValidFiles:       5,
+		ViolationCount:   0,
+		Violations:       []NamingViolation{},
 		ViolationsByType: map[ViolationType][]NamingViolation{},
 	}
 

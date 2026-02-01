@@ -31,9 +31,9 @@ This is the body content.`,
 			expectedBody:  "\n# Agent Body\n\nThis is the body content.",
 		},
 		{
-			name:     "no frontmatter",
-			content:  "Just content without frontmatter",
-			wantErr:  true,
+			name:    "no frontmatter",
+			content: "Just content without frontmatter",
+			wantErr: true,
 		},
 		{
 			name: "no closing marker",

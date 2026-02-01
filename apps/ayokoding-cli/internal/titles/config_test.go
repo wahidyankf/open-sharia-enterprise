@@ -8,11 +8,11 @@ import (
 
 func TestLoadConfig(t *testing.T) {
 	tests := []struct {
-		name               string
-		configContent      string
-		expectError        bool
-		expectedOverrides  map[string]string
-		expectedLowercase  []string
+		name              string
+		configContent     string
+		expectError       bool
+		expectedOverrides map[string]string
+		expectedLowercase []string
 	}{
 		{
 			name: "valid config with overrides and lowercase words",
