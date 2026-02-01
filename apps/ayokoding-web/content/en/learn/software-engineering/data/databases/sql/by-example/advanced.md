@@ -1762,137 +1762,178 @@ Denormalization duplicates data to avoid joins. Trade-off: faster reads, slower 
 **Code**:
 
 ```sql
--- Normalized schema (3NF)
+-- Normalized schema (3NF - Third Normal Form)
+-- => Separates orders from customers to avoid data duplication
 CREATE TABLE orders_normalized (
-    id INTEGER PRIMARY KEY,
-    customer_id INTEGER,
-    order_date TEXT,
-    total REAL
+    id INTEGER PRIMARY KEY,          -- => Unique order identifier
+    customer_id INTEGER,              -- => Foreign key to customers table
+    order_date TEXT,                  -- => Order creation date
+    total REAL                        -- => Order total amount
 );
+-- => orders_normalized table created (normalized design)
 
 CREATE TABLE customers_normalized (
-    id INTEGER PRIMARY KEY,
-    name TEXT,
-    email TEXT,
-    country TEXT
+    id INTEGER PRIMARY KEY,           -- => Unique customer identifier
+    name TEXT,                        -- => Customer name
+    email TEXT,                       -- => Customer email
+    country TEXT                      -- => Customer country
 );
+-- => customers_normalized table created (normalized design)
 
--- Insert test data
+-- Insert 1000 test customers
 INSERT INTO customers_normalized (id, name, email, country)
 SELECT
-    value,
-    'Customer ' || value,
-    'customer' || value || '@example.com',
-    CASE value % 3 WHEN 0 THEN 'USA' WHEN 1 THEN 'UK' ELSE 'Canada' END
+    value,                            -- => Customer ID (1-1000)
+    'Customer ' || value,             -- => Name: "Customer 1", "Customer 2", ...
+    'customer' || value || '@example.com',  -- => Email: customer1@example.com, ...
+    CASE value % 3                    -- => Distribute countries evenly
+        WHEN 0 THEN 'USA'             -- => Every 3rd customer in USA
+        WHEN 1 THEN 'UK'              -- => Next customer in UK
+        ELSE 'Canada'                 -- => Remaining in Canada
+    END
 FROM (
     WITH RECURSIVE nums AS (
-        SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 1000
+        SELECT 1 AS value             -- => Start at 1
+        UNION ALL
+        SELECT value + 1              -- => Increment by 1
+        FROM nums
+        WHERE value < 1000            -- => Stop at 1000
     )
-    SELECT value FROM nums
+    SELECT value FROM nums            -- => Generate numbers 1-1000
 );
+-- => 1000 customers inserted (333 USA, 333 UK, 334 Canada)
 
+-- Insert 10000 test orders
 INSERT INTO orders_normalized (id, customer_id, order_date, total)
 SELECT
-    value,
-    (value % 1000) + 1,
-    date('2024-01-01', '+' || (value % 365) || ' days'),
-    50 + (value % 500)
+    value,                            -- => Order ID (1-10000)
+    (value % 1000) + 1,               -- => Random customer ID (1-1000)
+    date('2024-01-01', '+' || (value % 365) || ' days'),  -- => Dates spread across 2024
+    50 + (value % 500)                -- => Total amount between 50-549
 FROM (
     WITH RECURSIVE nums AS (
-        SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 10000
+        SELECT 1 AS value             -- => Start at 1
+        UNION ALL
+        SELECT value + 1              -- => Increment by 1
+        FROM nums
+        WHERE value < 10000           -- => Stop at 10000
     )
-    SELECT value FROM nums
+    SELECT value FROM nums            -- => Generate numbers 1-10000
 );
+-- => 10000 orders inserted (avg 10 orders per customer)
 
--- Normalized query (requires JOIN)
+-- Normalized query (requires JOIN to get customer data)
 EXPLAIN QUERY PLAN
 SELECT o.id, o.order_date, o.total, c.name, c.country
 FROM orders_normalized o
 INNER JOIN customers_normalized c ON o.customer_id = c.id
 WHERE o.order_date >= '2024-06-01';
--- => Requires JOIN (slower for high-volume queries)
+-- => Query plan shows: SCAN orders + SEARCH customers (index lookup)
+-- => JOIN operation requires matching customer_id for each order
+-- => Performance degrades with large datasets (millions of rows)
 
--- Denormalized schema (duplicate customer data in orders)
+-- Denormalized schema (duplicate customer data in orders table)
+-- => Trade-off: duplicate data for faster reads, more complex writes
 CREATE TABLE orders_denormalized (
-    id INTEGER PRIMARY KEY,
-    customer_id INTEGER,
-    customer_name TEXT,      -- Denormalized
-    customer_email TEXT,     -- Denormalized
-    customer_country TEXT,   -- Denormalized
-    order_date TEXT,
-    total REAL
+    id INTEGER PRIMARY KEY,           -- => Unique order identifier
+    customer_id INTEGER,              -- => Customer ID (for reference)
+    customer_name TEXT,               -- => Denormalized: duplicated from customers
+    customer_email TEXT,              -- => Denormalized: duplicated from customers
+    customer_country TEXT,            -- => Denormalized: duplicated from customers
+    order_date TEXT,                  -- => Order creation date
+    total REAL                        -- => Order total amount
 );
+-- => orders_denormalized table created (all data in one table)
 
--- Populate denormalized table
+-- Populate denormalized table (one-time migration from normalized)
 INSERT INTO orders_denormalized
 SELECT
-    o.id,
-    o.customer_id,
-    c.name,
-    c.email,
-    c.country,
-    o.order_date,
-    o.total
+    o.id,                             -- => Copy order ID
+    o.customer_id,                    -- => Copy customer ID
+    c.name,                           -- => Copy customer name (denormalized)
+    c.email,                          -- => Copy customer email (denormalized)
+    c.country,                        -- => Copy customer country (denormalized)
+    o.order_date,                     -- => Copy order date
+    o.total                           -- => Copy order total
 FROM orders_normalized o
 INNER JOIN customers_normalized c ON o.customer_id = c.id;
+-- => 10000 rows inserted with duplicated customer data
+-- => Each customer's data repeated ~10 times (once per order)
 
--- Denormalized query (no JOIN needed)
+-- Denormalized query (no JOIN needed - all data in one table)
 EXPLAIN QUERY PLAN
 SELECT id, order_date, total, customer_name, customer_country
 FROM orders_denormalized
 WHERE order_date >= '2024-06-01';
--- => Single table scan, no JOIN (faster)
+-- => Query plan shows: SCAN orders_denormalized (single table)
+-- => No JOIN operation - significantly faster
+-- => Ideal for read-heavy workloads (dashboards, reports)
 
--- Trade-off: Updates require maintaining consistency
--- When customer changes name, must update all their orders
-BEGIN TRANSACTION;
+-- Trade-off: Updates become more complex and slower
+-- => When customer changes name, must update ALL their orders
+BEGIN TRANSACTION;                   -- => Start atomic update
 
-UPDATE customers_normalized SET name = 'Updated Customer' WHERE id = 1;
+UPDATE customers_normalized          -- => Update source table
+SET name = 'Updated Customer'
+WHERE id = 1;
+-- => Customer name updated in customers table
 
--- Also update denormalized table
-UPDATE orders_denormalized
+-- Must also update denormalized table to maintain consistency
+UPDATE orders_denormalized           -- => Update all customer occurrences
 SET customer_name = 'Updated Customer'
 WHERE customer_id = 1;
+-- => All orders for customer 1 updated (avg 10 rows)
+-- => Single customer update affects multiple order rows
 
-COMMIT;
--- => More complex update logic
+COMMIT;                              -- => Commit transaction
+-- => Denormalized update is slower and more complex
+-- => Risk: If only one table updated, data becomes inconsistent
 
--- Create materialized view (simulated with triggers)
+-- Create materialized view (pre-aggregated summary table)
+-- => Extreme denormalization: pre-calculate expensive aggregations
 CREATE TABLE orders_summary (
-    customer_id INTEGER PRIMARY KEY,
-    customer_name TEXT,
-    num_orders INTEGER,
-    total_spent REAL,
-    last_order_date TEXT
+    customer_id INTEGER PRIMARY KEY,  -- => One row per customer
+    customer_name TEXT,               -- => Customer name
+    num_orders INTEGER,               -- => Total order count (pre-aggregated)
+    total_spent REAL,                 -- => Total amount spent (pre-aggregated)
+    last_order_date TEXT              -- => Most recent order (pre-aggregated)
 );
+-- => orders_summary table created (materialized view)
 
+-- Initial population of summary table
 INSERT INTO orders_summary
 SELECT
-    c.id,
-    c.name,
-    COUNT(o.id),
-    SUM(o.total),
-    MAX(o.order_date)
+    c.id,                             -- => Customer ID
+    c.name,                           -- => Customer name
+    COUNT(o.id),                      -- => Count orders per customer
+    SUM(o.total),                     -- => Sum order totals per customer
+    MAX(o.order_date)                 -- => Latest order date per customer
 FROM customers_normalized c
 LEFT JOIN orders_normalized o ON c.id = o.customer_id
 GROUP BY c.id, c.name;
+-- => 1000 rows inserted (one per customer)
+-- => Expensive GROUP BY done once, not on every query
 
--- Query summary (extremely fast)
+-- Query summary (extremely fast - no aggregation needed)
 SELECT * FROM orders_summary WHERE total_spent > 1000;
--- => Pre-aggregated, no GROUP BY needed
+-- => Instant response: no GROUP BY, no JOIN
+-- => Returns pre-calculated results
+-- => Ideal for dashboards requiring real-time performance
 
--- Refresh summary (run periodically)
-DELETE FROM orders_summary;
-INSERT INTO orders_summary
+-- Refresh summary table (run periodically via cron/scheduler)
+DELETE FROM orders_summary;          -- => Remove old summary data
+INSERT INTO orders_summary           -- => Rebuild from scratch
 SELECT
-    c.id,
-    c.name,
-    COUNT(o.id),
-    SUM(o.total),
-    MAX(o.order_date)
+    c.id,                             -- => Customer ID
+    c.name,                           -- => Customer name
+    COUNT(o.id),                      -- => Recalculate order count
+    SUM(o.total),                     -- => Recalculate total spent
+    MAX(o.order_date)                 -- => Recalculate last order
 FROM customers_normalized c
 LEFT JOIN orders_normalized o ON c.id = o.customer_id
 GROUP BY c.id, c.name;
+-- => Summary refreshed (run hourly/daily depending on staleness tolerance)
+-- => Alternative: use triggers to update incrementally on INSERT/UPDATE/DELETE
 ```
 
 **Key Takeaway**: Denormalization duplicates data to eliminate joins. Use for read-heavy workloads. Trade-offs: faster reads, complex updates, data redundancy. Materialized views/summary tables pre-aggregate for instant queries. Refresh periodically or use triggers. Balance normalization (data integrity) vs denormalization (performance).
@@ -1908,80 +1949,108 @@ Soft deletes mark records as deleted instead of removing them. Enables undelete 
 **Code**:
 
 ```sql
+-- Soft delete pattern: use timestamp instead of DELETE
 CREATE TABLE users (
-    id INTEGER PRIMARY KEY,
-    email TEXT UNIQUE NOT NULL,
-    name TEXT,
-    deleted_at TEXT  -- NULL = active, timestamp = soft deleted
+    id INTEGER PRIMARY KEY,           -- => Unique user identifier
+    email TEXT UNIQUE NOT NULL,       -- => User email (unique constraint)
+    name TEXT,                        -- => User display name
+    deleted_at TEXT                   -- => NULL = active, timestamp = deleted
 );
+-- => users table created with soft delete support
+-- => deleted_at NULL means active user
 
+-- Insert test users (all active initially)
 INSERT INTO users (id, email, name, deleted_at)
 VALUES
-    (1, 'alice@example.com', 'Alice', NULL),
-    (2, 'bob@example.com', 'Bob', NULL),
-    (3, 'charlie@example.com', 'Charlie', NULL);
+    (1, 'alice@example.com', 'Alice', NULL),     -- => Alice active
+    (2, 'bob@example.com', 'Bob', NULL),         -- => Bob active
+    (3, 'charlie@example.com', 'Charlie', NULL); -- => Charlie active
+-- => 3 users inserted, all with deleted_at = NULL (active)
 
--- Soft delete (don't use DELETE)
+-- Soft delete (UPDATE instead of DELETE)
 UPDATE users
-SET deleted_at = datetime('now')
+SET deleted_at = datetime('now')     -- => Set deletion timestamp
 WHERE id = 2;
--- => Bob marked as deleted, record still exists
+-- => Bob's deleted_at set to current timestamp
+-- => Record still exists in database (not physically deleted)
+-- => Enables undelete and preserves foreign key references
 
--- Query active users only
+-- Query active users only (application default behavior)
 SELECT * FROM users WHERE deleted_at IS NULL;
--- => Returns: Alice, Charlie (Bob excluded)
+-- => Returns: id=1 (Alice), id=3 (Charlie)
+-- => Bob excluded (deleted_at is not NULL)
+-- => Applications should ALWAYS filter by deleted_at IS NULL
 
--- Query deleted users
+-- Query deleted users (for admin/audit purposes)
 SELECT * FROM users WHERE deleted_at IS NOT NULL;
--- => Returns: Bob
+-- => Returns: id=2 (Bob) with deletion timestamp
+-- => Shows when Bob was deleted
+-- => Supports audit requirements and compliance
 
--- Undelete (restore)
+-- Undelete (restore deleted user)
 UPDATE users
-SET deleted_at = NULL
+SET deleted_at = NULL                -- => Clear deletion timestamp
 WHERE id = 2;
--- => Bob restored to active status
+-- => Bob's deleted_at set back to NULL
+-- => Bob becomes active again
+-- => User can log in and access data
+-- => "Undo delete" feature for UI
 
--- Create view for active users
+-- Create view to simplify active user queries
 CREATE VIEW users_active AS
-SELECT id, email, name
+SELECT id, email, name               -- => Only active user fields
 FROM users
-WHERE deleted_at IS NULL;
+WHERE deleted_at IS NULL;            -- => Filter out deleted users
+-- => users_active view created
+-- => Applications query this instead of users table directly
 
--- Applications query view instead of table
+-- Query active users via view (simpler code)
 SELECT * FROM users_active;
--- => Automatically filters deleted users
+-- => Returns: Alice, Bob (restored), Charlie
+-- => No need to remember deleted_at IS NULL filter
+-- => Cleaner application code
 
--- Soft delete with foreign keys
+-- Soft delete with foreign keys (child records preserved)
 CREATE TABLE posts (
-    id INTEGER PRIMARY KEY,
-    user_id INTEGER NOT NULL,
-    title TEXT,
-    deleted_at TEXT,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    id INTEGER PRIMARY KEY,           -- => Unique post identifier
+    user_id INTEGER NOT NULL,         -- => Foreign key to users
+    title TEXT,                       -- => Post title
+    deleted_at TEXT,                  -- => Soft delete for posts too
+    FOREIGN KEY (user_id) REFERENCES users(id)  -- => References users.id
 );
+-- => posts table created with soft delete
+-- => Foreign key prevents deleting users with DELETE (would cascade)
 
 INSERT INTO posts (id, user_id, title, deleted_at)
 VALUES
-    (1, 1, 'Alice Post 1', NULL),
-    (2, 1, 'Alice Post 2', NULL),
-    (3, 2, 'Bob Post 1', NULL);
+    (1, 1, 'Alice Post 1', NULL),    -- => Alice's first post (active)
+    (2, 1, 'Alice Post 2', NULL),    -- => Alice's second post (active)
+    (3, 2, 'Bob Post 1', NULL);      -- => Bob's post (active)
+-- => 3 posts inserted, all active
 
--- Soft delete user (posts remain)
+-- Soft delete user (posts remain intact)
 UPDATE users SET deleted_at = datetime('now') WHERE id = 1;
--- => Alice deleted, posts remain (would fail with CASCADE DELETE)
+-- => Alice soft deleted
+-- => Alice's posts (id=1,2) still exist in posts table
+-- => Foreign key constraint NOT violated (record still exists)
+-- => Hard DELETE would fail if ON DELETE RESTRICT
 
 -- Query active users with their active posts
-SELECT u.name, p.title
-FROM users_active u
-INNER JOIN posts p ON u.id = p.user_id
-WHERE p.deleted_at IS NULL;
--- => Returns only active users and posts
+SELECT u.name, p.title               -- => User name and post title
+FROM users_active u                   -- => Only active users
+INNER JOIN posts p ON u.id = p.user_id  -- => Join with posts
+WHERE p.deleted_at IS NULL;          -- => Only active posts
+-- => Returns: Bob's posts only
+-- => Alice excluded (soft deleted user)
+-- => Proper filtering requires BOTH tables' deleted_at
 
 -- Permanent delete (after retention period)
 DELETE FROM users
-WHERE deleted_at IS NOT NULL
-  AND deleted_at < datetime('now', '-90 days');
--- => Permanently removes users deleted over 90 days ago
+WHERE deleted_at IS NOT NULL         -- => Only soft-deleted users
+  AND deleted_at < datetime('now', '-90 days');  -- => Deleted 90+ days ago
+-- => Physically removes users soft-deleted over 90 days ago
+-- => Compliance requirement: retain for 90 days, then purge
+-- => Run this as scheduled cleanup job (weekly/monthly)
 ```
 
 **Key Takeaway**: Soft deletes use deleted_at timestamp instead of DELETE. NULL = active, timestamp = deleted. Create views filtering deleted_at IS NULL for active records. Enables undelete, preserves referential integrity, supports audit trails. Permanent delete after retention period.
@@ -1997,138 +2066,160 @@ Audit logs track who changed what and when. Essential for compliance, debugging,
 **Code**:
 
 ```sql
--- Main table
+-- Main table (business data)
 CREATE TABLE products (
-    id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,
-    price REAL NOT NULL,
-    updated_at TEXT
+    id INTEGER PRIMARY KEY,           -- => Unique product identifier
+    name TEXT NOT NULL,               -- => Product name
+    price REAL NOT NULL,              -- => Current price
+    updated_at TEXT                   -- => Last update timestamp
 );
+-- => products table created (contains current state only)
 
--- Audit log table
+-- Audit log table (historical changes)
 CREATE TABLE products_audit (
-    id INTEGER PRIMARY KEY,
-    product_id INTEGER NOT NULL,
-    action TEXT NOT NULL,  -- 'INSERT', 'UPDATE', 'DELETE'
-    old_values TEXT,       -- JSON of old values
-    new_values TEXT,       -- JSON of new values
-    changed_by TEXT,       -- User who made change
-    changed_at TEXT NOT NULL
+    id INTEGER PRIMARY KEY,           -- => Unique audit record ID
+    product_id INTEGER NOT NULL,      -- => Reference to products.id
+    action TEXT NOT NULL,             -- => Operation: INSERT, UPDATE, DELETE
+    old_values TEXT,                  -- => JSON snapshot before change (NULL for INSERT)
+    new_values TEXT,                  -- => JSON snapshot after change (NULL for DELETE)
+    changed_by TEXT,                  -- => User email/ID who made change
+    changed_at TEXT NOT NULL          -- => Timestamp of change
 );
+-- => products_audit table created (append-only log)
+-- => Stores complete change history
 
--- Initial insert
+-- Initial insert (create new product)
 INSERT INTO products (id, name, price, updated_at)
 VALUES (1, 'Laptop', 1000.00, datetime('now'));
+-- => Product created: id=1, name=Laptop, price=1000
 
--- Log the insert
+-- Log the insert (manual approach)
 INSERT INTO products_audit (product_id, action, old_values, new_values, changed_by, changed_at)
 VALUES (
-    1,
-    'INSERT',
-    NULL,
-    JSON_OBJECT('name', 'Laptop', 'price', 1000.00),
-    'alice@example.com',
-    datetime('now')
+    1,                                -- => Product ID being audited
+    'INSERT',                         -- => Action type
+    NULL,                             -- => No old values (new record)
+    JSON_OBJECT('name', 'Laptop', 'price', 1000.00),  -- => New values as JSON
+    'alice@example.com',              -- => User who created product
+    datetime('now')                   -- => Creation timestamp
 );
+-- => Audit record created: tracks who created product and when
+-- => JSON format allows flexible querying of specific fields
 
--- Update product
+-- Update product (change price)
 UPDATE products
 SET price = 1200.00, updated_at = datetime('now')
 WHERE id = 1;
+-- => Product updated: price changed from 1000 to 1200
 
--- Log the update
+-- Log the update (manual approach)
 INSERT INTO products_audit (product_id, action, old_values, new_values, changed_by, changed_at)
 VALUES (
-    1,
-    'UPDATE',
-    JSON_OBJECT('name', 'Laptop', 'price', 1000.00),
-    JSON_OBJECT('name', 'Laptop', 'price', 1200.00),
-    'bob@example.com',
-    datetime('now')
+    1,                                -- => Product ID being audited
+    'UPDATE',                         -- => Action type
+    JSON_OBJECT('name', 'Laptop', 'price', 1000.00),  -- => Old values (before update)
+    JSON_OBJECT('name', 'Laptop', 'price', 1200.00),  -- => New values (after update)
+    'bob@example.com',                -- => User who updated product
+    datetime('now')                   -- => Update timestamp
 );
+-- => Audit record created: tracks price change from 1000 to 1200
+-- => Both old and new values preserved for comparison
 
 -- Delete product
 DELETE FROM products WHERE id = 1;
+-- => Product physically deleted from products table
 
--- Log the delete
+-- Log the delete (manual approach)
 INSERT INTO products_audit (product_id, action, old_values, new_values, changed_by, changed_at)
 VALUES (
-    1,
-    'DELETE',
-    JSON_OBJECT('name', 'Laptop', 'price', 1200.00),
-    NULL,
-    'charlie@example.com',
-    datetime('now')
+    1,                                -- => Product ID being audited
+    'DELETE',                         -- => Action type
+    JSON_OBJECT('name', 'Laptop', 'price', 1200.00),  -- => Final state before deletion
+    NULL,                             -- => No new values (record deleted)
+    'charlie@example.com',            -- => User who deleted product
+    datetime('now')                   -- => Deletion timestamp
 );
+-- => Audit record created: product gone from products table but history preserved
+-- => Can reconstruct product state at any point in time
 
--- Query audit history for product
+-- Query audit history for specific product
 SELECT
-    action,
-    old_values,
-    new_values,
-    changed_by,
-    changed_at
+    action,                           -- => What happened
+    old_values,                       -- => Before state
+    new_values,                       -- => After state
+    changed_by,                       -- => Who did it
+    changed_at                        -- => When it happened
 FROM products_audit
-WHERE product_id = 1
-ORDER BY changed_at;
--- => Returns full history: INSERT, UPDATE, DELETE
+WHERE product_id = 1                  -- => Filter by product
+ORDER BY changed_at;                  -- => Chronological order
+-- => Returns: INSERT (alice), UPDATE (bob), DELETE (charlie)
+-- => Complete lifecycle history of product
 
--- Find who changed price above 1000
-SELECT DISTINCT changed_by
+-- Find who changed price above 1000 (compliance query)
+SELECT DISTINCT changed_by            -- => Unique users
 FROM products_audit
-WHERE JSON_EXTRACT(new_values, '$.price') > 1000;
+WHERE JSON_EXTRACT(new_values, '$.price') > 1000;  -- => Extract price from JSON
 -- => Returns: bob@example.com
+-- => JSON querying enables field-specific audits without schema changes
 
--- Audit report: All changes in last 7 days
+-- Audit report: All changes in last 7 days (recent activity)
 SELECT
-    product_id,
-    action,
-    changed_by,
-    changed_at
+    product_id,                       -- => Which product
+    action,                           -- => What happened
+    changed_by,                       -- => Who did it
+    changed_at                        -- => When
 FROM products_audit
-WHERE changed_at >= datetime('now', '-7 days')
-ORDER BY changed_at DESC;
+WHERE changed_at >= datetime('now', '-7 days')  -- => Last week
+ORDER BY changed_at DESC;             -- => Most recent first
+-- => Typical compliance/security report
+-- => Shows recent activity for investigation
 
--- Simplified trigger-based approach (SQLite supports triggers)
+-- Simplified trigger-based approach (automatic auditing)
 CREATE TRIGGER products_audit_insert
-AFTER INSERT ON products
+AFTER INSERT ON products              -- => Fire after INSERT completes
 BEGIN
     INSERT INTO products_audit (product_id, action, new_values, changed_by, changed_at)
     VALUES (
-        NEW.id,
-        'INSERT',
-        JSON_OBJECT('name', NEW.name, 'price', NEW.price),
-        'system',  -- In real app, get from application context
-        datetime('now')
+        NEW.id,                       -- => NEW refers to inserted row
+        'INSERT',                     -- => Action type
+        JSON_OBJECT('name', NEW.name, 'price', NEW.price),  -- => Capture new values
+        'system',                     -- => In real app, get from session context
+        datetime('now')               -- => Current timestamp
     );
 END;
+-- => Trigger created: automatically logs every INSERT
+-- => Application code doesn't need manual audit logging
 
 CREATE TRIGGER products_audit_update
-AFTER UPDATE ON products
+AFTER UPDATE ON products              -- => Fire after UPDATE completes
 BEGIN
     INSERT INTO products_audit (product_id, action, old_values, new_values, changed_by, changed_at)
     VALUES (
-        NEW.id,
-        'UPDATE',
-        JSON_OBJECT('name', OLD.name, 'price', OLD.price),
-        JSON_OBJECT('name', NEW.name, 'price', NEW.price),
-        'system',
-        datetime('now')
+        NEW.id,                       -- => NEW refers to updated row
+        'UPDATE',                     -- => Action type
+        JSON_OBJECT('name', OLD.name, 'price', OLD.price),  -- => OLD has pre-update values
+        JSON_OBJECT('name', NEW.name, 'price', NEW.price),  -- => NEW has post-update values
+        'system',                     -- => Get from session context
+        datetime('now')               -- => Current timestamp
     );
 END;
+-- => Trigger created: automatically logs every UPDATE
+-- => Captures before/after state for comparison
 
 CREATE TRIGGER products_audit_delete
-AFTER DELETE ON products
+AFTER DELETE ON products              -- => Fire after DELETE completes
 BEGIN
     INSERT INTO products_audit (product_id, action, old_values, changed_by, changed_at)
     VALUES (
-        OLD.id,
-        'DELETE',
-        JSON_OBJECT('name', OLD.name, 'price', OLD.price),
-        'system',
-        datetime('now')
+        OLD.id,                       -- => OLD refers to deleted row (NEW doesn't exist)
+        'DELETE',                     -- => Action type
+        JSON_OBJECT('name', OLD.name, 'price', OLD.price),  -- => Final state before deletion
+        'system',                     -- => Get from session context
+        datetime('now')               -- => Current timestamp
     );
 END;
+-- => Trigger created: automatically logs every DELETE
+-- => Preserves deleted data in audit log
 ```
 
 **Key Takeaway**: Audit logs use separate table tracking action type, old/new values (JSON), user, and timestamp. Implement via application code or triggers. Query audit history for compliance, debugging, rollback. Store changed values as JSON for flexibility. Essential for financial systems, healthcare, and regulated industries.
@@ -2144,83 +2235,115 @@ Optimistic locking prevents lost updates in concurrent environments using versio
 **Code**:
 
 ```sql
+-- Optimistic locking: detect concurrent modifications without locks
 CREATE TABLE inventory (
-    id INTEGER PRIMARY KEY,
-    product_name TEXT NOT NULL,
-    quantity INTEGER NOT NULL,
-    version INTEGER NOT NULL DEFAULT 1  -- Version for optimistic locking
+    id INTEGER PRIMARY KEY,           -- => Unique product identifier
+    product_name TEXT NOT NULL,       -- => Product name
+    quantity INTEGER NOT NULL,        -- => Current stock quantity
+    version INTEGER NOT NULL DEFAULT 1  -- => Version number for conflict detection
 );
+-- => inventory table created with version column
+-- => version increments on every update
 
+-- Insert initial product
 INSERT INTO inventory (id, product_name, quantity, version)
 VALUES (1, 'Widget A', 100, 1);
+-- => Product created: quantity=100, version=1
+-- => version starts at 1
 
+-- Scenario: Two concurrent users editing same product
 -- User 1 reads current state
 SELECT * FROM inventory WHERE id = 1;
--- => quantity=100, version=1
+-- => Returns: id=1, product_name=Widget A, quantity=100, version=1
+-- => User 1 sees version=1 (remembers this for update)
 
--- User 2 reads current state (same version)
+-- User 2 reads current state (at same time)
 SELECT * FROM inventory WHERE id = 1;
--- => quantity=100, version=1
+-- => Returns: id=1, product_name=Widget A, quantity=100, version=1
+-- => User 2 also sees version=1
+-- => Both users have same starting point
 
--- User 1 updates (decreases quantity)
+-- User 1 updates first (decreases quantity by 5)
 UPDATE inventory
-SET quantity = 95, version = version + 1
-WHERE id = 1 AND version = 1;
--- => Success: 1 row updated, version now 2
+SET quantity = 95, version = version + 1  -- => Increment version
+WHERE id = 1 AND version = 1;        -- => Only update if version still 1
+-- => Success: 1 row updated
+-- => New state: quantity=95, version=2
+-- => WHERE clause ensures version hasn't changed since read
 
 -- User 2 tries to update (using stale version)
 UPDATE inventory
-SET quantity = 90, version = version + 1
-WHERE id = 1 AND version = 1;
--- => Fails: 0 rows updated (version is now 2, not 1)
+SET quantity = 90, version = version + 1  -- => Try to set quantity=90
+WHERE id = 1 AND version = 1;        -- => Expects version=1 (stale!)
+-- => Fails: 0 rows updated
+-- => version is now 2 (User 1 updated it)
+-- => Conflict detected: User 2's read is outdated
 
--- User 2 must re-read and retry
+-- User 2 must re-read and retry (conflict resolution)
 SELECT * FROM inventory WHERE id = 1;
--- => quantity=95, version=2 (sees User 1's change)
+-- => Returns: quantity=95, version=2
+-- => User 2 sees User 1's changes
+-- => Application can show conflict: "Quantity changed to 95 by another user"
 
+-- User 2 retries with new version
 UPDATE inventory
-SET quantity = 90, version = version + 1
-WHERE id = 1 AND version = 2;
--- => Success: 1 row updated, version now 3
+SET quantity = 90, version = version + 1  -- => Set quantity=90
+WHERE id = 1 AND version = 2;        -- => Use current version=2
+-- => Success: 1 row updated
+-- => New state: quantity=90, version=3
 
 -- Application pattern with error handling
-BEGIN TRANSACTION;
+BEGIN TRANSACTION;                   -- => Start transaction
 
 SELECT id, quantity, version FROM inventory WHERE id = 1;
 -- => Application reads: quantity=90, version=3
+-- => Store version in application memory
 
--- Calculate new quantity
+-- Application calculates new quantity (business logic)
+-- new_quantity = current_quantity - purchase_amount
 -- new_quantity = 90 - 10 = 80
 
+-- Attempt update with version check
 UPDATE inventory
-SET quantity = 80, version = version + 1
-WHERE id = 1 AND version = 3;
+SET quantity = 80, version = version + 1  -- => Update to 80, increment version
+WHERE id = 1 AND version = 3;        -- => Only if version unchanged
+-- => Check affected row count
+-- => If affected_rows == 0: version conflict (another update happened)
+-- => If affected_rows == 1: success (no conflict)
 
--- Check affected rows
--- If 0 rows affected: ROLLBACK and retry (version conflict)
--- If 1 row affected: COMMIT (success)
+-- Application checks result:
+-- If 0 rows affected: ROLLBACK and retry entire operation
+-- If 1 row affected: COMMIT (successful update)
 
-COMMIT;
+COMMIT;                              -- => Commit if successful
+-- => version now 4, quantity=80
 
--- Timestamp-based optimistic locking (alternative)
+-- Timestamp-based optimistic locking (alternative approach)
+-- => Use last update timestamp instead of version number
 CREATE TABLE documents (
-    id INTEGER PRIMARY KEY,
-    content TEXT,
-    updated_at TEXT NOT NULL
+    id INTEGER PRIMARY KEY,           -- => Unique document identifier
+    content TEXT,                     -- => Document content
+    updated_at TEXT NOT NULL          -- => Last update timestamp
 );
+-- => documents table created with timestamp column
 
 INSERT INTO documents (id, content, updated_at)
 VALUES (1, 'Original content', datetime('now'));
+-- => Document created with current timestamp
+-- => updated_at = '2025-12-29 02:07:25' (example)
 
--- Read with timestamp
+-- Read with timestamp (user remembers timestamp)
 SELECT id, content, updated_at FROM documents WHERE id = 1;
--- => updated_at = '2025-12-29 02:07:25'
+-- => Returns: content='Original content', updated_at='2025-12-29 02:07:25'
+-- => Application stores updated_at for later comparison
 
--- Update with timestamp check
+-- Update with timestamp check (detect if modified since read)
 UPDATE documents
-SET content = 'Updated content', updated_at = datetime('now')
-WHERE id = 1 AND updated_at = '2025-12-29 02:07:25';
--- => Success if timestamp matches, fails if stale
+SET content = 'Updated content', updated_at = datetime('now')  -- => New timestamp
+WHERE id = 1 AND updated_at = '2025-12-29 02:07:25';  -- => Match old timestamp
+-- => Success if timestamp matches (no concurrent update)
+-- => Fails if timestamp changed (concurrent update detected)
+-- => If 0 rows affected: conflict (document modified by someone else)
 ```
 
 **Key Takeaway**: Optimistic locking uses version numbers or timestamps to detect concurrent modifications. UPDATE with version check in WHERE clause. If 0 rows affected, version conflict occurred - re-read and retry. No locks needed, scales well. Essential for web applications with concurrent users.
@@ -2236,76 +2359,101 @@ Idempotent operations can be retried safely without side effects. Use unique con
 **Code**:
 
 ```sql
+-- Idempotent operations: safe to retry without side effects
 CREATE TABLE payments (
-    id INTEGER PRIMARY KEY,
-    transaction_id TEXT UNIQUE NOT NULL,  -- External idempotency key
-    user_id INTEGER NOT NULL,
-    amount REAL NOT NULL,
-    status TEXT NOT NULL,
-    created_at TEXT NOT NULL
+    id INTEGER PRIMARY KEY,           -- => Auto-increment internal ID
+    transaction_id TEXT UNIQUE NOT NULL,  -- => External idempotency key (client-generated)
+    user_id INTEGER NOT NULL,         -- => Customer making payment
+    amount REAL NOT NULL,             -- => Payment amount
+    status TEXT NOT NULL,             -- => Payment status
+    created_at TEXT NOT NULL          -- => When payment was created
 );
+-- => payments table created with UNIQUE constraint on transaction_id
+-- => Prevents duplicate payments with same transaction_id
 
--- First payment attempt
+-- First payment attempt (successful)
 INSERT INTO payments (transaction_id, user_id, amount, status, created_at)
 VALUES ('txn-12345', 100, 50.00, 'completed', datetime('now'));
--- => Success: Payment recorded
+-- => Success: 1 row inserted
+-- => Payment recorded: $50 charged to user 100
+-- => transaction_id='txn-12345' recorded
 
--- Duplicate payment attempt (network retry)
+-- Duplicate payment attempt (network retry after timeout)
 INSERT INTO payments (transaction_id, user_id, amount, status, created_at)
 VALUES ('txn-12345', 100, 50.00, 'completed', datetime('now'));
--- => ERROR: UNIQUE constraint failed (prevents duplicate charge)
+-- => ERROR: UNIQUE constraint failed: payments.transaction_id
+-- => Database prevents duplicate charge
+-- => Client must catch error and check if payment exists
 
--- Idempotent pattern: INSERT OR IGNORE
+-- Idempotent pattern: INSERT OR IGNORE (silent deduplication)
 INSERT OR IGNORE INTO payments (transaction_id, user_id, amount, status, created_at)
 VALUES ('txn-12345', 100, 50.00, 'completed', datetime('now'));
--- => Success: No error, no duplicate row (idempotent)
+-- => Success: 0 rows inserted (transaction_id already exists)
+-- => No error thrown, idempotent behavior
+-- => Safe to retry: first attempt inserts, subsequent attempts ignored
 
--- Check if payment exists before processing
+-- Check if payment exists before processing (application pattern)
 SELECT id FROM payments WHERE transaction_id = 'txn-12345';
--- => Returns existing payment (application can skip processing)
+-- => Returns: id=1 (payment exists)
+-- => Application skips payment processing
+-- => Returns same response as first attempt (idempotent)
 
--- Idempotent upsert with unique key
+-- Idempotent upsert with unique key (create or update pattern)
 CREATE TABLE user_sessions (
-    id INTEGER PRIMARY KEY,
-    session_token TEXT UNIQUE NOT NULL,
-    user_id INTEGER NOT NULL,
-    expires_at TEXT NOT NULL,
-    created_at TEXT NOT NULL
+    id INTEGER PRIMARY KEY,           -- => Auto-increment session ID
+    session_token TEXT UNIQUE NOT NULL,  -- => Session token (idempotency key)
+    user_id INTEGER NOT NULL,         -- => User owning session
+    expires_at TEXT NOT NULL,         -- => Session expiration
+    created_at TEXT NOT NULL          -- => When session created/refreshed
 );
+-- => user_sessions table created
+-- => UNIQUE constraint on session_token
 
--- Create or refresh session (idempotent)
+-- Create or refresh session (upsert pattern)
 INSERT INTO user_sessions (session_token, user_id, expires_at, created_at)
 VALUES ('token-abc123', 100, datetime('now', '+1 day'), datetime('now'))
 ON CONFLICT(session_token) DO UPDATE SET
-    expires_at = datetime('now', '+1 day'),
-    created_at = datetime('now');
--- => Creates new session or refreshes existing one
+    expires_at = datetime('now', '+1 day'),  -- => Refresh expiration
+    created_at = datetime('now');     -- => Update creation time
+-- => First call: creates new session
+-- => Subsequent calls: refresh expiration (idempotent)
+-- => Safe to retry: always results in valid session
 
--- Retry-safe pattern with status transitions
+-- Retry-safe pattern with status transitions (state machine)
 CREATE TABLE orders (
-    id INTEGER PRIMARY KEY,
-    order_number TEXT UNIQUE NOT NULL,
-    user_id INTEGER NOT NULL,
+    id INTEGER PRIMARY KEY,           -- => Auto-increment order ID
+    order_number TEXT UNIQUE NOT NULL,  -- => External order number (idempotency key)
+    user_id INTEGER NOT NULL,         -- => Customer placing order
     status TEXT NOT NULL CHECK (status IN ('pending', 'processing', 'completed', 'failed')),
-    created_at TEXT NOT NULL
+    created_at TEXT NOT NULL          -- => Order creation time
 );
+-- => orders table created with status state machine
+-- => Valid transitions: pending -> processing -> completed/failed
 
+-- Create order
 INSERT INTO orders (order_number, user_id, status, created_at)
 VALUES ('ORD-001', 100, 'pending', datetime('now'));
+-- => Order created in pending state
+-- => order_number='ORD-001' is idempotency key
 
--- Idempotent status transition (only move forward)
+-- Idempotent status transition (only move forward if in expected state)
 UPDATE orders
-SET status = 'processing'
-WHERE order_number = 'ORD-001'
-  AND status = 'pending';  -- Only transition from pending
--- => 1 row updated
+SET status = 'processing'            -- => Transition to processing
+WHERE order_number = 'ORD-001'       -- => Specific order
+  AND status = 'pending';            -- => Only if currently pending
+-- => Success: 1 row updated
+-- => Order transitioned: pending -> processing
+-- => WHERE clause ensures valid state transition
 
--- Retry same transition (idempotent - no change)
+-- Retry same transition (idempotent - already transitioned)
 UPDATE orders
-SET status = 'processing'
-WHERE order_number = 'ORD-001'
-  AND status = 'pending';
--- => 0 rows updated (already processing, safe to retry)
+SET status = 'processing'            -- => Try same transition
+WHERE order_number = 'ORD-001'       -- => Same order
+  AND status = 'pending';            -- => Expects pending state
+-- => Result: 0 rows updated
+-- => Order already in processing state (not pending)
+-- => Safe to retry: no harm, no error
+-- => Idempotent: multiple calls have same effect as one call
 ```
 
 **Key Takeaway**: Idempotent operations use unique constraints on external IDs (transaction_id, order_number). INSERT OR IGNORE prevents duplicates without errors. ON CONFLICT DO UPDATE for upserts. Status transitions check current state in WHERE. Enables safe retries in distributed systems.
@@ -2321,99 +2469,124 @@ Rate limiting prevents abuse by restricting actions per time window. Track event
 **Code**:
 
 ```sql
+-- Rate limiting: track API requests within time windows
 CREATE TABLE api_requests (
-    id INTEGER PRIMARY KEY,
-    api_key TEXT NOT NULL,
-    endpoint TEXT NOT NULL,
-    request_time TEXT NOT NULL
+    id INTEGER PRIMARY KEY,           -- => Auto-increment request ID
+    api_key TEXT NOT NULL,            -- => API key making request
+    endpoint TEXT NOT NULL,           -- => API endpoint called
+    request_time TEXT NOT NULL        -- => When request was made
 );
+-- => api_requests table created (logs all API requests)
 
+-- Index for fast rate limit queries (api_key + time range)
 CREATE INDEX idx_api_requests_key_time ON api_requests(api_key, request_time);
+-- => Composite index created
+-- => Optimizes queries: WHERE api_key = X AND request_time >= Y
 
--- Record API request
+-- Record API request (log each request)
 INSERT INTO api_requests (api_key, endpoint, request_time)
 VALUES ('key-12345', '/api/users', datetime('now'));
+-- => Request logged: api_key=key-12345, endpoint=/api/users
+-- => request_time = current timestamp
 
 -- Check rate limit: max 100 requests per hour
 WITH recent_requests AS (
-    SELECT COUNT(*) AS request_count
+    SELECT COUNT(*) AS request_count  -- => Count requests in window
     FROM api_requests
-    WHERE api_key = 'key-12345'
-      AND request_time >= datetime('now', '-1 hour')
+    WHERE api_key = 'key-12345'       -- => For specific API key
+      AND request_time >= datetime('now', '-1 hour')  -- => Last hour only
 )
 SELECT
     CASE
-        WHEN request_count >= 100 THEN 'RATE_LIMIT_EXCEEDED'
-        ELSE 'OK'
+        WHEN request_count >= 100 THEN 'RATE_LIMIT_EXCEEDED'  -- => Over limit
+        ELSE 'OK'                     -- => Under limit
     END AS status,
-    request_count,
-    100 - request_count AS remaining
+    request_count,                    -- => Current usage
+    100 - request_count AS remaining  -- => Requests left
 FROM recent_requests;
 -- => Returns: status='OK', request_count=1, remaining=99
+-- => Application uses this to decide: allow or reject request
 
 -- Application pattern: Check before allowing request
--- 1. Count recent requests
+-- Step 1: Count recent requests (rate limit check)
 WITH rate_check AS (
-    SELECT COUNT(*) AS count
+    SELECT COUNT(*) AS count          -- => Count requests in window
     FROM api_requests
-    WHERE api_key = 'key-12345'
-      AND request_time >= datetime('now', '-1 hour')
+    WHERE api_key = 'key-12345'       -- => For specific API key
+      AND request_time >= datetime('now', '-1 hour')  -- => Sliding 1-hour window
 )
 SELECT
-    CASE WHEN count < 100 THEN 1 ELSE 0 END AS allowed
+    CASE WHEN count < 100 THEN 1 ELSE 0 END AS allowed  -- => 1=allow, 0=deny
 FROM rate_check;
+-- => Returns: allowed=1 (under limit)
+-- => Application checks this before processing request
 
--- 2. If allowed=1, record request
+-- Step 2: If allowed=1, record request and process
 INSERT INTO api_requests (api_key, endpoint, request_time)
 VALUES ('key-12345', '/api/users', datetime('now'));
+-- => Request logged (increments count for next rate check)
+-- => Application proceeds with request processing
 
--- Sliding window rate limit (more accurate)
+-- Sliding window rate limit (more accurate, memory-efficient)
 CREATE TABLE rate_limit_sliding (
-    api_key TEXT PRIMARY KEY,
-    request_timestamps TEXT  -- JSON array of timestamps
+    api_key TEXT PRIMARY KEY,        -- => One row per API key
+    request_timestamps TEXT          -- => JSON array of recent timestamps
 );
+-- => rate_limit_sliding table created
+-- => Stores only recent timestamps (no historical data)
 
+-- Initialize API key with empty timestamp array
 INSERT OR IGNORE INTO rate_limit_sliding (api_key, request_timestamps)
 VALUES ('key-67890', '[]');
+-- => API key initialized: request_timestamps = []
+-- => INSERT OR IGNORE: idempotent initialization
 
--- Add new request to sliding window
+-- Add new request to sliding window (append timestamp)
 UPDATE rate_limit_sliding
 SET request_timestamps = JSON_INSERT(
-    request_timestamps,
-    '$[#]',
-    datetime('now')
+    request_timestamps,               -- => Existing JSON array
+    '$[#]',                           -- => Append position (end of array)
+    datetime('now')                   -- => Current timestamp
 )
 WHERE api_key = 'key-67890';
+-- => New timestamp appended to array
+-- => request_timestamps = ['2025-12-29 03:15:22']
 
--- Remove timestamps older than 1 hour
+-- Remove timestamps older than 1 hour (cleanup stale data)
 WITH filtered_timestamps AS (
     SELECT
         api_key,
-        JSON_GROUP_ARRAY(value) AS recent_timestamps
+        JSON_GROUP_ARRAY(value) AS recent_timestamps  -- => Rebuild array
     FROM rate_limit_sliding,
-         JSON_EACH(request_timestamps)
-    WHERE api_key = 'key-67890'
-      AND datetime(value) >= datetime('now', '-1 hour')
+         JSON_EACH(request_timestamps)  -- => Expand JSON array to rows
+    WHERE api_key = 'key-67890'       -- => For specific API key
+      AND datetime(value) >= datetime('now', '-1 hour')  -- => Keep recent only
     GROUP BY api_key
 )
 UPDATE rate_limit_sliding
 SET request_timestamps = (SELECT recent_timestamps FROM filtered_timestamps)
 WHERE api_key = 'key-67890';
+-- => Old timestamps removed (only last hour kept)
+-- => Keeps array size bounded (prevents unbounded growth)
 
--- Check limit
+-- Check limit (count timestamps in array)
 SELECT
     api_key,
-    JSON_ARRAY_LENGTH(request_timestamps) AS request_count,
+    JSON_ARRAY_LENGTH(request_timestamps) AS request_count,  -- => Array length
     CASE
         WHEN JSON_ARRAY_LENGTH(request_timestamps) >= 100 THEN 'EXCEEDED'
-        ELSE 'OK'
+        ELSE 'OK'                     -- => Under limit
     END AS status
 FROM rate_limit_sliding
 WHERE api_key = 'key-67890';
+-- => Returns: request_count=1, status='OK'
+-- => Application uses this to enforce rate limit
 
--- Cleanup old requests periodically
+-- Cleanup old requests periodically (prevent table growth)
 DELETE FROM api_requests
-WHERE request_time < datetime('now', '-24 hours');
+WHERE request_time < datetime('now', '-24 hours');  -- => Delete older than 24 hours
+-- => Removes old requests (keeps last 24 hours for analytics)
+-- => Run as scheduled job (hourly/daily)
 ```
 
 **Key Takeaway**: Rate limiting counts events within time windows. Simple approach: count rows with `request_time >= datetime('now', '-1 hour')`. Sliding window: Store timestamps in JSON array, filter old ones. Check count before allowing action. Periodically cleanup old records. Essential for API rate limiting, login attempts, spam prevention.
@@ -2429,97 +2602,113 @@ Feature flags enable/disable features without code deployment. Control rollout, 
 **Code**:
 
 ```sql
+-- Feature flags: control feature availability without code deployment
 CREATE TABLE feature_flags (
-    id INTEGER PRIMARY KEY,
-    flag_name TEXT UNIQUE NOT NULL,
-    is_enabled INTEGER NOT NULL DEFAULT 0,  -- 0=disabled, 1=enabled
-    rollout_percentage INTEGER NOT NULL DEFAULT 0,  -- 0-100
-    target_users TEXT,  -- JSON array of user IDs
-    updated_at TEXT NOT NULL
+    id INTEGER PRIMARY KEY,           -- => Auto-increment flag ID
+    flag_name TEXT UNIQUE NOT NULL,   -- => Feature identifier
+    is_enabled INTEGER NOT NULL DEFAULT 0,  -- => Global on/off switch (0=off, 1=on)
+    rollout_percentage INTEGER NOT NULL DEFAULT 0,  -- => Gradual rollout (0-100%)
+    target_users TEXT,                -- => JSON array of specific user IDs
+    updated_at TEXT NOT NULL          -- => Last modification timestamp
 );
+-- => feature_flags table created
+-- => Supports: global toggle, percentage rollout, targeted users
 
+-- Insert feature flags with different strategies
 INSERT INTO feature_flags (flag_name, is_enabled, rollout_percentage, target_users, updated_at)
 VALUES
-    ('new_dashboard', 1, 100, NULL, datetime('now')),  -- Enabled for all
-    ('beta_features', 1, 10, NULL, datetime('now')),   -- Enabled for 10%
-    ('premium_tier', 1, 0, '["user-1", "user-5", "user-10"]', datetime('now'));  -- Specific users
+    ('new_dashboard', 1, 100, NULL, datetime('now')),  -- => 100% rollout (all users)
+    ('beta_features', 1, 10, NULL, datetime('now')),   -- => 10% gradual rollout
+    ('premium_tier', 1, 0, '["user-1", "user-5", "user-10"]', datetime('now'));  -- => Specific users only
+-- => 3 flags created with different rollout strategies
 
--- Check if feature is enabled for all users
-SELECT is_enabled
+-- Check if feature enabled globally (simple check)
+SELECT is_enabled                     -- => Get enabled status
 FROM feature_flags
-WHERE flag_name = 'new_dashboard';
--- => Returns: 1 (enabled)
+WHERE flag_name = 'new_dashboard';    -- => Check specific flag
+-- => Returns: 1 (enabled for all users)
+-- => Application uses this for global features
 
--- Check if feature is enabled for user (percentage rollout)
--- Use user_id hash for consistent assignment
+-- Check if feature enabled for user (percentage rollout logic)
 WITH user_hash AS (
     SELECT
-        'user-42' AS user_id,
+        'user-42' AS user_id,         -- => User being checked
         ABS(((CAST(SUBSTR(HEX(RANDOMBLOB(16)), 1, 8) AS INTEGER)) % 100)) AS hash_value
-)
+)                                     -- => Deterministic hash: 0-99
 SELECT
-    ff.flag_name,
+    ff.flag_name,                     -- => Feature name
     CASE
-        WHEN ff.is_enabled = 0 THEN 0
-        WHEN ff.rollout_percentage = 100 THEN 1
+        WHEN ff.is_enabled = 0 THEN 0 -- => Globally disabled
+        WHEN ff.rollout_percentage = 100 THEN 1  -- => Enabled for all
         WHEN ff.rollout_percentage = 0 AND ff.target_users IS NOT NULL THEN
-            CASE WHEN JSON_EXTRACT(ff.target_users, '$') LIKE '%' || uh.user_id || '%' THEN 1 ELSE 0 END
+            CASE WHEN JSON_EXTRACT(ff.target_users, '$') LIKE '%' || uh.user_id || '%' THEN 1 ELSE 0 END  -- => Check user list
         ELSE
-            CASE WHEN uh.hash_value < ff.rollout_percentage THEN 1 ELSE 0 END
+            CASE WHEN uh.hash_value < ff.rollout_percentage THEN 1 ELSE 0 END  -- => Percentage check
     END AS is_enabled
 FROM feature_flags ff, user_hash uh
 WHERE ff.flag_name = 'beta_features';
--- => Returns: 1 if user hash < 10, else 0
+-- => Returns: 1 if user's hash < 10 (10% of users), else 0
+-- => Deterministic: same user always gets same result
 
--- Check target user list
+-- Check target user list (specific users only)
 SELECT
-    flag_name,
+    flag_name,                        -- => Feature name
     CASE
-        WHEN is_enabled = 0 THEN 0
-        WHEN target_users IS NOT NULL AND JSON_EXTRACT(target_users, '$') LIKE '%user-5%' THEN 1
-        ELSE 0
+        WHEN is_enabled = 0 THEN 0    -- => Globally disabled
+        WHEN target_users IS NOT NULL AND JSON_EXTRACT(target_users, '$') LIKE '%user-5%' THEN 1  -- => User in list
+        ELSE 0                        -- => User not in list
     END AS is_enabled
 FROM feature_flags
-WHERE flag_name = 'premium_tier';
--- => Returns: 1 for user-5, 0 for others
+WHERE flag_name = 'premium_tier';    -- => Check premium feature
+-- => Returns: 1 for user-5 (in target list), 0 for others
 
--- Enable feature for all users
+-- Enable feature for all users (100% rollout)
 UPDATE feature_flags
 SET is_enabled = 1, rollout_percentage = 100, updated_at = datetime('now')
 WHERE flag_name = 'beta_features';
+-- => Beta features now enabled for everyone
+-- => No code deployment needed
 
--- Emergency disable
+-- Emergency disable (kill switch)
 UPDATE feature_flags
 SET is_enabled = 0, updated_at = datetime('now')
 WHERE flag_name = 'new_dashboard';
+-- => New dashboard disabled immediately
+-- => Useful for buggy features in production
 
 -- Gradual rollout (increase percentage)
 UPDATE feature_flags
 SET rollout_percentage = 25, updated_at = datetime('now')
 WHERE flag_name = 'beta_features';
--- => Now enabled for 25% of users
+-- => Now enabled for 25% of users (was 10%)
+-- => Gradual expansion reduces risk
 
--- A/B testing: Assign users to variant
+-- A/B testing: Assign users to variants
 CREATE TABLE ab_test_assignments (
-    user_id TEXT PRIMARY KEY,
-    test_name TEXT NOT NULL,
-    variant TEXT NOT NULL,  -- 'A' or 'B'
-    assigned_at TEXT NOT NULL
+    user_id TEXT PRIMARY KEY,        -- => Unique per user
+    test_name TEXT NOT NULL,         -- => Test identifier
+    variant TEXT NOT NULL,           -- => Variant: 'A' or 'B'
+    assigned_at TEXT NOT NULL        -- => When assigned
 );
+-- => ab_test_assignments table created
+-- => Stores deterministic variant assignments
 
--- Assign user to variant (deterministic based on user_id)
+-- Assign user to variant (50/50 split)
 INSERT OR IGNORE INTO ab_test_assignments (user_id, test_name, variant, assigned_at)
 SELECT
-    'user-42',
-    'dashboard_redesign',
-    CASE WHEN ABS((CAST(SUBSTR(HEX(RANDOMBLOB(16)), 1, 8) AS INTEGER)) % 2) = 0 THEN 'A' ELSE 'B' END,
-    datetime('now');
+    'user-42',                       -- => User being assigned
+    'dashboard_redesign',            -- => Test name
+    CASE WHEN ABS((CAST(SUBSTR(HEX(RANDOMBLOB(16)), 1, 8) AS INTEGER)) % 2) = 0 THEN 'A' ELSE 'B' END,  -- => Random A/B
+    datetime('now');                 -- => Assignment timestamp
+-- => User assigned to variant A or B
+-- => INSERT OR IGNORE: keeps first assignment (stable)
 
--- Get user's variant
-SELECT variant
+-- Get user's variant (application query)
+SELECT variant                       -- => Get assigned variant
 FROM ab_test_assignments
 WHERE user_id = 'user-42' AND test_name = 'dashboard_redesign';
 -- => Returns: 'A' or 'B'
+-- => Application shows different UI based on variant
 ```
 
 **Key Takeaway**: Feature flags use is_enabled boolean and rollout_percentage for gradual rollout. Store target_users as JSON for specific user targeting. Hash user IDs for consistent percentage assignment. Enable instant feature toggling without deployment. Essential for continuous delivery and risk mitigation.
@@ -2535,14 +2724,17 @@ Partition time-series data by time period for efficient queries and data retenti
 **Code**:
 
 ```sql
--- Monthly partitioning pattern (simulated with separate tables)
+-- Monthly partitioning pattern (separate tables per month)
+-- => Partitioning: split large tables by time range for performance
 CREATE TABLE events_2025_01 (
-    id INTEGER PRIMARY KEY,
-    event_type TEXT,
-    user_id INTEGER,
-    data TEXT,
-    created_at TEXT CHECK (created_at >= '2025-01-01' AND created_at < '2025-02-01')
+    id INTEGER PRIMARY KEY,           -- => Auto-increment event ID
+    event_type TEXT,                  -- => Event category
+    user_id INTEGER,                  -- => User who triggered event
+    data TEXT,                        -- => Event payload (JSON)
+    created_at TEXT CHECK (created_at >= '2025-01-01' AND created_at < '2025-02-01')  -- => Partition boundary
 );
+-- => events_2025_01 table created (Jan 2025 partition)
+-- => CHECK constraint enforces partition boundary
 
 CREATE TABLE events_2025_02 (
     id INTEGER PRIMARY KEY,

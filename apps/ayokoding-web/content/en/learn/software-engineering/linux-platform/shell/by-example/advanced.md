@@ -1242,89 +1242,95 @@ Real-world deployment scripts combine all advanced techniques: error handling, l
 # ====================
 # Configuration
 # ====================
-set -euo pipefail               # Fail fast
-IFS=$'\n\t'                     # Safer IFS
+set -euo pipefail               # => Fail on: errors, undefined vars, pipe failures
+IFS=$'\n\t'                     # => Set field separator to newline/tab (safer)
 
-APP_NAME="myapp"
-VERSION="${1:-}"
-DEPLOY_DIR="/opt/${APP_NAME}"
-BACKUP_DIR="/var/backups/${APP_NAME}"
-LOG_FILE="/var/log/${APP_NAME}-deploy.log"
-MAX_BACKUPS=5
+APP_NAME="myapp"                # => Application name: myapp
+VERSION="${1:-}"                # => Version from first arg or empty
+DEPLOY_DIR="/opt/${APP_NAME}"   # => Deploy to /opt/myapp
+BACKUP_DIR="/var/backups/${APP_NAME}"  # => Backups in /var/backups/myapp
+LOG_FILE="/var/log/${APP_NAME}-deploy.log"  # => Log deployments
+MAX_BACKUPS=5                   # => Keep last 5 backups only
 
 # ====================
 # Color output
 # ====================
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m'                    # No color
+RED='\033[0;31m'                # => ANSI red for errors
+GREEN='\033[0;32m'              # => ANSI green for success
+YELLOW='\033[1;33m'             # => ANSI yellow for warnings
+NC='\033[0m'                    # => No color (reset)
 
 # ====================
 # Logging functions
 # ====================
 log() {
-    local level=$1
-    shift
-    local message="$*"
-    local timestamp=$(date +'%Y-%m-%d %H:%M:%S')
+    local level=$1              # => First arg: log level
+    shift                       # => Shift to get message args
+    local message="$*"          # => Remaining args as message
+    local timestamp=$(date +'%Y-%m-%d %H:%M:%S')  # => Current timestamp
 
     echo -e "${timestamp} [${level}] ${message}" | tee -a "$LOG_FILE"
+    # => Output to terminal AND append to log file
 }
 
-log_info() { log "INFO" "$@"; }
-log_warn() { echo -e "${YELLOW}$(log "WARN" "$@")${NC}"; }
-log_error() { echo -e "${RED}$(log "ERROR" "$@")${NC}" >&2; }
-log_success() { echo -e "${GREEN}$(log "SUCCESS" "$@")${NC}"; }
+log_info() { log "INFO" "$@"; }    # => Log info level
+log_warn() { echo -e "${YELLOW}$(log "WARN" "$@")${NC}"; }  # => Warnings in yellow
+log_error() { echo -e "${RED}$(log "ERROR" "$@")${NC}" >&2; }  # => Errors in red to stderr
+log_success() { echo -e "${GREEN}$(log "SUCCESS" "$@")${NC}"; }  # => Success in green
 
 # ====================
 # Error handling
 # ====================
 cleanup() {
-    local exit_code=$?
+    local exit_code=$?          # => Capture exit code
 
-    if [ $exit_code -ne 0 ]; then
+    if [ $exit_code -ne 0 ]; then  # => If deployment failed
         log_error "Deployment failed with exit code $exit_code"
         log_warn "Run '$0 rollback' to restore previous version"
+        # => Guide user to rollback
     fi
 
     # Cleanup temp files
     [ -d "${TMPDIR:-}" ] && rm -rf "${TMPDIR:-}"
+    # => Remove temp dir if exists
 }
 
-trap cleanup EXIT
+trap cleanup EXIT               # => Run cleanup on script exit
 trap 'log_error "Interrupted"; exit 130' INT TERM
+# => Handle Ctrl+C gracefully with exit code 130
 
 # ====================
 # Validation functions
 # ====================
 require_root() {
-    if [ "$(id -u)" -ne 0 ]; then
+    if [ "$(id -u)" -ne 0 ]; then  # => Check if UID is 0 (root)
         log_error "This script must be run as root"
-        exit 1
+        exit 1                  # => Exit if not root
     fi
 }
 
 validate_version() {
-    local version=$1
+    local version=$1            # => Version string to validate
 
-    if [ -z "$version" ]; then
+    if [ -z "$version" ]; then  # => If version empty
         log_error "Version not specified"
         echo "Usage: $0 <version>" >&2
         exit 1
     fi
 
     if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        # => Regex: version must be x.y.z format
         log_error "Invalid version format: $version (expected: x.y.z)"
         exit 1
     fi
 }
 
 check_dependencies() {
-    local deps=(curl tar systemctl)
+    local deps=(curl tar systemctl)  # => Required commands
 
-    for cmd in "${deps[@]}"; do
+    for cmd in "${deps[@]}"; do  # => Check each command
         if ! command -v "$cmd" >/dev/null 2>&1; then
+            # => command -v: portable way to check if command exists
             log_error "Required command not found: $cmd"
             exit 1
         fi
@@ -1338,37 +1344,46 @@ check_dependencies() {
 # ====================
 create_backup() {
     local backup_file="${BACKUP_DIR}/${APP_NAME}-$(date +%Y%m%d-%H%M%S).tar.gz"
+    # => Backup filename with timestamp: myapp-20250201-143025.tar.gz
 
     log_info "Creating backup: $backup_file"
 
-    mkdir -p "$BACKUP_DIR"
+    mkdir -p "$BACKUP_DIR"      # => Ensure backup directory exists
 
-    if [ -d "$DEPLOY_DIR" ]; then
+    if [ -d "$DEPLOY_DIR" ]; then  # => If app currently deployed
         tar -czf "$backup_file" -C "$(dirname "$DEPLOY_DIR")" "$(basename "$DEPLOY_DIR")" 2>/dev/null || {
+            # => Create compressed archive of deploy dir
             log_error "Backup failed"
-            return 1
+            return 1            # => Return error if tar fails
         }
 
         log_success "Backup created: $backup_file"
     else
         log_warn "No existing installation to backup"
+        # => First deployment, nothing to backup
     fi
 
     # Cleanup old backups
-    cleanup_old_backups
+    cleanup_old_backups         # => Maintain backup retention policy
 }
 
 cleanup_old_backups() {
     local backup_count=$(find "$BACKUP_DIR" -name "${APP_NAME}-*.tar.gz" | wc -l)
+    # => Count existing backups
 
-    if [ "$backup_count" -gt "$MAX_BACKUPS" ]; then
+    if [ "$backup_count" -gt "$MAX_BACKUPS" ]; then  # => If exceeded limit
         log_info "Cleaning up old backups (keeping last $MAX_BACKUPS)"
 
         find "$BACKUP_DIR" -name "${APP_NAME}-*.tar.gz" -type f -printf '%T@ %p\n' | \
+            # => Find backups with timestamp
             sort -rn | \
+            # => Sort by timestamp descending (newest first)
             tail -n +$((MAX_BACKUPS + 1)) | \
+            # => Get backups beyond limit
             cut -d' ' -f2 | \
+            # => Extract filenames
             xargs rm -f
+            # => Delete old backups
 
         log_info "Old backups cleaned"
     fi
@@ -1378,31 +1393,34 @@ cleanup_old_backups() {
 # Deployment functions
 # ====================
 download_release() {
-    local version=$1
+    local version=$1            # => Version to download
     local download_url="https://releases.example.com/${APP_NAME}/${version}/${APP_NAME}-${version}.tar.gz"
+    # => Construct download URL
     local checksum_url="${download_url}.sha256"
+    # => Checksum file URL
 
-    TMPDIR=$(mktemp -d)
+    TMPDIR=$(mktemp -d)         # => Create temp directory
     local archive="${TMPDIR}/${APP_NAME}.tar.gz"
     local checksum_file="${TMPDIR}/checksum.sha256"
 
     log_info "Downloading $APP_NAME version $version"
 
     # Download with retry
-    local max_attempts=3
+    local max_attempts=3        # => Retry up to 3 times
     local attempt=1
 
     while [ $attempt -le $max_attempts ]; do
         if curl -fsSL -o "$archive" "$download_url"; then
-            break
+            # => -f: fail on HTTP errors, -s: silent, -S: show errors, -L: follow redirects
+            break               # => Success, exit loop
         fi
 
         log_warn "Download attempt $attempt failed, retrying..."
-        ((attempt++))
-        sleep 2
+        ((attempt++))           # => Increment attempt counter
+        sleep 2                 # => Wait before retry
     done
 
-    if [ $attempt -gt $max_attempts ]; then
+    if [ $attempt -gt $max_attempts ]; then  # => All retries exhausted
         log_error "Download failed after $max_attempts attempts"
         return 1
     fi
@@ -1410,11 +1428,13 @@ download_release() {
     # Verify checksum
     log_info "Verifying checksum"
     curl -fsSL -o "$checksum_file" "$checksum_url"
+    # => Download checksum file
 
     cd "$TMPDIR"
     if ! sha256sum -c "$checksum_file"; then
+        # => Verify archive integrity
         log_error "Checksum verification failed"
-        return 1
+        return 1                # => Corrupted download
     fi
 
     log_success "Download and verification complete"
@@ -1426,50 +1446,57 @@ deploy_application() {
     # Stop service
     log_info "Stopping $APP_NAME service"
     systemctl stop "${APP_NAME}.service" 2>/dev/null || true
+    # => Stop service gracefully, ignore if not running
 
     # Extract to deploy directory
-    mkdir -p "$DEPLOY_DIR"
+    mkdir -p "$DEPLOY_DIR"      # => Ensure deploy dir exists
     tar -xzf "${TMPDIR}/${APP_NAME}.tar.gz" -C "$DEPLOY_DIR" --strip-components=1
+    # => Extract archive, strip top-level directory
 
     # Set permissions
     chown -R appuser:appgroup "$DEPLOY_DIR"
+    # => Change ownership to app user
     chmod 755 "$DEPLOY_DIR"
+    # => rwxr-xr-x permissions
 
     # Run database migrations
-    if [ -x "${DEPLOY_DIR}/migrate.sh" ]; then
+    if [ -x "${DEPLOY_DIR}/migrate.sh" ]; then  # => If migration script exists
         log_info "Running database migrations"
         su -c "${DEPLOY_DIR}/migrate.sh" - appuser || {
+            # => Run migrations as app user
             log_error "Migration failed"
-            return 1
+            return 1            # => Fail deployment if migrations fail
         }
     fi
 
     # Start service
     log_info "Starting $APP_NAME service"
     systemctl start "${APP_NAME}.service"
+    # => Start systemd service
 
     # Wait for service to be healthy
-    wait_for_healthy
+    wait_for_healthy            # => Verify service started successfully
 }
 
 wait_for_healthy() {
-    local max_wait=60
+    local max_wait=60           # => Wait up to 60 seconds
     local elapsed=0
 
     log_info "Waiting for application to become healthy"
 
     while [ $elapsed -lt $max_wait ]; do
         if curl -fs http://localhost:8080/health >/dev/null 2>&1; then
+            # => Check health endpoint
             log_success "Application is healthy"
-            return 0
+            return 0            # => Service healthy
         fi
 
-        sleep 2
-        ((elapsed += 2))
+        sleep 2                 # => Wait 2 seconds
+        ((elapsed += 2))        # => Update elapsed time
     done
 
     log_error "Application did not become healthy within ${max_wait}s"
-    return 1
+    return 1                    # => Health check timeout
 }
 
 smoke_test() {
@@ -1477,12 +1504,14 @@ smoke_test() {
 
     # Test 1: HTTP endpoint
     if ! curl -fs http://localhost:8080/ >/dev/null; then
+        # => Test main endpoint accessible
         log_error "Smoke test failed: HTTP endpoint unreachable"
         return 1
     fi
 
     # Test 2: Database connection
     if ! su -c "${DEPLOY_DIR}/check-db.sh" - appuser; then
+        # => Verify database connectivity
         log_error "Smoke test failed: Database connection"
         return 1
     fi
@@ -1498,8 +1527,9 @@ rollback() {
 
     local latest_backup=$(find "$BACKUP_DIR" -name "${APP_NAME}-*.tar.gz" -type f -printf '%T@ %p\n' | \
         sort -rn | head -n1 | cut -d' ' -f2)
+    # => Find most recent backup
 
-    if [ -z "$latest_backup" ]; then
+    if [ -z "$latest_backup" ]; then  # => If no backup exists
         log_error "No backup found for rollback"
         exit 1
     fi
@@ -1507,11 +1537,14 @@ rollback() {
     log_info "Restoring from backup: $latest_backup"
 
     systemctl stop "${APP_NAME}.service" 2>/dev/null || true
-    rm -rf "$DEPLOY_DIR"
-    mkdir -p "$DEPLOY_DIR"
+    # => Stop current service
+    rm -rf "$DEPLOY_DIR"        # => Remove failed deployment
+    mkdir -p "$DEPLOY_DIR"      # => Recreate deploy directory
     tar -xzf "$latest_backup" -C "$(dirname "$DEPLOY_DIR")"
+    # => Restore from backup
 
     systemctl start "${APP_NAME}.service"
+    # => Start service with previous version
 
     log_success "Rollback complete"
 }
@@ -1520,29 +1553,30 @@ rollback() {
 # Main execution
 # ====================
 main() {
-    local action="${1:-deploy}"
+    local action="${1:-deploy}"  # => Action: deploy or rollback (default: deploy)
 
     case "$action" in
         deploy)
-            shift
-            VERSION="${1:-}"
+            shift               # => Remove action arg
+            VERSION="${1:-}"    # => Get version arg
 
-            require_root
-            validate_version "$VERSION"
-            check_dependencies
+            require_root        # => Verify running as root
+            validate_version "$VERSION"  # => Verify version format
+            check_dependencies  # => Check required commands
 
             log_info "Starting deployment of $APP_NAME version $VERSION"
 
-            create_backup || exit 1
-            download_release "$VERSION" || exit 1
+            create_backup || exit 1  # => Backup current version
+            download_release "$VERSION" || exit 1  # => Download new version
             deploy_application || {
+                # => Deploy new version
                 log_error "Deployment failed, initiating rollback"
-                rollback
+                rollback        # => Auto-rollback on failure
                 exit 1
             }
-            smoke_test || {
+            smoke_test || {     # => Run smoke tests
                 log_error "Smoke tests failed, initiating rollback"
-                rollback
+                rollback        # => Auto-rollback if tests fail
                 exit 1
             }
 
@@ -1550,18 +1584,18 @@ main() {
             ;;
 
         rollback)
-            require_root
-            rollback
+            require_root        # => Verify root access
+            rollback            # => Manual rollback
             ;;
 
         *)
             echo "Usage: $0 {deploy <version>|rollback}" >&2
-            exit 1
+            exit 1              # => Invalid action
             ;;
     esac
 }
 
-main "$@"
+main "$@"                       # => Pass all script args to main
 ```
 
 **Key Takeaway**: Production scripts require comprehensive error handling (`set -euo pipefail`, traps), validation (dependencies, version format, checksums), logging (timestamped, colored), backup/rollback capability, health checks, and idempotency. This template provides a foundation for reliable automated deployments. Always test in staging before production.
@@ -1882,98 +1916,123 @@ Git commands in scripts automate branching, merging, releases, and CI/CD workflo
 ```bash
 # Check if in git repository
 if ! git rev-parse --git-dir > /dev/null 2>&1; then
+    # => git rev-parse --git-dir: returns .git directory path if in repo
     echo "Not a git repository"
-    exit 1
+    exit 1                      # => Exit if not in git repo
 fi
 
 # Check for uncommitted changes
 if ! git diff-index --quiet HEAD --; then
+    # => diff-index --quiet: exits 0 if no changes, 1 if changes exist
     echo "Uncommitted changes exist"
-    exit 1
+    exit 1                      # => Prevent operation on dirty working tree
 fi
 
 # Get current branch
 current_branch=$(git branch --show-current)
+# => Returns current branch name (e.g., "main", "feature/new")
 echo "Current branch: $current_branch"
+# => Output: Current branch: main
 
 # Get latest tag
 latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+# => --abbrev=0: show exact tag without commit info
+# => || echo "v0.0.0": default if no tags exist
 
 # Fetch and check for updates
-git fetch origin
-LOCAL=$(git rev-parse HEAD)
+git fetch origin                # => Fetch remote refs without merging
+LOCAL=$(git rev-parse HEAD)     # => Get local commit hash
 REMOTE=$(git rev-parse origin/"$current_branch")
+# => Get remote commit hash for current branch
 if [ "$LOCAL" != "$REMOTE" ]; then
     echo "Branch is behind remote"
+    # => Local and remote diverged
 fi
 
 # Practical: release script
 #!/bin/bash
-set -euo pipefail
+set -euo pipefail               # => Fail fast on errors
 
 # Validate we're on main
 if [ "$(git branch --show-current)" != "main" ]; then
     echo "Must be on main branch"
-    exit 1
+    exit 1                      # => Only release from main
 fi
 
 # Check for clean working directory
 if ! git diff-index --quiet HEAD --; then
+    # => Verify no uncommitted changes
     echo "Working directory is not clean"
-    exit 1
+    exit 1                      # => Prevent releasing dirty state
 fi
 
 # Get next version
 current_version=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//' || echo "0.0.0")
+# => Get latest tag, strip leading 'v', default to 0.0.0
 echo "Current version: $current_version"
+# => Output: Current version: 1.2.3
 
 # Bump patch version
 IFS='.' read -r major minor patch <<< "$current_version"
+# => Split version into components: 1.2.3 → major=1, minor=2, patch=3
 new_version="$major.$minor.$((patch + 1))"
+# => Increment patch: 1.2.3 → 1.2.4
 echo "New version: $new_version"
+# => Output: New version: 1.2.4
 
 # Create tag
 git tag -a "v$new_version" -m "Release v$new_version"
+# => Create annotated tag: v1.2.4
 git push origin "v$new_version"
+# => Push tag to remote
 
 echo "Released v$new_version"
+# => Output: Released v1.2.4
 
 # Practical: feature branch cleanup
 #!/bin/bash
 # Delete merged branches
 
-git fetch --prune
+git fetch --prune               # => Remove stale remote refs
+# => --prune: delete refs to deleted remote branches
 
 for branch in $(git branch --merged main | grep -v 'main\|master\|develop'); do
+    # => List branches merged into main, exclude protected branches
     branch=$(echo "$branch" | tr -d ' ')
+    # => Remove leading/trailing whitespace
     [ -n "$branch" ] && git branch -d "$branch"
+    # => Delete branch if name not empty (-d: safe delete, fails if unmerged)
 done
 
 echo "Merged branches cleaned up"
+# => Output: Merged branches cleaned up
 
 # Practical: pre-commit checks
 #!/bin/bash
 # .git/hooks/pre-commit
 
 # Run linter
-if ! npm run lint; then
+if ! npm run lint; then         # => Execute linter
     echo "Lint failed"
-    exit 1
+    exit 1                      # => Prevent commit if linting fails
 fi
 
 # Run tests
-if ! npm test; then
+if ! npm test; then             # => Execute test suite
     echo "Tests failed"
-    exit 1
+    exit 1                      # => Prevent commit if tests fail
 fi
 
 # Check for debug statements
 if git diff --cached | grep -E 'console.log|debugger|binding.pry'; then
+    # => Search staged changes for debug code
+    # => -E: extended regex, checks for common debug patterns
     echo "Debug statements detected"
-    exit 1
+    exit 1                      # => Prevent commit with debug code
 fi
 
 echo "Pre-commit checks passed"
+# => Output: Pre-commit checks passed
 ```
 
 **Key Takeaway**: Always validate git state before operations, use `git diff-index --quiet HEAD` to check for changes, and `git branch --show-current` for the current branch - script defensive checks prevent operations on wrong state.
@@ -2298,90 +2357,117 @@ HTTP API integration enables scripts to interact with external services, webhook
 ```bash
 # Basic API call
 response=$(curl -s https://api.example.com/data)
-echo "$response"
+# => -s: silent mode (no progress bar)
+# => response contains JSON: {"data": [...]}
+echo "$response"                # => Output: JSON response
 
 # With authentication
 curl -s -H "Authorization: Bearer $API_TOKEN" \
     https://api.example.com/protected
+# => -H: add HTTP header with Bearer token
+# => Returns protected resource
 
 # POST with JSON
 curl -s -X POST \
+    # => -X POST: use POST method
     -H "Content-Type: application/json" \
+    # => Set content type header
     -d '{"name": "test", "value": 123}' \
+    # => -d: request body (JSON payload)
     https://api.example.com/items
+# => Creates new item, returns created resource
 
 # Check HTTP status
 status_code=$(curl -s -o /dev/null -w "%{http_code}" https://api.example.com)
+# => -o /dev/null: discard response body
+# => -w "%{http_code}": output only HTTP status code
+# => status_code is "200", "404", "500", etc.
 if [ "$status_code" != "200" ]; then
     echo "API returned: $status_code"
-    exit 1
+    exit 1                      # => Fail if not 200 OK
 fi
 
 # Parse JSON response (with jq)
 name=$(echo "$response" | jq -r '.name')
+# => jq -r: extract .name field as raw string (no quotes)
 count=$(echo "$response" | jq -r '.items | length')
+# => Count items in array: .items | length
 
 # Practical: API with retry
 api_call() {
-    local url="$1"
-    local max_retries=3
-    local retry_delay=5
+    local url="$1"              # => URL to call
+    local max_retries=3         # => Retry up to 3 times
+    local retry_delay=5         # => Wait 5 seconds between retries
 
     for ((i=1; i<=max_retries; i++)); do
         response=$(curl -s -w "\n%{http_code}" "$url")
+        # => -w "\n%{http_code}": append status on new line
         http_code=$(echo "$response" | tail -n1)
+        # => Extract HTTP code from last line
         body=$(echo "$response" | sed '$d')
+        # => sed '$d': delete last line (remove status code)
 
         if [ "$http_code" = "200" ]; then
-            echo "$body"
-            return 0
+            echo "$body"        # => Return response body
+            return 0            # => Success
         fi
 
         echo "Attempt $i failed (HTTP $http_code), retrying..." >&2
-        sleep "$retry_delay"
+        # => Log to stderr
+        sleep "$retry_delay"    # => Wait before retry
     done
 
     echo "All retries failed" >&2
-    return 1
+    return 1                    # => All attempts exhausted
 }
 
 # Practical: Slack notification
 send_slack() {
-    local message="$1"
+    local message="$1"          # => Message to send
     local webhook_url="$SLACK_WEBHOOK_URL"
+    # => Webhook URL from environment
 
     curl -s -X POST \
         -H "Content-Type: application/json" \
         -d "{\"text\": \"$message\"}" \
         "$webhook_url"
+    # => POST JSON payload to Slack webhook
 }
 
 send_slack "Deployment completed successfully!"
+# => Sends notification to Slack channel
 
 # Practical: GitHub API
 #!/bin/bash
-GITHUB_TOKEN="${GITHUB_TOKEN:-}"
-REPO="owner/repo"
+GITHUB_TOKEN="${GITHUB_TOKEN:-}"  # => GitHub token from env
+REPO="owner/repo"               # => Repository in owner/repo format
 
 # Create issue
 create_issue() {
-    local title="$1"
-    local body="$2"
+    local title="$1"            # => Issue title
+    local body="$2"             # => Issue description
 
     curl -s -X POST \
         -H "Authorization: token $GITHUB_TOKEN" \
+        # => Authenticate with GitHub token
         -H "Accept: application/vnd.github.v3+json" \
+        # => Use GitHub API v3
         -d "{\"title\": \"$title\", \"body\": \"$body\"}" \
+        # => JSON payload with title and body
         "https://api.github.com/repos/$REPO/issues"
+    # => Returns created issue JSON
 }
 
 # Get latest release
 latest=$(curl -s \
     -H "Authorization: token $GITHUB_TOKEN" \
     "https://api.github.com/repos/$REPO/releases/latest" | \
+    # => GET latest release endpoint
     jq -r '.tag_name')
+    # => Extract tag_name field (e.g., "v1.2.3")
 
 echo "Latest release: $latest"
+# => Output: Latest release: v1.2.3
 
 # Practical: health check endpoint
 #!/bin/bash
@@ -2389,14 +2475,18 @@ ENDPOINTS=(
     "https://api.example.com/health"
     "https://web.example.com/health"
     "https://db.example.com/health"
-)
+)                               # => Array of health endpoints
 
 for endpoint in "${ENDPOINTS[@]}"; do
+    # => Loop through each endpoint
     status=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "$endpoint")
+    # => --max-time 5: timeout after 5 seconds
+    # => status is HTTP code: "200", "500", "000" (timeout)
     if [ "$status" = "200" ]; then
-        echo "$endpoint: OK"
+        echo "$endpoint: OK"    # => Service healthy
     else
         echo "$endpoint: FAILED ($status)"
+        # => Service unhealthy or unreachable
     fi
 done
 ```
@@ -2414,39 +2504,57 @@ Security scripts audit configurations, scan for vulnerabilities, enforce policie
 ```bash
 # Find world-writable files
 find / -type f -perm -0002 -ls 2>/dev/null
+# => -perm -0002: files writable by others (security risk)
+# => Lists files anyone can modify
 
 # Find SUID binaries
 find / -type f -perm -4000 -ls 2>/dev/null
+# => -perm -4000: SUID bit set (runs with owner privileges)
+# => Potential privilege escalation vectors
 
 # Check for empty passwords
 awk -F: '($2 == "") {print $1}' /etc/shadow
+# => -F:: field separator is colon
+# => $2 == "": password field empty
+# => Prints users with no password (critical security issue)
 
 # Find recently modified files
 find /etc -type f -mtime -1 -ls
+# => -mtime -1: modified within last 24 hours
+# => Detect unexpected config changes
 
 # Check open ports
 ss -tlnp | grep LISTEN
+# => -t: TCP, -l: listening, -n: numeric, -p: process
+# => Shows services accepting network connections
 
 # Practical: security audit script
 #!/bin/bash
-set -euo pipefail
+set -euo pipefail               # => Fail fast on errors
 
 REPORT="/tmp/security_audit_$(date +%Y%m%d).txt"
+# => Report filename with date: security_audit_20250201.txt
 
 echo "Security Audit Report - $(date)" > "$REPORT"
+# => Create report file with header
 echo "================================" >> "$REPORT"
 
 # Check SSH configuration
 echo "" >> "$REPORT"
 echo "SSH Configuration:" >> "$REPORT"
 grep -E "^(PermitRootLogin|PasswordAuthentication|PubkeyAuthentication)" /etc/ssh/sshd_config >> "$REPORT"
+# => Extract critical SSH settings
+# => PermitRootLogin should be "no"
+# => PasswordAuthentication should be "no" (key-based auth)
 
 # Check firewall status
 echo "" >> "$REPORT"
 echo "Firewall Status:" >> "$REPORT"
 if command -v ufw &>/dev/null; then
-    ufw status >> "$REPORT"
+    # => Ubuntu/Debian firewall
+    ufw status >> "$REPORT"     # => Active/inactive status
 elif command -v firewall-cmd &>/dev/null; then
+    # => RHEL/CentOS firewall
     firewall-cmd --state >> "$REPORT"
 fi
 
@@ -2454,49 +2562,71 @@ fi
 echo "" >> "$REPORT"
 echo "Sudo Users:" >> "$REPORT"
 grep -E '^[^#].*ALL=' /etc/sudoers /etc/sudoers.d/* 2>/dev/null >> "$REPORT" || true
+# => ^[^#]: non-comment lines
+# => ALL=: lines granting sudo privileges
+# => Lists who can execute commands as root
 
 # Check for failed login attempts
 echo "" >> "$REPORT"
 echo "Failed Login Attempts (last 24h):" >> "$REPORT"
 grep "Failed password" /var/log/auth.log 2>/dev/null | \
+    # => Find failed login attempts
     awk '{print $(NF-3)}' | sort | uniq -c | sort -rn | head -10 >> "$REPORT" || true
+    # => Extract IP addresses, count occurrences, show top 10
+    # => Detects brute force attempts
 
 # Check SSL certificate expiry
 echo "" >> "$REPORT"
 echo "SSL Certificate Status:" >> "$REPORT"
 for domain in example.com api.example.com; do
     expiry=$(echo | openssl s_client -servername "$domain" -connect "$domain:443" 2>/dev/null | \
+        # => Connect to HTTPS server
         openssl x509 -noout -dates | grep notAfter | cut -d= -f2)
+        # => Extract certificate expiry date
     echo "$domain: $expiry" >> "$REPORT"
+    # => Warns of expiring certificates
 done
 
 echo "Report saved to: $REPORT"
+# => Output: Report saved to: /tmp/security_audit_20250201.txt
 
 # Practical: password policy check
 #!/bin/bash
 # Check password aging
 echo "Password Aging Policy:"
 grep -E "^PASS_" /etc/login.defs
+# => PASS_MAX_DAYS: maximum password age
+# => PASS_MIN_DAYS: minimum days between password changes
+# => PASS_WARN_AGE: days of warning before password expires
 
 echo ""
 echo "Users with password expiry:"
 for user in $(cat /etc/passwd | cut -d: -f1); do
+    # => Loop through all users
     chage -l "$user" 2>/dev/null | grep "Password expires" || true
+    # => chage -l: display password aging info
+    # => Shows when each user's password expires
 done
 
 # Practical: file integrity check
 #!/bin/bash
 BASELINE="/var/lib/integrity/baseline.md5"
+# => Baseline checksums (original state)
 CURRENT="/tmp/current.md5"
+# => Current checksums
 
 # Generate current checksums
 find /etc -type f -exec md5sum {} \; 2>/dev/null | sort > "$CURRENT"
+# => Calculate MD5 hash for all files in /etc
+# => Sorted for consistent comparison
 
-if [ -f "$BASELINE" ]; then
+if [ -f "$BASELINE" ]; then     # => If baseline exists
     diff "$BASELINE" "$CURRENT" && echo "No changes detected" || echo "Files modified!"
+    # => Compare baseline vs current
+    # => Detects unauthorized config changes
 else
     echo "Creating baseline..."
-    cp "$CURRENT" "$BASELINE"
+    cp "$CURRENT" "$BASELINE"   # => First run: create baseline
 fi
 ```
 
@@ -2996,86 +3126,98 @@ Disaster recovery scripts automate backup verification, restore procedures, and 
 ```bash
 # Backup verification
 #!/bin/bash
-set -euo pipefail
+set -euo pipefail               # => Fail fast on errors
 
-BACKUP_FILE="$1"
-TEST_DIR=$(mktemp -d)
+BACKUP_FILE="$1"                # => Backup file to verify
+TEST_DIR=$(mktemp -d)           # => Create temp directory for testing
+# => mktemp -d: creates unique temp directory
 
-trap 'rm -rf "$TEST_DIR"' EXIT
+trap 'rm -rf "$TEST_DIR"' EXIT  # => Clean up temp dir on exit
 
 echo "Verifying backup: $BACKUP_FILE"
 
 # Check file integrity
 if ! gzip -t "$BACKUP_FILE" 2>/dev/null; then
+    # => gzip -t: test compressed file integrity
     echo "ERROR: Backup file is corrupted"
-    exit 1
+    exit 1                      # => Corrupted archive
 fi
 
 # Test extraction
 echo "Testing extraction..."
 if tar -xzf "$BACKUP_FILE" -C "$TEST_DIR"; then
+    # => Extract to test directory (non-destructive test)
     echo "Extraction successful"
-    ls -la "$TEST_DIR"
+    ls -la "$TEST_DIR"          # => Show extracted contents
 else
     echo "ERROR: Extraction failed"
-    exit 1
+    exit 1                      # => Archive cannot be extracted
 fi
 
 # Verify contents
 if [ -f "$TEST_DIR/data/critical.db" ]; then
+    # => Check critical files exist
     echo "Critical data file present"
 else
     echo "WARNING: Critical data file missing"
+    # => Backup incomplete
 fi
 
 echo "Backup verification complete"
+# => Backup is valid and usable
 
 # Database restore
 #!/bin/bash
-set -euo pipefail
+set -euo pipefail               # => Fail fast on errors
 
-BACKUP_FILE="$1"
-DATABASE="${2:-production}"
+BACKUP_FILE="$1"                # => Database backup file
+DATABASE="${2:-production}"     # => Target database (default: production)
 
 echo "Restoring $DATABASE from $BACKUP_FILE"
 
 # Confirm restore
 read -p "This will overwrite $DATABASE. Continue? (yes/no) " confirm
+# => -p: prompt for user confirmation
 if [ "$confirm" != "yes" ]; then
     echo "Aborted"
-    exit 1
+    exit 1                      # => User cancelled
 fi
 
 # Stop application
 echo "Stopping application..."
-systemctl stop myapp
+systemctl stop myapp            # => Prevent app from accessing DB during restore
 
 # Restore database
 echo "Restoring database..."
 gunzip -c "$BACKUP_FILE" | mysql "$DATABASE"
+# => gunzip -c: decompress to stdout
+# => Pipe into mysql for restoration
 
 # Verify restoration
 echo "Verifying restoration..."
 count=$(mysql -N -e "SELECT COUNT(*) FROM users" "$DATABASE")
-echo "User count: $count"
+# => -N: no table headers, -e: execute SQL
+# => Sanity check: count records
+echo "User count: $count"       # => Output: User count: 12345
 
 # Restart application
 echo "Starting application..."
-systemctl start myapp
+systemctl start myapp           # => Bring app back online
 
 echo "Restore complete"
 
 # Practical: failover script
 #!/bin/bash
-set -euo pipefail
+set -euo pipefail               # => Fail fast on errors
 
 PRIMARY="db-primary.example.com"
 SECONDARY="db-secondary.example.com"
 APP_CONFIG="/etc/myapp/database.conf"
 
 check_health() {
-    local host="$1"
+    local host="$1"             # => Database host to check
     mysqladmin -h "$host" ping 2>/dev/null
+    # => mysqladmin ping: returns 0 if DB accessible
 }
 
 failover_to_secondary() {
@@ -3083,35 +3225,42 @@ failover_to_secondary() {
 
     # Update application config
     sed -i "s/host=.*/host=$SECONDARY/" "$APP_CONFIG"
+    # => -i: edit in place
+    # => Replace host= line with secondary
 
     # Reload application
-    systemctl reload myapp
+    systemctl reload myapp      # => Reload config without downtime
 
     # Notify team
     send_alert "Database failover completed to $SECONDARY"
+    # => Alert team of failover event
 
     echo "Failover complete"
 }
 
 # Monitor primary
 if ! check_health "$PRIMARY"; then
+    # => If primary database unreachable
     echo "Primary database unhealthy"
 
     if check_health "$SECONDARY"; then
-        failover_to_secondary
+        # => If secondary is healthy
+        failover_to_secondary   # => Switch to secondary
     else
         echo "CRITICAL: Both databases unhealthy!"
         send_alert "CRITICAL: All databases down"
-        exit 1
+        exit 1                  # => Total failure, cannot failover
     fi
 fi
 
 # Practical: full system restore
 #!/bin/bash
-set -euo pipefail
+set -euo pipefail               # => Fail fast on errors
 
 BACKUP_DATE="${1:-$(date +%Y%m%d)}"
+# => Backup date from arg or today (YYYYMMDD)
 BACKUP_DIR="/backup/$BACKUP_DATE"
+# => Backup directory for specific date
 
 echo "=== Full System Restore ==="
 echo "Backup date: $BACKUP_DATE"
@@ -3119,34 +3268,38 @@ echo "Backup date: $BACKUP_DATE"
 # Verify backup exists
 if [ ! -d "$BACKUP_DIR" ]; then
     echo "ERROR: Backup not found: $BACKUP_DIR"
-    exit 1
+    exit 1                      # => Backup directory missing
 fi
 
 # Stop services
 echo "Stopping services..."
-systemctl stop nginx myapp
+systemctl stop nginx myapp      # => Stop all services
 
 # Restore database
 echo "Restoring database..."
 gunzip -c "$BACKUP_DIR/database.sql.gz" | mysql production
+# => Restore database from compressed SQL dump
 
 # Restore files
 echo "Restoring files..."
 tar -xzf "$BACKUP_DIR/files.tar.gz" -C /
+# => Extract application files to root
 
 # Restore configuration
 echo "Restoring configuration..."
 tar -xzf "$BACKUP_DIR/config.tar.gz" -C /etc
+# => Extract config files to /etc
 
 # Start services
 echo "Starting services..."
-systemctl start myapp nginx
+systemctl start myapp nginx     # => Bring services back online
 
 # Verify
 echo "Running health checks..."
-./scripts/health-check.sh
+./scripts/health-check.sh       # => Verify system healthy
 
 echo "Restore complete"
+# => Full system restored from backup
 ```
 
 **Key Takeaway**: Always verify backup integrity before relying on it, implement automated failover with health checks, and test restore procedures regularly - untested backups are not backups.
@@ -3185,28 +3338,32 @@ graph TD
 # Production Deployment Script
 # Implements blue-green deployment with canary testing
 #
-set -euo pipefail
+set -euo pipefail               # => Fail fast on errors
 
 # Configuration
 VERSION="${1:?Usage: $0 <version>}"
-ENVIRONMENT="production"
-CANARY_PERCENT=10
-CANARY_DURATION=300
-ROLLBACK_ON_ERROR=true
+# => ${1:?message}: require first arg or exit with error
+ENVIRONMENT="production"        # => Target environment
+CANARY_PERCENT=10               # => Deploy to 10% of traffic first
+CANARY_DURATION=300             # => Monitor canary for 5 minutes
+ROLLBACK_ON_ERROR=true          # => Auto-rollback on failure
 
 # Logging
 log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"; }
+# => Timestamped log messages
 error() { log "ERROR: $*" >&2; }
+# => Errors to stderr
 
 # Cleanup and rollback
 cleanup() {
-    local exit_code=$?
+    local exit_code=$?          # => Capture exit status
     if [ $exit_code -ne 0 ] && [ "$ROLLBACK_ON_ERROR" = true ]; then
+        # => If deployment failed and auto-rollback enabled
         log "Deployment failed, initiating rollback..."
-        rollback
+        rollback                # => Restore previous version
     fi
 }
-trap cleanup EXIT
+trap cleanup EXIT               # => Run cleanup on script exit
 
 # Pre-flight checks
 preflight_checks() {
@@ -3214,14 +3371,17 @@ preflight_checks() {
 
     # Check cluster access
     kubectl cluster-info > /dev/null || { error "Cannot access cluster"; return 1; }
+    # => Verify kubectl can communicate with Kubernetes cluster
 
     # Check image exists
     docker manifest inspect "registry.example.com/myapp:$VERSION" > /dev/null || \
         { error "Image not found"; return 1; }
+    # => Verify Docker image exists in registry
 
     # Check current deployment health
     kubectl rollout status deployment/myapp --timeout=30s || \
         { error "Current deployment unhealthy"; return 1; }
+    # => Ensure current deployment stable before updating
 
     log "Pre-flight checks passed"
 }
@@ -3232,10 +3392,13 @@ deploy_canary() {
 
     # Create canary deployment
     kubectl set image deployment/myapp-canary myapp="registry.example.com/myapp:$VERSION"
+    # => Update canary deployment with new version
     kubectl scale deployment/myapp-canary --replicas=1
+    # => Start 1 canary pod (10% of traffic)
 
     # Wait for canary to be ready
     kubectl rollout status deployment/myapp-canary --timeout=120s
+    # => Wait up to 2 minutes for canary pod to be healthy
 
     log "Canary deployed"
 }
@@ -3245,31 +3408,39 @@ monitor_canary() {
     log "Monitoring canary for ${CANARY_DURATION}s..."
 
     local end_time=$(($(date +%s) + CANARY_DURATION))
+    # => Calculate end time (now + 300 seconds)
 
     while [ $(date +%s) -lt $end_time ]; do
+        # => Loop until monitoring period ends
+
         # Check error rate
         error_rate=$(curl -s "http://metrics.example.com/api/v1/query?query=error_rate{version=\"$VERSION\"}" | \
             jq -r '.data.result[0].value[1] // 0')
+        # => Query Prometheus for canary error rate
 
         if (( $(echo "$error_rate > 0.01" | bc -l) )); then
+            # => If error rate > 1%
             error "Canary error rate too high: $error_rate"
-            return 1
+            return 1            # => Fail deployment
         fi
 
         # Check latency
         latency=$(curl -s "http://metrics.example.com/api/v1/query?query=p99_latency{version=\"$VERSION\"}" | \
             jq -r '.data.result[0].value[1] // 0')
+        # => Query Prometheus for 99th percentile latency
 
         if (( $(echo "$latency > 500" | bc -l) )); then
+            # => If p99 latency > 500ms
             error "Canary latency too high: ${latency}ms"
-            return 1
+            return 1            # => Fail deployment
         fi
 
         log "Canary healthy (error_rate=$error_rate, latency=${latency}ms)"
-        sleep 30
+        sleep 30                # => Check metrics every 30 seconds
     done
 
     log "Canary monitoring passed"
+    # => Canary stable for 5 minutes, safe to proceed
 }
 
 # Full rollout
@@ -3278,12 +3449,15 @@ full_rollout() {
 
     # Update main deployment
     kubectl set image deployment/myapp myapp="registry.example.com/myapp:$VERSION"
+    # => Update all pods with new version
 
     # Wait for rollout
     kubectl rollout status deployment/myapp --timeout=600s
+    # => Wait up to 10 minutes for full rollout
 
     # Scale down canary
     kubectl scale deployment/myapp-canary --replicas=0
+    # => Remove canary deployment (no longer needed)
 
     log "Full rollout complete"
 }
@@ -3293,10 +3467,14 @@ rollback() {
     log "Rolling back..."
 
     kubectl rollout undo deployment/myapp
+    # => Revert to previous deployment revision
     kubectl scale deployment/myapp-canary --replicas=0
+    # => Remove canary deployment
     kubectl rollout status deployment/myapp --timeout=120s
+    # => Wait for rollback to complete
 
     log "Rollback complete"
+    # => Previous version restored
 }
 
 # Post-deployment verification
@@ -3305,37 +3483,43 @@ verify_deployment() {
 
     # Run smoke tests
     ./scripts/smoke-tests.sh "$ENVIRONMENT"
+    # => Execute automated tests against production
 
     # Check all pods running
     ready=$(kubectl get deployment myapp -o jsonpath='{.status.readyReplicas}')
+    # => Count of ready pods
     desired=$(kubectl get deployment myapp -o jsonpath='{.spec.replicas}')
+    # => Expected pod count
 
     if [ "$ready" != "$desired" ]; then
+        # => If not all pods ready
         error "Not all pods ready: $ready/$desired"
-        return 1
+        return 1                # => Deployment incomplete
     fi
 
     log "Verification passed"
+    # => All pods healthy and tests passed
 }
 
 # Main deployment flow
 main() {
     log "=== Starting deployment of version $VERSION ==="
 
-    preflight_checks
-    deploy_canary
-    monitor_canary
-    full_rollout
-    verify_deployment
+    preflight_checks            # => Verify prerequisites
+    deploy_canary               # => Deploy to 10% traffic
+    monitor_canary              # => Watch metrics for 5 minutes
+    full_rollout                # => Deploy to 100% traffic
+    verify_deployment           # => Run final verification
 
     log "=== Deployment of $VERSION completed successfully ==="
 
     # Notify team
     curl -X POST -d "{\"text\": \"Deployed $VERSION to $ENVIRONMENT\"}" \
         "$SLACK_WEBHOOK_URL"
+    # => Send success notification to Slack
 }
 
-main
+main                            # => Execute deployment
 ```
 
 **Key Takeaway**: Combine pre-flight checks, canary deployments, metrics monitoring, automated rollback, and post-deployment verification for reliable production deployments that minimize risk.
