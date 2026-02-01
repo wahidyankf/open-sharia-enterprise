@@ -446,14 +446,8 @@ exclude_paths:
 ```bash
 # CI pipeline integration
 ansible-lint playbooks/*.yml --force-color --format pep8 > lint-results.txt
-# => Lint all playbooks in directory
-# => --force-color: preserve color codes in CI logs
-# => --format pep8: output format compatible with CI parsers
-# => Format: filename:line:column: [rule] message
-# => Example: site.yml:15:3: [yaml-indent] wrong indentation
-# => > lint-results.txt: redirect output to file for artifact storage
-# => Returns non-zero exit code on failures
-# => CI fails build if violations detected
+# => Lint all playbooks with CI-compatible output format
+# => Returns non-zero exit code on failures, failing build
 ```
 
 **Key Takeaway**: Ansible-lint automates best practice enforcement. Configure via `.ansible-lint` file. Integrate in CI/CD pipelines for quality gates.
@@ -496,19 +490,14 @@ gathering = smart
 # => 'implicit': always gather (default, slow)
 # => 'explicit': never gather unless gather_facts: yes
 fact_caching = jsonfile
-# => Cache backend type
-# => 'jsonfile': JSON files on disk (simple, no dependencies)
-# => 'redis': Redis server (fast, shared across control nodes)
-# => 'memcached': Memcached (fast, network-based)
+# => Cache backend type (jsonfile, redis, memcached)
+# => jsonfile: simple disk-based cache, no external dependencies
 fact_caching_connection = /tmp/ansible_facts
-# => Backend-specific connection
-# => For jsonfile: directory path to store cache files
-# => For redis: redis://localhost:6379/0
-# => For memcached: localhost:11211
+# => Backend connection: directory for jsonfile, URL for redis/memcached
+# => Example redis: redis://localhost:6379/0
 fact_caching_timeout = 86400
-# => Cache expiration in seconds
-# => 86400 = 24 hours
-# => After timeout, facts re-gathered on next run
+# => Cache expiration: 86400 seconds = 24 hours
+# => Facts re-gathered after timeout expires
 ```
 
 ```yaml
@@ -593,15 +582,20 @@ ssh_args = -o ControlMaster=auto -o ControlPersist=60s
 ---
 - name: Fast Execution with Pipelining
   # => Demonstrates pipelining performance benefits
+  # => ansible.cfg pipelining=True required for optimization
   hosts: webservers
   # => Target webserver group
+  # => Executes on all hosts in parallel
   tasks:
     - name: Install 10 packages
       # => Package installation task
+      # => Single task installs multiple packages atomically
       apt:
         # => Debian/Ubuntu package module
+        # => Uses APT package manager
         name:
           # => List of packages to install
+          # => YAML array format for bulk operations
           - pkg1
           - pkg2
           - pkg3
@@ -613,10 +607,13 @@ ssh_args = -o ControlMaster=auto -o ControlPersist=60s
           - pkg9
           - pkg10
           # => 10 packages in single task
+          # => More efficient than 10 separate tasks
         state: present
         # => Ensure packages installed
+        # => Idempotent: skips already-installed packages
       # => Without pipelining per host:
       # => SSH connect → create /tmp/ansible-modulefile → execute → delete
+      # => With pipelining: SSH connect → pipe module → execute (no temp file)
       # => ~2 seconds overhead per module execution
       # => With pipelining:
       # => SSH connect → stream module code → execute
@@ -1290,52 +1287,76 @@ Integrate Ansible with monitoring systems to track deployment progress and trigg
 ---
 - name: Deployment with Monitoring
   # => Observable deployment with external integrations
+  # => Integrates Slack and DataDog for deployment visibility
   hosts: webservers
+  # => Target servers for deployment
   tasks:
     - name: Send deployment start notification
-      # => Notify team in real-time
+      # => Notify team in real-time via Slack
+      # => Alerts on-call engineers of deployment start
       uri:
+        # => HTTP module for API calls
         url: "{{ slack_webhook_url }}"
         # => Slack incoming webhook URL
         # => Configured in Slack workspace settings
+        # => Variable should come from vault or vars
         method: POST
         # => POST request to webhook
+        # => Webhook expects POST, not GET
         body_format: json
         # => Send JSON payload
+        # => Required format for Slack webhooks
         body:
           # => Slack message payload
+          # => JSON structure per Slack API spec
           text: "Starting deployment of {{ app_version }} to {{ inventory_hostname }}"
           # => Message text for Slack channel
           # => Example: "Starting deployment of v2.5.0 to web1"
+          # => Variables interpolated at runtime
       delegate_to: localhost
       # => Execute webhook call from control node
-      # => Not from target server
+      # => Not from target server (control node has internet access)
+      # => Reduces network dependency on target hosts
 
     - name: Create deployment marker in DataDog
       # => Create event annotation in monitoring dashboard
+      # => Visible as vertical line on DataDog graphs
       uri:
+        # => HTTP module for DataDog API
         url: "https://api.datadoghq.com/api/v1/events"
         # => DataDog Events API endpoint
+        # => Public API endpoint (authentication via header)
         method: POST
+        # => POST creates new event
         headers:
-          # => API authentication
+          # => API authentication headers
+          # => Required for DataDog API access
           DD-API-KEY: "{{ datadog_api_key }}"
           # => DataDog API key from vault/vars
+          # => Secret credential (use Ansible Vault)
         body_format: json
+        # => JSON request body
         body:
-          # => Event data
+          # => Event data payload
+          # => Structured data for DataDog event
           title: "Deployment Started"
           # => Event title in DataDog
+          # => Appears in event stream
           text: "{{ app_version }} deploying to {{ inventory_hostname }}"
           # => Event description
+          # => Provides deployment context
           tags:
             # => Event tags for filtering
+            # => Enable filtering in DataDog dashboards
             - "environment:production"
-            # => Tag: environment
+            # => Tag: environment name
+            # => Filter: environment:production
             - "version:{{ app_version }}"
             # => Tag: deployed version
+            # => Filter deployments by version
       delegate_to: localhost
-      # => Creates vertical line on graphs
+      # => Creates vertical line on graphs at deployment time
+      # => Correlate deployment with metric changes
       # => Correlates metric changes with deployments
 
     - name: Deploy application
@@ -1564,49 +1585,62 @@ graph TD
 ---
 - name: Detect Configuration Drift
   # => Continuous compliance monitoring
+  # => Runs periodically (cron/scheduler) to detect unauthorized changes
   hosts: production
   # => All production servers
+  # => Scans entire production fleet for drift
   check_mode: yes
   # => Don't make changes, only check
   # => Simulates changes, reports what would happen
-  # => Safe for production runs
+  # => Safe for production runs (no state modification)
   diff: yes
   # => Show differences between desired and actual
   # => Displays file content changes in output
+  # => Useful for debugging configuration mismatches
   tasks:
     - name: Check nginx configuration
       # => Verify nginx config matches template
+      # => Detects manual edits or unauthorized changes
       template:
         # => Template module (normally writes file)
+        # => In check mode: compares without writing
         src: nginx.conf.j2
         # => Jinja2 template: desired configuration
+        # => Source of truth for nginx config
         dest: /etc/nginx/nginx.conf
-        # => Target file path
+        # => Target file path on production server
       register: nginx_drift
-      # => Capture result
+      # => Capture result into variable
       # => In check mode: .changed=True if file differs
-      # => Actual file NOT modified
+      # => Actual file NOT modified (check mode active)
 
     - name: Check service state
       # => Verify service running and enabled
+      # => Ensures service hasn't been stopped or disabled
       service:
         name: nginx
-        # => Service name
+        # => Service name (systemd unit)
         state: started
         # => Expected: running
+        # => Drift if service stopped
         enabled: yes
         # => Expected: start on boot
+        # => Drift if disabled
       register: service_drift
       # => .changed=True if service stopped or disabled
+      # => Alert ops team if drift detected
 
     - name: Check package versions
       # => Verify specific package versions installed
+      # => Detects version drift or unauthorized upgrades
       package:
         name:
           # => List of packages with version constraints
+          # => Version pins prevent unexpected upgrades
           - nginx=1.18*
           # => Nginx version 1.18.x
-          # => * = any patch version
+          # => * = any patch version (1.18.0, 1.18.1, etc.)
+          # => Drift if 1.19+ installed
           - postgresql=14*
           # => PostgreSQL version 14.x
         state: present
@@ -1669,52 +1703,71 @@ Orchestrate multi-stage deployments (dev → staging → production) with approv
 ---
 - name: Deploy to Development
   # => Stage 1: Development environment
+  # => First deployment stage (lowest risk)
   hosts: dev_webservers
   # => Dev servers (isolated environment)
+  # => No production traffic
   vars_files:
     # => Load environment-specific variables
+    # => Different config per environment
     - vars/dev.yml
     # => Development config: dev DB, debug enabled, etc.
+    # => Overrides role defaults with dev-specific values
   tasks:
     - include_tasks: deploy_tasks.yml
       # => Reusable deployment tasks
       # => Same tasks for all environments
       # => Variables differ per environment
+      # => DRY principle: single task definition
 
 - name: Run Integration Tests
   # => Validate deployment on dev
+  # => Quality gate before promoting to staging
   hosts: dev_webservers
+  # => Run tests on newly deployed dev environment
   tasks:
     - name: Execute test suite
       # => Run automated tests
+      # => Validates application functionality
       command: /opt/tests/run-integration-tests.sh
       # => Test script: API tests, DB queries, etc.
+      # => Exit code 0 = success, non-zero = failure
       register: tests
       # => Capture test results
+      # => Result stored in 'tests' variable
       failed_when: tests.rc != 0
       # => Fail pipeline if tests fail
       # => rc: return code (0=success, non-zero=failure)
       # => Blocks progression to staging
+      # => Pipeline stops here if tests fail
 
 - name: Deploy to Staging
   # => Stage 2: Staging environment (only if dev tests pass)
+  # => Production-like environment for final validation
   hosts: staging_webservers
   # => Staging servers (production-like)
+  # => Same OS, packages, config as production
   vars_files:
     - vars/staging.yml
     # => Staging config: staging DB, prod-like settings
+    # => Mirrors production configuration
   tasks:
     - include_tasks: deploy_tasks.yml
       # => Same deployment tasks, different vars
+      # => Reuses deploy_tasks.yml with staging variables
 
 - name: Staging Smoke Tests
   # => Quick validation on staging
+  # => Lightweight tests for rapid feedback
   hosts: staging_webservers
+  # => Test newly deployed staging environment
   tasks:
     - name: Check critical endpoints
       # => Test key application functions
+      # => Ensure core features responsive
       uri:
         url: "http://{{ inventory_hostname }}/{{ item }}"
+        # => HTTP health check per endpoint
         # => Test URL per host
         status_code: 200
         # => Expect successful response
@@ -2068,21 +2121,26 @@ Manage Docker containers with Ansible. Deploy multi-container applications with 
 ---
 - name: Deploy Docker Application
   # => Multi-container application deployment
+  # => Orchestrates database and application containers
   hosts: docker_hosts
   # => Hosts with Docker installed
+  # => Requires docker-py Python package
   tasks:
     - name: Create application network
       # => Isolated network for containers
+      # => Enables container-to-container communication
       docker_network:
         # => Docker network module
+        # => Manages Docker bridge networks
         name: myapp_network
-        # => Network name
+        # => Network name (used by containers)
         driver: bridge
         # => Network driver: bridge (default, single-host)
         # => vs overlay (multi-host swarm)
         # => vs host (direct host networking)
       # => Creates isolated network namespace
       # => Containers can communicate via service names
+      # => DNS-based service discovery within network
 
     - name: Deploy PostgreSQL container
       # => Database container

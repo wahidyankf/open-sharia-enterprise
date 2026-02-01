@@ -1471,68 +1471,143 @@ spec:
 NetworkPolicies support complex rules combining podSelector, namespaceSelector, and ipBlock for fine-grained traffic control.
 
 ```yaml
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
+apiVersion:
+  networking.k8s.io/v1 # => Networking API group
+  # => Stable v1 NetworkPolicy API
+  # => NetworkPolicies since Kubernetes 1.7
+kind:
+  NetworkPolicy # => NetworkPolicy resource
+  # => Defines traffic rules for Pods
+  # => Firewall rules at Pod level
 metadata:
-  name: complex-policy
-  namespace: production
+  name:
+    complex-policy # => Policy name
+    # => Unique within namespace
+  namespace:
+    production # => Namespace scope
+    # => Policy applies only to production namespace
 spec:
+  # => Policy specification
   podSelector:
+    # => Selects Pods this policy applies to
     matchLabels:
-      tier: backend
-      environment: prod # => Applies to Pods with both labels
+      # => Label-based selection (AND logic)
+      tier:
+        backend # => Matches backend tier Pods
+        # => First label requirement
+      environment:
+        prod # => Applies to Pods with both labels
+        # => Second label requirement
+        # => Both tier=backend AND environment=prod
   policyTypes:
-    - Ingress
-    - Egress
+    # => Traffic directions controlled
+    - Ingress # => Controls incoming traffic
+      # => Defines what can connect TO these Pods
+    - Egress # => Controls outgoing traffic
+      # => Defines where these Pods can connect
   ingress:
+    # => Ingress rules (OR logic between rules)
     # Rule 1: Allow from frontend in same namespace
     - from:
+        # => Traffic sources (OR logic between items)
         - podSelector:
+            # => Pods in same namespace
             matchLabels:
-              tier: frontend
+              tier:
+                frontend # => Allow from frontend Pods
+                # => Same namespace as policy
       ports:
-        - protocol: TCP
-          port: 8080
+        # => Allowed ports (AND logic with from)
+        - protocol:
+            TCP # => TCP protocol
+            # => Alternative: UDP, SCTP
+          port:
+            8080 # => Application port
+            # => Backend API endpoint
 
     # Rule 2: Allow from monitoring namespace
     - from:
+        # => Different source selector
         - namespaceSelector:
+            # => Pods from specific namespace
             matchLabels:
-              name: monitoring
+              name:
+                monitoring # => Monitoring namespace
+                # => Cross-namespace access
       ports:
-        - protocol: TCP
-          port: 9090 # => Metrics endpoint
+        # => Monitoring port
+        - protocol:
+            TCP # => TCP protocol
+            # => HTTP/gRPC common
+          port:
+            9090 # => Metrics endpoint
+            # => Prometheus scrape port
+            # => Separate rule for monitoring
 
     # Rule 3: Allow from specific IP range
     - from:
+        # => IP-based source
         - ipBlock:
-            cidr: 10.0.0.0/8 # => Internal network
+            # => CIDR-based access control
+            cidr:
+              10.0.0.0/8 # => Internal network
+              # => RFC 1918 private network
+              # => Corporate network range
       ports:
-        - protocol: TCP
-          port: 8080
+        # => Application port
+        - protocol:
+            TCP # => TCP protocol
+            # => Standard application traffic
+          port:
+            8080 # => Backend API port
+            # => Same port as Rule 1
 
   egress:
+    # => Egress rules (OR logic)
     # Allow to database
     - to:
+        # => Egress destinations
         - podSelector:
+            # => Database Pods in same namespace
             matchLabels:
-              tier: database
+              tier:
+                database # => Database tier Pods
+                # => Backend can connect to database
       ports:
-        - protocol: TCP
-          port: 5432
+        # => Database port
+        - protocol:
+            TCP # => TCP protocol
+            # => PostgreSQL wire protocol
+          port:
+            5432 # => PostgreSQL port
+            # => Standard PostgreSQL port
 
     # Allow to external API
     - to:
+        # => External destination
         - ipBlock:
-            cidr: 203.0.113.50/32 # => Specific external API
+            # => Specific external IP
+            cidr:
+              203.0.113.50/32 # => Specific external API
+              # => /32 = single IP
+              # => Whitelisted external service
       ports:
-        - protocol: TCP
-          port: 443
+        # => HTTPS port
+        - protocol:
+            TCP # => TCP protocol
+            # => HTTPS over TCP
+          port:
+            443 # => HTTPS port
+            # => Encrypted external API
 
 # Multiple selector behavior:
 # => Multiple items in from/to are OR'd (any match allows)
+# => Rules 1, 2, 3 are independent (OR logic)
+# => ANY rule matching allows traffic
 # => Multiple selectors in same item are AND'd (all must match)
+# => podSelector + namespaceSelector in same item = both required
 # => Example: podSelector AND namespaceSelector in same item
+# => Narrows selection to specific Pods in specific namespace
 ```
 
 **Key Takeaway**: Combine multiple selectors for complex traffic rules; understand OR (multiple from/to items) vs AND (multiple selectors in same item) semantics; test policies thoroughly in non-production before applying to production.
@@ -1872,52 +1947,112 @@ EOF
 CRDs support subresources like status and scale, enabling kubectl commands and standard Kubernetes patterns.
 
 ```yaml
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
+apiVersion:
+  apiextensions.k8s.io/v1 # => CRD API version
+  # => Stable v1 API
+kind:
+  CustomResourceDefinition # => Defines custom resource type
+  # => Extends Kubernetes API
 metadata:
-  name: applications.example.com
+  # => CRD metadata
+  name:
+    applications.example.com # => CRD name format: <plural>.<group>
+    # => Must match spec.names.plural + spec.group
 spec:
-  group: example.com
+  # => CRD specification
+  group:
+    example.com # => API group for custom resources
+    # => Appears in apiVersion: example.com/v1
   names:
-    kind: Application
-    plural: applications
-  scope: Namespaced
+    # => Resource naming
+    kind:
+      Application # => Resource kind (singular, PascalCase)
+      # => Used in YAML: kind: Application
+    plural:
+      applications # => Plural form (lowercase)
+      # => Used in API path and kubectl
+  scope:
+    Namespaced # => Resource scope
+    # => Resources belong to namespaces
   versions:
-    - name: v1
-      served: true
-      storage: true
+    # => API versions
+    - name:
+        v1 # => Version identifier
+        # => Appears in apiVersion: example.com/v1
+      served:
+        true # => Enable this version in API
+        # => Version is active
+      storage:
+        true # => Storage version (etcd persistence)
+        # => MUST have exactly ONE storage version
       schema:
+        # => OpenAPI v3 validation schema
         openAPIV3Schema:
-          type: object
+          # => JSON Schema for validation
+          type:
+            object # => Root must be object
+            # => Top-level structure
           properties:
+            # => Field definitions
             spec:
-              type: object
+              # => Desired state (user-defined)
+              type:
+                object # => Spec is always object
+                # => Contains user configuration
               properties:
+                # => Spec fields
                 image:
-                  type: string
+                  # => Container image field
+                  type:
+                    string # => Field type
+                    # => Image tag or digest
                 replicas:
-                  type: integer
+                  # => Replica count field
+                  type:
+                    integer # => Integer type
+                    # => Number of desired instances
             status:
-              type: object
+              # => Actual state (controller-managed)
+              type:
+                object # => Status is always object
+                # => Current state of resource
               properties:
+                # => Status fields
                 availableReplicas:
-                  type: integer
+                  # => Number of ready replicas
+                  type:
+                    integer # => Integer type
+                    # => Actual running instances
                 conditions:
-                  type: array
+                  # => Status conditions array
+                  type:
+                    array # => Array of condition objects
+                    # => Standard Kubernetes pattern
 
       subresources:
+        # => Subresources enable kubectl integration
         status: {} # => Enable status subresource
           # => Status updates separate from spec
+          # => Separate /status endpoint
+          # => Controllers update status independently
         scale: # => Enable scale subresource
-          specReplicasPath: .spec.replicas
+          # => Enables kubectl scale and HPA integration
+          specReplicasPath:
+            .spec.replicas # => Path to replica count in spec
+            # => JSONPath to desired replicas
           statusReplicasPath:
-            .status.availableReplicas
+            # => Path to replica count in status
+            .status.availableReplicas # => JSONPath to current replicas
             # => kubectl scale application/myapp --replicas=5
+            # => HorizontalPodAutoscaler integration
 
 # Subresource benefits:
 # => status: separate permissions (controller updates, users read-only)
+# => RBAC separation for spec vs status
 # => scale: kubectl scale integration
+# => Standard kubectl commands work
 # => kubectl get applications shows AVAILABLE replicas
+# => HorizontalPodAutoscaler support
 ```
 
 **Key Takeaway**: Enable status subresource for separation of spec and status updates; enable scale subresource for kubectl scale integration; subresources follow standard Kubernetes patterns improving UX.
@@ -2011,64 +2146,149 @@ Operator Lifecycle Manager manages operator installation, upgrades, and dependen
 ```yaml
 # Install OLM:
 # => curl -sL https://github.com/operator-framework/operator-lifecycle-manager/releases/download/v0.25.0/install.sh | bash -s v0.25.0
+# => Installs OLM components in cluster
+# => Creates olm and operators namespaces
+# => OLM manages operator lifecycle
 
 # Operator CSV (ClusterServiceVersion)
-apiVersion: operators.coreos.com/v1alpha1
-kind: ClusterServiceVersion
+apiVersion:
+  operators.coreos.com/v1alpha1 # => OLM API group
+  # => Operator Lifecycle Manager
+  # => Manages operator installation and upgrades
+kind:
+  ClusterServiceVersion # => CSV resource type
+  # => Operator metadata and installation spec
+  # => OLM uses CSV for operator management
 metadata:
-  name: database-operator.v1.0.0
-  namespace: operators
+  name:
+    database-operator.v1.0.0 # => CSV name with version
+    # => Format: name.vX.Y.Z
+    # => Unique identifier for this version
+  namespace:
+    operators # => Namespace for operator
+    # => OLM operators namespace
+    # => All operators installed here
 spec:
-  displayName: Database Operator
-  version: 1.0.0
-  description: Manages PostgreSQL databases
+  # => CSV specification
+  displayName:
+    Database Operator # => Human-readable operator name
+    # => Shown in OperatorHub UI
+  version:
+    1.0.0 # => Semantic version
+    # => Used for upgrade path
+    # => OLM tracks version progression
+  description:
+    Manages PostgreSQL databases # => Operator description
+    # => Shown in catalog
+    # => Explains operator purpose
   keywords:
-    - database
-    - postgres
+    # => Search keywords for OperatorHub
+    - database # => First keyword
+      # => Helps users find operator
+    - postgres # => Second keyword
+      # => Database type
   maintainers:
-    - name: Platform Team
-      email: [email protected]
+    # => Operator maintainer list
+    - name:
+        Platform Team # => Maintainer name
+        # => Team or individual
+      email:
+        [email protected] # => Contact email
+        # => Support contact
   provider:
-    name: Example Corp
+    # => Organization providing operator
+    name:
+      Example Corp # => Provider name
+      # => Company or project
   icon:
-    - base64data: <base64-encoded-icon>
-      mediatype: image/png
+    # => Operator icon for UI
+    - base64data:
+        <base64-encoded-icon> # => Base64-encoded icon
+        # => PNG or SVG image
+      mediatype:
+        image/png # => Icon format
+        # => MIME type
   customresourcedefinitions:
+    # => CRDs owned by operator
     owned:
-      - name: databases.example.com
-        version: v1
-        kind: Database
-        displayName: Database
-        description: PostgreSQL Database instance
+      # => CRDs this operator creates
+      - name:
+          databases.example.com # => CRD full name
+          # => API group + plural
+        version:
+          v1 # => CRD version
+          # => API version
+        kind:
+          Database # => Resource kind
+          # => Singular name
+        displayName:
+          Database # => UI display name
+          # => Human-readable kind
+        description:
+          PostgreSQL Database instance # => CRD description
+          # => Resource purpose
   install:
-    strategy: deployment
+    # => Installation strategy
+    strategy:
+      deployment # => Deployment-based install
+      # => OLM creates Deployment for operator
     spec:
+      # => Installation specification
       deployments:
-        - name: database-operator
+        # => Deployment definitions
+        - name:
+            database-operator # => Operator Deployment name
+            # => Created by OLM
           spec:
-            replicas: 1
+            # => Deployment spec
+            replicas:
+              1 # => Single operator instance
+              # => One controller per cluster
             selector:
+              # => Pod selector
               matchLabels:
-                name: database-operator
+                name:
+                  database-operator # => Selector label
+                  # => Matches template labels
             template:
+              # => Pod template
               metadata:
                 labels:
-                  name: database-operator
+                  # => Pod labels
+                  name:
+                    database-operator # => Pod label
+                    # => Matches selector
               spec:
-                serviceAccountName: database-operator
+                # => Pod specification
+                serviceAccountName:
+                  database-operator # => ServiceAccount for operator
+                  # => OLM creates automatically
+                  # => RBAC permissions
                 containers:
-                  - name: operator
-                    image: example.com/database-operator:v1.0.0
+                  # => Container list
+                  - name:
+                      operator # => Operator container
+                      # => Controller implementation
+                    image:
+                      example.com/database-operator:v1.0.0 # => Operator image
+                      # => Controller binary
+                      # => Version-specific image
 
 # Install operator via OLM:
 # => kubectl create -f database-operator-csv.yaml
+# => OLM processes CSV
 # => OLM creates Deployment, ServiceAccount, RBAC
+# => Automatic RBAC generation from CSV
 # => Operator starts managing Database resources
+# => Controller watches for Database CRs
 
 # Upgrade operator:
 # => Create new CSV with version v1.1.0
+# => Update spec and image reference
 # => OLM performs rolling update
+# => Gradual transition to new version
 # => Old CSV remains for rollback
+# => Supports version downgrades
 ```
 
 **Key Takeaway**: Use OLM for production operator management; OLM handles installation, upgrades, RBAC, and dependencies automatically; publish operators to OperatorHub for community distribution.
@@ -2101,76 +2321,181 @@ graph TD
 ```
 
 ```yaml
-apiVersion: admissionregistration.k8s.io/v1
-kind: ValidatingWebhookConfiguration
+apiVersion:
+  admissionregistration.k8s.io/v1 # => Admission registration API group
+  # => Stable v1 API for webhooks
+  # => Admission webhooks since Kubernetes 1.16
+kind:
+  ValidatingWebhookConfiguration # => Validating webhook resource
+  # => Intercepts API requests for validation
+  # => Can approve or reject requests
 metadata:
-  name: pod-validator
+  name:
+    pod-validator # => Webhook configuration name
+    # => Unique cluster-wide identifier
+spec:
+  # => Webhook configuration
 webhooks:
-  - name: pod-validator.example.com
+  # => List of webhook endpoints
+  - name:
+      pod-validator.example.com # => Webhook name (must be FQDN)
+      # => Unique webhook identifier
+      # => DNS-style naming convention
     clientConfig:
+      # => How API server contacts webhook
       service:
-        name: webhook-service
-        namespace: default
-        path: /validate
-      caBundle: <base64-ca-cert> # => CA certificate for TLS
+        # => Service-based endpoint (in-cluster)
+        name:
+          webhook-service # => Service name
+          # => Routes to webhook server Pods
+        namespace:
+          default # => Service namespace
+          # => Where webhook service runs
+        path:
+          /validate # => HTTP path for validation
+          # => Webhook server endpoint
+      caBundle:
+        <base64-ca-cert> # => CA certificate for TLS
+        # => Validates webhook server certificate
+        # => Required for HTTPS
+        # => Base64-encoded CA cert
     rules:
-      - operations: ["CREATE", "UPDATE"]
-        apiGroups: [""]
-        apiVersions: ["v1"]
-        resources: ["pods"] # => Intercept Pod create/update
-    admissionReviewVersions: ["v1"]
-    sideEffects: None
-    timeoutSeconds: 5
+      # => When to invoke webhook
+      - operations:
+          ["CREATE", "UPDATE"] # => Trigger on CREATE and UPDATE
+          # => Validates new and modified Pods
+          # => DELETE and CONNECT also possible
+        apiGroups:
+          [""] # => Core API group (v1)
+          # => Empty string = core resources
+        apiVersions:
+          ["v1"] # => API version
+          # => Matches v1 Pods
+        resources:
+          ["pods"] # => Intercept Pod create/update
+          # => Webhook validates Pod requests
+          # => Can specify subresources: pods/status
+    admissionReviewVersions:
+      ["v1"] # => AdmissionReview API version
+      # => Webhook must support v1
+      # => Sent in webhook request/response
+    sideEffects:
+      None # => Webhook has no side effects
+      # => Idempotent validation only
+      # => Required: None, NoneOnDryRun
+    timeoutSeconds:
+      5 # => Webhook timeout: 5 seconds
+      # => API server waits max 5s
+      # => Failure after timeout
+      # => Default: 10 seconds
 
 
 # Webhook server response:
 # {
 #   "apiVersion": "admission.k8s.io/v1",
+#   => AdmissionReview API version
 #   "kind": "AdmissionReview",
+#   => Response type
 #   "response": {
+#     => Validation result
 #     "uid": "<request-uid>",
+#     => Matches request UID
 #     "allowed": true/false,         # => Allow or reject
+#     => true: admit request
+#     => false: reject request
 #     "status": {
+#       => Rejection details (if allowed=false)
 #       "message": "Rejection reason"
+#       => Human-readable error message
+#       => Shown to kubectl user
 #     }
 #   }
 # }
 
 ---
-apiVersion: admissionregistration.k8s.io/v1
-kind: MutatingWebhookConfiguration
+apiVersion:
+  admissionregistration.k8s.io/v1 # => Admission registration API
+  # => Same API as ValidatingWebhook
+kind:
+  MutatingWebhookConfiguration # => Mutating webhook resource
+  # => Modifies requests before admission
+  # => Runs BEFORE validating webhooks
 metadata:
-  name: pod-mutator
+  name:
+    pod-mutator # => Webhook configuration name
+    # => Unique cluster-wide
 webhooks:
-  - name: pod-mutator.example.com
+  # => Webhook endpoint list
+  - name:
+      pod-mutator.example.com # => Webhook FQDN
+      # => Unique identifier
     clientConfig:
+      # => Webhook endpoint configuration
       service:
-        name: webhook-service
-        namespace: default
-        path: /mutate
-      caBundle: <base64-ca-cert>
+        # => In-cluster Service endpoint
+        name:
+          webhook-service # => Service name
+          # => Same service as validator
+        namespace:
+          default # => Service namespace
+          # => Where webhook runs
+        path:
+          /mutate # => HTTP path for mutation
+          # => Different endpoint than validator
+      caBundle:
+        <base64-ca-cert> # => CA certificate for TLS
+        # => Validates server identity
     rules:
-      - operations: ["CREATE"]
-        apiGroups: [""]
-        apiVersions: ["v1"]
-        resources: ["pods"]
-    admissionReviewVersions: ["v1"]
-    sideEffects: None
+      # => When to invoke webhook
+      - operations:
+          ["CREATE"] # => Only on CREATE
+          # => Mutates new Pods only
+          # => No UPDATE mutations
+        apiGroups:
+          [""] # => Core API group
+          # => v1 resources
+        apiVersions:
+          ["v1"] # => API version v1
+          # => Matches Pod API version
+        resources:
+          ["pods"] # => Mutates Pods
+          # => Can modify Pod spec before admission
+    admissionReviewVersions:
+      ["v1"] # => AdmissionReview v1 API
+      # => Webhook request/response format
+    sideEffects:
+      None # => No side effects
+      # => Mutation only (no external calls)
 
 # Webhook mutation response:
 # {
+#   => Mutation response structure
 #   "response": {
+#     => AdmissionReview response
 #     "uid": "<request-uid>",
+#     => Matches request UID
 #     "allowed": true,
+#     => Must allow for mutation
 #     "patchType": "JSONPatch",
+#     => Patch format type
+#     => JSONPatch RFC 6902
 #     "patch": "<base64-json-patch>"  # => JSON Patch to apply
+#     => Base64-encoded patch operations
+#     => Example: [{"op":"add","path":"/spec/containers/0/env","value":[...]}]
 #   }
 # }
 
 # Common webhook use cases:
 # => Validation: enforce naming conventions, require labels
+# => Prevents non-compliant resources
+# => Validation: enforce image registry restrictions
+# => Only allows approved registries
 # => Mutation: inject sidecars, add default resource limits
+# => Automatically adds logging/monitoring sidecars
+# => Mutation: add default labels and annotations
+# => Ensures consistent metadata
 # => Policy: prevent privileged Pods, enforce security contexts
+# => Security policy enforcement
 ```
 
 **Key Takeaway**: Use validating webhooks for custom policy enforcement beyond built-in admission controllers; use mutating webhooks for automatic resource modification like sidecar injection; webhook failures block API requests by default (set failurePolicy for control).

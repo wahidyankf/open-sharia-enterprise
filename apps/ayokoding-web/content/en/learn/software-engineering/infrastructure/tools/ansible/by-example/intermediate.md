@@ -118,43 +118,64 @@ config_file: /etc/nginx/sites-available/default # => Config file path
 # Main task file for webserver role
 # => tasks/main.yml is the role entry point
 # => Executes sequentially when role applied
+# => Auto-loaded when role referenced in playbook
 
 - name: Install web server # => Step 1: Package installation
+  # => Task name visible in playbook execution output
   ansible.builtin.package: # => OS-agnostic package module
+    # => Abstracts apt/yum/dnf/pacman differences
     name: "{{ nginx_package }}" # => Uses var from vars/main.yml
     # => Resolves to "nginx"
+    # => Variable interpolation with Jinja2 {{ }}
     state: present # => Ensure package installed
+    # => Idempotent: safe to run multiple times
   # => changed: [host] if package newly installed
   # => ok: [host] if package already present
 
 - name: Create document root # => Step 2: Directory setup
+  # => Ensures web content directory exists
   ansible.builtin.file: # => File/directory management module
+    # => Handles files, directories, symlinks
     path: "{{ document_root }}" # => Uses var from defaults/main.yml
     # => Resolves to "/var/www/html"
-    state: directory # => Ensure directory exists
+    # => Overridable via play or inventory vars
+    state: directory # => Ensure path is a directory
+    # => Creates if missing, verifies if exists
     mode: "0755" # => rwxr-xr-x permissions
     # => Owner read/write/execute, others read/execute
+    # => Octal notation requires quotes in YAML
   # => changed: [host] if directory created
   # => ok: [host] if directory exists with correct mode
 
 - name: Deploy configuration # => Step 3: Config file from template
+  # => Renders Jinja2 template with role variables
   ansible.builtin.template: # => Jinja2 template rendering
+    # => Processes {{ variables }}, {% logic %}
     src: nginx.conf.j2 # => Template from templates/ directory
     # => Relative path: roles/webserver/templates/nginx.conf.j2
+    # => Ansible searches role's templates/ folder
     dest: "{{ config_file }}" # => Destination path
     # => Resolves to "/etc/nginx/sites-available/default"
+    # => Target location for rendered config
     mode: "0644" # => rw-r--r-- permissions
+    # => Owner read/write, others read-only
   notify: restart nginx # => Trigger handler if config changes
   # => Handler queued for execution at play end
+  # => Only executes if this task reports "changed"
   # => changed: [host] if template content differs from destination
   # => ok: [host] if template content matches destination
 
 - name: Ensure service is running # => Step 4: Service state management
+  # => Guarantees nginx active and boot-enabled
   ansible.builtin.service: # => systemd/init service module
+    # => Abstracts systemd/SysV/upstart/OpenRC
     name: "{{ nginx_service }}" # => Service name
     # => Resolves to "nginx"
+    # => systemd unit name
     state: started # => Ensure service running
+    # => Starts if stopped, no-op if already running
     enabled: true # => Enable on boot (systemctl enable)
+    # => Creates systemd symlink for auto-start
   # => changed: [host] if service stopped or disabled
   # => ok: [host] if service already running and enabled
 ```
@@ -342,9 +363,7 @@ config_dir: /etc/myapp # => Application config directory
 # Run playbook with extra-vars
 ansible-playbook role_precedence.yml -e "app_port=3000"
 # => -e flag passes extra-vars (precedence: 22 - highest)
-# => app_port becomes 3000 (overrides play vars 9090)
-# => Extra-vars override even vars/main.yml (precedence 18)
-# => Output shows: Port: 3000
+# => Overrides all other variable sources including vars/main.yml
 
 # Multiple extra-vars
 ansible-playbook role_precedence.yml -e "app_port=3000 app_env=production"
@@ -389,21 +408,32 @@ graph TD
 # => Dependencies execute BEFORE current role
 
 dependencies: # => List of required roles
+  # => Dependencies execute before current role's tasks
+  # => Ensures prerequisites satisfied before main role
   - role: common # => First dependency
     # => Always executes before firewall and database
     # => Execution order: 1st
+    # => Provides baseline system configuration
     vars: # => Pass variables to dependency
+      # => Override dependency's default values
       ntp_server: time.example.com # => Override default NTP server
+      # => Custom NTP server for time synchronization
     # => dependency-specific variable override
+    # => Scoped to common role only
 
   - role: firewall # => Second dependency
     # => Executes after common, before database
     # => Execution order: 2nd
+    # => Configures network access rules
     vars: # => Configure firewall for database
+      # => Database-specific firewall configuration
       allowed_ports: # => Ports to open
+        # => YAML list of ports to allow through firewall
         - 5432 # => PostgreSQL default port
+        # => TCP port for database connections
     # => Firewall configured before database installation
     # => Ensures connectivity ready when service starts
+    # => Prevents connection failures after database starts
 ```
 
 **`roles/common/tasks/main.yml`**:
@@ -416,29 +446,41 @@ dependencies: # => List of required roles
 # => Shared foundation for all dependent roles
 
 - name: Update package cache # => Refresh package metadata
+  # => Ensures latest package versions available
   ansible.builtin.apt: # => Debian/Ubuntu package manager
     # => APT module provides cache management
+    # => Debian-specific (yum/dnf for RHEL)
     update_cache: true # => Run apt-get update
     # => Refreshes package index from repositories
+    # => Downloads latest package metadata
     cache_valid_time: 3600 # => Skip if updated within 1 hour
     # => Prevents redundant updates (performance optimization)
+    # => 3600 seconds = 1 hour cache validity
   when: ansible_os_family == "Debian" # => Only on Debian-based systems
   # => Conditional ensures APT only runs on Debian/Ubuntu
+  # => ansible_os_family fact populated by setup module
   # => changed: [host] if cache refreshed
   # => ok: [host] if cache fresh (within 3600 seconds)
 
 - name: Install common packages # => Base utility installation
+  # => Installs baseline tools for all systems
   ansible.builtin.package: # => OS-agnostic package module
     # => Cross-platform package installation
+    # => Automatically selects apt/yum/dnf/pacman
     name: # => Package list (YAML array)
       # => Multiple packages installed in single transaction
+      # => Efficient bulk installation
       - curl # => HTTP client utility
       # => Required for downloading files
+      # => Used by many deployment scripts
       - vim # => Text editor
       # => Standard editor for configuration files
+      # => Essential for server administration
       - git # => Version control system
       # => Essential for deployment workflows
+      # => Clone repositories, manage configs
     state: present # => Ensure all packages installed
+    # => Idempotent: installs only if missing
   # => changed: [host] if any package newly installed
   # => ok: [host] if all packages already present
 ```
@@ -463,12 +505,16 @@ dependencies: # => List of required roles
   # => ok: [host] if UFW already present
 
 - name: Allow SSH # => Critical: Prevent lockout
+  # => First rule to configure (safety measure)
   community.general.ufw: # => UFW management module
+    # => From community.general collection
     rule: allow # => Allow connection
+    # => Permits inbound traffic on specified port
     port: "22" # => SSH port
-    # => String format required
+    # => String format required by UFW module
+    # => Standard SSH port (default)
     proto: tcp # => TCP protocol
-    # => SSH uses TCP
+    # => SSH uses TCP (not UDP)
   # => MUST execute before enabling firewall
   # => Prevents SSH lockout on remote systems
   # => changed: [host] if rule added
@@ -570,18 +616,15 @@ Ansible Galaxy hosts thousands of community-maintained roles. Use `ansible-galax
 ansible-galaxy install geerlingguy.nginx
 # => Downloads latest version from galaxy.ansible.com
 # => Installs to ~/.ansible/roles/geerlingguy.nginx
-# => Output: geerlingguy.nginx was installed successfully
 
 # Install with version constraint
 ansible-galaxy install geerlingguy.nginx,2.8.0
-# => Installs specific version 2.8.0
-# => Comma-separated: role,version
+# => Installs specific version 2.8.0 using comma-separated format
 # => Ensures reproducible deployments
 
 # Install multiple roles from requirements file
 ansible-galaxy install -r requirements.yml
-# => -r flag specifies requirements file
-# => Batch install all roles with version pins
+# => Batch install all roles with version pins from YAML file
 # => Idempotent: Skips already-installed versions
 ```
 
@@ -591,24 +634,33 @@ ansible-galaxy install -r requirements.yml
 ---
 # Galaxy roles
 # => Roles from galaxy.ansible.com
+# => Public role repository maintained by community
 
 - name: geerlingguy.nginx # => Galaxy role (namespace.name format)
+  # => Author: geerlingguy, Role: nginx
   version: 2.8.0 # => Pin to version 2.8.0
   # => Optional: Omit for latest version
   # => Best practice: Always pin versions for reproducibility
+  # => Prevents unexpected updates breaking playbooks
 
 - name: geerlingguy.postgresql # => PostgreSQL database role
+  # => Popular role for PostgreSQL installation
   version: 3.4.1 # => Pin to version 3.4.1
   # => Prevents breaking changes from auto-updates
+  # => Specific version ensures consistency across teams
 
 # Git repository roles
 # => Roles from custom Git repositories
+# => Use for internal/private roles not on Galaxy
 - src: https://github.com/example/ansible-role-custom.git # => Git URL
+  # => HTTPS URL for Git repository
   name: custom_role # => Local role name (how to reference in playbook)
   # => Name required for Git sources (no namespace inference)
+  # => Used in playbook: roles: [custom_role]
   version: main # => Git branch or tag
   # => Default: main/master branch
   # => Can use tags: v1.0.0 or commit SHA
+  # => Commit SHA provides immutable reference
 
 # Local roles path override
 # => Roles from local filesystem (development/testing)
@@ -623,36 +675,56 @@ ansible-galaxy install -r requirements.yml
 ```yaml
 ---
 # galaxy_roles.yml
-- name: Use Galaxy Roles
-  hosts: webservers
-  become: true
+# => Playbook demonstrating Galaxy role integration
+- name: Use Galaxy Roles # => Play name
+  # => Describes playbook purpose
+  hosts: webservers # => Target host group
+  # => Executes on all hosts in webservers inventory group
+  become: true # => Escalate privileges
+  # => Required for package installation and service management
+  # => Uses sudo/su based on target system
 
-  roles:
+  roles: # => Roles to apply
+    # => Executes role tasks in order
     - role: geerlingguy.nginx # => Galaxy role reference
       # => Format: namespace.rolename
-      # => geerlingguy = Galaxy namespace
-      # => nginx = role name
+      # => geerlingguy = Galaxy namespace (author)
+      # => nginx = role name (web server)
+      # => Must be installed via ansible-galaxy first
       vars: # => Pass configuration to role
+        # => Override role default variables
+        # => Role-specific configuration
         nginx_vhosts: # => Virtual hosts configuration
           # => Variable name expected by geerlingguy.nginx role
           # => Check role documentation for required/optional vars
+          # => List of virtual host definitions
           - listen: "80" # => HTTP port
             # => Virtual host listens on port 80
+            # => Standard HTTP port (unencrypted)
             server_name: "example.com" # => Domain name
             # => Matches HTTP Host header
+            # => Used for name-based virtual hosting
             root: "/var/www/html" # => Document root
             # => Path to serve static files from
+            # => Base directory for web content
       # => Role executes its tasks with these variables
       # => Configures nginx with virtual host
+      # => Installs package, writes config, starts service
 
-  tasks:
+  tasks: # => Additional tasks after role execution
+    # => Runs after all roles complete
     - name: Verify nginx is running # => Post-role validation
+      # => Confirms role successfully configured service
       ansible.builtin.service: # => Service module
+        # => Query/manage system services
         name: nginx # => Service name
+        # => systemd unit name
         state: started # => Ensure running
+        # => Verify service is active
       # => Validates role successfully started service
       # => ok: [host] if nginx running (expected)
       # => changed: [host] if nginx stopped (unexpected)
+      # => Failure indicates role configuration error
 ```
 
 **List installed roles**:
@@ -666,14 +738,12 @@ ansible-galaxy list
 
 # Show role information
 ansible-galaxy info geerlingguy.nginx
-# => Displays role metadata from Galaxy
-# => Shows: description, author, platforms, versions, dependencies
+# => Displays role metadata: description, platforms, versions, dependencies
 # => Useful before installing to check compatibility
 
 # Remove installed role
 ansible-galaxy remove geerlingguy.nginx
 # => Deletes role from ~/.ansible/roles/
-# => Output: geerlingguy.nginx was removed successfully
 # => Use when upgrading or cleaning up unused roles
 ```
 
@@ -694,19 +764,8 @@ Create reusable roles for sharing via Galaxy or private repositories. Follow rol
 ```bash
 # Create role skeleton with standard structure
 ansible-galaxy init --init-path roles/ myapp
-# => ansible-galaxy init: Initialize new role
-# => --init-path roles/: Create role in roles/ directory
-# => myapp: Role name
-# => Creates standardized directory structure:
-# =>   roles/myapp/tasks/ - Task definitions
-# =>   roles/myapp/handlers/ - Event handlers
-# =>   roles/myapp/templates/ - Jinja2 templates
-# =>   roles/myapp/files/ - Static files
-# =>   roles/myapp/vars/ - Role variables
-# =>   roles/myapp/defaults/ - Default variables
-# =>   roles/myapp/meta/ - Role metadata
-# =>   roles/myapp/tests/ - Test playbooks
-# => Output: Role myapp was created successfully
+# => Creates standardized role structure in roles/myapp/
+# => Includes: tasks, handlers, templates, files, vars, defaults, meta, tests
 ```
 
 **`roles/myapp/meta/main.yml`**:

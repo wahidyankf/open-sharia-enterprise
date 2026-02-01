@@ -27,6 +27,7 @@ echo "hello world" | sed 's/world/universe/'
                                 # => /universe/: replacement text
                                 # => Matches only FIRST occurrence per line
                                 # => Output: hello universe
+                                # => Stream editor modifies text in-flight
 
 # Global substitution (all occurrences)
 echo "foo bar foo" | sed 's/foo/baz/g'
@@ -48,6 +49,7 @@ sed -i 's/old/new/g' file.txt   # => -i: in-place mode
                                 # => NO backup created
                                 # => DANGEROUS: no undo if wrong!
                                 # => Use only when certain
+                                # => Overwrites original file permanently
 
 # In-place with backup
 sed -i.bak 's/old/new/g' file.txt
@@ -56,6 +58,7 @@ sed -i.bak 's/old/new/g' file.txt
                                 # => Then modifies file.txt
                                 # => Safer: can restore from .bak
                                 # => Production best practice
+                                # => Backup extension can be any string
 
 # Delete lines matching pattern
 sed '/^#/d' file.txt            # => /^#/: regex pattern (lines starting with #)
@@ -63,10 +66,12 @@ sed '/^#/d' file.txt            # => /^#/: regex pattern (lines starting with #)
                                 # => ^: start of line anchor
                                 # => Removes comment lines
                                 # => Prints remaining lines to stdout
+                                # => Filters out comments from output
 
 # Delete line number
 sed '3d' file.txt               # => 3: line number (third line)
                                 # => d: delete command
+                                # => Deletes specific line by number
                                 # => Removes only line 3
                                 # => Other lines unchanged
 
@@ -838,6 +843,7 @@ chmod 644 file.txt              # => chmod: change mode (permissions)
                                 # => Second digit (4): group permissions = 4 = r--
                                 # => Third digit (4): others permissions = 4 = r--
                                 # => Result: -rw-r--r--
+                                # => Standard permission for text files
 
 chmod 755 script.sh             # => 755: common for executables
                                 # => First digit (7): owner = 4+2+1 = rwx
@@ -845,6 +851,7 @@ chmod 755 script.sh             # => 755: common for executables
                                 # => Third digit (5): others = 4+1 = r-x
                                 # => Result: -rwxr-xr-x
                                 # => Owner: full access, others: read and execute
+                                # => Standard permission for scripts
 
 chmod 700 private.sh            # => 700: private executable
                                 # => First digit (7): owner = 4+2+1 = rwx
@@ -852,6 +859,7 @@ chmod 700 private.sh            # => 700: private executable
                                 # => Third digit (0): others = 0 = ---
                                 # => Result: -rwx------
                                 # => Only owner has any access
+                                # => Maximum privacy for sensitive scripts
 
 # Symbolic notation
 chmod u+x script.sh             # => u+x: symbolic notation
@@ -860,17 +868,20 @@ chmod u+x script.sh             # => u+x: symbolic notation
                                 # => x: execute permission
                                 # => Adds execute for owner only
                                 # => Other permissions unchanged
+                                # => Relative change (not absolute)
 
 chmod go-w file.txt             # => go-w: symbolic notation
                                 # => g: group, o: others
                                 # => -: remove permission
                                 # => w: write permission
                                 # => Removes write for group AND others
+                                # => Multiple targets in single command
 
 chmod a+r file.txt              # => a+r: symbolic notation
                                 # => a: all (user, group, others)
                                 # => +: add permission
                                 # => r: read permission
+                                # => Makes file readable by everyone
                                 # => Adds read for everyone
 
 chmod u=rwx,g=rx,o=r file.txt   # => Absolute symbolic notation
@@ -2323,12 +2334,14 @@ Bash provides powerful string manipulation through parameter expansion, enabling
 
 ```bash
 string="Hello, World!"           # => Test string for demonstrations
+                                 # => Contains 13 characters total
 
 # String length
 echo "${#string}"                # => ${#var}: string length operator
                                  # => #: prefix for length
                                  # => Counts characters (13 chars including comma, space, exclamation)
                                  # => Output: 13
+                                 # => Useful for validation and bounds checking
 
 # Substring extraction
 echo "${string:0:5}"             # => ${var:offset:length}: substring syntax
@@ -2336,6 +2349,7 @@ echo "${string:0:5}"             # => ${var:offset:length}: substring syntax
                                  # => :5: extract 5 characters
                                  # => Zero-based indexing
                                  # => Output: Hello
+                                 # => Extracts first word from string
 
 echo "${string:7}"               # => ${var:offset}: extract from offset to end
                                  # => :7: start at index 7
@@ -2349,17 +2363,20 @@ echo "${string: -6}"             # => ${var: -n}: negative offset (from end)
 
 # Pattern removal (from start)
 file="backup.tar.gz"             # => Filename with multiple extensions
+                                 # => Common pattern for compressed archives
 echo "${file#*.}"                # => ${var#pattern}: remove shortest match from start
                                  # => #: single hash (non-greedy)
                                  # => *.: wildcard + dot pattern
                                  # => Removes "backup."
                                  # => Output: tar.gz
+                                 # => Keeps all extensions after first dot
 
 echo "${file##*.}"               # => ${var##pattern}: remove longest match from start
                                  # => ##: double hash (greedy)
                                  # => *.: matches all up to last dot
                                  # => Removes "backup.tar."
                                  # => Output: gz
+                                 # => Extracts final extension only
 
 # Pattern removal (from end)
 echo "${file%.*}"                # => ${var%pattern}: remove shortest match from end
@@ -2419,12 +2436,14 @@ echo "${undefined:-default}"     # => ${var:-default}: use default if unset/empt
                                  # => Returns "default" without setting variable
                                  # => Variable remains unset
                                  # => Output: default
+                                 # => Useful for function parameters
 
 echo "${undefined:=default}"     # => ${var:=default}: set and use default
                                  # => :=: colon equals operator
                                  # => Sets undefined="default"
                                  # => Then returns value
                                  # => Output: default
+                                 # => Useful for initializing variables
 
 echo "${undefined:?Error message}"
                                  # => ${var:?message}: error if unset/empty
@@ -2435,16 +2454,21 @@ echo "${undefined:?Error message}"
 # Practical: extract filename
 path="/home/user/documents/file.txt"
                                  # => Full file path
+                                 # => Unix-style path separators
 filename="${path##*/}"           # => Remove longest match up to last /
                                  # => Extracts filename
                                  # => Output: file.txt
+                                 # => Pure bash alternative to basename command
 dirname="${path%/*}"             # => Remove shortest match from last /
                                  # => Extracts directory path
                                  # => Output: /home/user/documents
+                                 # => Pure bash alternative to dirname command
 extension="${filename##*.}"      # => Get extension (after last dot)
                                  # => Output: txt
+                                 # => File type identifier
 basename="${filename%.*}"        # => Get basename (before last dot)
                                  # => Output: file
+                                 # => Filename without extension
 
 # Practical: sanitize input
 user_input="Hello   World"       # => Input with multiple spaces
@@ -3079,17 +3103,25 @@ Subshells run commands in isolated environments, while command grouping executes
                                  # => cd /tmp: changes directory in subshell only
                                  # => && ls: lists files if cd succeeds
                                  # => Entire command runs in isolated scope
+                                 # => Parentheses () create process fork
 pwd                              # => pwd: runs in parent shell
                                  # => Still in original directory (subshell isolated)
                                  # => Subshell changes don't affect parent
+                                 # => Parent directory unchanged
 
 # Environment isolation
 VAR="parent"                     # => Set variable in parent shell
+                                 # => Variable defined in current scope
 (                                # => Start subshell
+                                 # => Creates new process context
     VAR="child"                  # => Modify variable in subshell
+                                 # => Change isolated to child process
     echo "Inside: $VAR"          # => Output: child (subshell value)
+                                 # => Displays modified value
 )                                # => End subshell, changes discarded
+                                 # => Child process exits, state lost
 echo "Outside: $VAR"             # => Output: parent (original value preserved)
+                                 # => Parent state unaffected by subshell
 
 # Command grouping with { }
 { echo "one"; echo "two"; } > output.txt
@@ -3118,15 +3150,20 @@ echo "Outside: $VAR"             # => Output: parent (original value preserved)
 # Subshell for variable isolation
 total=0                          # => Initialize in parent shell
                                  # => Variable accessible in current scope
+                                 # => Counter starts at zero
 while read -r num; do            # => Loop in current shell
                                  # => read -r: read line without backslash escaping
+                                 # => Processes file line by line
     ((total += num))             # => Modify total in current shell
                                  # => Arithmetic expansion updates variable
+                                 # => Accumulates sum
 done < numbers.txt               # => < : redirect from file (no subshell)
                                  # => File redirection doesn't create subshell
                                  # => Loop runs in parent shell context
+                                 # => No process fork for file redirection
 echo "Total: $total"             # => Works: total modified in current shell
                                  # => Variable changes persist after loop
+                                 # => Final sum is available
 
 # Problematic: pipe creates subshell
 total=0                          # => Initialize in parent shell

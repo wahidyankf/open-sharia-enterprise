@@ -308,13 +308,14 @@ import 'dart:async';                    // => Import for Future
 
 Future<double> calculateZakat(double wealth) async {
                                         // => Async function for Zakat calculation
+                                        // => Returns Future<double> that completes with Zakat amount
                                         // => Zakat: 2.5% of eligible wealth (Islamic obligation)
   if (wealth < 0) {                     // => Validate input
                                         // => Business rule: negative wealth invalid
     throw ArgumentError('Negative wealth not allowed');
                                         // => throw: creates error that Future completes with
                                         // => ArgumentError: built-in exception for invalid arguments
-  }
+  }                                     // => Validation check complete
 
   if (wealth < 200000000.0) {           // => Check nisab threshold
                                         // => Nisab: minimum wealth required for Zakat
@@ -434,21 +435,23 @@ Future<double> fetchDonationFromAPI(String donorId) async {
   return 1000000.0;                     // => Return donation amount (if completes)
 }
 
-void main() async {
+void main() async {                     // => Main function with async support
+                                        // => async enables await keyword
   // Timeout without fallback (throws TimeoutException)
-  try {
+  try {                                 // => Try block for timeout handling
+                                        // => Catches TimeoutException if timeout expires
     double amount = await fetchDonationFromAPI('DONOR-001')
         .timeout(Duration(seconds: 2));  // => Maximum wait: 2 seconds
                                          // => fetchDonationFromAPI takes 3 seconds
                                          // => Result: timeout after 2 seconds
-    print('Amount: Rp$amount');          // => Never executes (timeout)
-  } on TimeoutException catch (e) {      // => Catch timeout exception
+    print('Amount: Rp$amount');          // => Never executes (timeout occurs first)
+  } on TimeoutException catch (e) {      // => Catch timeout exception specifically
                                          // => TimeoutException: thrown when timeout expires
     print('Request timeout: ${e.message}');
                                          // => Output: Request timeout: [timeout message]
     print('Fallback: Using default amount');
                                          // => Manual fallback in error handler
-  }
+  }                                     // => Try-catch complete
 
   // Timeout with fallback (no exception, graceful degradation)
   double amount = await fetchDonationFromAPI('DONOR-002')
@@ -597,19 +600,26 @@ void main() async {
 
   // Manual event completion (waiting for specific event)
   Completer<int> eventCompleter = Completer<int>();
+                                        // => Create Completer for event handling
+                                        // => Pattern: waiting for specific event to occur
 
   // Simulate event-driven code
   Future.delayed(Duration(milliseconds: 500), () {
-                                        // => Simulate event trigger
+                                        // => Simulate event trigger after delay
+                                        // => Real use: user interaction, network event, timer
     eventCompleter.complete(42);        // => Complete Future when event occurs
                                         // => Event-driven: Future completes from different context
-  });
+                                        // => All awaiters of eventCompleter.future receive value
+  });                                   // => Event handler registered
 
-  print('Waiting for event...');        // => Immediate output
+  print('Waiting for event...');        // => Immediate output (before event)
+                                        // => Non-blocking: main continues while waiting
   int eventResult = await eventCompleter.future;
                                         // => Await: blocks until complete() called
                                         // => Timeline: 500ms until event occurs
+                                        // => Receives: value passed to complete()
   print('Event result: $eventResult');  // => Output: Event result: 42
+                                        // => Executes after event completed
 
   // Completer with multiple waiters (single Future, multiple awaiters)
   Completer<String> sharedCompleter = Completer<String>();
@@ -943,7 +953,8 @@ Creating custom streams with StreamController for event publishing. Enables manu
 ```dart
 import 'dart:async';
 
-void main() async {
+void main() async {                     // => Main function with async support
+                                        // => async enables await keyword
   // Basic StreamController usage
   StreamController<int> controller = StreamController<int>();
                                         // => Create controller: manages stream
@@ -979,6 +990,7 @@ void main() async {
                                         // => Listener onError receives error
 
   await Future.delayed(Duration(milliseconds: 100));
+                                        // => Async pause for processing
 
   controller.close();                   // => Close stream (emit done event)
                                         // => Listener onDone executes
@@ -1009,18 +1021,23 @@ void main() async {
   broadcast.close();                    // => Close broadcast stream
 
   await Future.delayed(Duration(milliseconds: 100));
+                                        // => Wait for broadcast processing
 
   // StreamController with async emission
-  print('\n=== Async Emission ===');
+  print('\n=== Async Emission ===');  // => Section header
   StreamController<int> asyncController = StreamController<int>();
+                                        // => Create controller for async demo
 
   asyncController.stream.listen((value) {
-    print('Async value: $value');
+                                        // => Attach listener to stream
+    print('Async value: $value');      // => Print received value
   });
 
   // Emit values asynchronously
-  Future<void> emitDonations() async {
-    for (int i = 1; i <= 3; i++) {
+  Future<void> emitDonations() async {  // => Async function declaration
+                                        // => Returns Future<void> (no value)
+    for (int i = 1; i <= 3; i++) {      // => Loop: iterate 3 times
+                                        // => i ranges from 1 to 3
       await Future.delayed(Duration(milliseconds: 200));
                                         // => Delay between emissions
       asyncController.add(i * 100000);  // => Emit donation amount
@@ -1029,9 +1046,10 @@ void main() async {
   }
 
   await emitDonations();                // => Wait for async emission to complete
+                                        // => Blocks until all values emitted
 
   // StreamController with pause/resume
-  print('\n=== Pause/Resume ===');
+  print('\n=== Pause/Resume ===');     // => Section header
   StreamController<int> pausableController = StreamController<int>(
     onListen: () {                      // => Callback: when first listener subscribes
       print('Listener subscribed');
@@ -1053,12 +1071,14 @@ void main() async {
 
   pausableController.add(1);            // => Emit value
   await Future.delayed(Duration(milliseconds: 50));
+                                        // => Wait for value processing
 
   pausable.pause();                     // => Pause listener
                                         // => onPause callback executes
   pausableController.add(2);            // => Emitted but buffered (listener paused)
 
   await Future.delayed(Duration(milliseconds: 100));
+                                        // => Wait during pause
 
   pausable.resume();                    // => Resume listener
                                         // => onResume callback executes
@@ -1066,6 +1086,7 @@ void main() async {
 
   pausableController.add(3);            // => Emit after resume
   await Future.delayed(Duration(milliseconds: 50));
+                                        // => Wait for final value processing
 
   await pausable.cancel();              // => Cancel subscription
                                         // => onCancel callback executes
@@ -1165,15 +1186,19 @@ Stream<int> donationFeed() async* {
   yield 750000;                         // => Never executes (error terminated stream)
 }
 
-void main() async {
+void main() async {                     // => Main function with async support
+                                        // => async enables await for loop
   // Basic countdown generator
-  print('=== Countdown ===');
+  print('=== Countdown ===');           // => Section header
   await for (int count in countDown(5)) {
                                         // => Consume stream with await for
                                         // => Loop: processes each yielded value
+                                        // => Blocks: until stream completes or errors
     print('Count: $count');             // => Output: 5, 4, 3, 2, 1
+                                        // => Executes for each emitted value
   }                                     // => Timeline: 1 second total (5 × 200ms)
                                         // => Output after loop: "Countdown complete"
+                                        // => Loop completes when generator ends
 
   // Zakat calculator with filtering
   print('\n=== Zakat Calculator ===');
@@ -1271,158 +1296,206 @@ Managing stream subscriptions with pause(), resume(), and cancel(). Critical for
 ```dart
 import 'dart:async';
 
-Stream<int> fastStream() async* {      // => High-volume stream
-                                        // => Simulates: fast data source
-  for (int i = 1; i <= 10; i++) {       // => Emit 10 values
+Stream<int> fastStream() async* {      // => High-volume stream generator
+                                        // => async* enables yield keyword for stream emission
+                                        // => Simulates fast data source (sensor, WebSocket, file)
+  for (int i = 1; i <= 10; i++) {       // => Emit 10 values total
+                                        // => Loop generates stream events
     await Future.delayed(Duration(milliseconds: 100));
-                                        // => 100ms between emissions
-    yield i * 100000;                   // => Emit donation amounts
-    print('Emitted: ${i * 100000}');    // => Track emissions
-  }
-}
+                                        // => 100ms between emissions (simulates real-time data)
+                                        // => Non-blocking delay allows other operations
+    yield i * 100000;                   // => Emit donation amounts (100k, 200k, 300k, ...)
+                                        // => yield pauses until listener ready
+    print('Emitted: ${i * 100000}');    // => Track emissions (shows when data produced)
+                                        // => Runs even if stream paused (production continues)
+  }                                     // => Stream completes after 10 emissions
+}                                       // => Generator function defined
 
-void main() async {
+void main() async {                     // => Main function with async support
+                                        // => Demonstrates subscription management
   // Basic subscription management
-  print('=== Basic Subscription ===');
+  print('=== Basic Subscription ===');  // => Section header
   StreamSubscription<int> subscription = fastStream().listen(
-    (int value) {
+                                        // => Create: stream subscription
+                                        // => Type: StreamSubscription<int>
+    (int value) {                       // => onData callback
+                                        // => Parameter: emitted value
       print('Received: $value');        // => Process each value
     },
-    onDone: () {
+    onDone: () {                        // => onDone callback
       print('Stream complete');         // => Stream finished
     },
-  );
+  );                                    // => Subscription created
 
   await Future.delayed(Duration(milliseconds: 350));
                                         // => Wait for ~3 emissions
+                                        // => Async delay: non-blocking
 
   subscription.pause();                 // => Pause subscription
-                                        // => Buffering: emissions continue but not delivered
-  print('Subscription paused');
+                                        // => State change: Active → Paused
+                                        // => Buffering: emissions continue but not delivered to listener
+                                        // => Stream generator keeps running (print still executes)
+  print('Subscription paused');         // => Notify pause state
+                                        // => Buffering begins now
 
   await Future.delayed(Duration(milliseconds: 400));
                                         // => Stream emits during pause (buffered)
+                                        // => Buffer accumulates values
 
   subscription.resume();                // => Resume subscription
+                                        // => State change: Paused → Active
                                         // => Buffered values delivered immediately
-  print('Subscription resumed');
+  print('Subscription resumed');        // => Notify resume
 
   await Future.delayed(Duration(seconds: 1));
                                         // => Wait for stream to complete
+                                        // => Allow remaining values to process
 
   // Pause with pause token (manual resume control)
-  print('\n=== Pause with Token ===');
+  print('\n=== Pause with Token ==='); // => Section header
   StreamSubscription<int> tokenSub = fastStream().listen(
-    (int value) {
-      print('Token received: $value');
+                                        // => Create new subscription
+    (int value) {                       // => onData callback
+      print('Token received: $value');  // => Process value
     },
-  );
+  );                                    // => Subscription active
 
   StreamSubscription<void> pauseToken = tokenSub.pause();
                                         // => pause() returns token
+                                        // => Type: StreamSubscription<void>
                                         // => Use token to resume later
-  print('Paused with token');
+  print('Paused with token');           // => Notify pause state
 
   await Future.delayed(Duration(milliseconds: 500));
                                         // => Stream emits but buffered
+                                        // => Values queued during pause
 
   pauseToken.resume();                  // => Resume using token
                                         // => Alternative: tokenSub.resume() also works
-  print('Resumed with token');
+  print('Resumed with token');          // => Notify resume
 
   await Future.delayed(Duration(seconds: 1));
+                                        // => Wait for completion
 
   // Cancel subscription (stop permanently)
   print('\n=== Cancel Subscription ===');
+                                        // => Section header
   StreamSubscription<int> cancelSub = fastStream().listen(
-    (int value) {
-      print('Cancel test: $value');
+                                        // => Create subscription to cancel
+    (int value) {                       // => onData callback
+      print('Cancel test: $value');     // => Process value
     },
-    onDone: () {
+    onDone: () {                        // => onDone callback
       print('Stream done');             // => Never executes (cancelled before completion)
     },
-  );
+  );                                    // => Active subscription
 
   await Future.delayed(Duration(milliseconds: 350));
                                         // => Receive ~3 values
+                                        // => Let some values through
 
   await cancelSub.cancel();             // => Cancel subscription
+                                        // => State: Active/Paused → Cancelled
                                         // => Stops receiving: remaining values ignored
                                         // => Resource cleanup: releases memory
-  print('Subscription cancelled');
+  print('Subscription cancelled');      // => Notify cancellation
 
   await Future.delayed(Duration(seconds: 1));
                                         // => Stream continues emitting (no listeners)
+                                        // => Generator still runs to completion
 
   // Conditional pause/resume (backpressure simulation)
   print('\n=== Backpressure Control ===');
-  int processedCount = 0;
+                                        // => Section header
+  int processedCount = 0;               // => Counter: track processed values
   StreamSubscription<int>? backpressureSub;
+                                        // => Nullable: assigned in listen call
 
   backpressureSub = fastStream().listen(
+                                        // => Create subscription with backpressure
     (int value) async {                 // => Async listener
-      print('Processing: $value');
-      processedCount++;
+                                        // => async enables await in callback
+      print('Processing: $value');      // => Process value
+      processedCount++;                 // => Increment counter
 
       if (processedCount % 3 == 0) {    // => Every 3rd value
+                                        // => Condition: modulo operator
         backpressureSub!.pause();       // => Pause to slow down
+                                        // => Non-null assertion: guaranteed assigned
         print('Pausing for slow processing...');
+                                        // => Notify pause
 
         await Future.delayed(Duration(milliseconds: 500));
                                         // => Simulate slow processing
+                                        // => Async delay: represents CPU/IO work
 
         backpressureSub.resume();       // => Resume after processing
         print('Resumed after processing');
+                                        // => Notify resume
       }
     },
-  );
+  );                                    // => Backpressure pattern active
 
   await Future.delayed(Duration(seconds: 3));
                                         // => Wait for backpressure demo
+                                        // => Allow pattern to complete
 
   // Multiple pause/resume cycles
   print('\n=== Multiple Pause/Resume ===');
+                                        // => Section header
   StreamSubscription<int> cycleSub = fastStream().listen(
-    (int value) {
-      print('Cycle: $value');
+                                        // => Create subscription for cycling
+    (int value) {                       // => onData callback
+      print('Cycle: $value');           // => Process value
     },
-  );
+  );                                    // => Active subscription
 
   for (int i = 0; i < 3; i++) {         // => 3 pause/resume cycles
+                                        // => Loop: iterate 3 times
     await Future.delayed(Duration(milliseconds: 200));
-    cycleSub.pause();
-    print('Pause cycle $i');
+                                        // => Wait before pause
+    cycleSub.pause();                   // => Pause subscription
+    print('Pause cycle $i');            // => Log pause cycle
 
     await Future.delayed(Duration(milliseconds: 200));
-    cycleSub.resume();
-    print('Resume cycle $i');
-  }
+                                        // => Wait during pause
+    cycleSub.resume();                  // => Resume subscription
+    print('Resume cycle $i');           // => Log resume cycle
+  }                                     // => Cycling complete
 
   await Future.delayed(Duration(seconds: 2));
+                                        // => Wait for stream completion
 
   // isPaused check
   print('\n=== Check Paused State ===');
+                                        // => Section header
   StreamSubscription<int> checkSub = fastStream().listen(
-    (int value) {
-      print('Check: $value');
+                                        // => Create subscription for state checking
+    (int value) {                       // => onData callback
+      print('Check: $value');           // => Process value
     },
-  );
+  );                                    // => Active subscription
 
   print('Initially paused: ${checkSub.isPaused}');
                                         // => Output: false (actively listening)
+                                        // => Property: isPaused getter
 
-  checkSub.pause();
+  checkSub.pause();                     // => Pause subscription
   print('After pause: ${checkSub.isPaused}');
                                         // => Output: true
+                                        // => State: Paused
 
   await Future.delayed(Duration(milliseconds: 300));
+                                        // => Wait during pause
 
-  checkSub.resume();
+  checkSub.resume();                    // => Resume subscription
   print('After resume: ${checkSub.isPaused}');
                                         // => Output: false
+                                        // => State: Active
 
   await Future.delayed(Duration(seconds: 1));
-  await checkSub.cancel();
+                                        // => Wait for completion
+  await checkSub.cancel();              // => Clean up subscription
 }
 ```
 
@@ -1739,18 +1812,25 @@ class BankTransferProcessor extends PaymentProcessor {
   }
 }
 
-void main() async {
+void main() async {                     // => Main function with async support
+                                        // => Demonstrates abstract class usage
   // Cannot instantiate abstract class
   // PaymentProcessor processor = PaymentProcessor('Generic');
   // => ERROR: Abstract classes can't be instantiated
+                                        // => Compile-time error prevents direct instantiation
 
   // Use concrete implementations
   PaymentProcessor creditCard = CreditCardProcessor();
                                         // => Polymorphism: CreditCardProcessor as PaymentProcessor
+                                        // => Type: PaymentProcessor (base class reference)
+                                        // => Instance: CreditCardProcessor (concrete class)
   bool success1 = await creditCard.executePayment(1000000.0, 'Fatimah');
+                                        // => Calls template method from base class
+                                        // => Template method calls abstract methods
                                         // => Output: Fee: Rp30000.0
                                         // =>         [Credit Card] Transaction: Rp1030000.0 to Fatimah
                                         // =>         Credit card charged: Rp1000000.0 to Fatimah
+                                        // => success1 is true (payment succeeded)
 
   PaymentProcessor bankTransfer = BankTransferProcessor();
   bool success2 = await bankTransfer.executePayment(1000000.0, 'Ahmad');
@@ -1801,134 +1881,182 @@ Implementing multiple interfaces through abstract classes for flexible class des
 ```dart
 // Interface for timestamped entities
 abstract class Timestamped {            // => Interface: defines timestamp contract
+                                        // => Abstract: cannot instantiate
   DateTime get createdAt;               // => Abstract getter
+                                        // => Must implement in concrete class
   void updateTimestamp();               // => Abstract method
+                                        // => No implementation provided
 }
 
 // Interface for auditable entities
 abstract class Auditable {              // => Interface: defines audit contract
+                                        // => Separate contract: single responsibility
   List<String> get auditLog;            // => Abstract getter
+                                        // => Read-only access to audit log
   void logAction(String action);        // => Abstract method
+                                        // => Parameter: action description
 }
 
 // Donation class implementing both interfaces
 class Donation implements Timestamped, Auditable {
                                         // => implements: satisfy multiple contracts
                                         // => Must implement ALL members from both
-  String donorName;
-  double amount;
+                                        // => Comma-separated: multiple interfaces
+  String donorName;                     // => Field: donor name
+  double amount;                        // => Field: donation amount
 
   DateTime _createdAt;                  // => Private backing field
+                                        // => Leading underscore: private
   List<String> _auditLog = [];          // => Private backing field
+                                        // => Initialize: empty list
 
   Donation(this.donorName, this.amount) {
                                         // => Constructor
+                                        // => Parameters: initialize fields
     _createdAt = DateTime.now();        // => Initialize timestamp
+                                        // => Current time: creation time
     logAction('Donation created');      // => Log creation
+                                        // => Call interface method
   }
 
   // Implement Timestamped interface
   @override                             // => Implement required getter
+                                        // => From: Timestamped interface
   DateTime get createdAt => _createdAt; // => Return private field
+                                        // => Getter: exposes creation time
 
   @override                             // => Implement required method
-  void updateTimestamp() {
+                                        // => From: Timestamped interface
+  void updateTimestamp() {              // => Method: update timestamp
     _createdAt = DateTime.now();        // => Update timestamp
+                                        // => New value: current time
     logAction('Timestamp updated');     // => Log action
+                                        // => Cross-interface call
   }
 
   // Implement Auditable interface
   @override                             // => Implement required getter
+                                        // => From: Auditable interface
   List<String> get auditLog => List.unmodifiable(_auditLog);
                                         // => Return immutable copy
+                                        // => Prevents external modification
 
   @override                             // => Implement required method
-  void logAction(String action) {
+                                        // => From: Auditable interface
+  void logAction(String action) {       // => Method: add audit entry
     String entry = '${DateTime.now()}: $action';
+                                        // => Format: timestamp + action
     _auditLog.add(entry);               // => Add to audit log
-    print('Logged: $entry');
+                                        // => Mutate internal list
+    print('Logged: $entry');            // => Output: log entry
   }
 
   // Additional methods (not from interfaces)
   void process() {                      // => Custom method
+                                        // => Not required by interfaces
     logAction('Processing donation');   // => Use interface method
-    print('$donorName: Rp$amount');
+    print('$donorName: Rp$amount');     // => Output: donation details
     updateTimestamp();                  // => Use interface method
+                                        // => Update last modified time
   }
 }
 
 // Different class implementing same interfaces
 class Transaction implements Timestamped, Auditable {
                                         // => Different implementation of same interfaces
-  String transactionId;
-  double amount;
+                                        // => Polymorphism: same contract, different behavior
+  String transactionId;                 // => Field: transaction ID
+  double amount;                        // => Field: transaction amount
 
-  DateTime _createdAt;
-  List<String> _auditLog = [];
+  DateTime _createdAt;                  // => Private: creation timestamp
+  List<String> _auditLog = [];          // => Private: audit entries
 
   Transaction(this.transactionId, this.amount) {
-    _createdAt = DateTime.now();
+                                        // => Constructor: initialize transaction
+    _createdAt = DateTime.now();        // => Set creation time
     logAction('Transaction created: $transactionId');
+                                        // => Log creation with ID
   }
 
-  @override
-  DateTime get createdAt => _createdAt;
+  @override                             // => Implement: Timestamped.createdAt
+  DateTime get createdAt => _createdAt; // => Return: creation timestamp
 
-  @override
-  void updateTimestamp() {
-    _createdAt = DateTime.now();
+  @override                             // => Implement: Timestamped.updateTimestamp
+  void updateTimestamp() {              // => Method: update timestamp
+    _createdAt = DateTime.now();        // => Update: current time
     logAction('Transaction timestamp updated');
+                                        // => Log: timestamp change
   }
 
-  @override
+  @override                             // => Implement: Auditable.auditLog
   List<String> get auditLog => List.unmodifiable(_auditLog);
+                                        // => Return: immutable view
 
-  @override
-  void logAction(String action) {
+  @override                             // => Implement: Auditable.logAction
+  void logAction(String action) {       // => Method: custom log format
     _auditLog.add('[$transactionId] $action at ${DateTime.now()}');
+                                        // => Format: includes transaction ID
   }
 }
 
 // Function accepting Timestamped interface
 void printCreationDate(Timestamped entity) {
                                         // => Polymorphism: accepts any Timestamped
+                                        // => Parameter: interface type
   print('Created: ${entity.createdAt}');
+                                        // => Access: interface method
 }
 
 // Function accepting Auditable interface
 void printAuditSummary(Auditable entity) {
                                         // => Polymorphism: accepts any Auditable
+                                        // => Parameter: interface type
   print('Audit entries: ${entity.auditLog.length}');
+                                        // => Access: interface getter
 }
 
-void main() {
+void main() {                           // => Main function entry point
+                                        // => Demonstrates interface polymorphism
   // Create instances
   Donation donation = Donation('Ahmad', 500000.0);
                                         // => Implements both interfaces
+                                        // => Type: Donation (concrete class)
   Transaction txn = Transaction('TXN-001', 1000000.0);
+                                        // => Create: transaction instance
 
   // Use as Timestamped
   printCreationDate(donation);          // => Pass Donation as Timestamped
+                                        // => Polymorphism: Donation → Timestamped
   printCreationDate(txn);               // => Pass Transaction as Timestamped
+                                        // => Same interface, different class
 
   // Use as Auditable
   printAuditSummary(donation);          // => Pass Donation as Auditable
+                                        // => Multiple interfaces on same object
   printAuditSummary(txn);               // => Pass Transaction as Auditable
+                                        // => Both implement Auditable
 
   // Use both interfaces on same object
   donation.process();                   // => Uses both updateTimestamp() and logAction()
+                                        // => Combines both interface contracts
 
   print('\n=== Donation Audit Log ===');
+                                        // => Section header
   for (String entry in donation.auditLog) {
+                                        // => Iterate: audit log entries
     print(entry);                       // => Print all audit entries
   }
 
   // Polymorphism with mixed list
   List<Auditable> auditableEntities = [donation, txn];
                                         // => List<Auditable>: both implement interface
+                                        // => Mixed types: unified by interface
   print('\n=== All Auditable Entities ===');
+                                        // => Section header
   for (Auditable entity in auditableEntities) {
+                                        // => Iterate: polymorphic collection
     printAuditSummary(entity);          // => Polymorphic call
+                                        // => Works for any Auditable
   }
 }
 ```
@@ -2051,37 +2179,50 @@ classDiagram
 // Mixin for timestamp functionality
 mixin Timestamped {                     // => mixin: reusable functionality
                                         // => No constructor allowed
+                                        // => Can be applied with 'with' keyword
   DateTime? _timestamp;                 // => Mixin can have fields
+                                        // => Nullable: initially null
 
   void markTimestamp() {                // => Mixin can have methods
+                                        // => Public method: available to classes
     _timestamp = DateTime.now();        // => Record current time
-    print('Timestamp: $_timestamp');
+                                        // => Assignment: store timestamp
+    print('Timestamp: $_timestamp');    // => Output: timestamp value
   }
 
   DateTime? get timestamp => _timestamp;  // => Getter
-}
+                                        // => Returns: nullable DateTime
 
 // Mixin for audit trail
 mixin Auditable {                       // => Second mixin
+                                        // => Independent: can combine with other mixins
   List<String> _auditLog = [];          // => Audit trail storage
+                                        // => Private field: initialize empty
 
   void logAction(String action) {       // => Log method
+                                        // => Parameter: action description
     String entry = '${DateTime.now()}: $action';
-    _auditLog.add(entry);
-    print('Logged: $action');
+                                        // => Format: timestamp + action
+    _auditLog.add(entry);               // => Add: append to log
+    print('Logged: $action');           // => Output: log confirmation
   }
 
   List<String> get auditLog => List.unmodifiable(_auditLog);
                                         // => Return immutable copy
+                                        // => Prevents external modification
 }
 
 // Mixin for JSON serialization
 mixin Serializable {                    // => Third mixin
+                                        // => Defines serialization contract
   Map<String, dynamic> toJson();        // => Abstract method in mixin
                                         // => Class using mixin must implement
+                                        // => Returns: JSON map
 
   String toJsonString() {               // => Concrete method
+                                        // => Implemented in mixin
     return toJson().toString();         // => Uses abstract toJson()
+                                        // => Calls class implementation
   }
 }
 
@@ -2090,59 +2231,73 @@ class Donation with Timestamped, Auditable, Serializable {
                                         // => with: apply mixins
                                         // => Gains all mixin members
                                         // => Order matters (later mixins override earlier)
-  String donorName;
-  double amount;
+  String donorName;                     // => Field: donor name
+  double amount;                        // => Field: donation amount
 
   Donation(this.donorName, this.amount) {
+                                        // => Constructor: initialize fields
     markTimestamp();                    // => Call mixin method
+                                        // => From: Timestamped mixin
     logAction('Donation created');      // => Call mixin method
+                                        // => From: Auditable mixin
   }
 
   @override                             // => Implement abstract method from Serializable
-  Map<String, dynamic> toJson() {
-    return {
-      'donorName': donorName,
-      'amount': amount,
+  Map<String, dynamic> toJson() {       // => Required: Serializable contract
+    return {                            // => Return: Map literal
+      'donorName': donorName,           // => Field: donor name
+      'amount': amount,                 // => Field: amount value
       'timestamp': timestamp?.toIso8601String(),
+                                        // => Mixin field: nullable timestamp
       'auditLog': auditLog,             // => Use mixin getter
+                                        // => From: Auditable mixin
     };
   }
 
   void process() {                      // => Regular method
+                                        // => Not from mixin
     logAction('Processing donation');   // => Use mixin method
-    print('$donorName: Rp$amount');
+                                        // => From: Auditable
+    print('$donorName: Rp$amount');     // => Output: donation details
     markTimestamp();                    // => Update timestamp
+                                        // => From: Timestamped
   }
 }
 
 // Different class using subset of mixins
 class Transaction with Timestamped, Auditable {
                                         // => Only 2 mixins (not Serializable)
-  String transactionId;
-  double amount;
+                                        // => Flexible: choose what to include
+  String transactionId;                 // => Field: transaction ID
+  double amount;                        // => Field: transaction amount
 
   Transaction(this.transactionId, this.amount) {
-    markTimestamp();
-    logAction('Transaction created');
+                                        // => Constructor: initialize fields
+    markTimestamp();                    // => Call: Timestamped mixin method
+    logAction('Transaction created');   // => Call: Auditable mixin method
   }
 
-  void execute() {
-    logAction('Executing transaction');
+  void execute() {                      // => Method: execute transaction
+    logAction('Executing transaction'); // => Log: using Auditable mixin
     print('[$transactionId] Rp$amount');
+                                        // => Output: transaction details
   }
 }
 
 // Mixin with 'on' clause (restricted application)
 mixin Validated on Donation {           // => on Donation: only apply to Donation or subclasses
                                         // => Mixin can access Donation members
-  bool validate() {
+                                        // => Type safety: guaranteed to have Donation features
+  bool validate() {                     // => Method: validate donation
     if (amount <= 0) {                  // => Access Donation.amount
+                                        // => Check: amount must be positive
       logAction('Validation failed: negative amount');
                                         // => Access Auditable.logAction (from Donation)
-      return false;
+                                        // => Mixins can access other mixin methods
+      return false;                     // => Return: invalid
     }
-    logAction('Validation passed');
-    return true;
+    logAction('Validation passed');     // => Log: validation success
+    return true;                        // => Return: valid
   }
 }
 
@@ -2150,44 +2305,64 @@ mixin Validated on Donation {           // => on Donation: only apply to Donatio
 class ValidatedDonation extends Donation with Validated {
                                         // => extends Donation: satisfies 'on Donation'
                                         // => with Validated: apply restricted mixin
+                                        // => Order: extends before with
   ValidatedDonation(String donorName, double amount) : super(donorName, amount);
+                                        // => Constructor: delegate to super
+                                        // => Initializer: calls parent constructor
 
-  @override
-  void process() {
+  @override                             // => Override: parent process method
+  void process() {                      // => Enhanced: adds validation
     if (validate()) {                   // => Use Validated mixin method
+                                        // => Check: call mixin validation
       super.process();                  // => Call parent if valid
-    } else {
+                                        // => Delegate: original behavior
+    } else {                            // => Invalid case
       print('Cannot process invalid donation');
+                                        // => Output: error message
     }
   }
 }
 
-void main() {
+void main() {                           // => Main function entry point
+                                        // => Demonstrates mixin composition
   // Use class with all mixins
   Donation donation = Donation('Ahmad', 500000.0);
                                         // => Has: Timestamped, Auditable, Serializable
+                                        // => All three mixins active
   donation.process();                   // => Uses markTimestamp(), logAction()
+                                        // => Methods from multiple mixins
 
   print('\n=== JSON Serialization ===');
+                                        // => Section header
   print(donation.toJsonString());       // => Uses Serializable mixin
+                                        // => Output: JSON representation
 
-  print('\n=== Audit Log ===');
+  print('\n=== Audit Log ===');        // => Section header
   for (String entry in donation.auditLog) {
+                                        // => Iterate: audit log entries
     print(entry);                       // => Auditable mixin getter
+                                        // => Output: each log entry
   }
 
   // Use class with subset of mixins
   Transaction txn = Transaction('TXN-001', 1000000.0);
-  txn.execute();
+                                        // => Only Timestamped + Auditable
+  txn.execute();                        // => Execute: transaction logic
   // txn.toJsonString();                // => ERROR: Transaction doesn't have Serializable
+                                        // => Compile error: method not available
 
   // Use restricted mixin
   print('\n=== Validated Donation ===');
+                                        // => Section header
   ValidatedDonation validDonation = ValidatedDonation('Fatimah', 750000.0);
+                                        // => Valid: positive amount
   validDonation.process();              // => Validates before processing
+                                        // => Passes: validation succeeds
 
   ValidatedDonation invalidDonation = ValidatedDonation('Ali', -100.0);
+                                        // => Invalid: negative amount
   invalidDonation.process();            // => Validation fails
+                                        // => Output: error message
 }
 ```
 
@@ -2307,16 +2482,19 @@ extension DonationHelpers on Donation { // => Extension on custom class
   }
 }
 
-void main() {
+void main() {                           // => Main function entry point
+                                        // => Demonstrates extension method usage
   // Use String extensions
-  String donorId = 'DONOR-12345';
+  String donorId = 'DONOR-12345';       // => String instance
   print('Valid donor ID: ${donorId.isValidDonorId}');
                                         // => Output: Valid donor ID: true
                                         // => Extension method called as if built-in
+                                        // => isValidDonorId added by StringValidation extension
 
-  String invalidId = 'ABC';
+  String invalidId = 'ABC';             // => Another String instance
   print('Valid donor ID: ${invalidId.isValidDonorId}');
                                         // => Output: Valid donor ID: false
+                                        // => Extension works on any String
 
   String name = 'ahmad';
   print('Title case: ${name.toTitleCase()}');
@@ -2417,75 +2595,95 @@ Creating type-safe generic classes with bounded type parameters. Generics enable
 ```dart
 // Generic class without constraints
 class Box<T> {                          // => Generic class: works with any type T
+                                        // => T: type parameter (placeholder)
   T content;                            // => Field of type T
+                                        // => Type-safe: enforced at compile time
 
   Box(this.content);                    // => Constructor: takes T
+                                        // => Parameter: typed to T
 
   T getContent() => content;            // => Return type T
+                                        // => Getter: type-safe access
 
   void setContent(T newContent) {       // => Parameter type T
-    content = newContent;
+                                        // => Type safety: must match T
+    content = newContent;               // => Assignment: type-checked
   }
 
-  void display() {
+  void display() {                      // => Method: print content
     print('Box contains: \$content (type: \${T.toString()})');
                                         // => T.toString(): type parameter name
+                                        // => Runtime: shows actual type
   }
 }
 
 // Generic class with bound (type constraint)
 class NumberBox<T extends num> {        // => T extends num: only num or subclasses (int, double)
+                                        // => Bound: restricts T to numeric types
   T value;                              // => Type constraint ensures numeric operations
+                                        // => Can call num methods on value
 
-  NumberBox(this.value);
+  NumberBox(this.value);                // => Constructor: takes constrained T
 
   T add(T other) {                      // => Type-safe addition
+                                        // => Parameter: same type as value
     return (value + other) as T;        // => Cast needed (num + num → num, need T)
                                         // => Only works because T extends num
   }
 
   bool isGreaterThan(T other) {         // => Comparison available (num has >)
+                                        // => num provides > operator
     return value > other;               // => Compile error if T not constrained to num
   }
 
-  String formatted() {
+  String formatted() {                  // => Method: format number
     return value.toStringAsFixed(2);    // => toStringAsFixed available (num method)
+                                        // => 2 decimal places
   }
 }
 
 // Generic class with multiple type parameters
 class Pair<K, V> {                      // => Two type parameters
+                                        // => K: key type, V: value type
   K key;                                // => First type
   V value;                              // => Second type
 
-  Pair(this.key, this.value);
+  Pair(this.key, this.value);           // => Constructor: takes K and V
 
-  @override
+  @override                             // => Override: Object.toString
   String toString() => 'Pair(\$key: \$value)';
+                                        // => Format: key-value pair
 }
 
 // Generic collection with methods
 class Repository<T> {                   // => Generic repository pattern
+                                        // => T: entity type stored
   List<T> _items = [];                  // => List of type T
+                                        // => Private: internal storage
 
   void add(T item) {                    // => Add item of type T
-    _items.add(item);
-    print('Added: \$item');
+                                        // => Type-safe: only T accepted
+    _items.add(item);                   // => Append: to internal list
+    print('Added: \$item');             // => Output: confirmation
   }
 
   T? findById(bool Function(T) predicate) {
                                         // => Generic predicate function
                                         // => Function takes T, returns bool
-    try {
+                                        // => Return: nullable T
+    try {                               // => Try-catch: handle not found
       return _items.firstWhere(predicate);
-    } catch (e) {
+                                        // => Find: first matching item
+    } catch (e) {                       // => Catch: StateError if not found
       return null;                      // => Return null if not found
     }
   }
 
   List<T> getAll() => List.from(_items);  // => Return copy of list
+                                        // => Defensive: prevent external mutation
 
   int get count => _items.length;       // => Count getter
+                                        // => Return: number of items
 }
 
 // Class for testing
@@ -2499,17 +2697,21 @@ class Donation {
   String toString() => '\$donorName: Rp\$amount';
 }
 
-void main() {
+void main() {                           // => Main function entry point
+                                        // => Demonstrates generic type usage
   // Generic Box without constraint
   Box<String> stringBox = Box<String>('Hello');
                                         // => Type parameter: String
+                                        // => Explicit: specify type argument
   stringBox.display();                  // => Output: Box contains: Hello (type: String)
 
   Box<int> intBox = Box<int>(42);       // => Type parameter: int
+                                        // => Different type: same class
   intBox.display();                     // => Output: Box contains: 42 (type: int)
 
   // Type inference
   var inferredBox = Box(100);           // => Type inferred as Box<int>
+                                        // => Dart: infers from constructor argument
   inferredBox.display();                // => Output: Box contains: 100 (type: int)
 
   // Generic NumberBox with constraint
@@ -3001,18 +3203,21 @@ class DonationBuilder {
 
   DonationBuilder withDonor(String donor) {
                                         // => Builder method: set donor
-    _donor = donor;
+                                        // => Parameter: donor name string
+    _donor = donor;                     // => Assign to private field
     return this;                        // => Return this: enable method chaining
   }
 
   DonationBuilder withAmount(double amount) {
-    _amount = amount;
+                                        // => Builder method: set amount
+    _amount = amount;                   // => Store amount value
     return this;                        // => Return this: chain continues
   }
 
   DonationBuilder withCategory(String category) {
-    _category = category;
-    return this;
+                                        // => Builder method: set category
+    _category = category;               // => Store category value
+    return this;                        // => Return this for chaining
   }
 
   Donation build() {                    // => Build method: create final object
@@ -3024,14 +3229,15 @@ class DonationBuilder {
   }                                     // => Return: configured Donation object
 }
 
-void main() {
+void main() {                           // => Main function entry point
+                                        // => Demonstrates cascade notation patterns
   // Without cascade (verbose, repetitive)
-  Donation donation1 = Donation();
+  Donation donation1 = Donation();      // => Create Donation instance
   donation1.setDonor('Ahmad');          // => Repetition: donation1 repeated
   donation1.setAmount(100000.0);
   donation1.setCategory('Zakat');
   donation1.setTimestamp(DateTime.now());
-  donation1.log();
+  donation1.log();                      // => Call log method: print details
 
   // With cascade notation (clean, fluent)
   Donation donation2 = Donation()
@@ -3050,6 +3256,7 @@ void main() {
     ..category = 'Infaq'
     ..timestamp = DateTime.now();       // => Cascade: works with fields and methods
   donation3.log();                      // => Separate statement: no cascade
+                                        // => Regular method call: not part of cascade chain
 
   // Null-aware cascade (?..
   Donation? nullableDonation = null;    // => Nullable: might be null
@@ -3070,6 +3277,7 @@ void main() {
 
   // Builder pattern with cascade
   Donation donation4 = DonationBuilder()
+                                        // => Create builder instance
     ..withDonor('Bilal')                // => Builder cascade: method chaining
     ..withAmount(175000.0)              // => Each method: returns builder
     ..withCategory('Zakat')             // => Fluent API: readable sequence
@@ -3078,7 +3286,8 @@ void main() {
                                         // => Output: Donation: Bilal - Rp175000.0 (Zakat) at [time]
 
   // Cascade in list operations
-  List<int> amounts = []
+  List<int> amounts = []                // => Create empty list
+                                        // => Type: List<int>
     ..add(100000)                       // => Cascade on list: add operations
     ..add(200000)                       // => Fluent: multiple adds
     ..add(150000)
@@ -3087,11 +3296,13 @@ void main() {
   print('Sorted amounts: $amounts');    // => Output: [100000, 150000, 200000]
 
   // Mixed cascade and regular operations
-  StringBuffer buffer = StringBuffer()
+  StringBuffer buffer = StringBuffer()  // => Create StringBuffer instance
+                                        // => Mutable string builder
     ..write('Donations: ')              // => Cascade: StringBuffer operations
     ..write('Ahmad: Rp100000, ')
     ..write('Fatimah: Rp200000');
   String result2 = buffer.toString();   // => Regular call: break cascade
+                                        // => toString(): convert buffer to String
   print(result2);                       // => Output: Donations: Ahmad: Rp100000, Fatimah: Rp200000
 }
 ```
@@ -3118,12 +3329,14 @@ Using metadata annotations (@) to add declarative information to code elements. 
 ```dart
 // Custom annotation classes
 class ValidateAmount {                  // => Custom annotation: validation metadata
+                                        // => Class: defines annotation structure
   final double minAmount;               // => Field: minimum amount constraint
   final double maxAmount;               // => Field: maximum amount constraint
 
   const ValidateAmount({                // => const constructor: compile-time constant
-    required this.minAmount,
-    required this.maxAmount,
+                                        // => Required: annotations must be const
+    required this.minAmount,            // => Named parameter: min value
+    required this.maxAmount,            // => Named parameter: max value
   });                                   // => Usage: @ValidateAmount(min: 0, max: 1000000)
 }
 
@@ -3134,69 +3347,80 @@ class Auditable {                       // => Marker annotation: no parameters
 const auditable = Auditable();          // => Constant instance: shorthand usage
                                         // => Use: @auditable instead of @Auditable()
 
-class Donation {
+class Donation {                        // => Example class: using annotations
   @ValidateAmount(minAmount: 10000, maxAmount: 10000000)
                                         // => Annotation on field: validation metadata
                                         // => Code generators: can read this metadata
                                         // => Runtime: available via reflection (mirrors)
-  double amount;
+  double amount;                        // => Field: with validation metadata
 
   @auditable                            // => Marker: this field tracked in audit log
-  String donor;
+  String donor;                         // => Field: with audit tracking
 
-  Donation(this.amount, this.donor);
+  Donation(this.amount, this.donor);    // => Constructor: positional parameters
 }
 
-class ZakatCalculator {
+class ZakatCalculator {                 // => Example class: deprecation patterns
   @deprecated                           // => Built-in: marks method as deprecated
   double calculate(double wealth) {     // => Analyzer warning: when method called
                                         // => Migration: indicates old API
     return wealth * 0.025;              // => Old implementation
+                                        // => Formula: 2.5% Zakat rate
   }
 
   @Deprecated('Use calculateZakat instead')
                                         // => Custom message: deprecation reason
-  double computeZakat(double wealth) {
-    return wealth * 0.025;
+                                        // => Better: guides developers to new API
+  double computeZakat(double wealth) {  // => Deprecated method with message
+    return wealth * 0.025;              // => Implementation: same calculation
   }
 
   double calculateZakat(double wealth) {  // => New method: replacement API
-    return wealth * 0.025;
+                                        // => No annotation: current API
+    return wealth * 0.025;              // => Calculation: wealth × rate
   }
 
   @override                             // => Annotation: marks override
   String toString() {                   // => Overrides: Object.toString()
                                         // => Analyzer: warns if not actually overriding
-    return 'ZakatCalculator';
+    return 'ZakatCalculator';           // => Return: class name string
   }
 }
 
 // Abstract class with override annotations
-abstract class PaymentProcessor {
+abstract class PaymentProcessor {       // => Abstract class: defines interface
   void processPayment(double amount);   // => Abstract method: must override
 }
 
 class CashPayment implements PaymentProcessor {
+                                        // => Implementation: cash payment
   @override                             // => Required: implements interface method
   void processPayment(double amount) {  // => Implementation: concrete method
+                                        // => Parameter: payment amount
     print('Processing cash: Rp$amount');
+                                        // => Side effect: print payment
   }
 }
 
 class CardPayment implements PaymentProcessor {
-  @override
-  void processPayment(double amount) {
+                                        // => Implementation: card payment
+  @override                             // => Annotation: marks interface method
+  void processPayment(double amount) {  // => Implementation: card processing
     print('Processing card: Rp$amount');
+                                        // => Output: card payment details
   }
 
   // Typo: missing 's' in processPayment
   // @override would cause compile error here
   // void procesPayment(double amount) {} ← Won't compile with @override
+                                        // => Safety: @override catches typos
 }
 
-void main() {
+void main() {                           // => Main function entry point
+                                        // => Demonstrates annotation usage
   // Using class with annotations
   Donation donation = Donation(150000.0, 'Ahmad');
+                                        // => Create: donation instance
                                         // => Object: has annotated fields
                                         // => Metadata: available at runtime
   print('Donation: ${donation.donor} - Rp${donation.amount}');
@@ -3204,6 +3428,7 @@ void main() {
 
   // Deprecated method usage (analyzer warning)
   ZakatCalculator calculator = ZakatCalculator();
+                                        // => Create: calculator instance
   double zakat1 = calculator.calculate(10000000.0);
                                         // => Warning: calculate is deprecated
                                         // => IDE: shows strikethrough
@@ -3212,6 +3437,7 @@ void main() {
   double zakat2 = calculator.computeZakat(10000000.0);
                                         // => Warning: Use calculateZakat instead
   print('Zakat (deprecated): Rp$zakat2');
+                                        // => Output: same result but deprecated
 
   double zakat3 = calculator.calculateZakat(10000000.0);
                                         // => No warning: current API
@@ -3219,10 +3445,14 @@ void main() {
 
   // Override annotation benefits
   PaymentProcessor cashPayment = CashPayment();
-  cashPayment.processPayment(100000.0); // => Output: Processing cash: Rp100000.0
+                                        // => Polymorphism: interface type
+  cashPayment.processPayment(100000.0); // => Call: overridden method
+                                        // => Output: Processing cash: Rp100000.0
 
   PaymentProcessor cardPayment = CardPayment();
-  cardPayment.processPayment(200000.0); // => Output: Processing card: Rp200000.0
+                                        // => Create: card payment instance
+  cardPayment.processPayment(200000.0); // => Call: card implementation
+                                        // => Output: Processing card: Rp200000.0
 
   // Custom annotation usage (metadata only, no runtime effect without reflection)
   print('Donation annotation: ValidateAmount(10000-10000000)');
@@ -3282,17 +3512,20 @@ class Donation {
                                         // => Invariant: timestamp constraint
 
   // Method with assertions
-  void addBonus(double bonusPercent) {
+  void addBonus(double bonusPercent) {  // => Method: add bonus to donation
+                                        // => Parameter: bonus percentage
     assert(bonusPercent >= 0 && bonusPercent <= 100,
         'Bonus percent must be between 0 and 100, got: $bonusPercent');
                                         // => Precondition: valid percentage range
     double bonus = amount * (bonusPercent / 100);
                                         // => Calculate: bonus amount
-    print('Bonus: Rp$bonus');
+    print('Bonus: Rp$bonus');           // => Output: bonus value
   }
 }
 
 double calculateZakat(double wealth, double rate) {
+                                        // => Function: calculate Zakat from wealth
+                                        // => Parameters: wealth amount, Zakat rate
   assert(wealth >= 0, 'Wealth cannot be negative: $wealth');
                                         // => Parameter validation: development check
   assert(rate >= 0 && rate <= 1, 'Rate must be between 0 and 1: $rate');
@@ -3306,22 +3539,23 @@ double calculateZakat(double wealth, double rate) {
     return 0.0;                         // => No Zakat: below nisab
   }
 
-  double zakat = wealth * rate;
+  double zakat = wealth * rate;         // => Calculate: wealth × rate
   assert(zakat >= 0, 'Calculated Zakat cannot be negative: $zakat');
                                         // => Postcondition: result validation
   assert(zakat <= wealth, 'Zakat cannot exceed wealth');
                                         // => Sanity check: zakat ≤ wealth
 
-  return zakat;
+  return zakat;                         // => Return: calculated Zakat amount
 }
 
 class DonationList {
   final List<Donation> _donations = []; // => Internal list: donations
 
-  void add(Donation donation) {
+  void add(Donation donation) {         // => Method: add donation to list
+                                        // => Parameter: donation instance
     int oldLength = _donations.length;  // => Capture: length before add
 
-    _donations.add(donation);
+    _donations.add(donation);           // => Add: append to list
 
     assert(_donations.length == oldLength + 1,
         'List length should increase by 1');
@@ -3337,24 +3571,26 @@ class DonationList {
     assert(index < _donations.length,
         'Index out of bounds: $index >= ${_donations.length}');
                                         // => Range check: prevent index error
-    return _donations[index];
+    return _donations[index];           // => Return: donation at index
   }
 
-  int get length {
+  int get length {                      // => Getter: list length
     assert(_donations.length >= 0, 'Length cannot be negative');
                                         // => Invariant: sanity check (always true)
-    return _donations.length;
+    return _donations.length;           // => Return: internal list length
   }
 }
 
-void main() {
+void main() {                           // => Main function entry point
+                                        // => Demonstrates assertion usage
   // Valid donation (assertions pass in debug mode)
-  Donation donation1 = Donation(
+  Donation donation1 = Donation(        // => Create: valid donation instance
     donor: 'Ahmad',
     amount: 100000.0,
     timestamp: DateTime.now(),
   );                                    // => All assertions pass
   print('Valid donation: ${donation1.donor} - Rp${donation1.amount}');
+                                        // => Output: donation details
 
   // Assertions in method calls
   donation1.addBonus(10);               // => 10% bonus: valid
@@ -3383,6 +3619,7 @@ void main() {
 
   // Function assertions
   double zakat = calculateZakat(10000000.0, 0.025);
+                                        // => Call: wealth=10M, rate=2.5%
                                         // => All assertions pass
   print('Zakat: Rp$zakat');             // => Output: Zakat: Rp250000.0
 
@@ -3394,11 +3631,13 @@ void main() {
   //                                  // ← AssertionError: Rate must be between 0 and 1
 
   // Assertions in class operations
-  DonationList list = DonationList();
-  list.add(donation1);                  // => Assertions: verify list state
+  DonationList list = DonationList();   // => Create: empty donation list
+  list.add(donation1);                  // => Add: first donation
+                                        // => Assertions: verify list state
   print('List length: ${list.length}'); // => Output: List length: 1
 
-  Donation retrieved = list[0];         // => Index assertions: valid range
+  Donation retrieved = list[0];         // => Access: get first element
+                                        // => Index assertions: valid range
   print('Retrieved: ${retrieved.donor}');
                                         // => Output: Retrieved: Ahmad
 
@@ -3406,6 +3645,7 @@ void main() {
   // Donation invalid = list[10];      // ← AssertionError: Index out of bounds
 
   print('All assertions passed (debug mode) or disabled (release mode)');
+                                        // => Summary: assertion behavior
 }
 ```
 
@@ -3551,12 +3791,14 @@ class DonationService {
   }
 }
 
-void main() {
+void main() {                           // => Main function entry point
+                                        // => Demonstrates: factory and named constructors
   // Named constructors for clarity
   // => Named constructors improve API clarity and type safety
   Donation donation1 = Donation.zakat('Ahmad', 100000.0);
                                         // => Named constructor: clear intent
                                         // => Category: automatically 'Zakat'
+                                        // => donation1 is new Donation instance
                                         // => Alternative to: Donation('Ahmad', 100000.0, 'Zakat')
   print(donation1);                     // => Output: Zakat from Ahmad: Rp100000.0
 
@@ -3913,17 +4155,23 @@ typedef DonationRecord = ({String donor, double amount, DateTime timestamp});
                                         // => Typedef: name for record type
                                         // => Usage: reusable type alias
 
-void main() {
+void main() {                           // => Main function entry point
+                                        // => Demonstrates record type usage
   // Positional record
   var donation1 = getDonation();        // => Type: (String, double)
+                                        // => var infers record type from return
   print('Positional record: $donation1');
                                         // => Output: (Ahmad, 100000.0)
+                                        // => Records have automatic toString()
 
   // Access positional fields
   String donor1 = donation1.$1;         // => Field 1: $1 accessor
+                                        // => Positional fields numbered from $1
   double amount1 = donation1.$2;        // => Field 2: $2 accessor
+                                        // => Type-safe field access
   print('Donor: $donor1, Amount: Rp$amount1');
                                         // => Output: Donor: Ahmad, Amount: Rp100000.0
+                                        // => Extracted values from record
 
   // Named record
   var donation2 = getDonationDetails(); // => Type: ({String donor, double amount, String category})

@@ -1932,11 +1932,14 @@ sequenceDiagram
 ```rust
 use tokio::sync::mpsc;               // => mpsc: multi-producer, single-consumer channel
                                      // => Import from Tokio async runtime
+                                     // => Brings channel types into scope
 
 #[tokio::main]                       // => Macro creates Tokio runtime
                                      // => Expands to runtime creation and block_on call
                                      // => Enables async main function
+                                     // => Attribute macro (compile-time expansion)
 async fn main() {                    // => Async main function (requires #[tokio::main])
+                                     // => Entry point for async program
     let (tx, mut rx) = mpsc::channel(32);
                                      // => Create bounded channel with capacity 32
                                      // => Returns (Sender, Receiver) tuple
@@ -1949,9 +1952,11 @@ async fn main() {                    // => Async main function (requires #[tokio
                                      // => Spawn producer task (owns tx via move)
                                      // => move captures tx from outer scope
                                      // => Returns JoinHandle (task handle)
+                                     // => Task runs on Tokio thread pool
         for i in 0..5 {              // => Loop 5 iterations
                                      // => Send 5 messages (0, 1, 2, 3, 4)
                                      // => i is i32 (inferred from channel type)
+                                     // => Range iterator (0..5)
             tx.send(i).await.unwrap();
                                      // => send() is async: returns Future<Result<(), SendError>>
                                      // => .await suspends if channel full (backpressure)
@@ -1983,28 +1988,37 @@ async fn main() {                    // => Async main function (requires #[tokio
 
 // Demonstrating backpressure with small buffer
 async fn backpressure_demo() {      // => Async function demonstrating backpressure
+                                     // => Returns Future<()> (async fn sugar)
     let (tx, mut rx) = mpsc::channel(2);
                                      // => Small buffer: only 2 messages
                                      // => Capacity 2 (vs 32 in previous example)
                                      // => Forces backpressure when sender fast, receiver slow
+                                     // => Bounded channel (limited capacity)
 
     tokio::spawn(async move {        // => Spawn fast producer task
                                      // => Owns tx via move
+                                     // => Task runs concurrently
         for i in 0..5 {              // => Attempt to send 5 messages
                                      // => More messages than buffer capacity
+                                     // => Demonstrates backpressure
             println!("Attempting to send {}", i);
                                      // => Prints before send attempt
                                      // => Shows when send starts
+                                     // => Diagnostic output
             tx.send(i).await.unwrap();
                                      // => send() awaits when buffer full
                                      // => Blocks after buffer full (i=2)
                                      // => i=0,1 sent immediately (buffer has space)
                                      // => i=2 awaits until receiver consumes one
                                      // => Backpressure applied here
+                                     // => Automatic flow control
             println!("Sent {}", i);  // => Confirms successful send
                                      // => Prints after send completes
+                                     // => Shows backpressure release
         }                            // => Loop ends, tx dropped
+                                     // => Signals channel close
     });                              // => Producer spawned
+                                     // => Runs in background
 
     tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
                                      // => Main task sleeps 100ms
@@ -2025,12 +2039,17 @@ async fn backpressure_demo() {      // => Async function demonstrating backpress
 }                                    // => Function completes
 
 // Multiple producers, single consumer
-async fn multiple_producers() {
+async fn multiple_producers() {      // => Async function demonstrating mpsc pattern
+                                     // => Multi-producer, single-consumer
     let (tx, mut rx) = mpsc::channel(32);
+                                     // => Bounded channel (32 message capacity)
+                                     // => tx clonable, rx not clonable
 
     for producer_id in 0..3 {        // => Spawn 3 producer tasks
+                                     // => Iterate 0, 1, 2
         let tx_clone = tx.clone();   // => Clone sender (mpsc supports multiple senders)
                                      // => Each producer gets own Sender<i32>
+                                     // => Cloning increases sender reference count
         tokio::spawn(async move {
             for i in 0..3 {          // => Each producer sends 3 messages
                 let msg = producer_id * 10 + i;
@@ -3129,31 +3148,43 @@ Traits must be object-safe to be used as trait objects, requiring no generic met
 
 ```rust
 trait NotObjectSafe {                // => Trait with object-safety violations
+                                     // => Cannot be used as dyn NotObjectSafe
     fn generic<T>(&self, x: T);      // => Generic method: T unknown at runtime
                                      // => NOT object-safe: vtable can't store all possible T
                                      // => Would need infinite vtable entries!
                                      // => Each T instantiation needs separate vtable entry
+                                     // => Type parameter erased for trait objects
     fn returns_self(&self) -> Self;  // => Returns Self: size unknown for trait object
                                      // => NOT object-safe: what size to return?
                                      // => dyn Trait has unknown size (size_of_val varies)
+                                     // => Return type size must be known
 }                                    // => Trait cannot be used as dyn NotObjectSafe
+                                     // => Compiler error if attempted
 
 trait ObjectSafe {                   // => Trait satisfying object-safety requirements
+                                     // => Can be used for trait objects
     fn method(&self) -> i32;         // => Method with &self: object-safe
                                      // => No generics, known return size (i32)
                                      // => Can store in vtable: fn(&Self) -> i32
                                      // => Signature compatible with dynamic dispatch
+                                     // => Returns concrete type (not Self)
 }                                    // => Can be used as dyn ObjectSafe
+                                     // => Valid for Box<dyn ObjectSafe>
 
 struct MyType;                       // => Unit struct (zero-size type)
                                      // => Simple concrete type implementing ObjectSafe
+                                     // => No fields (zero bytes)
 
 impl ObjectSafe for MyType {         // => Implement ObjectSafe for MyType
+                                     // => Provides method implementation
     fn method(&self) -> i32 {        // => Implement required method
+                                     // => Takes immutable borrow of self
         42                           // => Simple implementation (returns constant)
                                      // => Return value has known size (i32)
+                                     // => Expression (no semicolon)
     }                                // => Method completes
 }                                    // => MyType now implements ObjectSafe
+                                     // => Can be used as dyn ObjectSafe
 
 fn main() {                          // => Demonstration of object safety
     let obj: Box<dyn ObjectSafe> = Box::new(MyType);
@@ -3176,9 +3207,11 @@ fn main() {                          // => Demonstration of object safety
 
 // Using where Self: Sized to hide methods from trait object
 trait MixedSafety {                  // => Trait mixing object-safe and non-object-safe methods
+                                     // => Overall trait is object-safe
     fn object_safe_method(&self);    // => Object-safe method (no generics, returns known size)
                                      // => In vtable (object-safe)
                                      // => Available on both concrete types and dyn MixedSafety
+                                     // => Required method (no default impl)
 
     fn non_object_safe<T>(&self, x: T)
                                      // => Generic method (NOT object-safe normally)
@@ -3677,9 +3710,11 @@ SIMD (Single Instruction Multiple Data) enables data parallelism at the CPU inst
 ```rust
 // Using portable SIMD (unstable feature, requires nightly)
 // #![feature(portable_simd)]        // => Enable portable_simd feature (nightly only)
+                                     // => Unstable API (subject to change)
 use std::simd::f32x4;                // => SIMD vector of 4 f32 values
                                      // => Single Instruction Multiple Data type
                                      // => Operates on 4 floats simultaneously
+                                     // => Portable across CPU architectures
 
 // SIMD vectorized addition
 fn simd_add(a: &[f32], b: &[f32]) -> Vec<f32> {
@@ -4418,42 +4453,59 @@ Profiling identifies performance bottlenecks, while benchmarking measures code p
 pub fn fibonacci_recursive(n: u64) -> u64 {
                                      // => Public function (callable from benchmarks)
                                      // => Takes u64, returns u64
+                                     // => Recursive implementation (inefficient)
     match n {                        // => Pattern match on n
+                                     // => Exhaustive match required
         0 => 0,                      // => Base case: fib(0) = 0
+                                     // => First fibonacci number
         1 => 1,                      // => Base case: fib(1) = 1
+                                     // => Second fibonacci number
         n => fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2),
                                      // => Recursive case (n >= 2)
                                      // => Recursive: fib(n) = fib(n-1) + fib(n-2)
                                      // => Makes 2 recursive calls per level
                                      // => Exponential time complexity O(2^n)
                                      // => Very slow for large n (duplicate computations)
+                                     // => No memoization (recalculates values)
     }                                // => Match returns u64
 }                                    // => Function completes
+                                     // => Returns fibonacci number
 
 pub fn fibonacci_iterative(n: u64) -> u64 {
                                      // => Optimized iterative version
                                      // => Public function for benchmarking
+                                     // => Much faster than recursive
     if n <= 1 {                      // => Handle base cases (0 and 1)
+                                     // => Early return optimization
         return n;                    // => Early return for base cases
                                      // => fib(0) = 0, fib(1) = 1
+                                     // => No iteration needed
     }                                // => Continue to iterative calculation
     let mut a = 0;                   // => Previous value (fib(n-2))
                                      // => Mutable state for iteration
+                                     // => Initialized to fib(0)
     let mut b = 1;                   // => Current value (fib(n-1))
                                      // => Mutable state for iteration
+                                     // => Initialized to fib(1)
     for _ in 1..n {                  // => Iterate n-1 times
                                      // => Loop from 1 to n-1 (inclusive)
+                                     // => Discard loop variable (unused)
         let temp = a + b;            // => Next fibonacci number
                                      // => Calculate fib(n) = fib(n-1) + fib(n-2)
+                                     // => Temporary storage for sum
         a = b;                       // => Shift: previous becomes current
                                      // => Update for next iteration
+                                     // => Move fib(n-1) to fib(n-2)
         b = temp;                    // => Shift: current becomes next
                                      // => Update for next iteration
+                                     // => Move fib(n) to fib(n-1)
     }                                // => Loop completes after n-1 iterations
+                                     // => All fibonacci numbers calculated
     b                                // => Return final result (fib(n))
                                      // => Linear time complexity O(n)
                                      // => ~650x faster than recursive for n=20
 }                                    // => Function completes
+                                     // => No recursion overhead
 
 pub fn sum_vector(data: &[i32]) -> i32 {
                                      // => Sum all elements in slice

@@ -38,107 +38,95 @@ graph TD
 **Code**:
 
 ```java
-// ABSTRACT CLASS - cannot be instantiated, may have abstract and concrete methods
+// ABSTRACT CLASS - cannot be instantiated
 abstract class DataProcessor {
     // => Cannot create: new DataProcessor() - compile error
     // => Must extend to use
 
-    // TEMPLATE METHOD - defines algorithm skeleton (final prevents override)
+    // TEMPLATE METHOD - defines algorithm skeleton
     public final void process() {
         // => Final keyword prevents subclass override
         // => Ensures all subclasses execute same workflow
-        // => Enforces consistent 4-step pipeline
-        loadData();
-        // => Step 1: subclass-specific data loading
-        // => Abstract method: implementation varies by processor type
-        transform();
-        // => Step 2: subclass-specific transformation
-        // => Converts loaded data to internal format
-        validate();
-        // => Step 3: shared validation logic
-        // => Concrete implementation: same for all subclasses
-        save();
-        // => Step 4: subclass-specific persistence
-        // => Abstract method: storage destination varies
+        loadData();                  // => Step 1: subclass-specific loading
+                                     // => Calls overridden loadData() in CSVProcessor/JSONProcessor
+        transform();                 // => Step 2: subclass-specific transformation
+                                     // => Polymorphic call: runtime type determines implementation
+        validate();                  // => Step 3: shared validation logic
+                                     // => Calls concrete method (same for all subclasses)
+        save();                      // => Step 4: subclass-specific persistence
+                                     // => Storage destination varies by subclass
     }
 
     // ABSTRACT METHODS - subclasses must implement
     protected abstract void loadData();
-    // => No method body: subclass MUST provide implementation
-    // => Compile error if concrete subclass doesn't override
+                                     // => No method body: subclass MUST override
     protected abstract void transform();
-    // => Forces customization point for data transformation
-    // => Each processor defines its own parsing logic
-    protected abstract void save();
-    // => Each subclass chooses storage mechanism
-    // => Database, cache, file system, etc.
+                                     // => Customization point for data transformation
+    protected abstract void save();  // => Each subclass chooses storage mechanism
 
     // CONCRETE METHOD - shared implementation
-    protected void validate() {
-        // => All subclasses inherit this implementation
-        // => Can be overridden (not final) if needed
+    protected void validate() {      // => All subclasses inherit this
+                                     // => Can be overridden (not final)
         System.out.println("Validating data");
-        // => Common validation logic
-        // => Output: "Validating data"
+                                     // => Output: Validating data
     }
 }
 
 // CONCRETE SUBCLASS
 class CSVProcessor extends DataProcessor {
-    // => Inherits template method process()
-    // => Must implement 3 abstract methods
+                                     // => Inherits template method process()
+                                     // => Must implement 3 abstract methods
 
     @Override
-    protected void loadData() {
+    protected void loadData() {      // => Implements abstract method
         System.out.println("Loading CSV file");
-        // => CSV-specific: reads .csv files
+                                     // => Output: Loading CSV file
     }
 
     @Override
-    protected void transform() {
+    protected void transform() {     // => Implements abstract method
         System.out.println("Parsing CSV to objects");
-        // => Converts comma-separated values to Java objects
+                                     // => Output: Parsing CSV to objects
     }
 
     @Override
-    protected void save() {
+    protected void save() {          // => Implements abstract method
         System.out.println("Saving to database");
-        // => Persists to SQL database
+                                     // => Output: Saving to database
     }
 }
 
 class JSONProcessor extends DataProcessor {
-    // => Different implementations, same interface
+                                     // => Different implementations, same interface
 
     @Override
     protected void loadData() {
         System.out.println("Loading JSON file");
-        // => JSON-specific: reads .json files
+                                     // => Output: Loading JSON file
     }
 
     @Override
     protected void transform() {
         System.out.println("Parsing JSON to objects");
-        // => Converts JSON strings to Java objects
+                                     // => Output: Parsing JSON to objects
     }
 
     @Override
     protected void save() {
         System.out.println("Saving to cache");
-        // => Stores in memory cache (different from CSV)
+                                     // => Output: Saving to cache
     }
 }
 
 // USAGE
 DataProcessor csv = new CSVProcessor();
-// => Creates concrete instance (abstract class used as type)
-csv.process();
-// => Executes: loadData() → transform() → validate() → save()
-// => Uses CSVProcessor implementations for steps 1,2,4
-// => Output: Loading CSV file
-// =>         Parsing CSV to objects
-// =>         Validating data
-// =>         Saving to database
+                                     // => Creates concrete instance
+csv.process();                       // => Executes 4-step pipeline
+                                     // => Calls CSVProcessor's overridden methods
+                                     // => Output: Loading CSV file
+                                     // =>         Parsing CSV to objects
+                                     // =>         Validating data
+                                     // =>         Saving to database
 
 DataProcessor json = new JSONProcessor();
 // => Different processor, same workflow structure
@@ -167,18 +155,14 @@ Composition builds objects from reusable components rather than inheriting from 
 // => HAS-A relationships instead of IS-A (inheritance)
 
 // Component interfaces
-interface Engine {
-    // => Contract: all engines must implement start()
-    // => Enables polymorphism: any Engine type works
-    void start();
-    // => No method body: interface method (abstract by default)
+interface Engine {                   // => Contract: all engines must implement start()
+                                     // => Enables polymorphism across engine types
+    void start();                    // => No body: abstract by default in interfaces
 }
 
-interface Transmission {
-    // => Contract: all transmissions must implement shift()
-    // => Allows different shifting strategies
-    void shift(int gear);
-    // => Parameter: target gear number
+interface Transmission {             // => Contract: all transmissions must implement shift()
+                                     // => Allows different shifting strategies
+    void shift(int gear);            // => Parameter: target gear number
 }
 
 // Component implementations
@@ -222,30 +206,24 @@ class AutomaticTransmission implements Transmission {
     }
 }
 
-// COMPOSED CLASS - has-a relationship instead of is-a
-class Car {
-    // => Car contains components (composition)
-    private final Engine engine;
-    // => HAS-A Engine (can be electric, gas, diesel, etc.)
+// COMPOSED CLASS - has-a relationship
+class Car {                          // => Car contains components (composition)
+    private final Engine engine;     // => HAS-A Engine (can be any Engine implementation)
+                                     // => Final: cannot be reassigned after construction
     private final Transmission transmission;
-    // => HAS-A Transmission (can be manual, automatic, CVT, etc.)
+                                     // => HAS-A Transmission (can be any Transmission type)
 
     public Car(Engine engine, Transmission transmission) {
-        // => Dependency injection: flexibility at construction
-        this.engine = engine;
-        // => Store engine reference
+                                     // => Dependency injection pattern
+        this.engine = engine;        // => Store engine reference
         this.transmission = transmission;
-        // => Store transmission reference
+                                     // => Store transmission reference
     }
 
-    public void drive() {
-        // => Coordinate components to drive
-        engine.start();
-        // => Delegate to composed engine
-        transmission.shift(1);
-        // => Shift to 1st gear
-        transmission.shift(2);
-        // => Shift to 2nd gear
+    public void drive() {            // => Coordinate components
+        engine.start();              // => Delegate to composed engine
+        transmission.shift(1);       // => Shift to 1st gear
+        transmission.shift(2);       // => Shift to 2nd gear
     }
 }
 
@@ -284,74 +262,67 @@ Java supports nested classes (static) and inner classes (non-static) that provid
 **Code**:
 
 ```java
-public class OuterClass {
-    // => Outer class containing nested/inner classes
+public class OuterClass {            // => Outer class containing nested/inner classes
     private String outerField = "Outer field";
-    // => Instance field: accessible to inner classes
+                                     // => Instance field accessible to inner classes
     private static String staticField = "Static field";
-    // => Static field: accessible to all nested classes
+                                     // => Static field accessible to all nested classes
 
     // STATIC NESTED CLASS - independent of outer instance
     public static class StaticNested {
-        // => Static means no implicit reference to outer instance
-        // => Can be instantiated without OuterClass instance
-        public void display() {
+                                     // => Static: no implicit reference to outer instance
+                                     // => Can instantiate without OuterClass instance
+        public void display() {      // => Method in static nested class
             System.out.println(staticField);
-            // => ✅ Can access static outer members
-            // => Output: "Static field"
+                                     // => ✅ Can access static outer members
+                                     // => Output: "Static field"
             // System.out.println(outerField);
-            // => ❌ ERROR: cannot access instance members
-            // => No outer instance reference available
+                                     // => ❌ ERROR: cannot access instance members
         }
     }
 
     // INNER CLASS (non-static) - tied to outer instance
-    public class Inner {
-        // => Non-static: holds implicit reference to outer instance
-        // => Cannot exist without OuterClass instance
+    public class Inner {             // => Non-static: holds implicit outer reference
+                                     // => Cannot exist without OuterClass instance
         private String innerField = "Inner field";
-        // => Inner class can have its own fields
+                                     // => Inner class can have own fields
 
         public void display() {
             System.out.println(outerField);
-            // => ✅ Accesses outer instance field
-            // => Implicit reference: OuterClass.this.outerField
+                                     // => ✅ Accesses outer instance field
+                                     // => Implicit: OuterClass.this.outerField
             System.out.println(staticField);
-            // => ✅ Also accesses static members
+                                     // => ✅ Also accesses static members
             System.out.println(innerField);
-            // => Accesses own field
+                                     // => Accesses own field
         }
 
         public void accessOuter() {
             OuterClass.this.outerField = "Modified";
-            // => Explicit outer reference syntax
-            // => OuterClass.this = the outer instance
-            // => Modifies outer field from inner class
+                                     // => Explicit outer reference syntax
+                                     // => OuterClass.this = the outer instance
         }
     }
 
     // METHOD LOCAL INNER CLASS - defined inside method
     public void methodWithLocalClass() {
-        // => Local class scope: only visible within this method
+                                     // => Local class scope: only in this method
         final String localVar = "Local variable";
-        // => Must be final or effectively final (Java 8+)
+                                     // => Must be final/effectively final (Java 8+)
 
-        class LocalInner {
-            // => Class defined inside method body
-            // => Can access method's local variables
+        class LocalInner {           // => Class defined inside method body
+                                     // => Can access method's local variables
             public void display() {
                 System.out.println(localVar);
-                // => Accesses enclosing method's final variable
-                // => Captured in closure
+                                     // => Accesses enclosing method's final variable
                 System.out.println(outerField);
-                // => Also accesses outer instance fields
+                                     // => Also accesses outer instance fields
             }
         }
 
         LocalInner local = new LocalInner();
-        // => Instantiate local class within method
-        local.display();
-        // => Output: "Local variable", "Outer field"
+                                     // => Instantiate local class within method
+        local.display();             // => Output: "Local variable", "Outer field"
     }
 
     // ANONYMOUS INNER CLASS - one-time implementation
@@ -375,8 +346,8 @@ public class OuterClass {
 OuterClass.StaticNested nested = new OuterClass.StaticNested();
 // => Create static nested class: no outer instance needed
 // => Syntax: OuterClass.NestedClass
-nested.display();
-// => Output: "Static field"
+nested.display();                    // => Calls display() on static nested instance
+                                     // => Output: "Static field"
 
 OuterClass outer = new OuterClass();
 // => Create outer instance first
@@ -581,30 +552,34 @@ import java.lang.reflect.*;
 
 // DEFINE CUSTOM ANNOTATION
 @Retention(RetentionPolicy.RUNTIME)  // => Available at runtime via reflection
+                                     // => Enables runtime inspection of annotation data
 @Target(ElementType.METHOD)          // => Can only be applied to methods
-public @interface Test {
+                                     // => Compile error if used on class/field
+public @interface Test {             // => @interface keyword defines annotation type
     String description() default "";  // => Annotation parameter with default value
-    int timeout() default 0;
+    int timeout() default 0;         // => Optional timeout parameter (milliseconds)
 }
 
 // ANOTHER ANNOTATION
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)  // => Available at runtime
+@Target(ElementType.FIELD)           // => Restricts to field declarations
 public @interface Inject {           // => Marks fields for dependency injection
 }
 
 // USE ANNOTATIONS
-class TestSuite {
-    @Inject
-    private String dependency;       // => Marked for injection
+class TestSuite {                    // => Class containing test methods
+    @Inject                          // => Annotation marks field for injection
+    private String dependency;       // => Framework will populate this field
 
     @Test(description = "Adds two numbers", timeout = 1000)
-    public void testAddition() {
+                                     // => Annotation with parameters
+    public void testAddition() {     // => Test method (has @Test)
         System.out.println("Testing addition");
     }
 
     @Test(description = "Divides by zero")
-    public void testDivision() {
+                                     // => Annotation with description only
+    public void testDivision() {     // => Test method (has @Test)
         System.out.println("Testing division");
     }
 
@@ -662,17 +637,21 @@ for (Method method : clazz.getDeclaredMethods()) {
 
 // BUILT-IN ANNOTATIONS
 class Example {
-    @Override                    // => Compile-time check that method overrides superclass
-    public String toString() {
+    @Override                    // => Compile-time check for overriding
+                                 // => Compiler error if not actually overriding
+    public String toString() {   // => Overrides Object.toString()
         return "Example";
     }
 
-    @Deprecated                  // => Marks method as deprecated (compiler warning)
-    public void oldMethod() {}
+    @Deprecated                  // => Marks method as deprecated
+                                 // => Compiler warning when called
+    public void oldMethod() {}   // => Legacy method
 
-    @SuppressWarnings("unchecked") // => Suppresses compiler warnings
-    public void rawTypeMethod() {
+    @SuppressWarnings("unchecked") // => Suppresses specific compiler warnings
+                                   // => Useful for legacy code with raw types
+    public void rawTypeMethod() {  // => Method using raw types
         java.util.List list = new java.util.ArrayList();
+                                   // => Raw List (no generic type)
     }
 }
 ```
@@ -828,76 +807,48 @@ import java.util.*;
 
 // UNBOUNDED WILDCARD - unknown type
 public static void printList(List<?> list) {
-                                 // => Accepts List of any type
-                                 // => ? means "unknown type" (wildcard)
-                                 // => Works with List<Integer>, List<String>, List<Object>, etc.
+                                 // => Accepts List of any type (?)
     for (Object elem : list) {   // => Can only read as Object (safest supertype)
-                                 // => Cannot assume specific type (unknown)
-                                 // => elem could be Integer, String, anything
         System.out.print(elem + " ");
-                                 // => Prints using Object.toString()
     }
     System.out.println();
     // list.add("x");            // => ERROR: cannot write to List<?>
-                                 // => Compiler doesn't know element type
 }
 
 // UPPER-BOUNDED WILDCARD - covariance (reading)
 public static double sumNumbers(List<? extends Number> numbers) {
-                                 // => Accepts List<Integer>, List<Double>, List<Number>, etc.
-                                 // => ? extends Number means "unknown type that extends Number"
-    double sum = 0;              // => Accumulator initialized to 0
-    for (Number num : numbers) { // => Can read elements as Number (upper bound)
-                                 // => Safe because all elements ARE Number subclasses
-        sum += num.doubleValue();// => Call Number method doubleValue()
-                                 // => Accumulate into sum
+                                 // => ? extends Number: accepts List<Integer>, List<Double>, etc.
+    double sum = 0;
+    for (Number num : numbers) { // => Can read as Number (upper bound)
+        sum += num.doubleValue();// => Calls Number.doubleValue()
     }
-    return sum;                  // => Return total sum
-    // numbers.add(1);           // => ERROR: cannot write (compiler doesn't know exact type)
-                                 // => Could be List<Double>, cannot add Integer
+    return sum;
+    // numbers.add(1);           // => ERROR: cannot write (exact type unknown)
 }
 
 // LOWER-BOUNDED WILDCARD - contravariance (writing)
 public static void addIntegers(List<? super Integer> list) {
-                                 // => ? super Integer means "unknown type that's Integer or superclass"
-                                 // => Accepts List<Integer>, List<Number>, List<Object>
-                                 // => Cannot accept List<Double> (Double not super of Integer)
+                                 // => ? super Integer: accepts List<Integer>, List<Number>, List<Object>
     list.add(1);                 // => Can write Integer (safe for any supertype)
-                                 // => Integer IS-A Number, Integer IS-A Object
-                                 // => Guaranteed safe to add Integer to list
-    list.add(2);                 // => Another Integer safely added
+    list.add(2);
     // Integer val = list.get(0); // => ERROR: can only read as Object
-                                 // => Could be List<Number> (returns Number, not Integer)
-                                 // => Could be List<Object> (returns Object, not Integer)
-                                 // => Only safe return type is Object
+                                 // => Could be List<Number> or List<Object>
+}
 
 // USAGE
 List<Integer> ints = Arrays.asList(1, 2, 3);
-                                 // => Fixed-size List<Integer>
 List<Double> doubles = Arrays.asList(1.0, 2.0, 3.0);
-                                 // => Fixed-size List<Double>
 
-printList(ints);                 // => Calls printList(List<?>)
-                                 // => Accepts List<Integer> (wildcard matches)
-                                 // => Output: 1 2 3
-printList(doubles);              // => Calls printList(List<?>)
-                                 // => Accepts List<Double> (wildcard matches)
-                                 // => Output: 1.0 2.0 3.0
+printList(ints);                 // => Output: 1 2 3
+printList(doubles);              // => Output: 1.0 2.0 3.0
 
-double sum1 = sumNumbers(ints);  // => List<Integer> matches List<? extends Number>
-                                 // => Integer extends Number
-                                 // => sum1 is 6.0 (1+2+3)
-double sum2 = sumNumbers(doubles); // => List<Double> matches List<? extends Number>
-                                 // => Double extends Number
-                                 // => sum2 is 6.0 (1.0+2.0+3.0)
+double sum1 = sumNumbers(ints);  // => sum1 is 6.0 (Integer extends Number)
+double sum2 = sumNumbers(doubles); // => sum2 is 6.0 (Double extends Number)
 
 List<Number> numbers = new ArrayList<>();
-                                 // => Mutable List<Number> (ArrayList)
-addIntegers(numbers);            // => List<Number> matches List<? super Integer>
-                                 // => Number is super of Integer
-                                 // => Can safely add Integers to List<Number>
-System.out.println(numbers);     // => numbers now contains [1, 2]
-                                 // => Output: [1, 2]
+addIntegers(numbers);            // => Can add Integers (Number super Integer)
+                                 // => numbers becomes [1, 2]
+System.out.println(numbers);     // => Output: [1, 2]
 
 // PECS RULE: Producer Extends, Consumer Super
 // Producer (reading): use <? extends T>
@@ -947,56 +898,40 @@ import java.util.*;
 
 // ArrayList - indexed access, dynamic size
 List<String> arrayList = new ArrayList<>();
-                                 // => arrayList is [] (empty dynamic array)
-arrayList.add("A");              // => O(1) amortized (O(n) when resizing)
-                                 // => arrayList is ["A"]
-String value = arrayList.get(0); // => O(1) random access
-                                 // => value is "A"
-arrayList.remove(0);             // => O(n) due to shifting elements
-                                 // => arrayList is [] (removed "A")
+arrayList.add("A");              // => O(1) amortized, arrayList is ["A"]
+String value = arrayList.get(0); // => O(1) random access, value is "A"
+arrayList.remove(0);             // => O(n) due to shifting, arrayList is []
 
-// LinkedList - efficient insertion/deletion, poor random access
+// LinkedList - efficient insertion/deletion
 List<String> linkedList = new LinkedList<>();
-                                 // => linkedList is [] (empty doubly-linked list)
-linkedList.add("A");             // => O(1) append to tail
-                                 // => linkedList is ["A"]
-linkedList.add(0, "B");          // => O(1) prepend to head
-                                 // => linkedList is ["B", "A"]
-String first = linkedList.get(0); // => O(n) traversal (must walk nodes, no indexing)
-                                 // => first is "B"
+linkedList.add("A");             // => O(1) append
+linkedList.add(0, "B");          // => O(1) prepend, linkedList is ["B", "A"]
+String first = linkedList.get(0); // => O(n) traversal, first is "B"
 
-// HashSet - unique elements, no order, O(1) operations
+// HashSet - unique elements, O(1) operations
 Set<String> hashSet = new HashSet<>();
-                                 // => hashSet is {} (empty hash table)
-hashSet.add("A");                // => O(1) average (hash bucket insert)
-                                 // => hashSet is {"A"}
+hashSet.add("A");                // => O(1) insert, hashSet is {"A"}
 boolean contains = hashSet.contains("A");
-                                 // => O(1) average hash lookup
-                                 // => contains is true
+                                 // => O(1) lookup, contains is true
 
-// TreeSet - sorted, unique elements, O(log n) operations
+// TreeSet - sorted, O(log n) operations
 Set<Integer> treeSet = new TreeSet<>();
-                                 // => treeSet is {} (empty red-black tree)
-treeSet.add(3);                  // => treeSet is {3}
-treeSet.add(1);                  // => treeSet is {1, 3} (auto-sorted)
-treeSet.add(2);                  // => treeSet is {1, 2, 3} (maintains order)
-System.out.println(treeSet);     // => Output: [1, 2, 3] (sorted by natural order)
+treeSet.add(3);
+treeSet.add(1);                  // => Auto-sorted: treeSet is {1, 3}
+treeSet.add(2);                  // => treeSet is {1, 2, 3}
+System.out.println(treeSet);     // => Output: [1, 2, 3]
 
 // HashMap - key-value pairs, O(1) operations
 Map<String, Integer> hashMap = new HashMap<>();
-                                 // => hashMap is {} (empty hash table)
-hashMap.put("Alice", 30);        // => O(1) average insert
-                                 // => hashMap is {"Alice"=30}
-Integer age = hashMap.get("Alice"); // => O(1) average lookup
-                                 // => age is 30
+hashMap.put("Alice", 30);        // => O(1) insert
+Integer age = hashMap.get("Alice"); // => O(1) lookup, age is 30
 
 // TreeMap - sorted by keys, O(log n) operations
 Map<String, Integer> treeMap = new TreeMap<>();
-                                 // => treeMap is {} (empty red-black tree)
-treeMap.put("Charlie", 25);      // => treeMap is {"Charlie"=25}
-treeMap.put("Alice", 30);        // => treeMap is {"Alice"=30, "Charlie"=25}
-treeMap.put("Bob", 28);          // => treeMap is {"Alice"=30, "Bob"=28, "Charlie"=25}
-System.out.println(treeMap);     // => Output: {Alice=30, Bob=28, Charlie=25} (sorted by key)
+treeMap.put("Charlie", 25);
+treeMap.put("Alice", 30);
+treeMap.put("Bob", 28);          // => Maintains sorted order by key
+System.out.println(treeMap);     // => Output: {Alice=30, Bob=28, Charlie=25}
 
 // COLLECTIONS UTILITY METHODS
 List<Integer> numbers = Arrays.asList(3, 1, 4, 1, 5, 9);
@@ -1296,114 +1231,62 @@ List<String> words = Arrays.asList("apple", "banana", "apricot", "blueberry", "a
 // COLLECTING TO COLLECTIONS
 List<String> list = words.stream()
                                  // => Creates stream from words list
-                                 // => Stream<String> containing 5 words
     .filter(w -> w.startsWith("a"))
-                                 // => Lambda: w -> w.startsWith("a")
-                                 // => Keeps only: apple, apricot, avocado
-                                 // => Filters out: banana, blueberry
+                                 // => Keeps: apple, apricot, avocado
     .collect(Collectors.toList());
-                                 // => Terminal operation: collects to ArrayList
+                                 // => Collects to ArrayList
                                  // => list is [apple, apricot, avocado]
-                                 // => Type: List<String> with 3 elements
 
 Set<String> set = words.stream()
-                                 // => Creates new stream (previous consumed)
-                                 // => Stream<String> with all 5 words
     .collect(Collectors.toSet());
-                                 // => Terminal operation: collects to HashSet
-                                 // => Removes duplicates (none in this example)
-                                 // => set contains {apple, banana, apricot, blueberry, avocado}
-                                 // => Unordered collection
+                                 // => Collects to HashSet (unordered)
 
 // JOINING STRINGS
 String joined = words.stream()
-                                 // => Stream<String> from words list
     .collect(Collectors.joining(", "));
-                                 // => joining() concatenates with delimiter
-                                 // => Delimiter: ", " (comma-space)
                                  // => joined is "apple, banana, apricot, blueberry, avocado"
-                                 // => Single string combining all elements
 
 String prefixed = words.stream()
-                                 // => New stream from same source
     .collect(Collectors.joining(", ", "[", "]"));
                                  // => joining(delimiter, prefix, suffix)
-                                 // => Delimiter: ", " between elements
-                                 // => Prefix: "[" at start
-                                 // => Suffix: "]" at end
                                  // => prefixed is "[apple, banana, apricot, blueberry, avocado]"
-                                 // => Wrapped in brackets
 
 // GROUPING BY
 Map<Character, List<String>> grouped = words.stream()
-                                 // => Creates stream from words list
-                                 // => Stream pipeline: source → grouping collector
     .collect(Collectors.groupingBy(w -> w.charAt(0)));
-                                 // => groupingBy() creates map with computed keys
-                                 // => Lambda w -> w.charAt(0) extracts first character
-                                 // => For each word: compute key, add word to key's list
-                                 // => Creates Map<Character, List<String>>
-                                 // => "apple" → key 'a', "banana" → key 'b', etc.
-                                 // => Each key is first char, value is list of words with that char
-// => {a=[apple, apricot, avocado], b=[banana, blueberry]}
-// => 'a' key maps to list with 3 words, 'b' key maps to list with 2 words
+                                 // => Groups by first character
+                                 // => {a=[apple, apricot, avocado], b=[banana, blueberry]}
 
 // COUNTING
 Map<Character, Long> counts = words.stream()
-                                 // => Stream pipeline with nested collector
     .collect(Collectors.groupingBy(w -> w.charAt(0), Collectors.counting()));
-                                 // => groupingBy() with downstream collector
-                                 // => First groups by first character (like above)
-                                 // => Then applies counting() to each group
-                                 // => counting() returns Long count for each key's group
-                                 // => {a=3, b=2} ('a' has 3 words, 'b' has 2 words)
+                                 // => Groups by first char, then counts each group
+                                 // => {a=3, b=2}
 
 // PARTITIONING (boolean predicate)
 Map<Boolean, List<String>> partitioned = words.stream()
-                                 // => Stream<String> from words
     .collect(Collectors.partitioningBy(w -> w.length() > 6));
-                                 // => partitioningBy() splits into 2 groups based on predicate
-                                 // => Lambda: w -> w.length() > 6 (true/false)
-                                 // => TRUE key: words longer than 6 chars
-                                 // => FALSE key: words 6 chars or shorter
+                                 // => Splits into true/false groups by length
                                  // => {false=[apple, banana], true=[apricot, blueberry, avocado]}
-                                 // => Always returns Map<Boolean, List<T>>
 
 // MAPPING WITHIN GROUPING
 Map<Character, List<Integer>> lengths = words.stream()
-                                 // => Stream<String> from words
     .collect(Collectors.groupingBy(
-                                 // => groupingBy() with downstream collector
-        w -> w.charAt(0),        // => Classifier: extract first character
-                                 // => Groups by: 'a', 'b'
+        w -> w.charAt(0),        // => Groups by first character
         Collectors.mapping(String::length, Collectors.toList())
-                                 // => Downstream: mapping() transforms grouped values
-                                 // => String::length converts each word to its length
-                                 // => toList() collects transformed values
-                                 // => Maps String → Integer → List<Integer>
+                                 // => Transforms to word lengths
     ));
                                  // => {a=[5, 7, 7], b=[6, 9]}
-                                 // => 'a' group: [apple(5), apricot(7), avocado(7)]
-                                 // => 'b' group: [banana(6), blueberry(9)]
 
 // CUSTOM COLLECTOR - joining with custom logic
 String custom = words.stream()
-                                 // => Stream<String> from words
     .collect(Collector.of(
-                                 // => Collector.of() creates custom collector
-                                 // => 4 components: supplier, accumulator, combiner, finisher
-        StringBuilder::new,      // => Supplier: creates mutable container
-                                 // => Method reference: () -> new StringBuilder()
-                                 // => Called once per thread (parallel) or once total (sequential)
+                                 // => Creates custom collector (4 components)
+        StringBuilder::new,      // => Supplier: creates StringBuilder container
         (sb, s) -> sb.append(s).append(" "),
-                                 // => Accumulator: processes each element
-                                 // => BiConsumer<StringBuilder, String>
-                                 // => Appends word + space to StringBuilder
-                                 // => Called for each word: "apple ", "banana ", etc.
+                                 // => Accumulator: appends word + space
         (sb1, sb2) -> sb1.append(sb2),
-                                 // => Combiner: merges results from parallel streams
-                                 // => BinaryOperator<StringBuilder>
-                                 // => Combines partial results if stream.parallel()
+                                 // => Combiner: merges parallel results
         StringBuilder::toString  // => Finisher: final transformation
                                  // => Function<StringBuilder, String>
                                  // => Converts mutable StringBuilder to immutable String

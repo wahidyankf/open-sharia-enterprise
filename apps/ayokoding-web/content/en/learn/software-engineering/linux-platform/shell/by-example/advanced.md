@@ -24,6 +24,7 @@ sleep 60 &                      # => Executes sleep command in background
                                 # => Output: [1] 12345
                                 # => [1] is job number, 12345 is PID
                                 # => & operator detaches from foreground
+                                # => Process continues running asynchronously
 
 # List background jobs
 jobs                            # => Shows all background jobs for current shell
@@ -31,6 +32,7 @@ jobs                            # => Shows all background jobs for current shell
                                 # => [1] is job number
                                 # => + indicates most recent job (current)
                                 # => - would indicate previous job
+                                # => Only shows jobs for this shell session
 
 # Bring job to foreground
 fg %1                           # => Brings job 1 to foreground
@@ -38,17 +40,21 @@ fg %1                           # => Brings job 1 to foreground
                                 # => Shell now waits for job to complete
                                 # => Job receives terminal input/output
                                 # => Press Ctrl+Z to suspend, Ctrl+C to terminate
+                                # => Job takes over terminal control
 
 # Send foreground job to background
 sleep 120                       # => Start command in foreground
                                 # => Shell blocks until complete
+                                # => Terminal is occupied by this process
                                 # Press Ctrl+Z (suspend signal SIGTSTP)
                                 # => Output: [1]+ Stopped  sleep 120
                                 # => Job paused but still in memory
+                                # => Keyboard interrupt suspends execution
 bg %1                           # => Send job 1 to background
                                 # => Output: [1]+ sleep 120 &
                                 # => Job resumes execution in background
                                 # => Shell returns to prompt immediately
+                                # => Process continues without terminal
 
 # Kill background job
 kill %1                         # => Send SIGTERM (signal 15) to job 1
@@ -60,12 +66,15 @@ kill %1                         # => Send SIGTERM (signal 15) to job 1
 # Wait for background jobs
 command1 &                      # => Start first background job
                                 # => Job 1 running in background
+                                # => Returns immediately to prompt
 command2 &                      # => Start second background job
                                 # => Job 2 running in background
                                 # => Both jobs executing in parallel
+                                # => Multiple processes running concurrently
 wait                            # => Wait for ALL background jobs
                                 # => Shell blocks until all jobs complete
                                 # => Returns exit code of last job to fail (or 0)
+                                # => Synchronization point for parallel tasks
 
 # Wait for specific job
 command &                       # => Start background job
@@ -110,10 +119,13 @@ Trap handlers execute code when signals are received, enabling cleanup on exit, 
 cleanup() {
     echo "Cleaning up..."         # => Print cleanup message
                                   # => Executed when trap fires
+                                  # => Function runs on signal reception
     rm -f /tmp/script.$$.*        # => $$ expands to current PID
                                   # => Removes files like /tmp/script.12345.tmp
                                   # => -f prevents error if files don't exist
+                                  # => Wildcard * matches all temp files
     echo "Done."                  # => Indicate cleanup complete
+                                  # => Final message before exit
 }
 
 # Register trap for EXIT signal
@@ -121,6 +133,7 @@ trap cleanup EXIT               # => Register cleanup function for EXIT
                                 # => EXIT fires when script exits (any reason)
                                 # => Runs on: normal exit, exit command, error
                                 # => Does NOT fire on kill -9 (SIGKILL)
+                                # => Always runs cleanup before termination
 
 # Trap interrupt (Ctrl+C)
 trap 'echo "Interrupted!"; exit 130' INT
@@ -129,6 +142,7 @@ trap 'echo "Interrupted!"; exit 130' INT
                                 # => Inline command: echo then exit
                                 # => Exit code 130 = 128 + signal_number(2)
                                 # => Standard convention for signal exits
+                                # => Allows custom interrupt handling
 
 # Trap termination
 trap 'echo "Terminated!"; cleanup; exit 143' TERM
@@ -137,6 +151,7 @@ trap 'echo "Terminated!"; cleanup; exit 143' TERM
                                 # => Calls cleanup function explicitly
                                 # => Exit code 143 = 128 + signal_number(15)
                                 # => Allows graceful shutdown
+                                # => Recommended for production scripts
 
 # Ignore signal
 trap '' HUP                     # => HUP is SIGHUP (hangup signal)
@@ -213,12 +228,14 @@ name=${USER:-"guest"}           # => If $USER is set and non-empty, use it
                                 # => :- tests for unset OR empty
                                 # => name="alice" if USER="alice"
                                 # => name="guest" if USER="" or unset
+                                # => Colon makes operator strict (tests empty)
 
 name=${USER-"guest"}            # => If $USER is set (even if empty), use it
                                 # => If $USER is unset, use "guest"
                                 # => - tests only for unset (not empty)
                                 # => name="" if USER="" (empty but set)
                                 # => name="guest" if USER is unset
+                                # => No colon = permissive (allows empty)
 
 # Assign default if unset
 name=${USER:="defaultuser"}     # => If $USER unset/empty, set both variables
@@ -226,6 +243,7 @@ name=${USER:="defaultuser"}     # => If $USER unset/empty, set both variables
                                 # => ALSO sets $USER to "defaultuser"
                                 # => := assigns default to original variable
                                 # => Side effect: modifies environment
+                                # => Permanent assignment to source variable
 
 # Error if unset
 name=${USER:?"USER not set"}    # => If $USER unset/empty, print error and exit
@@ -233,6 +251,7 @@ name=${USER:?"USER not set"}    # => If $USER unset/empty, print error and exit
                                 # => Script exits with code 1
                                 # => :? enforces required variables
                                 # => Prevents running with missing config
+                                # => Fail-fast for missing prerequisites
 
 # Use alternative value
 name=${USER:+"logged in"}       # => If $USER is set and non-empty, use "logged in"
@@ -243,19 +262,24 @@ name=${USER:+"logged in"}       # => If $USER is set and non-empty, use "logged 
 
 # String length
 file="document.txt"             # => Assign string to file variable
+                                # => Variable contains filename
 length=${#file}                 # => Get length of string
                                 # => Counts characters in $file
                                 # => length=12 ("document.txt" has 12 chars)
+                                # => # prefix operator for length
 
 # Substring extraction
 path="/home/user/documents/file.txt"
                                 # => path contains 28-character string
+                                # => Full file path for testing
 ${path:0:5}                     # => Start at index 0, extract 5 characters
                                 # => Result: "/home"
                                 # => Syntax: ${var:offset:length}
+                                # => Zero-based indexing
 ${path:6:4}                     # => Start at index 6, extract 4 characters
                                 # => Result: "user"
                                 # => Index starts at 0
+                                # => Extracts username portion
 ${path:11}                      # => Start at index 11, extract to end
                                 # => Result: "documents/file.txt"
                                 # => No length specified means "to end"
@@ -378,15 +402,18 @@ diff <(ls dir1) <(ls dir2)      # => <(ls dir1) creates /dev/fd/63 (temp file de
                                 # => diff reads from both file descriptors
                                 # => Shows differences between directory listings
                                 # => No manual temp file creation/cleanup needed
+                                # => Process substitution <() is bash extension
 
 # Process substitution as input
 while read line; do             # => Read loop reads line by line
     echo "Line: $line"          # => Print each line with prefix
+                                # => Processes each line individually
 done < <(find . -name "*.txt")  # => First < redirects input
                                 # => Second <(find...) creates file descriptor
                                 # => find runs, outputs to /dev/fd/63
                                 # => while loop reads from that descriptor
                                 # => Processes all .txt files found
+                                # => Double < syntax: redirection + substitution
 
 # Multiple input sources
 paste <(seq 1 5) <(seq 10 14)   # => seq 1 5 outputs: 1\n2\n3\n4\n5
@@ -395,6 +422,7 @@ paste <(seq 1 5) <(seq 10 14)   # => seq 1 5 outputs: 1\n2\n3\n4\n5
                                 # => <(seq 10 14) becomes /dev/fd/62
                                 # => paste joins line by line with tab
                                 # => Output: "1\t10\n2\t11\n3\t12\n4\t13\n5\t14"
+                                # => Merges two command outputs side-by-side
 
 # Output redirection with process substitution
 echo "data" > >(tee file1.txt file2.txt)
@@ -404,6 +432,7 @@ echo "data" > >(tee file1.txt file2.txt)
                                 # => tee writes to file1.txt
                                 # => tee also writes to file2.txt
                                 # => Data written to two files simultaneously
+                                # => Output process substitution >() is bash extension
 
 # Join two sorted outputs
 join <(sort file1) <(sort file2)
@@ -420,12 +449,14 @@ mkfifo /tmp/mypipe              # => Create FIFO special file
                                 # => No actual disk storage used
                                 # => Acts as communication channel
                                 # => Visible in filesystem: ls -l shows prw-r--r--
+                                # => FIFO = First In First Out
 
 # Write to named pipe (background)
 cat file.txt > /tmp/mypipe &    # => Open pipe for writing
                                 # => cat blocks until reader connects
                                 # => & runs in background (non-blocking shell)
                                 # => Data waits in kernel buffer
+                                # => Writer process suspends until reader attaches
 
 # Read from named pipe
 cat < /tmp/mypipe               # => Open pipe for reading
@@ -433,6 +464,7 @@ cat < /tmp/mypipe               # => Open pipe for reading
                                 # => Writer unblocks and sends data
                                 # => Reader receives and outputs data
                                 # => Both processes synchronized via pipe
+                                # => Data flows from writer to reader
 
 # Named pipe for inter-process communication
 mkfifo /tmp/logpipe             # => Create pipe for logging
@@ -449,6 +481,7 @@ rm /tmp/mypipe                  # => Remove FIFO from filesystem
                                 # => unlink() system call
                                 # => No disk space freed (none was used)
                                 # => File descriptor removed
+                                # => Same as removing regular file
 
 # Process substitution with tee (log and process)
 command | tee >(grep ERROR > errors.log) >(grep WARN > warnings.log)
@@ -459,6 +492,7 @@ command | tee >(grep ERROR > errors.log) >(grep WARN > warnings.log)
                                 # => grep ERROR filters and writes errors.log
                                 # => grep WARN filters and writes warnings.log
                                 # => Three destinations from single output
+                                # => Parallel filtering to multiple files
 ```
 
 **Key Takeaway**: Process substitution `<(command)` and `>(command)` treat command output/input as files. Named pipes (FIFOs) enable inter-process communication. Both eliminate temporary file creation and simplify complex pipelines.
@@ -2160,92 +2194,144 @@ Log analysis scripts extract insights, detect anomalies, and generate reports fr
 ```bash
 # Basic log analysis
 grep "ERROR" /var/log/app.log | tail -20
-                                 # => Last 20 errors
+                                 # => grep: extract lines containing "ERROR"
+                                 # => tail -20: show last 20 matches
+                                 # => Last 20 errors (most recent issues)
 
 # Count errors by type
 grep "ERROR" app.log | awk '{print $5}' | sort | uniq -c | sort -rn
-                                 # => Error frequency
+                                 # => awk '{print $5}': extract error type (field 5)
+                                 # => sort: group identical error types
+                                 # => uniq -c: count occurrences
+                                 # => sort -rn: numeric descending order
+                                 # => Error frequency (e.g., "45 NullPointerException")
 
 # Time-based filtering
 grep "$(date +%Y-%m-%d)" app.log # => Today's logs
+                                 # => date +%Y-%m-%d: current date (2025-12-30)
+                                 # => grep filters log lines with today's date
 
 # Between timestamps
 awk '/2025-12-30 10:00/,/2025-12-30 11:00/' app.log
-                                 # => Logs between times
+                                 # => Range pattern: /start/,/end/
+                                 # => Prints all lines between timestamps
+                                 # => Logs between times (10:00-11:00)
 
 # Response time analysis
 grep "response_time" access.log | \
-    awk '{print $NF}' | \
-    sort -n | \
+                                 # => Extract lines with response time data
+    awk '{print $NF}' | \        # => $NF: last field (response time value)
+    sort -n | \                  # => -n: numeric sort (ascending order)
     awk '{ sum += $1; a[NR] = $1 }
+                                # => sum: accumulate total
+                                # => a[NR]: store in array for percentiles
          END { print "Avg:", sum/NR, "ms";
+                                # => Average: total/count
                print "P50:", a[int(NR*0.5)], "ms";
+                                # => Median: 50th percentile
                print "P95:", a[int(NR*0.95)], "ms";
+                                # => 95th percentile (95% faster)
                print "P99:", a[int(NR*0.99)], "ms" }'
+                                # => 99th percentile (slowest 1%)
 
 # Practical: error monitoring script
 #!/bin/bash
-set -euo pipefail
+set -euo pipefail               # => Fail-fast for monitoring reliability
 
-LOGFILE="/var/log/app.log"
-ALERT_THRESHOLD=10
-CHECK_MINUTES=5
+LOGFILE="/var/log/app.log"      # => Application log path
+ALERT_THRESHOLD=10              # => Alert if > 10 errors in window
+CHECK_MINUTES=5                 # => Look back 5 minutes
 
 # Count recent errors
 error_count=$(awk -v since="$(date -d "-$CHECK_MINUTES minutes" '+%Y-%m-%d %H:%M')" \
+                                # => -v since: awk variable with timestamp
+                                # => date -d "-5 minutes": 5 minutes ago
+                                # => Format: 2025-12-30 14:25
     '$0 ~ since { found=1 } found && /ERROR/' "$LOGFILE" | wc -l)
+                                # => $0 ~ since: match timestamp line
+                                # => found=1: flag to start counting
+                                # => found && /ERROR/: count errors after timestamp
+                                # => wc -l: count lines (error count)
 
 echo "Errors in last $CHECK_MINUTES minutes: $error_count"
 
 if [ "$error_count" -gt "$ALERT_THRESHOLD" ]; then
+                                # => If error count exceeds threshold (> 10)
     echo "ALERT: Error threshold exceeded!"
+                                # => Alert message
 
     # Get unique errors
     grep "ERROR" "$LOGFILE" | tail -100 | \
+                                # => Last 100 error lines
         awk '{$1=$2=""; print}' | \
+                                # => Remove timestamp fields ($1, $2)
+                                # => Leaves error message only
         sort | uniq -c | sort -rn | head -5
+                                # => Count unique messages
+                                # => Sort by frequency
+                                # => Top 5 error types
 
     # Send alert (example)
     # curl -X POST -d "message=High error rate: $error_count" https://alerts.example.com
+                                # => Commented webhook alert (enable for production)
 fi
 
 # Practical: access log summary
 #!/bin/bash
 LOGFILE="${1:-/var/log/nginx/access.log}"
+                                # => ${1:-default}: first arg or default path
+                                # => Allows custom log file path
 
 echo "=== Access Log Summary ==="
-echo ""
+echo ""                         # => Blank line for readability
 
 echo "Top 10 IPs:"
 awk '{print $1}' "$LOGFILE" | sort | uniq -c | sort -rn | head -10
+                                # => $1: IP address field (first column)
+                                # => Count requests per IP
+                                # => Top 10 by frequency
 
 echo ""
 echo "Top 10 URLs:"
 awk '{print $7}' "$LOGFILE" | sort | uniq -c | sort -rn | head -10
+                                # => $7: request URI field
+                                # => Most requested endpoints
 
 echo ""
 echo "Response codes:"
 awk '{print $9}' "$LOGFILE" | sort | uniq -c | sort -rn
+                                # => $9: HTTP status code (200, 404, 500)
+                                # => Status code distribution
 
 echo ""
 echo "Requests per hour:"
 awk -F'[/:]' '{print $4":"$5}' "$LOGFILE" | sort | uniq -c
+                                # => -F'[/:]': field separator: / or :
+                                # => $4:$5: hour:minute from timestamp
+                                # => Traffic pattern by hour
 
 # Practical: real-time monitoring
 #!/bin/bash
-LOGFILE="/var/log/app.log"
+LOGFILE="/var/log/app.log"      # => Log file to monitor
 
 tail -f "$LOGFILE" | while read -r line; do
+                                # => tail -f: follow file (continuous)
+                                # => while read -r: process each new line
     if echo "$line" | grep -q "ERROR"; then
+                                # => grep -q: quiet mode (exit code only)
+                                # => Check if line contains "ERROR"
         echo "[$(date)] ERROR detected: $line"
-        # Trigger alert
+                                # => Timestamp + full error line
+        # Trigger alert         # => Placeholder for alerting logic
     fi
 
     if echo "$line" | grep -q "CRITICAL"; then
+                                # => Check for critical severity
         echo "[$(date)] CRITICAL: $line"
-        # Page on-call
+                                # => Urgent alert message
+        # Page on-call          # => Placeholder for paging logic
     fi
-done
+done                            # => Loop continues until killed (Ctrl+C)
 ```
 
 **Key Takeaway**: Use `awk` for field extraction, `sort | uniq -c` for frequency counts, and `tail -f` with pattern matching for real-time monitoring - combine with alerts for automated incident response.
@@ -2261,94 +2347,148 @@ Performance monitoring scripts collect system metrics, detect resource issues, a
 ```bash
 # CPU usage
 top -bn1 | grep "Cpu(s)" | awk '{print $2}' | cut -d'%' -f1
-                                 # => CPU user percentage
+                                 # => top -bn1: batch mode, 1 iteration
+                                 # => grep "Cpu(s)": extract CPU line
+                                 # => awk '{print $2}': second field (user %)
+                                 # => cut -d'%' -f1: remove % symbol
+                                 # => CPU user percentage (e.g., "15.3")
 
 # Memory usage
 free -m | awk 'NR==2 {printf "%.1f%%", $3/$2*100}'
-                                 # => Memory percentage
+                                 # => free -m: memory in megabytes
+                                 # => NR==2: second line (Mem: row)
+                                 # => $3/$2*100: used/total * 100
+                                 # => printf "%.1f%%": format as percentage
+                                 # => Memory percentage (e.g., "67.8%")
 
 # Disk usage
 df -h / | awk 'NR==2 {print $5}'
-                                 # => Root disk percentage
+                                 # => df -h: disk free, human-readable
+                                 # => /: root filesystem
+                                 # => NR==2: data line (skip header)
+                                 # => $5: use% column
+                                 # => Root disk percentage (e.g., "45%")
 
 # Load average
 cat /proc/loadavg | awk '{print $1, $2, $3}'
-                                 # => 1, 5, 15 minute averages
+                                 # => /proc/loadavg: kernel load statistics
+                                 # => $1, $2, $3: 1-min, 5-min, 15-min averages
+                                 # => Shows process queue depth
+                                 # => Compare to CPU core count
+                                 # => 1, 5, 15 minute averages (e.g., "1.23 0.98 0.87")
 
 # Network connections
 ss -s | grep "TCP:" | awk '{print $2}'
-                                 # => TCP connection count
+                                 # => ss -s: socket statistics summary
+                                 # => grep "TCP:": TCP connection line
+                                 # => awk '{print $2}': connection count
+                                 # => TCP connection count (e.g., "245")
 
 # Practical: system health check
 #!/bin/bash
-set -euo pipefail
+set -euo pipefail               # => Fail-fast for monitoring script safety
 
-WARN_CPU=80
-WARN_MEM=85
-WARN_DISK=90
+WARN_CPU=80                     # => CPU warning threshold: 80%
+WARN_MEM=85                     # => Memory warning threshold: 85%
+WARN_DISK=90                    # => Disk warning threshold: 90%
 
 echo "=== System Health Check ==="
-echo "Time: $(date)"
+echo "Time: $(date)"            # => Timestamp for report
 echo ""
 
 # CPU check
 cpu_usage=$(top -bn1 | grep "Cpu(s)" | awk '{print $2}' | cut -d'.' -f1)
+                                # => Extract CPU percentage (integer)
+                                # => cut -d'.' -f1: remove decimal (80.5 → 80)
 if [ "$cpu_usage" -gt "$WARN_CPU" ]; then
+                                # => -gt: numeric greater-than comparison
+                                # => If CPU above 80%
     echo "CPU: ${cpu_usage}% [WARNING]"
-else
+                                # => Alert: high CPU usage
+else                            # => CPU within normal range
     echo "CPU: ${cpu_usage}% [OK]"
+                                # => Status: CPU healthy
 fi
 
 # Memory check
 mem_usage=$(free | awk 'NR==2 {printf "%.0f", $3/$2*100}')
+                                # => Calculate memory percentage (no decimals)
+                                # => %.0f: round to integer
 if [ "$mem_usage" -gt "$WARN_MEM" ]; then
+                                # => If memory above 85%
     echo "Memory: ${mem_usage}% [WARNING]"
-else
+                                # => Alert: high memory usage
+else                            # => Memory within normal range
     echo "Memory: ${mem_usage}% [OK]"
+                                # => Status: memory healthy
 fi
 
 # Disk check
 disk_usage=$(df / | awk 'NR==2 {print $5}' | tr -d '%')
+                                # => Extract disk percentage
+                                # => tr -d '%': remove % symbol (45% → 45)
 if [ "$disk_usage" -gt "$WARN_DISK" ]; then
+                                # => If disk above 90%
     echo "Disk: ${disk_usage}% [WARNING]"
-else
+                                # => Alert: disk space critical
+else                            # => Disk space acceptable
     echo "Disk: ${disk_usage}% [OK]"
+                                # => Status: disk healthy
 fi
 
 # Load average
 load=$(cat /proc/loadavg | awk '{print $1}')
-cores=$(nproc)
+                                # => 1-minute load average
+cores=$(nproc)                  # => Number of CPU cores
+                                # => nproc: processor count
 if (( $(echo "$load > $cores" | bc -l) )); then
+                                # => bc -l: calculator with floats
+                                # => (( )): arithmetic context
+                                # => If load exceeds core count (overloaded)
     echo "Load: $load (cores: $cores) [WARNING]"
-else
+                                # => Alert: system overloaded
+else                            # => Load within capacity
     echo "Load: $load (cores: $cores) [OK]"
+                                # => Status: load healthy
 fi
 
 # Practical: continuous monitoring
 #!/bin/bash
-INTERVAL=60
-LOGFILE="/var/log/metrics.log"
+INTERVAL=60                     # => Collect metrics every 60 seconds
+LOGFILE="/var/log/metrics.log" # => Log file for time-series data
 
-while true; do
+while true; do                  # => Infinite monitoring loop
     timestamp=$(date +%Y-%m-%dT%H:%M:%S)
+                                # => ISO 8601 timestamp: 2025-12-30T14:30:00
     cpu=$(top -bn1 | grep "Cpu(s)" | awk '{print $2}' | cut -d'.' -f1)
+                                # => Current CPU usage (integer)
     mem=$(free | awk 'NR==2 {printf "%.0f", $3/$2*100}')
+                                # => Current memory usage (integer)
     disk=$(df / | awk 'NR==2 {print $5}' | tr -d '%')
+                                # => Current disk usage (integer)
     load=$(cat /proc/loadavg | awk '{print $1}')
+                                # => Current 1-minute load
 
     echo "$timestamp cpu=$cpu mem=$mem disk=$disk load=$load" >> "$LOGFILE"
+                                # => Append metrics to log file
+                                # => Format: timestamp key=value pairs
+                                # => Parseable for graphing/alerting
 
-    sleep "$INTERVAL"
-done
+    sleep "$INTERVAL"           # => Wait 60 seconds before next collection
+                                # => Controls sampling frequency
+done                            # => Loop continues until killed
 
 # Practical: top processes
 #!/bin/bash
-echo "Top 5 CPU consumers:"
-ps aux --sort=-%cpu | head -6
+echo "Top 5 CPU consumers:"    # => Report header
+ps aux --sort=-%cpu | head -6   # => ps aux: all processes with details
+                                # => --sort=-%cpu: descending CPU order
+                                # => head -6: header + top 5 processes
 
-echo ""
-echo "Top 5 Memory consumers:"
-ps aux --sort=-%mem | head -6
+echo ""                         # => Blank line separator
+echo "Top 5 Memory consumers:"  # => Second report section
+ps aux --sort=-%mem | head -6   # => --sort=-%mem: descending memory order
+                                # => Shows which processes using most RAM
 ```
 
 **Key Takeaway**: Use `top -bn1` for non-interactive CPU data, `free` for memory, `df` for disk, and `/proc/loadavg` for system load - combine metrics for comprehensive health checks.
@@ -2364,138 +2504,229 @@ HTTP API integration enables scripts to interact with external services, webhook
 ```bash
 # Basic API call
 response=$(curl -s https://api.example.com/data)
-# => -s: silent mode (no progress bar)
-# => response contains JSON: {"data": [...]}
-echo "$response"                # => Output: JSON response
+                                # => curl: command-line HTTP client
+                                # => -s: silent mode (no progress bar)
+                                # => $(): command substitution, captures output
+                                # => response contains JSON: {"data": [...]}
+echo "$response"                # => Output: JSON response to stdout
+                                # => Displays raw API response
 
 # With authentication
 curl -s -H "Authorization: Bearer $API_TOKEN" \
+                                # => -H: add custom HTTP header
+                                # => Authorization: standard auth header name
+                                # => Bearer $API_TOKEN: JWT or OAuth token pattern
     https://api.example.com/protected
-# => -H: add HTTP header with Bearer token
-# => Returns protected resource
+                                # => Protected endpoint requiring authentication
+                                # => Returns 401 without valid token
+                                # => Returns protected resource with valid token
 
 # POST with JSON
-curl -s -X POST \
+curl -s -X POST \               # => -X POST: specify HTTP method (default: GET)
+                                # => POST: create or submit data
     # => -X POST: use POST method
     -H "Content-Type: application/json" \
+                                # => Declare payload format as JSON
+                                # => Server expects JSON in request body
     # => Set content type header
     -d '{"name": "test", "value": 123}' \
+                                # => -d: data to send in request body
+                                # => Single quotes prevent shell expansion
+                                # => JSON must be properly quoted
     # => -d: request body (JSON payload)
     https://api.example.com/items
+                                # => POST endpoint for creating items
+                                # => Typically returns 201 Created with new resource
 # => Creates new item, returns created resource
 
 # Check HTTP status
 status_code=$(curl -s -o /dev/null -w "%{http_code}" https://api.example.com)
+                                # => -o /dev/null: discard response body (don't display)
+                                # => -w "%{http_code}": write-out format string
+                                # => %{http_code}: curl variable for HTTP status
 # => -o /dev/null: discard response body
 # => -w "%{http_code}": output only HTTP status code
 # => status_code is "200", "404", "500", etc.
 if [ "$status_code" != "200" ]; then
+                                # => Check if response is not 200 OK
+                                # => != : string inequality test
     echo "API returned: $status_code"
+                                # => Report non-success status code
     exit 1                      # => Fail if not 200 OK
-fi
+                                # => Exit code 1 indicates error
+fi                              # => Continue only if API returned 200
 
 # Parse JSON response (with jq)
 name=$(echo "$response" | jq -r '.name')
+                                # => echo pipes JSON to jq for parsing
+                                # => jq: JSON query processor
+                                # => -r: raw output (remove JSON quotes)
+                                # => .name: access name field in JSON object
 # => jq -r: extract .name field as raw string (no quotes)
 count=$(echo "$response" | jq -r '.items | length')
+                                # => .items: access items array
+                                # => | length: pipe to length function
+                                # => Returns number of elements in array
 # => Count items in array: .items | length
 
 # Practical: API with retry
-api_call() {
-    local url="$1"              # => URL to call
-    local max_retries=3         # => Retry up to 3 times
+api_call() {                    # => Function with exponential backoff pattern
+    local url="$1"              # => URL to call (function parameter)
+                                # => local: function-scoped variable
+    local max_retries=3         # => Retry up to 3 times total
+                                # => Prevents infinite retry loops
     local retry_delay=5         # => Wait 5 seconds between retries
+                                # => Fixed delay (could be exponential)
 
     for ((i=1; i<=max_retries; i++)); do
+                                # => C-style for loop: 1, 2, 3
+                                # => i tracks current attempt number
         response=$(curl -s -w "\n%{http_code}" "$url")
+                                # => -w "\n%{http_code}": append newline + status
+                                # => Response body followed by HTTP code on last line
         # => -w "\n%{http_code}": append status on new line
         http_code=$(echo "$response" | tail -n1)
+                                # => tail -n1: get last line only
+                                # => Extracts HTTP status code
         # => Extract HTTP code from last line
         body=$(echo "$response" | sed '$d')
+                                # => sed '$d': delete ($) last line (d)
+                                # => Removes HTTP code, leaves body
         # => sed '$d': delete last line (remove status code)
 
         if [ "$http_code" = "200" ]; then
-            echo "$body"        # => Return response body
-            return 0            # => Success
-        fi
+                                # => Success condition check
+            echo "$body"        # => Return response body to caller
+                                # => Output goes to stdout
+            return 0            # => Success exit code
+                                # => Exits function immediately
+        fi                      # => If not 200, continue to retry
 
         echo "Attempt $i failed (HTTP $http_code), retrying..." >&2
+                                # => >&2: redirect to stderr (not stdout)
+                                # => Logs retry attempts for monitoring
         # => Log to stderr
-        sleep "$retry_delay"    # => Wait before retry
-    done
+        sleep "$retry_delay"    # => Wait before retry (rate limiting)
+                                # => Gives server time to recover
+    done                        # => Try next attempt
 
     echo "All retries failed" >&2
+                                # => Error message after exhausting retries
     return 1                    # => All attempts exhausted
-}
+                                # => Failure exit code
+}                               # => Caller can check $? for success/failure
 
 # Practical: Slack notification
-send_slack() {
-    local message="$1"          # => Message to send
+send_slack() {                  # => Function to send Slack webhook notifications
+    local message="$1"          # => Message to send (function parameter)
+                                # => Supports plain text or markdown
     local webhook_url="$SLACK_WEBHOOK_URL"
+                                # => Read from environment variable
+                                # => Format: https://hooks.slack.com/services/...
     # => Webhook URL from environment
 
-    curl -s -X POST \
+    curl -s -X POST \           # => POST request to Slack webhook
+                                # => -s: silent (no progress output)
         -H "Content-Type: application/json" \
+                                # => Slack expects JSON payload
         -d "{\"text\": \"$message\"}" \
-        "$webhook_url"
+                                # => JSON with text field
+                                # => Escaped quotes for valid JSON
+        "$webhook_url"          # => Slack incoming webhook URL
+                                # => Returns: ok or error message
     # => POST JSON payload to Slack webhook
-}
+}                               # => Function sends notification and returns
 
 send_slack "Deployment completed successfully!"
+                                # => Call function with message
+                                # => Appears in configured Slack channel
 # => Sends notification to Slack channel
 
 # Practical: GitHub API
 #!/bin/bash
 GITHUB_TOKEN="${GITHUB_TOKEN:-}"  # => GitHub token from env
+                                # => Required for API authentication
+                                # => Create at: github.com/settings/tokens
 REPO="owner/repo"               # => Repository in owner/repo format
+                                # => Example: "microsoft/vscode"
 
 # Create issue
-create_issue() {
-    local title="$1"            # => Issue title
-    local body="$2"             # => Issue description
+create_issue() {                # => Function to create GitHub issue
+    local title="$1"            # => Issue title (first parameter)
+                                # => Will appear as issue heading
+    local body="$2"             # => Issue description (second parameter)
+                                # => Supports markdown formatting
 
-    curl -s -X POST \
+    curl -s -X POST \           # => POST to create new issue
         -H "Authorization: token $GITHUB_TOKEN" \
+                                # => GitHub requires auth for issue creation
+                                # => token: GitHub's auth method
         # => Authenticate with GitHub token
         -H "Accept: application/vnd.github.v3+json" \
+                                # => Specify GitHub API version
+                                # => v3: current stable API version
         # => Use GitHub API v3
         -d "{\"title\": \"$title\", \"body\": \"$body\"}" \
+                                # => JSON payload with issue data
+                                # => Both fields are strings (escaped quotes)
         # => JSON payload with title and body
         "https://api.github.com/repos/$REPO/issues"
+                                # => Issues endpoint for repository
+                                # => Returns 201 Created on success
     # => Returns created issue JSON
-}
+}                               # => Response includes issue number, URL, etc.
 
 # Get latest release
-latest=$(curl -s \
+latest=$(curl -s \              # => Fetch latest release information
     -H "Authorization: token $GITHUB_TOKEN" \
+                                # => Auth required for private repos
+                                # => Public repos work without token
     "https://api.github.com/repos/$REPO/releases/latest" | \
+                                # => GitHub releases endpoint
+                                # => Returns most recent non-draft release
     # => GET latest release endpoint
-    jq -r '.tag_name')
+    jq -r '.tag_name')          # => Extract tag name from JSON response
+                                # => .tag_name: semantic version tag
+                                # => -r: raw output (no JSON quotes)
     # => Extract tag_name field (e.g., "v1.2.3")
 
-echo "Latest release: $latest"
+echo "Latest release: $latest"  # => Display version to user
+                                # => Example output: Latest release: v1.2.3
 # => Output: Latest release: v1.2.3
 
 # Practical: health check endpoint
 #!/bin/bash
-ENDPOINTS=(
+ENDPOINTS=(                     # => Bash array of health check URLs
     "https://api.example.com/health"
+                                # => API service health endpoint
     "https://web.example.com/health"
+                                # => Web service health endpoint
     "https://db.example.com/health"
+                                # => Database health endpoint
 )                               # => Array of health endpoints
+                                # => Each service exposes /health endpoint
 
 for endpoint in "${ENDPOINTS[@]}"; do
+                                # => Iterate through each endpoint URL
+                                # => "${ENDPOINTS[@]}": proper array expansion
     # => Loop through each endpoint
     status=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "$endpoint")
+                                # => -o /dev/null: discard response body
+                                # => --max-time 5: timeout after 5 seconds
+                                # => Prevents hanging on unavailable services
     # => --max-time 5: timeout after 5 seconds
     # => status is HTTP code: "200", "500", "000" (timeout)
     if [ "$status" = "200" ]; then
+                                # => 200 OK: service is healthy
         echo "$endpoint: OK"    # => Service healthy
-    else
+                                # => Green light for monitoring
+    else                        # => Non-200 or timeout
         echo "$endpoint: FAILED ($status)"
+                                # => Report failure with status code
+                                # => 000: connection timeout or network error
         # => Service unhealthy or unreachable
-    fi
-done
+    fi                          # => Check next endpoint
+done                            # => Complete health check for all services
 ```
 
 **Key Takeaway**: Use `-w "%{http_code}"` to capture HTTP status, implement retry logic for resilience, and always set timeouts with `--max-time` to prevent hanging scripts.
@@ -2650,126 +2881,184 @@ CI/CD scripts automate build, test, and deployment stages with proper artifact h
 ```bash
 # Build stage
 #!/bin/bash
-set -euo pipefail
+set -euo pipefail               # => Fail-fast: errors, undefined vars, pipe failures
+                                # => Critical for CI/CD reliability
 
-echo "=== Build Stage ==="
+echo "=== Build Stage ==="      # => Pipeline stage indicator
 
 # Clean previous builds
-rm -rf dist/
+rm -rf dist/                    # => Remove distribution directory recursively
+                                # => Ensures clean build (no stale artifacts)
 
 # Install dependencies
-npm ci                           # => Clean install from lock file
+npm ci                          # => Clean install from lock file
+                                # => ci: faster than install, uses package-lock.json
+                                # => Fails if lock file out of sync (strict)
+                                # => Reproducible builds guaranteed
 
 # Run linter
-npm run lint
+npm run lint                    # => Execute lint script from package.json
+                                # => Code style and quality checks
+                                # => Fails build if linting errors found
 
 # Run tests
-npm test
+npm test                        # => Run test suite
+                                # => Exits 1 if any tests fail (set -e catches this)
+                                # => Gates build on test success
 
 # Build application
-npm run build
+npm run build                   # => Compile/bundle application
+                                # => Creates production artifacts in dist/
+                                # => Only runs if all previous steps pass
 
 # Generate build info
 cat > dist/build-info.json << EOF
+                                # => Create build metadata file
+                                # => Here-document: multi-line JSON
 {
     "version": "$(git describe --tags --always)",
+                                # => Git version: tag or commit hash
+                                # => --tags: use annotated tags
+                                # => --always: fallback to commit if no tags
     "commit": "$(git rev-parse HEAD)",
+                                # => Full commit SHA (40 characters)
+                                # => HEAD: current commit
     "branch": "$(git branch --show-current)",
+                                # => Current branch name (e.g., main)
     "timestamp": "$(date -Iseconds)",
-    "builder": "$USER"
+                                # => ISO 8601 timestamp: 2025-12-30T14:30:00+07:00
+    "builder": "$USER"          # => User who triggered build
+                                # => Audit trail for deployments
 }
-EOF
+EOF                             # => Command substitution: $() expands inside JSON
 
 echo "Build completed successfully"
+                                # => Success message for pipeline logs
 
 # Test stage
 #!/bin/bash
-set -euo pipefail
+set -euo pipefail               # => Strict error handling for test stage
 
-echo "=== Test Stage ==="
+echo "=== Test Stage ==="      # => Stage marker in logs
 
 # Unit tests
-npm run test:unit
+npm run test:unit               # => Execute unit test suite
+                                # => Fast tests, no external dependencies
 
 # Integration tests
-npm run test:integration
+npm run test:integration        # => Execute integration tests
+                                # => Tests with database, APIs, etc.
 
 # Code coverage
-npm run test:coverage
+npm run test:coverage           # => Generate coverage report
+                                # => Creates coverage/coverage-summary.json
 
 # Check coverage threshold
 coverage=$(cat coverage/coverage-summary.json | jq '.total.lines.pct')
+                                # => Extract line coverage percentage
+                                # => jq: JSON query for .total.lines.pct field
 if (( $(echo "$coverage < 80" | bc -l) )); then
+                                # => (( )) arithmetic context
+                                # => bc -l: calculator for floating point
+                                # => Checks if coverage below 80%
     echo "Coverage below threshold: $coverage%"
-    exit 1
-fi
+                                # => Report coverage failure
+    exit 1                      # => Fail build (quality gate)
+fi                              # => Continue only if >= 80% coverage
 
-echo "All tests passed"
+echo "All tests passed"         # => Success message
 
 # Deploy stage
 #!/bin/bash
-set -euo pipefail
+set -euo pipefail               # => Fail-fast for deployment safety
 
-ENVIRONMENT="${1:-staging}"
-VERSION="${2:-latest}"
+ENVIRONMENT="${1:-staging}"     # => First arg or default to "staging"
+                                # => Production deployments must be explicit
+VERSION="${2:-latest}"          # => Second arg or default to "latest"
 
-echo "=== Deploy Stage ==="
+echo "=== Deploy Stage ==="    # => Stage indicator
 echo "Environment: $ENVIRONMENT"
-echo "Version: $VERSION"
+echo "Version: $VERSION"        # => Log deployment parameters
 
 # Load environment config
 source "config/$ENVIRONMENT.env"
+                                # => Load environment variables
+                                # => Sets API keys, database URLs, etc.
 
 # Pre-deployment checks
-./scripts/pre-deploy-check.sh
+./scripts/pre-deploy-check.sh   # => Validate prerequisites
+                                # => Checks: cluster connectivity, permissions, etc.
 
 # Create deployment record
-deployment_id=$(uuidgen)
+deployment_id=$(uuidgen)        # => Generate unique deployment ID
+                                # => UUID for tracking and audit trail
 echo "Deployment ID: $deployment_id"
 
 # Deploy application
-case "$ENVIRONMENT" in
-    staging)
+case "$ENVIRONMENT" in          # => Environment-specific deployment logic
+    staging)                    # => Staging environment
         kubectl apply -f k8s/staging/
-        ;;
-    production)
+                                # => Apply Kubernetes manifests
+                                # => k8s/staging/: staging-specific configs
+        ;;                      # => Simple deployment (no traffic switch)
+    production)                 # => Production environment
         # Blue-green deployment
         kubectl apply -f k8s/production/
+                                # => Deploy new version (green)
         ./scripts/wait-for-healthy.sh
+                                # => Wait for health checks to pass
+                                # => Pods must be ready before traffic switch
         ./scripts/switch-traffic.sh
-        ;;
-esac
+                                # => Route traffic to new version
+                                # => Switches from blue to green
+        ;;                      # => Zero-downtime deployment
+esac                            # => Environment-specific logic complete
 
 # Verify deployment
 ./scripts/smoke-tests.sh "$ENVIRONMENT"
+                                # => Run smoke tests against deployed app
+                                # => Validates: endpoints, critical paths
 
 # Record success
 echo "Deployment $deployment_id completed at $(date)"
+                                # => Audit log: deployment ID + timestamp
 
 # Practical: rollback script
 #!/bin/bash
-set -euo pipefail
+set -euo pipefail               # => Fail-fast for rollback safety
 
-ENVIRONMENT="${1:-staging}"
-PREVIOUS_VERSION="${2:-}"
+ENVIRONMENT="${1:-staging}"     # => Target environment
+PREVIOUS_VERSION="${2:-}"       # => Optional: specific version to roll back to
 
 if [ -z "$PREVIOUS_VERSION" ]; then
+                                # => If version not specified
     # Get previous deployment
     PREVIOUS_VERSION=$(kubectl rollout history deployment/myapp -o jsonpath='{.metadata.annotations.kubernetes\.io/change-cause}' | tail -2 | head -1)
-fi
+                                # => rollout history: list deployment revisions
+                                # => -o jsonpath: extract annotation
+                                # => tail -2 | head -1: get second-to-last revision
+fi                              # => Auto-detect previous version
 
 echo "Rolling back to: $PREVIOUS_VERSION"
+                                # => Log rollback target
 
 # Perform rollback
 kubectl rollout undo deployment/myapp
+                                # => Revert to previous revision
+                                # => Kubernetes handles rollback automatically
 
 # Wait for rollback
 kubectl rollout status deployment/myapp --timeout=300s
+                                # => Wait for rollback to complete
+                                # => --timeout=300s: 5 minute maximum
+                                # => Exits 1 if timeout or failure
 
 # Verify
 ./scripts/smoke-tests.sh "$ENVIRONMENT"
+                                # => Verify rolled-back version works
+                                # => Same tests as deployment
 
-echo "Rollback completed"
+echo "Rollback completed"       # => Success message
 ```
 
 **Key Takeaway**: Use `set -euo pipefail` for strict error handling, implement health checks before switching traffic, and always maintain rollback capability for failed deployments.
@@ -2785,127 +3074,193 @@ Configuration management scripts handle templates, environment variables, and se
 ```bash
 # Template substitution
 envsubst < config.template > config.json
-                                 # => Replaces $VAR with values
+                                 # => envsubst: substitute environment variables
+                                 # => Reads template, replaces $VAR with values
+                                 # => <: input from config.template
+                                 # => >: write to config.json
+                                 # => Replaces ALL environment variables
 
 # With specific variables only
 envsubst '$DATABASE_URL $API_KEY' < template > config
+                                 # => '$DATABASE_URL $API_KEY': whitelist specific vars
+                                 # => Only these two variables substituted
+                                 # => Other $VARS remain literal (not expanded)
+                                 # => Safer than expanding all environment vars
 
 # Generate from template
 #!/bin/bash
 export DATABASE_URL="postgres://localhost/mydb"
-export API_KEY="secret123"
-export ENVIRONMENT="production"
+                                 # => Export makes variable available to subprocesses
+                                 # => envsubst runs in subshell, needs exported vars
+export API_KEY="secret123"      # => API key for external service
+export ENVIRONMENT="production" # => Deployment environment identifier
 
-cat << 'EOF' | envsubst
+cat << 'EOF' | envsubst         # => Here-document with single quotes
+                                # => Single quotes prevent immediate expansion
+                                # => Content passed literally to envsubst
 {
     "database": "$DATABASE_URL",
-    "api_key": "$API_KEY",
+                                # => $DATABASE_URL will be replaced by envsubst
+                                # => Becomes: "postgres://localhost/mydb"
+    "api_key": "$API_KEY",      # => Replaced with: "secret123"
     "environment": "$ENVIRONMENT",
-    "debug": false
+                                # => Replaced with: "production"
+    "debug": false              # => Literal value (not a variable)
 }
-EOF
+EOF                             # => envsubst performs substitution on entire JSON
 
 # Merge configuration files
 #!/bin/bash
 # Merge base + environment-specific config
 jq -s '.[0] * .[1]' base.json production.json > merged.json
-                                 # => Deep merge JSON files
+                                 # => -s: slurp mode (read both files into array)
+                                 # => .[0]: base.json (first file)
+                                 # => *: merge operator (deep merge)
+                                 # => .[1]: production.json (second file)
+                                 # => Deep merge: production values override base
+                                 # => Result written to merged.json
 
 # Environment-specific configuration
 #!/bin/bash
 ENVIRONMENT="${ENVIRONMENT:-development}"
-CONFIG_DIR="./config"
+                                 # => Default to "development" if not set
+                                 # => ${VAR:-default}: expansion with default value
+CONFIG_DIR="./config"           # => Configuration directory path
 
 # Load base config
-source "$CONFIG_DIR/base.env"
+source "$CONFIG_DIR/base.env"   # => source: execute base.env in current shell
+                                # => Sets variables from base configuration
+                                # => Variables available in current shell
 
 # Override with environment-specific
 if [ -f "$CONFIG_DIR/$ENVIRONMENT.env" ]; then
+                                # => -f: check if environment file exists
+                                # => Example: ./config/production.env
     source "$CONFIG_DIR/$ENVIRONMENT.env"
-fi
+                                # => Load environment-specific overrides
+                                # => Variables override base.env values
+fi                              # => Skip if environment file missing
 
-echo "Database: $DATABASE_HOST"
-echo "Debug: $DEBUG_MODE"
+echo "Database: $DATABASE_HOST" # => Display loaded configuration
+echo "Debug: $DEBUG_MODE"       # => Shows effective values after override
 
 # Practical: secrets management
 #!/bin/bash
-set -euo pipefail
+set -euo pipefail               # => Fail-fast for security-sensitive code
 
 # Load secrets from vault
-load_secrets() {
-    local path="$1"
+load_secrets() {                # => Function to fetch secrets from Vault
+    local path="$1"             # => Vault path parameter (e.g., "app/prod")
 
     # Example: HashiCorp Vault
     vault kv get -format=json "secret/$path" | \
+                                # => vault: HashiCorp Vault CLI
+                                # => kv get: read key-value secret
+                                # => -format=json: output as JSON
+                                # => secret/$path: full path (e.g., secret/app/prod)
         jq -r '.data.data | to_entries | .[] | "export \(.key)=\(.value)"' | \
-        source /dev/stdin
+                                # => .data.data: extract secrets (Vault v2 structure)
+                                # => to_entries: convert {k:v} to [{key:k,value:v}]
+                                # => "export \(.key)=\(.value)": format as shell exports
+                                # => -r: raw output (no JSON quotes)
+        source /dev/stdin       # => Execute export commands in current shell
+                                # => /dev/stdin: read from pipe
+                                # => Sets variables in current environment
 }
 
 # Or from AWS Secrets Manager
-load_aws_secrets() {
-    local secret_name="$1"
+load_aws_secrets() {            # => Function for AWS Secrets Manager
+    local secret_name="$1"      # => Secret identifier in AWS
 
     aws secretsmanager get-secret-value \
+                                # => AWS CLI: retrieve secret
         --secret-id "$secret_name" \
-        --query SecretString \
-        --output text | \
+                                # => Identify which secret to fetch
+        --query SecretString \  # => Extract SecretString field only
+        --output text | \       # => Text output (no JSON wrapper)
         jq -r 'to_entries | .[] | "export \(.key)=\(.value)"' | \
-        source /dev/stdin
+                                # => Parse JSON, format as export statements
+                                # => Same transformation as Vault example
+        source /dev/stdin       # => Execute in current shell
+                                # => Loads secrets as environment variables
 }
 
 # Practical: configuration validation
 #!/bin/bash
-set -euo pipefail
+set -euo pipefail               # => Strict error handling
 
-validate_config() {
-    local config_file="$1"
-    local errors=0
+validate_config() {             # => Function to validate config file
+    local config_file="$1"      # => JSON config file path
+    local errors=0              # => Error counter
 
     # Check required fields
     for field in database_url api_key environment; do
+                                # => Iterate required field names
         if ! jq -e ".$field" "$config_file" > /dev/null 2>&1; then
+                                # => jq -e: check if field exists (exit 0 if true)
+                                # => .$field: access field by name
+                                # => ! negates: true if field missing
+                                # => >/dev/null 2>&1: suppress output
             echo "Missing required field: $field"
-            ((errors++))
+                                # => Report missing field
+            ((errors++))        # => Increment error count
         fi
-    done
+    done                        # => Check all required fields
 
     # Validate values
     env=$(jq -r '.environment' "$config_file")
+                                # => Extract environment value
+                                # => -r: raw string (no quotes)
     if [[ ! "$env" =~ ^(development|staging|production)$ ]]; then
+                                # => Regex: match valid environment names only
+                                # => ^...$: exact match (full string)
+                                # => |: OR operator (any of three values)
         echo "Invalid environment: $env"
-        ((errors++))
-    fi
+                                # => Report invalid value
+        ((errors++))            # => Increment error count
+    fi                          # => Validation complete
 
-    return $errors
-}
+    return $errors              # => Return error count (0 = success)
+}                               # => Non-zero return indicates failures
 
 if validate_config config.json; then
-    echo "Configuration valid"
-else
+                                # => Call validation function
+                                # => if: executes when return code is 0 (no errors)
+    echo "Configuration valid"  # => All checks passed
+else                            # => Validation failed (errors > 0)
     echo "Configuration invalid"
-    exit 1
-fi
+    exit 1                      # => Exit with error code
+fi                              # => Prevents using invalid configuration
 
 # Practical: dynamic nginx config
 #!/bin/bash
 cat > /etc/nginx/conf.d/app.conf << EOF
-upstream backend {
+                                # => Write nginx config to file
+                                # => >: overwrite existing file
+                                # => Here-document without quotes: variables expand
+upstream backend {              # => Define backend server pool
     $(for server in $BACKEND_SERVERS; do
+                                # => $BACKEND_SERVERS: space-separated list
+                                # => Loop generates server directives
         echo "    server $server;"
-    done)
-}
+                                # => Output: "    server host:port;"
+    done)                       # => Command substitution: $() executes loop
+}                               # => All servers added to upstream block
 
-server {
-    listen 80;
-    server_name $DOMAIN;
+server {                        # => nginx server block
+    listen 80;                  # => Listen on port 80 (HTTP)
+    server_name $DOMAIN;        # => $DOMAIN expands (e.g., example.com)
 
-    location / {
+    location / {                # => Match all requests
         proxy_pass http://backend;
+                                # => Forward to upstream backend pool
     }
 }
-EOF
+EOF                             # => End of generated config
 
-nginx -t && nginx -s reload
+nginx -t && nginx -s reload     # => nginx -t: test configuration syntax
+                                # => &&: only reload if test passes
+                                # => nginx -s reload: graceful reload
 ```
 
 **Key Takeaway**: Use `envsubst` for variable substitution, `jq` for JSON manipulation, and separate base/environment configs - always validate configuration before applying changes.
@@ -2920,109 +3275,171 @@ Parallel processing maximizes throughput for batch operations, using background 
 
 ```bash
 # Background jobs
-for file in *.txt; do
-    process_file "$file" &
-done
-wait                             # => Wait for all background jobs
+for file in *.txt; do           # => Iterate over all .txt files
+                                # => Glob expansion: *.txt matches all text files
+    process_file "$file" &      # => & runs process_file in background
+                                # => Each file processed concurrently
+                                # => No limit on concurrent jobs (can overwhelm system)
+done                            # => Loop continues immediately (no waiting)
+wait                            # => Wait for all background jobs to complete
+                                # => Blocks until all & processes finish
+                                # => Ensures all processing done before continuing
 
 # Limit concurrent jobs
-max_jobs=4
-for file in *.txt; do
+max_jobs=4                      # => Limit to 4 concurrent processes
+                                # => Prevents system overload
+for file in *.txt; do           # => Process each file
     ((++count % max_jobs == 0)) && wait
-    process_file "$file" &
-done
-wait
+                                # => ++count: increment counter first
+                                # => % max_jobs: modulo operation (remainder)
+                                # => == 0: true every 4th iteration
+                                # => && wait: if true, wait for current batch
+                                # => Creates batches of 4 concurrent jobs
+    process_file "$file" &      # => Start next job in background
+done                            # => Continue until all files queued
+wait                            # => Wait for final batch to complete
 
 # Using xargs for parallel
 find . -name "*.jpg" | xargs -P 4 -I {} convert {} -resize 50% resized/{}
-                                 # => -P 4: 4 parallel processes
-                                 # => -I {}: placeholder
+                                 # => find: locate all .jpg files recursively
+                                 # => | xargs: build convert commands from input
+                                 # => -P 4: run 4 parallel processes maximum
+                                 # => -I {}: {} placeholder for each input line
+                                 # => convert: ImageMagick resize command
+                                 # => -resize 50%: scale image to half size
+                                 # => resized/{}: output to resized/ directory
 
 # Using GNU parallel
 parallel -j 4 convert {} -resize 50% resized/{} ::: *.jpg
-                                 # => -j 4: 4 jobs
-                                 # => ::: provides arguments
+                                 # => -j 4: 4 concurrent jobs (equivalent to xargs -P)
+                                 # => {}: argument placeholder
+                                 # => ::: separates command from arguments
+                                 # => *.jpg expanded to file list
+                                 # => More features than xargs (retries, logging, etc.)
 
 # Parallel with progress
 parallel --bar -j 8 process_file {} ::: *.dat
+                                # => --bar: display progress bar
+                                # => -j 8: 8 concurrent jobs
+                                # => *.dat: process all .dat files
 
 # Practical: parallel downloads
 #!/bin/bash
-URLS_FILE="urls.txt"
-MAX_PARALLEL=5
+URLS_FILE="urls.txt"            # => File containing URLs (one per line)
+MAX_PARALLEL=5                  # => Download 5 URLs concurrently
 
 cat "$URLS_FILE" | xargs -P "$MAX_PARALLEL" -I {} wget -q {}
+                                # => cat: read URLs from file
+                                # => xargs builds wget commands
+                                # => -P 5: 5 parallel downloads
+                                # => wget -q: quiet mode (no output)
+                                # => Downloads 5 URLs at a time
 
 # Or with curl
 cat "$URLS_FILE" | parallel -j "$MAX_PARALLEL" curl -sO {}
+                                # => parallel: GNU parallel (better than xargs)
+                                # => curl -sO: silent, save with original filename
+                                # => More robust error handling than xargs
 
 # Practical: parallel server operations
 #!/bin/bash
 SERVERS=(server1 server2 server3 server4)
-COMMAND="uptime"
+                                # => Array of server hostnames
+COMMAND="uptime"                # => Command to run on each server
 
 for server in "${SERVERS[@]}"; do
-    ssh "$server" "$COMMAND" &
-done
-wait
+                                # => Loop through server array
+    ssh "$server" "$COMMAND" &  # => SSH in background (non-blocking)
+                                # => All SSH connections start immediately
+                                # => Runs on all 4 servers concurrently
+done                            # => Loop finishes without waiting
+wait                            # => Wait for all SSH commands to complete
+                                # => Synchronization point
 
 # With output collection
 #!/bin/bash
-declare -A results
+declare -A results              # => Associative array for results
+                                # => Not used in this pattern (output goes to stdout)
 
-parallel_exec() {
-    local server="$1"
-    local output
+parallel_exec() {               # => Function to execute on each server
+    local server="$1"           # => Server hostname parameter
+    local output                # => Variable to store command output
     output=$(ssh "$server" uptime 2>&1)
-    echo "$server: $output"
+                                # => Execute uptime via SSH
+                                # => 2>&1: capture both stdout and stderr
+                                # => Command substitution stores result
+    echo "$server: $output"     # => Print server name and output
+                                # => Format: server1: ... 1 user ...
 }
-export -f parallel_exec
+export -f parallel_exec         # => Export function for use in parallel
+                                # => Subshells need access to function
 
 printf '%s\n' "${SERVERS[@]}" | parallel -j 4 parallel_exec {}
+                                # => printf: print each server on new line
+                                # => parallel: run parallel_exec for each server
+                                # => -j 4: 4 concurrent SSH connections
+                                # => Output collected and displayed in order
 
 # Practical: batch processing with rate limiting
 #!/bin/bash
-set -euo pipefail
+set -euo pipefail               # => Fail-fast: errors, undefined vars, pipes
 
-BATCH_SIZE=10
-DELAY=1
+BATCH_SIZE=10                   # => Process 10 items per batch
+DELAY=1                         # => 1 second delay between batches
+                                # => Rate limiting to avoid overwhelming target
 
-process_batch() {
-    local items=("$@")
+process_batch() {               # => Function to process one batch
+    local items=("$@")          # => Convert arguments to local array
+                                # => items contains batch of filenames
 
     for item in "${items[@]}"; do
-        process_item "$item" &
-    done
-    wait
+                                # => Process each item in batch
+        process_item "$item" &  # => Background processing (parallel within batch)
+    done                        # => All batch items start immediately
+    wait                        # => Wait for batch to complete
+                                # => Ensures batch finished before delay
 
-    sleep "$DELAY"               # => Rate limit between batches
+    sleep "$DELAY"              # => Rate limit between batches
+                                # => 1 second pause before next batch
 }
 
 # Read items into array
-mapfile -t items < items.txt
+mapfile -t items < items.txt    # => Read file into array (one line per element)
+                                # => -t: trim trailing newlines
+                                # => items array contains all filenames
 
 # Process in batches
 for ((i=0; i<${#items[@]}; i+=BATCH_SIZE)); do
+                                # => C-style loop: start at 0, increment by 10
+                                # => ${#items[@]}: array length
+                                # => i+=BATCH_SIZE: move to next batch
     batch=("${items[@]:i:BATCH_SIZE}")
+                                # => Array slice: start at i, length BATCH_SIZE
+                                # => batch contains next 10 items (or fewer for last batch)
     echo "Processing batch starting at $i..."
-    process_batch "${batch[@]}"
-done
+                                # => Progress indicator
+    process_batch "${batch[@]}" # => Process this batch (10 items in parallel)
+                                # => Waits for batch + 1 second delay
+done                            # => Continue until all items processed
 
 # Practical: parallel with job control
 #!/bin/bash
-MAX_JOBS=4
-job_count=0
+MAX_JOBS=4                      # => Maximum concurrent jobs
+job_count=0                     # => Track active jobs
 
-for item in "${items[@]}"; do
-    process_item "$item" &
-    ((++job_count))
+for item in "${items[@]}"; do   # => Process each item
+    process_item "$item" &      # => Start job in background
+    ((++job_count))             # => Increment active job counter
 
     if ((job_count >= MAX_JOBS)); then
-        wait -n                  # => Wait for any job to finish
-        ((--job_count))
-    fi
-done
-wait
+                                # => If at maximum concurrent jobs
+        wait -n                 # => Wait for any one job to finish
+                                # => -n: returns when first job completes
+                                # => More efficient than waiting for all
+        ((--job_count))         # => Decrement counter (one job finished)
+    fi                          # => Now have slot for next job
+done                            # => Queue all items
+wait                            # => Wait for remaining jobs to finish
 ```
 
 **Key Takeaway**: Use `xargs -P` or GNU `parallel` for parallel execution, `wait` to synchronize background jobs, and implement rate limiting to avoid overwhelming target systems.
@@ -3042,82 +3459,141 @@ Data transformation scripts convert between formats, clean data, and prepare dat
 # Output: [{"name":"...","age":...,"city":"..."},...]
 
 awk -F',' 'NR==1 {for(i=1;i<=NF;i++) header[i]=$i; next}
+                                # => NR==1: process header row only
+                                # => for loop: store each column name in header array
+                                # => next: skip to next line (don't process header as data)
     {printf "%s{", (NR>2?",":"[");
+                                # => NR>2: if not first data row, print comma
+                                # => NR==2: first data row, print opening bracket [
      for(i=1;i<=NF;i++) printf "\"%s\":\"%s\"%s", header[i], $i, (i<NF?",":"");
+                                # => Loop through fields: "header":"value"
+                                # => Add comma between fields except after last
      printf "}"}
-    END {print "]"}' data.csv
+                                # => Close JSON object after all fields
+    END {print "]"}' data.csv   # => END: print closing bracket after all rows
 
 # JSON to CSV
 jq -r '(.[0] | keys_unsorted) as $keys | $keys, (.[] | [.[$keys[]]]) | @csv' data.json
+                                # => keys_unsorted: get JSON keys from first object
+                                # => $keys: save keys to variable
+                                # => Print keys as CSV header row
+                                # => .[] iterates each object
+                                # => [.[$keys[]]]: extract values in key order
+                                # => @csv: format as CSV (quotes, escapes)
 
 # XML to JSON (with xmllint and jq)
 xmllint --xpath "//item" data.xml | # Extract items
+                                # => --xpath: XPath query selector
+                                # => //item: select all <item> elements
     # Convert to JSON with custom script
+                                # => Requires additional processing (not shown)
 
 # Clean data
 # Remove leading/trailing whitespace
 sed 's/^[[:space:]]*//;s/[[:space:]]*$//' data.txt
+                                # => ^[[:space:]]*: leading whitespace
+                                # => [[:space:]]*$: trailing whitespace
+                                # => Two substitutions chained with semicolon
 
 # Remove blank lines
-sed '/^$/d' data.txt
+sed '/^$/d' data.txt            # => /^$/: pattern matches empty lines
+                                # => d: delete command removes matching lines
 
 # Normalize line endings
 sed 's/\r$//' data.txt          # => CRLF to LF
+                                # => \r$: carriage return at end of line (Windows)
+                                # => Replace with nothing (Unix line endings)
 
 # Practical: log to JSON
 #!/bin/bash
 # Convert Apache log to JSON
 awk '{
-    gsub(/"/, "\\\"", $0);
+    gsub(/"/, "\\\"", $0);      # => Escape double quotes in entire line
+                                # => gsub: global substitution
+                                # => Prevents breaking JSON string values
     printf "{\"ip\":\"%s\",\"date\":\"%s %s\",\"request\":\"%s\",\"status\":%s,\"size\":%s}\n",
            $1, $4, $5, $6" "$7" "$8, $9, ($10=="\"-\""?0:$10)
-}' access.log | jq -s '.'
+                                # => $1: IP address field
+                                # => $4 $5: date and time fields
+                                # => $6 $7 $8: request method, path, protocol
+                                # => $9: HTTP status code (number, no quotes)
+                                # => $10: response size (0 if "-")
+}' access.log | jq -s '.'       # => jq -s: slurp all lines into array
+                                # => . : output entire array as JSON
 
 # Practical: CSV processing
 #!/bin/bash
-INPUT="data.csv"
-OUTPUT="processed.csv"
+INPUT="data.csv"                # => Source CSV file
+OUTPUT="processed.csv"          # => Destination file
 
 # Add header if missing
 if ! head -1 "$INPUT" | grep -q "^id,"; then
+                                # => head -1: read first line only
+                                # => grep -q: quiet mode (no output, just exit code)
+                                # => ^id,: check if line starts with "id,"
     echo "id,name,value" > "$OUTPUT"
-fi
+                                # => Add header row if missing
+fi                              # => Continue with existing header if present
 
 # Process and clean
-tail -n +2 "$INPUT" | \
+tail -n +2 "$INPUT" | \         # => tail -n +2: skip first line (header)
+                                # => Start from line 2 onwards
     awk -F',' '{
         # Trim whitespace
         gsub(/^[ \t]+|[ \t]+$/, "", $2);
+                                # => Remove leading/trailing spaces from field 2
+                                # => ^[ \t]+: leading spaces/tabs
+                                # => [ \t]+$: trailing spaces/tabs
         # Validate and output
         if ($1 ~ /^[0-9]+$/ && length($2) > 0) {
-            print $1","$2","$3
+                                # => $1 must be numeric (id validation)
+                                # => $2 must not be empty (name validation)
+            print $1","$2","$3  # => Output valid rows only
+                                # => Manually format CSV (avoids quoting)
         }
-    }' >> "$OUTPUT"
+    }' >> "$OUTPUT"             # => Append cleaned data to output file
 
 echo "Processed $(wc -l < "$OUTPUT") records"
+                                # => wc -l: count lines in output
+                                # => <: input redirection avoids printing filename
 
 # Practical: JSON transformation
 #!/bin/bash
 # Transform JSON structure
-jq '[.items[] | {
-    id: .id,
+jq '[.items[] | {               # => .items[]: iterate items array
+                                # => {}: create new object for each item
+    id: .id,                    # => Copy id field unchanged
     fullName: "\(.firstName) \(.lastName)",
-    email: .contacts.email,
+                                # => Combine firstName and lastName with space
+                                # => \(): string interpolation in jq
+    email: .contacts.email,     # => Navigate nested structure: contacts.email
     active: (.status == "active")
-}]' input.json > output.json
+                                # => Boolean: true if status is "active"
+}]' input.json > output.json    # => []: wrap results in array
+                                # => > : write to output.json
 
 # Practical: data aggregation
 #!/bin/bash
 # Sum values by category
-awk -F',' 'NR>1 {
-    sum[$1] += $2;
-    count[$1]++
-}
-END {
-    for (cat in sum) {
+awk -F',' 'NR>1 {               # => NR>1: skip header row
+                                # => -F',': comma-separated fields
+    sum[$1] += $2;              # => sum is associative array (hash map)
+                                # => $1: category (key)
+                                # => $2: value to add
+                                # => Accumulates total for each category
+    count[$1]++                 # => Increment count for category
+                                # => Tracks number of records per category
+}                               # => Process each data row
+END {                           # => After all rows processed
+    for (cat in sum) {          # => Iterate through each category
+                                # => cat: category name (loop variable)
         printf "%s,%d,%.2f\n", cat, sum[cat], sum[cat]/count[cat]
-    }
-}' data.csv | sort
+                                # => cat: category name
+                                # => sum[cat]: total sum for category
+                                # => sum[cat]/count[cat]: average value
+                                # => %.2f: format as decimal with 2 places
+    }                           # => Print summary for each category
+}' data.csv | sort              # => sort: alphabetize by category name
 ```
 
 **Key Takeaway**: Use `awk` for CSV processing, `jq` for JSON transformation, and `sed` for text cleaning - combine tools in pipelines for complex transformations.

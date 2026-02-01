@@ -193,15 +193,15 @@ double calculateTotalZakat(List<double> wealthList) {
                                         // => Calculate sum of all Zakats
 }
 
-void main() async {
-  // => Main async to use await with compute
-  List<double> wealthValues = [
-    // => List of wealth values to calculate Zakat for
+void main() async {                     // => Main async to use await with compute
+                                        // => Async enables await keyword
+  List<double> wealthValues = [         // => List of wealth values to calculate Zakat for
+                                        // => Data will be passed to isolate
     100000000.0,                        // => 100M IDR
     150000000.0,                        // => 150M IDR
     200000000.0,                        // => 200M IDR
     250000000.0,                        // => 250M IDR
-  ];                                    // => Test data
+  ];                                    // => Test data (total: 700M)
 
   print('Calculating total Zakat...');  // => Start message
 
