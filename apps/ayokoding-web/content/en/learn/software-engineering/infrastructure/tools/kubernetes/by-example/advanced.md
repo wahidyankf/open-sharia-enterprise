@@ -1410,54 +1410,116 @@ spec:
 NetworkPolicies can control egress traffic to external IP addresses and DNS names, restricting outbound connections to approved services.
 
 ```yaml
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
+apiVersion:
+  networking.k8s.io/v1 # => NetworkPolicy API
+  # => Stable networking API
+kind:
+  NetworkPolicy # => NetworkPolicy resource
+  # => Egress traffic control
 metadata:
-  name: allow-egress-external
-  namespace: default
+  # => Policy metadata
+  name:
+    allow-egress-external # => Policy name
+    # => Descriptive identifier
+  namespace:
+    default # => Namespace scope
+    # => Applies within this namespace
 spec:
+  # => NetworkPolicy specification
   podSelector:
+    # => Selects target Pods
     matchLabels:
-      app: api
+      # => Label selector
+      app:
+        api # => Applies to app=api Pods
+        # => Restricts these Pods' egress
   policyTypes:
-    - Egress
+    # => Policy directions
+    - Egress # => Controls outgoing traffic only
+      # => Allows all ingress by default
+      # => Egress default deny when specified
   egress:
+    # => Egress rule list
     # Allow DNS resolution
     - to:
+        # => Destination selector
         - namespaceSelector:
+            # => Namespace label selector
             matchLabels:
-              kubernetes.io/metadata.name: kube-system
+              # => Namespace labels
+              kubernetes.io/metadata.name:
+                kube-system # => kube-system namespace
+                # => DNS service location
           podSelector:
+            # => Pod label selector
             matchLabels:
-              k8s-app: kube-dns # => Allow CoreDNS
+              # => Pod labels
+              k8s-app:
+                kube-dns # => Allow CoreDNS
+                # => DNS service Pods
+                # => Required for name resolution
       ports:
-        - protocol: UDP
-          port: 53 # => DNS port
+        # => Allowed ports
+        - protocol:
+            UDP # => UDP protocol
+            # => DNS uses UDP
+          port:
+            53 # => DNS port
+            # => Standard DNS port
+            # => Essential for service discovery
 
     # Allow specific external IP
     - to:
+        # => Destination IP range
         - ipBlock:
-            cidr: 203.0.113.0/24 # => Allow to IP range
+            # => IP block selector
+            cidr:
+              203.0.113.0/24 # => Allow to IP range
+              # => /24 = 256 addresses
+              # => Specific external service range
             except:
+              # => Exclusion list
               - 203.0.113.10/32 # => Except this IP
+                # => /32 = single IP
+                # => Blocked within allowed range
       ports:
-        - protocol: TCP
-          port: 443 # => HTTPS only
+        # => Allowed ports
+        - protocol:
+            TCP # => TCP protocol
+            # => HTTPS uses TCP
+          port:
+            443 # => HTTPS only
+            # => Secure connection required
+            # => Blocks unencrypted HTTP
 
     # Allow to external service
     - to:
+        # => Destination IP range
         - ipBlock:
-            cidr: 0.0.0.0/0 # => Allow to any IP (internet)
+            # => IP block selector
+            cidr:
+              0.0.0.0/0 # => Allow to any IP (internet)
+              # => All external IPs
+              # => Broad internet access
       ports:
-        - protocol: TCP
-          port: 443 # => HTTPS to internet
-
+        # => Allowed ports
+        - protocol:
+            TCP # => TCP protocol
+            # => HTTPS uses TCP
+          port:
+            443 # => HTTPS to internet
+            # => Secure connections only
+            # => No HTTP (port 80)
 
 # Egress control use cases:
 # => Restrict outbound to approved APIs
+# => Third-party service whitelist
 # => Prevent data exfiltration
+# => Block unauthorized data transfer
 # => Control cloud provider API access
+# => AWS/GCP API restrictions
 # => Block unwanted internet access
+# => Security compliance
 ```
 
 **Key Takeaway**: Control egress traffic to external services using ipBlock; always allow DNS (port 53) for name resolution; use CIDR ranges to restrict outbound access to approved IP addresses and services.
@@ -2529,72 +2591,152 @@ graph TD
 
 ```yaml
 # Chart directory structure
-my-app/
-├── Chart.yaml                       # => Chart metadata
-├── values.yaml                      # => Default configuration values
-├── templates/                       # => Kubernetes manifest templates
-│   ├── deployment.yaml
-│   ├── service.yaml
-│   ├── ingress.yaml
-│   └── _helpers.tpl                # => Template helpers
-└── charts/                          # => Dependency charts
+# => Helm chart directory layout
+# => Standard chart organization
+my-app/ # => Chart root directory
+  # => Contains all chart files
+├── Chart.yaml # => Chart metadata
+  # => Chart name, version, description
+├── values.yaml # => Default configuration values
+  # => Base values for all environments
+├── templates/ # => Kubernetes manifest templates
+  # => Go template files (.yaml)
+│   ├── deployment.yaml # => Deployment template
+│     # => Creates Kubernetes Deployment
+│   ├── service.yaml # => Service template
+│     # => Creates Kubernetes Service
+│   ├── ingress.yaml # => Ingress template
+│     # => Optional Ingress resource
+│   └── _helpers.tpl # => Template helpers
+│     # => Reusable template functions
+│     # => Named templates for labels, names
+└── charts/ # => Dependency charts
+  # => Subcharts from dependencies
+  # => Populated by helm dependency update
 
 # Chart.yaml
-apiVersion: v2
-name: my-app
-description: A Helm chart for my application
-type: application
-version: 1.0.0                       # => Chart version
-appVersion: "1.24"                   # => Application version
-keywords:
-- application
-- web
-maintainers:
-- name: Platform Team
-  email: [email protected]
+# => Chart metadata file
+# => Defines chart properties
+apiVersion: v2 # => Chart API version
+  # => v2 for Helm 3
+name: my-app # => Chart name
+  # => Used for chart identification
+description: A Helm chart for my application # => Chart description
+  # => Human-readable summary
+type: application # => Chart type
+  # => application or library
+  # => application: deployable chart
+version: 1.0.0 # => Chart version
+  # => Semantic versioning
+  # => Incremented on chart changes
+appVersion: "1.24" # => Application version
+  # => Version of deployed application
+  # => Independent from chart version
+keywords: # => Search keywords
+  # => For chart repositories
+- application # => Keyword: application
+  # => Generic application tag
+- web # => Keyword: web
+  # => Web application category
+maintainers: # => Chart maintainers
+  # => Contact information
+- name: Platform Team # => Maintainer name
+    # => Team responsible for chart
+  email: [email protected] # => Contact email
+    # => Support contact
 
 # values.yaml
-replicaCount: 3
-image:
-  repository: nginx
-  tag: "1.24"
-  pullPolicy: IfNotPresent
-service:
-  type: ClusterIP
-  port: 80
-ingress:
-  enabled: false
+# => Default values for chart
+# => Base configuration template
+replicaCount: 3 # => Default replica count
+  # => Production default
+image: # => Container image settings
+  # => Image repository and tag
+  repository: nginx # => Image repository
+    # => Docker Hub nginx
+  tag: "1.24" # => Image tag
+    # => Specific version
+  pullPolicy: IfNotPresent # => Image pull policy
+    # => Pull if not cached locally
+service: # => Service configuration
+  # => ClusterIP service settings
+  type: ClusterIP # => Service type
+    # => Internal cluster service
+  port: 80 # => Service port
+    # => HTTP port 80
+ingress: # => Ingress configuration
+  # => External access settings
+  enabled: false # => Ingress disabled by default
+    # => Enable via override
 
 # templates/deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: {{ include "my-app.fullname" . }}
-  labels:
+# => Deployment template
+# => Go template with .Values substitution
+apiVersion: apps/v1 # => Deployment API version
+  # => Stable apps API
+kind: Deployment # => Resource type
+  # => Manages replica sets
+metadata: # => Deployment metadata
+  # => Name and labels
+  name: {{ include "my-app.fullname" . }} # => Dynamic name
+    # => Template helper function
+    # => Generates full name (release + chart)
+  labels: # => Deployment labels
+    # => Standard label set
     {{- include "my-app.labels" . | nindent 4 }}
-spec:
-  replicas: {{ .Values.replicaCount }}
-  selector:
-    matchLabels:
+      # => Template helper for labels
+      # => nindent 4: indent 4 spaces
+spec: # => Deployment specification
+  # => Desired state
+  replicas: {{ .Values.replicaCount }} # => Replica count from values
+    # => .Values.replicaCount substitution
+    # => Default: 3
+  selector: # => Pod selector
+    # => Matches pods by labels
+    matchLabels: # => Label selector
+      # => Must match pod labels
       {{- include "my-app.selectorLabels" . | nindent 6 }}
-  template:
-    metadata:
-      labels:
+        # => Selector label template
+        # => Consistent pod selection
+  template: # => Pod template
+    # => Defines pod spec
+    metadata: # => Pod metadata
+      # => Pod labels
+      labels: # => Pod labels
+        # => Must match selector
         {{- include "my-app.selectorLabels" . | nindent 8 }}
-    spec:
-      containers:
-      - name: {{ .Chart.Name }}
+          # => Same labels as selector
+          # => nindent 8: 8 spaces
+    spec: # => Pod specification
+      # => Container configuration
+      containers: # => Container list
+        # => Single container
+      - name: {{ .Chart.Name }} # => Container name
+          # => From Chart.yaml name field
+          # => .Chart.Name = my-app
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        ports:
-        - containerPort: 80
+          # => Image with tag
+          # => Combines repository + tag
+          # => Example: nginx:1.24
+        ports: # => Container ports
+          # => Exposed ports
+        - containerPort: 80 # => HTTP port
+            # => Container listens on 80
 
 # Helm commands:
+# => Common Helm CLI operations
 # => helm create my-app                    # Generate chart scaffold
+# => Creates new chart directory with templates
 # => helm install my-release my-app        # Install chart
+# => Deploys chart as release "my-release"
 # => helm upgrade my-release my-app        # Upgrade release
+# => Updates existing release with new chart
 # => helm rollback my-release 1            # Rollback to revision 1
+# => Reverts to previous release revision
 # => helm uninstall my-release             # Uninstall release
+# => Deletes all release resources
 # => helm list                             # List releases
+# => Shows all deployed releases
 ```
 
 **Key Takeaway**: Use Helm for repeatable application deployments with configuration management; separate chart version (Chart.yaml) from app version (appVersion); parameterize manifests using values.yaml for environment-specific deployments.
@@ -2624,60 +2766,124 @@ graph TD
 
 ```yaml
 # values.yaml (default values)
-global:
-  environment: production
-replicaCount: 3
-image:
-  repository: nginx
-  tag: "1.24"
-resources:
-  requests:
-    cpu: 100m
-    memory: 128Mi
-  limits:
-    cpu: 200m
-    memory: 256Mi
+# => Default values for Helm chart
+# => Base configuration template
+global: # => Global values shared across templates
+  # => Available in all templates via .Values.global
+  environment: production # => Default environment setting
+    # => Used for env-specific configuration
+replicaCount: 3 # => Default replica count
+  # => Production default: high availability
+image: # => Container image configuration
+  # => Defines image repository and tag
+  repository: nginx # => Image repository name
+    # => Docker Hub nginx image
+  tag: "1.24" # => Image tag version
+    # => Specific version for reproducibility
+resources: # => Resource limits and requests
+  # => CPU and memory allocation
+  requests: # => Minimum guaranteed resources
+    # => Scheduler uses for placement
+    cpu: 100m # => 100 millicores request
+      # => 0.1 CPU cores minimum
+    memory: 128Mi # => 128 mebibytes request
+      # => Minimum memory guarantee
+  limits: # => Maximum allowed resources
+    # => Container cannot exceed these
+    cpu: 200m # => 200 millicores limit
+      # => 0.2 CPU cores maximum
+    memory: 256Mi # => 256 mebibytes limit
+      # => Maximum memory cap
 
 # values-dev.yaml (environment override)
-global:
-  environment: development
-replicaCount: 1                      # => Override for dev
-resources:
-  requests:
-    cpu: 50m                         # => Lower resources for dev
-    memory: 64Mi
+# => Development environment overrides
+# => Merges with values.yaml defaults
+global: # => Override global values
+  # => Replaces production defaults
+  environment: development # => Dev environment setting
+    # => Overrides global.environment
+replicaCount: 1 # => Override for dev
+  # => Single replica for development
+  # => Saves resources in dev environment
+resources: # => Override resource settings
+  # => Lower limits for dev
+  requests: # => Reduced dev requests
+    # => Smaller footprint
+    cpu: 50m # => Lower resources for dev
+      # => Half of production request
+    memory: 64Mi # => Half production memory
+      # => 64 MiB minimum
 
 # templates/deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: {{ .Release.Name }}-app
-spec:
-  replicas: {{ .Values.replicaCount }}
-  template:
-    spec:
-      containers:
-      - name: app
+# => Helm template for Deployment
+# => Uses .Values for dynamic configuration
+apiVersion: apps/v1 # => Deployment API version
+  # => Stable apps API
+kind: Deployment # => Deployment resource type
+  # => Manages replica sets
+metadata: # => Deployment metadata
+  # => Name and labels
+  name: {{ .Release.Name }}-app # => Dynamic name from release
+    # => .Release.Name injected by Helm
+    # => Example: dev-release-app
+spec: # => Deployment specification
+  # => Desired state definition
+  replicas: {{ .Values.replicaCount }} # => Replica count from values
+    # => Production: 3, Dev: 1 (from values files)
+    # => Template variable substitution
+  template: # => Pod template
+    # => Defines pod specification
+    spec: # => Pod spec
+      # => Container configuration
+      containers: # => Container list
+        # => Single container in this pod
+      - name: app # => Container name
+          # => Main application container
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-        env:
-        - name: ENVIRONMENT
+          # => Dynamic image reference
+          # => Combines repository + tag
+          # => Example: nginx:1.24
+        env: # => Environment variables
+          # => Container environment
+        - name: ENVIRONMENT # => Environment variable name
+            # => Standard env var for app config
           value: {{ .Values.global.environment }}
-        resources:
+            # => Value from global settings
+            # => production or development
+        resources: # => Resource configuration
+          # => CPU and memory settings
           {{- toYaml .Values.resources | nindent 10 }}
+            # => Converts values to YAML
+            # => nindent 10: indent 10 spaces
+            # => Preserves resource structure
 
 # Helm install with overrides:
 # => helm install dev-release my-app -f values-dev.yaml
+# => Install release using values file
+# => -f values-dev.yaml: load override file
 # => Uses values-dev.yaml, merges with values.yaml
+# => Merge order: values.yaml base + values-dev.yaml overlay
 # => replicaCount=1, environment=development
+# => Final merged values
 
 # Override via --set flag:
 # => helm install prod-release my-app --set replicaCount=5
+# => --set flag for command-line overrides
 # => --set overrides values.yaml
+# => Highest precedence override mechanism
+# => replicaCount=5 replaces default 3
 
 # Override precedence (highest to lowest):
+# => Helm value precedence hierarchy
 # 1. --set flags
+# => CLI --set has highest priority
+# => Overrides all file-based values
 # 2. -f values-file.yaml (last file wins)
+# => Multiple -f files merge left-to-right
+# => Last file's values win conflicts
 # 3. values.yaml (default)
+# => Lowest priority: base defaults
+# => Overridden by -f and --set
 ```
 
 **Key Takeaway**: Use values.yaml for defaults and environment-specific values files for overrides; leverage --set for one-off changes; understand value precedence to predict final configuration.
@@ -2773,50 +2979,102 @@ graph TD
 
 ```yaml
 # templates/db-migration-job.yaml
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: {{ .Release.Name }}-migration
-  annotations:
-    "helm.sh/hook": pre-upgrade       # => Run before upgrade
-    "helm.sh/hook-weight": "1"        # => Hook execution order
+# => Helm hook Job template
+# => Runs database migrations before upgrade
+apiVersion: batch/v1 # => Job API version
+  # => Batch API for one-time tasks
+kind: Job # => Job resource type
+  # => Runs to completion
+metadata: # => Job metadata
+  # => Name and hook annotations
+  name: {{ .Release.Name }}-migration # => Dynamic Job name
+    # => release-name-migration
+  annotations: # => Helm hook annotations
+    # => Control hook behavior
+    "helm.sh/hook": pre-upgrade # => Run before upgrade
+      # => Executes before main resources
+      # => Blocks upgrade until completion
+    "helm.sh/hook-weight": "1" # => Hook execution order
+      # => Lower weights run first
+      # => Useful for multi-hook coordination
     "helm.sh/hook-delete-policy": before-hook-creation
-                                      # => Delete previous hook Job
-spec:
-  template:
-    spec:
-      restartPolicy: Never
-      containers:
-      - name: migrate
+      # => Delete previous hook Job
+      # => Cleanup before creating new Job
+      # => Prevents Job accumulation
+spec: # => Job specification
+  # => Pod template definition
+  template: # => Pod template
+    # => Defines migration Pod
+    spec: # => Pod spec
+      # => Container and restart policy
+      restartPolicy: Never # => Never restart failed Pods
+        # => Job handles failures
+        # => Failed Pods preserved for debugging
+      containers: # => Container list
+        # => Migration container
+      - name: migrate # => Container name
+          # => Migration job container
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-        command:
-        - /bin/sh
-        - -c
-        - |
+          # => Same image as main app
+          # => Contains migration scripts
+        command: # => Override container command
+          # => Run migration script
+        - /bin/sh # => Shell command
+            # => Execute shell script
+        - -c # => Command string flag
+            # => Next argument is script
+        - | # => Multiline script
+            # => Migration commands
           echo "Running database migrations..."
+            # => Log migration start
           ./migrate.sh
+            # => Execute migration script
+            # => Script in container image
           echo "Migrations complete"
+            # => Log migration completion
 
 # Available hooks:
+# => Helm lifecycle hooks
 # => pre-install: before install
+# => Runs before any install resources
 # => post-install: after install
+# => Runs after install resources created
 # => pre-delete: before delete
+# => Cleanup before resource deletion
 # => post-delete: after delete
+# => Final cleanup after deletion
 # => pre-upgrade: before upgrade
+# => Runs before upgrade (example above)
 # => post-upgrade: after upgrade
+# => Validation after upgrade
 # => pre-rollback: before rollback
+# => Prepare for rollback
 # => post-rollback: after rollback
+# => Cleanup after rollback
 # => test: helm test command
+# => Runs on helm test invocation
 
 # Hook execution order:
+# => Hook weight determines execution sequence
 # 1. Hooks with lowest weight execute first
+# => weight: -5 runs before weight: 0
 # 2. Hooks with same weight execute in alphabetical order
+# => Filename sorting for tied weights
 # 3. Main resources deployed after hooks succeed
+# => Hooks must complete successfully
+# => Failed hooks block deployment
 
 # Hook deletion policies:
+# => Control when hooks are cleaned up
 # => before-hook-creation: delete previous hook before new one
+# => Cleanup old Job before creating new
+# => Prevents resource accumulation
 # => hook-succeeded: delete after successful execution
+# => Remove successful hook Jobs
+# => Keep failed Jobs for debugging
 # => hook-failed: delete after failed execution
+# => Remove failed Jobs automatically
+# => Useful for transient failures
 ```
 
 **Key Takeaway**: Use Helm hooks for lifecycle tasks like database migrations, backups, or cleanup; set appropriate hook-delete-policy to prevent accumulation of hook resources; verify hook success before main release continues.
@@ -2831,41 +3089,81 @@ Helm tests validate release deployments using Pods with test annotations. Tests 
 
 ```yaml
 # templates/tests/test-connection.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: {{ .Release.Name }}-test-connection
-  annotations:
-    "helm.sh/hook": test              # => Test hook
-spec:
-  restartPolicy: Never
-  containers:
-  - name: wget
-    image: busybox:1.36
-    command:
-    - wget
-    - --spider                        # => Check URL without downloading
+# => Helm test Pod template
+# => Validates service connectivity
+apiVersion: v1 # => Pod API version
+  # => Core v1 API
+kind: Pod # => Pod resource type
+  # => Test runs as Pod
+metadata: # => Pod metadata
+  # => Name and test annotation
+  name: {{ .Release.Name }}-test-connection # => Dynamic test Pod name
+    # => release-name-test-connection
+  annotations: # => Helm test annotation
+    # => Marks as test resource
+    "helm.sh/hook": test # => Test hook
+      # => Runs on helm test command
+      # => Not deployed during install/upgrade
+spec: # => Pod specification
+  # => Container and restart policy
+  restartPolicy: Never # => Never restart test Pod
+    # => Run once, preserve exit code
+    # => Success/failure determines test result
+  containers: # => Container list
+    # => Test container
+  - name: wget # => Container name
+      # => wget-based connectivity test
+    image: busybox:1.36 # => Lightweight test image
+      # => BusyBox with wget utility
+    command: # => Test command
+      # => wget connectivity check
+    - wget # => wget command
+        # => HTTP client utility
+    - --spider # => Check URL without downloading
+        # => HEAD request only
+        # => Verifies URL reachable
     - {{ .Release.Name }}-service:{{ .Values.service.port }}
+        # => Service URL with port
+        # => Tests internal DNS + connectivity
+        # => Example: my-release-service:80
 
 # Run tests:
+# => Execute Helm tests for release
 # => helm test my-release
+# => Runs all Pods with test annotation
+# => Helm creates test Pods
 # => Runs Pods with helm.sh/hook: test annotation
+# => Collects exit codes
 # => Shows test results (passed/failed)
+# => Displays pass/fail summary
 
 # Example test output:
+# => Successful test execution output
 # => NAME: my-release
+# => Release name
 # => NAMESPACE: default
+# => Namespace where release deployed
 # => STATUS: deployed
+# => Release status
 # => TEST SUITE:     my-release-test-connection
+# => Test Pod name
 # => Last Started:   Mon Dec 30 00:00:00 2025
+# => Test start timestamp
 # => Last Completed: Mon Dec 30 00:00:05 2025
+# => Test completion timestamp
 # => Phase:          Succeeded
+# => Test result: Succeeded or Failed
 
 # Common test scenarios:
+# => Typical Helm test use cases
 # => Connection test: verify service reachable
+# => Tests internal DNS and service endpoints
 # => Health check: verify application healthy
+# => Tests /health or /ready endpoints
 # => Data validation: verify database migrations succeeded
+# => Queries database for expected schema
 # => Integration test: verify dependencies connected
+# => Tests external API or database connectivity
 ```
 
 **Key Takeaway**: Implement Helm tests to validate releases post-deployment; include tests in CI/CD pipelines to catch deployment issues early; tests provide confidence in production rollouts.
@@ -2898,47 +3196,87 @@ graph TD
 
 ```yaml
 # GitOps repository structure
-gitops-repo/
-├── apps/
-│   ├── production/
-│   │   ├── app1/
-│   │   │   ├── deployment.yaml
-│   │   │   ├── service.yaml
-│   │   │   └── kustomization.yaml
-│   │   └── app2/
-│   └── staging/
-│       └── app1/
-├── infrastructure/
-│   ├── namespaces/
-│   ├── rbac/
-│   └── monitoring/
-└── clusters/
-    ├── prod-cluster/
-    │   └── apps/
-    │       └── app1.yaml         # => ArgoCD Application manifest
-    └── staging-cluster/
+# => Typical GitOps repository layout
+# => Separates apps, infrastructure, cluster configs
+gitops-repo/ # => Git repository root
+  # => Single source of truth
+├── apps/ # => Application manifests
+  # => Per-environment application configs
+│   ├── production/ # => Production environment
+│     # => Production-specific configurations
+│   │   ├── app1/ # => Application 1
+│     │     # => app1 manifests
+│   │   │   ├── deployment.yaml # => Deployment manifest
+│     │   │     # => Production Deployment config
+│   │   │   ├── service.yaml # => Service manifest
+│     │   │     # => Service definition
+│   │   │   └── kustomization.yaml # => Kustomize configuration
+│     │   │     # => Overlay customizations
+│   │   └── app2/ # => Application 2
+│     │     # => app2 manifests
+│   └── staging/ # => Staging environment
+│     # => Staging-specific configs
+│       └── app1/ # => app1 staging version
+│         # => Lower resources, different config
+├── infrastructure/ # => Infrastructure resources
+  # => Cluster-wide infrastructure
+│   ├── namespaces/ # => Namespace definitions
+│     # => All cluster namespaces
+│   ├── rbac/ # => RBAC policies
+│     # => Roles, RoleBindings
+│   └── monitoring/ # => Monitoring stack
+│     # => Prometheus, Grafana, etc.
+└── clusters/ # => Cluster configurations
+  # => Multi-cluster management
+    ├── prod-cluster/ # => Production cluster
+      # => Prod cluster apps
+    │   └── apps/ # => App registration
+    │     # => ArgoCD Application CRDs
+    │       └── app1.yaml # => ArgoCD Application manifest
+    │         # => Points ArgoCD to apps/production/app1
+    └── staging-cluster/ # => Staging cluster
+      # => Staging cluster configs
 
 # GitOps workflow:
+# => GitOps deployment pipeline
 # 1. Developer commits to Git
+# => Code or config change pushed
 # 2. CI builds image, updates manifest with new tag
+# => CI updates deployment.yaml with new image tag
 # 3. GitOps operator (ArgoCD, Flux) detects change
+# => Operator polls Git repository
 # 4. Operator syncs cluster state to match Git
+# => Applies changed manifests to cluster
 # 5. Application deployed automatically
+# => New Pods created with new image
 
 # GitOps benefits:
+# => Advantages of GitOps approach
 # => Single source of truth (Git)
+# => All cluster state in Git repository
 # => Audit trail (Git history)
+# => Complete change history with authors
 # => Rollback via Git revert
+# => Simple git revert for instant rollback
 # => Declarative infrastructure
+# => Desired state defined, not imperative steps
 # => Automated deployment
+# => No manual kubectl commands
 # => Environment parity (same process for all envs)
+# => Dev, staging, prod use identical workflow
 
 # GitOps principles:
+# => Core principles of GitOps
 # 1. Declarative: desired state in Git
+# => YAML manifests define desired state
 # 2. Versioned: Git provides versioning
+# => Every change is a Git commit
 # 3. Immutable: Git commits are immutable
+# => Commits cannot be changed (only reverted)
 # 4. Automated: reconciliation loop syncs cluster
+# => Continuous sync without human intervention
 # 5. Auditable: Git log provides audit trail
+# => Who changed what and when
 ```
 
 **Key Takeaway**: GitOps treats Git as single source of truth for cluster state; separate application manifests by environment (production, staging); use GitOps operators like ArgoCD for continuous synchronization and drift detection.
@@ -2953,50 +3291,107 @@ ArgoCD is a declarative GitOps continuous delivery tool for Kubernetes. ArgoCD m
 
 ```yaml
 # Install ArgoCD:
+# => ArgoCD installation steps
 # => kubectl create namespace argocd
+# => Create dedicated namespace
 # => kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+# => Install ArgoCD manifests
+# => Deploys ArgoCD components
 
 # Access ArgoCD UI:
+# => Port-forward to ArgoCD server
 # => kubectl port-forward svc/argocd-server -n argocd 8080:443
+# => Forward local 8080 to ArgoCD HTTPS port
 # => https://localhost:8080
+# => Access UI via browser
 
 # Get admin password:
+# => Retrieve initial admin password
 # => kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+# => Extract base64-encoded password
+# => Use for first login
 
 # ArgoCD Application CRD
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: my-app
-  namespace: argocd
-spec:
-  project: default # => ArgoCD project
-  source:
-    repoURL: https://github.com/example/gitops-repo
-    targetRevision: HEAD # => Git branch/tag/commit
-    path: apps/production/app1 # => Path in repository
-  destination:
+# => ArgoCD Application resource
+# => Defines GitOps application
+apiVersion:
+  argoproj.io/v1alpha1 # => ArgoCD API version
+  # => ArgoCD custom resource API
+kind:
+  Application # => Application resource type
+  # => ArgoCD-specific CRD
+metadata: # => Application metadata
+  # => Name and namespace
+  name:
+    my-app # => Application name
+    # => Identifies this ArgoCD app
+  namespace:
+    argocd # => ArgoCD namespace
+    # => Applications live in argocd namespace
+spec: # => Application specification
+  # => Git source and sync configuration
+  project:
+    default # => ArgoCD project
+    # => Logical grouping for apps
+    # => default: built-in project
+  source: # => Git repository source
+    # => Defines where manifests live
+    repoURL:
+      https://github.com/example/gitops-repo # => Git repository URL
+      # => HTTPS Git URL
+      # => ArgoCD polls this repo
+    targetRevision:
+      HEAD # => Git branch/tag/commit
+      # => HEAD: track branch tip
+      # => Can use tag or commit SHA
+    path:
+      apps/production/app1 # => Path in repository
+      # => Subdirectory with manifests
+      # => ArgoCD applies manifests here
+  destination: # => Target cluster and namespace
+    # => Where to deploy resources
     server:
-      https://kubernetes.default.svc
-      # => Target cluster
-    namespace: production # => Target namespace
-  syncPolicy:
-    automated:
-      prune: true # => Delete resources not in Git
-      selfHeal: true # => Auto-sync on drift
-    syncOptions:
+      https://kubernetes.default.svc # => Target cluster
+      # => kubernetes.default.svc: in-cluster
+      # => Can target external clusters
+    namespace:
+      production # => Target namespace
+      # => Deploy resources to production namespace
+  syncPolicy: # => Synchronization policy
+    # => Automated sync configuration
+    automated: # => Automated sync settings
+      # => Automatic deployment on Git changes
+      prune:
+        true # => Delete resources not in Git
+        # => Remove orphaned resources
+        # => Keeps cluster clean
+      selfHeal:
+        true # => Auto-sync on drift
+        # => Revert manual changes
+        # => Ensures Git is source of truth
+    syncOptions: # => Sync options
+      # => Additional sync behaviors
       - CreateNamespace=true # => Auto-create namespace
-
+        # => Creates namespace if missing
+        # => No manual namespace creation needed
 
 # Apply Application:
+# => Create ArgoCD Application resource
 # => kubectl apply -f my-app-application.yaml
+# => Registers app with ArgoCD
 # => ArgoCD starts syncing repository to cluster
+# => Begins continuous reconciliation
 
 # ArgoCD CLI:
+# => ArgoCD command-line operations
 # => argocd login localhost:8080
+# => Login to ArgoCD server
 # => argocd app list
+# => List all applications
 # => argocd app sync my-app
+# => Manually trigger sync
 # => argocd app rollback my-app
+# => Rollback to previous version
 ```
 
 **Key Takeaway**: Install ArgoCD for GitOps-based deployment automation; define Applications pointing to Git repositories; enable automated sync with selfHeal for drift correction; ArgoCD provides UI and CLI for application management.
@@ -3028,54 +3423,120 @@ graph TD
 ```
 
 ```yaml
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: sync-strategies-demo
-  namespace: argocd
-spec:
-  source:
-    repoURL: https://github.com/example/gitops-repo
-    path: apps/production/demo
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: production
-  syncPolicy:
-    automated:
-      prune: true # => Delete resources removed from Git
-      selfHeal: true # => Auto-sync on drift detection
-      allowEmpty: false # => Prevent deleting all resources
-    syncOptions:
+apiVersion:
+  argoproj.io/v1alpha1 # => ArgoCD Application API
+  # => ArgoCD CRD version
+kind:
+  Application # => Application resource
+  # => Defines sync behavior
+metadata: # => Application metadata
+  # => Name and namespace
+  name:
+    sync-strategies-demo # => Application name
+    # => Demo application
+  namespace:
+    argocd # => ArgoCD namespace
+    # => All apps in argocd namespace
+spec: # => Application specification
+  # => Git source and sync policy
+  source: # => Git repository source
+    # => Where manifests live
+    repoURL:
+      https://github.com/example/gitops-repo # => Git repository
+      # => Source of truth
+    path:
+      apps/production/demo # => Path in repo
+      # => Manifest subdirectory
+  destination: # => Target cluster/namespace
+    # => Where to deploy
+    server:
+      https://kubernetes.default.svc # => Cluster API
+      # => In-cluster deployment
+    namespace:
+      production # => Target namespace
+      # => Deploy to production
+  syncPolicy: # => Synchronization policy
+    # => Automated sync configuration
+    automated: # => Automated sync settings
+      # => Auto-sync configuration
+      prune:
+        true # => Delete resources removed from Git
+        # => Orphan resource cleanup
+        # => If resource deleted from Git, delete from cluster
+      selfHeal:
+        true # => Auto-sync on drift detection
+        # => Revert manual changes
+        # => Continuous reconciliation
+      allowEmpty:
+        false # => Prevent deleting all resources
+        # => Safety check
+        # => Blocks sync if Git path empty
+    syncOptions: # => Sync options
+      # => Additional sync behaviors
       - Validate=true # => Validate manifests before sync
-      - CreateNamespace=true
-      - PrunePropagationPolicy=foreground
-        # => Delete dependents before owner
+        # => Dry-run validation first
+        # => Prevents invalid YAML
+      - CreateNamespace=true # => Auto-create namespace
+        # => Creates namespace if missing
+      - PrunePropagationPolicy=foreground # => Delete dependents before owner
+        # => Foreground cascading deletion
+        # => Wait for dependents to delete first
       - PruneLast=true # => Prune after applying
-    retry:
-      limit: 5 # => Retry limit on sync failure
-      backoff:
-        duration: 5s
-        factor: 2 # => Exponential backoff
-        maxDuration: 3m
+        # => Apply resources first, then prune
+        # => Prevents downtime from premature deletion
+    retry: # => Retry configuration
+      # => Handles transient failures
+      limit:
+        5 # => Retry limit on sync failure
+        # => Maximum 5 retry attempts
+        # => Prevents infinite loops
+      backoff: # => Backoff configuration
+        # => Exponential backoff settings
+        duration:
+          5s # => Initial retry delay
+          # => First retry after 5 seconds
+        factor:
+          2 # => Exponential backoff
+          # => Each retry doubles duration
+          # => 5s, 10s, 20s, 40s, 80s...
+        maxDuration:
+          3m # => Maximum retry delay
+          # => Cap at 3 minutes
+          # => Prevents excessive waiting
 
 # Sync strategies:
+# => Different ArgoCD sync approaches
 # 1. Manual sync (no automated section)
+# => No automated sync policy
 #    => argocd app sync my-app
+#    => Requires manual sync command
 #    => Sync only on demand
+#    => Full control, no automation
 
 # 2. Automated sync (automated: {})
+# => Basic automated sync
 #    => Auto-sync on Git changes
+#    => Deploys automatically on commit
 #    => Manual intervention on drift
+#    => Alerts on manual changes but doesn't revert
 
 # 3. Automated with selfHeal
+# => Automated sync with drift correction
 #    => Auto-sync on Git changes
+#    => Deploys on commit
 #    => Auto-sync on cluster drift
+#    => Reverts manual kubectl changes
 #    => Prevents manual changes
+#    => Enforces Git as source of truth
 
 # 4. Automated with prune
+# => Automated sync with cleanup
 #    => Auto-sync + delete orphaned resources
+#    => Deploys changes + removes orphans
 #    => Resources in cluster but not Git deleted
+#    => Keeps cluster clean
 #    => Enforces Git as source of truth
+#    => Complete state reconciliation
 ```
 
 **Key Takeaway**: Use automated sync with selfHeal for production to prevent configuration drift; enable prune to remove orphaned resources; configure retry with backoff for resilience against transient failures.
@@ -3089,59 +3550,131 @@ spec:
 ArgoCD Projects provide logical grouping, access control, and restrictions for Applications. Projects enforce source repositories, destination clusters, and allowed resource types.
 
 ```yaml
-apiVersion: argoproj.io/v1alpha1
-kind: AppProject
-metadata:
-  name: production-project
-  namespace: argocd
-spec:
-  description: Production applications
-  sourceRepos:
-    - https://github.com/example/gitops-repo
-      # => Allowed source repositories
-  destinations:
-    - namespace: production
+apiVersion:
+  argoproj.io/v1alpha1 # => AppProject API
+  # => ArgoCD project CRD
+kind:
+  AppProject # => AppProject resource
+  # => Project definition for grouping apps
+metadata: # => Project metadata
+  # => Name and namespace
+  name:
+    production-project # => Project name
+    # => Logical grouping name
+  namespace:
+    argocd # => ArgoCD namespace
+    # => Projects live in argocd namespace
+spec: # => Project specification
+  # => Access control and restrictions
+  description:
+    Production applications # => Project description
+    # => Human-readable summary
+  sourceRepos: # => Allowed Git repositories
+    # => Whitelist of allowed repos
+    - https://github.com/example/gitops-repo # => Allowed source repositories
+      # => Applications can only use this repo
+      # => Prevents unauthorized code sources
+  destinations: # => Allowed deployment targets
+    # => Whitelist of clusters/namespaces
+    - namespace:
+        production # => Allowed namespace
+        # => Applications can deploy to production
       server:
-        https://kubernetes.default.svc
-        # => Allowed destination clusters/namespaces
-  clusterResourceWhitelist:
-    - group: ""
-      kind: Namespace # => Allow Namespace creation
-    - group: "rbac.authorization.k8s.io"
-      kind: ClusterRole # => Allow ClusterRole (restricted)
-  namespaceResourceBlacklist:
-    - group: ""
-      kind: ResourceQuota # => Deny ResourceQuota changes
-  roles:
-    - name: developer
-      description: Developer access
-      policies:
+        https://kubernetes.default.svc # => Allowed destination clusters/namespaces
+        # => In-cluster server URL
+        # => Applications cannot deploy elsewhere
+  clusterResourceWhitelist: # => Allowed cluster-scoped resources
+    # => Whitelist for cluster resources
+    - group: "" # => Core API group
+      # => Empty string = core API
+      kind:
+        Namespace # => Allow Namespace creation
+        # => Can create namespaces
+    - group:
+        "rbac.authorization.k8s.io" # => RBAC API group
+        # => RBAC resources
+      kind:
+        ClusterRole # => Allow ClusterRole (restricted)
+        # => Can create ClusterRoles
+        # => Restricted cluster-wide access
+  namespaceResourceBlacklist: # => Denied namespace-scoped resources
+    # => Blacklist prevents specific resources
+    - group:
+        "" # => Core API group
+        # => Core resources
+      kind:
+        ResourceQuota # => Deny ResourceQuota changes
+        # => Cannot modify resource quotas
+        # => Prevents quota bypass
+  roles: # => Project RBAC roles
+    # => Custom role definitions
+    - name:
+        developer # => Role name
+        # => Developer role
+      description:
+        Developer access # => Role description
+        # => Human-readable purpose
+      policies: # => RBAC policies
+        # => Permission statements
         - p, proj:production-project:developer, applications, get, production-project/*, allow
-        - p, proj:production-project:developer, applications, sync, production-project/*, allow
-          # => Developers can view and sync apps
-      groups:
+          # => Allow get (view) applications
+          # => Policy format: p, subject, resource, action, object, effect
+        - p, proj:production-project:developer, applications, sync, production-project/*, allow # => Developers can view and sync apps
+          # => Allow sync applications
+          # => Cannot delete or override
+      groups: # => SSO group mapping
+        # => Map to external identity groups
         - developers # => Map to SSO group
+          # => GitHub/OIDC "developers" group
 
 ---
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: prod-app
-  namespace: argocd
-spec:
-  project: production-project # => Uses production project
-  source:
-    repoURL: https://github.com/example/gitops-repo
-    path: apps/production/app1
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: production
+apiVersion:
+  argoproj.io/v1alpha1 # => Application API
+  # => ArgoCD Application CRD
+kind:
+  Application # => Application resource
+  # => Uses project restrictions
+metadata: # => Application metadata
+  # => Name and namespace
+  name:
+    prod-app # => Application name
+    # => Production application
+  namespace:
+    argocd # => ArgoCD namespace
+    # => Applications in argocd namespace
+spec: # => Application specification
+  # => Git source and project
+  project:
+    production-project # => Uses production project
+    # => Inherits project restrictions
+    # => Must comply with project rules
+  source: # => Git source
+    # => Repository configuration
+    repoURL:
+      https://github.com/example/gitops-repo # => Git repository
+      # => Must be in project sourceRepos
+    path:
+      apps/production/app1 # => Path in repository
+      # => Manifest directory
+  destination: # => Deployment target
+    # => Cluster and namespace
+    server:
+      https://kubernetes.default.svc # => Target cluster
+      # => Must be in project destinations
+    namespace:
+      production # => Target namespace
+      # => Must be in project destinations
 
 # Project restrictions:
+# => How projects enforce policies
 # => Applications must use allowed source repos
+# => sourceRepos whitelist enforced
 # => Applications must target allowed destinations
+# => destinations whitelist enforced
 # => Applications cannot create blacklisted resources
+# => Resource blacklist/whitelist enforced
 # => RBAC enforces user/group permissions
+# => Policies control who can do what
 ```
 
 **Key Takeaway**: Use ArgoCD Projects for multi-team environments to enforce repository, cluster, and resource restrictions; configure RBAC roles for granular access control; projects prevent accidental changes to critical resources.
@@ -3173,57 +3706,128 @@ graph TD
 ```
 
 ```yaml
-apiVersion: argoproj.io/v1alpha1
-kind: ApplicationSet
-metadata:
-  name: cluster-apps
-  namespace: argocd
-spec:
-  generators:
-    - list:
-        elements:
-          - cluster: prod-us-west
-            url: https://prod-us-west.k8s.example.com
-          - cluster: prod-eu-central
-            url: https://prod-eu-central.k8s.example.com
-          - cluster: staging
-            url: https://staging.k8s.example.com
-  template:
-    metadata:
-      name: "{{cluster}}-app" # => Generated name
-    spec:
-      project: default
-      source:
-        repoURL: https://github.com/example/gitops-repo
-        path: "apps/{{cluster}}" # => Cluster-specific path
-        targetRevision: HEAD
-      destination:
-        server: "{{url}}" # => Cluster URL from generator
-        namespace: default
-      syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+apiVersion:
+  argoproj.io/v1alpha1 # => ApplicationSet API
+  # => ArgoCD ApplicationSet CRD
+kind:
+  ApplicationSet # => ApplicationSet resource
+  # => Application template generator
+metadata: # => ApplicationSet metadata
+  # => Name and namespace
+  name:
+    cluster-apps # => ApplicationSet name
+    # => Multi-cluster deployment
+  namespace:
+    argocd # => ArgoCD namespace
+    # => ApplicationSets in argocd namespace
+spec: # => ApplicationSet specification
+  # => Generators and template
+  generators: # => Generator list
+    # => Defines how to generate Applications
+    - list: # => List generator
+        # => Static list of parameters
+        elements: # => Generator elements
+          # => List of cluster configurations
+          - cluster:
+              prod-us-west # => Cluster parameter
+              # => US West production cluster
+            url:
+              https://prod-us-west.k8s.example.com # => Cluster URL
+              # => API server endpoint
+          - cluster:
+              prod-eu-central # => EU cluster
+              # => EU Central production cluster
+            url:
+              https://prod-eu-central.k8s.example.com # => Cluster URL
+              # => EU API endpoint
+          - cluster:
+              staging # => Staging cluster
+              # => Staging environment
+            url:
+              https://staging.k8s.example.com # => Cluster URL
+              # => Staging API endpoint
+  template: # => Application template
+    # => Template for generated Applications
+    metadata: # => Application metadata template
+      # => Name uses generator variables
+      name:
+        "{{cluster}}-app" # => Generated name
+        # => Template variable: {{cluster}}
+        # => Example: prod-us-west-app
+    spec: # => Application spec template
+      # => Source and destination
+      project:
+        default # => ArgoCD project
+        # => Use default project
+      source: # => Git source
+        # => Repository configuration
+        repoURL:
+          https://github.com/example/gitops-repo # => Git repository
+          # => Same repo for all clusters
+        path:
+          "apps/{{cluster}}" # => Cluster-specific path
+          # => Template variable: {{cluster}}
+          # => Example: apps/prod-us-west
+        targetRevision:
+          HEAD # => Git revision
+          # => Track branch tip
+      destination: # => Deployment target
+        # => Cluster and namespace
+        server:
+          "{{url}}" # => Cluster URL from generator
+          # => Template variable: {{url}}
+          # => Example: https://prod-us-west.k8s.example.com
+        namespace:
+          default # => Target namespace
+          # => Deploy to default namespace
+      syncPolicy: # => Sync policy
+        # => Automated sync
+        automated: # => Automated sync settings
+          # => Auto-sync configuration
+          prune:
+            true # => Delete orphaned resources
+            # => Cleanup enabled
+          selfHeal:
+            true # => Auto-correct drift
+            # => Continuous reconciliation
 
 # ApplicationSet generators:
+# => Different generator types
 # 1. List generator (static list)
+# => Hardcoded list of parameters (example above)
 # 2. Cluster generator (auto-discover clusters)
+# => Discovers clusters registered in ArgoCD
 # 3. Git generator (generate from Git directory structure)
+# => Reads Git directory/file structure to generate apps
 # 4. Matrix generator (combine multiple generators)
+# => Combines two generators (cartesian product)
 
 # Use cases:
+# => Common ApplicationSet patterns
 # => Deploy same app to multiple clusters
+# => Multi-cluster deployment (example above)
 # => Deploy multiple apps from Git directory structure
+# => One Application per Git subdirectory
 # => Multi-tenant deployments (one app per tenant)
+# => Generate Application per tenant/customer
 # => Progressive rollout across cluster fleet
+# => Staged deployment to clusters sequentially
 
 # Git directory generator example:
+# => Git generator configuration
 # generators:
+# => Generator list
 # - git:
+#     # => Git generator
 #     repoURL: https://github.com/example/gitops-repo
+#       # => Git repository URL
 #     revision: HEAD
+#       # => Git revision to scan
 #     directories:
+#       # => Directory pattern matching
 #     - path: apps/*
+#       # => Match all apps/* directories
+#       # => Creates one Application per directory
 ```
 
 **Key Takeaway**: Use ApplicationSets for fleet management and multi-cluster deployments; leverage generators to avoid manual Application creation; ApplicationSets enable GitOps at scale for multiple environments and clusters.
