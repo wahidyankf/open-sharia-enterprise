@@ -149,13 +149,18 @@ Skills package conventions for efficient agent access and can orchestrate agents
 **Source of Truth**: This directory (`.claude/skills/`) is the PRIMARY source.
 **Sync Target**: Changes are copied to `.opencode/skill/` (SECONDARY) via automation.
 
+**Directory Structure**:
+
+- `.claude/skills/{skill-name}/SKILL.md` (source)
+- `.opencode/skill/{skill-name}/SKILL.md` (synced output)
+
 **Making Changes**:
 
 1. Edit skills in `.claude/skills/` directory
 2. Run: `npm run sync:claude-to-opencode` (powered by `rhino-cli` for fast syncing)
-3. Both systems stay synchronized (direct copy, no format conversion needed)
+3. Both systems stay synchronized (maintains folder structure)
 
-**Implementation**: Sync powered by `rhino-cli sync-agents` (~121ms total, 25-60x faster than bash)
+**Implementation**: Sync powered by `rhino-cli sync-agents` (~35ms total, 25-60x faster than bash)
 
 **See**: [CLAUDE.md](../../CLAUDE.md) for complete guidance, [apps/rhino-cli/README.md](../../apps/rhino-cli/README.md) for rhino-cli details
 
@@ -196,6 +201,6 @@ All skills follow governance principles:
 ---
 
 **Total Skills**: 26
-**Format**: SKILL.md with YAML frontmatter
+**Format**: Folder structure with SKILL.md and YAML frontmatter
 **Token Target**: Metadata ~100 tokens, Full content <5k tokens
-**Last Updated**: 2026-01-25
+**Last Updated**: 2026-02-01

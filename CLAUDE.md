@@ -321,7 +321,7 @@ This repository maintains **dual compatibility** with both Claude Code and OpenC
 
 - **Tools**: Claude Code uses arrays `[Read, Write]`, OpenCode uses boolean flags `{ read: true, write: true }`
 - **Models**: Claude Code uses `sonnet`/`haiku` (or omits), OpenCode uses `zai/glm-4.7` or `inherit`
-- **Skills**: Same format for both (SKILL.md with frontmatter) - direct copy
+- **Skills**: Folder structure maintained (`.claude/skills/{name}/SKILL.md` → `.opencode/skill/{name}/SKILL.md`)
 
 **Security Policy**: Only use skills from trusted sources. All skills in this repository are maintained by the project team.
 
