@@ -209,40 +209,47 @@ graph TD
 
 ```sql
 CREATE DATABASE example_62;
--- => Creates isolated database for GiST examples
+-- => Creates database for GiST (Generalized Search Tree) index examples
 \c example_62;
 -- => Switches to example_62 database
 
 CREATE TABLE locations (
     id SERIAL PRIMARY KEY,
+    -- => id: location identifier (auto-incrementing)
     name VARCHAR(100),
+    -- => name: location name (Office A, Office B, Office C)
     coordinates POINT
-    -- => POINT stores (x, y) coordinates
-    -- => Represented as (longitude, latitude) or (x, y)
+    -- => coordinates: geometric point type (x, y) or (longitude, latitude)
+    -- => POINT is built-in PostgreSQL geometric type
 );
+-- => Creates locations table with POINT column for spatial queries
 
 INSERT INTO locations (name, coordinates)
+-- => Inserts 3 US office locations
 VALUES
     ('Office A', POINT(40.7128, -74.0060)),
-    -- => New York City coordinates
+    -- => Office A: New York City (latitude 40.7128, longitude -74.0060)
     ('Office B', POINT(34.0522, -118.2437)),
-    -- => Los Angeles coordinates
+    -- => Office B: Los Angeles (latitude 34.0522, longitude -118.2437)
     ('Office C', POINT(41.8781, -87.6298));
-    -- => Chicago coordinates
+    -- => Office C: Chicago (latitude 41.8781, longitude -87.6298)
 
 CREATE INDEX idx_locations_coords ON locations USING GiST(coordinates);
--- => GiST index enables geometric queries
--- => Supports: distance (<->), containment (@>), overlap (&&)
--- => B-tree structure for spatial data
+-- => Creates GiST index on coordinates column
+-- => USING GiST: specifies Generalized Search Tree index type
+-- => GiST supports geometric operations: distance (<->), overlap (&&), containment (@>)
+-- => Enables fast nearest-neighbor searches and spatial queries
 
 SELECT name, coordinates
 FROM locations
 ORDER BY coordinates <-> POINT(40.7589, -73.9851)
--- => <-> operator computes distance between points
--- => Reference point: Times Square, NYC
--- => Orders results by distance (nearest first)
+-- => <-> operator: distance between two points
+-- => Reference point: Times Square, NYC (40.7589, -73.9851)
+-- => Calculates distance from each location to Times Square
+-- => ORDER BY distance ascending (nearest first)
+-- => Office A (NYC) closest, then Office C (Chicago), then Office B (LA)
 LIMIT 3;
--- => Returns 3 nearest locations
+-- => Returns 3 nearest locations (all 3 in this case)
 -- => Result: Office A (closest), Office C, Office B
 
 EXPLAIN ANALYZE
@@ -537,30 +544,39 @@ CREATE DATABASE example_64;
 
 CREATE TABLE employees (
     id SERIAL PRIMARY KEY,
+    -- => id: employee identifier (auto-increment)
     name VARCHAR(100),
+    -- => name: employee name (generated as 'Employee N')
     email VARCHAR(100),
+    -- => email: employee email address
     department VARCHAR(50),
+    -- => department: one of 5 departments (Engineering, Sales, Marketing, HR, Operations)
     salary DECIMAL(10, 2)
+    -- => salary: employee salary ($50k-$150k range)
 );
+-- => Creates employees table for covering index demonstration
 
 INSERT INTO employees (name, email, department, salary)
+-- => Generates 100,000 test employees
 SELECT
     'Employee ' || generate_series,
-    -- => Generates names: Employee 1, Employee 2, ...
+    -- => Name: 'Employee 1', 'Employee 2', ..., 'Employee 100000'
     'emp' || generate_series || '@company.com',
-    -- => Generates emails
+    -- => Email: emp1@company.com, emp2@company.com, ...
     CASE (generate_series % 5)
+        -- => Modulo 5 distributes evenly across departments
         WHEN 0 THEN 'Engineering'
         WHEN 1 THEN 'Sales'
         WHEN 2 THEN 'Marketing'
         WHEN 3 THEN 'HR'
         ELSE 'Operations'
     END,
-    -- => Distributes employees across 5 departments
+    -- => Each department gets ~20,000 employees
     (random() * 100000 + 50000)::DECIMAL(10, 2)
-    -- => Random salary between $50,000 and $150,000
+    -- => Random salary: $50,000 to $150,000
 FROM generate_series(1, 100000);
--- => 100,000 employees created
+-- => Generates 100,000 rows
+-- => INSERT completes with 100,000 test employees
 
 CREATE INDEX idx_employees_dept ON employees(department);
 -- => Regular B-tree index on department
@@ -725,37 +741,49 @@ CREATE DATABASE example_65;
 
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
+    -- => Auto-incrementing integer primary key
     sku VARCHAR(50),
     -- => Stock Keeping Unit (unique product code)
     category VARCHAR(50),
+    -- => Product category (Electronics, Clothing, Food, Books)
     price DECIMAL(10, 2)
+    -- => Price with 2 decimal places
 );
+-- => Creates products table with 4 columns
 
 INSERT INTO products (sku, category, price)
+-- => Inserts bulk data using SELECT
 SELECT
     'SKU-' || LPAD(generate_series::TEXT, 8, '0'),
     -- => Generates SKUs: SKU-00000001, SKU-00000002, ...
     -- => LPAD pads left with zeros to 8 digits
     CASE (generate_series % 4)
         WHEN 0 THEN 'Electronics'
+        -- => 25% of products
         WHEN 1 THEN 'Clothing'
+        -- => 25% of products
         WHEN 2 THEN 'Food'
+        -- => 25% of products
         ELSE 'Books'
+        -- => Remaining 25%
     END,
-    -- => Distributes across 4 categories
+    -- => Distributes evenly across 4 categories
     (random() * 500 + 10)::DECIMAL(10, 2)
     -- => Random price $10 to $510
 FROM generate_series(1, 200000);
--- => 200,000 products created
+-- => 200,000 products created (50,000 per category)
 
 CREATE INDEX idx_products_category ON products(category);
 -- => Regular B-tree index on category
 -- => Does not support index-only scans for SELECT *
 
 EXPLAIN ANALYZE
+-- => Shows execution plan with actual runtime statistics
 SELECT category
+-- => Requests only category column
 FROM products
 WHERE category = 'Electronics';
+-- => Filters to Electronics category (~50,000 rows)
 -- => Before VACUUM:
 -- => Index Scan using idx_products_category
 -- => Heap Fetches: ~50,000 (accesses table heap)
@@ -768,9 +796,11 @@ VACUUM products;
 -- => Process completes in ~1 second for 200k rows
 
 EXPLAIN ANALYZE
+-- => Re-runs same query after VACUUM
 SELECT category
 FROM products
 WHERE category = 'Electronics';
+-- => Same query as before
 -- => After VACUUM:
 -- => Index Only Scan using idx_products_category
 -- => Heap Fetches: 0 (no table access)
@@ -779,7 +809,9 @@ WHERE category = 'Electronics';
 
 SELECT
     schemaname,
+    -- => Schema name (usually 'public')
     tablename,
+    -- => Table name
     last_vacuum,
     -- => Last manual VACUUM timestamp
     last_autovacuum,
@@ -791,7 +823,9 @@ SELECT
     n_tup_del
     -- => Number of rows deleted
 FROM pg_stat_user_tables
+-- => System view tracking table statistics
 WHERE tablename = 'products';
+-- => Filters to products table
 -- => Shows vacuum statistics
 -- => Helps determine when VACUUM needed
 -- => last_vacuum should be recent for index-only scans
@@ -805,25 +839,33 @@ VACUUM products;
 -- => Updates visibility map for new index
 
 EXPLAIN ANALYZE
+-- => Tests covering index performance
 SELECT sku, category, price
+-- => All three columns in covering index
 FROM products
 WHERE sku = 'SKU-00012345';
+-- => Searches for specific SKU
 -- => Index Only Scan using idx_products_sku_covering
 -- => Heap Fetches: 0
 -- => All three columns retrieved from index
 -- => No table access required
 
 UPDATE products
+-- => Modifies existing rows
 SET price = price * 1.1
 -- => Increases all prices by 10%
 WHERE category = 'Electronics';
+-- => Filters to Electronics category
 -- => Updates ~50,000 rows
 -- => Creates new row versions (MVCC)
+-- => Old versions marked as dead tuples
 
 EXPLAIN ANALYZE
+-- => Tests query after UPDATE
 SELECT category
 FROM products
 WHERE category = 'Electronics';
+-- => Same query as earlier
 -- => After UPDATE:
 -- => Index Scan using idx_products_category
 -- => Heap Fetches: ~50,000 (back to heap access)
@@ -835,9 +877,11 @@ VACUUM products;
 -- => Marks old row versions as removable
 
 EXPLAIN ANALYZE
+-- => Re-tests after second VACUUM
 SELECT category
 FROM products
 WHERE category = 'Electronics';
+-- => Same query again
 -- => After VACUUM:
 -- => Index Only Scan using idx_products_category
 -- => Heap Fetches: 0
@@ -846,36 +890,51 @@ WHERE category = 'Electronics';
 SELECT
     pg_size_pretty(pg_total_relation_size('products')) AS total_size,
     -- => Total size including table, indexes, TOAST
+    -- => Returns human-readable format (e.g., "45 MB")
     pg_size_pretty(pg_relation_size('products')) AS table_size,
     -- => Table heap size only
+    -- => Excludes indexes and TOAST
     pg_size_pretty(pg_indexes_size('products')) AS indexes_size;
     -- => All indexes combined size
+    -- => Helps monitor index overhead
 -- => Shows storage breakdown
 -- => Indexes typically 20-50% of table size
 
 CREATE TABLE events (
     id BIGSERIAL PRIMARY KEY,
+    -- => Auto-incrementing 64-bit integer
     event_type VARCHAR(50),
+    -- => Event name (page_view, click, etc.)
     timestamp TIMESTAMPTZ,
+    -- => Timestamp with timezone
     user_id INTEGER
+    -- => Foreign key to users table
 );
+-- => Creates events table for analytics
 
 INSERT INTO events (event_type, timestamp, user_id)
+-- => Bulk insert analytics events
 SELECT
     CASE (random() * 5)::INTEGER
         WHEN 0 THEN 'page_view'
+        -- => 20% page views
         WHEN 1 THEN 'click'
+        -- => 20% clicks
         WHEN 2 THEN 'purchase'
+        -- => 20% purchases
         WHEN 3 THEN 'signup'
+        -- => 20% signups
         ELSE 'logout'
+        -- => 20% logouts
     END,
-    -- => Random event type
+    -- => Evenly distributed event types
     NOW() - (random() * 30 || ' days')::INTERVAL,
     -- => Random timestamp within past 30 days
+    -- => Simulates historical event data
     (random() * 50000)::INTEGER
-    -- => Random user ID
+    -- => Random user ID (0 to 50,000)
 FROM generate_series(1, 1000000);
--- => 1 million events created
+-- => 1 million events created (200k per type)
 
 CREATE INDEX idx_events_type_time
 ON events(event_type, timestamp);
@@ -887,18 +946,22 @@ VACUUM ANALYZE events;
 -- => ANALYZE updates table statistics for query planner
 
 EXPLAIN ANALYZE
+-- => Analyzes query for recent purchase events
 SELECT event_type, timestamp
+-- => Both columns in composite index
 FROM events
 WHERE event_type = 'purchase'
+-- => Filters to purchase events (~200k rows)
   AND timestamp >= NOW() - INTERVAL '7 days'
--- => Filters to recent purchases
+-- => Filters to last 7 days (~23k rows)
 ORDER BY timestamp DESC
 -- => Sorts newest first
 LIMIT 100;
--- => Returns 100 most recent purchases
+-- => Returns top 100 results
 -- => Index Only Scan using idx_events_type_time
 -- => Heap Fetches: 0
 -- => All data from index, sorted by index order
+-- => No table access needed
 ```
 
 **Key Takeaway**: Index-only scans require visibility map updates via VACUUM. After INSERT/UPDATE/DELETE operations, run VACUUM to enable index-only scans. Monitor with pg_stat_user_tables to track vacuum status.
@@ -1099,87 +1162,124 @@ CREATE DATABASE example_67;
 
 CREATE TABLE customers (
     id SERIAL PRIMARY KEY,
+    -- => Auto-incrementing customer ID
     name VARCHAR(100),
+    -- => Customer name
     email VARCHAR(100)
+    -- => Customer email
 );
+-- => Creates customers table (10k rows expected)
 
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
+    -- => Auto-incrementing order ID
     customer_id INTEGER,
     -- => Foreign key to customers.id
     order_date DATE,
+    -- => Order placement date
     total DECIMAL(10, 2)
+    -- => Order total amount
 );
+-- => Creates orders table (100k rows expected)
 
 CREATE TABLE order_items (
     id SERIAL PRIMARY KEY,
+    -- => Auto-incrementing item ID
     order_id INTEGER,
     -- => Foreign key to orders.id
     product_id INTEGER,
+    -- => Product identifier
     quantity INTEGER,
+    -- => Quantity ordered
     price DECIMAL(10, 2)
+    -- => Item price
 );
+-- => Creates order_items table (500k rows expected)
 
 INSERT INTO customers (name, email)
+-- => Inserts customer data
 SELECT
     'Customer ' || generate_series,
+    -- => Names: Customer 1, Customer 2, ...
     'customer' || generate_series || '@email.com'
+    -- => Emails: customer1@email.com, customer2@email.com, ...
 FROM generate_series(1, 10000);
 -- => 10,000 customers created
 
 INSERT INTO orders (customer_id, order_date, total)
+-- => Inserts order data
 SELECT
     (random() * 10000 + 1)::INTEGER,
     -- => Random customer ID (1-10,000)
+    -- => Each customer gets ~10 orders on average
     CURRENT_DATE - (random() * 365)::INTEGER,
     -- => Random date within past year
+    -- => Simulates historical orders
     (random() * 1000)::DECIMAL(10, 2)
+    -- => Random total $0-$1000
 FROM generate_series(1, 100000);
 -- => 100,000 orders created (avg 10 orders per customer)
 
 INSERT INTO order_items (order_id, product_id, quantity, price)
+-- => Inserts order line items
 SELECT
     (random() * 100000 + 1)::INTEGER,
     -- => Random order ID (1-100,000)
+    -- => Each order gets ~5 items on average
     (random() * 5000 + 1)::INTEGER,
-    -- => Random product ID
+    -- => Random product ID (1-5000)
+    -- => Simulates product catalog
     (random() * 5 + 1)::INTEGER,
-    -- => Random quantity (1-5)
+    -- => Random quantity (1-5 units)
     (random() * 100 + 10)::DECIMAL(10, 2)
     -- => Random price ($10-$110)
 FROM generate_series(1, 500000);
--- => 500,000 order items (avg 5 items per order)
+-- => 500,000 order items created (avg 5 items per order)
 
 CREATE INDEX idx_orders_customer ON orders(customer_id);
+-- => Index on orders.customer_id for JOIN optimization
 CREATE INDEX idx_order_items_order ON order_items(order_id);
--- => Indexes for foreign key joins
+-- => Index on order_items.order_id for JOIN optimization
+-- => Both indexes critical for multi-table joins
 
 ANALYZE customers;
+-- => Updates statistics for customers table
 ANALYZE orders;
+-- => Updates statistics for orders table
 ANALYZE order_items;
--- => Updates table statistics for query planner
+-- => Updates statistics for order_items table
 -- => Collects row counts, value distributions, null counts
 -- => Required for accurate join order selection
+-- => Query planner uses this for cost estimates
 
 EXPLAIN ANALYZE
+-- => Analyzes two-table join execution
 SELECT c.name, o.total
+-- => Retrieves customer name and order total
 FROM customers c
 JOIN orders o ON c.id = o.customer_id
--- => Two-table join
+-- => Joins customers to orders
+-- => Links via customer ID foreign key
 WHERE c.id = 5000;
--- => Filters customers first
+-- => Filters to single customer first
+-- => Reduces join cardinality
 -- => Plan: Nested Loop
 -- =>   Index Scan on customers (filter: id = 5000)
 -- =>   Index Scan on orders (customer_id = 5000)
 -- => Nested loop chosen because filtering reduces outer rows
 
 EXPLAIN ANALYZE
+-- => Analyzes three-table join
 SELECT c.name, o.total, oi.quantity
+-- => Retrieves data from all three tables
 FROM customers c
 JOIN orders o ON c.id = o.customer_id
+-- => First join: customers to orders
 JOIN order_items oi ON o.id = oi.order_id
+-- => Second join: orders to order_items
 -- => Three-table join chain
 WHERE c.id = 5000;
+-- => Filters to single customer
 -- => Planner evaluates join order:
 -- => Option 1: (customers ⋈ orders) ⋈ order_items
 -- => Option 2: (customers ⋈ order_items) ⋈ orders
@@ -1187,93 +1287,132 @@ WHERE c.id = 5000;
 -- => Likely: customers → orders → order_items (following FK chain)
 
 EXPLAIN ANALYZE
+-- => Analyzes aggregation with join
 SELECT c.name, COUNT(*) AS order_count
+-- => Counts orders per customer
 FROM customers c
 JOIN orders o ON c.id = o.customer_id
+-- => Joins all customers with all orders
 GROUP BY c.id, c.name;
+-- => Groups by customer
 -- => Join all customers with all orders
--- => No filter reduces dataset
+-- => No filter reduces dataset (100k orders × 10k customers)
 -- => Plan: Hash Join
 -- =>   Seq Scan on customers (builds hash table)
 -- =>   Seq Scan on orders (probes hash table)
 -- => Hash join chosen for large dataset join
+-- => More efficient than nested loop for full table joins
 
 EXPLAIN ANALYZE
+-- => Tests LEFT JOIN with filter
 SELECT c.name, o.total
+-- => Retrieves customer and order data
 FROM customers c
 LEFT JOIN orders o ON c.id = o.customer_id
 -- => LEFT JOIN includes customers with no orders
+-- => Returns NULL for o.* when no match
 WHERE o.order_date >= '2025-01-01';
 -- => Filter on orders table
+-- => Filters out NULL rows (customers with no orders)
 -- => Converts LEFT JOIN to INNER JOIN (optimizer transformation)
 -- => o.order_date >= '2025-01-01' excludes NULL rows from LEFT JOIN
+-- => Plan will show INNER JOIN, not LEFT JOIN
 
 EXPLAIN ANALYZE
+-- => Tests LEFT JOIN with NULL-preserving filter
 SELECT c.name, o.total
 FROM customers c
 LEFT JOIN orders o ON c.id = o.customer_id
+-- => LEFT JOIN returns all customers
 WHERE o.order_date >= '2025-01-01'
    OR o.order_date IS NULL;
+   -- => OR clause includes NULL dates
    -- => Preserves LEFT JOIN semantics
    -- => Includes customers with no orders (NULL dates)
    -- => Plan: Hash Right Join or Merge Join
    -- => Cannot convert to INNER JOIN
+   -- => Keeps customers without orders in result
 
 EXPLAIN ANALYZE
+-- => Tests old-style comma join syntax
 SELECT c.name, o.total
 FROM customers c, orders o
 -- => Comma syntax (implicit CROSS JOIN)
+-- => Legacy SQL-89 join syntax
 WHERE c.id = o.customer_id
   AND c.id = 5000;
-  -- => Join condition in WHERE clause
+  -- => Join condition in WHERE clause (not ON clause)
+  -- => Filters to single customer
   -- => Optimizer converts to explicit JOIN
   -- => Same plan as explicit JOIN syntax
-  -- => Prefer explicit JOIN for clarity
+  -- => Prefer explicit JOIN for clarity and maintainability
 
 SET join_collapse_limit = 1;
 -- => Limits join reordering optimization
 -- => Forces planner to respect written join order
 -- => Default: 8 (reorders up to 8 tables)
+-- => Useful for debugging query plans
 
 EXPLAIN ANALYZE
+-- => Tests join with reordering disabled
 SELECT c.name, o.total, oi.quantity
+-- => Retrieves data from three tables
 FROM customers c
 JOIN orders o ON c.id = o.customer_id
+-- => First join as written
 JOIN order_items oi ON o.id = oi.order_id
+-- => Second join as written
 WHERE c.id = 5000;
+-- => Filters to single customer
 -- => With join_collapse_limit = 1:
 -- => Joins executed in written order
 -- => No reordering optimization
 -- => May produce suboptimal plan
+-- => Useful for controlling join order manually
 
 RESET join_collapse_limit;
 -- => Restores default (8)
 -- => Re-enables automatic join reordering
+-- => Planner can optimize join order again
 
 EXPLAIN (ANALYZE, BUFFERS)
+-- => Analyzes with buffer I/O statistics
 SELECT c.name, COUNT(*)
+-- => Counts orders per customer
 FROM customers c
 JOIN orders o ON c.id = o.customer_id
+-- => Joins customers to orders
 WHERE o.order_date >= '2025-01-01'
+-- => Filters to recent orders
 GROUP BY c.id, c.name;
--- => BUFFERS shows I/O for join operations
+-- => Groups by customer
+-- => BUFFERS option shows I/O statistics
 -- => Hash Join buffer usage:
--- =>   Shared hit: X (buffer cache hits)
--- =>   Shared read: Y (disk reads)
+-- =>   Shared hit: X (buffer cache hits - memory reads)
+-- =>   Shared read: Y (disk reads - slower)
 -- =>   Temp read/written: Z (spills to disk if memory exceeded)
+-- => Helps identify I/O bottlenecks in joins
 
 EXPLAIN ANALYZE
+-- => Analyzes multi-filter join query
 SELECT *
+-- => Retrieves all columns from all tables
 FROM customers c
 JOIN orders o ON c.id = o.customer_id
+-- => First join
 JOIN order_items oi ON o.id = oi.order_id
+-- => Second join
 WHERE c.email LIKE '%@email.com'
+  -- => Filter on customers (low selectivity - most match)
   AND o.total > 500
+  -- => Filter on orders (medium selectivity)
   AND oi.quantity > 2;
+  -- => Filter on order_items (high selectivity)
   -- => Multiple filter conditions across tables
   -- => Planner estimates selectivity of each filter
   -- => Applies most selective filter first
   -- => Join order: most selective → least selective
+  -- => Reduces intermediate result sizes
 ```
 
 **Key Takeaway**: PostgreSQL automatically optimizes join order based on table statistics collected by ANALYZE. Use EXPLAIN to verify chosen join strategy (Nested Loop for small datasets, Hash Join for large datasets, Merge Join for sorted data). Control join behavior with join_collapse_limit.
@@ -1298,53 +1437,79 @@ CREATE DATABASE example_68;
 
 CREATE TABLE customers (
     id SERIAL PRIMARY KEY,
+    -- => Auto-incrementing customer ID
     name VARCHAR(100),
+    -- => Customer name
     email VARCHAR(100)
+    -- => Customer email
 );
+-- => Creates customers table
 
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
+    -- => Auto-incrementing order ID
     customer_id INTEGER,
+    -- => Foreign key to customers.id
     order_date DATE,
+    -- => Order date
     total DECIMAL(10, 2)
+    -- => Order total amount
 );
+-- => Creates orders table
 
 INSERT INTO customers (name, email)
+-- => Inserts customer data
 SELECT
     'Customer ' || generate_series,
+    -- => Names: Customer 1, Customer 2, ...
     'customer' || generate_series || '@email.com'
+    -- => Emails: customer1@email.com, ...
 FROM generate_series(1, 50000);
 -- => 50,000 customers created
 
 INSERT INTO orders (customer_id, order_date, total)
+-- => Inserts order data
 SELECT
     (random() * 50000 + 1)::INTEGER,
     -- => Random customer ID (1-50,000)
+    -- => Each customer gets ~4 orders on average
     CURRENT_DATE - (random() * 730)::INTEGER,
     -- => Random date within past 2 years
+    -- => Creates historical order data
     (random() * 2000)::DECIMAL(10, 2)
+    -- => Random total $0-$2000
 FROM generate_series(1, 200000);
 -- => 200,000 orders created (avg 4 orders per customer)
 
 CREATE INDEX idx_orders_customer ON orders(customer_id);
+-- => Index for JOIN optimization
 CREATE INDEX idx_orders_date ON orders(order_date);
--- => Indexes for optimization
+-- => Index for date range queries
+-- => Both indexes accelerate subquery and JOIN queries
 
 ANALYZE customers;
+-- => Updates customer table statistics
 ANALYZE orders;
--- => Collects statistics for query planner
+-- => Updates order table statistics
+-- => Collects row counts, value distributions
+-- => Required for accurate query plan cost estimation
 
 EXPLAIN ANALYZE
+-- => Analyzes IN subquery performance
 SELECT name, email
+-- => Retrieves customer details
 FROM customers
 WHERE id IN (
+    -- => IN clause with subquery
     SELECT customer_id
+    -- => Returns matching customer IDs
     FROM orders
     WHERE order_date >= '2024-01-01'
+    -- => Filters to orders since 2024
     -- => Subquery finds customers with recent orders
 );
 -- => Subquery execution plan:
--- => Hash Semi Join
+-- => Hash Semi Join (planner converts IN to semi-join)
 -- =>   Seq Scan on customers
 -- =>   Seq Scan on orders (filter on order_date)
 -- => Subquery result hashed for membership check
@@ -1357,12 +1522,17 @@ WHERE id IN (
 
 ```sql
 EXPLAIN ANALYZE
+-- => Analyzes JOIN with DISTINCT performance
 SELECT DISTINCT c.name, c.email
+-- => DISTINCT removes duplicate customers
+-- => (customers with multiple recent orders)
 FROM customers c
 JOIN orders o ON c.id = o.customer_id
 -- => Explicit join relationship
+-- => More readable than IN subquery
 WHERE o.order_date >= '2024-01-01';
 -- => Filter applied to orders table
+-- => Filters before join (more efficient)
 -- => JOIN execution plan:
 -- => Hash Join
 -- =>   Hash: Seq Scan on orders (filter on order_date)
@@ -1381,18 +1551,25 @@ WHERE o.order_date >= '2024-01-01';
 
 ```sql
 EXPLAIN ANALYZE
+-- => Analyzes correlated subquery performance
 SELECT c.name,
        (SELECT COUNT(*)
+        -- => Subquery in SELECT list
         FROM orders o
         WHERE o.customer_id = c.id
+        -- => Correlated with outer query (references c.id)
         -- => Correlated subquery executes ONCE per customer
+        -- => 50,000 separate executions
         AND o.order_date >= '2024-01-01') AS recent_orders
+        -- => Counts recent orders per customer
 FROM customers c;
+-- => Scans all 50,000 customers
 -- => Correlated subquery plan:
 -- => Seq Scan on customers
 -- => For each row: Index Scan on orders (customer_id filter)
 -- => 50,000 index scans (one per customer)
 -- => Execution time: ~800ms (slow due to row-by-row execution)
+-- => Inefficient for large datasets
 ```
 
 **Text explanation**: Correlated subquery executes repeatedly (once per outer row). For 50,000 customers, subquery runs 50,000 times. Inefficient for large datasets despite index usage.
@@ -1401,22 +1578,31 @@ FROM customers c;
 
 ```sql
 EXPLAIN ANALYZE
+-- => Analyzes LEFT JOIN with GROUP BY performance
 SELECT c.name,
        COALESCE(o.recent_orders, 0) AS recent_orders
+       -- => COALESCE converts NULL to 0
+       -- => Handles customers with no recent orders
 FROM customers c
 LEFT JOIN (
+    -- => Subquery in FROM clause (executes once)
     SELECT customer_id, COUNT(*) AS recent_orders
+    -- => Counts orders per customer
     FROM orders
     WHERE order_date >= '2024-01-01'
+    -- => Filters to recent orders
     GROUP BY customer_id
-    -- => Subquery executes ONCE, groups by customer
+    -- => Groups by customer (aggregates once)
+    -- => Subquery executes ONCE, not per row
 ) o ON c.id = o.customer_id;
+-- => Joins aggregated results to customers
+-- => LEFT JOIN preserves all customers
 -- => JOIN with aggregation plan:
 -- => Hash Left Join
 -- =>   Seq Scan on customers
 -- =>   HashAggregate on orders subquery (executes once)
 -- => Execution time: ~180ms (4x faster than correlated subquery)
--- => COALESCE handles NULL for customers with no recent orders
+-- => Single execution vastly outperforms row-by-row
 ```
 
 **Text explanation**: JOIN approach executes subquery once, aggregates results, then joins. Eliminates row-by-row subquery execution. LEFT JOIN preserves all customers even if no recent orders. COALESCE converts NULL to 0 for clarity.
@@ -1503,129 +1689,174 @@ CREATE DATABASE example_69;
 
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
+    -- => Auto-incrementing product ID
     category VARCHAR(50),
+    -- => Product category (Electronics, Clothing, etc.)
     price DECIMAL(10, 2),
+    -- => Product price with 2 decimal places
     in_stock BOOLEAN
+    -- => Stock availability flag
 );
+-- => Creates products table with 4 columns
 
 INSERT INTO products (category, price, in_stock)
+-- => Inserts bulk product data
 SELECT
     CASE (generate_series % 5)
         WHEN 0 THEN 'Electronics'
+        -- => 20% of products
         WHEN 1 THEN 'Clothing'
+        -- => 20% of products
         WHEN 2 THEN 'Food'
+        -- => 20% of products
         WHEN 3 THEN 'Books'
+        -- => 20% of products
         ELSE 'Toys'
+        -- => 20% of products
     END,
-    -- => 5 categories with equal distribution
+    -- => 5 categories with equal 20% distribution each
     (random() * 500 + 10)::DECIMAL(10, 2),
     -- => Random price $10-$510
     random() < 0.8
-    -- => 80% in stock, 20% out of stock
+    -- => 80% chance TRUE (in stock), 20% FALSE (out of stock)
 FROM generate_series(1, 100000);
--- => 100,000 products created
+-- => 100,000 products created (20,000 per category)
 
 SELECT
     schemaname,
+    -- => Schema name (usually 'public')
     tablename,
+    -- => Table name
     last_analyze,
-    -- => Last ANALYZE timestamp
+    -- => Last ANALYZE timestamp (NULL if never analyzed)
     n_live_tup,
     -- => Estimated live rows
     n_dead_tup
     -- => Dead rows from UPDATE/DELETE (need VACUUM)
 FROM pg_stat_user_tables
+-- => System view with table statistics
 WHERE tablename = 'products';
+-- => Filters to products table
 -- => Shows statistics metadata
--- => last_analyze: NULL (never analyzed)
--- => n_live_tup: ~100,000 (approximate)
+-- => last_analyze: NULL (never analyzed yet)
+-- => n_live_tup: ~100,000 (approximate count)
 
 EXPLAIN
+-- => Shows query execution plan without running query
 SELECT * FROM products WHERE category = 'Electronics';
+-- => Retrieves all Electronics products
 -- => Plan before ANALYZE:
 -- => Seq Scan on products
 -- => Filter: category = 'Electronics'
--- => Estimated rows: ~50,000 (planner guesses 50% selectivity)
--- => Actual rows should be ~20,000 (20% of data)
+-- => Estimated rows: ~50,000 (planner guesses 50% selectivity without stats)
+-- => Actual rows should be ~20,000 (20% of data based on CASE distribution)
 
 ANALYZE products;
 -- => Collects statistics on products table
 -- => Samples random rows (default: 300 * default_statistics_target)
 -- => Computes value distributions, NULL counts, distinct values
--- => Updates pg_statistic catalog
+-- => Updates pg_statistic system catalog
+-- => Critical for accurate query planning
 
 SELECT
     schemaname,
     tablename,
     last_analyze,
+    -- => Now shows recent timestamp
     n_live_tup,
+    -- => Accurate row count
     n_dead_tup
+    -- => Dead tuple count
 FROM pg_stat_user_tables
 WHERE tablename = 'products';
+-- => Re-checks statistics metadata
 -- => last_analyze: now updated to current timestamp
--- => n_live_tup: 100,000 (accurate count)
+-- => n_live_tup: 100,000 (accurate count after ANALYZE)
 
 EXPLAIN
+-- => Re-runs query plan after ANALYZE
 SELECT * FROM products WHERE category = 'Electronics';
+-- => Same query as before
 -- => Plan after ANALYZE:
 -- => Seq Scan on products
--- => Estimated rows: ~20,000 (accurate based on statistics)
--- => Planner now knows exact category distribution
+-- => Estimated rows: ~20,000 (accurate based on collected statistics)
+-- => Planner now knows exact category distribution (20% per category)
+-- => Much more accurate cost estimation
 
 SELECT
     tablename,
+    -- => Table name
     attname AS column_name,
-    -- => Column name
+    -- => Column name (renamed from attname for clarity)
     n_distinct,
     -- => Estimated number of distinct values
     -- => Positive number: actual distinct count
     -- => Negative number: fraction of rows (e.g., -0.5 = 50% distinct)
     most_common_vals,
-    -- => Array of most common values
+    -- => Array of most common values in column
+    -- => Helps planner estimate selectivity
     most_common_freqs,
-    -- => Frequencies of most common values
+    -- => Frequencies (0.0 to 1.0) of most common values
+    -- => Sums to approximate percentage of data
     correlation
     -- => Physical storage correlation with logical order
     -- => 1.0: perfectly sorted, 0: random, -1.0: reverse sorted
+    -- => Affects cost of index vs sequential scans
 FROM pg_stats
+-- => System view with column-level statistics
 WHERE tablename = 'products' AND attname = 'category';
+-- => Filters to category column of products table
 -- => Shows detailed statistics for category column
--- => n_distinct: 5 (five categories)
+-- => n_distinct: 5 (five unique categories)
 -- => most_common_vals: {Electronics, Clothing, Food, Books, Toys}
--- => most_common_freqs: {0.2, 0.2, 0.2, 0.2, 0.2}
--- => correlation: low (categories distributed randomly)
+-- => most_common_freqs: {0.2, 0.2, 0.2, 0.2, 0.2} (equal distribution)
+-- => correlation: low (categories distributed randomly in table)
 
 SELECT
     tablename,
+    -- => Table name
     attname,
+    -- => Column name
     n_distinct,
+    -- => Distinct value count
     null_frac,
     -- => Fraction of NULL values (0.0 to 1.0)
+    -- => 0.0 means no NULLs, 1.0 means all NULLs
     avg_width
-    -- => Average width in bytes
+    -- => Average column width in bytes
+    -- => Helps estimate memory usage
 FROM pg_stats
 WHERE tablename = 'products' AND attname = 'in_stock';
+-- => Filters to in_stock boolean column
 -- => Shows boolean column statistics
--- => n_distinct: 2 (true/false)
--- => null_frac: 0.0 (no NULLs)
--- => avg_width: 1 (1 byte for boolean)
+-- => n_distinct: 2 (true/false only)
+-- => null_frac: 0.0 (no NULLs in boolean column)
+-- => avg_width: 1 (1 byte for boolean storage)
 
 CREATE INDEX idx_products_category ON products(category);
--- => Creates B-tree index on category
+-- => Creates B-tree index on category column
+-- => Enables fast lookups by category value
+-- => Planner uses statistics to decide index vs seq scan
 
 EXPLAIN
+-- => Generates execution plan with statistics
 SELECT * FROM products WHERE category = 'Electronics';
+-- => Queries for Electronics products
 -- => Plan with accurate statistics:
 -- => Index Scan using idx_products_category
--- => Estimated rows: ~20,000
--- => Planner chooses index because selectivity good (20%)
+-- => Estimated rows: ~20,000 (based on statistics showing 20% selectivity)
+-- => Planner chooses index because selectivity good (20% < 25% threshold)
 
 UPDATE products
+-- => Modifies existing rows
 SET category = 'Electronics'
+-- => Changes category to Electronics
 WHERE category = 'Clothing';
--- => Changes 20% of rows (20,000 rows)
--- => category distribution NOW: Electronics 40%, others 15% each
--- => Statistics NOT updated yet
+-- => Filters to Clothing category (20,000 rows)
+-- => Changes 20% of rows (20,000 rows updated)
+-- => category distribution NOW: Electronics 40%, Food/Books/Toys 15% each
+-- => Statistics NOT updated yet (still shows old 20% distribution)
+-- => Planner doesn't know data changed
 
 EXPLAIN
 SELECT * FROM products WHERE category = 'Electronics';
@@ -1668,39 +1899,56 @@ SET default_statistics_target = 1000;
 -- => Applies to all columns without explicit ALTER TABLE
 
 ANALYZE products;
+-- => Re-collects statistics with increased target
 -- => Uses new default_statistics_target (1000)
+-- => More accurate histograms and most_common_vals
+-- => Longer analysis time but better plans
 
 RESET default_statistics_target;
 -- => Restores default (100)
+-- => Applies to future ANALYZE operations
 
 SELECT
     relname AS table_name,
+    -- => Table name (renamed for clarity)
     seq_scan,
-    -- => Number of sequential scans
+    -- => Number of sequential scans performed
+    -- => High value suggests missing indexes
     seq_tup_read,
-    -- => Rows read by sequential scans
+    -- => Total rows read by sequential scans
+    -- => Shows scan efficiency
     idx_scan,
-    -- => Number of index scans
+    -- => Number of index scans performed
+    -- => High value suggests indexes used effectively
     idx_tup_fetch
-    -- => Rows fetched by index scans
+    -- => Total rows fetched via index scans
+    -- => Shows index scan efficiency
 FROM pg_stat_user_tables
+-- => System view tracking table access patterns
 WHERE relname = 'products';
--- => Shows access patterns
--- => High seq_scan: may need indexes
+-- => Filters to products table
+-- => Shows access patterns over time
+-- => High seq_scan: may need indexes on filtered columns
 -- => High idx_scan: indexes used effectively
 
 SELECT
     schemaname,
+    -- => Schema name
     tablename,
+    -- => Table name
     attname,
+    -- => Column name
     n_distinct,
+    -- => Distinct value count
     correlation
+    -- => Physical-logical correlation
 FROM pg_stats
 WHERE tablename = 'products' AND attname = 'id';
--- => Primary key statistics
--- => n_distinct: 100,000 (unique values)
--- => correlation: ~1.0 (highly correlated with physical order)
--- => Sequential scans on id very efficient
+-- => Examines primary key column statistics
+-- => Primary key statistics show uniqueness
+-- => n_distinct: 100,000 (all unique values)
+-- => correlation: ~1.0 (highly correlated with physical row order)
+-- => Sequential scans on id range queries very efficient
 ```
 
 **Key Takeaway**: Run ANALYZE after significant data changes (bulk INSERT/UPDATE/DELETE). Monitor pg_stats to verify statistics accuracy. Increase statistics target for columns with many distinct values or skewed distributions.
@@ -1721,98 +1969,130 @@ CREATE DATABASE example_70;
 
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,
+    -- => Auto-incrementing event ID
     event_type VARCHAR(50),
+    -- => Event type (login, purchase, logout)
     user_id INTEGER,
+    -- => User identifier
     created_at TIMESTAMP DEFAULT NOW()
+    -- => Event timestamp (defaults to current time)
 );
+-- => Creates events table for tracking user actions
 
 INSERT INTO events (event_type, user_id)
+-- => Inserts bulk event data
 SELECT
     CASE (random() * 3)::INTEGER
         WHEN 0 THEN 'login'
+        -- => 33% login events
         WHEN 1 THEN 'purchase'
+        -- => 33% purchase events
         ELSE 'logout'
+        -- => 33% logout events
     END,
+    -- => Randomly distributed event types
     (random() * 10000 + 1)::INTEGER
+    -- => Random user ID (1-10,000)
 FROM generate_series(1, 500000);
--- => 500,000 events created
+-- => 500,000 events created (~167k per event type)
 
 SELECT
     schemaname,
+    -- => Schema name
     tablename,
+    -- => Table name
     n_live_tup,
-    -- => Current live rows
+    -- => Current live rows (visible to transactions)
     n_dead_tup,
-    -- => Dead rows (from UPDATE/DELETE)
+    -- => Dead rows (from UPDATE/DELETE, not yet vacuumed)
     last_vacuum,
-    -- => Last manual VACUUM timestamp
+    -- => Last manual VACUUM timestamp (NULL if never run)
     last_autovacuum,
-    -- => Last autovacuum timestamp
+    -- => Last autovacuum timestamp (automatic cleanup)
     vacuum_count,
-    -- => Manual VACUUM count
+    -- => Number of manual VACUUM operations
     autovacuum_count
-    -- => Autovacuum count
+    -- => Number of autovacuum operations
 FROM pg_stat_user_tables
+-- => System view with vacuum statistics
 WHERE tablename = 'events';
--- => n_live_tup: ~500,000
--- => n_dead_tup: 0 (no UPDATE/DELETE yet)
--- => last_vacuum: NULL (never vacuumed)
+-- => Filters to events table
+-- => n_live_tup: ~500,000 (all rows visible)
+-- => n_dead_tup: 0 (no UPDATE/DELETE operations yet)
+-- => last_vacuum: NULL (never manually vacuumed)
 
 UPDATE events
+-- => Modifies existing rows
 SET event_type = 'login'
+-- => Changes event_type to 'login'
 WHERE user_id < 5000;
--- => Updates ~250,000 rows
--- => Creates 250,000 dead tuples (old versions)
--- => New versions inserted
+-- => Filters to users 1-4999 (~250,000 rows, 50% of data)
+-- => Updates ~250,000 rows (MVCC creates new versions)
+-- => Creates 250,000 dead tuples (old row versions)
+-- => New versions inserted, old versions marked dead
 
 SELECT
     tablename,
+    -- => Table name
     n_live_tup,
+    -- => Live tuple count
     n_dead_tup,
+    -- => Dead tuple count
     n_dead_tup::FLOAT / NULLIF(n_live_tup, 0) AS dead_ratio
-    -- => Ratio of dead to live rows
+    -- => Calculates dead-to-live ratio
+    -- => NULLIF prevents division by zero
 FROM pg_stat_user_tables
 WHERE tablename = 'events';
--- => n_live_tup: ~500,000
--- => n_dead_tup: ~250,000
--- => dead_ratio: ~0.5 (50% dead tuples)
+-- => Checks tuple statistics after UPDATE
+-- => n_live_tup: ~500,000 (still 500k visible rows)
+-- => n_dead_tup: ~250,000 (old row versions)
+-- => dead_ratio: ~0.5 (50% dead tuples - significant bloat)
 
 SELECT
     pg_size_pretty(pg_total_relation_size('events')) AS total_size,
-    -- => Total size (table + indexes + TOAST)
+    -- => Total size (table + indexes + TOAST) in human-readable format
+    -- => Includes all storage for table
     pg_size_pretty(pg_relation_size('events')) AS table_size
-    -- => Table size only
+    -- => Table heap size only (excludes indexes)
 FROM pg_database
 WHERE datname = 'example_70'
 LIMIT 1;
--- => total_size: ~60 MB
--- => table_size: ~60 MB (no indexes yet)
--- => Size includes dead tuples (bloat)
+-- => Checks table size with dead tuples
+-- => total_size: ~60 MB (includes dead tuple overhead)
+-- => table_size: ~60 MB (no indexes yet, so same as total)
+-- => Size includes dead tuples (table bloat)
 
 VACUUM events;
--- => Removes dead tuples
+-- => Manually runs VACUUM on events table
+-- => Removes dead tuples and reclaims space
 -- => Marks space as reusable (doesn't return to OS)
--- => Updates free space map (FSM)
+-- => Updates free space map (FSM) for new inserts
 -- => Updates visibility map for index-only scans
+-- => Does NOT lock table (concurrent operations allowed)
 
 SELECT
     tablename,
     n_live_tup,
     n_dead_tup,
     last_vacuum
+    -- => Shows vacuum timestamp
 FROM pg_stat_user_tables
 WHERE tablename = 'events';
--- => n_dead_tup: 0 (dead tuples removed)
+-- => Re-checks statistics after VACUUM
+-- => n_dead_tup: 0 (dead tuples removed successfully)
 -- => last_vacuum: updated to current timestamp
 
 SELECT
     pg_size_pretty(pg_total_relation_size('events')) AS total_size,
     pg_size_pretty(pg_relation_size('events')) AS table_size;
--- => Size remains ~60 MB
--- => VACUUM doesn't shrink file (space marked reusable)
+-- => Re-checks size after VACUUM
+-- => Size remains ~60 MB (VACUUM doesn't shrink file)
+-- => Space marked reusable but file size unchanged
+-- => VACUUM FULL required to shrink file
 
 VACUUM FULL events;
 -- => Rewrites entire table without dead tuples
+-- => Compacts table and returns space to OS
 -- => Returns space to OS
 -- => Locks table exclusively (blocks reads/writes)
 -- => Slow operation for large tables
@@ -1838,80 +2118,100 @@ VACUUM (VERBOSE) events;
 VACUUM (ANALYZE) events;
 -- => Combines VACUUM and ANALYZE in single operation
 -- => Removes dead tuples AND updates statistics
--- => Efficient for post-batch operation cleanup
+-- => Efficient for post-batch operation cleanup (saves I/O)
 
 SELECT
     tablename,
     n_live_tup,
     n_dead_tup,
     last_vacuum,
+    -- => Vacuum timestamp
     last_analyze
+    -- => Analyze timestamp
 FROM pg_stat_user_tables
 WHERE tablename = 'events';
--- => last_vacuum: updated
--- => last_analyze: updated
--- => Both operations completed
+-- => Verifies both operations completed
+-- => last_vacuum: updated to current time
+-- => last_analyze: updated to current time
+-- => Both operations completed in single pass
 
 CREATE INDEX idx_events_type ON events(event_type);
--- => B-tree index on event_type
+-- => Creates B-tree index on event_type column
+-- => Enables fast lookups by event type
 
 VACUUM events;
--- => VACUUM also processes indexes
+-- => VACUUM also processes associated indexes
 -- => Removes dead tuple references from index
 -- => Updates visibility map for index-only scans
+-- => Maintains index health
 
 EXPLAIN ANALYZE
+-- => Generates and executes query plan
 SELECT event_type FROM events WHERE event_type = 'login';
+-- => Retrieves login events
 -- => After VACUUM:
 -- => Index Only Scan using idx_events_type
--- => Heap Fetches: 0 (visibility map up to date)
+-- => Heap Fetches: 0 (visibility map up to date, no heap access)
 
 UPDATE events SET event_type = 'purchase' WHERE user_id < 1000;
--- => Updates ~50,000 rows
--- => Creates dead tuples in table and index
+-- => Modifies event_type for users 1-999
+-- => Updates ~50,000 rows (10% of data)
+-- => Creates dead tuples in both table and index
+-- => Visibility map becomes outdated
 
 EXPLAIN ANALYZE
 SELECT event_type FROM events WHERE event_type = 'login';
+-- => Re-runs same query after UPDATE
 -- => After UPDATE before VACUUM:
--- => Index Scan using idx_events_type
--- => Heap Fetches: ~50,000 (visibility map outdated)
--- => Index-only scan disabled
+-- => Index Scan using idx_events_type (not index-only!)
+-- => Heap Fetches: ~50,000 (visibility map outdated, must check heap)
+-- => Index-only scan disabled due to dead tuples
 
 VACUUM events;
--- => Updates visibility map
+-- => Re-runs VACUUM to clean up dead tuples
+-- => Updates visibility map to enable index-only scans again
 
 EXPLAIN ANALYZE
 SELECT event_type FROM events WHERE event_type = 'login';
+-- => Tests query plan after second VACUUM
 -- => After VACUUM:
--- => Index Only Scan using idx_events_type
--- => Heap Fetches: 0 (visibility map restored)
+-- => Index Only Scan using idx_events_type (restored!)
+-- => Heap Fetches: 0 (visibility map restored, no heap access)
 
 SHOW autovacuum;
--- => Shows autovacuum status
--- => Result: on (enabled by default)
+-- => Displays autovacuum configuration status
+-- => Shows current autovacuum setting
+-- => Result: on (enabled by default in PostgreSQL)
 
 SELECT
     name,
+    -- => Configuration parameter name
     setting,
+    -- => Current value
     unit
+    -- => Unit of measurement (if applicable)
 FROM pg_settings
+-- => System view with configuration parameters
 WHERE name LIKE 'autovacuum%';
--- => autovacuum: on
--- => autovacuum_vacuum_threshold: 50 (minimum dead tuples)
+-- => Filters to autovacuum-related settings
+-- => autovacuum: on (enabled)
+-- => autovacuum_vacuum_threshold: 50 (minimum dead tuples before vacuum)
 -- => autovacuum_vacuum_scale_factor: 0.2 (20% dead tuples trigger)
--- => autovacuum_analyze_threshold: 50
+-- => autovacuum_analyze_threshold: 50 (minimum changes before analyze)
 -- => autovacuum_analyze_scale_factor: 0.1 (10% changes trigger)
 
 VACUUM (FREEZE) events;
--- => Freezes old transaction IDs
--- => Prevents transaction ID wraparound
+-- => Freezes old transaction IDs to prevent wraparound
+-- => Converts old XIDs to frozen state
+-- => Prevents transaction ID wraparound failure
 -- => Required for tables older than 200M transactions
--- => Typically handled by autovacuum
+-- => Typically handled automatically by autovacuum
 
 SELECT
     relname,
+    -- => Relation (table) name
     age(relfrozenxid) AS xid_age,
-    -- => Transaction ID age
+    -- => Transaction ID age (how old frozen XID is)
     pg_size_pretty(pg_total_relation_size(oid)) AS size
 FROM pg_class
 WHERE relname = 'events';
@@ -2114,90 +2414,116 @@ CREATE DATABASE example_72;
 
 CREATE TABLE events (
     id BIGSERIAL,
+    -- => Auto-incrementing 64-bit integer ID
     event_type VARCHAR(50),
+    -- => Event type (login, purchase, logout)
     user_id INTEGER,
+    -- => User identifier
     created_at TIMESTAMP NOT NULL
+    -- => Event timestamp (partition key, cannot be NULL)
 ) PARTITION BY RANGE (created_at);
--- => Parent table (no data stored here)
--- => PARTITION BY RANGE defines partitioning strategy
--- => created_at is partition key
+-- => Creates parent partitioned table (no data stored here)
+-- => PARTITION BY RANGE defines range partitioning strategy
+-- => created_at is partition key (determines which partition stores row)
 
 CREATE TABLE events_2024_q1 PARTITION OF events
     FOR VALUES FROM ('2024-01-01') TO ('2024-04-01');
-    -- => Partition stores 2024 Q1 data
-    -- => Range: [2024-01-01, 2024-04-01) (exclusive upper bound)
+    -- => Creates partition for 2024 Q1 data
+    -- => Range: [2024-01-01, 2024-04-01) (inclusive start, exclusive end)
+    -- => Stores rows where created_at in Q1 2024
 
 CREATE TABLE events_2024_q2 PARTITION OF events
     FOR VALUES FROM ('2024-04-01') TO ('2024-07-01');
-    -- => 2024 Q2 partition
+    -- => 2024 Q2 partition (Apr-Jun)
 
 CREATE TABLE events_2024_q3 PARTITION OF events
     FOR VALUES FROM ('2024-07-01') TO ('2024-10-01');
-    -- => 2024 Q3 partition
+    -- => 2024 Q3 partition (Jul-Sep)
 
 CREATE TABLE events_2024_q4 PARTITION OF events
     FOR VALUES FROM ('2024-10-01') TO ('2025-01-01');
-    -- => 2024 Q4 partition
+    -- => 2024 Q4 partition (Oct-Dec)
 
 CREATE TABLE events_2025_q1 PARTITION OF events
     FOR VALUES FROM ('2025-01-01') TO ('2025-04-01');
-    -- => 2025 Q1 partition
+    -- => 2025 Q1 partition (future data)
 
 INSERT INTO events (event_type, user_id, created_at)
+-- => Inserts into parent table
 SELECT
     CASE (random() * 3)::INTEGER
         WHEN 0 THEN 'login'
+        -- => 33% login events
         WHEN 1 THEN 'purchase'
+        -- => 33% purchase events
         ELSE 'logout'
+        -- => 33% logout events
     END,
     (random() * 10000 + 1)::INTEGER,
+    -- => Random user ID (1-10,000)
     TIMESTAMP '2024-01-01' + (random() * 365 || ' days')::INTERVAL
-    -- => Random timestamp in 2024
+    -- => Random timestamp throughout 2024
+    -- => Distributes data across all 2024 partitions
 FROM generate_series(1, 1000000);
 -- => 1 million events inserted
--- => PostgreSQL automatically routes to correct partition
+-- => PostgreSQL automatically routes each row to correct partition based on created_at
 
 SELECT
     tablename,
+    -- => Partition table name
     pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS size
+    -- => Human-readable total size (table + indexes + TOAST)
 FROM pg_tables
+-- => System view listing all tables
 WHERE tablename LIKE 'events_%'
+-- => Filters to partition tables only
 ORDER BY tablename;
+-- => Sorts by partition name
 -- => Shows size of each partition
--- => events_2024_q1: ~50 MB
--- => events_2024_q2: ~50 MB
--- => events_2024_q3: ~50 MB
--- => events_2024_q4: ~50 MB
--- => Data distributed across quarters
+-- => events_2024_q1: ~50 MB (Q1 data)
+-- => events_2024_q2: ~50 MB (Q2 data)
+-- => events_2024_q3: ~50 MB (Q3 data)
+-- => events_2024_q4: ~50 MB (Q4 data)
+-- => Data evenly distributed across quarters
 
 EXPLAIN ANALYZE
+-- => Generates and executes plan showing partition pruning
 SELECT COUNT(*)
+-- => Counts matching rows
 FROM events
+-- => Queries parent table
 WHERE created_at >= '2024-07-01' AND created_at < '2024-10-01';
+-- => Filters to Q3 2024 date range
 -- => Query plan shows partition pruning:
 -- => Aggregate
 -- =>   Append (only scans events_2024_q3 partition)
 -- =>   Seq Scan on events_2024_q3
--- => Other partitions excluded (pruning)
+-- => Other 4 partitions excluded by pruning logic
 -- => Scans 25% of data instead of 100%
 
 EXPLAIN ANALYZE
 SELECT COUNT(*)
 FROM events
 WHERE created_at >= '2024-11-01' AND created_at < '2024-12-01';
--- => Partition pruning:
+-- => Filters to November 2024 (within Q4)
+-- => Partition pruning in action:
 -- =>   Seq Scan on events_2024_q4 only
--- => Scans single partition (~25% of data)
--- => 4x faster than full table scan
+-- => Scans single partition (~25% of total data)
+-- => 4x faster than full table scan (1 partition vs 4)
 
 CREATE INDEX idx_events_2024_q1_user ON events_2024_q1(user_id);
+-- => Index on Q1 partition
 CREATE INDEX idx_events_2024_q2_user ON events_2024_q2(user_id);
+-- => Index on Q2 partition
 CREATE INDEX idx_events_2024_q3_user ON events_2024_q3(user_id);
+-- => Index on Q3 partition
 CREATE INDEX idx_events_2024_q4_user ON events_2024_q4(user_id);
+-- => Index on Q4 partition
 CREATE INDEX idx_events_2025_q1_user ON events_2025_q1(user_id);
--- => Creates indexes on each partition
--- => Indexes smaller than single-table index
--- => Faster index scans
+-- => Index on 2025 Q1 partition
+-- => Creates indexes on each partition separately
+-- => Each index smaller than single-table index (covers 20% data)
+-- => Faster index scans and maintenance
 
 EXPLAIN ANALYZE
 SELECT *
@@ -2475,105 +2801,150 @@ CREATE DATABASE example_74_local;
 CREATE EXTENSION postgres_fdw;
 -- => Installs Foreign Data Wrapper extension
 -- => Enables connection to remote PostgreSQL databases
+-- => Required for cross-database queries
 
 CREATE DATABASE example_74_remote;
--- => Remote database (simulated)
+-- => Creates remote database (simulated on same server)
+-- => Represents external database server in production
 \c example_74_remote;
 -- => Switches to remote database
+-- => Simulates connecting to remote server
 
 CREATE TABLE remote_users (
     id SERIAL PRIMARY KEY,
+    -- => Auto-incrementing user ID
     username VARCHAR(100),
+    -- => Username (max 100 chars)
     email VARCHAR(100),
+    -- => Email address
     created_at TIMESTAMP DEFAULT NOW()
+    -- => Creation timestamp (defaults to current time)
 );
+-- => Creates users table in remote database
 
 INSERT INTO remote_users (username, email)
+-- => Inserts user data into remote table
 VALUES
     ('alice', 'alice@remote.com'),
+    -- => First remote user
     ('bob', 'bob@remote.com'),
+    -- => Second remote user
     ('carol', 'carol@remote.com');
-    -- => 3 users in remote database
+    -- => Third remote user
+    -- => 3 users created in remote database
 
 \c example_74_local;
 -- => Switches back to local database
+-- => Will configure FDW to access remote database
 
 CREATE SERVER remote_server
     FOREIGN DATA WRAPPER postgres_fdw
+    -- => Uses postgres_fdw extension for remote connection
     OPTIONS (host 'localhost', dbname 'example_74_remote', port '5432');
-    -- => Defines remote server connection
-    -- => host: remote server hostname
+    -- => Defines remote server connection parameters
+    -- => host: remote server hostname (localhost for demo)
     -- => dbname: remote database name
-    -- => port: PostgreSQL port
+    -- => port: PostgreSQL port (5432 default)
 
 CREATE USER MAPPING FOR CURRENT_USER
     SERVER remote_server
+    -- => Maps to remote_server defined above
     OPTIONS (user 'postgres', password 'password');
     -- => Maps local user to remote database credentials
-    -- => user: remote username
-    -- => password: remote password
+    -- => user: remote PostgreSQL username
+    -- => password: remote user password
+    -- => Required for authentication to remote server
 
 CREATE FOREIGN TABLE users (
     id INTEGER,
+    -- => Column definition matching remote table
     username VARCHAR(100),
+    -- => Must match remote column type
     email VARCHAR(100),
+    -- => Type compatibility required
     created_at TIMESTAMP
+    -- => Remote column data type
 ) SERVER remote_server
+-- => Links foreign table to remote server connection
 OPTIONS (schema_name 'public', table_name 'remote_users');
 -- => Creates foreign table mapping to remote table
--- => Column definitions must match remote table
--- => schema_name: remote schema
--- => table_name: remote table name
+-- => Column definitions must match remote table structure
+-- => schema_name: remote schema (public)
+-- => table_name: remote table name (remote_users)
 
 SELECT * FROM users;
--- => Queries remote table as if local
--- => Foreign Data Wrapper translates to remote query
--- => Result: alice, bob, carol (data from example_74_remote)
+-- => Queries foreign table (appears as local table)
+-- => Foreign Data Wrapper transparently queries remote database
+-- => Translates to: SELECT * FROM example_74_remote.public.remote_users
+-- => Result: alice, bob, carol (data from remote database)
 
 EXPLAIN ANALYZE
+-- => Shows query execution plan for FDW query
 SELECT * FROM users WHERE username = 'alice';
+-- => Filters by username in foreign table
 -- => Shows FDW query plan:
 -- =>   Foreign Scan on users
 -- =>   Remote SQL: SELECT * FROM remote_users WHERE username = 'alice'
--- => Filter pushed to remote database (efficient)
+-- => Filter pushed to remote database (efficient pushdown)
+-- => Reduces network transfer (only matching rows returned)
 
 CREATE TABLE local_orders (
     id SERIAL PRIMARY KEY,
+    -- => Local order ID
     user_id INTEGER,
+    -- => Foreign key to users (remote table)
     total DECIMAL(10, 2),
+    -- => Order total
     order_date DATE
+    -- => Order date
 );
+-- => Creates local orders table
 
 INSERT INTO local_orders (user_id, total, order_date)
+-- => Inserts order data locally
 VALUES
     (1, 150.00, '2025-01-15'),
+    -- => Order for user_id=1 (alice)
     (2, 200.00, '2025-01-16'),
+    -- => Order for user_id=2 (bob)
     (1, 75.00, '2025-01-17');
-    -- => Local orders table
+    -- => Second order for user_id=1 (alice)
+    -- => 3 local orders created
 
 SELECT
     u.username,
+    -- => From remote table
     u.email,
+    -- => From remote table
     o.total,
+    -- => From local table
     o.order_date
+    -- => From local table
 FROM users u
+-- => Foreign table (remote data)
 JOIN local_orders o ON u.id = o.user_id;
--- => Joins foreign table (users) with local table (orders)
--- => FDW fetches remote data and joins locally
--- => Result: alice and bob orders with usernames
+-- => Joins foreign table with local table
+-- => FDW fetches remote user data
+-- => Performs join in local database
+-- => Result: alice and bob orders with usernames/emails from remote
 
 EXPLAIN ANALYZE
+-- => Analyzes cross-database join performance
 SELECT
     u.username,
     o.total
 FROM users u
+-- => Foreign table
 JOIN local_orders o ON u.id = o.user_id
+-- => Local table
 WHERE u.username = 'alice';
--- => Query plan:
--- =>   Hash Join
--- =>     Foreign Scan on users (filter: username = 'alice')
+-- => Filters on remote table column
+-- => Query plan shows optimization:
+-- =>   Hash Join (performed locally)
+-- =>     Foreign Scan on users (filter: username = 'alice' pushed to remote)
 -- =>     Seq Scan on local_orders
--- => Filter pushed to remote database before join
+-- => Filter pushed to remote database before data transfer
+-- => Reduces network overhead
 
 INSERT INTO users (username, email)
 VALUES ('dave', 'dave@remote.com');
@@ -2797,89 +3168,123 @@ CREATE DATABASE example_76;
 -- => Switches to example_76
 
 CREATE ROLE app_readonly;
--- => Creates role without login capability
--- => Used for grouping permissions
+-- => Creates role without login capability (group role)
+-- => Used for grouping permissions, not direct login
+-- => Cannot connect to database (LOGIN not granted)
 
 CREATE ROLE app_readwrite;
--- => Another role for read-write access
+-- => Another group role for read-write access
+-- => Also cannot login directly
 
 CREATE ROLE app_admin;
--- => Admin role with elevated privileges
+-- => Admin group role with elevated privileges
+-- => Template for admin permissions
 
 CREATE USER alice WITH PASSWORD 'alice_password';
 -- => Creates user with login capability
--- => User is role with LOGIN attribute
+-- => User is role with LOGIN attribute enabled
+-- => Can authenticate and connect to database
 
 CREATE USER bob WITH PASSWORD 'bob_password';
+-- => Creates bob user
 CREATE USER carol WITH PASSWORD 'carol_password';
--- => Additional users
+-- => Creates carol user
+-- => All three users can login
 
 GRANT app_readonly TO alice;
 -- => Grants role membership to user
--- => alice inherits app_readonly permissions
+-- => alice inherits all permissions from app_readonly
+-- => alice gets read-only access
 
 GRANT app_readwrite TO bob;
--- => bob gets read-write permissions
+-- => bob inherits read-write permissions
+-- => bob can SELECT, INSERT, UPDATE, DELETE
 
 GRANT app_admin TO carol;
--- => carol gets admin permissions
+-- => carol inherits admin permissions
+-- => carol gets DDL and DML permissions
 
 CREATE TABLE employees (
     id SERIAL PRIMARY KEY,
+    -- => Auto-incrementing employee ID
     name VARCHAR(100),
+    -- => Employee name
     email VARCHAR(100),
+    -- => Email address
     salary DECIMAL(10, 2)
+    -- => Salary amount
 );
+-- => Creates employees table
 
 INSERT INTO employees (name, email, salary)
+-- => Inserts employee data
 VALUES
     ('Alice', 'alice@company.com', 80000),
+    -- => First employee
     ('Bob', 'bob@company.com', 90000),
+    -- => Second employee
     ('Carol', 'carol@company.com', 100000);
-    -- => 3 employees created
+    -- => Third employee
+    -- => 3 employees created by superuser
 
 GRANT SELECT ON employees TO app_readonly;
 -- => Grants SELECT permission to role
 -- => Members of app_readonly can read table
+-- => alice inherits this permission
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON employees TO app_readwrite;
 -- => Grants full DML permissions to app_readwrite
--- => Members can read and modify data
+-- => Members can read and modify data (not DDL)
+-- => bob inherits these permissions
 
 GRANT ALL PRIVILEGES ON employees TO app_admin;
 -- => Grants all permissions including DDL
--- => Members can ALTER, DROP table
+-- => Members can SELECT, INSERT, UPDATE, DELETE, ALTER, DROP table
+-- => carol inherits all permissions
 
 GRANT USAGE, SELECT ON SEQUENCE employees_id_seq TO app_readwrite;
 -- => Grants sequence access for INSERT operations
--- => Required to generate id values via SERIAL
+-- => USAGE allows using sequence, SELECT allows reading current value
+-- => Required to generate id values via SERIAL column
+-- => Without this, INSERT would fail for app_readwrite members
 
 SET ROLE alice;
 -- => Switches current session to alice role
--- => Tests alice's permissions
+-- => Tests alice's read-only permissions
+-- => Session now operates with alice's privileges
 
 SELECT * FROM employees;
--- => Success (alice has SELECT via app_readonly)
+-- => Queries employees table
+-- => Success (alice has SELECT permission via app_readonly)
+-- => Returns all 3 employees
 
 INSERT INTO employees (name, email, salary)
 VALUES ('Dave', 'dave@company.com', 85000);
--- => ERROR: permission denied
--- => alice lacks INSERT permission
+-- => Attempts to insert new employee
+-- => ERROR: permission denied for table employees
+-- => alice lacks INSERT permission (read-only role)
 
 SET ROLE bob;
--- => Switches to bob
+-- => Switches to bob role
+-- => Tests bob's read-write permissions
 
 INSERT INTO employees (name, email, salary)
 VALUES ('Dave', 'dave@company.com', 85000);
+-- => Attempts same INSERT as alice
 -- => Success (bob has INSERT via app_readwrite)
+-- => Dave added to employees table
 
 UPDATE employees
 SET salary = 95000
+-- => Increases Bob's salary
 WHERE name = 'Bob';
+-- => Filters to Bob's record
 -- => Success (bob has UPDATE permission)
+-- => Bob's salary changed from 90000 to 95000
 
 SET ROLE carol;
--- => Switches to carol (admin)
+-- => Switches to carol role (admin)
+-- => Tests admin DDL permissions
 
 ALTER TABLE employees ADD COLUMN department VARCHAR(50);
 -- => Success (carol has DDL permissions via app_admin)
@@ -2979,92 +3384,127 @@ CREATE DATABASE example_77;
 
 CREATE TABLE documents (
     id SERIAL PRIMARY KEY,
+    -- => Auto-incrementing document ID
     title VARCHAR(200),
+    -- => Document title
     content TEXT,
+    -- => Document content (unlimited length)
     owner VARCHAR(50),
-    -- => User who owns document
+    -- => User who owns document (RLS filter column)
     department VARCHAR(50)
+    -- => Department (for department-based policies)
 );
+-- => Creates documents table for RLS demo
 
 INSERT INTO documents (title, content, owner, department)
+-- => Inserts sample documents
 VALUES
     ('Q1 Report', 'Sales report Q1 2025', 'alice', 'sales'),
+    -- => Alice's first document
     ('Marketing Plan', 'Marketing strategy 2025', 'bob', 'marketing'),
+    -- => Bob's document
     ('Engineering Roadmap', 'Technical roadmap', 'carol', 'engineering'),
+    -- => Carol's document
     ('Q2 Forecast', 'Sales forecast Q2 2025', 'alice', 'sales');
+    -- => Alice's second document
     -- => 4 documents from different owners/departments
 
 CREATE USER alice WITH PASSWORD 'alice_pass';
+-- => Creates alice user
 CREATE USER bob WITH PASSWORD 'bob_pass';
+-- => Creates bob user
 CREATE USER carol WITH PASSWORD 'carol_pass';
--- => Creates users
+-- => Creates carol user
+-- => All three users can login
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON documents TO alice, bob, carol;
+-- => Grants DML permissions to all users
 GRANT USAGE, SELECT ON SEQUENCE documents_id_seq TO alice, bob, carol;
--- => Grants base table permissions
+-- => Grants sequence access for INSERT
+-- => Base table permissions granted (RLS adds additional filtering)
 
 ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
--- => Enables RLS on table
+-- => Enables RLS on documents table
 -- => Restricts all access (even SELECT) until policies created
--- => Superusers bypass RLS by default
+-- => Superusers bypass RLS by default (postgres user unaffected)
+-- => Regular users see 0 rows until policies defined
 
 SET ROLE alice;
--- => Switches to alice
+-- => Switches current session to alice
+-- => Tests RLS without policies
 
 SELECT * FROM documents;
+-- => Attempts to query documents
 -- => Returns 0 rows (RLS enabled, no policies yet)
--- => All rows hidden
+-- => All rows hidden by default when RLS enabled
 
 RESET ROLE;
--- => Returns to postgres (superuser)
+-- => Returns to postgres superuser
+-- => Superuser bypasses RLS
 
 CREATE POLICY user_documents ON documents
     FOR SELECT
-    -- => Policy applies to SELECT operations
+    -- => Policy applies to SELECT operations only
     USING (owner = current_user);
+    -- => USING clause: filter condition for visible rows
     -- => Shows only rows where owner matches current user
-    -- => current_user returns session username
+    -- => current_user returns session username (alice, bob, carol)
 
 SET ROLE alice;
+-- => Switches to alice to test policy
 
 SELECT * FROM documents;
+-- => Queries documents with RLS policy active
 -- => Returns 2 rows (Q1 Report, Q2 Forecast)
--- => alice only sees her documents
+-- => alice only sees her documents (owner='alice')
+-- => RLS filters out Bob and Carol's documents
 
 SET ROLE bob;
+-- => Switches to bob
 
 SELECT * FROM documents;
+-- => Queries as bob
 -- => Returns 1 row (Marketing Plan)
--- => bob sees only his document
+-- => bob sees only his document (owner='bob')
 
 RESET ROLE;
+-- => Returns to superuser for policy creation
 
 CREATE POLICY insert_own_documents ON documents
     FOR INSERT
-    WITH CHECK (owner = current_user);
     -- => Policy for INSERT operations
-    -- => WITH CHECK validates new rows
+    WITH CHECK (owner = current_user);
+    -- => WITH CHECK validates new rows before insertion
     -- => Enforces owner = current_user for inserted rows
+    -- => Prevents users from inserting rows for other users
 
 SET ROLE alice;
+-- => Switches to alice to test INSERT policy
 
 INSERT INTO documents (title, content, owner, department)
 VALUES ('New Report', 'Content here', 'alice', 'sales');
--- => Success (owner matches current_user)
+-- => Attempts to insert document with owner='alice'
+-- => Success (owner matches current_user 'alice')
+-- => Row inserted successfully
 
 INSERT INTO documents (title, content, owner, department)
 VALUES ('Fake Report', 'Content here', 'bob', 'sales');
+-- => Attempts to insert document with owner='bob' while logged in as alice
 -- => ERROR: new row violates row-level security policy
--- => Cannot insert rows for other users
+-- => WITH CHECK prevents alice from inserting rows for bob
 
 RESET ROLE;
+-- => Returns to superuser
 
 CREATE POLICY update_own_documents ON documents
     FOR UPDATE
+    -- => Policy for UPDATE operations
     USING (owner = current_user)
-    -- => Shows only rows user can update
+    -- => USING: shows only rows user can update
+    -- => Filters to rows owned by current user
     WITH CHECK (owner = current_user);
-    -- => Validates updated rows still meet policy
+    -- => WITH CHECK: validates updated rows still meet policy
+    -- => Prevents changing owner to another user
 
 SET ROLE alice;
 
@@ -3172,64 +3612,47 @@ pg_dump creates logical backups (SQL scripts) of databases - essential for disas
 
 # Backup entire database
 pg_dump -h localhost -U postgres -d example_78 -F p -f /tmp/example_78.sql
-# => -h: host
-# => -U: username
-# => -d: database name
-# => -F p: plain text format (SQL script)
-# => -f: output file path
-# => Creates SQL script with CREATE TABLE, INSERT statements
+# => Plain text format (-F p), outputs SQL script with CREATE/INSERT statements
 
 # Backup in custom format (compressed, restorable with pg_restore)
 pg_dump -h localhost -U postgres -d example_78 -F c -f /tmp/example_78.dump
-# => -F c: custom format (binary, compressed)
-# => Smaller file size than plain text
-# => Supports parallel restore
+# => Custom format (-F c): binary, compressed, supports parallel restore
 
 # Backup specific table
 pg_dump -h localhost -U postgres -d example_78 -t employees -f /tmp/employees.sql
-# => -t: table name
-# => Backs up only employees table (schema + data)
+# => -t flag backs up only employees table (schema + data)
 
 # Backup multiple tables
 pg_dump -h localhost -U postgres -d example_78 -t employees -t departments -f /tmp/hr_tables.sql
-# => Multiple -t options for multiple tables
+# => Multiple -t flags for multiple tables
 
 # Backup schema only (no data)
 pg_dump -h localhost -U postgres -d example_78 --schema-only -f /tmp/schema.sql
-# => --schema-only: excludes INSERT statements
-# => Useful for recreating table structure
+# => Excludes INSERT statements, useful for DDL versioning
 
 # Backup data only (no schema)
 pg_dump -h localhost -U postgres -d example_78 --data-only -f /tmp/data.sql
-# => --data-only: only INSERT/COPY statements
-# => Useful for data migration
+# => Only INSERT/COPY statements, useful for data migration
 
 # Backup with specific schema
 pg_dump -h localhost -U postgres -d example_78 -n public -f /tmp/public_schema.sql
-# => -n: schema name
-# => Backs up only public schema
+# => -n flag backs up only public schema
 
 # Exclude specific tables
 pg_dump -h localhost -U postgres -d example_78 -T temp_table -f /tmp/main_backup.sql
-# => -T: exclude table
-# => Useful for excluding large temporary tables
+# => -T flag excludes tables (useful for large temporary tables)
 
 # Backup all databases
 pg_dumpall -h localhost -U postgres -f /tmp/all_databases.sql
-# => Backs up ALL databases on server
-# => Includes global objects (roles, tablespaces)
+# => Backs up ALL databases plus global objects (roles, tablespaces)
 
 # Backup with compression (gzip)
 pg_dump -h localhost -U postgres -d example_78 -F p | gzip > /tmp/example_78.sql.gz
-# => Pipes plain text output to gzip
-# => Reduces file size significantly
+# => Pipes plain text to gzip, reduces file size significantly
 
 # Backup with parallel jobs (custom format only)
 pg_dump -h localhost -U postgres -d example_78 -F d -j 4 -f /tmp/example_78_dir
-# => -F d: directory format
-# => -j 4: 4 parallel jobs
-# => Faster backup for large databases
-# => Output: directory with multiple files
+# => -F d (directory format) with -j 4 (4 parallel jobs), faster for large databases
 ```
 
 **Key Takeaway**: Use pg_dump for logical backups. Plain text format (-F p) for version control, custom format (-F c) for compression and parallel restore. Backup schema-only for DDL, data-only for migration. Use pg_dumpall for all databases including roles.
@@ -3247,67 +3670,51 @@ pg_restore reconstructs databases from pg_dump backups - essential for disaster 
 
 # Restore from custom format dump
 pg_restore -h localhost -U postgres -d example_79 -v /tmp/example_78.dump
-# => -d: target database (must exist)
-# => -v: verbose output (shows progress)
-# => Restores tables, indexes, constraints, data
+# => Restores tables, indexes, constraints, data with verbose output
 
 # Restore with parallel jobs (faster)
 pg_restore -h localhost -U postgres -d example_79 -j 4 /tmp/example_78.dump
-# => -j 4: 4 parallel workers
-# => 4x faster for large databases
-# => Requires custom or directory format
+# => 4 parallel workers (-j 4), 4x faster for large databases
 
 # Restore specific table
 pg_restore -h localhost -U postgres -d example_79 -t employees /tmp/example_78.dump
-# => -t: table name
-# => Restores only employees table
+# => -t flag restores only employees table
 
 # Restore schema only
 pg_restore -h localhost -U postgres -d example_79 --schema-only /tmp/example_78.dump
-# => Creates tables without inserting data
-# => Useful for testing schema changes
+# => Creates tables without data, useful for testing schema changes
 
 # Restore data only (requires existing schema)
 pg_restore -h localhost -U postgres -d example_79 --data-only /tmp/example_78.dump
 # => Inserts data into existing tables
-# => Assumes tables already created
 
 # Restore with clean (drops objects first)
 pg_restore -h localhost -U postgres -d example_79 --clean /tmp/example_78.dump
-# => Executes DROP statements before CREATE
-# => Prevents "object already exists" errors
-# => Dangerous (deletes existing data)
+# => Executes DROP before CREATE, prevents "already exists" errors (dangerous)
 
 # Restore with create database
 pg_restore -h localhost -U postgres -d postgres -C /tmp/example_78.dump
-# => -C: creates database from dump
-# => Connect to postgres database first
-# => Then creates target database
+# => -C creates database from dump (connect to postgres database first)
 
 # Restore from directory format
 pg_restore -h localhost -U postgres -d example_79 -j 4 /tmp/example_78_dir
-# => Restores from directory created by -F d
-# => Supports parallel jobs
+# => Restores from -F d directory format with parallel jobs
 
 # Restore with if-exists (safe clean)
 pg_restore -h localhost -U postgres -d example_79 --if-exists --clean /tmp/example_78.dump
-# => Uses DROP IF EXISTS instead of DROP
-# => No error if object doesn't exist
+# => Uses DROP IF EXISTS (no error if object doesn't exist)
 
 # Restore specific schema
 pg_restore -h localhost -U postgres -d example_79 -n public /tmp/example_78.dump
-# => -n: schema name
-# => Restores only public schema
+# => -n flag restores only public schema
 
 # List contents of dump file
 pg_restore -l /tmp/example_78.dump
-# => Shows tables, indexes, constraints in dump
-# => Useful for selective restore
+# => Shows tables, indexes, constraints in dump (useful for selective restore)
 
 # Restore from plain text SQL dump
 psql -h localhost -U postgres -d example_79 -f /tmp/example_78.sql
-# => Uses psql for plain text format
-# => pg_restore only works with custom/directory/tar formats
+# => Uses psql for plain text format (pg_restore only for custom/directory/tar)
 ```
 
 **Key Takeaway**: Use pg_restore for custom/directory/tar format dumps, psql for plain text SQL dumps. Parallel restore (-j) speeds up large database restoration. Use --clean for idempotent restores, --schema-only for testing DDL.
@@ -3328,67 +3735,90 @@ CREATE DATABASE example_80;
 
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
+    -- => Auto-incrementing order ID
     customer_id INTEGER,
+    -- => Customer identifier
     total DECIMAL(10, 2),
+    -- => Order total amount
     created_at TIMESTAMP DEFAULT NOW()
+    -- => Order timestamp
 );
+-- => Creates orders table for monitoring
 
 INSERT INTO orders (customer_id, total)
+-- => Inserts bulk order data
 SELECT
     (random() * 1000 + 1)::INTEGER,
+    -- => Random customer ID (1-1000)
     (random() * 500)::DECIMAL(10, 2)
+    -- => Random order total ($0-$500)
 FROM generate_series(1, 100000);
 -- => 100,000 orders created
 
 SELECT
     schemaname,
+    -- => Schema name
     tablename,
+    -- => Table name
     seq_scan,
-    -- => Number of sequential scans
+    -- => Number of sequential scans performed
     seq_tup_read,
-    -- => Rows read by sequential scans
+    -- => Total rows read by sequential scans
     idx_scan,
-    -- => Number of index scans
+    -- => Number of index scans performed
     idx_tup_fetch,
-    -- => Rows fetched by index scans
+    -- => Total rows fetched by index scans
     n_tup_ins,
-    -- => Rows inserted
+    -- => Rows inserted (cumulative)
     n_tup_upd,
-    -- => Rows updated
+    -- => Rows updated (cumulative)
     n_tup_del
-    -- => Rows deleted
+    -- => Rows deleted (cumulative)
 FROM pg_stat_user_tables
+-- => System view tracking table access statistics
 WHERE tablename = 'orders';
--- => seq_scan: ~1 (from INSERT operation)
--- => seq_tup_read: 0
--- => idx_scan: ~100,000 (primary key inserts)
--- => Shows table access patterns
+-- => Filters to orders table
+-- => seq_scan: ~1 (from INSERT operation scanning primary key)
+-- => seq_tup_read: 0 (INSERT doesn't read rows)
+-- => idx_scan: ~100,000 (primary key index used during inserts)
+-- => Shows table access patterns for performance analysis
 
 SELECT * FROM orders WHERE customer_id = 500;
--- => Sequential scan (no index on customer_id)
+-- => Queries orders by customer_id
+-- => Sequential scan (no index on customer_id yet)
+-- => Scans all 100,000 rows
 
 SELECT
     tablename,
     seq_scan,
+    -- => Sequential scan count
     seq_tup_read
+    -- => Rows scanned sequentially
 FROM pg_stat_user_tables
 WHERE tablename = 'orders';
--- => seq_scan: incremented by 1
--- => seq_tup_read: ~100,000 (scanned all rows)
+-- => Re-checks statistics after query
+-- => seq_scan: incremented by 1 (now 2)
+-- => seq_tup_read: ~100,000 (scanned all rows for WHERE filter)
 
 CREATE INDEX idx_orders_customer ON orders(customer_id);
--- => Creates index on customer_id
+-- => Creates index on customer_id column
+-- => Enables fast lookups by customer
 
 SELECT * FROM orders WHERE customer_id = 500;
--- => Index scan (uses new index)
+-- => Re-runs same query
+-- => Index scan (uses new idx_orders_customer index)
+-- => Much faster than sequential scan
 
 SELECT
     tablename,
     idx_scan,
+    -- => Index scan count
     idx_tup_fetch
+    -- => Rows fetched via index
 FROM pg_stat_user_tables
 WHERE tablename = 'orders';
--- => idx_scan: incremented
+-- => Checks index usage statistics
+-- => idx_scan: incremented (now ~100,001)
 -- => idx_tup_fetch: number of rows fetched via index
 
 SELECT
@@ -3474,67 +3904,82 @@ ORDER BY duration DESC;
 
 SELECT
     schemaname,
+    -- => Schema name
     tablename,
+    -- => Table name
     n_live_tup,
-    -- => Estimated live rows
+    -- => Estimated live rows (visible tuples)
     n_dead_tup,
-    -- => Dead rows (need VACUUM)
+    -- => Dead rows (from UPDATE/DELETE, need VACUUM)
     n_dead_tup::FLOAT / NULLIF(n_live_tup, 0) AS dead_ratio,
     -- => Ratio of dead to live rows
+    -- => NULLIF prevents division by zero
     last_vacuum,
-    -- => Last manual VACUUM
+    -- => Last manual VACUUM timestamp
     last_autovacuum,
-    -- => Last autovacuum
+    -- => Last autovacuum timestamp (automatic cleanup)
     last_analyze,
-    -- => Last ANALYZE
+    -- => Last manual ANALYZE timestamp
     last_autoanalyze
-    -- => Last auto-analyze
+    -- => Last auto-analyze timestamp
 FROM pg_stat_user_tables
+-- => System view with vacuum/analyze statistics
 WHERE tablename = 'orders';
--- => dead_ratio > 0.2 indicates VACUUM needed
+-- => Filters to orders table
+-- => dead_ratio > 0.2 indicates VACUUM needed (20% dead tuples)
 -- => last_autovacuum NULL means autovacuum not run yet
 
 SELECT
     wait_event_type,
-    -- => Category of wait event
+    -- => Category of wait event (Lock, IO, Client, etc.)
     wait_event,
-    -- => Specific wait event
+    -- => Specific wait event (DataFileRead, LockTuple, etc.)
     COUNT(*) AS count
+    -- => Number of queries waiting on this event
 FROM pg_stat_activity
+-- => System view with active connection information
 WHERE wait_event IS NOT NULL
+-- => Filters to queries actually waiting
 GROUP BY wait_event_type, wait_event
+-- => Groups by event category and type
 ORDER BY count DESC;
+-- => Sorts by most common waits
 -- => Shows what queries are waiting for
--- => Common: Lock (lock contention), IO (disk I/O)
+-- => Common types: Lock (lock contention), IO (disk I/O), Client (app delay)
 -- => Identifies performance bottlenecks
 
 SELECT
     query,
+    -- => SQL query text
     calls,
-    -- => Number of times executed
+    -- => Number of times executed (frequency)
     total_exec_time,
-    -- => Total execution time (ms)
+    -- => Total execution time in milliseconds (cumulative)
     mean_exec_time,
-    -- => Average execution time (ms)
+    -- => Average execution time per call (ms)
     max_exec_time,
-    -- => Maximum execution time (ms)
+    -- => Maximum execution time (worst case, ms)
     rows
-    -- => Total rows returned
+    -- => Total rows returned across all executions
 FROM pg_stat_statements
+-- => Extension view tracking query performance statistics
 ORDER BY total_exec_time DESC
+-- => Sorts by total time (identifies high-impact queries)
 LIMIT 10;
--- => Requires pg_stat_statements extension
--- => Shows top 10 queries by total time
--- => Identifies optimization candidates
+-- => Shows top 10 most expensive queries
+-- => Requires pg_stat_statements extension enabled
+-- => Identifies optimization candidates (high total_exec_time or mean_exec_time)
 
 CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
--- => Enables query statistics tracking
--- => Tracks execution counts, times, resource usage
+-- => Enables query statistics tracking extension
+-- => Tracks execution counts, execution times, resource usage
+-- => Essential for query performance monitoring
 
 SELECT pg_stat_reset();
--- => Resets all statistics to zero
+-- => Resets all pg_stat_* statistics to zero
+-- => Clears counters in pg_stat_user_tables, pg_stat_user_indexes, etc.
 -- => Useful for measuring specific workload periods
--- => Use cautiously (loses historical data)
+-- => Use cautiously (loses historical performance data)
 ```
 
 **Key Takeaway**: Monitor pg_stat_user_tables for table access patterns, pg_stat_user_indexes for index usage, pg_stat_activity for active queries. Cache hit ratio should exceed 99%. Identify unused indexes (idx_scan = 0) for removal.
@@ -3555,62 +4000,86 @@ CREATE DATABASE example_81;
 
 SELECT pg_try_advisory_lock(12345);
 -- => Attempts to acquire advisory lock with ID 12345
--- => Returns TRUE if lock acquired
--- => Returns FALSE if already locked
--- => Lock held until released or session ends
+-- => Non-blocking call (returns immediately)
+-- => Returns TRUE if lock acquired successfully
+-- => Returns FALSE if already locked by another session
+-- => Lock held until explicitly released or session ends
 
 SELECT pg_try_advisory_lock(12345);
+-- => Attempts to acquire same lock again
 -- => Returns FALSE (already locked by current session)
+-- => Advisory locks are reentrant within same session
 
 SELECT pg_advisory_unlock(12345);
--- => Releases advisory lock 12345
--- => Returns TRUE if lock was held
--- => Returns FALSE if lock not held
+-- => Releases advisory lock with ID 12345
+-- => Returns TRUE if lock was held by current session
+-- => Returns FALSE if lock not held by current session
+-- => Makes lock available to other sessions
 
 SELECT pg_try_advisory_lock(12345);
--- => Returns TRUE (lock released, now available)
+-- => Attempts lock again after release
+-- => Returns TRUE (lock released by previous UNLOCK, now available)
 
 SELECT pg_advisory_lock(12345);
--- => Blocks until lock available
+-- => Blocking version of advisory lock
+-- => Blocks (waits) until lock becomes available
 -- => Waits indefinitely if another session holds lock
--- => Use with caution (can cause deadlocks)
+-- => Use with caution (can cause deadlocks or long waits)
 
 SELECT pg_advisory_unlock(12345);
--- => Releases lock
+-- => Releases blocking lock
 
 CREATE TABLE jobs (
     id SERIAL PRIMARY KEY,
+    -- => Job ID
     job_type VARCHAR(50),
+    -- => Job type (email, report, export)
     status VARCHAR(20) DEFAULT 'pending',
+    -- => Job status (pending, processing, completed)
     worker_id INTEGER,
+    -- => Worker ID processing the job
     created_at TIMESTAMP DEFAULT NOW()
+    -- => Job creation timestamp
 );
+-- => Creates jobs table for worker coordination
 
 INSERT INTO jobs (job_type)
+-- => Inserts pending jobs
 SELECT
     CASE (random() * 2)::INTEGER
         WHEN 0 THEN 'email'
+        -- => Email jobs
         WHEN 1 THEN 'report'
+        -- => Report generation jobs
         ELSE 'export'
+        -- => Data export jobs
     END
 FROM generate_series(1, 100);
--- => 100 pending jobs created
+-- => 100 pending jobs created (distributed across 3 types)
 
 BEGIN;
--- => Starts transaction
+-- => Starts transaction for job processing
+-- => Ensures atomic job claim
 
 SELECT id, job_type
+-- => Retrieves job details
 FROM jobs
 WHERE status = 'pending'
+-- => Filters to unprocessed jobs
 ORDER BY id
+-- => Processes jobs in order
 LIMIT 1
+-- => Gets single job
 FOR UPDATE SKIP LOCKED;
--- => SKIP LOCKED skips rows locked by other transactions
--- => Returns first available pending job
--- => Prevents duplicate processing
+-- => FOR UPDATE locks the row
+-- => SKIP LOCKED skips rows locked by other transactions/workers
+-- => Returns first available pending job not claimed by other workers
+-- => Prevents duplicate processing by multiple workers
 
 UPDATE jobs
+-- => Marks job as being processed
 SET status = 'processing', worker_id = 1001
+-- => Changes status and assigns to worker 1001
 WHERE id = (
     SELECT id
     FROM jobs
@@ -3618,32 +4087,38 @@ WHERE id = (
     ORDER BY id
     LIMIT 1
     FOR UPDATE SKIP LOCKED
+    -- => Uses same logic to get unclaimed job
 );
 -- => Marks job as processing
--- => Only if not locked by another worker
+-- => Only succeeds if job not locked by another worker
+-- => Safe concurrent job claiming
 
 COMMIT;
--- => Releases row lock
+-- => Commits transaction
+-- => Releases row lock on claimed job
+-- => Job now visible as processing to other workers
 
 SELECT
     locktype,
-    -- => Type of lock (advisory, relation, tuple)
+    -- => Type of lock (advisory, relation, tuple, etc.)
     database,
-    -- => Database OID
+    -- => Database OID (object identifier)
     classid,
-    -- => Advisory lock namespace
+    -- => Advisory lock namespace (for advisory locks)
     objid,
-    -- => Advisory lock ID
+    -- => Advisory lock ID (the 12345 in examples)
     mode,
-    -- => Lock mode (ExclusiveLock, ShareLock)
+    -- => Lock mode (ExclusiveLock, ShareLock, etc.)
     granted,
-    -- => TRUE if lock granted
+    -- => TRUE if lock granted, FALSE if waiting
     pid
-    -- => Process ID holding lock
+    -- => Process ID holding or waiting for lock
 FROM pg_locks
+-- => System view showing all locks in database
 WHERE locktype = 'advisory';
--- => Shows all advisory locks
--- => Helps debug lock contention
+-- => Filters to advisory locks only
+-- => Shows all advisory locks currently held or waiting
+-- => Helps debug lock contention and identify blocking processes
 
 SELECT pg_advisory_lock(hash('unique_operation'));
 -- => Uses hash function for string-based lock IDs
@@ -4066,33 +4541,29 @@ PgBouncer provides connection pooling - reduces connection overhead and enables 
 
 [databases]
 example_84 = host=localhost port=5432 dbname=example_84
-# => Defines database connection
-# => example_84: pool name (clients connect to this)
-# => host/port: PostgreSQL server
-# => dbname: actual database name
+# => Maps pool name to PostgreSQL database connection
 
 [pgbouncer]
 listen_addr = 0.0.0.0
-# => Listen on all interfaces
+# => Listens on all network interfaces
 listen_port = 6432
-# => PgBouncer listens on 6432 (PostgreSQL uses 5432)
+# => PgBouncer port (PostgreSQL uses 5432)
 auth_type = md5
-# => Authentication method (md5, scram-sha-256, trust)
+# => Authentication method (md5, scram-sha-256, or trust)
 auth_file = /etc/pgbouncer/userlist.txt
-# => File with username/password hashes
+# => Username/password hash file
 pool_mode = transaction
-# => Pool mode: transaction, session, statement
-# =>   transaction: pool after transaction commit (best for web apps)
-# =>   session: pool after client disconnects (safe for all cases)
-# =>   statement: pool after every statement (most aggressive)
+# => Transaction mode: pools after commit (best for web apps)
+# => Session mode: pools after disconnect (safe for all cases)
+# => Statement mode: pools after statement (most aggressive, breaks transactions)
 max_client_conn = 1000
 # => Maximum client connections to PgBouncer
 default_pool_size = 25
-# => Maximum connections per database pool
+# => Maximum backend connections per pool
 reserve_pool_size = 5
-# => Additional connections for emergencies
+# => Emergency reserve connections
 reserve_pool_timeout = 3
-# => Seconds to wait for reserve pool connection
+# => Seconds to wait for reserve connection
 
 -- Application connects to PgBouncer (not PostgreSQL directly)
 -- Connection string: host=localhost port=6432 dbname=example_84
@@ -4100,25 +4571,17 @@ reserve_pool_timeout = 3
 -- Session pooling mode example
 [pgbouncer]
 pool_mode = session
-# => One backend connection per client connection
-# => Connection returned to pool when client disconnects
-# => Safe for prepared statements, temporary tables, session variables
+# => One backend per client, returned on disconnect (safe for all features)
 
 -- Transaction pooling mode example
 [pgbouncer]
 pool_mode = transaction
-# => Backend connection returned after COMMIT/ROLLBACK
-# => Multiple clients share same backend connection
-# => NOT safe for prepared statements, temp tables (state lost)
-# => Most efficient for stateless applications
+# => Backend returned after commit/rollback (NOT safe for prepared statements/temp tables)
 
 -- Statement pooling mode example
 [pgbouncer]
 pool_mode = statement
-# => Backend connection returned after every SQL statement
-# => Most aggressive pooling
-# => Breaks transactions, prepared statements, temp tables
-# => Rarely used (only for autocommit read queries)
+# => Backend returned after every statement (breaks transactions, rarely used)
 
 -- Monitoring PgBouncer
 -- Connect to pgbouncer admin console
@@ -4137,47 +4600,25 @@ SHOW POOLS;
 # =>   maxwait: 2 (seconds clients waited for connection)
 
 SHOW DATABASES;
-# => Shows configured databases
-# =>   name: example_84
-# =>   host: localhost
-# =>   port: 5432
-# =>   database: example_84
-# =>   pool_mode: transaction
-# =>   max_connections: 25
+# => Configured databases: name, host, port, pool_mode, max_connections
 
 SHOW CLIENTS;
-# => Shows connected clients
-# =>   type: C (client connection)
-# =>   user: app_user
-# =>   database: example_84
-# =>   state: active/idle/waiting
-# =>   addr: client IP address
-# =>   port: client port
+# => Connected clients: user, database, state (active/idle/waiting), IP address
 
 SHOW SERVERS;
-# => Shows backend connections
-# =>   type: S (server connection)
-# =>   user: app_user
-# =>   database: example_84
-# =>   state: idle/active/used
-# =>   addr: PostgreSQL server IP
-# =>   port: 5432
+# => Backend connections: user, database, state (idle/active/used), server IP
 
 RELOAD;
-# => Reloads pgbouncer.ini configuration
-# => No connection interruption
+# => Reloads pgbouncer.ini without interrupting connections
 
 PAUSE;
-# => Pauses connection pooling
-# => Existing connections remain, no new connections
-# => Useful for maintenance
+# => Pauses pooling (existing connections remain, useful for maintenance)
 
 RESUME;
 # => Resumes connection pooling
 
 SHUTDOWN;
-# => Shuts down PgBouncer gracefully
-# => Waits for active queries to complete
+# => Graceful shutdown, waits for active queries
 
 -- PgBouncer benefits
 -- 1. Reduced connection overhead

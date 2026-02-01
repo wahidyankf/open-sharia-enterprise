@@ -87,37 +87,29 @@ Databases organize related tables and data. Each PostgreSQL server can host mult
 ```sql
 -- Create a new database
 CREATE DATABASE first_db;
--- => Executes DDL (Data Definition Language) command
--- => Creates database 'first_db' with default encoding UTF8
--- => Default owner is current user (postgres)
--- => Template database template1 used for initialization
+-- => Creates database 'first_db' with default UTF8 encoding
+-- => Owner is current user (postgres)
 
 -- List all databases
 \l
--- => Executes PostgreSQL meta-command (backslash command)
--- => Shows all databases: postgres (default), template0 (pristine template), template1 (user template), first_db (newly created)
--- => Displays: database name, owner, encoding, collation, access privileges
+-- => Shows all databases: postgres, template0, template1, first_db
+-- => Displays: name, owner, encoding, collation, privileges
 
 -- Connect to the new database
 \c first_db;
--- => Closes current connection to postgres database
--- => Opens new connection to 'first_db' database
+-- => Switches connection from postgres to first_db
 -- => Output: "You are now connected to database 'first_db' as user 'postgres'"
 
 -- Verify current database
 SELECT current_database();
--- => Queries system function (returns current database name)
--- => Returns single row with single column: 'first_db'
--- => Useful for verifying connection in scripts
+-- => Returns current database name: 'first_db'
 
 -- Drop database (must disconnect first)
 \c postgres;
--- => Switch back to postgres database (cannot drop database you're connected to)
--- => Connection to first_db closed
+-- => Switch back to postgres (cannot drop database you're connected to)
 DROP DATABASE first_db;
--- => Deletes database 'first_db' and all its contents (tables, data, schemas)
--- => WARNING: Irreversible operation! No confirmation prompt!
--- => Fails if any active connections exist to first_db
+-- => Deletes database 'first_db' and all contents
+-- => WARNING: Irreversible operation!
 ```
 
 **Key Takeaway**: Use `CREATE DATABASE` to create isolated environments for different applications or projects. Always connect to a specific database before creating tables - the default `postgres` database should remain clean for administrative tasks.
@@ -785,17 +777,22 @@ CREATE DATABASE example_11;
 
 CREATE TABLE products (
     id SERIAL,
-    -- => id: auto-incrementing product identifier
+    -- => id: auto-incrementing product identifier starting at 1
+    -- => Type: SERIAL generates sequence automatically
     name VARCHAR(100),
-    -- => name: product name
+    -- => name: product name (up to 100 characters)
+    -- => Example values: 'Laptop', 'Mouse', 'Desk Chair'
     category VARCHAR(50),
     -- => category: product category (Electronics, Furniture, Kitchen)
+    -- => Used for filtering products by type
     price DECIMAL(10, 2),
-    -- => price: product price
+    -- => price: product price (8 digits before decimal, 2 after)
+    -- => Exact precision for monetary values
     stock INTEGER
-    -- => stock: available inventory quantity
+    -- => stock: available inventory quantity (whole numbers only)
+    -- => Zero means out of stock
 );
--- => Creates products table with 5 columns
+-- => Creates products table with 5 columns for product catalog
 
 INSERT INTO products (name, category, price, stock)
 VALUES
@@ -812,12 +809,16 @@ VALUES
 -- => Inserts 5 products across 3 categories
 -- Single condition
 SELECT name, price
+-- => Selects only name and price columns (not all columns)
 FROM products
+-- => Scans all 5 rows in products table
 WHERE category = 'Electronics';
 -- => WHERE clause filters rows before returning results
--- => Checks each row: category column equals 'Electronics' (string comparison)
+-- => Checks each row: category column equals 'Electronics' (string comparison, case-sensitive)
+-- => Matching rows: Laptop, Mouse, Monitor (3 out of 5 rows pass filter)
 -- => Returns 3 rows: Laptop (999.99), Mouse (29.99), Monitor (299.99)
 -- => Excludes: Desk Chair (Furniture), Coffee Mug (Kitchen)
+-- => Filtered rows never reach result set (discarded before SELECT)
 
 -- Multiple conditions with AND
 SELECT name, price, stock
@@ -843,9 +844,13 @@ WHERE category = 'Furniture' OR price > 500;
 SELECT name, price
 FROM products
 WHERE price >= 100 AND price <= 300;
--- => >= means greater than or equal to
--- => <= means less than or equal to
+-- => >= means greater than or equal to (100 included)
+-- => <= means less than or equal to (300 included)
 -- => Checks: 100 <= price <= 300 (inclusive range)
+-- => Evaluates both conditions: price >= 100 AND price <= 300
+-- => Desk Chair: 199.99 >= 100 (true) AND 199.99 <= 300 (true) → included
+-- => Monitor: 299.99 >= 100 (true) AND 299.99 <= 300 (true) → included
+-- => Laptop: 999.99 <= 300 (false) → excluded despite >= 100 being true
 -- => Returns 2 rows: Desk Chair (199.99), Monitor (299.99)
 -- => Excludes: Laptop (999.99 too high), Mouse (29.99 too low), Coffee Mug (12.99 too low)
 
@@ -900,16 +905,21 @@ CREATE DATABASE example_12;
 CREATE TABLE employees (
     id SERIAL,
     -- => id: auto-incrementing employee identifier
+    -- => Type: SERIAL for unique identifiers
     name VARCHAR(100),
-    -- => name: employee name
+    -- => name: employee name (up to 100 characters)
+    -- => Used for display in result sets
     department VARCHAR(50),
-    -- => department: Engineering or Sales
+    -- => department: Engineering or Sales (two departments)
+    -- => Used for grouping and sorting employees
     salary DECIMAL(10, 2),
-    -- => salary: annual salary
+    -- => salary: annual salary (exact precision)
+    -- => Range in dataset: $75,000 to $105,000
     hire_date DATE
-    -- => hire_date: date employee was hired
+    -- => hire_date: date employee was hired (YYYY-MM-DD format)
+    -- => Used for seniority calculations and sorting
 );
--- => Creates employees table with 5 columns
+-- => Creates employees table with 5 columns for employee records
 
 INSERT INTO employees (name, department, salary, hire_date)
 VALUES
@@ -947,11 +957,18 @@ ORDER BY salary DESC;
 SELECT name, department, salary
 FROM employees
 ORDER BY department, salary DESC;
--- => First sorts by department (alphabetical ascending: Engineering, Sales)
--- => Within each department, sorts by salary descending
+-- => ORDER BY with multiple columns creates hierarchical sorting
+-- => First sort key: department (ascending by default, alphabetical)
+-- => Grouping: Engineering comes before Sales (E < S alphabetically)
+-- => Second sort key: salary DESC (descending, within each department)
+-- => Engineering group sorted internally: 105000 > 95000 > 95000
+-- => Charlie (105000) first, then Alice (95000), then Eve (95000)
+-- => Sales group sorted internally: 80000 > 75000
+-- => Diana (80000) first, then Bob (75000)
 -- => Engineering group (3 rows): Charlie (105000), Alice (95000), Eve (95000)
 -- => Sales group (2 rows): Diana (80000), Bob (75000)
 -- => Returns 5 rows ordered by department first, salary second
+-- => Second sort only matters when first sort values are identical
 
 -- Sort by date
 SELECT name, hire_date
@@ -1110,21 +1127,35 @@ Aggregate functions compute single values from multiple rows - count rows, sum v
 
 ```sql
 CREATE DATABASE example_14;
+-- => Creates database for aggregate function examples
 \c example_14;
+-- => Switches to example_14 database
 CREATE TABLE sales (
     id SERIAL,
+    -- => id: auto-incrementing sale identifier
     product VARCHAR(100),
+    -- => product: product name (can have duplicates for multiple sales)
     quantity INTEGER,
+    -- => quantity: number of items sold in this transaction
     price DECIMAL(10, 2),
+    -- => price: unit price per item (exact precision for money)
     sale_date DATE
+    -- => sale_date: date of sale transaction
 );
+-- => Creates sales table for tracking individual sales transactions
 INSERT INTO sales (product, quantity, price, sale_date)
+-- => Inserts 5 sales records
 VALUES
     ('Laptop', 5, 999.99, '2025-12-20'),
+    -- => Sale 1: 5 Laptops at $999.99 each
     ('Mouse', 20, 29.99, '2025-12-21'),
+    -- => Sale 2: 20 Mice at $29.99 each (highest quantity, lowest price)
     ('Keyboard', 15, 79.99, '2025-12-22'),
+    -- => Sale 3: 15 Keyboards at $79.99 each
     ('Monitor', 8, 299.99, '2025-12-23'),
+    -- => Sale 4: 8 Monitors at $299.99 each
     ('Laptop', 3, 999.99, '2025-12-24');
+    -- => Sale 5: 3 Laptops (duplicate product, different quantity/date)
 -- Count total sales
 SELECT COUNT(*) AS total_sales
 FROM sales;
@@ -1239,22 +1270,37 @@ graph TD
 
 ```sql
 CREATE DATABASE example_15;
+-- => Creates database for GROUP BY examples
 \c example_15;
+-- => Switches to example_15 database
 CREATE TABLE orders (
     id SERIAL,
+    -- => id: auto-incrementing order identifier
     customer VARCHAR(100),
+    -- => customer: customer name (can have duplicates - same customer, multiple orders)
     product VARCHAR(100),
+    -- => product: product ordered (can have duplicates - same product, multiple customers)
     quantity INTEGER,
+    -- => quantity: number of items in this order
     total_price DECIMAL(10, 2)
+    -- => total_price: total cost for this order (quantity * unit_price)
 );
+-- => Creates orders table for customer purchase records
 INSERT INTO orders (customer, product, quantity, total_price)
+-- => Inserts 6 orders from 3 customers
 VALUES
     ('Alice', 'Laptop', 1, 999.99),
+    -- => Order 1: Alice buys 1 Laptop
     ('Bob', 'Mouse', 2, 59.98),
+    -- => Order 2: Bob buys 2 Mice
     ('Alice', 'Keyboard', 1, 79.99),
+    -- => Order 3: Alice buys 1 Keyboard (second Alice order)
     ('Charlie', 'Laptop', 2, 1999.98),
+    -- => Order 4: Charlie buys 2 Laptops (highest single order value)
     ('Bob', 'Monitor', 1, 299.99),
+    -- => Order 5: Bob buys 1 Monitor (second Bob order)
     ('Alice', 'Mouse', 3, 89.97);
+    -- => Order 6: Alice buys 3 Mice (third Alice order)
 -- Count orders per customer
 SELECT customer, COUNT(*) AS num_orders
 FROM orders
@@ -1426,25 +1472,39 @@ CREATE DATABASE example_17;
 
 -- SERIAL creates auto-incrementing integer primary key
 CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    -- => id: auto-incrementing integer (starts at 1, increments by 1)
+    -- => SERIAL is shorthand for INTEGER + sequence creation
+    -- => PRIMARY KEY enforces uniqueness and NOT NULL automatically
+    -- => Creates index on id column for fast lookups
     username VARCHAR(50) NOT NULL,
+    -- => username: user's login name (required, up to 50 chars)
+    -- => NOT NULL means this column cannot be empty
     email VARCHAR(100) NOT NULL
+    -- => email: user's email address (required, up to 100 chars)
 );
+-- => Creates users table with auto-incrementing primary key
 -- Insert without specifying id
 INSERT INTO users (username, email)
--- => INSERT into users table begins
+-- => INSERT into users table (id column omitted)
+-- => PostgreSQL automatically generates id value
 VALUES ('alice', 'alice@example.com');
--- => Row data values follow
--- => id automatically becomes 1
+-- => Row data: username='alice', email='alice@example.com'
+-- => SERIAL sequence generates next value: 1
+-- => Actual row inserted: id=1, username='alice', email='alice@example.com'
 INSERT INTO users (username, email)
--- => INSERT into users table begins
+-- => Second INSERT (id still omitted)
 VALUES ('bob', 'bob@example.com');
--- => Row data values follow
--- => id automatically becomes 2
+-- => Row data: username='bob', email='bob@example.com'
+-- => SERIAL sequence increments: 2
+-- => Actual row inserted: id=2, username='bob', email='bob@example.com'
 
 -- Verify auto-generated IDs
 SELECT * FROM users;
--- => Query executes and returns result set
--- => id: 1 (alice), 2 (bob)
+-- => Query all columns (*)
+-- => Returns 2 rows with auto-generated IDs
+-- => Row 1: id=1, username='alice', email='alice@example.com'
+-- => Row 2: id=2, username='bob', email='bob@example.com'
 
 -- Cannot insert duplicate primary key
 INSERT INTO users (id, username, email)
@@ -1574,18 +1634,33 @@ CREATE DATABASE example_19;
 \c example_19;
 -- => Switches connection to example_19 database
 CREATE TABLE users (
-    username VARCHAR(50) UNIQUE,        -- => No two users can have same username
-    email VARCHAR(100) UNIQUE NOT NULL, -- => Email must be unique and present
+    username VARCHAR(50) UNIQUE,
+    -- => username: user's login name (up to 50 chars)
+    -- => UNIQUE constraint: no two users can have same username
+    -- => Creates implicit index on username column
+    email VARCHAR(100) UNIQUE NOT NULL,
+    -- => email: user's email address (required and unique)
+    -- => UNIQUE + NOT NULL combination enforces email presence and uniqueness
+    -- => Creates implicit index on email column
     age INTEGER CHECK (age >= 18 AND age <= 120),
+    -- => age: user's age (must be 18-120 inclusive)
+    -- => CHECK constraint validates range on every INSERT/UPDATE
     country VARCHAR(50),
+    -- => country: user's country (no constraint - any value allowed)
     city VARCHAR(50),
+    -- => city: user's city (validated in combination with country)
     CONSTRAINT valid_location CHECK (
+        -- => Named CHECK constraint for better error messages
         (country = 'USA' AND city IN ('New York', 'Los Angeles', 'Chicago')) OR
+        -- => USA requires specific cities (3 allowed)
         (country = 'UK' AND city IN ('London', 'Manchester', 'Birmingham')) OR
+        -- => UK requires specific cities (3 allowed)
         (country NOT IN ('USA', 'UK'))
-        -- => Row data inserted
+        -- => Other countries allow any city value
+        -- => Complex multi-column validation logic
     )
 );
+-- => Creates users table with UNIQUE and CHECK constraints
 -- Valid insert
 INSERT INTO users (username, email, age, country, city)
 -- => INSERT into users table begins
@@ -1927,23 +2002,37 @@ LEFT JOIN returns all rows from the left table, with matching rows from the righ
 
 ```sql
 CREATE DATABASE example_22;
+-- => Creates database for LEFT JOIN examples
 \c example_22;
+-- => Switches to example_22 database
 CREATE TABLE customers (
     id SERIAL PRIMARY KEY,
+    -- => id: customer identifier (auto-incrementing)
     name VARCHAR(100)
+    -- => name: customer name
 );
+-- => Creates customers table (LEFT table in joins)
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
+    -- => id: order identifier (auto-incrementing)
     customer_id INTEGER,
+    -- => customer_id: links to customers.id (foreign key, not enforced here)
     order_date DATE,
+    -- => order_date: when order was placed
     total DECIMAL(10, 2)
+    -- => total: order total amount
 );
+-- => Creates orders table (RIGHT table in joins)
 INSERT INTO customers (name)
+-- => Inserts 4 customers
 VALUES ('Alice'), ('Bob'), ('Charlie'), ('Diana');
+-- => Alice (id=1), Bob (id=2), Charlie (id=3), Diana (id=4)
 INSERT INTO orders (customer_id, order_date, total)
+-- => Inserts 2 orders (only Alice has orders)
 VALUES
-    (1, '2025-12-20', 150.00),  -- => Alice
-    (1, '2025-12-22', 300.00);  -- => Alice again
+    (1, '2025-12-20', 150.00),  -- => Alice's first order
+    (1, '2025-12-22', 300.00);  -- => Alice's second order
+-- => Bob, Charlie, Diana have NO orders (demonstrates LEFT JOIN behavior)
 -- Left join: all customers, with orders if they exist
 SELECT
     c.name,
@@ -2260,19 +2349,31 @@ String functions manipulate text - concatenation, substring extraction, case con
 
 ```sql
 CREATE DATABASE example_26;
+-- => Creates database for string function examples
 \c example_26;
+-- => Switches to example_26 database
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
+    -- => id: user identifier (auto-incrementing)
     first_name VARCHAR(50),
+    -- => first_name: user's first name
     last_name VARCHAR(50),
+    -- => last_name: user's last name
     email VARCHAR(100),
+    -- => email: user's email address (varied case for demonstration)
     phone VARCHAR(20)
+    -- => phone: user's phone number (can be NULL)
 );
+-- => Creates users table for string manipulation examples
 INSERT INTO users (first_name, last_name, email, phone)
+-- => Inserts 3 users with varied data
 VALUES
     ('Alice', 'Johnson', 'alice@example.com', '555-1234'),
+    -- => User 1: lowercase email, has phone
     ('Bob', 'Smith', 'BOB@EXAMPLE.COM', '555-5678'),
+    -- => User 2: UPPERCASE email (demonstrates case conversion)
     ('Charlie', 'Brown', 'charlie@example.com', NULL);
+    -- => User 3: NULL phone (demonstrates NULL handling in string functions)
 -- Concatenate strings
 SELECT
     first_name || ' ' || last_name AS full_name,
@@ -2364,18 +2465,29 @@ Date functions calculate current time, extract components, compute differences, 
 
 ```sql
 CREATE DATABASE example_27;
+-- => Creates database for date function examples
 \c example_27;
+-- => Switches to example_27 database
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,
+    -- => id: event identifier (auto-incrementing)
     title VARCHAR(200),
+    -- => title: event name (up to 200 characters)
     event_date DATE,
+    -- => event_date: when event occurs (DATE type, no time component)
     created_at TIMESTAMP DEFAULT NOW()
+    -- => created_at: timestamp when row created (auto-set to current time)
 );
+-- => Creates events table with date/timestamp columns
 INSERT INTO events (title, event_date)
+-- => Inserts 3 events (created_at auto-set to NOW())
 VALUES
     ('Conference', '2025-12-29'),
+    -- => Event 1: future event (relative to 2026-01-02 execution)
     ('Webinar', '2026-01-15'),
+    -- => Event 2: near-future event (13 days from assumed execution)
     ('Workshop', '2024-11-20');
+    -- => Event 3: past event (demonstrates negative date differences)
 -- Current date and time
 SELECT
     NOW() AS current_timestamp,
