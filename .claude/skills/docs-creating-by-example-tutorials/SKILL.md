@@ -66,6 +66,17 @@ Each example follows a consistent five-part structure:
 - **Optimal**: 1.0-2.25 (target range for educational value)
 - **Upper bound**: 2.5 (examples exceeding this need reduction)
 
+**Density Calculation Formula**:
+
+```
+density = (number of comment lines) ÷ (number of code lines)
+```
+
+**Example**:
+
+- 15 comment lines ÷ 7 code lines = 2.14 density ✅ (optimal)
+- NOT: 7 code lines ÷ 15 comments = 0.47 ❌ (inverted formula)
+
 ### Annotation Pattern
 
 Use `// =>` or `# =>` notation to document:
