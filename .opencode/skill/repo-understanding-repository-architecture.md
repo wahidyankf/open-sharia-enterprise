@@ -54,7 +54,7 @@ Layer 5: Workflows    WHEN - Orchestrate (multi-step processes)
 
 **Location**: `governance/vision/`
 
-**Key Document**: [Vision - Open Sharia Enterprise](../../../governance/vision/open-sharia-enterprise.md)
+**Key Document**: [Vision - Open Sharia Enterprise](../../governance/vision/open-sharia-enterprise.md)
 
 **Core Vision**:
 
@@ -380,7 +380,7 @@ Skills (context: fork) ──delegates to──> Isolated Agent Context
 
 ## References
 
-- **[Repository Architecture](../../../governance/repository-governance-architecture.md)** - Complete architectural documentation with all traceability examples
+- **[Repository Architecture](../../governance/repository-governance-architecture.md)** - Complete architectural documentation with all traceability examples
 - **[Core Principles Index](../README.md)** - All 10 foundational principles
 - **[Conventions Index](../README.md)** - All 24 documentation conventions
 - **[Development Index](../README.md)** - All 15 development practices

@@ -444,12 +444,12 @@ cover:
 
 ## Reference Documentation
 
-**Primary Convention**: [Hugo Content Convention - ose-platform-web](../../../governance/conventions/hugo/ose-platform.md)
+**Primary Convention**: [Hugo Content Convention - ose-platform-web](../../governance/conventions/hugo/ose-platform.md)
 
 **Related Conventions**:
 
-- [Hugo Content Shared](../../../governance/conventions/hugo/shared.md) - Shared Hugo patterns
-- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Universal quality standards
+- [Hugo Content Shared](../../governance/conventions/hugo/shared.md) - Shared Hugo patterns
+- [Content Quality Principles](../../governance/conventions/writing/quality.md) - Universal quality standards
 
 **Related Skills**:
 
@@ -536,12 +536,12 @@ Vercel automatically:
 
 ## References
 
-**Primary Convention**: [Hugo Content Convention - ose-platform-web](../../../governance/conventions/hugo/ose-platform.md)
+**Primary Convention**: [Hugo Content Convention - ose-platform-web](../../governance/conventions/hugo/ose-platform.md)
 
 **Related Conventions**:
 
-- [Hugo Content Shared](../../../governance/conventions/hugo/shared.md) - Shared Hugo patterns
-- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Universal quality standards
+- [Hugo Content Shared](../../governance/conventions/hugo/shared.md) - Shared Hugo patterns
+- [Content Quality Principles](../../governance/conventions/writing/quality.md) - Universal quality standards
 
 **Related Skills**:
 

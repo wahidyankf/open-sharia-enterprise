@@ -476,8 +476,8 @@ Renamed software documentation directories for semantic clarity:
 
 **Changes**:
 
-- `stack-lang/` → `prog-lang/` (prefix: `ex-so-stla` → `ex-so-prla`)
-- `stack-libs/` → `platform-web/` (prefix: `ex-so-stli` → `ex-so-plwe`)
+- `stack-lang/` → `programming-languages/` (prefix: `ex-soen-stla` → `ex-soen-prla`)
+- `stack-libs/` → `platform-web/` (prefix: `ex-soen-stli` → `ex-soen-plwe`)
 
 **Impact**: 258 files renamed, 40 reference files updated, 2,150+ internal references
 

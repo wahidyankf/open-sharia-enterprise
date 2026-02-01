@@ -110,9 +110,9 @@ The standard was derived from benchmark analysis of Golang, Python, and Java imp
 **Must Follow**:
 
 - [Programming Language Content Standard](../../../governance/conventions/tutorials/programming-language-content.md)
-- [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)
-- [Hugo Content Convention - ayokoding](../../../governance/conventions/hugo/ayokoding.md)
-- [Content Quality Principles](../../../governance/conventions/writing/quality.md)
+- [Color Accessibility Convention](../../../../governance/conventions/formatting/color-accessibility.md)
+- [Hugo Content Convention - ayokoding](../../../../governance/conventions/hugo/ayokoding.md)
+- [Content Quality Principles](../../../../governance/conventions/writing/quality.md)
 - [Factual Validation Convention](../../../governance/conventions/writing/factual-validation.md)
 
 **Resource Constraints**:
@@ -141,7 +141,7 @@ The standard was derived from benchmark analysis of Golang, Python, and Java imp
 
 **Type**: Trunk Based Development (Direct to Main)
 
-All development happens on `main` branch with direct commits. See [Trunk Based Development Convention](../../../governance/development/workflow/trunk-based-development.md) for complete details.
+All development happens on `main` branch with direct commits. See [Trunk Based Development Convention](../../../../governance/development/workflow/trunk-based-development.md) for complete details.
 
 **Delivery Strategy**:
 

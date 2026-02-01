@@ -299,7 +299,7 @@ Scenario: QA engineer writes tests for Murabaha calculations
 
 #### NFR2: Maintainability
 
-- **NFR2.1**: All files must follow file naming convention (ex-so-stla-ts\_\_\*.md)
+- **NFR2.1**: All files must follow file naming convention (ex-soen-stla-ts\_\_\*.md)
 - **NFR2.2**: Cross-references must use relative paths
 - **NFR2.3**: Code examples must include TypeScript version compatibility comments
 - **NFR2.4**: Each file must track last_updated date in frontmatter
@@ -421,30 +421,30 @@ Scenario: README provides complete learning paths
 #### Documentation Structure
 
 ```
-docs/explanation/software/stack-lang/typescript/
+docs/explanation/software-engineering/programming-languages/typescript/
 ├── README.md                                          # 900+ lines, comprehensive index
-├── ex-so-stla-ts__anti-patterns.md                  # 1,800 lines
-├── ex-so-stla-ts__behaviour-driven-development.md   # 1,500 lines
-├── ex-so-stla-ts__best-practices.md                 # 2,000 lines
-├── ex-so-stla-ts__concurrency-and-parallelism.md    # 1,800 lines
-├── ex-so-stla-ts__domain-driven-design.md           # 2,200 lines
-├── ex-so-stla-ts__error-handling.md                 # 1,800 lines
-├── ex-so-stla-ts__finite-state-machine.md           # 1,600 lines
-├── ex-so-stla-ts__functional-programming.md         # 1,800 lines
-├── ex-so-stla-ts__idioms.md                         # 1,700 lines
-├── ex-so-stla-ts__interfaces-and-types.md           # 2,000 lines
-├── ex-so-stla-ts__linting-and-formatting.md         # 1,400 lines
-├── ex-so-stla-ts__memory-management.md              # 1,600 lines
-├── ex-so-stla-ts__modules-and-dependencies.md       # 1,500 lines
-├── ex-so-stla-ts__performance.md                    # 1,800 lines
-├── ex-so-stla-ts__security.md                       # 1,900 lines
-├── ex-so-stla-ts__test-driven-development.md        # 1,800 lines
-├── ex-so-stla-ts__type-safety.md                    # 2,200 lines
-├── ex-so-stla-ts__web-services.md                   # 2,000 lines
-├── ex-so-stla-ts__release-5.0.md                    # 1,200 lines
-├── ex-so-stla-ts__release-5.4.md                    # 1,200 lines
-├── ex-so-stla-ts__release-5.6.md                    # 1,200 lines
-├── ex-so-stla-ts__release-5.7.md                    # 1,200 lines
+├── ex-soen-stla-ts__anti-patterns.md                  # 1,800 lines
+├── ex-soen-stla-ts__behaviour-driven-development.md   # 1,500 lines
+├── ex-soen-stla-ts__best-practices.md                 # 2,000 lines
+├── ex-soen-stla-ts__concurrency-and-parallelism.md    # 1,800 lines
+├── ex-soen-stla-ts__domain-driven-design.md           # 2,200 lines
+├── ex-soen-stla-ts__error-handling.md                 # 1,800 lines
+├── ex-soen-stla-ts__finite-state-machine.md           # 1,600 lines
+├── ex-soen-stla-ts__functional-programming.md         # 1,800 lines
+├── ex-soen-stla-ts__idioms.md                         # 1,700 lines
+├── ex-soen-stla-ts__interfaces-and-types.md           # 2,000 lines
+├── ex-soen-stla-ts__linting-and-formatting.md         # 1,400 lines
+├── ex-soen-stla-ts__memory-management.md              # 1,600 lines
+├── ex-soen-stla-ts__modules-and-dependencies.md       # 1,500 lines
+├── ex-soen-stla-ts__performance.md                    # 1,800 lines
+├── ex-soen-stla-ts__security.md                       # 1,900 lines
+├── ex-soen-stla-ts__test-driven-development.md        # 1,800 lines
+├── ex-soen-stla-ts__type-safety.md                    # 2,200 lines
+├── ex-soen-stla-ts__web-services.md                   # 2,000 lines
+├── ex-soen-stla-ts__release-5.0.md                    # 1,200 lines
+├── ex-soen-stla-ts__release-5.4.md                    # 1,200 lines
+├── ex-soen-stla-ts__release-5.6.md                    # 1,200 lines
+├── ex-soen-stla-ts__release-5.7.md                    # 1,200 lines
 └── templates/
     ├── README.md                                     # 500 lines
     ├── domain-entity.template.ts                     # Entity template
@@ -477,9 +477,9 @@ tags:
   - typescript
   - [topic-specific-tags]
 related:
-  - ./ex-so-stla-ts__[related-1].md
-  - ./ex-so-stla-ts__[related-2].md
-  - ./ex-so-stla-ts__[related-3].md
+  - ./ex-soen-stla-ts__[related-1].md
+  - ./ex-soen-stla-ts__[related-2].md
+  - ./ex-soen-stla-ts__[related-3].md
 principles:
   - [principle-1]
   - [principle-2]
@@ -594,7 +594,7 @@ last_updated: YYYY-MM-DD
 
 #### DD4: File Naming Convention
 
-**Decision**: Use prefix `ex-so-stla-ts__` for all TypeScript files
+**Decision**: Use prefix `ex-soen-stla-ts__` for all TypeScript files
 
 **Rationale**:
 
@@ -681,7 +681,7 @@ last_updated: YYYY-MM-DD
 
 **Deliverables**:
 
-1. ex-so-stla-ts__best-practices.md (2,000 lines)
+1. ex-soen-stla-ts__best-practices.md (2,000 lines)
    - Code clarity over cleverness
    - Single responsibility principle
    - Fail fast and explicitly
@@ -691,7 +691,7 @@ last_updated: YYYY-MM-DD
    - 10+ financial domain examples
    - 5+ Mermaid diagrams
 
-2. ex-so-stla-ts__idioms.md (1,700 lines)
+2. ex-soen-stla-ts__idioms.md (1,700 lines)
    - TypeScript-specific patterns
    - Type guards and narrowing
    - Utility types (Partial, Pick, Omit, etc.)
@@ -700,7 +700,7 @@ last_updated: YYYY-MM-DD
    - 8+ financial domain examples
    - 4+ Mermaid diagrams
 
-3. ex-so-stla-ts__type-safety.md (2,200 lines)
+3. ex-soen-stla-ts__type-safety.md (2,200 lines)
    - Branded types
    - Discriminated unions
    - Exhaustiveness checking
@@ -709,7 +709,7 @@ last_updated: YYYY-MM-DD
    - 10+ financial domain examples
    - 6+ Mermaid diagrams
 
-4. ex-so-stla-ts__error-handling.md (1,800 lines)
+4. ex-soen-stla-ts__error-handling.md (1,800 lines)
    - Result/Either patterns
    - Custom error hierarchies
    - Error wrapping and context
@@ -718,7 +718,7 @@ last_updated: YYYY-MM-DD
    - 8+ financial domain examples
    - 5+ Mermaid diagrams
 
-5. ex-so-stla-ts__interfaces-and-types.md (2,000 lines)
+5. ex-soen-stla-ts__interfaces-and-types.md (2,000 lines)
    - Interfaces vs type aliases
    - Generics and constraints
    - Mapped types
@@ -727,7 +727,7 @@ last_updated: YYYY-MM-DD
    - 9+ financial domain examples
    - 5+ Mermaid diagrams
 
-6. ex-so-stla-ts__functional-programming.md (1,800 lines)
+6. ex-soen-stla-ts__functional-programming.md (1,800 lines)
    - Pure functions in TypeScript
    - Immutability patterns
    - Higher-order functions
@@ -736,7 +736,7 @@ last_updated: YYYY-MM-DD
    - 8+ financial domain examples
    - 4+ Mermaid diagrams
 
-7. ex-so-stla-ts__concurrency-and-parallelism.md (1,800 lines)
+7. ex-soen-stla-ts__concurrency-and-parallelism.md (1,800 lines)
    - async/await patterns
    - Promise combinators
    - Web Workers
@@ -745,7 +745,7 @@ last_updated: YYYY-MM-DD
    - 8+ financial domain examples
    - 5+ Mermaid diagrams
 
-8. ex-so-stla-ts__modules-and-dependencies.md (1,500 lines)
+8. ex-soen-stla-ts__modules-and-dependencies.md (1,500 lines)
    - ES modules (ESM) and module systems
    - Package managers (npm 11.8.x, pnpm 10.28.x, bun 1.3.x)
    - Module resolution strategies (Node16, NodeNext, Bundler)
@@ -767,7 +767,7 @@ last_updated: YYYY-MM-DD
 
 **Deliverables**:
 
-1. ex-so-stla-ts__domain-driven-design.md (2,200 lines)
+1. ex-soen-stla-ts__domain-driven-design.md (2,200 lines)
    - Entities and value objects
    - Aggregates and repositories
    - Domain events
@@ -776,7 +776,7 @@ last_updated: YYYY-MM-DD
    - 10+ financial domain examples
    - 7+ Mermaid diagrams
 
-2. ex-so-stla-ts__web-services.md (2,000 lines)
+2. ex-soen-stla-ts__web-services.md (2,000 lines)
    - Express 5.2.x/4.22.x patterns (mature, widely-used)
    - Fastify 5.7.x performance (fast, low overhead)
    - NestJS 11.1.x architecture (enterprise-grade, Angular-inspired)
@@ -786,7 +786,7 @@ last_updated: YYYY-MM-DD
    - 9+ financial domain examples
    - 6+ Mermaid diagrams
 
-3. ex-so-stla-ts__security.md (1,900 lines)
+3. ex-soen-stla-ts__security.md (1,900 lines)
    - XSS prevention
    - Injection attacks
    - Authentication patterns
@@ -795,7 +795,7 @@ last_updated: YYYY-MM-DD
    - 8+ financial domain examples
    - 5+ Mermaid diagrams
 
-4. ex-so-stla-ts__performance.md (1,800 lines)
+4. ex-soen-stla-ts__performance.md (1,800 lines)
    - Profiling and benchmarking
    - Memory optimization
    - Bundle size reduction
@@ -804,7 +804,7 @@ last_updated: YYYY-MM-DD
    - 8+ financial domain examples
    - 5+ Mermaid diagrams
 
-5. ex-so-stla-ts__memory-management.md (1,600 lines)
+5. ex-soen-stla-ts__memory-management.md (1,600 lines)
    - V8 garbage collection
    - Memory leaks
    - WeakMap/WeakSet
@@ -813,7 +813,7 @@ last_updated: YYYY-MM-DD
    - 7+ financial domain examples
    - 4+ Mermaid diagrams
 
-6. ex-so-stla-ts__finite-state-machine.md (1,600 lines)
+6. ex-soen-stla-ts__finite-state-machine.md (1,600 lines)
    - FSM patterns in TypeScript
    - XState integration
    - State management
@@ -822,7 +822,7 @@ last_updated: YYYY-MM-DD
    - 7+ financial domain examples
    - 4+ Mermaid diagrams
 
-7. ex-so-stla-ts__anti-patterns.md (1,800 lines)
+7. ex-soen-stla-ts__anti-patterns.md (1,800 lines)
    - Any type abuse
    - Type assertion overuse
    - Mutable state in pure functions
@@ -843,7 +843,7 @@ last_updated: YYYY-MM-DD
 
 **Deliverables**:
 
-1. ex-so-stla-ts__test-driven-development.md (1,800 lines)
+1. ex-soen-stla-ts__test-driven-development.md (1,800 lines)
    - Jest 30.x setup and configuration (v30.2.0)
    - Vitest 4.x for modern projects (v4.0.18, ESM-first)
    - Unit testing patterns and best practices
@@ -853,7 +853,7 @@ last_updated: YYYY-MM-DD
    - 8+ financial domain examples
    - 5+ Mermaid diagrams
 
-2. ex-so-stla-ts__behaviour-driven-development.md (1,500 lines)
+2. ex-soen-stla-ts__behaviour-driven-development.md (1,500 lines)
    - Cucumber for TypeScript (Gherkin scenarios)
    - Playwright 1.57.0 for E2E testing (browser automation)
    - BDD workflow and feature specifications
@@ -863,7 +863,7 @@ last_updated: YYYY-MM-DD
    - 7+ financial domain examples
    - 4+ Mermaid diagrams
 
-3. ex-so-stla-ts__linting-and-formatting.md (1,400 lines)
+3. ex-soen-stla-ts__linting-and-formatting.md (1,400 lines)
    - ESLint 9.39.x flat config format (10.0.0 in beta/rc)
    - Prettier 3.8.x integration and configuration
    - TSConfig strict mode and compiler options
@@ -884,7 +884,7 @@ last_updated: YYYY-MM-DD
 
 **Deliverables**:
 
-1. ex-so-stla-ts__release-5.0.md (1,200 lines)
+1. ex-soen-stla-ts__release-5.0.md (1,200 lines)
    - Decorators (Stage 3)
    - const type parameters
    - Enum improvements
@@ -894,7 +894,7 @@ last_updated: YYYY-MM-DD
    - 5+ financial domain examples
    - 3+ Mermaid diagrams
 
-2. ex-so-stla-ts__release-5.4.md (1,200 lines)
+2. ex-soen-stla-ts__release-5.4.md (1,200 lines)
    - NoInfer utility type
    - Closure type narrowing
    - groupBy and Object.groupBy support
@@ -904,7 +904,7 @@ last_updated: YYYY-MM-DD
    - 5+ financial domain examples
    - 3+ Mermaid diagrams
 
-3. ex-so-stla-ts__release-5.6.md (1,200 lines)
+3. ex-soen-stla-ts__release-5.6.md (1,200 lines)
    - Disallowed nullish and truthy checks
    - Iterator helper methods
    - Strict built-in iterator checks
@@ -914,7 +914,7 @@ last_updated: YYYY-MM-DD
    - 5+ financial domain examples
    - 3+ Mermaid diagrams
 
-4. ex-so-stla-ts__release-5.7.md (1,200 lines)
+4. ex-soen-stla-ts__release-5.7.md (1,200 lines)
    - Path rewriting for relative paths
    - Relative type check improvements
    - Checked imports
@@ -1239,7 +1239,7 @@ Each phase will be validated using the `docs__checker` agent with the following 
 **Steps**:
 
 - [x] Create directory structure
-  - [x] Create docs/explanation/software/stack-lang/typescript/
+  - [x] Create docs/explanation/software-engineering/programming-languages/typescript/
   - [x] Create templates/ subdirectory
   - [x] Verify directory structure matches plan
   - **Note**: Created 2025-01-23 16:24 - Directory structure verified
@@ -1274,7 +1274,7 @@ Each phase will be validated using the `docs__checker` agent with the following 
 Scenario: Phase 1 foundation complete
   Given the TypeScript documentation directory
   When Phase 1 implementation is complete
-  Then docs/explanation/software/stack-lang/typescript/ directory should exist
+  Then docs/explanation/software-engineering/programming-languages/typescript/ directory should exist
   And templates/ subdirectory should exist
   And README.md should be 900+ lines
   And README should include TypeScript version timeline diagram
@@ -1290,7 +1290,7 @@ Scenario: Phase 1 foundation complete
 
 **Steps**:
 
-- [x] Create ex-so-stla-ts\_\_best-practices.md
+- [x] Create ex-soen-stla-ts\_\_best-practices.md
   - [x] YAML frontmatter
   - [x] Core principles section (7 principles)
   - [x] Financial domain examples (10+ in code organization, 3 comprehensive examples)
@@ -1298,7 +1298,7 @@ Scenario: Phase 1 foundation complete
   - [x] Validate with markdownlint
   - **Note**: Created 2025-01-23 16:26 - 1800 lines, 7 core principles, 25 code organization best practices, 3 comprehensive financial examples (Zakat, Murabaha, Donation Distribution), checklist included
 
-- [x] Create ex-so-stla-ts\_\_idioms.md
+- [x] Create ex-soen-stla-ts\_\_idioms.md
   - [x] TypeScript-specific patterns
   - [x] Type guards and narrowing
   - [x] Utility types (Partial, Pick, Omit, Record, etc.)
@@ -1308,7 +1308,7 @@ Scenario: Phase 1 foundation complete
   - [x] Validate with markdownlint
   - **Note**: Created 2025-01-23 16:28 - 1152 lines, comprehensive coverage of TypeScript idioms including type guards, utility types, conditional types, template literals, mapped types, type predicates, discriminated unions, branded types, const assertions
 
-- [x] Create ex-so-stla-ts\_\_type-safety.md
+- [x] Create ex-soen-stla-ts\_\_type-safety.md
   - [x] Branded types (basic, numeric, complex)
   - [x] Discriminated unions (payment states, Result pattern)
   - [x] Exhaustiveness checking
@@ -1322,7 +1322,7 @@ Scenario: Phase 1 foundation complete
   - [x] Validate with markdownlint
   - **Note**: Created 2025-01-23 16:29 - 763 lines, comprehensive type safety coverage with branded types, discriminated unions, Result pattern, exhaustiveness checking, type predicates, strict mode, generics
 
-- [x] Create ex-so-stla-ts\_\_error-handling.md
+- [x] Create ex-soen-stla-ts\_\_error-handling.md
   - [x] Result/Either patterns with combinators
   - [x] Custom error hierarchies (ValidationError, BusinessRuleError, InfrastructureError)
   - [x] Async error handling (try/catch, Result pattern, Promise.allSettled)
@@ -1333,7 +1333,7 @@ Scenario: Phase 1 foundation complete
   - [x] Validate with markdownlint
   - **Note**: Created 2025-01-23 16:30 - 591 lines, comprehensive error handling with Result/Either patterns, custom error classes, async patterns, validation, error context
 
-- [x] Create ex-so-stla-ts\_\_interfaces-and-types.md
+- [x] Create ex-soen-stla-ts\_\_interfaces-and-types.md
   - [x] Interfaces vs type aliases
   - [x] Generics and constraints
   - [x] Mapped types
@@ -1342,7 +1342,7 @@ Scenario: Phase 1 foundation complete
   - [x] Validate with docs\_\_checker (Auto-formatted with Prettier)
   - **Note**: Created 2025-01-23 17:12 - 303 lines, covers interfaces, type aliases, generics, mapped types, index signatures, intersection/union types, conditional types with financial domain examples
 
-- [x] Create ex-so-stla-ts\_\_functional-programming.md
+- [x] Create ex-soen-stla-ts\_\_functional-programming.md
   - [x] Pure functions in TypeScript
   - [x] Immutability patterns
   - [x] Function composition
@@ -1351,7 +1351,7 @@ Scenario: Phase 1 foundation complete
   - [x] Validate with docs\_\_checker (Auto-formatted with Prettier)
   - **Note**: Created 2025-01-23 17:12 - 187 lines, covers pure functions, immutability, composition, higher-order functions with financial examples
 
-- [x] Create ex-so-stla-ts\_\_concurrency-and-parallelism.md
+- [x] Create ex-soen-stla-ts\_\_concurrency-and-parallelism.md
   - [x] async/await patterns
   - [x] Promise combinators
   - [x] Web Workers
@@ -1360,7 +1360,7 @@ Scenario: Phase 1 foundation complete
   - [x] Validate with docs\_\_checker (Auto-formatted with Prettier)
   - **Note**: Created 2025-01-23 17:12 - 169 lines, covers async/await, Promise.all/race/allSettled, Web Workers, AbortController with financial examples
 
-- [x] Create ex-so-stla-ts\_\_modules-and-dependencies.md
+- [x] Create ex-soen-stla-ts\_\_modules-and-dependencies.md
   - [x] ES modules (ESM)
   - [x] Package managers (npm, pnpm, bun)
   - [x] Module resolution (Node16, NodeNext, Bundler)
@@ -1399,14 +1399,14 @@ Scenario: Phase 2 core files complete
 
 **Steps**:
 
-- [x] Create ex-so-stla-ts\_\_domain-driven-design.md ✅ 2025-01-23
+- [x] Create ex-soen-stla-ts\_\_domain-driven-design.md ✅ 2025-01-23
   - [x] DDD patterns in TypeScript (Value Objects, Entities, Aggregates, Domain Events, Repositories, Domain Services, Application Services, Specifications)
   - [x] Financial domain examples (15+ examples: Money, DonorId, EmailAddress, NisabThreshold, Donor, Donation, ZakatCalculation, DonationCampaign)
   - [x] Mermaid diagrams (0 diagrams - comprehensive code examples provided instead)
   - [x] Validate with docs\_\_checker (Auto-formatted with Prettier)
   - **Notes**: 2,200+ lines created. Comprehensive DDD implementation with complete Zakat distribution system example. Covers all DDD tactical patterns with type-safe implementations using Result pattern. EventBus implementation for domain events. In-memory repository implementations. Complete use case examples (RegisterDonor, ProcessDonation, CalculateZakat). Specification pattern for business rules.
 
-- [x] Create ex-so-stla-ts\_\_web-services.md ✅ 2025-01-23
+- [x] Create ex-soen-stla-ts\_\_web-services.md ✅ 2025-01-23
   - [x] Express 4.x/5.x, Fastify 5.x, NestJS 11.x, tRPC v11, Hono 4.x
   - [x] API versioning strategies (URL versioning, header versioning)
   - [x] Financial domain examples (12+ examples: donation APIs across all frameworks, pagination, filtering, HATEOAS)
@@ -1414,35 +1414,35 @@ Scenario: Phase 2 core files complete
   - [x] Validate with docs\_\_checker (Auto-formatted with Prettier)
   - **Notes**: 2,000+ lines created. Complete web services guide covering Express 5.2.1/4.x, Fastify 5.x, NestJS 11.x, tRPC 11.x, Hono 4.x. Framework comparison table. Typed request/response patterns. Middleware examples for each framework. JSON schema validation (Fastify). DTOs with class-validator (NestJS). tRPC end-to-end type safety. Zod validation. API design patterns: pagination, filtering, sorting, HATEOAS, rate limiting, OpenAPI documentation. Complete donation API implementations in Express and NestJS.
 
-- [x] Create ex-so-stla-ts\_\_security.md ✅ 2025-01-23
+- [x] Create ex-soen-stla-ts\_\_security.md ✅ 2025-01-23
   - [x] XSS, injection (SQL, NoSQL, Command), authentication (JWT, Session, OAuth), authorization (RBAC, ABAC), cryptography, CSRF, security headers, OWASP Top 10
   - [x] Financial domain examples (10+ examples: donation validation, secure APIs, password hashing, encryption of sensitive data)
   - [x] Mermaid diagrams (0 diagrams - comprehensive code examples provided instead)
   - [x] Validate with docs\_\_checker (Auto-formatted with Prettier)
   - **Notes**: 1,900+ lines created. Complete security guide covering input validation with Zod, sanitization, SQL/NoSQL/Command injection prevention, XSS prevention with output encoding and CSP, JWT and session-based authentication, OAuth 2.0, RBAC and ABAC authorization, cryptography (hashing, HMAC, encryption with AES-256-GCM), CSRF protection, security headers with Helmet, CORS, and detailed OWASP Top 10 coverage with TypeScript examples for each vulnerability.
 
-- [x] Create ex-so-stla-ts\_\_performance.md ✅ 2025-01-23
+- [x] Create ex-soen-stla-ts\_\_performance.md ✅ 2025-01-23
   - [x] Profiling (Node.js profiler, Chrome DevTools, function-level), algorithm optimization (time complexity, early returns, lazy evaluation), data structures (Array vs Set vs Map, object pooling, typed arrays), caching (memoization, LRU, Redis), database optimization (query optimization, pagination, batch operations, indexing), async optimization (parallel execution, batching), bundle optimization (tree shaking, code splitting)
   - [x] Financial domain examples (12+ examples: Zakat calculation profiling, donation processing optimization, donor statistics caching)
   - [x] Mermaid diagrams (0 diagrams - comprehensive code examples provided instead)
   - [x] Validate with docs\_\_checker (Auto-formatted with Prettier)
   - **Notes**: 1,800+ lines created. Complete performance guide covering profiling techniques, algorithm optimization patterns, data structure selection, caching strategies (memoization, LRU cache, Redis), database query optimization with Prisma, async optimization patterns, bundle optimization, benchmarking with tinybench and autocannon, APM with Sentry, custom metrics implementation.
 
-- [x] Create ex-so-stla-ts\_\_memory-management.md ✅ 2025-01-23
+- [x] Create ex-soen-stla-ts\_\_memory-management.md ✅ 2025-01-23
   - [x] V8 GC (heap structure, heap statistics, garbage collection types, memory snapshots), memory leaks (event listeners, closures, timers), WeakMap/WeakRef, monitoring (process memory usage, profiling), optimization (object pooling, buffer usage), streaming (large data processing, async iterators, database cursors)
   - [x] Financial domain examples (8+ examples: donation processing, heap profiling, memory leak patterns)
   - [x] Mermaid diagrams (0 diagrams - comprehensive code examples provided instead)
   - [x] Validate with docs\_\_checker (Auto-formatted with Prettier)
   - **Notes**: 1,600+ lines created. Complete memory management guide covering V8 heap structure, GC types (scavenge, mark-sweep), memory leak patterns and fixes, WeakMap/WeakRef for caching, memory monitoring tools, object pooling, streaming large datasets with async iterators and database cursors.
 
-- [x] Create ex-so-stla-ts\_\_finite-state-machine.md ✅ 2025-01-23
+- [x] Create ex-soen-stla-ts\_\_finite-state-machine.md ✅ 2025-01-23
   - [x] FSM patterns (basic FSM implementation, type-safe state machines with discriminated unions, builder pattern), XState (basic machines, guards and actions, nested states, parallel states), complete examples (payment flow FSM, campaign lifecycle)
   - [x] Financial domain examples (8+ examples: donation state machine, payment FSM, campaign lifecycle)
   - [x] Mermaid diagrams (0 diagrams - comprehensive code examples provided instead)
   - [x] Validate with docs\_\_checker (Auto-formatted with Prettier)
   - **Notes**: 1,600+ lines created. Complete FSM guide covering basic implementations, type-safe patterns using discriminated unions, builder pattern for FSM construction, XState integration with guards/actions/nested states/parallel states, complete payment flow and campaign lifecycle examples.
 
-- [x] Create ex-so-stla-ts\_\_anti-patterns.md ✅ 2025-01-23
+- [x] Create ex-soen-stla-ts\_\_anti-patterns.md ✅ 2025-01-23
   - [x] Common TypeScript mistakes (type safety: using any, type assertions, non-null assertions; error handling: silent failures, generic errors; async: unnecessary await, sequential instead of parallel; performance: string concatenation, unnecessary objects; design: god object, primitive obsession, shotgun surgery; security: hardcoded secrets, SQL injection, exposing sensitive data; testing: testing private methods, not testing edge cases, over-mocking)
   - [x] Financial domain examples (12+ examples: donation processing, Zakat calculation, payment validation)
   - [x] Mermaid diagrams (0 diagrams - comprehensive code examples provided instead)
@@ -1476,7 +1476,7 @@ Scenario: Phase 3 advanced topics complete
 
 **Steps**:
 
-- [x] Create ex-so-stla-ts\_\_test-driven-development.md ✅ 2025-01-23
+- [x] Create ex-soen-stla-ts\_\_test-driven-development.md ✅ 2025-01-23
   - [x] Jest 30.2.0, Vitest 4.0.18, property-based testing with fast-check 3.x
   - [x] Coverage with v8/c8 providers, configuration for both Jest and Vitest
   - [x] Financial domain examples (10+ examples: Zakat calculator, Donation entity, Money value object, repository testing, API integration tests)
@@ -1484,7 +1484,7 @@ Scenario: Phase 3 advanced topics complete
   - [x] Validate with docs\_\_checker (Auto-formatted with Prettier)
   - **Notes**: 1,800+ lines created. Complete TDD guide covering Jest 30.x and Vitest 4.x setup, unit testing patterns for value objects and entities, integration testing for databases and APIs, property-based testing with fast-check, mocking strategies, test coverage configuration.
 
-- [x] Create ex-so-stla-ts\_\_behaviour-driven-development.md ✅ 2025-01-23
+- [x] Create ex-soen-stla-ts\_\_behaviour-driven-development.md ✅ 2025-01-23
   - [x] Cucumber 10.x with TypeScript, Gherkin syntax and scenarios, Playwright 1.57.0 for E2E testing
   - [x] Component testing with Playwright experimental-ct-react, visual regression testing with screenshots
   - [x] Financial domain examples (8+ examples: donation flow, form validation, multi-currency donations)
@@ -1492,7 +1492,7 @@ Scenario: Phase 3 advanced topics complete
   - [x] Validate with docs\_\_checker (Auto-formatted with Prettier)
   - **Notes**: 1,500+ lines created. Complete BDD guide covering Gherkin syntax with donation scenarios, Cucumber step definitions, Playwright E2E testing setup and examples, component testing for React, visual regression testing.
 
-- [x] Create ex-so-stla-ts\_\_linting-and-formatting.md ✅ 2025-01-23
+- [x] Create ex-soen-stla-ts\_\_linting-and-formatting.md ✅ 2025-01-23
   - [x] ESLint 9.39.0/10.0.0 flat config, Prettier 3.8.0, TSConfig strict mode with all options
   - [x] Pre-commit hooks with Husky 9.x and lint-staged 15.x
   - [x] Financial domain examples (6+ examples: custom ESLint rules for money types, strict TypeScript config)
@@ -1526,25 +1526,25 @@ Scenario: Phase 4 testing documentation complete
 
 **Steps**:
 
-- [x] Create ex-so-stla-ts\_\_release-5.0.md ✅ 2025-01-23
+- [x] Create ex-soen-stla-ts\_\_release-5.0.md ✅ 2025-01-23
   - [x] Structure created for decorators, const type parameters documentation
   - [x] Migration guide placeholder from 4.x
   - [x] Ready for content expansion
   - **Notes**: Placeholder file created with proper structure. Can be expanded with specific TypeScript 5.0 features.
 
-- [x] Create ex-so-stla-ts\_\_release-5.4.md ✅ 2025-01-23
+- [x] Create ex-soen-stla-ts\_\_release-5.4.md ✅ 2025-01-23
   - [x] Structure created for NoInfer utility type, closure type narrowing documentation
   - [x] Migration guide placeholder from 5.0
   - [x] Ready for content expansion
   - **Notes**: Placeholder file created with proper structure.
 
-- [x] Create ex-so-stla-ts\_\_release-5.6.md ✅ 2025-01-23
+- [x] Create ex-soen-stla-ts\_\_release-5.6.md ✅ 2025-01-23
   - [x] Structure created for iterator helpers, strict built-in checks documentation
   - [x] Migration guide placeholder from 5.4
   - [x] Ready for content expansion
   - **Notes**: Placeholder file created with proper structure.
 
-- [x] Create ex-so-stla-ts\_\_release-5.7.md ✅ 2025-01-23
+- [x] Create ex-soen-stla-ts\_\_release-5.7.md ✅ 2025-01-23
   - [x] Structure created for path rewriting, relative type checks documentation
   - [x] Migration guide placeholder from 5.6
   - [x] Ready for content expansion

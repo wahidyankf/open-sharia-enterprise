@@ -504,7 +504,7 @@ parity_gaps:
 highest_standards:
   tutorials:
     initial_setup:
-      example: "apps/ayokoding-web/content/en/learn/swe/prog-lang/python/tutorials/initial-setup.md"
+      example: "apps/ayokoding-web/content/en/learn/swe/programming-languages/python/tutorials/initial-setup.md"
       line_count: 412
       highlights:
         - "Clear platform-specific installation instructions"
@@ -512,7 +512,7 @@ highest_standards:
         - "Troubleshooting section"
 
     quick_start:
-      example: "apps/ayokoding-web/content/en/learn/swe/prog-lang/golang/tutorials/quick-start.md"
+      example: "apps/ayokoding-web/content/en/learn/swe/programming-languages/golang/tutorials/quick-start.md"
       line_count: 892
       highlights:
         - "Excellent learning path diagram"
@@ -520,7 +520,7 @@ highest_standards:
         - "Progressive complexity"
 
     beginner:
-      example: "apps/ayokoding-web/content/en/learn/swe/prog-lang/java/tutorials/beginner.md"
+      example: "apps/ayokoding-web/content/en/learn/swe/programming-languages/java/tutorials/beginner.md"
       line_count: 2156
       highlights:
         - "Comprehensive type system coverage"
@@ -530,7 +530,7 @@ highest_standards:
     # ... etc for all content types
 
   cookbook:
-    example: "apps/ayokoding-web/content/en/learn/swe/prog-lang/golang/how-to/cookbook.md"
+    example: "apps/ayokoding-web/content/en/learn/swe/programming-languages/golang/how-to/cookbook.md"
     line_count: 5169
     recipe_count: 42
     highlights:

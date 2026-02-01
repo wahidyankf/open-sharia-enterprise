@@ -647,7 +647,7 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 
 ### Step 8: Software Documentation Validation
 
-**Scope**: `docs/explanation/software/` (343 files, 345k lines)
+**Scope**: `docs/explanation/software-engineering/` (343 files, 345k lines)
 
 **Purpose**: Validate comprehensive software design and coding standards documentation as authoritative reference.
 
@@ -680,7 +680,7 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 ### Finding: Governance Principle Alignment
 
 **Category**: Principle Alignment
-**File**: docs/explanation/software/prog-lang/java/ex-so-prla-ja\_\_security.md
+**File**: docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja\_\_security.md
 **Criticality**: HIGH
 
 **Issue**: Security documentation missing security-by-design principle reference
@@ -707,7 +707,7 @@ Expected: Should include security-by-design given document focuses on security p
 
 1. **Extract Cross-References**:
    - Find all links from software docs to `governance/`
-   - Find all links from governance docs to `docs/explanation/software/`
+   - Find all links from governance docs to `docs/explanation/software-engineering/`
    - Build bidirectional reference map
 
 2. **Validate Targets**:
@@ -717,7 +717,7 @@ Expected: Should include security-by-design given document focuses on security p
 
 3. **Check Bidirectional References**:
    - When software doc references governance, check if governance should reference back
-   - Example: If `ex-so-prla-ja__functional-programming.md` references `governance/development/pattern/functional-programming.md`, the governance doc should list Java in "Language Support" section
+   - Example: If `ex-soen-prla-ja__functional-programming.md` references `governance/development/pattern/functional-programming.md`, the governance doc should list Java in "Language Support" section
 
 4. **Criticality Levels**:
    - **CRITICAL**: Broken link (404, target doesn't exist)
@@ -731,7 +731,7 @@ Expected: Should include security-by-design given document focuses on security p
 ### Finding: Cross-Reference Completeness
 
 **Category**: Cross-Reference
-**Files**: docs/explanation/software/prog-lang/java/ex-so-prla-ja__functional-programming.md → governance/development/pattern/functional-programming.md
+**Files**: docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__functional-programming.md → governance/development/pattern/functional-programming.md
 **Criticality**: HIGH
 
 **Issue**: One-way cross-reference (should be bidirectional)
@@ -748,14 +748,14 @@ Expected: Should include security-by-design given document focuses on security p
 **Validate software documentation follows established naming patterns**:
 
 1. **Pattern Validation**:
-   - **Stack Language**: `ex-so-prla-[abbrev]__[topic].md`
+   - **Stack Language**: `ex-soen-prla-[abbrev]__[topic].md`
      - Abbreviations: `ja` (Java), `ts` (TypeScript), `go` (Go), `py` (Python), `ex` (Elixir)
-   - **Stack Libraries**: `ex-so-plwe-[framework-abbrev]__[topic].md`
+   - **Stack Libraries**: `ex-soen-plwe-[framework-abbrev]__[topic].md`
      - Examples: `jvsp` (JVM Spring Boot), `expr` (Elixir Phoenix), `tsre` (TS React)
-   - **Architecture**: `ex-so-arch-[pattern]__[topic].md`
-   - **Development**: `ex-so-devp-[practice]__[topic].md`
+   - **Architecture**: `ex-soen-arch-[pattern]__[topic].md`
+   - **Development**: `ex-soen-devp-[practice]__[topic].md`
    - **Exception**: `README.md` for index files
-   - **Exception**: `templates/` directory files: `ex-so-prla-[lang]-te__[name].md`
+   - **Exception**: `templates/` directory files: `ex-soen-prla-[lang]-te__[name].md`
 
 2. **Abbreviation Consistency**:
    - Check all files in same directory use same abbreviation
@@ -763,7 +763,7 @@ Expected: Should include security-by-design given document focuses on security p
 
 3. **Location Validation**:
    - Verify files are in correct directory based on prefix
-   - Example: `ex-so-prla-ja__*` should be in `prog-lang/java/`
+   - Example: `ex-soen-prla-ja__*` should be in `programming-languages/java/`
 
 4. **Criticality Levels**:
    - **CRITICAL**: File in wrong directory (organizational integrity)
@@ -777,14 +777,14 @@ Expected: Should include security-by-design given document focuses on security p
 ### Finding: File Naming Convention
 
 **Category**: File Naming
-**File**: docs/explanation/software/prog-lang/java/security-practices.md
+**File**: docs/explanation/software-engineering/programming-languages/java/security-practices.md
 **Criticality**: HIGH
 
 **Issue**: Missing required prefix pattern
 
 **Evidence**:
 Current: `security-practices.md`
-Expected: `ex-so-prla-ja__security-practices.md`
+Expected: `ex-soen-prla-ja__security-practices.md`
 
 **Recommendation**: Rename file to follow convention (use `git mv` to preserve history)
 ```
@@ -837,11 +837,11 @@ Expected: `ex-so-prla-ja__security-practices.md`
 **Evidence**:
 Found:
 
-- ex-so-prla-ex\_\_idioms.md ✓
-- ex-so-prla-ex\_\_best-practices.md ✓
-- ex-so-prla-ex\_\_anti-patterns.md ✗ (missing)
+- ex-soen-prla-ex\_\_idioms.md ✓
+- ex-soen-prla-ex\_\_best-practices.md ✓
+- ex-soen-prla-ex\_\_anti-patterns.md ✗ (missing)
 
-**Recommendation**: Create ex-so-prla-ex\_\_anti-patterns.md from template
+**Recommendation**: Create ex-soen-prla-ex\_\_anti-patterns.md from template
 ```
 
 #### 8.5 Template Completeness
@@ -850,11 +850,11 @@ Found:
 
 1. **Templates Directory Check**:
    - For each language, verify `templates/` subdirectory exists
-   - Example: `docs/explanation/software/prog-lang/java/templates/`
+   - Example: `docs/explanation/software-engineering/programming-languages/java/templates/`
 
 2. **Template Naming Validation**:
-   - Pattern: `ex-so-prla-[lang]-te__[pattern-name].md`
-   - Example: `ex-so-prla-ja-te__spring-boot-rest-controller.md`
+   - Pattern: `ex-soen-prla-[lang]-te__[pattern-name].md`
+   - Example: `ex-soen-prla-ja-te__spring-boot-rest-controller.md`
 
 3. **Cross-Reference with Documentation**:
    - When documentation describes a pattern, check if template exists
@@ -880,7 +880,7 @@ Found:
 **Evidence**:
 
 - Documentation references "Repository Pattern" in best-practices.md
-- Template `ex-so-prla-ja-te__jpa-repository.md` not found
+- Template `ex-soen-prla-ja-te__jpa-repository.md` not found
 
 **Recommendation**: Create template from similar pattern or copy from existing codebase examples
 ```
@@ -919,7 +919,7 @@ Found:
 ### Finding: Diagram Accessibility
 
 **Category**: Diagrams
-**File**: docs/explanation/software/architecture/c4-architecture-model/ex-so-arch-c4\_\_system-context.md
+**File**: docs/explanation/software-engineering/architecture/c4-architecture-model/ex-soen-arch-c4\_\_system-context.md
 **Criticality**: HIGH
 
 **Issue**: Mermaid diagram missing explicit color definitions
@@ -967,15 +967,15 @@ classDef orangeBox fill:#DE8F05,stroke:#DE8F05,color:#fff
 ### Finding: README Index Accuracy
 
 **Category**: README Index
-**File**: docs/explanation/software/prog-lang/typescript/README.md
+**File**: docs/explanation/software-engineering/programming-languages/typescript/README.md
 **Criticality**: HIGH
 
 **Issue**: Orphaned files not listed in README
 
 **Evidence**:
 Files in directory but not in README:
-- ex-so-prla-ts__type-narrowing.md
-- ex-so-prla-ts__advanced-types.md
+- ex-soen-prla-ts__type-narrowing.md
+- ex-soen-prla-ts__advanced-types.md
 
 **Recommendation**: Add missing files to README index with brief descriptions
 ````
@@ -985,8 +985,8 @@ Files in directory but not in README:
 **Validate version-specific documentation coverage**:
 
 1. **Version Pattern Check**:
-   - Pattern: `ex-so-prla-[lang]__release-[version].md`
-   - Example: `ex-so-prla-ja__release-21.md` (Java 21 LTS)
+   - Pattern: `ex-soen-prla-[lang]__release-[version].md`
+   - Example: `ex-soen-prla-ja__release-21.md` (Java 21 LTS)
 
 2. **README Mentions Validation**:
    - Check if README mentions version support
@@ -1019,9 +1019,9 @@ Files in directory but not in README:
 **Evidence**:
 
 - README mentions Java 17, 21, 25 support
-- Found: ex-so-prla-ja\_\_release-21.md ✓
-- Missing: ex-so-prla-ja\_\_release-17.md ✗
-- Missing: ex-so-prla-ja\_\_release-25.md ✗
+- Found: ex-soen-prla-ja\_\_release-21.md ✓
+- Missing: ex-soen-prla-ja\_\_release-17.md ✗
+- Missing: ex-soen-prla-ja\_\_release-25.md ✗
 
 **Recommendation**: Create version documentation for Java 17 and 25 LTS releases
 ```

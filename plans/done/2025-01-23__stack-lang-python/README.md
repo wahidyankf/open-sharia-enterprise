@@ -62,7 +62,7 @@ related:
 ```gherkin
 Scenario: Developer discovers Python documentation
   Given I am a Python developer new to the platform
-  When I navigate to docs/explanation/software/stack-lang/python/
+  When I navigate to docs/explanation/software-engineering/programming-languages/python/
   Then I should see README.md with comprehensive overview
   And I should see 23+ documentation files organized by topic
   And I should see templates/ directory with 10+ reusable templates
@@ -170,8 +170,8 @@ Scenario: Verify Domain-Driven Design (DDD) patterns
 
 ### FR-1: File Structure
 
-- [x] Create `docs/explanation/software/stack-lang/python/` directory
-- [x] Create 22 core documentation files with consistent naming (`ex-so-stla-py__[topic].md`) (Note: Architecture shows 22 core files, not 23)
+- [x] Create `docs/explanation/software-engineering/programming-languages/python/` directory
+- [x] Create 22 core documentation files with consistent naming (`ex-soen-stla-py__[topic].md`) (Note: Architecture shows 22 core files, not 23)
 - [x] Create `templates/` subdirectory with 11 template files + 1 README (12 total files)
 - [x] Create comprehensive README.md (950+ lines) with overview and learning paths
 
@@ -247,7 +247,7 @@ Create 11 Python templates + 1 README (12 total files in templates/ directory).
 
 ### NFR-2: Maintainability
 
-- Consistent file naming: `ex-so-stla-py__[topic].md`
+- Consistent file naming: `ex-soen-stla-py__[topic].md`
 - Consistent section structure across files
 - Cross-references between related topics
 - Version citations for Python features
@@ -282,29 +282,29 @@ Create 11 Python templates + 1 README (12 total files in templates/ directory).
 ### Documentation Structure
 
 ```
-docs/explanation/software/stack-lang/python/
+docs/explanation/software-engineering/programming-languages/python/
 ├── README.md                                    # Overview, learning paths (900+ lines)
-├── ex-so-stla-py__anti-patterns.md             # Common mistakes to avoid
-├── ex-so-stla-py__behaviour-driven-development.md  # BDD with behave, pytest-bdd
-├── ex-so-stla-py__best-practices.md            # PEP 8, PEP 20, modern patterns
-├── ex-so-stla-py__classes-and-protocols.md     # Classes, protocols, dataclasses, Pydantic
-├── ex-so-stla-py__concurrency-and-parallelism.md  # asyncio, threading, multiprocessing, GIL
-├── ex-so-stla-py__domain-driven-design.md      # DDD patterns in Python
-├── ex-so-stla-py__error-handling.md            # Exceptions, context managers, error patterns
-├── ex-so-stla-py__finite-state-machine.md      # FSM patterns with transitions library
-├── ex-so-stla-py__functional-programming.md    # itertools, functools, comprehensions
-├── ex-so-stla-py__idioms.md                    # Pythonic patterns, EAFP, comprehensions
-├── ex-so-stla-py__linting-and-formatting.md    # Ruff, Black, mypy, pylint
-├── ex-so-stla-py__memory-management.md         # Reference counting, garbage collection
-├── ex-so-stla-py__modules-and-dependencies.md  # pip, Poetry, pyproject.toml, venv
-├── ex-so-stla-py__performance.md               # Profiling, Cython, PyPy, optimization
-├── ex-so-stla-py__security.md                  # Injection, auth, secrets, dependencies
-├── ex-so-stla-py__test-driven-development.md   # pytest, unittest, hypothesis
-├── ex-so-stla-py__type-safety.md               # Type hints, mypy, Pydantic
-├── ex-so-stla-py__web-services.md              # FastAPI, Django, Flask, httpx
-├── ex-so-stla-py__release-3.11.md              # Baseline features
-├── ex-so-stla-py__release-3.12.md              # Stable maintenance features
-├── ex-so-stla-py__release-3.13.md              # Latest stable features
+├── ex-soen-stla-py__anti-patterns.md             # Common mistakes to avoid
+├── ex-soen-stla-py__behaviour-driven-development.md  # BDD with behave, pytest-bdd
+├── ex-soen-stla-py__best-practices.md            # PEP 8, PEP 20, modern patterns
+├── ex-soen-stla-py__classes-and-protocols.md     # Classes, protocols, dataclasses, Pydantic
+├── ex-soen-stla-py__concurrency-and-parallelism.md  # asyncio, threading, multiprocessing, GIL
+├── ex-soen-stla-py__domain-driven-design.md      # DDD patterns in Python
+├── ex-soen-stla-py__error-handling.md            # Exceptions, context managers, error patterns
+├── ex-soen-stla-py__finite-state-machine.md      # FSM patterns with transitions library
+├── ex-soen-stla-py__functional-programming.md    # itertools, functools, comprehensions
+├── ex-soen-stla-py__idioms.md                    # Pythonic patterns, EAFP, comprehensions
+├── ex-soen-stla-py__linting-and-formatting.md    # Ruff, Black, mypy, pylint
+├── ex-soen-stla-py__memory-management.md         # Reference counting, garbage collection
+├── ex-soen-stla-py__modules-and-dependencies.md  # pip, Poetry, pyproject.toml, venv
+├── ex-soen-stla-py__performance.md               # Profiling, Cython, PyPy, optimization
+├── ex-soen-stla-py__security.md                  # Injection, auth, secrets, dependencies
+├── ex-soen-stla-py__test-driven-development.md   # pytest, unittest, hypothesis
+├── ex-soen-stla-py__type-safety.md               # Type hints, mypy, Pydantic
+├── ex-soen-stla-py__web-services.md              # FastAPI, Django, Flask, httpx
+├── ex-soen-stla-py__release-3.11.md              # Baseline features
+├── ex-soen-stla-py__release-3.12.md              # Stable maintenance features
+├── ex-soen-stla-py__release-3.13.md              # Latest stable features
 └── templates/
     ├── README.md                               # Templates overview
     ├── entity-template.md                      # Entity pattern
@@ -334,7 +334,7 @@ tags:
   - python
   - [topic-specific-tags]
 related:
-  - ./ex-so-stla-py__[related-file].md
+  - ./ex-soen-stla-py__[related-file].md
 principles:
   - [relevant-principle]
 last_updated: YYYY-MM-DD
@@ -461,10 +461,10 @@ Good vs Bad code examples...
 **Files**:
 
 1. `README.md` (900+ lines) - Overview, learning paths, quick reference
-2. `ex-so-stla-py__best-practices.md` (1,800+ lines) - PEP 8, PEP 20, modern patterns
-3. `ex-so-stla-py__idioms.md` (1,600+ lines) - Pythonic patterns, comprehensions, EAFP
-4. `ex-so-stla-py__type-safety.md` (1,800+ lines) - Type hints, mypy, Pydantic
-5. `ex-so-stla-py__error-handling.md` (1,900+ lines) - Exceptions, context managers
+2. `ex-soen-stla-py__best-practices.md` (1,800+ lines) - PEP 8, PEP 20, modern patterns
+3. `ex-soen-stla-py__idioms.md` (1,600+ lines) - Pythonic patterns, comprehensions, EAFP
+4. `ex-soen-stla-py__type-safety.md` (1,800+ lines) - Type hints, mypy, Pydantic
+5. `ex-soen-stla-py__error-handling.md` (1,900+ lines) - Exceptions, context managers
 
 **Success Criteria**: Foundation files provide immediate value to Python developers.
 
@@ -476,12 +476,12 @@ Good vs Bad code examples...
 
 **Files**:
 
-1. `ex-so-stla-py__functional-programming.md` (1,700+ lines) - itertools, functools, pure functions
-2. `ex-so-stla-py__classes-and-protocols.md` (1,800+ lines) - Classes, protocols, dataclasses
-3. `ex-so-stla-py__domain-driven-design.md` (1,800+ lines) - DDD with Pydantic
-4. `ex-so-stla-py__concurrency-and-parallelism.md` (1,900+ lines) - asyncio, threading, GIL
-5. `ex-so-stla-py__modules-and-dependencies.md` (1,400+ lines) - pip, Poetry, pyproject.toml
-6. `ex-so-stla-py__anti-patterns.md` (1,400+ lines) - Common mistakes
+1. `ex-soen-stla-py__functional-programming.md` (1,700+ lines) - itertools, functools, pure functions
+2. `ex-soen-stla-py__classes-and-protocols.md` (1,800+ lines) - Classes, protocols, dataclasses
+3. `ex-soen-stla-py__domain-driven-design.md` (1,800+ lines) - DDD with Pydantic
+4. `ex-soen-stla-py__concurrency-and-parallelism.md` (1,900+ lines) - asyncio, threading, GIL
+5. `ex-soen-stla-py__modules-and-dependencies.md` (1,400+ lines) - pip, Poetry, pyproject.toml
+6. `ex-soen-stla-py__anti-patterns.md` (1,400+ lines) - Common mistakes
 
 **Success Criteria**: Developers can implement core patterns correctly.
 
@@ -493,12 +493,12 @@ Good vs Bad code examples...
 
 **Files**:
 
-1. `ex-so-stla-py__test-driven-development.md` (1,600+ lines) - pytest, unittest, hypothesis
-2. `ex-so-stla-py__behaviour-driven-development.md` (1,500+ lines) - behave, pytest-bdd
-3. `ex-so-stla-py__linting-and-formatting.md` (1,500+ lines) - Ruff, Black, mypy
-4. `ex-so-stla-py__security.md` (1,700+ lines) - Injection, auth, secrets
-5. `ex-so-stla-py__performance.md` (1,600+ lines) - Profiling, optimization
-6. `ex-so-stla-py__memory-management.md` (1,100+ lines) - Reference counting, GC
+1. `ex-soen-stla-py__test-driven-development.md` (1,600+ lines) - pytest, unittest, hypothesis
+2. `ex-soen-stla-py__behaviour-driven-development.md` (1,500+ lines) - behave, pytest-bdd
+3. `ex-soen-stla-py__linting-and-formatting.md` (1,500+ lines) - Ruff, Black, mypy
+4. `ex-soen-stla-py__security.md` (1,700+ lines) - Injection, auth, secrets
+5. `ex-soen-stla-py__performance.md` (1,600+ lines) - Profiling, optimization
+6. `ex-soen-stla-py__memory-management.md` (1,100+ lines) - Reference counting, GC
 
 **Success Criteria**: Developers can write well-tested, secure, performant Python code.
 
@@ -510,9 +510,9 @@ Good vs Bad code examples...
 
 **Files**:
 
-1. `ex-so-stla-py__web-services.md` (1,800+ lines) - FastAPI, Django, Flask
-2. `ex-so-stla-py__finite-state-machine.md` (1,400+ lines) - FSM with transitions
-3. `ex-so-stla-py__release-3.13.md` (1,300+ lines) - Latest Python features
+1. `ex-soen-stla-py__web-services.md` (1,800+ lines) - FastAPI, Django, Flask
+2. `ex-soen-stla-py__finite-state-machine.md` (1,400+ lines) - FSM with transitions
+3. `ex-soen-stla-py__release-3.13.md` (1,300+ lines) - Latest Python features
 
 **Success Criteria**: Developers can build production web services and state machines.
 
@@ -524,8 +524,8 @@ Good vs Bad code examples...
 
 **Files**:
 
-1. `ex-so-stla-py__release-3.11.md` (1,200+ lines) - Baseline features
-2. `ex-so-stla-py__release-3.12.md` (1,300+ lines) - Stable maintenance features
+1. `ex-soen-stla-py__release-3.11.md` (1,200+ lines) - Baseline features
+2. `ex-soen-stla-py__release-3.12.md` (1,300+ lines) - Stable maintenance features
 
 **Success Criteria**: Developers understand version differences and migration paths.
 
@@ -596,16 +596,16 @@ Good vs Bad code examples...
 **Required Conventions**:
 
 - [File Naming Convention](../../../governance/conventions/structure/file-naming.md)
-- [Content Quality Convention](../../../governance/conventions/writing/quality.md)
+- [Content Quality Convention](../../../../governance/conventions/writing/quality.md)
 - [Diátaxis Framework](../../../governance/conventions/structure/diataxis-framework.md)
-- [Diagrams Convention](../../../governance/conventions/formatting/diagrams.md)
-- [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)
+- [Diagrams Convention](../../../../governance/conventions/formatting/diagrams.md)
+- [Color Accessibility Convention](../../../../governance/conventions/formatting/color-accessibility.md)
 
 **Reference Documentation**:
 
-- [Java Documentation](../../../docs/explanation/software/stack-lang/java/) - Structure reference (22 files, 45,193 lines)
-- [Elixir Documentation](../../../docs/explanation/software/stack-lang/elixir/) - Pattern reference (28 files, 32,247 lines)
-- [Golang Documentation](../../../docs/explanation/software/stack-lang/golang/) - Quality reference (25 files, 40,192 lines)
+- [Java Documentation](../../../docs/explanation/software-engineering/programming-languages/java/) - Structure reference (22 files, 45,193 lines)
+- [Elixir Documentation](../../../docs/explanation/software-engineering/programming-languages/elixir/) - Pattern reference (28 files, 32,247 lines)
+- [Golang Documentation](../../../docs/explanation/software-engineering/programming-languages/golang/) - Quality reference (25 files, 40,192 lines)
 
 **Internal Tooling**:
 
@@ -696,7 +696,7 @@ Good vs Bad code examples...
 **Manual Validation**:
 
 1. **Frontmatter completeness**: All required fields present
-2. **File naming consistency**: Follows `ex-so-stla-py__[topic].md` pattern
+2. **File naming consistency**: Follows `ex-soen-stla-py__[topic].md` pattern
 3. **Heading hierarchy**: Single H1, proper nesting
 4. **Active voice**: No passive constructions
 5. **No time estimates**: Removed all time-based framing
@@ -754,8 +754,8 @@ Good vs Bad code examples...
 
 #### Step 1.1: Create Directory Structure
 
-- [x] Create `docs/explanation/software/stack-lang/python/` directory
-- [x] Create `docs/explanation/software/stack-lang/python/templates/` subdirectory
+- [x] Create `docs/explanation/software-engineering/programming-languages/python/` directory
+- [x] Create `docs/explanation/software-engineering/programming-languages/python/templates/` subdirectory
 - [x] Verify directory structure matches plan
 
 #### Step 1.2: Create README.md (900+ lines)
@@ -1428,7 +1428,7 @@ Good vs Bad code examples...
 Scenario: Python documentation complete and validated
   Given all 6 phases are marked complete
   When I validate final deliverables
-  Then 23 core files should exist in docs/explanation/software/stack-lang/python/
+  Then 23 core files should exist in docs/explanation/software-engineering/programming-languages/python/
   And 12 files should exist in templates/ directory (11 templates + 1 README)
   And 35 total files should exist (23 core + 12 templates)
   And total line count should be ≥40,000 lines
@@ -1528,17 +1528,17 @@ Scenario: Documentation matches quality standards
 
 **Platform Documentation**:
 
-- [Java Documentation](../../../docs/explanation/software/stack-lang/java/) - Structure reference
-- [Elixir Documentation](../../../docs/explanation/software/stack-lang/elixir/) - Pattern reference
-- [Golang Documentation](../../../docs/explanation/software/stack-lang/golang/) - Quality reference
+- [Java Documentation](../../../docs/explanation/software-engineering/programming-languages/java/) - Structure reference
+- [Elixir Documentation](../../../docs/explanation/software-engineering/programming-languages/elixir/) - Pattern reference
+- [Golang Documentation](../../../docs/explanation/software-engineering/programming-languages/golang/) - Quality reference
 
 **Conventions**:
 
 - [File Naming Convention](../../../governance/conventions/structure/file-naming.md)
-- [Content Quality Convention](../../../governance/conventions/writing/quality.md)
+- [Content Quality Convention](../../../../governance/conventions/writing/quality.md)
 - [Diátaxis Framework](../../../governance/conventions/structure/diataxis-framework.md)
-- [Diagrams Convention](../../../governance/conventions/formatting/diagrams.md)
-- [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)
+- [Diagrams Convention](../../../../governance/conventions/formatting/diagrams.md)
+- [Color Accessibility Convention](../../../../governance/conventions/formatting/color-accessibility.md)
 
 **Skills**:
 

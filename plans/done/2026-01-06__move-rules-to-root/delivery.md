@@ -195,7 +195,7 @@ git add -A
   - Update example file path examples for workflow documents
 
 - [x] Update all directory path examples:
-  - Change `../../governance/vision/` → `../../governance/vision/`
+  - Change `../../../governance/vision/` → `../../../governance/vision/`
   - Change `../../governance/principles/` → `../../governance/principles/`
   - Change `../../governance/conventions/` → `../../governance/conventions/`
   - Change `../../governance/development/` → `../../governance/development/`

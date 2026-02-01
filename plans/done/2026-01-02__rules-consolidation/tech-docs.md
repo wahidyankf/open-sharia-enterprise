@@ -57,7 +57,7 @@ The following 7 Skills need "References" sections added (using new gerund names)
 
 | Skill (New Name)                     | Authoritative Source                                                                                                |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
-| `creating-by-example-tutorials`      | `governance/conventions/tutorials/by-example.md`                                                                     |
+| `creating-by-example-tutorials`      | `governance/conventions/tutorials/by-example.md`                                                                    |
 | `assessing-criticality-confidence`   | `governance/development/quality/criticality-levels.md`, `governance/development/quality/fixer-confidence-levels.md` |
 | `developing-ayokoding-content`       | `governance/conventions/hugo/ayokoding.md`                                                                          |
 | `validating-factual-accuracy`        | `governance/conventions/writing/factual-validation.md`                                                              |
@@ -493,7 +493,7 @@ This plan uses only existing repository tools and patterns. No new npm packages,
 
 ## Related Documentation
 
-- [Repository Governance Architecture](../../../governance/repository-governance-architecture.md)
-- [Convention Writing Convention](../../../governance/conventions/writing/conventions.md)
-- [AI Agents Convention](../../../governance/development/agents/ai-agents.md)
-- [Skills Directory](../../../.claude/skills/README.md)
+- [Repository Governance Architecture](../../../../governance/repository-governance-architecture.md)
+- [Convention Writing Convention](../../../../../../governance/conventions/writing/quality.md)
+- [AI Agents Convention](../../../../governance/development/agents/ai-agents.md)
+- [Skills Directory](../../.././.claude/skills/README.md)
