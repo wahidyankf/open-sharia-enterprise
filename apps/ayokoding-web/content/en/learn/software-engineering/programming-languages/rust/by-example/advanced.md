@@ -1128,26 +1128,33 @@ gantt
 
 ```rust
 use tokio::time::{sleep, Duration};  // => Async sleep (non-blocking)
+                                     // => Import Tokio's time utilities for async delays
 
 async fn task1() -> u32 {            // => First async task
+                                     // => Returns Future<Output = u32> when called
     sleep(Duration::from_millis(100)).await;
                                      // => Sleep 100ms (yields to runtime)
+                                     // => Suspends execution, allows other tasks to run
     println!("Task 1 done");         // => Prints after 100ms
     1                                // => Returns 1
 }
 
 async fn task2() -> u32 {            // => Second async task (faster)
+                                     // => Returns Future<Output = u32> when called
     sleep(Duration::from_millis(50)).await;
                                      // => Sleep 50ms (yields to runtime)
+                                     // => Finishes in half the time of task1
     println!("Task 2 done");         // => Prints after 50ms
     2                                // => Returns 2
 }
 
-#[tokio::main]
-async fn main() {
+#[tokio::main]                       // => Creates Tokio multi-threaded runtime
+                                     // => Enables async/await in main function
+async fn main() {                    // => main is now async, returns Future<Output = ()>
     // tokio::join! runs futures concurrently on SAME task/thread
     let (r1, r2) = tokio::join!(task1(), task2());
                                      // => Start both tasks at time 0
+                                     // => Macro polls both futures cooperatively
                                      // => t=0ms: both tasks start sleeping
                                      // => t=50ms: task2 completes, prints "Task 2 done"
                                      // => task1 still sleeping (50ms remaining)
@@ -1155,11 +1162,12 @@ async fn main() {
                                      // => Total time: 100ms (not 150ms - concurrent!)
                                      // => Output order: "Task 2 done" (first), then "Task 1 done"
                                      // => r1 = 1, r2 = 2 (both values available)
+                                     // => Type: (u32, u32) from join! destructuring
 
     println!("Results: {} + {} = {}", r1, r2, r1 + r2);
                                      // => Output: Results: 1 + 2 = 3
                                      // => Both tasks completed, sum computed
-}
+}                                    // => Runtime shuts down after main returns
 
 // Demonstrating join! behavior with multiple tasks
 async fn multi_join() {
@@ -1456,149 +1464,217 @@ graph TD
 
 ```rust
 use tokio::time::{sleep, Duration};  // => Tokio's async sleep for non-blocking delays
+                                     // => Import time utilities from tokio crate
 
 async fn operation1() -> &'static str {
                                      // => First operation: returns string after delay
+                                     // => Returns Future<Output = &'static str>
     sleep(Duration::from_millis(100)).await;
                                      // => Sleeps 100ms (slower operation)
+                                     // => Suspends future, yields to runtime executor
     "Operation 1"                    // => Returns after 100ms
+                                     // => Static lifetime string literal
 }
 
 async fn operation2() -> &'static str {
                                      // => Second operation: faster version
+                                     // => Returns Future<Output = &'static str>
     sleep(Duration::from_millis(50)).await;
                                      // => Sleeps 50ms (finishes first!)
+                                     // => Will complete before operation1
     "Operation 2"                    // => Returns after 50ms (winner in race)
+                                     // => This branch wins the select! race
 }
 
 #[tokio::main]                       // => Creates Tokio runtime for async execution
-async fn main() {
+                                     // => Initializes multi-threaded work-stealing scheduler
+async fn main() {                    // => main is now async function
+                                     // => Runtime blocks on this future until completion
     let result = tokio::select! {    // => select! races multiple futures
+                                     // => Macro expands to future polling state machine
                                      // => Returns when FIRST branch completes
                                      // => Other branches are CANCELLED (dropped)
         res1 = operation1() => res1, // => Branch 1: wait for operation1
                                      // => Pattern: future => result_expr
                                      // => If this completes first, return res1
+                                     // => Polls operation1() future each iteration
         res2 = operation2() => res2, // => Branch 2: wait for operation2
                                      // => Polls both branches concurrently
                                      // => Returns res2 if this completes first
+                                     // => This branch will win (50ms < 100ms)
     };                               // => operation2() finishes after 50ms (first!)
                                      // => operation1() is DROPPED (cancelled at 50ms mark)
+                                     // => Dropping cancels pending future (no completion)
                                      // => result is "Operation 2" (from faster branch)
+                                     // => Type: &'static str (from winning branch)
     println!("First completed: {}", result);
                                      // => Output: First completed: Operation 2
                                      // => Only winner's result is used
-}
+                                     // => Losing branch result discarded
+}                                    // => Runtime shuts down after main completes
 
 // Demonstrating timeout with select!
-async fn with_timeout() {
-    use tokio::time::timeout;
+async fn with_timeout() {            // => Pattern: race operation against timeout
+                                     // => Common pattern for request timeouts
+    use tokio::time::timeout;        // => Import timeout helper (alternative approach)
 
-    let result = tokio::select! {
+    let result = tokio::select! {    // => Race operation vs timeout duration
+                                     // => Result type: Result<i32, &str>
         value = slow_operation() => {
                                      // => Main operation branch
+                                     // => Executes if slow_operation completes first
             println!("Operation completed: {}", value);
+                                     // => value is i32 (42 from slow_operation)
             Ok(value)                // => Wrap in Ok if successful
+                                     // => Returns Ok(42) on success path
         }
         _ = sleep(Duration::from_millis(200)) => {
                                      // => Timeout branch (200ms limit)
+                                     // => Executes if 200ms elapses first
             println!("Operation timed out!");
+                                     // => Timeout message printed
             Err("Timeout")           // => Return Err if timeout wins
+                                     // => Returns Err("Timeout") on timeout path
         }
     };                               // => Whichever completes first determines result
                                      // => If slow_operation takes >200ms, timeout wins
+                                     // => slow_operation takes 150ms, so completes first
 
-    match result {
+    match result {                   // => Pattern match on Result type
         Ok(v) => println!("Got value: {}", v),
+                                     // => Success case: prints "Got value: 42"
         Err(e) => println!("Error: {}", e),
+                                     // => Timeout case (won't execute in this example)
     }
 }
 
-async fn slow_operation() -> i32 {
+async fn slow_operation() -> i32 {  // => Simulates slow async operation
+                                     // => Returns Future<Output = i32>
     sleep(Duration::from_millis(150)).await;
                                      // => Takes 150ms (under 200ms timeout)
+                                     // => Suspends for 150 milliseconds
     42                               // => Returns value if not cancelled
+                                     // => Magic number placeholder result
 }
 
 // Multiple operations with select! and pattern matching
-async fn multi_select() {
+async fn multi_select() {            // => Demonstrates select! in loop pattern
+                                     // => Common pattern for event handling
     let mut interval = tokio::time::interval(Duration::from_millis(100));
                                      // => Interval timer: ticks every 100ms
-    let mut counter = 0;
+                                     // => First tick completes immediately, then every 100ms
+    let mut counter = 0;             // => Track number of ticks
+                                     // => Mutable state across loop iterations
 
-    loop {
-        tokio::select! {
+    loop {                           // => Infinite loop until break
+                                     // => select! enables early exit via timeout
+        tokio::select! {             // => Race interval vs long sleep each iteration
             _ = interval.tick() => {
                                      // => Branch 1: timer tick (every 100ms)
-                counter += 1;
+                                     // => tick() returns Future<Output = Instant>
+                counter += 1;        // => Increment counter on each tick
+                                     // => counter is 1, 2, 3, 4, 5
                 println!("Tick {}", counter);
                                      // => Output: Tick 1, Tick 2, Tick 3...
-                if counter >= 5 {
+                                     // => Prints on each 100ms interval
+                if counter >= 5 {    // => Check for exit condition
+                                     // => Stop after 5 ticks
                     break;           // => Stop after 5 ticks (500ms total)
+                                     // => Exit loop before long sleep completes
                 }
             }
             _ = sleep(Duration::from_millis(350)) => {
                                      // => Branch 2: long sleep (350ms)
+                                     // => Won't complete before 5 ticks (500ms total)
                 println!("Long sleep completed");
                                      // => Only executes if loop runs 350ms
                                      // => Competes with interval ticks
+                                     // => Never reaches this in practice
                 break;               // => Exit loop on long sleep
+                                     // => Alternative exit path (unused here)
             }
         }                            // => First completed branch executes
+                                     // => Interval wins first 5 iterations
     }                                // => Loop continues until break
+                                     // => Exits after 5 ticks (~500ms total)
 }
 
 // biased option - deterministic ordering
-async fn biased_select() {
-    let mut count = 0;
+async fn biased_select() {          // => Demonstrates biased select! behavior
+                                     // => Use when branch priority matters
+    let mut count = 0;               // => Counter for loop iterations
+                                     // => Tracks how many times first branch executes
 
-    loop {
-        tokio::select! {
+    loop {                           // => Infinite loop with break condition
+        tokio::select! {             // => select! with biased mode
             biased;                  // => biased flag: check branches in order (top to bottom)
+                                     // => Changes polling semantics from fair to priority
                                      // => Without biased: pseudo-random fair polling
                                      // => With biased: deterministic priority (first ready wins)
+                                     // => Must appear first in select! block
 
             _ = sleep(Duration::from_millis(0)) => {
                                      // => Branch 1: immediately ready (0ms sleep)
+                                     // => sleep(0) completes instantly
                 println!("First branch");
                                      // => With biased, this branch ALWAYS wins if ready
-                count += 1;
-                if count >= 3 {
+                                     // => Prints on every iteration
+                count += 1;          // => Increment counter
+                                     // => count is 1, 2, 3
+                if count >= 3 {      // => Check exit condition
                     break;           // => Stop after 3 iterations
+                                     // => Exit loop after 3 first-branch executions
                 }
             }
             _ = sleep(Duration::from_millis(0)) => {
                                      // => Branch 2: also immediately ready
+                                     // => Both branches ready simultaneously
                 println!("Second branch");
                                      // => Without biased, this could run sometimes
                                      // => With biased, this NEVER runs (first branch wins)
+                                     // => Unreachable code due to biased priority
             }
         }                            // => Biased ensures predictable branch selection
+                                     // => First ready branch always chosen (deterministic)
     }                                // => Output: "First branch" 3 times, never "Second branch"
+                                     // => Demonstrates priority-based select! behavior
 }
 
 // Cancellation safety with select!
-async fn cancellation_safety() {
+async fn cancellation_safety() {    // => Demonstrates cancellation safety hazard
+                                     // => WARNING: Mutable state across await is risky
     let mut data = vec![1, 2, 3];    // => Mutable vector (state across iterations)
+                                     // => Shared mutable state between branches
                                      // => Cancellation can leave state inconsistent
 
     tokio::select! {                 // => Racing async operations with mutable state
+                                     // => Dangerous pattern: state mutation before await
         _ = async {                  // => Branch 1: async block mutating data
+                                     // => Inline async block (closure-like syntax)
             data.push(4);            // => Modify data in branch 1
+                                     // => Executes immediately (before await)
             sleep(Duration::from_millis(100)).await;
+                                     // => Await point: branch can be cancelled here
             data.push(5);            // => Second modification (might not happen!)
+                                     // => Only executes if not cancelled by timeout
         } => {
             println!("Long branch: {:?}", data);
                                      // => If this completes: data is [1,2,3,4,5]
+                                     // => All mutations applied successfully
         }
         _ = sleep(Duration::from_millis(50)) => {
+                                     // => Branch 2: timeout after 50ms
+                                     // => Wins race (50ms < 100ms)
             println!("Short branch: {:?}", data);
                                      // => If timeout wins: data is [1,2,3,4] (incomplete!)
+                                     // => First push(4) applied, second push(5) never ran
                                      // => Second push(5) was CANCELLED mid-execution
                                      // => DANGER: partial state modification!
+                                     // => Output: Short branch: [1, 2, 3, 4]
         }
     };                               // => Cancellation can leave data in intermediate state
                                      // => Be careful with mutable state across await points in select!
+                                     // => Best practice: avoid mutable state or use atomic operations
 }
 
 // Pattern matching with select! results
@@ -2665,77 +2741,108 @@ graph TD
 ```
 
 ```rust
-trait Draw {
+trait Draw {                         // => Trait definition for drawable objects
+                                     // => Object-safe trait (can be used as dyn Trait)
     fn draw(&self);                  // => Trait method (object-safe)
                                      // => Takes &self (not Self), returns nothing
+                                     // => Enables dynamic dispatch via vtable
 }
 
-struct Circle {
+struct Circle {                      // => Concrete type implementing Draw
+                                     // => Size: 8 bytes (one f64 field)
     radius: f64,                     // => Circle-specific data
+                                     // => Stored as 64-bit floating point
 }
 
-impl Draw for Circle {
-    fn draw(&self) {
+impl Draw for Circle {               // => Implement Draw trait for Circle
+                                     // => Creates vtable with draw() function pointer
+    fn draw(&self) {                 // => self is &Circle
+                                     // => Implementation receives concrete type reference
         println!("Drawing circle with radius {}", self.radius);
                                      // => Circle's implementation of draw()
+                                     // => Accesses Circle-specific field
     }
 }
 
-struct Square {
+struct Square {                      // => Different concrete type implementing Draw
+                                     // => Size: 8 bytes (one f64 field, same as Circle)
     side: f64,                       // => Square-specific data (different layout than Circle)
+                                     // => Different semantic meaning than Circle::radius
 }
 
-impl Draw for Square {
-    fn draw(&self) {
+impl Draw for Square {               // => Implement Draw trait for Square
+                                     // => Creates separate vtable for Square
+    fn draw(&self) {                 // => self is &Square
+                                     // => Implementation receives concrete type reference
         println!("Drawing square with side {}", self.side);
                                      // => Square's implementation of draw()
+                                     // => Different behavior than Circle::draw
     }
 }
 
-fn main() {
+fn main() {                          // => Demonstrates heterogeneous collection with trait objects
+                                     // => Stores different types in same Vec
     let shapes: Vec<Box<dyn Draw>> = vec![
                                      // => Heterogeneous collection: different concrete types
+                                     // => Vec<Box<dyn Draw>>: vector of trait objects
                                      // => Box<dyn Draw>: trait object (fat pointer)
                                      // =>   - Data pointer (8 bytes): points to heap Circle/Square
                                      // =>   - vtable pointer (8 bytes): points to impl's method table
                                      // => Total size: 16 bytes per element (regardless of T)
         Box::new(Circle { radius: 5.0 }),
                                      // => Box allocates Circle on heap
+                                     // => Circle takes 8 bytes on heap (one f64)
                                      // => Creates trait object: (Circle*, Circle_Draw_vtable*)
+                                     // => vtable contains pointer to Circle::draw implementation
         Box::new(Square { side: 3.0 }),
                                      // => Box allocates Square on heap
+                                     // => Square also takes 8 bytes on heap (one f64)
                                      // => Creates trait object: (Square*, Square_Draw_vtable*)
+                                     // => Different vtable with Square::draw implementation
     ];                               // => Vec stores trait objects (all same size: 16 bytes)
                                      // => Cannot store Circle and Square directly (different sizes)
+                                     // => Type erasure: Vec doesn't know concrete types
 
     for shape in shapes.iter() {     // => shape is &Box<dyn Draw> = &&dyn Draw
+                                     // => Iterate over trait object references
         shape.draw();                // => Dynamic dispatch: runtime vtable lookup
                                      // => 1. Dereference shape to get data pointer
                                      // => 2. Load vtable pointer
                                      // => 3. Index into vtable to find draw() function pointer
                                      // => 4. Call function pointer with data pointer as &self
+                                     // => First iteration: Circle::draw via vtable
                                      // => Output: Drawing circle with radius 5
+                                     // => Second iteration: Square::draw via vtable
                                      // => Output: Drawing square with side 3
     }                                // => Each call goes through vtable (slight overhead)
                                      // => Trade-off: flexibility vs. performance
-}
+                                     // => Enables runtime polymorphism
+}                                    // => shapes dropped: Box deallocates heap memory
 
 // Comparing static vs dynamic dispatch
 fn static_dispatch<T: Draw>(shape: &T) {
                                      // => Generic function: monomorphized at compile time
+                                     // => T is placeholder for concrete type (Circle, Square, etc.)
                                      // => Compiler generates separate code for each T
                                      // => static_dispatch::<Circle> and static_dispatch::<Square>
+                                     // => Two (or more) versions exist in binary
     shape.draw();                    // => Direct function call (no vtable)
+                                     // => Compiler knows exact type at compile time
                                      // => Faster: no indirection, can inline
                                      // => Larger binary: duplicate code per type
+                                     // => Each monomorphized version optimized separately
 }
 
 fn dynamic_dispatch(shape: &dyn Draw) {
                                      // => Trait object parameter (NOT generic)
+                                     // => shape is fat pointer: (data ptr, vtable ptr)
                                      // => Single function in binary (no monomorphization)
+                                     // => Works with any type implementing Draw at runtime
     shape.draw();                    // => Vtable lookup (runtime indirection)
+                                     // => Load vtable ptr, index to draw(), call function
                                      // => Slower: cannot inline (compiler doesn't know concrete type)
                                      // => Smaller binary: one copy of function
+                                     // => Trade runtime performance for code size
 }
 
 fn compare_dispatch() {

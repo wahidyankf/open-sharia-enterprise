@@ -1812,99 +1812,146 @@ JUnit 5 provides annotations, assertions, and lifecycle methods for unit testing
 **Code**:
 
 ```java
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.*;  // => JUnit 5 core annotations (@Test, @BeforeEach, etc.)
 import static org.junit.jupiter.api.Assertions.*;
-import java.util.*;
+                                 // => Static import for assertion methods (assertEquals, assertTrue, etc.)
+import java.util.*;              // => Java utilities (not used here, common in tests)
 
-class Calculator {
+class Calculator {               // => Class under test (production code)
     public int add(int a, int b) {
-        return a + b;
+                                 // => Method to test: addition operation
+        return a + b;            // => Returns sum of two integers
     }
 
     public int divide(int a, int b) {
+                                 // => Method to test: division operation with validation
         if (b == 0) throw new ArithmeticException("Division by zero");
-        return a / b;
+                                 // => Guards against division by zero
+                                 // => Throws ArithmeticException with message
+        return a / b;            // => Returns quotient if divisor non-zero
     }
 }
 
 // TEST CLASS
-class CalculatorTest {
+class CalculatorTest {          // => Test class following JUnit 5 naming convention (*Test)
     private Calculator calculator;
+                                 // => Instance field holding object under test
+                                 // => Recreated before each test via @BeforeEach
 
     // LIFECYCLE METHODS
     @BeforeAll                   // => Runs once before all tests (must be static)
-    static void initAll() {
+                                 // => Use for expensive one-time setup (DB connections, etc.)
+    static void initAll() {      // => Must be static (runs before any instance created)
         System.out.println("Initializing test suite");
+                                 // => Output: Initializing test suite (once at start)
     }
 
     @BeforeEach                  // => Runs before each test
-    void init() {
+                                 // => Use to reset test state (fresh object per test)
+    void init() {                // => Instance method (new instance per test)
         calculator = new Calculator();
+                                 // => Creates fresh Calculator for each test
+                                 // => Ensures test isolation (no shared state)
     }
 
     @AfterEach                   // => Runs after each test
-    void tearDown() {
-        calculator = null;
+                                 // => Use for cleanup (close files, release resources)
+    void tearDown() {            // => Instance method (runs after each test)
+        calculator = null;       // => Clears reference (helps garbage collection)
+                                 // => Not strictly needed here (automatic cleanup)
     }
 
     @AfterAll                    // => Runs once after all tests
-    static void tearDownAll() {
+                                 // => Use for expensive cleanup (close DB, shutdown servers)
+    static void tearDownAll() {  // => Must be static (runs after all instances destroyed)
         System.out.println("Test suite complete");
+                                 // => Output: Test suite complete (once at end)
     }
 
     // BASIC TEST
     @Test                        // => Marks method as test
-    void testAddition() {
+                                 // => JUnit discovers and runs methods with @Test annotation
+    void testAddition() {        // => Test method name should describe what's being tested
         int result = calculator.add(2, 3);
+                                 // => Calls add with arguments 2, 3
+                                 // => result is 5
         assertEquals(5, result);  // => Assertion: expected vs actual
+                                 // => Test passes if result == 5, fails otherwise
     }
 
     // MULTIPLE ASSERTIONS
     @Test
     void testMultipleAssertions() {
+                                 // => Tests multiple scenarios in one test method
         assertAll(               // => Groups assertions (all executed even if one fails)
+                                 // => Without assertAll, first failure stops execution
             () -> assertEquals(5, calculator.add(2, 3)),
+                                 // => Lambda assertion: 2 + 3 should equal 5
             () -> assertEquals(0, calculator.add(-2, 2)),
+                                 // => Lambda assertion: -2 + 2 should equal 0
             () -> assertTrue(calculator.add(1, 1) > 0)
-        );
+                                 // => Lambda assertion: 1 + 1 should be positive
+        );                       // => All three assertions run, failure report shows all issues
     }
 
     // EXCEPTION TESTING
     @Test
-    void testDivisionByZero() {
+    void testDivisionByZero() {  // => Tests that exception is thrown correctly
         Exception exception = assertThrows(
+                                 // => Captures thrown exception for further assertions
             ArithmeticException.class,
+                                 // => Expected exception type
             () -> calculator.divide(10, 0)
+                                 // => Lambda that should throw exception
         );                       // => Asserts exception is thrown
+                                 // => Test fails if no exception or wrong type thrown
         assertEquals("Division by zero", exception.getMessage());
+                                 // => Verifies exception message is correct
+                                 // => Ensures error messages are user-friendly
     }
 
     // TIMEOUT TESTING
     @Test
     @Timeout(1)                  // => Test must complete within 1 second
-    void testPerformance() {
-        calculator.add(1, 1);
+                                 // => Fails if test takes longer (prevents hanging tests)
+    void testPerformance() {     // => Tests that method completes quickly
+        calculator.add(1, 1);    // => Simple addition should be instant
+                                 // => Test fails if takes more than 1 second
     }
 
     // DISABLED TEST
     @Disabled("Not implemented yet")
+                                 // => Temporarily disables test (not run during test suite)
+                                 // => Use for incomplete tests or known failures
     @Test
-    void testNotReady() {
+    void testNotReady() {        // => Test method that's disabled
         // Skipped during test run
+                                 // => JUnit shows this as "skipped" in results
+                                 // => Reason appears in test report
     }
 
     // PARAMETERIZED TEST
-    @ParameterizedTest
+    @ParameterizedTest           // => Runs same test with different inputs
+                                 // => More concise than writing multiple @Test methods
     @ValueSource(ints = {1, 2, 3, 4, 5})
+                                 // => Provides input values (test runs 5 times)
+                                 // => Each int becomes parameter to test method
     void testMultipleInputs(int number) {
+                                 // => number takes values 1, 2, 3, 4, 5 across 5 runs
         assertTrue(calculator.add(number, 1) > number);
+                                 // => Asserts: number + 1 > number (should always be true)
+                                 // => Runs 5 assertions: (1+1>1), (2+1>2), (3+1>3), (4+1>4), (5+1>5)
     }
 
     // DISPLAY NAME
     @DisplayName("Test division with valid inputs")
+                                 // => Custom display name for test reports
+                                 // => More readable than method name in test output
     @Test
-    void testDivision() {
+    void testDivision() {        // => Actual method name (less important with @DisplayName)
         assertEquals(2, calculator.divide(10, 5));
+                                 // => Asserts: 10 / 5 == 2
+                                 // => Test report shows: "Test division with valid inputs ✓"
     }
 }
 ```
@@ -1923,119 +1970,179 @@ Mockito creates mock objects for testing, isolating units from dependencies. It 
 
 ```java
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+                                 // => JUnit 5 test annotation
+import org.mockito.*;            // => Mockito core classes (Mock, InjectMocks, etc.)
 import static org.mockito.Mockito.*;
+                                 // => Static import for Mockito methods (when, verify, etc.)
 import static org.junit.jupiter.api.Assertions.*;
-import java.util.*;
+                                 // => Static import for assertion methods
+import java.util.*;              // => Java utilities
 
 // DEPENDENCIES TO MOCK
-interface UserRepository {
-    User findById(String id);
-    void save(User user);
+interface UserRepository {       // => External dependency that will be mocked
+                                 // => Interface makes mocking easier (no concrete class needed)
+    User findById(String id);    // => Method that reads from data source
+                                 // => In real code, would query database
+    void save(User user);        // => Method that writes to data source
+                                 // => In real code, would persist to database
 }
 
-class User {
-    private String id;
-    private String name;
+class User {                     // => Domain object (data class)
+    private String id;           // => User identifier
+    private String name;         // => User name
 
     public User(String id, String name) {
-        this.id = id;
-        this.name = name;
+                                 // => Constructor for creating User objects
+        this.id = id;            // => Sets user ID
+        this.name = name;        // => Sets user name
     }
 
     // Getters/setters...
+                                 // => getName() needed for UserService logic
 }
 
 // SERVICE CLASS UNDER TEST
-class UserService {
+class UserService {              // => Business logic class we want to test
+                                 // => Depends on UserRepository (will be mocked)
     private final UserRepository repository;
+                                 // => Dependency injected via constructor
+                                 // => Final ensures immutability
 
     public UserService(UserRepository repository) {
+                                 // => Constructor injection (testable design)
         this.repository = repository;
+                                 // => Stores repository reference
     }
 
     public String getUserName(String id) {
+                                 // => Business method to test
         User user = repository.findById(id);
+                                 // => Calls repository (will call mock in tests)
         return user != null ? user.getName() : "Unknown";
+                                 // => Returns name if user found, "Unknown" if null
     }
 
     public void updateUser(User user) {
-        repository.save(user);
+                                 // => Business method for updating users
+        repository.save(user);   // => Delegates to repository (will call mock)
+                                 // => No return value (void method)
     }
 }
 
 // TESTS WITH MOCKS
-class UserServiceTest {
+class UserServiceTest {          // => Test class using Mockito mocks
     @Mock                        // => Mockito creates mock implementation
+                                 // => mockRepository doesn't need real implementation
     private UserRepository mockRepository;
+                                 // => Mock object (all methods return null by default)
 
     @InjectMocks                 // => Mockito injects mocks into this object
+                                 // => userService will be created with mockRepository injected
     private UserService userService;
+                                 // => Object under test (uses mocked dependencies)
 
-    @BeforeEach
-    void setUp() {
+    @BeforeEach                  // => Runs before each test method
+    void setUp() {               // => Initializes Mockito annotations
         MockitoAnnotations.openMocks(this);
                                  // => Initialize mocks
+                                 // => Creates mock for @Mock fields and injects into @InjectMocks
     }
 
     @Test
-    void testGetUserName() {
+    void testGetUserName() {     // => Tests happy path: user exists
         // STUBBING - define mock behavior
         User mockUser = new User("123", "Alice");
+                                 // => Creates test User object
+                                 // => mockUser has id="123", name="Alice"
         when(mockRepository.findById("123")).thenReturn(mockUser);
                                  // => When findById("123") called, return mockUser
+                                 // => Stubbing: defines what mock should do
+                                 // => mockRepository is programmed to return mockUser
 
         // EXECUTE
         String name = userService.getUserName("123");
+                                 // => Calls method under test
+                                 // => Internally calls mockRepository.findById("123")
+                                 // => name is "Alice" (from mockUser)
 
         // VERIFY
         assertEquals("Alice", name);
+                                 // => Asserts returned name is correct
         verify(mockRepository, times(1)).findById("123");
                                  // => Verify findById was called exactly once
+                                 // => Ensures service uses repository correctly
     }
 
     @Test
     void testGetUserNameNotFound() {
+                                 // => Tests edge case: user not found
         when(mockRepository.findById("999")).thenReturn(null);
+                                 // => Stub to return null (user doesn't exist)
+                                 // => mockRepository.findById("999") returns null
 
         String name = userService.getUserName("999");
+                                 // => Calls method with non-existent ID
+                                 // => name should be "Unknown"
 
         assertEquals("Unknown", name);
+                                 // => Asserts fallback value returned
+                                 // => Verifies null-safety logic works
     }
 
     @Test
-    void testUpdateUser() {
+    void testUpdateUser() {      // => Tests void method using verification
         User user = new User("123", "Bob");
+                                 // => Creates test user to save
+                                 // => user has id="123", name="Bob"
 
         userService.updateUser(user);
+                                 // => Calls update method
+                                 // => Internally calls mockRepository.save(user)
 
         // VERIFY method called with specific argument
         verify(mockRepository).save(user);
                                  // => Verify save was called with user
+                                 // => times(1) is implicit default
+                                 // => Ensures service delegates to repository correctly
     }
 
     @Test
     void testExceptionHandling() {
+                                 // => Tests that service propagates exceptions
         // STUB TO THROW EXCEPTION
         when(mockRepository.findById(anyString()))
+                                 // => anyString() matches any String argument
             .thenThrow(new RuntimeException("Database error"));
+                                 // => Stub throws exception when called
+                                 // => Simulates database failure
 
         assertThrows(RuntimeException.class, () -> {
+                                 // => Asserts that lambda throws RuntimeException
             userService.getUserName("123");
-        });
+                                 // => Calls service (should propagate exception)
+        });                      // => Test passes if RuntimeException thrown
     }
 
     @Test
     void testArgumentMatchers() {
+                                 // => Tests flexible argument matching
         // ARGUMENT MATCHERS - flexible matching
         when(mockRepository.findById(anyString()))
+                                 // => anyString() matches ANY String (not specific value)
+                                 // => More flexible than exact matching
             .thenReturn(new User("any", "AnyUser"));
+                                 // => Returns same user regardless of ID
 
         String name = userService.getUserName("anything");
+                                 // => Calls with "anything" (matches anyString())
+                                 // => name is "AnyUser"
         assertEquals("AnyUser", name);
+                                 // => Asserts matcher worked correctly
 
         // Verify with matchers
         verify(mockRepository).findById(startsWith("any"));
+                                 // => Verifies findById called with String starting with "any"
+                                 // => "anything" starts with "any" (verification passes)
     }
 }
 ```

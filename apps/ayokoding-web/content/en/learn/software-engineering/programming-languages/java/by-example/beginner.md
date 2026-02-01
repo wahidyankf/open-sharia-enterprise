@@ -623,50 +623,67 @@ Interfaces define contracts (what methods a class must implement) without implem
 ```java
 // INTERFACE DEFINITION
 public interface Drawable {      // => Contract: any Drawable must implement draw()
+                                 // => Interface members are public and abstract by default
     void draw();                 // => Abstract method (no body, implicitly public abstract)
+                                 // => Any class implementing Drawable MUST provide draw() implementation
     // => Constants are implicitly public static final
     double PI = 3.14159;         // => Accessible as Drawable.PI
+                                 // => Cannot be reassigned (final constant)
 }
 
 // CLASS IMPLEMENTING INTERFACE
 class Circle implements Drawable {
                                  // => Circle must implement all Drawable methods
-    @Override
+                                 // => "implements" keyword declares interface contract
+    @Override                    // => Annotation verifies we're overriding interface method
+                                 // => Compile error if method signature doesn't match
     public void draw() {         // => Must be public (interface methods are public)
+                                 // => Provides concrete implementation for abstract method
         System.out.println("Drawing a circle");
+                                 // => Output: Drawing a circle
     }
 }
 
 class Square implements Drawable {
-    @Override
-    public void draw() {
+                                 // => Square also implements Drawable (different implementation)
+    @Override                    // => Verifies interface contract fulfillment
+    public void draw() {         // => Square's version of draw()
         System.out.println("Drawing a square");
+                                 // => Output: Drawing a square
     }
 }
 
 // MULTIPLE INTERFACE IMPLEMENTATION
-interface Resizable {
-    void resize(int factor);
+interface Resizable {            // => Second interface defining resize capability
+    void resize(int factor);     // => Single abstract method taking int parameter
 }
 
 class FlexibleCircle implements Drawable, Resizable {
                                  // => Can implement multiple interfaces (no multiple inheritance for classes)
+                                 // => Must implement ALL methods from BOTH interfaces
     @Override
-    public void draw() {
+    public void draw() {         // => Implements Drawable.draw()
         System.out.println("Drawing flexible circle");
+                                 // => Output: Drawing flexible circle
     }
 
     @Override
     public void resize(int factor) {
+                                 // => Implements Resizable.resize(int)
         System.out.println("Resizing by " + factor);
+                                 // => Output: Resizing by [factor value]
     }
 }
 
 // POLYMORPHISM WITH INTERFACES
 Drawable shape1 = new Circle(); // => Circle referenced as Drawable
-Drawable shape2 = new Square();
-shape1.draw();                   // => Output: Drawing a circle
-shape2.draw();                   // => Output: Drawing a square
+                                 // => shape1 is type Drawable, actual object is Circle
+Drawable shape2 = new Square(); // => Square referenced as Drawable
+                                 // => shape2 is type Drawable, actual object is Square
+shape1.draw();                   // => Calls Circle's draw() method (dynamic dispatch)
+                                 // => Output: Drawing a circle
+shape2.draw();                   // => Calls Square's draw() method (dynamic dispatch)
+                                 // => Output: Drawing a square
 ```
 
 **Key Takeaway**: Interfaces define method contracts without implementation, forcing implementing classes to provide behavior. Classes can implement multiple interfaces (unlike single-class inheritance), enabling flexible type hierarchies. Use interfaces to define capabilities (Drawable, Runnable, Comparable) rather than concrete types.
@@ -1817,73 +1834,96 @@ Java provides multiple APIs for file operations. Modern NIO.2 (java.nio.file) of
 **Code**:
 
 ```java
-import java.nio.file.*;
-import java.io.IOException;
-import java.util.List;
+import java.nio.file.*;          // => Modern NIO.2 API for file operations
+import java.io.IOException;      // => Checked exception for I/O errors
+import java.util.List;           // => For working with file lines as List
 
 // WRITE to file
 String content = "Hello, File I/O!";
+                                 // => String to write to file
 Path path = Paths.get("output.txt");
                                  // => Path represents file/directory location
-try {
+                                 // => Relative path (current working directory)
+try {                            // => try block required for checked IOException
     Files.writeString(path, content);
                                  // => Writes string to file (creates if doesn't exist)
+                                 // => Overwrites if file already exists
     System.out.println("File written successfully");
+                                 // => Output: File written successfully
 } catch (IOException e) {        // => Checked exception (must handle or declare)
+                                 // => Catches file write errors (permissions, disk full, etc.)
     System.out.println("Error writing file: " + e.getMessage());
+                                 // => Output: Error writing file: [error details]
 }
 
 // READ from file
-try {
+try {                            // => Separate try block for read operation
     String fileContent = Files.readString(path);
                                  // => Reads entire file as String
+                                 // => fileContent is "Hello, File I/O!"
     System.out.println(fileContent);
                                  // => Output: Hello, File I/O!
-} catch (IOException e) {
+} catch (IOException e) {        // => Catches file read errors (file not found, etc.)
     System.out.println("Error reading file: " + e.getMessage());
+                                 // => Output: Error reading file: [error details]
 }
 
 // READ lines as List
-try {
+try {                            // => Another try block for line-by-line reading
     List<String> lines = Files.readAllLines(path);
                                  // => Reads file as List of lines
-    for (String line : lines) {
-        System.out.println(line);
+                                 // => lines is List with 1 element: ["Hello, File I/O!"]
+    for (String line : lines) {  // => Enhanced for loop iterating over lines
+                                 // => line is "Hello, File I/O!" (first and only line)
+        System.out.println(line);// => Output: Hello, File I/O!
     }
-} catch (IOException e) {
-    e.printStackTrace();
+} catch (IOException e) {        // => Catches file read errors
+    e.printStackTrace();         // => Prints full stack trace to stderr
+                                 // => Shows error location and call chain
 }
 
 // APPEND to file
 String moreContent = "\nAppended line";
-try {
+                                 // => New content with newline prefix
+try {                            // => try block for append operation
     Files.writeString(path, moreContent, StandardOpenOption.APPEND);
                                  // => APPEND option adds to existing content
-} catch (IOException e) {
-    e.printStackTrace();
+                                 // => Without APPEND, would overwrite file
+                                 // => File now contains: "Hello, File I/O!\nAppended line"
+} catch (IOException e) {        // => Catches append errors
+    e.printStackTrace();         // => Prints stack trace if error occurs
 }
 
 // CHECK file existence and properties
 boolean exists = Files.exists(path);
                                  // => exists is true if file exists
+                                 // => Returns false if file doesn't exist
 boolean isFile = Files.isRegularFile(path);
                                  // => isFile is true (not directory)
+                                 // => Returns false for directories, symbolic links
 long size = Files.size(path);    // => size in bytes
+                                 // => size is approximately 30 bytes (depends on content)
 
 // DELETE file
-try {
+try {                            // => try block for delete operation
     Files.delete(path);          // => Deletes file (throws exception if doesn't exist)
+                                 // => File is removed from filesystem
     // Files.deleteIfExists(path); => Alternative (no exception if missing)
-} catch (IOException e) {
-    e.printStackTrace();
+                                 // => Returns true if deleted, false if didn't exist
+} catch (IOException e) {        // => Catches delete errors (permissions, file in use)
+    e.printStackTrace();         // => Prints error details
 }
 
 // CREATING directories
 Path dir = Paths.get("my/nested/directory");
-try {
+                                 // => Path with multiple directory levels
+                                 // => Relative path from current directory
+try {                            // => try block for directory creation
     Files.createDirectories(dir);// => Creates all parent directories if needed
-} catch (IOException e) {
-    e.printStackTrace();
+                                 // => Creates "my", then "my/nested", then "my/nested/directory"
+                                 // => No error if directories already exist
+} catch (IOException e) {        // => Catches directory creation errors
+    e.printStackTrace();         // => Prints error if creation fails
 }
 ```
 

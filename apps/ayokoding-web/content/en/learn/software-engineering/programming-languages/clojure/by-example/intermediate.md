@@ -319,29 +319,40 @@ sequenceDiagram
 ```
 
 ```clojure
-(def account-a (ref 1000))
-(def account-b (ref 500))
+(def account-a (ref 1000))                   ;; => Create ref with initial value 1000
+                                             ;; => Ref: coordinated synchronous mutable reference
+(def account-b (ref 500))                    ;; => Create ref with initial value 500
+                                             ;; => Both refs managed by STM system
 
-(defn transfer [from to amount]
-  (dosync                                    ;; => STM transaction (atomic)
-    (alter from - amount)
-    (alter to + amount)))
+(defn transfer [from to amount]              ;; => Define transfer function (from/to are refs)
+  (dosync                                    ;; => Start STM transaction (atomic block)
+                                             ;; => All alters coordinated via MVCC
+    (alter from - amount)                    ;; => Queues mutation: subtract from source
+    (alter to + amount)))                    ;; => Queues mutation: add to destination
+                                             ;; => Both alters commit together atomically
+                                             ;; => #'user/transfer
 
-(println @account-a @account-b)              ;; => Output: 1000 500
+(println @account-a @account-b)              ;; => Dereference refs with @
+                                             ;; => Output: 1000 500 (initial state)
 
-(transfer account-a account-b 200)           ;; => Atomically transfer 200
-(println @account-a @account-b)              ;; => Output: 800 700
+(transfer account-a account-b 200)           ;; => Atomically transfer 200 from a to b
+                                             ;; => dosync: alter a (1000-200=800), alter b (500+200=700)
+                                             ;; => Transaction commits both changes
+(println @account-a @account-b)              ;; => Output: 800 700 (transfer succeeded)
 
 ;; Transactions are atomic - all succeed or all fail
-(try
-  (dosync
-    (alter account-a - 100)
-    (throw (Exception. "Error!"))            ;; => Transaction aborted - all changes rolled back
-    (alter account-b + 100))
-  (catch Exception e
-    (println "Transaction failed")))
+(try                                         ;; => Exception handling around transaction
+  (dosync                                    ;; => Start new STM transaction
+    (alter account-a - 100)                  ;; => Tentative change: a becomes 700 (in-flight)
+    (throw (Exception. "Error!"))            ;; => Exception thrown mid-transaction
+                                             ;; => All changes rolled back (a stays 800)
+    (alter account-b + 100))                 ;; => Never executed (unreachable after throw)
+  (catch Exception e                         ;; => Catch exception
+    (println "Transaction failed")))         ;; => Output: Transaction failed
 
-(println @account-a @account-b)              ;; => Output: 800 700 (unchanged)
+(println @account-a @account-b)              ;; => Verify refs unchanged after rollback
+                                             ;; => Output: 800 700 (unchanged)
+                                             ;; => ACID atomicity: all-or-nothing
 ```
 
 **Key Takeaway**: Refs with STM provide coordinated atomic transactions across multiple state changes.
@@ -660,35 +671,47 @@ graph TD
 
 ```clojure
 ;; Regular sequence operations (create intermediates)
-(->> (range 1000000)
-     (map inc)
-     (filter even?)
+(->> (range 1000000)                         ;; => Create lazy sequence 0..999999
+     (map inc)                               ;; => INTERMEDIATE lazy seq with each+1
+     (filter even?)                          ;; => ANOTHER intermediate lazy seq
      (take 10))                              ;; => (2 4 6 8 10 12 14 16 18 20)
+                                             ;; => Multiple lazy sequences chained
 
 ;; Transducer (no intermediate sequences)
-(def xf
-  (comp
-    (map inc)
-    (filter even?)))
+(def xf                                      ;; => Define transducer composition
+  (comp                                      ;; => comp combines transducers right-to-left
+    (map inc)                                ;; => Increment transformation (no intermediate)
+    (filter even?)))                         ;; => Even filter (composed into single pass)
+                                             ;; => xf is function returning reducing fn
 
-(into [] xf (range 10))                      ;; => [2 4 6 8 10] (single pass, no intermediates)
-(sequence xf (range 10))                     ;; => (2 4 6 8 10) (lazy sequence)
+(into [] xf (range 10))                      ;; => Apply transducer to range 0..9
+                                             ;; => Single pass: inc [1..10], filter even [2 4 6 8 10]
+                                             ;; => [2 4 6 8 10] (zero intermediate allocations)
+
+(sequence xf (range 10))                     ;; => Apply transducer, return lazy seq
+                                             ;; => (2 4 6 8 10) (still single-pass)
 
 ;; With transduce (reduce-like)
-(transduce xf + (range 10))                  ;; => 30 (2+4+6+8+10)
+(transduce xf + (range 10))                  ;; => Combine transducer with reduction
+                                             ;; => Transforms: inc→filter, reduces: sum
+                                             ;; => 30 (sum of 2+4+6+8+10)
+                                             ;; => Single pass, no collection built
 
 ;; Custom transducer
-(defn take-while-xf [pred]
-  (fn [rf]
-    (fn
-      ([] (rf))
-      ([result] (rf result))
-      ([result input]
-       (if (pred input)
-         (rf result input)
-         (reduced result))))))
+(defn take-while-xf [pred]                   ;; => Custom transducer factory
+  (fn [rf]                                   ;; => Returns fn taking reducing fn (rf)
+    (fn                                      ;; => Returns 3-arity reducing fn
+      ([] (rf))                              ;; => 0-arity: init call
+      ([result] (rf result))                 ;; => 1-arity: completion
+      ([result input]                        ;; => 2-arity: main reduction step
+       (if (pred input)                      ;; => Test predicate
+         (rf result input)                   ;; => Continue if true
+         (reduced result))))))               ;; => Stop (early termination) if false
 
-(into [] (take-while-xf #(< % 5)) (range 10)) ;; => [0 1 2 3 4]
+(into [] (take-while-xf #(< % 5)) (range 10)) ;; => Apply custom transducer
+                                             ;; => Takes while < 5: [0 1 2 3 4]
+                                             ;; => Stops at 5, reduced called
+                                             ;; => [0 1 2 3 4] (early termination)
 ```
 
 **Key Takeaway**: Transducers eliminate intermediate collections providing efficient composable transformations.

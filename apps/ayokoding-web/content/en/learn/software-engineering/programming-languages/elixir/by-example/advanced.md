@@ -38,14 +38,24 @@ graph TD
 
 ```elixir
 defmodule Counter do
+              # => Defines Counter module implementing GenServer
+              # => GenServer provides stateful process abstraction
   use GenServer  # => imports GenServer behavior and callbacks
                  # => defines init/1, handle_call/3, handle_cast/2, handle_info/2
+                 # => requires implementing specific callback functions
+                 # => enables OTP supervision and error handling
 
   # Client API (public interface)
+  # => Functions below called by external processes
+  # => Wrap GenServer.call/cast operations for clean API
   def start_link(initial_value \\ 0) do  # => default parameter: initial_value = 0 if not provided
+                                         # => \\ syntax provides default value
+                                         # => allows calling with or without argument
     GenServer.start_link(__MODULE__, initial_value, name: __MODULE__)  # => {:ok, #PID<...>} (starts GenServer process)
-                                                                         # => __MODULE__ is Counter atom
-                                                                         # => name: Counter registers process globally
+                                                                         # => __MODULE__ is Counter atom (module name)
+                                                                         # => initial_value passed to init/1 callback
+                                                                         # => name: Counter registers process globally (enables Counter.get())
+                                                                         # => Global registration allows access without PID
   end
 
   def increment do  # => public synchronous function wrapping async cast
@@ -270,12 +280,20 @@ defmodule Account do
   end
 
   # Server callbacks
+  # => Private implementation called by GenServer
+  # => Functions below handle messages from clients
   @impl true  # => compiler verification for init/1
+              # => ensures callback signature matches behavior
   def init(initial_balance) do  # => called when GenServer starts
+                                # => receives initial_balance from start_link
+                                # => Must return {:ok, state} or {:stop, reason}
     state = %__MODULE__{balance: initial_balance}  # => %Account{balance: 1000, transactions: []}
+                                                   # => __MODULE__ expands to Account
                                                    # => creates Account struct with empty transaction list
+                                                   # => Struct provides compile-time field validation
     {:ok, state}  # => {:ok, %Account{...}}
                   # => returns initial state to GenServer
+                  # => GenServer stores this as current state
   end
 
   @impl true  # => marks handle_call/3 implementation
@@ -1278,116 +1296,204 @@ graph TD
 # :one_for_one - Independent workers, restart crashed child only
 defmodule OneForOneSupervisor do
   use Supervisor  # => imports Supervisor behavior
+                  # => provides init/1 callback and supervision functions
+                  # => enables this module to act as a supervisor
 
   def start_link(_opts) do
+                         # => _opts is ignored (no configuration needed)
     Supervisor.start_link(__MODULE__, :ok)  # => {:ok, #PID<...>}
+                                            # => starts supervisor process
+                                            # => __MODULE__ is OneForOneSupervisor
+                                            # => :ok passed to init/1 callback
+                                            # => returns {:ok, pid} on success
   end
 
-  @impl true
+  @impl true  # => marks init/1 as Supervisor callback implementation
+              # => compiler warns if signature doesn't match behavior
   def init(:ok) do
+            # => receives :ok from start_link
+            # => returns supervisor specification
     children = [
-      {Worker, 1},  # => Worker 1 (independent)
-      {Worker, 2},  # => Worker 2 (independent)
-      {Worker, 3}   # => Worker 3 (independent)
+      {Worker, 1},  # => Worker 1 (independent process)
+                    # => expands to Worker.start_link(1)
+                    # => no state sharing with other workers
+      {Worker, 2},  # => Worker 2 (independent process)
+                    # => expands to Worker.start_link(2)
+                    # => operates independently from Worker 1 and 3
+      {Worker, 3}   # => Worker 3 (independent process)
+                    # => expands to Worker.start_link(3)
+                    # => no dependencies on other workers
     ]
+    # => Children list defines 3 worker processes
     # => Workers are INDEPENDENT - Worker 2 crash doesn't affect Workers 1 or 3
+    # => Each worker has its own state, mailbox, and lifecycle
 
     Supervisor.init(children, strategy: :one_for_one)  # => {:ok, {supervisor_flags, children}}
+                                                       # => initializes supervisor with child specs
+                                                       # => strategy: :one_for_one defines restart policy
     # => :one_for_one means: if Worker 2 crashes, ONLY Worker 2 restarts
     # => Workers 1 and 3 keep running with their current state
+    # => Minimal blast radius: failure isolated to crashed process
     # => Use case: stateless workers, connection pool workers, task processors
   end
 end
 
 # :one_for_all - Tightly coupled workers, restart ALL on any crash
 defmodule OneForAllSupervisor do
-  use Supervisor
+  use Supervisor  # => imports Supervisor behavior
+                  # => enables supervision capabilities
 
   def start_link(_opts) do
+                         # => _opts is ignored (no custom configuration)
     Supervisor.start_link(__MODULE__, :ok)  # => {:ok, #PID<...>}
+                                            # => starts supervisor process
+                                            # => calls init(:ok) callback
   end
 
-  @impl true
+  @impl true  # => marks init/1 as callback implementation
+              # => compiler verifies correct signature
   def init(:ok) do
+            # => receives :ok argument from start_link
+            # => defines tightly coupled children
     children = [
-      {DatabaseConnection, []},  # => Must be up for Cache and APIServer
-      {Cache, []},               # => Depends on database (caches DB queries)
-      {APIServer, []}            # => Depends on cache (serves cached data)
+      {DatabaseConnection, []},  # => Started FIRST (position 1)
+                                 # => Must be up for Cache and APIServer
+                                 # => expands to DatabaseConnection.start_link([])
+      {Cache, []},               # => Started SECOND (position 2)
+                                 # => Depends on database (caches DB queries)
+                                 # => Invalid if database state changed
+      {APIServer, []}            # => Started THIRD (position 3)
+                                 # => Depends on cache (serves cached data)
+                                 # => Invalid if cache state changed
     ]
     # => Workers are TIGHTLY COUPLED - if any crashes, ALL must restart for consistency
+    # => Startup order: DatabaseConnection → Cache → APIServer
+    # => All children depend on each other's state consistency
 
     Supervisor.init(children, strategy: :one_for_all)  # => {:ok, {supervisor_flags, children}}
+                                                       # => initializes with one_for_all strategy
+                                                       # => any child crash triggers ALL restarts
     # => :one_for_all means: if DatabaseConnection crashes, ALL THREE restart in order
     # => Why? Cache has stale DB state, APIServer has stale cache state
-    # => Restart order: DatabaseConnection → Cache → APIServer (clean slate for all)
+    # => Restart order preserves dependency chain: DatabaseConnection → Cache → APIServer
+    # => Maximum blast radius: all children restarted (clean slate for all)
     # => Use case: workers with shared mutable state, game sessions, synchronized protocols
   end
 end
 
 # :rest_for_one - Startup-order dependencies, restart crashed child + later siblings
 defmodule RestForOneSupervisor do
-  use Supervisor
+  use Supervisor  # => imports Supervisor behavior
+                  # => enables rest_for_one restart strategy
 
   def start_link(_opts) do
+                         # => _opts is ignored (no configuration)
     Supervisor.start_link(__MODULE__, :ok)  # => {:ok, #PID<...>}
+                                            # => starts supervisor process
+                                            # => calls init(:ok) callback
   end
 
-  @impl true
+  @impl true  # => marks init/1 as Supervisor callback
+              # => compiler enforces correct signature
   def init(:ok) do
+            # => receives :ok from start_link
+            # => defines children with startup order dependencies
     children = [
-      {DatabaseConnection, []},  # => Position 1: Started first
-      {Cache, []},               # => Position 2: Depends on DatabaseConnection
-      {APIServer, []}            # => Position 3: Depends on Cache
+      {DatabaseConnection, []},  # => Position 1: Started FIRST
+                                 # => Foundation for later children
+                                 # => expands to DatabaseConnection.start_link([])
+      {Cache, []},               # => Position 2: Started SECOND
+                                 # => Depends on DatabaseConnection (caches DB queries)
+                                 # => Invalid if database restarts
+      {APIServer, []}            # => Position 3: Started THIRD
+                                 # => Depends on Cache (serves cached data)
+                                 # => Invalid if cache restarts
     ]
     # => STARTUP ORDER MATTERS - later children depend on earlier children
+    # => Child list position defines dependency chain
+    # => Earlier children must be running for later children to function
 
     Supervisor.init(children, strategy: :rest_for_one)  # => {:ok, {supervisor_flags, children}}
+                                                        # => initializes with rest_for_one strategy
+                                                        # => restart policy based on position
     # => :rest_for_one means: restart crashed child + all LATER siblings
+    # => Restart behavior by position:
     # => If DatabaseConnection (pos 1) crashes: restart DatabaseConnection, Cache, APIServer
-    # => If Cache (pos 2) crashes: restart Cache, APIServer (DatabaseConnection unaffected)
-    # => If APIServer (pos 3) crashes: restart APIServer only (nothing depends on it)
+    #      (all later children depend on database, must restart for consistency)
+    # => If Cache (pos 2) crashes: restart Cache, APIServer (DatabaseConnection keeps running)
+    #      (APIServer depends on cache, DatabaseConnection independent)
+    # => If APIServer (pos 3) crashes: restart APIServer only (no children depend on it)
+    #      (last child, nothing downstream to invalidate)
+    # => Blast radius scales with position: earlier crash = more restarts
     # => Use case: initialization pipelines, dependent services, layered architectures
   end
 end
 
 # Supervisor with restart limits (prevent crash loops)
 defmodule ConfiguredSupervisor do
-  use Supervisor
+  use Supervisor  # => imports Supervisor behavior
+                  # => enables crash loop prevention
 
   def start_link(_opts) do
+                         # => _opts is ignored (no custom options)
     Supervisor.start_link(__MODULE__, :ok)  # => {:ok, #PID<...>}
+                                            # => starts supervisor with restart limits
+                                            # => calls init(:ok) callback
   end
 
-  @impl true
+  @impl true  # => marks init/1 as Supervisor callback
+              # => compiler enforces correct implementation
   def init(:ok) do
+            # => receives :ok from start_link
+            # => configures restart limits to prevent crash loops
     children = [{Worker, 1}]  # => single worker child
+                              # => expands to Worker.start_link(1)
+                              # => supervisor monitors this worker
 
     Supervisor.init(children,
-      strategy: :one_for_one,  # => restart only crashed child
+      strategy: :one_for_one,  # => restart only crashed child (not siblings)
+                               # => suitable for single-child supervisor
       max_restarts: 3,         # => allow MAX 3 restarts...
-      max_seconds: 5           # => ...within 5 second window
+                               # => counts successful restarts
+      max_seconds: 5           # => ...within 5 second sliding window
+                               # => window slides with each restart
     )
+    # => Returns {:ok, {supervisor_flags, children}}
     # => Restart budget: 3 restarts per 5 seconds
-    # => Example timeline:
-    # => t=0s: Worker crashes (1st restart) ✓
-    # => t=2s: Worker crashes (2nd restart) ✓
-    # => t=4s: Worker crashes (3rd restart) ✓
-    # => t=5s: Worker crashes (4th restart in 5s) ✗ SUPERVISOR CRASHES
+    # => Sliding window mechanism:
+    # => Example timeline (crash loop scenario):
+    # => t=0s: Worker crashes (1st restart) ✓ [1 restart in last 5s]
+    # => t=2s: Worker crashes (2nd restart) ✓ [2 restarts in last 5s]
+    # => t=4s: Worker crashes (3rd restart) ✓ [3 restarts in last 5s]
+    # => t=5s: Worker crashes (4th restart in 5s) ✗ BUDGET EXCEEDED
     # => Supervisor crashes → escalates to parent supervisor (up supervision tree)
     # => Prevents infinite crash loops from depleting system resources
     # => If limit exceeded, supervisor itself crashes (escalates to parent)
+    # => Parent supervisor decides how to handle supervisor crash
   end
 end
 
-# Example usage comparison
-{:ok, one_for_one} = OneForOneSupervisor.start_link([])  # => starts 3 independent workers
-# => Worker 2 crashes → only Worker 2 restarts
+# Example usage comparison - demonstrates different restart strategy behaviors
+{:ok, one_for_one} = OneForOneSupervisor.start_link([])  # => {:ok, #PID<...>}
+                                                          # => starts 3 independent workers
+                                                          # => Workers 1, 2, 3 are isolated
+# => Crash scenario: Worker 2 crashes
+# => Restart behavior: only Worker 2 restarts
+# => Workers 1 and 3 continue running with current state
 
-{:ok, one_for_all} = OneForAllSupervisor.start_link([])  # => starts 3 dependent workers
-# => DatabaseConnection crashes → ALL 3 restart (DatabaseConnection → Cache → APIServer)
+{:ok, one_for_all} = OneForAllSupervisor.start_link([])  # => {:ok, #PID<...>}
+                                                          # => starts 3 tightly coupled workers
+                                                          # => DatabaseConnection, Cache, APIServer
+# => Crash scenario: DatabaseConnection crashes
+# => Restart behavior: ALL 3 restart in order (DatabaseConnection → Cache → APIServer)
+# => Cache and APIServer had stale state, needed fresh start
 
-{:ok, rest_for_one} = RestForOneSupervisor.start_link([])  # => starts 3 workers with startup dependencies
-# => Cache crashes → Cache and APIServer restart (DatabaseConnection keeps running)
+{:ok, rest_for_one} = RestForOneSupervisor.start_link([])  # => {:ok, #PID<...>}
+                                                            # => starts 3 workers with startup dependencies
+                                                            # => Position matters for restart policy
+# => Crash scenario: Cache (position 2) crashes
+# => Restart behavior: Cache and APIServer restart (DatabaseConnection keeps running)
+# => DatabaseConnection (position 1) unaffected, continues with current state
 ```
 
 **Key Takeaway**: Choose restart strategy based on dependencies: `:one_for_one` for independent workers, `:one_for_all` for interdependent workers, `:rest_for_one` for startup-order dependencies. Configure `max_restarts` and `max_seconds` to prevent crash loops.
@@ -2245,147 +2351,265 @@ graph TD
 defmodule MyMacros do
   # Simple macro - no arguments
   defmacro say_hello do
-    quote do  # => returns AST: {{:., [], [{:__aliases__, [alias: false], [:IO]}, :puts]}, [], ["Hello from macro!"]}
+                   # => defmacro defines macro (runs at compile time)
+                   # => Macros receive AST, return transformed AST
+    quote do  # => captures code as AST (doesn't execute)
+              # => quote returns AST representation of code block
+              # => AST: {{:., [], [{:__aliases__, [alias: false], [:IO]}, :puts]}, [], ["Hello from macro!"]}
       IO.puts("Hello from macro!")  # => this code runs in CALLER's context at runtime
-    end
+                                     # => Generated at compile time, executed at runtime
+    end  # => quote block returns AST that compiler injects at call site
   end
   # => defmacro receives NO arguments, returns AST that will be inserted at call site
+  # => When user calls say_hello(), compiler replaces it with IO.puts("Hello from macro!")
 
   # Macro with arguments
   defmacro double(value) do
-    # => value is AST of argument (e.g., for double(5), value = {:5, [], Elixir})
-    quote do
+                    # => value is AST of argument passed at call site
+                    # => For call double(5), value receives AST: 5 (integer literal)
+                    # => For call double(x), value receives AST: {:x, [], Elixir} (variable)
+                    # => Macros see CODE structure, not evaluated values
+    quote do  # => begins AST construction
+              # => quote captures expression as compile-time data structure
       unquote(value) * 2  # => unquote injects value AST into multiplication expression
-    end
+                          # => unquote "escapes" quote to inject runtime expression
+                          # => Expands to: 5 * 2 (if value was 5)
+    end  # => returns AST: {:*, [], [value_ast, 2]}
     # => returns AST: {:*, [], [unquote(value), 2]}
     # => At compile time: double(5) becomes: 5 * 2
+    # => Compiler replaces macro call with generated multiplication
   end
 
   # Macro that generates function
   defmacro create_getter(name, value) do
-    # => name is atom AST (e.g., :name), value is AST (e.g., "Alice")
-    quote do
+                              # => name is atom AST (e.g., :name for function name)
+                              # => value is AST (e.g., "Alice" for return value)
+                              # => This macro generates a complete function definition
+    quote do  # => begins function definition AST construction
+              # => Generated code injected into calling module
       def unquote(name)(), do: unquote(value)  # => generates function definition at compile time
-    end
+                                                # => unquote(name) injects :name as function identifier
+                                                # => unquote(value) injects "Alice" as function body
+                                                # => Expands to: def name(), do: "Alice"
+    end  # => returns function definition AST
     # => creates: def name(), do: "Alice"
     # => unquote(name) injects atom as function name
     # => unquote(value) injects value as function body
+    # => This macro enables runtime function generation at compile time
   end
 
   # Macro for logging
   defmacro log(message) do
-    quote do
+                   # => message is AST of logged content
+                   # => Macro generates logging code with timestamp
+    quote do  # => constructs logging expression AST
+              # => Generated code includes timestamp generation
       IO.puts("[LOG #{DateTime.utc_now()}] #{unquote(message)}")  # => DateTime.utc_now() evaluated at RUNTIME in caller context
-    end
+                                                                   # => unquote(message) injects message AST
+                                                                   # => String interpolation happens at runtime
+                                                                   # => Fresh timestamp on each execution
+    end  # => returns logging AST
     # => unquote(message) injects message AST
     # => Timestamp generated when log executes, NOT when macro expands
+    # => This ensures accurate timestamps (not frozen at compile time)
   end
 
   # Macro with block (do...end)
   defmacro benchmark(name, do: block) do
-    # => name is string AST, block is AST of entire do...end content
-    quote do
+                                # => name is string AST for benchmark label
+                                # => block is AST of entire do...end content
+                                # => Keyword list captures do: block syntax
+                                # => block contains multiple expressions as single AST
+    quote do  # => begins benchmark wrapper AST construction
+              # => Wraps user code with timing logic
       {time, result} = :timer.tc(fn -> unquote(block) end)  # => unquote(block) injects benchmarked code into anonymous function
-      # => :timer.tc returns {microseconds, result} tuple
+                                                             # => :timer.tc measures function execution time
+                                                             # => Returns {microseconds, result} tuple
+                                                             # => time is duration in microseconds
+                                                             # => result is return value of benchmarked code
       IO.puts("#{unquote(name)} took #{time}μs")  # => prints benchmark name and duration
+                                                   # => unquote(name) injects label
+                                                   # => time is available from :timer.tc
       result  # => returns result of benchmarked code
-    end
+              # => Preserves original code's return value
+    end  # => returns benchmark wrapper AST
     # => entire benchmark logic inserted at call site and executed at runtime
+    # => Macro provides zero-overhead benchmark syntax (compiled to direct timer call)
   end
 end
 
 defmodule Example do
   require MyMacros  # => makes macros available at compile time (REQUIRED for macro use)
+                    # => require loads module and enables macro expansion
+                    # => Without require, macro calls would fail at compile time
+                    # => Functions don't need require, only macros do
 
   MyMacros.say_hello()  # => macro expands to: IO.puts("Hello from macro!")
-  # => Prints: Hello from macro! (at runtime)
+                        # => Compiler replaces macro call with generated AST
+                        # => Prints: Hello from macro! (at runtime)
+                        # => Expansion happens during compilation, execution at runtime
 
   x = MyMacros.double(5)  # => macro expands to: x = 5 * 2
-  # => x = 10 (at runtime)
+                          # => Compiler sees double(5), calls defmacro double at compile time
+                          # => Macro returns AST {:*, [], [5, 2]}
+                          # => AST injected into code: x = 5 * 2
+                          # => x = 10 (at runtime)
 
   MyMacros.create_getter(:name, "Alice")  # => generates function def at compile time
-  # => Expands to: def name(), do: "Alice"
-  # => Now name() function exists in Example module
+                                          # => Macro receives :name and "Alice" as AST
+                                          # => Returns function definition AST
+                                          # => Expands to: def name(), do: "Alice"
+                                          # => Compiler injects function into Example module
+                                          # => Now name() function exists in Example module
+                                          # => Function available for runtime calls
 
   def demo do
+            # => Regular function definition (not a macro)
+            # => Contains macro calls that expand at compile time
     MyMacros.log("Starting demo")  # => expands to: IO.puts("[LOG #{DateTime.utc_now()}] Starting demo")
-    # => Prints: [LOG 2024-01-15 10:30:45.123456Z] Starting demo (timestamp at runtime)
+                                    # => Macro injects logging code at compile time
+                                    # => DateTime.utc_now() called at runtime (fresh timestamp)
+                                    # => Prints: [LOG 2024-01-15 10:30:45.123456Z] Starting demo (timestamp at runtime)
 
     result = MyMacros.benchmark "computation" do
+                                           # => benchmark macro with do block
+                                           # => "computation" is label, do block is code to measure
       :timer.sleep(100)  # => sleep 100ms
+                         # => Part of benchmarked block
       42  # => return value
-    end
-    # => Expands to:
+          # => Last expression in block (returned by benchmark)
+    end  # => benchmark macro expands at compile time
+         # => Generated code wraps sleep and 42 with timing logic
+    # => Expands to at compile time:
     # => {time, result} = :timer.tc(fn -> :timer.sleep(100); 42 end)
     # => IO.puts("computation took #{time}μs")
     # => result
+    # => Executes at runtime:
+    # => Measures sleep duration, prints time, returns 42
     # => Prints: computation took ~100000μs (100ms = 100,000 microseconds)
-    # => Returns: 42
-  end
+    # => result is 42
+  end  # => demo function complete
 end
 
 # Macro Hygiene - variables don't leak by default
 defmodule HygieneDemo do
+              # => Demonstrates default hygienic macro behavior
+              # => Elixir macros are hygienic by default (unlike C macros)
   defmacro create_var do
-    quote do
+                  # => Macro that attempts to create variable in caller
+                  # => Default hygiene prevents variable leakage
+    quote do  # => Generates AST for variable assignment
+              # => Variable created in ISOLATED SCOPE (not caller's scope)
       x = 42  # => creates x in MACRO's context (hygienic), NOT caller's context
-    end
+              # => This x is scoped to macro expansion, invisible to caller
+              # => Prevents accidental name collisions with caller's variables
+    end  # => Returns assignment AST
   end
 end
 
 defmodule User do
-  require HygieneDemo
+  require HygieneDemo  # => Loads HygieneDemo macros for compile time
+                       # => Makes create_var macro available
 
   def test do
-    HygieneDemo.create_var()  # => macro creates x in isolated scope
+          # => Function that demonstrates hygiene protection
+          # => Attempts to access macro-created variable
+    HygieneDemo.create_var()  # => macro expands and creates x in isolated scope
+                              # => x exists in macro's private context only
+                              # => Caller (test/0) cannot see or access x
     x  # => ** (CompileError) undefined function x/0
-    # => ERROR! Variable x from macro doesn't exist in test/0 scope
-    # => This is HYGIENE - prevents accidental variable capture
+       # => ERROR! Variable x from macro doesn't exist in test/0 scope
+       # => Compiler error: x is undefined in this context
+       # => This is HYGIENE - prevents accidental variable capture
+       # => Without hygiene, macros could silently overwrite caller's variables
   end
 end
 
 # Explicitly breaking hygiene with var!
 defmodule UnhygieneDemo do
+                # => Demonstrates intentional hygiene breaking
+                # => Use var! when you WANT variable sharing
   defmacro create_var do
-    quote do
+                  # => Macro that explicitly leaks variable to caller
+                  # => Uses var! to break default hygiene
+    quote do  # => Generates AST with unhygienic variable
+              # => var! marks variable for caller's scope
       var!(x) = 42  # => var! explicitly creates variable in CALLER's context (unhygienic)
-    end
+                    # => Breaks hygiene barrier intentionally
+                    # => x will exist in caller's scope, not macro's scope
+                    # => Use only when variable sharing is desired behavior
+    end  # => Returns unhygienic assignment AST
   end
 end
 
 defmodule User2 do
-  require UnhygieneDemo
+  require UnhygieneDemo  # => Loads UnhygieneDemo macros for compile time
+                         # => Enables create_var macro with var!
 
   def test do
-    UnhygieneDemo.create_var()  # => creates x in test/0 scope (intentional leak)
+          # => Function demonstrating intentional variable leak
+          # => Successfully accesses macro-created variable
+    UnhygieneDemo.create_var()  # => macro expands with var!(x) = 42
+                                # => creates x in test/0 scope (intentional leak)
+                                # => x is visible and accessible in this function
     x  # => 42 (works! variable explicitly leaked using var!)
-    # => var! breaks hygiene when you WANT variable sharing between macro and caller
+       # => x exists in caller's scope thanks to var!
+       # => Returns 42 successfully
+       # => var! breaks hygiene when you WANT variable sharing between macro and caller
+       # => Use cases: DSL variables, test setup, shared state
   end
 end
 
 # Pattern matching on AST
 defmodule MiniTest do
+            # => Demonstrates advanced macro technique: AST pattern matching
+            # => Macros can destructure AST to analyze code structure
   defmacro assert({:==, _, [left, right]}) do  # => pattern matches AST of == expression
+                                                # => Function head pattern matches tuple structure
+                                                # => {:==, _, [left, right]} destructures AST
+                                                # => :== is operator atom, _ is metadata (ignored)
+                                                # => [left, right] are AST of left and right operands
     # => {:==, _, [left, right]} destructures: operator, metadata, [left_arg, right_arg]
-    # => For assert(1 + 1 == 2), left = {:+, [], [1, 1]}, right = 2
-    quote do
+    # => For assert(1 + 1 == 2):
+    #    - left = {:+, [], [1, 1]} (AST of addition)
+    #    - right = 2 (integer literal)
+    # => Macro receives STRUCTURE of comparison, not evaluated values
+    quote do  # => Generates assertion checking code
+              # => Code injected at call site to evaluate and compare
       left_val = unquote(left)  # => evaluates left expression at runtime
+                                # => unquote injects left AST into runtime code
+                                # => For 1 + 1, left_val = 2 after evaluation
       # => left_val = 1 + 1 = 2
       right_val = unquote(right)  # => evaluates right expression at runtime
+                                  # => unquote injects right AST into runtime code
+                                  # => For 2, right_val = 2 (already evaluated)
       # => right_val = 2
-      if left_val != right_val do
+      if left_val != right_val do  # => compares evaluated values at runtime
+                                   # => Raises if assertion fails
         raise "Assertion failed: #{inspect(left_val)} != #{inspect(right_val)}"  # => raises on mismatch
-      end
-      # => If assertion passes, returns nil (no raise)
-    end
+                                                                                   # => inspect converts values to strings
+                                                                                   # => Provides clear error messages
+      end  # => if block ends
+      # => If assertion passes (left_val == right_val), no raise
+      # => Function returns nil (successful assertion)
+    end  # => quote block returns assertion checking AST
     # => This shows how macros can inspect AST structure (pattern match on operator)
+    # => Macros see code structure, enabling compile-time analysis
+    # => Pattern matching on AST enables custom syntax validation
   end
 end
 
-require MiniTest  # => loads MiniTest macros
-MiniTest.assert(1 + 1 == 2)  # => macro expands, evaluates 1+1, compares to 2, passes (no raise)
+require MiniTest  # => loads MiniTest macros for compile time
+                  # => Makes assert macro available in current scope
+MiniTest.assert(1 + 1 == 2)  # => macro call with == comparison
+                             # => Compiler calls defmacro assert at compile time
+                             # => Macro pattern matches {:==, _, [{:+, [], [1, 1]}, 2]}
+                             # => Generates assertion code at compile time
+                             # => Evaluates 1+1, compares to 2 at runtime
+                             # => Passes (no raise, returns nil)
 # => At compile time: pattern matches AST, generates assertion code
 # => At runtime: evaluates expressions, performs comparison
+# => Two-phase execution: compile (AST transformation), runtime (evaluation)
 ```
 
 **Key Takeaway**: Macros transform AST at compile time. Use `defmacro` to define, `quote/unquote` to build AST, and `require` to use. Macros enable DSLs and code generation but should be used sparingly—prefer functions when possible.
