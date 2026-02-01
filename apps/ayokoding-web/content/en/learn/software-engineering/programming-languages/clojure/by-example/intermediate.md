@@ -267,21 +267,38 @@ stateDiagram-v2
 ```
 
 ```clojure
-(def counter (atom 0))
+(def counter (atom 0))               ;; => Creates atom wrapping initial value 0
+                                     ;; => Atom provides thread-safe mutable reference
 
-(println @counter)                           ;; => 0 (dereference with @)
-(swap! counter inc)                          ;; => 1 (atomically increment)
-(println @counter)                           ;; => 1
-(swap! counter + 5)                          ;; => 6 (swap! calls (+ counter 5))
-(println @counter)                           ;; => 6
-(reset! counter 0)                           ;; => Direct assignment
+(println @counter)                   ;; => Dereferences atom to get current value
+                                     ;; => Output: 0
+@counter                             ;; => Current value is 0
+(swap! counter inc)                  ;; => Applies inc function to current value atomically
+                                     ;; => 1 (atomically increments 0 to 1)
+(println @counter)                   ;; => Dereferences to verify state change
+                                     ;; => Output: 1
+@counter                             ;; => Current value is now 1
+(swap! counter + 5)                  ;; => Applies (+ current-value 5) atomically
+                                     ;; => 6 (atomically adds 5 to current value of 1)
+(println @counter)                   ;; => Dereferences to verify addition
+                                     ;; => Output: 6
+@counter                             ;; => Current value is now 6
+(reset! counter 0)                   ;; => Sets atom to exact value 0 (not function-based)
+                                     ;; => 0 (direct assignment, ignores previous value)
 
 ;; Atoms with complex state
 (def app-state (atom {:users [] :count 0}))
+                                     ;; => Creates atom wrapping map with two keys
+                                     ;; => Initial state: empty users vector, count 0
 
-(swap! app-state update :count inc)          ;; => {:users [], :count 1}
-(swap! app-state update :users conj {:name "Alice"}) ;; => {:users [{:name "Alice"}], :count 1}
-(println @app-state)                         ;; => {:users [{:name "Alice"}], :count 1}
+(swap! app-state update :count inc)  ;; => Atomically updates :count key using inc
+                                     ;; => {:users [], :count 1} (increments count 0 to 1)
+(swap! app-state update :users conj {:name "Alice"})
+                                     ;; => Atomically updates :users vector
+                                     ;; => Adds {:name "Alice"} to users collection
+                                     ;; => {:users [{:name "Alice"}], :count 1}
+(println @app-state)                 ;; => Dereferences to show final state
+                                     ;; => Output: {:users [{:name "Alice"}], :count 1}
 ```
 
 **Key Takeaway**: Atoms provide lock-free atomic updates for independent synchronous state changes.
@@ -526,36 +543,56 @@ sequenceDiagram
 
 ```clojure
 (require '[clojure.core.async :refer [go chan >! <! timeout]])
+                                     ;; => Imports core.async functions for async programming
+                                     ;; => go, chan, >!, <!, timeout are now available
 
-(def ch (chan))                              ;; => Create channel for communication
+(def ch (chan))                      ;; => Creates unbuffered channel
+                                     ;; => Channel for communicating between go blocks
 
-(go                                          ;; => Launch first go block (lightweight thread)
-  (println "Starting task...")               ;; => Output: Starting task...
-  (<! (timeout 1000))                        ;; => Park for 1000ms (thread released)
-                                             ;; => Main thread can do other work
-  (>! ch "Task complete")                    ;; => Put result on channel
-  (println "Task done"))                     ;; => Output: Task done (after 1000ms)
+(go                                  ;; => Launches first go block (asynchronous)
+                                     ;; => Returns channel immediately (non-blocking)
+  (println "Starting task...")       ;; => Executes immediately in go block
+                                     ;; => Output: Starting task...
+  (<! (timeout 1000))                ;; => Parks go block for 1000ms
+                                     ;; => Thread released back to pool during wait
+                                     ;; => After 1000ms, go block resumes
+  (>! ch "Task complete")            ;; => Puts string on channel
+                                     ;; => Parks if channel full (unbuffered)
+                                     ;; => Unblocks waiting receiver
+  (println "Task done"))             ;; => Executes after channel put completes
+                                     ;; => Output: Task done (after 1000ms delay)
 
-(go                                          ;; => Launch second go block
-  (println "Waiting for result...")          ;; => Output: Waiting for result...
-  (println "Result:" (<! ch)))               ;; => Take from channel (blocks/parks)
-                                             ;; => Waits for first go block to deliver result
-                                             ;; => Output: Result: Task complete
+(go                                  ;; => Launches second go block (asynchronous)
+                                     ;; => Runs concurrently with first go block
+  (println "Waiting for result...")  ;; => Executes immediately
+                                     ;; => Output: Waiting for result...
+  (println "Result:" (<! ch)))       ;; => Takes value from channel (parks until available)
+                                     ;; => Thread released during wait
+                                     ;; => When value available, resumes and prints
+                                     ;; => Output: Result: Task complete
 
 ;; Multiple parallel tasks function
-(defn async-task [id delay-ms]
-  (go                                        ;; => Return channel representing async task
-    (println "Task" id "starting")
-    (<! (timeout delay-ms))                  ;; => Park for delay-ms milliseconds
-    (println "Task" id "completed")
-    id))                                     ;; => Final value on channel
+(defn async-task [id delay-ms]       ;; => Defines function returning async computation
+  (go                                ;; => Returns channel (handle to async result)
+                                     ;; => Caller can take from channel to get result
+    (println "Task" id "starting")   ;; => Output: Task [id] starting (immediately)
+    (<! (timeout delay-ms))          ;; => Parks for delay-ms milliseconds
+                                     ;; => Thread released during timeout
+    (println "Task" id "completed")  ;; => Output: Task [id] completed (after delay)
+    id))                             ;; => Returns id as final value
+                                     ;; => Value delivered to channel
 
-(go                                          ;; => Coordinator go block
+(go                                  ;; => Coordinator go block for parallel execution
   (let [results (doall (map #(async-task % (* % 100)) (range 5)))]
-    ;; => Creates 5 async tasks with delays: 0ms, 100ms, 200ms, 300ms, 400ms
-    (doseq [result results]                  ;; => Iterate over 5 result channels
-      (println "Completed:" (<! result)))))  ;; => Take each result in sequence
-                                             ;; => Prints completion as each task finishes
+                                     ;; => Creates 5 async-task channels immediately
+                                     ;; => Task 0: 0ms delay, Task 1: 100ms, Task 2: 200ms, etc.
+                                     ;; => doall forces immediate channel creation (not lazy)
+                                     ;; => results is vector of 5 channels
+    (doseq [result results]          ;; => Iterates over 5 result channels sequentially
+      (println "Completed:" (<! result)))))
+                                     ;; => Takes from each channel in order
+                                     ;; => Parks until each task completes
+                                     ;; => Output: Completed: 0, Completed: 1, etc.
 ```
 
 **Key Takeaway**: go blocks enable lightweight async computation with automatic channel coordination.
@@ -723,40 +760,54 @@ graph TD
 Handle errors with try/catch and ex-info for custom exceptions.
 
 ```clojure
-(defn divide [a b]
-  (if (zero? b)
+(defn divide [a b]                           ;; => Defines function to divide a by b
+  (if (zero? b)                              ;; => Checks if divisor is zero
     (throw (ex-info "Division by zero" {:a a :b b}))
-    (/ a b)))
+                                             ;; => Throws exception with message and data map
+                                             ;; => ex-info creates ExceptionInfo with metadata
+    (/ a b)))                                ;; => Performs division if b is not zero
+                                             ;; => Returns result
+                                             ;; => #'user/divide
 
-(try
-  (divide 10 0)
-  (catch Exception e
-    (println "Error:" (.getMessage e))       ;; => Output: Error: Division by zero
-    (println "Data:" (ex-data e))))          ;; => Output: Data: {:a 10, :b 0}
+(try                                         ;; => try block wraps code that may throw
+  (divide 10 0)                              ;; => Calls divide with b=0
+                                             ;; => Throws exception from divide function
+  (catch Exception e                         ;; => Catches any Exception type
+                                             ;; => e is bound to caught exception
+    (println "Error:" (.getMessage e))       ;; => Extracts error message
+                                             ;; => Output: Error: Division by zero
+    (println "Data:" (ex-data e))))          ;; => Extracts attached data map
+                                             ;; => Output: Data: {:a 10, :b 0}
+                                             ;; => Returns nil
 
 ;; Multiple catch blocks
 (try
-  (Integer/parseInt "not-a-number")
-  (catch NumberFormatException e
-    (println "Invalid number"))              ;; => Output: Invalid number
+  (Integer/parseInt "not-a-number")          ;; => Attempts to parse invalid string
+                                             ;; => Throws NumberFormatException
+  (catch NumberFormatException e             ;; => Catches specific exception type first
+                                             ;; => More specific catches go first
+    (println "Invalid number"))              ;; => Handles number format errors
+                                             ;; => Output: Invalid number
                                              ;; => nil (this catch executed)
-  (catch Exception e                         ;; => Catch general exceptions (not reached)
+  (catch Exception e                         ;; => Catches general exceptions (fallback)
+                                             ;; => Not reached for NumberFormatException
     (println "Other error")))                ;; => Would handle other exception types
                                              ;; => nil
 
 ;; finally
 (try                                         ;; => try with finally block
-  (println "Opening resource")               ;; => Output: Opening resource
-                                             ;; => nil
-  (/ 1 0)                                    ;; => Division by zero
+  (println "Opening resource")               ;; => Executes in try block
+                                             ;; => Output: Opening resource
+  (/ 1 0)                                    ;; => Division by zero operation
                                              ;; => Throws ArithmeticException
-  (catch Exception e                         ;; => Catch exception
-    (println "Error occurred"))              ;; => Output: Error occurred
-                                             ;; => nil
-  (finally                                   ;; => finally ALWAYS executed (even with exception)
-    (println "Cleanup")))                    ;; => Output: Cleanup
-                                             ;; => nil (finally returns nil)
-                                             ;; => finally runs even if catch throws
+  (catch Exception e                         ;; => Catches the exception
+    (println "Error occurred"))              ;; => Executes error handling
+                                             ;; => Output: Error occurred
+  (finally                                   ;; => finally ALWAYS executes
+                                             ;; => Runs even if exception thrown or caught
+    (println "Cleanup")))                    ;; => Cleanup code guaranteed to run
+                                             ;; => Output: Cleanup
+                                             ;; => nil (entire try expression returns nil)
 ```
 
 **Key Takeaway**: ex-info attaches structured data to exceptions for rich error context.
@@ -1157,38 +1208,56 @@ sequenceDiagram
 
 ```clojure
 ;; Future for async computation
-(def result (future                          ;; => Create future (computation in thread pool)
-              (Thread/sleep 1000)            ;; => Simulates 1-second delay
-              (+ 1 2)))                      ;; => Returns 3
+(def result (future                          ;; => Creates future, runs computation in thread pool
+                                             ;; => Execution starts immediately in background thread
+              (Thread/sleep 1000)            ;; => Simulates 1-second delay (expensive operation)
+                                             ;; => Main thread continues, not blocked here
+              (+ 1 2)))                      ;; => Computes and returns 3
+                                             ;; => Future captures this value
+                                             ;; => #'user/result (var holds future object)
 
-(println "Computing...")                     ;; => Output immediately (computation in background)
-(println @result)                            ;; => Dereference blocks until ready (~1000ms)
-                                             ;; => Output: 3
-(println (realized? result))                 ;; => Check if future completed
+(println "Computing...")                     ;; => Executes immediately (main thread not blocked)
+                                             ;; => Output: Computing...
+(println @result)                            ;; => Dereferences future (blocks until ready)
+                                             ;; => Waits ~1000ms for computation to complete
+                                             ;; => Output: 3 (prints computed value)
+(println (realized? result))                 ;; => Checks if future computation completed
+                                             ;; => true (already dereferenced, so realized)
                                              ;; => Output: true
 
 ;; Promise for manual delivery
-(def p (promise))                            ;; => Create empty promise
+(def p (promise))                            ;; => Creates empty promise (placeholder for value)
+                                             ;; => No value yet, will be delivered later
+                                             ;; => #'user/p
 
-(future                                      ;; => Background thread
-  (Thread/sleep 1000)                        ;; => After 1 second delay
-  (deliver p "Async result"))                ;; => Deliver value to promise
+(future                                      ;; => Launches background thread
+  (Thread/sleep 1000)                        ;; => Waits 1 second in background thread
+                                             ;; => Main thread continues immediately
+  (deliver p "Async result"))                ;; => Delivers value to promise after delay
+                                             ;; => Promise becomes realized with this value
 
-(println "Waiting...")                       ;; => Output immediately
-(println @p)                                 ;; => Block until promised value delivered
+(println "Waiting...")                       ;; => Executes immediately (main thread)
+                                             ;; => Output: Waiting...
+(println @p)                                 ;; => Dereferences promise (blocks until delivered)
+                                             ;; => Waits ~1000ms for deliver to execute
                                              ;; => Output: Async result
 
 ;; Combining futures and promises for async patterns
-(defn async-add [a b]
-  (let [p (promise)]                         ;; => Create promise for result coordination
-    (future                                  ;; => Launch async computation
-      (Thread/sleep 500)                     ;; => Simulate work
-      (deliver p (+ a b)))                   ;; => Deliver result to promise
-    p))                                      ;; => Return promise immediately
+(defn async-add [a b]                        ;; => Defines async addition function
+  (let [p (promise)]                         ;; => Creates promise for result coordination
+                                             ;; => Promise used to communicate result
+    (future                                  ;; => Launches async computation in thread pool
+      (Thread/sleep 500)                     ;; => Simulates 500ms work delay
+      (deliver p (+ a b)))                   ;; => Computes sum and delivers to promise
+                                             ;; => (+ 10 20) = 30 delivered to p
+    p))                                      ;; => Returns promise immediately (not blocking)
+                                             ;; => Caller can deref when ready
+                                             ;; => #'user/async-add
 
-(println @(async-add 10 20))                 ;; => Call async-add (returns immediately)
-                                             ;; => Dereference blocks until result (~500ms)
-                                             ;; => Output: 30
+(println @(async-add 10 20))                 ;; => Calls async-add with args 10, 20
+                                             ;; => Function returns promise immediately
+                                             ;; => @ blocks until promise delivered (~500ms)
+                                             ;; => Output: 30 (prints sum)
 ```
 
 **Key Takeaway**: Futures enable fire-and-forget async; promises enable result coordination.

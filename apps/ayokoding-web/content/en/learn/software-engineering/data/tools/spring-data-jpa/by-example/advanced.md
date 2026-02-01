@@ -801,104 +801,162 @@ Handle case-insensitive searches and null-safe filtering.
 
 ```java
 public class ProductSpecifications {
+    // => Static utility class for reusable Specification factory methods
+
     public static Specification<Product> hasNameIgnoreCase(String name) {
+        // => Factory method for case-insensitive exact name match
+
         return (root, query, cb) -> {
-            // => Convert both sides to lowercase
+            // => Lambda implements Specification functional interface
+            // => root: query root (Product entity)
+            // => query: CriteriaQuery for additional configuration
+            // => cb: CriteriaBuilder for predicate construction
+
             return cb.equal(
                 cb.lower(root.get("name")),
+                // => LOWER(name) - converts database column to lowercase
+
                 name.toLowerCase()
+                // => Converts parameter to lowercase ("LAPTOP" → "laptop")
             );
-            // => WHERE LOWER(name) = LOWER(:name)
-            // => Case-insensitive exact match
+            // => WHERE LOWER(name) = 'laptop'
+            // => Case-insensitive exact match (matches "Laptop", "LAPTOP", "laptop")
         };
     }
 
     public static Specification<Product> nameContainsIgnoreCase(String keyword) {
+        // => Factory method for case-insensitive partial match
+
         return (root, query, cb) -> {
             String pattern = "%" + keyword.toLowerCase() + "%";
+            // => Builds LIKE pattern: "%lap%" for partial match
+            // => Wildcards % match any characters before/after
 
             return cb.like(
                 cb.lower(root.get("name")),
+                // => LOWER(name) for case-insensitive comparison
+
                 pattern
+                // => Pattern "%lap%" matches "Laptop", "Apple Laptop", "laptop case"
             );
-            // => WHERE LOWER(name) LIKE LOWER(:pattern)
+            // => WHERE LOWER(name) LIKE '%lap%'
             // => Case-insensitive partial match
         };
     }
 
     public static Specification<Product> hasNonNullDescription() {
+        // => Factory method for non-null description check
+
         return (root, query, cb) -> {
             return cb.isNotNull(root.get("description"));
             // => WHERE description IS NOT NULL
+            // => Excludes products with NULL description
         };
     }
 
     public static Specification<Product> hasNullOrEmptyDescription() {
+        // => Factory method for null or empty description check
+
         return (root, query, cb) -> {
             Predicate isNull = cb.isNull(root.get("description"));
-            // => description IS NULL
+            // => Predicate: description IS NULL
+            // => Matches products with NULL description field
 
             Predicate isEmpty = cb.equal(root.get("description"), "");
-            // => description = ''
+            // => Predicate: description = ''
+            // => Matches products with empty string description
 
             return cb.or(isNull, isEmpty);
             // => WHERE description IS NULL OR description = ''
+            // => Combines predicates with OR logic
         };
     }
 
     public static Specification<Product> hasDescriptionOrDefault() {
+        // => Factory method using COALESCE for null handling
+
         return (root, query, cb) -> {
-            // => Use COALESCE for null handling
             Expression<String> descriptionOrDefault = cb.coalesce()
+                // => COALESCE SQL function (returns first non-null value)
+
                 .value(root.get("description"))
+                // => First choice: actual description value
+
                 .value("No description")
+                // => Fallback: "No description" if first is NULL
+
                 .build();
             // => COALESCE(description, 'No description')
+            // => Returns description if not NULL, otherwise "No description"
 
             return cb.equal(descriptionOrDefault, "No description");
             // => WHERE COALESCE(description, 'No description') = 'No description'
-            // => Matches null or 'No description'
+            // => Matches products with NULL description OR description = "No description"
         };
     }
 }
 
 @Service
 public class ProductService {
+    // => Service layer using Specifications for case-insensitive search
+
     public List<Product> searchByNameFuzzy(String keyword) {
-        // => Case-insensitive search with null check
+        // => Null-safe case-insensitive fuzzy search
+
         Specification<Product> spec = (root, query, cb) -> {
+            // => Inline Specification (not extracted to static factory)
+
             if (keyword == null || keyword.trim().isEmpty()) {
-                return cb.conjunction(); // => Return all if no keyword
+                // => Guard clause: handles null or blank keyword input
+
+                return cb.conjunction();
+                // => Returns SQL TRUE predicate (matches all rows)
+                // => WHERE 1=1 (tautology - always true)
             }
 
             String pattern = "%" + keyword.trim().toLowerCase() + "%";
+            // => Builds case-insensitive LIKE pattern
+            // => Trims whitespace: "  laptop  " → "laptop"
+            // => Lowercases: "LAPTOP" → "laptop"
+            // => Adds wildcards: "laptop" → "%laptop%"
 
             return cb.like(
                 cb.lower(root.get("name")),
+                // => LOWER(name) for database column
+
                 pattern
+                // => "%laptop%" pattern for matching
             );
+            // => WHERE LOWER(name) LIKE '%laptop%'
         };
 
         return productRepository.findAll(spec);
-// => Executes SELECT * FROM table
-// => Loads ALL records into memory (dangerous for large tables)
-// => Returns List<Entity> (never null, empty list if no records)
+        // => Executes: SELECT * FROM products WHERE LOWER(name) LIKE '%laptop%'
+        // => Returns List<Product>[5 products] with "laptop" in name (case-insensitive)
+        // => Products are MANAGED (tracked by persistence context)
     }
 
     public List<Product> findProductsWithDescription() {
         // => Find products with non-empty description
+
         Specification<Product> spec = (root, query, cb) -> {
             Predicate notNull = cb.isNotNull(root.get("description"));
+            // => Predicate: description IS NOT NULL
+            // => Excludes NULL values
+
             Predicate notEmpty = cb.notEqual(root.get("description"), "");
+            // => Predicate: description != ''
+            // => Excludes empty strings
 
             return cb.and(notNull, notEmpty);
             // => WHERE description IS NOT NULL AND description != ''
+            // => Combines with AND logic (both conditions must be true)
         };
 
         return productRepository.findAll(spec);
-// => Executes SELECT * FROM table
-// => Loads ALL records into memory (dangerous for large tables)
-// => Returns List<Entity> (never null, empty list if no records)
+        // => Executes: SELECT * FROM products WHERE description IS NOT NULL AND description != ''
+        // => Returns List<Product>[30 products] with meaningful descriptions
+        // => Excludes 15 products with NULL description, 5 with empty string
     }
 }
 
@@ -1827,34 +1885,53 @@ graph TD
 ```java
 public interface ProductRepositoryCustom {
     List<Product> findWithNativeQuery(String category);
+    // => Custom query method declaration
+
     List<Map<String, Object>> getProductStatistics();
+    // => Aggregation method returning flexible structure
 }
 
 @Repository
 public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
+    // => Suffix "Impl" required for Spring Data auto-detection
+
     @PersistenceContext
     private EntityManager entityManager;
+    // => Injected by Spring (container-managed EntityManager)
 
     @Override
     public List<Product> findWithNativeQuery(String category) {
-        // => Native SQL query
+        // => Execute raw SQL with entity mapping
+
         String sql = "SELECT * FROM products WHERE category = :category " +
                     "AND price > (SELECT AVG(price) FROM products) " +
                     "ORDER BY price DESC";
+        // => Database-specific SQL (PostgreSQL/MySQL/H2 compatible)
+        // => Subquery calculates average price across all products
+        // => Named parameter :category for safe parameter binding
 
         Query nativeQuery = entityManager.createNativeQuery(sql, Product.class);
-        // => Second parameter maps result to Product entity
+        // => Creates Query from raw SQL string
+        // => Product.class maps result columns to entity fields
+        // => Result type: Query (not TypedQuery - native query limitation)
 
         nativeQuery.setParameter("category", category);
+        // => Binds "Electronics" to :category parameter
+        // => Prevents SQL injection through prepared statement
 
         return nativeQuery.getResultList();
-        // => Returns List<Product> populated from SQL result
+        // => Executes SQL: SELECT * FROM products WHERE category = 'Electronics' AND price > 499.99 ORDER BY price DESC
+        // => Hibernate maps result rows to Product entities (id, name, category, price)
+        // => Returns List<Product> with 3 products above average price
+        // => Entities are MANAGED (tracked by persistence context)
     }
 
     @Override
     @SuppressWarnings("unchecked")
+    // => Suppress warning for raw type cast (native query returns untyped List)
     public List<Map<String, Object>> getProductStatistics() {
-        // => Native query returning custom result structure
+        // => Execute aggregation query returning custom structure
+
         String sql = "SELECT category, " +
                     "COUNT(*) as product_count, " +
                     "AVG(price) as avg_price, " +
@@ -1863,37 +1940,68 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
                     "FROM products " +
                     "GROUP BY category " +
                     "ORDER BY product_count DESC";
+        // => Aggregation SQL with GROUP BY clause
+        // => Returns 5 columns: category (String), counts/prices (BigDecimal)
+        // => No entity mapping - custom projection
 
         Query nativeQuery = entityManager.createNativeQuery(sql);
-        // => No entity class: returns Object[]
+        // => No entity class specified (second parameter omitted)
+        // => Result type: Object[] array per row
 
         List<Object[]> results = nativeQuery.getResultList();
+        // => Executes SQL: SELECT category, COUNT(*), AVG(price), MIN(price), MAX(price) FROM products GROUP BY category
+        // => Returns List<Object[]> where each array has 5 elements
+        // => Example row: ["Electronics", 15L, 349.99, 99.99, 899.99]
 
-        // => Convert to Map for easier access
         return results.stream()
             .map(row -> {
+                // => Transform each Object[] to Map<String, Object>
+
                 Map<String, Object> map = new HashMap<>();
+                // => Flexible structure for JSON serialization
+
                 map.put("category", row[0]);
+                // => row[0] is String "Electronics"
+
                 map.put("productCount", ((Number) row[1]).longValue());
+                // => row[1] is COUNT(*) result (database-specific type: Long/BigInteger)
+                // => Cast to Number for type safety, then extract long value
+
                 map.put("avgPrice", row[2]);
+                // => row[2] is AVG(price) result (BigDecimal)
+
                 map.put("minPrice", row[3]);
+                // => row[3] is MIN(price) result (BigDecimal)
+
                 map.put("maxPrice", row[4]);
+                // => row[4] is MAX(price) result (BigDecimal)
+
                 return map;
+                // => Returns Map with typed keys for API response
             })
             .collect(Collectors.toList());
-        // => Returns List<Map<String, Object>>
+        // => Collects transformed maps into List<Map<String, Object>>
+        // => Example result: [{"category":"Electronics","productCount":15,"avgPrice":349.99,...}]
     }
 
     public void executeDatabaseSpecificOperation() {
-        // => PostgreSQL-specific JSON query
+        // => Demonstrate PostgreSQL-specific feature usage
+
         String sql = "UPDATE products SET metadata = " +
                     "jsonb_set(metadata, '{updated}', 'true') " +
                     "WHERE category = :category";
+        // => PostgreSQL JSONB function (not portable to MySQL/H2)
+        // => Sets metadata.updated = true for products in category
 
         entityManager.createNativeQuery(sql)
             .setParameter("category", "Electronics")
+            // => Binds category parameter
+
             .executeUpdate();
-        // => Database-specific features available
+        // => Executes UPDATE (not SELECT)
+        // => Returns int count of updated rows
+        // => Requires active transaction (@Transactional)
+        // => Changes flushed to database immediately
     }
 }
 
@@ -2010,25 +2118,43 @@ Combine multiple custom repository fragments for modular functionality.
 ```java
 // Fragment 1: Search functionality
 public interface ProductSearchFragment {
+    // => Custom fragment interface (modular functionality)
+
     List<Product> advancedSearch(ProductSearchCriteria criteria);
+    // => Search method declaration for dynamic query building
 }
 
 @Repository
 public class ProductSearchFragmentImpl implements ProductSearchFragment {
+    // => Implementation class (Spring Data auto-detects by "Impl" suffix)
+
     @PersistenceContext
     private EntityManager entityManager;
+    // => Container-managed EntityManager injected by Spring
 
     @Override
     public List<Product> advancedSearch(ProductSearchCriteria criteria) {
-        // => Complex search implementation
+        // => Build dynamic query based on search criteria
+
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        // => Factory for Criteria API components
+
         CriteriaQuery<Product> query = cb.createQuery(Product.class);
+        // => Type-safe query definition
+
         Root<Product> root = query.from(Product.class);
+        // => Query root (FROM Product p)
 
         List<Predicate> predicates = buildPredicates(cb, root, criteria);
+        // => Calls helper method to build WHERE clause predicates
+        // => Returns List<Predicate> with 3 conditions (name LIKE, price >, category =)
+
         query.where(predicates.toArray(new Predicate[0]));
+        // => Converts List to array and applies WHERE clause
+        // => Combines predicates with AND logic
 
         return entityManager.createQuery(query).getResultList();
+        // => Executes query and returns List<Product> (3 matching products)
     }
 
     private List<Predicate> buildPredicates(
@@ -2036,80 +2162,165 @@ public class ProductSearchFragmentImpl implements ProductSearchFragment {
         Root<Product> root,
         ProductSearchCriteria criteria
     ) {
-        // => Predicate building logic
+        // => Helper method to construct predicates dynamically
+
         List<Predicate> predicates = new ArrayList<>();
-        // ... add predicates based on criteria
+        // => Accumulates WHERE clause conditions
+
+        if (criteria.getName() != null) {
+            // => Null-safe check for optional criteria
+
+            predicates.add(cb.like(root.get("name"), "%" + criteria.getName() + "%"));
+            // => WHERE name LIKE '%laptop%' (case-sensitive)
+        }
+
+        if (criteria.getMinPrice() != null) {
+            predicates.add(cb.greaterThanOrEqualTo(root.get("price"), criteria.getMinPrice()));
+            // => WHERE price >= 100.00
+        }
+
+        if (criteria.getCategory() != null) {
+            predicates.add(cb.equal(root.get("category"), criteria.getCategory()));
+            // => WHERE category = 'Electronics'
+        }
+
         return predicates;
+        // => Returns 3 predicates to combine with AND
     }
 }
 
 // Fragment 2: Batch operations
 public interface ProductBatchFragment {
+    // => Second custom fragment for batch processing
+
     void batchInsert(List<Product> products);
+    // => Bulk insert method declaration
+
     void batchUpdate(List<Product> products);
+    // => Bulk update method declaration
 }
 
 @Repository
 public class ProductBatchFragmentImpl implements ProductBatchFragment {
+    // => Implementation for batch operations
+
     @PersistenceContext
     private EntityManager entityManager;
+    // => Container-managed EntityManager
 
     @Override
     @Transactional
+    // => Required for write operations
     public void batchInsert(List<Product> products) {
-        // => Batch insert implementation
+        // => Insert 1000 products in batches of 50
+
         int batchSize = 50;
+        // => Batch size (balance between memory usage and performance)
+
         for (int i = 0; i < products.size(); i++) {
+            // => Iterate through all products
+
             entityManager.persist(products.get(i));
+            // => Add entity to persistence context (TRANSIENT → MANAGED)
+            // => SQL not executed yet (waits for flush)
+
             if (i > 0 && i % batchSize == 0) {
+                // => Every 50 products, flush and clear
+
                 entityManager.flush();
-// => Forces immediate synchronization of persistence context to database
-// => Executes pending INSERT/UPDATE/DELETE statements
-// => Useful for triggering constraint violations early
+                // => Executes 50 pending INSERT statements
+                // => Synchronizes persistence context to database
+
                 entityManager.clear();
+                // => Clears persistence context (MANAGED → DETACHED for all 50 entities)
+                // => Prevents memory overflow for large batches
             }
         }
+
         entityManager.flush();
-// => Forces immediate synchronization of persistence context to database
-// => Executes pending INSERT/UPDATE/DELETE statements
-// => Useful for triggering constraint violations early
+        // => Final flush for remaining products (1000 % 50 = 0, so this flushes nothing here)
+
         entityManager.clear();
+        // => Final clear (detaches all remaining entities)
     }
 
     @Override
     @Transactional
     public void batchUpdate(List<Product> products) {
-        // => Batch update implementation
-        // ... similar to batchInsert
+        // => Batch update implementation (similar pattern to batchInsert)
+
+        int batchSize = 50;
+        for (int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
+            // => Get product from list
+
+            Product managed = entityManager.merge(product);
+            // => DETACHED → MANAGED (updates existing entity)
+            // => Dirty checking will generate UPDATE on flush
+
+            if (i > 0 && i % batchSize == 0) {
+                entityManager.flush();
+                // => Executes 50 UPDATE statements
+
+                entityManager.clear();
+                // => Clears persistence context
+            }
+        }
+
+        entityManager.flush();
+        entityManager.clear();
     }
 }
 
 // Fragment 3: Statistics
 public interface ProductStatisticsFragment {
+    // => Third custom fragment for aggregation queries
+
     Map<String, Object> getCategoryStatistics(String category);
+    // => Aggregation method returning flexible Map structure
 }
 
 @Repository
 public class ProductStatisticsFragmentImpl implements ProductStatisticsFragment {
+    // => Implementation for statistics queries
+
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
     public Map<String, Object> getCategoryStatistics(String category) {
-        // => Statistics query implementation
+        // => Execute aggregation query for category statistics
+
         String jpql = "SELECT COUNT(p), AVG(p.price), MIN(p.price), MAX(p.price) " +
                      "FROM Product p WHERE p.category = :category";
+        // => JPQL aggregation query (4 aggregate functions)
+        // => Result type: Object[] with 4 elements
 
         Object[] result = (Object[]) entityManager.createQuery(jpql)
             .setParameter("category", category)
+            // => Binds "Electronics" to :category parameter
+
             .getSingleResult();
+        // => Executes: SELECT COUNT(p), AVG(p.price), MIN(p.price), MAX(p.price) FROM products WHERE category = 'Electronics'
+        // => Returns Object[]: [15L, 349.99, 99.99, 899.99]
 
         Map<String, Object> stats = new HashMap<>();
+        // => Flexible structure for API response
+
         stats.put("count", result[0]);
+        // => COUNT(p) = 15 (Long)
+
         stats.put("avgPrice", result[1]);
+        // => AVG(p.price) = 349.99 (BigDecimal)
+
         stats.put("minPrice", result[2]);
+        // => MIN(p.price) = 99.99 (BigDecimal)
+
         stats.put("maxPrice", result[3]);
+        // => MAX(p.price) = 899.99 (BigDecimal)
+
         return stats;
+        // => Returns Map with 4 entries for JSON serialization
     }
 }
 
@@ -2118,34 +2329,43 @@ public interface ProductRepository extends JpaRepository<Product, Long>,
                                            ProductSearchFragment,
                                            ProductBatchFragment,
                                            ProductStatisticsFragment {
-    // => Combines standard Spring Data + all custom fragments
-    // => Single repository interface with modular functionality
+    // => Combines standard Spring Data repository + 3 custom fragments
+    // => Single interface provides all CRUD + custom methods
+    // => Spring Data auto-wires all implementations at runtime
 
     List<Product> findByCategory(String category);
-// => Spring derives SQL WHERE clause from method name
-// => Returns List<Entity> or Optional<Entity> based on return type
-    // => Standard derived queries still work
+    // => Standard derived query (Spring generates implementation)
+    // => WHERE category = :category
 }
 
 @Service
 public class ProductService {
+    // => Service layer using composed repository
+
     @Autowired
     private ProductRepository productRepository;
     // => Single repository with all capabilities
+    // => Provides: save/findAll/findById (JpaRepository)
+    // =>          + advancedSearch (ProductSearchFragment)
+    // =>          + batchInsert/batchUpdate (ProductBatchFragment)
+    // =>          + getCategoryStatistics (ProductStatisticsFragment)
 
     public List<Product> search(ProductSearchCriteria criteria) {
         return productRepository.advancedSearch(criteria);
-        // => From ProductSearchFragment
+        // => Calls ProductSearchFragmentImpl.advancedSearch()
+        // => Returns 3 products matching criteria
     }
 
     public void importProducts(List<Product> products) {
         productRepository.batchInsert(products);
-        // => From ProductBatchFragment
+        // => Calls ProductBatchFragmentImpl.batchInsert()
+        // => Inserts 1000 products in batches of 50
     }
 
     public Map<String, Object> getStats(String category) {
         return productRepository.getCategoryStatistics(category);
-        // => From ProductStatisticsFragment
+        // => Calls ProductStatisticsFragmentImpl.getCategoryStatistics()
+        // => Returns Map with count/avgPrice/minPrice/maxPrice
     }
 }
 
@@ -2920,49 +3140,79 @@ Use constructor-based DTO projections for better performance and type safety.
 ```java
 // DTO class with constructor
 public class ProductDTO {
+    // => Data Transfer Object (immutable, no JPA annotations)
+
     private final String name;
+    // => Final field (immutable after construction)
+
     private final BigDecimal price;
     private final String category;
 
-    // => Constructor matching query projection
     public ProductDTO(String name, BigDecimal price, String category) {
+        // => Constructor matching JPQL projection column order
+        // => Parameter order MUST match SELECT clause
+
         this.name = name;
+        // => Assigns constructor parameter to final field
+
         this.price = price;
         this.category = category;
     }
 
     // getters only (immutable DTO)
     public String getName() { return name; }
+    // => Read-only access (no setters for immutability)
+
     public BigDecimal getPrice() { return price; }
     public String getCategory() { return category; }
 }
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    // => Constructor expression in JPQL
+    // => Repository with constructor projection queries
+
     @Query("SELECT new com.example.ProductDTO(p.name, p.price, p.category) " +
            "FROM Product p WHERE p.active = true")
+    // => JPQL with constructor expression (new keyword required)
+    // => Fully qualified DTO class name (com.example.ProductDTO)
+    // => Constructor arguments match SELECT columns (name, price, category)
+
     List<ProductDTO> findActiveProductDTOs();
-    // => SELECT name, price, category FROM products WHERE active = true
-    // => Results directly instantiated as ProductDTO
-    // => No entity instantiation overhead
+    // => Executes: SELECT name, price, category FROM products WHERE active = true
+    // => Hibernate instantiates ProductDTO using constructor (no entity lifecycle)
+    // => Returns List<ProductDTO>[50 DTOs] - not tracked by persistence context
+    // => Memory efficient (only 3 fields loaded, not entire entity)
 
     @Query("SELECT new com.example.ProductDTO(p.name, p.price, p.category) " +
            "FROM Product p WHERE p.price >= :minPrice ORDER BY p.price DESC")
     List<ProductDTO> findProductDTOsAbovePrice(@Param("minPrice") BigDecimal minPrice);
+    // => Executes: SELECT name, price, category FROM products WHERE price >= 100.00 ORDER BY price DESC
+    // => Returns 15 ProductDTO instances (cheapest product excluded)
 
-    // => Constructor projection with joins
     @Query("SELECT new com.example.OrderDTO(o.id, o.orderDate, c.email, c.tier) " +
            "FROM Order o JOIN o.customer c WHERE o.status = :status")
+    // => Constructor projection with INNER JOIN
+    // => Accesses joined entity properties (c.email, c.tier)
+
     List<OrderDTO> findOrderDTOsByStatus(@Param("status") String status);
-    // => SELECT o.id, o.order_date, c.email, c.tier
-    //    FROM orders o JOIN customers c WHERE o.status = :status
+    // => Executes: SELECT o.id, o.order_date, c.email, c.tier FROM orders o
+    //              INNER JOIN customers c ON o.customer_id = c.id WHERE o.status = 'PENDING'
+    // => Returns 8 OrderDTO instances (only pending orders)
+    // => No lazy loading (DTO receives data immediately, no proxy objects)
 }
 
 // Complex DTO with aggregation
 public class CategoryStatisticsDTO {
+    // => DTO for aggregated statistics (reporting use case)
+
     private final String category;
+    // => Category name (GROUP BY key)
+
     private final Long productCount;
+    // => COUNT(p) result
+
     private final BigDecimal avgPrice;
+    // => AVG(p.price) result
+
     private final BigDecimal minPrice;
     private final BigDecimal maxPrice;
 
@@ -2973,46 +3223,87 @@ public class CategoryStatisticsDTO {
         BigDecimal minPrice,
         BigDecimal maxPrice
     ) {
+        // => Constructor receives aggregation results
+        // => Parameter order matches SELECT clause aggregate functions
+
         this.category = category;
+        // => "Electronics" (first row group)
+
         this.productCount = productCount;
+        // => 50L (count of electronics products)
+
         this.avgPrice = avgPrice;
+        // => 349.99 (average price)
+
         this.minPrice = minPrice;
+        // => 99.99 (cheapest electronics product)
+
         this.maxPrice = maxPrice;
+        // => 899.99 (most expensive electronics product)
     }
 
     // getters
+    public String getCategory() { return category; }
+    // => Read-only access for API serialization
+
+    public Long getProductCount() { return productCount; }
+    public BigDecimal getAvgPrice() { return avgPrice; }
+    public BigDecimal getMinPrice() { return minPrice; }
+    public BigDecimal getMaxPrice() { return maxPrice; }
 }
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT new com.example.CategoryStatisticsDTO(" +
            "p.category, COUNT(p), AVG(p.price), MIN(p.price), MAX(p.price)) " +
            "FROM Product p GROUP BY p.category")
+    // => Constructor expression with aggregate functions
+    // => GROUP BY creates one row per category
+    // => Constructor called once per group (3 categories = 3 DTO instances)
+
     List<CategoryStatisticsDTO> getCategoryStatistics();
-    // => Aggregation results directly as DTOs
+    // => Executes: SELECT category, COUNT(*), AVG(price), MIN(price), MAX(price)
+    //              FROM products GROUP BY category
+    // => Returns List<CategoryStatisticsDTO>[3 DTOs]:
+    //    - CategoryStatisticsDTO("Electronics", 50L, 349.99, 99.99, 899.99)
+    //    - CategoryStatisticsDTO("Clothing", 30L, 45.50, 15.99, 89.99)
+    //    - CategoryStatisticsDTO("Books", 25L, 12.75, 5.99, 29.99)
 }
 
 @Service
 public class ProductService {
+    // => Service layer using DTO projections
+
     @Autowired
     private ProductRepository productRepository;
+    // => Repository injected by Spring
 
     public List<ProductDTO> getActiveProductDTOs() {
-        // => Returns DTOs, not entities
+        // => Fetch active products as lightweight DTOs
+
         List<ProductDTO> dtos = productRepository.findActiveProductDTOs();
-        // => Lightweight, immutable, no persistence context overhead
+        // => Executes query and returns 50 ProductDTO instances
+        // => No persistence context overhead (DTOs are not entities)
+        // => Safe to serialize for API response (no lazy loading risk)
 
         for (ProductDTO dto : dtos) {
             System.out.println(dto.getName() + ": $" + dto.getPrice());
-            // => No risk of lazy loading exceptions
-            // => DTOs safe to pass across layers
+            // => Output: Laptop: $899.99
+            //           Smartphone: $599.99
+            //           ...
+            // => No LazyInitializationException possible (DTOs have all data)
+            // => DTOs safe to pass across transaction boundaries
         }
 
         return dtos;
+        // => Returns immutable DTOs to controller layer
+        // => No risk of accidental entity modification
     }
 
     public List<CategoryStatisticsDTO> getStatistics() {
         return productRepository.getCategoryStatistics();
-        // => Aggregated data as DTOs for reporting/analytics
+        // => Executes aggregation query
+        // => Returns 3 CategoryStatisticsDTO instances for dashboard display
+        // => Aggregated data already computed in database (not in Java)
     }
 }
 

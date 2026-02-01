@@ -627,41 +627,71 @@ SQLite has no dedicated BOOLEAN type. Use INTEGER with 0 (false) and 1 (true) by
 
 ```sql
 CREATE TABLE settings (
-    id INTEGER,
-    feature_name TEXT,
-    is_enabled INTEGER,       -- => 0 = false, 1 = true by convention
-    is_visible INTEGER
+    id INTEGER,                   -- => Settings identifier (unique per setting)
+    feature_name TEXT,            -- => Human-readable feature name
+    is_enabled INTEGER,           -- => 0 = false, 1 = true by convention
+                                   -- => Boolean flag controlling feature state
+    is_visible INTEGER            -- => 0 = hidden, 1 = visible in UI
+                                   -- => Boolean flag for UI rendering control
 );
+-- => Table structure defined for feature flags
+-- => No BOOLEAN type in SQLite, use INTEGER 0/1 pattern
 
 INSERT INTO settings (id, feature_name, is_enabled, is_visible)
 VALUES
-    (1, 'Dark Mode', 1, 1),
-    (2, 'Notifications', 0, 1),
-    (3, 'Beta Features', 1, 0);
+    (1, 'Dark Mode', 1, 1),       -- => id=1, enabled=true, visible=true
+    (2, 'Notifications', 0, 1),   -- => id=2, enabled=false, visible=true
+    (3, 'Beta Features', 1, 0);   -- => id=3, enabled=true, visible=false
+-- => 3 rows inserted with boolean states represented as 0/1
+-- => Table state: 3 feature flags with different combinations
 
 -- Filter by boolean values
 SELECT * FROM settings WHERE is_enabled = 1;
--- => Returns Dark Mode and Beta Features (enabled features)
+-- => WHERE is_enabled = 1 filters to "true" values only
+-- => Returns 2 rows: Dark Mode (id=1) and Beta Features (id=3)
+-- => Notifications (is_enabled=0) excluded from results
+-- => Output: id | feature_name | is_enabled | is_visible
 
 -- Logical operators produce 0 or 1
 SELECT
-    feature_name,
-    is_enabled,
-    is_visible,
-    is_enabled AND is_visible AS both_true,
-    is_enabled OR is_visible AS either_true,
-    NOT is_enabled AS inverted
+    feature_name,                 -- => Feature name for display
+    is_enabled,                   -- => Current enabled state (0 or 1)
+    is_visible,                   -- => Current visible state (0 or 1)
+    is_enabled AND is_visible AS both_true,  -- => 1 if both true, else 0
+                                              -- => Dark Mode: 1 AND 1 = 1
+                                              -- => Notifications: 0 AND 1 = 0
+                                              -- => Beta Features: 1 AND 0 = 0
+    is_enabled OR is_visible AS either_true, -- => 1 if either true, else 0
+                                              -- => Dark Mode: 1 OR 1 = 1
+                                              -- => Notifications: 0 OR 1 = 1
+                                              -- => Beta Features: 1 OR 0 = 1
+    NOT is_enabled AS inverted    -- => 1 if enabled=0, else 0
+                                   -- => Dark Mode: NOT 1 = 0
+                                   -- => Notifications: NOT 0 = 1
+                                   -- => Beta Features: NOT 1 = 0
 FROM settings;
+-- => Returns 3 rows with computed boolean columns
+-- => Output shows truthiness combinations for each setting
 -- => Dark Mode: both_true=1, either_true=1, inverted=0
 -- => Notifications: both_true=0, either_true=1, inverted=1
+-- => Beta Features: both_true=0, either_true=1, inverted=0
 
 -- Comparison operators produce 0 or 1
 SELECT
-    feature_name,
-    (is_enabled = 1) AS explicit_check,
-    (id > 2) AS id_comparison
+    feature_name,                 -- => Feature name column
+    (is_enabled = 1) AS explicit_check,  -- => Comparison returns 0 or 1
+                                          -- => Dark Mode: 1 = 1 → 1 (true)
+                                          -- => Notifications: 0 = 1 → 0 (false)
+                                          -- => Beta Features: 1 = 1 → 1 (true)
+    (id > 2) AS id_comparison     -- => Comparison operator result
+                                   -- => Dark Mode: 1 > 2 → 0 (false)
+                                   -- => Notifications: 2 > 2 → 0 (false)
+                                   -- => Beta Features: 3 > 2 → 1 (true)
 FROM settings;
+-- => Returns 3 rows with boolean comparison results
 -- => Dark Mode: explicit_check=1, id_comparison=0
+-- => Notifications: explicit_check=0, id_comparison=0
+-- => Beta Features: explicit_check=1, id_comparison=1
 ```
 
 **Key Takeaway**: Use INTEGER with 0/1 values to represent boolean data. Logical operators (AND, OR, NOT) and comparisons produce 0 (false) or 1 (true). This convention is portable to other SQL databases.

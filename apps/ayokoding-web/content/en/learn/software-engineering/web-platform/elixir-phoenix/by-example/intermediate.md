@@ -1044,64 +1044,81 @@ end
 Securely hash passwords before storing. Implement password reset with time-limited tokens.
 
 ```elixir
-defmodule MyApp.Accounts.User do
+defmodule MyApp.Accounts.User do          # => User schema with security fields
   schema "users" do
-    field :email, :string
-    field :password, :string, virtual: true  # => Not stored
-    field :password_hash, :string            # => Stored in DB
-    field :password_reset_token, :string
-    field :password_reset_at, :utc_datetime
-    timestamps()
+    field :email, :string                  # => User's email address
+    field :password, :string, virtual: true  # => Not stored in DB (virtual)
+                                            # => Only exists in changeset
+    field :password_hash, :string          # => Bcrypt hashed password (stored)
+    field :password_reset_token, :string   # => Random token for reset link
+    field :password_reset_at, :utc_datetime # => Token creation time
+    timestamps()                            # => inserted_at, updated_at
   end
 
-  def registration_changeset(user, attrs) do
+  def registration_changeset(user, attrs) do  # => Validates new user
     user
-    |> cast(attrs, [:email, :password])
-    |> validate_required([:email, :password])
-    |> unique_constraint(:email)
-    |> put_password_hash()  # => Hash password
+    |> cast(attrs, [:email, :password])     # => Extract email, password
+    |> validate_required([:email, :password])  # => Both required
+    |> unique_constraint(:email)            # => Email must be unique
+    |> put_password_hash()                  # => Hash password before save
   end
 
-  defp put_password_hash(changeset) do
+  defp put_password_hash(changeset) do      # => Hashes password if valid
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{password: password}} ->
+                                            # => Only hash if changeset valid
+                                            # => Extract password from changes
         put_change(changeset, :password_hash, Bcrypt.hash_pwd_salt(password))
+                                            # => Bcrypt.hash_pwd_salt generates hash
+                                            # => Adds :password_hash to changeset
 
-      changeset ->
-        changeset
+      changeset ->                          # => Invalid changeset
+        changeset                           # => Return unchanged
     end
   end
 
-  def password_reset_changeset(user) do
+  def password_reset_changeset(user) do     # => Creates reset token
     token = :crypto.strong_rand_bytes(32) |> Base.encode64()
+                                            # => Generates 32 random bytes
+                                            # => Encodes to base64 string
+                                            # => token is "abc123..." (44 chars)
 
     user
     |> change(%{password_reset_token: token, password_reset_at: DateTime.utc_now()})
+                                            # => Sets token and timestamp
+                                            # => Returns changeset
   end
 end
 
 # Password reset flow
 def reset_password_request(conn, %{"email" => email}) do
+                                            # => User requests password reset
   case MyApp.Accounts.get_user_by_email(email) do
-    user ->
+                                            # => Look up user by email
+    user ->                                 # => User exists
       {:ok, user} = MyApp.Accounts.generate_password_reset_token(user)
-      # Send email with reset token
-      send_reset_email(user)
-      {:ok, conn}
+                                            # => Create reset token
+      send_reset_email(user)                # => Send email with token link
+                                            # => Email contains reset URL
+      {:ok, conn}                           # => Always return success
 
-    nil ->
-      {:ok, conn}  # => Don't reveal if email exists
+    nil ->                                  # => User not found
+      {:ok, conn}                           # => Return success anyway
+                                            # => Don't reveal if email exists (security)
   end
 end
 
 def reset_password(conn, %{"token" => token, "password" => password}) do
+                                            # => User submits new password
   case MyApp.Accounts.get_user_by_reset_token(token) do
-    {:ok, user} ->
+                                            # => Verify token valid
+    {:ok, user} ->                          # => Token valid, user found
       MyApp.Accounts.update_password(user, %{password: password})
-      {:ok, conn}
+                                            # => Hash and save new password
+      {:ok, conn}                           # => Password updated
 
-    {:error, :expired} ->
-      {:error, "Reset token expired"}
+    {:error, :expired} ->                   # => Token expired (>24 hours old)
+      {:error, "Reset token expired"}       # => Return error message
   end
 end
 ```
@@ -1115,46 +1132,53 @@ end
 Restrict actions based on user roles. Use plugs for authorization checks.
 
 ```elixir
-defmodule MyAppWeb.Plugs.RequireRole do
-  def init(opts) do
-    Keyword.fetch!(opts, :role)
+defmodule MyAppWeb.Plugs.RequireRole do  # => Authorization plug
+  def init(opts) do                      # => Compile-time initialization
+    Keyword.fetch!(opts, :role)          # => Extract required role
+                                         # => role is :admin, :moderator, etc.
   end
 
-  def call(conn, role) do
+  def call(conn, role) do                # => Runtime authorization check
     if has_role?(conn.assigns.current_user, role) do
-      conn
+                                         # => Check user has required role
+      conn                               # => User authorized, continue
     else
       conn
-      |> put_flash(:error, "Not authorized")
-      |> redirect(to: ~p"/")
-      |> halt()
+      |> put_flash(:error, "Not authorized")  # => Set error message
+      |> redirect(to: ~p"/")             # => Redirect to home
+      |> halt()                          # => Stop pipeline execution
+                                         # => Prevents controller action
     end
   end
 
   defp has_role?(%{role: user_role}, required_role) do
+                                         # => Compare user role with requirement
     user_role == required_role or user_role == :admin
+                                         # => Exact match OR admin (admin has all access)
   end
 end
 
 # In router
-scope "/admin", MyAppWeb.Admin do
-  pipe_through :browser
-  pipe_through :require_login
+scope "/admin", MyAppWeb.Admin do       # => Admin-only routes
+  pipe_through :browser                  # => Standard browser pipeline
+  pipe_through :require_login            # => Must be logged in
 
-  pipe MyAppWeb.Plugs.RequireRole, role: :admin  # => Only admins
+  pipe MyAppWeb.Plugs.RequireRole, role: :admin  # => Only admins allowed
+                                         # => Checks user.role == :admin
 
-  resources "/users", UserController
-  resources "/settings", SettingController
+  resources "/users", UserController     # => User management routes
+  resources "/settings", SettingController  # => Settings routes
 end
 
 # Or check in controller
-def delete(conn, %{"id" => id}) do
+def delete(conn, %{"id" => id}) do       # => Delete action with auth
   if can_delete?(conn.assigns.current_user, id) do
-    # Delete logic
+                                         # => Check user can delete this resource
+    # Delete logic                       # => Perform deletion
   else
     conn
-    |> put_flash(:error, "Not authorized")
-    |> redirect(to: ~p"/")
+    |> put_flash(:error, "Not authorized")  # => Set error message
+    |> redirect(to: ~p"/")               # => Redirect home
   end
 end
 ```
@@ -1283,64 +1307,80 @@ sequenceDiagram
 
 ```elixir
 # config/config.exs
-config :ueberauth, Ueberauth,
-  providers: [
+config :ueberauth, Ueberauth,           # => Ueberauth configuration
+  providers: [                           # => OAuth providers list
     google: {Ueberauth.Strategy.Google, [default_scope: "email profile"]},
+                                         # => Google OAuth with email, profile scopes
     github: {Ueberauth.Strategy.Github, [default_scope: "user email"]}
+                                         # => GitHub OAuth with user, email scopes
   ]
 
 config :ueberauth, Ueberauth.Strategy.Google.OAuth,
+                                         # => Google OAuth credentials
   client_id: System.get_env("GOOGLE_CLIENT_ID"),
+                                         # => From environment variable
   client_secret: System.get_env("GOOGLE_CLIENT_SECRET")
+                                         # => Secret key from Google Console
 
 # Router
-scope "/auth", MyAppWeb do
-  pipe_through :browser
+scope "/auth", MyAppWeb do              # => OAuth routes
+  pipe_through :browser                  # => Browser pipeline
 
   get "/:provider", AuthController, :request
+                                         # => Start OAuth flow (e.g., /auth/google)
   get "/:provider/callback", AuthController, :callback
+                                         # => OAuth callback endpoint
 end
 
 # Controller
-defmodule MyAppWeb.AuthController do
-  use MyAppWeb, :controller
-  alias MyApp.Accounts
+defmodule MyAppWeb.AuthController do    # => Handles OAuth flow
+  use MyAppWeb, :controller              # => Phoenix controller
+  alias MyApp.Accounts                   # => User accounts context
 
-  def request(conn, _params) do
+  def request(conn, _params) do          # => OAuth initiation
     render(conn, "request.html", callback_url: Routes.auth_url(conn, :callback, :google))
+                                         # => Renders OAuth consent redirect
   end
 
   def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
+                                         # => OAuth provider callback
+                                         # => auth contains user info from provider
     case Accounts.find_or_create_user(auth) do
-      {:ok, user} ->
+                                         # => Find existing or create new user
+      {:ok, user} ->                     # => User created/found
         conn
-        |> put_session(:user_id, user.id)
-        |> redirect(to: ~p"/dashboard")
+        |> put_session(:user_id, user.id)  # => Log user in
+        |> redirect(to: ~p"/dashboard")  # => Redirect to dashboard
 
-      {:error, _} ->
+      {:error, _} ->                     # => User creation failed
         conn
-        |> put_flash(:error, "OAuth login failed")
-        |> redirect(to: ~p"/")
+        |> put_flash(:error, "OAuth login failed")  # => Error message
+        |> redirect(to: ~p"/")           # => Redirect home
     end
   end
 
-  def callback(conn, _params) do
+  def callback(conn, _params) do         # => OAuth failure callback
     conn
-    |> put_flash(:error, "OAuth failed")
-    |> redirect(to: ~p"/")
+    |> put_flash(:error, "OAuth failed")  # => Generic error
+    |> redirect(to: ~p"/")               # => Redirect home
   end
 end
 
 # Find or create user from OAuth info
-def find_or_create_user(auth) do
+def find_or_create_user(auth) do        # => Handles OAuth user
+                                         # => auth.provider is "google" or "github"
+                                         # => auth.uid is provider's user ID
   case get_user_by_provider(auth.provider, auth.uid) do
-    user = %User{} ->
-      {:ok, user}
+                                         # => Look up by provider + UID
+    user = %User{} ->                    # => User already exists
+      {:ok, user}                        # => Return existing user
 
-    nil ->
+    nil ->                               # => New user
       %User{}
-      |> User.oauth_changeset(auth)
-      |> Repo.insert()
+      |> User.oauth_changeset(auth)      # => Create changeset from OAuth data
+                                         # => Extracts email, name, avatar
+      |> Repo.insert()                   # => Insert into database
+                                         # => Returns {:ok, user} or {:error, changeset}
   end
 end
 ```
@@ -1356,45 +1396,64 @@ end
 Test controller actions, responses, status codes, and flash messages.
 
 ```elixir
-defmodule MyAppWeb.PostControllerTest do
-  use MyAppWeb.ConnCase
+defmodule MyAppWeb.PostControllerTest do  # => Controller test module
+  use MyAppWeb.ConnCase                   # => Imports test helpers
+                                          # => Provides conn fixture
+                                          # => Sets up test database
 
-  describe "GET /posts" do
-    test "lists all posts", %{conn: conn} do
-      post = insert(:post)
+  describe "GET /posts" do                # => Group tests for index action
+    test "lists all posts", %{conn: conn} do  # => Test index page
+      post = insert(:post)                # => Create test post in DB
+                                          # => Uses factory or fixture
 
       response = get(conn, ~p"/posts") |> html_response(200)
-      assert response =~ post.title
+                                          # => GET /posts
+                                          # => Expects 200 OK status
+                                          # => response is HTML string
+      assert response =~ post.title       # => Verify post title in HTML
     end
   end
 
-  describe "POST /posts" do
+  describe "POST /posts" do               # => Group tests for create action
     test "creates post and redirects", %{conn: conn} do
+                                          # => Test successful creation
       post_params = %{title: "Hello", body: "World"}
+                                          # => Valid post parameters
 
       conn = post(conn, ~p"/posts", post: post_params)
+                                          # => POST /posts with params
+                                          # => conn now has response
 
       assert redirected_to(conn) == ~p"/posts/1"
+                                          # => Expects redirect to show page
       assert has_flash?(conn, :info, "Post created!")
+                                          # => Expects success flash message
     end
 
     test "renders errors on invalid params", %{conn: conn} do
+                                          # => Test validation errors
       conn = post(conn, ~p"/posts", post: %{title: ""})
+                                          # => POST with empty title (invalid)
 
       assert html_response(conn, 200) =~ "can't be blank"
+                                          # => Expects 200 with form re-render
+                                          # => Expects validation error message
     end
   end
 
-  describe "authenticated routes" do
-    setup %{conn: conn} do
-      user = insert(:user)
+  describe "authenticated routes" do      # => Group tests requiring auth
+    setup %{conn: conn} do                # => Runs before each test
+      user = insert(:user)                # => Create test user
       conn = conn |> assign(:current_user, user)
-      {:ok, conn: conn}
+                                          # => Add user to conn.assigns
+      {:ok, conn: conn}                   # => Return updated conn
     end
 
     test "requires authentication", %{conn: conn} do
-      conn = delete(conn, ~p"/logout")
-      assert redirected_to(conn) == ~p"/"
+                                          # => Test auth requirement
+                                          # => conn.assigns.current_user is set
+      conn = delete(conn, ~p"/logout")    # => DELETE /logout
+      assert redirected_to(conn) == ~p"/"  # => Expects redirect to home
     end
   end
 end
@@ -1409,40 +1468,56 @@ end
 Test LiveView mount, render, and event handling.
 
 ```elixir
-defmodule MyAppWeb.CounterLiveTest do
-  use MyAppWeb.ConnCase
-  import Phoenix.LiveViewTest
+defmodule MyAppWeb.CounterLiveTest do   # => LiveView test module
+  use MyAppWeb.ConnCase                  # => Imports test helpers
+  import Phoenix.LiveViewTest            # => LiveView testing functions
 
   test "mount and render counter", %{conn: conn} do
+                                         # => Test initial mount
     {:ok, _live, html} = live(conn, "/counter")
-    assert html =~ "Count: 0"
+                                         # => Mounts LiveView at /counter
+                                         # => Returns {:ok, live_view, initial_html}
+    assert html =~ "Count: 0"            # => Initial count is 0
   end
 
-  test "increment event", %{conn: conn} do
+  test "increment event", %{conn: conn} do  # => Test click event
     {:ok, live, _html} = live(conn, "/counter")
+                                         # => Mount counter LiveView
 
-    assert live
-           |> element("button", "+")
+    assert live                          # => Start assertion chain
+           |> element("button", "+")     # => Find button with "+" text
            |> render_click() =~ "Count: 1"
+                                         # => Click button
+                                         # => Returns updated HTML
+                                         # => Verify count incremented to 1
   end
 
   test "decrement multiple times", %{conn: conn} do
+                                         # => Test multiple events
     {:ok, live, _html} = live(conn, "/counter")
+                                         # => Mount counter
 
     assert live
-           |> element("button", "-")
-           |> render_click()
-           |> render() =~ "Count: -1"
+           |> element("button", "-")     # => Find decrement button
+           |> render_click()             # => Click (count: -1)
+           |> render() =~ "Count: -1"    # => Render after click
+                                         # => Verify count is -1
   end
 
-  test "form submission", %{conn: conn} do
+  test "form submission", %{conn: conn} do  # => Test form handling
     {:ok, live, _html} = live(conn, "/posts/new")
+                                         # => Mount new post form
 
     assert live
            |> form("form", post: %{title: "Test", body: "Content"})
-           |> render_submit()
+                                         # => Find form element
+                                         # => Fill with post data
+           |> render_submit()            # => Submit form
+                                         # => Triggers phx-submit event
 
     assert has_element?(live, "h1", "Test")
+                                         # => Verify h1 with "Test" exists
+                                         # => Confirms post created
   end
 end
 ```
@@ -1457,53 +1532,66 @@ Use factories to generate consistent test data without repetition.
 
 ```elixir
 # test/support/factory.ex
-defmodule MyApp.Factory do
-  use ExMachina.Ecto, repo: MyApp.Repo
+defmodule MyApp.Factory do              # => Test data factory
+  use ExMachina.Ecto, repo: MyApp.Repo  # => Enables Ecto factories
+                                        # => Provides insert, build functions
 
-  def user_factory do
+  def user_factory do                   # => User factory definition
     %MyApp.Accounts.User{
       email: sequence(:email, &"user#{&1}@example.com"),
-      password: "password123",
+                                        # => Unique email per user
+                                        # => "user1@...", "user2@...", etc.
+      password: "password123",          # => Virtual password field
       password_hash: Bcrypt.hash_pwd_salt("password123")
+                                        # => Pre-hashed password
     }
   end
 
-  def post_factory do
+  def post_factory do                   # => Post factory definition
     %MyApp.Blog.Post{
-      title: "Test Post",
-      body: "Test body",
-      user: build(:user)
+      title: "Test Post",               # => Default title
+      body: "Test body",                # => Default body
+      user: build(:user)                # => Associated user (not inserted)
+                                        # => Creates user struct in memory
     }
   end
 
-  def comment_factory do
+  def comment_factory do                # => Comment factory definition
     %MyApp.Blog.Comment{
-      body: "Great post!",
-      post: build(:post),
-      user: build(:user)
+      body: "Great post!",              # => Default comment text
+      post: build(:post),               # => Associated post
+      user: build(:user)                # => Associated user
     }
   end
 end
 
 # In test
 defmodule MyAppWeb.PostControllerTest do
-  use MyAppWeb.ConnCase
+  use MyAppWeb.ConnCase                 # => Test case setup
 
-  setup do
-    user = insert(:user)
-    post = insert(:post, user: user)
-    {:ok, post: post, user: user}
+  setup do                              # => Runs before each test
+    user = insert(:user)                # => Create user in DB
+                                        # => Uses user_factory
+    post = insert(:post, user: user)    # => Create post in DB
+                                        # => Override user association
+    {:ok, post: post, user: user}       # => Return to test context
   end
 
   test "shows post", %{conn: conn, post: post} do
+                                        # => Test show action
+                                        # => post from setup
     conn = get(conn, ~p"/posts/#{post.id}")
+                                        # => GET /posts/1
     assert html_response(conn, 200) =~ post.title
+                                        # => Verify post title in response
   end
 
   test "creates multiple posts", %{conn: conn} do
-    insert_list(5, :post)
-    posts = MyApp.Repo.all(Post)
-    assert length(posts) == 5
+                                        # => Test bulk creation
+    insert_list(5, :post)               # => Create 5 posts in DB
+                                        # => Each uses post_factory
+    posts = MyApp.Repo.all(Post)        # => Fetch all posts
+    assert length(posts) == 5           # => Verify 5 posts created
   end
 end
 ```
@@ -1518,50 +1606,64 @@ Mock external API calls in tests using Mox library.
 
 ```elixir
 # lib/my_app/payment_api.ex
-defmodule MyApp.PaymentAPI do
+defmodule MyApp.PaymentAPI do           # => Payment API behavior
   @callback charge(amount: integer, customer_id: string) :: {:ok, map} | {:error, term}
+                                        # => Defines charge function contract
 end
 
-defmodule MyApp.PaymentAPI.Stripe do
-  @behaviour MyApp.PaymentAPI
+defmodule MyApp.PaymentAPI.Stripe do    # => Real Stripe implementation
+  @behaviour MyApp.PaymentAPI           # => Implements PaymentAPI behavior
 
   def charge(amount: amount, customer_id: customer_id) do
-    # Real Stripe API call
+                                        # => Real Stripe API call
+    # Real Stripe API call              # => Makes HTTP request to Stripe
     {:ok, %{id: "ch_123", amount: amount}}
+                                        # => Returns charge result
   end
 end
 
 # config/test.exs
 config :my_app, payment_api: MyApp.PaymentAPI.Mock
+                                        # => Use mock in test environment
+                                        # => Real implementation in production
 
 # test/support/mocks.ex
 Mox.defmock(MyApp.PaymentAPI.Mock, for: MyApp.PaymentAPI)
+                                        # => Creates mock module
+                                        # => Implements PaymentAPI behavior
+                                        # => Used for testing
 
 # In test
 defmodule MyAppWeb.OrderControllerTest do
-  use MyAppWeb.ConnCase
-  import Mox
+  use MyAppWeb.ConnCase                 # => Test setup
+  import Mox                             # => Import Mox functions
 
-  setup :verify_on_exit!
+  setup :verify_on_exit!                # => Verify expectations after each test
+                                        # => Fails if expected calls didn't happen
 
   test "processes payment on order", %{conn: conn} do
-    # Expect charge to be called with these args
+                                        # => Test successful payment
     expect(MyApp.PaymentAPI.Mock, :charge, fn %{amount: 1000} ->
-      {:ok, %{id: "ch_123"}}
-    end)
+                                        # => Expect charge called with amount: 1000
+      {:ok, %{id: "ch_123"}}            # => Return success response
+    end)                                # => Test fails if not called
 
     conn = post(conn, ~p"/orders", order: %{amount: 1000})
-    assert html_response(conn, 302)  # Redirect on success
+                                        # => POST order (triggers charge call)
+    assert html_response(conn, 302)     # => Redirect on success
   end
 
   test "handles payment failure", %{conn: conn} do
-    # Mock payment failure
+                                        # => Test payment failure
     stub(MyApp.PaymentAPI.Mock, :charge, fn _ ->
-      {:error, "Card declined"}
+                                        # => Stub allows any number of calls
+      {:error, "Card declined"}         # => Return error response
     end)
 
     conn = post(conn, ~p"/orders", order: %{amount: 1000})
+                                        # => POST order (payment fails)
     assert html_response(conn, 200) =~ "Payment failed"
+                                        # => Renders error message
   end
 end
 ```
@@ -1654,46 +1756,53 @@ graph TD
 
 ```elixir
 # URL versioning (recommended for simplicity)
-defmodule MyAppWeb.Router do
+defmodule MyAppWeb.Router do            # => Router with versioned scopes
   scope "/api/v1", MyAppWeb.API.V1, as: :v1_api do
-    pipe_through :api
-    resources "/posts", PostController                # => V1 endpoints
+                                        # => V1 routes under /api/v1
+                                        # => Uses MyAppWeb.API.V1 controllers
+    pipe_through :api                   # => API pipeline
+    resources "/posts", PostController  # => V1 endpoints
+                                        # => GET /api/v1/posts/:id routes here
   end
 
   scope "/api/v2", MyAppWeb.API.V2, as: :v2_api do
-    pipe_through :api
-    resources "/posts", PostController                # => V2 endpoints
+                                        # => V2 routes under /api/v2
+    pipe_through :api                   # => API pipeline
+    resources "/posts", PostController  # => V2 endpoints
+                                        # => GET /api/v2/posts/:id routes here
   end
 end
 
 # V1 Controller
 defmodule MyAppWeb.API.V1.PostController do
-  use MyAppWeb, :controller
+                                        # => V1 controller implementation
+  use MyAppWeb, :controller             # => Phoenix controller
 
-  def show(conn, %{"id" => id}) do
-    post = MyApp.Blog.get_post!(id)
+  def show(conn, %{"id" => id}) do      # => GET /api/v1/posts/:id
+    post = MyApp.Blog.get_post!(id)     # => Fetch post from DB
     json(conn, %{
-      id: post.id,                                    # => V1 response format
-      title: post.title,
-      body: post.body
+      id: post.id,                      # => V1 response format (flat)
+      title: post.title,                # => Direct field mapping
+      body: post.body                   # => Complete body
     })
   end
 end
 
 # V2 Controller - different response shape
 defmodule MyAppWeb.API.V2.PostController do
-  use MyAppWeb, :controller
+                                        # => V2 controller with new format
+  use MyAppWeb, :controller             # => Phoenix controller
 
-  def show(conn, %{"id" => id}) do
-    post = MyApp.Blog.get_post!(id)
+  def show(conn, %{"id" => id}) do      # => GET /api/v2/posts/:id
+    post = MyApp.Blog.get_post!(id)     # => Fetch post from DB
     json(conn, %{
-      data: %{                                        # => V2 wraps in data
-        type: "post",                                 # => JSON:API style
-        id: to_string(post.id),                       # => String ID
-        attributes: %{
-          title: post.title,
-          body: post.body,
-          created_at: post.inserted_at              # => Different field name
+      data: %{                          # => V2 wraps in data envelope
+        type: "post",                   # => JSON:API style resource type
+        id: to_string(post.id),         # => String ID (V1 used integer)
+        attributes: %{                  # => Attributes nested
+          title: post.title,            # => Title field
+          body: post.body,              # => Body field
+          created_at: post.inserted_at  # => Different field name (was inserted_at)
         }
       }
     })
@@ -1701,26 +1810,28 @@ defmodule MyAppWeb.API.V2.PostController do
 end
 
 # Header-based versioning (alternative)
-defmodule MyAppWeb.Plugs.APIVersion do
-  def init(opts), do: opts
+defmodule MyAppWeb.Plugs.APIVersion do  # => Plug for header versioning
+  def init(opts), do: opts              # => Compile-time init
 
-  def call(conn, _opts) do
+  def call(conn, _opts) do              # => Runtime version detection
     version = case get_req_header(conn, "accept") do
-      ["application/vnd.myapp.v2+json"] -> :v2      # => Client requests V2
-      _ -> :v1                                      # => Default to V1
+                                        # => Check Accept header
+      ["application/vnd.myapp.v2+json"] -> :v2
+                                        # => Client requests V2
+      _ -> :v1                          # => Default to V1 if not specified
     end
 
-    assign(conn, :api_version, version)             # => Store version
+    assign(conn, :api_version, version) # => Store version in conn.assigns
   end
 end
 
 # Use version in controller
-def show(conn, %{"id" => id}) do
-  post = MyApp.Blog.get_post!(id)
+def show(conn, %{"id" => id}) do        # => Single controller handling both
+  post = MyApp.Blog.get_post!(id)       # => Fetch post
 
-  case conn.assigns.api_version do                  # => Check version
-    :v1 -> render_v1(conn, post)
-    :v2 -> render_v2(conn, post)
+  case conn.assigns.api_version do      # => Check detected version
+    :v1 -> render_v1(conn, post)        # => Render V1 format
+    :v2 -> render_v2(conn, post)        # => Render V2 format
   end
 end
 ```
@@ -1735,97 +1846,109 @@ Implement per-user rate limiting for API endpoints. Track usage by API key.
 
 ```elixir
 # Generate API keys for users
-defmodule MyApp.Accounts.User do
+defmodule MyApp.Accounts.User do        # => User schema with API fields
   schema "users" do
-    field :email, :string
-    field :api_key, :string                           # => Unique API key
-    field :api_requests_count, :integer, default: 0   # => Request counter
-    field :api_reset_at, :utc_datetime                # => Reset time
-    timestamps()
+    field :email, :string                # => User email
+    field :api_key, :string              # => Unique API key
+    field :api_requests_count, :integer, default: 0
+                                         # => Request counter (resets hourly)
+    field :api_reset_at, :utc_datetime   # => When counter resets
+    timestamps()                         # => inserted_at, updated_at
   end
 
-  def generate_api_key do
-    :crypto.strong_rand_bytes(32) |> Base.encode64()  # => 32-byte random key
+  def generate_api_key do                # => Creates random API key
+    :crypto.strong_rand_bytes(32) |> Base.encode64()
+                                         # => 32-byte random key
+                                         # => Base64 encoded (44 chars)
   end
 end
 
 # Plug to check API key and rate limit
-defmodule MyAppWeb.Plugs.APIAuth do
-  import Plug.Conn
-  alias MyApp.Accounts
+defmodule MyAppWeb.Plugs.APIAuth do     # => API authentication plug
+  import Plug.Conn                       # => Conn functions
+  alias MyApp.Accounts                   # => User context
 
-  def init(opts), do: opts
+  def init(opts), do: opts               # => Compile-time init
 
-  def call(conn, _opts) do
+  def call(conn, _opts) do               # => Runtime auth check
     case get_req_header(conn, "x-api-key") do
-      [api_key] ->
-        case Accounts.verify_api_key(api_key) do      # => Check key exists
-          {:ok, user} ->
+                                         # => Check for X-API-Key header
+      [api_key] ->                       # => Header present
+        case Accounts.verify_api_key(api_key) do
+                                         # => Verify key in database
+          {:ok, user} ->                 # => Valid key
             conn
-            |> assign(:current_user, user)           # => Store user
-            |> check_rate_limit(user)                # => Check limit
+            |> assign(:current_user, user)  # => Store user in conn
+            |> check_rate_limit(user)    # => Check rate limit
 
-          {:error, :invalid} ->
+          {:error, :invalid} ->          # => Invalid key
             conn
-            |> put_status(:unauthorized)             # => 401
+            |> put_status(:unauthorized) # => 401 Unauthorized
             |> Phoenix.Controller.json(%{error: "Invalid API key"})
-            |> halt()
+            |> halt()                    # => Stop pipeline
+
         end
 
-      _ ->
+      _ ->                               # => Missing header
         conn
-        |> put_status(:unauthorized)
+        |> put_status(:unauthorized)     # => 401 Unauthorized
         |> Phoenix.Controller.json(%{error: "Missing API key"})
-        |> halt()
+        |> halt()                        # => Stop pipeline
     end
   end
 
-  defp check_rate_limit(conn, user) do
-    now = DateTime.utc_now()
+  defp check_rate_limit(conn, user) do   # => Check usage limit
+    now = DateTime.utc_now()             # => Current time
 
     cond do
-      DateTime.compare(now, user.api_reset_at) == :gt ->  # => Reset window passed
-        Accounts.reset_rate_limit(user)                   # => Reset counter
-        conn
+      DateTime.compare(now, user.api_reset_at) == :gt ->
+                                         # => Past reset time
+        Accounts.reset_rate_limit(user)  # => Reset counter to 0
+        conn                             # => Allow request
 
-      user.api_requests_count >= 1000 ->                  # => Limit: 1000/hour
+      user.api_requests_count >= 1000 -> # => Limit: 1000 requests/hour
         conn
-        |> put_status(:too_many_requests)                 # => 429
+        |> put_status(:too_many_requests)  # => 429 status
         |> put_resp_header("x-rate-limit-reset", to_string(DateTime.to_unix(user.api_reset_at)))
+                                         # => Tell client when limit resets
         |> Phoenix.Controller.json(%{error: "Rate limit exceeded"})
-        |> halt()
+        |> halt()                        # => Stop pipeline
 
-      true ->
-        Accounts.increment_api_usage(user)                # => Count this request
+      true ->                            # => Under limit
+        Accounts.increment_api_usage(user)  # => Count this request
         conn
         |> put_resp_header("x-rate-limit-remaining", to_string(1000 - user.api_requests_count - 1))
+                                         # => Tell client remaining requests
     end
   end
 end
 
 # Context functions
-defmodule MyApp.Accounts do
-  def reset_rate_limit(user) do
+defmodule MyApp.Accounts do             # => User context
+  def reset_rate_limit(user) do         # => Reset request counter
     user
     |> Ecto.Changeset.change(%{
-      api_requests_count: 0,                          # => Reset to 0
-      api_reset_at: DateTime.add(DateTime.utc_now(), 3600)  # => +1 hour
+      api_requests_count: 0,             # => Reset to 0
+      api_reset_at: DateTime.add(DateTime.utc_now(), 3600)
+                                         # => +1 hour (3600 seconds)
     })
-    |> Repo.update()
+    |> Repo.update()                     # => Save to DB
   end
 
-  def increment_api_usage(user) do
+  def increment_api_usage(user) do      # => Increment counter
     from(u in User, where: u.id == ^user.id, update: [inc: [api_requests_count: 1]])
-    |> Repo.update_all([])                            # => Atomic increment
+                                         # => Atomic increment query
+                                         # => Prevents race conditions
+    |> Repo.update_all([])               # => Execute update
   end
 end
 
 # In router
-scope "/api", MyAppWeb.API do
-  pipe_through :api
-  plug MyAppWeb.Plugs.APIAuth                         # => Require API key
+scope "/api", MyAppWeb.API do           # => API routes
+  pipe_through :api                      # => API pipeline
+  plug MyAppWeb.Plugs.APIAuth            # => Require API key (all routes)
 
-  resources "/posts", PostController
+  resources "/posts", PostController     # => Protected endpoints
 end
 ```
 

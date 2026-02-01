@@ -33,16 +33,31 @@ graph TD
 
 ```yaml
 ---
-# hello.yml
-- name: Hello World Playbook # => Human-readable play name (shows in output)
-  hosts: localhost # => Target host (special name for local machine)
-  gather_facts: false # => Skip fact gathering for speed (default: true)
+# hello.yml - Minimal working playbook demonstrating Ansible basics
+- name:
+    Hello World Playbook # => Human-readable play name (appears in console output)
+    # => Required field for documentation and logging
+  hosts:
+    localhost # => Target host pattern (special name for local machine)
+    # => Accepts hostname, group name, or pattern (e.g., web*)
+  gather_facts:
+    false # => Skip automatic fact collection (setup module)
+    # => Improves execution speed when facts not needed
+    # => Default is true (runs setup module before tasks)
 
-  tasks:
-    - name: Print greeting # => Task name (shows in output)
-      ansible.builtin.debug: # => Debug module for printing messages
-        msg: "Hello, Ansible!" # => Message to print
+  tasks: # => List of actions to execute on target hosts
+    # => Tasks run sequentially from top to bottom
+    - name:
+        Print greeting # => Task description (appears in console output)
+        # => Best practice: use descriptive names for debugging
+      ansible.builtin.debug: # => Debug module prints messages to console
+        # => No state changes (idempotent, safe for testing)
+        # => FQCN format: namespace.collection.module
+        msg:
+          "Hello, Ansible!" # => Message to display during playbook execution
+          # => Can be string or variable using Jinja2 syntax
       # => Output: ok: [localhost] => { "msg": "Hello, Ansible!" }
+      # => Task status is "ok" (not "changed") because debug doesn't modify state
 ```
 
 **Run**: `ansible-playbook hello.yml`
@@ -61,31 +76,58 @@ Before writing automation, verify Ansible installation and Python environment. T
 
 ```yaml
 ---
-# verify.yml
-- name: Verify Ansible Installation # => Play declaration with descriptive name
-  hosts: localhost # => Execute tasks on local machine only
-  gather_facts: true # => Collect system information (default behavior)
-  # => Fact gathering runs setup module automatically before tasks
+# verify.yml - Verification playbook for Ansible installation
+- name:
+    Verify Ansible Installation # => Play name describing verification purpose
+    # => Appears in console output during execution
+  hosts:
+    localhost # => Execute tasks on local machine only
+    # => Uses connection: local (no SSH required)
+  gather_facts:
+    true # => Enable automatic fact collection (setup module)
+    # => Default behavior (explicitly shown for clarity)
+    # => Runs ansible.builtin.setup before tasks
+  # => Setup module collects 100+ facts about target system
+  # => Facts include: OS, network, hardware, Python, filesystem info
 
-  tasks:
-    - name: Display Ansible version # => Task 1: Show installed Ansible version
-      ansible.builtin.debug: # => Debug module for output (no state changes)
-        msg: "Ansible version: {{ ansible_version.full }}" # => Jinja2 variable interpolation
-      # => Reads ansible_version from facts dictionary
-      # => Output: Ansible version: 2.15.0 (from gathered facts)
+  tasks: # => Task list begins after fact gathering completes
+    # => All facts available as variables in tasks
+    - name: Display Ansible version # => Task 1: Show installed Ansible version information
+      # => Helps verify correct Ansible installation
+      ansible.builtin.debug: # => Debug module prints variables to console
+        # => Non-destructive (no state changes)
+        # => FQCN format: ansible.builtin.debug
+        msg:
+          "Ansible version: {{ ansible_version.full }}" # => Access nested fact variable
+          # => ansible_version is dict with 'full', 'major', 'minor' keys
+          # => Jinja2 {{ }} syntax interpolates variables
+      # => ansible_version.full contains complete version (e.g., "2.15.0")
+      # => Output: ok: [localhost] => { "msg": "Ansible version: 2.15.0" }
 
-    - name: Display Python version # => Task 2: Show Python interpreter version
-      ansible.builtin.debug:
-        msg: "Python version: {{ ansible_python_version }}" # => Python version fact
+    - name:
+        Display Python version # => Task 2: Show Python interpreter version
+        # => Confirms Python compatibility with Ansible
+      ansible.builtin.debug: # => Debug module for console output
+        msg:
+          "Python version: {{ ansible_python_version }}" # => Access Python version fact
+          # => Collected during fact gathering
+      # => ansible_python_version contains version string (e.g., "3.11.6")
       # => Ansible requires Python 2.7+ or 3.5+ on target hosts
-      # => Output: Python version: 3.11.6 (Python interpreter used by Ansible)
+      # => Modern Ansible (2.12+) prefers Python 3.x
+      # => Output: Python version: 3.11.6 (interpreter at ansible_python_interpreter path)
 
-    - name: Display operating system # => Task 3: Show OS distribution information
-      ansible.builtin.debug:
-        msg: "OS: {{ ansible_distribution }} {{ ansible_distribution_version }}" # => Combines two facts
-      # => ansible_distribution: Ubuntu, Debian, RedHat, CentOS, etc.
-      # => ansible_distribution_version: 22.04, 20.04, 9, etc.
-      # => Output: OS: Ubuntu 22.04 (detected from /etc/os-release)
+    - name:
+        Display operating system # => Task 3: Show OS distribution and version
+        # => Useful for environment-aware playbooks
+      ansible.builtin.debug: # => Debug output module
+        msg:
+          "OS: {{ ansible_distribution }} {{ ansible_distribution_version }}" # => Combine two separate facts
+          # => String concatenation with space
+      # => ansible_distribution: OS family (Ubuntu, Debian, RedHat, CentOS, Fedora, etc.)
+      # => ansible_distribution_version: Version number (22.04, 20.04, 9, 8, etc.)
+      # => Detected from /etc/os-release or equivalent system files
+      # => Output: OS: Ubuntu 22.04 (parsed from system identification files)
+      # => Enables conditional logic: when: ansible_distribution == "Ubuntu"
 ```
 
 **Run**: `ansible-playbook verify.yml`
@@ -410,33 +452,57 @@ Inventory files define target hosts and groups. INI format is simplest for stati
 Create inventory file `inventory.ini`:
 
 ```ini
-# inventory.ini
-# Ungrouped hosts
-standalone.example.com
+# inventory.ini - Static inventory in INI format
+# Ungrouped hosts (not in any group, still accessible via 'all')
+standalone.example.com # => Host without group membership
+                        # => Reachable via: ansible standalone.example.com -m ping
 
-# Group: webservers
-[webservers]
-web1.example.com ansible_host=192.168.1.10      # => ansible_host overrides hostname
-web2.example.com ansible_host=192.168.1.11
-web3.example.com ansible_port=2222               # => Custom SSH port
+# Group: webservers (logical grouping of web tier hosts)
+[webservers] # => Group header (INI section format)
+             # => Create logical grouping for fleet operations
+web1.example.com ansible_host=192.168.1.10 # => Inventory hostname with IP override
+                                            # => DNS name: web1.example.com
+                                            # => Actual IP: 192.168.1.10 (ansible_host connection variable)
+web2.example.com ansible_host=192.168.1.11 # => Second webserver with IP override
+                                            # => Connects to 192.168.1.11 via SSH
+web3.example.com ansible_port=2222 # => Third webserver with custom SSH port
+                                    # => Default port 22 overridden to 2222
+                                    # => Useful for security hardening (non-standard SSH ports)
 
-# Group: databases
-[databases]
-db1.example.com
-db2.example.com ansible_user=dbadmin             # => Custom SSH username
+# Group: databases (database tier hosts)
+[databases] # => Database group header
+            # => Separate from webservers for targeted operations
+db1.example.com # => Database primary server
+                # => Uses default connection settings (SSH port 22, current user)
+db2.example.com ansible_user=dbadmin # => Database replica with custom SSH user
+                                      # => Connects as 'dbadmin' instead of current user
+                                      # => Requires SSH key or password for dbadmin
 
-# Group of groups (parent group)
-[production:children]
-webservers
-databases
+# Group of groups (parent group containing other groups)
+[production:children] # => Parent group syntax: [groupname:children]
+                      # => Contains other groups, not individual hosts
+webservers # => Include all hosts from webservers group
+           # => Expands to: web1, web2, web3
+databases # => Include all hosts from databases group
+          # => Expands to: db1, db2
+# => Result: 'production' contains 5 hosts (web1, web2, web3, db1, db2)
+# => Enables targeting entire production environment: ansible production -m ping
 
 # Group variables (apply to all hosts in group)
-[webservers:vars]
-ansible_python_interpreter=/usr/bin/python3      # => Specify Python interpreter
-http_port=80                                     # => Custom variable
+[webservers:vars] # => Variables for webservers group
+                  # => Applied to web1, web2, web3 automatically
+ansible_python_interpreter=/usr/bin/python3 # => Override Python interpreter path
+                                             # => Required when default Python is 2.x
+                                             # => Ansible requires Python on target hosts
+http_port=80 # => Custom variable (not Ansible built-in)
+             # => Accessible in playbooks as {{ http_port }}
+             # => Used for application configuration
 
-[databases:vars]
-db_port=5432
+[databases:vars] # => Variables for databases group
+                 # => Applied to db1, db2
+db_port=5432 # => PostgreSQL default port
+             # => Custom variable for database configuration
+             # => Accessible as {{ db_port }} in playbooks
 ```
 
 **Playbook using inventory**:
@@ -480,38 +546,79 @@ Create inventory file `inventory.yml`:
 
 ```yaml
 ---
-# inventory.yml
-all: # => Root group (contains all hosts)
-  hosts:
-    standalone.example.com: # => Ungrouped host
+# inventory.yml - Static inventory in YAML format
+all: # => Root group containing all hosts in inventory
+  # => Special group automatically created by Ansible
+  # => Contains both standalone hosts and grouped hosts
+  hosts: # => Host definitions at root level
+    # => Hosts here belong to 'all' group only (ungrouped)
+    standalone.example.com: # => Ungrouped host entry
+      # => Empty dict means no host-specific variables
+      # => Reachable via: ansible standalone.example.com -m ping
 
-  children: # => Nested groups
-    webservers:
-      hosts:
-        web1.example.com:
-          ansible_host: 192.168.1.10 # => Host-specific variable
-        web2.example.com:
-          ansible_host: 192.168.1.11
-        web3.example.com:
-          ansible_port: 2222
-      vars: # => Group-level variables
-        ansible_python_interpreter: /usr/bin/python3
-        http_port: 80
+  children: # => Nested groups under 'all' parent group
+    # => Groups organize hosts logically (web tier, db tier, etc.)
+    webservers: # => Webservers group definition
+      # => Equivalent to [webservers] in INI format
+      hosts: # => Host list for webservers group
+        # => Each entry can have host-specific variables
+        web1.example.com: # => First webserver entry
+          # => Indented dict contains host variables
+          ansible_host:
+            192.168.1.10 # => Connection IP override
+            # => Ansible connects to 192.168.1.10 instead of DNS lookup
+        web2.example.com: # => Second webserver
+          ansible_host:
+            192.168.1.11 # => IP override for web2
+            # => Enables static IP targeting
+        web3.example.com: # => Third webserver with custom SSH port
+          ansible_port:
+            2222 # => Override default SSH port (22 → 2222)
+            # => Security hardening via non-standard port
+      vars: # => Group-level variables for all webservers
+        # => Applied to web1, web2, web3 automatically
+        ansible_python_interpreter:
+          /usr/bin/python3 # => Python 3 interpreter path
+          # => Required when Python 2.x is system default
+          # => Ansible modules require Python on targets
+        http_port:
+          80 # => Custom application variable
+          # => Accessible in playbooks as {{ http_port }}
+          # => Not an Ansible built-in (user-defined)
 
-    databases:
-      hosts:
-        db1.example.com:
-        db2.example.com:
-          ansible_user: dbadmin
-      vars:
-        db_port: 5432
+    databases: # => Database group definition
+      # => Separate tier from webservers
+      hosts: # => Database host list
+        db1.example.com: # => Primary database server
+          # => Empty dict (no host-specific variables)
+          # => Uses group vars and defaults
+        db2.example.com: # => Replica database server
+          ansible_user:
+            dbadmin # => SSH username override
+            # => Connects as 'dbadmin' user instead of current user
+            # => Requires SSH key or password for dbadmin account
+      vars: # => Database group variables
+        # => Applied to db1, db2
+        db_port:
+          5432 # => PostgreSQL default port
+          # => Custom variable for database configuration
+          # => Accessible as {{ db_port }} in playbooks
 
-    production: # => Group of groups
-      children:
-        webservers:
-        databases:
-      vars:
-        environment: production # => Applies to all hosts in production
+    production: # => Parent group containing other groups
+      # => Enables hierarchy: production → webservers/databases → hosts
+      children: # => List of child groups (not hosts)
+        # => Only groups allowed here (no individual hosts)
+        webservers: # => Include webservers group (web1, web2, web3)
+          # => All hosts from webservers become production members
+        databases: # => Include databases group (db1, db2)
+          # => All hosts from databases become production members
+      vars: # => Variables applied to ALL production hosts
+        # => Inherited by both webservers and databases groups
+        environment:
+          production # => Environment identifier
+          # => Accessible as {{ environment }}
+          # => Used for environment-specific logic in playbooks
+          # => production group contains 5 total hosts
 ```
 
 **Run**: `ansible-playbook -i inventory.yml playbook.yml`
@@ -723,55 +830,87 @@ if __name__ == "__main__":
 
 ```yaml
 ---
-# command_vs_shell.yml
-- name: Command vs Shell Comparison
-  hosts: localhost
-  gather_facts: false
+# command_vs_shell.yml - Demonstrates security and functionality differences
+- name: Command vs Shell Comparison # => Compare safe (command) vs powerful (shell) modules
+  hosts: localhost # => Execute on local machine
+  gather_facts: false # => Skip fact collection (not needed)
 
-  tasks:
-    # command module - Safe but limited
-    - name: Using command module (safe)
-      ansible.builtin.command:
-        cmd: echo "Hello World" # => Executes command directly (no shell)
-      register: cmd_result
-      # => changed: [localhost] (command module always reports changed)
-      # => stdout: "Hello World"
+  tasks: # => Task list demonstrating module differences
+    # command module - Safe but limited (no shell interpreter)
+    - name: Using command module (safe) # => Task 1: Safe command execution
+      ansible.builtin.command: # => Command module bypasses shell
+        # => No shell injection risk (safe for user input)
+        # => Cannot use pipes, redirects, wildcards, variables
+        cmd:
+          echo "Hello World" # => Command with arguments
+          # => Executes directly via exec() system call
+          # => No /bin/bash or /bin/sh involved
+      register:
+        cmd_result # => Save task output to variable
+        # => Stores stdout, stderr, rc (return code)
+      # => changed: [localhost] (command module ALWAYS reports changed)
+      # => Use changed_when: false to override this behavior
+      # => stdout: "Hello World" (command output)
 
-    - name: Display command result
-      ansible.builtin.debug:
-        msg: "Command output: {{ cmd_result.stdout }}"
+    - name: Display command result # => Task 2: Show command module output
+      ansible.builtin.debug: # => Debug module for console output
+        msg:
+          "Command output: {{ cmd_result.stdout }}" # => Access stdout from registered variable
+          # => cmd_result is dict with stdout/stderr/rc keys
       # => Output: Command output: Hello World
+      # => Debug tasks never report changed status
 
     # command module - FAILS with shell features
-    - name: Command module with pipe (FAILS)
-      ansible.builtin.command:
-        cmd: echo "test" | grep test # => ERROR: pipes not supported
-      ignore_errors: true # => Continue playbook despite failure
-      # => failed: [localhost] (pipes require shell)
+    - name: Command module with pipe (FAILS) # => Task 3: Demonstrate command limitations
+      ansible.builtin.command: # => Command module doesn't support pipes
+        cmd:
+          echo "test" | grep test # => Pipe character | not interpreted
+          # => Passed literally to echo command
+          # => ERROR: echo tries to output string "test | grep test"
+      ignore_errors:
+        true # => Continue playbook execution despite failure
+        # => Prevents playbook abort on failed task
+      # => failed: [localhost] (command module rejects shell metacharacters)
+      # => Error message explains pipes/redirects require shell module
 
-    # shell module - Full shell access
-    - name: Using shell module (powerful but risky)
-      ansible.builtin.shell:
-        cmd: echo "Hello" | tr 'a-z' 'A-Z' # => Pipes work in shell
-      register: shell_result
-      # => changed: [localhost]
-      # => stdout: "HELLO" (pipe executed in bash)
+    # shell module - Full shell access (powerful but risky)
+    - name: Using shell module (powerful but risky) # => Task 4: Full shell capabilities
+      ansible.builtin.shell: # => Shell module invokes /bin/sh (or SHELL env var)
+        # => Enables pipes, redirects, wildcards, variable expansion
+        # => SECURITY RISK: vulnerable to shell injection attacks
+        cmd:
+          echo "Hello" | tr 'a-z' 'A-Z' # => Pipe works because shell interprets it
+          # => echo outputs "Hello" → piped to tr
+          # => tr translates lowercase to uppercase
+      register:
+        shell_result # => Save output to variable
+        # => Same dict structure as command (stdout/stderr/rc)
+      # => changed: [localhost] (shell module always reports changed)
+      # => stdout: "HELLO" (pipe executed in bash subprocess)
+      # => Both echo and tr executed in same shell process
 
-    - name: Display shell result
-      ansible.builtin.debug:
-        msg: "Shell output: {{ shell_result.stdout }}"
+    - name: Display shell result # => Task 5: Show shell module output
+      ansible.builtin.debug: # => Debug output
+        msg: "Shell output: {{ shell_result.stdout }}" # => Access stdout from shell task
       # => Output: Shell output: HELLO
+      # => Demonstrates successful pipe execution
 
     # shell module - Environment variable expansion
-    - name: Shell module with variables
-      ansible.builtin.shell:
-        cmd: echo "Current user is $USER" # => $USER expanded by shell
-      register: user_result
-      # => stdout: "Current user is <username>"
+    - name: Shell module with variables # => Task 6: Environment variable support
+      ansible.builtin.shell: # => Shell module enables $VAR expansion
+        cmd:
+          echo "Current user is $USER" # => $USER expanded by shell to username
+          # => Command module would output literal "$USER"
+          # => Shell interprets environment variables
+      register: user_result # => Capture output with username
+      # => stdout: "Current user is <username>" (e.g., "Current user is admin")
+      # => $USER environment variable replaced with actual username
 
-    - name: Display user
-      ansible.builtin.debug:
-        msg: "{{ user_result.stdout }}"
+    - name: Display user # => Task 7: Show expanded username
+      ansible.builtin.debug: # => Debug module for output
+        msg: "{{ user_result.stdout }}" # => Display stdout (contains expanded username)
+      # => Output: Current user is <actual_username>
+      # => Confirms shell variable expansion worked
 ```
 
 **Run**: `ansible-playbook command_vs_shell.yml`
@@ -790,55 +929,89 @@ The `copy` module transfers files from control node to managed hosts. Supports i
 
 ```yaml
 ---
-# copy_module.yml
-- name: Copy Module Examples
-  hosts: localhost
-  gather_facts: false
+# copy_module.yml - File transfer and inline content creation
+- name: Copy Module Examples # => Demonstrate copy module capabilities
+  hosts: localhost # => Execute on local machine
+  gather_facts: false # => Skip fact gathering (not needed)
 
-  tasks:
-    # Copy with inline content
-    - name: Create file with inline content
-      ansible.builtin.copy:
-        dest: /tmp/demo_inline.txt # => Destination path on target
-        content: | # => Inline content (multi-line)
+  tasks: # => Task list showing different copy patterns
+    # Copy with inline content (no source file needed)
+    - name: Create file with inline content # => Task 1: Write inline content to file
+      ansible.builtin.copy: # => Copy module handles file creation/transfer
+        # => Idempotent: checks content checksum before writing
+        dest:
+          /tmp/demo_inline.txt # => Destination path on target host
+          # => Creates parent directory if missing
+        content: | # => Inline multi-line content (literal YAML block)
           Line 1: Hello
           Line 2: World
-        mode: "0644" # => File permissions (rw-r--r--)
-        owner: "{{ ansible_user_id }}" # => File owner (current user)
-      # => changed: [localhost] (creates file if missing or content differs)
-      # => ok: [localhost] (if file exists with same content/permissions)
+        # => Literal block preserves newlines and formatting
+        # => Content written exactly as shown (including trailing newline)
+        mode:
+          "0644" # => POSIX permissions (octal notation, quotes required)
+          # => 0644 = rw-r--r-- (owner: rw, group: r, others: r)
+        owner:
+          "{{ ansible_user_id }}" # => File owner username
+          # => ansible_user_id is fact (current SSH user)
+      # => changed: [localhost] (creates file if missing or content/mode differs)
+      # => ok: [localhost] (if file exists with identical content/permissions)
+      # => Idempotency: compares SHA256 checksum of existing vs new content
 
     # Copy from file (first create source file)
-    - name: Create source file
-      ansible.builtin.copy:
-        dest: /tmp/source.txt
-        content: "Source file content\n"
+    - name: Create source file # => Task 2: Prepare source file for copying
+      ansible.builtin.copy: # => Copy module also creates source files
+        dest: /tmp/source.txt # => Source file location
+        content: "Source file content\n" # => Single-line content with newline
+      # => Creates file at /tmp/source.txt for next task
 
-    - name: Copy file from control node to target
-      ansible.builtin.copy:
-        src: /tmp/source.txt # => Source path on control node
-        dest: /tmp/destination.txt # => Destination on target
-        mode: "0644"
-        backup: true # => Create backup if file exists
-      register: copy_result
-      # => changed: [localhost] (if content/permissions differ)
-      # => backup_file: /tmp/destination.txt.12345.2024-01-15@12:30:00~
+    - name: Copy file from control node to target # => Task 3: File transfer operation
+      ansible.builtin.copy: # => Copy mode: src→dest transfer
+        # => Transfers files from control node to managed hosts
+        src:
+          /tmp/source.txt # => Source file path on control node
+          # => Must exist before task runs
+        dest:
+          /tmp/destination.txt # => Destination path on target host
+          # => Creates new file or overwrites existing
+        mode: "0644" # => Override destination permissions
+        backup:
+          true # => Create timestamped backup before overwriting
+          # => Backup format: <dest>.<pid>.<timestamp>~
+          # => Only created if destination already exists
+      register:
+        copy_result # => Capture task results in variable
+        # => Contains: changed, backup_file, checksum, dest
+      # => changed: [localhost] (if content, mode, or owner differs)
+      # => ok: [localhost] (if destination matches source exactly)
+      # => backup_file key only present if backup created
+      # => Example backup: /tmp/destination.txt.12345.2024-01-15@12:30:00~
 
-    - name: Display backup location
-      ansible.builtin.debug:
-        msg: "Backup created: {{ copy_result.backup_file | default('No backup needed') }}"
-      # => Shows backup path if file was backed up
+    - name: Display backup location # => Task 4: Show backup path if created
+      ansible.builtin.debug: # => Debug output module
+        msg:
+          "Backup created: {{ copy_result.backup_file | default('No backup needed') }}"
+          # => Access backup_file from registered variable
+          # => Jinja2 filter: default() provides fallback if key missing
+      # => Output: "Backup created: /path..." (if backup created)
+      # => Output: "Backup created: No backup needed" (if new file)
 
-    # Copy with validation
-    - name: Copy configuration with validation
-      ansible.builtin.copy:
-        dest: /tmp/config.conf
-        content: |
+    # Copy with validation (critical for config files)
+    - name: Copy configuration with validation # => Task 5: Safe config deployment
+      ansible.builtin.copy: # => Copy with pre-deployment validation
+        # => Prevents broken configs from reaching production
+        dest: /tmp/config.conf # => Destination config file path
+        content: | # => Configuration file content
           setting1=value1
           setting2=value2
-        validate: 'grep -q "setting1" %s' # => Validate before replacing
-      # => Runs validation command with %s replaced by temp file path
-      # => Only replaces destination if validation succeeds
+        # => INI-style configuration format
+        validate:
+          'grep -q "setting1" %s' # => Validation command template
+          # => %s replaced with temp file path
+          # => Exit code 0 = valid, non-zero = invalid
+      # => Process: writes to temp file → validates temp → replaces dest
+      # => Runs validation: grep -q "setting1" /tmp/ansible.tmpXXXX
+      # => Only replaces /tmp/config.conf if grep succeeds
+      # => Task fails if validation fails (protects against bad configs)
 ```
 
 **Run**: `ansible-playbook copy_module.yml`
@@ -857,69 +1030,131 @@ The `file` module manages files, directories, symlinks, and permissions without 
 
 ```yaml
 ---
-# file_module.yml
-- name: File Module Examples
-  hosts: localhost
-  gather_facts: false
+# file_module.yml - Filesystem management without content transfer
+- name: File Module Examples # => Demonstrate file module capabilities
+  hosts: localhost # => Execute on local machine
+  gather_facts: false # => Skip fact gathering (not needed)
 
-  tasks:
-    # Create directory
-    - name: Create directory with specific permissions
-      ansible.builtin.file:
-        path: /tmp/demo_dir # => Directory path
-        state: directory # => Ensure it's a directory
-        mode: "0755" # => Permissions (rwxr-xr-x)
-        owner: "{{ ansible_user_id }}" # => Owner (current user)
-      # => changed: [localhost] (creates directory if missing)
-      # => ok: [localhost] (if directory exists with correct attributes)
+  tasks: # => Task list for filesystem operations
+    # Create directory (idempotent directory creation)
+    - name: Create directory with specific permissions # => Task 1: Directory creation
+      ansible.builtin.file: # => File module manages filesystem objects
+        # => No content transfer (unlike copy module)
+        # => Idempotent: safe to run multiple times
+        path:
+          /tmp/demo_dir # => Directory path to create
+          # => Absolute path recommended for reliability
+          # => Creates directory if missing
+        state:
+          directory # => Ensure path is a directory (not file/link)
+          # => Creates directory if absent
+          # => Verifies existing directory has correct attributes
+        mode:
+          "0755" # => POSIX permissions in octal notation (quotes required)
+          # => 0755 = rwxr-xr-x (owner: rwx, group: rx, others: rx)
+          # => Owner can read/write/execute, others can read/execute
+        owner:
+          "{{ ansible_user_id }}" # => Set directory owner to current user
+          # => ansible_user_id is fact (current SSH user)
+          # => Requires appropriate permissions to chown
+      # => changed: [localhost] (directory created or attributes modified)
+      # => ok: [localhost] (directory exists with correct mode/owner)
+      # => Idempotent: running twice produces same result
 
-    # Create nested directories
-    - name: Create nested directory structure
-      ansible.builtin.file:
-        path: /tmp/demo_dir/sub1/sub2 # => Nested path
-        state: directory
-        mode: "0755"
-        recurse: true # => Create parent dirs if missing
-      # => Creates /tmp/demo_dir, sub1, and sub2 in one operation
+    # Create nested directories (recursive directory creation)
+    - name: Create nested directory structure # => Task 2: Nested directory creation
+      ansible.builtin.file: # => File module with recursive option
+        path:
+          /tmp/demo_dir/sub1/sub2 # => Three-level nested path
+          # => Target: /tmp/demo_dir/sub1/sub2
+        state: directory # => Ensure path is directory
+        mode: "0755" # => Permissions applied to all created directories
+        recurse:
+          true # => Create parent directories if missing
+          # => Without recurse, task fails if parents don't exist
+          # => Like mkdir -p command
+      # => changed: [localhost] (creates demo_dir, sub1, sub2 as needed)
+      # => Creates all missing parent directories in one operation
+      # => Idempotent: ok if directory structure already exists
 
-    # Touch file (create or update timestamp)
-    - name: Create empty file or update timestamp
-      ansible.builtin.file:
-        path: /tmp/demo_dir/timestamp.txt
-        state: touch # => Create empty file or update mtime
-        mode: "0644"
-      # => changed: [localhost] (creates file or updates modification time)
+    # Touch file (create empty file or update timestamp)
+    - name: Create empty file or update timestamp # => Task 3: Touch file operation
+      ansible.builtin.file: # => File module with touch state
+        path:
+          /tmp/demo_dir/timestamp.txt # => File path inside created directory
+          # => Must be absolute or relative path
+        state:
+          touch # => Create empty file or update modification time
+          # => Like Linux touch command
+          # => Updates mtime (modification time) and atime (access time)
+        mode:
+          "0644" # => Permissions for new file (rw-r--r--)
+          # => Owner: rw, group: r, others: r
+      # => changed: [localhost] (file created or timestamps updated)
+      # => Creates zero-byte file if missing
+      # => Updates timestamps if file exists
 
-    # Create symlink
-    - name: Create symbolic link
-      ansible.builtin.file:
-        src: /tmp/demo_dir # => Link target (what symlink points to)
-        dest: /tmp/demo_link # => Link path (the symlink itself)
-        state: link # => Create symbolic link
-      # => changed: [localhost] (creates symlink)
-      # => ls -la /tmp/demo_link => lrwxr-xr-x ... /tmp/demo_link -> /tmp/demo_dir
+    # Create symlink (symbolic link creation)
+    - name: Create symbolic link # => Task 4: Symlink creation
+      ansible.builtin.file: # => File module with link state
+        src:
+          /tmp/demo_dir # => Link target (what symlink points to)
+          # => Can be absolute or relative path
+          # => Target doesn't need to exist (dangling symlink allowed)
+        dest:
+          /tmp/demo_link # => Link path (the symlink itself)
+          # => This is the symlink file created
+          # => Must not already exist as regular file
+        state:
+          link # => Create symbolic link (soft link, not hard link)
+          # => Creates symlink pointing from dest to src
+          # => Like ln -s command
+      # => changed: [localhost] (symlink created)
+      # => Creates: /tmp/demo_link -> /tmp/demo_dir
+      # => ls -la output: lrwxr-xr-x ... /tmp/demo_link -> /tmp/demo_dir
+      # => Following symlink reaches /tmp/demo_dir directory
 
-    # Modify permissions and ownership
-    - name: Change file permissions
-      ansible.builtin.file:
-        path: /tmp/demo_dir/timestamp.txt
-        mode: "0600" # => Change to rw------- (owner only)
-      # => changed: [localhost] (if permissions differ)
+    # Modify permissions and ownership (attribute modification)
+    - name: Change file permissions # => Task 5: Permission modification
+      ansible.builtin.file: # => File module modifying existing file
+        path:
+          /tmp/demo_dir/timestamp.txt # => Target file to modify
+          # => File must already exist
+        mode:
+          "0600" # => New permissions (rw-------)
+          # => Owner: rw, group: none, others: none
+          # => Restricts access to owner only (security hardening)
+      # => changed: [localhost] (if current permissions differ from 0600)
+      # => ok: [localhost] (if permissions already 0600)
+      # => Idempotent: only changes if different
 
-    # Remove file
-    - name: Remove file
-      ansible.builtin.file:
-        path: /tmp/demo_dir/timestamp.txt
-        state: absent # => Ensure file does not exist
-      # => changed: [localhost] (if file exists, removes it)
-      # => ok: [localhost] (if file already absent)
+    # Remove file (file deletion)
+    - name: Remove file # => Task 6: File deletion
+      ansible.builtin.file: # => File module with absent state
+        path:
+          /tmp/demo_dir/timestamp.txt # => File to delete
+          # => Absolute path for safety
+        state:
+          absent # => Ensure file does not exist
+          # => Deletes file if present
+          # => Succeeds if already absent (idempotent)
+      # => changed: [localhost] (file deleted if it existed)
+      # => ok: [localhost] (file already absent, no action needed)
+      # => Idempotent: safe to run multiple times
 
-    # Remove directory recursively
-    - name: Remove directory and contents
-      ansible.builtin.file:
-        path: /tmp/demo_dir
-        state: absent # => Remove directory and all contents
-      # => changed: [localhost] (recursively deletes directory)
+    # Remove directory recursively (directory deletion)
+    - name: Remove directory and contents # => Task 7: Recursive directory deletion
+      ansible.builtin.file: # => File module deleting directory
+        path:
+          /tmp/demo_dir # => Directory to remove
+          # => Removes directory and ALL contents
+        state:
+          absent # => Ensure directory does not exist
+          # => Recursive deletion (like rm -rf)
+          # => Deletes files, subdirectories, symlinks inside
+      # => changed: [localhost] (directory and contents deleted)
+      # => Dangerous operation: no confirmation, no trash/recycle
+      # => Use with caution in production (irreversible)
 ```
 
 **Run**: `ansible-playbook file_module.yml`
@@ -956,72 +1191,144 @@ graph TD
 Create template file `nginx.conf.j2`:
 
 ```jinja2
-# nginx.conf.j2
-server {
-    listen {{ http_port }};              # => Variable substitution
-    server_name {{ server_name }};
+# nginx.conf.j2 - Jinja2 template for nginx server configuration
+server {                                         # => nginx server block start
+                                                 # => Rendered to plain nginx config
+    listen {{ http_port }};                      # => Variable substitution using {{ }}
+                                                 # => Jinja2 replaces with http_port value from playbook
+                                                 # => Renders to: listen 8080;
+    server_name {{ server_name }};               # => Server hostname variable
+                                                 # => Renders to: server_name example.com;
+                                                 # => DNS name for virtual host matching
 
-    location / {
-        root {{ document_root }};
-        index index.html;
+    location / {                                 # => Root location block
+                                                 # => Handles all requests to / path
+        root {{ document_root }};                # => Document root directory variable
+                                                 # => Renders to: root /var/www/html;
+                                                 # => Base directory for serving files
+        index index.html;                        # => Default index file
+                                                 # => Static content, no variable needed
     }
 
-    # Conditional block
-    {% if enable_ssl %}                  # => Jinja2 conditional
-    ssl_certificate {{ ssl_cert_path }};
-    ssl_certificate_key {{ ssl_key_path }};
-    {% endif %}
+    # Conditional block (only rendered if condition true)
+    {% if enable_ssl %}                          # => Jinja2 conditional logic ({% %} tags)
+                                                 # => Checks enable_ssl boolean variable
+                                                 # => Entire block included/excluded based on condition
+    ssl_certificate {{ ssl_cert_path }};         # => SSL certificate path variable
+                                                 # => Renders to: ssl_certificate /etc/ssl/cert.pem;
+                                                 # => Only rendered when enable_ssl is true
+    ssl_certificate_key {{ ssl_key_path }};      # => SSL private key path variable
+                                                 # => Renders to: ssl_certificate_key /etc/ssl/key.pem;
+    {% endif %}                                  # => End conditional block
+                                                 # => Closing tag for if statement
 
-    # Loop over list
-    {% for location in custom_locations %}  # => Jinja2 loop
-    location {{ location.path }} {
-        proxy_pass {{ location.backend }};
+    # Loop over list (repeats for each item)
+    {% for location in custom_locations %}      # => Jinja2 for loop iterates over list
+                                                 # => custom_locations is list variable from playbook
+                                                 # => Loop variable 'location' holds current item
+    location {{ location.path }} {               # => Access dict key: location.path
+                                                 # => First iteration: location /api {
+                                                 # => Second iteration: location /admin {
+        proxy_pass {{ location.backend }};       # => Access dict key: location.backend
+                                                 # => First iteration: proxy_pass http://localhost:3000;
+                                                 # => Second iteration: proxy_pass http://localhost:4000;
     }
-    {% endfor %}
-}
+    {% endfor %}                                 # => End for loop
+                                                 # => Closing tag for loop statement
+}                                                # => Server block end
+                                                 # => Final rendered config written to dest path
 ```
 
 **Playbook**:
 
 ```yaml
 ---
-# template_module.yml
-- name: Template Module Example
-  hosts: localhost
-  gather_facts: false
+# template_module.yml - Jinja2 template rendering demonstration
+- name: Template Module Example # => Play demonstrating template rendering
+  hosts: localhost # => Execute on local machine
+  gather_facts: false # => Skip fact gathering (not needed)
 
-  vars:
-    http_port: 8080 # => Variables used in template
-    server_name: example.com
-    document_root: /var/www/html
-    enable_ssl: true
-    ssl_cert_path: /etc/ssl/cert.pem
-    ssl_key_path: /etc/ssl/key.pem
-    custom_locations: # => List for Jinja2 loop
-      - path: /api
-        backend: http://localhost:3000
-      - path: /admin
-        backend: http://localhost:4000
+  vars: # => Variables section (all vars available to template)
+    # => Template accesses these via {{ variable_name }}
+    http_port:
+      8080 # => Port number for nginx listen directive
+      # => Integer value (no quotes)
+      # => Rendered in template as: listen 8080;
+    server_name:
+      example.com # => Virtual host server name
+      # => String value for DNS matching
+      # => Rendered as: server_name example.com;
+    document_root:
+      /var/www/html # => Root directory for served files
+      # => Absolute path to document root
+      # => Rendered as: root /var/www/html;
+    enable_ssl:
+      true # => Boolean flag for conditional SSL block
+      # => Controls {% if enable_ssl %} in template
+      # => true includes SSL config, false excludes it
+    ssl_cert_path:
+      /etc/ssl/cert.pem # => SSL certificate file path
+      # => Used only if enable_ssl is true
+    ssl_key_path:
+      /etc/ssl/key.pem # => SSL private key file path
+      # => Used only if enable_ssl is true
+    custom_locations: # => List variable for Jinja2 {% for %} loop
+      # => Each item is dict with path/backend keys
+      - path: /api # => First location: API endpoint path
+        backend:
+          http://localhost:3000 # => Backend server for /api requests
+          # => Proxy target for API calls
+      - path: /admin # => Second location: Admin interface path
+        backend:
+          http://localhost:4000 # => Backend server for /admin requests
+          # => Separate backend for admin panel
 
-  tasks:
-    - name: Render template to file
-      ansible.builtin.template:
-        src: nginx.conf.j2 # => Template file (relative to playbook)
-        dest: /tmp/nginx.conf # => Destination for rendered output
-        mode: "0644"
-        backup: true # => Backup existing file
-      # => changed: [localhost] (renders template and writes to dest)
-      # => Rendered content has variables replaced with values
+  tasks: # => Task list begins
+    - name: Render template to file # => Task 1: Template rendering and deployment
+      ansible.builtin.template: # => Template module renders Jinja2 to plain text
+        # => Processing happens on control node
+        # => Rendered output copied to target host
+        src:
+          nginx.conf.j2 # => Source template file path
+          # => Path relative to playbook directory
+          # => Must have .j2 extension (convention)
+          # => Template uses Jinja2 syntax ({{}} and {%%})
+        dest:
+          /tmp/nginx.conf # => Destination path for rendered output
+          # => Plain nginx config (no Jinja2 syntax)
+          # => All variables replaced with actual values
+        mode:
+          "0644" # => File permissions for rendered output
+          # => Readable by all, writable by owner only
+        backup:
+          true # => Create timestamped backup before overwriting
+          # => Backup format: <dest>.<pid>.<timestamp>~
+          # => Only created if dest file already exists
+      # => changed: [localhost] (template rendered and written to dest)
+      # => Template rendering: reads src, processes Jinja2, writes dest
+      # => Variables substituted: {{ http_port }} → 8080, {{ server_name }} → example.com
+      # => Conditionals evaluated: {% if enable_ssl %} → includes SSL block
+      # => Loops expanded: {% for location in custom_locations %} → 2 location blocks
 
-    - name: Display rendered configuration
-      ansible.builtin.command:
-        cmd: cat /tmp/nginx.conf
-      register: rendered_config
+    - name: Display rendered configuration # => Task 2: Read rendered output
+      ansible.builtin.command: # => Execute shell command to read file
+        cmd:
+          cat /tmp/nginx.conf # => Read rendered nginx config
+          # => Shows final output with all substitutions
+      register:
+        rendered_config # => Save command output to variable
+        # => Contains stdout with file contents
 
-    - name: Show configuration
-      ansible.builtin.debug:
-        msg: "{{ rendered_config.stdout }}"
-      # => Shows final configuration with all variables substituted
+    - name: Show configuration # => Task 3: Display rendered template
+      ansible.builtin.debug: # => Debug module for console output
+        msg:
+          "{{ rendered_config.stdout }}" # => Access stdout from registered variable
+          # => Shows complete rendered nginx config
+      # => Output shows final config with:
+      # => - Variables replaced (http_port=8080, server_name=example.com)
+      # => - Conditional SSL block included (enable_ssl=true)
+      # => - Two location blocks from loop (custom_locations list)
+      # => Template rendering complete: Jinja2 → plain nginx config
 ```
 
 **Run**: `ansible-playbook template_module.yml`

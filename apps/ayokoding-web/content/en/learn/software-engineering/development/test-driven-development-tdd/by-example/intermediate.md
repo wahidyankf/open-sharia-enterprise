@@ -1321,11 +1321,14 @@ test("calculateDiscount applies discount", () => {
 ```typescript
 function calculateDiscount(price: number, rate: number): number {
   return price - price * rate; // => Correct implementation
+  // => Calculates: 100 - (100 * 0.1) = 90
 }
 
 test("calculateDiscount applies discount", () => {
-  const result = calculateDiscount(100, 0.1);
+  const result = calculateDiscount(100, 0.1); // => Calls function
+  // => result is 90 (type: number)
   expect(result).toBeDefined(); // => Passes but doesn't verify correctness
+  // => Weak: doesn't check if value is correct
 });
 ```
 
@@ -1334,11 +1337,14 @@ test("calculateDiscount applies discount", () => {
 ```typescript
 function calculateDiscount(price: number, rate: number): number {
   return price; // => MUTATION: Removed discount calculation
+  // => Now returns 100 instead of 90 (BUG!)
 } // => Weak test doesn't catch this bug!
 
 test("calculateDiscount applies discount", () => {
-  const result = calculateDiscount(100, 0.1);
+  const result = calculateDiscount(100, 0.1); // => Calls buggy function
+  // => result is 100 (wrong but defined)
   expect(result).toBeDefined(); // => Still passes! (mutation survived)
+  // => Test passes despite broken logic
 });
 ```
 
@@ -1347,26 +1353,32 @@ test("calculateDiscount applies discount", () => {
 ```typescript
 describe("calculateDiscount", () => {
   test("applies correct discount percentage", () => {
-    const result = calculateDiscount(100, 0.1);
+    const result = calculateDiscount(100, 0.1); // => Calls with 10% discount
+    // => result is 90 (100 - 10)
     expect(result).toBe(90); // => STRONG: Verifies exact value
+    // => Would fail if mutation returns 100
   }); // => Would catch discount removal
 
   test("applies different discount rates", () => {
-    expect(calculateDiscount(100, 0.2)).toBe(80); // => 20% discount
-    expect(calculateDiscount(100, 0.5)).toBe(50); // => 50% discount
+    expect(calculateDiscount(100, 0.2)).toBe(80); // => 20% discount: 100 - 20 = 80
+    expect(calculateDiscount(100, 0.5)).toBe(50); // => 50% discount: 100 - 50 = 50
   }); // => Multiple assertions increase mutation detection
+  // => Mutation changing formula would fail at least one
 
   test("handles zero discount", () => {
-    expect(calculateDiscount(100, 0)).toBe(100); // => Edge case
+    expect(calculateDiscount(100, 0)).toBe(100); // => Edge case: 0% discount
+    // => 100 - 0 = 100 (no change)
   });
 
   test("handles full discount", () => {
-    expect(calculateDiscount(100, 1)).toBe(0); // => Another edge
+    expect(calculateDiscount(100, 1)).toBe(0); // => Another edge: 100% discount
+    // => 100 - 100 = 0 (free)
   });
 });
 
 function calculateDiscount(price: number, rate: number): number {
   return price - price * rate; // => Correct implementation
+  // => Formula: price - (price × rate)
 }
 ```
 
@@ -1382,23 +1394,32 @@ Test coverage measures which code is executed during tests. Aim for high coverag
 
 ```typescript
 function processPayment(amount: number, method: string): string {
-  // => FAILS: processPamyent not fully covered
+  // => FAILS: processPayment not fully covered
+  // => Function parameters: amount (number), method (string)
   if (amount < 0) {
+    // => Validation check
     throw new Error("Invalid amount"); // => Edge case not tested
+    // => Coverage gap: error path untested
   }
 
   if (method === "credit") {
-    return "Processed via credit card";
+    // => First payment type check
+    return "Processed via credit card"; // => Happy path tested
   } else if (method === "debit") {
-    return "Processed via debit card"; // => Not tested
+    // => Second payment type check
+    return "Processed via debit card"; // => Not tested (coverage gap)
   }
 
-  return "Unknown payment method"; // => Not tested
+  return "Unknown payment method"; // => Not tested (coverage gap)
+  // => Default fallback path
 }
 
 test("processPayment handles credit cards", () => {
   expect(processPayment(100, "credit")).toBe("Processed via credit card");
+  // => Calls with amount=100, method="credit"
+  // => Only tests happy path
 }); // => Only covers one path
+// => Coverage: ~25% of branches
 ```
 
 **Green: Full coverage achieved**
@@ -1407,20 +1428,33 @@ test("processPayment handles credit cards", () => {
 describe("processPayment", () => {
   test("processes credit card payments", () => {
     expect(processPayment(100, "credit")).toBe("Processed via credit card");
+    // => Tests credit card path
+    // => amount=100 (valid), method="credit"
   }); // => Covers credit path
+  // => Branch coverage: if (method === "credit")
 
   test("processes debit card payments", () => {
     expect(processPayment(100, "debit")).toBe("Processed via debit card");
+    // => Tests debit card path
+    // => amount=100 (valid), method="debit"
   }); // => Covers debit path
+  // => Branch coverage: else if (method === "debit")
 
   test("handles unknown payment methods", () => {
     expect(processPayment(100, "cash")).toBe("Unknown payment method");
+    // => Tests fallback path
+    // => amount=100 (valid), method="cash" (unknown)
   }); // => Covers default path
+  // => Branch coverage: default return
 
   test("rejects negative amounts", () => {
     expect(() => processPayment(-10, "credit")).toThrow("Invalid amount");
+    // => Tests validation path
+    // => amount=-10 (invalid), expects Error
   }); // => Covers error path
+  // => Branch coverage: if (amount < 0)
 }); // => 100% coverage achieved
+// => All 4 branches tested
 ```
 
 **Coverage Report Analysis**

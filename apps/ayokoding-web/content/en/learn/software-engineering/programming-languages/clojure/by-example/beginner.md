@@ -67,26 +67,40 @@ graph TD
 ```clojure
 ;; Lists (linked lists, O(1) prepend)
 '(1 2 3)                            ;; => (1 2 3) (quoted to prevent evaluation)
-(list 1 2 3)                        ;; => (1 2 3) (explicit list construction)
+                                    ;; => Without quote, Clojure would try to call 1 as function
+(list 1 2 3)                        ;; => Creates list with 3 elements
+                                    ;; => (1 2 3) (explicit list construction)
 
-(first '(1 2 3))                    ;; => 1 (first element)
-(rest '(1 2 3))                     ;; => (2 3) (all but first)
-(cons 0 '(1 2 3))                   ;; => (0 1 2 3) (prepend element)
+(first '(1 2 3))                    ;; => Accesses first element
+                                    ;; => 1 (O(1) operation for lists)
+(rest '(1 2 3))                     ;; => Returns all elements except first
+                                    ;; => (2 3) (also O(1) operation)
+(cons 0 '(1 2 3))                   ;; => Prepends 0 to beginning of list
+                                    ;; => (0 1 2 3) (O(1) prepend, creates new list)
 
 ;; Vectors (indexed arrays, O(1) index access)
-[1 2 3]                             ;; => [1 2 3] (no quoting needed)
-(vector 1 2 3)                      ;; => [1 2 3] (explicit vector construction)
+[1 2 3]                             ;; => [1 2 3] (literal vector syntax)
+                                    ;; => No quoting needed, not evaluated as function call
+(vector 1 2 3)                      ;; => Constructs vector from arguments
+                                    ;; => [1 2 3] (explicit vector construction)
 
-(get [1 2 3] 0)                     ;; => 1 (zero-based indexing)
-(nth [1 2 3] 1)                     ;; => 2 (nth element, throws if out of bounds)
-([1 2 3] 2)                         ;; => 3 (vectors are functions of indices)
+(get [1 2 3] 0)                     ;; => Retrieves element at index 0
+                                    ;; => 1 (zero-based indexing, returns nil if out of bounds)
+(nth [1 2 3] 1)                     ;; => Gets element at index 1
+                                    ;; => 2 (nth element, throws exception if out of bounds)
+([1 2 3] 2)                         ;; => Vector used as function with index argument
+                                    ;; => 3 (idiomatic vector indexing)
 
-(conj [1 2 3] 4)                    ;; => [1 2 3 4] (append to vector)
-(assoc [1 2 3] 1 99)                ;; => [1 99 3] (update at index 1)
+(conj [1 2 3] 4)                    ;; => Appends element to end of vector
+                                    ;; => [1 2 3 4] (efficient O(log32 n) append)
+(assoc [1 2 3] 1 99)                ;; => Updates element at index 1
+                                    ;; => [1 99 3] (creates new vector with change)
 
 ;; Count works on both
-(count '(1 2 3))                    ;; => 3 (list count)
-(count [1 2 3])                     ;; => 3 (vector count)
+(count '(1 2 3))                    ;; => Returns number of elements in list
+                                    ;; => 3 (O(1) for lists)
+(count [1 2 3])                     ;; => Returns number of elements in vector
+                                    ;; => 3 (O(1) for vectors)
 ```
 
 **Key Takeaway**: Use vectors `[]` for indexed access and when you need to add elements at the end. Use lists `()` when prepending elements or representing code (macros).
@@ -101,30 +115,45 @@ Maps are key-value associations (hash maps) optimized for lookup, while sets are
 
 ```clojure
 ;; Maps (key-value associations)
-{:name "Alice" :age 30}             ;; => {:name "Alice", :age 30} (hash map)
+{:name "Alice" :age 30}             ;; => Creates hash map with two key-value pairs
+                                    ;; => {:name "Alice", :age 30} (persistent hash map)
 
-(get {:name "Alice"} :name)         ;; => "Alice" (lookup by key)
-(get {:name "Alice"} :email "N/A")  ;; => "N/A" (default if key missing)
+(get {:name "Alice"} :name)         ;; => Looks up value for :name key
+                                    ;; => "Alice" (O(log32 n) lookup)
+(get {:name "Alice"} :email "N/A")  ;; => Looks up :email key with default value
+                                    ;; => "N/A" (default returned if key missing)
 
-({:name "Alice"} :name)             ;; => "Alice" (map as function)
-(:name {:name "Alice"})             ;; => "Alice" (keyword as function, idiomatic)
+({:name "Alice"} :name)             ;; => Map used as function with key argument
+                                    ;; => "Alice" (map-as-function pattern)
+(:name {:name "Alice"})             ;; => Keyword used as function with map argument
+                                    ;; => "Alice" (idiomatic Clojure lookup style)
 
-(assoc {:name "Alice"} :age 30)     ;; => {:name "Alice", :age 30} (add/update key)
+(assoc {:name "Alice"} :age 30)     ;; => Adds new key-value pair to map
+                                    ;; => {:name "Alice", :age 30} (creates new map)
 (dissoc {:name "Alice" :age 30} :age)
-                                    ;; => {:name "Alice"} (remove key)
+                                    ;; => Removes :age key from map
+                                    ;; => {:name "Alice"} (creates new map without key)
 
-(keys {:name "Alice" :age 30})      ;; => (:name :age) (all keys)
-(vals {:name "Alice" :age 30})      ;; => ("Alice" 30) (all values)
+(keys {:name "Alice" :age 30})      ;; => Extracts all keys from map
+                                    ;; => (:name :age) (returns sequence of keys)
+(vals {:name "Alice" :age 30})      ;; => Extracts all values from map
+                                    ;; => ("Alice" 30) (returns sequence of values)
 
 ;; Sets (unique values)
-#{1 2 3}                            ;; => #{1 3 2} (hash set, order not guaranteed)
-(set [1 2 2 3])                     ;; => #{1 3 2} (convert vector to set, duplicates removed)
+#{1 2 3}                            ;; => Creates hash set literal
+                                    ;; => #{1 3 2} (unordered, no guaranteed iteration order)
+(set [1 2 2 3])                     ;; => Converts vector to set
+                                    ;; => #{1 3 2} (duplicate 2 removed, only unique values)
 
-(contains? #{1 2 3} 2)              ;; => true (membership test)
-(#{1 2 3} 2)                        ;; => 2 (set as function, returns value or nil)
+(contains? #{1 2 3} 2)              ;; => Tests if set contains value 2
+                                    ;; => true (O(log32 n) membership test)
+(#{1 2 3} 2)                        ;; => Set used as function for membership
+                                    ;; => 2 (returns value if present, nil if absent)
 
-(conj #{1 2} 3)                     ;; => #{1 3 2} (add element)
-(disj #{1 2 3} 2)                   ;; => #{1 3} (remove element)
+(conj #{1 2} 3)                     ;; => Adds element 3 to set
+                                    ;; => #{1 3 2} (creates new set with added element)
+(disj #{1 2 3} 2)                   ;; => Removes element 2 from set
+                                    ;; => #{1 3} (creates new set without element)
 ```
 
 **Key Takeaway**: Use keywords as map keys (`:name`) for idiomatic Clojure - they act as functions for lookups. Sets are perfect for membership testing and ensuring uniqueness.
@@ -154,43 +183,63 @@ graph TD
 
 ```clojure
 ;; Named function with defn
-(defn greet [name]                  ;; => Defines function greet
-  (str "Hello, " name "!"))         ;; => Function body returns string
-                                    ;; => #'user/greet (var created)
+(defn greet [name]                  ;; => Defines named function 'greet'
+                                    ;; => Takes one parameter: name
+  (str "Hello, " name "!"))         ;; => Concatenates strings to form greeting
+                                    ;; => Returns greeting string
+                                    ;; => #'user/greet (var binding created in namespace)
 
-(greet "Alice")                     ;; => "Hello, Alice!" (function call)
+(greet "Alice")                     ;; => Calls greet function with "Alice"
+                                    ;; => "Hello, Alice!" (returns greeting)
 
 ;; Function with docstring
 (defn add
-  "Adds two numbers together"       ;; => Docstring (shown in REPL help)
-  [a b]
-  (+ a b))                          ;; => #'user/add
+  "Adds two numbers together"       ;; => Docstring (documentation shown in REPL with (doc add))
+  [a b]                             ;; => Takes two parameters: a and b
+  (+ a b))                          ;; => Adds parameters using + function
+                                    ;; => Returns sum
+                                    ;; => #'user/add (var created)
 
-(add 3 4)                           ;; => 7
+(add 3 4)                           ;; => Calls add with arguments 3 and 4
+                                    ;; => 7 (returns sum)
 
 ;; Multi-arity function
 (defn greet-multi
-  ([] (greet-multi "World"))        ;; => Zero-arg arity, calls 1-arg version
-  ([name] (str "Hello, " name "!"))) ;; => One-arg arity
-                                    ;; => #'user/greet-multi
+  ([] (greet-multi "World"))        ;; => Zero-argument arity
+                                    ;; => Calls one-argument arity with default "World"
+  ([name] (str "Hello, " name "!"))) ;; => One-argument arity
+                                    ;; => Constructs greeting with provided name
+                                    ;; => #'user/greet-multi (var created)
 
-(greet-multi)                       ;; => "Hello, World!" (0-arg arity)
-(greet-multi "Bob")                 ;; => "Hello, Bob!" (1-arg arity)
+(greet-multi)                       ;; => Calls zero-argument arity
+                                    ;; => "Hello, World!" (uses default value)
+(greet-multi "Bob")                 ;; => Calls one-argument arity with "Bob"
+                                    ;; => "Hello, Bob!" (uses provided name)
 
 ;; Variadic function (& rest)
-(defn sum [& numbers]               ;; => & collects remaining args as sequence
-  (reduce + 0 numbers))             ;; => Sums all numbers
-                                    ;; => #'user/sum
+(defn sum [& numbers]               ;; => & captures all arguments as sequence
+                                    ;; => numbers becomes sequence of all arguments
+  (reduce + 0 numbers))             ;; => Applies + across sequence with initial value 0
+                                    ;; => Returns sum of all numbers
+                                    ;; => #'user/sum (var created)
 
-(sum 1 2 3 4 5)                     ;; => 15 (all args collected into numbers)
+(sum 1 2 3 4 5)                     ;; => Calls sum with 5 arguments
+                                    ;; => numbers is (1 2 3 4 5)
+                                    ;; => 15 (returns sum)
 
 ;; Anonymous function (fn)
-(fn [x] (* x x))                    ;; => #function[...] (anonymous function object)
+(fn [x] (* x x))                    ;; => Creates anonymous function (not bound to name)
+                                    ;; => Takes one parameter x, returns x squared
+                                    ;; => #function[...] (function object, no var)
 
-((fn [x] (* x x)) 5)                ;; => 25 (immediately invoked)
+((fn [x] (* x x)) 5)                ;; => Creates anonymous function and invokes immediately
+                                    ;; => Passes 5 as argument
+                                    ;; => 25 (returns 5 * 5)
 
 ;; Anonymous function shorthand #()
-(#(* % %) 5)                        ;; => 25 (% is first arg, %2 is second, etc.)
+(#(* % %) 5)                        ;; => Shorthand anonymous function syntax
+                                    ;; => % is first argument, %2 would be second
+                                    ;; => 25 (returns 5 * 5, same as fn form)
 ```
 
 **Key Takeaway**: Use `defn` for named functions, `fn` for anonymous functions when you need to pass behavior as a value. Multi-arity functions eliminate the need for optional parameters.
@@ -692,47 +741,75 @@ Threading macros improve readability by eliminating nested function calls. `->` 
 ```clojure
 ;; Without threading (nested, hard to read)
 (reduce + (filter even? (map #(* 2 %) [1 2 3 4 5])))
-                                    ;; => 30 (nested inside-out evaluation)
+                                    ;; => Nested evaluation (inside-out, right-to-left)
+                                    ;; => map doubles: (2 4 6 8 10)
+                                    ;; => filter keeps evens: (2 4 6 8 10)
+                                    ;; => reduce sums: 30
 
 ;; With ->> threading macro (readable left-to-right)
-(->> [1 2 3 4 5]                    ;; => Start with collection
-     (map #(* 2 %))                 ;; => (2 4 6 8 10)
-     (filter even?)                 ;; => (2 4 6 8 10)
-     (reduce +))                    ;; => 30
+(->> [1 2 3 4 5]                    ;; => Starts with collection
+                                    ;; => Threads value as LAST argument to each form
+     (map #(* 2 %))                 ;; => Doubles each: [1 2 3 4 5] threaded to map
+                                    ;; => (2 4 6 8 10)
+     (filter even?)                 ;; => Filters for evens: (2 4 6 8 10) threaded to filter
+                                    ;; => (2 4 6 8 10) (all already even)
+     (reduce +))                    ;; => Sums all: (2 4 6 8 10) threaded to reduce
+                                    ;; => 30
 
 ;; -> thread-first (result becomes first argument)
-(-> {:name "Alice"}                 ;; => Start with map
-    (assoc :age 30)                 ;; => {:name "Alice", :age 30}
-    (assoc :city "NYC")             ;; => {:name "Alice", :age 30, :city "NYC"}
-    (dissoc :age))                  ;; => {:name "Alice", :city "NYC"}
+(-> {:name "Alice"}                 ;; => Starts with map
+                                    ;; => Threads value as FIRST argument to each form
+    (assoc :age 30)                 ;; => (assoc {:name "Alice"} :age 30)
+                                    ;; => {:name "Alice", :age 30}
+    (assoc :city "NYC")             ;; => (assoc previous-result :city "NYC")
+                                    ;; => {:name "Alice", :age 30, :city "NYC"}
+    (dissoc :age))                  ;; => (dissoc previous-result :age)
+                                    ;; => {:name "Alice", :city "NYC"}
 
 ;; Equivalent without ->
 (dissoc (assoc (assoc {:name "Alice"} :age 30) :city "NYC") :age)
-                                    ;; => {:name "Alice", :city "NYC"} (hard to read)
+                                    ;; => Same logic but nested (hard to read)
+                                    ;; => {:name "Alice", :city "NYC"}
 
 ;; ->> thread-last (result becomes last argument)
-(->> (range 10)                     ;; => (0 1 2 3 4 5 6 7 8 9)
-     (map inc)                      ;; => (1 2 3 4 5 6 7 8 9 10)
-     (filter odd?)                  ;; => (1 3 5 7 9)
-     (reduce +))                    ;; => 25
+(->> (range 10)                     ;; => Generates sequence 0 to 9
+                                    ;; => (0 1 2 3 4 5 6 7 8 9)
+     (map inc)                      ;; => Increments each: (map inc range-result)
+                                    ;; => (1 2 3 4 5 6 7 8 9 10)
+     (filter odd?)                  ;; => Keeps odd numbers: (filter odd? map-result)
+                                    ;; => (1 3 5 7 9)
+     (reduce +))                    ;; => Sums all: (reduce + filter-result)
+                                    ;; => 25
 
 ;; as-> (thread with custom position)
-(as-> [1 2 3] $                     ;; => Bind collection to $
-  (map inc $)                       ;; => (2 3 4) ($ is explicit)
-  (filter even? $)                  ;; => (2 4)
-  (reduce + 10 $))                  ;; => 16 (10 + 2 + 4)
+(as-> [1 2 3] $                     ;; => Binds [1 2 3] to symbol $
+                                    ;; => $ can appear anywhere in forms
+  (map inc $)                       ;; => (map inc [1 2 3]) - $ is explicit
+                                    ;; => (2 3 4)
+  (filter even? $)                  ;; => (filter even? (2 3 4)) - $ refers to previous
+                                    ;; => (2 4)
+  (reduce + 10 $))                  ;; => (reduce + 10 (2 4)) - $ as third argument
+                                    ;; => 16 (10 + 2 + 4)
 
 ;; cond-> (conditional threading)
-(cond-> {:name "Alice"}             ;; => Start with map
-  true (assoc :age 30)              ;; => {:name "Alice", :age 30} (condition true)
-  false (assoc :deleted true)       ;; => Skipped (condition false)
-  (= 1 1) (assoc :active true))     ;; => {:name "Alice", :age 30, :active true}
+(cond-> {:name "Alice"}             ;; => Starts with map, threads as first argument
+                                    ;; => Only applies forms where condition is true
+  true (assoc :age 30)              ;; => Condition true, applies (assoc map :age 30)
+                                    ;; => {:name "Alice", :age 30}
+  false (assoc :deleted true)       ;; => Condition false, skips this form entirely
+                                    ;; => Map unchanged
+  (= 1 1) (assoc :active true))     ;; => Condition true (1=1), applies assoc
+                                    ;; => {:name "Alice", :age 30, :active true}
 
 ;; cond->> (conditional thread-last)
-(cond->> [1 2 3 4 5]                ;; => Start with collection
-  true (map inc)                    ;; => (2 3 4 5 6) (condition true)
-  false (filter even?)              ;; => Skipped
-  (> 10 5) (reduce +))              ;; => 20 (condition true)
+(cond->> [1 2 3 4 5]                ;; => Starts with collection, threads as last argument
+                                    ;; => Only applies forms where condition is true
+  true (map inc)                    ;; => Condition true, applies (map inc collection)
+                                    ;; => (2 3 4 5 6)
+  false (filter even?)              ;; => Condition false, skips filtering
+                                    ;; => Collection unchanged
+  (> 10 5) (reduce +))              ;; => Condition true (10>5), applies (reduce + collection)
+                                    ;; => 20 (2+3+4+5+6)
 ```
 
 **Key Takeaway**: Use `->` for operations that take the subject as the first argument (map updates), `->>` for sequence operations (last argument), and `as->` when you need explicit control over position. Threading macros dramatically improve code readability.
@@ -820,59 +897,94 @@ stateDiagram-v2
 
 ```clojure
 ;; Creating an atom
-(def counter (atom 0))              ;; => #'user/counter (atom with initial value 0)
+(def counter (atom 0))              ;; => Creates atom wrapping initial value 0
+                                    ;; => Atoms provide thread-safe mutable reference
+                                    ;; => #'user/counter (var created in namespace)
 
 ;; Reading atom value with deref or @
-(deref counter)                     ;; => 0 (read current value)
-@counter                            ;; => 0 (shorthand for deref)
+(deref counter)                     ;; => Dereferences atom to get current value
+                                    ;; => 0 (reads wrapped value)
+@counter                            ;; => @ is reader macro for deref
+                                    ;; => 0 (shorthand syntax)
 
 ;; Updating with swap! (apply function)
-(swap! counter inc)                 ;; => 1 (increment atomically)
-@counter                            ;; => 1 (new value)
+(swap! counter inc)                 ;; => Applies inc function to current value atomically
+                                    ;; => Uses compare-and-swap (CAS) for thread safety
+                                    ;; => 1 (atomically increments 0 to 1)
+@counter                            ;; => Reads updated value
+                                    ;; => 1 (new state persisted)
 
-(swap! counter + 5)                 ;; => 6 (add 5 atomically)
-@counter                            ;; => 6
+(swap! counter + 5)                 ;; => Applies (+ current-value 5) atomically
+                                    ;; => 6 (adds 5 to current value of 1)
+@counter                            ;; => Reads updated value
+                                    ;; => 6
 
 ;; swap! with custom function
-(swap! counter #(* % 2))            ;; => 12 (double current value)
-@counter                            ;; => 12
+(swap! counter #(* % 2))            ;; => Applies anonymous function (* current 2)
+                                    ;; => 12 (doubles current value of 6)
+@counter                            ;; => Reads updated value
+                                    ;; => 12
 
 ;; Updating with reset! (set directly)
-(reset! counter 0)                  ;; => 0 (set to 0, returns new value)
-@counter                            ;; => 0
+(reset! counter 0)                  ;; => Sets atom to exact value 0 (not function-based)
+                                    ;; => Ignores previous value, direct assignment
+                                    ;; => 0 (returns new value)
+@counter                            ;; => Reads reset value
+                                    ;; => 0
 
 ;; Atom with complex state (map)
 (def user (atom {:name "Alice" :age 30}))
+                                    ;; => Creates atom wrapping map
+                                    ;; => Entire map is atomic value
                                     ;; => #'user/user
 
-@user                               ;; => {:name "Alice", :age 30}
+@user                               ;; => Dereferences to get current map
+                                    ;; => {:name "Alice", :age 30}
 
-(swap! user assoc :city "NYC")      ;; => {:name "Alice", :age 30, :city "NYC"}
-@user                               ;; => {:name "Alice", :age 30, :city "NYC"}
+(swap! user assoc :city "NYC")      ;; => Applies (assoc current-map :city "NYC")
+                                    ;; => Creates new map with added key
+                                    ;; => {:name "Alice", :age 30, :city "NYC"}
+@user                               ;; => Reads updated map
+                                    ;; => {:name "Alice", :age 30, :city "NYC"}
 
-(swap! user update :age inc)        ;; => {:name "Alice", :age 31, :city "NYC"}
-@user                               ;; => {:name "Alice", :age 31, :city "NYC"}
+(swap! user update :age inc)        ;; => Applies (update current-map :age inc)
+                                    ;; => Increments :age value from 30 to 31
+                                    ;; => {:name "Alice", :age 31, :city "NYC"}
+@user                               ;; => Reads updated map
+                                    ;; => {:name "Alice", :age 31, :city "NYC"}
 
 ;; Atom with validator (constraints)
 (def positive-counter
-  (atom 0 :validator pos?))         ;; => Atom with positive number constraint
+  (atom 0 :validator pos?))         ;; => Creates atom with validation function
+                                    ;; => pos? checks value is positive
+                                    ;; => Validator runs on every update
                                     ;; => #'user/positive-counter
 
-(swap! positive-counter inc)        ;; => 1 (valid, constraint satisfied)
+(swap! positive-counter inc)        ;; => Attempts to set value to 1
+                                    ;; => Validator checks: (pos? 1) => true
+                                    ;; => 1 (update allowed)
 
-(reset! positive-counter -5)        ;; => Exception: Invalid reference state
-                                    ;; => Validator rejects negative values
+(reset! positive-counter -5)        ;; => Attempts to set value to -5
+                                    ;; => Validator checks: (pos? -5) => false
+                                    ;; => Exception: Invalid reference state
 
 ;; Atom with watch (observe changes)
-(def watched-atom (atom 0))         ;; => #'user/watched-atom
+(def watched-atom (atom 0))         ;; => Creates atom to be watched
+                                    ;; => #'user/watched-atom
 
 (add-watch watched-atom :logger
-  (fn [key ref old-val new-val]
+  (fn [key ref old-val new-val]     ;; => Watch function receives 4 args
+                                    ;; => key: :logger, ref: atom, old/new values
     (println "Changed from" old-val "to" new-val)))
-                                    ;; => #<Atom ...> (watch registered)
+                                    ;; => Registers watch with :logger key
+                                    ;; => #<Atom ...> (watch attached)
 
-(swap! watched-atom inc)            ;; => 1, Output: Changed from 0 to 1
-(reset! watched-atom 10)            ;; => 10, Output: Changed from 1 to 10
+(swap! watched-atom inc)            ;; => Increments 0 to 1
+                                    ;; => Watch function triggered automatically
+                                    ;; => 1, Output: Changed from 0 to 1
+(reset! watched-atom 10)            ;; => Resets to 10
+                                    ;; => Watch function triggered again
+                                    ;; => 10, Output: Changed from 1 to 10
 ```
 
 **Key Takeaway**: Use atoms for independent, synchronous state. `swap!` applies functions atomically (retries on contention), while `reset!` sets values directly. Validators enforce constraints, and watches observe changes.
@@ -947,89 +1059,145 @@ Clojure provides rich predicates for type checking and testing values. Predicate
 
 ```clojure
 ;; Type predicates
-(nil? nil)                          ;; => true
-(nil? 0)                            ;; => false
+(nil? nil)                          ;; => Tests if value is nil
+                                    ;; => true (nil is the only nil value)
+(nil? 0)                            ;; => Tests if 0 is nil
+                                    ;; => false (0 is a number, not nil)
 
-(some? 42)                          ;; => true (opposite of nil?)
-(some? nil)                         ;; => false
+(some? 42)                          ;; => Tests if value is not nil (opposite of nil?)
+                                    ;; => true (42 is a value, not nil)
+(some? nil)                         ;; => Tests if nil is not nil
+                                    ;; => false (nil fails some? test)
 
-(number? 42)                        ;; => true
-(number? "42")                      ;; => false
+(number? 42)                        ;; => Tests if value is numeric type
+                                    ;; => true (42 is a number)
+(number? "42")                      ;; => Tests if string is numeric type
+                                    ;; => false (string "42" is not a number type)
 
-(string? "hello")                   ;; => true
-(string? 'hello)                    ;; => false (symbol, not string)
+(string? "hello")                   ;; => Tests if value is string type
+                                    ;; => true ("hello" is a string)
+(string? 'hello)                    ;; => Tests if symbol is string type
+                                    ;; => false ('hello is symbol, not string)
 
-(keyword? :name)                    ;; => true
-(keyword? "name")                   ;; => false
+(keyword? :name)                    ;; => Tests if value is keyword type
+                                    ;; => true (:name is a keyword)
+(keyword? "name")                   ;; => Tests if string is keyword type
+                                    ;; => false ("name" is string, not keyword)
 
-(symbol? 'x)                        ;; => true
-(symbol? :x)                        ;; => false (keyword, not symbol)
+(symbol? 'x)                        ;; => Tests if value is symbol type
+                                    ;; => true ('x is a symbol)
+(symbol? :x)                        ;; => Tests if keyword is symbol type
+                                    ;; => false (:x is keyword, not symbol)
 
 ;; Collection predicates
-(coll? [1 2 3])                     ;; => true (vector is collection)
-(coll? {:a 1})                      ;; => true (map is collection)
-(coll? 42)                          ;; => false
+(coll? [1 2 3])                     ;; => Tests if vector is a collection
+                                    ;; => true (vectors implement collection interface)
+(coll? {:a 1})                      ;; => Tests if map is a collection
+                                    ;; => true (maps implement collection interface)
+(coll? 42)                          ;; => Tests if number is a collection
+                                    ;; => false (numbers are not collections)
 
-(sequential? [1 2 3])               ;; => true (vectors are sequential)
-(sequential? '(1 2 3))              ;; => true (lists are sequential)
-(sequential? #{1 2 3})              ;; => false (sets are not sequential)
+(sequential? [1 2 3])               ;; => Tests if vector has sequential semantics
+                                    ;; => true (vectors have defined order)
+(sequential? '(1 2 3))              ;; => Tests if list has sequential semantics
+                                    ;; => true (lists have defined order)
+(sequential? #{1 2 3})              ;; => Tests if set has sequential semantics
+                                    ;; => false (sets are unordered)
 
-(vector? [1 2 3])                   ;; => true
-(vector? '(1 2 3))                  ;; => false (list, not vector)
+(vector? [1 2 3])                   ;; => Tests if value is specifically a vector
+                                    ;; => true (literal vector syntax)
+(vector? '(1 2 3))                  ;; => Tests if list is a vector
+                                    ;; => false (list is different type from vector)
 
-(list? '(1 2 3))                    ;; => true
-(list? [1 2 3])                     ;; => false
+(list? '(1 2 3))                    ;; => Tests if value is specifically a list
+                                    ;; => true (quoted list syntax)
+(list? [1 2 3])                     ;; => Tests if vector is a list
+                                    ;; => false (vector is different type from list)
 
-(map? {:a 1})                       ;; => true
-(map? [[:a 1]])                     ;; => false
+(map? {:a 1})                       ;; => Tests if value is a map
+                                    ;; => true (literal map syntax)
+(map? [[:a 1]])                     ;; => Tests if vector of pairs is a map
+                                    ;; => false (vector is not a map)
 
-(set? #{1 2 3})                     ;; => true
-(set? [1 2 3])                      ;; => false
+(set? #{1 2 3})                     ;; => Tests if value is a set
+                                    ;; => true (literal set syntax)
+(set? [1 2 3])                      ;; => Tests if vector is a set
+                                    ;; => false (vector is not a set)
 
 ;; Numeric predicates
-(zero? 0)                           ;; => true
-(zero? 0.0)                         ;; => true
-(zero? 1)                           ;; => false
+(zero? 0)                           ;; => Tests if integer zero equals zero
+                                    ;; => true (0 is zero)
+(zero? 0.0)                         ;; => Tests if floating point zero equals zero
+                                    ;; => true (0.0 is also zero)
+(zero? 1)                           ;; => Tests if one equals zero
+                                    ;; => false (1 is not zero)
 
-(pos? 5)                            ;; => true (positive)
-(pos? 0)                            ;; => false
-(pos? -3)                           ;; => false
+(pos? 5)                            ;; => Tests if number is greater than zero
+                                    ;; => true (5 is positive)
+(pos? 0)                            ;; => Tests if zero is greater than zero
+                                    ;; => false (0 is not positive)
+(pos? -3)                           ;; => Tests if negative number is positive
+                                    ;; => false (-3 is negative, not positive)
 
-(neg? -5)                           ;; => true (negative)
-(neg? 0)                            ;; => false
+(neg? -5)                           ;; => Tests if number is less than zero
+                                    ;; => true (-5 is negative)
+(neg? 0)                            ;; => Tests if zero is less than zero
+                                    ;; => false (0 is not negative)
 
-(even? 4)                           ;; => true
-(even? 3)                           ;; => false
+(even? 4)                           ;; => Tests if number is divisible by 2
+                                    ;; => true (4 is even)
+(even? 3)                           ;; => Tests if 3 is divisible by 2
+                                    ;; => false (3 is odd)
 
-(odd? 3)                            ;; => true
-(odd? 4)                            ;; => false
+(odd? 3)                            ;; => Tests if number is not divisible by 2
+                                    ;; => true (3 is odd)
+(odd? 4)                            ;; => Tests if 4 is not divisible by 2
+                                    ;; => false (4 is even)
 
 ;; Logical predicates
-(true? true)                        ;; => true
-(true? 1)                           ;; => false (1 is truthy, not true)
+(true? true)                        ;; => Tests if value is exactly boolean true
+                                    ;; => true (true is the true value)
+(true? 1)                           ;; => Tests if 1 is exactly boolean true
+                                    ;; => false (1 is truthy but not true value)
 
-(false? false)                      ;; => true
-(false? nil)                        ;; => false (nil is falsey, not false)
+(false? false)                      ;; => Tests if value is exactly boolean false
+                                    ;; => true (false is the false value)
+(false? nil)                        ;; => Tests if nil is exactly boolean false
+                                    ;; => false (nil is falsey but not false value)
 
 ;; Function predicates
-(fn? inc)                           ;; => true
-(fn? #(+ % 1))                      ;; => true
-(fn? 42)                            ;; => false
+(fn? inc)                           ;; => Tests if inc is a function object
+                                    ;; => true (inc is built-in function)
+(fn? #(+ % 1))                      ;; => Tests if anonymous fn is function object
+                                    ;; => true (anonymous functions are functions)
+(fn? 42)                            ;; => Tests if number is a function
+                                    ;; => false (numbers are not functions)
 
-(ifn? inc)                          ;; => true (functions are invocable)
-(ifn? {:a 1})                       ;; => true (maps are invocable)
-(ifn? [1 2 3])                      ;; => true (vectors are invocable)
+(ifn? inc)                          ;; => Tests if inc implements IFn (invocable)
+                                    ;; => true (functions are invocable)
+(ifn? {:a 1})                       ;; => Tests if map is invocable
+                                    ;; => true (maps can be called as functions)
+(ifn? [1 2 3])                      ;; => Tests if vector is invocable
+                                    ;; => true (vectors can be called with index)
 
 ;; Empty/contains predicates
-(empty? [])                         ;; => true
-(empty? [1])                        ;; => false
-(empty? "")                         ;; => true
-(empty? nil)                        ;; => true (nil is empty)
+(empty? [])                         ;; => Tests if vector has no elements
+                                    ;; => true (empty vector)
+(empty? [1])                        ;; => Tests if vector with one element is empty
+                                    ;; => false (contains 1 element)
+(empty? "")                         ;; => Tests if string has no characters
+                                    ;; => true (empty string)
+(empty? nil)                        ;; => Tests if nil is empty
+                                    ;; => true (nil is considered empty)
 
-(contains? {:a 1 :b 2} :a)          ;; => true (key exists)
-(contains? {:a 1 :b 2} :c)          ;; => false
-(contains? [1 2 3] 0)               ;; => true (index 0 exists)
-(contains? [1 2 3] 5)               ;; => false (no index 5)
+(contains? {:a 1 :b 2} :a)          ;; => Tests if map has key :a
+                                    ;; => true (:a key exists in map)
+(contains? {:a 1 :b 2} :c)          ;; => Tests if map has key :c
+                                    ;; => false (:c key not in map)
+(contains? [1 2 3] 0)               ;; => Tests if vector has index 0
+                                    ;; => true (index 0 exists in 3-element vector)
+(contains? [1 2 3] 5)               ;; => Tests if vector has index 5
+                                    ;; => false (only indices 0-2 exist)
 ```
 
 **Key Takeaway**: Use type predicates for runtime checks. `nil?` vs `some?` are opposites. `contains?` checks for key/index existence, not value membership (use `some` for value search).
@@ -1044,56 +1212,85 @@ Clojure's `clojure.string` namespace provides functional string manipulation. Op
 
 ```clojure
 ;; Require clojure.string
-(require '[clojure.string :as str]) ;; => nil
+(require '[clojure.string :as str]) ;; => Imports string namespace with alias 'str'
+                                    ;; => nil (require returns nil)
 
 ;; Basic operations
-(str/upper-case "hello")            ;; => "HELLO"
-(str/lower-case "WORLD")            ;; => "world"
-(str/capitalize "clojure")          ;; => "Clojure" (first char uppercase)
+(str/upper-case "hello")            ;; => Converts all characters to uppercase
+                                    ;; => "HELLO"
+(str/lower-case "WORLD")            ;; => Converts all characters to lowercase
+                                    ;; => "world"
+(str/capitalize "clojure")          ;; => Uppercases first character only
+                                    ;; => "Clojure" (rest unchanged)
 
 ;; Trimming
-(str/trim "  hello  ")              ;; => "hello" (remove leading/trailing whitespace)
-(str/triml "  hello  ")             ;; => "hello  " (trim left)
-(str/trimr "  hello  ")             ;; => "  hello" (trim right)
+(str/trim "  hello  ")              ;; => Removes whitespace from both ends
+                                    ;; => "hello"
+(str/triml "  hello  ")             ;; => Removes whitespace from left only
+                                    ;; => "hello  " (right whitespace preserved)
+(str/trimr "  hello  ")             ;; => Removes whitespace from right only
+                                    ;; => "  hello" (left whitespace preserved)
 
 ;; Splitting
-(str/split "a,b,c" #",")            ;; => ["a" "b" "c"] (split by regex)
-(str/split "a b c" #"\s+")          ;; => ["a" "b" "c"] (split by whitespace)
-(str/split "a:b:c" #":" 2)          ;; => ["a" "b:c"] (limit splits to 2)
+(str/split "a,b,c" #",")            ;; => Splits string by comma regex pattern
+                                    ;; => ["a" "b" "c"] (returns vector)
+(str/split "a b c" #"\s+")          ;; => Splits by one or more whitespace characters
+                                    ;; => ["a" "b" "c"]
+(str/split "a:b:c" #":" 2)          ;; => Splits by colon, max 2 parts
+                                    ;; => ["a" "b:c"] (remaining colons stay in last part)
 
 ;; Joining
-(str/join ["a" "b" "c"])            ;; => "abc" (concatenate)
-(str/join ", " ["a" "b" "c"])       ;; => "a, b, c" (join with separator)
+(str/join ["a" "b" "c"])            ;; => Concatenates strings with no separator
+                                    ;; => "abc"
+(str/join ", " ["a" "b" "c"])       ;; => Concatenates with ", " between elements
+                                    ;; => "a, b, c"
 
 ;; Replacing
 (str/replace "hello world" "world" "clojure")
-                                    ;; => "hello clojure" (replace first match)
-(str/replace "aaa" "a" "b")         ;; => "bbb" (replace all occurrences)
-(str/replace-first "aaa" "a" "b")   ;; => "baa" (replace first only)
+                                    ;; => Replaces ALL occurrences of "world"
+                                    ;; => "hello clojure"
+(str/replace "aaa" "a" "b")         ;; => Replaces all "a" with "b"
+                                    ;; => "bbb"
+(str/replace-first "aaa" "a" "b")   ;; => Replaces only first "a" with "b"
+                                    ;; => "baa" (remaining "aa" unchanged)
 
 ;; Testing
 (str/starts-with? "hello world" "hello")
+                                    ;; => Tests if string begins with "hello"
                                     ;; => true
 (str/ends-with? "hello world" "world")
+                                    ;; => Tests if string ends with "world"
                                     ;; => true
-(str/includes? "hello world" "lo")  ;; => true
+(str/includes? "hello world" "lo")  ;; => Tests if "lo" appears anywhere in string
+                                    ;; => true
 
 ;; Blank checking
-(str/blank? "")                     ;; => true
-(str/blank? "  ")                   ;; => true (whitespace only)
-(str/blank? "hello")                ;; => false
-(str/blank? nil)                    ;; => true
+(str/blank? "")                     ;; => Tests if string is empty
+                                    ;; => true
+(str/blank? "  ")                   ;; => Tests if string is whitespace-only
+                                    ;; => true (whitespace counts as blank)
+(str/blank? "hello")                ;; => Tests if string has content
+                                    ;; => false (contains non-whitespace)
+(str/blank? nil)                    ;; => Tests if nil is blank
+                                    ;; => true (nil is considered blank)
 
 ;; Reverse
-(str/reverse "hello")               ;; => "olleh"
+(str/reverse "hello")               ;; => Reverses character order in string
+                                    ;; => "olleh"
 
 ;; Pipeline example
-(->> "  HELLO, WORLD!  "            ;; => Start with string
-     str/trim                       ;; => "HELLO, WORLD!"
-     str/lower-case                 ;; => "hello, world!"
-     (str/split #",\s*")            ;; => ["hello" "world!"]
-     (map str/capitalize)           ;; => ("Hello" "World!")
-     (str/join " and "))            ;; => "Hello and World!"
+(->> "  HELLO, WORLD!  "            ;; => Starts with messy string
+                                    ;; => Thread-last macro pipes through transformations
+     str/trim                       ;; => Removes leading/trailing whitespace
+                                    ;; => "HELLO, WORLD!"
+     str/lower-case                 ;; => Converts to lowercase
+                                    ;; => "hello, world!"
+     (str/split #",\s*")            ;; => Splits by comma and optional whitespace
+                                    ;; => ["hello" "world!"]
+     (map str/capitalize)           ;; => Capitalizes each word in collection
+                                    ;; => ("Hello" "World!")
+     (str/join " and "))            ;; => Joins with " and " separator
+                                    ;; => "Hello and World!"
 ```
 
 **Key Takeaway**: Alias `clojure.string` as `str` and use threading macros for readable string transformations. All operations are pure (return new strings, never mutate).

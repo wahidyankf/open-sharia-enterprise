@@ -366,71 +366,88 @@ Proper documentation through comments and descriptions makes Terraform configura
 
 ```hcl
 # comments.tf
+# => File name demonstrates comment and documentation patterns
 
 # Single-line comment using hash
+# => Hash-style comment (most common in HCL)
 // Single-line comment using double-slash (both valid)
+// => Slash-style comment (alternative syntax)
 
 /*
   Multi-line comment
   using C-style syntax
   spans multiple lines
 */
+# => Multi-line comment block for documentation sections
 
 terraform {
 # => Terraform configuration block
   required_version = ">= 1.0"              # Inline comment
   # => Sets required_version
+  # => Inline comment appears after code on same line
 }
 
 provider "local" {}
-# => Provider configuration
+# => Provider configuration (enables local_file resource)
 
 # Resource with documentation
 resource "local_file" "documented" {
-# => Resource definition
+# => Resource definition for documented file
   filename = "documented.txt"
   # => Sets filename
+  # => Creates file in current directory
   content  = "Well-documented configuration"
   # => Sets content
+  # => File contents written to documented.txt
 
   # File permissions in octal notation
   file_permission = "0644"                 # rw-r--r-- (owner: rw, group: r, other: r)
-  # => Sets file_permission
+  # => Sets file_permission in octal format
+  # => 0644: owner read/write, group read, other read
 }
 
 # Variable with description
 variable "environment" {
-# => Input variable
+# => Input variable for environment name
   description = <<-EOT
-  # => Sets description
+  # => Sets description using heredoc syntax
     Environment name for resource tagging.
     Valid values: development, staging, production
   EOT
+  # => Multi-line description appears in terraform plan output
   type        = string
-  # => Sets type
+  # => Sets type constraint (must be string)
   default     = "development"
-  # => Sets default
+  # => Sets default value if variable not provided
+  # => Makes variable optional (no default = required)
 
   # Validation rule with explanation
   validation {
+  # => Validation block prevents invalid values
     condition     = contains(["development", "staging", "production"], var.environment)
-    # => Sets condition
+    # => Sets condition expression (must evaluate to true)
+    # => contains checks if var.environment in allowed list
     error_message = "Environment must be development, staging, or production."
-    # => Sets error_message
+    # => Sets error_message shown when validation fails
+    # => Displayed to user during terraform plan/apply
   }
 }
 
 # Output with description
 output "file_info" {
-# => Output value
+# => Output value exposes file information
   description = "Information about the created file"
-  # => Sets description
+  # => Sets description (appears in terraform output command)
   value = {
+  # => Map value with multiple attributes
     filename    = local_file.documented.filename
-    # => Sets filename
+    # => References filename attribute from resource
+    # => Value: "documented.txt"
     permissions = local_file.documented.file_permission
-    # => Sets permissions
+    # => References file_permission attribute
+    # => Value: "0644"
   }
+  # => Output available after terraform apply completes
 }
 
 
@@ -1886,34 +1903,51 @@ Terraform state tracks real infrastructure and maps resources to configuration. 
 
 ```hcl
 # state_demo.tf
+# => Demonstrates state file management and backend configuration
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets minimum Terraform version
 
   # Backend configuration (where state is stored)
   backend "local" {
+  # => Local backend stores state in filesystem
     path = "terraform.tfstate"             # => Local state file (default)
+    # => State file path relative to working directory
+    # => Contains resource mappings and metadata
   }
+  # => Backend determines state storage location
 }
 
 provider "local" {}
+# => Local provider for file system operations
 
 resource "local_file" "state_example" {
+# => Resource tracked in terraform.tfstate
   filename = "state_example.txt"
+  # => Sets filename
+  # => Terraform tracks this file in state
   content  = "State management demo"
+  # => Sets content
+  # => After apply, state records filename, content, id
 }
 
 # State commands (run via CLI)
 # $ terraform state list
 # => local_file.state_example (lists all resources in state)
+# => Shows resource addresses managed by Terraform
 
 # $ terraform state show local_file.state_example
 # => Shows complete resource state and all attributes
+# => Displays: filename, content, id, provider
 
 # $ terraform state pull
 # => Outputs state as JSON to stdout
+# => Useful for inspection and backup
 
 # $ terraform state push terraform.tfstate.backup
 # => Uploads local state file to configured backend (dangerous!)
+# => Overwrites remote state (use with caution)
 ```
 
 **State file structure**:
