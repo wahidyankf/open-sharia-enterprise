@@ -46,54 +46,34 @@ graph TD
 ```
 
 ```yaml
-apiVersion:
-  v1 # => Uses core Kubernetes API v1
-  # => v1 is stable, production-ready API version
-  # => Core API includes Pods, Services, ConfigMaps
-  # => Other versions: apps/v1, batch/v1, networking.k8s.io/v1
-kind:
-  Pod # => Resource type: Pod
-  # => Smallest deployable unit in Kubernetes
-  # => Groups one or more containers
-  # => Alternative: Deployment, StatefulSet, DaemonSet
-  # => Pods are ephemeral (not persistent)
+apiVersion: v1 # => Core Kubernetes API (stable, production-ready)
+kind: Pod # => Smallest deployable unit (groups one or more containers)
 metadata:
-  # => Resource metadata section
-  name:
-    hello-world # => Pod name: "hello-world"
-    # => Must be unique within namespace
-    # => DNS-1123 format: lowercase alphanumeric with hyphens
-    # => Used in kubectl commands
+  name: hello-world # => Pod name (unique within namespace)
   labels:
-    # => Key-value labels for organization
-    app:
-      hello # => Label for identification and selection
-      # => Labels are key-value pairs for organization
-      # => Used by Services and Deployments to select Pods
-      # => Enables grouping and filtering
-spec:
-  # => Pod specification defines desired state
+    app: hello # => Label for Service selection and grouping
+spec: # => Pod specification (desired state)
   containers:
-    # => List of containers in this Pod
-    - name:
-        nginx # => Container name: "nginx"
-        # => Each container needs unique name within Pod
-        # => Used in kubectl logs and exec commands
-        # => Identifier for this container
+    - name: nginx # => Container name (used in logs and exec)
       image:
-        nginx:1.24 # => Uses nginx 1.24 from Docker Hub
-        # => Image pulled automatically if not present locally
-        # => Format: [registry/]image[:tag]
-        # => Default registry: docker.io (Docker Hub)
-        # => Version tag prevents unexpected updates
+        nginx:1.24 # => nginx 1.24 from Docker Hub
+        # => Pin version to prevent unexpected updates
       ports:
-        # => Container port configuration
         - containerPort:
-            80 # => Exposes port 80 inside container
-            # => Documentation only, doesn't create network access
-            # => Does not expose to outside cluster
-            # => Use Service resource for external exposure
-            # => Containers can still bind to this port
+            80 # => Documents port 80 (HTTP standard port)
+            # => Service will target this port
+
+# Create Pod from manifest
+# => kubectl apply -f hello-world-pod.yaml
+
+# Verify Pod is running
+# => kubectl get pod hello-world
+
+# Access Pod
+# => kubectl port-forward pod/hello-world 8080:80
+
+# Delete Pod
+# => kubectl delete pod hello-world
 ```
 
 **Key Takeaway**: Pods are ephemeral and should not be created directly in production; use higher-level controllers like Deployments for automatic recovery and scaling.
@@ -106,41 +86,31 @@ spec:
 
 Kubernetes cluster health can be verified by checking component status and creating a test Pod. This example demonstrates essential kubectl commands for cluster diagnostics and resource inspection.
 
-```yaml
-# No YAML manifest needed - using kubectl commands directly
-
+```bash
 # Check cluster info
 # => kubectl cluster-info
-# => Shows API server URL and cluster services
 
 # Check node status
 # => kubectl get nodes
-# => Lists all nodes with status (Ready/NotReady)
 
 # Check system Pods
 # => kubectl get pods -n kube-system
-# => Shows core Kubernetes components (kube-proxy, coredns, etc.)
 
 # Create test Pod
 # => kubectl run test-pod --image=nginx:1.24 --restart=Never
-# => Creates Pod named "test-pod" with nginx image
-# => --restart=Never creates bare Pod (not Deployment)
 
 # Verify Pod is running
 # => kubectl get pods
-# => Shows Pod status (Pending → Running → Running)
 
 # Get detailed Pod info
 # => kubectl describe pod test-pod
-# => Shows events, conditions, container states
 
 # View Pod logs
 # => kubectl logs test-pod
-# => Shows nginx access/error logs
 
 # Cleanup
 # => kubectl delete pod test-pod
-# => Removes Pod and associated resources
+
 ```
 
 **Key Takeaway**: Use `kubectl get`, `describe`, and `logs` commands for debugging Pod issues; check node status and kube-system Pods to diagnose cluster-level problems.
@@ -173,102 +143,53 @@ graph TD
 ```
 
 ```yaml
-apiVersion:
-  v1 # => Core Kubernetes API
-  # => Stable Pod API
-kind:
-  Pod # => Multi-container Pod resource
-  # => Demonstrates container-to-container communication
+apiVersion: v1
+kind: Pod
 metadata:
-  name:
-    multi-container-pod # => Pod name: "multi-container-pod"
-    # => Unique identifier in namespace
-    # => Contains two containers
+  name: multi-container-pod # => Pod with two containers (sidecar pattern)
 spec:
-  # => Pod specification
   containers:
-    # => Container list (two containers)
-    - name:
-        nginx # => Main application container
-        # => Serves web content from shared volume
-        # => First container in Pod
-      image:
-        nginx:1.24 # => nginx web server
-        # => Production web server image
-        # => Listens on port 80 by default
-        # => Reads HTML from /usr/share/nginx/html
+    - name: nginx # => Main application container
+      image: nginx:1.24 # => Serves content from shared volume
       ports:
-        # => Container port configuration
-        - containerPort:
-            80 # => HTTP port exposed
-            # => Container listens on this port
-            # => Shared network with busybox container
-            # => Both containers use localhost
+        - containerPort: 80 # => HTTP port (shared network with busybox)
       volumeMounts:
-        # => Volume mount configuration
-        - name:
-            shared-data # => Mounts shared volume at /usr/share/nginx/html
-            # => Volume name matches volumes section below
-            # => Links to emptyDir volume
+        - name: shared-data # => Links to emptyDir volume below
           mountPath:
-            /usr/share/nginx/html # => nginx serves content from this path
-            # => Default document root for nginx
+            /usr/share/nginx/html # => nginx default document root
             # => Files written by busybox visible here
-            # => Dynamic content served
 
-    - name:
-        busybox # => Sidecar container for data generation
-        # => Generates dynamic content for nginx
-        # => Second container in Pod
-      image:
-        busybox:1.36 # => Lightweight Linux container
-        # => Minimal Linux distribution
-        # => Provides shell and basic utilities
-        # => Very small image size
+    - name: busybox # => Sidecar container (generates dynamic content)
+      image: busybox:1.36 # => Lightweight Linux for shell scripts
       command:
-        # => Container startup command
-        - sh # => Runs shell command
-          # => Bourne shell interpreter
-          # => Executes script
-        - -c # => Interprets following string as command
-          # => Execute inline script
-          # => Shell flag for command execution
-        - | # => Multi-line YAML string
-          # => Pipe notation for script
-          # => Loop script that updates HTML file
-          while true; do
-            # => Infinite loop for continuous updates
-            echo "$(date) - Generated by busybox" > /data/index.html # => Write timestamped content
-            # => Creates HTML with current timestamp
-            # => Overwrites file every iteration
-            sleep 10 # => Wait 10 seconds
-            # => Delay between updates
-          done                             # => Updates index.html every 10 seconds
-          # => Content immediately visible to nginx container
-          # => Demonstrates real-time container communication
+        - sh
+        - -c
+        - |
+          while true; do                                     # => Infinite loop
+            echo "$(date) - Generated by busybox" > /data/index.html
+                                                             # => Writes timestamped HTML
+            sleep 10                                         # => Updates every 10 seconds
+          done
       volumeMounts:
-        # => Volume mount for busybox
-        - name:
-            shared-data # => Same volume as nginx container
-            # => Both containers share same storage
-            # => Enables data sharing
-          mountPath:
-            /data # => busybox writes to /data
-            # => Different path than nginx (demonstrates flexibility)
-            # => Both containers see same files
-            # => Data persists for Pod lifetime only
-            # => Lost when Pod deleted
+        - name: shared-data # => Same volume as nginx
+          mountPath: /data # => Different path, same underlying storage
 
   volumes:
-    # => Volume definitions for Pod
-    - name:
-        shared-data # => EmptyDir volume (ephemeral)
-        # => Temporary storage shared between containers
-        # => Created when Pod starts
-      emptyDir: {} # => Created when Pod starts
-        # => Deleted when Pod terminates
-        # => Uses node's local storage
-        # => No size limit specified
+    - name: shared-data # => Shared ephemeral storage
+      emptyDir: {} # => Created when Pod starts, deleted when Pod terminates
+
+
+# Apply and observe
+# => kubectl apply -f multi-container-pod.yaml
+
+# Access nginx to see generated content
+# => kubectl port-forward pod/multi-container-pod 8080:80
+
+# View logs from specific container
+# => kubectl logs multi-container-pod -c nginx    # nginx access logs
+
+# Execute commands in container
+# => kubectl exec -it multi-container-pod -c busybox -- sh
 ```
 
 **Key Takeaway**: Multi-container Pods share localhost networking and volumes, enabling sidecar patterns for logging, monitoring, or data processing without container modifications.
@@ -282,60 +203,35 @@ spec:
 Restart policies control how Kubernetes handles container failures within Pods. Different policies suit different workload types: Always for long-running services, OnFailure for batch jobs, Never for run-once tasks.
 
 ```yaml
-apiVersion:
-  v1 # => Core API for Pod resources
-  # => Stable Pod API version
-kind:
-  Pod # => Pod with restart policy demonstration
-  # => Demonstrates failure recovery
+apiVersion: v1
+kind: Pod
 metadata:
-  name:
-    restart-demo # => Pod identifier
-    # => Unique name in namespace
-    # => Restart policy test Pod
+  name: restart-demo # => Demonstrates restart policy behavior
 spec:
-  # => Pod specification
   restartPolicy:
-    OnFailure # => Restarts container only if exit code != 0
-    # => Pod-level restart policy
+    OnFailure # => Restarts only if exit code != 0
     # => Options: Always (default), OnFailure, Never
-    # => Always: restart on any termination
-    # => OnFailure: restart only on non-zero exit
-    # => Never: do not restart (for jobs)
-    # => Policy applies to ALL containers in Pod
   containers:
-    # => Container list
-    - name:
-        failing-app # => Container that simulates failure
-        # => Demonstrates restart behavior
-        # => Intentionally exits with error
-      image:
-        busybox:1.36 # => Lightweight shell environment
-        # => Minimal Linux for testing
-        # => Provides shell utilities for testing
-        # => Small image for fast restarts
+    - name: failing-app # => Simulates application failure
+      image: busybox:1.36 # => Lightweight shell for testing
       command:
-        # => Container command override
-        - sh # => Execute shell script
-          # => Bourne shell interpreter
-          # => Runs failure simulation
-        - -c # => Run inline command
-          # => Interpret string as script
-          # => Shell command flag
-        - | # => Multi-line script begins
-          # => Pipe notation for script
-          # => Script demonstrates restart policy
-          echo "Starting application..." # => Log startup message
-          # => Shows container start
-          sleep 5 # => Run for 5 seconds before failure
-          # => Simulates application runtime
-          echo "Simulating failure" # => Log failure event
-          # => Indicates crash
-          exit 1                          # => Non-zero exit triggers restart with OnFailure
-          # => Exit code 1 = failure
-          # => Container enters CrashLoopBackOff after repeated failures
-          # => Kubernetes increases restart delay: 10s, 20s, 40s, 80s (max 5min)
-          # => Exponential backoff prevents restart storms
+        - sh
+        - -c
+        - |
+          echo "Starting application..."  # => Logs startup
+          sleep 5                         # => Runs for 5 seconds
+          echo "Simulating failure"       # => Logs crash
+          exit 1                          # => Non-zero exit triggers restart
+                                          # => Enters CrashLoopBackOff after repeated failures
+
+# Create and observe restart behavior
+# => kubectl apply -f restart-demo.yaml
+
+# Check restart count
+# => kubectl get pod restart-demo         # RESTARTS column increments
+
+# View logs across restarts
+# => kubectl logs restart-demo            # Current container logs
 ```
 
 **Key Takeaway**: Use `Always` for Deployments (services), `OnFailure` for Jobs (batch processing), and `Never` for Pods that should run exactly once without automatic recovery.
@@ -349,59 +245,34 @@ spec:
 Resource requests guarantee minimum CPU/memory allocation for Pods, while limits cap maximum usage to prevent resource starvation. Kubernetes uses requests for scheduling decisions and limits for resource enforcement.
 
 ```yaml
-apiVersion:
-  v1 # => Core Kubernetes API
-  # => Stable Pod API
-kind:
-  Pod # => Pod with resource constraints
-  # => Demonstrates resource management
+apiVersion: v1
+kind: Pod
 metadata:
-  name:
-    resource-demo # => Pod name for resource testing
-    # => Demonstrates CPU and memory management
-    # => Unique identifier
+  name: resource-demo # => Demonstrates CPU and memory management
 spec:
-  # => Pod specification
   containers:
-    # => Container list
-    - name:
-        nginx # => nginx web server container
-        # => Demonstrates resource requests and limits
-        # => Application container
-      image:
-        nginx:1.24 # => nginx version 1.24
-        # => Stable production image
-        # => Version-pinned
+    - name: nginx
+      image: nginx:1.24 # => Stable production image
       resources:
-        # => Resource management configuration
-        # => Critical for scheduling and enforcement
-        requests:
-          # => Minimum guaranteed resources
-          # => Used by scheduler for placement
-          cpu:
-            100m # => Requests 100 millicores (0.1 CPU core)
-            # => Scheduler places Pod on node with available CPU
-            # => 1000m = 1 CPU core, 100m = 10% of one core
-            # => Guaranteed CPU allocation
-          memory:
-            128Mi # => Requests 128 mebibytes RAM
-            # => Mi = mebibyte (1024^2 bytes)
-            # => Guaranteed memory allocation
-            # => Scheduler ensures node has available memory
-        limits:
-          # => Maximum resource usage caps
-          # => Enforced by kubelet
-          cpu:
-            200m # => Limited to 200 millicores maximum
-            # => CPU throttled if exceeds limit
-            # => Container slowed down but not killed
-            # => CFS quota enforcement
-          memory:
-            256Mi # => Limited to 256 MiB maximum
-            # => Pod killed (OOMKilled) if exceeds memory limit
-            # => Requests must be <= limits
-            # => Memory limit violation is fatal
-            # => Hard limit enforcement
+        requests: # => Minimum guaranteed resources (scheduling)
+          cpu: 100m # => 0.1 CPU core guaranteed (1000m = 1 core)
+          memory: 128Mi # => 128 MiB RAM guaranteed (Mi = mebibyte)
+        limits: # => Maximum resource caps (enforcement)
+          cpu: 200m # => CPU throttled if exceeds (slowed, not killed)
+          memory: 256Mi # => Pod OOMKilled if exceeds memory limit
+
+
+# Apply and monitor resources
+# => kubectl apply -f resource-demo.yaml
+
+# Monitor actual resource usage
+# => kubectl top pod resource-demo       # Requires metrics-server
+
+# Test CPU throttling
+# => kubectl exec -it resource-demo -- sh -c "yes > /dev/null &"
+
+# Test memory limit (OOMKill)
+# => kubectl exec -it resource-demo -- sh -c "stress --vm 1 --vm-bytes 300M"
 ```
 
 **Key Takeaway**: Always set resource requests for predictable scheduling and limits to prevent resource starvation; memory limit violations kill Pods (OOMKilled) while CPU limits throttle performance.
@@ -418,17 +289,14 @@ Environment variables inject configuration into containers without modifying ima
 apiVersion:
   v1 # => Core Kubernetes API
   # => Stable Pod specification
-  # => Environment variable support built-in
 kind:
   Pod # => Pod with environment variables
   # => Demonstrates env injection patterns
-  # => Three configuration methods shown
 metadata:
   # => Pod metadata
   name:
     env-demo # => Pod name for environment testing
     # => Demonstrates various env variable patterns
-    # => Unique identifier in namespace
 spec:
   # => Pod specification
   containers:
@@ -436,82 +304,58 @@ spec:
     - name:
         busybox # => Lightweight shell container
         # => Displays environment variables
-        # => BusyBox provides Unix utilities
       image:
         busybox:1.36 # => Provides shell utilities
         # => Minimal Linux environment
-        # => Tag 1.36 for reproducibility
-        # => ~1MB compressed image
       command:
         # => Override container ENTRYPOINT
         - sh # => Execute shell commands
         # => Bourne shell interpreter
-        # => Standard POSIX shell
         - -c # => Run inline script
         # => Execute string as command
-        # => Interprets next arg as script
         - | # => Multi-line script
           # => Prints environment variables
-          # => YAML pipe notation for literal string
-          # => Preserves newlines and formatting
           echo "APP_ENV: $APP_ENV" # => Shows directly assigned value
           # => Prints static env var
-          # => Shell expands $APP_ENV variable
           echo "POD_NAME: $POD_NAME" # => Shows Pod name from metadata
           # => Prints dynamically injected value
-          # => References Pod's own metadata
           echo "POD_IP: $POD_IP" # => Shows Pod IP from status
           # => Prints Pod network address
-          # => Available after scheduling
           sleep 3600                      # => Keeps container running for inspection
           # => Allows kubectl exec for testing
-          # => 1 hour sleep for debugging
-          # => Without sleep, Pod completes immediately
       env:
         # => Environment variable definitions
-        # => Three injection methods demonstrated
-        # => Available to all container processes
         - name: APP_ENV # => Environment variable name
           # => Static configuration value
-          # => Direct value assignment pattern
           value: "production" # => Direct value assignment
           # => Hardcoded in Pod manifest
-          # => Simple string value
-          # => No external references
         - name: POD_NAME # => Variable from Pod metadata
           # => Dynamically injected value
-          # => References Pod's own fields
           valueFrom:
             # => Source is Pod field
-            # => Alternative to direct value
-            # => Downward API pattern
             fieldRef:
               # => References metadata field
-              # => Downward API field reference
-              # => Accesses Pod metadata at runtime
               fieldPath:
                 metadata.name # => References Pod's own name
                 # => Useful for logging and identification
-                # => Value set when Pod created
-                # => Unique within namespace
-                # => Enables self-identification
         - name: POD_IP # => Variable from Pod status
           # => Pod IP address injection
-          # => Network identity variable
           valueFrom:
             # => Source is status field
-            # => Runtime status injection
-            # => Available after Pod scheduled
             fieldRef:
               # => References status field
-              # => Downward API status reference
-              # => Dynamic Pod information
               fieldPath:
                 status.podIP # => References Pod's assigned IP address
                 # => Available after Pod is scheduled
-                # => Changes if Pod recreated
-                # => Cluster-internal IP
-                # => Used for service discovery
+
+# Create and verify environment variables:
+# => kubectl apply -f env-demo.yaml
+
+# Inspect environment variables interactively:
+# => kubectl exec -it env-demo -- sh
+
+# Environment variable patterns:
+# => Direct values for non-sensitive config
 ```
 
 **Key Takeaway**: Use direct values for static config, ConfigMap/Secret references for sensitive data, and fieldRef for Pod metadata like name and IP; avoid hardcoding environment-specific values in images.
@@ -547,129 +391,105 @@ graph TD
 apiVersion:
   v1 # => Core Kubernetes API
   # => Stable Pod API version
-  # => Init containers supported since v1.6
 kind:
   Pod # => Pod with init containers
   # => Demonstrates initialization pattern
-  # => Init containers run before app containers
 metadata:
   # => Pod metadata
   name:
     init-demo # => Pod demonstrating initialization pattern
     # => Shows sequential init container execution
-    # => Unique identifier in namespace
 spec:
   # => Pod specification
   initContainers:
     # => Init containers run BEFORE app containers
-    # => Run sequentially in defined order
-    # => All must succeed for app containers to start
     - name:
         init-setup # => First init container
         # => Prepares initial data
-        # => Runs before init-permissions
       image:
         busybox:1.36 # => Lightweight shell environment
         # => Provides basic utilities
-        # => Tag for reproducibility
       command:
         # => Override container ENTRYPOINT
         - sh # => Execute shell script
         # => Bourne shell interpreter
-        # => Standard Unix shell
         - -c # => Run inline command
         # => Execute string as script
-        # => Interprets next arg as code
         - | # => Multi-line script
           # => Data preparation logic
-          # => YAML literal block scalar
           echo "Initializing data..." # => Log initialization start
           # => Output to stdout
           echo "Initial content" > /work-dir/index.html # => Create HTML file
           # => Writes to shared volume
-          # => File persists for app containers
           sleep 2                         # => Simulates setup work
           # => Container exits with code 0 (success)
-          # => 2 second delay simulates work
-          # => Success allows next init to start
       volumeMounts:
         # => Volume mount list for init container
         - name: workdir # => Volume name reference
           # => Shared with other containers
-          # => References volumes section
           mountPath: /work-dir # => Writes to shared volume
           # => Files persist for Pod lifetime
-          # => Mount point in container filesystem
-          # => Data accessible to subsequent containers
 
     - name:
         init-permissions # => Second init container (runs after first)
         # => Sets file permissions
-        # => Only starts if init-setup succeeds
-        # => Sequential execution guaranteed
       image:
         busybox:1.36 # => Same image as first init
         # => Reuses downloaded image
-        # => Image pull optimization
       command:
         # => Override container ENTRYPOINT
         - sh # => Execute shell script
         # => Bourne shell interpreter
-        # => Standard Unix shell
         - -c # => Run inline command
         # => Execute string as script
-        # => Interprets next arg as code
         - | # => Multi-line script
           # => Permission setup logic
-          # => YAML literal block scalar
           echo "Setting permissions..." # => Log permission start
           # => Output to stdout
           chmod 644 /work-dir/index.html # => Make file readable
           # => Sets owner read/write, group read, world read
-          # => Prepares file for nginx access
           echo "Init complete"            # => Exit code 0 signals success
           # => App containers start after this succeeds
-          # => Success triggers app container startup
       volumeMounts:
         # => Volume mount list for init container
         - name: workdir # => Same volume as init-setup
           # => Accesses files created by previous init
-          # => Shared volume reference
           mountPath: /work-dir # => Accesses files from first init container
           # => Shared storage between init containers
-          # => Mount point in container filesystem
-          # => Same path as init-setup for consistency
 
   containers:
     # => App containers only start after ALL inits succeed
-    # => Main application container list
     - name:
         nginx # => App container starts after both inits succeed
         # => Web server serving prepared content
-        # => Waits for all init containers to complete
       image:
         nginx:1.24 # => nginx web server
         # => Production-ready image
-        # => Tag 1.24 for version pinning
       volumeMounts:
         # => Volume mount list for app container
         - name: workdir # => Same volume as init containers
           # => Reads files prepared by inits
-          # => Shared volume reference
           mountPath: /usr/share/nginx/html # => Serves content prepared by init containers
           # => nginx default document root
-          # => HTML files served at root path
-          # => Volume contains index.html from init
 
   volumes:
     # => Volume definitions for Pod
     - name: workdir # => EmptyDir volume definition
       # => Temporary storage for Pod lifetime
-      # => Referenced by all containers
       emptyDir: {} # => Shared between init and app containers
       # => Created when Pod starts, deleted when Pod terminates
-      # => Temporary filesystem in memory or disk
-      # => Data does not persist across Pod restarts
+
+# Apply and observe init container sequence:
+# => kubectl apply -f init-demo.yaml
+
+# Check init container logs:
+# => kubectl logs init-demo -c init-setup
+
+# Verify init container work:
+# => kubectl exec -it init-demo -- cat /usr/share/nginx/html/index.html
+
+# Init container behavior:
+# => Init containers run sequentially
 ```
 
 **Key Takeaway**: Init containers guarantee sequential execution for setup tasks and must complete successfully before app containers start; use them for data seeding, prerequisite checks, or waiting for dependencies.
@@ -703,66 +523,61 @@ graph TD
 apiVersion:
   apps/v1 # => Uses apps API group for workloads
   # => apps/v1 is stable API for Deployments
-  # => Separate from core/v1 API
 kind:
   Deployment # => Deployment resource (manages ReplicaSets)
   # => Higher-level abstraction than Pods
-  # => Provides declarative updates and rollbacks
 metadata:
   # => Deployment metadata
   name:
     web-app # => Deployment name: "web-app"
     # => Unique identifier in namespace
-    # => Referenced by kubectl commands
   labels:
     # => Deployment labels
     app: web # => Label for Deployment identification
     # => Used by kubectl selectors
-    # => Organizational metadata
 spec:
   # => Deployment specification
   replicas:
     3 # => Maintains 3 Pod replicas at all times
     # => Deployment creates ReplicaSet to manage Pods
-    # => Self-healing: recreates failed Pods automatically
-    # => Desired state declaration
   selector:
     # => Defines which Pods this Deployment manages
-    # => Label selector for Pod ownership
     matchLabels:
       # => Equality-based selector
       app:
         web # => Selects Pods with label app=web
         # => Must match template labels below
-        # => Immutable after creation
-        # => Links Deployment to Pods
   template: # => Pod template (blueprint for Pods)
-    # => ReplicaSet uses this to create Pods
-    # => Pod specification embedded
     metadata:
       # => Pod template metadata
       labels:
         # => Labels for created Pods
         app: web # => Applied to all created Pods
         # => MUST match selector.matchLabels above
-        # => Service selector target
     spec:
       # => Pod specification
       containers:
         # => Container list for Pods
         - name: nginx # => Container name
           # => Single container per Pod
-          # => Identifier for container in Pod
           image: nginx:1.24 # => nginx image version
           # => Pulled from Docker Hub
-          # => Tag 1.24 for version pinning
-          # => Container runtime downloads image
           ports:
             # => Port definitions
             - containerPort: 80 # => Container port exposed
             # => Does not create external access
-            # => Use Service for external exposure
-            # => Documentation for port usage
+
+# Apply Deployment:
+# => kubectl apply -f web-app-deployment.yaml
+
+# Inspect created resources:
+# => kubectl get rs
+
+# Test self-healing:
+# => kubectl delete pod web-app-<pod-hash>
+
+# Deployment management commands:
+# => kubectl rollout status deployment/web-app
 ```
 
 **Key Takeaway**: Always use Deployments instead of bare Pods in production for automatic replica management, self-healing, and zero-downtime updates; Deployments create ReplicaSets which create Pods.
@@ -787,74 +602,51 @@ metadata:
   name:
     scalable-app # => Deployment identifier
     # => Used in kubectl commands
-    # => Unique in namespace
 spec:
   # => Deployment specification
   replicas:
     5 # => Updated from 3 to 5 replicas
     # => Deployment creates 2 additional Pods
-    # => kubectl scale deployment scalable-app --replicas=5
-    # => Scaling operation is declarative
-    # => Desired state specification
   selector:
     # => Pod selector for management
-    # => Links Deployment to Pods
     matchLabels:
       # => Equality-based selector
       app: scalable # => Matches template labels
       # => Immutable after creation
-      # => Pod ownership identification
   template:
     # => Pod template for replicas
-    # => Blueprint for all Pods
     metadata:
       # => Pod template metadata
       labels:
         # => Labels for created Pods
         app: scalable # => Labels applied to Pods
         # => MUST match selector
-        # => Service discovery label
     spec:
       # => Pod specification
       containers:
         # => Container list
         - name: nginx # => Container definition
           # => Single container per Pod
-          # => Container identifier
           image: nginx:1.24 # => nginx image
           # => Same image for all replicas
-          # => Version 1.24 pinned
           resources:
             # => Resource constraints per Pod
-            # => Scheduler uses for placement
             requests:
               # => Minimum guaranteed resources
-              # => Used for scheduling decisions
               cpu: 100m # => 100 millicores per Pod
               # => 5 Pods = 500m CPU total requested
-              # => Scheduler reserves CPU
               memory: 128Mi # => 128 MiB per Pod
               # => 5 Pods = 640 MiB total requested
-              # => Scheduler reserves memory
             limits:
               # => Maximum resource caps
-              # => Enforced by runtime
               cpu: 200m # => 200 millicores max per Pod
               # => Throttled if exceeded
-              # => CFS quota enforcement
               memory:
                 256Mi # => Each Pod gets these resources
                 # => Total: 500m CPU, 640Mi memory requested
-                # => Killed if memory exceeded
-                # => OOMKilled on limit breach
 
 # Scaling commands:
 # => kubectl scale deployment scalable-app --replicas=10
-# => Imperative scaling command (quick adjustment)
-# => Updates replica count directly
-# => kubectl autoscale deployment scalable-app --min=3 --max=10 --cpu-percent=80
-# => Creates HorizontalPodAutoscaler (automatic scaling)
-# => Autoscales based on CPU utilization
 ```
 
 **Key Takeaway**: Scale Deployments declaratively by updating replicas in YAML (GitOps-friendly) or imperatively with `kubectl scale` for quick adjustments; consider HorizontalPodAutoscaler for automatic scaling based on metrics.
@@ -897,84 +689,54 @@ metadata:
   name:
     rolling-app # => Deployment name
     # => Used in rollout commands
-    # => Unique identifier
 spec:
   # => Deployment specification
   replicas:
     4 # => Desired number of Pods
     # => Maintained during and after update
-    # => Target state for ReplicaSet
   strategy:
     # => Update strategy configuration
-    # => Controls how Pods are replaced
     type:
       RollingUpdate # => Update strategy: RollingUpdate (default)
       # => Alternative: Recreate (all Pods down, then up)
-      # => RollingUpdate ensures zero downtime
-      # => Gradual Pod replacement
     rollingUpdate:
       # => Rolling update parameters
-      # => Fine-tune update behavior
       maxSurge:
         1 # => Maximum 1 extra Pod during update
         # => Total Pods during update: 4 + 1 = 5
-        # => Allows faster rollout with extra capacity
-        # => Can be number or percentage
       maxUnavailable:
         1 # => Maximum 1 Pod can be unavailable
         # => Minimum available: 4 - 1 = 3 Pods
-        # => Balance: maxSurge controls speed, maxUnavailable controls availability
-        # => Critical services use maxUnavailable=0
-        # => Can be number or percentage
   selector:
     # => Pod selector (immutable)
-    # => Links Deployment to Pods
     matchLabels:
       # => Equality-based selector
       app: rolling # => Matches template labels
       # => Selector cannot change after creation
-      # => Pod ownership identification
   template:
     # => Pod template (blueprint)
-    # => Specification for all Pods
     metadata:
       # => Pod template metadata
       labels:
         # => Labels for created Pods
         app: rolling # => Labels for created Pods
         # => MUST match selector
-        # => Service discovery label
     spec:
       # => Pod specification
       containers:
         # => Container list
         - name: nginx # => Container name
           # => Referenced in kubectl set image
-          # => Container identifier
           image:
             nginx:1.24 # => Update to nginx:1.25 to trigger rolling update
             # => kubectl set image deployment/rolling-app nginx=nginx:1.25
-            # => Image change triggers new ReplicaSet creation
-            # => Current version 1.24
           ports:
             # => Port definitions
             - containerPort: 80 # => HTTP port
             # => Service routes traffic here
-            # => Container listens on port 80
 
 # Update and rollback commands:
 # => kubectl set image deployment/rolling-app nginx=nginx:1.25
-# => Triggers rolling update to new image version
-# => Creates new ReplicaSet
-# => kubectl rollout status deployment/rolling-app
-# => Watch update progress in real-time
-# => Shows Pod replacement progression
-# => kubectl rollout history deployment/rolling-app
-# => View revision history with change-cause annotations
-# => Lists all ReplicaSet revisions
-# => kubectl rollout undo deployment/rolling-app
-# => Rollback to previous revision (creates new ReplicaSet)
-# => Reverses to last known good state
 ```
 
 **Key Takeaway**: Configure maxSurge and maxUnavailable to balance update speed and availability; use maxSurge=1, maxUnavailable=0 for critical services requiring zero downtime, or increase both for faster updates with acceptable brief unavailability.
@@ -999,76 +761,46 @@ metadata:
   name:
     versioned-app # => Deployment name
     # => Used in rollback commands
-    # => Unique identifier
   annotations:
     # => Annotations for deployment metadata
-    # => Non-identifying metadata
     kubernetes.io/change-cause:
       "Update to v1.25"
       # => Recorded in revision history
-      # => kubectl rollout history shows this message
-      # => Set this on each deployment for audit trail
-      # => Tracks reason for each revision
 spec:
   # => Deployment specification
   replicas:
     3 # => Desired Pod count
     # => Maintained across rollbacks
-    # => Target state for ReplicaSet
   revisionHistoryLimit:
     10 # => Keeps 10 old ReplicaSets for rollback
     # => Default: 10 revisions
-    # => Old ReplicaSets scaled to 0 but retained
-    # => Cleanup happens when limit exceeded
-    # => Set to 0 to disable rollback
   selector:
     # => Pod selector (immutable)
-    # => Links Deployment to Pods
     matchLabels:
       # => Equality-based selector
       app: versioned # => Matches template labels
       # => Cannot change after creation
-      # => Pod ownership identification
   template:
     # => Pod template for replicas
-    # => Blueprint for all Pods
     metadata:
       # => Pod template metadata
       labels:
         # => Labels for created Pods
         app: versioned # => Required label
         # => Matches selector above
-        # => Service discovery label
         version: v1.25 # => Version label for tracking
         # => Optional but helpful for debugging
-        # => Not part of selector
     spec:
       # => Pod specification
       containers:
         # => Container list
         - name: nginx # => Container definition
           # => Single container in this example
-          # => Container identifier
           image: nginx:1.25 # => Current image version
           # => Changing this triggers rollout
-          # => Previous version: nginx:1.24
-          # => Image tag identifies version
 
 # Rollback commands:
 # => kubectl rollout history deployment/versioned-app
-# => Shows: REVISION  CHANGE-CAUSE
-# =>        1         Update to v1.24
-# =>        2         Update to v1.25 (current)
-# => Lists all retained revisions with change-cause
-# => Each revision is a ReplicaSet
-# => kubectl rollout undo deployment/versioned-app
-# => Rolls back to revision 1 (previous)
-# => Creates new revision (3) with v1.24 Pod template
-# => Follows rolling update strategy
-# => kubectl rollout undo deployment/versioned-app --to-revision=1
-# => Rolls back to specific revision
-# => Useful for jumping back multiple versions
-# => Target revision must exist in history
 ```
 
 **Key Takeaway**: Set `kubernetes.io/change-cause` annotation to track deployment reasons; use `kubectl rollout undo` for quick rollbacks and `--to-revision` for specific version restoration; maintain sufficient `revisionHistoryLimit` for rollback options.
@@ -1093,97 +825,62 @@ metadata:
   name:
     probe-app # => Deployment identifier
     # => Demonstrates liveness probes
-    # => Unique name in namespace
 spec:
   # => Deployment specification
   replicas:
     2 # => Two Pod replicas
     # => Both monitored independently
-    # => Each Pod has its own probe
   selector:
     # => Pod selector
-    # => Links Deployment to Pods
     matchLabels:
       # => Equality-based selector
       app: probe # => Matches template labels
       # => Immutable selector
-      # => Pod ownership identification
   template:
     # => Pod template
-    # => Blueprint for all Pods
     metadata:
       # => Pod template metadata
       labels:
         # => Labels for created Pods
         app: probe # => Labels for Pods
         # => MUST match selector
-        # => Service discovery label
     spec:
       # => Pod specification with probes
       containers:
         # => Container list
         - name: nginx # => nginx container
           # => Serves as health check target
-          # => Container identifier
           image: nginx:1.24 # => nginx image
           # => Responds to HTTP health checks
-          # => Version 1.24 pinned
           ports:
             # => Port definitions
             - containerPort: 80 # => HTTP port
             # => Liveness probe target
-            # => nginx default HTTP port
           livenessProbe: # => Checks if container is alive
-            # => Detects deadlocks and hangs
-            # => Automatic restart on failure
             httpGet:
               # => HTTP probe type
-              # => Alternative: exec, tcpSocket, grpc
               path: / # => Sends HTTP GET to / on port 80
               # => nginx default page responds
-              # => Root path health check
               port: 80 # => Target port for probe
               # => Matches containerPort above
-              # => HTTP probe destination
             initialDelaySeconds:
               10 # => Wait 10s after container starts before first probe
               # => Allows app initialization time
-              # => Prevents false positives during startup
-              # => Grace period for slow starts
             periodSeconds:
               5 # => Probe every 5 seconds
               # => Default: 10 seconds
-              # => Frequent checks for faster detection
-              # => Check interval timing
             timeoutSeconds:
               2 # => Probe must respond within 2 seconds
               # => Default: 1 second
-              # => Timeout = failure
-              # => Response deadline
             failureThreshold:
               3 # => Restart after 3 consecutive failures
               # => Default: 3 failures
-              # => Prevents restart on transient failures
-              # => Failure tolerance window
             successThreshold:
               1 # => Consider healthy after 1 success
               # => Default: 1 (cannot be changed for liveness)
-              # => Always 1 for liveness probes
-              # => Immediate health confirmation
 
 # Liveness check behavior:
 # => HTTP 200-399: Success (container healthy)
-# => Continues normal operation
-# => 2xx/3xx status codes pass
-# => HTTP 400+: Failure (counts toward failureThreshold)
-# => 4xx/5xx responses treated as unhealthy
-# => Client/server errors fail probe
-# => Timeout: Failure (no response within timeoutSeconds)
-# => Network issues or hangs trigger failure
-# => Slow response = failed probe
-# => After 3 failures: kubelet restarts container
-# => Restarts follow Pod restartPolicy (Always by default)
-# => Container restart preserves Pod
 ```
 
 **Key Takeaway**: Use liveness probes to detect and recover from application deadlocks or hangs; set appropriate `initialDelaySeconds` to allow startup time and avoid false positives that cause restart loops.
@@ -1225,50 +922,29 @@ metadata:
   name:
     web-service # => Service name: "web-service"
     # => DNS: web-service.default.svc.cluster.local
-    # => Unique name in namespace
 spec:
   # => Service specification
   type:
     ClusterIP # => Internal cluster IP (default type)
     # => Not accessible from outside cluster
-    # => Most secure service type
-    # => Default if not specified
   selector:
     # => Pod selector for traffic routing
-    # => Label-based Pod discovery
     app:
       web # => Routes traffic to Pods with app=web label
       # => Service continuously watches for matching Pods
-      # => Automatically updates endpoints when Pods change
-      # => Load balances across matching Pods
   ports:
     # => Port mapping configuration
-    # => Service port definitions
     - port: 80 # => Service listens on port 80
       # => Clients connect to ClusterIP:80
-      # => External port for service
       targetPort:
         8080 # => Forwards to container port 8080
         # => Service IP:80 → Pod IP:8080
-        # => Pods must listen on this port
-        # => Internal container port
       protocol:
         TCP # => TCP protocol (default)
         # => Alternative: UDP for DNS, SCTP for telecom
-        # => Most common: TCP for HTTP/HTTPS
-        # => Layer 4 protocol
 
 # Service receives cluster IP automatically
 # => kubectl get svc web-service
-# => Shows: CLUSTER-IP (e.g., 10.96.0.10)
-# => Allocated from service cluster IP range
-# => kube-proxy manages routing rules
-# => Other Pods can access via: http://web-service:80
-# => Short DNS name within same namespace
-# => CoreDNS resolves to cluster IP
-# => Or via FQDN: http://web-service.default.svc.cluster.local:80
-# => Full DNS name works across namespaces
-# => Format: <service>.<namespace>.svc.cluster.local
 ```
 
 **Key Takeaway**: Use ClusterIP Services for internal microservice communication within the cluster, reserving LoadBalancer and NodePort types for external access points to minimize security exposure and resource costs.
@@ -1310,52 +986,29 @@ metadata:
   name:
     nodeport-service # => Service name
     # => DNS name within cluster
-    # => Unique identifier
 spec:
   # => Service specification
   type:
     NodePort # => Exposes Service on node IPs
     # => Accessible via <NodeIP>:<NodePort>
-    # => Opens port on ALL cluster nodes
-    # => External access service type
   selector:
     # => Pod selector
-    # => Label-based routing
     app: nodeport # => Routes to Pods with app=nodeport
     # => Service watches for matching Pods
-    # => Automatic endpoint updates
   ports:
     # => Port configuration
-    # => Three-tier port mapping
     - port: 80 # => Service port (cluster-internal)
       # => ClusterIP:80 for internal access
-      # => ClusterIP functionality included
       targetPort: 8080 # => Container port on Pods
       # => Pods must listen on 8080
-      # => Backend application port
       nodePort:
         31000 # => External port on all nodes (30000-32767)
         # => Optional: Kubernetes assigns random port if omitted
-        # => Traffic flow: NodeIP:31000 → Service:80 → Pod:8080
-        # => Same port on every node
-        # => High-numbered port range
       protocol: TCP # => TCP protocol
       # => Standard for HTTP traffic
-      # => Layer 4 protocol
 
 # Access patterns:
 # => From outside cluster: http://<node-ip>:31000
-# => External clients use any node IP
-# => kube-proxy routes to backend Pods
-# => From inside cluster: http://nodeport-service:80
-# => Internal Pods use ClusterIP
-# => Standard service discovery
-# => Works on ALL nodes (kube-proxy sets up iptables rules)
-# => Even if Pod not on that node
-# => Traffic forwarded to correct node
-# => kubectl get nodes -o wide  # Get node IPs
-# => Shows external IPs for access
-# => Use EXTERNAL-IP column
 ```
 
 **Key Takeaway**: NodePort is suitable for development and testing but avoid in production due to security concerns (opens ports on all nodes) and lack of load balancing; use LoadBalancer or Ingress for production external access.
@@ -1380,33 +1033,23 @@ metadata:
   name:
     loadbalancer-service # => Service identifier
     # => Used in kubectl commands
-    # => Unique name in namespace
 spec:
   # => Service specification
   type:
     LoadBalancer # => Provisions cloud provider load balancer
     # => Requires cloud provider integration
-    # => On Minikube: use `minikube tunnel`
-    # => Creates external cloud resource
-    # => Managed load balancer service
   selector:
     # => Pod selector for routing
-    # => Label-based backend discovery
     app: frontend # => Routes to Pods with app=frontend
     # => Service tracks endpoints automatically
-    # => Load balances across Pods
   ports:
     # => Port mapping
-    # => External to internal routing
     - port: 80 # => Load balancer listens on port 80
       # => Public port for external access
-      # => Internet-facing port
       targetPort: 8080 # => Forwards to Pod port 8080
       # => Backend port on containers
-      # => Internal application port
       protocol: TCP # => TCP protocol
       # => HTTP/HTTPS traffic
-      # => Layer 4 protocol
 
   # Cloud provider specific annotations (AWS example):
   # annotations:
@@ -1419,18 +1062,6 @@ spec:
 
 # LoadBalancer provisions external IP
 # => kubectl get svc loadbalancer-service
-# => Shows: EXTERNAL-IP (e.g., 203.0.113.10)
-# => Cloud provider allocates public IP
-# => Public internet-routable address
-# => Pending: load balancer provisioning in progress
-# => Usually takes 1-3 minutes
-# => Cloud resource creation time
-# => After provisioning: accessible via http://203.0.113.10:80
-# => Public internet access enabled
-# => Direct external access point
-# => Cloud provider handles health checks and failover
-# => Automatic traffic distribution
-# => Managed high availability
 ```
 
 **Key Takeaway**: LoadBalancer Services are production-ready for external access but incur cloud provider costs per Service; consider using a single Ingress controller with Ingress resources for cost-effective HTTP/HTTPS routing to multiple Services.
@@ -1455,45 +1086,25 @@ metadata:
   name:
     headless-service # => Headless Service name
     # => Used by StatefulSets for DNS
-    # => Unique identifier
 spec:
   # => Service specification
   clusterIP:
     None # => No cluster IP assigned (headless)
     # => DNS returns Pod IPs directly
-    # => "None" is special value (not null)
-    # => Disables load balancing
   selector:
     # => Pod selector
-    # => Label-based Pod discovery
     app: stateful # => Targets Pods with app=stateful
     # => Same selector as StatefulSet below
-    # => Direct Pod endpoint tracking
   ports:
     # => Port configuration (required even for headless)
-    # => Port definition for DNS records
     - port: 80 # => Service port
       # => Not used for routing (no ClusterIP)
-      # => Documentation purpose
       targetPort: 8080 # => Container port
       # => Direct Pod connections use this port
-      # => Backend application port
 
 
 # DNS behavior:
 # => Regular Service: DNS returns single cluster IP
-# => Load balances across Pods transparently
-# => kube-proxy manages routing
-# => Headless Service: DNS returns all Pod IPs
-# => Multiple A records for service name
-# => No load balancing abstraction
-# => nslookup headless-service.default.svc.cluster.local
-# => Returns: 10.244.0.5, 10.244.1.6, 10.244.2.7 (Pod IPs)
-# => Client application chooses which IP to use
-# => Application-level load balancing
-# => Enables direct Pod addressing: pod-name.headless-service.namespace.svc.cluster.local
-# => Individual Pod DNS resolution
-# => Stable network identity per Pod
 
 ---
 apiVersion:
@@ -1527,7 +1138,6 @@ spec:
       # => Equality-based selector
       app: stateful # => Matches template and Service selector
       # => All three components must align
-      # => Pod ownership identification
   template:
     # => Pod template
     # => Blueprint for stateful Pods
@@ -1537,30 +1147,17 @@ spec:
         # => Labels for created Pods
         app: stateful # => Labels for Pods
         # => MUST match selector and Service
-        # => Service discovery label
     spec:
       # => Pod specification
       containers:
         # => Container list
         - name: nginx # => Container definition
           # => Application container
-          # => Container identifier
           image: nginx:1.24 # => nginx image
           # => Version-pinned for stability
-          # => Reproducible deployments
 
 # Pod DNS names:
 # => stateful-app-0.headless-service.default.svc.cluster.local
-# => First Pod (index 0)
-# => Stable DNS regardless of node
-# => stateful-app-1.headless-service.default.svc.cluster.local
-# => Second Pod (index 1)
-# => Sequential ordering
-# => stateful-app-2.headless-service.default.svc.cluster.local
-# => Third Pod (index 2)
-# => Predictable naming
-# => Stable DNS even if Pod recreated
-# => Network identity persists
 ```
 
 **Key Takeaway**: Use headless Services with StatefulSets for predictable Pod DNS names and direct Pod-to-Pod communication; avoid for regular stateless applications where load balancing and service abstraction are beneficial.
@@ -1585,60 +1182,34 @@ metadata:
   name:
     sticky-service # => Service name
     # => Provides sticky sessions
-    # => Unique identifier
 spec:
   # => Service specification
   type:
     ClusterIP # => Internal cluster IP
     # => Session affinity works with all Service types
-    # => Also works with LoadBalancer/NodePort
   sessionAffinity:
     ClientIP # => Enables session affinity
     # => Routes requests from same client IP to same Pod
-    # => Default: None (random load balancing)
-    # => Only option: ClientIP (no cookie-based affinity)
-    # => IP-based sticky sessions
   sessionAffinityConfig:
     # => Session affinity configuration
-    # => Timeout settings
     clientIP:
       # => Client IP session config
-      # => IP-based affinity parameters
       timeoutSeconds:
         10800 # => Session timeout: 3 hours (10800 seconds)
         # => After timeout, new Pod may be selected
-        # => Range: 1-86400 seconds (1 second - 24 hours)
-        # => Tracks last request time per client IP
-        # => Default: 10800 seconds
   selector:
     # => Pod selector
-    # => Label-based routing
     app: stateful-app # => Routes to Pods with app=stateful-app
     # => Session maintained across these Pods
-    # => Backend Pod discovery
   ports:
     # => Port configuration
-    # => Service port mapping
     - port: 80 # => Service port
       # => Client connects here
-      # => External service port
       targetPort: 8080 # => Pod port
       # => Backend container port
-      # => Internal application port
 
 # Session affinity behavior:
 # => First request from 192.0.2.10 → routed to Pod A
-# => kube-proxy records: 192.0.2.10 → Pod A mapping
-# => iptables rules track client IP
-# => Subsequent requests from 192.0.2.10 → routed to Pod A (same Pod)
-# => Consistent routing for same client IP
-# => Stateful session preservation
-# => Request from 192.0.2.20 → routed to Pod B (different client IP)
-# => Each client IP gets own Pod affinity
-# => Independent session tracking
-# => After 3 hours idle → next request may route to different Pod
-# => Timeout resets affinity mapping
-# => Session expiration handling
 ```
 
 **Key Takeaway**: Session affinity is a workaround for stateful applications but prevents even load distribution and complicates scaling; prefer stateless application design with external session stores (Redis, databases) for production systems.
@@ -1657,36 +1228,24 @@ ConfigMaps store non-sensitive configuration data as key-value pairs, environmen
 apiVersion:
   v1 # => Core Kubernetes API
   # => v1 is stable API version for ConfigMaps
-  # => ConfigMaps exist since Kubernetes 1.2
 kind:
   ConfigMap # => ConfigMap resource for configuration
   # => Stores non-sensitive configuration data
-  # => Alternative: Secret for sensitive data
 metadata:
   name:
     app-config # => ConfigMap name: "app-config"
     # => Unique identifier within namespace
-    # => Referenced by Pods for config injection
-    # => DNS-1123 compliant naming
 data:
   # => Key-value configuration data (all strings)
-  # => All values MUST be strings (no int/bool types)
-  # => Application must parse/convert values
   APP_ENV:
     "production" # => Key-value pair: APP_ENV=production
     # => Environment identifier
-    # => Injected as environment variable
-    # => Used for environment-specific behavior
   LOG_LEVEL:
     "info" # => Key-value pair: LOG_LEVEL=info
     # => Logging verbosity level
-    # => Options: debug, info, warn, error
-    # => Controls application log output
   MAX_CONNECTIONS:
     "100" # => All values stored as strings
     # => Application must parse numeric values
-    # => ConfigMaps don't have typed data
-    # => String "100" not integer 100
 
 ---
 apiVersion:
@@ -1709,7 +1268,6 @@ spec:
       image:
         busybox:1.36 # => Lightweight shell environment
         # => Minimal Linux container
-        # => Used for testing config injection
       command:
         # => Override container entrypoint
         - sh # => Shell interpreter
@@ -1720,16 +1278,12 @@ spec:
           # => Pipe notation for script
           echo "APP_ENV: $APP_ENV"
           # => Display APP_ENV value from ConfigMap
-          # => Shows: APP_ENV: production
           echo "LOG_LEVEL: $LOG_LEVEL"
           # => Display LOG_LEVEL value
-          # => Shows: LOG_LEVEL: info
           echo "MAX_CONNECTIONS: $MAX_CONNECTIONS"
           # => Display MAX_CONNECTIONS value
-          # => Shows: MAX_CONNECTIONS: 100 (string)
           sleep 3600
           # => Keep container running for inspection
-          # => 1 hour sleep for kubectl exec testing
       envFrom:
         # => Load all ConfigMap keys as env vars
         - configMapRef:
@@ -1737,14 +1291,9 @@ spec:
             name:
               app-config # => Loads all ConfigMap keys as environment variables
               # => All data keys become environment variables
-              # => Alternative: env with valueFrom for selective loading
-              # => envFrom loads entire ConfigMap at once
 
 # Create ConfigMap imperatively:
 # => kubectl create configmap app-config --from-literal=APP_ENV=production --from-literal=LOG_LEVEL=info
-# => Quick creation without YAML file
-# => --from-literal: specify key=value pairs
-# => Can also use --from-file or --from-env-file
 ```
 
 **Key Takeaway**: Use ConfigMaps for non-sensitive configuration like environment names, feature flags, and application settings; reference via envFrom for all keys or env.valueFrom for selective key loading.
@@ -1781,12 +1330,10 @@ metadata:
   name:
     nginx-config # => ConfigMap name: "nginx-config"
     # => Referenced by Pod volume mount
-    # => Unique identifier in namespace
 data:
   # => Configuration data (key-value map)
   default.conf: | # => Key becomes filename: default.conf
     # => Pipe preserves multi-line nginx config
-    # => Entire nginx server block below
     server {                          # => Value becomes file content
       # => nginx server configuration
       listen 80;
@@ -1811,7 +1358,6 @@ data:
       }
     }
     # => ConfigMap stores entire nginx config
-    # => Mounted as file in container
 
 ---
 apiVersion:
@@ -1834,33 +1380,24 @@ spec:
       image:
         nginx:1.24 # => nginx version 1.24
         # => Production nginx image
-        # => Reads config from mounted volume
       volumeMounts:
         # => Volume mount configuration
         - name:
             config-volume # => References volume defined below
             # => Must match volumes.name
-            # => Links mount to volume source
           mountPath:
             /etc/nginx/conf.d # => Mounts ConfigMap at this path
             # => nginx config directory
-            # => File appears at: /etc/nginx/conf.d/default.conf
-            # => nginx auto-loads configs from this directory
-            # => Key "default.conf" becomes filename
   volumes:
     # => Volume definitions
     - name:
         config-volume # => Volume name
         # => Referenced by volumeMounts
-        # => Arbitrary volume identifier
       configMap:
         # => ConfigMap volume source
         name:
           nginx-config # => References ConfigMap "nginx-config"
           # => ConfigMap must exist before Pod creation
-          # => All keys mounted as files
-          # => Updates to ConfigMap propagate to mounted files (eventual consistency)
-          # => Propagation delay: ~1 minute
 ```
 
 **Key Takeaway**: Mount ConfigMaps as volumes for configuration files; updates propagate automatically (with eventual consistency) allowing config changes without Pod restarts for apps that reload configs.
@@ -1877,34 +1414,24 @@ Secrets store sensitive data like passwords, tokens, and certificates using base
 apiVersion:
   v1 # => Core Kubernetes API
   # => Stable v1 API for Secrets
-  # => Secrets available since Kubernetes 1.0
 kind:
   Secret # => Secret resource for sensitive data
   # => Stores credentials, tokens, keys
-  # => Alternative to ConfigMap for sensitive data
 metadata:
   name:
     db-credentials # => Secret name: "db-credentials"
     # => Unique identifier in namespace
-    # => Referenced by Pods for credential injection
 type:
   Opaque # => Generic secret type (default)
   # => Most common type for arbitrary data
-  # => Other types: kubernetes.io/tls, kubernetes.io/dockerconfigjson
-  # => Type determines required keys and validation
 data:
   # => Base64-encoded key-value pairs
-  # => Kubernetes automatically decodes when mounting
   username:
     YWRtaW4= # => base64-encoded "admin"
     # => echo -n "admin" | base64
-    # => -n flag prevents newline encoding
-    # => Decoded automatically when injected
   password:
     cGFzc3dvcmQxMjM= # => base64-encoded "password123"
     # => echo -n "password123" | base64
-    # => Base64 encoding not encryption
-    # => Use encryption-at-rest for production
 
 ---
 apiVersion:
@@ -1927,7 +1454,6 @@ spec:
       image:
         busybox:1.36 # => Lightweight shell environment
         # => Minimal Linux for testing
-        # => Shows Secret values in env vars
       command:
         # => Override container entrypoint
         - sh # => Shell interpreter
@@ -1938,18 +1464,12 @@ spec:
           # => Pipe notation for script block
           echo "DB_USER: $DB_USER"
           # => Display username from Secret
-          # => Shows decoded value (not base64)
-          # => Output: DB_USER: admin
           echo "DB_PASS: $DB_PASS"        # => Values decoded from base64 automatically
           # => Display password from Secret
-          # => Kubernetes decodes base64 automatically
-          # => Output: DB_PASS: password123
           sleep 3600
           # => Keep container running for inspection
-          # => 1 hour sleep for testing
       env:
         # => Environment variable definitions
-        # => Individual key injection (selective)
         - name:
             DB_USER # => Environment variable name
             # => Container sees this as $DB_USER
@@ -1960,11 +1480,9 @@ spec:
               name:
                 db-credentials # => References Secret "db-credentials"
                 # => Secret must exist before Pod creation
-                # => Links to Secret resource
               key:
                 username # => Loads "username" key value
                 # => Specific key from Secret data
-                # => Decoded automatically from base64
         - name:
             DB_PASS # => Environment variable name
             # => Container sees this as $DB_PASS
@@ -1978,13 +1496,9 @@ spec:
               key:
                 password # => Loads "password" key value
                 # => Different key from same Secret
-                # => Automatic base64 decoding
 
 # Create Secret imperatively:
 # => kubectl create secret generic db-credentials --from-literal=username=admin --from-literal=password=password123
-# => Quick creation without YAML file
-# => --from-literal: key=value pairs (auto-encoded)
-# => Can also use --from-file for certificate files
 ```
 
 **Key Takeaway**: Use Secrets for sensitive data like passwords and API keys; prefer mounting as volumes over environment variables to avoid exposure in Pod specs and process listings; enable encryption at rest for production clusters.
@@ -2008,26 +1522,19 @@ metadata:
   name:
     tls-secret # => Secret name: "tls-secret"
     # => Unique identifier for TLS Secret
-    # => Referenced by volume mount
 type:
   kubernetes.io/tls # => TLS secret type
   # => Specific type for TLS certificates
-  # => Requires tls.crt and tls.key keys
-  # => Validates certificate/key presence
 data:
   # => TLS certificate and private key (base64)
   tls.crt: | # => TLS certificate (base64-encoded)
     # => Public certificate chain
-    # => Presented to clients during TLS handshake
     LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0t...
     # => Base64-encoded PEM certificate
-    # => Decoded automatically when mounted
   tls.key: | # => TLS private key (base64-encoded)
     # => Private RSA/ECDSA key
-    # => MUST be kept secret (not version controlled)
     LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQ...
     # => Base64-encoded PEM private key
-    # => Used for TLS encryption/decryption
 
 ---
 apiVersion:
@@ -2050,48 +1557,33 @@ spec:
       image:
         nginx:1.24 # => nginx version 1.24
         # => Production web server
-        # => Reads TLS certs from mounted volume
       volumeMounts:
         # => Volume mount configuration
         - name:
             tls-volume # => References volume below
             # => Must match volumes.name
-            # => Links to Secret volume
           mountPath:
             /etc/nginx/ssl # => Mounts Secret at this path
             # => nginx TLS certificate directory
-            # => Files created: tls.crt and tls.key
-            # => Keys become filenames
           readOnly:
             true # => Read-only mount for security
             # => Prevents container from modifying certs
-            # => Files: /etc/nginx/ssl/tls.crt, /etc/nginx/ssl/tls.key
-            # => Container cannot write to this mount
   volumes:
     # => Volume definitions
     - name:
         tls-volume # => Volume name
         # => Referenced by volumeMounts
-        # => Arbitrary volume identifier
       secret:
         # => Secret volume source
         secretName:
           tls-secret # => References Secret "tls-secret"
           # => Secret must exist before Pod creation
-          # => Content automatically decoded from base64
-          # => Files contain decoded PEM data
         defaultMode:
           0400 # => File permissions: read-only for owner
           # => Octal notation: owner read-only
-          # => Protects private key from unauthorized access
-          # => Prevents accidental exposure
 
 # Create TLS Secret from files:
 # => kubectl create secret tls tls-secret --cert=tls.crt --key=tls.key
-# => Quick creation from certificate files
-# => --cert: path to public certificate
-# => --key: path to private key
-# => Automatically base64-encodes content
 ```
 
 **Key Takeaway**: Mount Secrets as volumes with restrictive permissions (0400) for sensitive files like private keys; use readOnly mounts to prevent container modifications and reduce security risks.
@@ -2115,24 +1607,17 @@ metadata:
   name:
     immutable-config # => ConfigMap name
     # => Unique identifier
-    # => Cannot be changed once created
 data:
   # => Configuration key-value pairs
   APP_VERSION:
     "v1.0.0" # => Application version string
     # => Cannot be modified after creation
-    # => Must create new ConfigMap for updates
   FEATURE_FLAG:
     "true" # => Feature toggle value
     # => Immutable after creation
-    # => New ConfigMap required for changes
 immutable:
   true # => Prevents modifications after creation
   # => ConfigMap cannot be edited
-  # => Improves performance (kubelet stops watching)
-  # => Prevents accidental changes in production
-  # => Updates require new ConfigMap + Pod restart
-  # => API server rejects edit attempts
 
 ---
 apiVersion:
@@ -2145,7 +1630,6 @@ metadata:
   name:
     immutable-secret # => Secret name
     # => Unique identifier
-    # => Immutable Secret resource
 type:
   Opaque # => Generic secret type
   # => Default type for arbitrary data
@@ -2154,31 +1638,20 @@ data:
   api-key:
     c2VjcmV0LWtleQ== # => Base64-encoded API key
     # => Decoded value: "secret-key"
-    # => Cannot be modified after creation
 immutable:
   true # => Same behavior as immutable ConfigMap
   # => Secret cannot be edited
-  # => API server rejects modification attempts
-  # => Eliminates watch overhead
-  # => Prevents configuration drift
 
 # Attempting to modify immutable ConfigMap/Secret:
 # => kubectl edit configmap immutable-config
-# => Error: field is immutable
-# => API server blocks modification
-# => ConfigMap/Secret must be deleted and recreated
 
 # Update pattern for immutable configs:
 # 1. Create new ConfigMap with version suffix
 # => kubectl create configmap immutable-config-v2 --from-literal=APP_VERSION=v2.0.0
-# => Version suffix enables side-by-side deployment
-# => Old version remains until Pods updated
 # 2. Update Deployment to reference new ConfigMap
 # => Triggers rolling update with new config
-# => Pods gradually switch to new ConfigMap
 # 3. Delete old ConfigMap after successful rollout
 # => kubectl delete configmap immutable-config
-# => Cleanup after migration complete
 ```
 
 **Key Takeaway**: Use immutable ConfigMaps and Secrets for production environments to prevent accidental changes and improve performance; adopt versioned naming (config-v1, config-v2) for clean rollout and rollback workflows.
@@ -2200,22 +1673,18 @@ apiVersion:
 kind:
   Namespace # => Namespace resource for isolation
   # => Virtual cluster partition
-  # => Isolates resources from other namespaces
 metadata:
   name:
     development # => Namespace name: "development"
     # => Unique cluster-wide identifier
-    # => DNS-1123 compliant naming
   labels:
     # => Labels for namespace organization
     environment:
       dev # => Labels for namespace identification
       # => Used for ResourceQuota selection
-      # => Used for NetworkPolicy targeting
     team:
       platform # => Team ownership label
       # => Organizational metadata
-      # => Used for cost allocation
 
 ---
 apiVersion:
@@ -2231,8 +1700,6 @@ metadata:
   namespace:
     development # => Pod created in "development" namespace
     # => Namespace must exist before Pod creation
-    # => Default namespace: "default"
-    # => Namespace provides resource isolation
 spec:
   # => Pod specification
   containers:
@@ -2246,26 +1713,9 @@ spec:
 
 # Namespace commands:
 # => kubectl create namespace development
-# => Creates namespace declaratively
-# => Can also use YAML manifest above
-# => kubectl get pods -n development
-# => List Pods in development namespace
-# => -n flag specifies namespace
-# => kubectl get pods --all-namespaces
-# => List Pods across all namespaces
-# => Shows namespace column
-# => kubectl config set-context --current --namespace=development
-# => Sets default namespace for current context
-# => Avoids -n flag in future commands
-# => Changes kubectl default namespace
 
 # DNS names include namespace:
 # => Service in same namespace: http://web-service
-# => Short DNS name (namespace implied)
-# => Only works within same namespace
-# => Service in different namespace: http://web-service.production.svc.cluster.local
-# => Full DNS name required for cross-namespace
-# => Format: service.namespace.svc.cluster.local
 ```
 
 **Key Takeaway**: Use namespaces for environment separation (dev/staging/prod) or team isolation; apply ResourceQuotas and NetworkPolicies at namespace level for resource limits and network segmentation.
@@ -2305,23 +1755,18 @@ metadata:
     # => Unique within namespace
   labels:
     # => Key-value labels for selection
-    # => Used by Services, Deployments
     app:
       web # => Label key-value: app=web
       # => Application identifier
-      # => Used for Service selector matching
     environment:
       production # => Label key-value: environment=production
       # => Environment classification
-      # => Separates prod from dev/staging
     version:
       v1.0.0 # => Label key-value: version=v1.0.0
       # => Version tracking label
-      # => Enables version-based filtering
     tier:
       frontend # => Multiple labels for multi-dimensional classification
       # => Architectural layer label
-      # => Distinguishes frontend/backend/database
 spec:
   # => Pod specification
   containers:
@@ -2351,12 +1796,9 @@ spec:
     app:
       web # => Matches Pods with app=web label
       # => First selection criterion
-      # => Narrows Pod set
     environment:
       production # => AND environment=production label
       # => Second selection criterion
-      # => Logical AND between multiple selectors
-      # => Only Pods matching ALL selectors
   ports:
     # => Port configuration
     - port:
@@ -2368,20 +1810,6 @@ spec:
 
 # Label selector queries:
 # => kubectl get pods -l app=web
-# => Filters Pods by single label
-# => Shows all Pods with app=web
-# => kubectl get pods -l environment=production
-# => Filters by environment label
-# => Shows production Pods only
-# => kubectl get pods -l 'app=web,environment=production'
-# => Comma-separated selectors (AND logic)
-# => Shows Pods matching both labels
-# => kubectl get pods -l 'environment in (production,staging)'
-# => Set-based selector (OR logic)
-# => Shows Pods in production OR staging
-# => kubectl get pods -l 'version!=v1.0.0'
-# => Inequality selector (NOT logic)
-# => Shows Pods NOT on v1.0.0
 ```
 
 **Key Takeaway**: Use labels for multi-dimensional resource classification (app, environment, version, tier); Services, Deployments, and NetworkPolicies rely on label selectors for resource targeting and grouping.
@@ -2410,36 +1838,26 @@ metadata:
     app:
       web # => Labels for selection (must be short)
       # => Used by Services/Deployments
-      # => Selection mechanism
   annotations:
     # => Annotations for descriptive metadata
-    # => Not used for selection
     description:
       "Production web server for customer-facing application"
       # => Human-readable description
-      # => Longer text allowed
-      # => Documentation purpose
     deployed-by:
       "CI/CD Pipeline" # => Deployment automation info
       # => Deployment source tracking
-      # => Audit trail metadata
     build-version:
       "v1.0.0-abc123" # => Build identifier with commit hash
       # => Version + git commit hash
-      # => Deployment provenance
     prometheus.io/scrape:
       "true" # => Tool-specific annotation (Prometheus)
       # => Prometheus discovery flag
-      # => Enables automatic scraping
     prometheus.io/port:
       "9090" # => Prometheus scrape port
       # => Metrics endpoint port
-      # => Tool configuration
     kubernetes.io/change-cause:
       "Updated nginx to v1.24"
       # => Deployment history tracking
-      # => Recorded in rollout history
-      # => kubectl rollout history shows this
 spec:
   # => Pod specification
   containers:
@@ -2453,18 +1871,6 @@ spec:
 
 # Annotations vs Labels:
 # => Labels: short values, used for selection and grouping
-# => Max 63 characters per value
-# => Used in selectors (Service, Deployment)
-# => Annotations: longer values, metadata only, not selectable
-# => No size limit (practical limit ~256KB)
-# => Not used in queries/selectors
-# => kubectl annotate pod annotated-pod deployed-by="Manual"
-# => Add or update annotation
-# => kubectl annotate pod annotated-pod deployed-by-
-# => Remove annotation (minus suffix)
-# => kubectl describe pod annotated-pod | grep Annotations
-# => View all annotations
-# => Shows annotation key-value pairs
 ```
 
 **Key Takeaway**: Use annotations for descriptive metadata, build information, and tool integrations; labels are for resource selection and grouping with value length limits while annotations support larger unstructured data.
@@ -2480,14 +1886,6 @@ Node labels and selectors enable Pod placement on specific nodes based on hardwa
 ```yaml
 # First, label nodes:
 # => kubectl label nodes node-1 disktype=ssd
-# => Adds disktype=ssd label to node-1
-# => Labels persist across node reboots
-# => kubectl label nodes node-2 disktype=hdd
-# => Adds disktype=hdd label to node-2
-# => Different storage type label
-# => kubectl label nodes node-1 region=us-west
-# => Adds region label for geographic placement
-# => node-1 now has two labels
 
 apiVersion:
   v1 # => Core Kubernetes API
@@ -2525,14 +1923,6 @@ spec:
 
 # Node selection commands:
 # => kubectl get nodes --show-labels
-# => Shows all node labels
-# => Displays disktype, region, and built-in labels
-# => kubectl label nodes node-1 disktype=ssd
-# => Add or update label on node
-# => Labels immediately affect scheduling
-# => kubectl label nodes node-1 disktype-  # Remove label
-# => Minus suffix removes label
-# => Running Pods unaffected, future Pods can't schedule
 ```
 
 **Key Takeaway**: Use nodeSelector for simple node placement requirements based on hardware or location; consider node affinity (covered in advanced examples) for complex scheduling rules with multiple constraints and preferences.
@@ -2559,53 +1949,34 @@ metadata:
   namespace:
     development # => Applies to "development" namespace only
     # => Namespace-scoped resource
-    # => Limits only affect this namespace
 spec:
   # => Quota specification
   hard:
     # => Hard limits (cannot be exceeded)
-    # => Enforced by admission controller
     requests.cpu:
       "10" # => Total CPU requests: 10 cores max
       # => Sum of all Pod CPU requests <= 10
-      # => Aggregate across all Pods
-      # => Prevents CPU oversubscription
     requests.memory:
       20Gi # => Total memory requests: 20 GiB max
       # => Sum of all Pod memory requests
-      # => Guaranteed memory allocation cap
     limits.cpu:
       "20" # => Total CPU limits: 20 cores max
       # => Sum of all Pod CPU limits
-      # => Maximum CPU throttle point
     limits.memory:
       40Gi # => Total memory limits: 40 GiB max
       # => Sum of all Pod memory limits
-      # => Maximum memory before OOMKill
     persistentvolumeclaims:
       "5" # => Maximum 5 PVCs in namespace
       # => Count-based limit
-      # => Prevents storage proliferation
     pods:
       "50" # => Maximum 50 Pods in namespace
       # => Total Pod count limit
-      # => Prevents Pod sprawl
     services:
       "10" # => Maximum 10 Services in namespace
       # => Service count limit
-      # => Prevents excessive LoadBalancers
 
 # ResourceQuota enforcement:
 # => Pods without resource requests/limits are rejected
-# => Admission controller blocks creation
-# => Encourages resource planning
-# => kubectl describe resourcequota dev-quota -n development
-# => Shows: Used vs Hard limits
-# => Displays current consumption
-# => Shows: Used: 5 cores, Hard: 10 cores (example)
-# => Pod creation fails if quota would be exceeded
-# => Returns error: forbidden: exceeded quota
-# => Prevents resource starvation
 ```
 
 **Key Takeaway**: Apply ResourceQuotas to multi-tenant namespaces to prevent resource starvation; quotas require Pods to specify resource requests and limits for enforcement, promoting resource planning and capacity management.
@@ -2682,20 +2053,9 @@ spec:
 
 # LimitRange behavior:
 # => Containers without limits get default values
-# => Automatically injected during creation
-# => Containers exceeding max are rejected
-# => Admission controller validates
-# => Containers below min are rejected
-# => Enforces minimum resource allocation
-# => kubectl describe limitrange resource-limits -n development
-# => Shows constraints and defaults
 
 # LimitRange vs ResourceQuota:
 # => LimitRange: per-Pod/container constraints and defaults
-# => ResourceQuota: namespace-wide total limits
-# => Use together: LimitRange sets defaults, ResourceQuota caps totals
-# => LimitRange prevents individual outliers
-# => ResourceQuota prevents namespace-wide overconsumption
 ```
 
 **Key Takeaway**: Use LimitRange to enforce default resource requests and limits in namespaces, ensuring all Pods have baseline resource allocation and preventing outliers that could destabilize the cluster.

@@ -167,22 +167,9 @@ spec:
 
 # StatefulSet guarantees:
 # => Pods created in order: database-0, then database-1, then database-2
-# => Sequential startup with health checks
-# => Pods deleted in reverse order: database-2, then database-1, then database-0
-# => Graceful shutdown sequence
-# => Each Pod has stable hostname: database-0.database.default.svc.cluster.local
-# => Predictable DNS for peer discovery
-# => PVCs persist across Pod restarts and rescheduling
-# => Data survives Pod deletion and recreation
-# => Pod identity preserved across rescheduling to different nodes
-# => Ordinal suffix stays with Pod
 
 # Scaling behavior:
 # => Scale up: kubectl scale statefulset database --replicas=5
-# => Creates database-3, then database-4 (ordered)
-# => Scale down: kubectl scale statefulset database --replicas=2
-# => Deletes database-2, then database-1 (reverse order)
-# => PVCs remain after scaling down (manual deletion required)
 ```
 
 **Key Takeaway**: Use StatefulSets for databases, message queues, and applications requiring stable network identities and persistent storage; StatefulSets guarantee ordered deployment/scaling and maintain PVC associations across Pod restarts.
@@ -259,28 +246,9 @@ spec:
 
 # Update behavior with partition=2:
 # => kubectl set image statefulset/web-stateful nginx=nginx:1.25
-# => Triggers update for Pods >= partition
-# => Pod web-stateful-3: updated to nginx:1.25 (ordinal 3 >= partition 2)
-# => First canary Pod (highest ordinal)
-# => Pod web-stateful-2: updated to nginx:1.25 (ordinal 2 >= partition 2)
-# => Second canary Pod
-# => Pod web-stateful-1: remains at nginx:1.24 (ordinal 1 < partition 2)
-# => Stable version (below partition)
-# => Pod web-stateful-0: remains at nginx:1.24 (ordinal 0 < partition 2)
-# => Primary Pod stays on stable version
-# => Observe canary Pods (2, 3) for issues
-# => Monitor metrics, logs, errors
-# => Set partition=0 to complete update to all Pods
-# => kubectl patch statefulset web-stateful -p '{"spec":{"updateStrategy":{"rollingUpdate":{"partition":0}}}}'
-# => Updates remaining Pods (1, then 0)
-# => Rollback: kubectl rollout undo statefulset/web-stateful
-# => Reverts to previous version
 
 # Partition use cases:
 # => Canary deployments: test new version on subset
-# => Gradual rollouts: reduce blast radius
-# => A/B testing: different versions in same StatefulSet
-# => Blue-green at Pod level: instant switchover
 ```
 
 **Key Takeaway**: Use partition in RollingUpdate strategy for canary deployments on StatefulSets; update high-ordinal Pods first while keeping low-ordinal Pods on stable version for gradual rollout validation.
@@ -433,11 +401,6 @@ spec:
 
 # Init container execution:
 # => Init containers run before main containers
-# => Sequential execution (if multiple init containers)
-# => Main container waits for all init containers to complete
-# => Init containers can access same volumes as main containers
-# => Useful for: data preparation, dependency waiting, permission setup
-# => Init containers restart on failure until successful
 ```
 
 **Key Takeaway**: Use init containers in StatefulSets for data initialization, configuration templating, or dependency waiting; init containers have access to volumeClaimTemplates volumes and Pod metadata for per-instance customization.
@@ -499,34 +462,12 @@ spec:
 
 # OrderedReady (default):
 # => Scale 0→10: creates Pods 0,1,2,3,4,5,6,7,8,9 sequentially
-# => Sequential startup with health checks
-# => Each Pod must be Ready before next starts
-# => Pod 1 waits for Pod 0 Ready, Pod 2 waits for Pod 1 Ready, etc.
-# => Guarantees ordered initialization
-# => Scale 10→0: deletes in reverse order 9,8,7,6,5,4,3,2,1,0
-# => Sequential shutdown
-# => Each deletion waits for previous Pod termination
-# => Graceful teardown sequence
-# => Use for: databases, clustered apps requiring bootstrap order
 
 # Parallel:
 # => Scale 0→10: creates all 10 Pods simultaneously
-# => All Pods start at once
-# => No waiting for Ready status between Pods
-# => Scheduler places all Pods in parallel
-# => All Pods start in parallel, reaching Ready independently
-# => Health checks run concurrently
-# => Scale 10→0: deletes all 10 Pods simultaneously
-# => Immediate parallel termination
-# => Terminates entire StatefulSet quickly
-# => No graceful ordering
-# => Use for: caches, stateless-like workloads with persistence
 
 # Performance comparison:
 # => OrderedReady scaling 0→10: ~10-20 minutes (sequential)
-# => Parallel scaling 0→10: ~2-3 minutes (concurrent)
-# => 80-90% time reduction for independent workloads
-# => Trade-off: speed vs. initialization guarantees
 ```
 
 **Key Takeaway**: Use Parallel podManagementPolicy for faster scaling when Pod ordering is not critical; keep OrderedReady (default) for databases and applications requiring sequential initialization.
@@ -620,27 +561,9 @@ spec:
 
 # Retention behavior:
 # => Scale 3→1: Pods 2 and 1 deleted, but PVCs data-retained-stateful-2 and data-retained-stateful-1 retained
-# => Pods terminate but volumes persist
-# => PVCs remain Available (not Bound) after Pod deletion
-# => Status changes from Bound to Available
-# => Scale 1→3: Pods 1 and 2 recreated, attach to existing PVCs (data preserved)
-# => Automatic PVC reattachment by ordinal
-# => Original data automatically recovered on scale-up
-# => Zero data loss on scale operations
-# => kubectl delete statefulset retained-stateful: StatefulSet deleted, PVCs retained
-# => StatefulSet gone but storage remains
-# => PVCs become orphaned (no owner) but still exist
-# => kubectl get pvc shows all PVCs Available
-# => Manual cleanup required: kubectl delete pvc data-retained-stateful-0 data-retained-stateful-1 data-retained-stateful-2
-# => Explicit deletion prevents accidental loss
-# => Prevents storage cost accumulation from abandoned volumes
-# => Cloud storage billing continues
 
 # Policy combinations:
 # => whenDeleted=Retain, whenScaled=Retain: Maximum safety (production default)
-# => whenDeleted=Retain, whenScaled=Delete: Free storage on scale-down
-# => whenDeleted=Delete, whenScaled=Delete: Auto-cleanup (development only)
-# => whenDeleted=Delete, whenScaled=Retain: Unusual combination
 ```
 
 **Key Takeaway**: Use Retain policy for production databases to prevent accidental data loss during scaling or deletion; remember to manually clean up PVCs when no longer needed to avoid storage costs.
@@ -773,22 +696,9 @@ spec:
 
 # DaemonSet behavior:
 # => Creates 1 Pod per node automatically
-# => Scheduled to every node (or subset with nodeSelector)
-# => New node joins cluster → Pod created on new node within seconds
-# => Automatic deployment on scale-out
-# => Node removed → Pod deleted automatically
-# => Cleanup on node drain/delete
-# => kubectl get daemonset shows: DESIRED=3, CURRENT=3, READY=3 (3 nodes)
-# => DESIRED equals node count
-# => DESIRED equals number of nodes matching nodeSelector (all nodes if no selector)
-# => All nodes if no nodeSelector specified
 
 # DaemonSet use cases:
 # => Log collectors (Fluentd, Filebeat)
-# => Monitoring agents (Datadog, Prometheus node-exporter)
-# => Network plugins (Calico, Cilium)
-# => Storage daemons (Ceph, GlusterFS)
-# => Node-level services requiring presence everywhere
 ```
 
 **Key Takeaway**: Use DaemonSets for node-level services requiring presence on every node; DaemonSets automatically handle node additions/removals and support node selectors for subset deployment.
@@ -885,14 +795,6 @@ spec:
 
 # DaemonSet with node selector:
 # => Only creates Pods on nodes matching nodeSelector
-# => 10 nodes total, 3 GPU nodes → DESIRED=3, CURRENT=3
-# => 7 nodes ignored (no nvidia-gpu label)
-# => Selective deployment optimization
-# => New GPU node added → Pod created automatically on new node
-# => Automatic scale-out on matching nodes
-# => Node label removed → Pod deleted automatically
-# => kubectl label nodes node-1 accelerator- (removes label, deletes Pod)
-# => Label-driven Pod lifecycle
 ```
 
 **Key Takeaway**: Use nodeSelector or node affinity in DaemonSets to run specialized workloads only on appropriate nodes; label nodes based on hardware capabilities, regions, or roles for targeted DaemonSet deployment.
@@ -995,30 +897,9 @@ spec:
 
 # Job lifecycle:
 # => Pod created and runs to completion
-# => Job controller monitors exit code
-# => Exit 0 → Job marked Complete (completions: 1/1)
-# => Success increments completion counter
-# => Exit 1+ → Pod recreated (up to backoffLimit retries)
-# => Failure triggers retry logic
-# => Attempt 1 fails → wait 10s, retry
-# => Exponential backoff starts
-# => Attempt 2 fails → wait 20s, retry
-# => Backoff doubles each failure
-# => Attempt 3 fails → wait 40s, retry
-# => Maximum backoff interval
-# => After 3 failures → Job marked Failed (status.failed=3)
-# => Exceeds backoffLimit, Job stops
-# => kubectl get jobs shows: COMPLETIONS=1/1, DURATION=15s
-# => Shows completion ratio and time
-# => kubectl delete job data-migration  # Cleanup (removes Pods)
-# => Job and Pods both deleted
 
 # Completion calculation:
 # => completions=5, parallelism=2
-# => First 2 Pods created immediately
-# => Pod A completes → completions: 1/5, Pod C created
-# => Pod B completes → completions: 2/5, Pod D created
-# => Continue until completions: 5/5 → Job Complete
 ```
 
 **Key Takeaway**: Use Jobs for one-time or periodic batch tasks; set appropriate completions, parallelism, and backoffLimit based on workload requirements; Jobs do not support restartPolicy: Always.
@@ -1106,28 +987,9 @@ spec:
 
 # Parallel execution:
 # => Pods 1,2,3 start immediately (parallelism=3)
-# => Initial batch created
-# => Pod 1 completes (1/10) → Pod 4 starts (maintains parallelism=3)
-# => Completion triggers next Pod creation
-# => Pod 2 completes (2/10) → Pod 5 starts
-# => Continues replacing completed Pods
-# => Pod 3 completes (3/10) → Pod 6 starts
-# => Maintains 3 running Pods
-# => Continues until 10 successful completions
-# => Work queue pattern
-# => kubectl get pods shows 3 Running, 7 Completed
-# => Live state during execution
-# => kubectl get jobs shows: COMPLETIONS=7/10 (7 completed, 3 running)
-# => Progress tracking
-# => Job controller maintains parallelism by creating new Pods
-# => Automatic backfill on completion
 
 # Scaling parallelism:
 # => kubectl patch job parallel-processing -p '{"spec":{"parallelism":5}}'
-# => Increases concurrency to 5 Pods
-# => More Pods created immediately
-# => kubectl patch job parallel-processing -p '{"spec":{"parallelism":1}}'
-# => Reduces to 1 Pod (existing Pods finish, no new ones until count drops)
 ```
 
 **Key Takeaway**: Use parallel Jobs for distributed batch processing; adjust parallelism based on cluster capacity and completions based on total work items; consider work queue pattern for dynamic task distribution.
@@ -1227,27 +1089,9 @@ spec:
 
 # CronJob behavior:
 # => Creates Job at scheduled time (2:00 AM daily)
-# => CronJob controller spawns Job
-# => Job creates Pod to run backup
-# => Job controller manages Pod lifecycle
-# => Pod completes → Job marked successful
-# => Success increments history
-# => After successfulJobsHistoryLimit (3), old Jobs deleted
-# => Automatic cleanup prevents accumulation
-# => Keeps: backup-job-27891234 (oldest), backup-job-27891235, backup-job-27891236 (newest)
-# => Rolling window of recent executions
-# => kubectl get cronjobs shows: SCHEDULE, SUSPEND, ACTIVE, LAST SCHEDULE
-# => Status overview
-# => kubectl create job --from=cronjob/backup-job manual-backup  # Manual trigger
-# => Run Job immediately outside schedule
-# => Suspend CronJob: kubectl patch cronjob backup-job -p '{"spec":{"suspend":true}}'
-# => Temporarily disable scheduling
 
 # Timezone handling:
 # => Default: Controller manager timezone (usually UTC)
-# => Kubernetes 1.25+: spec.timeZone field
-# => Set timezone: spec.timeZone: "America/New_York"
-# => Ensures consistent scheduling across daylight saving
 ```
 
 **Key Takeaway**: Use CronJobs for scheduled recurring tasks with appropriate concurrencyPolicy to handle overlapping executions; set history limits to prevent accumulation of completed Jobs.
@@ -1283,10 +1127,6 @@ graph TD
 ```yaml
 # First, install Ingress Controller (nginx example):
 # => kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.1/deploy/static/provider/cloud/deploy.yaml
-# => Installs nginx Ingress Controller
-# => Creates Ingress Controller Deployment and Service
-# => LoadBalancer Service exposes Ingress to external traffic
-# => Required prerequisite for Ingress resources
 
 apiVersion: networking.k8s.io/v1 # => Networking API for Ingress
 kind: Ingress # => Ingress resource
@@ -1356,20 +1196,9 @@ spec:
 
 # Access patterns:
 # => http://app.example.com/api/users → api-service (path rewritten to /users)
-# => Host matches, path /api matches, rewrite applied
-# => http://app.example.com/web/home → web-service (path rewritten to /home)
-# => Host matches, path /web matches, rewrite applied
-# => http://other.example.com/api → no match (404 from Ingress Controller)
-# => Host doesn't match (other.example.com ≠ app.example.com)
-# => Direct IP access http://INGRESS-IP/api → no match (host header doesn't match)
-# => IP address ≠ app.example.com hostname
 
 # Ingress Controller behavior:
 # => LoadBalancer Service receives external traffic
-# => Ingress Controller evaluates host and path
-# => Routes to backend Service based on rules
-# => Service forwards to Pods
-# => End-to-end: Client → LoadBalancer → Ingress Controller → Service → Pod
 ```
 
 **Key Takeaway**: Ingress provides cost-effective HTTP/HTTPS routing compared to multiple LoadBalancer Services; install an Ingress Controller first, then create Ingress resources for routing rules.
@@ -1385,11 +1214,6 @@ Ingress supports TLS termination using Secrets containing certificates and priva
 ```yaml
 # Create TLS Secret:
 # => kubectl create secret tls tls-secret --cert=tls.crt --key=tls.key
-# => Creates Kubernetes TLS Secret
-# => tls.crt: certificate file (public key)
-# => tls.key: private key file
-# => Secret type: kubernetes.io/tls
-# => Automatically validates TLS format
 
 apiVersion: networking.k8s.io/v1 # => Networking API for Ingress
 kind: Ingress # => Ingress resource
@@ -1443,27 +1267,9 @@ spec:
 
 # TLS behavior:
 # => https://secure.example.com → TLS termination at Ingress Controller
-# => HTTPS request arrives
-# => Ingress Controller decrypts HTTPS, validates certificate
-# => TLS handshake at Ingress Controller
-# => Ingress Controller → web-service over HTTP (cluster-internal)
-# => Cluster network unencrypted
-# => Backend receives plain HTTP (no TLS overhead)
-# => Services don't need TLS configuration
-# => http://secure.example.com → redirected to HTTPS (nginx default)
-# => HTTP upgrade enforcement
-# => 301 Moved Permanently redirect
-# => Browser auto-redirects to HTTPS
-# => Certificate validation required for production (browsers check)
-# => Invalid cert → browser warning
 
 # cert-manager integration (automated certificates):
 # => Install cert-manager: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.yaml
-# => Creates ClusterIssuer for Let's Encrypt
-# => Add annotation: cert-manager.io/cluster-issuer: "letsencrypt-prod"
-# => cert-manager automatically provisions certificate
-# => Auto-renewal 30 days before expiration
-# => Zero manual certificate management
 ```
 
 **Key Takeaway**: Use TLS Ingress for production HTTPS; obtain certificates from Let's Encrypt via cert-manager for automated certificate management and renewal; TLS terminates at Ingress Controller, not backend Services.
@@ -1579,20 +1385,6 @@ spec:
 
 # Multi-host routing:
 # => http://api.example.com → api-service
-# => Host header routing
-# => API requests to API Service
-# => http://admin.example.com → admin-service
-# => Admin interface routing
-# => Separate backend for admin
-# => http://static.example.com → static-service
-# => Static asset routing
-# => CDN-like behavior
-# => All hosts use same Ingress Controller IP
-# => Single LoadBalancer IP
-# => Virtual host routing by Host header
-# => Configure DNS to point all hosts to Ingress Controller
-# => DNS A records for all three hosts → same IP
-# => Ingress Controller routes by Host header
 ```
 
 **Key Takeaway**: Consolidate multiple host-based routes in a single Ingress resource for easier management; each host can have independent backend Services and path rules.
@@ -1691,13 +1483,6 @@ spec:
 
 # Annotation effects:
 # => Request: /api/users → rewritten to /users
-# => Path transformation before backend
-# => HTTP request → 308 redirect to HTTPS
-# => Forces secure connections
-# => >100 req/sec → 503 Service Temporarily Unavailable
-# => Rate limit enforcement
-# => Missing auth → 401 Unauthorized
-# => Basic Auth required
 ```
 
 **Key Takeaway**: Leverage Ingress Controller annotations for advanced HTTP features; consult controller documentation for available annotations as they vary between nginx, Traefik, and other controllers.
@@ -1770,16 +1555,6 @@ spec:
 
 # Default backend routing:
 # => http://app.example.com/api → api-service (matches rule)
-# => Path matches /api prefix
-# => Routes to primary backend
-# => http://app.example.com/other → default-service (no match)
-# => No matching path rule
-# => Falls back to defaultBackend
-# => http://unknown.example.com → default-service (host no match)
-# => Host doesn't match any rule
-# => Catches all unmatched hosts
-# => Useful for custom 404 pages or redirect to main site
-# => Better user experience than generic errors
 ```
 
 **Key Takeaway**: Configure default backend for better user experience on unmatched requests; implement custom 404 pages or redirects instead of generic Ingress Controller errors.
@@ -1878,11 +1653,6 @@ spec:
 
 # PV/PVC lifecycle:
 # => kubectl get pv → shows PV status (Available → Bound)
-# => kubectl get pvc → shows PVC status (Pending → Bound)
-# => PVC binds to PV with matching capacity, access mode, and storage class
-# => Binding is one-to-one (one PVC per PV)
-# => Pod mounts PVC, data persists across Pod restarts
-# => Pod reschedules to different node → reattaches same PVC
 ```
 
 **Key Takeaway**: Use PV/PVC for persistent storage across Pod restarts; cloud providers offer dynamic provisioning via StorageClasses, eliminating manual PV creation for production use.
@@ -1953,11 +1723,6 @@ spec:
 
 # Dynamic provisioning:
 # => PVC created → StorageClass provisions new PV automatically
-# => Cloud API called to create EBS volume
-# => PV created and bound to PVC
-# => No manual PV creation needed
-# => PV deleted automatically when PVC deleted (reclaimPolicy: Delete)
-# => kubectl get pv → shows auto-created PV (name: pvc-<uuid>)
 ```
 
 **Key Takeaway**: Use StorageClasses for production storage with dynamic provisioning; configure WaitForFirstConsumer for multi-zone clusters to ensure PV and Pod are in the same availability zone.
@@ -2004,26 +1769,18 @@ spec:
 # Expansion process:
 # 1. Edit PVC to increase size
 # => kubectl edit pvc expandable-pvc
-# => Change storage: 10Gi → storage: 20Gi
-# => Save and exit
 
 # 2. Check expansion status
 # => kubectl get pvc expandable-pvc
-# => Conditions: FileSystemResizePending (Pod restart needed)
 
 # 3. Restart Pod to complete expansion
 # => kubectl delete pod <pod-using-pvc>
-# => New Pod mounts expanded volume
 
 # 4. Verify new size
 # => kubectl exec <pod> -- df -h /mount/path
-# => Shows 20G total
 
 # Expansion behavior:
 # => Volume controller resizes PV
-# => kubelet resizes filesystem (may require Pod restart)
-# => Cannot shrink volumes (decrease size)
-# => Some volume types support online expansion (no Pod restart)
 ```
 
 **Key Takeaway**: Volume expansion requires StorageClass with allowVolumeExpansion enabled; most volume types require Pod restart to complete filesystem resize; plan initial PVC sizes carefully as shrinking is not supported.
@@ -2065,9 +1822,6 @@ spec:
 
 # Snapshot lifecycle:
 # => kubectl get volumesnapshot
-# => Shows: READYTOUSE=true after snapshot completes
-# => Snapshot stored in cloud provider storage
-# => Independent of source PVC lifecycle
 
 ---
 apiVersion: v1
@@ -2088,8 +1842,6 @@ spec:
 
 # Restore process:
 # => PVC created from snapshot
-# => Data restored from snapshot to new PV
-# => Original PVC unaffected
 ```
 
 **Key Takeaway**: Use VolumeSnapshots for backup and disaster recovery; requires CSI driver support; create snapshots before major changes for easy rollback; consider snapshot costs and retention policies.
@@ -2165,7 +1917,6 @@ spec:
       # => Must exist before PV creation
   nodeAffinity: # => Required for local volumes
     # => Node affinity rules
-    # => Binds PV to specific node
     required:
       # => Required node selector
       nodeSelectorTerms:
@@ -2216,13 +1967,6 @@ spec:
 
 # Local PV behavior:
 # => Pod using local-pvc scheduled on node-1 (PV location)
-# => Node affinity enforces Pod placement
-# => No cross-node portability (Pod stuck on node-1)
-# => Pod cannot migrate to different node
-# => Highest performance (local SSD/NVMe)
-# => Sub-millisecond latency
-# => Risk: node failure means data loss (use replication)
-# => Application-level HA required
 ```
 
 **Key Takeaway**: Use local PersistentVolumes for latency-sensitive workloads like databases; understand trade-off between performance and availability; implement application-level replication for fault tolerance.
@@ -2306,9 +2050,6 @@ spec:
 
 # QoS behavior during resource pressure:
 # => Node runs low on memory
-# => 1. BestEffort Pods evicted first
-# => 2. Burstable Pods evicted (using most memory relative to requests)
-# => 3. Guaranteed Pods evicted last (only if critical system processes need resources)
 ```
 
 **Key Takeaway**: Set requests equal to limits for Guaranteed QoS on critical workloads; use Burstable for applications with variable load; avoid BestEffort in production except for truly optional workloads.
@@ -2356,11 +2097,6 @@ spec:
 
 # Preemption behavior:
 # => Cluster has no capacity
-# => critical-pod (priority 1000000) needs scheduling
-# => Scheduler evicts low-priority Pods to make room
-# => critical-pod scheduled on freed resources
-# => Evicted Pods: status=Failed, reason=Preempted
-# => kubectl describe pod shows: Status: Failed, Reason: Preempted
 ```
 
 **Key Takeaway**: Use PriorityClasses to ensure critical workloads schedule before less important ones; preemption allows cluster to prioritize essential services during resource contention; avoid too many priority levels for simplicity.
@@ -2393,8 +2129,6 @@ graph TD
 ```yaml
 # Install metrics-server first:
 # => kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
-# => Metrics-server collects resource metrics from kubelets
-# => Required for CPU/memory-based autoscaling
 
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -2426,13 +2160,6 @@ spec:
 
 # HPA behavior:
 # => Checks metrics every 15 seconds (default)
-# => Current CPU: 85% (above 70% target)
-# => Calculates: desiredReplicas = ceil(currentReplicas * currentMetric / targetMetric)
-# => Example: ceil(2 * 85 / 70) = ceil(2.43) = 3 replicas
-# => Scales up by 1 replica (2→3)
-# => Gradually scales up to avoid flapping
-# => Waits 3 minutes before next scale-up (cooldown)
-# => kubectl get hpa shows: TARGETS=85%/70%, REPLICAS=3, MINPODS=2, MAXPODS=10
 ```
 
 **Key Takeaway**: Use HPA for automatic scaling based on demand; set appropriate min/max replicas to prevent over-scaling costs or under-scaling unavailability; requires resource requests for CPU metrics.
@@ -2448,8 +2175,6 @@ VerticalPodAutoscaler (VPA) automatically adjusts Pod resource requests and limi
 ```yaml
 # Install VPA:
 # => git clone https://github.com/kubernetes/autoscaler.git
-# => cd autoscaler/vertical-pod-autoscaler
-# => ./hack/vpa-up.sh
 
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
@@ -2481,10 +2206,6 @@ spec:
 
 # VPA behavior:
 # => Monitors actual resource usage
-# => Recommends new requests/limits
-# => Auto mode: updates Pods with new resources (triggers restart)
-# => kubectl get vpa web-vpa shows recommendations
-# => kubectl describe vpa web-vpa shows: RECOMMENDATION, LOWER BOUND, UPPER BOUND
 ```
 
 **Key Takeaway**: Use VPA to right-size resource requests automatically; prefer HPA for horizontal scaling, VPA for vertical sizing; avoid using HPA and VPA on CPU/memory simultaneously to prevent conflicts.
@@ -2513,11 +2234,6 @@ spec:
 
 # PDB behavior:
 # => Deployment has 4 replicas
-# => kubectl drain node-1 (3 Pods on node-1)
-# => PDB allows eviction of 2 Pods only (keeps minAvailable=2)
-# => Drain operation waits for evicted Pods to reschedule
-# => After new Pods ready, drain continues
-# => Prevents complete service unavailability during maintenance
 
 ---
 # Alternative: maxUnavailable
@@ -2535,8 +2251,6 @@ spec:
 
 # maxUnavailable vs minAvailable:
 # => maxUnavailable: "at most N Pods down"
-# => minAvailable: "at least N Pods up"
-# => Use maxUnavailable for percentage-based limits: maxUnavailable: 25%
 ```
 
 **Key Takeaway**: Use PodDisruptionBudgets to maintain availability during voluntary disruptions like node maintenance; set minAvailable or maxUnavailable based on application requirements; PDBs do not prevent involuntary disruptions like node failures.
@@ -2598,12 +2312,6 @@ spec:
 
 # Readiness vs Liveness:
 # => Readiness failure → removes from Service, no restart
-# => Liveness failure → restarts container
-# => Use readiness for temporary unavailability (loading data, dependencies down)
-# => kubectl get pods shows: READY=0/1 (readiness failed)
-# => Service endpoints updated automatically
-# => kubectl describe pod shows: Readiness probe failed: HTTP probe failed with statuscode: 503
-# => Traffic stops flowing to this Pod
 ```
 
 **Key Takeaway**: Use readiness probes to prevent traffic to Pods that are starting up or temporarily unavailable; failed readiness checks remove Pods from load balancing without restarting them.
@@ -2677,11 +2385,6 @@ spec:
 
 # Without startup probe:
 # => Slow app takes 3 min to start
-# => Liveness probe failureThreshold=3, periodSeconds=5 → fails after 15s
-# => Container restarted repeatedly (CrashLoopBackOff)
-# => Never completes initialization
-# => Startup probe gives sufficient time for initialization
-# => Liveness stays disabled until startup succeeds
 ```
 
 **Key Takeaway**: Use startup probes for slow-starting applications to prevent premature liveness probe failures; configure longer failureThreshold \* periodSeconds than application startup time; liveness probes begin only after startup success.
@@ -2759,9 +2462,6 @@ spec:
 
 # Health check endpoints should return:
 # => /startup: 200 when initialization complete (DB connected, cache loaded)
-# => /healthz: 200 when application functional (no deadlocks, core services ok)
-# => /ready: 200 when ready for traffic (dependencies healthy, not overloaded)
-# => Non-200 status triggers probe failure
 ```
 
 **Key Takeaway**: Implement all three probe types for production workloads; startup for slow initialization, liveness for crash recovery, readiness for traffic control; design separate health check endpoints with appropriate logic for each probe type.
@@ -2825,14 +2525,9 @@ spec:
 
 # Probe handler selection:
 # => HTTP: applications with HTTP endpoints (web apps, APIs)
-# => TCP: services accepting TCP connections (databases, message queues)
-# => Exec: custom health checks requiring commands (CLI tools, scripts)
 
 # Performance considerations:
 # => HTTP: moderate overhead (HTTP processing, parsing)
-# => TCP: minimal overhead (connection test only, fastest)
-# => Exec: highest overhead (fork/exec, command execution, slowest)
-# => Prefer HTTP/TCP for production scale
 ```
 
 **Key Takeaway**: Use HTTP probes for web applications with health endpoints, TCP probes for non-HTTP network services, and exec probes only when necessary due to execution overhead; prefer HTTP/TCP for performance.
