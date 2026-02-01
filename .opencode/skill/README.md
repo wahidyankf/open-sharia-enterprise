@@ -6,15 +6,24 @@
 >
 > 1. Edit skills in `.claude/skills/` directory
 > 2. Run: `npm run sync:claude-to-opencode`
-> 3. Changes will be copied here automatically (direct copy, no conversion)
+> 3. Changes will be synced here automatically (maintains folder structure)
 >
-> **See [.claude/skil../../.opencode/README.md](../../.claude/skil../../.opencode/README.md) for primary skills documentation**.
+> **See [.claude/skills/README.md](../../.claude/skills/README.md) for primary skills documentation**.
 
 ---
 
 ## Skills Format
 
-Skills use identical format for both Claude Code and OpenCode systems:
+Skills use **folder structure** for OpenCode compatibility:
+
+**Directory structure**:
+
+```
+.opencode/skill/
+├── skill-name/
+│   └── SKILL.md
+└── README.md
+```
 
 **SKILL.md structure**:
 
@@ -59,9 +68,9 @@ Links to conventions, related skills
 
 **Service relationship**: Skills serve agents but don't govern them (delivery infrastructure, not governance layer).
 
-## All 23 Skills
+## All 26 Skills
 
-Skills are direct copies from `.claude/skills/`. For complete documentation, see [.claude/skil../../.opencode/README.md](../../.claude/skil../../.opencode/README.md).
+Skills are synced from `.claude/skills/` maintaining folder structure. For complete documentation, see [.claude/skills/README.md](../../.claude/skills/README.md).
 
 ### Skill Categories
 
@@ -75,6 +84,6 @@ Skills are direct copies from `.claude/skills/`. For complete documentation, see
 
 ---
 
-**Total Skills**: 21
-**Format**: SKILL.md (identical for both Claude Code and OpenCode)
-**Last Updated**: 2026-01-16
+**Total Skills**: 26
+**Format**: Folder structure with SKILL.md inside each folder
+**Last Updated**: 2026-02-01
