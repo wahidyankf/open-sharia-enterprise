@@ -16,10 +16,53 @@ var (
 
 // GetMarkdownFiles returns a list of markdown files to scan based on options.
 func GetMarkdownFiles(opts ScanOptions) ([]string, error) {
+	var files []string
+	var err error
+
 	if opts.StagedOnly {
-		return getStagedMarkdownFiles(opts.RepoRoot)
+		files, err = getStagedMarkdownFiles(opts.RepoRoot)
+	} else {
+		files, err = getAllMarkdownFiles(opts.RepoRoot)
 	}
-	return getAllMarkdownFiles(opts.RepoRoot)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Filter out skip paths
+	return filterSkipPaths(files, opts.RepoRoot, opts.SkipPaths), nil
+}
+
+// filterSkipPaths filters out files that match any of the skip paths.
+func filterSkipPaths(files []string, repoRoot string, skipPaths []string) []string {
+	if len(skipPaths) == 0 {
+		return files
+	}
+
+	var filtered []string
+	for _, file := range files {
+		relPath, err := filepath.Rel(repoRoot, file)
+		if err != nil {
+			// If we can't get relative path, keep the file
+			filtered = append(filtered, file)
+			continue
+		}
+
+		skip := false
+		for _, skipPath := range skipPaths {
+			// Check if file is under skip path
+			if strings.HasPrefix(relPath, skipPath) || strings.HasPrefix(relPath, filepath.Clean(skipPath)) {
+				skip = true
+				break
+			}
+		}
+
+		if !skip {
+			filtered = append(filtered, file)
+		}
+	}
+
+	return filtered
 }
 
 // getStagedMarkdownFiles returns staged markdown files from git.

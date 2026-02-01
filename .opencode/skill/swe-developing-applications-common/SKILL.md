@@ -285,10 +285,10 @@ All language developers follow this pattern:
 **All language developers reference**:
 
 - **[CLAUDE.md](../../CLAUDE.md)**: Primary guidance for all agents
-- **[Monorepo Structure](../../../docs/reference/re__monorepo-structure.md)**: Nx workspace organization
-- **[Commit Messages Convention](../../../governance/development/workflow/commit-messages.md)**: Conventional Commits detailed guide
-- **[Code Quality Convention](../../../governance/development/quality/code.md)**: Git hooks and automation
-- **[Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md)**: Git workflow philosophy
+- **[Monorepo Structure](../../docs/reference/re__monorepo-structure.md)**: Nx workspace organization
+- **[Commit Messages Convention](../../governance/development/workflow/commit-messages.md)**: Conventional Commits detailed guide
+- **[Code Quality Convention](../../governance/development/quality/code.md)**: Git hooks and automation
+- **[Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)**: Git workflow philosophy
 
 ### Language-Specific Documentation
 
@@ -318,19 +318,19 @@ docs/explanation/software-engineering/programming-languages/[language]/README.md
 
 **Workflow Conventions**:
 
-- [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md) - Git workflow details
-- [Commit Messages Convention](../../../governance/development/workflow/commit-messages.md) - Conventional Commits specification
-- [Implementation Workflow](../../../governance/development/workflow/implementation.md) - Make it work → right → fast
+- [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md) - Git workflow details
+- [Commit Messages Convention](../../governance/development/workflow/commit-messages.md) - Conventional Commits specification
+- [Implementation Workflow](../../governance/development/workflow/implementation.md) - Make it work → right → fast
 
 **Quality Conventions**:
 
-- [Code Quality Convention](../../../governance/development/quality/code.md) - Git hooks, linting, formatting
-- [Reproducible Environments](../../../governance/development/workflow/reproducible-environments.md) - Volta, package-lock.json
+- [Code Quality Convention](../../governance/development/quality/code.md) - Git hooks, linting, formatting
+- [Reproducible Environments](../../governance/development/workflow/reproducible-environments.md) - Volta, package-lock.json
 
 **Architecture Conventions**:
 
-- [Monorepo Structure Reference](../../../docs/reference/re__monorepo-structure.md) - Nx workspace organization
-- [Functional Programming](../../../governance/development/pattern/functional-programming.md) - FP principles across languages
+- [Monorepo Structure Reference](../../docs/reference/re__monorepo-structure.md) - Nx workspace organization
+- [Functional Programming](../../governance/development/pattern/functional-programming.md) - FP principles across languages
 
 ## Related Skills
 

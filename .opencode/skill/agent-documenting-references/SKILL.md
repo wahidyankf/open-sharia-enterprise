@@ -1,4 +1,5 @@
 ---
+name: agent-documenting-references
 description: Standardized reference documentation section structure for agents - project guidance, conventions, related agents, and Skills. Use when implementing or updating agent documentation.
 ---
 

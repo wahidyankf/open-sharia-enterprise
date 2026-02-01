@@ -1,4 +1,5 @@
 ---
+name: apps-ose-platform-web-developing-content
 description: Guide for creating content on ose-platform-web Hugo site using PaperMod theme. Covers English-only landing page structure, update posts with date-prefixed filenames, PaperMod frontmatter (cover images, table of contents, author field), simple flat organization, and ose-platform-web specific conventions. Essential for ose-platform-web content creation tasks
 ---
 

@@ -1,4 +1,5 @@
 ---
+name: apps-ayokoding-web-developing-content
 description: Comprehensive guide for creating content on ayokoding-web Hugo site using Hextra theme. Covers bilingual content strategy (default English), level-based weight ordering system, by-example tutorial annotation standards (1-2.25 comments per code line), absolute path linking requirements, and ayokoding-web specific frontmatter patterns. Essential for content creation tasks on ayokoding-web
 ---
 
