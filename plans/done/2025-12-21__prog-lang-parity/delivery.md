@@ -422,8 +422,8 @@ Feature: Clear parity standards defined
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/golang/tutorials/initial-setup.md (274→394 lines)
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/golang/tutorials/quick-start.md (394→977 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/golang/tutorials/initial-setup.md (274→394 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/golang/tutorials/quick-start.md (394→977 lines)
 - [x] **Step 3.2.3**: Fix Golang quality gaps
   - **Implementation Notes**: Verified all 5 Golang tutorial files have required quality elements. All files already have engaging front hooks (problem-solution format), learning path/flow diagrams (Mermaid), prerequisites sections, and comprehensive cross-references (10+ links each: initial-setup 21, quick-start 48, beginner 146, intermediate 80, advanced 69 links). No quality gaps remaining - all tutorials meet pedagogical standards.
   - **Date**: 2025-12-21
@@ -474,7 +474,7 @@ Feature: Clear parity standards defined
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/java/explanation/best-practices.md (549→710 lines, +161 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/explanation/best-practices.md (549→710 lines, +161 lines)
 - [x] **Step 3.3.3**: Fix Java quality gaps
   - **Implementation Notes**: Fixed all Java quality gaps across 5 tutorials. (1) Added engaging front hooks to all tutorials (initial-setup: "Ever wondered how enterprise systems...", quick-start: "Want to build real applications...", beginner: "Ever wondered how professional developers...", intermediate: "Ever wondered how enterprise systems handle millions...", advanced: "Want to understand how Java works under the hood"). (2) Added learning path Mermaid diagram to initial-setup.md with approved color palette. (3) Added comprehensive cross-references: initial-setup 11 refs, quick-start 12 refs, beginner 13 refs, intermediate 13 refs, advanced 13 refs (total 62, exceeding minimum 50). All tutorials now have front hooks, learning paths, prerequisites, and rich cross-linking.
   - **Date**: 2025-12-21

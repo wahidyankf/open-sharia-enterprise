@@ -758,9 +758,9 @@ Before deletion, consider extracting useful functions:
 
 - [OpenCode Agent Format](https://opencode.ai/docs/agents)
 - [OpenCode Skills Documentation](https://opencode.ai/docs/skills)
-- [AI Agents Convention](../../../governance/development/agents/ai-agents.md)
+- [AI Agents Convention](../../../../governance/development/agents/ai-agents.md)
 - [Maker-Checker-Fixer Pattern](../../../governance/development/pattern/maker-checker-fixer.md)
-- [Plans Organization Convention](../../../governance/conventions/structure/plans.md)
+- [Plans Organization Convention](../../../../governance/conventions/structure/plans.md)
 - Current conversion: `scripts/convert-agents-to-opencode.py`
 - Current validation: `scripts/validate-opencode-agents.py`
 - Migration plan: `plans/backlog/2025-01-12__claude-code-full-migration/`

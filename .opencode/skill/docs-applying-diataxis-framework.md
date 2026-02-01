@@ -160,12 +160,12 @@ The explanation directory has special subdirectories:
 
 ## References
 
-**Primary Convention**: [Diátaxis Framework Convention](../../../governance/conventions/structure/diataxis-framework.md)
+**Primary Convention**: [Diátaxis Framework Convention](../../governance/conventions/structure/diataxis-framework.md)
 
 **Related Conventions**:
 
-- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Universal content standards
-- [File Naming Convention](../../../governance/conventions/structure/file-naming.md) - Naming documentation files
+- [Content Quality Principles](../../governance/conventions/writing/quality.md) - Universal content standards
+- [File Naming Convention](../../governance/conventions/structure/file-naming.md) - Naming documentation files
 
 **Related Skills**:
 

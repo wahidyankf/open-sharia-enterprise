@@ -20,7 +20,7 @@ Week 10 focused on quality infrastructure. Two main things were launched to acce
 Week 9: No formal standards infrastructure, 45 agents, 21 skills
 Week 10: 343 files (345k lines) established as authoritative + 50 agents + 27 skills
 
-Established docs/explanation/software/ as authoritative source for coding decisions—architecture (C4, DDD), practices (TDD, BDD), languages (5), frameworks (3). Extended governance with 8-category validation. Created 5 skills + 5 developer agents.
+Established docs/explanation/software-engineering/ as authoritative source for coding decisions—architecture (C4, DDD), practices (TDD, BDD), languages (5), frameworks (3). Extended governance with 8-category validation. Created 5 skills + 5 developer agents.
 
 Impact: Complete ecosystem—343k lines of standards + skills + agents. AI agents cite docs vs hallucinating.
 

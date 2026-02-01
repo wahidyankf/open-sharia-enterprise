@@ -36,12 +36,12 @@ Each principle is demonstrated across the platform's technology stack:
 
 ### Java Examples
 
-- **[Java Idioms](../../../docs/explanation/software/prog-lang/java/ex-so-prla-ja__idioms.md)** - Records (Immutability), Pattern Matching (Explicit), Try-with-resources (Automation)
-- **[Java Functional Programming](../../../docs/explanation/software/prog-lang/java/ex-so-prla-ja__functional-programming.md)** - Pure Functions, Immutability, Functional Core architecture
-- **[Java Type Safety](../../../docs/explanation/software/prog-lang/java/ex-so-prla-ja__type-safety.md)** - Explicit nullable types, Static analysis (Automation)
-- **[Java Concurrency](../../../docs/explanation/software/prog-lang/java/ex-so-prla-ja__concurrency-and-parallelism.md)** - Immutability for thread-safety, Virtual threads
-- **[Java Domain-Driven Design](../../../docs/explanation/software/prog-lang/java/ex-so-prla-ja__domain-driven-design.md)** - Value Objects (Immutability), Domain Services (Pure Functions)
-- **[Java Best Practices](../../../docs/explanation/software/prog-lang/java/ex-so-prla-ja__best-practices.md)** - Build automation, Reproducible development
+- **[Java Idioms](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__idioms.md)** - Records (Immutability), Pattern Matching (Explicit), Try-with-resources (Automation)
+- **[Java Functional Programming](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__functional-programming.md)** - Pure Functions, Immutability, Functional Core architecture
+- **[Java Type Safety](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__type-safety.md)** - Explicit nullable types, Static analysis (Automation)
+- **[Java Concurrency](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__concurrency-and-parallelism.md)** - Immutability for thread-safety, Virtual threads
+- **[Java Domain-Driven Design](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__domain-driven-design.md)** - Value Objects (Immutability), Domain Services (Pure Functions)
+- **[Java Best Practices](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__best-practices.md)** - Build automation, Reproducible development
 
 ### Principle-Specific Examples
 

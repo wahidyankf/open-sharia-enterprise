@@ -698,8 +698,8 @@ After markdown linting implementation:
 
 **Related Conventions**:
 
-- [Content Quality Convention](../../../governance/conventions/writing/quality.md)
-- [Indentation Convention](../../../governance/conventions/formatting/indentation.md)
+- [Content Quality Convention](../../../../governance/conventions/writing/quality.md)
+- [Indentation Convention](../../../../governance/conventions/formatting/indentation.md)
 - [Code Quality Convention](../../../governance/development/quality/code.md)
 
 **External Resources**:

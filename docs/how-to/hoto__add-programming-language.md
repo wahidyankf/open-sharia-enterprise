@@ -104,7 +104,7 @@ Before starting, ensure you have:
 1. Navigate to ayokoding-web content directory:
 
    ```bash
-   cd apps/ayokoding-web/content/en/learn/swe/prog-lang/
+   cd apps/ayokoding-web/content/en/learn/swe/programming-languages/
    ```
 
 2. Create language directory (use lowercase, no special characters):
@@ -186,27 +186,27 @@ Before starting, ensure you have:
    layout: list
    ---
 
-   - [Overview](/en/learn/swe/prog-lang/[language]/overview)
-   - [Tutorials](/en/learn/swe/prog-lang/[language]/tutorials)
-     - [Overview](/en/learn/swe/prog-lang/[language]/tutorials/overview)
-     - [Initial Setup](/en/learn/swe/prog-lang/[language]/tutorials/initial-setup)
-     - [Quick Start](/en/learn/swe/prog-lang/[language]/tutorials/quick-start)
-     - [Beginner](/en/learn/swe/prog-lang/[language]/tutorials/beginner)
-     - [Intermediate](/en/learn/swe/prog-lang/[language]/tutorials/intermediate)
-     - [Advanced](/en/learn/swe/prog-lang/[language]/tutorials/advanced)
-   - [How-To Guides](/en/learn/swe/prog-lang/[language]/how-to)
-     - [Overview](/en/learn/swe/prog-lang/[language]/how-to/overview)
-     - [Cookbook](/en/learn/swe/prog-lang/[language]/how-to/cookbook)
+   - [Overview](/en/learn/swe/programming-languages/[language]/overview)
+   - [Tutorials](/en/learn/swe/programming-languages/[language]/tutorials)
+     - [Overview](/en/learn/swe/programming-languages/[language]/tutorials/overview)
+     - [Initial Setup](/en/learn/swe/programming-languages/[language]/tutorials/initial-setup)
+     - [Quick Start](/en/learn/swe/programming-languages/[language]/tutorials/quick-start)
+     - [Beginner](/en/learn/swe/programming-languages/[language]/tutorials/beginner)
+     - [Intermediate](/en/learn/swe/programming-languages/[language]/tutorials/intermediate)
+     - [Advanced](/en/learn/swe/programming-languages/[language]/tutorials/advanced)
+   - [How-To Guides](/en/learn/swe/programming-languages/[language]/how-to)
+     - [Overview](/en/learn/swe/programming-languages/[language]/how-to/overview)
+     - [Cookbook](/en/learn/swe/programming-languages/[language]/how-to/cookbook)
      - [... add your 12-18 how-to guides here ...]
-   - [Reference](/en/learn/swe/prog-lang/[language]/reference)
-     - [Overview](/en/learn/swe/prog-lang/[language]/reference/overview)
-   - [Explanation](/en/learn/swe/prog-lang/[language]/explanation)
-     - [Overview](/en/learn/swe/prog-lang/[language]/explanation/overview)
-     - [Best Practices and Idioms](/en/learn/swe/prog-lang/[language]/explanation/best-practices)
-     - [Anti-Patterns](/en/learn/swe/prog-lang/[language]/explanation/anti-patterns)
+   - [Reference](/en/learn/swe/programming-languages/[language]/reference)
+     - [Overview](/en/learn/swe/programming-languages/[language]/reference/overview)
+   - [Explanation](/en/learn/swe/programming-languages/[language]/explanation)
+     - [Overview](/en/learn/swe/programming-languages/[language]/explanation/overview)
+     - [Best Practices and Idioms](/en/learn/swe/programming-languages/[language]/explanation/best-practices)
+     - [Anti-Patterns](/en/learn/swe/programming-languages/[language]/explanation/anti-patterns)
    ```
 
-   **Note**: Programming language folders are at level 5 (`/en/learn/swe/prog-lang/[language]/`). The folder's `_index.md` uses level 5 weight (10002 to position among other languages), while content INSIDE the folder (like `overview.md`, `tutorials/`, etc.) uses level 6 weights starting at 100000.
+   **Note**: Programming language folders are at level 5 (`/en/learn/swe/programming-languages/[language]/`). The folder's `_index.md` uses level 5 weight (10002 to position among other languages), while content INSIDE the folder (like `overview.md`, `tutorials/`, etc.) uses level 6 weights starting at 100000.
 
 2. **Create `overview.md` (learning path guide)**:
    - See [Golang overview.md](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/overview.md) as template
@@ -226,7 +226,7 @@ Before starting, ensure you have:
 
    ```
    Spawn ayokoding-web-general-maker agent:
-   "Create Initial Setup tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/tutorials/initial-setup.md
+   "Create Initial Setup tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/tutorials/initial-setup.md
 
    Coverage: 0-5% (Installation and verification)
    Topics: Installation (Windows/macOS/Linux), version verification, first Hello World program, basic tool setup
@@ -275,7 +275,7 @@ Before starting, ensure you have:
 
    ```
    Spawn ayokoding-web-general-maker agent:
-   "Create Quick Start tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/tutorials/quick-start.md
+   "Create Quick Start tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/tutorials/quick-start.md
 
    Coverage: 5-30% (Touchpoints and core concepts)
    Touchpoints: [Your 8-12 concepts]
@@ -322,7 +322,7 @@ Before starting, ensure you have:
 
    ```
    Spawn ayokoding-web-general-maker agent:
-   "Create Beginner tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/tutorials/beginner.md
+   "Create Beginner tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/tutorials/beginner.md
 
    Coverage: 0-60% (Comprehensive fundamentals)
    Topics: [Your 10-15 major sections]
@@ -363,7 +363,7 @@ Before starting, ensure you have:
 
    ```
    Spawn ayokoding-web-general-maker agent:
-   "Create Intermediate tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/tutorials/intermediate.md
+   "Create Intermediate tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/tutorials/intermediate.md
 
    Coverage: 60-85% (Production-grade techniques)
    Topics: [Your 8-12 production topics]
@@ -402,7 +402,7 @@ Before starting, ensure you have:
 
    ```
    Spawn ayokoding-web-general-maker agent:
-   "Create Advanced tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/tutorials/advanced.md
+   "Create Advanced tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/tutorials/advanced.md
 
    Coverage: 85-95% (Expert mastery)
    Topics: [Your 6-10 expert topics]
@@ -465,7 +465,7 @@ Before starting, ensure you have:
 
    ```
    Spawn ayokoding-web-general-maker agent:
-   "Create Cookbook for [Language] at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/how-to/cookbook.md
+   "Create Cookbook for [Language] at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/how-to/cookbook.md
 
    Include: 30-40 recipes organized by category
    Format: Problem → Solution → How It Works → Use Cases for each recipe
@@ -510,7 +510,7 @@ Before starting, ensure you have:
 
    ```
    Spawn ayokoding-web-general-maker agent:
-   "Create how-to guide: [Guide Title] for [Language] at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/how-to/[filename].md
+   "Create how-to guide: [Guide Title] for [Language] at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/how-to/[filename].md
 
    Include: Problem statement, solution (step-by-step), how it works, variations, common pitfalls
    Reference: [Link to similar guide in reference language]"
@@ -557,7 +557,7 @@ Before starting, ensure you have:
 
    ```
    Spawn ayokoding-web-general-maker agent:
-   "Create Best Practices document for [Language] at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/explanation/best-practices.md
+   "Create Best Practices document for [Language] at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/explanation/best-practices.md
 
    Include: Language philosophy, idiomatic patterns, good/bad examples, category organization
    Reference: [Link to reference language best-practices.md]"
@@ -595,7 +595,7 @@ Before starting, ensure you have:
 
    ```
    Spawn ayokoding-web-general-maker agent:
-   "Create Anti-Patterns document for [Language] at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/explanation/anti-patterns.md
+   "Create Anti-Patterns document for [Language] at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/explanation/anti-patterns.md
 
    Include: Common mistakes, bad/better examples, severity categorization
    Reference: [Link to reference language anti-patterns.md]"
@@ -635,7 +635,7 @@ Before starting, ensure you have:
 
    ```
    Spawn ayokoding-web-general-checker agent:
-   "Validate all [Language] content at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/
+   "Validate all [Language] content at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/
 
    Check: Hugo conventions, content quality principles, structure compliance"
    ```
@@ -658,7 +658,7 @@ Before starting, ensure you have:
 
    ```
    Spawn ayokoding-web-facts-checker agent:
-   "Verify factual accuracy for [Language] content at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/
+   "Verify factual accuracy for [Language] content at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/
 
    Validate: Code examples, command syntax, version numbers, external references, technical claims"
    ```
@@ -681,7 +681,7 @@ Before starting, ensure you have:
 
    ```
    Spawn ayokoding-web-link-checker agent:
-   "Validate links in [Language] content at apps/ayokoding-web/content/en/learn/swe/prog-lang/[language]/
+   "Validate links in [Language] content at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/
 
    Check: Internal links, external URLs, cross-references"
    ```
@@ -756,7 +756,7 @@ Before starting, ensure you have:
 
 3. **Verify deployment**:
    - Check Vercel deployment status
-   - Visit <https://ayokoding.com/en/learn/swe/prog-lang/[language]/>
+   - Visit <https://ayokoding.com/en/learn/swe/programming-languages/[language]/>
    - Navigate through tutorials
    - Test a few code examples
 

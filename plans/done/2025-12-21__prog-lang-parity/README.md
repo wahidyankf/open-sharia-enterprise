@@ -33,7 +33,7 @@ Bring all 6 programming languages (Python, Golang, Java, Kotlin, Rust, Elixir) t
 
 ## Context
 
-The ayokoding-web site has 6 programming languages under `/en/learn/swe/prog-lang/`:
+The ayokoding-web site has 6 programming languages under `/en/learn/swe/programming-languages/`:
 
 - Python (reference implementation for dynamic languages)
 - Golang (reference implementation for concurrent programming)

@@ -935,22 +935,22 @@ interface Issue {
 ### Conventions
 
 - [Programming Language Content Standard](../../../governance/conventions/tutorials/programming-language-content.md) - Master reference
-- [Hugo Content Convention - ayokoding](../../../governance/conventions/hugo/ayokoding.md) - Hextra theme specifics
-- [Hugo Content Convention - Shared](../../../governance/conventions/hugo/shared.md) - Base Hugo rules
-- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Quality standards
+- [Hugo Content Convention - ayokoding](../../../../governance/conventions/hugo/ayokoding.md) - Hextra theme specifics
+- [Hugo Content Convention - Shared](../../../../governance/conventions/hugo/shared.md) - Base Hugo rules
+- [Content Quality Principles](../../../../governance/conventions/writing/quality.md) - Quality standards
 - [Tutorial Naming Convention](../../../governance/conventions/tutorials/naming.md) - Tutorial level definitions
-- [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md) - Approved color palette
-- [Diagrams Convention](../../../governance/conventions/formatting/diagrams.md) - Mermaid standards
+- [Color Accessibility Convention](../../../../governance/conventions/formatting/color-accessibility.md) - Approved color palette
+- [Diagrams Convention](../../../../governance/conventions/formatting/diagrams.md) - Mermaid standards
 
 ### Development Practices
 
-- [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md) - Git workflow
+- [Trunk Based Development](../../../../governance/development/workflow/trunk-based-development.md) - Git workflow
 - [Commit Messages](../../../governance/development/workflow/commit-messages.md) - Commit format
 - [Code Quality](../../../governance/development/quality/code.md) - Automated checks
 
 ### AI Agents
 
-- [ayokoding-web-general-maker](../../../.claude/agents/apps-ayokoding-web-general-maker.md) - Content creation agent
-- [ayokoding-web-general-checker](../../../.claude/agents/apps-ayokoding-web-general-checker.md) - Validation agent
-- [ayokoding-web-facts-checker](../../../.claude/agents/ayokoding-web-facts-checker.md) - Fact verification agent
-- [ayokoding-web-link-checker](../../../.claude/agents/ayokoding-web-link-checker.md) - Link validation agent
+- [ayokoding-web-general-maker](../../../../.claude/agents/apps-ayokoding-web-general-maker.md) - Content creation agent
+- [ayokoding-web-general-checker](../../../../.claude/agents/apps-ayokoding-web-general-checker.md) - Validation agent
+- [ayokoding-web-facts-checker](../../../../.claude/agents/ayokoding-web-facts-checker.md) - Fact verification agent
+- [ayokoding-web-link-checker](../../../../.claude/agents/ayokoding-web-link-checker.md) - Link validation agent

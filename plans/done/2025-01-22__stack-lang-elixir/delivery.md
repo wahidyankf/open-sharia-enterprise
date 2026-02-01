@@ -15,8 +15,8 @@ This delivery plan breaks down the Elixir documentation creation into 5 sequenti
 ### Implementation Steps
 
 - [x] **Step 1.1**: Create directory structure
-  - [x] Create `/docs/explanation/software/stack-lang/elixir/` directory
-  - [x] Create `/docs/explanation/software/stack-lang/elixir/templates/` directory
+  - [x] Create `/docs/explanation/software-engineering/programming-languages/elixir/` directory
+  - [x] Create `/docs/explanation/software-engineering/programming-languages/elixir/templates/` directory
 
 - [x] **Step 1.2**: Research current Elixir ecosystem state
   - [x] WebSearch: Current Elixir stable version (1.18.0, released Dec 19, 2024)
@@ -40,14 +40,14 @@ This delivery plan breaks down the Elixir documentation creation into 5 sequenti
   - [x] Related Documentation links
 
 - [x] **Step 1.4**: Create core topic files (Part 1 - Fundamentals)
-  - [x] `ex-so-stla-el__idioms.md`
+  - [x] `ex-soen-stla-el__idioms.md`
     - Pattern matching (function clauses, case, with)
     - Pipe operator for data transformation
     - Anonymous functions and captures
     - Guards for business rules
     - Protocols for polymorphism
     - Financial domain examples (Money, Donation, ZakatPayment)
-  - [x] `ex-so-stla-el__best-practices.md`
+  - [x] `ex-soen-stla-el__best-practices.md`
     - Naming conventions (modules, functions, variables)
     - OTP patterns (GenServer as first choice for state)
     - Supervision tree design
@@ -55,7 +55,7 @@ This delivery plan breaks down the Elixir documentation creation into 5 sequenti
     - Ecto changeset patterns
     - Testing best practices (ExUnit, doctests)
     - Financial domain examples
-  - [x] `ex-so-stla-el__anti-patterns.md`
+  - [x] `ex-soen-stla-el__anti-patterns.md`
     - Process leaks and resource exhaustion
     - Improper supervision strategies
     - Misuse of macros
@@ -63,14 +63,14 @@ This delivery plan breaks down the Elixir documentation creation into 5 sequenti
     - Over-abstraction
     - Common Ecto mistakes
     - Financial domain anti-patterns
-  - [x] `ex-so-stla-el__concurrency-and-parallelism.md`
+  - [x] `ex-soen-stla-el__concurrency-and-parallelism.md`
     - Processes (spawn, send, receive)
     - Message passing patterns
     - Task module for one-off work
     - GenServer for stateful processes
     - Concurrent patterns (producer-consumer, pub-sub)
     - Financial domain: concurrent transaction processing
-  - [x] `ex-so-stla-el__error-handling.md`
+  - [x] `ex-soen-stla-el__error-handling.md`
     - Let it crash philosophy
     - Supervision trees for fault tolerance
     - Pattern matching for errors ({:ok, result} | {:error, reason})
@@ -93,11 +93,11 @@ Scenario: Phase 1 foundation complete
   Given Elixir documentation directory exists
   When Phase 1 implementation is complete
   Then README.md should exist with comprehensive index
-  And ex-so-stla-el__idioms.md should exist
-  And ex-so-stla-el__best-practices.md should exist
-  And ex-so-stla-el__anti-patterns.md should exist
-  And ex-so-stla-el__concurrency-and-parallelism.md should exist
-  And ex-so-stla-el__error-handling.md should exist
+  And ex-soen-stla-el__idioms.md should exist
+  And ex-soen-stla-el__best-practices.md should exist
+  And ex-soen-stla-el__anti-patterns.md should exist
+  And ex-soen-stla-el__concurrency-and-parallelism.md should exist
+  And ex-soen-stla-el__error-handling.md should exist
   And each file should have Quick Reference section
   And each file should have financial domain examples
   And each file should be >15KB (comprehensive)
@@ -112,13 +112,13 @@ Scenario: Phase 1 foundation complete
 ### Implementation Steps
 
 - [ ] **Step 2.1**: Create core topic files (Part 2 - Advanced)
-  - [x] `ex-so-stla-el__type-safety.md` ✅ **COMPLETED 2025-01-23**
+  - [x] `ex-soen-stla-el__type-safety.md` ✅ **COMPLETED 2025-01-23**
     - Typespecs (@spec, @type, @opaque)
     - Dialyzer for success typing
     - Runtime pattern matching as type guard
     - Compile-time warnings vs errors
     - Financial domain: Money type safety
-  - [x] `ex-so-stla-el__functional-programming.md` ✅ **COMPLETED 2025-01-23**
+  - [x] `ex-soen-stla-el__functional-programming.md` ✅ **COMPLETED 2025-01-23**
     - Immutability by default
     - Pure functions and referential transparency
     - Recursion and tail call optimization
@@ -126,7 +126,7 @@ Scenario: Phase 1 foundation complete
     - Enum and Stream modules
     - Pipe operator for composition
     - Financial domain: pure calculation functions
-  - [x] `ex-so-stla-el__protocols-and-behaviours.md` ✅ **COMPLETED 2025-01-23**
+  - [x] `ex-soen-stla-el__protocols-and-behaviours.md` ✅ **COMPLETED 2025-01-23**
     - Protocols for polymorphism (String.Chars, Inspect, Enumerable)
     - Implementing protocols for custom types
     - Behaviours for contracts (@callback)
@@ -134,7 +134,7 @@ Scenario: Phase 1 foundation complete
     - Plugin systems with behaviours
     - Strategy and adapter patterns
     - Financial domain: PaymentGateway behaviour, Auditable protocol
-  - [x] `ex-so-stla-el__memory-management.md` ✅ **COMPLETED 2025-01-23**
+  - [x] `ex-soen-stla-el__memory-management.md` ✅ **COMPLETED 2025-01-23**
     - BEAM VM garbage collection (per-process, generational)
     - Process heap vs binary heap vs ETS vs atom table
     - Memory profiling with :observer and :recon
@@ -143,7 +143,7 @@ Scenario: Phase 1 foundation complete
     - Hibernation for memory reduction
     - Memory optimization patterns (streaming, pooling, iolists)
     - Financial domain: batch processing optimization
-  - [x] `ex-so-stla-el__dependencies.md` ✅ **COMPLETED 2025-01-23**
+  - [x] `ex-soen-stla-el__dependencies.md` ✅ **COMPLETED 2025-01-23**
     - Mix project management (mix.exs, mix tasks)
     - Hex package manager (adding, versioning, SemVer)
     - Dependency types (runtime, dev/test, hex/git/path, optional)
@@ -158,7 +158,7 @@ Scenario: Phase 1 foundation complete
   - Total files: type-safety, functional-programming, protocols-and-behaviours, memory-management, dependencies
 
 - [ ] **Step 2.2**: Create specialized topic files
-  - [x] `ex-so-stla-el__domain-driven-design.md` ✅ **COMPLETED 2025-01-23** (CRITICAL for Phase 5)
+  - [x] `ex-soen-stla-el__domain-driven-design.md` ✅ **COMPLETED 2025-01-23** (CRITICAL for Phase 5)
     - DDD without classes (functional vs OO approach)
     - Strategic design (bounded contexts, context mapping, ubiquitous language)
     - Tactical design (entities, value objects, aggregates, domain services, repositories)
@@ -167,7 +167,7 @@ Scenario: Phase 1 foundation complete
     - Umbrella apps for DDD structure
     - Complete financial domain examples (Campaign aggregate, Money value object, Zakat service)
     - CQRS pattern (commands and queries)
-  - [x] `ex-so-stla-el__security.md` ✅ **COMPLETED 2025-01-23**
+  - [x] `ex-soen-stla-el__security.md` ✅ **COMPLETED 2025-01-23**
     - Input validation (Ecto changesets, parameter validation, type checking)
     - XSS prevention (Phoenix HTML escaping, sanitization, CSP)
     - SQL injection prevention (parameterized queries, Ecto safety)
@@ -178,7 +178,7 @@ Scenario: Phase 1 foundation complete
     - Secret management (runtime config, environment variables)
     - Security headers, rate limiting, audit logging
     - Financial domain: complete secure payment handling examples
-  - [x] `ex-so-stla-el__performance.md` ✅ **COMPLETED 2025-01-23**
+  - [x] `ex-soen-stla-el__performance.md` ✅ **COMPLETED 2025-01-23**
     - BEAM VM optimization (strengths, trade-offs)
     - Profiling tools (:observer, :fprof, :eprof, Benchee)
     - Common optimizations (tail recursion, binary ops, ETS, process pooling)
@@ -186,7 +186,7 @@ Scenario: Phase 1 foundation complete
     - Concurrency patterns (Task.async_stream, GenStage, Flow)
     - Web application performance (Phoenix, response caching, assets)
     - Financial domain: complete high-throughput batch processing example
-  - [x] `ex-so-stla-el__web-services.md` ✅ **COMPLETED 2025-01-23**
+  - [x] `ex-soen-stla-el__web-services.md` ✅ **COMPLETED 2025-01-23**
     - Phoenix framework (installation, structure, request lifecycle)
     - REST APIs (controllers, views, JSON, error handling)
     - Phoenix LiveView (real-time interactivity, lifecycle, forms, components)
@@ -197,7 +197,7 @@ Scenario: Phase 1 foundation complete
     - API versioning (URL path, header-based, query parameter)
     - Testing (controllers, LiveViews, channels)
     - Financial domain: complete donation API and campaign management examples
-  - [x] `ex-so-stla-el__linting-and-formatting.md` ✅ **COMPLETED 2025-01-23**
+  - [x] `ex-soen-stla-el__linting-and-formatting.md` ✅ **COMPLETED 2025-01-23**
     - mix format (configuration, usage, editor integration)
     - Credo (installation, configuration, running, custom checks)
     - Dialyzer (setup, type specifications, running, common issues)
@@ -210,7 +210,7 @@ Scenario: Phase 1 foundation complete
   - Total files: domain-driven-design, security, performance, web-services, linting-and-formatting
 
 - [ ] **Step 2.3**: Create testing documentation
-  - [x] `ex-so-stla-el__test-driven-development.md` ✅ **COMPLETED 2025-01-23**
+  - [x] `ex-soen-stla-el__test-driven-development.md` ✅ **COMPLETED 2025-01-23**
     - ExUnit fundamentals (test structure, assertions, organization)
     - TDD cycle (Red-Green-Refactor with complete examples)
     - Testing patterns (unit, integration, doctests)
@@ -219,7 +219,7 @@ Scenario: Phase 1 foundation complete
     - Test data with ExMachina (defining factories, using in tests)
     - Testing Phoenix applications (controllers, LiveView, channels)
     - Financial domain: complete TDD workflow for donation allocation
-  - [x] `ex-so-stla-el__behaviour-driven-development.md` ✅ **COMPLETED 2025-01-23**
+  - [x] `ex-soen-stla-el__behaviour-driven-development.md` ✅ **COMPLETED 2025-01-23**
     - BDD fundamentals (what is BDD, Gherkin syntax, BDD vs TDD)
     - White Bread setup (installation, configuration)
     - Writing features (structure, scenarios, scenario outlines)
@@ -248,18 +248,18 @@ Scenario: Phase 2 advanced topics complete
   Given Phase 1 is complete
   When Phase 2 implementation is complete
   Then all 17 core topic files should exist
-  And ex-so-stla-el__type-safety.md should exist
-  And ex-so-stla-el__functional-programming.md should exist
-  And ex-so-stla-el__protocols-and-behaviours.md should exist
-  And ex-so-stla-el__memory-management.md should exist
-  And ex-so-stla-el__dependencies.md should exist
-  And ex-so-stla-el__domain-driven-design.md should exist
-  And ex-so-stla-el__security.md should exist
-  And ex-so-stla-el__performance.md should exist
-  And ex-so-stla-el__web-services.md should exist
-  And ex-so-stla-el__linting-and-formatting.md should exist
-  And ex-so-stla-el__test-driven-development.md should exist
-  And ex-so-stla-el__behaviour-driven-development.md should exist
+  And ex-soen-stla-el__type-safety.md should exist
+  And ex-soen-stla-el__functional-programming.md should exist
+  And ex-soen-stla-el__protocols-and-behaviours.md should exist
+  And ex-soen-stla-el__memory-management.md should exist
+  And ex-soen-stla-el__dependencies.md should exist
+  And ex-soen-stla-el__domain-driven-design.md should exist
+  And ex-soen-stla-el__security.md should exist
+  And ex-soen-stla-el__performance.md should exist
+  And ex-soen-stla-el__web-services.md should exist
+  And ex-soen-stla-el__linting-and-formatting.md should exist
+  And ex-soen-stla-el__test-driven-development.md should exist
+  And ex-soen-stla-el__behaviour-driven-development.md should exist
   And each file should be comprehensive (>15KB)
   And each file should have financial domain examples
   And markdown linting should pass
@@ -281,37 +281,37 @@ Scenario: Phase 2 advanced topics complete
   - [x] WebFetch: Elixir 1.18 release notes (Dec 19, 2024 - Type checking calls, LSP, built-in JSON)
 
 - [x] **Step 3.2**: Create release documentation files ✅ **COMPLETED 2025-01-23**
-  - [x] `ex-so-stla-el__release-1.12.md` ✅ (May 2021 - Mix.install, stepped ranges, OTP 24)
+  - [x] `ex-soen-stla-el__release-1.12.md` ✅ (May 2021 - Mix.install, stepped ranges, OTP 24)
     - Scripted mix install for single-file scripts
     - Stepped ranges (first..last//step)
     - OTP 24 JIT compilation benefits
     - Financial domain: campaign analyzer script, payment schedules
-  - [x] `ex-so-stla-el__release-1.13.md` ✅ (Dec 2021 - Semantic recompilation, Code.Fragment)
+  - [x] `ex-soen-stla-el__release-1.13.md` ✅ (Dec 2021 - Semantic recompilation, Code.Fragment)
     - Semantic recompilation (75% faster)
     - Code.Fragment for autocompletion
     - Mix format plugins
     - Financial domain: type-safe financial system, registry-based tracking
-  - [x] `ex-so-stla-el__release-1.14.md` ✅ (Sep 2022 - dbg/2, PartitionSupervisor)
+  - [x] `ex-soen-stla-el__release-1.14.md` ✅ (Sep 2022 - dbg/2, PartitionSupervisor)
     - dbg/2 debugging helper with context
     - Better error messages (OTP 25)
     - PartitionSupervisor for scalability
     - Financial domain: debugging workflows, partitioned processing
-  - [x] `ex-so-stla-el__release-1.15.md` ✅ (Jun 2023 - Boot time, Logger improvements)
+  - [x] `ex-soen-stla-el__release-1.15.md` ✅ (Jun 2023 - Boot time, Logger improvements)
     - 5-30% faster boot time (OTP 26)
     - Smarter dependency tracking
     - Logger file rotation and compaction
     - Financial domain: production logging, fast boot service
-  - [x] `ex-so-stla-el__release-1.16.md` ✅ (Dec 2023 - Enhanced diagnostics, anti-patterns)
+  - [x] `ex-soen-stla-el__release-1.16.md` ✅ (Dec 2023 - Enhanced diagnostics, anti-patterns)
     - Code snippets in exceptions
     - Anti-patterns documentation
     - Stripped escripts (75% smaller)
     - Financial domain: better error reporting, refactored patterns
-  - [x] `ex-so-stla-el__release-1.17.md` ✅ (Jun 2024 - Set-theoretic types, Duration, OTP 27)
+  - [x] `ex-soen-stla-el__release-1.17.md` ✅ (Jun 2024 - Set-theoretic types, Duration, OTP 27)
     - Set-theoretic type system
     - Duration data type
     - OTP 27 support (OTP 24 dropped)
     - Financial domain: type-safe validation, subscription management
-  - [x] `ex-so-stla-el__release-1.18.md` ✅ (Dec 2024 - Type checking, LSP, JSON)
+  - [x] `ex-soen-stla-el__release-1.18.md` ✅ (Dec 2024 - Type checking, LSP, JSON)
     - Type checking of function calls
     - LSP listeners for editor sync
     - Built-in JSON support
@@ -331,8 +331,8 @@ Scenario: Phase 3 release documentation complete
   Given Phase 2 is complete
   When Phase 3 implementation is complete
   Then at least 5 release files should exist (1.12-1.16)
-  And ex-so-stla-el__release-1.17.md should exist if 1.17 is released
-  And ex-so-stla-el__release-1.18.md should exist if 1.18 is stable
+  And ex-soen-stla-el__release-1.17.md should exist if 1.17 is released
+  And ex-soen-stla-el__release-1.18.md should exist if 1.18 is stable
   And each release file should document major features
   And each release file should document breaking changes
   And each release file should reference official release notes
@@ -348,19 +348,19 @@ Scenario: Phase 3 release documentation complete
 ### Implementation Steps
 
 - [x] **Step 4.1**: Create OTP pattern files ✅ **COMPLETED 2025-01-23**
-  - [x] `ex-so-stla-el__otp-genserver.md` ✅
+  - [x] `ex-soen-stla-el__otp-genserver.md` ✅
     - GenServer fundamentals (callbacks, state management)
     - Synchronous (call) vs asynchronous (cast) patterns
     - Lifecycle hooks (init, handle_continue, terminate)
     - Testing strategies with Mox
     - Financial domain: ZakatCalculator with caching, DonationProcessor with batching
-  - [x] `ex-so-stla-el__otp-supervisor.md` ✅
+  - [x] `ex-soen-stla-el__otp-supervisor.md` ✅
     - Supervision strategies (one-for-one, one-for-all, rest-for-one) with examples
     - Hierarchical supervision tree design patterns
     - Dynamic supervisors and PartitionSupervisor
     - Restart strategies, intensities, and shutdown behaviors
     - Financial domain: Payment processing tree, campaign pipeline with rest_for_one
-  - [x] `ex-so-stla-el__otp-application.md` ✅
+  - [x] `ex-soen-stla-el__otp-application.md` ✅
     - Application structure (mix.exs, Application callback)
     - Starting applications with dependencies
     - Umbrella projects for multi-app systems
@@ -381,9 +381,9 @@ Scenario: Phase 3 release documentation complete
 Scenario: Phase 4 OTP patterns complete
   Given Phase 3 is complete
   When Phase 4 implementation is complete
-  Then ex-so-stla-el__otp-genserver.md should exist
-  And ex-so-stla-el__otp-supervisor.md should exist
-  And ex-so-stla-el__otp-application.md should exist
+  Then ex-soen-stla-el__otp-genserver.md should exist
+  And ex-soen-stla-el__otp-supervisor.md should exist
+  And ex-soen-stla-el__otp-application.md should exist
   And each file should have complete code examples
   And GenServer examples should be runnable
   And Supervisor examples should be runnable
@@ -538,7 +538,7 @@ Scenario: Elixir documentation achieves parity with Java/Golang
 After each major step completion:
 
 ```bash
-git add docs/explanation/software/stack-lang/elixir/
+git add docs/explanation/software-engineering/programming-languages/elixir/
 git commit -m "docs(elixir): <specific deliverable completed>"
 ```
 

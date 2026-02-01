@@ -222,9 +222,9 @@ skills: [wow__generating-validation-reports]
 
 Complete specifications in:
 
-- [Temporary Files Convention](../../../governance/development/infra/temporary-files.md)
-- [Timestamp Format Convention](../../../governance/conventions/formatting/timestamp.md)
-- [File Naming Convention](../../../governance/conventions/structure/file-naming.md)
+- [Temporary Files Convention](../../governance/development/infra/temporary-files.md)
+- [Timestamp Format Convention](../../governance/conventions/formatting/timestamp.md)
+- [File Naming Convention](../../governance/conventions/structure/file-naming.md)
 
 ## Usage Example
 
