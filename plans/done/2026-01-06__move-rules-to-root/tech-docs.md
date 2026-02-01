@@ -122,13 +122,13 @@ find .claude/agents -name "*.md" -type f -exec sed -i 's|governance/|governance/
 
 **Pattern Examples**:
 
-- `See: [convention writing](governance/conventions/writing/conventions.md)`
+- `See: [convention writing](../../../governance/conventions/writing/quality.md)`
 - `[Reference docs](../../../governance/conventions/)`
 - `Rules location: governance/`
 
 **After**:
 
-- `See: [convention writing](governance/conventions/writing/conventions.md)`
+- `See: [convention writing](../../../governance/conventions/writing/quality.md)`
 - `[Reference docs](../../../governance/conventions/)`
 - `Rules location: governance/`
 
@@ -146,12 +146,12 @@ find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|governance/|governa
 
 **Pattern Examples**:
 
-- `See: [AI agents convention](../../../governance/development/agents/ai-agents.md)`
+- `See: [AI agents convention](../../../../governance/development/agents/ai-agents.md)`
 - `Related: governance/principles/`
 
 **After**:
 
-- `See: [AI agents convention](../../../governance/development/agents/ai-agents.md)`
+- `See: [AI agents convention](../../../../governance/development/agents/ai-agents.md)`
 - `Related: governance/principles/`
 
 ---
@@ -645,7 +645,7 @@ ls governance/conventions/
 **Example**: Reference from rule to doc
 
 ```markdown
-See also: [tutorials](../../docs/tutorials/)
+See also: [tutorials](../../../docs/tutorials/)
 ````
 
 **After move**: This remains correct (no change needed)

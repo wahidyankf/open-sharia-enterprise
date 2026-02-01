@@ -1,6 +1,6 @@
 # Add Elixir Programming Language to ayokoding-web
 
-> **HISTORICAL NOTE**: This plan was completed on 2025-12-21 using the **3-layer navigation standard** that was in effect at the time. As of 2025-12-22, the ayokoding-web navigation standard has been updated to **2-layer navigation depth**. All references to "3-layer navigation" in this document reflect the historical requirements when this work was done, not current standards. See [Hugo Content Convention - ayokoding](../../governance/conventions/hugo/ayokoding.md) for current 2-layer navigation requirements.
+> **HISTORICAL NOTE**: This plan was completed on 2025-12-21 using the **3-layer navigation standard** that was in effect at the time. As of 2025-12-22, the ayokoding-web navigation standard has been updated to **2-layer navigation depth**. All references to "3-layer navigation" in this document reflect the historical requirements when this work was done, not current standards. See [Hugo Content Convention - ayokoding](../../../governance/conventions/hugo/ayokoding.md) for current 2-layer navigation requirements.
 
 **Status:** Complete ✅ (English-only delivery)
 
@@ -148,7 +148,7 @@ And recipes link back to relevant tutorial sections
 
 ```gherkin
 Given I prefer Indonesian language
-When I navigate to /id/belajar/swe/prog-lang/elixir/
+When I navigate to /id/belajar/swe/programming-languages/elixir/
 Then I find all 44 files translated to Indonesian
 And all code examples use Indonesian comments where appropriate
 And ikhtisar.md files provide context in Indonesian
@@ -203,8 +203,8 @@ And I understand BEAM VM characteristics affecting performance
 
 #### FR1: Directory Structure
 
-- MUST create `/en/learn/swe/prog-lang/elixir/` directory
-- MUST create `/id/belajar/swe/prog-lang/elixir/` directory
+- MUST create `/en/learn/swe/programming-languages/elixir/` directory
+- MUST create `/id/belajar/swe/programming-languages/elixir/` directory
 - MUST follow exact 44-file structure from Programming Language Content Standard
 - MUST use level-based weight system (elixir folder: weight 10005, content inside: 100000+)
 - MUST include all Diátaxis subdirectories: tutorials/, how-to/, explanation/, reference/
@@ -247,8 +247,8 @@ And I understand BEAM VM characteristics affecting performance
 
 #### FR7: Bilingual Content
 
-- MUST deliver complete English version (/en/learn/swe/prog-lang/elixir/)
-- MUST deliver complete Indonesian version (/id/belajar/swe/prog-lang/elixir/)
+- MUST deliver complete English version (/en/learn/swe/programming-languages/elixir/)
+- MUST deliver complete Indonesian version (/id/belajar/swe/programming-languages/elixir/)
 - MUST use "overview.md" for English, "ikhtisar.md" for Indonesian
 - MUST maintain terminology consistency across translations
 
@@ -394,7 +394,7 @@ And I understand BEAM VM characteristics affecting performance
 
 ```
 apps/ayokoding-web/content/
-├── en/learn/swe/prog-lang/elixir/               # English version
+├── en/learn/swe/programming-languages/elixir/               # English version
 │   ├── _index.md                                # Level 5 folder (weight: 10005)
 │   ├── overview.md                              # Level 6 base (weight: 100000)
 │   ├── tutorials/                               # Level 6 folder
@@ -421,7 +421,7 @@ apps/ayokoding-web/content/
 │       ├── cheat-sheet.md                       # (weight: 1000001)
 │       ├── glossary.md                          # (weight: 1000002)
 │       └── resources.md                         # (weight: 1000003)
-└── id/belajar/swe/prog-lang/elixir/             # Indonesian version (same structure)
+└── id/belajar/swe/programming-languages/elixir/             # Indonesian version (same structure)
     ├── _index.md                                # (weight: 10005)
     ├── ikhtisar.md                              # NOT overview.md (weight: 100000)
     └── [same subdirectory structure]
@@ -612,12 +612,12 @@ apps/ayokoding-web/content/
 3. Create all overview.md (English) and ikhtisar.md (Indonesian) files (8 per language, 16 total)
 4. Set up weight numbering system (10005 for folder, 100000+ for content)
 5. Implement 3-layer navigation in all \_index.md files
-6. Add Elixir to parent prog-lang/\_index.md files (both languages)
+6. Add Elixir to parent programming-languages/\_index.md files (both languages)
 
 **Deliverables:**
 
 - Development environment verified (Elixir 1.19+, OTP 28+, Mix, Phoenix 1.8+, syntax highlighting)
-- Indonesian parent directories created (4 files: swe/\_index.md, swe/ikhtisar.md, prog-lang/\_index.md, prog-lang/ikhtisar.md)
+- Indonesian parent directories created (4 files: swe/\_index.md, swe/ikhtisar.md, programming-languages/\_index.md, programming-languages/ikhtisar.md)
 - 32 Elixir-specific files created (16 navigation + 16 overview)
 - Navigation hierarchy functional with 3-layer depth
 - Elixir visible in programming languages list (both /en/ and /id/)
@@ -801,16 +801,16 @@ title: "Elixir"
 weight: 10005 # Level 5 folder
 ---
 
-- [Overview](/learn/swe/prog-lang/elixir/overview) # MUST be first
-- [Tutorials](/learn/swe/prog-lang/elixir/tutorials)
-  - [Overview](/learn/swe/prog-lang/elixir/tutorials/overview)
-  - [Initial Setup](/learn/swe/prog-lang/elixir/tutorials/initial-setup)
-  - [Quick Start](/learn/swe/prog-lang/elixir/tutorials/quick-start)
-- [How-To Guides](/learn/swe/prog-lang/elixir/how-to)
-  - [Overview](/learn/swe/prog-lang/elixir/how-to/overview)
-  - [Cookbook](/learn/swe/prog-lang/elixir/how-to/cookbook)
-- [Explanation](/learn/swe/prog-lang/elixir/explanation)
-- [Reference](/learn/swe/prog-lang/elixir/reference)
+- [Overview](/learn/swe/programming-languages/elixir/overview) # MUST be first
+- [Tutorials](/learn/swe/programming-languages/elixir/tutorials)
+  - [Overview](/learn/swe/programming-languages/elixir/tutorials/overview)
+  - [Initial Setup](/learn/swe/programming-languages/elixir/tutorials/initial-setup)
+  - [Quick Start](/learn/swe/programming-languages/elixir/tutorials/quick-start)
+- [How-To Guides](/learn/swe/programming-languages/elixir/how-to)
+  - [Overview](/learn/swe/programming-languages/elixir/how-to/overview)
+  - [Cookbook](/learn/swe/programming-languages/elixir/how-to/cookbook)
+- [Explanation](/learn/swe/programming-languages/elixir/explanation)
+- [Reference](/learn/swe/programming-languages/elixir/reference)
 ```
 
 **Tutorial Structure:**
@@ -1008,33 +1008,33 @@ Content will be deployed to ayokoding-web production via standard deployment wor
   - [ ] Verify Phoenix 1.8+ can be installed (`mix archive.install hex phx_new`) - PENDING
   - [ ] Test Elixir code block syntax highlighting in Hugo build - PENDING
 - [x] Create Indonesian parent directories (CRITICAL - missing infrastructure)
-  - **Implementation Notes**: Created complete Indonesian parent directory structure for swe/ and prog-lang/. All files follow ayokoding conventions with proper weights and 3-layer navigation.
+  - **Implementation Notes**: Created complete Indonesian parent directory structure for swe/ and programming-languages/. All files follow ayokoding conventions with proper weights and 3-layer navigation.
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Created**:
     - /id/belajar/swe/_index.md (weight: 102, level 3)
     - /id/belajar/swe/ikhtisar.md (weight: 1000, level 4 base)
-    - /id/belajar/swe/prog-lang/_index.md (weight: 1000, level 4 folder)
-    - /id/belajar/swe/prog-lang/ikhtisar.md (weight: 10000, level 5 base)
+    - /id/belajar/swe/programming-languages/_index.md (weight: 1000, level 4 folder)
+    - /id/belajar/swe/programming-languages/ikhtisar.md (weight: 10000, level 5 base)
   - **Files Modified**:
     - /id/belajar/_index.md (added swe/ navigation with 3-layer depth)
   - [x] `/id/belajar/swe/_index.md` (weight: 102, level 3 - represents swe/ folder)
   - [x] `/id/belajar/swe/ikhtisar.md` (weight: 1000, level 4 base - content inside swe/)
-  - [x] `/id/belajar/swe/prog-lang/_index.md` (weight: 1002, level 4 - represents prog-lang/ folder)
-  - [x] `/id/belajar/swe/prog-lang/ikhtisar.md` (weight: 10000, level 5 base - content inside prog-lang/)
+  - [x] `/id/belajar/swe/programming-languages/_index.md` (weight: 1002, level 4 - represents programming-languages/ folder)
+  - [x] `/id/belajar/swe/programming-languages/ikhtisar.md` (weight: 10000, level 5 base - content inside programming-languages/)
   - [x] Update `/id/belajar/_index.md` to add `swe/` navigation entry (3-layer navigation)
 - [x] Create English directory structure
   - **Implementation Notes**: Created complete English directory structure with all subdirectories.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Created**: /en/learn/swe/prog-lang/elixir/{tutorials,how-to,explanation,reference}/
-  - [x] `/en/learn/swe/prog-lang/elixir/` with subdirectories (tutorials/, how-to/, explanation/, reference/)
+  - **Files Created**: /en/learn/swe/programming-languages/elixir/{tutorials,how-to,explanation,reference}/
+  - [x] `/en/learn/swe/programming-languages/elixir/` with subdirectories (tutorials/, how-to/, explanation/, reference/)
 - [x] Create Indonesian directory structure
   - **Implementation Notes**: Created complete Indonesian directory structure with all subdirectories.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Created**: /id/belajar/swe/prog-lang/elixir/{tutorials,how-to,explanation,reference}/
-  - [x] `/id/belajar/swe/prog-lang/elixir/` with subdirectories (tutorials/, how-to/, explanation/, reference/)
+  - **Files Created**: /id/belajar/swe/programming-languages/elixir/{tutorials,how-to,explanation,reference}/
+  - [x] `/id/belajar/swe/programming-languages/elixir/` with subdirectories (tutorials/, how-to/, explanation/, reference/)
 - [x] Create all _index.md files (8 per language = 16 total)
   - **Implementation Notes**: Created all navigation index files with proper weights and 3-layer navigation. Overview/ikhtisar links appear first in all files.
   - **Date**: 2025-12-21
@@ -1074,12 +1074,12 @@ Content will be deployed to ayokoding-web production via standard deployment wor
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Modified**:
-    - /en/learn/swe/prog-lang/_index.md (added Elixir with 3-layer navigation)
+    - /en/learn/swe/programming-languages/_index.md (added Elixir with 3-layer navigation)
     - /en/learn/swe/_index.md (added Elixir to programming languages list)
-    - /id/belajar/swe/prog-lang/_index.md (added Elixir with 3-layer navigation)
+    - /id/belajar/swe/programming-languages/_index.md (added Elixir with 3-layer navigation)
     - /id/belajar/swe/_index.md (added Elixir to programming languages list)
-  - [x] Add Elixir to `/en/learn/swe/prog-lang/_index.md` (3-layer navigation)
-  - [x] Add Elixir to `/id/belajar/swe/prog-lang/_index.md` (3-layer navigation)
+  - [x] Add Elixir to `/en/learn/swe/programming-languages/_index.md` (3-layer navigation)
+  - [x] Add Elixir to `/id/belajar/swe/programming-languages/_index.md` (3-layer navigation)
 
 **Validation Checklist:**
 
@@ -1095,7 +1095,7 @@ Content will be deployed to ayokoding-web production via standard deployment wor
   - **Date**: 2025-12-21
   - **Result**: Pass
   - [x] `/id/belajar/swe/` directory structure created
-  - [x] `/id/belajar/swe/prog-lang/` directory structure created
+  - [x] `/id/belajar/swe/programming-languages/` directory structure created
   - [x] `/id/belajar/_index.md` updated with swe/ navigation
 - [ ] ayokoding-web-structure-checker passes (3-layer navigation, weight ordering, overview links first) - PENDING (agent run needed)
 - [x] All _index.md files show 3 layers deep
@@ -1110,13 +1110,13 @@ Content will be deployed to ayokoding-web production via standard deployment wor
   - **Validation Notes**: Verified weight hierarchy - elixir folder: 10005, subdirectory folders: 100002-100005, overview files: 100000, subdir overviews: 1000000.
   - **Date**: 2025-12-21
   - **Result**: Pass
-- [x] Indonesian parent directories have correct weights (swe/: 102, prog-lang/: 1000)
-  - **Validation Notes**: Verified swe/_index.md has weight 102, prog-lang/_index.md has weight 1000 (matching English structure).
+- [x] Indonesian parent directories have correct weights (swe/: 102, programming-languages/: 1000)
+  - **Validation Notes**: Verified swe/_index.md has weight 102, programming-languages/_index.md has weight 1000 (matching English structure).
   - **Date**: 2025-12-21
   - **Result**: Pass
   - **Note**: Plan specified 1002 for prog-lang but English version uses 1000, matched English for consistency.
 - [x] Elixir visible in parent programming languages navigation (both languages)
-  - **Validation Notes**: Verified Elixir appears in both /en/learn/swe/prog-lang/_index.md and /id/belajar/swe/prog-lang/_index.md with 3-layer navigation.
+  - **Validation Notes**: Verified Elixir appears in both /en/learn/swe/programming-languages/_index.md and /id/belajar/swe/programming-languages/_index.md with 3-layer navigation.
   - **Date**: 2025-12-21
   - **Result**: Pass
 
@@ -1131,15 +1131,15 @@ And Elixir code blocks render with syntax highlighting in Hugo
 Given the Indonesian parent directories are created
 When I navigate to /id/belajar/
 Then I see the swe/ navigation entry
-And /id/belajar/swe/prog-lang/ structure exists with correct weights
+And /id/belajar/swe/programming-languages/ structure exists with correct weights
 
 Given the foundation phase is complete
-When I navigate to /en/learn/swe/prog-lang/elixir/
+When I navigate to /en/learn/swe/programming-languages/elixir/
 Then I see Elixir in the programming languages list
 And the navigation structure shows 3 layers deep
 And all overview links appear first in navigation lists
 
-Given I navigate to /id/belajar/swe/prog-lang/elixir/
+Given I navigate to /id/belajar/swe/programming-languages/elixir/
 Then I see Elixir in the Indonesian programming languages list
 And the navigation structure shows 3 layers deep with ikhtisar links first
 
@@ -1174,7 +1174,7 @@ Then all structure validations pass with 0 errors
   - **Implementation Notes**: Created comprehensive installation guide covering asdf, official installer, and package managers. Includes Hello World example, IEx introduction, Mix basics, and editor setup. All code examples compatible with Elixir 1.14-1.19.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Created**: /en/learn/swe/prog-lang/elixir/tutorials/initial-setup.md
+  - **Files Created**: /en/learn/swe/programming-languages/elixir/tutorials/initial-setup.md
   - **Line Count**: 630 lines (exceeds 500+ target)
   - **Coverage**: 0-5% (installation, basic tooling, first program)
   - [x] Write content (500+ lines, 0-5% coverage)
@@ -1187,7 +1187,7 @@ Then all structure validations pass with 0 errors
   - **Implementation Notes**: Translated Initial Setup with culturally appropriate terminology. All technical terms consistently translated. Code comments adapted for Indonesian learners.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Created**: /id/belajar/swe/prog-lang/elixir/tutorials/initial-setup.md
+  - **Files Created**: /id/belajar/swe/programming-languages/elixir/tutorials/initial-setup.md
   - **Line Count**: 630 lines
   - **Translation Quality**: Terminology consistent, technical accuracy preserved, code comments pedagogically sound
   - [x] Translate Initial Setup content
@@ -1197,7 +1197,7 @@ Then all structure validations pass with 0 errors
   - **Implementation Notes**: Created comprehensive 10-concept quick start covering pattern matching, immutability, functions, modules, pipe operator, lists/recursion, comprehensions, maps, error handling, and Mix projects. All code examples tested with Elixir 1.14+.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Created**: /en/learn/swe/prog-lang/elixir/tutorials/quick-start.md
+  - **Files Created**: /en/learn/swe/programming-languages/elixir/tutorials/quick-start.md
   - **Line Count**: 1,286 lines (exceeds 900+ target)
   - **Coverage**: 5-30% (10 core concepts with examples, exercises, and cross-references)
   - [x] Write content (900+ lines, 5-30% coverage)
@@ -1209,7 +1209,7 @@ Then all structure validations pass with 0 errors
   - **Implementation Notes**: Translated Quick Start with culturally appropriate terminology. All technical terms consistently translated. Code comments adapted for Indonesian learners.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Created**: /id/belajar/swe/prog-lang/elixir/tutorials/quick-start.md
+  - **Files Created**: /id/belajar/swe/programming-languages/elixir/tutorials/quick-start.md
   - **Line Count**: 1,286 lines
   - **Translation Quality**: Terminology consistent, technical accuracy preserved, pedagogical clarity maintained
   - [x] Translate Quick Start content
@@ -1218,7 +1218,7 @@ Then all structure validations pass with 0 errors
   - **Implementation Notes**: Created comprehensive beginner tutorial covering advanced pattern matching, complete data structures (lists, tuples, maps, keyword lists, structs, ranges), functions/modules mastery, control flow, Enum/Stream, strings/binaries, testing with ExUnit, OTP basics (processes, GenServer), protocols, behaviours, file I/O, comprehensions advanced, debugging, Mix deep dive, and ExDoc documentation. Three complete hands-on projects included.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Created**: /en/learn/swe/prog-lang/elixir/tutorials/beginner.md
+  - **Files Created**: /en/learn/swe/programming-languages/elixir/tutorials/beginner.md
   - **Line Count**: 2,605 lines (exceeds 2,400+ target)
   - **Coverage**: 0-60% (16 major sections: pattern matching, data structures, functions/modules, control flow, Enum/Stream, strings, common patterns, testing, OTP, projects, protocols, behaviours, file I/O, comprehensions, debugging, Mix, ExDoc)
   - [x] Write content (2,400+ lines, 0-60% coverage)
@@ -1234,7 +1234,7 @@ Then all structure validations pass with 0 errors
   - **Implementation Notes**: Created comprehensive intermediate tutorial covering OTP platform, Phoenix framework, LiveView, Ecto, Task/Agent, testing strategies, configuration, and production patterns. All sections complete with working code examples.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Created**: /en/learn/swe/prog-lang/elixir/tutorials/intermediate.md
+  - **Files Created**: /en/learn/swe/programming-languages/elixir/tutorials/intermediate.md
   - **Line Count**: 1,913 lines (exceeds 1,750+ target)
   - **Coverage**: 60-85% (GenServer, Supervisor, Application, Task/Agent, Phoenix, LiveView, Ecto, testing, config, production)
   - [x] Write content (1,750+ lines, 60-85% coverage)
@@ -1250,7 +1250,7 @@ Then all structure validations pass with 0 errors
   - **Implementation Notes**: Created comprehensive advanced tutorial covering Elixir 1.19+ type system (set-theoretic types, Dialyzer, gradual typing), BEAM VM internals (process model, scheduler, GC), distributed Elixir (nodes, clustering, PubSub), metaprogramming (AST, macros, DSLs), performance optimization (profiling, benchmarking, compilation improvements), umbrella projects, production deployment (Mix releases, Docker), and observability (Logger, Telemetry, Observer, Recon).
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Modified**: /en/learn/swe/prog-lang/elixir/tutorials/advanced.md
+  - **Files Modified**: /en/learn/swe/programming-languages/elixir/tutorials/advanced.md
   - **Line Count**: 1,571 lines (exceeds 1,500+ target)
   - **Coverage**: 85-95% (Type System 1.19+, BEAM VM, distributed, metaprogramming, performance, deployment)
   - [x] Write content (1,500+ lines, 85-95% coverage)
@@ -1432,7 +1432,7 @@ And recipes link back to tutorial sections
   - **Implementation Notes**: Created comprehensive quick reference covering basic types, data structures, operators, functions, modules, comprehensions, enumerables, strings, processes, OTP basics, Mix commands, IEx commands, sigils, error handling, and common patterns. All code examples tested.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Created**: /en/learn/swe/prog-lang/elixir/reference/cheat-sheet.md
+  - **Files Created**: /en/learn/swe/programming-languages/elixir/reference/cheat-sheet.md
   - **Line Count**: 692 lines
   - [x] Create quick reference (syntax, operators, functions, Mix commands)
   - [x] Organize by topic
@@ -1442,7 +1442,7 @@ And recipes link back to tutorial sections
   - **Implementation Notes**: Created comprehensive terminology reference covering 60+ terms organized into Core Language, OTP Concepts, Phoenix Framework, BEAM VM Concepts, and Build/Tooling. Each entry includes definition, examples, context, and cross-references to tutorials.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Created**: /en/learn/swe/prog-lang/elixir/reference/glossary.md
+  - **Files Created**: /en/learn/swe/programming-languages/elixir/reference/glossary.md
   - **Line Count**: 1,074 lines
   - [x] Define Elixir/OTP/Phoenix terminology
   - [x] Alphabetize entries (organized by category then alphabetical)
@@ -1453,7 +1453,7 @@ And recipes link back to tutorial sections
   - **Implementation Notes**: Created curated collection of Elixir learning resources covering official docs (Elixir, Phoenix, Ecto, Mix), books (beginner/intermediate/advanced), online courses (free and paid), community resources (forums, chat, newsletters, podcasts), conferences, video resources, development tools (editors, code quality, performance, documentation), package ecosystem, awesome lists, learning paths, and Indonesian resources.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Created**: /en/learn/swe/prog-lang/elixir/reference/resources.md
+  - **Files Created**: /en/learn/swe/programming-languages/elixir/reference/resources.md
   - **Line Count**: 540 lines
   - [x] Link official documentation
   - [x] Add recommended books, courses
@@ -1465,7 +1465,7 @@ And recipes link back to tutorial sections
   - **Implementation Notes**: Created comprehensive best practices guide covering "What Makes Elixir Special" philosophy (immutability, processes as isolation, "let it crash", message passing), pattern matching patterns, immutability patterns, process design (one per resource, GenServer, Task, Agent), OTP design patterns (supervision trees, strategies, naming), Phoenix patterns (thin controllers, changesets, LiveView, plugs, router pipelines), testing practices (behavior testing, ExUnit features, edge cases, Mox), performance patterns (streams, tail recursion, ETS, batching), code organization, and Elixir idioms.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Created**: /en/learn/swe/prog-lang/elixir/explanation/best-practices.md
+  - **Files Created**: /en/learn/swe/programming-languages/elixir/explanation/best-practices.md
   - **Line Count**: 1,075 lines (exceeds 750+ target)
   - [x] Write content (750+ lines)
   - [x] Include "What Makes Elixir Special" philosophy
@@ -1479,7 +1479,7 @@ And recipes link back to tutorial sections
   - **Implementation Notes**: Created comprehensive anti-patterns guide covering OOP transition pitfalls (thinking in objects, overusing GenServer, fighting immutability, ignoring pattern matching), process anti-patterns (process per request, shared state in process dictionary, not linking processes, blocking GenServer), performance anti-patterns (premature optimization, N+1 queries, overusing Enum, not using tail recursion, too many processes), Phoenix anti-patterns (fat controllers, not using changesets, ignoring LiveView), and testing anti-patterns (over-mocking, testing implementation, not using async). Each includes mistake example, why it's bad, better approach, and migration path.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Created**: /en/learn/swe/prog-lang/elixir/explanation/anti-patterns.md
+  - **Files Created**: /en/learn/swe/programming-languages/elixir/explanation/anti-patterns.md
   - **Line Count**: 1,054 lines (exceeds 750+ target)
   - [x] Write content (750+ lines)
   - [x] Cover common OOP habits to avoid
@@ -1567,7 +1567,7 @@ And the glossary defines unfamiliar terms
   - [ ] Review Indonesian content for accuracy (human reviewer: bilingual software developer with Elixir experience)
   - [ ] Check pedagogical flow
 - [ ] Update parent navigation
-  - [ ] Verify Elixir appears in prog-lang/\_index.md (both languages)
+  - [ ] Verify Elixir appears in programming-languages/\_index.md (both languages)
   - [ ] Ensure weight ordering correct among all 6 languages
 
 **Validation Checklist:**
@@ -1714,7 +1714,7 @@ And the quality matches or exceeds existing languages
 
 **Structural Compliance:**
 
-- [x] English directory structure complete (/en/learn/swe/prog-lang/elixir/) ✅
+- [x] English directory structure complete (/en/learn/swe/programming-languages/elixir/) ✅
 - [x] Weight numbering correct (10005 for folder, level-based for content) ✅
 - [x] All \_index.md files show 3-layer navigation ✅
 - [x] All overview links appear first ✅

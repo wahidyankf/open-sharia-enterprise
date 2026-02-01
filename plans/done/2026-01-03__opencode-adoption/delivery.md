@@ -226,7 +226,7 @@ This plan was executed in 3 phases:
 
   **Files Updated**:
   - `governance/conventions/structure/diataxis-framework.md`
-  - `governance/conventions/writing/conventions.md`
+  - `../../../governance/conventions/writing/quality.md`
   - `governance/development/pattern/maker-checker-fixer.md`
   - `governance/development/quality/repository-validation.md`
   - `.claude/skills/README.md`

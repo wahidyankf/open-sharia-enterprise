@@ -6,7 +6,7 @@
 
 **Git Workflow**: Trunk Based Development (direct commits to `main`)
 
-All implementation happens on the `main` branch using Trunk Based Development workflow with direct commits. No PRs or feature branches. See [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) for complete details.
+All implementation happens on the `main` branch using Trunk Based Development workflow with direct commits. No PRs or feature branches. See [Trunk Based Development Convention](../../../governance/development/workflow/trunk-based-development.md) for complete details.
 
 **Summary**: This plan delivers 37 new how-to guides and ~5,740 lines of cookbook content across 5 programming languages (Java, Golang, Python, Kotlin, Rust) through 5 sequential phases prioritized by gap size. Each phase commits directly to `main` upon completion.
 
@@ -33,7 +33,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/java/how-to/optimize-performance.md (new, 410 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/optimize-performance.md (new, 410 lines)
 
 - [x] **Create how-to guide: work-with-databases.md**
   - Topics: JDBC, connection pooling, transactions, ORM patterns
@@ -44,7 +44,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/java/how-to/work-with-databases.md (new, 485 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/work-with-databases.md (new, 485 lines)
 
 - [x] **Create how-to guide: build-rest-apis-spring.md**
   - Topics: Spring Boot REST controllers, request/response handling, validation
@@ -55,7 +55,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/java/how-to/build-rest-apis-spring.md (new, 470 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/build-rest-apis-spring.md (new, 470 lines)
 
 - [x] **Create how-to guide: dependency-injection-spring.md**
   - Topics: Spring IoC, bean configuration, dependency management
@@ -66,7 +66,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/java/how-to/dependency-injection-spring.md (new, 485 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/dependency-injection-spring.md (new, 485 lines)
 
 - [x] **Create how-to guide: work-with-streams-effectively.md**
   - Topics: Stream API, lazy evaluation, parallel streams, collectors
@@ -77,7 +77,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/java/how-to/work-with-streams-effectively.md (new, 495 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/work-with-streams-effectively.md (new, 495 lines)
 
 - [x] **Create how-to guide: use-records-effectively.md**
   - Topics: Java 14+ records, immutability, pattern matching
@@ -88,7 +88,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/java/how-to/use-records-effectively.md (new, 510 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/use-records-effectively.md (new, 510 lines)
 
 - [x] **Create how-to guide: use-sealed-classes.md**
   - Topics: Java 17+ sealed classes, permitted subtypes, exhaustiveness
@@ -99,7 +99,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/java/how-to/use-sealed-classes.md (new, 525 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/use-sealed-classes.md (new, 525 lines)
 
 - [x] **Create how-to guide: pattern-matching.md**
   - Topics: Java 21+ pattern matching, switch expressions, type patterns
@@ -110,7 +110,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/java/how-to/pattern-matching.md (new, 505 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/pattern-matching.md (new, 505 lines)
 
 - [x] **Create how-to guide: reactive-programming.md**
   - Topics: Project Reactor, reactive streams, backpressure
@@ -121,7 +121,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/java/how-to/reactive-programming.md (new, 540 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/reactive-programming.md (new, 540 lines)
 
 - [x] **Create how-to guide: organize-packages-properly.md**
   - Topics: Package structure, naming conventions, modularity
@@ -132,7 +132,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/java/how-to/organize-packages-properly.md (new, 480 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/organize-packages-properly.md (new, 480 lines)
 
 - [x] **Create how-to guide: virtual-threads.md**
   - Topics: Java 21+ virtual threads (Project Loom), structured concurrency
@@ -143,7 +143,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/java/how-to/virtual-threads.md (new, 515 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/virtual-threads.md (new, 515 lines)
 
 - [x] **Create how-to guide: testing-strategies.md**
   - Topics: JUnit 5, mocking with Mockito, test organization, test-driven development
@@ -154,7 +154,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/java/how-to/testing-strategies.md (new, 540 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/testing-strategies.md (new, 540 lines)
 
 - [x] **Update cross-references in existing content**
   - Add references from tutorials to new how-to guides
@@ -348,7 +348,7 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/python/how-to/optimize-performance.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/optimize-performance.md (new)
 
 - [x] **Create how-to guide: async-patterns-advanced.md**
   - Topics: asyncio, aiohttp, async context managers, async generators
@@ -359,7 +359,7 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/python/how-to/async-patterns-advanced.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/async-patterns-advanced.md (new)
 
 - [x] **Create how-to guide: work-with-databases.md**
   - Topics: SQLAlchemy, database connections, ORM patterns, migrations
@@ -370,7 +370,7 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/python/how-to/work-with-databases.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/work-with-databases.md (new)
 
 - [x] **Create how-to guide: build-rest-apis.md**
   - Topics: FastAPI, request/response handling, validation, authentication
@@ -381,7 +381,7 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/python/how-to/build-rest-apis.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/build-rest-apis.md (new)
 
 - [x] **Create how-to guide: data-validation-patterns.md**
   - Topics: Pydantic, field validation, custom validators, nested models
@@ -392,7 +392,7 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/python/how-to/data-validation-patterns.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/data-validation-patterns.md (new)
 
 - [x] **Create how-to guide: security-best-practices.md**
   - Topics: Password hashing, SQL injection prevention, input validation, cryptography
@@ -403,7 +403,7 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/python/how-to/security-best-practices.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/security-best-practices.md (new)
 
 - [x] **Create how-to guide: type-hints-effectively.md**
   - Topics: Type hints, mypy, Protocol, TypedDict, generics
@@ -414,7 +414,7 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/python/how-to/type-hints-effectively.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/type-hints-effectively.md (new)
 
 - [x] **Create how-to guide: package-management.md**
   - Topics: pip, Poetry, virtual environments, dependency management, packaging
@@ -425,7 +425,7 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/python/how-to/package-management.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/package-management.md (new)
 
 - [x] **Expand cookbook with ~4-5 new recipes (~650 lines)**
   - ✅ Recipe: Concurrent API Requests with Rate Limiting (~75 lines) - Advanced Async Patterns
@@ -443,7 +443,7 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Date**: 2025-12-21
   - **Status**: Completed - Exceeded Target
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/python/how-to/cookbook.md (expanded by 840 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/cookbook.md (expanded by 840 lines)
 
 - [x] **Update cross-references in existing content**
   - All new how-to guides include cross-references to tutorials and cookbook
@@ -623,7 +623,7 @@ Scenario: Kotlin reaches exceptional standard for cookbook
   - **Implementation Notes**: Created debug-and-logging.md (weight 1000220) with dbg! macro, log/env_logger, tracing crate, anyhow error context, backtrace handling. Covers structured logging and advanced tracing patterns.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/prog-lang/rust/how-to/debug-and-logging.md (new, ~170 lines)
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/rust/how-to/debug-and-logging.md (new, ~170 lines)
   - Topics: Debug traits, logging frameworks, error context, tracing
   - Code examples: dbg! macro, log crate, tracing crate, backtrace
   - Weight: 1000020 (next available after existing 19 guides)
@@ -633,31 +633,31 @@ Scenario: Kotlin reaches exceptional standard for cookbook
   - **Implementation Notes**: Created configuration-management.md (weight 1000230) with dotenv, TOML with serde, hierarchical config crate, validator for validation, clap for CLI args. Comprehensive config patterns.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/prog-lang/rust/how-to/configuration-management.md (new, ~205 lines)
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/rust/how-to/configuration-management.md (new, ~205 lines)
 
 - [x] **Create how-to guide: document-code-effectively.md**
   - **Implementation Notes**: Created code-documentation.md (weight 1000240) with doc comments, rustdoc, module documentation, documentation tests, examples directory, advanced features like #[doc(hidden)].
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/prog-lang/rust/how-to/code-documentation.md (new, ~201 lines)
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/rust/how-to/code-documentation.md (new, ~201 lines)
 
 - [x] **Create how-to guide: async-rust-patterns.md**
   - **Implementation Notes**: Created async-programming-patterns.md (weight 1000250) with Tokio basics, tokio::join!, reqwest HTTP, async channels/streams, timeouts/cancellation, async-trait. Comprehensive async patterns.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/prog-lang/rust/how-to/async-programming-patterns.md (new, ~211 lines)
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/rust/how-to/async-programming-patterns.md (new, ~211 lines)
 
 - [x] **Create how-to guide: testing-strategies.md**
   - **Implementation Notes**: Created testing-patterns.md (weight 1000260) with unit tests, integration tests, proptest property-based testing, criterion benchmarks, mocking/test doubles. Complete testing coverage.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/prog-lang/rust/how-to/testing-patterns.md (new, ~187 lines)
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/rust/how-to/testing-patterns.md (new, ~187 lines)
 
 - [x] **Expand cookbook with 18 new recipes (1,701 lines)**
   - **Implementation Notes**: Expanded cookbook from 2,243 to 3,944 lines (+1,701 lines, 76% progress toward 2,760-line target). Added 18 comprehensive recipes across 6 new categories: Advanced Async Patterns (5 recipes: streams, select, JoinSet, async Mutex/RwLock, channels), Advanced Macro Patterns (3 recipes: declarative with pattern matching, attribute macros, function-like procedural macros), Advanced Ownership Patterns (3 recipes: Cell types, phantom types, custom Deref smart pointers), Advanced Error Handling (2 recipes: error enums with context, custom Result aliases), Advanced Concurrency Patterns (3 recipes: scoped threads, lock-free atomics, barrier synchronization), Advanced Testing Patterns (2 recipes: test fixtures, parameterized tests). All recipes follow Problem-Solution-How It Works-Use Cases structure with production-ready code examples.
   - **Date**: 2025-12-21
   - **Status**: Completed (76% of target, 18/20 recipes)
-  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/prog-lang/rust/how-to/cookbook.md (modified, +1,701 lines)
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/rust/how-to/cookbook.md (modified, +1,701 lines)
   - **New Categories Added**:
     - Advanced Async Patterns (Recipe 42-46): Async streams/generators, select for multiple futures, JoinSet task spawning, async Mutex/RwLock, async channels with backpressure
     - Advanced Macro Patterns (Recipe 47-49): Declarative macro pattern matching, attribute-like procedural macros, function-like procedural macros

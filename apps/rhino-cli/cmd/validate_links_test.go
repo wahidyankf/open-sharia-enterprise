@@ -66,7 +66,7 @@ External link: [example](https://example.com)
 
 	// Execute command (should exit with error due to broken link)
 	err = cmd.RunE(cmd, []string{})
-	
+
 	// Note: The command calls os.Exit(1) on failure, but in tests we just check the output
 	// We expect the RunE to complete successfully (no panic), and we check output
 	if err != nil {

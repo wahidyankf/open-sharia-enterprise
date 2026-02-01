@@ -379,7 +379,7 @@ The following are explicitly **not** included in this plan:
 
 ### Internal Dependencies
 
-- **Independent of**: `plans/backlog/2026-01-04__agents-docs-source-of-truth/`
+- **Independent of**: `plans/backl../2026-01-04__agents-docs-source-of-truth/`
 - **Non-conflicting**: agents/ subdirectory left untouched (separate plan scope)
 
 ### External Dependencies

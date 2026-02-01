@@ -8,11 +8,11 @@
 
 **Implementation Steps**:
 
-- [x] Create `apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/` directory
+- [x] Create `apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/` directory
   - **Implementation Notes**: Created main Kotlin directory with all required subdirectories (tutorials/, how-to/, explanation/, reference/) following Programming Language Content Standard structure
   - **Date**: 2025-12-18
   - **Status**: Completed
-  - **Files Changed**: Created directory structure at apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/
+  - **Files Changed**: Created directory structure at apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/
 - [x] Create subdirectories: tutorials/, how-to/, explanation/, reference/
   - **Implementation Notes**: All four subdirectories created following Diátaxis framework organization
   - **Date**: 2025-12-18
@@ -22,32 +22,32 @@
   - **Date**: 2025-12-18
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/\_index.md (weight: 401)
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/tutorials/\_index.md (weight: 501)
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/how-to/\_index.md (weight: 601)
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/explanation/\_index.md (weight: 701)
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/reference/\_index.md (weight: 801)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/\_index.md (weight: 401)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/tutorials/\_index.md (weight: 501)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/how-to/\_index.md (weight: 601)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/explanation/\_index.md (weight: 701)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/reference/\_index.md (weight: 801)
 - [x] Set up main \_index.md with complete navigation tree
   - **Implementation Notes**: Main \_index.md includes complete navigation tree with all tutorials (5 levels), how-to guides (15 guides), explanation documents (2), and reference placeholder. All links use absolute paths with /en/ prefix as required by Hugo Content Convention
   - **Date**: 2025-12-18
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/\_index.md
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/\_index.md
 - [x] Create overview.md placeholder files
   - **Implementation Notes**: Created overview.md for main directory and all four subdirectories. Main overview.md provides complete learning path guide with 6 tutorials, path recommendations by experience level, and tutorial descriptions. Subdirectory overviews explain content organization and purpose
   - **Date**: 2025-12-18
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/overview.md (weight: 402)
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/tutorials/overview.md (weight: 502)
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/how-to/overview.md (weight: 602)
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/explanation/overview.md (weight: 702)
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/reference/overview.md (weight: 802)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/overview.md (weight: 402)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/tutorials/overview.md (weight: 502)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/how-to/overview.md (weight: 602)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/explanation/overview.md (weight: 702)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/reference/overview.md (weight: 802)
 - [x] Configure Kotlin 2.3.0+ development environment for testing examples
   - **Implementation Notes**: Kotlin 2.3.0+ is target version (latest stable). Development environment will be configured when creating Initial Setup tutorial with actual code examples. All code examples will be tested with Kotlin 2.3.0+ and IntelliJ IDEA
   - **Date**: 2025-12-18
   - **Status**: Completed (deferred to Phase 2 Initial Setup tutorial creation)
 - [x] Review Java implementation structure for reference
-  - **Implementation Notes**: Reviewed Java implementation at apps/ayokoding-web/content/en/learn/swe/prog-lang/java/ for structure patterns. Applied consistent weight numbering (401, 402, 501, 502, etc.), navigation format, and overview structure. Adapted for Kotlin-specific features (12 touchpoints vs Java's 10, Kotlin-specific how-to guides for null safety, coroutines, data classes, sealed classes)
+  - **Implementation Notes**: Reviewed Java implementation at apps/ayokoding-web/content/en/learn/swe/programming-languages/java/ for structure patterns. Applied consistent weight numbering (401, 402, 501, 502, etc.), navigation format, and overview structure. Adapted for Kotlin-specific features (12 touchpoints vs Java's 10, Kotlin-specific how-to guides for null safety, coroutines, data classes, sealed classes)
   - **Date**: 2025-12-18
   - **Status**: Completed
 
@@ -62,7 +62,7 @@
   - **Date**: 2025-12-18
   - **Result**: Pass
 - [x] Navigation links use absolute paths with `/en/` prefix
-  - **Validation Notes**: Verified all navigation links in \_index.md files use absolute paths starting with /en/learn/swe/prog-lang/kotlin/ as required by Hugo Content Convention for ayokoding-web
+  - **Validation Notes**: Verified all navigation links in \_index.md files use absolute paths starting with /en/learn/swe/programming-languages/kotlin/ as required by Hugo Content Convention for ayokoding-web
   - **Date**: 2025-12-18
   - **Result**: Pass
 - [x] Hugo builds successfully without errors
@@ -75,7 +75,7 @@
 
 ```gherkin
 Given the Kotlin content directory structure
-When I navigate to /en/learn/swe/prog-lang/kotlin/
+When I navigate to /en/learn/swe/programming-languages/kotlin/
 Then I see the navigation hub with links to all sections
 And All _index.md files render correctly
 And Hugo build completes without errors
@@ -673,24 +673,24 @@ And I see good vs bad examples side-by-side
   - **Date**: 2025-12-18
   - **Status**: Completed
   - **Line Count**: 631 lines (target: 600-900)
-  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/reference/cheat-sheet.md
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/reference/cheat-sheet.md
 - [x] Create glossary.md (weight: 804)
   - **Implementation Notes**: Created comprehensive Kotlin glossary with 80+ terms organized alphabetically (A-W). Each entry includes definition, code example, and "See Also" cross-references. Covers language features (data classes, sealed classes, coroutines), operators (Elvis, safe call), type system concepts (nullable types, smart casts), and Kotlin-specific terminology (reified types, inline classes, expect/actual).
   - **Date**: 2025-12-18
   - **Status**: Completed
   - **Line Count**: 1,073 lines (target: 400-600, exceeded for comprehensive coverage)
-  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/reference/glossary.md
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/reference/glossary.md
 - [x] Create resources.md (weight: 805)
   - **Implementation Notes**: Created curated resources guide organized into 8 major sections: Official Documentation (language reference, API docs, specs, tutorials, playground), Development Tools (IntelliJ IDEA, Android Studio, VS Code, Gradle, Maven, Detekt, ktlint), Frameworks/Libraries (Ktor, Spring Boot, Exposed, Ktorm, MockK, Kotest, kotlinx.serialization), Community Resources (learning platforms, blogs, forums), Books (Kotlin in Action, Head First Kotlin, Programming Kotlin), Tools/Utilities (Maven Central, JitPack, online compilers), Official Social Media, Contributing to Kotlin, Platform-Specific Resources (JVM, JS, Native, Multiplatform).
   - **Date**: 2025-12-18
   - **Status**: Completed
   - **Line Count**: 546 lines (target: 200-400, exceeded for comprehensive coverage)
-  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/reference/resources.md
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/reference/resources.md
 - [x] Update main \_index.md with reference document links
   - **Implementation Notes**: Added three reference document links to main navigation: Cheat Sheet, Glossary, Resources. Links use absolute paths with /en/ prefix as required by Hugo Content Convention.
   - **Date**: 2025-12-18
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/\_index.md
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/\_index.md
 
 **Final Polish**:
 
@@ -902,7 +902,7 @@ And Quantitative metrics meet Programming Language Content Standard targets
   - **Implementation Notes**: Vercel deployment completed successfully. Kotlin content live on ayokoding.com.
   - **Date**: 2025-12-18
   - **Status**: Completed
-- [x] Visit <https://ayokoding.com/en/learn/swe/prog-lang/kotlin/>
+- [x] Visit <https://ayokoding.com/en/learn/swe/programming-languages/kotlin/>
   - **Implementation Notes**: Visited live site. Kotlin content accessible and renders correctly.
   - **Date**: 2025-12-18
   - **Status**: Completed
@@ -953,7 +953,7 @@ And Quantitative metrics meet Programming Language Content Standard targets
 
 ```gherkin
 Given Kotlin content deployed to production
-When I visit ayokoding.com/en/learn/swe/prog-lang/kotlin/
+When I visit ayokoding.com/en/learn/swe/programming-languages/kotlin/
 Then I can navigate to all tutorials
 And I can view all how-to guides
 And I can access the cookbook
@@ -1097,7 +1097,7 @@ All items verified and completed:
 
 - [x] Content committed to main branch ✅
 - [x] Deployed to production via ayokoding-web-deployer ✅
-- [x] Verified live on ayokoding.com/en/learn/swe/prog-lang/kotlin/ ✅
+- [x] Verified live on ayokoding.com/en/learn/swe/programming-languages/kotlin/ ✅
 - [x] Launch announcement published ✅
 
 ## Completion Status

@@ -8,11 +8,11 @@ import (
 
 func TestUpdateTitleInFile(t *testing.T) {
 	tests := []struct {
-		name           string
+		name            string
 		originalContent string
-		newTitle       string
+		newTitle        string
 		expectedContent string
-		expectError    bool
+		expectError     bool
 	}{
 		{
 			name: "update simple title",
@@ -163,13 +163,13 @@ func TestProcessFile(t *testing.T) {
 	}
 
 	tests := []struct {
-		name            string
-		filename        string
-		originalTitle   string
-		expectedTitle   string
-		dryRun          bool
-		expectSkip      bool
-		expectUpdate    bool
+		name          string
+		filename      string
+		originalTitle string
+		expectedTitle string
+		dryRun        bool
+		expectSkip    bool
+		expectUpdate  bool
 	}{
 		{
 			name:          "title needs update",

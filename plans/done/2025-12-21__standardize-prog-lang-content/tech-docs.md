@@ -559,9 +559,9 @@ graph TD
 ## Related Documentation
 
 - [Programming Language Content Standard](../../../governance/conventions/tutorials/programming-language-content.md) - Universal content architecture
-- [Hugo Content Convention - ayokoding](../../../governance/conventions/hugo/ayokoding.md) - Hextra theme specifics
-- [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md) - Color palette requirements
-- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Quality standards
+- [Hugo Content Convention - ayokoding](../../../../governance/conventions/hugo/ayokoding.md) - Hextra theme specifics
+- [Color Accessibility Convention](../../../../governance/conventions/formatting/color-accessibility.md) - Color palette requirements
+- [Content Quality Principles](../../../../governance/conventions/writing/quality.md) - Quality standards
 - [Factual Validation Convention](../../../governance/conventions/writing/factual-validation.md) - Fact-checking methodology
 
 ---

@@ -124,23 +124,23 @@ Scenario: Build REST API with Phoenix
 
 **Files Required**:
 
-1. `ex-so-stla-el__idioms.md` - Pattern matching, pipe operator, guards, protocols, anonymous functions
-2. `ex-so-stla-el__best-practices.md` - Naming, OTP patterns, GenServer usage, supervision trees
-3. `ex-so-stla-el__anti-patterns.md` - Common mistakes, process leaks, improper supervision
-4. `ex-so-stla-el__concurrency-and-parallelism.md` - Processes, message passing, Task module, concurrent patterns
-5. `ex-so-stla-el__error-handling.md` - Let it crash, supervision, pattern matching errors, with construct
-6. `ex-so-stla-el__type-safety.md` - Typespecs, Dialyzer, type inference, compile-time guarantees
-7. `ex-so-stla-el__functional-programming.md` - Immutability, pure functions, recursion, tail call optimization, higher-order functions, Enum/Stream
-8. `ex-so-stla-el__domain-driven-design.md` - DDD without classes, Ecto schemas as aggregates, bounded contexts with umbrella apps
-9. `ex-so-stla-el__security.md` - Secure coding, input validation, XSS prevention in Phoenix, SQL injection prevention with Ecto
-10. `ex-so-stla-el__performance.md` - BEAM VM optimization, profiling with :observer, benchmarking with Benchee, memory management, ETS tables
-11. `ex-so-stla-el__protocols-and-behaviours.md` - Polymorphism, implementing protocols, defining behaviours, callbacks
-12. `ex-so-stla-el__memory-management.md` - BEAM VM internals, garbage collection per process, memory profiling
-13. `ex-so-stla-el__dependencies.md` - Mix project management, hex.pm packages, dependency resolution
-14. `ex-so-stla-el__web-services.md` - Phoenix framework, REST APIs, GraphQL with Absinthe, LiveView
-15. `ex-so-stla-el__linting-and-formatting.md` - mix format, Credo, Dialyzer integration
-16. `ex-so-stla-el__test-driven-development.md` - ExUnit, doctests, property-based testing with StreamData
-17. `ex-so-stla-el__behaviour-driven-development.md` - White Bread for Gherkin, acceptance testing
+1. `ex-soen-stla-el__idioms.md` - Pattern matching, pipe operator, guards, protocols, anonymous functions
+2. `ex-soen-stla-el__best-practices.md` - Naming, OTP patterns, GenServer usage, supervision trees
+3. `ex-soen-stla-el__anti-patterns.md` - Common mistakes, process leaks, improper supervision
+4. `ex-soen-stla-el__concurrency-and-parallelism.md` - Processes, message passing, Task module, concurrent patterns
+5. `ex-soen-stla-el__error-handling.md` - Let it crash, supervision, pattern matching errors, with construct
+6. `ex-soen-stla-el__type-safety.md` - Typespecs, Dialyzer, type inference, compile-time guarantees
+7. `ex-soen-stla-el__functional-programming.md` - Immutability, pure functions, recursion, tail call optimization, higher-order functions, Enum/Stream
+8. `ex-soen-stla-el__domain-driven-design.md` - DDD without classes, Ecto schemas as aggregates, bounded contexts with umbrella apps
+9. `ex-soen-stla-el__security.md` - Secure coding, input validation, XSS prevention in Phoenix, SQL injection prevention with Ecto
+10. `ex-soen-stla-el__performance.md` - BEAM VM optimization, profiling with :observer, benchmarking with Benchee, memory management, ETS tables
+11. `ex-soen-stla-el__protocols-and-behaviours.md` - Polymorphism, implementing protocols, defining behaviours, callbacks
+12. `ex-soen-stla-el__memory-management.md` - BEAM VM internals, garbage collection per process, memory profiling
+13. `ex-soen-stla-el__dependencies.md` - Mix project management, hex.pm packages, dependency resolution
+14. `ex-soen-stla-el__web-services.md` - Phoenix framework, REST APIs, GraphQL with Absinthe, LiveView
+15. `ex-soen-stla-el__linting-and-formatting.md` - mix format, Credo, Dialyzer integration
+16. `ex-soen-stla-el__test-driven-development.md` - ExUnit, doctests, property-based testing with StreamData
+17. `ex-soen-stla-el__behaviour-driven-development.md` - White Bread for Gherkin, acceptance testing
 
 **Quality Standards**:
 
@@ -159,13 +159,13 @@ Scenario: Build REST API with Phoenix
 
 **Files Required** (minimum):
 
-1. `ex-so-stla-el__release-1.12.md` - Elixir 1.12 features (scripted mix install, improved mix xref)
-2. `ex-so-stla-el__release-1.13.md` - Elixir 1.13 features (semantic recompilation, Registry improvements)
-3. `ex-so-stla-el__release-1.14.md` - Elixir 1.14 features (dbg/2, improved compile diagnostics)
-4. `ex-so-stla-el__release-1.15.md` - Elixir 1.15 features (compiler diagnostics, Duration type)
-5. `ex-so-stla-el__release-1.16.md` - Elixir 1.16 features (JSON support, process sleep improvements)
-6. `ex-so-stla-el__release-1.17.md` - Elixir 1.17 features (set-theoretic types, if released)
-7. `ex-so-stla-el__release-1.18.md` - Elixir 1.18 features (if released and stable by January 2026)
+1. `ex-soen-stla-el__release-1.12.md` - Elixir 1.12 features (scripted mix install, improved mix xref)
+2. `ex-soen-stla-el__release-1.13.md` - Elixir 1.13 features (semantic recompilation, Registry improvements)
+3. `ex-soen-stla-el__release-1.14.md` - Elixir 1.14 features (dbg/2, improved compile diagnostics)
+4. `ex-soen-stla-el__release-1.15.md` - Elixir 1.15 features (compiler diagnostics, Duration type)
+5. `ex-soen-stla-el__release-1.16.md` - Elixir 1.16 features (JSON support, process sleep improvements)
+6. `ex-soen-stla-el__release-1.17.md` - Elixir 1.17 features (set-theoretic types, if released)
+7. `ex-soen-stla-el__release-1.18.md` - Elixir 1.18 features (if released and stable by January 2026)
 
 **Content Requirements**:
 
@@ -182,9 +182,9 @@ Scenario: Build REST API with Phoenix
 
 **Files Required**:
 
-1. `ex-so-stla-el__otp-genserver.md` - GenServer patterns (state management, handle_call/cast, lifecycle callbacks)
-2. `ex-so-stla-el__otp-supervisor.md` - Supervisor patterns (one-for-one, one-for-all, rest-for-one, dynamic supervisors)
-3. `ex-so-stla-el__otp-application.md` - Application architecture (supervision trees, starting applications, umbrella projects, GenStage/Flow)
+1. `ex-soen-stla-el__otp-genserver.md` - GenServer patterns (state management, handle_call/cast, lifecycle callbacks)
+2. `ex-soen-stla-el__otp-supervisor.md` - Supervisor patterns (one-for-one, one-for-all, rest-for-one, dynamic supervisors)
+3. `ex-soen-stla-el__otp-application.md` - Application architecture (supervision trees, starting applications, umbrella projects, GenStage/Flow)
 
 **Content Requirements**:
 
@@ -282,7 +282,7 @@ Scenario: Build REST API with Phoenix
 
 **Standards**:
 
-- File naming matches Java/Golang pattern (`ex-so-stla-el__*.md`)
+- File naming matches Java/Golang pattern (`ex-soen-stla-el__*.md`)
 - Documentation structure parallels Java/Golang
 - Quality standards identical across languages
 - DDD templates follow same structure as Java/Golang templates
@@ -316,23 +316,23 @@ Scenario: Build REST API with Phoenix
 Scenario: All 17 core topic files created
   Given Elixir documentation directory exists
   When I review the core documentation files
-  Then ex-so-stla-el__idioms.md should exist
-  And ex-so-stla-el__best-practices.md should exist
-  And ex-so-stla-el__anti-patterns.md should exist
-  And ex-so-stla-el__concurrency-and-parallelism.md should exist
-  And ex-so-stla-el__error-handling.md should exist
-  And ex-so-stla-el__type-safety.md should exist
-  And ex-so-stla-el__functional-programming.md should exist
-  And ex-so-stla-el__domain-driven-design.md should exist
-  And ex-so-stla-el__security.md should exist
-  And ex-so-stla-el__performance.md should exist
-  And ex-so-stla-el__protocols-and-behaviours.md should exist
-  And ex-so-stla-el__memory-management.md should exist
-  And ex-so-stla-el__dependencies.md should exist
-  And ex-so-stla-el__web-services.md should exist
-  And ex-so-stla-el__linting-and-formatting.md should exist
-  And ex-so-stla-el__test-driven-development.md should exist
-  And ex-so-stla-el__behaviour-driven-development.md should exist
+  Then ex-soen-stla-el__idioms.md should exist
+  And ex-soen-stla-el__best-practices.md should exist
+  And ex-soen-stla-el__anti-patterns.md should exist
+  And ex-soen-stla-el__concurrency-and-parallelism.md should exist
+  And ex-soen-stla-el__error-handling.md should exist
+  And ex-soen-stla-el__type-safety.md should exist
+  And ex-soen-stla-el__functional-programming.md should exist
+  And ex-soen-stla-el__domain-driven-design.md should exist
+  And ex-soen-stla-el__security.md should exist
+  And ex-soen-stla-el__performance.md should exist
+  And ex-soen-stla-el__protocols-and-behaviours.md should exist
+  And ex-soen-stla-el__memory-management.md should exist
+  And ex-soen-stla-el__dependencies.md should exist
+  And ex-soen-stla-el__web-services.md should exist
+  And ex-soen-stla-el__linting-and-formatting.md should exist
+  And ex-soen-stla-el__test-driven-development.md should exist
+  And ex-soen-stla-el__behaviour-driven-development.md should exist
   And each file should be >15KB (comprehensive content)
   And each file should have Quick Reference section
   And each file should have financial domain examples
@@ -346,8 +346,8 @@ Scenario: All release files created with accurate information
   Given Elixir documentation directory exists
   When I review the release documentation files
   Then at least 5 release files should exist (1.12 through 1.16 minimum)
-  And ex-so-stla-el__release-1.17.md should exist if 1.17 is released
-  And ex-so-stla-el__release-1.18.md should exist if 1.18 is stable
+  And ex-soen-stla-el__release-1.17.md should exist if 1.17 is released
+  And ex-soen-stla-el__release-1.18.md should exist if 1.18 is stable
   And each release file should document major features
   And each release file should have breaking changes section
   And each release file should have financial domain examples
@@ -361,9 +361,9 @@ Scenario: All release files created with accurate information
 Scenario: All OTP pattern files created
   Given Elixir documentation directory exists
   When I review the OTP pattern files
-  Then ex-so-stla-el__otp-genserver.md should exist
-  And ex-so-stla-el__otp-supervisor.md should exist
-  And ex-so-stla-el__otp-application.md should exist
+  Then ex-soen-stla-el__otp-genserver.md should exist
+  And ex-soen-stla-el__otp-supervisor.md should exist
+  And ex-soen-stla-el__otp-application.md should exist
   And each file should have complete code examples
   And each file should have financial domain examples
   And each file should cover error handling and recovery

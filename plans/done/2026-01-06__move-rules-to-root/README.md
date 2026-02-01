@@ -151,7 +151,7 @@ This plan is organized into four documents:
 
 ### Internal Dependencies
 
-- **Separate from**: `plans/backlog/2026-01-04__agents-docs-source-of-truth/`
+- **Separate from**: `plans/backl../2026-01-04__agents-docs-source-of-truth/`
 - `governance/agents/` NOT moved (that plan handles it)
 - All other rules directories moved by this plan
 
@@ -253,5 +253,5 @@ This plan is organized into four documents:
 ## References
 
 - Repository Governance Architecture (will be at `/governance/ex-ru__repository-governance-architecture.md` after move)
-- [Plans Organization](../../governance/conventions/structure/plans.md)
+- [Plans Organization](../../../governance/conventions/structure/plans.md)
 - [Agent and Skill Definitions as Documentation Source of Truth](../2026-01-04__agents-docs-source-of-truth/) - Separate plan handling `governance/agents/`

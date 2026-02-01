@@ -92,7 +92,7 @@ ayokoding-web uses a **level-based weight system** with powers of 10 ranges that
 ### Weight Calculation Example
 
 ```
-Path: /en/ (1) → /learn/ (2) → /swe/ (3) → /prog-lang/ (4) → /golang/ (5) → /tutorials/ (6)
+Path: /en/ (1) → /learn/ (2) → /swe/ (3) → /programming-languages/ (4) → /golang/ (5) → /tutorials/ (6)
 
 tutorials/ is level 6 folder:
   - tutorials/_index.md: weight: 100002 (level 6 - represents folder)
@@ -143,15 +143,15 @@ System.out.println(result);      // => Output: 10-transformed
 ```markdown
 ✅ Correct:
 
-- [Python](/en/learn/swe/prog-lang/python)
-- [Golang Overview](/en/learn/swe/prog-lang/golang/overview)
-- [Ikhtisar](/id/belajar/swe/prog-lang/ikhtisar)
+- [Python](/en/learn/swe/programming-languages/python)
+- [Golang Overview](/en/learn/swe/programming-languages/golang/overview)
+- [Ikhtisar](/id/belajar/swe/programming-languages/ikhtisar)
 
 ❌ Wrong:
 
-- [Python](swe/prog-lang/python) # Relative path
+- [Python](swe/programming-languages/python) # Relative path
 - [Overview](./overview) # Relative path
-- [Python](/learn/swe/prog-lang/python) # Missing language prefix
+- [Python](/learn/swe/programming-languages/python) # Missing language prefix
 ```
 
 **Why**: Hugo resolves links based on current page context. Relative paths break when content rendered in different locations.
@@ -298,11 +298,11 @@ weight: 10 # Should use level 3, not level 2
 ```markdown
 <!-- WRONG! -->
 
-- [Python](swe/prog-lang/python)
+- [Python](swe/programming-languages/python)
 
 <!-- RIGHT! -->
 
-- [Python](/en/learn/swe/prog-lang/python)
+- [Python](/en/learn/swe/programming-languages/python)
 ```
 
 ### ❌ Mistake 4: Missing weight field
@@ -422,14 +422,14 @@ Vercel automatically:
 
 ## References
 
-**Primary Convention**: [Hugo Content Convention - ayokoding-web](../../../governance/conventions/hugo/ayokoding.md)
+**Primary Convention**: [Hugo Content Convention - ayokoding-web](../../governance/conventions/hugo/ayokoding.md)
 
 **Related Conventions**:
 
-- [Programming Language Tutorial Structure](../../../governance/conventions/tutorials/programming-language-structure.md) - Dual-path organization
-- [By Example Tutorial Convention](../../../governance/conventions/tutorials/by-example.md) - Annotation standards
-- [Hugo Content Shared](../../../governance/conventions/hugo/shared.md) - Shared Hugo patterns
-- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Universal quality standards
+- [Programming Language Tutorial Structure](../../governance/conventions/tutorials/programming-language-structure.md) - Dual-path organization
+- [By Example Tutorial Convention](../../governance/conventions/tutorials/by-example.md) - Annotation standards
+- [Hugo Content Shared](../../governance/conventions/hugo/shared.md) - Shared Hugo patterns
+- [Content Quality Principles](../../governance/conventions/writing/quality.md) - Universal quality standards
 
 **Related Skills**:
 

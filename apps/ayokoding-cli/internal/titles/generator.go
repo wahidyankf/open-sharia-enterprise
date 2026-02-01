@@ -8,15 +8,17 @@ import (
 // GenerateTitle generates a title from a filename using the provided config
 // Algorithm:
 // 1. Extract filename/directory name (without extension)
-//    - Special case: _index.md files use parent directory name instead
-//    - Other files: strip leading underscores
+//   - Special case: _index.md files use parent directory name instead
+//   - Other files: strip leading underscores
+//
 // 2. Normalize: lowercase the extracted name
 // 3. Exact filename override check: if entire normalized name is in overrides, use it and STOP
 // 4. Split on hyphens and underscores into words
 // 5. For each word:
-//    - Per-word override check: if word is in overrides, use override value
-//    - If not found: capitalize first letter
-//    - Lowercase word check: if word is in lowercase_words list AND not first word, lowercase it
+//   - Per-word override check: if word is in overrides, use override value
+//   - If not found: capitalize first letter
+//   - Lowercase word check: if word is in lowercase_words list AND not first word, lowercase it
+//
 // 6. Join words with spaces
 func GenerateTitle(filePath string, config *Config) string {
 	// Extract filename without extension

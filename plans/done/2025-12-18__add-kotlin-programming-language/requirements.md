@@ -112,7 +112,7 @@ Scenario: Using cookbook for common task
 ## Functional Requirements
 
 1. **Directory Structure**:
-   - Create `apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/` with standard structure
+   - Create `apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/` with standard structure
    - Include tutorials/, how-to/, explanation/, reference/ subdirectories
    - All \_index.md and overview.md files for navigation
 

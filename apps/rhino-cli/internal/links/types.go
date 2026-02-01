@@ -14,11 +14,11 @@ type BrokenLink struct {
 
 // ValidationResult contains the complete results of a link validation scan.
 type ValidationResult struct {
-	TotalFiles       int                       // Total number of files scanned
-	TotalLinks       int                       // Total number of links checked
-	BrokenLinks      []BrokenLink              // All broken links found
-	BrokenByCategory map[string][]BrokenLink   // Broken links grouped by category
-	ScanDuration     time.Duration             // Time taken for the scan
+	TotalFiles       int                     // Total number of files scanned
+	TotalLinks       int                     // Total number of links checked
+	BrokenLinks      []BrokenLink            // All broken links found
+	BrokenByCategory map[string][]BrokenLink // Broken links grouped by category
+	ScanDuration     time.Duration           // Time taken for the scan
 }
 
 // ScanOptions configures how the link validation scan should be performed.

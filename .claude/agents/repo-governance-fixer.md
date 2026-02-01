@@ -200,7 +200,7 @@ See [AI Agents Convention - Writing to .opencode Folders](../../governance/devel
 
 ## Software Documentation Fixes
 
-**Scope**: Fixes for findings in `docs/explanation/software/` (343 files, 345k lines)
+**Scope**: Fixes for findings in `docs/explanation/software-engineering/` (343 files, 345k lines)
 
 ### Fix Patterns by Category
 
@@ -239,7 +239,7 @@ principles:
 **Example Fix**:
 
 ```markdown
-**File**: docs/explanation/software/prog-lang/java/ex-so-prla-ja\_\_security.md
+**File**: docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja\_\_security.md
 **Confidence**: HIGH
 **Applied**: Added security-by-design principle to frontmatter
 ```
@@ -267,7 +267,7 @@ Add "See Also" or "Related Documentation" section if missing, then add reference
 ```markdown
 ## See Also
 
-- [Java Functional Programming](../../../docs/explanation/software/prog-lang/java/ex-so-prla-ja__functional-programming.md)
+- [Java Functional Programming](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__functional-programming.md)
 ```
 
 **Tool**: Edit
@@ -300,11 +300,11 @@ Add "See Also" or "Related Documentation" section if missing, then add reference
 
 ```bash
 # Rename file preserving git history
-git mv docs/explanation/software/prog-lang/java/security-practices.md \
-      docs/explanation/software/prog-lang/java/ex-so-prla-ja__security-practices.md
+git mv docs/explanation/software-engineering/programming-languages/java/security-practices.md \
+      docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__security-practices.md
 
 # Update all references (find and replace)
-find . -name "*.md" -exec sed -i 's|security-practices\.md|ex-so-prla-ja__security-practices.md|g' {} +
+find . -name "*.md" -exec sed -i 's|security-practices\.md|ex-soen-prla-ja__security-practices.md|g' {} +
 ```
 
 **Tools**: Bash (git mv), Edit (update references)
@@ -312,9 +312,9 @@ find . -name "*.md" -exec sed -i 's|security-practices\.md|ex-so-prla-ja__securi
 **Example Fix**:
 
 ```markdown
-**File**: docs/explanation/software/prog-lang/java/security-practices.md
+**File**: docs/explanation/software-engineering/programming-languages/java/security-practices.md
 **Confidence**: HIGH
-**Applied**: Renamed to ex-so-prla-ja\_\_security-practices.md, updated 3 references
+**Applied**: Renamed to ex-soen-prla-ja\_\_security-practices.md, updated 3 references
 ```
 
 #### 8.4 Structure Pattern Fixes
@@ -337,8 +337,8 @@ find . -name "*.md" -exec sed -i 's|security-practices\.md|ex-so-prla-ja__securi
 
 ```bash
 # Copy template
-cp docs/explanation/software/prog-lang/java/templates/ex-so-prla-ja-te__anti-patterns.md \
-   docs/explanation/software/prog-lang/elixir/ex-so-prla-ex__anti-patterns.md
+cp docs/explanation/software-engineering/programming-languages/java/templates/ex-soen-prla-ja-te__anti-patterns.md \
+   docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-ex__anti-patterns.md
 
 # Flag for manual content addition
 echo "TODO: Customize Elixir-specific anti-patterns content" >> manual-review-needed.txt
@@ -349,7 +349,7 @@ echo "TODO: Customize Elixir-specific anti-patterns content" >> manual-review-ne
 **Example Fix**:
 
 ```markdown
-**File**: docs/explanation/software/prog-lang/elixir/ex-so-prla-ex\_\_anti-patterns.md
+**File**: docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-ex\_\_anti-patterns.md
 **Confidence**: MEDIUM
 **Applied**: Created stub from template, flagged for manual content review
 ```
@@ -374,8 +374,8 @@ echo "TODO: Customize Elixir-specific anti-patterns content" >> manual-review-ne
 
 ```bash
 # Copy similar template
-cp docs/explanation/software/prog-lang/python/templates/ex-so-prla-py-te__repository-pattern.md \
-   docs/explanation/software/prog-lang/go/templates/ex-so-prla-go-te__repository-pattern.md
+cp docs/explanation/software-engineering/programming-languages/python/templates/ex-soen-prla-py-te__repository-pattern.md \
+   docs/explanation/software-engineering/programming-languages/go/templates/ex-soen-prla-go-te__repository-pattern.md
 
 # Adapt syntax (manual step - flag for review)
 echo "TODO: Adapt Python syntax to Go syntax in template" >> manual-review-needed.txt
@@ -386,7 +386,7 @@ echo "TODO: Adapt Python syntax to Go syntax in template" >> manual-review-neede
 **Example Fix**:
 
 ```markdown
-**File**: docs/explanation/software/prog-lang/go/templates/ex-so-prla-go-te\_\_repository-pattern.md
+**File**: docs/explanation/software-engineering/programming-languages/go/templates/ex-soen-prla-go-te\_\_repository-pattern.md
 **Confidence**: MEDIUM
 **Applied**: Created from Python template, flagged for Go syntax adaptation
 ```
@@ -439,7 +439,7 @@ flowchart TD
 **Example Fix**:
 
 ```markdown
-**File**: docs/explanation/software/architecture/c4-architecture-model/ex-so-arch-c4__system-context.md
+**File**: docs/explanation/software-engineering/architecture/c4-architecture-model/ex-soen-arch-c4__system-context.md
 **Confidence**: HIGH
 **Applied**: Added WCAG AA color palette definitions to Mermaid diagram
 ````
@@ -476,7 +476,7 @@ flowchart TD
 **Example Fix**:
 
 ```markdown
-**File**: docs/explanation/software/prog-lang/typescript/README.md
+**File**: docs/explanation/software-engineering/programming-languages/typescript/README.md
 **Confidence**: HIGH
 **Applied**: Added 2 orphaned files to "Advanced TypeScript Features" section
 ```
@@ -532,7 +532,7 @@ See [Java Official Documentation](https://docs.oracle.com/en/java/javase/17/) fo
 **Example Fix**:
 
 ```markdown
-**File**: docs/explanation/software/prog-lang/java/ex-so-prla-ja\_\_release-17.md
+**File**: docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja\_\_release-17.md
 **Confidence**: LOW
 **Applied**: Created stub with TODO markers, flagged for manual feature documentation
 ```
@@ -559,7 +559,7 @@ See [Java Official Documentation](https://docs.oracle.com/en/java/javase/17/) fo
 
 ### Tool Selection for Software Documentation Fixes
 
-**Use Edit tool** for all `docs/explanation/software/` files:
+**Use Edit tool** for all `docs/explanation/software-engineering/` files:
 
 - These are documentation files, not agent configuration
 - User approval prompts are acceptable for documentation changes

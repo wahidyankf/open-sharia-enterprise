@@ -43,7 +43,7 @@ This convention ensures:
 This convention applies to:
 
 - **All programming language tutorial content** across the repository:
-  - **ayokoding-web** (`apps/ayokoding-web/content/[lang]/learn/swe/prog-lang/[language]/`)
+  - **ayokoding-web** (`apps/ayokoding-web/content/[lang]/learn/swe/programming-languages/[language]/`)
   - **docs/** (`docs/tutorials/software-engineering/programming-languages/[language]/`)
   - **Any other location** where programming language tutorials exist
 - Includes: tutorials (foundational, by-concept, by-example, cookbook), how-to guides, best practices, anti-patterns
@@ -56,7 +56,7 @@ This convention applies to:
 Every programming language MUST follow this structure:
 
 ```
-[language]/                                    # Level 5 folder (e.g., /en/learn/swe/prog-lang/golang/)
+[language]/                                    # Level 5 folder (e.g., /en/learn/swe/programming-languages/golang/)
 ├── _index.md                                  # Folder (weight: 10002, level 5 - represents the folder)
 ├── overview.md                                # Content (weight: 100000, level 6 - content inside level 5 folder)
 ├── tutorials/                                 # Folder (weight: 100002, level 6 - represents the folder)
@@ -97,7 +97,7 @@ Every programming language MUST follow this structure:
 Programming language folders (e.g., `golang/`, `python/`, `java/`) are at **level 5** in the directory hierarchy:
 
 ```
-/en/ (level 1) → /learn/ (level 2) → /swe/ (level 3) → /prog-lang/ (level 4) → /golang/ (level 5)
+/en/ (level 1) → /learn/ (level 2) → /swe/ (level 3) → /programming-languages/ (level 4) → /golang/ (level 5)
 ```
 
 **Understanding Levels and Weights:**
@@ -189,7 +189,7 @@ tutorials/
 
 **Weight Calculation:**
 
-Path: `/en/` (1) → `/learn/` (2) → `/swe/` (3) → `/prog-lang/` (4) → `/[language]/` (5) → `/tutorials/` (6) → `/cookbook/` (7)
+Path: `/en/` (1) → `/learn/` (2) → `/swe/` (3) → `/programming-languages/` (4) → `/[language]/` (5) → `/tutorials/` (6) → `/cookbook/` (7)
 
 - `cookbook/` is a **level 7 folder** (child of tutorials/)
 - `cookbook/_index.md` represents the folder at level 7 → **weight: 1000002** (3rd child in tutorials/)
@@ -719,7 +719,7 @@ See [How to Add a Programming Language](../../../docs/how-to/hoto__add-programmi
 
 ### Golang (Reference Implementation)
 
-**Location:** `apps/ayokoding-web/content/en/learn/swe/prog-lang/golang/`
+**Location:** `apps/ayokoding-web/content/en/learn/swe/programming-languages/golang/`
 
 **Characteristics:**
 
@@ -733,7 +733,7 @@ See [How to Add a Programming Language](../../../docs/how-to/hoto__add-programmi
 
 ### Python (Reference Implementation)
 
-**Location:** `apps/ayokoding-web/content/en/learn/swe/prog-lang/python/`
+**Location:** `apps/ayokoding-web/content/en/learn/swe/programming-languages/python/`
 
 **Characteristics:**
 
@@ -747,7 +747,7 @@ See [How to Add a Programming Language](../../../docs/how-to/hoto__add-programmi
 
 ### Java (Reference Implementation)
 
-**Location:** `apps/ayokoding-web/content/en/learn/swe/prog-lang/java/`
+**Location:** `apps/ayokoding-web/content/en/learn/swe/programming-languages/java/`
 
 **Characteristics:**
 

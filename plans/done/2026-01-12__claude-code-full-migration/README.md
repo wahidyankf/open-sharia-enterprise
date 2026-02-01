@@ -347,11 +347,11 @@ This plan is organized into four documents:
 - [OpenCode vs Claude Code Comparison](https://www.nxcode.io/resources/news/opencode-vs-claude-code-vs-cursor-2026)
 - [Claude Code to OpenCode Migration Guide](https://medium.com/spillwave-solutions/claude-code-agents-to-opencode-agents-041f9c8e5ccd)
 - [Converting Claude Subagents to OpenCode](https://claude-plugins.dev/skills/@edheltzel/dotfiles/converting-claude-subagents)
-- [AI Agents Convention](../../../governance/development/agents/ai-agents.md)
-- [Repository Governance Architecture](../../../governance/ex-ru__repository-governance-architecture.md)
-- [Plans Organization Convention](../../../governance/conventions/structure/plans.md)
+- [AI Agents Convention](../../../../governance/development/agents/ai-agents.md)
+- [Repository Governance Architecture](../../../governance/repository-governance-architecture.md)
+- [Plans Organization Convention](../../../../governance/conventions/structure/plans.md)
 - Current conversion scripts: `scripts/convert-agents-to-opencode.py`, `scripts/validate-opencode-agents.py`, `scripts/sync-claude-opencode.py`
-- Existing dual-format plan: `plans/backlog/2026-01-04__agents-docs-source-of-truth/` (alternative approach rejected)
+- Existing dual-format plan: `plans/backl../2026-01-04__agents-docs-source-of-truth/` (alternative approach rejected)
 
 ```
 
