@@ -8,11 +8,11 @@ import (
 
 func TestExtractFrontmatter(t *testing.T) {
 	tests := []struct {
-		name          string
-		content       string
-		expectedTitle string
+		name           string
+		content        string
+		expectedTitle  string
 		expectedWeight int
-		expectError   bool
+		expectError    bool
 	}{
 		{
 			name: "valid frontmatter with title and weight",

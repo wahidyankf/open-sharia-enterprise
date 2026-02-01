@@ -11,7 +11,7 @@ import (
 func ResolveLink(sourceFile, link, repoRoot string) string {
 	// Remove anchor if present
 	linkWithoutAnchor := strings.Split(link, "#")[0]
-	
+
 	// If link is empty after removing anchor (pure anchor link), return source file
 	if linkWithoutAnchor == "" {
 		return sourceFile
@@ -21,14 +21,14 @@ func ResolveLink(sourceFile, link, repoRoot string) string {
 	sourceDir := filepath.Dir(sourceFile)
 	targetPath := filepath.Join(sourceDir, linkWithoutAnchor)
 	resolved := filepath.Clean(targetPath)
-	
+
 	return resolved
 }
 
 // ValidateLink checks if a link's target exists.
 func ValidateLink(sourceFile, link, repoRoot string) (bool, error) {
 	targetPath := ResolveLink(sourceFile, link, repoRoot)
-	
+
 	// Check if target exists
 	_, err := os.Stat(targetPath)
 	if os.IsNotExist(err) {
@@ -37,7 +37,7 @@ func ValidateLink(sourceFile, link, repoRoot string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	
+
 	return true, nil
 }
 
@@ -54,23 +54,23 @@ func ValidateFile(filePath string, opts ScanOptions) ([]BrokenLink, error) {
 	}
 
 	var brokenLinks []BrokenLink
-	
+
 	for _, linkInfo := range links {
 		valid, err := ValidateLink(filePath, linkInfo.URL, opts.RepoRoot)
 		if err != nil {
 			return nil, err
 		}
-		
+
 		if !valid {
 			targetPath := ResolveLink(filePath, linkInfo.URL, opts.RepoRoot)
 			category := CategorizeBrokenLink(linkInfo.URL)
-			
+
 			// Get relative path for reporting
 			relPath, err := filepath.Rel(opts.RepoRoot, filePath)
 			if err != nil {
 				relPath = filePath
 			}
-			
+
 			brokenLinks = append(brokenLinks, BrokenLink{
 				LineNumber: linkInfo.LineNumber,
 				SourceFile: relPath,
@@ -80,14 +80,14 @@ func ValidateFile(filePath string, opts ScanOptions) ([]BrokenLink, error) {
 			})
 		}
 	}
-	
+
 	return brokenLinks, nil
 }
 
 // ValidateAll validates all markdown files based on options.
 func ValidateAll(opts ScanOptions) (*ValidationResult, error) {
 	startTime := time.Now()
-	
+
 	files, err := GetMarkdownFiles(opts)
 	if err != nil {
 		return nil, err

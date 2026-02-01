@@ -119,7 +119,7 @@ func ExtractLinks(filePath string) ([]LinkInfo, error) {
 				continue
 			}
 			url := match[2]
-			
+
 			// Strip angle brackets if present (markdown autolink syntax)
 			url = strings.Trim(url, "<>")
 
@@ -200,8 +200,8 @@ func ShouldSkipLink(link string) bool {
 		"./auth-guide.md", "by-concept/beginner", "./by-example/beginner",
 		"swe/prog-lang/", "../parent", "./ai/", "../swe/", "../../advanced/",
 		"url", "./LICENSE", "../../features.md",
-		"./tutorials/tu__",  // Example tutorial paths
-		"../../.opencode/",  // OpenCode references (not part of this repo)
+		"./tutorials/tu__", // Example tutorial paths
+		"../../.opencode/", // OpenCode references (not part of this repo)
 	}
 	for _, pattern := range examplePatterns {
 		if strings.Contains(link, pattern) {

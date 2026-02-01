@@ -59,7 +59,7 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 ## Coding Standards
 
-**Authoritative Reference**: `docs/explanation/software/prog-lang/python/README.md`
+**Authoritative Reference**: `docs/explanation/software-engineering/programming-languages/python/README.md`
 
 All Python code MUST follow the platform coding standards:
 
@@ -88,10 +88,10 @@ All Python code MUST follow the platform coding standards:
 
 **Coding Standards** (Authoritative):
 
-- [docs/explanation/software/prog-lang/python/README.md](../../docs/explanation/software/prog-lang/python/README.md)
-- [docs/explanation/software/prog-lang/python/ex-so-prla-py\_\_idioms.md](../../docs/explanation/software/prog-lang/python/ex-so-prla-py__idioms.md)
-- [docs/explanation/software/prog-lang/python/ex-so-prla-py\_\_best-practices.md](../../docs/explanation/software/prog-lang/python/ex-so-prla-py__best-practices.md)
-- [docs/explanation/software/prog-lang/python/ex-so-prla-py\_\_anti-patterns.md](../../docs/explanation/software/prog-lang/python/ex-so-prla-py__anti-patterns.md)
+- [docs/explanation/software-engineering/programming-languages/python/README.md](../../docs/explanation/software-engineering/programming-languages/python/README.md)
+- [docs/explanation/software-engineering/programming-languages/python/ex-soen-prla-py\_\_idioms.md](../../docs/explanation/software-engineering/programming-languages/python/ex-soen-prla-py__idioms.md)
+- [docs/explanation/software-engineering/programming-languages/python/ex-soen-prla-py\_\_best-practices.md](../../docs/explanation/software-engineering/programming-languages/python/ex-soen-prla-py__best-practices.md)
+- [docs/explanation/software-engineering/programming-languages/python/ex-soen-prla-py\_\_anti-patterns.md](../../docs/explanation/software-engineering/programming-languages/python/ex-soen-prla-py__anti-patterns.md)
 
 **Development Practices**:
 

@@ -2,7 +2,7 @@
 
 **Status**: In Progress
 **Created**: 2025-01-22
-**Target Directory**: `docs/explanation/software/stack-lang/elixir/`
+**Target Directory**: `docs/explanation/software-engineering/programming-languages/elixir/`
 
 ## Overview
 
@@ -63,7 +63,7 @@ Create comprehensive Elixir documentation achieving **parity** with Java and Gol
 **Quality**:
 
 - Diátaxis framework (understanding-oriented)
-- File naming convention: `ex-so-stla-el__*.md`
+- File naming convention: `ex-soen-stla-el__*.md`
 - Quick Reference sections with jump links
 - Cross-references to related documentation
 - Code examples for every concept

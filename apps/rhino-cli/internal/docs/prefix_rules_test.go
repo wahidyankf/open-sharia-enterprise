@@ -24,6 +24,7 @@ func TestEncodeSubdirectory(t *testing.T) {
 
 		// Hyphenated compounds - 2 chars from each word concatenated
 		{"hyphenated: prog-lang", "prog-lang", "prla"},
+		{"hyphenated: programming-languages", "programming-languages", "prla"},
 		{"hyphenated: platform-web", "platform-web", "plwe"},
 		{"hyphenated: how-to", "how-to", "hoto"},
 		{"hyphenated: ayokoding-web", "ayokoding-web", "aywe"},
@@ -67,20 +68,20 @@ func TestGenerateExpectedPrefix(t *testing.T) {
 		{"explanation root", "docs/explanation/qux.md", "ex__", false},
 
 		// Subdirectories
-		{"explanation with one subdir", "docs/explanation/software/foo.md", "ex-so__", false},
-		{"explanation with two subdirs", "docs/explanation/software/prog-lang/foo.md", "ex-so-prla__", false},
-		{"explanation with three subdirs", "docs/explanation/software/prog-lang/python/foo.md", "ex-so-prla-py__", false},
+		{"explanation with one subdir", "docs/explanation/software-engineering/foo.md", "ex-soen__", false},
+		{"explanation with two subdirs", "docs/explanation/software-engineering/programming-languages/foo.md", "ex-soen-prla__", false},
+		{"explanation with three subdirs", "docs/explanation/software-engineering/programming-languages/python/foo.md", "ex-soen-prla-py__", false},
 
 		// Multi-word hyphenated directories (full encoding)
-		{"domain-driven-design-ddd", "docs/explanation/software/architecture/domain-driven-design-ddd/file.md", "ex-so-ar-dodrdedd__", false},
-		{"finite-state-machine-fsm", "docs/explanation/software/architecture/finite-state-machine-fsm/file.md", "ex-so-ar-fistmafs__", false},
-		{"test-driven-development-tdd", "docs/explanation/software/development/test-driven-development-tdd/file.md", "ex-so-de-tedrdetd__", false},
-		{"behavior-driven-development-bdd", "docs/explanation/software/development/behavior-driven-development-bdd/file.md", "ex-so-de-bedrdebd__", false},
+		{"domain-driven-design-ddd", "docs/explanation/software-engineering/architecture/domain-driven-design-ddd/file.md", "ex-soen-ar-dodrdedd__", false},
+		{"finite-state-machine-fsm", "docs/explanation/software-engineering/architecture/finite-state-machine-fsm/file.md", "ex-soen-ar-fistmafs__", false},
+		{"test-driven-development-tdd", "docs/explanation/software-engineering/development/test-driven-development-tdd/file.md", "ex-soen-de-tedrdetd__", false},
+		{"behavior-driven-development-bdd", "docs/explanation/software-engineering/development/behavior-driven-development-bdd/file.md", "ex-soen-de-bedrdebd__", false},
 
 		// Exceptions
 		{"README in tutorials", "docs/tutorials/README.md", "", true},
 		{"README in how-to", "docs/how-to/README.md", "", true},
-		{"README in subdirectory", "docs/explanation/software/README.md", "", true},
+		{"README in subdirectory", "docs/explanation/software-engineering/README.md", "", true},
 		{"metadata directory", "docs/metadata/cache.yaml", "", true},
 		{"metadata subdirectory", "docs/metadata/validation/results.json", "", true},
 
@@ -112,7 +113,7 @@ func TestIsException(t *testing.T) {
 		// README.md files
 		{"README in tutorials", "docs/tutorials/README.md", true},
 		{"README in how-to", "docs/how-to/README.md", true},
-		{"README in subdirectory", "docs/explanation/software/README.md", true},
+		{"README in subdirectory", "docs/explanation/software-engineering/README.md", true},
 		{"README at docs root", "docs/README.md", true},
 
 		// Metadata directory
@@ -149,7 +150,7 @@ func TestExtractPrefix(t *testing.T) {
 		expectedID     string
 	}{
 		{"simple prefix", "tu__getting-started.md", "tu__", "getting-started"},
-		{"complex prefix", "ex-so-prla-py__basics.md", "ex-so-prla-py__", "basics"},
+		{"complex prefix", "ex-soen-prla-py__basics.md", "ex-soen-prla-py__", "basics"},
 		{"no prefix", "getting-started.md", "", "getting-started.md"},
 		{"multiple underscores", "tu__my__file.md", "tu__", "my__file"},
 		{"README", "README.md", "", "README.md"},

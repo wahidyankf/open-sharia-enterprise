@@ -1363,7 +1363,7 @@ All files MUST have weights assigned according to category-based hundred-ranges.
 
 #### Step 2.8: Add Cross-References
 
-Cross-references create a cohesive learning experience by connecting related content across the Diátaxis framework. All links must use Hugo-compatible format: `[Display Text](/en/learn/swe/prog-lang/rust/category/file)` (absolute paths with language prefix, NO `.md` extension).
+Cross-references create a cohesive learning experience by connecting related content across the Diátaxis framework. All links must use Hugo-compatible format: `[Display Text](/en/learn/swe/programming-languages/rust/category/file)` (absolute paths with language prefix, NO `.md` extension).
 
 ##### Step 2.8.1: Tutorial → Other Content Cross-References
 
@@ -1589,7 +1589,7 @@ After adding all cross-references, verify:
   - [x] If best-practices links to content, anti-patterns links to contrasting content
 
 - [x] **Link format correctness**:
-  - [x] All links use absolute paths: `/en/learn/swe/prog-lang/rust/...`
+  - [x] All links use absolute paths: `/en/learn/swe/programming-languages/rust/...`
   - [x] No `.md` extensions in links
   - [x] All links include proper display text (not bare URLs)
   - [x] Links to specific sections use anchor format: `#section-heading`

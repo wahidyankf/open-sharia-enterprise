@@ -277,7 +277,7 @@ References to official docs, community resources.
 
 ### File Naming Convention
 
-All files follow the pattern: `ex-so-stla-el__[identifier].md`
+All files follow the pattern: `ex-soen-stla-el__[identifier].md`
 
 **Breakdown**:
 
@@ -290,9 +290,9 @@ All files follow the pattern: `ex-so-stla-el__[identifier].md`
 
 **Examples**:
 
-- `ex-so-stla-el__idioms.md`
-- `ex-so-stla-el__otp-genserver.md`
-- `ex-so-stla-el__release-1.17.md`
+- `ex-soen-stla-el__idioms.md`
+- `ex-soen-stla-el__otp-genserver.md`
+- `ex-soen-stla-el__release-1.17.md`
 
 **Templates** (in templates/ directory):
 
@@ -417,7 +417,7 @@ mix credo
 
 ### Quality Checklist Per File
 
-- [ ] File naming convention correct (`ex-so-stla-el__*.md`)
+- [ ] File naming convention correct (`ex-soen-stla-el__*.md`)
 - [ ] Exactly one H1 heading
 - [ ] Proper heading nesting (no skipped levels)
 - [ ] Quick Reference section with jump links

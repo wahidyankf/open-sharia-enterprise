@@ -514,13 +514,13 @@ tags:
 
 #### Quick Reference Table
 
-| Folder Level | Path Example                      | Folder's \_index.md       | Content Inside (overview.md, files) |
-| ------------ | --------------------------------- | ------------------------- | ----------------------------------- |
-| 1            | `/en/`, `/id/`                    | 1, 2 (level 1)            | 10, 11, 12... (level 2)             |
-| 2            | `/en/learn/`, `/id/belajar/`      | 12, 13, 14... (level 2)   | 100, 101, 102... (level 3)          |
-| 3            | `/en/learn/swe/`                  | 102, 103... (level 3)     | 1000, 1001, 1002... (level 4)       |
-| 4            | `/en/learn/swe/prog-lang/`        | 1002, 1003... (level 4)   | 10000, 10001... (level 5)           |
-| 5            | `/en/learn/swe/prog-lang/golang/` | 10002, 10003... (level 5) | 100000, 100001... (level 6)         |
+| Folder Level | Path Example                                  | Folder's \_index.md       | Content Inside (overview.md, files) |
+| ------------ | --------------------------------------------- | ------------------------- | ----------------------------------- |
+| 1            | `/en/`, `/id/`                                | 1, 2 (level 1)            | 10, 11, 12... (level 2)             |
+| 2            | `/en/learn/`, `/id/belajar/`                  | 12, 13, 14... (level 2)   | 100, 101, 102... (level 3)          |
+| 3            | `/en/learn/swe/`                              | 102, 103... (level 3)     | 1000, 1001, 1002... (level 4)       |
+| 4            | `/en/learn/swe/programming-languages/`        | 1002, 1003... (level 4)   | 10000, 10001... (level 5)           |
+| 5            | `/en/learn/swe/programming-languages/golang/` | 10002, 10003... (level 5) | 100000, 100001... (level 6)         |
 
 **Critical Rule**: `_index.md` represents the folder itself at level N. Content **inside** the folder is one level deeper (level N+1).
 
@@ -573,8 +573,8 @@ tags:
 /en/                           → Level 1 (language root)
 /en/learn/                     → Level 2 (child of level 1)
 /en/learn/swe/                 → Level 3 (child of level 2)
-/en/learn/swe/prog-lang/       → Level 4 (child of level 3)
-/en/learn/swe/prog-lang/golang/→ Level 5 (child of level 4)
+/en/learn/swe/programming-languages/       → Level 4 (child of level 3)
+/en/learn/swe/programming-languages/golang/→ Level 5 (child of level 4)
 ```
 
 ---
@@ -621,8 +621,8 @@ weight: 102 # Level 3 weight - represents the level 3 folder
 # /en/learn/swe/overview.md
 weight: 1000 # Level 4 base - content inside level 3 folder is one level deeper
 
-# /en/learn/swe/prog-lang/ (folder)
-# /en/learn/swe/prog-lang/_index.md
+# /en/learn/swe/programming-languages/ (folder)
+# /en/learn/swe/programming-languages/_index.md
 weight: 1002 # Level 4 weight - represents the level 4 folder
 
 # /en/learn/swe/infosec/ (folder)
@@ -698,7 +698,7 @@ weight: 1003 # Level 4 weight - represents the level 4 folder
 │   ├── swe/ (level 3 folder)
 │   │   ├── _index.md                   → weight: 102    (level 3 - represents the folder)
 │   │   ├── overview.md                 → weight: 1000   (level 4 - content inside level 3 folder)
-│   │   ├── prog-lang/ (level 4 folder)
+│   │   ├── programming-languages/ (level 4 folder)
 │   │   │   ├── _index.md               → weight: 1002   (level 4 - represents the folder)
 │   │   │   ├── overview.md             → weight: 10000  (level 5 - content inside level 4 folder)
 │   │   │   ├── golang/ (level 5 folder)
@@ -708,7 +708,7 @@ weight: 1003 # Level 4 weight - represents the level 4 folder
 │   │   │   │   └── _index.md           → weight: 10003  (level 5 - represents the folder)
 │   │   │   └── python/ (level 5 folder)
 │   │   │       └── _index.md           → weight: 10004  (level 5 - represents the folder)
-│   │   └── infosec/ (level 4 folder - sibling of prog-lang/)
+│   │   └── infosec/ (level 4 folder - sibling of programming-languages/)
 │   │       ├── _index.md               → weight: 1003   (level 4 - sibling continues sequence)
 │   │       └── overview.md             → weight: 10000  (level 5 - RESET, content inside different parent)
 │   ├── ai/ (level 3 folder - sibling of swe/)
@@ -793,7 +793,7 @@ FAIL: **Mistake 2: Not resetting weights for different parents**
 # Different parent (/en/rants/ vs /en/learn/) = should start from base again
 
 # Same mistake at deeper levels:
-/en/learn/swe/prog-lang/_index.md → weight: 1002 (level 4, parent: swe/)
+/en/learn/swe/programming-languages/_index.md → weight: 1002 (level 4, parent: swe/)
 /en/learn/ai/ml-basics/_index.md → weight: 1003 # WRONG! Should be 1002 (different parent: ai/)
 # ai/ and swe/ are different parents, so their children reset independently
 ```
@@ -806,7 +806,7 @@ PASS: **Correct: Reset to base for each parent**
 /en/rants/2024/_index.md → weight: 102 # RESET (level 3, different parent: rants/)
 # rants/ and learn/ are siblings under /en/, so their children reset independently
 
-/en/learn/swe/prog-lang/_index.md → weight: 1002 (level 4, parent: swe/)
+/en/learn/swe/programming-languages/_index.md → weight: 1002 (level 4, parent: swe/)
 /en/learn/ai/ml-basics/_index.md → weight: 1002 # RESET (level 4, different parent: ai/)
 # swe/ and ai/ are siblings under learn/, so their children reset independently
 ```
@@ -981,8 +981,8 @@ Partial coverage (showing only some children) is a violation.
 
 **Examples of Non-Terminal Directories** (NOT exempt, MUST show 2 layers with COMPLETE coverage):
 
-- `/en/learn/swe/` - Has subdirectories: prog-lang/, system-design/, infosec/ (MUST show ALL these subdirectories as Layer 2)
-- `/en/learn/swe/prog-lang/` - Has subdirectories: golang/, java/, python/, kotlin/, rust/ (MUST show ALL of these as Layer 2)
+- `/en/learn/swe/` - Has subdirectories: programming-languages/, system-design/, infosec/ (MUST show ALL these subdirectories as Layer 2)
+- `/en/learn/swe/programming-languages/` - Has subdirectories: golang/, java/, python/, kotlin/, rust/ (MUST show ALL of these as Layer 2)
 - `/en/learn/` - Has subdirectories: swe/, ai/, business/, human/, gobuster/, system-design/ (MUST show ALL these as Layer 2)
 
 **What Terminal Directories Should Show**:
@@ -997,16 +997,16 @@ This is a **structural limitation, not a compliance violation**.
 PASS: **Good (2 layers deep with overview links first)**:
 
 ```markdown
-<!-- File: content/en/learn/swe/prog-lang/_index.md -->
+<!-- File: content/en/learn/swe/programming-languages/_index.md -->
 <!-- Shows: 2 layers deep + overview link as first item -->
 
-- [Overview](/learn/swe/prog-lang/overview) # ← Overview FIRST when exists
-- [Golang](/learn/swe/prog-lang/golang)
-- [Java](/learn/swe/prog-lang/java)
-- [Python](/learn/swe/prog-lang/python)
-- [Kotlin](/learn/swe/prog-lang/kotlin)
-- [Rust](/learn/swe/prog-lang/rust)
-- [Elixir](/learn/swe/prog-lang/elixir)
+- [Overview](/learn/swe/programming-languages/overview) # ← Overview FIRST when exists
+- [Golang](/learn/swe/programming-languages/golang)
+- [Java](/learn/swe/programming-languages/java)
+- [Python](/learn/swe/programming-languages/python)
+- [Kotlin](/learn/swe/programming-languages/kotlin)
+- [Rust](/learn/swe/programming-languages/rust)
+- [Elixir](/learn/swe/programming-languages/elixir)
 ```
 
 FAIL: **Bad (only 1 layer - missing children)**:
@@ -1023,9 +1023,9 @@ FAIL: **Bad (incomplete coverage - missing some children)**:
 ```markdown
 <!-- WRONG! Folder has golang/, java/, python/, kotlin/, rust/ but only shows 2 -->
 
-- [Overview](/learn/swe/prog-lang/overview)
-- [Golang](/learn/swe/prog-lang/golang)
-- [Java](/learn/swe/prog-lang/java)
+- [Overview](/learn/swe/programming-languages/overview)
+- [Golang](/learn/swe/programming-languages/golang)
+- [Java](/learn/swe/programming-languages/java)
 <!-- Missing: Python, Kotlin, Rust -->
 ```
 
@@ -1040,7 +1040,7 @@ FAIL: **Bad (incomplete coverage - missing some children)**:
 PASS: **Good (descriptive, readable titles)**:
 
 ```yaml
-# File: content/en/learn/swe/prog-lang/_index.md
+# File: content/en/learn/swe/programming-languages/_index.md
 ---
 title: Programming Languages # Clear, descriptive, properly capitalized
 ---
@@ -1061,7 +1061,7 @@ title: Business and Finance # Descriptive with context
 FAIL: **Bad (forced folder name matching)**:
 
 ```yaml
-# File: content/en/learn/swe/prog-lang/_index.md
+# File: content/en/learn/swe/programming-languages/_index.md
 ---
 title: Prog-lang # WRONG! Unreadable, keeps folder naming pattern
 ---
@@ -1103,9 +1103,9 @@ title: Business # WRONG! Too generic (missing context)
 
 **Applies to ALL folder types**:
 
-- Topic folders (e.g., `/en/learn/swe/prog-lang/golang/`)
+- Topic folders (e.g., `/en/learn/swe/programming-languages/golang/`)
 - Category folders (e.g., `/en/learn/swe/`, `/en/learn/ai/`)
-- Diátaxis subdirectories (e.g., `/en/learn/swe/prog-lang/golang/tutorials/`)
+- Diátaxis subdirectories (e.g., `/en/learn/swe/programming-languages/golang/tutorials/`)
 - Any folder containing `_index.md` navigation file
 
 **Rationale**: Every section needs context and introduction separate from navigation; ensures consistent user experience.
@@ -1134,8 +1134,8 @@ title: Business # WRONG! Too generic (missing context)
 **Applies to ALL folder levels**:
 
 - Category folders (e.g., `/en/learn/swe/_index.md` → starts with overview link)
-- Topic folders (e.g., `/en/learn/swe/prog-lang/golang/_index.md` → starts with overview link)
-- Diátaxis subdirectories (e.g., `/en/learn/swe/prog-lang/golang/tutorials/_index.md` → starts with overview link)
+- Topic folders (e.g., `/en/learn/swe/programming-languages/golang/_index.md` → starts with overview link)
+- Diátaxis subdirectories (e.g., `/en/learn/swe/programming-languages/golang/tutorials/_index.md` → starts with overview link)
 - ANY folder containing both `_index.md` and `overview.md`/`ikhtisar.md`
 
 **Examples of CORRECT usage**:
@@ -1153,11 +1153,11 @@ title: Business # WRONG! Too generic (missing context)
 - [Programming Languages](/en/learn/swe/prog-lang)
 - [System Design](/en/learn/swe/system-design)
 
-<!-- File: /en/learn/swe/prog-lang/golang/_index.md -->
+<!-- File: /en/learn/swe/programming-languages/golang/_index.md -->
 
-- [Overview](/en/learn/swe/prog-lang/golang/overview) # ← FIRST ITEM
-- [Initial Setup](/en/learn/swe/prog-lang/golang/initial-setup)
-- [Quick Start](/en/learn/swe/prog-lang/golang/quick-start)
+- [Overview](/en/learn/swe/programming-languages/golang/overview) # ← FIRST ITEM
+- [Initial Setup](/en/learn/swe/programming-languages/golang/initial-setup)
+- [Quick Start](/en/learn/swe/programming-languages/golang/quick-start)
 ```
 
 **Examples of INCORRECT usage**:
@@ -1171,11 +1171,11 @@ title: Business # WRONG! Too generic (missing context)
 - [System Design](/en/learn/swe/system-design)
 
 <!-- WRONG! Missing overview link entirely -->
-<!-- File: /en/learn/swe/prog-lang/_index.md -->
+<!-- File: /en/learn/swe/programming-languages/_index.md -->
 
-- [Golang](/en/learn/swe/prog-lang/golang) # Missing overview link
-- [Java](/en/learn/swe/prog-lang/java)
-- [Python](/en/learn/swe/prog-lang/python)
+- [Golang](/en/learn/swe/programming-languages/golang) # Missing overview link
+- [Java](/en/learn/swe/programming-languages/java)
+- [Python](/en/learn/swe/programming-languages/python)
 
 <!-- WRONG! Overview link exists but is 2nd or later -->
 <!-- File: /en/learn/_index.md -->
@@ -1240,15 +1240,15 @@ tutorials/                           # Level 6 folder
 PASS: **Good (simple, generic titles)**:
 
 ```yaml
-# File: content/en/learn/swe/prog-lang/overview.md
-# Path: /en/ (1) → /learn/ (2) → /swe/ (3) → /prog-lang/ (4)
+# File: content/en/learn/swe/programming-languages/overview.md
+# Path: /en/ (1) → /learn/ (2) → /swe/ (3) → /programming-languages/ (4)
 # prog-lang is level 4 folder, content inside uses level 5
 ---
 title: "Overview" # Simple, generic - context from path
 weight: 10000 # Level 5 base - content inside level 4 folder
 ---
-# File: content/id/belajar/swe/prog-lang/ikhtisar.md
-# Path: /id/ (1) → /belajar/ (2) → /swe/ (3) → /prog-lang/ (4)
+# File: content/id/belajar/swe/programming-languages/ikhtisar.md
+# Path: /id/ (1) → /belajar/ (2) → /swe/ (3) → /programming-languages/ (4)
 # prog-lang is level 4 folder, content inside uses level 5
 ---
 title: "Ikhtisar" # Simple, generic - context from path
@@ -1259,11 +1259,11 @@ weight: 10000 # Level 5 base - content inside level 4 folder
 FAIL: **Bad (descriptive titles)**:
 
 ```yaml
-# File: content/en/learn/swe/prog-lang/overview.md
+# File: content/en/learn/swe/programming-languages/overview.md
 ---
 title: "Programming Languages Overview" # WRONG! Too descriptive
 ---
-# File: content/id/belajar/swe/prog-lang/ikhtisar.md
+# File: content/id/belajar/swe/programming-languages/ikhtisar.md
 ---
 title: "Ikhtisar Penyimpanan Data Dalam Memori" # WRONG! Too descriptive
 ---
@@ -1278,7 +1278,7 @@ The examples below show the old flat structure. Programming languages now use Fu
 **New Structure** (golang/ is level 5 folder, Full Set Tutorial Package):
 
 ```
-content/en/learn/swe/prog-lang/golang/
+content/en/learn/swe/programming-languages/golang/
 ├── _index.md        # Folder (weight: 10002, level 5)
 ├── overview.md      # Content (weight: 100000, level 6)
 ├── tutorials/       # Folder (weight: 100002, level 6)
@@ -1302,10 +1302,10 @@ title: Golang
 weight: 10002 # Level 5 - represents the golang/ folder
 ---
 
-- [Overview](/en/learn/swe/prog-lang/golang/overview)
-- [Tutorials](/en/learn/swe/prog-lang/golang/tutorials)
-- [How-To Guides](/en/learn/swe/prog-lang/golang/how-to)
-- [Explanation](/en/learn/swe/prog-lang/golang/explanation)
+- [Overview](/en/learn/swe/programming-languages/golang/overview)
+- [Tutorials](/en/learn/swe/programming-languages/golang/tutorials)
+- [How-To Guides](/en/learn/swe/programming-languages/golang/how-to)
+- [Explanation](/en/learn/swe/programming-languages/golang/explanation)
 ```
 
 **Example `overview.md` (English intro content)**:
@@ -1370,7 +1370,7 @@ FAIL: **Keep flat when**:
 **Example (topic using Diátaxis structure)**:
 
 ```
-content/en/learn/swe/prog-lang/golang/
+content/en/learn/swe/programming-languages/golang/
 ├── _index.md                           # Navigation hub (3 layers deep)
 ├── overview.md                         # Topic introduction
 ├── tutorials/
@@ -1512,7 +1512,7 @@ content/en/rants/
 
 | Feature                     | Learning Content (/learn/, /belajar/)                              | Blogging Content (/rants/, /celoteh/)                                          |
 | --------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
-| **Organization**            | Topic-based hierarchy (e.g., swe/prog-lang/golang/)                | Time-based hierarchy (year/month/)                                             |
+| **Organization**            | Topic-based hierarchy (e.g., swe/programming-languages/golang/)    | Time-based hierarchy (year/month/)                                             |
 | **Overview/Ikhtisar**       | **REQUIRED** - Every folder needs overview.md or ikhtisar.md       | **NOT REQUIRED** - No overview files needed                                    |
 | **Index File Structure**    | Navigation lists (2 layers deep)                                   | Year index: 2-layer tree; Month index: flat article list                       |
 | **Directory Depth Purpose** | Represents topic nesting                                           | Represents time period (year/month)                                            |
@@ -1645,25 +1645,25 @@ Hugo resolves links based on the **current page context**. Relative paths break 
 **The Problem with Relative Paths**:
 
 ```markdown
-<!-- File: /en/learn/swe/prog-lang/_index.md -->
+<!-- File: /en/learn/swe/programming-languages/_index.md -->
 <!-- WRONG! Relative path -->
 
-- [Python](swe/prog-lang/python)
+- [Python](swe/programming-languages/python)
 ```
 
 **Why this breaks**:
 
-- When viewed from `/en/learn` → Link resolves to `/en/swe/prog-lang/python` FAIL: (missing `/learn/`)
-- When viewed from `/en/learn/swe/prog-lang` → Link resolves to `/en/learn/swe/prog-lang/swe/prog-lang/python` FAIL: (doubled path)
+- When viewed from `/en/learn` → Link resolves to `/en/swe/programming-languages/python` FAIL: (missing `/learn/`)
+- When viewed from `/en/learn/swe/prog-lang` → Link resolves to `/en/learn/swe/programming-languages/swe/programming-languages/python` FAIL: (doubled path)
 - Hamburger navigation works because Hugo's menu system uses absolute paths internally
 
 **The Solution - Absolute Paths**:
 
 ```markdown
-<!-- File: /en/learn/swe/prog-lang/_index.md -->
+<!-- File: /en/learn/swe/programming-languages/_index.md -->
 <!-- CORRECT! Absolute path with language prefix -->
 
-- [Python](/en/learn/swe/prog-lang/python)
+- [Python](/en/learn/swe/programming-languages/python)
 ```
 
 **Why this works**:
@@ -1694,9 +1694,9 @@ Hugo resolves links based on the **current page context**. Relative paths break 
 Examples:
 
 - [Overview](/en/learn/overview)
-- [Python](/en/learn/swe/prog-lang/python)
-- [Golang Initial Setup](/en/learn/swe/prog-lang/golang/initial-setup)
-- [Ikhtisar](/id/belajar/swe/prog-lang/ikhtisar)
+- [Python](/en/learn/swe/programming-languages/python)
+- [Golang Initial Setup](/en/learn/swe/programming-languages/golang/initial-setup)
+- [Ikhtisar](/id/belajar/swe/programming-languages/ikhtisar)
 ```
 
 **Key Components**:
@@ -1726,15 +1726,15 @@ The `ayokoding-cli` tool (used by `ayokoding-web-navigation-maker` agent) automa
 ```markdown
 <!-- Generated by ayokoding-cli -->
 
-- [Overview](/en/learn/swe/prog-lang/overview)
-- [Golang](/en/learn/swe/prog-lang/golang)
-  - [Overview](/en/learn/swe/prog-lang/golang/overview)
-  - [Initial Setup](/en/learn/swe/prog-lang/golang/initial-setup)
+- [Overview](/en/learn/swe/programming-languages/overview)
+- [Golang](/en/learn/swe/programming-languages/golang)
+  - [Overview](/en/learn/swe/programming-languages/golang/overview)
+  - [Initial Setup](/en/learn/swe/programming-languages/golang/initial-setup)
 ```
 
 **Critical Bug Fix (2025-12-21)**:
 
-Prior to 2025-12-21, the CLI tool generated relative paths (`swe/prog-lang/python`) which broke navigation when clicking from certain page contexts. This was fixed to generate absolute paths with language prefixes.
+Prior to 2025-12-21, the CLI tool generated relative paths (`swe/programming-languages/python`) which broke navigation when clicking from certain page contexts. This was fixed to generate absolute paths with language prefixes.
 
 ### Validation
 
@@ -1758,7 +1758,7 @@ FAIL: **Mistake 1: Relative paths**
 ```markdown
 <!-- WRONG! Relative path -->
 
-- [Python](swe/prog-lang/python)
+- [Python](swe/programming-languages/python)
 - [Overview](./overview)
 - [Parent](../parent)
 ```
@@ -1768,8 +1768,8 @@ PASS: **Correct: Absolute paths**
 ```markdown
 <!-- RIGHT! Absolute path with language prefix -->
 
-- [Python](/en/learn/swe/prog-lang/python)
-- [Overview](/en/learn/swe/prog-lang/overview)
+- [Python](/en/learn/swe/programming-languages/python)
+- [Overview](/en/learn/swe/programming-languages/overview)
 - [Parent](/en/learn/swe)
 ```
 
@@ -1778,7 +1778,7 @@ FAIL: **Mistake 2: Missing language prefix**
 ```markdown
 <!-- WRONG! Missing language prefix -->
 
-- [Python](/learn/swe/prog-lang/python)
+- [Python](/learn/swe/programming-languages/python)
 ```
 
 PASS: **Correct: Include language prefix**
@@ -1786,7 +1786,7 @@ PASS: **Correct: Include language prefix**
 ```markdown
 <!-- RIGHT! Language prefix included -->
 
-- [Python](/en/learn/swe/prog-lang/python)
+- [Python](/en/learn/swe/programming-languages/python)
 ```
 
 FAIL: **Mistake 3: Including .md extension**
@@ -1794,7 +1794,7 @@ FAIL: **Mistake 3: Including .md extension**
 ```markdown
 <!-- WRONG! .md extension -->
 
-- [Python](/en/learn/swe/prog-lang/python.md)
+- [Python](/en/learn/swe/programming-languages/python.md)
 ```
 
 PASS: **Correct: No .md extension**
@@ -1802,7 +1802,7 @@ PASS: **Correct: No .md extension**
 ```markdown
 <!-- RIGHT! No .md extension -->
 
-- [Python](/en/learn/swe/prog-lang/python)
+- [Python](/en/learn/swe/programming-languages/python)
 ```
 
 ### Migration Notes

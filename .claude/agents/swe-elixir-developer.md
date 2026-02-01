@@ -59,7 +59,7 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 ## Coding Standards
 
-**Authoritative Reference**: `docs/explanation/software/prog-lang/elixir/README.md`
+**Authoritative Reference**: `docs/explanation/software-engineering/programming-languages/elixir/README.md`
 
 All Elixir code MUST follow the platform coding standards:
 
@@ -88,10 +88,10 @@ All Elixir code MUST follow the platform coding standards:
 
 **Coding Standards** (Authoritative):
 
-- [docs/explanation/software/prog-lang/elixir/README.md](../../docs/explanation/software/prog-lang/elixir/README.md)
-- [docs/explanation/software/prog-lang/elixir/ex-so-prla-el\_\_idioms.md](../../docs/explanation/software/prog-lang/elixir/ex-so-prla-el__idioms.md)
-- [docs/explanation/software/prog-lang/elixir/ex-so-prla-el\_\_best-practices.md](../../docs/explanation/software/prog-lang/elixir/ex-so-prla-el__best-practices.md)
-- [docs/explanation/software/prog-lang/elixir/ex-so-prla-el\_\_anti-patterns.md](../../docs/explanation/software/prog-lang/elixir/ex-so-prla-el__anti-patterns.md)
+- [docs/explanation/software-engineering/programming-languages/elixir/README.md](../../docs/explanation/software-engineering/programming-languages/elixir/README.md)
+- [docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el\_\_idioms.md](../../docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el__idioms.md)
+- [docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el\_\_best-practices.md](../../docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el__best-practices.md)
+- [docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el\_\_anti-patterns.md](../../docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el__anti-patterns.md)
 
 **Development Practices**:
 

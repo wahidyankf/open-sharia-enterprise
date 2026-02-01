@@ -153,7 +153,7 @@ All Skills must have `allowed-tools` frontmatter to restrict tool access when ac
 
 **CRITICAL**: All file operations in `.claude/` folders MUST use Bash tools (heredoc, sed, awk), NOT Write/Edit tools.
 
-**Rationale**: This enables autonomous agent operation without user approval prompts. See [AI Agents Convention - Writing to .claude Folders](../../../governance/development/agents/ai-agents.md#writing-to-claude-folders).
+**Rationale**: This enables autonomous agent operation without user approval prompts. See [AI Agents Convention - Writing to .claude Folders](../../../../governance/development/agents/ai-agents.md#writing-to-claude-folders).
 
 **Applies to**:
 

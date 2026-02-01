@@ -371,9 +371,9 @@ Complete all items to consider this migration successful:
 
 ## References
 
-- [AI Agents Convention](../../../governance/development/agents/ai-agents.md)
+- [AI Agents Convention](../../../../governance/development/agents/ai-agents.md)
 - [OpenCode Agent Format](https://opencode.ai/docs/agents)
 - [Maker-Checker-Fixer Pattern](../../../governance/development/pattern/maker-checker-fixer.md)
-- [Plans Organization Convention](../../../governance/conventions/structure/plans.md)
+- [Plans Organization Convention](../../../../governance/conventions/structure/plans.md)
 - Current conversion: `scripts/convert-agents-to-opencode.py`
 - Current validation: `scripts/validate-opencode-agents.py`

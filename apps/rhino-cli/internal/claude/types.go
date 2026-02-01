@@ -6,9 +6,9 @@ import "regexp"
 type ClaudeAgentFull struct {
 	Name        string   `yaml:"name"`
 	Description string   `yaml:"description"`
-	Tools       string   `yaml:"tools"`        // Comma-separated string in Claude format
-	Model       string   `yaml:"model"`        // Can be empty, "sonnet", "opus", or "haiku"
-	Color       string   `yaml:"color"`        // blue, green, yellow, or purple
+	Tools       string   `yaml:"tools"` // Comma-separated string in Claude format
+	Model       string   `yaml:"model"` // Can be empty, "sonnet", "opus", or "haiku"
+	Color       string   `yaml:"color"` // blue, green, yellow, or purple
 	Skills      []string `yaml:"skills,omitempty"`
 }
 

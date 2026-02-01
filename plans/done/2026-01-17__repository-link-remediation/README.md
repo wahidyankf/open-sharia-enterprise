@@ -288,7 +288,7 @@ After link remediation:
 
 **Related Conventions**:
 
-- [Linking Convention](../../../governance/conventions/formatting/linking.md)
+- [Linking Convention](../../../../governance/conventions/formatting/linking.md)
 - [File Naming Convention](../../../governance/conventions/structure/file-naming.md)
 
 **Related Plans**:

@@ -1,6 +1,6 @@
 ---
 name: swe-programming-java
-description: Java coding standards from authoritative docs/explanation/software/prog-lang/java/ documentation
+description: Java coding standards from authoritative docs/explanation/software-engineering/programming-languages/java/ documentation
 ---
 
 # Java Coding Standards
@@ -9,7 +9,7 @@ description: Java coding standards from authoritative docs/explanation/software/
 
 Progressive disclosure of Java coding standards for agents writing Java code.
 
-**Authoritative Source**: [docs/explanation/software/prog-lang/java/README.md](../../../docs/explanation/software/prog-lang/java/README.md)
+**Authoritative Source**: [docs/explanation/software-engineering/programming-languages/java/README.md](../../../docs/explanation/software-engineering/programming-languages/java/README.md)
 
 **Usage**: Auto-loaded for agents when writing Java code. Provides quick reference to idioms, best practices, and antipatterns.
 
@@ -133,9 +133,9 @@ stmt.setString(1, userId);
 
 For detailed guidance, refer to:
 
-- **[Idioms](../../../docs/explanation/software/prog-lang/java/ex-so-prla-ja__idioms.md)** - Java-specific patterns
-- **[Best Practices](../../../docs/explanation/software/prog-lang/java/ex-so-prla-ja__best-practices.md)** - Clean code standards
-- **[Anti-Patterns](../../../docs/explanation/software/prog-lang/java/ex-so-prla-ja__anti-patterns.md)** - Common mistakes
+- **[Idioms](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__idioms.md)** - Java-specific patterns
+- **[Best Practices](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__best-practices.md)** - Clean code standards
+- **[Anti-Patterns](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__anti-patterns.md)** - Common mistakes
 
 ## Related Skills
 
@@ -144,5 +144,5 @@ For detailed guidance, refer to:
 
 ## References
 
-- [Java README](../../../docs/explanation/software/prog-lang/java/README.md)
+- [Java README](../../../docs/explanation/software-engineering/programming-languages/java/README.md)
 - [Functional Programming](../../../governance/development/pattern/functional-programming.md)

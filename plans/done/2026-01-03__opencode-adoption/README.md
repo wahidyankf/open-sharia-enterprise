@@ -398,12 +398,12 @@ And repository MCP servers connect successfully
 
 These documents define our project's governance and should inform AGENTS.md content:
 
-- [Repository Architecture: Six-Layer Hierarchy](../../governance/repository-governance-architecture.md) - Complete governance architecture
-- [Vision: Open Sharia Enterprise](../../governance/vision/ex-vi__open-sharia-enterprise.md) - WHY we exist
-- [Core Principles Index](../../governance/principles/README.md) - 10 foundational values
-- [Conventions Index](../../governance/conventions/README.md) - 24 documentation standards
+- [Repository Architecture: Six-Layer Hierarchy](../../../governance/repository-governance-architecture.md) - Complete governance architecture
+- [Vision: Open Sharia Enterprise](../../../governance/vision/ex-vi__open-sharia-enterprise.md) - WHY we exist
+- [Core Principles Index](../../../governance/principles/README.md) - 10 foundational values
+- [Conventions Index](../../../governance/conventions/README.md) - 24 documentation standards
 - [Development Index](../../governance/development/README.md) - 15 software practices
-- [Workflows Index](../../governance/workflows/README.md) - Multi-step orchestrated processes
+- [Workflows Index](../../../governance/workflows/README.md) - Multi-step orchestrated processes
 
 ### OpenCode Documentation
 

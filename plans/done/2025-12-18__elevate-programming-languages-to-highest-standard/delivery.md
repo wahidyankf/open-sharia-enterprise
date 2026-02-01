@@ -94,7 +94,7 @@ This plan elevates 4 programming languages (Python, Java, Kotlin, Golang) to the
   - **Implementation Notes**: Successfully expanded from 308 to 823 lines (167% increase, exceeds 100% target)
   - **Date**: 2025-12-19
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/prog-lang/python/tutorials/initial-setup.md
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/python/tutorials/initial-setup.md
   - **Content Added**:
     - Windows installation: Official installer, winget, chocolatey (3 options with guidance)
     - macOS installation: Official installer, Homebrew, pyenv (3 options with shell config)
@@ -117,7 +117,7 @@ This plan elevates 4 programming languages (Python, Java, Kotlin, Golang) to the
   - **Implementation Notes**: Successfully expanded from 440 to 1,654 lines (276% increase, exceeds 150% target)
   - **Date**: 2025-12-19
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/prog-lang/python/tutorials/quick-start.md
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/python/tutorials/quick-start.md
   - **Content Added**:
     - 10 comprehensive touchpoints covering 5-30% of Python knowledge
     - Enhanced Mermaid learning path diagram with all 10 touchpoints (color-blind friendly palette)
@@ -197,7 +197,7 @@ This plan elevates 4 programming languages (Python, Java, Kotlin, Golang) to the
   - **Implementation Notes**: Created comprehensive Python cheat sheet (~450 lines)
   - **Date**: 2025-12-19
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/prog-lang/python/reference/cheat-sheet.md (new file)
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/python/reference/cheat-sheet.md (new file)
   - **Content Added**:
     - Basic syntax (variables, comments, data types)
     - All operators (arithmetic, comparison, logical, bitwise, membership, identity)
@@ -229,7 +229,7 @@ This plan elevates 4 programming languages (Python, Java, Kotlin, Golang) to the
   - **Implementation Notes**: Created comprehensive Python glossary (~750 lines) with alphabetically organized terms
   - **Date**: 2025-12-19
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/prog-lang/python/reference/glossary.md (new file)
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/python/reference/glossary.md (new file)
   - **Content Added**:
     - 60+ Python terms with definitions and examples
     - Organized alphabetically (A-Z sections)
@@ -253,7 +253,7 @@ This plan elevates 4 programming languages (Python, Java, Kotlin, Golang) to the
   - **Implementation Notes**: Created curated Python resources guide (~450 lines)
   - **Date**: 2025-12-19
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/prog-lang/python/reference/resources.md (new file)
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/python/reference/resources.md (new file)
   - **Content Added**:
     - Official Documentation: Python.org, PEP index, PEP 8, Standard Library
     - Learning Platforms: Real Python, Python Tutor, Exercism, Coursera, Codecademy
@@ -283,9 +283,9 @@ This plan elevates 4 programming languages (Python, Java, Kotlin, Golang) to the
   - **Date**: 2025-12-19
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/python/how-to/advanced-async-patterns.md (new)
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/python/how-to/testing-strategies.md (new)
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/python/how-to/api-development-best-practices.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/advanced-async-patterns.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/testing-strategies.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/api-development-best-practices.md (new)
   - [x] Guide 1: Advanced Async Patterns (~500 lines)
     - When to use async (I/O-bound vs CPU-bound)
     - 9 async patterns: concurrent API requests, task management, rate limiting, producer-consumer, timeout/cancellation, retry with backoff, graceful shutdown, error handling in gather(), async context managers
@@ -466,7 +466,7 @@ Scenario: Python tutorials cover stated ranges
   - **Date**: 2025-12-19
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/how-to/cookbook.md (modified, 2,671 → 4,543 lines, +1,872 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/how-to/cookbook.md (modified, 2,671 → 4,543 lines, +1,872 lines)
   - [x] Add 12 key recipes across modern Kotlin topics
   - [x] Recipe 36: Reified Type Parameters for Generic Functions
   - [x] Recipe 37: Advanced Flow Operators (combine, debounce, flatMapLatest, retry, shareIn)
@@ -489,7 +489,7 @@ Scenario: Python tutorials cover stated ranges
   - **Date**: 2025-12-19
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/explanation/best-practices.md (modified, 509 → 779 lines, +270 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/explanation/best-practices.md (modified, 509 → 779 lines, +270 lines)
   - [x] Add advanced null safety patterns section
     - [x] Safe calls (?.) vs unsafe (!!)
     - [x] Elvis operator (?:) patterns
@@ -512,7 +512,7 @@ Scenario: Python tutorials cover stated ranges
   - **Date**: 2025-12-19
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/explanation/anti-patterns.md (modified, 636 → 952 lines, +316 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/explanation/anti-patterns.md (modified, 636 → 952 lines, +316 lines)
   - [x] Add Java-to-Kotlin migration mistakes
     - [x] Overusing !! (force unwrap)
     - [x] Using mutable collections unnecessarily
@@ -530,7 +530,7 @@ Scenario: Python tutorials cover stated ranges
   - **Date**: 2025-12-19
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/kotlin/explanation/overview.md (modified, 74 → 153 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/explanation/overview.md (modified, 74 → 153 lines)
   - [x] Add "What Makes Kotlin Special" section
     - [x] Null safety by design
     - [x] Concise syntax reducing boilerplate
@@ -659,7 +659,7 @@ Scenario: Kotlin philosophy content is comprehensive
   - **Date**: 2025-12-19
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/java/reference/cheat-sheet.md (new, 663 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/reference/cheat-sheet.md (new, 663 lines)
   - [x] JVM-specific syntax reference
   - [x] Common patterns (streams, optionals, lambdas)
   - [x] Collections framework quick reference
@@ -673,7 +673,7 @@ Scenario: Kotlin philosophy content is comprehensive
   - **Date**: 2025-12-19
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/java/reference/glossary.md (new, 853 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/reference/glossary.md (new, 853 lines)
   - [x] JVM terminology (bytecode, classloader, heap, stack)
   - [x] Java concepts (interface, abstract class, annotation, generic)
   - [x] Enterprise terms (bean, dependency injection, ORM)
@@ -687,7 +687,7 @@ Scenario: Kotlin philosophy content is comprehensive
   - **Date**: 2025-12-19
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-web/content/en/learn/swe/prog-lang/java/reference/resources.md (new, 487 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/reference/resources.md (new, 487 lines)
   - [x] Official Java documentation (Oracle, OpenJDK)
   - [x] JEPs (Java Enhancement Proposals) - important ones
   - [x] Enterprise framework documentation (Spring, Jakarta EE)
@@ -867,7 +867,7 @@ Scenario: Java has 18 how-to guides
   - **Implementation Notes**:
     - **Date**: 2025-12-19
     - **Status**: Completed
-    - **File**: apps/ayokoding-web/content/en/learn/swe/prog-lang/golang/reference/cheat-sheet.md
+    - **File**: apps/ayokoding-web/content/en/learn/swe/programming-languages/golang/reference/cheat-sheet.md
     - **Lines**: 575 lines (~17KB)
     - **Content**: Complete syntax reference, control flow, data structures, functions, error handling, concurrency, defer/panic/recover, common patterns
 
@@ -881,7 +881,7 @@ Scenario: Java has 18 how-to guides
   - **Implementation Notes**:
     - **Date**: 2025-12-19
     - **Status**: Completed
-    - **File**: apps/ayokoding-web/content/en/learn/swe/prog-lang/golang/reference/glossary.md
+    - **File**: apps/ayokoding-web/content/en/learn/swe/programming-languages/golang/reference/glossary.md
     - **Lines**: 349 lines (~11KB)
     - **Content**: Comprehensive terms (Channel, Composition, Defer, Goroutine, Go Module, Interface, Method, Mutex, Package, Panic, Receiver, Rune, Select, Slice, Struct) with code examples
 
@@ -896,7 +896,7 @@ Scenario: Java has 18 how-to guides
   - **Implementation Notes**:
     - **Date**: 2025-12-19
     - **Status**: Completed
-    - **File**: apps/ayokoding-web/content/en/learn/swe/prog-lang/golang/reference/resources.md
+    - **File**: apps/ayokoding-web/content/en/learn/swe/programming-languages/golang/reference/resources.md
     - **Lines**: 337 lines (~16KB)
     - **Content**: Official docs, books, online courses, dev tools, frameworks, communities, learning paths
 
@@ -951,7 +951,7 @@ Scenario: Java has 18 how-to guides
   - **Implementation Notes**:
     - **Date**: 2025-12-19
     - **Status**: Completed
-    - **File**: apps/ayokoding-web/content/en/learn/swe/prog-lang/golang/explanation/best-practices.md
+    - **File**: apps/ayokoding-web/content/en/learn/swe/programming-languages/golang/explanation/best-practices.md
     - **Lines**: 751 → 1,029 lines (+278 lines, +37%)
     - **Sections Added**: Testing and Code Quality, Performance Optimization, Context Management, Package Organization
     - **Cross-references**: Updated to link to all 5 new how-to guides

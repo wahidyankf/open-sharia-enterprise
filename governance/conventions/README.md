@@ -133,7 +133,7 @@ Hugo site-specific content conventions.
 - [Repository Governance Architecture](../repository-governance-architecture.md) - Complete six-layer architecture (Layer 2: Conventions)
 - [Core Principles](../principles/README.md) - Layer 1: Foundational values that govern conventions
 - [Development](../development/README.md) - Layer 3: Software practices (parallel governance with conventions)
-- [Software Design Reference](../../docs/explanation/software/ex-so__software-design-reference.md) - Cross-reference to authoritative software design and coding standards
+- [Software Design Reference](../../docs/explanation/software-engineering/ex-soen__software-design-reference.md) - Cross-reference to authoritative software design and coding standards
 
 ---
 

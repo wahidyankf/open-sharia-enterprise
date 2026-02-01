@@ -19,7 +19,7 @@ func TestCategorizeBrokenLink(t *testing.T) {
 			link: "./ex__ru__pattern.md",
 			want: "Old ex-ru-* prefixes",
 		},
-		
+
 		// workflows/ paths
 		{
 			name: "workflows/ path",
@@ -31,7 +31,7 @@ func TestCategorizeBrokenLink(t *testing.T) {
 			link: "../../governance/workflows/deployment.md",
 			want: "General/other paths",
 		},
-		
+
 		// vision/ paths
 		{
 			name: "vision/ path",
@@ -43,7 +43,7 @@ func TestCategorizeBrokenLink(t *testing.T) {
 			link: "../../governance/vision/mission.md",
 			want: "General/other paths",
 		},
-		
+
 		// conventions README
 		{
 			name: "conventions README",
@@ -55,7 +55,7 @@ func TestCategorizeBrokenLink(t *testing.T) {
 			link: "../../governance/conventions/README.md",
 			want: "conventions README",
 		},
-		
+
 		// Missing files
 		{
 			name: "CODE_OF_CONDUCT.md",
@@ -67,7 +67,7 @@ func TestCategorizeBrokenLink(t *testing.T) {
 			link: "CHANGELOG.md",
 			want: "Missing files",
 		},
-		
+
 		// General/other
 		{
 			name: "Random missing file",

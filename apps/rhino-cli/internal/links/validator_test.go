@@ -8,7 +8,7 @@ import (
 
 func TestResolveLink(t *testing.T) {
 	tmpDir := t.TempDir()
-	
+
 	tests := []struct {
 		name       string
 		sourceFile string
@@ -59,18 +59,18 @@ func TestResolveLink(t *testing.T) {
 
 func TestValidateLink(t *testing.T) {
 	tmpDir := t.TempDir()
-	
+
 	// Create test files
 	docsDir := filepath.Join(tmpDir, "docs")
 	if err := os.MkdirAll(docsDir, 0755); err != nil {
 		t.Fatalf("Failed to create docs dir: %v", err)
 	}
-	
+
 	existingFile := filepath.Join(docsDir, "existing.md")
 	if err := os.WriteFile(existingFile, []byte("# Test"), 0644); err != nil {
 		t.Fatalf("Failed to create existing file: %v", err)
 	}
-	
+
 	sourceFile := filepath.Join(docsDir, "source.md")
 	if err := os.WriteFile(sourceFile, []byte("# Source"), 0644); err != nil {
 		t.Fatalf("Failed to create source file: %v", err)
@@ -120,19 +120,19 @@ func TestValidateLink(t *testing.T) {
 
 func TestValidateFile(t *testing.T) {
 	tmpDir := t.TempDir()
-	
+
 	// Create test structure
 	docsDir := filepath.Join(tmpDir, "docs")
 	if err := os.MkdirAll(docsDir, 0755); err != nil {
 		t.Fatalf("Failed to create docs dir: %v", err)
 	}
-	
+
 	// Create an existing target file
 	existingFile := filepath.Join(docsDir, "existing.md")
 	if err := os.WriteFile(existingFile, []byte("# Existing"), 0644); err != nil {
 		t.Fatalf("Failed to create existing file: %v", err)
 	}
-	
+
 	// Create source file with links
 	sourceFile := filepath.Join(docsDir, "source.md")
 	content := `# Source File
@@ -175,13 +175,13 @@ Also [external](https://example.com) should be skipped.
 
 func TestValidateFileSkipsSkillFiles(t *testing.T) {
 	tmpDir := t.TempDir()
-	
+
 	// Create .claude/skills directory
 	skillsDir := filepath.Join(tmpDir, ".claude", "skills")
 	if err := os.MkdirAll(skillsDir, 0755); err != nil {
 		t.Fatalf("Failed to create skills dir: %v", err)
 	}
-	
+
 	// Create skill file with broken links
 	skillFile := filepath.Join(skillsDir, "test-skill.md")
 	content := `# Test Skill

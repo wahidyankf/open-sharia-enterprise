@@ -132,10 +132,10 @@ User: "Add a new Hugo tutorial to ayokoding-web about TypeScript generics"
 
 Maker Agent (ayokoding-web-general-maker):
 
-1. Creates content/en/learn/swe/prog-lang/typescript/generics.md
-2. Creates content/id/belajar/swe/prog-lang/typescript/generics.md (bilingual)
-3. Updates content/en/learn/swe/prog-lang/typescript/\_index.md (navigation)
-4. Updates content/id/belajar/swe/prog-lang/typescript/\_index.md (navigation)
+1. Creates content/en/learn/swe/programming-languages/typescript/generics.md
+2. Creates content/id/belajar/swe/programming-languages/typescript/generics.md (bilingual)
+3. Updates content/en/learn/swe/programming-languages/typescript/\_index.md (navigation)
+4. Updates content/id/belajar/swe/programming-languages/typescript/\_index.md (navigation)
 5. Ensures overview.md/ikhtisar.md links are correct
 6. Follows weight ordering convention (level-based)
 7. Uses accessible colors in diagrams
@@ -200,7 +200,7 @@ User: "Check the new TypeScript tutorial for quality issues"
 
 Checker Agent (ayokoding-web-general-checker):
 
-1. Reads content/en/learn/swe/prog-lang/typescript/generics.md
+1. Reads content/en/learn/swe/programming-languages/typescript/generics.md
 2. Validates frontmatter (date format, required fields, weight ordering)
 3. Checks content structure (heading hierarchy, link format)
 4. Validates Hugo conventions (absolute paths, no .md extension)
