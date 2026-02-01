@@ -7,9 +7,7 @@ type: docs
 layout: list
 ---
 
+- [Tools](/en/learn/software-engineering/platform-linux/tools)
+  - [Overview](/en/learn/software-engineering/platform-linux/tools/overview)
+  - [Shell](/en/learn/software-engineering/platform-linux/tools/shell)
 - [Overview](/en/learn/software-engineering/platform-linux/overview)
-- [Shell](/en/learn/software-engineering/platform-linux/shell)
-  - [Overview](/en/learn/software-engineering/platform-linux/shell/overview)
-  - [Initial Setup](/en/learn/software-engineering/platform-linux/shell/initial-setup)
-  - [Quick Start](/en/learn/software-engineering/platform-linux/shell/quick-start)
-  - [By Example](/en/learn/software-engineering/platform-linux/shell/by-example)

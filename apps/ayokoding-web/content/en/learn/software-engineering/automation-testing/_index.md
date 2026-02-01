@@ -8,3 +8,4 @@ draft: false
 - [Overview](/en/learn/software-engineering/automation-testing/overview)
 - [Tools](/en/learn/software-engineering/automation-testing/tools)
   - [Overview](/en/learn/software-engineering/automation-testing/tools/overview)
+  - [Playwright](/en/learn/software-engineering/automation-testing/tools/playwright)

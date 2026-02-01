@@ -9,3 +9,7 @@ draft: false
 - [Initial Setup](/en/learn/software-engineering/automation-testing/tools/playwright/initial-setup)
 - [Quick Start](/en/learn/software-engineering/automation-testing/tools/playwright/quick-start)
 - [By Example](/en/learn/software-engineering/automation-testing/tools/playwright/by-example)
+  - [Overview](/en/learn/software-engineering/automation-testing/tools/playwright/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/automation-testing/tools/playwright/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/automation-testing/tools/playwright/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/automation-testing/tools/playwright/by-example/advanced)
