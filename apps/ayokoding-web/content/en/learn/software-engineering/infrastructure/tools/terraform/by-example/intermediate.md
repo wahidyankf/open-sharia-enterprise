@@ -947,20 +947,32 @@ graph TD
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets minimum Terraform version
 
   # Local backend (default, no configuration needed)
   backend "local" {
+  # => Backend block configures state storage location
     path = "terraform.tfstate"             # => State file location (default)
     # => Relative to working directory
+    # => File created on first terraform apply
   }
+  # => Local backend is default (can omit this block)
+  # => No locking, no encryption, single-user only
 }
 
 provider "local" {}
+# => Local provider for file operations
 
 resource "local_file" "app_config" {
+# => Resource tracked in terraform.tfstate
   filename = "app-config.txt"
+  # => Sets filename
+  # => Creates file in current directory
   content  = "Database URL: db.example.com"
+  # => Sets content
+  # => State records filename, content, id, md5
 }
 
 # State stores resource attributes
@@ -979,9 +991,14 @@ resource "local_file" "app_config" {
 #     }]
 #   }]
 # }
+# => JSON structure maps config to infrastructure reality
+# => Terraform reads state to determine required changes
 
 output "state_location" {
+# => Output value showing backend type
   value = "terraform.tfstate (local backend)"
+  # => Displayed after terraform apply
+  # => Confirms state stored locally
 }
 ```
 
@@ -3081,30 +3098,41 @@ resource "local_file" "imported_declarative" {
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.1"  # moved blocks require Terraform 1.1+
+  # => Sets minimum version (moved introduced in 1.1)
 }
 
 provider "local" {}
+# => Provider configuration
 
 # Original configuration (before refactoring):
 # resource "local_file" "old_name" {
 #   filename = "data.txt"
 #   content  = "Important data"
 # }
+# => State tracked resource as local_file.old_name
 
 # Refactored configuration with moved block:
 resource "local_file" "new_name" {
+# => Resource renamed (new_name instead of old_name)
   filename = "data.txt"
+  # => Sets filename (same as before)
   content  = "Important data"
+  # => Sets content (same as before)
   # => Resource renamed from old_name to new_name
 }
 
 moved {
+# => Moved block prevents resource destruction during rename
   from = local_file.old_name
+  # => Original address in state
   to   = local_file.new_name
+  # => New address in configuration
   # => Tells Terraform: resource address changed, don't destroy/recreate
   # => State updated to track resource under new name
 }
+# => Moved block is migration instruction (remove after apply)
 
 # Without moved block:
 # $ terraform plan
@@ -3112,11 +3140,13 @@ moved {
 # => - local_file.old_name (destroyed)
 # => + local_file.new_name (created)
 # => DESTROYS FILE!
+# => Terraform sees old resource deleted, new resource created
 
 # With moved block:
 # $ terraform plan
 # => Plan: 0 to add, 0 to change, 0 to destroy
 # => No changes. Resource address updated in state without destruction.
+# => Terraform updates state: old_name → new_name (no resource changes)
 
 # Moving resources into modules
 # Before:
@@ -3124,33 +3154,49 @@ moved {
 #   filename = "app.txt"
 #   content  = "App config"
 # }
+# => Root-level resource
 
 # After (moved to module):
 module "app" {
+# => Module call (replaces root resource)
   source = "./modules/app"
+  # => Sets module source path
 }
+# => Resource now inside module
 
 # modules/app/main.tf:
 # resource "local_file" "config" {
 #   filename = "app.txt"
 #   content  = "App config"
 # }
+# => Same resource, different location
 
 moved {
+# => Moved block for module migration
   from = local_file.app_config
+  # => Original root address
   to   = module.app.local_file.config
+  # => New module address
   # => Moves resource from root to module without recreation
 }
+# => State updated: app_config → module.app.config
 
 # Moving resources out of modules
 moved {
+# => Moved block for extracting from module
   from = module.old_app.local_file.config
+  # => Original module address
   to   = local_file.extracted_config
+  # => New root address
 }
+# => Reverse migration: module → root
 
 resource "local_file" "extracted_config" {
+# => Resource extracted from module
   filename = "extracted.txt"
+  # => Sets filename
   content  = "Extracted from module"
+  # => Sets content
 }
 
 # Moving between module instances (for_each)
@@ -3158,19 +3204,27 @@ resource "local_file" "extracted_config" {
 # module "storage" {
 #   source = "./modules/storage"
 # }
+# => Single module instance
 
 # After: for_each module instances
 module "storage_regional" {
+# => Module with for_each (multiple instances)
   source   = "./modules/storage"
+  # => Sets source
   for_each = toset(["us-west", "eu-central"])
+  # => Creates instances: storage_regional["us-west"], storage_regional["eu-central"]
 }
 
 moved {
+# => Moved block for for_each migration
   from = module.storage.local_file.data
+  # => Original single instance address
   to   = module.storage_regional["us-west"].local_file.data
+  # => New for_each instance address
   # => Moves resource from single instance to for_each instance
   # => Other regions will be created (not moved)
 }
+# => Only us-west moved; eu-central created fresh
 ```
 
 **Key Takeaway**: `moved` blocks prevent resource destruction during refactoring by updating state to track resource under new address. Syntax: `moved { from = OLD_ADDRESS, to = NEW_ADDRESS }`. Works for resource renames, moving to/from modules, changing module instances. Requires Terraform 1.1+. Plan shows no changes (resource not recreated). Remove moved blocks after apply—they're migration instructions, not permanent configuration.

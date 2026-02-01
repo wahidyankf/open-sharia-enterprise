@@ -55,6 +55,7 @@ Shell variables store strings by default, with no type declarations. Variable na
 name="Bob"                      # => Creates variable storing "Bob" (strings by default)
                                 # => Spaces around = cause syntax error
 age=30                          # => Stores "30" as string, not number
+                                # => Shell doesn't distinguish number types
 echo "$name is $age years old"  # => Variables expanded in double quotes
                                 # => Output: Bob is 30 years old
 
@@ -71,6 +72,7 @@ echo "$literal"                 # => Output: $name (literal)
 # Command substitution
 current_date=$(date +%Y-%m-%d)  # => Executes date command, captures output
                                 # => current_date is "2025-12-30"
+                                # => +%Y-%m-%d formats as YYYY-MM-DD
 echo "Today: $current_date"     # => Output: Today: 2025-12-30
 
 # Arithmetic with $(( ))
@@ -108,30 +110,46 @@ graph TD
 
 ```bash
 # Basic command
-ls                              # => Output: Lists files in current directory
+ls                              # => Lists files in current directory
+                                # => Output: file1.txt file2.sh directory/
 
 # Command with short option
-ls -l                           # => Output: Long format listing (detailed info)
+ls -l                           # => -l flag enables long format
+                                # => Output: Shows permissions, owner, size, date
+                                # => Format: -rw-r--r-- 1 user group 1234 Dec 30 file.txt
 
 # Multiple short options (combined)
-ls -la                          # => Output: Long format including hidden files (-l and -a)
+ls -la                          # => Combines -l (long) and -a (all files)
+                                # => Output: Long format including hidden files (.bashrc, .profile)
+                                # => Hidden files start with dot (.)
 
 # Command with long option
-ls --all                        # => Output: Shows hidden files (same as -a)
+ls --all                        # => Long form of -a flag
+                                # => Shows hidden files (same behavior as -a)
+                                # => Output: Includes .hidden files
 
 # Command with option argument
-ls -w 80                        # => Output: Limits output width to 80 characters
+ls -w 80                        # => -w takes numeric argument
+                                # => Limits output width to 80 characters
+                                # => Useful for formatting terminal output
 
 # Command with multiple arguments
-ls /etc /var /tmp               # => Output: Lists contents of three directories
+ls /etc /var /tmp               # => Three directory paths as arguments
+                                # => Lists contents of each directory separately
+                                # => Output shows each directory labeled
 
 # Mixing options and arguments
-ls -lh /var/log                 # => Output: Long format, human-readable sizes, /var/log contents
+ls -lh /var/log                 # => Combines options (-lh) with argument (/var/log)
                                 # => -l: long format, -h: human-readable (1K, 234M, 2G)
+                                # => /var/log: target directory for listing
+                                # => Output: Detailed listing with readable file sizes
 
 # Getting help
-ls --help                       # => Output: Displays ls command help
-man ls                          # => Output: Opens manual page for ls (press 'q' to quit)
+ls --help                       # => --help displays command usage
+                                # => Output: Shows all available options
+man ls                          # => Opens manual page in pager (less)
+                                # => Shows comprehensive documentation
+                                # => Press 'q' to quit, '/' to search
 ```
 
 **Key Takeaway**: Most commands follow the pattern `command [options] [arguments]` - use short options (`-a`) for quick typing, long options (`--all`) for script readability, and `man command` to learn about any command's options.
@@ -263,42 +281,61 @@ graph TD
 
 ```bash
 # View entire file
-cat file.txt                    # => Output: Entire file contents (scrolls if long)
+cat file.txt                    # => cat reads file to stdout
+                                # => Output: Entire file contents (scrolls if long)
+                                # => No paging, suitable for small files only
 
 # View multiple files (concatenate)
-cat file1.txt file2.txt         # => Output: file1 contents, then file2 contents
+cat file1.txt file2.txt         # => Concatenates multiple files sequentially
+                                # => Output: file1 contents, then file2 contents
+                                # => Files merged in command-line order
 
 # Number lines
-cat -n file.txt                 # => Output: Each line prefixed with line number
-                                # => 1  First line
-                                # => 2  Second line
+cat -n file.txt                 # => -n flag adds line numbers
+                                # => Output: Each line prefixed with line number
+                                # => Format: "     1  First line"
+                                # => Useful for code review and debugging
 
 # View with paging (large files)
-less file.txt                   # => Opens file in pager
+less file.txt                   # => Opens file in interactive pager
+                                # => Loads file incrementally (fast for large files)
                                 # => Space: next page, b: previous page, q: quit
                                 # => /pattern: search forward, ?pattern: search backward
+                                # => n: next match, N: previous match
 
 # View first 10 lines
-head file.txt                   # => Output: First 10 lines of file
+head file.txt                   # => Displays first 10 lines by default
+                                # => Output: First 10 lines of file
+                                # => Useful for preview or column headers
 
 # View first N lines
-head -n 5 file.txt              # => Output: First 5 lines
-head -5 file.txt                # => Same as head -n 5 (shorthand)
+head -n 5 file.txt              # => -n specifies exact line count
+                                # => Output: First 5 lines only
+head -5 file.txt                # => Shorthand: number directly after dash
+                                # => Same as head -n 5 (legacy syntax)
 
 # View last 10 lines
-tail file.txt                   # => Output: Last 10 lines of file
+tail file.txt                   # => Displays last 10 lines by default
+                                # => Output: Last 10 lines of file
+                                # => Useful for recent log entries
 
 # View last N lines
-tail -n 20 file.txt             # => Output: Last 20 lines
-tail -20 file.txt               # => Same as tail -n 20 (shorthand)
+tail -n 20 file.txt             # => -n specifies exact line count
+                                # => Output: Last 20 lines only
+tail -20 file.txt               # => Shorthand: number directly after dash
+                                # => Same as tail -n 20 (legacy syntax)
 
 # Follow file updates (real-time monitoring)
-tail -f /var/log/syslog         # => Output: Shows last lines and updates as file grows
-                                # => Ctrl+C to exit
-                                # => Perfect for monitoring log files
+tail -f /var/log/syslog         # => -f flag follows file growth
+                                # => Output: Shows last lines and updates as file grows
+                                # => Blocks terminal, waits for new content
+                                # => Ctrl+C to exit following mode
+                                # => Essential for monitoring log files in production
 
 # Follow with line count
-tail -f -n 50 app.log           # => Shows last 50 lines and follows updates
+tail -f -n 50 app.log           # => Combines -f (follow) with -n (line count)
+                                # => Shows last 50 lines initially
+                                # => Then follows and displays new lines as appended
 ```
 
 **Key Takeaway**: Use `cat` for small files, `less` for browsing large files interactively, `head` for beginnings, `tail` for endings, and `tail -f` for real-time log monitoring.
@@ -397,7 +434,8 @@ graph TD
 
 ```bash
 # View permissions
-ls -l file.txt                  # => Output: -rw-r--r-- 1 user group 1234 Dec 30 file.txt
+ls -l file.txt                  # => Long listing shows permission string
+                                # => Output: -rw-r--r-- 1 user group 1234 Dec 30 file.txt
                                 # => Format: [type][owner rwx][group rwx][others rwx]
                                 # => -rw-r--r-- = file, owner:rw, group:r, others:r
 
@@ -407,30 +445,44 @@ ls -l file.txt                  # => Output: -rw-r--r-- 1 user group 1234 Dec 30
 # x (execute) = 1: Run file as program or enter directory
 
 # Make file executable
-chmod +x script.sh              # => + adds execute for all (user, group, others)
+chmod +x script.sh              # => + adds permission, x is execute
+                                # => Applies to all (user, group, others)
                                 # => Before: -rw-r--r--, After: -rwxr-xr-x
+                                # => Now script.sh can be run with ./script.sh
 
 # Remove write permission from group and others
-chmod go-w file.txt             # => g=group, o=others, - removes write
+chmod go-w file.txt             # => g=group, o=others targets
+                                # => - removes permission, w is write
                                 # => Before: -rw-rw-rw-, After: -rw-r--r--
+                                # => Only owner can modify file now
 
 # Set specific permissions with octal
-chmod 644 file.txt              # => 6=rw-, 4=r--, 4=r--
+chmod 644 file.txt              # => Octal notation: 3 digits for owner/group/others
+                                # => 6=rw- (4+2=read+write), 4=r--, 4=r--
                                 # => Result: -rw-r--r-- (owner writes, all read)
+                                # => Standard permission for text files
 
-chmod 755 script.sh             # => 7=rwx, 5=r-x, 5=r-x
+chmod 755 script.sh             # => 7=rwx (4+2+1), 5=r-x (4+1), 5=r-x (4+1)
                                 # => Result: -rwxr-xr-x (owner modifies, all execute)
+                                # => Standard permission for executable scripts
 
-chmod 700 private.txt           # => 7=rwx, 0=---, 0=---
-                                # => Result: -rwx------ (owner only)
+chmod 700 private.txt           # => 7=rwx, 0=--- (no permissions), 0=---
+                                # => Result: -rwx------ (owner only, full access)
+                                # => Maximum privacy, others can't even read
 
 # Set permissions recursively
-chmod -R 755 public_html/       # => -R: applies 755 to directory and all contents
+chmod -R 755 public_html/       # => -R flag recurses into subdirectories
+                                # => Applies 755 to directory and all contents
+                                # => All files and subdirs get same permissions
 
 # Symbolic permissions
-chmod u+x file.sh               # => u=user, +x adds execute for owner only
-chmod g+w,o-r file.txt          # => Comma-separated: add group write, remove others read
-chmod a=r file.txt              # => a=all, =r sets read-only for everyone
+chmod u+x file.sh               # => u=user (owner), +x adds execute
+                                # => Only affects owner, not group/others
+chmod g+w,o-r file.txt          # => Multiple changes: comma-separated
+                                # => g+w: add group write, o-r: remove others read
+chmod a=r file.txt              # => a=all (owner, group, others)
+                                # => = sets exact permissions, r is read-only
+                                # => Everyone gets read, no write or execute
 ```
 
 **Key Takeaway**: Use `ls -l` to view permissions, `chmod` with octal notation (644, 755, 700) for absolute permission sets, or symbolic notation (u+x, go-w) for relative changes - remember that 644 is standard for files and 755 for directories/executables.

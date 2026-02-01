@@ -63,48 +63,35 @@ Elixir variables don't hold values—they **bind** to values. The `=` operator i
 ```elixir
 x = 1                          # => Match operator binds x to value 1
                                # => x is now 1 (type: integer)
-                               # => = is NOT assignment, it's pattern matching
 x                              # => Returns current binding: 1
-                               # => Variable evaluation returns bound value
 
 x = 2                          # => Rebinds x to new value 2 (old binding discarded)
                                # => x is now 2 (variable rebound, not mutated)
-                               # => Previous value 1 is garbage collected if unreferenced
 x                              # => Returns current binding: 2
 
 y = 1                          # => Binds y to value 1
                                # => y is 1 (type: integer)
-                               # => New variable, independent from x
 x = 2                          # => Rebinds x again to 2
                                # => x is 2, y is still 1 (independent bindings)
-                               # => Rebinding x doesn't affect y
 
 user_name = "Alice"            # => Binds user_name to string "Alice"
-                               # => user_name is "Alice" (type: binary/string)
-                               # => Strings in Elixir are UTF-8 binaries
+                               # => user_name is "Alice" (type: binary/UTF-8 string)
 user_age = 30                  # => Binds user_age to integer 30
-                               # => user_age is 30 (type: integer)
-                               # => Arbitrary precision integers (no overflow)
+                               # => user_age is 30 (arbitrary precision integer)
 
 a = b = c = 5                  # => Right-to-left evaluation: c=5, b=c, a=b
                                # => All three variables bound to value 5
-                               # => Single value shared by all three variables
 a                              # => Returns 5
 b                              # => Returns 5
 c                              # => Returns 5
 
 list = [1, 2, 3]               # => Binds list to new list structure [1, 2, 3]
-                               # => list is [1, 2, 3] (linked list in memory)
-                               # => Elixir lists are singly-linked lists
+                               # => list is [1, 2, 3] (singly-linked list)
 new_list = [0 | list]          # => Prepends 0 to list using cons operator |
-                               # => Creates NEW list structure [0, 1, 2, 3]
-                               # => Structural sharing: [1,2,3] portion reused
-                               # => Efficient memory use: only new head allocated
+                               # => Creates NEW list [0, 1, 2, 3] with structural sharing
 list                           # => Original list unchanged: [1, 2, 3]
                                # => Immutability: original data never modified
-                               # => list still points to original structure
 new_list                       # => New list with prepended element: [0, 1, 2, 3]
-                               # => new_list shares tail with list (structural sharing)
 ```
 
 **Key Takeaway**: Variables bind to values (they don't contain values), and data is immutable. You create new data structures instead of modifying existing ones, which enables safe concurrency.
@@ -467,62 +454,45 @@ graph TD
 
 ```elixir
 list = [1, 2, 3]                       # => Creates linked list [1, 2, 3]
-                                        # => list is [1, 2, 3] (singly-linked structure)
 
-new_list = [0 | list]                  # => Prepends 0 using cons operator |
-                                        # => O(1) operation, new head pointer to list
+new_list = [0 | list]                  # => Prepends 0 using cons operator |, O(1)
                                         # => new_list is [0, 1, 2, 3]
 list                                   # => Original list unchanged: [1, 2, 3]
-                                        # => Immutability guarantees original intact
 
-[1, 2] ++ [3, 4]                       # => Concatenates two lists
-                                        # => O(n) operation, copies first list
+[1, 2] ++ [3, 4]                       # => Concatenates two lists, O(n)
                                         # => Returns [1, 2, 3, 4]
 
-[1, 2, 3, 2, 1] -- [2]                 # => Subtraction removes first occurrence of 2
-                                        # => Returns [1, 3, 2, 1] (only first 2 removed)
-[1, 2, 3] -- [3, 2]                    # => Removes first occurrence of 3, then first 2
-                                        # => Returns [1] (both 2 and 3 removed)
+[1, 2, 3, 2, 1] -- [2]                 # => Removes first occurrence of 2
+                                        # => Returns [1, 3, 2, 1]
+[1, 2, 3] -- [3, 2]                    # => Removes first 3, then first 2
+                                        # => Returns [1]
 
-Enum.at([1, 2, 3], 0)                  # => Accesses element at index 0
-                                        # => O(n) for lists (traverses from head)
+Enum.at([1, 2, 3], 0)                  # => Accesses element at index 0, O(n)
                                         # => Returns 1
 Enum.at([1, 2, 3], 2)                  # => Accesses element at index 2
-                                        # => Traverses two hops from head
                                         # => Returns 3
 
-length([1, 2, 3, 4, 5])                # => Counts list elements
-                                        # => O(n) operation (traverses entire list)
+length([1, 2, 3, 4, 5])                # => Counts list elements, O(n)
                                         # => Returns 5
 
 tuple = {1, 2, 3}                      # => Creates tuple (contiguous memory)
-                                        # => tuple is {1, 2, 3} (fixed-size structure)
 
-elem(tuple, 0)                         # => Accesses element at index 0
-                                        # => O(1) for tuples (direct memory access)
+elem(tuple, 0)                         # => Accesses element at index 0, O(1)
                                         # => Returns 1
-elem(tuple, 2)                         # => Accesses element at index 2
-                                        # => O(1) access
+elem(tuple, 2)                         # => Accesses element at index 2, O(1)
                                         # => Returns 3
 
 new_tuple = put_elem(tuple, 1, 999)    # => Creates new tuple with index 1 updated
-                                        # => Copies and modifies (immutability)
                                         # => new_tuple is {1, 999, 3}
 tuple                                  # => Original tuple unchanged: {1, 2, 3}
-                                        # => Immutability preserved
 
-tuple_size(tuple)                      # => Returns tuple size
-                                        # => O(1) operation (size stored in header)
+tuple_size(tuple)                      # => Returns tuple size, O(1)
                                         # => Returns 3
 
 {:ok, result} = {:ok, 42}              # => Tagged tuple pattern for success
-                                        # => :ok indicates success state
                                         # => result binds to 42
-                                        # => Returns {:ok, 42}
 {:error, reason} = {:error, "not found"}  # => Tagged tuple pattern for error
-                                           # => :error indicates failure state
                                            # => reason binds to "not found"
-                                           # => Returns {:error, "not found"}
 ```
 
 **Key Takeaway**: Lists are for sequential access and variable length (prepend is fast). Tuples are for fixed-size data and random access (indexing is fast). Different performance characteristics guide your choice.
@@ -3114,78 +3084,82 @@ List comprehensions provide concise syntax for generating lists from enumerables
 
 ```elixir
 # Basic comprehension (like Enum.map)
-for x <- [1, 2, 3, 4, 5], do: x * 2 # => [2, 4, 6, 8, 10]
+for x <- [1, 2, 3, 4, 5], do: x * 2 # => Generator x iterates list
+                                    # => Returns [2, 4, 6, 8, 10]
 
 # Same as Enum.map
-Enum.map([1, 2, 3, 4, 5], fn x -> x * 2 end) # => [2, 4, 6, 8, 10]
+Enum.map([1, 2, 3, 4, 5], fn x -> x * 2 end) # => Equivalent functional approach
+                                               # => Returns [2, 4, 6, 8, 10]
 
 # Comprehension with filter
-for x <- 1..10, rem(x, 2) == 0, do: x # => [2, 4, 6, 8, 10]
+for x <- 1..10, rem(x, 2) == 0, do: x # => Filter condition: rem(x, 2) == 0
+                                       # => Returns [2, 4, 6, 8, 10] (evens only)
 
 # Multiple filters
 for x <- 1..20,
-    rem(x, 2) == 0, # => Even numbers
-    rem(x, 3) == 0, # => Divisible by 3
-    do: x
+    rem(x, 2) == 0, # => First filter: even numbers
+    rem(x, 3) == 0, # => Second filter: divisible by 3
+    do: x           # => Both conditions must be true
 # => [6, 12, 18] (divisible by both 2 and 3)
 
 # Multiple generators (cartesian product)
-for x <- [1, 2], y <- [3, 4], do: {x, y}
-# => [{1, 3}, {1, 4}, {2, 3}, {2, 4}]
+for x <- [1, 2], y <- [3, 4], do: {x, y} # => Nested iteration: x outer, y inner
+                                          # => Returns [{1, 3}, {1, 4}, {2, 3}, {2, 4}]
 
 # Nested comprehension
-for x <- 1..3, y <- 1..3, do: x * y
-# => [1, 2, 3, 2, 4, 6, 3, 6, 9]
+for x <- 1..3, y <- 1..3, do: x * y # => Multiplies each x-y combination
+                                     # => Returns [1, 2, 3, 2, 4, 6, 3, 6, 9]
 
 # Pattern matching in generator
-users = [
-  {:user, "Alice", 30},
-  {:user, "Bob", 25},
-  {:admin, "Charlie", 35}
+users = [                          # => List of tagged tuples
+  {:user, "Alice", 30},            # => Regular user
+  {:user, "Bob", 25},              # => Regular user
+  {:admin, "Charlie", 35}          # => Admin (different tag)
 ]
 
-for {:user, name, age} <- users, do: {name, age}
+for {:user, name, age} <- users, do: {name, age} # => Pattern {:user, ...} filters
+                                                  # => Admin doesn't match pattern
 # => [{"Alice", 30}, {"Bob", 25}] (admin filtered out by pattern)
 
 # Comprehension with maps
-for {key, value} <- %{a: 1, b: 2, c: 3}, do: {key, value * 10}
-# => [a: 10, b: 20, c: 30]
+for {key, value} <- %{a: 1, b: 2, c: 3}, do: {key, value * 10} # => Destructures map entries
+                                                                 # => Returns [a: 10, b: 20, c: 30]
 
 # Generate map from comprehension
-for x <- 1..3, into: %{}, do: {x, x * x}
-# => %{1 => 1, 2 => 4, 3 => 9}
+for x <- 1..3, into: %{}, do: {x, x * x} # => into: %{} collects into map
+                                          # => Returns %{1 => 1, 2 => 4, 3 => 9}
 
 # String comprehension
-for <<c <- "hello">>, do: c
-# => [104, 101, 108, 108, 111] (character codes)
+for <<c <- "hello">>, do: c              # => Binary generator <<c <- ...>>
+                                          # => Returns [104, 101, 108, 108, 111] (UTF-8 codes)
 
-for <<c <- "hello">>, do: <<c>>
-# => ["h", "e", "l", "l", "o"]
+for <<c <- "hello">>, do: <<c>>          # => Wraps each byte in binary
+                                          # => Returns ["h", "e", "l", "l", "o"]
 
 # Filter and transform
-for x <- 1..10, x > 5, do: x * x
-# => [36, 49, 64, 81, 100]
+for x <- 1..10, x > 5, do: x * x # => Filter x > 5, then square
+                                  # => Returns [36, 49, 64, 81, 100]
 
 # Flatten nested lists
-nested = [[1, 2], [3, 4], [5, 6]]
-for list <- nested, x <- list, do: x
-# => [1, 2, 3, 4, 5, 6] (flattened!)
+nested = [[1, 2], [3, 4], [5, 6]]        # => Nested list structure
+for list <- nested, x <- list, do: x     # => Two generators: list, then x
+                                          # => Returns [1, 2, 3, 4, 5, 6] (flattened)
 
 # Multiplication table
-for x <- 1..5, y <- 1..5, do: {x, y, x * y}
-# => [{1, 1, 1}, {1, 2, 2}, ..., {5, 5, 25}]
+for x <- 1..5, y <- 1..5, do: {x, y, x * y} # => Cartesian product with calculation
+                                             # => Returns [{1, 1, 1}, {1, 2, 2}, ..., {5, 5, 25}]
 
 # Filter with guards
-for x <- 1..20, rem(x, 5) == 0, x > 10, do: x
-# => [15, 20]
+for x <- 1..20, rem(x, 5) == 0, x > 10, do: x # => Two filters: divisible by 5 AND > 10
+                                               # => Returns [15, 20]
 
 # Multiple values
-for x <- [1, 2, 3], do: [x, x * 2]
-# => [[1, 2], [2, 4], [3, 6]]
+for x <- [1, 2, 3], do: [x, x * 2] # => Each iteration returns list
+                                    # => Returns [[1, 2], [2, 4], [3, 6]]
 
 # Comprehension with into option
-for x <- ["a", "b", "c"], into: "", do: String.upcase(x)
-# => "ABC" (into string)
+for x <- ["a", "b", "c"], into: "", do: String.upcase(x) # => into: "" concatenates strings
+                                                          # => Returns "ABC"
 ```
 
 **Key Takeaway**: List comprehensions combine generators (`<-`), filters (guards), and transformations. They're more readable than nested `Enum` calls for complex transformations. Use `into:` to specify output collection type.

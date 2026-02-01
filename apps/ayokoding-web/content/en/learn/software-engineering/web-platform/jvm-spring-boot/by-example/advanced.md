@@ -1799,21 +1799,26 @@ data class ApplicationInfo(val name: String, val profiles: Array<String>, val be
 Docker multi-stage builds with layered JARs optimize image size and build caching for faster deployments.
 
 ```dockerfile
-FROM eclipse-temurin:17-jre as builder
-WORKDIR /app
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} application.jar
-RUN java -Djarmode=layertools -jar application.jar extract
+# Stage 1: Extract JAR layers
+FROM eclipse-temurin:17-jre as builder    # => Base image with JRE 17 (AdoptOpenJDK distribution)
+                                           # => 'as builder' names this stage for reference
+WORKDIR /app                               # => Set working directory to /app
+ARG JAR_FILE=target/*.jar                  # => Define build argument for JAR path (Maven default)
+COPY ${JAR_FILE} application.jar           # => Copy built JAR into container
+RUN java -Djarmode=layertools -jar application.jar extract  # => Extract JAR into separate layer directories
+                                                             # => Creates: dependencies/, spring-boot-loader/, snapshot-dependencies/, application/
 
-FROM eclipse-temurin:17-jre
-WORKDIR /app
-COPY --from=builder /app/dependencies/ ./
-COPY --from=builder /app/spring-boot-loader/ ./
-COPY --from=builder /app/snapshot-dependencies/ ./
-COPY --from=builder /app/application/ ./
+# Stage 2: Final runtime image
+FROM eclipse-temurin:17-jre                # => Fresh base image (smaller final image, no builder artifacts)
+WORKDIR /app                               # => Set working directory
+COPY --from=builder /app/dependencies/ ./  # => Copy dependencies layer from builder stage (rarely changes, cached)
+COPY --from=builder /app/spring-boot-loader/ ./  # => Copy Spring Boot loader layer (rarely changes, cached)
+COPY --from=builder /app/snapshot-dependencies/ ./  # => Copy snapshot dependencies (changes occasionally)
+COPY --from=builder /app/application/ ./   # => Copy application code (changes frequently, smallest layer)
+                                           # => Layer order optimizes Docker caching (most stable → most volatile)
 
-EXPOSE 8080
-ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
+EXPOSE 8080                                # => Document that container listens on port 8080
+ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]  # => Launch Spring Boot application using layered JAR loader
 ```
 
 ```xml
@@ -1823,18 +1828,25 @@ ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
     <artifactId>spring-boot-maven-plugin</artifactId>
     <configuration>
         <layers>
-            <enabled>true</enabled>
+            <enabled>true</enabled>  <!-- => Enable JAR layering for Docker optimization -->
+                                      <!-- => Default layers: dependencies, spring-boot-loader, snapshot-dependencies, application -->
         </layers>
     </configuration>
 </plugin>
 ```
 
 ```bash
-mvn clean package
-docker build -t myapp:latest .
-docker run -p 8080:8080 myapp:latest
+mvn clean package                          # => Build Spring Boot application (creates target/myapp.jar)
+docker build -t myapp:latest .             # => Build Docker image using Dockerfile, tag as 'myapp:latest'
+                                           # => Multi-stage build extracts layers, creates optimized image
+docker run -p 8080:8080 myapp:latest       # => Run container, map host port 8080 to container port 8080
 
-java -Djarmode=layertools -jar target/myapp.jar list
+java -Djarmode=layertools -jar target/myapp.jar list  # => List available layers in JAR
+# => Output:
+# dependencies
+# spring-boot-loader
+# snapshot-dependencies
+# application
 ```
 
 ```mermaid
@@ -1901,48 +1913,53 @@ java -Djarmode=layertools -jar build/libs/myapp.jar list
 Kubernetes health probes distinguish between liveness (restart if unhealthy) and readiness (stop traffic if not ready).
 
 ```java
-@Component
-public class DatabaseHealthIndicator implements HealthIndicator {
-    private final DataSource dataSource;
+@Component  // => Spring-managed component for auto-registration
+public class DatabaseHealthIndicator implements HealthIndicator {  // => Custom health check for database connectivity
+    private final DataSource dataSource;  // => Injected HikariCP connection pool
 
-    public DatabaseHealthIndicator(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public DatabaseHealthIndicator(DataSource dataSource) {  // => Constructor injection
+        this.dataSource = dataSource;  // => Store reference to connection pool
     }
 
-    @Override
-    public Health health() {
-        try (Connection conn = dataSource.getConnection()) {
-            if (conn.isValid(1)) {
-                return Health.up()
-                    .withDetail("database", "PostgreSQL")
-                    .build();
+    @Override  // => Implement HealthIndicator contract
+    public Health health() {  // => Called by Spring Boot Actuator to check health
+        try (Connection conn = dataSource.getConnection()) {  // => Get connection from pool, auto-close after try block
+                                                               // => Throws SQLException if pool exhausted or database unreachable
+            if (conn.isValid(1)) {  // => Test connection validity with 1-second timeout
+                                     // => Sends simple query to database to verify connectivity
+                return Health.up()  // => Return UP status if connection valid
+                    .withDetail("database", "PostgreSQL")  // => Add metadata to health response
+                    .build();  // => Build immutable Health object
             }
-        } catch (Exception e) {
-            return Health.down(e).build();
+        } catch (Exception e) {  // => Catch SQLException or connection pool errors
+            return Health.down(e).build();  // => Return DOWN status with exception details
+                                             // => Kubernetes will restart pod if liveness probe fails
         }
-        return Health.down().build();
+        return Health.down().build();  // => Return DOWN if connection invalid but no exception
     }
 }
 
-@Component
-public class ExternalApiHealthIndicator implements HealthIndicator {
-    private final WebClient webClient;
+@Component  // => Spring-managed component
+public class ExternalApiHealthIndicator implements HealthIndicator {  // => Custom health check for external API dependency
+    private final WebClient webClient;  // => Injected reactive HTTP client
 
-    public ExternalApiHealthIndicator(WebClient webClient) {
-        this.webClient = webClient;
+    public ExternalApiHealthIndicator(WebClient webClient) {  // => Constructor injection
+        this.webClient = webClient;  // => Store reference to WebClient bean
     }
 
-    @Override
-    public Health health() {
+    @Override  // => Implement HealthIndicator contract
+    public Health health() {  // => Called by Spring Boot Actuator to check external API health
         try {
-            webClient.get()
-                .uri("https://api.external.com/health")
-                .retrieve()
-                .bodyToMono(String.class)
-                .block(Duration.ofSeconds(2));
-            return Health.up().build();
-        } catch (Exception e) {
-            return Health.down(e).build();
+            webClient.get()  // => HTTP GET request
+                .uri("https://api.external.com/health")  // => External API health endpoint
+                .retrieve()  // => Execute request
+                .bodyToMono(String.class)  // => Convert response body to Mono<String>
+                .block(Duration.ofSeconds(2));  // => Block (synchronous) with 2-second timeout
+                                                 // => Throws TimeoutException if API doesn't respond within 2s
+            return Health.up().build();  // => Return UP status if API responds successfully
+        } catch (Exception e) {  // => Catch TimeoutException or HTTP errors (4xx/5xx)
+            return Health.down(e).build();  // => Return DOWN status if external API unavailable
+                                             // => Kubernetes will remove pod from load balancer if readiness probe fails
         }
     }
 }
@@ -1952,21 +1969,21 @@ public class ExternalApiHealthIndicator implements HealthIndicator {
 //   endpoint:
 //     health:
 //       probes:
-//         enabled: true
+//         enabled: true  # => Enable Kubernetes liveness/readiness probe endpoints
 //       group:
-//         liveness:
-//           include: livenessState
-//         readiness:
-//           include: readinessState,db,externalApi
+//         liveness:  # => Define liveness probe group (should pod be restarted?)
+//           include: livenessState  # => Include only basic application lifecycle state
+//         readiness:  # => Define readiness probe group (should pod receive traffic?)
+//           include: readinessState,db,externalApi  # => Include lifecycle state, database, and external API checks
 
 // Kubernetes probes:
-// livenessProbe:
+// livenessProbe:  # => Liveness probe configuration (restart if unhealthy)
 //   httpGet:
-//     path: /actuator/health/liveness
+//     path: /actuator/health/liveness  # => Endpoint: checks basic application health
 //     port: 8080
-// readinessProbe:
+// readinessProbe:  # => Readiness probe configuration (stop traffic if not ready)
 //   httpGet:
-//     path: /actuator/health/readiness
+//     path: /actuator/health/readiness  # => Endpoint: checks database, external API, and application readiness
 //     port: 8080
 ```
 
@@ -2005,54 +2022,63 @@ class ReadinessIndicator : HealthIndicator {
 Graceful shutdown ensures in-flight requests complete before application termination, preventing data loss.
 
 ```java
-@Configuration
+@Configuration  // => Spring configuration class
 public class GracefulShutdownConfig {
-    @Bean
-    public TomcatServletWebServerFactory tomcatFactory() {
-        TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
-        factory.addConnectorCustomizers(connector -> {
-            connector.setProperty("connectionTimeout", "20000");
+    @Bean  // => Define bean for Tomcat web server factory customization
+    public TomcatServletWebServerFactory tomcatFactory() {  // => Customize embedded Tomcat server
+        TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();  // => Create factory instance
+        factory.addConnectorCustomizers(connector -> {  // => Add connector customizer lambda
+            connector.setProperty("connectionTimeout", "20000");  // => Set connection timeout to 20 seconds
+                                                                   // => Timeout applies to idle connections (no data transfer)
         });
-        return factory;
+        return factory;  // => Return customized factory
     }
 
-    @PreDestroy
-    public void onShutdown() {
-        System.out.println("Application shutting down gracefully...");
+    @PreDestroy  // => Lifecycle callback executed during application shutdown
+                  // => Called after graceful shutdown period but before final termination
+    public void onShutdown() {  // => Cleanup method
+        System.out.println("Application shutting down gracefully...");  // => Log shutdown event
+                                                                          // => Useful for cleanup tasks (close connections, flush buffers)
     }
 }
 
-@RestController
-@Slf4j
+@RestController  // => REST controller with @ResponseBody on all methods
+@Slf4j  // => Lombok annotation generates static logger field
 public class LongRunningController {
-    @PostMapping("/process")
-    public ResponseEntity<String> processLongRunning() {
-        log.info("Started long-running request");
+    @PostMapping("/process")  // => Handle POST requests to /process
+    public ResponseEntity<String> processLongRunning() {  // => Simulate long-running operation
+        log.info("Started long-running request");  // => Log request start
 
         try {
-            Thread.sleep(5000);  // => Simulate long operation
-            log.info("Completed long-running request");
-            return ResponseEntity.ok("Processing complete");
-        } catch (InterruptedException e) {
-            log.warn("Request interrupted during shutdown");
-            Thread.currentThread().interrupt();
-            return ResponseEntity.status(503).body("Service shutting down");
+            Thread.sleep(5000);  // => Simulate 5-second operation (database query, external API call)
+                                  // => During graceful shutdown, this request completes before termination
+            log.info("Completed long-running request");  // => Log successful completion
+            return ResponseEntity.ok("Processing complete");  // => Return 200 OK response
+        } catch (InterruptedException e) {  // => Handle interruption during shutdown
+                                             // => If shutdown timeout exceeded, thread interrupted
+            log.warn("Request interrupted during shutdown");  // => Log interruption warning
+            Thread.currentThread().interrupt();  // => Restore interrupted status (best practice)
+                                                  // => Allows upstream code to detect interruption
+            return ResponseEntity.status(503).body("Service shutting down");  // => Return 503 Service Unavailable
+                                                                                // => Signals client to retry later
         }
     }
 }
 
 // application.yml
 // server:
-//   shutdown: graceful
+//   shutdown: graceful  # => Enable graceful shutdown (default is IMMEDIATE)
+//                       # => Server stops accepting new requests but waits for active requests
 // spring:
 //   lifecycle:
-//     timeout-per-shutdown-phase: 30s
+//     timeout-per-shutdown-phase: 30s  # => Maximum wait time for active requests to complete
+//                                       # => After 30s, remaining requests are interrupted
 
 // Shutdown behavior:
-// 1. Server stops accepting new requests
-// 2. Waits up to 30s for active requests to complete
-// 3. Executes @PreDestroy methods
-// 4. Shuts down
+// 1. Server stops accepting new requests  # => Returns 503 Service Unavailable to new requests
+// 2. Waits up to 30s for active requests to complete  # => Allows in-flight requests to finish
+// 3. Executes @PreDestroy methods  # => Cleanup callbacks
+// 4. Shuts down  # => Application terminates
 ```
 
 **Code (Kotlin)**:
@@ -2087,43 +2113,50 @@ Spring Cloud Config Server provides centralized configuration management for dis
 
 ```java
 // Config Server Application
-@SpringBootApplication
-@EnableConfigServer
+@SpringBootApplication  // => Auto-configuration for Spring Boot application
+@EnableConfigServer  // => Enable Spring Cloud Config Server functionality
+                      // => Exposes REST API endpoints: /{application}/{profile}/{label}
 public class ConfigServerApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(ConfigServerApplication.class, args);
+    public static void main(String[] args) {  // => Application entry point
+        SpringApplication.run(ConfigServerApplication.class, args);  // => Start embedded web server on port 8888
     }
 }
 
 // application.yml (Config Server)
 // server:
-//   port: 8888
+//   port: 8888  # => Config Server listens on port 8888 (conventional port)
 // spring:
 //   cloud:
 //     config:
 //       server:
 //         git:
-//           uri: https://github.com/myorg/config-repo
-//           default-label: main
-//           search-paths: '{application}'
+//           uri: https://github.com/myorg/config-repo  # => Git repository URL for configuration storage
+//                                                       # => Supports GitHub, GitLab, Bitbucket, or any Git server
+//           default-label: main  # => Default Git branch (main, master, develop, etc.)
+//           search-paths: '{application}'  # => Search path pattern: config-repo/{application}/
+//                                          # => Placeholder replaced with spring.application.name from client
 
 // Config Client Application
-// pom.xml: spring-cloud-starter-config
+// pom.xml: spring-cloud-starter-config  # => Add dependency for Config Client support
 
-@RestController
-@RefreshScope  // => Reload properties without restart
+@RestController  // => REST controller with @ResponseBody on all methods
+@RefreshScope  // => Enable dynamic property refresh without application restart
+                // => Bean recreated when /actuator/refresh called, re-injecting properties
 public class ConfigClientController {
-    @Value("${app.message:default}")
-    private String message;
+    @Value("${app.message:default}")  // => Inject property from Config Server
+                                       // => Fetches from config-repo/myapp/application.yml: app.message
+                                       // => Default value "default" if property missing
+    private String message;  // => Field holds current property value
 
-    @Value("${app.feature.enabled:false}")
-    private boolean featureEnabled;
+    @Value("${app.feature.enabled:false}")  // => Inject boolean property from Config Server
+                                             // => Default to false if property missing
+    private boolean featureEnabled;  // => Feature flag controlled by Config Server
 
-    @GetMapping("/config")
-    public Map<String, Object> getConfig() {
-        return Map.of(
-            "message", message,
-            "featureEnabled", featureEnabled
+    @GetMapping("/config")  // => Expose current configuration via REST endpoint
+    public Map<String, Object> getConfig() {  // => Return configuration as JSON
+        return Map.of(  // => Immutable map with current property values
+            "message", message,  // => Current message value (refreshable)
+            "featureEnabled", featureEnabled  // => Current feature flag state (refreshable)
         );
     }
 }
@@ -2131,23 +2164,26 @@ public class ConfigClientController {
 // application.yml (Client)
 // spring:
 //   application:
-//     name: myapp
+//     name: myapp  # => Application name (maps to config-repo/myapp/)
 //   config:
-//     import: optional:configserver:http://localhost:8888
+//     import: optional:configserver:http://localhost:8888  # => Import configuration from Config Server
+//                                                           # => 'optional:' prefix allows startup if Config Server unavailable
 //   cloud:
 //     config:
-//       fail-fast: true
+//       fail-fast: true  # => Fail application startup if Config Server unreachable
+//                        # => Prevents startup with incorrect/missing configuration
 //       retry:
-//         max-attempts: 6
+//         max-attempts: 6  # => Retry 6 times if Config Server unavailable during startup
 
 // Config repo structure:
 // config-repo/
 //   myapp/
-//     application.yml         # Default properties
-//     application-dev.yml     # Dev environment
-//     application-prod.yml    # Production environment
+//     application.yml         # Default properties (all environments)
+//     application-dev.yml     # Dev environment overrides (spring.profiles.active=dev)
+//     application-prod.yml    # Production environment overrides (spring.profiles.active=prod)
 
-// Refresh config: POST /actuator/refresh
+// Refresh config: POST /actuator/refresh  # => Reload properties without restart (only @RefreshScope beans)
+//                                          # => Returns list of changed property keys
 ```
 
 **Code (Kotlin)**:
@@ -2188,26 +2224,31 @@ class ConfigController(@Value("\${app.message}") private var message: String) {
 Integrate Spring Boot with Kubernetes ConfigMaps for configuration and Secrets for sensitive data.
 
 ```java
-// pom.xml: spring-cloud-starter-kubernetes-fabric8-config
+// pom.xml: spring-cloud-starter-kubernetes-fabric8-config  # => Add dependency for Kubernetes integration
+                                                             # => Enables automatic ConfigMap/Secret reading
 
-@RestController
-@RequestMapping("/api/k8s")
+@RestController  // => REST controller with @ResponseBody on all methods
+@RequestMapping("/api/k8s")  // => Base path for all endpoints in this controller
 public class K8sConfigController {
-    @Value("${app.environment}")
-    private String environment; // => From ConfigMap
+    @Value("${app.environment}")  // => Inject property from Kubernetes ConfigMap
+                                   // => ConfigMap key: app.environment
+    private String environment; // => Value loaded from ConfigMap at startup and on refresh
 
-    @Value("${db.password}")
-    private String dbPassword; // => From Secret
+    @Value("${db.password}")  // => Inject secret from Kubernetes Secret
+                               // => Secret injected as environment variable (base64 decoded automatically)
+    private String dbPassword; // => Sensitive credential (never expose in logs/responses)
 
-    @Value("${app.feature.newUI:false}")
-    private boolean newUI; // => From ConfigMap with default
+    @Value("${app.feature.newUI:false}")  // => Inject property from ConfigMap with default value
+                                           // => Defaults to false if property missing
+    private boolean newUI; // => Feature flag controlled by ConfigMap
 
-    @GetMapping("/config")
-    public Map<String, String> getConfig() {
-        return Map.of(
-            "environment", environment,
-            "dbPasswordLength", String.valueOf(dbPassword.length()), // Don't expose!
-            "newUI", String.valueOf(newUI)
+    @GetMapping("/config")  // => GET /api/k8s/config endpoint
+    public Map<String, String> getConfig() {  // => Return configuration info as JSON
+        return Map.of(  // => Immutable map with configuration details
+            "environment", environment,  // => Show environment name (safe to expose)
+            "dbPasswordLength", String.valueOf(dbPassword.length()), // Don't expose actual password! (Security best practice)
+                                                                      // => Shows password exists without revealing value
+            "newUI", String.valueOf(newUI)  // => Show feature flag state
         );
     }
 }
@@ -2215,78 +2256,85 @@ public class K8sConfigController {
 
 ```yaml
 # configmap.yaml
-apiVersion: v1
-kind: ConfigMap
+apiVersion: v1 # => Kubernetes API version for ConfigMap resource
+kind: ConfigMap # => Resource type for non-sensitive configuration data
 metadata:
-  name: myapp-config
-data:
-  application.yml: |
-    app:
-      environment: production
-      feature:
-        newUI: true
-    spring:
-      datasource:
-        url: jdbc:postgresql://postgres:5432/mydb
+  name: myapp-config # => ConfigMap name (referenced in Deployment volumeMounts)
+data: # => Key-value pairs (unencrypted, plain text)
+  application.yml: | # => Key: filename, Value: YAML content (multi-line string)
+    app:  # => Application-specific configuration
+      environment: production  # => Environment identifier (dev/staging/prod)
+      feature:  # => Feature flags
+        newUI: true  # => Enable new UI feature (toggle without code change)
+    spring:  # => Spring Boot configuration
+      datasource:  # => Database connection settings
+        url: jdbc:postgresql://postgres:5432/mydb  # => JDBC URL (Kubernetes DNS resolves 'postgres' to service IP)
 ```
 
 ```yaml
 # secret.yaml
-apiVersion: v1
-kind: Secret
+apiVersion: v1 # => Kubernetes API version for Secret resource
+kind: Secret # => Resource type for sensitive data (encrypted at rest in etcd)
 metadata:
-  name: myapp-secrets
-type: Opaque
-data:
-  db.password: cGFzc3dvcmQxMjM= # base64 encoded "password123"
+  name: myapp-secrets # => Secret name (referenced in Deployment env vars)
+type: Opaque # => Generic secret type (binary data)
+data: # => Key-value pairs (base64 encoded, encrypted at rest)
+  db.password:
+    cGFzc3dvcmQxMjM= # => base64 encoded "password123"
+    # => Create with: echo -n "password123" | base64
+    # => Spring Cloud Kubernetes decodes automatically
 ```
 
 ```yaml
 # deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: apps/v1 # => Kubernetes API version for Deployment resource
+kind: Deployment # => Resource type for deploying pods with replicas
 metadata:
-  name: myapp
+  name: myapp # => Deployment name
 spec:
-  replicas: 3
-  template:
-    spec:
+  replicas: 3 # => Run 3 identical pods for high availability
+  template: # => Pod template
+    spec: # => Pod specification
       containers:
-        - name: myapp
-          image: myapp:latest
-          env:
-            - name: SPRING_PROFILES_ACTIVE
-              value: kubernetes
-            - name: db.password
-              valueFrom:
-                secretKeyRef:
-                  name: myapp-secrets
-                  key: db.password
-          volumeMounts:
-            - name: config
-              mountPath: /config
-              readOnly: true
-      volumes:
-        - name: config
-          configMap:
-            name: myapp-config
+        - name: myapp # => Container name
+          image: myapp:latest # => Docker image to run
+          env: # => Environment variables injected into container
+            - name: SPRING_PROFILES_ACTIVE # => Activate Kubernetes profile
+              value: kubernetes # => Loads application-kubernetes.yml
+            - name: db.password # => Environment variable name (matches @Value key)
+              valueFrom: # => Load value from external source
+                secretKeyRef: # => Reference to Secret resource
+                  name: myapp-secrets # => Secret name (must exist in same namespace)
+                  key: db.password # => Key within Secret (base64 decoded automatically)
+          volumeMounts: # => Mount volumes into container filesystem
+            - name: config # => Volume name (matches volumes.name below)
+              mountPath: /config # => Path where ConfigMap mounted in container
+              readOnly: true # => Prevent container from modifying ConfigMap
+      volumes: # => Define volumes to mount
+        - name: config # => Volume name
+          configMap: # => Volume source is ConfigMap
+            name: myapp-config # => ConfigMap name (must exist in same namespace)
 ```
 
 ```yaml
 # application-kubernetes.yml
-spring:
-  config:
-    import: "kubernetes:"
-  cloud:
-    kubernetes:
-      config:
-        enabled: true
-        sources:
-          - name: myapp-config
-      secrets:
-        enabled: true
-        sources:
-          - name: myapp-secrets
+spring: # => Spring Boot configuration
+  config: # => Configuration sources
+    import:
+      "kubernetes:" # => Enable Kubernetes ConfigMap/Secret import
+      # => Automatically discovers ConfigMaps and Secrets
+  cloud: # => Spring Cloud configuration
+    kubernetes: # => Kubernetes integration
+      config: # => ConfigMap configuration
+        enabled: true # => Enable ConfigMap property source
+        sources: # => List of ConfigMaps to load
+          - name: myapp-config # => Load properties from ConfigMap named 'myapp-config'
+      secrets: # => Secret configuration
+        enabled: true # => Enable Secret property source
+        sources: # => List of Secrets to load
+          - name:
+              myapp-secrets # => Load properties from Secret named 'myapp-secrets'
+              # => Secrets automatically base64 decoded
 ```
 
 ```mermaid
@@ -2352,25 +2400,32 @@ class ConfigMapController(
 Create an API gateway for routing, load balancing, and cross-cutting concerns.
 
 ```java
-// pom.xml: spring-cloud-starter-gateway
+// pom.xml: spring-cloud-starter-gateway  # => Add dependency for Spring Cloud Gateway
+                                           # => Reactive API gateway built on Spring WebFlux
 
-@Configuration
+@Configuration  // => Spring configuration class
 public class GatewayConfig {
-    @Bean
-    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
-        return builder.routes()
+    @Bean  // => Define route configuration bean
+    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {  // => Inject DSL builder for routes
+        return builder.routes()  // => Start route configuration (fluent API)
             // User service routing
-            .route("user-service", r -> r
-                .path("/api/users/**")
-                .filters(f -> f
-                    .stripPrefix(1) // => Remove /api prefix before forwarding // Remove /api prefix
-                    .addRequestHeader("X-Gateway", "spring-cloud-gateway")
-                    .circuitBreaker(c -> c
-                        .setName("userServiceCircuitBreaker")
-                        .setFallbackUri("forward:/fallback/users")
+            .route("user-service", r -> r  // => Define route with ID "user-service"
+                .path("/api/users/**")  // => Match requests to /api/users/* (/** matches all sub-paths)
+                                         // => Example: /api/users/123, /api/users/123/orders
+                .filters(f -> f  // => Apply filters to modify request/response
+                    .stripPrefix(1)  // => Remove first path segment (/api) before forwarding
+                                      // => /api/users/123 becomes /users/123 at backend
+                    .addRequestHeader("X-Gateway", "spring-cloud-gateway")  // => Add header to track gateway routing
+                                                                             // => Backend services can detect requests via gateway
+                    .circuitBreaker(c -> c  // => Add circuit breaker filter (Resilience4j)
+                        .setName("userServiceCircuitBreaker")  // => Circuit breaker instance name
+                        .setFallbackUri("forward:/fallback/users")  // => Fallback endpoint if circuit open
+                                                                     // => Returns cached/degraded response instead of error
                     )
                 )
-                .uri("lb://USER-SERVICE") // => Load-balanced URI (Eureka resolves to instance IPs)
+                .uri("lb://USER-SERVICE")  // => Forward to user service instances (load-balanced)
+                                            // => 'lb://' prefix triggers client-side load balancing
+                                            // => USER-SERVICE resolved by service discovery (Eureka/Consul)
             )
             // => Configure route for order service endpoints
             .route("order-service", r -> r
@@ -2446,21 +2501,29 @@ public class FallbackController {
 
 ```yaml
 # application.yml
-spring:
-  cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-      default-filters:
-        - name: Retry
-          args:
-            retries: 3
-            methods: GET,POST
-        - name: CircuitBreaker
-          args:
-            name: defaultCircuitBreaker
+spring: # => Spring Boot configuration
+  cloud: # => Spring Cloud configuration
+    gateway: # => API Gateway configuration
+      discovery: # => Service discovery integration
+        locator: # => Automatic route discovery from service registry
+          enabled:
+            true # => Enable automatic route creation for registered services
+            # => Creates route: /SERVICE-NAME/** -> lb://SERVICE-NAME
+          lower-case-service-id:
+            true # => Convert service names to lowercase in URLs
+            # => /user-service/** instead of /USER-SERVICE/**
+      default-filters: # => Filters applied to ALL routes
+        - name: Retry # => Retry filter for transient failures
+          args: # => Filter arguments
+            retries: 3 # => Retry failed requests up to 3 times
+            methods:
+              GET,POST # => Only retry idempotent methods (safe to retry)
+              # => Don't retry DELETE/PUT to avoid duplicate operations
+        - name: CircuitBreaker # => Circuit breaker for all routes
+          args: # => Circuit breaker arguments
+            name:
+              defaultCircuitBreaker # => Default circuit breaker instance name
+              # => Prevents cascading failures across services
 ```
 
 ```mermaid
@@ -2708,114 +2771,127 @@ Separate read and write models for scalability and different optimization strate
 
 ```java
 // Command model (write side)
-@Entity
-@Table(name = "orders_write")
-public class OrderWriteModel {
-    @Id
-    private String id;
-    private String customerId;
-    private BigDecimal totalAmount;
-    private OrderStatus status;
-    private LocalDateTime createdAt;
-    // Optimized for writes
+@Entity  // => JPA entity for write operations
+@Table(name = "orders_write")  // => Dedicated table for write model (separate from read model)
+public class OrderWriteModel {  // => Optimized for INSERTS/UPDATES (normalized schema)
+    @Id  // => Primary key
+    private String id;  // => Order ID (UUID)
+    private String customerId;  // => Customer reference (minimal data)
+    private BigDecimal totalAmount;  // => Order total
+    private OrderStatus status;  // => Order state (PLACED, SHIPPED, CANCELLED)
+    private LocalDateTime createdAt;  // => Creation timestamp
+    // Optimized for writes: minimal fields, normalized schema
+    // => No joins, fast writes, referential integrity
 }
 
-@Repository
-public interface OrderCommandRepository extends JpaRepository<OrderWriteModel, String> {}
+@Repository  // => Spring Data JPA repository for command operations
+public interface OrderCommandRepository extends JpaRepository<OrderWriteModel, String> {
+    // => Inherits save(), saveAll(), delete() methods for write operations
+    // => No complex queries - write model focused on data integrity
+}
 
 // Query model (read side)
-@Entity
-@Table(name = "orders_read")
-public class OrderReadModel {
-    @Id
-    private String id;
-    private String customerName;
-    private String customerEmail;
-    private BigDecimal totalAmount;
-    private int itemCount;
-    private OrderStatus status;
-    private LocalDateTime createdAt;
-    // Denormalized, optimized for reads
+@Entity  // => JPA entity for read operations
+@Table(name = "orders_read")  // => Separate table from write model (can be different database)
+public class OrderReadModel {  // => Optimized for SELECT queries (denormalized, no joins)
+    @Id  // => Primary key (matches write model ID for correlation)
+    private String id;  // => Order ID
+    private String customerName;  // => Denormalized customer data (from separate Customer table)
+    private String customerEmail;  // => Denormalized email (avoids JOIN with Customer table)
+    private BigDecimal totalAmount;  // => Order total
+    private int itemCount;  // => Denormalized item count (computed aggregate)
+    private OrderStatus status;  // => Order state
+    private LocalDateTime createdAt;  // => Creation timestamp
+    // Denormalized, optimized for reads: duplicates data to avoid JOINs
+    // => Fast queries, no foreign keys, eventual consistency with write model
 }
 
-@Repository
+@Repository  // => Spring Data JPA repository for query operations
 public interface OrderQueryRepository extends JpaRepository<OrderReadModel, String> {
-    List<OrderReadModel> findByCustomerNameContaining(String name);
-    List<OrderReadModel> findByStatusAndCreatedAtAfter(OrderStatus status, LocalDateTime after);
+    List<OrderReadModel> findByCustomerNameContaining(String name);  // => Search by customer name (no JOIN needed)
+                                                                      // => Fast query using denormalized data
+    List<OrderReadModel> findByStatusAndCreatedAtAfter(OrderStatus status, LocalDateTime after);  // => Recent orders by status
+                                                                                                    // => Single table query (no JOINs)
 }
 
 // Command service (write operations)
-@Service
-public class OrderCommandService {
-    @Autowired
-    private OrderCommandRepository commandRepo;
+@Service  // => Service for write operations (commands)
+public class OrderCommandService {  // => Handles state-changing commands
+    @Autowired  // => Inject write repository
+    private OrderCommandRepository commandRepo;  // => Repository for write model persistence
 
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    @Autowired  // => Inject event publisher
+    private ApplicationEventPublisher eventPublisher;  // => Publishes domain events to synchronize read model
 
-    @Transactional
-    public String createOrder(CreateOrderCommand command) {
-        OrderWriteModel order = new OrderWriteModel();
-        order.setId(UUID.randomUUID().toString());
-        order.setCustomerId(command.customerId());
-        order.setTotalAmount(command.totalAmount());
-        order.setStatus(OrderStatus.PLACED);
-        order.setCreatedAt(LocalDateTime.now());
+    @Transactional  // => Ensure atomicity (save order + publish event in single transaction)
+                     // => Rollback if event publishing fails
+    public String createOrder(CreateOrderCommand command) {  // => Create new order command handler
+        OrderWriteModel order = new OrderWriteModel();  // => Create new write model entity
+        order.setId(UUID.randomUUID().toString());  // => Generate unique order ID
+        order.setCustomerId(command.customerId());  // => Set customer reference
+        order.setTotalAmount(command.totalAmount());  // => Set total amount
+        order.setStatus(OrderStatus.PLACED);  // => Initial order status
+        order.setCreatedAt(LocalDateTime.now());  // => Set creation timestamp
 
-        commandRepo.save(order);
+        commandRepo.save(order);  // => Persist to write database (normalized schema)
+                                   // => Write model updated immediately
 
         // Publish event for read model update
-        eventPublisher.publishEvent(new OrderCreatedEvent(
-            order.getId(),
-            order.getCustomerId(),
-            order.getTotalAmount()
-        ));
+        eventPublisher.publishEvent(new OrderCreatedEvent(  // => Publish domain event
+            order.getId(),  // => Order ID for event correlation
+            order.getCustomerId(),  // => Customer ID for denormalization
+            order.getTotalAmount()  // => Total amount for read model
+        ));  // => Event triggers async read model update (eventual consistency)
 
-        return order.getId();
+        return order.getId();  // => Return order ID to caller
     }
 }
 
 // Query service (read operations)
-@Service
-public class OrderQueryService {
-    @Autowired
-    private OrderQueryRepository queryRepo;
+@Service  // => Service for read operations (queries)
+public class OrderQueryService {  // => Handles queries against read model
+    @Autowired  // => Inject read repository
+    private OrderQueryRepository queryRepo;  // => Repository for denormalized read model
 
-    public List<OrderReadModel> searchOrders(String customerName) {
-        return queryRepo.findByCustomerNameContaining(customerName);
+    public List<OrderReadModel> searchOrders(String customerName) {  // => Search by customer name
+        return queryRepo.findByCustomerNameContaining(customerName);  // => Query denormalized data (no JOIN)
+                                                                       // => Fast query with indexed customer name
     }
 
-    public List<OrderReadModel> getRecentOrders(OrderStatus status, int days) {
-        LocalDateTime since = LocalDateTime.now().minusDays(days);
-        return queryRepo.findByStatusAndCreatedAtAfter(status, since);
+    public List<OrderReadModel> getRecentOrders(OrderStatus status, int days) {  // => Get recent orders by status
+        LocalDateTime since = LocalDateTime.now().minusDays(days);  // => Calculate cutoff date
+        return queryRepo.findByStatusAndCreatedAtAfter(status, since);  // => Single table query (denormalized)
+                                                                         // => Indexed by status + createdAt
     }
 }
 
 // Event handler to synchronize read model
-@Component
-public class OrderReadModelUpdater {
-    @Autowired
-    private OrderQueryRepository queryRepo;
+@Component  // => Spring-managed component
+public class OrderReadModelUpdater {  // => Synchronizes read model with write model via events
+    @Autowired  // => Inject read repository
+    private OrderQueryRepository queryRepo;  // => Repository for read model updates
 
-    @Autowired
-    private CustomerRepository customerRepo;
+    @Autowired  // => Inject customer repository
+    private CustomerRepository customerRepo;  // => Repository to fetch customer details for denormalization
 
-    @EventListener
-    @Async
-    public void handleOrderCreated(OrderCreatedEvent event) {
-        Customer customer = customerRepo.findById(event.customerId()).orElseThrow();
+    @EventListener  // => Listen for domain events
+    @Async  // => Process event asynchronously (eventual consistency)
+             // => Write model commits immediately, read model updates later
+    public void handleOrderCreated(OrderCreatedEvent event) {  // => Handle OrderCreatedEvent
+        Customer customer = customerRepo.findById(event.customerId()).orElseThrow();  // => Fetch customer details for denormalization
 
-        OrderReadModel readModel = new OrderReadModel();
-        readModel.setId(event.orderId());
-        readModel.setCustomerName(customer.getName());
-        readModel.setCustomerEmail(customer.getEmail());
-        readModel.setTotalAmount(event.totalAmount());
-        readModel.setItemCount(event.itemCount());
-        readModel.setStatus(OrderStatus.PLACED);
-        readModel.setCreatedAt(LocalDateTime.now());
+        OrderReadModel readModel = new OrderReadModel();  // => Create denormalized read model
+        readModel.setId(event.orderId());  // => Set order ID (matches write model)
+        readModel.setCustomerName(customer.getName());  // => Denormalize customer name (avoid JOIN)
+        readModel.setCustomerEmail(customer.getEmail());  // => Denormalize email (avoid JOIN)
+        readModel.setTotalAmount(event.totalAmount());  // => Copy total amount from event
+        readModel.setItemCount(event.itemCount());  // => Copy item count (computed aggregate)
+        readModel.setStatus(OrderStatus.PLACED);  // => Initial status
+        readModel.setCreatedAt(LocalDateTime.now());  // => Set creation timestamp
 
-        queryRepo.save(readModel);
-        // Read model updated asynchronously
+        queryRepo.save(readModel);  // => Persist denormalized read model
+        // Read model updated asynchronously (eventual consistency)
+        // => Small delay between write and read model consistency
     }
 }
 

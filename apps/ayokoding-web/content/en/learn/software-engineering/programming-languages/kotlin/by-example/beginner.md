@@ -63,7 +63,7 @@ graph TD
 ```
 
 ```kotlin
-fun main() {
+fun main() {                         // => Entry point, no return value (Unit type)
     val name = "Alice"               // => name is "Alice" (immutable, type inferred as String)
                                      // => Cannot reassign: name = "Bob" would cause compile error
     var age = 25                     // => age is 25 (mutable, type inferred as Int)
@@ -89,8 +89,7 @@ fun main() {
                                        // => Compiled to StringBuilder for efficiency
     println("$city: ${temperature}°C") // => Output: Jakarta: 29.0°C
                                        // => ${temperature} expression interpolation with curly braces
-                                       // => Returns Unit (like void), no return value
-}
+}                                    // => Returns Unit (like void), no return value
 ```
 
 **Key Takeaway**: Use `val` by default for immutability and thread safety; only use `var` when you genuinely need to reassign values.
@@ -110,7 +109,7 @@ Kotlin has a rich type system with proper primitives that are represented as obj
 **Reflection**: `::class` operator obtains `KClass` instance. `.simpleName` property returns class name string.
 
 ```kotlin
-fun main() {
+fun main() {                         // => Entry point, demonstrates numeric type system
     val byteValue: Byte = 127        // => byteValue is 127 (Byte: 8-bit, range -128 to 127)
                                      // => Explicit type required: 127 literal defaults to Int
                                      // => Byte saves memory for large arrays (1 byte vs 4)
@@ -139,8 +138,7 @@ fun main() {
                                             // => .simpleName returns "Int" (no package prefix)
     println(doubleValue::class.simpleName)  // => Output: Double
                                             // => Runtime type reflection, not compile-time
-                                            // => Returns Unit (void), no return value
-}
+}                                   // => Program completes, returns Unit
 ```
 
 **Key Takeaway**: Kotlin's type inference reduces boilerplate while maintaining type safety, and underscores in numeric literals improve readability for large numbers.
@@ -239,20 +237,22 @@ graph TD
 ```
 
 ```kotlin
-fun add(a: Int, b: Int): Int {
+fun add(a: Int, b: Int): Int {       // => Function signature with explicit return type Int
     return a + b                     // => Returns sum of a and b
 }                                    // => Block body with explicit return type
 
 fun multiply(a: Int, b: Int) = a * b // => Single-expression function (type inferred to Int)
+                                     // => Compiler infers Int from a * b operation
 
 fun greet(name: String, greeting: String = "Hello") = "$greeting, $name!"
                                      // => Default parameter: greeting = "Hello" if not provided
+                                     // => Returns formatted string with interpolation
 
 fun printSum(a: Int, b: Int) {       // => Unit return type (like void)
     println("$a + $b = ${a + b}")    // => String template with expression
 }                                    // => No explicit return needed for Unit functions
 
-fun main() {
+fun main() {                         // => Entry point demonstrating function features
     val sum = add(10, 20)            // => Calls add with a=10, b=20
                                      // => sum is 30
     val product = multiply(5, 6)     // => Calls multiply with a=5, b=6
@@ -267,13 +267,14 @@ fun main() {
                                      // => greet3 is "Hey, Charlie!"
 
     printSum(15, 25)                 // => Output: 15 + 25 = 40
+                                     // => Calls printSum, no return value (Unit)
 
     println(sum)                     // => Output: 30
     println(product)                 // => Output: 30
     println(greet1)                  // => Output: Hello, Alice!
     println(greet2)                  // => Output: Hi, Bob!
     println(greet3)                  // => Output: Hey, Charlie!
-}
+}                                    // => Returns Unit, program completes
 ```
 
 **Key Takeaway**: Use single-expression syntax (`=`) for concise functions, leverage default parameters to reduce overloading, and use named arguments for clarity with multiple parameters.
@@ -453,7 +454,7 @@ Kotlin's for loops iterate over anything that provides an iterator, including ra
 **Range iteration**: Combine for loops with ranges (`1..5`), steps (`0..10 step 2`), and descending sequences (`5 downTo 1`) for custom iteration patterns.
 
 ```kotlin
-fun main() {
+fun main() {                         // => Entry point for loop demonstrations
     print("Range: ")                 // => Prints "Range: " without newline
                                      // => print() doesn't add newline (unlike println())
     for (i in 1..5) {                // => Iterates i over 1, 2, 3, 4, 5
@@ -464,6 +465,7 @@ fun main() {
                                      // => String interpolation with $i
     }                                // => Loop ends, i no longer accessible
     println()                        // => Output newline (moves to next line)
+                                     // => Separates output sections
 
     val fruits = listOf("Apple", "Banana", "Cherry")
                                      // => fruits is List<String> with 3 elements
@@ -472,10 +474,12 @@ fun main() {
     print("Fruits: ")                // => Prints label for next output
     for (fruit in fruits) {          // => Iterates fruit over each list element
                                      // => fruit type inferred as String
+                                     // => Collection iteration uses iterator protocol
         print("$fruit ")             // => Prints: Apple Banana Cherry (space-separated)
                                      // => Each iteration binds fruit to next element
     }                                // => fruit scoped to loop only
     println()                        // => Newline after fruits list
+                                     // => Completes fruits iteration section
 
     print("Indexed: ")               // => Label for indexed iteration
     for ((index, fruit) in fruits.withIndex()) {
@@ -517,8 +521,8 @@ fun main() {
                                      // => Each decrement by 1
     }                                // => 5 iterations total
     println()                        // => Final newline
-                                     // => Returns Unit (void), no return value
-}
+}                                    // => Returns Unit (void), program completes
+                                     // => All loop demonstrations completed
 ```
 
 **Key Takeaway**: Use destructuring with `withIndex()` for indexed iteration, destructure map entries directly in the loop, and combine ranges with `step` and `downTo` for custom iteration patterns.
@@ -641,7 +645,8 @@ graph TD
 ```
 
 ```kotlin
-fun main() {
+fun main() {                         // => Entry point demonstrating null safety
+                                     // => Kotlin's type system prevents NPEs at compile time
     val name: String = "Kotlin"      // => name is "Kotlin" (non-nullable String)
                                      // => Cannot be null (compile-time enforced)
                                      // => No null checks needed (guaranteed non-null)
@@ -679,6 +684,7 @@ fun main() {
 
     val value: Any = "Hello"         // => value is "Hello" (Any supertype)
                                      // => Runtime type is String (not known at compile-time)
+                                     // => Any is root of Kotlin type hierarchy
     val str = value as? String       // => Safe cast: "Hello" is String, succeeds
                                      // => str is "Hello" (String? type)
                                      // => as? returns null on failure (no exception)
@@ -698,8 +704,8 @@ fun main() {
                                      // => Successful safe cast result
     println(num)                     // => Output: null
                                      // => Failed safe cast returns null
-                                     // => Returns Unit (void), no return value
-}
+}                                    // => Returns Unit (void), program completes
+                                     // => All null safety operators demonstrated
 ```
 
 **Key Takeaway**: Use `Type?` for nullable types, `?.` for safe calls that propagate null, `?:` for default values, and avoid `!!` unless you're absolutely certain a value is non-null.
@@ -721,7 +727,8 @@ Kotlin provides both mutable and immutable collections. Immutable lists (created
 **Functional transformations**: Use `map { }` to transform each element (returns new list), `filter { }` to select elements matching a predicate. The `it` parameter is the implicit lambda parameter for single-argument lambdas.
 
 ```kotlin
-fun main() {
+fun main() {                         // => Entry point for list operations demonstration
+                                     // => Shows immutable vs mutable collections
     val fruits = listOf("Apple", "Banana", "Cherry")
                                      // => fruits is List<String> (immutable, read-only)
                                      // => listOf creates immutable list (no add/remove)
@@ -766,10 +773,12 @@ fun main() {
 
     for (fruit in fruits) {          // => Iterates over each element: "Apple", "Banana", "Cherry"
                                      // => fruit type inferred as String
+                                     // => For-in loop provides clean iteration syntax
         print("$fruit ")             // => Output: Apple Banana Cherry
                                      // => Space-separated output
     }                                // => fruit scoped to loop body only
     println()                        // => Newline after iteration
+                                     // => Separates loop output from next section
 
     val lengths = fruits.map { it.length }
                                      // => map transforms each element with lambda
@@ -777,12 +786,14 @@ fun main() {
                                      // => lengths is [5, 6, 6] (List<Int>)
                                      // => "Apple".length=5, "Banana".length=6, "Cherry".length=6
                                      // => Returns new list (fruits unchanged)
+                                     // => Functional transformation preserves immutability
     val filtered = fruits.filter { it.startsWith("C") }
                                      // => filter selects elements matching predicate
                                      // => 'it' tested: "Apple"→false, "Banana"→false, "Cherry"→true
                                      // => filtered is ["Cherry"] (List<String>)
                                      // => Only "Cherry" starts with 'C'
                                      // => Returns new list (fruits unchanged)
+                                     // => Predicate lambda returns Boolean for each element
 
     println(numbers)                 // => Output: [10, 3, 4]
                                      // => Final state after mutations (add, remove, update)
@@ -792,8 +803,8 @@ fun main() {
                                      // => Mapped lengths result
     println(filtered)                // => Output: [Cherry]
                                      // => Filtered result (only "C" starters)
-                                     // => Returns Unit (void), no return value
-}
+}                                    // => Returns Unit (void), program completes
+                                     // => Demonstrates immutable and mutable list operations
 ```
 
 **Key Takeaway**: Use `listOf` for immutable lists that prevent accidental modification, `mutableListOf` when you need to add/remove elements, and leverage functional operations like `map` and `filter` for transformations.
@@ -815,7 +826,8 @@ Sets are unordered collections of unique elements. Kotlin provides immutable `Se
 **Efficient membership testing**: The `in` operator uses hash-based O(1) lookup (constant time), making sets ideal for deduplication and existence checks in large datasets.
 
 ```kotlin
-fun main() {
+fun main() {                         // => Entry point demonstrating set operations
+                                     // => Shows unique element collections
     val numbers = setOf(1, 2, 3, 2, 1)
                                      // => numbers is Set<Int> {1, 2, 3} (duplicates removed)
                                      // => setOf creates immutable Set (read-only)
@@ -844,8 +856,10 @@ fun main() {
 
     val set1 = setOf(1, 2, 3, 4)     // => set1 is Set<Int> {1, 2, 3, 4}
                                      // => First operand for set operations
+                                     // => Immutable set for mathematical operations
     val set2 = setOf(3, 4, 5, 6)     // => set2 is Set<Int> {3, 4, 5, 6}
                                      // => Second operand, overlaps with set1 at {3, 4}
+                                     // => Demonstrates intersecting sets
 
     val union = set1 union set2      // => union is {1, 2, 3, 4, 5, 6}
                                      // => union combines all unique elements from both sets
@@ -876,8 +890,8 @@ fun main() {
                                      // => Only overlapping elements
     println(diff)                    // => Output: [1, 2]
                                      // => Elements unique to set1
-                                     // => Returns Unit (void), no return value
-}
+}                                    // => Returns Unit (void), program completes
+                                     // => All set operations demonstrated
 ```
 
 **Key Takeaway**: Use sets when you need unique elements and efficient membership testing; leverage set operations (union, intersect, subtract) for mathematical set manipulations.
