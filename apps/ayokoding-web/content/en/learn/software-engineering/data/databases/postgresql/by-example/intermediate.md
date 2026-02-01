@@ -1175,49 +1175,64 @@ Partial indexes include only rows matching a WHERE condition - smaller, faster, 
 
 ```sql
 CREATE DATABASE example_39;
--- => Creates database 'example_39'
+-- => Creates database for partial index demonstration
 \c example_39;
--- => Statement execution completes
 -- => Switches connection to example_39 database
 CREATE TABLE orders (
     customer_id INTEGER,
+    -- => customer_id: customer identifier (1-100 in generated data)
     status VARCHAR(20),
+    -- => status: order status ('pending', 'completed', 'cancelled', 'refunded')
+    -- => Majority will be 'completed', minority 'pending' (ideal for partial index)
     total DECIMAL(10, 2),
+    -- => total: order amount ($0-$1000 range in generated data)
     created_at TIMESTAMP DEFAULT NOW()
+    -- => created_at: order timestamp (spread across past 365 days)
 );
--- => Statement execution completes
+-- => Creates orders table for 10,000 test rows
 INSERT INTO orders (customer_id, status, total, created_at)
--- => INSERT into orders table begins
+-- => Generates 10,000 random orders using SELECT
 SELECT
     (random() * 100)::INTEGER + 1,
+    -- => Random customer_id from 1-100 (simulates 100 customers)
     CASE (random() * 4)::INTEGER
+        -- => Random integer 0-3 for status distribution
         WHEN 0 THEN 'pending'
+        -- => 25% pending (target for partial index)
         WHEN 1 THEN 'completed'
+        -- => 25% completed
         WHEN 2 THEN 'cancelled'
+        -- => 25% cancelled
         ELSE 'refunded'
+        -- => 25% refunded
     END,
     (random() * 1000)::DECIMAL(10, 2),
-    -- => Row data inserted
+    -- => Random total from $0.00 to $999.99
     NOW() - (random() * 365 || ' days')::INTERVAL
+    -- => Random timestamp within past 365 days
+    -- => Concatenates random * 365 with ' days' text, casts to INTERVAL
 FROM generate_series(1, 10000);
--- => Specifies source table for query
+-- => Generates 10,000 rows (1 to 10,000 sequence)
+-- => INSERT completes with 10,000 rows created
 
 -- Partial index for active orders only
 CREATE INDEX idx_orders_pending
--- => Creates index idx_orders_pending for faster queries
+-- => Creates partial index named idx_orders_pending
 ON orders(customer_id)
+-- => Indexes customer_id column
 WHERE status = 'pending';
--- => Applies filter to rows
--- => Filter condition for query
--- => Indexes only pending orders (smaller, faster)
+-- => PARTIAL INDEX: only indexes rows where status='pending' (~2,500 rows instead of 10,000)
+-- => Smaller index size = faster queries, less disk space
+-- => Perfect when most queries filter on status='pending'
 EXPLAIN ANALYZE
+-- => Shows query execution plan WITH actual runtime statistics
 SELECT * FROM orders
--- => Specifies source table for query
--- => Query executes and returns result set
+-- => Retrieves all columns from orders table
 WHERE customer_id = 42 AND status = 'pending';
--- => Applies filter to rows
--- => Filter condition for query
--- => Uses idx_orders_pending
+-- => Filters: customer_id=42 AND status='pending'
+-- => PostgreSQL uses idx_orders_pending (partial index matches WHERE clause)
+-- => Index Scan instead of Sequential Scan (much faster on large tables)
+-- => Execution plan shows: "Index Scan using idx_orders_pending"
 
 -- Partial index for high-value orders
 CREATE INDEX idx_orders_high_value
@@ -1310,26 +1325,40 @@ graph TD
 
 ```sql
 CREATE DATABASE example_40;
+-- => Creates database for EXPLAIN examples
 \c example_40;
--- => Statement execution completes
+-- => Switches to example_40 database
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
+    -- => id: product identifier (auto-incrementing)
     name VARCHAR(200),
+    -- => name: product name (generated as 'Product 1', 'Product 2', ...)
     category VARCHAR(50),
+    -- => category: product category (Electronics, Furniture, Kitchen)
     price DECIMAL(10, 2)
+    -- => price: product price ($0-$1000 range)
 );
--- => Statement execution completes
+-- => Creates products table for performance analysis
 INSERT INTO products (name, category, price)
+-- => Generates 10,000 test products
 SELECT
     'Product ' || generate_series,
+    -- => Concatenates 'Product ' with number (1-10,000)
     CASE (generate_series % 3)
+        -- => Modulo 3 for category distribution
         WHEN 0 THEN 'Electronics'
+        -- => Every 3rd product is Electronics
         WHEN 1 THEN 'Furniture'
+        -- => Remainder 1: Furniture
         ELSE 'Kitchen'
+        -- => Remainder 2: Kitchen
     END,
+    -- => Result: roughly equal distribution across 3 categories
     (random() * 1000)::DECIMAL(10, 2)
+    -- => Random price $0.00-$999.99
 FROM generate_series(1, 10000);
--- => Specifies source table for query
+-- => Generates rows numbered 1 to 10,000
+-- => INSERT completes with 10,000 products created
 
 -- EXPLAIN shows execution plan without running query
 EXPLAIN
@@ -1442,89 +1471,107 @@ PostgreSQL supports array columns - store multiple values in single column. Usef
 
 ```sql
 CREATE DATABASE example_41;
--- => Creates database 'example_41'
+-- => Creates database for array column examples
 \c example_41;
--- => Statement execution completes
--- => Switches connection to example_41 database
+-- => Switches to example_41 database
 CREATE TABLE articles (
     title VARCHAR(200),
-    tags TEXT[],              -- => Array of text values
-    ratings INTEGER[]         -- => Array of integers
+    -- => title: article title
+    tags TEXT[],
+    -- => tags: array of text values (multiple tags per article)
+    -- => Stores variable-length array without separate junction table
+    ratings INTEGER[]
+    -- => ratings: array of integers (multiple ratings per article)
 );
--- => Statement execution completes
+-- => Creates articles table with array columns
 
--- Insert arrays
+-- Insert arrays using ARRAY constructor
 INSERT INTO articles (title, tags, ratings)
--- => INSERT into articles table begins
+-- => Inserts 3 articles with arrays
 VALUES
--- => Row data values follow
     ('PostgreSQL Guide', ARRAY['database', 'sql', 'tutorial'], ARRAY[5, 4, 5, 4]),
-    -- => Row data inserted
+    -- => Article 1: 3 tags, 4 ratings
+    -- => tags: ['database', 'sql', 'tutorial'] (3 elements)
+    -- => ratings: [5, 4, 5, 4] (4 elements)
     ('Docker Basics', ARRAY['docker', 'containers'], ARRAY[5, 5, 3]),
-    -- => Row data inserted
+    -- => Article 2: 2 tags, 3 ratings
+    -- => tags: ['docker', 'containers'] (2 elements)
+    -- => ratings: [5, 5, 3] (3 elements)
     ('Kubernetes', ARRAY['k8s', 'orchestration', 'docker'], ARRAY[4, 3, 4, 5, 5]);
-    -- => Statement execution completes
+    -- => Article 3: 3 tags, 5 ratings
+    -- => tags: ['k8s', 'orchestration', 'docker'] (3 elements)
+    -- => ratings: [4, 3, 4, 5, 5] (5 elements)
 
--- Alternative array syntax
+-- Alternative: PostgreSQL literal array syntax (string format)
 INSERT INTO articles (title, tags, ratings)
--- => INSERT into articles table begins
+-- => Inserts using literal syntax '{"val1", "val2"}'
 VALUES
--- => Row data values follow
     ('Advanced SQL', '{"sql", "advanced", "postgresql"}', '{5, 5, 4, 5}');
-    -- => Statement execution completes
+    -- => Article 4: 3 tags, 4 ratings
+    -- => Same result as ARRAY constructor but different syntax
 SELECT * FROM articles;
 -- => Specifies source table for query
 -- => Query executes and returns result set
 
--- Access array elements (1-indexed!)
+-- Access array elements (1-indexed! PostgreSQL arrays start at 1, not 0)
 SELECT
     title,
-    tags[1] AS first_tag,         -- => First element
-    tags[2] AS second_tag,        -- => Second element
-    array_length(tags, 1) AS num_tags  -- => Number of elements
+    tags[1] AS first_tag,
+    -- => Accesses first array element (index 1)
+    -- => PostgreSQL Guide: 'database', Docker Basics: 'docker'
+    tags[2] AS second_tag,
+    -- => Accesses second array element (index 2)
+    -- => PostgreSQL Guide: 'sql', Docker Basics: 'containers'
+    array_length(tags, 1) AS num_tags
+    -- => Returns array length (dimension 1)
+    -- => PostgreSQL Guide: 3, Docker Basics: 2, Kubernetes: 3
 FROM articles;
--- => Specifies source table for query
+-- => Returns 4 rows with array access results
 
--- Check if array contains value
+-- Check if array contains value using ANY
 SELECT title
 FROM articles
--- => Specifies source table for query
 WHERE 'docker' = ANY(tags);
--- => Applies filter to rows
--- => Filter condition for query
--- => Returns articles with 'docker' in tags
--- => Docker Basics, Kubernetes
+-- => ANY checks if value matches ANY element in array
+-- => 'docker' = ANY(['docker', 'containers']) → true (Docker Basics)
+-- => 'docker' = ANY(['k8s', 'orchestration', 'docker']) → true (Kubernetes)
+-- => Returns 2 rows: Docker Basics, Kubernetes
 
--- Array overlap operator
+-- Array overlap operator (&&)
 SELECT title
 FROM articles
--- => Specifies source table for query
-WHERE tags && ARRAY['sql', 'database'];  -- => Overlap: shares at least one element
--- => PostgreSQL Guide, Advanced SQL
+WHERE tags && ARRAY['sql', 'database'];
+-- => && operator: true if arrays share at least one element
+-- => ['database', 'sql', 'tutorial'] && ['sql', 'database'] → true (shares 'sql' and 'database')
+-- => ['sql', 'advanced', 'postgresql'] && ['sql', 'database'] → true (shares 'sql')
+-- => Returns 2 rows: PostgreSQL Guide, Advanced SQL
 
--- Array containment
+-- Array containment operator (@>)
 SELECT title
 FROM articles
--- => Specifies source table for query
-WHERE tags @> ARRAY['sql'];  -- => Contains all elements in array
--- => PostgreSQL Guide, Advanced SQL
+WHERE tags @> ARRAY['sql'];
+-- => @> operator: left array CONTAINS all elements from right array
+-- => ['database', 'sql', 'tutorial'] @> ['sql'] → true (contains 'sql')
+-- => ['sql', 'advanced', 'postgresql'] @> ['sql'] → true (contains 'sql')
+-- => Returns 2 rows: PostgreSQL Guide, Advanced SQL
 
--- Unnest array to rows
+-- Unnest array to rows (one row per array element)
 SELECT
     title,
     unnest(tags) AS tag
-    -- => Creates alias for column/table
+-- => unnest() expands array into multiple rows
+-- => PostgreSQL Guide with 3 tags → 3 rows
+-- => Docker Basics with 2 tags → 2 rows
 FROM articles;
--- => Specifies source table for query
--- => Returns one row per tag (expands array to multiple rows)
+-- => Returns 11 total rows (3+2+3+3 tags from 4 articles)
 
--- Aggregate into array
+-- Aggregate into array using ARRAY_AGG
 SELECT
-    ARRAY_AGG(title ORDER BY id) AS all_titles
-    -- => Sorts query results
+    ARRAY_AGG(title) AS all_titles
+-- => ARRAY_AGG collects all title values into single array
+-- => Result: ['PostgreSQL Guide', 'Docker Basics', 'Kubernetes', 'Advanced SQL']
 FROM articles;
--- => Specifies source table for query
--- => Collects all titles into single array
+-- => Returns 1 row with array containing all titles
 
 -- Array functions
 SELECT
@@ -2512,68 +2559,89 @@ Deadlocks occur when transactions wait for each other's locks. PostgreSQL detect
 
 ```sql
 CREATE DATABASE example_50;
+-- => Creates database for deadlock demonstration
 \c example_50;
--- => Statement execution completes
+-- => Switches to example_50 database
 CREATE TABLE accounts (
     id SERIAL PRIMARY KEY,
+    -- => id: account identifier (used for consistent lock ordering)
     name VARCHAR(100),
+    -- => name: account holder name
     balance DECIMAL(10, 2)
+    -- => balance: account balance (decimal for exact money precision)
 );
--- => Statement execution completes
+-- => Creates accounts table for concurrent transaction testing
 INSERT INTO accounts (name, balance)
+-- => Inserts 2 test accounts
 VALUES ('Alice', 1000.00), ('Bob', 500.00);
--- => Statement execution completes
+-- => Alice: id=1, $1000.00; Bob: id=2, $500.00
 
--- Deadlock scenario requires two concurrent sessions
--- Session 1 and Session 2 shown sequentially
--- Session 1:
+-- Deadlock scenario: two concurrent sessions locking in opposite order
+-- NOTE: This requires TWO database connections running simultaneously
+-- Timeline shown sequentially below
+
+-- Session 1 (Connection A):
 BEGIN;
--- => Statement execution completes
+-- => Starts transaction in Session 1
 UPDATE accounts SET balance = balance - 100 WHERE name = 'Alice';
--- => Applies filter to rows
--- => Acquires lock on Alice's row
+-- => Updates Alice's balance: 1000.00 → 900.00
+-- => Acquires EXCLUSIVE lock on Alice's row (id=1)
+-- => Session 1 holds lock, continues...
 
--- Session 2 (concurrent):
+-- Session 2 (Connection B - runs concurrently):
 BEGIN;
--- => Statement execution completes
+-- => Starts transaction in Session 2 (while Session 1 still active)
 UPDATE accounts SET balance = balance - 50 WHERE name = 'Bob';
--- => Applies filter to rows
--- => Acquires lock on Bob's row
+-- => Updates Bob's balance: 500.00 → 450.00
+-- => Acquires EXCLUSIVE lock on Bob's row (id=2)
+-- => Session 2 holds lock, continues...
 
--- Session 1 (continued):
+-- Session 1 (Connection A - attempts second update):
 UPDATE accounts SET balance = balance + 100 WHERE name = 'Bob';
--- => Applies filter to rows
--- => Waits for Bob's lock (held by Session 2)
+-- => Tries to update Bob's row
+-- => BLOCKS: Session 2 holds lock on Bob's row
+-- => Session 1 waits for Session 2 to release lock...
 
--- Session 2 (continued):
+-- Session 2 (Connection B - attempts second update):
 UPDATE accounts SET balance = balance + 50 WHERE name = 'Alice';
--- => Applies filter to rows
+-- => Tries to update Alice's row
+-- => DEADLOCK DETECTED: Session 2 needs Alice (locked by Session 1)
+-- =>                    Session 1 needs Bob (locked by Session 2)
+-- => PostgreSQL detects circular wait, aborts Session 2 as victim
 -- => ERROR: deadlock detected
--- => One transaction aborted (deadlock victim)
 
--- Session 2 must ROLLBACK
+-- Session 2 must ROLLBACK (transaction aborted)
 ROLLBACK;
--- => Statement execution completes
+-- => Rolls back Session 2 changes (Bob's balance reverts to 500.00)
 
--- Session 1 can now proceed
+-- Session 1 can now proceed (Session 2 released Bob's lock)
 COMMIT;
--- => Statement execution completes
+-- => Commits Session 1 changes (Alice: 900.00, Bob: 550.00)
 
--- Avoiding deadlocks: consistent lock order
--- Always update accounts in ID order
--- Session 1:
+-- Avoiding deadlocks: ALWAYS acquire locks in same order (by ID)
+-- Rule: Always lock accounts in ascending ID order (1, 2, 3...)
+
+-- Session 1 (Connection A):
 BEGIN;
--- => Statement execution completes
-UPDATE accounts SET balance = balance - 100 WHERE id = 1;  -- => Alice
-UPDATE accounts SET balance = balance + 100 WHERE id = 2;  -- => Bob
+UPDATE accounts SET balance = balance - 100 WHERE id = 1;
+-- => Locks Alice (id=1) FIRST
+UPDATE accounts SET balance = balance + 100 WHERE id = 2;
+-- => Locks Bob (id=2) SECOND
+-- => Lock order: 1 → 2
 COMMIT;
--- => Statement execution completes
 
--- Session 2:
+-- Session 2 (Connection B - concurrent):
 BEGIN;
--- => Statement execution completes
-UPDATE accounts SET balance = balance - 50 WHERE id = 1;  -- => Alice (waits)
--- => No deadlock: both sessions acquire locks in same order
+UPDATE accounts SET balance = balance - 50 WHERE id = 1;
+-- => Tries to lock Alice (id=1) FIRST
+-- => BLOCKS if Session 1 holds lock, but NO DEADLOCK
+-- => Both sessions lock id=1 first, then id=2 (same order)
+-- => Session 2 waits until Session 1 commits, then proceeds
+UPDATE accounts SET balance = balance + 50 WHERE id = 2;
+-- => Locks Bob (id=2) SECOND (after Alice lock acquired)
+-- => Lock order: 1 → 2 (same as Session 1)
+COMMIT;
+-- => NO DEADLOCK: consistent lock ordering prevents circular wait
 
 -- View locks
 SELECT
@@ -2613,68 +2681,74 @@ Views are saved queries that act like tables - use them to simplify complex quer
 
 ```sql
 CREATE DATABASE example_51;
--- => Creates database 'example_51'
+-- => Creates database for view examples
 \c example_51;
--- => Statement execution completes
--- => Switches connection to example_51 database
+-- => Switches to example_51 database
 CREATE TABLE employees (
+    id SERIAL PRIMARY KEY,
+    -- => id: employee identifier (auto-incrementing)
     name VARCHAR(100),
+    -- => name: employee name
     department VARCHAR(50),
+    -- => department: Engineering or Sales
     salary DECIMAL(10, 2),
+    -- => salary: annual salary (exact precision)
     hire_date DATE
+    -- => hire_date: date employee was hired
 );
--- => Statement execution completes
+-- => Creates employees table for view demonstration
 INSERT INTO employees (name, department, salary, hire_date)
--- => INSERT into employees table begins
+-- => Inserts 4 employees (2 Engineering, 2 Sales)
 VALUES
--- => Row data values follow
     ('Alice', 'Engineering', 95000, '2020-03-15'),
-    -- => Row data inserted
+    -- => Employee 1: Engineering, $95k, hired 2020
     ('Bob', 'Sales', 75000, '2019-06-01'),
-    -- => Row data inserted
+    -- => Employee 2: Sales, $75k (lowest salary)
     ('Charlie', 'Engineering', 105000, '2021-01-10'),
-    -- => Row data inserted
+    -- => Employee 3: Engineering, $105k (highest salary)
     ('Diana', 'Sales', 80000, '2018-11-20');
-    -- => Statement execution completes
+    -- => Employee 4: Sales, $80k, earliest hire date
 
--- Create simple view
+-- Create simple view (filtered subset of employees)
 CREATE VIEW engineering_employees AS
+-- => Creates view named engineering_employees
 SELECT id, name, salary, hire_date
+-- => Selects specific columns (excludes department)
 FROM employees
--- => Specifies source table for query
 WHERE department = 'Engineering';
--- => Applies filter to rows
--- => Filter condition for query
--- => View shows only engineering employees
+-- => Filters to Engineering department only
+-- => View definition stored, not data (query runs on SELECT)
 
 -- Query view like a table
 SELECT * FROM engineering_employees;
--- => Specifies source table for query
--- => Query executes and returns result set
--- => Alice, Charlie
+-- => Queries view (PostgreSQL executes underlying SELECT)
+-- => Returns 2 rows: Alice (id=1, $95k), Charlie (id=3, $105k)
+-- => View acts like table but data comes from employees table
 
--- Create view with calculations
+-- Create view with aggregations
 CREATE VIEW employee_stats AS
+-- => Creates view with GROUP BY aggregations
 SELECT
     department,
     COUNT(*) AS num_employees,
-    -- => Creates alias for column/table
+    -- => Counts employees per department
     AVG(salary) AS avg_salary,
-    -- => Creates alias for column/table
+    -- => Calculates average salary per department
     MIN(hire_date) AS first_hire,
-    -- => Creates alias for column/table
+    -- => Finds earliest hire date per department
     MAX(hire_date) AS last_hire
-    -- => Creates alias for column/table
+    -- => Finds latest hire date per department
 FROM employees
--- => Specifies source table for query
 GROUP BY department;
--- => Aggregates rows by specified columns
--- => Groups rows for aggregation
+-- => Groups by department for aggregation
+-- => Engineering: 2 employees, avg $100k
+-- => Sales: 2 employees, avg $77.5k
+
 SELECT * FROM employee_stats;
--- => Specifies source table for query
--- => Query executes and returns result set
--- => Engineering: 2 employees, 100000 avg
--- => Sales: 2 employees, 77500 avg
+-- => Queries aggregated view
+-- => Returns 2 rows (one per department with stats)
+-- => Engineering: 2 employees, $100,000 avg, first_hire 2020-03-15
+-- => Sales: 2 employees, $77,500 avg, first_hire 2018-11-20
 
 -- Create view with joins
 CREATE TABLE projects (
@@ -3400,38 +3474,47 @@ ON CONFLICT handles insert conflicts by updating existing rows or ignoring dupli
 
 ```sql
 CREATE DATABASE example_56;
--- => Creates database 'example_56'
+-- => Creates database for ON CONFLICT (upsert) examples
 \c example_56;
--- => Statement execution completes
--- => Switches connection to example_56 database
+-- => Switches to example_56 database
 CREATE TABLE users (
     email VARCHAR(100) UNIQUE,
+    -- => email: user email (UNIQUE constraint for conflict detection)
     name VARCHAR(100),
+    -- => name: user name (can be updated)
     login_count INTEGER DEFAULT 0,
+    -- => login_count: number of logins (incremented on conflict)
     last_login TIMESTAMP
+    -- => last_login: timestamp of last login
 );
--- => Statement execution completes
+-- => Creates users table with UNIQUE constraint on email
 
 -- Insert initial user
 INSERT INTO users (email, name, login_count, last_login)
--- => INSERT into users table begins
+-- => First INSERT (no conflict)
 VALUES ('alice@example.com', 'Alice', 1, NOW());
--- => Statement execution completes
--- => Row data values follow
+-- => Inserts Alice with login_count=1, current timestamp
+-- => email='alice@example.com' now exists in table
 
--- Upsert: update if exists, insert if doesn't
+-- Upsert: INSERT or UPDATE on conflict
 INSERT INTO users (email, name, login_count, last_login)
--- => INSERT into users table begins
+-- => Attempts INSERT (will conflict on email UNIQUE constraint)
 VALUES ('alice@example.com', 'Alice Updated', 2, NOW())
--- => Row data values follow
 ON CONFLICT (email)
+-- => Detects conflict on email UNIQUE constraint
+-- => 'alice@example.com' already exists (from first INSERT)
 DO UPDATE SET
-    login_count = users.login_count + 1,  -- => Increment existing count
-    last_login = EXCLUDED.last_login;     -- => EXCLUDED refers to proposed insert values
+-- => Instead of failing, UPDATE existing row
+    login_count = users.login_count + 1,
+    -- => Increments EXISTING login_count (1 + 1 = 2)
+    -- => users.login_count references EXISTING row value
+    last_login = EXCLUDED.last_login;
+    -- => EXCLUDED references VALUES being inserted (NOW() timestamp)
+    -- => Updates last_login to new timestamp
+-- => Result: login_count=2, name='Alice' (unchanged), last_login=new timestamp
 SELECT * FROM users WHERE email = 'alice@example.com';
--- => Specifies source table for query
--- => Query executes and returns result set
--- => login_count: 2 (incremented), last_login updated
+-- => Returns updated row: login_count=2, name='Alice'
+-- => name NOT updated (not in DO UPDATE SET clause)
 
 -- Upsert with nothing (ignore conflicts)
 INSERT INTO users (email, name)
@@ -3445,26 +3528,28 @@ SELECT * FROM users WHERE email = 'alice@example.com';
 -- => Query executes and returns result set
 -- => No changes (conflict ignored)
 
--- Bulk upsert
+-- Bulk upsert (multiple rows, mixed INSERT/UPDATE)
 INSERT INTO users (email, name, login_count, last_login)
--- => INSERT into users table begins
+-- => Attempts INSERT for 3 users
 VALUES
--- => Row data values follow
     ('bob@example.com', 'Bob', 1, NOW()),
-    -- => Row data inserted
+    -- => New user: will INSERT
     ('charlie@example.com', 'Charlie', 1, NOW()),
-    -- => Row data inserted
+    -- => New user: will INSERT
     ('alice@example.com', 'Alice', 1, NOW())
-    -- => Row data inserted
+    -- => Existing user (conflict): will UPDATE
 ON CONFLICT (email)
 DO UPDATE SET
     login_count = users.login_count + 1,
+    -- => For alice@example.com: 2 + 1 = 3
     last_login = EXCLUDED.last_login;
-    -- => Statement execution completes
+    -- => Updates timestamp for conflict rows
+-- => Result: 2 INSERTs (Bob, Charlie), 1 UPDATE (Alice)
 SELECT email, login_count FROM users ORDER BY email;
--- => Specifies source table for query
--- => Query executes and returns result set
--- => Alice: 3 (updated), Bob: 1 (inserted), Charlie: 1 (inserted)
+-- => Returns 3 rows sorted by email
+-- => Alice: login_count=3 (updated from 2)
+-- => Bob: login_count=1 (newly inserted)
+-- => Charlie: login_count=1 (newly inserted)
 
 -- Upsert with WHERE clause
 INSERT INTO users (email, name, login_count, last_login)
@@ -3539,27 +3624,34 @@ graph TD
 
 ```sql
 CREATE DATABASE example_57;
+-- => Creates database for COPY command examples
 \c example_57;
--- => Statement execution completes
+-- => Switches to example_57 database
 CREATE TABLE products (
     id INTEGER,
+    -- => id: product identifier (no SERIAL, manual IDs for COPY)
     name VARCHAR(100),
+    -- => name: product name
     category VARCHAR(50),
+    -- => category: product category
     price DECIMAL(10, 2)
+    -- => price: product price
 );
--- => Statement execution completes
+-- => Creates products table for bulk loading
 
--- COPY from stdin (manual data entry)
+-- COPY from stdin (paste CSV data directly into psql)
 COPY products (id, name, category, price) FROM stdin WITH (FORMAT csv);
--- => Specifies source table for query
+-- => COPY command reads CSV data from stdin (standard input)
+-- => FORMAT csv: interprets input as comma-separated values
 1,Laptop,Electronics,999.99
 2,Mouse,Electronics,29.99
 3,Desk,Furniture,299.99
 \.
--- => \. terminates input
+-- => Backslash-dot terminates stdin input
+-- => COPY completes, data loaded into products table
 SELECT * FROM products;
--- => Specifies source table for query
--- => 3 rows inserted
+-- => Returns 3 rows: Laptop ($999.99), Mouse ($29.99), Desk ($299.99)
+-- => COPY is 10-100x faster than equivalent INSERT statements
 
 -- COPY from file (requires server filesystem access)
 -- Note: This requires a CSV file on the PostgreSQL server filesystem
@@ -3583,26 +3675,31 @@ COPY products TO stdout WITH (FORMAT text, DELIMITER '|');
 -- => Restricts number of rows returned
 -- => Pipe-delimited output
 
--- Generate test data with COPY
+-- Generate test data using INSERT ... SELECT with generate_series
 TRUNCATE products;
--- => Statement execution completes
+-- => Removes all existing rows from products table
 INSERT INTO products (id, name, category, price)
+-- => Bulk INSERT using SELECT (faster than individual INSERTs)
 SELECT
     generate_series AS id,
-    -- => Creates alias for column/table
+    -- => Uses series value as id (1, 2, 3, ..., 10000)
     'Product ' || generate_series AS name,
-    -- => Creates alias for column/table
+    -- => Concatenates 'Product ' with number ('Product 1', 'Product 2', ...)
     CASE (generate_series % 3)
+        -- => Distributes categories evenly using modulo
         WHEN 0 THEN 'Electronics'
+        -- => Every 3rd product
         WHEN 1 THEN 'Furniture'
+        -- => Remainder 1
         ELSE 'Kitchen'
+        -- => Remainder 2
     END AS category,
-    -- => Creates alias for column/table
     (random() * 1000)::DECIMAL(10, 2) AS price
-    -- => Creates alias for column/table
+    -- => Random price $0.00-$999.99 for each row
 FROM generate_series(1, 10000);
--- => Specifies source table for query
--- => 10000 rows inserted quickly
+-- => Generates 10,000 rows (numbers 1 to 10,000)
+-- => INSERT completes with 10,000 test products created
+-- => Much faster than 10,000 individual INSERT statements
 
 -- Alternative: COPY for PostgreSQL client tools
 -- \copy products FROM 'products.csv' WITH (FORMAT csv);
@@ -3623,69 +3720,64 @@ GENERATE_SERIES creates sequences of values - combine with random functions to g
 
 ```sql
 CREATE DATABASE example_58;
--- => Creates database 'example_58'
+-- => Creates database for generate_series examples
 \c example_58;
--- => Statement execution completes
--- => Switches connection to example_58 database
+-- => Switches to example_58 database
 
--- Generate integer series
+-- Generate simple integer series
 SELECT * FROM generate_series(1, 10);
--- => generate_series(start, stop) is set-returning function
--- => Returns table with one column containing sequence values
--- => Parameters: start=1 (inclusive), stop=10 (inclusive)
--- => Generates: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 (10 rows)
--- => Each number is separate row in result set
--- => Useful for loops, test data, filling gaps
+-- => generate_series(start, stop) returns set of rows
+-- => start=1 (inclusive), stop=10 (inclusive), default step=1
+-- => Returns 10 rows: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+-- => Each value is separate row in result set
 
--- Generate series with step
+-- Generate series with custom step
 SELECT * FROM generate_series(0, 100, 10);
--- => generate_series(start, stop, step) with custom increment
--- => start=0, stop=100 (inclusive), step=10 (increment by 10)
--- => Generates: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 (11 rows)
--- => Step can be negative for descending sequences
--- => Example negative step: generate_series(10, 1, -1) → 10,9,8,...,1
+-- => generate_series(start, stop, step) with increment
+-- => start=0, stop=100, step=10 (increment by 10 each time)
+-- => Returns 11 rows: 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100
+-- => Step can be negative: generate_series(10, 1, -1) produces 10,9,8,...,1
 
--- Generate date series
+-- Generate date series (one date per day for December 2025)
 SELECT * FROM generate_series(
-    -- => generate_series works with DATE and TIMESTAMP types
     '2025-12-01'::DATE,
-    -- => Start date: December 1, 2025 (::DATE casts string to DATE)
+    -- => Start: December 1, 2025 (::DATE casts text to DATE type)
     '2025-12-31'::DATE,
-    -- => End date: December 31, 2025 (inclusive)
+    -- => End: December 31, 2025 (inclusive)
     '1 day'::INTERVAL
-    -- => Step interval: 1 day increment (::INTERVAL casts string)
-    -- => Can use '1 week', '1 month', '2 hours', etc.
+    -- => Step: 1 day increment (::INTERVAL casts text to INTERVAL)
+    -- => Other intervals: '1 week', '1 month', '2 hours'
 );
--- => Returns all 31 dates in December 2025 (one row per day)
--- => Useful for generating calendar tables, filling date gaps
--- => Format: 2025-12-01, 2025-12-02, ..., 2025-12-31
+-- => Returns 31 rows (all dates in December 2025)
+-- => 2025-12-01, 2025-12-02, ..., 2025-12-31
 
--- Create test table
+-- Create orders table for test data
 CREATE TABLE orders (
+    id INTEGER,
     customer_id INTEGER,
     amount DECIMAL(10, 2),
     order_date DATE
 );
--- => Statement execution completes
+-- => Creates orders table for generated test data
 
--- Generate 10,000 test orders
+-- Generate 10,000 test orders using generate_series
 INSERT INTO orders (id, customer_id, amount, order_date)
--- => INSERT into orders table begins
+-- => Bulk INSERT with generated data
 SELECT
     generate_series AS id,
-    -- => Creates alias for column/table
+    -- => Uses series value as order id (1-10,000)
     (random() * 100)::INTEGER + 1 AS customer_id,
-    -- => Creates alias for column/table
+    -- => Random customer_id from 1-100 (simulates 100 customers)
+    -- => random() returns 0.0-1.0, multiplied by 100 = 0-100, +1 = 1-101
     (random() * 1000)::DECIMAL(10, 2) AS amount,
-    -- => Creates alias for column/table
+    -- => Random amount $0.00-$999.99 for each order
     '2025-01-01'::DATE + (random() * 365)::INTEGER AS order_date
-    -- => Creates alias for column/table
+    -- => Random date within 2025 (Jan 1 + 0-365 days)
 FROM generate_series(1, 10000);
--- => Specifies source table for query
+-- => Generates 10,000 sequential numbers (1-10,000)
+-- => INSERT completes with 10,000 test orders
 SELECT COUNT(*) FROM orders;
--- => Specifies source table for query
--- => Query executes and returns result set
--- => 10,000 rows
+-- => Returns count: 10,000 rows
 
 -- Generate realistic email addresses
 CREATE TABLE users (
