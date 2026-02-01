@@ -3851,6 +3851,7 @@ fn main() {
 ```rust
 use std::collections::HashSet;       // => HashSet requires Eq + Hash
                                      // => Import from standard library collections module
+                                     // => Brings HashSet type into scope
 
 // Point with derived PartialEq
 #[derive(Debug, PartialEq, Eq, Hash)] // => Auto-implement equality traits
@@ -3860,19 +3861,29 @@ use std::collections::HashSet;       // => HashSet requires Eq + Hash
                                      // => Eq: marker trait (reflexive equality)
                                      // => Hash: enables use in HashMap/HashSet
 struct Point {                       // => Simple coordinate struct
+                                     // => Two-field coordinate type
     x: i32,                          // => i32 implements PartialEq + Eq + Hash
+                                     // => X coordinate (signed 32-bit)
     y: i32,                          // => i32 implements PartialEq + Eq + Hash
+                                     // => Y coordinate (signed 32-bit)
 }                                    // => Point derives all traits
                                      // => Derived PartialEq compares all fields
+                                     // => Field-by-field equality check
 
 // Person with custom PartialEq
 #[derive(Debug)]                     // => Only Debug, no PartialEq
                                      // => Manual PartialEq impl below
+                                     // => Auto-derive Debug formatting
 struct Person {                      // => Person struct definition
+                                     // => Custom equality logic required
     name: String,                    // => Person name (owned String)
+                                     // => Heap-allocated string buffer
     age: u32,                        // => Person age (unsigned 32-bit)
+                                     // => Stack-allocated integer
     id: u64,                         // => Unique identifier (unsigned 64-bit)
+                                     // => Primary key for equality
 }                                    // => 3 fields but equality based on id only
+                                     // => Name and age ignored in comparisons
 
 impl PartialEq for Person {          // => Manual PartialEq implementation
                                      // => Implements PartialEq trait for Person type
@@ -3894,17 +3905,25 @@ impl PartialEq for Person {          // => Manual PartialEq implementation
                                      // => derive(Eq) would fail compilation
                                      // => f64 is PartialEq but not Eq
                                      // => NaN != NaN in floating point (violates reflexivity)
+                                     // => Auto-implements Debug and PartialEq
 struct Temperature {                 // => Temperature wrapper around f64
+                                     // => Single-field newtype pattern
     celsius: f64,                    // => f64 implements PartialEq only
                                      // => f64 is NOT Eq due to NaN behavior
+                                     // => 64-bit floating point (stack-allocated)
 }                                    // => Temperature is PartialEq, not Eq
                                      // => Cannot be used in HashSet (requires Eq)
+                                     // => Partial equivalence relation only
 
 // Custom comparison logic
 #[derive(Debug)]                     // => Debug only, custom PartialEq below
+                                     // => No auto-derived equality
 struct CaseInsensitiveString {       // => String wrapper with custom equality
+                                     // => Newtype pattern around String
     value: String,                   // => Internal string storage (owned)
+                                     // => Heap-allocated UTF-8 string
 }                                    // => Struct holds one field
+                                     // => Custom eq() implementation below
 
 impl PartialEq for CaseInsensitiveString {
                                      // => Manual PartialEq with custom logic

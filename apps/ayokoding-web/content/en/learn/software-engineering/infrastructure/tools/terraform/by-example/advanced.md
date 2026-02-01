@@ -317,7 +317,7 @@ func resourceServerDelete(ctx context.Context, d *schema.ResourceData, meta inte
 ```hcl
 terraform {
   required_providers {
-    example = {
+    example = {  # => Map/object definition
       source  = "example.com/custom/example"    # => Custom provider source
       # => Format: hostname/namespace/name
       # => For private registry or local development
@@ -490,7 +490,7 @@ terraform {
   # => Terraform configuration block
   required_providers {
     # => Provider requirements
-    example = {
+    example = {  # => Map/object definition
       # => example provider configuration
       source = "example.com/custom/example"    # => Custom provider source
       # => Matches provider registration from Example 57
@@ -671,6 +671,7 @@ func testAccResourceServerConfig_basic() string {
     // => testAccResourceServerConfig_basic returns HCL for initial resource
     return `
 resource "example_server" "test" {
+  # => Defines example_server.test resource
   name          = "test-server"
   instance_type = "small"
 }
@@ -684,6 +685,7 @@ func testAccResourceServerConfig_updated() string {
     // => testAccResourceServerConfig_updated returns HCL for update test
     return `
 resource "example_server" "test" {
+  # => Defines example_server.test resource
   name          = "test-server"
   instance_type = "large"
 }
@@ -784,7 +786,7 @@ Built-in validation ensures correct syntax and formatting before plan/apply. Thi
 ```hcl
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 }
 
@@ -794,16 +796,16 @@ provider "local" {}
 # Intentional errors for validation demonstration
 resource "local_file" "example" {
 # => Resource definition
-  filename = "test.txt"
+  filename = "test.txt"  # => String value
   # => Sets filename
-  content  = "Test content"
+  content  = "Test content"  # => String value
   # => Sets content
 }
 
 # Missing required argument (will fail validation)
 resource "local_file" "invalid" {
 # => Resource definition
-  filename = "invalid.txt"
+  filename = "invalid.txt"  # => String value
   # content missing (required argument)
 }
 
@@ -882,50 +884,50 @@ TFLint detects errors beyond `terraform validate`: unused variables, deprecated 
 ```hcl
 config {
   # => TFLint global configuration
-  module = true
+  module = true  # => Boolean value
   # => Enable linting of module calls
   # => Validates modules called from root configuration
 }
 
 plugin "terraform" {
   # => Core Terraform plugin for basic linting
-  enabled = true
+  enabled = true  # => Boolean value
   # => Core Terraform linting rules
   # => Activates terraform-specific rule checks
-  preset  = "recommended"
+  preset  = "recommended"  # => String value
   # => Use recommended rule set (opinionated defaults)
 }
 
 plugin "aws" {
   # => AWS provider plugin for cloud-specific rules
-  enabled = true
+  enabled = true  # => Boolean value
   # => Activate AWS linting rules
-  version = "0.27.0"
+  version = "0.27.0"  # => String value
   # => Plugin version to use
-  source  = "github.com/terraform-linters/tflint-ruleset-aws"
+  source  = "github.com/terraform-linters/tflint-ruleset-aws"  # => String value
   # => AWS-specific rules (instance types, regions, deprecated resources)
   # => GitHub repository for AWS ruleset
 }
 
 rule "terraform_unused_declarations" {
   # => Rule for detecting unused declarations
-  enabled = true
+  enabled = true  # => Boolean value
   # => Detect unused variables, outputs, locals
   # => Helps clean up configuration clutter
 }
 
 rule "terraform_deprecated_syntax" {
   # => Rule for deprecated HCL syntax
-  enabled = true
+  enabled = true  # => Boolean value
   # => Warn about deprecated HCL syntax
   # => Catches old patterns that should be updated
 }
 
 rule "terraform_naming_convention" {
   # => Rule for consistent naming patterns
-  enabled = true
+  enabled = true  # => Boolean value
   # => Activate naming convention checks
-  format  = "snake_case"
+  format  = "snake_case"  # => String value
   # => Enforce snake_case naming
   # => Variables, resources, modules must use underscores not camelCase
 }
@@ -936,7 +938,7 @@ rule "terraform_naming_convention" {
 ```hcl
 terraform {
   # => Terraform configuration
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Minimum version requirement
 }
 
@@ -947,7 +949,7 @@ variable "unused_var" {
   # => Variable declared but never used
   type    = string
   # => String type
-  default = "never referenced"
+  default = "never referenced"  # => String value
   # => Default value provided
   # => TFLint warning: unused variable
   # => No resource or output references this
@@ -963,7 +965,7 @@ variable "ProdInstanceType" {
 
 resource "local_file" "example" {
   # => Local file resource
-  filename = "test.txt"
+  filename = "test.txt"  # => String value
   # => Output filename
   content  = var.ProdInstanceType
   # => References camelCase variable
@@ -973,7 +975,7 @@ resource "local_file" "example" {
 # Deprecated syntax
 locals {
   # => Local values block
-  list_example = "${list("a", "b", "c")}"
+  list_example = "${list("a", "b", "c")}"  # => String interpolation
   # => TFLint warning: use ["a", "b", "c"] instead of list() function
   # => list() function deprecated in Terraform 0.12+
   # => Modern syntax: ["a", "b", "c"] (no function needed)
@@ -1081,7 +1083,7 @@ require (
 ```hcl
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 }
 
@@ -1092,7 +1094,7 @@ variable "filename" {
 # => Input variable
   type    = string
   # => Sets type
-  default = "test-output.txt"
+  default = "test-output.txt"  # => String value
   # => Sets default
 }
 
@@ -1321,7 +1323,7 @@ deny[msg] {
 ```hcl
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 }
 
@@ -1331,9 +1333,9 @@ provider "local" {}
 # Compliant resource (has all required tags)
 resource "local_file" "compliant" {
 # => Resource definition
-  filename = "compliant.txt"
+  filename = "compliant.txt"  # => String value
   # => Sets filename
-  content  = "Valid"
+  content  = "Valid"  # => String value
   # => Sets content
 
   # Simulated tags using local_file
@@ -1343,9 +1345,9 @@ resource "local_file" "compliant" {
 # Non-compliant resource (missing tags)
 resource "local_file" "non_compliant" {
 # => Resource definition
-  filename = "non-compliant.txt"
+  filename = "non-compliant.txt"  # => String value
   # => Sets filename
-  content  = "Invalid"
+  content  = "Invalid"  # => String value
   # => Missing Environment, Owner, CostCenter tags
 }
 
@@ -1445,13 +1447,15 @@ variable "server_name" {
 # => Input variable
   type        = string
   # => Sets type
-  description = "Server name"
+  description = "Server name"  # => String value
   # => Sets description
 
   validation {
-    condition     = length(var.server_name) > 0
+    # => Validation rule enforces constraints
+    condition     = length(  # => Returns collection size
+var.server_name) > 0
     # => Sets condition
-    error_message = "server_name cannot be empty"
+    error_message = "server_name cannot be empty"  # => String value
     # => Sets error_message
   }
 }
@@ -1460,7 +1464,7 @@ variable "instance_type" {
 # => Input variable
   type    = string
   # => Sets type
-  default = "small"
+  default = "small"  # => String value
   # => Sets default
 }
 
@@ -1478,9 +1482,9 @@ output "server_name" {
 
 resource "local_file" "server" {
 # => Resource definition
-  filename = "${var.server_name}-server.txt"
+  filename = "${var.server_name}-server.txt"  # => String interpolation
   # => Sets filename
-  content  = "Instance type: ${var.instance_type}"
+  content  = "Instance type: ${var.instance_type}"  # => String value
   # => Sets content
 }
 
@@ -1701,29 +1705,29 @@ infrastructure/
 ```hcl
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 
   backend "s3" {
     # Production state in separate S3 bucket
-    bucket         = "company-terraform-prod-state"
+    bucket         = "company-terraform-prod-state"  # => String value
     # => Sets bucket
-    key            = "app/terraform.tfstate"
+    key            = "app/terraform.tfstate"  # => String value
     # => Sets key
-    region         = "us-east-1"
+    region         = "us-east-1"  # => String value
     # => Sets region
-    encrypt        = true
+    encrypt        = true  # => Boolean value
     # => Sets encrypt
-    dynamodb_table = "terraform-prod-locks"
+    dynamodb_table = "terraform-prod-locks"  # => String value
     # => Sets dynamodb_table
   }
 
   required_providers {
   # => Provider configuration
-    aws = {
-      source  = "hashicorp/aws"
-      # => Sets source
-      version = "~> 5.0"
+    aws = {  # => Map/object definition
+      source  = "hashicorp/aws"  # => String value
+  # => Provider source location
+      version = "~> 5.0"  # => String value
       # => Sets version
     }
   }
@@ -1736,7 +1740,7 @@ provider "aws" {
 
   # Production uses separate AWS account
   assume_role {
-    role_arn = "arn:aws:iam::111111111111:role/TerraformProd"
+    role_arn = "arn:aws:iam::111111111111:role/TerraformProd"  # => String value
     # => Sets role_arn
   }
   # => Different IAM role than dev/staging
@@ -1745,10 +1749,10 @@ provider "aws" {
 
 module "app" {
 # => Module configuration
-  source = "../../modules/app"
+  source = "../../modules/app"  # => String value
   # => Sets source
 
-  environment    = "production"
+  environment    = "production"  # => String value
   # => Sets environment
   instance_count = 10
   # => Sets instance_count
@@ -1771,20 +1775,20 @@ output "app_url" {
 ```hcl
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 
   backend "s3" {
     # Dev state in separate S3 bucket
-    bucket         = "company-terraform-dev-state"
+    bucket         = "company-terraform-dev-state"  # => String value
     # => Sets bucket
-    key            = "app/terraform.tfstate"
+    key            = "app/terraform.tfstate"  # => String value
     # => Sets key
-    region         = "us-west-2"
+    region         = "us-west-2"  # => String value
     # => Sets region
-    encrypt        = true
+    encrypt        = true  # => Boolean value
     # => Sets encrypt
-    dynamodb_table = "terraform-dev-locks"
+    dynamodb_table = "terraform-dev-locks"  # => String value
     # => Sets dynamodb_table
   }
 }
@@ -1796,21 +1800,21 @@ provider "aws" {
 
   # Dev uses separate AWS account
   assume_role {
-    role_arn = "arn:aws:iam::222222222222:role/TerraformDev"
+    role_arn = "arn:aws:iam::222222222222:role/TerraformDev"  # => String value
     # => Sets role_arn
   }
 }
 
 module "app" {
 # => Module configuration
-  source = "../../modules/app"
+  source = "../../modules/app"  # => String value
   # => Sets source
 
-  environment    = "development"
+  environment    = "development"  # => String value
   # => Sets environment
-  instance_count = 1
+  instance_count = 1  # => Numeric value
   # => Sets instance_count
-  instance_type  = "t3.micro"
+  instance_type  = "t3.micro"  # => String value
   # => Dev-specific configuration
 }
 
@@ -1858,15 +1862,15 @@ graph TD
 ```hcl
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 
   required_providers {
   # => Provider configuration
-    aws = {
-      source  = "hashicorp/aws"
-      # => Sets source
-      version = "~> 5.0"
+    aws = {  # => Map/object definition
+      source  = "hashicorp/aws"  # => String value
+  # => Provider source location
+      version = "~> 5.0"  # => String value
       # => Sets version
     }
   }
@@ -1875,37 +1879,37 @@ terraform {
 # Primary region provider
 provider "aws" {
 # => Provider configuration
-  alias  = "primary"
+  alias  = "primary"  # => String value
   # => Sets alias
-  region = "us-east-1"
+  region = "us-east-1"  # => String value
   # => Primary region: main traffic
 }
 
 # Secondary region provider
 provider "aws" {
 # => Provider configuration
-  alias  = "secondary"
+  alias  = "secondary"  # => String value
   # => Sets alias
-  region = "us-west-2"
+  region = "us-west-2"  # => String value
   # => Secondary region: failover
 }
 
 # Tertiary region provider (global distribution)
 provider "aws" {
 # => Provider configuration
-  alias  = "tertiary"
+  alias  = "tertiary"  # => String value
   # => Sets alias
-  region = "eu-west-1"
+  region = "eu-west-1"  # => String value
   # => Tertiary region: Europe traffic
 }
 
 # Primary region resources
 module "app_primary" {
 # => Module configuration
-  source = "./modules/app"
+  source = "./modules/app"  # => String value
   # => Sets source
 
-  providers = {
+  providers = {  # => Map/object definition
     aws = aws.primary
     # => Sets aws
   }
@@ -1961,7 +1965,7 @@ module "app_tertiary" {
 # Created in primary region
 resource "aws_route53_zone" "main" {
 # => Resource definition
-  provider = aws.primary
+  provider = aws.primary  # => Overrides default provider
   # => Sets provider
 
   name = "example.com"
@@ -1971,7 +1975,7 @@ resource "aws_route53_zone" "main" {
 # Multi-region DNS routing (latency-based)
 resource "aws_route53_record" "app" {
 # => Resource definition
-  provider = aws.primary
+  provider = aws.primary  # => Overrides default provider
   # => Sets provider
 
   zone_id        = aws_route53_zone.main.zone_id
@@ -2001,7 +2005,7 @@ resource "aws_route53_record" "app" {
 
 resource "aws_route53_record" "app_secondary" {
 # => Resource definition
-  provider = aws.primary
+  provider = aws.primary  # => Overrides default provider
   # => Sets provider
 
   zone_id        = aws_route53_zone.main.zone_id
@@ -2031,7 +2035,7 @@ resource "aws_route53_record" "app_secondary" {
 # Cross-region data replication
 resource "aws_s3_bucket_replication_configuration" "primary_to_secondary" {
 # => Resource definition
-  provider = aws.primary
+  provider = aws.primary  # => Overrides default provider
   # => Sets provider
 
   bucket = module.app_primary.s3_bucket_id
@@ -2102,7 +2106,7 @@ graph TD
 ```hcl
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 }
 
@@ -2113,15 +2117,17 @@ variable "active_environment" {
 # => Input variable
   type        = string
   # => Sets type
-  description = "Active environment: blue or green"
+  description = "Active environment: blue or green"  # => String value
   # => Sets description
-  default     = "blue"
+  default     = "blue"  # => String value
   # => Sets default
 
   validation {
-    condition     = contains(["blue", "green"], var.active_environment)
+    # => Validation rule enforces constraints
+    condition     = contains(  # => Checks list membership
+["blue", "green"], var.active_environment)
     # => Sets condition
-    error_message = "active_environment must be blue or green"
+    error_message = "active_environment must be blue or green"  # => String value
     # => Sets error_message
   }
 }
@@ -2130,10 +2136,10 @@ variable "app_version" {
 # => Input variable
   type = map(string)
   # => Sets type
-  default = {
-    blue  = "v1.0"
+  default = {  # => Map/object definition
+    blue  = "v1.0"  # => String value
     # => Sets blue
-    green = "v2.0"
+    green = "v2.0"  # => String value
     # => Sets green
   }
 }
@@ -2141,7 +2147,7 @@ variable "app_version" {
 # Blue environment
 resource "local_file" "blue_app" {
 # => Resource definition
-  filename = "blue-app.txt"
+  filename = "blue-app.txt"  # => String value
   # => Sets filename
   content  = "App version: ${var.app_version["blue"]}\nStatus: ${var.active_environment == "blue" ? "ACTIVE" : "STANDBY"}"
   # => Sets content
@@ -2256,7 +2262,7 @@ Feature flags enable safe progressive rollouts: deploy to 1% of users, validate,
 ```hcl
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 }
 
@@ -2267,9 +2273,9 @@ variable "new_feature_enabled" {
 # => Input variable
   type        = bool
   # => Sets type
-  description = "Enable new feature"
+  description = "Enable new feature"  # => String value
   # => Sets description
-  default     = false
+  default     = false  # => Boolean value
   # => Sets default
 }
 
@@ -2277,15 +2283,16 @@ variable "new_feature_rollout_percentage" {
 # => Input variable
   type        = number
   # => Sets type
-  description = "Percentage of traffic to new feature (0-100)"
+  description = "Percentage of traffic to new feature (0-100)"  # => String value
   # => Sets description
-  default     = 0
+  default     = 0  # => Numeric value
   # => Sets default
 
   validation {
-    condition     = var.new_feature_rollout_percentage >= 0 && var.new_feature_rollout_percentage <= 100
+    # => Validation rule enforces constraints
+    condition     = var.new_feature_rollout_percentage >= 0 && var.new_feature_rollout_percentage <= 100  # => Numeric value
     # => Sets condition
-    error_message = "Rollout percentage must be 0-100"
+    error_message = "Rollout percentage must be 0-100"  # => String value
     # => Sets error_message
   }
 }
@@ -2293,9 +2300,9 @@ variable "new_feature_rollout_percentage" {
 # Old feature (stable)
 resource "local_file" "feature_v1" {
 # => Resource definition
-  filename = "feature-v1.txt"
+  filename = "feature-v1.txt"  # => String value
   # => Sets filename
-  content  = "Feature Version: 1.0 (Stable)\nTraffic: ${100 - var.new_feature_rollout_percentage}%"
+  content  = "Feature Version: 1.0 (Stable)\nTraffic: ${100 - var.new_feature_rollout_percentage}%"  # => String value
   # => Sets content
 }
 
@@ -2303,7 +2310,7 @@ resource "local_file" "feature_v1" {
 resource "local_file" "feature_v2" {
 # => Resource definition
   count    = var.new_feature_enabled ? 1 : 0
-  # => Only create if feature enabled
+  # => Creates specified number of instances
 
   filename = "feature-v2.txt"
   # => Sets filename
@@ -2430,9 +2437,9 @@ variable "database_password" {
 # ❌ NEVER use sensitive data in resources directly
 resource "local_file" "config" {
 # => Resource definition
-  filename = "config.txt"
+  filename = "config.txt"  # => String value
   # => Sets filename
-  content  = "DB_PASSWORD=SuperSecret123!"
+  content  = "DB_PASSWORD=SuperSecret123!"  # => String value
   # => Secrets appear in state file (plain text)
   # => Secrets appear in plan output
   # => Secrets leak in logs
@@ -2445,15 +2452,15 @@ resource "local_file" "config" {
 ```hcl
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 
   required_providers {
   # => Provider configuration
-    aws = {
-      source  = "hashicorp/aws"
-      # => Sets source
-      version = "~> 5.0"
+    aws = {  # => Map/object definition
+      source  = "hashicorp/aws"  # => String value
+  # => Provider source location
+      version = "~> 5.0"  # => String value
       # => Sets version
     }
   }
@@ -2461,7 +2468,7 @@ terraform {
 
 provider "aws" {
 # => Provider configuration
-  region = "us-west-2"
+  region = "us-west-2"  # => String value
   # => Sets region
 }
 
@@ -2473,7 +2480,7 @@ provider "aws" {
 # Reference secret from Secrets Manager (not stored in Terraform)
 data "aws_secretsmanager_secret" "db_password" {
 # => Data source
-  name = "prod/database/password"
+  name = "prod/database/password"  # => String value
   # => Fetch secret metadata (not value)
 }
 
@@ -2487,11 +2494,11 @@ data "aws_secretsmanager_secret_version" "db_password" {
 # Use secret in resource (marked sensitive)
 resource "aws_db_instance" "main" {
 # => Resource definition
-  allocated_storage   = 20
+  allocated_storage   = 20  # => Numeric value
   # => Sets allocated_storage
-  engine              = "postgres"
+  engine              = "postgres"  # => String value
   # => Sets engine
-  instance_class      = "db.t3.micro"
+  instance_class      = "db.t3.micro"  # => String value
   # => Sets instance_class
   username            = "admin"
   # => Sets username
@@ -2540,10 +2547,10 @@ terraform {
 # => Terraform configuration block
   required_providers {
   # => Provider configuration
-    vault = {
-      source  = "hashicorp/vault"
-      # => Sets source
-      version = "~> 3.0"
+    vault = {  # => Map/object definition
+      source  = "hashicorp/vault"  # => String value
+  # => Provider source location
+      version = "~> 3.0"  # => String value
       # => Sets version
     }
   }
@@ -2551,20 +2558,20 @@ terraform {
 
 provider "vault" {
 # => Provider configuration
-  address = "https://vault.example.com"
+  address = "https://vault.example.com"  # => String value
   # Authenticate via VAULT_TOKEN environment variable
 }
 
 # Read secret from Vault
 data "vault_generic_secret" "db_password" {
 # => Data source
-  path = "secret/prod/database"
+  path = "secret/prod/database"  # => String value
   # => Fetch secret from Vault KV store
 }
 
 resource "local_file" "config" {
 # => Resource definition
-  filename = "app-config.txt"
+  filename = "app-config.txt"  # => String value
   # => Sets filename
   content  = <<-EOT
   # => Sets content
@@ -2616,10 +2623,13 @@ resource "aws_iam_role" "terraform_apply" {
 # => Terraform configuration block
   # => IAM role for terraform apply operations
   # => Assumed by GitHub Actions on main branch
-  name = "TerraformApply"
+  name = "TerraformApply"  # => String value
   # => Role name (visible in AWS console)
 
-  assume_role_policy = jsonencode({
+  assume_role_policy = jsonencode(  # => Converts value to JSON string
+
+
+  {
     # => Trust policy defines who can assume this role
     # => jsonencode converts map to JSON string
     Version = "2012-10-17"
@@ -2656,12 +2666,15 @@ resource "aws_iam_role_policy" "terraform_apply" {
 # => Terraform configuration block
   # => Inline policy attached to terraform_apply role
   # => Grants permissions for infrastructure changes
-  name = "TerraformApplyPolicy"
+  name = "TerraformApplyPolicy"  # => String value
   # => Policy name
   role = aws_iam_role.terraform_apply.id
   # => Attach to terraform_apply role
 
-  policy = jsonencode({
+  policy = jsonencode(  # => Converts value to JSON string
+
+
+  {
     # => Permissions policy (what role can do)
     Version = "2012-10-17"
     # => Sets Version
@@ -2739,7 +2752,10 @@ resource "aws_iam_role" "terraform_plan" {
   name = "TerraformPlan"
   # => Role name (read-only variant)
 
-  assume_role_policy = jsonencode({
+  assume_role_policy = jsonencode(  # => Converts value to JSON string
+
+
+  {
     # => Trust policy for plan role
     Version = "2012-10-17"
     # => Sets Version
@@ -2774,7 +2790,10 @@ resource "aws_iam_role_policy" "terraform_plan" {
   role = aws_iam_role.terraform_plan.id
   # => Attach to plan role
 
-  policy = jsonencode({
+  policy = jsonencode(  # => Converts value to JSON string
+
+
+  {
     Version = "2012-10-17"
     # => Sets Version
     Statement = [
@@ -2831,19 +2850,19 @@ resource "aws_iam_role_policy" "terraform_plan" {
 # Terraform configuration assumes appropriate role
 terraform {
   # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Minimum Terraform version
 
   backend "s3" {
     # => S3 backend for state storage
-    bucket         = "terraform-state-bucket"
+    bucket         = "terraform-state-bucket"  # => String value
     # => S3 bucket name for state file
-    key            = "prod/terraform.tfstate"
+    key            = "prod/terraform.tfstate"  # => String value
     # => State file path within bucket
     # => Organizes state by environment (prod/)
-    region         = "us-west-2"
+    region         = "us-west-2"  # => String value
     # => AWS region for S3 bucket
-    role_arn       = "arn:aws:iam::ACCOUNT_ID:role/TerraformApply"
+    role_arn       = "arn:aws:iam::ACCOUNT_ID:role/TerraformApply"  # => String value
     # => Backend uses apply role (write access)
     # => Role must have S3 GetObject/PutObject/DeleteObject permissions
     # => Also needs DynamoDB permissions for state locking
@@ -2852,12 +2871,12 @@ terraform {
 
 provider "aws" {
   # => AWS provider configuration
-  region = "us-west-2"
+  region = "us-west-2"  # => String value
   # => All resources created in us-west-2
 
   assume_role {
     # => Assume IAM role for resource operations
-    role_arn = "arn:aws:iam::ACCOUNT_ID:role/TerraformApply"
+    role_arn = "arn:aws:iam::ACCOUNT_ID:role/TerraformApply"  # => String value
     # => Provider assumes role with appropriate permissions
     # => Role has permissions for EC2, S3, RDS operations
     # => CI/CD authenticates via OIDC, then assumes this role
@@ -2983,7 +3002,7 @@ graph TD
 ```hcl
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 }
 
@@ -2993,9 +3012,9 @@ provider "local" {}
 # Terraform-managed resource
 resource "local_file" "managed" {
 # => Resource definition
-  filename = "managed-file.txt"
+  filename = "managed-file.txt"  # => String value
   # => Sets filename
-  content  = "Terraform-managed content version 1.0"
+  content  = "Terraform-managed content version 1.0"  # => String value
   # => Sets content
 }
 
@@ -3091,16 +3110,17 @@ jobs:
 # Prevent manual modifications with lifecycle rules
 resource "local_file" "protected" {
 # => Resource definition
-  filename = "protected-file.txt"
+  filename = "protected-file.txt"  # => String value
   # => Sets filename
-  content  = "Protected content"
+  content  = "Protected content"  # => String value
   # => Sets content
 
   lifecycle {
-    prevent_destroy = true
+    # => Lifecycle customization controls resource behavior
+    prevent_destroy = true  # => Boolean value
     # => Prevent accidental terraform destroy
 
-    ignore_changes = [
+    ignore_changes = [  # => List definition
       # List attributes to ignore drift
       # (none here means all drift is detected)
     ]
@@ -3432,19 +3452,19 @@ GitLab CI/CD with Terraform Cloud backend enables collaborative infrastructure m
 ```hcl
 terraform {
   # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Minimum Terraform version
 
   cloud {
     # => Terraform Cloud backend configuration
     # => Replaces S3/local backend with managed service
-    organization = "my-company"
+    organization = "my-company"  # => String value
     # => Terraform Cloud organization name
     # => Must match organization in Terraform Cloud
 
     workspaces {
       # => Workspace configuration
-      name = "production-infrastructure"
+      name = "production-infrastructure"  # => String value
       # => Workspace name in Terraform Cloud
       # => State stored in this workspace
     }
@@ -3777,7 +3797,7 @@ Terraform executes resource operations in parallel for speed. Control parallelis
 ```hcl
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 }
 
@@ -3787,38 +3807,41 @@ provider "local" {}
 # Independent resources (execute in parallel)
 resource "local_file" "file1" {
 # => Resource definition
-  filename = "file1.txt"
+  filename = "file1.txt"  # => String value
   # => Sets filename
-  content  = "File 1 content"
+  content  = "File 1 content"  # => String value
   # => Created in parallel with file2, file3
 }
 
 resource "local_file" "file2" {
 # => Resource definition
-  filename = "file2.txt"
+  filename = "file2.txt"  # => String value
   # => Sets filename
-  content  = "File 2 content"
+  content  = "File 2 content"  # => String value
   # => Created in parallel with file1, file3
 }
 
 resource "local_file" "file3" {
 # => Resource definition
-  filename = "file3.txt"
+  filename = "file3.txt"  # => String value
   # => Sets filename
-  content  = "File 3 content"
+  content  = "File 3 content"  # => String value
   # => Created in parallel with file1, file2
 }
 
 # Dependent resources (execute sequentially)
 resource "local_file" "config" {
 # => Resource definition
-  filename = "config.txt"
+  filename = "config.txt"  # => String value
   # => Sets filename
-  content  = "Config based on file1"
+  content  = "Config based on file1"  # => String value
   # => Sets content
 
-  depends_on = [local_file.file1]
-  # => Waits for file1 to complete before creating
+  depends_on = [  # => Explicit dependency list
+
+
+  local_file.file1]
+  # => Explicit dependency enforces creation order
   # => Sequential dependency reduces parallelism
 }
 
@@ -3830,13 +3853,16 @@ resource "local_file" "bad_example" {
   content  = "Unnecessary dependency"
   # => Sets content
 
-  depends_on = [
+  depends_on = [  # => Explicit dependency list
+
+
+
   # => Sets depends_on
     local_file.file1,
     local_file.file2,
     local_file.file3,
   ]
-  # => Waits for ALL files (unnecessary serialization)
+  # => Explicit dependency enforces creation order
   # => Slows down apply
 }
 
@@ -3933,21 +3959,15 @@ graph TD
 ```hcl
 # Problem: Monolithic state file (slow operations)
 # ❌ Single state for entire organization (10,000+ resources)
-# terraform {
-#   backend "s3" {
-#     bucket = "company-terraform-state"
-#     key    = "everything.tfstate"  # => 50MB state file
-#   }
-# }
-# => terraform plan takes 5+ minutes (refresh 10,000 resources)
+# => terraform plan takes 5+ minutes (refresh all resources)
 # => terraform apply takes 20+ minutes
 # => High risk: corrupted state affects everything
 
 # Solution 1: Split state by environment
 terraform {
-  backend "s3" {
-    bucket = "company-terraform-state"
-    key    = "prod/infrastructure.tfstate"
+  backend "s3" {                                # => S3 backend for remote state
+    bucket = "company-terraform-state"  # => String value
+    key    = "prod/infrastructure.tfstate"  # => String value
     # => Only production resources (1,000 resources)
     # => Separate dev, staging, prod states
   }
@@ -4044,21 +4064,21 @@ State file loss is catastrophic—implement automated backups and recovery proce
 terraform {
 # => Terraform configuration block
   backend "s3" {
-    bucket = "terraform-state-backup"
+    bucket = "terraform-state-backup"  # => String value
     # => Sets bucket
-    key    = "prod/terraform.tfstate"
+    key    = "prod/terraform.tfstate"  # => String value
     # => Sets key
-    region = "us-west-2"
+    region = "us-west-2"  # => String value
     # => Sets region
 
-    versioning = true
+    versioning = true  # => Boolean value
     # => CRITICAL: Enable S3 bucket versioning
     # => Every state change creates new version
     # => Rollback possible
 
-    dynamodb_table = "terraform-locks"
+    dynamodb_table = "terraform-locks"  # => String value
     # => Sets dynamodb_table
-    encrypt        = true
+    encrypt        = true  # => Boolean value
     # => State locking + encryption
   }
 }
@@ -4066,11 +4086,12 @@ terraform {
 # S3 bucket configuration (separate Terraform project)
 resource "aws_s3_bucket" "terraform_state" {
 # => Terraform configuration block
-  bucket = "terraform-state-backup"
+  bucket = "terraform-state-backup"  # => String value
   # => Sets bucket
 
   lifecycle {
-    prevent_destroy = true
+    # => Lifecycle customization controls resource behavior
+    prevent_destroy = true  # => Boolean value
     # => Prevent accidental deletion
   }
 }
@@ -4081,7 +4102,7 @@ resource "aws_s3_bucket_versioning" "terraform_state" {
   # => Sets bucket
 
   versioning_configuration {
-    status = "Enabled"
+    status = "Enabled"  # => String value
     # => Track all state file versions
   }
 }
@@ -4205,13 +4226,13 @@ Design Terraform for disaster recovery: replicate critical infrastructure across
 # Multi-region infrastructure with workspace-based DR
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 }
 
 variable "region" {
 # => Input variable
-  description = "AWS region (primary: us-west-2, DR: us-east-1)"
+  description = "AWS region (primary: us-west-2, DR: us-east-1)"  # => String value
   # => Sets description
   type        = string
   # => Sets type
@@ -4219,7 +4240,7 @@ variable "region" {
 
 variable "environment" {
 # => Input variable
-  description = "Environment (prod-primary, prod-dr)"
+  description = "Environment (prod-primary, prod-dr)"  # => String value
   # => Sets description
   type        = string
   # => Sets type
@@ -4234,10 +4255,10 @@ provider "aws" {
 # Critical infrastructure (must exist in both regions)
 resource "aws_vpc" "main" {
 # => Resource definition
-  cidr_block = "10.0.0.0/16"
+  cidr_block = "10.0.0.0/16"  # => String value
   # => Sets cidr_block
 
-  tags = {
+  tags = {  # => Map/object definition
     Name        = "${var.environment}-vpc"
     # => Sets Name
     Environment = var.environment
@@ -4251,7 +4272,7 @@ resource "aws_subnet" "public" {
 # => Resource definition
   vpc_id                  = aws_vpc.main.id
   # => Sets vpc_id
-  cidr_block              = "10.0.1.0/24"
+  cidr_block              = "10.0.1.0/24"  # => String value
   # => Sets cidr_block
   availability_zone       = data.aws_availability_zones.available.names[0]
   # => Sets availability_zone
@@ -4322,7 +4343,7 @@ resource "aws_db_instance" "primary" {
 
   skip_final_snapshot = false
   # => Sets skip_final_snapshot
-  final_snapshot_identifier = "${var.environment}-db-final-${formatdate("YYYYMMDD-hhmm", timestamp())}"
+  final_snapshot_identifier = "${var.environment}-db-final-${formatdate("YYYYMMDD-hhmm", timestamp()  # => Current UTC time)}"
   # => Create snapshot on deletion
 }
 
@@ -4445,26 +4466,26 @@ Manage multiple AWS accounts (dev, staging, prod) with organization-level Terraf
 # AWS Organizations setup (management account)
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 }
 
 provider "aws" {
 # => Provider configuration
-  region = "us-west-2"
+  region = "us-west-2"  # => String value
   # => Sets region
 }
 
 # Create organizational units
 resource "aws_organizations_organization" "main" {
 # => Resource definition
-  feature_set = "ALL"
+  feature_set = "ALL"  # => String value
   # => Enables consolidated billing and policy features
 }
 
 resource "aws_organizations_organizational_unit" "environments" {
 # => Resource definition
-  name      = "Environments"
+  name      = "Environments"  # => String value
   # => Sets name
   parent_id = aws_organizations_organization.main.roots[0].id
   # => Sets parent_id
@@ -4473,14 +4494,14 @@ resource "aws_organizations_organizational_unit" "environments" {
 # Development account
 resource "aws_organizations_account" "dev" {
 # => Resource definition
-  name      = "Development"
+  name      = "Development"  # => String value
   # => Sets name
-  email     = "aws-dev@example.com"
+  email     = "aws-dev@example.com"  # => String value
   # => Sets email
   parent_id = aws_organizations_organizational_unit.environments.id
   # => Sets parent_id
 
-  tags = {
+  tags = {  # => Map/object definition
     Environment = "dev"
     # => Sets Environment
   }
@@ -4490,7 +4511,7 @@ resource "aws_organizations_account" "dev" {
 # Staging account
 resource "aws_organizations_account" "staging" {
 # => Resource definition
-  name      = "Staging"
+  name      = "Staging"  # => String value
   # => Sets name
   email     = "aws-staging@example.com"
   # => Sets email
@@ -4527,7 +4548,10 @@ resource "aws_organizations_policy" "deny_expensive_instances" {
   description = "Prevent launching expensive EC2 instances"
   # => Sets description
 
-  content = jsonencode({
+  content = jsonencode(  # => Converts value to JSON string
+
+
+  {
     Version = "2012-10-17"
     # => Sets Version
     Statement = [
@@ -4580,7 +4604,10 @@ resource "aws_iam_role" "cross_account_admin" {
   name = "CrossAccountAdmin"                   # => Role name
   # => Sets name
 
-  assume_role_policy = jsonencode({
+  assume_role_policy = jsonencode(  # => Converts value to JSON string
+
+
+  {
     # => Trust policy defining who can assume this role
     Version = "2012-10-17"                     # => IAM policy version
     # => Sets Version
@@ -4652,7 +4679,7 @@ provider "aws" {
 resource "aws_vpc" "dev_vpc" {
 # => Resource definition
   # => VPC in dev account (isolated from prod)
-  provider   = aws.dev                         # => Use dev provider alias
+  provider = aws.dev                         # => Use dev provider alias  # => Overrides default provider
   # => Resource created in dev account (111111111111)
   cidr_block = "10.0.0.0/16"                   # => Private IP range for dev
   # => Supports 65,536 IP addresses
@@ -4671,7 +4698,7 @@ resource "aws_vpc" "dev_vpc" {
 resource "aws_vpc" "prod_vpc" {
 # => Resource definition
   # => VPC in prod account (isolated from dev)
-  provider   = aws.prod                        # => Use prod provider alias
+  provider = aws.prod                        # => Use prod provider alias  # => Overrides default provider
   # => Resource created in prod account (222222222222)
   cidr_block = "10.1.0.0/16"                   # => Private IP range for prod
   # => Supports 65,536 IP addresses
@@ -4852,7 +4879,7 @@ terraform-aws-vpc/
 ```hcl
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 }
 
@@ -4865,7 +4892,8 @@ resource "aws_vpc" "main" {
   enable_dns_support   = var.enable_dns_support
   # => Sets enable_dns_support
 
-  tags = merge(
+  tags = merge(  # => Combines maps
+
   # => Sets tags
     {
       Name = var.name
@@ -4877,8 +4905,9 @@ resource "aws_vpc" "main" {
 
 resource "aws_subnet" "public" {
 # => Resource definition
-  count = length(var.public_subnets)
-  # => Sets count
+  count = length(  # => Returns collection size
+var.public_subnets)
+  # => Creates specified number of instances
 
   vpc_id                  = aws_vpc.main.id
   # => Sets vpc_id
@@ -4886,10 +4915,11 @@ resource "aws_subnet" "public" {
   # => Sets cidr_block
   availability_zone       = data.aws_availability_zones.available.names[count.index]
   # => Sets availability_zone
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = true  # => Boolean value
   # => Sets map_public_ip_on_launch
 
-  tags = merge(
+  tags = merge(  # => Combines maps
+
   # => Sets tags
     {
       Name = "${var.name}-public-${count.index + 1}"
@@ -4903,8 +4933,9 @@ resource "aws_subnet" "public" {
 
 resource "aws_subnet" "private" {
 # => Resource definition
-  count = length(var.private_subnets)
-  # => Sets count
+  count = length(  # => Returns collection size
+var.private_subnets)
+  # => Creates specified number of instances
 
   vpc_id            = aws_vpc.main.id
   # => Sets vpc_id
@@ -4913,7 +4944,8 @@ resource "aws_subnet" "private" {
   availability_zone = data.aws_availability_zones.available.names[count.index]
   # => Sets availability_zone
 
-  tags = merge(
+  tags = merge(  # => Combines maps
+
   # => Sets tags
     {
       Name = "${var.name}-private-${count.index + 1}"
@@ -4940,7 +4972,7 @@ data "aws_availability_zones" "available" {
 ```hcl
 variable "name" {
 # => Input variable
-  description = "Name prefix for VPC resources"
+  description = "Name prefix for VPC resources"  # => String value
   # => Sets description
   type        = string
   # => Sets type
@@ -4948,41 +4980,41 @@ variable "name" {
 
 variable "cidr_block" {
 # => Input variable
-  description = "CIDR block for VPC"
+  description = "CIDR block for VPC"  # => String value
   # => Sets description
   type        = string
   # => Sets type
-  default     = "10.0.0.0/16"
+  default     = "10.0.0.0/16"  # => String value
   # => Sets default
 }
 
 variable "public_subnets" {
 # => Input variable
-  description = "List of public subnet CIDR blocks"
+  description = "List of public subnet CIDR blocks"  # => String value
   # => Sets description
   type        = list(string)
   # => Sets type
-  default     = ["10.0.1.0/24", "10.0.2.0/24"]
+  default     = ["10.0.1.0/24", "10.0.2.0/24"]  # => List definition
   # => Sets default
 }
 
 variable "private_subnets" {
 # => Input variable
-  description = "List of private subnet CIDR blocks"
+  description = "List of private subnet CIDR blocks"  # => String value
   # => Sets description
   type        = list(string)
   # => Sets type
-  default     = ["10.0.101.0/24", "10.0.102.0/24"]
+  default     = ["10.0.101.0/24", "10.0.102.0/24"]  # => List definition
   # => Sets default
 }
 
 variable "enable_dns_hostnames" {
 # => Input variable
-  description = "Enable DNS hostnames in VPC"
+  description = "Enable DNS hostnames in VPC"  # => String value
   # => Sets description
   type        = bool
   # => Sets type
-  default     = true
+  default     = true  # => Boolean value
   # => Sets default
 }
 
@@ -5015,7 +5047,7 @@ variable "tags" {
 ```hcl
 output "vpc_id" {
 # => Output value
-  description = "ID of the VPC"
+  description = "ID of the VPC"  # => String value
   # => Sets description
   value       = aws_vpc.main.id
   # => Sets value
@@ -5023,7 +5055,7 @@ output "vpc_id" {
 
 output "vpc_cidr_block" {
 # => Output value
-  description = "CIDR block of the VPC"
+  description = "CIDR block of the VPC"  # => String value
   # => Sets description
   value       = aws_vpc.main.cidr_block
   # => Sets value
@@ -5031,7 +5063,7 @@ output "vpc_cidr_block" {
 
 output "public_subnet_ids" {
 # => Output value
-  description = "IDs of public subnets"
+  description = "IDs of public subnets"  # => String value
   # => Sets description
   value       = aws_subnet.public[*].id
   # => Sets value
@@ -5039,7 +5071,7 @@ output "public_subnet_ids" {
 
 output "private_subnet_ids" {
 # => Output value
-  description = "IDs of private subnets"
+  description = "IDs of private subnets"  # => String value
   # => Sets description
   value       = aws_subnet.private[*].id
   # => Sets value
@@ -5071,27 +5103,27 @@ output "private_subnet_ids" {
 # Public Terraform Registry
 module "vpc" {
 # => Module configuration
-  source  = "terraform-aws-modules/vpc/aws"
-  # => Sets source
-  version = "5.1.0"
+  source  = "terraform-aws-modules/vpc/aws"  # => String value
+  # => Provider source location
+  version = "5.1.0"  # => String value
   # => Uses public registry module
 
-  name = "my-vpc"
+  name = "my-vpc"  # => String value
   # => Sets name
-  cidr = "10.0.0.0/16"
+  cidr = "10.0.0.0/16"  # => String value
   # => Sets cidr
 
-  azs             = ["us-west-2a", "us-west-2b"]
+  azs             = ["us-west-2a", "us-west-2b"]  # => List definition
   # => Sets azs
-  public_subnets  = ["10.0.1.0/24", "10.0.2.0/24"]
+  public_subnets  = ["10.0.1.0/24", "10.0.2.0/24"]  # => List definition
   # => Sets public_subnets
-  private_subnets = ["10.0.101.0/24", "10.0.102.0/24"]
+  private_subnets = ["10.0.101.0/24", "10.0.102.0/24"]  # => List definition
   # => Sets private_subnets
 
-  enable_nat_gateway = true
+  enable_nat_gateway = true  # => Boolean value
   # => Sets enable_nat_gateway
 
-  tags = {
+  tags = {  # => Map/object definition
     Environment = "prod"
     # => Sets Environment
   }
@@ -5100,21 +5132,21 @@ module "vpc" {
 # Private Terraform Cloud registry
 module "vpc" {
 # => Module configuration
-  source  = "app.terraform.io/my-org/vpc/aws"
-  # => Sets source
-  version = "1.0.0"
+  source  = "app.terraform.io/my-org/vpc/aws"  # => String value
+  # => Provider source location
+  version = "1.0.0"  # => String value
   # => Uses private registry module
 
-  name = "my-vpc"
+  name = "my-vpc"  # => String value
   # => Sets name
-  cidr = "10.0.0.0/16"
+  cidr = "10.0.0.0/16"  # => String value
   # => Sets cidr
 }
 
 # Git-based module (no registry)
 module "vpc" {
 # => Module configuration
-  source = "git::https://github.com/my-org/terraform-aws-vpc.git?ref=v1.0.0"
+  source = "git::https://github.com/my-org/terraform-aws-vpc.git?ref=v1.0.0"  # => String value
   # => Direct Git reference with version tag
   # => No registry required
 }
@@ -5210,7 +5242,7 @@ suites:
 ```hcl
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 }
 
@@ -5224,26 +5256,26 @@ variable "region" {
 # => Input variable
   type    = string
   # => Sets type
-  default = "us-west-2"
+  default = "us-west-2"  # => String value
   # => Sets default
 }
 
 # Module under test
 module "vpc" {
 # => Module configuration
-  source = "../../.."
+  source = "../../.."  # => String value
   # => References module at repository root
 
-  name            = "test-vpc"
+  name            = "test-vpc"  # => String value
   # => Sets name
-  cidr_block      = "10.0.0.0/16"
+  cidr_block      = "10.0.0.0/16"  # => String value
   # => Sets cidr_block
-  public_subnets  = ["10.0.1.0/24", "10.0.2.0/24"]
+  public_subnets  = ["10.0.1.0/24", "10.0.2.0/24"]  # => List definition
   # => Sets public_subnets
-  private_subnets = ["10.0.101.0/24", "10.0.102.0/24"]
+  private_subnets = ["10.0.101.0/24", "10.0.102.0/24"]  # => List definition
   # => Sets private_subnets
 
-  tags = {
+  tags = {  # => Map/object definition
     Environment = "test"
     # => Sets Environment
     Purpose     = "kitchen-terraform"
@@ -5405,39 +5437,39 @@ terraform-monorepo/
 ```hcl
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 }
 
 provider "aws" {
 # => Provider configuration
-  region = "us-west-2"
+  region = "us-west-2"  # => String value
   # => Sets region
 }
 
 locals {
 # => Local values
-  environment = "dev"
+  environment = "dev"  # => String value
   # => Environment-specific local values
 }
 
 # Shared VPC module
 module "vpc" {
 # => Module configuration
-  source = "../../modules/vpc"
+  source = "../../modules/vpc"  # => String value
   # => Sets source
 
-  name       = "${local.environment}-vpc"
+  name       = "${local.environment}-vpc"  # => String interpolation
   # => Sets name
-  cidr_block = "10.0.0.0/16"
+  cidr_block = "10.0.0.0/16"  # => String value
   # => Sets cidr_block
 
-  public_subnets  = ["10.0.1.0/24", "10.0.2.0/24"]
+  public_subnets  = ["10.0.1.0/24", "10.0.2.0/24"]  # => List definition
   # => Sets public_subnets
-  private_subnets = ["10.0.101.0/24", "10.0.102.0/24"]
+  private_subnets = ["10.0.101.0/24", "10.0.102.0/24"]  # => List definition
   # => Sets private_subnets
 
-  tags = {
+  tags = {  # => Map/object definition
     Environment = local.environment
     # => Sets Environment
   }
@@ -5446,7 +5478,7 @@ module "vpc" {
 # Compute resources
 module "compute" {
 # => Module configuration
-  source = "../../modules/compute"
+  source = "../../modules/compute"  # => String value
   # => Sets source
 
   environment       = local.environment
@@ -5495,39 +5527,39 @@ module "database" {
 ```hcl
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 }
 
 provider "aws" {
 # => Provider configuration
-  region = "us-west-2"
+  region = "us-west-2"  # => String value
   # => Sets region
 }
 
 locals {
 # => Local values
-  environment = "prod"
+  environment = "prod"  # => String value
   # => Sets environment
 }
 
 # Same modules, different parameters
 module "vpc" {
 # => Module configuration
-  source = "../../modules/vpc"
+  source = "../../modules/vpc"  # => String value
   # => Sets source
 
-  name       = "${local.environment}-vpc"
+  name       = "${local.environment}-vpc"  # => String interpolation
   # => Sets name
-  cidr_block = "10.1.0.0/16"
+  cidr_block = "10.1.0.0/16"  # => String value
   # => Different CIDR for prod
 
-  public_subnets  = ["10.1.1.0/24", "10.1.2.0/24", "10.1.3.0/24"]
+  public_subnets  = ["10.1.1.0/24", "10.1.2.0/24", "10.1.3.0/24"]  # => List definition
   # => Sets public_subnets
-  private_subnets = ["10.1.101.0/24", "10.1.102.0/24", "10.1.103.0/24"]
+  private_subnets = ["10.1.101.0/24", "10.1.102.0/24", "10.1.103.0/24"]  # => List definition
   # => 3 subnets for multi-AZ
 
-  tags = {
+  tags = {  # => Map/object definition
     Environment = local.environment
     # => Sets Environment
   }
@@ -5535,7 +5567,7 @@ module "vpc" {
 
 module "compute" {
 # => Module configuration
-  source = "../../modules/compute"
+  source = "../../modules/compute"  # => String value
   # => Sets source
 
   environment       = local.environment
@@ -5652,7 +5684,7 @@ graph TD
 terraform {
 # => Terraform configuration block
   # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Minimum Terraform version required
 }
 
@@ -5666,23 +5698,23 @@ variable "environment" {
 variable "enable_auto_shutdown" {
 # => Input variable
   # => Toggle auto-shutdown feature
-  description = "Enable auto-shutdown for cost savings (non-prod only)"
+  description = "Enable auto-shutdown for cost savings (non-prod only)"  # => String value
   # => Human-readable description
   type        = bool
   # => Boolean variable (true/false)
-  default     = false
+  default     = false  # => Boolean value
   # => Default: disabled (must opt-in for cost savings)
 }
 
 provider "aws" {
 # => Provider configuration
   # => AWS provider configuration
-  region = "us-west-2"
+  region = "us-west-2"  # => String value
   # => All resources created in us-west-2
 
   default_tags {
     # => Tags applied to ALL resources automatically
-    tags = {
+    tags = {  # => Map/object definition
       ManagedBy   = "Terraform"
       # => Identifies infrastructure managed by Terraform
       Environment = var.environment
@@ -5699,7 +5731,7 @@ resource "aws_instance" "web" {
 # => Resource definition
   # => EC2 instances with environment-based sizing
   count = var.environment == "prod" ? 3 : 1
-  # => 3 instances for prod (HA), 1 for dev (cost savings)
+  # => Creates specified number of instances
   # => Ternary: condition ? true_value : false_value
 
   ami           = data.aws_ami.ubuntu.id
@@ -5718,7 +5750,7 @@ resource "aws_instance" "web" {
     dynamic "spot_options" {
       # => Conditional nested block (only for dev)
       for_each = var.environment == "dev" ? [1] : []
-      # => for_each with [1] creates block, [] skips block
+  # => Creates multiple instances from collection
       content {
         # => Spot instance configuration
         spot_instance_type             = "persistent"
@@ -5766,7 +5798,7 @@ resource "aws_lambda_function" "auto_shutdown" {
 # => Resource definition
   # => Lambda function for scheduled instance stop/start
   count = var.enable_auto_shutdown ? 1 : 0
-  # => Create only if enable_auto_shutdown = true
+  # => Creates specified number of instances
   # => 0 resources if disabled (no cost)
 
   filename      = "auto-shutdown.zip"
@@ -5799,11 +5831,14 @@ resource "aws_iam_role" "lambda_auto_shutdown" {
 # => Resource definition
   # => IAM role for Lambda execution
   count = var.enable_auto_shutdown ? 1 : 0
-  # => Create only if auto-shutdown enabled
+  # => Creates specified number of instances
   name  = "${var.environment}-lambda-auto-shutdown"
   # => Role name with environment prefix
 
-  assume_role_policy = jsonencode({
+  assume_role_policy = jsonencode(  # => Converts value to JSON string
+
+
+  {
     # => Trust policy (who can assume this role)
     Version = "2012-10-17"
     # => Sets Version
@@ -5824,11 +5859,14 @@ resource "aws_iam_role_policy" "lambda_auto_shutdown" {
 # => Resource definition
   # => Inline policy for Lambda role
   count = var.enable_auto_shutdown ? 1 : 0
-  # => Sets count
+  # => Creates specified number of instances
   role  = aws_iam_role.lambda_auto_shutdown[0].id
   # => Attach to Lambda role
 
-  policy = jsonencode({
+  policy = jsonencode(  # => Converts value to JSON string
+
+
+  {
     # => Permissions policy
     Version = "2012-10-17"
     # => Sets Version
@@ -5858,7 +5896,7 @@ resource "aws_cloudwatch_event_rule" "shutdown_schedule" {
 # => Resource definition
   # => EventBridge rule for nightly shutdown
   count               = var.enable_auto_shutdown ? 1 : 0
-  # => Sets count
+  # => Creates specified number of instances
   name                = "${var.environment}-shutdown-schedule"
   # => Sets name
   description         = "Stop instances at 7 PM weekdays"
@@ -5873,7 +5911,7 @@ resource "aws_cloudwatch_event_target" "shutdown_lambda" {
 # => Resource definition
   # => EventBridge target for shutdown rule
   count     = var.enable_auto_shutdown ? 1 : 0
-  # => Sets count
+  # => Creates specified number of instances
   rule      = aws_cloudwatch_event_rule.shutdown_schedule[0].name
   # => Link to shutdown schedule rule
   target_id = "ShutdownLambda"
@@ -5881,7 +5919,10 @@ resource "aws_cloudwatch_event_target" "shutdown_lambda" {
   arn       = aws_lambda_function.auto_shutdown[0].arn
   # => Lambda function to invoke
 
-  input = jsonencode({
+  input = jsonencode(  # => Converts value to JSON string
+
+
+  {
     # => Input passed to Lambda function
     action = "stop"
     # => Lambda reads action and stops instances
@@ -5892,7 +5933,7 @@ resource "aws_cloudwatch_event_rule" "startup_schedule" {
 # => Resource definition
   # => EventBridge rule for morning startup
   count               = var.enable_auto_shutdown ? 1 : 0
-  # => Sets count
+  # => Creates specified number of instances
   name                = "${var.environment}-startup-schedule"
   # => Sets name
   description         = "Start instances at 8 AM weekdays"
@@ -5907,7 +5948,7 @@ resource "aws_cloudwatch_event_target" "startup_lambda" {
 # => Resource definition
   # => EventBridge target for startup rule
   count     = var.enable_auto_shutdown ? 1 : 0
-  # => Sets count
+  # => Creates specified number of instances
   rule      = aws_cloudwatch_event_rule.startup_schedule[0].name
   # => Link to startup schedule rule
   target_id = "StartupLambda"
@@ -5915,7 +5956,10 @@ resource "aws_cloudwatch_event_target" "startup_lambda" {
   arn       = aws_lambda_function.auto_shutdown[0].arn
   # => Same Lambda function (handles stop and start)
 
-  input = jsonencode({
+  input = jsonencode(  # => Converts value to JSON string
+
+
+  {
     action = "start"
     # => Lambda reads action and starts instances
   })
@@ -5925,7 +5969,7 @@ resource "aws_lambda_permission" "allow_eventbridge_shutdown" {
 # => Resource definition
   # => Grant EventBridge permission to invoke Lambda
   count         = var.enable_auto_shutdown ? 1 : 0
-  # => Sets count
+  # => Creates specified number of instances
   statement_id  = "AllowExecutionFromEventBridgeShutdown"
   # => Unique statement ID
   action        = "lambda:InvokeFunction"
@@ -5942,7 +5986,7 @@ resource "aws_lambda_permission" "allow_eventbridge_startup" {
 # => Resource definition
   # => Grant EventBridge permission for startup rule
   count         = var.enable_auto_shutdown ? 1 : 0
-  # => Sets count
+  # => Creates specified number of instances
   statement_id  = "AllowExecutionFromEventBridgeStartup"
   # => Sets statement_id
   action        = "lambda:InvokeFunction"
@@ -5960,7 +6004,7 @@ resource "aws_ec2_capacity_reservation" "prod" {
 # => Resource definition
   # => Reserved capacity for production instances
   count             = var.environment == "prod" ? 1 : 0
-  # => Only for production environment
+  # => Creates specified number of instances
   instance_type     = "t3.large"
   # => Match production instance type
   instance_platform = "Linux/UNIX"
@@ -6011,31 +6055,31 @@ resource "aws_s3_bucket" "data" {
 # AWS Budget for cost alerting
 resource "aws_budgets_budget" "monthly_cost" {
   # => AWS Budget tracks spending and sends alerts
-  name              = "${var.environment}-monthly-budget"
+  name              = "${var.environment}-monthly-budget"  # => String interpolation
   # => Budget name with environment prefix
-  budget_type       = "COST"
+  budget_type       = "COST"  # => String value
   # => Budget type: COST (total spending), USAGE, or RI_COVERAGE
   limit_amount      = var.environment == "prod" ? "10000" : "1000"
   # => $10k/month for prod, $1k/month for dev
   # => Different limits per environment
-  limit_unit        = "USD"
+  limit_unit        = "USD"  # => String value
   # => Currency unit (USD dollars)
-  time_period_start = "2024-01-01_00:00"
+  time_period_start = "2024-01-01_00:00"  # => String value
   # => Budget start date (YYYY-MM-DD_HH:MM format)
-  time_unit         = "MONTHLY"
+  time_unit         = "MONTHLY"  # => String value
   # => Reset budget every month
 
   notification {
     # => Alert configuration when threshold exceeded
-    comparison_operator        = "GREATER_THAN"
+    comparison_operator        = "GREATER_THAN"  # => String value
     # => Trigger when actual cost > threshold
-    threshold                  = 80
+    threshold                  = 80  # => Numeric value
     # => Threshold value (80% of limit)
-    threshold_type             = "PERCENTAGE"
+    threshold_type             = "PERCENTAGE"  # => String value
     # => Threshold as percentage (not absolute amount)
-    notification_type          = "ACTUAL"
+    notification_type          = "ACTUAL"  # => String value
     # => Alert on actual costs (not forecasted)
-    subscriber_email_addresses = ["team@example.com"]
+    subscriber_email_addresses = ["team@example.com"]  # => List definition
     # => Alert at 80% of budget
     # => Email recipients for alerts
     # => Sends email when prod cost > $8k or dev > $800

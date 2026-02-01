@@ -819,48 +819,80 @@ graph TD
 ```
 
 ```yaml
-apiVersion: apps/v1
-kind: DaemonSet
+apiVersion:
+  apps/v1 # => Apps API for DaemonSets
+  # => Stable workload API
+kind:
+  DaemonSet # => DaemonSet resource
+  # => Node-level Pod deployment
 metadata:
-  name: gpu-monitor # => DaemonSet name
+  # => DaemonSet metadata
+  name:
+    gpu-monitor # => DaemonSet name
+    # => Unique cluster identifier
 spec:
+  # => DaemonSet specification
   selector:
+    # => Pod selector
+    # => Links DaemonSet to Pods
     matchLabels:
-      app: gpu-monitor # => Must match template labels
+      # => Equality-based selector
+      app:
+        gpu-monitor # => Must match template labels
+        # => Pod ownership identification
   template:
+    # => Pod template (one per matching node)
     metadata:
+      # => Pod template metadata
       labels:
-        app: gpu-monitor # => Pod labels
+        # => Labels for created Pods
+        app:
+          gpu-monitor # => Pod labels
+          # => Must match selector
     spec:
+      # => Pod specification
       nodeSelector:
+        # => Node label selector
+        # => Restricts Pod placement
         accelerator:
           nvidia-gpu # => Only runs on nodes with this label
           # => kubectl label nodes node-1 accelerator=nvidia-gpu
           # => Filters nodes for GPU-equipped hosts
+          # => Node targeting mechanism
       containers:
+        # => Container list
         - name:
             dcgm-exporter # => NVIDIA GPU monitoring
             # => Data Center GPU Manager exporter
+            # => Container identifier
           image:
             nvidia/dcgm-exporter:3.1.3 # => NVIDIA official image
             # => Version 3.1.3
+            # => GPU metrics collection
           ports:
+            # => Port definitions
             - containerPort:
                 9400 # => Prometheus metrics port
                 # => Exposes GPU metrics
+                # => Scrape endpoint for monitoring
           securityContext:
+            # => Container security settings
             privileged:
               true # => Required for GPU access
               # => Allows device access
               # => Security trade-off for hardware monitoring
+              # => Full host access granted
 
 # DaemonSet with node selector:
 # => Only creates Pods on nodes matching nodeSelector
 # => 10 nodes total, 3 GPU nodes → DESIRED=3, CURRENT=3
 # => 7 nodes ignored (no nvidia-gpu label)
+# => Selective deployment optimization
 # => New GPU node added → Pod created automatically on new node
+# => Automatic scale-out on matching nodes
 # => Node label removed → Pod deleted automatically
 # => kubectl label nodes node-1 accelerator- (removes label, deletes Pod)
+# => Label-driven Pod lifecycle
 ```
 
 **Key Takeaway**: Use nodeSelector or node affinity in DaemonSets to run specialized workloads only on appropriate nodes; label nodes based on hardware capabilities, regions, or roles for targeted DaemonSet deployment.
@@ -874,12 +906,18 @@ spec:
 Jobs run Pods to completion, suitable for batch processing, data migration, or one-time tasks. Unlike Deployments, Jobs terminate when tasks complete successfully and track completion status.
 
 ```yaml
-apiVersion: batch/v1 # => Batch API for Jobs
-kind: Job # => Job resource
+apiVersion:
+  batch/v1 # => Batch API for Jobs
+  # => Stable Job API
+kind:
+  Job # => Job resource
+  # => One-time task execution
 metadata:
+  # => Job metadata
   name:
     data-migration # => Job name
     # => Unique identifier for batch task
+    # => Job completion tracking name
 spec:
   # => Job specification
   completions:
@@ -887,24 +925,30 @@ spec:
     # => Job completes after 1 successful Pod
     # => completions=5 requires 5 successful Pods
     # => Total work items to process
+    # => Desired completion count
   parallelism:
     1 # => Number of Pods running in parallel
     # => parallelism=3 runs 3 Pods simultaneously
     # => parallelism ≤ completions
     # => Controls concurrency
+    # => Concurrent Pod execution limit
   backoffLimit:
     3 # => Maximum retries before marking Job failed
     # => Retries with exponential backoff
     # => Default: 6 retries
     # => Prevents infinite retry loops
+    # => Failure tolerance threshold
   template:
     # => Pod template for Job
+    # => Blueprint for Job Pods
     metadata:
+      # => Pod template metadata
       labels:
         # => Pod labels
         app:
           migration # => Pod labels for tracking
           # => Used for monitoring and querying
+          # => Job Pod identification
     spec:
       # => Pod specification
       restartPolicy:
@@ -913,30 +957,41 @@ spec:
         # => Never creates new Pod on failure
         # => OnFailure restarts container in same Pod
         # => Required field for Jobs
+        # => Failure handling strategy
       containers:
         # => Container list
         - name:
             migrator # => Container name
             # => Migration task executor
+            # => Container identifier
           image:
             busybox:1.36 # => Lightweight Linux utilities
             # => Minimal image for shell scripts
+            # => Version 1.36 pinned
           command:
             # => Container command
+            # => Override entrypoint
             - sh # => Shell interpreter
+              # => Bourne shell
             - -c # => Execute following script
+              # => Interpret as shell script
             - | # => Multi-line script
               # => Pipe preserves newlines
+              # => YAML literal block scalar
               echo "Starting data migration..."
               # => Log start
+              # => Stdout logging
               sleep 10
               # => Simulate migration work
+              # => 10 second task duration
               echo "Migration completed successfully"
               # => Log completion
+              # => Success message
               exit 0 # => Exit 0 signals success
                      # => Exit 1+ triggers retry (up to backoffLimit)
                      # => Job controller creates new Pod on failure
                      # => Exit code determines success/failure
+                     # => Zero exit = Job completion
 
 # Job lifecycle:
 # => Pod created and runs to completion
@@ -1422,52 +1477,122 @@ spec:
 Ingress supports multiple hosts in a single resource, enabling consolidated routing configuration. Each host can have independent path-based routing rules.
 
 ```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion:
+  networking.k8s.io/v1 # => Networking API group
+  # => Stable v1 Ingress API
+kind:
+  Ingress # => Ingress resource for routing
+  # => HTTP/HTTPS routing rules
 metadata:
-  name: multi-host-ingress
+  name:
+    multi-host-ingress # => Ingress name
+    # => Unique identifier
 spec:
-  ingressClassName: nginx
+  # => Ingress specification
+  ingressClassName:
+    nginx # => Ingress Controller type
+    # => Uses nginx Ingress Controller
+    # => Alternative: traefik, haproxy, aws-alb
   rules:
-    - host: api.example.com # => First host
+    # => Routing rules (multiple hosts)
+    - host:
+        api.example.com # => First host
+        # => API subdomain
+        # => Virtual host routing
       http:
+        # => HTTP routing configuration
         paths:
-          - path: /
-            pathType: Prefix
+          # => Path-based routes
+          - path:
+              / # => Root path matcher
+              # => Matches all requests
+            pathType:
+              Prefix # => Prefix matching type
+              # => /anything matches
+              # => Alternative: Exact, ImplementationSpecific
             backend:
+              # => Backend Service configuration
               service:
-                name: api-service
+                # => Service-based backend
+                name:
+                  api-service # => API Service name
+                  # => Routes to api-service
                 port:
-                  number: 80
+                  # => Target port
+                  number:
+                    80 # => Service port 80
+                    # => HTTP port
 
-    - host: admin.example.com # => Second host
+    - host:
+        admin.example.com # => Second host
+        # => Admin subdomain
+        # => Separate virtual host
       http:
+        # => HTTP configuration
         paths:
-          - path: /
-            pathType: Prefix
+          # => Path routes
+          - path:
+              / # => Root path
+              # => All admin requests
+            pathType:
+              Prefix # => Prefix matching
+              # => Matches /*, /dashboard, etc.
             backend:
+              # => Admin backend
               service:
-                name: admin-service
+                # => Admin Service
+                name:
+                  admin-service # => Admin Service name
+                  # => Different Service than API
                 port:
-                  number: 80
+                  # => Port configuration
+                  number:
+                    80 # => HTTP port
+                    # => Standard HTTP
 
-    - host: static.example.com # => Third host
+    - host:
+        static.example.com # => Third host
+        # => Static content subdomain
+        # => CDN-like routing
       http:
+        # => HTTP configuration
         paths:
-          - path: /
-            pathType: Prefix
+          # => Path routing
+          - path:
+              / # => Root path
+              # => All static assets
+            pathType:
+              Prefix # => Prefix match
+              # => /images, /js, /css all match
             backend:
+              # => Static backend
               service:
-                name: static-service
+                # => Static asset Service
+                name:
+                  static-service # => Static Service name
+                  # => Serves static files
                 port:
-                  number: 80
+                  # => Port number
+                  number:
+                    80 # => HTTP port
+                    # => nginx serving static
 
 # Multi-host routing:
 # => http://api.example.com → api-service
+# => Host header routing
+# => API requests to API Service
 # => http://admin.example.com → admin-service
+# => Admin interface routing
+# => Separate backend for admin
 # => http://static.example.com → static-service
+# => Static asset routing
+# => CDN-like behavior
 # => All hosts use same Ingress Controller IP
+# => Single LoadBalancer IP
+# => Virtual host routing by Host header
 # => Configure DNS to point all hosts to Ingress Controller
+# => DNS A records for all three hosts → same IP
+# => Ingress Controller routes by Host header
 ```
 
 **Key Takeaway**: Consolidate multiple host-based routes in a single Ingress resource for easier management; each host can have independent backend Services and path rules.
@@ -1481,51 +1606,98 @@ spec:
 Ingress Controllers support custom annotations for advanced features like rate limiting, authentication, CORS, and custom headers. Annotations are controller-specific (nginx, Traefik, etc.).
 
 ```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion:
+  networking.k8s.io/v1 # => Networking API group
+  # => Stable Ingress API
+kind:
+  Ingress # => Ingress resource with annotations
+  # => Advanced feature configuration
 metadata:
-  name: annotated-ingress
+  name:
+    annotated-ingress # => Ingress name
+    # => Unique identifier
   annotations:
+    # => Controller-specific annotations
+    # => nginx Ingress Controller specific
     nginx.ingress.kubernetes.io/rewrite-target:
-      /$2
-      # => URL rewriting with capture groups
+      /$2 # => URL rewriting with capture groups
+      # => Rewrites /api/users to /users
+      # => $2 references second capture group in path
+      # => Removes /api prefix before backend
     nginx.ingress.kubernetes.io/ssl-redirect:
-      "true"
-      # => Force HTTPS redirect
+      "true" # => Force HTTPS redirect
+      # => HTTP requests → 308 redirect to HTTPS
+      # => Enforces encrypted traffic
+      # => String value required
     nginx.ingress.kubernetes.io/rate-limit:
-      "100"
-      # => 100 requests per second per IP
+      "100" # => 100 requests per second per IP
+      # => Rate limiting per client IP
+      # => Exceeding limit returns 503
+      # => DDoS protection
     nginx.ingress.kubernetes.io/enable-cors:
-      "true"
-      # => Enable CORS headers
+      "true" # => Enable CORS headers
+      # => Adds Access-Control-Allow-Origin header
+      # => Required for cross-origin requests
+      # => Browser CORS policy compliance
     nginx.ingress.kubernetes.io/cors-allow-origin:
-      "https://example.com"
-      # => Allowed CORS origin
+      "https://example.com" # => Allowed CORS origin
+      # => Only this origin permitted
+      # => Restricts cross-origin access
+      # => Security control
     nginx.ingress.kubernetes.io/auth-type:
-      basic
-      # => Basic authentication
+      basic # => Basic authentication
+      # => HTTP Basic Auth
+      # => Username/password authentication
+      # => Not recommended for production (use OAuth)
     nginx.ingress.kubernetes.io/auth-secret:
-      basic-auth
-      # => References Secret with credentials
+      basic-auth # => References Secret with credentials
+      # => Secret contains htpasswd data
+      # => Must exist in same namespace
+      # => Credentials for Basic Auth
 spec:
-  ingressClassName: nginx
+  # => Ingress specification
+  ingressClassName:
+    nginx # => nginx Ingress Controller
+    # => Controller processes this Ingress
+    # => Annotations are nginx-specific
   rules:
-    - host: protected.example.com
+    # => Routing rules
+    - host:
+        protected.example.com # => Host for this rule
+        # => Virtual host routing
       http:
+        # => HTTP configuration
         paths:
-          - path: /api(/|$)(.*) # => Capture group for rewrite
-            pathType: ImplementationSpecific
+          # => Path routing
+          - path:
+              /api(/|$)(.*) # => Capture group for rewrite
+              # => Regex captures everything after /api
+              # => $2 in rewrite-target uses second group
+            pathType:
+              ImplementationSpecific # => Controller-specific matching
+              # => nginx interprets as regex
             backend:
+              # => Backend Service
               service:
-                name: api-service
+                # => Service target
+                name:
+                  api-service # => Backend Service name
+                  # => Routes to api-service
                 port:
-                  number: 80
+                  # => Service port
+                  number:
+                    80 # => HTTP port
+                    # => Standard HTTP
 
 # Annotation effects:
 # => Request: /api/users → rewritten to /users
+# => Path transformation before backend
 # => HTTP request → 308 redirect to HTTPS
+# => Forces secure connections
 # => >100 req/sec → 503 Service Temporarily Unavailable
+# => Rate limit enforcement
 # => Missing auth → 401 Unauthorized
+# => Basic Auth required
 ```
 
 **Key Takeaway**: Leverage Ingress Controller annotations for advanced HTTP features; consult controller documentation for available annotations as they vary between nginx, Traefik, and other controllers.
@@ -1539,34 +1711,75 @@ spec:
 Default backend serves requests that don't match any Ingress rules, useful for custom 404 pages or catch-all routing. Configure default backend at Ingress Controller or per-Ingress resource level.
 
 ```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion:
+  networking.k8s.io/v1 # => Networking API group
+  # => Stable Ingress API
+kind:
+  Ingress # => Ingress with default backend
+  # => Catch-all routing pattern
 metadata:
-  name: default-backend-ingress
+  name:
+    default-backend-ingress # => Ingress name
+    # => Unique identifier
 spec:
-  ingressClassName: nginx
+  # => Ingress specification
+  ingressClassName:
+    nginx # => nginx Ingress Controller
+    # => Controller type
   defaultBackend:
+    # => Default backend for unmatched requests
+    # => Fallback Service
     service:
-      name: default-service # => Serves unmatched requests
+      # => Service configuration
+      name:
+        default-service # => Serves unmatched requests
+        # => Custom 404 Service
+        # => Handles all non-matching traffic
       port:
-        number: 80
+        # => Service port
+        number:
+          80 # => HTTP port
+          # => Default backend port
   rules:
-    - host: app.example.com
+    # => Routing rules (specific routes)
+    - host:
+        app.example.com # => Host for specific routing
+        # => Virtual host
       http:
+        # => HTTP routing
         paths:
-          - path: /api
-            pathType: Prefix
+          # => Path-based routes
+          - path:
+              /api # => API path prefix
+              # => Matches /api/*
+            pathType:
+              Prefix # => Prefix matching
+              # => /api, /api/users, etc.
             backend:
+              # => API backend
               service:
-                name: api-service
+                # => API Service
+                name:
+                  api-service # => API Service name
+                  # => Primary application backend
                 port:
-                  number: 80
+                  # => Service port
+                  number:
+                    80 # => HTTP port
+                    # => API Service port
 
 # Default backend routing:
 # => http://app.example.com/api → api-service (matches rule)
+# => Path matches /api prefix
+# => Routes to primary backend
 # => http://app.example.com/other → default-service (no match)
+# => No matching path rule
+# => Falls back to defaultBackend
 # => http://unknown.example.com → default-service (host no match)
+# => Host doesn't match any rule
+# => Catches all unmatched hosts
 # => Useful for custom 404 pages or redirect to main site
+# => Better user experience than generic errors
 ```
 
 **Key Takeaway**: Configure default backend for better user experience on unmatched requests; implement custom 404 pages or redirects instead of generic Ingress Controller errors.

@@ -34,21 +34,28 @@ graph TD
 
 ```hcl
 # main.tf
+# => Single file Terraform configuration (convention: main.tf)
 terraform {
+  # => terraform block configures Terraform behavior and requirements
   required_version = ">= 1.0"              # => Minimum Terraform version required
   # => Blocks older versions from running this configuration
+  # => Ensures version 1.0+ features available
 }
 
 # Local provider for testing (no cloud credentials needed)
 provider "local" {
   # => Provider block initializes the local provider for file operations
   # => Local provider enables testing without cloud accounts
+  # => No configuration arguments needed for local provider
 }
 
 # Create a local file resource
 resource "local_file" "hello" {
-  filename = "${path.module}/hello.txt"    # => path.module is current directory
+  # => resource block defines infrastructure component to manage
+  # => "local_file" is resource type, "hello" is resource name
+  filename = "${path.module}  # => Current module directory path/hello.txt"    # => path.module is current directory
   # => path.module resolves to directory containing this .tf file
+  # => ${} interpolation syntax embeds expressions in strings
   content  = "Hello, Terraform!"           # => File content to write
   # => terraform plan shows: +local_file.hello (will be created)
   # => terraform apply creates hello.txt in current directory
@@ -57,7 +64,9 @@ resource "local_file" "hello" {
 
 # Output the file path
 output "file_path" {
+  # => output block exposes values after terraform apply
   value = local_file.hello.filename        # => Reference resource attribute
+  # => Dot notation: resource_type.resource_name.attribute
   # => Output: file_path = "./hello.txt"
   # => Outputs appear after terraform apply completes
 }
@@ -89,12 +98,12 @@ Understanding Terraform CLI commands enables effective infrastructure management
 # version_check.tf
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 
   required_providers {
   # => Provider configuration
-    local = {
+    local = {  # => Map/object definition
       source  = "hashicorp/local"          # => Provider source address
       # => Sets source
       version = "~> 2.0"                   # => Allow patch updates (2.0.x)
@@ -104,11 +113,11 @@ terraform {
 }
 
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
 
 resource "local_file" "demo" {
 # => Resource definition
-  filename = "demo.txt"
+  filename = "demo.txt"  # => String value
   # => Sets filename
   content  = "Terraform version: ${terraform.version}"  # => Built-in variable
   # => Sets content
@@ -175,10 +184,10 @@ terraform {
 
   required_providers {                     # => Provider dependencies
   # => Sets required_providers {                     #
-    local = {
-      source  = "hashicorp/local"
-      # => Sets source
-      version = "~> 2.0"
+    local = {  # => Map/object definition
+      source  = "hashicorp/local"  # => String value
+  # => Provider source location
+      version = "~> 2.0"  # => String value
       # => Sets version
     }
   }
@@ -244,19 +253,23 @@ HCL supports multiple data types: strings, numbers, booleans, lists, maps, and o
 # data_types.tf
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
-  # => Sets required_version
+# => Controls Terraform behavior and requirements
+  required_version = ">= 1.0"  # => String value
+  # => Sets required_version constraint
+  # => Validates Terraform binary version before execution
 }
 
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
+# => Initializes local provider (no arguments needed)
 
 # Local values - reusable expressions
 locals {
-# => Local values
+# => locals block defines computed values for reuse
+# => Local values available as local.name throughout configuration
   # Primitive types
   string_value  = "hello"                  # => String type
-  # => Sets string_value
+  # => Sets string_value to "hello"
   number_value  = 42                       # => Number type (int or float)
   # => Sets number_value
   bool_value    = true                     # => Boolean type
@@ -271,12 +284,12 @@ locals {
   # => Sets set_value
 
   # Object type (structured)
-  object_value  = {
-    name    = "example"
+  object_value  = {  # => Map/object definition
+    name    = "example"  # => String value
     # => Sets name
-    port    = 8080
+    port    = 8080  # => Numeric value
     # => Sets port
-    enabled = true
+    enabled = true  # => Boolean value
     # => Sets enabled
   }
 
@@ -388,15 +401,15 @@ terraform {
 }
 
 provider "local" {}
-# => Provider configuration (enables local_file resource)
+# => Local provider for file-based examples
 
 # Resource with documentation
 resource "local_file" "documented" {
 # => Resource definition for documented file
-  filename = "documented.txt"
+  filename = "documented.txt"  # => String value
   # => Sets filename
   # => Creates file in current directory
-  content  = "Well-documented configuration"
+  content  = "Well-documented configuration"  # => String value
   # => Sets content
   # => File contents written to documented.txt
 
@@ -416,7 +429,7 @@ variable "environment" {
   EOT
   # => Multi-line description appears in terraform plan output
   type        = string
-  # => Sets type constraint (must be string)
+  # => Type constraint ensures string value
   default     = "development"
   # => Sets default value if variable not provided
   # => Makes variable optional (no default = required)
@@ -493,92 +506,123 @@ graph TD
 # functions.tf
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
-  # => Sets required_version
+  required_version = ">= 1.0"  # => String value
+  # => Ensures version 1.0+ features available
 }
 
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
 
 locals {
-# => Local values
+# => locals block contains function demonstrations
   # String functions
-  original        = "  Hello, Terraform!  "
-  # => original stores raw string with leading/trailing whitespace
+  original        = "  Hello, Terraform!  "  # => String value
+  # => Sets original with whitespace padding for trimspace demo
   trimmed         = trimspace(local.original)           # => "Hello, Terraform!" (remove whitespace)
-  # => Sets trimmed
+  # => trimspace removes leading and trailing whitespace
   lowercased      = lower(local.trimmed)                # => "hello, terraform!"
   # => lower converts all characters to lowercase
+  # => Sets lowercased for comparison
   uppercased      = upper(local.trimmed)                # => "HELLO, TERRAFORM!"
-  # => Sets uppercased
+  # => upper converts all characters to uppercase
+  # => Sets uppercased for comparison
   replaced        = replace(local.trimmed, "Terraform", "HCL")  # => "Hello, HCL!"
-  # => replace finds first match and substitutes
+  # => replace(string, search, replacement) performs text substitution
+  # => Sets replaced with modified string
   split_result    = split(", ", local.trimmed)          # => ["Hello", "Terraform!"]
-  # => Sets split_result
+  # => split(separator, string) creates list from delimited string
+  # => Sets split_result as two-element list
   joined          = join("-", split(", ", local.trimmed))  # => "Hello-Terraform!"
-  # => join concatenates list elements with separator
+  # => join(separator, list) concatenates list elements with separator
+  # => Combines split and join for transformation
 
   # Numeric functions
-  numbers         = [10, 5, 20, 15]
-  # => Sets numbers
+  numbers         = [10, 5, 20, 15]  # => List definition
+  # => Sets numbers list for numeric function demos
   max_num         = max(local.numbers...)               # => 20 (variadic expansion)
   # => ... operator expands list into separate arguments
+  # => max() returns largest value
   min_num         = min(local.numbers...)               # => 5
-  # => Sets min_num
+  # => min() returns smallest value
+  # => Sets min_num to 5
   sum_num         = sum(local.numbers)                  # => 50
   # => sum adds all elements (10 + 5 + 20 + 15 = 50)
+  # => Sets sum_num to total
 
   # Collection functions
-  list            = ["a", "b", "c", "d"]
-  # => Sets list
+  list            = ["a", "b", "c", "d"]  # => List definition
+  # => Sets list with four elements for collection demos
   list_length     = length(local.list)                  # => 4
-  # => Sets list_length
+  # => length() returns number of elements in collection
+  # => Sets list_length to 4
   contains_b      = contains(local.list, "b")           # => true
   # => contains checks if element exists in list
+  # => Returns boolean result
   first_elem      = element(local.list, 0)              # => "a"
   # => element accesses list by index (0-based)
+  # => Retrieves first element safely
   last_elem       = element(local.list, length(local.list) - 1)  # => "d"
-  # => Sets last_elem
+  # => Combines element() and length() to get last item
+  # => Sets last_elem to "d"
   reversed        = reverse(local.list)                 # => ["d", "c", "b", "a"]
-  # => Sets reversed
+  # => reverse() flips list order
+  # => Sets reversed to backward list
   sorted          = sort(local.list)                    # => ["a", "b", "c", "d"]
-  # => Sets sorted
+  # => sort() orders elements alphabetically
+  # => Sets sorted (already sorted in this case)
   distinct        = distinct(["a", "b", "a", "c"])      # => ["a", "b", "c"]
   # => distinct removes duplicate values
+  # => Returns unique elements only
 
   # Map functions
   map_data        = { env = "prod", region = "us-east-1", team = "platform" }
-  # => Sets map_data
+  # => Sets map_data with three key-value pairs
   map_keys        = keys(local.map_data)                # => ["env", "region", "team"]
   # => keys extracts all map keys as list
+  # => Order not guaranteed in maps
   map_values      = values(local.map_data)              # => ["prod", "us-east-1", "platform"]
-  # => Sets map_values
+  # => values extracts all map values as list
+  # => Sets map_values corresponding to keys
   merged_map      = merge(local.map_data, { tier = "web" })  # => Adds tier key
   # => merge combines maps (right map overwrites left on key collision)
+  # => Results in four-key map
 
   # Type conversion
   string_to_num   = tonumber("42")                      # => 42 (number type)
   # => tonumber converts string to number (fails if non-numeric)
+  # => Useful for parsing user input
   num_to_string   = tostring(42)                        # => "42" (string type)
-  # => Sets num_to_string
+  # => tostring converts number to string representation
+  # => Sets num_to_string for string operations
   to_set          = toset(["a", "b", "a"])              # => Set with unique values
   # => toset creates set (unique, unordered collection)
+  # => Removes duplicate "a"
 
   # Encoding functions
-  json_string     = jsonencode({ key = "value" })       # => '{"key":"value"}'
-  # => Sets json_string
-  yaml_string     = yamlencode({ key = "value" })       # => 'key: value\n'
-  # => Sets yaml_string
+  json_string = jsonencode(  # => Converts value to JSON string
+
+  { key = "value" })       # => '{"key":"value"}'
+  # => jsonencode converts HCL value to JSON string
+  # => Sets json_string for API payloads
+  yaml_string = yamlencode(  # => Converts value to YAML string
+
+  { key = "value" })       # => 'key: value\n'
+  # => yamlencode converts HCL value to YAML string
+  # => Sets yaml_string for YAML-based tools
   base64_encoded  = base64encode("hello")               # => "aGVsbG8="
   # => base64encode encodes string to Base64 format
+  # => Common for binary data in text fields
   base64_decoded  = base64decode("aGVsbG8=")            # => "hello"
   # => base64decode decodes Base64 string to original
+  # => Reverses encoding operation
 
   # Date/Time functions
   timestamp       = timestamp()                         # => "2024-01-15T10:30:00Z" (UTC)
-  # => Sets timestamp
+  # => timestamp() returns current time in RFC3339 format
+  # => Sets timestamp (always current, changes each apply)
   formatted_date  = formatdate("YYYY-MM-DD", timestamp())  # => "2024-01-15"
-  # => Sets formatted_date
+  # => formatdate applies format string to timestamp
+  # => Sets formatted_date with custom format
 }
 
 resource "local_file" "functions_demo" {
@@ -639,32 +683,36 @@ Providers are plugins that manage resources for specific platforms (AWS, Azure, 
 # providers.tf
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
-  # => Sets required_version
+# => Configures Terraform behavior and provider requirements
+  required_version = ">= 1.0"  # => String value
+  # => Sets required_version constraint to 1.0 or higher
 
   required_providers {
-  # => Provider configuration
+  # => required_providers block declares provider dependencies
+  # => Lists all providers used in configuration
     # AWS provider
-    aws = {
+    aws = {  # => Map/object definition
       source  = "hashicorp/aws"            # => Provider source (namespace/name)
-      # => Sets source
+      # => Format: hostname/namespace/type (default registry: registry.terraform.io)
+      # => Sets source location for provider download
       version = "~> 5.0"                   # => Pessimistic constraint (~> allows rightmost increment)
-      # => Sets version
+      # => ~> 5.0 allows 5.x but not 6.0 (prevents breaking changes)
+      # => Sets version constraint for provider
     }
 
     # Azure provider
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      # => Sets source
+    azurerm = {  # => Map/object definition
+      source  = "hashicorp/azurerm"  # => String value
+  # => Provider source location
       version = ">= 3.0, < 4.0"            # => Range constraint
       # => Sets version
     }
 
     # Local provider (for examples)
-    local = {
-      source  = "hashicorp/local"
-      # => Sets source
-      version = "~> 2.0"
+    local = {  # => Map/object definition
+      source  = "hashicorp/local"  # => String value
+  # => Provider source location
+      version = "~> 2.0"  # => String value
       # => Sets version
     }
   }
@@ -679,7 +727,7 @@ provider "aws" {
   # => Or from ~/.aws/credentials file
 
   default_tags {
-    tags = {
+    tags = {  # => Map/object definition
       Environment = "development"
       # => Sets Environment
       ManagedBy   = "Terraform"
@@ -707,7 +755,7 @@ provider "azurerm" {
 
 # Local provider (no configuration needed)
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
 
 # Resource using default AWS provider
 resource "local_file" "provider_demo" {
@@ -750,37 +798,37 @@ Resources are the most important element in Terraform—they represent infrastru
 # resources.tf
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
   required_providers {
   # => Provider configuration
-    local = {
-      source  = "hashicorp/local"
-      # => Sets source
-      version = "~> 2.0"
+    local = {  # => Map/object definition
+      source  = "hashicorp/local"  # => String value
+  # => Provider source location
+      version = "~> 2.0"  # => String value
       # => Sets version
     }
   }
 }
 
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
 
 # Simple resource
 resource "local_file" "simple" {
 # => Resource definition
   filename = "simple.txt"                  # => Required argument
   # => Sets filename
-  content  = "Simple resource example"
+  content  = "Simple resource example"  # => String value
   # => Sets content
 }
 
 # Resource with multiple arguments
 resource "local_file" "detailed" {
 # => Resource definition
-  filename        = "detailed.txt"
+  filename        = "detailed.txt"  # => String value
   # => Sets filename
-  content         = "Detailed resource"
+  content         = "Detailed resource"  # => String value
   # => Sets content
   file_permission = "0644"                 # => Optional argument
   # => Sets file_permission
@@ -789,12 +837,13 @@ resource "local_file" "detailed" {
 # Resource with lifecycle customization
 resource "local_file" "lifecycle_demo" {
 # => Resource definition
-  filename = "lifecycle.txt"
+  filename = "lifecycle.txt"  # => String value
   # => Sets filename
-  content  = "Lifecycle example"
+  content  = "Lifecycle example"  # => String value
   # => Sets content
 
   lifecycle {
+    # => Lifecycle customization controls resource behavior
     create_before_destroy = true           # => Create new before destroying old
     # => Sets create_before_destroy
     prevent_destroy       = false          # => Prevent accidental deletion (true in prod)
@@ -809,7 +858,7 @@ resource "local_file" "lifecycle_demo" {
 resource "local_file" "counted" {
 # => Resource definition
   count    = 3                             # => Create 3 instances
-  # => Sets count
+  # => Creates specified number of instances
   filename = "file_${count.index}.txt"    # => count.index: 0, 1, 2
   # => Sets filename
   content  = "File number ${count.index}"
@@ -831,7 +880,9 @@ resource "local_file" "second" {
   # => Sets filename
   content    = "Created after first"
   # => Sets content
-  depends_on = [local_file.first]          # => Explicit dependency
+  depends_on = [  # => Explicit dependency list
+
+  local_file.first]          # => Explicit dependency
   # => Terraform creates first.txt before second.txt
 }
 
@@ -882,30 +933,32 @@ graph TD
 ```hcl
 # dependencies.tf
 terraform {
-# => Terraform configuration block
-  required_version = ">= 1.0"
-  # => Sets required_version
+# => Terraform configuration block for dependency demo
+# => Shows implicit and explicit resource dependencies
+  required_version = ">= 1.0"  # => String value
+# => Sets required_version to minimum 1.0
+# => Ensures dependency features available
 }
 
 provider "local" {
 # => Provider configuration
-  version = "~> 2.0"
+  version = "~> 2.0"  # => String value
   # => Sets version
 }
 
 # Base resource (no dependencies)
 resource "local_file" "base" {
 # => Resource definition
-  filename = "base.txt"
+  filename = "base.txt"  # => String value
   # => Sets filename
-  content  = "Base file created first"
+  content  = "Base file created first"  # => String value
   # => No dependencies, can be created immediately
 }
 
 # Implicit dependency (via reference)
 resource "local_file" "depends_implicit" {
 # => Resource definition
-  filename = "implicit.txt"
+  filename = "implicit.txt"  # => String value
   # => Sets filename
   content  = "Base file: ${local_file.base.filename}"  # => References base
   # => Terraform detects dependency automatically
@@ -915,11 +968,13 @@ resource "local_file" "depends_implicit" {
 # Explicit dependency (via depends_on)
 resource "local_file" "depends_explicit" {
 # => Resource definition
-  filename   = "explicit.txt"
+  filename   = "explicit.txt"  # => String value
   # => Sets filename
-  content    = "Depends on base (explicit)"
+  content    = "Depends on base (explicit)"  # => String value
   # => Sets content
-  depends_on = [local_file.base]           # => Explicit dependency declaration
+  depends_on = [  # => Explicit dependency list
+
+  local_file.base]           # => Explicit dependency declaration
   # => Use depends_on when no direct reference exists
 }
 
@@ -958,25 +1013,27 @@ Lifecycle meta-arguments control resource creation, update, and destruction beha
 # lifecycle.tf
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
-  # => Sets required_version
+# => Configures lifecycle behavior demonstration
+  required_version = ">= 1.0"  # => String value
+  # => Ensures version 1.0+ features available
 }
 
 provider "local" {
 # => Provider configuration
-  version = "~> 2.0"
+  version = "~> 2.0"  # => String value
   # => Sets version
 }
 
 # create_before_destroy: Create replacement before destroying old
 resource "local_file" "zero_downtime" {
 # => Resource definition
-  filename = "zero_downtime.txt"
+  filename = "zero_downtime.txt"  # => String value
   # => Sets filename
   content  = "Version 2"                   # => Change this to trigger replacement
   # => Modifying content forces resource recreation
 
   lifecycle {
+    # => Lifecycle customization controls resource behavior
     create_before_destroy = true           # => Create new, then destroy old
     # => Ensures resource always exists during replacement
   }
@@ -988,12 +1045,13 @@ resource "local_file" "zero_downtime" {
 # prevent_destroy: Prevent accidental deletion
 resource "local_file" "critical" {
 # => Resource definition
-  filename = "critical.txt"
+  filename = "critical.txt"  # => String value
   # => Sets filename
-  content  = "Critical production data"
+  content  = "Critical production data"  # => String value
   # => Content represents critical state (database, secrets, etc.)
 
   lifecycle {
+    # => Lifecycle customization controls resource behavior
     prevent_destroy = true                 # => terraform destroy will fail
     # => Error: "Cannot destroy resource with prevent_destroy = true"
   }
@@ -1011,6 +1069,7 @@ resource "local_file" "ignore_demo" {
   # => External processes can modify this file
 
   lifecycle {
+    # => Lifecycle customization controls resource behavior
     ignore_changes = [content]             # => Ignore content changes
     # ignore_changes = all                 # => Ignore all attribute changes
     # => Terraform won't revert external modifications
@@ -1055,6 +1114,7 @@ resource "local_file" "combined" {
   # => Sets content
 
   lifecycle {
+    # => Lifecycle customization controls resource behavior
     create_before_destroy = true           # => Zero downtime
     # => Sets create_before_destroy
     prevent_destroy       = false          # => Allow destruction (set true in prod)
@@ -1108,31 +1168,37 @@ graph TD
 # variables.tf
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
-  # => Sets required_version
+# => Demonstrates variable declaration patterns
+  required_version = ">= 1.0"  # => String value
+  # => Ensures version 1.0+ features available
 }
 
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
+# => Enables local file resources for demonstration
 
 # Simple string variable with default
 variable "environment" {
-# => Input variable
-  description = "Environment name"
+# => Input variable declaration
+# => variable block defines configurable parameter
+  description = "Environment name"  # => String value
   # => Description appears in terraform console and docs
+  # => Helps users understand variable purpose
   type        = string
-  # => type = string enforces string type (rejected: numbers, bools, lists)
+  # => Type constraint ensures string value
+  # => Type checking happens during terraform plan
   default     = "development"              # => Used if not provided
   # => Optional: Allows terraform apply without -var flag
+  # => Default value makes variable optional
 }
 
 # Variable without default (required)
 variable "project_name" {
 # => Input variable
-  description = "Project name for resource naming"
+  description = "Project name for resource naming"  # => String value
   # => Sets description
   type        = string
-  # => No default = required variable
+  # => Type constraint ensures string value
   # => Must be provided via CLI, file, or environment variable
   # => terraform apply fails if not provided
 }
@@ -1140,11 +1206,11 @@ variable "project_name" {
 # Number variable
 variable "instance_count" {
 # => Input variable
-  description = "Number of instances to create"
+  description = "Number of instances to create"  # => String value
   # => Sets description
   type        = number
-  # => type = number enforces numeric type (rejected: strings, bools)
-  default     = 1
+  # => Type constraint ensures numeric value
+  default     = 1  # => Numeric value
   # => Default prevents need for explicit value in most cases
 }
 
@@ -1154,7 +1220,7 @@ variable "enable_monitoring" {
   description = "Enable monitoring features"
   # => Sets description
   type        = bool
-  # => type = bool enforces true/false (rejected: strings, numbers)
+  # => Type constraint ensures boolean value
   default     = false
   # => Monitoring disabled by default (opt-in pattern)
 }
@@ -1165,7 +1231,7 @@ variable "allowed_cidrs" {
   description = "List of allowed CIDR blocks"
   # => Sets description
   type        = list(string)
-  # => type = list(string) enforces list of strings
+  # => Type constraint ensures list of strings
   # => Rejected: non-string list elements, single string values
   default     = ["10.0.0.0/8"]
   # => Single private network CIDR in default configuration
@@ -1177,7 +1243,7 @@ variable "tags" {
   description = "Resource tags"
   # => Sets description
   type        = map(string)
-  # => type = map(string) enforces string-keyed, string-valued map
+  # => Type constraint ensures string-keyed map
   default = {
     ManagedBy = "Terraform"
     # => All infrastructure tagged with IaC tool for auditing
@@ -1214,11 +1280,12 @@ variable "region" {
   description = "AWS region"
   # => Sets description
   type        = string
-  # => Sets type
+  # => Type constraint ensures string value
   default     = "us-east-1"
   # => Sets default
 
   validation {
+    # => Validation rule enforces constraints
     condition     = can(regex("^us-", var.region))  # => Must start with "us-"
     # => can() prevents error if regex fails, returns false instead
     error_message = "Region must be a US region."
@@ -1234,7 +1301,7 @@ variable "api_key" {
   description = "API key for external service"
   # => Sets description
   type        = string
-  # => Sets type
+  # => Type constraint ensures string value
   sensitive   = true                       # => Value hidden in plan/apply output
   # => Shows (sensitive value) instead of actual string
   default     = ""
@@ -1301,33 +1368,33 @@ Output values expose information about infrastructure after apply. Outputs can b
 # outputs.tf
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
-  # => Sets required_version
+  required_version = ">= 1.0"  # => String value
+  # => Ensures version 1.0+ features available
 }
 
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
 
 variable "prefix" {
 # => Input variable
   type    = string
-  # => Sets type
-  default = "demo"
+  # => Type constraint ensures string value
+  default = "demo"  # => String value
   # => Sets default
 }
 
 resource "local_file" "output_demo" {
 # => Resource definition
-  filename = "${var.prefix}-output.txt"
+  filename = "${var.prefix}-output.txt"  # => String interpolation
   # => Sets filename
-  content  = "Output demonstration"
+  content  = "Output demonstration"  # => String value
   # => Sets content
 }
 
 # Simple output
 output "file_id" {
 # => Output value
-  description = "Unique identifier for the file"
+  description = "Unique identifier for the file"  # => String value
   # => Sets description
   value       = local_file.output_demo.id  # => Resource attribute
   # => terraform output file_id
@@ -1336,9 +1403,9 @@ output "file_id" {
 # Output with multiple attributes
 output "file_info" {
 # => Output value
-  description = "Complete file information"
+  description = "Complete file information"  # => String value
   # => Sets description
-  value = {
+  value = {  # => Map/object definition
     id          = local_file.output_demo.id
     # => Sets id
     filename    = local_file.output_demo.filename
@@ -1480,69 +1547,81 @@ graph TD
 # locals.tf
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
-  # => Sets required_version
+  required_version = ">= 1.0"  # => String value
+  # => Ensures version 1.0+ features available
 }
 
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
 
 variable "environment" {
 # => Input variable
   type    = string
-  # => Sets type
-  default = "development"
+  # => Type constraint ensures string value
+  default = "development"  # => String value
   # => Sets default
 }
 
 variable "project" {
 # => Input variable
   type    = string
-  # => Sets type
-  default = "myapp"
+  # => Type constraint ensures string value
+  default = "myapp"  # => String value
   # => Sets default
 }
 
 # Locals block
 locals {
-# => Local values
+# => locals block defines computed values for reuse
+# => Reduces duplication compared to repeating expressions
   # Simple computed value
   prefix = "${var.project}-${var.environment}"  # => "myapp-development"
-  # => Sets prefix
+  # => Combines project and environment variables into naming prefix
+  # => Used across multiple resources for consistent naming
 
   # Conditional logic
-  is_production = var.environment == "production"
-  # => Sets is_production
+  is_production = var.environment == "production"  # => String value
+  # => Boolean comparison returns true/false
+  # => Evaluates to true only when environment is "production"
   backup_enabled = local.is_production ? true : false
-  # => Sets backup_enabled
+  # => Ternary conditional: condition ? true_value : false_value
+  # => Enables backups only in production environment
 
   # Common tags used across resources
-  common_tags = {
+  common_tags = {  # => Map/object definition
+    # => Map of tags applied to all resources
     Project     = var.project
-    # => Sets Project
+    # => Sets Project tag from variable
     Environment = var.environment
-    # => Sets Environment
+    # => Sets Environment tag from variable
     ManagedBy   = "Terraform"
-    # => Sets ManagedBy
+    # => Hardcoded tag identifies infrastructure provisioning tool
     Timestamp   = timestamp()
-    # => Sets Timestamp
+    # => timestamp() function provides current UTC time
+    # => WARNING: Changes on each apply (triggers resource updates)
   }
 
   # Complex computation
   config = {
+    # => Configuration map based on environment
     instance_count = local.is_production ? 3 : 1
-    # => Sets instance_count
+    # => Production: 3 instances (high availability)
+    # => Non-production: 1 instance (cost optimization)
     instance_type  = local.is_production ? "large" : "small"
-    # => Sets instance_type
+    # => Production: large instances (performance)
+    # => Non-production: small instances (cost optimization)
     monitoring     = local.is_production ? "detailed" : "basic"
-    # => Sets monitoring
+    # => Production: detailed monitoring (observability)
+    # => Non-production: basic monitoring (cost reduction)
   }
 
   # List transformation
   availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
-  # => Sets availability_zones
+  # => Three availability zones in us-east-1 region
+  # => Provides multi-AZ redundancy for high availability
   az_suffix          = [for az in local.availability_zones : substr(az, -1, 1)]  # => ["a", "b", "c"]
-  # => Sets az_suffix
+  # => for expression transforms list using substr function
+  # => Extracts last character from each zone name
 
   # Map transformation
   region_map = {
@@ -1564,7 +1643,7 @@ locals {
 resource "local_file" "config_file" {
 # => Resource definition
   for_each = toset(local.resource_names)       # => Create one file per name
-  # => Sets for_each
+  # => Creates multiple instances from collection
 
   filename = "${each.value}.txt"
   # => Sets filename
@@ -1582,7 +1661,9 @@ resource "local_file" "tags_file" {
 # => Resource definition
   filename = "${local.prefix}-tags.txt"
   # => Sets filename
-  content  = jsonencode(local.common_tags)
+  content = jsonencode(  # => Converts value to JSON string
+
+  local.common_tags)
   # => Sets content
 }
 
@@ -1622,19 +1703,19 @@ Data sources query existing infrastructure or external data without creating res
 # data_sources.tf
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
-  # => Sets required_version
+  required_version = ">= 1.0"  # => String value
+  # => Ensures version 1.0+ features available
 }
 
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
 
 # Create a resource first
 resource "local_file" "source" {
 # => Resource definition
-  filename = "source.txt"
+  filename = "source.txt"  # => String value
   # => Sets filename
-  content  = "Original content"
+  content  = "Original content"  # => String value
   # => This resource must exist before data source can read it
 }
 
@@ -1643,7 +1724,9 @@ data "local_file" "existing" {
 # => Data source
   filename = "source.txt"                  # => Read existing file
   # => Data source queries file at apply time
-  depends_on = [local_file.source]        # => Ensure file exists first
+  depends_on = [  # => Explicit dependency list
+
+  local_file.source]        # => Ensure file exists first
   # => depends_on creates explicit ordering (source created before read)
   # => Data sources read-only, never create/modify/destroy
   # => Query happens during terraform plan and apply
@@ -1652,7 +1735,7 @@ data "local_file" "existing" {
 # Use data source attributes
 resource "local_file" "copy" {
 # => Resource definition
-  filename = "copy.txt"
+  filename = "copy.txt"  # => String value
   # => Sets filename
   content  = data.local_file.existing.content  # => Reference data source
   # => Content copied from source.txt (dynamic reference)
@@ -1661,7 +1744,7 @@ resource "local_file" "copy" {
 
 output "data_source_info" {
 # => Output value
-  value = {
+  value = {  # => Map/object definition
     id          = data.local_file.existing.id
     # => Unique identifier for the file
     filename    = data.local_file.existing.filename
@@ -1686,8 +1769,10 @@ data "local_file" "file2" {
 # => Data source
   filename = "copy.txt"
   # => Sets filename
-  depends_on = [local_file.copy]
-  # => Second data source (reads copy.txt after it's created)
+  depends_on = [  # => Explicit dependency list
+
+  local_file.copy]
+  # => Explicit dependency enforces creation order
 }
 
 output "combined_content" {
@@ -1707,9 +1792,9 @@ output "combined_content" {
 data "aws_vpc" "existing" {
 # => Data source
   filter {
-    name   = "tag:Name"
+    name   = "tag:Name"  # => String value
     # => Sets name
-    values = ["production-vpc"]
+    values = ["production-vpc"]  # => List definition
     # => Sets values
   }
 }
@@ -1719,9 +1804,9 @@ resource "aws_subnet" "new" {
 # => Resource definition
   vpc_id            = data.aws_vpc.existing.id  # => Reference existing VPC
   # => Sets vpc_id
-  cidr_block        = "10.0.1.0/24"
+  cidr_block        = "10.0.1.0/24"  # => String value
   # => Sets cidr_block
-  availability_zone = "us-east-1a"
+  availability_zone = "us-east-1a"  # => String value
   # => Sets availability_zone
 }
 
@@ -1746,20 +1831,20 @@ The external data source executes external programs and captures their JSON outp
 # external_data.tf
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
   required_providers {
   # => Provider configuration
-    external = {
-      source  = "hashicorp/external"
-      # => Sets source
-      version = "~> 2.0"
+    external = {  # => Map/object definition
+      source  = "hashicorp/external"  # => String value
+  # => Provider source location
+      version = "~> 2.0"  # => String value
       # => Sets version
     }
-    local = {
-      source  = "hashicorp/local"
-      # => Sets source
-      version = "~> 2.0"
+    local = {  # => Map/object definition
+      source  = "hashicorp/local"  # => String value
+  # => Provider source location
+      version = "~> 2.0"  # => String value
       # => Sets version
     }
   }
@@ -1768,14 +1853,14 @@ terraform {
 provider "external" {}
 # => Provider configuration
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
 
 # Create external script
 resource "local_file" "script" {
 # => Resource definition
-  filename        = "${path.module}/query.sh"
+  filename        = "${path.module}  # => Current module directory path/query.sh"
   # => Sets filename
-  file_permission = "0755"
+  file_permission = "0755"  # => String value
   # => Sets file_permission
   content         = <<-EOT
     #!/bin/bash
@@ -1803,7 +1888,7 @@ resource "local_file" "script" {
 # External data source
 data "external" "example" {
 # => Data source
-  program = ["bash", "${path.module}/query.sh"]  # => Command to execute
+  program = ["bash", "${path.module}  # => Current module directory path/query.sh"]  # => Command to execute
   # => Sets program
 
   query = {
@@ -1812,8 +1897,11 @@ data "external" "example" {
   }
   # => Script must output JSON: {"key": "value"}
 
-  depends_on = [local_file.script]
-  # => Sets depends_on
+  depends_on = [  # => Explicit dependency list
+
+
+  local_file.script]
+  # => Explicit dependency enforces creation order
 }
 
 # Use external data
@@ -1849,9 +1937,9 @@ output "external_output" {
 # Python script (query.py)
 resource "local_file" "python_script" {
 # => Resource definition
-  filename        = "${path.module}/query.py"
+  filename        = "${path.module}  # => Current module directory path/query.py"
   # => Sets filename
-  file_permission = "0755"
+  file_permission = "0755"  # => String value
   # => Sets file_permission
   content         = <<-EOT
     #!/usr/bin/env python3
@@ -1863,7 +1951,7 @@ resource "local_file" "python_script" {
     # => Sets input_data
 
     # Process data
-    result = {
+    result = {  # => Map/object definition
         "api_key": input_data.get("key_name", "default"),
         "computed": "value-from-api-call"
     }
@@ -1875,12 +1963,14 @@ resource "local_file" "python_script" {
 
 data "external" "python_data" {
 # => Data source
-  program = ["python3", "${path.module}/query.py"]
+  program = ["python3", "${path.module}  # => Current module directory path/query.py"]
   # => Sets program
-  query   = { key_name = "production" }
+  query   = { key_name = "production" }  # => Map/object definition
   # => Sets query
-  depends_on = [local_file.python_script]
-  # => Sets depends_on
+  depends_on = [  # => Explicit dependency list
+
+  local_file.python_script]
+  # => Explicit dependency enforces creation order
 }
 
 
@@ -1906,7 +1996,7 @@ Terraform state tracks real infrastructure and maps resources to configuration. 
 # => Demonstrates state file management and backend configuration
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets minimum Terraform version
 
   # Backend configuration (where state is stored)
@@ -1920,14 +2010,14 @@ terraform {
 }
 
 provider "local" {}
-# => Local provider for file system operations
+# => Local provider for file-based examples
 
 resource "local_file" "state_example" {
 # => Resource tracked in terraform.tfstate
-  filename = "state_example.txt"
+  filename = "state_example.txt"  # => String value
   # => Sets filename
   # => Terraform tracks this file in state
-  content  = "State management demo"
+  content  = "State management demo"  # => String value
   # => Sets content
   # => After apply, state records filename, content, id
 }
@@ -1996,36 +2086,24 @@ Terraform CLI provides commands to inspect and modify state. Essential for debug
 ```hcl
 # state_operations.tf
 terraform {
-# => Terraform configuration block
-  required_version = ">= 1.0"
-  # => Sets required_version
+  required_version = ">= 1.0"              # => Terraform 1.0+ required
 }
 
-provider "local" {}
-# => Provider configuration
+provider "local" {}                        # => Local provider for file operations
 
-resource "local_file" "file1" {
-# => Resource definition
-  filename = "file1.txt"
-  # => Sets filename
-  content  = "File 1 content"
-  # => Sets content
+resource "local_file" "file1" {            # => First demonstration file
+  filename = "file1.txt"                   # => Output: file1.txt created
+  content  = "File 1 content"  # => String value
 }
 
-resource "local_file" "file2" {
-# => Resource definition
-  filename = "file2.txt"
-  # => Sets filename
-  content  = "File 2 content"
-  # => Sets content
+resource "local_file" "file2" {            # => Second demonstration file
+  filename = "file2.txt"                   # => Output: file2.txt created
+  content  = "File 2 content"  # => String value
 }
 
-resource "local_file" "file3" {
-# => Resource definition
-  filename = "file3.txt"
-  # => Sets filename
-  content  = "File 3 content"
-  # => Sets content
+resource "local_file" "file3" {            # => Third demonstration file
+  filename = "file3.txt"                   # => Output: file3.txt created
+  content  = "File 3 content"  # => String value
 }
 
 
@@ -2082,18 +2160,18 @@ resource "local_file" "file3" {
 # Before refactoring
 resource "local_file" "old_name" {
 # => Resource definition
-  filename = "file.txt"
+  filename = "file.txt"  # => String value
   # => Sets filename
-  content  = "content"
+  content  = "content"  # => String value
   # => Sets content
 }
 
 # After refactoring (must update state)
 resource "local_file" "new_name" {
 # => Resource definition
-  filename = "file.txt"
+  filename = "file.txt"  # => String value
   # => Sets filename
-  content  = "content"
+  content  = "content"  # => String value
   # => Sets content
 }
 
@@ -2117,11 +2195,13 @@ State locking prevents concurrent modifications when multiple team members run T
 ```hcl
 # state_locking.tf
 terraform {
-  required_version = ">= 1.0"
+# => Terraform configuration block
+  required_version = ">= 1.0"  # => String value
 
   # Local backend (no locking support)
   backend "local" {
-    path = "terraform.tfstate"
+    # => Backend configuration for state storage
+    path = "terraform.tfstate"  # => String value
     # => No locking—unsafe for team usage
   }
 
@@ -2138,10 +2218,12 @@ terraform {
 }
 
 provider "local" {}
+# => Local provider for file-based examples
 
 resource "local_file" "locking_demo" {
-  filename = "locking.txt"
-  content  = "State locking demonstration"
+# => Resource local_file.locking_demo
+  filename = "locking.txt"  # => String value
+  content  = "State locking demonstration"  # => String value
 }
 
 # Lock behavior
@@ -2194,25 +2276,26 @@ Variable validation ensures inputs meet requirements before infrastructure chang
 # validation.tf
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
-  # => Sets required_version
+  required_version = ">= 1.0"  # => String value
+  # => Ensures version 1.0+ features available
 }
 
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
 
 # String pattern validation
 variable "environment" {
 # => Input variable
-  description = "Environment name"
+  description = "Environment name"  # => String value
   # => Sets description
   type        = string
-  # => Sets type
+  # => Type constraint ensures string value
 
   validation {
+    # => Validation rule enforces constraints
     condition     = can(regex("^(dev|staging|prod)$", var.environment))
     # => Sets condition
-    error_message = "Environment must be dev, staging, or prod."
+    error_message = "Environment must be dev, staging, or prod."  # => String value
     # => Sets error_message
   }
   # => Validates environment matches allowed values
@@ -2221,17 +2304,18 @@ variable "environment" {
 # Numeric range validation
 variable "instance_count" {
 # => Input variable
-  description = "Number of instances (1-10)"
+  description = "Number of instances (1-10)"  # => String value
   # => Sets description
   type        = number
-  # => Sets type
-  default     = 1
+  # => Type constraint ensures numeric value
+  default     = 1  # => Numeric value
   # => Sets default
 
   validation {
-    condition     = var.instance_count >= 1 && var.instance_count <= 10
+    # => Validation rule enforces constraints
+    condition     = var.instance_count >= 1 && var.instance_count <= 10  # => Numeric value
     # => Sets condition
-    error_message = "Instance count must be between 1 and 10."
+    error_message = "Instance count must be between 1 and 10."  # => String value
     # => Sets error_message
   }
 }
@@ -2242,9 +2326,10 @@ variable "project_name" {
   description = "Project name (3-20 characters)"
   # => Sets description
   type        = string
-  # => Sets type
+  # => Type constraint ensures string value
 
   validation {
+    # => Validation rule enforces constraints
     condition     = length(var.project_name) >= 3 && length(var.project_name) <= 20
     # => Sets condition
     error_message = "Project name must be 3-20 characters long."
@@ -2258,11 +2343,12 @@ variable "vpc_cidr" {
   description = "VPC CIDR block"
   # => Sets description
   type        = string
-  # => Sets type
+  # => Type constraint ensures string value
   default     = "10.0.0.0/16"
   # => Sets default
 
   validation {
+    # => Validation rule enforces constraints
     condition     = can(cidrhost(var.vpc_cidr, 0))  # => Validates CIDR format
     # => Sets condition
     error_message = "VPC CIDR must be valid IPv4 CIDR notation."
@@ -2283,6 +2369,7 @@ variable "server_config" {
   })
 
   validation {
+    # => Validation rule enforces constraints
     condition     = var.server_config.cpu >= 1 && var.server_config.cpu <= 64
     # => Sets condition
     error_message = "CPU count must be 1-64."
@@ -2290,6 +2377,7 @@ variable "server_config" {
   }
 
   validation {
+    # => Validation rule enforces constraints
     condition     = var.server_config.memory >= 1 && var.server_config.memory <= 256
     # => Sets condition
     error_message = "Memory must be 1-256 GB."
@@ -2304,9 +2392,10 @@ variable "availability_zones" {
   description = "List of availability zones"
   # => Sets description
   type        = list(string)
-  # => Sets type
+  # => Type constraint ensures list of strings
 
   validation {
+    # => Validation rule enforces constraints
     condition     = length(var.availability_zones) >= 2
     # => Sets condition
     error_message = "At least 2 availability zones required for HA."
@@ -2314,6 +2403,7 @@ variable "availability_zones" {
   }
 
   validation {
+    # => Validation rule enforces constraints
     condition     = alltrue([for az in var.availability_zones : can(regex("^[a-z]{2}-[a-z]+-[0-9][a-z]$", az))])
     # => Sets condition
     error_message = "Availability zones must match pattern: us-east-1a."
@@ -2362,36 +2452,36 @@ Terraform loads variables from multiple sources with defined precedence. Underst
 # precedence.tf
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
-  # => Sets required_version
+  required_version = ">= 1.0"  # => String value
+  # => Ensures version 1.0+ features available
 }
 
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
 
 variable "app_name" {
 # => Input variable
-  description = "Application name"
+  description = "Application name"  # => String value
   # => Sets description
   type        = string
-  # => Sets type
+  # => Type constraint ensures string value
   default     = "default-app"              # => Precedence: 1 (lowest)
   # => Sets default
 }
 
 variable "environment" {
 # => Input variable
-  description = "Environment"
+  description = "Environment"  # => String value
   # => Sets description
   type        = string
-  # => Sets type
-  default     = "development"
+  # => Type constraint ensures string value
+  default     = "development"  # => String value
   # => Sets default
 }
 
 resource "local_file" "precedence_demo" {
 # => Resource definition
-  filename = "precedence.txt"
+  filename = "precedence.txt"  # => String value
   # => Sets filename
   content  = <<-EOT
   # => Sets content
@@ -2412,17 +2502,20 @@ resource "local_file" "precedence_demo" {
    variable "app_name" {
    # => Input variable
      default = "default-app"               # => Precedence: 1
-     # => Sets default
-   }
-
    ```
+
+# => Default value makes variable optional
+
+}
+
+````
 
 2. **Environment variables (`TF_VAR_name`)**
 
-   ```bash
-   # $ export TF_VAR_app_name="env-app"   # => Precedence: 2
-   # $ terraform apply
-   ```
+```bash
+# $ export TF_VAR_app_name="env-app"   # => Precedence: 2
+# $ terraform apply
+```
 
 3. **`terraform.tfvars` file**
 
@@ -2477,44 +2570,44 @@ Sensitive variables prevent accidental exposure in logs, plan output, and state 
 # sensitive.tf
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
-  # => Sets required_version
+  required_version = ">= 1.0"  # => String value
+  # => Ensures version 1.0+ features available
 }
 
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
 
 # Sensitive variable declaration
 variable "api_key" {
 # => Input variable
-  description = "API key for external service"
+  description = "API key for external service"  # => String value
   # => Sets description
   type        = string
-  # => Sets type
+  # => Type constraint ensures string value
   sensitive   = true                       # => Marks variable as sensitive
   # => Value hidden in plan/apply output as <sensitive>
 }
 
 variable "database_password" {
 # => Input variable
-  description = "Database password"
+  description = "Database password"  # => String value
   # => Sets description
   type        = string
-  # => Sets type
-  sensitive   = true
+  # => Type constraint ensures string value
+  sensitive   = true  # => Boolean value
   # => Sets sensitive
 }
 
 # Sensitive locals
 locals {
 # => Local values
-  connection_string = "postgres://user:${var.database_password}@host:5432/db"
+  connection_string = "postgres://user:${var.database_password}@host:5432/db"  # => String value
   # => Local inherits sensitive marking from var.database_password
 }
 
 resource "local_file" "config" {
 # => Resource definition
-  filename = "config.txt"
+  filename = "config.txt"  # => String value
   # => Sets filename
   content  = <<-EOT
   # => Sets content
@@ -2637,43 +2730,43 @@ project/
 ```hcl
 variable "project_name" {
 # => Input variable
-  description = "Project name"
+  description = "Project name"  # => String value
   # => Sets description
   type        = string
-  # => Sets type
+  # => Type constraint ensures string value
 }
 
 variable "environment" {
 # => Input variable
-  description = "Environment name"
+  description = "Environment name"  # => String value
   # => Sets description
   type        = string
-  # => Sets type
+  # => Type constraint ensures string value
 }
 
 variable "instance_count" {
 # => Input variable
-  description = "Number of instances"
+  description = "Number of instances"  # => String value
   # => Sets description
   type        = number
-  # => Sets type
+  # => Type constraint ensures numeric value
 }
 
 variable "enable_monitoring" {
 # => Input variable
-  description = "Enable monitoring"
+  description = "Enable monitoring"  # => String value
   # => Sets description
   type        = bool
-  # => Sets type
+  # => Type constraint ensures boolean value
 }
 
 variable "api_key" {
 # => Input variable
-  description = "API key"
+  description = "API key"  # => String value
   # => Sets description
   type        = string
-  # => Sets type
-  sensitive   = true
+  # => Type constraint ensures string value
+  sensitive   = true  # => Boolean value
   # => Sets sensitive
 }
 
@@ -2758,16 +2851,16 @@ secrets/
 ```hcl
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
-  # => Sets required_version
+  required_version = ">= 1.0"  # => String value
+  # => Ensures version 1.0+ features available
 }
 
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
 
 resource "local_file" "config" {
 # => Resource definition
-  filename = "${var.environment}-config.txt"
+  filename = "${var.environment}-config.txt"  # => String interpolation
   # => Sets filename
   content  = <<-EOT
   # => Sets content
@@ -2801,19 +2894,19 @@ Data sources can depend on resources and other data sources. Understanding depen
 # data_dependencies.tf
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
-  # => Sets required_version
+  required_version = ">= 1.0"  # => String value
+  # => Ensures version 1.0+ features available
 }
 
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
 
 # Step 1: Create base resource
 resource "local_file" "base" {
 # => Resource definition
-  filename = "base.txt"
+  filename = "base.txt"  # => String value
   # => Sets filename
-  content  = "Base file for data source"
+  content  = "Base file for data source"  # => String value
   # => Sets content
 }
 
@@ -2828,26 +2921,28 @@ data "local_file" "read_base" {
 # Step 3: Create resource using data source
 resource "local_file" "derived" {
 # => Resource definition
-  filename = "derived.txt"
+  filename = "derived.txt"  # => String value
   # => Sets filename
-  content  = "Content from base: ${data.local_file.read_base.content}"
+  content  = "Content from base: ${data.local_file.read_base.content}"  # => String value
   # => Implicit dependency chain: base -> read_base -> derived
 }
 
 # Explicit dependency (when no reference exists)
 resource "local_file" "source_explicit" {
 # => Resource definition
-  filename = "explicit.txt"
+  filename = "explicit.txt"  # => String value
   # => Sets filename
-  content  = "Explicit source"
+  content  = "Explicit source"  # => String value
   # => Sets content
 }
 
 data "local_file" "read_explicit" {
 # => Data source
-  filename   = "explicit.txt"
+  filename   = "explicit.txt"  # => String value
   # => Sets filename
-  depends_on = [local_file.source_explicit]  # => Explicit dependency
+  depends_on = [  # => Explicit dependency list
+
+  local_file.source_explicit]  # => Explicit dependency
   # => Use when data source doesn't reference resource attributes
 }
 
@@ -2946,42 +3041,43 @@ The `terraform_remote_state` data source reads outputs from other Terraform conf
 ```hcl
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 
   backend "local" {
+    # => Backend configuration for state storage
     path = "network.tfstate"               # => Separate state file
     # => Sets path
   }
 }
 
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
 
 resource "local_file" "network_config" {
 # => Resource definition
-  filename = "network.txt"
+  filename = "network.txt"  # => String value
   # => Sets filename
-  content  = "VPC: 10.0.0.0/16"
+  content  = "VPC: 10.0.0.0/16"  # => String value
   # => Sets content
 }
 
 # Export values for other configurations
 output "vpc_cidr" {
 # => Output value
-  value = "10.0.0.0/16"
+  value = "10.0.0.0/16"  # => String value
   # => Sets value
 }
 
 output "subnet_cidrs" {
 # => Output value
-  value = ["10.0.1.0/24", "10.0.2.0/24"]
+  value = ["10.0.1.0/24", "10.0.2.0/24"]  # => List definition
   # => Sets value
 }
 
 output "vpc_id" {
 # => Output value
-  value = "vpc-12345"
+  value = "vpc-12345"  # => String value
   # => Sets value
 }
 
@@ -2994,25 +3090,26 @@ output "vpc_id" {
 ```hcl
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 
   backend "local" {
+    # => Backend configuration for state storage
     path = "app.tfstate"                   # => Different state file
     # => Sets path
   }
 }
 
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
 
 # Read outputs from network configuration
 data "terraform_remote_state" "network" {
 # => Terraform configuration block
-  backend = "local"
+  backend = "local"  # => String value
   # => Sets backend
 
-  config = {
+  config = {  # => Map/object definition
     path = "../network/network.tfstate"   # => Path to network state
     # => Sets path
   }
@@ -3022,7 +3119,7 @@ data "terraform_remote_state" "network" {
 # Use network outputs
 resource "local_file" "app_config" {
 # => Resource definition
-  filename = "app.txt"
+  filename = "app.txt"  # => String value
   # => Sets filename
   content  = <<-EOT
   # => Sets content
@@ -3038,7 +3135,7 @@ resource "local_file" "app_config" {
 
 output "app_network_info" {
 # => Output value
-  value = {
+  value = {  # => Map/object definition
     vpc_id       = data.terraform_remote_state.network.outputs.vpc_id
     # => Sets vpc_id
     vpc_cidr     = data.terraform_remote_state.network.outputs.vpc_cidr
@@ -3059,11 +3156,11 @@ output "app_network_info" {
 terraform {
 # => Terraform configuration block
   backend "s3" {
-    bucket = "terraform-state-bucket"
+    bucket = "terraform-state-bucket"  # => String value
     # => Sets bucket
-    key    = "network/terraform.tfstate"
+    key    = "network/terraform.tfstate"  # => String value
     # => Sets key
-    region = "us-east-1"
+    region = "us-east-1"  # => String value
     # => Sets region
   }
 }
@@ -3071,15 +3168,15 @@ terraform {
 # Application reads from S3
 data "terraform_remote_state" "network" {
 # => Terraform configuration block
-  backend = "s3"
+  backend = "s3"  # => String value
   # => Sets backend
 
-  config = {
-    bucket = "terraform-state-bucket"
+  config = {  # => Map/object definition
+    bucket = "terraform-state-bucket"  # => String value
     # => Sets bucket
-    key    = "network/terraform.tfstate"
+    key    = "network/terraform.tfstate"  # => String value
     # => Sets key
-    region = "us-east-1"
+    region = "us-east-1"  # => String value
     # => Sets region
   }
 }
@@ -3121,23 +3218,24 @@ Terraform automatically creates backup files before state modifications. Underst
 # state_backup.tf
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
+  required_version = ">= 1.0"  # => String value
   # => Sets required_version
 
   backend "local" {
-    path = "terraform.tfstate"
+    # => Backend configuration for state storage
+    path = "terraform.tfstate"  # => String value
     # => Sets path
   }
 }
 
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
 
 resource "local_file" "backup_demo" {
 # => Resource definition
-  filename = "backup_demo.txt"
+  filename = "backup_demo.txt"  # => String value
   # => Sets filename
-  content  = "State backup demonstration"
+  content  = "State backup demonstration"  # => String value
   # => Sets content
 }
 
@@ -3202,11 +3300,11 @@ resource "local_file" "backup_demo" {
 terraform {
 # => Terraform configuration block
   backend "s3" {
-    bucket         = "terraform-state-bucket"
+    bucket         = "terraform-state-bucket"  # => String value
     # => Sets bucket
-    key            = "project/terraform.tfstate"
+    key            = "project/terraform.tfstate"  # => String value
     # => Sets key
-    region         = "us-east-1"
+    region         = "us-east-1"  # => String value
     # => Sets region
 
     # S3 versioning provides automatic backup
@@ -3217,7 +3315,7 @@ terraform {
 # S3 bucket versioning configuration (separate Terraform config)
 resource "aws_s3_bucket_versioning" "state_bucket" {
 # => Resource definition
-  bucket = "terraform-state-bucket"
+  bucket = "terraform-state-bucket"  # => String value
   # => Sets bucket
 
   versioning_configuration {
@@ -3268,26 +3366,18 @@ State refresh updates Terraform state to match real infrastructure without modif
 ```hcl
 # state_refresh.tf
 terraform {
-# => Terraform configuration block
-  required_version = ">= 1.0"
-  # => Sets required_version
+  required_version = ">= 1.0"              # => Terraform 1.0+ required
 }
 
-provider "local" {}
-# => Provider configuration
+provider "local" {}                        # => Local provider for file operations
 
-resource "local_file" "refresh_demo" {
-# => Resource definition
-  filename = "refresh_demo.txt"
-  # => Sets filename
-  content  = "Original content"
-  # => Sets content
+resource "local_file" "refresh_demo" {     # => Demonstration file resource
+  filename = "refresh_demo.txt"            # => Output: refresh_demo.txt created
+  content  = "Original content"            # => Initial content value
 }
 
-output "file_content" {
-# => Output value
-  value = local_file.refresh_demo.content
-  # => Sets value
+output "file_content" {                    # => Exposes file content for inspection
+  value = local_file.refresh_demo.content  # => Tracks content changes after refresh
 }
 
 
@@ -3393,45 +3483,47 @@ Resource targeting applies changes to specific resources instead of entire confi
 # targeting.tf
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
-  # => Sets required_version
+  required_version = ">= 1.0"  # => String value
+  # => Ensures version 1.0+ features available
 }
 
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
 
 resource "local_file" "file1" {
 # => Resource definition
-  filename = "file1.txt"
+  filename = "file1.txt"  # => String value
   # => Sets filename
-  content  = "File 1 content"
+  content  = "File 1 content"  # => String value
   # => Sets content
 }
 
 resource "local_file" "file2" {
 # => Resource definition
-  filename = "file2.txt"
+  filename = "file2.txt"  # => String value
   # => Sets filename
-  content  = "File 2 content"
+  content  = "File 2 content"  # => String value
   # => Sets content
 }
 
 resource "local_file" "file3" {
 # => Resource definition
-  filename = "file3.txt"
+  filename = "file3.txt"  # => String value
   # => Sets filename
-  content  = "File 3 content"
+  content  = "File 3 content"  # => String value
   # => Sets content
 }
 
 resource "local_file" "file4" {
 # => Resource definition
-  filename = "file4.txt"
+  filename = "file4.txt"  # => String value
   # => Sets filename
-  content  = "File 4 depends on file3"
+  content  = "File 4 depends on file3"  # => String value
   # => Sets content
-  depends_on = [local_file.file3]
-  # => Sets depends_on
+  depends_on = [  # => Explicit dependency list
+
+  local_file.file3]
+  # => Explicit dependency enforces creation order
 }
 
 
@@ -3538,28 +3630,28 @@ Terraform import brings existing infrastructure under Terraform management. Esse
 # import.tf
 terraform {
 # => Terraform configuration block
-  required_version = ">= 1.0"
-  # => Sets required_version
+  required_version = ">= 1.0"  # => String value
+  # => Ensures version 1.0+ features available
 }
 
 provider "local" {}
-# => Provider configuration
+# => Local provider for file-based examples
 
 # Step 1: Create resource block (without apply)
 resource "local_file" "imported" {
 # => Resource definition
-  filename = "existing.txt"
+  filename = "existing.txt"  # => String value
   # => Sets filename
-  content  = "This file already exists"
+  content  = "This file already exists"  # => String value
   # => Resource block must exist before import
   # => Configuration should match existing resource
 }
 
 resource "local_file" "imported2" {
 # => Resource definition
-  filename = "existing2.txt"
+  filename = "existing2.txt"  # => String value
   # => Sets filename
-  content  = "Another existing file"
+  content  = "Another existing file"  # => String value
   # => Sets content
 }
 
@@ -3579,9 +3671,9 @@ resource "local_file" "imported2" {
 ```hcl
 resource "local_file" "imported" {
 # => Resource definition
-  filename = "existing.txt"
+  filename = "existing.txt"  # => String value
   # => Sets filename
-  content  = "This file already exists"
+  content  = "This file already exists"  # => String value
   # => Sets content
 }
 
@@ -3627,8 +3719,9 @@ resource "local_file" "imported" {
 ```hcl
 # Resource configuration
 resource "aws_instance" "imported_server" {
-  ami           = "ami-0c55b159cbfafe1f0"
-  instance_type = "t2.micro"
+# => Resource aws_instance.imported_server
+  ami           = "ami-0c55b159cbfafe1f0"  # => String value
+  instance_type = "t2.micro"  # => String value
   # ... other required attributes
 }
 
@@ -3663,15 +3756,15 @@ resource "aws_instance" "imported_server" {
 import {
   to = local_file.imported
   # => Sets to
-  id = "existing.txt"
+  id = "existing.txt"  # => String value
   # => Sets id
 }
 
 resource "local_file" "imported" {
 # => Resource definition
-  filename = "existing.txt"
+  filename = "existing.txt"  # => String value
   # => Sets filename
-  content  = "This file already exists"
+  content  = "This file already exists"  # => String value
   # => Sets content
 }
 
@@ -3714,3 +3807,4 @@ graph TD
 ---
 
 **🎯 Beginner level complete!** You've covered HCL fundamentals, providers, resources, variables, data sources, and state management. These foundations enable basic infrastructure provisioning and management. Proceed to [Intermediate](/en/learn/software-engineering/infrastructure/tools/terraform/by-example/intermediate) for modules, remote state, workspaces, and production patterns.
+````

@@ -1378,25 +1378,31 @@ class ZakatPayment {                    // => Class for Zakat payments
   });                                   // => All fields must be final for const
 
   void printReceipt() {                 // => Method to display info
-    print('---Receipt---');
-    print('Donor: $donorName');
-    print('Type: $type');
-    print('Amount: Rp$amount');
+    print('---Receipt---');             // => Print header
+    print('Donor: $donorName');         // => String interpolation with $
+                                        // => Outputs donor name
+    print('Type: $type');               // => Display Zakat type
+    print('Amount: Rp$amount');         // => Display calculated amount
     print('Date: ${date.year}-${date.month}-${date.day}');
-    print('------------');
-  }
+                                        // => Extract year, month, day from DateTime
+                                        // => ${expression} syntax for complex interpolation
+    print('------------');               // => Print footer
+  }                                     // => Method completes
 }
 
 void main() {
   // Use default constructor
   ZakatPayment payment1 = ZakatPayment(
-    'Ahmad',                            // => donorName
-    500000.0,                           // => amount
-    DateTime(2025, 1, 29),              // => date
-    'Sadaqah',                          // => type
+    'Ahmad',                            // => donorName parameter
+    500000.0,                           // => amount parameter
+    DateTime(2025, 1, 29),              // => date parameter (creates DateTime object)
+    'Sadaqah',                          // => type parameter
   );                                    // => Create object with default constructor
+                                        // => payment1 now holds ZakatPayment instance
+                                        // => All fields assigned via this.field syntax
 
-  payment1.printReceipt();              // => Call method
+  payment1.printReceipt();              // => Call method to display receipt
+                                        // => Method accesses instance fields
 
   // Use named constructor for wealth
   ZakatPayment payment2 = ZakatPayment.wealth('Fatimah', 100000000.0);
@@ -1528,20 +1534,26 @@ class DonationAccount {                 // => Class for managing donations
   }                                     // => Computed dynamically on each access
 
   void deposit(double amount) {         // => Method to add funds
-    if (amount <= 0) {                  // => Validate amount
+    if (amount <= 0) {                  // => Validate amount is positive
+                                        // => Business rule enforcement
       throw ArgumentError('Amount must be positive');
+                                        // => Throw error for invalid input
     }
-    _balance += amount;                 // => Update balance
-    _transactions.add(amount);          // => Record transaction
-  }
+    _balance += amount;                 // => Update balance by adding amount
+    _transactions.add(amount);          // => Record positive transaction
+                                        // => Maintains audit trail
+  }                                     // => Method completes
 
   void withdraw(double amount) {        // => Method to remove funds
-    if (amount > _balance) {            // => Check sufficient funds
+    if (amount > _balance) {            // => Check sufficient funds available
+                                        // => Prevents negative balance
       throw ArgumentError('Insufficient balance');
+                                        // => Reject transaction if insufficient funds
     }
-    _balance -= amount;                 // => Update balance
-    _transactions.add(-amount);         // => Record as negative
-  }
+    _balance -= amount;                 // => Update balance by subtracting amount
+    _transactions.add(-amount);         // => Record negative transaction
+                                        // => Negative value indicates withdrawal
+  }                                     // => Method completes
 }
 
 void main() {
@@ -1968,30 +1980,41 @@ Try-catch blocks handle runtime errors gracefully.
 // Custom exception class
 class InsufficientFundsException implements Exception {
                                         // => Custom exception type
+                                        // => implements Exception interface
   final String message;                 // => Error message field
+                                        // => final ensures immutability
   InsufficientFundsException(this.message);
-                                        // => Constructor
+                                        // => Constructor initializes message
+                                        // => Shorthand this.message syntax
 
   @override
   String toString() => 'InsufficientFundsException: $message';
                                         // => Override toString for display
-}
+                                        // => Called when exception printed
+}                                       // => Custom exception defined
 
-double calculateZakat(double wealth) {  // => Function that may throw
-  if (wealth < 0) {                     // => Validate input
+double calculateZakat(double wealth) {  // => Function that may throw exceptions
+                                        // => Returns double if successful
+  if (wealth < 0) {                     // => Validate input is non-negative
+                                        // => Business rule enforcement
     throw ArgumentError('Wealth cannot be negative');
-                                        // => Throw exception
+                                        // => Throw standard library exception
+                                        // => Program execution stops here if negative
   }
 
-  const double nisab = 85000000.0;      // => Threshold
+  const double nisab = 85000000.0;      // => Threshold (minimum wealth for Zakat)
+                                        // => compile-time constant
 
-  if (wealth < nisab) {                 // => Check eligibility
+  if (wealth < nisab) {                 // => Check eligibility against threshold
+                                        // => Zakat only applies above nisab
     throw InsufficientFundsException('Wealth below nisab threshold');
                                         // => Throw custom exception
+                                        // => Different exception type than ArgumentError
   }
 
-  return wealth * 0.025;                // => Calculate and return
-}
+  return wealth * 0.025;                // => Calculate 2.5% Zakat
+                                        // => Only reached if all validations passed
+}                                       // => Function completes successfully
 
 void main() {
   // Basic try-catch

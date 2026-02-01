@@ -29,6 +29,7 @@ fn main() {                          // => Program entry point (called by Rust r
                                      // => Expands at compile-time to formatting code
                                      // => Prints to stdout with newline
                                      // => Output: Hello, World!
+                                     // => String literal "Hello, World!" has type &str
 }                                    // => main returns () implicitly
                                      // => Program exits with code 0 (success)
 ```
@@ -1351,9 +1352,11 @@ fn main() {                          // => Program entry point
     let username = String::from("shorthand");
                                      // => username variable created (type: String)
                                      // => Variable name matches field name
+                                     // => Heap allocation for string buffer
     let email = String::from("short@example.com");
                                      // => email variable created (type: String)
                                      // => Variable name matches field name
+                                     // => Separate heap allocation
 
     let user3 = User {               // => Creates User with shorthand syntax
         username,                    // => Shorthand for username: username
@@ -1955,11 +1958,17 @@ graph TD
 ```rust
 // Define enum with multiple variants
 enum Coin {                          // => Enum type declaration
+                                     // => Creates new type named Coin
     Penny,                           // => 1 cent coin (unit variant, no data)
+                                     // => Zero-size variant (no heap allocation)
     Nickel,                          // => 5 cent coin (unit variant)
+                                     // => Stack-allocated discriminant only
     Dime,                            // => 10 cent coin (unit variant)
+                                     // => Compile-time size calculation
     Quarter,                         // => 25 cent coin (unit variant)
+                                     // => Enum discriminant differentiates variants
 }                                    // => All variants have same type: Coin
+                                     // => Size: smallest to hold largest variant
 
 // Function using match expression
 fn value_in_cents(coin: Coin) -> u8 {
@@ -1973,21 +1982,27 @@ fn value_in_cents(coin: Coin) -> u8 {
                                      // => Compiler enforces exhaustiveness
                                      // => Must handle ALL variants
                                      // => Tests each arm top-to-bottom until match found
+                                     // => Compile-time check for missing patterns
 
         // Pattern arms: pattern => expression
         Coin::Penny => 1,            // => If coin is Penny, return 1
                                      // => Expression (no semicolon)
                                      // => Type: u8
+                                     // => Single expression arm (no braces needed)
         Coin::Nickel => 5,           // => If coin is Nickel, return 5
                                      // => All arms must return same type
+                                     // => Compiler checks type consistency
         Coin::Dime => 10,            // => If coin is Dime, return 10
                                      // => Pattern matches exactly one variant
+                                     // => Match succeeds, other arms skipped
         Coin::Quarter => 25,         // => If coin is Quarter, return 25
                                      // => Last arm, no comma needed
+                                     // => Exhaustiveness check complete
 
     }                                // => match returns value from matching arm
                                      // => Compiler verifies all 4 variants covered
                                      // => Return type: u8 (inferred from arms)
+                                     // => No fallthrough between arms
 
     // If we forget a variant:
     // match coin {
@@ -2006,49 +2021,73 @@ fn main() {                          // => Example program entry point
     let coin = Coin::Dime;           // => coin is Dime variant
                                      // => Type: Coin
                                      // => Stored on stack (zero-size variant)
+                                     // => Enum discriminant identifies variant
 
     // Call function (ownership transfer)
     let value = value_in_cents(coin);// => coin moved into function
                                      // => Match expression returns 10
                                      // => value is 10 (type: u8)
+                                     // => Function consumes coin (no longer usable)
     println!("Value: {} cents", value);
                                      // => Output: Value: 10 cents
                                      // => Formats u8 as decimal
+                                     // => Borrows value immutably for printing
 
     // Match with pattern destructuring
 
     // Enum with data
     enum UsState {                   // => State enumeration
+                                     // => Represents US states
         Alaska,                      // => Alaska state
+                                     // => Unit variant (no associated data)
         Alabama,                     // => Alabama state
+                                     // => Zero-size variant
         // ...                       // => Other states omitted for brevity
     }                                // => Each variant is unit type (no data)
+                                     // => Discriminant differentiates variants
 
     enum Coin2 {                     // => Enhanced coin enum with data
+                                     // => Demonstrates variant with associated data
         Penny,                       // => Unit variant (no data)
+                                     // => Zero-size like Coin::Penny
         Nickel,                      // => Unit variant
+                                     // => Simple discriminant
         Dime,                        // => Unit variant
+                                     // => No heap allocation
         Quarter(UsState),            // => Tuple variant holds UsState
                                      // => Quarter carries which state it's from
+                                     // => Size: discriminant + UsState size
     }                                // => Mixed enum: some variants with data, some without
+                                     // => Total size: max(variant sizes) + discriminant
 
     fn value_in_cents2(coin: Coin2) -> u8 {
                                      // => Takes Coin2 enum (any variant)
                                      // => Returns u8 (cent value)
+                                     // => Owns coin (moved from caller)
         match coin {                 // => Pattern match on Coin2
+                                     // => Exhaustive check on all variants
             Coin2::Penny => 1,       // => Simple pattern (no data to extract)
+                                     // => Returns literal 1
             Coin2::Nickel => 5,      // => Returns 5 for Nickel
+                                     // => No pattern binding needed
             Coin2::Dime => 10,       // => Returns 10 for Dime
+                                     // => Unit variant match
             // Pattern with data extraction
             Coin2::Quarter(state) => {
                                      // => Destructure Quarter variant
                                      // => Extract state from Quarter variant
                                      // => state: UsState (pattern binding)
+                                     // => Block expression (multiple statements)
                 println!("Quarter from state!");
+                                     // => Prints state notification
+                                     // => state moved into println!
                 25                   // => Return value
-            }
-        }
-    }
+                                     // => Last expression (no semicolon)
+                                     // => Type: u8 (matches other arms)
+            }                        // => Block closes, state dropped
+        }                            // => All variants handled
+                                     // => Compiler verified exhaustiveness
+    }                                // => coin dropped (consumed by match)
 
     // Match with multiple expressions in arm
     let penny = Coin::Penny;
@@ -2506,8 +2545,10 @@ The `?` operator propagates errors up the call stack, returning early with `Err`
 
 ```rust
 use std::fs::File;                   // => Import File type from filesystem module
+                                     // => Brings File into scope
 use std::io::{self, Read};           // => Import io module and Read trait
                                      // => self creates io:: namespace, Read enables read_to_string
+                                     // => Read trait required for read_to_string method
 
 // Function must return Result to use ? operator
 fn read_username_from_file() -> Result<String, io::Error> {
@@ -2549,23 +2590,30 @@ fn read_username_from_file() -> Result<String, io::Error> {
                                      // => s is moved into Ok (ownership transferred)
 }                                    // => Function returns Result<String, io::Error>
 
-fn main() {
+fn main() {                          // => Program entry point
+                                     // => Demonstrates ? operator usage
     // Call function and handle Result
     match read_username_from_file() {
+                                     // => Calls function that returns Result
+                                     // => Evaluate Result value and match variants
         Ok(username) => {
             // => This branch executes if file read successfully
             // => username is String containing file contents
+                                     // => Ownership transferred from Result
             println!("Username: {}", username);
             // => Output: Username: <file contents>
+                                     // => Borrows username for printing
         }
         Err(e) => {
             // => This branch executes if any error occurred
             // => e is io::Error (from either open or read)
+                                     // => Could be from File::open or read_to_string
             println!("Error reading file: {}", e);
             // => Output: Error reading file: No such file or directory
             // => (or other error message)
+                                     // => Displays error details
         }
-    }
+    }                                // => Match complete, username/e dropped
 
     // Chaining ? operators for concise error handling
     fn read_first_line() -> Result<String, io::Error> {

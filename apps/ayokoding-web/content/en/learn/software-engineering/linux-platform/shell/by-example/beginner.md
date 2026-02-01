@@ -54,14 +54,18 @@ Shell variables store strings by default, with no type declarations. Variable na
 # Variable assignment (no spaces around =)
 name="Bob"                      # => Creates variable storing "Bob" (strings by default)
                                 # => Spaces around = cause syntax error
+                                # => No type declaration needed (dynamic typing)
 age=30                          # => Stores "30" as string, not number
                                 # => Shell doesn't distinguish number types
+                                # => Can still use in arithmetic contexts
 echo "$name is $age years old"  # => Variables expanded in double quotes
                                 # => Output: Bob is 30 years old
+                                # => $ triggers variable substitution
 
 # Variable expansion in double quotes
 greeting="Hello, $name"         # => $name expands during assignment
                                 # => greeting stores "Hello, Bob"
+                                # => Expansion happens at assignment time
 echo "$greeting"                # => Output: Hello, Bob
 
 # Single quotes prevent expansion
@@ -112,37 +116,44 @@ graph TD
 # Basic command
 ls                              # => Lists files in current directory
                                 # => Output: file1.txt file2.sh directory/
+                                # => No options = default view (names only)
 
 # Command with short option
 ls -l                           # => -l flag enables long format
                                 # => Output: Shows permissions, owner, size, date
                                 # => Format: -rw-r--r-- 1 user group 1234 Dec 30 file.txt
+                                # => Single-letter options use single dash (-)
 
 # Multiple short options (combined)
 ls -la                          # => Combines -l (long) and -a (all files)
                                 # => Output: Long format including hidden files (.bashrc, .profile)
                                 # => Hidden files start with dot (.)
+                                # => Short options can be combined after single dash
 
 # Command with long option
 ls --all                        # => Long form of -a flag
                                 # => Shows hidden files (same behavior as -a)
                                 # => Output: Includes .hidden files
+                                # => Long options use double dash (--) and full words
 
 # Command with option argument
 ls -w 80                        # => -w takes numeric argument
                                 # => Limits output width to 80 characters
                                 # => Useful for formatting terminal output
+                                # => Some options require values
 
 # Command with multiple arguments
 ls /etc /var /tmp               # => Three directory paths as arguments
                                 # => Lists contents of each directory separately
                                 # => Output shows each directory labeled
+                                # => Can specify multiple targets
 
 # Mixing options and arguments
 ls -lh /var/log                 # => Combines options (-lh) with argument (/var/log)
                                 # => -l: long format, -h: human-readable (1K, 234M, 2G)
                                 # => /var/log: target directory for listing
                                 # => Output: Detailed listing with readable file sizes
+                                # => Options before arguments is standard order
 
 # Getting help
 ls --help                       # => --help displays command usage
@@ -284,17 +295,20 @@ graph TD
 cat file.txt                    # => cat reads file to stdout
                                 # => Output: Entire file contents (scrolls if long)
                                 # => No paging, suitable for small files only
+                                # => Command name "cat" = concatenate
 
 # View multiple files (concatenate)
 cat file1.txt file2.txt         # => Concatenates multiple files sequentially
                                 # => Output: file1 contents, then file2 contents
                                 # => Files merged in command-line order
+                                # => Original cat purpose: join files
 
 # Number lines
 cat -n file.txt                 # => -n flag adds line numbers
                                 # => Output: Each line prefixed with line number
                                 # => Format: "     1  First line"
                                 # => Useful for code review and debugging
+                                # => Numbers right-aligned with padding
 
 # View with paging (large files)
 less file.txt                   # => Opens file in interactive pager
@@ -302,11 +316,13 @@ less file.txt                   # => Opens file in interactive pager
                                 # => Space: next page, b: previous page, q: quit
                                 # => /pattern: search forward, ?pattern: search backward
                                 # => n: next match, N: previous match
+                                # => Better than "more" (backward navigation)
 
 # View first 10 lines
 head file.txt                   # => Displays first 10 lines by default
                                 # => Output: First 10 lines of file
                                 # => Useful for preview or column headers
+                                # => Default count: 10 lines
 
 # View first N lines
 head -n 5 file.txt              # => -n specifies exact line count
@@ -318,6 +334,7 @@ head -5 file.txt                # => Shorthand: number directly after dash
 tail file.txt                   # => Displays last 10 lines by default
                                 # => Output: Last 10 lines of file
                                 # => Useful for recent log entries
+                                # => Default count: 10 lines (matches head)
 
 # View last N lines
 tail -n 20 file.txt             # => -n specifies exact line count
@@ -331,11 +348,13 @@ tail -f /var/log/syslog         # => -f flag follows file growth
                                 # => Blocks terminal, waits for new content
                                 # => Ctrl+C to exit following mode
                                 # => Essential for monitoring log files in production
+                                # => "f" = follow mode (watch for appends)
 
 # Follow with line count
 tail -f -n 50 app.log           # => Combines -f (follow) with -n (line count)
                                 # => Shows last 50 lines initially
                                 # => Then follows and displays new lines as appended
+                                # => Combines initial view + follow mode
 ```
 
 **Key Takeaway**: Use `cat` for small files, `less` for browsing large files interactively, `head` for beginnings, `tail` for endings, and `tail -f` for real-time log monitoring.
@@ -438,40 +457,50 @@ ls -l file.txt                  # => Long listing shows permission string
                                 # => Output: -rw-r--r-- 1 user group 1234 Dec 30 file.txt
                                 # => Format: [type][owner rwx][group rwx][others rwx]
                                 # => -rw-r--r-- = file, owner:rw, group:r, others:r
+                                # => First character: file type (- or d)
 
 # Permission meanings (r=4, w=2, x=1)
 # r (read) = 4: View file contents or list directory
+                                # => Read bit allows cat, less, directory listing
 # w (write) = 2: Modify file or create/delete files in directory
+                                # => Write bit allows editing, creating, deleting
 # x (execute) = 1: Run file as program or enter directory
+                                # => Execute bit for scripts/binaries or cd
 
 # Make file executable
 chmod +x script.sh              # => + adds permission, x is execute
                                 # => Applies to all (user, group, others)
                                 # => Before: -rw-r--r--, After: -rwxr-xr-x
                                 # => Now script.sh can be run with ./script.sh
+                                # => Common for shell scripts
 
 # Remove write permission from group and others
 chmod go-w file.txt             # => g=group, o=others targets
                                 # => - removes permission, w is write
                                 # => Before: -rw-rw-rw-, After: -rw-r--r--
                                 # => Only owner can modify file now
+                                # => Security measure for shared systems
 
 # Set specific permissions with octal
 chmod 644 file.txt              # => Octal notation: 3 digits for owner/group/others
                                 # => 6=rw- (4+2=read+write), 4=r--, 4=r--
                                 # => Result: -rw-r--r-- (owner writes, all read)
                                 # => Standard permission for text files
+                                # => Most common for documents, configs
 
 chmod 755 script.sh             # => 7=rwx (4+2+1), 5=r-x (4+1), 5=r-x (4+1)
                                 # => Result: -rwxr-xr-x (owner modifies, all execute)
                                 # => Standard permission for executable scripts
+                                # => Owner can edit, everyone can run
 
 chmod 700 private.txt           # => 7=rwx, 0=--- (no permissions), 0=---
                                 # => Result: -rwx------ (owner only, full access)
                                 # => Maximum privacy, others can't even read
+                                # => Used for sensitive data, private keys
 
 # Set permissions recursively
 chmod -R 755 public_html/       # => -R flag recurses into subdirectories
+                                # => Applies to all files and folders inside
                                 # => Applies 755 to directory and all contents
                                 # => All files and subdirs get same permissions
 
@@ -522,41 +551,48 @@ echo "Hello, World" > output.txt # => > operator redirects stdout (file descript
                                 # => stdout redirected to output.txt (overwrites existing)
                                 # => output.txt contents: "Hello, World\n"
                                 # => File created if doesn't exist
+                                # => Previous file content lost (overwrite mode)
 
 # Redirect stdout to file (append)
 echo "Second line" >> output.txt # => >> operator appends instead of overwriting
                                 # => Preserves existing content, adds to end
                                 # => output.txt now: "Hello, World\nSecond line\n"
                                 # => Safe for log files (won't lose history)
+                                # => Double > means append mode
 
 # Redirect stderr to file
 ls /nonexistent 2> error.log    # => 2> redirects stderr (file descriptor 2)
                                 # => stdout (FD 1) still goes to terminal
                                 # => error.log receives: "ls: cannot access '/nonexistent': No such file or directory"
                                 # => Useful for separating errors from normal output
+                                # => Number 2 specifies stderr stream
 
 # Redirect both stdout and stderr
 command &> all_output.txt       # => &> is shorthand for both streams
                                 # => Redirects stdout (FD 1) and stderr (FD 2) to same file
                                 # => Equivalent to: >all_output.txt 2>&1
                                 # => Combined output captured in single file
+                                # => Bash-specific syntax (not POSIX sh)
 
 # Redirect stdout and stderr separately
 command >output.log 2>error.log # => Two separate redirections in one command
                                 # => stdout (normal output) to output.log
                                 # => stderr (error messages) to error.log
                                 # => Separates normal output from errors for analysis
+                                # => Two different files for two streams
 
 # Discard output (send to /dev/null)
 command > /dev/null             # => /dev/null is special file that discards everything
                                 # => stdout discarded (silent, no output visible)
                                 # => stderr still visible on terminal
+                                # => "Bit bucket" - data disappears
 command 2> /dev/null            # => Suppresses error messages only
                                 # => stderr discarded, stdout still visible
                                 # => Normal output shown, errors hidden
 command &> /dev/null            # => Discards both stdout and stderr
                                 # => Completely silent operation
                                 # => No output of any kind shown
+                                # => Common for background processes
 
 # Redirect stdin from file
 wc -l < input.txt               # => < operator redirects stdin from file
@@ -564,6 +600,7 @@ wc -l < input.txt               # => < operator redirects stdin from file
                                 # => Output: 42 (number only, no filename shown)
                                 # => Compare: wc -l input.txt shows "42 input.txt"
                                 # => Difference: filename comes from stdin vs argument
+                                # => Reverse of > operator (input instead of output)
 
 # Here document (multi-line input)
 cat > config.txt << EOF         # => << starts here document (multi-line stdin)
@@ -581,6 +618,7 @@ sort < unsorted.txt > sorted.txt # => Multiple redirections: input AND output
                                 # => stdin from unsorted.txt, stdout to sorted.txt
                                 # => unsorted.txt unchanged (read-only)
                                 # => sorted.txt created with sorted lines
+                                # => Chain input and output redirection
 ```
 
 **Key Takeaway**: Use `>` to redirect output to files (overwrites), `>>` to append, `2>` for error messages, and `<` for input - remember that `> /dev/null` discards output, useful for silent execution.
@@ -1048,49 +1086,65 @@ mkdir testdir && cd testdir     # => mkdir testdir executes first
                                 # =>   cd doesn't execute (short-circuit)
                                 # => If testdir created: mkdir returns 0 (success)
                                 # =>   && triggers cd execution
+                                # => Second command runs only on first command success
 
 # Chain multiple commands with AND
 cd /var/log && grep "error" syslog && echo "Errors found"
                                 # => All three run if each succeeds
                                 # => First failure stops chain
+                                # => Left-to-right evaluation (cd, then grep, then echo)
 
 # OR operator (||) - run next if previous fails
 cd /nonexistent || echo "Failed to change directory"
                                 # => cd fails → || triggers echo
                                 # => Output: Failed to change directory
+                                # => Opposite of &&: runs on failure, not success
 
 # Default value pattern
 [ -f config.txt ] || echo "Config not found"
                                 # => If file missing: echo runs
                                 # => If file exists: echo skipped
+                                # => Common idiom for existence checks
 
 # Semicolon (;) - unconditional execution
 cd /tmp; ls; pwd                # => ; ignores exit codes, all three run independently
+                                # => Always executes all commands
+                                # => No short-circuiting (unlike && and ||)
 
 # Combine AND and OR
 command && echo "Success" || echo "Failed"
                                 # => Success: command → "Success" → skip "Failed"
                                 # => Failure: command fails → skip "Success" → "Failed"
+                                # => Common pattern for success/failure messages
 
 # Create directory with fallback
 mkdir /var/myapp 2>/dev/null || mkdir ~/myapp
                                 # => Fallback to ~/myapp if /var/myapp fails
+                                # => 2>/dev/null suppresses error messages
+                                # => Try privileged location first, fall back to home
 
 # Backup with validation
 tar -czf backup.tar.gz /data && echo "Backup complete" || echo "Backup failed"
                                 # => Message based on tar exit code
+                                # => Conditional feedback on operation success
 
 # Multiple conditions
 [ -f file.txt ] && [ -r file.txt ] && cat file.txt
                                 # => cat runs only if both conditions true
+                                # => First checks file exists, then checks readable
+                                # => All conditions must pass for cat to execute
 
 # Short-circuit evaluation
 false && echo "This won't print" # => echo skipped
+                                # => false returns 1, && short-circuits
 true || echo "This won't print"  # => echo skipped
+                                # => true returns 0, || short-circuits
 
 # Practical example: safe deployment
 git pull && npm install && npm test && npm run deploy
                                 # => Fail-fast: stops at first failure
+                                # => Each step validates before proceeding
+                                # => Prevents deploying broken code
 ```
 
 **Key Takeaway**: Use `&&` to chain commands that depend on success (fail-fast), `||` for fallback actions on failure, and `;` for independent commands - combine them for robust scripts that handle errors gracefully.
@@ -2146,16 +2200,22 @@ Scripts receive arguments via positional parameters `$1, $2, ...`, with `$#` cou
 ```bash
 #!/bin/bash
 # Save as: script.sh
+                                # => Shebang tells OS which interpreter to use
+                                # => bash will execute this script
 
 # Script name
 echo "Script name: $0"          # => $0 holds script path/name
                                 # => If called as ./script.sh, $0="./script.sh"
+                                # => $0 is special parameter for script name
 
 # Individual arguments
 echo "First argument: $1"       # => $1 is first argument after script name
+                                # => Positional parameter 1
 echo "Second argument: $2"      # => $2 is second argument
+                                # => Positional parameter 2
 echo "Third argument: $3"       # => $3 is third argument
                                 # => Arguments start at $1, not $0
+                                # => Positional parameter 3
 
 # Argument count
 echo "Argument count: $#"       # => $# counts arguments (excludes $0)
@@ -2178,9 +2238,11 @@ for arg in "$@"; do             # => "$@" with quotes preserves word boundaries
                                 # => Each argument becomes separate iteration
                                 # => Works correctly even with spaces in arguments
                                 # => Without quotes, spaces split arguments
+                                # => for loop iterates over all positional parameters
     echo "Argument: $arg"       # => Processes each argument individually
                                 # => arg contains one complete argument per loop
-done
+                                # => Prints each argument on separate line
+done                            # => Completes loop after all arguments processed
 
 # Shift arguments (move $2 to $1, $3 to $2, etc.)
 echo "Before shift: $1 $2 $3"   # => Shows first 3 arguments as received
@@ -2200,48 +2262,72 @@ shift 2                         # => Removes next 2 arguments (current $1 and $2
 # Practical example: argument validation
 if [ $# -eq 0 ]; then           # => -eq tests numeric equality ($# equals 0)
                                 # => Tests if no arguments provided to script
+                                # => $# holds count of positional parameters
     echo "Usage: $0 <filename> [options]"
                                 # => Shows usage message with script name
                                 # => <filename> indicates required, [options] indicates optional
+                                # => $0 expands to script name in message
     exit 1                      # => Exits with error code 1 (failure)
                                 # => Prevents script execution without required args
+                                # => Non-zero exit code indicates error to caller
 fi                              # => Script continues only if arguments provided
+                                # => End of argument count check
 
 filename="$1"                   # => Stores first argument in named variable
                                 # => Quotes preserve spaces if filename has them
+                                # => Assigns positional parameter to named variable
 if [ ! -f "$filename" ]; then   # => ! negates test, -f tests "is regular file"
                                 # => Validates filename argument points to existing file
                                 # => Returns true if file doesn't exist
+                                # => Bracket [ is test command alias
     echo "Error: $filename not found"
                                 # => Error message to stderr
+                                # => Reports which file wasn't found
     exit 1                      # => Exits if validation fails
                                 # => Prevents processing non-existent file
-fi
+                                # => Same error code as argument count failure
+fi                              # => End of file existence check
 
 echo "Processing $filename..."  # => Continues only if file exists
                                 # => All validation passed at this point
+                                # => Safe to proceed with file operations
 
 # Practical example: option parsing
 while [ $# -gt 0 ]; do          # => Loop while arguments remain ($# > 0)
+                                # => -gt is numeric greater-than test
+                                # => Processes all arguments one by one
     case "$1" in                # => Tests current argument
+                                # => Pattern matching on first parameter
         -v|--verbose)           # => Matches -v OR --verbose
+                                # => Pipe | means OR in case patterns
             VERBOSE=true        # => Sets flag
+                                # => Boolean flag stored in variable
             ;;
         -o|--output)            # => Matches -o OR --output
+                                # => Option that takes a value
             OUTPUT_FILE="$2"    # => Next argument is value for -o
+                                # => $2 becomes value for the option
             shift               # => Consume value argument (moves $3→$2, $4→$3, etc.)
+                                # => Extra shift for option value
             ;;
         *)                      # => Unrecognized option
+                                # => Default case catches everything else
             echo "Unknown option: $1"
+                                # => Reports invalid option to user
             exit 1              # => Exits on invalid option
+                                # => Prevents execution with bad arguments
             ;;
-    esac
+    esac                        # => End of case statement
+                                # => esac closes pattern matching block
     shift                       # => Move to next argument ($2→$1, $3→$2, etc.)
+                                # => Advances to next parameter
 done                            # => Continues until all arguments processed
+                                # => Loop exits when $# reaches 0
 
 # Access last argument
 echo "Last argument: ${!#}"     # => ${!#} expands to last positional parameter
                                 # => Indirect expansion of argument count
+                                # => Gets value of variable named by $#
 ```
 
 **Key Takeaway**: Use `$1, $2, ...` for individual arguments, `$#` to check argument count, `$@` to iterate over all arguments, and `shift` to process arguments sequentially - always validate argument count and values before use.
