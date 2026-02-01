@@ -1163,105 +1163,105 @@ graph TD
 **Code**:
 
 ```elixir
-defmodule ImportAliasRequire do
-  alias MyApp.Accounts.User
-  # => User = MyApp.Accounts.User (shorthand)
+defmodule ImportAliasRequire do               # => Module demonstrating namespace directives
+  alias MyApp.Accounts.User                   # => Creates shorthand alias
+  # => User = MyApp.Accounts.User (module-level scope)
 
-  alias MyApp.Accounts.Admin, as: A
-  # => Custom alias: A = MyApp.Accounts.Admin
+  alias MyApp.Accounts.Admin, as: A           # => Custom alias with as: option
+  # => A = MyApp.Accounts.Admin (different name)
 
-  def create_user(name) do
-    %User{name: name}
+  def create_user(name) do                    # => Function using User alias
+    %User{name: name}                         # => Struct expansion via alias
     # => Expands to %MyApp.Accounts.User{name: name}
   end
 
-  def create_admin(name) do
-    %A{name: name}
+  def create_admin(name) do                   # => Function using A alias
+    %A{name: name}                            # => Struct expansion via custom alias
     # => Expands to %MyApp.Accounts.Admin{name: name}
   end
 
-  import Enum, only: [map: 2, filter: 2]
-  # => Selective import: only map/2 and filter/2
+  import Enum, only: [map: 2, filter: 2]     # => Selective import (best practice)
+  # => Brings map/2 and filter/2 into scope (no other Enum functions)
 
-  def process_numbers(list) do
-    list
-    |> map(fn x -> x * 2 end)
-    # => Calls Enum.map/2 without prefix
-    |> filter(fn x -> x > 10 end)
-    # => Calls Enum.filter/2 without prefix
+  def process_numbers(list) do                # => Function using imported functions
+    list                                      # => Input list
+    |> map(fn x -> x * 2 end)                # => Calls Enum.map/2 without module prefix
+                                              # => Doubles each element
+    |> filter(fn x -> x > 10 end)            # => Calls Enum.filter/2 without prefix
+                                              # => Keeps only values > 10
   end
 
-  import String, except: [split: 1]
-  # => All String functions except split/1
+  import String, except: [split: 1]          # => Import all except split/1
+  # => All String functions available except split/1
 
-  def upcase_string(str) do
-    upcase(str)
-    # => Calls String.upcase/1 without prefix
+  def upcase_string(str) do                  # => Function using imported String function
+    upcase(str)                               # => Calls String.upcase/1 without prefix
+    # => Returns uppercased string
   end
 
-  require Logger
-  # => Required for Logger macros
+  require Logger                              # => Required for macros
+  # => Logger.info, Logger.debug are macros (compile-time expansion)
 
-  def log_something do
-    Logger.info("This is a log message")
-    # => Macro expands at compile time
+  def log_something do                        # => Function using Logger macro
+    Logger.info("This is a log message")      # => Macro expands at compile time
+    # => Generates log output with metadata
   end
 
-  alias MyApp.{Accounts, Billing, Reports}
-  # => Multiple aliases: Accounts, Billing, Reports
+  alias MyApp.{Accounts, Billing, Reports}   # => Multi-alias syntax
+  # => Creates three aliases: Accounts, Billing, Reports
 
-  def get_account_report do
-    account = Accounts.get()
-    # => MyApp.Accounts.get/0
-    billing = Billing.get()
-    # => MyApp.Billing.get/0
-    Reports.generate(account, billing)
-    # => MyApp.Reports.generate/2
+  def get_account_report do                   # => Function using multiple aliases
+    account = Accounts.get()                  # => Expands to MyApp.Accounts.get/0
+    # => Retrieves account data
+    billing = Billing.get()                   # => Expands to MyApp.Billing.get/0
+    # => Retrieves billing data
+    Reports.generate(account, billing)        # => Expands to MyApp.Reports.generate/2
+    # => Generates combined report
   end
 end
 
-defmodule MyApp.Accounts.User do
-  defstruct name: nil, email: nil
+defmodule MyApp.Accounts.User do              # => User struct definition
+  defstruct name: nil, email: nil             # => Fields: name and email
 end
 
-defmodule MyApp.Accounts.Admin do
-  defstruct name: nil, role: :admin
+defmodule MyApp.Accounts.Admin do             # => Admin struct definition
+  defstruct name: nil, role: :admin           # => Fields: name and role (default :admin)
 end
 
-defmodule ScopingExample do
-  def func1 do
-    import Enum
-    # => Function-level import (only in func1)
-    map([1, 2, 3], fn x -> x * 2 end)
+defmodule ScopingExample do                   # => Module demonstrating import scoping
+  def func1 do                                # => Function with local import
+    import Enum                               # => Function-level import (lexical scope)
+    # => Import valid only within func1 body
+    map([1, 2, 3], fn x -> x * 2 end)        # => Calls imported map/2
     # => Returns [2, 4, 6]
   end
 
-  def func2 do
-    Enum.map([1, 2, 3], fn x -> x * 2 end)
-    # => Must use full module name (func1's import not available)
+  def func2 do                                # => Function without import
+    Enum.map([1, 2, 3], fn x -> x * 2 end)   # => Must use full module name
+    # => func1's import not available (function-scoped)
   end
 
-  import String
-  # => Module-level import (available in all functions)
+  import String                               # => Module-level import
+  # => Available in all functions below (module scope)
 
-  def func3, do: upcase("hello")
-  # => Returns "HELLO" (uses imported upcase/1)
+  def func3, do: upcase("hello")             # => Uses module-level imported upcase/1
+  # => Returns "HELLO"
 
-  def func4, do: downcase("WORLD")
-  # => Returns "world" (uses imported downcase/1)
+  def func4, do: downcase("WORLD")           # => Uses module-level imported downcase/1
+  # => Returns "world"
 end
 
-# ImportAliasRequire.create_user("Alice")
+# ImportAliasRequire.create_user("Alice")   # => Calls create_user/1
 # => %MyApp.Accounts.User{name: "Alice", email: nil}
 
-# ImportAliasRequire.process_numbers([1, 2, 3, 4, 5, 6, 7, 8])
+# ImportAliasRequire.process_numbers([1, 2, 3, 4, 5, 6, 7, 8])  # => Process with imported functions
 # => Doubles: [2, 4, 6, 8, 10, 12, 14, 16]
 # => Filters > 10: [12, 14, 16]
 
-# ScopingExample.func1()
+# ScopingExample.func1()                     # => Calls func1 with local import
 # => [2, 4, 6]
 
-# ScopingExample.func3()
+# ScopingExample.func3()                     # => Calls func3 with module-level import
 # => "HELLO"
 ```
 
@@ -4562,17 +4562,18 @@ end
 
 ```elixir
 # OptionParser.parse(args, switches: [...])
-{opts, positional, invalid} = OptionParser.parse(
-  args,
-  switches: [
-    name: :string,    # --name Alice
-    count: :integer,  # --count 5
-    verbose: :boolean # --verbose
+{opts, positional, invalid} = OptionParser.parse(  # => Parses command-line arguments
+  args,                                              # => Input args from Mix.Task.run/1
+  switches: [                                        # => Define expected switches/options
+    name: :string,    # --name Alice                # => String option with value
+    count: :integer,  # --count 5                   # => Integer option (auto-parsed)
+    verbose: :boolean # --verbose                   # => Boolean flag (presence = true)
   ]
 )
+# => Returns 3-element tuple: {parsed_opts, positional_args, invalid_opts}
 # => opts: [name: "Alice", count: 5, verbose: true]
-# => positional: unnamed arguments list
-# => invalid: unrecognized options
+# => positional: unnamed arguments list (e.g., ["file1.txt", "file2.txt"])
+# => invalid: unrecognized options (e.g., [{"-x", nil}] for --unknown-flag)
 ```
 
 **Key Takeaway**: Custom Mix tasks automate project operations. Implement `Mix.Task` behavior with `run/1`, parse arguments with `OptionParser`, and document with `@shortdoc`/`@moduledoc`. Run tasks with `mix task_name [args]`.

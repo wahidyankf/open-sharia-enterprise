@@ -287,58 +287,46 @@ By default, variables in patterns rebind to new values. The **pin operator** `^`
 x = 1                          # => Binds x to value 1
                                # => x is 1 (initial binding)
 x = 2                          # => Rebinds x to value 2 (default behavior)
-                               # => x is now 2 (previous value discarded)
+                               # => x is now 2
 x                              # => Returns current binding: 2
 
 x = 1                          # => Resets x to value 1
-                               # => x is 1 (fresh binding)
 ^x = 1                         # => Pin operator ^ prevents rebinding
                                # => Matches x's current value (1) against right side (1)
-                               # => Match succeeds: 1 == 1
                                # => Returns 1 (no rebinding, just validation)
 
 status = :ok                   # => Binds status to atom :ok
-                               # => status is :ok
 
 {^status, result} = {:ok, 42}  # => Pattern with pinned status
                                # => ^status matches :ok (first element must be :ok)
                                # => result binds to 42 (second element)
-                               # => Match succeeds because {:ok, ...} structure matches
                                # => Returns {:ok, 42}
 result                         # => Returns 42 (extracted from tuple)
 
 expected_status = :ok          # => Binds expected_status to :ok at module scope
-                               # => expected_status is :ok
 
 defmodule Matcher do           # => Defines module Matcher
   def match_value(^expected_status, result) do  # => Function with pinned parameter
                                                  # => ^expected_status pins to outer scope value (:ok)
                                                  # => First arg MUST be :ok for clause to match
-                                                 # => result is second parameter (any value)
     result                     # => Returns result unchanged
-                               # => Body executes only if first arg is :ok
   end
-end                            # => Ends module definition
+end
 
 Matcher.match_value(:ok, 42)   # => Calls match_value with :ok and 42
-                               # => First arg :ok matches pinned ^expected_status (:ok)
-                               # => result binds to 42
-                               # => Returns 42
+                               # => First arg :ok matches pinned ^expected_status
+                               # => result binds to 42, returns 42
 
 list = [1, 2, 3]               # => Creates list for demonstration
-                               # => list is [1, 2, 3]
 [first | _] = list             # => Destructures list without pinning
                                # => first binds to 1 (head element)
-                               # => _ ignores tail [2, 3]
                                # => Returns [1, 2, 3]
-first                          # => Returns 1 (head value)
+first                          # => Returns 1
 
 [^first | _] = list            # => Destructures with pinned first
                                # => ^first matches against current value (1)
                                # => Head of list must be 1 for match to succeed
-                               # => Match succeeds: [1, 2, 3] head is 1
                                # => Returns [1, 2, 3]
-                               # => first not rebound (pin prevents rebinding)
 ```
 
 **Key Takeaway**: Use `^` when you want to match against a variable's current value instead of rebinding it. Essential for validating expected values in pattern matching.
@@ -510,66 +498,48 @@ Maps are key-value data structures (like hash maps or dictionaries in other lang
 ```elixir
 map = %{"name" => "Alice", "age" => 30}  # => Creates map with string keys
                                           # => map is %{"age" => 30, "name" => "Alice"}
-                                          # => Keys sorted alphabetically in output
 
 map["name"]                            # => Accesses value by string key
                                         # => Returns "Alice"
-map["age"]                             # => Accesses age value
-                                        # => Returns 30
-map["missing"]                         # => Accesses non-existent key
-                                        # => Returns nil (no error, safe access)
+map["age"]                             # => Returns 30
+map["missing"]                         # => Returns nil (no error, safe access)
 
 user = %{name: "Bob", age: 25, city: "NYC"}  # => Creates map with atom keys
                                               # => Atom key syntax: key: value
-                                              # => user is %{age: 25, city: "NYC", name: "Bob"}
 
 %{name: "Bob"} === %{:name => "Bob"}   # => Both syntaxes equivalent for atom keys
-                                        # => name: "Bob" is sugar for :name => "Bob"
                                         # => Returns true
 
 user.name                              # => Dot notation for atom keys only
-                                        # => Raises KeyError if key missing
-                                        # => Returns "Bob"
-user.age                               # => Dot access for :age
-                                        # => Returns 25
+                                        # => Returns "Bob" (raises KeyError if missing)
+user.age                               # => Returns 25
 
 Map.get(user, :name)                   # => Safe access function
                                         # => Returns "Bob"
 Map.get(user, :missing)                # => Returns nil for missing key
-                                        # => No error raised
-                                        # => Returns nil
-Map.get(user, :missing, "N/A")         # => Provides default value for missing key
-                                        # => Returns "N/A" (default)
+Map.get(user, :missing, "N/A")         # => Provides default value
+                                        # => Returns "N/A"
 
 updated_user = %{user | age: 26}       # => Update syntax | for existing keys only
-                                        # => Creates new map with age changed
                                         # => updated_user is %{age: 26, city: "NYC", name: "Bob"}
 user                                   # => Original map unchanged: %{age: 25, ...}
-                                        # => Immutability preserved
 
 with_country = Map.put(user, :country, "USA")  # => Adds new key to map
-                                                # => Works for both new and existing keys
                                                 # => with_country is %{age: 25, city: "NYC", country: "USA", name: "Bob"}
 
 without_age = Map.delete(user, :age)   # => Removes key from map
-                                        # => Creates new map without :age
                                         # => without_age is %{city: "NYC", name: "Bob"}
 
 %{name: person_name} = user            # => Pattern matches to extract :name value
                                         # => person_name binds to "Bob"
-                                        # => Other keys (:age, :city) ignored
                                         # => Returns %{age: 25, city: "NYC", name: "Bob"}
 person_name                            # => Returns "Bob"
 
 %{name: n, age: a} = user              # => Extracts multiple keys in pattern
-                                        # => n binds to "Bob"
-                                        # => a binds to 25
-                                        # => Returns original map
+                                        # => n binds to "Bob", a binds to 25
 
-nested = %{user: %{profile: %{bio: "Hello"}}}  # => Creates deeply nested map structure
-                                                # => nested is %{user: %{profile: %{bio: "Hello"}}}
+nested = %{user: %{profile: %{bio: "Hello"}}}  # => Creates deeply nested map
 updated_nested = put_in(nested, [:user, :profile, :bio], "Hi there!")  # => Updates nested value by path
-                                                                         # => Creates new structure with :bio changed
                                                                          # => updated_nested is %{user: %{profile: %{bio: "Hi there!"}}}
 ```
 
@@ -2537,60 +2507,70 @@ IEx (Interactive Elixir) is the REPL for running Elixir code interactively. It p
 
 # h - Help for modules and functions
 h(Enum) # => Shows documentation for Enum module
+         # => Displays module overview and available functions
 h(Enum.map) # => Shows documentation for Enum.map/2
-h(Enum.map/2) # => Same, explicit arity
+             # => Includes examples and parameter descriptions
+h(Enum.map/2) # => Same, explicit arity notation
 
 # i - Information about data types
 i(42) # => Shows: Term: 42, Data type: Integer, Reference modules: Integer
+      # => Useful for understanding value types at runtime
 i("hello") # => Shows: Term: "hello", Data type: BitString (binary)
+            # => Reveals UTF-8 string representation
 i([1, 2, 3]) # => Shows: Term: [1, 2, 3], Data type: List
+              # => Lists element count and structure
 
 # v - Retrieve previous results
-1 + 1 # => 2
+1 + 1 # => 2 (result stored in history)
 v(1) # => 2 (gets result from line 1)
-v(1) * 10 # => 20
+      # => Retrieves by line number
+v(1) * 10 # => 20 (reuses previous calculation)
 
-v() # => Gets last result
-v(-1) # => Same as v()
+v() # => Gets last result (most recent)
+v(-1) # => Same as v() (negative index from end)
 v(-2) # => Second-to-last result
 
 # c - Compile file
-# c("path/to/file.ex") # => Compiles and loads module
+# c("path/to/file.ex") # => Compiles and loads module into IEx
+                        # => Returns list of loaded modules
 
 # r - Recompile module
 # r(MyModule) # => Recompiles module from source
+               # => Useful for development iteration
 
 # s - Print spec information
 defmodule TypedModule do
-  @spec add(integer(), integer()) :: integer()
-  def add(a, b), do: a + b
+  @spec add(integer(), integer()) :: integer()  # => Type specification
+  def add(a, b), do: a + b                       # => Implementation
 end
 
-# s(TypedModule.add) # => Shows type spec
+# s(TypedModule.add) # => Shows type spec: add(integer(), integer()) :: integer()
 
 # t - Print types
-# t(String) # => Shows String types
+# t(String) # => Shows String type definitions and aliases
 
 # b - Print callbacks
-# b(GenServer) # => Shows GenServer callbacks
+# b(GenServer) # => Shows required callbacks: init/1, handle_call/3, etc.
 
 # exports - List module functions
 exports(Enum) # => Lists all Enum functions: [at: 2, count: 1, ...]
+               # => Number indicates function arity
 
 # imports - Show current imports
 imports() # => Shows: Kernel, Kernel.SpecialForms
+           # => Modules imported into current scope
 
 # Clear screen
-# clear() # => Clears IEx screen
+# clear() # => Clears IEx screen (visual cleanup)
 
 # Break out of execution
-# Use Ctrl+C twice to exit IEx
+# Use Ctrl+C twice to exit IEx (safe shutdown)
 
 # Respawn IEx (after crash)
-# respawn() # => Restarts IEx session
+# respawn() # => Restarts IEx session (fresh state)
 
 # pwd - Print working directory
-# pwd() # => Shows current directory
+# pwd() # => Shows current directory path
 
 # ls - List files
 # ls() # => Lists files in current directory
@@ -2600,15 +2580,16 @@ imports() # => Shows: Kernel, Kernel.SpecialForms
 # cd("lib") # => Changes to lib/ directory
 
 # Flush messages
-send(self(), :hello) # => :hello (send message to self)
-send(self(), :world) # => :world
+send(self(), :hello) # => :hello (send message to self process)
+send(self(), :world) # => :world (second message queued)
 flush() # => Prints: :hello, :world (and removes from mailbox)
+         # => Clears process mailbox
 
 # Runtime info
-runtime_info() # => Shows system information
+runtime_info() # => Shows system information (BEAM version, etc.)
 
 # Memory info
-runtime_info(:system) # => Shows system memory
+runtime_info(:system) # => Shows system memory usage statistics
 
 # Load .iex.exs file with custom helpers
 # Create ~/.iex.exs with custom functions/imports

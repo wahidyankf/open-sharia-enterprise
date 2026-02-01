@@ -727,44 +727,62 @@ spec:
 Kubernetes maintains revision history for Deployments, enabling rollback to previous versions when updates introduce bugs. Rollbacks create a new ReplicaSet matching the target revision's Pod template, following the same rolling update strategy.
 
 ```yaml
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: apps/v1 # => Apps API group for Deployments
+kind: Deployment # => Deployment with rollback capability
 metadata:
-  name: versioned-app
+  name:
+    versioned-app # => Deployment name
+    # => Used in rollback commands
   annotations:
+    # => Annotations for deployment metadata
     kubernetes.io/change-cause:
       "Update to v1.25"
       # => Recorded in revision history
       # => kubectl rollout history shows this message
+      # => Set this on each deployment for audit trail
 spec:
-  replicas: 3
+  replicas:
+    3 # => Desired Pod count
+    # => Maintained across rollbacks
   revisionHistoryLimit:
     10 # => Keeps 10 old ReplicaSets for rollback
     # => Default: 10 revisions
     # => Old ReplicaSets scaled to 0 but retained
+    # => Cleanup happens when limit exceeded
   selector:
+    # => Pod selector (immutable)
     matchLabels:
-      app: versioned
+      app: versioned # => Matches template labels
+      # => Cannot change after creation
   template:
+    # => Pod template for replicas
     metadata:
       labels:
-        app: versioned
+        app: versioned # => Required label
+        # => Matches selector above
         version: v1.25 # => Version label for tracking
+        # => Optional but helpful for debugging
     spec:
+      # => Pod specification
       containers:
-        - name: nginx
+        - name: nginx # => Container definition
+          # => Single container in this example
           image: nginx:1.25 # => Current image version
-
+          # => Changing this triggers rollout
+          # => Previous version: nginx:1.24
 
 # Rollback commands:
 # => kubectl rollout history deployment/versioned-app
 # => Shows: REVISION  CHANGE-CAUSE
 # =>        1         Update to v1.24
 # =>        2         Update to v1.25 (current)
+# => Lists all retained revisions with change-cause
 # => kubectl rollout undo deployment/versioned-app
 # => Rolls back to revision 1 (previous)
+# => Creates new revision (3) with v1.24 Pod template
 # => kubectl rollout undo deployment/versioned-app --to-revision=1
 # => Rolls back to specific revision
+# => Useful for jumping back multiple versions
 ```
 
 **Key Takeaway**: Set `kubernetes.io/change-cause` annotation to track deployment reasons; use `kubectl rollout undo` for quick rollbacks and `--to-revision` for specific version restoration; maintain sufficient `revisionHistoryLimit` for rollback options.
@@ -778,50 +796,75 @@ spec:
 Liveness probes detect unhealthy containers and restart them automatically, recovering from deadlocks, infinite loops, or application hangs. Failed liveness checks trigger Pod restarts according to the restart policy.
 
 ```yaml
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: apps/v1 # => Apps API group
+kind: Deployment # => Deployment with health checks
 metadata:
-  name: probe-app
+  name:
+    probe-app # => Deployment identifier
+    # => Demonstrates liveness probes
 spec:
-  replicas: 2
+  replicas:
+    2 # => Two Pod replicas
+    # => Both monitored independently
   selector:
+    # => Pod selector
     matchLabels:
-      app: probe
+      app: probe # => Matches template labels
+      # => Immutable selector
   template:
+    # => Pod template
     metadata:
       labels:
-        app: probe
+        app: probe # => Labels for Pods
+        # => MUST match selector
     spec:
+      # => Pod specification with probes
       containers:
-        - name: nginx
-          image: nginx:1.24
+        - name: nginx # => nginx container
+          # => Serves as health check target
+          image: nginx:1.24 # => nginx image
+          # => Responds to HTTP health checks
           ports:
-            - containerPort: 80
+            - containerPort: 80 # => HTTP port
+            # => Liveness probe target
           livenessProbe: # => Checks if container is alive
+            # => Detects deadlocks and hangs
             httpGet:
+              # => HTTP probe type
               path: / # => Sends HTTP GET to / on port 80
-              port: 80
+              # => nginx default page responds
+              port: 80 # => Target port for probe
+              # => Matches containerPort above
             initialDelaySeconds:
               10 # => Wait 10s after container starts before first probe
               # => Allows app initialization time
+              # => Prevents false positives during startup
             periodSeconds:
               5 # => Probe every 5 seconds
               # => Default: 10 seconds
+              # => Frequent checks for faster detection
             timeoutSeconds:
               2 # => Probe must respond within 2 seconds
               # => Default: 1 second
+              # => Timeout = failure
             failureThreshold:
               3 # => Restart after 3 consecutive failures
               # => Default: 3 failures
+              # => Prevents restart on transient failures
             successThreshold:
               1 # => Consider healthy after 1 success
               # => Default: 1 (cannot be changed for liveness)
+              # => Always 1 for liveness probes
 
 # Liveness check behavior:
 # => HTTP 200-399: Success (container healthy)
+# => Continues normal operation
 # => HTTP 400+: Failure (counts toward failureThreshold)
+# => 4xx/5xx responses treated as unhealthy
 # => Timeout: Failure (no response within timeoutSeconds)
+# => Network issues or hangs trigger failure
 # => After 3 failures: kubelet restarts container
+# => Restarts follow Pod restartPolicy (Always by default)
 ```
 
 **Key Takeaway**: Use liveness probes to detect and recover from application deadlocks or hangs; set appropriate `initialDelaySeconds` to allow startup time and avoid false positives that cause restart loops.
@@ -852,34 +895,45 @@ graph TD
 ```
 
 ```yaml
-apiVersion: v1
-kind: Service
+apiVersion: v1 # => Core Kubernetes API
+kind: Service # => Service resource for networking
 metadata:
   name:
     web-service # => Service name: "web-service"
     # => DNS: web-service.default.svc.cluster.local
+    # => Unique name in namespace
 spec:
   type:
     ClusterIP # => Internal cluster IP (default type)
     # => Not accessible from outside cluster
+    # => Most secure service type
   selector:
+    # => Pod selector for traffic routing
     app:
       web # => Routes traffic to Pods with app=web label
       # => Service continuously watches for matching Pods
+      # => Automatically updates endpoints when Pods change
   ports:
+    # => Port mapping configuration
     - port: 80 # => Service listens on port 80
+      # => Clients connect to ClusterIP:80
       targetPort:
         8080 # => Forwards to container port 8080
         # => Service IP:80 → Pod IP:8080
+        # => Pods must listen on this port
       protocol:
         TCP # => TCP protocol (default)
         # => Alternative: UDP for DNS, SCTP for telecom
+        # => Most common: TCP for HTTP/HTTPS
 
 # Service receives cluster IP automatically
 # => kubectl get svc web-service
 # => Shows: CLUSTER-IP (e.g., 10.96.0.10)
+# => Allocated from service cluster IP range
 # => Other Pods can access via: http://web-service:80
+# => Short DNS name within same namespace
 # => Or via FQDN: http://web-service.default.svc.cluster.local:80
+# => Full DNS name works across namespaces
 ```
 
 **Key Takeaway**: Use ClusterIP Services for internal microservice communication within the cluster, reserving LoadBalancer and NodePort types for external access points to minimize security exposure and resource costs.
@@ -910,30 +964,44 @@ graph TD
 ```
 
 ```yaml
-apiVersion: v1
-kind: Service
+apiVersion: v1 # => Core API for Services
+kind: Service # => NodePort Service type
 metadata:
-  name: nodeport-service
+  name:
+    nodeport-service # => Service name
+    # => DNS name within cluster
 spec:
   type:
     NodePort # => Exposes Service on node IPs
     # => Accessible via <NodeIP>:<NodePort>
+    # => Opens port on ALL cluster nodes
   selector:
-    app: nodeport
+    # => Pod selector
+    app: nodeport # => Routes to Pods with app=nodeport
+    # => Service watches for matching Pods
   ports:
+    # => Port configuration
     - port: 80 # => Service port (cluster-internal)
+      # => ClusterIP:80 for internal access
       targetPort: 8080 # => Container port on Pods
+      # => Pods must listen on 8080
       nodePort:
         31000 # => External port on all nodes (30000-32767)
         # => Optional: Kubernetes assigns random port if omitted
         # => Traffic flow: NodeIP:31000 → Service:80 → Pod:8080
-      protocol: TCP
+        # => Same port on every node
+      protocol: TCP # => TCP protocol
+      # => Standard for HTTP traffic
 
 # Access patterns:
 # => From outside cluster: http://<node-ip>:31000
+# => External clients use any node IP
 # => From inside cluster: http://nodeport-service:80
+# => Internal Pods use ClusterIP
 # => Works on ALL nodes (kube-proxy sets up iptables rules)
+# => Even if Pod not on that node
 # => kubectl get nodes -o wide  # Get node IPs
+# => Shows external IPs for access
 ```
 
 **Key Takeaway**: NodePort is suitable for development and testing but avoid in production due to security concerns (opens ports on all nodes) and lack of load balancing; use LoadBalancer or Ingress for production external access.
@@ -947,33 +1015,48 @@ spec:
 LoadBalancer Services integrate with cloud provider load balancers (AWS ELB, GCP LB, Azure LB) to expose Pods via external IP addresses. This service type provides production-grade external access with automatic load distribution and health checks.
 
 ```yaml
-apiVersion: v1
-kind: Service
+apiVersion: v1 # => Core Kubernetes API
+kind: Service # => LoadBalancer Service type
 metadata:
-  name: loadbalancer-service
+  name:
+    loadbalancer-service # => Service identifier
+    # => Used in kubectl commands
 spec:
   type:
     LoadBalancer # => Provisions cloud provider load balancer
     # => Requires cloud provider integration
     # => On Minikube: use `minikube tunnel`
+    # => Creates external cloud resource
   selector:
-    app: frontend
+    # => Pod selector for routing
+    app: frontend # => Routes to Pods with app=frontend
+    # => Service tracks endpoints automatically
   ports:
+    # => Port mapping
     - port: 80 # => Load balancer listens on port 80
+      # => Public port for external access
       targetPort: 8080 # => Forwards to Pod port 8080
-      protocol: TCP
+      # => Backend port on containers
+      protocol: TCP # => TCP protocol
+      # => HTTP/HTTPS traffic
 
   # Cloud provider specific annotations (AWS example):
   # annotations:
   #   service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+  #   # => Network Load Balancer (layer 4, faster)
   #   service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+  #   # => Distributes traffic across availability zones
 
 # LoadBalancer provisions external IP
 # => kubectl get svc loadbalancer-service
 # => Shows: EXTERNAL-IP (e.g., 203.0.113.10)
+# => Cloud provider allocates public IP
 # => Pending: load balancer provisioning in progress
+# => Usually takes 1-3 minutes
 # => After provisioning: accessible via http://203.0.113.10:80
+# => Public internet access enabled
 # => Cloud provider handles health checks and failover
+# => Automatic traffic distribution
 ```
 
 **Key Takeaway**: LoadBalancer Services are production-ready for external access but incur cloud provider costs per Service; consider using a single Ingress controller with Ingress resources for cost-effective HTTP/HTTPS routing to multiple Services.
@@ -987,54 +1070,84 @@ spec:
 Headless Services (ClusterIP: None) enable direct Pod-to-Pod communication without load balancing, useful for StatefulSets and service discovery. DNS returns Pod IPs directly instead of a virtual Service IP.
 
 ```yaml
-apiVersion: v1
-kind: Service
+apiVersion: v1 # => Core API for Services
+kind: Service # => Headless Service (no ClusterIP)
 metadata:
-  name: headless-service # => Headless Service name
+  name:
+    headless-service # => Headless Service name
+    # => Used by StatefulSets for DNS
 spec:
   clusterIP:
     None # => No cluster IP assigned (headless)
     # => DNS returns Pod IPs directly
+    # => "None" is special value (not null)
   selector:
-    app: stateful
+    # => Pod selector
+    app: stateful # => Targets Pods with app=stateful
+    # => Same selector as StatefulSet below
   ports:
-    - port: 80
-      targetPort: 8080
+    # => Port configuration (required even for headless)
+    - port: 80 # => Service port
+      # => Not used for routing (no ClusterIP)
+      targetPort: 8080 # => Container port
+      # => Direct Pod connections use this port
 
 
 # DNS behavior:
 # => Regular Service: DNS returns single cluster IP
+# => Load balances across Pods transparently
 # => Headless Service: DNS returns all Pod IPs
+# => Multiple A records for service name
 # => nslookup headless-service.default.svc.cluster.local
 # => Returns: 10.244.0.5, 10.244.1.6, 10.244.2.7 (Pod IPs)
+# => Client application chooses which IP to use
 # => Enables direct Pod addressing: pod-name.headless-service.namespace.svc.cluster.local
+# => Individual Pod DNS resolution
 
 ---
-apiVersion: apps/v1
-kind: StatefulSet # => StatefulSets commonly use headless Services
+apiVersion: apps/v1 # => Apps API for StatefulSets
+kind:
+  StatefulSet # => StatefulSets commonly use headless Services
+  # => Provides stable Pod identities
 metadata:
-  name: stateful-app
+  name:
+    stateful-app # => StatefulSet name
+    # => Creates Pods with predictable names
 spec:
   serviceName:
     headless-service # => Associates with headless Service
     # => Creates predictable DNS: pod-0.headless-service
-  replicas: 3
+    # => MUST reference existing headless Service
+  replicas:
+    3 # => Number of stateful Pods
+    # => Each gets unique persistent identity
   selector:
+    # => Pod selector (immutable)
     matchLabels:
-      app: stateful
+      app: stateful # => Matches template and Service selector
+      # => All three components must align
   template:
+    # => Pod template
     metadata:
       labels:
-        app: stateful
+        app: stateful # => Labels for Pods
+        # => MUST match selector and Service
     spec:
+      # => Pod specification
       containers:
-        - name: nginx
-          image: nginx:1.24
+        - name: nginx # => Container definition
+          # => Application container
+          image: nginx:1.24 # => nginx image
+          # => Version-pinned for stability
 
 # Pod DNS names:
 # => stateful-app-0.headless-service.default.svc.cluster.local
+# => First Pod (index 0)
 # => stateful-app-1.headless-service.default.svc.cluster.local
+# => Second Pod (index 1)
 # => stateful-app-2.headless-service.default.svc.cluster.local
+# => Third Pod (index 2)
+# => Stable DNS even if Pod recreated
 ```
 
 **Key Takeaway**: Use headless Services with StatefulSets for predictable Pod DNS names and direct Pod-to-Pod communication; avoid for regular stateless applications where load balancing and service abstraction are beneficial.
@@ -1048,33 +1161,50 @@ spec:
 Session affinity (sticky sessions) routes requests from the same client to the same Pod, useful for stateful applications that maintain client-specific data. Kubernetes supports session affinity based on client IP.
 
 ```yaml
-apiVersion: v1
-kind: Service
+apiVersion: v1 # => Core API for Services
+kind: Service # => Service with session affinity
 metadata:
-  name: sticky-service
+  name:
+    sticky-service # => Service name
+    # => Provides sticky sessions
 spec:
-  type: ClusterIP
+  type:
+    ClusterIP # => Internal cluster IP
+    # => Session affinity works with all Service types
   sessionAffinity:
     ClientIP # => Enables session affinity
     # => Routes requests from same client IP to same Pod
     # => Default: None (random load balancing)
+    # => Only option: ClientIP (no cookie-based affinity)
   sessionAffinityConfig:
+    # => Session affinity configuration
     clientIP:
+      # => Client IP session config
       timeoutSeconds:
         10800 # => Session timeout: 3 hours (10800 seconds)
         # => After timeout, new Pod may be selected
         # => Range: 1-86400 seconds (1 second - 24 hours)
+        # => Tracks last request time per client IP
   selector:
-    app: stateful-app
+    # => Pod selector
+    app: stateful-app # => Routes to Pods with app=stateful-app
+    # => Session maintained across these Pods
   ports:
-    - port: 80
-      targetPort: 8080
+    # => Port configuration
+    - port: 80 # => Service port
+      # => Client connects here
+      targetPort: 8080 # => Pod port
+      # => Backend container port
 
 # Session affinity behavior:
 # => First request from 192.0.2.10 → routed to Pod A
+# => kube-proxy records: 192.0.2.10 → Pod A mapping
 # => Subsequent requests from 192.0.2.10 → routed to Pod A (same Pod)
+# => Consistent routing for same client IP
 # => Request from 192.0.2.20 → routed to Pod B (different client IP)
+# => Each client IP gets own Pod affinity
 # => After 3 hours idle → next request may route to different Pod
+# => Timeout resets affinity mapping
 ```
 
 **Key Takeaway**: Session affinity is a workaround for stateful applications but prevents even load distribution and complicates scaling; prefer stateless application design with external session stores (Redis, databases) for production systems.
@@ -1090,16 +1220,24 @@ spec:
 ConfigMaps store non-sensitive configuration data as key-value pairs, environment variables, or configuration files. This example demonstrates creating ConfigMaps from literal values and consuming them as environment variables.
 
 ```yaml
-apiVersion: v1
-kind: ConfigMap
+apiVersion: v1 # => Core Kubernetes API
+kind: ConfigMap # => ConfigMap resource for configuration
 metadata:
-  name: app-config # => ConfigMap name: "app-config"
+  name:
+    app-config # => ConfigMap name: "app-config"
+    # => Referenced by Pods for config injection
 data:
-  APP_ENV: "production" # => Key-value pair: APP_ENV=production
-  LOG_LEVEL: "info" # => Key-value pair: LOG_LEVEL=info
+  # => Key-value configuration data (all strings)
+  APP_ENV:
+    "production" # => Key-value pair: APP_ENV=production
+    # => Environment identifier
+  LOG_LEVEL:
+    "info" # => Key-value pair: LOG_LEVEL=info
+    # => Logging verbosity level
   MAX_CONNECTIONS:
     "100" # => All values stored as strings
     # => Application must parse numeric values
+    # => ConfigMaps don't have typed data
 
 ---
 apiVersion: v1

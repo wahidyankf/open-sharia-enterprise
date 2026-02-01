@@ -194,11 +194,13 @@ double calculateTotalZakat(List<double> wealthList) {
 }
 
 void main() async {
+  // => Main async to use await with compute
   List<double> wealthValues = [
-    100000000.0,
-    150000000.0,
-    200000000.0,
-    250000000.0,
+    // => List of wealth values to calculate Zakat for
+    100000000.0,                        // => 100M IDR
+    150000000.0,                        // => 150M IDR
+    200000000.0,                        // => 200M IDR
+    250000000.0,                        // => 250M IDR
   ];                                    // => Test data
 
   print('Calculating total Zakat...');  // => Start message
@@ -2500,194 +2502,364 @@ Implementing repository pattern for data access abstraction, separating business
 
 ```dart
 // Domain model
+// => Core business entity representing a donation
 class Donation {
-  final String id;
-  final String donor;
-  final double amount;
-  final DateTime timestamp;
+  final String id;                       // => Unique donation identifier
+  final String donor;                    // => Donor name (simplified - real app uses donor ID)
+  final double amount;                   // => Donation amount in IDR
+  final DateTime timestamp;              // => When donation occurred
 
+  // => Named constructor for creating donation instances
   Donation({
-    required this.id,
+    required this.id,                    // => All fields required (non-nullable)
     required this.donor,
     required this.amount,
     required this.timestamp,
   });
+  // => All fields final (immutable value object)
 
+  // => Serialization method: converts object to JSON map
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'donor': donor,
-    'amount': amount,
+    'id': id,                            // => Preserve ID for database storage
+    'donor': donor,                      // => Preserve donor name
+    'amount': amount,                    // => Amount stored as number
     'timestamp': timestamp.toIso8601String(),
+    // => Convert DateTime to ISO 8601 string for JSON compatibility
   };
+  // => Used when saving to file or database
 
+  // => Deserialization factory: creates object from JSON map
   factory Donation.fromJson(Map<String, dynamic> json) => Donation(
-    id: json['id'],
-    donor: json['donor'],
-    amount: json['amount'],
+    id: json['id'],                      // => Extract ID from JSON
+    donor: json['donor'],                // => Extract donor from JSON
+    amount: json['amount'],              // => Extract amount (already double)
     timestamp: DateTime.parse(json['timestamp']),
+    // => Parse ISO 8601 string back to DateTime
   );
-}
+  // => Used when loading from file or database
+  // => Enables round-trip serialization (toJson → fromJson)
 
 // Repository interface
+// => Repository pattern: abstract data access behind interface
+// => Defines contract for donation data operations (CRUD + queries)
 abstract class DonationRepository {
+  // => Create operation: persists new donation
   Future<void> create(Donation donation);
+  // => Async operation (database I/O)
+  // => Void return (no result, just side effect)
+
+  // => Read operation: retrieves donation by ID
   Future<Donation?> findById(String id);
+  // => Returns nullable (donation may not exist)
+  // => Primary key lookup (single result)
+
+  // => Read operation: retrieves all donations
   Future<List<Donation>> findAll();
+  // => Returns list (may be empty if no donations)
+  // => Use with caution in production (unbounded result set)
+
+  // => Query operation: finds donations by donor name
   Future<List<Donation>> findByDonor(String donor);
+  // => Returns list of donations for specific donor
+  // => Enables reporting, donor history views
+
+  // => Update operation: modifies existing donation
   Future<void> update(Donation donation);
+  // => Replaces donation with same ID
+  // => Void return (no result, just side effect)
+
+  // => Delete operation: removes donation
   Future<void> delete(String id);
+  // => Removes by ID
+  // => Void return (no error if ID doesn't exist - idempotent)
 }
+// => Interface allows multiple implementations (in-memory, file, database)
+// => Business logic depends on interface, not concrete implementation
 
 // In-memory implementation (testing)
+// => Test double: simulates database using in-memory Map
+// => Fast (no I/O), isolated (no shared state), deterministic (no race conditions)
 class InMemoryDonationRepository implements DonationRepository {
+  // => Storage: Map simulating database table
   final Map<String, Donation> _storage = {};
+  // => Key: donation ID (primary key), Value: donation object
+  // => Private field (encapsulation - only accessible via interface methods)
 
   @override
+  // => Implements create operation from interface
   Future<void> create(Donation donation) async {
+    // => Marked async to match interface (even though no actual async work)
     _storage[donation.id] = donation;
+    // => Store donation in map (upsert behavior)
     print('[MEMORY] Created: ${donation.id}');
+    // => Log for visibility during example execution
   }
 
   @override
+  // => Implements findById query from interface
   Future<Donation?> findById(String id) async {
     return _storage[id];
+    // => Map lookup by key
+    // => Returns null if ID doesn't exist (matches interface contract)
   }
 
   @override
+  // => Implements findAll query from interface
   Future<List<Donation>> findAll() async {
     return _storage.values.toList();
+    // => Convert map values to list
+    // => Returns all donations (no filtering)
+    // => Empty list if no donations exist
   }
 
   @override
+  // => Implements findByDonor query from interface
   Future<List<Donation>> findByDonor(String donor) async {
     return _storage.values
+        // => Start with all donations
         .where((d) => d.donor == donor)
+        // => Filter to only donations where donor name matches
         .toList();
+        // => Convert filtered result to list
+    // => Returns empty list if donor has no donations
   }
 
   @override
+  // => Implements update operation from interface
   Future<void> update(Donation donation) async {
     _storage[donation.id] = donation;
+    // => Replace existing donation with same ID
+    // => Uses same logic as create (map upsert)
     print('[MEMORY] Updated: ${donation.id}');
+    // => Log for visibility
   }
 
   @override
+  // => Implements delete operation from interface
   Future<void> delete(String id) async {
     _storage.remove(id);
+    // => Remove donation from map
+    // => No-op if ID doesn't exist (idempotent behavior)
     print('[MEMORY] Deleted: $id');
+    // => Log for visibility
   }
 }
+// => End of in-memory implementation
+// => Used for tests (fast, isolated) and development (no database setup)
 
 // File-based implementation (persistence)
+// => Production-like implementation: persists data to file
+// => Same interface as in-memory version (demonstrates pattern benefit)
 class FileDonationRepository implements DonationRepository {
-  final String filePath;
+  final String filePath;                 // => Path to JSON file for storage
 
+  // => Constructor requires file path
   FileDonationRepository(this.filePath);
 
+  // => Helper method: loads all donations from file
   Future<Map<String, Donation>> _load() async {
     // Simulated file I/O
+    // => Real implementation would:
+    // => 1. Read file contents as string
+    // => 2. Parse JSON string to Map
+    // => 3. Convert JSON objects to Donation instances via fromJson
     print('[FILE] Loading from $filePath');
     return {};                          // => Would read from actual file
+    // => Simulated: returns empty map (no file operations in example)
   }
 
+  // => Helper method: saves all donations to file
   Future<void> _save(Map<String, Donation> data) async {
     // Simulated file I/O
+    // => Real implementation would:
+    // => 1. Convert Donation instances to JSON via toJson
+    // => 2. Convert Map to JSON string
+    // => 3. Write string to file
     print('[FILE] Saving to $filePath');
                                         // => Would write to actual file
+    // => Simulated: just logs (no file operations in example)
   }
 
   @override
+  // => Implements create operation from interface
   Future<void> create(Donation donation) async {
     Map<String, Donation> data = await _load();
+    // => Load existing donations from file
     data[donation.id] = donation;
+    // => Add new donation to in-memory map
     await _save(data);
+    // => Save updated map back to file
+    // => Pattern: read-modify-write (not optimized for concurrent writes)
   }
 
   @override
+  // => Implements findById query from interface
   Future<Donation?> findById(String id) async {
     Map<String, Donation> data = await _load();
+    // => Load all donations from file
     return data[id];
+    // => Lookup donation by ID
+    // => Returns null if not found
   }
 
   @override
+  // => Implements findAll query from interface
   Future<List<Donation>> findAll() async {
     Map<String, Donation> data = await _load();
+    // => Load all donations from file
     return data.values.toList();
+    // => Convert map values to list
+    // => Returns all donations
   }
 
   @override
+  // => Implements findByDonor query from interface
   Future<List<Donation>> findByDonor(String donor) async {
     Map<String, Donation> data = await _load();
+    // => Load all donations from file
     return data.values
+        // => Iterate through all donations
         .where((d) => d.donor == donor)
+        // => Filter to matching donor name
         .toList();
+        // => Convert filtered result to list
   }
 
   @override
+  // => Implements update operation from interface
   Future<void> update(Donation donation) async {
     Map<String, Donation> data = await _load();
+    // => Load existing donations
     data[donation.id] = donation;
+    // => Replace donation with same ID (upsert)
     await _save(data);
+    // => Save updated data to file
   }
 
   @override
+  // => Implements delete operation from interface
   Future<void> delete(String id) async {
     Map<String, Donation> data = await _load();
+    // => Load existing donations
     data.remove(id);
+    // => Remove donation from map
     await _save(data);
+    // => Save updated data to file (without deleted donation)
   }
 }
+// => End of file implementation
+// => Demonstrates repository pattern: same interface, different storage mechanism
+// => Business logic doesn't know if using in-memory or file repository
 
 // Service using repository
+// => Business logic layer: depends on repository abstraction
+// => Demonstrates dependency injection and loose coupling
 class DonationService {
   final DonationRepository repository;  // => Abstraction: not concrete type
+  // => Type is interface (DonationRepository), not implementation
+  // => Enables swapping implementations without changing service code
 
+  // => Constructor injection: dependency provided by caller
   DonationService(this.repository);
+  // => Service doesn't create repository (inversion of control)
+  // => Makes dependencies explicit and enables testing
 
+  // => Business method: creates donation with generated ID
   Future<void> createDonation(String donor, double amount) async {
+    // => Build donation object with auto-generated ID
     Donation donation = Donation(
       id: 'DON-${DateTime.now().millisecondsSinceEpoch}',
-      donor: donor,
-      amount: amount,
-      timestamp: DateTime.now(),
+      // => Simple ID generation using timestamp
+      // => Production: use UUID or database-generated ID
+      donor: donor,                      // => Donor name from caller
+      amount: amount,                    // => Amount from caller
+      timestamp: DateTime.now(),         // => Current timestamp
     );
 
+    // => Delegate to repository for persistence
     await repository.create(donation);
+    // => Service doesn't know if this goes to memory, file, or database
+    // => Repository abstraction provides flexibility
     print('Service: Donation created');
+    // => Log for visibility
   }
 
+  // => Business method: calculates total donations for donor
   Future<double> getTotalByDonor(String donor) async {
+    // => Query repository for donor's donations
     List<Donation> donations = await repository.findByDonor(donor);
+    // => Repository returns list of all donations for this donor
     return donations.fold(0.0, (sum, d) => sum + d.amount);
+    // => fold: reduce list to single value
+    // => Starting value: 0.0 (empty sum)
+    // => Accumulator: sum + d.amount (add each donation amount)
+    // => Returns total of all donations for donor
   }
 }
+// => End of service class
+// => Service uses repository abstraction (not tied to specific implementation)
 
+// => Main function demonstrates repository pattern benefits
 void main() async {
+  // => Marked async because it calls async service methods
+
   // Use in-memory repository (development/testing)
+  // => Scenario 1: Development/testing with in-memory storage
   print('=== In-Memory Repository ===');
   DonationRepository memoryRepo = InMemoryDonationRepository();
+  // => Create in-memory implementation
+  // => Type: DonationRepository (interface), not InMemoryDonationRepository
   DonationService service1 = DonationService(memoryRepo);
+  // => Inject in-memory repository into service
+  // => Service doesn't know it's using in-memory implementation
 
+  // => Create test donations
   await service1.createDonation('Ahmad', 100000.0);
+  // => Creates donation: Ahmad, 100k IDR
+  // => Stored in memory map
   await service1.createDonation('Ahmad', 150000.0);
+  // => Creates second donation: Ahmad, 150k IDR
+  // => Same donor, different donation
   await service1.createDonation('Fatimah', 200000.0);
+  // => Creates donation: Fatimah, 200k IDR
+  // => Different donor
 
+  // => Query total for specific donor
   double ahmadTotal = await service1.getTotalByDonor('Ahmad');
+  // => Calls service method which queries repository
+  // => Should return 250000.0 (100k + 150k)
   print('Ahmad total: Rp$ahmadTotal\n');
+  // => Output: Rp250000.0
 
   // Switch to file repository (production)
+  // => Scenario 2: Production with file-based persistence
   print('=== File Repository ===');
   DonationRepository fileRepo = FileDonationRepository('donations.json');
+  // => Create file implementation (would persist to donations.json)
+  // => Type: DonationRepository (same interface as in-memory version)
   DonationService service2 = DonationService(fileRepo);
+  // => Inject file repository into service
+  // => Service code unchanged (depends on abstraction)
 
+  // => Create donation using file repository
   await service2.createDonation('Ali', 175000.0);
+  // => Creates donation: Ali, 175k IDR
+  // => Would be saved to file (simulated in example)
+  // => Same service method, different storage mechanism
 
+  // => Summary of repository pattern benefits
   print('\n=== Repository Pattern Benefits ===');
   print('✅ Abstraction: business logic doesn\'t know storage mechanism');
+  // => Service1 and service2 use same code, different storage
   print('✅ Testability: swap file repo for in-memory in tests');
+  // => Tests use in-memory (fast, isolated), production uses file/database
   print('✅ Flexibility: change storage (file → database) without changing service');
+  // => Can add PostgreSQL implementation without touching DonationService
   print('✅ Single Responsibility: repository handles data access only');
+  // => Service handles business logic, repository handles persistence
 }
+// => Output demonstrates same service working with different repositories
+// => Pattern enables swapping storage implementations without code changes
 ```
 
 **Repository Pattern Benefits**:
@@ -2713,247 +2885,434 @@ Implementing service layer to orchestrate business logic across multiple reposit
 
 ```dart
 // Repositories
+// => Data access layer abstractions (repository pattern)
+// => Service layer depends on interfaces, not implementations
 abstract class DonationRepository {
+  // => Persists donation to data store
   Future<void> save(Donation donation);
+  // => Returns Future<void> - async operation, no return value
+
+  // => Retrieves donation by unique identifier
   Future<Donation?> findById(String id);
+  // => Returns nullable Donation (may not exist)
+  // => Enables service to check if donation already processed
 }
 
+// => Repository for donor data access
 abstract class DonorRepository {
+  // => Finds donor by email address (business key)
   Future<Donor?> findByEmail(String email);
+  // => Returns nullable Donor (new donors don't exist yet)
+  // => Service uses this to get-or-create donor pattern
+
+  // => Saves or updates donor record
   Future<void> save(Donor donor);
+  // => Used for both creating new donors and updating stats
 }
 
 // External services
+// => Third-party service abstractions (adapter pattern)
+// => Allows mocking for tests, swapping implementations
 abstract class PaymentGateway {
+  // => Processes payment through external provider
   Future<PaymentResult> processPayment(double amount, String method);
+  // => amount: payment amount in IDR
+  // => method: payment method identifier ('credit_card', 'bank_transfer', etc.)
+  // => Returns result indicating success/failure with details
 }
 
+// => Email notification service abstraction
 abstract class EmailService {
+  // => Sends donation receipt via email
   Future<void> sendReceipt(String email, Donation donation);
+  // => email: recipient email address
+  // => donation: donation details to include in receipt
+  // => Fire-and-forget operation (doesn't block on email delivery)
 }
 
 // Models
+// => Domain models representing business entities
 class Donation {
-  final String id;
-  final String donorEmail;
-  final double amount;
-  final DateTime timestamp;
+  final String id;                       // => Unique donation identifier
+  final String donorEmail;               // => Email of donor (foreign key)
+  final double amount;                   // => Donation amount in IDR
+  final DateTime timestamp;              // => When donation occurred
 
+  // => Constructor for creating donation instances
   Donation(this.id, this.donorEmail, this.amount, this.timestamp);
+  // => All fields immutable (final) - value object pattern
 }
 
+// => Donor entity representing person who donates
 class Donor {
-  final String email;
-  final String name;
-  int totalDonations;
-  double lifetimeAmount;
+  final String email;                    // => Unique identifier (business key)
+  final String name;                     // => Donor's display name
+  int totalDonations;                    // => Count of donations made
+  double lifetimeAmount;                 // => Total donated over time
 
+  // => Constructor for creating donor instances
   Donor(this.email, this.name, this.totalDonations, this.lifetimeAmount);
+  // => totalDonations and lifetimeAmount are mutable (updated on new donations)
+  // => email and name are immutable (business constraint)
 }
 
+// => Result object from payment gateway operations
 class PaymentResult {
-  final bool success;
-  final String? transactionId;
-  final String? errorMessage;
+  final bool success;                    // => Whether payment succeeded
+  final String? transactionId;           // => Payment provider transaction ID (if successful)
+  final String? errorMessage;            // => Error description (if failed)
 
+  // => Named constructor for flexible initialization
   PaymentResult({required this.success, this.transactionId, this.errorMessage});
+  // => success required, transaction ID and error optional
+  // => Successful payment has transactionId, failed payment has errorMessage
 }
 
 // Service layer (orchestrates business logic)
+// => Service coordinates multiple repositories and external services
+// => Implements complex business workflows across system boundaries
 class DonationService {
-  final DonationRepository donationRepo;
-  final DonorRepository donorRepo;
-  final PaymentGateway paymentGateway;
-  final EmailService emailService;
+  // => Dependencies injected via constructor (dependency injection pattern)
+  final DonationRepository donationRepo;  // => Data access for donations
+  final DonorRepository donorRepo;        // => Data access for donors
+  final PaymentGateway paymentGateway;    // => External payment processing
+  final EmailService emailService;        // => External email notifications
 
+  // => Constructor requires all dependencies (makes dependencies explicit)
   DonationService({
     required this.donationRepo,
     required this.donorRepo,
     required this.paymentGateway,
     required this.emailService,
   });
+  // => Named parameters enforce clarity at call site
+  // => All dependencies required (no nullable dependencies)
+  // => Enables testing with mocks (dependency injection)
 
   // Complex operation orchestrating multiple components
+  // => Main business workflow: process a donation from start to finish
+  // => Coordinates 4 external dependencies in specific sequence
   Future<DonationResult> processDonation({
-    required String donorEmail,
-    required String donorName,
-    required double amount,
-    required String paymentMethod,
+    required String donorEmail,          // => Donor's email address
+    required String donorName,           // => Donor's name (for new donors)
+    required double amount,              // => Donation amount in IDR
+    required String paymentMethod,       // => Payment method identifier
   }) async {
+    // => async method because it orchestrates multiple async operations
     print('\n=== Processing Donation ===');
+    // => Logging provides visibility into multi-step workflow
 
     // Step 1: Get or create donor
+    // => Business rule: must have donor record before processing donation
     print('1. Getting donor...');
     Donor? donor = await donorRepo.findByEmail(donorEmail);
+    // => Query repository by email (business key)
+    // => Returns null if donor doesn't exist yet (first-time donor)
     if (donor == null) {
+      // => Donor not found - create new donor record
       print('   Creating new donor');
       donor = Donor(donorEmail, donorName, 0, 0.0);
+      // => Initialize with zero donations and zero lifetime amount
       await donorRepo.save(donor);
+      // => Persist new donor to database
+      // => After this, donor variable is non-null (fresh donor record)
     }
+    // => After this step: donor variable guaranteed non-null
 
     // Step 2: Process payment
+    // => Critical step: must charge donor before recording donation
     print('2. Processing payment...');
     PaymentResult paymentResult = await paymentGateway.processPayment(
       amount,
       paymentMethod,
     );
+    // => Call external payment provider (Stripe, PayPal, etc.)
+    // => This is async - may take seconds for network round-trip
+    // => Payment provider returns success/failure result
 
+    // => Handle payment failure (business rule: no payment = no donation)
     if (!paymentResult.success) {
+      // => Payment failed - abort workflow and return error
       print('   Payment failed: ${paymentResult.errorMessage}');
       return DonationResult(
         success: false,
         errorMessage: 'Payment failed: ${paymentResult.errorMessage}',
       );
+      // => Early return prevents subsequent steps from executing
+      // => No donation record created, no donor stats updated
+      // => System state remains consistent (no partial success)
     }
 
+    // => Payment succeeded - continue workflow
     print('   Payment successful: ${paymentResult.transactionId}');
+    // => transactionId is payment provider reference for reconciliation
 
     // Step 3: Save donation
+    // => Payment succeeded - record donation for auditing and reporting
     print('3. Saving donation...');
     Donation donation = Donation(
       'DON-${DateTime.now().millisecondsSinceEpoch}',
-      donorEmail,
-      amount,
-      DateTime.now(),
+      // => Generate unique ID using timestamp (simple strategy)
+      // => Production: use UUID or database-generated ID
+      donorEmail,                        // => Link donation to donor
+      amount,                            // => Record amount donated
+      DateTime.now(),                    // => Timestamp for when donation occurred
     );
+    // => Create donation object with all required fields
     await donationRepo.save(donation);
+    // => Persist to database (creates permanent record)
+    // => After this: donation exists in database with unique ID
 
     // Step 4: Update donor statistics
+    // => Business rule: maintain aggregate stats on donor record
     print('4. Updating donor statistics...');
-    donor.totalDonations++;
-    donor.lifetimeAmount += amount;
+    donor.totalDonations++;              // => Increment donation counter
+    // => donor variable still valid from step 1
+    donor.lifetimeAmount += amount;      // => Add to lifetime total
+    // => These stats enable donor recognition (top donors, badges, etc.)
     await donorRepo.save(donor);
+    // => Persist updated stats to database
+    // => Same save() method used for create and update
 
     // Step 5: Send receipt email
+    // => Business requirement: email confirmation to donor
     print('5. Sending receipt email...');
     await emailService.sendReceipt(donorEmail, donation);
+    // => Sends formatted email with donation details
+    // => This is fire-and-forget (workflow doesn't wait for email delivery)
+    // => Email failure doesn't rollback donation (already committed)
 
     print('=== Donation Complete ===\n');
+    // => All 5 steps completed successfully
 
+    // => Return success result with donation and transaction references
     return DonationResult(
-      success: true,
-      donationId: donation.id,
+      success: true,                     // => Workflow succeeded
+      donationId: donation.id,           // => Reference for donation record
       transactionId: paymentResult.transactionId,
+      // => Reference for payment provider transaction
+      // => Enables reconciliation between internal records and payment provider
     );
+    // => Caller receives confirmation with references to both systems
   }
+  // => End of complex multi-step workflow
+  // => Service coordinated 4 dependencies across 5 steps
+  // => Maintains data consistency (all-or-nothing on payment failure)
 
+  // => Query method: retrieves donor statistics for reporting
   Future<DonorStats> getDonorStatistics(String email) async {
+    // => Looks up donor by email (business key)
     Donor? donor = await donorRepo.findByEmail(email);
+    // => Repository query returns nullable result
     if (donor == null) {
+      // => Donor doesn't exist - return zero stats (not an error)
       return DonorStats(totalDonations: 0, lifetimeAmount: 0.0);
+      // => Enables "donor has never donated" UI state
     }
 
+    // => Donor exists - return their stats
     return DonorStats(
       totalDonations: donor.totalDonations,
+      // => Count of donations made by donor
       lifetimeAmount: donor.lifetimeAmount,
+      // => Total amount donated over time
     );
+    // => Maps from Donor entity to DonorStats DTO
+    // => Separates internal model from API response
   }
 }
+// => End of DonationService class
+// => Service encapsulates all donation-related business logic
 
+// => Result object returned from processDonation
 class DonationResult {
-  final bool success;
-  final String? donationId;
-  final String? transactionId;
-  final String? errorMessage;
+  final bool success;                    // => Overall operation success/failure
+  final String? donationId;              // => Internal donation ID (if successful)
+  final String? transactionId;           // => Payment provider transaction ID (if successful)
+  final String? errorMessage;            // => Error description (if failed)
 
+  // => Named constructor for flexible result creation
   DonationResult({
-    required this.success,
-    this.donationId,
-    this.transactionId,
-    this.errorMessage,
+    required this.success,               // => success is always required
+    this.donationId,                     // => Optional: only present on success
+    this.transactionId,                  // => Optional: only present on success
+    this.errorMessage,                   // => Optional: only present on failure
   });
+  // => Pattern: success=true has IDs, success=false has errorMessage
+  // => Caller checks success field to determine workflow outcome
 }
 
+// => DTO for donor statistics query
 class DonorStats {
-  final int totalDonations;
-  final double lifetimeAmount;
+  final int totalDonations;              // => Count of donations
+  final double lifetimeAmount;           // => Total donated in IDR
 
+  // => Named constructor requires both fields
   DonorStats({required this.totalDonations, required this.lifetimeAmount});
+  // => Immutable value object (all fields final)
+  // => Used for reporting, UI display, donor recognition
 }
 
 // Mock implementations
+// => Test doubles for running example without real database/external services
+// => Production code would use real implementations (PostgreSQL, Stripe, SendGrid)
 class MockDonationRepository implements DonationRepository {
+  // => In-memory storage simulating database
   final Map<String, Donation> _storage = {};
+  // => Key: donation ID, Value: donation object
+  // => Resets on each program run (not persistent)
 
   @override
+  // => Implements save operation from interface
   Future<void> save(Donation donation) async {
+    // => Simulate async database operation
     _storage[donation.id] = donation;
+    // => Store donation in map (upsert behavior)
+    // => Same ID overwrites previous donation (update)
+    // => New ID creates new entry (insert)
   }
 
   @override
+  // => Implements findById query from interface
   Future<Donation?> findById(String id) async {
+    // => Simulate async database query
     return _storage[id];
+    // => Map lookup returns null if key doesn't exist
+    // => Matches repository interface contract (nullable return)
   }
 }
 
+// => Mock implementation of donor repository
 class MockDonorRepository implements DonorRepository {
+  // => In-memory storage simulating donor database table
   final Map<String, Donor> _storage = {};
+  // => Key: email address, Value: donor object
+  // => Email used as business key (unique identifier)
 
   @override
+  // => Implements findByEmail query from interface
   Future<Donor?> findByEmail(String email) async {
+    // => Simulate async database query
     return _storage[email];
+    // => Lookup by email (business key)
+    // => Returns null if donor not found (first-time donor)
   }
 
   @override
+  // => Implements save operation from interface
   Future<void> save(Donor donor) async {
+    // => Simulate async database operation
     _storage[donor.email] = donor;
+    // => Store donor in map keyed by email
+    // => Upsert: creates if new, updates if exists
   }
 }
 
+// => Mock implementation of payment gateway
 class MockPaymentGateway implements PaymentGateway {
   @override
+  // => Simulates external payment provider API call
   Future<PaymentResult> processPayment(double amount, String method) async {
+    // => Simulate network latency (realistic delay)
     await Future.delayed(Duration(milliseconds: 100));
+    // => Real payment would make HTTP request to Stripe/PayPal/etc.
+    // => Mock always succeeds (simplification for example)
     return PaymentResult(
-      success: true,
+      success: true,                     // => Mock always returns success
       transactionId: 'TXN-${DateTime.now().millisecondsSinceEpoch}',
+      // => Generate fake transaction ID using timestamp
+      // => Real payment provider would return their transaction ID
     );
+    // => Production mock could simulate failures for testing error paths
   }
 }
 
+// => Mock implementation of email service
 class MockEmailService implements EmailService {
   @override
+  // => Simulates sending email via provider (SendGrid, AWS SES, etc.)
   Future<void> sendReceipt(String email, Donation donation) async {
+    // => Simulate network latency
     await Future.delayed(Duration(milliseconds: 50));
+    // => Real email would make HTTP request to email provider
     print('   Email sent to $email');
+    // => Mock just logs to console (doesn't send real email)
+    // => Production mock could capture emails for testing
   }
 }
 
+// => Main function demonstrates service layer pattern in action
 void main() async {
+  // => Marked async because it calls async service methods
+
   // Setup service with dependencies
+  // => Dependency injection: manually wire up dependencies
   DonationService service = DonationService(
     donationRepo: MockDonationRepository(),
+    // => Pass mock donation repository (in-memory storage)
     donorRepo: MockDonorRepository(),
+    // => Pass mock donor repository (in-memory storage)
     paymentGateway: MockPaymentGateway(),
+    // => Pass mock payment gateway (simulated payments)
     emailService: MockEmailService(),
+    // => Pass mock email service (console logging)
   );
+  // => Service doesn't know these are mocks (depends on interfaces)
+  // => Production: inject real implementations (PostgreSQL, Stripe, SendGrid)
 
   // Process donations
+  // => Scenario: First-time donor makes donation
   DonationResult result1 = await service.processDonation(
     donorEmail: 'ahmad@example.com',
-    donorName: 'Ahmad',
-    amount: 100000.0,
-    paymentMethod: 'credit_card',
+    donorName: 'Ahmad',               // => New donor name
+    amount: 100000.0,                 // => 100k IDR donation
+    paymentMethod: 'credit_card',     // => Payment method
   );
+  // => This triggers full 5-step workflow:
+  // => 1. Creates new donor (first time)
+  // => 2. Processes payment (100k)
+  // => 3. Saves donation record
+  // => 4. Updates donor stats (1 donation, 100k lifetime)
+  // => 5. Sends receipt email
 
+  // => Display result of first donation
   print('Result: ${result1.success ? 'SUCCESS' : 'FAILED'}');
+  // => Should print SUCCESS (mock payment always succeeds)
   print('Donation ID: ${result1.donationId}');
+  // => Shows donation record ID (DON-xxxxx)
   print('Transaction ID: ${result1.transactionId}');
+  // => Shows payment transaction ID (TXN-xxxxx)
 
   // Second donation from same donor
+  // => Scenario: Existing donor makes another donation
   await service.processDonation(
-    donorEmail: 'ahmad@example.com',
-    donorName: 'Ahmad',
-    amount: 150000.0,
-    paymentMethod: 'bank_transfer',
+    donorEmail: 'ahmad@example.com',  // => Same email as first donation
+    donorName: 'Ahmad',               // => Name not used (donor exists)
+    amount: 150000.0,                 // => 150k IDR donation
+    paymentMethod: 'bank_transfer',   // => Different payment method
   );
+  // => This triggers workflow again:
+  // => 1. Finds existing donor (no creation this time)
+  // => 2. Processes payment (150k)
+  // => 3. Saves second donation record
+  // => 4. Updates donor stats (2 donations, 250k lifetime)
+  // => 5. Sends receipt email
+  // => Result not captured (demonstrate fire-and-forget usage)
 
   // Get donor statistics
+  // => Query updated donor stats after both donations
   DonorStats stats = await service.getDonorStatistics('ahmad@example.com');
+  // => Retrieves aggregate stats from donor record
   print('Donor Statistics:');
   print('  Total donations: ${stats.totalDonations}');
+  // => Should print: 2 (first donation + second donation)
   print('  Lifetime amount: Rp${stats.lifetimeAmount}');
+  // => Should print: Rp250000.0 (100k + 150k)
+  // => Stats updated by processDonation workflow (step 4)
 }
+// => Output demonstrates service layer orchestrating complex workflow
+// => Service coordinates multiple repositories and external services
+// => Maintains data consistency across operations
 ```
 
 **Service Layer Responsibilities**:
@@ -3400,246 +3759,386 @@ Implementing comprehensive testing strategies including unit, widget, integratio
 
 ```dart
 // === Code under test ===
+// => Production class demonstrating testable design
 class ZakatCalculator {
+  // => Calculates Zakat (Islamic alms-giving obligation)
+  // => wealth: total wealth to evaluate for Zakat
+  // => nisabValue: minimum threshold for Zakat obligation (default: 8.5M IDR)
   double calculate(double wealth, {double nisabValue = 8500000.0}) {
+    // => Validation: reject negative wealth values
     if (wealth < 0) {
+      // => Throws ArgumentError for invalid input
       throw ArgumentError('Wealth cannot be negative');
+      // => This allows tests to verify error handling behavior
     }
 
+    // => Business rule: no Zakat due if wealth below nisab
     if (wealth < nisabValue) {
       return 0.0;                       // => Below nisab: no Zakat due
+      // => This is a critical boundary condition for testing
     }
 
+    // => Business rule: Zakat is 2.5% of zakatable wealth
     return wealth * 0.025;              // => 2.5% Zakat rate
+    // => This formula is the core business logic to verify
   }
 
+  // => Helper method: determines if Zakat is due
+  // => Returns true if wealth >= nisab threshold
   bool isZakatDue(double wealth, {double nisabValue = 8500000.0}) {
     return wealth >= nisabValue;
+    // => Simple comparison enables boundary testing
+    // => Useful for UI logic (showing "Zakat due" indicator)
   }
 }
 
 // === Test Framework (simulated) ===
+// => Custom test runner demonstrating testing infrastructure
+// => In production, use package:test or package:flutter_test
 class TestSuite {
-  final String description;
-  final List<Test> tests = [];
-  int passed = 0;
-  int failed = 0;
+  final String description;              // => Test suite name
+  final List<Test> tests = [];           // => Collects all test results
+  int passed = 0;                        // => Tracks successful tests
+  int failed = 0;                        // => Tracks failed tests
 
+  // => Constructor initializes test suite with descriptive name
   TestSuite(this.description);
 
+  // => Core method: runs individual test and captures result
   void test(String description, void Function() testFn) {
     try {
-      testFn();
+      testFn();                          // => Execute test function
+      // => If no exception thrown, test passes
       tests.add(Test(description, true));
-      passed++;
-      print('  ✅ $description');
+      passed++;                          // => Increment pass counter
+      print('  ✅ $description');        // => Visual feedback for passing test
     } catch (e) {
+      // => If exception thrown, test fails
       tests.add(Test(description, false, error: e.toString()));
-      failed++;
-      print('  ❌ $description: $e');
+      failed++;                          // => Increment fail counter
+      print('  ❌ $description: $e');   // => Show error message
+      // => Captures exception details for debugging
     }
   }
 
+  // => Prints test suite header
   void run() {
     print('\n=== $description ===');
     print('');
+    // => Provides visual separation between test suites
   }
 
+  // => Prints test execution summary
   void summary() {
     print('');
     print('Passed: $passed, Failed: $failed');
+    // => Shows aggregate results for suite
+    // => Helps identify test suite health at a glance
   }
 }
 
+// => Data class representing single test result
 class Test {
-  final String description;
-  final bool passed;
-  final String? error;
+  final String description;              // => Test name
+  final bool passed;                     // => Pass/fail status
+  final String? error;                   // => Optional error message
 
+  // => Constructor captures test outcome
   Test(this.description, this.passed, {this.error});
+  // => Error parameter only populated for failed tests
 }
 
+// => Assertion function: verifies actual value matches expectation
 void expect(dynamic actual, Matcher matcher) {
+  // => Uses matcher pattern for flexible comparisons
   if (!matcher.matches(actual)) {
+    // => If match fails, throw descriptive error
     throw AssertionError('Expected: ${matcher.description}, Actual: $actual');
+    // => Error message shows expected vs actual for debugging
   }
+  // => If match succeeds, returns normally (test passes)
 }
 
+// => Abstract base class for matcher pattern
 abstract class Matcher {
+  // => Each matcher implements custom comparison logic
   bool matches(dynamic value);
+  // => Each matcher provides description for error messages
   String get description;
 }
 
+// => Matcher for equality comparison (==)
 class Equals implements Matcher {
-  final dynamic expected;
+  final dynamic expected;                // => Stores expected value
 
+  // => Constructor captures expected value for comparison
   Equals(this.expected);
 
   @override
+  // => Uses Dart equality operator for comparison
   bool matches(dynamic value) => value == expected;
+  // => Works for primitives, strings, and objects with == override
 
   @override
+  // => Description for error messages
   String get description => '$expected';
+  // => Shows what value was expected
 }
 
+// => Matcher for numeric comparisons (>)
 class GreaterThan implements Matcher {
-  final num threshold;
+  final num threshold;                   // => Stores comparison threshold
 
+  // => Constructor captures threshold value
   GreaterThan(this.threshold);
 
   @override
+  // => Compares numeric values
   bool matches(dynamic value) => value > threshold;
+  // => Returns true if value exceeds threshold
 
   @override
+  // => Description for error messages
   String get description => 'greater than $threshold';
+  // => Shows threshold for failed comparisons
 }
 
+// => Matcher for exception-throwing behavior
 class Throws implements Matcher {
   @override
+  // => Executes function and checks if exception thrown
   bool matches(dynamic value) {
     try {
       if (value is Function) {
-        value();
+        value();                         // => Execute function
+        // => If we reach here, no exception thrown
       }
-      return false;
+      return false;                      // => Test fails (no exception)
     } catch (e) {
-      return true;
+      return true;                       // => Test passes (exception caught)
+      // => Any exception type counts as match
     }
   }
 
   @override
+  // => Description for error messages
   String get description => 'throws exception';
+  // => Indicates test expected exception to be thrown
 }
 
+// => Factory functions for readable test syntax
 Matcher equals(dynamic value) => Equals(value);
+// => Usage: expect(result, equals(42))
 Matcher greaterThan(num value) => GreaterThan(value);
+// => Usage: expect(score, greaterThan(50))
 Matcher get throwsException => Throws();
+// => Usage: expect(() => risky(), throwsException)
 
 // === Tests ===
+// => Main function orchestrates all test suites
 void main() {
+  // => System under test: instantiate calculator
   ZakatCalculator calculator = ZakatCalculator();
+  // => Single instance used across all tests (stateless class)
 
   // Unit tests (test individual methods)
+  // => Unit tests verify individual method behavior in isolation
   TestSuite unitTests = TestSuite('Unit Tests');
-  unitTests.run();
+  unitTests.run();                       // => Print suite header
 
+  // => Test 1: Normal case - wealth above threshold
   unitTests.test('Calculate Zakat for wealth above nisab', () {
     double result = calculator.calculate(10000000.0);
+    // => Input: 10M IDR (above 8.5M nisab)
     expect(result, equals(250000.0));   // => 10M * 0.025 = 250k
+    // => Verifies core business logic calculation
   });
 
+  // => Test 2: Boundary case - wealth below threshold
   unitTests.test('Return 0 for wealth below nisab', () {
     double result = calculator.calculate(5000000.0);
+    // => Input: 5M IDR (below 8.5M nisab)
     expect(result, equals(0.0));
+    // => Verifies no Zakat charged below nisab
+    // => Critical business rule enforcement
   });
 
+  // => Test 3: Error case - invalid input
   unitTests.test('Throw error for negative wealth', () {
+    // => Pass function closure to test exception throwing
     expect(() => calculator.calculate(-1000.0), throwsException);
+    // => Verifies input validation works correctly
+    // => ArgumentError should be thrown for negative values
   });
 
+  // => Test 4: Helper method - positive case
   unitTests.test('Is Zakat due for wealth above nisab', () {
     bool result = calculator.isZakatDue(10000000.0);
+    // => Input: 10M IDR (above threshold)
     expect(result, equals(true));
+    // => Verifies helper correctly identifies Zakat obligation
   });
 
+  // => Test 5: Helper method - negative case
   unitTests.test('Is Zakat not due for wealth below nisab', () {
     bool result = calculator.isZakatDue(5000000.0);
+    // => Input: 5M IDR (below threshold)
     expect(result, equals(false));
+    // => Verifies helper correctly identifies no obligation
   });
 
-  unitTests.summary();
+  unitTests.summary();                   // => Print pass/fail counts
 
   // Boundary tests (test edge cases)
+  // => Boundary tests verify behavior at thresholds and limits
   TestSuite boundaryTests = TestSuite('Boundary Tests');
-  boundaryTests.run();
+  boundaryTests.run();                   // => Print suite header
 
+  // => Test 6: Exact boundary condition
   boundaryTests.test('Zakat for wealth exactly at nisab', () {
     double result = calculator.calculate(8500000.0);
-    expect(result, equals(212500.0));   // => At boundary
+    // => Input: exactly 8.5M IDR (nisab threshold)
+    expect(result, equals(212500.0));   // => At boundary: 8.5M * 0.025 = 212.5k
+    // => Critical test: wealth >= nisab should trigger Zakat
+    // => Verifies >= comparison, not > comparison
   });
 
+  // => Test 7: Just below boundary
   boundaryTests.test('Zakat for wealth just below nisab', () {
     double result = calculator.calculate(8499999.0);
+    // => Input: 8,499,999 IDR (1 rupiah below nisab)
     expect(result, equals(0.0));
+    // => Verifies strict threshold enforcement
+    // => Even 1 rupiah below = no Zakat
   });
 
+  // => Test 8: Zero edge case
   boundaryTests.test('Zakat for zero wealth', () {
     double result = calculator.calculate(0.0);
+    // => Input: 0 IDR (minimum valid wealth)
     expect(result, equals(0.0));
+    // => Verifies zero wealth handled correctly
+    // => Not negative, but below nisab
   });
 
-  boundaryTests.summary();
+  boundaryTests.summary();               // => Print pass/fail counts
 
   // Property-based tests (test properties hold for random inputs)
+  // => Property-based testing verifies invariants across many inputs
   TestSuite propertyTests = TestSuite('Property-Based Tests');
-  propertyTests.run();
+  propertyTests.run();                   // => Print suite header
 
+  // => Test 9: Invariant - Zakat rate is always 2.5%
   propertyTests.test('Zakat is always 2.5% for wealth above nisab', () {
+    // => Test data: various wealth values above nisab
     List<double> wealthValues = [9000000.0, 15000000.0, 50000000.0, 100000000.0];
+    // => Covers range: just above nisab to very high wealth
 
+    // => Verify property holds for all test values
     for (double wealth in wealthValues) {
       double zakat = calculator.calculate(wealth);
+      // => Calculate expected value independently
       double expected = wealth * 0.025;
       expect(zakat, equals(expected));
+      // => Property: Zakat = wealth * 2.5% for all wealth >= nisab
+      // => Verifies formula consistency across wealth spectrum
     }
+    // => If loop completes, property holds for all inputs
   });
 
+  // => Test 10: Invariant - Zero Zakat below nisab
   propertyTests.test('Zakat is always 0 for wealth below nisab', () {
+    // => Test data: various wealth values below nisab
     List<double> wealthValues = [0.0, 1000000.0, 5000000.0, 8000000.0];
+    // => Covers range: zero to just below nisab
 
+    // => Verify property holds for all test values
     for (double wealth in wealthValues) {
       double zakat = calculator.calculate(wealth);
+      // => Calculate actual Zakat
       expect(zakat, equals(0.0));
+      // => Property: Zakat = 0 for all wealth < nisab
+      // => Verifies threshold enforcement is consistent
     }
   });
 
+  // => Test 11: Invariant - Zakat never exceeds wealth
   propertyTests.test('Calculated Zakat never exceeds wealth', () {
+    // => Test data: various wealth values
     List<double> wealthValues = [10000000.0, 20000000.0, 100000000.0];
+    // => Different magnitudes to verify rate consistency
 
+    // => Verify property holds for all test values
     for (double wealth in wealthValues) {
       double zakat = calculator.calculate(wealth);
+      // => Calculate actual Zakat
       if (zakat > wealth) {
+        // => Property violation: Zakat should never exceed 100% of wealth
         throw AssertionError('Zakat $zakat exceeds wealth $wealth');
+        // => This would indicate incorrect formula (rate > 1.0)
       }
+      // => Since rate is 0.025 (2.5%), this should always pass
     }
+    // => Verifies sanity of business logic
   });
 
-  propertyTests.summary();
+  propertyTests.summary();               // => Print pass/fail counts
 
   // Parameterized tests
+  // => Parameterized testing runs same test logic with different inputs
   TestSuite parameterizedTests = TestSuite('Parameterized Tests');
-  parameterizedTests.run();
+  parameterizedTests.run();              // => Print suite header
 
+  // => Test data: table of inputs and expected outputs
   List<Map<String, dynamic>> testCases = [
-    {'wealth': 10000000.0, 'expected': 250000.0},
-    {'wealth': 20000000.0, 'expected': 500000.0},
-    {'wealth': 15000000.0, 'expected': 375000.0},
-    {'wealth': 8500000.0, 'expected': 212500.0},
+    // => Each map contains input wealth and expected Zakat
+    {'wealth': 10000000.0, 'expected': 250000.0},   // => 10M → 250k
+    {'wealth': 20000000.0, 'expected': 500000.0},   // => 20M → 500k
+    {'wealth': 15000000.0, 'expected': 375000.0},   // => 15M → 375k
+    {'wealth': 8500000.0, 'expected': 212500.0},    // => 8.5M → 212.5k (boundary)
   ];
+  // => Data-driven testing: separates test data from test logic
 
+  // => Test 12-15: Run same test with different parameters
   for (Map<String, dynamic> testCase in testCases) {
+    // => Create one test per test case
     parameterizedTests.test(
       'Calculate Zakat for ${testCase['wealth']}',
+      // => Dynamic test name includes input value
       () {
         double result = calculator.calculate(testCase['wealth']);
+        // => Extract wealth from test case map
         expect(result, equals(testCase['expected']));
+        // => Extract expected result from test case map
+        // => Verifies calculation matches expected output
       },
     );
+    // => Loop generates 4 tests with descriptive names
   }
 
-  parameterizedTests.summary();
+  parameterizedTests.summary();          // => Print pass/fail counts
 
   // Performance tests
+  // => Performance tests verify execution speed meets requirements
   print('\n=== Performance Tests ===\n');
+  // => Performance testing not integrated with test framework
 
+  // => Measure execution time for many iterations
   Stopwatch sw = Stopwatch()..start();
+  // => Start high-precision timer
   for (int i = 0; i < 100000; i++) {
+    // => Run calculation 100,000 times
     calculator.calculate(10000000.0);
+    // => Same input each iteration (measures pure calculation speed)
   }
-  sw.stop();
+  sw.stop();                             // => Stop timer
 
+  // => Report performance metrics
   print('  100,000 calculations: ${sw.elapsedMilliseconds}ms');
+  // => Total elapsed time in milliseconds
   print('  Average: ${sw.elapsedMicroseconds / 100000}μs per calculation');
+  // => Average time per calculation in microseconds
+  // => Helps identify performance regressions
 
   print('\n=== Testing Strategies Summary ===');
   print('✅ Unit tests: Test individual methods');

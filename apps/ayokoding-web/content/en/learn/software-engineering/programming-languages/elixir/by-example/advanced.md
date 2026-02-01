@@ -3575,107 +3575,65 @@ Elixir runs on the BEAM and can call Erlang modules directly. Use `:module_name`
 
 ```elixir
 # Sleep using Erlang :timer module
-:timer.sleep(1000)  # => :ok (after 1 second)
-# => Blocks current process for 1000 milliseconds
-# => :timer is Erlang module (all Erlang modules prefixed with :)
-# => Elixir alternative: Process.sleep(1000)
+:timer.sleep(1000)  # => :ok (blocks process for 1000ms)
+                     # => Erlang modules prefixed with :
 
 # Cryptographic hashing with Erlang :crypto
-:crypto.hash(:sha256, "Hello, World!")
-# => <<127, 131, 177, ...>> (32-byte binary)
-# => Returns raw binary hash (SHA256 produces 256 bits = 32 bytes)
-# => First arg: algorithm (:md5, :sha, :sha256, :sha512, etc.)
-# => Second arg: data to hash (binary)
+:crypto.hash(:sha256, "Hello, World!")  # => <<127, 131, 177, ...>> (32-byte binary)
+                                         # => Args: algorithm, data to hash
 
 # Hash and encode as hex string
 :crypto.hash(:sha256, "Hello, World!")
-|> Base.encode16(case: :lower)
-# => "dffd6021bb2bd5b0af676290809ec3a53191dd81c7f70a4b28688a362182986f"
-# => Base.encode16 is Elixir function (converts binary to hex)
-# => case: :lower produces lowercase hex (default :upper)
+|> Base.encode16(case: :lower)  # => "dffd6021bb...986f" (lowercase hex)
+                                 # => case: :lower for lowercase (default :upper)
 
 # Date/time functions from Erlang :calendar
 :calendar.local_time()  # => {{2024, 12, 23}, {15, 30, 45}}
-# => Returns {{year, month, day}, {hour, minute, second}} tuple
-# => Local timezone (depends on system timezone)
-# => Elixir alternative: NaiveDateTime.local_now()
+                         # => {{year, month, day}, {hour, minute, second}}
 
 # Operating system information
 :os.type()  # => {:unix, :darwin} or {:win32, :nt}
-# => Returns {OS_family, OS_name} tuple
-# => {:unix, :darwin} = macOS, {:unix, :linux} = Linux, {:win32, :nt} = Windows
+             # => {OS_family, OS_name} tuple
 :os.getenv()  # => ['PATH=/usr/bin:...', 'HOME=/Users/username', ...]
-# => Returns ALL environment variables as CHARLISTS (Erlang strings)
-# => Erlang strings use single quotes: 'hello' (charlist, not binary)
-# => Elixir strings use double quotes: "hello" (binary)
-:os.getenv('HOME')  # => '/Users/username'
-# => Get specific environment variable (charlist argument!)
-# => Must use single quotes for Erlang charlist
-# => Elixir alternative: System.get_env("HOME") (binary argument)
+               # => ALL environment variables as CHARLISTS (single quotes)
+:os.getenv('HOME')  # => '/Users/username' (charlist argument required)
 
 # List functions from Erlang :lists
 :lists.seq(1, 10)  # => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-# => Generate sequence from 1 to 10 (inclusive)
-# => Elixir alternative: Enum.to_list(1..10)
+                    # => Generate sequence (inclusive)
 :lists.sum([1, 2, 3, 4, 5])  # => 15
-# => Sum all elements in list
-# => Elixir alternative: Enum.sum([1, 2, 3, 4, 5])
 
 # Random number generation with Erlang :rand
 :rand.uniform()  # => 0.1234567 (random float 0.0-1.0)
-# => Returns random float in range [0.0, 1.0)
-# => Uses process-specific random state (not global)
-:rand.uniform(100)  # => 42 (random int 1-100)
-# => Returns random integer in range 1..100 (inclusive)
-# => Argument N produces range 1..N
+                  # => Process-specific random state
+:rand.uniform(100)  # => 42 (random int 1-100, inclusive)
 
 # Erlang tuples (same syntax as Elixir)
-user = {:user, "Alice", 30}  # => {:user, "Alice", 30}
-# => Tuples work identically in Erlang and Elixir
-# => Tagged tuple pattern (record-like structure)
-{:user, name, age} = user  # => pattern match extracts fields
-name  # => "Alice"
-# => Destructures tuple, binds name = "Alice", age = 30
+user = {:user, "Alice", 30}  # => {:user, "Alice", 30} (tagged tuple)
+{:user, name, age} = user    # => Pattern match extracts fields
+name  # => "Alice" (destructured)
 
 # Erlang string functions (work on CHARLISTS not binaries)
-:string.uppercase('hello')  # => 'HELLO'
-# => Converts charlist to uppercase
-# => MUST use single quotes (charlist), not double quotes (binary)
-# => For Elixir strings: String.upcase("hello") => "HELLO"
-# => Mixing Erlang charlists and Elixir binaries is common source of bugs
+:string.uppercase('hello')  # => 'HELLO' (charlist, single quotes required)
+                             # => Elixir: String.upcase("hello") for binaries
 
 # Queue data structure from Erlang :queue
-q = :queue.new()  # => {[], []}
-# => Creates empty queue (efficient FIFO data structure)
-# => Implemented as two lists for O(1) amortized enqueue/dequeue
-q = :queue.in(1, q)  # => {[1], []}
-# => Enqueue 1 (add to back)
-q = :queue.in(2, q)  # => {[2, 1], []}
-# => Enqueue 2
-q = :queue.in(3, q)  # => {[3, 2, 1], []}
-# => Enqueue 3
-# => Internal: maintains two lists for efficiency (front list, back list)
+q = :queue.new()  # => {[], []} (empty FIFO queue)
+                   # => O(1) amortized enqueue/dequeue
+q = :queue.in(1, q)  # => {[1], []} (enqueue 1)
+q = :queue.in(2, q)  # => {[2, 1], []} (enqueue 2)
+q = :queue.in(3, q)  # => {[3, 2, 1], []} (enqueue 3)
 {{:value, item}, q} = :queue.out(q)  # => {{:value, 1}, {[2], [3]}}
-# => Dequeue from front (FIFO order)
-# => Returns {{:value, dequeued_item}, new_queue}
-# => For empty queue: {:empty, queue}
-item  # => 1
-# => First item dequeued (FIFO: 1 came in first, out first)
+                                      # => Dequeue from front (FIFO)
+item  # => 1 (first in, first out)
 
 # General balanced trees from Erlang :gb_trees
-tree = :gb_trees.empty()  # => {0, nil}
-# => Creates empty balanced binary tree (sorted by keys)
-# => O(log N) insert, lookup, delete
+tree = :gb_trees.empty()  # => {0, nil} (empty balanced tree)
+                           # => O(log N) operations
 tree = :gb_trees.insert(:a, 1, tree)  # => {1, {:a, 1, nil, nil}}
-# => Insert key :a with value 1
-# => Returns new tree (immutable data structure)
-tree = :gb_trees.insert(:b, 2, tree)  # => {2, ...}
-# => Insert key :b with value 2
-# => Tree automatically balances for O(log N) operations
-:gb_trees.lookup(:a, tree)  # => {:value, 1}
-# => Lookup returns {:value, found_value}
-# => For missing key: :none
-# => Elixir alternative for simple cases: Map (hash table, not tree)
+tree = :gb_trees.insert(:b, 2, tree)  # => {2, ...} (auto-balances)
+:gb_trees.lookup(:a, tree)  # => {:value, 1} (found)
+                             # => Missing key: :none
 ```
 
 **Key Takeaway**: Call Erlang modules with `:module_name` syntax. Elixir has full Erlang interop—leverage powerful Erlang libraries for crypto, timing, system monitoring, and more. Erlang uses charlists (single quotes) for strings.

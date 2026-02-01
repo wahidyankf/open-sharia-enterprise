@@ -2837,87 +2837,158 @@ Connection pooling reuses database connections for efficiency. Simulate pool beh
 ```sql
 -- Connection pool state table
 CREATE TABLE connection_pool (
-    connection_id INTEGER PRIMARY KEY,
+    connection_id INTEGER PRIMARY KEY,  -- => Unique connection identifier (1-N)
+                                         -- => PRIMARY KEY auto-creates index for fast lookups
     status TEXT NOT NULL CHECK (status IN ('idle', 'active')),
-    last_used_at TEXT NOT NULL,
-    created_at TEXT NOT NULL
+                                         -- => Connection state: idle (available) or active (in use)
+                                         -- => CHECK constraint enforces only valid states
+                                         -- => NOT NULL prevents unknown states
+    last_used_at TEXT NOT NULL,          -- => Timestamp when connection last used
+                                         -- => Used for LRU (Least Recently Used) selection
+                                         -- => ISO8601 format: 'YYYY-MM-DD HH:MM:SS'
+    created_at TEXT NOT NULL             -- => When connection created
+                                         -- => Tracks connection age for leak detection
 );
+-- => Table simulates connection pool state
+-- => Real pools manage TCP connections, this manages metadata
 
 -- Initialize pool with 10 connections
 INSERT INTO connection_pool (connection_id, status, last_used_at, created_at)
 SELECT
-    value,
-    'idle',
-    datetime('now'),
-    datetime('now')
+    value,                               -- => Connection ID from sequence (1-10)
+    'idle',                              -- => All start idle (available for use)
+    datetime('now'),                     -- => Initial last_used_at set to creation time
+                                         -- => UTC timestamp in ISO8601 format
+    datetime('now')                      -- => Creation timestamp (same as last_used_at initially)
 FROM (
-    WITH RECURSIVE nums AS (
-        SELECT 1 AS value UNION ALL SELECT value + 1 FROM nums WHERE value < 10
+    WITH RECURSIVE nums AS (             -- => Generate sequence 1 to 10
+        SELECT 1 AS value                -- => Base case: start at 1
+        UNION ALL                        -- => Recursive case: add 1 each iteration
+        SELECT value + 1 FROM nums WHERE value < 10  -- => Stop at 10
     )
-    SELECT value FROM nums
+    SELECT value FROM nums               -- => Extract values 1, 2, 3...10
 );
+-- => Inserts 10 rows with IDs 1-10
+-- => Pool starts with 10 idle connections ready for use
+-- => All have same creation time (pool initialized atomically)
 
 -- Acquire connection from pool
-WITH available_connection AS (
-    SELECT connection_id
-    FROM connection_pool
-    WHERE status = 'idle'
-    ORDER BY last_used_at
-    LIMIT 1
+WITH available_connection AS (           -- => CTE finds idle connection
+    SELECT connection_id                 -- => Get connection ID only
+    FROM connection_pool                 -- => Search pool table
+    WHERE status = 'idle'                -- => Filter to available connections only
+                                         -- => Excludes active connections
+    ORDER BY last_used_at                -- => LRU: pick least recently used first
+                                         -- => Spreads usage evenly across pool
+    LIMIT 1                              -- => Take only one connection
+                                         -- => Ensures single-threaded acquisition (in transaction)
 )
-UPDATE connection_pool
-SET status = 'active', last_used_at = datetime('now')
+UPDATE connection_pool                   -- => Mark connection as active
+SET status = 'active',                   -- => Change state from idle to active
+                                         -- => Prevents other queries from acquiring it
+    last_used_at = datetime('now')       -- => Update timestamp to now
+                                         -- => Records when connection acquired
 WHERE connection_id = (SELECT connection_id FROM available_connection)
-RETURNING connection_id;
--- => Returns connection_id that was acquired
+                                         -- => Update only the selected connection
+                                         -- => Subquery returns single ID from CTE
+RETURNING connection_id;                 -- => Return acquired connection ID to caller
+-- => Returns connection_id that was acquired (e.g., 1)
+-- => Caller uses this ID to identify which connection to use
+-- => If no idle connections, returns nothing (pool exhausted)
 
 -- Release connection back to pool
-UPDATE connection_pool
-SET status = 'idle', last_used_at = datetime('now')
-WHERE connection_id = 1;
+UPDATE connection_pool                   -- => Return connection to idle state
+SET status = 'idle',                     -- => Change status from active to idle
+                                         -- => Makes connection available for reuse
+    last_used_at = datetime('now')       -- => Update last_used_at to current time
+                                         -- => Tracks when connection returned (for LRU)
+WHERE connection_id = 1;                 -- => Release specific connection (ID 1)
+                                         -- => In real systems, caller specifies which connection
+-- => Connection 1 now available for next acquisition
+-- => No data returned (UPDATE without RETURNING)
 
 -- Monitor pool utilization
 SELECT
-    status,
-    COUNT(*) AS count,
+    status,                              -- => Connection state (idle or active)
+    COUNT(*) AS count,                   -- => Number of connections in this state
+                                         -- => Shows pool distribution
     ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM connection_pool), 2) AS percentage
-FROM connection_pool
-GROUP BY status;
--- => idle: 9 (90%), active: 1 (10%)
+                                         -- => Percentage of pool in this state
+                                         -- => Subquery gets total pool size for denominator
+                                         -- => ROUND to 2 decimal places for readability
+FROM connection_pool                     -- => Source: all connections
+GROUP BY status;                         -- => Aggregate by state
+                                         -- => Creates one row per status value
+-- => Returns 2 rows (assuming both states present):
+-- => idle: 9 (90.00%) - available connections
+-- => active: 1 (10.00%) - connections in use
+-- => Helps detect pool saturation (low idle percentage)
 
 -- Detect connection leaks (active too long)
 SELECT
-    connection_id,
-    status,
-    last_used_at,
+    connection_id,                       -- => ID of potentially leaked connection
+    status,                              -- => Should be 'active' (WHERE filter guarantees this)
+    last_used_at,                        -- => When connection was last acquired
+                                         -- => Shows how long it's been active
     CAST((JULIANDAY('now') - JULIANDAY(last_used_at)) * 24 * 60 AS INTEGER) AS minutes_active
-FROM connection_pool
-WHERE status = 'active'
+                                         -- => Calculate duration in minutes
+                                         -- => JULIANDAY converts datetime to fractional days
+                                         -- => Subtract to get day difference
+                                         -- => Multiply by 24*60 to get minutes
+                                         -- => CAST to INTEGER removes fractional minutes
+FROM connection_pool                     -- => Check all connections
+WHERE status = 'active'                  -- => Only check active connections
+                                         -- => Idle connections can't be leaked
   AND last_used_at < datetime('now', '-5 minutes');
+                                         -- => Filter to connections active > 5 minutes
+                                         -- => Threshold detects forgotten releases
 -- => Returns connections active for > 5 minutes (potential leaks)
+-- => Example: connection_id=1, status='active', minutes_active=7
+-- => Empty result means no leaks detected
+-- => Production systems alert on this query
 
 -- Force release leaked connections
-UPDATE connection_pool
-SET status = 'idle', last_used_at = datetime('now')
-WHERE status = 'active'
+UPDATE connection_pool                   -- => Auto-recover from connection leaks
+SET status = 'idle',                     -- => Reset to idle state
+                                         -- => Forcibly releases leaked connections
+    last_used_at = datetime('now')       -- => Update timestamp to now
+                                         -- => Records when leak was recovered
+WHERE status = 'active'                  -- => Only process active connections
   AND last_used_at < datetime('now', '-5 minutes');
+                                         -- => Same threshold as leak detection
+                                         -- => Automatically releases connections active > 5 minutes
+-- => Recovers leaked connections for reuse
+-- => Prevents pool exhaustion from application bugs
+-- => Production systems log which connections were force-released
 
 -- Dynamic pool sizing: Add connection if all busy
-WITH pool_stats AS (
+WITH pool_stats AS (                     -- => Calculate current pool state
     SELECT
-        COUNT(*) AS total,
+        COUNT(*) AS total,               -- => Current pool size (active + idle)
         COUNT(CASE WHEN status = 'idle' THEN 1 END) AS idle,
-        MAX(connection_id) AS max_id
-    FROM connection_pool
+                                         -- => Count idle connections
+                                         -- => CASE returns 1 for idle, NULL otherwise
+                                         -- => COUNT ignores NULL, counts only 1s
+        MAX(connection_id) AS max_id     -- => Highest connection ID currently in pool
+                                         -- => Used to assign ID to new connection
+    FROM connection_pool                 -- => Aggregate across entire pool
 )
 INSERT INTO connection_pool (connection_id, status, last_used_at, created_at)
 SELECT
-    max_id + 1,
-    'idle',
-    datetime('now'),
-    datetime('now')
-FROM pool_stats
-WHERE idle = 0 AND total < 20;  -- Max pool size = 20
+    max_id + 1,                          -- => New connection ID (next sequential ID)
+                                         -- => Ensures no ID collision
+    'idle',                              -- => New connection starts idle
+                                         -- => Available immediately after creation
+    datetime('now'),                     -- => Last used = creation time (never used yet)
+    datetime('now')                      -- => Creation timestamp
+FROM pool_stats                          -- => Use computed stats
+WHERE idle = 0 AND total < 20;           -- => Only add if pool exhausted (no idle)
+                                         -- => AND pool under max size (20 connections)
+                                         -- => Prevents unbounded growth
+-- => Dynamically grows pool when needed
+-- => Example: Pool has 10 active, 0 idle → adds connection 11
+-- => If pool already at 20, no new connection (hard limit)
+-- => Production systems use more sophisticated growth algorithms
 -- => Adds connection if pool exhausted (up to max)
 
 -- Shrink pool: Remove excess idle connections
@@ -2946,111 +3017,190 @@ Multi-tenancy isolates data by tenant using row-level filtering. Single database
 
 ```sql
 -- Shared schema approach
-CREATE TABLE tenants (
-    id INTEGER PRIMARY KEY,
-    name TEXT UNIQUE NOT NULL,
-    created_at TEXT NOT NULL
+CREATE TABLE tenants (               -- => Master table for tenant organizations
+    id INTEGER PRIMARY KEY,           -- => Unique tenant identifier
+                                      -- => Used as foreign key in all tenant-scoped tables
+    name TEXT UNIQUE NOT NULL,        -- => Tenant organization name
+                                      -- => UNIQUE prevents duplicate tenant names
+                                      -- => NOT NULL ensures every tenant has name
+    created_at TEXT NOT NULL          -- => When tenant was created (ISO8601)
 );
+-- => Multi-tenancy master table
+-- => Each tenant gets unique ID (1, 2, 3...)
+-- => All tenant data references this ID
 
-CREATE TABLE users (
-    id INTEGER PRIMARY KEY,
-    tenant_id INTEGER NOT NULL,
-    email TEXT NOT NULL,
-    name TEXT,
+CREATE TABLE users (                  -- => User accounts scoped to tenants
+    id INTEGER PRIMARY KEY,           -- => Global user identifier
+                                      -- => Unique across ALL tenants
+    tenant_id INTEGER NOT NULL,       -- => Which tenant this user belongs to
+                                      -- => CRITICAL: Must filter by this in all queries
+    email TEXT NOT NULL,              -- => User email address
+                                      -- => Not globally unique, unique per tenant
+    name TEXT,                        -- => User display name (nullable)
     FOREIGN KEY (tenant_id) REFERENCES tenants(id),
-    UNIQUE(tenant_id, email)  -- Email unique within tenant
+                                      -- => Enforce referential integrity
+                                      -- => Prevents orphaned users (tenant must exist)
+    UNIQUE(tenant_id, email)          -- => Email unique within tenant, not globally
+                                      -- => alice@example.com can exist in tenant 1 and 2
 );
+-- => Users belong to single tenant
+-- => Tenant 1 users can't see/interact with Tenant 2 users
 
-CREATE TABLE documents (
-    id INTEGER PRIMARY KEY,
-    tenant_id INTEGER NOT NULL,
-    user_id INTEGER NOT NULL,
-    title TEXT,
-    content TEXT,
-    created_at TEXT NOT NULL,
+CREATE TABLE documents (              -- => Document storage scoped to tenants
+    id INTEGER PRIMARY KEY,           -- => Global document identifier
+    tenant_id INTEGER NOT NULL,       -- => Tenant owner (CRITICAL for isolation)
+                                      -- => Every document belongs to exactly one tenant
+    user_id INTEGER NOT NULL,         -- => Which user created document
+                                      -- => Must belong to same tenant (enforced by app)
+    title TEXT,                       -- => Document title
+    content TEXT,                     -- => Document body/content
+    created_at TEXT NOT NULL,         -- => Creation timestamp (ISO8601)
     FOREIGN KEY (tenant_id) REFERENCES tenants(id),
+                                      -- => Document's tenant must exist
     FOREIGN KEY (user_id) REFERENCES users(id)
+                                      -- => Document creator must exist
 );
+-- => Documents scoped to tenants
+-- => Tenant isolation enforced by filtering tenant_id in queries
 
 -- Create indexes with tenant_id first
 CREATE INDEX idx_users_tenant ON users(tenant_id);
+                                      -- => Index tenant_id for fast filtering
+                                      -- => WHERE tenant_id = X uses this index
+                                      -- => Tenant queries avoid full table scans
 CREATE INDEX idx_documents_tenant ON documents(tenant_id);
+                                      -- => Same benefit for documents table
+                                      -- => Composite indexes often use (tenant_id, other_col)
+-- => Indexes critical for multi-tenant performance
+-- => Without them, tenant queries scan entire table
 
 -- Insert tenants
 INSERT INTO tenants (id, name, created_at)
 VALUES
-    (1, 'Acme Corp', '2025-01-01'),
-    (2, 'TechStart Inc', '2025-01-02');
+    (1, 'Acme Corp', '2025-01-01'),   -- => Tenant 1: Acme Corporation
+                                      -- => Created on Jan 1, 2025
+    (2, 'TechStart Inc', '2025-01-02'); -- => Tenant 2: TechStart Inc
+                                      -- => Created on Jan 2, 2025
+-- => 2 tenants in system
+-- => Each gets isolated data space
 
 -- Insert users (isolated by tenant)
 INSERT INTO users (id, tenant_id, email, name)
 VALUES
-    (1, 1, 'alice@acme.com', 'Alice'),
-    (2, 1, 'bob@acme.com', 'Bob'),
-    (3, 2, 'charlie@techstart.com', 'Charlie');
+    (1, 1, 'alice@acme.com', 'Alice'),     -- => User 1 belongs to tenant 1 (Acme)
+    (2, 1, 'bob@acme.com', 'Bob'),         -- => User 2 belongs to tenant 1 (Acme)
+    (3, 2, 'charlie@techstart.com', 'Charlie'); -- => User 3 belongs to tenant 2 (TechStart)
+-- => 3 users total: 2 in Acme, 1 in TechStart
+-- => Users can't cross tenant boundaries
+-- => Alice and Bob share tenant, Charlie isolated
 
 -- Insert documents
 INSERT INTO documents (id, tenant_id, user_id, title, content, created_at)
 VALUES
     (1, 1, 1, 'Q1 Report', 'Acme Q1 data', '2025-01-15'),
+                                      -- => Doc 1: Acme's Q1 report by Alice
     (2, 1, 2, 'Roadmap', 'Acme roadmap', '2025-01-16'),
+                                      -- => Doc 2: Acme's roadmap by Bob
     (3, 2, 3, 'Strategy', 'TechStart strategy', '2025-01-17');
+                                      -- => Doc 3: TechStart's strategy by Charlie
+-- => 3 documents: 2 owned by Acme, 1 by TechStart
+-- => Each document scoped to tenant that created it
 
 -- CRITICAL: Always filter by tenant_id
-SELECT * FROM documents
-WHERE tenant_id = 1;  -- Acme Corp sees only their documents
--- => Returns documents 1 and 2
+SELECT * FROM documents               -- => Query documents table
+WHERE tenant_id = 1;                  -- => Filter to Acme Corp only (tenant 1)
+                                      -- => CRITICAL: Never query without tenant_id filter
+                                      -- => Returns only tenant 1's documents
+-- => Returns documents 1 and 2 (Acme's documents)
+-- => Document 3 invisible to this query (belongs to tenant 2)
+-- => Application must ALWAYS provide tenant_id from session
 
-SELECT * FROM documents
-WHERE tenant_id = 2;  -- TechStart sees only their documents
--- => Returns document 3
+SELECT * FROM documents               -- => Query documents table
+WHERE tenant_id = 2;                  -- => Filter to TechStart only (tenant 2)
+                                      -- => Isolates TechStart's data
+-- => Returns document 3 (TechStart's document)
+-- => Documents 1 and 2 invisible (belong to tenant 1)
+-- => Each tenant sees only their own data
 
 -- Join across tables (maintain tenant filtering)
 SELECT
-    d.title,
-    u.name AS author,
-    t.name AS tenant
-FROM documents d
+    d.title,                          -- => Document title
+    u.name AS author,                 -- => User who created document
+    t.name AS tenant                  -- => Tenant organization name
+FROM documents d                      -- => Start with documents
 INNER JOIN users u ON d.user_id = u.id AND d.tenant_id = u.tenant_id
+                                      -- => Join to users table
+                                      -- => CRITICAL: Include tenant_id in join condition
+                                      -- => Prevents cross-tenant user lookup
+                                      -- => d.tenant_id = u.tenant_id enforces same tenant
 INNER JOIN tenants t ON d.tenant_id = t.id
-WHERE d.tenant_id = 1;
--- => Returns Acme documents with authors
+                                      -- => Join to tenants for name display
+WHERE d.tenant_id = 1;                -- => Filter to Acme Corp documents
+                                      -- => Entire join scoped to single tenant
+-- => Returns Acme documents with authors from Acme users
+-- => Charlie (tenant 2) never appears in results
+-- => Tenant filtering prevents cross-tenant data leakage
 
 -- Create view for application convenience
-CREATE VIEW documents_with_context AS
+CREATE VIEW documents_with_context AS -- => Pre-joined view for common queries
 SELECT
-    d.id,
-    d.tenant_id,
-    d.title,
-    d.content,
-    u.name AS author,
-    t.name AS tenant_name,
-    d.created_at
-FROM documents d
+    d.id,                             -- => Document ID
+    d.tenant_id,                      -- => CRITICAL: Include tenant_id for filtering
+                                      -- => View queries MUST filter by this
+    d.title,                          -- => Document title
+    d.content,                        -- => Document body
+    u.name AS author,                 -- => Author name from users table
+    t.name AS tenant_name,            -- => Tenant name from tenants table
+    d.created_at                      -- => Creation timestamp
+FROM documents d                      -- => Base table: documents
 INNER JOIN users u ON d.user_id = u.id AND d.tenant_id = u.tenant_id
-INNER JOIN tenants t ON d.tenant_id = t.id;
+                                      -- => Join users with tenant_id constraint
+                                      -- => Ensures user and document in same tenant
+INNER JOIN tenants t ON d.tenant_id = t.id
+                                      -- => Join tenants for name
+;
+-- => View simplifies application queries
+-- => Still requires tenant_id filtering when queried
 
 -- Application sets tenant context and queries view
-SELECT * FROM documents_with_context
-WHERE tenant_id = 1;
+SELECT * FROM documents_with_context  -- => Query pre-joined view
+WHERE tenant_id = 1;                  -- => Filter to Acme Corp
+                                      -- => Application provides tenant_id from session
+-- => Returns Acme documents with all context
+-- => Same security rules apply to views
 
 -- Prevent cross-tenant data leakage
 -- Wrong: Missing tenant_id filter
-SELECT * FROM documents WHERE id = 3;
--- => Returns TechStart document (security issue if tenant_id not checked)
+SELECT * FROM documents WHERE id = 3; -- => SECURITY VULNERABILITY!
+                                      -- => No tenant_id filter
+                                      -- => Returns document regardless of tenant
+-- => Returns TechStart document (document 3)
+-- => Security issue if application doesn't verify tenant ownership
+-- => Attacker could enumerate IDs to access all tenant data
 
 -- Correct: Always include tenant_id
 SELECT * FROM documents WHERE id = 3 AND tenant_id = 1;
+                                      -- => Includes tenant_id filter
+                                      -- => Document 3 belongs to tenant 2, not tenant 1
 -- => Returns no rows (document 3 belongs to tenant 2)
+-- => Even if attacker knows document ID 3 exists, can't access it
+-- => Tenant filtering provides security boundary
 
 -- Aggregate per tenant
 SELECT
-    t.name AS tenant,
-    COUNT(d.id) AS num_documents
-FROM tenants t
+    t.name AS tenant,                 -- => Tenant organization name
+    COUNT(d.id) AS num_documents      -- => Count documents per tenant
+                                      -- => COUNT(d.id) counts non-NULL document IDs
+FROM tenants t                        -- => Start with all tenants
 LEFT JOIN documents d ON t.id = d.tenant_id
-GROUP BY t.id, t.name;
--- => Acme Corp: 2, TechStart Inc: 1
+                                      -- => LEFT JOIN includes tenants with no documents
+                                      -- => If tenant has no documents, COUNT returns 0
+GROUP BY t.id, t.name;                -- => Group by tenant
+                                      -- => Creates one row per tenant
+-- => Returns document counts for all tenants:
+-- => Acme Corp: 2 (documents 1 and 2)
+-- => TechStart Inc: 1 (document 3)
+-- => Admin query showing all tenant activity
 ```
 
 **Key Takeaway**: Multi-tenancy uses tenant_id on all tables to isolate data. ALWAYS filter by tenant_id in WHERE clauses. Create indexes with tenant_id as first column. Use UNIQUE constraints scoped to tenant. Application sets tenant context from authentication and includes in all queries. Essential for SaaS applications.
@@ -3067,130 +3217,226 @@ Monitor database health with query performance metrics, connection stats, and re
 
 ```sql
 -- Query performance log
-CREATE TABLE query_log (
-    id INTEGER PRIMARY KEY,
-    query_hash TEXT NOT NULL,
-    query_text TEXT,
-    execution_time_ms INTEGER NOT NULL,
-    rows_returned INTEGER,
-    executed_at TEXT NOT NULL
+CREATE TABLE query_log (              -- => Stores query execution metrics
+    id INTEGER PRIMARY KEY,           -- => Unique log entry identifier
+                                      -- => Auto-increments for each execution
+    query_hash TEXT NOT NULL,         -- => Hash of normalized query (groups similar queries)
+                                      -- => e.g., "SELECT * FROM users WHERE id = ?" always same hash
+                                      -- => Parameters removed for grouping
+    query_text TEXT,                  -- => Actual query text (for reference)
+                                      -- => Helps identify what query_hash represents
+    execution_time_ms INTEGER NOT NULL,  -- => How long query took (milliseconds)
+                                          -- => Critical metric for performance analysis
+    rows_returned INTEGER,            -- => How many rows query returned
+                                      -- => Helps identify queries scanning too much data
+    executed_at TEXT NOT NULL         -- => When query ran (ISO8601 timestamp)
+                                      -- => For time-series analysis
 );
+-- => Performance monitoring table
+-- => Application logs every query execution here
+-- => Enables detection of slow queries and degradation trends
 
 CREATE INDEX idx_query_log_time ON query_log(executed_at);
+                                      -- => Index on timestamp for time-based queries
+                                      -- => "Last hour" queries use this index
 CREATE INDEX idx_query_log_hash ON query_log(query_hash);
+                                      -- => Index on query hash for grouping
+                                      -- => GROUP BY query_hash uses this
+-- => Indexes critical for fast metric queries
+-- => Without them, analyzing logs is slow (ironic for performance monitoring)
 
 -- Log query execution
 INSERT INTO query_log (query_hash, query_text, execution_time_ms, rows_returned, executed_at)
 VALUES
     ('hash123', 'SELECT * FROM users WHERE country = ?', 45, 150, '2025-01-15 10:00:00'),
+                                      -- => First execution: 45ms, 150 rows
+                                      -- => Same query_hash for all country lookups
     ('hash123', 'SELECT * FROM users WHERE country = ?', 42, 145, '2025-01-15 10:05:00'),
+                                      -- => Second execution: 42ms, 145 rows (similar performance)
+                                      -- => query_hash groups these together
     ('hash456', 'SELECT COUNT(*) FROM orders', 320, 1, '2025-01-15 10:10:00');
+                                      -- => Different query: 320ms (slow!), 1 row
+                                      -- => Separate query_hash for different query pattern
+-- => 3 log entries: 2 executions of hash123, 1 of hash456
+-- => Simulates application logging query executions
+-- => Production systems log thousands per second
 
 -- Find slow queries (> 100ms)
 SELECT
-    query_hash,
-    query_text,
-    AVG(execution_time_ms) AS avg_time_ms,
-    MAX(execution_time_ms) AS max_time_ms,
-    COUNT(*) AS execution_count
-FROM query_log
-WHERE executed_at >= datetime('now', '-1 hour')
-GROUP BY query_hash, query_text
-HAVING AVG(execution_time_ms) > 100
-ORDER BY avg_time_ms DESC;
+    query_hash,                       -- => Query identifier (groups similar queries)
+    query_text,                       -- => Actual query text for reference
+    AVG(execution_time_ms) AS avg_time_ms,  -- => Average execution time
+                                            -- => Smooths out outliers
+    MAX(execution_time_ms) AS max_time_ms,  -- => Worst case execution time
+                                            -- => Shows performance spikes
+    COUNT(*) AS execution_count       -- => How many times query executed
+                                      -- => High-frequency queries need optimization priority
+FROM query_log                        -- => Source: all logged queries
+WHERE executed_at >= datetime('now', '-1 hour')  -- => Last hour only
+                                                  -- => Focuses on recent performance
+GROUP BY query_hash, query_text       -- => Aggregate by query pattern
+                                      -- => One row per unique query
+HAVING AVG(execution_time_ms) > 100   -- => Filter to slow queries (>100ms average)
+                                      -- => HAVING filters after aggregation
+ORDER BY avg_time_ms DESC;            -- => Slowest queries first
+                                      -- => Prioritize optimization targets
 -- => Returns queries needing optimization
+-- => Example: hash456 with avg 320ms appears at top
+-- => Production threshold might be 50ms (stricter)
 
 -- Query performance trends
-WITH hourly_stats AS (
+WITH hourly_stats AS (                -- => CTE calculates hourly metrics
     SELECT
         STRFTIME('%Y-%m-%d %H:00:00', executed_at) AS hour,
-        AVG(execution_time_ms) AS avg_time,
-        COUNT(*) AS query_count
-    FROM query_log
-    WHERE executed_at >= datetime('now', '-24 hours')
-    GROUP BY hour
+                                      -- => Round timestamp to hour boundary
+                                      -- => Groups all queries in same hour
+                                      -- => Example: 10:37:42 → 10:00:00
+        AVG(execution_time_ms) AS avg_time,  -- => Average query time per hour
+                                             -- => Shows performance degradation trends
+        COUNT(*) AS query_count       -- => Number of queries per hour
+                                      -- => Shows load patterns
+    FROM query_log                    -- => Source: query logs
+    WHERE executed_at >= datetime('now', '-24 hours')  -- => Last 24 hours
+                                                        -- => One day of trend data
+    GROUP BY hour                     -- => Aggregate by hour bucket
+                                      -- => Creates hourly time series
 )
-SELECT * FROM hourly_stats ORDER BY hour;
+SELECT * FROM hourly_stats ORDER BY hour;  -- => Sort chronologically
+                                           -- => Shows trend over time
 -- => Shows performance trend over last 24 hours
+-- => Example output: Hour | avg_time | query_count
+-- => 2025-01-15 09:00:00 | 42 | 150
+-- => 2025-01-15 10:00:00 | 135 | 180 (degrading!)
+-- => Helps detect "queries getting slower over time"
 
 -- Table statistics
-CREATE TABLE table_stats (
-    table_name TEXT PRIMARY KEY,
-    row_count INTEGER,
-    index_count INTEGER,
-    last_analyzed TEXT
+CREATE TABLE table_stats (            -- => Stores metadata about tables
+    table_name TEXT PRIMARY KEY,      -- => Name of table being tracked
+                                      -- => One row per table
+    row_count INTEGER,                -- => Number of rows in table
+                                      -- => For capacity planning
+    index_count INTEGER,              -- => Number of indexes on table
+                                      -- => More indexes = faster reads, slower writes
+    last_analyzed TEXT                -- => When stats last collected
+                                      -- => Tracks freshness of metrics
 );
+-- => Metadata table for monitoring table health
+-- => Updated periodically (cron job or scheduled task)
 
 -- Collect stats (run periodically)
 INSERT OR REPLACE INTO table_stats (table_name, row_count, index_count, last_analyzed)
+                                      -- => Upsert: insert or update if exists
+                                      -- => PRIMARY KEY on table_name prevents duplicates
 SELECT
-    name AS table_name,
+    name AS table_name,               -- => Table name from sqlite_master
     (SELECT COUNT(*) FROM sqlite_master WHERE type='index' AND tbl_name = name) AS index_count,
-    0 AS row_count,  -- Would need ANALYZE or SELECT COUNT(*) per table
-    datetime('now') AS last_analyzed
-FROM sqlite_master
-WHERE type = 'table' AND name NOT LIKE 'sqlite_%';
+                                      -- => Subquery counts indexes per table
+                                      -- => Queries sqlite_master (metadata table)
+    0 AS row_count,                   -- => Placeholder (would need per-table COUNT)
+                                      -- => Real implementation: SELECT COUNT(*) FROM <table>
+    datetime('now') AS last_analyzed  -- => Current timestamp
+FROM sqlite_master                    -- => System table with table metadata
+WHERE type = 'table' AND name NOT LIKE 'sqlite_%';  -- => User tables only
+                                                     -- => Excludes system tables (sqlite_*)
+-- => Collects metadata for all user tables
+-- => Run this hourly or daily to track table growth
+-- => Production version would calculate actual row counts
 
 -- Database size monitoring
 SELECT
-    SUM(pgsize) / 1024.0 / 1024.0 AS size_mb
-FROM dbstat;
+    SUM(pgsize) / 1024.0 / 1024.0 AS size_mb  -- => Total database size in megabytes
+                                               -- => SUM(pgsize) gets bytes
+                                               -- => Divide by 1024^2 for MB
+FROM dbstat;                          -- => Virtual table with page statistics
+                                      -- => dbstat shows space usage per table/index
 -- => Returns database size in MB
+-- => Example: 245.67 (database is ~246 MB)
+-- => Alert when approaching storage limits
+-- => Triggers VACUUM or archival if too large
 
 -- Connection monitoring (from pool table in Example 83)
-CREATE TABLE connection_stats (
-    recorded_at TEXT PRIMARY KEY,
-    active_connections INTEGER,
-    idle_connections INTEGER,
-    total_connections INTEGER
+CREATE TABLE connection_stats (       -- => Time-series connection metrics
+    recorded_at TEXT PRIMARY KEY,     -- => Timestamp of snapshot
+                                      -- => One row per snapshot (minute/hour)
+    active_connections INTEGER,       -- => Connections in use
+    idle_connections INTEGER,         -- => Connections available
+    total_connections INTEGER         -- => Pool size (active + idle)
 );
+-- => Tracks connection pool health over time
+-- => Helps detect connection leaks (active climbing over time)
 
 INSERT INTO connection_stats (recorded_at, active_connections, idle_connections, total_connections)
 SELECT
-    datetime('now'),
-    COUNT(CASE WHEN status = 'active' THEN 1 END),
-    COUNT(CASE WHEN status = 'idle' THEN 1 END),
-    COUNT(*)
-FROM connection_pool;
+    datetime('now'),                  -- => Current timestamp (snapshot time)
+    COUNT(CASE WHEN status = 'active' THEN 1 END),  -- => Count active connections
+                                                     -- => CASE returns 1 for active, NULL otherwise
+    COUNT(CASE WHEN status = 'idle' THEN 1 END),    -- => Count idle connections
+    COUNT(*)                          -- => Total connections
+FROM connection_pool;                 -- => From Example 83's connection_pool table
+-- => Records current connection state
+-- => Run every minute to build time series
+-- => Enables "active connections trending up" alerts
 
 -- Resource alerts
-WITH current_metrics AS (
+WITH current_metrics AS (             -- => CTE calculates current health metrics
     SELECT
         (SELECT AVG(execution_time_ms) FROM query_log WHERE executed_at >= datetime('now', '-5 minutes')) AS avg_query_time,
+                                      -- => Average query time in last 5 minutes
+                                      -- => Short window for fast alert response
         (SELECT COUNT(*) FROM connection_pool WHERE status = 'active') AS active_connections,
+                                      -- => Current active connection count
+                                      -- => From Example 83 table
         (SELECT SUM(pgsize) / 1024.0 / 1024.0 FROM dbstat) AS db_size_mb
+                                      -- => Current database size
+                                      -- => From dbstat virtual table
 )
 SELECT
-    CASE
+    CASE                              -- => Evaluate alert conditions
         WHEN avg_query_time > 500 THEN 'ALERT: High query latency'
+                                      -- => Slow queries detected (>500ms average)
         WHEN active_connections > 15 THEN 'ALERT: High connection usage'
+                                      -- => Connection pool near exhaustion
         WHEN db_size_mb > 1000 THEN 'ALERT: Database size exceeded 1GB'
-        ELSE 'OK'
-    END AS health_status,
-    avg_query_time,
-    active_connections,
-    db_size_mb
-FROM current_metrics;
+                                      -- => Database too large for capacity
+        ELSE 'OK'                     -- => All metrics within thresholds
+    END AS health_status,             -- => Alert message or OK
+    avg_query_time,                   -- => Include metric values for context
+    active_connections,               -- => Current active count
+    db_size_mb                        -- => Current size
+FROM current_metrics;                 -- => Query CTE metrics
+-- => Returns health status with context metrics
+-- => Production systems send alerts via webhook/email/Slack
+-- => Example: "ALERT: High query latency | avg_query_time=650 | active=8 | size=234"
 
 -- Automated maintenance recommendations
 SELECT
-    'Run VACUUM' AS recommendation
+    'Run VACUUM' AS recommendation    -- => Suggests running VACUUM
 WHERE (SELECT SUM(pgsize) FROM dbstat WHERE name LIKE '%_freelist%') > 100000
+                                      -- => Freelist pages > threshold
+                                      -- => Freelist = freed space not yet reclaimed
+                                      -- => VACUUM recovers this space
 
 UNION ALL
 
-SELECT 'Analyze slow queries'
+SELECT 'Analyze slow queries'         -- => Suggests investigating slow queries
 WHERE EXISTS (
-    SELECT 1 FROM query_log
-    WHERE executed_at >= datetime('now', '-1 hour')
-      AND execution_time_ms > 1000
+    SELECT 1 FROM query_log           -- => Check if any slow queries exist
+    WHERE executed_at >= datetime('now', '-1 hour')  -- => Recent hour
+      AND execution_time_ms > 1000    -- => Very slow (>1 second)
 )
 
 UNION ALL
 
-SELECT 'Add index to ' || table_name
-FROM table_stats
-WHERE index_count = 0;
+SELECT 'Add index to ' || table_name  -- => Suggests adding indexes
+FROM table_stats                      -- => Check table_stats metadata
+WHERE index_count = 0;                -- => Tables without indexes
+-- => Returns list of maintenance recommendations
+-- => UNION ALL combines multiple suggestions
+-- => Example output:
+-- => "Run VACUUM"
+-- => "Analyze slow queries"
+-- => "Add index to products"
+-- => Production systems create tickets or send notifications
 ```
 
 **Key Takeaway**: Monitor query performance (log execution times, identify slow queries), connection usage (active/idle counts), and database size. Collect metrics periodically, analyze trends, set alerts for thresholds. Use EXPLAIN for slow queries, VACUUM for space reclamation, ANALYZE for statistics. Essential for production database health.

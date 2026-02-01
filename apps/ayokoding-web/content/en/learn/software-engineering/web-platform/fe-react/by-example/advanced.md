@@ -1865,39 +1865,29 @@ Code splitting reduces initial bundle size by loading components on-demand. Use 
 ```typescript
 import { Suspense, lazy, useState } from 'react';
 
-// => Lazy-loaded components using React.lazy()
-// => Webpack creates separate bundles for these components
-// => Loaded only when first rendered
+// => React.lazy() creates separate bundles (loaded on-demand)
 const DonationForm = lazy(() => import('./DonationForm'));
-// => import('./DonationForm') returns Promise<{ default: Component }>
-// => React.lazy() wraps promise, creates component that loads on demand
-
+// => import() returns Promise<{ default: Component }>
 const ZakatCalculator = lazy(() => import('./ZakatCalculator'));
-// => Separate bundle created for ZakatCalculator
-
 const ReportsPanel = lazy(() => import('./ReportsPanel'));
-// => Separate bundle created for ReportsPanel
 
-// => Loading fallback component
-// => Displayed while lazy component loads
+// => Loading fallback displayed during component load
 function LoadingSpinner() {
   return (
     <div style={{ padding: '20px', textAlign: 'center' }}>
       <div className="spinner">⏳ Loading...</div>
-      {/* => Simple loading indicator */}
     </div>
   );
 }
 
 function Dashboard() {
-  // => Tab state determines which lazy component to load
   const [activeTab, setActiveTab] = useState<'donate' | 'zakat' | 'reports'>('donate');
+  // => Tab state determines which lazy component to render
 
   return (
     <div>
       <h2>Financial Dashboard</h2>
 
-      {/* => Tab navigation */}
       <div style={{ marginBottom: '20px' }}>
         <button
           onClick={() => setActiveTab('donate')}
@@ -1919,25 +1909,13 @@ function Dashboard() {
         </button>
       </div>
 
-      {/* => Suspense boundary: catches lazy component loading */}
-      {/* => fallback: shown while lazy component loads */}
+      {/* => Suspense boundary catches lazy loading, shows fallback */}
       <Suspense fallback={<LoadingSpinner />}>
-        {/* => Conditional rendering based on active tab */}
-        {/* => Only selected component bundle is loaded */}
-
         {activeTab === 'donate' && <DonationForm />}
-        {/* => DonationForm bundle loads when tab first selected */}
-        {/* => LoadingSpinner shows during load */}
-        {/* => After load, DonationForm cached in memory */}
-
+        {/* => Bundle loads on first render, then cached */}
         {activeTab === 'zakat' && <ZakatCalculator />}
-        {/* => ZakatCalculator bundle loads when tab first selected */}
-
         {activeTab === 'reports' && <ReportsPanel />}
-        {/* => ReportsPanel bundle loads when tab first selected */}
       </Suspense>
-      {/* => Suspense catches loading state automatically */}
-      {/* => No manual loading state management needed */}
     </div>
   );
 }
@@ -1951,8 +1929,6 @@ function DonationForm() {
   return (
     <div>
       <h3>Make a Donation</h3>
-      {/* => This component code split into separate bundle */}
-      {/* => Only loaded when Donations tab selected */}
       <label>
         Amount: $
         <input
@@ -1975,8 +1951,6 @@ function ZakatCalculator() {
   return (
     <div>
       <h3>Calculate Zakat</h3>
-      {/* => This component code split into separate bundle */}
-      {/* => Only loaded when Zakat Calculator tab selected */}
       <label>
         Total Wealth: $
         <input
@@ -1997,8 +1971,6 @@ function ReportsPanel() {
   return (
     <div>
       <h3>Financial Reports</h3>
-      {/* => This component code split into separate bundle */}
-      {/* => Only loaded when Reports tab selected */}
       <p>Monthly donation summary...</p>
       <p>Zakat calculations...</p>
     </div>
@@ -2022,59 +1994,34 @@ Route-based code splitting loads route components on-demand, reducing initial bu
 import { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
 
-// => Lazy-load route components
-// => Each route gets separate bundle
-// => Bundle loaded when route first accessed
+// => Lazy-load route components (separate bundles per route)
 const HomePage = lazy(() => import('./routes/HomePage'));
-// => HomePage.tsx compiled to separate chunk (e.g., HomePage.abc123.js)
-
+// => Chunk: HomePage.abc123.js
 const DonationPage = lazy(() => import('./routes/DonationPage'));
-// => DonationPage.tsx compiled to separate chunk
-
 const ZakatPage = lazy(() => import('./routes/ZakatPage'));
-// => ZakatPage.tsx compiled to separate chunk
-
 const ReportsPage = lazy(() => import('./routes/ReportsPage'));
-// => ReportsPage.tsx compiled to separate chunk
-
 const NotFoundPage = lazy(() => import('./routes/NotFoundPage'));
-// => 404 page also code-split
 
-// => Route-level loading fallback
-// => Shows while route component loads
+// => Route loading fallback
 function RouteLoadingFallback() {
   return (
     <div style={{ padding: '40px', textAlign: 'center' }}>
       <div style={{ fontSize: '48px' }}>⏳</div>
       <p>Loading page...</p>
-      {/* => User-friendly loading indicator */}
     </div>
   );
 }
 
-// => Layout component (NOT lazy-loaded)
-// => Loaded with main bundle, always visible
+// => Layout component (NOT lazy - always visible)
 function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div>
-      {/* => Navigation bar (always loaded) */}
       <nav style={{ padding: '16px', backgroundColor: '#F5F5F5', marginBottom: '20px' }}>
-        <Link to="/" style={{ marginRight: '16px' }}>
-          Home
-        </Link>
-        <Link to="/donate" style={{ marginRight: '16px' }}>
-          Donate
-        </Link>
-        <Link to="/zakat" style={{ marginRight: '16px' }}>
-          Zakat
-        </Link>
-        <Link to="/reports" style={{ marginRight: '16px' }}>
-          Reports
-        </Link>
-        {/* => Navigation links trigger lazy loading when clicked */}
+        <Link to="/" style={{ marginRight: '16px' }}>Home</Link>
+        <Link to="/donate" style={{ marginRight: '16px' }}>Donate</Link>
+        <Link to="/zakat" style={{ marginRight: '16px' }}>Zakat</Link>
+        <Link to="/reports" style={{ marginRight: '16px' }}>Reports</Link>
       </nav>
-
-      {/* => Route content area */}
       {children}
     </div>
   );
@@ -2084,26 +2031,16 @@ function App() {
   return (
     <BrowserRouter>
       <Layout>
-        {/* => Suspense wraps all routes */}
-        {/* => Catches lazy loading for any route */}
+        {/* => Suspense catches all route lazy loading */}
         <Suspense fallback={<RouteLoadingFallback />}>
           <Routes>
-            {/* => Each route uses lazy-loaded component */}
             <Route path="/" element={<HomePage />} />
-            {/* => HomePage bundle loads when / route accessed */}
-
+            {/* => Bundle loads when route first accessed */}
             <Route path="/donate" element={<DonationPage />} />
-            {/* => DonationPage bundle loads when /donate accessed */}
-
             <Route path="/zakat" element={<ZakatPage />} />
-            {/* => ZakatPage bundle loads when /zakat accessed */}
-
             <Route path="/reports" element={<ReportsPage />} />
-            {/* => ReportsPage bundle loads when /reports accessed */}
-
             <Route path="/404" element={<NotFoundPage />} />
             <Route path="*" element={<Navigate to="/404" replace />} />
-            {/* => 404 page also lazy-loaded */}
           </Routes>
         </Suspense>
       </Layout>
@@ -2118,11 +2055,7 @@ function HomePage() {
   return (
     <div style={{ padding: '20px' }}>
       <h1>Welcome to Financial Platform</h1>
-      {/* => HomePage content split into separate bundle */}
-      <p>
-        Manage your donations, calculate zakat, and view financial reports.
-      </p>
-      {/* => Only loaded when user navigates to / route */}
+      <p>Manage your donations, calculate zakat, and view financial reports.</p>
     </div>
   );
 }
@@ -2139,8 +2072,6 @@ function DonationPage() {
   return (
     <div style={{ padding: '20px' }}>
       <h1>Make a Donation</h1>
-      {/* => DonationPage content split into separate bundle */}
-
       <label>
         Amount: $
         <input
@@ -2149,7 +2080,6 @@ function DonationPage() {
           onChange={(e) => setAmount(parseFloat(e.target.value) || 0)}
         />
       </label>
-
       <label>
         Name:
         <input
@@ -2158,9 +2088,7 @@ function DonationPage() {
           onChange={(e) => setDonor(e.target.value)}
         />
       </label>
-
       <button>Submit Donation</button>
-      {/* => Only loaded when user navigates to /donate route */}
     </div>
   );
 }
@@ -2175,9 +2103,10 @@ function ZakatPage() {
   const [zakatAmount, setZakatAmount] = useState(0);
 
   const calculateZakat = () => {
-    const nisab = 5000;
+    const nisab = 5000;                      // => Minimum wealth threshold
     if (wealth >= nisab) {
       setZakatAmount((wealth - nisab) * 0.025);
+      // => 2.5% of wealth above nisab
     } else {
       setZakatAmount(0);
     }
@@ -2186,8 +2115,6 @@ function ZakatPage() {
   return (
     <div style={{ padding: '20px' }}>
       <h1>Zakat Calculator</h1>
-      {/* => ZakatPage content split into separate bundle */}
-
       <label>
         Total Wealth: $
         <input
@@ -2196,15 +2123,12 @@ function ZakatPage() {
           onChange={(e) => setWealth(parseFloat(e.target.value) || 0)}
         />
       </label>
-
       <button onClick={calculateZakat}>Calculate Zakat</button>
-
       {zakatAmount > 0 && (
         <p style={{ fontSize: '24px', fontWeight: 'bold', color: 'green' }}>
           Zakat Due: ${zakatAmount.toFixed(2)}
         </p>
       )}
-      {/* => Only loaded when user navigates to /zakat route */}
     </div>
   );
 }
@@ -2216,13 +2140,11 @@ function ReportsPage() {
   return (
     <div style={{ padding: '20px' }}>
       <h1>Financial Reports</h1>
-      {/* => ReportsPage content split into separate bundle */}
       <div>
         <h2>Monthly Summary</h2>
         <p>Total donations: \$2,500</p>
         <p>Total zakat: \$1,250</p>
       </div>
-      {/* => Only loaded when user navigates to /reports route */}
     </div>
   );
 }
@@ -2234,9 +2156,7 @@ function NotFoundPage() {
   return (
     <div style={{ padding: '20px', textAlign: 'center' }}>
       <h1>404 - Page Not Found</h1>
-      {/* => 404 page also code-split */}
       <p>The page you're looking for doesn't exist.</p>
-      {/* => Only loaded when user navigates to invalid route */}
     </div>
   );
 }
