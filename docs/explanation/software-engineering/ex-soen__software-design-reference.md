@@ -67,9 +67,9 @@ Languages covered:
 
 Frameworks covered:
 
-- **[Spring Boot (JVM)](./platform-web/jvm-spring-boot/README.md)** - REST APIs and microservices
-- **[Phoenix (Elixir)](./platform-web/elixir-phoenix/README.md)** - Real-time applications
-- **[React (TypeScript)](./platform-web/fe-react/README.md)** - Interactive UIs
+- **[Spring Boot (JVM)](./platform-web/tools/jvm-spring-boot/README.md)** - REST APIs and microservices
+- **[Phoenix (Elixir)](./platform-web/tools/elixir-phoenix/README.md)** - Real-time applications
+- **[React (TypeScript)](./platform-web/tools/fe-react/README.md)** - Interactive UIs
 
 ## Separation of Concerns
 

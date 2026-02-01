@@ -62,9 +62,12 @@ Each stack directory contains documentation for frameworks and libraries specifi
 
 ```
 platform-web/
-├── jvm-spring-boot/     # Spring Boot framework (Java/Kotlin)
-├── elixir-phoenix/      # Phoenix framework (Elixir)
-└── fe-react/            # React library (TypeScript)
+└── tools/
+    ├── jvm-spring-boot/     # Spring Boot framework (Java/Kotlin)
+    ├── jvm-spring/          # Spring Framework (Java/Kotlin)
+    ├── elixir-phoenix/      # Phoenix framework (Elixir)
+    ├── fe-react/            # React library (TypeScript)
+    └── fe-nextjs/           # Next.js framework (TypeScript)
 ```
 
 ### Document Organization
@@ -79,7 +82,7 @@ Each framework directory typically contains:
 
 ## Available Frameworks
 
-### 🍃 [Spring Boot (JVM)](./jvm-spring-boot/README.md)
+### 🍃 [Spring Boot (JVM)](./tools/jvm-spring-boot/README.md)
 
 **Modern Java application framework for building production-ready services**
 
@@ -97,21 +100,21 @@ Spring Boot is the primary backend framework for building REST APIs, domain serv
 
 **Comprehensive Documentation Coverage**:
 
-- **[Framework Overview](./jvm-spring-boot/README.md)** - Version strategy, architecture integration, getting started
-- **[Idioms](./jvm-spring-boot/ex-soen-plwe-jvspbo__idioms.md)** - Framework-specific patterns (auto-configuration, DI, profiles)
-- **[Best Practices](./jvm-spring-boot/ex-soen-plwe-jvspbo__best-practices.md)** - Production standards (project structure, error handling, testing)
-- **[Anti-Patterns](./jvm-spring-boot/ex-soen-plwe-jvspbo__anti-patterns.md)** - Common mistakes to avoid
-- **[Configuration](./jvm-spring-boot/ex-soen-plwe-jvspbo__configuration.md)** - Environment management, properties, profiles
-- **[Dependency Injection](./jvm-spring-boot/ex-soen-plwe-jvspbo__dependency-injection.md)** - IoC container, bean scopes, lifecycle
-- **[REST APIs](./jvm-spring-boot/ex-soen-plwe-jvspbo__rest-apis.md)** - RESTful services, validation, exception handling
-- **[Data Access](./jvm-spring-boot/ex-soen-plwe-jvspbo__data-access.md)** - Spring Data JPA, repositories, transactions
-- **[Security](./jvm-spring-boot/ex-soen-plwe-jvspbo__security.md)** - Spring Security, OAuth2, JWT, method security
-- **[Testing](./jvm-spring-boot/ex-soen-plwe-jvspbo__testing.md)** - Unit, integration, slice tests, TestContainers
-- **[Observability](./jvm-spring-boot/ex-soen-plwe-jvspbo__observability.md)** - Actuator, metrics, health checks, tracing
-- **[Performance](./jvm-spring-boot/ex-soen-plwe-jvspbo__performance.md)** - Optimization, caching, async processing
-- **[Domain-Driven Design](./jvm-spring-boot/ex-soen-plwe-jvspbo__domain-driven-design.md)** - DDD tactical patterns with Spring
-- **[Functional Programming](./jvm-spring-boot/ex-soen-plwe-jvspbo__functional-programming.md)** - FP patterns, immutability
-- **[Version Migration](./jvm-spring-boot/ex-soen-plwe-jvspbo__version-migration.md)** - Spring Boot 2.x to 3.x upgrade guide
+- **[Framework Overview](./tools/jvm-spring-boot/README.md)** - Version strategy, architecture integration, getting started
+- **[Idioms](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__idioms.md)** - Framework-specific patterns (auto-configuration, DI, profiles)
+- **[Best Practices](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__best-practices.md)** - Production standards (project structure, error handling, testing)
+- **[Anti-Patterns](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__anti-patterns.md)** - Common mistakes to avoid
+- **[Configuration](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__configuration.md)** - Environment management, properties, profiles
+- **[Dependency Injection](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__dependency-injection.md)** - IoC container, bean scopes, lifecycle
+- **[REST APIs](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__rest-apis.md)** - RESTful services, validation, exception handling
+- **[Data Access](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__data-access.md)** - Spring Data JPA, repositories, transactions
+- **[Security](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__security.md)** - Spring Security, OAuth2, JWT, method security
+- **[Testing](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__testing.md)** - Unit, integration, slice tests, TestContainers
+- **[Observability](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__observability.md)** - Actuator, metrics, health checks, tracing
+- **[Performance](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__performance.md)** - Optimization, caching, async processing
+- **[Domain-Driven Design](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__domain-driven-design.md)** - DDD tactical patterns with Spring
+- **[Functional Programming](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__functional-programming.md)** - FP patterns, immutability
+- **[Version Migration](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__version-migration.md)** - Spring Boot 2.x to 3.x upgrade guide
 
 **Key Features**:
 
@@ -127,13 +130,13 @@ Spring Boot applications in the platform follow Domain-Driven Design principles 
 
 **Quick Start**:
 
-1. Review [Spring Boot README](./jvm-spring-boot/README.md) for version strategy and architecture
-2. Study [Idioms](./jvm-spring-boot/ex-soen-plwe-jvspbo__idioms.md) for framework patterns
-3. Follow [Best Practices](./jvm-spring-boot/ex-soen-plwe-jvspbo__best-practices.md) for production standards
+1. Review [Spring Boot README](./tools/jvm-spring-boot/README.md) for version strategy and architecture
+2. Study [Idioms](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__idioms.md) for framework patterns
+3. Follow [Best Practices](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__best-practices.md) for production standards
 4. Apply consistent implementation patterns
 5. Apply [Java coding standards](../programming-languages/java/README.md) for language-specific idioms
 
-### 🔥 [Phoenix (Elixir)](./elixir-phoenix/README.md)
+### 🔥 [Phoenix (Elixir)](./tools/elixir-phoenix/README.md)
 
 **High-performance web framework built on the Erlang VM**
 
@@ -147,7 +150,7 @@ Phoenix is a web framework for building scalable, fault-tolerant real-time appli
 - Functional programming with immutability
 - Productive development with hot code reloading
 
-### ⚛️ [React (TypeScript)](./fe-react/README.md)
+### ⚛️ [React (TypeScript)](./tools/fe-react/README.md)
 
 **Component-based library for building user interfaces**
 
@@ -203,13 +206,13 @@ Frameworks in this documentation are chosen based on:
 ### For Backend Developers
 
 1. **Java/Spring Boot path**:
-   - Read [Spring Boot Overview](./jvm-spring-boot/README.md)
+   - Read [Spring Boot Overview](./tools/jvm-spring-boot/README.md)
    - Study Spring Boot patterns and best practices
    - Integrate with DDD patterns from [Architecture docs](../architecture/README.md)
    - Apply [Java idioms](../programming-languages/java/README.md)
 
 2. **Elixir/Phoenix path**:
-   - Read [Phoenix Overview](./elixir-phoenix/README.md)
+   - Read [Phoenix Overview](./tools/elixir-phoenix/README.md)
    - Study Phoenix channels and real-time patterns
    - Learn Elixir functional patterns
    - Understand BEAM VM concurrency model
@@ -217,7 +220,7 @@ Frameworks in this documentation are chosen based on:
 ### For Frontend Developers
 
 1. **React/TypeScript path**:
-   - Read [React Overview](./fe-react/README.md)
+   - Read [React Overview](./tools/fe-react/README.md)
    - Study React component patterns
    - Apply [TypeScript idioms](../programming-languages/typescript/README.md) (when available)
    - Learn state management approaches
