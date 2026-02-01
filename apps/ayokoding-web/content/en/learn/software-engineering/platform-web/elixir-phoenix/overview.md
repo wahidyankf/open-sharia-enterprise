@@ -39,8 +39,8 @@ Phoenix provides a productive development experience with code reloading, compre
 
 Before diving into Phoenix development, get up and running:
 
-1. **[Initial Setup](/en/learn/software-engineering/web-platform/elixir-phoenix/initial-setup)** - Install Elixir, Phoenix, PostgreSQL, Node.js, verify your setup
-2. **[Quick Start](/en/learn/software-engineering/web-platform/elixir-phoenix/quick-start)** - Your first Phoenix app, basic routing, essential patterns
+1. **[Initial Setup](/en/learn/software-engineering/platform-web/elixir-phoenix/initial-setup)** - Install Elixir, Phoenix, PostgreSQL, Node.js, verify your setup
+2. **[Quick Start](/en/learn/software-engineering/platform-web/elixir-phoenix/quick-start)** - Your first Phoenix app, basic routing, essential patterns
 
 These foundational tutorials (0-30% coverage) prepare you for comprehensive Phoenix learning.
 

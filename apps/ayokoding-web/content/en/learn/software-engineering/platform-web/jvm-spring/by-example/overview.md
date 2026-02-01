@@ -267,7 +267,7 @@ After each example:
 
 ### Setup Requirements
 
-Complete [Initial Setup](/en/learn/software-engineering/web-platform/jvm-spring/initial-setup) to have:
+Complete [Initial Setup](/en/learn/software-engineering/platform-web/jvm-spring/initial-setup) to have:
 
 - Java 17+ or Kotlin 1.9+ installed
 - Maven or Gradle configured
@@ -434,12 +434,12 @@ After completing all examples, you will:
 
 **Start Learning**:
 
-- **[Beginner Examples](/en/learn/software-engineering/web-platform/jvm-spring/by-example/beginner)** - Examples 1-30 (0-50% coverage)
-- **[Intermediate Examples](/en/learn/software-engineering/web-platform/jvm-spring/by-example/intermediate)** - Examples 31-65 (50-85% coverage)
-- **[Advanced Examples](/en/learn/software-engineering/web-platform/jvm-spring/by-example/advanced)** - Examples 66-90 (85-95% coverage)
+- **[Beginner Examples](/en/learn/software-engineering/platform-web/jvm-spring/by-example/beginner)** - Examples 1-30 (0-50% coverage)
+- **[Intermediate Examples](/en/learn/software-engineering/platform-web/jvm-spring/by-example/intermediate)** - Examples 31-65 (50-85% coverage)
+- **[Advanced Examples](/en/learn/software-engineering/platform-web/jvm-spring/by-example/advanced)** - Examples 66-90 (85-95% coverage)
 
 **Other Learning Paths**:
 
-- **[Overview](/en/learn/software-engineering/web-platform/jvm-spring/overview)** - Conceptual introduction
-- **[Initial Setup](/en/learn/software-engineering/web-platform/jvm-spring/initial-setup)** - Installation and project setup
-- **[Quick Start](/en/learn/software-engineering/web-platform/jvm-spring/quick-start)** - Complete working application
+- **[Overview](/en/learn/software-engineering/platform-web/jvm-spring/overview)** - Conceptual introduction
+- **[Initial Setup](/en/learn/software-engineering/platform-web/jvm-spring/initial-setup)** - Installation and project setup
+- **[Quick Start](/en/learn/software-engineering/platform-web/jvm-spring/quick-start)** - Complete working application

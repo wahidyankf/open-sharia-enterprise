@@ -2883,4 +2883,4 @@ These 25 intermediate examples cover production-ready Next.js patterns:
 
 **Advanced Middleware**: Custom headers, redirects, A/B testing, geo-routing, security headers
 
-**Next**: [Advanced examples](/en/learn/software-engineering/web-platform/fe-nextjs/by-example/advanced) for performance optimization, advanced caching, streaming, and deployment patterns.
+**Next**: [Advanced examples](/en/learn/software-engineering/platform-web/fe-nextjs/by-example/advanced) for performance optimization, advanced caching, streaming, and deployment patterns.

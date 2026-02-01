@@ -6558,4 +6558,4 @@ This beginner tutorial covered **50 fundamental Spring Framework examples** (0-4
 - Environment property resolution
 - Bean validation with @Validated
 
-**Next Steps**: Progress to [Intermediate](/en/learn/software-engineering/web-platform/jvm-spring/by-example/intermediate) (40-75% coverage) covering advanced DI, AOP, transactions, and data access.
+**Next Steps**: Progress to [Intermediate](/en/learn/software-engineering/platform-web/jvm-spring/by-example/intermediate) (40-75% coverage) covering advanced DI, AOP, transactions, and data access.

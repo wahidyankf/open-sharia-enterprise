@@ -3106,4 +3106,4 @@ fg %?sleep                      # => Brings job matching "sleep" to foreground (
 
 ## Next Steps
 
-Continue to [Intermediate](/en/learn/software-engineering/linux-platform/shell/by-example/intermediate) examples for advanced text processing, scripting patterns, process management, and automation techniques (40-75% coverage).
+Continue to [Intermediate](/en/learn/software-engineering/platform-linux/shell/by-example/intermediate) examples for advanced text processing, scripting patterns, process management, and automation techniques (40-75% coverage).

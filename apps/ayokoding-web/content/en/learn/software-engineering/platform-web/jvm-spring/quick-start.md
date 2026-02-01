@@ -23,7 +23,7 @@ This quick start builds a **Zakat Calculator Application** demonstrating core Sp
 
 ## Prerequisites
 
-Complete [Initial Setup](/en/learn/software-engineering/web-platform/jvm-spring/initial-setup) to have:
+Complete [Initial Setup](/en/learn/software-engineering/platform-web/jvm-spring/initial-setup) to have:
 
 - Java 17+ installed
 - Maven or Gradle configured
@@ -893,7 +893,7 @@ public ZakatRecord recordZakatPayment(BigDecimal zakatAmount) {
 
 Now that you've built a working Spring Framework application, continue learning:
 
-**[By Example](/en/learn/software-engineering/web-platform/jvm-spring/by-example)** - Learn through 75-90 heavily annotated examples covering:
+**[By Example](/en/learn/software-engineering/platform-web/jvm-spring/by-example)** - Learn through 75-90 heavily annotated examples covering:
 
 - Advanced dependency injection patterns
 - AOP (Aspect-Oriented Programming)
@@ -902,4 +902,4 @@ Now that you've built a working Spring Framework application, continue learning:
 - Testing strategies
 - Production configurations
 
-**[Spring Boot Tutorial](/en/learn/software-engineering/web-platform/jvm-spring-boot)** - After mastering Spring Framework fundamentals, learn how Spring Boot simplifies configuration and deployment
+**[Spring Boot Tutorial](/en/learn/software-engineering/platform-web/jvm-spring-boot)** - After mastering Spring Framework fundamentals, learn how Spring Boot simplifies configuration and deployment

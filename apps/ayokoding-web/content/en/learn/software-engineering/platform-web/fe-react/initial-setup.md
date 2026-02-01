@@ -9,7 +9,7 @@ tags: ["react", "typescript", "installation", "setup", "beginner", "vite"]
 
 **Want to start building with React?** This initial setup guide gets React with TypeScript installed and working on your system in minutes. By the end, you'll have a React development environment configured and will create your first interactive component.
 
-This tutorial provides 0-5% coverage - just enough to get React working on your machine. For deeper learning, continue to [Quick Start](/en/learn/software-engineering/web-platform/fe-react/quick-start) (5-30% coverage).
+This tutorial provides 0-5% coverage - just enough to get React working on your machine. For deeper learning, continue to [Quick Start](/en/learn/software-engineering/platform-web/fe-react/quick-start) (5-30% coverage).
 
 ## Prerequisites
 
@@ -877,19 +877,19 @@ Should serve production build and show preview URL.
 
 **Ready to learn React fundamentals?**
 
-- [Quick Start](/en/learn/software-engineering/web-platform/fe-react/quick-start) (5-30% coverage) - Touch all core React concepts in a fast-paced tour
+- [Quick Start](/en/learn/software-engineering/platform-web/fe-react/quick-start) (5-30% coverage) - Touch all core React concepts in a fast-paced tour
 
 **Want comprehensive React mastery?**
 
-- [Beginner Tutorial](/en/learn/software-engineering/web-platform/fe-react/by-concept/beginner) (0-60% coverage) - Deep dive into React with extensive practice
+- [Beginner Tutorial](/en/learn/software-engineering/platform-web/fe-react/by-concept/beginner) (0-60% coverage) - Deep dive into React with extensive practice
 
 **Prefer code-first learning?**
 
-- [By-Example Tutorial](/en/learn/software-engineering/web-platform/fe-react/by-example) - Learn through heavily annotated examples
+- [By-Example Tutorial](/en/learn/software-engineering/platform-web/fe-react/by-example) - Learn through heavily annotated examples
 
 **Want to understand React's design philosophy?**
 
-- [Overview](/en/learn/software-engineering/web-platform/fe-react/overview) - Why React exists and when to use it
+- [Overview](/en/learn/software-engineering/platform-web/fe-react/overview) - Why React exists and when to use it
 
 ## Troubleshooting Common Issues
 

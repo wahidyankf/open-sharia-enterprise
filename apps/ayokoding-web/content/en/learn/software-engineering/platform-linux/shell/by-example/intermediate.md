@@ -3585,4 +3585,4 @@ restore_env() {                  # => Function to restore environment
 
 ## Next Steps
 
-Continue to [Advanced](/en/learn/software-engineering/linux-platform/shell/by-example/advanced) examples for performance optimization, advanced scripting patterns, and production deployment techniques (75-95% coverage).
+Continue to [Advanced](/en/learn/software-engineering/platform-linux/shell/by-example/advanced) examples for performance optimization, advanced scripting patterns, and production deployment techniques (75-95% coverage).

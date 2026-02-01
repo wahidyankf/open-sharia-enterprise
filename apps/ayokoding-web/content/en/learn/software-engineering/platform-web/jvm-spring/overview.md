@@ -345,8 +345,8 @@ Murabaha is a Shariah-compliant financing structure where the financier purchase
 
 Ready to start? Proceed to:
 
-**[Initial Setup](/en/learn/software-engineering/web-platform/jvm-spring/initial-setup)** - Install Java/Kotlin, set up build tools, create project structure
+**[Initial Setup](/en/learn/software-engineering/platform-web/jvm-spring/initial-setup)** - Install Java/Kotlin, set up build tools, create project structure
 
-**[Quick Start](/en/learn/software-engineering/web-platform/jvm-spring/quick-start)** - Build a complete Zakat Calculator application in 30 minutes
+**[Quick Start](/en/learn/software-engineering/platform-web/jvm-spring/quick-start)** - Build a complete Zakat Calculator application in 30 minutes
 
-**[By Example](/en/learn/software-engineering/web-platform/jvm-spring/by-example)** - Learn through 75-90 heavily annotated code examples
+**[By Example](/en/learn/software-engineering/platform-web/jvm-spring/by-example)** - Learn through 75-90 heavily annotated code examples

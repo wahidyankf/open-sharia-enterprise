@@ -9,7 +9,7 @@ tags: ["nextjs", "typescript", "tutorial", "server-components", "server-actions"
 
 **Ready to build with Next.js?** This tutorial guides you through creating your first Next.js application - a Zakat Calculator demonstrating Server Components, Client Components, and Server Actions.
 
-**Prerequisites**: Complete [Initial Setup](/en/learn/software-engineering/web-platform/fe-nextjs/initial-setup) before starting this tutorial.
+**Prerequisites**: Complete [Initial Setup](/en/learn/software-engineering/platform-web/fe-nextjs/initial-setup) before starting this tutorial.
 
 ## What We'll Build
 
@@ -698,8 +698,8 @@ Ensure your Zakat Calculator works correctly.
 
 **Continue learning Next.js**:
 
-- **[By Example](/en/learn/software-engineering/web-platform/fe-nextjs/by-example)** - Master Next.js through annotated examples (30-95% coverage)
-- **[Overview](/en/learn/software-engineering/web-platform/fe-nextjs/overview)** - Deep dive into Next.js architecture and concepts
+- **[By Example](/en/learn/software-engineering/platform-web/fe-nextjs/by-example)** - Master Next.js through annotated examples (30-95% coverage)
+- **[Overview](/en/learn/software-engineering/platform-web/fe-nextjs/overview)** - Deep dive into Next.js architecture and concepts
 
 **Explore more features**:
 

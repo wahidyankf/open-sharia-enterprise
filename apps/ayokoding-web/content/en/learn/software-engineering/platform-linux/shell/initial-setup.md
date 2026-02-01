@@ -9,7 +9,7 @@ tags: ["shell", "bash", "linux", "terminal", "setup", "beginner"]
 
 **Want to start using the Linux command-line?** This initial setup guide gets you into a working shell environment in minutes. By the end, you'll have accessed a terminal and executed your first commands.
 
-This tutorial provides 0-5% coverage - just enough to get your shell environment working. For deeper learning, continue to [Quick Start](/en/learn/software-engineering/linux-platform/shell/quick-start) (5-30% coverage).
+This tutorial provides 0-5% coverage - just enough to get your shell environment working. For deeper learning, continue to [Quick Start](/en/learn/software-engineering/platform-linux/shell/quick-start) (5-30% coverage).
 
 ## Prerequisites
 
@@ -720,19 +720,19 @@ Type `ec` and press Tab. It should complete to `echo` (or show options if multip
 
 **Ready to learn essential shell commands?**
 
-- [Quick Start](/en/learn/software-engineering/linux-platform/shell/quick-start) (5-30% coverage) - Touch all core shell concepts in a fast-paced tour
+- [Quick Start](/en/learn/software-engineering/platform-linux/shell/quick-start) (5-30% coverage) - Touch all core shell concepts in a fast-paced tour
 
 **Want comprehensive command mastery?**
 
-- [Beginner Tutorial](/en/learn/software-engineering/linux-platform/shell/by-concept/beginner) (0-60% coverage) - Deep dive into shell fundamentals with extensive practice
+- [Beginner Tutorial](/en/learn/software-engineering/platform-linux/shell/by-concept/beginner) (0-60% coverage) - Deep dive into shell fundamentals with extensive practice
 
 **Prefer code-first learning?**
 
-- [By-Example Tutorial](/en/learn/software-engineering/linux-platform/shell/by-example) - Learn through heavily annotated shell examples
+- [By-Example Tutorial](/en/learn/software-engineering/platform-linux/shell/by-example) - Learn through heavily annotated shell examples
 
 **Want to understand shell philosophy?**
 
-- [Overview](/en/learn/software-engineering/linux-platform/shell/overview) - Why command-line interfaces matter and when to use them
+- [Overview](/en/learn/software-engineering/platform-linux/shell/overview) - Why command-line interfaces matter and when to use them
 
 ## Troubleshooting Common Issues
 

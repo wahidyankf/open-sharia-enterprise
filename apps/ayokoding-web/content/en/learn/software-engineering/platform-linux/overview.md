@@ -20,7 +20,7 @@ Linux is an open-source operating system kernel that powers servers, development
 
 ### Shell - Command-Line Mastery
 
-**[Shell](/en/learn/software-engineering/linux-platform/shell)** teaches Unix shell fundamentals through practical examples:
+**[Shell](/en/learn/software-engineering/platform-linux/shell)** teaches Unix shell fundamentals through practical examples:
 
 - **Basic Commands** - Navigation (cd, ls, pwd), file operations (cp, mv, rm)
 - **File Permissions** - Understanding chmod, chown, file modes
@@ -74,7 +74,7 @@ Shell skills transfer across:
 
 ## Getting Started
 
-Start with **[Shell](/en/learn/software-engineering/linux-platform/shell)** to build command-line proficiency. The tutorial assumes no prior Linux experience and teaches from first principles.
+Start with **[Shell](/en/learn/software-engineering/platform-linux/shell)** to build command-line proficiency. The tutorial assumes no prior Linux experience and teaches from first principles.
 
 You'll learn by running real commands in a Linux terminal, building practical scripts, and working through progressively complex examples.
 

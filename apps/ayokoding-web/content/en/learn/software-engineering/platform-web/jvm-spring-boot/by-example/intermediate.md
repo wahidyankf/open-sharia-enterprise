@@ -11,7 +11,7 @@ Learn intermediate Spring Boot patterns through 30 annotated examples covering p
 
 ## Prerequisites
 
-- Completed [beginner by-example tutorial](/en/learn/software-engineering/web-platform/jvm-spring-boot/by-example/beginner)
+- Completed [beginner by-example tutorial](/en/learn/software-engineering/platform-web/jvm-spring-boot/by-example/beginner)
 - Spring Boot 3.4.x + Java 17
 - Understanding of JPA, REST APIs, and dependency injection
 
@@ -6138,4 +6138,4 @@ You've learned 30 intermediate Spring Boot patterns:
 
 ## Next Steps
 
-- [Advanced by-example tutorial](/en/learn/software-engineering/web-platform/jvm-spring-boot/by-example/advanced) - Microservices, observability, advanced patterns
+- [Advanced by-example tutorial](/en/learn/software-engineering/platform-web/jvm-spring-boot/by-example/advanced) - Microservices, observability, advanced patterns

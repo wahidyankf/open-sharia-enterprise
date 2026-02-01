@@ -9,13 +9,13 @@ tags: ["phoenix", "elixir", "web-framework", "liveview", "ecto", "real-time", "b
 
 **Ready to learn Phoenix Framework quickly?** This quick start tutorial provides a fast-paced tour through Phoenix's core concepts. By the end, you'll understand the fundamentals and be ready to build real web applications.
 
-This tutorial provides 5-30% coverage - touching all essential concepts without deep dives. For 0-5% coverage (installation only), see [Initial Setup](/en/learn/software-engineering/web-platform/elixir-phoenix/initial-setup). For deep dives, continue to [Beginner Tutorial](/en/learn/software-engineering/web-platform/elixir-phoenix/by-concept/beginner) (0-60% coverage).
+This tutorial provides 5-30% coverage - touching all essential concepts without deep dives. For 0-5% coverage (installation only), see [Initial Setup](/en/learn/software-engineering/platform-web/elixir-phoenix/initial-setup). For deep dives, continue to [Beginner Tutorial](/en/learn/software-engineering/platform-web/elixir-phoenix/by-concept/beginner) (0-60% coverage).
 
 ## Prerequisites
 
 Before starting this tutorial, you need:
 
-- Phoenix Framework installed (see [Initial Setup](/en/learn/software-engineering/web-platform/elixir-phoenix/initial-setup))
+- Phoenix Framework installed (see [Initial Setup](/en/learn/software-engineering/platform-web/elixir-phoenix/initial-setup))
 - Elixir 1.14+ and Erlang/OTP 24+
 - PostgreSQL database running
 - Basic Elixir knowledge (see [Elixir Quick Start](/en/learn/software-engineering/programming-languages/elixir/quick-start))
@@ -1344,16 +1344,16 @@ fly ssh console
 
 **Ready for comprehensive Phoenix mastery?**
 
-- [Beginner Tutorial](/en/learn/software-engineering/web-platform/elixir-phoenix/by-concept/beginner) (0-60% coverage) - Deep dive into Phoenix with extensive practice
-- [Intermediate Tutorial](/en/learn/software-engineering/web-platform/elixir-phoenix/by-concept/intermediate) (60-85% coverage) - Advanced features, testing, deployment
+- [Beginner Tutorial](/en/learn/software-engineering/platform-web/elixir-phoenix/by-concept/beginner) (0-60% coverage) - Deep dive into Phoenix with extensive practice
+- [Intermediate Tutorial](/en/learn/software-engineering/platform-web/elixir-phoenix/by-concept/intermediate) (60-85% coverage) - Advanced features, testing, deployment
 
 **Prefer code-first learning?**
 
-- [By-Example Tutorial](/en/learn/software-engineering/web-platform/elixir-phoenix/by-example/beginner) - 75-90 heavily annotated examples covering 95% of Phoenix
+- [By-Example Tutorial](/en/learn/software-engineering/platform-web/elixir-phoenix/by-example/beginner) - 75-90 heavily annotated examples covering 95% of Phoenix
 
 **Want to understand design philosophy?**
 
-- [Overview](/en/learn/software-engineering/web-platform/elixir-phoenix/overview) - Why Phoenix exists, when to use it, ecosystem overview
+- [Overview](/en/learn/software-engineering/platform-web/elixir-phoenix/overview) - Why Phoenix exists, when to use it, ecosystem overview
 
 **Need to strengthen Elixir fundamentals?**
 
