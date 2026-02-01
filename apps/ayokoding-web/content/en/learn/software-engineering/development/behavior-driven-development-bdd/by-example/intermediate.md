@@ -9,7 +9,7 @@ tags: ["bdd", "tutorial", "by-example", "intermediate", "api-testing", "page-obj
 
 This intermediate section advances your BDD skills through 30 examples covering framework integration, API testing patterns, Page Object Model, database testing, and production deployment strategies. You'll learn cross-framework BDD patterns and production-ready testing techniques.
 
-## Example 31: Page Object Model - Separating UI Logic from Tests
+### Example 31: Page Object Model - Separating UI Logic from Tests
 
 Page Object Model (POM) encapsulates page-specific UI logic in classes, separating locators and interactions from BDD scenarios for better maintainability.
 
@@ -126,7 +126,7 @@ Scenario: Login with invalid password
 
 **Why It Matters**: Google's testing research shows that teams using POM reduce UI test maintenance time by 40-60% compared to direct driver calls in step definitions. When UI changes (e.g., CSS class rename), you modify one Page Object method instead of dozens of step definitions.
 
-## Example 32: API Testing with REST Client
+### Example 32: API Testing with REST Client
 
 BDD scenarios can test REST APIs directly using HTTP clients, verifying API contracts without UI dependencies.
 
@@ -248,7 +248,7 @@ Feature: User API
 
 **Why It Matters**: API-level BDD tests run 10-50x faster than UI tests and provide more precise failure diagnostics. Martin Fowler's Test Pyramid recommends 70% API tests vs 10% UI tests for optimal speed and reliability. API BDD scenarios verify business logic without UI flakiness.
 
-## Example 33: Database Testing - Verifying Data State
+### Example 33: Database Testing - Verifying Data State
 
 BDD scenarios can verify database state directly to ensure data integrity and business rule enforcement at the persistence layer.
 
@@ -371,7 +371,7 @@ Feature: User Database Operations
 
 **Why It Matters**: Database tests catch data corruption, constraint violations, and migration issues that UI/API tests miss. Netflix uses database BDD scenarios to verify data consistency across microservices, catching 30% more bugs than API-only tests by validating actual persisted state vs in-memory representations.
 
-## Example 34: Cucumber-JVM (Java) - Cross-Platform BDD
+### Example 34: Cucumber-JVM (Java) - Cross-Platform BDD
 
 BDD principles apply across languages. This example shows Cucumber-JVM with Java for teams in JVM ecosystems.
 
@@ -475,7 +475,7 @@ public class RunCucumberTest {
 
 **Why It Matters**: BDD isn't language-specific - Cucumber supports Java, Ruby, JavaScript, Python, C#, and more. Teams can use BDD across polyglot microservices while maintaining consistent Gherkin specifications. The feature file is the universal contract.
 
-## Example 35: SpecFlow (C#) - BDD in .NET Ecosystem
+### Example 35: SpecFlow (C#) - BDD in .NET Ecosystem
 
 SpecFlow brings BDD to C# and .NET, using NUnit or MSTest for assertions and Visual Studio integration.
 
@@ -596,7 +596,7 @@ public class RegistrationResult
 
 **Why It Matters**: SpecFlow brings BDD benefits to .NET ecosystem with enterprise tooling integration (Visual Studio, Azure DevOps, Rider). Microsoft teams use SpecFlow for living documentation that executives can review while developers maintain automated tests behind the scenes.
 
-## Example 36: Behave (Python) - Pythonic BDD
+### Example 36: Behave (Python) - Pythonic BDD
 
 Behave brings BDD to Python with Gherkin feature files and Python step definitions using pytest or unittest assertions.
 
@@ -706,7 +706,7 @@ def step_then_count(context, count):
 
 **Why It Matters**: Python teams gain BDD benefits without leaving the Python ecosystem. Data science teams use Behave to verify ML model behaviors, while Django teams test web applications. The lightweight syntax fits Python's philosophy while maintaining Gherkin's readability for stakeholders.
 
-## Example 37: Parameterized Scenarios with Complex Data
+### Example 37: Parameterized Scenarios with Complex Data
 
 Scenario Outline handles complex parameterization including multiple tables, nested data, and combinatorial testing.
 
@@ -828,7 +828,7 @@ function validateAndLogin(username: string, password: string): AuthResult {
 
 **Why It Matters**: Categorized Examples tables make large parameterized test suites scannable. Security teams at financial institutions use this pattern to separate happy paths from attack vectors, making threat model coverage visible to auditors while keeping 200+ test cases maintainable.
 
-## Example 38: Custom Matchers for Domain-Specific Assertions
+### Example 38: Custom Matchers for Domain-Specific Assertions
 
 Custom matchers extend assertion libraries with domain-specific validation logic, making Then steps more expressive.
 
@@ -963,7 +963,7 @@ Scenario: Validate user registration data
 
 **Why It Matters**: Custom matchers reduce code duplication and improve test expressiveness. Instead of repeating email regex validation in 50 step definitions, one custom matcher centralizes the logic. When validation rules change, update one matcher instead of dozens of steps.
 
-## Example 39: Test Doubles - Mocks and Stubs in BDD
+### Example 39: Test Doubles - Mocks and Stubs in BDD
 
 BDD scenarios use test doubles (mocks, stubs) to isolate system under test from external dependencies like databases, APIs, or third-party services.
 
@@ -1081,7 +1081,7 @@ Feature: Payment Processing
 
 **Why It Matters**: Mocks enable testing error scenarios (API timeouts, payment failures) that are hard to trigger with real services. Google's testing pyramid emphasizes unit/integration tests with mocks over end-to-end tests for 90% of coverage, reserving real service calls for critical smoke tests.
 
-## Example 40: BDD in CI/CD Pipeline Configuration
+### Example 40: BDD in CI/CD Pipeline Configuration
 
 BDD scenarios integrate into CI/CD pipelines for automated quality gates on every commit.
 
@@ -1272,7 +1272,7 @@ module.exports = {
 
 **Why It Matters**: Tiered testing balances speed and coverage. Smoke tests (2 min) fail fast on broken builds, regression tests (10 min) catch most bugs, E2E tests (30 min) validate critical flows. This staged approach enables 15+ daily deployments while maintaining quality gates.
 
-## Example 41: Parallel Test Execution for Speed
+### Example 41: Parallel Test Execution for Speed
 
 Parallel execution runs scenarios concurrently across multiple workers, dramatically reducing total test execution time.
 
@@ -1426,7 +1426,7 @@ $ npx cucumber-js --parallel 4
 
 **Why It Matters**: Parallel execution transforms 30-minute test suites into 8-minute suites, enabling developers to run full regression locally instead of waiting for CI. However, parallel tests require investment in worker isolation infrastructure and debugging parallel failures is harder than sequential failures.
 
-## Example 42: Test Data Management with Fixtures
+### Example 42: Test Data Management with Fixtures
 
 Test fixtures provide consistent, reusable test data across scenarios while avoiding data pollution and setup duplication.
 
@@ -1660,7 +1660,7 @@ Given("an admin user named {string} exists", async function (username: string) {
 
 **Why It Matters**: Fixtures eliminate "magic numbers" and hardcoded test data scattered across step definitions. When test data requirements change (e.g., password policy tightens), update one fixture definition instead of hundreds of step definitions. ThoughtWorks reports 50% reduction in test maintenance time with centralized fixtures.
 
-## Example 43: Flaky Test Prevention Strategies
+### Example 43: Flaky Test Prevention Strategies
 
 Flaky tests pass/fail non-deterministically. BDD scenarios use explicit waits, retries, and isolation to prevent flakiness.
 
@@ -1847,7 +1847,7 @@ Given("a user is created", async function () {
 
 **Why It Matters**: Flaky tests erode confidence in test suites. Google's research shows that developers ignore test failures when flakiness exceeds 1%, leading to real bugs slipping through. Teams should aim for 0.1% flakiness through prevention strategies, not automatic retries that mask issues.
 
-## Example 44: Living Documentation with Cucumber Reports
+### Example 44: Living Documentation with Cucumber Reports
 
 BDD scenarios serve as living documentation when formatted into human-readable reports that stakeholders can review.
 
@@ -2011,7 +2011,7 @@ HTML Report Contains:
 
 **Why It Matters**: Living documentation bridges the gap between code and business understanding. Atlassian reports that teams using HTML BDD reports see 40% higher stakeholder engagement in test reviews compared to raw test logs, enabling business analysts to validate coverage without technical assistance.
 
-## Example 45: Cross-Browser Testing with BDD
+### Example 45: Cross-Browser Testing with BDD
 
 BDD scenarios test UI behavior across multiple browsers (Chrome, Firefox, Safari) to ensure consistent user experience.
 
@@ -2236,7 +2236,7 @@ npx cucumber-js --tags "@chrome or @firefox or @safari" --parallel 3
 
 **Why It Matters**: Browser incompatibilities cause 15-20% of production UI bugs according to BrowserStack data. Cross-browser BDD testing catches CSS rendering differences, JavaScript API variations, and browser-specific bugs before deployment, especially critical for public-facing applications supporting diverse user bases.
 
-## Example 46: Mobile App Testing with Appium and BDD
+### Example 46: Mobile App Testing with Appium and BDD
 
 BDD scenarios test mobile apps (iOS/Android) using Appium driver with same Gherkin specifications as web testing.
 
@@ -2475,7 +2475,7 @@ When("I tap the login button", async function () {
 
 **Why It Matters**: Mobile app testing requires device/simulator management, platform-specific selectors, and slower execution than web tests. BDD abstracts these complexities behind Gherkin scenarios, enabling product managers to define mobile behavior without understanding Appium/XCUITest/UiAutomator2 intricacies. Facebook uses Appium BDD to test React Native apps across 50+ device/OS combinations with shared scenarios.
 
-## Example 47: GraphQL API Testing with BDD
+### Example 47: GraphQL API Testing with BDD
 
 BDD scenarios test GraphQL APIs by sending queries/mutations and verifying response structure and data, handling nested data and field selection.
 
@@ -2665,7 +2665,7 @@ Feature: User GraphQL API
 
 **Why It Matters**: GraphQL's nested data and field selection require different testing patterns than REST. BDD scenarios validate both data correctness and schema compliance, catching breaking changes when APIs evolve. GitHub uses GraphQL BDD tests to ensure API backwards compatibility across 500+ million API calls daily.
 
-## Example 48: WebSocket Testing with Real-Time Events
+### Example 48: WebSocket Testing with Real-Time Events
 
 BDD scenarios test WebSocket connections for real-time features like chat, notifications, and live updates.
 
@@ -2862,7 +2862,7 @@ Feature: Real-Time Chat
 
 **Why It Matters**: Real-time features are hard to test due to asynchronous message delivery and connection state. BDD scenarios make WebSocket testing deterministic through message waiting predicates and connection cleanup hooks. Slack tests real-time messaging using WebSocket BDD patterns to ensure messages reach all connected clients within SLA timeframes.
 
-## Example 49: File Upload/Download Testing
+### Example 49: File Upload/Download Testing
 
 BDD scenarios test file upload/download functionality including multipart forms, file validation, and download verification.
 
@@ -3036,7 +3036,7 @@ Feature: File Upload and Download
 
 **Why It Matters**: File handling involves complex edge cases (size limits, MIME types, encoding). BDD scenarios test the complete upload-download cycle including error cases (oversized files, invalid types). Dropbox uses file transfer BDD tests to verify integrity across network transfers and ensure zero data corruption at petabyte scale.
 
-## Example 50: Email Testing with Mail Trap
+### Example 50: Email Testing with Mail Trap
 
 BDD scenarios test email sending by capturing emails in test mail servers, verifying recipients, subjects, and content.
 
@@ -3228,7 +3228,7 @@ Feature: Email Notifications
 
 **Why It Matters**: Email functionality is critical for user workflows (registration, password reset, notifications) but hard to test in CI/CD. Mail trap services like MailTrap, MailHog, or Ethereal provide test SMTP servers that capture emails for assertion. Spotify uses email BDD tests to verify notification delivery across 40+ email templates in 30+ languages.
 
-## Example 51: PDF/Document Validation
+### Example 51: PDF/Document Validation
 
 BDD scenarios test PDF generation and validation including content extraction, metadata verification, and structure checks.
 
@@ -3410,7 +3410,7 @@ Feature: PDF Document Generation
 
 **Why It Matters**: PDF generation is common for invoices, reports, and official documents requiring precise content and formatting. BDD scenarios validate both content accuracy and PDF metadata compliance. Stripe uses PDF BDD tests to ensure invoice PDFs meet tax authority requirements across 40+ countries with different formatting regulations.
 
-## Example 52: Performance Testing with BDD Scenarios
+### Example 52: Performance Testing with BDD Scenarios
 
 BDD scenarios test performance characteristics like response time, throughput, and resource usage with acceptable thresholds.
 
@@ -3611,7 +3611,7 @@ Feature: API Performance
 
 **Why It Matters**: Performance regressions often go unnoticed until production. BDD scenarios with performance thresholds catch slowdowns early, ensuring SLA compliance. Netflix uses performance BDD tests to verify API response times stay under 100ms at the 95th percentile, catching performance degradation before it affects user experience.
 
-## Example 53: Security Testing - Authentication & Authorization
+### Example 53: Security Testing - Authentication & Authorization
 
 BDD scenarios test security controls including authentication, authorization, JWT token validation, and access control.
 
@@ -3800,7 +3800,7 @@ Feature: Authentication and Authorization
 
 **Why It Matters**: Security vulnerabilities cause 43% of data breaches according to Verizon DBIR. BDD scenarios test the complete security surface including happy paths (valid tokens) and attack vectors (expired, invalid, insufficient permissions). OWASP recommends security BDD tests for all protected endpoints to prevent authorization bypass vulnerabilities.
 
-## Example 54: Multi-Environment Testing (Dev, Staging, Prod)
+### Example 54: Multi-Environment Testing (Dev, Staging, Prod)
 
 BDD scenarios run across multiple environments with environment-specific configuration and data, ensuring consistent behavior from dev to production.
 
@@ -4051,7 +4051,7 @@ TEST_ENV=production npm test --tags "@production and not @write"
 
 **Why It Matters**: Environment parity bugs cause 25% of production incidents. Running BDD scenarios across environments catches configuration issues, network differences, and data-dependent bugs. Amazon runs smoke BDD tests in production every 15 minutes to verify service health without modifying data.
 
-## Example 55: Test Reporting and Analytics
+### Example 55: Test Reporting and Analytics
 
 BDD test reports aggregate metrics, trends, and failure analysis to provide actionable insights beyond pass/fail status.
 
@@ -4418,7 +4418,7 @@ jobs:
 
 **Why It Matters**: Raw test logs don't reveal trends or patterns. Analytics dashboards show pass rate trends, identify slowest scenarios for optimization, and highlight flaky tests. Google's testing infrastructure tracks flakiness rates over time, automatically quarantining tests that exceed 1% flakiness to prevent developer frustration.
 
-## Example 56: BDD with Docker Containers
+### Example 56: BDD with Docker Containers
 
 BDD scenarios test against Dockerized services, ensuring isolated, reproducible test environments with database containers, API mocks, and service dependencies.
 
@@ -4650,7 +4650,7 @@ docker-compose -f docker-compose.test.yml down -v  # Stop and clean
 
 **Why It Matters**: Environment consistency eliminates "works on my machine" issues. Docker ensures identical database versions, network topology, and service dependencies across local dev and CI. Square runs 100% of BDD tests in Docker containers to guarantee production parity, catching database migration issues and service dependency bugs before deployment.
 
-## Example 57: Integration Testing Patterns
+### Example 57: Integration Testing Patterns
 
 BDD integration tests verify interaction between multiple system components (API + Database + Cache) rather than isolated unit behavior.
 
@@ -4894,7 +4894,7 @@ Feature: Integration Testing
 
 **Why It Matters**: Integration bugs account for 35% of production defects according to Capers Jones research. Unit tests verify individual components, but integration tests catch contract mismatches, race conditions, and distributed system failures. Uber runs integration BDD tests covering 50+ microservice interactions to catch service mesh failures before production.
 
-## Example 58: Contract Testing Basics with Pact
+### Example 58: Contract Testing Basics with Pact
 
 BDD scenarios verify API contracts between consumers and providers using Pact, ensuring backward compatibility and preventing breaking changes.
 

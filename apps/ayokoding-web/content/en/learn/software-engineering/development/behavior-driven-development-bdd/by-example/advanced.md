@@ -9,7 +9,7 @@ tags: ["bdd", "tutorial", "by-example", "advanced", "microservices", "enterprise
 
 This advanced section covers enterprise-scale BDD through 27 examples demonstrating microservices testing, distributed system patterns, chaos engineering, organizational scaling, and production case studies. You'll master advanced BDD techniques for complex architectures and large team environments.
 
-## Example 59: BDD in Microservices - Service-to-Service Communication
+### Example 59: BDD in Microservices - Service-to-Service Communication
 
 Testing interactions between microservices requires coordinating multiple services, managing service discovery, and verifying distributed behavior.
 
@@ -191,7 +191,7 @@ Then("notification email should be sent to {string}", async (email: string) => {
 
 **Why It Matters**: Modern applications use microservices architecture. BDD scenarios testing service-to-service communication validate critical business workflows spanning multiple bounded contexts.
 
-## Example 60: Event-Driven BDD with Message Brokers
+### Example 60: Event-Driven BDD with Message Brokers
 
 Event-driven architectures use message brokers (Kafka, RabbitMQ) for asynchronous communication. BDD scenarios verify event production, consumption, and eventual consistency.
 
@@ -425,7 +425,7 @@ Then("email service should send confirmation to customer", async () => {
 
 **Why It Matters**: Event-driven architectures enable loose coupling and scalability. BDD scenarios validate eventual consistency and event-driven business workflows critical to modern distributed systems.
 
-## Example 61: SAGA Pattern - Distributed Transaction Coordination
+### Example 61: SAGA Pattern - Distributed Transaction Coordination
 
 SAGA pattern manages distributed transactions through orchestrated or choreographed compensation logic. BDD scenarios verify both success paths and failure rollback.
 
@@ -752,7 +752,7 @@ export class SagaOrchestrator extends EventEmitter {
 
 **Why It Matters**: Distributed systems can't use traditional ACID transactions. SAGAs enable business transactions spanning multiple services with eventual consistency and rollback guarantees.
 
-## Example 62: BDD for Distributed Tracing
+### Example 62: BDD for Distributed Tracing
 
 Distributed tracing tracks requests across microservices using correlation IDs. BDD scenarios verify trace propagation and observability integration.
 
@@ -957,7 +957,7 @@ Then("trace spans should form parent-child relationships", async () => {
 
 **Why It Matters**: Observability is critical for debugging distributed systems. BDD scenarios ensure tracing infrastructure correctly tracks requests across microservices for production troubleshooting.
 
-## Example 63: Chaos Engineering with BDD - Testing Resilience
+### Example 63: Chaos Engineering with BDD - Testing Resilience
 
 Chaos engineering intentionally introduces failures to verify system resilience. BDD scenarios test graceful degradation, circuit breakers, and retry logic.
 
@@ -1149,7 +1149,7 @@ Then("order service should return error {string}", async (expectedMessage: strin
 
 **Why It Matters**: Production systems fail. BDD scenarios testing chaos engineering patterns ensure graceful degradation and recovery, preventing total system outages.
 
-## Example 64: BDD Anti-Patterns and Refactoring
+### Example 64: BDD Anti-Patterns and Refactoring
 
 BDD anti-patterns produce brittle, hard-to-maintain scenarios. This example demonstrates common problems and refactoring solutions.
 
@@ -1311,7 +1311,7 @@ Scenario: User profile update
 
 **Why It Matters**: Brittle scenarios create maintenance burden and reduce confidence in test suite. Declarative, focused scenarios survive refactoring and clearly document business requirements.
 
-## Example 65: Custom Gherkin Dialects for Domain-Specific Languages
+### Example 65: Custom Gherkin Dialects for Domain-Specific Languages
 
 Custom Gherkin keywords enable domain-specific BDD languages for specialized industries like finance, healthcare, or trading systems.
 
@@ -1549,7 +1549,7 @@ export class TradingWorld extends World {
 
 **Why It Matters**: Generic Gherkin keywords (Given/When/Then) don't always fit domain language. Custom keywords improve business stakeholder engagement and make scenarios self-documenting for domain experts.
 
-## Example 66: BDD Metaprogramming - Dynamic Step Generation
+### Example 66: BDD Metaprogramming - Dynamic Step Generation
 
 Metaprogramming dynamically generates step definitions from data structures, reducing boilerplate for CRUD operations or repetitive patterns.
 
@@ -1782,7 +1782,7 @@ stepConfigurations.forEach((config) => {
 
 **Why It Matters**: Large applications have dozens of entities with similar CRUD patterns. Metaprogramming eliminates copy-paste step definitions, improves maintainability, and enables data-driven step generation.
 
-## Example 67: Living Documentation at Scale - Automated Spec Generation
+### Example 67: Living Documentation at Scale - Automated Spec Generation
 
 Living documentation automatically generates specification documents from BDD scenarios, keeping requirements synchronized with implementation.
 
@@ -2122,7 +2122,7 @@ jobs:
 
 **Why It Matters**: Manual documentation becomes stale quickly. Living documentation directly from executable BDD scenarios guarantees accuracy and saves documentation maintenance effort.
 
-## Example 68: BDD in Legacy System Modernization
+### Example 68: BDD in Legacy System Modernization
 
 Modernizing legacy systems requires BDD scenarios that test both old and new implementations during migration, ensuring behavioral compatibility.
 
@@ -2377,7 +2377,7 @@ Then("modern system should match legacy system behavior", async () => {
 
 **Why It Matters**: Big-bang rewrites are risky. BDD with shadow mode testing verifies new implementation matches legacy behavior before switching production traffic, reducing migration risk.
 
-## Example 69: A/B Testing Scenarios - Feature Variant Verification
+### Example 69: A/B Testing Scenarios - Feature Variant Verification
 
 A/B testing requires BDD scenarios that verify different feature variants behave correctly and collect proper metrics.
 
@@ -2711,7 +2711,7 @@ Then("statistical significance should be calculated", async () => {
 
 **Why It Matters**: Product decisions require data. BDD scenarios for A/B tests ensure experiment infrastructure works correctly, metrics are reliable, and teams can confidently ship winning variants.
 
-## Example 70: Feature Flag Testing - Progressive Rollout Verification
+### Example 70: Feature Flag Testing - Progressive Rollout Verification
 
 Feature flags enable progressive rollouts (1% → 10% → 50% → 100%). BDD scenarios verify flag behavior at each rollout percentage.
 
@@ -3018,7 +3018,7 @@ Then("all users should use old payment processor", async () => {
 
 **Why It Matters**: Feature flags enable safe releases and instant rollback without deployments. BDD scenarios ensure flag infrastructure works correctly, protecting production from bad releases.
 
-## Example 71: Blue-Green Deployment Testing with BDD
+### Example 71: Blue-Green Deployment Testing with BDD
 
 Blue-green deployment runs two identical production environments. BDD scenarios verify both environments work identically before traffic switching.
 
@@ -3065,7 +3065,7 @@ Feature: Blue-Green Deployment Verification
 
 **Why It Matters**: Downtime costs revenue and customer trust. Blue-green deployments with BDD verification ensure new releases deploy safely without service interruption.
 
-## Example 72: Canary Release Testing - Gradual Traffic Shifting
+### Example 72: Canary Release Testing - Gradual Traffic Shifting
 
 Canary releases gradually shift traffic (5% → 10% → 50% → 100%) to new version while monitoring metrics. BDD scenarios verify canary progression.
 
@@ -3112,7 +3112,7 @@ Feature: Canary Release Progressive Traffic Shift
 
 **Why It Matters**: Big-bang releases are risky. Canary releases with automated monitoring detect issues early (5% traffic) before impacting all users, reducing blast radius of bad releases.
 
-## Example 73: BDD for Observability - Metrics, Logs, Traces
+### Example 73: BDD for Observability - Metrics, Logs, Traces
 
 Observability BDD verifies monitoring infrastructure correctly captures metrics, logs, and distributed traces for production debugging.
 
@@ -3166,7 +3166,7 @@ Feature: Observability Infrastructure Verification
 
 **Why It Matters**: "You can't fix what you can't see." BDD scenarios ensure observability tools work correctly, so teams can debug production issues quickly.
 
-## Example 74: Multi-Tenant Testing - Data Isolation Verification
+### Example 74: Multi-Tenant Testing - Data Isolation Verification
 
 Multi-tenant applications require strict data isolation between tenants. BDD scenarios verify tenant boundaries are enforced.
 
@@ -3209,7 +3209,7 @@ Feature: Multi-Tenant Data Isolation
 
 **Why It Matters**: Multi-tenant data breaches are catastrophic. BDD scenarios ensure tenant boundaries are enforced, protecting customer data and maintaining regulatory compliance.
 
-## Example 75: Data Privacy Testing - GDPR/CCPA Compliance
+### Example 75: Data Privacy Testing - GDPR/CCPA Compliance
 
 Data privacy regulations (GDPR, CCPA) require specific data handling. BDD scenarios verify right to access, deletion, and portability.
 
@@ -3344,7 +3344,7 @@ Then("all personal data should be deleted within {int} days", async function (da
 
 **Why It Matters**: Privacy violations incur massive fines (up to 4% of global revenue for GDPR). BDD scenarios ensure compliance automation works correctly, reducing regulatory risk.
 
-## Example 76: BDD in Regulated Industries - Healthcare HL7 FHIR
+### Example 76: BDD in Regulated Industries - Healthcare HL7 FHIR
 
 Healthcare applications must comply with HL7 FHIR standards and HIPAA regulations. BDD scenarios verify compliance.
 
@@ -3392,7 +3392,7 @@ Feature: HL7 FHIR Healthcare Interoperability
 
 **Why It Matters**: Healthcare regulations are strict (HIPAA fines, lawsuits). BDD scenarios ensure medical software meets regulatory standards, protecting patient privacy and enabling system integration.
 
-## Example 77: BDD in Finance - PCI-DSS Compliance Testing
+### Example 77: BDD in Finance - PCI-DSS Compliance Testing
 
 Financial applications handling payment cards must comply with PCI-DSS. BDD scenarios verify secure card data handling.
 
@@ -3435,7 +3435,7 @@ Feature: PCI-DSS Payment Card Security
 
 **Why It Matters**: Payment breaches destroy trust and incur fines. BDD scenarios ensure PCI-DSS requirements are met, protecting cardholder data and maintaining payment processor partnerships.
 
-## Example 78: Enterprise Test Architecture - Shared Step Libraries
+### Example 78: Enterprise Test Architecture - Shared Step Libraries
 
 Large organizations need shared BDD step libraries across teams to ensure consistency and reduce duplication.
 
@@ -3504,7 +3504,7 @@ shared-steps/
 
 **Why It Matters**: Large organizations have dozens of teams writing BDD scenarios. Shared libraries prevent "reinventing the wheel" and ensure consistent patterns enterprise-wide.
 
-## Example 79: BDD Governance and Standardization
+### Example 79: BDD Governance and Standardization
 
 Enterprise BDD requires governance to maintain quality and consistency across teams. BDD scenarios verify governance policies.
 
@@ -3625,7 +3625,7 @@ lintScenarios();
 
 **Why It Matters**: Without governance, BDD quality degrades over time. Automated governance tooling maintains consistency and quality across teams as organizations scale.
 
-## Example 80: Scaling BDD Across Teams - Federated Ownership
+### Example 80: Scaling BDD Across Teams - Federated Ownership
 
 Large organizations use federated BDD ownership where teams own their scenarios while following shared standards.
 
@@ -3682,7 +3682,7 @@ Feature: Order with Payment Processing
 
 **Why It Matters**: Centralized BDD ownership doesn't scale. Federated ownership distributes responsibility while maintaining consistency through governance and shared libraries.
 
-## Example 81: BDD Coaching and Training Patterns
+### Example 81: BDD Coaching and Training Patterns
 
 Successful BDD adoption requires coaching teams on writing effective scenarios. This example demonstrates training approaches.
 
@@ -3878,7 +3878,7 @@ function assessTeamMaturity(team: string): void {
 
 **Why It Matters**: BDD is a practice, not just a tool. Effective coaching accelerates adoption, prevents common pitfalls, and ensures teams gain full value from specification by example.
 
-## Example 82: ROI Measurement for BDD Initiatives
+### Example 82: ROI Measurement for BDD Initiatives
 
 Organizations need metrics to justify BDD investment. This example demonstrates measuring BDD return on investment.
 
@@ -4027,7 +4027,7 @@ const roi = calculateBDDROI(metricsBeforeBDD, metricsAfterBDD);
 
 **Why It Matters**: BDD requires investment (tools, training, time). ROI metrics justify the investment by showing tangible benefits: fewer production defects, faster delivery, and better collaboration.
 
-## Example 83: BDD in Continuous Discovery - Product Experimentation
+### Example 83: BDD in Continuous Discovery - Product Experimentation
 
 BDD integrates with continuous discovery processes to validate product hypotheses through experiments.
 
@@ -4161,7 +4161,7 @@ Then("if hypothesis validated, promote feature to {int}% users", async (percenta
 
 **Why It Matters**: Product decisions should be data-driven, not opinion-driven. BDD scenarios codify hypotheses and success criteria, enabling evidence-based product development.
 
-## Example 84: BDD for Machine Learning Models - Model Validation
+### Example 84: BDD for Machine Learning Models - Model Validation
 
 Machine learning applications require BDD scenarios validating model behavior, accuracy thresholds, and fairness.
 
@@ -4344,7 +4344,7 @@ function calculateMetrics(dataset: any[], predictions: any[]): any {
 
 **Why It Matters**: ML models can fail silently or discriminate unfairly. BDD scenarios codify model quality gates and fairness requirements, preventing biased or inaccurate models from reaching production.
 
-## Example 85: Production Case Study - E-Commerce Platform BDD Transformation
+### Example 85: Production Case Study - E-Commerce Platform BDD Transformation
 
 Real-world case study demonstrating enterprise BDD transformation at scale.
 

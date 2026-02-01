@@ -760,46 +760,60 @@ end
 
 # Usage: Singleton cache (one instance for whole application)
 {:ok, _pid} = Cache.start_link([])  # => {:ok, #PID<...>} (Cache registered globally)
+# => Process started and registered as Cache atom
 Cache.put(:user_1, %{name: "Alice"})  # => :ok (stores in cache)
 # => State now: %{user_1: %{name: "Alice"}}
+# => Async cast operation
 Cache.get(:user_1)  # => %{name: "Alice"} (retrieves from cache)
+# => Sync call operation
 Cache.delete(:user_1)  # => :ok (removes from cache)
 # => State now: %{}
+# => Async cast operation
 Cache.get(:user_1)  # => nil (key not found)
+# => Key was deleted, returns nil
 
 # Named GenServer - Multiple instances with different names
 defmodule Worker do
   use GenServer
+  # => Multiple instances with different names
 
   def start_link(name) do
     GenServer.start_link(__MODULE__, [], name: name)  # => {:ok, #PID<...>} with name: :worker_1, :worker_2, etc.
     # => Each instance has unique name (passed as argument)
     # => Can start multiple Workers with different names
+    # => name parameter allows dynamic registration
   end
 
   def ping(name) do
     GenServer.call(name, :ping)  # => :pong (calls specific worker by name)
     # => name is :worker_1 or :worker_2 (looks up PID by name)
+    # => Routes to specific worker instance
   end
 
   @impl true
   def init(_) do
     {:ok, []}  # => {:ok, []} (empty list as state)
+    # => Simple stateless worker
   end
 
   @impl true
   def handle_call(:ping, _from, state) do
     {:reply, :pong, state}  # => {:reply, :pong, []} (simple ping response)
+    # => Returns :pong to caller
   end
 end
 
 # Usage: Multiple named workers (each with unique name)
 {:ok, _} = Worker.start_link(:worker_1)  # => {:ok, #PID<...>} (worker_1 registered)
+# => First worker instance started
 {:ok, _} = Worker.start_link(:worker_2)  # => {:ok, #PID<...>} (worker_2 registered)
 # => Two separate Worker processes, each with unique name
+# => Second worker instance started
 Worker.ping(:worker_1)  # => :pong (pings worker_1 by name)
+# => Targets first worker
 Worker.ping(:worker_2)  # => :pong (pings worker_2 by name)
 # => Each worker responds independently
+# => Targets second worker
 
 # Naming comparison:
 # PID-based (without names):
@@ -1300,12 +1314,9 @@ defmodule OneForOneSupervisor do
                   # => enables this module to act as a supervisor
 
   def start_link(_opts) do
-                         # => _opts is ignored (no configuration needed)
     Supervisor.start_link(__MODULE__, :ok)  # => {:ok, #PID<...>}
                                             # => starts supervisor process
                                             # => __MODULE__ is OneForOneSupervisor
-                                            # => :ok passed to init/1 callback
-                                            # => returns {:ok, pid} on success
   end
 
   @impl true  # => marks init/1 as Supervisor callback implementation
@@ -2085,11 +2096,15 @@ mix new my_app --umbrella  # => creates apps/ directory for child applications
 # =>   apps/         (child applications go here)
 # =>   config/       (shared configuration)
 # =>   mix.exs       (umbrella project definition)
+# => --umbrella flag enables multi-app architecture
 
 # Create child apps inside umbrella
 cd my_app/apps
+# => Navigate to apps directory
 mix new my_app_core  # => creates my_app_core app (business logic)
+# => Core domain app without dependencies
 mix new my_app_web --sup  # => creates my_app_web app (web interface) with supervision tree
+# => --sup adds Application and Supervisor modules
 ```
 
 ```elixir
@@ -2100,11 +2115,17 @@ defmodule MyAppCore.MixProject do
   def project do
     [
       app: :my_app_core,  # => application name (atom)
+      # => Unique identifier for this app
       version: "0.1.0",  # => version
+      # => Semantic versioning
       build_path: "../../_build",  # => ✅ shared build directory (umbrella root)
+      # => All compiled BEAM files go here
       config_path: "../../config/config.exs",  # => ✅ shared config
+      # => Configuration shared across apps
       deps_path: "../../deps",  # => ✅ shared dependencies (all apps use same versions)
+      # => Single dependency directory for umbrella
       lockfile: "../../mix.lock"  # => ✅ shared lock file (dependency versions locked)
+      # => Ensures version consistency
     ]
   end
   # => All umbrella apps share build artifacts and dependencies
@@ -2118,7 +2139,9 @@ defmodule MyAppWeb.MixProject do
   def project do
     [
       app: :my_app_web,  # => application name
+      # => Web layer application
       deps: deps()  # => dependencies for web app
+      # => Calls deps/0 function
     ]
   end
 
@@ -2127,11 +2150,14 @@ defmodule MyAppWeb.MixProject do
       {:my_app_core, in_umbrella: true},  # => ✅ depend on sibling app (in same umbrella)
       # => in_umbrella: true tells Mix to find :my_app_core in apps/ directory
       # => NOT from Hex (external package)
+      # => Creates compile-time dependency
       {:phoenix, "~> 1.7"}  # => external dependency from Hex
+      # => ~> means "compatible with 1.7.x"
     ]
   end
   # => Dependency order: Phoenix → my_app_core → my_app_web
   # => OTP starts apps in dependency order automatically
+  # => Core starts before web
 end
 
 # apps/my_app_core/lib/my_app_core/users.ex - Business logic (core app)
@@ -2352,89 +2378,49 @@ defmodule MyMacros do
   # Simple macro - no arguments
   defmacro say_hello do
                    # => defmacro defines macro (runs at compile time)
-                   # => Macros receive AST, return transformed AST
     quote do  # => captures code as AST (doesn't execute)
-              # => quote returns AST representation of code block
-              # => AST: {{:., [], [{:__aliases__, [alias: false], [:IO]}, :puts]}, [], ["Hello from macro!"]}
       IO.puts("Hello from macro!")  # => this code runs in CALLER's context at runtime
-                                     # => Generated at compile time, executed at runtime
-    end  # => quote block returns AST that compiler injects at call site
+    end
   end
-  # => defmacro receives NO arguments, returns AST that will be inserted at call site
   # => When user calls say_hello(), compiler replaces it with IO.puts("Hello from macro!")
 
   # Macro with arguments
   defmacro double(value) do
                     # => value is AST of argument passed at call site
-                    # => For call double(5), value receives AST: 5 (integer literal)
-                    # => For call double(x), value receives AST: {:x, [], Elixir} (variable)
                     # => Macros see CODE structure, not evaluated values
-    quote do  # => begins AST construction
-              # => quote captures expression as compile-time data structure
+    quote do
       unquote(value) * 2  # => unquote injects value AST into multiplication expression
-                          # => unquote "escapes" quote to inject runtime expression
-                          # => Expands to: 5 * 2 (if value was 5)
-    end  # => returns AST: {:*, [], [value_ast, 2]}
-    # => returns AST: {:*, [], [unquote(value), 2]}
+    end
     # => At compile time: double(5) becomes: 5 * 2
-    # => Compiler replaces macro call with generated multiplication
   end
 
   # Macro that generates function
   defmacro create_getter(name, value) do
-                              # => name is atom AST (e.g., :name for function name)
-                              # => value is AST (e.g., "Alice" for return value)
                               # => This macro generates a complete function definition
-    quote do  # => begins function definition AST construction
-              # => Generated code injected into calling module
+    quote do
       def unquote(name)(), do: unquote(value)  # => generates function definition at compile time
-                                                # => unquote(name) injects :name as function identifier
-                                                # => unquote(value) injects "Alice" as function body
                                                 # => Expands to: def name(), do: "Alice"
-    end  # => returns function definition AST
-    # => creates: def name(), do: "Alice"
-    # => unquote(name) injects atom as function name
-    # => unquote(value) injects value as function body
-    # => This macro enables runtime function generation at compile time
+    end
   end
 
   # Macro for logging
   defmacro log(message) do
-                   # => message is AST of logged content
                    # => Macro generates logging code with timestamp
-    quote do  # => constructs logging expression AST
-              # => Generated code includes timestamp generation
+    quote do
       IO.puts("[LOG #{DateTime.utc_now()}] #{unquote(message)}")  # => DateTime.utc_now() evaluated at RUNTIME in caller context
-                                                                   # => unquote(message) injects message AST
-                                                                   # => String interpolation happens at runtime
                                                                    # => Fresh timestamp on each execution
-    end  # => returns logging AST
-    # => unquote(message) injects message AST
-    # => Timestamp generated when log executes, NOT when macro expands
-    # => This ensures accurate timestamps (not frozen at compile time)
+    end
   end
 
   # Macro with block (do...end)
   defmacro benchmark(name, do: block) do
-                                # => name is string AST for benchmark label
                                 # => block is AST of entire do...end content
-                                # => Keyword list captures do: block syntax
-                                # => block contains multiple expressions as single AST
-    quote do  # => begins benchmark wrapper AST construction
-              # => Wraps user code with timing logic
-      {time, result} = :timer.tc(fn -> unquote(block) end)  # => unquote(block) injects benchmarked code into anonymous function
-                                                             # => :timer.tc measures function execution time
+    quote do
+      {time, result} = :timer.tc(fn -> unquote(block) end)  # => :timer.tc measures function execution time
                                                              # => Returns {microseconds, result} tuple
-                                                             # => time is duration in microseconds
-                                                             # => result is return value of benchmarked code
-      IO.puts("#{unquote(name)} took #{time}μs")  # => prints benchmark name and duration
-                                                   # => unquote(name) injects label
-                                                   # => time is available from :timer.tc
-      result  # => returns result of benchmarked code
-              # => Preserves original code's return value
-    end  # => returns benchmark wrapper AST
-    # => entire benchmark logic inserted at call site and executed at runtime
-    # => Macro provides zero-overhead benchmark syntax (compiled to direct timer call)
+      IO.puts("#{unquote(name)} took #{time}μs")
+      result  # => Preserves original code's return value
+    end
   end
 end
 
@@ -2629,17 +2615,22 @@ The `use` macro is Elixir's mechanism for injecting code into modules. When you 
 defmodule Loggable do
   defmacro __using__(opts) do  # => __using__ is special macro called by "use Loggable"
     # => opts is keyword list from use call (e.g., [level: :debug])
+    # => Receives configuration from use statement
     level = Keyword.get(opts, :level, :info)  # => extract :level option, default :info
     # => This runs at COMPILE TIME (when MyApp is compiled)
+    # => Keyword.get safely extracts option
 
     quote do  # => generates AST to inject into caller module
+      # => Returns quoted code for injection
       def log(message) do
         IO.puts("[#{unquote(level) |> to_string() |> String.upcase()}] #{message}")
         # => unquote(level) injects compile-time value (:debug) into runtime code
         # => Expands to: IO.puts("[DEBUG] #{message}")
+        # => Formats log level in brackets
       end
     end
     # => This function definition is INJECTED into MyApp module at compile time
+    # => Creates log/1 in caller's namespace
   end
 end
 
@@ -2648,32 +2639,41 @@ defmodule MyApp do
   # => At compile time, injects log/1 function into MyApp
   # => Equivalent to:
   # => def log(message), do: IO.puts("[DEBUG] #{message}")
+  # => Configures debug-level logging
 
   def start do
     log("Application starting...")  # => calls injected log/1 function
     # => Prints: [DEBUG] Application starting...
+    # => Uses injected function
   end
 end
 
 MyApp.start()  # => prints "[DEBUG] Application starting..."
+# => Demonstrates injected logging functionality
 
 # Advanced use macro - default implementations with override
 defmodule GenServerSimplified do
   defmacro __using__(_opts) do
     quote do
       @behaviour :gen_server  # => declares module implements :gen_server behavior (Erlang)
+      # => Enables compile-time callback verification
 
       # Default callback implementations
       def init(args), do: {:ok, args}  # => default init: pass args as state
+      # => Simplest possible initialization
       def handle_call(_msg, _from, state), do: {:reply, :ok, state}  # => default call: always reply :ok
+      # => Ignores message content, always succeeds
       def handle_cast(_msg, state), do: {:noreply, state}  # => default cast: ignore messages
+      # => No-op cast handler
 
       defoverridable init: 1, handle_call: 3, handle_cast: 2  # => allows caller to override these functions
       # => User can define their own init/1, handle_call/3, handle_cast/2
       # => Without defoverridable, redefining would cause compile error
+      # => Enables optional customization
     end
   end
   # => Provides sensible defaults while allowing customization
+  # => Reduces boilerplate for simple GenServers
 end
 
 # Use macro for test setup and imports
@@ -2681,33 +2681,44 @@ defmodule MyTestCase do
   defmacro __using__(_opts) do
     quote do
       import ExUnit.Assertions  # => makes assert/1, refute/1, etc. available
+      # => Standard ExUnit assertions
       import MyTestCase.Helpers  # => makes custom assert_json/2 available
+      # => Project-specific helpers
 
       setup do  # => ExUnit callback (runs before each test)
         # Setup code (runs at test time, NOT compile time)
+        # => Executed for every test
         {:ok, %{user: %{name: "Test User"}}}  # => returns context passed to tests
         # => Context merged into test arguments
+        # => Provides test data
       end
     end
   end
   # => Injects test helpers and setup into every test module that uses this
+  # => Standardizes test configuration
 
   defmodule Helpers do
     def assert_json(response, expected) do
       assert Jason.decode!(response) == expected  # => custom assertion for JSON
+      # => Decodes and compares JSON structures
     end
   end
 end
 
 defmodule MyTest do
   use ExUnit.Case  # => injects ExUnit test DSL (test macro, setup, etc.)
+  # => Standard test framework
   use MyTestCase   # => injects MyTestCase setup and Helpers
   # => Both __using__ macros run at compile time, injecting code
+  # => Adds project-specific setup
 
   test "example with helpers", %{user: user} do  # => %{user: user} is context from setup
+    # => Pattern matches context map
     assert user.name == "Test User"  # => user from setup context
+    # => Verifies setup data
     # Can use assert_json from Helpers (imported via use MyTestCase)
     # => assert_json(~s({"name": "Test"}), %{"name" => "Test"})
+    # => Example of custom helper usage
   end
 end
 
@@ -2715,21 +2726,30 @@ end
 defmodule MyAppWeb do
   # Helper function returns AST (NOT a macro)
   def controller do
+    # => Regular function that returns quoted code
     quote do  # => returns quoted AST
+      # => AST for controller functionality
       use Phoenix.Controller, namespace: MyAppWeb  # => nested use (injects Phoenix controller code)
+      # => Delegates to Phoenix for core behavior
 
       import Plug.Conn  # => makes conn functions available (send_resp, put_status, etc.)
+      # => HTTP connection manipulation
       import MyAppWeb.Gettext  # => makes gettext functions available (localization)
+      # => Internationalization support
       alias MyAppWeb.Router.Helpers, as: Routes  # => alias for router helpers
+      # => Shortens route helper references
     end
     # => This AST will be injected into caller when they use MyAppWeb, :controller
+    # => Composite injection pattern
   end
 
   # __using__ dispatches to helper functions based on argument
   defmacro __using__(which) when is_atom(which) do  # => which is :controller, :view, :channel, etc.
+    # => Dispatcher macro for different module types
     apply(__MODULE__, which, [])  # => calls MyAppWeb.controller(), MyAppWeb.view(), etc.
     # => Returns AST from helper function
     # => Pattern: different behaviors for different use cases
+    # => Dynamic dispatch based on use argument
   end
 end
 
@@ -2738,11 +2758,14 @@ defmodule MyAppWeb.UserController do
   # => Which calls MyAppWeb.controller()
   # => Which returns quote do ... end AST
   # => Result: Phoenix.Controller, Plug.Conn, Gettext, Routes all injected
+  # => Single line bootstraps entire controller environment
 
   def index(conn, _params) do
     # Now has access to Phoenix.Controller functions (from use Phoenix.Controller)
+    # => All injected functionality available
     render(conn, "index.html")  # => render/2 from Phoenix.Controller
     # Also has: conn functions (Plug.Conn), Routes.*, gettext functions
+    # => Multiple imports compose together
   end
 end
 
@@ -2753,6 +2776,7 @@ end
 # 4. Returns AST: quote do use Phoenix.Controller, ...; import Plug.Conn; ... end
 # 5. AST expanded and injected into UserController
 # 6. Now UserController has all Phoenix controller functionality
+# => Multi-step expansion process
 ```
 
 **Key Takeaway**: `use SomeModule` calls `SomeModule.__using__/1` to inject code. Common pattern for DSLs (GenServer, Phoenix controllers, test cases). The `use` macro enables framework behavior injection.
@@ -2771,10 +2795,13 @@ Macros are powerful but overuse leads to complex, hard-to-debug code. Follow bes
 # Anti-pattern: Macro for simple computation (BAD)
 defmodule Bad do
   defmacro add(a, b) do  # => ❌ macro is overkill for simple addition
+    # => Unnecessary AST manipulation
     quote do: unquote(a) + unquote(b)
+    # => Generates addition code at compile time
   end
   # => Problem: adds compile-time overhead for NO benefit
   # => No DSL, no code generation, just regular computation
+  # => Harder to debug than function
 end
 
 # Best practice: Use function for computations (GOOD)
@@ -2782,46 +2809,57 @@ defmodule Good do
   def add(a, b), do: a + b  # => ✅ function is sufficient (faster, simpler, debuggable)
   # => Functions handle runtime values perfectly
   # => Rule: If it can be a function, make it a function
+  # => Clear, simple, maintainable
 end
 
 # Valid use case 1: DSL for code generation
 defmodule SchemaGenerator do
   defmacro schema(fields) do  # => ✅ macro justified - generates struct + functions at compile time
     # => fields is [:name, :age, :email]
+    # => Receives field list at compile time
     quote do
       defstruct unquote(fields)  # => generates: defstruct [:name, :age, :email]
       # => Creates struct definition at compile time
+      # => defstruct only works at compile time
 
       def fields, do: unquote(fields)  # => generates function returning field list
       # => def fields, do: [:name, :age, :email]
+      # => Introspection function generated
     end
     # => User writes: schema [:name, :age]
     # => Compiler generates: defstruct + fields/0 function
     # => Justification: Can't generate defstruct with a function (compile-time only)
+    # => DRY: single source for struct and metadata
   end
 end
 
 # Valid use case 2: DSL for route definitions
 defmodule Router do
   defmacro get(path, handler) do  # => ✅ macro justified - generates route functions
+    # => Creates function clause for HTTP GET
     quote do
       def route("GET", unquote(path)), do: unquote(handler)  # => def route("GET", "/users"), do: UserController.index()
+      # => Pattern-matched route function
     end
     # => Generates route function clauses at compile time
     # => User writes: get "/users", UserController.index()
     # => Compiler generates pattern-matching function clause
     # => Justification: Pattern-matched function clauses can't be generated dynamically
+    # => Enables readable routing DSL
   end
 end
 
 # Valid use case 3: Compile-time optimization
 defmodule Optimized do
   defmacro compute_at_compile_time(expr) do  # => ✅ macro justified - pre-computes expensive calculations
+    # => Evaluates at compile time, not runtime
     result = Code.eval_quoted(expr) |> elem(0)  # => evaluates expression at COMPILE time
     # => For compute_at_compile_time(1000 * 1000), result = 1000000 (computed during compilation)
+    # => Code.eval_quoted executes AST
     quote do: unquote(result)  # => injects pre-computed result (1000000) into code
     # => Runtime code contains: 1000000 (no multiplication executed at runtime)
     # => Justification: Moves computation from runtime to compile time (performance optimization)
+    # => Zero runtime cost for constant calculations
   end
 end
 
@@ -2829,35 +2867,48 @@ end
 defmodule Documented do
   @doc """
   Generates a getter function.  # => ✅ documents what code is generated
+  # => Clear explanation of macro purpose
 
   ## Examples  # => provides usage examples
+  # => Shows concrete usage
 
       defmodule User do
         getter :name, "Default Name"  # => shows how to use macro
+        # => Demonstrates syntax
       end
 
       User.name()  # => "Default Name"  # => shows generated behavior
+      # => Expected runtime result
   """
   defmacro getter(name, default) do
+    # => Generates simple getter function
     quote do
       def unquote(name)(), do: unquote(default)  # => generates: def name(), do: "Default Name"
+      # => Injects function with default value
     end
   end
   # => Rule: Always document macros - users need to understand generated code
+  # => Documentation critical for AST manipulation
 end
 
 # Best practice: Validate macro arguments at compile time
 defmodule Validated do
   defmacro safe_divide(a, b) do
+    # => Validates arguments before code generation
     if b == 0 do  # => compile-time check (runs when code compiles)
+      # => Only works for literal values (not variables)
       raise ArgumentError, "Division by zero at compile time!"  # => ✅ fail fast at compile time
+      # => Stops compilation immediately
     end
     # => For safe_divide(10, 0), compilation FAILS (error caught early)
+    # => Prevents runtime errors
 
     quote do: unquote(a) / unquote(b)
+    # => Generates division code if validation passes
   end
   # => Justification: Catch errors during development, not production
   # => Rule: Validate macro inputs when possible (static values only)
+  # => Shift-left testing to compile time
 end
 
 # Critical pattern: Use bind_quoted to avoid duplicate evaluation
@@ -3347,45 +3398,34 @@ Worker.get(2)  # => 2
 {:ok, subscriber2} = Agent.start_link(fn -> [] end)  # => {:ok, #PID<0.402.0>}
 
 # Register both subscribers to same topic (duplicate key allowed)
-# Assuming subscriber1 and subscriber2 both call:
 Registry.register(PubSub, :topic_1, nil)  # => {:ok, #PID<0.401.0>}
 # => First subscriber registers for :topic_1
 # Registry.register(PubSub, :topic_1, nil)  # => {:ok, #PID<0.402.0>}
 # => Second subscriber ALSO registers for :topic_1 (duplicate key OK)
-# => Now :topic_1 → [#PID<0.401.0>, #PID<0.402.0>]
 
 # Broadcast message to all subscribers of a topic
 Registry.dispatch(PubSub, :topic_1, fn entries ->
   # => entries = [{#PID<0.401.0>, nil}, {#PID<0.402.0>, nil}]
-  # => List of all processes registered for :topic_1
   for {pid, _} <- entries do
     send(pid, {:message, "Hello subscribers!"})
-    # => Sends message to each subscriber process
   end
 end)
-# => Executes function with all matching processes
 # => Both subscriber1 and subscriber2 receive {:message, "Hello subscribers!"}
 
 # Unregister from topic
 Registry.unregister(PubSub, :topic_1)  # => :ok
 # => Removes current process from :topic_1 subscriptions
-# => Other subscribers still registered
 
 # Register with metadata for pattern matching
 Registry.register(MyRegistry, :user, %{role: :admin})  # => {:ok, #PID<...>}
-# => Register with metadata: %{role: :admin}
 # => Third argument is custom metadata attached to registration
 Registry.match(MyRegistry, :user, %{role: :admin})  # => [{#PID<...>, %{role: :admin}}]
 # => Returns registrations matching key AND metadata pattern
-# => Only returns entries where metadata matches %{role: :admin}
-# => For metadata %{role: :user}, would NOT match
 
 # Count registrations
 Registry.count(MyRegistry)  # => 1
-# => Total number of registrations in entire Registry
 Registry.count_match(MyRegistry, :user, %{role: :admin})  # => 1
 # => Count registrations matching key :user AND metadata pattern
-# => Efficient for "how many admins registered?" queries
 ```
 
 **Key Takeaway**: Registry maps keys to PIDs for process discovery. Use `keys: :unique` for single process per key, `keys: :duplicate` for pub/sub. Replaces global names with dynamic process registration.
@@ -3616,16 +3656,23 @@ name  # => "Alice" (destructured)
 # Erlang string functions (work on CHARLISTS not binaries)
 :string.uppercase('hello')  # => 'HELLO' (charlist, single quotes required)
                              # => Elixir: String.upcase("hello") for binaries
+                             # => Different data types for strings
 
 # Queue data structure from Erlang :queue
 q = :queue.new()  # => {[], []} (empty FIFO queue)
                    # => O(1) amortized enqueue/dequeue
+                   # => Two-list internal representation
 q = :queue.in(1, q)  # => {[1], []} (enqueue 1)
+# => Add to rear
 q = :queue.in(2, q)  # => {[2, 1], []} (enqueue 2)
+# => Second element added
 q = :queue.in(3, q)  # => {[3, 2, 1], []} (enqueue 3)
+# => Third element added
 {{:value, item}, q} = :queue.out(q)  # => {{:value, 1}, {[2], [3]}}
                                       # => Dequeue from front (FIFO)
+                                      # => Returns value and new queue
 item  # => 1 (first in, first out)
+# => Retrieved first item
 
 # General balanced trees from Erlang :gb_trees
 tree = :gb_trees.empty()  # => {0, nil} (empty balanced tree)

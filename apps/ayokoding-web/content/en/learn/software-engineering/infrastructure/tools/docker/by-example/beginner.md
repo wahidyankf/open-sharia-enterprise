@@ -7,7 +7,7 @@ description: "Examples 1-27: Docker fundamentals, Dockerfile basics, containers,
 tags: ["docker", "tutorial", "by-example", "beginner", "containers", "dockerfile"]
 ---
 
-## Examples 1-27: Docker Fundamentals
+### Examples 1-27: Docker Fundamentals
 
 This chapter covers Docker fundamentals through 27 examples, achieving 0-40% coverage. You'll learn installation verification, Dockerfile basics, image building, container lifecycle management, volumes, and basic networking.
 

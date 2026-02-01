@@ -42,26 +42,19 @@ Generic components work with multiple data types while maintaining type safety. 
 ```typescript
 import { useState } from 'react';
 
-// => Generic interface with type parameter T
-// => T can be any type - string, number, custom interfaces
+// => Generic interface: T can be any type
 interface ListProps<T> {
-  items: T[];                                // => Array of type T
-  renderItem: (item: T) => React.ReactNode; // => Function accepting T, returning JSX
-  keyExtractor: (item: T) => string;        // => Function to get unique key from T
+  items: T[];
+  renderItem: (item: T) => React.ReactNode;
+  keyExtractor: (item: T) => string;
 }
 
-// => Generic component with type parameter T
-// => T inferred from props or explicitly specified
+// => Generic component: T inferred from usage
 function List<T>({ items, renderItem, keyExtractor }: ListProps<T>) {
-  // => Component works with any type T
-  // => TypeScript validates item types match T throughout
-
   return (
     <ul>
       {items.map((item) => (
-        // => keyExtractor ensures unique key for each item
         <li key={keyExtractor(item)}>
-          {/* => renderItem receives strongly-typed item */}
           {renderItem(item)}
         </li>
       ))}
@@ -69,29 +62,26 @@ function List<T>({ items, renderItem, keyExtractor }: ListProps<T>) {
   );
 }
 
-// => Domain interfaces for type safety
 interface Donation {
-  id: string;                                // => Unique identifier
-  amount: number;                            // => Donation amount in dollars
-  donor: string;                             // => Donor name
+  id: string;
+  amount: number;
+  donor: string;
 }
 
 interface ZakatPayment {
-  id: string;                                // => Unique identifier
-  nisab: number;                             // => Nisab threshold
-  zakatAmount: number;                       // => 2.5% of excess wealth
-  payer: string;                             // => Payer name
+  id: string;
+  nisab: number;
+  zakatAmount: number;
+  payer: string;
 }
 
 function DonationDashboard() {
-  // => useState with Donation[] type
   const [donations] = useState<Donation[]>([
     { id: '1', amount: 100, donor: 'Aisha' },
     { id: '2', amount: 250, donor: 'Omar' },
   ]);
 
-  // => useState with ZakatPayment[] type
-  const [zakatPayments] = useState<ZakatPatment[]>([
+  const [zakatPayments] = useState<ZakatPayment[]>([
     { id: '1', nisab: 5000, zakatAmount: 125, payer: 'Fatima' },
     { id: '2', nisab: 10000, zakatAmount: 250, payer: 'Ali' },
   ]);
@@ -99,25 +89,20 @@ function DonationDashboard() {
   return (
     <div>
       <h2>Recent Donations</h2>
-      {/* => List<Donation> - T inferred as Donation from items prop */}
-      {/* => TypeScript validates renderItem receives Donation */}
-      {/* => TypeScript validates keyExtractor receives Donation */}
+      {/* => List<Donation>: T inferred from items prop */}
       <List
         items={donations}
         renderItem={(donation) => (
-          // => donation is type Donation (inferred)
           <span>${donation.amount} from {donation.donor}</span>
         )}
         keyExtractor={(donation) => donation.id}
-        // => donation is type Donation (inferred)
       />
 
       <h2>Zakat Payments</h2>
-      {/* => List<ZakatPayment> - T inferred as ZakatPayment */}
+      {/* => List<ZakatPayment>: T inferred from items type */}
       <List
         items={zakatPayments}
         renderItem={(payment) => (
-          // => payment is type ZakatPayment (inferred)
           <span>${payment.zakatAmount} zakat from {payment.payer}</span>
         )}
         keyExtractor={(payment) => payment.id}
@@ -152,70 +137,52 @@ interface Donation {
   createdAt: Date;                           // => Timestamp (required)
 }
 
-// => Partial<T> makes all properties optional
-// => Useful for update operations where only some fields change
+// => Partial<T>: all properties optional (for updates)
 type DonationUpdate = Partial<Donation>;
-// => Equivalent to: { id?: string; amount?: number; ... }
 
-// => Pick<T, K> selects specific properties from type
-// => Useful for form inputs with subset of fields
+// => Pick<T, K>: select specific properties
 type DonationFormData = Pick<Donation, 'amount' | 'donor' | 'email' | 'isAnonymous'>;
-// => Equivalent to: { amount: number; donor: string; email: string; isAnonymous: boolean }
 
-// => Omit<T, K> excludes specific properties from type
-// => Useful when you need most fields except a few
+// => Omit<T, K>: exclude specific properties
 type DonationDisplay = Omit<Donation, 'email'>;
-// => Equivalent to: { id: string; amount: number; donor: string; isAnonymous: boolean; createdAt: Date }
 
-// => Record<K, T> creates object type with keys K and values T
-// => Useful for lookup objects, dictionaries, mappings
+// => Record<K, T>: object with keys K and values T
 type DonationsByCategory = Record<'general' | 'zakat' | 'sadaqah', Donation[]>;
-// => Equivalent to: { general: Donation[]; zakat: Donation[]; sadaqah: Donation[] }
 
 function DonationForm() {
-  // => useState with DonationFormData type (subset of fields)
   const [formData, setFormData] = useState<DonationFormData>({
-    amount: 0,                               // => Initial amount is 0
-    donor: '',                               // => Empty donor name
-    email: '',                               // => Empty email
-    isAnonymous: false,                      // => Not anonymous by default
+    amount: 0,
+    donor: '',
+    email: '',
+    isAnonymous: false,
   });
 
-  // => Partial<DonationFormData> for partial updates
-  // => Only changed fields need to be specified
+  // => Partial update: only changed fields needed
   const updateField = (update: Partial<DonationFormData>) => {
     setFormData((prev) => ({
-      ...prev,                               // => Keep existing fields
-      ...update,                             // => Override with new values
+      ...prev,
+      ...update,
     }));
-    // => TypeScript ensures update object has valid keys
   };
 
-  // => Handle form submission
   const handleSubmit = () => {
-    // => formData has type DonationFormData
-    // => Only includes form fields, not id/createdAt
     console.log('Submitting:', formData);
-    // => Backend would generate id and createdAt
+    // => Backend generates id and createdAt
   };
 
   return (
     <div>
       <h2>Make a Donation</h2>
 
-      {/* => Amount input */}
       <label>
         Amount: $
         <input
           type="number"
           value={formData.amount}
           onChange={(e) => updateField({ amount: parseFloat(e.target.value) })}
-          // => updateField accepts Partial<DonationFormData>
-          // => TypeScript validates { amount: number } is valid
         />
       </label>
 
-      {/* => Donor name input */}
       <label>
         Name:
         <input
@@ -225,7 +192,6 @@ function DonationForm() {
         />
       </label>
 
-      {/* => Email input */}
       <label>
         Email:
         <input
@@ -235,7 +201,6 @@ function DonationForm() {
         />
       </label>
 
-      {/* => Anonymous checkbox */}
       <label>
         <input
           type="checkbox"
@@ -250,24 +215,20 @@ function DonationForm() {
   );
 }
 
-// => Example using Record for categorization
+// => Record ensures all category keys present
 function DonationCategoryView() {
-  // => Record ensures all keys are present with correct type
   const [donations] = useState<DonationsByCategory>({
-    general: [],                             // => Must provide general key
-    zakat: [],                               // => Must provide zakat key
-    sadaqah: [],                             // => Must provide sadaqah key
+    general: [],
+    zakat: [],
+    sadaqah: [],
   });
-  // => TypeScript error if any key is missing
-  // => TypeScript error if values aren't Donation[]
+  // => TypeScript errors if keys missing or wrong value type
 
   return (
     <div>
       <h3>General Donations: {donations.general.length}</h3>
       <h3>Zakat Payments: {donations.zakat.length}</h3>
       <h3>Sadaqah: {donations.sadaqah.length}</h3>
-      {/* => TypeScript autocompletes valid keys */}
-      {/* => TypeScript validates all keys accessed exist */}
     </div>
   );
 }
@@ -430,108 +391,88 @@ Type guards narrow union types at runtime, enabling safe access to type-specific
 ```typescript
 import { ReactNode } from 'react';
 
-// => Domain interfaces for financial transactions
 interface DonationTransaction {
-  type: 'donation';                          // => Discriminant: identifies as donation
-  amount: number;                            // => Donation amount
-  donor: string;                             // => Donor name
-  isAnonymous: boolean;                      // => Anonymous flag
+  type: 'donation';                          // => Discriminant property
+  amount: number;
+  donor: string;
+  isAnonymous: boolean;
 }
 
 interface ZakatTransaction {
-  type: 'zakat';                             // => Discriminant: identifies as zakat
-  wealth: number;                            // => Total wealth
-  nisab: number;                             // => Nisab threshold
-  zakatAmount: number;                       // => 2.5% of excess
+  type: 'zakat';
+  wealth: number;
+  nisab: number;
+  zakatAmount: number;
 }
 
 interface RefundTransaction {
-  type: 'refund';                            // => Discriminant: identifies as refund
-  originalAmount: number;                    // => Amount being refunded
-  reason: string;                            // => Refund reason
-  refundDate: Date;                          // => When refund processed
+  type: 'refund';
+  originalAmount: number;
+  reason: string;
+  refundDate: Date;
 }
 
-// => Union type: transaction can be any of these types
 type Transaction = DonationTransaction | ZakatTransaction | RefundTransaction;
 
-// => Type guard function: checks if transaction is DonationTransaction
-// => Return type is type predicate: 'transaction is DonationTransaction'
+// => Type predicate: narrows union type
 function isDonation(transaction: Transaction): transaction is DonationTransaction {
-  // => Check discriminant property
-  // => Returns boolean, but TypeScript narrows type on true
   return transaction.type === 'donation';
 }
 
-// => Type guard for ZakatTransaction
 function isZakat(transaction: Transaction): transaction is ZakatTransaction {
   return transaction.type === 'zakat';
 }
 
-// => Type guard for RefundTransaction
 function isRefund(transaction: Transaction): transaction is RefundTransaction {
   return transaction.type === 'refund';
 }
 
-// => Component rendering transaction based on type
 interface TransactionItemProps {
-  transaction: Transaction;                  // => Union type passed as prop
+  transaction: Transaction;
 }
 
 function TransactionItem({ transaction }: TransactionItemProps) {
-  // => Render different UI based on transaction type
-  // => Type guards narrow union type in each branch
-
   if (isDonation(transaction)) {
-    // => transaction is DonationTransaction here
-    // => TypeScript knows donor, isAnonymous properties exist
+    // => transaction narrowed to DonationTransaction
     return (
       <div className="transaction donation">
         <h4>Donation</h4>
         <p>Amount: ${transaction.amount}</p>
         <p>Donor: {transaction.isAnonymous ? 'Anonymous' : transaction.donor}</p>
-        {/* => TypeScript autocompletes donation-specific properties */}
       </div>
     );
   }
 
   if (isZakat(transaction)) {
-    // => transaction is ZakatTransaction here
-    // => TypeScript knows wealth, nisab, zakatAmount properties exist
+    // => transaction narrowed to ZakatTransaction
     return (
       <div className="transaction zakat">
         <h4>Zakat Payment</h4>
         <p>Wealth: ${transaction.wealth}</p>
         <p>Nisab: ${transaction.nisab}</p>
         <p>Zakat Due: ${transaction.zakatAmount}</p>
-        {/* => TypeScript autocompletes zakat-specific properties */}
       </div>
     );
   }
 
   if (isRefund(transaction)) {
-    // => transaction is RefundTransaction here
-    // => TypeScript knows originalAmount, reason, refundDate properties exist
+    // => transaction narrowed to RefundTransaction
     return (
       <div className="transaction refund">
         <h4>Refund</h4>
         <p>Amount: ${transaction.originalAmount}</p>
         <p>Reason: {transaction.reason}</p>
         <p>Date: {transaction.refundDate.toLocaleDateString()}</p>
-        {/* => TypeScript knows refundDate is Date, provides Date methods */}
       </div>
     );
   }
 
-  // => Exhaustiveness check: TypeScript ensures all cases handled
-  // => If new transaction type added, TypeScript error here
+  // => Exhaustiveness check: ensures all union members handled
   const _exhaustive: never = transaction;
   return null;
 }
 
-// => Parent component with mixed transactions
 function TransactionList() {
-  // => Array with different transaction types
   const transactions: Transaction[] = [
     {
       type: 'donation',
@@ -539,23 +480,18 @@ function TransactionList() {
       donor: 'Aisha',
       isAnonymous: false,
     },
-    // => TypeScript validates object matches DonationTransaction
-
     {
       type: 'zakat',
       wealth: 10000,
       nisab: 5000,
       zakatAmount: 125,
     },
-    // => TypeScript validates object matches ZakatTransaction
-
     {
       type: 'refund',
       originalAmount: 50,
       reason: 'Duplicate payment',
       refundDate: new Date('2026-01-15'),
     },
-    // => TypeScript validates object matches RefundTransaction
   ];
 
   return (
@@ -563,7 +499,6 @@ function TransactionList() {
       <h2>Transaction History</h2>
       {transactions.map((transaction, index) => (
         <TransactionItem key={index} transaction={transaction} />
-        // => Each transaction rendered with type-specific UI
       ))}
     </div>
   );
@@ -904,6 +839,7 @@ Slices organize large stores into logical modules. Combine slices for separation
 ```typescript
 // donationSlice.ts
 import { StateCreator } from 'zustand';
+// => StateCreator: Zustand type for slice creators
 
 // => Donation slice interface
 export interface DonationSlice {
@@ -917,38 +853,46 @@ export interface DonationSlice {
   removeDonation: (id: string) => void;
 }
 
-// => Slice creator function with proper typing
-// => StateCreator<T, [], [], SliceType> ensures type safety
+// => Slice creator with StateCreator typing
+// => First generic: combined store type
+// => Last generic: this slice's type
 export const createDonationSlice: StateCreator<
-  DonationSlice & ZakatSlice,                // => Combined store type
+  DonationSlice & ZakatSlice,
   [],
   [],
-  DonationSlice                              // => This slice's type
+  DonationSlice
 > = (set) => ({
-  // => Initial donation state
+  // => set: Zustand function to update state
   donations: [],
+  // => donations: empty array initially
   donationTotal: 0,
+  // => donationTotal: 0 initially
 
-  // => Donation actions
   addDonation: (amount, donor) => {
     set((state) => ({
+      // => state: current store state (all slices)
       donations: [
         ...state.donations,
         { id: Date.now().toString(), amount, donor },
+        // => id: timestamp ensures uniqueness
       ],
       donationTotal: state.donationTotal + amount,
-      // => Only updates donation slice properties
+      // => Add amount to running total
     }));
   },
 
   removeDonation: (id) => {
     set((state) => {
       const donation = state.donations.find((d) => d.id === id);
+      // => Find donation to calculate total adjustment
       if (!donation) return state;
+      // => No change if donation not found
 
       return {
         donations: state.donations.filter((d) => d.id !== id),
+        // => Remove donation from array
         donationTotal: state.donationTotal - donation.amount,
+        // => Subtract amount from total
       };
     });
   },
@@ -970,37 +914,42 @@ export interface ZakatSlice {
   removeZakatPayment: (id: string) => void;
 }
 
-// => Zakat slice creator
+// => Zakat slice creator (same pattern as donation)
 export const createZakatSlice: StateCreator<
-  DonationSlice & ZakatSlice,                // => Combined store type
+  DonationSlice & ZakatSlice,
   [],
   [],
-  ZakatSlice                                 // => This slice's type
+  ZakatSlice
 > = (set) => ({
-  // => Initial zakat state
   zakatPayments: [],
+  // => zakatPayments: empty array initially
   zakatTotal: 0,
+  // => zakatTotal: 0 initially
 
-  // => Zakat actions
   addZakatPayment: (wealth, zakatAmount, payer) => {
     set((state) => ({
       zakatPayments: [
         ...state.zakatPayments,
         { id: Date.now().toString(), wealth, zakatAmount, payer },
+        // => Create new payment with timestamp id
       ],
       zakatTotal: state.zakatTotal + zakatAmount,
-      // => Only updates zakat slice properties
+      // => Add zakatAmount to running total
     }));
   },
 
   removeZakatPayment: (id) => {
     set((state) => {
       const payment = state.zakatPayments.find((p) => p.id === id);
+      // => Find payment to calculate total adjustment
       if (!payment) return state;
+      // => No change if payment not found
 
       return {
         zakatPayments: state.zakatPayments.filter((p) => p.id !== id),
+        // => Remove payment from array
         zakatTotal: state.zakatTotal - payment.zakatAmount,
+        // => Subtract zakatAmount from total
       };
     });
   },
@@ -1008,36 +957,46 @@ export const createZakatSlice: StateCreator<
 
 // store.ts
 import { create } from 'zustand';
+// => create: Zustand store factory function
 import { DonationSlice, createDonationSlice } from './donationSlice';
 import { ZakatSlice, createZakatSlice } from './zakatSlice';
 
-// => Combined store type from both slices
+// => Combined store type: intersection of both slices
 type FinancialStore = DonationSlice & ZakatSlice;
 
-// => Create store combining both slices
-// => Spread both slice creators to merge state and actions
+// => Create store with both slices merged
+// => (...a): Zustand's set, get, api parameters
 export const useFinancialStore = create<FinancialStore>()((...a) => ({
-  ...createDonationSlice(...a),              // => Merge donation slice
-  ...createZakatSlice(...a),                 // => Merge zakat slice
+  ...createDonationSlice(...a),
+  // => Spreads donation state and actions into store
+  ...createZakatSlice(...a),
+  // => Spreads zakat state and actions into store
 }));
-// => Single store with all state and actions from both slices
+// => Result: single hook accessing all state/actions
 
 // Component.tsx
 import { useFinancialStore } from './store';
 
 function FinancialDashboard() {
-  // => Select donation slice state
+  // => Select donation slice state with selector functions
   const donations = useFinancialStore((state) => state.donations);
+  // => donations: reactive, updates on donation changes
   const donationTotal = useFinancialStore((state) => state.donationTotal);
+  // => donationTotal: reactive, updates on total changes
   const addDonation = useFinancialStore((state) => state.addDonation);
+  // => addDonation: stable function reference
 
   // => Select zakat slice state
   const zakatPayments = useFinancialStore((state) => state.zakatPayments);
+  // => zakatPayments: reactive, updates on payment changes
   const zakatTotal = useFinancialStore((state) => state.zakatTotal);
+  // => zakatTotal: reactive, updates on total changes
   const addZakatPayment = useFinancialStore((state) => state.addZakatPayment);
+  // => addZakatPayment: stable function reference
 
-  // => Combined total from both slices
+  // => Derived state: computed from both slices
   const grandTotal = donationTotal + zakatTotal;
+  // => grandTotal: recalculates when either total changes
 
   return (
     <div>
@@ -1096,8 +1055,12 @@ Zustand middleware enhances stores with persistence, devtools integration, and l
 
 ```typescript
 import { create } from 'zustand';
+// => create: Zustand store factory
 import { persist, createJSONStorage } from 'zustand/middleware';
+// => persist: saves state to storage
+// => createJSONStorage: configures localStorage/sessionStorage
 import { devtools } from 'zustand/middleware';
+// => devtools: integrates with Redux DevTools
 
 // => State interface
 interface DonationState {
@@ -1105,7 +1068,7 @@ interface DonationState {
     id: string;
     amount: number;
     donor: string;
-    timestamp: string;                       // => Store as string for JSON serialization
+    timestamp: string;                       // => String for JSON serialization
   }>;
   totalAmount: number;
   addDonation: (amount: number, donor: string) => void;
@@ -1113,96 +1076,105 @@ interface DonationState {
   clearDonations: () => void;
 }
 
-// => Create store with middleware chain
-// => devtools() → persist() → store
+// => Middleware chain: devtools wraps persist wraps store
+// => Execution order: devtools() → persist() → store
 export const useDonationStore = create<DonationState>()(
   devtools(
-    // => devtools() enables Redux DevTools integration
-    // => Provides time-travel debugging and action logging
+    // => devtools: Redux DevTools integration
+    // => Enables time-travel debugging
     persist(
-      // => persist() saves state to localStorage
-      // => Rehydrates state on page reload
+      // => persist: localStorage persistence
+      // => Auto-rehydrates state on mount
       (set) => ({
-        // => Initial state
+        // => set: Zustand state updater function
         donations: [],
+        // => donations: [] initially (or rehydrated from localStorage)
         totalAmount: 0,
+        // => totalAmount: 0 initially (or rehydrated)
 
-        // => Action: add donation
+        // => Add donation action
         addDonation: (amount, donor) => {
           set(
             (state) => {
+              // => state: current store state
               const newDonation = {
                 id: Date.now().toString(),
+                // => id: timestamp string (unique)
                 amount,
                 donor,
                 timestamp: new Date().toISOString(),
-                // => Store as ISO string for JSON serialization
+                // => ISO string: JSON-serializable for localStorage
               };
 
               return {
                 donations: [...state.donations, newDonation],
+                // => Immutable array update
                 totalAmount: state.totalAmount + amount,
+                // => Add to running total
               };
             },
             false,
-            // => Second argument: replace state?
-            // => false means merge (default)
+            // => false: merge state (don't replace entirely)
             'donation/add'
-            // => Third argument: action name for devtools
-            // => Shows as "donation/add" in Redux DevTools
+            // => Action name visible in Redux DevTools
           );
         },
 
-        // => Action: remove donation
+        // => Remove donation action
         removeDonation: (id) => {
           set(
             (state) => {
               const donation = state.donations.find((d) => d.id === id);
+              // => Find donation to calculate total adjustment
               if (!donation) return state;
+              // => No change if not found
 
               return {
                 donations: state.donations.filter((d) => d.id !== id),
+                // => Remove from array
                 totalAmount: state.totalAmount - donation.amount,
+                // => Subtract from total
               };
             },
             false,
             'donation/remove'
-            // => Action name for devtools
+            // => Devtools action name
           );
         },
 
-        // => Action: clear all donations
+        // => Clear all donations action
         clearDonations: () => {
           set(
             {
               donations: [],
+              // => Reset to empty array
               totalAmount: 0,
+              // => Reset total to 0
             },
             false,
             'donation/clear'
+            // => Devtools action name
           );
         },
       }),
       {
-        name: 'donation-storage',            // => localStorage key
-        // => State saved to localStorage['donation-storage']
+        name: 'donation-storage',
+        // => localStorage key: localStorage['donation-storage']
         storage: createJSONStorage(() => localStorage),
-        // => Use localStorage for persistence
-        // => Can use sessionStorage or custom storage
+        // => Storage engine: localStorage (can be sessionStorage)
         partialize: (state) => ({
           donations: state.donations,
           totalAmount: state.totalAmount,
-          // => Only persist these properties
-          // => Exclude functions and transient state
+          // => Only persist data, exclude functions
         }),
-        // => Custom serialization (optional)
+        // => Optional custom serialization:
         // serialize: (state) => JSON.stringify(state),
         // deserialize: (str) => JSON.parse(str),
       }
     ),
     {
-      name: 'DonationStore',                 // => Store name in Redux DevTools
-      // => Shows as "DonationStore" in devtools UI
+      name: 'DonationStore',
+      // => Store name shown in Redux DevTools
     }
   )
 );
@@ -1212,20 +1184,24 @@ import { useEffect } from 'react';
 import { useDonationStore } from './store';
 
 function PersistedDonationTracker() {
-  // => Subscribe to store state
+  // => Selector: extract donations from store
   const donations = useDonationStore((state) => state.donations);
+  // => Re-renders when donations change
   const totalAmount = useDonationStore((state) => state.totalAmount);
+  // => Re-renders when totalAmount changes
   const addDonation = useDonationStore((state) => state.addDonation);
+  // => Stable reference (doesn't cause re-renders)
   const removeDonation = useDonationStore((state) => state.removeDonation);
   const clearDonations = useDonationStore((state) => state.clearDonations);
 
-  // => Log when store rehydrates from localStorage
+  // => Effect: log rehydration
   useEffect(() => {
     console.log('Store rehydrated from localStorage');
+    // => Runs after persist middleware loads saved state
     console.log('Loaded donations:', donations);
-    // => Runs once on mount after rehydration
+    // => Shows donations from previous session
   }, []);
-  // => Empty dependency array - run once
+  // => [] dependency: runs once on mount
 
   return (
     <div>
@@ -2370,7 +2346,6 @@ Virtual scrolling renders only visible items in large lists, dramatically improv
 import { FixedSizeList } from 'react-window';
 import { useMemo } from 'react';
 
-// => Domain interface
 interface Donation {
   id: string;
   amount: number;
@@ -2378,53 +2353,43 @@ interface Donation {
   timestamp: string;
 }
 
-// => Generate large donation list (10,000 items)
-// => Without virtualization: renders all 10,000 DOM nodes
-// => With virtualization: renders only ~20 visible nodes
+// => Generate 10,000 donations for performance testing
 function generateDonations(count: number): Donation[] {
   const donations: Donation[] = [];
   for (let i = 0; i < count; i++) {
     donations.push({
       id: `donation-${i}`,
       amount: Math.floor(Math.random() * 500) + 10,
-      // => Random amount between \$10-\$510
+      // => Random \$10-\$510
       donor: `Donor ${i + 1}`,
       timestamp: new Date(
         Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000
       ).toISOString(),
-      // => Random timestamp within last year
+      // => Random date within last year
     });
   }
   return donations;
 }
 
 function VirtualizedDonationList() {
-  // => Memoize large list generation
-  // => Prevents regeneration on every render
+  // => Memoize: prevent regenerating 10,000 items on each render
   const donations = useMemo(() => generateDonations(10000), []);
-  // => 10,000 donations cached in memory
-  // => Only generated once
 
-  // => Row renderer function
-  // => Called for each visible row by react-window
-  // => Receives index and style props
+  // => Row renderer: called only for visible rows
   const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => {
     const donation = donations[index];
-    // => Get donation at current index
-    // => react-window handles which indices to render
+    // => react-window manages which indices to render
 
     return (
       <div style={{
         ...style,
-        // => Position and size provided by react-window
-        // => Absolute positioning for efficient DOM manipulation
+        // => style: positioning from react-window (absolute)
         padding: '12px',
         borderBottom: '1px solid #E0E0E0',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
       }}>
-        {/* => Donation content */}
         <div>
           <strong>${donation.amount}</strong> from {donation.donor}
         </div>
@@ -2434,9 +2399,7 @@ function VirtualizedDonationList() {
       </div>
     );
   };
-  // => Row component renders one list item
-  // => react-window reuses Row components as user scrolls
-  // => Only ~20 Row instances exist in DOM regardless of list size
+  // => Only ~20 Row instances in DOM (reused during scroll)
 
   return (
     <div>
@@ -2445,37 +2408,20 @@ function VirtualizedDonationList() {
         Showing 10,000 donations using virtual scrolling. Only visible items rendered.
       </p>
 
-      {/* => FixedSizeList from react-window */}
-      {/* => Renders only visible portion of list */}
+      {/* => FixedSizeList: renders only visible portion */}
       <FixedSizeList
         height={600}
-        // => Container height in pixels
-        // => Controls how many rows visible at once
-        // => At 50px/row: 600/50 = ~12 rows visible
-        // => react-window renders ~12 rows + buffer
-
+        // => 600px container: ~12 rows visible at 50px each
         itemCount={donations.length}
-        // => Total number of items in list (10,000)
-        // => react-window calculates scroll range based on this
-
+        // => Total items: 10,000
         itemSize={50}
-        // => Fixed height per row in pixels
-        // => Must match Row component height
-        // => Enables efficient scroll position calculation
-
+        // => Fixed 50px per row
         width="100%"
-        // => Container width (percentage or pixels)
-
         overscanCount={5}
-        // => Render extra rows above/below viewport
-        // => Prevents white flash during fast scrolling
-        // => 5 means render 5 extra rows on each side
+        // => Render 5 extra rows above/below (prevents scroll flash)
       >
         {Row}
-        {/* => Row renderer function */}
-        {/* => react-window calls with index and style */}
       </FixedSizeList>
-      {/* => react-window handles scrolling, positioning, recycling */}
 
       {/* => Performance comparison */}
       <div style={{ marginTop: '24px', padding: '16px', backgroundColor: '#F0F0F0' }}>
@@ -2889,54 +2835,61 @@ Suspense handles async data loading declaratively. Components "suspend" while lo
 
 ```typescript
 import { Suspense } from 'react';
+// => Suspense: declarative loading state boundary
 
-// => Resource interface for Suspense-compatible data fetching
-// => Suspense expects resource with read() method that throws promise
+// => Resource interface: Suspense-compatible data fetcher
+// => read() must throw promise (pending) or return data (success)
 interface Resource<T> {
   read(): T;
+  // => read(): throws promise | throws error | returns T
 }
 
-// => Create Suspense-compatible resource
-// => Wraps promise to work with Suspense
+// => wrapPromise: converts Promise to Suspense Resource
 function wrapPromise<T>(promise: Promise<T>): Resource<T> {
   let status: 'pending' | 'success' | 'error' = 'pending';
+  // => status: tracks promise lifecycle
   let result: T;
+  // => result: stores resolved data
   let error: any;
+  // => error: stores rejection reason
 
-  // => Start promise execution immediately
+  // => Execute promise immediately (not lazy)
   const suspender = promise.then(
     (data) => {
       status = 'success';
+      // => Update status on resolution
       result = data;
+      // => Cache resolved data
     },
     (err) => {
       status = 'error';
+      // => Update status on rejection
       error = err;
+      // => Cache error
     }
   );
 
   return {
     read(): T {
-      // => read() throws promise if pending (triggers Suspense)
+      // => Pending: throw promise to trigger Suspense
       if (status === 'pending') {
         throw suspender;
-        // => Suspense catches thrown promise
-        // => Shows fallback until promise resolves
+        // => Suspense catches, shows fallback
       }
 
-      // => read() throws error if failed
+      // => Error: throw to trigger Error Boundary
       if (status === 'error') {
         throw error;
-        // => Error boundary catches thrown error
+        // => Error Boundary handles
       }
 
-      // => read() returns data if success
+      // => Success: return cached data
       return result;
+      // => Component renders with data
     },
   };
 }
 
-// => Domain interface
 interface Donation {
   id: string;
   amount: number;
@@ -2944,37 +2897,35 @@ interface Donation {
   timestamp: string;
 }
 
-// => API function that returns Suspense-compatible resource
-// => Resource immediately starts fetching
+// => fetchDonations: returns Resource (not Promise)
 function fetchDonations(): Resource<Donation[]> {
-  // => Create promise that fetches data
   const promise = new Promise<Donation[]>((resolve) => {
     setTimeout(() => {
-      // => Simulate API call with 2-second delay
+      // => Simulate 2-second API delay
       resolve([
         { id: '1', amount: 100, donor: 'Aisha', timestamp: '2026-01-29T10:00:00Z' },
         { id: '2', amount: 250, donor: 'Omar', timestamp: '2026-01-29T11:00:00Z' },
         { id: '3', amount: 75, donor: 'Fatima', timestamp: '2026-01-29T12:00:00Z' },
       ]);
+      // => Resolve with donation array
     }, 2000);
   });
 
-  // => Wrap promise in resource for Suspense
   return wrapPromise(promise);
+  // => Convert Promise to Suspense Resource
 }
 
-// => Create resource immediately (before component renders)
-// => Start fetching as early as possible
+// => Create resource immediately (module scope)
+// => Starts fetch before component mounts (early fetch)
 const donationResource = fetchDonations();
 
-// => Component that reads from Suspense resource
+// => Component reading from Suspense resource
 function DonationList() {
-  // => Read from resource
-  // => Throws promise if still loading (Suspense catches)
-  // => Returns data when loaded
+  // => read(): throws promise (pending) or returns data (success)
   const donations = donationResource.read();
-  // => Component "suspends" until data ready
-  // => Suspense boundary shows fallback
+  // => If pending: throws → Suspense shows fallback
+  // => If success: returns → component renders
+  // => Component "suspends" while loading
 
   return (
     <div>
@@ -2985,10 +2936,12 @@ function DonationList() {
             ${donation.amount} from {donation.donor}
             {' - '}
             {new Date(donation.timestamp).toLocaleString()}
+            {/* => Parse ISO timestamp to locale string */}
           </li>
         ))}
       </ul>
       <p>Total: ${donations.reduce((sum, d) => sum + d.amount, 0)}</p>
+      {/* => Compute total from donation amounts */}
     </div>
   );
 }
@@ -2998,20 +2951,19 @@ function SuspenseDemo() {
     <div>
       <h2>Suspense for Data Fetching</h2>
 
-      {/* => Suspense boundary wraps async component */}
-      {/* => Catches thrown promises from resource.read() */}
+      {/* => Suspense: declarative loading boundary */}
       <Suspense
         fallback={
-          // => Fallback UI shown while component suspended
+          // => fallback: shown while DonationList suspended
           <div style={{ padding: '20px', textAlign: 'center' }}>
             <div style={{ fontSize: '32px' }}>⏳</div>
             <p>Loading donations...</p>
           </div>
         }
       >
-        {/* => DonationList suspends if data not ready */}
-        {/* => Suspense catches suspension, shows fallback */}
-        {/* => When data ready, renders DonationList */}
+        {/* => DonationList calls read() → throws if pending */}
+        {/* => Suspense catches thrown promise → shows fallback */}
+        {/* => When promise resolves → re-renders DonationList */}
         <DonationList />
       </Suspense>
     </div>
@@ -3034,7 +2986,6 @@ startTransition marks state updates as low-priority, keeping UI responsive durin
 ```typescript
 import { useState, startTransition, useDeferredValue } from 'react';
 
-// => Domain interface
 interface Donation {
   id: string;
   amount: number;
@@ -3042,8 +2993,7 @@ interface Donation {
   category: string;
 }
 
-// => Generate large donation list for demonstration
-// => Large enough to cause noticeable lag during filtering
+// => Generate 5000 donations (large enough to cause filter lag)
 function generateDonations(count: number): Donation[] {
   const categories = ['general', 'zakat', 'sadaqah', 'emergency'];
   const donations: Donation[] = [];
@@ -3061,52 +3011,39 @@ function generateDonations(count: number): Donation[] {
 }
 
 function TransitionDemo() {
-  // => Large dataset (5000 donations)
   const [donations] = useState(() => generateDonations(5000));
+  // => 5000 donations: filtering is expensive
 
-  // => Search query state (urgent - update immediately)
   const [query, setQuery] = useState('');
-
-  // => Filtered results state (non-urgent - can be delayed)
+  // => query: urgent update (input value)
   const [filteredDonations, setFilteredDonations] = useState(donations);
-
-  // => Pending state indicates transition in progress
+  // => filteredDonations: non-urgent update
   const [isPending, startTransition] = useState(false);
+  // => isPending: true while transition in progress
 
-  // => Handle search input WITHOUT startTransition
-  // => Updates block UI, causing input lag
+  // => WITHOUT startTransition: blocks UI
   const handleSearchWithoutTransition = (value: string) => {
     setQuery(value);
-    // => Urgent update: query input value
-    // => Must update immediately for responsive input
+    // => Urgent: update immediately
 
-    // => Non-urgent update: filtered results
-    // => Expensive operation blocks UI
     const filtered = donations.filter(
       (d) =>
         d.donor.toLowerCase().includes(value.toLowerCase()) ||
         d.category.toLowerCase().includes(value.toLowerCase())
     );
-    // => Filtering 5000 items is expensive
-    // => Blocks UI, causes input lag
+    // => Expensive: filtering 5000 items blocks UI
 
     setFilteredDonations(filtered);
-    // => UI blocked until filtering completes
-    // => Next keystroke delayed
+    // => Blocks until complete, causes input lag
   };
 
-  // => Handle search input WITH startTransition
-  // => Keeps input responsive, delays filtering
+  // => WITH startTransition: keeps input responsive
   const handleSearchWithTransition = (value: string) => {
     setQuery(value);
-    // => Urgent update: query input value
-    // => Updates immediately, input stays responsive
+    // => Urgent: updates immediately
 
-    // => Wrap expensive update in startTransition
-    // => Marks update as non-urgent, can be interrupted
+    // => Mark filtered update as non-urgent
     startTransition(() => {
-      // => Non-urgent update: filtered results
-      // => React can interrupt this update for urgent work
       const filtered = donations.filter(
         (d) =>
           d.donor.toLowerCase().includes(value.toLowerCase()) ||
@@ -3114,17 +3051,15 @@ function TransitionDemo() {
       );
 
       setFilteredDonations(filtered);
-      // => Update deferred, doesn't block urgent updates
-      // => Input stays responsive
+      // => Non-urgent: React can interrupt for urgent updates
     });
-    // => Input responsive, filtering happens in background
+    // => Input stays responsive during filtering
   };
 
   return (
     <div>
       <h2>startTransition Demo</h2>
 
-      {/* => Search input */}
       <div style={{ marginBottom: '16px' }}>
         <label>
           Search donations (try typing quickly):
@@ -3132,8 +3067,7 @@ function TransitionDemo() {
             type="text"
             value={query}
             onChange={(e) => handleSearchWithTransition(e.target.value)}
-            // => Using transition version - input responsive
-            // => Switch to handleSearchWithoutTransition to see lag
+            // => Using transition: input stays responsive
             style={{
               padding: '8px',
               fontSize: '16px',
@@ -3145,25 +3079,20 @@ function TransitionDemo() {
         </label>
       </div>
 
-      {/* => Pending indicator */}
-      {/* => Shows when transition in progress */}
+      {/* => Pending indicator during transition */}
       {isPending && (
         <div style={{ padding: '8px', backgroundColor: '#FFF8E1', marginBottom: '16px' }}>
           ⏳ Filtering results...
-          {/* => UI stays responsive during filtering */}
         </div>
       )}
 
-      {/* => Results count */}
       <div style={{ marginBottom: '16px' }}>
         <strong>Results:</strong> {filteredDonations.length} of {donations.length} donations
-        {/* => Count updates after transition completes */}
       </div>
 
-      {/* => Results list */}
+      {/* => Show first 100 results */}
       <div style={{ maxHeight: '400px', overflowY: 'auto', border: '1px solid #ddd' }}>
         {filteredDonations.slice(0, 100).map((donation) => (
-          // => Show first 100 results only
           <div
             key={donation.id}
             style={{
@@ -3251,14 +3180,12 @@ useDeferredValue defers expensive rendering based on state value. React shows st
 ```typescript
 import { useState, useDeferredValue, memo } from 'react';
 
-// => Domain interface
 interface Donation {
   id: string;
   amount: number;
   donor: string;
 }
 
-// => Generate donations for demonstration
 function generateDonations(count: number): Donation[] {
   return Array.from({ length: count }, (_, i) => ({
     id: `donation-${i}`,
@@ -3267,19 +3194,15 @@ function generateDonations(count: number): Donation[] {
   }));
 }
 
-// => Expensive list component
-// => Memoized to prevent unnecessary re-renders
+// => Expensive component: memoized to skip renders when props unchanged
 const ExpensiveDonationList = memo(
   ({ donations, query }: { donations: Donation[]; query: string }) => {
-    // => Simulate expensive rendering
-    // => Each render intentionally slow to demonstrate deferral
+    // => Simulate expensive render (100ms block)
     const startTime = performance.now();
     while (performance.now() - startTime < 100) {
-      // => Block for 100ms to simulate expensive computation
-      // => In production: complex rendering, heavy calculations
+      // => In production: complex calculations, heavy rendering
     }
 
-    // => Filter donations based on query
     const filtered = donations.filter((d) =>
       d.donor.toLowerCase().includes(query.toLowerCase())
     );
@@ -3304,27 +3227,21 @@ const ExpensiveDonationList = memo(
 
 function DeferredValueDemo() {
   const [donations] = useState(() => generateDonations(1000));
-  // => 1000 donations for demonstration
 
   const [query, setQuery] = useState('');
-  // => Search query state (urgent - updates immediately)
+  // => query: urgent, updates immediately
 
-  // => Deferred query value
-  // => React can show stale value during expensive updates
+  // => deferredQuery: can lag behind query during expensive renders
   const deferredQuery = useDeferredValue(query);
-  // => deferredQuery lags behind query during expensive renders
-  // => Allows input to stay responsive
+  // => Keeps input responsive
 
-  // => Check if deferral in progress
   const isStale = query !== deferredQuery;
-  // => true when query updated but deferredQuery still old value
-  // => Indicates expensive render in progress
+  // => true when deferredQuery hasn't caught up to query
 
   return (
     <div>
       <h2>useDeferredValue Demo</h2>
 
-      {/* => Search input */}
       <div style={{ marginBottom: '16px' }}>
         <label>
           Search donations (try typing quickly):
@@ -3332,8 +3249,7 @@ function DeferredValueDemo() {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            // => Updates query immediately
-            // => Input always responsive
+            // => query updates immediately (input responsive)
             style={{
               padding: '8px',
               fontSize: '16px',
@@ -3345,23 +3261,17 @@ function DeferredValueDemo() {
         </label>
       </div>
 
-      {/* => Staleness indicator */}
+      {/* => Show indicator when deferred value lagging */}
       {isStale && (
         <div style={{ padding: '8px', backgroundColor: '#FFF8E1', marginBottom: '16px' }}>
           ⏳ Updating results...
-          {/* => Shows when deferred value lagging behind */}
-          {/* => Input stays responsive during this time */}
         </div>
       )}
 
-      {/* => Expensive list with deferred query */}
+      {/* => Dim list during update */}
       <div style={{ opacity: isStale ? 0.6 : 1, transition: 'opacity 0.2s' }}>
-        {/* => Dim list while update in progress */}
-        {/* => Visual feedback for deferred state */}
         <ExpensiveDonationList donations={donations} query={deferredQuery} />
-        {/* => Uses deferredQuery, not query */}
-        {/* => Re-renders with deferred value (can lag behind) */}
-        {/* => Allows input to stay responsive */}
+        {/* => Uses deferredQuery (can be stale), not query */}
       </div>
 
       {/* => Comparison */}

@@ -7,7 +7,7 @@ description: "Examples 1-27: Kotlin fundamentals, variables, functions, classes,
 tags: ["kotlin", "tutorial", "by-example", "beginner", "fundamentals"]
 ---
 
-## Example 1: Hello World
+### Example 1: Hello World
 
 Every Kotlin program starts with a main function. Unlike Java, Kotlin doesn't require a class wrapper for the main function, and semicolons are optional. The `println` function outputs to standard output with an automatic newline.
 
@@ -32,7 +32,7 @@ fun main() {                        // => Entry point function
 
 ---
 
-## Example 2: Variable Declaration - val vs var
+### Example 2: Variable Declaration - val vs var
 
 Kotlin distinguishes between immutable (`val`) and mutable (`var`) variables to encourage immutability. The compiler infers types automatically, but you can specify them explicitly when needed. Immutable variables prevent accidental reassignment and enable safer concurrent code.
 
@@ -98,7 +98,7 @@ fun main() {                         // => Entry point, no return value (Unit ty
 
 ---
 
-## Example 3: Basic Types and Type Inference
+### Example 3: Basic Types and Type Inference
 
 Kotlin has a rich type system with proper primitives that are represented as objects. Type inference eliminates redundant type declarations while maintaining type safety. All number types have explicit sizes (Byte, Short, Int, Long, Float, Double).
 
@@ -147,7 +147,7 @@ fun main() {                         // => Entry point, demonstrates numeric typ
 
 ---
 
-## Example 4: String Templates
+### Example 4: String Templates
 
 Kotlin's string templates embed expressions directly in strings using `$` for simple variables and `${}` for complex expressions. This eliminates cumbersome string concatenation and improves readability for formatted output.
 
@@ -212,7 +212,7 @@ fun main() {
 
 ---
 
-## Example 5: Functions
+### Example 5: Functions
 
 Kotlin functions are first-class citizens defined with the `fun` keyword. Single-expression functions can use the `=` syntax without braces, and the compiler infers return types. Default and named parameters eliminate function overloading.
 
@@ -283,7 +283,7 @@ fun main() {                         // => Entry point demonstrating function fe
 
 ---
 
-## Example 6: When Expression
+### Example 6: When Expression
 
 Kotlin's `when` replaces Java's switch statement with a more powerful expression that returns values. It supports ranges, type checks, arbitrary expressions, and doesn't require explicit `break` statements.
 
@@ -367,7 +367,7 @@ fun main() {
 
 ---
 
-## Example 7: Ranges and Progression
+### Example 7: Ranges and Progression
 
 Kotlin ranges represent sequences of values with start and end points. They support iteration, membership checks, and progression (step values). Ranges are memory-efficient as they don't materialize all values.
 
@@ -441,7 +441,7 @@ fun main() {
 
 ---
 
-## Example 8: For Loops
+### Example 8: For Loops
 
 Kotlin's for loops iterate over anything that provides an iterator, including ranges, collections, and arrays. The loop variable is automatically declared and scoped to the loop body.
 
@@ -531,7 +531,7 @@ fun main() {                         // => Entry point for loop demonstrations
 
 ---
 
-## Example 9: While and Do-While Loops
+### Example 9: While and Do-While Loops
 
 Kotlin supports traditional while and do-while loops for conditional iteration. The do-while variant guarantees at least one execution before checking the condition.
 
@@ -609,7 +609,7 @@ fun main() {
 
 ---
 
-## Example 10: Null Safety - Nullable Types
+### Example 10: Null Safety - Nullable Types
 
 Kotlin's type system distinguishes between nullable and non-nullable references, eliminating most null pointer exceptions. Use `?` to mark types as nullable and leverage safe call operators to handle null values gracefully.
 
@@ -714,7 +714,7 @@ fun main() {                         // => Entry point demonstrating null safety
 
 ---
 
-## Example 11: Collections - Lists
+### Example 11: Collections - Lists
 
 Kotlin provides both mutable and immutable collections. Immutable lists (created with `listOf`) cannot be modified after creation, promoting safer concurrent code. Mutable lists (created with `mutableListOf`) support adding, removing, and updating elements.
 
@@ -813,7 +813,7 @@ fun main() {                         // => Entry point for list operations demon
 
 ---
 
-## Example 12: Collections - Sets
+### Example 12: Collections - Sets
 
 Sets are unordered collections of unique elements. Kotlin provides immutable `Set` and mutable `MutableSet`. Sets automatically eliminate duplicates and provide efficient membership testing.
 
@@ -900,7 +900,7 @@ fun main() {                         // => Entry point demonstrating set operati
 
 ---
 
-## Example 13: Collections - Maps
+### Example 13: Collections - Maps
 
 Maps store key-value pairs with unique keys. Kotlin provides immutable `Map` and mutable `MutableMap`. Use the `to` infix function or `Pair` to create entries, and access values safely with null-aware operators.
 
@@ -999,7 +999,7 @@ fun main() {
 
 ---
 
-## Example 14: Classes and Objects
+### Example 14: Classes and Objects
 
 Kotlin classes are concise with properties declared in the primary constructor. Properties automatically generate getters (and setters for `var`). The `init` block runs during object initialization for setup logic.
 
@@ -1114,7 +1114,7 @@ fun main() {
 
 ---
 
-## Example 15: Data Classes
+### Example 15: Data Classes
 
 Data classes automatically generate `equals()`, `hashCode()`, `toString()`, and `copy()` methods. They're ideal for holding immutable data and enable destructuring declarations. The `copy()` function creates modified copies for immutability.
 
@@ -1191,7 +1191,7 @@ fun main() {
 
 ---
 
-## Example 16: Inheritance and Open Classes
+### Example 16: Inheritance and Open Classes
 
 Kotlin classes are final by default, preventing unintended inheritance. Mark classes and methods with `open` to allow inheritance and overriding. Subclasses use `:` to inherit and `override` to redefine behavior.
 
@@ -1309,7 +1309,7 @@ fun main() {
 
 ---
 
-## Example 17: Interfaces
+### Example 17: Interfaces
 
 Interfaces define contracts that classes must implement. Unlike Java, Kotlin interfaces can contain default method implementations and properties. Classes can implement multiple interfaces for flexible composition.
 
@@ -1435,7 +1435,7 @@ fun main() {
 
 ---
 
-## Example 18: Abstract Classes
+### Example 18: Abstract Classes
 
 Abstract classes cannot be instantiated and may contain abstract members that subclasses must implement. They can also contain concrete implementations. Use abstract classes when you need shared implementation across related classes.
 
@@ -1555,7 +1555,7 @@ fun main() {
 
 ---
 
-## Example 19: Companion Objects
+### Example 19: Companion Objects
 
 Companion objects provide class-level functionality without static keywords. They enable factory methods, constants, and singleton behavior. Companion objects can implement interfaces and be accessed through the class name.
 
@@ -1678,7 +1678,7 @@ fun main() {
 
 ---
 
-## Example 20: Object Declarations (Singletons)
+### Example 20: Object Declarations (Singletons)
 
 Object declarations create singletons that are thread-safe and lazily initialized. Unlike classes, objects are instantiated once and accessed by name. They're ideal for stateless utilities and configuration holders.
 
@@ -1785,7 +1785,7 @@ fun main() {
 
 ---
 
-## Example 21: Sealed Classes
+### Example 21: Sealed Classes
 
 Sealed classes represent restricted class hierarchies where all subclasses are known at compile time. They enable exhaustive `when` expressions without `else` branches and provide type-safe state modeling.
 
@@ -1912,7 +1912,7 @@ fun main() {
 
 ---
 
-## Example 22: Extension Functions
+### Example 22: Extension Functions
 
 Extension functions add methods to existing classes without modifying their source code. They provide a clean way to add utility methods to library classes or third-party types. Extensions are resolved statically, not dynamically.
 
@@ -1979,7 +1979,7 @@ fun main() {
 
 ---
 
-## Example 23: Lambdas and Higher-Order Functions
+### Example 23: Lambdas and Higher-Order Functions
 
 Kotlin treats functions as first-class citizens. Lambdas are anonymous functions passed as arguments or stored in variables. Higher-order functions accept functions as parameters or return them, enabling functional programming patterns.
 
@@ -2052,7 +2052,7 @@ fun main() {
 
 ---
 
-## Example 24: Scope Functions - let, run, with, apply, also
+### Example 24: Scope Functions - let, run, with, apply, also
 
 Scope functions execute a block of code in the context of an object. They differ in how they reference the context (`this` vs `it`) and what they return (context object vs lambda result). Choose based on your use case.
 
@@ -2107,7 +2107,7 @@ fun main() {
 
 ---
 
-## Example 25: Exception Handling
+### Example 25: Exception Handling
 
 Kotlin's exception handling uses try-catch-finally blocks similar to Java, but `try` is an expression that can return values. All exceptions are unchecked (no checked exception requirement), simplifying error handling.
 
@@ -2251,7 +2251,7 @@ fun main() {
 
 ---
 
-## Example 26: Type Checks and Smart Casts
+### Example 26: Type Checks and Smart Casts
 
 Kotlin's `is` operator checks types at runtime and automatically smart casts the variable in the appropriate scope. This eliminates explicit casting and makes type-safe code more concise.
 
@@ -2345,7 +2345,7 @@ fun main() {
 
 ---
 
-## Example 27: Generics Basics
+### Example 27: Generics Basics
 
 Generics enable type-safe containers and functions that work with multiple types. Type parameters are specified in angle brackets and provide compile-time type safety without runtime overhead.
 

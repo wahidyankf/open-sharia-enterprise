@@ -50,79 +50,139 @@ graph TD
 ```
 
 ```yaml
-apiVersion: v1
-kind: Service
+apiVersion: v1 # => Core Kubernetes API
+kind: Service # => Headless Service for StatefulSet
 metadata:
-  name: database # => Headless Service for StatefulSet
+  name:
+    database # => Headless Service name
+    # => Required for StatefulSet DNS
 spec:
+  # => Service specification
   clusterIP:
     None # => Headless (no cluster IP allocated)
     # => DNS returns Pod IPs directly
     # => Enables individual Pod addressing
+    # => "None" is special value (not null)
   selector:
-    app: database # => Matches StatefulSet Pods
+    # => Pod selector
+    app:
+      database # => Matches StatefulSet Pods
+      # => Routes to StatefulSet Pods
   ports:
-    - port: 5432 # => PostgreSQL port
-      name: postgres # => Named port for clarity
+    # => Port configuration
+    - port:
+        5432 # => PostgreSQL port
+        # => Standard PostgreSQL port
+      name:
+        postgres # => Named port for clarity
+        # => Referenced by StatefulSet
 
 ---
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: apps/v1 # => Apps API for StatefulSets
+kind: StatefulSet # => StatefulSet resource
 metadata:
-  name: database # => StatefulSet name
+  name:
+    database # => StatefulSet name
+    # => Creates Pods with stable identities
 spec:
+  # => StatefulSet specification
   serviceName:
     database # => Associates with headless Service above
     # => Enables predictable DNS names
     # => Required field for StatefulSet
+    # => Links to Service for DNS
   replicas:
     3 # => Creates 3 Pods: database-0, database-1, database-2
     # => Each Pod gets unique ordinal suffix
+    # => Ordered creation and deletion
   selector:
+    # => Pod selector (immutable)
     matchLabels:
-      app: database # => Must match template labels
+      app:
+        database # => Must match template labels
+        # => Links StatefulSet to Pods
   template:
+    # => Pod template
     metadata:
       labels:
-        app: database # => Labels for Service selector and Pod identity
+        # => Pod labels
+        app:
+          database # => Labels for Service selector and Pod identity
+          # => Must match selector
     spec:
+      # => Pod specification
       containers:
-        - name: postgres # => Container name
-          image: postgres:15 # => PostgreSQL 15 image
+        # => Container list
+        - name:
+            postgres # => Container name
+            # => PostgreSQL database
+          image:
+            postgres:15 # => PostgreSQL 15 image
+            # => Version-pinned
           ports:
-            - containerPort: 5432 # => PostgreSQL listening port
-              name: postgres # => Named port matches Service
+            # => Container ports
+            - containerPort:
+                5432 # => PostgreSQL listening port
+                # => Backend port
+              name:
+                postgres # => Named port matches Service
+                # => Port name reference
           volumeMounts:
-            - name: data # => References volumeClaimTemplate below
+            # => Volume mount configuration
+            - name:
+                data # => References volumeClaimTemplate below
+                # => Links to PVC template
               mountPath:
                 /var/lib/postgresql/data # => PostgreSQL data directory
                 # => Data persists across restarts
+                # => Mount point for persistent storage
           env:
+            # => Environment variables
             - name: POSTGRES_PASSWORD
+              # => Postgres password env var
               value:
                 "example" # => Database password
                 # => Use Secret in production for security
+                # => Hardcoded for demo only
   volumeClaimTemplates: # => Creates PVC per Pod automatically
+    # => PVC template (one per Pod)
     - metadata:
         name:
           data # => PVC name pattern: data-database-0, data-database-1, data-database-2
           # => Unique PVC per Pod instance
+          # => Persistent across Pod restarts
       spec:
+        # => PVC specification
         accessModes:
           ["ReadWriteOnce"] # => Single node read-write access
           # => Most common for databases
+          # => RWO: one node mounts read-write
         resources:
+          # => Storage resource request
           requests:
             storage:
               10Gi # => Each Pod gets dedicated 10 GiB volume
               # => Independent storage per database instance
+              # => Provisioned from StorageClass
 
 # StatefulSet guarantees:
 # => Pods created in order: database-0, then database-1, then database-2
+# => Sequential startup with health checks
 # => Pods deleted in reverse order: database-2, then database-1, then database-0
+# => Graceful shutdown sequence
 # => Each Pod has stable hostname: database-0.database.default.svc.cluster.local
+# => Predictable DNS for peer discovery
 # => PVCs persist across Pod restarts and rescheduling
+# => Data survives Pod deletion and recreation
 # => Pod identity preserved across rescheduling to different nodes
+# => Ordinal suffix stays with Pod
+
+# Scaling behavior:
+# => Scale up: kubectl scale statefulset database --replicas=5
+# => Creates database-3, then database-4 (ordered)
+# => Scale down: kubectl scale statefulset database --replicas=2
+# => Deletes database-2, then database-1 (reverse order)
+# => PVCs remain after scaling down (manual deletion required)
 ```
 
 **Key Takeaway**: Use StatefulSets for databases, message queues, and applications requiring stable network identities and persistent storage; StatefulSets guarantee ordered deployment/scaling and maintain PVC associations across Pod restarts.
@@ -136,51 +196,91 @@ spec:
 StatefulSets support RollingUpdate (default) and OnDelete update strategies. RollingUpdate updates Pods in reverse ordinal order (highest to lowest), while OnDelete requires manual Pod deletion for updates.
 
 ```yaml
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: apps/v1 # => Apps API for StatefulSets
+kind: StatefulSet # => StatefulSet resource
 metadata:
-  name: web-stateful # => StatefulSet name
+  name:
+    web-stateful # => StatefulSet name
+    # => Manages web application Pods
 spec:
-  serviceName: web # => Headless Service name
-  replicas: 4 # => Total Pods: web-stateful-0, 1, 2, 3
+  # => StatefulSet specification
+  serviceName:
+    web # => Headless Service name
+    # => Required for DNS
+  replicas:
+    4 # => Total Pods: web-stateful-0, 1, 2, 3
+    # => Four stateful instances
   updateStrategy:
+    # => Update strategy configuration
     type:
       RollingUpdate # => Rolling update strategy (default)
       # => Updates Pods in reverse order: 3→2→1→0
       # => Alternative: OnDelete (manual Pod deletion)
+      # => RollingUpdate is automatic and gradual
     rollingUpdate:
+      # => Rolling update parameters
       partition:
         2 # => Only update Pods with ordinal >= partition
         # => Pods 2 and 3 get new version
         # => Pods 0 and 1 stay old version
         # => Useful for canary testing
+        # => Default: 0 (all Pods updated)
   selector:
+    # => Pod selector (immutable)
     matchLabels:
-      app: web-stateful # => Must match template labels
+      app:
+        web-stateful # => Must match template labels
+        # => Links StatefulSet to Pods
   template:
+    # => Pod template
     metadata:
       labels:
-        app: web-stateful # => Pod labels
+        # => Pod labels
+        app:
+          web-stateful # => Pod labels
+          # => Must match selector
     spec:
+      # => Pod specification
       containers:
-        - name: nginx # => Container name
+        # => Container list
+        - name:
+            nginx # => Container name
+            # => nginx web server
           image:
             nginx:1.24 # => Current version
             # => Update to nginx:1.25 to trigger rolling update
             # => Pod 3 updates first, then Pod 2
+            # => Controlled by partition value
           ports:
-            - containerPort: 80 # => HTTP port
-
+            # => Container ports
+            - containerPort:
+                80 # => HTTP port
+                # => Standard HTTP port
 
 # Update behavior with partition=2:
 # => kubectl set image statefulset/web-stateful nginx=nginx:1.25
+# => Triggers update for Pods >= partition
 # => Pod web-stateful-3: updated to nginx:1.25 (ordinal 3 >= partition 2)
+# => First canary Pod (highest ordinal)
 # => Pod web-stateful-2: updated to nginx:1.25 (ordinal 2 >= partition 2)
+# => Second canary Pod
 # => Pod web-stateful-1: remains at nginx:1.24 (ordinal 1 < partition 2)
+# => Stable version (below partition)
 # => Pod web-stateful-0: remains at nginx:1.24 (ordinal 0 < partition 2)
+# => Primary Pod stays on stable version
 # => Observe canary Pods (2, 3) for issues
+# => Monitor metrics, logs, errors
 # => Set partition=0 to complete update to all Pods
+# => kubectl patch statefulset web-stateful -p '{"spec":{"updateStrategy":{"rollingUpdate":{"partition":0}}}}'
+# => Updates remaining Pods (1, then 0)
 # => Rollback: kubectl rollout undo statefulset/web-stateful
+# => Reverts to previous version
+
+# Partition use cases:
+# => Canary deployments: test new version on subset
+# => Gradual rollouts: reduce blast radius
+# => A/B testing: different versions in same StatefulSet
+# => Blue-green at Pod level: instant switchover
 ```
 
 **Key Takeaway**: Use partition in RollingUpdate strategy for canary deployments on StatefulSets; update high-ordinal Pods first while keeping low-ordinal Pods on stable version for gradual rollout validation.
@@ -194,75 +294,150 @@ spec:
 Init containers in StatefulSets can prepare persistent volumes, wait for dependencies, or perform one-time setup before the main application starts. This pattern ensures data initialization completes before database or cache services become ready.
 
 ```yaml
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: apps/v1 # => Apps API for StatefulSets
+kind: StatefulSet # => StatefulSet resource
 metadata:
-  name: redis-cluster # => StatefulSet name
+  name:
+    redis-cluster # => StatefulSet name
+    # => Redis cluster management
 spec:
-  serviceName: redis # => Headless Service for cluster
-  replicas: 3 # => Three Redis instances: redis-cluster-0, 1, 2
+  # => StatefulSet specification
+  serviceName:
+    redis # => Headless Service for cluster
+    # => Required for DNS
+  replicas:
+    3 # => Three Redis instances: redis-cluster-0, 1, 2
+    # => Clustered Redis deployment
   selector:
+    # => Pod selector (immutable)
     matchLabels:
-      app: redis # => Must match template labels
+      app:
+        redis # => Must match template labels
+        # => Links StatefulSet to Pods
   template:
+    # => Pod template
     metadata:
       labels:
-        app: redis # => Pod labels
+        # => Pod labels
+        app:
+          redis # => Pod labels
+          # => Must match selector
     spec:
+      # => Pod specification
       initContainers:
-        - name: init-redis # => Prepares Redis configuration before main container
-          image: redis:7 # => Same image as main container
+        # => Init containers (run before main containers)
+        - name:
+            init-redis # => Init container name
+            # => Prepares Redis configuration before main container
+          image:
+            redis:7 # => Same image as main container
+            # => Ensures tooling compatibility
           command:
+            # => Init container command
             - sh # => Shell interpreter
             - -c # => Execute following script
             - | # => Multi-line script
+              # => Pipe preserves newlines
               echo "Initializing Redis config for Pod $POD_NAME"
+              # => Log initialization
               cp /config/redis.conf /data/redis.conf
+              # => Copy template to writable volume
               sed -i "s/POD_NAME/${POD_NAME}/g" /data/redis.conf
               # => Copies template config to data volume
               # => Replaces POD_NAME placeholder with actual Pod name
+              # => Customizes config per Pod
           env:
+            # => Environment variables
             - name: POD_NAME
+              # => Pod name variable
               valueFrom:
+                # => Value from Downward API
                 fieldRef:
+                  # => Field reference
                   fieldPath:
                     metadata.name # => Gets Pod name: redis-cluster-0
                     # => Uses Downward API
+                    # => Unique per Pod
           volumeMounts:
-            - name: config # => Reads from ConfigMap
-              mountPath: /config # => Mount point for config template
-            - name: data # => Writes to PVC
-              mountPath: /data # => Shared with main container
+            # => Volume mounts for init container
+            - name:
+                config # => Reads from ConfigMap
+                # => Template source
+              mountPath:
+                /config # => Mount point for config template
+                # => Read-only ConfigMap
+            - name:
+                data # => Writes to PVC
+                # => Persistent storage
+              mountPath:
+                /data # => Shared with main container
+                # => Writable volume
 
       containers:
-        - name: redis # => Main Redis container
-          image: redis:7 # => Redis 7 image
+        # => Main containers
+        - name:
+            redis # => Main Redis container
+            # => Redis server
+          image:
+            redis:7 # => Redis 7 image
+            # => Version-pinned
           command:
+            # => Container startup command
             ["redis-server", "/data/redis.conf"] # => Starts with custom config
             # => Config prepared by init container
+            # => Uses customized configuration
           ports:
-            - containerPort: 6379 # => Redis port
+            # => Container ports
+            - containerPort:
+                6379 # => Redis port
+                # => Standard Redis port
           volumeMounts:
-            - name: data # => Same volume as init container
+            # => Volume mounts
+            - name:
+                data # => Same volume as init container
+                # => Shared PVC
               mountPath:
                 /data # => Reads config prepared by init
                 # => Stores Redis data
+                # => Persistent across restarts
 
       volumes:
-        - name: config # => ConfigMap volume
+        # => Volume definitions
+        - name:
+            config # => ConfigMap volume
+            # => Template volume
           configMap:
+            # => ConfigMap volume source
             name:
               redis-config # => References ConfigMap with template
               # => Contains redis.conf template
+              # => Must exist before Pod creation
 
   volumeClaimTemplates:
+    # => PVC template (one per Pod)
     - metadata:
-        name: data # => PVC name pattern: data-redis-cluster-0, 1, 2
+        name:
+          data # => PVC name pattern: data-redis-cluster-0, 1, 2
+          # => Unique PVC per Pod
       spec:
-        accessModes: ["ReadWriteOnce"] # => Single node access
+        # => PVC specification
+        accessModes:
+          ["ReadWriteOnce"] # => Single node access
+          # => Standard for StatefulSets
         resources:
+          # => Storage resource request
           requests:
-            storage: 5Gi # => Each Redis instance gets 5 GiB
+            storage:
+              5Gi # => Each Redis instance gets 5 GiB
+              # => Per-Pod storage allocation
+
+# Init container execution:
+# => Init containers run before main containers
+# => Sequential execution (if multiple init containers)
+# => Main container waits for all init containers to complete
+# => Init containers can access same volumes as main containers
+# => Useful for: data preparation, dependency waiting, permission setup
+# => Init containers restart on failure until successful
 ```
 
 **Key Takeaway**: Use init containers in StatefulSets for data initialization, configuration templating, or dependency waiting; init containers have access to volumeClaimTemplates volumes and Pod metadata for per-instance customization.
@@ -276,45 +451,82 @@ spec:
 Pod Management Policy controls whether StatefulSet creates/deletes Pods sequentially (OrderedReady, default) or in parallel (Parallel). Parallel policy speeds up scaling but loses ordering guarantees.
 
 ```yaml
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: apps/v1 # => Apps API for StatefulSets
+kind: StatefulSet # => StatefulSet resource
 metadata:
-  name: parallel-stateful # => StatefulSet name
+  name:
+    parallel-stateful # => StatefulSet name
+    # => Uses parallel Pod management
 spec:
-  serviceName: parallel # => Headless Service name
-  replicas: 10 # => Pods: parallel-stateful-0 through parallel-stateful-9
+  # => StatefulSet specification
+  serviceName:
+    parallel # => Headless Service name
+    # => Required for DNS
+  replicas:
+    10 # => Pods: parallel-stateful-0 through parallel-stateful-9
+    # => Ten parallel instances
   podManagementPolicy:
     Parallel # => Parallel Pod creation/deletion
     # => Default: OrderedReady (sequential)
     # => Parallel: all Pods created simultaneously
     # => Faster scaling but no ordering guarantee
     # => Use for independent workloads
+    # => No sequential dependency
   selector:
+    # => Pod selector (immutable)
     matchLabels:
-      app: parallel # => Must match template labels
+      app:
+        parallel # => Must match template labels
+        # => Links StatefulSet to Pods
   template:
+    # => Pod template
     metadata:
       labels:
-        app: parallel # => Pod labels
+        # => Pod labels
+        app:
+          parallel # => Pod labels
+          # => Must match selector
     spec:
+      # => Pod specification
       containers:
-        - name: nginx # => Container name
-          image: nginx:1.24 # => Nginx web server
-
+        # => Container list
+        - name:
+            nginx # => Container name
+            # => nginx web server
+          image:
+            nginx:1.24 # => Nginx web server
+            # => Version-pinned
 
 # OrderedReady (default):
 # => Scale 0→10: creates Pods 0,1,2,3,4,5,6,7,8,9 sequentially
+# => Sequential startup with health checks
 # => Each Pod must be Ready before next starts
 # => Pod 1 waits for Pod 0 Ready, Pod 2 waits for Pod 1 Ready, etc.
+# => Guarantees ordered initialization
 # => Scale 10→0: deletes in reverse order 9,8,7,6,5,4,3,2,1,0
+# => Sequential shutdown
 # => Each deletion waits for previous Pod termination
+# => Graceful teardown sequence
+# => Use for: databases, clustered apps requiring bootstrap order
 
 # Parallel:
 # => Scale 0→10: creates all 10 Pods simultaneously
+# => All Pods start at once
 # => No waiting for Ready status between Pods
+# => Scheduler places all Pods in parallel
 # => All Pods start in parallel, reaching Ready independently
+# => Health checks run concurrently
 # => Scale 10→0: deletes all 10 Pods simultaneously
+# => Immediate parallel termination
 # => Terminates entire StatefulSet quickly
+# => No graceful ordering
+# => Use for: caches, stateless-like workloads with persistence
+
+# Performance comparison:
+# => OrderedReady scaling 0→10: ~10-20 minutes (sequential)
+# => Parallel scaling 0→10: ~2-3 minutes (concurrent)
+# => 80-90% time reduction for independent workloads
+# => Trade-off: speed vs. initialization guarantees
 ```
 
 **Key Takeaway**: Use Parallel podManagementPolicy for faster scaling when Pod ordering is not critical; keep OrderedReady (default) for databases and applications requiring sequential initialization.
@@ -328,58 +540,107 @@ spec:
 PersistentVolumeClaim retention policy controls whether PVCs are deleted when StatefulSet scales down or is deleted. WhenDeleted retains PVCs on scale-down but deletes on StatefulSet deletion, while Retain preserves PVCs in all cases.
 
 ```yaml
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: apps/v1 # => Apps API for StatefulSets
+kind: StatefulSet # => StatefulSet resource
 metadata:
-  name: retained-stateful # => StatefulSet name
+  name:
+    retained-stateful # => StatefulSet name
+    # => PVC retention configuration
 spec:
-  serviceName: retained # => Headless Service name
-  replicas: 3 # => Three Pods with persistent storage
+  # => StatefulSet specification
+  serviceName:
+    retained # => Headless Service name
+    # => Required for DNS
+  replicas:
+    3 # => Three Pods with persistent storage
+    # => Each with dedicated PVC
   persistentVolumeClaimRetentionPolicy:
+    # => PVC retention policy (Kubernetes 1.23+)
     whenDeleted:
       Retain # => Retain PVCs when StatefulSet deleted
       # => Prevents accidental data loss
       # => Alternative: Delete (removes PVCs automatically)
+      # => Production safety mechanism
     whenScaled:
       Retain # => Retain PVCs when scaling down
       # => PVCs persist for scale-up reattachment
       # => Alternative: Delete (removes PVCs of deleted Pods)
+      # => Enables data recovery on scale-up
   selector:
+    # => Pod selector (immutable)
     matchLabels:
-      app: retained # => Must match template labels
+      app:
+        retained # => Must match template labels
+        # => Links StatefulSet to Pods
   template:
+    # => Pod template
     metadata:
       labels:
-        app: retained # => Pod labels
+        # => Pod labels
+        app:
+          retained # => Pod labels
+          # => Must match selector
     spec:
+      # => Pod specification
       containers:
-        - name: nginx # => Container name
-          image: nginx:1.24 # => Nginx web server
+        # => Container list
+        - name:
+            nginx # => Container name
+            # => nginx web server
+          image:
+            nginx:1.24 # => Nginx web server
+            # => Version-pinned
           volumeMounts:
-            - name: data # => References volumeClaimTemplate
+            # => Volume mounts
+            - name:
+                data # => References volumeClaimTemplate
+                # => Links to PVC template
               mountPath:
                 /usr/share/nginx/html # => Web root directory
                 # => Data persists across restarts
+                # => Nginx serves content from here
 
   volumeClaimTemplates:
+    # => PVC template (one per Pod)
     - metadata:
-        name: data # => PVC name pattern: data-retained-stateful-0, 1, 2
+        name:
+          data # => PVC name pattern: data-retained-stateful-0, 1, 2
+          # => Unique PVC per Pod
       spec:
-        accessModes: ["ReadWriteOnce"] # => Single node access
+        # => PVC specification
+        accessModes:
+          ["ReadWriteOnce"] # => Single node access
+          # => Standard for StatefulSets
         resources:
+          # => Storage resource request
           requests:
-            storage: 5Gi # => Each Pod gets 5 GiB persistent storage
-
+            storage:
+              5Gi # => Each Pod gets 5 GiB persistent storage
+              # => Per-Pod allocation
 
 # Retention behavior:
 # => Scale 3→1: Pods 2 and 1 deleted, but PVCs data-retained-stateful-2 and data-retained-stateful-1 retained
+# => Pods terminate but volumes persist
 # => PVCs remain Available (not Bound) after Pod deletion
+# => Status changes from Bound to Available
 # => Scale 1→3: Pods 1 and 2 recreated, attach to existing PVCs (data preserved)
+# => Automatic PVC reattachment by ordinal
 # => Original data automatically recovered on scale-up
+# => Zero data loss on scale operations
 # => kubectl delete statefulset retained-stateful: StatefulSet deleted, PVCs retained
+# => StatefulSet gone but storage remains
 # => PVCs become orphaned (no owner) but still exist
+# => kubectl get pvc shows all PVCs Available
 # => Manual cleanup required: kubectl delete pvc data-retained-stateful-0 data-retained-stateful-1 data-retained-stateful-2
+# => Explicit deletion prevents accidental loss
 # => Prevents storage cost accumulation from abandoned volumes
+# => Cloud storage billing continues
+
+# Policy combinations:
+# => whenDeleted=Retain, whenScaled=Retain: Maximum safety (production default)
+# => whenDeleted=Retain, whenScaled=Delete: Free storage on scale-down
+# => whenDeleted=Delete, whenScaled=Delete: Auto-cleanup (development only)
+# => whenDeleted=Delete, whenScaled=Retain: Unusual combination
 ```
 
 **Key Takeaway**: Use Retain policy for production databases to prevent accidental data loss during scaling or deletion; remember to manually clean up PVCs when no longer needed to avoid storage costs.
@@ -411,66 +672,123 @@ graph TD
 ```
 
 ```yaml
-apiVersion: apps/v1
-kind: DaemonSet
+apiVersion: apps/v1 # => Apps API for DaemonSets
+kind: DaemonSet # => DaemonSet resource
 metadata:
-  name: log-collector # => DaemonSet name
+  name:
+    log-collector # => DaemonSet name
+    # => Log collection agent
   labels:
-    app: log-collector # => DaemonSet labels
+    # => DaemonSet labels
+    app:
+      log-collector # => DaemonSet labels
+      # => Organizational metadata
 spec:
+  # => DaemonSet specification
   selector:
+    # => Pod selector
     matchLabels:
-      app: log-collector # => Must match template labels
+      app:
+        log-collector # => Must match template labels
+        # => Links DaemonSet to Pods
   template:
+    # => Pod template (one per node)
     metadata:
       labels:
-        app: log-collector # => Pod labels
+        # => Pod labels
+        app:
+          log-collector # => Pod labels
+          # => Must match selector
     spec:
+      # => Pod specification
       containers:
-        - name: fluentd # => Container name
+        # => Container list
+        - name:
+            fluentd # => Container name
+            # => Fluentd log aggregator
           image:
             fluent/fluentd:v1.16 # => Log forwarding agent
             # => Fluentd version 1.16
+            # => Lightweight log shipper
           volumeMounts:
-            - name: varlog # => Mounts node's /var/log
-              mountPath: /var/log # => Container path
+            # => Volume mount configuration
+            - name:
+                varlog # => Mounts node's /var/log
+                # => System logs volume
+              mountPath:
+                /var/log # => Container path
+                # => Reads node's /var/log directory
               readOnly:
                 true # => Read-only access for safety
                 # => Prevents accidental log modification
-            - name: varlibdockercontainers # => Mounts Docker container logs
-              mountPath: /var/lib/docker/containers # => Docker log directory
-              readOnly: true # => Read-only access
+                # => Security best practice
+            - name:
+                varlibdockercontainers # => Mounts Docker container logs
+                # => Container logs volume
+              mountPath:
+                /var/lib/docker/containers # => Docker log directory
+                # => Container stdout/stderr logs
+              readOnly:
+                true # => Read-only access
+                # => No write permissions needed
           resources:
+            # => Resource constraints
             limits:
+              # => Maximum resource usage
               memory:
                 200Mi # => Maximum memory usage
                 # => OOM kill if exceeded
+                # => Prevents node resource exhaustion
             requests:
+              # => Guaranteed resource allocation
               cpu:
                 100m # => Minimum CPU allocation
                 # => 0.1 CPU cores guaranteed
+                # => Scheduler guarantee
               memory:
                 200Mi # => Minimum memory allocation
                 # => Scheduling guarantee
+                # => Reserved on node
 
       volumes:
-        - name: varlog # => Volume name
+        # => Volume definitions (hostPath for node access)
+        - name:
+            varlog # => Volume name
+            # => System logs volume
           hostPath:
+            # => Host filesystem mount
             path:
               /var/log # => Node's /var/log directory
               # => Accesses node filesystem
-        - name: varlibdockercontainers # => Volume name
+              # => Direct node access
+        - name:
+            varlibdockercontainers # => Volume name
+            # => Container logs volume
           hostPath:
+            # => Host filesystem mount
             path:
               /var/lib/docker/containers # => Node's container logs
               # => Docker/containerd logs
+              # => Runtime-specific path
 
 # DaemonSet behavior:
 # => Creates 1 Pod per node automatically
+# => Scheduled to every node (or subset with nodeSelector)
 # => New node joins cluster → Pod created on new node within seconds
+# => Automatic deployment on scale-out
 # => Node removed → Pod deleted automatically
+# => Cleanup on node drain/delete
 # => kubectl get daemonset shows: DESIRED=3, CURRENT=3, READY=3 (3 nodes)
+# => DESIRED equals node count
 # => DESIRED equals number of nodes matching nodeSelector (all nodes if no selector)
+# => All nodes if no nodeSelector specified
+
+# DaemonSet use cases:
+# => Log collectors (Fluentd, Filebeat)
+# => Monitoring agents (Datadog, Prometheus node-exporter)
+# => Network plugins (Calico, Cilium)
+# => Storage daemons (Ceph, GlusterFS)
+# => Node-level services requiring presence everywhere
 ```
 
 **Key Takeaway**: Use DaemonSets for node-level services requiring presence on every node; DaemonSets automatically handle node additions/removals and support node selectors for subset deployment.

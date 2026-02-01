@@ -9,7 +9,7 @@ tags:
   ["spring-data-jpa", "tutorial", "by-example", "advanced", "specifications", "criteria-api", "auditing", "performance"]
 ---
 
-## Example 61: Basic Specification with Single Predicate
+### Example 61: Basic Specification with Single Predicate
 
 Specifications provide type-safe dynamic query building using the Criteria API.
 
@@ -72,7 +72,7 @@ public class ProductService {                                 // => Service laye
 
 **Why It Matters**: Specifications provide type-safe dynamic query construction eliminating string-based SQL that causes 50% of query-related production bugs through typos and SQL injection vulnerabilities. The Criteria API integration enables compile-time validation of entity attributes, catching invalid field references before deployment versus runtime errors. Enterprise search features using Specifications report 90% reduction in query construction defects compared to string concatenation approaches.
 
-## Example 62: Combining Specifications with AND/OR
+### Example 62: Combining Specifications with AND/OR
 
 Build complex queries by composing simple specifications using logical operators.
 
@@ -166,7 +166,7 @@ public class ProductService {                                 // => Service laye
 
 **Why It Matters**: Specification composition with and/or enables building complex search queries from simple reusable predicates, reducing code duplication by 70-80% compared to custom @Query for every filter combination. The type-safe Criteria API prevents SQL injection and catches entity attribute typos at compile time, eliminating runtime errors. However, overly complex Specifications (10+ AND/OR conditions) generate inefficient SQL with excessive joins - measure query performance and simplify to custom @Query when Specification readability or performance degrades.
 
-## Example 63: Dynamic Query Building with Null-Safe Specifications
+### Example 63: Dynamic Query Building with Null-Safe Specifications
 
 Build queries dynamically based on optional filter parameters.
 
@@ -238,7 +238,7 @@ public class ProductService {
 
 **Why It Matters**: Null-safe Specifications with Specification.where(null) eliminate brittle if-else chains for optional search filters, reducing cyclomatic complexity by 60% and improving testability through pure functional composition. The pattern adapts queries to user input dynamically, preventing empty WHERE clauses or malformed SQL from missing parameters. Production search APIs using null-safe Specifications report 90% reduction in NullPointerException incidents and 50% faster feature development for adding new filters without modifying existing code.
 
-## Example 64: Specifications with Joins
+### Example 64: Specifications with Joins
 
 Navigate entity relationships in specifications using joins.
 
@@ -369,7 +369,7 @@ public class OrderService {                                   // => Service laye
 
 **Why It Matters**: Specifications with joins enable type-safe querying across entity relationships without string-based JPA metamodel, improving refactoring safety when relationships change. The root.join() method generates proper LEFT/INNER JOIN SQL automatically, preventing Cartesian products and N+1 queries from manual association navigation. However, multiple joins in single Specification can create fetch join limits (Hibernate allows one collection fetch join), requiring separate Specifications for different relationship loading strategies to avoid MultiBagFetchException.
 
-## Example 65: Specifications with NOT and Complex Predicates
+### Example 65: Specifications with NOT and Complex Predicates
 
 Use negation and complex predicate logic in specifications.
 
@@ -506,7 +506,7 @@ public class ProductService {
 
 **Why It Matters**: Complex predicate composition with NOT, IN, BETWEEN, and logical operators enables full SQL expressiveness through type-safe Criteria API, eliminating 95% of native SQL needs. The cb.and/or/not methods support arbitrary nesting for business rules like '(premium OR loyal) AND NOT blacklisted', matching SQL capabilities while maintaining database portability. However, deeply nested predicates (5+ levels) generate unreadable SQL and confuse query optimizers - refactor complex Specifications into custom @Query with documented SQL for maintainability.
 
-## Example 66: Specifications with Sorting and Pagination
+### Example 66: Specifications with Sorting and Pagination
 
 Combine specifications with sorting and pagination for efficient data retrieval.
 
@@ -662,7 +662,7 @@ public class ProductController {                              // => REST API for
 
 **Why It Matters**: Combining Specifications with Pageable enables dynamic filtered pagination in single method call, eliminating duplicate code for paginated vs non-paginated search endpoints. The integration automatically generates optimized COUNT queries respecting WHERE conditions, ensuring accurate pagination metadata. Production API gateways with 50+ search endpoints report 85% code reduction by composing Specifications with pagination versus custom repositories, while maintaining sub-100ms response times for complex filtered queries on million-row tables.
 
-## Example 67: Specifications with Distinct and Group By
+### Example 67: Specifications with Distinct and Group By
 
 Use DISTINCT queries and aggregations in specifications.
 
@@ -795,7 +795,7 @@ public class CustomOrderRepository {
 
 **Why It Matters**: Specification inheritance and composition promote DRY principles, enabling reusable query fragments like 'active and not deleted' applied across multiple entities. The pattern creates domain-specific query languages through expressive method names (isActive, hasRecentActivity, belongsToTenant), improving code readability by 70%. However, over-abstraction with deep Specification hierarchies (4+ levels) obscures actual query logic, requiring balance between reuse and explicitness for maintainability in teams larger than 5 developers.
 
-## Example 68: Specifications with Case-Insensitive and Null Checks
+### Example 68: Specifications with Case-Insensitive and Null Checks
 
 Handle case-insensitive searches and null-safe filtering.
 
@@ -967,7 +967,7 @@ public class ProductService {
 
 **Why It Matters**: Metamodel-based Specifications using JPA Metamodel (SingularAttribute, CollectionAttribute) provide compile-time safety against entity attribute renames, catching breaking changes during compilation instead of runtime. The static metamodel classes enable IDE autocomplete and refactoring support, reducing query maintenance burden by 50% during entity schema evolution. However, metamodel generation requires annotation processing configuration and increases build complexity, making it worthwhile only for codebases with 20+ entities where entity changes happen frequently.
 
-## Example 69: Basic Criteria API Query
+### Example 69: Basic Criteria API Query
 
 Use Criteria API directly for full control over query construction.
 
@@ -1072,7 +1072,7 @@ public class ProductCriteriaRepository {
 
 **Why It Matters**: CriteriaBuilder provides low-level query construction for advanced SQL features like CASE WHEN, COALESCE, and aggregate functions unavailable in derived query methods. The programmatic query building enables full JPA Criteria API power for complex reporting queries requiring grouped aggregations and subquery EXISTS checks. However, Criteria API verbosity (5-10x more code than JPQL) makes it unsuitable for simple queries - reserve for dynamic queries where Specifications lack needed SQL features, using @Query for static complex queries.
 
-## Example 70: Criteria API with Joins and Path Expressions
+### Example 70: Criteria API with Joins and Path Expressions
 
 Navigate relationships using Path and Join in Criteria API.
 
@@ -1165,7 +1165,7 @@ public class OrderCriteriaRepository {
 
 **Why It Matters**: CriteriaQuery with aggregate functions (SUM, AVG, COUNT, MIN, MAX) enables type-safe reporting queries without string-based JPQL, improving refactoring safety and IDE support. The cb.sum/avg methods return typed expressions preventing ClassCastException from wrong result types. However, aggregate queries bypass entity loading and return Object[] or DTOs, requiring manual type mapping and losing JPA's automatic entity management - consider Spring Data projections or QueryDSL for cleaner aggregate query syntax.
 
-## Example 71: Criteria API with Subqueries
+### Example 71: Criteria API with Subqueries
 
 Build complex queries with subqueries using Criteria API.
 
@@ -1259,7 +1259,7 @@ public class ProductCriteriaRepository {
 
 **Why It Matters**: GROUP BY with HAVING clauses in Criteria API enables filtered aggregations like 'categories with average price > $100' through type-safe query construction, eliminating error-prone string JPQL for reporting. The pattern generates database-portable GROUP BY SQL across vendors, handling HAVING differences between PostgreSQL and MySQL automatically. However, Criteria API GROUP BY verbosity (20+ lines for simple grouping) and lack of strong typing for grouped results make @Query with DTO projections 3-4x more maintainable for typical reporting queries.
 
-## Example 72: Criteria API with Dynamic Predicates
+### Example 72: Criteria API with Dynamic Predicates
 
 Build queries dynamically based on runtime conditions.
 
@@ -1417,7 +1417,7 @@ public class ProductService {
 
 **Why It Matters**: Subqueries in Criteria API enable complex correlated queries and EXISTS checks without string SQL, providing compile-time validation of subquery entity references. The Subquery abstraction supports multi-level nesting for business logic like 'orders containing products from suppliers with rating > 4', generating efficient SQL. However, correlated subqueries execute per outer row causing O(N) scaling - measure query performance and convert to JOIN when subquery execution dominates query time (>50% of total time).
 
-## Example 73: Criteria API with Projections and DTOs
+### Example 73: Criteria API with Projections and DTOs
 
 Select specific columns and map results to DTOs using Criteria API.
 
@@ -1606,7 +1606,7 @@ public class ProductCriteriaRepository {
 
 **Why It Matters**: Custom repository implementations enable raw EntityManager usage for ultra-performance queries, native SQL execution, and JDBC batch operations impossible through Spring Data abstractions. The pattern preserves Spring Data convenience methods while adding specialized operations like bulk upserts and stored procedure calls, combining best of both worlds. However, custom implementations bypass Spring Data's safety features (query validation, automatic pagination), requiring rigorous integration testing and code review to prevent SQL injection and performance regressions.
 
-## Example 74: Custom Repository Implementation
+### Example 74: Custom Repository Implementation
 
 Extend Spring Data repositories with custom query methods using EntityManager.
 
@@ -1734,7 +1734,7 @@ public class ProductService {
 
 **Why It Matters**: EntityManager direct access enables advanced JPA features like FlushMode control, entity state management (detach/merge), and persistence context manipulation unavailable in repositories. The low-level API provides escape hatch for edge cases requiring manual transaction boundaries or stateless session usage in batch processing. However, EntityManager usage requires deep JPA knowledge to avoid LazyInitializationException, detached entity bugs, and transaction management errors affecting 60% of direct EntityManager usage - prefer Spring Data abstractions unless specific features required.
 
-## Example 75: Custom Repository with Batch Operations
+### Example 75: Custom Repository with Batch Operations
 
 Implement efficient batch processing in custom repositories.
 
@@ -1853,7 +1853,7 @@ public class ProductService {
 
 **Why It Matters**: Bulk operations with EntityManager execute UPDATE/DELETE for thousands of rows in single SQL statement, improving performance by 100-1000x versus iterating entities. The createQuery().executeUpdate() pattern bypasses entity loading and dirty checking overhead, critical for batch jobs processing millions of records. However, bulk operations don't update persistence context, causing cached entities to have stale data - always call clear() after bulk updates or use @Modifying(clearAutomatically=true) to prevent data inconsistency bugs.
 
-## Example 76: Custom Repository with Native Queries
+### Example 76: Custom Repository with Native Queries
 
 Execute database-specific SQL in custom repositories.
 
@@ -2012,7 +2012,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 
 **Why It Matters**: @EntityListeners separate audit logic from entity code, enabling cross-cutting concerns like logging, validation, and security checks through AOP-style callbacks. The listener pattern reduces entity code by 40-60% compared to embedding @PrePersist callbacks directly, improving maintainability and testability. However, entity listeners can't easily access Spring beans (requires AspectJ weaving or manual bean lookup), limiting their use for complex audit logic requiring database access or external service calls.
 
-## Example 77: Custom Repository with QueryDSL Integration
+### Example 77: Custom Repository with QueryDSL Integration
 
 Combine Spring Data with QueryDSL for type-safe query building.
 
@@ -2111,7 +2111,7 @@ public class OrderRepositoryCustomImpl {
 
 **Why It Matters**: Entity lifecycle callbacks (@PrePersist, @PostLoad) enable automatic computed field population like timestamps, UUIDs, and default values without service layer boilerplate. The declarative approach ensures consistency across all persistence paths (repository.save, JPQL UPDATE, Criteria queries), preventing missing audit fields affecting 30% of manual timestamp implementations. However, callbacks can't access lazy collections or make additional database calls without N+1 risks, requiring careful design to avoid performance degradation.
 
-## Example 78: Custom Repository Fragment Composition
+### Example 78: Custom Repository Fragment Composition
 
 Combine multiple custom repository fragments for modular functionality.
 
@@ -2376,7 +2376,7 @@ public class ProductService {
 
 **Why It Matters**: @CreatedDate and @LastModifiedDate annotations with Spring Data JPA auditing eliminate 95% of manual timestamp code while ensuring timezone consistency (UTC storage) and transaction accuracy (commit time, not wall clock time). The automatic population prevents forgotten audit fields and timezone bugs that plague 40% of manual implementations. However, auditing requires @EnableJpaAuditing configuration and doesn't work with bulk operations (@Modifying queries), requiring explicit timestamp handling for batch updates affecting audit compliance.
 
-## Example 79: JPA Auditing with Timestamps
+### Example 79: JPA Auditing with Timestamps
 
 Automatically track entity creation and modification times using JPA auditing.
 
@@ -2517,7 +2517,7 @@ public class ProductService {
 
 **Why It Matters**: @CreatedBy and @LastModifiedBy with AuditorAware integration automatically capture user context for every database change, enabling complete audit trails for compliance requirements (SOX, HIPAA, GDPR). The Spring Security integration provides zero-boilerplate user tracking, reducing security audit implementation time from weeks to hours. However, AuditorAware doesn't support async operations or batch jobs without explicit SecurityContext propagation, requiring custom solutions for background processing where 30% of auditing implementations fail.
 
-## Example 80: JPA Auditing with User Tracking
+### Example 80: JPA Auditing with User Tracking
 
 Track which user created or modified entities using `@CreatedBy` and `@LastModifiedBy`.
 
@@ -2696,7 +2696,7 @@ public class ProductService {
 
 **Why It Matters**: DTO projections with interface proxies eliminate DTO class boilerplate through Spring Data's automatic proxy generation, reducing code by 80% while maintaining type safety. The getter-only interface approach prevents accidental entity state modifications while loading subset of columns, improving read performance by 40-70%. However, interface projections can't be serialized easily (JSON serialization requires Jackson mix-ins) and don't support nested property access without additional joins, limiting their use to simple flat projections.
 
-## Example 81: Entity Lifecycle Callbacks with @EntityListeners
+### Example 81: Entity Lifecycle Callbacks with @EntityListeners
 
 Execute custom logic during entity lifecycle events using JPA callbacks.
 
@@ -2910,7 +2910,7 @@ public class ProductService {
 
 **Why It Matters**: Class-based DTO projections with constructor expressions provide full control over result mapping including computed fields, type conversions, and nested objects, enabling rich read models for complex UIs. The pattern supports Java records for immutable DTOs with minimal boilerplate, improving null-safety and serialization performance. However, constructor projections require full package names in JPQL and manual maintenance when entity attributes change, increasing coupling between queries and entity schema affecting refactoring safety.
 
-## Example 82: Combining Auditing with Custom Callbacks
+### Example 82: Combining Auditing with Custom Callbacks
 
 Merge Spring Data JPA auditing with custom entity listeners for comprehensive tracking.
 
@@ -3031,7 +3031,7 @@ public class ProductService {
 
 **Why It Matters**: @EntityGraph solves N+1 problems through declarative relationship loading specification, providing cleaner syntax than JOIN FETCH and enabling multiple entity graphs per entity. The attributePaths approach loads specific relationships on-demand without changing default fetch types, improving flexibility for different use cases (list view vs detail view). However, @EntityGraph with multiple collections causes Cartesian products and MultiBagFetchException, requiring multiple queries or graph grouping strategies, adding complexity affecting 40% of EntityGraph usage.
 
-## Example 83: Interface-Based Projections for Performance
+### Example 83: Interface-Based Projections for Performance
 
 Use interface projections to load only required fields, reducing memory and database load.
 
@@ -3133,7 +3133,7 @@ public class ProductService {
 
 **Why It Matters**: Query hints like HINT_FETCH_SIZE and HINT_READ_ONLY provide low-level JDBC and Hibernate tuning for specific performance scenarios, enabling 10-100x throughput improvements for batch processing. The hint mechanism accesses database-specific optimizations (Oracle hints, PostgreSQL work_mem) while maintaining JPA abstraction, balancing portability and performance. However, hints are often database-vendor-specific and require deep SQL knowledge to use correctly - improper hints (too-large fetch size) can cause OutOfMemoryError, making hints advanced optimization requiring profiling.
 
-## Example 84: DTO Projections with Constructor Expressions
+### Example 84: DTO Projections with Constructor Expressions
 
 Use constructor-based DTO projections for better performance and type safety.
 
@@ -3314,7 +3314,7 @@ public class ProductService {
 
 **Why It Matters**: Batch fetching with @BatchSize reduces N+1 queries to 1+ceiling(N/batch_size) queries through IN clause batching, dramatically improving performance for lazy collection loading. The pattern works transparently without JOIN FETCH complexity, balancing eager loading benefits with lazy loading memory efficiency. However, @BatchSize generates IN clauses with 10-50 IDs that may hit database query plan cache limits or exceed maximum IN clause size (Oracle: 1000 items), requiring tuning for specific databases and query patterns.
 
-## Example 85: Query Hints and Batch Fetching for Performance
+### Example 85: Query Hints and Batch Fetching for Performance
 
 Optimize query performance using JPA query hints and batch fetching strategies.
 

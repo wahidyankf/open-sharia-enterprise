@@ -9,7 +9,7 @@ tags: ["bdd", "tutorial", "by-example", "beginner", "gherkin", "cucumber"]
 
 This beginner section introduces Behavior-Driven Development (BDD) fundamentals through 30 heavily annotated examples. You'll master Gherkin syntax, Given-When-Then structure, and basic Cucumber/Jest integration patterns essential for writing behavior specifications.
 
-## Example 1: Hello World BDD - First Feature File
+### Example 1: Hello World BDD - First Feature File
 
 BDD tests are written in Gherkin language using `.feature` files that describe application behavior in plain English. This example shows the simplest possible feature file structure.
 
@@ -33,7 +33,7 @@ Feature: Hello World                         # => Feature: High-level descriptio
 
 **Why It Matters**: BDD bridges communication gaps between developers, testers, and business stakeholders by using human-readable specifications. Companies like Spotify and BBC use BDD to align technical implementation with business requirements, reducing miscommunication that causes 37% of project failures according to PMI research. Gherkin serves as both documentation and executable tests, ensuring requirements stay synchronized with code.
 
-## Example 2: Given-When-Then Structure
+### Example 2: Given-When-Then Structure
 
 Given-When-Then is BDD's core pattern: Given sets up context, When triggers action, Then asserts outcome. Understanding this structure is fundamental to writing clear behavior specifications.
 
@@ -69,7 +69,7 @@ Feature: User Login
 
 **Why It Matters**: Given-When-Then provides cognitive scaffolding that prevents common testing mistakes like testing multiple behaviors in one scenario or missing setup steps. Google's testing blog reports that teams using BDD see 60% fewer ambiguous requirements compared to traditional test-first approaches, because the structure forces clear separation between setup, action, and verification.
 
-## Example 3: Multiple Scenarios in One Feature
+### Example 3: Multiple Scenarios in One Feature
 
 Features typically contain multiple scenarios testing different aspects of the same functionality. Each scenario is independent and self-contained.
 
@@ -103,7 +103,7 @@ Feature: Shopping Cart
 
 **Why It Matters**: Independent scenarios enable parallel test execution and isolated debugging. CircleCI data shows that BDD test suites with properly isolated scenarios achieve 3-4x faster CI/CD pipeline execution through parallelization, while shared-state scenarios create brittle tests that fail unpredictably when run concurrently.
 
-## Example 4: Background - Shared Setup Steps
+### Example 4: Background - Shared Setup Steps
 
 Background runs before EACH scenario in a feature file, eliminating repetitive Given steps. Use it for common setup that every scenario needs.
 
@@ -139,7 +139,7 @@ Feature: Bank Account Operations
 
 **Why It Matters**: Background reduces duplication and improves maintainability when setup changes. However, Microsoft's testing guidance warns against overusing Background: scenarios should still read independently. If a Background step isn't needed by ALL scenarios, move it to individual scenarios to maintain clarity and avoid unnecessary setup overhead.
 
-## Example 5: And & But Keywords for Readability
+### Example 5: And & But Keywords for Readability
 
 And and But improve readability by chaining multiple steps of the same type (Given/When/Then) without repeating the keyword. They're syntactic sugar with no behavioral difference.
 
@@ -167,7 +167,7 @@ Feature: User Registration
 
 **Why It Matters**: Strategic use of And/But improves scenario readability, making specifications easier for business stakeholders to review. Cucumber documentation shows that scenarios with well-placed And/But keywords have 40% higher stakeholder approval rates during requirement reviews, as the logical flow becomes more conversational and natural to read.
 
-## Example 6: Data Tables in Steps
+### Example 6: Data Tables in Steps
 
 Data tables pass structured data to step definitions, enabling complex input without verbose step text. Tables use `|` delimiters to create rows and columns.
 
@@ -198,7 +198,7 @@ Feature: Bulk User Import
 
 **Why It Matters**: Data tables make BDD scenarios with complex input data maintainable and readable. ThoughtWorks reports that teams using data tables for test fixtures reduce scenario verbosity by 60-70% compared to individual steps per data item, while improving comprehension for non-technical reviewers who can quickly scan tabular data formats.
 
-## Example 7: Scenario Outline with Examples Table
+### Example 7: Scenario Outline with Examples Table
 
 Scenario Outline defines a template scenario executed once per row in the Examples table, enabling data-driven testing without duplicating scenario structure.
 
@@ -232,7 +232,7 @@ Feature: Login Validation
 
 **Why It Matters**: Scenario Outline prevents scenario duplication for parameterized tests, a pattern especially valuable for boundary testing and edge cases. Cucumber's creator reports that teams replacing duplicate scenarios with Scenario Outline reduce feature file size by 50-80% while increasing test coverage, as adding new test cases becomes a single-line table addition rather than copying entire scenarios.
 
-## Example 8: Tags for Organizing Scenarios
+### Example 8: Tags for Organizing Scenarios
 
 Tags categorize scenarios for selective execution, enabling filtering by feature area, priority, or environment. Tags start with `@` and can appear before Feature or Scenario.
 
@@ -280,7 +280,7 @@ npx cucumber-js --tags "@authentication or @smoke"
 
 **Why It Matters**: Tags are essential for efficient CI/CD pipelines where running full test suites is time-prohibitive. Google's testing infrastructure uses tags to run 10-minute smoke suites on every commit while reserving full regression suites (2+ hours) for nightly builds, enabling 15+ daily deployments while maintaining quality gates.
 
-## Example 9: Comments in Feature Files
+### Example 9: Comments in Feature Files
 
 Comments provide context, explanations, or temporary notes without affecting test execution. Comments start with `#` and extend to end of line.
 
@@ -355,7 +355,7 @@ Feature: Shopping Cart
 
 **Why It Matters**: Well-commented feature files serve as living documentation that explains business rules and edge cases. However, Cucumber best practices warn against over-commenting: if a comment explains what a step does, the step text itself should be clearer. Reserve comments for WHY (business context) rather than WHAT (step explanations).
 
-## Example 10: Step Definition Basics (TypeScript)
+### Example 10: Step Definition Basics (TypeScript)
 
 Step definitions connect Gherkin steps to executable code. Each step (Given/When/Then) maps to a function that implements the behavior.
 
@@ -399,7 +399,7 @@ Then("the result should be {string}", function (expected: string) {
 
 **Why It Matters**: Step definitions are the bridge between human-readable specifications and executable code. The key is making them reusable: one step definition should match multiple similar Gherkin steps through parameterization. Teams that over-specify steps (creating one step definition per Gherkin line) face maintenance nightmares, while teams that properly parameterize achieve 70-80% step reuse across feature files.
 
-## Example 11: Cucumber Expressions - String Parameters
+### Example 11: Cucumber Expressions - String Parameters
 
 Cucumber Expressions provide built-in parameter types like `{string}` for quoted text, `{int}` for integers, and `{float}` for decimals, automatically parsing and converting matched text.
 
@@ -449,7 +449,7 @@ When("I add {float} and {float}", function (a: number, b: number) {
 
 **Why It Matters**: Built-in parameter types eliminate manual parsing and type conversion boilerplate, reducing step definition code by 30-40%. However, teams should avoid mixing `{int}` and `{float}` for the same semantic concept, as this creates two nearly-identical step definitions that cause confusion and maintenance overhead.
 
-## Example 12: Multiple Parameters in One Step
+### Example 12: Multiple Parameters in One Step
 
 Steps can capture multiple parameters of different types, enabling rich parameterization without verbose step text.
 
@@ -510,7 +510,7 @@ Scenario: Create user with details
 
 **Why It Matters**: Multi-parameter steps reduce scenario line count while maintaining readability. However, Cucumber guidelines recommend limiting to 3-4 parameters per step - beyond that, data tables or custom parameter types improve clarity. Steps with 5+ parameters often indicate the need to refactor into multiple steps or use a data table.
 
-## Example 13: Data Tables in Step Definitions
+### Example 13: Data Tables in Step Definitions
 
 Step definitions receive data tables as DataTable objects with methods to transform rows into arrays of objects or key-value pairs.
 
@@ -567,7 +567,7 @@ Then("user {string} should have role {string}", function (username: string, role
 
 **Why It Matters**: Data tables enable bulk data setup without verbose scenarios. The hashes() method is most common, but Cucumber also provides rows() for 2D arrays and rowsHash() for key-value pairs. Teams should standardize on hashes() for consistency unless specific use cases require alternative formats.
 
-## Example 14: Before Hook - Setup Before Scenarios
+### Example 14: Before Hook - Setup Before Scenarios
 
 Hooks run code at specific points in the test lifecycle. Before hooks execute before each scenario, useful for resetting state or initializing test environment.
 
@@ -633,7 +633,7 @@ Scenario: Query existing users
 
 **Why It Matters**: Before hooks prevent test pollution by ensuring clean state for each scenario. However, overuse creates hidden dependencies - if hooks contain complex setup, scenarios become harder to understand in isolation. Martin Fowler recommends keeping Before hooks minimal, favoring explicit Given steps for clarity.
 
-## Example 15: After Hook - Teardown After Scenarios
+### Example 15: After Hook - Teardown After Scenarios
 
 After hooks execute after each scenario, useful for cleanup, logging test results, or capturing screenshots on failure.
 
@@ -686,7 +686,7 @@ After({ tags: "@browser" }, function (this: ITestCaseHookParameter) {
 
 **Why It Matters**: After hooks are critical for preventing resource leaks (database connections, browser instances, file handles). Google's testing infrastructure uses After hooks to clean up containers and cloud resources, preventing CI cost overruns from abandoned test resources. Tag-filtered After hooks enable resource-specific cleanup without affecting unrelated scenarios.
 
-## Example 16: World Object - Sharing State Between Steps
+### Example 16: World Object - Sharing State Between Steps
 
 The World object provides shared context across steps in a scenario. Cucumber creates a new World instance for each scenario, ensuring isolation.
 
@@ -767,7 +767,7 @@ async function login(username: string, password: string) {
 
 **Why It Matters**: World eliminates global variables and module-level state, preventing cross-scenario pollution. However, ThoughtWorks warns against treating World as a dumping ground for all test data - keep it focused on data that genuinely needs to be shared across steps, using local variables for step-specific data to maintain clarity.
 
-## Example 17: Custom Parameter Types
+### Example 17: Custom Parameter Types
 
 Custom parameter types extend Cucumber expressions beyond built-in types ({string}, {int}), enabling domain-specific parameter matching and parsing.
 
@@ -845,7 +845,7 @@ Scenario: User with generated email
 
 **Why It Matters**: Custom parameter types eliminate repetitive parsing logic and enable richer Gherkin vocabulary. However, Cucumber documentation warns against over-engineering: if a parameter type is used in only 1-2 steps, inline parsing is simpler than custom types. Reserve custom types for domain concepts reused across many scenarios.
 
-## Example 18: Pending Steps - Work in Progress
+### Example 18: Pending Steps - Work in Progress
 
 Pending steps act as placeholders for unimplemented functionality, allowing you to write scenarios before implementation exists.
 
@@ -945,7 +945,7 @@ Scenario: Process credit card payment
 
 **Why It Matters**: Pending steps enable specification-first development where business analysts write scenarios before developers implement features. This aligns with BDD's core philosophy of starting with behavior specifications. However, teams should track pending steps as technical debt - long-lived pending steps indicate stalled features or poor planning.
 
-## Example 19: Step Definition Patterns - Optional Text
+### Example 19: Step Definition Patterns - Optional Text
 
 Cucumber expressions support optional text using parentheses, enabling one step definition to match multiple Gherkin variations.
 
@@ -1002,7 +1002,7 @@ Scenario: Cart operations with full words
 
 **Why It Matters**: Optional text enables more natural Gherkin while reducing step definition duplication. However, Cucumber guidelines warn against excessive optionals - if you have 3+ optional parts creating 8+ variations, your step text is probably too complex. Split into focused step definitions for clarity.
 
-## Example 20: Alternative Text in Steps
+### Example 20: Alternative Text in Steps
 
 Cucumber expressions support alternatives using "/" to create one step definition matching multiple distinct phrasings.
 
@@ -1062,7 +1062,7 @@ Scenario: Touch interface
 
 **Why It Matters**: Alternatives improve Gherkin readability by allowing natural synonym variation (login/sign-in, delete/remove). However, alternatives should be true synonyms - using "log in/log out" creates semantic confusion since they're opposite actions. Reserve alternatives for equivalent phrasings, not logically distinct behaviors.
 
-## Example 21: Async Step Definitions
+### Example 21: Async Step Definitions
 
 BDD step definitions often interact with async APIs, databases, or HTTP clients. Use async/await for clean asynchronous step implementations.
 
@@ -1126,7 +1126,7 @@ Scenario: Create user via API
 
 **Why It Matters**: Async step definitions prevent callback hell and race conditions in tests. Cucumber waits for async steps to complete before proceeding, ensuring deterministic execution. Teams should use async/await consistently rather than mixing callbacks, promises, and async patterns, as mixed approaches create debugging nightmares.
 
-## Example 22: Retrying Failed Scenarios
+### Example 22: Retrying Failed Scenarios
 
 Cucumber supports automatic retry of failed scenarios to handle flaky tests from timing issues, network instability, or race conditions.
 
@@ -1198,7 +1198,7 @@ Scenario: Call stable API
 
 **Why It Matters**: Retries reduce false negatives from transient failures (network blips, timing issues), improving CI/CD pipeline reliability. However, Google's testing blog warns that retries should be a temporary bandage, not a permanent solution - if scenarios need retries consistently, the underlying test or application has stability issues requiring root cause fixes.
 
-## Example 23: Conditional Steps with Step Definitions
+### Example 23: Conditional Steps with Step Definitions
 
 Step definitions can conditionally execute different logic based on parameters or World state, enabling flexible behavior without scenario duplication.
 
@@ -1359,7 +1359,7 @@ Scenario: Guest can only read
 
 **Why It Matters**: Conditional steps reduce step definition proliferation when logic varies based on parameters. However, excessive conditionals indicate step definitions are doing too much - if a step has 5+ conditionals or complex nested logic, split into focused steps or use custom parameter types for clarity.
 
-## Example 24: Sharing Step Definitions Across Features
+### Example 24: Sharing Step Definitions Across Features
 
 Step definitions are global and reusable across all feature files. Organize them by domain (auth, cart, api) rather than by feature file for maximum reuse.
 
@@ -1498,7 +1498,7 @@ Feature: Shopping Cart
 
 **Why It Matters**: Proper step organization enables 70-80% step reuse across feature files, drastically reducing maintenance burden. Cucumber's creator recommends organizing steps by domain rather than feature, with shared common steps for cross-cutting concerns (navigation, assertions, data setup).
 
-## Example 25: Simple Assertions with Chai
+### Example 25: Simple Assertions with Chai
 
 Chai provides BDD-style assertions (expect) that integrate naturally with Cucumber scenarios, making Then steps readable and expressive.
 
@@ -1600,7 +1600,7 @@ Scenario: Verify object properties
 
 **Why It Matters**: BDD-style assertions align with Gherkin's human-readable philosophy, making test failures easier to understand. Chai's error messages are descriptive (expected 42 to equal 50) compared to bare asserts, reducing debugging time. Teams should standardize on one assertion library (Chai, Jest, or native assert) to avoid mixing syntaxes.
 
-## Example 26: Testing Error Messages
+### Example 26: Testing Error Messages
 
 BDD scenarios should verify error handling behavior, not just happy paths. Use assertions to check error messages, status codes, and error states.
 
@@ -1688,7 +1688,7 @@ Scenario: API rejects invalid data
 
 **Why It Matters**: Error handling bugs cause 23% of production incidents according to DORA research. BDD scenarios that test error paths prevent error-handling gaps, especially edge cases like network timeouts, invalid input, and resource exhaustion. Teams should aim for 40-50% negative scenarios (testing failures/errors) alongside happy paths.
 
-## Example 27: Background vs Before Hook - When to Use Which
+### Example 27: Background vs Before Hook - When to Use Which
 
 Background runs before each scenario but is visible in Gherkin, while Before hooks are invisible code. Choose based on stakeholder visibility needs.
 
@@ -1847,7 +1847,7 @@ Before(function () {
 
 **Why It Matters**: This decision affects collaboration between technical and non-technical team members. Background in feature files enables business analysts to review and validate test preconditions, while Before hooks keep technical plumbing out of stakeholder-facing specifications. Misusing Background for technical setup clutters feature files, while hiding business-relevant setup in Before hooks loses stakeholder engagement.
 
-## Example 28: Simple BDD Workflow Pattern
+### Example 28: Simple BDD Workflow Pattern
 
 BDD follows a three-step workflow: Write feature → Implement steps → Refactor. This example shows the complete cycle for a simple calculator feature.
 
@@ -1953,7 +1953,7 @@ Given("I have a calculator", function () {
 
 **Why It Matters**: Writing specifications before implementation aligns teams on requirements before development begins, reducing rework. Kent Beck's original TDD formulation (Red-Green-Refactor) applies to BDD, with Gherkin providing the failing test. Teams that skip the specification-first step often implement features that don't match stakeholder expectations.
 
-## Example 29: Organizing Feature Files by Domain
+### Example 29: Organizing Feature Files by Domain
 
 Organize feature files by business domain (authentication, shopping, payments) rather than technical layers (frontend, backend, database) for better stakeholder navigation.
 
@@ -2073,7 +2073,7 @@ features/
 
 **Why It Matters**: Domain-based organization enables non-technical stakeholders to navigate feature files independently, increasing collaboration. Gojko Adzic's research shows that teams using domain-based feature organization have 2-3x higher stakeholder engagement in specification reviews compared to technically-organized structures, because business users can find and review relevant scenarios without developer assistance.
 
-## Example 30: Running Specific Scenarios from CLI
+### Example 30: Running Specific Scenarios from CLI
 
 Cucumber CLI provides filtering options to run specific features, scenarios, or tags without executing the entire test suite.
 

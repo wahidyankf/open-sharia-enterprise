@@ -9,7 +9,7 @@ tags: ["tdd", "tutorial", "by-example", "advanced", "legacy-code", "microservice
 
 This tutorial covers advanced TDD patterns for enterprise environments including legacy code testing, approval testing, TDD in distributed systems, microservices patterns, and scaling TDD across teams.
 
-## Example 59: Characterization Tests for Legacy Code
+### Example 59: Characterization Tests for Legacy Code
 
 Characterization tests capture current behavior of legacy code without refactoring. They document what the system actually does (not what it should do) to establish a safety net before changes.
 
@@ -76,7 +76,7 @@ describe("legacyCalculate characterization", () => {
 
 **Why It Matters**: Legacy code without tests is too risky to change. Michael Feathers' "Working Effectively with Legacy Code" shows characterization tests enable safe refactoring - Spotify documented 80% reduction in legacy code incidents after implementing characterization testing for critical systems.
 
-## Example 60: Approval Testing for Complex Outputs
+### Example 60: Approval Testing for Complex Outputs
 
 Approval testing (golden master testing) compares large outputs against approved baseline. Ideal for testing complex data structures, reports, or generated code.
 
@@ -163,7 +163,7 @@ describe("Report approval tests", () => {
 
 **Why It Matters**: Manual verification of complex outputs is error-prone. Approval testing automates this - GitHub uses approval testing for generated API documentation, catching formatting regressions that manual reviews missed 60% of the time.
 
-## Example 61: Working with Seams in Untestable Code
+### Example 61: Working with Seams in Untestable Code
 
 Seams are places where you can alter program behavior without modifying code. Identify seams to inject test doubles into legacy code.
 
@@ -228,7 +228,7 @@ test("processOrder with test doubles", () => {
 
 **Why It Matters**: Legacy code often has hard-coded dependencies making it untestable. Identifying seams enables gradual testability improvements without full rewrites - Amazon's retail platform used seam identification to introduce testing into decade-old codebases, enabling safe modernization.
 
-## Example 62: Dependency Breaking Techniques
+### Example 62: Dependency Breaking Techniques
 
 Breaking dependencies makes legacy code testable. Use extract method, extract interface, and parameterize constructor to create seams.
 
@@ -303,7 +303,7 @@ test("createUser calls all services", () => {
 
 **Why It Matters**: Hard dependencies block testing and refactoring. Dependency breaking enables incremental improvement - Twitter's backend team documented 10x faster test execution after breaking database dependencies using these techniques.
 
-## Example 63: TDD for Microservices - Service Isolation
+### Example 63: TDD for Microservices - Service Isolation
 
 Microservices require testing individual services in isolation without full environment. Use contract testing and service virtualization.
 
@@ -361,7 +361,7 @@ test("UserService gets user orders via HTTP", async () => {
 
 **Why It Matters**: Microservices with real service dependencies are slow and flaky. Service isolation enables fast unit testing - Netflix runs 50,000+ microservice tests in minutes using service virtualization instead of full environments.
 
-## Example 64: Contract Testing for Microservices
+### Example 64: Contract Testing for Microservices
 
 Contract testing verifies service integrations match expected contracts without running both services. Producer defines contract, consumer tests against it.
 
@@ -434,7 +434,7 @@ test("OrderService fulfills contract", async () => {
 
 **Why It Matters**: Integration testing all microservice combinations is exponentially expensive. Contract testing catches integration bugs without full environments - Pact (contract testing tool) users report 90% fewer integration failures in production.
 
-## Example 65: Testing Distributed Systems - Eventual Consistency
+### Example 65: Testing Distributed Systems - Eventual Consistency
 
 Distributed systems often have eventual consistency. Tests must account for asynchronous propagation and race conditions.
 
@@ -488,7 +488,7 @@ test("replication happens eventually", async () => {
 
 **Why It Matters**: Distributed systems have inherent delays. Tests assuming immediate consistency are flaky - Cassandra's test suite uses eventual consistency helpers, eliminating 95% of timing-related test failures.
 
-## Example 66: Testing Event Sourcing Systems
+### Example 66: Testing Event Sourcing Systems
 
 Event sourcing stores state changes as events. TDD for event sourcing tests event application and state reconstruction.
 
@@ -584,7 +584,7 @@ test("rebuilds state from event store", () => {
 
 **Why It Matters**: Event sourcing enables audit trails and temporal queries. TDD ensures correct event application - Axon Framework users report event sourcing tests catch 70% of bugs during development that would be catastrophic in production.
 
-## Example 67: Testing CQRS Patterns
+### Example 67: Testing CQRS Patterns
 
 CQRS (Command Query Responsibility Segregation) separates read and write models. TDD tests commands and queries independently.
 
@@ -656,7 +656,7 @@ describe("CQRS pattern", () => {
 
 **Why It Matters**: CQRS enables independent scaling of reads and writes. Separate testing prevents coupling - Microsoft's Azure services use CQRS extensively, with separate test suites reducing cross-concern bugs by 80%.
 
-## Example 68: TDD in Polyglot Environments
+### Example 68: TDD in Polyglot Environments
 
 Teams using multiple languages need consistent TDD practices across languages. Adapt patterns to language idioms while maintaining discipline.
 
@@ -732,7 +732,7 @@ test("calculateDiscount applies correct rate", () => {
 
 **Why It Matters**: Polyglot teams risk inconsistent testing across languages. Universal TDD principles maintain quality - Google's polyglot codebase (C++, Java, Python, Go) uses language-specific tools but consistent TDD patterns, achieving 85%+ coverage across all languages.
 
-## Example 69: Performance-Sensitive TDD
+### Example 69: Performance-Sensitive TDD
 
 Performance-critical code needs TDD without sacrificing optimization. Write performance tests alongside functional tests.
 
@@ -804,7 +804,7 @@ describe("sort", () => {
 
 **Why It Matters**: Premature optimization leads to complex code without proven need. TDD enables optimization when needed with safety net - V8 JavaScript engine development uses performance tests to prevent regressions during optimizations.
 
-## Example 70: Security Testing with TDD
+### Example 70: Security Testing with TDD
 
 Security requirements need TDD just like functional requirements. Test authentication, authorization, input validation, and encryption.
 
@@ -892,7 +892,7 @@ describe("authMiddleware", () => {
 
 **Why It Matters**: Security bugs are often logic errors testable through TDD. GitHub's security team reports 90% of authentication bugs are preventable through tested security requirements rather than penetration testing.
 
-## Example 71: TDD Anti-Patterns - Testing Implementation Details
+### Example 71: TDD Anti-Patterns - Testing Implementation Details
 
 Testing implementation details makes tests brittle. Focus on behavior and public API, not internal structure.
 
@@ -959,7 +959,7 @@ describe("ShoppingCart", () => {
 
 **Why It Matters**: Tests coupled to implementation details break during refactoring, discouraging improvement. Behavior-focused tests enable safe refactoring - Kent Beck's TDD philosophy emphasizes testing observable behavior to maintain flexibility.
 
-## Example 72: Test-Induced Design Damage
+### Example 72: Test-Induced Design Damage
 
 Over-application of TDD can lead to unnecessary complexity. Balance testability with design simplicity.
 
@@ -1041,7 +1041,7 @@ test("createUser generates unique ID", () => {
 
 **Why It Matters**: Over-abstraction for testability creates complex production code. Pragmatic TDD focuses on testing business logic - DHH's "TDD is dead" debate highlighted test-induced damage when testability trumps design clarity.
 
-## Example 73: Scaling TDD Across Teams
+### Example 73: Scaling TDD Across Teams
 
 Large organizations need consistent TDD practices across teams. Establish shared standards, CI enforcement, and knowledge sharing.
 
@@ -1145,7 +1145,7 @@ describe("Testing Guild Practices", () => {
 
 **Why It Matters**: Inconsistent testing across teams creates quality gaps. Standardization scales quality - Google's Testing Blog documents how consistent testing practices across 40,000+ engineers maintain 85%+ coverage across millions of lines of code.
 
-## Example 74: TDD Coaching and Mentoring
+### Example 74: TDD Coaching and Mentoring
 
 Teaching TDD requires hands-on practice, not lectures. Use pair programming, code reviews, and kata exercises.
 
@@ -1242,7 +1242,7 @@ describe("Mob Programming TDD", () => {
 
 **Why It Matters**: TDD is a skill requiring muscle memory. Theory without practice doesn't stick - Uncle Bob Martin's TDD training uses katas exclusively, with 90%+ participants applying TDD after kata practice versus 30% after lecture-only training.
 
-## Example 75: ROI Measurement for TDD
+### Example 75: ROI Measurement for TDD
 
 Measuring TDD return on investment requires tracking defect rates, development velocity, and maintenance costs.
 
@@ -1314,7 +1314,7 @@ test("TDD investment pays back quickly", () => {
 
 **Why It Matters**: Teams need business justification for TDD investment. Data-driven ROI measurement enables informed decisions - Microsoft's research shows TDD reduces defect density by 40-90% with 15-35% initial time investment, paying back within months.
 
-## Example 76: TDD in Regulated Industries
+### Example 76: TDD in Regulated Industries
 
 Regulated industries (finance, healthcare, aerospace) require audit trails and compliance testing. TDD provides documentation and traceability.
 
@@ -1394,7 +1394,7 @@ describe("TransactionProcessor audit compliance", () => {
 
 **Why It Matters**: Regulatory violations have severe consequences (fines, shutdowns). TDD provides audit-ready documentation - NASA's JPL Software Development Process requires 100% test coverage for flight software, with tests serving as compliance evidence.
 
-## Example 77: Compliance Testing Patterns
+### Example 77: Compliance Testing Patterns
 
 Compliance testing verifies regulatory requirements (GDPR, HIPAA, SOC2). Test data retention, access controls, and encryption.
 
@@ -1477,7 +1477,7 @@ describe("GDPR Compliance", () => {
 
 **Why It Matters**: Non-compliance penalties are severe (GDPR: up to 4% global revenue). Tested compliance prevents violations - Stripe's PCI DSS compliance testing caught 100% of data handling violations before production.
 
-## Example 78: TDD for Machine Learning Systems
+### Example 78: TDD for Machine Learning Systems
 
 Machine learning systems need testing despite non-determinism. Test data pipelines, model interfaces, and prediction boundaries.
 
@@ -1571,7 +1571,7 @@ describe("ML System Testing", () => {
 
 **Why It Matters**: ML models are non-deterministic but pipelines are testable. Pipeline bugs cause model failures - Google's ML testing guidelines recommend 80% test coverage on data pipelines and model interfaces, preventing 90% of production ML failures.
 
-## Example 79: Testing AI/ML Model Behavior
+### Example 79: Testing AI/ML Model Behavior
 
 AI models require behavioral testing through example inputs and expected outputs. Test edge cases and model degradation.
 
@@ -1646,7 +1646,7 @@ describe("SentimentAnalyzer behavior", () => {
 
 **Why It Matters**: AI model behavior shifts over time. Behavioral tests catch regressions - OpenAI's GPT testing uses thousands of behavioral examples to detect model degradation between versions.
 
-## Example 80: Evolutionary Architecture with TDD
+### Example 80: Evolutionary Architecture with TDD
 
 Evolutionary architecture evolves through incremental changes guided by fitness functions. TDD provides fast feedback for architectural decisions.
 
@@ -1724,7 +1724,7 @@ describe("Evolutionary Architecture Fitness Functions", () => {
 
 **Why It Matters**: Architecture erodes without automated checks. Fitness functions enable safe evolution - ThoughtWorks' evolutionary architecture practice uses automated fitness functions to maintain architectural integrity during rapid changes.
 
-## Example 81: TDD in Continuous Deployment
+### Example 81: TDD in Continuous Deployment
 
 Continuous deployment requires high confidence in automated tests. TDD enables safe deployment to production multiple times per day.
 
@@ -1819,7 +1819,7 @@ test("CD metrics meet industry benchmarks", () => {
 
 **Why It Matters**: Manual testing blocks frequent deployment. Amazon deploys every 11.6 seconds using automated testing - their TDD discipline enables 150+ million deployments per year with 99.99% success rate.
 
-## Example 82: Production Testing Patterns
+### Example 82: Production Testing Patterns
 
 Production testing catches issues that pre-production testing misses. Use canary deployments, feature flags, and synthetic monitoring.
 
@@ -1895,7 +1895,7 @@ describe("Canary Deployment", () => {
 
 **Why It Matters**: Production has unique conditions impossible to replicate in staging. Canary testing enables safe production validation - Facebook's 1% canary rollout caught critical bugs that affected 0 users instead of 2 billion.
 
-## Example 83: Testing with Feature Flags
+### Example 83: Testing with Feature Flags
 
 Feature flags enable testing new features in production with controlled rollout. TDD tests flag behavior and gradual enablement.
 
@@ -1989,7 +1989,7 @@ describe("Feature Flags", () => {
 
 **Why It Matters**: Feature flags enable safe experimentation in production. TDD ensures flag logic works correctly - Etsy runs thousands of A/B experiments simultaneously using tested feature flags.
 
-## Example 84: Synthetic Monitoring and Production Tests
+### Example 84: Synthetic Monitoring and Production Tests
 
 Synthetic monitoring runs automated tests against production to detect issues before users. Combine with alerting for fast incident response.
 
@@ -2073,7 +2073,7 @@ setInterval(async () => {
 
 **Why It Matters**: Production issues affect users immediately. Synthetic monitoring detects problems before users report them - Datadog's synthetic monitoring users detect 80% of production issues through automated tests rather than customer complaints.
 
-## Example 85: TDD Anti-Pattern Recovery - Abandoned Test Suites
+### Example 85: TDD Anti-Pattern Recovery - Abandoned Test Suites
 
 Test suites decay when ignored. Revive abandoned tests through cleanup, deprecation, and reintroduction of TDD discipline.
 
