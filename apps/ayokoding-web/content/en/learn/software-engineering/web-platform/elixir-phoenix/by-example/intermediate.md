@@ -44,23 +44,35 @@ graph TD
 ```
 
 ```elixir
-defmodule MyAppWeb.PostsLive.Index do
-  use Phoenix.LiveView
+defmodule MyAppWeb.PostsLive.Index do   # => LiveView for post listing with streams
+  use Phoenix.LiveView                   # => Imports LiveView behavior
 
   def mount(_params, _session, socket) do
+                                          # => Called when LiveView connects
     {:ok,
      socket
-     |> assign(:posts, [])
-     |> stream(:posts, MyApp.Blog.list_posts())}  # => Initialize stream
+     |> assign(:posts, [])               # => Legacy assign (not used with streams)
+     |> stream(:posts, MyApp.Blog.list_posts())}
+                                          # => Initializes stream with post list
+                                          # => stream/3 sets up @streams.posts
+                                          # => Each item gets unique DOM ID
+                                          # => Fetches all posts from database
   end
 
-  def render(assigns) do
+  def render(assigns) do                 # => Renders post list with stream
     ~H"""
     <div id="posts" phx-update="stream">
+                                          # => phx-update="stream" enables stream mode
+                                          # => LiveView only updates changed items
+                                          # => Not full list re-render
       <!-- Streams each item with unique ID -->
       <%= for {dom_id, post} <- @streams.posts do %>
-        <article id={dom_id}>
-          <h2><%= post.title %></h2>
+                                          # => Iterates stream tuples
+                                          # => dom_id is "posts-123" (auto-generated)
+                                          # => post is %Post{} struct
+        <article id={dom_id}>            # => DOM ID must match stream ID
+                                          # => Enables targeted updates
+          <h2><%= post.title %></h2>     # => Displays post title
         </article>
       <% end %>
     </div>
@@ -68,18 +80,33 @@ defmodule MyAppWeb.PostsLive.Index do
   end
 
   def handle_info({:post_created, post}, socket) do
-    {:noreply, stream_insert(socket, :posts, post)}  # => Add post
+                                          # => Receives broadcast message
+                                          # => Triggered when new post created
+    {:noreply, stream_insert(socket, :posts, post)}
+                                          # => Adds post to stream
+                                          # => Only sends new post to client
+                                          # => Client inserts <article> DOM node
+                                          # => Doesn't re-render entire list
   end
 
   def handle_info({:post_deleted, post_id}, socket) do
-    {:noreply, stream_delete_by_dom_id(socket, :posts, "posts-#{post_id}")}  # => Remove post
+                                          # => Receives delete broadcast
+    {:noreply, stream_delete_by_dom_id(socket, :posts, "posts-#{post_id}")}
+                                          # => Removes post from stream
+                                          # => stream_delete_by_dom_id/3 targets specific DOM ID
+                                          # => "posts-123" matches <article id="posts-123">
+                                          # => Client removes DOM node
   end
 end
 
 # Subscribe to real-time updates
-def mount(_params, _session, socket) do
-  MyAppWeb.Endpoint.subscribe("posts")
+def mount(_params, _session, socket) do  # => Alternative mount with PubSub
+  MyAppWeb.Endpoint.subscribe("posts")   # => Subscribes to "posts" topic
+                                          # => Receives broadcasts from this topic
+                                          # => handle_info/2 handles messages
   {:ok, stream(socket, :posts, MyApp.Blog.list_posts())}
+                                          # => Initializes stream
+                                          # => Returns socket with stream configured
 end
 ```
 
@@ -106,50 +133,73 @@ stateDiagram-v2
 ```
 
 ```elixir
-defmodule MyAppWeb.DataLive do
-  use Phoenix.LiveView
+defmodule MyAppWeb.DataLive do           # => LiveView with async data loading
+  use Phoenix.LiveView                   # => Imports LiveView behavior
 
   def mount(_params, _session, socket) do
+                                          # => Called when LiveView connects
     {:ok,
      socket
-     |> assign(:result, nil, :loading)                                       # => Initial state
-     |> assign_async(:data, fn -> {:ok, %{data: fetch_expensive_data()}} end)}  # => Start async fetch
-  end  # => Returns {:ok, socket} immediately, doesn't block
+     |> assign(:result, nil, :loading)   # => Sets initial loading state
+                                          # => :loading is placeholder value
+     |> assign_async(:data, fn -> {:ok, %{data: fetch_expensive_data()}} end)}
+                                          # => Starts async task immediately
+                                          # => fn -> ... end runs in separate process
+                                          # => fetch_expensive_data() executes async
+                                          # => Returns {:ok, %{data: ...}} on success
+  end                                    # => Returns {:ok, socket} immediately
+                                          # => Doesn't block page render
 
-  def render(assigns) do
+  def render(assigns) do                 # => Renders with async state handling
     ~H"""
     <div>
-      <%= case @data do %>
-        <% {:loading} -> %>                           # => Shows while fetching
-          <p>Loading...</p>
+      <%= case @data do %>               # => Pattern matches async state
+                                          # => @data changes as async progresses
+        <% {:loading} -> %>              # => While async task running
+                                          # => Initial state from assign_async
+          <p>Loading...</p>              # => Shows loading indicator
 
-        <% {:ok, %{data: data}} -> %>                 # => Success state
-          <p><%= data %></p>
+        <% {:ok, %{data: data}} -> %>    # => Async task completed successfully
+                                          # => Extracts data from result map
+          <p><%= data %></p>             # => Displays loaded data
 
-        <% {:error, reason} -> %>                     # => Error state
-          <p>Error: <%= reason %></p>
+        <% {:error, reason} -> %>        # => Async task failed
+                                          # => Catches exceptions/errors
+          <p>Error: <%= reason %></p>    # => Shows error message
       <% end %>
     </div>
     """
   end
 
-  defp fetch_expensive_data do
-    Process.sleep(2000)                               # => Simulate 2 second delay
-    "Data loaded!"                                    # => Returns result
-  end  # => Runs in separate process, doesn't block UI
+  defp fetch_expensive_data do           # => Simulates slow operation
+    Process.sleep(2000)                  # => Blocks for 2 seconds
+                                          # => Simulates API call, DB query
+    "Data loaded!"                       # => Returns result string
+  end                                    # => Runs in separate process
+                                          # => Doesn't block UI rendering
+
 end
 
 # Or using start_async for event-triggered async work
 def handle_event("search", %{"query" => query}, socket) do
+                                          # => Handles search button click
+                                          # => query is user input string
   {:noreply,
-   start_async(socket, :search, fn ->
-     results = MyApp.Search.query(query)
-     {:ok, results}
-   end)}
-end
+   start_async(socket, :search, fn ->    # => Starts named async task
+                                          # => :search is task identifier
+                                          # => fn -> ... end runs async
+     results = MyApp.Search.query(query) # => Executes search operation
+                                          # => Potentially slow operation
+     {:ok, results}                      # => Returns success tuple
+   end)}                                 # => Task runs in background
+end                                      # => Returns immediately, no blocking
 
 def handle_async(:search, {:ok, results}, socket) do
+                                          # => Called when :search task completes
+                                          # => {:ok, results} is task return value
   {:noreply, assign(socket, :results, results)}
+                                          # => Updates socket with search results
+                                          # => Triggers re-render with results
 end
 ```
 
@@ -180,55 +230,95 @@ graph TD
 ```
 
 ```elixir
-defmodule MyAppWeb.ProfileLive.Edit do
-  use Phoenix.LiveView
+defmodule MyAppWeb.ProfileLive.Edit do   # => LiveView for profile photo uploads
+  use Phoenix.LiveView                   # => Imports LiveView behavior
 
   def mount(_params, _session, socket) do
+                                          # => Called when LiveView connects
     {:ok,
      socket
-     |> assign(:uploaded_files, [])                   # => Track uploaded files
-     |> allow_upload(:photo,                          # => Register upload config
-       accept: ~w(.jpg .jpeg .png),                   # => Only images
-       max_entries: 5,                                # => Up to 5 files
-       max_file_size: 10_000_000)}                    # => 10MB limit per file
+     |> assign(:uploaded_files, [])      # => Initializes empty upload list
+                                          # => Tracks completed uploads
+     |> allow_upload(:photo,             # => Registers :photo upload configuration
+                                          # => Creates @uploads.photo in assigns
+       accept: ~w(.jpg .jpeg .png),      # => Restricts to image types
+                                          # => Client-side validation
+                                          # => ~w sigil creates string list
+       max_entries: 5,                   # => Allows up to 5 files
+                                          # => User can select multiple
+       max_file_size: 10_000_000)}       # => 10MB = 10,000,000 bytes
+                                          # => Validates file size client-side
   end
 
-  def render(assigns) do
+  def render(assigns) do                 # => Renders upload form
     ~H"""
-    <form phx-submit="save">
+    <form phx-submit="save">             # => Triggers "save" event on submit
       <.live_file_input upload={@uploads.photo} />
+                                          # => Renders file input for :photo
+                                          # => Bound to upload configuration
 
-      <%= for entry <- @uploads.photo.entries do %>  # => Loop selected files
+      <%= for entry <- @uploads.photo.entries do %>
+                                          # => Iterates selected files
+                                          # => entry contains file metadata
         <div>
-          <.live_img_preview entry={entry} />        # => Show preview
+          <.live_img_preview entry={entry} />
+                                          # => Shows image preview
+                                          # => Client-side preview (no upload yet)
           <button phx-click="cancel_upload" phx-value-ref={entry.ref}>Cancel</button>
-          <progress value={entry.progress} max="100" />  # => Upload progress bar
+                                          # => phx-click triggers event
+                                          # => phx-value-ref passes entry reference
+          <progress value={entry.progress} max="100" />
+                                          # => HTML5 progress bar
+                                          # => entry.progress is 0-100
+                                          # => Updates during upload
         </div>
       <% end %>
 
       <button type="submit">Save</button>
+                                          # => Triggers phx-submit="save"
     </form>
     """
   end
 
   def handle_event("cancel_upload", %{"ref" => ref}, socket) do
+                                          # => Handles cancel button click
+                                          # => ref identifies specific entry
     {:noreply, cancel_upload(socket, :photo, ref)}
+                                          # => Removes entry from upload queue
+                                          # => Deletes temporary file
   end
 
   def handle_event("save", _params, socket) do
+                                          # => Handles form submission
     uploaded_files =
       consume_uploaded_entries(socket, :photo, fn %{path: path}, entry ->
+                                          # => Processes each uploaded file
+                                          # => path is temp file location
+                                          # => entry contains metadata
         # Generate S3 pre-signed URL for client upload
         key = "uploads/#{entry.client_name}"
+                                          # => S3 object key (path in bucket)
+                                          # => entry.client_name is original filename
         url = MyApp.S3.get_presigned_url(key)
+                                          # => Generates pre-signed URL
+                                          # => Allows temporary upload access
+                                          # => URL expires after timeout
 
         # Upload file directly from client to S3
         {:ok, _} = MyApp.S3.put_object(key, File.read!(path))
+                                          # => Reads temp file contents
+                                          # => Uploads to S3 bucket
+                                          # => File.read! raises on error
 
         {:ok, %{name: entry.client_name, url: url}}
-      end)
+                                          # => Returns success tuple
+                                          # => Map contains filename and URL
+      end)                               # => Collects all upload results
+                                          # => uploaded_files is list of maps
 
     {:noreply, assign(socket, :uploaded_files, uploaded_files)}
+                                          # => Stores upload results
+                                          # => uploaded_files available in template
   end
 end
 ```
@@ -242,57 +332,92 @@ end
 Live components manage isolated state. Events target only that component, not the parent.
 
 ```elixir
-defmodule MyAppWeb.ShoppingCart do
-  use Phoenix.LiveComponent
+defmodule MyAppWeb.ShoppingCart do      # => Stateful live component
+  use Phoenix.LiveComponent             # => Imports LiveComponent behavior
+                                          # => Different from LiveView
 
-  @impl true
-  def mount(socket) do
-    {:ok, assign(socket, items: [], total: 0)}        # => Initialize component state
-  end  # => Each component instance has separate state
+  @impl true                             # => Marks callback implementation
+  def mount(socket) do                   # => Called once per component instance
+                                          # => socket is component's own socket
+    {:ok, assign(socket, items: [], total: 0)}
+                                          # => Initializes component state
+                                          # => items is empty list
+                                          # => total starts at 0
+  end                                    # => Each instance has separate state
+                                          # => Multiple components don't share state
 
   @impl true
   def handle_event("add_item", %{"product_id" => id}, socket) do
-    product = MyApp.Catalog.get_product!(id)          # => Fetch product
-    items = [product | socket.assigns.items]          # => Add to cart
-    total = socket.assigns.total + product.price      # => Update total
+                                          # => Handles add button click
+                                          # => id from phx-value-product_id
+    product = MyApp.Catalog.get_product!(id)
+                                          # => Fetches product from database
+                                          # => Raises if not found
+    items = [product | socket.assigns.items]
+                                          # => Prepends product to items list
+                                          # => [new_item | old_items]
+    total = socket.assigns.total + product.price
+                                          # => Adds price to running total
+                                          # => Decimal/Money math
 
-    {:noreply, assign(socket, items: items, total: total)}  # => Update component state
-  end  # => Only this component updates, not parent
+    {:noreply, assign(socket, items: items, total: total)}
+                                          # => Updates component state only
+                                          # => Triggers component re-render
+  end                                    # => Parent LiveView NOT affected
+                                          # => Isolated state change
 
   @impl true
   def handle_event("remove_item", %{"product_id" => id}, socket) do
+                                          # => Handles remove button click
     product = MyApp.Catalog.get_product!(id)
+                                          # => Re-fetches for price info
     items = Enum.reject(socket.assigns.items, &(&1.id == id))
+                                          # => Filters out matching product
+                                          # => &(&1.id == id) is anonymous function
+                                          # => Returns new list without item
     total = socket.assigns.total - product.price
+                                          # => Subtracts price from total
 
     {:noreply, assign(socket, items: items, total: total)}
+                                          # => Updates component state
   end
 
   @impl true
-  def render(assigns) do
+  def render(assigns) do                 # => Renders component template
     ~H"""
-    <div id="cart">
+    <div id="cart">                      # => Container for component
       <h2>Cart (<%= length(@items) %> items)</h2>
+                                          # => Shows item count
+                                          # => length/1 counts list elements
       <ul>
-        <%= for item <- @items do %>
+        <%= for item <- @items do %>     # => Iterates cart items
           <li>
             <%= item.name %> - $<%= item.price %>
+                                          # => Displays item details
             <button phx-click="remove_item" phx-value-product_id={item.id} phx-target={@myself}>
+                                          # => phx-click triggers event
+                                          # => phx-value- passes data
+                                          # => phx-target={@myself} routes to THIS component
+                                          # => Without @myself, goes to parent LiveView
               Remove
             </button>
           </li>
         <% end %>
       </ul>
-      <p>Total: $<%= @total %></p>
+      <p>Total: $<%= @total %></p>       # => Shows running total
     </div>
     """
   end
 end
 
 # Parent uses live_component to render
-def parent_render(assigns) do
+def parent_render(assigns) do            # => Parent LiveView template
   ~H"""
   <%= live_component(MyAppWeb.ShoppingCart, id: "cart") %>
+                                          # => Renders LiveComponent
+                                          # => id: "cart" identifies instance
+                                          # => Required for stateful components
+                                          # => Each id creates separate state
   """
 end
 ```
@@ -306,20 +431,29 @@ end
 Trigger JavaScript from LiveView without custom JS. Use Phoenix.LiveView.JS for common patterns.
 
 ```elixir
-defmodule MyAppWeb.ModalLive do
-  use Phoenix.LiveView
+defmodule MyAppWeb.ModalLive do          # => LiveView with JS commands
+  use Phoenix.LiveView                   # => Imports LiveView behavior
 
-  def render(assigns) do
+  def render(assigns) do                 # => Renders modal with JS
     ~H"""
     <div>
       <button phx-click={JS.show(to: "#modal")}>Open Modal</button>
+                                          # => phx-click accepts JS command
+                                          # => JS.show/1 makes element visible
+                                          # => to: "#modal" targets DOM selector
+                                          # => No server roundtrip needed
 
       <div id="modal" class="modal" style="display: none;">
+                                          # => Initially hidden modal
+                                          # => style="display: none;" hides element
         <h2>Modal Title</h2>
 
         <button phx-click={
-          JS.hide(to: "#modal")
-          |> JS.push("close_modal")
+          JS.hide(to: "#modal")          # => First: hide modal
+                                          # => JS.hide/1 sets display: none
+          |> JS.push("close_modal")      # => Then: send server event
+                                          # => Chains JS commands with |>
+                                          # => JS.push/1 triggers server handler
         }>
           Close
         </button>
@@ -329,17 +463,28 @@ defmodule MyAppWeb.ModalLive do
   end
 
   def handle_event("close_modal", _params, socket) do
-    {:noreply, socket}
+                                          # => Handles server-side close event
+                                          # => Triggered after JS.hide completes
+    {:noreply, socket}                   # => No state changes needed
+                                          # => DOM already hidden by JS
   end
 end
 
 # Chaining multiple JS commands
-action = JS.push("validate")
-  |> JS.show(to: "#spinner")
-  |> JS.add_class("error", to: "#field")
+action = JS.push("validate")             # => Starts chain with server event
+                                          # => Sends "validate" to handle_event
+  |> JS.show(to: "#spinner")             # => Shows loading spinner
+                                          # => DOM manipulation
+  |> JS.add_class("error", to: "#field") # => Adds CSS class to field
+                                          # => to: "#field" targets input
   |> JS.transition({"fade-in", "duration-500"}, time: 500)
+                                          # => Applies CSS transition
+                                          # => "fade-in" is CSS class
+                                          # => time: 500 is animation duration (ms)
 
 <button phx-click={action}>Submit</button>
+                                          # => Executes all chained commands
+                                          # => Commands run sequentially
 ```
 
 **Key Takeaway**: JS.show/2, JS.hide/2, JS.add_class/2, JS.remove_class/2 manipulate DOM. Chain multiple commands together. Use JS.push/1 to send server event alongside DOM changes.
@@ -351,17 +496,20 @@ action = JS.push("validate")
 Update the UI immediately (optimistic), then rollback if the server operation fails.
 
 ```elixir
-defmodule MyAppWeb.PostLive do
-  use Phoenix.LiveView
+defmodule MyAppWeb.PostLive do           # => LiveView with optimistic updates
+  use Phoenix.LiveView                   # => Imports LiveView behavior
 
-  def render(assigns) do
+  def render(assigns) do                 # => Renders post with like button
     ~H"""
     <article>
-      <h2><%= @post.title %></h2>
-      <p>Likes: <%= @post.likes %></p>
+      <h2><%= @post.title %></h2>        # => Post title
+      <p>Likes: <%= @post.likes %></p>   # => Shows current like count
+                                          # => Updates immediately on click
 
       <!-- Optimistically increment, rollback on error -->
       <button phx-click="like" phx-value-post_id={@post.id}>
+                                          # => phx-click triggers event
+                                          # => phx-value- passes post ID
         Like
       </button>
     </article>
@@ -369,20 +517,32 @@ defmodule MyAppWeb.PostLive do
   end
 
   def handle_event("like", %{"post_id" => id}, socket) do
-    post = socket.assigns.post
+                                          # => Handles like button click
+    post = socket.assigns.post           # => Gets current post from assigns
 
-    # Update UI immediately
+    # Update UI immediately (optimistic)
     updated_post = %{post | likes: post.likes + 1}
+                                          # => Map update syntax
+                                          # => Increments likes immediately
+                                          # => User sees instant feedback
     socket = assign(socket, :post, updated_post)
+                                          # => Updates socket with new post
+                                          # => Triggers re-render immediately
 
     case MyApp.Blog.increment_likes(post) do
-      {:ok, _} ->
+                                          # => Attempts database update
+                                          # => Happens AFTER UI update
+      {:ok, _} ->                        # => Server confirmed success
         # Server confirmed - keep the change
-        {:noreply, socket}
+        {:noreply, socket}               # => UI already updated
+                                          # => No rollback needed
 
-      {:error, _reason} ->
+      {:error, _reason} ->               # => Server operation failed
         # Server failed - rollback to original
         {:noreply, assign(socket, :post, post)}
+                                          # => Restores original post
+                                          # => Reverts likes count
+                                          # => User sees rollback
     end
   end
 end
@@ -416,27 +576,45 @@ sequenceDiagram
 
 ```elixir
 # lib/my_app_web/channels/room_channel.ex
-defmodule MyAppWeb.RoomChannel do
-  use Phoenix.Channel
+defmodule MyAppWeb.RoomChannel do        # => Channel for chat rooms
+  use Phoenix.Channel                    # => Imports Channel behavior
+                                          # => Provides join, handle_in callbacks
 
-  @impl true
+  @impl true                             # => Marks callback implementation
   def join("room:" <> room_id, _message, socket) do
-    {:ok, assign(socket, :room_id, room_id)}          # => User joined successfully
-  end  # => Pattern match room ID from topic name
+                                          # => Handles channel join request
+                                          # => "room:" <> room_id pattern matches topic
+                                          # => room_id extracted from "room:123"
+    {:ok, assign(socket, :room_id, room_id)}
+                                          # => Returns success tuple
+                                          # => Stores room_id in socket assigns
+                                          # => User now subscribed to room
+  end                                    # => Client receives {:ok, ...} response
 
   @impl true
   def handle_in("new_message", %{"body" => body}, socket) do
+                                          # => Handles incoming message event
+                                          # => "new_message" is event name
+                                          # => %{"body" => ...} from client
     # Broadcast to all users in the room
     broadcast(socket, "message", %{body: body, user_id: socket.assigns.user_id})
-    # => Sends to ALL users in room, including sender
-    {:noreply, socket}                                # => Don't send individual reply
+                                          # => Sends to ALL users in same topic
+                                          # => "message" is event name
+                                          # => Includes sender's user_id
+                                          # => Sender also receives own message
+    {:noreply, socket}                   # => No individual reply to sender
+                                          # => Broadcast already sent message
   end
 
   @impl true
   def handle_in("typing", _params, socket) do
+                                          # => Handles typing indicator event
     broadcast_from(socket, "user_typing", %{user_id: socket.assigns.user_id})
-    # => Sends to all EXCEPT sender (no echo)
-    {:noreply, socket}
+                                          # => Sends to all EXCEPT sender
+                                          # => broadcast_from excludes sender socket
+                                          # => Prevents echo to typing user
+                                          # => "user_typing" event with user_id
+    {:noreply, socket}                   # => No reply to sender
   end
 end
 
@@ -485,23 +663,30 @@ graph TD
 ```
 
 ```elixir
-defmodule MyAppWeb.PostsLive.List do
-  use Phoenix.LiveView
+defmodule MyAppWeb.PostsLive.List do     # => LiveView subscribing to PubSub
+  use Phoenix.LiveView                   # => Imports LiveView behavior
 
   def mount(_params, _session, socket) do
+                                          # => Called when LiveView connects
     # Subscribe to "posts" topic
-    MyAppWeb.Endpoint.subscribe("posts")              # => Listen for broadcasts
+    MyAppWeb.Endpoint.subscribe("posts") # => Subscribes to PubSub topic
+                                          # => "posts" is topic name
+                                          # => Receives all broadcasts to this topic
 
-    posts = MyApp.Blog.list_posts()                   # => Initial data
-    {:ok, stream(socket, :posts, posts)}              # => Setup stream
-  end  # => This LiveView now receives all "posts" broadcasts
+    posts = MyApp.Blog.list_posts()      # => Fetches initial post list
+                                          # => Returns [%Post{}, %Post{}, ...]
+    {:ok, stream(socket, :posts, posts)} # => Initializes stream
+                                          # => Sets up @streams.posts
+  end                                    # => handle_info will receive broadcasts
 
-  def render(assigns) do
+  def render(assigns) do                 # => Renders post list
     ~H"""
     <div id="posts" phx-update="stream">
+                                          # => phx-update="stream" for efficient updates
       <%= for {dom_id, post} <- @streams.posts do %>
-        <article id={dom_id}>
-          <h2><%= post.title %></h2>
+                                          # => Iterates stream tuples
+        <article id={dom_id}>            # => DOM ID for targeted updates
+          <h2><%= post.title %></h2>     # => Post title
         </article>
       <% end %>
     </div>
@@ -510,30 +695,47 @@ defmodule MyAppWeb.PostsLive.List do
 
   @impl true
   def handle_info({:post_created, post}, socket) do
-    {:noreply, stream_insert(socket, :posts, post, at: 0)}  # => Add at top
-  end  # => Triggered by PubSub broadcast
+                                          # => Receives broadcast message
+                                          # => {:post_created, post} tuple from broadcast
+    {:noreply, stream_insert(socket, :posts, post, at: 0)}
+                                          # => Adds post to stream
+                                          # => at: 0 inserts at beginning
+                                          # => Updates UI without full re-render
+  end                                    # => All subscribed LiveViews update
 
   @impl true
   def handle_info({:post_updated, post}, socket) do
-    {:noreply, stream_insert(socket, :posts, post)}   # => Updates existing item
-  end  # => Stream finds by ID and updates in place
+                                          # => Receives post update broadcast
+    {:noreply, stream_insert(socket, :posts, post)}
+                                          # => Updates existing post
+                                          # => Stream finds by post.id and replaces
+  end                                    # => UI shows updated content
 
   @impl true
   def handle_info({:post_deleted, post_id}, socket) do
-    {:noreply, stream_delete_by_dom_id(socket, :posts, "posts-#{post_id}")}  # => Remove from UI
-  end  # => All connected LiveViews update simultaneously
+                                          # => Receives delete broadcast
+    {:noreply, stream_delete_by_dom_id(socket, :posts, "posts-#{post_id}")}
+                                          # => Removes from stream by DOM ID
+                                          # => "posts-123" matches article id
+                                          # => UI removes element
+  end                                    # => All users see deletion instantly
 end
 
 # When a post is created (in your context)
-defmodule MyApp.Blog do
-  def create_post(attrs) do
-    case Repo.insert(changeset) do
-      {:ok, post} ->
+defmodule MyApp.Blog do                  # => Context module for blog domain
+  def create_post(attrs) do              # => Creates new post
+    case Repo.insert(changeset) do       # => Attempts database insert
+      {:ok, post} ->                     # => Insert succeeded
         MyAppWeb.Endpoint.broadcast("posts", "post_created", post)
-        {:ok, post}
+                                          # => Broadcasts to all subscribers
+                                          # => "posts" topic
+                                          # => "post_created" event type
+                                          # => post is payload
+        {:ok, post}                      # => Returns success tuple
 
-      {:error, changeset} ->
-        {:error, changeset}
+      {:error, changeset} ->             # => Insert failed
+        {:error, changeset}              # => Returns error
+                                          # => No broadcast on error
     end
   end
 end
@@ -548,39 +750,57 @@ end
 Track which users are online and what they're doing. Presence automatically cleans up when users disconnect.
 
 ```elixir
-defmodule MyAppWeb.Presence do
-  use Phoenix.Presence,
-    otp_app: :my_app,
-    pubsub_server: MyApp.PubSub
+defmodule MyAppWeb.Presence do           # => Presence module for user tracking
+  use Phoenix.Presence,                  # => Uses Phoenix.Presence behavior
+    otp_app: :my_app,                    # => Links to application
+    pubsub_server: MyApp.PubSub          # => Uses app's PubSub server
+                                          # => Broadcasts presence updates
 end
 
 # Track user presence
-defmodule MyAppWeb.RoomChannel do
-  use Phoenix.Channel
-  alias MyAppWeb.Presence
+defmodule MyAppWeb.RoomChannel do        # => Channel with presence tracking
+  use Phoenix.Channel                    # => Imports Channel behavior
+  alias MyAppWeb.Presence                # => Shortcuts Presence module
 
   def join("room:" <> room_id, _params, socket) do
-    send(self(), :after_join)
+                                          # => Handles room join
+    send(self(), :after_join)            # => Sends message to self
+                                          # => Defers presence tracking
+                                          # => Ensures join completes first
     {:ok, assign(socket, :room_id, room_id)}
+                                          # => Returns success
+                                          # => Stores room_id
   end
 
   def handle_info(:after_join, socket) do
+                                          # => Receives :after_join message
+                                          # => Called after successful join
     {:ok, _} =
       Presence.track(socket, "user:#{socket.assigns.user_id}", %{
-        user_id: socket.assigns.user_id,             # => User identifier
-        username: socket.assigns.username,           # => Display name
-        status: "online"                             # => Current status
-      })  # => Registers this user as present
+                                          # => Tracks user in this socket's topic
+                                          # => "user:1" is presence key
+        user_id: socket.assigns.user_id, # => User identifier (database ID)
+        username: socket.assigns.username, # => Display name for UI
+        status: "online"                 # => Current status string
+      })                                 # => Meta map with user data
+                                          # => Registers presence in topic
 
-    push(socket, "presence_state", Presence.list(socket))  # => Send current users list
-    {:noreply, socket}
-  end  # => Automatically removed when socket disconnects
+    push(socket, "presence_state", Presence.list(socket))
+                                          # => Sends current presence list to client
+                                          # => "presence_state" event
+                                          # => Client gets all online users
+    {:noreply, socket}                   # => Returns socket
+  end                                    # => Presence auto-removed on disconnect
+
 end
 
 # Get list of online users
-onlineUsers = Presence.list("room:123")
+onlineUsers = Presence.list("room:123")  # => Lists all users in topic
+                                          # => "room:123" is PubSub topic
+# => Returns map of presences:
 # => %{
 #   "user:1" => %{metas: [%{user_id: 1, username: "Alice", status: "online"}]},
+                                          # => metas is list (supports multiple connections)
 #   "user:2" => %{metas: [%{user_id: 2, username: "Bob", status: "online"}]}
 # }
 ```
@@ -594,43 +814,66 @@ onlineUsers = Presence.list("room:123")
 Secure channels with authentication tokens. Only authenticated users can join sensitive channels.
 
 ```elixir
-defmodule MyAppWeb.UserSocket do
-  use Phoenix.Socket
+defmodule MyAppWeb.UserSocket do         # => Socket module for WebSocket connections
+  use Phoenix.Socket                     # => Imports Socket behavior
 
-  channel "room:*", MyAppWeb.RoomChannel
+  channel "room:*", MyAppWeb.RoomChannel # => Routes "room:*" topics to RoomChannel
+                                          # => * wildcard matches any room ID
   channel "private:*", MyAppWeb.PrivateChannel
+                                          # => Routes "private:*" to PrivateChannel
 
   @impl true
   def connect(%{"token" => token}, socket) do
-    case verify_token(token) do
-      {:ok, user_id} ->
+                                          # => Called when client connects
+                                          # => %{"token" => ...} from client params
+    case verify_token(token) do          # => Verifies authentication token
+                                          # => Checks signature and expiry
+      {:ok, user_id} ->                  # => Token valid
         {:ok, assign(socket, user_id: user_id)}
+                                          # => Returns success
+                                          # => Stores user_id in socket assigns
+                                          # => Connection allowed
 
-      {:error, _reason} ->
-        :error  # => Reject connection
+      {:error, _reason} ->               # => Token invalid or expired
+        :error                           # => Rejects connection
+                                          # => Client cannot connect
     end
   end
 
   @impl true
   def id(socket), do: "user_socket:#{socket.assigns.user_id}"
+                                          # => Generates unique socket ID
+                                          # => Used for tracking connections
+                                          # => Enables disconnect on logout
 
-  defp verify_token(token) do
+  defp verify_token(token) do            # => Private token verification
     Phoenix.Token.verify(socket, "user socket", token, max_age: 86400)
+                                          # => Verifies token signature
+                                          # => "user socket" is salt
+                                          # => max_age: 86400 (24 hours in seconds)
+                                          # => Returns {:ok, user_id} or {:error, reason}
   end
 end
 
 # Generate token in your controller
 def login(conn, %{"email" => email, "password" => password}) do
+                                          # => Handles login form submission
   case MyApp.Accounts.authenticate(email, password) do
-    {:ok, user} ->
+                                          # => Validates credentials
+    {:ok, user} ->                       # => Authentication successful
       token = Phoenix.Token.sign(conn, "user socket", user.id)
+                                          # => Generates signed token
+                                          # => Embeds user.id in token
+                                          # => "user socket" is salt (must match verify)
 
       conn
-      |> put_session(:user_token, token)
+      |> put_session(:user_token, token) # => Stores token in session
       |> render("login_success.html", user_token: token)
+                                          # => Renders success page with token
+                                          # => Client uses token for socket connection
 
-    {:error, _} ->
-      render(conn, "login_error.html")
+    {:error, _} ->                       # => Authentication failed
+      render(conn, "login_error.html")   # => Shows error page
   end
 end
 ```
@@ -644,30 +887,55 @@ end
 Test channel behavior with ChannelCase. Assert messages, errors, and state changes.
 
 ```elixir
-defmodule MyAppWeb.RoomChannelTest do
-  use MyAppWeb.ChannelCase
+defmodule MyAppWeb.RoomChannelTest do    # => Test module for RoomChannel
+  use MyAppWeb.ChannelCase              # => Imports channel testing helpers
+                                          # => Provides subscribe_and_join, push, assert_*
 
-  setup do
+  setup do                               # => Runs before each test
+                                          # => Sets up test socket
     {:ok, _, socket} = subscribe_and_join(MyAppWeb.UserSocket, "room:123", %{})
-    {:ok, socket: socket}
+                                          # => Connects to test socket
+                                          # => Joins "room:123" channel
+                                          # => Returns {:ok, reply, socket}
+    {:ok, socket: socket}                # => Returns socket for tests
+                                          # => Available as %{socket: socket} in tests
   end
 
   test "broadcast new_message", %{socket: socket} do
+                                          # => Tests message broadcasting
+                                          # => socket from setup/0
     push(socket, "new_message", %{"body" => "Hello"})
+                                          # => Sends message to channel
+                                          # => Triggers handle_in/3
     assert_broadcast("message", %{body: "Hello"})
+                                          # => Asserts broadcast happened
+                                          # => Verifies event name and payload
+                                          # => Test passes if broadcast sent
   end
 
   test "handles join message", %{socket: socket} do
-    assert_push("presence_state", _)
+                                          # => Tests join behavior
+    assert_push("presence_state", _)     # => Asserts server pushed message
+                                          # => "presence_state" event expected
+                                          # => _ matches any payload
+                                          # => Verifies presence list sent
   end
 
-  test "rejects unauthorized join" do
+  test "rejects unauthorized join" do    # => Tests authentication
+                                          # => No socket from setup (independent test)
     assert {:error, _} = subscribe_and_join(MyAppWeb.UserSocket, "private:secret", %{})
+                                          # => Attempts to join private channel
+                                          # => Should return {:error, reason}
+                                          # => Asserts join rejected
+                                          # => Tests authorization logic
   end
 
   test "handle_in updates state", %{socket: socket} do
-    push(socket, "typing", %{})
-    assert_broadcast("user_typing", _)
+                                          # => Tests event handling
+    push(socket, "typing", %{})          # => Sends typing event
+                                          # => Empty payload map
+    assert_broadcast("user_typing", _)   # => Asserts typing broadcast
+                                          # => Verifies broadcast_from called
   end
 end
 ```
@@ -701,45 +969,68 @@ graph TD
 ```
 
 ```elixir
-defmodule MyAppWeb.SessionController do
-  use MyAppWeb, :controller
-  alias MyApp.Accounts
+defmodule MyAppWeb.SessionController do  # => Controller for login/logout
+  use MyAppWeb, :controller              # => Imports controller behavior
+  alias MyApp.Accounts                   # => Shortcuts Accounts context
 
-  def new(conn, _params) do
-    render(conn, "new.html")
+  def new(conn, _params) do              # => Renders login form
+                                          # => GET /login route
+    render(conn, "new.html")             # => Shows login page
   end
 
   def create(conn, %{"session" => %{"email" => email, "password" => password}}) do
-    case Accounts.authenticate(email, password) do    # => Check credentials
-      {:ok, user} ->
+                                          # => Handles login form submission
+                                          # => POST /login route
+    case Accounts.authenticate(email, password) do
+                                          # => Verifies credentials
+                                          # => Checks email + hashed password
+      {:ok, user} ->                     # => Login successful
         conn
-        |> put_session(:user_id, user.id)            # => Store encrypted in session
+        |> put_session(:user_id, user.id)
+                                          # => Stores user ID in encrypted cookie
+                                          # => Session survives across requests
         |> put_flash(:info, "Welcome back!")
-        |> redirect(to: ~p"/dashboard")
+                                          # => Sets flash message
+        |> redirect(to: ~p"/dashboard")  # => Redirects to dashboard
+                                          # => Flash shown on dashboard page
 
-      {:error, _} ->
+      {:error, _} ->                     # => Login failed
         conn
-        |> put_flash(:error, "Invalid credentials")  # => Show error
-        |> render("new.html")                        # => Re-render login form
+        |> put_flash(:error, "Invalid credentials")
+                                          # => Shows error message
+        |> render("new.html")            # => Re-renders login form
+                                          # => Error flash displayed
     end
-  end  # => Session stored in signed cookie
+  end                                    # => Session stored in signed cookie
+                                          # => Client cannot tamper with session
 
-  def delete(conn, _params) do
+  def delete(conn, _params) do           # => Handles logout
+                                          # => DELETE /logout route
     conn
-    |> delete_session(:user_id)  # => Clear session
-    |> put_flash(:info, "Logged out")
-    |> redirect(to: ~p"/")
+    |> delete_session(:user_id)          # => Removes user_id from session
+                                          # => Clears authentication
+    |> put_flash(:info, "Logged out")    # => Shows logout message
+    |> redirect(to: ~p"/")               # => Redirects to homepage
   end
 end
 
 # Get current user from session
 defmodule MyAppWeb.Plugs.SetCurrentUser do
-  def init(opts), do: opts
+                                          # => Plug to load current user
+  def init(opts), do: opts               # => Initializes plug options
+                                          # => Runs at compile time
 
-  def call(conn, _opts) do
+  def call(conn, _opts) do               # => Called on each request
+                                          # => Runs in plug pipeline
     user_id = get_session(conn, :user_id)
+                                          # => Retrieves user_id from session
+                                          # => Returns nil if not logged in
     user = if user_id, do: MyApp.Accounts.get_user!(user_id)
-    assign(conn, :current_user, user)
+                                          # => Loads user if user_id exists
+                                          # => nil if not logged in
+    assign(conn, :current_user, user)    # => Makes @current_user available
+                                          # => Templates can use @current_user
+                                          # => Controllers can access conn.assigns.current_user
   end
 end
 ```

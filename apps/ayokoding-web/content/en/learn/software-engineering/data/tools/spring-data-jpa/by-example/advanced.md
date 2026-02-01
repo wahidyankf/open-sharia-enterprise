@@ -14,53 +14,54 @@ tags:
 Specifications provide type-safe dynamic query building using the Criteria API.
 
 ```java
-import org.springframework.data.jpa.domain.Specification;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import org.springframework.data.jpa.domain.Specification;      // => Specification interface for type-safe queries
+import jakarta.persistence.criteria.CriteriaBuilder;          // => Builder for query predicates
+import jakarta.persistence.criteria.CriteriaQuery;            // => Represents query structure
+import jakarta.persistence.criteria.Predicate;                // => Represents WHERE clause condition
+import jakarta.persistence.criteria.Root;                     // => Represents entity in FROM clause
 
-// => Entity
-@Entity
-// => Marks class as JPA entity (database table mapping)
-public class Product {
-    @Id @GeneratedValue
-    // => Primary key field
-    private Long id;
-    private String name;
-    private BigDecimal price;
-    private boolean active;
-    // getters/setters
+@Entity                                                       // => Marks class as JPA entity (database table mapping)
+public class Product {                                        // => Product entity class
+    @Id @GeneratedValue                                       // => Primary key, auto-generated
+    private Long id;                                          // => Product ID (primary key)
+    private String name;                                      // => Product name (VARCHAR in DB)
+    private BigDecimal price;                                 // => Product price (DECIMAL in DB)
+    private boolean active;                                   // => Active status (BOOLEAN/TINYINT in DB)
+    // getters/setters omitted for brevity                   // => JPA requires public getters/setters
 }
 
-// => Specification for active products
-public class ProductSpecifications {
-    public static Specification<Product> isActive() {
+public class ProductSpecifications {                          // => Utility class for reusable Specifications
+    public static Specification<Product> isActive() {         // => Creates Specification for active products filter
         return (Root<Product> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
-            // => Root: represents Product entity in query
-            // => CriteriaBuilder: creates predicates, expressions
-            return cb.equal(root.get("active"), true);
-            // => Same as: WHERE active = true
-        };
+                                                              // => Lambda parameters: root (entity), query (SELECT structure), cb (predicate builder)
+                                                              // => Root<Product>: represents Product table in FROM clause
+                                                              // => CriteriaQuery<?>: query metadata (SELECT, FROM, WHERE)
+                                                              // => CriteriaBuilder: factory for predicates, expressions
+            return cb.equal(root.get("active"), true);       // => Creates predicate: WHERE active = true
+                                                              // => root.get("active") accesses Product.active field
+                                                              // => cb.equal() creates equality predicate
+        };                                                    // => Returns Predicate (WHERE condition)
     }
 }
 
-// => Repository with JpaSpecificationExecutor
 public interface ProductRepository extends JpaRepository<Product, Long>,
                                            JpaSpecificationExecutor<Product> {
-    // => JpaSpecificationExecutor adds findAll(Specification) methods
+                                                              // => Extends JpaRepository for basic CRUD
+                                                              // => Extends JpaSpecificationExecutor for Specification support
+                                                              // => Adds methods: findAll(Specification), findOne(Specification), count(Specification)
+    // No method definitions needed                          // => Spring Data JPA generates implementation at runtime
 }
 
-// => Usage in service
-@Service
-public class ProductService {
-    @Autowired
-    private ProductRepository productRepository;
+@Service                                                      // => Spring service bean
+public class ProductService {                                 // => Service layer for Product operations
+    @Autowired                                                // => Dependency injection (constructor injection preferred)
+    private ProductRepository productRepository;              // => Repository instance injected by Spring
 
-    public List<Product> getActiveProducts() {
-        // => Execute specification
+    public List<Product> getActiveProducts() {                // => Retrieves active products only
         return productRepository.findAll(ProductSpecifications.isActive());
-        // => Returns only products where active = true
+                                                              // => Calls findAll(Specification) from JpaSpecificationExecutor
+                                                              // => Executes: SELECT * FROM product WHERE active = true
+                                                              // => Returns List<Product> (all active products, never null)
     }
 }
 
@@ -99,55 +100,57 @@ graph TD
 ```
 
 ```java
-public class ProductSpecifications {
-    public static Specification<Product> isActive() {
+public class ProductSpecifications {                          // => Reusable specification factory class
+    public static Specification<Product> isActive() {         // => Specification for active status filter
         return (root, query, cb) -> cb.equal(root.get("active"), true);
+                                                              // => Lambda with implicit types (same as Example 61)
+                                                              // => Generates: WHERE active = true
     }
 
     public static Specification<Product> hasMinPrice(BigDecimal minPrice) {
-        return (root, query, cb) ->
+                                                              // => Specification for minimum price filter
+        return (root, query, cb) ->                           // => Lambda creates Predicate
             cb.greaterThanOrEqualTo(root.get("price"), minPrice);
-            // => WHERE price >= :minPrice
+                                                              // => Generates: WHERE price >= :minPrice
+                                                              // => cb.greaterThanOrEqualTo() creates >= comparison
+                                                              // => root.get("price") accesses Product.price field
     }
 
     public static Specification<Product> hasCategory(String category) {
-        return (root, query, cb) ->
-            cb.equal(root.get("category"), category);
-            // => WHERE category = :category
+                                                              // => Specification for category filter
+        return (root, query, cb) ->                           // => Lambda creates Predicate
+            cb.equal(root.get("category"), category);         // => Generates: WHERE category = :category
+                                                              // => Parameterized query (SQL injection safe)
     }
 }
 
-@Service
-public class ProductService {
-    @Autowired
-    private ProductRepository productRepository;
+@Service                                                      // => Spring service bean
+public class ProductService {                                 // => Service layer for complex Product queries
+    @Autowired                                                // => Dependency injection
+    private ProductRepository productRepository;              // => Repository instance
 
     public List<Product> searchProducts(BigDecimal minPrice, String category) {
-        // => Combine specifications with AND
-        Specification<Product> spec = Specification
-            .where(ProductSpecifications.isActive())
-            // => WHERE active = true
-            .and(ProductSpecifications.hasMinPrice(minPrice))
-            // => AND price >= :minPrice
-            .and(ProductSpecifications.hasCategory(category));
-            // => AND category = :category
+                                                              // => Search with multiple AND conditions
+        Specification<Product> spec = Specification           // => Build composite Specification
+            .where(ProductSpecifications.isActive())          // => Base condition: WHERE active = true
+            .and(ProductSpecifications.hasMinPrice(minPrice)) // => Add AND clause: AND price >= :minPrice
+            .and(ProductSpecifications.hasCategory(category)); // => Add AND clause: AND category = :category
+                                                              // => Final SQL: WHERE active = true AND price >= :minPrice AND category = :category
 
-        return productRepository.findAll(spec);
-// => Executes SELECT * FROM table
-// => Loads ALL records into memory (dangerous for large tables)
-// => Returns List<Entity> (never null, empty list if no records)
-        // => Final query: WHERE active = true AND price >= :minPrice AND category = :category
+        return productRepository.findAll(spec);               // => Execute composed specification
+                                                              // => Executes: SELECT * FROM product WHERE active = true AND price >= :minPrice AND category = :category
+                                                              // => Returns List<Product> matching all conditions
     }
 
     public List<Product> searchFlexible(BigDecimal minPrice, String cat1, String cat2) {
-        // => Complex combination: AND with OR
-        Specification<Product> spec = Specification
-            .where(ProductSpecifications.isActive())
-            .and(ProductSpecifications.hasMinPrice(minPrice))
-            .and(ProductSpecifications.hasCategory(cat1)
-                .or(ProductSpecifications.hasCategory(cat2)));
-                // => WHERE active = true AND price >= :minPrice
-                //    AND (category = :cat1 OR category = :cat2)
+                                                              // => Search with AND + OR combination
+        Specification<Product> spec = Specification           // => Build composite Specification with OR
+            .where(ProductSpecifications.isActive())          // => Base: WHERE active = true
+            .and(ProductSpecifications.hasMinPrice(minPrice)) // => AND price >= :minPrice
+            .and(ProductSpecifications.hasCategory(cat1)      // => AND (category = :cat1
+                .or(ProductSpecifications.hasCategory(cat2))); // => OR category = :cat2)
+                                                              // => Parentheses enforce OR precedence
+                                                              // => Final SQL: WHERE active = true AND price >= :minPrice AND (category = :cat1 OR category = :cat2)
 
         return productRepository.findAll(spec);
 // => Executes SELECT * FROM table
@@ -240,129 +243,122 @@ public class ProductService {
 Navigate entity relationships in specifications using joins.
 
 ```java
-// => Entities with relationship
-@Entity
-// => Marks class as JPA entity (database table mapping)
-public class Order {
-    @Id @GeneratedValue
-    // => Primary key field
-    private Long id;
-    private LocalDateTime orderDate;
-    private String status;
+@Entity                                                       // => Marks class as JPA entity (database table mapping)
+public class Order {                                          // => Order entity (maps to "order" table)
+    @Id @GeneratedValue                                       // => Primary key, auto-generated
+    private Long id;                                          // => Order ID
+    private LocalDateTime orderDate;                          // => When order was placed (TIMESTAMP in DB)
+    private String status;                                    // => Order status: "PENDING", "SHIPPED", "DELIVERED" (VARCHAR in DB)
 
-    @ManyToOne
-    // => Defines entity relationship for foreign key mapping
-    @JoinColumn(name = "customer_id")
-    // => Foreign key column: customer_id
-    private Customer customer;
-    // => Order belongs to Customer
+    @ManyToOne                                                // => Many orders belong to one customer
+                                                              // => Creates foreign key relationship
+    @JoinColumn(name = "customer_id")                         // => Foreign key column name in order table
+                                                              // => References customer.id
+    private Customer customer;                                // => Associated customer entity
+                                                              // => Loaded lazily by default (proxy until accessed)
 
-    @OneToMany(mappedBy = "order")
-    // => Defines entity relationship for foreign key mapping
-    private List<OrderItem> items = new ArrayList<>();
-    // => Order has many OrderItems
+    @OneToMany(mappedBy = "order")                            // => One order has many order items
+                                                              // => mappedBy = "order" indicates inverse side (OrderItem owns the FK)
+    private List<OrderItem> items = new ArrayList<>();        // => Collection of order items
+                                                              // => Loaded lazily by default (proxy until accessed)
 }
 
-@Entity
-// => Marks class as JPA entity (database table mapping)
-public class Customer {
-    @Id @GeneratedValue
-    // => Primary key field
-    private Long id;
-    private String email;
-    private String tier; // GOLD, SILVER, BRONZE
+@Entity                                                       // => Marks class as JPA entity (database table mapping)
+public class Customer {                                       // => Customer entity (maps to "customer" table)
+    @Id @GeneratedValue                                       // => Primary key, auto-generated
+    private Long id;                                          // => Customer ID
+    private String email;                                     // => Customer email (VARCHAR in DB)
+    private String tier;                                      // => Customer tier: "GOLD", "SILVER", "BRONZE" (VARCHAR in DB)
+                                                              // => Could use @Enumerated instead for type safety
 }
 
-@Entity
-// => Marks class as JPA entity (database table mapping)
-public class OrderItem {
-    @Id @GeneratedValue
-    // => Primary key field
-    private Long id;
-    private Integer quantity;
+@Entity                                                       // => Marks class as JPA entity (database table mapping)
+public class OrderItem {                                      // => OrderItem entity (maps to "order_item" table)
+    @Id @GeneratedValue                                       // => Primary key, auto-generated
+    private Long id;                                          // => OrderItem ID
+    private Integer quantity;                                 // => Quantity ordered (INT in DB)
 
-    @ManyToOne
-    // => Defines entity relationship for foreign key mapping
-    @JoinColumn(name = "order_id")
-    // => Foreign key column: order_id
-    private Order order;
+    @ManyToOne                                                // => Many order items belong to one order
+    @JoinColumn(name = "order_id")                            // => Foreign key column in order_item table
+                                                              // => References order.id
+    private Order order;                                      // => Associated order entity
+                                                              // => Loaded lazily by default
 
-    @ManyToOne
-    // => Defines entity relationship for foreign key mapping
-    @JoinColumn(name = "product_id")
-    // => Foreign key column: product_id
-    private Product product;
+    @ManyToOne                                                // => Many order items reference one product
+    @JoinColumn(name = "product_id")                          // => Foreign key column in order_item table
+                                                              // => References product.id
+    private Product product;                                  // => Associated product entity
+                                                              // => Loaded lazily by default
 }
 
-// => Specifications with joins
-public class OrderSpecifications {
+public class OrderSpecifications {                            // => Specification factory for Order queries with joins
     public static Specification<Order> hasCustomerEmail(String email) {
-        return (root, query, cb) -> {
-            // => Join to Customer entity
+                                                              // => Specification for filtering by customer email
+        return (root, query, cb) -> {                         // => Lambda creates Predicate with join
             Join<Order, Customer> customerJoin = root.join("customer");
-            // => Navigate from Order to Customer relationship
+                                                              // => Creates INNER JOIN from Order to Customer
+                                                              // => Navigates @ManyToOne relationship
+                                                              // => SQL: ... INNER JOIN customer ON order.customer_id = customer.id
 
             return cb.equal(customerJoin.get("email"), email);
-            // => WHERE customer.email = :email
-            // => SQL: ... JOIN customer ON order.customer_id = customer.id
-            //         WHERE customer.email = :email
+                                                              // => Creates predicate on joined table column
+                                                              // => WHERE customer.email = :email
+                                                              // => Filters orders by customer's email address
         };
     }
 
     public static Specification<Order> hasCustomerTier(String tier) {
-        return (root, query, cb) -> {
+                                                              // => Specification for filtering by customer tier level
+        return (root, query, cb) -> {                         // => Lambda creates Predicate with join
             Join<Order, Customer> customerJoin = root.join("customer");
-            return cb.equal(customerJoin.get("tier"), tier);
-            // => Filter by joined entity property
+                                                              // => Creates INNER JOIN to Customer table
+            return cb.equal(customerJoin.get("tier"), tier);  // => WHERE customer.tier = :tier
+                                                              // => Filters by customer tier ("GOLD", "SILVER", "BRONZE")
         };
     }
 
     public static Specification<Order> hasProductInItems(String productName) {
-        return (root, query, cb) -> {
-            // => Multiple joins: Order -> OrderItem -> Product
+                                                              // => Specification with multi-level join (Order → OrderItem → Product)
+        return (root, query, cb) -> {                         // => Lambda creates Predicate with chained joins
             Join<Order, OrderItem> itemsJoin = root.join("items");
-            // => Join from Order to OrderItem
+                                                              // => First join: Order to OrderItem (@OneToMany)
+                                                              // => SQL: ... INNER JOIN order_item ON order.id = order_item.order_id
 
             Join<OrderItem, Product> productJoin = itemsJoin.join("product");
-            // => Join from OrderItem to Product
+                                                              // => Second join: OrderItem to Product (@ManyToOne)
+                                                              // => SQL: ... INNER JOIN product ON order_item.product_id = product.id
 
             return cb.equal(productJoin.get("name"), productName);
-            // => WHERE product.name = :productName
-            // => SQL: ... JOIN order_item ON order.id = order_item.order_id
-            //         JOIN product ON order_item.product_id = product.id
-            //         WHERE product.name = :productName
-        };
+                                                              // => WHERE product.name = :productName
+                                                              // => Filters orders containing product with specific name
+        };                                                    // => Final SQL has 2 joins: order → order_item → product
     }
 }
 
-@Service
-public class OrderService {
-    @Autowired
-    private OrderRepository orderRepository;
+@Service                                                      // => Spring service bean
+public class OrderService {                                   // => Service layer for Order queries with joins
+    @Autowired                                                // => Dependency injection
+    private OrderRepository orderRepository;                  // => Repository instance (must extend JpaSpecificationExecutor)
 
-    public List<Order> findGoldCustomerOrders() {
-        // => Find all orders from GOLD tier customers
-        return orderRepository.findAll(
-// => Executes SELECT * FROM table
-// => Loads ALL records into memory (dangerous for large tables)
-// => Returns List<Entity> (never null, empty list if no records)
-            OrderSpecifications.hasCustomerTier("GOLD")
-        );
-        // => Automatically generates proper join SQL
+    public List<Order> findGoldCustomerOrders() {             // => Retrieves all orders from GOLD tier customers
+        return orderRepository.findAll(                       // => Execute specification query
+            OrderSpecifications.hasCustomerTier("GOLD")       // => Pass specification to repository
+        );                                                    // => Executes: SELECT * FROM order INNER JOIN customer ON order.customer_id = customer.id WHERE customer.tier = 'GOLD'
+                                                              // => Returns List<Order> (never null)
     }
 
     public List<Order> findOrdersWithProduct(String productName, String customerEmail) {
-        // => Combine multiple joins
-        Specification<Order> spec = Specification
+                                                              // => Query with multiple joins combined
+        Specification<Order> spec = Specification             // => Build composite specification
             .where(OrderSpecifications.hasProductInItems(productName))
+                                                              // => First condition: product.name = :productName (adds 2 joins)
             .and(OrderSpecifications.hasCustomerEmail(customerEmail));
-            // => WHERE product.name = :productName AND customer.email = :customerEmail
-            // => Multiple joins in single query
+                                                              // => Second condition: customer.email = :customerEmail (adds 1 join)
+                                                              // => Final SQL has 3 joins: order → order_item → product + order → customer
 
-        return orderRepository.findAll(spec);
-// => Executes SELECT * FROM table
-// => Loads ALL records into memory (dangerous for large tables)
-// => Returns List<Entity> (never null, empty list if no records)
+        return orderRepository.findAll(spec);                 // => Execute composed specification
+                                                              // => Executes: SELECT * FROM order INNER JOIN order_item ... INNER JOIN product ... INNER JOIN customer ... WHERE product.name = :productName AND customer.email = :customerEmail
+                                                              // => Returns List<Order> matching both conditions
     }
 }
 
@@ -404,51 +400,56 @@ graph TD
 ```
 
 ```java
-public class ProductSpecifications {
-    public static Specification<Product> isNotActive() {
-        return (root, query, cb) -> {
-            // => Use NOT to negate predicate
+public class ProductSpecifications {                          // => Specification factory with NOT operations
+    public static Specification<Product> isNotActive() {      // => Specification for inactive products
+        return (root, query, cb) -> {                         // => Lambda creates negated predicate
             Predicate activePredicate = cb.equal(root.get("active"), true);
-            return cb.not(activePredicate);
-            // => WHERE NOT (active = true)
-            // => Equivalent to: WHERE active = false
-        };
+                                                              // => Creates base predicate: active = true
+            return cb.not(activePredicate);                   // => Negates predicate using cb.not()
+                                                              // => WHERE NOT (active = true)
+                                                              // => Functionally equivalent to: WHERE active = false
+        };                                                    // => cb.not() inverts boolean predicate logic
     }
 
     public static Specification<Product> isNotInCategories(List<String> excludedCategories) {
-        return (root, query, cb) -> {
-            // => Negate IN clause
+                                                              // => Specification for excluding multiple categories
+        return (root, query, cb) -> {                         // => Lambda creates negated IN clause
             Predicate inPredicate = root.get("category").in(excludedCategories);
-            return cb.not(inPredicate);
-            // => WHERE NOT (category IN (:categories))
-            // => Equivalent to: WHERE category NOT IN (:categories)
+                                                              // => Creates IN clause: category IN (:categories)
+                                                              // => Matches any category in the list
+            return cb.not(inPredicate);                       // => Negates IN clause
+                                                              // => WHERE NOT (category IN (:categories))
+                                                              // => Same as: WHERE category NOT IN (:categories)
         };
     }
 
-    public static Specification<Product> hasComplexFilter(
-        BigDecimal minPrice,
-        BigDecimal maxPrice,
-        List<String> excludedCategories
+    public static Specification<Product> hasComplexFilter(    // => Specification combining multiple complex predicates
+        BigDecimal minPrice,                                  // => Minimum price filter parameter
+        BigDecimal maxPrice,                                  // => Maximum price filter parameter
+        List<String> excludedCategories                       // => Categories to exclude
     ) {
-        return (root, query, cb) -> {
-            // => Build multiple predicates
-            Predicate pricePredicate = cb.between(
-                root.get("price"),
-                minPrice,
-                maxPrice
-            );
-            // => price BETWEEN :minPrice AND :maxPrice
+        return (root, query, cb) -> {                         // => Lambda builds composite predicate
+            Predicate pricePredicate = cb.between(            // => BETWEEN predicate for price range
+                root.get("price"),                            // => Product.price field
+                minPrice,                                     // => Lower bound (inclusive)
+                maxPrice                                      // => Upper bound (inclusive)
+            );                                                // => price BETWEEN :minPrice AND :maxPrice
+                                                              // => Same as: price >= :minPrice AND price <= :maxPrice
 
-            Predicate categoryPredicate = cb.not(
-                root.get("category").in(excludedCategories)
-            );
-            // => category NOT IN (:excludedCategories)
+            Predicate categoryPredicate = cb.not(             // => Negated IN predicate
+                root.get("category").in(excludedCategories)   // => category IN (:excludedCategories)
+            );                                                // => category NOT IN (:excludedCategories)
+                                                              // => Filters out unwanted categories
 
             Predicate activePredicate = cb.equal(root.get("active"), true);
-            // => active = true
+                                                              // => active = true predicate
+                                                              // => Only include active products
 
-            // => Combine with AND
             return cb.and(pricePredicate, categoryPredicate, activePredicate);
+                                                              // => Combines all predicates with AND
+                                                              // => WHERE price BETWEEN :minPrice AND :maxPrice
+                                                              //     AND category NOT IN (:excludedCategories)
+                                                              //     AND active = true
             // => WHERE (price BETWEEN :minPrice AND :maxPrice)
             //    AND (category NOT IN (:excludedCategories))
             //    AND (active = true)
@@ -510,137 +511,147 @@ public class ProductService {
 Combine specifications with sorting and pagination for efficient data retrieval.
 
 ```java
-@Service
-public class ProductService {
-    @Autowired
-    private ProductRepository productRepository;
+@Service                                                      // => Spring service bean
+public class ProductService {                                 // => Service layer for paginated product queries
+    @Autowired                                                // => Dependency injection
+    private ProductRepository productRepository;              // => Repository instance (must extend JpaSpecificationExecutor)
 
-    public Page<Product> searchProductsPaged(
-        String category,
-        BigDecimal minPrice,
-        int page,
-        int size,
-        String sortBy,
-        boolean ascending
+    public Page<Product> searchProductsPaged(                 // => Paginated search with dynamic filters and sorting
+        String category,                                      // => Optional category filter
+        BigDecimal minPrice,                                  // => Optional minimum price filter
+        int page,                                             // => Page number (0-based index)
+        int size,                                             // => Items per page
+        String sortBy,                                        // => Field name to sort by
+        boolean ascending                                     // => Sort direction (true=ASC, false=DESC)
     ) {
-        // => Build specification
-        Specification<Product> spec = Specification
-            .where(ProductSpecifications.isActive());
+        Specification<Product> spec = Specification           // => Build specification with base condition
+            .where(ProductSpecifications.isActive());         // => Base: WHERE active = true
+                                                              // => Start with non-null specification
 
-        if (category != null) {
+        if (category != null) {                               // => Conditionally add category filter
             spec = spec.and(ProductSpecifications.hasCategory(category));
+                                                              // => Appends: AND category = :category
         }
 
-        if (minPrice != null) {
+        if (minPrice != null) {                               // => Conditionally add price filter
             spec = spec.and(ProductSpecifications.hasMinPrice(minPrice));
-        }
+                                                              // => Appends: AND price >= :minPrice
+        }                                                     // => Final spec adapts to provided parameters
 
-        // => Create sort
-        Sort sort = ascending
-            ? Sort.by(sortBy).ascending()
-            : Sort.by(sortBy).descending();
-        // => Sort by specified field and direction
+        Sort sort = ascending                                 // => Create Sort based on direction parameter
+            ? Sort.by(sortBy).ascending()                     // => ASC: ORDER BY sortBy ASC
+            : Sort.by(sortBy).descending();                   // => DESC: ORDER BY sortBy DESC
+                                                              // => Single-field sort
 
-        // => Create pageable
-        Pageable pageable = PageRequest.of(page, size, sort);
-        // => page: 0-based index
-        // => size: items per page
-        // => sort: sorting criteria
+        Pageable pageable = PageRequest.of(page, size, sort); // => Create Pageable combining pagination + sorting
+                                                              // => page: 0-based index (0 = first page)
+                                                              // => size: number of items per page
+                                                              // => sort: sorting criteria
+                                                              // => PageRequest implements Pageable interface
 
-        // => Execute with specification and pagination
-        return productRepository.findAll(spec, pageable);
-// => Executes SELECT * FROM table
-// => Loads ALL records into memory (dangerous for large tables)
-// => Returns List<Entity> (never null, empty list if no records)
-        // => Returns Page<Product> with:
-        //    - content: List of products for current page
-        //    - totalElements: total matching products
-        //    - totalPages: total number of pages
-        //    - number: current page number
-        //    - size: page size
+        return productRepository.findAll(spec, pageable);     // => Execute specification query with pagination
+                                                              // => Executes 2 queries:
+                                                              // => 1. SELECT COUNT(*) FROM product WHERE ... (for total count)
+                                                              // => 2. SELECT * FROM product WHERE ... ORDER BY ... LIMIT :size OFFSET :offset (for page data)
+                                                              // => Returns Page<Product> with content + metadata
+                                                              // => Page.content: List<Product> for current page
+                                                              // => Page.totalElements: total matching products (from COUNT query)
+                                                              // => Page.totalPages: ceiling(totalElements / size)
+                                                              // => Page.number: current page number
+                                                              // => Page.size: page size
     }
 
     public List<Product> searchWithMultipleSort(String category) {
-        // => Sort by multiple fields
-        Sort sort = Sort.by(
-            Sort.Order.desc("price"),    // Primary: price descending
-            Sort.Order.asc("name")       // Secondary: name ascending
-        );
-        // => ORDER BY price DESC, name ASC
+                                                              // => Query with multi-field sorting (no pagination)
+        Sort sort = Sort.by(                                  // => Create multi-field Sort
+            Sort.Order.desc("price"),                         // => Primary sort: price DESC
+                                                              // => Products sorted by price high to low first
+            Sort.Order.asc("name")                            // => Secondary sort: name ASC
+                                                              // => When prices equal, sort by name alphabetically
+        );                                                    // => SQL: ORDER BY price DESC, name ASC
+                                                              // => Sort applies in order specified
 
-        Specification<Product> spec =
-            ProductSpecifications.hasCategory(category);
+        Specification<Product> spec =                         // => Create specification filter
+            ProductSpecifications.hasCategory(category);      // => WHERE category = :category
 
-        return productRepository.findAll(spec, sort);
-// => Executes SELECT * FROM table
-// => Loads ALL records into memory (dangerous for large tables)
-// => Returns List<Entity> (never null, empty list if no records)
-        // => Returns sorted list without pagination
+        return productRepository.findAll(spec, sort);         // => Execute query with specification + sort
+                                                              // => Executes: SELECT * FROM product WHERE category = :category ORDER BY price DESC, name ASC
+                                                              // => Returns List<Product> (all matching records, sorted)
+                                                              // => No pagination - loads all matching products
     }
 
-    public Page<Product> searchWithDynamicSort(
-        Specification<Product> spec,
-        int page,
-        int size,
-        List<String> sortFields,
-        List<String> directions
+    public Page<Product> searchWithDynamicSort(                // => Paginated query with runtime-determined sort fields
+        Specification<Product> spec,                          // => Pre-built specification (filtering logic)
+        int page,                                             // => Page number
+        int size,                                             // => Items per page
+        List<String> sortFields,                              // => List of field names to sort by (e.g., ["price", "name"])
+        List<String> directions                               // => List of directions ("ASC" or "DESC")
     ) {
-        // => Build dynamic sort from lists
-        List<Sort.Order> orders = new ArrayList<>();
-        // => Creates transient entity (not yet persisted, id=null)
+        List<Sort.Order> orders = new ArrayList<>();          // => Collection to hold Sort.Order objects
+                                                              // => Will build multi-field sort dynamically
 
-        for (int i = 0; i < sortFields.size(); i++) {
-            String field = sortFields.get(i);
+        for (int i = 0; i < sortFields.size(); i++) {         // => Iterate over sort field names
+            String field = sortFields.get(i);                 // => Get field name at index i
             String direction = i < directions.size() ? directions.get(i) : "ASC";
+                                                              // => Get direction at index i, default to "ASC" if not provided
+                                                              // => Handles case where directions list shorter than sortFields
 
             Sort.Order order = direction.equalsIgnoreCase("DESC")
-                ? Sort.Order.desc(field)
-                : Sort.Order.asc(field);
+                                                              // => Check if direction is "DESC" (case-insensitive)
+                ? Sort.Order.desc(field)                      // => Create descending Sort.Order
+                : Sort.Order.asc(field);                      // => Create ascending Sort.Order
 
-            orders.add(order);
-        }
+            orders.add(order);                                // => Add to orders list
+        }                                                     // => Loop builds Sort.Order for each field
 
-        Sort sort = Sort.by(orders);
-        // => Dynamic multi-field sorting
+        Sort sort = Sort.by(orders);                          // => Create Sort from list of Sort.Order objects
+                                                              // => SQL: ORDER BY field1 direction1, field2 direction2, ...
+                                                              // => Example: ORDER BY price DESC, name ASC, category ASC
 
-        Pageable pageable = PageRequest.of(page, size, sort);
-        return productRepository.findAll(spec, pageable);
-// => Executes SELECT * FROM table
-// => Loads ALL records into memory (dangerous for large tables)
-// => Returns List<Entity> (never null, empty list if no records)
+        Pageable pageable = PageRequest.of(page, size, sort); // => Create Pageable with dynamic sort
+        return productRepository.findAll(spec, pageable);     // => Execute specification + pagination + dynamic sort
+                                                              // => Executes COUNT + SELECT queries with dynamic ORDER BY clause
+                                                              // => Returns Page<Product> with sorted content
     }
 }
 
-// => REST Controller usage
-@RestController
-@RequestMapping("/api/products")
-public class ProductController {
-    @Autowired
-    private ProductService productService;
+@RestController                                               // => Spring REST controller (returns JSON by default)
+@RequestMapping("/api/products")                              // => Base path for all endpoints in this controller
+public class ProductController {                              // => REST API for product search
+    @Autowired                                                // => Dependency injection
+    private ProductService productService;                    // => Service layer instance
 
-    @GetMapping("/search")
-    public ResponseEntity<Page<Product>> searchProducts(
-        @RequestParam(required = false) String category,
-        @RequestParam(required = false) BigDecimal minPrice,
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "20") int size,
-        @RequestParam(defaultValue = "name") String sortBy,
-        @RequestParam(defaultValue = "true") boolean ascending
+    @GetMapping("/search")                                    // => HTTP GET endpoint: /api/products/search
+    public ResponseEntity<Page<Product>> searchProducts(      // => Handler method for product search
+        @RequestParam(required = false) String category,      // => Optional query param: ?category=Electronics
+                                                              // => null if not provided
+        @RequestParam(required = false) BigDecimal minPrice,  // => Optional query param: ?minPrice=100.00
+                                                              // => null if not provided
+        @RequestParam(defaultValue = "0") int page,           // => Query param with default: ?page=0
+                                                              // => Defaults to 0 (first page) if not provided
+        @RequestParam(defaultValue = "20") int size,          // => Query param with default: ?size=20
+                                                              // => Defaults to 20 items per page
+        @RequestParam(defaultValue = "name") String sortBy,   // => Query param with default: ?sortBy=name
+                                                              // => Defaults to sorting by "name" field
+        @RequestParam(defaultValue = "true") boolean ascending // => Query param with default: ?ascending=true
+                                                              // => Defaults to ascending order
     ) {
         Page<Product> products = productService.searchProductsPaged(
+                                                              // => Call service method with all parameters
             category, minPrice, page, size, sortBy, ascending
-        );
+        );                                                    // => products contains page data + metadata
 
-        return ResponseEntity.ok(products);
-        // => Returns JSON with pagination metadata:
-        // {
-        //   "content": [...],
-        //   "totalElements": 150,
-        //   "totalPages": 8,
-        //   "number": 0,
-        //   "size": 20,
-        //   "sort": { "sorted": true, "unsorted": false }
-        // }
+        return ResponseEntity.ok(products);                   // => Return HTTP 200 OK with Page<Product> as JSON
+                                                              // => Spring automatically serializes Page to JSON
+                                                              // => Response body example:
+                                                              // => {
+                                                              // =>   "content": [{ Product objects }],
+                                                              // =>   "totalElements": 150,
+                                                              // =>   "totalPages": 8,
+                                                              // =>   "number": 0,
+                                                              // =>   "size": 20,
+                                                              // =>   "sort": { "sorted": true, "unsorted": false }
+                                                              // => }
     }
 }
 
@@ -1195,123 +1206,149 @@ public class ProductCriteriaRepository {
 Build queries dynamically based on runtime conditions.
 
 ```java
-@Repository
+@Repository                                           // => Spring Data repository
 public class ProductCriteriaRepository {
-    @PersistenceContext
+    @PersistenceContext                               // => Injects EntityManager
+                                                      // => Container-managed (thread-safe)
     private EntityManager entityManager;
 
     public List<Product> searchProducts(ProductSearchCriteria criteria) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        // => Creates CriteriaBuilder for type-safe query construction
         CriteriaQuery<Product> query = cb.createQuery(Product.class);
+        // => Creates query returning Product entities
         Root<Product> root = query.from(Product.class);
+        // => FROM products (root entity in query)
 
-        // => Build predicates list dynamically
+        // Build predicates list dynamically
         List<Predicate> predicates = new ArrayList<>();
+        // => Empty list to hold WHERE conditions
+        // => Predicates added conditionally based on criteria
 
-        // => Add predicates conditionally
+        // Add predicates conditionally (null-safe query building)
         if (criteria.getName() != null && !criteria.getName().isEmpty()) {
             predicates.add(
                 cb.like(
                     cb.lower(root.get("name")),
+                    // => LOWER(name) - case-insensitive comparison
                     "%" + criteria.getName().toLowerCase() + "%"
+                    // => Wraps in wildcards for LIKE pattern
                 )
             );
-            // => WHERE LOWER(name) LIKE :name
+            // => SQL fragment: WHERE LOWER(name) LIKE '%search%'
         }
 
         if (criteria.getMinPrice() != null) {
             predicates.add(
                 cb.greaterThanOrEqualTo(root.get("price"), criteria.getMinPrice())
+                // => price >= minPrice predicate
             );
-            // => AND price >= :minPrice
+            // => SQL fragment: AND price >= 10.00
         }
 
         if (criteria.getMaxPrice() != null) {
             predicates.add(
                 cb.lessThanOrEqualTo(root.get("price"), criteria.getMaxPrice())
+                // => price <= maxPrice predicate
             );
-            // => AND price <= :maxPrice
+            // => SQL fragment: AND price <= 100.00
         }
 
         if (criteria.getCategories() != null && !criteria.getCategories().isEmpty()) {
             predicates.add(
                 root.get("category").in(criteria.getCategories())
+                // => category IN (...) predicate
             );
-            // => AND category IN (:categories)
+            // => SQL fragment: AND category IN ('Electronics', 'Books')
         }
 
         if (criteria.getActive() != null) {
             predicates.add(
                 cb.equal(root.get("active"), criteria.getActive())
+                // => active = ? predicate
             );
-            // => AND active = :active
+            // => SQL fragment: AND active = true
         }
 
-        // => Combine all predicates with AND
+        // Combine all predicates with AND logic
         if (!predicates.isEmpty()) {
             query.where(cb.and(predicates.toArray(new Predicate[0])));
-            // => WHERE predicate1 AND predicate2 AND ...
+            // => Converts List<Predicate> to array
+            // => Combines with AND: WHERE p1 AND p2 AND p3...
+            // => Empty list results in no WHERE clause (all records)
         }
 
-        // => Dynamic sorting
+        // Dynamic sorting based on runtime parameter
         if (criteria.getSortBy() != null) {
             if (criteria.isAscending()) {
                 query.orderBy(cb.asc(root.get(criteria.getSortBy())));
+                // => ORDER BY {column} ASC
             } else {
                 query.orderBy(cb.desc(root.get(criteria.getSortBy())));
+                // => ORDER BY {column} DESC
             }
         }
 
         TypedQuery<Product> typedQuery = entityManager.createQuery(query);
+        // => Converts CriteriaQuery to TypedQuery
+        // => Ready for execution
 
-        // => Dynamic pagination
+        // Dynamic pagination
         if (criteria.getPage() != null && criteria.getSize() != null) {
             typedQuery.setFirstResult(criteria.getPage() * criteria.getSize());
-            // => OFFSET
+            // => SQL: OFFSET {page * size}
+            // => Skip records for pagination
             typedQuery.setMaxResults(criteria.getSize());
-            // => LIMIT
+            // => SQL: LIMIT {size}
+            // => Limit result count
         }
 
         return typedQuery.getResultList();
+        // => Executes query
+        // => Returns List<Product> (empty list if no matches)
     }
 }
 
-// => Search criteria DTO
+// Search criteria DTO (data transfer object)
 public class ProductSearchCriteria {
-    private String name;
-    private BigDecimal minPrice;
-    private BigDecimal maxPrice;
-    private List<String> categories;
-    private Boolean active;
-    private String sortBy;
-    private boolean ascending = true;
-    private Integer page;
-    private Integer size;
-    // getters/setters
+    private String name;                              // => Optional: product name filter
+    private BigDecimal minPrice;                      // => Optional: minimum price
+    private BigDecimal maxPrice;                      // => Optional: maximum price
+    private List<String> categories;                  // => Optional: category filters
+    private Boolean active;                           // => Optional: active status filter
+    private String sortBy;                            // => Optional: sort column name
+    private boolean ascending = true;                 // => Sort direction (default ascending)
+    private Integer page;                             // => Optional: page number (0-indexed)
+    private Integer size;                             // => Optional: page size
+    // getters/setters omitted for brevity
 }
 
-@Service
+@Service                                              // => Service bean
 public class ProductService {
-    @Autowired
+    @Autowired                                        // => Injects repository
     private ProductCriteriaRepository criteriaRepository;
 
     public List<Product> flexibleSearch(Map<String, Object> filters) {
-        // => Build criteria from request parameters
+        // Build criteria from request parameters
         ProductSearchCriteria criteria = new ProductSearchCriteria();
-        // => Creates transient entity (not yet persisted, id=null)
+        // => Creates DTO to hold search parameters
+        // => All fields initially null (no filters)
 
         if (filters.containsKey("name")) {
             criteria.setName((String) filters.get("name"));
+            // => Sets name filter if provided
         }
 
         if (filters.containsKey("minPrice")) {
             criteria.setMinPrice(new BigDecimal(filters.get("minPrice").toString()));
+            // => Sets minimum price filter if provided
         }
 
-        // ... set other criteria fields
+        // ... set other criteria fields based on filters map
 
         return criteriaRepository.searchProducts(criteria);
-        // => Query adapts to provided filters
+        // => Query dynamically adapts to non-null criteria fields
+        // => Only adds WHERE clauses for provided filters
     }
 }
 
@@ -1352,105 +1389,128 @@ graph TD
 ```
 
 ```java
-// => DTO for projection
+// DTO for projection (data transfer object)
 public class ProductSummary {
-    private String name;
-    private BigDecimal price;
-    private String category;
+    private String name;                              // => Product name field
+    private BigDecimal price;                         // => Product price field
+    private String category;                          // => Product category field
 
-    // => Constructor matching query projection
+    // Constructor matching query projection
     public ProductSummary(String name, BigDecimal price, String category) {
-        this.name = name;
-        this.price = price;
-        this.category = category;
-    }
-    // getters/setters
+        this.name = name;                             // => Sets name from query result
+        this.price = price;                           // => Sets price from query result
+        this.category = category;                     // => Sets category from query result
+    }                                                 // => Called by cb.construct() in Criteria API
+    // getters/setters omitted for brevity
 }
 
-@Repository
+@Repository                                           // => Spring Data repository
 public class ProductCriteriaRepository {
-    @PersistenceContext
+    @PersistenceContext                               // => Injects EntityManager
     private EntityManager entityManager;
 
     public List<String> findAllProductNames() {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        // => Creates CriteriaBuilder
         CriteriaQuery<String> query = cb.createQuery(String.class);
-        // => Return type: String (single column)
+        // => Return type: String (single column projection)
+        // => Not selecting full Product entities
 
         Root<Product> root = query.from(Product.class);
+        // => FROM products
 
         query.select(root.get("name"));
-        // => SELECT name FROM Product
+        // => SELECT name FROM products
+        // => Only fetches name column (lighter query)
 
         return entityManager.createQuery(query).getResultList();
-        // => Returns List<String>
+        // => Executes query
+        // => Returns List<String> (not List<Product>)
     }
 
     public List<Object[]> findProductNameAndPrice() {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        // => Creates CriteriaBuilder
         CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
-        // => Return type: Object[] (multiple columns)
+        // => Return type: Object[] (multiple columns projection)
+        // => Type-unsafe but flexible
 
         Root<Product> root = query.from(Product.class);
+        // => FROM products
 
         query.multiselect(
-            root.get("name"),
-            root.get("price")
+            root.get("name"),                         // => First column (index 0)
+            root.get("price")                         // => Second column (index 1)
         );
-        // => SELECT name, price FROM Product
+        // => SELECT name, price FROM products
 
         return entityManager.createQuery(query).getResultList();
         // => Returns List<Object[]>
-        // => Each Object[] contains [name, price]
+        // => Each Object[]: [name (String), price (BigDecimal)]
+        // => ⚠️ Type-unsafe: requires casting when accessing
     }
 
     public List<Tuple> findProductDetailsAsTuple() {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        // => Creates CriteriaBuilder
         CriteriaQuery<Tuple> query = cb.createTupleQuery();
         // => Tuple: type-safe alternative to Object[]
+        // => Allows named access to columns
 
         Root<Product> root = query.from(Product.class);
+        // => FROM products
 
         query.multiselect(
-            root.get("name").alias("productName"),    // => Named alias
-            root.get("price").alias("productPrice"),
-            root.get("category").alias("productCategory")
+            root.get("name").alias("productName"),    // => Column with alias
+            root.get("price").alias("productPrice"),  // => Column with alias
+            root.get("category").alias("productCategory") // => Column with alias
         );
         // => SELECT name AS productName, price AS productPrice, category AS productCategory
 
         List<Tuple> tuples = entityManager.createQuery(query).getResultList();
+        // => Executes query
+        // => Returns List<Tuple>
 
-        // => Access Tuple values by alias
+        // Access Tuple values by alias (type-safe)
         for (Tuple tuple : tuples) {
             String name = tuple.get("productName", String.class);
+            // => Extracts by alias with type (compile-time safety)
             BigDecimal price = tuple.get("productPrice", BigDecimal.class);
+            // => Type-safe extraction (no casting needed)
             String category = tuple.get("productCategory", String.class);
-            // => Type-safe extraction with aliases
+            // => Named access (better than Object[] indices)
         }
 
         return tuples;
+        // => Returns Tuple list for type-safe access
     }
 
     public List<ProductSummary> findProductSummaries() {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        // => Creates CriteriaBuilder
         CriteriaQuery<ProductSummary> query = cb.createQuery(ProductSummary.class);
-        // => Return type: DTO class
+        // => Return type: DTO class (custom object)
+        // => Most type-safe projection approach
 
         Root<Product> root = query.from(Product.class);
+        // => FROM products
 
         query.select(
             cb.construct(
-                ProductSummary.class,
-                root.get("name"),
-                root.get("price"),
-                root.get("category")
+                ProductSummary.class,                 // => DTO class to instantiate
+                root.get("name"),                     // => Constructor arg 1
+                root.get("price"),                    // => Constructor arg 2
+                root.get("category")                  // => Constructor arg 3
             )
         );
-        // => SELECT new ProductSummary(name, price, category) FROM Product
-        // => Calls ProductSummary constructor with selected columns
+        // => SELECT new ProductSummary(name, price, category) FROM products
+        // => Calls ProductSummary(String, BigDecimal, String) constructor
+        // => JPA instantiates DTOs directly from query results
 
         return entityManager.createQuery(query).getResultList();
-        // => Returns List<ProductSummary> with directly instantiated DTOs
+        // => Executes query
+        // => Returns List<ProductSummary> (fully instantiated DTOs)
+        // => No manual mapping needed
     }
 
     public List<ProductSummary> findActiveProductSummaries(BigDecimal minPrice) {

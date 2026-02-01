@@ -303,8 +303,10 @@ func main() {
     // Create map - keys are strings, values are integers
     ages := make(map[string]int) // => ages is empty map[string]int{}
                                   // => make() allocates and initializes map
+                                  // => Syntax: make(map[KeyType]ValueType)
 
     ages["Alice"] = 30           // => Insert key "Alice" with value 30
+                                  // => Map lookup/insertion is O(1) average case
 
     ages["Bob"] = 25              // => ages is now map[Alice:30 Bob:25]
     ages["Charlie"] = 35          // => ages is now map[Alice:30 Bob:25 Charlie:35]
@@ -314,46 +316,53 @@ func main() {
 
     fmt.Println(ages["Unknown"]) // => Returns 0 (zero value for int, no panic)
     // => Output: 0
+                                  // => Map returns zero value for missing keys
 
     // Comma-ok idiom - check if key exists
     age, exists := ages["Bob"]   // => age is 25, exists is true
                                   // => Standard pattern for safe map access
+                                  // => Distinguishes zero value from missing key
 
-    fmt.Println(age, exists)
+    fmt.Println(age, exists)     // => Prints value and existence boolean
     // => Output: 25 true
 
     age, exists = ages["David"]  // => age is 0, exists is false (key not found)
+                                  // => Reuses age and exists variables
 
-    fmt.Println(age, exists)
+    fmt.Println(age, exists)     // => Shows zero value and false for missing key
     // => Output: 0 false
 
     // Delete key
     delete(ages, "Bob")          // => Remove "Bob" key from map
                                   // => delete() is safe - no panic if key doesn't exist
+                                  // => ages is now map[Alice:30 Charlie:35]
 
-    fmt.Println(ages)
+    fmt.Println(ages)            // => Prints remaining map entries
     // => Output: map[Alice:30 Charlie:35]
 
     // Map iteration order is randomized
     for name, age := range ages { // => Iterate over key-value pairs
                                    // => Order is deliberately randomized each run
+                                   // => Never rely on iteration order
 
         fmt.Printf("%s is %d\n", name, age)
+                                   // => Formats and prints each key-value pair
     }
 
     // Iterate over keys only
     for name := range ages {     // => Iterate over keys only (ignore values)
+                                  // => Use _ to explicitly ignore: for name, _ := range
 
-        fmt.Println(name)
+        fmt.Println(name)        // => Prints just the key names
     }
 
     // Map literal initialization
     scores := map[string]int{    // => scores is map[Alice:95 Bob:87]
         "Alice": 95,              // => More concise than make() + assignments
-        "Bob":   87,
+        "Bob":   87,              // => Trailing comma required for multi-line literals
     }
 
-    fmt.Println(scores)
+    fmt.Println(scores)          // => Prints entire map
     // => Output: map[Alice:95 Bob:87]
 }
 ```
@@ -560,101 +569,115 @@ import "fmt"
 
 func main() {
     // if-else
-    age := 25                   // => age is 25
+    age := 25                   // => age is 25 (type: int)
 
     if age >= 18 {              // => Condition: 25 >= 18 is true
                                  // => Braces mandatory (no single-line if)
+                                 // => Executes if block
 
-        fmt.Println("Adult")
-    } else {
+        fmt.Println("Adult")    // => Output: Adult
+                                 // => Prints to stdout with newline
+    } else {                    // => Skipped (condition was true)
         fmt.Println("Minor")
     }
-    // => Output: Adult
 
     // if with initialization statement
-    if x := 10; x > 5 {         // => x is 10, scoped to if block only
+    if x := 10; x > 5 {         // => x is 10, scoped to if/else block only
                                  // => Condition: 10 > 5 is true
+                                 // => x NOT accessible outside this if/else
 
         fmt.Println("x is greater than 5")
         // => Output: x is greater than 5
     }
+    // => x is undefined here (out of scope)
 
     // for loop - basic
     for i := 0; i < 3; i++ {    // => i starts at 0, loops while i < 3
+                                 // => i increments each iteration (0, 1, 2)
 
-        fmt.Println(i)
+        fmt.Println(i)          // => Prints current value of i
     }
     // => Output: 0 1 2
 
     // for loop - while style
-    count := 0
+    count := 0                  // => count is 0 (type: int)
 
     for count < 3 {             // => No while keyword - use for with condition only
+                                 // => Loops while count < 3
 
-        fmt.Println(count)
-        count++
+        fmt.Println(count)      // => Prints current count
+        count++                 // => Increment count (0 -> 1 -> 2 -> 3)
     }
     // => Output: 0 1 2
+    // => count is now 3 (exits when count >= 3)
 
     // for loop - infinite
-    counter := 0
+    counter := 0                // => counter is 0 (type: int)
 
     for {                       // => Infinite loop (no condition = always true)
+                                 // => Requires break to exit
 
-        if counter >= 2 {
-            break              // => Exit loop immediately
+        if counter >= 2 {       // => Check exit condition
+            break               // => Exit loop immediately when counter is 2
         }
-        counter++
+        counter++               // => Increment counter (0 -> 1 -> 2)
     }
-    // counter is now 2
+    // => counter is now 2 (broke loop before incrementing to 3)
 
     // continue keyword
-    for i := 0; i < 5; i++ {    // => Loop from 0 to 4
-        if i == 2 {
+    for i := 0; i < 5; i++ {    // => Loop from 0 to 4 (i = 0, 1, 2, 3, 4)
+        if i == 2 {             // => Check if i is 2
             continue            // => Skip rest of iteration when i is 2
+                                 // => Jumps to next iteration immediately
         }
         fmt.Println(i)          // => Prints 0, 1, 3, 4 (skips 2)
     }
     // => Output: 0 1 3 4
 
     // switch statement
-    language := "Go"
+    language := "Go"            // => language is "Go" (type: string)
 
     switch language {           // => Match language against cases
                                  // => No fallthrough by default (unlike C/Java)
+                                 // => Breaks automatically after matching case
 
-    case "Python":
+    case "Python":              // => Does not match "Go"
         fmt.Println("Batteries included")
-    case "Go":
-        fmt.Println("Simple and fast")    // => Executes (matches)
-    case "Rust":
+    case "Go":                  // => Matches! language == "Go"
+        fmt.Println("Simple and fast")
+                                 // => Executes this case, then exits switch
+    case "Rust":                // => Not evaluated (already matched)
         fmt.Println("Memory safe")
-    default:
+    default:                    // => Not evaluated (already matched)
         fmt.Println("Unknown language")
     }
     // => Output: Simple and fast
 
     // switch with multiple values per case
-    day := 3
-    switch day {
-    case 1, 2, 3, 4, 5:         // => Multiple values in one case
-        fmt.Println("Weekday")
-    case 6, 7:
+    day := 3                    // => day is 3 (type: int)
+    switch day {                // => Match day against cases
+    case 1, 2, 3, 4, 5:         // => Multiple values in one case (weekdays)
+                                 // => Matches because day == 3
+        fmt.Println("Weekday")  // => Output: Weekday
+    case 6, 7:                  // => Not evaluated (already matched)
         fmt.Println("Weekend")
     }
-    // => Output: Weekday
 
     // defer - schedules cleanup
-    fmt.Println("Start")
-    // => Output: Start
+    fmt.Println("Start")        // => Executes immediately
+                                 // => Output: Start
 
-    defer fmt.Println("Deferred 1") // => Scheduled to run when main() returns (LIFO)
+    defer fmt.Println("Deferred 1")
+                                 // => Scheduled to run when main() returns (LIFO)
+                                 // => NOT executed immediately
 
-    defer fmt.Println("Deferred 2") // => Will execute BEFORE "Deferred 1" (LIFO order)
+    defer fmt.Println("Deferred 2")
+                                 // => Will execute BEFORE "Deferred 1" (LIFO order)
+                                 // => defer stack: [Deferred 1, Deferred 2]
 
-    fmt.Println("End")
-    // => Output: End
-    // => Deferred functions execute in reverse order:
+    fmt.Println("End")          // => Executes immediately
+                                 // => Output: End
+    // => Function returns, deferred calls execute in reverse:
     // => Output: Deferred 2
     // => Output: Deferred 1
 }
@@ -2050,18 +2073,24 @@ func main() {
 
     // Check if file exists
     if _, err := os.Stat("test.txt"); err == nil {
-        fmt.Println("File exists")
-    } else if os.IsNotExist(err) {
+                                    // => os.Stat returns file info and error
+                                    // => _ ignores file info (we only check error)
+                                    // => err == nil means file exists
+        fmt.Println("File exists")  // => Output: File exists
+    } else if os.IsNotExist(err) {  // => Check if error is "file not found"
         fmt.Println("File does not exist")
+                                    // => Not executed (file exists)
     }
 
     // Delete file
-    err = os.Remove("test.txt")    // => Delete file
-    if err != nil {
+    err = os.Remove("test.txt")    // => Delete file from filesystem
+                                    // => Returns error (or nil on success)
+    if err != nil {                 // => Check if deletion failed
         fmt.Println("Delete error:", err)
-        return
+        return                      // => Early return on error
     }
-    fmt.Println("File deleted")
+    fmt.Println("File deleted")    // => Success message
+                                    // => Output: File deleted
 }
 ```
 
@@ -3025,21 +3054,25 @@ import "testing"
 func TestCalculations(t *testing.T) {
                                     // => Test function (must start with Test)
                                     // => Parameter: *testing.T for test control
+                                    // => Name format: Test<Name> (capitalized)
     // Subtests organize related test cases
     t.Run("addition", func(t *testing.T) {
                                     // => t.Run(name, func) creates subtest
                                     // => Subtest name: "addition"
                                     // => Each subtest gets own *testing.T
+                                    // => Full test name: TestCalculations/addition
         result := add(2, 3)         // => Call function under test
                                     // => add(2, 3) returns 5
         if result != 5 {            // => Assertion: result should be 5
             t.Errorf("Expected 5, got %d", result)
                                     // => t.Errorf marks test failed but continues
+                                    // => %d formats integer in error message
         }                           // => Test passes (result is 5)
     })
 
     t.Run("subtraction", func(t *testing.T) {
                                     // => Second subtest: "subtraction"
+                                    // => Subtests run sequentially in order
         result := subtract(10, 4)   // => subtract(10, 4) returns 6
         if result != 6 {            // => Assertion: result should be 6
             t.Errorf("Expected 6, got %d", result)
@@ -3048,6 +3081,7 @@ func TestCalculations(t *testing.T) {
 
     t.Run("multiplication", func(t *testing.T) {
                                     // => Third subtest: "multiplication"
+                                    // => Independent from previous subtests
         result := multiply(3, 7)    // => multiply(3, 7) returns 21
         if result != 21 {           // => Assertion: result should be 21
             t.Errorf("Expected 21, got %d", result)
@@ -3057,11 +3091,13 @@ func TestCalculations(t *testing.T) {
 
 // Table-driven tests with subtests
 func TestDivision(t *testing.T) {   // => Table-driven test pattern
+                                    // => Separates test data from test logic
     tests := []struct {             // => Slice of anonymous structs
                                     // => Each struct is one test case
-        name     string             // => Subtest name
-        a, b     int                // => Input parameters
-        expected int                // => Expected result
+                                    // => Table-driven pattern scales to many cases
+        name     string             // => Subtest name (for t.Run)
+        a, b     int                // => Input parameters for divide()
+        expected int                // => Expected result value
         hasError bool               // => Whether error expected
     }{
         {"normal division", 10, 2, 5, false},
@@ -3070,7 +3106,7 @@ func TestDivision(t *testing.T) {   // => Table-driven test pattern
                                     // => Test case: 10/0, expect error
         {"negative result", -10, 2, -5, false},
                                     // => Test case: -10/2=-5, no error
-    }
+    }                               // => 3 test cases defined in table
 
     for _, tc := range tests {      // => Iterate test cases
                                     // => tc is current test case struct

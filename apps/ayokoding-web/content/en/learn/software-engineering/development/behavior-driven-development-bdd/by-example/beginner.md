@@ -288,28 +288,67 @@ Comments provide context, explanations, or temporary notes without affecting tes
 
 ```gherkin
 # Feature: Shopping Cart
+# => Comment: Line-level comment in Gherkin
+# => Symbol: # starts comment (extends to end of line)
 # Author: Alice (alice@example.com)
+# => Comment: Metadata about feature ownership
+# => Purpose: Contact info for questions
 # Last Updated: 2026-01-31
+# => Comment: Timestamp for last modification
+# => Tracking: When feature was changed
 # This feature covers basic shopping cart operations for e-commerce platform
+# => Comment: Feature description and scope
+# => Context: Explains business domain
                                                # => Comments: Metadata and context
                                                # => Ignored by Cucumber parser
+                                               # => Execution: Not run as test steps
 
 Feature: Shopping Cart
+# => Feature: Keyword (test execution starts here)
+# => Above: All comments ignored by Cucumber
 
   # Happy path: User successfully adds items
+  # => Comment: Scenario category annotation
+  # => Purpose: Indicates this is positive test case
   Scenario: Add item to cart
+  # => Scenario: Test case definition
     # Setup: Start with empty cart
-    Given the shopping cart is empty           # => Given: Initial state
+    # => Comment: Explains next step's purpose
+    # => Documentation: WHAT we're setting up
+    Given the shopping cart is empty
+    # => Step: Executed by Cucumber
+    # => Given: Initial state
+    # => Above comment: Explains WHY (setup context)
     # Action: Add first item
-    When I add "Laptop" to the cart            # => When: Add item
+    # => Comment: Explains action intent
+    # => Documentation: Next step adds item
+    When I add "Laptop" to the cart
+    # => Step: Executed by Cucumber
+    # => When: Add item
+    # => Parameter: "Laptop" passed to step definition
     # Verification: Cart updated correctly
-    Then the cart should contain 1 item        # => Then: Count check
+    # => Comment: Explains assertion purpose
+    # => Documentation: What we're verifying
+    Then the cart should contain 1 item
+    # => Step: Executed by Cucumber
+    # => Then: Count check
+    # => Expected: 1 item in cart
     # Expected: Cart has ["Laptop"] with quantity 1
+    # => Comment: Documents expected state
+    # => Business rule: One item added means count=1
                                                # => Output: Cart = [{name: "Laptop", qty: 1}]
+                                               # => State: Internal cart structure
 
   # TODO: Add scenario for quantity updates
+  # => Comment: Future work item
+  # => TODO: Not implemented yet
   # TODO: Add scenario for price calculations
+  # => Comment: Another future scenario
+  # => Business: Price totaling not covered yet
   # FIXME: Current implementation doesn't handle negative quantities
+  # => Comment: Known bug
+  # => FIXME: Code issue to resolve
+  # => Bug: Adding -1 quantity crashes
 ```
 
 **Key Takeaway**: Use comments for context, documentation, and TODOs - they're ignored during execution but valuable for maintainability and team communication.
@@ -814,31 +853,53 @@ Pending steps act as placeholders for unimplemented functionality, allowing you 
 
 ```typescript
 // File: step-definitions/payment.steps.ts
+// => Purpose: Payment step definitions with pending placeholders
 import { Given, When, Then } from "@cucumber/cucumber";
+// => Import: Cucumber step decorators
 
 Given("I have a valid credit card", function () {
-  // Implementation exists
+  // => Given: Setup step - create test credit card
+  // => Status: Implemented (not pending)
   this.creditCard = {
+    // => Object: Credit card test data
     number: "4111111111111111",
+    // => Field: Test card number (Visa test card)
     cvv: "123",
+    // => Field: Card security code
     expiry: "12/25",
+    // => Field: Expiration date (MM/YY format)
   };
-  // => State: Credit card stored
+  // => State: Credit card stored in World.creditCard
+  // => Result: Step passes (implemented)
 });
 
 When("I submit payment for ${int}", function (amount: number) {
-  // Implementation exists
-  this.paymentAmount = amount; // => State: Amount stored
+  // => When: Action step - submit payment
+  // => Parameter: amount (integer from Gherkin)
+  // => Status: Implemented (not pending)
+  this.paymentAmount = amount;
+  // => State: Amount stored in World.paymentAmount
+  // => Example: amount=100 → World.paymentAmount = 100
+  // => Result: Step passes (implemented)
 });
 
 Then("the payment should be processed", function () {
-  return "pending"; // => Pending: Step not implemented yet
-  // => Cucumber: Marks step as pending
+  // => Then: Assertion step - NOT YET IMPLEMENTED
+  // => Status: Pending (work in progress)
+  return "pending";
+  // => Return: String "pending" marks step as pending
+  // => Cucumber: Recognizes "pending" return value
   // => Output: "P" (pending) in test results
+  // => Effect: Test stops here, remaining steps skipped
 });
 
 Then("the payment confirmation should include transaction ID", function () {
-  return "pending"; // => Pending: Another unimplemented step
+  // => Then: Assertion step - NOT YET IMPLEMENTED
+  // => Status: Pending (work in progress)
+  return "pending";
+  // => Return: String "pending" marks step as pending
+  // => Cucumber: Marks this step as pending too
+  // => Output: "-" (skipped) if previous step pending
 });
 ```
 
@@ -846,10 +907,15 @@ Then("the payment confirmation should include transaction ID", function () {
 
 ```typescript
 import { pending } from "@cucumber/cucumber";
+// => Import: Cucumber pending() helper function
 
 Then("the payment should be processed", function () {
-  pending(); // => Helper: Explicit pending() call
+  // => Then: Same assertion step using helper
+  pending();
+  // => Function: Cucumber pending() helper
+  // => Throws: Special pending exception
   // => Same result: Marks step as pending
+  // => Benefit: More explicit than return "pending"
 });
 ```
 
@@ -857,11 +923,22 @@ Then("the payment should be processed", function () {
 
 ```gherkin
 Scenario: Process credit card payment
-  Given I have a valid credit card            # ✓ Passed
-  When I submit payment for $100              # ✓ Passed
-  Then the payment should be processed        # P Pending
-  And the payment confirmation should include transaction ID # - Skipped
-                                              # Output: Scenario marked as pending (not failure)
+  # => Scenario: Payment flow with pending steps
+  Given I have a valid credit card
+  # => Step: Executes Given() - implemented
+  # => Result: ✓ Passed (creditCard stored in World)
+  When I submit payment for $100
+  # => Step: Executes When() - implemented
+  # => Result: ✓ Passed (paymentAmount=100 stored)
+  Then the payment should be processed
+  # => Step: Executes Then() - returns "pending"
+  # => Result: P Pending (step not implemented)
+  # => Effect: Test stops here, following steps skipped
+  And the payment confirmation should include transaction ID
+  # => Step: Never executes (previous step pending)
+  # => Result: - Skipped (depends on pending step)
+  # => Output: Scenario marked as pending (not failure)
+  # => Report: Shows as "P" in test results (work in progress)
 ```
 
 **Key Takeaway**: Return 'pending' or call pending() in step definitions to mark unimplemented steps, differentiating work-in-progress from failures in test reports.
@@ -1129,64 +1206,109 @@ Step definitions can conditionally execute different logic based on parameters o
 
 ```typescript
 // File: step-definitions/conditional.steps.ts
+// => Purpose: Conditional step logic based on user roles
 import { Given, When, Then } from "@cucumber/cucumber";
+// => Import: Cucumber step decorators
 import { expect } from "chai";
+// => Import: Assertion library for validation
 
 interface User {
+  // => Interface: User structure with role-based permissions
   username: string;
+  // => Field: User identifier
   role: "admin" | "user" | "guest";
+  // => Field: User role (union type with 3 options)
   permissions: string[];
+  // => Field: Array of permission strings
 }
 
 let currentUser: User;
+// => Variable: Global state storing current user
+// => Scope: Shared across all step definitions
 let actionResult: "success" | "forbidden";
+// => Variable: Stores permission check result
+// => Type: Union type (either "success" or "forbidden")
 
 Given("I am logged in as {string}", function (role: string) {
-  // => Given: Create user with specified role
+  // => Given: Setup step creating user with role
+  // => Parameter: role captured from Gherkin {string}
+  // => Examples: "admin", "user", "guest"
   if (role === "admin") {
+    // => Branch: Admin role path
     currentUser = {
+      // => Create: Admin user object
       username: "admin-user",
+      // => Value: "admin-user"
       role: "admin",
+      // => Value: "admin" (matches union type)
       permissions: ["read", "write", "delete"],
-      // => Conditional: Admin has all permissions
+      // => Value: Full permissions array
+      // => Conditional: Admin has all 3 permissions
     };
   } else if (role === "user") {
+    // => Branch: Regular user role path
     currentUser = {
+      // => Create: Regular user object
       username: "regular-user",
+      // => Value: "regular-user"
       role: "user",
+      // => Value: "user" (matches union type)
       permissions: ["read", "write"],
-      // => Conditional: User has limited permissions
+      // => Value: Limited permissions array
+      // => Conditional: User has 2 of 3 permissions (no delete)
     };
   } else {
+    // => Branch: Guest role path (default)
     currentUser = {
+      // => Create: Guest user object
       username: "guest-user",
+      // => Value: "guest-user"
       role: "guest",
+      // => Value: "guest" (matches union type)
       permissions: ["read"],
-      // => Conditional: Guest has minimal permissions
+      // => Value: Minimal permissions array
+      // => Conditional: Guest has only 1 permission (read-only)
     };
   }
-  // => Output: User created with role-specific permissions
+  // => Output: currentUser assigned with role-specific permissions
+  // => State: Global currentUser now contains User object
 });
 
 When("I attempt to {string} a resource", function (action: string) {
-  // => When: Check permission for action
+  // => When: Action step checking permission
+  // => Parameter: action captured from Gherkin {string}
+  // => Examples: "read", "write", "delete"
   const hasPermission = currentUser.permissions.includes(action);
-  // => Check: Does user have required permission?
+  // => Check: Does permissions array contain action string?
+  // => Method: Array.includes() returns boolean
+  // => Example: ["read", "write"].includes("delete") → false
 
   if (hasPermission) {
-    actionResult = "success"; // => Conditional: Action allowed
-    // => Output: "success"
+    // => Branch: Permission granted path
+    actionResult = "success";
+    // => Assign: Set result to "success"
+    // => Conditional: Action allowed for this role
+    // => Output: actionResult is "success"
   } else {
-    actionResult = "forbidden"; // => Conditional: Action blocked
-    // => Output: "forbidden"
+    // => Branch: Permission denied path
+    actionResult = "forbidden";
+    // => Assign: Set result to "forbidden"
+    // => Conditional: Action blocked for this role
+    // => Output: actionResult is "forbidden"
   }
+  // => State: Global actionResult now contains check result
 });
 
 Then("the action should {string}", function (expectedResult: string) {
-  // => Then: Verify result matches expectation
+  // => Then: Assertion step verifying result
+  // => Parameter: expectedResult from Gherkin {string}
+  // => Examples: "success", "forbidden"
   expect(actionResult).to.equal(expectedResult);
-  // => Assertion: Result is as expected
-  // => Output: Test passes (result matches)
+  // => Assertion: Chai equality check
+  // => Compares: actionResult vs expectedResult
+  // => Pass: If values match (test continues)
+  // => Fail: If values differ (test throws error)
+  // => Output: Test passes when actionResult === expectedResult
 });
 ```
 
@@ -1194,19 +1316,43 @@ Then("the action should {string}", function (expectedResult: string) {
 
 ```gherkin
 Scenario: Admin can delete resources
-  Given I am logged in as "admin"           # Creates admin user with delete permission
-  When I attempt to "delete" a resource     # Checks permission, result = "success"
-  Then the action should "success"          # Assertion passes
+  # => Scenario: Testing admin delete permission
+  Given I am logged in as "admin"
+  # => Step: Calls Given() with role="admin"
+  # => Creates: currentUser with permissions=["read","write","delete"]
+  When I attempt to "delete" a resource
+  # => Step: Calls When() with action="delete"
+  # => Checks: ["read","write","delete"].includes("delete") → true
+  # => Sets: actionResult = "success"
+  Then the action should "success"
+  # => Step: Calls Then() with expectedResult="success"
+  # => Assertion: "success" === "success" → PASS
 
 Scenario: Regular user cannot delete resources
-  Given I am logged in as "user"            # Creates user WITHOUT delete permission
-  When I attempt to "delete" a resource     # Checks permission, result = "forbidden"
-  Then the action should "forbidden"        # Assertion passes
+  # => Scenario: Testing user permission denial
+  Given I am logged in as "user"
+  # => Step: Calls Given() with role="user"
+  # => Creates: currentUser with permissions=["read","write"]
+  When I attempt to "delete" a resource
+  # => Step: Calls When() with action="delete"
+  # => Checks: ["read","write"].includes("delete") → false
+  # => Sets: actionResult = "forbidden"
+  Then the action should "forbidden"
+  # => Step: Calls Then() with expectedResult="forbidden"
+  # => Assertion: "forbidden" === "forbidden" → PASS
 
 Scenario: Guest can only read
-  Given I am logged in as "guest"           # Creates guest with read-only permission
-  When I attempt to "write" a resource      # Checks permission, result = "forbidden"
-  Then the action should "forbidden"        # Assertion passes
+  # => Scenario: Testing guest read-only permission
+  Given I am logged in as "guest"
+  # => Step: Calls Given() with role="guest"
+  # => Creates: currentUser with permissions=["read"]
+  When I attempt to "write" a resource
+  # => Step: Calls When() with action="write"
+  # => Checks: ["read"].includes("write") → false
+  # => Sets: actionResult = "forbidden"
+  Then the action should "forbidden"
+  # => Step: Calls Then() with expectedResult="forbidden"
+  # => Assertion: "forbidden" === "forbidden" → PASS
 ```
 
 **Key Takeaway**: Step definitions can contain conditional logic based on parameters or World state, enabling flexible behavior across scenarios without duplicating step definitions.
@@ -1221,39 +1367,93 @@ Step definitions are global and reusable across all feature files. Organize them
 
 ```
 project/
+# => Root: Project directory structure
 ├── features/
-│   ├── authentication.feature              # Uses auth steps
-│   ├── shopping-cart.feature               # Uses cart steps
-│   └── api.feature                         # Uses api steps
+# => Directory: Gherkin feature files
+│   ├── authentication.feature
+# => Feature: User authentication scenarios
+# => Imports: Steps from auth.steps.ts
+│   ├── shopping-cart.feature
+# => Feature: Shopping cart scenarios
+# => Imports: Steps from cart.steps.ts AND auth.steps.ts
+│   └── api.feature
+# => Feature: API testing scenarios
+# => Imports: Steps from api.steps.ts
 └── step-definitions/
-    ├── auth.steps.ts                       # Reusable auth steps
-    ├── cart.steps.ts                       # Reusable cart steps
-    ├── api.steps.ts                        # Reusable api steps
-    └── common.steps.ts                     # Shared utility steps
+# => Directory: TypeScript step implementations
+# => Scope: Global - ALL steps available to ALL features
+    ├── auth.steps.ts
+    # => Module: Authentication step definitions
+    # => Used by: authentication.feature, shopping-cart.feature, api.feature
+    # => Contains: Login, logout, registration steps
+    ├── cart.steps.ts
+    # => Module: Shopping cart step definitions
+    # => Used by: shopping-cart.feature
+    # => Contains: Add item, remove item, checkout steps
+    ├── api.steps.ts
+    # => Module: API request/response steps
+    # => Used by: api.feature
+    # => Contains: HTTP request, status code, JSON assertion steps
+    └── common.steps.ts
+    # => Module: Shared utility steps
+    # => Used by: All features
+    # => Contains: Wait, navigate, data setup steps
 ```
 
 **Reusable auth steps**:
 
 ```typescript
 // File: step-definitions/auth.steps.ts
+// => Purpose: Authentication step definitions for all features
 import { Given, When, Then } from "@cucumber/cucumber";
-// => Steps: Available to ALL feature files
+// => Import: Cucumber step definition decorators
+// => Scope: Steps registered globally for ALL feature files
 
 Given("a user named {string} exists", function (username: string) {
-  // => Reusable: Used by authentication.feature
-  // => Reusable: Used by shopping-cart.feature
-  // => Reusable: Used by api.feature
-  // Create user implementation
+  // => Given: Setup step - creates test user
+  // => Parameter: username (string captured from Gherkin)
+  // => Used by: authentication.feature (user setup)
+  // => Used by: shopping-cart.feature (logged-in user)
+  // => Used by: api.feature (API authentication)
+  // => Reuse: One definition, three features
+  this.users = this.users || {};
+  // => State: Initialize users object on World
+  this.users[username] = { id: Date.now(), username };
+  // => State: Store user in World for step sharing
+  // => Example: this.users["alice"] = { id: 1234567890, username: "alice" }
 });
 
 When("I log in as {string}", function (username: string) {
-  // => Reusable: Multiple features use login
-  // Login implementation
+  // => When: Action step - performs login
+  // => Parameter: username (string captured from Gherkin)
+  // => Used by: Multiple features requiring authentication
+  // => Reuse: 10+ scenarios across 3 feature files
+  const user = this.users[username];
+  // => Retrieve: Get user from World
+  if (!user) throw new Error(`User ${username} not found`);
+  // => Validation: Ensure user exists (from Given step)
+  this.currentUser = user;
+  // => State: Set current authenticated user in World
+  this.authToken = `token-${user.id}`;
+  // => State: Generate authentication token
+  // => Example: this.authToken = "token-1234567890"
 });
 
 Then("I should be logged in", function () {
-  // => Reusable: Standard login verification
-  // Assertion implementation
+  // => Then: Assertion step - verifies login state
+  // => Used by: Any scenario requiring login verification
+  // => Reuse: Standard login assertion across all features
+  if (!this.currentUser) {
+    // => Check: Verify current user exists in World
+    throw new Error("No user is logged in");
+    // => Error: Fail test if not authenticated
+  }
+  if (!this.authToken) {
+    // => Check: Verify auth token exists
+    throw new Error("No auth token found");
+    // => Error: Fail test if token missing
+  }
+  // => Success: Test passes if both checks pass
 });
 ```
 
@@ -1261,19 +1461,37 @@ Then("I should be logged in", function () {
 
 ```gherkin
 # File: features/authentication.feature
+# => Feature: Authentication scenarios
 Feature: User Authentication
+  # => Scenario: Login flow
   Scenario: Successful login
-    Given a user named "alice" exists        # Uses: auth.steps.ts
-    When I log in as "alice"                 # Uses: auth.steps.ts
-    Then I should be logged in               # Uses: auth.steps.ts
+    Given a user named "alice" exists
+    # => Step: Calls Given() from auth.steps.ts
+    # => Creates: User "alice" in World.users
+    When I log in as "alice"
+    # => Step: Calls When() from auth.steps.ts
+    # => Sets: World.currentUser and World.authToken
+    Then I should be logged in
+    # => Step: Calls Then() from auth.steps.ts
+    # => Verifies: World.currentUser and World.authToken exist
 
 # File: features/shopping-cart.feature
+# => Feature: Shopping cart scenarios
 Feature: Shopping Cart
+  # => Scenario: Cart manipulation
   Scenario: Add item to cart
-    Given a user named "alice" exists        # Reuses: Same step from auth.steps.ts
-    And I log in as "alice"                  # Reuses: Same step from auth.steps.ts
-    When I add "Laptop" to the cart          # Uses: cart.steps.ts
-    Then the cart should contain 1 item      # Uses: cart.steps.ts
+    Given a user named "alice" exists
+    # => Step: REUSES same Given() from auth.steps.ts
+    # => Benefit: No duplicate step definition needed
+    And I log in as "alice"
+    # => Step: REUSES same When() from auth.steps.ts
+    # => Benefit: Authentication setup in one line
+    When I add "Laptop" to the cart
+    # => Step: NEW step from cart.steps.ts
+    # => Action: Shopping cart specific operation
+    Then the cart should contain 1 item
+    # => Step: NEW step from cart.steps.ts
+    # => Verify: Cart state assertion
 ```
 
 **Key Takeaway**: Step definitions are globally available to all feature files - organize by domain (auth, cart, api) to maximize reuse across features rather than duplicating steps per feature.
@@ -1478,48 +1696,86 @@ Background runs before each scenario but is visible in Gherkin, while Before hoo
 
 ```gherkin
 # File: features/shopping.feature
+# => Feature: Shopping cart scenarios
 Feature: Shopping Cart
 
   Background:
-    Given I am logged in as "alice"          # Visible: Stakeholders see this setup
-                                             # Runs: Before EACH scenario
-    And I have an empty cart                 # Visible: Clear prerequisite
+  # => Background: Setup runs before EACH scenario in this feature
+  # => Visibility: Appears in feature file (stakeholders see it)
+  # => Purpose: Establish common preconditions for all scenarios
+    Given I am logged in as "alice"
+    # => Step: Business-relevant setup (user authentication)
+    # => Visible: Stakeholders see this precondition
+    # => Runs: Before scenario 1 (Add item)
+    # => Runs: Before scenario 2 (Remove item)
+    # => Repeated: Executed twice (once per scenario)
+    And I have an empty cart
+    # => Step: Business-relevant state (empty cart)
+    # => Visible: Clear prerequisite for all scenarios
+    # => State: cart is empty before each scenario starts
 
   Scenario: Add item to cart
+  # => Scenario: After Background steps run
     When I add "Laptop" to the cart
+    # => Step: Action step (add item)
     Then the cart should contain 1 item
+    # => Step: Assertion step (verify count)
+    # => Result: Passes if cart has 1 item
 
   Scenario: Remove item from cart
+  # => Scenario: After Background steps run AGAIN
     Given the cart contains "Mouse"
+    # => Step: Additional setup beyond Background
+    # => State: cart now has 1 item (Mouse)
     When I remove "Mouse" from the cart
+    # => Step: Action step (remove item)
     Then the cart should be empty
+    # => Step: Assertion step (verify empty)
+    # => Result: Passes if cart has 0 items
 ```
 
 **Before Hook - Hidden Implementation**:
 
 ```typescript
 // File: step-definitions/hooks.ts
+// => Purpose: Hidden technical setup hooks
 import { Before } from "@cucumber/cucumber";
+// => Import: Cucumber Before hook decorator
 
 Before(function () {
-  // => Before: Runs before EACH scenario
-  // => Invisible: Not in feature file
+  // => Before: Global hook runs before EACH scenario
+  // => Invisible: Not visible in feature files
+  // => Technical: Implementation detail stakeholders don't need to know
   console.log("🔧 Initializing test database...");
-  // => Technical: Database setup
+  // => Log: Console output for developers only
+  // => Hidden: Stakeholders never see this
   this.database = {
+    // => State: Initialize clean database in World
     users: [],
+    // => Array: Empty users for test isolation
     orders: [],
+    // => Array: Empty orders for clean state
     products: [],
+    // => Array: Empty products catalog
   };
-  // => State: Clean database for scenario
-  // => Hidden from: Business stakeholders
+  // => Result: Fresh database for each scenario
+  // => Hidden from: Business stakeholders in feature files
+  // => Benefit: Tests are isolated and repeatable
 });
 
 Before({ tags: "@browser" }, function () {
-  // => Before: Conditional setup
-  console.log("🌐 Launching browser..."); // => Technical: Browser initialization
-  this.browser = launchBrowser(); // => Implementation detail
-  // => Hidden from: Feature files
+  // => Before: Conditional hook (only for @browser scenarios)
+  // => Tags: Runs when scenario has @browser tag
+  // => Selective: Doesn't run for non-browser scenarios
+  console.log("🌐 Launching browser...");
+  // => Log: Developer-only console message
+  // => Technical: Browser initialization (Selenium/Playwright)
+  this.browser = launchBrowser();
+  // => Function: Starts browser instance
+  // => State: Browser stored in World
+  // => Implementation detail: Hidden from feature files
+  // => Performance: Only launches when needed (tag-based)
+  // => Hidden from: Business analysts reviewing features
 });
 ```
 
@@ -1527,27 +1783,52 @@ Before({ tags: "@browser" }, function () {
 
 ```gherkin
 # Use Background when setup is business-relevant
+# => Rule: Background for domain concepts stakeholders care about
 Feature: Bank Account
+# => Feature: Banking scenarios
 
   Background:
-    Given a customer named "Alice" exists    # Business concept: Customer
-    And Alice has a checking account         # Business concept: Account type
-    And the account balance is $1000         # Business rule: Initial balance
-                                             # Stakeholders NEED to see this context
+  # => Background: Business-relevant preconditions
+  # => Reason: Stakeholders need to understand account state
+    Given a customer named "Alice" exists
+    # => Step: Business concept (customer entity)
+    # => Visible: Product managers understand "customer"
+    # => Domain: Banking domain language
+    And Alice has a checking account
+    # => Step: Business concept (account type)
+    # => Visible: Stakeholders know checking vs savings vs credit
+    # => Important: Account type affects available operations
+    And the account balance is $1000
+    # => Step: Business rule (initial balance)
+    # => Visible: Financial state is business-critical
+    # => Important: Balance affects withdrawal/transfer scenarios
+    # => Stakeholders NEED to see this context
+    # => Reason: Initial conditions affect business logic
 ```
 
 **When to Use Before Hook**:
 
 ```typescript
 // Use Before hook when setup is technical implementation
+// => Rule: Before hook for infrastructure stakeholders don't need
 Before(function () {
-  // => Technical: Database connection
+  // => Before: Technical setup hook
+  // => Hidden: Not visible in feature files
+  // => Reason: Implementation details not business concepts
   this.dbConnection = connectToTestDB();
-  // => Technical: Mock server setup
+  // => Technical: Database connection (PostgreSQL/MySQL)
+  // => Implementation: Connection pooling, credentials
+  // => Hidden: Stakeholders don't care about database type
   this.mockServer = startMockServer();
-  // => Technical: Test fixtures
+  // => Technical: Mock HTTP server for external APIs
+  // => Implementation: Port, routes, responses
+  // => Hidden: Stakeholders don't care about mocking
   this.testData = loadFixtures();
+  // => Technical: Load test data from JSON/CSV
+  // => Implementation: File paths, parsing logic
+  // => Hidden: Stakeholders care about WHAT data, not HOW it's loaded
   // => Stakeholders DON'T care about these details
+  // => Reason: Pure infrastructure for test execution
 });
 ```
 
@@ -1680,48 +1961,112 @@ Organize feature files by business domain (authentication, shopping, payments) r
 
 ```
 features/
+# => Root: Top-level feature directory
 ├── authentication/
-│   ├── login.feature                        # Domain: User authentication
-│   ├── logout.feature                       # Domain: Session management
-│   ├── password-reset.feature               # Domain: Account recovery
-│   └── registration.feature                 # Domain: User onboarding
+# => Domain: User authentication and account management
+│   ├── login.feature
+# => Feature: User authentication flows
+# => Scenarios: Email login, social login, MFA
+│   ├── logout.feature
+# => Feature: Session management and termination
+# => Scenarios: Logout, session expiry, force logout
+│   ├── password-reset.feature
+# => Feature: Account recovery mechanisms
+# => Scenarios: Request reset, verify email, set new password
+│   └── registration.feature
+# => Feature: User onboarding and signup
+# => Scenarios: Email signup, validation, welcome flow
 ├── shopping/
-│   ├── cart.feature                         # Domain: Shopping cart
-│   ├── checkout.feature                     # Domain: Purchase flow
-│   └── wishlist.feature                     # Domain: Saved items
+# => Domain: Shopping cart and purchase workflow
+│   ├── cart.feature
+# => Feature: Shopping cart operations
+# => Scenarios: Add items, update quantity, remove items
+│   ├── checkout.feature
+# => Feature: Purchase flow and order completion
+# => Scenarios: Enter shipping, select payment, confirm order
+│   └── wishlist.feature
+# => Feature: Saved items for future purchase
+# => Scenarios: Add to wishlist, move to cart, remove
 ├── payments/
-│   ├── credit-card.feature                  # Domain: Payment methods
-│   ├── refunds.feature                      # Domain: Payment reversals
-│   └── subscriptions.feature                # Domain: Recurring payments
+# => Domain: Payment processing and financial transactions
+│   ├── credit-card.feature
+# => Feature: Credit card payment processing
+# => Scenarios: Authorize payment, capture, decline handling
+│   ├── refunds.feature
+# => Feature: Payment reversals and cancellations
+# => Scenarios: Full refund, partial refund, refund status
+│   └── subscriptions.feature
+# => Feature: Recurring payments and billing
+# => Scenarios: Subscribe, cancel, payment failure handling
 └── admin/
-    ├── user-management.feature              # Domain: Admin operations
-    └── reports.feature                      # Domain: Analytics
+# => Domain: Administrative and operational features
+    ├── user-management.feature
+    # => Feature: Admin user operations
+    # => Scenarios: Create user, disable account, reset password
+    └── reports.feature
+    # => Feature: Analytics and business intelligence
+    # => Scenarios: Generate sales report, export data, filter by date
 ```
 
 **Anti-pattern - Technical layers (Avoid)**:
 
 ```
 features/
+# => Anti-pattern: Organized by technical layers (wrong approach)
 ├── frontend/
-│   ├── login-ui.feature                     # Bad: Technical layer, not business domain
-│   ├── cart-ui.feature                      # Bad: Splits cart across frontend/backend
+# => Problem: Technical layer, not business domain
+│   ├── login-ui.feature
+# => Bad: UI implementation detail
+# => Issue: Business user doesn't think "frontend login"
+│   ├── cart-ui.feature
+# => Bad: Splits cart feature across frontend/backend
+# => Issue: One business feature → multiple files
 │   └── checkout-ui.feature
+# => Bad: Technical separation
+# => Issue: Checkout UI separate from checkout API logic
 ├── backend/
-│   ├── login-api.feature                    # Bad: Same feature as frontend/login-ui.feature
-│   ├── cart-api.feature                     # Bad: Duplicate of frontend/cart-ui.feature
+# => Problem: Implementation layer, duplicates frontend
+│   ├── login-api.feature
+# => Bad: Same business feature as frontend/login-ui.feature
+# => Issue: Login logic duplicated across layers
+│   ├── cart-api.feature
+# => Bad: Duplicate of frontend/cart-ui.feature
+# => Issue: Cart scenarios split by technical boundary
 │   └── payment-api.feature
+# => Bad: Payment API separate from payment UI
+# => Issue: Payment flow fragmented
 └── database/
-    ├── user-schema.feature                  # Bad: Too technical, not business-facing
-    └── order-queries.feature                # Bad: Implementation detail
+# => Problem: Too low-level, implementation detail
+    ├── user-schema.feature
+    # => Bad: Database schema is implementation detail
+    # => Issue: Not a business-facing feature
+    └── order-queries.feature
+    # => Bad: SQL implementation, not business workflow
+    # => Issue: Stakeholders don't care about queries
 ```
 
 **Benefits of domain-based organization**:
 
 ```
 ✅ Stakeholder navigation: Business analysts find "payments/" folder easily
+# => Benefit: Non-technical users navigate independently
+# => Example: Product manager opens payments/ to review refund scenarios
+# => Outcome: Self-service access to business requirements
+
 ✅ Feature cohesion: All cart-related scenarios in shopping/cart.feature
+# => Benefit: Complete feature testing in single file
+# => Example: cart.feature tests UI, API, and database together
+# => Outcome: No duplicate scenarios across layers
+
 ✅ Team ownership: Payments team owns payments/ folder
+# => Benefit: Clear responsibility boundaries
+# => Example: Payments squad maintains all payment features
+# => Outcome: Faster reviews, better domain expertise
+
 ✅ Reuse: shopping/cart.feature can test UI + API + database together
+# => Benefit: End-to-end testing in one scenario
+# => Example: "Add item to cart" tests UI button, API call, database persistence
+# => Outcome: Full feature coverage without layer splitting
 ```
 
 **Key Takeaway**: Organize feature files by business domain (authentication, shopping, payments) to align with how stakeholders think about features, not technical implementation layers.

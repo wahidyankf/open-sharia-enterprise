@@ -32,48 +32,56 @@ graph TD
 ```
 
 ```java
-// UserRepository.java
 public interface UserRepository extends JpaRepository<User, Long> {
+                                                              // => Repository interface for User entity
 
-    @Query("SELECT u FROM User u WHERE u.email = :email")
+    @Query("SELECT u FROM User u WHERE u.email = :email")    // => JPQL query with named parameter
+                                                              // => JPQL syntax: SELECT alias FROM Entity alias WHERE condition
+                                                              // => Translates to SQL: SELECT * FROM users WHERE email = ?
     Optional<User> findByEmailCustom(@Param("email") String email);
-// => Spring derives SQL WHERE clause from method name
-// => Returns List<Entity> or Optional<Entity> based on return type
-    // => JPQL: SELECT u FROM User u WHERE u.email = :email
-    // => SQL: SELECT * FROM users WHERE email = ?
-    // => Parameter binding: :email → 'john@example.com'
+                                                              // => Method with custom @Query (not derived from method name)
+                                                              // => @Param("email") binds method parameter to :email placeholder
+                                                              // => Returns Optional<User> (empty if no match, never null)
+                                                              // => Spring Data JPA generates implementation at runtime
 
     @Query("SELECT u FROM User u WHERE u.age >= :minAge AND u.status = :status")
-    List<User> findAdultActiveUsers(
-        @Param("minAge") int minAge,
-        @Param("status") String status
-    );
-    // => JPQL with multiple named parameters
-    // => SQL: SELECT * FROM users WHERE age >= ? AND status = ?
+                                                              // => JPQL with multiple named parameters
+                                                              // => WHERE clause combines two conditions with AND
+    List<User> findAdultActiveUsers(                          // => Method name can be arbitrary (query defined in @Query)
+        @Param("minAge") int minAge,                          // => Binds to :minAge in JPQL
+        @Param("status") String status                        // => Binds to :status in JPQL
+    );                                                        // => Returns List<User> (never null, empty list if no matches)
+                                                              // => SQL: SELECT * FROM users WHERE age >= ? AND status = ?
 }
 
-// Usage
-@Service
-public class UserService {
+@Service                                                      // => Spring service bean
+public class UserService {                                    // => Service layer for User operations
 
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired                                                // => Dependency injection
+    private UserRepository userRepository;                    // => Repository instance
 
-    public void demonstrateCustomQuery() {
+    public void demonstrateCustomQuery() {                    // => Demo method showing @Query usage
         Optional<User> user = userRepository.findByEmailCustom("john@example.com");
-// => Spring derives SQL WHERE clause from method name
-// => Returns List<Entity> or Optional<Entity> based on return type
-        // => Query execution:
-        // =>   Hibernate: select user0_.id, user0_.name, user0_.email, user0_.age
-        // =>             from users user0_ where user0_.email=?
-        // => Result: Optional[User(id=1, name='John', email='john@example.com')]
+                                                              // => Calls custom @Query method
+                                                              // => Executes JPQL: SELECT u FROM User u WHERE u.email = :email
+                                                              // => Hibernate translates to SQL:
+                                                              // =>   SELECT user0_.id, user0_.name, user0_.email, user0_.age
+                                                              // =>   FROM users user0_
+                                                              // =>   WHERE user0_.email = ?
+                                                              // => Parameter binding: ? = 'john@example.com'
+                                                              // => Result: Optional[User(id=1, name='John', email='john@example.com')]
+                                                              // => If no match, returns Optional.empty()
 
         List<User> activeAdults = userRepository.findAdultActiveUsers(18, "ACTIVE");
-        // => Query execution:
-        // =>   Hibernate: select user0_.id, user0_.name, user0_.email, user0_.age, user0_.status
-        // =>             from users user0_ where user0_.age>=? and user0_.status=?
-        // => Parameters: [18, 'ACTIVE']
-        // => Result: List of 5 users matching criteria
+                                                              // => Calls multi-parameter @Query method
+                                                              // => Executes JPQL: SELECT u FROM User u WHERE u.age >= :minAge AND u.status = :status
+                                                              // => Hibernate translates to SQL:
+                                                              // =>   SELECT user0_.id, user0_.name, user0_.email, user0_.age, user0_.status
+                                                              // =>   FROM users user0_
+                                                              // =>   WHERE user0_.age >= ? AND user0_.status = ?
+                                                              // => Parameters bound in order: [18, 'ACTIVE']
+                                                              // => Result: List<User> with 5 matching users
+                                                              // => Empty list if no matches (never null)
     }
 }
 
@@ -89,52 +97,61 @@ public class UserService {
 Native SQL queries execute database-specific SQL directly, bypassing JPQL abstraction. Use for database-specific features or performance optimization.
 
 ```java
-// ProductRepository.java
 public interface ProductRepository extends JpaRepository<Product, Long> {
+                                                              // => Repository interface for Product entity
 
     @Query(value = "SELECT * FROM products WHERE price < :maxPrice", nativeQuery = true)
+                                                              // => @Query with nativeQuery=true executes raw SQL
+                                                              // => Bypasses JPQL → SQL translation layer
+                                                              // => Database-specific SQL syntax allowed (PostgreSQL, MySQL, Oracle)
+                                                              // => No entity graph optimization, no second-level cache
     List<Product> findCheapProductsNative(@Param("maxPrice") BigDecimal maxPrice);
-    // => Native SQL executed directly
-    // => No JPQL parsing, no entity graph optimization
-    // => Database-specific syntax allowed (PostgreSQL, MySQL, etc.)
+                                                              // => Method executes native SQL directly
+                                                              // => @Param("maxPrice") binds to :maxPrice in SQL
+                                                              // => Returns List<Product> (JPA maps result columns to entity fields)
+                                                              // => Column names must match entity field names
 
-    @Query(
-        value = "SELECT p.*, c.name as category_name " +
-                "FROM products p " +
+    @Query(                                                   // => Multi-line native SQL query
+        value = "SELECT p.*, c.name as category_name " +     // => SELECT all product columns + joined column
+                "FROM products p " +                          // => FROM products table (aliased as p)
                 "INNER JOIN categories c ON p.category_id = c.id " +
-                "WHERE c.active = true",
-        nativeQuery = true
+                                                              // => INNER JOIN to categories table
+                "WHERE c.active = true",                      // => WHERE clause filters by category status
+        nativeQuery = true                                    // => Marks as native SQL query
     )
-    List<Object[]> findProductsWithCategoryNative();
-    // => Returns Object[] instead of entities
-    // => Index 0: Product columns, Index 1: category_name
+    List<Object[]> findProductsWithCategoryNative();          // => Returns List<Object[]> (not entities)
+                                                              // => Each Object[] array contains result columns
+                                                              // => Object[0] = Product entity, Object[1] = category_name String
+                                                              // => JPA cannot map extra columns to entity automatically
 }
 
-// Usage
-@Service
-public class ProductService {
+@Service                                                      // => Spring service bean
+public class ProductService {                                 // => Service layer for Product operations
 
-    @Autowired
-    private ProductRepository productRepository;
+    @Autowired                                                // => Dependency injection
+    private ProductRepository productRepository;              // => Repository instance
 
-    public void demonstrateNativeQuery() {
+    public void demonstrateNativeQuery() {                    // => Demo method showing native query usage
         List<Product> cheapProducts = productRepository.findCheapProductsNative(
-            new BigDecimal("50.00")
-        );
-        // => SQL execution (PostgreSQL example):
-        // =>   SELECT * FROM products WHERE price < 50.00
-        // => Result: List of 12 products with price < 50
+                                                              // => Call native query method
+            new BigDecimal("50.00")                           // => Pass maxPrice parameter (50.00)
+        );                                                    // => Executes native SQL (example: PostgreSQL):
+                                                              // =>   SELECT * FROM products WHERE price < 50.00
+                                                              // => Database executes SQL as-is (no translation)
+                                                              // => Result: List<Product> with 12 products priced < 50
+                                                              // => JPA maps result rows to Product entities
 
         List<Object[]> productsWithCategory = productRepository.findProductsWithCategoryNative();
-        // => SQL execution:
-        // =>   SELECT p.*, c.name as category_name
-        // =>   FROM products p
-        // =>   INNER JOIN categories c ON p.category_id = c.id
-        // =>   WHERE c.active = true
-        // => Result: List<Object[]> where each Object[] contains:
-        // =>   [0] = Product entity data
-        // =>   [1] = String category_name
-        // => Example: [ [Product(id=1, name='Laptop'), 'Electronics'], ... ]
+                                                              // => Call native query returning Object[]
+                                                              // => Executes native SQL:
+                                                              // =>   SELECT p.*, c.name as category_name
+                                                              // =>   FROM products p
+                                                              // =>   INNER JOIN categories c ON p.category_id = c.id
+                                                              // =>   WHERE c.active = true
+                                                              // => Result: List<Object[]> with each array containing:
+                                                              // =>   Object[0] = Product entity (id=1, name='Laptop', price=999.99)
+                                                              // =>   Object[1] = String category_name ("Electronics")
+                                                              // => Example result: [[Product(...), "Electronics"], [Product(...), "Books"], ...]
     }
 }
 
@@ -2052,73 +2069,95 @@ public class ConcurrencyDemo {
 @Transactional rollback behavior differs for checked vs unchecked exceptions. Custom rollback rules provide fine-grained control.
 
 ```java
-@Service
+@Service                                              // => Service bean for Spring container
 public class PaymentService {
 
-    @Autowired
-    private PaymentRepository paymentRepository;
+    @Autowired                                        // => Field injection (constructor preferred)
+    private PaymentRepository paymentRepository;      // => Injected repository dependency
 
-    @Transactional
+    @Transactional                                    // => Default transaction behavior
+                                                      // => Rolls back on unchecked exceptions only
     public void processPaymentDefaultRollback(Payment payment) throws Exception {
         paymentRepository.save(payment);
+        // => SQL: INSERT INTO payments (...)
+        // => Entity in MANAGED state (tracked by persistence context)
 
         // Unchecked exception (RuntimeException)
         throw new IllegalStateException("Payment failed");
-        // => Transaction ROLLS BACK (default behavior for unchecked exceptions)
+        // => Unchecked exception (extends RuntimeException)
+        // => Transaction ROLLS BACK (default Spring behavior)
+        // => SQL: ROLLBACK
         // => Payment NOT saved to database
     }
 
-    @Transactional
+    @Transactional                                    // => Default transaction behavior
     public void processPaymentChecked(Payment payment) throws Exception {
         paymentRepository.save(payment);
+        // => SQL: INSERT INTO payments (...)
 
         // Checked exception
         throw new Exception("Network error");
-        // => Transaction COMMITS (default behavior for checked exceptions)
-        // => Payment saved to database (unexpected!)
+        // => Checked exception (does NOT extend RuntimeException)
+        // => Transaction COMMITS by default (⚠️ unexpected behavior)
+        // => SQL: COMMIT
+        // => Payment saved to database (data corruption risk!)
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)    // => Custom rollback rule
+                                                      // => Overrides default: rollback on ANY Exception
     public void processPaymentRollbackAll(Payment payment) throws Exception {
         paymentRepository.save(payment);
+        // => SQL: INSERT INTO payments (...)
 
         throw new Exception("Network error");
-        // => rollbackFor = Exception.class
-        // => Transaction ROLLS BACK (overrides default for checked exceptions)
+        // => Checked exception
+        // => rollbackFor = Exception.class overrides default
+        // => Transaction ROLLS BACK (correct behavior)
+        // => SQL: ROLLBACK
         // => Payment NOT saved
     }
 
     @Transactional(noRollbackFor = IllegalArgumentException.class)
+                                                      // => Exception whitelist (commit despite error)
+                                                      // => Use carefully - can cause data corruption
     public void processPaymentNoRollback(Payment payment) {
         paymentRepository.save(payment);
+        // => SQL: INSERT INTO payments (...)
 
         throw new IllegalArgumentException("Invalid amount");
-        // => noRollbackFor = IllegalArgumentException.class
-        // => Transaction COMMITS (despite unchecked exception)
-        // => Payment saved to database
+        // => Unchecked exception (normally triggers rollback)
+        // => noRollbackFor = IllegalArgumentException.class overrides
+        // => Transaction COMMITS (despite exception)
+        // => SQL: COMMIT
+        // => Payment saved to database (validation failed but data persisted)
     }
 
     @Transactional(rollbackFor = {SQLException.class, IOException.class})
+                                                      // => Multiple exception types for rollback
+                                                      // => Checked exceptions array
     public void processPaymentMultipleRules(Payment payment)
             throws SQLException, IOException {
         paymentRepository.save(payment);
+        // => SQL: INSERT INTO payments (...)
 
         // Either exception triggers rollback
         if (someCondition) {
             throw new SQLException("Database error");
+            // => SQL: ROLLBACK (SQLException in rollbackFor list)
         } else {
             throw new IOException("File error");
+            // => SQL: ROLLBACK (IOException in rollbackFor list)
         }
-        // => Both SQLException and IOException cause rollback
-        // => Other checked exceptions (e.g., Exception) still commit
+        // => Only SQLException and IOException cause rollback
+        // => Other checked exceptions (e.g., Exception) still COMMIT
     }
 }
 
-// Usage
-@Service
+// Usage demonstration
+@Service                                              // => Service bean
 public class BusinessService {
 
-    @Autowired
+    @Autowired                                        // => Injected PaymentService
     private PaymentService paymentService;
 
     public void demonstrateRollback() {
@@ -2128,26 +2167,29 @@ public class BusinessService {
         try {
             paymentService.processPaymentDefaultRollback(payment1);
         } catch (Exception e) {
-            // => Transaction rolled back
-            // => payment1 NOT in database
+            // => IllegalStateException thrown
+            // => Transaction rolled back automatically
+            // => payment1 NOT in database (INSERT rolled back)
         }
 
-        // Scenario 2: Checked exception (default commits)
+        // Scenario 2: Checked exception (default commits - ⚠️ DANGEROUS)
         Payment payment2 = new Payment();
         try {
             paymentService.processPaymentChecked(payment2);
         } catch (Exception e) {
-            // => Transaction COMMITTED (unexpected!)
-            // => payment2 EXISTS in database
+            // => Exception thrown (checked exception)
+            // => Transaction COMMITTED (⚠️ unexpected!)
+            // => payment2 EXISTS in database (despite error)
         }
 
-        // Scenario 3: Custom rollback rule
+        // Scenario 3: Custom rollback rule (recommended pattern)
         Payment payment3 = new Payment();
         try {
             paymentService.processPaymentRollbackAll(payment3);
         } catch (Exception e) {
-            // => Transaction rolled back (rollbackFor = Exception.class)
-            // => payment3 NOT in database
+            // => Exception thrown
+            // => rollbackFor = Exception.class triggered rollback
+            // => payment3 NOT in database (correct behavior)
         }
     }
 }

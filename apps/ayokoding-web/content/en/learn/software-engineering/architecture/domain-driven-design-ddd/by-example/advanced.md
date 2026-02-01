@@ -45,413 +45,339 @@ graph LR
 ```typescript
 // Event Store - persistence for event streams
 interface StoredEvent {
+  // => Ensures transactional consistency
   eventId: string; // => Unique event identifier
+  // => Manages entity lifecycle
   aggregateId: string; // => Which aggregate this event belongs to
+  // => Preserves domain model
   eventType: string; // => Event class name
+  // => Communicates domain intent
   eventData: string; // => Serialized event payload (JSON)
+  // => Executes domain logic
   version: number; // => Event version in stream (ordering)
+  // => Updates aggregate state
   timestamp: Date; // => When event occurred
+  // => Validates business rule
 }
+// => Executes domain logic
 
 class EventStore {
-  // => Domain object representing EventStore
-  // => Encapsulates business logic and state
-  // => Domain object: EventStore
+  // => EventStore: domain model element
   private events: Map<string, StoredEvent[]> = new Map();
-  // => Encapsulated field: events
-  // => Internal state (can only be modified by methods)
-  // => Declares events
   // => Encapsulated field (not publicly accessible)
   // => In-memory store: aggregateId -> event array
   // => Production: use EventStoreDB, PostgreSQL, DynamoDB
 
   async append(aggregateId: string, events: DomainEvent[], expectedVersion: number): Promise<void> {
-    // => Calls append method
     // => Append new events to aggregate's stream
     const stream = this.events.get(aggregateId) || [];
-    // => Creates variable: stream
-    // => Assigns value: this.events.get(aggregateId) || []
-    // => Declares stream
     // => Get existing event stream or create empty array
 
     if (stream.length !== expectedVersion) {
-      // => Checks business rule: stream.length !== expectedVersion
-      // => Validates domain constraint
-      // => Calls method and assigns result
       // => Optimistic concurrency check
       throw new Error(`Concurrency conflict: expected version ${expectedVersion}, got ${stream.length}`);
-      // => Throws domain exception
-      // => Business rule violation detected
-      // => Throws domain exception
-      // => Protects business invariant
       // => Prevents lost updates when multiple processes modify same aggregate
     }
+    // => Updates aggregate state
 
     const storedEvents = events.map((event, index) => ({
-      // => Creates variable: storedEvents
-      // => Assigns value: events.map((event, index) => ({
-      // => Declares storedEvents
       // => Convert domain events to stored events
       eventId: crypto.randomUUID(),
-      // => Calls randomUUID method
       // => Generate unique ID for each event
       aggregateId,
+      // => Validates business rule
       eventType: event.constructor.name,
       // => Store event class name for deserialization
       eventData: JSON.stringify(event),
-      // => Calls stringify method
       // => Serialize event payload to JSON
       version: expectedVersion + index + 1,
       // => Increment version for each new event
       timestamp: new Date(),
-      // => Calls Date method
       // => Record when event was stored
     }));
+    // => Enforces invariant
 
     this.events.set(aggregateId, [...stream, ...storedEvents]);
-    // => Calls set method
     // => Delegates to internal method
     // => Append new events to stream (immutable pattern)
     // => Stream now contains all historical events
   }
+  // => Encapsulates domain knowledge
 
   async getEvents(aggregateId: string): Promise<DomainEvent[]> {
-    // => Calls getEvents method
     // => Retrieve all events for aggregate
     const stream = this.events.get(aggregateId) || [];
-    // => Creates variable: stream
-    // => Assigns value: this.events.get(aggregateId) || []
-    // => Declares stream
     // => Get event stream or empty array if aggregate doesn't exist
 
     return stream.map((stored) => this.deserialize(stored));
     // => Returns stream.map((stored) => this.deserialize(stored))
-    // => Calls method and assigns result
     // => Convert stored events back to domain event objects
     // => Maintains event ordering via version numbers
   }
+  // => Delegates to domain service
 
   private deserialize(stored: StoredEvent): DomainEvent {
-    // => Private method: deserialize
     // => Internal logic (not part of public API)
     // => Reconstruct domain event from stored format
     const data = JSON.parse(stored.eventData);
-    // => Creates variable: data
-    // => Assigns value: JSON.parse(stored.eventData)
-    // => Declares data
     // => Parse JSON payload back to object
 
     switch (stored.eventType) {
       // => Route to correct event class constructor
       case "AccountOpened":
+        // => Maintains consistency boundary
         return new AccountOpened(data.accountId, data.ownerId, data.initialBalance);
-      // => Returns new AccountOpened(data.accountId, data.ownerId, data.initialBalance)
+      // => Return result to caller
       case "MoneyDeposited":
+        // => Applies domain event
         return new MoneyDeposited(data.accountId, data.amount);
-      // => Returns new MoneyDeposited(data.accountId, data.amount)
+      // => Return result to caller
       case "MoneyWithdrawn":
+        // => Coordinates with bounded context
         return new MoneyWithdrawn(data.accountId, data.amount);
-      // => Returns new MoneyWithdrawn(data.accountId, data.amount)
+      // => Return result to caller
       default:
+        // => Implements tactical pattern
         throw new Error(`Unknown event type: ${stored.eventType}`);
-      // => Throws domain exception
-      // => Business rule violation detected
-      // => Throws domain exception
-      // => Protects business invariant
+      // => Raise domain exception
     }
+    // => Protects aggregate integrity
   }
+  // => Ensures transactional consistency
 }
+// => Manages entity lifecycle
 
 // Domain Events
 abstract class DomainEvent {
-  // => Domain object representing DomainEvent
-  // => Encapsulates business logic and state
+  // => DomainEvent: domain model element
   constructor(public readonly occurredAt: Date = new Date()) {}
-  // => Constructor initializes domain object
-  // => Establishes valid initial state
-  // => Constructor initializes instance
+  // => Initialize object with parameters
 }
+// => Preserves domain model
 
 class AccountOpened extends DomainEvent {
-  // => Domain object representing AccountOpened
-  // => Encapsulates business logic and state
-  // => Domain object: AccountOpened
+  // => AccountOpened: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     public readonly accountId: string,
+    // => Field: readonly (public)
     public readonly ownerId: string,
+    // => Field: readonly (public)
     public readonly initialBalance: number,
+    // => Field: readonly (public)
   ) {
+    // => Communicates domain intent
     super();
-    // => Calls super method
+    // => Executes domain logic
   }
+  // => Updates aggregate state
 }
+// => Validates business rule
 
 class MoneyDeposited extends DomainEvent {
-  // => Domain object representing MoneyDeposited
-  // => Encapsulates business logic and state
-  // => Domain object: MoneyDeposited
+  // => MoneyDeposited: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     public readonly accountId: string,
+    // => Field: readonly (public)
     public readonly amount: number,
+    // => Field: readonly (public)
   ) {
+    // => Enforces invariant
     super();
-    // => Calls super method
+    // => Encapsulates domain knowledge
   }
+  // => Delegates to domain service
 }
+// => Maintains consistency boundary
 
 class MoneyWithdrawn extends DomainEvent {
-  // => Domain object representing MoneyWithdrawn
-  // => Encapsulates business logic and state
-  // => Domain object: MoneyWithdrawn
+  // => MoneyWithdrawn: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     public readonly accountId: string,
+    // => Field: readonly (public)
     public readonly amount: number,
+    // => Field: readonly (public)
   ) {
+    // => Applies domain event
     super();
-    // => Calls super method
+    // => Coordinates with bounded context
   }
+  // => Implements tactical pattern
 }
+// => Protects aggregate integrity
 
 // Event-Sourced Aggregate
 class BankAccount {
-  // => Domain object representing BankAccount
-  // => Encapsulates business logic and state
-  // => Domain object: BankAccount
+  // => BankAccount: domain model element
   private accountId: string;
-  // => Encapsulated field: accountId
-  // => Internal state (can only be modified by methods)
-  // => Declares accountId
   // => Encapsulated field (not publicly accessible)
   private ownerId: string;
-  // => Encapsulated field: ownerId
-  // => Internal state (can only be modified by methods)
-  // => Declares ownerId
   // => Encapsulated field (not publicly accessible)
   private balance: number = 0;
-  // => Encapsulated field: balance
-  // => Internal state (can only be modified by methods)
-  // => Declares balance
   // => Encapsulated field (not publicly accessible)
   private version: number = 0;
-  // => Encapsulated field: version
-  // => Internal state (can only be modified by methods)
-  // => Declares version
   // => Encapsulated field (not publicly accessible)
   // => Version tracks position in event stream
   private uncommittedEvents: DomainEvent[] = [];
-  // => Encapsulated field: uncommittedEvents
-  // => Internal state (can only be modified by methods)
-  // => Declares uncommittedEvents
   // => Encapsulated field (not publicly accessible)
   // => New events not yet persisted
 
   static async load(eventStore: EventStore, accountId: string): Promise<BankAccount> {
-    // => Calls load method
     // => Rebuild aggregate from event history
     const events = await eventStore.getEvents(accountId);
-    // => Creates variable: events
-    // => Assigns value: await eventStore.getEvents(accountId)
-    // => Declares events
     // => Fetch all historical events
 
     const account = new BankAccount();
-    // => Creates variable: account
-    // => Instantiates new object
-    // => Declares account
+    // => Store value in account
     events.forEach((event) => account.apply(event));
-    // => Calls method and assigns result
     // => Replay events to rebuild current state
     account.uncommittedEvents = [];
     // => Clear uncommitted (we just loaded persisted events)
 
     return account;
     // => Returns account
-    // => Returns value
     // => Aggregate now in state reflecting all past events
   }
+  // => Ensures transactional consistency
 
   openAccount(accountId: string, ownerId: string, initialBalance: number): void {
     // => Domain operation: openAccount
-    // => Modifies state while maintaining invariants
     // => Command: open new account
     const event = new AccountOpened(accountId, ownerId, initialBalance);
-    // => Creates variable: event
-    // => Instantiates new object
-    // => Declares event
     // => Create domain event
     this.applyAndRecord(event);
-    // => Calls applyAndRecord method
     // => Delegates to internal method
     // => Apply event and add to uncommitted list
   }
+  // => Manages entity lifecycle
 
   deposit(amount: number): void {
     // => Domain operation: deposit
-    // => Modifies state while maintaining invariants
     // => Command: deposit money
     const event = new MoneyDeposited(this.accountId, amount);
-    // => Creates variable: event
-    // => Instantiates new object
-    // => Declares event
+    // => Store value in event
     this.applyAndRecord(event);
-    // => Calls applyAndRecord method
     // => Delegates to internal method
   }
+  // => Preserves domain model
 
   withdraw(amount: number): void {
     // => Domain operation: withdraw
-    // => Modifies state while maintaining invariants
     // => Command: withdraw money
     if (this.balance < amount) {
-      // => Checks business rule: this.balance < amount
-      // => Validates domain constraint
+      // => Operation: if()
       throw new Error("Insufficient funds");
-      // => Throws domain exception
-      // => Business rule violation detected
-      // => Throws domain exception
-      // => Protects business invariant
       // => Business rule validation
     }
+    // => Communicates domain intent
     const event = new MoneyWithdrawn(this.accountId, amount);
-    // => Creates variable: event
-    // => Instantiates new object
-    // => Declares event
+    // => Store value in event
     this.applyAndRecord(event);
-    // => Calls applyAndRecord method
     // => Delegates to internal method
   }
+  // => Executes domain logic
 
   private applyAndRecord(event: DomainEvent): void {
-    // => Private method: applyAndRecord
     // => Internal logic (not part of public API)
     // => Apply event and add to uncommitted
     this.apply(event);
-    // => Calls apply method
     // => Delegates to internal method
     // => Update aggregate state
     this.uncommittedEvents.push(event);
-    // => Calls push method
     // => Delegates to internal method
     // => Record for persistence
   }
+  // => Updates aggregate state
 
   private apply(event: DomainEvent): void {
-    // => Private method: apply
     // => Internal logic (not part of public API)
     // => Event handler - updates aggregate state
     if (event instanceof AccountOpened) {
-      // => Checks business rule: event instanceof AccountOpened
-      // => Validates domain constraint
+      // => Operation: if()
       this.accountId = event.accountId;
-      // => Sets accountId to event.accountId
-      // => Updates internal state
-      // => Updates internal state
+      // => Update accountId state
       this.ownerId = event.ownerId;
-      // => Sets ownerId to event.ownerId
-      // => Updates internal state
-      // => Updates internal state
+      // => Update ownerId state
       this.balance = event.initialBalance;
-      // => Sets balance to event.initialBalance
-      // => Updates internal state
-      // => Updates internal state
       // => Initialize account state from event
     } else if (event instanceof MoneyDeposited) {
+      // => Validates business rule
       this.balance += event.amount;
-      // => Modifies balance
       // => State change operation
       // => Modifies state value
       // => Balance updated
       // => Increase balance
     } else if (event instanceof MoneyWithdrawn) {
+      // => Enforces invariant
       this.balance -= event.amount;
-      // => Modifies balance
       // => State change operation
       // => Modifies state value
       // => Balance updated
       // => Decrease balance
     }
+    // => Encapsulates domain knowledge
     this.version++;
     // => Increment version after each event
   }
+  // => Delegates to domain service
 
   getUncommittedEvents(): DomainEvent[] {
     // => Domain operation: getUncommittedEvents
-    // => Modifies state while maintaining invariants
     return [...this.uncommittedEvents];
     // => Returns [...this.uncommittedEvents]
-    // => Returns value
     // => Return copy of uncommitted events
   }
+  // => Maintains consistency boundary
 
   getVersion(): number {
     // => Domain operation: getVersion
-    // => Modifies state while maintaining invariants
     return this.version;
-    // => Returns this.version
-    // => Returns value
+    // => Return result to caller
   }
+  // => Applies domain event
 
   getBalance(): number {
     // => Domain operation: getBalance
-    // => Modifies state while maintaining invariants
     return this.balance;
-    // => Returns this.balance
-    // => Returns value
+    // => Return result to caller
   }
+  // => Coordinates with bounded context
 }
+// => Implements tactical pattern
 
 // Usage
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const eventStore = new EventStore();
-  // => Creates variable: eventStore
-  // => Instantiates new object
-  // => Declares eventStore
+  // => Store value in eventStore
 
   // Create new account
   const account = new BankAccount();
-  // => Creates variable: account
-  // => Instantiates new object
-  // => Declares account
+  // => Store value in account
   account.openAccount("ACC-001", "USER-123", 1000);
-  // => Calls openAccount method
   // => AccountOpened event created
   account.deposit(500);
-  // => Calls deposit method
   // => MoneyDeposited event created
   account.withdraw(200);
-  // => Calls withdraw method
   // => MoneyWithdrawn event created
 
   await eventStore.append("ACC-001", account.getUncommittedEvents(), 0);
-  // => Calls append method
   // => Persist 3 events to store
   // => Stream: [AccountOpened, MoneyDeposited, MoneyWithdrawn]
 
   // Rebuild from events
   const rebuilt = await BankAccount.load(eventStore, "ACC-001");
-  // => Creates variable: rebuilt
-  // => Assigns value: await BankAccount.load(eventStore, "ACC-001")
-  // => Declares rebuilt
   // => Replays 3 events to reconstruct state
   console.log(rebuilt.getBalance());
-  // => Calls log method
   // => Outputs result
   // => Output: 1300 (1000 + 500 - 200)
   console.log(rebuilt.getVersion());
-  // => Calls log method
   // => Outputs result
   // => Output: 3 (three events applied)
 })();
+// => Protects aggregate integrity
 ```
 
 **Key Takeaway**: Event Store persists complete event history for aggregates. State is rebuilt by replaying events. Optimistic concurrency prevents conflicts using version numbers.
@@ -465,352 +391,279 @@ Snapshots optimize event replay performance for long-lived aggregates by periodi
 ```typescript
 // Snapshot - current state at specific version
 interface Snapshot {
+  // => Snapshot: contract definition
   aggregateId: string;
+  // => Delegates to domain service
   version: number; // => Which event version this snapshot represents
+  // => Maintains consistency boundary
   state: any; // => Serialized aggregate state
+  // => Applies domain event
   timestamp: Date;
+  // => Executes domain logic
 }
+// => Updates aggregate state
 
 class SnapshotStore {
-  // => Domain object representing SnapshotStore
-  // => Encapsulates business logic and state
-  // => Domain object: SnapshotStore
+  // => SnapshotStore: domain model element
   private snapshots: Map<string, Snapshot> = new Map();
-  // => Encapsulated field: snapshots
-  // => Internal state (can only be modified by methods)
-  // => Declares snapshots
   // => Encapsulated field (not publicly accessible)
   // => In-memory snapshot storage
   // => Production: use Redis, PostgreSQL, S3
 
   async saveSnapshot(aggregateId: string, version: number, state: any): Promise<void> {
-    // => Calls saveSnapshot method
     // => Persist snapshot for aggregate
     this.snapshots.set(aggregateId, {
+      // => Validates business rule
       aggregateId,
+      // => Enforces invariant
       version,
+      // => Encapsulates domain knowledge
       state: JSON.stringify(state),
-      // => Calls stringify method
       // => Serialize state to JSON
       timestamp: new Date(),
-      // => Calls Date method
+      // => Delegates to domain service
     });
     // => Overwrite previous snapshot (keep latest only)
   }
+  // => Maintains consistency boundary
 
   async getSnapshot(aggregateId: string): Promise<Snapshot | null> {
-    // => Calls getSnapshot method
     // => Retrieve latest snapshot
     return this.snapshots.get(aggregateId) || null;
-    // => Returns this.snapshots.get(aggregateId) || null
-    // => Returns null if no snapshot exists
+    // => Return result to caller
   }
+  // => Applies domain event
 }
+// => Coordinates with bounded context
 
 class BankAccountWithSnapshots {
-  // => Domain object representing BankAccountWithSnapshots
-  // => Encapsulates business logic and state
-  // => Domain object: BankAccountWithSnapshots
+  // => BankAccountWithSnapshots: domain model element
   private accountId: string;
-  // => Encapsulated field: accountId
-  // => Internal state (can only be modified by methods)
-  // => Declares accountId
   // => Encapsulated field (not publicly accessible)
   private ownerId: string;
-  // => Encapsulated field: ownerId
-  // => Internal state (can only be modified by methods)
-  // => Declares ownerId
   // => Encapsulated field (not publicly accessible)
   private balance: number = 0;
-  // => Encapsulated field: balance
-  // => Internal state (can only be modified by methods)
-  // => Declares balance
   // => Encapsulated field (not publicly accessible)
   private version: number = 0;
-  // => Encapsulated field: version
-  // => Internal state (can only be modified by methods)
-  // => Declares version
   // => Encapsulated field (not publicly accessible)
   private uncommittedEvents: DomainEvent[] = [];
-  // => Encapsulated field: uncommittedEvents
-  // => Internal state (can only be modified by methods)
-  // => Declares uncommittedEvents
   // => Encapsulated field (not publicly accessible)
 
   static async load(
+    // => Implements tactical pattern
     eventStore: EventStore,
+    // => Protects aggregate integrity
     snapshotStore: SnapshotStore,
+    // => Ensures transactional consistency
     accountId: string,
+    // => Manages entity lifecycle
   ): Promise<BankAccountWithSnapshots> {
     // => Load aggregate using snapshot + subsequent events
     const snapshot = await snapshotStore.getSnapshot(accountId);
-    // => Creates variable: snapshot
-    // => Assigns value: await snapshotStore.getSnapshot(accountId)
-    // => Declares snapshot
     // => Try to load snapshot first
 
     const account = new BankAccountWithSnapshots();
-    // => Creates variable: account
-    // => Instantiates new object
-    // => Declares account
+    // => Store value in account
 
     if (snapshot) {
-      // => Checks business rule: snapshot
-      // => Validates domain constraint
       // => Snapshot exists, restore from it
       account.restoreFromSnapshot(snapshot);
-      // => Calls restoreFromSnapshot method
       // => Restore state from snapshot
       console.log(`Restored from snapshot at version ${snapshot.version}`);
-      // => Calls log method
       // => Outputs result
 
       const events = await eventStore.getEvents(accountId);
-      // => Creates variable: events
-      // => Assigns value: await eventStore.getEvents(accountId)
-      // => Declares events
       // => Get ALL events from store
       const eventsAfterSnapshot = events.slice(snapshot.version);
-      // => Creates variable: eventsAfterSnapshot
-      // => Assigns value: events.slice(snapshot.version)
-      // => Declares eventsAfterSnapshot
       // => Only replay events AFTER snapshot version
       // => Example: snapshot at v100, total events 150, replay events 101-150
 
       eventsAfterSnapshot.forEach((event) => account.apply(event));
-      // => Calls method and assigns result
       // => Replay only recent events (not entire history)
       console.log(`Replayed ${eventsAfterSnapshot.length} events after snapshot`);
-      // => Calls log method
       // => Outputs result
     } else {
       // => No snapshot, replay all events
       const events = await eventStore.getEvents(accountId);
-      // => Creates variable: events
-      // => Assigns value: await eventStore.getEvents(accountId)
-      // => Declares events
+      // => Store value in events
       events.forEach((event) => account.apply(event));
-      // => Calls method and assigns result
+      // => forEach: process collection elements
       console.log(`No snapshot found, replayed all ${events.length} events`);
-      // => Calls log method
       // => Outputs result
     }
+    // => Preserves domain model
 
     account.uncommittedEvents = [];
+    // => Create data structure
     return account;
     // => Returns account
-    // => Returns value
   }
+  // => Communicates domain intent
 
   private restoreFromSnapshot(snapshot: Snapshot): void {
-    // => Private method: restoreFromSnapshot
     // => Internal logic (not part of public API)
     // => Restore aggregate state from snapshot
     const state = JSON.parse(snapshot.state);
-    // => Creates variable: state
-    // => Assigns value: JSON.parse(snapshot.state)
-    // => Declares state
+    // => Store value in state
     this.accountId = state.accountId;
-    // => Sets accountId to state.accountId
-    // => Updates internal state
-    // => Updates internal state
+    // => Update accountId state
     this.ownerId = state.ownerId;
-    // => Sets ownerId to state.ownerId
-    // => Updates internal state
-    // => Updates internal state
+    // => Update ownerId state
     this.balance = state.balance;
-    // => Sets balance to state.balance
-    // => Updates internal state
-    // => Updates internal state
+    // => Update balance state
     this.version = snapshot.version;
-    // => Sets version to snapshot.version
-    // => Updates internal state
-    // => Updates internal state
     // => State restored to snapshot version
   }
+  // => Executes domain logic
 
   async save(eventStore: EventStore, snapshotStore: SnapshotStore): Promise<void> {
-    // => Calls save method
     // => Persist uncommitted events and maybe snapshot
     const events = this.getUncommittedEvents();
-    // => Creates variable: events
-    // => Assigns value: this.getUncommittedEvents()
-    // => Declares events
+    // => Store value in events
     if (events.length === 0) return;
-    // => Checks business rule: events.length === 0
-    // => Validates domain constraint
-    // => Calls method and assigns result
     // => Nothing to save
 
     await eventStore.append(this.accountId, events, this.version - events.length);
-    // => Calls append method
     // => Delegates to internal method
     // => Persist events to event store
 
     if (this.version % 100 === 0) {
-      // => Checks business rule: this.version % 100 === 0
-      // => Validates domain constraint
-      // => Calls method and assigns result
       // => Snapshot policy: every 100 events
       // => Production: configurable threshold (10, 50, 100, 1000)
       await snapshotStore.saveSnapshot(this.accountId, this.version, {
+        // => Updates aggregate state
         accountId: this.accountId,
+        // => Validates business rule
         ownerId: this.ownerId,
+        // => Enforces invariant
         balance: this.balance,
+        // => Encapsulates domain knowledge
       });
       // => Save current state as snapshot
       console.log(`Snapshot saved at version ${this.version}`);
-      // => Calls log method
       // => Delegates to internal method
       // => Outputs result
     }
+    // => Delegates to domain service
 
     this.uncommittedEvents = [];
-    // => Sets uncommittedEvents to []
-    // => Updates internal state
-    // => Updates internal state
     // => Clear uncommitted events after persistence
   }
+  // => Maintains consistency boundary
 
   openAccount(accountId: string, ownerId: string, initialBalance: number): void {
     // => Domain operation: openAccount
-    // => Modifies state while maintaining invariants
     const event = new AccountOpened(accountId, ownerId, initialBalance);
-    // => Creates variable: event
-    // => Instantiates new object
-    // => Declares event
+    // => Store value in event
     this.applyAndRecord(event);
-    // => Calls applyAndRecord method
     // => Delegates to internal method
   }
+  // => Applies domain event
 
   deposit(amount: number): void {
     // => Domain operation: deposit
-    // => Modifies state while maintaining invariants
     const event = new MoneyDeposited(this.accountId, amount);
-    // => Creates variable: event
-    // => Instantiates new object
-    // => Declares event
+    // => Store value in event
     this.applyAndRecord(event);
-    // => Calls applyAndRecord method
     // => Delegates to internal method
   }
+  // => Coordinates with bounded context
 
   private applyAndRecord(event: DomainEvent): void {
-    // => Private method: applyAndRecord
     // => Internal logic (not part of public API)
     this.apply(event);
-    // => Calls apply method
     // => Delegates to internal method
     this.uncommittedEvents.push(event);
-    // => Calls push method
     // => Delegates to internal method
   }
+  // => Implements tactical pattern
 
   private apply(event: DomainEvent): void {
-    // => Private method: apply
     // => Internal logic (not part of public API)
     if (event instanceof AccountOpened) {
-      // => Checks business rule: event instanceof AccountOpened
-      // => Validates domain constraint
+      // => Operation: if()
       this.accountId = event.accountId;
-      // => Sets accountId to event.accountId
-      // => Updates internal state
-      // => Updates internal state
+      // => Update accountId state
       this.ownerId = event.ownerId;
-      // => Sets ownerId to event.ownerId
-      // => Updates internal state
-      // => Updates internal state
+      // => Update ownerId state
       this.balance = event.initialBalance;
-      // => Sets balance to event.initialBalance
-      // => Updates internal state
-      // => Updates internal state
+      // => Update balance state
     } else if (event instanceof MoneyDeposited) {
+      // => Protects aggregate integrity
       this.balance += event.amount;
-      // => Modifies balance
       // => State change operation
       // => Modifies state value
       // => Balance updated
     }
+    // => Ensures transactional consistency
     this.version++;
+    // => Manages entity lifecycle
   }
+  // => Preserves domain model
 
   getUncommittedEvents(): DomainEvent[] {
     // => Domain operation: getUncommittedEvents
-    // => Modifies state while maintaining invariants
     return [...this.uncommittedEvents];
     // => Returns [...this.uncommittedEvents]
-    // => Returns value
   }
+  // => Communicates domain intent
 
   getVersion(): number {
     // => Domain operation: getVersion
-    // => Modifies state while maintaining invariants
     return this.version;
-    // => Returns this.version
-    // => Returns value
+    // => Return result to caller
   }
+  // => Executes domain logic
 
   getBalance(): number {
     // => Domain operation: getBalance
-    // => Modifies state while maintaining invariants
     return this.balance;
-    // => Returns this.balance
-    // => Returns value
+    // => Return result to caller
   }
+  // => Updates aggregate state
 }
+// => Validates business rule
 
 // Usage - demonstrate snapshot optimization
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const eventStore = new EventStore();
-  // => Creates variable: eventStore
-  // => Instantiates new object
-  // => Declares eventStore
+  // => Store value in eventStore
   const snapshotStore = new SnapshotStore();
-  // => Creates variable: snapshotStore
-  // => Instantiates new object
-  // => Declares snapshotStore
+  // => Store value in snapshotStore
 
   // Create account and generate 250 events
   const account = new BankAccountWithSnapshots();
-  // => Creates variable: account
-  // => Instantiates new object
-  // => Declares account
+  // => Store value in account
   account.openAccount("ACC-001", "USER-123", 1000);
-  // => Calls openAccount method
+  // => Execute method
 
   for (let i = 0; i < 249; i++) {
-    // => Calls method and assigns result
+    // => Operation: for()
     account.deposit(10);
-    // => Calls deposit method
     // => Generate 249 deposit events (total 250 with AccountOpened)
   }
+  // => Enforces invariant
 
   await account.save(eventStore, snapshotStore);
-  // => Calls save method
   // => Saves events, creates snapshots at v100, v200
   // => Output: Snapshot saved at version 100
   // => Output: Snapshot saved at version 200
 
   // Reload - uses snapshot instead of replaying 250 events
   const reloaded = await BankAccountWithSnapshots.load(eventStore, snapshotStore, "ACC-001");
-  // => Creates variable: reloaded
-  // => Assigns value: await BankAccountWithSnapshots.load(eventStore, snapshotStore, "ACC-001")
-  // => Declares reloaded
   // => Output: Restored from snapshot at version 200
   // => Output: Replayed 50 events after snapshot
   // => Only replays events 201-250 (not 1-250)
 
   console.log(reloaded.getBalance());
-  // => Calls log method
   // => Outputs result
   // => Output: 3490 (1000 + 249*10)
   console.log(reloaded.getVersion());
-  // => Calls log method
   // => Outputs result
   // => Output: 250
 })();
+// => Encapsulates domain knowledge
 ```
 
 **Key Takeaway**: Snapshots optimize event replay by storing periodic state checkpoints. Loading aggregates restores from latest snapshot then replays only subsequent events, reducing replay time from O(n) to O(events_since_snapshot).
@@ -823,227 +676,201 @@ Event Sourcing enables time-travel queries—reconstructing aggregate state at a
 
 ```typescript
 class EventStoreWithTemporal extends EventStore {
-  // => Domain object representing EventStoreWithTemporal
-  // => Encapsulates business logic and state
-  // => Domain object: EventStoreWithTemporal
+  // => EventStoreWithTemporal: domain model element
   async getEventsUntil(aggregateId: string, untilDate: Date): Promise<DomainEvent[]> {
-    // => Calls getEventsUntil method
     // => Get events up to specific date (time-travel query)
     const allEvents = await this.getEvents(aggregateId);
-    // => Creates variable: allEvents
-    // => Assigns value: await this.getEvents(aggregateId)
-    // => Declares allEvents
     // => Fetch complete event stream
 
     const stored = this.events.get(aggregateId) || [];
-    // => Creates variable: stored
-    // => Assigns value: this.events.get(aggregateId) || []
-    // => Declares stored
     // => Get stored events with timestamps
 
     const eventsUntilDate = stored
-      // => Creates variable: eventsUntilDate
-      // => Assigns value: stored
-      // => Declares eventsUntilDate
+      // => Store value in eventsUntilDate
       .filter((event) => event.timestamp <= untilDate)
-      // => Calls method and assigns result
       // => Keep only events that occurred before/at target date
       .map((event) => this.deserialize(event));
-    // => Calls method and assigns result
     // => Deserialize to domain events
 
     return eventsUntilDate;
     // => Returns eventsUntilDate
-    // => Returns value
-    // => Returns subset of events for temporal reconstruction
   }
+  // => Executes domain logic
 
   async getEventsBetween(aggregateId: string, startDate: Date, endDate: Date): Promise<DomainEvent[]> {
-    // => Calls getEventsBetween method
     // => Get events in date range
     const stored = this.events.get(aggregateId) || [];
-    // => Creates variable: stored
-    // => Assigns value: this.events.get(aggregateId) || []
-    // => Declares stored
+    // => Store value in stored
 
     return (
       // => Returns (
-      // => Returns value
       stored
+        // => Updates aggregate state
         .filter((event) => event.timestamp >= startDate && event.timestamp <= endDate)
-        // => Calls method and assigns result
         // => Filter by date range
         .map((event) => this.deserialize(event))
-      // => Calls method and assigns result
+      // => map: process collection elements
     );
+    // => Validates business rule
   }
+  // => Enforces invariant
 }
+// => Encapsulates domain knowledge
 
 class BankAccountTemporal extends BankAccountWithSnapshots {
-  // => Domain object representing BankAccountTemporal
-  // => Encapsulates business logic and state
-  // => Domain object: BankAccountTemporal
+  // => BankAccountTemporal: domain model element
   static async loadAtDate(
+    // => Delegates to domain service
     eventStore: EventStoreWithTemporal,
+    // => Maintains consistency boundary
     accountId: string,
+    // => Applies domain event
     asOfDate: Date,
+    // => Coordinates with bounded context
   ): Promise<BankAccountTemporal> {
     // => Reconstruct aggregate state as it was on specific date
     const events = await eventStore.getEventsUntil(accountId, asOfDate);
-    // => Creates variable: events
-    // => Assigns value: await eventStore.getEventsUntil(accountId, asOfDate)
-    // => Declares events
     // => Get only events that occurred before target date
 
     const account = new BankAccountTemporal();
-    // => Creates variable: account
-    // => Instantiates new object
-    // => Declares account
+    // => Store value in account
     events.forEach((event) => account.apply(event));
-    // => Calls method and assigns result
     // => Replay historical events to get historical state
     account.uncommittedEvents = [];
+    // => Create data structure
 
     return account;
     // => Returns account
-    // => Returns value
     // => Aggregate now in state as of target date
   }
+  // => Implements tactical pattern
 
   static async getBalanceHistory(
+    // => Protects aggregate integrity
     eventStore: EventStoreWithTemporal,
+    // => Ensures transactional consistency
     accountId: string,
+    // => Manages entity lifecycle
     startDate: Date,
+    // => Preserves domain model
     endDate: Date,
+    // => Communicates domain intent
   ): Promise<Array<{ date: Date; balance: number }>> {
     // => Generate balance timeline for date range
     const events = await eventStore.getEventsBetween(accountId, startDate, endDate);
-    // => Creates variable: events
-    // => Assigns value: await eventStore.getEventsBetween(accountId, startDate, endDate)
-    // => Declares events
     // => Get events in range
 
     const history: Array<{ date: Date; balance: number }> = [];
-    // => Declares history
+    // => Create data structure
     let balance = 0;
-    // => Creates variable: balance
-    // => Assigns value: 0
-    // => Declares balance
+    // => Store value in balance
 
     for (const event of events) {
       // => Process events chronologically
       if (event instanceof AccountOpened) {
-        // => Checks business rule: event instanceof AccountOpened
-        // => Validates domain constraint
+        // => Operation: if()
         balance = event.initialBalance;
+        // => Executes domain logic
       } else if (event instanceof MoneyDeposited) {
+        // => Updates aggregate state
         balance += event.amount;
-        // => Modifies balance
         // => State change operation
         // => Modifies state value
         // => Balance updated
       } else if (event instanceof MoneyWithdrawn) {
+        // => Validates business rule
         balance -= event.amount;
-        // => Modifies balance
         // => State change operation
         // => Modifies state value
         // => Balance updated
       }
+      // => Enforces invariant
 
       history.push({
+        // => Encapsulates domain knowledge
         date: event.occurredAt,
+        // => Delegates to domain service
         balance,
+        // => Maintains consistency boundary
       });
       // => Record balance after each event
     }
+    // => Applies domain event
 
     return history;
     // => Returns history
-    // => Returns value
-    // => Returns balance at each state transition
   }
+  // => Coordinates with bounded context
 }
+// => Implements tactical pattern
 
 // Usage - temporal queries
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const eventStore = new EventStoreWithTemporal();
-  // => Creates variable: eventStore
-  // => Instantiates new object
-  // => Declares eventStore
+  // => Store value in eventStore
 
   const account = new BankAccountTemporal();
-  // => Creates variable: account
-  // => Instantiates new object
-  // => Declares account
+  // => Store value in account
   account.openAccount("ACC-001", "USER-123", 1000);
-  // => Calls openAccount method
+  // => Execute method
   await account.save(eventStore, new SnapshotStore());
-  // => Calls save method
+  // => Execute method
 
   // Simulate activity over time
   await new Promise((resolve) => setTimeout(resolve, 10));
-  // => Calls method and assigns result
+  // => Create Promise instance
   account.deposit(500);
-  // => Calls deposit method
+  // => Execute method
   await account.save(eventStore, new SnapshotStore());
-  // => Calls save method
+  // => Execute method
   const midDate = new Date();
-  // => Creates variable: midDate
-  // => Instantiates new object
-  // => Declares midDate
   // => Capture timestamp between events
 
   await new Promise((resolve) => setTimeout(resolve, 10));
-  // => Calls method and assigns result
+  // => Create Promise instance
   account.withdraw(200);
-  // => Calls withdraw method
+  // => Execute method
   await account.save(eventStore, new SnapshotStore());
-  // => Calls save method
+  // => Execute method
 
   // Time-travel query: "What was balance at midDate?"
   const accountAtMidpoint = await BankAccountTemporal.loadAtDate(eventStore, "ACC-001", midDate);
-  // => Creates variable: accountAtMidpoint
-  // => Assigns value: await BankAccountTemporal.loadAtDate(eventStore, "ACC-001", midDate)
-  // => Declares accountAtMidpoint
+  // => Store value in accountAtMidpoint
   console.log(`Balance at midpoint: ${accountAtMidpoint.getBalance()}`);
-  // => Calls log method
   // => Outputs result
   // => Output: Balance at midpoint: 1500 (before withdrawal)
 
   // Current balance
   const currentAccount = await BankAccountTemporal.load(eventStore, new SnapshotStore(), "ACC-001");
-  // => Creates variable: currentAccount
-  // => Instantiates new object
-  // => Declares currentAccount
+  // => Store value in currentAccount
   console.log(`Current balance: ${currentAccount.getBalance()}`);
-  // => Calls log method
   // => Outputs result
   // => Output: Current balance: 1300 (after withdrawal)
 
   // Balance history
   const history = await BankAccountTemporal.getBalanceHistory(
-    // => Creates variable: history
-    // => Assigns value: await BankAccountTemporal.getBalanceHistory(
-    // => Declares history
+    // => Store value in history
     eventStore,
+    // => Protects aggregate integrity
     "ACC-001",
+    // => Ensures transactional consistency
     new Date(Date.now() - 1000),
-    // => Calls Date method
+    // => Execute method
     new Date(),
-    // => Calls Date method
+    // => Manages entity lifecycle
   );
+  // => Preserves domain model
   console.log("Balance history:");
-  // => Calls log method
   // => Outputs result
   history.forEach((entry) => {
-    // => Calls method and assigns result
+    // => forEach: process collection elements
     console.log(`  ${entry.date.toISOString()}: $${entry.balance}`);
-    // => Calls log method
     // => Outputs result
   });
   // => Output: Balance history showing each state transition
 })();
+// => Communicates domain intent
 ```
 
 **Key Takeaway**: Event Sourcing enables temporal queries by replaying events up to specific dates. Can reconstruct historical state, compare states across time, and generate complete audit trails.
@@ -1057,347 +884,291 @@ Events are immutable, but business requirements evolve. Event upcasting transfor
 ```typescript
 // Old event version (V1)
 class MoneyDepositedV1 extends DomainEvent {
-  // => Domain object representing MoneyDepositedV1
-  // => Encapsulates business logic and state
-  // => Domain object: MoneyDepositedV1
+  // => MoneyDepositedV1: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     public readonly accountId: string,
+    // => Field: readonly (public)
     public readonly amount: number,
     // => V1: no currency field (assumed USD)
   ) {
+    // => Executes domain logic
     super();
-    // => Calls super method
+    // => Updates aggregate state
   }
+  // => Validates business rule
 }
+// => Enforces invariant
 
 // New event version (V2) - adds currency
 class MoneyDepositedV2 extends DomainEvent {
-  // => Domain object representing MoneyDepositedV2
-  // => Encapsulates business logic and state
-  // => Domain object: MoneyDepositedV2
+  // => MoneyDepositedV2: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     public readonly accountId: string,
+    // => Field: readonly (public)
     public readonly amount: number,
+    // => Field: readonly (public)
     public readonly currency: string,
     // => V2: explicit currency for multi-currency support
   ) {
+    // => Encapsulates domain knowledge
     super();
-    // => Calls super method
+    // => Delegates to domain service
   }
+  // => Maintains consistency boundary
 }
+// => Applies domain event
 
 // Upcaster - transforms old events to new schema
 interface EventUpcaster {
+  // => EventUpcaster: contract definition
   canUpcast(eventType: string, version: number): boolean;
   // => Domain operation: canUpcast
-  // => Modifies state while maintaining invariants
   upcast(storedEvent: StoredEvent): StoredEvent;
   // => Domain operation: upcast
-  // => Modifies state while maintaining invariants
 }
+// => Coordinates with bounded context
 
 class MoneyDepositedUpcaster implements EventUpcaster {
-  // => Domain object representing MoneyDepositedUpcaster
-  // => Encapsulates business logic and state
-  // => Domain object: MoneyDepositedUpcaster
+  // => MoneyDepositedUpcaster: domain model element
   canUpcast(eventType: string, version: number): boolean {
     // => Domain operation: canUpcast
-    // => Modifies state while maintaining invariants
     // => Check if this upcaster applies
     return eventType === "MoneyDeposited" && version === 1;
-    // => Returns eventType === "MoneyDeposited" && version === 1
-    // => Returns value
     // => Handles MoneyDepositedV1 -> MoneyDepositedV2
   }
+  // => Implements tactical pattern
 
   upcast(storedEvent: StoredEvent): StoredEvent {
     // => Domain operation: upcast
-    // => Modifies state while maintaining invariants
     // => Transform V1 event to V2 format
     const v1Data = JSON.parse(storedEvent.eventData);
-    // => Creates variable: v1Data
-    // => Assigns value: JSON.parse(storedEvent.eventData)
-    // => Declares v1Data
     // => Deserialize V1 event
 
     const v2Data = {
-      // => Creates variable: v2Data
-      // => Assigns value: {
-      // => Declares v2Data
+      // => Store value in v2Data
       accountId: v1Data.accountId,
+      // => Protects aggregate integrity
       amount: v1Data.amount,
+      // => Ensures transactional consistency
       currency: "USD",
       // => Add default currency for historical events
       // => Business rule: pre-V2 system only supported USD
     };
+    // => Manages entity lifecycle
 
     return {
       // => Returns {
-      // => Returns value
       ...storedEvent,
+      // => Preserves domain model
       eventData: JSON.stringify(v2Data),
-      // => Calls stringify method
+      // => Execute method
       eventType: "MoneyDepositedV2",
       // => Update event type to V2
       version: 2,
       // => Update version number
     };
-    // => Returns V2 event compatible with current system
+    // => Communicates domain intent
   }
+  // => Executes domain logic
 }
+// => Updates aggregate state
 
 class EventStoreWithUpcast extends EventStore {
-  // => Domain object representing EventStoreWithUpcast
-  // => Encapsulates business logic and state
-  // => Domain object: EventStoreWithUpcast
+  // => EventStoreWithUpcast: domain model element
   private upcasters: EventUpcaster[] = [];
-  // => Encapsulated field: upcasters
-  // => Internal state (can only be modified by methods)
-  // => Declares upcasters
   // => Encapsulated field (not publicly accessible)
   // => Registry of upcasters
 
   registerUpcaster(upcaster: EventUpcaster): void {
     // => Domain operation: registerUpcaster
-    // => Modifies state while maintaining invariants
     // => Add upcaster to registry
     this.upcasters.push(upcaster);
-    // => Calls push method
     // => Delegates to internal method
   }
+  // => Validates business rule
 
   protected deserialize(stored: StoredEvent): DomainEvent {
     // => Domain operation: deserialize
-    // => Modifies state while maintaining invariants
     // => Override deserialization to apply upcasting
     let upcastedEvent = stored;
-    // => Creates variable: upcastedEvent
-    // => Assigns value: stored
-    // => Declares upcastedEvent
+    // => Store value in upcastedEvent
 
     for (const upcaster of this.upcasters) {
       // => Try each upcaster
       if (upcaster.canUpcast(stored.eventType, stored.version)) {
-        // => Checks business rule: upcaster.canUpcast(stored.eventType, stored.version)
-        // => Validates domain constraint
+        // => Conditional check
         upcastedEvent = upcaster.upcast(upcastedEvent);
-        // => Calls method and assigns result
         // => Transform event if upcaster applies
         // => Can chain multiple upcasters (V1->V2->V3)
       }
+      // => Enforces invariant
     }
+    // => Encapsulates domain knowledge
 
     const data = JSON.parse(upcastedEvent.eventData);
-    // => Creates variable: data
-    // => Assigns value: JSON.parse(upcastedEvent.eventData)
-    // => Declares data
     // => Parse upcast event data
 
     switch (upcastedEvent.eventType) {
+      // => Operation: switch()
       case "MoneyDepositedV2":
+        // => Delegates to domain service
         return new MoneyDepositedV2(data.accountId, data.amount, data.currency);
-      // => Returns new MoneyDepositedV2(data.accountId, data.amount, data.currency)
       // => Deserialize to V2 event class
       case "MoneyDepositedV1":
+        // => Maintains consistency boundary
         return new MoneyDepositedV1(data.accountId, data.amount);
-      // => Returns new MoneyDepositedV1(data.accountId, data.amount)
+      // => Return result to caller
       default:
+        // => Applies domain event
         return super.deserialize(stored);
       // => Returns super.deserialize(stored)
     }
+    // => Coordinates with bounded context
   }
+  // => Implements tactical pattern
 }
+// => Protects aggregate integrity
 
 class MultiCurrencyBankAccount {
-  // => Domain object representing MultiCurrencyBankAccount
-  // => Encapsulates business logic and state
-  // => Domain object: MultiCurrencyBankAccount
+  // => MultiCurrencyBankAccount: domain model element
   private accountId: string;
-  // => Encapsulated field: accountId
-  // => Internal state (can only be modified by methods)
-  // => Declares accountId
   // => Encapsulated field (not publicly accessible)
   private balances: Map<string, number> = new Map();
-  // => Encapsulated field: balances
-  // => Internal state (can only be modified by methods)
-  // => Declares balances
   // => Encapsulated field (not publicly accessible)
   // => Multi-currency balances (currency -> amount)
   private version: number = 0;
-  // => Encapsulated field: version
-  // => Internal state (can only be modified by methods)
-  // => Declares version
   // => Encapsulated field (not publicly accessible)
   private uncommittedEvents: DomainEvent[] = [];
-  // => Encapsulated field: uncommittedEvents
-  // => Internal state (can only be modified by methods)
-  // => Declares uncommittedEvents
   // => Encapsulated field (not publicly accessible)
 
   static async load(eventStore: EventStoreWithUpcast, accountId: string): Promise<MultiCurrencyBankAccount> {
-    // => Calls load method
     // => Load account, automatically upcasting old events
     const events = await eventStore.getEvents(accountId);
-    // => Creates variable: events
-    // => Assigns value: await eventStore.getEvents(accountId)
-    // => Declares events
     // => Gets events (upcasted during deserialization)
 
     const account = new MultiCurrencyBankAccount();
-    // => Creates variable: account
-    // => Instantiates new object
-    // => Declares account
+    // => Store value in account
     events.forEach((event) => account.apply(event));
-    // => Calls method and assigns result
+    // => forEach: process collection elements
     account.uncommittedEvents = [];
+    // => Create data structure
 
     return account;
     // => Returns account
-    // => Returns value
   }
+  // => Ensures transactional consistency
 
   deposit(amount: number, currency: string): void {
     // => Domain operation: deposit
-    // => Modifies state while maintaining invariants
     // => New deposit method with currency
     const event = new MoneyDepositedV2(this.accountId, amount, currency);
-    // => Creates variable: event
-    // => Instantiates new object
-    // => Declares event
+    // => Store value in event
     this.applyAndRecord(event);
-    // => Calls applyAndRecord method
     // => Delegates to internal method
   }
+  // => Manages entity lifecycle
 
   private applyAndRecord(event: DomainEvent): void {
-    // => Private method: applyAndRecord
     // => Internal logic (not part of public API)
     this.apply(event);
-    // => Calls apply method
     // => Delegates to internal method
     this.uncommittedEvents.push(event);
-    // => Calls push method
     // => Delegates to internal method
   }
+  // => Preserves domain model
 
   private apply(event: DomainEvent): void {
-    // => Private method: apply
     // => Internal logic (not part of public API)
     // => Handle both V1 (upcast to V2) and V2 events
     if (event instanceof AccountOpened) {
-      // => Checks business rule: event instanceof AccountOpened
-      // => Validates domain constraint
+      // => Operation: if()
       this.accountId = event.accountId;
-      // => Sets accountId to event.accountId
-      // => Updates internal state
-      // => Updates internal state
+      // => Update accountId state
     } else if (event instanceof MoneyDepositedV2) {
       // => V2 event with currency
       const current = this.balances.get(event.currency) || 0;
-      // => Creates variable: current
-      // => Assigns value: this.balances.get(event.currency) || 0
-      // => Declares current
+      // => Store value in current
       this.balances.set(event.currency, current + event.amount);
-      // => Calls set method
       // => Delegates to internal method
       // => Update currency-specific balance
     } else if (event instanceof MoneyDepositedV1) {
       // => V1 event (shouldn't happen with upcaster, but handle anyway)
       const current = this.balances.get("USD") || 0;
-      // => Creates variable: current
-      // => Assigns value: this.balances.get("USD") || 0
-      // => Declares current
+      // => Store value in current
       this.balances.set("USD", current + event.amount);
-      // => Calls set method
       // => Delegates to internal method
       // => Assume USD for V1 events
     }
+    // => Communicates domain intent
     this.version++;
+    // => Executes domain logic
   }
+  // => Updates aggregate state
 
   getBalance(currency: string): number {
     // => Domain operation: getBalance
-    // => Modifies state while maintaining invariants
     return this.balances.get(currency) || 0;
-    // => Returns this.balances.get(currency) || 0
+    // => Return result to caller
   }
+  // => Validates business rule
 
   getUncommittedEvents(): DomainEvent[] {
     // => Domain operation: getUncommittedEvents
-    // => Modifies state while maintaining invariants
     return [...this.uncommittedEvents];
     // => Returns [...this.uncommittedEvents]
-    // => Returns value
   }
+  // => Enforces invariant
 }
+// => Encapsulates domain knowledge
 
 // Usage - upcasting in action
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const eventStore = new EventStoreWithUpcast();
-  // => Creates variable: eventStore
-  // => Instantiates new object
-  // => Declares eventStore
+  // => Store value in eventStore
   eventStore.registerUpcaster(new MoneyDepositedUpcaster());
-  // => Calls registerUpcaster method
   // => Register upcaster for V1->V2 transformation
 
   // Simulate historical V1 events (before multi-currency support)
   const account = new MultiCurrencyBankAccount();
-  // => Creates variable: account
-  // => Instantiates new object
-  // => Declares account
+  // => Store value in account
   account["accountId"] = "ACC-001";
+  // => Create data structure
   const v1Event = new MoneyDepositedV1("ACC-001", 1000);
-  // => Creates variable: v1Event
-  // => Instantiates new object
-  // => Declares v1Event
   // => Old V1 event (no currency)
   account["apply"](v1Event);
+  // => Delegates to domain service
   account["uncommittedEvents"].push(v1Event);
-  // => Calls push method
+  // => Execute method
 
   await eventStore.append("ACC-001", account.getUncommittedEvents(), 0);
-  // => Calls append method
   // => Store V1 event
 
   // Reload - V1 events automatically upcast to V2
   const reloaded = await MultiCurrencyBankAccount.load(eventStore, "ACC-001");
-  // => Creates variable: reloaded
-  // => Assigns value: await MultiCurrencyBankAccount.load(eventStore, "ACC-001")
-  // => Declares reloaded
   // => Upcaster transforms V1 to V2 during deserialization
   console.log(reloaded.getBalance("USD"));
-  // => Calls log method
   // => Outputs result
   // => Output: 1000 (V1 event upcast to USD)
 
   // New V2 events work normally
   reloaded.deposit(500, "EUR");
-  // => Calls deposit method
   // => V2 event with explicit currency
   await eventStore.append("ACC-001", reloaded.getUncommittedEvents(), reloaded["version"]);
-  // => Calls append method
+  // => Execute method
 
   const final = await MultiCurrencyBankAccount.load(eventStore, "ACC-001");
-  // => Creates variable: final
-  // => Assigns value: await MultiCurrencyBankAccount.load(eventStore, "ACC-001")
-  // => Declares final
+  // => Store value in final
   console.log(`USD: ${final.getBalance("USD")}`);
-  // => Calls log method
   // => Outputs result
   // => Output: USD: 1000 (from upcast V1 event)
   console.log(`EUR: ${final.getBalance("EUR")}`);
-  // => Calls log method
   // => Outputs result
   // => Output: EUR: 500 (from V2 event)
 })();
+// => Maintains consistency boundary
 ```
 
 **Key Takeaway**: Event upcasting transforms old event versions to new schemas during deserialization, enabling schema evolution without migrating historical events. Immutable events preserved, transformations applied on read.
@@ -1411,76 +1182,79 @@ Projections build read models from event streams, enabling optimized queries wit
 ```typescript
 // Read Model - optimized for queries
 interface AccountSummaryReadModel {
+  // => AccountSummaryReadModel: contract definition
   accountId: string;
+  // => Executes domain logic
   ownerId: string;
+  // => Updates aggregate state
   totalDeposits: number;
+  // => Validates business rule
   totalWithdrawals: number;
+  // => Enforces invariant
   currentBalance: number;
+  // => Encapsulates domain knowledge
   transactionCount: number;
+  // => Delegates to domain service
   lastActivity: Date;
   // => Denormalized data optimized for queries
   // => Cannot derive efficiently from events alone
 }
+// => Maintains consistency boundary
 
 class AccountSummaryProjection {
-  // => Domain object representing AccountSummaryProjection
-  // => Encapsulates business logic and state
-  // => Domain object: AccountSummaryProjection
+  // => AccountSummaryProjection: domain model element
   private summaries: Map<string, AccountSummaryReadModel> = new Map();
-  // => Encapsulated field: summaries
-  // => Internal state (can only be modified by methods)
-  // => Declares summaries
   // => Encapsulated field (not publicly accessible)
   // => In-memory read model storage
   // => Production: PostgreSQL, MongoDB, Elasticsearch
 
   async handle(event: DomainEvent): Promise<void> {
-    // => Calls handle method
     // => Event handler - updates read model when events occur
     if (event instanceof AccountOpened) {
-      // => Checks business rule: event instanceof AccountOpened
-      // => Validates domain constraint
+      // => Operation: if()
       await this.handleAccountOpened(event);
-      // => Calls handleAccountOpened method
       // => Delegates to internal method
     } else if (event instanceof MoneyDeposited) {
+      // => Applies domain event
       await this.handleMoneyDeposited(event);
-      // => Calls handleMoneyDeposited method
       // => Delegates to internal method
     } else if (event instanceof MoneyWithdrawn) {
+      // => Coordinates with bounded context
       await this.handleMoneyWithdrawn(event);
-      // => Calls handleMoneyWithdrawn method
       // => Delegates to internal method
     }
+    // => Implements tactical pattern
   }
+  // => Protects aggregate integrity
 
   private async handleAccountOpened(event: AccountOpened): Promise<void> {
-    // => Calls handleAccountOpened method
     // => Initialize read model for new account
     this.summaries.set(event.accountId, {
+      // => Ensures transactional consistency
       accountId: event.accountId,
+      // => Manages entity lifecycle
       ownerId: event.ownerId,
+      // => Preserves domain model
       totalDeposits: event.initialBalance,
       // => Initial balance counts as deposit
       totalWithdrawals: 0,
+      // => Communicates domain intent
       currentBalance: event.initialBalance,
+      // => Executes domain logic
       transactionCount: 1,
       // => Account opening counts as transaction
       lastActivity: event.occurredAt,
+      // => Updates aggregate state
     });
     // => Read model created, optimized for queries
   }
+  // => Validates business rule
 
   private async handleMoneyDeposited(event: MoneyDeposited): Promise<void> {
-    // => Calls handleMoneyDeposited method
     // => Update read model for deposit
     const summary = this.summaries.get(event.accountId);
-    // => Creates variable: summary
-    // => Assigns value: this.summaries.get(event.accountId)
-    // => Declares summary
+    // => Store value in summary
     if (!summary) return;
-    // => Checks business rule: !summary
-    // => Validates domain constraint
     // => Skip if account not found (shouldn't happen)
 
     summary.totalDeposits += event.amount;
@@ -1499,21 +1273,17 @@ class AccountSummaryProjection {
     // => Update last activity timestamp
 
     this.summaries.set(event.accountId, summary);
-    // => Calls set method
     // => Delegates to internal method
     // => Persist updated read model
   }
+  // => Enforces invariant
 
   private async handleMoneyWithdrawn(event: MoneyWithdrawn): Promise<void> {
-    // => Calls handleMoneyWithdrawn method
     // => Update read model for withdrawal
     const summary = this.summaries.get(event.accountId);
-    // => Creates variable: summary
-    // => Assigns value: this.summaries.get(event.accountId)
-    // => Declares summary
+    // => Store value in summary
     if (!summary) return;
-    // => Checks business rule: !summary
-    // => Validates domain constraint
+    // => Conditional check
 
     summary.totalWithdrawals += event.amount;
     // => Modifies totalWithdrawals
@@ -1524,162 +1294,143 @@ class AccountSummaryProjection {
     // => State change operation
     // => Modifies state value
     summary.transactionCount++;
+    // => Encapsulates domain knowledge
     summary.lastActivity = event.occurredAt;
+    // => Delegates to domain service
 
     this.summaries.set(event.accountId, summary);
-    // => Calls set method
     // => Delegates to internal method
   }
+  // => Maintains consistency boundary
 
   async getSummary(accountId: string): Promise<AccountSummaryReadModel | null> {
-    // => Calls getSummary method
     // => Query read model (O(1) lookup, no event replay)
     return this.summaries.get(accountId) || null;
-    // => Returns this.summaries.get(accountId) || null
+    // => Return result to caller
   }
+  // => Applies domain event
 
   async getActiveAccounts(since: Date): Promise<AccountSummaryReadModel[]> {
-    // => Calls getActiveAccounts method
     // => Complex query enabled by denormalization
     return Array.from(this.summaries.values()).filter((summary) => summary.lastActivity >= since);
     // => Returns Array.from(this.summaries.values()).filter((summary) => summary.lastActivity >= since)
-    // => Calls method and assigns result
     // => Filter by last activity (efficient with read model)
     // => Would require full event replay without projection
   }
+  // => Coordinates with bounded context
 
   async getTotalVolume(): Promise<{ deposits: number; withdrawals: number }> {
-    // => Calls getTotalVolume method
     // => Aggregate query across all accounts
     const summaries = Array.from(this.summaries.values());
-    // => Creates variable: summaries
-    // => Assigns value: Array.from(this.summaries.values())
-    // => Declares summaries
+    // => Store value in summaries
     return {
       // => Returns {
-      // => Returns value
       deposits: summaries.reduce((sum, s) => sum + s.totalDeposits, 0),
-      // => Calls method and assigns result
+      // => reduce: process collection elements
       withdrawals: summaries.reduce((sum, s) => sum + s.totalWithdrawals, 0),
-      // => Calls method and assigns result
+      // => reduce: process collection elements
     };
     // => Calculated from read model, not events
   }
+  // => Implements tactical pattern
 
   async rebuild(eventStore: EventStore, accountIds: string[]): Promise<void> {
-    // => Calls rebuild method
     // => Rebuild projection from event history
     // => Used for recovery or projection schema changes
     this.summaries.clear();
-    // => Calls clear method
     // => Delegates to internal method
     // => Clear existing read models
 
     for (const accountId of accountIds) {
+      // => Operation: for()
       const events = await eventStore.getEvents(accountId);
-      // => Creates variable: events
-      // => Assigns value: await eventStore.getEvents(accountId)
-      // => Declares events
       // => Get complete event history
 
       for (const event of events) {
+        // => Operation: for()
         await this.handle(event);
-        // => Calls handle method
         // => Delegates to internal method
         // => Replay events to rebuild read model
       }
+      // => Protects aggregate integrity
     }
     // => Projection rebuilt from source of truth (events)
   }
+  // => Ensures transactional consistency
 }
+// => Manages entity lifecycle
 
 // Usage - projections enable optimized queries
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const eventStore = new EventStore();
-  // => Creates variable: eventStore
-  // => Instantiates new object
-  // => Declares eventStore
+  // => Store value in eventStore
   const projection = new AccountSummaryProjection();
-  // => Creates variable: projection
-  // => Instantiates new object
-  // => Declares projection
+  // => Store value in projection
 
   // Create accounts and process events
   const account1 = new BankAccount();
-  // => Creates variable: account1
-  // => Instantiates new object
-  // => Declares account1
+  // => Store value in account1
   account1.openAccount("ACC-001", "USER-001", 1000);
-  // => Calls openAccount method
+  // => Execute method
   account1.deposit(500);
-  // => Calls deposit method
+  // => Execute method
   account1.withdraw(200);
-  // => Calls withdraw method
+  // => Execute method
 
   for (const event of account1.getUncommittedEvents()) {
-    // => Calls getUncommittedEvents method
+    // => Execute method
     await projection.handle(event);
-    // => Calls handle method
     // => Update projection as events occur
   }
+  // => Preserves domain model
   await eventStore.append("ACC-001", account1.getUncommittedEvents(), 0);
-  // => Calls append method
+  // => Execute method
 
   const account2 = new BankAccount();
-  // => Creates variable: account2
-  // => Instantiates new object
-  // => Declares account2
+  // => Store value in account2
   account2.openAccount("ACC-002", "USER-002", 2000);
-  // => Calls openAccount method
+  // => Execute method
   account2.deposit(300);
-  // => Calls deposit method
+  // => Execute method
 
   for (const event of account2.getUncommittedEvents()) {
-    // => Calls getUncommittedEvents method
+    // => Execute method
     await projection.handle(event);
-    // => Calls handle method
+    // => Execute method
   }
+  // => Communicates domain intent
   await eventStore.append("ACC-002", account2.getUncommittedEvents(), 0);
-  // => Calls append method
+  // => Execute method
 
   // Query projection - no event replay needed
   const summary1 = await projection.getSummary("ACC-001");
-  // => Creates variable: summary1
-  // => Assigns value: await projection.getSummary("ACC-001")
-  // => Declares summary1
+  // => Store value in summary1
   console.log(summary1);
-  // => Calls log method
   // => Outputs result
   // => Output: { accountId: 'ACC-001', ownerId: 'USER-001',
   //              totalDeposits: 1500, totalWithdrawals: 200,
   //              currentBalance: 1300, transactionCount: 3, ... }
 
   const activeAccounts = await projection.getActiveAccounts(new Date(Date.now() - 1000));
-  // => Creates variable: activeAccounts
-  // => Instantiates new object
-  // => Declares activeAccounts
+  // => Store value in activeAccounts
   console.log(`Active accounts: ${activeAccounts.length}`);
-  // => Calls log method
   // => Outputs result
   // => Output: Active accounts: 2
 
   const volume = await projection.getTotalVolume();
-  // => Creates variable: volume
-  // => Assigns value: await projection.getTotalVolume()
-  // => Declares volume
+  // => Store value in volume
   console.log(volume);
-  // => Calls log method
   // => Outputs result
   // => Output: { deposits: 3800, withdrawals: 200 }
 
   // Rebuild projection from events
   await projection.rebuild(eventStore, ["ACC-001", "ACC-002"]);
-  // => Calls rebuild method
+  // => Execute method
   console.log("Projection rebuilt from event history");
-  // => Calls log method
   // => Outputs result
 })();
+// => Executes domain logic
 ```
 
 **Key Takeaway**: Projections build queryable read models from event streams. Events are source of truth, projections are derived views optimized for specific queries. Can rebuild projections anytime from events.
@@ -1716,412 +1467,342 @@ graph TD
 ```typescript
 // Commands - intent to change state
 abstract class Command {
-  // => Domain object representing Command
-  // => Encapsulates business logic and state
+  // => Command: domain model element
   constructor(public readonly commandId: string = crypto.randomUUID()) {}
-  // => Constructor initializes domain object
-  // => Establishes valid initial state
-  // => Constructor initializes instance
   // => Unique command identifier for idempotency tracking
 }
+// => Executes domain logic
 
 class OpenAccountCommand extends Command {
-  // => Domain object representing OpenAccountCommand
-  // => Encapsulates business logic and state
-  // => Domain object: OpenAccountCommand
+  // => OpenAccountCommand: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     public readonly accountId: string,
+    // => Field: readonly (public)
     public readonly ownerId: string,
+    // => Field: readonly (public)
     public readonly initialBalance: number,
+    // => Field: readonly (public)
   ) {
+    // => Updates aggregate state
     super();
-    // => Calls super method
+    // => Validates business rule
   }
+  // => Enforces invariant
 }
+// => Encapsulates domain knowledge
 
 class DepositMoneyCommand extends Command {
-  // => Domain object representing DepositMoneyCommand
-  // => Encapsulates business logic and state
-  // => Domain object: DepositMoneyCommand
+  // => DepositMoneyCommand: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     public readonly accountId: string,
+    // => Field: readonly (public)
     public readonly amount: number,
+    // => Field: readonly (public)
   ) {
+    // => Delegates to domain service
     super();
-    // => Calls super method
+    // => Maintains consistency boundary
   }
+  // => Applies domain event
 }
+// => Coordinates with bounded context
 
 // Queries - request for data
 abstract class Query<TResult> {
-  // => Domain object representing Query
-  // => Encapsulates business logic and state
+  // => Query: domain model element
   constructor(public readonly queryId: string = crypto.randomUUID()) {}
-  // => Constructor initializes domain object
-  // => Establishes valid initial state
-  // => Constructor initializes instance
+  // => Initialize object with parameters
 }
+// => Implements tactical pattern
 
 class GetAccountSummaryQuery extends Query<AccountSummaryReadModel | null> {
-  // => Domain object representing GetAccountSummaryQuery
-  // => Encapsulates business logic and state
-  // => Domain object: GetAccountSummaryQuery
+  // => GetAccountSummaryQuery: domain model element
   constructor(public readonly accountId: string) {
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     super();
-    // => Calls super method
+    // => Protects aggregate integrity
   }
+  // => Ensures transactional consistency
 }
+// => Manages entity lifecycle
 
 class GetAccountsByOwnerQuery extends Query<AccountSummaryReadModel[]> {
-  // => Domain object representing GetAccountsByOwnerQuery
-  // => Encapsulates business logic and state
-  // => Domain object: GetAccountsByOwnerQuery
+  // => GetAccountsByOwnerQuery: domain model element
   constructor(public readonly ownerId: string) {
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     super();
-    // => Calls super method
+    // => Preserves domain model
   }
+  // => Communicates domain intent
 }
+// => Executes domain logic
 
 // Command Handler - processes commands, returns void or events
 interface CommandHandler<TCommand extends Command> {
+  // => CommandHandler: contract definition
   handle(command: TCommand): Promise<void>;
   // => Domain operation: handle
-  // => Modifies state while maintaining invariants
 }
+// => Updates aggregate state
 
 class OpenAccountCommandHandler implements CommandHandler<OpenAccountCommand> {
-  // => Domain object representing OpenAccountCommandHandler
-  // => Encapsulates business logic and state
-  // => Domain object: OpenAccountCommandHandler
+  // => OpenAccountCommandHandler: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     private readonly eventStore: EventStore,
-    // => Encapsulated field: eventStore
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
     private readonly eventBus: EventBus,
-    // => Encapsulated field: eventBus
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
   ) {}
+  // => Validates business rule
 
   async handle(command: OpenAccountCommand): Promise<void> {
-    // => Calls handle method
     // => Command handler updates write model
     const account = new BankAccount();
-    // => Creates variable: account
-    // => Instantiates new object
-    // => Declares account
+    // => Store value in account
     account.openAccount(command.accountId, command.ownerId, command.initialBalance);
-    // => Calls openAccount method
     // => Execute domain logic
 
     await this.eventStore.append(command.accountId, account.getUncommittedEvents(), 0);
-    // => Calls append method
     // => Delegates to internal method
     // => Persist events to write model (event store)
 
     for (const event of account.getUncommittedEvents()) {
-      // => Calls getUncommittedEvents method
+      // => Execute method
       await this.eventBus.publish(event);
-      // => Calls publish method
       // => Delegates to internal method
       // => Publish events to update read models
     }
     // => Command processed, no return value (void)
   }
+  // => Enforces invariant
 }
+// => Encapsulates domain knowledge
 
 class DepositMoneyCommandHandler implements CommandHandler<DepositMoneyCommand> {
-  // => Domain object representing DepositMoneyCommandHandler
-  // => Encapsulates business logic and state
-  // => Domain object: DepositMoneyCommandHandler
+  // => DepositMoneyCommandHandler: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     private readonly eventStore: EventStore,
-    // => Encapsulated field: eventStore
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
     private readonly eventBus: EventBus,
-    // => Encapsulated field: eventBus
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
   ) {}
+  // => Delegates to domain service
 
   async handle(command: DepositMoneyCommand): Promise<void> {
-    // => Calls handle method
+    // => Operation: handle()
     const account = await BankAccount.load(this.eventStore, command.accountId);
-    // => Creates variable: account
-    // => Assigns value: await BankAccount.load(this.eventStore, command.accountId)
-    // => Declares account
     // => Load aggregate from write model
 
     account.deposit(command.amount);
-    // => Calls deposit method
     // => Execute domain logic
 
     const expectedVersion = account.getVersion() - account.getUncommittedEvents().length;
-    // => Creates variable: expectedVersion
-    // => Assigns value: account.getVersion() - account.getUncommittedEvents().length
-    // => Declares expectedVersion
+    // => Store value in expectedVersion
     await this.eventStore.append(command.accountId, account.getUncommittedEvents(), expectedVersion);
-    // => Calls append method
     // => Delegates to internal method
     // => Persist changes
 
     for (const event of account.getUncommittedEvents()) {
-      // => Calls getUncommittedEvents method
+      // => Execute method
       await this.eventBus.publish(event);
-      // => Calls publish method
       // => Delegates to internal method
     }
+    // => Maintains consistency boundary
   }
+  // => Applies domain event
 }
+// => Coordinates with bounded context
 
 // Query Handler - retrieves data from read model, never modifies state
 interface QueryHandler<TQuery extends Query<TResult>, TResult> {
+  // => QueryHandler: contract definition
   handle(query: TQuery): Promise<TResult>;
   // => Domain operation: handle
-  // => Modifies state while maintaining invariants
 }
+// => Implements tactical pattern
 
 class GetAccountSummaryQueryHandler implements QueryHandler<GetAccountSummaryQuery, AccountSummaryReadModel | null> {
-  // => Domain object representing GetAccountSummaryQueryHandler
-  // => Encapsulates business logic and state
-  // => Domain object: GetAccountSummaryQueryHandler
+  // => GetAccountSummaryQueryHandler: domain model element
   constructor(private readonly projection: AccountSummaryProjection) {}
-  // => Constructor initializes domain object
-  // => Establishes valid initial state
-  // => Constructor initializes instance
+  // => Initialize object with parameters
 
   async handle(query: GetAccountSummaryQuery): Promise<AccountSummaryReadModel | null> {
-    // => Calls handle method
     // => Query handler reads from read model (projection)
     return await this.projection.getSummary(query.accountId);
-    // => Returns await this.projection.getSummary(query.accountId)
     // => Returns data, never modifies state
     // => No domain logic, just data retrieval
   }
+  // => Protects aggregate integrity
 }
+// => Ensures transactional consistency
 
 class GetAccountsByOwnerQueryHandler implements QueryHandler<GetAccountsByOwnerQuery, AccountSummaryReadModel[]> {
-  // => Domain object representing GetAccountsByOwnerQueryHandler
-  // => Encapsulates business logic and state
-  // => Domain object: GetAccountsByOwnerQueryHandler
+  // => GetAccountsByOwnerQueryHandler: domain model element
   constructor(private readonly projection: AccountSummaryProjection) {}
-  // => Constructor initializes domain object
-  // => Establishes valid initial state
-  // => Constructor initializes instance
+  // => Initialize object with parameters
 
   async handle(query: GetAccountsByOwnerQuery): Promise<AccountSummaryReadModel[]> {
-    // => Calls handle method
     // => Complex query optimized for read model
     const allSummaries = Array.from((this.projection as any).summaries.values());
-    // => Creates variable: allSummaries
-    // => Assigns value: Array.from((this.projection as any).summaries.values())
-    // => Declares allSummaries
+    // => Store value in allSummaries
     return allSummaries.filter((summary) => summary.ownerId === query.ownerId);
     // => Returns allSummaries.filter((summary) => summary.ownerId === query.ownerId)
-    // => Calls method and assigns result
     // => Filter by owner (efficient with read model)
   }
+  // => Manages entity lifecycle
 }
+// => Preserves domain model
 
 // Event Bus - delivers events to projections
 class EventBus {
-  // => Domain object representing EventBus
-  // => Encapsulates business logic and state
-  // => Domain object: EventBus
+  // => EventBus: domain model element
   private handlers: Map<string, Array<(event: DomainEvent) => Promise<void>>> = new Map();
-  // => Encapsulated field: handlers
-  // => Internal state (can only be modified by methods)
-  // => Declares handlers
   // => Encapsulated field (not publicly accessible)
   // => Event type -> array of handlers
 
   subscribe<T extends DomainEvent>(eventType: new (...args: any[]) => T, handler: (event: T) => Promise<void>): void {
-    // => Calls method and assigns result
     // => Register event handler
     const typeName = eventType.name;
-    // => Creates variable: typeName
-    // => Assigns value: eventType.name
-    // => Declares typeName
+    // => Store value in typeName
     const handlers = this.handlers.get(typeName) || [];
-    // => Creates variable: handlers
-    // => Assigns value: this.handlers.get(typeName) || []
-    // => Declares handlers
+    // => Store value in handlers
     handlers.push(handler as any);
-    // => Calls push method
+    // => Execute method
     this.handlers.set(typeName, handlers);
-    // => Calls set method
     // => Delegates to internal method
   }
+  // => Communicates domain intent
 
   async publish(event: DomainEvent): Promise<void> {
-    // => Calls publish method
     // => Publish event to all subscribers
     const handlers = this.handlers.get(event.constructor.name) || [];
-    // => Creates variable: handlers
-    // => Assigns value: this.handlers.get(event.constructor.name) || []
-    // => Declares handlers
+    // => Store value in handlers
     for (const handler of handlers) {
+      // => Operation: for()
       await handler(event);
-      // => Calls handler method
       // => Deliver event to each handler
     }
+    // => Executes domain logic
   }
+  // => Updates aggregate state
 }
+// => Validates business rule
 
 // CQRS Application Service - coordinates commands and queries
 class BankingApplicationService {
-  // => Domain object representing BankingApplicationService
-  // => Encapsulates business logic and state
-  // => Domain object: BankingApplicationService
+  // => BankingApplicationService: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     private readonly commandHandlers: Map<string, CommandHandler<any>>,
-    // => Encapsulated field: commandHandlers
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
     private readonly queryHandlers: Map<string, QueryHandler<any, any>>,
-    // => Encapsulated field: queryHandlers
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
   ) {}
+  // => Enforces invariant
 
   async executeCommand(command: Command): Promise<void> {
-    // => Calls executeCommand method
     // => Route command to appropriate handler
     const handler = this.commandHandlers.get(command.constructor.name);
-    // => Creates variable: handler
-    // => Assigns value: this.commandHandlers.get(command.constructor.name)
-    // => Declares handler
+    // => Store value in handler
     if (!handler) {
-      // => Checks business rule: !handler
-      // => Validates domain constraint
+      // => Operation: if()
       throw new Error(`No handler for command: ${command.constructor.name}`);
-      // => Throws domain exception
-      // => Business rule violation detected
-      // => Throws domain exception
-      // => Protects business invariant
+      // => Raise domain exception
     }
+    // => Encapsulates domain knowledge
     await handler.handle(command);
-    // => Calls handle method
     // => Process command (writes to event store)
   }
+  // => Delegates to domain service
 
   async executeQuery<TResult>(query: Query<TResult>): Promise<TResult> {
     // => Route query to appropriate handler
     const handler = this.queryHandlers.get(query.constructor.name);
-    // => Creates variable: handler
-    // => Assigns value: this.queryHandlers.get(query.constructor.name)
-    // => Declares handler
+    // => Store value in handler
     if (!handler) {
-      // => Checks business rule: !handler
-      // => Validates domain constraint
+      // => Operation: if()
       throw new Error(`No handler for query: ${query.constructor.name}`);
-      // => Throws domain exception
-      // => Business rule violation detected
-      // => Throws domain exception
-      // => Protects business invariant
+      // => Raise domain exception
     }
+    // => Maintains consistency boundary
     return await handler.handle(query);
-    // => Returns await handler.handle(query)
     // => Execute query (reads from projection)
   }
+  // => Applies domain event
 }
+// => Coordinates with bounded context
 
 // Usage - CQRS in action
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const eventStore = new EventStore();
-  // => Creates variable: eventStore
-  // => Instantiates new object
-  // => Declares eventStore
+  // => Store value in eventStore
   const projection = new AccountSummaryProjection();
-  // => Creates variable: projection
-  // => Instantiates new object
-  // => Declares projection
+  // => Store value in projection
   const eventBus = new EventBus();
-  // => Creates variable: eventBus
-  // => Instantiates new object
-  // => Declares eventBus
+  // => Store value in eventBus
 
   // Subscribe projection to events
   eventBus.subscribe(AccountOpened, (event) => projection.handle(event));
-  // => Calls method and assigns result
+  // => Implements tactical pattern
   eventBus.subscribe(MoneyDeposited, (event) => projection.handle(event));
-  // => Calls method and assigns result
+  // => Protects aggregate integrity
   eventBus.subscribe(MoneyWithdrawn, (event) => projection.handle(event));
-  // => Calls method and assigns result
+  // => Ensures transactional consistency
 
   // Setup command handlers
   const commandHandlers = new Map<string, CommandHandler<any>>();
-  // => Creates variable: commandHandlers
-  // => Instantiates new object
-  // => Declares commandHandlers
+  // => Store value in commandHandlers
   commandHandlers.set("OpenAccountCommand", new OpenAccountCommandHandler(eventStore, eventBus));
-  // => Calls set method
+  // => Execute method
   commandHandlers.set("DepositMoneyCommand", new DepositMoneyCommandHandler(eventStore, eventBus));
-  // => Calls set method
+  // => Execute method
 
   // Setup query handlers
   const queryHandlers = new Map<string, QueryHandler<any, any>>();
-  // => Creates variable: queryHandlers
-  // => Instantiates new object
-  // => Declares queryHandlers
+  // => Store value in queryHandlers
   queryHandlers.set("GetAccountSummaryQuery", new GetAccountSummaryQueryHandler(projection));
-  // => Calls set method
+  // => Execute method
   queryHandlers.set("GetAccountsByOwnerQuery", new GetAccountsByOwnerQueryHandler(projection));
-  // => Calls set method
+  // => Execute method
 
   const service = new BankingApplicationService(commandHandlers, queryHandlers);
-  // => Creates variable: service
-  // => Instantiates new object
-  // => Declares service
+  // => Store value in service
 
   // Execute commands - write operations
   await service.executeCommand(new OpenAccountCommand("ACC-001", "USER-001", 1000));
-  // => Calls executeCommand method
   // => Command updates write model (event store)
   // => Events published to update read model (projection)
 
   await service.executeCommand(new DepositMoneyCommand("ACC-001", 500));
-  // => Calls executeCommand method
+  // => Execute method
 
   // Execute queries - read operations
   const summary = await service.executeQuery(new GetAccountSummaryQuery("ACC-001"));
-  // => Creates variable: summary
-  // => Instantiates new object
-  // => Declares summary
+  // => Store value in summary
   console.log(summary);
-  // => Calls log method
   // => Outputs result
   // => Query reads from read model (projection)
   // => Output: { accountId: 'ACC-001', ownerId: 'USER-001',
   //              totalDeposits: 1500, currentBalance: 1500, ... }
 
   const ownerAccounts = await service.executeQuery(new GetAccountsByOwnerQuery("USER-001"));
-  // => Creates variable: ownerAccounts
-  // => Instantiates new object
-  // => Declares ownerAccounts
+  // => Store value in ownerAccounts
   console.log(`Accounts for USER-001: ${ownerAccounts.length}`);
-  // => Calls log method
   // => Outputs result
   // => Output: Accounts for USER-001: 1
 })();
+// => Manages entity lifecycle
 ```
 
 **Key Takeaway**: CQRS separates write operations (commands → write model) from read operations (queries → read model). Commands change state via event store, queries retrieve optimized views via projections. Enables independent scaling and optimization of reads vs writes.
@@ -2135,241 +1816,190 @@ CQRS introduces eventual consistency between write and read models—reads may l
 ```typescript
 // Eventual Consistency Tracker - monitors read model lag
 class EventualConsistencyMonitor {
-  // => Domain object representing EventualConsistencyMonitor
-  // => Encapsulates business logic and state
-  // => Domain object: EventualConsistencyMonitor
+  // => EventualConsistencyMonitor: domain model element
   private lastProcessedVersion: Map<string, number> = new Map();
-  // => Encapsulated field: lastProcessedVersion
-  // => Internal state (can only be modified by methods)
-  // => Declares lastProcessedVersion
   // => Encapsulated field (not publicly accessible)
   // => Track latest version processed by read model
 
   recordProcessedEvent(aggregateId: string, version: number): void {
     // => Domain operation: recordProcessedEvent
-    // => Modifies state while maintaining invariants
     // => Update last processed version
     this.lastProcessedVersion.set(aggregateId, version);
-    // => Calls set method
     // => Delegates to internal method
   }
+  // => Executes domain logic
 
   async isConsistent(aggregateId: string, expectedVersion: number): Promise<boolean> {
-    // => Calls isConsistent method
     // => Check if read model caught up to expected version
     const processedVersion = this.lastProcessedVersion.get(aggregateId) || 0;
-    // => Creates variable: processedVersion
-    // => Assigns value: this.lastProcessedVersion.get(aggregateId) || 0
-    // => Declares processedVersion
+    // => Store value in processedVersion
     return processedVersion >= expectedVersion;
-    // => Returns processedVersion >= expectedVersion
-    // => Returns value
-    // => Returns false if read model still processing events
+    // => Return result to caller
   }
+  // => Updates aggregate state
 
   async waitForConsistency(aggregateId: string, expectedVersion: number, timeoutMs: number = 5000): Promise<void> {
-    // => Calls method and assigns result
     // => Poll until read model consistent or timeout
     const startTime = Date.now();
-    // => Creates variable: startTime
-    // => Assigns value: Date.now()
-    // => Declares startTime
+    // => Store value in startTime
 
     while (Date.now() - startTime < timeoutMs) {
-      // => Calls now method
+      // => Execute method
       if (await this.isConsistent(aggregateId, expectedVersion)) {
-        // => Checks business rule: await this.isConsistent(aggregateId, expectedVersion)
-        // => Validates domain constraint
+        // => Conditional check
         return;
         // => Read model caught up
       }
+      // => Validates business rule
       await new Promise((resolve) => setTimeout(resolve, 10));
-      // => Calls method and assigns result
       // => Wait 10ms before checking again
     }
+    // => Enforces invariant
 
     throw new Error(`Consistency timeout: expected version ${expectedVersion} not reached`);
-    // => Throws domain exception
-    // => Business rule violation detected
-    // => Throws domain exception
-    // => Protects business invariant
+    // => Raise domain exception
   }
+  // => Encapsulates domain knowledge
 }
+// => Delegates to domain service
 
 class AccountSummaryProjectionWithMonitoring extends AccountSummaryProjection {
-  // => Domain object representing AccountSummaryProjectionWithMonitoring
-  // => Encapsulates business logic and state
-  // => Domain object: AccountSummaryProjectionWithMonitoring
+  // => AccountSummaryProjectionWithMonitoring: domain model element
   constructor(private readonly monitor: EventualConsistencyMonitor) {
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     super();
-    // => Calls super method
+    // => Maintains consistency boundary
   }
+  // => Applies domain event
 
   async handle(event: DomainEvent): Promise<void> {
-    // => Calls handle method
     // => Process event and update monitoring
     await super.handle(event);
-    // => Calls handle method
+    // => Execute method
 
     if (event instanceof AccountOpened || event instanceof MoneyDeposited || event instanceof MoneyWithdrawn) {
-      // => Checks business rule: event instanceof AccountOpened || event instanceof MoneyDeposited || event instanceof MoneyWithdrawn
-      // => Validates domain constraint
+      // => Operation: if()
       const accountId = (event as any).accountId;
-      // => Creates variable: accountId
-      // => Assigns value: (event as any).accountId
-      // => Declares accountId
+      // => Store value in accountId
       const summary = await this.getSummary(accountId);
-      // => Creates variable: summary
-      // => Assigns value: await this.getSummary(accountId)
-      // => Declares summary
+      // => Store value in summary
       if (summary) {
-        // => Checks business rule: summary
-        // => Validates domain constraint
+        // => Operation: if()
         this.monitor.recordProcessedEvent(accountId, summary.transactionCount);
-        // => Calls recordProcessedEvent method
         // => Delegates to internal method
         // => Record that read model processed this event
       }
+      // => Coordinates with bounded context
     }
+    // => Implements tactical pattern
   }
+  // => Protects aggregate integrity
 }
+// => Ensures transactional consistency
 
 // Command Handler with version tracking
 class DepositMoneyWithVersionTracking implements CommandHandler<DepositMoneyCommand> {
-  // => Domain object representing DepositMoneyWithVersionTracking
-  // => Encapsulates business logic and state
-  // => Domain object: DepositMoneyWithVersionTracking
+  // => DepositMoneyWithVersionTracking: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     private readonly eventStore: EventStore,
-    // => Encapsulated field: eventStore
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
     private readonly eventBus: EventBus,
-    // => Encapsulated field: eventBus
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
   ) {}
+  // => Manages entity lifecycle
 
   async handle(command: DepositMoneyCommand): Promise<number> {
-    // => Calls handle method
-    // => Returns version after command processing
+    // => Operation: handle()
     const account = await BankAccount.load(this.eventStore, command.accountId);
-    // => Creates variable: account
-    // => Assigns value: await BankAccount.load(this.eventStore, command.accountId)
-    // => Declares account
+    // => Store value in account
     account.deposit(command.amount);
-    // => Calls deposit method
+    // => Execute method
 
     const expectedVersion = account.getVersion() - account.getUncommittedEvents().length;
-    // => Creates variable: expectedVersion
-    // => Assigns value: account.getVersion() - account.getUncommittedEvents().length
-    // => Declares expectedVersion
+    // => Store value in expectedVersion
     await this.eventStore.append(command.accountId, account.getUncommittedEvents(), expectedVersion);
-    // => Calls append method
     // => Delegates to internal method
 
     for (const event of account.getUncommittedEvents()) {
-      // => Calls getUncommittedEvents method
+      // => Execute method
       await this.eventBus.publish(event);
-      // => Calls publish method
       // => Delegates to internal method
     }
+    // => Preserves domain model
 
     return account.getVersion();
     // => Returns account.getVersion()
     // => Return new version for consistency tracking
   }
+  // => Communicates domain intent
 }
+// => Executes domain logic
 
 // Usage - handling eventual consistency
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const eventStore = new EventStore();
-  // => Creates variable: eventStore
-  // => Instantiates new object
-  // => Declares eventStore
+  // => Store value in eventStore
   const monitor = new EventualConsistencyMonitor();
-  // => Creates variable: monitor
-  // => Instantiates new object
-  // => Declares monitor
+  // => Store value in monitor
   const projection = new AccountSummaryProjectionWithMonitoring(monitor);
-  // => Creates variable: projection
-  // => Instantiates new object
-  // => Declares projection
+  // => Store value in projection
   const eventBus = new EventBus();
-  // => Creates variable: eventBus
-  // => Instantiates new object
-  // => Declares eventBus
+  // => Store value in eventBus
 
   eventBus.subscribe(AccountOpened, (event) => projection.handle(event));
-  // => Calls method and assigns result
+  // => Updates aggregate state
   eventBus.subscribe(MoneyDeposited, (event) => projection.handle(event));
-  // => Calls method and assigns result
+  // => Validates business rule
 
   const handler = new DepositMoneyWithVersionTracking(eventStore, eventBus);
-  // => Creates variable: handler
-  // => Instantiates new object
-  // => Declares handler
+  // => Store value in handler
 
   // Setup account
   const account = new BankAccount();
-  // => Creates variable: account
-  // => Instantiates new object
-  // => Declares account
+  // => Store value in account
   account.openAccount("ACC-001", "USER-001", 1000);
-  // => Calls openAccount method
+  // => Execute method
   await eventStore.append("ACC-001", account.getUncommittedEvents(), 0);
-  // => Calls append method
+  // => Execute method
   for (const event of account.getUncommittedEvents()) {
-    // => Calls getUncommittedEvents method
+    // => Execute method
     await eventBus.publish(event);
-    // => Calls publish method
+    // => Execute method
   }
+  // => Enforces invariant
 
   // Execute command
   const command = new DepositMoneyCommand("ACC-001", 500);
-  // => Creates variable: command
-  // => Instantiates new object
-  // => Declares command
+  // => Store value in command
   const newVersion = await handler.handle(command);
-  // => Creates variable: newVersion
-  // => Assigns value: await handler.handle(command)
-  // => Declares newVersion
   // => Command completed, write model updated
   console.log(`Command processed, new version: ${newVersion}`);
-  // => Calls log method
   // => Outputs result
 
   // Read model may not be consistent immediately
   const isConsistent = await monitor.isConsistent("ACC-001", newVersion);
-  // => Creates variable: isConsistent
-  // => Assigns value: await monitor.isConsistent("ACC-001", newVersion)
-  // => Declares isConsistent
+  // => Store value in isConsistent
   console.log(`Read model consistent: ${isConsistent}`);
-  // => Calls log method
   // => Outputs result
   // => May be false if projection hasn't processed event yet
 
   // Wait for consistency before querying
   await monitor.waitForConsistency("ACC-001", newVersion);
-  // => Calls waitForConsistency method
+  // => Execute method
   console.log("Read model caught up!");
-  // => Calls log method
   // => Outputs result
 
   const summary = await projection.getSummary("ACC-001");
-  // => Creates variable: summary
-  // => Assigns value: await projection.getSummary("ACC-001")
-  // => Declares summary
+  // => Store value in summary
   console.log(summary);
-  // => Calls log method
   // => Outputs result
   // => Now guaranteed to reflect latest deposit
 })();
+// => Encapsulates domain knowledge
 ```
 
 **Key Takeaway**: CQRS introduces eventual consistency—write model updated immediately, read model updated asynchronously. Applications must handle lag between writes and reads through monitoring and wait strategies.
@@ -2383,121 +2013,134 @@ Read models in CQRS can be optimized for specific query patterns without impacti
 ```typescript
 // Multiple Read Models for Different Query Patterns
 interface AccountListReadModel {
+  // => AccountListReadModel: contract definition
   accountId: string;
+  // => Executes domain logic
   ownerId: string;
+  // => Updates aggregate state
   balance: number;
+  // => Validates business rule
   status: "active" | "inactive";
   // => Minimal data for list views
 }
+// => Enforces invariant
 
 interface AccountDetailReadModel {
+  // => AccountDetailReadModel: contract definition
   accountId: string;
+  // => Encapsulates domain knowledge
   ownerId: string;
+  // => Delegates to domain service
   balance: number;
+  // => Maintains consistency boundary
   totalDeposits: number;
+  // => Applies domain event
   totalWithdrawals: number;
+  // => Coordinates with bounded context
   transactionCount: number;
+  // => Implements tactical pattern
   lastActivity: Date;
   // => Rich data for detail views
 }
+// => Protects aggregate integrity
 
 interface AccountSearchReadModel {
+  // => AccountSearchReadModel: contract definition
   accountId: string;
+  // => Ensures transactional consistency
   ownerId: string;
+  // => Ensures transactional consistency
   ownerName: string; // => Denormalized for search
+  // => Manages entity lifecycle
   balance: number;
+  // => Preserves domain model
   tags: string[]; // => Search keywords
   // => Optimized for full-text search
 }
+// => Manages entity lifecycle
 
 class MultiReadModelProjection {
-  // => Domain object representing MultiReadModelProjection
-  // => Encapsulates business logic and state
-  // => Domain object: MultiReadModelProjection
+  // => MultiReadModelProjection: domain model element
   private listModels: Map<string, AccountListReadModel> = new Map();
-  // => Encapsulated field: listModels
-  // => Internal state (can only be modified by methods)
-  // => Declares listModels
   // => Encapsulated field (not publicly accessible)
   private detailModels: Map<string, AccountDetailReadModel> = new Map();
-  // => Encapsulated field: detailModels
-  // => Internal state (can only be modified by methods)
-  // => Declares detailModels
   // => Encapsulated field (not publicly accessible)
   private searchModels: Map<string, AccountSearchReadModel> = new Map();
-  // => Encapsulated field: searchModels
-  // => Internal state (can only be modified by methods)
-  // => Declares searchModels
   // => Encapsulated field (not publicly accessible)
   // => Three independent read models from same events
 
   async handle(event: DomainEvent): Promise<void> {
-    // => Calls handle method
     // => Update all read models in parallel
     await Promise.all([this.updateListModel(event), this.updateDetailModel(event), this.updateSearchModel(event)]);
-    // => Calls all method
     // => Delegates to internal method
     // => Same event updates multiple optimized views
   }
+  // => Preserves domain model
 
   private async updateListModel(event: DomainEvent): Promise<void> {
-    // => Calls updateListModel method
     // => Update lightweight list view
     if (event instanceof AccountOpened) {
-      // => Checks business rule: event instanceof AccountOpened
-      // => Validates domain constraint
+      // => Operation: if()
       this.listModels.set(event.accountId, {
+        // => Communicates domain intent
         accountId: event.accountId,
+        // => Executes domain logic
         ownerId: event.ownerId,
+        // => Updates aggregate state
         balance: event.initialBalance,
+        // => Validates business rule
         status: "active",
+        // => Enforces invariant
       });
       // => Minimal data for fast list rendering
     } else if (event instanceof MoneyDeposited) {
+      // => Encapsulates domain knowledge
       const model = this.listModels.get(event.accountId);
-      // => Creates variable: model
-      // => Assigns value: this.listModels.get(event.accountId)
-      // => Declares model
+      // => Store value in model
       if (model) {
-        // => Checks business rule: model
-        // => Validates domain constraint
+        // => Operation: if()
         model.balance += event.amount;
-        // => Modifies balance
         // => State change operation
         // => Modifies state value
         // => Balance updated
         this.listModels.set(event.accountId, model);
-        // => Calls set method
         // => Delegates to internal method
       }
+      // => Delegates to domain service
     }
+    // => Maintains consistency boundary
   }
+  // => Applies domain event
 
   private async updateDetailModel(event: DomainEvent): Promise<void> {
-    // => Calls updateDetailModel method
     // => Update rich detail view (same logic as AccountSummaryProjection)
     if (event instanceof AccountOpened) {
-      // => Checks business rule: event instanceof AccountOpened
-      // => Validates domain constraint
+      // => Operation: if()
       this.detailModels.set(event.accountId, {
+        // => Coordinates with bounded context
         accountId: event.accountId,
+        // => Implements tactical pattern
         ownerId: event.ownerId,
+        // => Protects aggregate integrity
         balance: event.initialBalance,
+        // => Ensures transactional consistency
         totalDeposits: event.initialBalance,
+        // => Manages entity lifecycle
         totalWithdrawals: 0,
+        // => Preserves domain model
         transactionCount: 1,
+        // => Communicates domain intent
         lastActivity: event.occurredAt,
+        // => Executes domain logic
       });
+      // => Updates aggregate state
     } else if (event instanceof MoneyDeposited) {
+      // => Validates business rule
       const model = this.detailModels.get(event.accountId);
-      // => Creates variable: model
-      // => Assigns value: this.detailModels.get(event.accountId)
-      // => Declares model
+      // => Store value in model
       if (model) {
-        // => Checks business rule: model
-        // => Validates domain constraint
+        // => Operation: if()
         model.balance += event.amount;
-        // => Modifies balance
         // => State change operation
         // => Modifies state value
         // => Balance updated
@@ -2506,142 +2149,133 @@ class MultiReadModelProjection {
         // => State change operation
         // => Modifies state value
         model.transactionCount++;
+        // => Enforces invariant
         model.lastActivity = event.occurredAt;
+        // => Encapsulates domain knowledge
         this.detailModels.set(event.accountId, model);
-        // => Calls set method
         // => Delegates to internal method
       }
+      // => Delegates to domain service
     }
+    // => Maintains consistency boundary
   }
+  // => Applies domain event
 
   private async updateSearchModel(event: DomainEvent): Promise<void> {
-    // => Calls updateSearchModel method
     // => Update search-optimized view
     if (event instanceof AccountOpened) {
-      // => Checks business rule: event instanceof AccountOpened
-      // => Validates domain constraint
+      // => Operation: if()
       this.searchModels.set(event.accountId, {
+        // => Coordinates with bounded context
         accountId: event.accountId,
+        // => Implements tactical pattern
         ownerId: event.ownerId,
+        // => Protects aggregate integrity
         ownerName: `User ${event.ownerId}`,
         // => Denormalized owner name (would join from user service)
         balance: event.initialBalance,
+        // => Ensures transactional consistency
         tags: ["active", "new-account"],
         // => Tags for filtering/search
       });
+      // => Manages entity lifecycle
     } else if (event instanceof MoneyDeposited) {
+      // => Preserves domain model
       const model = this.searchModels.get(event.accountId);
-      // => Creates variable: model
-      // => Assigns value: this.searchModels.get(event.accountId)
-      // => Declares model
+      // => Store value in model
       if (model) {
-        // => Checks business rule: model
-        // => Validates domain constraint
+        // => Operation: if()
         model.balance += event.amount;
-        // => Modifies balance
         // => State change operation
         // => Modifies state value
         // => Balance updated
         if (model.balance > 10000) {
-          // => Checks business rule: model.balance > 10000
-          // => Validates domain constraint
+          // => Operation: if()
           model.tags.push("high-balance");
-          // => Calls push method
           // => Add tag based on business rule
         }
+        // => Communicates domain intent
         this.searchModels.set(event.accountId, model);
-        // => Calls set method
         // => Delegates to internal method
       }
+      // => Executes domain logic
     }
+    // => Updates aggregate state
   }
+  // => Validates business rule
 
   // Query methods for different use cases
   async getAccountList(ownerId: string): Promise<AccountListReadModel[]> {
-    // => Calls getAccountList method
     // => Fast list query using minimal data
     return Array.from(this.listModels.values()).filter((m) => m.ownerId === ownerId);
     // => Returns Array.from(this.listModels.values()).filter((m) => m.ownerId === ownerId)
-    // => Calls method and assigns result
-    // => Returns only fields needed for list view
   }
+  // => Enforces invariant
 
   async getAccountDetail(accountId: string): Promise<AccountDetailReadModel | null> {
-    // => Calls getAccountDetail method
     // => Rich detail query
     return this.detailModels.get(accountId) || null;
-    // => Returns this.detailModels.get(accountId) || null
+    // => Return result to caller
   }
+  // => Encapsulates domain knowledge
 
   async searchAccounts(query: string): Promise<AccountSearchReadModel[]> {
-    // => Calls searchAccounts method
     // => Search query using optimized model
     const lowerQuery = query.toLowerCase();
-    // => Creates variable: lowerQuery
-    // => Assigns value: query.toLowerCase()
-    // => Declares lowerQuery
+    // => Store value in lowerQuery
     return Array.from(this.searchModels.values()).filter(
       // => Returns Array.from(this.searchModels.values()).filter(
       (m) =>
-        // => Calls method and assigns result
+        // => Delegates to domain service
         m.accountId.toLowerCase().includes(lowerQuery) ||
-        // => Calls toLowerCase method
+        // => Execute method
         m.ownerName.toLowerCase().includes(lowerQuery) ||
-        // => Calls toLowerCase method
+        // => Execute method
         m.tags.some((tag) => tag.includes(lowerQuery)),
-      // => Calls method and assigns result
+      // => Maintains consistency boundary
     );
     // => Search across multiple fields (would use Elasticsearch in production)
   }
+  // => Applies domain event
 }
+// => Coordinates with bounded context
 
 // Usage
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const projection = new MultiReadModelProjection();
-  // => Creates variable: projection
-  // => Instantiates new object
-  // => Declares projection
+  // => Store value in projection
 
   const events = [new AccountOpened("ACC-001", "USER-001", 15000), new MoneyDeposited("ACC-001", 5000)];
-  // => Creates variable: events
-  // => Instantiates new object
-  // => Declares events
+  // => Store value in events
 
   for (const event of events) {
+    // => Operation: for()
     await projection.handle(event);
-    // => Calls handle method
     // => Single event updates all three read models
   }
+  // => Implements tactical pattern
 
   // Different queries use different optimized models
   const list = await projection.getAccountList("USER-001");
-  // => Creates variable: list
-  // => Assigns value: await projection.getAccountList("USER-001")
-  // => Declares list
+  // => Store value in list
   console.log("List view:", list);
-  // => Calls log method
   // => Outputs result
   // => Output: List view: [{ accountId: 'ACC-001', ownerId: 'USER-001', balance: 20000, status: 'active' }]
 
   const detail = await projection.getAccountDetail("ACC-001");
-  // => Creates variable: detail
-  // => Assigns value: await projection.getAccountDetail("ACC-001")
-  // => Declares detail
+  // => Store value in detail
   console.log("Detail view:", detail);
-  // => Calls log method
   // => Outputs result
   // => Output: Detail view: { accountId: 'ACC-001', ..., totalDeposits: 20000, transactionCount: 2, ... }
 
   const searchResults = await projection.searchAccounts("high-balance");
-  // => Creates variable: searchResults
-  // => Assigns value: await projection.searchAccounts("high-balance")
-  // => Declares searchResults
+  // => Store value in searchResults
   console.log("Search results:", searchResults.length);
-  // => Calls log method
   // => Outputs result
   // => Output: Search results: 1
 })();
+// => Protects aggregate integrity
 ```
 
 **Key Takeaway**: CQRS enables multiple read models optimized for different query patterns (lists, details, search). Same events update all read models independently. Each optimized for specific use case without compromising others.
@@ -2655,339 +2289,287 @@ CQRS coordinates reads and writes across bounded context boundaries using integr
 ```typescript
 // Sales Context - owns Order aggregate
 namespace SalesContext {
+  // => Executes domain logic
   export class OrderPlaced extends DomainEvent {
-    // => Domain object representing OrderPlaced
-    // => Encapsulates business logic and state
+    // => OrderPlaced: domain model element
     constructor(
-      // => Constructor initializes domain object
-      // => Establishes valid initial state
-      // => Constructor initializes instance
+      // => Initialize object with parameters
       public readonly orderId: string,
+      // => Field: readonly (public)
       public readonly customerId: string,
+      // => Field: readonly (public)
       public readonly totalAmount: number,
+      // => Field: readonly (public)
     ) {
+      // => Updates aggregate state
       super();
-      // => Calls super method
+      // => Validates business rule
     }
+    // => Enforces invariant
   }
+  // => Encapsulates domain knowledge
 
   export class OrderCancelled extends DomainEvent {
-    // => Domain object representing OrderCancelled
-    // => Encapsulates business logic and state
+    // => OrderCancelled: domain model element
     constructor(public readonly orderId: string) {
-      // => Constructor initializes domain object
-      // => Establishes valid initial state
-      // => Constructor initializes instance
+      // => Initialize object with parameters
       super();
-      // => Calls super method
+      // => Delegates to domain service
     }
+    // => Maintains consistency boundary
   }
+  // => Applies domain event
 
   export class Order {
-    // => Domain object representing Order
-    // => Encapsulates business logic and state
+    // => Order: domain model element
     private orderId: string;
-    // => Encapsulated field: orderId
-    // => Internal state (can only be modified by methods)
-    // => Declares orderId
     // => Encapsulated field (not publicly accessible)
     private customerId: string;
-    // => Encapsulated field: customerId
-    // => Internal state (can only be modified by methods)
-    // => Declares customerId
     // => Encapsulated field (not publicly accessible)
     private totalAmount: number;
-    // => Encapsulated field: totalAmount
-    // => Internal state (can only be modified by methods)
-    // => Declares totalAmount
     // => Encapsulated field (not publicly accessible)
     private status: "placed" | "cancelled" = "placed";
-    // => Encapsulated field: status
-    // => Internal state (can only be modified by methods)
-    // => Declares status
     // => Encapsulated field (not publicly accessible)
     private uncommittedEvents: DomainEvent[] = [];
-    // => Encapsulated field: uncommittedEvents
-    // => Internal state (can only be modified by methods)
-    // => Declares uncommittedEvents
     // => Encapsulated field (not publicly accessible)
 
     placeOrder(orderId: string, customerId: string, totalAmount: number): void {
       // => Domain operation: placeOrder
-      // => Modifies state while maintaining invariants
       this.orderId = orderId;
-      // => Sets orderId to orderId
-      // => Updates internal state
-      // => Updates internal state
+      // => Update orderId state
       this.customerId = customerId;
-      // => Sets customerId to customerId
-      // => Updates internal state
-      // => Updates internal state
+      // => Update customerId state
       this.totalAmount = totalAmount;
-      // => Sets totalAmount to totalAmount
-      // => Updates internal state
-      // => Updates internal state
+      // => Update totalAmount state
       this.status = "placed";
-      // => Sets status to "placed"
-      // => Updates internal state
-      // => Updates internal state
+      // => Update status state
 
       const event = new OrderPlaced(orderId, customerId, totalAmount);
-      // => Creates variable: event
-      // => Instantiates new object
-      // => Declares event
+      // => Store value in event
       this.uncommittedEvents.push(event);
-      // => Calls push method
       // => Delegates to internal method
     }
+    // => Coordinates with bounded context
 
     cancelOrder(): void {
       // => Domain operation: cancelOrder
-      // => Modifies state while maintaining invariants
       if (this.status !== "placed") {
-        // => Checks business rule: this.status !== "placed"
-        // => Validates domain constraint
-        // => Calls method and assigns result
+        // => Operation: if()
         throw new Error("Can only cancel placed orders");
-        // => Throws domain exception
-        // => Business rule violation detected
-        // => Throws domain exception
-        // => Protects business invariant
+        // => Raise domain exception
       }
+      // => Implements tactical pattern
       this.status = "cancelled";
-      // => Sets status to "cancelled"
-      // => Updates internal state
-      // => Updates internal state
+      // => Update status state
       const event = new OrderCancelled(this.orderId);
-      // => Creates variable: event
-      // => Instantiates new object
-      // => Declares event
+      // => Store value in event
       this.uncommittedEvents.push(event);
-      // => Calls push method
       // => Delegates to internal method
     }
+    // => Protects aggregate integrity
 
     getUncommittedEvents(): DomainEvent[] {
       // => Domain operation: getUncommittedEvents
-      // => Modifies state while maintaining invariants
       return [...this.uncommittedEvents];
       // => Returns [...this.uncommittedEvents]
-      // => Returns value
     }
+    // => Ensures transactional consistency
   }
+  // => Manages entity lifecycle
 
   // Write Model - Order Repository
   export class OrderRepository {
-    // => Domain object representing OrderRepository
-    // => Encapsulates business logic and state
+    // => OrderRepository: domain model element
     private orders: Map<string, Order> = new Map();
-    // => Encapsulated field: orders
-    // => Internal state (can only be modified by methods)
-    // => Declares orders
     // => Encapsulated field (not publicly accessible)
 
     async save(order: Order): Promise<void> {
-      // => Calls save method
+      // => Operation: save()
       // In production: persist to database
       this.orders.set((order as any).orderId, order);
-      // => Calls set method
       // => Delegates to internal method
     }
+    // => Preserves domain model
 
     async getById(orderId: string): Promise<Order | null> {
-      // => Calls getById method
+      // => Operation: getById()
       return this.orders.get(orderId) || null;
-      // => Returns this.orders.get(orderId) || null
+      // => Return result to caller
     }
+    // => Communicates domain intent
   }
+  // => Executes domain logic
 }
+// => Updates aggregate state
 
 // Billing Context - maintains read model of orders for invoicing
 namespace BillingContext {
+  // => Validates business rule
   export interface OrderSummaryForBilling {
+    // => Enforces invariant
     orderId: string;
+    // => Encapsulates domain knowledge
     customerId: string;
+    // => Delegates to domain service
     totalAmount: number;
+    // => Maintains consistency boundary
     status: "pending_payment" | "cancelled";
     // => Billing's view of order (different from Sales' model)
   }
+  // => Applies domain event
 
   export class BillingReadModel {
-    // => Domain object representing BillingReadModel
-    // => Encapsulates business logic and state
+    // => BillingReadModel: domain model element
     private orders: Map<string, OrderSummaryForBilling> = new Map();
-    // => Encapsulated field: orders
-    // => Internal state (can only be modified by methods)
-    // => Declares orders
     // => Encapsulated field (not publicly accessible)
 
     async handleOrderPlaced(event: SalesContext.OrderPlaced): Promise<void> {
-      // => Calls handleOrderPlaced method
       // => Integration event handler (cross-context)
       this.orders.set(event.orderId, {
+        // => Coordinates with bounded context
         orderId: event.orderId,
+        // => Implements tactical pattern
         customerId: event.customerId,
+        // => Protects aggregate integrity
         totalAmount: event.totalAmount,
+        // => Ensures transactional consistency
         status: "pending_payment",
         // => Translated to Billing's ubiquitous language
       });
       // => Billing context builds own read model from Sales events
     }
+    // => Manages entity lifecycle
 
     async handleOrderCancelled(event: SalesContext.OrderCancelled): Promise<void> {
-      // => Calls handleOrderCancelled method
       // => Update Billing's model when Sales order cancelled
       const order = this.orders.get(event.orderId);
-      // => Creates variable: order
-      // => Assigns value: this.orders.get(event.orderId)
-      // => Declares order
+      // => Store value in order
       if (order) {
-        // => Checks business rule: order
-        // => Validates domain constraint
+        // => Operation: if()
         order.status = "cancelled";
+        // => Preserves domain model
         this.orders.set(event.orderId, order);
-        // => Calls set method
         // => Delegates to internal method
       }
+      // => Communicates domain intent
     }
+    // => Executes domain logic
 
     async getOrdersForInvoicing(customerId: string): Promise<OrderSummaryForBilling[]> {
-      // => Calls getOrdersForInvoicing method
       // => Query optimized for billing use case
       return Array.from(this.orders.values()).filter(
         // => Returns Array.from(this.orders.values()).filter(
         (o) => o.customerId === customerId && o.status === "pending_payment",
-        // => Calls method and assigns result
+        // => Updates aggregate state
       );
       // => Only shows orders needing payment (Billing's concern)
     }
+    // => Validates business rule
   }
+  // => Enforces invariant
 }
+// => Encapsulates domain knowledge
 
 // Integration Event Bus - crosses bounded context boundaries
 class IntegrationEventBus {
-  // => Domain object representing IntegrationEventBus
-  // => Encapsulates business logic and state
-  // => Domain object: IntegrationEventBus
+  // => IntegrationEventBus: domain model element
   private handlers: Map<string, Array<(event: any) => Promise<void>>> = new Map();
-  // => Encapsulated field: handlers
-  // => Internal state (can only be modified by methods)
-  // => Declares handlers
   // => Encapsulated field (not publicly accessible)
 
   subscribe<T extends DomainEvent>(eventType: new (...args: any[]) => T, handler: (event: T) => Promise<void>): void {
-    // => Calls method and assigns result
+    // => Create data structure
     const typeName = eventType.name;
-    // => Creates variable: typeName
-    // => Assigns value: eventType.name
-    // => Declares typeName
+    // => Store value in typeName
     const handlers = this.handlers.get(typeName) || [];
-    // => Creates variable: handlers
-    // => Assigns value: this.handlers.get(typeName) || []
-    // => Declares handlers
+    // => Store value in handlers
     handlers.push(handler);
-    // => Calls push method
+    // => Execute method
     this.handlers.set(typeName, handlers);
-    // => Calls set method
     // => Delegates to internal method
   }
+  // => Delegates to domain service
 
   async publish(event: DomainEvent): Promise<void> {
-    // => Calls publish method
     // => Publishes events across context boundaries
     const handlers = this.handlers.get(event.constructor.name) || [];
-    // => Creates variable: handlers
-    // => Assigns value: this.handlers.get(event.constructor.name) || []
-    // => Declares handlers
+    // => Store value in handlers
     for (const handler of handlers) {
+      // => Operation: for()
       await handler(event);
-      // => Calls handler method
       // => Asynchronous propagation to other contexts
     }
+    // => Maintains consistency boundary
   }
+  // => Applies domain event
 }
+// => Coordinates with bounded context
 
 // Usage - CQRS across bounded contexts
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const integrationBus = new IntegrationEventBus();
-  // => Creates variable: integrationBus
-  // => Instantiates new object
-  // => Declares integrationBus
+  // => Store value in integrationBus
   const salesRepository = new SalesContext.OrderRepository();
-  // => Creates variable: salesRepository
-  // => Instantiates new object
-  // => Declares salesRepository
+  // => Store value in salesRepository
   const billingReadModel = new BillingContext.BillingReadModel();
-  // => Creates variable: billingReadModel
-  // => Instantiates new object
-  // => Declares billingReadModel
+  // => Store value in billingReadModel
 
   // Billing subscribes to Sales events
   integrationBus.subscribe(SalesContext.OrderPlaced, (event) => billingReadModel.handleOrderPlaced(event));
-  // => Calls method and assigns result
+  // => Implements tactical pattern
   integrationBus.subscribe(SalesContext.OrderCancelled, (event) => billingReadModel.handleOrderCancelled(event));
-  // => Calls method and assigns result
+  // => Protects aggregate integrity
 
   // Sales context processes command
   const order = new SalesContext.Order();
-  // => Creates variable: order
-  // => Instantiates new object
-  // => Declares order
+  // => Store value in order
   order.placeOrder("ORDER-001", "CUST-001", 150);
-  // => Calls placeOrder method
+  // => Execute method
   await salesRepository.save(order);
-  // => Calls save method
+  // => Execute method
 
   for (const event of order.getUncommittedEvents()) {
-    // => Calls getUncommittedEvents method
+    // => Execute method
     await integrationBus.publish(event);
-    // => Calls publish method
     // => Sales events propagate to Billing context
   }
+  // => Ensures transactional consistency
 
   // Billing context now has read model updated
   const ordersForInvoicing = await billingReadModel.getOrdersForInvoicing("CUST-001");
-  // => Creates variable: ordersForInvoicing
-  // => Assigns value: await billingReadModel.getOrdersForInvoicing("CUST-001")
-  // => Declares ordersForInvoicing
+  // => Store value in ordersForInvoicing
   console.log("Orders needing payment:", ordersForInvoicing);
-  // => Calls log method
   // => Outputs result
   // => Output: Orders needing payment: [{ orderId: 'ORDER-001', customerId: 'CUST-001',
   //                                       totalAmount: 150, status: 'pending_payment' }]
 
   // Sales cancels order
   const loadedOrder = await salesRepository.getById("ORDER-001");
-  // => Creates variable: loadedOrder
-  // => Assigns value: await salesRepository.getById("ORDER-001")
-  // => Declares loadedOrder
+  // => Store value in loadedOrder
   if (loadedOrder) {
-    // => Checks business rule: loadedOrder
-    // => Validates domain constraint
+    // => Operation: if()
     loadedOrder.cancelOrder();
-    // => Calls cancelOrder method
+    // => Execute method
     await salesRepository.save(loadedOrder);
-    // => Calls save method
+    // => Execute method
 
     for (const event of loadedOrder.getUncommittedEvents()) {
-      // => Calls getUncommittedEvents method
+      // => Execute method
       await integrationBus.publish(event);
-      // => Calls publish method
       // => Cancellation propagates to Billing
     }
+    // => Manages entity lifecycle
   }
+  // => Preserves domain model
 
   // Billing read model updated automatically
   const afterCancellation = await billingReadModel.getOrdersForInvoicing("CUST-001");
-  // => Creates variable: afterCancellation
-  // => Assigns value: await billingReadModel.getOrdersForInvoicing("CUST-001")
-  // => Declares afterCancellation
+  // => Store value in afterCancellation
   console.log("Orders after cancellation:", afterCancellation);
-  // => Calls log method
   // => Outputs result
   // => Output: Orders after cancellation: [] (cancelled order excluded)
 })();
+// => Communicates domain intent
 ```
 
 **Key Takeaway**: CQRS coordinates across bounded contexts using integration events. One context's write model publishes events that update other contexts' read models. Each context maintains its own optimized view using its own ubiquitous language.
@@ -3001,13 +2583,8 @@ CQRS read models benefit from aggressive caching since they're eventually consis
 ```typescript
 // Cached Read Model - adds caching layer to projection
 class CachedAccountProjection {
-  // => Domain object representing CachedAccountProjection
-  // => Encapsulates business logic and state
-  // => Domain object: CachedAccountProjection
+  // => CachedAccountProjection: domain model element
   private cache: Map<string, { data: AccountSummaryReadModel; expiresAt: number }> = new Map();
-  // => Encapsulated field: cache
-  // => Internal state (can only be modified by methods)
-  // => Declares cache
   // => Encapsulated field (not publicly accessible)
   // => In-memory cache with TTL
   // => Production: Redis, Memcached
@@ -3015,48 +2592,32 @@ class CachedAccountProjection {
   // => Cache entries expire after 60 seconds
 
   constructor(private readonly projection: AccountSummaryProjection) {}
-  // => Constructor initializes domain object
-  // => Establishes valid initial state
-  // => Constructor initializes instance
+  // => Initialize object with parameters
 
   async getSummary(accountId: string): Promise<AccountSummaryReadModel | null> {
-    // => Calls getSummary method
     // => Try cache first
     const cached = this.cache.get(accountId);
-    // => Creates variable: cached
-    // => Assigns value: this.cache.get(accountId)
-    // => Declares cached
+    // => Store value in cached
     const now = Date.now();
-    // => Creates variable: now
-    // => Assigns value: Date.now()
-    // => Declares now
+    // => Store value in now
 
     if (cached && cached.expiresAt > now) {
-      // => Checks business rule: cached && cached.expiresAt > now
-      // => Validates domain constraint
       // => Cache hit and not expired
       console.log(`Cache HIT for ${accountId}`);
-      // => Calls log method
       // => Outputs result
       return cached.data;
       // => Returns cached.data
-      // => Returns value
       // => Return cached data (no database query)
     }
 
     // => Cache miss or expired
     console.log(`Cache MISS for ${accountId}`);
-    // => Calls log method
     // => Outputs result
     const data = await this.projection.getSummary(accountId);
-    // => Creates variable: data
-    // => Assigns value: await this.projection.getSummary(accountId)
-    // => Declares data
     // => Query underlying projection (database)
 
     if (data) {
-      // => Checks business rule: data
-      // => Validates domain constraint
+      // => Operation: if()
       this.cache.set(accountId, {
         data,
         expiresAt: now + this.cacheTTLMs,
@@ -3066,7 +2627,6 @@ class CachedAccountProjection {
 
     return data;
     // => Returns data
-    // => Returns value
   }
 
   invalidate(accountId: string): void {
@@ -3074,31 +2634,23 @@ class CachedAccountProjection {
     // => Throws exception if invariant violated
     // => Remove from cache when data changes
     this.cache.delete(accountId);
-    // => Calls delete method
     // => Delegates to internal method
     console.log(`Cache invalidated for ${accountId}`);
-    // => Calls log method
     // => Outputs result
     // => Next query will fetch fresh data
   }
 
   async handleEvent(event: DomainEvent): Promise<void> {
-    // => Calls handleEvent method
     // => Update projection and invalidate cache
     await this.projection.handle(event);
-    // => Calls handle method
     // => Delegates to internal method
     // => Update underlying read model
 
     if (event instanceof AccountOpened || event instanceof MoneyDeposited || event instanceof MoneyWithdrawn) {
-      // => Checks business rule: event instanceof AccountOpened || event instanceof MoneyDeposited || event instanceof MoneyWithdrawn
-      // => Validates domain constraint
+      // => Operation: if()
       const accountId = (event as any).accountId;
-      // => Creates variable: accountId
-      // => Assigns value: (event as any).accountId
-      // => Declares accountId
+      // => Store value in accountId
       this.invalidate(accountId);
-      // => Calls invalidate method
       // => Delegates to internal method
       // => Invalidate cache so next read gets updated data
     }
@@ -3107,100 +2659,68 @@ class CachedAccountProjection {
 
 // Query Handler with Caching
 class CachedGetAccountSummaryQueryHandler implements QueryHandler<
-  // => Domain object representing CachedGetAccountSummaryQueryHandler
-  // => Encapsulates business logic and state
-  // => Domain object: CachedGetAccountSummaryQueryHandler
+  // => CachedGetAccountSummaryQueryHandler: domain model element
   GetAccountSummaryQuery,
   AccountSummaryReadModel | null
 > {
   constructor(private readonly cachedProjection: CachedAccountProjection) {}
-  // => Constructor initializes domain object
-  // => Establishes valid initial state
-  // => Constructor initializes instance
+  // => Initialize object with parameters
 
   async handle(query: GetAccountSummaryQuery): Promise<AccountSummaryReadModel | null> {
-    // => Calls handle method
     // => Use cached projection
     return await this.cachedProjection.getSummary(query.accountId);
-    // => Returns await this.cachedProjection.getSummary(query.accountId)
     // => Automatically benefits from cache
   }
 }
 
 // Usage - caching optimization
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const projection = new AccountSummaryProjection();
-  // => Creates variable: projection
-  // => Instantiates new object
-  // => Declares projection
+  // => Store value in projection
   const cachedProjection = new CachedAccountProjection(projection);
-  // => Creates variable: cachedProjection
-  // => Instantiates new object
-  // => Declares cachedProjection
+  // => Store value in cachedProjection
 
   // Setup account
   const openEvent = new AccountOpened("ACC-001", "USER-001", 1000);
-  // => Creates variable: openEvent
-  // => Instantiates new object
-  // => Declares openEvent
+  // => Store value in openEvent
   await cachedProjection.handleEvent(openEvent);
-  // => Calls handleEvent method
   // => Projection updated, cache invalidated
 
   // First query - cache miss
   const summary1 = await cachedProjection.getSummary("ACC-001");
-  // => Creates variable: summary1
-  // => Assigns value: await cachedProjection.getSummary("ACC-001")
-  // => Declares summary1
   // => Output: Cache MISS for ACC-001
   console.log("First query:", summary1?.currentBalance);
-  // => Calls log method
   // => Outputs result
   // => Output: First query: 1000
 
   // Second query - cache hit
   const summary2 = await cachedProjection.getSummary("ACC-001");
-  // => Creates variable: summary2
-  // => Assigns value: await cachedProjection.getSummary("ACC-001")
-  // => Declares summary2
   // => Output: Cache HIT for ACC-001
   console.log("Second query (cached):", summary2?.currentBalance);
-  // => Calls log method
   // => Outputs result
   // => Output: Second query (cached): 1000
   // => No database query executed
 
   // Update account
   const depositEvent = new MoneyDeposited("ACC-001", 500);
-  // => Creates variable: depositEvent
-  // => Instantiates new object
-  // => Declares depositEvent
+  // => Store value in depositEvent
   await cachedProjection.handleEvent(depositEvent);
-  // => Calls handleEvent method
   // => Projection updated, cache invalidated
   // => Output: Cache invalidated for ACC-001
 
   // Query after update - cache miss (invalidated)
   const summary3 = await cachedProjection.getSummary("ACC-001");
-  // => Creates variable: summary3
-  // => Assigns value: await cachedProjection.getSummary("ACC-001")
-  // => Declares summary3
   // => Output: Cache MISS for ACC-001
   console.log("After deposit:", summary3?.currentBalance);
-  // => Calls log method
   // => Outputs result
   // => Output: After deposit: 1500
   // => Fresh data from database
 
   // Subsequent query - cache hit again
   const summary4 = await cachedProjection.getSummary("ACC-001");
-  // => Creates variable: summary4
-  // => Assigns value: await cachedProjection.getSummary("ACC-001")
-  // => Declares summary4
   // => Output: Cache HIT for ACC-001
   console.log("Cached again:", summary4?.currentBalance);
-  // => Calls log method
   // => Outputs result
   // => Output: Cached again: 1500
 })();
@@ -3240,99 +2760,79 @@ graph TD
 ```typescript
 // Saga Step - represents single operation in distributed transaction
 interface SagaStep {
+  // => SagaStep: contract definition
   name: string;
   execute(): Promise<void>; // => Forward action
   // => Domain operation: execute
-  // => Modifies state while maintaining invariants
   compensate(): Promise<void>; // => Rollback action
   // => Domain operation: compensate
-  // => Modifies state while maintaining invariants
 }
 
 // Order Saga - orchestrates order placement across services
 class OrderSaga {
-  // => Domain object representing OrderSaga
-  // => Encapsulates business logic and state
-  // => Domain object: OrderSaga
+  // => OrderSaga: domain model element
   private readonly sagaId: string;
-  // => Encapsulated field: sagaId
-  // => Immutable (readonly) - cannot change after construction
+  // => Field: readonly (private)
+  // => Encapsulated state, not directly accessible
   private readonly steps: SagaStep[] = [];
-  // => Encapsulated field: steps
-  // => Immutable (readonly) - cannot change after construction
+  // => Field: readonly (private)
+  // => Encapsulated state, not directly accessible
   private completedSteps: SagaStep[] = [];
-  // => Encapsulated field: completedSteps
-  // => Internal state (can only be modified by methods)
-  // => Declares completedSteps
   // => Encapsulated field (not publicly accessible)
   // => Track completed steps for compensation
 
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     sagaId: string,
     private readonly orderId: string,
-    // => Encapsulated field: orderId
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
     private readonly customerId: string,
-    // => Encapsulated field: customerId
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
     private readonly items: Array<{ productId: string; quantity: number }>,
-    // => Encapsulated field: items
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
     private readonly totalAmount: number,
-    // => Encapsulated field: totalAmount
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
   ) {
     this.sagaId = sagaId;
-    // => Sets sagaId to sagaId
-    // => Updates internal state
-    // => Updates internal state
+    // => Update sagaId state
     this.initializeSteps();
-    // => Calls initializeSteps method
     // => Delegates to internal method
   }
 
   private initializeSteps(): void {
-    // => Private method: initializeSteps
     // => Internal logic (not part of public API)
     // => Define saga workflow steps
     this.steps = [
-      // => Sets steps to [
-      // => Updates internal state
-      // => Updates internal state
+      // => Update steps state
       {
         name: "Reserve Inventory",
         execute: async () => {
-          // => Calls method and assigns result
+          // => Create data structure
           console.log(`[${this.sagaId}] Reserving inventory for order ${this.orderId}`);
-          // => Calls log method
           // => Delegates to internal method
           // => Outputs result
           // => Call Inventory Service to reserve items
           // => await inventoryService.reserve(this.items)
           await this.simulateServiceCall();
-          // => Calls simulateServiceCall method
           // => Delegates to internal method
           console.log(`[${this.sagaId}] Inventory reserved`);
-          // => Calls log method
           // => Delegates to internal method
           // => Outputs result
         },
         compensate: async () => {
-          // => Calls method and assigns result
+          // => Create data structure
           console.log(`[${this.sagaId}] Releasing inventory for order ${this.orderId}`);
-          // => Calls log method
           // => Delegates to internal method
           // => Outputs result
           // => Call Inventory Service to release reservation
           // => await inventoryService.release(this.items)
           await this.simulateServiceCall();
-          // => Calls simulateServiceCall method
           // => Delegates to internal method
           console.log(`[${this.sagaId}] Inventory released`);
-          // => Calls log method
           // => Delegates to internal method
           // => Outputs result
         },
@@ -3340,34 +2840,28 @@ class OrderSaga {
       {
         name: "Process Payment",
         execute: async () => {
-          // => Calls method and assigns result
+          // => Create data structure
           console.log(`[${this.sagaId}] Processing payment of ${this.totalAmount} for customer ${this.customerId}`);
-          // => Calls log method
           // => Delegates to internal method
           // => Outputs result
           // => Call Payment Service
           // => await paymentService.charge(this.customerId, this.totalAmount)
           await this.simulateServiceCall();
-          // => Calls simulateServiceCall method
           // => Delegates to internal method
           console.log(`[${this.sagaId}] Payment processed`);
-          // => Calls log method
           // => Delegates to internal method
           // => Outputs result
         },
         compensate: async () => {
-          // => Calls method and assigns result
+          // => Create data structure
           console.log(`[${this.sagaId}] Refunding payment of ${this.totalAmount}`);
-          // => Calls log method
           // => Delegates to internal method
           // => Outputs result
           // => Call Payment Service to refund
           // => await paymentService.refund(this.customerId, this.totalAmount)
           await this.simulateServiceCall();
-          // => Calls simulateServiceCall method
           // => Delegates to internal method
           console.log(`[${this.sagaId}] Payment refunded`);
-          // => Calls log method
           // => Delegates to internal method
           // => Outputs result
         },
@@ -3375,34 +2869,28 @@ class OrderSaga {
       {
         name: "Ship Order",
         execute: async () => {
-          // => Calls method and assigns result
+          // => Create data structure
           console.log(`[${this.sagaId}] Shipping order ${this.orderId}`);
-          // => Calls log method
           // => Delegates to internal method
           // => Outputs result
           // => Call Shipping Service
           // => await shippingService.ship(this.orderId)
           await this.simulateServiceCall();
-          // => Calls simulateServiceCall method
           // => Delegates to internal method
           console.log(`[${this.sagaId}] Order shipped`);
-          // => Calls log method
           // => Delegates to internal method
           // => Outputs result
         },
         compensate: async () => {
-          // => Calls method and assigns result
+          // => Create data structure
           console.log(`[${this.sagaId}] Cancelling shipment for order ${this.orderId}`);
-          // => Calls log method
           // => Delegates to internal method
           // => Outputs result
           // => Call Shipping Service to cancel
           // => await shippingService.cancel(this.orderId)
           await this.simulateServiceCall();
-          // => Calls simulateServiceCall method
           // => Delegates to internal method
           console.log(`[${this.sagaId}] Shipment cancelled`);
-          // => Calls log method
           // => Delegates to internal method
           // => Outputs result
         },
@@ -3411,64 +2899,51 @@ class OrderSaga {
   }
 
   async execute(): Promise<void> {
-    // => Calls execute method
     // => Execute saga steps sequentially
     try {
       for (const step of this.steps) {
+        // => Operation: for()
         console.log(`[${this.sagaId}] Executing step: ${step.name}`);
-        // => Calls log method
         // => Delegates to internal method
         // => Outputs result
         await step.execute();
-        // => Calls execute method
         // => Execute forward action
         this.completedSteps.push(step);
-        // => Calls push method
         // => Delegates to internal method
         // => Track completion for potential compensation
       }
       console.log(`[${this.sagaId}] Saga completed successfully`);
-      // => Calls log method
       // => Delegates to internal method
       // => Outputs result
     } catch (error) {
       // => Step failed, initiate compensation
       console.error(`[${this.sagaId}] Saga failed:`, error);
-      // => Calls error method
       // => Delegates to internal method
       await this.compensate();
-      // => Calls compensate method
       // => Delegates to internal method
       throw error;
     }
   }
 
   private async compensate(): Promise<void> {
-    // => Calls compensate method
     // => Rollback completed steps in reverse order
     console.log(`[${this.sagaId}] Starting compensation (${this.completedSteps.length} steps)`);
-    // => Calls log method
     // => Delegates to internal method
     // => Outputs result
 
     const stepsToCompensate = [...this.completedSteps].reverse();
-    // => Creates variable: stepsToCompensate
-    // => Assigns value: [...this.completedSteps].reverse()
-    // => Declares stepsToCompensate
     // => Compensate in reverse order (LIFO)
 
     for (const step of stepsToCompensate) {
+      // => Operation: for()
       try {
         console.log(`[${this.sagaId}] Compensating step: ${step.name}`);
-        // => Calls log method
         // => Delegates to internal method
         // => Outputs result
         await step.compensate();
-        // => Calls compensate method
         // => Execute compensation action
       } catch (error) {
         console.error(`[${this.sagaId}] Compensation failed for ${step.name}:`, error);
-        // => Calls error method
         // => Delegates to internal method
         // => Log but continue compensating other steps
         // => Production: send alerts, record in dead letter queue
@@ -3476,28 +2951,21 @@ class OrderSaga {
     }
 
     console.log(`[${this.sagaId}] Compensation completed`);
-    // => Calls log method
     // => Delegates to internal method
     // => Outputs result
   }
 
   private async simulateServiceCall(): Promise<void> {
-    // => Calls simulateServiceCall method
     // => Simulate async service call
     await new Promise((resolve) => setTimeout(resolve, 100));
-    // => Calls method and assigns result
+    // => Create Promise instance
   }
 }
 
 // Saga Orchestrator - manages saga lifecycle
 class SagaOrchestrator {
-  // => Domain object representing SagaOrchestrator
-  // => Encapsulates business logic and state
-  // => Domain object: SagaOrchestrator
+  // => SagaOrchestrator: domain model element
   private activeSagas: Map<string, OrderSaga> = new Map();
-  // => Encapsulated field: activeSagas
-  // => Internal state (can only be modified by methods)
-  // => Declares activeSagas
   // => Encapsulated field (not publicly accessible)
 
   async startOrderSaga(
@@ -3506,41 +2974,29 @@ class SagaOrchestrator {
     totalAmount: number,
   ): Promise<void> {
     const sagaId = crypto.randomUUID();
-    // => Creates variable: sagaId
-    // => Assigns value: crypto.randomUUID()
-    // => Declares sagaId
+    // => Store value in sagaId
     const orderId = crypto.randomUUID();
-    // => Creates variable: orderId
-    // => Assigns value: crypto.randomUUID()
-    // => Declares orderId
     // => Generate unique IDs for saga and order
 
     const saga = new OrderSaga(sagaId, orderId, customerId, items, totalAmount);
-    // => Creates variable: saga
-    // => Instantiates new object
-    // => Declares saga
+    // => Store value in saga
     this.activeSagas.set(sagaId, saga);
-    // => Calls set method
     // => Delegates to internal method
     // => Register active saga for tracking
 
     try {
       await saga.execute();
-      // => Calls execute method
       // => Run saga to completion
       this.activeSagas.delete(sagaId);
-      // => Calls delete method
       // => Delegates to internal method
       // => Remove from active sagas
       console.log(`Order ${orderId} completed successfully`);
-      // => Calls log method
       // => Outputs result
     } catch (error) {
       this.activeSagas.delete(sagaId);
-      // => Calls delete method
       // => Delegates to internal method
       console.error(`Order ${orderId} failed and was compensated`);
-      // => Calls error method
+      // => Execute method
       throw error;
     }
   }
@@ -3548,16 +3004,13 @@ class SagaOrchestrator {
 
 // Usage - successful saga
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const orchestrator = new SagaOrchestrator();
-  // => Creates variable: orchestrator
-  // => Instantiates new object
-  // => Declares orchestrator
+  // => Store value in orchestrator
 
   console.log("=== Successful Order Saga ===");
   // => Outputs result
   await orchestrator.startOrderSaga("CUST-001", [{ productId: "PROD-001", quantity: 2 }], 150);
-  // => Calls startOrderSaga method
   // => Output: [saga-id] Executing step: Reserve Inventory
   // => Output: [saga-id] Inventory reserved
   // => Output: [saga-id] Executing step: Process Payment
@@ -3580,366 +3033,327 @@ Saga Choreography achieves distributed transactions through event-driven collabo
 ```typescript
 // Services communicate via events (no central orchestrator)
 class OrderPlacedEvent extends DomainEvent {
-  // => Domain object representing OrderPlacedEvent
-  // => Encapsulates business logic and state
-  // => Domain object: OrderPlacedEvent
+  // => OrderPlacedEvent: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     public readonly orderId: string,
+    // => Field: readonly (public)
     public readonly customerId: string,
+    // => Field: readonly (public)
     public readonly items: Array<{ productId: string; quantity: number }>,
+    // => Field: readonly (public)
     public readonly totalAmount: number,
+    // => Field: readonly (public)
   ) {
+    // => Executes domain logic
     super();
-    // => Calls super method
+    // => Updates aggregate state
   }
+  // => Validates business rule
 }
+// => Enforces invariant
 
 class InventoryReservedEvent extends DomainEvent {
-  // => Domain object representing InventoryReservedEvent
-  // => Encapsulates business logic and state
-  // => Domain object: InventoryReservedEvent
+  // => InventoryReservedEvent: domain model element
   constructor(public readonly orderId: string) {
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     super();
-    // => Calls super method
+    // => Encapsulates domain knowledge
   }
+  // => Delegates to domain service
 }
+// => Maintains consistency boundary
 
 class InventoryReservationFailedEvent extends DomainEvent {
-  // => Domain object representing InventoryReservationFailedEvent
-  // => Encapsulates business logic and state
-  // => Domain object: InventoryReservationFailedEvent
+  // => InventoryReservationFailedEvent: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     public readonly orderId: string,
+    // => Field: readonly (public)
     public readonly reason: string,
+    // => Field: readonly (public)
   ) {
+    // => Applies domain event
     super();
-    // => Calls super method
+    // => Coordinates with bounded context
   }
+  // => Implements tactical pattern
 }
+// => Protects aggregate integrity
 
 class PaymentProcessedEvent extends DomainEvent {
-  // => Domain object representing PaymentProcessedEvent
-  // => Encapsulates business logic and state
-  // => Domain object: PaymentProcessedEvent
+  // => PaymentProcessedEvent: domain model element
   constructor(public readonly orderId: string) {
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     super();
-    // => Calls super method
+    // => Ensures transactional consistency
   }
+  // => Manages entity lifecycle
 }
+// => Preserves domain model
 
 class PaymentFailedEvent extends DomainEvent {
-  // => Domain object representing PaymentFailedEvent
-  // => Encapsulates business logic and state
-  // => Domain object: PaymentFailedEvent
+  // => PaymentFailedEvent: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     public readonly orderId: string,
+    // => Field: readonly (public)
     public readonly reason: string,
+    // => Field: readonly (public)
   ) {
+    // => Communicates domain intent
     super();
-    // => Calls super method
+    // => Executes domain logic
   }
+  // => Updates aggregate state
 }
+// => Validates business rule
 
 class OrderCompletedEvent extends DomainEvent {
-  // => Domain object representing OrderCompletedEvent
-  // => Encapsulates business logic and state
-  // => Domain object: OrderCompletedEvent
+  // => OrderCompletedEvent: domain model element
   constructor(public readonly orderId: string) {
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     super();
-    // => Calls super method
+    // => Enforces invariant
   }
+  // => Encapsulates domain knowledge
 }
+// => Delegates to domain service
 
 class OrderCancelledEvent extends DomainEvent {
-  // => Domain object representing OrderCancelledEvent
-  // => Encapsulates business logic and state
-  // => Domain object: OrderCancelledEvent
+  // => OrderCancelledEvent: domain model element
   constructor(public readonly orderId: string) {
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     super();
-    // => Calls super method
+    // => Maintains consistency boundary
   }
+  // => Applies domain event
 }
+// => Coordinates with bounded context
 
 // Order Service - initiates saga by placing order
 class OrderService {
-  // => Domain object representing OrderService
-  // => Encapsulates business logic and state
-  // => Domain object: OrderService
+  // => OrderService: domain model element
   constructor(private readonly eventBus: IntegrationEventBus) {}
-  // => Constructor initializes domain object
-  // => Establishes valid initial state
-  // => Constructor initializes instance
+  // => Initialize object with parameters
 
   async placeOrder(
+    // => Implements tactical pattern
     customerId: string,
+    // => Protects aggregate integrity
     items: Array<{ productId: string; quantity: number }>,
+    // => Ensures transactional consistency
     totalAmount: number,
+    // => Manages entity lifecycle
   ): Promise<string> {
+    // => Preserves domain model
     const orderId = crypto.randomUUID();
-    // => Creates variable: orderId
-    // => Assigns value: crypto.randomUUID()
-    // => Declares orderId
+    // => Store value in orderId
     console.log(`[OrderService] Order ${orderId} placed`);
-    // => Calls log method
     // => Outputs result
 
     // => Publish event to start saga
     await this.eventBus.publish(new OrderPlacedEvent(orderId, customerId, items, totalAmount));
-    // => Calls publish method
     // => Delegates to internal method
     // => No direct service calls, only event
     // => Other services react to event
 
     return orderId;
     // => Returns orderId
-    // => Returns value
   }
+  // => Communicates domain intent
 
   async handleInventoryReservationFailed(event: InventoryReservationFailedEvent): Promise<void> {
-    // => Calls handleInventoryReservationFailed method
     // => React to inventory failure
     console.log(`[OrderService] Order ${event.orderId} cancelled: ${event.reason}`);
-    // => Calls log method
     // => Outputs result
     await this.eventBus.publish(new OrderCancelledEvent(event.orderId));
-    // => Calls publish method
     // => Delegates to internal method
     // => Publish cancellation event
   }
+  // => Executes domain logic
 
   async handlePaymentFailed(event: PaymentFailedEvent): Promise<void> {
-    // => Calls handlePaymentFailed method
     // => React to payment failure
     console.log(`[OrderService] Order ${event.orderId} cancelled: ${event.reason}`);
-    // => Calls log method
     // => Outputs result
     await this.eventBus.publish(new OrderCancelledEvent(event.orderId));
-    // => Calls publish method
     // => Delegates to internal method
   }
+  // => Updates aggregate state
 
   async handleOrderCompleted(event: OrderCompletedEvent): Promise<void> {
-    // => Calls handleOrderCompleted method
+    // => Operation: handleOrderCompleted()
     console.log(`[OrderService] Order ${event.orderId} completed successfully`);
-    // => Calls log method
     // => Outputs result
   }
+  // => Validates business rule
 }
+// => Enforces invariant
 
 // Inventory Service - reacts to OrderPlaced, reserves inventory
 class InventoryService {
-  // => Domain object representing InventoryService
-  // => Encapsulates business logic and state
-  // => Domain object: InventoryService
+  // => InventoryService: domain model element
   constructor(private readonly eventBus: IntegrationEventBus) {}
-  // => Constructor initializes domain object
-  // => Establishes valid initial state
-  // => Constructor initializes instance
+  // => Initialize object with parameters
 
   async handleOrderPlaced(event: OrderPlacedEvent): Promise<void> {
-    // => Calls handleOrderPlaced method
     // => React to order placement
     console.log(`[InventoryService] Reserving inventory for order ${event.orderId}`);
-    // => Calls log method
     // => Outputs result
 
     try {
       // => Attempt inventory reservation
       // await this.reserveItems(event.items)
       await new Promise((resolve) => setTimeout(resolve, 100));
-      // => Calls method and assigns result
+      // => Create Promise instance
       console.log(`[InventoryService] Inventory reserved for order ${event.orderId}`);
-      // => Calls log method
       // => Outputs result
 
       await this.eventBus.publish(new InventoryReservedEvent(event.orderId));
-      // => Calls publish method
       // => Delegates to internal method
       // => Publish success event (triggers next step)
     } catch (error) {
+      // => Encapsulates domain knowledge
       console.error(`[InventoryService] Reservation failed for order ${event.orderId}`);
-      // => Calls error method
+      // => Execute method
       await this.eventBus.publish(new InventoryReservationFailedEvent(event.orderId, "Insufficient inventory"));
-      // => Calls publish method
       // => Delegates to internal method
       // => Publish failure event (triggers compensation)
     }
+    // => Delegates to domain service
   }
+  // => Maintains consistency boundary
 
   async handleOrderCancelled(event: OrderCancelledEvent): Promise<void> {
-    // => Calls handleOrderCancelled method
     // => Compensation: release inventory
     console.log(`[InventoryService] Releasing inventory for cancelled order ${event.orderId}`);
-    // => Calls log method
     // => Outputs result
     // await this.releaseItems(event.orderId)
   }
+  // => Applies domain event
 }
+// => Coordinates with bounded context
 
 // Payment Service - reacts to InventoryReserved, processes payment
 class PaymentService {
-  // => Domain object representing PaymentService
-  // => Encapsulates business logic and state
-  // => Domain object: PaymentService
+  // => PaymentService: domain model element
   constructor(private readonly eventBus: IntegrationEventBus) {}
-  // => Constructor initializes domain object
-  // => Establishes valid initial state
-  // => Constructor initializes instance
+  // => Initialize object with parameters
 
   async handleInventoryReserved(event: InventoryReservedEvent): Promise<void> {
-    // => Calls handleInventoryReserved method
     // => React to inventory reservation success
     console.log(`[PaymentService] Processing payment for order ${event.orderId}`);
-    // => Calls log method
     // => Outputs result
 
     try {
       // => Attempt payment
       // await this.chargeCustomer(customerId, amount)
       await new Promise((resolve) => setTimeout(resolve, 100));
-      // => Calls method and assigns result
+      // => Create Promise instance
       console.log(`[PaymentService] Payment processed for order ${event.orderId}`);
-      // => Calls log method
       // => Outputs result
 
       await this.eventBus.publish(new PaymentProcessedEvent(event.orderId));
-      // => Calls publish method
       // => Delegates to internal method
       // => Publish success event (triggers next step)
     } catch (error) {
+      // => Implements tactical pattern
       console.error(`[PaymentService] Payment failed for order ${event.orderId}`);
-      // => Calls error method
+      // => Execute method
       await this.eventBus.publish(new PaymentFailedEvent(event.orderId, "Payment declined"));
-      // => Calls publish method
       // => Delegates to internal method
       // => Publish failure event (triggers compensation)
     }
+    // => Protects aggregate integrity
   }
+  // => Ensures transactional consistency
 
   async handleOrderCancelled(event: OrderCancelledEvent): Promise<void> {
-    // => Calls handleOrderCancelled method
     // => Compensation: refund payment (if charged)
     console.log(`[PaymentService] Refunding payment for cancelled order ${event.orderId}`);
-    // => Calls log method
     // => Outputs result
     // await this.refundCustomer(event.orderId)
   }
+  // => Manages entity lifecycle
 }
+// => Preserves domain model
 
 // Shipping Service - reacts to PaymentProcessed, ships order
 class ShippingService {
-  // => Domain object representing ShippingService
-  // => Encapsulates business logic and state
-  // => Domain object: ShippingService
+  // => ShippingService: domain model element
   constructor(private readonly eventBus: IntegrationEventBus) {}
-  // => Constructor initializes domain object
-  // => Establishes valid initial state
-  // => Constructor initializes instance
+  // => Initialize object with parameters
 
   async handlePaymentProcessed(event: PaymentProcessedEvent): Promise<void> {
-    // => Calls handlePaymentProcessed method
     // => React to payment success
     console.log(`[ShippingService] Shipping order ${event.orderId}`);
-    // => Calls log method
     // => Outputs result
 
     // => Ship order
     // await this.shipOrder(event.orderId)
     await new Promise((resolve) => setTimeout(resolve, 100));
-    // => Calls method and assigns result
+    // => Create Promise instance
     console.log(`[ShippingService] Order ${event.orderId} shipped`);
-    // => Calls log method
     // => Outputs result
 
     await this.eventBus.publish(new OrderCompletedEvent(event.orderId));
-    // => Calls publish method
     // => Delegates to internal method
     // => Publish completion event
   }
+  // => Communicates domain intent
 
   async handleOrderCancelled(event: OrderCancelledEvent): Promise<void> {
-    // => Calls handleOrderCancelled method
     // => Compensation: cancel shipment
     console.log(`[ShippingService] Cancelling shipment for order ${event.orderId}`);
-    // => Calls log method
     // => Outputs result
     // await this.cancelShipment(event.orderId)
   }
+  // => Executes domain logic
 }
+// => Updates aggregate state
 
 // Usage - choreography saga
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const eventBus = new IntegrationEventBus();
-  // => Creates variable: eventBus
-  // => Instantiates new object
-  // => Declares eventBus
+  // => Store value in eventBus
 
   // Setup services
   const orderService = new OrderService(eventBus);
-  // => Creates variable: orderService
-  // => Instantiates new object
-  // => Declares orderService
+  // => Store value in orderService
   const inventoryService = new InventoryService(eventBus);
-  // => Creates variable: inventoryService
-  // => Instantiates new object
-  // => Declares inventoryService
+  // => Store value in inventoryService
   const paymentService = new PaymentService(eventBus);
-  // => Creates variable: paymentService
-  // => Instantiates new object
-  // => Declares paymentService
+  // => Store value in paymentService
   const shippingService = new ShippingService(eventBus);
-  // => Creates variable: shippingService
-  // => Instantiates new object
-  // => Declares shippingService
+  // => Store value in shippingService
 
   // Wire event handlers (choreography connections)
   eventBus.subscribe(OrderPlacedEvent, (e) => inventoryService.handleOrderPlaced(e));
-  // => Calls method and assigns result
+  // => Validates business rule
   eventBus.subscribe(InventoryReservedEvent, (e) => paymentService.handleInventoryReserved(e));
-  // => Calls method and assigns result
+  // => Enforces invariant
   eventBus.subscribe(PaymentProcessedEvent, (e) => shippingService.handlePaymentProcessed(e));
-  // => Calls method and assigns result
+  // => Encapsulates domain knowledge
   eventBus.subscribe(OrderCompletedEvent, (e) => orderService.handleOrderCompleted(e));
-  // => Calls method and assigns result
+  // => Delegates to domain service
 
   // Compensation handlers
   eventBus.subscribe(InventoryReservationFailedEvent, (e) => orderService.handleInventoryReservationFailed(e));
-  // => Calls method and assigns result
+  // => Maintains consistency boundary
   eventBus.subscribe(PaymentFailedEvent, (e) => orderService.handlePaymentFailed(e));
-  // => Calls method and assigns result
+  // => Applies domain event
   eventBus.subscribe(OrderCancelledEvent, (e) => inventoryService.handleOrderCancelled(e));
-  // => Calls method and assigns result
+  // => Coordinates with bounded context
   eventBus.subscribe(OrderCancelledEvent, (e) => paymentService.handleOrderCancelled(e));
-  // => Calls method and assigns result
+  // => Implements tactical pattern
   eventBus.subscribe(OrderCancelledEvent, (e) => shippingService.handleOrderCancelled(e));
-  // => Calls method and assigns result
+  // => Protects aggregate integrity
 
   console.log("=== Successful Choreography Saga ===");
   // => Outputs result
   await orderService.placeOrder("CUST-001", [{ productId: "PROD-001", quantity: 2 }], 150);
-  // => Calls placeOrder method
   // => Output: [OrderService] Order order-id placed
   // => Output: [InventoryService] Reserving inventory for order order-id
   // => Output: [InventoryService] Inventory reserved for order order-id
@@ -3951,6 +3365,7 @@ class ShippingService {
 
   // No central orchestrator - services react to events
 })();
+// => Ensures transactional consistency
 ```
 
 **Key Takeaway**: Saga Choreography achieves distributed transactions through event-driven service collaboration. No central orchestrator—each service publishes events and reacts to others' events. Compensation triggered by failure events flowing through system.
@@ -3964,382 +3379,386 @@ Sagas must handle failures gracefully and ensure idempotent operations to preven
 ```typescript
 // Idempotency Key - prevents duplicate saga step execution
 interface IdempotencyRecord {
+  // => IdempotencyRecord: contract definition
   key: string;
+  // => Executes domain logic
   processedAt: Date;
+  // => Updates aggregate state
   result?: any;
+  // => Validates business rule
 }
+// => Enforces invariant
 
 class IdempotencyStore {
-  // => Domain object representing IdempotencyStore
-  // => Encapsulates business logic and state
-  // => Domain object: IdempotencyStore
+  // => IdempotencyStore: domain model element
   private records: Map<string, IdempotencyRecord> = new Map();
-  // => Encapsulated field: records
-  // => Internal state (can only be modified by methods)
-  // => Declares records
   // => Encapsulated field (not publicly accessible)
   // => Track processed operations
   // => Production: PostgreSQL, DynamoDB
 
   async isProcessed(key: string): Promise<boolean> {
-    // => Calls isProcessed method
     // => Check if operation already processed
     return this.records.has(key);
-    // => Returns this.records.has(key)
+    // => Return result to caller
   }
+  // => Encapsulates domain knowledge
 
   async recordProcessed(key: string, result?: any): Promise<void> {
-    // => Calls recordProcessed method
     // => Mark operation as processed
     this.records.set(key, {
+      // => Delegates to domain service
       key,
+      // => Maintains consistency boundary
       processedAt: new Date(),
-      // => Calls Date method
+      // => Applies domain event
       result,
+      // => Coordinates with bounded context
     });
+    // => Implements tactical pattern
   }
+  // => Protects aggregate integrity
 
   async getResult(key: string): Promise<any | null> {
-    // => Calls getResult method
     // => Retrieve cached result for idempotent replay
     const record = this.records.get(key);
-    // => Creates variable: record
-    // => Assigns value: this.records.get(key)
-    // => Declares record
+    // => Store value in record
     return record?.result || null;
     // => Returns record?.result || null
-    // => Returns value
   }
+  // => Ensures transactional consistency
 }
+// => Manages entity lifecycle
 
 // Idempotent Saga Step
 class IdempotentSagaStep implements SagaStep {
-  // => Domain object representing IdempotentSagaStep
-  // => Encapsulates business logic and state
-  // => Domain object: IdempotentSagaStep
+  // => IdempotentSagaStep: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     public readonly name: string,
+    // => Field: readonly (public)
     private readonly stepId: string,
-    // => Encapsulated field: stepId
-    // => Immutable (readonly) - cannot change after construction
     // => Unique ID for this step instance
     private readonly executeAction: () => Promise<void>,
-    // => Encapsulated field: executeAction
-    // => Immutable (readonly) - cannot change after construction
-    // => Calls method and assigns result
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
     private readonly compensateAction: () => Promise<void>,
-    // => Encapsulated field: compensateAction
-    // => Immutable (readonly) - cannot change after construction
-    // => Calls method and assigns result
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
     private readonly idempotencyStore: IdempotencyStore,
-    // => Encapsulated field: idempotencyStore
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
   ) {}
+  // => Preserves domain model
 
   async execute(): Promise<void> {
-    // => Calls execute method
+    // => Operation: execute()
     const idempotencyKey = `execute-${this.stepId}`;
-    // => Creates variable: idempotencyKey
-    // => Assigns value: `execute-${this.stepId}`
-    // => Declares idempotencyKey
     // => Unique key for this execution
 
     if (await this.idempotencyStore.isProcessed(idempotencyKey)) {
-      // => Checks business rule: await this.idempotencyStore.isProcessed(idempotencyKey)
-      // => Validates domain constraint
       // => Already processed, skip execution
       console.log(`[${this.name}] Already executed (idempotency key: ${idempotencyKey})`);
-      // => Calls log method
       // => Delegates to internal method
       // => Outputs result
       return;
       // => Safe to retry without side effects
     }
+    // => Communicates domain intent
 
     await this.executeAction();
-    // => Calls executeAction method
     // => Delegates to internal method
     // => Execute only if not already processed
 
     await this.idempotencyStore.recordProcessed(idempotencyKey);
-    // => Calls recordProcessed method
     // => Delegates to internal method
     // => Mark as processed
   }
+  // => Executes domain logic
 
   async compensate(): Promise<void> {
-    // => Calls compensate method
+    // => Operation: compensate()
     const idempotencyKey = `compensate-${this.stepId}`;
-    // => Creates variable: idempotencyKey
-    // => Assigns value: `compensate-${this.stepId}`
-    // => Declares idempotencyKey
     // => Separate key for compensation
 
     if (await this.idempotencyStore.isProcessed(idempotencyKey)) {
-      // => Checks business rule: await this.idempotencyStore.isProcessed(idempotencyKey)
-      // => Validates domain constraint
+      // => Conditional check
       console.log(`[${this.name}] Already compensated (idempotency key: ${idempotencyKey})`);
-      // => Calls log method
       // => Delegates to internal method
       // => Outputs result
       return;
+      // => Updates aggregate state
     }
+    // => Validates business rule
 
     await this.compensateAction();
-    // => Calls compensateAction method
     // => Delegates to internal method
     await this.idempotencyStore.recordProcessed(idempotencyKey);
-    // => Calls recordProcessed method
     // => Delegates to internal method
   }
+  // => Enforces invariant
 }
+// => Encapsulates domain knowledge
 
 // Saga with Retry Logic
 class ResilientOrderSaga extends OrderSaga {
-  // => Domain object representing ResilientOrderSaga
-  // => Encapsulates business logic and state
-  // => Domain object: ResilientOrderSaga
+  // => ResilientOrderSaga: domain model element
   private maxRetries = 3;
-  // => Declares maxRetries
   // => Encapsulated field (not publicly accessible)
   private retryDelayMs = 1000;
-  // => Declares retryDelayMs
   // => Encapsulated field (not publicly accessible)
 
   async executeWithRetry(): Promise<void> {
-    // => Calls executeWithRetry method
+    // => Operation: executeWithRetry()
     let attempt = 0;
-    // => Creates variable: attempt
-    // => Assigns value: 0
-    // => Declares attempt
+    // => Store value in attempt
 
     while (attempt < this.maxRetries) {
+      // => Operation: while()
       try {
+        // => Delegates to domain service
         await this.execute();
-        // => Calls execute method
         // => Delegates to internal method
         return;
         // => Success, exit retry loop
       } catch (error) {
+        // => Maintains consistency boundary
         attempt++;
+        // => Applies domain event
         console.error(`Saga attempt ${attempt} failed:`, error);
-        // => Calls error method
+        // => Execute method
 
         if (attempt < this.maxRetries) {
-          // => Checks business rule: attempt < this.maxRetries
-          // => Validates domain constraint
+          // => Operation: if()
           console.log(`Retrying in ${this.retryDelayMs}ms...`);
-          // => Calls log method
           // => Delegates to internal method
           // => Outputs result
           await new Promise((resolve) => setTimeout(resolve, this.retryDelayMs));
-          // => Calls method and assigns result
           // => Wait before retry
         } else {
+          // => Coordinates with bounded context
           console.error(`Saga failed after ${this.maxRetries} attempts`);
-          // => Calls error method
           // => Delegates to internal method
           throw error;
           // => Exhausted retries, propagate error
         }
+        // => Implements tactical pattern
       }
+      // => Protects aggregate integrity
     }
+    // => Ensures transactional consistency
   }
+  // => Manages entity lifecycle
 }
+// => Preserves domain model
 
 // Saga Failure Recovery - restores saga state after crash
 interface SagaState {
+  // => SagaState: contract definition
   sagaId: string;
+  // => Communicates domain intent
   orderId: string;
+  // => Executes domain logic
   currentStep: number;
+  // => Updates aggregate state
   status: "in_progress" | "completed" | "compensating" | "failed";
+  // => Validates business rule
   completedSteps: string[];
+  // => Enforces invariant
   createdAt: Date;
+  // => Encapsulates domain knowledge
 }
+// => Delegates to domain service
 
 class SagaStateStore {
-  // => Domain object representing SagaStateStore
-  // => Encapsulates business logic and state
-  // => Domain object: SagaStateStore
+  // => SagaStateStore: domain model element
   private states: Map<string, SagaState> = new Map();
-  // => Encapsulated field: states
-  // => Internal state (can only be modified by methods)
-  // => Declares states
   // => Encapsulated field (not publicly accessible)
   // => Persist saga state for recovery
   // => Production: database with strong consistency
 
   async saveState(state: SagaState): Promise<void> {
-    // => Calls saveState method
+    // => Operation: saveState()
     this.states.set(state.sagaId, state);
-    // => Calls set method
     // => Delegates to internal method
   }
+  // => Maintains consistency boundary
 
   async getState(sagaId: string): Promise<SagaState | null> {
-    // => Calls getState method
+    // => Operation: getState()
     return this.states.get(sagaId) || null;
-    // => Returns this.states.get(sagaId) || null
+    // => Return result to caller
   }
+  // => Applies domain event
 
   async getInProgressSagas(): Promise<SagaState[]> {
-    // => Calls getInProgressSagas method
     // => Find sagas that didn't complete (for recovery)
     return Array.from(this.states.values()).filter((state) => state.status === "in_progress");
     // => Returns Array.from(this.states.values()).filter((state) => state.status === "in_progress")
-    // => Calls method and assigns result
   }
+  // => Coordinates with bounded context
 }
+// => Implements tactical pattern
 
 class RecoverableOrderSaga {
-  // => Domain object representing RecoverableOrderSaga
-  // => Encapsulates business logic and state
-  // => Domain object: RecoverableOrderSaga
+  // => RecoverableOrderSaga: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     private readonly sagaId: string,
-    // => Encapsulated field: sagaId
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
     private readonly orderId: string,
-    // => Encapsulated field: orderId
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
     private readonly steps: SagaStep[],
-    // => Encapsulated field: steps
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
     private readonly stateStore: SagaStateStore,
-    // => Encapsulated field: stateStore
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
   ) {}
+  // => Protects aggregate integrity
 
   async execute(): Promise<void> {
-    // => Calls execute method
     // => Execute with state persistence for recovery
     for (let i = 0; i < this.steps.length; i++) {
-      // => Calls method and assigns result
+      // => Operation: for()
       const step = this.steps[i];
-      // => Creates variable: step
-      // => Assigns value: this.steps[i]
-      // => Declares step
+      // => Store value in step
 
       await this.stateStore.saveState({
+        // => Ensures transactional consistency
         sagaId: this.sagaId,
+        // => Manages entity lifecycle
         orderId: this.orderId,
+        // => Preserves domain model
         currentStep: i,
+        // => Communicates domain intent
         status: "in_progress",
+        // => Executes domain logic
         completedSteps: this.steps.slice(0, i).map((s) => s.name),
-        // => Calls method and assigns result
+        // => map: process collection elements
         createdAt: new Date(),
-        // => Calls Date method
+        // => Updates aggregate state
       });
       // => Persist state before each step
 
       try {
+        // => Validates business rule
         await step.execute();
-        // => Calls execute method
         // => Execute step
       } catch (error) {
+        // => Enforces invariant
         await this.stateStore.saveState({
+          // => Encapsulates domain knowledge
           sagaId: this.sagaId,
+          // => Delegates to domain service
           orderId: this.orderId,
+          // => Maintains consistency boundary
           currentStep: i,
+          // => Applies domain event
           status: "compensating",
+          // => Coordinates with bounded context
           completedSteps: this.steps.slice(0, i).map((s) => s.name),
-          // => Calls method and assigns result
+          // => map: process collection elements
           createdAt: new Date(),
-          // => Calls Date method
+          // => Implements tactical pattern
         });
+        // => Protects aggregate integrity
         throw error;
+        // => Ensures transactional consistency
       }
+      // => Manages entity lifecycle
     }
+    // => Preserves domain model
 
     await this.stateStore.saveState({
+      // => Communicates domain intent
       sagaId: this.sagaId,
+      // => Executes domain logic
       orderId: this.orderId,
+      // => Updates aggregate state
       currentStep: this.steps.length,
+      // => Validates business rule
       status: "completed",
+      // => Enforces invariant
       completedSteps: this.steps.map((s) => s.name),
-      // => Calls method and assigns result
+      // => map: process collection elements
       createdAt: new Date(),
-      // => Calls Date method
+      // => Encapsulates domain knowledge
     });
     // => Mark saga as completed
   }
+  // => Delegates to domain service
 
   static async recover(state: SagaState, steps: SagaStep[], stateStore: SagaStateStore): Promise<void> {
-    // => Calls recover method
     // => Resume saga from failure point
     console.log(`Recovering saga ${state.sagaId} from step ${state.currentStep}`);
-    // => Calls log method
     // => Outputs result
 
     if (state.status === "in_progress") {
-      // => Checks business rule: state.status === "in_progress"
-      // => Validates domain constraint
-      // => Calls method and assigns result
       // => Resume forward execution
       const saga = new RecoverableOrderSaga(state.sagaId, state.orderId, steps, stateStore);
-      // => Creates variable: saga
-      // => Instantiates new object
-      // => Declares saga
+      // => Store value in saga
       try {
+        // => Maintains consistency boundary
         // Resume from current step
         for (let i = state.currentStep; i < steps.length; i++) {
-          // => Calls method and assigns result
+          // => Operation: for()
           await steps[i].execute();
-          // => Calls execute method
+          // => Execute method
         }
+        // => Applies domain event
       } catch (error) {
+        // => Coordinates with bounded context
         console.error("Recovery failed, compensating");
-        // => Calls error method
+        // => Execute method
         // Compensate completed steps
       }
+      // => Implements tactical pattern
     }
+    // => Protects aggregate integrity
   }
+  // => Ensures transactional consistency
 }
+// => Manages entity lifecycle
 
 // Usage
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const idempotencyStore = new IdempotencyStore();
-  // => Creates variable: idempotencyStore
-  // => Instantiates new object
-  // => Declares idempotencyStore
+  // => Store value in idempotencyStore
 
   const step1 = new IdempotentSagaStep(
-    // => Creates variable: step1
-    // => Instantiates new object
-    // => Declares step1
+    // => Store value in step1
     "Reserve Inventory",
+    // => Preserves domain model
     "saga-1-step-1",
+    // => Communicates domain intent
     async () => {
-      // => Calls method and assigns result
+      // => Create data structure
       console.log("Reserving inventory...");
-      // => Calls log method
       // => Outputs result
       await new Promise((resolve) => setTimeout(resolve, 100));
-      // => Calls method and assigns result
+      // => Create Promise instance
     },
+    // => Executes domain logic
     async () => console.log("Releasing inventory..."),
     // => Outputs result
     idempotencyStore,
+    // => Updates aggregate state
   );
+  // => Validates business rule
 
   // Execute step
   await step1.execute();
-  // => Calls execute method
   // => Output: Reserving inventory...
 
   // Retry execution (idempotent)
   await step1.execute();
-  // => Calls execute method
   // => Output: [Reserve Inventory] Already executed (idempotency key: execute-saga-1-step-1)
   // => No duplicate execution
 })();
+// => Enforces invariant
 ```
 
 **Key Takeaway**: Saga resilience requires idempotency (prevent duplicate execution), retry logic (handle transient failures), and state persistence (enable recovery after crashes). Idempotency keys track processed operations, state stores enable resuming sagas.
@@ -4355,442 +3774,367 @@ Process Managers coordinate long-running business processes with complex branchi
 ```typescript
 // Process Manager - maintains state and orchestrates multi-step workflow
 class OrderFulfillmentProcessManager {
-  // => Domain object representing OrderFulfillmentProcessManager
-  // => Encapsulates business logic and state
-  // => Domain object: OrderFulfillmentProcessManager
+  // => OrderFulfillmentProcessManager: domain model element
   private orderId: string;
-  // => Encapsulated field: orderId
-  // => Internal state (can only be modified by methods)
-  // => Declares orderId
   // => Encapsulated field (not publicly accessible)
   private status: "new" | "payment_pending" | "inventory_reserved" | "shipped" | "completed" | "failed";
-  // => Encapsulated field: status
-  // => Internal state (can only be modified by methods)
-  // => Declares status
   // => Encapsulated field (not publicly accessible)
   private customerId: string;
-  // => Encapsulated field: customerId
-  // => Internal state (can only be modified by methods)
-  // => Declares customerId
   // => Encapsulated field (not publicly accessible)
   private paymentAttempts: number = 0;
-  // => Encapsulated field: paymentAttempts
-  // => Internal state (can only be modified by methods)
-  // => Declares paymentAttempts
   // => Encapsulated field (not publicly accessible)
   private maxPaymentAttempts: number = 3;
-  // => Encapsulated field: maxPaymentAttempts
-  // => Internal state (can only be modified by methods)
-  // => Declares maxPaymentAttempts
   // => Encapsulated field (not publicly accessible)
   private uncommittedEvents: DomainEvent[] = [];
-  // => Encapsulated field: uncommittedEvents
-  // => Internal state (can only be modified by methods)
-  // => Declares uncommittedEvents
   // => Encapsulated field (not publicly accessible)
 
   constructor() {
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     this.status = "new";
-    // => Sets status to "new"
-    // => Updates internal state
-    // => Updates internal state
+    // => Update status state
   }
+  // => Executes domain logic
 
   // Handle incoming events and transition state
   async handleOrderPlaced(event: OrderPlacedEvent): Promise<void> {
-    // => Calls handleOrderPlaced method
     // => Initialize process
     this.orderId = event.orderId;
-    // => Sets orderId to event.orderId
-    // => Updates internal state
-    // => Updates internal state
+    // => Update orderId state
     this.customerId = event.customerId;
-    // => Sets customerId to event.customerId
-    // => Updates internal state
-    // => Updates internal state
+    // => Update customerId state
     this.status = "payment_pending";
-    // => Sets status to "payment_pending"
-    // => Updates internal state
-    // => Updates internal state
     // => Transition to payment_pending
 
     console.log(`[ProcessManager] Order ${this.orderId} process started`);
-    // => Calls log method
     // => Delegates to internal method
     // => Outputs result
     this.uncommittedEvents.push(new ProcessPaymentCommand(this.orderId, this.customerId, event.totalAmount));
-    // => Calls push method
     // => Delegates to internal method
     // => Emit command to process payment
   }
+  // => Updates aggregate state
 
   async handlePaymentProcessed(event: PaymentProcessedEvent): Promise<void> {
-    // => Calls handlePaymentProcessed method
     // => Payment succeeded
     if (this.status !== "payment_pending") {
-      // => Checks business rule: this.status !== "payment_pending"
-      // => Validates domain constraint
-      // => Calls method and assigns result
+      // => Operation: if()
       console.log(`[ProcessManager] Ignoring PaymentProcessed, wrong state: ${this.status}`);
-      // => Calls log method
       // => Delegates to internal method
       // => Outputs result
       return;
       // => Ignore if not in expected state
     }
+    // => Validates business rule
 
     this.status = "inventory_reserved";
-    // => Sets status to "inventory_reserved"
-    // => Updates internal state
-    // => Updates internal state
     // => Transition state
 
     console.log(`[ProcessManager] Payment confirmed for order ${this.orderId}`);
-    // => Calls log method
     // => Delegates to internal method
     // => Outputs result
     this.uncommittedEvents.push(new ReserveInventoryCommand(this.orderId));
-    // => Calls push method
     // => Delegates to internal method
     // => Emit command to reserve inventory
   }
+  // => Enforces invariant
 
   async handlePaymentFailed(event: PaymentFailedEvent): Promise<void> {
-    // => Calls handlePaymentFailed method
     // => Payment failed
     this.paymentAttempts++;
+    // => Encapsulates domain knowledge
     console.log(`[ProcessManager] Payment failed (attempt ${this.paymentAttempts}/${this.maxPaymentAttempts})`);
-    // => Calls log method
     // => Delegates to internal method
     // => Outputs result
 
     if (this.paymentAttempts < this.maxPaymentAttempts) {
-      // => Checks business rule: this.paymentAttempts < this.maxPaymentAttempts
-      // => Validates domain constraint
       // => Retry payment
       console.log(`[ProcessManager] Retrying payment for order ${this.orderId}`);
-      // => Calls log method
       // => Delegates to internal method
       // => Outputs result
       this.uncommittedEvents.push(new ProcessPaymentCommand(this.orderId, this.customerId, 0));
-      // => Calls push method
       // => Delegates to internal method
       // => Emit retry command
     } else {
       // => Max retries exceeded
       this.status = "failed";
-      // => Sets status to "failed"
-      // => Updates internal state
-      // => Updates internal state
+      // => Update status state
       console.log(`[ProcessManager] Order ${this.orderId} failed: max payment attempts exceeded`);
-      // => Calls log method
       // => Delegates to internal method
       // => Outputs result
       this.uncommittedEvents.push(new CancelOrderCommand(this.orderId));
-      // => Calls push method
       // => Delegates to internal method
       // => Cancel order
     }
+    // => Delegates to domain service
   }
+  // => Maintains consistency boundary
 
   async handleInventoryReserved(event: InventoryReservedEvent): Promise<void> {
-    // => Calls handleInventoryReserved method
     // => Inventory reserved successfully
     if (this.status !== "inventory_reserved") {
-      // => Checks business rule: this.status !== "inventory_reserved"
-      // => Validates domain constraint
-      // => Calls method and assigns result
+      // => Operation: if()
       return;
+      // => Applies domain event
     }
+    // => Coordinates with bounded context
 
     this.status = "shipped";
-    // => Sets status to "shipped"
-    // => Updates internal state
-    // => Updates internal state
+    // => Update status state
     console.log(`[ProcessManager] Inventory reserved for order ${this.orderId}`);
-    // => Calls log method
     // => Delegates to internal method
     // => Outputs result
     this.uncommittedEvents.push(new ShipOrderCommand(this.orderId));
-    // => Calls push method
     // => Delegates to internal method
     // => Emit shipping command
   }
+  // => Implements tactical pattern
 
   async handleOrderShipped(event: any): Promise<void> {
-    // => Calls handleOrderShipped method
     // => Order shipped
     if (this.status !== "shipped") {
-      // => Checks business rule: this.status !== "shipped"
-      // => Validates domain constraint
-      // => Calls method and assigns result
+      // => Operation: if()
       return;
+      // => Protects aggregate integrity
     }
+    // => Ensures transactional consistency
 
     this.status = "completed";
-    // => Sets status to "completed"
-    // => Updates internal state
-    // => Updates internal state
+    // => Update status state
     console.log(`[ProcessManager] Order ${this.orderId} completed successfully`);
-    // => Calls log method
     // => Delegates to internal method
     // => Outputs result
     // => Process complete
   }
+  // => Manages entity lifecycle
 
   getUncommittedEvents(): DomainEvent[] {
     // => Domain operation: getUncommittedEvents
-    // => Modifies state while maintaining invariants
     return [...this.uncommittedEvents];
     // => Returns [...this.uncommittedEvents]
-    // => Returns value
   }
+  // => Preserves domain model
 
   clearUncommittedEvents(): void {
     // => Domain operation: clearUncommittedEvents
-    // => Modifies state while maintaining invariants
     this.uncommittedEvents = [];
-    // => Sets uncommittedEvents to []
-    // => Updates internal state
-    // => Updates internal state
+    // => Update uncommittedEvents state
   }
+  // => Communicates domain intent
 
   getStatus(): string {
     // => Domain operation: getStatus
-    // => Modifies state while maintaining invariants
     return this.status;
-    // => Returns this.status
-    // => Returns value
+    // => Return result to caller
   }
+  // => Executes domain logic
 }
+// => Updates aggregate state
 
 // Commands emitted by Process Manager
 class ProcessPaymentCommand extends DomainEvent {
-  // => Domain object representing ProcessPaymentCommand
-  // => Encapsulates business logic and state
-  // => Domain object: ProcessPaymentCommand
+  // => ProcessPaymentCommand: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     public readonly orderId: string,
+    // => Field: readonly (public)
     public readonly customerId: string,
+    // => Field: readonly (public)
     public readonly amount: number,
+    // => Field: readonly (public)
   ) {
+    // => Validates business rule
     super();
-    // => Calls super method
+    // => Enforces invariant
   }
+  // => Encapsulates domain knowledge
 }
+// => Delegates to domain service
 
 class ReserveInventoryCommand extends DomainEvent {
-  // => Domain object representing ReserveInventoryCommand
-  // => Encapsulates business logic and state
-  // => Domain object: ReserveInventoryCommand
+  // => ReserveInventoryCommand: domain model element
   constructor(public readonly orderId: string) {
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     super();
-    // => Calls super method
+    // => Maintains consistency boundary
   }
+  // => Applies domain event
 }
+// => Coordinates with bounded context
 
 class ShipOrderCommand extends DomainEvent {
-  // => Domain object representing ShipOrderCommand
-  // => Encapsulates business logic and state
-  // => Domain object: ShipOrderCommand
+  // => ShipOrderCommand: domain model element
   constructor(public readonly orderId: string) {
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     super();
-    // => Calls super method
+    // => Implements tactical pattern
   }
+  // => Protects aggregate integrity
 }
+// => Ensures transactional consistency
 
 class CancelOrderCommand extends DomainEvent {
-  // => Domain object representing CancelOrderCommand
-  // => Encapsulates business logic and state
-  // => Domain object: CancelOrderCommand
+  // => CancelOrderCommand: domain model element
   constructor(public readonly orderId: string) {
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     super();
-    // => Calls super method
+    // => Manages entity lifecycle
   }
+  // => Preserves domain model
 }
+// => Communicates domain intent
 
 class OrderShippedEvent extends DomainEvent {
-  // => Domain object representing OrderShippedEvent
-  // => Encapsulates business logic and state
-  // => Domain object: OrderShippedEvent
+  // => OrderShippedEvent: domain model element
   constructor(public readonly orderId: string) {
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     super();
-    // => Calls super method
+    // => Executes domain logic
   }
+  // => Updates aggregate state
 }
+// => Validates business rule
 
 // Process Manager Repository
 class ProcessManagerRepository {
-  // => Domain object representing ProcessManagerRepository
-  // => Encapsulates business logic and state
-  // => Domain object: ProcessManagerRepository
+  // => ProcessManagerRepository: domain model element
   private managers: Map<string, OrderFulfillmentProcessManager> = new Map();
-  // => Encapsulated field: managers
-  // => Internal state (can only be modified by methods)
-  // => Declares managers
   // => Encapsulated field (not publicly accessible)
 
   async getOrCreate(orderId: string): Promise<OrderFulfillmentProcessManager> {
-    // => Calls getOrCreate method
     // => Load existing or create new process manager
     let manager = this.managers.get(orderId);
-    // => Creates variable: manager
-    // => Assigns value: this.managers.get(orderId)
-    // => Declares manager
+    // => Store value in manager
 
     if (!manager) {
-      // => Checks business rule: !manager
-      // => Validates domain constraint
+      // => Operation: if()
       manager = new OrderFulfillmentProcessManager();
-      // => Calls method and assigns result
+      // => Create OrderFulfillmentProcessManager instance
       this.managers.set(orderId, manager);
-      // => Calls set method
       // => Delegates to internal method
       // => Create new process for order
     }
+    // => Enforces invariant
 
     return manager;
     // => Returns manager
-    // => Returns value
   }
+  // => Encapsulates domain knowledge
 
   async save(orderId: string, manager: OrderFulfillmentProcessManager): Promise<void> {
-    // => Calls save method
+    // => Operation: save()
     this.managers.set(orderId, manager);
-    // => Calls set method
     // => Delegates to internal method
     // => Persist process state
   }
+  // => Delegates to domain service
 }
+// => Maintains consistency boundary
 
 // Usage
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const repository = new ProcessManagerRepository();
-  // => Creates variable: repository
-  // => Instantiates new object
-  // => Declares repository
+  // => Store value in repository
   const eventBus = new IntegrationEventBus();
-  // => Creates variable: eventBus
-  // => Instantiates new object
-  // => Declares eventBus
+  // => Store value in eventBus
 
   // Event Router - routes events to process managers
   const routeEvent = async (event: DomainEvent) => {
-    // => Creates variable: routeEvent
-    // => Assigns value: async (event: DomainEvent) => {
-    // => Declares routeEvent
+    // => Store value in routeEvent
     if (
       // => Validates business rule
       event instanceof OrderPlacedEvent ||
+      // => Applies domain event
       event instanceof PaymentProcessedEvent ||
+      // => Coordinates with bounded context
       event instanceof PaymentFailedEvent ||
+      // => Implements tactical pattern
       event instanceof InventoryReservedEvent ||
+      // => Protects aggregate integrity
       event instanceof OrderShippedEvent
+      // => Ensures transactional consistency
     ) {
+      // => Manages entity lifecycle
       const orderId = (event as any).orderId;
-      // => Creates variable: orderId
-      // => Assigns value: (event as any).orderId
-      // => Declares orderId
+      // => Store value in orderId
       const manager = await repository.getOrCreate(orderId);
-      // => Creates variable: manager
-      // => Assigns value: await repository.getOrCreate(orderId)
-      // => Declares manager
       // => Get or create process manager for this order
 
       // Route to appropriate handler
       if (event instanceof OrderPlacedEvent) {
-        // => Checks business rule: event instanceof OrderPlacedEvent
-        // => Validates domain constraint
+        // => Operation: if()
         await manager.handleOrderPlaced(event);
-        // => Calls handleOrderPlaced method
+        // => Execute method
       } else if (event instanceof PaymentProcessedEvent) {
+        // => Preserves domain model
         await manager.handlePaymentProcessed(event);
-        // => Calls handlePaymentProcessed method
+        // => Execute method
       } else if (event instanceof PaymentFailedEvent) {
+        // => Communicates domain intent
         await manager.handlePaymentFailed(event);
-        // => Calls handlePaymentFailed method
+        // => Execute method
       } else if (event instanceof InventoryReservedEvent) {
+        // => Executes domain logic
         await manager.handleInventoryReserved(event);
-        // => Calls handleInventoryReserved method
+        // => Execute method
       } else if (event instanceof OrderShippedEvent) {
+        // => Updates aggregate state
         await manager.handleOrderShipped(event);
-        // => Calls handleOrderShipped method
+        // => Execute method
       }
+      // => Validates business rule
 
       // Emit commands generated by process manager
       for (const command of manager.getUncommittedEvents()) {
-        // => Calls getUncommittedEvents method
+        // => Execute method
         await eventBus.publish(command);
-        // => Calls publish method
+        // => Execute method
       }
+      // => Enforces invariant
       manager.clearUncommittedEvents();
-      // => Calls clearUncommittedEvents method
+      // => Execute method
 
       await repository.save(orderId, manager);
-      // => Calls save method
       // => Persist updated state
     }
+    // => Encapsulates domain knowledge
   };
+  // => Delegates to domain service
 
   // Subscribe process manager to events
   eventBus.subscribe(OrderPlacedEvent, routeEvent);
-  // => Calls subscribe method
+  // => Execute method
   eventBus.subscribe(PaymentProcessedEvent, routeEvent);
-  // => Calls subscribe method
+  // => Execute method
   eventBus.subscribe(PaymentFailedEvent, routeEvent);
-  // => Calls subscribe method
+  // => Execute method
   eventBus.subscribe(InventoryReservedEvent, routeEvent);
-  // => Calls subscribe method
+  // => Execute method
   eventBus.subscribe(OrderShippedEvent, routeEvent);
-  // => Calls subscribe method
+  // => Execute method
 
   // Simulate successful order
   console.log("=== Successful Order Process ===");
   // => Outputs result
   await eventBus.publish(new OrderPlacedEvent("ORDER-001", "CUST-001", [], 100));
-  // => Calls publish method
   // => Output: [ProcessManager] Order ORDER-001 process started
 
   await eventBus.publish(new PaymentProcessedEvent("ORDER-001"));
-  // => Calls publish method
   // => Output: [ProcessManager] Payment confirmed for order ORDER-001
 
   await eventBus.publish(new InventoryReservedEvent("ORDER-001"));
-  // => Calls publish method
   // => Output: [ProcessManager] Inventory reserved for order ORDER-001
 
   await eventBus.publish(new OrderShippedEvent("ORDER-001"));
-  // => Calls publish method
   // => Output: [ProcessManager] Order ORDER-001 completed successfully
 
   const manager = await repository.getOrCreate("ORDER-001");
-  // => Creates variable: manager
-  // => Assigns value: await repository.getOrCreate("ORDER-001")
-  // => Declares manager
+  // => Store value in manager
   console.log(`Final status: ${manager.getStatus()}`);
-  // => Calls log method
   // => Outputs result
   // => Output: Final status: completed
 })();
+// => Maintains consistency boundary
 ```
 
 **Key Takeaway**: Process Managers maintain state across long-running workflows, handling complex branching logic and coordinating multiple services. Unlike sagas, they persist state and can handle arbitrary complexity including retries, timeouts, and conditional branching.
@@ -4804,232 +4148,218 @@ Process Managers must persist state to survive service restarts and enable recov
 ```typescript
 // Persistent Process Manager State
 interface PersistedProcessState {
+  // => PersistedProcessState: contract definition
   processId: string;
+  // => Executes domain logic
   orderId: string;
+  // => Updates aggregate state
   status: string;
+  // => Validates business rule
   customerId: string;
+  // => Enforces invariant
   paymentAttempts: number;
+  // => Encapsulates domain knowledge
   metadata: Record<string, any>;
+  // => Delegates to domain service
   createdAt: Date;
+  // => Maintains consistency boundary
   updatedAt: Date;
+  // => Applies domain event
   version: number;
   // => Optimistic locking
 }
+// => Coordinates with bounded context
 
 class ProcessStateStore {
-  // => Domain object representing ProcessStateStore
-  // => Encapsulates business logic and state
-  // => Domain object: ProcessStateStore
+  // => ProcessStateStore: domain model element
   private states: Map<string, PersistedProcessState> = new Map();
-  // => Encapsulated field: states
-  // => Internal state (can only be modified by methods)
-  // => Declares states
   // => Encapsulated field (not publicly accessible)
   // => Production: PostgreSQL, DynamoDB
 
   async load(processId: string): Promise<PersistedProcessState | null> {
-    // => Calls load method
+    // => Operation: load()
     return this.states.get(processId) || null;
-    // => Returns this.states.get(processId) || null
+    // => Return result to caller
   }
+  // => Implements tactical pattern
 
   async save(state: PersistedProcessState): Promise<void> {
-    // => Calls save method
     // => Save with optimistic locking
     const existing = this.states.get(state.processId);
-    // => Creates variable: existing
-    // => Assigns value: this.states.get(state.processId)
-    // => Declares existing
+    // => Store value in existing
 
     if (existing && existing.version !== state.version) {
-      // => Checks business rule: existing && existing.version !== state.version
-      // => Validates domain constraint
-      // => Calls method and assigns result
+      // => Operation: if()
       throw new Error(`Concurrency conflict: expected version ${state.version}, found ${existing.version}`);
-      // => Throws domain exception
-      // => Business rule violation detected
-      // => Throws domain exception
-      // => Protects business invariant
       // => Prevent lost updates
     }
+    // => Protects aggregate integrity
 
     this.states.set(state.processId, {
+      // => Ensures transactional consistency
       ...state,
+      // => Manages entity lifecycle
       updatedAt: new Date(),
-      // => Calls Date method
+      // => Preserves domain model
       version: state.version + 1,
       // => Increment version
     });
+    // => Communicates domain intent
   }
+  // => Executes domain logic
 }
+// => Updates aggregate state
 
 class PersistentOrderFulfillmentProcessManager extends OrderFulfillmentProcessManager {
-  // => Domain object representing PersistentOrderFulfillmentProcessManager
-  // => Encapsulates business logic and state
-  // => Domain object: PersistentOrderFulfillmentProcessManager
+  // => PersistentOrderFulfillmentProcessManager: domain model element
   private processId: string;
-  // => Encapsulated field: processId
-  // => Internal state (can only be modified by methods)
-  // => Declares processId
   // => Encapsulated field (not publicly accessible)
   private version: number = 0;
-  // => Encapsulated field: version
-  // => Internal state (can only be modified by methods)
-  // => Declares version
   // => Encapsulated field (not publicly accessible)
 
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     processId: string,
+    // => Validates business rule
     private readonly stateStore: ProcessStateStore,
-    // => Encapsulated field: stateStore
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
   ) {
+    // => Enforces invariant
     super();
-    // => Calls super method
+    // => Encapsulates domain knowledge
     this.processId = processId;
-    // => Sets processId to processId
-    // => Updates internal state
-    // => Updates internal state
+    // => Update processId state
   }
+  // => Delegates to domain service
 
   static async load(orderId: string, stateStore: ProcessStateStore): Promise<PersistentOrderFulfillmentProcessManager> {
-    // => Calls load method
     // => Load process from storage
     const processId = `order-process-${orderId}`;
-    // => Creates variable: processId
-    // => Assigns value: `order-process-${orderId}`
-    // => Declares processId
+    // => Store value in processId
     const state = await stateStore.load(processId);
-    // => Creates variable: state
-    // => Assigns value: await stateStore.load(processId)
-    // => Declares state
+    // => Store value in state
 
     const manager = new PersistentOrderFulfillmentProcessManager(processId, stateStore);
-    // => Creates variable: manager
-    // => Instantiates new object
-    // => Declares manager
+    // => Store value in manager
 
     if (state) {
-      // => Checks business rule: state
-      // => Validates domain constraint
       // => Restore from persisted state
       manager["orderId"] = state.orderId;
+      // => Create data structure
       manager["customerId"] = state.customerId;
+      // => Create data structure
       manager["status"] = state.status as any;
+      // => Create data structure
       manager["paymentAttempts"] = state.paymentAttempts;
+      // => Create data structure
       manager.version = state.version;
+      // => Maintains consistency boundary
       console.log(`[ProcessManager] Loaded process ${processId} (version ${state.version})`);
-      // => Calls log method
       // => Outputs result
     } else {
       // => New process
       manager["orderId"] = orderId;
+      // => Create data structure
       console.log(`[ProcessManager] Created new process ${processId}`);
-      // => Calls log method
       // => Outputs result
     }
+    // => Applies domain event
 
     return manager;
     // => Returns manager
-    // => Returns value
   }
+  // => Coordinates with bounded context
 
   async save(): Promise<void> {
-    // => Calls save method
     // => Persist current state
     const state: PersistedProcessState = {
-      // => Declares state
+      // => Create data structure
       processId: this.processId,
+      // => Implements tactical pattern
       orderId: this["orderId"],
+      // => Protects aggregate integrity
       status: this["status"],
+      // => Ensures transactional consistency
       customerId: this["customerId"],
+      // => Manages entity lifecycle
       paymentAttempts: this["paymentAttempts"],
+      // => Preserves domain model
       metadata: {},
+      // => Communicates domain intent
       createdAt: new Date(),
-      // => Calls Date method
+      // => Executes domain logic
       updatedAt: new Date(),
-      // => Calls Date method
+      // => Updates aggregate state
       version: this.version,
+      // => Validates business rule
     };
+    // => Enforces invariant
 
     await this.stateStore.save(state);
-    // => Calls save method
     // => Delegates to internal method
     this.version = state.version + 1;
-    // => Sets version to state.version + 1
-    // => Updates internal state
-    // => Updates internal state
     // => Update local version after save
   }
+  // => Encapsulates domain knowledge
 
   // Override handlers to persist after state changes
   async handleOrderPlaced(event: OrderPlacedEvent): Promise<void> {
-    // => Calls handleOrderPlaced method
+    // => Operation: handleOrderPlaced()
     await super.handleOrderPlaced(event);
-    // => Calls handleOrderPlaced method
+    // => Execute method
     await this.save();
-    // => Calls save method
     // => Delegates to internal method
     // => Persist after state transition
   }
+  // => Delegates to domain service
 
   async handlePaymentProcessed(event: PaymentProcessedEvent): Promise<void> {
-    // => Calls handlePaymentProcessed method
+    // => Operation: handlePaymentProcessed()
     await super.handlePaymentProcessed(event);
-    // => Calls handlePaymentProcessed method
+    // => Execute method
     await this.save();
-    // => Calls save method
     // => Delegates to internal method
   }
+  // => Maintains consistency boundary
 
   async handlePaymentFailed(event: PaymentFailedEvent): Promise<void> {
-    // => Calls handlePaymentFailed method
+    // => Operation: handlePaymentFailed()
     await super.handlePaymentFailed(event);
-    // => Calls handlePaymentFailed method
+    // => Execute method
     await this.save();
-    // => Calls save method
     // => Delegates to internal method
   }
+  // => Applies domain event
 }
+// => Coordinates with bounded context
 
 // Usage
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const stateStore = new ProcessStateStore();
-  // => Creates variable: stateStore
-  // => Instantiates new object
-  // => Declares stateStore
+  // => Store value in stateStore
 
   // Create and execute process
   const manager1 = await PersistentOrderFulfillmentProcessManager.load("ORDER-001", stateStore);
-  // => Creates variable: manager1
-  // => Assigns value: await PersistentOrderFulfillmentProcessManager.load("ORDER-001", stateStore)
-  // => Declares manager1
+  // => Store value in manager1
   await manager1.handleOrderPlaced(new OrderPlacedEvent("ORDER-001", "CUST-001", [], 100));
-  // => Calls handleOrderPlaced method
   // => Output: [ProcessManager] Created new process order-process-ORDER-001
   // => Output: [ProcessManager] Order ORDER-001 process started
 
   // Simulate service restart - reload process
   const manager2 = await PersistentOrderFulfillmentProcessManager.load("ORDER-001", stateStore);
-  // => Creates variable: manager2
-  // => Assigns value: await PersistentOrderFulfillmentProcessManager.load("ORDER-001", stateStore)
-  // => Declares manager2
   // => Output: [ProcessManager] Loaded process order-process-ORDER-001 (version 1)
   console.log(`Status after reload: ${manager2.getStatus()}`);
-  // => Calls log method
   // => Outputs result
   // => Output: Status after reload: payment_pending
   // => State survived "restart"
 
   // Continue process
   await manager2.handlePaymentProcessed(new PaymentProcessedEvent("ORDER-001"));
-  // => Calls handlePaymentProcessed method
   // => Process continues from persisted state
 })();
+// => Implements tactical pattern
 ```
 
 **Key Takeaway**: Process Manager persistence enables recovery after service restarts. State stored with optimistic locking prevents concurrent modification. Load existing state or create new process on first event.
@@ -5043,213 +4373,185 @@ Process Managers handle timeouts for steps that don't complete within expected t
 ```typescript
 // Timeout-aware Process Manager
 class TimeoutAwareProcessManager extends PersistentOrderFulfillmentProcessManager {
-  // => Domain object representing TimeoutAwareProcessManager
-  // => Encapsulates business logic and state
-  // => Domain object: TimeoutAwareProcessManager
+  // => TimeoutAwareProcessManager: domain model element
   private timeouts: Map<string, { deadline: Date; action: () => Promise<void> }> = new Map();
-  // => Encapsulated field: timeouts
-  // => Internal state (can only be modified by methods)
-  // => Declares timeouts
   // => Encapsulated field (not publicly accessible)
 
   async handleOrderPlaced(event: OrderPlacedEvent): Promise<void> {
-    // => Calls handleOrderPlaced method
+    // => Operation: handleOrderPlaced()
     await super.handleOrderPlaced(event);
-    // => Calls handleOrderPlaced method
+    // => Execute method
 
     // Set payment timeout
     this.setTimeout(
+      // => Executes domain logic
       "payment",
+      // => Updates aggregate state
       30000,
       // => 30 second timeout for payment
       async () => {
-        // => Calls method and assigns result
+        // => Create data structure
         console.log(`[ProcessManager] Payment timeout for order ${this["orderId"]}`);
-        // => Calls log method
         // => Outputs result
         await this.handlePaymentFailed(new PaymentFailedEvent(this["orderId"], "Payment timeout"));
-        // => Calls handlePaymentFailed method
         // => Delegates to internal method
         // => Treat timeout as failure
       },
+      // => Validates business rule
     );
+    // => Enforces invariant
   }
+  // => Encapsulates domain knowledge
 
   async handlePaymentProcessed(event: PaymentProcessedEvent): Promise<void> {
-    // => Calls handlePaymentProcessed method
+    // => Operation: handlePaymentProcessed()
     this.clearTimeout("payment");
-    // => Calls clearTimeout method
     // => Delegates to internal method
     // => Clear timeout when payment succeeds
     await super.handlePaymentProcessed(event);
-    // => Calls handlePaymentProcessed method
+    // => Execute method
 
     // Set inventory timeout
     this.setTimeout(
+      // => Delegates to domain service
       "inventory",
+      // => Maintains consistency boundary
       60000,
       // => 60 second timeout for inventory
       async () => {
-        // => Calls method and assigns result
+        // => Create data structure
         console.log(`[ProcessManager] Inventory timeout for order ${this["orderId"]}`);
-        // => Calls log method
         // => Outputs result
         this["status"] = "failed";
+        // => Create data structure
         this.uncommittedEvents.push(new CancelOrderCommand(this["orderId"]));
-        // => Calls push method
         // => Delegates to internal method
         await this.save();
-        // => Calls save method
         // => Delegates to internal method
       },
+      // => Applies domain event
     );
+    // => Coordinates with bounded context
   }
+  // => Implements tactical pattern
 
   async handleInventoryReserved(event: InventoryReservedEvent): Promise<void> {
-    // => Calls handleInventoryReserved method
+    // => Operation: handleInventoryReserved()
     this.clearTimeout("inventory");
-    // => Calls clearTimeout method
     // => Delegates to internal method
     await super.handleInventoryReserved(event);
-    // => Calls handleInventoryReserved method
+    // => Execute method
   }
+  // => Protects aggregate integrity
 
   private setTimeout(name: string, ms: number, action: () => Promise<void>): void {
-    // => Calls method and assigns result
     // => Register timeout handler
     const deadline = new Date(Date.now() + ms);
-    // => Creates variable: deadline
-    // => Instantiates new object
-    // => Declares deadline
+    // => Store value in deadline
     this.timeouts.set(name, { deadline, action });
-    // => Calls set method
     // => Delegates to internal method
 
     // In production: use persistent timers (database polling, scheduled jobs)
     setTimeout(async () => {
-      // => Calls method and assigns result
+      // => Create data structure
       const timeout = this.timeouts.get(name);
-      // => Creates variable: timeout
-      // => Assigns value: this.timeouts.get(name)
-      // => Declares timeout
+      // => Store value in timeout
       if (timeout && timeout.deadline <= new Date()) {
-        // => Checks business rule: timeout && timeout.deadline <= new Date()
-        // => Validates domain constraint
-        // => Calls method and assigns result
+        // => Conditional check
         await timeout.action();
-        // => Calls action method
+        // => Execute method
         this.timeouts.delete(name);
-        // => Calls delete method
         // => Delegates to internal method
       }
+      // => Ensures transactional consistency
     }, ms);
+    // => Manages entity lifecycle
   }
+  // => Preserves domain model
 
   private clearTimeout(name: string): void {
-    // => Private method: clearTimeout
     // => Internal logic (not part of public API)
     this.timeouts.delete(name);
-    // => Calls delete method
     // => Delegates to internal method
   }
+  // => Communicates domain intent
 }
+// => Executes domain logic
 
 // Timeout Monitor - recovers abandoned processes
 class ProcessTimeoutMonitor {
-  // => Domain object representing ProcessTimeoutMonitor
-  // => Encapsulates business logic and state
-  // => Domain object: ProcessTimeoutMonitor
+  // => ProcessTimeoutMonitor: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     private readonly stateStore: ProcessStateStore,
-    // => Encapsulated field: stateStore
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
     private readonly eventBus: IntegrationEventBus,
-    // => Encapsulated field: eventBus
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
   ) {}
+  // => Updates aggregate state
 
   async checkTimeouts(): Promise<void> {
-    // => Calls checkTimeouts method
     // => Periodic check for timed-out processes
     // => Run every minute via cron job in production
     console.log("[Monitor] Checking for timed-out processes...");
-    // => Calls log method
     // => Outputs result
 
     const allStates = Array.from((this.stateStore as any).states.values());
-    // => Creates variable: allStates
-    // => Assigns value: Array.from((this.stateStore as any).states.values())
-    // => Declares allStates
+    // => Store value in allStates
     const now = new Date();
-    // => Creates variable: now
-    // => Instantiates new object
-    // => Declares now
+    // => Store value in now
 
     for (const state of allStates) {
+      // => Operation: for()
       const ageMs = now.getTime() - state.updatedAt.getTime();
-      // => Creates variable: ageMs
-      // => Assigns value: now.getTime() - state.updatedAt.getTime()
-      // => Declares ageMs
+      // => Store value in ageMs
 
       if (state.status === "payment_pending" && ageMs > 30000) {
-        // => Checks business rule: state.status === "payment_pending" && ageMs > 30000
-        // => Validates domain constraint
-        // => Calls method and assigns result
         // => Payment timeout
         console.log(`[Monitor] Detected payment timeout for order ${state.orderId}`);
-        // => Calls log method
         // => Outputs result
         await this.eventBus.publish(new PaymentFailedEvent(state.orderId, "Timeout detected by monitor"));
-        // => Calls publish method
         // => Delegates to internal method
       } else if (state.status === "inventory_reserved" && ageMs > 60000) {
-        // => Calls method and assigns result
         // => Inventory timeout
         console.log(`[Monitor] Detected inventory timeout for order ${state.orderId}`);
-        // => Calls log method
         // => Outputs result
         await this.eventBus.publish(new CancelOrderCommand(state.orderId));
-        // => Calls publish method
         // => Delegates to internal method
       }
+      // => Validates business rule
     }
+    // => Enforces invariant
   }
+  // => Encapsulates domain knowledge
 }
+// => Delegates to domain service
 
 // Usage
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const stateStore = new ProcessStateStore();
-  // => Creates variable: stateStore
-  // => Instantiates new object
-  // => Declares stateStore
+  // => Store value in stateStore
   const eventBus = new IntegrationEventBus();
-  // => Creates variable: eventBus
-  // => Instantiates new object
-  // => Declares eventBus
+  // => Store value in eventBus
 
   const manager = new TimeoutAwareProcessManager("ORDER-001", stateStore);
-  // => Creates variable: manager
-  // => Instantiates new object
-  // => Declares manager
+  // => Store value in manager
   await manager.handleOrderPlaced(new OrderPlacedEvent("ORDER-001", "CUST-001", [], 100));
-  // => Calls handleOrderPlaced method
+  // => Execute method
 
   // Simulate payment timeout (wait 31 seconds in production)
   await new Promise((resolve) => setTimeout(resolve, 100));
-  // => Calls method and assigns result
+  // => Create Promise instance
   // In production, timeout handler would trigger after 30s
   // => Output would be: [ProcessManager] Payment timeout for order ORDER-001
 
   const monitor = new ProcessTimeoutMonitor(stateStore, eventBus);
-  // => Creates variable: monitor
-  // => Instantiates new object
-  // => Declares monitor
   // => Monitor runs periodically to detect timeouts
 })();
+// => Maintains consistency boundary
 ```
 
 **Key Takeaway**: Process Managers handle timeouts using timer infrastructure (persistent timers, scheduled jobs). Timeout monitors detect abandoned processes by checking state age, providing safety net if in-process timeouts fail.
@@ -5265,251 +4567,264 @@ Context Maps document relationships between bounded contexts using standardized 
 ```typescript
 // Customer-Supplier Pattern - downstream depends on upstream
 namespace InventoryContext {
+  // => Executes domain logic
   // Upstream context - defines API
   export interface ProductAvailability {
+    // => Updates aggregate state
     productId: string;
+    // => Validates business rule
     quantityAvailable: number;
+    // => Enforces invariant
     reservedUntil?: Date;
+    // => Encapsulates domain knowledge
   }
+  // => Delegates to domain service
 
   export class InventoryAPI {
-    // => Domain object representing InventoryAPI
-    // => Encapsulates business logic and state
+    // => InventoryAPI: domain model element
     async checkAvailability(productId: string): Promise<ProductAvailability> {
-      // => Calls checkAvailability method
       // => Published interface that downstream depends on
       console.log(`[Inventory] Checking availability for ${productId}`);
-      // => Calls log method
       // => Outputs result
       return {
         // => Returns {
-        // => Returns value
         productId,
+        // => Maintains consistency boundary
         quantityAvailable: 100,
+        // => Applies domain event
         reservedUntil: undefined,
+        // => Coordinates with bounded context
       };
+      // => Implements tactical pattern
     }
+    // => Protects aggregate integrity
 
     async reserve(productId: string, quantity: number): Promise<void> {
-      // => Calls reserve method
+      // => Operation: reserve()
       console.log(`[Inventory] Reserved ${quantity} units of ${productId}`);
-      // => Calls log method
       // => Outputs result
     }
+    // => Ensures transactional consistency
   }
+  // => Manages entity lifecycle
 }
+// => Preserves domain model
 
 namespace OrderContext {
+  // => Communicates domain intent
   // Downstream context - depends on upstream
   export class OrderService {
-    // => Domain object representing OrderService
-    // => Encapsulates business logic and state
+    // => OrderService: domain model element
     constructor(private readonly inventoryAPI: InventoryContext.InventoryAPI) {
-      // => Constructor initializes domain object
-      // => Establishes valid initial state
-      // => Constructor initializes instance
       // => Dependency on upstream context's published API
     }
+    // => Executes domain logic
 
     async placeOrder(productId: string, quantity: number): Promise<void> {
-      // => Calls placeOrder method
+      // => Operation: placeOrder()
       const availability = await this.inventoryAPI.checkAvailability(productId);
-      // => Creates variable: availability
-      // => Assigns value: await this.inventoryAPI.checkAvailability(productId)
-      // => Declares availability
       // => Call upstream API
 
       if (availability.quantityAvailable < quantity) {
-        // => Checks business rule: availability.quantityAvailable < quantity
-        // => Validates domain constraint
+        // => Operation: if()
         throw new Error("Insufficient inventory");
-        // => Throws domain exception
-        // => Business rule violation detected
-        // => Throws domain exception
-        // => Protects business invariant
+        // => Raise domain exception
       }
+      // => Updates aggregate state
 
       await this.inventoryAPI.reserve(productId, quantity);
-      // => Calls reserve method
       // => Delegates to internal method
       console.log(`[Order] Order placed for ${quantity} units of ${productId}`);
-      // => Calls log method
       // => Outputs result
     }
+    // => Validates business rule
   }
+  // => Enforces invariant
 }
+// => Encapsulates domain knowledge
 
 // Conformist Pattern - downstream conforms to upstream without negotiation
 namespace ExternalPaymentProvider {
+  // => Delegates to domain service
   // Upstream (external) - we have no control
   export interface PaymentRequest {
+    // => Maintains consistency boundary
     card_number: string;
     // => Uses snake_case (external API convention)
     exp_month: number;
+    // => Applies domain event
     exp_year: number;
+    // => Coordinates with bounded context
     cvv: string;
+    // => Implements tactical pattern
     amount_cents: number;
     // => Amounts in cents
   }
+  // => Protects aggregate integrity
 
   export class StripeAPI {
-    // => Domain object representing StripeAPI
-    // => Encapsulates business logic and state
+    // => StripeAPI: domain model element
     async charge(request: PaymentRequest): Promise<{ charge_id: string }> {
-      // => Calls charge method
+      // => Operation: charge()
       console.log(`[Stripe] Charging ${request.amount_cents} cents`);
-      // => Calls log method
       // => Outputs result
       return { charge_id: "ch_123" };
       // => Returns { charge_id: "ch_123" }
-      // => Returns value
     }
+    // => Ensures transactional consistency
   }
+  // => Manages entity lifecycle
 }
+// => Preserves domain model
 
 namespace PaymentContext {
+  // => Communicates domain intent
   // Downstream - conforms to Stripe's model
   export class PaymentService {
-    // => Domain object representing PaymentService
-    // => Encapsulates business logic and state
+    // => PaymentService: domain model element
     constructor(private readonly stripeAPI: ExternalPaymentProvider.StripeAPI) {}
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
 
     async processPayment(
+      // => Executes domain logic
       cardNumber: string,
+      // => Updates aggregate state
       expMonth: number,
+      // => Validates business rule
       expYear: number,
+      // => Enforces invariant
       cvv: string,
+      // => Encapsulates domain knowledge
       amountDollars: number,
+      // => Delegates to domain service
     ): Promise<string> {
       // => Adapt our model to Stripe's required format
       const request: ExternalPaymentProvider.PaymentRequest = {
-        // => Declares request
+        // => Create data structure
         card_number: cardNumber,
         // => Convert camelCase to snake_case
         exp_month: expMonth,
+        // => Maintains consistency boundary
         exp_year: expYear,
+        // => Applies domain event
         cvv,
+        // => Coordinates with bounded context
         amount_cents: Math.round(amountDollars * 100),
-        // => Calls round method
         // => Convert dollars to cents
       };
+      // => Implements tactical pattern
 
       const result = await this.stripeAPI.charge(request);
-      // => Creates variable: result
-      // => Assigns value: await this.stripeAPI.charge(request)
-      // => Declares result
       // => Conform to external API structure
       console.log(`[Payment] Payment processed: ${result.charge_id}`);
-      // => Calls log method
       // => Outputs result
       return result.charge_id;
       // => Returns result.charge_id
-      // => Returns value
     }
+    // => Protects aggregate integrity
   }
+  // => Ensures transactional consistency
 }
+// => Manages entity lifecycle
 
 // Partnership Pattern - mutual dependency with coordinated evolution
 namespace ShippingContext {
+  // => Preserves domain model
   export interface ShipmentCreatedEvent {
+    // => Communicates domain intent
     shipmentId: string;
+    // => Executes domain logic
     orderId: string;
+    // => Updates aggregate state
     estimatedDelivery: Date;
+    // => Validates business rule
   }
+  // => Enforces invariant
 
   export class ShippingService {
-    // => Domain object representing ShippingService
-    // => Encapsulates business logic and state
+    // => ShippingService: domain model element
     constructor(private readonly orderEventBus: any) {
-      // => Constructor initializes domain object
-      // => Establishes valid initial state
-      // => Constructor initializes instance
       // => Coordinate with Order context
     }
+    // => Encapsulates domain knowledge
 
     async createShipment(orderId: string): Promise<void> {
-      // => Calls createShipment method
+      // => Operation: createShipment()
       const shipmentId = crypto.randomUUID();
-      // => Creates variable: shipmentId
-      // => Assigns value: crypto.randomUUID()
-      // => Declares shipmentId
+      // => Store value in shipmentId
       console.log(`[Shipping] Created shipment ${shipmentId} for order ${orderId}`);
-      // => Calls log method
       // => Outputs result
 
       // Publish event for Order context
       await this.orderEventBus.publish({
+        // => Delegates to domain service
         shipmentId,
+        // => Maintains consistency boundary
         orderId,
+        // => Applies domain event
         estimatedDelivery: new Date(Date.now() + 86400000),
-        // => Calls Date method
+        // => Execute method
       } as ShipmentCreatedEvent);
       // => Coordinate state across contexts
     }
+    // => Coordinates with bounded context
   }
+  // => Implements tactical pattern
 }
+// => Protects aggregate integrity
 
 namespace OrderContext {
+  // => Ensures transactional consistency
   export class OrderServiceWithShipping {
-    // => Domain object representing OrderServiceWithShipping
-    // => Encapsulates business logic and state
+    // => OrderServiceWithShipping: domain model element
     constructor(
-      // => Constructor initializes domain object
-      // => Establishes valid initial state
-      // => Constructor initializes instance
+      // => Initialize object with parameters
       private readonly shippingService: ShippingContext.ShippingService,
-      // => Encapsulated field: shippingService
-      // => Immutable (readonly) - cannot change after construction
       // => Mutual dependency
       private readonly eventBus: any,
-      // => Encapsulated field: eventBus
-      // => Immutable (readonly) - cannot change after construction
+      // => Field: readonly (private)
+      // => Encapsulated state, not directly accessible
     ) {
+      // => Manages entity lifecycle
       // Subscribe to shipping events
       this.eventBus.subscribe("ShipmentCreated", this.handleShipmentCreated.bind(this));
-      // => Calls subscribe method
       // => Delegates to internal method
     }
+    // => Preserves domain model
 
     private async handleShipmentCreated(event: ShippingContext.ShipmentCreatedEvent): Promise<void> {
-      // => Calls handleShipmentCreated method
+      // => Field: async (private)
+      // => Encapsulated state, not directly accessible
       console.log(`[Order] Received shipment ${event.shipmentId} for order ${event.orderId}`);
-      // => Calls log method
       // => Outputs result
       // => React to partner context's events
     }
+    // => Communicates domain intent
 
     async fulfillOrder(orderId: string): Promise<void> {
-      // => Calls fulfillOrder method
+      // => Operation: fulfillOrder()
       console.log(`[Order] Fulfilling order ${orderId}`);
-      // => Calls log method
       // => Outputs result
       await this.shippingService.createShipment(orderId);
-      // => Calls createShipment method
       // => Delegates to internal method
       // => Coordinate with partner context
     }
+    // => Executes domain logic
   }
+  // => Updates aggregate state
 }
+// => Validates business rule
 
 // Usage - demonstrating context map patterns
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   console.log("=== Customer-Supplier Pattern ===");
   // => Outputs result
   const inventoryAPI = new InventoryContext.InventoryAPI();
-  // => Creates variable: inventoryAPI
-  // => Instantiates new object
-  // => Declares inventoryAPI
+  // => Store value in inventoryAPI
   const orderService = new OrderContext.OrderService(inventoryAPI);
-  // => Creates variable: orderService
-  // => Instantiates new object
-  // => Declares orderService
+  // => Store value in orderService
   await orderService.placeOrder("PROD-001", 5);
-  // => Calls placeOrder method
   // => Output: [Inventory] Checking availability for PROD-001
   // => Output: [Inventory] Reserved 5 units of PROD-001
   // => Output: [Order] Order placed for 5 units of PROD-001
@@ -5517,38 +4832,27 @@ namespace OrderContext {
   console.log("\n=== Conformist Pattern ===");
   // => Outputs result
   const stripeAPI = new ExternalPaymentProvider.StripeAPI();
-  // => Creates variable: stripeAPI
-  // => Instantiates new object
-  // => Declares stripeAPI
+  // => Store value in stripeAPI
   const paymentService = new PaymentContext.PaymentService(stripeAPI);
-  // => Creates variable: paymentService
-  // => Instantiates new object
-  // => Declares paymentService
+  // => Store value in paymentService
   await paymentService.processPayment("4111111111111111", 12, 2025, "123", 99.99);
-  // => Calls processPayment method
   // => Output: [Stripe] Charging 9999 cents
   // => Output: [Payment] Payment processed: ch_123
 
   console.log("\n=== Partnership Pattern ===");
   // => Outputs result
   const eventBus = new IntegrationEventBus();
-  // => Creates variable: eventBus
-  // => Instantiates new object
-  // => Declares eventBus
+  // => Store value in eventBus
   const shippingService = new ShippingContext.ShippingService(eventBus);
-  // => Creates variable: shippingService
-  // => Instantiates new object
-  // => Declares shippingService
+  // => Store value in shippingService
   const orderWithShipping = new OrderContext.OrderServiceWithShipping(shippingService, eventBus);
-  // => Creates variable: orderWithShipping
-  // => Instantiates new object
-  // => Declares orderWithShipping
+  // => Store value in orderWithShipping
   await orderWithShipping.fulfillOrder("ORDER-001");
-  // => Calls fulfillOrder method
   // => Output: [Order] Fulfilling order ORDER-001
   // => Output: [Shipping] Created shipment shipment-id for order ORDER-001
   // => Output: [Order] Received shipment shipment-id for order ORDER-001
 })();
+// => Enforces invariant
 ```
 
 **Key Takeaway**: Context Maps formalize bounded context relationships using patterns: Customer-Supplier (downstream depends on upstream), Conformist (downstream conforms to upstream), Partnership (mutual dependency with coordination). Each pattern defines expectations for integration and evolution.
@@ -5562,277 +4866,247 @@ Shared Kernel allows two contexts to share subset of domain model, with discipli
 ```typescript
 // Shared Kernel - common model shared between contexts
 namespace SharedKernel {
+  // => Executes domain logic
   // Value Objects shared across contexts
   export class Money {
-    // => Domain object representing Money
-    // => Encapsulates business logic and state
+    // => Money: domain model element
     constructor(
-      // => Constructor initializes domain object
-      // => Establishes valid initial state
-      // => Constructor initializes instance
+      // => Initialize object with parameters
       private readonly amount: number,
-      // => Encapsulated field: amount
-      // => Immutable (readonly) - cannot change after construction
+      // => Field: readonly (private)
+      // => Encapsulated state, not directly accessible
       private readonly currency: string,
-      // => Encapsulated field: currency
-      // => Immutable (readonly) - cannot change after construction
+      // => Field: readonly (private)
+      // => Encapsulated state, not directly accessible
     ) {
+      // => Updates aggregate state
       if (amount < 0) {
-        // => Checks business rule: amount < 0
-        // => Validates domain constraint
+        // => Operation: if()
         throw new Error("Amount cannot be negative");
-        // => Throws domain exception
-        // => Business rule violation detected
-        // => Throws domain exception
-        // => Protects business invariant
+        // => Raise domain exception
       }
+      // => Validates business rule
     }
+    // => Enforces invariant
 
     getAmount(): number {
       // => Domain operation: getAmount
-      // => Modifies state while maintaining invariants
       return this.amount;
-      // => Returns this.amount
-      // => Returns value
+      // => Return result to caller
     }
+    // => Encapsulates domain knowledge
 
     getCurrency(): string {
       // => Domain operation: getCurrency
-      // => Modifies state while maintaining invariants
       return this.currency;
-      // => Returns this.currency
-      // => Returns value
+      // => Return result to caller
     }
+    // => Delegates to domain service
 
     add(other: Money): Money {
       // => Domain operation: add
-      // => Modifies state while maintaining invariants
       if (this.currency !== other.currency) {
-        // => Checks business rule: this.currency !== other.currency
-        // => Validates domain constraint
-        // => Calls method and assigns result
+        // => Operation: if()
         throw new Error("Cannot add different currencies");
-        // => Throws domain exception
-        // => Business rule violation detected
-        // => Throws domain exception
-        // => Protects business invariant
+        // => Raise domain exception
       }
+      // => Maintains consistency boundary
       return new Money(this.amount + other.amount, this.currency);
-      // => Returns new Money(this.amount + other.amount, this.currency)
+      // => Return result to caller
     }
+    // => Applies domain event
 
     equals(other: Money): boolean {
       // => Domain operation: equals
-      // => Modifies state while maintaining invariants
       return this.amount === other.amount && this.currency === other.currency;
-      // => Returns this.amount === other.amount && this.currency === other.currency
-      // => Returns value
+      // => Return result to caller
     }
+    // => Coordinates with bounded context
   }
+  // => Implements tactical pattern
 
   export class CustomerId {
-    // => Domain object representing CustomerId
-    // => Encapsulates business logic and state
+    // => CustomerId: domain model element
     constructor(private readonly value: string) {
-      // => Constructor initializes domain object
-      // => Establishes valid initial state
-      // => Constructor initializes instance
+      // => Initialize object with parameters
       if (!value.startsWith("CUST-")) {
-        // => Checks business rule: !value.startsWith("CUST-")
-        // => Validates domain constraint
+        // => Conditional check
         throw new Error("Invalid customer ID format");
-        // => Throws domain exception
-        // => Business rule violation detected
-        // => Throws domain exception
-        // => Protects business invariant
+        // => Raise domain exception
       }
+      // => Protects aggregate integrity
     }
+    // => Ensures transactional consistency
 
     getValue(): string {
       // => Domain operation: getValue
-      // => Modifies state while maintaining invariants
       return this.value;
-      // => Returns this.value
-      // => Returns value
+      // => Return result to caller
     }
+    // => Manages entity lifecycle
 
     equals(other: CustomerId): boolean {
       // => Domain operation: equals
-      // => Modifies state while maintaining invariants
       return this.value === other.value;
-      // => Returns this.value === other.value
-      // => Returns value
+      // => Return result to caller
     }
+    // => Preserves domain model
   }
+  // => Communicates domain intent
 
   // Shared Events
   export class CustomerRegistered extends DomainEvent {
-    // => Domain object representing CustomerRegistered
-    // => Encapsulates business logic and state
+    // => CustomerRegistered: domain model element
     constructor(
-      // => Constructor initializes domain object
-      // => Establishes valid initial state
-      // => Constructor initializes instance
+      // => Initialize object with parameters
       public readonly customerId: CustomerId,
+      // => Field: readonly (public)
       public readonly email: string,
+      // => Field: readonly (public)
     ) {
+      // => Executes domain logic
       super();
-      // => Calls super method
+      // => Updates aggregate state
     }
+    // => Validates business rule
   }
+  // => Enforces invariant
 }
+// => Encapsulates domain knowledge
 
 // Sales Context - uses Shared Kernel
 namespace SalesContext {
+  // => Delegates to domain service
   import Money = SharedKernel.Money;
+  // => Maintains consistency boundary
   import CustomerId = SharedKernel.CustomerId;
+  // => Applies domain event
 
   export class Order {
-    // => Domain object representing Order
-    // => Encapsulates business logic and state
+    // => Order: domain model element
     constructor(
-      // => Constructor initializes domain object
-      // => Establishes valid initial state
-      // => Constructor initializes instance
+      // => Initialize object with parameters
       private readonly orderId: string,
-      // => Encapsulated field: orderId
-      // => Immutable (readonly) - cannot change after construction
+      // => Field: readonly (private)
+      // => Encapsulated state, not directly accessible
       private readonly customerId: CustomerId,
-      // => Encapsulated field: customerId
-      // => Immutable (readonly) - cannot change after construction
       // => Uses shared CustomerId
       private readonly total: Money,
-      // => Encapsulated field: total
-      // => Immutable (readonly) - cannot change after construction
       // => Uses shared Money
     ) {}
+    // => Coordinates with bounded context
 
     getTotal(): Money {
       // => Domain operation: getTotal
-      // => Modifies state while maintaining invariants
       return this.total;
-      // => Returns this.total
-      // => Returns value
+      // => Return result to caller
     }
+    // => Implements tactical pattern
 
     getCustomerId(): CustomerId {
       // => Domain operation: getCustomerId
-      // => Modifies state while maintaining invariants
       return this.customerId;
-      // => Returns this.customerId
-      // => Returns value
+      // => Return result to caller
     }
+    // => Protects aggregate integrity
   }
+  // => Ensures transactional consistency
 
   export class OrderService {
-    // => Domain object representing OrderService
-    // => Encapsulates business logic and state
+    // => OrderService: domain model element
     async placeOrder(customerId: CustomerId, total: Money): Promise<void> {
-      // => Calls placeOrder method
+      // => Operation: placeOrder()
       const order = new Order(crypto.randomUUID(), customerId, total);
-      // => Creates variable: order
-      // => Instantiates new object
-      // => Declares order
+      // => Store value in order
       console.log(
+        // => Manages entity lifecycle
         `[Sales] Order placed for customer ${customerId.getValue()}: ${total.getCurrency()} ${total.getAmount()}`,
-        // => Calls getValue method
+        // => Execute method
       );
       // => Both contexts understand shared types
     }
+    // => Preserves domain model
   }
+  // => Communicates domain intent
 }
+// => Executes domain logic
 
 // Billing Context - also uses Shared Kernel
 namespace BillingContext {
+  // => Updates aggregate state
   import Money = SharedKernel.Money;
+  // => Validates business rule
   import CustomerId = SharedKernel.CustomerId;
+  // => Enforces invariant
 
   export class Invoice {
-    // => Domain object representing Invoice
-    // => Encapsulates business logic and state
+    // => Invoice: domain model element
     constructor(
-      // => Constructor initializes domain object
-      // => Establishes valid initial state
-      // => Constructor initializes instance
+      // => Initialize object with parameters
       private readonly invoiceId: string,
-      // => Encapsulated field: invoiceId
-      // => Immutable (readonly) - cannot change after construction
+      // => Field: readonly (private)
+      // => Encapsulated state, not directly accessible
       private readonly customerId: CustomerId,
-      // => Encapsulated field: customerId
-      // => Immutable (readonly) - cannot change after construction
       // => Same CustomerId type as Sales
       private readonly amount: Money,
-      // => Encapsulated field: amount
-      // => Immutable (readonly) - cannot change after construction
       // => Same Money type as Sales
     ) {}
+    // => Encapsulates domain knowledge
 
     getAmount(): Money {
       // => Domain operation: getAmount
-      // => Modifies state while maintaining invariants
       return this.amount;
-      // => Returns this.amount
-      // => Returns value
+      // => Return result to caller
     }
+    // => Delegates to domain service
   }
+  // => Maintains consistency boundary
 
   export class BillingService {
-    // => Domain object representing BillingService
-    // => Encapsulates business logic and state
+    // => BillingService: domain model element
     async createInvoice(customerId: CustomerId, amount: Money): Promise<void> {
-      // => Calls createInvoice method
+      // => Operation: createInvoice()
       const invoice = new Invoice(crypto.randomUUID(), customerId, amount);
-      // => Creates variable: invoice
-      // => Instantiates new object
-      // => Declares invoice
+      // => Store value in invoice
       console.log(
+        // => Applies domain event
         `[Billing] Invoice created for customer ${customerId.getValue()}: ${amount.getCurrency()} ${amount.getAmount()}`,
-        // => Calls getValue method
+        // => Execute method
       );
       // => Shared types enable seamless integration
     }
+    // => Coordinates with bounded context
   }
+  // => Implements tactical pattern
 }
+// => Protects aggregate integrity
 
 // Usage
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const customerId = new SharedKernel.CustomerId("CUST-001");
-  // => Creates variable: customerId
-  // => Instantiates new object
-  // => Declares customerId
+  // => Store value in customerId
   const amount = new SharedKernel.Money(150, "USD");
-  // => Creates variable: amount
-  // => Instantiates new object
-  // => Declares amount
   // => Shared types used by both contexts
 
   const salesService = new SalesContext.OrderService();
-  // => Creates variable: salesService
-  // => Instantiates new object
-  // => Declares salesService
+  // => Store value in salesService
   await salesService.placeOrder(customerId, amount);
-  // => Calls placeOrder method
   // => Output: [Sales] Order placed for customer CUST-001: USD 150
 
   const billingService = new BillingContext.BillingService();
-  // => Creates variable: billingService
-  // => Instantiates new object
-  // => Declares billingService
+  // => Store value in billingService
   await billingService.createInvoice(customerId, amount);
-  // => Calls createInvoice method
   // => Output: [Billing] Invoice created for customer CUST-001: USD 150
 
   // Shared kernel enables type safety across contexts
   const total = amount.add(new SharedKernel.Money(50, "USD"));
-  // => Creates variable: total
-  // => Instantiates new object
-  // => Declares total
+  // => Store value in total
   console.log(`Total: ${total.getCurrency()} ${total.getAmount()}`);
-  // => Calls log method
   // => Outputs result
   // => Output: Total: USD 200
 })();
+// => Ensures transactional consistency
 ```
 
 **Key Takeaway**: Shared Kernel allows two closely-aligned contexts to share domain model subset (value objects, events, core concepts). Requires coordination for changes—both teams must agree on modifications. Reduces duplication but increases coupling.
@@ -5846,33 +5120,42 @@ Published Language defines standard format for inter-context communication, ofte
 ```typescript
 // Published Language - standard format for integration
 namespace PublishedLanguage {
-// => Block scope begins
+  // => Block scope begins
   // JSON Schema for Order Events (published contract)
   export interface OrderEventV1 {
-  // => Block scope begins
+    // => Block scope begins
     eventType: "order.placed" | "order.cancelled" | "order.shipped";
+    // => Executes domain logic
     eventId: string;
+    // => Updates aggregate state
     timestamp: string;
     // => ISO 8601 format
     data: {
-    // => Block scope begins
-      orderId: string;
-      customerId: string;
-      totalAmount: {
       // => Block scope begins
+      orderId: string;
+      // => Validates business rule
+      customerId: string;
+      // => Enforces invariant
+      totalAmount: {
+        // => Block scope begins
         value: number;
+        // => Encapsulates domain knowledge
         currency: string;
         // => ISO 4217 currency code
       };
       // => Block scope ends
       items: Array<{
-      // => Block scope begins
-        productId: string;
-        quantity: number;
-        unitPrice: {
         // => Block scope begins
+        productId: string;
+        // => Delegates to domain service
+        quantity: number;
+        // => Maintains consistency boundary
+        unitPrice: {
+          // => Block scope begins
           value: number;
+          // => Applies domain event
           currency: string;
+          // => Coordinates with bounded context
         };
         // => Block scope ends
       }>;
@@ -5880,9 +5163,11 @@ namespace PublishedLanguage {
     };
     // => Block scope ends
     metadata: {
-    // => Block scope begins
+      // => Block scope begins
       version: "1.0";
+      // => Implements tactical pattern
       source: string;
+      // => Protects aggregate integrity
     };
     // => Block scope ends
   }
@@ -5890,25 +5175,18 @@ namespace PublishedLanguage {
 
   // Event Publisher - serializes to Published Language
   export class OrderEventPublisher {
-  // => Block scope begins
-  // => Domain object representing OrderEventPublisher
-  // => Encapsulates business logic and state
-    publish(event: OrderEventV1): string {
     // => Block scope begins
-    // => Domain operation: publish
-    // => Modifies state while maintaining invariants
+    publish(event: OrderEventV1): string {
+      // => Block scope begins
+      // => Domain operation: publish
       // => Serialize to JSON (standard format)
       const json = JSON.stringify(event, null, 2);
-      // => Creates variable: json
-      // => Assigns value: JSON.stringify(event, null, 2)
-      // => Declares json
+      // => Store value in json
       console.log(`[Publisher] Publishing event:\n${json}`);
       // => Block scope begins
-      // => Calls log method
       // => Outputs result
       return json;
       // => Returns json
-      // => Returns value
       // => Consumers parse this standard format
     }
     // => Block scope ends
@@ -5917,41 +5195,27 @@ namespace PublishedLanguage {
 
   // Event Consumer - deserializes from Published Language
   export class OrderEventConsumer {
-  // => Block scope begins
-  // => Domain object representing OrderEventConsumer
-  // => Encapsulates business logic and state
-    consume(json: string): OrderEventV1 {
     // => Block scope begins
-    // => Domain operation: consume
-    // => Modifies state while maintaining invariants
+    consume(json: string): OrderEventV1 {
+      // => Block scope begins
+      // => Domain operation: consume
       // => Parse standard format
       const event = JSON.parse(json) as OrderEventV1;
-      // => Creates variable: event
-      // => Assigns value: JSON.parse(json) as OrderEventV1
-      // => Declares event
+      // => Store value in event
 
       // Validate schema
       if (event.metadata.version !== "1.0") {
-      // => Block scope begins
-      // => Checks business rule: event.metadata.version !== "1.0"
-      // => Validates domain constraint
-      // => Calls method and assigns result
+        // => Block scope begins
         throw new Error(`Unsupported event version: ${event.metadata.version}`);
         // => Block scope begins
-        // => Throws domain exception
-        // => Business rule violation detected
-        // => Throws domain exception
-        // => Protects business invariant
       }
       // => Block scope ends
 
       console.log(`[Consumer] Received ${event.eventType} event for order ${event.data.orderId}`);
       // => Block scope begins
-      // => Calls log method
       // => Outputs result
       return event;
       // => Returns event
-      // => Returns value
     }
     // => Block scope ends
   }
@@ -5961,174 +5225,195 @@ namespace PublishedLanguage {
 
 // Order Context - publishes events in Published Language
 namespace OrderContextWithPublishedLanguage {
-// => Block scope begins
+  // => Block scope begins
   import OrderEventV1 = PublishedLanguage.OrderEventV1;
+  // => Ensures transactional consistency
 
   export class OrderService {
-  // => Block scope begins
-  // => Domain object representing OrderService
-  // => Encapsulates business logic and state
+    // => Block scope begins
     constructor(private readonly eventPublisher: PublishedLanguage.OrderEventPublisher) {}
     // => Block scope begins
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
 
     async placeOrder(
+      // => Manages entity lifecycle
       orderId: string,
+      // => Preserves domain model
       customerId: string,
+      // => Communicates domain intent
       items: Array<{ productId: string; quantity: number; unitPrice: number }>,
       // => Block scope begins
       currency: string,
+      // => Executes domain logic
     ): Promise<void> {
-    // => Block scope begins
+      // => Block scope begins
       const totalAmount = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
-      // => Creates variable: totalAmount
-      // => Assigns value: items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0)
-      // => Declares totalAmount
+      // => Store value in totalAmount
 
       // Convert to Published Language format
       const event: OrderEventV1 = {
-      // => Block scope begins
-      // => Declares event
+        // => Block scope begins
         eventType: "order.placed",
+        // => Updates aggregate state
         eventId: crypto.randomUUID(),
-        // => Calls randomUUID method
+        // => Execute method
         timestamp: new Date().toISOString(),
-        // => Calls Date method
         // => ISO 8601
         data: {
-        // => Block scope begins
-          orderId,
-          customerId,
-          totalAmount: {
           // => Block scope begins
+          orderId,
+          // => Validates business rule
+          customerId,
+          // => Enforces invariant
+          totalAmount: {
+            // => Block scope begins
             value: totalAmount,
+            // => Encapsulates domain knowledge
             currency,
             // => ISO 4217
           },
           // => Block scope ends
           items: items.map((item) => ({
-          // => Block scope begins
-          // => Calls method and assigns result
-            productId: item.productId,
-            quantity: item.quantity,
-            unitPrice: {
             // => Block scope begins
+            productId: item.productId,
+            // => Delegates to domain service
+            quantity: item.quantity,
+            // => Maintains consistency boundary
+            unitPrice: {
+              // => Block scope begins
               value: item.unitPrice,
+              // => Applies domain event
               currency,
+              // => Coordinates with bounded context
             },
+            // => Implements tactical pattern
           })),
+          // => Protects aggregate integrity
         },
+        // => Ensures transactional consistency
         metadata: {
+          // => Manages entity lifecycle
           version: "1.0",
+          // => Preserves domain model
           source: "OrderService",
+          // => Communicates domain intent
         },
+        // => Executes domain logic
       };
+      // => Updates aggregate state
 
       this.eventPublisher.publish(event);
-      // => Calls publish method
       // => Delegates to internal method
       // => Publish in standard format
     }
+    // => Validates business rule
   }
+  // => Enforces invariant
 }
+// => Encapsulates domain knowledge
 
 // Warehouse Context - consumes events in Published Language
 namespace WarehouseContext {
+  // => Delegates to domain service
   import OrderEventConsumer = PublishedLanguage.OrderEventConsumer;
+  // => Maintains consistency boundary
   import OrderEventV1 = PublishedLanguage.OrderEventV1;
+  // => Applies domain event
 
   export class WarehouseService {
-  // => Domain object representing WarehouseService
-  // => Encapsulates business logic and state
+    // => WarehouseService: domain model element
     constructor(private readonly eventConsumer: OrderEventConsumer) {}
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
 
     async handleOrderPlacedEvent(json: string): Promise<void> {
-    // => Calls handleOrderPlacedEvent method
       // => Receive event in standard format
       const event = this.eventConsumer.consume(json);
-      // => Creates variable: event
-      // => Assigns value: this.eventConsumer.consume(json)
-      // => Declares event
+      // => Store value in event
 
       if (event.eventType === "order.placed") {
-      // => Checks business rule: event.eventType === "order.placed"
-      // => Validates domain constraint
-      // => Calls method and assigns result
+        // => Operation: if()
         console.log(`[Warehouse] Processing order ${event.data.orderId}`);
-        // => Calls log method
         // => Outputs result
         console.log(`[Warehouse] Items to pick: ${event.data.items.length}`);
-        // => Calls log method
         // => Outputs result
         // => Parse standard format without context-specific knowledge
       }
+      // => Coordinates with bounded context
     }
+    // => Implements tactical pattern
   }
+  // => Protects aggregate integrity
 }
+// => Ensures transactional consistency
 
 // Usage
 (async () => {
-// => Calls method and assigns result
+  // => Create data structure
   const publisher = new PublishedLanguage.OrderEventPublisher();
-  // => Creates variable: publisher
-  // => Instantiates new object
-  // => Declares publisher
+  // => Store value in publisher
   const consumer = new PublishedLanguage.OrderEventConsumer();
-  // => Creates variable: consumer
-  // => Instantiates new object
-  // => Declares consumer
+  // => Store value in consumer
 
   const orderService = new OrderContextWithPublishedLanguage.OrderService(publisher);
-  // => Creates variable: orderService
-  // => Instantiates new object
-  // => Declares orderService
+  // => Store value in orderService
   const warehouseService = new WarehouseContext.WarehouseService(consumer);
-  // => Creates variable: warehouseService
-  // => Instantiates new object
-  // => Declares warehouseService
+  // => Store value in warehouseService
 
   // Order context publishes in Published Language
   await orderService.placeOrder(
+    // => Manages entity lifecycle
     "ORDER-001",
+    // => Preserves domain model
     "CUST-001",
+    // => Communicates domain intent
     [
+      // => Executes domain logic
       { productId: "PROD-001", quantity: 2, unitPrice: 50 },
+      // => Updates aggregate state
       { productId: "PROD-002", quantity: 1, unitPrice: 100 },
+      // => Validates business rule
     ],
+    // => Enforces invariant
     "USD",
+    // => Encapsulates domain knowledge
   );
   // => Output: [Publisher] Publishing event: { ... JSON ... }
 
   // Warehouse context consumes Published Language
   const eventJson = `{
-  // => Creates variable: eventJson
-  // => Assigns value: `{
-  // => Declares eventJson
+    // => Store value in eventJson
     "eventType": "order.placed",
+      // => Delegates to domain service
     "eventId": "evt-123",
+      // => Maintains consistency boundary
     "timestamp": "2026-01-31T12:00:00Z",
+      // => Applies domain event
     "data": {
+      // => Coordinates with bounded context
       "orderId": "ORDER-001",
+        // => Implements tactical pattern
       "customerId": "CUST-001",
+        // => Protects aggregate integrity
       "totalAmount": { "value": 200, "currency": "USD" },
+        // => Ensures transactional consistency
       "items": [
+        // => Manages entity lifecycle
         { "productId": "PROD-001", "quantity": 2, "unitPrice": { "value": 50, "currency": "USD" } }
+          // => Preserves domain model
       ]
+        // => Communicates domain intent
     },
+      // => Executes domain logic
     "metadata": { "version": "1.0", "source": "OrderService" }
+      // => Updates aggregate state
   }`;
+  // => Validates business rule
 
   await warehouseService.handleOrderPlacedEvent(eventJson);
-  // => Calls handleOrderPlacedEvent method
   // => Output: [Consumer] Received order.placed event for order ORDER-001
   // => Output: [Warehouse] Processing order ORDER-001
   // => Output: [Warehouse] Items to pick: 1
 })();
+// => Enforces invariant
 ```
 
 **Key Takeaway**: Published Language defines standard communication format using industry standards (JSON Schema, ISO formats, XML, Protocol Buffers). Enables multiple contexts to integrate without knowing each other's internal models.
@@ -6142,7 +5427,9 @@ Organizing hundreds of bounded contexts in large enterprises requires governance
 ```typescript
 // Context Catalog - registry of all bounded contexts
 interface BoundedContextMetadata {
+  // => BoundedContextMetadata: contract definition
   name: string;
+  // => Executes domain logic
   team: string;
   // => Owning team
   purpose: string;
@@ -6158,213 +5445,229 @@ interface BoundedContextMetadata {
   contextMapPatterns: Record<string, string>;
   // => Relationship with other contexts
 }
+// => Updates aggregate state
 
 class ContextCatalog {
-  // => Domain object representing ContextCatalog
-  // => Encapsulates business logic and state
-  // => Domain object: ContextCatalog
+  // => ContextCatalog: domain model element
   private contexts: Map<string, BoundedContextMetadata> = new Map();
-  // => Encapsulated field: contexts
-  // => Internal state (can only be modified by methods)
-  // => Declares contexts
   // => Encapsulated field (not publicly accessible)
 
   register(context: BoundedContextMetadata): void {
     // => Domain operation: register
-    // => Modifies state while maintaining invariants
     // => Register new context
     this.contexts.set(context.name, context);
-    // => Calls set method
     // => Delegates to internal method
     console.log(`[Catalog] Registered context: ${context.name} (team: ${context.team})`);
-    // => Calls log method
     // => Outputs result
   }
+  // => Validates business rule
 
   findContext(name: string): BoundedContextMetadata | null {
     // => Domain operation: findContext
-    // => Modifies state while maintaining invariants
     return this.contexts.get(name) || null;
-    // => Returns this.contexts.get(name) || null
+    // => Return result to caller
   }
+  // => Enforces invariant
 
   findByTeam(team: string): BoundedContextMetadata[] {
     // => Domain operation: findByTeam
-    // => Modifies state while maintaining invariants
     return Array.from(this.contexts.values()).filter((ctx) => ctx.team === team);
     // => Returns Array.from(this.contexts.values()).filter((ctx) => ctx.team === team)
-    // => Calls method and assigns result
   }
+  // => Encapsulates domain knowledge
 
   getDependencies(contextName: string): BoundedContextMetadata[] {
     // => Domain operation: getDependencies
-    // => Modifies state while maintaining invariants
     // => Find all upstream contexts
     const context = this.contexts.get(contextName);
-    // => Creates variable: context
-    // => Assigns value: this.contexts.get(contextName)
-    // => Declares context
+    // => Store value in context
     if (!context) return [];
-    // => Checks business rule: !context
-    // => Validates domain constraint
+    // => Conditional check
 
     return (
+      // => Return result to caller
       context.dependencies
         // => Returns context.dependencies
-        // => Returns value
         .map((name) => this.contexts.get(name))
-        // => Calls method and assigns result
+        // => map: process collection elements
         .filter((ctx): ctx is BoundedContextMetadata => ctx !== undefined)
+      // => filter: process collection elements
     );
-    // => Calls method and assigns result
+    // => Delegates to domain service
   }
+  // => Maintains consistency boundary
 
   getConsumers(contextName: string): BoundedContextMetadata[] {
     // => Domain operation: getConsumers
-    // => Modifies state while maintaining invariants
     // => Find all downstream contexts
     const context = this.contexts.get(contextName);
-    // => Creates variable: context
-    // => Assigns value: this.contexts.get(contextName)
-    // => Declares context
+    // => Store value in context
     if (!context) return [];
-    // => Checks business rule: !context
-    // => Validates domain constraint
+    // => Conditional check
 
     return (
+      // => Return result to caller
       context.consumers
         // => Returns context.consumers
-        // => Returns value
         .map((name) => this.contexts.get(name))
-        // => Calls method and assigns result
+        // => map: process collection elements
         .filter((ctx): ctx is BoundedContextMetadata => ctx !== undefined)
+      // => filter: process collection elements
     );
-    // => Calls method and assigns result
+    // => Applies domain event
   }
+  // => Coordinates with bounded context
 
   analyzeImpact(contextName: string): void {
     // => Domain operation: analyzeImpact
-    // => Modifies state while maintaining invariants
     // => Analyze impact of changes to context
     console.log(`\n=== Impact Analysis for ${contextName} ===`);
     // => Outputs result
 
     const context = this.contexts.get(contextName);
-    // => Creates variable: context
-    // => Assigns value: this.contexts.get(contextName)
-    // => Declares context
+    // => Store value in context
     if (!context) {
-      // => Checks business rule: !context
-      // => Validates domain constraint
+      // => Operation: if()
       console.log("Context not found");
-      // => Calls log method
       // => Outputs result
       return;
+      // => Implements tactical pattern
     }
+    // => Protects aggregate integrity
 
     const consumers = this.getConsumers(contextName);
-    // => Creates variable: consumers
-    // => Assigns value: this.getConsumers(contextName)
-    // => Declares consumers
+    // => Store value in consumers
     console.log(`Direct consumers: ${consumers.length}`);
-    // => Calls log method
     // => Outputs result
     consumers.forEach((c) => console.log(`  - ${c.name} (${c.team})`));
     // => Outputs result
 
     // Find transitive consumers
     const allAffected = new Set<string>([contextName]);
-    // => Creates variable: allAffected
-    // => Instantiates new object
-    // => Declares allAffected
+    // => Store value in allAffected
     const queue = [...consumers];
-    // => Creates variable: queue
-    // => Assigns value: [...consumers]
-    // => Declares queue
+    // => Store value in queue
 
     while (queue.length > 0) {
+      // => Operation: while()
       const current = queue.shift()!;
-      // => Creates variable: current
-      // => Assigns value: queue.shift()!
-      // => Declares current
+      // => Store value in current
       if (allAffected.has(current.name)) continue;
-      // => Checks business rule: allAffected.has(current.name)
-      // => Validates domain constraint
+      // => Conditional check
 
       allAffected.add(current.name);
-      // => Calls add method
+      // => Execute method
       const indirectConsumers = this.getConsumers(current.name);
-      // => Creates variable: indirectConsumers
-      // => Assigns value: this.getConsumers(current.name)
-      // => Declares indirectConsumers
+      // => Store value in indirectConsumers
       queue.push(...indirectConsumers);
-      // => Calls push method
+      // => Execute method
     }
+    // => Ensures transactional consistency
 
     console.log(`Total affected contexts: ${allAffected.size - 1}`);
-    // => Calls log method
     // => Outputs result
     // => Helps plan changes in large systems
   }
+  // => Manages entity lifecycle
 }
+// => Preserves domain model
 
 // Usage - large-scale context organization
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const catalog = new ContextCatalog();
-  // => Creates variable: catalog
-  // => Instantiates new object
-  // => Declares catalog
+  // => Store value in catalog
 
   // Register contexts
   catalog.register({
+    // => Communicates domain intent
     name: "Customer",
+    // => Executes domain logic
     team: "Customer Experience",
+    // => Updates aggregate state
     purpose: "Manage customer profiles and preferences",
+    // => Validates business rule
     publishedAPIs: ["GET /customers/{id}", "POST /customers"],
+    // => Enforces invariant
     dependencies: [],
+    // => Encapsulates domain knowledge
     consumers: ["Sales", "Support", "Marketing"],
+    // => Delegates to domain service
     publishedLanguages: ["CustomerEventV1"],
+    // => Maintains consistency boundary
     contextMapPatterns: {
+      // => Applies domain event
       Sales: "Customer-Supplier",
+      // => Coordinates with bounded context
       Support: "Customer-Supplier",
+      // => Implements tactical pattern
       Marketing: "Customer-Supplier",
+      // => Protects aggregate integrity
     },
+    // => Ensures transactional consistency
   });
+  // => Manages entity lifecycle
 
   catalog.register({
+    // => Preserves domain model
     name: "Sales",
+    // => Communicates domain intent
     team: "Revenue",
+    // => Executes domain logic
     purpose: "Manage orders and quotes",
+    // => Updates aggregate state
     publishedAPIs: ["GET /orders/{id}", "POST /orders"],
+    // => Validates business rule
     dependencies: ["Customer", "Inventory"],
+    // => Enforces invariant
     consumers: ["Billing", "Fulfillment"],
+    // => Encapsulates domain knowledge
     publishedLanguages: ["OrderEventV1"],
+    // => Delegates to domain service
     contextMapPatterns: {
+      // => Maintains consistency boundary
       Customer: "Customer-Supplier",
+      // => Applies domain event
       Inventory: "Customer-Supplier",
+      // => Coordinates with bounded context
       Billing: "Partnership",
+      // => Implements tactical pattern
       Fulfillment: "Customer-Supplier",
+      // => Protects aggregate integrity
     },
+    // => Ensures transactional consistency
   });
+  // => Manages entity lifecycle
 
   catalog.register({
+    // => Preserves domain model
     name: "Billing",
+    // => Communicates domain intent
     team: "Finance",
+    // => Executes domain logic
     purpose: "Process payments and generate invoices",
+    // => Updates aggregate state
     publishedAPIs: ["GET /invoices/{id}", "POST /payments"],
+    // => Validates business rule
     dependencies: ["Sales", "Customer"],
+    // => Enforces invariant
     consumers: ["Accounting"],
+    // => Encapsulates domain knowledge
     publishedLanguages: ["PaymentEventV1"],
+    // => Delegates to domain service
     contextMapPatterns: {
+      // => Maintains consistency boundary
       Sales: "Partnership",
+      // => Applies domain event
       Customer: "Customer-Supplier",
+      // => Coordinates with bounded context
     },
+    // => Implements tactical pattern
   });
+  // => Protects aggregate integrity
 
   // Analyze impact of changing Customer context
   catalog.analyzeImpact("Customer");
-  // => Calls analyzeImpact method
   // => Output: === Impact Analysis for Customer ===
   // => Output: Direct consumers: 3
   // => Output:   - Sales (Revenue)
@@ -6374,14 +5677,12 @@ class ContextCatalog {
   // => Shows ripple effect of changes
 
   const salesContext = catalog.findContext("Sales");
-  // => Creates variable: salesContext
-  // => Assigns value: catalog.findContext("Sales")
-  // => Declares salesContext
+  // => Store value in salesContext
   console.log(`\nSales context dependencies:`, salesContext?.dependencies);
-  // => Calls log method
   // => Outputs result
   // => Output: Sales context dependencies: [ 'Customer', 'Inventory' ]
 })();
+// => Ensures transactional consistency
 ```
 
 **Key Takeaway**: Large-scale DDD requires context catalog documenting all bounded contexts, their relationships, and ownership. Impact analysis reveals ripple effects of changes. Governance patterns prevent context sprawl and integration chaos.
@@ -6397,231 +5698,198 @@ Each Bounded Context becomes independent microservice with own database and depl
 ```typescript
 // Order Microservice - owns Order bounded context
 class OrderMicroservice {
-  // => Domain object representing OrderMicroservice
-  // => Encapsulates business logic and state
-  // => Domain object: OrderMicroservice
+  // => OrderMicroservice: domain model element
   private readonly orderRepository: Map<string, any> = new Map();
-  // => Encapsulated field: orderRepository
-  // => Immutable (readonly) - cannot change after construction
-  // => Calls method and assigns result
   // => Private database (not shared with other services)
   private readonly eventBus: IntegrationEventBus;
-  // => Encapsulated field: eventBus
-  // => Immutable (readonly) - cannot change after construction
+  // => Field: readonly (private)
+  // => Encapsulated state, not directly accessible
 
   constructor(eventBus: IntegrationEventBus) {
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     this.eventBus = eventBus;
-    // => Sets eventBus to eventBus
-    // => Updates internal state
-    // => Updates internal state
+    // => Update eventBus state
   }
+  // => Executes domain logic
 
   // REST API endpoint
   async createOrder(request: { customerId: string; items: any[]; total: number }): Promise<string> {
-    // => Calls createOrder method
+    // => Operation: createOrder()
     const orderId = crypto.randomUUID();
-    // => Creates variable: orderId
-    // => Assigns value: crypto.randomUUID()
-    // => Declares orderId
+    // => Store value in orderId
 
     const order = {
-      // => Creates variable: order
-      // => Assigns value: {
-      // => Declares order
+      // => Store value in order
       orderId,
+      // => Updates aggregate state
       customerId: request.customerId,
+      // => Validates business rule
       items: request.items,
+      // => Enforces invariant
       total: request.total,
+      // => Encapsulates domain knowledge
       status: "pending",
+      // => Delegates to domain service
     };
+    // => Maintains consistency boundary
 
     this.orderRepository.set(orderId, order);
-    // => Calls set method
     // => Delegates to internal method
     // => Store in Order service's database
 
     await this.eventBus.publish(new OrderPlacedEvent(orderId, request.customerId, request.items, request.total));
-    // => Calls publish method
     // => Delegates to internal method
     // => Publish integration event for other services
 
     console.log(`[OrderService] Order ${orderId} created`);
-    // => Calls log method
     // => Outputs result
     return orderId;
     // => Returns orderId
-    // => Returns value
   }
+  // => Applies domain event
 
   async getOrder(orderId: string): Promise<any> {
-    // => Calls getOrder method
     // => Query own database
     return this.orderRepository.get(orderId) || null;
-    // => Returns this.orderRepository.get(orderId) || null
+    // => Return result to caller
   }
+  // => Coordinates with bounded context
 }
+// => Implements tactical pattern
 
 // Inventory Microservice - owns Inventory bounded context
 class InventoryMicroservice {
-  // => Domain object representing InventoryMicroservice
-  // => Encapsulates business logic and state
-  // => Domain object: InventoryMicroservice
+  // => InventoryMicroservice: domain model element
   private readonly inventory: Map<string, number> = new Map([
-    // => Encapsulated field: inventory
-    // => Immutable (readonly) - cannot change after construction
+    // => Create Map instance
     ["PROD-001", 100],
+    // => Protects aggregate integrity
     ["PROD-002", 50],
+    // => Ensures transactional consistency
   ]);
   // => Private database
   private readonly eventBus: IntegrationEventBus;
-  // => Encapsulated field: eventBus
-  // => Immutable (readonly) - cannot change after construction
+  // => Field: readonly (private)
+  // => Encapsulated state, not directly accessible
 
   constructor(eventBus: IntegrationEventBus) {
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     this.eventBus = eventBus;
-    // => Sets eventBus to eventBus
-    // => Updates internal state
-    // => Updates internal state
+    // => Update eventBus state
 
     // Subscribe to Order events
     this.eventBus.subscribe(OrderPlacedEvent, this.handleOrderPlaced.bind(this));
-    // => Calls subscribe method
     // => Delegates to internal method
   }
+  // => Manages entity lifecycle
 
   private async handleOrderPlaced(event: OrderPlacedEvent): Promise<void> {
-    // => Calls handleOrderPlaced method
     // => React to events from other services
     console.log(`[InventoryService] Processing order ${event.orderId}`);
-    // => Calls log method
     // => Outputs result
 
     for (const item of event.items) {
+      // => Operation: for()
       const available = this.inventory.get(item.productId) || 0;
-      // => Creates variable: available
-      // => Assigns value: this.inventory.get(item.productId) || 0
-      // => Declares available
+      // => Store value in available
 
       if (available >= item.quantity) {
-        // => Checks business rule: available >= item.quantity
-        // => Validates domain constraint
-        // => Calls method and assigns result
+        // => Operation: if()
         this.inventory.set(item.productId, available - item.quantity);
-        // => Calls set method
         // => Delegates to internal method
         // => Update own database
         console.log(`[InventoryService] Reserved ${item.quantity} units of ${item.productId}`);
-        // => Calls log method
         // => Outputs result
       } else {
+        // => Preserves domain model
         await this.eventBus.publish(new InventoryReservationFailedEvent(event.orderId, "Insufficient stock"));
-        // => Calls publish method
         // => Delegates to internal method
         return;
+        // => Communicates domain intent
       }
+      // => Executes domain logic
     }
+    // => Updates aggregate state
 
     await this.eventBus.publish(new InventoryReservedEvent(event.orderId));
-    // => Calls publish method
     // => Delegates to internal method
   }
+  // => Validates business rule
 
   // REST API endpoint
   async checkStock(productId: string): Promise<number> {
-    // => Calls checkStock method
     // => Public API for other services
     return this.inventory.get(productId) || 0;
-    // => Returns this.inventory.get(productId) || 0
+    // => Return result to caller
   }
+  // => Enforces invariant
 }
+// => Encapsulates domain knowledge
 
 // API Gateway - routes requests to appropriate microservice
 class APIGateway {
-  // => Domain object representing APIGateway
-  // => Encapsulates business logic and state
-  // => Domain object: APIGateway
+  // => APIGateway: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     private readonly orderService: OrderMicroservice,
-    // => Encapsulated field: orderService
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
     private readonly inventoryService: InventoryMicroservice,
-    // => Encapsulated field: inventoryService
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
   ) {}
+  // => Delegates to domain service
 
   async handleRequest(path: string, method: string, body?: any): Promise<any> {
-    // => Calls handleRequest method
     // => Route to appropriate microservice
     if (path.startsWith("/orders") && method === "POST") {
-      // => Checks business rule: path.startsWith("/orders") && method === "POST"
-      // => Validates domain constraint
-      // => Calls method and assigns result
+      // => Conditional check
       return await this.orderService.createOrder(body);
-      // => Returns await this.orderService.createOrder(body)
+      // => Return result to caller
     } else if (path.match(/\/orders\/(.+)/) && method === "GET") {
-      // => Calls method and assigns result
+      // => Create data structure
       const orderId = path.split("/")[2];
-      // => Creates variable: orderId
-      // => Assigns value: path.split("/")[2]
-      // => Declares orderId
+      // => Store value in orderId
       return await this.orderService.getOrder(orderId);
-      // => Returns await this.orderService.getOrder(orderId)
+      // => Return result to caller
     } else if (path.match(/\/inventory\/(.+)/) && method === "GET") {
-      // => Calls method and assigns result
+      // => Create data structure
       const productId = path.split("/")[2];
-      // => Creates variable: productId
-      // => Assigns value: path.split("/")[2]
-      // => Declares productId
+      // => Store value in productId
       return await this.inventoryService.checkStock(productId);
-      // => Returns await this.inventoryService.checkStock(productId)
+      // => Return result to caller
     }
+    // => Maintains consistency boundary
 
     throw new Error("Not found");
-    // => Throws domain exception
-    // => Business rule violation detected
-    // => Throws domain exception
-    // => Protects business invariant
+    // => Raise domain exception
   }
+  // => Applies domain event
 }
+// => Coordinates with bounded context
 
 // Usage - microservices architecture
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const eventBus = new IntegrationEventBus();
-  // => Creates variable: eventBus
-  // => Instantiates new object
-  // => Declares eventBus
+  // => Store value in eventBus
 
   const orderService = new OrderMicroservice(eventBus);
-  // => Creates variable: orderService
-  // => Instantiates new object
-  // => Declares orderService
+  // => Store value in orderService
   const inventoryService = new InventoryMicroservice(eventBus);
-  // => Creates variable: inventoryService
-  // => Instantiates new object
-  // => Declares inventoryService
+  // => Store value in inventoryService
   const gateway = new APIGateway(orderService, inventoryService);
-  // => Creates variable: gateway
-  // => Instantiates new object
-  // => Declares gateway
+  // => Store value in gateway
 
   // Client makes request to API Gateway
   const orderId = await gateway.handleRequest("/orders", "POST", {
-    // => Creates variable: orderId
-    // => Assigns value: await gateway.handleRequest("/orders", "POST", {
-    // => Declares orderId
+    // => Store value in orderId
     customerId: "CUST-001",
+    // => Implements tactical pattern
     items: [{ productId: "PROD-001", quantity: 5 }],
+    // => Protects aggregate integrity
     total: 250,
+    // => Ensures transactional consistency
   });
   // => Output: [OrderService] Order order-id created
   // => Output: [InventoryService] Processing order order-id
@@ -6629,23 +5897,18 @@ class APIGateway {
 
   // Query order
   const order = await gateway.handleRequest(`/orders/${orderId}`, "GET");
-  // => Creates variable: order
-  // => Assigns value: await gateway.handleRequest(`/orders/${orderId}`, "GET")
-  // => Declares order
+  // => Store value in order
   console.log("Order retrieved:", order);
-  // => Calls log method
   // => Outputs result
 
   // Query inventory
   const stock = await gateway.handleRequest("/inventory/PROD-001", "GET");
-  // => Creates variable: stock
-  // => Assigns value: await gateway.handleRequest("/inventory/PROD-001", "GET")
-  // => Declares stock
+  // => Store value in stock
   console.log("Stock remaining:", stock);
-  // => Calls log method
   // => Outputs result
   // => Output: Stock remaining: 95
 })();
+// => Manages entity lifecycle
 ```
 
 **Key Takeaway**: Map each Bounded Context to independent microservice with private database and REST/event-based APIs. Services communicate via integration events or synchronous calls through API Gateway. Database per service ensures loose coupling.
@@ -6659,281 +5922,271 @@ Microservices architecture requires distributed sagas spanning multiple services
 ```typescript
 // Saga Coordinator Service - orchestrates distributed transactions
 class OrderSagaCoordinator {
-  // => Domain object representing OrderSagaCoordinator
-  // => Encapsulates business logic and state
-  // => Domain object: OrderSagaCoordinator
+  // => OrderSagaCoordinator: domain model element
   constructor(
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     private readonly orderService: OrderMicroservice,
-    // => Encapsulated field: orderService
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
     private readonly inventoryService: InventoryMicroservice,
-    // => Encapsulated field: inventoryService
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
     private readonly paymentService: PaymentMicroservice,
-    // => Encapsulated field: paymentService
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
     private readonly shippingService: ShippingMicroservice,
-    // => Encapsulated field: shippingService
-    // => Immutable (readonly) - cannot change after construction
+    // => Field: readonly (private)
+    // => Encapsulated state, not directly accessible
   ) {}
+  // => Executes domain logic
 
   async executeOrderSaga(
+    // => Updates aggregate state
     customerId: string,
+    // => Validates business rule
     items: Array<{ productId: string; quantity: number }>,
+    // => Enforces invariant
     totalAmount: number,
+    // => Encapsulates domain knowledge
   ): Promise<void> {
+    // => Delegates to domain service
     const orderId = crypto.randomUUID();
-    // => Creates variable: orderId
-    // => Assigns value: crypto.randomUUID()
-    // => Declares orderId
+    // => Store value in orderId
     const sagaId = crypto.randomUUID();
-    // => Creates variable: sagaId
-    // => Assigns value: crypto.randomUUID()
-    // => Declares sagaId
+    // => Store value in sagaId
     console.log(`[SagaCoordinator] Starting saga ${sagaId} for order ${orderId}`);
-    // => Calls log method
     // => Outputs result
 
     const completedSteps: string[] = [];
-    // => Declares completedSteps
+    // => Create data structure
 
     try {
+      // => Maintains consistency boundary
       // Step 1: Create order
       await this.orderService.createOrder({ customerId, items, total: totalAmount });
-      // => Calls createOrder method
       // => Delegates to internal method
       completedSteps.push("order");
-      // => Calls push method
+      // => Execute method
       console.log(`[SagaCoordinator] Order created`);
-      // => Calls log method
       // => Outputs result
 
       // Step 2: Reserve inventory (remote service call)
       await this.inventoryService.reserveInventory(items);
-      // => Calls reserveInventory method
       // => Delegates to internal method
       completedSteps.push("inventory");
-      // => Calls push method
+      // => Execute method
       console.log(`[SagaCoordinator] Inventory reserved`);
-      // => Calls log method
       // => Outputs result
 
       // Step 3: Process payment (remote service call)
       await this.paymentService.processPayment(customerId, totalAmount);
-      // => Calls processPayment method
       // => Delegates to internal method
       completedSteps.push("payment");
-      // => Calls push method
+      // => Execute method
       console.log(`[SagaCoordinator] Payment processed`);
-      // => Calls log method
       // => Outputs result
 
       // Step 4: Ship order (remote service call)
       await this.shippingService.createShipment(orderId);
-      // => Calls createShipment method
       // => Delegates to internal method
       completedSteps.push("shipping");
-      // => Calls push method
+      // => Execute method
       console.log(`[SagaCoordinator] Shipment created`);
-      // => Calls log method
       // => Outputs result
 
       console.log(`[SagaCoordinator] Saga ${sagaId} completed successfully`);
-      // => Calls log method
       // => Outputs result
     } catch (error) {
+      // => Applies domain event
       console.error(`[SagaCoordinator] Saga ${sagaId} failed at step:`, completedSteps[completedSteps.length - 1]);
-      // => Calls error method
+      // => Execute method
 
       // Compensate in reverse order
       await this.compensate(completedSteps, orderId, customerId, items, totalAmount);
-      // => Calls compensate method
       // => Delegates to internal method
     }
+    // => Coordinates with bounded context
   }
+  // => Implements tactical pattern
 
   private async compensate(
+    // => Field: async (private)
+    // => Encapsulated state, not directly accessible
     completedSteps: string[],
+    // => Protects aggregate integrity
     orderId: string,
+    // => Ensures transactional consistency
     customerId: string,
+    // => Manages entity lifecycle
     items: any[],
+    // => Preserves domain model
     amount: number,
+    // => Communicates domain intent
   ): Promise<void> {
+    // => Executes domain logic
     console.log(`[SagaCoordinator] Starting compensation for ${completedSteps.length} steps`);
-    // => Calls log method
     // => Outputs result
 
     const reversed = [...completedSteps].reverse();
-    // => Creates variable: reversed
-    // => Assigns value: [...completedSteps].reverse()
-    // => Declares reversed
+    // => Store value in reversed
 
     for (const step of reversed) {
+      // => Operation: for()
       try {
+        // => Updates aggregate state
         switch (step) {
+          // => Operation: switch()
           case "shipping":
+            // => Validates business rule
             await this.shippingService.cancelShipment(orderId);
-            // => Calls cancelShipment method
             // => Delegates to internal method
             console.log(`[SagaCoordinator] Shipment cancelled`);
-            // => Calls log method
             // => Outputs result
             break;
+          // => Enforces invariant
           case "payment":
+            // => Encapsulates domain knowledge
             await this.paymentService.refundPayment(customerId, amount);
-            // => Calls refundPayment method
             // => Delegates to internal method
             console.log(`[SagaCoordinator] Payment refunded`);
-            // => Calls log method
             // => Outputs result
             break;
+          // => Delegates to domain service
           case "inventory":
+            // => Maintains consistency boundary
             await this.inventoryService.releaseInventory(items);
-            // => Calls releaseInventory method
             // => Delegates to internal method
             console.log(`[SagaCoordinator] Inventory released`);
-            // => Calls log method
             // => Outputs result
             break;
+          // => Applies domain event
           case "order":
+            // => Coordinates with bounded context
             await this.orderService.cancelOrder(orderId);
-            // => Calls cancelOrder method
             // => Delegates to internal method
             console.log(`[SagaCoordinator] Order cancelled`);
-            // => Calls log method
             // => Outputs result
             break;
+          // => Implements tactical pattern
         }
+        // => Protects aggregate integrity
       } catch (error) {
+        // => Ensures transactional consistency
         console.error(`[SagaCoordinator] Compensation failed for ${step}:`, error);
-        // => Calls error method
+        // => Execute method
       }
+      // => Manages entity lifecycle
     }
+    // => Preserves domain model
 
     console.log(`[SagaCoordinator] Compensation completed`);
-    // => Calls log method
     // => Outputs result
   }
+  // => Communicates domain intent
 }
+// => Executes domain logic
 
 // Payment Microservice
 class PaymentMicroservice {
-  // => Domain object representing PaymentMicroservice
-  // => Encapsulates business logic and state
-  // => Domain object: PaymentMicroservice
+  // => PaymentMicroservice: domain model element
   async processPayment(customerId: string, amount: number): Promise<void> {
-    // => Calls processPayment method
+    // => Operation: processPayment()
     console.log(`[PaymentService] Processing payment of ${amount} for ${customerId}`);
-    // => Calls log method
     // => Outputs result
     // Simulate remote call
     await new Promise((resolve) => setTimeout(resolve, 100));
-    // => Calls method and assigns result
+    // => Create Promise instance
   }
+  // => Updates aggregate state
 
   async refundPayment(customerId: string, amount: number): Promise<void> {
-    // => Calls refundPayment method
+    // => Operation: refundPayment()
     console.log(`[PaymentService] Refunding ${amount} to ${customerId}`);
-    // => Calls log method
     // => Outputs result
     await new Promise((resolve) => setTimeout(resolve, 100));
-    // => Calls method and assigns result
+    // => Create Promise instance
   }
+  // => Validates business rule
 }
+// => Enforces invariant
 
 // Shipping Microservice
 class ShippingMicroservice {
-  // => Domain object representing ShippingMicroservice
-  // => Encapsulates business logic and state
-  // => Domain object: ShippingMicroservice
+  // => ShippingMicroservice: domain model element
   async createShipment(orderId: string): Promise<void> {
-    // => Calls createShipment method
+    // => Operation: createShipment()
     console.log(`[ShippingService] Creating shipment for order ${orderId}`);
-    // => Calls log method
     // => Outputs result
     await new Promise((resolve) => setTimeout(resolve, 100));
-    // => Calls method and assigns result
+    // => Create Promise instance
   }
+  // => Encapsulates domain knowledge
 
   async cancelShipment(orderId: string): Promise<void> {
-    // => Calls cancelShipment method
+    // => Operation: cancelShipment()
     console.log(`[ShippingService] Cancelling shipment for order ${orderId}`);
-    // => Calls log method
     // => Outputs result
     await new Promise((resolve) => setTimeout(resolve, 100));
-    // => Calls method and assigns result
+    // => Create Promise instance
   }
+  // => Delegates to domain service
 }
+// => Maintains consistency boundary
 
 // Inventory Microservice Extensions
 interface InventoryMicroserviceExtended extends InventoryMicroservice {
+  // => InventoryMicroserviceExtended: contract definition
   reserveInventory(items: Array<{ productId: string; quantity: number }>): Promise<void>;
   // => Domain operation: reserveInventory
-  // => Modifies state while maintaining invariants
   releaseInventory(items: Array<{ productId: string; quantity: number }>): Promise<void>;
   // => Domain operation: releaseInventory
-  // => Modifies state while maintaining invariants
 }
+// => Applies domain event
 
 // Usage
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const eventBus = new IntegrationEventBus();
-  // => Creates variable: eventBus
-  // => Instantiates new object
-  // => Declares eventBus
+  // => Store value in eventBus
   const orderService = new OrderMicroservice(eventBus);
-  // => Creates variable: orderService
-  // => Instantiates new object
-  // => Declares orderService
+  // => Store value in orderService
   const inventoryService = new InventoryMicroservice(eventBus) as any;
-  // => Creates variable: inventoryService
-  // => Instantiates new object
-  // => Declares inventoryService
+  // => Store value in inventoryService
   const paymentService = new PaymentMicroservice();
-  // => Creates variable: paymentService
-  // => Instantiates new object
-  // => Declares paymentService
+  // => Store value in paymentService
   const shippingService = new ShippingMicroservice();
-  // => Creates variable: shippingService
-  // => Instantiates new object
-  // => Declares shippingService
+  // => Store value in shippingService
 
   // Add methods to inventory service
   inventoryService.reserveInventory = async (items: any[]) => {
-    // => Calls method and assigns result
+    // => Create data structure
     console.log(`[InventoryService] Reserving items:`, items);
-    // => Calls log method
     // => Outputs result
   };
+  // => Coordinates with bounded context
   inventoryService.releaseInventory = async (items: any[]) => {
-    // => Calls method and assigns result
+    // => Create data structure
     console.log(`[InventoryService] Releasing items:`, items);
-    // => Calls log method
     // => Outputs result
   };
+  // => Implements tactical pattern
 
   // Add methods to order service
   (orderService as any).cancelOrder = async (orderId: string) => {
-    // => Calls method and assigns result
+    // => Create data structure
     console.log(`[OrderService] Cancelling order ${orderId}`);
-    // => Calls log method
     // => Outputs result
   };
+  // => Protects aggregate integrity
 
   const coordinator = new OrderSagaCoordinator(orderService, inventoryService, paymentService, shippingService);
-  // => Creates variable: coordinator
-  // => Instantiates new object
-  // => Declares coordinator
+  // => Store value in coordinator
 
   await coordinator.executeOrderSaga("CUST-001", [{ productId: "PROD-001", quantity: 2 }], 100);
-  // => Calls executeOrderSaga method
   // => Coordinates saga across 4 microservices
   // => Handles compensations if any step fails
 })();
+// => Ensures transactional consistency
 ```
 
 **Key Takeaway**: Distributed sagas coordinate transactions across microservices using saga coordinator that orchestrates steps and handles compensations. Each microservice provides both forward operations and compensating operations.
@@ -6947,241 +6200,208 @@ Event-driven architecture enables loose coupling between microservices using dom
 ```typescript
 // Event Store Microservice - centralized event log
 class EventStoreMicroservice {
-  // => Domain object representing EventStoreMicroservice
-  // => Encapsulates business logic and state
-  // => Domain object: EventStoreMicroservice
+  // => EventStoreMicroservice: domain model element
   private events: Array<{ eventId: string; eventType: string; data: any; timestamp: Date }> = [];
-  // => Encapsulated field: events
-  // => Internal state (can only be modified by methods)
-  // => Declares events
   // => Encapsulated field (not publicly accessible)
 
   async appendEvent(eventType: string, data: any): Promise<string> {
-    // => Calls appendEvent method
+    // => Operation: appendEvent()
     const eventId = crypto.randomUUID();
-    // => Creates variable: eventId
-    // => Assigns value: crypto.randomUUID()
-    // => Declares eventId
+    // => Store value in eventId
     const event = { eventId, eventType, data, timestamp: new Date() };
-    // => Creates variable: event
-    // => Instantiates new object
-    // => Declares event
+    // => Store value in event
 
     this.events.push(event);
-    // => Calls push method
     // => Delegates to internal method
     console.log(`[EventStore] Stored event ${eventId}: ${eventType}`);
-    // => Calls log method
     // => Outputs result
 
     return eventId;
     // => Returns eventId
-    // => Returns value
   }
+  // => Executes domain logic
 
   async getEvents(since?: Date): Promise<any[]> {
-    // => Calls getEvents method
+    // => Operation: getEvents()
     if (!since) return this.events;
-    // => Checks business rule: !since
-    // => Validates domain constraint
+    // => Conditional check
 
     return this.events.filter((e) => e.timestamp >= since);
-    // => Returns this.events.filter((e) => e.timestamp >= since)
-    // => Calls method and assigns result
+    // => Return result to caller
   }
+  // => Updates aggregate state
 
   async getEventsByType(eventType: string): Promise<any[]> {
-    // => Calls getEventsByType method
+    // => Operation: getEventsByType()
     return this.events.filter((e) => e.eventType === eventType);
-    // => Returns this.events.filter((e) => e.eventType === eventType)
-    // => Calls method and assigns result
+    // => Return result to caller
   }
+  // => Validates business rule
 }
+// => Enforces invariant
 
 // Event Bus with Persistent Log
 class PersistentEventBus {
-  // => Domain object representing PersistentEventBus
-  // => Encapsulates business logic and state
-  // => Domain object: PersistentEventBus
+  // => PersistentEventBus: domain model element
   private handlers: Map<string, Array<(event: any) => Promise<void>>> = new Map();
-  // => Encapsulated field: handlers
-  // => Internal state (can only be modified by methods)
-  // => Declares handlers
   // => Encapsulated field (not publicly accessible)
 
   constructor(private readonly eventStore: EventStoreMicroservice) {}
-  // => Constructor initializes domain object
-  // => Establishes valid initial state
-  // => Constructor initializes instance
+  // => Initialize object with parameters
 
   subscribe<T extends DomainEvent>(eventType: new (...args: any[]) => T, handler: (event: T) => Promise<void>): void {
-    // => Calls method and assigns result
+    // => Create data structure
     const typeName = eventType.name;
-    // => Creates variable: typeName
-    // => Assigns value: eventType.name
-    // => Declares typeName
+    // => Store value in typeName
     const handlers = this.handlers.get(typeName) || [];
-    // => Creates variable: handlers
-    // => Assigns value: this.handlers.get(typeName) || []
-    // => Declares handlers
+    // => Store value in handlers
     handlers.push(handler as any);
-    // => Calls push method
+    // => Execute method
     this.handlers.set(typeName, handlers);
-    // => Calls set method
     // => Delegates to internal method
   }
+  // => Encapsulates domain knowledge
 
   async publish(event: DomainEvent): Promise<void> {
-    // => Calls publish method
+    // => Operation: publish()
     // Persist event first
     await this.eventStore.appendEvent(event.constructor.name, event);
-    // => Calls appendEvent method
     // => Delegates to internal method
 
     // Then deliver to subscribers
     const handlers = this.handlers.get(event.constructor.name) || [];
-    // => Creates variable: handlers
-    // => Assigns value: this.handlers.get(event.constructor.name) || []
-    // => Declares handlers
+    // => Store value in handlers
     for (const handler of handlers) {
+      // => Operation: for()
       try {
+        // => Delegates to domain service
         await handler(event);
-        // => Calls handler method
+        // => Maintains consistency boundary
       } catch (error) {
+        // => Applies domain event
         console.error(`Event handler failed for ${event.constructor.name}:`, error);
-        // => Calls error method
+        // => Execute method
         // Log error but continue delivering to other handlers
       }
+      // => Coordinates with bounded context
     }
+    // => Implements tactical pattern
   }
+  // => Protects aggregate integrity
 }
+// => Ensures transactional consistency
 
 // Analytics Microservice - subscribes to events
 class AnalyticsMicroservice {
-  // => Domain object representing AnalyticsMicroservice
-  // => Encapsulates business logic and state
-  // => Domain object: AnalyticsMicroservice
+  // => AnalyticsMicroservice: domain model element
   private orderCount = 0;
-  // => Declares orderCount
   // => Encapsulated field (not publicly accessible)
   private revenue = 0;
-  // => Declares revenue
   // => Encapsulated field (not publicly accessible)
 
   constructor(eventBus: PersistentEventBus) {
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     eventBus.subscribe(OrderPlacedEvent, this.handleOrderPlaced.bind(this));
-    // => Calls subscribe method
     // => Delegates to internal method
     eventBus.subscribe(OrderCancelledEvent, this.handleOrderCancelled.bind(this));
-    // => Calls subscribe method
     // => Delegates to internal method
   }
+  // => Manages entity lifecycle
 
   private async handleOrderPlaced(event: OrderPlacedEvent): Promise<void> {
-    // => Calls handleOrderPlaced method
+    // => Field: async (private)
+    // => Encapsulated state, not directly accessible
     this.orderCount++;
+    // => Preserves domain model
     this.revenue += event.totalAmount;
     // => Modifies revenue
     // => State change operation
     // => Modifies state value
     console.log(`[Analytics] Order placed. Total orders: ${this.orderCount}, Revenue: ${this.revenue}`);
-    // => Calls log method
     // => Delegates to internal method
     // => Outputs result
   }
+  // => Communicates domain intent
 
   private async handleOrderCancelled(event: OrderCancelledEvent): Promise<void> {
-    // => Calls handleOrderCancelled method
+    // => Field: async (private)
+    // => Encapsulated state, not directly accessible
     this.orderCount--;
+    // => Executes domain logic
     console.log(`[Analytics] Order cancelled. Total orders: ${this.orderCount}`);
-    // => Calls log method
     // => Delegates to internal method
     // => Outputs result
   }
+  // => Updates aggregate state
 
   async getMetrics(): Promise<{ orders: number; revenue: number }> {
-    // => Calls getMetrics method
+    // => Operation: getMetrics()
     return { orders: this.orderCount, revenue: this.revenue };
     // => Returns { orders: this.orderCount, revenue: this.revenue }
-    // => Returns value
   }
+  // => Validates business rule
 }
+// => Enforces invariant
 
 // Notification Microservice - subscribes to events
 class NotificationMicroservice {
-  // => Domain object representing NotificationMicroservice
-  // => Encapsulates business logic and state
-  // => Domain object: NotificationMicroservice
+  // => NotificationMicroservice: domain model element
   constructor(eventBus: PersistentEventBus) {
-    // => Constructor initializes domain object
-    // => Establishes valid initial state
-    // => Constructor initializes instance
+    // => Initialize object with parameters
     eventBus.subscribe(OrderPlacedEvent, this.handleOrderPlaced.bind(this));
-    // => Calls subscribe method
     // => Delegates to internal method
     eventBus.subscribe(InventoryReservedEvent, this.handleInventoryReserved.bind(this));
-    // => Calls subscribe method
     // => Delegates to internal method
   }
+  // => Encapsulates domain knowledge
 
   private async handleOrderPlaced(event: OrderPlacedEvent): Promise<void> {
-    // => Calls handleOrderPlaced method
+    // => Field: async (private)
+    // => Encapsulated state, not directly accessible
     console.log(`[Notification] Sending order confirmation to customer ${event.customerId}`);
-    // => Calls log method
     // => Outputs result
     // Send email/SMS
   }
+  // => Delegates to domain service
 
   private async handleInventoryReserved(event: InventoryReservedEvent): Promise<void> {
-    // => Calls handleInventoryReserved method
+    // => Field: async (private)
+    // => Encapsulated state, not directly accessible
     console.log(`[Notification] Inventory reserved for order ${event.orderId}`);
-    // => Calls log method
     // => Outputs result
     // Send status update
   }
+  // => Maintains consistency boundary
 }
+// => Applies domain event
 
 // Usage - event-driven microservices
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const eventStore = new EventStoreMicroservice();
-  // => Creates variable: eventStore
-  // => Instantiates new object
-  // => Declares eventStore
+  // => Store value in eventStore
   const eventBus = new PersistentEventBus(eventStore);
-  // => Creates variable: eventBus
-  // => Instantiates new object
-  // => Declares eventBus
+  // => Store value in eventBus
 
   // Microservices subscribe to events
   const analytics = new AnalyticsMicroservice(eventBus);
-  // => Creates variable: analytics
-  // => Instantiates new object
-  // => Declares analytics
+  // => Store value in analytics
   const notifications = new NotificationMicroservice(eventBus);
-  // => Creates variable: notifications
-  // => Instantiates new object
-  // => Declares notifications
+  // => Store value in notifications
   const orderService = new OrderMicroservice(eventBus);
-  // => Creates variable: orderService
-  // => Instantiates new object
-  // => Declares orderService
+  // => Store value in orderService
   const inventoryService = new InventoryMicroservice(eventBus);
-  // => Creates variable: inventoryService
-  // => Instantiates new object
-  // => Declares inventoryService
+  // => Store value in inventoryService
 
   // Place order - events flow through system
   const orderId = await orderService.createOrder({
-    // => Creates variable: orderId
-    // => Assigns value: await orderService.createOrder({
-    // => Declares orderId
+    // => Store value in orderId
     customerId: "CUST-001",
+    // => Coordinates with bounded context
     items: [{ productId: "PROD-001", quantity: 2 }],
+    // => Implements tactical pattern
     total: 100,
+    // => Protects aggregate integrity
   });
   // => Output: [EventStore] Stored event evt-id: OrderPlaced
   // => Output: [OrderService] Order order-id created
@@ -7193,23 +6413,18 @@ class NotificationMicroservice {
 
   // Query analytics
   const metrics = await analytics.getMetrics();
-  // => Creates variable: metrics
-  // => Assigns value: await analytics.getMetrics()
-  // => Declares metrics
+  // => Store value in metrics
   console.log("Current metrics:", metrics);
-  // => Calls log method
   // => Outputs result
   // => Output: Current metrics: { orders: 1, revenue: 100 }
 
   // Query event store
   const events = await eventStore.getEventsByType("OrderPlaced");
-  // => Creates variable: events
-  // => Assigns value: await eventStore.getEventsByType("OrderPlaced")
-  // => Declares events
+  // => Store value in events
   console.log(`Total OrderPlaced events: ${events.length}`);
-  // => Calls log method
   // => Outputs result
 })();
+// => Ensures transactional consistency
 ```
 
 **Key Takeaway**: Event-driven microservices architecture uses persistent event bus and event store. Services publish domain events that other services subscribe to. Event store provides audit log and enables rebuilding read models.
@@ -7223,6 +6438,7 @@ Service mesh infrastructure complements DDD by handling cross-cutting concerns a
 ```typescript
 // Service Identity - DDD bounded context mapped to service mesh identity
 interface ServiceIdentity {
+  // => ServiceIdentity: contract definition
   contextName: string;
   // => Bounded context name
   namespace: string;
@@ -7232,274 +6448,248 @@ interface ServiceIdentity {
   endpoints: string[];
   // => Service endpoints
 }
+// => Executes domain logic
 
 // Service Registry - discovers services by bounded context
 class ServiceRegistry {
-  // => Domain object representing ServiceRegistry
-  // => Encapsulates business logic and state
-  // => Domain object: ServiceRegistry
+  // => ServiceRegistry: domain model element
   private services: Map<string, ServiceIdentity> = new Map();
-  // => Encapsulated field: services
-  // => Internal state (can only be modified by methods)
-  // => Declares services
   // => Encapsulated field (not publicly accessible)
 
   register(service: ServiceIdentity): void {
     // => Domain operation: register
-    // => Modifies state while maintaining invariants
     this.services.set(service.contextName, service);
-    // => Calls set method
     // => Delegates to internal method
     console.log(`[ServiceRegistry] Registered ${service.contextName} v${service.version}`);
-    // => Calls log method
     // => Outputs result
   }
+  // => Updates aggregate state
 
   discover(contextName: string): ServiceIdentity | null {
     // => Domain operation: discover
-    // => Modifies state while maintaining invariants
     return this.services.get(contextName) || null;
-    // => Returns this.services.get(contextName) || null
+    // => Return result to caller
   }
+  // => Validates business rule
 }
+// => Enforces invariant
 
 // Circuit Breaker - prevents cascading failures
 class CircuitBreaker {
-  // => Domain object representing CircuitBreaker
-  // => Encapsulates business logic and state
-  // => Domain object: CircuitBreaker
+  // => CircuitBreaker: domain model element
   private state: "CLOSED" | "OPEN" | "HALF_OPEN" = "CLOSED";
-  // => Encapsulated field: state
-  // => Internal state (can only be modified by methods)
-  // => Declares state
   // => Encapsulated field (not publicly accessible)
   private failureCount = 0;
-  // => Declares failureCount
   // => Encapsulated field (not publicly accessible)
   private readonly threshold = 5;
+  // => Field: readonly (private)
+  // => Encapsulated state, not directly accessible
   private lastFailureTime?: Date;
+  // => Field: lastFailureTime (private)
+  // => Encapsulated state, not directly accessible
 
   async execute<T>(operation: () => Promise<T>, contextName: string): Promise<T> {
-    // => Calls method and assigns result
+    // => Create data structure
     if (this.state === "OPEN") {
-      // => Checks business rule: this.state === "OPEN"
-      // => Validates domain constraint
-      // => Calls method and assigns result
+      // => Operation: if()
       const now = Date.now();
-      // => Creates variable: now
-      // => Assigns value: Date.now()
-      // => Declares now
+      // => Store value in now
       const lastFailure = this.lastFailureTime?.getTime() || 0;
-      // => Creates variable: lastFailure
-      // => Assigns value: this.lastFailureTime?.getTime() || 0
-      // => Declares lastFailure
+      // => Store value in lastFailure
 
       if (now - lastFailure > 60000) {
-        // => Checks business rule: now - lastFailure > 60000
-        // => Validates domain constraint
+        // => Operation: if()
         // 60s timeout
         this.state = "HALF_OPEN";
-        // => Sets state to "HALF_OPEN"
-        // => Updates internal state
-        // => Updates internal state
+        // => Update state state
         console.log(`[CircuitBreaker] ${contextName} entering HALF_OPEN`);
-        // => Calls log method
         // => Outputs result
       } else {
+        // => Encapsulates domain knowledge
         throw new Error(`Circuit breaker OPEN for ${contextName}`);
-        // => Throws domain exception
-        // => Business rule violation detected
-        // => Throws domain exception
-        // => Protects business invariant
+        // => Raise domain exception
       }
+      // => Delegates to domain service
     }
+    // => Maintains consistency boundary
 
     try {
+      // => Applies domain event
       const result = await operation();
-      // => Creates variable: result
-      // => Assigns value: await operation()
-      // => Declares result
+      // => Store value in result
       // Success - reset circuit breaker
       if (this.state === "HALF_OPEN") {
-        // => Checks business rule: this.state === "HALF_OPEN"
-        // => Validates domain constraint
-        // => Calls method and assigns result
+        // => Operation: if()
         this.state = "CLOSED";
-        // => Sets state to "CLOSED"
-        // => Updates internal state
-        // => Updates internal state
+        // => Update state state
         this.failureCount = 0;
-        // => Sets failureCount to 0
-        // => Updates internal state
-        // => Updates internal state
+        // => Update failureCount state
         console.log(`[CircuitBreaker] ${contextName} recovered to CLOSED`);
-        // => Calls log method
         // => Outputs result
       }
+      // => Coordinates with bounded context
       return result;
       // => Returns result
-      // => Returns value
     } catch (error) {
+      // => Implements tactical pattern
       this.failureCount++;
+      // => Protects aggregate integrity
       this.lastFailureTime = new Date();
-      // => Sets lastFailureTime to new Date()
-      // => Updates internal state
-      // => Calls method and assigns result
+      // => Update lastFailureTime state
 
       if (this.failureCount >= this.threshold) {
-        // => Checks business rule: this.failureCount >= this.threshold
-        // => Validates domain constraint
-        // => Calls method and assigns result
+        // => Operation: if()
         this.state = "OPEN";
-        // => Sets state to "OPEN"
-        // => Updates internal state
-        // => Updates internal state
+        // => Update state state
         console.log(`[CircuitBreaker] ${contextName} circuit breaker OPEN`);
-        // => Calls log method
         // => Outputs result
       }
+      // => Ensures transactional consistency
 
       throw error;
+      // => Manages entity lifecycle
     }
+    // => Preserves domain model
   }
+  // => Communicates domain intent
 }
+// => Executes domain logic
 
 // Service Client with Circuit Breaker
 class ResilientServiceClient {
-  // => Domain object representing ResilientServiceClient
-  // => Encapsulates business logic and state
-  // => Domain object: ResilientServiceClient
+  // => ResilientServiceClient: domain model element
   private circuitBreakers: Map<string, CircuitBreaker> = new Map();
-  // => Encapsulated field: circuitBreakers
-  // => Internal state (can only be modified by methods)
-  // => Declares circuitBreakers
   // => Encapsulated field (not publicly accessible)
 
   constructor(private readonly registry: ServiceRegistry) {}
-  // => Constructor initializes domain object
-  // => Establishes valid initial state
-  // => Constructor initializes instance
+  // => Initialize object with parameters
 
   async call<T>(contextName: string, operation: () => Promise<T>): Promise<T> {
-    // => Calls method and assigns result
+    // => Create data structure
     // Discover service
     const service = this.registry.discover(contextName);
-    // => Creates variable: service
-    // => Assigns value: this.registry.discover(contextName)
-    // => Declares service
+    // => Store value in service
     if (!service) {
-      // => Checks business rule: !service
-      // => Validates domain constraint
+      // => Operation: if()
       throw new Error(`Service ${contextName} not found in registry`);
-      // => Throws domain exception
-      // => Business rule violation detected
-      // => Throws domain exception
-      // => Protects business invariant
+      // => Raise domain exception
     }
+    // => Updates aggregate state
 
     // Get or create circuit breaker
     let breaker = this.circuitBreakers.get(contextName);
-    // => Creates variable: breaker
-    // => Assigns value: this.circuitBreakers.get(contextName)
-    // => Declares breaker
+    // => Store value in breaker
     if (!breaker) {
-      // => Checks business rule: !breaker
-      // => Validates domain constraint
+      // => Operation: if()
       breaker = new CircuitBreaker();
-      // => Calls method and assigns result
+      // => Create CircuitBreaker instance
       this.circuitBreakers.set(contextName, breaker);
-      // => Calls set method
       // => Delegates to internal method
     }
+    // => Validates business rule
 
     // Execute with circuit breaker protection
     return await breaker.execute(operation, contextName);
-    // => Returns await breaker.execute(operation, contextName)
+    // => Return result to caller
   }
+  // => Enforces invariant
 }
+// => Encapsulates domain knowledge
 
 // Usage - service mesh patterns
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   const registry = new ServiceRegistry();
-  // => Creates variable: registry
-  // => Instantiates new object
-  // => Declares registry
+  // => Store value in registry
 
   // Register bounded contexts as services
   registry.register({
+    // => Delegates to domain service
     contextName: "Order",
+    // => Maintains consistency boundary
     namespace: "sales",
+    // => Applies domain event
     version: "1.0",
+    // => Coordinates with bounded context
     endpoints: ["http://order-service:8080"],
+    // => Implements tactical pattern
   });
+  // => Protects aggregate integrity
 
   registry.register({
+    // => Ensures transactional consistency
     contextName: "Inventory",
+    // => Manages entity lifecycle
     namespace: "warehouse",
+    // => Preserves domain model
     version: "2.1",
+    // => Communicates domain intent
     endpoints: ["http://inventory-service:8080"],
+    // => Executes domain logic
   });
+  // => Updates aggregate state
 
   const client = new ResilientServiceClient(registry);
-  // => Creates variable: client
-  // => Instantiates new object
-  // => Declares client
+  // => Store value in client
 
   // Call Inventory service through circuit breaker
   try {
+    // => Validates business rule
     await client.call("Inventory", async () => {
-      // => Calls method and assigns result
+      // => Create data structure
       console.log("[Client] Calling Inventory service");
-      // => Calls log method
       // => Outputs result
       // Simulate service call
       return { available: true };
       // => Returns { available: true }
-      // => Returns value
     });
     // => Output: [Client] Calling Inventory service
   } catch (error) {
+    // => Enforces invariant
     console.error("Service call failed:", error);
-    // => Calls error method
+    // => Execute method
   }
+  // => Encapsulates domain knowledge
 
   // Simulate failures to trigger circuit breaker
   for (let i = 0; i < 6; i++) {
-    // => Calls method and assigns result
+    // => Operation: for()
     try {
+      // => Delegates to domain service
       await client.call("Inventory", async () => {
-        // => Calls method and assigns result
+        // => Create data structure
         throw new Error("Service unavailable");
-        // => Throws domain exception
-        // => Business rule violation detected
-        // => Throws domain exception
-        // => Protects business invariant
+        // => Raise domain exception
       });
+      // => Maintains consistency boundary
     } catch (error) {
+      // => Applies domain event
       console.log(`Attempt ${i + 1} failed`);
-      // => Calls log method
       // => Outputs result
     }
+    // => Coordinates with bounded context
   }
   // => After 5 failures, circuit breaker opens
   // => Output: [CircuitBreaker] Inventory circuit breaker OPEN
 
   // Subsequent calls fail fast
   try {
+    // => Implements tactical pattern
     await client.call("Inventory", async () => {
-      // => Calls method and assigns result
+      // => Create data structure
       return { available: true };
       // => Returns { available: true }
-      // => Returns value
     });
+    // => Protects aggregate integrity
   } catch (error) {
+    // => Ensures transactional consistency
     console.log("Call blocked by circuit breaker");
-    // => Calls log method
     // => Outputs result
     // => Output: Call blocked by circuit breaker
   }
+  // => Manages entity lifecycle
 })();
+// => Preserves domain model
 ```
 
 **Key Takeaway**: Service mesh handles cross-cutting concerns (service discovery, circuit breaking, retries, observability) at infrastructure level. Bounded contexts map to service identities. Circuit breakers prevent cascading failures between contexts.
@@ -7513,331 +6703,281 @@ Different bounded contexts optimize storage based on their specific needs, not f
 ```typescript
 // Order Context - uses relational database (PostgreSQL)
 class OrderContextWithPostgreSQL {
-  // => Domain object representing OrderContextWithPostgreSQL
-  // => Encapsulates business logic and state
-  // => Domain object: OrderContextWithPostgreSQL
+  // => OrderContextWithPostgreSQL: domain model element
   private orders: Map<string, any> = new Map();
-  // => Encapsulated field: orders
-  // => Internal state (can only be modified by methods)
-  // => Declares orders
   // => Encapsulated field (not publicly accessible)
   // => Simulates PostgreSQL
   // => Production: use pg library
 
   async saveOrder(order: any): Promise<void> {
-    // => Calls saveOrder method
+    // => Operation: saveOrder()
     this.orders.set(order.orderId, order);
-    // => Calls set method
     // => Delegates to internal method
     console.log(`[OrderDB] Saved order to PostgreSQL: ${order.orderId}`);
-    // => Calls log method
     // => Outputs result
     // => Relational model for ACID transactions
   }
+  // => Executes domain logic
 
   async findOrder(orderId: string): Promise<any> {
-    // => Calls findOrder method
+    // => Operation: findOrder()
     return this.orders.get(orderId);
-    // => Returns this.orders.get(orderId)
+    // => Return result to caller
   }
+  // => Updates aggregate state
 
   async findOrdersByCustomer(customerId: string): Promise<any[]> {
-    // => Calls findOrdersByCustomer method
     // => Efficient indexed queries
     return Array.from(this.orders.values()).filter((o) => o.customerId === customerId);
     // => Returns Array.from(this.orders.values()).filter((o) => o.customerId === customerId)
-    // => Calls method and assigns result
   }
+  // => Validates business rule
 }
+// => Enforces invariant
 
 // Product Catalog Context - uses document database (MongoDB)
 class ProductCatalogContextWithMongoDB {
-  // => Domain object representing ProductCatalogContextWithMongoDB
-  // => Encapsulates business logic and state
-  // => Domain object: ProductCatalogContextWithMongoDB
+  // => ProductCatalogContextWithMongoDB: domain model element
   private products: Map<string, any> = new Map();
-  // => Encapsulated field: products
-  // => Internal state (can only be modified by methods)
-  // => Declares products
   // => Encapsulated field (not publicly accessible)
   // => Simulates MongoDB
   // => Production: use mongodb library
 
   async saveProduct(product: any): Promise<void> {
-    // => Calls saveProduct method
+    // => Operation: saveProduct()
     this.products.set(product.productId, product);
-    // => Calls set method
     // => Delegates to internal method
     console.log(`[CatalogDB] Saved product to MongoDB: ${product.productId}`);
-    // => Calls log method
     // => Outputs result
     // => Document model for flexible schema
   }
+  // => Encapsulates domain knowledge
 
   async findProduct(productId: string): Promise<any> {
-    // => Calls findProduct method
+    // => Operation: findProduct()
     return this.products.get(productId);
-    // => Returns this.products.get(productId)
+    // => Return result to caller
   }
+  // => Delegates to domain service
 
   async searchProducts(query: string): Promise<any[]> {
-    // => Calls searchProducts method
     // => Full-text search on nested documents
     return Array.from(this.products.values()).filter((p) => p.name.toLowerCase().includes(query.toLowerCase()));
     // => Returns Array.from(this.products.values()).filter((p) => p.name.toLowerCase().includes(query.toLowerCase()))
-    // => Calls method and assigns result
   }
+  // => Maintains consistency boundary
 }
+// => Applies domain event
 
 // Session Context - uses in-memory cache (Redis)
 class SessionContextWithRedis {
-  // => Domain object representing SessionContextWithRedis
-  // => Encapsulates business logic and state
-  // => Domain object: SessionContextWithRedis
+  // => SessionContextWithRedis: domain model element
   private sessions: Map<string, { data: any; expiresAt: number }> = new Map();
-  // => Encapsulated field: sessions
-  // => Internal state (can only be modified by methods)
-  // => Declares sessions
   // => Encapsulated field (not publicly accessible)
   // => Simulates Redis
   // => Production: use ioredis library
 
   async saveSession(sessionId: string, data: any, ttlSeconds: number): Promise<void> {
-    // => Calls saveSession method
+    // => Operation: saveSession()
     this.sessions.set(sessionId, {
+      // => Coordinates with bounded context
       data,
+      // => Implements tactical pattern
       expiresAt: Date.now() + ttlSeconds * 1000,
-      // => Calls now method
+      // => Execute method
     });
+    // => Protects aggregate integrity
     console.log(`[SessionCache] Cached session ${sessionId} (TTL: ${ttlSeconds}s)`);
-    // => Calls log method
     // => Outputs result
     // => In-memory storage for fast access
   }
+  // => Ensures transactional consistency
 
   async getSession(sessionId: string): Promise<any | null> {
-    // => Calls getSession method
+    // => Operation: getSession()
     const session = this.sessions.get(sessionId);
-    // => Creates variable: session
-    // => Assigns value: this.sessions.get(sessionId)
-    // => Declares session
+    // => Store value in session
     if (!session) return null;
-    // => Checks business rule: !session
-    // => Validates domain constraint
+    // => Conditional check
 
     if (Date.now() > session.expiresAt) {
-      // => Checks business rule: Date.now() > session.expiresAt
-      // => Validates domain constraint
+      // => Conditional check
       this.sessions.delete(sessionId);
-      // => Calls delete method
       // => Delegates to internal method
       return null;
       // => Returns null
-      // => Returns value
       // => Automatic expiration
     }
+    // => Manages entity lifecycle
 
     return session.data;
     // => Returns session.data
-    // => Returns value
   }
+  // => Preserves domain model
 }
+// => Communicates domain intent
 
 // Analytics Context - uses columnar database (ClickHouse/BigQuery)
 class AnalyticsContextWithClickHouse {
-  // => Domain object representing AnalyticsContextWithClickHouse
-  // => Encapsulates business logic and state
-  // => Domain object: AnalyticsContextWithClickHouse
+  // => AnalyticsContextWithClickHouse: domain model element
   private events: any[] = [];
-  // => Encapsulated field: events
-  // => Internal state (can only be modified by methods)
-  // => Declares events
   // => Encapsulated field (not publicly accessible)
   // => Simulates columnar storage
   // => Production: use ClickHouse, BigQuery, Redshift
 
   async recordEvent(event: any): Promise<void> {
-    // => Calls recordEvent method
+    // => Operation: recordEvent()
     this.events.push({
+      // => Executes domain logic
       ...event,
+      // => Updates aggregate state
       timestamp: new Date(),
-      // => Calls Date method
+      // => Validates business rule
     });
+    // => Enforces invariant
     console.log(`[AnalyticsDB] Recorded event to ClickHouse: ${event.eventType}`);
-    // => Calls log method
     // => Outputs result
     // => Columnar format optimized for aggregations
   }
+  // => Encapsulates domain knowledge
 
   async getOrderCountByDay(): Promise<Array<{ date: string; count: number }>> {
-    // => Calls getOrderCountByDay method
     // => Efficient aggregation queries
     const orderEvents = this.events.filter((e) => e.eventType === "OrderPlaced");
-    // => Creates variable: orderEvents
-    // => Assigns value: this.events.filter((e) => e.eventType === "OrderPlaced")
-    // => Declares orderEvents
+    // => Store value in orderEvents
     const byDay = new Map<string, number>();
-    // => Creates variable: byDay
-    // => Instantiates new object
-    // => Declares byDay
+    // => Store value in byDay
 
     orderEvents.forEach((e) => {
-      // => Calls method and assigns result
+      // => forEach: process collection elements
       const date = e.timestamp.toISOString().split("T")[0];
-      // => Creates variable: date
-      // => Assigns value: e.timestamp.toISOString().split("T")[0]
-      // => Declares date
+      // => Store value in date
       byDay.set(date, (byDay.get(date) || 0) + 1);
-      // => Calls set method
+      // => Execute method
     });
+    // => Delegates to domain service
 
     return Array.from(byDay.entries()).map(([date, count]) => ({ date, count }));
     // => Returns Array.from(byDay.entries()).map(([date, count]) => ({ date, count }))
-    // => Calls method and assigns result
   }
+  // => Maintains consistency boundary
 }
+// => Applies domain event
 
 // Search Context - uses search engine (Elasticsearch)
 class SearchContextWithElasticsearch {
-  // => Domain object representing SearchContextWithElasticsearch
-  // => Encapsulates business logic and state
-  // => Domain object: SearchContextWithElasticsearch
+  // => SearchContextWithElasticsearch: domain model element
   private documents: any[] = [];
-  // => Encapsulated field: documents
-  // => Internal state (can only be modified by methods)
-  // => Declares documents
   // => Encapsulated field (not publicly accessible)
   // => Simulates Elasticsearch
   // => Production: use @elastic/elasticsearch
 
   async indexProduct(product: any): Promise<void> {
-    // => Calls indexProduct method
+    // => Operation: indexProduct()
     this.documents.push(product);
-    // => Calls push method
     // => Delegates to internal method
     console.log(`[SearchIndex] Indexed product in Elasticsearch: ${product.productId}`);
-    // => Calls log method
     // => Outputs result
     // => Inverted index for full-text search
   }
+  // => Coordinates with bounded context
 
   async search(query: string): Promise<any[]> {
-    // => Calls search method
     // => Full-text search with ranking
     return this.documents.filter(
+      // => Return result to caller
       (doc) =>
-        // => Returns this.documents.filter((doc) =>
-        // => Calls method and assigns result
+        // => Implements tactical pattern
         Object.values(doc).some((value) => String(value).toLowerCase().includes(query.toLowerCase())),
-      // => Calls method and assigns result
+      // => Protects aggregate integrity
     );
+    // => Ensures transactional consistency
   }
+  // => Manages entity lifecycle
 }
+// => Preserves domain model
 
 // Usage - polyglot persistence
 (async () => {
-  // => Calls method and assigns result
+  // => Create data structure
   // Each context uses optimal database
   const orderDB = new OrderContextWithPostgreSQL();
-  // => Creates variable: orderDB
-  // => Instantiates new object
-  // => Declares orderDB
+  // => Store value in orderDB
   const catalogDB = new ProductCatalogContextWithMongoDB();
-  // => Creates variable: catalogDB
-  // => Instantiates new object
-  // => Declares catalogDB
+  // => Store value in catalogDB
   const sessionCache = new SessionContextWithRedis();
-  // => Creates variable: sessionCache
-  // => Instantiates new object
-  // => Declares sessionCache
+  // => Store value in sessionCache
   const analyticsDB = new AnalyticsContextWithClickHouse();
-  // => Creates variable: analyticsDB
-  // => Instantiates new object
-  // => Declares analyticsDB
+  // => Store value in analyticsDB
   const searchIndex = new SearchContextWithElasticsearch();
-  // => Creates variable: searchIndex
-  // => Instantiates new object
-  // => Declares searchIndex
+  // => Store value in searchIndex
 
   // Order Context - relational for ACID
   await orderDB.saveOrder({
+    // => Communicates domain intent
     orderId: "ORDER-001",
+    // => Executes domain logic
     customerId: "CUST-001",
+    // => Updates aggregate state
     total: 150,
+    // => Validates business rule
     status: "placed",
+    // => Enforces invariant
   });
   // => Output: [OrderDB] Saved order to PostgreSQL: ORDER-001
 
   // Catalog Context - document for flexibility
   await catalogDB.saveProduct({
+    // => Encapsulates domain knowledge
     productId: "PROD-001",
+    // => Delegates to domain service
     name: "Laptop Pro",
+    // => Maintains consistency boundary
     specs: { cpu: "M2", ram: "16GB", storage: "512GB" },
     // => Nested document structure
     tags: ["electronics", "computers"],
+    // => Applies domain event
   });
   // => Output: [CatalogDB] Saved product to MongoDB: PROD-001
 
   // Session Context - cache for speed
   await sessionCache.saveSession("sess-123", { userId: "USER-001", cartItems: 3 }, 3600);
-  // => Calls saveSession method
   // => Output: [SessionCache] Cached session sess-123 (TTL: 3600s)
 
   // Analytics Context - columnar for aggregations
   await analyticsDB.recordEvent({ eventType: "OrderPlaced", orderId: "ORDER-001" });
-  // => Calls recordEvent method
   // => Output: [AnalyticsDB] Recorded event to ClickHouse: OrderPlaced
 
   // Search Context - search engine for full-text
   await searchIndex.indexProduct({ productId: "PROD-001", name: "Laptop Pro", category: "Electronics" });
-  // => Calls indexProduct method
   // => Output: [SearchIndex] Indexed product in Elasticsearch: PROD-001
 
   // Query optimized for each storage
   const orders = await orderDB.findOrdersByCustomer("CUST-001");
-  // => Creates variable: orders
-  // => Assigns value: await orderDB.findOrdersByCustomer("CUST-001")
-  // => Declares orders
   // => Fast indexed query on PostgreSQL
   const products = await catalogDB.searchProducts("laptop");
-  // => Creates variable: products
-  // => Assigns value: await catalogDB.searchProducts("laptop")
-  // => Declares products
   // => Full-text search on MongoDB
   const session = await sessionCache.getSession("sess-123");
-  // => Creates variable: session
-  // => Assigns value: await sessionCache.getSession("sess-123")
-  // => Declares session
   // => Sub-millisecond cache lookup
   const analytics = await analyticsDB.getOrderCountByDay();
-  // => Creates variable: analytics
-  // => Assigns value: await analyticsDB.getOrderCountByDay()
-  // => Declares analytics
   // => Efficient aggregation on columnar storage
   const searchResults = await searchIndex.search("laptop");
-  // => Creates variable: searchResults
-  // => Assigns value: await searchIndex.search("laptop")
-  // => Declares searchResults
   // => Ranked full-text search
 
   console.log(`\nPolyglot Persistence Summary:`);
-  // => Calls log method
   // => Outputs result
   console.log(`- Orders: ${orders.length} (PostgreSQL)`);
-  // => Calls log method
   // => Outputs result
   console.log(`- Products found: ${products.length} (MongoDB)`);
-  // => Calls log method
   // => Outputs result
   console.log(`- Session active: ${session !== null} (Redis)`);
   // => Outputs result
   console.log(`- Analytics events: ${analytics.length} days (ClickHouse)`);
-  // => Calls log method
   // => Outputs result
   console.log(`- Search results: ${searchResults.length} (Elasticsearch)`);
-  // => Calls log method
   // => Outputs result
 })();
+// => Coordinates with bounded context
 ```
 
 **Key Takeaway**: Polyglot persistence allows each bounded context to use database technology optimized for its access patterns: relational for ACID transactions, document for flexible schemas, cache for speed, columnar for analytics, search engine for full-text queries.

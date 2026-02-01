@@ -240,59 +240,40 @@ graph TD
 
 ```kotlin
 fun add(a: Int, b: Int): Int {
-    return a + b
-}                                   // => Block body with explicit return type
+    return a + b                     // => Returns sum of a and b
+}                                    // => Block body with explicit return type
 
-// Single-expression function (return type inferred)
-                                    // => More concise than block body
+fun multiply(a: Int, b: Int) = a * b // => Single-expression function (type inferred to Int)
 
-// Function with default parameter
 fun greet(name: String, greeting: String = "Hello") = "$greeting, $name!"
-                                     // => = "Hello": default value
-                                     // => greeting defaults to "Hello" if not provided
+                                     // => Default parameter: greeting = "Hello" if not provided
 
-// Function with no return value (Unit type, like void)
-fun printSum(a: Int, b: Int) {      // => No return type specified
-                                    // => Unit indicates no meaningful return value
-                                    // => String template: "$a + $b = ${a + b}"
-                                    // => No explicit return needed
+fun printSum(a: Int, b: Int) {       // => Unit return type (like void)
+    println("$a + $b = ${a + b}")    // => String template with expression
+}                                    // => No explicit return needed for Unit functions
 
-fun main() {                        // => Program entry point
-                                    // => Arguments: a=10, b=10
-                                    // => Computes 10 + 20
-                                    // => Arguments: a=5, b=6
-                                    // => Computes 5 * 6
+fun main() {
+    val sum = add(10, 20)            // => Calls add with a=10, b=20
+                                     // => sum is 30
+    val product = multiply(5, 6)     // => Calls multiply with a=5, b=6
+                                     // => product is 30
 
-                                    // => name = "Alice" (positional)
-                                    // => greeting uses default "Hello"
-                                    // => Template: "Hello, Alice!"
-                                    // => greet1 is "Hello, Alice!"
-                                    // => name = "Bob" (positional)
-                                    // => greeting = "Hi" (overrides default)
-                                    // => Template: "Hi, Bob!"
-                                    // => greet2 is "Hi, Bob!"
+    val greet1 = greet("Alice")      // => greeting uses default "Hello"
+                                     // => greet1 is "Hello, Alice!"
+    val greet2 = greet("Bob", "Hi")  // => greeting = "Hi" (overrides default)
+                                     // => greet2 is "Hi, Bob!"
     val greet3 = greet(name = "Charlie", greeting = "Hey")
-                                     // => name = "Charlie" (named)
-                                     // => greeting = "Hey" (named)
-                                     // => Order doesn't matter with named args
-                                     // => Template: "Hey, Charlie!"
-                                     // => Named args improve readability
+                                     // => Named arguments (order doesn't matter)
+                                     // => greet3 is "Hey, Charlie!"
 
-                                     // => Arguments: a=15, b=25
-                                     // => Computes: "15 + 25 = 40"
-                                     // => Output: 15 + 25 = 40
+    printSum(15, 25)                 // => Output: 15 + 25 = 40
 
-    println(sum)                     // => Outputs sum value
-                                     // => Output: 30
-    println(product)                 // => Outputs product value
-                                     // => Output: 30
-    println(greet1)                  // => Outputs greeting 1
-                                     // => Output: Hello, Alice!
-    println(greet2)                  // => Outputs greeting 2
-                                     // => Output: Hi, Bob!
-    println(greet3)                  // => Outputs greeting 3
-                                     // => Output: Hey, Charlie!
-                                    // => No class wrapper required
+    println(sum)                     // => Output: 30
+    println(product)                 // => Output: 30
+    println(greet1)                  // => Output: Hello, Alice!
+    println(greet2)                  // => Output: Hi, Bob!
+    println(greet3)                  // => Output: Hey, Charlie!
+}
 ```
 
 **Key Takeaway**: Use single-expression syntax (`=`) for concise functions, leverage default parameters to reduce overloading, and use named arguments for clarity with multiple parameters.
@@ -476,6 +457,7 @@ fun main() {
     print("Range: ")                 // => Prints "Range: " without newline
                                      // => print() doesn't add newline (unlike println())
     for (i in 1..5) {                // => Iterates i over 1, 2, 3, 4, 5
+                                     // => Closed range: includes both 1 and 5
                                      // => i auto-declared as Int (type inferred from range)
                                      // => i scoped to loop body only
         print("$i ")                 // => Prints: 1 2 3 4 5 (space-separated)
@@ -562,6 +544,7 @@ fun main() {
     var count = 0                    // => count is 0 (var allows mutation)
                                      // => Must be var for loop counter (val would be immutable)
     while (count < 3) {              // => Condition checked before each iteration
+                                     // => Loop continues while condition is true
                                      // => Loops while 0 < 3, 1 < 3, 2 < 3 (3 iterations)
         println("Count: $count")     // => Output: Count: 0
                                      // => Output: Count: 1
@@ -1836,51 +1819,78 @@ graph TD
 
 **Type-safe state modeling**: Sealed classes model restricted type hierarchies like API responses (Success/Error/Loading), UI states, or workflow steps. Better than enums (which can't hold associated data) and better than unrestricted inheritance (which allows unexpected subtypes).
 
-`````kotlin
-sealed class Result {
+```kotlin
+sealed class Result {                // => Sealed class (restricted hierarchy)
+                                     // => All subclasses defined in same file
     data class Success(val data: String) : Result()
+                                     // => Data class subclass (holds success data)
+                                     // => Inherits from Result
     data class Error(val message: String, val code: Int) : Result()
-    object Loading : Result()        // => Singleton (one instance)
-}
+                                     // => Data class for error state with message and code
+                                     // => Inherits from Result
+    object Loading : Result()        // => Object subclass (singleton for stateless loading)
+                                     // => One instance shared across app
+}                                    // => Compiler knows ALL possible Result subtypes
 
 fun fetchData(shouldSucceed: Boolean): Result {
-    return if (shouldSucceed) {
+                                     // => Returns Result (sealed type)
+    return if (shouldSucceed) {      // => Conditional based on shouldSucceed
         Result.Success("Data loaded successfully")
+                                     // => Creates Success instance with data
     } else {
         Result.Error("Network error", 404)
+                                     // => Creates Error instance with message and code
     }
 }
 
 fun main() {
-    val result3 = Result.Loading     // => Singleton reference
+    val result1 = fetchData(true)    // => result1 is Result.Success("Data loaded successfully")
+    val result2 = fetchData(false)   // => result2 is Result.Error("Network error", 404)
+    val result3 = Result.Loading     // => result3 is singleton Loading object
 
     fun handleResult(result: Result) = when (result) {
-        is Result.Success -> {
+                                     // => Exhaustive when (no else needed)
+                                     // => Compiler knows all Result subtypes
+        is Result.Success -> {       // => Type check and smart cast
+                                     // => result auto-cast to Success in this branch
             println("Success: ${result.data}")
+                                     // => Accesses data property (smart-cast)
                                      // => Output: Success: Data loaded successfully
         }
-        is Result.Error -> {
+        is Result.Error -> {         // => Type check for Error subclass
+                                     // => result auto-cast to Error
             println("Error ${result.code}: ${result.message}")
+                                     // => Accesses code and message properties
                                      // => Output: Error 404: Network error
         }
-        is Result.Loading -> {
+        is Result.Loading -> {       // => Type check for Loading object
             println("Loading...")    // => Output: Loading...
+                                     // => No properties (stateless)
         }
         // No else needed - all cases covered (exhaustive)
+                                     // => Adding new Result subclass causes compile error here
     }
 
-    handleResult(result1)            // => Output: Success: Data loaded successfully
-    handleResult(result2)            // => Output: Error 404: Network error
-    handleResult(result3)            // => Output: Loading...
+    handleResult(result1)            // => Calls with Success
+                                     // => Output: Success: Data loaded successfully
+    handleResult(result2)            // => Calls with Error
+                                     // => Output: Error 404: Network error
+    handleResult(result3)            // => Calls with Loading
+                                     // => Output: Loading...
 
-    val message = when (result1) {
+    val message = when (result1) {   // => Exhaustive when expression
+                                     // => Returns String value
         is Result.Success -> "Got: ${result1.data}"
+                                     // => result1 is Success, returns "Got: Data loaded successfully"
         is Result.Error -> "Failed: ${result1.message}"
+                                     // => Not evaluated (result1 is Success)
         is Result.Loading -> "Please wait"
+                                     // => Not evaluated
     }                                // => message is "Got: Data loaded successfully"
 
     println(message)                 // => Output: Got: Data loaded successfully
 }
+```
 
 **Key Takeaway**: Sealed classes enable compile-time exhaustive `when` expressions by restricting hierarchies to a known set of subclasses, eliminating the need for `else` branches and preventing unexpected subtypes.
 
@@ -1900,48 +1910,54 @@ Extension functions add methods to existing classes without modifying their sour
 
 **Static resolution**: Extensions don't actually modify the class - they're compiled to static utility methods. The receiver becomes the first parameter. This means extensions can be added to final classes and third-party libraries.
 
-````kotlin
+```kotlin
 fun String.isPalindrome(): Boolean {
+                                     // => Extension function on String
     val cleaned = this.lowercase().replace(" ", "")
+                                     // => Remove spaces, convert to lowercase
     return cleaned == cleaned.reversed()
+                                     // => Compare with reversed string
 }
 
 fun Int.times(action: (Int) -> Unit) {
-    for (i in 1..this) {
-        action(i)
+                                     // => Extension function on Int
+    for (i in 1..this) {             // => Loop from 1 to this value
+        action(i)                    // => Execute action for each iteration
     }
 }
 
-val String.wordCount: Int
+val String.wordCount: Int            // => Extension property on String
     get() = this.split("\\s+".toRegex()).size
+                                     // => Count words by splitting on whitespace
 
 fun String?.orDefault(default: String = "N/A"): String {
-    return this ?: default
+                                     // => Nullable receiver extension
+    return this ?: default           // => Return this or default if null
 }
 
 fun main() {
-    val word1 = "radar"
-    val word2 = "kotlin"
+    val word1 = "radar"              // => word1 is "radar"
+    val word2 = "kotlin"             // => word2 is "kotlin"
 
     println(word1.isPalindrome())    // => Output: true
     println(word2.isPalindrome())    // => Output: false
 
-    5.times { i ->
+    5.times { i ->                   // => Call extension on Int literal
         print("$i ")                 // => Output: 1 2 3 4 5
     }
     println()
 
-    val text = "Hello Kotlin World"
+    val text = "Hello Kotlin World"  // => text is "Hello Kotlin World"
     println(text.wordCount)          // => Output: 3
 
-    val str1: String? = null
-    val str2: String? = "Hello"
+    val str1: String? = null         // => str1 is null
+    val str2: String? = "Hello"      // => str2 is "Hello"
 
     println(str1.orDefault())        // => Output: N/A
     println(str2.orDefault())        // => Output: Hello
     println(str1.orDefault("Empty")) // => Output: Empty
 }
-`````
+```
 
 **Key Takeaway**: Use extension functions to add methods to existing classes without inheritance; they improve API ergonomics and enable domain-specific utilities on third-party types.
 
@@ -1969,36 +1985,32 @@ graph TD
 ```
 
 ```kotlin
-fun main() {                         // => Program entry point
+fun main() {
     // Lambda syntax: { parameters -> body }
     val sum = { a: Int, b: Int -> a + b }
-                                     // => Output: 8
+                                     // => sum is lambda function
+    println(sum(3, 5))               // => Output: 8
 
     // Lambda with type inference
     val numbers = listOf(1, 2, 3, 4, 5)
-                                     // => numbers: immutable list of integers
-                                     // => Size: 5 elements
                                      // => numbers is [1, 2, 3, 4, 5]
     val doubled = numbers.map { it * 2 }
-                                     // => doubled is [2, 4, 6, 8, 10] (new list)
-                                     // => Original numbers unchanged (immutable)
+                                     // => doubled is [2, 4, 6, 8, 10]
 
     // Lambda with explicit parameter
     val evens = numbers.filter { num -> num % 2 == 0 }
-                                     // => Replaces implicit 'it' for clarity
-                                     // => num % 2: modulo operation (remainder)
-                                     // => evens is [2, 4] (filtered result)
-                                     // => Original numbers unchanged
+                                     // => evens is [2, 4]
 
     // Multi-line lambda
     val squared = numbers.map { num ->
-        val result = num * num       // => Calculates square of current number
-                                     // => Value of result becomes element in new list
-                                     // => squared is [1, 4, 9, 16, 25] (new list)
-                                     // => Original numbers unchanged
+        val result = num * num       // => Square each number
+        result                       // => Return result
+    }                                // => squared is [1, 4, 9, 16, 25]
 
     // Higher-order function (takes function as parameter)
     fun operate(a: Int, b: Int, operation: (Int, Int) -> Int): Int {
+        return operation(a, b)       // => Calls lambda with a and b
+    }
 
     val addResult = operate(10, 5) { x, y -> x + y }
                                      // => addResult is 15
@@ -2008,22 +2020,16 @@ fun main() {                         // => Program entry point
     // Function returning function
     fun makeMultiplier(factor: Int): (Int) -> Int {
         return { num -> num * factor }
-                                     // => num * factor: uses captured 'factor'
-                                     // => factor value frozen at creation time
-    }                                // => End of makeMultiplier
+                                     // => Captures factor variable
+    }
 
-                                     // => triple: closure capturing factor=3
-                                     // => Output: 15
-                                     // => factor still 3 (captured at creation)
-                                     // => Output: 30
+    val triple = makeMultiplier(3)   // => triple multiplies by 3
+    println(triple(5))               // => Output: 15
+    println(triple(10))              // => Output: 30
 
-                                     // => doubled is [2, 4, 6, 8, 10]
-                                     // => Output: [2, 4, 6, 8, 10]
-                                     // => evens is [2, 4]
-                                     // => Output: [2, 4]
-                                     // => squared is [1, 4, 9, 16, 25]
-                                     // => Output: [1, 4, 9, 16, 25]
-                                     // => Closures capture and preserve state
+    println(doubled)                 // => Output: [2, 4, 6, 8, 10]
+    println(evens)                   // => Output: [2, 4]
+    println(squared)                 // => Output: [1, 4, 9, 16, 25]
 ```
 
 **Key Takeaway**: Use lambdas with `it` for single parameters, explicit names for clarity with multiple parameters, and leverage higher-order functions for functional composition and reusable logic.
@@ -2037,101 +2043,48 @@ fun main() {                         // => Program entry point
 Scope functions execute a block of code in the context of an object. They differ in how they reference the context (`this` vs `it`) and what they return (context object vs lambda result). Choose based on your use case.
 
 ```kotlin
+data class Person(val name: String, var age: Int)
+
 fun main() {
     // let: context is 'it', returns lambda result
-    val name: String? = "Kotlin"     // => name is "Kotlin" (nullable String?)
-                                     // => Currently assigned "Kotlin" (non-null value)
-                                     // => Type inference: String? from nullable assignment
-                                     // => 'it' is the context object (name)
-                                     // => it is "Kotlin" (context object)
-                                     // => Constructs string: "Processing: Kotlin"
-                                     // => Output: Processing: Kotlin
-                                     // => it is "Kotlin" (String)
-                                     // => "Kotlin".length is 6
-                                     // => length is 6 (Int?)
+    val name: String? = "Kotlin"
+    val length = name?.let {         // => Calls block if name not null
+        println("Processing: $it")   // => Output: Processing: Kotlin
+        it.length                    // => Returns length
+    }                                // => length is 6
 
     // run: context is 'this', returns lambda result
-    val message = "Hello".run {      // => "Hello": receiver object (String literal)
-                                     // => Difference from let: this vs it
-                                     // => NOT this.length (which is 5)
-                                     // => Constructs string: "Length: 6"
-                                     // => Output: Length: 6
-                                     // => Original "Hello" unchanged
-                                     // => message is "HELLO" (String)
-                                     // => run transformed receiver object
+    val message = "Hello".run {      // => 'this' refers to "Hello"
+        println("Length: $length")   // => Output: Length: 6
+        this.uppercase()             // => Returns "HELLO"
+    }                                // => message is "HELLO"
 
-    // with: context is 'this', returns lambda result (not extension)
+    // with: context is 'this', returns lambda result
     val numbers = mutableListOf(1, 2, 3)
-                                     // => Initial elements: 1, 2, 3
-                                     // => Can add/remove elements (mutable)
-                                     // => Syntax: with(receiver) { body }
-                                     // => Difference from run: with is not extension
-        add(4)                       // => Implicit this.add(4)
-                                     // => Adds 4 to end of list
-                                     // => numbers is [1, 2, 3, 4] (mutated)
-                                     // => Return value not used (side effect)
-        add(5)                       // => Implicit this.add(5)
-                                     // => Adds 5 to end of list
-                                     // => numbers is [1, 2, 3, 4, 5] (mutated)
-                                     // => Return value not used (side effect)
-                                     // => Implicit this.sum()
-                                     // => Computes: 1 + 2 + 3 + 4 + 5 = 15
-                                     // => sum is 15 (Int)
-                                     // => numbers remains [1, 2, 3, 4, 5] (mutated)
-                                     // => with performed operations and returned result
+    val sum = with(numbers) {        // => 'this' refers to numbers
+        add(4)                       // => Adds 4
+        add(5)                       // => Adds 5
+        sum()                        // => Returns sum: 15
+    }                                // => sum is 15
 
     // apply: context is 'this', returns context object
     val person = Person("Alice", 25).apply {
-                                     // => Implicit this.name
-                                     // => Constructs string: "Configuring Alice"
-                                     // => Output: Configuring Alice
-                                     // => Side effect: logging during configuration
-        age = 26                     // => Implicit this.age = 26
-                                     // => Reassigns age from 25 to 26
-                                     // => Mutates Person instance
-                                     // => No return value (Unit)
-                                     // => person is Person(name="Alice", age=26)
-                                     // => person.age is 26 (mutated)
-                                     // => Use case: object configuration/initialization
+        println("Configuring $name") // => Output: Configuring Alice
+        age = 26                     // => Mutates age field
+    }                                // => person is Person(name="Alice", age=26)
 
     // also: context is 'it', returns context object
     val numbers2 = mutableListOf(1, 2, 3).also {
-                                     // => Initial elements: 1, 2, 3
-                                     // => it is MutableList<Int>: [1, 2, 3]
-                                     // => Difference from apply: it vs this
-                                     // => it is [1, 2, 3] (MutableList<Int>)
-                                     // => List toString(): "[1, 2, 3]"
-                                     // => Constructs string: "Initial list: [1, 2, 3]"
-                                     // => Output: Initial list: [1, 2, 3]
-        it.add(4)                    // => it is [1, 2, 3] (MutableList<Int>)
-                                     // => Adds 4 to end of list
-                                     // => it becomes [1, 2, 3, 4] (mutated)
-                                     // => Return value not used (side effect)
-                                     // => numbers2 is [1, 2, 3, 4] (MutableList<Int>)
-                                     // => Use case: side effects with chaining
+        println("Initial list: $it") // => Output: Initial list: [1, 2, 3]
+        it.add(4)                    // => Adds 4
+    }                                // => numbers2 is [1, 2, 3, 4]
 
-    println(length)                  // => length is 6 (Int?, but non-null here)
-                                     // => Converts to String: "6"
-                                     // => Output: 6
-    println(message)                 // => message is "HELLO" (String)
-                                     // => Output: HELLO
-    println(sum)                     // => sum is 15 (Int)
-                                     // => Converts to String: "15"
-                                     // => Output: 15
-    println(person.age)              // => person is Person(name="Alice", age=26)
-                                     // => person.age is 26 (Int, mutated by apply)
-                                     // => Converts to String: "26"
-                                     // => Output: 26
-    println(numbers2)                // => numbers2 is [1, 2, 3, 4] (MutableList<Int>)
-                                     // => List toString(): "[1, 2, 3, 4]"
-                                     // => Output: [1, 2, 3, 4]
-
-data class Person(val name: String, var age: Int)
-                                     // => name: val (immutable, read-only)
-                                     // => age: var (mutable, read-write)
-                                     // => Generated: equals(), hashCode(), toString()
-                                     // => Generated: copy(), componentN()
-                                     // => toString() format: "Person(name=Alice, age=25)"
+    println(length)                  // => Output: 6
+    println(message)                 // => Output: HELLO
+    println(sum)                     // => Output: 15
+    println(person.age)              // => Output: 26
+    println(numbers2)                // => Output: [1, 2, 3, 4]
+}
 ```
 
 **Key Takeaway**: Use `let` for null-safe transformations, `apply` for object configuration, `also` for side effects while chaining, `run` for scoped computations, and `with` for non-extension context operations.
@@ -2306,74 +2259,70 @@ graph TD
 ```
 
 ```kotlin
-fun main() {                        // => Program entry point
-    // Type check with is
-                                     // => "Kotlin": String literal value
+fun main() {
+    val obj: Any = "Kotlin"          // => obj is Any type holding String
+                                     // => Runtime type is String
 
-                                     // => Enters if block
+    if (obj is String) {             // => Type check with is operator
+                                     // => obj is String: true (type check passes)
+                                     // => obj auto-cast to String in if block
         println("String length: ${obj.length}")
-                                     // => "Kotlin".length is 6 (character count)
-                                     // => No explicit cast needed
+                                     // => obj.length is 6 (smart-cast, no explicit cast)
                                      // => Output: String length: 6
-    }                                // => if block complete
+    }
 
-    // Negated type check
-                                     // => 42: Int literal
+    val num: Any = 42                // => num is Any type holding Int
+                                     // => Runtime type is Int
     if (num !is String) {            // => !is: negated type check
-                                     // => Enters if block
+                                     // => num is not String: true (42 is Int)
         println("Not a string")      // => Output: Not a string
-    }                                // => if block complete
+    }
 
-    // Smart cast in when expression
-                                     // => when (x): exhaustive type matching
+    fun describe(x: Any): String = when (x) {
+                                     // => when with type checks (smart casting)
         is String -> "String of length ${x.length}"
+                                     // => x smart-cast to String, accesses length
         is Int -> "Integer with value $x doubled = ${x * 2}"
-                                     // => x * 2: arithmetic operation (Int-specific)
+                                     // => x smart-cast to Int, arithmetic allowed
         is List<*> -> "List of size ${x.size}"
+                                     // => x smart-cast to List, accesses size
+        else -> "Unknown type"       // => Handles other types
+    }
 
-                                     // => "Hello".length is 5
+    println(describe("Hello"))       // => "Hello" is String
                                      // => Output: String of length 5
-                                     // => 42 * 2 is 84
+    println(describe(42))            // => 42 is Int
                                      // => Output: Integer with value 42 doubled = 84
     println(describe(listOf(1, 2, 3)))
-                                     // => size is 3 (element count)
+                                     // => listOf(1, 2, 3) is List<Int>
                                      // => Output: List of size 3
-    println(describe(3.14))          // => 3.14: Double literal
+    println(describe(3.14))          // => 3.14 is Double (not String, Int, or List)
                                      // => Output: Unknown type
 
-    // Unsafe cast (throws exception if wrong type)
     val str1 = obj as String         // => as: unsafe cast operator
-                                     // => obj as String: casts obj to String
-                                     // => Cast succeeds (no exception)
-    // val str2 = num as String      // => num as String: unsafe cast attempt
-                                     // => num is 42 (Int, not String)
-                                     // => Compile warning: cast will always fail
+                                     // => obj is String, cast succeeds
+                                     // => str1 is "Kotlin"
+    // val str2 = num as String      // => Would throw ClassCastException (42 is Int)
                                      // => Commented out to prevent crash
 
-    // Safe cast (returns null if wrong type)
     val str2 = num as? String        // => as?: safe cast operator
-                                     // => num as? String: attempts cast to String
-                                     // => num is 42 (Int, not String)
-    val int1 = num as? Int           // => num as? Int: attempts cast to Int
-                                     // => Cast succeeds
+                                     // => num is Int, not String, returns null
+                                     // => str2 is null (no exception)
+    val int1 = num as? Int           // => num is Int, cast succeeds
+                                     // => int1 is 42
 
-    println(str1)                    // => str1 is "Kotlin" (from successful unsafe cast)
-                                     // => Output: Kotlin
-    println(str2)                    // => str2 is null (from failed safe cast)
-                                     // => Output: null
-    println(int1)                    // => int1 is 42 (from successful safe cast)
-                                     // => Output: 42
+    println(str1)                    // => Output: Kotlin
+    println(str2)                    // => Output: null
+    println(int1)                    // => Output: 42
 
-    // Smart cast with null check
-    val nullable: String? = "Test"   // => nullable: String?: nullable String type
-                                     // => "Test": non-null String value
-                                     // => nullable is "Test" (actual value not null)
-    if (nullable != null) {          // => != null: null check
-                                     // => Enters if block
-                                     // => "Test".length is 4
+    val nullable: String? = "Test"   // => nullable is String? (can be null or String)
+                                     // => Actual value is "Test" (not null)
+    if (nullable != null) {          // => Null check
+                                     // => nullable smart-cast to String (non-null)
+        println(nullable.length)     // => Safe access without !! or ?.
                                      // => Output: 4
-    }                                // => if block complete
-                                    // => Program terminates
+    }
+}
 ```
 
 **Key Takeaway**: Use `is` for type checks that enable automatic smart casts, prefer safe casts (`as?`) over unsafe casts (`as`) to avoid exceptions, and leverage smart casting in `when` expressions for clean type handling.

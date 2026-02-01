@@ -3115,16 +3115,21 @@ graph TD
 ```kotlin
 fun main() {
     println("=== Sequences for Performance ===\n")
+                                             // => Demonstrates lazy vs eager evaluation
 
     val range = 1..10_000_000                // => Range representing 10M integers
+                                             // => Used for performance comparison
 
     // Eager list operations (allocates multiple intermediate lists)
     println("--- List (Eager Evaluation) ---")
     var startTime = System.currentTimeMillis()
                                              // => Record benchmark start time
     val listResult = range.toList()          // => Allocate 10M-element ArrayList
+                                             // => Memory: ~40MB allocation
         .map { it + 1000 }                   // => Allocate 10M-element list for mapped values
+                                             // => Another ~40MB allocation
         .filter { it % 2 == 0 }              // => Allocate large list for filtered values
+                                             // => Processes ALL 10M elements
         .take(10)                            // => Extract first 10 elements (allocate 10-element list)
                                              // => Filters entire 10M mapped list
     println("List result: $listResult")      // => Output: [1002, 1004, 1006, 1008, 1010, 1012, 1014, 1016, 1018, 1020]
@@ -3135,11 +3140,16 @@ fun main() {
     println("--- Sequence (Lazy Evaluation) ---")
     startTime = System.currentTimeMillis()   // => Reset timer
     val seqResult = range.asSequence()       // => No allocation (lazy wrapper)
+                                             // => Memory: ~0 bytes
         .map { it + 1000 }                   // => Lazy transformer (not executed yet)
+                                             // => No computation until terminal op
         .filter { it % 2 == 0 }              // => Lazy predicate (not executed yet)
+                                             // => Deferred until toList()
         .take(10)                            // => Lazy take (defines stop condition)
+                                             // => Stops after 10 elements found
         .toList()                            // => TERMINAL operation triggers computation
                                              // => Processes elements one-by-one until 10 found
+                                             // => Evaluates ~10 elements only
     println("Sequence result: $seqResult")   // => Output: [1002, 1004, 1006, 1008, 1010, 1012, 1014, 1016, 1018, 1020]
                                              // => Same result as list approach
     println("Time: ${System.currentTimeMillis() - startTime}ms\n")
@@ -5178,50 +5188,56 @@ graph TD
 ```kotlin
 // Covariance (out) - producer only
 class Producer<out T>(private val value: T) {
-    fun produce(): T = value
-    // => Can return T (produce)
+                                     // => 'out' modifier: covariant type parameter
+    fun produce(): T = value         // => Can return T (produce)
+                                     // => Read-only access to T
     // fun consume(value: T) {} // => ERROR: can't consume T with out
 }
 
 // Contravariance (in) - consumer only
-class Consumer<in T> {
-    fun consume(value: T) {
-        println("Consumed: $value")
+class Consumer<in T> {               // => 'in' modifier: contravariant type parameter
+    fun consume(value: T) {          // => Can accept T (consume)
+                                     // => Write-only access to T
+        println("Consumed: $value")  // => Prints consumed value
     }
     // fun produce(): T {} // => ERROR: can't produce T with in
 }
 
 // Invariant - both producer and consumer
-class Box<T>(var value: T) {
-    // => No 'out' or 'in', invariant by default
-    fun get(): T = value
+class Box<T>(var value: T) {         // => No variance modifier: invariant
+                                     // => No 'out' or 'in', invariant by default
+    fun get(): T = value             // => Can produce T
     fun set(newValue: T) { value = newValue }
+                                     // => Can consume T
 }
 
 // Star projection - unknown type
-fun printAll(items: List<*>) {
-    // => List<*> is star projection
-    for (item in items) {
-        // => item has type Any?
-        println(item)
+fun printAll(items: List<*>) {       // => List<*> is star projection
+                                     // => Unknown type parameter
+    for (item in items) {            // => Iterates over list
+                                     // => item has type Any?
+        println(item)                // => Prints each item
     }
     // items.add(something) // => ERROR: can't add to List<*>
 }
 
 // Upper bound - restrict type parameter
 fun <T : Number> sum(values: List<T>): Double {
+                                     // => T : Number restricts to Number subtypes
     return values.sumOf { it.toDouble() }
-    // => Constraint ensures type safety, prevents sum(listOf("a", "b"))
+                                     // => Converts each to Double and sums
+                                     // => Constraint ensures type safety, prevents sum(listOf("a", "b"))
 }
 
 // Multiple bounds using where clause
-interface Named {
-    val name: String
+interface Named {                    // => Interface for named objects
+    val name: String                 // => Required name property
 }
 
 fun <T> printName(item: T) where T : Named, T : Comparable<T> {
-    // => T must satisfy BOTH constraints
-    println(item.name)
+                                     // => T must satisfy BOTH constraints
+                                     // => Must be Named AND Comparable
+    println(item.name)               // => Access name property
 }
 
 fun main() {

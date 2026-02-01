@@ -27,87 +27,236 @@ useFormState hook provides Server Action state and pending status in Client Comp
 
 ```typescript
 // app/actions.ts
-'use server';
-// => All exports are Server Actions
+// => File location: app/actions.ts (Server Actions file)
+// => Place at app root for global Server Actions
 
-// => State type for form results
+'use server';
+// => REQUIRED directive: marks file as Server Actions module
+// => All exports in this file are Server Actions
+// => Server Actions run ONLY on server (never sent to client)
+
 type FormState = {
+  // => State type for useFormState hook
+  // => Hook requires consistent state shape across submissions
+
   message: string;
+  // => Success or error message to show user
+  // => Always present in response
+
   errors?: {
+    // => Optional errors object (only present on validation failure)
+    // => Question mark makes property optional
+    // => undefined when no validation errors
+
     name?: string;
+    // => Name field error message (optional)
+    // => Example: "Name must be at least 2 characters"
+
     amount?: string;
+    // => Amount field error message (optional)
+    // => Example: "Minimum donation is IDR 10,000"
   };
 };
+// => FormState defines contract between Server Action and useFormState
+// => Both prevState and return value must match this type
 
 export async function submitDonation(
-  prevState: FormState,                     // => Previous form state
-  formData: FormData                        // => Form data from submission
+  // => Server Action function signature for useFormState
+  // => Export required: makes function callable from Client Components
+  // => async keyword: allows await for database/API calls
+
+  prevState: FormState,
+  // => Previous form state from last submission
+  // => useFormState provides this automatically
+  // => First submission: receives initial state
+  // => Subsequent submissions: receives previous return value
+  // => Type must match return type (FormState)
+
+  formData: FormData
+  // => Form data from form submission
+  // => Automatically populated by browser on submit
+  // => Contains all input values with name attributes
+  // => FormData is browser API (not Next.js specific)
 ): Promise<FormState> {
-  // => Server Action with state parameter for useFormState
+  // => Return type: Promise<FormState>
+  // => async functions always return Promise
+  // => Resolved value must match FormState type
 
-  const name = formData.get('name') as string;         // => name is "Ahmad"
-  const amountStr = formData.get('amount') as string;  // => amountStr is "100000"
+  const name = formData.get('name') as string;
+  // => Extract 'name' input value from form
+  // => formData.get() returns FormDataEntryValue (string | File | null)
+  // => Type assertion 'as string': treat value as string
+  // => For input name="name", value is "Ahmad"
+  // => name is "Ahmad" (type: string)
 
-  // => Validation errors object
+  const amountStr = formData.get('amount') as string;
+  // => Extract 'amount' input value as string
+  // => Number inputs still submit as strings
+  // => For input name="amount" value="100000"
+  // => amountStr is "100000" (type: string, NOT number)
+  // => Need parseInt() to convert to number
+
   const errors: FormState['errors'] = {};
+  // => Initialize errors object
+  // => Type: FormState['errors'] (indexed access type)
+  // => Initially empty object {}
+  // => Add properties only if validation fails
 
   if (!name || name.length < 2) {
+    // => Validate name field
+    // => !name: true if name is null, undefined, or empty string ""
+    // => name.length < 2: true if name has less than 2 characters
+    // => OR operator: true if either condition true
+
     errors.name = 'Name must be at least 2 characters';
+    // => Add error message to errors object
+    // => errors.name now exists (was optional)
+    // => User sees this message below name input
   }
 
   const amount = parseInt(amountStr);
+  // => Convert string to number
+  // => parseInt("100000") returns 100000 (type: number)
+  // => parseInt("abc") returns NaN (Not a Number)
+  // => parseInt("") returns NaN
+  // => amount is 100000 or NaN (type: number)
+
   if (isNaN(amount) || amount < 10000) {
+    // => Validate amount field
+    // => isNaN(amount): true if amount is Not a Number
+    // =>   Example: user entered non-numeric text
+    // => amount < 10000: true if donation too small
+    // => OR operator: true if either condition true
+
     errors.amount = 'Minimum donation is IDR 10,000';
+    // => Add error message to errors object
+    // => errors.amount now exists (was optional)
   }
 
   if (Object.keys(errors).length > 0) {
-    // => Validation failed
+    // => Check if any validation errors exist
+    // => Object.keys(errors) returns array of property names
+    // => Example: ["name", "amount"] if both fields invalid
+    // => .length > 0: true if errors object has any properties
+    // => Validation FAILED if true
+
     return {
+      // => Early return with validation errors
+      // => Stops function execution here
+      // => Client receives error state
+
       message: 'Validation failed',
+      // => Generic error message
+      // => Specific errors in errors object
+
       errors,
+      // => Shorthand for errors: errors
+      // => Includes all validation error messages
+      // => Client Component displays these below fields
     };
+    // => Return type matches FormState
+    // => useFormState receives this, updates state
+    // => Component re-renders with error messages
   }
 
-  // => Save to database
-  await new Promise(resolve => setTimeout(resolve, 1000)); // => Simulate delay
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  // => Simulate database save delay
+  // => Production: await prisma.donation.create(...)
+  // => new Promise: creates promise that resolves after 1000ms (1 second)
+  // => setTimeout: delays resolve function call
+  // => await: pauses execution until promise resolves
+
   console.log(`Saved donation: ${name} - IDR ${amount}`);
+  // => Server-side logging
+  // => For name="Ahmad", amount=100000
+  // => Output: "Saved donation: Ahmad - IDR 100000"
+  // => Logs appear in terminal (server), NOT browser console
 
   return {
+    // => Success response
+    // => Validation passed, database save complete
+
     message: `Thank you ${name}! Donation of IDR ${amount.toLocaleString()} received.`,
+    // => Personalized success message
+    // => Template literal with interpolation
+    // => amount.toLocaleString() formats number with commas
+    // => 100000 becomes "100,000"
+    // => Result: "Thank you Ahmad! Donation of IDR 100,000 received."
   };
+  // => Return type matches FormState (no errors property)
+  // => useFormState receives this, updates state
+  // => Component shows success message
 }
 
 // app/donate/page.tsx
+// => File location: app/donate/page.tsx
+// => Route: /donate
+// => Client Component (needs useFormState hook)
+
 'use client';
-// => Client Component for useFormState
+// => REQUIRED directive: marks component as Client Component
+// => Needed for React hooks (useFormState)
+// => Without this: Error "useFormState can only be used in Client Components"
 
 import { useFormState } from 'react-dom';
-// => Import useFormState hook
+// => Import useFormState hook from react-dom (not react)
+// => useFormState: manages form state with Server Actions
+// => Returns [state, formAction] tuple
+
 import { submitDonation } from '../actions';
+// => Import Server Action from actions.ts
+// => Relative path: ../actions (up one level, then actions.ts)
+// => submitDonation can be called from Client Component
 
 export default function DonatePage() {
-  // => useFormState hook manages Server Action state
+  // => Page component export
+  // => Default export: Next.js renders this for /donate route
+
   const [state, formAction] = useFormState(submitDonation, {
-    message: '',                            // => Initial state
+    // => useFormState hook manages Server Action state
+    // => First argument: Server Action function (submitDonation)
+    // => Second argument: initial state
+    // => Returns array: [current state, wrapped action]
+
+    message: '',
+    // => Initial state message (empty string)
+    // => First render: state.message is ''
+    // => After submission: state.message is success/error message
   });
-  // => state updates after each submission
-  // => formAction is wrapped Server Action
+  // => state: current form state (type: FormState)
+  // =>   Updates after each submission with Server Action return value
+  // => formAction: wrapped Server Action for form action attribute
+  // =>   Handles state management automatically
 
   return (
     <div>
       <h1>Make a Donation</h1>
 
       <form action={formAction}>
-        {/* => Use formAction instead of Server Action directly */}
+        {/* => form element with action prop */}
+        {/* => action={formAction}: wrapped Server Action from useFormState */}
+        {/* => NOT action={submitDonation} (loses state management) */}
+        {/* => On submit: calls formAction with FormData */}
 
         <div>
           <label>
             Name:
             <input type="text" name="name" />
+            {/* => name attribute REQUIRED: used in formData.get('name') */}
+            {/* => User types: value included in FormData on submit */}
           </label>
-          {/* => Show field-specific error */}
+
           {state.errors?.name && (
+            // => Conditional rendering: only show if error exists
+            // => state.errors?.name: optional chaining (safe access)
+            // => If state.errors undefined: short-circuits to false
+            // => If state.errors.name exists: renders error message
+            // => && operator: renders right side only if left side truthy
+
             <p style={{ color: 'red' }}>{state.errors.name}</p>
+            // => Error message paragraph
+            // => Inline style: red text for visibility
+            // => {state.errors.name}: "Name must be at least 2 characters"
           )}
         </div>
 
@@ -115,22 +264,50 @@ export default function DonatePage() {
           <label>
             Amount (IDR):
             <input type="number" name="amount" />
+            {/* => type="number": numeric keyboard on mobile */}
+            {/* => name="amount": used in formData.get('amount') */}
+            {/* => Value still submitted as string (need parseInt) */}
           </label>
+
           {state.errors?.amount && (
+            // => Conditional error rendering for amount field
+            // => Same pattern as name field error
+
             <p style={{ color: 'red' }}>{state.errors.amount}</p>
+            // => Amount field error message
+            // => Example: "Minimum donation is IDR 10,000"
           )}
         </div>
 
         <button type="submit">Donate</button>
+        {/* => Submit button triggers form submission */}
+        {/* => type="submit": submits form (not just button) */}
+        {/* => Calls formAction with FormData */}
 
-        {/* => Show success/error message */}
         {state.message && (
+          // => Show success or generic error message
+          // => state.message always exists (never undefined)
+          // => Empty string is falsy, so nothing renders initially
+          // => After submission: shows "Thank you..." or "Validation failed"
+
           <p>{state.message}</p>
+          // => Message paragraph
+          // => Success: "Thank you Ahmad! Donation of IDR 100,000 received."
+          // => Error: "Validation failed"
         )}
       </form>
     </div>
   );
 }
+// => Full workflow:
+// => 1. User fills form, clicks "Donate"
+// => 2. Browser creates FormData with input values
+// => 3. formAction called with FormData
+// => 4. submitDonation Server Action executes on server
+// => 5. Returns FormState (success or errors)
+// => 6. useFormState updates state with return value
+// => 7. Component re-renders with new state
+// => 8. User sees errors or success message
 ```
 
 **Key Takeaway**: Use useFormState hook to manage Server Action state in Client Components. Perfect for validation errors, success messages, and form state persistence.
@@ -145,69 +322,186 @@ useFormStatus hook provides form submission status (pending, data, method). Use 
 
 ```typescript
 // app/actions.ts
+// => File location: app/actions.ts (Server Actions module)
+// => Centralized Server Actions for application
+
 'use server';
+// => REQUIRED directive: makes all exports Server Actions
+// => Server Actions execute on server only
 
 export async function createPost(formData: FormData) {
-  // => Server Action with artificial delay
-  const title = formData.get('title') as string;      // => title is "Zakat Guide"
-  const content = formData.get('content') as string;  // => content is "..."
+  // => Server Action for creating blog posts
+  // => Export required: callable from Client Components
+  // => async keyword: allows await for database operations
+  // => formData parameter: receives form data from submission
 
-  // => Simulate slow database save
-  await new Promise(resolve => setTimeout(resolve, 2000)); // => 2 second delay
+  const title = formData.get('title') as string;
+  // => Extract 'title' field from FormData
+  // => formData.get() returns FormDataEntryValue (string | File | null)
+  // => Type assertion 'as string': treat as string
+  // => For input name="title" value="Zakat Guide"
+  // => title is "Zakat Guide" (type: string)
+
+  const content = formData.get('content') as string;
+  // => Extract 'content' field from FormData
+  // => For textarea name="content" value="This guide explains..."
+  // => content is "This guide explains..." (type: string)
+  // => Textareas submit values as strings (like inputs)
+
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  // => Simulate slow database operation
+  // => Real code: await prisma.post.create({ data: { title, content } })
+  // => new Promise: creates promise resolving after 2000ms (2 seconds)
+  // => setTimeout: delays resolve call by 2 seconds
+  // => await: pauses function execution until promise resolves
+  // => During this time: useFormStatus pending is true
 
   console.log(`Created post: ${title}`);
+  // => Server-side logging (appears in terminal)
+  // => For title="Zakat Guide"
+  // => Output: "Created post: Zakat Guide"
+  // => Confirms Server Action executed successfully
+
   return { success: true };
+  // => Return success indicator
+  // => Object with success boolean property
+  // => Client Component can check return value
+  // => Type: { success: boolean }
 }
 
 // app/components/SubmitButton.tsx
+// => File location: app/components/SubmitButton.tsx
+// => Reusable submit button with loading state
+// => MUST be separate component (useFormStatus requirement)
+
 'use client';
+// => REQUIRED directive: Client Component for useFormStatus hook
+// => Cannot use useFormStatus in Server Component
 
 import { useFormStatus } from 'react-dom';
-// => Import useFormStatus hook
+// => Import useFormStatus hook from react-dom (not react)
+// => Provides form submission status
+// => Returns object with pending, data, method, action properties
 
 export function SubmitButton() {
-  // => useFormStatus hook provides form submission status
-  const { pending } = useFormStatus();      // => pending is true during submission
-  // => Hook MUST be used in component that is child of form
+  // => Submit button component with loading state
+  // => Export required: used in other components
+  // => CRITICAL: Must be CHILD of form element (not same level)
+
+  const { pending } = useFormStatus();
+  // => useFormStatus hook reads form submission status
+  // => pending: boolean, true during form submission
+  // => Destructure pending from returned object
+  // => pending is false initially
+  // => pending becomes true when form submits
+  // => pending becomes false when Server Action completes
+
+  // => CRITICAL CONSTRAINT: useFormStatus ONLY works in components
+  // =>   that are CHILDREN of form element
+  // => If used in same component as <form>: returns default values (pending: false)
+  // => Must be separate child component
 
   return (
     <button type="submit" disabled={pending}>
-      {/* => Disable button during submission */}
+      {/* => Submit button with dynamic disabled state */}
+      {/* => type="submit": submits parent form */}
+      {/* => disabled={pending}: disable during submission */}
+      {/* => disabled when pending=true (prevents double submission) */}
+      {/* => enabled when pending=false (allows submission) */}
+
       {pending ? 'Creating Post...' : 'Create Post'}
-      {/* => Show loading text when pending */}
+      {/* => Conditional button text */}
+      {/* => Ternary operator: condition ? ifTrue : ifFalse */}
+      {/* => When pending=true: shows "Creating Post..." (loading state) */}
+      {/* => When pending=false: shows "Create Post" (normal state) */}
+      {/* => Provides visual feedback during submission */}
     </button>
   );
-  // => Component re-renders when pending state changes
+  // => Component returns button with dynamic content
+  // => Re-renders automatically when pending changes
+  // => Submission flow:
+  // =>   1. User clicks → pending becomes true
+  // =>   2. Button shows "Creating Post...", disables
+  // =>   3. Server Action executes (2 second delay)
+  // =>   4. Server Action completes → pending becomes false
+  // =>   5. Button shows "Create Post", enables
 }
 
 // app/posts/new/page.tsx
+// => File location: app/posts/new/page.tsx
+// => Route: /posts/new
+// => New post creation page
+
 'use client';
+// => REQUIRED: Client Component for importing Client Component (SubmitButton)
+// => Also needed if page uses any hooks
 
 import { createPost } from '@/app/actions';
+// => Import Server Action
+// => Absolute path with @/ alias (configured in tsconfig.json)
+// => @/ represents project root
+// => Equivalent to: import { createPost } from '../../actions';
+
 import { SubmitButton } from '@/app/components/SubmitButton';
+// => Import custom submit button component
+// => Absolute path for clarity
+// => Component has useFormStatus hook built-in
 
 export default function NewPostPage() {
+  // => Page component for creating new posts
+  // => Default export: Next.js renders for /posts/new route
+
   return (
     <div>
       <h1>Create New Post</h1>
+      {/* => Page heading */}
 
       <form action={createPost}>
+        {/* => Form with Server Action */}
+        {/* => action={createPost}: calls Server Action on submit */}
+        {/* => createPost is Server Action function reference */}
+        {/* => On submit: browser sends FormData to Server Action */}
+
         <label>
           Title:
           <input type="text" name="title" required />
+          {/* => Title input field */}
+          {/* => name="title": used in formData.get('title') */}
+          {/* => required attribute: HTML5 validation (prevents empty submission) */}
+          {/* => type="text": standard text input */}
         </label>
 
         <label>
           Content:
           <textarea name="content" required />
+          {/* => Content textarea field */}
+          {/* => name="content": used in formData.get('content') */}
+          {/* => required: prevents empty submission */}
+          {/* => textarea allows multi-line text input */}
         </label>
 
-        {/* => SubmitButton is child of form (required for useFormStatus) */}
         <SubmitButton />
+        {/* => Custom submit button component */}
+        {/* => CRITICAL: SubmitButton is CHILD of form */}
+        {/* => This placement allows useFormStatus to work */}
+        {/* => Button automatically shows loading state during submission */}
+        {/* => If we used <button> directly here without useFormStatus: */}
+        {/* =>   No loading state, no disabled state during submission */}
       </form>
     </div>
   );
 }
+// => Complete workflow:
+// => 1. User fills title and content fields
+// => 2. User clicks "Create Post" button
+// => 3. Form submits, sends FormData to createPost Server Action
+// => 4. useFormStatus detects submission: pending becomes true
+// => 5. SubmitButton shows "Creating Post...", disables
+// => 6. Server Action executes (2 second delay)
+// => 7. Server logs "Created post: [title]"
+// => 8. Server Action returns { success: true }
+// => 9. useFormStatus detects completion: pending becomes false
+// => 10. SubmitButton shows "Create Post", enables again
 ```
 
 **Key Takeaway**: Use useFormStatus hook in form children to access submission status. Perfect for submit button loading states and disabling during submission.
@@ -223,52 +517,58 @@ Server Actions work without JavaScript through native form submission. Add progr
 ```typescript
 // app/actions.ts
 'use server';
+// => Server Actions work with/without JavaScript
 
 import { redirect } from 'next/navigation';
-// => Import redirect for server-side navigation
+// => Server-side navigation utility
 
 export async function loginUser(formData: FormData) {
-  // => Server Action that works without JavaScript
-  const email = formData.get('email') as string;         // => email is "user@example.com"
-  const password = formData.get('password') as string;   // => password is "password123"
+  // => Authentication Server Action
+  const email = formData.get('email') as string;
+  // => Extract email from form
+  const password = formData.get('password') as string;
+  // => Extract password from form
 
-  // => Validate credentials (simplified)
   if (email === 'user@example.com' && password === 'password123') {
-    // => Set auth cookie (simplified)
+    // => Validate credentials (production: check database)
     // cookies().set('auth_token', 'token123');
-
-    // => Redirect on success (works without JavaScript)
+    // => Set auth cookie (commented for demo)
     redirect('/dashboard');
-    // => Server-side redirect, browser navigates to /dashboard
+    // => HTTP 303 redirect without JavaScript
+    // => Client-side navigation with JavaScript
   }
 
-  // => Invalid credentials
   return { error: 'Invalid email or password' };
+  // => Return error for invalid credentials
 }
 
 // app/login/page.tsx
-// => Server Component (works without JavaScript)
 import { loginUser } from '../actions';
+// => Import Server Action
 
 export default function LoginPage() {
+  // => Basic login page (no JavaScript required)
   return (
     <div>
       <h1>Login</h1>
 
-      {/* => Plain form, works without JavaScript */}
       <form action={loginUser}>
+        {/* => Form works WITHOUT JavaScript (HTTP POST) */}
+        {/* => Form works WITH JavaScript (fetch, no reload) */}
         <label>
           Email:
           <input type="email" name="email" required />
+          {/* => HTML5 email validation */}
         </label>
 
         <label>
           Password:
           <input type="password" name="password" required />
+          {/* => Password field masked */}
         </label>
 
         <button type="submit">Login</button>
-        {/* => Form submits to server even if JavaScript disabled */}
+        {/* => Submits via HTTP POST (no JS) or fetch (with JS) */}
       </form>
     </div>
   );
@@ -276,29 +576,37 @@ export default function LoginPage() {
 
 // app/login-enhanced/page.tsx
 'use client';
-// => Client Component with progressive enhancement
+// => Client Component for hooks
 
 import { useFormState, useFormStatus } from 'react-dom';
+// => React form hooks
 import { loginUser } from '../actions';
 
 function SubmitButton() {
+  // => Separate component (useFormStatus requirement)
   const { pending } = useFormStatus();
+  // => Form submission status
   return (
     <button type="submit" disabled={pending}>
+      {/* => Disable during submission */}
       {pending ? 'Logging in...' : 'Login'}
+      {/* => Dynamic button text */}
     </button>
   );
 }
 
 export default function LoginEnhancedPage() {
+  // => Enhanced with JavaScript features
   const [state, formAction] = useFormState(loginUser, {});
+  // => useFormState manages form state
+  // => state receives Server Action return value
 
   return (
     <div>
       <h1>Login (Enhanced)</h1>
 
-      {/* => Enhanced with client-side state management */}
       <form action={formAction}>
+        {/* => Use wrapped formAction for state management */}
         <label>
           Email:
           <input type="email" name="email" required />
@@ -310,17 +618,18 @@ export default function LoginEnhancedPage() {
         </label>
 
         <SubmitButton />
+        {/* => Shows loading state during submission */}
 
-        {/* => Show error with JavaScript enabled */}
         {state.error && (
+          // => Conditional error display (JavaScript enhancement)
           <p style={{ color: 'red' }}>{state.error}</p>
+          // => Inline error message
         )}
       </form>
     </div>
   );
-  // => Works without JavaScript (basic form)
-  // => Enhanced with JavaScript (loading states, inline errors)
 }
+// => Progressive enhancement: basic works without JS, enhanced with JS
 ```
 
 **Key Takeaway**: Server Actions provide progressive enhancement. Base functionality works without JavaScript, enhanced features activate when JavaScript available.
@@ -337,35 +646,47 @@ Use revalidate option to set cache lifetime. Next.js regenerates page after expi
 
 ```typescript
 // app/posts/page.tsx
-// => Server Component with time-based revalidation
+// => ISR (Incremental Static Regeneration) example
 
 async function getPosts() {
-  // => Fetch with revalidate option
+  // => Fetch function with caching
   const res = await fetch('https://jsonplaceholder.typicode.com/posts', {
-    next: { revalidate: 60 }                // => Revalidate every 60 seconds
+    // => Fetch posts from API
+    next: { revalidate: 60 }
+    // => Cache for 60 seconds
+    // => After 60s: serve stale, regenerate in background
   });
-  // => First request: fetches from API, caches for 60 seconds
-  // => Within 60s: serves from cache (instant)
-  // => After 60s: serves stale cache, fetches fresh data in background
+  // => First request: fetch from API, cache result
+  // => Within 60s: serve from cache (instant)
+  // => After 60s: serve stale cache, fetch fresh data background
+  // => Next request after regeneration: serve fresh data
 
   return res.json();
+  // => Return parsed JSON response
 }
 
 export default async function PostsPage() {
-  const posts = await getPosts();           // => posts is Post[] array
+  // => Async Server Component
+  const posts = await getPosts();
+  // => Fetch posts (may be cached)
+  // => posts is array of Post objects
 
   return (
     <div>
       <h2>Blog Posts (ISR)</h2>
-      {/* => Updated every 60 seconds maximum */}
 
       <p>Last rendered: {new Date().toLocaleTimeString()}</p>
-      {/* => Shows when page was generated */}
+      {/* => Timestamp shows when page generated */}
+      {/* => Updates every 60s after first request */}
 
       <ul>
         {posts.slice(0, 5).map((post: any) => (
+          // => Display first 5 posts
+          // => slice(0, 5) takes first 5 items from array
           <li key={post.id}>
+            {/* => key prop required for list items */}
             <strong>{post.title}</strong>
+            {/* => Post title in bold */}
           </li>
         ))}
       </ul>
@@ -374,8 +695,10 @@ export default async function PostsPage() {
 }
 
 // Alternative: page-level revalidate export
-export const revalidate = 60;               // => Revalidate entire page every 60s
-// => All fetch requests in page inherit this revalidate value
+export const revalidate = 60;
+// => Apply 60s revalidation to entire page
+// => All fetch requests inherit this value
+// => Simpler than setting revalidate per fetch
 ```
 
 **Key Takeaway**: Use revalidate option for time-based cache invalidation (ISR). Page serves cached version, regenerates in background after expiration.
@@ -391,64 +714,86 @@ Use revalidatePath() to invalidate specific route cache immediately. Perfect for
 ```typescript
 // app/actions.ts
 'use server';
+// => Server Actions module
 
 import { revalidatePath } from 'next/cache';
-// => Import revalidatePath function
+// => Import cache invalidation function
 
 export async function updatePost(postId: string, formData: FormData) {
-  // => Server Action that updates post
-  const title = formData.get('title') as string;      // => title is "Updated Title"
-  const content = formData.get('content') as string;  // => content is "Updated content..."
+  // => Update post Server Action
+  // => First param: postId (from bind)
+  // => Second param: formData (from form submission)
+  const title = formData.get('title') as string;
+  // => Extract title from form
+  const content = formData.get('content') as string;
+  // => Extract content from form
 
-  // => Update in database
   // await db.posts.update({ where: { id: postId }, data: { title, content } });
+  // => Database update (commented for demo)
+  // => Production: update in database
   console.log(`Updated post ${postId}: ${title}`);
+  // => Log update to server console
 
-  // => Revalidate specific post page
   revalidatePath(`/posts/${postId}`);
-  // => Invalidates cache for /posts/[postId]
-  // => Next request will fetch fresh data
+  // => Invalidate cache for specific post page
+  // => Next request to /posts/[postId] fetches fresh data
+  // => Cache cleared immediately
 
-  // => Also revalidate posts list
   revalidatePath('/posts');
-  // => Invalidates /posts page cache
-  // => Shows updated post in list
+  // => Invalidate posts list cache
+  // => List shows updated post immediately
+  // => Can invalidate multiple related paths
 }
 
 // app/posts/[id]/edit/page.tsx
 'use client';
+// => Client Component for form
 
 import { updatePost } from '@/app/actions';
+// => Import Server Action
 
 export default function EditPostPage({
   params,
 }: {
   params: { id: string };
+  // => params from dynamic route [id]
 }) {
-  // => Bind postId to Server Action
+  // => Edit page for specific post
+
   const updatePostWithId = updatePost.bind(null, params.id);
-  // => updatePostWithId now has postId pre-filled
+  // => Bind postId to first parameter
+  // => updatePost expects (postId, formData)
+  // => updatePostWithId now expects only formData
+  // => postId is pre-filled with params.id
 
   return (
     <div>
       <h1>Edit Post {params.id}</h1>
+      {/* => Show post ID being edited */}
 
       <form action={updatePostWithId}>
+        {/* => Form calls bound Server Action */}
+        {/* => Only formData sent (postId already bound) */}
         <label>
           Title:
           <input type="text" name="title" required />
+          {/* => Title input field */}
         </label>
 
         <label>
           Content:
           <textarea name="content" required />
+          {/* => Content textarea field */}
         </label>
 
         <button type="submit">Update Post</button>
+        {/* => Submit triggers updatePostWithId */}
       </form>
     </div>
   );
 }
+// => On submit: updatePost(params.id, formData) called
+// => Cache invalidated, fresh data served
 ```
 
 **Key Takeaway**: Use revalidatePath() in Server Actions to invalidate specific route cache on-demand. Ensures users see fresh data immediately after mutations.
@@ -463,90 +808,138 @@ Use fetch cache tags and revalidateTag() to invalidate multiple related requests
 
 ```typescript
 // app/lib/data.ts
-// => Data fetching functions with cache tags
+// => Data fetching utilities with cache tags
 
 export async function getUser(userId: string) {
-  // => Fetch with cache tag
+  // => Fetch user by ID
+  // => userId parameter: user identifier
   const res = await fetch(`https://api.example.com/users/${userId}`, {
+    // => API request for user data
     next: {
-      tags: [`user-${userId}`],             // => Cache tag for this user
+      // => Next.js fetch options
+      tags: [`user-${userId}`],
+      // => Cache tag for revalidation
+      // => Tag format: user-{userId}
+      // => Allows selective cache invalidation
     },
   });
+  // => res is Response object
   return res.json();
+  // => Parse and return JSON
 }
 
 export async function getUserPosts(userId: string) {
+  // => Fetch posts for specific user
   const res = await fetch(`https://api.example.com/users/${userId}/posts`, {
+    // => API request for user's posts
     next: {
-      tags: [`user-${userId}-posts`, `posts`], // => Multiple tags
-      // => Can revalidate by user or by all posts
+      tags: [`user-${userId}-posts`, `posts`],
+      // => Multiple cache tags
+      // => First tag: user-specific posts
+      // => Second tag: all posts globally
+      // => Enables both granular and broad revalidation
     },
   });
   return res.json();
+  // => Return posts array
 }
 
 // app/actions.ts
 'use server';
+// => Server Actions module
 
 import { revalidateTag } from 'next/cache';
-// => Import revalidateTag function
+// => Import tag-based cache invalidation
 
 export async function updateUserProfile(userId: string, formData: FormData) {
-  const name = formData.get('name') as string;        // => name is "Ahmad Updated"
+  // => Update user profile Server Action
+  // => userId: bound parameter
+  // => formData: form submission data
+  const name = formData.get('name') as string;
+  // => Extract name from form
+  // => name is "Ahmad Updated"
 
-  // => Update user in database
   // await db.users.update({ where: { id: userId }, data: { name } });
+  // => Database update (commented for demo)
 
-  // => Revalidate all requests tagged with this user
   revalidateTag(`user-${userId}`);
-  // => Invalidates getUser(userId) cache
-  // => Also invalidates getUserPosts (has user tag)
+  // => Invalidate cache for user tag
+  // => Affects getUser(userId) fetch
+  // => Also affects getUserPosts (shares tag)
+  // => All requests with this tag refreshed
 
   console.log(`Revalidated cache for user ${userId}`);
+  // => Server log confirmation
 }
 
 export async function createPost(userId: string, formData: FormData) {
+  // => Create new post Server Action
   const title = formData.get('title') as string;
+  // => Extract title from form
   const content = formData.get('content') as string;
+  // => Extract content from form
 
-  // => Create post
   // await db.posts.create({ data: { userId, title, content } });
+  // => Database insertion (commented)
 
-  // => Revalidate posts tag (affects all post lists)
   revalidateTag('posts');
-  // => Invalidates all fetches tagged with 'posts'
+  // => Invalidate all posts caches
+  // => Affects ALL fetches tagged 'posts'
+  // => Refreshes post lists across site
 
-  // => Also revalidate this user's posts
   revalidateTag(`user-${userId}-posts`);
-  // => More granular revalidation
+  // => Invalidate specific user's posts cache
+  // => More granular than 'posts' tag
+  // => Targets specific user's post list
 }
 
 // app/users/[id]/page.tsx
+// => User profile page
 import { getUser, getUserPosts } from '@/app/lib/data';
+// => Import tagged fetch functions
 
 export default async function UserPage({
   params,
 }: {
   params: { id: string };
+  // => Dynamic route params
 }) {
-  // => Both fetches use cache tags
+  // => User page component
+
   const [user, posts] = await Promise.all([
-    getUser(params.id),                     // => Tagged: user-${id}
-    getUserPosts(params.id),                // => Tagged: user-${id}-posts, posts
+    // => Fetch both concurrently
+    // => Promise.all runs requests in parallel
+    getUser(params.id),
+    // => Fetch user data
+    // => Tagged: user-${id}
+    getUserPosts(params.id),
+    // => Fetch user's posts
+    // => Tagged: user-${id}-posts, posts
   ]);
+  // => user contains profile data
+  // => posts contains array of posts
 
   return (
     <div>
       <h1>{user.name}</h1>
+      {/* => Display user name */}
       <p>Posts by {user.name}:</p>
+
       <ul>
         {posts.map((post: any) => (
+          // => Iterate over posts array
           <li key={post.id}>{post.title}</li>
+          // => Display post title
+          // => key prop required for list items
         ))}
       </ul>
     </div>
   );
 }
+// => Tag revalidation workflow:
+// => 1. updateUserProfile('123') → revalidateTag('user-123')
+// => 2. Next getUser('123') request fetches fresh data
+// => 3. getUserPosts('123') also refreshes (shares tag)
 ```
 
 **Key Takeaway**: Use cache tags and revalidateTag() to invalidate related data across multiple routes. More flexible and efficient than path-based revalidation.
@@ -563,50 +956,73 @@ Use (folder) syntax to organize routes without affecting URL structure. Perfect 
 
 ```typescript
 // app/(marketing)/layout.tsx
-// => Parentheses create route group (NOT part of URL)
-// => Layout applies to routes in (marketing) group
+// => File location: app/(marketing)/layout.tsx
+// => Parentheses create route group: (marketing)
+// => Route groups organize files WITHOUT affecting URLs
+// => (marketing) folder NOT part of URL path
 export default function MarketingLayout({
+  // => Layout for marketing pages
   children,
+  // => Child pages render in layout
 }: {
   children: React.ReactNode;
+  // => Type: React component or JSX
 }) {
+  // => Marketing layout component
   return (
     <div>
-      {/* => Marketing-specific header */}
       <header style={{ background: '#0173B2', color: 'white', padding: '1rem' }}>
+        {/* => Marketing header with brand colors */}
+        {/* => background #0173B2: accessible blue */}
         <h1>Islamic Finance Platform</h1>
+        {/* => Site branding */}
         <nav>
           <a href="/">Home</a> | <a href="/about">About</a> | <a href="/pricing">Pricing</a>
+          {/* => Navigation links */}
+          {/* => All routes in (marketing) group */}
         </nav>
       </header>
 
       <main>
         {children}
-        {/* => Marketing pages render here */}
+        {/* => Marketing pages (/, /about, /pricing) render here */}
+        {/* => Each page wrapped by this layout */}
       </main>
 
-      {/* => Marketing-specific footer */}
       <footer style={{ background: '#f5f5f5', padding: '2rem', textAlign: 'center' }}>
+        {/* => Marketing footer */}
+        {/* => Light gray background */}
         <p>© 2026 Islamic Finance Platform</p>
+        {/* => Copyright notice */}
       </footer>
     </div>
   );
 }
+// => All pages in (marketing)/ use this layout
 
 // app/(marketing)/page.tsx
-// => Route: "/" (group name NOT in URL)
+// => File: app/(marketing)/page.tsx
+// => URL: "/" (route group NOT in URL)
+// => (marketing) group omitted from path
 export default function HomePage() {
+  // => Homepage component
   return (
     <div>
       <h1>Welcome to Islamic Finance</h1>
+      {/* => Page heading */}
       <p>Learn Sharia-compliant financial products.</p>
+      {/* => Page description */}
     </div>
   );
 }
+// => Wrapped by MarketingLayout (blue header + footer)
 
 // app/(marketing)/about/page.tsx
-// => Route: "/about" (NOT "/marketing/about")
+// => File: app/(marketing)/about/page.tsx
+// => URL: "/about" (NOT "/marketing/about")
+// => Route group name omitted
 export default function AboutPage() {
+  // => About page component
   return (
     <div>
       <h1>About Us</h1>
@@ -614,31 +1030,43 @@ export default function AboutPage() {
     </div>
   );
 }
+// => Also wrapped by MarketingLayout
 
 // app/(app)/layout.tsx
-// => Separate route group for application routes
+// => File: app/(app)/layout.tsx
+// => Separate route group: (app)
+// => Different layout for application pages
 export default function AppLayout({
+  // => Application layout (different from marketing)
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
     <div>
-      {/* => App-specific header (different from marketing) */}
       <header style={{ background: '#029E73', color: 'white', padding: '1rem' }}>
+        {/* => App header with different color */}
+        {/* => background #029E73: accessible teal */}
+        {/* => Visually distinct from marketing */}
         <nav>
           <a href="/dashboard">Dashboard</a> | <a href="/profile">Profile</a>
+          {/* => App-specific navigation */}
         </nav>
       </header>
 
       {children}
+      {/* => App pages render here */}
+      {/* => No footer in app layout */}
     </div>
   );
 }
 
 // app/(app)/dashboard/page.tsx
-// => Route: "/dashboard" (NOT "/app/dashboard")
+// => File: app/(app)/dashboard/page.tsx
+// => URL: "/dashboard" (NOT "/app/dashboard")
+// => Route group omitted from URL
 export default function DashboardPage() {
+  // => Dashboard page component
   return (
     <div>
       <h1>Dashboard</h1>
@@ -646,6 +1074,8 @@ export default function DashboardPage() {
     </div>
   );
 }
+// => Wrapped by AppLayout (teal header, no footer)
+// => Route groups enable multiple layouts without URL changes
 ```
 
 **Key Takeaway**: Use (folder) route groups to organize routes without affecting URLs. Apply different layouts to different groups of routes.

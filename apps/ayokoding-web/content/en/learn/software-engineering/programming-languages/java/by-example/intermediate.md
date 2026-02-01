@@ -941,64 +941,91 @@ The Collections Framework provides algorithms for sorting, searching, and transf
 
 ```java
 import java.util.*;
+                                 // => Import collections framework classes
 
 // CHOOSING COLLECTION TYPES based on requirements
 
 // ArrayList - indexed access, dynamic size
 List<String> arrayList = new ArrayList<>();
+                                 // => arrayList is [] (empty dynamic array)
 arrayList.add("A");              // => O(1) amortized (O(n) when resizing)
+                                 // => arrayList is ["A"]
 String value = arrayList.get(0); // => O(1) random access
-arrayList.remove(0);             // => O(n) due to shifting
+                                 // => value is "A"
+arrayList.remove(0);             // => O(n) due to shifting elements
+                                 // => arrayList is [] (removed "A")
 
 // LinkedList - efficient insertion/deletion, poor random access
 List<String> linkedList = new LinkedList<>();
-linkedList.add("A");             // => O(1) append
-linkedList.add(0, "B");          // => O(1) prepend
-String first = linkedList.get(0); // => O(n) traversal (no indexing)
+                                 // => linkedList is [] (empty doubly-linked list)
+linkedList.add("A");             // => O(1) append to tail
+                                 // => linkedList is ["A"]
+linkedList.add(0, "B");          // => O(1) prepend to head
+                                 // => linkedList is ["B", "A"]
+String first = linkedList.get(0); // => O(n) traversal (must walk nodes, no indexing)
+                                 // => first is "B"
 
 // HashSet - unique elements, no order, O(1) operations
 Set<String> hashSet = new HashSet<>();
-hashSet.add("A");                // => O(1) average
-boolean contains = hashSet.contains("A"); // => O(1) average
+                                 // => hashSet is {} (empty hash table)
+hashSet.add("A");                // => O(1) average (hash bucket insert)
+                                 // => hashSet is {"A"}
+boolean contains = hashSet.contains("A");
+                                 // => O(1) average hash lookup
+                                 // => contains is true
 
 // TreeSet - sorted, unique elements, O(log n) operations
 Set<Integer> treeSet = new TreeSet<>();
-treeSet.add(3);
-treeSet.add(1);
-treeSet.add(2);
-System.out.println(treeSet);     // => Output: [1, 2, 3] (sorted)
+                                 // => treeSet is {} (empty red-black tree)
+treeSet.add(3);                  // => treeSet is {3}
+treeSet.add(1);                  // => treeSet is {1, 3} (auto-sorted)
+treeSet.add(2);                  // => treeSet is {1, 2, 3} (maintains order)
+System.out.println(treeSet);     // => Output: [1, 2, 3] (sorted by natural order)
 
 // HashMap - key-value pairs, O(1) operations
 Map<String, Integer> hashMap = new HashMap<>();
-hashMap.put("Alice", 30);        // => O(1) average
-Integer age = hashMap.get("Alice"); // => O(1) average
+                                 // => hashMap is {} (empty hash table)
+hashMap.put("Alice", 30);        // => O(1) average insert
+                                 // => hashMap is {"Alice"=30}
+Integer age = hashMap.get("Alice"); // => O(1) average lookup
+                                 // => age is 30
 
 // TreeMap - sorted by keys, O(log n) operations
 Map<String, Integer> treeMap = new TreeMap<>();
-treeMap.put("Charlie", 25);
-treeMap.put("Alice", 30);
-treeMap.put("Bob", 28);
+                                 // => treeMap is {} (empty red-black tree)
+treeMap.put("Charlie", 25);      // => treeMap is {"Charlie"=25}
+treeMap.put("Alice", 30);        // => treeMap is {"Alice"=30, "Charlie"=25}
+treeMap.put("Bob", 28);          // => treeMap is {"Alice"=30, "Bob"=28, "Charlie"=25}
 System.out.println(treeMap);     // => Output: {Alice=30, Bob=28, Charlie=25} (sorted by key)
 
 // COLLECTIONS UTILITY METHODS
 List<Integer> numbers = Arrays.asList(3, 1, 4, 1, 5, 9);
+                                 // => numbers is [3, 1, 4, 1, 5, 9] (fixed-size list)
 
-Collections.sort(numbers);       // => numbers is [1, 1, 3, 4, 5, 9]
-Collections.reverse(numbers);    // => numbers is [9, 5, 4, 3, 1, 1]
-Collections.shuffle(numbers);    // => Randomizes order
+Collections.sort(numbers);       // => In-place sort (mutates original)
+                                 // => numbers is [1, 1, 3, 4, 5, 9]
+Collections.reverse(numbers);    // => In-place reversal
+                                 // => numbers is [9, 5, 4, 3, 1, 1]
+Collections.shuffle(numbers);    // => Randomizes order (uses Random)
+                                 // => numbers is [unpredictable order]
 
-int max = Collections.max(numbers); // => max is 9
-int min = Collections.min(numbers); // => min is 1
+int max = Collections.max(numbers); // => Finds maximum element
+                                 // => max is 9
+int min = Collections.min(numbers); // => Finds minimum element
+                                 // => min is 1
 
 int frequency = Collections.frequency(numbers, 1);
+                                 // => Counts occurrences of 1
                                  // => frequency is 2 (appears twice)
 
 // IMMUTABLE COLLECTIONS (Java 9+)
 List<String> immutable = List.of("A", "B", "C");
-// immutable.add("D");           // => UnsupportedOperationException
+                                 // => immutable is ["A", "B", "C"] (cannot modify)
+// immutable.add("D");           // => UnsupportedOperationException (immutable)
 
 Map<String, Integer> immutableMap = Map.of("A", 1, "B", 2);
-// immutableMap.put("C", 3);     // => UnsupportedOperationException
+                                 // => immutableMap is {"A"=1, "B"=2} (cannot modify)
+// immutableMap.put("C", 3);     // => UnsupportedOperationException (immutable)
 ```
 
 **Key Takeaway**: Choose collection types based on access patterns: ArrayList for indexed access, LinkedList for frequent insertions/deletions, HashSet for uniqueness with O(1) operations, TreeSet for sorted uniqueness, HashMap for key-value O(1) lookups, TreeMap for sorted keys. Understand time complexity tradeoffs to avoid performance pitfalls.
@@ -1034,67 +1061,87 @@ import java.util.*;
 
 // CONCURRENTHASHMAP - thread-safe without single lock
 ConcurrentHashMap<String, Integer> concurrentMap = new ConcurrentHashMap<>();
+                                 // => concurrentMap is {} (empty, thread-safe map)
+                                 // => Uses segment-based locking (high concurrency)
 
 // Thread-safe operations
-concurrentMap.put("key", 1);     // => Thread-safe put
-Integer value = concurrentMap.get("key"); // => Thread-safe get
+concurrentMap.put("key", 1);     // => Thread-safe put without blocking all threads
+                                 // => concurrentMap is {"key"=1}
+Integer value = concurrentMap.get("key");
+                                 // => Thread-safe get (lock-free read in Java 8+)
+                                 // => value is 1
 
 // ATOMIC OPERATIONS
 concurrentMap.putIfAbsent("key", 2);
-                                 // => Only puts if key doesn't exist (atomic)
-                                 // => Returns null if inserted, existing value otherwise
+                                 // => Only puts if key doesn't exist (atomic check-and-set)
+                                 // => Returns 1 (key exists, not inserted)
+                                 // => concurrentMap is {"key"=1} (unchanged)
 
 concurrentMap.computeIfAbsent("newKey", k -> k.length());
                                  // => Computes value atomically if key absent
-                                 // => newKey -> 6 (length of "newKey")
+                                 // => Lambda: "newKey".length() returns 6
+                                 // => concurrentMap is {"key"=1, "newKey"=6}
 
 concurrentMap.merge("key", 1, Integer::sum);
                                  // => Atomically updates: old value + new value
-                                 // => key -> 2 (was 1, merged with 1)
+                                 // => Merges 1 (existing) + 1 (new) = 2
+                                 // => concurrentMap is {"key"=2, "newKey"=6}
 
 // COPYONWRITEARRAYLIST - reads without locking, writes copy entire array
 CopyOnWriteArrayList<String> cowList = new CopyOnWriteArrayList<>();
-cowList.add("A");                // => Creates new array copy
-cowList.add("B");                // => Every write copies array (expensive!)
+                                 // => cowList is [] (empty, optimized for reads)
+cowList.add("A");                // => Creates new array copy with "A"
+                                 // => cowList is ["A"] (write expensive, read cheap)
+cowList.add("B");                // => Every write copies array (O(n) write cost)
+                                 // => cowList is ["A", "B"]
 
 // Safe iteration during concurrent modifications
 for (String item : cowList) {    // => Iteration uses snapshot (no ConcurrentModificationException)
+                                 // => Iterates over: ["A", "B"]
     cowList.add("C");            // => Modifications don't affect ongoing iteration
-}
+                                 // => Creates new array but iterator sees old snapshot
+}                                // => After loop: cowList is ["A", "B", "C", "C"]
 
 // BLOCKINGQUEUE - producer-consumer pattern
 BlockingQueue<String> queue = new LinkedBlockingQueue<>(10);
-                                 // => Capacity 10 (blocks when full)
+                                 // => queue capacity is 10 (blocks when full)
+                                 // => Uses locks and conditions (thread coordination)
 
 // Producer thread
-new Thread(() -> {
+new Thread(() -> {               // => Lambda creates producer thread
     try {
-        queue.put("item");       // => Blocks if queue full
+        queue.put("item");       // => Blocks if queue full (waits for space)
+                                 // => Wakes up consumers waiting for items
     } catch (InterruptedException e) {
-        e.printStackTrace();
+        e.printStackTrace();     // => Handle thread interruption
     }
-}).start();
+}).start();                      // => Start producer thread immediately
 
 // Consumer thread
-new Thread(() -> {
+new Thread(() -> {               // => Lambda creates consumer thread
     try {
-        String item = queue.take(); // => Blocks if queue empty
+        String item = queue.take(); // => Blocks if queue empty (waits for item)
+                                 // => item is "item" (from producer)
         System.out.println("Consumed: " + item);
+                                 // => Output: Consumed: item
     } catch (InterruptedException e) {
-        e.printStackTrace();
+        e.printStackTrace();     // => Handle thread interruption
     }
-}).start();
+}).start();                      // => Start consumer thread immediately
 
 // CONCURRENTSKIPLISTMAP - sorted, concurrent alternative to TreeMap
 ConcurrentSkipListMap<Integer, String> skipListMap = new ConcurrentSkipListMap<>();
-skipListMap.put(3, "three");
-skipListMap.put(1, "one");
-skipListMap.put(2, "two");
+                                 // => skipListMap is {} (empty skip list, sorted + thread-safe)
+skipListMap.put(3, "three");     // => skipListMap is {3="three"}
+skipListMap.put(1, "one");       // => skipListMap is {1="one", 3="three"} (auto-sorted)
+skipListMap.put(2, "two");       // => skipListMap is {1="one", 2="two", 3="three"}
 System.out.println(skipListMap);  // => Output: {1=one, 2=two, 3=three} (sorted, thread-safe)
 
 // CONTRAST: Synchronized wrapper (poor concurrency)
 Map<String, Integer> syncMap = Collections.synchronizedMap(new HashMap<>());
-                                 // => Single lock for all operations (bottleneck)
+                                 // => syncMap is {} (wrapped HashMap)
+                                 // => Single lock for all operations (severe bottleneck)
+                                 // => All threads block each other (no concurrency)
 ```
 
 **Key Takeaway**: Use ConcurrentHashMap for high-concurrency key-value access with fine-grained locking. CopyOnWriteArrayList suits read-heavy workloads where writes are rare. BlockingQueue enables producer-consumer patterns with thread-safe blocking operations. Avoid synchronized wrappers (Collections.synchronizedMap()) which use coarse-grained locking.
@@ -1133,10 +1180,12 @@ import java.util.*;
 import java.util.stream.*;
 
 List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+                                 // => numbers is [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 // LAZY EVALUATION - intermediate operations don't execute until terminal operation
 Stream<Integer> stream = numbers.stream()
                                  // => Creates stream from list (no processing yet)
+                                 // => Pipeline defined but not executed
     .filter(n -> {
         System.out.println("Filter: " + n);
         return n % 2 == 0;       // => NOT executed yet (lazy intermediate operation)
@@ -1149,45 +1198,64 @@ Stream<Integer> stream = numbers.stream()
     });
 // => No output yet (no terminal operation)
 // => Stream pipeline defined but not executed
+// => No System.out.println calls made
 
 List<Integer> result = stream.collect(Collectors.toList());
                                  // => Terminal operation triggers pipeline execution
+                                 // => Now executes filter and map for each element
 // => Output: Filter: 1, Filter: 2, Map: 2, Filter: 3, Filter: 4, Map: 4, ...
+// => result is [4, 8, 12, 16, 20] (even numbers doubled)
 
 // SHORT-CIRCUITING - stops processing when result determined
 Optional<Integer> first = numbers.stream()
+                                 // => Creates new stream from numbers
     .filter(n -> {
         System.out.println("Checking: " + n);
-        return n > 5;
+        return n > 5;            // => Filter for n > 5
     })
     .findFirst();                // => Short-circuits after first match
+                                 // => Stops immediately when match found
 // => Output: Checking: 1, Checking: 2, ..., Checking: 6
 // => Stops at 6 (first n > 5), doesn't process 7, 8, 9, 10
+// => first is Optional[6]
 
 // PARALLEL STREAMS - splits work across threads
 long count = numbers.parallelStream()
-    .filter(n -> n % 2 == 0)
-    .count();                    // => Parallel execution (order not guaranteed)
+                                 // => Splits collection across ForkJoinPool threads
+    .filter(n -> n % 2 == 0)     // => Parallel filtering (each thread processes subset)
+                                 // => Filters: 2, 4, 6, 8, 10
+    .count();                    // => Terminal operation: counts matches
+                                 // => Parallel execution (order not guaranteed)
                                  // => count is 5
 
 // OPTIMIZATION: limit() short-circuits infinite streams
-Stream.iterate(0, n -> n + 1)    // => Infinite stream: 0, 1, 2, 3, ...
-    .filter(n -> n % 2 == 0)     // => Even numbers: 0, 2, 4, 6, ...
+Stream.iterate(0, n -> n + 1)    // => Infinite stream: 0, 1, 2, 3, ... (unbounded)
+                                 // => Without limit(), would run forever
+    .filter(n -> n % 2 == 0)     // => Even numbers: 0, 2, 4, 6, 8, ...
     .limit(5)                    // => Take first 5: stops after 5 elements
+                                 // => Short-circuits infinite stream
     .forEach(System.out::println);
+                                 // => Terminal operation: prints each element
 // => Output: 0, 2, 4, 6, 8 (stops, doesn't run forever)
 
 // PRIMITIVE STREAMS - avoid autoboxing overhead
 IntStream.range(1, 1000000)      // => Primitive int stream (no Integer objects)
-    .filter(n -> n % 2 == 0)
+                                 // => range is [1, 2, ..., 999999]
+    .filter(n -> n % 2 == 0)     // => Filters even numbers (no boxing)
     .sum();                      // => sum() on IntStream (no boxing/unboxing)
+                                 // => Returns int sum directly (efficient)
 
 // STATELESS vs STATEFUL operations
-numbers.stream()
+numbers.stream()                 // => Creates stream from numbers
     .filter(n -> n > 5)          // => Stateless: each element processed independently
-    .map(n -> n * 2)             // => Stateless
+                                 // => Filters: 6, 7, 8, 9, 10
+    .map(n -> n * 2)             // => Stateless: independent transformation
+                                 // => Maps to: 12, 14, 16, 18, 20
     .sorted()                    // => STATEFUL: requires all elements (breaks streaming)
+                                 // => Collects all before sorting (memory overhead)
     .collect(Collectors.toList());
+                                 // => Terminal: collects to List
+                                 // => Result is [12, 14, 16, 18, 20] (sorted)
 ```
 
 **Key Takeaway**: Intermediate operations (filter, map) are lazy—they don't execute until a terminal operation (collect, forEach, count) triggers the pipeline. Short-circuiting operations (findFirst, limit, anyMatch) stop processing early. Use primitive streams (IntStream, LongStream, DoubleStream) to avoid autoboxing overhead for numeric operations.
@@ -2162,20 +2230,29 @@ Threads enable concurrent execution. Java provides Runnable interface for defini
 ```java
 // RUNNABLE - task to execute in thread
 class PrintTask implements Runnable {
+                                 // => Implements Runnable functional interface
     private final String message;
+                                 // => Immutable message field (thread-safe)
 
     public PrintTask(String message) {
-        this.message = message;
+                                 // => Constructor initializes task
+        this.message = message;  // => Stores message for run() method
     }
 
     @Override
     public void run() {          // => Executed when thread starts
+                                 // => This code runs in separate thread
         for (int i = 0; i < 5; i++) {
+                                 // => Loop 5 times
             System.out.println(message + " " + i);
+                                 // => Output: message + iteration number
             try {
-                Thread.sleep(100); // => Pause 100ms
+                Thread.sleep(100); // => Pause 100ms (yields CPU to other threads)
+                                 // => Allows context switching
             } catch (InterruptedException e) {
+                                 // => Thrown if thread interrupted during sleep
                 e.printStackTrace();
+                                 // => Print stack trace
             }
         }
     }
@@ -2196,6 +2273,7 @@ thread1.start();                 // => Starts thread (calls run() in new thread)
 thread2.start();                 // => Starts second thread concurrently
                                  // => Both threads execute independently
                                  // => Output interleaved (non-deterministic order)
+                                 // => Example: Thread-1 0, Thread-2 0, Thread-1 1...
 
 // WAIT FOR COMPLETION
 try {
@@ -2207,7 +2285,7 @@ try {
                                  // => Both threads guaranteed finished after this
 } catch (InterruptedException e) {
                                  // => Thrown if waiting thread interrupted
-    e.printStackTrace();
+    e.printStackTrace();         // => Print exception details
 }
 
 // LAMBDA SYNTAX (Java 8+)
@@ -2218,6 +2296,7 @@ Thread thread3 = new Thread(() -> {
                                  // => Output: Lambda thread running
 });
 thread3.start();                 // => Starts thread executing lambda
+                                 // => Lambda code runs in new thread
 
 // THREAD PROPERTIES
 Thread current = Thread.currentThread();
@@ -2228,10 +2307,11 @@ String name = current.getName();
                                  // => name might be "main" if in main thread
 long id = current.getId();       // => Unique thread ID (positive long)
                                  // => Assigned by JVM, never reused
+                                 // => Example: 1 (main thread), 2, 3, ...
 int priority = current.getPriority();
                                  // => Priority hint for scheduler (1-10)
                                  // => Default: 5 (Thread.NORM_PRIORITY)
-                                 // => Higher priority MAY get more CPU time
+                                 // => Higher priority MAY get more CPU time (not guaranteed)
 ```
 
 **Key Takeaway**: Implement Runnable to define thread tasks, create Thread objects wrapping Runnable, and call start() to begin execution. Use join() to wait for thread completion. Never call run() directly—it executes in current thread without concurrency.

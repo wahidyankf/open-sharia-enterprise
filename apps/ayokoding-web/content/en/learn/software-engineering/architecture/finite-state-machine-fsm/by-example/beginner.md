@@ -68,51 +68,60 @@ stateDiagram-v2
 
 ```typescript
 // Simple On/Off FSM
-type State = "Off" | "On"; // => Two possible states
-// => Type system ensures only valid states used
-type Event = "toggle"; // => One event type
-// => Events trigger state transitions
+type State = "Off" | "On"; // => Union type defines exactly 2 valid states
+// => TypeScript compiler rejects invalid states at compile-time
+
+type Event = "toggle"; // => Single event type triggers state transitions
+// => Real systems might have: toggle, auto_off, manual_on, etc.
 
 class LightSwitch {
-  // => State machine implementation class
+  // => Class encapsulates FSM logic
   // => Encapsulates state + transition logic
-  private state: State = "Off"; // => Initial state: Off
-  // => FSM begins execution in Off state
+  // => Class provides state isolation and controlled access
+  private state: State = "Off"; // => Initial state: Off (constructor initializes here)
+  // => Private field prevents external state corruption
 
   getCurrentState(): State {
-    // => Query method: read current FSM state
-    // => Pure read, no side effects
-    return this.state; // => Returns current state
+    // => Accessor method definition
+    // => Read-only access to current FSM state
+    return this.state; // => Returns current state without side effects
+    // => Allows state inspection without modification
   }
 
   handleEvent(event: Event): void {
-    // => Event handler: main FSM dispatch method
-    // => Processes events, triggers transitions
+    // => Event handler method
+    // => Main event dispatcher: processes events, triggers transitions
+    // => void return = state change is side effect, not return value
     if (event === "toggle") {
-      // => Comparison check
-      // => Comparison check
-      // => Event type check
-      // => Check event type
-      this.state = this.state === "Off" ? "On" : "Off"; // => Toggle state
-      // => If Off, becomes On; if On, becomes Off
+      // => Event type guard condition
+      // => Guards transition: only proceed if event type matches
+      // => Pattern matching determines which transition to execute
+      this.state = this.state === "Off" ? "On" : "Off"; // => Conditional transition: Off→On or On→Off
+      // => Binary state toggle logic
+      // => Ternary operator implements bidirectional toggle
+      // => No invalid states possible (type safety)
     }
   }
 }
 
 // Usage
-const light = new LightSwitch(); // => state: "Off"
+const light = new LightSwitch(); // => Creates FSM instance, initializes to Off state
+// => Constructor runs, state field set to "Off"
 console.log(light.getCurrentState()); // => Output: Off
-// => Pure read, no side effects
+// => FSM state management logic
+// => Verifies FSM initialized correctly
 
-light.handleEvent("toggle"); // => Off → On
-// => Processes events, triggers transitions
+light.handleEvent("toggle"); // => Dispatches toggle event: Off → On transition executes
+// => FSM state changes from "Off" to "On"
 console.log(light.getCurrentState()); // => Output: On
-// => Pure read, no side effects
+// => FSM state management logic
+// => State query confirms successful transition
 
-light.handleEvent("toggle"); // => On → Off
-// => Processes events, triggers transitions
+light.handleEvent("toggle"); // => Dispatches toggle event again: On → Off transition executes
+// => Demonstrates bidirectional toggle behavior
 console.log(light.getCurrentState()); // => Output: Off
-// => Pure read, no side effects
+// => FSM state management logic
+// => FSM returns to initial state (toggle is reversible)
 ```
 
 **Key Takeaway**: FSMs use type-safe state values and event handlers. State transitions are explicit (toggle flips state). Current state is always known and queryable.
@@ -143,72 +152,80 @@ stateDiagram-v2
 
 ```typescript
 // Three-state traffic light FSM
-type TrafficLightState = "Red" | "Green" | "Yellow"; // => Three states
-// => Type system ensures only valid states used
-type TrafficEvent = "timer"; // => Timer event
-// => Events trigger state transitions
+type TrafficLightState = "Red" | "Green" | "Yellow"; // => Union type defines exactly 3 valid states
+// => Compiler enforces: no "Blue" or "Orange" states possible
+
+type TrafficEvent = "timer"; // => Single timer event drives state progression
+// => Real traffic lights use hardware timer interrupts
 
 class TrafficLight {
-  // => State machine implementation class
-  // => Encapsulates state + transition logic
-  private state: TrafficLightState = "Red"; // => Initial: Red
-  // => FSM begins execution in Red state
+  // => Class encapsulates FSM logic
+  // => FSM implementation for sequential state cycling
+  // => State progresses: Red → Green → Yellow → Red (loop)
+  private state: TrafficLightState = "Red"; // => Initial state: Red (safe default - cars stop)
+  // => Private ensures only handleEvent modifies state
 
   getCurrentState(): TrafficLightState {
-    // => Query method: read current FSM state
-    // => Pure read, no side effects
-    return this.state; // => Returns current state
+    // => Accessor method definition
+    // => State accessor for external observation
+    return this.state; // => Returns current state snapshot
+    // => Read-only: no state modification possible
   }
 
   handleEvent(event: TrafficEvent): void {
-    // => Event handler: main FSM dispatch method
-    // => Processes events, triggers transitions
+    // => Event handler method
+    // => Event dispatcher: routes events to state transitions
+    // => Void return: state change is side effect
     if (event === "timer") {
-      // => Comparison check
-      // => Comparison check
-      // => Event type check
-      // => Timer triggered
+      // => Event type guard condition
+      // => Event filter: only process timer events
+      // => Guards against invalid event types
       if (this.state === "Red") {
-        // => Comparison check
-        // => Comparison check
-        // => Guard condition: check current state is Red
-        // => Only execute if condition true
-        this.state = "Green"; // => Red → Green
+        // => State-based guard condition
+        // => Guard: check if currently Red
+        // => Pattern: current state determines next state
+        this.state = "Green"; // => Transition: Red → Green (cars go)
+        // => State change atomic, no intermediate states
       } else if (this.state === "Green") {
-        // => Comparison check
-        // => Comparison check
-        // => Alternative condition
-        this.state = "Yellow"; // => Green → Yellow
+        // => Method signature: defines function interface
+        // => Alternative guard: check if Green
+        // => Sequential if-else chain implements state-based routing
+        this.state = "Yellow"; // => Transition: Green → Yellow (caution, prepare to stop)
       } else if (this.state === "Yellow") {
-        // => Comparison check
-        // => Comparison check
-        // => Alternative condition
-        this.state = "Red"; // => Yellow → Red
+        // => Method signature: defines function interface
+        // => Final alternative: must be Yellow
+        // => Exhaustive pattern: all states covered
+        this.state = "Red"; // => Transition: Yellow → Red (cycle completes)
+        // => Returns to initial state, enabling continuous loop
       }
-      // => State transitioned based on current state
     }
   }
 }
 
 // Usage
-const light = new TrafficLight(); // => state: "Red"
+const light = new TrafficLight(); // => Creates traffic light FSM, initializes to Red
+// => Initial state = safest state (cars stopped)
 console.log(light.getCurrentState()); // => Output: Red
-// => Pure read, no side effects
+// => FSM state management logic
+// => Confirms FSM started in safe initial state
 
-light.handleEvent("timer"); // => Red → Green
-// => Processes events, triggers transitions
+light.handleEvent("timer"); // => First timer tick: Red → Green transition
+// => State changes from Red to Green
 console.log(light.getCurrentState()); // => Output: Green
-// => Pure read, no side effects
+// => FSM state management logic
+// => Verifies first transition executed correctly
 
-light.handleEvent("timer"); // => Green → Yellow
-// => Processes events, triggers transitions
+light.handleEvent("timer"); // => Second timer tick: Green → Yellow transition
+// => Warns drivers to prepare to stop
 console.log(light.getCurrentState()); // => Output: Yellow
-// => Pure read, no side effects
+// => FSM state management logic
+// => Confirms second transition in sequence
 
-light.handleEvent("timer"); // => Yellow → Red
-// => Processes events, triggers transitions
+light.handleEvent("timer"); // => Third timer tick: Yellow → Red transition
+// => Completes cycle, returns to initial state
 console.log(light.getCurrentState()); // => Output: Red
-// => Pure read, no side effects
+// => FSM state management logic
+// => FSM has looped back to start (cyclic FSM)
 ```
 
 **Key Takeaway**: FSMs handle sequential states with conditional transitions. Each state has defined next state(s). Event handling checks current state before transitioning.
@@ -252,42 +269,55 @@ type PlayerEvent = "start" | "pause" | "resume" | "stop"; // => Four events
 // => Events trigger state transitions
 
 class MediaPlayer {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: PlayerState = "Idle"; // => Initial: Idle
   // => FSM begins execution in Idle state
 
   getCurrentState(): PlayerState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   handleEvent(event: PlayerEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (this.state === "Idle" && event === "start") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       this.state = "Running"; // => Idle → Running
     } else if (this.state === "Running" && event === "pause") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "Paused"; // => Running → Paused
     } else if (this.state === "Paused" && event === "resume") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "Running"; // => Paused → Running
     } else if (this.state === "Running" && event === "stop") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "Stopped"; // => Running → Stopped
     } else if (this.state === "Paused" && event === "stop") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -300,31 +330,37 @@ class MediaPlayer {
 // Usage
 const player = new MediaPlayer(); // => state: "Idle"
 console.log(player.getCurrentState()); // => Output: Idle
+// => FSM state management logic
 // => Pure read, no side effects
 
 player.handleEvent("start"); // => Idle → Running
 // => Processes events, triggers transitions
 console.log(player.getCurrentState()); // => Output: Running
+// => FSM state management logic
 // => Pure read, no side effects
 
 player.handleEvent("pause"); // => Running → Paused
 // => Processes events, triggers transitions
 console.log(player.getCurrentState()); // => Output: Paused
+// => FSM state management logic
 // => Pure read, no side effects
 
 player.handleEvent("resume"); // => Paused → Running
 // => Processes events, triggers transitions
 console.log(player.getCurrentState()); // => Output: Running
+// => FSM state management logic
 // => Pure read, no side effects
 
 player.handleEvent("stop"); // => Running → Stopped
 // => Processes events, triggers transitions
 console.log(player.getCurrentState()); // => Output: Stopped
+// => FSM state management logic
 // => Pure read, no side effects
 
 player.handleEvent("pause"); // => Invalid: Stopped + pause
 // => Processes events, triggers transitions
 console.log(player.getCurrentState()); // => Output: Stopped (no change)
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -360,6 +396,7 @@ type LockEvent = "wrong_code" | "correct_code" | "lock"; // => Three events
 // => Events trigger state transitions
 
 class DoorLock {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: LockState = "Locked"; // => Initial: Locked
@@ -368,20 +405,25 @@ class DoorLock {
   // => Initialized alongside FSM state
 
   getCurrentState(): LockState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   getFailedAttempts(): number {
+    // => Accessor method definition
     // => Begin object/config definition
     return this.failedAttempts; // => Returns attempt count
   }
 
   handleEvent(event: LockEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (this.state === "Locked" && event === "wrong_code") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Event type check
@@ -389,14 +431,19 @@ class DoorLock {
       this.failedAttempts += 1; // => Increment counter
       // => State remains "Locked" (self-transition)
       console.log(`Failed attempt ${this.failedAttempts}`); // => Log attempt
+      // => FSM state management logic
       // => Log for observability
     } else if (this.state === "Locked" && event === "correct_code") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "Unlocked"; // => Locked → Unlocked
       this.failedAttempts = 0; // => Reset counter
     } else if (this.state === "Unlocked" && event === "lock") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -408,24 +455,29 @@ class DoorLock {
 // Usage
 const lock = new DoorLock(); // => state: "Locked", attempts: 0
 console.log(lock.getCurrentState()); // => Output: Locked
+// => FSM state management logic
 // => Pure read, no side effects
 
 lock.handleEvent("wrong_code"); // => Locked → Locked, attempts: 1
 // => Processes events, triggers transitions
 console.log(lock.getFailedAttempts()); // => Output: 1
+// => FSM state management logic
 
 lock.handleEvent("wrong_code"); // => Locked → Locked, attempts: 2
 // => Processes events, triggers transitions
 console.log(lock.getFailedAttempts()); // => Output: 2
+// => FSM state management logic
 
 lock.handleEvent("correct_code"); // => Locked → Unlocked, attempts: 0
 // => Processes events, triggers transitions
 console.log(lock.getCurrentState()); // => Output: Unlocked
+// => FSM state management logic
 // => Pure read, no side effects
 
 lock.handleEvent("lock"); // => Unlocked → Locked
 // => Processes events, triggers transitions
 console.log(lock.getCurrentState()); // => Output: Locked
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -468,37 +520,44 @@ type OrderEvent = "approve" | "reject" | "cancel"; // => Three events
 // => Events trigger state transitions
 
 class OrderApproval {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: OrderState = "Pending"; // => Initial: Pending
   // => FSM begins execution in Pending state
 
   getCurrentState(): OrderState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   handleEvent(event: OrderEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (this.state === "Pending") {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Guard condition: check current state is Pending
       // => Only execute if condition true
       // => Only valid in Pending
       if (event === "approve") {
+        // => Event type guard condition
         // => Comparison check
         // => Comparison check
         // => Event type check
         this.state = "Approved"; // => Pending → Approved
       } else if (event === "reject") {
+        // => Method signature: defines function interface
         // => Comparison check
         // => Comparison check
         // => Alternative condition
         this.state = "Rejected"; // => Pending → Rejected
       } else if (event === "cancel") {
+        // => Method signature: defines function interface
         // => Comparison check
         // => Comparison check
         // => Alternative condition
@@ -515,18 +574,21 @@ const order1 = new OrderApproval(); // => state: "Pending"
 order1.handleEvent("approve"); // => Pending → Approved
 // => Processes events, triggers transitions
 console.log(order1.getCurrentState()); // => Output: Approved
+// => FSM state management logic
 // => Pure read, no side effects
 
 const order2 = new OrderApproval(); // => state: "Pending"
 order2.handleEvent("reject"); // => Pending → Rejected
 // => Processes events, triggers transitions
 console.log(order2.getCurrentState()); // => Output: Rejected
+// => FSM state management logic
 // => Pure read, no side effects
 
 const order3 = new OrderApproval(); // => state: "Pending"
 order3.handleEvent("cancel"); // => Pending → Cancelled
 // => Processes events, triggers transitions
 console.log(order3.getCurrentState()); // => Output: Cancelled
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -548,48 +610,58 @@ type OrderEvent = "submit" | "ship" | "deliver"; // => Three events
 // => Events trigger state transitions
 
 class Order {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: OrderState = "Draft"; // => Initial: Draft
   // => FSM begins execution in Draft state
 
   getCurrentState(): OrderState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   handleEvent(event: OrderEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     const validTransitions: Record<OrderState, Partial<Record<OrderEvent, OrderState>>> = {
+      // => State variable initialization
       // => Assign value
       // => Assign value
       // => Type: transition table structure
       // => Maps (currentState, event) -> nextState
       Draft: { submit: "Submitted" }, // => Draft can only submit
+      // => FSM state management logic
       Submitted: { ship: "Shipped" }, // => Submitted can only ship
+      // => FSM state management logic
       Shipped: { deliver: "Delivered" }, // => Shipped can only deliver
+      // => FSM state management logic
       Delivered: {}, // => Delivered is terminal
+      // => FSM state management logic
     };
 
     const nextState = validTransitions[this.state][event]; // => Look up transition
     // => Declarative transition specification
     if (nextState) {
+      // => Conditional branch
       // => Conditional check
       // => Branch execution based on condition
       this.state = nextState; // => Valid: transition
-      console.log(`Transitioned to ${nextState}`);
+      console.log(`Transitioned to ${nextState}`); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else {
+      // => Statement execution
       // => Fallback branch
       throw new Error( // => Invalid: throw error
         // => Fail fast on FSM violation
-        `Invalid transition: ${event} not allowed in ${this.state} state`,
+        `Invalid transition: ${event} not allowed in ${this.state} state`, // => Statement execution
         // => Access instance property
         // => Access instance property
-      );
+      ); // => Statement execution
     }
   }
 }
@@ -597,20 +669,24 @@ class Order {
 // Usage
 const order = new Order(); // => state: "Draft"
 console.log(order.getCurrentState()); // => Output: Draft
+// => FSM state management logic
 // => Pure read, no side effects
 
 order.handleEvent("submit"); // => Draft → Submitted
 // => Processes events, triggers transitions
 console.log(order.getCurrentState()); // => Output: Submitted
+// => FSM state management logic
 // => Pure read, no side effects
 
 try {
+  // => Statement execution
   // => Begin error handling
   // => Begin error handling
   // => Begin object/config definition
   order.handleEvent("deliver"); // => Invalid: deliver from Submitted
   // => Processes events, triggers transitions
 } catch (error) {
+  // => Method signature: defines function interface
   // => Catch errors
   // => Catch errors
   // => Begin object/config definition
@@ -620,6 +696,7 @@ try {
 order.handleEvent("ship"); // => Submitted → Shipped
 // => Processes events, triggers transitions
 console.log(order.getCurrentState()); // => Output: Shipped
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -658,37 +735,48 @@ type DocEvent = "publish" | "unpublish" | "archive" | "restore"; // => Four even
 // => Events trigger state transitions
 
 class Document {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: DocState = "Editing"; // => Initial: Editing
   // => FSM begins execution in Editing state
 
   getCurrentState(): DocState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   handleEvent(event: DocEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (this.state === "Editing" && event === "publish") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       this.state = "Published"; // => Editing → Published
     } else if (this.state === "Published" && event === "unpublish") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "Editing"; // => Published → Editing (reverse)
     } else if (this.state === "Published" && event === "archive") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "Archived"; // => Published → Archived
     } else if (this.state === "Archived" && event === "restore") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -703,11 +791,14 @@ const doc = new Document(); // => state: "Editing"
 doc.handleEvent("publish"); // => Editing → Published
 // => Processes events, triggers transitions
 console.log(doc.getCurrentState()); // => Output: Published
+// => FSM state management logic
 // => Pure read, no side effects
 
 doc.handleEvent("unpublish"); // => Published → Editing (undo)
+// => FSM state management logic
 // => Processes events, triggers transitions
 console.log(doc.getCurrentState()); // => Output: Editing
+// => FSM state management logic
 // => Pure read, no side effects
 
 doc.handleEvent("publish"); // => Editing → Published
@@ -715,11 +806,14 @@ doc.handleEvent("publish"); // => Editing → Published
 doc.handleEvent("archive"); // => Published → Archived
 // => Processes events, triggers transitions
 console.log(doc.getCurrentState()); // => Output: Archived
+// => FSM state management logic
 // => Pure read, no side effects
 
 doc.handleEvent("restore"); // => Archived → Published (undo)
+// => FSM state management logic
 // => Processes events, triggers transitions
 console.log(doc.getCurrentState()); // => Output: Published
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -741,6 +835,7 @@ type AuthState = "LoggedOut" | "LoggedIn" | "Locked"; // => Three states
 // => Type system ensures only valid states used
 
 interface LoginEvent {
+  // => Type declaration defines structure
   // => Begin object/config definition
   type: "login"; // => Event type
   username: string; // => Payload: username
@@ -748,11 +843,13 @@ interface LoginEvent {
 }
 
 interface LogoutEvent {
+  // => Type declaration defines structure
   // => Begin object/config definition
   type: "logout"; // => Event type (no payload)
 }
 
 interface FailedLoginEvent {
+  // => Type declaration defines structure
   // => Begin object/config definition
   type: "failed_login"; // => Event type
 }
@@ -761,6 +858,7 @@ type AuthEvent = LoginEvent | LogoutEvent | FailedLoginEvent; // => Union type
 // => Events trigger state transitions
 
 class AuthSystem {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: AuthState = "LoggedOut"; // => Initial: LoggedOut
@@ -771,34 +869,43 @@ class AuthSystem {
   // => Initialized alongside FSM state
 
   getCurrentState(): AuthState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   getCurrentUser(): string | null {
+    // => Accessor method definition
     // => Begin object/config definition
     return this.currentUser; // => Returns username or null
   }
 
   handleEvent(event: AuthEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event.type === "login" && this.state === "LoggedOut") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
       if (this.authenticateUser(event.username, event.password)) {
+        // => Event type guard condition
+        // => Chained method calls or nested operations
         // => Conditional check
         // => Branch execution based on condition
         this.state = "LoggedIn"; // => LoggedOut → LoggedIn
         this.currentUser = event.username; // => Store username from payload
         this.failedAttempts = 0; // => Reset counter
       } else {
+        // => Statement execution
         // => Fallback branch
         this.failedAttempts += 1; // => Increment failures
         if (this.failedAttempts >= 3) {
+          // => Conditional branch
           // => Comparison check
           // => Comparison check
           // => Conditional check
@@ -807,6 +914,8 @@ class AuthSystem {
         }
       }
     } else if (event.type === "logout" && this.state === "LoggedIn") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -816,8 +925,10 @@ class AuthSystem {
   }
 
   private authenticateUser(username: string, password: string): boolean {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     return username === "admin" && password === "secret"; // => Mock authentication
+    // => FSM state management logic
   }
 }
 
@@ -825,22 +936,28 @@ class AuthSystem {
 const auth = new AuthSystem(); // => state: "LoggedOut", user: null
 
 auth.handleEvent({
+  // => Event handler method
   // => Event handler: main FSM dispatch method
   // => Processes events, triggers transitions
   // => Login attempt with payload
-  type: "login",
-  username: "admin",
-  password: "secret",
-});
+  type: "login", // => Statement execution
+  username: "admin", // => Statement execution
+  password: "secret", // => Statement execution
+}); // => Statement execution
 console.log(auth.getCurrentState()); // => Output: LoggedIn
+// => FSM state management logic
 // => Pure read, no side effects
 console.log(auth.getCurrentUser()); // => Output: admin
+// => FSM state management logic
 
 auth.handleEvent({ type: "logout" }); // => Logout
+// => FSM state management logic
 // => Processes events, triggers transitions
 console.log(auth.getCurrentState()); // => Output: LoggedOut
+// => FSM state management logic
 // => Pure read, no side effects
 console.log(auth.getCurrentUser()); // => Output: null
+// => FSM state management logic
 ```
 
 **Key Takeaway**: Events carry data (payloads) used during transitions. Login event includes username/password; logout has no payload. Payloads enable data-driven state changes.
@@ -859,6 +976,7 @@ type SessionState = "Active" | "Idle" | "TimedOut"; // => Three states
 // => Type system ensures only valid states used
 
 class SessionManager {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: SessionState = "Active"; // => Initial: Active
@@ -867,15 +985,19 @@ class SessionManager {
   // => Initialized alongside FSM state
 
   getCurrentState(): SessionState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   recordActivity(): void {
+    // => Method invocation
     // => Begin object/config definition
     this.lastActivity = new Date(); // => Update activity timestamp
+    // => FSM state management logic
     if (this.state === "Idle") {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Guard condition: check current state is Idle
@@ -885,27 +1007,33 @@ class SessionManager {
   }
 
   checkTimeout(): void {
+    // => Method invocation
     // => Begin object/config definition
     const now = new Date(); // => Current time
     const inactiveMs = now.getTime() - this.lastActivity.getTime(); // => Milliseconds inactive
+    // => FSM state management logic
     const idleThreshold = 5 * 60 * 1000; // => 5 minutes in ms
     const timeoutThreshold = 30 * 60 * 1000; // => 30 minutes in ms
 
     if (this.state === "Active" && inactiveMs > idleThreshold) {
+      // => State-based guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
       this.state = "Idle"; // => Active → Idle (5min inactive)
-      console.log("Session idle after 5 minutes");
+      console.log("Session idle after 5 minutes"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (this.state === "Idle" && inactiveMs > timeoutThreshold) {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "TimedOut"; // => Idle → TimedOut (30min inactive)
-      console.log("Session timed out after 30 minutes");
+      console.log("Session timed out after 30 minutes"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
@@ -916,13 +1044,16 @@ class SessionManager {
 // Usage (simulated with manual time checks)
 const session = new SessionManager(); // => state: "Active"
 console.log(session.getCurrentState()); // => Output: Active
+// => FSM state management logic
 // => Pure read, no side effects
 
 // Simulate 5 minutes passing
 session.checkTimeout(); // => Would check: Active → Idle?
+// => FSM state management logic
 
 session.recordActivity(); // => Reset activity timer
 console.log(session.getCurrentState()); // => Output: Active (activity prevents timeout)
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -942,12 +1073,15 @@ type SystemState = "Normal" | "Warning" | "Critical" | "Emergency"; // => Four s
 // => Type system ensures only valid states used
 
 interface SystemEvent {
+  // => Type declaration defines structure
   // => Begin object/config definition
   type: "minor_issue" | "major_issue" | "critical_failure" | "emergency"; // => Event types
   priority: number; // => Priority: 1 (low) to 4 (high)
+  // => FSM state management logic
 }
 
 class EmergencySystem {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: SystemState = "Normal"; // => Initial: Normal
@@ -956,18 +1090,22 @@ class EmergencySystem {
   // => Initialized alongside FSM state
 
   getCurrentState(): SystemState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   enqueueEvent(event: SystemEvent): void {
+    // => Method invocation
     // => Begin object/config definition
     this.eventQueue.push(event); // => Add event to queue
     this.eventQueue.sort((a, b) => b.priority - a.priority); // => Sort by priority (high first)
+    // => FSM state management logic
   }
 
   processNextEvent(): void {
+    // => Method invocation
     // => Begin object/config definition
     if (this.eventQueue.length === 0) return; // => No events to process
     // => Branch execution based on condition
@@ -978,13 +1116,16 @@ class EmergencySystem {
   }
 
   private handleEvent(event: SystemEvent): void {
+    // => Event handler method
     // => Extended state (data beyond FSM state)
     if (event.type === "minor_issue") {
+      // => Event type guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
       if (this.state === "Normal") {
+        // => State-based guard condition
         // => Comparison check
         // => Comparison check
         // => Guard condition: check current state is Normal
@@ -992,11 +1133,13 @@ class EmergencySystem {
         this.state = "Warning"; // => Normal → Warning
       }
     } else if (event.type === "major_issue") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "Critical"; // => Any → Critical
     } else if (event.type === "emergency") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -1009,12 +1152,17 @@ class EmergencySystem {
 const system = new EmergencySystem(); // => state: "Normal", queue: []
 
 system.enqueueEvent({ type: "minor_issue", priority: 1 }); // => Add low-priority event
+// => FSM state management logic
 system.enqueueEvent({ type: "emergency", priority: 4 }); // => Add high-priority event
+// => FSM state management logic
 system.enqueueEvent({ type: "major_issue", priority: 3 }); // => Add medium-priority event
+// => FSM state management logic
 // => Queue after sorting: [emergency(4), major_issue(3), minor_issue(1)]
 
 system.processNextEvent(); // => Process emergency (priority 4)
+// => FSM state management logic
 console.log(system.getCurrentState()); // => Output: Emergency (not Warning or Critical)
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -1036,6 +1184,7 @@ type OrderEvent = "start_processing" | "ship" | "deliver"; // => Three events
 // => Events trigger state transitions
 
 interface HistoryEntry {
+  // => Type declaration defines structure
   // => Begin object/config definition
   timestamp: Date; // => When event occurred
   event: OrderEvent; // => What event happened
@@ -1044,6 +1193,7 @@ interface HistoryEntry {
 }
 
 class OrderWithHistory {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: OrderState = "Pending"; // => Initial: Pending
@@ -1052,33 +1202,42 @@ class OrderWithHistory {
   // => Initialized alongside FSM state
 
   getCurrentState(): OrderState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   getHistory(): HistoryEntry[] {
+    // => Accessor method definition
     // => Begin object/config definition
     return this.history; // => Returns full history
   }
 
   handleEvent(event: OrderEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     const previousState = this.state; // => Store state before transition
 
     if (this.state === "Pending" && event === "start_processing") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       this.state = "Processing"; // => Pending → Processing
     } else if (this.state === "Processing" && event === "ship") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "Shipped"; // => Processing → Shipped
     } else if (this.state === "Shipped" && event === "deliver") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -1086,23 +1245,25 @@ class OrderWithHistory {
     }
 
     if (previousState !== this.state) {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
       // => Transition occurred
       this.history.push({
+        // => Statement execution
         // => Add to collection
         // => Add to collection
         // => Begin object/config definition
         // => Record in history
-        timestamp: new Date(),
-        event,
-        previousState,
-        newState: this.state,
+        timestamp: new Date(), // => Method invocation
+        event, // => Statement execution
+        previousState, // => Statement execution
+        newState: this.state, // => Statement execution
         // => Access instance property
         // => Access instance property
-      });
+      }); // => Statement execution
     }
   }
 }
@@ -1118,15 +1279,19 @@ order.handleEvent("deliver"); // => Shipped → Delivered
 // => Processes events, triggers transitions
 
 console.log("Current state:", order.getCurrentState()); // => Output: Delivered
+// => FSM state management logic
 // => Pure read, no side effects
 
 order.getHistory().forEach((entry, i) => {
+  // => Method invocation
+  // => Chained method calls or nested operations
   // => Begin object/config definition
   // => Print history
-  console.log(`${i + 1}. ${entry.previousState} → ${entry.newState} (${entry.event})`);
+  console.log(`${i + 1}. ${entry.previousState} → ${entry.newState} (${entry.event})`); // => Output for verification
+  // => Chained method calls or nested operations
   // => Debug/audit output
   // => Log for observability
-});
+}); // => Statement execution
 // => Output:
 // 1. Pending → Processing (start_processing)
 // 2. Processing → Shipped (ship)
@@ -1149,24 +1314,27 @@ type InventoryState = "Available" | "LowStock" | "OutOfStock"; // => Three state
 // => Type system ensures only valid states used
 
 interface PurchaseEvent {
+  // => Type declaration defines structure
   // => Begin object/config definition
   type: "purchase"; // => Event type
   quantity: number; // => How many units
 }
 
 interface RestockEvent {
+  // => Type declaration defines structure
   // => Begin object/config definition
   type: "restock"; // => Event type
   quantity: number; // => How many units added
 }
 
-type InventoryEvent = PurchaseEvent | RestockEvent;
+type InventoryEvent = PurchaseEvent | RestockEvent; // => Type declaration defines structure
 // => Assign value
 // => Assign value
 // => Defines event alphabet for FSM
 // => Events trigger state transitions
 
 class Inventory {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: InventoryState = "Available"; // => Initial: Available
@@ -1177,25 +1345,30 @@ class Inventory {
   // => Initialized alongside FSM state
 
   getCurrentState(): InventoryState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   getStock(): number {
+    // => Accessor method definition
     // => Begin object/config definition
     return this.stock; // => Returns stock level
   }
 
   handleEvent(event: InventoryEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event.type === "purchase") {
+      // => Event type guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
       if (this.stock >= event.quantity) {
+        // => Event type guard condition
         // => Comparison check
         // => Comparison check
         // => Conditional check
@@ -1204,12 +1377,15 @@ class Inventory {
         this.stock -= event.quantity; // => Deduct stock
         this.updateState(); // => Check state transition
       } else {
+        // => Statement execution
         // => Fallback branch
-        throw new Error(`Insufficient stock. Available: ${this.stock}, Requested: ${event.quantity}`);
+        throw new Error(`Insufficient stock. Available: ${this.stock}, Requested: ${event.quantity}`); // => Method invocation
+        // => Constructor creates new object instance
         // => Reject invalid operation
         // => Fail fast on FSM violation
       }
     } else if (event.type === "restock") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -1219,19 +1395,23 @@ class Inventory {
   }
 
   private updateState(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     if (this.stock === 0) {
+      // => Conditional branch
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
       this.state = "OutOfStock"; // => → OutOfStock (guard: stock == 0)
     } else if (this.stock <= this.lowStockThreshold) {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "LowStock"; // => → LowStock (guard: stock <= 20)
     } else {
+      // => Statement execution
       // => Fallback branch
       this.state = "Available"; // => → Available (guard: stock > 20)
     }
@@ -1243,22 +1423,29 @@ class Inventory {
 const inventory = new Inventory(); // => state: "Available", stock: 100
 
 inventory.handleEvent({ type: "purchase", quantity: 85 }); // => stock: 15
+// => FSM state management logic
 // => Processes events, triggers transitions
 console.log(inventory.getCurrentState()); // => Output: LowStock (15 <= 20)
+// => FSM state management logic
 // => Pure read, no side effects
 
 inventory.handleEvent({ type: "purchase", quantity: 15 }); // => stock: 0
+// => FSM state management logic
 // => Processes events, triggers transitions
 console.log(inventory.getCurrentState()); // => Output: OutOfStock (0 == 0)
+// => FSM state management logic
 // => Pure read, no side effects
 
 try {
+  // => Statement execution
   // => Begin error handling
   // => Begin error handling
   // => Begin object/config definition
   inventory.handleEvent({ type: "purchase", quantity: 1 }); // => Guard fails (stock < quantity)
+  // => FSM state management logic
   // => Processes events, triggers transitions
 } catch (error) {
+  // => Method signature: defines function interface
   // => Catch errors
   // => Catch errors
   // => Begin object/config definition
@@ -1266,8 +1453,10 @@ try {
 }
 
 inventory.handleEvent({ type: "restock", quantity: 50 }); // => stock: 50
+// => FSM state management logic
 // => Processes events, triggers transitions
 console.log(inventory.getCurrentState()); // => Output: Available (50 > 20)
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -1290,50 +1479,59 @@ type DocApprovalState = "Draft" | "Review" | "Approved" | "Published"; // => Fou
 type UserRole = "Author" | "Reviewer" | "Publisher"; // => Three roles
 
 interface SubmitEvent {
+  // => Type declaration defines structure
   // => Begin object/config definition
   type: "submit"; // => Event type
   user: UserRole; // => Who triggered event
 }
 
 interface ApproveEvent {
+  // => Type declaration defines structure
   // => Begin object/config definition
   type: "approve"; // => Event type
   user: UserRole; // => Who triggered event
 }
 
 interface PublishEvent {
+  // => Type declaration defines structure
   // => Begin object/config definition
   type: "publish"; // => Event type
   user: UserRole; // => Who triggered event
 }
 
-type DocEvent = SubmitEvent | ApproveEvent | PublishEvent;
+type DocEvent = SubmitEvent | ApproveEvent | PublishEvent; // => Type declaration defines structure
 // => Assign value
 // => Assign value
 // => Defines event alphabet for FSM
 // => Events trigger state transitions
 
 class DocumentApproval {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: DocApprovalState = "Draft"; // => Initial: Draft
   // => FSM begins execution in Draft state
 
   getCurrentState(): DocApprovalState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   handleEvent(event: DocEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event.type === "submit" && this.state === "Draft") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
       if (event.user === "Author") {
+        // => Event type guard condition
         // => Comparison check
         // => Comparison check
         // => Conditional check
@@ -1341,16 +1539,20 @@ class DocumentApproval {
         // => Guard: only Author can submit
         this.state = "Review"; // => Draft → Review
       } else {
+        // => Statement execution
         // => Fallback branch
-        throw new Error("Only Authors can submit drafts");
+        throw new Error("Only Authors can submit drafts"); // => Method invocation
         // => Reject invalid operation
         // => Fail fast on FSM violation
       }
     } else if (event.type === "approve" && this.state === "Review") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       if (event.user === "Reviewer") {
+        // => Event type guard condition
         // => Comparison check
         // => Comparison check
         // => Conditional check
@@ -1358,16 +1560,20 @@ class DocumentApproval {
         // => Guard: only Reviewer can approve
         this.state = "Approved"; // => Review → Approved
       } else {
+        // => Statement execution
         // => Fallback branch
-        throw new Error("Only Reviewers can approve documents");
+        throw new Error("Only Reviewers can approve documents"); // => Method invocation
         // => Reject invalid operation
         // => Fail fast on FSM violation
       }
     } else if (event.type === "publish" && this.state === "Approved") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       if (event.user === "Publisher") {
+        // => Event type guard condition
         // => Comparison check
         // => Comparison check
         // => Conditional check
@@ -1375,8 +1581,9 @@ class DocumentApproval {
         // => Guard: only Publisher can publish
         this.state = "Published"; // => Approved → Published
       } else {
+        // => Statement execution
         // => Fallback branch
-        throw new Error("Only Publishers can publish documents");
+        throw new Error("Only Publishers can publish documents"); // => Method invocation
         // => Reject invalid operation
         // => Fail fast on FSM violation
       }
@@ -1388,17 +1595,22 @@ class DocumentApproval {
 const doc = new DocumentApproval(); // => state: "Draft"
 
 doc.handleEvent({ type: "submit", user: "Author" }); // => Draft → Review (guard passes)
+// => FSM state management logic
 // => Processes events, triggers transitions
 console.log(doc.getCurrentState()); // => Output: Review
+// => FSM state management logic
 // => Pure read, no side effects
 
 try {
+  // => Statement execution
   // => Begin error handling
   // => Begin error handling
   // => Begin object/config definition
   doc.handleEvent({ type: "approve", user: "Author" }); // => Guard fails (not Reviewer)
+  // => FSM state management logic
   // => Processes events, triggers transitions
 } catch (error) {
+  // => Method signature: defines function interface
   // => Catch errors
   // => Catch errors
   // => Begin object/config definition
@@ -1406,8 +1618,10 @@ try {
 }
 
 doc.handleEvent({ type: "approve", user: "Reviewer" }); // => Review → Approved (guard passes)
+// => FSM state management logic
 // => Processes events, triggers transitions
 console.log(doc.getCurrentState()); // => Output: Approved
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -1427,42 +1641,56 @@ type TradingState = "MarketClosed" | "PreMarket" | "MarketOpen" | "AfterHours"; 
 // => Type system ensures only valid states used
 
 class TradingSystem {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: TradingState = "MarketClosed"; // => Initial: MarketClosed
   // => FSM begins execution in MarketClosed state
 
   getCurrentState(): TradingState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   updateState(): void {
+    // => Method invocation
     // => Begin object/config definition
     const now = new Date(); // => Current time
     const hour = now.getHours(); // => Current hour (0-23)
+    // => FSM state management logic
     const day = now.getDay(); // => Day of week (0=Sunday, 6=Saturday)
+    // => FSM state management logic
 
     const isWeekday = day >= 1 && day <= 5; // => Guard: Monday-Friday
+    // => FSM state management logic
     const isPreMarketHour = hour >= 4 && hour < 9; // => Guard: 4am-9am
+    // => FSM state management logic
     const isMarketHour = hour >= 9 && hour < 16; // => Guard: 9am-4pm
+    // => FSM state management logic
     const isAfterHoursTime = hour >= 16 && hour < 20; // => Guard: 4pm-8pm
+    // => FSM state management logic
 
     if (!isWeekday) {
+      // => Conditional branch
       // => Conditional check
       // => Branch execution based on condition
       this.state = "MarketClosed"; // => Weekend → MarketClosed
     } else if (isPreMarketHour) {
+      // => Method signature: defines function interface
       // => Alternative condition
       this.state = "PreMarket"; // => Weekday 4am-9am → PreMarket
     } else if (isMarketHour) {
+      // => Method signature: defines function interface
       // => Alternative condition
       this.state = "MarketOpen"; // => Weekday 9am-4pm → MarketOpen
     } else if (isAfterHoursTime) {
+      // => Method signature: defines function interface
       // => Alternative condition
       this.state = "AfterHours"; // => Weekday 4pm-8pm → AfterHours
     } else {
+      // => Statement execution
       // => Fallback branch
       this.state = "MarketClosed"; // => Other times → MarketClosed
     }
@@ -1470,8 +1698,10 @@ class TradingSystem {
   }
 
   canPlaceTrade(): boolean {
+    // => Method invocation
     // => Begin object/config definition
     return this.state === "MarketOpen" || this.state === "AfterHours"; // => Guard: trading allowed?
+    // => FSM state management logic
   }
 }
 
@@ -1480,8 +1710,10 @@ const trading = new TradingSystem(); // => state: "MarketClosed"
 trading.updateState(); // => Check current time, update state
 
 console.log(trading.getCurrentState()); // => Output: depends on current time
+// => FSM state management logic
 // => Pure read, no side effects
 console.log(trading.canPlaceTrade()); // => Output: true if MarketOpen/AfterHours
+// => FSM state management logic
 ```
 
 **Key Takeaway**: Time-based guards restrict operations to valid time windows. Trading system only allows trades during market hours. Guards check current time and enforce business rules (no weekend trading).
@@ -1500,12 +1732,14 @@ type JobState = "Queued" | "Running" | "Completed" | "Failed"; // => Four states
 // => Type system ensures only valid states used
 
 interface Job {
+  // => Type declaration defines structure
   // => Begin object/config definition
   id: string; // => Job identifier
   memoryRequired: number; // => Memory in MB
 }
 
 class JobScheduler {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: JobState = "Queued"; // => Initial: Queued
@@ -1516,29 +1750,34 @@ class JobScheduler {
   // => Initialized alongside FSM state
 
   getCurrentState(): JobState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   startJob(job: Job): void {
+    // => Method invocation
     // => Begin object/config definition
     if (this.state !== "Queued") {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
-      throw new Error("Can only start jobs in Queued state");
+      throw new Error("Can only start jobs in Queued state"); // => Method invocation
       // => Reject invalid operation
       // => Fail fast on FSM violation
     }
 
     if (job.memoryRequired > this.availableMemory) {
+      // => Conditional branch
       // => Conditional check
       // => Branch execution based on condition
       // => Guard: sufficient memory?
       this.state = "Failed"; // => Queued → Failed (insufficient resources)
-      throw new Error(`Insufficient memory. Required: ${job.memoryRequired}MB, Available: ${this.availableMemory}MB`);
+      throw new Error(`Insufficient memory. Required: ${job.memoryRequired}MB, Available: ${this.availableMemory}MB`); // => Method invocation
+      // => Constructor creates new object instance
       // => Reject invalid operation
       // => Fail fast on FSM violation
     }
@@ -1546,26 +1785,28 @@ class JobScheduler {
     this.availableMemory -= job.memoryRequired; // => Allocate memory
     this.currentJob = job; // => Assign job
     this.state = "Running"; // => Queued → Running (guard passed)
-    console.log(`Job ${job.id} started, ${this.availableMemory}MB remaining`);
+    console.log(`Job ${job.id} started, ${this.availableMemory}MB remaining`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   completeJob(): void {
+    // => Method invocation
     // => Begin object/config definition
     if (this.state !== "Running") {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
-      throw new Error("No job running");
+      throw new Error("No job running"); // => Method invocation
       // => Reject invalid operation
       // => Fail fast on FSM violation
     }
 
     this.availableMemory += this.currentJob!.memoryRequired; // => Release memory
     this.state = "Completed"; // => Running → Completed
-    console.log(`Job ${this.currentJob!.id} completed, ${this.availableMemory}MB available`);
+    console.log(`Job ${this.currentJob!.id} completed, ${this.availableMemory}MB available`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
@@ -1575,25 +1816,33 @@ class JobScheduler {
 const scheduler = new JobScheduler(); // => state: "Queued", memory: 1024MB
 
 scheduler.startJob({ id: "job1", memoryRequired: 512 }); // => Queued → Running (512MB allocated)
+// => FSM state management logic
 console.log(scheduler.getCurrentState()); // => Output: Running
+// => FSM state management logic
 // => Pure read, no side effects
 
 scheduler.completeJob(); // => Running → Completed (512MB released)
+// => FSM state management logic
 console.log(scheduler.getCurrentState()); // => Output: Completed
+// => FSM state management logic
 // => Pure read, no side effects
 
 const scheduler2 = new JobScheduler(); // => New scheduler
 try {
+  // => Statement execution
   // => Begin error handling
   // => Begin error handling
   // => Begin object/config definition
   scheduler2.startJob({ id: "job2", memoryRequired: 2048 }); // => Guard fails (2048MB > 1024MB)
+  // => FSM state management logic
 } catch (error) {
+  // => Method signature: defines function interface
   // => Catch errors
   // => Catch errors
   // => Begin object/config definition
   console.log(error.message); // => Output: Insufficient memory. Required: 2048MB, Available: 1024MB
   console.log(scheduler2.getCurrentState()); // => Output: Failed
+  // => FSM state management logic
   // => Pure read, no side effects
 }
 ```
@@ -1614,6 +1863,7 @@ type PaymentState = "Pending" | "Validated" | "Processed" | "Rejected"; // => Fo
 // => Type system ensures only valid states used
 
 interface PaymentData {
+  // => Type declaration defines structure
   // => Begin object/config definition
   amount: number; // => Payment amount
   cardNumber: string; // => Card number
@@ -1621,6 +1871,7 @@ interface PaymentData {
 }
 
 class PaymentProcessor {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: PaymentState = "Pending"; // => Initial: Pending
@@ -1629,19 +1880,22 @@ class PaymentProcessor {
   // => Initialized alongside FSM state
 
   getCurrentState(): PaymentState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   validatePayment(data: PaymentData): void {
+    // => Method invocation
     // => Begin object/config definition
     if (this.state !== "Pending") {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
-      throw new Error("Can only validate Pending payments");
+      throw new Error("Can only validate Pending payments"); // => Method invocation
       // => Reject invalid operation
       // => Fail fast on FSM violation
     }
@@ -1650,63 +1904,69 @@ class PaymentProcessor {
 
     // Guard: amount validation
     if (data.amount <= 0) {
+      // => Conditional branch
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
       // => Guard: positive amount?
       this.state = "Rejected"; // => Pending → Rejected (invalid amount)
-      throw new Error("Amount must be positive");
+      throw new Error("Amount must be positive"); // => Method invocation
       // => Reject invalid operation
       // => Fail fast on FSM violation
     }
 
     // Guard: card number validation (simple check)
     if (data.cardNumber.length !== 16) {
+      // => Conditional branch
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
       // => Guard: 16-digit card?
       this.state = "Rejected"; // => Pending → Rejected (invalid card)
-      throw new Error("Invalid card number length");
+      throw new Error("Invalid card number length"); // => Method invocation
       // => Reject invalid operation
       // => Fail fast on FSM violation
     }
 
     // Guard: CVV validation
     if (data.cvv.length !== 3 && data.cvv.length !== 4) {
+      // => Conditional branch
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
       // => Guard: valid CVV?
       this.state = "Rejected"; // => Pending → Rejected (invalid CVV)
-      throw new Error("Invalid CVV length");
+      throw new Error("Invalid CVV length"); // => Method invocation
       // => Reject invalid operation
       // => Fail fast on FSM violation
     }
 
     this.state = "Validated"; // => Pending → Validated (all guards passed)
-    console.log("Payment validated successfully");
+    console.log("Payment validated successfully"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   processPayment(): void {
+    // => Method invocation
     // => Begin object/config definition
     if (this.state !== "Validated") {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
-      throw new Error("Can only process Validated payments");
+      throw new Error("Can only process Validated payments"); // => Method invocation
       // => Reject invalid operation
       // => Fail fast on FSM violation
     }
 
     this.state = "Processed"; // => Validated → Processed
-    console.log(`Processed payment of $${this.paymentData!.amount}`);
+    console.log(`Processed payment of $${this.paymentData!.amount}`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
@@ -1715,36 +1975,43 @@ class PaymentProcessor {
 // Usage
 const payment1 = new PaymentProcessor(); // => state: "Pending"
 payment1.validatePayment({
+  // => Statement execution
   // => Begin object/config definition
   // => All guards pass
-  amount: 99.99,
-  cardNumber: "1234567890123456",
-  cvv: "123",
-});
+  amount: 99.99, // => Statement execution
+  cardNumber: "1234567890123456", // => Statement execution
+  cvv: "123", // => Statement execution
+}); // => Statement execution
 console.log(payment1.getCurrentState()); // => Output: Validated
+// => FSM state management logic
 // => Pure read, no side effects
 payment1.processPayment(); // => Validated → Processed
 console.log(payment1.getCurrentState()); // => Output: Processed
+// => FSM state management logic
 // => Pure read, no side effects
 
 const payment2 = new PaymentProcessor(); // => state: "Pending"
 try {
+  // => Statement execution
   // => Begin error handling
   // => Begin error handling
   // => Begin object/config definition
   payment2.validatePayment({
+    // => Statement execution
     // => Begin object/config definition
     // => Guard fails (invalid amount)
-    amount: -10,
-    cardNumber: "1234567890123456",
-    cvv: "123",
-  });
+    amount: -10, // => Statement execution
+    cardNumber: "1234567890123456", // => Statement execution
+    cvv: "123", // => Statement execution
+  }); // => Statement execution
 } catch (error) {
+  // => Method signature: defines function interface
   // => Catch errors
   // => Catch errors
   // => Begin object/config definition
   console.log(error.message); // => Output: Amount must be positive
   console.log(payment2.getCurrentState()); // => Output: Rejected
+  // => FSM state management logic
   // => Pure read, no side effects
 }
 ```
@@ -1765,14 +2032,17 @@ type LoanState = "Application" | "UnderReview" | "Approved" | "Rejected"; // => 
 // => Type system ensures only valid states used
 
 interface ApplicantData {
+  // => Type declaration defines structure
   // => Begin object/config definition
   creditScore: number; // => Credit score (300-850)
   income: number; // => Annual income
   loanAmount: number; // => Requested loan amount
   hasCollateral: boolean; // => Has collateral?
+  // => FSM state management logic
 }
 
 class LoanApproval {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: LoanState = "Application"; // => Initial: Application
@@ -1781,19 +2051,22 @@ class LoanApproval {
   // => Initialized alongside FSM state
 
   getCurrentState(): LoanState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   submitApplication(data: ApplicantData): void {
+    // => Method invocation
     // => Begin object/config definition
     if (this.state !== "Application") {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
-      throw new Error("Invalid state for submission");
+      throw new Error("Invalid state for submission"); // => Method invocation
       // => Reject invalid operation
       // => Fail fast on FSM violation
     }
@@ -1803,13 +2076,16 @@ class LoanApproval {
   }
 
   reviewApplication(): void {
+    // => Method invocation
     // => Begin object/config definition
     if (this.state !== "UnderReview" || !this.applicantData) {
+      // => State-based guard condition
+      // => Logical OR: either condition can be true
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
-      throw new Error("Invalid state for review");
+      throw new Error("Invalid state for review"); // => Method invocation
       // => Reject invalid operation
       // => Fail fast on FSM violation
     }
@@ -1823,23 +2099,26 @@ class LoanApproval {
 
     // Approval logic:
     // (Good credit AND stable income AND reasonable debt ratio) OR has collateral
-    const approved = (hasGoodCredit && hasStableIncome && reasonableDebtRatio) || data.hasCollateral;
+    const approved = (hasGoodCredit && hasStableIncome && reasonableDebtRatio) || data.hasCollateral; // => Variable declaration and assignment
+    // => Logical AND: both conditions must be true
     // => Assign value
     // => Assign value
     // => Initialize approved
     // => Composite guard: (A AND B AND C) OR D
 
     if (approved) {
+      // => Conditional branch
       // => Conditional check
       // => Branch execution based on condition
       this.state = "Approved"; // => UnderReview → Approved
-      console.log("Loan approved");
+      console.log("Loan approved"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else {
+      // => Statement execution
       // => Fallback branch
       this.state = "Rejected"; // => UnderReview → Rejected
-      console.log("Loan rejected");
+      console.log("Loan rejected"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
@@ -1849,41 +2128,48 @@ class LoanApproval {
 // Usage
 const loan1 = new LoanApproval(); // => state: "Application"
 loan1.submitApplication({
+  // => Statement execution
   // => Begin object/config definition
   // => All AND guards pass
-  creditScore: 750,
-  income: 80000,
-  loanAmount: 150000,
-  hasCollateral: false,
-});
+  creditScore: 750, // => Statement execution
+  income: 80000, // => Statement execution
+  loanAmount: 150000, // => Statement execution
+  hasCollateral: false, // => Statement execution
+}); // => Statement execution
 loan1.reviewApplication(); // => UnderReview → Approved
 console.log(loan1.getCurrentState()); // => Output: Approved
+// => FSM state management logic
 // => Pure read, no side effects
 
 const loan2 = new LoanApproval(); // => state: "Application"
 loan2.submitApplication({
+  // => Statement execution
   // => Begin object/config definition
   // => AND guards fail, but OR passes
-  creditScore: 600,
-  income: 40000,
-  loanAmount: 200000,
+  creditScore: 600, // => Statement execution
+  income: 40000, // => Statement execution
+  loanAmount: 200000, // => Statement execution
   hasCollateral: true, // => Collateral enables approval
-});
+}); // => Statement execution
 loan2.reviewApplication(); // => UnderReview → Approved (via collateral)
+// => FSM state management logic
 console.log(loan2.getCurrentState()); // => Output: Approved
+// => FSM state management logic
 // => Pure read, no side effects
 
 const loan3 = new LoanApproval(); // => state: "Application"
 loan3.submitApplication({
+  // => Statement execution
   // => Begin object/config definition
   // => Both AND and OR fail
-  creditScore: 600,
-  income: 40000,
-  loanAmount: 200000,
-  hasCollateral: false,
-});
+  creditScore: 600, // => Statement execution
+  income: 40000, // => Statement execution
+  loanAmount: 200000, // => Statement execution
+  hasCollateral: false, // => Statement execution
+}); // => Statement execution
 loan3.reviewApplication(); // => UnderReview → Rejected
 console.log(loan3.getCurrentState()); // => Output: Rejected
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -1907,50 +2193,64 @@ type CharacterEvent = "walk" | "run" | "jump" | "land" | "stop"; // => Five even
 // => Events trigger state transitions
 
 class GameCharacter {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: CharacterState = "Idle"; // => Initial: Idle
   // => FSM begins execution in Idle state
 
   getCurrentState(): CharacterState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   handleEvent(event: CharacterEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     const previousState = this.state; // => Store previous state
 
     // Transition logic
     if (this.state === "Idle" && event === "walk") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       this.state = "Walking"; // => Idle → Walking
     } else if (this.state === "Idle" && event === "run") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "Running"; // => Idle → Running
     } else if (this.state === "Walking" && event === "run") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "Running"; // => Walking → Running
     } else if (this.state === "Running" && event === "jump") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "Jumping"; // => Running → Jumping
     } else if (this.state === "Jumping" && event === "land") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "Idle"; // => Jumping → Idle
     } else if (event === "stop") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -1959,6 +2259,7 @@ class GameCharacter {
 
     // Entry actions (execute when entering new state)
     if (this.state !== previousState) {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
@@ -1969,8 +2270,10 @@ class GameCharacter {
   }
 
   private onEnter(state: CharacterState): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     if (state === "Walking") {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
@@ -1979,6 +2282,7 @@ class GameCharacter {
       // => Log for observability
       this.setAnimationSpeed(1.0); // => Normal speed
     } else if (state === "Running") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -1986,6 +2290,7 @@ class GameCharacter {
       // => Log for observability
       this.setAnimationSpeed(2.0); // => Double speed
     } else if (state === "Jumping") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -1993,6 +2298,7 @@ class GameCharacter {
       // => Log for observability
       this.playSound("jump.wav"); // => Trigger sound effect
     } else if (state === "Idle") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -2004,14 +2310,18 @@ class GameCharacter {
   }
 
   private setAnimationSpeed(speed: number): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log(`  Set animation speed: ${speed}x`); // => Mock animation API
+    // => FSM state management logic
     // => Log for observability
   }
 
   private playSound(file: string): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log(`  Play sound: ${file}`); // => Mock audio API
+    // => FSM state management logic
     // => Log for observability
   }
 }
@@ -2062,6 +2372,7 @@ type ConnectionEvent = "connect" | "connection_success" | "connection_failed" | 
 // => Events trigger state transitions
 
 class DatabaseConnection {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: ConnectionState = "Disconnected"; // => Initial: Disconnected
@@ -2070,34 +2381,44 @@ class DatabaseConnection {
   // => Initialized alongside FSM state
 
   getCurrentState(): ConnectionState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   handleEvent(event: ConnectionEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     const previousState = this.state; // => Store previous state
 
     // Transition logic
     if (this.state === "Disconnected" && event === "connect") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       this.state = "Connecting"; // => Disconnected → Connecting
     } else if (this.state === "Connecting" && event === "connection_success") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "Connected"; // => Connecting → Connected
     } else if (this.state === "Connecting" && event === "connection_failed") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "Error"; // => Connecting → Error
     } else if (this.state === "Connected" && event === "disconnect") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -2106,6 +2427,7 @@ class DatabaseConnection {
 
     // Exit actions (execute when leaving state)
     if (this.state !== previousState) {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
@@ -2117,8 +2439,10 @@ class DatabaseConnection {
   }
 
   private onExit(state: ConnectionState): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     if (state === "Connected") {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
@@ -2127,6 +2451,7 @@ class DatabaseConnection {
       // => Log for observability
       this.closeConnection(); // => Cleanup resources
     } else if (state === "Connecting") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -2138,8 +2463,10 @@ class DatabaseConnection {
   }
 
   private onEnter(state: ConnectionState): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     if (state === "Connecting") {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
@@ -2148,6 +2475,7 @@ class DatabaseConnection {
       // => Log for observability
       this.connectionHandle = "conn-" + Date.now(); // => Mock connection handle
     } else if (state === "Connected") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -2157,15 +2485,19 @@ class DatabaseConnection {
   }
 
   private closeConnection(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log(`  Closing connection: ${this.connectionHandle}`); // => Mock close
+    // => FSM state management logic
     // => Log for observability
     this.connectionHandle = null; // => Release handle
   }
 
   private cancelConnection(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log(`  Cancelling connection: ${this.connectionHandle}`); // => Mock cancel
+    // => FSM state management logic
     // => Log for observability
     this.connectionHandle = null; // => Release handle
   }
@@ -2212,6 +2544,7 @@ type RequestEvent = "send" | "response_ok" | "response_error" | "timeout"; // =>
 // => Events trigger state transitions
 
 class HttpRequest {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: RequestState = "Idle"; // => Initial: Idle
@@ -2222,34 +2555,44 @@ class HttpRequest {
   // => Initialized alongside FSM state
 
   getCurrentState(): RequestState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   handleEvent(event: RequestEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     const previousState = this.state; // => Store previous state
 
     // Transition logic
     if (this.state === "Idle" && event === "send") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       this.state = "Pending"; // => Idle → Pending
     } else if (this.state === "Pending" && event === "response_ok") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "Success"; // => Pending → Success
     } else if (this.state === "Pending" && event === "response_error") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "Failed"; // => Pending → Failed
     } else if (this.state === "Pending" && event === "timeout") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -2258,6 +2601,7 @@ class HttpRequest {
 
     // Execute exit then entry actions
     if (this.state !== previousState) {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
@@ -2268,8 +2612,10 @@ class HttpRequest {
   }
 
   private onEnter(state: RequestState): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     if (state === "Pending") {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
@@ -2277,23 +2623,30 @@ class HttpRequest {
       console.log("▶ Entry: Start request timer"); // => Entry action for Pending
       // => Log for observability
       this.requestStartTime = new Date(); // => Record start time
+      // => FSM state management logic
       this.timeoutHandle = setTimeout(() => {
+        // => Event handler method
+        // => Chained method calls or nested operations
         // => Assign value
         // => Assign value
         // => Begin object/config definition
         // => Start timeout timer
-        this.handleEvent("timeout");
+        this.handleEvent("timeout"); // => Event handler method
         // => Event handler: main FSM dispatch method
         // => Processes events, triggers transitions
-      }, 5000); // => 5 second timeout
+      }, 5000); // => Statement execution
     } else if (state === "Success") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       const duration = Date.now() - this.requestStartTime!.getTime(); // => Calculate duration
+      // => FSM state management logic
       console.log(`▶ Entry: Request succeeded (${duration}ms)`); // => Entry action for Success
+      // => FSM state management logic
       // => Log for observability
     } else if (state === "Failed") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -2303,8 +2656,10 @@ class HttpRequest {
   }
 
   private onExit(state: RequestState): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     if (state === "Pending") {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
@@ -2312,6 +2667,7 @@ class HttpRequest {
       console.log("◀ Exit: Clear request timer"); // => Exit action for Pending
       // => Log for observability
       if (this.timeoutHandle) {
+        // => Event handler method
         // => Conditional check
         // => Branch execution based on condition
         clearTimeout(this.timeoutHandle); // => Cancel timeout timer
@@ -2356,36 +2712,46 @@ type AuthEvent = "login" | "login_success" | "logout"; // => Three events
 // => Events trigger state transitions
 
 class AuthWithActions {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: AuthState = "LoggedOut"; // => Initial: LoggedOut
   // => FSM begins execution in LoggedOut state
 
   getCurrentState(): AuthState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   handleEvent(event: AuthEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     const previousState = this.state; // => Store previous state
 
     // Transition logic with transition-specific actions
     if (this.state === "LoggedOut" && event === "login") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       this.onTransition_LoggedOut_to_LoggingIn(); // => Transition action (specific)
+      // => FSM state management logic
       this.state = "LoggingIn"; // => Change state
     } else if (this.state === "LoggingIn" && event === "login_success") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "LoggedIn"; // => Change state
     } else if (this.state === "LoggedIn" && event === "logout") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -2394,19 +2760,24 @@ class AuthWithActions {
 
     // Execute exit/entry actions (run for ANY transition)
     if (this.state !== previousState) {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
       this.onExit(previousState); // => Exit action (generic)
+      // => FSM state management logic
       this.onEnter(this.state); // => Entry action (generic)
+      // => FSM state management logic
     }
   }
 
   // ENTRY ACTIONS (run for ANY transition INTO this state)
   private onEnter(state: AuthState): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     if (state === "LoggingIn") {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
@@ -2414,6 +2785,7 @@ class AuthWithActions {
       console.log("▶ Entry: Show loading spinner"); // => Runs for ANY transition into LoggingIn
       // => Log for observability
     } else if (state === "LoggedIn") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -2424,8 +2796,10 @@ class AuthWithActions {
 
   // EXIT ACTIONS (run for ANY transition OUT OF this state)
   private onExit(state: AuthState): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     if (state === "LoggingIn") {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
@@ -2437,6 +2811,7 @@ class AuthWithActions {
 
   // TRANSITION ACTIONS (run for SPECIFIC transition only)
   private onTransition_LoggedOut_to_LoggingIn(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("→ Transition: Validate credentials"); // => Only for LoggedOut → LoggingIn
     // => Log for observability
@@ -2480,6 +2855,7 @@ type VideoEvent = "play" | "buffer_complete" | "pause" | "stop"; // => Four even
 // => Events trigger state transitions
 
 class VideoPlayer {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: VideoState = "Stopped"; // => Initial: Stopped
@@ -2488,39 +2864,50 @@ class VideoPlayer {
   // => Initialized alongside FSM state
 
   getCurrentState(): VideoState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   handleEvent(event: VideoEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     const previousState = this.state; // => Store previous state
 
     // Transition logic
     if (event === "play" && this.state === "Stopped") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       this.state = "Buffering"; // => Stopped → Buffering
     } else if (event === "buffer_complete" && this.state === "Buffering") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "Playing"; // => Buffering → Playing
     } else if (event === "pause" && this.state === "Playing") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "Paused"; // => Playing → Paused
     } else if (event === "play" && this.state === "Paused") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.state = "Playing"; // => Paused → Playing
     } else if (event === "stop") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -2529,50 +2916,57 @@ class VideoPlayer {
 
     // Execute lifecycle actions
     if (this.state !== previousState) {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
       this.onExit(previousState); // => Exit previous state
       this.onEnter(this.state); // => Enter new state
+      // => FSM state management logic
     }
   }
 
   private onEnter(state: VideoState): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     if (state === "Buffering") {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
-      console.log("▶ Entry: Start buffering");
+      console.log("▶ Entry: Start buffering"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.startBuffering(); // => Nested call: start buffer
       this.showBufferingIndicator(); // => Nested call: show UI
     } else if (state === "Playing") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Comparison check
       // => Alternative condition
-      console.log("▶ Entry: Start playback");
+      console.log("▶ Entry: Start playback"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.resumePlayback(); // => Nested call: play video
       this.hideBufferingIndicator(); // => Nested call: hide UI
       this.trackAnalytics("play"); // => Nested call: analytics
     } else if (state === "Paused") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Comparison check
       // => Alternative condition
-      console.log("▶ Entry: Pause playback");
+      console.log("▶ Entry: Pause playback"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.pausePlayback(); // => Nested call: pause
     } else if (state === "Stopped") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Comparison check
       // => Alternative condition
-      console.log("▶ Entry: Stop playback");
+      console.log("▶ Entry: Stop playback"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.stopPlayback(); // => Nested call: stop
@@ -2581,13 +2975,15 @@ class VideoPlayer {
   }
 
   private onExit(state: VideoState): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     if (state === "Buffering") {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
-      console.log("◀ Exit: Buffering complete");
+      console.log("◀ Exit: Buffering complete"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.trackAnalytics("buffer_complete"); // => Nested call: analytics
@@ -2596,6 +2992,7 @@ class VideoPlayer {
 
   // Nested helper methods called by entry/exit actions
   private startBuffering(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → Downloading video data"); // => Nested action
     // => Log for observability
@@ -2603,47 +3000,55 @@ class VideoPlayer {
   }
 
   private showBufferingIndicator(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → Display buffering spinner"); // => Nested action
     // => Log for observability
   }
 
   private hideBufferingIndicator(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → Hide buffering spinner"); // => Nested action
     // => Log for observability
   }
 
   private resumePlayback(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → Resume video playback"); // => Nested action
     // => Log for observability
   }
 
   private pausePlayback(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → Pause video"); // => Nested action
     // => Log for observability
   }
 
   private stopPlayback(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → Stop video"); // => Nested action
     // => Log for observability
   }
 
   private clearBuffer(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → Clear buffer memory"); // => Nested action
     // => Log for observability
-    this.bufferLevel = 0;
+    this.bufferLevel = 0; // => Statement execution
     // => Access instance property
     // => Access instance property
   }
 
   private trackAnalytics(event: string): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log(`  → Track analytics: ${event}`); // => Nested action
+    // => FSM state management logic
     // => Log for observability
   }
 }
@@ -2689,12 +3094,14 @@ type CartEvent = "add_item" | "checkout" | "payment_success"; // => Three events
 // => Events trigger state transitions
 
 interface Item {
+  // => Type declaration defines structure
   // => Begin object/config definition
   id: string; // => Item ID
   price: number; // => Item price
 }
 
 class ShoppingCart {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: CartState = "Empty"; // => Initial: Empty
@@ -2705,51 +3112,68 @@ class ShoppingCart {
   // => Initialized alongside FSM state
 
   getCurrentState(): CartState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   handleEvent(event: CartEvent, data?: any): void {
+    // => Event handler method
+    // => Ternary: condition ? true_branch : false_branch
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "add_item" && this.state === "Empty") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       this.onTransition_AddFirstItem(data); // => Transition action (Empty → HasItems)
+      // => FSM state management logic
       this.state = "HasItems"; // => Empty → HasItems
     } else if (event === "add_item" && this.state === "HasItems") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.onTransition_AddAnotherItem(data); // => Transition action (HasItems → HasItems)
+      // => FSM state management logic
       // => State stays HasItems (self-transition)
     } else if (event === "checkout" && this.state === "HasItems") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.onTransition_StartCheckout(); // => Transition action (HasItems → CheckingOut)
+      // => FSM state management logic
       this.state = "CheckingOut"; // => HasItems → CheckingOut
     } else if (event === "payment_success" && this.state === "CheckingOut") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.onTransition_CompleteOrder(); // => Transition action (CheckingOut → OrderPlaced)
+      // => FSM state management logic
       this.state = "OrderPlaced"; // => CheckingOut → OrderPlaced
     }
   }
 
   // TRANSITION ACTION: Empty → HasItems (first item)
   private onTransition_AddFirstItem(item: Item): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log("→ Transition: Add first item");
+    console.log("→ Transition: Add first item"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
     this.items.push(item); // => Add item to cart
     this.totalAmount = item.price; // => Set total
-    console.log(`  Cart created with ${item.id} ($${item.price})`);
+    console.log(`  Cart created with ${item.id} ($${item.price})`); // => Output for verification
+    // => Chained method calls or nested operations
     // => Debug/audit output
     // => Log for observability
     this.trackAnalytics("cart_started"); // => Analytics for first item
@@ -2757,24 +3181,28 @@ class ShoppingCart {
 
   // TRANSITION ACTION: HasItems → HasItems (additional items)
   private onTransition_AddAnotherItem(item: Item): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log("→ Transition: Add item to existing cart");
+    console.log("→ Transition: Add item to existing cart"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
     this.items.push(item); // => Add item
     this.totalAmount += item.price; // => Update total
-    console.log(`  Added ${item.id}, new total: $${this.totalAmount}`);
+    console.log(`  Added ${item.id}, new total: $${this.totalAmount}`); // => Output for verification
+    // => Constructor creates new object instance
     // => Debug/audit output
     // => Log for observability
   }
 
   // TRANSITION ACTION: HasItems → CheckingOut
   private onTransition_StartCheckout(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log("→ Transition: Start checkout process");
+    console.log("→ Transition: Start checkout process"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
-    console.log(`  Cart total: $${this.totalAmount} (${this.items.length} items)`);
+    console.log(`  Cart total: $${this.totalAmount} (${this.items.length} items)`); // => Output for verification
+    // => Chained method calls or nested operations
     // => Debug/audit output
     // => Log for observability
     this.validateInventory(); // => Check item availability
@@ -2783,8 +3211,9 @@ class ShoppingCart {
 
   // TRANSITION ACTION: CheckingOut → OrderPlaced
   private onTransition_CompleteOrder(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log("→ Transition: Complete order");
+    console.log("→ Transition: Complete order"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
     this.generateOrderId(); // => Create order ID
@@ -2794,38 +3223,45 @@ class ShoppingCart {
   }
 
   private validateInventory(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → Validate item availability"); // => Mock validation
     // => Log for observability
   }
 
   private calculateTax(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → Calculate tax"); // => Mock tax calc
     // => Log for observability
   }
 
   private generateOrderId(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → Order ID: ORD-12345"); // => Mock order ID
     // => Log for observability
   }
 
   private sendConfirmationEmail(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → Send confirmation email"); // => Mock email
     // => Log for observability
   }
 
   private updateInventory(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → Update inventory"); // => Mock inventory update
     // => Log for observability
   }
 
   private trackAnalytics(event: string): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log(`  → Analytics: ${event}`); // => Mock analytics
+    // => FSM state management logic
     // => Log for observability
   }
 }
@@ -2834,6 +3270,7 @@ class ShoppingCart {
 const cart = new ShoppingCart(); // => state: "Empty"
 
 cart.handleEvent("add_item", { id: "laptop", price: 1200 }); // => Empty → HasItems
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output:
 // → Transition: Add first item
@@ -2841,6 +3278,7 @@ cart.handleEvent("add_item", { id: "laptop", price: 1200 }); // => Empty → Has
 //   → Analytics: cart_started
 
 cart.handleEvent("add_item", { id: "mouse", price: 25 }); // => HasItems → HasItems
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output:
 // → Transition: Add item to existing cart
@@ -2882,13 +3320,16 @@ type OrderEvent = "confirm" | "ship" | "deliver"; // => Three events
 // => Events trigger state transitions
 
 interface Order {
+  // => Type declaration defines structure
   // => Begin object/config definition
   orderId: string; // => Order ID
   customerId: string; // => Customer ID
   trackingNumber?: string; // => Tracking number (after ship)
+  // => FSM state management logic
 }
 
 class OrderFulfillment {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: OrderState = "Pending"; // => Initial: Pending
@@ -2897,20 +3338,25 @@ class OrderFulfillment {
   // => Initialized alongside FSM state
 
   constructor(order: Order) {
+    // => Method invocation
     // => Begin object/config definition
     this.order = order; // => Store order
   }
 
   getCurrentState(): OrderState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   handleEvent(event: OrderEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "confirm" && this.state === "Pending") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Event type check
@@ -2918,12 +3364,16 @@ class OrderFulfillment {
       this.onTransition_ConfirmOrder(); // => Transition action with side effects
       this.state = "Confirmed"; // => Pending → Confirmed
     } else if (event === "ship" && this.state === "Confirmed") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.onTransition_ShipOrder(); // => Transition action with side effects
       this.state = "Shipped"; // => Confirmed → Shipped
     } else if (event === "deliver" && this.state === "Shipped") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -2934,104 +3384,119 @@ class OrderFulfillment {
 
   // TRANSITION ACTION: Pending → Confirmed (multiple side effects)
   private onTransition_ConfirmOrder(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log("→ Transition: Confirm order");
+    console.log("→ Transition: Confirm order"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
     this.chargePayment(); // => Side effect: payment
     this.sendEmailNotification("confirmation"); // => Side effect: email
     this.createWarehouseTicket(); // => Side effect: warehouse system
     this.updateInventoryReservation(); // => Side effect: inventory
-    console.log(`  Order ${this.order.orderId} confirmed`);
+    console.log(`  Order ${this.order.orderId} confirmed`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   // TRANSITION ACTION: Confirmed → Shipped (multiple side effects)
   private onTransition_ShipOrder(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log("→ Transition: Ship order");
+    console.log("→ Transition: Ship order"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
     this.order.trackingNumber = this.generateTrackingNumber(); // => Generate tracking
     this.updateInventoryActual(); // => Side effect: decrement stock
     this.sendEmailNotification("shipped"); // => Side effect: email
     this.notifyDeliveryPartner(); // => Side effect: shipping API
-    console.log(`  Order ${this.order.orderId} shipped (tracking: ${this.order.trackingNumber})`);
+    console.log(`  Order ${this.order.orderId} shipped (tracking: ${this.order.trackingNumber})`); // => Output for verification
+    // => Chained method calls or nested operations
     // => Debug/audit output
     // => Log for observability
   }
 
   // TRANSITION ACTION: Shipped → Delivered (multiple side effects)
   private onTransition_DeliverOrder(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log("→ Transition: Deliver order");
+    console.log("→ Transition: Deliver order"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
     this.sendEmailNotification("delivered"); // => Side effect: email
     this.updateCustomerLoyaltyPoints(); // => Side effect: loyalty system
     this.closeWarehouseTicket(); // => Side effect: warehouse system
     this.archiveOrder(); // => Side effect: database
-    console.log(`  Order ${this.order.orderId} delivered`);
+    console.log(`  Order ${this.order.orderId} delivered`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   // Side effect methods (would call external APIs in real implementation)
   private chargePayment(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → [API] Charge payment"); // => Payment gateway API
     // => Log for observability
   }
 
   private sendEmailNotification(type: string): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log(`  → [API] Send ${type} email to ${this.order.customerId}`); // => Email service API
+    // => FSM state management logic
     // => Log for observability
   }
 
   private createWarehouseTicket(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → [API] Create warehouse pick ticket"); // => Warehouse system API
     // => Log for observability
   }
 
   private updateInventoryReservation(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → [DB] Reserve inventory"); // => Database update
     // => Log for observability
   }
 
   private generateTrackingNumber(): string {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     return "TRACK-" + Date.now(); // => Mock tracking number
   }
 
   private updateInventoryActual(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → [DB] Decrement inventory"); // => Database update
     // => Log for observability
   }
 
   private notifyDeliveryPartner(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → [API] Notify delivery partner"); // => Shipping API
     // => Log for observability
   }
 
   private updateCustomerLoyaltyPoints(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → [DB] Add loyalty points"); // => Database update
     // => Log for observability
   }
 
   private closeWarehouseTicket(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → [API] Close warehouse ticket"); // => Warehouse system API
     // => Log for observability
   }
 
   private archiveOrder(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  → [DB] Archive order"); // => Database update
     // => Log for observability
@@ -3040,13 +3505,14 @@ class OrderFulfillment {
 
 // Usage
 const order = new OrderFulfillment({
+  // => Instance creation via constructor
   // => Create new instance
   // => Create new instance
   // => Initialize order
   // => state: "Pending"
-  orderId: "ORD-123",
-  customerId: "CUST-456",
-});
+  orderId: "ORD-123", // => Statement execution
+  customerId: "CUST-456", // => Statement execution
+}); // => Statement execution
 
 order.handleEvent("confirm"); // => Pending → Confirmed
 // => Processes events, triggers transitions
@@ -3096,13 +3562,16 @@ type OnboardingEvent = "create_profile" | "verify_email" | "complete_onboarding"
 // => Events trigger state transitions
 
 interface UserProfile {
+  // => Type declaration defines structure
   // => Begin object/config definition
   email: string; // => User email
   isPremium: boolean; // => Premium status
   referralCode?: string; // => Referral code (optional)
+  // => FSM state management logic
 }
 
 class UserOnboarding {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: OnboardingState = "NotStarted"; // => Initial: NotStarted
@@ -3111,15 +3580,20 @@ class UserOnboarding {
   // => Initialized alongside FSM state
 
   getCurrentState(): OnboardingState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   handleEvent(event: OnboardingEvent, data?: any): void {
+    // => Event handler method
+    // => Ternary: condition ? true_branch : false_branch
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "create_profile" && this.state === "NotStarted") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Event type check
@@ -3128,12 +3602,16 @@ class UserOnboarding {
       this.onTransition_CreateProfile(); // => Transition action with conditionals
       this.state = "ProfileCreated"; // => NotStarted → ProfileCreated
     } else if (event === "verify_email" && this.state === "ProfileCreated") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
       this.onTransition_VerifyEmail(); // => Transition action with conditionals
       this.state = "Verified"; // => ProfileCreated → Verified
     } else if (event === "complete_onboarding" && this.state === "Verified") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Alternative condition
@@ -3144,32 +3622,36 @@ class UserOnboarding {
 
   // TRANSITION ACTION: NotStarted → ProfileCreated (conditional logic)
   private onTransition_CreateProfile(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log("→ Transition: Create profile");
+    console.log("→ Transition: Create profile"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
 
     if (this.profile!.referralCode) {
+      // => Conditional branch
       // => Conditional check
       // => Branch execution based on condition
       // => Conditional: has referral?
-      console.log("  → Apply referral bonus");
+      console.log("  → Apply referral bonus"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.applyReferralBonus(this.profile!.referralCode); // => Execute if referred
     }
 
     if (this.profile!.isPremium) {
+      // => Conditional branch
       // => Conditional check
       // => Branch execution based on condition
       // => Conditional: premium user?
-      console.log("  → Enable premium features");
+      console.log("  → Enable premium features"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.enablePremiumFeatures(); // => Execute if premium
     } else {
+      // => Statement execution
       // => Fallback branch
-      console.log("  → Show upgrade prompt");
+      console.log("  → Show upgrade prompt"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.showUpgradePrompt(); // => Execute if free tier
@@ -3180,22 +3662,25 @@ class UserOnboarding {
 
   // TRANSITION ACTION: ProfileCreated → Verified (conditional logic)
   private onTransition_VerifyEmail(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log("→ Transition: Verify email");
+    console.log("→ Transition: Verify email"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
 
     if (this.profile!.isPremium) {
+      // => Conditional branch
       // => Conditional check
       // => Branch execution based on condition
       // => Conditional: premium user?
-      console.log("  → Grant immediate access");
+      console.log("  → Grant immediate access"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.grantImmediateAccess(); // => Skip additional verification
     } else {
+      // => Statement execution
       // => Fallback branch
-      console.log("  → Require phone verification");
+      console.log("  → Require phone verification"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.requestPhoneVerification(); // => Additional step for free tier
@@ -3204,26 +3689,29 @@ class UserOnboarding {
 
   // TRANSITION ACTION: Verified → Completed (conditional logic)
   private onTransition_CompleteOnboarding(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log("→ Transition: Complete onboarding");
+    console.log("→ Transition: Complete onboarding"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
 
     if (this.profile!.referralCode) {
+      // => Conditional branch
       // => Conditional check
       // => Branch execution based on condition
       // => Conditional: referred user?
-      console.log("  → Credit referrer account");
+      console.log("  → Credit referrer account"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.creditReferrer(this.profile!.referralCode); // => Reward referrer
     }
 
     if (this.profile!.isPremium) {
+      // => Conditional branch
       // => Conditional check
       // => Branch execution based on condition
       // => Conditional: premium?
-      console.log("  → Assign dedicated support");
+      console.log("  → Assign dedicated support"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.assignDedicatedSupport(); // => Premium perk
@@ -3234,64 +3722,73 @@ class UserOnboarding {
 
   // Helper methods
   private applyReferralBonus(code: string): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log(`    Referral code ${code} applied`);
+    console.log(`    Referral code ${code} applied`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   private enablePremiumFeatures(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log(`    Premium features enabled`);
+    console.log(`    Premium features enabled`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   private showUpgradePrompt(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log(`    Upgrade prompt displayed`);
+    console.log(`    Upgrade prompt displayed`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   private sendWelcomeEmail(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log(`    Welcome email sent to ${this.profile!.email}`);
+    console.log(`    Welcome email sent to ${this.profile!.email}`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   private grantImmediateAccess(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log(`    Full access granted`);
+    console.log(`    Full access granted`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   private requestPhoneVerification(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log(`    Phone verification required`);
+    console.log(`    Phone verification required`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   private creditReferrer(code: string): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log(`    Referrer ${code} credited`);
+    console.log(`    Referrer ${code} credited`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   private assignDedicatedSupport(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log(`    Dedicated support assigned`);
+    console.log(`    Dedicated support assigned`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   private trackOnboardingComplete(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log(`    Analytics: onboarding_complete`);
+    console.log(`    Analytics: onboarding_complete`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
@@ -3300,12 +3797,13 @@ class UserOnboarding {
 // Usage - Free tier user with referral
 const user1 = new UserOnboarding(); // => state: "NotStarted"
 user1.handleEvent("create_profile", {
+  // => Event handler method
   // => Event handler: main FSM dispatch method
   // => Processes events, triggers transitions
-  email: "user@example.com",
-  isPremium: false,
-  referralCode: "REF123",
-});
+  email: "user@example.com", // => Statement execution
+  isPremium: false, // => Statement execution
+  referralCode: "REF123", // => Statement execution
+}); // => Statement execution
 // => Output:
 // → Transition: Create profile
 //   → Apply referral bonus
@@ -3317,11 +3815,12 @@ user1.handleEvent("create_profile", {
 // Usage - Premium user without referral
 const user2 = new UserOnboarding(); // => state: "NotStarted"
 user2.handleEvent("create_profile", {
+  // => Event handler method
   // => Event handler: main FSM dispatch method
   // => Processes events, triggers transitions
-  email: "premium@example.com",
-  isPremium: true,
-});
+  email: "premium@example.com", // => Statement execution
+  isPremium: true, // => Statement execution
+}); // => Statement execution
 // => Output:
 // → Transition: Create profile
 //   → Enable premium features
@@ -3347,6 +3846,7 @@ type UploadEvent = "start_upload" | "upload_complete" | "processing_complete"; /
 // => Events trigger state transitions
 
 class FileUpload {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: UploadState = "Idle"; // => Initial: Idle
@@ -3357,24 +3857,31 @@ class FileUpload {
   // => Initialized alongside FSM state
 
   getCurrentState(): UploadState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   getError(): string | null {
+    // => Accessor method definition
     // => Begin object/config definition
     return this.errorMessage; // => Returns error if Failed
   }
 
   handleEvent(event: UploadEvent, data?: any): void {
+    // => Event handler method
+    // => Ternary: condition ? true_branch : false_branch
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     try {
+      // => Statement execution
       // => Begin error handling
       // => Begin error handling
       // => Begin object/config definition
       if (event === "start_upload" && this.state === "Idle") {
+        // => Event type guard condition
+        // => Logical AND: both conditions must be true
         // => Comparison check
         // => Comparison check
         // => Event type check
@@ -3383,12 +3890,16 @@ class FileUpload {
         this.onTransition_StartUpload(); // => May throw error
         this.state = "Uploading"; // => Idle → Uploading
       } else if (event === "upload_complete" && this.state === "Uploading") {
+        // => Method signature: defines function interface
+        // => Logical AND: both conditions must be true
         // => Comparison check
         // => Comparison check
         // => Alternative condition
         this.onTransition_ProcessUpload(); // => May throw error
         this.state = "ProcessingData"; // => Uploading → ProcessingData
       } else if (event === "processing_complete" && this.state === "ProcessingData") {
+        // => Method signature: defines function interface
+        // => Logical AND: both conditions must be true
         // => Comparison check
         // => Comparison check
         // => Alternative condition
@@ -3396,6 +3907,7 @@ class FileUpload {
         this.state = "Success"; // => ProcessingData → Success
       }
     } catch (error) {
+      // => Method signature: defines function interface
       // => Catch errors
       // => Catch errors
       // => Begin object/config definition
@@ -3405,12 +3917,15 @@ class FileUpload {
 
   // TRANSITION ACTION: Idle → Uploading (with error handling)
   private onTransition_StartUpload(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log("→ Transition: Start upload");
+    console.log("→ Transition: Start upload"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
 
     if (!this.fileName || this.fileName.length === 0) {
+      // => Conditional branch
+      // => Logical OR: either condition can be true
       // => Comparison check
       // => Comparison check
       // => Conditional check
@@ -3421,6 +3936,8 @@ class FileUpload {
     }
 
     if (this.fileName.endsWith(".exe")) {
+      // => Conditional branch
+      // => Chained method calls or nested operations
       // => Conditional check
       // => Branch execution based on condition
       // => Security check
@@ -3428,7 +3945,7 @@ class FileUpload {
       // => Fail fast on FSM violation
     }
 
-    console.log(`  Upload started: ${this.fileName}`);
+    console.log(`  Upload started: ${this.fileName}`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
     this.initializeUploadStream(); // => Begin upload
@@ -3436,21 +3953,26 @@ class FileUpload {
 
   // TRANSITION ACTION: Uploading → ProcessingData (with error handling)
   private onTransition_ProcessUpload(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log("→ Transition: Process uploaded file");
+    console.log("→ Transition: Process uploaded file"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
 
     const fileSize = this.checkFileSize(); // => Check size
     if (fileSize > 100 * 1024 * 1024) {
+      // => Conditional branch
       // => Conditional check
       // => Branch execution based on condition
       // => Exceeds 100MB?
       throw new Error("File too large (max 100MB)"); // => Throw error
+      // => FSM state management logic
       // => Fail fast on FSM violation
     }
 
     if (!this.validateFileIntegrity()) {
+      // => Conditional branch
+      // => Chained method calls or nested operations
       // => Conditional check
       // => Branch execution based on condition
       // => Check integrity
@@ -3458,7 +3980,8 @@ class FileUpload {
       // => Fail fast on FSM violation
     }
 
-    console.log(`  Processing file (${fileSize} bytes)`);
+    console.log(`  Processing file (${fileSize} bytes)`); // => Output for verification
+    // => Chained method calls or nested operations
     // => Debug/audit output
     // => Log for observability
     this.runVirusScan(); // => Security scan
@@ -3466,84 +3989,97 @@ class FileUpload {
 
   // TRANSITION ACTION: ProcessingData → Success (with error handling)
   private onTransition_FinalizeUpload(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log("→ Transition: Finalize upload");
+    console.log("→ Transition: Finalize upload"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
 
     if (!this.generateThumbnail()) {
+      // => Conditional branch
+      // => Chained method calls or nested operations
       // => Conditional check
       // => Branch execution based on condition
       // => Try thumbnail generation
       console.warn("  Warning: Thumbnail generation failed (non-fatal)"); // => Log warning but continue
+      // => FSM state management logic
     }
 
     this.saveToDatabase(); // => May throw error
     this.sendNotification(); // => May throw error
-    console.log(`  Upload complete: ${this.fileName}`);
+    console.log(`  Upload complete: ${this.fileName}`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   // ERROR HANDLER (transitions to Failed state)
   private handleTransitionError(error: Error): void {
+    // => Event handler method
     // => Extended state (data beyond FSM state)
-    console.error(`✗ Transition error: ${error.message}`);
+    console.error(`✗ Transition error: ${error.message}`); // => Method invocation
     this.errorMessage = error.message; // => Store error message
     this.state = "Failed"; // => Any → Failed (error recovery)
     this.cleanupResources(); // => Cleanup on error
-    console.log(`  State: ${this.state}, Error: ${this.errorMessage}`);
+    console.log(`  State: ${this.state}, Error: ${this.errorMessage}`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   // Helper methods
   private initializeUploadStream(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log("  → Initialize upload stream");
+    console.log("  → Initialize upload stream"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   private checkFileSize(): number {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     return 50 * 1024 * 1024; // => Mock: 50MB
   }
 
   private validateFileIntegrity(): boolean {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     return true; // => Mock: validation pass
   }
 
   private runVirusScan(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log("  → Virus scan complete");
+    console.log("  → Virus scan complete"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   private generateThumbnail(): boolean {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     return true; // => Mock: thumbnail generated
   }
 
   private saveToDatabase(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log("  → Saved to database");
+    console.log("  → Saved to database"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   private sendNotification(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log("  → Notification sent");
+    console.log("  → Notification sent"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   private cleanupResources(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log("  → Cleanup resources");
+    console.log("  → Cleanup resources"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
@@ -3558,6 +4094,7 @@ upload1.handleEvent("upload_complete"); // => Uploading → ProcessingData
 upload1.handleEvent("processing_complete"); // => ProcessingData → Success
 // => Processes events, triggers transitions
 console.log(`Final state: ${upload1.getCurrentState()}`); // => Output: Success
+// => FSM state management logic
 // => Pure read, no side effects
 
 // Usage - Failed upload (invalid file type)
@@ -3571,8 +4108,10 @@ upload2.handleEvent("start_upload", "malware.exe"); // => Error: Executable not 
 //   State: Failed, Error: Executable files not allowed
 
 console.log(`Final state: ${upload2.getCurrentState()}`); // => Output: Failed
+// => FSM state management logic
 // => Pure read, no side effects
 console.log(`Error: ${upload2.getError()}`); // => Output: Executable files not allowed
+// => FSM state management logic
 ```
 
 **Key Takeaway**: Transition actions must handle errors gracefully. Try-catch blocks capture errors during transitions; error handlers move FSM to Failed state and cleanup resources. Distinguishes fatal errors (transition fails) from warnings (log but continue).
@@ -3592,6 +4131,7 @@ The State Pattern encapsulates state-specific behavior in separate classes, dele
 
 // State interface defining common operations
 interface ConnectionState {
+  // => Type declaration defines structure
   // => Begin object/config definition
   open(context: TcpConnection): void; // => Open operation
   close(context: TcpConnection): void; // => Close operation
@@ -3601,28 +4141,34 @@ interface ConnectionState {
 
 // Concrete state: Closed
 class ClosedState implements ConnectionState {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   open(context: TcpConnection): void {
+    // => Method invocation
     // => Begin object/config definition
     console.log("Opening connection..."); // => Log action
     // => Log for observability
     context.setState(new ConnectingState()); // => Transition to Connecting
+    // => FSM state management logic
   }
 
   close(context: TcpConnection): void {
+    // => Method invocation
     // => Begin object/config definition
     console.log("Already closed"); // => No-op
     // => Log for observability
   }
 
   send(context: TcpConnection, data: string): void {
+    // => Method invocation
     // => Begin object/config definition
     throw new Error("Cannot send: connection closed"); // => Invalid operation
     // => Fail fast on FSM violation
   }
 
   getStateName(): string {
+    // => Accessor method definition
     // => Begin object/config definition
     return "Closed"; // => State name
   }
@@ -3630,66 +4176,81 @@ class ClosedState implements ConnectionState {
 
 // Concrete state: Connecting
 class ConnectingState implements ConnectionState {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   open(context: TcpConnection): void {
+    // => Method invocation
     // => Begin object/config definition
     console.log("Already connecting"); // => No-op
     // => Log for observability
   }
 
   close(context: TcpConnection): void {
+    // => Method invocation
     // => Begin object/config definition
     console.log("Abort connection attempt"); // => Cancel connection
     // => Log for observability
     context.setState(new ClosedState()); // => Transition to Closed
+    // => FSM state management logic
   }
 
   send(context: TcpConnection, data: string): void {
+    // => Method invocation
     // => Begin object/config definition
     throw new Error("Cannot send: still connecting"); // => Invalid operation
     // => Fail fast on FSM violation
   }
 
   getStateName(): string {
+    // => Accessor method definition
     // => Begin object/config definition
     return "Connecting"; // => State name
   }
 
   // Simulate connection establishment
   completeConnection(context: TcpConnection): void {
+    // => Method invocation
     // => Begin object/config definition
     console.log("Connection established"); // => Log success
     // => Log for observability
     context.setState(new OpenState()); // => Transition to Open
+    // => FSM state management logic
   }
 }
 
 // Concrete state: Open
 class OpenState implements ConnectionState {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   open(context: TcpConnection): void {
+    // => Method invocation
     // => Begin object/config definition
     console.log("Already open"); // => No-op
     // => Log for observability
   }
 
   close(context: TcpConnection): void {
+    // => Method invocation
     // => Begin object/config definition
     console.log("Closing connection..."); // => Log action
     // => Log for observability
     context.setState(new ClosedState()); // => Transition to Closed
+    // => FSM state management logic
   }
 
   send(context: TcpConnection, data: string): void {
+    // => Method invocation
     // => Begin object/config definition
     console.log(`Sending data: ${data}`); // => Send data
+    // => FSM state management logic
     // => Log for observability
     // => Actual send logic here
   }
 
   getStateName(): string {
+    // => Accessor method definition
     // => Begin object/config definition
     return "Open"; // => State name
   }
@@ -3697,40 +4258,49 @@ class OpenState implements ConnectionState {
 
 // Context class delegating to state objects
 class TcpConnection {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: ConnectionState; // => Current state object
 
   constructor() {
+    // => Method invocation
     // => Begin object/config definition
     this.state = new ClosedState(); // => Initial state: Closed
+    // => FSM state management logic
   }
 
   setState(state: ConnectionState): void {
+    // => Accessor method definition
     // => Begin object/config definition
-    console.log(`State transition: → ${state.getStateName()}`);
+    console.log(`State transition: → ${state.getStateName()}`); // => Output for verification
+    // => Chained method calls or nested operations
     // => Debug/audit output
     // => Log for observability
     this.state = state; // => Change state object
   }
 
   getStateName(): string {
+    // => Accessor method definition
     // => Begin object/config definition
     return this.state.getStateName(); // => Delegate to state
   }
 
   // Public API methods delegate to current state
   open(): void {
+    // => Method invocation
     // => Begin object/config definition
     this.state.open(this); // => Delegate to state
   }
 
   close(): void {
+    // => Method invocation
     // => Begin object/config definition
     this.state.close(this); // => Delegate to state
   }
 
   send(data: string): void {
+    // => Method invocation
     // => Begin object/config definition
     this.state.send(this, data); // => Delegate to state
   }
@@ -3739,6 +4309,7 @@ class TcpConnection {
 // Usage
 const connection = new TcpConnection(); // => state: Closed
 console.log(`Current: ${connection.getStateName()}`); // => Output: Closed
+// => FSM state management logic
 
 connection.open(); // => Closed → Connecting
 // => Output:
@@ -3746,19 +4317,22 @@ connection.open(); // => Closed → Connecting
 // State transition: → Connecting
 
 try {
+  // => Statement execution
   // => Begin error handling
   // => Begin error handling
   // => Begin object/config definition
   connection.send("Hello"); // => Invalid: cannot send while Connecting
 } catch (error) {
+  // => Method signature: defines function interface
   // => Catch errors
   // => Catch errors
   // => Begin object/config definition
   console.log(`Error: ${(error as Error).message}`); // => Output: Cannot send: still connecting
+  // => FSM state management logic
 }
 
 // Simulate connection completing
-const connectingState = new ConnectingState();
+const connectingState = new ConnectingState(); // => State variable initialization
 // => Create new instance
 // => Create new instance
 // => Initialize connectingState
@@ -3790,88 +4364,100 @@ Complex FSMs benefit from hierarchical states where substates inherit parent sta
 // Alarm system with hierarchical states
 
 // Parent state: Armed (has substates)
-type ArmedSubstate = "ArmedAway" | "ArmedStay" | "ArmedNight";
+type ArmedSubstate = "ArmedAway" | "ArmedStay" | "ArmedNight"; // => Type declaration defines structure
 // => Assign value
 // => Assign value
 // Parent state: Disarmed (has substates)
-type DisarmedSubstate = "DisarmedNormal" | "DisarmedMaintenance";
+type DisarmedSubstate = "DisarmedNormal" | "DisarmedMaintenance"; // => Type declaration defines structure
 // => Assign value
 // => Assign value
 // Top-level states
-type AlarmState = ArmedSubstate | DisarmedSubstate | "Triggered";
+type AlarmState = ArmedSubstate | DisarmedSubstate | "Triggered"; // => Type declaration defines structure
 // => Assign value
 // => Assign value
 // => Enum-like union type for state values
 // => Type system ensures only valid states used
 
-type AlarmEvent = "arm_away" | "arm_stay" | "arm_night" | "disarm" | "sensor_triggered" | "enter_maintenance";
+type AlarmEvent = "arm_away" | "arm_stay" | "arm_night" | "disarm" | "sensor_triggered" | "enter_maintenance"; // => Type declaration defines structure
 // => Assign value
 // => Assign value
 // => Defines event alphabet for FSM
 // => Events trigger state transitions
 
 class HierarchicalAlarm {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: AlarmState = "DisarmedNormal"; // => Initial: DisarmedNormal
   // => FSM begins execution in DisarmedNormal state
 
   getCurrentState(): AlarmState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   handleEvent(event: AlarmEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
-    console.log(`Event: ${event} in state ${this.state}`);
+    console.log(`Event: ${event} in state ${this.state}`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
 
     // Parent state behavior: ANY Armed substate can be triggered
     if (this.isArmed() && event === "sensor_triggered") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Comparison check
       // => Event type check
       this.state = "Triggered"; // => Any Armed → Triggered
       this.soundAlarm(); // => Parent behavior
-      return;
+      return; // => Statement execution
     }
 
     // Parent state behavior: ANY state can disarm
     if (event === "disarm") {
+      // => Event type guard condition
       // => Comparison check
       // => Comparison check
       // => Event type check
       this.state = "DisarmedNormal"; // => Any → DisarmedNormal
       this.stopAlarm(); // => Parent behavior
-      return;
+      return; // => Statement execution
     }
 
     // Specific state transitions
     if (this.isDisarmed()) {
+      // => Conditional branch
+      // => Chained method calls or nested operations
       // => Conditional check
       // => Branch execution based on condition
       if (event === "arm_away") {
+        // => Event type guard condition
         // => Comparison check
         // => Comparison check
         // => Event type check
         this.state = "ArmedAway"; // => Disarmed → ArmedAway
         this.activateSensors("all"); // => Specific behavior
       } else if (event === "arm_stay") {
+        // => Method signature: defines function interface
         // => Comparison check
         // => Comparison check
         // => Alternative condition
         this.state = "ArmedStay"; // => Disarmed → ArmedStay
         this.activateSensors("perimeter"); // => Specific behavior
       } else if (event === "arm_night") {
+        // => Method signature: defines function interface
         // => Comparison check
         // => Comparison check
         // => Alternative condition
         this.state = "ArmedNight"; // => Disarmed → ArmedNight
         this.activateSensors("night_mode"); // => Specific behavior
       } else if (event === "enter_maintenance") {
+        // => Method signature: defines function interface
         // => Comparison check
         // => Comparison check
         // => Alternative condition
@@ -3882,8 +4468,10 @@ class HierarchicalAlarm {
 
   // Helper: Check if in ANY Armed substate (parent state check)
   private isArmed(): boolean {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    return this.state === "ArmedAway" || this.state === "ArmedStay" || this.state === "ArmedNight";
+    return this.state === "ArmedAway" || this.state === "ArmedStay" || this.state === "ArmedNight"; // => State transition execution
+    // => Logical OR: either condition can be true
     // => Access instance property
     // => Access instance property
     // => Return current state value
@@ -3892,8 +4480,10 @@ class HierarchicalAlarm {
 
   // Helper: Check if in ANY Disarmed substate (parent state check)
   private isDisarmed(): boolean {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    return this.state === "DisarmedNormal" || this.state === "DisarmedMaintenance";
+    return this.state === "DisarmedNormal" || this.state === "DisarmedMaintenance"; // => State transition execution
+    // => Logical OR: either condition can be true
     // => Access instance property
     // => Access instance property
     // => Return current state value
@@ -3901,20 +4491,24 @@ class HierarchicalAlarm {
   }
 
   private soundAlarm(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  🚨 ALARM TRIGGERED!"); // => Parent state action
     // => Log for observability
   }
 
   private stopAlarm(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("  ✓ Alarm silenced"); // => Parent state action
     // => Log for observability
   }
 
   private activateSensors(mode: string): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log(`  → Activate sensors: ${mode}`); // => Substate-specific action
+    // => FSM state management logic
     // => Log for observability
   }
 }
@@ -3929,12 +4523,14 @@ alarm.handleEvent("arm_away"); // => DisarmedNormal → ArmedAway
 //   → Activate sensors: all
 
 alarm.handleEvent("sensor_triggered"); // => ArmedAway → Triggered (parent transition)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output:
 // Event: sensor_triggered in state ArmedAway
 //   🚨 ALARM TRIGGERED!
 
 alarm.handleEvent("disarm"); // => Triggered → DisarmedNormal (parent transition)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output:
 // Event: disarm in state Triggered
@@ -3947,6 +4543,7 @@ alarm.handleEvent("arm_stay"); // => DisarmedNormal → ArmedStay
 //   → Activate sensors: perimeter
 
 alarm.handleEvent("sensor_triggered"); // => ArmedStay → Triggered (parent transition)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output:
 // Event: sensor_triggered in state ArmedStay
@@ -3973,16 +4570,19 @@ type TurnstileEvent = "coin" | "push"; // => Two events
 
 // Transition table: [currentState][event] => newState
 const transitionTable: Record<TurnstileState, Partial<Record<TurnstileEvent, TurnstileState>>> = {
+  // => State variable initialization
   // => Assign value
   // => Assign value
   // => Type: transition table structure
   // => Maps (currentState, event) -> nextState
   Locked: {
+    // => Statement execution
     // => Begin object/config definition
     coin: "Unlocked", // => Locked + coin → Unlocked
     push: "Locked", // => Locked + push → Locked (self-transition)
   },
   Unlocked: {
+    // => Statement execution
     // => Begin object/config definition
     coin: "Unlocked", // => Unlocked + coin → Unlocked (self-transition)
     push: "Locked", // => Unlocked + push → Locked
@@ -3991,58 +4591,72 @@ const transitionTable: Record<TurnstileState, Partial<Record<TurnstileEvent, Tur
 
 // Action table: [currentState][event] => action to execute
 const actionTable: Record<TurnstileState, Partial<Record<TurnstileEvent, () => void>>> = {
+  // => State variable initialization
+  // => Additional context for complex operation
   // => Assign value
   // => Assign value
   // => Type: transition table structure
   // => Maps (currentState, event) -> nextState
   Locked: {
+    // => Statement execution
     // => Begin object/config definition
     coin: () => console.log("  → Unlock turnstile"), // => Action for Locked + coin
+    // => FSM state management logic
     // => Log for observability
     push: () => console.log("  → Alarm: Push while locked"), // => Action for Locked + push
+    // => FSM state management logic
     // => Log for observability
   },
   Unlocked: {
+    // => Statement execution
     // => Begin object/config definition
     coin: () => console.log("  → Return coin (already unlocked)"), // => Action for Unlocked + coin
+    // => FSM state management logic
     // => Log for observability
     push: () => console.log("  → Lock turnstile after passage"), // => Action for Unlocked + push
+    // => FSM state management logic
     // => Log for observability
   },
 };
 
 class TurnstileFSM {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: TurnstileState = "Locked"; // => Initial: Locked
   // => FSM begins execution in Locked state
 
   getCurrentState(): TurnstileState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   handleEvent(event: TurnstileEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
-    console.log(`Event: ${event} (State: ${this.state})`);
+    console.log(`Event: ${event} (State: ${this.state})`); // => Output for verification
+    // => Chained method calls or nested operations
     // => Debug/audit output
     // => Log for observability
 
     // Look up next state in transition table
     const nextState = transitionTable[this.state][event]; // => Table lookup
     if (!nextState) {
+      // => Conditional branch
       // => Conditional check
       // => Branch execution based on condition
       console.log("  ✗ Invalid transition"); // => No transition defined
       // => Log for observability
-      return;
+      return; // => Statement execution
     }
 
     // Execute action from action table
     const action = actionTable[this.state][event]; // => Table lookup
     if (action) {
+      // => Conditional branch
       // => Conditional check
       // => Branch execution based on condition
       action(); // => Execute action
@@ -4050,11 +4664,13 @@ class TurnstileFSM {
 
     // Transition to next state
     if (this.state !== nextState) {
+      // => State-based guard condition
       // => Comparison check
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
       console.log(`  State: ${this.state} → ${nextState}`); // => Log transition
+      // => FSM state management logic
       // => Log for observability
       this.state = nextState; // => Change state
     }
@@ -4064,6 +4680,7 @@ class TurnstileFSM {
 // Usage
 const turnstile = new TurnstileFSM(); // => state: "Locked"
 console.log(`Initial: ${turnstile.getCurrentState()}`); // => Output: Locked
+// => FSM state management logic
 // => Pure read, no side effects
 
 turnstile.handleEvent("push"); // => Locked + push → Locked
@@ -4093,6 +4710,7 @@ turnstile.handleEvent("push"); // => Unlocked + push → Locked
 //   State: Unlocked → Locked
 
 console.log(`Final: ${turnstile.getCurrentState()}`); // => Output: Locked
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 

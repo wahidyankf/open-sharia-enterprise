@@ -32,92 +32,115 @@ graph TD
 **Code**:
 
 ```java
-package com.example.demo.entity;
+package com.example.demo.entity;              // => JPA entity package location
 
-import jakarta.persistence.*;
+import jakarta.persistence.*;                 // => Jakarta Persistence API (JPA 3.0+)
 
-@Entity // Marks this class as a JPA entity
-@Table(name = "users") // Maps to "users" table
+@Entity                                       // => Marks class as JPA entity (database table mapping)
+                                              // => Hibernate creates table schema from this class
+@Table(name = "users")                        // => Explicitly maps to "users" table
+                                              // => Without @Table, defaults to class name "User"
 public class User {
-    @Id // Primary key
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment
-    private Long id;
+    @Id                                       // => Primary key field
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // => Auto-increment strategy
+                                              // => Database generates ID on INSERT
+    private Long id;                          // => Primary key type (Long supports null for new entities)
 
-    @Column(nullable = false) // NOT NULL constraint
-    private String name;
+    @Column(nullable = false)                 // => NOT NULL constraint in database
+                                              // => JPA validates before persisting
+    private String name;                      // => Required field (cannot be null)
 
-    private String email;
+    private String email;                     // => Optional field (nullable=true by default)
+                                              // => Maps to VARCHAR(255) in database
 
-    // Default constructor required by JPA
-    public User() {}
+    public User() {}                          // => Default constructor REQUIRED by JPA
+                                              // => JPA uses reflection to instantiate entities
 
-    public User(String name, String email) {
-        this.name = name;
-        this.email = email;
+    public User(String name, String email) {  // => Convenience constructor for application code
+        this.name = name;                     // => Sets name field
+        this.email = email;                   // => Sets email field
+    }                                         // => Note: id remains null (assigned on persist)
+
+    public Long getId() { return id; }        // => Getter for primary key
+    public void setId(Long id) {              // => Setter for primary key
+        this.id = id;                         // => Usually only set by JPA, not application code
     }
-
-    // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public String getName() { return name; }  // => Getter for name field
+    public void setName(String name) {        // => Setter for name field
+        this.name = name;                     // => Updates name in managed entity
+    }
+    public String getEmail() { return email; }  // => Getter for email field
+    public void setEmail(String email) {      // => Setter for email field
+        this.email = email;                   // => Updates email in managed entity
+    }
 }
 
 
 ```
 
 ```java
-package com.example.demo.repository;
+package com.example.demo.repository;         // => Repository layer package
 
-import com.example.demo.entity.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import com.example.demo.entity.User;          // => Entity this repository manages
+import org.springframework.data.jpa.repository.JpaRepository;  // => Base repository interface
+import org.springframework.stereotype.Repository;              // => Spring stereotype annotation
 
-// JpaRepository<User, Long> provides CRUD operations
-// User = entity type, Long = ID type
-@Repository // Optional - Spring auto-detects repository interfaces
+@Repository                                   // => Marks as Spring Data repository bean
+                                              // => Optional - Spring auto-detects interfaces extending JpaRepository
 public interface UserRepository extends JpaRepository<User, Long> {
-    // No methods needed - JpaRepository provides:
-    // - save(User user)
-    // - findById(Long id)
-    // - findAll()
-    // - deleteById(Long id)
-    // - count()
+    // => JpaRepository<User, Long> signature breakdown:
+    // => - User: Entity type this repository manages
+    // => - Long: Primary key type of User entity
+    // => No method implementations needed - Spring Data JPA provides them at runtime
+
+    // => Inherited CRUD methods (15+ methods):
+    // => - save(User user) - INSERT or UPDATE
+    // => - findById(Long id) - SELECT by primary key, returns Optional<User>
+    // => - findAll() - SELECT *, returns List<User>
+    // => - deleteById(Long id) - DELETE by primary key
+    // => - count() - SELECT COUNT(*), returns long
+    // => - existsById(Long id) - SELECT COUNT(*) WHERE id=?, returns boolean
+
+    // => Spring generates proxy implementation at startup
+    // => All methods use parameterized queries (SQL injection safe)
 }
 
 
 ```
 
 ```java
-package com.example.demo.service;
+package com.example.demo.service;                // => Service layer package
 
-import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
-import org.springframework.stereotype.Service;
+import com.example.demo.entity.User;             // => Import User entity
+import com.example.demo.repository.UserRepository; // => Import repository interface
+import org.springframework.stereotype.Service;    // => Spring @Service annotation
 
-@Service
+@Service                                          // => Marks class as Spring service component
+                                                  // => Auto-detected by component scanning
 public class UserService {
-    private final UserRepository userRepository;
+    private final UserRepository userRepository;  // => Injected repository (immutable)
 
     public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository; // => Injected by Spring
+        this.userRepository = userRepository;     // => Constructor injection (Spring dependency)
+                                                  // => Recommended over @Autowired field injection
     }
 
     public void demo() {
         // Create new user
         User user = new User("Alice", "alice@example.com");
-        // => Creates TRANSIENT entity (not yet persisted, id=null)
-        // => User state: {id=null, name="Alice", email="alice@example.com"}
+        // => Creates TRANSIENT entity (not yet tracked by persistence context)
+        // => Entity state: {id=null, name="Alice", email="alice@example.com"}
+        // => No database interaction yet
 
         // Save to database
         User saved = userRepository.save(user);
-        // => Executes INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com')
-        // => Entity transitions to MANAGED state with assigned ID
+        // => Detects null ID, performs INSERT operation
+        // => SQL: INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com')
+        // => Entity transitions: TRANSIENT → MANAGED (tracked by persistence context)
         // => Returns: {id=1, name="Alice", email="alice@example.com"}
 
-        System.out.println("Saved user ID: " + saved.getId()); // => 1
+        System.out.println("Saved user ID: " + saved.getId());
+        // => Prints: 1 (auto-generated primary key)
     }
 }
 
@@ -135,44 +158,50 @@ public class UserService {
 **Code**:
 
 ```java
-package com.example.demo.service;
+package com.example.demo.service;                // => Service layer package
 
-import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
-import org.springframework.stereotype.Service;
+import com.example.demo.entity.User;             // => Import User entity
+import com.example.demo.repository.UserRepository; // => Import repository
+import org.springframework.stereotype.Service;    // => Spring component annotation
 
-@Service
+@Service                                          // => Service bean registered in Spring context
 public class UserPersistenceService {
-    private final UserRepository userRepository;
+    private final UserRepository userRepository;  // => Injected repository dependency
 
     public UserPersistenceService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+        this.userRepository = userRepository;     // => Constructor injection
+                                                  // => Enables immutability and testability
     }
 
     public void demonstrateSave() {
         // CREATE: New entity (id = null)
         User newUser = new User("Bob", "bob@example.com");
-        // => Creates TRANSIENT entity (not yet persisted, id=null)
+        // => Creates TRANSIENT entity (not tracked, id=null)
         // => Entity state: {id=null, name="Bob", email="bob@example.com"}
 
         User savedUser = userRepository.save(newUser);
-        // => Executes INSERT INTO users (name, email) VALUES ('Bob', 'bob@example.com')
-        // => Entity transitions to MANAGED state with assigned ID
+        // => JPA detects id==null, performs INSERT operation
+        // => SQL: INSERT INTO users (name, email) VALUES ('Bob', 'bob@example.com')
+        // => Database assigns auto-increment ID (strategy=IDENTITY)
+        // => Entity transitions: TRANSIENT → MANAGED (tracked by persistence context)
         // => Returns: {id=2, name="Bob", email="bob@example.com"}
 
-        System.out.println("Created user with ID: " + savedUser.getId()); // => 2
+        System.out.println("Created user with ID: " + savedUser.getId());
+        // => Prints: 2 (generated primary key)
 
         // UPDATE: Existing entity (id != null)
         savedUser.setEmail("bob.updated@example.com");
-        // => Modifies MANAGED entity field
-        // => Changes not persisted until save() is called
+        // => Modifies MANAGED entity field (dirty checking enabled)
+        // => Changes not persisted until save() called
+        // => Persistence context tracks modification
 
         User updatedUser = userRepository.save(savedUser);
-        // => Executes UPDATE users SET name='Bob', email='bob.updated@example.com' WHERE id=2
+        // => JPA detects id!=null, performs UPDATE operation
+        // => SQL: UPDATE users SET name='Bob', email='bob.updated@example.com' WHERE id=2
         // => Returns updated entity: {id=2, name="Bob", email="bob.updated@example.com"}
 
         System.out.println("Updated email: " + updatedUser.getEmail());
-        // => "bob.updated@example.com"
+        // => Prints: "bob.updated@example.com"
     }
 }
 
@@ -203,47 +232,55 @@ graph TD
 **Code**:
 
 ```java
-package com.example.demo.service;
+package com.example.demo.service;                // => Service layer package
 
-import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
-import org.springframework.stereotype.Service;
-import java.util.Optional;
+import com.example.demo.entity.User;             // => Import User entity
+import com.example.demo.repository.UserRepository; // => Import repository
+import org.springframework.stereotype.Service;    // => Spring component annotation
+import java.util.Optional;                        // => Java 8+ Optional type
 
-@Service
+@Service                                          // => Service bean for Spring container
 public class UserLookupService {
-    private final UserRepository userRepository;
+    private final UserRepository userRepository;  // => Injected repository dependency
 
     public UserLookupService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+        this.userRepository = userRepository;     // => Constructor injection
     }
 
     public void demonstrateFindById() {
         // FOUND: ID exists in database
         Optional<User> found = userRepository.findById(1L);
-        // => SELECT * FROM users WHERE id=1 (indexed lookup), returns Optional[User{...}]
+        // => SQL: SELECT * FROM users WHERE id=1
+        // => Uses index on primary key (fast lookup)
+        // => Returns Optional[User{id=1, name="Alice", ...}] (not null)
 
         found.ifPresent(user -> {
+            // => Lambda executes only if Optional contains value
             System.out.println("Found: " + user.getName());
             // => Prints: "Alice" (safe access, no NPE risk)
         });
 
         // NOT FOUND: ID doesn't exist
         Optional<User> notFound = userRepository.findById(999L);
-        // => Returns Optional.empty() (not null), no exception thrown
+        // => SQL: SELECT * FROM users WHERE id=999
+        // => No rows returned
+        // => Returns Optional.empty() (not null), never throws exception
 
         User defaultUser = notFound.orElse(new User("Guest", "guest@example.com"));
-        // => Fallback when empty, creates Guest user
+        // => Provides fallback value when Optional is empty
+        // => Creates Guest user as default
         System.out.println("User: " + defaultUser.getName());
-        // => Prints: "Guest"
+        // => Prints: "Guest" (fallback executed)
 
         // THROW EXCEPTION: Handle missing entity explicitly
         try {
             User user = userRepository.findById(999L)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-            // => Throws RuntimeException when Optional is empty
+            // => Throws RuntimeException when Optional.empty()
+            // => Forces explicit error handling
         } catch (RuntimeException e) {
             System.out.println("Error: " + e.getMessage());
+            // => Catches thrown exception
             // => Prints: "Error: User not found"
         }
     }
@@ -270,50 +307,54 @@ import com.example.demo.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
-@Service
+@Service                                          // => Service bean for Spring container
 public class UserListService {
-    private final UserRepository userRepository;
+    private final UserRepository userRepository;  // => Injected repository dependency
 
     public UserListService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+        this.userRepository = userRepository;     // => Constructor injection
     }
 
     public void demonstrateFindAll() {
         // Setup: Create test data
         userRepository.save(new User("Alice", "alice@example.com"));
-        // => INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com')
+        // => SQL: INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com')
+        // => Returns User{id=1, ...}
         userRepository.save(new User("Bob", "bob@example.com"));
-        // => INSERT INTO users (name, email) VALUES ('Bob', 'bob@example.com')
+        // => SQL: INSERT INTO users (name, email) VALUES ('Bob', 'bob@example.com')
+        // => Returns User{id=2, ...}
         userRepository.save(new User("Charlie", "charlie@example.com"));
-        // => INSERT INTO users (name, email) VALUES ('Charlie', 'charlie@example.com')
+        // => SQL: INSERT INTO users (name, email) VALUES ('Charlie', 'charlie@example.com')
+        // => Returns User{id=3, ...}
         // => 3 entities persisted with auto-generated IDs
 
         // Retrieve all users
         List<User> allUsers = userRepository.findAll();
-        // => Executes: SELECT * FROM users
-        // => Fetches all rows into List<User>
+        // => SQL: SELECT * FROM users
+        // => Fetches ALL rows into memory as List<User>
         // => Returns List, never null (empty list if no records)
-        // => ⚠️ Loads ALL entities into memory (use Pageable for large datasets)
+        // => ⚠️ OOM risk for large tables (use Pageable for 1000+ rows)
 
         System.out.println("Total users: " + allUsers.size());
-        // => Prints: 3
+        // => Prints: 3 (List size)
 
         allUsers.forEach(user -> {
-            // => Iterates each User in the list
+            // => Lambda iterates each User in the list
             System.out.println(user.getName());
-            // => Prints: "Alice", "Bob", "Charlie"
+            // => Prints: "Alice", "Bob", "Charlie" (one per iteration)
         });
 
         // Empty table scenario
         userRepository.deleteAll();
-        // => Executes DELETE for each entity (inefficient for large tables)
+        // => SQL: DELETE FROM users (no WHERE clause)
+        // => Executes DELETE for each entity (N queries, inefficient)
         List<User> emptyList = userRepository.findAll();
-        // => Executes: SELECT * FROM users
-        // => Returns: [] (empty list, NOT null)
+        // => SQL: SELECT * FROM users
+        // => Returns: [] (empty ArrayList, NOT null)
         // => Safe to call .size() without null check
 
         System.out.println("Empty list size: " + emptyList.size());
-        // => Prints: 0
+        // => Prints: 0 (empty list size)
     }
 }
 
@@ -346,44 +387,57 @@ graph TD
 **Code**:
 
 ```java
-package com.example.demo.service;
+package com.example.demo.service;                // => Service layer package
 
-import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
-import org.springframework.stereotype.Service;
+import com.example.demo.entity.User;             // => Import User entity
+import com.example.demo.repository.UserRepository; // => Import repository
+import org.springframework.stereotype.Service;    // => Spring component annotation
 
-@Service
+@Service                                          // => Service bean for Spring container
 public class UserDeletionService {
-    private final UserRepository userRepository;
+    private final UserRepository userRepository;  // => Injected repository dependency
 
     public UserDeletionService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+        this.userRepository = userRepository;     // => Constructor injection
     }
 
     public void demonstrateDelete() {
         // Setup: Create test users
         User user1 = userRepository.save(new User("Alice", "alice@example.com"));
+        // => SQL: INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com')
+        // => Returns User{id=1, name="Alice", ...}
         User user2 = userRepository.save(new User("Bob", "bob@example.com"));
+        // => SQL: INSERT INTO users (name, email) VALUES ('Bob', 'bob@example.com')
+        // => Returns User{id=2, name="Bob", ...}
         User user3 = userRepository.save(new User("Charlie", "charlie@example.com"));
-        // => 3 INSERT statements, returns User{id=1}, User{id=2}, User{id=3}
+        // => SQL: INSERT INTO users (name, email) VALUES ('Charlie', 'charlie@example.com')
+        // => Returns User{id=3, name="Charlie", ...}
 
         // Method 1: deleteById() - deletes by primary key
         userRepository.deleteById(1L);
-        // => SELECT + DELETE (two queries), removes Alice
+        // => SQL 1: SELECT * FROM users WHERE id=1 (verifies existence)
+        // => SQL 2: DELETE FROM users WHERE id=1 (deletes Alice)
+        // => Two queries total (less efficient than delete(entity))
 
         // Method 2: delete() - deletes by entity object
         userRepository.delete(user2);
-        // => DELETE WHERE id=2 (single query, more efficient)
+        // => SQL: DELETE FROM users WHERE id=2 (single query)
+        // => More efficient (no SELECT needed, entity already loaded)
+        // => Deletes Bob
 
         System.out.println("Remaining users: " + userRepository.count());
+        // => SQL: SELECT COUNT(*) FROM users
         // => Prints: 1 (only Charlie remains)
 
         // Method 3: deleteAll() - deletes all records
         userRepository.deleteAll();
-        // => SELECT * + DELETE per row (loads all into memory, ⚠️ OOM risk for large tables)
+        // => SQL 1: SELECT * FROM users (loads all into memory)
+        // => SQL 2+: DELETE FROM users WHERE id=? (one DELETE per row)
+        // => ⚠️ OOM risk for large tables (use TRUNCATE or batch delete)
 
         System.out.println("Final count: " + userRepository.count());
-        // => Prints: 0
+        // => SQL: SELECT COUNT(*) FROM users
+        // => Prints: 0 (table empty)
     }
 }
 
@@ -401,49 +455,56 @@ public class UserDeletionService {
 **Code**:
 
 ```java
-package com.example.demo.service;
+package com.example.demo.service;                // => Service layer package
 
-import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
-import org.springframework.stereotype.Service;
+import com.example.demo.entity.User;             // => Import User entity
+import com.example.demo.repository.UserRepository; // => Import repository
+import org.springframework.stereotype.Service;    // => Spring component annotation
 
-@Service
+@Service                                          // => Service bean for Spring container
 public class UserCountService {
-    private final UserRepository userRepository;
+    private final UserRepository userRepository;  // => Injected repository dependency
 
     public UserCountService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+        this.userRepository = userRepository;     // => Constructor injection
     }
 
     public void demonstrateCountAndExists() {
         // Setup: Create test data
         userRepository.save(new User("Alice", "alice@example.com"));
+        // => SQL: INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com')
         userRepository.save(new User("Bob", "bob@example.com"));
-        // => 2 INSERT statements, 2 users in database
+        // => SQL: INSERT INTO users (name, email) VALUES ('Bob', 'bob@example.com')
+        // => 2 users persisted with auto-generated IDs
 
         // Count total records
         long totalUsers = userRepository.count();
-        // => SELECT COUNT(*) FROM users, returns 2
+        // => SQL: SELECT COUNT(*) FROM users
+        // => Returns: 2 (total row count)
 
         System.out.println("Total users: " + totalUsers);
         // => Prints: 2
 
         // Check existence by ID
         boolean exists = userRepository.existsById(1L);
-        // => SELECT 1 FROM users WHERE id=1 LIMIT 1 (optimized, doesn't fetch columns)
+        // => SQL: SELECT 1 FROM users WHERE id=1 LIMIT 1
+        // => Optimized query (no columns fetched, just existence check)
+        // => Returns: true (ID 1 exists)
 
         System.out.println("User 1 exists: " + exists);
         // => Prints: true
 
         boolean notExists = userRepository.existsById(999L);
-        // => Returns false (no exception on missing ID)
+        // => SQL: SELECT 1 FROM users WHERE id=999 LIMIT 1
+        // => Returns: false (ID 999 doesn't exist, no exception)
 
         System.out.println("User 999 exists: " + notExists);
         // => Prints: false
 
         // INEFFICIENT: Don't use findById() just to check existence
         boolean inefficient = userRepository.findById(1L).isPresent();
-        // => SELECT * FROM users (fetches all columns, ⚠️ wasteful)
+        // => SQL: SELECT * FROM users WHERE id=1 (fetches ALL columns)
+        // => ⚠️ Wasteful - use existsById() instead (10x faster for existence checks)
     }
 }
 
@@ -479,56 +540,46 @@ public class UserBatchService {
 
     public void demonstrateSaveAll() {
         // Create multiple users
-        List<User> users = Arrays.asList(
-            new User("Alice", "alice@example.com"),
-// => Creates TRANSIENT entity (not yet in database)
-// => id field is null (will be assigned on save)
-            new User("Bob", "bob@example.com"),
-// => Creates TRANSIENT entity (not yet in database)
-// => id field is null (will be assigned on save)
-            new User("Charlie", "charlie@example.com"),
-// => Creates TRANSIENT entity (not yet in database)
-// => id field is null (will be assigned on save)
-            new User("Diana", "diana@example.com")
-// => Creates TRANSIENT entity (not yet in database)
-// => id field is null (will be assigned on save)
-        );
-        // => 4 transient entities (id = null for all)
+        List<User> users = Arrays.asList(          // => Creating list of transient entities
+            new User("Alice", "alice@example.com"),  // => TRANSIENT entity {id=null, name="Alice", email="alice@example.com"}
+            new User("Bob", "bob@example.com"),      // => TRANSIENT entity {id=null, name="Bob", email="bob@example.com"}
+            new User("Charlie", "charlie@example.com"),  // => TRANSIENT entity {id=null, name="Charlie", email="charlie@example.com"}
+            new User("Diana", "diana@example.com")   // => TRANSIENT entity {id=null, name="Diana", email="diana@example.com"}
+        );                                          // => List contains 4 transient entities (id=null for all)
 
         // Batch save
         List<User> savedUsers = userRepository.saveAll(users);
-// => Batch persist operation
-// => With proper configuration (hibernate.jdbc.batch_size), reduces round-trips
-// => Returns List of persisted entities with assigned IDs
-        // => SQL: INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com')
-        // => SQL: INSERT INTO users (name, email) VALUES ('Bob', 'bob@example.com')
-        // => SQL: INSERT INTO users (name, email) VALUES ('Charlie', 'charlie@example.com')
-        // => SQL: INSERT INTO users (name, email) VALUES ('Diana', 'diana@example.com')
-        // => Note: JPA batches these into fewer database roundtrips with proper config
+                                                    // => Executes batch INSERT operation
+                                                    // => SQL: INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com')
+                                                    // => SQL: INSERT INTO users (name, email) VALUES ('Bob', 'bob@example.com')
+                                                    // => SQL: INSERT INTO users (name, email) VALUES ('Charlie', 'charlie@example.com')
+                                                    // => SQL: INSERT INTO users (name, email) VALUES ('Diana', 'diana@example.com')
+                                                    // => With hibernate.jdbc.batch_size configured, reduces to 1-2 roundtrips instead of 4
+                                                    // => Returns List<User> with assigned IDs: [{id=1,...}, {id=2,...}, {id=3,...}, {id=4,...}]
 
-        System.out.println("Saved " + savedUsers.size() + " users"); // => 4
+        System.out.println("Saved " + savedUsers.size() + " users");  // => Output: "Saved 4 users"
 
-        savedUsers.forEach(user -> {
-// => Iterates over collection elements
-// => May trigger lazy loading if accessing relationships
+        savedUsers.forEach(user -> {                // => Iterates each User in savedUsers
             System.out.println("ID: " + user.getId() + ", Name: " + user.getName());
-            // => ID: 1, Name: Alice
-            // => ID: 2, Name: Bob
-            // => ID: 3, Name: Charlie
-            // => ID: 4, Name: Diana
+                                                    // => Output: "ID: 1, Name: Alice"
+                                                    // => Output: "ID: 2, Name: Bob"
+                                                    // => Output: "ID: 3, Name: Charlie"
+                                                    // => Output: "ID: 4, Name: Diana"
         });
 
         // Update multiple entities
         savedUsers.forEach(user -> user.setEmail(user.getEmail().toUpperCase()));
-// => Iterates over collection elements
-// => May trigger lazy loading if accessing relationships
+                                                    // => Modifies email field in each MANAGED entity
+                                                    // => Changes: "alice@example.com" → "ALICE@EXAMPLE.COM", etc.
         List<User> updated = userRepository.saveAll(savedUsers);
-// => Batch persist operation
-// => With proper configuration (hibernate.jdbc.batch_size), reduces round-trips
-// => Returns List of persisted entities with assigned IDs
-        // => 4 UPDATE statements (batched with proper config)
+                                                    // => Executes batch UPDATE operation
+                                                    // => SQL: UPDATE users SET name='Alice', email='ALICE@EXAMPLE.COM' WHERE id=1
+                                                    // => SQL: UPDATE users SET name='Bob', email='BOB@EXAMPLE.COM' WHERE id=2
+                                                    // => (Similar for id=3 and id=4)
+                                                    // => With batching, reduces to 1-2 roundtrips
+                                                    // => Returns List<User> with updated state
 
-        System.out.println("Updated emails to uppercase");
+        System.out.println("Updated emails to uppercase");  // => Output: "Updated emails to uppercase"
     }
 }
 
@@ -576,42 +627,43 @@ public class UserTransactionService {
         this.userRepository = userRepository;
     }
 
-    @Transactional // Required for flush() to work
+    @Transactional                                // => Enables transaction boundaries and flush() support
+                                                  // => Without @Transactional, flush() does nothing
     public void demonstrateFlush() {
         // Create user without flushing
         User user = new User("Alice", "alice@example.com");
-// => Creates TRANSIENT entity (not yet in database)
-// => id field is null (will be assigned on save)
-        // => Creates transient entity (not yet persisted, id=null)
+        // => Creates TRANSIENT entity (not yet in persistence context)
+        // => id field is null (will be assigned on INSERT)
+
         userRepository.save(user);
-        // => Entity in persistence context (not yet in database)
-        // => No SQL executed yet
+        // => Entity added to persistence context (MANAGED state)
+        // => No SQL executed yet (batched until flush/commit)
 
         System.out.println("After save, before flush");
+        // => Prints message (no database interaction yet)
 
         // Force immediate database write
         userRepository.flush();
-// => Forces immediate synchronization of persistence context to database
-// => Executes pending INSERT/UPDATE/DELETE statements
-// => Useful for triggering constraint violations early
+        // => Synchronizes persistence context to database immediately
         // => SQL: INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com')
-        // => Now in database, ID assigned
+        // => Database assigns auto-increment ID (id=1)
 
-        System.out.println("After flush: ID = " + user.getId()); // => ID assigned
+        System.out.println("After flush: ID = " + user.getId());
+        // => Prints: "After flush: ID = 1" (ID now assigned)
 
         // Modify entity
         user.setEmail("alice.updated@example.com");
-        // => Entity marked as dirty in persistence context
+        // => Changes MANAGED entity field (dirty checking enabled)
+        // => Persistence context marks entity as "dirty" (modified)
 
         userRepository.flush();
-// => Forces immediate synchronization of persistence context to database
-// => Executes pending INSERT/UPDATE/DELETE statements
-// => Useful for triggering constraint violations early
+        // => Synchronizes dirty entities to database immediately
         // => SQL: UPDATE users SET email='alice.updated@example.com' WHERE id=1
-        // => Changes written to database immediately
+        // => Changes written to database before transaction commit
 
         // Transaction commits at method end
         // => Any remaining dirty entities flushed automatically
+        // => @Transactional triggers COMMIT (finalizes changes)
     }
 
     @Transactional
@@ -662,81 +714,86 @@ graph TD
 **Code**:
 
 ```java
-package com.example.demo.repository;
+package com.example.demo.repository;                         // => Repository layer package
 
-import com.example.demo.entity.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.List;
-import java.util.Optional;
+import com.example.demo.entity.User;                          // => User entity import
+import org.springframework.data.jpa.repository.JpaRepository; // => Base repository interface
+import java.util.List;                                        // => Java List collection
+import java.util.Optional;                                    // => Java Optional wrapper
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    // Find single user by name
-    Optional<User> findByName(String name);
-// => Spring derives SQL WHERE clause from method name
-// => Returns List<Entity> or Optional<Entity> based on return type
-    // => SQL: SELECT * FROM users WHERE name = ?
+                                                              // => Repository interface for User entity (no implementation needed)
 
-    // Find all users with specific email
-    List<User> findByEmail(String email);
-// => Spring derives SQL WHERE clause from method name
-// => Returns List<Entity> or Optional<Entity> based on return type
-    // => SQL: SELECT * FROM users WHERE email = ?
+    Optional<User> findByName(String name);                   // => Query derivation from method name
+                                                              // => "findBy" prefix triggers query generation
+                                                              // => "Name" matches User.name field
+                                                              // => Generates SQL: SELECT * FROM users WHERE name = ?
+                                                              // => Parameter binding: ? = name (SQL injection safe)
+                                                              // => Returns Optional<User> (single result expected)
+                                                              // => If multiple matches, returns first one (non-deterministic)
+                                                              // => Returns Optional.empty() if no match
+
+    List<User> findByEmail(String email);                     // => Query derivation for multiple results
+                                                              // => "Email" matches User.email field
+                                                              // => Generates SQL: SELECT * FROM users WHERE email = ?
+                                                              // => Returns List<User> (supports 0 or more results)
+                                                              // => Empty list if no matches (never null)
 }
 
 
 ```
 
 ```java
-package com.example.demo.service;
+package com.example.demo.service;                            // => Service layer package
 
-import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
-import org.springframework.stereotype.Service;
-import java.util.Optional;
-import java.util.List;
+import com.example.demo.entity.User;                          // => User entity import
+import com.example.demo.repository.UserRepository;            // => Repository import
+import org.springframework.stereotype.Service;                // => Spring @Service annotation
+import java.util.Optional;                                    // => Optional wrapper for single results
+import java.util.List;                                        // => List for multiple results
 
-@Service
-public class UserQueryService {
-    private final UserRepository userRepository;
+@Service                                                      // => Spring service bean
+public class UserQueryService {                               // => Service layer for User query operations
+    private final UserRepository userRepository;              // => Repository dependency (final for immutability)
 
-    public UserQueryService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserQueryService(UserRepository userRepository) {  // => Constructor injection (preferred over @Autowired)
+        this.userRepository = userRepository;                 // => Assigns injected repository
     }
 
-    public void demonstrateFindByProperty() {
-        // Setup data
+    public void demonstrateFindByProperty() {                 // => Demo method showing query derivation
         userRepository.save(new User("Alice", "alice@example.com"));
-// => Creates TRANSIENT entity (not yet in database)
-// => id field is null (will be assigned on save)
+                                                              // => Creates User entity {id=null, name="Alice", email="alice@example.com"}
+                                                              // => Executes INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com')
+                                                              // => Returns User {id=1, name="Alice", email="alice@example.com"}
         userRepository.save(new User("Bob", "bob@example.com"));
-// => Creates TRANSIENT entity (not yet in database)
-// => id field is null (will be assigned on save)
-        userRepository.save(new User("Alice", "alice2@example.com")); // Duplicate name
-// => Creates TRANSIENT entity (not yet in database)
-// => id field is null (will be assigned on save)
+                                                              // => Creates User entity {id=null, name="Bob", email="bob@example.com"}
+                                                              // => Executes INSERT INTO users (name, email) VALUES ('Bob', 'bob@example.com')
+                                                              // => Returns User {id=2, name="Bob", email="bob@example.com"}
+        userRepository.save(new User("Alice", "alice2@example.com"));
+                                                              // => DUPLICATE name "Alice" (different email)
+                                                              // => Executes INSERT INTO users (name, email) VALUES ('Alice', 'alice2@example.com')
+                                                              // => Returns User {id=3, name="Alice", email="alice2@example.com"}
 
-        // Find by name (returns Optional for single result)
         Optional<User> alice = userRepository.findByName("Alice");
-// => Spring derives SQL WHERE clause from method name
-// => Returns List<Entity> or Optional<Entity> based on return type
-        // => SQL: SELECT * FROM users WHERE name = 'Alice'
-        // => Result: Optional[User{id=1, name="Alice", email="alice@example.com"}]
-        // => WARNING: If multiple "Alice" exist, returns first one found
+                                                              // => Calls derived query method findByName("Alice")
+                                                              // => Executes SQL: SELECT * FROM users WHERE name = 'Alice'
+                                                              // => WARNING: Multiple "Alice" records exist (id=1 and id=3)
+                                                              // => Returns first match (non-deterministic order): Optional[User{id=1, name="Alice", email="alice@example.com"}]
+                                                              // => Optional prevents null pointer exceptions
 
-        alice.ifPresent(user -> {
-// => Executes lambda only if value is present
-// => Safe alternative to .get() which throws NoSuchElementException
-            System.out.println("Found: " + user.getEmail()); // => "alice@example.com"
-        });
+        alice.ifPresent(user -> {                             // => Executes lambda ONLY if Optional contains a value
+                                                              // => Safe alternative to alice.get() which throws NoSuchElementException if empty
+            System.out.println("Found: " + user.getEmail());  // => Output: "Found: alice@example.com"
+        });                                                   // => No output if alice is Optional.empty()
 
-        // Find by email (returns List for multiple results)
         List<User> bobUsers = userRepository.findByEmail("bob@example.com");
-// => Spring derives SQL WHERE clause from method name
-// => Returns List<Entity> or Optional<Entity> based on return type
-        // => SQL: SELECT * FROM users WHERE email = 'bob@example.com'
-        // => Result: [User{id=2, name="Bob", email="bob@example.com"}]
+                                                              // => Calls derived query method findByEmail("bob@example.com")
+                                                              // => Executes SQL: SELECT * FROM users WHERE email = 'bob@example.com'
+                                                              // => Returns List<User> with 1 element: [User{id=2, name="Bob", email="bob@example.com"}]
+                                                              // => List return type supports 0 or more results (never null)
 
-        System.out.println("Users with bob@example.com: " + bobUsers.size()); // => 1
+        System.out.println("Users with bob@example.com: " + bobUsers.size());
+                                                              // => Output: "Users with bob@example.com: 1"
     }
 }
 
@@ -838,37 +895,47 @@ Query keywords like `LessThan`, `GreaterThan`, `Between` map to SQL comparison o
 **Code**:
 
 ```java
-package com.example.demo.entity;
+package com.example.demo.entity;                 // => JPA entity package
 
-import jakarta.persistence.*;
+import jakarta.persistence.*;                     // => Jakarta Persistence API (JPA 3.0+)
 
-@Entity
-// => Marks class as JPA entity (database table mapping)
-@Table(name = "products")
-// => Maps to "products" table in database
+@Entity                                           // => Marks class as JPA entity (table mapping)
+                                                  // => Hibernate scans for @Entity classes at startup
+@Table(name = "products")                         // => Maps to "products" table in database
+                                                  // => Without @Table, defaults to class name "Product"
 public class Product {
-    @Id
-    // => Primary key field
+    @Id                                           // => Primary key field
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // => Auto-increment strategy (database assigns ID)
-    private Long id;
+                                                  // => Auto-increment strategy (database-generated ID)
+                                                  // => Database assigns ID on INSERT
+    private Long id;                              // => Primary key type (Long supports null for new entities)
 
-    private String name;
-    private Double price;
+    private String name;                          // => Product name (nullable=true by default)
+                                                  // => Maps to VARCHAR(255) in database
+    private Double price;                         // => Product price (nullable=true by default)
+                                                  // => Maps to DOUBLE in database
 
-    public Product() {}
-    public Product(String name, Double price) {
-        this.name = name;
-        this.price = price;
-    }
+    public Product() {}                           // => Default constructor REQUIRED by JPA
+                                                  // => JPA uses reflection to instantiate entities
+
+    public Product(String name, Double price) {   // => Convenience constructor for application code
+        this.name = name;                         // => Sets name field
+        this.price = price;                       // => Sets price field
+    }                                             // => Note: id remains null (assigned on persist)
 
     // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public Double getPrice() { return price; }
-    public void setPrice(Double price) { this.price = price; }
+    public Long getId() { return id; }            // => Getter for primary key
+    public void setId(Long id) {                  // => Setter for primary key
+        this.id = id;                             // => Usually only set by JPA, not application code
+    }
+    public String getName() { return name; }      // => Getter for name field
+    public void setName(String name) {            // => Setter for name field
+        this.name = name;                         // => Updates name in managed entity
+    }
+    public Double getPrice() { return price; }    // => Getter for price field
+    public void setPrice(Double price) {          // => Setter for price field
+        this.price = price;                       // => Updates price in managed entity
+    }
 }
 
 
@@ -1130,24 +1197,33 @@ public class UserPatternService {
 **Code**:
 
 ```java
-package com.example.demo.repository;
+package com.example.demo.repository;                 // => Repository layer package
 
-import com.example.demo.entity.Product;
-import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.List;
+import com.example.demo.entity.Product;              // => Import Product entity
+import org.springframework.data.jpa.repository.JpaRepository; // => Base repository interface
+import java.util.List;                                // => Java List collection
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
+                                                      // => Repository for Product entity (Long primary key)
+                                                      // => Spring generates implementation at runtime
+
     // Single property ascending
     List<Product> findAllByOrderByPriceAsc();
+    // => Spring derives query from method name: findAllBy + OrderBy + Price + Asc
     // => SQL: SELECT * FROM products ORDER BY price ASC
+    // => Returns List sorted by price (lowest first)
 
     // Single property descending
     List<Product> findAllByOrderByPriceDesc();
+    // => Spring derives query from method name: findAllBy + OrderBy + Price + Desc
     // => SQL: SELECT * FROM products ORDER BY price DESC
+    // => Returns List sorted by price (highest first)
 
     // Multiple properties
     List<Product> findAllByOrderByNameAscPriceDesc();
+    // => Spring derives multi-column sort: OrderBy + Name + Asc + Price + Desc
     // => SQL: SELECT * FROM products ORDER BY name ASC, price DESC
+    // => Returns List sorted by name alphabetically, then price descending
 }
 
 
@@ -1225,25 +1301,35 @@ public class ProductSortService {
 **Code**:
 
 ```java
-package com.example.demo.repository;
+package com.example.demo.repository;                 // => Repository layer package
 
-import com.example.demo.entity.Product;
-import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.List;
-import java.util.Optional;
+import com.example.demo.entity.Product;              // => Import Product entity
+import org.springframework.data.jpa.repository.JpaRepository; // => Base repository interface
+import java.util.List;                                // => Java List collection
+import java.util.Optional;                            // => Java Optional wrapper
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
+                                                      // => Repository for Product entity (Long primary key)
+                                                      // => Spring generates implementation at runtime
+
     // First result only
     Optional<Product> findFirstByOrderByPriceAsc();
+    // => Spring derives query: findFirst + By + OrderBy + Price + Asc
     // => SQL: SELECT * FROM products ORDER BY price ASC LIMIT 1
+    // => Returns Optional<Product> (single result or empty)
 
     // Top 3 results
     List<Product> findTop3ByOrderByPriceDesc();
+    // => Spring derives query: findTop3 + By + OrderBy + Price + Desc
     // => SQL: SELECT * FROM products ORDER BY price DESC LIMIT 3
+    // => Returns List<Product> (max 3 items, could be fewer)
 
     // First 5 with condition
     List<Product> findFirst5ByPriceGreaterThanOrderByPriceAsc(Double price);
+    // => Spring derives: findFirst5 + By + Price + GreaterThan + OrderBy + Price + Asc
     // => SQL: SELECT * FROM products WHERE price > ? ORDER BY price ASC LIMIT 5
+    // => Parameter binding: ? = price (SQL injection safe)
+    // => Returns List<Product> (max 5 items matching condition)
 }
 
 
@@ -1336,40 +1422,51 @@ public class ProductLimitService {
 **Code**:
 
 ```java
-package com.example.demo.entity;
+package com.example.demo.entity;                     // => JPA entity package
 
-import jakarta.persistence.*;
+import jakarta.persistence.*;                         // => Jakarta Persistence API (JPA 3.0+)
 
-@Entity
-// => Marks class as JPA entity (database table mapping)
-@Table(name = "users")
-// => Maps to "users" table in database
+@Entity                                               // => Marks class as JPA entity (table mapping)
+                                                      // => Hibernate creates users table from this class
+@Table(name = "users")                                // => Explicit table name mapping
+                                                      // => Without @Table, defaults to "User"
 public class User {
-    @Id
-    // => Primary key field
+    @Id                                               // => Primary key field
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // => Auto-increment strategy (database assigns ID)
-    private Long id;
+                                                      // => Auto-increment strategy (database-generated ID)
+                                                      // => Database assigns ID on INSERT
+    private Long id;                                  // => Primary key type (Long supports null for new entities)
 
-    @Column(nullable = false)
-    // => NOT NULL constraint enforced at database level
-    private String name;
+    @Column(nullable = false)                         // => NOT NULL constraint in database
+                                                      // => JPA validates before persisting
+                                                      // => Database rejects INSERT/UPDATE if name is null
+    private String name;                              // => Required field (cannot be null)
 
-    private String email; // Nullable field
+    private String email;                             // => Nullable field (nullable=true by default)
+                                                      // => Can be null in database (email is optional)
+                                                      // => Maps to VARCHAR(255) in database
 
-    public User() {}
-    public User(String name, String email) {
-        this.name = name;
-        this.email = email;
-    }
+    public User() {}                                  // => Default constructor REQUIRED by JPA
+                                                      // => JPA uses reflection to instantiate
+
+    public User(String name, String email) {          // => Convenience constructor
+        this.name = name;                             // => Sets required name field
+        this.email = email;                           // => Sets optional email field (can be null)
+    }                                                 // => Note: id remains null (assigned on persist)
 
     // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public Long getId() { return id; }                // => Getter for primary key
+    public void setId(Long id) {                      // => Setter for primary key
+        this.id = id;                                 // => Usually only set by JPA
+    }
+    public String getName() { return name; }          // => Getter for required name
+    public void setName(String name) {                // => Setter for required name
+        this.name = name;                             // => Updates name in managed entity
+    }
+    public String getEmail() { return email; }        // => Getter for optional email
+    public void setEmail(String email) {              // => Setter for optional email
+        this.email = email;                           // => Updates email (can set to null)
+    }
 }
 
 
@@ -1637,44 +1734,56 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-// => Marks class as JPA entity (database table mapping)
-@Table(name = "departments")
-// => Maps to "departments" table in database
+@Entity                                           // => Marks class as JPA entity (table mapping)
+                                                  // => Hibernate creates departments table from this class
+@Table(name = "departments")                      // => Explicit table name mapping
+                                                  // => Without @Table, defaults to "Department"
 public class Department {
-    @Id
-    // => Primary key field
+    @Id                                           // => Primary key field
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // => Auto-increment strategy (database assigns ID)
-    private Long id;
+                                                  // => Auto-increment strategy (database-generated ID)
+                                                  // => Database assigns ID on INSERT
+    private Long id;                              // => Primary key type (Long supports null for new entities)
 
-    private String name;
+    private String name;                          // => Department name (nullable=true by default)
+                                                  // => Maps to VARCHAR(255) in database
 
     // One department has many employees
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
-    // => Defines entity relationship for foreign key mapping
-    // mappedBy = field name in Employee entity that owns the relationship
-    // cascade = operations propagate to employees
+                                                  // => One-to-many relationship definition
+                                                  // => mappedBy="department" references Employee.department field (inverse side)
+                                                  // => cascade=ALL operations propagate to employees (save, delete, etc.)
+                                                  // => Lazy loaded by default (fetch=LAZY implicit)
     private List<Employee> employees = new ArrayList<>();
+                                                  // => Collection initialized to prevent NPE
+                                                  // => Empty list for new departments
 
-    public Department() {}
-    public Department(String name) {
-        this.name = name;
-    }
+    public Department() {}                        // => Default constructor REQUIRED by JPA
+                                                  // => JPA uses reflection to instantiate
+
+    public Department(String name) {              // => Convenience constructor
+        this.name = name;                         // => Sets department name
+    }                                             // => employees list auto-initialized (empty)
 
     // Helper method to maintain both sides of relationship
     public void addEmployee(Employee employee) {
-        employees.add(employee);
-        employee.setDepartment(this); // Set back-reference
-    }
+        employees.add(employee);                  // => Adds employee to collection (one side)
+        employee.setDepartment(this);             // => Sets back-reference (inverse side)
+    }                                             // => Maintains bidirectional consistency
 
     // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public List<Employee> getEmployees() { return employees; }
-    public void setEmployees(List<Employee> employees) { this.employees = employees; }
+    public Long getId() { return id; }            // => Getter for primary key
+    public void setId(Long id) {                  // => Setter for primary key
+        this.id = id;                             // => Usually only set by JPA
+    }
+    public String getName() { return name; }      // => Getter for department name
+    public void setName(String name) {            // => Setter for department name
+        this.name = name;                         // => Updates name in managed entity
+    }
+    public List<Employee> getEmployees() { return employees; } // => Getter for employees collection
+    public void setEmployees(List<Employee> employees) {      // => Setter for employees collection
+        this.employees = employees;               // => Replaces entire collection
+    }
 }
 
 
@@ -1685,37 +1794,49 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 
-@Entity
-// => Marks class as JPA entity (database table mapping)
-@Table(name = "employees")
-// => Maps to "employees" table in database
+@Entity                                           // => Marks class as JPA entity (table mapping)
+                                                  // => Hibernate creates employees table from this class
+@Table(name = "employees")                        // => Explicit table name mapping
+                                                  // => Without @Table, defaults to "Employee"
 public class Employee {
-    @Id
-    // => Primary key field
+    @Id                                           // => Primary key field
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // => Auto-increment strategy (database assigns ID)
-    private Long id;
+                                                  // => Auto-increment strategy (database-generated ID)
+                                                  // => Database assigns ID on INSERT
+    private Long id;                              // => Primary key type (Long supports null for new entities)
 
-    private String name;
+    private String name;                          // => Employee name (nullable=true by default)
+                                                  // => Maps to VARCHAR(255) in database
 
     // Many employees belong to one department
-    @ManyToOne
-    // => Defines entity relationship for foreign key mapping
-    @JoinColumn(name = "department_id") // Foreign key column
-    private Department department;
+    @ManyToOne                                    // => Many-to-one relationship definition
+                                                  // => This is the "owning side" (has foreign key)
+                                                  // => Eager loaded by default (fetch=EAGER implicit)
+    @JoinColumn(name = "department_id")           // => Foreign key column name
+                                                  // => Creates department_id column in employees table
+                                                  // => References departments.id (implicit)
+    private Department department;                // => Department reference (can be null)
 
-    public Employee() {}
-    public Employee(String name) {
-        this.name = name;
-    }
+    public Employee() {}                          // => Default constructor REQUIRED by JPA
+                                                  // => JPA uses reflection to instantiate
+
+    public Employee(String name) {                // => Convenience constructor
+        this.name = name;                         // => Sets employee name
+    }                                             // => department remains null (set via setter)
 
     // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public Department getDepartment() { return department; }
-    public void setDepartment(Department department) { this.department = department; }
+    public Long getId() { return id; }            // => Getter for primary key
+    public void setId(Long id) {                  // => Setter for primary key
+        this.id = id;                             // => Usually only set by JPA
+    }
+    public String getName() { return name; }      // => Getter for employee name
+    public void setName(String name) {            // => Setter for employee name
+        this.name = name;                         // => Updates name in managed entity
+    }
+    public Department getDepartment() { return department; } // => Getter for department reference
+    public void setDepartment(Department department) {      // => Setter for department reference
+        this.department = department;             // => Sets foreign key relationship
+    }
 }
 
 
@@ -1847,23 +1968,24 @@ public class EmployeeQueryService {
 
         // Query by department name (auto-join)
         List<Employee> engineers = employeeRepository.findByDepartmentName("Engineering");
-// => Spring derives SQL WHERE clause from method name
-// => Returns List<Entity> or Optional<Entity> based on return type
+        // => Spring derives query from method name: findBy + Department.Name
         // => SQL: SELECT e.* FROM employees e
         // =>      JOIN departments d ON e.department_id = d.id
         // =>      WHERE d.name = 'Engineering'
-        // => Result: [Employee{name="Alice"}, Employee{name="Bob"}]
+        // => Returns: [Employee{name="Alice"}, Employee{name="Bob"}]
 
-        System.out.println("Engineers: " + engineers.size()); // => 2
+        System.out.println("Engineers: " + engineers.size());
+        // => Prints: 2 (Alice and Bob from Engineering)
 
         // Query by department ID (no join needed)
         List<Employee> salesTeam = employeeRepository.findByDepartmentId(1L);
-// => Spring derives SQL WHERE clause from method name
-// => Returns List<Entity> or Optional<Entity> based on return type
+        // => Spring derives query from method name: findBy + Department.Id
         // => SQL: SELECT * FROM employees WHERE department_id = 1
-        // => Result: [Employee{name="Alice"}, Employee{name="Bob"}]
+        // => No JOIN needed (foreign key direct match)
+        // => Returns: [Employee{name="Alice"}, Employee{name="Bob"}]
 
-        System.out.println("Sales team: " + salesTeam.size()); // => 2
+        System.out.println("Sales team: " + salesTeam.size());
+        // => Prints: 2 (Alice and Bob from department id=1)
     }
 }
 
@@ -1881,19 +2003,23 @@ public class EmployeeQueryService {
 **Code**:
 
 ```java
-package com.example.demo.repository;
+package com.example.demo.repository;                 // => Repository layer package
 
-import com.example.demo.entity.Employee;
-import com.example.demo.entity.Department;
-import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.List;
+import com.example.demo.entity.Employee;             // => Import Employee entity
+import com.example.demo.entity.Department;           // => Import Department entity
+import org.springframework.data.jpa.repository.JpaRepository; // => Base repository interface
+import java.util.List;                                // => Java List collection
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+                                                      // => Repository for Employee entity (Long primary key)
+                                                      // => Spring generates implementation at runtime
+
     // Find all employees in specific department
     List<Employee> findByDepartment(Department department);
-// => Spring derives SQL WHERE clause from method name
-// => Returns List<Entity> or Optional<Entity> based on return type
+    // => Spring derives query from method name: findBy + Department
     // => SQL: SELECT * FROM employees WHERE department_id = ?
+    // => Parameter binding: ? = department.id (foreign key match)
+    // => Returns List<Employee> (all employees in that department)
 }
 
 
@@ -1995,58 +2121,62 @@ graph TD
 **Code**:
 
 ```java
-package com.example.demo.entity;
+package com.example.demo.entity;                     // => JPA entity package
 
-import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;                         // => Jakarta Persistence API
+import java.util.ArrayList;                           // => ArrayList implementation
+import java.util.List;                                // => List interface
 
-@Entity
-// => Marks class as JPA entity (database table mapping)
-@Table(name = "departments")
-// => Maps to "departments" table in database
+@Entity                                               // => Marks class as JPA entity (table mapping)
+@Table(name = "departments")                          // => Maps to "departments" table
 public class Department {
-    @Id
-    // => Primary key field
+    @Id                                               // => Primary key field
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // => Auto-increment strategy (database assigns ID)
-    private Long id;
+                                                      // => Auto-increment (database-generated ID)
+    private Long id;                                  // => Primary key type
 
-    private String name;
+    private String name;                              // => Department name (nullable by default)
 
-    // CascadeType.PERSIST: save() cascades to employees
-    // CascadeType.MERGE: update() cascades
-    // CascadeType.REMOVE: delete() cascades
-    // CascadeType.REFRESH: refresh() cascades
-    // CascadeType.DETACH: detach() cascades
-    // CascadeType.ALL: all of the above
+    // CascadeType options:
+    // PERSIST: save() cascades to employees
+    // MERGE: update() cascades
+    // REMOVE: delete() cascades
+    // REFRESH: refresh() cascades
+    // DETACH: detach() cascades
+    // ALL: all of the above
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
-    // => Defines entity relationship for foreign key mapping
-    // orphanRemoval = true: delete employees removed from collection
+                                                      // => One-to-many relationship (inverse side)
+                                                      // => mappedBy="department" references Employee.department field
+                                                      // => cascade=ALL propagates all operations to employees
+                                                      // => orphanRemoval=true deletes employees removed from collection
     private List<Employee> employees = new ArrayList<>();
+                                                      // => Collection initialized to prevent NPE
 
-    public Department() {}
-    public Department(String name) {
-        this.name = name;
+    public Department() {}                            // => Default constructor REQUIRED by JPA
+
+    public Department(String name) {                  // => Convenience constructor
+        this.name = name;                             // => Sets department name
     }
 
     public void addEmployee(Employee employee) {
-        employees.add(employee);
-        employee.setDepartment(this);
-    }
+        employees.add(employee);                      // => Adds to collection (one side)
+        employee.setDepartment(this);                 // => Sets back-reference (inverse side)
+    }                                                 // => Maintains bidirectional consistency
 
     public void removeEmployee(Employee employee) {
-        employees.remove(employee);
-        employee.setDepartment(null);
-    }
+        employees.remove(employee);                   // => Removes from collection
+        employee.setDepartment(null);                 // => Clears back-reference
+    }                                                 // => orphanRemoval=true triggers DELETE
 
     // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public List<Employee> getEmployees() { return employees; }
-    public void setEmployees(List<Employee> employees) { this.employees = employees; }
+    public Long getId() { return id; }                // => Getter for primary key
+    public void setId(Long id) { this.id = id; }      // => Setter for primary key
+    public String getName() { return name; }          // => Getter for name
+    public void setName(String name) { this.name = name; } // => Setter for name
+    public List<Employee> getEmployees() { return employees; } // => Getter for employees
+    public void setEmployees(List<Employee> employees) {
+        this.employees = employees;                   // => Setter for employees
+    }
 }
 
 
@@ -2123,46 +2253,55 @@ Fetch strategies control when related entities load. `LAZY` (default for `@OneTo
 **Code**:
 
 ```java
-package com.example.demo.entity;
+package com.example.demo.entity;                     // => JPA entity package
 
-import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;                         // => Jakarta Persistence API
+import java.util.ArrayList;                           // => ArrayList implementation
+import java.util.List;                                // => List interface
 
-@Entity
-// => Marks class as JPA entity (database table mapping)
-@Table(name = "departments")
-// => Maps to "departments" table in database
+@Entity                                               // => Marks class as JPA entity (table mapping)
+@Table(name = "departments")                          // => Maps to "departments" table
 public class Department {
-    @Id
-    // => Primary key field
+    @Id                                               // => Primary key field
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // => Auto-increment strategy (database assigns ID)
-    private Long id;
+                                                      // => Auto-increment (database-generated ID)
+    private Long id;                                  // => Primary key type
 
-    private String name;
+    private String name;                              // => Department name
 
     // LAZY: Default for @OneToMany - load only when accessed
     @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
-    // => Defines entity relationship for foreign key mapping
+                                                      // => One-to-many relationship (inverse side)
+                                                      // => mappedBy="department" references Employee.department
+                                                      // => fetch=LAZY delays loading until employees accessed
+                                                      // => Initial SELECT only loads department (no employees)
+                                                      // => Accessing employees triggers SELECT for employees
     private List<Employee> employees = new ArrayList<>();
+                                                      // => Collection initialized to prevent NPE
 
-    // EAGER: Load immediately with department
+    // EAGER alternative: Load immediately with department
     // @OneToMany(mappedBy = "department", fetch = FetchType.EAGER)
+    //                                               // => fetch=EAGER loads employees immediately
+    //                                               // => Initial SELECT uses JOIN to load both
+    //                                               // => ⚠️ N+1 problem risk with multiple departments
     // private List<Employee> employees = new ArrayList<>();
 
-    public Department() {}
-    public Department(String name) {
-        this.name = name;
+    public Department() {}                            // => Default constructor REQUIRED by JPA
+
+    public Department(String name) {                  // => Convenience constructor
+        this.name = name;                             // => Sets department name
     }
 
     // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public List<Employee> getEmployees() { return employees; }
-    public void setEmployees(List<Employee> employees) { this.employees = employees; }
+    public Long getId() { return id; }                // => Getter for primary key
+    public void setId(Long id) { this.id = id; }      // => Setter for primary key
+    public String getName() { return name; }          // => Getter for name
+    public void setName(String name) { this.name = name; } // => Setter for name
+    public List<Employee> getEmployees() { return employees; } // => Getter for employees
+                                                      // => Triggers LAZY load if not yet loaded
+    public void setEmployees(List<Employee> employees) {
+        this.employees = employees;                   // => Setter for employees
+    }
 }
 
 
@@ -2265,108 +2404,116 @@ graph TD
 **Code**:
 
 ```java
-package com.example.demo.entity;
+package com.example.demo.entity;                     // => JPA entity package
 
-import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;                         // => Jakarta Persistence API
+import java.util.ArrayList;                           // => ArrayList implementation
+import java.util.List;                                // => List interface
 
-@Entity
-// => Marks class as JPA entity (database table mapping)
-@Table(name = "departments")
-// => Maps to "departments" table in database
+@Entity                                               // => Marks class as JPA entity (table mapping)
+@Table(name = "departments")                          // => Maps to "departments" table
 public class Department {
-    @Id
-    // => Primary key field
+    @Id                                               // => Primary key field
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // => Auto-increment strategy (database assigns ID)
-    private Long id;
+                                                      // => Auto-increment (database-generated ID)
+    private Long id;                                  // => Primary key type
 
-    private String name;
+    private String name;                              // => Department name
 
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
-    // => Defines entity relationship for foreign key mapping
+                                                      // => One-to-many relationship (inverse side)
+                                                      // => mappedBy="department" references Employee.department
+                                                      // => cascade=ALL propagates operations to employees
+                                                      // => orphanRemoval=true deletes orphaned employees
     private List<Employee> employees = new ArrayList<>();
+                                                      // => Collection initialized to prevent NPE
 
-    public Department() {}
-    public Department(String name) {
-        this.name = name;
+    public Department() {}                            // => Default constructor REQUIRED by JPA
+
+    public Department(String name) {                  // => Convenience constructor
+        this.name = name;                             // => Sets department name
     }
 
-    // CORRECT: Sync both sides
+    // CORRECT: Sync both sides of bidirectional relationship
     public void addEmployee(Employee employee) {
-        employees.add(employee);
-        employee.setDepartment(this); // Maintain bidirectional link
-    }
+        employees.add(employee);                      // => Adds to collection (one side)
+        employee.setDepartment(this);                 // => Sets back-reference (inverse side)
+    }                                                 // => CRITICAL: Both sides must be synchronized
 
     public void removeEmployee(Employee employee) {
-        employees.remove(employee);
-        employee.setDepartment(null); // Break bidirectional link
-    }
+        employees.remove(employee);                   // => Removes from collection
+        employee.setDepartment(null);                 // => Clears back-reference
+    }                                                 // => orphanRemoval=true triggers DELETE
 
-    // WRONG: Only sets one side
+    // WRONG PATTERN: Only sets one side (causes data inconsistency)
     // public void addEmployeeWrong(Employee employee) {
-    //     employees.add(employee); // Missing: employee.setDepartment(this)
+    //     employees.add(employee);                  // => Only adds to collection
+    //                                               // => Missing: employee.setDepartment(this)
+    //                                               // => ⚠️ Employee's department_id remains NULL
     // }
 
     // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public List<Employee> getEmployees() { return employees; }
-    public void setEmployees(List<Employee> employees) { this.employees = employees; }
+    public Long getId() { return id; }                // => Getter for primary key
+    public void setId(Long id) { this.id = id; }      // => Setter for primary key
+    public String getName() { return name; }          // => Getter for name
+    public void setName(String name) { this.name = name; } // => Setter for name
+    public List<Employee> getEmployees() { return employees; } // => Getter for employees
+    public void setEmployees(List<Employee> employees) {
+        this.employees = employees;                   // => Setter for employees
+    }
 }
 
 
 ```
 
 ```java
-package com.example.demo.entity;
+package com.example.demo.entity;                     // => JPA entity package
 
-import jakarta.persistence.*;
+import jakarta.persistence.*;                         // => Jakarta Persistence API
 
-@Entity
-// => Marks class as JPA entity (database table mapping)
-@Table(name = "employees")
-// => Maps to "employees" table in database
+@Entity                                               // => Marks class as JPA entity (table mapping)
+@Table(name = "employees")                            // => Maps to "employees" table
 public class Employee {
-    @Id
-    // => Primary key field
+    @Id                                               // => Primary key field
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // => Auto-increment strategy (database assigns ID)
-    private Long id;
+                                                      // => Auto-increment (database-generated ID)
+    private Long id;                                  // => Primary key type
 
-    private String name;
+    private String name;                              // => Employee name
 
-    @ManyToOne
-    // => Defines entity relationship for foreign key mapping
-    @JoinColumn(name = "department_id")
-    // => Foreign key column: department_id
-    private Department department;
+    @ManyToOne                                        // => Many-to-one relationship (owning side)
+                                                      // => This side owns the foreign key
+    @JoinColumn(name = "department_id")               // => Foreign key column name
+                                                      // => Creates department_id column in employees table
+                                                      // => References departments.id (implicit)
+    private Department department;                    // => Department reference (can be null)
 
-    public Employee() {}
-    public Employee(String name) {
-        this.name = name;
-    }
+    public Employee() {}                              // => Default constructor REQUIRED by JPA
 
-    // Defensive setter: sync reverse side
+    public Employee(String name) {                    // => Convenience constructor
+        this.name = name;                             // => Sets employee name
+    }                                                 // => department remains null (set via setter)
+
+    // Defensive setter: automatically syncs both sides of relationship
     public void setDepartment(Department department) {
         if (this.department != null) {
-            this.department.getEmployees().remove(this); // Remove from old dept
+            this.department.getEmployees().remove(this);
+                                                      // => Removes from old department's collection
+                                                      // => Prevents duplicate references
         }
-        this.department = department;
+        this.department = department;                 // => Sets new department reference (or null)
         if (department != null && !department.getEmployees().contains(this)) {
-            department.getEmployees().add(this); // Add to new dept
+            department.getEmployees().add(this);      // => Adds to new department's collection
+                                                      // => Maintains bidirectional consistency
         }
-    }
+    }                                                 // => Alternative to manual add/remove helpers
 
     // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public Department getDepartment() { return department; }
+    public Long getId() { return id; }                // => Getter for primary key
+    public void setId(Long id) { this.id = id; }      // => Setter for primary key
+    public String getName() { return name; }          // => Getter for name
+    public void setName(String name) { this.name = name; } // => Setter for name
+    public Department getDepartment() { return department; } // => Getter for department
 }
 
 

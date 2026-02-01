@@ -789,87 +789,44 @@ result: str = str_stack.pop()                 # => Pop with type safety
 Identify performance bottlenecks using cProfile for function-level timing.
 
 ```python
-import cProfile                               # => Import profiling module
-                                               # => C-based profiler (fast)
+import cProfile                               # => Import profiling module (C-based, fast)
 import pstats                                 # => Import statistics formatter
-                                               # => Analyzes profiler output
 
 def fibonacci(n):                             # => Define recursive function
-                                               # => Classic inefficient implementation
     """Inefficient recursive Fibonacci"""
-    if n < 2:                                 # => Base case check
-                                               # => True for n=0 or n=1
-                                               # => Terminates recursion
+    if n < 2:                                 # => Base case: n=0 or n=1
         return n                               # => Returns 0 for n=0, 1 for n=1
-                                               # => Stops recursion
-                                               # => No further calls
     return fibonacci(n-1) + fibonacci(n-2)     # => Two recursive calls per invocation
-                                               # => fibonacci(24) calls fibonacci(23) + fibonacci(22)
-                                               # => Exponential time: O(2^n)
-                                               # => MASSIVE duplicate computation
-                                               # => Many values recomputed thousands of times
+                                               # => Exponential time O(2^n) - massive duplicate computation
 
 def calculate_sequence():                     # => Define wrapper function
-                                               # => Groups multiple calls for profiling
     """Calculate multiple Fibonacci numbers"""
-    results = [fibonacci(i) for i in range(25)]  # => List comprehension
-                                                  # => Calls fibonacci(0), fibonacci(1), ..., fibonacci(24)
+    results = [fibonacci(i) for i in range(25)]  # => Calls fibonacci(0) through fibonacci(24)
                                                   # => fibonacci(24) alone makes ~46,368 recursive calls
-                                                  # => Total across all: 150,000+ function calls
-    return results                            # => Returns computed list
-                                               # => Returns [0, 1, 1, 2, 3, 5, 8, ...]
-                                               # => List of first 25 Fibonacci numbers
+    return results                            # => Returns [0, 1, 1, 2, 3, 5, 8, ...]
 
 # Profile function execution
 profiler = cProfile.Profile()                 # => Create profiler instance
-                                               # => Create profiler object
-                                               # => Low-overhead profiler (~5% slowdown)
-profiler.enable()                             # => Start recording calls
-                                               # => Start profiling
-                                               # => Records all function calls from this point
-                                               # => Tracks: function name, call count, time spent
-result = calculate_sequence()                 # => Execute target code
-                                               # => Execute code to profile
-                                               # => Profiler tracks EVERY fibonacci() call
-                                               # => ~150,000 calls recorded
+profiler.enable()                             # => Start recording all function calls
+                                               # => Tracks function name, call count, time spent
+result = calculate_sequence()                 # => Execute target code (~150,000 calls recorded)
 profiler.disable()                            # => Stop recording calls
-                                               # => Stop profiling
-                                               # => Stops recording function calls
-                                               # => All data stored in profiler object
 
 # Analyze and print statistics
-stats = pstats.Stats(profiler)                # => Create stats object
-                                               # => Create statistics object from profiler
-                                               # => Provides sorting and formatting
-stats.sort_stats('cumulative')                # => Sort by cumulative time
-                                               # => Sort by cumulative time
-                                               # => Cumulative: total time including subcalls
-                                               # => Shows functions with most total time first
-stats.print_stats(10)                         # => Print top 10 entries
-                                               # => Print top 10 slowest functions
-                                               # => Output table with columns:
-                                               # => ncalls, tottime, percall, cumtime, percall, filename:lineno(function)
+stats = pstats.Stats(profiler)                # => Create statistics object from profiler
+stats.sort_stats('cumulative')                # => Sort by cumulative time (total time including subcalls)
+stats.print_stats(10)                         # => Print top 10 slowest functions
+                                               # => Output: ncalls, tottime, percall, cumtime, filename:lineno(function)
 
 # Example output interpretation:
-# ncalls: 150049                              # => fibonacci() called 150,049 times!
-                                               # => Massive number for just 25 calls
-                                               # => Shows recursion explosion
+# ncalls: 150049                              # => fibonacci() called 150,049 times (recursion explosion)
 # tottime: 0.05s                              # => Time in fibonacci() itself (excluding subcalls)
-                                               # => Only the arithmetic and comparisons
-                                               # => Excludes recursive call time
 # cumtime: 0.05s                              # => Total time including ALL recursive subcalls
-                                               # => Nearly identical to tottime (lightweight function)
-                                               # => Full execution time
 # filename:lineno(function)                   # => Source file location
-                                               # => Function identifier
 
 # Performance bottleneck identified:
-# => fibonacci() dominates execution with 150K+ calls
-# => Exponential time complexity O(2^n)
-# => Solutions:
-#    1. Memoization: Cache results (DP)
-#    2. Iterative approach: O(n) time
-#    3. Matrix exponentiation: O(log n)
+# => fibonacci() dominates with 150K+ calls, O(2^n) complexity
+# => Solutions: (1) Memoization, (2) Iterative O(n), (3) Matrix exponentiation O(log n)
 ```
 
 **Key Takeaway**: cProfile reveals performance hotspots showing call counts and time per function.
@@ -881,62 +838,33 @@ stats.print_stats(10)                         # => Print top 10 entries
 Track memory usage with memory_profiler to identify memory leaks.
 
 ```python
-from memory_profiler import profile           # => Import memory profiling decorator
-                                               # => Line-by-line memory tracking
+from memory_profiler import profile           # => Import memory profiling decorator (line-by-line tracking)
 
-@profile                                      # => Decorator instruments function
-                                               # => Decorator instruments function for memory profiling
-                                               # => Tracks line-by-line memory usage
-                                               # => Adds ~2x slowdown during profiling
-                                               # => Measures memory at each line
+@profile                                      # => Decorator instruments function for memory profiling
+                                               # => Tracks line-by-line memory usage (~2x slowdown)
 def process_large_data():                     # => Define function to profile
-                                               # => Target function for analysis
     """Function that uses memory"""
-    data = [i ** 2 for i in range(1000000)]  # => Create large list
-                                               # => Create list of 1 million integers
-                                               # => Computes [0, 1, 4, 9, 16, ...]
-                                               # => Each int ~28 bytes in Python
-                                               # => Total: ~38 MiB for data
+    data = [i ** 2 for i in range(1000000)]  # => Create list of 1 million integers (~38 MiB)
                                                # => Major allocation event
-    filtered = [x for x in data if x % 2 == 0]  # => Create second large list
-                                               # => Filter even numbers only
-                                               # => Creates SECOND list (not in-place)
-                                               # => ~500,000 even numbers
-                                               # => Additional ~37.7 MiB allocated
-                                               # => Peak memory here (both lists)
-    result = sum(filtered)                    # => Compute sum
-                                               # => Sum all filtered values
-                                               # => Single integer result
-                                               # => No additional memory allocation
-    return result                             # => Return sum value
-                                               # => Returns integer sum
-                                               # => Lists remain in memory until GC
+    filtered = [x for x in data if x % 2 == 0]  # => Create second large list (~500,000 even numbers)
+                                               # => Additional ~37.7 MiB allocated (peak: 88.2 MiB total)
+    result = sum(filtered)                    # => Compute sum (no additional memory allocation)
+    return result                             # => Return sum value (lists remain until GC)
 
 # Run function with memory profiling
 # result = process_large_data()               # => Execute profiled function
-                                               # => Execute with @profile decorator active
                                                # => Prints line-by-line memory report
-                                               # => Shows memory growth
 
 # Example output interpretation:
 # Line    Mem usage    Increment   Line Contents
 # ====    =========    =========   =============
-#     3     50.5 MiB     50.5 MiB   data = [...]          # => Initial allocation (38 MiB data + overhead)
-                                                            # => Memory usage jumps significantly
-                                                            # => First major allocation
-#     4     88.2 MiB     37.7 MiB   filtered = [...]      # => Second large allocation
-                                                            # => Additional 37.7 MiB for filtered list
-                                                            # => Total: 88.2 MiB (both lists in memory)
-                                                            # => Peak memory usage point
-#     5     88.2 MiB      0.0 MiB   result = sum(...)     # => No new allocation
-                                                            # => Just iterates and sums (O(1) space)
-                                                            # => Constant memory for sum
+#     3     50.5 MiB     50.5 MiB   data = [...]          # => Initial allocation (38 MiB + overhead)
+#     4     88.2 MiB     37.7 MiB   filtered = [...]      # => Second allocation (peak memory: both lists)
+#     5     88.2 MiB      0.0 MiB   result = sum(...)     # => No new allocation (constant space)
 
 # Memory optimization insights:
 # => Two large lists exist simultaneously (88 MiB total)
-# => Could use generator expressions for streaming: (x for x in ... if x % 2 == 0)
-# => Generator would reduce peak memory to ~50 MiB (only data list needed)
-# => Trade-off: streaming uses less memory but may be slower
+# => Use generators for streaming: (x for x in ... if x % 2 == 0) reduces peak to ~50 MiB
 ```
 
 **Key Takeaway**: memory_profiler shows line-by-line memory usage revealing allocation hotspots.
@@ -1064,53 +992,33 @@ graph TD
 ```
 
 ```python
-from concurrent.futures import ThreadPoolExecutor, as_completed  # => Import executor and helper
-                                                                  # => ThreadPoolExecutor: thread pool management
+from concurrent.futures import ThreadPoolExecutor, as_completed  # => ThreadPoolExecutor: thread pool management
                                                                   # => as_completed: yield futures as they finish
-import time                                   # => Import time module
-                                               # => Provides sleep for simulation
+import time                                   # => Import time module for simulation
 
 def process_task(task_id):                    # => Define worker function
-                                               # => Accepts task identifier
     """Process single task"""
-    time.sleep(1)                             # => Simulate I/O work
-                                               # => 1 second delay per task
+    time.sleep(1)                             # => Simulate I/O work (1 second delay)
     return f"Task {task_id} completed"        # => Return result string
-                                               # => Indicates completion
 
 # Thread pool with max 3 worker threads
-with ThreadPoolExecutor(max_workers=3) as executor:  # => Create thread pool
-                                                      # => max_workers=3: 3 threads max
-    # => Creates thread pool with 3 worker threads
-    # => Threads are reused for multiple tasks
-    # => Context manager ensures cleanup
+with ThreadPoolExecutor(max_workers=3) as executor:  # => Create thread pool with 3 worker threads
+    # => Threads are reused for multiple tasks, context manager ensures cleanup
 
     # Submit tasks
-    futures = [executor.submit(process_task, i) for i in range(10)]  # => Submit all tasks
-                                                                       # => List comprehension creates futures
-    # => Submits 10 tasks to thread pool
+    futures = [executor.submit(process_task, i) for i in range(10)]  # => Submit 10 tasks to pool
     # => Returns list of Future objects
-    # => Tasks queued and distributed to 3 workers
-    # => First 3 tasks start immediately
-    # => Remaining 7 tasks wait in queue
+    # => First 3 tasks start immediately, remaining 7 tasks wait in queue
 
     # Process as completed (not in submission order)
-    for future in as_completed(futures):      # => Iterate over completing futures
-                                               # => Yields futures as they complete
-                                               # => NOT in submission order
-                                               # => Returns first completed task first
-        result = future.result()              # => Extract result value
-                                               # => Get result from completed task
-                                               # => Blocks if future not done yet
+    for future in as_completed(futures):      # => Iterate over futures as they complete
+                                               # => NOT in submission order (first completed returns first)
+        result = future.result()              # => Extract result value (blocks if not done yet)
                                                # => Returns "Task X completed"
-        print(result)                         # => Print result
-                                               # => Output: Task X completed
-                                               # => Order varies (depends on completion)
+        print(result)                         # => Output: Task X completed (order varies)
 
-# Context manager exit here
-# => Calls executor.shutdown(wait=True)
-# => Waits for all tasks to complete
-# => Cleans up threads automatically
+# Context manager exit: calls executor.shutdown(wait=True)
+# => Waits for all tasks to complete, cleans up threads automatically
 # => All 10 tasks complete in ~4 seconds (10 tasks / 3 workers ≈ 3.33 seconds)
 ```
 
@@ -1155,67 +1063,39 @@ graph TD
 ```
 
 ```python
-from multiprocessing import Pool              # => Import process pool class
-                                               # => Manages worker processes
-import time                                   # => Import time module
-                                               # => For timing (not used in this example)
+from multiprocessing import Pool              # => Import process pool class for worker management
+import time                                   # => Import time module (unused in this example)
 
-def cpu_intensive_task(n):                    # => Define CPU-bound function
-                                               # => Pure computation (no I/O)
+def cpu_intensive_task(n):                    # => Define CPU-bound function (pure computation, no I/O)
     """CPU-bound computation"""
-    total = 0                                 # => Initialize accumulator to 0
-                                               # => Will store sum of squares
-                                               # => Counter variable
+    total = 0                                 # => Initialize accumulator for sum of squares
     for i in range(n):                        # => Loop 10 million times (n=10,000,000)
-                                               # => Pure CPU computation (no I/O waits)
-                                               # => Compute intensive work
-        total += i ** 2                       # => Compute square: i * i
-                                               # => Add to accumulator
-                                               # => CPU-bound: GIL blocks parallel execution in threads
-    return total                              # => Return computed sum
-                                               # => Result: sum(i^2 for i in 0..9999999)
-                                               # => = 333,333,283,333,335,000
+                                               # => Pure CPU computation (GIL blocks parallel in threads)
+        total += i ** 2                       # => Compute square and add to accumulator
+    return total                              # => Return sum: 333,333,283,333,335,000
 
-if __name__ == '__main__':                    # => Entry point guard
-                                               # => Guard required for multiprocessing
+if __name__ == '__main__':                    # => Entry point guard (required for multiprocessing)
                                                # => Prevents recursive process spawning on Windows
-                                               # => Entry point protection
     # Sequential (slow) - single core utilization
     # results = [cpu_intensive_task(10**7) for _ in range(4)]
-    # => Calls cpu_intensive_task() 4 times sequentially
-    # => GIL blocks parallel execution (one task at a time)
-    # => Only 1 CPU core used (other cores idle)
+    # => Calls 4 times sequentially (GIL blocks parallel, only 1 core used)
     # => Total time: ~4x single task time (e.g., 8 seconds)
 
     # Parallel with process pool (fast) - multi-core utilization
-    with Pool(processes=4) as pool:           # => Create process pool
-                                               # => Create process pool with 4 workers
-                                               # => Spawns 4 separate Python processes
-                                               # => Each process: own Python interpreter + own GIL
+    with Pool(processes=4) as pool:           # => Create process pool with 4 workers
+                                               # => Spawns 4 separate Python processes (each with own GIL)
                                                # => NO GIL contention (separate interpreters!)
-                                               # => Context manager handles pool.close() + pool.join()
         results = pool.map(cpu_intensive_task, [10**7] * 4)  # => Distribute work across processes
-                                                              # => Map function to arguments
-        # => pool.map(func, iterable) distributes work
-        # => Argument list: [10000000, 10000000, 10000000, 10000000]
-        # => Process 1: cpu_intensive_task(10**7) on CPU core 1
-        # => Process 2: cpu_intensive_task(10**7) on CPU core 2
-        # => Process 3: cpu_intensive_task(10**7) on CPU core 3
-        # => Process 4: cpu_intensive_task(10**7) on CPU core 4
-        # => TRUE parallel execution (all cores running simultaneously)
+        # => Process 1-4: cpu_intensive_task(10**7) on CPU cores 1-4
+        # => TRUE parallel execution (all cores simultaneously)
         # => Results serialized and returned as list
         # => Total time: ~1x single task time (4x speedup on 4-core CPU)
 
-    print(f"Results: {results}")              # => Print results list
-                                               # => Output: [333333283333335000, 333333283333335000, 333333283333335000, 333333283333335000]
-                                               # => All 4 processes computed same sum
-                                               # => List preserves order from input iterable
+    print(f"Results: {results}")              # => Output: [333333283333335000, ...] (4 same sums)
 
 # Multiprocessing overhead considerations:
-# => Process creation: ~100ms startup cost per process
-# => Inter-process communication: pickling/unpickling results
-# => Memory: each process has own memory space (no shared state)
-# => Only worth it for CPU-bound tasks taking >100ms
+# => Process creation: ~100ms startup, IPC: pickling/unpickling, memory: separate spaces
+# => Only worth it for CPU-bound tasks >100ms
 ```
 
 **Key Takeaway**: Multiprocessing achieves true parallelism for CPU-bound tasks using separate processes.
@@ -1779,26 +1659,38 @@ mytool = "mypackage.cli:main"                 # => mytool command → mypackage.
                                                # => Creates executable 'mytool' in PATH
 ```
 
+**Package CLI entry point example**:
+
 ```python
+# File: mypackage/cli.py
+def main():                                   # => CLI entry point function
+    """Main CLI entry point"""
+    import sys                                # => Import sys for argv access
+    print(f"mytool called with args: {sys.argv[1:]}")  # => Print command arguments
+                                                        # => Output: mytool called with args: [...]
+    # CLI logic here
+    return 0                                  # => Return exit code (0 = success)
+
+if __name__ == '__main__':                    # => Direct execution guard
+    import sys                                # => Import sys for exit
+    sys.exit(main())                          # => Call main and exit with return code
+```
+
+**Build and distribution commands**:
+
+```bash
 # Build distribution
-# python -m build                             # => Creates dist/mypackage-0.1.0.tar.gz (source)
+python -m build                               # => Creates dist/mypackage-0.1.0.tar.gz (source)
                                                # => Creates dist/mypackage-0.1.0-py3-none-any.whl (wheel)
-                                               # => Builds both source and wheel distributions
 
 # Install in development mode
-# pip install -e .                            # => Editable install (changes reflect immediately)
-                                               # => Links to source directory
-                                               # => No need to rebuild after code changes
+pip install -e .                              # => Editable install (changes reflect immediately)
 
 # Install with optional dependencies
-# pip install -e ".[dev]"                     # => Install with dev dependencies
-                                               # => Includes pytest and black
-                                               # => Use quotes to prevent shell expansion
+pip install -e ".[dev]"                       # => Install with dev dependencies (pytest, black)
 
 # Publish to PyPI
-# twine upload dist/*                         # => Upload both .tar.gz and .whl to PyPI
-                                               # => Requires PyPI account and token
-                                               # => Makes package available via 'pip install'
+twine upload dist/*                           # => Upload to PyPI (requires account and token)
 ```
 
 **Key Takeaway**: pyproject.toml provides standardized packaging configuration for modern Python projects.
@@ -1861,67 +1753,40 @@ mock_db.query.assert_called_with("SELECT * FROM users")  # => Verify call argume
 Markers tag tests for selective execution and categorization.
 
 ```python
-import pytest                                 # => Import pytest framework
-                                               # => Provides @pytest.mark decorators
+import pytest                                 # => Import pytest framework (provides @pytest.mark decorators)
 
-@pytest.mark.slow                             # => Mark test as 'slow'
-                                               # => Decorator applies metadata to function
-                                               # => Decorator applies metadata
-def test_long_running_operation():           # => Define test function
-                                               # => pytest auto-discovers via 'test_' prefix
+@pytest.mark.slow                             # => Mark test as 'slow' (decorator applies metadata)
+def test_long_running_operation():           # => Define test function (auto-discovered via 'test_' prefix)
     """Test marked as slow"""
-    import time                                # => Import time module
-                                               # => Needed for sleep function
-    time.sleep(2)                             # => Sleep for 2 seconds
-                                               # => 2 second delay
-                                               # => Simulates slow operation
-    assert True                               # => Always passes
-                                               # => Validates test infrastructure
+    import time                                # => Import time module for sleep
+    time.sleep(2)                             # => Sleep for 2 seconds (simulates slow operation)
+    assert True                               # => Always passes (validates test infrastructure)
 
-@pytest.mark.unit                             # => Mark test as 'unit'
-                                               # => Indicates unit test category
-def test_fast_unit():                         # => Define unit test function
-                                               # => Fast execution expected
+@pytest.mark.unit                             # => Mark test as 'unit' (indicates unit test category)
+def test_fast_unit():                         # => Define unit test function (fast execution expected)
     """Unit test (fast)"""
-    assert 1 + 1 == 2                         # => Fast assertion
-                                               # => Fast test (~milliseconds)
-                                               # => No I/O or external dependencies
+    assert 1 + 1 == 2                         # => Fast assertion (~milliseconds, no I/O)
 
 @pytest.mark.integration                      # => Mark test as 'integration'
-                                               # => First marker on function
-@pytest.mark.slow                             # => Multiple markers allowed
-                                               # => Second marker on same function
-                                               # => Has BOTH 'integration' AND 'slow'
-def test_database_integration():              # => Define integration test
-                                               # => Combines both marker categories
+@pytest.mark.slow                             # => Multiple markers allowed (has BOTH markers)
+def test_database_integration():              # => Define integration test (combines both categories)
     """Integration test (slow)"""
-    assert True                               # => Simple assertion
-                                               # => Marked for selective execution
+    assert True                               # => Simple assertion (marked for selective execution)
 
 # Run only specific markers:
-# pytest -m unit                              # => Command: run unit tests only
-                                               # => Run only tests with 'unit' marker
-                                               # => Skips slow and integration tests
-                                               # => Enables fast feedback during development
-# pytest -m "not slow"                        # => Command: exclude slow tests
-                                               # => Run all tests EXCEPT slow
-                                               # => Runs only fast tests
-                                               # => Uses boolean expression
-# pytest -m "slow and integration"            # => Command: both markers required
-                                               # => Run tests with BOTH markers
+# pytest -m unit                              # => Run only tests with 'unit' marker
+                                               # => Skips slow and integration tests (fast feedback)
+# pytest -m "not slow"                        # => Run all tests EXCEPT slow (boolean expression)
+# pytest -m "slow and integration"            # => Run tests with BOTH markers (AND logic)
                                                # => Runs test_database_integration only
-                                               # => AND logic for marker filtering
 
 # Custom markers in pytest.ini or pyproject.toml:
 # [tool:pytest]                               # => pytest configuration section
 # markers =                                   # => Marker registration list
-#     slow: marks tests as slow (>1 second)  # => Define 'slow' marker with description
-                                               # => Documents marker purpose for team
+#     slow: marks tests as slow (>1 second)  # => Define 'slow' marker with description (documents purpose)
 #     unit: marks tests as unit tests         # => Define 'unit' marker
 #     integration: marks tests as integration tests  # => Define 'integration' marker
-# => Declares markers to avoid warnings
-# => Documents marker purpose
-# => Enables IDE/editor autocomplete
+# => Declares markers (avoids warnings, enables IDE autocomplete)
 ```
 
 **Key Takeaway**: Markers enable test categorization and selective execution for faster development workflows.
@@ -2041,54 +1906,59 @@ sequenceDiagram
 ```
 
 ```python
-class Observable:
+class Observable:                             # => Define subject class
+                                               # => Maintains list of observers and notifies them
     """Subject that observers watch"""
 
-    def __init__(self):
-        self._observers = []                  # => List of registered observers
-                                               # => Initially empty
+    def __init__(self):                       # => Initialize observable
+        self._observers = []                  # => List of registered observers (initially empty)
+                                               # => Private list prevents direct access
 
-    def attach(self, observer):
+    def attach(self, observer):               # => Add observer method
         """Add observer to notification list"""
-        self._observers.append(observer)      # => Register new observer
-                                               # => Observer must have update() method
+        self._observers.append(observer)      # => Register new observer (must have update() method)
+                                               # => Appends to end of list
 
-    def detach(self, observer):
+    def detach(self, observer):               # => Remove observer method
         """Remove observer from notification list"""
-        self._observers.remove(observer)      # => Unregister observer
-                                               # => No longer receives notifications
+        self._observers.remove(observer)      # => Unregister observer (no longer receives notifications)
+                                               # => Raises ValueError if not found
 
-    def notify(self, event):
+    def notify(self, event):                  # => Notify all observers method
         """Notify all observers of event"""
         for observer in self._observers:      # => Iterate registered observers
-            observer.update(event)             # => Call each observer's update()
-                                               # => Passes event data
+                                               # => Processes in registration order
+            observer.update(event)             # => Call each observer's update() with event data
+                                               # => Passes same event to all observers
 
-class EmailNotifier:
+class EmailNotifier:                          # => Define email observer class
+                                               # => Concrete observer for email notifications
     """Observer that sends emails"""
-    def update(self, event):
+    def update(self, event):                  # => Implement update() interface
         """React to event by sending email"""
         print(f"Email: {event}")              # => Simulated email send
                                                # => Output: Email: User registered
 
-class LogNotifier:
+class LogNotifier:                            # => Define log observer class
+                                               # => Concrete observer for logging
     """Observer that logs events"""
-    def update(self, event):
+    def update(self, event):                  # => Implement update() interface
         """React to event by logging"""
         print(f"Log: {event}")                # => Simulated logging
                                                # => Output: Log: User registered
 
 # Usage
-subject = Observable()                        # => Create subject
-email = EmailNotifier()                       # => Create email observer
-logger = LogNotifier()                        # => Create log observer
+subject = Observable()                        # => Create subject instance
+                                               # => _observers = []
+email = EmailNotifier()                       # => Create email observer instance
+logger = LogNotifier()                        # => Create log observer instance
 
 subject.attach(email)                         # => Register email observer
                                                # => _observers = [EmailNotifier]
 subject.attach(logger)                        # => Register log observer
                                                # => _observers = [EmailNotifier, LogNotifier]
 
-subject.notify("User registered")             # => Trigger notification
+subject.notify("User registered")             # => Trigger notification to all observers
                                                # => Calls email.update("User registered")
                                                # => Calls logger.update("User registered")
                                                # => Output: Email: User registered
@@ -2105,36 +1975,19 @@ Embrace Python's EAFP (Easier to Ask Forgiveness than Permission) and duck typin
 
 ```python
 # EAFP: Easier to Ask for Forgiveness than Permission
-# Pythonic approach: Try operation, catch exceptions
-# Philosophy: Optimistic execution, handle failures as exceptions
-def process_file(filename):                   # => Define file processing function
-                                               # => Demonstrates EAFP pattern
+# Pythonic approach: Try operation, catch exceptions (optimistic execution)
+def process_file(filename):                   # => Define file processing function (demonstrates EAFP)
     """EAFP approach (Pythonic)"""
-    try:                                      # => Try block (optimistic execution)
-                                               # => Assume operation succeeds
-        with open(filename) as f:             # => Try opening file directly
-                                               # => No pre-checks (existence, permissions)
-                                               # => Assumes success (optimistic)
+    try:                                      # => Try block (assume operation succeeds)
+        with open(filename) as f:             # => Try opening file directly (no pre-checks)
                                                # => Context manager handles cleanup
-            return f.read()                    # => Read entire file contents
-                                               # => Return as string
-                                               # => Returns on success
-    except FileNotFoundError:                 # => Catch specific exception type
-                                               # => Only if file doesn't exist
-                                               # => Specific error handling
-        return "File not found"                # => Graceful error handling
-                                               # => Return error message
-                                               # => User-friendly message
-    except PermissionError:                   # => Catch permission denied
-                                               # => Only if no read access
-                                               # => OS-level permission issue
+            return f.read()                    # => Read entire file contents and return
+    except FileNotFoundError:                 # => Catch specific exception (file doesn't exist)
+        return "File not found"                # => Graceful error handling (user-friendly message)
+    except PermissionError:                   # => Catch permission denied (no read access)
         return "Permission denied"             # => Return different error message
-                                               # => Specific to permission issue
-    except IOError as e:                      # => Catch other I/O errors
-                                               # => Disk full, network issues, etc.
-                                               # => Catchall for other I/O problems
-        return f"I/O error: {e}"               # => Return detailed error
-                                               # => Includes exception details
+    except IOError as e:                      # => Catch other I/O errors (disk full, network issues)
+        return f"I/O error: {e}"               # => Return detailed error with exception info
 
 # LBYL (Look Before You Leap) - less Pythonic, NOT recommended
 # import os
@@ -2143,92 +1996,55 @@ def process_file(filename):                   # => Define file processing functi
 #         if os.access(filename, os.R_OK):    # => Check 2: Readable?
 #             with open(filename) as f:       # => THEN open
 #                 return f.read()
-# => PROBLEMS:
-#    1. Race condition: File deleted BETWEEN check and open (TOCTOU)
-#    2. More verbose: 2 checks + 1 operation vs 1 try block
-#    3. Duplicates logic: os.path.exists + open both check existence
-#    4. Not Pythonic: Defensive programming, not exception handling
+# => PROBLEMS: Race condition (TOCTOU), verbose, duplicates logic, not Pythonic
 # => Use EAFP instead!
 
 # Duck typing: "If it walks like a duck and quacks like a duck, it's a duck"
-# Accept any object with required behavior (no type checking)
-# Philosophy: Interface over inheritance
-def print_items(items):                       # => Define generic function
-                                               # => No type restrictions
+# Accept any object with required behavior (interface over inheritance)
+def print_items(items):                       # => Define generic function (no type restrictions)
     """Accept any iterable (list, tuple, set, generator, custom class)"""
-    for item in items:                        # => Iterate over items
-                                               # => Requires __iter__() method only
-                                               # => Duck typing: assumes iterable
-                                               # => No isinstance() check
-                                               # => No type annotation
-        print(item)                            # => Output: item value
-                                               # => Works for ANY object with __iter__
-                                               # => Polymorphic behavior
+    for item in items:                        # => Iterate over items (requires __iter__() only)
+                                               # => Duck typing: assumes iterable, no isinstance() check
+        print(item)                            # => Output item value (polymorphic behavior)
 
-print_items([1, 2, 3])                        # => Pass list
-                                               # => Works: list has __iter__
-                                               # => Output: 1
-                                               # => Output: 2
-                                               # => Output: 3
-print_items((1, 2, 3))                        # => Pass tuple
-                                               # => Works: tuple has __iter__
+print_items([1, 2, 3])                        # => Pass list (works: list has __iter__)
                                                # => Output: 1, 2, 3
-print_items({1, 2, 3})                        # => Pass set
-                                               # => Works: set has __iter__
+print_items((1, 2, 3))                        # => Pass tuple (works: tuple has __iter__)
+                                               # => Output: 1, 2, 3
+print_items({1, 2, 3})                        # => Pass set (works: set has __iter__)
                                                # => Output: 1, 2, 3 (unordered)
-print_items(x for x in range(3))              # => Pass generator expression
-                                               # => Works: generator has __iter__
+print_items(x for x in range(3))              # => Pass generator expression (works: has __iter__)
                                                # => Output: 0, 1, 2
-print_items("abc")                            # => Pass string
-                                               # => Works: str has __iter__
+print_items("abc")                            # => Pass string (works: str has __iter__)
                                                # => Output: a, b, c
 
 # Custom class with __iter__ also works
-class MyIterable:                             # => Define custom iterable class
-                                               # => Implements iterator protocol
-    def __iter__(self):                       # => Implement __iter__ method
-                                               # => Required for iteration
-        return iter([10, 20, 30])             # => Return iterator
-                                               # => Wraps list with iter()
-print_items(MyIterable())                     # => Pass custom class instance
-                                               # => Works: has __iter__
+class MyIterable:                             # => Define custom iterable class (implements iterator protocol)
+    def __iter__(self):                       # => Implement __iter__ method (required for iteration)
+        return iter([10, 20, 30])             # => Return iterator (wraps list with iter())
+print_items(MyIterable())                     # => Pass custom class instance (works: has __iter__)
                                                # => Output: 10, 20, 30
 
 # Type checking reduces flexibility (anti-pattern)
 # def print_list(items: list):                # => TOO restrictive
 #     for item in items:
 #         print(item)
-# print_list((1, 2, 3))                       # => TypeError: expected list, got tuple
-                                               # => Rejects tuple despite being iterable
-                                               # => Forces list(tuple) conversion (inefficient)
+# print_list((1, 2, 3))                       # => TypeError (rejects tuple despite being iterable)
                                                # => Not Pythonic (rigid type requirements)
 
 # Better: Use protocols or abstract types for flexible type hints
-from typing import Iterable                   # => Import Iterable type
-                                               # => Generic abstract type for iteration
-def print_items_typed(items: Iterable):       # => Define typed function
-                                               # => Generic iterable type
-                                               # => Accepts ANY object with __iter__
-                                               # => Type checker validates __iter__ presence
-                                               # => Static type safety + runtime flexibility
-    for item in items:                        # => Iterate over items
-                                               # => Same runtime behavior as untyped
-        print(item)                            # => Same behavior as duck typing
-                                               # => Plus IDE autocomplete support
-                                               # => Plus mypy validation
+from typing import Iterable                   # => Import Iterable type (generic abstract type)
+def print_items_typed(items: Iterable):       # => Define typed function (accepts ANY object with __iter__)
+                                               # => Type checker validates __iter__ presence (static type safety + runtime flexibility)
+    for item in items:                        # => Iterate over items (same runtime behavior as untyped)
+        print(item)                            # => Same behavior as duck typing (plus IDE autocomplete and mypy validation)
 
-print_items_typed([1, 2, 3])                  # => Pass list
-                                               # => mypy: ✓ list is Iterable
-print_items_typed((1, 2, 3))                  # => Pass tuple
-                                               # => mypy: ✓ tuple is Iterable
-print_items_typed({1, 2, 3})                  # => Pass set
-                                               # => mypy: ✓ set is Iterable
-print_items_typed("abc")                      # => Pass string
-                                               # => mypy: ✓ str is Iterable
+print_items_typed([1, 2, 3])                  # => Pass list (mypy: ✓ list is Iterable)
+print_items_typed((1, 2, 3))                  # => Pass tuple (mypy: ✓ tuple is Iterable)
+print_items_typed({1, 2, 3})                  # => Pass set (mypy: ✓ set is Iterable)
+print_items_typed("abc")                      # => Pass string (mypy: ✓ str is Iterable)
 # print_items_typed(123)                      # => Would pass int
-                                               # => mypy error: int is not Iterable
-                                               # => Static type checking catches error
-                                               # => Compile-time vs runtime error
+                                               # => mypy error: int is not Iterable (static type checking catches error)
 
 # EAFP + Duck typing = Pythonic code
 # => Optimistic: Try operations, catch exceptions

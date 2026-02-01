@@ -441,18 +441,21 @@ import (
 func main() {
     // Start goroutine with go keyword
     go printNumbers()        // => Spawns new goroutine running printNumbers()
-    // => Main goroutine continues immediately WITHOUT waiting
-    // => printNumbers runs concurrently with main
+                              // => Main goroutine continues immediately WITHOUT waiting
+                              // => printNumbers runs concurrently with main
+                              // => Two goroutines now executing: main and printNumbers
 
     // Main continues while goroutine runs
     fmt.Println("Main continues immediately")
-    // => Output: Main continues immediately (printed before goroutine finishes)
+                              // => Output: Main continues immediately (printed before goroutine finishes)
+                              // => Demonstrates non-blocking nature of go keyword
 
     // Wait for goroutine to finish (crude synchronization)
     time.Sleep(1 * time.Second) // => Sleeps main goroutine for 1 second
-    // => Gives printNumbers goroutine time to complete
-    // => In production, use WaitGroups or channels (see Example 37)
-    fmt.Println("Main done")
+                              // => Gives printNumbers goroutine time to complete
+                              // => In production, use WaitGroups or channels (see Example 37)
+                              // => If main exits early, goroutines are terminated
+    fmt.Println("Main done")  // => Output: Main done (after sleep completes)
 
     // => Typical output (order may vary due to concurrency):
     // => Main continues immediately
@@ -463,17 +466,22 @@ func main() {
 
     // Multiple goroutines with closure pitfall
     fmt.Println("\nMultiple goroutines:")
-    for i := 0; i < 3; i++ {
-        go func(id int) { // => Anonymous function takes id parameter
-            // => CORRECT: id is function parameter, each goroutine gets its own copy
+                              // => Output: (newline) Multiple goroutines:
+    for i := 0; i < 3; i++ {  // => Loop creates 3 goroutines
+        go func(id int) {     // => Anonymous function takes id parameter
+                              // => CORRECT: id is function parameter, each goroutine gets its own copy
+                              // => Avoids closure variable capture bug
             fmt.Printf("Goroutine %d running\n", id)
-        }(i)              // => Pass i as argument to goroutine function
-        // => i is copied to id at goroutine creation time
+        }(i)                  // => Pass i as argument to goroutine function
+                              // => i is copied to id at goroutine creation time
+                              // => Each goroutine receives different id (0, 1, 2)
     }
-    // => Output order is non-deterministic (goroutines execute concurrently)
-    // => Possible output: "Goroutine 2", "Goroutine 0", "Goroutine 1"
+                              // => Output order is non-deterministic (goroutines execute concurrently)
+                              // => Possible output: "Goroutine 2", "Goroutine 0", "Goroutine 1"
 
-    time.Sleep(100 * time.Millisecond) // => Wait for all goroutines to complete
+    time.Sleep(100 * time.Millisecond)
+                              // => Wait for all goroutines to complete
+                              // => 100ms should be enough for 3 simple goroutines
 
     // PITFALL: Closure without parameter (WRONG - don't do this)
     fmt.Println("\nClosure pitfall (incorrect):")
@@ -1064,10 +1072,11 @@ Making HTTP requests is essential for API integration. The `net/http` package pr
 package main
 
 import (
-    "fmt"
-    "io"
-    "net/http"
-    "time"
+    "fmt"                                // => Formatted I/O
+    "io"                                 // => I/O utilities (ReadAll)
+    "net/http"                           // => HTTP client and types
+    "net/url"                            // => URL parsing and query parameters
+    "time"                               // => Time and duration types
 )
 
 func main() {
@@ -1075,92 +1084,122 @@ func main() {
     resp, err := http.Get("https://api.example.com/users") // => http.Get uses default client
     // => Makes GET request to URL, returns response and error
     // => Default client has no timeout (can hang forever)
+    // => Convenience wrapper for http.DefaultClient.Get(url)
     if err != nil {                      // => Check for network/DNS errors
+        // => Common errors: connection refused, DNS lookup failure, timeout
         fmt.Println("Error:", err)       // => Output: Error: [network error details]
         return
+        // => Early return on error (skip rest of processing)
     }
     defer resp.Body.Close()              // => CRITICAL: Always close response body to prevent leaks
     // => Body is io.ReadCloser, must be closed manually
     // => Leaked bodies exhaust file descriptors and memory
+    // => defer ensures close even if function panics
 
     // Read response body
     body, err := io.ReadAll(resp.Body)   // => Read all bytes from body into memory
     // => body is []byte containing response content
     // => io.ReadAll buffers entire response (risky for large responses)
+    // => For streaming, use io.Copy or read in chunks
     if err != nil {                      // => Check for I/O errors during read
+        // => Can fail if connection drops mid-read
         fmt.Println("Read error:", err)  // => Output: Read error: [read failure details]
         return
     }
     fmt.Println("Status:", resp.Status)  // => resp.Status is "200 OK" (string)
     // => Output: Status: 200 OK
+    // => resp.Status includes both code and text
     fmt.Println("Status Code:", resp.StatusCode) // => resp.StatusCode is 200 (int)
     // => Output: Status Code: 200
+    // => resp.StatusCode is just the numeric code
     fmt.Println("Body:", string(body))   // => Convert []byte to string
     // => Output: Body: [JSON or HTML response content]
+    // => Prints entire response body to console
 
     // Custom client with timeout
     client := &http.Client{              // => Create custom HTTP client
+        // => Pointer to http.Client struct
         Timeout: 5 * time.Second,        // => Overall request timeout (includes connection, read, etc.)
         // => If request takes > 5s, client.Do returns timeout error
         // => Prevents hanging on slow/unresponsive servers
+        // => 5 * time.Second is 5000000000 nanoseconds (5s duration)
     }                                    // => client is *http.Client with 5s timeout
 
     // Create custom request with headers
     req, err := http.NewRequest("GET", "https://api.example.com/users", nil)
     // => Creates GET request, nil body (GET requests typically have no body)
     // => req is *http.Request with URL, method, and empty body
+    // => http.NewRequest returns (req, err) - req is nil if err != nil
     if err != nil {                      // => Check for request creation errors (rare)
+        // => Only fails if method or URL invalid
         fmt.Println("Request creation error:", err)
         return
     }
 
     req.Header.Add("Authorization", "Bearer token123") // => Add authorization header
     // => Sets Authorization: Bearer token123 in request
+    // => req.Header is http.Header (map[string][]string)
     req.Header.Add("Content-Type", "application/json") // => Add content type
     // => Sets Content-Type: application/json
+    // => Header.Add appends value (allows multiple values for same key)
     req.Header.Set("User-Agent", "MyApp/1.0")          // => Set user agent (replaces existing)
-    // => Set replaces, Add appends (for multi-value headers)
-    // => req.Header is http.Header (map[string][]string)
+    // => Set replaces all existing values, Add appends
+    // => Use Set for single-value headers, Add for multi-value
+    // => User-Agent identifies client to server
 
     resp, err = client.Do(req)           // => Execute request with custom client
     // => Sends request with all custom headers and timeout
+    // => resp overwrites first response (original resp already closed)
     if err != nil {                      // => Check for timeout or network errors
+        // => Timeout error message: "context deadline exceeded"
         fmt.Println("Error:", err)       // => Output: Error: context deadline exceeded (timeout)
         return
     }
     defer resp.Body.Close()              // => Close response body to prevent leaks
+    // => Second defer (closes second response)
 
     // Check status code
     if resp.StatusCode == http.StatusOK { // => http.StatusOK is constant 200
+        // => Successful responses are 2xx (200-299)
         fmt.Println("Request successful") // => Output: Request successful
     } else if resp.StatusCode >= 400 {   // => 4xx or 5xx indicates error
+        // => 4xx is client error (404 Not Found, 401 Unauthorized)
+        // => 5xx is server error (500 Internal Server Error)
         fmt.Printf("Request failed with status: %d\n", resp.StatusCode)
         // => Output: Request failed with status: 404 (example)
     }
 
     // Query parameters
     baseURL := "https://api.example.com/search" // => Base URL without query string
+    // => baseURL is string, will be concatenated with encoded params
     params := url.Values{}               // => url.Values is map[string][]string
     // => Constructs query parameters safely with proper escaping
+    // => Values{} creates empty map (no params initially)
     params.Add("q", "golang")            // => Add query parameter q=golang
     // => params is map[string][]string{"q": ["golang"]}
+    // => Add appends value to list (supports multiple values for same key)
     params.Add("limit", "10")            // => Add limit=10 parameter
     // => params is map[string][]string{"q": ["golang"], "limit": ["10"]}
     fullURL := baseURL + "?" + params.Encode()
     // => params.Encode() converts to URL-encoded query string
     // => fullURL is "https://api.example.com/search?q=golang&limit=10"
     // => Properly escapes special characters (spaces, &, =, etc.)
+    // => Encode handles URL encoding (spaces become %20, etc.)
 
     req2, _ := http.NewRequest("GET", fullURL, nil) // => Create request with query params
     // => req2 URL includes ?q=golang&limit=10
+    // => _ discards error (we know URL is valid)
     resp2, err := client.Do(req2)        // => Execute request with 5s timeout
     // => Sends GET https://api.example.com/search?q=golang&limit=10
+    // => Uses same client (5s timeout applies)
     if err != nil {                      // => Check for errors (timeout, network, etc.)
+        // => Same error handling as previous requests
         fmt.Println("Error:", err)
         return
     }
     defer resp2.Body.Close()             // => Close second response body
     // => Always close bodies to prevent resource leaks
+    // => Third defer in this function (closes third response)
 }
 ```
 
@@ -1178,30 +1217,38 @@ Go's standard library includes HTTP server capabilities. Handler functions or ty
 package main
 
 import (
-    "fmt"
-    "io"
-    "net/http"
+    "fmt"                                // => For formatted output
+    "io"                                 // => For ReadAll (reading request body)
+    "net/http"                           // => HTTP server and handler types
 )
 
 func main() {
     // Create router (multiplexer)
     mux := http.NewServeMux()            // => ServeMux routes requests to handlers
     // => mux matches request URL to registered patterns
+    // => Type: *http.ServeMux (pointer to multiplexer)
 
     // Register handler function
     mux.HandleFunc("/", homeHandler)     // => HandleFunc wraps function as Handler
     // => "/" matches all paths (default/fallback)
+    // => homeHandler is func(ResponseWriter, *Request)
     mux.HandleFunc("/users", usersHandler)
     // => "/users" matches exactly "/users"
+    // => More specific patterns take precedence over "/"
     mux.Handle("/data", &DataHandler{})  // => Handle registers Handler interface implementor
     // => DataHandler must implement ServeHTTP method
+    // => &DataHandler{} creates pointer to empty struct
 
     // Start HTTP server
     fmt.Println("Server listening on :8080")
+    // => Output to console before blocking
     err := http.ListenAndServe(":8080", mux) // => Blocks listening on port 8080
     // => mux is the handler (routes to registered handlers)
+    // => ":8080" binds to all network interfaces on port 8080
     if err != nil {                      // => Returns error if server fails to start
+        // => Common errors: port in use, permission denied
         fmt.Println("Error:", err)
+        // => Print error and exit
     }
 }
 
@@ -1209,23 +1256,35 @@ func main() {
 func homeHandler(w http.ResponseWriter, r *http.Request) {
     // => w is ResponseWriter interface (writes response)
     // => r is *Request (contains request data)
+    // => Called when request matches "/" pattern
 
     // Read request body
     body, err := io.ReadAll(r.Body)      // => Read all bytes from request body
+    // => r.Body is io.ReadCloser (must be closed)
+    // => body is []byte, err is error
     if err != nil {
+        // => Error reading body (e.g., connection closed)
         http.Error(w, "Bad Request", http.StatusBadRequest) // => Send error response
+        // => Sets status 400, writes "Bad Request\n" to body
         return
+        // => Don't proceed if body read failed
     }
     defer r.Body.Close()                 // => Close body when done
+    // => Defer runs at function exit, releases resources
 
     // Access request information
     fmt.Printf("Method: %s\n", r.Method) // => r.Method is "GET", "POST", etc.
+    // => r.Method is string constant from HTTP request
     fmt.Printf("URL: %s\n", r.URL.Path)  // => r.URL.Path is "/", r.URL.RawQuery has params
+    // => r.URL is *url.URL, Path is path component
     fmt.Printf("Headers: %v\n", r.Header) // => r.Header is map[string][]string
+    // => Headers can have multiple values (e.g., Set-Cookie)
 
     // Write response
     fmt.Fprintf(w, "Hello from home! Method: %s, Body: %s\n", r.Method, string(body))
     // => Writes to ResponseWriter, sent to client
+    // => string(body) converts []byte to string
+    // => Fprintf formats and writes to w
 }
 
 // Handler function with JSON response
@@ -1233,36 +1292,55 @@ func usersHandler(w http.ResponseWriter, r *http.Request) {
     // Set response headers BEFORE writing body
     w.Header().Set("Content-Type", "application/json") // => Set content type header
     // => w.Header() is http.Header (map[string][]string)
+    // => Set replaces all values for key "Content-Type"
     w.WriteHeader(http.StatusOK)         // => Set status code (must be before Write)
     // => Default status is 200 if not set explicitly
+    // => http.StatusOK is constant 200
+    // => Once WriteHeader called, status cannot change
 
     // Check request method
     if r.Method == http.MethodPost {     // => http.MethodPost is constant "POST"
+        // => Method is string, comparing with constant
         fmt.Fprint(w, `{"status": "user created"}`) // => Write JSON string
+        // => Backticks are raw string literal (no escaping needed)
     } else if r.Method == http.MethodGet {
+        // => Check if GET request
         fmt.Fprint(w, `{"users": [{"id": 1}, {"id": 2}]}`)
+        // => Return JSON array of users
     } else {
         // Method not allowed
         w.WriteHeader(http.StatusMethodNotAllowed)
+        // => http.StatusMethodNotAllowed is 405
+        // => Indicates server doesn't support method for this path
         fmt.Fprint(w, `{"error": "method not allowed"}`)
+        // => JSON error response
     }
 }
 
 // Handler type - implements Handler interface
 type DataHandler struct{}
+// => Empty struct, no fields
+// => Used as method receiver for ServeHTTP
 
 // ServeHTTP makes DataHandler satisfy http.Handler interface
 func (h *DataHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
     // => This method is called when request matches "/data"
     // => Any type with ServeHTTP(ResponseWriter, *Request) is a Handler
+    // => h is pointer receiver (method on *DataHandler)
 
     // Access query parameters
     queryParams := r.URL.Query()         // => Returns url.Values (map[string][]string)
+    // => Parses query string from URL (e.g., "?filter=active&sort=name")
+    // => url.Values is alias for map[string][]string
     filter := queryParams.Get("filter")  // => Get first value of "filter" param
     // => Example: "/data?filter=active" sets filter to "active"
+    // => Get returns "" if param not present
 
     response := fmt.Sprintf("Data response with filter: %s", filter)
+    // => Formats string with filter value
+    // => If filter="", output is "Data response with filter: "
     fmt.Fprint(w, response)              // => Write response
+    // => Sends formatted response to client
 }
 ```
 
@@ -1703,54 +1781,77 @@ import (
 func main() {
     // Define flags - returns pointers to values
     name := flag.String("name", "World", "Name to greet")
-    // => flag.String creates string flag "-name", default "World", description "Name to greet"
-    // => name is *string (pointer to string variable)
+                                    // => flag.String creates string flag "-name", default "World", description "Name to greet"
+                                    // => name is *string (pointer to string variable)
+                                    // => Pattern: flag.Type(name, default, description)
     count := flag.Int("count", 1, "Number of greetings")
-    // => count is *int (pointer to int variable)
+                                    // => count is *int (pointer to int variable)
+                                    // => Default value is 1 if flag not provided
     verbose := flag.Bool("verbose", false, "Verbose mode")
-    // => verbose is *bool (pointer to bool variable)
+                                    // => verbose is *bool (pointer to bool variable)
+                                    // => Boolean flags don't require value: -verbose sets true
 
     // Alternative: bind flag to existing variable
-    var port int
+    var port int                    // => Declare variable first
     flag.IntVar(&port, "port", 8080, "Port to listen on")
-    // => Sets port variable directly (no pointer needed)
+                                    // => Sets port variable directly (no pointer needed)
+                                    // => IntVar pattern: (pointer, name, default, description)
 
-    flag.Parse()                   // => Parse os.Args[1:] to populate flag values
-    // => MUST call Parse() before accessing flag values
-    // => After Parse(), flag variables contain parsed values
+    flag.Parse()                    // => Parse os.Args[1:] to populate flag values
+                                    // => MUST call Parse() before accessing flag values
+                                    // => After Parse(), flag variables contain parsed values
+                                    // => Non-flag args remain in os.Args
 
     // Use parsed values (dereference pointers)
-    for i := 0; i < *count; i++ {  // => *count dereferences pointer to get int value
-        greeting := fmt.Sprintf("Hello, %s!", *name) // => *name dereferences to get string
-        fmt.Println(greeting)
+    for i := 0; i < *count; i++ {   // => *count dereferences pointer to get int value
+                                    // => Loop runs count times (default 1)
+        greeting := fmt.Sprintf("Hello, %s!", *name)
+                                    // => *name dereferences to get string
+                                    // => fmt.Sprintf formats string without printing
+        fmt.Println(greeting)       // => Output: Hello, World! (default)
+                                    // => If -name Alice: Hello, Alice!
     }
-    // => Example: -count 3 prints greeting 3 times
 
-    if *verbose {                  // => *verbose dereferences to get bool value
+    if *verbose {                   // => *verbose dereferences to get bool value
+                                    // => Only executes if -verbose flag provided
         fmt.Println("Verbose mode enabled")
+                                    // => Output: Verbose mode enabled
         fmt.Printf("  Name: %s\n", *name)
+                                    // => Prints dereferenced name value
         fmt.Printf("  Count: %d\n", *count)
-        fmt.Printf("  Port: %d\n", port) // => port is not pointer (used IntVar)
+                                    // => Prints dereferenced count value
+        fmt.Printf("  Port: %d\n", port)
+                                    // => port is not pointer (used IntVar)
+                                    // => Direct variable access, no dereference
     }
 
     // Remaining positional arguments after flags
-    args := flag.Args()            // => flag.Args() returns []string of non-flag args
-    // => Example: cmd -name Alice file1.txt file2.txt => args is ["file1.txt", "file2.txt"]
-    if len(args) > 0 {
+    args := flag.Args()             // => flag.Args() returns []string of non-flag args
+                                    // => Example: cmd -name Alice file1.txt file2.txt => args is ["file1.txt", "file2.txt"]
+                                    // => Flags must come before positional args
+    if len(args) > 0 {              // => Check if any positional args exist
         fmt.Println("Extra arguments:", args)
-        fmt.Printf("  Number of args: %d\n", flag.NArg()) // => flag.NArg() is len(args)
+                                    // => Prints slice of extra arguments
+        fmt.Printf("  Number of args: %d\n", flag.NArg())
+                                    // => flag.NArg() is len(args)
+                                    // => Counts non-flag arguments
     }
 
     // Check if specific flag was set
     flag.Visit(func(f *flag.Flag) {
-        // => flag.Visit calls function for each flag SET by user
+                                    // => flag.Visit calls function for each flag SET by user
+                                    // => Only visits flags that were explicitly set
+                                    // => f is *flag.Flag containing metadata
         fmt.Printf("Flag %s was set to %s\n", f.Name, f.Value)
+                                    // => Prints flag name and current value
     })
 
     // Iterate all flags (including defaults)
     flag.VisitAll(func(f *flag.Flag) {
-        // => flag.VisitAll calls function for ALL flags (including defaults)
+                                    // => flag.VisitAll calls function for ALL flags (including defaults)
+                                    // => Visits every defined flag regardless of whether set
         fmt.Printf("All flag %s = %s (default: %s)\n", f.Name, f.Value, f.DefValue)
+                                    // => Prints all flags with current and default values
     })
 }
 
@@ -1789,98 +1890,136 @@ Middleware intercepts requests and responses, enabling cross-cutting concerns li
 package main
 
 import (
-    "fmt"
-    "log"
-    "net/http"
-    "time"
+    "fmt"                            // => For writing response
+    "log"                            // => For logging middleware actions
+    "net/http"                       // => HTTP server and handler types
+    "time"                           // => For measuring request duration
 )
 
 func main() {
-    mux := http.NewServeMux()        // => Create router
+    mux := http.NewServeMux()        // => Create router (multiplexer)
+    // => mux routes paths to handlers
 
     // Build middleware chain (order matters!)
     handler := http.HandlerFunc(homeHandler) // => Convert function to http.Handler
     // => homeHandler is the core business logic
+    // => http.HandlerFunc adapter converts func signature to http.Handler interface
     handler = loggingMiddleware(handler)     // => Wrap with logging (outermost)
     // => loggingMiddleware wraps homeHandler, executes before/after
+    // => handler is now: loggingMiddleware(homeHandler)
     handler = authMiddleware(handler)        // => Wrap with auth (middle)
     // => authMiddleware wraps logging, checks auth before proceeding
+    // => handler is now: authMiddleware(loggingMiddleware(homeHandler))
     handler = recoveryMiddleware(handler)    // => Wrap with recovery (innermost)
     // => recoveryMiddleware wraps auth, catches panics from entire chain
+    // => handler is now: recoveryMiddleware(authMiddleware(loggingMiddleware(homeHandler)))
 
     // Execution order: recovery → auth → logging → homeHandler → logging → auth → recovery
     // Request flows: recovery (defer) → auth (check) → logging (start) → homeHandler → logging (complete)
+    // Each middleware calls next.ServeHTTP(), which calls the next layer
 
-    mux.Handle("/", handler)         // => Register wrapped handler
-    http.ListenAndServe(":8080", mux) // => Start server
+    mux.Handle("/", handler)         // => Register wrapped handler at root path
+    // => All requests to / use the wrapped handler chain
+    http.ListenAndServe(":8080", mux) // => Start server on port 8080
+    // => Blocks forever, serving requests
 }
 
 // Middleware function type signature: func(http.Handler) http.Handler
 func loggingMiddleware(next http.Handler) http.Handler {
     // => next is the handler to call after this middleware
+    // => Function returns new handler that wraps next
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         // => This function wraps the next handler
-        start := time.Now()          // => Capture start time
+        // => w is response writer, r is request
+        start := time.Now()          // => Capture start time (type: time.Time)
+        // => Used to calculate request duration
         log.Printf("Started %s %s", r.Method, r.RequestURI)
-        // => Log request start
+        // => Log request start (r.Method is GET/POST, r.RequestURI is path)
+        // => Output example: "Started GET /"
 
         next.ServeHTTP(w, r)         // => Call next handler in chain
         // => Execution blocks here until next handler completes
+        // => Response already sent when this returns
 
-        duration := time.Since(start) // => Calculate duration
+        duration := time.Since(start) // => Calculate duration (type: time.Duration)
+        // => time.Since returns elapsed time since start
         log.Printf("Completed in %v", duration)
         // => Log request completion (after response sent)
+        // => Output example: "Completed in 5ms"
     })
+    // => Returns handler that logs before and after calling next
 }
 
 // Authentication middleware - checks authorization
 func authMiddleware(next http.Handler) http.Handler {
+    // => next is the handler to proceed to if auth succeeds
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        // => Anonymous function implements ServeHTTP
         token := r.Header.Get("Authorization") // => Get Authorization header
         // => token is "" if header not present
+        // => r.Header is map[string][]string, Get returns first value
 
         if token == "" {             // => No authorization header
+            // => Check if token is empty string
             http.Error(w, "Unauthorized", http.StatusUnauthorized)
-            // => Send 401 Unauthorized response
+            // => Send 401 Unauthorized response with body "Unauthorized"
+            // => http.StatusUnauthorized is 401
             return                   // => Short-circuit: Don't call next handler
-            // => Request processing stops here
+            // => Request processing stops here, response already sent
         }
 
         // Validate token (simplified - production checks JWT signature, expiry)
         if token != "Bearer valid-token" {
+            // => Check if token matches expected value
+            // => Production: parse JWT, verify signature, check expiry
             http.Error(w, "Invalid token", http.StatusUnauthorized)
+            // => Send 401 with "Invalid token" body
             return                   // => Short-circuit on invalid token
+            // => Don't proceed to next handler
         }
 
         next.ServeHTTP(w, r)         // => Token valid, proceed to next handler
+        // => Only reached if token passes validation
+        // => Calls next layer in middleware chain
     })
 }
 
 // Recovery middleware - catch panics
 func recoveryMiddleware(next http.Handler) http.Handler {
+    // => next is the handler that may panic
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        // => Wraps next handler with panic recovery
         defer func() {
             // => defer runs when function exits (even if panic occurs)
+            // => Deferred function runs AFTER next.ServeHTTP completes or panics
             if err := recover(); err != nil {
                 // => recover() catches panic, returns panic value
                 // => err is interface{} containing panic value
+                // => If no panic, recover() returns nil
                 log.Printf("Panic recovered: %v", err)
-                // => Log panic for debugging
+                // => Log panic for debugging (includes panic message)
+                // => %v formats err as default representation
                 http.Error(w, "Internal Server Error", http.StatusInternalServerError)
                 // => Send 500 response to client (instead of crashing server)
+                // => http.StatusInternalServerError is 500
+                // => Server continues running after panic recovery
             }
         }()                          // => defer statement must be before next.ServeHTTP
+        // => () immediately invokes the defer (schedules cleanup)
 
         next.ServeHTTP(w, r)         // => Call next handler (may panic)
         // => If next panics, defer func runs and recovers
+        // => If no panic, defer func runs but recover() returns nil
     })
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
     // => Final handler in chain (business logic)
     // => Only reached if recovery, auth, and logging all succeeded
+    // => w is response writer, r is request
     fmt.Fprint(w, "Hello, Authenticated User!")
-    // => Send response
+    // => Send response (writes to w)
+    // => Fprint writes string to w (implements io.Writer)
 }
 ```
 
@@ -1909,53 +2048,76 @@ import (
 
 func main() {
     // Create HTTP server with configuration
-    server := &http.Server{
-        Addr:           ":8080",     // => Port to listen on
+    server := &http.Server{         // => Pointer to http.Server struct
+                                    // => Allows shutdown control later
+        Addr:           ":8080",     // => Port to listen on (all interfaces)
+                                    // => Format: "host:port" or ":port"
         Handler:        http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-            time.Sleep(2 * time.Second) // => Simulate slow request (2s processing time)
-            // => In-flight requests will complete during graceful shutdown
+                                    // => Handler processes ALL requests
+                                    // => http.HandlerFunc wraps function as Handler interface
+            time.Sleep(2 * time.Second)
+                                    // => Simulate slow request (2s processing time)
+                                    // => In-flight requests will complete during graceful shutdown
             fmt.Fprint(w, "Response")
+                                    // => Write response to client
         }),
-        ReadTimeout:    10 * time.Second,  // => Timeout for reading request
-        WriteTimeout:   10 * time.Second,  // => Timeout for writing response
-        MaxHeaderBytes: 1 << 20,           // => Max header size (1MB)
+        ReadTimeout:    10 * time.Second,
+                                    // => Timeout for reading request
+                                    // => Prevents slow clients from holding connections
+        WriteTimeout:   10 * time.Second,
+                                    // => Timeout for writing response
+                                    // => Prevents slow writes from blocking
+        MaxHeaderBytes: 1 << 20,    // => Max header size (1MB = 1 << 20 bytes)
+                                    // => Prevents memory exhaustion attacks
     }
 
     // Start server in goroutine (non-blocking)
-    go func() {
+    go func() {                     // => Server runs in background goroutine
+                                    // => Main goroutine continues to signal handling
         fmt.Println("Starting server on :8080")
+                                    // => Output: Starting server on :8080
         if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-            // => ListenAndServe blocks until server stopped
-            // => http.ErrServerClosed is expected during graceful shutdown (not an error)
+                                    // => ListenAndServe blocks until server stopped
+                                    // => http.ErrServerClosed is expected during graceful shutdown (not an error)
+                                    // => Only log unexpected errors
             fmt.Printf("Server error: %v\n", err)
         }
-    }()                              // => Server now running in background
+    }()                             // => Server now running in background
 
     // Wait for interrupt signal (SIGTERM or SIGINT)
-    sigChan := make(chan os.Signal, 1) // => Buffered channel (capacity 1)
+    sigChan := make(chan os.Signal, 1)
+                                    // => Buffered channel (capacity 1)
+                                    // => Buffer prevents signal loss if not immediately received
     signal.Notify(sigChan, syscall.SIGTERM, syscall.SIGINT)
-    // => signal.Notify sends signals to sigChan
-    // => SIGTERM is graceful shutdown signal (kill PID)
-    // => SIGINT is interrupt signal (Ctrl+C)
+                                    // => signal.Notify sends signals to sigChan
+                                    // => SIGTERM is graceful shutdown signal (kill PID)
+                                    // => SIGINT is interrupt signal (Ctrl+C)
+                                    // => Channel will receive signal when OS sends it
 
-    <-sigChan                        // => Block until signal received
-    // => When signal arrives, channel receives value and unblocks
+    <-sigChan                       // => Block until signal received
+                                    // => When signal arrives, channel receives value and unblocks
+                                    // => Main goroutine waits here until shutdown signal
     fmt.Println("\nShutdown signal received, gracefully stopping...")
+                                    // => Output: (newline) Shutdown signal received, gracefully stopping...
 
     // Graceful shutdown with timeout context
     ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-    // => ctx expires after 5 seconds (maximum time to wait for in-flight requests)
-    defer cancel()                   // => Clean up context resources
+                                    // => ctx expires after 5 seconds (maximum time to wait for in-flight requests)
+                                    // => Prevents indefinite hanging if requests don't complete
+    defer cancel()                  // => Clean up context resources
+                                    // => Always defer cancel() for contexts with timeout
 
     if err := server.Shutdown(ctx); err != nil {
-        // => Shutdown stops accepting new connections
-        // => Waits for in-flight requests to complete (up to ctx timeout)
-        // => Returns error if shutdown takes longer than timeout
+                                    // => Shutdown stops accepting new connections
+                                    // => Waits for in-flight requests to complete (up to ctx timeout)
+                                    // => Returns error if shutdown takes longer than timeout
         fmt.Printf("Shutdown error: %v\n", err)
+                                    // => Prints error if shutdown failed or timed out
     }
 
     fmt.Println("Server stopped gracefully")
-    // => All in-flight requests completed (or timeout reached)
+                                    // => All in-flight requests completed (or timeout reached)
+                                    // => Output: Server stopped gracefully
 }
 
 // Production pattern: Graceful shutdown ensures:
@@ -2036,10 +2198,13 @@ func main() {
     }                              // => All 10 jobs queued
 
     wg.Wait()                      // => Block until all 10 jobs marked Done()
-    // => After Wait() returns, all jobs completed
+                                    // => After Wait() returns, all jobs completed
+                                    // => WaitGroup counter must reach 0
     close(jobChan)                 // => Close channel to signal no more jobs
-    // => Workers' range loops will exit when channel closed
+                                    // => Workers' range loops will exit when channel closed
+                                    // => Safe to close after Wait() (all jobs consumed)
     fmt.Println("All jobs complete")
+                                    // => Output: All jobs complete
 }
 
 func worker(id int, jobs <-chan int, wg *sync.WaitGroup) {
@@ -2295,18 +2460,21 @@ import (
 )
 
 func TestCoverage(t *testing.T) {
-    // => t is *testing.T (test type)
+                                // => t is *testing.T (test type)
+                                // => Test function must start with Test prefix
     // Test normal case (positive number)
     result := processValue(10) // => Call processValue with positive number
-    // => result is 20 (10 * 2)
+                                // => result is 20 (10 * 2)
+                                // => Exercises positive number branch
     if result != 20 {          // => Assert result is 20
         t.Errorf("Expected 20, got %d", result)
-        // => t.Errorf marks test as failed (continues running other tests)
+                                // => t.Errorf marks test as failed (continues running other tests)
     }                          // => This test case covers positive branch (line 1862)
 
     // Test zero case
     result = processValue(0)   // => Call processValue with 0
-    // => result is 0 (zero branch returns 0)
+                                // => result is 0 (zero branch returns 0)
+                                // => Exercises zero special case branch
     if result != 0 {           // => Assert result is 0
         t.Errorf("Expected 0, got %d", result)
     }                          // => This test case covers zero branch (line 1857)
@@ -2319,19 +2487,21 @@ func TestCoverage(t *testing.T) {
     }                          // => This test case covers negative branch (line 1860)
 
     // All branches covered (100% coverage)
-    // => Run: go test -cover
-    // => Output: coverage: 100.0% of statements
-    // => Run: go test -coverprofile=coverage.out
-    // => Generates coverage.out file for detailed analysis
-    // => Run: go tool cover -html=coverage.out
-    // => Opens HTML view showing covered/uncovered lines
+                                // => Run: go test -cover
+                                // => Output: coverage: 100.0% of statements
+                                // => Run: go test -coverprofile=coverage.out
+                                // => Generates coverage.out file for detailed analysis
+                                // => Run: go tool cover -html=coverage.out
+                                // => Opens HTML view showing covered/uncovered lines
+                                // => Green = covered, red = not covered
 }
 
 func processValue(x int) int {
-    // => processValue doubles input, with special case for zero
-    if x == 0 {
-        return 0                  // => Line 1857: Covered by zero test case
-        // => Returns immediately if input is 0
+                                // => processValue doubles input, with special case for zero
+                                // => Function demonstrates branch coverage
+    if x == 0 {                 // => Check if input is zero
+        return 0                // => Line 1857: Covered by zero test case
+                                // => Returns immediately if input is 0
     }
     if x < 0 {
         return x * 2             // => Line 1860: Covered by negative test case
@@ -2406,32 +2576,50 @@ import (
 
 func main() {
     // Build middleware chain - order matters!
-    handler := http.HandlerFunc(businessHandler) // => Convert function to http.Handler
-    // => businessHandler is the innermost handler (business logic)
-    handler = loggingMiddleware(handler)        // => Wrap with logging (layer 1)
-    // => loggingMiddleware wraps businessHandler
-    handler = authMiddleware(handler)           // => Wrap with auth (layer 2)
-    // => authMiddleware wraps loggingMiddleware
-    handler = rateLimitMiddleware(handler)      // => Wrap with rate limiting (layer 3)
-    // => rateLimitMiddleware wraps authMiddleware
-    handler = recoveryMiddleware(handler)       // => Wrap with recovery (outermost layer 4)
-    // => recoveryMiddleware wraps rateLimitMiddleware
+    handler := http.HandlerFunc(businessHandler)
+                                    // => Convert function to http.Handler
+                                    // => businessHandler is the innermost handler (business logic)
+                                    // => http.HandlerFunc wraps function as Handler interface
+    handler = loggingMiddleware(handler)
+                                    // => Wrap with logging (layer 1)
+                                    // => loggingMiddleware wraps businessHandler
+                                    // => handler now: logging → business
+    handler = authMiddleware(handler)
+                                    // => Wrap with auth (layer 2)
+                                    // => authMiddleware wraps loggingMiddleware
+                                    // => handler now: auth → logging → business
+    handler = rateLimitMiddleware(handler)
+                                    // => Wrap with rate limiting (layer 3)
+                                    // => rateLimitMiddleware wraps authMiddleware
+                                    // => handler now: rate → auth → logging → business
+    handler = recoveryMiddleware(handler)
+                                    // => Wrap with recovery (outermost layer 4)
+                                    // => recoveryMiddleware wraps rateLimitMiddleware
+                                    // => Final handler: recovery → rate → auth → logging → business
 
     // Execution order: recovery → rateLimiting → auth → logging → business
-    // Request flow: recovery (defer) → rate check → auth check → log start → business → log complete
+                                    // => Request flow: recovery (defer) → rate check → auth check → log start → business → log complete
+                                    // => Onion pattern: outer layers execute first
 
     // Register handler
-    mux := http.NewServeMux()    // => Create router
-    mux.Handle("/api/data", handler) // => Register wrapped handler at /api/data
-    // => All requests to /api/data flow through middleware chain
+    mux := http.NewServeMux()       // => Create router (HTTP request multiplexer)
+                                    // => mux routes requests to handlers by path
+    mux.Handle("/api/data", handler)
+                                    // => Register wrapped handler at /api/data
+                                    // => All requests to /api/data flow through middleware chain
 
     // Start server
     fmt.Println("Server listening on :8080")
-    http.ListenAndServe(":8080", mux) // => Start server (blocks)
+                                    // => Output: Server listening on :8080
+    http.ListenAndServe(":8080", mux)
+                                    // => Start server (blocks until shutdown)
+                                    // => Listens on all interfaces port 8080
 }
 
 // Middleware type - wraps http.Handler and returns http.Handler
 type Middleware func(http.Handler) http.Handler
+                                    // => Function type for middleware
+                                    // => Takes handler, returns wrapped handler
 
 // 1. Logging Middleware - logs request/response details
 func loggingMiddleware(next http.Handler) http.Handler {
@@ -2513,68 +2701,101 @@ func authMiddleware(next http.Handler) http.Handler {
 }
 
 func isValidToken(token string) bool {
-    // Simplified validation - production checks JWT signature, expiry, revocation
-    // Production:
-    // - Parse JWT (json web token)
-    // - Verify signature (RSA/HMAC)
-    // - Check expiry (exp claim)
-    // - Check issuer (iss claim)
-    // - Verify audience (aud claim)
-    return token == "Bearer valid-token-123"    // => Mock validation for example
-    // => Returns true only for this specific token
+                                    // => Simplified validation - production checks JWT signature, expiry, revocation
+                                    // => Production:
+                                    // => - Parse JWT (json web token)
+                                    // => - Verify signature (RSA/HMAC)
+                                    // => - Check expiry (exp claim)
+                                    // => - Check issuer (iss claim)
+                                    // => - Verify audience (aud claim)
+    return token == "Bearer valid-token-123"
+                                    // => Mock validation for example
+                                    // => Returns true only for this specific token
+                                    // => In production, parse and verify JWT
 }
 
 // 3. Rate Limiting Middleware - prevent abuse
 func rateLimitMiddleware(next http.Handler) http.Handler {
-    // Simple in-memory rate limiter (production uses Redis/distributed cache)
-    requests := make(map[string][]time.Time)    // => IP -> request timestamps
+                                    // => Simple in-memory rate limiter (production uses Redis/distributed cache)
+                                    // => Prevents API abuse by limiting requests per IP
+    requests := make(map[string][]time.Time)
+                                    // => IP -> request timestamps
+                                    // => Tracks request history per client IP
 
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        ip := r.RemoteAddr                      // => Client IP
+                                    // => Handler function for each request
+        ip := r.RemoteAddr          // => Client IP address
+                                    // => Used as key for rate tracking
 
-        now := time.Now()
+        now := time.Now()           // => Current timestamp
+                                    // => Used to filter old requests
         // Remove requests older than 1 minute
-        var recent []time.Time
+        var recent []time.Time      // => Filtered list of recent requests
         for _, t := range requests[ip] {
-            if now.Sub(t) < time.Minute {       // => Keep only recent requests
+                                    // => Iterate through this IP's request history
+            if now.Sub(t) < time.Minute {
+                                    // => Keep only recent requests (within 1 minute)
+                                    // => now.Sub(t) calculates time difference
                 recent = append(recent, t)
-            }
+                                    // => Add to recent list
+            }                       // => Old requests discarded (not in recent)
         }
 
         // Check rate limit (10 requests per minute)
-        if len(recent) >= 10 {
+        if len(recent) >= 10 {      // => Check if limit exceeded (10 requests/min)
+                                    // => Reject if too many recent requests
             http.Error(w, "Rate limit exceeded", http.StatusTooManyRequests)
-            return                              // => Short-circuit: reject request
+                                    // => Send 429 status code
+            return                  // => Short-circuit: reject request, don't call next
         }
 
         // Add this request to history
         requests[ip] = append(recent, now)
+                                    // => Update request history for this IP
+                                    // => Includes current request timestamp
 
-        next.ServeHTTP(w, r)                    // => Proceed to next handler
+        next.ServeHTTP(w, r)        // => Proceed to next handler (within limit)
+                                    // => Only reached if rate limit not exceeded
     })
 }
 
 // 4. Recovery Middleware - catch panics and return 500
 func recoveryMiddleware(next http.Handler) http.Handler {
+                                    // => Outermost middleware layer
+                                    // => Prevents panics from crashing server
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        defer func() {
-            if err := recover(); err != nil {   // => Catch panic
+                                    // => Handler function for each request
+        defer func() {              // => Deferred function runs when handler returns OR panics
+                                    // => Executes in reverse order (LIFO)
+            if err := recover(); err != nil {
+                                    // => recover() catches panic, returns panic value
+                                    // => err is nil if no panic occurred
+                                    // => err is panic value if panic occurred
                 log.Printf("PANIC: %v", err)
+                                    // => Log panic details for debugging
                 http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-            }
+                                    // => Send 500 error to client
+                                    // => Prevents client from hanging
+            }                       // => Panic recovered, server continues running
         }()
 
-        next.ServeHTTP(w, r)                    // => Execute handler (may panic)
+        next.ServeHTTP(w, r)        // => Execute handler (may panic)
+                                    // => If panic occurs, defer catches it
     })
 }
 
 // Final business logic handler
 func businessHandler(w http.ResponseWriter, r *http.Request) {
-    // This is where actual business logic lives
-    // Middleware has already handled logging, auth, rate limiting, recovery
+                                    // => This is where actual business logic lives
+                                    // => Middleware has already handled logging, auth, rate limiting, recovery
+                                    // => Only executes if all middleware checks passed
 
     w.Header().Set("Content-Type", "application/json")
+                                    // => Set response content type header
+                                    // => Tells client response is JSON
     fmt.Fprint(w, `{"status": "success", "data": {"message": "Hello, authenticated user!"}}`)
+                                    // => Write JSON response body
+                                    // => Output: JSON object with success status
 }
 
 // Alternative: Chainable middleware builder
@@ -2634,9 +2855,9 @@ graph TD
 package main
 
 import (
-    "context"
-    "fmt"
-    "time"
+    "context"                          // => Context types and functions
+    "fmt"                              // => Formatted I/O
+    "time"                             // => Time operations and delays
 )
 
 func main() {
@@ -2644,81 +2865,114 @@ func main() {
     ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
     // => ctx expires after 2 seconds (automatic cancellation)
     // => cancel is function to manually cancel before timeout
+    // => context.Background() is root context (never cancelled)
+    // => WithTimeout returns (ctx, cancel func())
     defer cancel()                     // => CRITICAL: Always defer cancel() to prevent resource leaks
     // => Even if timeout occurs, cancel() must be called to release resources
+    // => Defer ensures cancel() runs even if panic occurs
 
     // Start long-running operation in goroutine
     result := make(chan string)        // => Channel to receive result
+    // => Unbuffered channel (blocks until sender and receiver ready)
     go longOperation(ctx, result)      // => Pass context to enable cancellation
     // => longOperation checks ctx.Done() periodically
+    // => Goroutine runs concurrently with main
 
     select {
     case res := <-result:              // => Operation completed successfully
+        // => Receives from result channel if longOperation sends
         fmt.Println("Result:", res)    // => res is "completed"
         // => This case executes if longOperation finishes before 2s timeout
+        // => Output: Result: completed
     case <-ctx.Done():                 // => Context cancelled or timeout exceeded
+        // => ctx.Done() is channel that closes when context cancelled
         fmt.Println("Timeout:", ctx.Err()) // => ctx.Err() is context.DeadlineExceeded
         // => This case executes if 2s timeout occurs before completion
         // => longOperation should exit when it detects ctx.Done()
+        // => Output: Timeout: context deadline exceeded
     }
 
     // Context with manual cancellation (no timeout)
     ctx2, cancel2 := context.WithCancel(context.Background())
     // => ctx2 has no deadline, only manual cancellation via cancel2()
+    // => WithCancel returns (ctx, cancel func())
+    // => cancel2() is function to manually cancel ctx2
 
     go func() {
+        // => Anonymous goroutine for delayed cancellation
         time.Sleep(500 * time.Millisecond) // => Wait 500ms
+        // => Blocks goroutine for 500ms
         cancel2()                      // => Manually cancel context
         // => Closes ctx2.Done() channel
         // => Any goroutine checking ctx2.Done() will unblock
+        // => All derived contexts also cancelled
     }()
 
     select {
     case <-time.After(1 * time.Second): // => This would wait 1 second
+        // => time.After returns channel that sends after duration
         fmt.Println("Never reached")   // => Never executes (cancel2() happens at 500ms)
+        // => select unblocks at 500ms via ctx2.Done(), not at 1s
     case <-ctx2.Done():                // => Receives cancellation at 500ms
+        // => ctx2.Done() closes when cancel2() called
         fmt.Println("Cancelled:", ctx2.Err()) // => Output: Cancelled: context canceled
         // => ctx2.Err() is context.Canceled (manual cancellation)
+        // => Different from DeadlineExceeded (timeout)
     }
 
     // Context with deadline - cancel at specific time
     deadline := time.Now().Add(100 * time.Millisecond) // => Absolute time 100ms from now
+    // => deadline is time.Time (not duration)
+    // => time.Now() is current time, Add shifts by duration
     ctx3, cancel3 := context.WithDeadline(context.Background(), deadline)
     // => ctx3 expires at specific time (not relative duration)
     // => Functionally equivalent to WithTimeout for this use case
+    // => WithDeadline takes time.Time, WithTimeout takes time.Duration
     defer cancel3()                    // => Clean up resources
+    // => Must call cancel3() even though deadline auto-cancels
 
     select {
     case <-time.After(200 * time.Millisecond): // => Would wait 200ms
+        // => This case never executes (deadline at 100ms)
         fmt.Println("Never reached")   // => Never executes (deadline at 100ms)
     case <-ctx3.Done():                // => Deadline exceeded at 100ms
+        // => ctx3.Done() closes when deadline time reached
         fmt.Println("Deadline exceeded:", ctx3.Err())
         // => Output: Deadline exceeded: context deadline exceeded
         // => ctx3.Err() is context.DeadlineExceeded
+        // => Same error as WithTimeout when timeout occurs
     }
 }
 
 func longOperation(ctx context.Context, result chan<- string) {
     // => ctx enables caller to cancel this operation
     // => result is send-only channel (chan<-) for sending completion signal
+    // => Function signature restricts result to send-only (cannot receive)
+
     // Simulate work with periodic context checking
     for i := 0; i < 10; i++ {          // => 10 iterations, each taking 300ms = 3 seconds total
+        // => Loop would take 3 seconds if not cancelled
         select {
         case <-ctx.Done():             // => Check if context cancelled
             // => ctx.Done() is channel that closes when context cancelled
             // => Receive from closed channel returns immediately
+            // => select chooses this case if context cancelled
             fmt.Println("Operation cancelled early")
             // => Exit goroutine immediately (cleanup)
             return                     // => Early return (result not sent)
+            // => Does NOT send to result channel (operation incomplete)
         case <-time.After(300 * time.Millisecond):
             // => Wait 300ms between iterations
+            // => time.After creates new channel for each iteration
             fmt.Printf("Working... %d/10\n", i+1)
             // => Example output: "Working... 1/10", "Working... 2/10", ...
+            // => Shows progress to demonstrate cancellation timing
         }
     }
     result <- "completed"              // => Send result if all iterations complete
     // => Only reached if context not cancelled during all 10 iterations
     // => Requires 3 seconds (10 * 300ms) without cancellation
+    // => Blocks until main receives from result channel
 }
 ```
 
@@ -2744,53 +2998,65 @@ import (
 
 func main() {
     // Write JSON stream with Encoder (memory-efficient)
-    file, err := os.Create("users.json") // => Create output file
-    if err != nil {
+    file, err := os.Create("users.json")
+                                    // => Create output file
+                                    // => Returns *os.File and error
+    if err != nil {                 // => Check if file creation failed
         fmt.Println("Create error:", err)
-        return
+        return                      // => Early return on error
     }
-    defer file.Close()                 // => Ensure file closes
+    defer file.Close()              // => Ensure file closes when function exits
+                                    // => Always defer Close after successful Open/Create
 
-    encoder := json.NewEncoder(file)   // => Create encoder writing directly to file
-    // => Encoder is *json.Encoder, wraps io.Writer (file)
-    // => Streams JSON directly to disk (no intermediate buffer)
-    encoder.SetIndent("", "  ")        // => Pretty print with 2-space indent
-    // => Empty prefix, "  " for each indentation level
+    encoder := json.NewEncoder(file)
+                                    // => Create encoder writing directly to file
+                                    // => Encoder is *json.Encoder, wraps io.Writer (file)
+                                    // => Streams JSON directly to disk (no intermediate buffer)
+    encoder.SetIndent("", "  ")     // => Pretty print with 2-space indent
+                                    // => Empty prefix, "  " for each indentation level
+                                    // => Makes output human-readable
 
     // Stream multiple JSON objects
-    users := []User{
+    users := []User{                // => Slice of User structs
         {Name: "Alice", Age: 30, Email: "alice@example.com"},
         {Name: "Bob", Age: 25, Email: "bob@example.com"},
         {Name: "Charlie", Age: 35, Email: "charlie@example.com"},
-    }                                  // => users is []User with 3 elements
+    }                               // => users is []User with 3 elements
 
-    for _, user := range users {       // => Iterate users
+    for _, user := range users {    // => Iterate users slice
+                                    // => _ ignores index, user is current User
         if err := encoder.Encode(user); err != nil {
-            // => encoder.Encode marshals user to JSON and writes to file
-            // => Each call writes one complete JSON object
-            // => No []byte allocation (streams directly)
+                                    // => encoder.Encode marshals user to JSON and writes to file
+                                    // => Each call writes one complete JSON object
+                                    // => No []byte allocation (streams directly)
+                                    // => Automatic newline after each object
             fmt.Println("Encode error:", err)
-            return
-        }                              // => After each Encode, one JSON object written
-    }                                  // => File contains 3 JSON objects (newline-separated)
+            return                  // => Early return on encoding error
+        }                           // => After each Encode, one JSON object written to file
+    }                               // => File contains 3 JSON objects (newline-separated)
 
     fmt.Println("JSON stream written to users.json")
+                                    // => Output: JSON stream written to users.json
 
     // Read JSON stream with Decoder (memory-efficient)
     jsonStream := `
     {"Name":"David","Age":28,"Email":"david@example.com"}
     {"Name":"Eve","Age":32,"Email":"eve@example.com"}
-    `                                  // => NDJSON format (newline-delimited JSON)
-    // => Each line is a complete JSON object
+    `                               // => NDJSON format (newline-delimited JSON)
+                                    // => Each line is a complete JSON object
+                                    // => Multi-line string literal (backticks)
 
     decoder := json.NewDecoder(strings.NewReader(jsonStream))
-    // => Create decoder reading from io.Reader (strings.Reader)
-    // => decoder is *json.Decoder
-    // => Reads incrementally (doesn't load entire stream into memory)
+                                    // => Create decoder reading from io.Reader (strings.Reader)
+                                    // => decoder is *json.Decoder
+                                    // => Reads incrementally (doesn't load entire stream into memory)
+                                    // => strings.NewReader converts string to io.Reader
 
-    for decoder.More() {               // => decoder.More() returns true if more data available
-        // => Returns false at EOF
-        var user User                  // => user is zero value User{}
+    for decoder.More() {            // => decoder.More() returns true if more data available
+                                    // => Returns false at EOF
+                                    // => Checks if more JSON objects in stream
+        var user User               // => user is zero value User{}
+                                    // => Fresh User instance for each iteration
         if err := decoder.Decode(&user); err != nil {
             // => decoder.Decode reads next JSON object into user (by pointer)
             // => Only one object in memory at a time
