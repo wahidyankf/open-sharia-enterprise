@@ -2222,23 +2222,31 @@ graph TD
 **Code**:
 
 ```java
-import java.sql.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.sql.*;            // => JDBC API: Connection, ResultSet, SQLException
+                                 // => Core database connectivity interfaces
+import java.util.*;             // => Utilities: List, Set, Queue
+import java.util.concurrent.*;  // => Concurrency: ConcurrentLinkedQueue, CopyOnWriteArraySet
 
 // Database connection interface
 interface DatabaseConnection {
                                  // => Abstraction for different database types (Strategy pattern)
                                  // => Enables polymorphism: PostgresConnection, MySQLConnection
+                                 // => Contract: all implementations must provide these methods
     void connect() throws SQLException;
+                                 // => Method signature: no return value, may throw SQLException
                                  // => Opens database connection (expensive operation: 100-1000ms)
                                  // => May throw SQLException for connection failures
     void disconnect();           // => Closes connection and releases resources
+                                 // => Method signature: no parameters, no return value
     ResultSet executeQuery(String sql) throws SQLException;
                                  // => Executes SQL query, returns result set
+                                 // => Method signature: accepts SQL string, may throw SQLException
     boolean isConnected();       // => Checks if connection is currently open
+                                 // => Method signature: returns boolean (true if connected)
     String getConnectionString();// => Returns JDBC connection string
+                                 // => Method signature: returns String (connection URL)
 }
+                                 // => End of DatabaseConnection interface
 
 // PostgreSQL connection implementation
 class PostgresConnection implements DatabaseConnection {
@@ -2272,6 +2280,7 @@ class PostgresConnection implements DatabaseConnection {
     @Override
     public void disconnect() {   // => Closes connection and releases resources
         try {
+                                 // => try-catch wraps close operation to handle exceptions
             if (connection != null) connection.close();
                                  // => Closes JDBC connection (releases TCP socket, database session)
                                  // => null check prevents NPE if connect() never called
@@ -2295,6 +2304,7 @@ class PostgresConnection implements DatabaseConnection {
     public boolean isConnected() {
                                  // => Checks if connection is currently open and valid
         try {
+                                 // => try-catch handles potential SQLException from isClosed()
             return connection != null && !connection.isClosed();
                                  // => true if connection exists and not closed
                                  // => false if null or closed
@@ -2307,12 +2317,15 @@ class PostgresConnection implements DatabaseConnection {
     @Override
     public String getConnectionString() { return connString; }
                                  // => Returns JDBC connection string (e.g., "jdbc:postgresql://localhost:5432/mydb")
+                                 // => Useful for debugging or logging connection details
 }
+                                 // => End of PostgresConnection class
 
 // MySQL connection implementation
 class MySQLConnection implements DatabaseConnection {
                                  // => Concrete implementation for MySQL databases
                                  // => JDBC URL pattern: jdbc:mysql://host:port/database
+                                 // => Parallel to PostgresConnection (Factory can return either)
     private Connection connection;
                                  // => JDBC connection object (null until connect() called)
     private final String connString;
@@ -2339,6 +2352,7 @@ class MySQLConnection implements DatabaseConnection {
     @Override
     public void disconnect() {   // => Closes MySQL connection
         try {
+                                 // => try-catch wraps close to handle SQLException
             if (connection != null) connection.close();
                                  // => Closes connection, releases MySQL session
             System.out.println("Disconnected from MySQL");
@@ -2359,6 +2373,7 @@ class MySQLConnection implements DatabaseConnection {
     public boolean isConnected() {
                                  // => Checks MySQL connection status
         try {
+                                 // => try-catch handles potential SQLException
             return connection != null && !connection.isClosed();
                                  // => true if connection valid and open
         } catch (SQLException e) {
@@ -2369,13 +2384,17 @@ class MySQLConnection implements DatabaseConnection {
     @Override
     public String getConnectionString() { return connString; }
                                  // => Returns MySQL JDBC connection string
+                                 // => Example: "jdbc:mysql://localhost:3306/mydb"
 }
+                                 // => End of MySQLConnection class
 
 // Factory for creating database connections
 class ConnectionFactory {        // => Factory pattern: creates objects without exposing creation logic
                                  // => Centralizes connection creation, supports multiple database types
     public static DatabaseConnection create(String dbType, String host,
                                            int port, String database) {
+                                 // => Factory method returns interface type (DatabaseConnection)
+                                 // => Decouples client from concrete implementations
                                  // => Static factory method (no instance needed)
                                  // => Parameters: database type, host, port, database name
         return switch (dbType.toLowerCase()) {
@@ -2392,8 +2411,10 @@ class ConnectionFactory {        // => Factory pattern: creates objects without 
                                  // => Throws exception for unsupported database types
                                  // => Example error: "Unsupported database: oracle"
         };
+                                 // => Switch expression returns DatabaseConnection instance
     }
 }
+                                 // => End of ConnectionFactory class
 
 // Connection configuration using Builder pattern
 class ConnectionConfig {        // => Immutable configuration object (all fields final)
@@ -2434,6 +2455,7 @@ class ConnectionConfig {        // => Immutable configuration object (all fields
         private final String database;
                                  // => Required field: database name (no default)
         private int port = 5432; // Default for Postgres
+                                 // => Field initialization sets default value
                                  // => Optional field with default: Postgres port
         private int poolSize = 10;
                                  // => Optional field with default: 10 connections
@@ -2460,25 +2482,34 @@ class ConnectionConfig {        // => Immutable configuration object (all fields
 
         public Builder poolSize(int size) {
                                  // => Optional setter for pool size
+                                 // => Method chaining: returns Builder
             this.poolSize = size;
                                  // => Sets number of connections (e.g., 20, 50)
+                                 // => Overrides default value of 10
             return this;         // => Returns this for chaining
+                                 // => Enables fluent API
         }
 
         public Builder timeout(int seconds) {
                                  // => Optional setter for connection timeout
+                                 // => Method chaining pattern
             this.timeout = seconds;
                                  // => Sets timeout in seconds (e.g., 60, 120)
+                                 // => Overrides default of 30 seconds
             return this;         // => Returns this for chaining
+                                 // => Fluent API continuation
         }
 
         public ConnectionConfig build() {
                                  // => Terminal operation: creates ConnectionConfig instance
+                                 // => Finalizes builder pattern (no more method chaining)
             return new ConnectionConfig(this);
                                  // => Calls private constructor with this Builder
                                  // => Returns immutable ConnectionConfig
+                                 // => Builder fields copied to final configuration
         }
     }
+                                 // => End of Builder inner class
 
     public String getDbType() { return dbType; }
                                  // => Getter for database type
@@ -2492,7 +2523,9 @@ class ConnectionConfig {        // => Immutable configuration object (all fields
                                  // => Getter for pool size
     public int getTimeout() { return timeout; }
                                  // => Getter for timeout
+                                 // => Returns timeout value in seconds
 }
+                                 // => End of ConnectionConfig class
 
 // Connection Pool using Singleton pattern
 class ConnectionPool {          // => Singleton pattern: only one pool instance per application
@@ -2513,16 +2546,22 @@ class ConnectionPool {          // => Singleton pattern: only one pool instance 
     private ConnectionPool(ConnectionConfig config) {
                                  // => Private constructor (Singleton: no public instantiation)
                                  // => Only getInstance() can create instance
+                                 // => Constructor called once by getInstance()
         this.config = config;    // => Saves configuration
+                                 // => Stores reference to immutable configuration
+                                 // => Configuration contains dbType, host, port, database, poolSize, timeout
         this.availableConnections = new ConcurrentLinkedQueue<>();
                                  // => Initializes available connections queue (thread-safe)
+                                 // => ConcurrentLinkedQueue: lock-free, unbounded queue
         this.inUseConnections = ConcurrentHashMap.newKeySet();
                                  // => Initializes in-use connections set (thread-safe)
+                                 // => newKeySet() creates Set backed by ConcurrentHashMap
 
         // Pre-create pool connections
         for (int i = 0; i < config.getPoolSize(); i++) {
                                  // => Loops poolSize times (default: 10)
                                  // => Pre-creates connections to avoid lazy initialization delays
+                                 // => Warm start: connections ready immediately
             DatabaseConnection conn = ConnectionFactory.create(
                 config.getDbType(),
                 config.getHost(),
@@ -2533,9 +2572,11 @@ class ConnectionPool {          // => Singleton pattern: only one pool instance 
             availableConnections.offer(conn);
                                  // => Adds connection to available queue
                                  // => offer(): adds to tail of queue (non-blocking)
+                                 // => Connection ready for use via acquire()
         }
         System.out.println("Connection pool initialized with " +
                          config.getPoolSize() + " connections");
+                                 // => Logs initialization completion
                                  // => Output: "Connection pool initialized with 10 connections"
     }
 
@@ -2545,9 +2586,11 @@ class ConnectionPool {          // => Singleton pattern: only one pool instance 
                                  // => Thread-safe: uses double-checked locking pattern
         if (instance == null) {  // => First check (no synchronization, fast path)
                                  // => Avoids synchronization overhead if already initialized
+                                 // => Optimistic check: most calls take this fast path
             synchronized (ConnectionPool.class) {
                                  // => Synchronizes on class object (ensures single instance)
                                  // => Lock acquired: other threads block here
+                                 // => synchronized block ensures mutual exclusion
                 if (instance == null) {
                                  // => Second check inside synchronized block
                                  // => Prevents race condition: two threads pass first check
@@ -2557,26 +2600,37 @@ class ConnectionPool {          // => Singleton pattern: only one pool instance 
             }
         }
         return instance;         // => Returns existing instance (all subsequent calls)
+                                 // => volatile ensures visibility across threads
     }
 
     public DatabaseConnection acquire() throws InterruptedException {
                                  // => Acquires connection from pool (blocking if pool exhausted)
+                                 // => throws InterruptedException if thread interrupted while waiting
         DatabaseConnection conn = availableConnections.poll();
+                                 // => poll() is non-blocking (returns immediately)
                                  // => poll(): removes and returns head of queue (non-blocking)
                                  // => Returns null if queue empty (no available connections)
         if (conn == null) {      // => Pool exhausted: no available connections
+                                 // => All connections currently in use
             System.out.println("Pool exhausted, creating new connection");
                                  // => Output: "Pool exhausted, creating new connection"
                                  // => Indicates pool undersized or connection leak
+                                 // => Warning: dynamic creation can lead to unbounded growth
             conn = ConnectionFactory.create(
                 config.getDbType(),
+                                 // => Passes database type from config
                 config.getHost(),
+                                 // => Passes host from config
                 config.getPort(),
+                                 // => Passes port from config
                 config.getDatabase()
+                                 // => Passes database name from config
             );                   // => Creates new connection dynamically (overflow strategy)
                                  // => Alternative: block until connection available (HikariCP strategy)
+                                 // => Factory method handles database-specific creation
         }
         inUseConnections.add(conn);
+                                 // => Thread-safe add operation (ConcurrentHashMap.newKeySet())
                                  // => Adds connection to in-use set
                                  // => Tracks borrowed connections for leak detection
         return conn; // => Connection from pool or newly created
@@ -2586,35 +2640,47 @@ class ConnectionPool {          // => Singleton pattern: only one pool instance 
 
     public void release(DatabaseConnection conn) {
                                  // => Returns connection to pool for reuse
+                                 // => MUST be called after acquire() to prevent leaks
         if (inUseConnections.remove(conn)) {
                                  // => Removes from in-use set
                                  // => Returns true if conn was in set (valid release)
+                                 // => Returns false if conn not in set (double-release or invalid)
             availableConnections.offer(conn);
                                  // => Adds connection back to available queue
                                  // => Connection now available for next acquire() call
+                                 // => offer() adds to tail of queue (non-blocking)
             System.out.println("Connection returned to pool");
                                  // => Output: "Connection returned to pool"
         }
+                                 // => If remove() returns false, connection not released (already released or invalid)
     }
 
     public void shutdown() {     // => Closes all connections and shuts down pool
         for (DatabaseConnection conn : availableConnections) {
                                  // => Iterates available connections
+                                 // => Enhanced for loop over queue elements
             conn.disconnect();   // => Closes each available connection
+                                 // => Releases database resources
         }
         for (DatabaseConnection conn : inUseConnections) {
                                  // => Iterates in-use connections (may be leaked)
+                                 // => Enhanced for loop over set elements
             conn.disconnect();   // => Closes each in-use connection (cleanup)
+                                 // => Force-closes even if not properly released
         }
         System.out.println("Connection pool shut down");
                                  // => Output: "Connection pool shut down"
+                                 // => Indicates cleanup complete
     }
 
     public int getAvailableCount() { return availableConnections.size(); }
                                  // => Returns number of available connections (not in use)
+                                 // => Useful for monitoring pool utilization
     public int getInUseCount() { return inUseConnections.size(); }
                                  // => Returns number of in-use connections (borrowed)
+                                 // => Helps detect connection leaks
 }
+                                 // => End of ConnectionPool class
 
 // Usage example combining all patterns
 ConnectionConfig config = new ConnectionConfig.Builder("postgres", "localhost", "mydb")
@@ -2639,15 +2705,19 @@ DatabaseConnection conn = pool.acquire(); // => Factory creates connection
                                  // => Returns existing connection (fast: ~1ms) or creates new (slow: 100-1000ms)
                                  // => conn must be released in finally block to avoid leaks
 try {
+                                 // => try-catch-finally ensures connection always released
     conn.connect();              // => Opens connection (TCP handshake + authentication)
                                  // => May throw SQLException
     ResultSet rs = conn.executeQuery("SELECT * FROM users");
                                  // => Executes SQL query, returns ResultSet
                                  // => rs contains all rows from users table
     // Process results...
+                                 // => Placeholder for result processing logic (iterate ResultSet rows)
 } catch (SQLException e) {       // => Catches SQL exceptions (connection failures, query errors)
     e.printStackTrace();         // => Logs exception stack trace
+                                 // => Prints SQLException details to stderr
 } finally {
+                                 // => finally block always executes (even if exception thrown)
     pool.release(conn); // => Return to pool for reuse
                                  // => CRITICAL: always release in finally block
                                  // => Failure to release causes connection leak and pool exhaustion
@@ -2656,15 +2726,18 @@ try {
 
 // Pool statistics
 System.out.println("Available: " + pool.getAvailableCount());
+                                 // => Prints number of available connections
                                  // => Output: "Available: 19" (20 total - 1 in use)
                                  // => Shows connections ready for reuse
 System.out.println("In use: " + pool.getInUseCount());
                                  // => Output: "In use: 1" (conn acquired but not released yet)
                                  // => Shows connections currently borrowed
+                                 // => Helps monitor pool usage and detect leaks
 
 pool.shutdown(); // Cleanup
                                  // => Closes all connections (available + in-use)
                                  // => Call on application shutdown (cleanup resources)
+                                 // => Releases all database resources
 ```
 
 **Key Takeaway**: This demonstrates all three creational patterns in production context. **Singleton** ensures one connection pool instance (thread-safe with double-checked locking). **Factory** creates database connections by type (Postgres, MySQL) enabling polymorphism. **Builder** constructs complex configuration with fluent API, avoiding telescoping constructors. Connection pooling is essential for production databases—creating connections is expensive (100-1000ms), reusing them is fast (1ms). This pattern appears in all production database libraries (HikariCP, C3P0, Apache DBCP).
@@ -3431,10 +3504,13 @@ SOLID principles guide maintainable object-oriented design. Single Responsibilit
 // A class should have one reason to change
                                  // => Each class has ONE responsibility
                                  // => Changes to one responsibility don't affect others
+                                 // => SRP reduces coupling, improves maintainability
 
 // Bad - multiple responsibilities
 class UserServiceBad {
+                                 // => Violates SRP: multiple responsibilities in one class
     public void createUser(User user) {
+                                 // => Method with mixed concerns (validation, persistence, notification, logging)
         // Validate user         // => Responsibility 1: Validation
         // Save to database      // => Responsibility 2: Persistence
         // Send email            // => Responsibility 3: Notification
@@ -3448,44 +3524,63 @@ class UserServiceBad {
 
 // Good - single responsibility per class
 class UserValidator {
+                                 // => SRP compliant: only validates users
+                                 // => One reason to change: validation rules
     public boolean validate(User user) {
         // Only validation logic
                                  // => Single responsibility: validation
         return user.getName() != null && user.getEmail() != null;
                                  // => Returns true if user data valid
+                                 // => No persistence, notification, or logging concerns
     }
 }
 
 class UserRepository {
+                                 // => SRP compliant: only handles database persistence
+                                 // => One reason to change: database schema or access patterns
     public void save(User user) {
         // Only database operations
                                  // => Single responsibility: persistence
                                  // => Database changes isolated to this class
+                                 // => No validation, notification, or logging
     }
 }
 
 class EmailService {
+                                 // => SRP compliant: only sends emails
+                                 // => One reason to change: email templates or SMTP configuration
     public void sendWelcomeEmail(User user) {
         // Only email sending   // => Single responsibility: email notifications
                                  // => Email format changes isolated to this class
+                                 // => No validation, persistence, or logging
     }
 }
 
 class UserService {
+                                 // => SRP compliant: orchestrates user creation workflow
+                                 // => One reason to change: workflow logic
     private final UserValidator validator;
+                                 // => Dependency: validator (injected or constructed)
     private final UserRepository repository;
+                                 // => Dependency: repository (injected or constructed)
     private final EmailService emailService;
+                                 // => Dependency: email service (injected or constructed)
                                  // => Coordinates single-responsibility classes
                                  // => Delegates to specialized classes
 
     public void createUser(User user) {
+                                 // => Orchestrates workflow: validate → persist → notify
         if (validator.validate(user)) {
                                  // => Delegates validation
+                                 // => Calls UserValidator.validate()
             repository.save(user);
                                  // => Delegates persistence
+                                 // => Calls UserRepository.save()
             emailService.sendWelcomeEmail(user);
                                  // => Delegates notification
+                                 // => Calls EmailService.sendWelcomeEmail()
         }                        // => Orchestration: composing single-responsibility classes
+                                 // => UserService doesn't implement validation, persistence, or email
     }
 }
 
@@ -3493,75 +3588,111 @@ class UserService {
 // Open for extension, closed for modification
                                  // => Classes open for extension (new features)
                                  // => Closed for modification (existing code unchanged)
+                                 // => OCP prevents breaking existing code when adding features
 
 // Bad - modifying class for new behavior
 class AreaCalculatorBad {
+                                 // => Violates OCP: must modify for each new shape
     public double calculate(Object shape) {
+                                 // => Accepts generic Object (no type safety)
         if (shape instanceof Circle) {
                                  // => Type check for each shape type
+                                 // => instanceof runtime type checking
             Circle c = (Circle) shape;
+                                 // => Explicit cast after instanceof check
             return Math.PI * c.radius * c.radius;
+                                 // => Circle area formula: π × r²
         } else if (shape instanceof Rectangle) {
             Rectangle r = (Rectangle) shape;
+                                 // => Cast to Rectangle
             return r.width * r.height;
+                                 // => Rectangle area formula: width × height
         }
         // Adding new shape requires modifying this method
                                  // => Violates OCP: must modify class to add Triangle
                                  // => Each new shape = modify existing code
+                                 // => Adding Triangle requires new else-if branch
         return 0;
+                                 // => Default return for unknown types
     }
 }
 
 // Good - extend via polymorphism
 interface Shape {              // => Abstraction for all shapes
+                                 // => OCP compliant: new shapes extend interface
     double area();               // => Contract: all shapes calculate area
+                                 // => Each implementation provides own formula
 }
 
 class Circle implements Shape {
+                                 // => OCP compliant: extends Shape without modifying it
     double radius;
+                                 // => Circle-specific field
     public double area() { return Math.PI * radius * radius; }
                                  // => Circle-specific area calculation
+                                 // => Implements Shape contract
 }
 
 class Rectangle implements Shape {
+                                 // => OCP compliant: extends Shape without modifying it
     double width, height;
+                                 // => Rectangle-specific fields
     public double area() { return width * height; }
                                  // => Rectangle-specific area calculation
+                                 // => Implements Shape contract
 }
 
 class Triangle implements Shape {
+                                 // => NEW shape added without modifying existing code
+                                 // => OCP: extended Shape interface via new implementation
     double base, height;
+                                 // => Triangle-specific fields for area calculation
     public double area() { return 0.5 * base * height; }
                                  // => Triangle added WITHOUT modifying existing classes
+                                 // => Formula: area = (base × height) / 2
+                                 // => Implements Shape contract
 }
+                                 // => End of Triangle class
 
 class AreaCalculator {
+                                 // => OCP compliant: works with any Shape implementation
+                                 // => Never needs modification when new shapes added
     public double calculate(Shape shape) {
+                                 // => Accepts Shape interface (polymorphic parameter)
         return shape.area();     // => Polymorphism: delegates to shape implementation
                                  // => No modification needed for new shapes
                                  // => Open for extension (add Triangle), closed for modification
+                                 // => Same code works for Circle, Rectangle, Triangle, etc.
     }
 }
 
 // Liskov Substitution Principle (LSP)
 // Subtypes must be substitutable for base types
                                  // => Subclass should be usable wherever parent expected
+                                 // => LSP ensures behavioral compatibility in inheritance
                                  // => Subclass must not break parent's contract
 
 // Bad - violates LSP
 class Bird {
+                                 // => Base class establishes contract: all birds can fly
     public void fly() { System.out.println("Flying"); }
                                  // => Contract: all Birds can fly
+                                 // => Output: "Flying"
 }
 
 class Penguin extends Bird {
+                                 // => Violates LSP: Penguin cannot substitute Bird
     @Override
     public void fly() {
+                                 // => Breaks parent contract (throws exception instead of flying)
+                                 // => Overrides method but changes behavior fundamentally
         throw new UnsupportedOperationException("Penguins can't fly");
                                  // => Breaks Bird contract: fly() expected to work
+                                 // => Runtime exception violates substitutability
         // Violates LSP: cannot substitute Penguin for Bird
                                  // => Code expecting Bird will fail with Penguin
                                  // => Subclass breaks parent's behavioral contract
+                                 // => Example: processbird(Bird b) { b.fly(); } fails with Penguin
     }
 }
 
@@ -3586,102 +3717,144 @@ class Penguin2 {                 // => Penguin doesn't claim to be Flyable
 // Many specific interfaces better than one general
                                  // => Clients shouldn't depend on methods they don't use
                                  // => Many small interfaces > one fat interface
+                                 // => ISP prevents interface pollution
 
 // Bad - fat interface
 interface WorkerBad {            // => Single interface with all capabilities
+                                 // => Violates ISP: forces implementers to support all methods
     void work();                 // => Method 1
     void eat();                  // => Method 2 (not all workers eat)
+                                 // => Robots don't eat (irrelevant method)
     void sleep();                // => Method 3 (not all workers sleep)
+                                 // => Robots don't sleep (irrelevant method)
 }
 
 class RobotBad implements WorkerBad {
+                                 // => Forced to implement all WorkerBad methods
+                                 // => Violates ISP: must implement irrelevant methods
     public void work() { /* work */ }
                                  // => Robot can work
+                                 // => Only relevant method implementation
     public void eat() { /* robots don't eat - forced to implement */ }
                                  // => Forced to implement irrelevant method
+                                 // => Empty or exception-throwing implementation
     public void sleep() { /* robots don't sleep - forced to implement */ }
                                  // => Violates ISP: depends on methods it doesn't use
+                                 // => Interface too broad for this implementer
 }
 
 // Good - segregated interfaces
 interface Workable {             // => Small, focused interface: working
+                                 // => ISP compliant: single capability
     void work();                 // => Single capability
+                                 // => Implementers only need to support work()
 }
 
 interface Eatable {              // => Small, focused interface: eating
+                                 // => ISP compliant: single capability
     void eat();                  // => Single capability
+                                 // => Only used by entities that eat
 }
 
 interface Sleepable {            // => Small, focused interface: sleeping
+                                 // => ISP compliant: single capability
     void sleep();                // => Single capability
+                                 // => Only used by entities that sleep
 }
+                                 // => End of Sleepable interface
 
 class Human implements Workable, Eatable, Sleepable {
                                  // => Human implements all three capabilities
+                                 // => ISP compliant: multiple interface composition
     public void work() { /* work */ }
                                  // => Human can work
+                                 // => Implements Workable interface
     public void eat() { /* eat */ }
                                  // => Human can eat
+                                 // => Implements Eatable interface
     public void sleep() { /* sleep */ }
                                  // => Human can sleep
+                                 // => Implements Sleepable interface
 }
+                                 // => End of Human class (implements 3 focused interfaces)
 
 class Robot implements Workable {
                                  // => Robot implements ONLY what it needs
+                                 // => ISP compliant: no irrelevant methods
     public void work() { /* work */ }
                                  // => Robot can work
+                                 // => Only method implementation required
     // Only implements what it needs
                                  // => No forced implementation of irrelevant methods
                                  // => Respects ISP: depends only on Workable
+                                 // => Compare to RobotBad: no eat() or sleep() pollution
 }
 
 // Dependency Inversion Principle (DIP)
 // Depend on abstractions, not concretions
                                  // => High-level modules shouldn't depend on low-level modules
                                  // => Both should depend on abstractions
+                                 // => DIP enables loose coupling and testability
 
 // Bad - depends on concrete class
 class OrderProcessorBad {
+                                 // => Violates DIP: depends on concrete implementation
     private MySQLDatabase database = new MySQLDatabase();
                                  // => Hardcoded dependency on concrete MySQLDatabase
                                  // => Tightly coupled: cannot switch to PostgreSQL
+                                 // => Hard to test: cannot mock database
 
     public void process(Order order) {
+                                 // => Uses concrete MySQLDatabase reference
         database.save(order);    // => Tightly coupled to MySQL
                                  // => Cannot use different database without code modification
+                                 // => Cannot inject test double
     }
 }
 
 // Good - depends on abstraction
 interface Database {             // => Abstraction: defines contract
+                                 // => DIP: both high and low-level depend on this
     void save(Order order);      // => Contract: save method
+                                 // => Interface defines behavior, not implementation
 }
 
 class MySQLDatabase implements Database {
                                  // => Concrete implementation: MySQL
+                                 // => DIP compliant: implements abstraction
     public void save(Order order) { /* MySQL implementation */ }
                                  // => MySQL-specific persistence logic
+                                 // => Swappable with any Database implementation
 }
 
 class PostgreSQLDatabase implements Database {
                                  // => Alternative implementation: PostgreSQL
+                                 // => DIP compliant: implements same abstraction
     public void save(Order order) { /* PostgreSQL implementation */ }
+                                 // => PostgreSQL-specific persistence logic
                                  // => PostgreSQL-specific persistence logic
 }
 
 class OrderProcessor {
+                                 // => DIP compliant: depends on Database abstraction
+                                 // => High-level module (business logic)
     private final Database database;
                                  // => Depends on abstraction (Database interface)
                                  // => Not coupled to any specific implementation
+                                 // => Enables dependency injection
 
     public OrderProcessor(Database database) {
+                                 // => Constructor injection (Dependency Injection pattern)
         this.database = database;// => Depends on abstraction
                                  // => Injected: caller provides concrete implementation
+                                 // => Can inject MySQLDatabase, PostgreSQLDatabase, or mock
     }
 
     public void process(Order order) {
+                                 // => Business logic (high-level)
         database.save(order);    // => Works with any Database implementation
                                  // => Polymorphism: MySQL, PostgreSQL, or any Database
+                                 // => Testable: can inject mock Database
                                  // => Respects DIP: depends on abstraction, not concretion
     }
 }
@@ -3802,29 +3975,55 @@ class CustomClassLoader extends ClassLoader {
 
 // Using custom ClassLoader
 CustomClassLoader loader = new CustomClassLoader("/path/to/classes");
+                                 // => Creates custom loader with specific classpath
+                                 // => loader will search /path/to/classes for .class files
 Class<?> clazz = loader.loadClass("com.example.MyClass");
+                                 // => Loads class using custom loader
+                                 // => Delegates to parent first, then findClass() if not found
+                                 // => clazz is Class<?> for com.example.MyClass
 Object instance = clazz.getDeclaredConstructor().newInstance();
+                                 // => Creates instance of loaded class
+                                 // => getDeclaredConstructor() gets no-arg constructor
+                                 // => newInstance() invokes constructor, returns Object
 
 // Class identity determined by (class name + ClassLoader)
 // Same class loaded by different loaders are different classes!
+                                 // => Class identity: (fully qualified name, ClassLoader instance)
+                                 // => Important: same source, different loaders → different classes
 ClassLoader loader1 = new CustomClassLoader("/path1");
-ClassLoader loader2 = new CustomClassLoader("/path2");
+                                 // => First custom loader instance
 Class<?> class1 = loader1.loadClass("MyClass");
+                                 // => Loads MyClass using loader1
+ClassLoader loader2 = new CustomClassLoader("/path2");
+                                 // => Second custom loader instance (different object)
 Class<?> class2 = loader2.loadClass("MyClass");
+                                 // => Loads MyClass using loader2
 // class1 != class2 (different loaders)
+                                 // => class1 and class2 are DIFFERENT classes
+                                 // => Same name, different loaders → incompatible types
+                                 // => class1.isInstance(class2.newInstance()) → false!
 
 // Hot reload use case
 class HotReloadClassLoader extends ClassLoader {
-    private String classPath;
+                                 // => Enables reloading classes without JVM restart
+    private String classPath;    // => Path to .class files
 
     public HotReloadClassLoader(String classPath) {
+                                 // => Constructor: stores classpath
         this.classPath = classPath;
+                                 // => Saved for creating fresh loaders
     }
 
     public Class<?> reload(String name) throws Exception {
+                                 // => Reloads class with fresh loader
         // Create new loader for each reload (isolates class versions)
+                                 // => Key: new loader creates new class identity
+                                 // => Old class and new class are different (different loaders)
         CustomClassLoader freshLoader = new CustomClassLoader(classPath);
+                                 // => Fresh loader instance (not cached)
         return freshLoader.loadClass(name);
+                                 // => Loads class with fresh loader
+                                 // => Returns NEW Class<?> instance (old version unaffected)
     }
 }
 
@@ -3897,33 +4096,45 @@ Java source code compiles to `.class` files containing bytecode instructions. Th
 ASM provides direct bytecode manipulation with fine-grained control. Requires manually constructing bytecode instructions. Used when you need precise control over generated bytecode.
 
 ```java
-import org.objectweb.asm.*;
+import org.objectweb.asm.*;      // => ASM library for bytecode manipulation
 
 ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-// => Creates bytecode writer
+                                 // => Creates bytecode writer with automatic frame computation
+                                 // => COMPUTE_FRAMES: ASM calculates stack map frames automatically
 cw.visit(Opcodes.V17, Opcodes.ACC_PUBLIC, "GeneratedClass", null, "java/lang/Object", null);
-// => Defines class structure: Java 17, public, extends Object
+                                 // => Defines class structure: Java 17, public, extends Object
+                                 // => Parameters: version, access flags, name, signature, superclass, interfaces
 
 MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "hello", "()Ljava/lang/String;", null, null);
-// => Creates public String hello() method
-mv.visitCode();
-mv.visitLdcInsn("Hello");
-// => Load constant "Hello" onto stack
-mv.visitInsn(Opcodes.ARETURN);
-// => Return string from stack
-mv.visitMaxs(1, 1);
-mv.visitEnd();
+                                 // => Creates public String hello() method visitor
+                                 // => Method signature: ()Ljava/lang/String; = no params, returns String
+mv.visitCode();                  // => Starts method body bytecode generation
+mv.visitLdcInsn("Hello");        // => Load constant "Hello" onto operand stack
+                                 // => LDC instruction: load constant from constant pool
+mv.visitInsn(Opcodes.ARETURN);   // => Return string reference from top of stack
+                                 // => ARETURN: return reference type (vs IRETURN for int)
+mv.visitMaxs(1, 1);              // => Sets max stack size=1, max locals=1
+                                 // => Required for bytecode verification
+mv.visitEnd();                   // => Finishes method bytecode generation
 
 byte[] bytecode = cw.toByteArray();
-// => Generates .class file bytes
+                                 // => Generates .class file bytes (bytecode array)
+                                 // => Ready to be loaded by ClassLoader
 
 CustomClassLoader loader = new CustomClassLoader();
+                                 // => Creates custom class loader instance
 Class<?> clazz = loader.defineClass("GeneratedClass", bytecode);
-// => Loads generated class into JVM
+                                 // => Loads generated bytecode into JVM as Class object
+                                 // => defineClass converts byte[] to Class<?> instance
 Object instance = clazz.getDeclaredConstructor().newInstance();
+                                 // => Creates instance of dynamically generated class
+                                 // => getDeclaredConstructor() gets no-arg constructor
 Method method = clazz.getMethod("hello");
+                                 // => Retrieves hello() method via reflection
 String result = (String) method.invoke(instance);
-// => Result: "Hello"
+                                 // => Invokes hello() on instance reflectively
+                                 // => Returns "Hello" (from LDC instruction)
+                                 // => Result is "Hello" (String)
 ```
 
 **ASM Trade-offs**: Powerful and fast, but verbose (requires understanding JVM opcodes). Manual stack management. No type safety. Used by frameworks needing maximum performance and control.
@@ -4289,22 +4500,32 @@ MicroProfile standardizes enterprise Java microservices. Specifications for REST
 
 // JAX-RS - REST endpoints
 import javax.ws.rs.*;        // => JAX-RS annotations: @Path, @GET, @POST, @PUT, @DELETE
+                                 // => Core REST endpoint annotations
 import javax.ws.rs.core.*;   // => Core classes: Response, MediaType
+                                 // => Response builder and content type constants
 
 @Path("/users")              // => Base path for all methods in this class
                                  // => Maps to /users endpoint
+                                 // => Class-level annotation applies to all methods
 @Produces(MediaType.APPLICATION_JSON)
                                  // => All responses return JSON
+                                 // => Default content type for all endpoints
 @Consumes(MediaType.APPLICATION_JSON)
                                  // => All requests accept JSON
+                                 // => Expects JSON in request body for POST/PUT
 class UserResource {         // => JAX-RS resource class (REST controller)
+                                 // => Container discovers and registers this class
     @GET                     // => HTTP GET method (retrieve resources)
+                                 // => Responds to GET /users (no path parameter)
     public Response getAllUsers() {
                                  // => GET /users - returns all users
+                                 // => List all resources operation
         List<User> users = userService.findAll();
                                  // => Fetches users from service layer
+                                 // => Service layer handles business logic
         return Response.ok(users).build();
                                  // => Returns HTTP 200 OK with users JSON
+                                 // => Response.ok() creates 200 status, build() finalizes
     }
 
     @GET                     // => HTTP GET method
@@ -4320,13 +4541,17 @@ class UserResource {         // => JAX-RS resource class (REST controller)
     }
 
     @POST                    // => HTTP POST method (create resource)
+                                 // => Responds to POST /users with JSON body
     public Response createUser(User user) {
                                  // => POST /users - creates new user
                                  // => User deserialized from JSON request body
+                                 // => JAX-RS automatically converts JSON to User object
         userService.create(user);
                                  // => Persists user to database
+                                 // => Delegates to service layer for creation logic
         return Response.status(Response.Status.CREATED).entity(user).build();
                                  // => Returns HTTP 201 Created with created user
+                                 // => 201 indicates successful resource creation
     }
 
     @PUT                     // => HTTP PUT method (update resource)
@@ -4341,36 +4566,50 @@ class UserResource {         // => JAX-RS resource class (REST controller)
 
     @DELETE                  // => HTTP DELETE method (delete resource)
     @Path("/{id}")           // => DELETE /users/123
+                                 // => Path parameter for target user ID
     public Response deleteUser(@PathParam("id") Long id) {
                                  // => Deletes user with specified ID
+                                 // => Extracts ID from URL path
         userService.delete(id);
                                  // => Removes user from database
+                                 // => Service layer handles deletion logic
         return Response.noContent().build();
                                  // => Returns HTTP 204 No Content (successful deletion)
+                                 // => 204 indicates success without response body
     }
 }
+                                 // => End of UserResource class
 
 // MicroProfile Config - externalized configuration
 import org.eclipse.microprofile.config.inject.ConfigProperty;
                                  // => MicroProfile Config annotation for property injection
+                                 // => Enables 12-factor app configuration
 
 @ApplicationScoped           // => CDI scope: one instance per application
                                  // => Shared across all requests (singleton-like)
+                                 // => Bean lifecycle managed by container
 class ConfigExample {
+                                 // => Demonstrates externalized configuration pattern
     @Inject                  // => CDI dependency injection
+                                 // => Container injects configuration at runtime
     @ConfigProperty(name = "database.url")
                                  // => Injects value from config property "database.url"
                                  // => Checks system properties, env vars, config files
+                                 // => Config sources: META-INF/microprofile-config.properties, env vars
     String databaseUrl; // Injected from config source
                                  // => databaseUrl = value from DATABASE_URL env var or database.url property
                                  // => Example: "jdbc:postgresql://localhost:5432/mydb"
 
     @Inject
+                                 // => CDI injection for second property
     @ConfigProperty(name = "database.timeout", defaultValue = "30")
                                  // => Injects "database.timeout" property with default 30
                                  // => Falls back to 30 if property not found
+                                 // => defaultValue prevents deployment failure if missing
     int timeout;             // => timeout = 30 (default) or configured value
+                                 // => Type conversion automatic (String to int)
 }
+                                 // => End of ConfigExample class
 
 // Config sources: system properties, environment variables, microprofile-config.properties
                                  // => Config priority: system properties > env vars > config files
@@ -4381,35 +4620,49 @@ import org.eclipse.microprofile.health.*;
                                  // => MicroProfile Health API for health check endpoints
 
 @Health                      // => Marks class as health check (deprecated, use @Liveness/@Readiness)
+                                 // => Container registers this as health check endpoint
 @ApplicationScoped           // => One instance per application
+                                 // => Bean managed by CDI container
 class DatabaseHealthCheck implements HealthCheck {
                                  // => HealthCheck interface: single call() method
+                                 // => MicroProfile Health contract
     @Override
     public HealthCheckResponse call() {
                                  // => Called by health check endpoint (GET /health)
+                                 // => Executed when Kubernetes probes health endpoint
         boolean isHealthy = checkDatabaseConnection();
                                  // => Checks if database connection is alive
+                                 // => Returns true if DB accessible, false otherwise
         return HealthCheckResponse.named("database")
                                  // => Health check name: "database"
+                                 // => Identifies this check in aggregated response
             .state(isHealthy)    // => UP if true, DOWN if false
+                                 // => Sets health state based on check result
             .withData("connection", "active")
                                  // => Additional metadata in health response
+                                 // => Optional diagnostic information
             .build();            // => Returns JSON: {"name":"database","state":"UP","data":{"connection":"active"}}
+                                 // => Builder pattern creates HealthCheckResponse
     }
 }
+                                 // => End of DatabaseHealthCheck class
 
 // Liveness vs Readiness
 @Liveness // Pod should be restarted if fails
                                  // => Liveness probe: checks if app is running
                                  // => Kubernetes restarts pod if fails (app deadlocked/crashed)
+                                 // => Typical checks: thread deadlock, memory exhaustion
 class LivenessCheck implements HealthCheck { /*...*/ }
                                  // => GET /health/live - returns UP if app alive
+                                 // => Kubernetes periodically calls this endpoint
 
 @Readiness // Pod should not receive traffic if fails
                                  // => Readiness probe: checks if app can handle requests
                                  // => Kubernetes stops sending traffic if fails (warming up, dependencies down)
+                                 // => Typical checks: database connection, external service availability
 class ReadinessCheck implements HealthCheck { /*...*/ }
                                  // => GET /health/ready - returns UP if ready for traffic
+                                 // => Kubernetes adds pod to load balancer when ready
 
 // Metrics
 import org.eclipse.microprofile.metrics.annotation.*;
@@ -4420,24 +4673,32 @@ class MetricsExample {
     @Counted(name = "user_requests", description = "Number of user requests")
                                  // => Counter metric: increments each time method called
                                  // => Exposed as Prometheus metric: user_requests_total
+                                 // => Annotations automatically instrument method
     @Timed(name = "user_request_time", description = "Time to process user requests")
                                  // => Timer metric: records execution duration
                                  // => Exposes p50, p99, max, mean latencies
+                                 // => Multiple annotations on same method allowed
     public void processUser() {
+                                 // => Method automatically instrumented by metrics annotations
         // Method execution counted and timed
                                  // => Each call increments counter and records duration
                                  // => Metrics available at GET /metrics (Prometheus format)
+                                 // => No manual instrumentation code required
     }
 
     @Gauge(name = "active_users", unit = MetricUnits.NONE)
                                  // => Gauge metric: current value (not cumulative)
                                  // => Polled periodically, returns current active users
+                                 // => Unlike counters (always increase), gauges can go up/down
     public long getActiveUsers() {
+                                 // => Method called periodically by metrics system
         return userService.countActive();
                                  // => Returns current count of active users
                                  // => Gauge value = return value
+                                 // => Prometheus scrapes this value at configured interval
     }
 }
+                                 // => End of metrics example class
 
 // Fault Tolerance
 import org.eclipse.microprofile.faultto tolerance.*;
@@ -4449,59 +4710,79 @@ class FaultToleranceExample {
                                  // => Automatically retries on exception
                                  // => maxRetries = 3: tries up to 4 times total (initial + 3 retries)
                                  // => delay = 1000ms between retry attempts
+                                 // => Fault tolerance pattern for transient failures
     public String callExternalService() {
                                  // => Calls external service with automatic retry
+                                 // => Protected by retry policy
         return externalService.getData();
                                  // => If fails, retries 3 times with 1 second delay
                                  // => Total max time: ~3 seconds (3 retries × 1 second)
+                                 // => Throws exception if all retries exhausted
     }
 
     @CircuitBreaker(
+                                 // => Circuit breaker pattern: prevents cascading failures
         requestVolumeThreshold = 4,
                                  // => Minimum 4 requests before circuit opens
                                  // => Circuit doesn't activate until 4 requests received
+                                 // => Requires initial request history
         failureRatio = 0.5,      // => Opens if 50% of requests fail
                                  // => Example: 2 of 4 requests fail → circuit opens
+                                 // => Decimal between 0.0 and 1.0
         delay = 5000             // => Circuit stays open for 5 seconds
                                  // => After 5 seconds, enters half-open state (allows 1 request)
+                                 // => Delay in milliseconds (5000ms = 5 seconds)
     )
     public String callUnreliableService() {
+                                 // => Protected by circuit breaker pattern
         // Circuit opens if 50% of 4 requests fail
         // Opens for 5 seconds before half-open state
                                  // => While open: immediately throws CircuitBreakerOpenException
                                  // => Half-open: allows 1 request. Success → closes, failure → opens
+                                 // => Three states: closed (normal), open (failing fast), half-open (testing)
         return unreliableService.getData();
                                  // => Returns data if circuit closed/half-open and request succeeds
+                                 // => Actual call to unreliable external service
     }
 
     @Timeout(1000) // Timeout after 1 second
                                  // => Throws TimeoutException if method exceeds 1000ms
                                  // => Interrupts long-running operations
+                                 // => Prevents indefinite blocking on slow services
     @Fallback(fallbackMethod = "fallbackMethod")
                                  // => Calls fallbackMethod if timeout or exception occurs
                                  // => fallbackMethod must have same signature
+                                 // => Provides graceful degradation
     public String callSlowService() {
                                  // => Calls service with 1 second timeout
+                                 // => Protected by both timeout and fallback
         return slowService.getData();
+                                 // => If exceeds 1000ms → TimeoutException → fallbackMethod
                                  // => If > 1 second, throws TimeoutException → calls fallbackMethod
     }
 
     public String fallbackMethod() {
                                  // => Fallback method (same signature as callSlowService)
+                                 // => Must match original method signature exactly
         return "Fallback data"; // => Returns default data when main method fails
                                  // => Called on timeout, exception, or circuit breaker open
+                                 // => Provides degraded but functional response
     }
 
     @Bulkhead(value = 5, waitingTaskQueue = 10)
                                  // => Limits concurrent executions (semaphore pattern)
                                  // => value = 5: max 5 concurrent executions
                                  // => waitingTaskQueue = 10: max 10 waiting requests
+                                 // => Bulkhead pattern prevents resource exhaustion
     public String limitedConcurrency() {
+                                 // => Protected by bulkhead (concurrency limit)
         // Max 5 concurrent executions, 10 waiting
                                  // => 6th concurrent request waits in queue (up to 10)
                                  // => 16th concurrent request immediately rejected (BulkheadException)
+                                 // => Total capacity: 5 executing + 10 queued = 15 max
         return service.getData();
                                  // => Returns data if semaphore acquired (not at limit)
+                                 // => Releases semaphore when method completes
     }
 }
 
@@ -4602,35 +4883,46 @@ import java.util.concurrent.Flow.*;
 // Publisher interface
 interface Publisher<T> {        // => Source of data (emits elements)
                                  // => Generic type T: type of emitted elements
+                                 // => Contract for all Publishers in Reactive Streams
     void subscribe(Subscriber<? super T> subscriber);
                                  // => Connects subscriber to this publisher
                                  // => Triggers data flow when subscriber ready
-}
+                                 // => ? super T: contravariant, accepts any supertype of T
+}                                // => Interface defines Publisher contract only
 
 // Subscriber interface
 interface Subscriber<T> {        // => Consumer of data (receives elements)
+                                 // => Generic type T: type of consumed elements
+                                 // => Contract for all Subscribers in Reactive Streams
     void onSubscribe(Subscription subscription);
                                  // => Called first when subscription starts
                                  // => Receives Subscription for backpressure control
+                                 // => Subscriber stores Subscription to request items
     void onNext(T item);         // => Called for each emitted item
                                  // => Receives one element at a time
+                                 // => May be called 0 to N times
     void onError(Throwable throwable);
                                  // => Called on error (terminal event)
                                  // => No more onNext calls after onError
+                                 // => Either onError OR onComplete called (mutually exclusive)
     void onComplete();           // => Called when publisher finished (terminal event)
                                  // => No more onNext calls after onComplete
-}
+                                 // => Either onError OR onComplete called (never both)
+}                                // => Interface defines Subscriber lifecycle contract
 
 // Subscription interface
 interface Subscription {         // => Controls data flow between Publisher and Subscriber
                                  // => Implements backpressure mechanism
-    void request(long n); // Request n items (backpressure)
+                                 // => Mediates between Publisher and Subscriber
+    void request(long n);        // => Request n items (backpressure signal)
                                  // => Subscriber requests n items from Publisher
                                  // => Publisher sends ≤ n items (respects backpressure)
-    void cancel(); // Cancel subscription
+                                 // => Pull-based: subscriber controls rate (backpressure)
+    void cancel();               // => Cancel subscription (stop emitting)
                                  // => Subscriber cancels subscription (no more items)
                                  // => Publisher stops emitting
-}
+                                 // => Cleanup: releases resources
+}                                // => Interface defines Subscription flow control contract
 
 // Simple Publisher implementation
 class SimplePublisher implements Publisher<Integer> {

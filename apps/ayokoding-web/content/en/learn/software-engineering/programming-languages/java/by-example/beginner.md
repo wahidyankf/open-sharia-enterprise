@@ -147,40 +147,63 @@ Java provides `if/else` for conditional branching and `switch` for multi-way bra
 **Code**:
 
 ```java
-int score = 85;                  // => score initialized to 85
+int score = 85;                  // => score initialized to 85 (primitive int)
 
 // IF/ELSE - traditional conditional branching
-if (score >= 90) {               // => Condition false (85 < 90), skip to next
+if (score >= 90) {               // => First condition: score >= 90 (85 >= 90)
+                                 // => Evaluates to false (85 < 90), skip block
+                                 // => Move to next else-if branch
     System.out.println("Grade: A");
-} else if (score >= 80) {        // => Condition true (85 >= 80), enter block
-    System.out.println("Grade: B");  // => Output: Grade: B
+                                 // => Not executed (condition failed)
+} else if (score >= 80) {        // => Second condition: score >= 80 (85 >= 80)
+                                 // => Evaluates to true, enter this block
+    System.out.println("Grade: B");  // => Output: Grade: B (executed)
+                                 // => Skips remaining else-if and else branches
 } else if (score >= 70) {        // => Not evaluated (previous branch taken)
+                                 // => else-if chains stop after first match
     System.out.println("Grade: C");
-} else {
+                                 // => Not executed
+} else {                         // => Catch-all for score < 70
+                                 // => Not evaluated (score >= 80 matched)
     System.out.println("Grade: F");
+                                 // => Not executed
 }
 
 // SWITCH STATEMENT - multi-way branch
-String day = "Monday";           // => day references "Monday"
-switch (day) {                   // => Switch on String (Java 7+)
-    case "Monday":               // => Matches: day.equals("Monday")
-        System.out.println("Start of work week");  // => Output: Start of work week
-        break;                   // => Exit switch (without break: falls through)
-    case "Friday":
+String day = "Monday";           // => day references String "Monday"
+switch (day) {                   // => Switch on String value (Java 7+)
+                                 // => Compares day with each case using equals()
+    case "Monday":               // => Matches: day.equals("Monday") is true
+                                 // => Enters this case block
+        System.out.println("Start of work week");
+                                 // => Output: Start of work week
+        break;                   // => Exit switch immediately (prevents fall-through)
+                                 // => Without break: would execute next case ("Friday")
+    case "Friday":               // => Not matched (already exited via break)
         System.out.println("TGIF!");
-        break;
-    default:                     // => Matches any other value
+                                 // => Not executed
+        break;                   // => Exit switch if this case matched
+    default:                     // => Matches any value not covered by cases
+                                 // => Not reached (day matched "Monday" case)
         System.out.println("Midweek");
+                                 // => Not executed
 }
 
 // SWITCH EXPRESSION - modern syntax (Java 14+)
-int numLetters = switch (day) {  // => Switch as expression (returns value)
-    case "Monday", "Friday" -> 6; // => Arrow syntax (implicit break)
-    case "Tuesday" -> 7;
-    case "Wednesday" -> 9;
-    default -> 0;                // => Required for exhaustiveness
-};                               // => numLetters is 6
-System.out.println(numLetters);  // => Output: 6
+int numLetters = switch (day) {  // => Switch as expression (returns value to numLetters)
+                                 // => day is "Monday", evaluates to 6
+    case "Monday", "Friday" -> 6; // => Arrow syntax (implicit break, returns 6)
+                                 // => Matches "Monday" (day value), returns 6
+                                 // => Multiple cases with comma (OR logic)
+    case "Tuesday" -> 7;         // => Returns 7 if day is "Tuesday"
+                                 // => Not matched (day is "Monday")
+    case "Wednesday" -> 9;       // => Returns 9 if day is "Wednesday"
+                                 // => Not matched
+    default -> 0;                // => Required: compiler checks exhaustiveness
+                                 // => Returns 0 for any other day value
+                                 // => Not reached (day matched earlier case)
+};                               // => numLetters assigned 6 (from "Monday" case)
+System.out.println(numLetters);  // => Output: 6 (value returned by switch expression)
 ```
 
 **Key Takeaway**: Use `if/else` for simple boolean conditions and modern switch expressions for multi-way branching based on discrete values. Switch expressions with arrow syntax (`->`) eliminate fall-through bugs and enable value-returning switches, making code safer and more concise than traditional switch statements.
@@ -432,39 +455,66 @@ graph TD
 
 ```java
 // SUPERCLASS
-class Animal {                   // => Base class
-    public void makeSound() {    // => Default implementation
+class Animal {                   // => Base class (superclass, parent class)
+                                 // => Defines common behavior for all animals
+    public void makeSound() {    // => Instance method with default implementation
+                                 // => Subclasses can override this method
         System.out.println("Some generic animal sound");
+                                 // => Default output for base Animal class
     }
 }
 
 // SUBCLASSES
 class Dog extends Animal {       // => Dog inherits from Animal (is-a relationship)
-    @Override                    // => Annotation verifies override
-    public void makeSound() {    // => Overrides Animal's method
-        System.out.println("Woof!");  // => Output: Woof!
+                                 // => Dog IS-A Animal (subtype relationship)
+                                 // => Inherits all Animal fields and methods
+    @Override                    // => Annotation verifies method signature matches superclass
+                                 // => Compile error if signature doesn't match Animal.makeSound()
+    public void makeSound() {    // => Overrides Animal's makeSound() method
+                                 // => Replaces default implementation with Dog-specific behavior
+        System.out.println("Woof!");  // => Dog's specific sound
+                                 // => Output: Woof! (when Dog calls makeSound)
     }
 }
 
-class Cat extends Animal {       // => Cat also extends Animal
-    @Override
-    public void makeSound() {
-        System.out.println("Meow!");  // => Output: Meow!
+class Cat extends Animal {       // => Cat also extends Animal (is-a relationship)
+                                 // => Cat IS-A Animal (another subtype)
+                                 // => Inherits all Animal fields and methods
+    @Override                    // => Verifies override of Animal.makeSound()
+                                 // => Compiler checks signature correctness
+    public void makeSound() {    // => Cat's version of makeSound()
+                                 // => Overrides default Animal implementation
+        System.out.println("Meow!");  // => Cat's specific sound
+                                 // => Output: Meow! (when Cat calls makeSound)
     }
 }
 
 // POLYMORPHISM
-Animal animal1 = new Dog();      // => Dog object as Animal type (upcast)
-Animal animal2 = new Cat();      // => Cat object as Animal type
+Animal animal1 = new Dog();      // => Dog object referenced as Animal type (upcast)
+                                 // => animal1 is Animal reference pointing to Dog object
+                                 // => Compile-time type: Animal, Runtime type: Dog
+Animal animal2 = new Cat();      // => Cat object referenced as Animal type (upcast)
+                                 // => animal2 is Animal reference pointing to Cat object
+                                 // => Compile-time type: Animal, Runtime type: Cat
 animal1.makeSound();             // => Calls Dog's makeSound() (dynamic dispatch)
-                                 // => Output: Woof!
-animal2.makeSound();             // => Output: Meow!
+                                 // => JVM checks runtime type (Dog), calls Dog.makeSound()
+                                 // => Output: Woof! (Dog's overridden method)
+animal2.makeSound();             // => Calls Cat's makeSound() (dynamic dispatch)
+                                 // => JVM checks runtime type (Cat), calls Cat.makeSound()
+                                 // => Output: Meow! (Cat's overridden method)
 
 // ARRAY OF POLYMORPHIC OBJECTS
 Animal[] animals = {new Dog(), new Cat(), new Dog()};
-for (Animal a : animals) {       // => Iterate using Animal type
-    a.makeSound();               // => Calls correct subclass method
-}                                // => Output: Woof! Meow! Woof!
+                                 // => Array of Animal references (compile-time type)
+                                 // => Contains Dog and Cat objects (runtime types)
+                                 // => animals[0] is Dog, animals[1] is Cat, animals[2] is Dog
+for (Animal a : animals) {       // => Iterate using Animal type (polymorphic iteration)
+                                 // => a references Dog, then Cat, then Dog
+    a.makeSound();               // => Dynamic dispatch: calls actual object's method
+                                 // => Iteration 1: Dog.makeSound() → Output: Woof!
+                                 // => Iteration 2: Cat.makeSound() → Output: Meow!
+                                 // => Iteration 3: Dog.makeSound() → Output: Woof!
+}                                // => Total output: Woof! Meow! Woof! (3 lines)
 ```
 
 **Key Takeaway**: Inheritance (`extends`) creates is-a relationships where subclasses inherit superclass members. Override methods with `@Override` annotation to customize behavior. Polymorphism lets you reference subclass objects via superclass type—method calls dynamically dispatch to the actual object's overridden method at runtime.
@@ -562,42 +612,60 @@ graph TD
 **Code**:
 
 ```java
-import java.util.ArrayList;
+import java.util.ArrayList;      // => ArrayList from java.util package
 
 // CREATE ArrayList
 ArrayList<String> names = new ArrayList<>();
-                                 // => Generic type specifies element type
-                                 // => Auto-grows when capacity exceeded
+                                 // => Creates empty ArrayList with default capacity 10
+                                 // => Generic type <String> specifies element type (compile-time safety)
+                                 // => Diamond operator <> infers type from left side
+                                 // => Backed by resizable Object[] array internally
+                                 // => names holds reference to heap ArrayList object
+                                 // => names is [], size=0, capacity=10
 
 // ADD ELEMENTS
-names.add("Alice");              // => Appends to end
-names.add("Bob");                // => ["Alice", "Bob"]
-names.add(1, "Charlie");         // => Insert at index 1, shifts Bob right
-                                 // => ["Alice", "Charlie", "Bob"]
+names.add("Alice");              // => Appends "Alice" to end (index 0)
+                                 // => names is ["Alice"], size=1
+names.add("Bob");                // => Appends "Bob" to end (index 1)
+                                 // => names is ["Alice", "Bob"], size=2
+names.add(1, "Charlie");         // => Insert "Charlie" at index 1
+                                 // => Shifts "Bob" right to index 2 (O(n) operation)
+                                 // => names is ["Alice", "Charlie", "Bob"], size=3
 
 // ACCESS ELEMENTS
-String first = names.get(0);     // => first is "Alice"
-int size = names.size();         // => size is 3 (method, not property)
+String first = names.get(0);     // => Retrieves element at index 0 (O(1) random access)
+                                 // => first is "Alice" (value at index 0)
+int size = names.size();         // => Returns number of elements (method, not property)
+                                 // => size is 3 (current number of elements)
 
 // MODIFY ELEMENTS
-names.set(2, "Dave");            // => Replace at index 2
-                                 // => ["Alice", "Charlie", "Dave"]
+names.set(2, "Dave");            // => Replace element at index 2 with "Dave"
+                                 // => "Bob" at index 2 replaced with "Dave"
+                                 // => names is ["Alice", "Charlie", "Dave"], size=3
 
 // REMOVE ELEMENTS
-names.remove("Charlie");         // => Remove by value (O(n) search)
-                                 // => Shifts left to fill gap
-names.remove(0);                 // => Remove by index
+names.remove("Charlie");         // => Remove first occurrence of "Charlie" (O(n) search)
+                                 // => Finds "Charlie" at index 1, removes it
+                                 // => Shifts "Dave" left to index 1 (fills gap)
+                                 // => names is ["Alice", "Dave"], size=2
+names.remove(0);                 // => Remove element at index 0 (O(n) shift)
+                                 // => Removes "Alice", shifts "Dave" left to index 0
+                                 // => names is ["Dave"], size=1
 
 // ITERATE
-for (String name : names) {
-    System.out.println(name);    // => Enhanced for-loop
-}
+for (String name : names) {      // => Enhanced for-loop iterates over all elements
+                                 // => name takes value of each element ("Dave")
+    System.out.println(name);    // => Output: Dave (prints each element)
+}                                // => Loop completes after 1 iteration
 
 // CONTAINS AND SEARCH
 boolean has = names.contains("Dave");
-                                 // => Linear search O(n)
+                                 // => Linear search O(n) checks if "Dave" exists
+                                 // => has is true ("Dave" is in list)
 int index = names.indexOf("Dave");
-                                 // => Returns -1 if not found
+                                 // => Returns first index of "Dave" (O(n) search)
+                                 // => index is 0 ("Dave" is at index 0)
+                                 // => Returns -1 if element not found
 ```
 
 **Key Takeaway**: ArrayList provides dynamic arrays that grow automatically, avoiding fixed-size limitations of primitive arrays. Use `add()` to append, `get(index)` to access, `set(index, value)` to modify, and `remove()` to delete. ArrayList maintains insertion order and allows duplicates, making it ideal for ordered collections with unknown size.
@@ -1093,56 +1161,86 @@ Strings are immutable character sequences with extensive manipulation methods. S
 **Code**:
 
 ```java
-String text = "Hello, World!";
+String text = "Hello, World!";   // => String literal stored in string pool
+                                 // => text references immutable String object
 
 // LENGTH and ACCESS
-int len = text.length();         // => len is 13
-char first = text.charAt(0);     // => first is 'H'
+int len = text.length();         // => Returns number of characters (method call)
+                                 // => len is 13 (counts all characters including comma and space)
+char first = text.charAt(0);     // => Returns character at index 0 (zero-based)
+                                 // => first is 'H' (type: char)
 
 // SUBSTRING
 String hello = text.substring(0, 5);
-                                 // => "Hello" (exclusive end)
-String world = text.substring(7);// => "World!" (to end)
+                                 // => Extracts characters from index 0 to 4 (end index exclusive)
+                                 // => hello is "Hello" (5 characters, indices 0-4)
+                                 // => Creates new String object (immutability)
+String world = text.substring(7);// => Extracts from index 7 to end of string
+                                 // => world is "World!" (starts at index 7, includes all remaining)
+                                 // => Creates new String object
 
 // CONCATENATION
 String greeting = "Hi" + " " + "there";
-                                 // => "Hi there"
+                                 // => Concatenates 3 string literals using + operator
+                                 // => greeting is "Hi there" (new String object created)
 String concat = "Hello".concat(" World");
-                                 // => "Hello World"
+                                 // => concat() method appends " World" to "Hello"
+                                 // => concat is "Hello World" (new String object)
 
 // CASE CONVERSION
 String upper = text.toUpperCase();
-                                 // => "HELLO, WORLD!" (new object)
+                                 // => Converts all characters to uppercase
+                                 // => upper is "HELLO, WORLD!" (new String object)
+                                 // => Original text unchanged (immutability)
 String lower = text.toLowerCase();
-                                 // => "hello, world!"
+                                 // => Converts all characters to lowercase
+                                 // => lower is "hello, world!" (new String object)
 
 // TRIMMING
-String padded = "  text  ";
-String trimmed = padded.trim();  // => "text" (removes whitespace)
+String padded = "  text  ";      // => String with leading and trailing whitespace
+                                 // => padded is "  text  " (2 spaces each side)
+String trimmed = padded.trim();  // => Removes leading and trailing whitespace
+                                 // => trimmed is "text" (no spaces, new String object)
 
 // SEARCH
 boolean contains = text.contains("World");
-                                 // => true
+                                 // => Checks if substring "World" exists in text
+                                 // => contains is true ("World" found at index 7)
 boolean starts = text.startsWith("Hello");
+                                 // => Checks if text starts with "Hello"
+                                 // => starts is true (text begins with "Hello")
 int index = text.indexOf("World");
-                                 // => 7 (or -1 if not found)
+                                 // => Returns first index of substring "World"
+                                 // => index is 7 (position where "World" starts)
+                                 // => Returns -1 if substring not found
 
 // REPLACEMENT
 String replaced = text.replace("World", "Java");
-                                 // => "Hello, Java!" (original unchanged)
+                                 // => Replaces all occurrences of "World" with "Java"
+                                 // => replaced is "Hello, Java!" (new String object)
+                                 // => Original text unchanged (immutability)
 
 // SPLITTING
 String csv = "apple,banana,cherry";
-String[] fruits = csv.split(",");// => Array of 3 strings
+                                 // => Comma-separated values string
+String[] fruits = csv.split(",");// => Splits string by comma delimiter
+                                 // => fruits is ["apple", "banana", "cherry"] (String array)
+                                 // => Array of 3 elements (split creates new String objects)
 
 // IMMUTABILITY
-String original = "Java";
-original.toUpperCase();          // => Returns new object
-System.out.println(original);    // => Output: Java (unchanged!)
+String original = "Java";        // => original references String "Java"
+original.toUpperCase();          // => Creates new String "JAVA", returns it
+                                 // => But return value NOT assigned to anything (discarded)
+                                 // => original UNCHANGED (toUpperCase doesn't modify original)
+System.out.println(original);    // => Output: Java (lowercase, unchanged)
+                                 // => Demonstrates immutability: operations return new Strings
 
 String modified = original.toUpperCase();
-                                 // => Must assign to capture
-System.out.println(modified);    // => Output: JAVA
+                                 // => toUpperCase() returns new String "JAVA"
+                                 // => Assigned to modified variable (captures result)
+                                 // => modified is "JAVA", original still "Java"
+System.out.println(modified);    // => Output: JAVA (uppercase, new String)
+                                 // => Must assign result to use modified value
 ```
 
 **Key Takeaway**: Strings are immutable—all manipulation methods return new String objects rather than modifying originals. This prevents accidental modifications but requires assigning results to variables. Use `+` or `concat()` for simple concatenation, `StringBuilder` for loops or repeated modifications.
@@ -1481,55 +1579,99 @@ Static members belong to the class rather than instances. They're shared across 
 **Code**:
 
 ```java
-public class Counter {
+public class Counter {           // => Public class (accessible from any package)
     // STATIC FIELD - shared across all Counter objects
     private static int totalCount = 0;
-                                 // => One copy shared by all instances
+                                 // => static keyword: one copy shared by ALL instances
+                                 // => Class-level field, not instance-level
+                                 // => Initialized to 0 when Counter class loaded
+                                 // => All Counter objects share this single totalCount variable
     // INSTANCE FIELD - each object has its own copy
     private int instanceCount = 0;
+                                 // => NO static: each Counter object has separate instanceCount
+                                 // => Object-level field (instance-specific state)
+                                 // => Each new Counter() creates new instanceCount field
 
     // CONSTRUCTOR
-    public Counter() {
-        totalCount++;            // => Increment shared static field
-        instanceCount++;         // => Increment instance field
+    public Counter() {           // => Constructor called when new Counter() executed
+                                 // => Runs each time object created
+        totalCount++;            // => Increment shared static field (class-level)
+                                 // => Same totalCount modified by all instances
+                                 // => Tracks total number of Counter objects created
+        instanceCount++;         // => Increment instance field (object-level)
+                                 // => Each object increments its own instanceCount
+                                 // => Always 1 for new objects (starts at 0, then++)
     }
 
     // STATIC METHOD - can be called without creating object
     public static int getTotalCount() {
-                                 // => Counter.getTotalCount() (no object needed)
-        return totalCount;
+                                 // => static method: belongs to class, not instance
+                                 // => Called via Counter.getTotalCount() (class name, no object)
+                                 // => NO this reference (no specific object context)
+        return totalCount;       // => Can access static fields
+                                 // => Returns shared totalCount value
         // return instanceCount; // => ERROR: cannot access instance field from static method
+                                 // => Static methods have no this reference
+                                 // => instanceCount requires specific object (no object here)
     }
 
     // INSTANCE METHOD - requires object
     public int getInstanceCount() {
-        return instanceCount;    // => Can access both instance and static fields
+                                 // => Instance method: requires Counter object
+                                 // => Called via c1.getInstanceCount() (object reference)
+                                 // => Has this reference (current object context)
+        return instanceCount;    // => Can access both instance fields (instanceCount)
+                                 // => And static fields (totalCount)
+                                 // => Returns this object's instanceCount value
     }
 
     // STATIC INITIALIZATION BLOCK - runs once when class loaded
-    static {
+    static {                     // => static block: executes when class loaded by JVM
+                                 // => Runs ONCE per class (not per object)
+                                 // => Runs before any Counter object created
+                                 // => Runs before static method calls
         System.out.println("Counter class loaded");
-        totalCount = 0;          // => Initialize static fields
+                                 // => Output: Counter class loaded (printed once)
+        totalCount = 0;          // => Initialize static field totalCount to 0
+                                 // => Can perform complex initialization here
         // Complex initialization logic here
+                                 // => Loading config, initializing caches, etc.
     }
 }
 
 // USAGE
-Counter c1 = new Counter();      // => Output: Counter class loaded (static block runs once)
-Counter c2 = new Counter();
-Counter c3 = new Counter();
+Counter c1 = new Counter();      // => First Counter object created
+                                 // => Triggers class loading (static block runs)
+                                 // => Output: Counter class loaded (static block executes ONCE)
+                                 // => Constructor runs: totalCount becomes 1, c1.instanceCount becomes 1
+Counter c2 = new Counter();      // => Second Counter object created
+                                 // => Static block does NOT run again (class already loaded)
+                                 // => Constructor runs: totalCount becomes 2, c2.instanceCount becomes 1
+Counter c3 = new Counter();      // => Third Counter object created
+                                 // => Constructor runs: totalCount becomes 3, c3.instanceCount becomes 1
 
 System.out.println(Counter.getTotalCount());
-                                 // => Output: 3 (static method call via class name)
+                                 // => Call static method via class name Counter
+                                 // => No object needed (static method)
+                                 // => Returns totalCount (3)
+                                 // => Output: 3 (total objects created)
 System.out.println(c1.getInstanceCount());
-                                 // => Output: 1 (each object has own instanceCount)
+                                 // => Call instance method on c1 object
+                                 // => Returns c1's instanceCount field
+                                 // => Output: 1 (each object has instanceCount=1)
 
 // STATIC IMPORT
 import static java.lang.Math.PI;
+                                 // => Import static field PI from Math class
+                                 // => Allows using PI without Math. prefix
 import static java.lang.Math.sqrt;
+                                 // => Import static method sqrt from Math class
+                                 // => Allows calling sqrt() directly
 
-double area = PI * sqrt(25);     // => Use PI and sqrt directly (no Math. prefix)
-                                 // => area is 15.707... (π * 5)
+double area = PI * sqrt(25);     // => Use imported static members directly
+                                 // => PI is Math.PI (3.14159...)
+                                 // => sqrt(25) is Math.sqrt(25) = 5.0
+                                 // => area is π * 5 = 15.707... (calculation result)
 ```
 
 **Key Takeaway**: Static members belong to the class, not instances—they're shared across all objects. Static methods can only access static fields (no `this` reference). Static blocks initialize static fields when class loads. Use static for utility methods (Math.sqrt), constants (Math.PI), and shared state (counters, caches).
@@ -1980,71 +2122,114 @@ Streams provide declarative, functional-style operations on collections. They en
 **Code**:
 
 ```java
-import java.util.*;
-import java.util.stream.*;
+import java.util.*;              // => Import Collections classes (List, Arrays)
+import java.util.stream.*;       // => Import Stream API classes
 
 List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+                                 // => Creates immutable List of 10 integers
+                                 // => numbers is [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-// FILTER
+// FILTER - select elements matching predicate
 List<Integer> evens = numbers.stream()
-    .filter(n -> n % 2 == 0)     // => Keep only evens
+                                 // => Creates Stream<Integer> from numbers list
+                                 // => Stream is lazy: operations don't execute yet
+    .filter(n -> n % 2 == 0)     // => Lambda predicate: keep if n % 2 == 0 (even)
+                                 // => Intermediate operation (lazy, returns new stream)
+                                 // => Will filter: 2, 4, 6, 8, 10 pass, odds rejected
     .collect(Collectors.toList());
-                                 // => evens is [2, 4, 6, 8, 10]
+                                 // => Terminal operation: triggers stream execution
+                                 // => Collects filtered results into new ArrayList
+                                 // => evens is [2, 4, 6, 8, 10] (5 even numbers)
 
-// MAP
+// MAP - transform each element
 List<Integer> squares = numbers.stream()
-    .map(n -> n * n)             // => Transform each
+                                 // => Creates stream from numbers list
+    .map(n -> n * n)             // => Lambda: transform each n to n²
+                                 // => Intermediate operation (lazy mapping)
+                                 // => Will square each: 1→1, 2→4, 3→9, 4→16, etc.
     .collect(Collectors.toList());
-                                 // => [1, 4, 9, 16, ...]
+                                 // => Terminal operation: execute and collect
+                                 // => squares is [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 
-// FILTER + MAP chain
+// FILTER + MAP chain - composable operations
 List<Integer> evenSquares = numbers.stream()
-    .filter(n -> n % 2 == 0)     // => Lazy intermediate operation
-    .map(n -> n * n)             // => Lazy transformation
+                                 // => Creates stream from numbers
+    .filter(n -> n % 2 == 0)     // => Lazy: filter evens (2, 4, 6, 8, 10)
+                                 // => Intermediate operation (doesn't execute yet)
+    .map(n -> n * n)             // => Lazy: square filtered values
+                                 // => Intermediate operation (chained with filter)
     .collect(Collectors.toList());
-                                 // => Terminal operation triggers
+                                 // => Terminal operation: triggers pipeline execution
+                                 // => Processes: 2→4, 4→16, 6→36, 8→64, 10→100
+                                 // => evenSquares is [4, 16, 36, 64, 100]
 
-// REDUCE
-int sum = numbers.stream()
-    .reduce(0, (a, b) -> a + b); // => Combines all elements
-                                 // => 0 is initial value
-                                 // => sum is 55
+// REDUCE - combine all elements to single value
+int sum = numbers.stream()       // => Creates stream
+    .reduce(0, (a, b) -> a + b); // => Binary operator: accumulate a + b
+                                 // => Initial value 0 (identity)
+                                 // => Step 1: 0 + 1 = 1
+                                 // => Step 2: 1 + 2 = 3
+                                 // => Step 3: 3 + 3 = 6, ...
+                                 // => Step 10: 45 + 10 = 55
+                                 // => sum is 55 (sum of 1..10)
 
-// COUNT
-long count = numbers.stream()
-    .filter(n -> n > 5)
-    .count();                    // => count is 5
+// COUNT - count elements matching filter
+long count = numbers.stream()    // => Creates stream
+    .filter(n -> n > 5)          // => Keeps 6, 7, 8, 9, 10 (5 elements)
+                                 // => Elements > 5
+    .count();                    // => Terminal operation: counts filtered elements
+                                 // => count is 5 (5 numbers greater than 5)
 
-// MIN / MAX
+// MIN / MAX - find minimum or maximum
 Optional<Integer> max = numbers.stream()
-    .max(Integer::compareTo);    // => Optional[10]
-int maxValue = max.orElse(0);    // => 10 (or 0 if empty)
+                                 // => Creates stream
+    .max(Integer::compareTo);    // => Method reference: natural ordering comparator
+                                 // => Compares all elements to find maximum
+                                 // => max is Optional[10] (wrapped in Optional)
+int maxValue = max.orElse(0);    // => Unwraps Optional: 10 if present, 0 if empty
+                                 // => maxValue is 10 (maximum value from list)
 
-// SORT
+// SORT - order elements by comparator
 List<Integer> sorted = numbers.stream()
+                                 // => Creates stream
     .sorted(Comparator.reverseOrder())
+                                 // => Sorts in reverse natural order (descending)
+                                 // => Intermediate operation (sorts stream)
     .collect(Collectors.toList());
-                                 // => [10, 9, 8, ...]
+                                 // => Terminal: collect to list
+                                 // => sorted is [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 
-// DISTINCT
+// DISTINCT - remove duplicates
 List<Integer> withDupes = Arrays.asList(1, 2, 2, 3, 3, 3, 4);
+                                 // => List with duplicate elements
+                                 // => withDupes is [1, 2, 2, 3, 3, 3, 4]
 List<Integer> unique = withDupes.stream()
-    .distinct()
+                                 // => Creates stream from withDupes
+    .distinct()                  // => Removes duplicates (keeps first occurrence)
+                                 // => Intermediate operation (stateful)
     .collect(Collectors.toList());
-                                 // => [1, 2, 3, 4]
+                                 // => Terminal: collect unique elements
+                                 // => unique is [1, 2, 3, 4] (duplicates removed)
 
-// PARALLEL STREAMS
+// PARALLEL STREAMS - concurrent execution
 int parallelSum = numbers.parallelStream()
-                                 // => Parallel execution
-    .filter(n -> n % 2 == 0)
-    .mapToInt(n -> n)            // => IntStream (primitive)
-    .sum();                      // => parallelSum is 30
+                                 // => Creates parallel stream (fork-join pool)
+                                 // => Splits work across available CPU cores
+    .filter(n -> n % 2 == 0)     // => Parallel filter: multiple threads process chunks
+                                 // => Keeps even numbers: 2, 4, 6, 8, 10
+    .mapToInt(n -> n)            // => Converts to IntStream (primitive int stream)
+                                 // => Avoids autoboxing overhead
+    .sum();                      // => Terminal: sum all filtered values
+                                 // => parallelSum is 30 (2+4+6+8+10)
 
-// STREAM from sources
+// STREAM from sources - creating streams
 Stream<String> stream1 = Stream.of("a", "b", "c");
-                                 // => Create stream from varargs
+                                 // => Creates stream from varargs elements
+                                 // => stream1 contains 3 elements: "a", "b", "c"
 IntStream range = IntStream.range(1, 10);
-                                 // => Create stream of ints 1-9 (exclusive end)
+                                 // => Creates IntStream of integers from 1 to 9
+                                 // => Exclusive end: 10 not included
+                                 // => range contains: 1, 2, 3, 4, 5, 6, 7, 8, 9
 ```
 
 **Key Takeaway**: Streams enable functional collection processing with declarative operations: `filter` (select), `map` (transform), `reduce` (combine), `collect` (accumulate). Streams are lazy—intermediate operations (filter, map) don't execute until terminal operation (collect, count, reduce) is called. Use `parallelStream()` for concurrent processing on multi-core systems.
@@ -2060,19 +2245,24 @@ Optional is a container for values that may be absent, providing null-safe opera
 **Code**:
 
 ```java
-import java.util.Optional;
+import java.util.Optional;       // => Optional class from java.util package
 
-// CREATE Optional
+// CREATE Optional - three factory methods
 Optional<String> present = Optional.of("hello");
-                                 // => Optional containing "hello"
+                                 // => Creates Optional containing "hello" (non-null value required)
+                                 // => present is Optional["hello"] (value present)
 // Optional<String> nullError = Optional.of(null);
-                                 // => NullPointerException (use ofNullable for null)
+                                 // => Throws NullPointerException if argument is null
+                                 // => Use ofNullable for potentially null values
 
 Optional<String> maybe = Optional.ofNullable(null);
-                                 // => Optional.empty() (safe null handling)
+                                 // => Creates Optional from potentially null value
+                                 // => null argument → Optional.empty() (safe handling)
+                                 // => maybe is Optional.empty() (no value)
 
 Optional<String> empty = Optional.empty();
-                                 // => Explicitly empty Optional
+                                 // => Creates explicitly empty Optional (no value)
+                                 // => empty is Optional.empty() (singleton instance)
 
 // CHECK presence
 boolean hasValue = present.isPresent();
@@ -2124,15 +2314,29 @@ String result = Optional.ofNullable("  text  ")
 
 // REAL-WORLD usage: method return types
 public Optional<String> findUserById(int id) {
-    // ... database lookup ...
-    if (userFound) {
+                                 // => Return type Optional signals: value may be absent
+                                 // => Caller must handle both present and empty cases
+                                 // => Forces explicit null handling at compile time
+    // ... database lookup ...   // => Database query (may or may not find user)
+    if (userFound) {             // => User exists in database
+                                 // => Branch taken if database query successful
         return Optional.of(userName);
+                                 // => Returns Optional containing user name
+                                 // => Wraps found userName in Optional container
     }
-    return Optional.empty();     // => Explicit "no result" signal
+    return Optional.empty();     // => Explicit "no result" signal (user not found)
+                                 // => Returns empty Optional (no value)
+                                 // => Prevents returning null (forces caller to handle absence)
 }
 
 Optional<String> user = findUserById(123);
+                                 // => Calls method with user ID 123
+                                 // => user is Optional (either present or empty)
+                                 // => May contain user name or be empty
 user.ifPresent(name -> System.out.println("Found: " + name));
+                                 // => Lambda executes only if user present
+                                 // => If present: prints "Found: [userName]"
+                                 // => If empty: no output (lambda skipped)
 ```
 
 **Key Takeaway**: Optional provides null-safe container for values that may be absent. Use `ofNullable()` to create from potentially null values, `orElse()` for default values, `map()`/`filter()` for transformations, and `ifPresent()` for conditional execution. Optional forces explicit missing-value handling, preventing NullPointerException.
@@ -2148,68 +2352,107 @@ Java 8's java.time package provides immutable, thread-safe date/time types repla
 **Code**:
 
 ```java
-import java.time.*;
+import java.time.*;              // => Date/time types (LocalDate, LocalTime, etc.)
 import java.time.format.DateTimeFormatter;
+                                 // => Formatting/parsing utilities
 
 // CURRENT date/time
 LocalDate today = LocalDate.now();
-                                 // => Date only
-LocalTime now = LocalTime.now(); // => Time only
+                                 // => Current date (no time component)
+                                 // => today is 2026-01-02 (example, system date)
+LocalTime now = LocalTime.now(); // => Current time (no date component)
+                                 // => now is 14:30:45.123456789 (example, system time)
 LocalDateTime datetime = LocalDateTime.now();
-                                 // => Date + time
+                                 // => Current date AND time combined
+                                 // => datetime is 2026-01-02T14:30:45.123456789
 
 // CREATE specific date/time
 LocalDate birthday = LocalDate.of(1990, 5, 15);
-                                 // => 1990-05-15
+                                 // => Creates date: year=1990, month=5 (May), day=15
+                                 // => birthday is 1990-05-15 (immutable)
 LocalTime meeting = LocalTime.of(14, 30);
-                                 // => 14:30
+                                 // => Creates time: hour=14 (2 PM), minute=30
+                                 // => meeting is 14:30 (2:30 PM, immutable)
 
 // DATE arithmetic
 LocalDate tomorrow = today.plusDays(1);
-                                 // => Immutable (new instance)
+                                 // => Adds 1 day to today
+                                 // => Returns NEW LocalDate (immutable, today unchanged)
+                                 // => tomorrow is 2026-01-03 (new instance)
 LocalDate lastWeek = today.minusWeeks(1);
+                                 // => Subtracts 1 week (7 days) from today
+                                 // => Returns NEW LocalDate (immutable)
+                                 // => lastWeek is 2025-12-26 (new instance)
 
 // EXTRACT components
-int year = today.getYear();
-Month month = today.getMonth();  // => Enum
-int day = today.getDayOfMonth();
+int year = today.getYear();      // => Extracts year component from today
+                                 // => year is 2026 (integer value)
+Month month = today.getMonth();  // => Extracts month as enum value
+                                 // => month is Month.JANUARY (enum, not int)
+int day = today.getDayOfMonth(); // => Extracts day of month (1-31)
+                                 // => day is 2 (integer value)
 
 // COMPARISONS
 boolean isBefore = birthday.isBefore(today);
+                                 // => Checks if birthday is before today
+                                 // => 1990-05-15 < 2026-01-02 → true
+                                 // => isBefore is true
 boolean isAfter = tomorrow.isAfter(today);
+                                 // => Checks if tomorrow is after today
+                                 // => 2026-01-03 > 2026-01-02 → true
+                                 // => isAfter is true
 
 // PERIOD - date duration
 LocalDate start = LocalDate.of(2020, 1, 1);
+                                 // => Start date: 2020-01-01
 LocalDate end = LocalDate.of(2026, 1, 2);
+                                 // => End date: 2026-01-02
 Period period = Period.between(start, end);
-                                 // => 6 years, 1 day
-int years = period.getYears();
+                                 // => Calculates period between two dates
+                                 // => period is P6Y1D (6 years, 0 months, 1 day)
+int years = period.getYears();   // => Extracts years component from period
+                                 // => years is 6 (integer value)
 
 // DURATION - time duration
-LocalTime start = LocalTime.of(9, 0);
-LocalTime end = LocalTime.of(17, 30);
-Duration duration = Duration.between(start, end);
-                                 // => 8h 30m
-long hours = duration.toHours();
+LocalTime startTime = LocalTime.of(9, 0);
+                                 // => Start time: 09:00 (9 AM)
+LocalTime endTime = LocalTime.of(17, 30);
+                                 // => End time: 17:30 (5:30 PM)
+Duration duration = Duration.between(startTime, endTime);
+                                 // => Calculates duration between two times
+                                 // => duration is PT8H30M (8 hours, 30 minutes)
+long hours = duration.toHours(); // => Converts duration to total hours
+                                 // => hours is 8 (long value, truncates 30 minutes)
 
 // FORMATTING
 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                                 // => Creates formatter with custom pattern
+                                 // => Pattern: day/month/year (DD/MM/YYYY format)
 String formatted = today.format(formatter);
-                                 // => "02/01/2026"
+                                 // => Formats today using custom pattern
+                                 // => formatted is "02/01/2026" (String)
 
 // PARSING
 LocalDate parsed = LocalDate.parse("15-05-1990",
+                                 // => Parses string "15-05-1990" to LocalDate
     DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                                 // => Uses pattern: day-month-year
+                                 // => parsed is 1990-05-15 (LocalDate)
 
 // ZONED date/time
 ZonedDateTime zoned = ZonedDateTime.now(ZoneId.of("America/New_York"));
-                                 // => With timezone
+                                 // => Current date/time in New York timezone
+                                 // => zoned is 2026-01-02T09:30:45.123-05:00[America/New_York]
+                                 // => Includes timezone offset (-05:00) and zone ID
 
 // INSTANT - machine timestamp
 Instant timestamp = Instant.now();
-                                 // => UTC nanosecond precision
+                                 // => Current UTC timestamp (machine time)
+                                 // => timestamp is 2026-01-02T14:30:45.123456789Z
+                                 // => Nanosecond precision, UTC timezone (Z suffix)
 long epochSeconds = timestamp.getEpochSecond();
-                                 // => Seconds since epoch
+                                 // => Converts timestamp to seconds since Unix epoch (1970-01-01)
+                                 // => epochSeconds is 1735826445 (example, long value)
 ```
 
 **Key Takeaway**: Use java.time types for date/time operations: LocalDate (date only), LocalTime (time only), LocalDateTime (date+time), ZonedDateTime (with timezone), Instant (machine timestamp). All types are immutable (methods return new instances). Use DateTimeFormatter for parsing/formatting with custom patterns.
