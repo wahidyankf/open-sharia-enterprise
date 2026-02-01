@@ -72,9 +72,9 @@ Unlike Selenium which requires browser drivers and explicit waits, Playwright au
 
 **Multiple ways to learn Playwright**:
 
-1. **[Initial Setup](/en/learn/software-engineering/automation-testing/playwright/initial-setup)** - Install Playwright, configure project, run first test
-2. **[Quick Start](/en/learn/software-engineering/automation-testing/playwright/quick-start)** - Complete working example with step-by-step walkthrough (5-30% coverage)
-3. **[By Example](/en/learn/software-engineering/automation-testing/playwright/by-example)** - 85 annotated code examples covering 95% of Playwright features
+1. **[Initial Setup](/en/learn/software-engineering/automation-testing/tools/playwright/initial-setup)** - Install Playwright, configure project, run first test
+2. **[Quick Start](/en/learn/software-engineering/automation-testing/tools/playwright/quick-start)** - Complete working example with step-by-step walkthrough (5-30% coverage)
+3. **[By Example](/en/learn/software-engineering/automation-testing/tools/playwright/by-example)** - 85 annotated code examples covering 95% of Playwright features
 
 **Recommended path for experienced developers**: Start with Initial Setup → Quick Start → By Example for comprehensive learning.
 
@@ -162,8 +162,8 @@ All Playwright APIs are fully typed, providing autocomplete and type checking ou
 
 Choose your learning path:
 
-- **[Initial Setup](/en/learn/software-engineering/automation-testing/playwright/initial-setup)** - Get Playwright installed and running
-- **[Quick Start](/en/learn/software-engineering/automation-testing/playwright/quick-start)** - Build your first complete test
-- **[By Example](/en/learn/software-engineering/automation-testing/playwright/by-example)** - Learn through 85 annotated examples
+- **[Initial Setup](/en/learn/software-engineering/automation-testing/tools/playwright/initial-setup)** - Get Playwright installed and running
+- **[Quick Start](/en/learn/software-engineering/automation-testing/tools/playwright/quick-start)** - Build your first complete test
+- **[By Example](/en/learn/software-engineering/automation-testing/tools/playwright/by-example)** - Learn through 85 annotated examples
 
 For production use, review the official Playwright documentation for best practices, CI/CD integration, and advanced patterns.

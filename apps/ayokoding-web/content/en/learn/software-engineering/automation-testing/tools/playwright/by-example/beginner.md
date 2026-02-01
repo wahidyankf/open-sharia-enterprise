@@ -2,7 +2,7 @@
 title: "Beginner"
 date: 2025-02-01T22:30:00+07:00
 draft: false
-weight: 10000001
+weight: 100000001
 description: "Learn Playwright fundamentals through 30 annotated examples: browser launch, navigation, locators, interactions, assertions, and auto-waiting"
 tags: ["playwright", "tutorial", "by-example", "beginner", "basics", "testing"]
 ---

@@ -2,7 +2,7 @@
 title: "Intermediate"
 date: 2026-02-01T00:00:00+07:00
 draft: false
-weight: 10000002
+weight: 100000002
 description: "Examples 31-60: Form handling, advanced assertions, API testing, and test organization (40-75% coverage)"
 tags: ["playwright", "tutorial", "by-example", "intermediate", "forms", "assertions", "api"]
 ---
