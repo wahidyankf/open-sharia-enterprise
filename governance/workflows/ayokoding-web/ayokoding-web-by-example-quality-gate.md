@@ -171,6 +171,7 @@ prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/progr
 
 1. **Coverage and count**: 95% coverage, 75-85 examples
 2. **Annotation density**: 1.0-2.25 comment lines per code line (target: 1.0-2.25, upper bound: 2.5)
+   - **Calculation**: `density = comments ÷ code` (e.g., 10 comments ÷ 5 code = 2.0)
 3. **Self-containment**: Copy-paste-runnable within chapter scope
 4. **Annotations**: `// =>` notation for outputs and states
 5. **Diagrams**: 30-50 total diagrams (approximately 35-60% of 75-85 examples), color-blind palette

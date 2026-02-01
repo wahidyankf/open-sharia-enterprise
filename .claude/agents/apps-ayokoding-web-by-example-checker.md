@@ -125,8 +125,37 @@ For EACH example:
 
 - Count code lines (excluding blank lines, comments)
 - Count comment lines
-- Calculate ratio: comments / code
-- Flag if ratio <1.0 or >2.25
+- Calculate density: comment_count ÷ code_count
+  - Example: 10 comments ÷ 5 code lines = 2.0 density ✅
+  - NOT: 5 code lines ÷ 10 comments = 0.5 ❌ (inverted)
+- Flag if density < 1.0 (under-annotated) or > 2.25 (over-annotated)
+
+#### Annotation Density Calculation Algorithm
+
+**CRITICAL: Formula Direction**
+
+```python
+# CORRECT formula
+density = comment_lines / code_lines
+
+# Example from Java beginner.md Example 1:
+code_lines = 5      # Executable code: class declaration, main method, println, closing braces
+comment_lines = 10  # Lines with // or // => annotations
+density = 10 / 5 = 2.0  # ✅ PASS (within 1.0-2.25)
+
+# WRONG formula (DO NOT USE)
+density = code_lines / comment_lines  # ❌ This is inverted!
+density = 5 / 10 = 0.5  # This would incorrectly flag as FAIL
+```
+
+**Counting Rules**:
+
+1. **Code lines**: Actual executable code (excluding blank lines and full-comment-only lines)
+2. **Comment lines**: Lines containing annotation markers (`// =>`, `# =>`, `-- =>`, `;; =>`)
+   - Count inline comments on code lines
+   - Count full-line comments that explain adjacent code
+   - Count multi-line `// =>` continuations as separate lines
+3. **Per-example basis**: Calculate density for EACH example individually, not as file average
 
 ### Step 3: Validate Structure
 
