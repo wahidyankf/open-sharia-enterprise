@@ -1573,7 +1573,7 @@ FAIL: Bad: "The content is validated by the agent"
 - Source prioritization (official docs → GitHub → registries → standards)
 - Confidence classifications ([Verified], [Unverified], [Error], [Outdated])
 
-**Technical specs**: [Factual Validation Convention](path) for confidence classification criteria.
+**Technical specs**: [Factual Validation Convention](../../conventions/writing/factual-validation.md) for confidence classification criteria.
 ```
 
 **Impact**: ~150-300 lines removed per agent, best-of-both (guidance + specs) via two sources.
