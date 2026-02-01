@@ -60,22 +60,28 @@ Java is statically typed with two categories: primitive types (stored on stack) 
 
 ```java
 // 8 PRIMITIVE TYPES
-byte b = 127;
-short s = 32000;
-int i = 42;                      // => Default integer type
-long l = 1000000L;
-float f = 3.14f;
-double d = 3.14159;              // => Default decimal type
-boolean bool = true;
-char c = 'A';
+byte b = 127;                    // => b = 127 (8-bit signed integer, -128 to 127)
+short s = 32000;                 // => s = 32000 (16-bit signed integer)
+int i = 42;                      // => i = 42 (32-bit signed integer, default)
+                                 // => Default integer type
+long l = 1000000L;               // => l = 1000000 (64-bit signed integer, L suffix required)
+float f = 3.14f;                 // => f = 3.14 (32-bit floating point, f suffix required)
+double d = 3.14159;              // => d = 3.14159 (64-bit floating point, default)
+                                 // => Default decimal type
+boolean bool = true;             // => bool = true (true or false, not 1/0)
+char c = 'A';                    // => c = 'A' (16-bit Unicode character)
 
 // REFERENCE TYPES
-String str = "Hello";
-int[] array = {1, 2, 3};
+String str = "Hello";            // => str = "Hello" (reference type, stored on heap)
+                                 // => Can be null
+int[] array = {1, 2, 3};         // => array = [1, 2, 3] (reference to array object)
+                                 // => Array is reference type
 
 // TYPE INFERENCE
-var num = 100;                   // => int (inferred)
-var text = "World";              // => String (inferred)
+var num = 100;                   // => num = 100 (type: int, inferred from literal)
+                                 // => int (inferred)
+var text = "World";              // => text = "World" (type: String, inferred from literal)
+                                 // => String (inferred)
 
 System.out.println(i);           // => Output: 42
 System.out.println(str);         // => Output: Hello
@@ -109,20 +115,23 @@ graph TD
 ```java
 import java.util.Scanner;        // => Scanner from java.util package
 
-Scanner scanner = new Scanner(System.in);
-                                 // => Wraps System.in (console input)
+Scanner scanner = new Scanner(System.in);  // => Creates Scanner for console input
+                                 // => Wraps System.in (standard input stream)
 
-System.out.print("Enter your name: ");
-String name = scanner.nextLine(); // => Reads line: "Alice\n" → "Alice"
+System.out.print("Enter your name: ");  // => Prompts user (no newline)
+String name = scanner.nextLine();  // => Reads entire line from user
+                                 // => Reads line: "Alice\n" → "Alice" (strips newline)
 
-System.out.print("Enter your age: ");
-int age = scanner.nextInt();     // => Parses integer (newline stays in buffer!)
-scanner.nextLine();              // => Consume leftover \n (REQUIRED after nextInt)
+System.out.print("Enter your age: ");  // => Prompts for age
+int age = scanner.nextInt();     // => Parses integer from input
+                                 // => Parses integer (newline stays in buffer!)
+scanner.nextLine();              // => Consume leftover \n from buffer
+                                 // => REQUIRED after nextInt (prevents nextLine bug)
 
-System.out.println("Hello, " + name + "! You are " + age + " years old.");
+System.out.println("Hello, " + name + "! You are " + age + " years old.");  // => Outputs greeting
                                  // => Output: Hello, Alice! You are 25 years old.
 
-scanner.close();                 // => Release resources
+scanner.close();                 // => Release resources (closes System.in)
 ```
 
 **Key Takeaway**: Use `Scanner` for reading console input with type-safe parsing methods (`nextInt`, `nextDouble`, `nextLine`). Always call `scanner.nextLine()` after `nextInt()` or similar methods to consume leftover newlines that would otherwise interfere with subsequent `nextLine()` calls.
@@ -204,33 +213,56 @@ graph TD
 **Code**:
 
 ```java
-// FOR LOOP
-for (int i = 0; i < 5; i++) {    // => i starts 0, increments
-    System.out.print(i + " ");   // => 5 iterations
-}                                // => Output: 0 1 2 3 4
+// FOR LOOP - known iteration count
+for (int i = 0; i < 5; i++) {    // => Initialize: i = 0
+                                 // => Condition: i < 5 (checked before each iteration)
+                                 // => Update: i++ (increments after each iteration)
+    System.out.print(i + " ");   // => Prints current i value
+                                 // => Iteration 1: i=0, output "0 "
+                                 // => Iteration 2: i=1, output "1 "
+                                 // => Iteration 3: i=2, output "2 "
+                                 // => Iteration 4: i=3, output "3 "
+                                 // => Iteration 5: i=4, output "4 "
+}                                // => After loop: i=5 (out of scope)
+                                 // => Output: 0 1 2 3 4
+System.out.println();            // => Newline (moves cursor to next line)
+
+// WHILE LOOP - condition-based iteration
+int count = 0;                   // => count initialized to 0
+while (count < 3) {              // => Condition checked BEFORE body executes
+                                 // => Loop continues while count < 3
+    System.out.print(count + " ");
+                                 // => Iteration 1: count=0, output "0 "
+                                 // => Iteration 2: count=1, output "1 "
+                                 // => Iteration 3: count=2, output "2 "
+    count++;                     // => Increment count manually (no auto-increment)
+                                 // => count becomes 1, then 2, then 3
+}                                // => count=3, condition false, exit loop
+                                 // => Output: 0 1 2
 System.out.println();            // => Newline
 
-// WHILE LOOP
-int count = 0;                   // => Initialize counter
-while (count < 3) {              // => Check before execution
-    System.out.print(count + " ");
-    count++;                     // => Increment
-}                                // => Output: 0 1 2
-System.out.println();
+// DO-WHILE LOOP - execute-then-check pattern
+int num = 0;                     // => num initialized to 0
+do {                             // => Body executes FIRST (before condition check)
+    System.out.print(num + " "); // => Iteration 1: num=0, output "0 "
+                                 // => Iteration 2: num=1, output "1 "
+                                 // => Iteration 3: num=2, output "2 "
+    num++;                       // => num becomes 1, then 2, then 3
+} while (num < 3);               // => Condition checked AFTER body executes
+                                 // => num=3, condition false, exit loop
+                                 // => Guarantees at least ONE execution (even if condition initially false)
+                                 // => Output: 0 1 2
+System.out.println();            // => Newline
 
-// DO-WHILE LOOP
-int num = 0;
-do {                             // => Execute first
-    System.out.print(num + " ");
-    num++;
-} while (num < 3);               // => Check after
-                                 // => At least one execution
-System.out.println();
-
-// ENHANCED FOR LOOP
-int[] numbers = {10, 20, 30};
-for (int n : numbers) {          // => "for each" syntax
-    System.out.print(n + " ");   // => No manual indexing
+// ENHANCED FOR LOOP - collection iteration
+int[] numbers = {10, 20, 30};    // => Array with 3 elements
+for (int n : numbers) {          // => "for each" syntax: for (element : collection)
+                                 // => n takes value of each element sequentially
+                                 // => Iteration 1: n=10, output "10 "
+                                 // => Iteration 2: n=20, output "20 "
+                                 // => Iteration 3: n=30, output "30 "
+    System.out.print(n + " ");   // => No manual index tracking needed
+                                 // => Cannot modify array elements (n is copy)
 }                                // => Output: 10 20 30
 ```
 
@@ -260,30 +292,47 @@ graph TD
 **Code**:
 
 ```java
-// ARRAY DECLARATION
-int[] numbers = {1, 2, 3, 4, 5}; // => Inline initialization
-int[] empty = new int[10];       // => 10 elements, initialized to 0
+// ARRAY DECLARATION AND INITIALIZATION
+int[] numbers = {1, 2, 3, 4, 5}; // => Inline initialization (array literal)
+                                 // => numbers holds reference to heap array
+                                 // => Array: [1, 2, 3, 4, 5], length=5
+int[] empty = new int[10];       // => Allocates array of 10 elements
+                                 // => All elements initialized to default (0 for int)
+                                 // => empty: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], length=10
 
 // ARRAY ACCESS
-int first = numbers[0];          // => first is 1 (0-indexed)
-int last = numbers[numbers.length - 1];  // => .length is property
-numbers[2] = 99;                 // => Mutate element
+int first = numbers[0];          // => Access element at index 0 (first element)
+                                 // => first is 1 (0-based indexing)
+int last = numbers[numbers.length - 1];
+                                 // => numbers.length is 5 (property, not method)
+                                 // => Access index 4 (last element, 5-1)
+                                 // => last is 5
+numbers[2] = 99;                 // => Mutate element at index 2
+                                 // => numbers becomes [1, 2, 99, 4, 5]
+                                 // => Arrays are mutable (elements can be changed)
 
-// ARRAY UTILITIES
-import java.util.Arrays;
-
+// ARRAY UTILITIES (import java.util.Arrays)
 int[] copy = Arrays.copyOf(numbers, numbers.length);
-                                 // => Deep copy
+                                 // => Creates deep copy of numbers array
+                                 // => copy is new array: [1, 2, 99, 4, 5]
+                                 // => Separate memory location from numbers
 String str = Arrays.toString(numbers);
-                                 // => "[1, 2, 99, 4, 5]"
-Arrays.sort(numbers);            // => In-place sort
+                                 // => Converts array to readable string format
+                                 // => str is "[1, 2, 99, 4, 5]"
+                                 // => Useful for debugging (arrays don't have toString())
+Arrays.sort(numbers);            // => In-place sort (modifies original array)
+                                 // => numbers becomes [1, 2, 4, 5, 99] (ascending order)
+                                 // => Uses dual-pivot quicksort internally
 
-// MULTIDIMENSIONAL ARRAYS
-int[][] matrix = {
-    {1, 2, 3},
-    {4, 5, 6}
-};
-int value = matrix[1][2];        // => value is 6
+// MULTIDIMENSIONAL ARRAYS (array of arrays)
+int[][] matrix = {               // => 2D array (array of int[] arrays)
+    {1, 2, 3},                   // => Row 0: [1, 2, 3]
+    {4, 5, 6}                    // => Row 1: [4, 5, 6]
+};                               // => matrix has 2 rows, 3 columns
+int value = matrix[1][2];        // => Access row 1, column 2
+                                 // => matrix[1] is [4, 5, 6]
+                                 // => matrix[1][2] is 6
+                                 // => value is 6
 ```
 
 **Key Takeaway**: Arrays have fixed size determined at creation and use zero-based indexing. Access array length via `.length` property (not `.length()` method). Use `Arrays` utility class for common operations like sorting, copying, and string conversion—don't reinvent these operations.
@@ -433,48 +482,51 @@ Interfaces define contracts (what methods a class must implement) without implem
 ```java
 // INTERFACE DEFINITION
 public interface Drawable {      // => Contract for drawable objects
-    void draw();                 // => Abstract method (no body)
-    double PI = 3.14159;         // => Constant (public static final)
-}
+    void draw();                 // => Abstract method (no body, no implementation)
+    double PI = 3.14159;         // => Constant (public static final by default)
+}                                // => All methods implicitly public abstract
+                                 // => All fields implicitly public static final
 
 // CLASS IMPLEMENTING INTERFACE
-class Circle implements Drawable {
-                                 // => Must implement all methods
-    @Override
-    public void draw() {
-        System.out.println("Drawing a circle");
-                                 // => Concrete implementation
+class Circle implements Drawable {  // => Implements Drawable contract
+                                    // => Must implement all methods
+    @Override                       // => Indicates overriding interface method
+    public void draw() {            // => Concrete implementation required
+        System.out.println("Drawing a circle");  // => Output: Drawing a circle
+                                    // => Concrete implementation
     }
 }
 
-class Square implements Drawable {
-    @Override
-    public void draw() {
-        System.out.println("Drawing a square");
+class Square implements Drawable {  // => Another Drawable implementation
+    @Override                       // => Overrides draw()
+    public void draw() {            // => Square's specific behavior
+        System.out.println("Drawing a square");  // => Output: Drawing a square
     }
 }
 
 // MULTIPLE INTERFACE IMPLEMENTATION
-interface Resizable {
-    void resize(int factor);
+interface Resizable {               // => Second interface (resizing capability)
+    void resize(int factor);        // => Abstract resize method
 }
 
-class FlexibleCircle implements Drawable, Resizable {
-                                 // => Multiple interfaces allowed
-    @Override
-    public void draw() {
-        System.out.println("Drawing flexible circle");
+class FlexibleCircle implements Drawable, Resizable {  // => Implements TWO interfaces
+                                    // => Multiple interfaces allowed (unlike inheritance)
+    @Override                       // => Implements Drawable.draw()
+    public void draw() {            // => FlexibleCircle's draw behavior
+        System.out.println("Drawing flexible circle");  // => Output: Drawing flexible circle
     }
 
-    @Override
-    public void resize(int factor) {
-        System.out.println("Resizing by " + factor);
+    @Override                       // => Implements Resizable.resize()
+    public void resize(int factor) {  // => FlexibleCircle's resize behavior
+        System.out.println("Resizing by " + factor);  // => Output: Resizing by 3 (example)
     }
 }
 
 // POLYMORPHISM WITH INTERFACES
-Drawable shape1 = new Circle(); // => Reference via interface type
-Drawable shape2 = new Square();
+Drawable shape1 = new Circle();  // => Reference via interface type
+                                 // => shape1 = Circle instance (polymorphic reference)
+Drawable shape2 = new Square();  // => shape2 = Square instance
+                                 // => Both shape1 and shape2 are Drawable type
 shape1.draw();                   // => Calls Circle's draw() (dynamic dispatch)
                                  // => Output: Drawing a circle
 shape2.draw();                   // => Calls Square's draw()
@@ -720,27 +772,42 @@ boolean or = a || b;             // => or is true (at least one true)
                                  // => Prevents unnecessary expensive operations
 
 // Short-circuit prevents null pointer errors
-String str = null;
+String str = null;               // => str references null (no object)
 if (str != null && str.length() > 0) {
-                                 // => str.length() only called if str != null
-                                 // => Safe: no NullPointerException
+                                 // => First condition: str != null → false
+                                 // => Second condition: str.length() NOT evaluated (short-circuit)
+                                 // => && short-circuits: if left is false, right skipped
+                                 // => Safe: no NullPointerException (str.length() never called)
+                                 // => Entire condition is false, if block skipped
     System.out.println("Non-empty string");
+                                 // => Not executed (condition false)
 }
 
 // COMPARISON OPERATORS
-int x = 10;
-int y = 20;
-boolean equal = (x == y);        // => false (value equality)
-boolean notEqual = (x != y);     // => true
-boolean greater = (x > y);       // => false
-boolean lessOrEqual = (x <= y);  // => true
+int x = 10;                      // => x = 10 (primitive int)
+int y = 20;                      // => y = 20 (primitive int)
+boolean equal = (x == y);        // => Compares values: 10 == 20 → false
+                                 // => equal = false
+boolean notEqual = (x != y);     // => Compares values: 10 != 20 → true
+                                 // => notEqual = true
+boolean greater = (x > y);       // => Compares values: 10 > 20 → false
+                                 // => greater = false
+boolean lessOrEqual = (x <= y);  // => Compares values: 10 <= 20 → true
+                                 // => lessOrEqual = true
 
 // REFERENCE vs VALUE equality
-String s1 = new String("hello");
-String s2 = new String("hello");
-boolean refEqual = (s1 == s2);   // => false (different objects, different memory addresses)
+String s1 = new String("hello"); // => Creates NEW String object in heap
+                                 // => s1 references object at memory location A
+String s2 = new String("hello"); // => Creates ANOTHER new String object in heap
+                                 // => s2 references object at memory location B
+                                 // => Both have same content "hello" but different locations
+boolean refEqual = (s1 == s2);   // => Compares memory addresses (references)
+                                 // => s1 address A != s2 address B
+                                 // => refEqual = false (different objects)
 boolean valueEqual = s1.equals(s2);
-                                 // => true (same content via equals() method)
+                                 // => Compares string content using equals() method
+                                 // => "hello".equals("hello") → true
+                                 // => valueEqual = true (same content)
 ```
 
 **Key Takeaway**: Use ternary operator (`condition ? true : false`) for simple inline conditionals, replacing verbose if/else. Logical operators `&&` and `||` short-circuit—right side only evaluated if necessary, preventing NullPointerExceptions. For objects, use `equals()` for value comparison, `==` for reference comparison.
@@ -760,38 +827,61 @@ import java.util.*;
 
 // ENHANCED FOR with ArrayList
 ArrayList<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana", "cherry"));
+                                 // => fruits is ["apple", "banana", "cherry"]
 
-for (String fruit : fruits) {    // => Enhanced for-loop syntax
-    System.out.println(fruit);   // => Output: apple, banana, cherry
+for (String fruit : fruits) {    // => Enhanced for-loop: for (element : collection)
+                                 // => Internally uses Iterator (compiler translation)
+                                 // => Iteration 1: fruit="apple"
+                                 // => Iteration 2: fruit="banana"
+                                 // => Iteration 3: fruit="cherry"
+    System.out.println(fruit);   // => Output: apple, banana, cherry (3 lines)
 }
 
-// TRADITIONAL for loop
+// TRADITIONAL for loop with index
 for (int i = 0; i < fruits.size(); i++) {
+                                 // => Loop with explicit index i
+                                 // => fruits.size() is 3
     System.out.println(i + ": " + fruits.get(i));
-                                 // => Use when index needed
+                                 // => Output: 0: apple, 1: banana, 2: cherry
+                                 // => Use when index needed (numbering, parallel arrays)
 }
 
-// ITERATOR - manual iteration
+// ITERATOR - manual iteration control
 Iterator<String> iter = fruits.iterator();
-while (iter.hasNext()) {         // => Check if more elements
-    String fruit = iter.next();  // => Get next and advance
-    System.out.println(fruit);
-    if (fruit.equals("banana")) {
-        iter.remove();           // => Safe removal during iteration
-                                 // => fruits is ["apple", "cherry"]
+                                 // => Creates iterator for fruits collection
+                                 // => iter positioned before first element
+while (iter.hasNext()) {         // => Check if more elements exist
+                                 // => hasNext() returns true if elements remain
+    String fruit = iter.next();  // => Get next element and advance iterator
+                                 // => Iteration 1: fruit="apple"
+                                 // => Iteration 2: fruit="banana"
+                                 // => Iteration 3: fruit="cherry"
+    System.out.println(fruit);   // => Output: apple, banana, cherry
+    if (fruit.equals("banana")) {// => Check if current fruit is "banana"
+        iter.remove();           // => Safe removal using iterator
+                                 // => Removes "banana" from fruits collection
+                                 // => fruits becomes ["apple", "cherry"]
     }
 }
 
 // CAUTION: ConcurrentModificationException
 ArrayList<Integer> numbers = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
-for (Integer num : numbers) {
-    // numbers.remove(num);      // => ERROR: Cannot modify during loop
+                                 // => numbers is [1, 2, 3, 4]
+for (Integer num : numbers) {    // => Enhanced for creates internal iterator
+    // numbers.remove(num);      // => ERROR: Modifies collection during iteration
+                                 // => Throws ConcurrentModificationException
+                                 // => Fail-fast mechanism prevents iterator corruption
 }
 
-// CORRECT removal
+// CORRECT removal with removeIf (Java 8+)
 numbers.removeIf(num -> num % 2 == 0);
-                                 // => Lambda filter, removes even numbers
-                                 // => numbers is [1, 3]
+                                 // => Lambda predicate: num -> num % 2 == 0
+                                 // => Removes elements where predicate returns true
+                                 // => Checks: 1 % 2 == 0 → false (keep)
+                                 // => Checks: 2 % 2 == 0 → true (remove)
+                                 // => Checks: 3 % 2 == 0 → false (keep)
+                                 // => Checks: 4 % 2 == 0 → true (remove)
+                                 // => numbers becomes [1, 3] (even numbers removed)
 ```
 
 **Key Takeaway**: Enhanced for-loops (`for (element : collection)`) provide clean iteration syntax for read-only traversal. To remove elements during iteration, use `Iterator.remove()` or `Collection.removeIf()`, NOT direct collection modification which throws ConcurrentModificationException. Use traditional for-loops when you need the index.
@@ -830,49 +920,72 @@ graph TD
 ```java
 // METHOD DEFINITION
 public static int add(int a, int b) {
-                                 // => public static method
-                                 // => int: return type
-    return a + b;                // => Return value to caller
+                                 // => public: accessible from anywhere
+                                 // => static: belongs to class (not instance)
+                                 // => int: return type (returns integer)
+                                 // => add: method name
+                                 // => (int a, int b): parameters (2 integers)
+    return a + b;                // => Computes sum: 5 + 3 = 8
+                                 // => Returns result to caller
 }
 
 // METHOD CALL
-int sum = add(5, 3);             // => sum is 8
+int sum = add(5, 3);             // => Calls add method with arguments 5 and 3
+                                 // => add(5, 3) evaluates to 8
+                                 // => sum is 8
 
 // PASS-BY-VALUE for primitives
 public static void modifyPrimitive(int x) {
+                                 // => Parameter x receives COPY of argument value
     x = 100;                     // => Modifies local copy only
+                                 // => Original variable unchanged
 }
 
-int num = 10;
-modifyPrimitive(num);            // => num still 10 (primitive copied)
+int num = 10;                    // => num is 10
+modifyPrimitive(num);            // => Passes copy of num's value (10) to method
+                                 // => Method modifies copy to 100, not original
+                                 // => num still 10 (primitive pass-by-value)
 
 // PASS-BY-VALUE for references
 public static void modifyArray(int[] arr) {
-    arr[0] = 999;                // => Modifies heap object
-                                 // => Changes visible to caller
+                                 // => Parameter arr receives COPY of reference
+                                 // => Copy points to SAME heap array as original
+    arr[0] = 999;                // => Modifies heap array via reference copy
+                                 // => Changes visible to caller (same object)
 }
 
 public static void reassignArray(int[] arr) {
-    arr = new int[]{100, 200};   // => Reassigns local reference only
-                                 // => Original unchanged
+                                 // => Parameter arr receives COPY of reference
+    arr = new int[]{100, 200};   // => Reassigns local reference copy to NEW array
+                                 // => Original reference unchanged (still points to old array)
 }
 
-int[] numbers = {1, 2, 3};
-modifyArray(numbers);            // => numbers is [999, 2, 3]
-reassignArray(numbers);          // => numbers still [999, 2, 3]
-                                 // => Reference copy reassigned, not original
+int[] numbers = {1, 2, 3};       // => numbers references array [1, 2, 3] in heap
+modifyArray(numbers);            // => Passes copy of reference to modifyArray
+                                 // => Method modifies heap array via reference copy
+                                 // => numbers is [999, 2, 3] (heap modified)
+reassignArray(numbers);          // => Passes copy of reference to reassignArray
+                                 // => Method reassigns local copy to new array
+                                 // => Original reference unchanged
+                                 // => numbers still [999, 2, 3] (original reference intact)
 
 // RETURN VALUES
 public static String greet(String name) {
-    return "Hello, " + name;     // => Return String object
+                                 // => Method returns String object
+    return "Hello, " + name;     // => Concatenates "Hello, " with parameter name
+                                 // => Returns new String object to caller
 }
 
-String message = greet("Alice"); // => message is "Hello, Alice"
+String message = greet("Alice"); // => Calls greet("Alice")
+                                 // => greet returns "Hello, Alice"
+                                 // => message is "Hello, Alice"
 
-// VOID METHODS
+// VOID METHODS (no return value)
 public static void printMessage(String msg) {
-                                 // => void: no return value
-    System.out.println(msg);     // => Side effect only
+                                 // => void: method doesn't return value
+                                 // => Used for side effects only
+    System.out.println(msg);     // => Side effect: prints to console
+                                 // => No return statement needed
 }
 ```
 
@@ -1196,52 +1309,77 @@ Varargs allows methods to accept variable numbers of arguments using `...` synta
 // VARARGS METHOD
 public static int sum(int... numbers) {
                                  // => int... allows 0 or more int arguments
-                                 // => numbers is treated as int[] inside method
-    int total = 0;
-    for (int num : numbers) {
-        total += num;
+                                 // => Compiler converts to int[] array internally
+                                 // => numbers parameter is int[] inside method body
+    int total = 0;               // => Accumulator initialized to 0
+    for (int num : numbers) {    // => Iterate over varargs array
+                                 // => num takes each element value
+        total += num;            // => Add num to running total
     }
-    return total;
+    return total;                // => Return accumulated sum
 }
 
 // CALLING with different argument counts
-int result1 = sum();             // => result1 is 0 (no arguments, empty array)
-int result2 = sum(5);            // => result2 is 5 (one argument)
-int result3 = sum(1, 2, 3, 4);   // => result3 is 10 (four arguments)
+int result1 = sum();             // => Called with 0 arguments
+                                 // => numbers is empty array int[0]
+                                 // => Loop doesn't execute (empty array)
+                                 // => result1 is 0 (no additions)
+int result2 = sum(5);            // => Called with 1 argument
+                                 // => numbers is int[]{5}
+                                 // => Loop executes once: total = 0 + 5
+                                 // => result2 is 5
+int result3 = sum(1, 2, 3, 4);   // => Called with 4 arguments
+                                 // => numbers is int[]{1, 2, 3, 4}
+                                 // => Loop: total = 0 + 1 + 2 + 3 + 4
+                                 // => result3 is 10
 
 // VARARGS with regular parameters
 public static String format(String template, Object... args) {
-                                 // => Regular parameter first, varargs last
+                                 // => Regular parameter (template) MUST come first
+                                 // => Varargs parameter (args) MUST be last
+                                 // => args is Object[] inside method
     return String.format(template, args);
-                                 // => args passed to format() as array
+                                 // => Passes template and args array to String.format
+                                 // => String.format replaces %s, %d with args elements
 }
 
 String msg = format("Hello %s, you have %d messages", "Alice", 5);
+                                 // => template = "Hello %s, you have %d messages"
+                                 // => args = new Object[]{"Alice", 5}
+                                 // => String.format replaces %s with "Alice", %d with 5
                                  // => msg is "Hello Alice, you have 5 messages"
 
 // VARARGS vs ARRAY parameter
 public static void printArray(int[] array) {
-                                 // => Requires explicit array
-    for (int n : array) {
+                                 // => Requires explicit int[] array parameter
+                                 // => Caller must create array manually
+    for (int n : array) {        // => Iterate array elements
         System.out.print(n + " ");
+                                 // => Output: 1 2 3
     }
 }
 
-printArray(new int[]{1, 2, 3});  // => Must create array explicitly
+printArray(new int[]{1, 2, 3});  // => Must create array explicitly with new int[]{}
+                                 // => Verbose syntax (array literal required)
 
 // Varargs equivalent (cleaner call syntax)
 public static void printVarargs(int... numbers) {
-    for (int n : numbers) {
+                                 // => Varargs allows comma-separated arguments
+                                 // => Compiler creates array automatically
+    for (int n : numbers) {      // => numbers is int[] internally
         System.out.print(n + " ");
+                                 // => Output: 1 2 3
     }
 }
 
 printVarargs(1, 2, 3);           // => No explicit array creation needed
+                                 // => Compiler creates int[]{1, 2, 3} automatically
+                                 // => Cleaner syntax for callers
 
 // VARARGS RULES
-// 1. Only one varargs parameter allowed per method
-// 2. Varargs must be LAST parameter
-// public static void invalid(int... a, String s) {}  // => ERROR: varargs not last
+// => 1. Only one varargs parameter allowed per method
+// => 2. Varargs parameter MUST be LAST in parameter list
+// public static void invalid(int... a, String s) {}  // => ERROR: varargs not last (compilation error)
 ```
 
 **Key Takeaway**: Varargs (`Type... varName`) allows methods to accept variable numbers of arguments, treating them as arrays internally. Varargs must be the last parameter in the parameter list. Use varargs for flexible APIs (printf-style formatting, builders, utility methods) but prefer explicit arrays for performance-critical code to avoid hidden array allocation.
@@ -1257,52 +1395,77 @@ Java provides wrapper classes (Integer, Double, Boolean, etc.) to treat primitiv
 **Code**:
 
 ```java
-// WRAPPER CLASSES
-int primitive = 42;
+// WRAPPER CLASSES (manual boxing/unboxing)
+int primitive = 42;              // => Primitive int value 42
 Integer wrapped = Integer.valueOf(primitive);
-                                 // => Explicit boxing
+                                 // => Explicit boxing: converts int 42 to Integer object
+                                 // => wrapped references Integer object holding 42
 int unwrapped = wrapped.intValue();
-                                 // => Explicit unboxing
+                                 // => Explicit unboxing: extracts int from Integer object
+                                 // => unwrapped is 42 (primitive int)
 
-// AUTOBOXING (Java 5+)
-Integer auto = 42;               // => Automatic int → Integer
-int primitiveAuto = auto;        // => Automatic Integer → int
+// AUTOBOXING (Java 5+, automatic conversion)
+Integer auto = 42;               // => Automatic int → Integer (compiler inserts valueOf)
+                                 // => Equivalent to: Integer auto = Integer.valueOf(42)
+                                 // => auto references Integer object holding 42
+int primitiveAuto = auto;        // => Automatic Integer → int (compiler inserts intValue)
+                                 // => Equivalent to: int primitiveAuto = auto.intValue()
+                                 // => primitiveAuto is 42 (primitive int)
 
-// COLLECTIONS require objects
+// COLLECTIONS require objects (cannot use primitives)
 ArrayList<Integer> numbers = new ArrayList<>();
-                                 // => Cannot use ArrayList<int>
-numbers.add(10);                 // => Autoboxing
-numbers.add(20);
-int first = numbers.get(0);      // => Auto-unboxing
+                                 // => ArrayList<int> is ILLEGAL (generics require objects)
+                                 // => Must use wrapper class Integer
+numbers.add(10);                 // => Autoboxing: 10 (int) → Integer.valueOf(10)
+                                 // => Adds Integer object to list
+numbers.add(20);                 // => Autoboxing: 20 → Integer.valueOf(20)
+                                 // => numbers is [10, 20] (Integer objects)
+int first = numbers.get(0);      // => Returns Integer object (value 10)
+                                 // => Auto-unboxing: Integer.intValue() → 10 (int)
+                                 // => first is 10 (primitive int)
 
-// UTILITIES
-String numberStr = "123";
+// UTILITIES (wrapper class static methods)
+String numberStr = "123";        // => String representation of number
 int parsed = Integer.parseInt(numberStr);
-                                 // => String → int
+                                 // => Parses String to primitive int
+                                 // => parsed is 123 (int, not Integer)
 Integer parsedObj = Integer.valueOf(numberStr);
-                                 // => String → Integer
+                                 // => Parses String to Integer object
+                                 // => parsedObj references Integer(123)
 
 String binary = Integer.toBinaryString(42);
-                                 // => "101010"
-int max = Integer.MAX_VALUE;     // => 2147483647
-int min = Integer.MIN_VALUE;     // => -2147483648
+                                 // => Converts int to binary string representation
+                                 // => binary is "101010" (42 in base-2)
+int max = Integer.MAX_VALUE;     // => Constant: maximum int value
+                                 // => max is 2147483647 (2^31 - 1)
+int min = Integer.MIN_VALUE;     // => Constant: minimum int value
+                                 // => min is -2147483648 (-2^31)
 
-// NULL POINTER RISK
-Integer nullValue = null;
-// int danger = nullValue;       // => NullPointerException!
-if (nullValue != null) {
-    int safe = nullValue;        // => Safe unboxing
+// NULL POINTER RISK (auto-unboxing danger)
+Integer nullValue = null;        // => nullValue references null (no Integer object)
+// int danger = nullValue;       // => Auto-unboxing attempts nullValue.intValue()
+                                 // => NullPointerException! (cannot call method on null)
+if (nullValue != null) {         // => Check for null BEFORE auto-unboxing
+    int safe = nullValue;        // => Safe: only executes if nullValue not null
+                                 // => Auto-unboxing: nullValue.intValue()
 }
 
-// WRAPPER CACHING
-Integer a = 127;
-Integer b = 127;
-System.out.println(a == b);      // => true (cached -128 to 127)
+// WRAPPER CACHING (Integer.valueOf caches -128 to 127)
+Integer a = 127;                 // => Autoboxing: Integer.valueOf(127)
+                                 // => valueOf returns CACHED Integer instance for 127
+Integer b = 127;                 // => Autoboxing: Integer.valueOf(127)
+                                 // => valueOf returns SAME cached instance as a
+System.out.println(a == b);      // => Compares references (memory addresses)
+                                 // => true (a and b reference same cached object)
 
-Integer c = 128;
-Integer d = 128;
-System.out.println(c == d);      // => false (different objects)
-System.out.println(c.equals(d)); // => true (value equality)
+Integer c = 128;                 // => Autoboxing: Integer.valueOf(128)
+                                 // => valueOf creates NEW Integer instance (128 > 127, not cached)
+Integer d = 128;                 // => Autoboxing: Integer.valueOf(128)
+                                 // => valueOf creates ANOTHER new Integer instance
+System.out.println(c == d);      // => Compares references
+                                 // => false (c and d reference different objects)
+System.out.println(c.equals(d)); // => Compares values using equals()
+                                 // => true (both hold value 128, value equality)
 ```
 
 **Key Takeaway**: Wrapper classes (Integer, Double, Boolean) enable primitives to be used where objects are required (collections, generics). Autoboxing automatically converts primitives to wrappers and vice versa. Always use `equals()` for wrapper comparison, NOT `==` (except for cached values -128 to 127). Check for null before auto-unboxing to avoid NullPointerException.
@@ -1387,67 +1550,77 @@ Access modifiers control visibility of classes, fields, and methods. Encapsulati
 public class BankAccount {       // => public: accessible anywhere
     // PRIVATE fields
     private String accountNumber; // => Only accessible within class
+                                 // => External code cannot read/write directly
     private double balance;       // => Encapsulation hides state
+                                 // => Prevents direct manipulation
 
     // PUBLIC constructor
-    public BankAccount(String accountNumber, double initialBalance) {
-        this.accountNumber = accountNumber;
-        this.balance = initialBalance;
+    public BankAccount(String accountNumber, double initialBalance) {  // => Public constructor
+        this.accountNumber = accountNumber;                            // => Sets account number
+        this.balance = initialBalance;                                 // => Sets initial balance
                                  // => Controlled initialization
     }
 
     // PUBLIC methods
-    public void deposit(double amount) {
-        if (amount > 0) {
-            balance += amount;     // => Validation logic
-        }
+    public void deposit(double amount) {  // => Public API for depositing
+        if (amount > 0) {                 // => Validation: positive amounts only
+            balance += amount;            // => Validation logic, updates balance
+        }                                 // => Rejects negative/zero amounts
     }
 
-    public boolean withdraw(double amount) {
-        if (amount > 0 && balance >= amount) {
-            balance -= amount;
-            return true;           // => Success
+    public boolean withdraw(double amount) {  // => Public API for withdrawing
+        if (amount > 0 && balance >= amount) {  // => Validates positive amount and sufficient balance
+            balance -= amount;                  // => Deducts from balance
+            return true;                        // => Success, returns true
         }
-        return false;              // => Failure
+        return false;                           // => Failure (insufficient funds or invalid amount)
     }
 
-    public double getBalance() {   // => Read-only access
-        return balance;            // => No setter, controlled modification
+    public double getBalance() {   // => Read-only access to balance
+        return balance;            // => Returns current balance
+                                   // => No setter, controlled modification
     }
 
     // PRIVATE helper
-    private void logTransaction(String type, double amount) {
-                                 // => Internal only
-        System.out.println(type + ": $" + amount + ", Balance: $" + balance);
+    private void logTransaction(String type, double amount) {  // => Private helper method
+                                 // => Internal only, not accessible outside class
+        System.out.println(type + ": $" + amount + ", Balance: $" + balance);  // => Logs transaction
     }
 }
 
 // PACKAGE-PRIVATE
 class PackageHelper {              // => No public: same package only
-    void helperMethod() {          // => Package-private method
+                                   // => Only visible within package
+    void helperMethod() {          // => Package-private method (no modifier)
+                                   // => Accessible within package only
     }
 }
 
 // PROTECTED
-class Animal {
+class Animal {                     // => Base class
     protected String species;      // => Subclasses + same package
+                                   // => Accessible in subclasses and package
 
     protected void makeSound() {   // => Subclasses can override
-        System.out.println("Generic sound");
+        System.out.println("Generic sound");  // => Output: Generic sound
     }
 }
 
-class Dog extends Animal {
-    public void bark() {
-        species = "Canine";        // => Access protected field
-        makeSound();               // => Call protected method
+class Dog extends Animal {         // => Subclass of Animal
+    public void bark() {           // => Public method
+        species = "Canine";        // => Access protected field from superclass
+                                   // => species = "Canine"
+        makeSound();               // => Call protected method from superclass
+                                   // => Output: Generic sound
     }
 }
 
 // USAGE
-BankAccount account = new BankAccount("12345", 1000);
-account.deposit(500);              // => Public method accessible
-double bal = account.getBalance(); // => bal is 1500
+BankAccount account = new BankAccount("12345", 1000);  // => Creates account, balance = 1000
+account.deposit(500);              // => Public method accessible, balance = 1500
+                                   // => Deposits 500
+double bal = account.getBalance(); // => bal = 1500
+                                   // => bal is 1500
 // account.balance = 0;            // => ERROR: balance is private (cannot access directly)
 // account.logTransaction();       // => ERROR: logTransaction is private
 ```
@@ -1470,18 +1643,20 @@ package com.example.myapp;       // => This file belongs to com.example.myapp pa
                                  // => File must be in com/example/myapp/ directory
 
 // IMPORT STATEMENTS (after package, before class)
-import java.util.ArrayList;      // => Import specific class
-import java.util.HashMap;
+import java.util.ArrayList;      // => Import specific class (ArrayList)
+import java.util.HashMap;        // => Import HashMap from java.util
 import java.util.List;           // => Import interface (List is interface, ArrayList implements it)
 
 import java.time.*;              // => Import all classes from package (wildcard)
                                  // => Imports LocalDate, LocalTime, LocalDateTime, etc.
 
 import static java.lang.Math.PI; // => Static import (import static field)
-import static java.lang.Math.sqrt;
+                                 // => Allows using PI without Math. prefix
+import static java.lang.Math.sqrt;  // => Static import for sqrt method
                                  // => Use PI and sqrt directly (no Math. prefix)
 
 // AUTO-IMPORTED: java.lang.* (String, System, Integer, etc.)
+                                 // => java.lang automatically imported (no explicit import needed)
 
 public class App {
     public static void main(String[] args) {
@@ -1625,75 +1800,77 @@ Java provides multiple APIs for file operations. Modern NIO.2 (java.nio.file) of
 **Code**:
 
 ```java
-import java.nio.file.*;
-import java.io.IOException;
-import java.util.List;
+import java.nio.file.*;                       // => Modern file I/O API (Java 7+)
+import java.io.IOException;                   // => Checked exception for I/O errors
+import java.util.List;                        // => List collection interface
 
 // WRITE to file
-String content = "Hello, File I/O!";
-Path path = Paths.get("output.txt");
-                                 // => Relative path
-try {
-    Files.writeString(path, content);
-                                 // => Creates or overwrites
-    System.out.println("File written successfully");
-} catch (IOException e) {        // => Checked exception
-    System.out.println("Error writing file: " + e.getMessage());
+String content = "Hello, File I/O!";          // => content = "Hello, File I/O!"
+Path path = Paths.get("output.txt");          // => path = output.txt (relative)
+                                               // => Relative path from current directory
+try {                                          // => Exception handling required
+    Files.writeString(path, content);          // => Creates or overwrites output.txt
+                                               // => Writes content to file
+    System.out.println("File written successfully");  // => Output: File written successfully
+} catch (IOException e) {                      // => Checked exception must be caught
+    System.out.println("Error writing file: " + e.getMessage());  // => Error handling
 }
 
 // READ from file
-try {
-    String fileContent = Files.readString(path);
-                                 // => Reads entire file
-    System.out.println(fileContent);
-                                 // => Output: Hello, File I/O!
-} catch (IOException e) {
-    System.out.println("Error reading file: " + e.getMessage());
+try {                                          // => Try block for reading
+    String fileContent = Files.readString(path);  // => Reads entire file into String
+                                               // => fileContent = "Hello, File I/O!"
+    System.out.println(fileContent);           // => Output: Hello, File I/O!
+                                               // => Output: Hello, File I/O!
+} catch (IOException e) {                      // => Catches read errors
+    System.out.println("Error reading file: " + e.getMessage());  // => Error message
 }
 
 // READ lines as List
-try {
-    List<String> lines = Files.readAllLines(path);
-                                 // => List of lines
-    for (String line : lines) {
-        System.out.println(line);
+try {                                          // => Try block for line reading
+    List<String> lines = Files.readAllLines(path);  // => List of lines
+                                               // => lines = ["Hello, File I/O!"]
+    for (String line : lines) {                // => Iterate each line
+        System.out.println(line);              // => Output: Hello, File I/O!
     }
-} catch (IOException e) {
-    e.printStackTrace();         // => Full stack trace
+} catch (IOException e) {                      // => Catches read exceptions
+    e.printStackTrace();                       // => Full stack trace to stderr
 }
 
 // APPEND to file
-String moreContent = "\nAppended line";
-try {
-    Files.writeString(path, moreContent, StandardOpenOption.APPEND);
-                                 // => APPEND option
-} catch (IOException e) {
-    e.printStackTrace();
+String moreContent = "\nAppended line";        // => moreContent = "\nAppended line"
+try {                                          // => Try block for appending
+    Files.writeString(path, moreContent, StandardOpenOption.APPEND);  // => Appends to file
+                                               // => File now: "Hello, File I/O!\nAppended line"
+} catch (IOException e) {                      // => Catches append errors
+    e.printStackTrace();                       // => Prints error stack
 }
 
 // CHECK file properties
-boolean exists = Files.exists(path);
-                                 // => true if exists
-boolean isFile = Files.isRegularFile(path);
-                                 // => true (not directory)
-long size = Files.size(path);    // => Size in bytes
+boolean exists = Files.exists(path);           // => exists = true (file created above)
+                                               // => true if file exists
+boolean isFile = Files.isRegularFile(path);    // => isFile = true (not directory)
+                                               // => true (not directory)
+long size = Files.size(path);                  // => size = 31 bytes (example)
+                                               // => Size in bytes
 
 // DELETE file
-try {
-    Files.delete(path);          // => Throws if doesn't exist
-    // Files.deleteIfExists(path); => No exception variant
-} catch (IOException e) {
-    e.printStackTrace();
+try {                                          // => Try block for deletion
+    Files.delete(path);                        // => Deletes output.txt
+                                               // => Throws if doesn't exist
+    // Files.deleteIfExists(path);             // => No exception variant
+} catch (IOException e) {                      // => Catches deletion errors
+    e.printStackTrace();                       // => Prints error if deletion fails
 }
 
 // CREATING directories
-Path dir = Paths.get("my/nested/directory");
-try {
-    Files.createDirectories(dir);// => Creates all parents
-                                 // => Creates "my", then "my/nested", then "my/nested/directory"
-                                 // => No error if directories already exist
-} catch (IOException e) {        // => Catches directory creation errors
-    e.printStackTrace();         // => Prints error if creation fails
+Path dir = Paths.get("my/nested/directory");   // => dir = my/nested/directory
+try {                                          // => Try block for directory creation
+    Files.createDirectories(dir);              // => Creates all parent directories
+                                               // => Creates "my", then "my/nested", then "my/nested/directory"
+                                               // => No error if directories already exist
+} catch (IOException e) {                      // => Catches directory creation errors
+    e.printStackTrace();                       // => Prints error if creation fails
 }
 ```
 

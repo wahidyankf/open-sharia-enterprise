@@ -51,11 +51,11 @@ import 'dart:async';                    // => Import for Future, Stream, Complet
                                         // => Core async primitives
 
 // Simulated async function for donation processing
-Future<double> fetchDonationAmount(String donorId) async {
+Future<double> fetchDonationAmount(String donorId) async {  // => Execute statement
                                         // => async keyword: enables await inside function
                                         // => Returns: Future<double> (not double directly)
                                         // => Use case: fetch donation from API/database
-  await Future.delayed(Duration(seconds: 1));
+  await Future.delayed(Duration(seconds: 1));  // => Wait for async operation
                                         // => Simulates: network latency or database query
                                         // => Thread: Dart event loop continues processing other tasks
                                         // => Non-blocking: isolate can handle other Futures during delay
@@ -69,7 +69,7 @@ void main() async {                     // => main can be async in Dart (unlike 
                                         // => Timeline: T=0ms
 
   // Await async function (sequential execution)
-  double amount = await fetchDonationAmount('DONOR-001');
+  double amount = await fetchDonationAmount('DONOR-001');  // => Execute statement
                                         // => await: pauses THIS function until Future completes
                                         // => Thread: isolate processes other events during delay
                                         // => Timeline: T=1000ms (after 1 second delay)
@@ -78,7 +78,7 @@ void main() async {                     // => main can be async in Dart (unlike 
                                         // => Timeline: T=1000ms
 
   // Future.value creates already-completed Future
-  Future<String> immediateFuture = Future.value('Completed');
+  Future<String> immediateFuture = Future.value('Completed');  // => Execute statement
                                         // => State: Future already COMPLETED (no pending work)
                                         // => Use case: return cached values in async context
                                         // => Performance: zero delay, no event loop scheduling
@@ -87,7 +87,7 @@ void main() async {                     // => main can be async in Dart (unlike 
   print('Result: $result');             // => Output: Result: Completed
 
   // Future.error creates failed Future
-  try {
+  try {                                 // => Execute statement
     await Future.error('Payment failed');  // => Creates Future that completes with error
                                            // => State: COMPLETED with error (not value)
                                            // => await: throws error instead of returning value
@@ -115,7 +115,7 @@ void main() async {                     // => main can be async in Dart (unlike 
         print('Chain error: $error');   // => Only executes if any then throws
       });
 
-  await Future.delayed(Duration(seconds: 2));
+  await Future.delayed(Duration(seconds: 2));  // => Wait for async operation
                                         // => Wait for then() chain to complete
                                         // => Without this: main() exits before chain finishes
                                         // => Total time: 2 seconds to allow chain execution
@@ -182,10 +182,10 @@ sequenceDiagram
 ```dart
 import 'dart:async';                    // => Import for Future operations
 
-Future<Map<String, double>> fetchDonor(String name) async {
+Future<Map<String, double>> fetchDonor(String name) async {  // => Execute statement
                                         // => Simulates: HTTP GET request to donor service
                                         // => Returns: donor data as Map
-  await Future.delayed(Duration(milliseconds: 500));
+  await Future.delayed(Duration(milliseconds: 500));  // => Wait for async operation
                                         // => Simulates: 500ms network latency
                                         // => Realistic: typical database query or API call timing
   return {                              // => Return donor data structure
@@ -194,26 +194,26 @@ Future<Map<String, double>> fetchDonor(String name) async {
   };                                    // => Map<String, double>: string keys, double values
 }
 
-void main() async {
+void main() async {                     // => Execute statement
   print('Fetching multiple donors...');  // => Start message
                                          // => Timeline: T=0ms
 
   // Sequential execution (slow - anti-pattern for independent operations)
-  Stopwatch stopwatch = Stopwatch()..start();
+  Stopwatch stopwatch = Stopwatch()..start();  // => Execute statement
                                         // => Cascade notation: create and start in one line
                                         // => Stopwatch: measures elapsed time in milliseconds
-  Map<String, double> donor1 = await fetchDonor('Ahmad');
+  Map<String, double> donor1 = await fetchDonor('Ahmad');  // => Execute statement
                                         // => Timeline: T=500ms (first fetch completes)
                                         // => Blocking: waits for first fetch before starting second
-  Map<String, double> donor2 = await fetchDonor('Fatimah');
+  Map<String, double> donor2 = await fetchDonor('Fatimah');  // => Execute statement
                                         // => Timeline: T=1000ms (500ms + 500ms)
                                         // => Problem: second fetch waited unnecessarily
-  Map<String, double> donor3 = await fetchDonor('Ali');
+  Map<String, double> donor3 = await fetchDonor('Ali');  // => Execute statement
                                         // => Timeline: T=1500ms (500ms + 500ms + 500ms)
                                         // => Total: 1500ms (additive delays)
   stopwatch.stop();                     // => Stop timer
 
-  print('Sequential: ${stopwatch.elapsedMilliseconds}ms');
+  print('Sequential: ${stopwatch.elapsedMilliseconds}ms');  // => Execute statement
                                         // => Output: Sequential: ~1500ms
                                         // => Inefficient: each await blocks next fetch
 
@@ -221,7 +221,7 @@ void main() async {
   stopwatch.reset();                    // => Reset timer to zero
   stopwatch.start();                    // => Start timing parallel execution
 
-  List<Future<Map<String, double>>> futures = [
+  List<Future<Map<String, double>>> futures = [  // => Execute statement
     fetchDonor('Ahmad'),                // => Start first fetch immediately
                                         // => Returns: Future (pending), doesn't block
     fetchDonor('Fatimah'),              // => Start second fetch immediately (parallel)
@@ -230,18 +230,18 @@ void main() async {
   ];                                    // => All three executing concurrently
                                         // => Timeline: T=0ms (all started, none awaited yet)
 
-  List<Map<String, double>> donors = await Future.wait(futures);
+  List<Map<String, double>> donors = await Future.wait(futures);  // => Execute statement
                                         // => Wait for ALL futures to complete
                                         // => Returns: List of results in original order
                                         // => Timeline: T=500ms (all complete at same time)
                                         // => Performance: max(500ms, 500ms, 500ms) = 500ms
   stopwatch.stop();                     // => Stop timer
 
-  print('Parallel: ${stopwatch.elapsedMilliseconds}ms');
+  print('Parallel: ${stopwatch.elapsedMilliseconds}ms');  // => Execute statement
                                         // => Output: Parallel: ~500ms
                                         // => Speedup: 1500ms → 500ms (3x faster)
 
-  double total = donors.fold(0.0, (sum, donor) => sum + (donor['amount'] ?? 0.0));
+  double total = donors.fold(0.0, (sum, donor) => sum + (donor['amount'] ?? 0.0));  // => Execute statement
                                         // => fold: reduce list to single value
                                         // => sum: accumulator (starts at 0.0)
                                         // => donor['amount']: extract amount, default to 0.0 if null
@@ -249,12 +249,12 @@ void main() async {
                                         // => Calculation: (5+7+3) * 100000 = 1500000.0
 
   // Future.wait with error handling (eagerError: true by default)
-  try {
-    await Future.wait([
+  try {                                 // => Execute statement
+    await Future.wait([                 // => Wait for async operation
       fetchDonor('Valid'),              // => Will complete successfully
       Future.error('Network error'),    // => Simulates: API call failure
       fetchDonor('Also Valid'),         // => May not execute (eager error)
-    ]);
+    ]);                                 // => Execute statement
   } catch (e) {                         // => Catches FIRST error
                                         // => eagerError: true → stops at first error
     print('Error in batch: $e');        // => Output: Error in batch: Network error
@@ -262,17 +262,17 @@ void main() async {
   }
 
   // Future.wait with eagerError: false (collect partial results)
-  List<dynamic> results = await Future.wait(
-    [
+  List<dynamic> results = await Future.wait(  // => Execute statement
+    [                                   // => Execute statement
       fetchDonor('Valid'),              // => Will complete successfully
       Future.error('Error'),            // => Will fail
       fetchDonor('Also Valid'),         // => Will complete successfully
-    ],
+    ],                                  // => Execute statement
     eagerError: false,                  // => Continue executing despite errors
                                         // => Use case: best-effort data collection
   );                                    // => returns List including error objects
                                         // => Result: contains successful values and error
-  print('Partial results: ${results.length}');
+  print('Partial results: ${results.length}');  // => Execute statement
                                         // => Output: Partial results: 3
                                         // => Contains: mix of successful Maps and error object
 }
@@ -306,33 +306,33 @@ Proper error handling patterns in async code with try-catch and Future.catchErro
 ```dart
 import 'dart:async';                    // => Import for Future
 
-Future<double> calculateZakat(double wealth) async {
+Future<double> calculateZakat(double wealth) async {  // => Execute statement
                                         // => Async function for Zakat calculation
                                         // => Returns Future<double> that completes with Zakat amount
                                         // => Zakat: 2.5% of eligible wealth (Islamic obligation)
   if (wealth < 0) {                     // => Validate input
                                         // => Business rule: negative wealth invalid
-    throw ArgumentError('Negative wealth not allowed');
+    throw ArgumentError('Negative wealth not allowed');  // => Execute statement
                                         // => throw: creates error that Future completes with
                                         // => ArgumentError: built-in exception for invalid arguments
   }                                     // => Validation check complete
 
   if (wealth < 200000000.0) {           // => Check nisab threshold
                                         // => Nisab: minimum wealth required for Zakat
-    throw StateError('Wealth below nisab threshold');
+    throw StateError('Wealth below nisab threshold');  // => Execute statement
                                         // => StateError: wealth doesn't meet minimum
   }
 
-  await Future.delayed(Duration(milliseconds: 100));
+  await Future.delayed(Duration(milliseconds: 100));  // => Wait for async operation
                                         // => Simulate: calculation processing time
   return wealth * 0.025;                // => Calculate: 2.5% Zakat rate
                                         // => Return: Zakat amount due
 }
 
-void main() async {
+void main() async {                     // => Execute statement
   // Try-catch with await (synchronous-style error handling)
-  try {
-    double zakat = await calculateZakat(-1000.0);
+  try {                                 // => Execute statement
+    double zakat = await calculateZakat(-1000.0);  // => Execute statement
                                         // => Throws: ArgumentError (negative wealth)
                                         // => await: unwraps Future, throws error if Future failed
     print('Zakat: Rp$zakat');           // => Never executes (error thrown above)
@@ -353,7 +353,7 @@ void main() async {
 
   // catchError on Future (functional-style error handling)
   calculateZakat(-500.0)                // => Returns Future that will fail
-      .then((value) => print('Zakat: Rp$value'))
+      .then((value) => print('Zakat: Rp$value'))  // => Execute statement
                                         // => Callback: only executes if Future succeeds
                                         // => Doesn't execute (Future fails)
       .catchError((error) {             // => Handle error in Future chain
@@ -366,31 +366,31 @@ void main() async {
         print('Recovered with: $value');  // => Output: Recovered with: 0.0
       });
 
-  await Future.delayed(Duration(milliseconds: 200));
+  await Future.delayed(Duration(milliseconds: 200));  // => Wait for async operation
                                         // => Wait for then() chain to complete
                                         // => Ensures chain finishes before main() exits
 
   // Successful calculation (no error)
-  try {
-    double zakat = await calculateZakat(500000000.0);
+  try {                                 // => Execute statement
+    double zakat = await calculateZakat(500000000.0);  // => Execute statement
                                         // => Valid input: above nisab, positive
                                         // => Timeline: 100ms delay in calculateZakat
     print('Valid Zakat: Rp$zakat');     // => Output: Valid Zakat: Rp12500000.0
                                         // => Calculation: 500000000 * 0.025 = 12500000.0
-  } catch (e) {
+  } catch (e) {                         // => Execute statement
     print('Error: $e');                 // => Doesn't execute (success case)
   }
 
   // Multiple error types demonstration
-  List<double> testValues = [-1000.0, 100000.0, 500000000.0];
+  List<double> testValues = [-1000.0, 100000.0, 500000000.0];  // => Execute statement
   for (double wealth in testValues) {   // => Test different scenarios
-    try {
-      double zakat = await calculateZakat(wealth);
-      print('Wealth Rp$wealth → Zakat Rp$zakat');
-    } on ArgumentError catch (e) {
-      print('Wealth Rp$wealth → Validation failed: ${e.message}');
-    } on StateError catch (e) {
-      print('Wealth Rp$wealth → Below nisab: ${e.message}');
+    try {                               // => Execute statement
+      double zakat = await calculateZakat(wealth);  // => Execute statement
+      print('Wealth Rp$wealth → Zakat Rp$zakat');  // => Execute statement
+    } on ArgumentError catch (e) {      // => Execute statement
+      print('Wealth Rp$wealth → Validation failed: ${e.message}');  // => Execute statement
+    } on StateError catch (e) {         // => Execute statement
+      print('Wealth Rp$wealth → Below nisab: ${e.message}');  // => Execute statement
     }
   }
 }
@@ -426,10 +426,10 @@ Using Future.timeout() to prevent indefinite waits on async operations. Critical
 ```dart
 import 'dart:async';                    // => Import for Future, TimeoutException
 
-Future<double> fetchDonationFromAPI(String donorId) async {
+Future<double> fetchDonationFromAPI(String donorId) async {  // => Execute statement
                                         // => Simulates: external API call
                                         // => Real use: HTTP request to donation service
-  await Future.delayed(Duration(seconds: 3));
+  await Future.delayed(Duration(seconds: 3));  // => Wait for async operation
                                         // => Simulates: slow API (3 second response time)
                                         // => Problem: network issues or overloaded server
   return 1000000.0;                     // => Return donation amount (if completes)
@@ -440,67 +440,67 @@ void main() async {                     // => Main function with async support
   // Timeout without fallback (throws TimeoutException)
   try {                                 // => Try block for timeout handling
                                         // => Catches TimeoutException if timeout expires
-    double amount = await fetchDonationFromAPI('DONOR-001')
+    double amount = await fetchDonationFromAPI('DONOR-001')  // => Execute statement
         .timeout(Duration(seconds: 2));  // => Maximum wait: 2 seconds
                                          // => fetchDonationFromAPI takes 3 seconds
                                          // => Result: timeout after 2 seconds
     print('Amount: Rp$amount');          // => Never executes (timeout occurs first)
   } on TimeoutException catch (e) {      // => Catch timeout exception specifically
                                          // => TimeoutException: thrown when timeout expires
-    print('Request timeout: ${e.message}');
+    print('Request timeout: ${e.message}');  // => Execute statement
                                          // => Output: Request timeout: [timeout message]
-    print('Fallback: Using default amount');
+    print('Fallback: Using default amount');  // => Execute statement
                                          // => Manual fallback in error handler
   }                                     // => Try-catch complete
 
   // Timeout with fallback (no exception, graceful degradation)
-  double amount = await fetchDonationFromAPI('DONOR-002')
-      .timeout(
+  double amount = await fetchDonationFromAPI('DONOR-002')  // => Execute statement
+      .timeout(                         // => Execute statement
         Duration(seconds: 2),            // => Maximum wait: 2 seconds
         onTimeout: () {                  // => Callback: executes when timeout expires
                                          // => Returns: fallback value instead of throwing
-          print('Timeout - using cached amount');
+          print('Timeout - using cached amount');  // => Execute statement
           return 500000.0;               // => Fallback: cached or default value
                                          // => Graceful degradation: continue with fallback
         },
-      );
-  print('Amount with fallback: Rp$amount');
+      );                                // => Execute statement
+  print('Amount with fallback: Rp$amount');  // => Execute statement
                                         // => Output: Amount with fallback: Rp500000.0
                                         // => No exception: onTimeout provided value
 
   // Fast operation (completes before timeout)
-  Future<double> fastOperation() async {
-    await Future.delayed(Duration(milliseconds: 500));
+  Future<double> fastOperation() async {  // => Execute statement
+    await Future.delayed(Duration(milliseconds: 500));  // => Wait for async operation
                                         // => Completes in 500ms
     return 750000.0;                    // => Return before timeout
   }
 
-  double fastAmount = await fastOperation()
+  double fastAmount = await fastOperation()  // => Execute statement
       .timeout(Duration(seconds: 2));   // => Timeout: 2 seconds (plenty of time)
                                         // => Completes: 500ms < 2000ms (no timeout)
   print('Fast amount: Rp$fastAmount');  // => Output: Fast amount: Rp750000.0
                                         // => Success: completed within timeout
 
   // Multiple operations with different timeouts (circuit breaker pattern)
-  List<Future<double>> operations = [
-    fetchDonationFromAPI('DONOR-003').timeout(
+  List<Future<double>> operations = [   // => Execute statement
+    fetchDonationFromAPI('DONOR-003').timeout(  // => Execute statement
       Duration(seconds: 1),              // => Aggressive timeout (1 second)
       onTimeout: () => 0.0,              // => Fail fast with zero
-    ),
-    fastOperation().timeout(
+    ),                                  // => Execute statement
+    fastOperation().timeout(            // => Execute statement
       Duration(seconds: 2),              // => Conservative timeout (2 seconds)
-      onTimeout: () => 0.0,
-    ),
-  ];
+      onTimeout: () => 0.0,             // => Execute statement
+    ),                                  // => Execute statement
+  ];                                    // => Execute statement
 
-  List<double> results = await Future.wait(operations);
+  List<double> results = await Future.wait(operations);  // => Execute statement
                                         // => Wait for all (parallel execution)
                                         // => First: times out (3s > 1s) → 0.0
                                         // => Second: succeeds (0.5s < 2s) → 750000.0
   print('Results: $results');           // => Output: Results: [0.0, 750000.0]
 
-  double totalWithTimeouts = results.reduce((a, b) => a + b);
-  print('Total with timeouts: Rp$totalWithTimeouts');
+  double totalWithTimeouts = results.reduce((a, b) => a + b);  // => Execute statement
+  print('Total with timeouts: Rp$totalWithTimeouts');  // => Execute statement
                                         // => Output: Total with timeouts: Rp750000.0
                                         // => Resilient: partial success despite timeout
 }
@@ -537,31 +537,31 @@ Creating and completing Futures manually with Completer class. Enables bridging 
 import 'dart:async';                    // => Import for Completer, Future
 
 // Simulate callback-based API (legacy pattern)
-void fetchUserDataCallback(String userId, Function(String) onSuccess, Function(String) onError) {
+void fetchUserDataCallback(String userId, Function(String) onSuccess, Function(String) onError) {  // => Execute statement
                                         // => Callback pattern: common in JavaScript, legacy Dart
                                         // => onSuccess: called with result on success
                                         // => onError: called with error message on failure
-  Future.delayed(Duration(seconds: 1), () {
+  Future.delayed(Duration(seconds: 1), () {  // => Execute statement
                                         // => Simulate async operation with callback
-    if (userId.isNotEmpty) {
-      onSuccess('User data for $userId');
+    if (userId.isNotEmpty) {            // => Conditional check
+      onSuccess('User data for $userId');  // => Execute statement
                                         // => Success case: invoke success callback
-    } else {
+    } else {                            // => Execute statement
       onError('Invalid user ID');       // => Error case: invoke error callback
     }
   });
 }
 
 // Bridge callback API to Future using Completer
-Future<String> fetchUserData(String userId) {
+Future<String> fetchUserData(String userId) {  // => Execute statement
                                         // => Returns: Future<String> (modern async API)
                                         // => Bridges: callback-based to Future-based
-  Completer<String> completer = Completer<String>();
+  Completer<String> completer = Completer<String>();  // => Execute statement
                                         // => Create Completer: manual Future control
                                         // => Type parameter: String (Future<String>)
 
-  fetchUserDataCallback(
-    userId,
+  fetchUserDataCallback(                // => Execute statement
+    userId,                             // => Execute statement
     (String data) {                     // => Success callback
                                         // => Called by legacy API on success
       completer.complete(data);         // => Complete Future with success value
@@ -572,39 +572,39 @@ Future<String> fetchUserData(String userId) {
       completer.completeError(error);   // => Complete Future with error
                                         // => Completer.future throws when awaited
     },
-  );
+  );                                    // => Execute statement
 
   return completer.future;              // => Return Future controlled by Completer
                                         // => Caller can await this Future
 }
 
-void main() async {
+void main() async {                     // => Execute statement
   // Use bridged Future API (clean async/await)
-  try {
-    String userData = await fetchUserData('USER-001');
+  try {                                 // => Execute statement
+    String userData = await fetchUserData('USER-001');  // => Execute statement
                                         // => Clean async/await: no callbacks
                                         // => Timeline: 1 second delay in callback API
     print('Data: $userData');           // => Output: Data: User data for USER-001
-  } catch (e) {
+  } catch (e) {                         // => Execute statement
     print('Error: $e');                 // => Catches error from completeError()
   }
 
   // Error case
-  try {
-    String userData = await fetchUserData('');
+  try {                                 // => Execute statement
+    String userData = await fetchUserData('');  // => Execute statement
                                         // => Empty userId triggers error in callback
     print('Data: $userData');           // => Never executes
-  } catch (e) {
+  } catch (e) {                         // => Execute statement
     print('Error: $e');                 // => Output: Error: Invalid user ID
   }
 
   // Manual event completion (waiting for specific event)
-  Completer<int> eventCompleter = Completer<int>();
+  Completer<int> eventCompleter = Completer<int>();  // => Execute statement
                                         // => Create Completer for event handling
                                         // => Pattern: waiting for specific event to occur
 
   // Simulate event-driven code
-  Future.delayed(Duration(milliseconds: 500), () {
+  Future.delayed(Duration(milliseconds: 500), () {  // => Execute statement
                                         // => Simulate event trigger after delay
                                         // => Real use: user interaction, network event, timer
     eventCompleter.complete(42);        // => Complete Future when event occurs
@@ -614,7 +614,7 @@ void main() async {
 
   print('Waiting for event...');        // => Immediate output (before event)
                                         // => Non-blocking: main continues while waiting
-  int eventResult = await eventCompleter.future;
+  int eventResult = await eventCompleter.future;  // => Execute statement
                                         // => Await: blocks until complete() called
                                         // => Timeline: 500ms until event occurs
                                         // => Receives: value passed to complete()
@@ -622,19 +622,19 @@ void main() async {
                                         // => Executes after event completed
 
   // Completer with multiple waiters (single Future, multiple awaiters)
-  Completer<String> sharedCompleter = Completer<String>();
+  Completer<String> sharedCompleter = Completer<String>();  // => Execute statement
 
   // Multiple async operations waiting on same Completer
-  Future<void> waiter1() async {
-    print('Waiter 1 waiting...');
-    String result = await sharedCompleter.future;
+  Future<void> waiter1() async {        // => Execute statement
+    print('Waiter 1 waiting...');       // => Execute statement
+    String result = await sharedCompleter.future;  // => Execute statement
                                         // => Waits: until complete() called
     print('Waiter 1 got: $result');     // => Outputs after completion
   }
 
-  Future<void> waiter2() async {
-    print('Waiter 2 waiting...');
-    String result = await sharedCompleter.future;
+  Future<void> waiter2() async {        // => Execute statement
+    print('Waiter 2 waiting...');       // => Execute statement
+    String result = await sharedCompleter.future;  // => Execute statement
                                         // => Same Future: multiple awaiters allowed
     print('Waiter 2 got: $result');     // => Outputs after completion
   }
@@ -642,17 +642,17 @@ void main() async {
   waiter1();                            // => Start first waiter (doesn't block)
   waiter2();                            // => Start second waiter (doesn't block)
 
-  await Future.delayed(Duration(seconds: 1));
+  await Future.delayed(Duration(seconds: 1));  // => Wait for async operation
                                         // => Delay before completing
-  sharedCompleter.complete('Shared result');
+  sharedCompleter.complete('Shared result');  // => Execute statement
                                         // => Complete: both waiters receive result
                                         // => Broadcast: single complete() satisfies all awaiters
 
-  await Future.delayed(Duration(milliseconds: 100));
+  await Future.delayed(Duration(milliseconds: 100));  // => Wait for async operation
                                         // => Wait for waiters to print
 
   // Completer isCompleted check (prevent double completion error)
-  Completer<int> safeCompleter = Completer<int>();
+  Completer<int> safeCompleter = Completer<int>();  // => Execute statement
 
   safeCompleter.complete(100);          // => Complete with value
   if (!safeCompleter.isCompleted) {     // => Check: prevents double completion
@@ -661,7 +661,7 @@ void main() async {
                                         // => Prevents: StateError from double completion
   }
 
-  int safeResult = await safeCompleter.future;
+  int safeResult = await safeCompleter.future;  // => Execute statement
   print('Safe result: $safeResult');    // => Output: Safe result: 100
 }
 ```
@@ -727,7 +727,7 @@ Stream<int> donationStream() async* {   // => async*: creates Stream<int>
                                         // => Difference: async returns Future, async* returns Stream
                                         // => Generator: yields multiple values
   for (int i = 1; i <= 5; i++) {        // => Loop: emit 5 donation amounts
-    await Future.delayed(Duration(milliseconds: 200));
+    await Future.delayed(Duration(milliseconds: 200));  // => Wait for async operation
                                         // => Delay: 200ms between emissions
                                         // => Simulates: real-time donations arriving
     yield i * 100000;                   // => yield: emit value to stream
@@ -735,7 +735,7 @@ Stream<int> donationStream() async* {   // => async*: creates Stream<int>
   }                                     // => Stream completes after last yield
 }                                       // => Total time: 5 × 200ms = 1000ms
 
-void main() async {
+void main() async {                     // => Execute statement
   print('Listening to donations...');   // => Start message
                                         // => Timeline: T=0ms
 
@@ -755,7 +755,7 @@ void main() async {
                                         // => Timeline: T=1000ms
 
   // Alternative: listen() method (callback-based, non-blocking)
-  donationStream().listen(
+  donationStream().listen(              // => Execute statement
     (int amount) {                      // => onData callback
                                         // => Called: for each value emitted
                                         // => Parameter: the emitted value
@@ -771,9 +771,9 @@ void main() async {
     },
     cancelOnError: false,               // => Continue listening after error
                                         // => Default: true (cancel on first error)
-  );
+  );                                    // => Execute statement
 
-  await Future.delayed(Duration(seconds: 2));
+  await Future.delayed(Duration(seconds: 2));  // => Wait for async operation
                                         // => Wait for listen() to complete
                                         // => listen() doesn't block: main continues immediately
                                         // => Total time: 2 seconds to allow all emissions
@@ -811,37 +811,37 @@ Transforming streams with map(), where(), and take() methods. Stream transformat
 - **fold**: Reduce stream to single value (awaits completion)
 
 ```dart
-import 'dart:async';
+import 'dart:async';                    // => Executes
 
 Stream<int> donationAmounts() async* {  // => Stream of donation amounts
-  List<int> amounts = [100000, 500000, 250000, 750000, 50000, 1000000];
+  List<int> amounts = [100000, 500000, 250000, 750000, 50000, 1000000];  // => Execute statement
   for (int amount in amounts) {         // => Emit each amount
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(Duration(milliseconds: 100));  // => Wait for async operation
                                         // => 100ms delay between emissions
     yield amount;                       // => Emit donation amount
   }
 }
 
-void main() async {
+void main() async {                     // => Execute statement
   // Map transformation (convert int to String)
-  print('=== Map Transformation ===');
-  Stream<String> formattedStream = donationAmounts().map((amount) {
+  print('=== Map Transformation ===');  // => Execute statement
+  Stream<String> formattedStream = donationAmounts().map((amount) {  // => Execute statement
                                         // => map: transform each value
                                         // => Parameter: each emitted int
                                         // => Returns: transformed value (String)
-    return 'Rp${amount.toStringAsFixed(2)}';
+    return 'Rp${amount.toStringAsFixed(2)}';  // => Return value
                                         // => Convert to currency format
                                         // => e.g., 100000 → "Rp100000.00"
   });
 
-  await for (String formatted in formattedStream) {
+  await for (String formatted in formattedStream) {  // => Wait for async operation
                                         // => Consume transformed stream
     print('Formatted: $formatted');     // => Output: Formatted: Rp100000.00, etc.
   }
 
   // Where transformation (filter values)
-  print('\n=== Where Filter ===');
-  Stream<int> largeStream = donationAmounts().where((amount) {
+  print('\n=== Where Filter ===');      // => Execute statement
+  Stream<int> largeStream = donationAmounts().where((amount) {  // => Execute statement
                                         // => where: filter by predicate
                                         // => Parameter: each emitted value
                                         // => Returns: bool (true to keep, false to filter out)
@@ -849,43 +849,43 @@ void main() async {
                                         // => Predicate: filtering criteria
   });
 
-  await for (int amount in largeStream) {
+  await for (int amount in largeStream) {  // => Wait for async operation
                                         // => Only large donations emitted
     print('Large donation: Rp$amount'); // => Output: 500000, 750000, 1000000
   }                                     // => Smaller amounts filtered out
 
   // Take transformation (limit values)
-  print('\n=== Take Limit ===');
-  Stream<int> firstThree = donationAmounts().take(3);
+  print('\n=== Take Limit ===');        // => Execute statement
+  Stream<int> firstThree = donationAmounts().take(3);  // => Execute statement
                                         // => take: emit only first N values
                                         // => Parameter: count (3)
                                         // => Stream closes after 3 values
 
-  await for (int amount in firstThree) {
+  await for (int amount in firstThree) {  // => Wait for async operation
                                         // => Loop: executes 3 times only
     print('Top 3: Rp$amount');          // => Output: first 3 donations
   }                                     // => Stream completes early (after 3 values)
 
   // Chained transformations (pipeline)
-  print('\n=== Chained Pipeline ===');
-  Stream<String> pipeline = donationAmounts()
+  print('\n=== Chained Pipeline ===');  // => Execute statement
+  Stream<String> pipeline = donationAmounts()  // => Execute statement
       .where((amount) => amount >= 250000)  // => Filter: >= 250000
                                             // => Emits: 500000, 250000, 750000, 1000000
       .map((amount) => amount * 0.025)      // => Transform: calculate Zakat (2.5%)
                                             // => Emits: 12500.0, 6250.0, 18750.0, 25000.0
       .take(3)                              // => Limit: first 3 values
                                             // => Emits: 12500.0, 6250.0, 18750.0
-      .map((zakat) => 'Zakat: Rp${zakat.toStringAsFixed(2)}');
+      .map((zakat) => 'Zakat: Rp${zakat.toStringAsFixed(2)}');  // => Execute statement
                                             // => Format as string
                                             // => Final: "Zakat: Rp12500.00", etc.
 
-  await for (String result in pipeline) {
+  await for (String result in pipeline) {  // => Wait for async operation
     print(result);                      // => Output: Zakat: Rp12500.00, etc.
   }
 
   // Expand transformation (one-to-many)
-  print('\n=== Expand (Split) ===');
-  Stream<int> expanded = donationAmounts()
+  print('\n=== Expand (Split) ===');    // => Execute statement
+  Stream<int> expanded = donationAmounts()  // => Execute statement
       .take(2)                          // => Take first 2: 100000, 500000
       .expand((amount) {                // => expand: emit multiple values per input
                                         // => Parameter: input value
@@ -895,13 +895,13 @@ void main() async {
                                         // => 500000 → [500000, 250000]
       });                               // => Total emitted: 4 values (2 × 2)
 
-  await for (int amount in expanded) {
+  await for (int amount in expanded) {  // => Wait for async operation
     print('Expanded: Rp$amount');       // => Output: 100000, 50000, 500000, 250000
   }
 
   // Fold transformation (reduce to single value)
-  print('\n=== Fold (Sum) ===');
-  int total = await donationAmounts().fold(0, (sum, amount) {
+  print('\n=== Fold (Sum) ===');        // => Execute statement
+  int total = await donationAmounts().fold(0, (sum, amount) {  // => Execute statement
                                         // => fold: reduce stream to single value
                                         // => Waits: until stream completes
                                         // => Parameter 1: initial value (0)
@@ -913,12 +913,12 @@ void main() async {
                                         // => Sum: 100000 + 500000 + 250000 + 750000 + 50000 + 1000000
 
   // Skip transformation (ignore first N values)
-  print('\n=== Skip ===');
-  Stream<int> skipped = donationAmounts().skip(2);
+  print('\n=== Skip ===');              // => Execute statement
+  Stream<int> skipped = donationAmounts().skip(2);  // => Execute statement
                                         // => skip: ignore first 2 values
                                         // => Emits: starting from 3rd value
 
-  await for (int amount in skipped) {
+  await for (int amount in skipped) {   // => Wait for async operation
     print('Skipped first 2: Rp$amount');  // => Output: 250000, 750000, 50000, 1000000
   }
 }
@@ -951,18 +951,18 @@ Creating custom streams with StreamController for event publishing. Enables manu
 - **Backpressure**: Pause/resume with `onListen`, `onPause`, `onResume` callbacks
 
 ```dart
-import 'dart:async';
+import 'dart:async';                    // => Executes
 
 void main() async {                     // => Main function with async support
                                         // => async enables await keyword
   // Basic StreamController usage
-  StreamController<int> controller = StreamController<int>();
+  StreamController<int> controller = StreamController<int>();  // => Execute statement
                                         // => Create controller: manages stream
                                         // => Type parameter: int (Stream<int>)
                                         // => Single-subscription: only one listener allowed
 
   // Listen to stream
-  StreamSubscription<int> subscription = controller.stream.listen(
+  StreamSubscription<int> subscription = controller.stream.listen(  // => Execute statement
                                         // => controller.stream: the Stream to consume
                                         // => listen: attach listener
     (int value) {                       // => onData callback
@@ -974,7 +974,7 @@ void main() async {                     // => Main function with async support
     onDone: () {                        // => onDone callback
       print('Stream closed');           // => Stream completed
     },
-  );
+  );                                    // => Execute statement
 
   // Emit values manually
   controller.add(100);                  // => Emit value to stream
@@ -983,13 +983,13 @@ void main() async {                     // => Main function with async support
                                         // => Listener receives: 200
   controller.add(300);                  // => Emit third value
 
-  await Future.delayed(Duration(milliseconds: 100));
+  await Future.delayed(Duration(milliseconds: 100));  // => Wait for async operation
                                         // => Wait for listener to process
 
   controller.addError('Sample error');  // => Emit error to stream
                                         // => Listener onError receives error
 
-  await Future.delayed(Duration(milliseconds: 100));
+  await Future.delayed(Duration(milliseconds: 100));  // => Wait for async operation
                                         // => Async pause for processing
 
   controller.close();                   // => Close stream (emit done event)
@@ -997,18 +997,18 @@ void main() async {                     // => Main function with async support
                                         // => No more values can be added
 
   // Broadcast stream (multiple listeners)
-  print('\n=== Broadcast Stream ===');
-  StreamController<String> broadcast = StreamController<String>.broadcast();
+  print('\n=== Broadcast Stream ===');  // => Execute statement
+  StreamController<String> broadcast = StreamController<String>.broadcast();  // => Execute statement
                                         // => broadcast(): allow multiple listeners
                                         // => Difference: regular controller allows only one
 
   // First listener
-  broadcast.stream.listen((value) {
+  broadcast.stream.listen((value) {     // => Execute statement
     print('Listener 1: $value');        // => First listener callback
   });
 
   // Second listener (only broadcast streams allow this)
-  broadcast.stream.listen((value) {
+  broadcast.stream.listen((value) {     // => Execute statement
     print('Listener 2: $value');        // => Second listener callback
                                         // => Both listeners receive same values
   });
@@ -1020,15 +1020,15 @@ void main() async {                     // => Main function with async support
   broadcast.add('World');               // => Both listeners receive
   broadcast.close();                    // => Close broadcast stream
 
-  await Future.delayed(Duration(milliseconds: 100));
+  await Future.delayed(Duration(milliseconds: 100));  // => Wait for async operation
                                         // => Wait for broadcast processing
 
   // StreamController with async emission
   print('\n=== Async Emission ===');  // => Section header
-  StreamController<int> asyncController = StreamController<int>();
+  StreamController<int> asyncController = StreamController<int>();  // => Execute statement
                                         // => Create controller for async demo
 
-  asyncController.stream.listen((value) {
+  asyncController.stream.listen((value) {  // => Execute statement
                                         // => Attach listener to stream
     print('Async value: $value');      // => Print received value
   });
@@ -1038,7 +1038,7 @@ void main() async {                     // => Main function with async support
                                         // => Returns Future<void> (no value)
     for (int i = 1; i <= 3; i++) {      // => Loop: iterate 3 times
                                         // => i ranges from 1 to 3
-      await Future.delayed(Duration(milliseconds: 200));
+      await Future.delayed(Duration(milliseconds: 200));  // => Wait for async operation
                                         // => Delay between emissions
       asyncController.add(i * 100000);  // => Emit donation amount
     }
@@ -1050,34 +1050,34 @@ void main() async {                     // => Main function with async support
 
   // StreamController with pause/resume
   print('\n=== Pause/Resume ===');     // => Section header
-  StreamController<int> pausableController = StreamController<int>(
+  StreamController<int> pausableController = StreamController<int>(  // => Execute statement
     onListen: () {                      // => Callback: when first listener subscribes
-      print('Listener subscribed');
+      print('Listener subscribed');     // => Execute statement
     },
     onPause: () {                       // => Callback: when listener pauses
-      print('Listener paused');
+      print('Listener paused');         // => Execute statement
     },
     onResume: () {                      // => Callback: when listener resumes
-      print('Listener resumed');
+      print('Listener resumed');        // => Execute statement
     },
     onCancel: () {                      // => Callback: when listener cancels
-      print('Listener cancelled');
+      print('Listener cancelled');      // => Execute statement
     },
-  );
+  );                                    // => Execute statement
 
-  StreamSubscription<int> pausable = pausableController.stream.listen((value) {
-    print('Pausable: $value');
+  StreamSubscription<int> pausable = pausableController.stream.listen((value) {  // => Execute statement
+    print('Pausable: $value');          // => Execute statement
   });
 
   pausableController.add(1);            // => Emit value
-  await Future.delayed(Duration(milliseconds: 50));
+  await Future.delayed(Duration(milliseconds: 50));  // => Wait for async operation
                                         // => Wait for value processing
 
   pausable.pause();                     // => Pause listener
                                         // => onPause callback executes
   pausableController.add(2);            // => Emitted but buffered (listener paused)
 
-  await Future.delayed(Duration(milliseconds: 100));
+  await Future.delayed(Duration(milliseconds: 100));  // => Wait for async operation
                                         // => Wait during pause
 
   pausable.resume();                    // => Resume listener
@@ -1085,7 +1085,7 @@ void main() async {                     // => Main function with async support
                                         // => Buffered value (2) delivered
 
   pausableController.add(3);            // => Emit after resume
-  await Future.delayed(Duration(milliseconds: 50));
+  await Future.delayed(Duration(milliseconds: 50));  // => Wait for async operation
                                         // => Wait for final value processing
 
   await pausable.cancel();              // => Cancel subscription
@@ -1123,14 +1123,14 @@ Generating asynchronous sequences with async\* generators and yield. Enables cle
 - **yield\***: Emit all values from another Stream
 
 ```dart
-import 'dart:async';
+import 'dart:async';                    // => Executes
 
 // Basic async* generator
-Stream<int> countDown(int start) async* {
+Stream<int> countDown(int start) async* {  // => Execute statement
                                         // => async*: creates Stream<int>
                                         // => Parameter: starting count
   for (int i = start; i > 0; i--) {     // => Loop: emit decreasing values
-    await Future.delayed(Duration(milliseconds: 200));
+    await Future.delayed(Duration(milliseconds: 200));  // => Wait for async operation
                                         // => Delay: 200ms between emissions
                                         // => Non-blocking: isolate processes other tasks
     yield i;                            // => yield: emit value to stream
@@ -1140,11 +1140,11 @@ Stream<int> countDown(int start) async* {
 }
 
 // Generator with conditional yield
-Stream<double> zakatCalculator(List<double> wealthAmounts) async* {
+Stream<double> zakatCalculator(List<double> wealthAmounts) async* {  // => Execute statement
                                         // => Process list asynchronously
                                         // => Returns: Stream of Zakat amounts
-  for (double wealth in wealthAmounts) {
-    await Future.delayed(Duration(milliseconds: 100));
+  for (double wealth in wealthAmounts) {  // => Loop iteration
+    await Future.delayed(Duration(milliseconds: 100));  // => Wait for async operation
                                         // => Simulate: calculation time
 
     if (wealth >= 200000000.0) {        // => Check: nisab threshold
@@ -1156,29 +1156,29 @@ Stream<double> zakatCalculator(List<double> wealthAmounts) async* {
 }
 
 // Generator with yield* (delegate to another stream)
-Stream<String> donorCategories() async* {
+Stream<String> donorCategories() async* {  // => Execute statement
                                         // => Stream of donor categories
   yield 'Individual';                   // => Emit single value
-  yield 'Corporate';
+  yield 'Corporate';                    // => Emit value to stream
 
-  yield* Stream.fromIterable(['Foundation', 'Trust', 'Anonymous']);
+  yield* Stream.fromIterable(['Foundation', 'Trust', 'Anonymous']);  // => Execute statement
                                         // => yield*: emit ALL values from another Stream
                                         // => Stream.fromIterable: convert List to Stream
                                         // => Equivalent to yielding Foundation, then Trust, then Anonymous
 }
 
 // Generator with error handling
-Stream<int> donationFeed() async* {
+Stream<int> donationFeed() async* {     // => Execute statement
                                         // => Stream that may emit errors
-  try {
+  try {                                 // => Execute statement
     yield 100000;                       // => Emit first donation
 
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(Duration(milliseconds: 100));  // => Wait for async operation
     yield 500000;                       // => Emit second donation
 
     throw Exception('Connection lost');  // => Simulate error in stream
                                          // => Error: propagates to stream listeners
-  } catch (e) {
+  } catch (e) {                         // => Execute statement
     yield* Stream.error(e);             // => Emit error to stream
                                         // => yield*: delegate error emission
   }
@@ -1190,7 +1190,7 @@ void main() async {                     // => Main function with async support
                                         // => async enables await for loop
   // Basic countdown generator
   print('=== Countdown ===');           // => Section header
-  await for (int count in countDown(5)) {
+  await for (int count in countDown(5)) {  // => Wait for async operation
                                         // => Consume stream with await for
                                         // => Loop: processes each yielded value
                                         // => Blocks: until stream completes or errors
@@ -1201,62 +1201,62 @@ void main() async {                     // => Main function with async support
                                         // => Loop completes when generator ends
 
   // Zakat calculator with filtering
-  print('\n=== Zakat Calculator ===');
-  List<double> wealthAmounts = [
+  print('\n=== Zakat Calculator ===');  // => Execute statement
+  List<double> wealthAmounts = [        // => Execute statement
     100000000.0,                        // => Below nisab: no Zakat
     500000000.0,                        // => Above nisab: Zakat = 12500000.0
     150000000.0,                        // => Below nisab: no Zakat
     1000000000.0,                       // => Above nisab: Zakat = 25000000.0
-  ];
+  ];                                    // => Execute statement
 
-  await for (double zakat in zakatCalculator(wealthAmounts)) {
+  await for (double zakat in zakatCalculator(wealthAmounts)) {  // => Wait for async operation
                                         // => Only eligible amounts emitted
-    print('Zakat: Rp${zakat.toStringAsFixed(2)}');
+    print('Zakat: Rp${zakat.toStringAsFixed(2)}');  // => Execute statement
                                         // => Output: Rp12500000.00, Rp25000000.00
   }                                     // => 2 values emitted (2 above nisab)
 
   // Donor categories with yield*
-  print('\n=== Donor Categories ===');
-  await for (String category in donorCategories()) {
+  print('\n=== Donor Categories ===');  // => Execute statement
+  await for (String category in donorCategories()) {  // => Wait for async operation
                                         // => All yielded values received
     print('Category: $category');       // => Output: Individual, Corporate, Foundation, Trust, Anonymous
   }                                     // => yield*: streamlined multiple emissions
 
   // Error handling in generator
-  print('\n=== Donation Feed ===');
-  try {
-    await for (int amount in donationFeed()) {
+  print('\n=== Donation Feed ===');     // => Execute statement
+  try {                                 // => Execute statement
+    await for (int amount in donationFeed()) {  // => Wait for async operation
                                         // => Consume stream until error
       print('Donation: Rp$amount');     // => Output: 100000, 500000
     }                                   // => Loop exits on error
-  } catch (e) {
+  } catch (e) {                         // => Execute statement
     print('Feed error: $e');            // => Output: Feed error: Exception: Connection lost
   }
 
   // Transforming generator output
-  print('\n=== Transformed Countdown ===');
-  Stream<String> transformedCountdown = countDown(3).map((count) {
+  print('\n=== Transformed Countdown ===');  // => Execute statement
+  Stream<String> transformedCountdown = countDown(3).map((count) {  // => Execute statement
                                         // => Chain transformation on generator
     return 'T-minus $count';            // => Transform int to String
   });
 
-  await for (String message in transformedCountdown) {
+  await for (String message in transformedCountdown) {  // => Wait for async operation
     print(message);                     // => Output: T-minus 3, T-minus 2, T-minus 1
   }
 
   // Infinite generator (use take() to limit)
-  print('\n=== Infinite Sequence ===');
-  Stream<int> infiniteSequence() async* {
+  print('\n=== Infinite Sequence ==='); // => Execute statement
+  Stream<int> infiniteSequence() async* {  // => Execute statement
                                         // => Generator with no end condition
-    int i = 0;
+    int i = 0;                          // => Execute statement
     while (true) {                      // => Infinite loop
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(Duration(milliseconds: 100));  // => Wait for async operation
       yield i++;                        // => Emit incrementing values
                                         // => Never completes (infinite stream)
     }
   }
 
-  await for (int value in infiniteSequence().take(5)) {
+  await for (int value in infiniteSequence().take(5)) {  // => Wait for async operation
                                         // => take(5): limit to first 5 values
                                         // => Prevents infinite consumption
     print('Infinite: $value');          // => Output: 0, 1, 2, 3, 4
@@ -1294,14 +1294,14 @@ Managing stream subscriptions with pause(), resume(), and cancel(). Critical for
 4. **Cancel**: Permanently stop and release resources
 
 ```dart
-import 'dart:async';
+import 'dart:async';                    // => Executes
 
 Stream<int> fastStream() async* {      // => High-volume stream generator
                                         // => async* enables yield keyword for stream emission
                                         // => Simulates fast data source (sensor, WebSocket, file)
   for (int i = 1; i <= 10; i++) {       // => Emit 10 values total
                                         // => Loop generates stream events
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(Duration(milliseconds: 100));  // => Wait for async operation
                                         // => 100ms between emissions (simulates real-time data)
                                         // => Non-blocking delay allows other operations
     yield i * 100000;                   // => Emit donation amounts (100k, 200k, 300k, ...)
@@ -1315,7 +1315,7 @@ void main() async {                     // => Main function with async support
                                         // => Demonstrates subscription management
   // Basic subscription management
   print('=== Basic Subscription ===');  // => Section header
-  StreamSubscription<int> subscription = fastStream().listen(
+  StreamSubscription<int> subscription = fastStream().listen(  // => Execute statement
                                         // => Create: stream subscription
                                         // => Type: StreamSubscription<int>
     (int value) {                       // => onData callback
@@ -1327,7 +1327,7 @@ void main() async {                     // => Main function with async support
     },
   );                                    // => Subscription created
 
-  await Future.delayed(Duration(milliseconds: 350));
+  await Future.delayed(Duration(milliseconds: 350));  // => Wait for async operation
                                         // => Wait for ~3 emissions
                                         // => Async delay: non-blocking
 
@@ -1338,7 +1338,7 @@ void main() async {                     // => Main function with async support
   print('Subscription paused');         // => Notify pause state
                                         // => Buffering begins now
 
-  await Future.delayed(Duration(milliseconds: 400));
+  await Future.delayed(Duration(milliseconds: 400));  // => Wait for async operation
                                         // => Stream emits during pause (buffered)
                                         // => Buffer accumulates values
 
@@ -1347,26 +1347,26 @@ void main() async {                     // => Main function with async support
                                         // => Buffered values delivered immediately
   print('Subscription resumed');        // => Notify resume
 
-  await Future.delayed(Duration(seconds: 1));
+  await Future.delayed(Duration(seconds: 1));  // => Wait for async operation
                                         // => Wait for stream to complete
                                         // => Allow remaining values to process
 
   // Pause with pause token (manual resume control)
   print('\n=== Pause with Token ==='); // => Section header
-  StreamSubscription<int> tokenSub = fastStream().listen(
+  StreamSubscription<int> tokenSub = fastStream().listen(  // => Execute statement
                                         // => Create new subscription
     (int value) {                       // => onData callback
       print('Token received: $value');  // => Process value
     },
   );                                    // => Subscription active
 
-  StreamSubscription<void> pauseToken = tokenSub.pause();
+  StreamSubscription<void> pauseToken = tokenSub.pause();  // => Execute statement
                                         // => pause() returns token
                                         // => Type: StreamSubscription<void>
                                         // => Use token to resume later
   print('Paused with token');           // => Notify pause state
 
-  await Future.delayed(Duration(milliseconds: 500));
+  await Future.delayed(Duration(milliseconds: 500));  // => Wait for async operation
                                         // => Stream emits but buffered
                                         // => Values queued during pause
 
@@ -1374,13 +1374,13 @@ void main() async {                     // => Main function with async support
                                         // => Alternative: tokenSub.resume() also works
   print('Resumed with token');          // => Notify resume
 
-  await Future.delayed(Duration(seconds: 1));
+  await Future.delayed(Duration(seconds: 1));  // => Wait for async operation
                                         // => Wait for completion
 
   // Cancel subscription (stop permanently)
-  print('\n=== Cancel Subscription ===');
+  print('\n=== Cancel Subscription ===');  // => Execute statement
                                         // => Section header
-  StreamSubscription<int> cancelSub = fastStream().listen(
+  StreamSubscription<int> cancelSub = fastStream().listen(  // => Execute statement
                                         // => Create subscription to cancel
     (int value) {                       // => onData callback
       print('Cancel test: $value');     // => Process value
@@ -1390,7 +1390,7 @@ void main() async {                     // => Main function with async support
     },
   );                                    // => Active subscription
 
-  await Future.delayed(Duration(milliseconds: 350));
+  await Future.delayed(Duration(milliseconds: 350));  // => Wait for async operation
                                         // => Receive ~3 values
                                         // => Let some values through
 
@@ -1400,18 +1400,18 @@ void main() async {                     // => Main function with async support
                                         // => Resource cleanup: releases memory
   print('Subscription cancelled');      // => Notify cancellation
 
-  await Future.delayed(Duration(seconds: 1));
+  await Future.delayed(Duration(seconds: 1));  // => Wait for async operation
                                         // => Stream continues emitting (no listeners)
                                         // => Generator still runs to completion
 
   // Conditional pause/resume (backpressure simulation)
-  print('\n=== Backpressure Control ===');
+  print('\n=== Backpressure Control ===');  // => Execute statement
                                         // => Section header
   int processedCount = 0;               // => Counter: track processed values
-  StreamSubscription<int>? backpressureSub;
+  StreamSubscription<int>? backpressureSub;  // => Execute statement
                                         // => Nullable: assigned in listen call
 
-  backpressureSub = fastStream().listen(
+  backpressureSub = fastStream().listen(  // => Execute statement
                                         // => Create subscription with backpressure
     (int value) async {                 // => Async listener
                                         // => async enables await in callback
@@ -1422,28 +1422,28 @@ void main() async {                     // => Main function with async support
                                         // => Condition: modulo operator
         backpressureSub!.pause();       // => Pause to slow down
                                         // => Non-null assertion: guaranteed assigned
-        print('Pausing for slow processing...');
+        print('Pausing for slow processing...');  // => Execute statement
                                         // => Notify pause
 
-        await Future.delayed(Duration(milliseconds: 500));
+        await Future.delayed(Duration(milliseconds: 500));  // => Wait for async operation
                                         // => Simulate slow processing
                                         // => Async delay: represents CPU/IO work
 
         backpressureSub.resume();       // => Resume after processing
-        print('Resumed after processing');
+        print('Resumed after processing');  // => Execute statement
                                         // => Notify resume
       }
     },
   );                                    // => Backpressure pattern active
 
-  await Future.delayed(Duration(seconds: 3));
+  await Future.delayed(Duration(seconds: 3));  // => Wait for async operation
                                         // => Wait for backpressure demo
                                         // => Allow pattern to complete
 
   // Multiple pause/resume cycles
-  print('\n=== Multiple Pause/Resume ===');
+  print('\n=== Multiple Pause/Resume ===');  // => Execute statement
                                         // => Section header
-  StreamSubscription<int> cycleSub = fastStream().listen(
+  StreamSubscription<int> cycleSub = fastStream().listen(  // => Execute statement
                                         // => Create subscription for cycling
     (int value) {                       // => onData callback
       print('Cycle: $value');           // => Process value
@@ -1452,48 +1452,48 @@ void main() async {                     // => Main function with async support
 
   for (int i = 0; i < 3; i++) {         // => 3 pause/resume cycles
                                         // => Loop: iterate 3 times
-    await Future.delayed(Duration(milliseconds: 200));
+    await Future.delayed(Duration(milliseconds: 200));  // => Wait for async operation
                                         // => Wait before pause
     cycleSub.pause();                   // => Pause subscription
     print('Pause cycle $i');            // => Log pause cycle
 
-    await Future.delayed(Duration(milliseconds: 200));
+    await Future.delayed(Duration(milliseconds: 200));  // => Wait for async operation
                                         // => Wait during pause
     cycleSub.resume();                  // => Resume subscription
     print('Resume cycle $i');           // => Log resume cycle
   }                                     // => Cycling complete
 
-  await Future.delayed(Duration(seconds: 2));
+  await Future.delayed(Duration(seconds: 2));  // => Wait for async operation
                                         // => Wait for stream completion
 
   // isPaused check
-  print('\n=== Check Paused State ===');
+  print('\n=== Check Paused State ===');  // => Execute statement
                                         // => Section header
-  StreamSubscription<int> checkSub = fastStream().listen(
+  StreamSubscription<int> checkSub = fastStream().listen(  // => Execute statement
                                         // => Create subscription for state checking
     (int value) {                       // => onData callback
       print('Check: $value');           // => Process value
     },
   );                                    // => Active subscription
 
-  print('Initially paused: ${checkSub.isPaused}');
+  print('Initially paused: ${checkSub.isPaused}');  // => Execute statement
                                         // => Output: false (actively listening)
                                         // => Property: isPaused getter
 
   checkSub.pause();                     // => Pause subscription
-  print('After pause: ${checkSub.isPaused}');
+  print('After pause: ${checkSub.isPaused}');  // => Execute statement
                                         // => Output: true
                                         // => State: Paused
 
-  await Future.delayed(Duration(milliseconds: 300));
+  await Future.delayed(Duration(milliseconds: 300));  // => Wait for async operation
                                         // => Wait during pause
 
   checkSub.resume();                    // => Resume subscription
-  print('After resume: ${checkSub.isPaused}');
+  print('After resume: ${checkSub.isPaused}');  // => Execute statement
                                         // => Output: false
                                         // => State: Active
 
-  await Future.delayed(Duration(seconds: 1));
+  await Future.delayed(Duration(seconds: 1));  // => Wait for async operation
                                         // => Wait for completion
   await checkSub.cancel();              // => Clean up subscription
 }
@@ -1584,7 +1584,7 @@ class Donor {                           // => Parent class
   }
 
   String getDescription() {             // => Method using other methods
-    return '${getCategory()}: $name (Rp$totalDonations)';
+    return '${getCategory()}: $name (Rp$totalDonations)';  // => Return value
                                         // => Calls overridden getCategory() (polymorphism)
   }
 }
@@ -1594,7 +1594,7 @@ class PremiumDonor extends Donor {      // => extends: creates subclass
                                         // => Inherits: name, totalDonations, donate(), getCategory()
   double discountRate;                  // => Additional field (not in parent)
 
-  PremiumDonor(String name, this.discountRate) : super(name);
+  PremiumDonor(String name, this.discountRate) : super(name);  // => Execute statement
                                         // => super(name): call parent constructor
                                         // => Must call super() explicitly (Dart requirement)
                                         // => Initializes inherited name field
@@ -1602,13 +1602,13 @@ class PremiumDonor extends Donor {      // => extends: creates subclass
   @override                             // => Annotation: marks method override
                                         // => Optional but recommended (compile-time safety)
   String getCategory() {                // => Override parent method
-    return 'Premium Donor (${discountRate * 100}% discount)';
+    return 'Premium Donor (${discountRate * 100}% discount)';  // => Return value
                                         // => New implementation
                                         // => Called polymorphically via getDescription()
   }
 
   void applyDiscount(double amount) {   // => New method (not in parent)
-    double discounted = amount * (1 - discountRate);
+    double discounted = amount * (1 - discountRate);  // => Execute statement
                                         // => Calculate discounted amount
     donate(discounted);                 // => Call inherited method
                                         // => Reuse parent functionality
@@ -1618,32 +1618,32 @@ class PremiumDonor extends Donor {      // => extends: creates subclass
 // Corporate donor with tax benefits
 class CorporateDonor extends Donor {    // => Another subclass
   String companyName;                   // => Additional field
-  String taxId;
+  String taxId;                         // => Execute statement
 
-  CorporateDonor(String name, this.companyName, this.taxId) : super(name);
+  CorporateDonor(String name, this.companyName, this.taxId) : super(name);  // => Execute statement
 
-  @override
+  @override                             // => Execute statement
   String getCategory() {                // => Different override than PremiumDonor
-    return 'Corporate Donor';
+    return 'Corporate Donor';           // => Return value
   }
 
   @override                             // => Can override multiple methods
   void donate(double amount) {          // => Override donate() for custom behavior
     super.donate(amount);               // => super.donate(): call parent implementation
                                         // => Executes parent logic first
-    print('Tax receipt for $companyName ($taxId)');
+    print('Tax receipt for $companyName ($taxId)');  // => Execute statement
                                         // => Add corporate-specific behavior
   }
 }
 
-void main() {
+void main() {                           // => Execute statement
   // Use base class
   Donor regularDonor = Donor('Ahmad');  // => Create base class instance
   regularDonor.donate(500000.0);        // => Call method: Ahmad donated Rp500000.0
   print(regularDonor.getDescription()); // => Output: Standard Donor: Ahmad (Rp500000.0)
 
   // Use premium donor
-  PremiumDonor premiumDonor = PremiumDonor('Fatimah', 0.10);
+  PremiumDonor premiumDonor = PremiumDonor('Fatimah', 0.10);  // => Execute statement
                                         // => Create subclass instance
   premiumDonor.donate(1000000.0);       // => Inherited method
   print(premiumDonor.getDescription()); // => Output: Premium Donor (10.0% discount): Fatimah (Rp1000000.0)
@@ -1651,21 +1651,21 @@ void main() {
 
   premiumDonor.applyDiscount(500000.0); // => Subclass-only method
                                         // => Fatimah donated Rp450000.0 (10% discount)
-  print('Total: Rp${premiumDonor.totalDonations}');
+  print('Total: Rp${premiumDonor.totalDonations}');  // => Execute statement
                                         // => Output: Total: Rp1450000.0
 
   // Use corporate donor
-  CorporateDonor corp = CorporateDonor('Ali', 'TechCorp', 'TAX-123');
+  CorporateDonor corp = CorporateDonor('Ali', 'TechCorp', 'TAX-123');  // => Execute statement
   corp.donate(2000000.0);               // => Overridden donate()
                                         // => Output: Ali donated Rp2000000.0
                                         // =>         Tax receipt for TechCorp (TAX-123)
 
   // Polymorphism with list of donors
-  List<Donor> allDonors = [regularDonor, premiumDonor, corp];
+  List<Donor> allDonors = [regularDonor, premiumDonor, corp];  // => Execute statement
                                         // => List<Donor>: holds all subclass instances
                                         // => Polymorphism: treat all as Donor type
 
-  print('\n=== All Donors ===');
+  print('\n=== All Donors ===');        // => Execute statement
   for (Donor donor in allDonors) {      // => Iterate with base class type
     print(donor.getDescription());      // => Calls appropriate overridden method
                                         // => Runtime polymorphism determines implementation
@@ -1740,74 +1740,74 @@ abstract class PaymentProcessor {       // => abstract: cannot instantiate
                                         // => Subclass MUST implement
                                         // => Semicolon instead of braces
 
-  Future<bool> processPayment(double amount, String recipient);
+  Future<bool> processPayment(double amount, String recipient);  // => Execute statement
                                         // => Abstract: payment processing logic
                                         // => Return type: Future<bool> (async operation)
 
   // Concrete method (has implementation)
-  void logTransaction(double amount, String recipient) {
+  void logTransaction(double amount, String recipient) {  // => Execute statement
                                         // => Concrete: all subclasses inherit
                                         // => Can override if needed
-    print('[$processorName] Transaction: Rp$amount to $recipient');
+    print('[$processorName] Transaction: Rp$amount to $recipient');  // => Execute statement
   }
 
   // Concrete method using abstract method (template pattern)
-  Future<bool> executePayment(double amount, String recipient) async {
+  Future<bool> executePayment(double amount, String recipient) async {  // => Execute statement
                                         // => Template method: defines workflow
     double fee = calculateFee(amount);  // => Calls abstract method (polymorphism)
                                         // => Subclass implementation determines fee
-    print('Fee: Rp$fee');
+    print('Fee: Rp$fee');               // => Execute statement
 
-    logTransaction(amount + fee, recipient);
+    logTransaction(amount + fee, recipient);  // => Execute statement
                                         // => Call concrete method
 
-    return await processPayment(amount, recipient);
+    return await processPayment(amount, recipient);  // => Return value
                                         // => Call abstract method for core logic
   }
 }
 
 // Concrete implementation for credit card
-class CreditCardProcessor extends PaymentProcessor {
+class CreditCardProcessor extends PaymentProcessor {  // => Execute statement
                                         // => Concrete class: can instantiate
                                         // => Must implement all abstract methods
-  CreditCardProcessor() : super('Credit Card');
+  CreditCardProcessor() : super('Credit Card');  // => Execute statement
                                         // => Call parent constructor
 
   @override                             // => Implement required abstract method
-  double calculateFee(double amount) {
+  double calculateFee(double amount) {  // => Execute statement
     return amount * 0.03;               // => 3% credit card fee
   }
 
   @override                             // => Implement required abstract method
-  Future<bool> processPayment(double amount, String recipient) async {
-    await Future.delayed(Duration(milliseconds: 200));
+  Future<bool> processPayment(double amount, String recipient) async {  // => Execute statement
+    await Future.delayed(Duration(milliseconds: 200));  // => Wait for async operation
                                         // => Simulate: API call to credit card gateway
-    print('Credit card charged: Rp$amount to $recipient');
+    print('Credit card charged: Rp$amount to $recipient');  // => Execute statement
     return true;                        // => Success
   }
 }
 
 // Concrete implementation for bank transfer
-class BankTransferProcessor extends PaymentProcessor {
-  BankTransferProcessor() : super('Bank Transfer');
+class BankTransferProcessor extends PaymentProcessor {  // => Execute statement
+  BankTransferProcessor() : super('Bank Transfer');  // => Execute statement
 
-  @override
-  double calculateFee(double amount) {
+  @override                             // => Execute statement
+  double calculateFee(double amount) {  // => Execute statement
     return 6500.0;                      // => Flat fee for bank transfer
   }
 
-  @override
-  Future<bool> processPayment(double amount, String recipient) async {
-    await Future.delayed(Duration(milliseconds: 500));
+  @override                             // => Execute statement
+  Future<bool> processPayment(double amount, String recipient) async {  // => Execute statement
+    await Future.delayed(Duration(milliseconds: 500));  // => Wait for async operation
                                         // => Simulate: slower bank processing
-    print('Bank transfer processed: Rp$amount to $recipient');
-    return true;
+    print('Bank transfer processed: Rp$amount to $recipient');  // => Execute statement
+    return true;                        // => Return value
   }
 
   @override                             // => Optional: override concrete method
-  void logTransaction(double amount, String recipient) {
+  void logTransaction(double amount, String recipient) {  // => Execute statement
                                         // => Custom logging for bank transfer
-    print('[$processorName] BANK LOG: Rp$amount → $recipient');
+    print('[$processorName] BANK LOG: Rp$amount → $recipient');  // => Execute statement
                                         // => Different format than parent
   }
 }
@@ -1820,11 +1820,11 @@ void main() async {                     // => Main function with async support
                                         // => Compile-time error prevents direct instantiation
 
   // Use concrete implementations
-  PaymentProcessor creditCard = CreditCardProcessor();
+  PaymentProcessor creditCard = CreditCardProcessor();  // => Execute statement
                                         // => Polymorphism: CreditCardProcessor as PaymentProcessor
                                         // => Type: PaymentProcessor (base class reference)
                                         // => Instance: CreditCardProcessor (concrete class)
-  bool success1 = await creditCard.executePayment(1000000.0, 'Fatimah');
+  bool success1 = await creditCard.executePayment(1000000.0, 'Fatimah');  // => Execute statement
                                         // => Calls template method from base class
                                         // => Template method calls abstract methods
                                         // => Output: Fee: Rp30000.0
@@ -1832,20 +1832,20 @@ void main() async {                     // => Main function with async support
                                         // =>         Credit card charged: Rp1000000.0 to Fatimah
                                         // => success1 is true (payment succeeded)
 
-  PaymentProcessor bankTransfer = BankTransferProcessor();
-  bool success2 = await bankTransfer.executePayment(1000000.0, 'Ahmad');
+  PaymentProcessor bankTransfer = BankTransferProcessor();  // => Execute statement
+  bool success2 = await bankTransfer.executePayment(1000000.0, 'Ahmad');  // => Execute statement
                                         // => Output: Fee: Rp6500.0
                                         // =>         [Bank Transfer] BANK LOG: Rp1006500.0 → Ahmad
                                         // =>         Bank transfer processed: Rp1000000.0 to Ahmad
 
   // Polymorphism: treat all as PaymentProcessor
-  List<PaymentProcessor> processors = [creditCard, bankTransfer];
-  print('\n=== Process Multiple Payments ===');
-  for (PaymentProcessor processor in processors) {
+  List<PaymentProcessor> processors = [creditCard, bankTransfer];  // => Execute statement
+  print('\n=== Process Multiple Payments ===');  // => Execute statement
+  for (PaymentProcessor processor in processors) {  // => Loop iteration
                                         // => Polymorphism: unified interface
-    double fee = processor.calculateFee(500000.0);
+    double fee = processor.calculateFee(500000.0);  // => Execute statement
                                         // => Calls appropriate implementation
-    print('${processor.processorName} fee: Rp$fee');
+    print('${processor.processorName} fee: Rp$fee');  // => Execute statement
   }
 }
 ```
@@ -1898,7 +1898,7 @@ abstract class Auditable {              // => Interface: defines audit contract
 }
 
 // Donation class implementing both interfaces
-class Donation implements Timestamped, Auditable {
+class Donation implements Timestamped, Auditable {  // => Execute statement
                                         // => implements: satisfy multiple contracts
                                         // => Must implement ALL members from both
                                         // => Comma-separated: multiple interfaces
@@ -1910,7 +1910,7 @@ class Donation implements Timestamped, Auditable {
   List<String> _auditLog = [];          // => Private backing field
                                         // => Initialize: empty list
 
-  Donation(this.donorName, this.amount) {
+  Donation(this.donorName, this.amount) {  // => Execute statement
                                         // => Constructor
                                         // => Parameters: initialize fields
     _createdAt = DateTime.now();        // => Initialize timestamp
@@ -1937,14 +1937,14 @@ class Donation implements Timestamped, Auditable {
   // Implement Auditable interface
   @override                             // => Implement required getter
                                         // => From: Auditable interface
-  List<String> get auditLog => List.unmodifiable(_auditLog);
+  List<String> get auditLog => List.unmodifiable(_auditLog);  // => Execute statement
                                         // => Return immutable copy
                                         // => Prevents external modification
 
   @override                             // => Implement required method
                                         // => From: Auditable interface
   void logAction(String action) {       // => Method: add audit entry
-    String entry = '${DateTime.now()}: $action';
+    String entry = '${DateTime.now()}: $action';  // => Execute statement
                                         // => Format: timestamp + action
     _auditLog.add(entry);               // => Add to audit log
                                         // => Mutate internal list
@@ -1962,7 +1962,7 @@ class Donation implements Timestamped, Auditable {
 }
 
 // Different class implementing same interfaces
-class Transaction implements Timestamped, Auditable {
+class Transaction implements Timestamped, Auditable {  // => Execute statement
                                         // => Different implementation of same interfaces
                                         // => Polymorphism: same contract, different behavior
   String transactionId;                 // => Field: transaction ID
@@ -1971,10 +1971,10 @@ class Transaction implements Timestamped, Auditable {
   DateTime _createdAt;                  // => Private: creation timestamp
   List<String> _auditLog = [];          // => Private: audit entries
 
-  Transaction(this.transactionId, this.amount) {
+  Transaction(this.transactionId, this.amount) {  // => Execute statement
                                         // => Constructor: initialize transaction
     _createdAt = DateTime.now();        // => Set creation time
-    logAction('Transaction created: $transactionId');
+    logAction('Transaction created: $transactionId');  // => Execute statement
                                         // => Log creation with ID
   }
 
@@ -1984,44 +1984,44 @@ class Transaction implements Timestamped, Auditable {
   @override                             // => Implement: Timestamped.updateTimestamp
   void updateTimestamp() {              // => Method: update timestamp
     _createdAt = DateTime.now();        // => Update: current time
-    logAction('Transaction timestamp updated');
+    logAction('Transaction timestamp updated');  // => Execute statement
                                         // => Log: timestamp change
   }
 
   @override                             // => Implement: Auditable.auditLog
-  List<String> get auditLog => List.unmodifiable(_auditLog);
+  List<String> get auditLog => List.unmodifiable(_auditLog);  // => Execute statement
                                         // => Return: immutable view
 
   @override                             // => Implement: Auditable.logAction
   void logAction(String action) {       // => Method: custom log format
-    _auditLog.add('[$transactionId] $action at ${DateTime.now()}');
+    _auditLog.add('[$transactionId] $action at ${DateTime.now()}');  // => Execute statement
                                         // => Format: includes transaction ID
   }
 }
 
 // Function accepting Timestamped interface
-void printCreationDate(Timestamped entity) {
+void printCreationDate(Timestamped entity) {  // => Execute statement
                                         // => Polymorphism: accepts any Timestamped
                                         // => Parameter: interface type
-  print('Created: ${entity.createdAt}');
+  print('Created: ${entity.createdAt}');  // => Execute statement
                                         // => Access: interface method
 }
 
 // Function accepting Auditable interface
-void printAuditSummary(Auditable entity) {
+void printAuditSummary(Auditable entity) {  // => Execute statement
                                         // => Polymorphism: accepts any Auditable
                                         // => Parameter: interface type
-  print('Audit entries: ${entity.auditLog.length}');
+  print('Audit entries: ${entity.auditLog.length}');  // => Execute statement
                                         // => Access: interface getter
 }
 
 void main() {                           // => Main function entry point
                                         // => Demonstrates interface polymorphism
   // Create instances
-  Donation donation = Donation('Ahmad', 500000.0);
+  Donation donation = Donation('Ahmad', 500000.0);  // => Execute statement
                                         // => Implements both interfaces
                                         // => Type: Donation (concrete class)
-  Transaction txn = Transaction('TXN-001', 1000000.0);
+  Transaction txn = Transaction('TXN-001', 1000000.0);  // => Execute statement
                                         // => Create: transaction instance
 
   // Use as Timestamped
@@ -2040,20 +2040,20 @@ void main() {                           // => Main function entry point
   donation.process();                   // => Uses both updateTimestamp() and logAction()
                                         // => Combines both interface contracts
 
-  print('\n=== Donation Audit Log ===');
+  print('\n=== Donation Audit Log ===');  // => Execute statement
                                         // => Section header
-  for (String entry in donation.auditLog) {
+  for (String entry in donation.auditLog) {  // => Loop iteration
                                         // => Iterate: audit log entries
     print(entry);                       // => Print all audit entries
   }
 
   // Polymorphism with mixed list
-  List<Auditable> auditableEntities = [donation, txn];
+  List<Auditable> auditableEntities = [donation, txn];  // => Execute statement
                                         // => List<Auditable>: both implement interface
                                         // => Mixed types: unified by interface
-  print('\n=== All Auditable Entities ===');
+  print('\n=== All Auditable Entities ===');  // => Execute statement
                                         // => Section header
-  for (Auditable entity in auditableEntities) {
+  for (Auditable entity in auditableEntities) {  // => Loop iteration
                                         // => Iterate: polymorphic collection
     printAuditSummary(entity);          // => Polymorphic call
                                         // => Works for any Auditable
@@ -2201,13 +2201,13 @@ mixin Auditable {                       // => Second mixin
 
   void logAction(String action) {       // => Log method
                                         // => Parameter: action description
-    String entry = '${DateTime.now()}: $action';
+    String entry = '${DateTime.now()}: $action';  // => Execute statement
                                         // => Format: timestamp + action
     _auditLog.add(entry);               // => Add: append to log
     print('Logged: $action');           // => Output: log confirmation
   }
 
-  List<String> get auditLog => List.unmodifiable(_auditLog);
+  List<String> get auditLog => List.unmodifiable(_auditLog);  // => Execute statement
                                         // => Return immutable copy
                                         // => Prevents external modification
 }
@@ -2227,14 +2227,14 @@ mixin Serializable {                    // => Third mixin
 }
 
 // Class using all three mixins
-class Donation with Timestamped, Auditable, Serializable {
+class Donation with Timestamped, Auditable, Serializable {  // => Execute statement
                                         // => with: apply mixins
                                         // => Gains all mixin members
                                         // => Order matters (later mixins override earlier)
   String donorName;                     // => Field: donor name
   double amount;                        // => Field: donation amount
 
-  Donation(this.donorName, this.amount) {
+  Donation(this.donorName, this.amount) {  // => Execute statement
                                         // => Constructor: initialize fields
     markTimestamp();                    // => Call mixin method
                                         // => From: Timestamped mixin
@@ -2247,7 +2247,7 @@ class Donation with Timestamped, Auditable, Serializable {
     return {                            // => Return: Map literal
       'donorName': donorName,           // => Field: donor name
       'amount': amount,                 // => Field: amount value
-      'timestamp': timestamp?.toIso8601String(),
+      'timestamp': timestamp?.toIso8601String(),  // => Execute statement
                                         // => Mixin field: nullable timestamp
       'auditLog': auditLog,             // => Use mixin getter
                                         // => From: Auditable mixin
@@ -2265,13 +2265,13 @@ class Donation with Timestamped, Auditable, Serializable {
 }
 
 // Different class using subset of mixins
-class Transaction with Timestamped, Auditable {
+class Transaction with Timestamped, Auditable {  // => Execute statement
                                         // => Only 2 mixins (not Serializable)
                                         // => Flexible: choose what to include
   String transactionId;                 // => Field: transaction ID
   double amount;                        // => Field: transaction amount
 
-  Transaction(this.transactionId, this.amount) {
+  Transaction(this.transactionId, this.amount) {  // => Execute statement
                                         // => Constructor: initialize fields
     markTimestamp();                    // => Call: Timestamped mixin method
     logAction('Transaction created');   // => Call: Auditable mixin method
@@ -2279,7 +2279,7 @@ class Transaction with Timestamped, Auditable {
 
   void execute() {                      // => Method: execute transaction
     logAction('Executing transaction'); // => Log: using Auditable mixin
-    print('[$transactionId] Rp$amount');
+    print('[$transactionId] Rp$amount');  // => Execute statement
                                         // => Output: transaction details
   }
 }
@@ -2291,7 +2291,7 @@ mixin Validated on Donation {           // => on Donation: only apply to Donatio
   bool validate() {                     // => Method: validate donation
     if (amount <= 0) {                  // => Access Donation.amount
                                         // => Check: amount must be positive
-      logAction('Validation failed: negative amount');
+      logAction('Validation failed: negative amount');  // => Execute statement
                                         // => Access Auditable.logAction (from Donation)
                                         // => Mixins can access other mixin methods
       return false;                     // => Return: invalid
@@ -2302,11 +2302,11 @@ mixin Validated on Donation {           // => on Donation: only apply to Donatio
 }
 
 // Class using restricted mixin
-class ValidatedDonation extends Donation with Validated {
+class ValidatedDonation extends Donation with Validated {  // => Execute statement
                                         // => extends Donation: satisfies 'on Donation'
                                         // => with Validated: apply restricted mixin
                                         // => Order: extends before with
-  ValidatedDonation(String donorName, double amount) : super(donorName, amount);
+  ValidatedDonation(String donorName, double amount) : super(donorName, amount);  // => Execute statement
                                         // => Constructor: delegate to super
                                         // => Initializer: calls parent constructor
 
@@ -2317,7 +2317,7 @@ class ValidatedDonation extends Donation with Validated {
       super.process();                  // => Call parent if valid
                                         // => Delegate: original behavior
     } else {                            // => Invalid case
-      print('Cannot process invalid donation');
+      print('Cannot process invalid donation');  // => Execute statement
                                         // => Output: error message
     }
   }
@@ -2326,40 +2326,40 @@ class ValidatedDonation extends Donation with Validated {
 void main() {                           // => Main function entry point
                                         // => Demonstrates mixin composition
   // Use class with all mixins
-  Donation donation = Donation('Ahmad', 500000.0);
+  Donation donation = Donation('Ahmad', 500000.0);  // => Execute statement
                                         // => Has: Timestamped, Auditable, Serializable
                                         // => All three mixins active
   donation.process();                   // => Uses markTimestamp(), logAction()
                                         // => Methods from multiple mixins
 
-  print('\n=== JSON Serialization ===');
+  print('\n=== JSON Serialization ===');  // => Execute statement
                                         // => Section header
   print(donation.toJsonString());       // => Uses Serializable mixin
                                         // => Output: JSON representation
 
   print('\n=== Audit Log ===');        // => Section header
-  for (String entry in donation.auditLog) {
+  for (String entry in donation.auditLog) {  // => Loop iteration
                                         // => Iterate: audit log entries
     print(entry);                       // => Auditable mixin getter
                                         // => Output: each log entry
   }
 
   // Use class with subset of mixins
-  Transaction txn = Transaction('TXN-001', 1000000.0);
+  Transaction txn = Transaction('TXN-001', 1000000.0);  // => Execute statement
                                         // => Only Timestamped + Auditable
   txn.execute();                        // => Execute: transaction logic
   // txn.toJsonString();                // => ERROR: Transaction doesn't have Serializable
                                         // => Compile error: method not available
 
   // Use restricted mixin
-  print('\n=== Validated Donation ===');
+  print('\n=== Validated Donation ===');  // => Execute statement
                                         // => Section header
-  ValidatedDonation validDonation = ValidatedDonation('Fatimah', 750000.0);
+  ValidatedDonation validDonation = ValidatedDonation('Fatimah', 750000.0);  // => Execute statement
                                         // => Valid: positive amount
   validDonation.process();              // => Validates before processing
                                         // => Passes: validation succeeds
 
-  ValidatedDonation invalidDonation = ValidatedDonation('Ali', -100.0);
+  ValidatedDonation invalidDonation = ValidatedDonation('Ali', -100.0);  // => Execute statement
                                         // => Invalid: negative amount
   invalidDonation.process();            // => Validation fails
                                         // => Output: error message
@@ -2371,13 +2371,13 @@ void main() {                           // => Main function entry point
 When multiple mixins define the same method, **later mixins override earlier**:
 
 ```dart
-mixin A {
-  void greet() => print('A');
-}
+mixin A {                               // => Execute statement
+  void greet() => print('A');           // => Execute statement
+}                                       // => Operation
 
-mixin B {
-  void greet() => print('B');
-}
+mixin B {                               // => Execute statement
+  void greet() => print('B');           // => Execute statement
+}                                       // => Operation
 
 class Example with A, B {}              // => B's greet() wins (later in chain)
 ```
@@ -2407,19 +2407,19 @@ Adding methods to existing classes without inheritance using extensions. Extensi
 extension StringValidation on String {  // => extension: add methods to String
                                         // => on String: target type
   bool get isValidDonorId {             // => Add getter to String
-    return length >= 5 && startsWith('DONOR-');
+    return length >= 5 && startsWith('DONOR-');  // => Return value
                                         // => Validation logic
                                         // => this: refers to String instance
   }
 
   bool get isNumeric {                  // => Another getter
-    return double.tryParse(this) != null;
+    return double.tryParse(this) != null;  // => Return value
                                         // => Check if string is number
   }
 
   String toTitleCase() {                // => Add method to String
-    if (isEmpty) return this;
-    return this[0].toUpperCase() + substring(1).toLowerCase();
+    if (isEmpty) return this;           // => Conditional check
+    return this[0].toUpperCase() + substring(1).toLowerCase();  // => Return value
                                         // => Capitalize first letter
   }
 }
@@ -2427,44 +2427,44 @@ extension StringValidation on String {  // => extension: add methods to String
 // Extension on built-in int type
 extension IntCurrency on int {          // => Named extension on int
   String get toRupiah {                 // => Convert int to Rupiah format
-    return 'Rp${toString().replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (Match m) => '${m[1]},',
-    )}';
+    return 'Rp${toString().replaceAllMapped(  // => Return value
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),  // => Execute statement
+      (Match m) => '${m[1]},',          // => Execute statement
+    )}';                                // => Execute statement
                                         // => Format with thousand separators
   }
 
   bool get isValidDonationAmount {      // => Validation getter
-    return this > 0 && this <= 1000000000;
+    return this > 0 && this <= 1000000000;  // => Return value
                                         // => Between 0 and 1 billion
   }
 }
 
 // Extension on List type
-extension ListStats<T extends num> on List<T> {
+extension ListStats<T extends num> on List<T> {  // => Execute statement
                                         // => Generic extension on List<T>
                                         // => T extends num: only numeric lists
   double get average {                  // => Calculate average
-    if (isEmpty) return 0.0;
-    return reduce((a, b) => (a + b) as T) / length;
+    if (isEmpty) return 0.0;            // => Conditional check
+    return reduce((a, b) => (a + b) as T) / length;  // => Return value
                                         // => Sum and divide
   }
 
   T get maximum {                       // => Find maximum
-    return reduce((a, b) => a > b ? a : b);
+    return reduce((a, b) => a > b ? a : b);  // => Return value
   }
 
   T get minimum {                       // => Find minimum
-    return reduce((a, b) => a < b ? a : b);
+    return reduce((a, b) => a < b ? a : b);  // => Return value
   }
 }
 
 // Extension on custom class
-class Donation {
-  String donorName;
-  double amount;
+class Donation {                        // => Execute statement
+  String donorName;                     // => Execute statement
+  double amount;                        // => Execute statement
 
-  Donation(this.donorName, this.amount);
+  Donation(this.donorName, this.amount);  // => Execute statement
 }
 
 extension DonationHelpers on Donation { // => Extension on custom class
@@ -2473,12 +2473,12 @@ extension DonationHelpers on Donation { // => Extension on custom class
   }
 
   String get summary {                  // => Format summary
-    return '$donorName: ${amount.toInt().toRupiah}';
+    return '$donorName: ${amount.toInt().toRupiah}';  // => Return value
                                         // => Use IntCurrency extension
   }
 
   bool get isLargeDonation {            // => Classification
-    return amount >= 1000000.0;
+    return amount >= 1000000.0;         // => Return value
   }
 }
 
@@ -2486,55 +2486,55 @@ void main() {                           // => Main function entry point
                                         // => Demonstrates extension method usage
   // Use String extensions
   String donorId = 'DONOR-12345';       // => String instance
-  print('Valid donor ID: ${donorId.isValidDonorId}');
+  print('Valid donor ID: ${donorId.isValidDonorId}');  // => Execute statement
                                         // => Output: Valid donor ID: true
                                         // => Extension method called as if built-in
                                         // => isValidDonorId added by StringValidation extension
 
   String invalidId = 'ABC';             // => Another String instance
-  print('Valid donor ID: ${invalidId.isValidDonorId}');
+  print('Valid donor ID: ${invalidId.isValidDonorId}');  // => Execute statement
                                         // => Output: Valid donor ID: false
                                         // => Extension works on any String
 
-  String name = 'ahmad';
-  print('Title case: ${name.toTitleCase()}');
+  String name = 'ahmad';                // => Execute statement
+  print('Title case: ${name.toTitleCase()}');  // => Execute statement
                                         // => Output: Title case: Ahmad
 
   // Use int extensions
-  int amount = 1500000;
-  print('Formatted: ${amount.toRupiah}');
+  int amount = 1500000;                 // => Execute statement
+  print('Formatted: ${amount.toRupiah}');  // => Execute statement
                                         // => Output: Formatted: Rp1,500,000
 
-  print('Valid amount: ${amount.isValidDonationAmount}');
+  print('Valid amount: ${amount.isValidDonationAmount}');  // => Execute statement
                                         // => Output: Valid amount: true
 
   // Use List extensions
-  List<int> donations = [100000, 500000, 250000, 750000];
-  print('Average donation: ${donations.average.toInt().toRupiah}');
+  List<int> donations = [100000, 500000, 250000, 750000];  // => Execute statement
+  print('Average donation: ${donations.average.toInt().toRupiah}');  // => Execute statement
                                         // => Output: Average donation: Rp400,000
 
-  print('Largest: ${donations.maximum.toRupiah}');
+  print('Largest: ${donations.maximum.toRupiah}');  // => Execute statement
                                         // => Output: Largest: Rp750,000
 
-  print('Smallest: ${donations.minimum.toRupiah}');
+  print('Smallest: ${donations.minimum.toRupiah}');  // => Execute statement
                                         // => Output: Smallest: Rp100,000
 
   // Use custom class extensions
-  Donation donation = Donation('Fatimah', 2000000.0);
-  print('Zakat: ${donation.zakatAmount.toInt().toRupiah}');
+  Donation donation = Donation('Fatimah', 2000000.0);  // => Execute statement
+  print('Zakat: ${donation.zakatAmount.toInt().toRupiah}');  // => Execute statement
                                         // => Output: Zakat: Rp50,000
 
-  print('Summary: ${donation.summary}');
+  print('Summary: ${donation.summary}');  // => Execute statement
                                         // => Output: Summary: Fatimah: Rp2,000,000
 
-  print('Large donation: ${donation.isLargeDonation}');
+  print('Large donation: ${donation.isLargeDonation}');  // => Execute statement
                                         // => Output: Large donation: true
 
   // Chaining extensions
-  String input = '1500000';
+  String input = '1500000';             // => Execute statement
   if (input.isNumeric) {                // => StringValidation extension
-    int value = int.parse(input);
-    print('Valid amount: ${value.toRupiah}');
+    int value = int.parse(input);       // => Execute statement
+    print('Valid amount: ${value.toRupiah}');  // => Execute statement
                                         // => IntCurrency extension
   }
 }
@@ -2611,7 +2611,7 @@ class Box<T> {                          // => Generic class: works with any type
   }
 
   void display() {                      // => Method: print content
-    print('Box contains: \$content (type: \${T.toString()})');
+    print('Box contains: \$content (type: \${T.toString()})');  // => Execute statement
                                         // => T.toString(): type parameter name
                                         // => Runtime: shows actual type
   }
@@ -2651,7 +2651,7 @@ class Pair<K, V> {                      // => Two type parameters
   Pair(this.key, this.value);           // => Constructor: takes K and V
 
   @override                             // => Override: Object.toString
-  String toString() => 'Pair(\$key: \$value)';
+  String toString() => 'Pair(\$key: \$value)';  // => Execute statement
                                         // => Format: key-value pair
 }
 
@@ -2667,12 +2667,12 @@ class Repository<T> {                   // => Generic repository pattern
     print('Added: \$item');             // => Output: confirmation
   }
 
-  T? findById(bool Function(T) predicate) {
+  T? findById(bool Function(T) predicate) {  // => Execute statement
                                         // => Generic predicate function
                                         // => Function takes T, returns bool
                                         // => Return: nullable T
     try {                               // => Try-catch: handle not found
-      return _items.firstWhere(predicate);
+      return _items.firstWhere(predicate);  // => Return value
                                         // => Find: first matching item
     } catch (e) {                       // => Catch: StateError if not found
       return null;                      // => Return null if not found
@@ -2687,20 +2687,20 @@ class Repository<T> {                   // => Generic repository pattern
 }
 
 // Class for testing
-class Donation {
-  String donorName;
-  double amount;
+class Donation {                        // => Execute statement
+  String donorName;                     // => Execute statement
+  double amount;                        // => Execute statement
 
-  Donation(this.donorName, this.amount);
+  Donation(this.donorName, this.amount);  // => Execute statement
 
-  @override
-  String toString() => '\$donorName: Rp\$amount';
+  @override                             // => Execute statement
+  String toString() => '\$donorName: Rp\$amount';  // => Execute statement
 }
 
 void main() {                           // => Main function entry point
                                         // => Demonstrates generic type usage
   // Generic Box without constraint
-  Box<String> stringBox = Box<String>('Hello');
+  Box<String> stringBox = Box<String>('Hello');  // => Execute statement
                                         // => Type parameter: String
                                         // => Explicit: specify type argument
   stringBox.display();                  // => Output: Box contains: Hello (type: String)
@@ -2715,40 +2715,40 @@ void main() {                           // => Main function entry point
   inferredBox.display();                // => Output: Box contains: 100 (type: int)
 
   // Generic NumberBox with constraint
-  NumberBox<int> intNumberBox = NumberBox<int>(10);
+  NumberBox<int> intNumberBox = NumberBox<int>(10);  // => Execute statement
   int sum = intNumberBox.add(5);        // => Type-safe: add(int) → int
   print('Sum: \$sum');                   // => Output: Sum: 15
 
-  NumberBox<double> doubleNumberBox = NumberBox<double>(3.14);
-  print('Formatted: \${doubleNumberBox.formatted()}');
+  NumberBox<double> doubleNumberBox = NumberBox<double>(3.14);  // => Execute statement
+  print('Formatted: \${doubleNumberBox.formatted()}');  // => Execute statement
                                         // => Output: Formatted: 3.14
 
-  print('Greater than 2.5: \${doubleNumberBox.isGreaterThan(2.5)}');
+  print('Greater than 2.5: \${doubleNumberBox.isGreaterThan(2.5)}');  // => Execute statement
                                         // => Output: Greater than 2.5: true
 
   // Pair with two type parameters
-  Pair<String, int> donorCount = Pair('Ahmad', 5);
+  Pair<String, int> donorCount = Pair('Ahmad', 5);  // => Execute statement
   print(donorCount);                    // => Output: Pair(Ahmad: 5)
 
-  Pair<int, double> amountPair = Pair(1, 500000.0);
+  Pair<int, double> amountPair = Pair(1, 500000.0);  // => Execute statement
   print(amountPair);                    // => Output: Pair(1: 500000.0)
 
   // Generic Repository
-  Repository<Donation> donationRepo = Repository<Donation>();
-  donationRepo.add(Donation('Ahmad', 500000.0));
-  donationRepo.add(Donation('Fatimah', 750000.0));
-  donationRepo.add(Donation('Ali', 1000000.0));
+  Repository<Donation> donationRepo = Repository<Donation>();  // => Execute statement
+  donationRepo.add(Donation('Ahmad', 500000.0));  // => Execute statement
+  donationRepo.add(Donation('Fatimah', 750000.0));  // => Execute statement
+  donationRepo.add(Donation('Ali', 1000000.0));  // => Execute statement
 
-  print('\n=== All Donations ===');
-  for (Donation donation in donationRepo.getAll()) {
-    print(donation);
+  print('\n=== All Donations ===');     // => Execute statement
+  for (Donation donation in donationRepo.getAll()) {  // => Loop iteration
+    print(donation);                    // => Execute statement
   }
 
   // Find with predicate
-  Donation? found = donationRepo.findById((d) => d.donorName == 'Fatimah');
+  Donation? found = donationRepo.findById((d) => d.donorName == 'Fatimah');  // => Execute statement
   print('\nFound: \$found');             // => Output: Found: Fatimah: Rp750000.0
 
-  print('Total donations: \${donationRepo.count}');
+  print('Total donations: \${donationRepo.count}');  // => Execute statement
                                         // => Output: Total donations: 3
 }
 ```
@@ -2784,12 +2784,12 @@ T getFirst<T>(List<T> items) {          // => Type parameter: T (inferred from a
 }                                       // => Inference: Dart infers T from usage
 
 // Generic function with multiple type parameters
-Map<K, V> createMap<K, V>(List<K> keys, List<V> values) {
+Map<K, V> createMap<K, V>(List<K> keys, List<V> values) {  // => Execute statement
                                         // => Two type parameters: K (key), V (value)
                                         // => Parameters: separate key/value lists
                                         // => Return: Map<K, V> (type-safe map)
   if (keys.length != values.length) {   // => Guard: ensure equal lengths
-    throw ArgumentError('Keys and values must have same length');
+    throw ArgumentError('Keys and values must have same length');  // => Execute statement
   }
 
   Map<K, V> result = {};                // => Create: empty typed map
@@ -2800,9 +2800,9 @@ Map<K, V> createMap<K, V>(List<K> keys, List<V> values) {
 }
 
 // Generic method in class
-class ZakatCalculator {
+class ZakatCalculator {                 // => Execute statement
   // Generic method with constraint
-  double calculateTotal<T extends num>(List<T> amounts) {
+  double calculateTotal<T extends num>(List<T> amounts) {  // => Execute statement
                                         // => Generic method: works on instance
                                         // => Constraint: T extends num (int or double)
                                         // => Enables: arithmetic operations on T
@@ -2815,45 +2815,45 @@ class ZakatCalculator {
   }
 }
 
-void main() {
+void main() {                           // => Execute statement
   // Generic function with type inference
-  List<String> donors = ['Ahmad', 'Fatimah', 'Ali'];
+  List<String> donors = ['Ahmad', 'Fatimah', 'Ali'];  // => Execute statement
                                         // => Type: List<String> (explicit)
   String firstDonor = getFirst(donors); // => Inference: T = String (from List<String>)
                                         // => firstDonor: 'Ahmad' (type String)
   print('First donor: $firstDonor');    // => Output: First donor: Ahmad
 
-  List<int> amounts = [100000, 200000, 150000];
+  List<int> amounts = [100000, 200000, 150000];  // => Execute statement
                                         // => Type: List<int>
   int firstAmount = getFirst(amounts);  // => Inference: T = int (from List<int>)
                                         // => firstAmount: 100000 (type int)
   print('First amount: Rp$firstAmount'); // => Output: First amount: Rp100000
 
   // Explicit type argument (override inference)
-  var firstExplicit = getFirst<String>(['A', 'B']);
+  var firstExplicit = getFirst<String>(['A', 'B']);  // => Execute statement
                                         // => Explicit: <String> (override inference)
                                         // => Result: 'A' (type String)
   print('Explicit: $firstExplicit');    // => Output: Explicit: A
 
   // Generic function with multiple type parameters
-  List<String> keys = ['donor1', 'donor2', 'donor3'];
-  List<double> values = [100000.0, 200000.0, 150000.0];
-  Map<String, double> donationMap = createMap(keys, values);
+  List<String> keys = ['donor1', 'donor2', 'donor3'];  // => Execute statement
+  List<double> values = [100000.0, 200000.0, 150000.0];  // => Execute statement
+  Map<String, double> donationMap = createMap(keys, values);  // => Execute statement
                                         // => Inference: K = String, V = double
                                         // => donationMap: {donor1: 100000.0, ...}
   print('Donation map: $donationMap');  // => Output: {donor1: 100000.0, donor2: 200000.0, donor3: 150000.0}
 
   // Generic method usage
-  ZakatCalculator calculator = ZakatCalculator();
-  List<int> intAmounts = [100000, 200000, 150000];
-  double totalInt = calculator.calculateTotal(intAmounts);
+  ZakatCalculator calculator = ZakatCalculator();  // => Execute statement
+  List<int> intAmounts = [100000, 200000, 150000];  // => Execute statement
+  double totalInt = calculator.calculateTotal(intAmounts);  // => Execute statement
                                         // => Inference: T = int (from List<int>)
                                         // => Conversion: each int converted to double
                                         // => totalInt: 450000.0
   print('Total (int): Rp$totalInt');    // => Output: Total (int): Rp450000.0
 
-  List<double> doubleAmounts = [100000.5, 200000.75, 150000.25];
-  double totalDouble = calculator.calculateTotal(doubleAmounts);
+  List<double> doubleAmounts = [100000.5, 200000.75, 150000.25];  // => Execute statement
+  double totalDouble = calculator.calculateTotal(doubleAmounts);  // => Execute statement
                                         // => Inference: T = double (from List<double>)
                                         // => totalDouble: 450001.5
   print('Total (double): Rp$totalDouble'); // => Output: Total (double): Rp450001.5
@@ -2881,7 +2881,7 @@ Making class instances callable like functions using the `call()` method. Enable
 
 ```dart
 // Callable class for Zakat calculation
-class ZakatRate {
+class ZakatRate {                       // => Execute statement
   final double percentage;              // => Field: Zakat rate (e.g., 2.5% = 0.025)
                                         // => Immutable: final prevents changes
 
@@ -2897,18 +2897,18 @@ class ZakatRate {
 
   // Additional methods still available
   String describe() {                   // => Regular method: not callable syntax
-    return 'Zakat rate: ${percentage * 100}%';
+    return 'Zakat rate: ${percentage * 100}%';  // => Return value
                                         // => Description: percentage as percent
   }
 }
 
 // Callable class with state
-class DonationCounter {
+class DonationCounter {                 // => Execute statement
   int _count = 0;                       // => Private field: donation count
   double _total = 0.0;                  // => Private field: total amount
 
   // call() with named parameters
-  void call({required String donor, required double amount}) {
+  void call({required String donor, required double amount}) {  // => Execute statement
                                         // => Named parameters: clarity in usage
                                         // => call(): invoked with () syntax
     _count++;                           // => Increment: count donations
@@ -2921,9 +2921,9 @@ class DonationCounter {
 }
 
 // Callable class for validation
-class EmailValidator {
+class EmailValidator {                  // => Execute statement
   final RegExp _emailRegex = RegExp(    // => Regular expression: email pattern
-    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'  // => Execute statement
   );                                    // => Pattern: basic email validation
 
   bool call(String email) {             // => call(): validate email
@@ -2932,9 +2932,9 @@ class EmailValidator {
   }                                     // => Usage: validator(email)
 }
 
-void main() {
+void main() {                           // => Execute statement
   // Use callable class like function
-  ZakatRate standardRate = ZakatRate(0.025);
+  ZakatRate standardRate = ZakatRate(0.025);  // => Execute statement
                                         // => Create instance: 2.5% Zakat rate
                                         // => standardRate: callable object
 
@@ -2951,47 +2951,47 @@ void main() {
   ZakatRate goldRate = ZakatRate(0.025);   // => Gold: 2.5%
   ZakatRate agricultureRate = ZakatRate(0.10);  // => Agriculture: 10%
 
-  double goldWealth = 5000000.0;
-  print('Gold Zakat: Rp${goldRate(goldWealth)}');
+  double goldWealth = 5000000.0;        // => Execute statement
+  print('Gold Zakat: Rp${goldRate(goldWealth)}');  // => Execute statement
                                         // => Output: Gold Zakat: Rp125000.0
 
-  double cropValue = 8000000.0;
-  print('Agriculture Zakat: Rp${agricultureRate(cropValue)}');
+  double cropValue = 8000000.0;         // => Execute statement
+  print('Agriculture Zakat: Rp${agricultureRate(cropValue)}');  // => Execute statement
                                         // => Output: Agriculture Zakat: Rp800000.0
 
   // Callable class with state
-  DonationCounter counter = DonationCounter();
+  DonationCounter counter = DonationCounter();  // => Execute statement
                                         // => Create: stateful callable object
 
-  counter(donor: 'Ahmad', amount: 100000.0);
+  counter(donor: 'Ahmad', amount: 100000.0);  // => Execute statement
                                         // => Call: named parameters
                                         // => Output: Ahmad donated Rp100000.0
                                         // => State: count=1, total=100000.0
 
-  counter(donor: 'Fatimah', amount: 200000.0);
+  counter(donor: 'Fatimah', amount: 200000.0);  // => Execute statement
                                         // => Output: Fatimah donated Rp200000.0
                                         // => State: count=2, total=300000.0
 
-  counter(donor: 'Ali', amount: 150000.0);
+  counter(donor: 'Ali', amount: 150000.0);  // => Execute statement
                                         // => Output: Ali donated Rp150000.0
                                         // => State: count=3, total=450000.0
 
-  print('Total donations: ${counter.count}');
+  print('Total donations: ${counter.count}');  // => Execute statement
                                         // => Output: Total donations: 3
-  print('Total amount: Rp${counter.total}');
+  print('Total amount: Rp${counter.total}');  // => Execute statement
                                         // => Output: Total amount: Rp450000.0
 
   // Callable validator
-  EmailValidator validator = EmailValidator();
+  EmailValidator validator = EmailValidator();  // => Execute statement
                                         // => Create: email validator
 
-  String email1 = 'donor@example.com';
-  print('$email1 is valid: ${validator(email1)}');
+  String email1 = 'donor@example.com';  // => Execute statement
+  print('$email1 is valid: ${validator(email1)}');  // => Execute statement
                                         // => Call: validator(email)
                                         // => Output: donor@example.com is valid: true
 
-  String email2 = 'invalid-email';
-  print('$email2 is valid: ${validator(email2)}');
+  String email2 = 'invalid-email';      // => Execute statement
+  print('$email2 is valid: ${validator(email2)}');  // => Execute statement
                                         // => Output: invalid-email is valid: false
 }
 ```
@@ -3017,21 +3017,21 @@ Creating type aliases for function signatures using typedef for clearer code and
 
 ```dart
 // Define function type aliases
-typedef ZakatCalculation = double Function(double wealth);
+typedef ZakatCalculation = double Function(double wealth);  // => Execute statement
                                         // => Typedef: name for function type
                                         // => Function: takes double, returns double
                                         // => Usage: anywhere function type needed
 
-typedef DonationValidator = bool Function(String donor, double amount);
+typedef DonationValidator = bool Function(String donor, double amount);  // => Execute statement
                                         // => Function: takes String & double, returns bool
                                         // => Use case: validate donation before processing
 
-typedef TransactionProcessor = Future<void> Function(Map<String, dynamic> data);
+typedef TransactionProcessor = Future<void> Function(Map<String, dynamic> data);  // => Execute statement
                                         // => Async function: returns Future<void>
                                         // => Parameter: transaction data map
 
 // Use typedef in function parameters
-class DonationService {
+class DonationService {                 // => Execute statement
   final ZakatCalculation _calculator;  // => Field: function type
                                         // => Any function matching signature works
 
@@ -3045,105 +3045,105 @@ class DonationService {
 }
 
 // Function that takes typedef as parameter
-void processDonation(
-  String donor,
-  double amount,
+void processDonation(                   // => Execute statement
+  String donor,                         // => Execute statement
+  double amount,                        // => Execute statement
   DonationValidator validator,         // => Parameter: function matching typedef
   TransactionProcessor processor,       // => Parameter: async function
 ) async {                               // => async: needed for await
   if (validator(donor, amount)) {       // => Validate: call validator function
-    print('Processing donation from $donor');
+    print('Processing donation from $donor');  // => Execute statement
     Map<String, dynamic> data = {       // => Transaction data: map
-      'donor': donor,
-      'amount': amount,
-      'timestamp': DateTime.now().toString(),
+      'donor': donor,                   // => Execute statement
+      'amount': amount,                 // => Execute statement
+      'timestamp': DateTime.now().toString(),  // => Execute statement
     };
     await processor(data);              // => Process: call async function
                                         // => await: wait for completion
-  } else {
-    print('Invalid donation: $donor - Rp$amount');
+  } else {                              // => Execute statement
+    print('Invalid donation: $donor - Rp$amount');  // => Execute statement
                                         // => Validation failed
   }
 }
 
 // Functions matching typedefs
-double calculateStandardZakat(double wealth) {
+double calculateStandardZakat(double wealth) {  // => Execute statement
                                         // => Matches: ZakatCalculation typedef
   return wealth * 0.025;                // => Standard rate: 2.5%
 }
 
-double calculateGoldZakat(double wealth) {
+double calculateGoldZakat(double wealth) {  // => Execute statement
                                         // => Also matches: ZakatCalculation typedef
   return wealth * 0.025;                // => Same signature, different name
 }
 
-bool validateMinimumAmount(String donor, double amount) {
+bool validateMinimumAmount(String donor, double amount) {  // => Execute statement
                                         // => Matches: DonationValidator typedef
-  return donor.isNotEmpty && amount >= 10000;
+  return donor.isNotEmpty && amount >= 10000;  // => Return value
                                         // => Rules: donor not empty, amount >= 10k
 }
 
-Future<void> logTransaction(Map<String, dynamic> data) async {
+Future<void> logTransaction(Map<String, dynamic> data) async {  // => Execute statement
                                         // => Matches: TransactionProcessor typedef
-  await Future.delayed(Duration(milliseconds: 100));
+  await Future.delayed(Duration(milliseconds: 100));  // => Wait for async operation
                                         // => Simulate: database write
   print('Transaction logged: $data');   // => Log: transaction data
 }
 
-void main() async {
+void main() async {                     // => Execute statement
   // Use typedef with dependency injection
-  DonationService service1 = DonationService(calculateStandardZakat);
+  DonationService service1 = DonationService(calculateStandardZakat);  // => Execute statement
                                         // => Inject: standard calculator
                                         // => service1: uses 2.5% rate
 
-  double zakat1 = service1.processZakat(10000000.0);
+  double zakat1 = service1.processZakat(10000000.0);  // => Execute statement
   print('Zakat (standard): Rp$zakat1'); // => Output: Zakat (standard): Rp250000.0
 
-  DonationService service2 = DonationService(calculateGoldZakat);
+  DonationService service2 = DonationService(calculateGoldZakat);  // => Execute statement
                                         // => Inject: gold calculator
                                         // => Different implementation, same typedef
 
-  double zakat2 = service2.processZakat(10000000.0);
+  double zakat2 = service2.processZakat(10000000.0);  // => Execute statement
   print('Zakat (gold): Rp$zakat2');     // => Output: Zakat (gold): Rp250000.0
 
   // Use typedef in function parameters
-  await processDonation(
-    'Ahmad',
-    100000.0,
+  await processDonation(                // => Wait for async operation
+    'Ahmad',                            // => Execute statement
+    100000.0,                           // => Execute statement
     validateMinimumAmount,              // => Validator: function reference
     logTransaction,                     // => Processor: async function reference
   );                                    // => Output: Processing donation from Ahmad
                                         // =>         Transaction logged: {donor: Ahmad, ...}
 
-  await processDonation(
-    'Fatimah',
+  await processDonation(                // => Wait for async operation
+    'Fatimah',                          // => Execute statement
     5000.0,                             // => Amount: below minimum (10000)
-    validateMinimumAmount,
-    logTransaction,
+    validateMinimumAmount,              // => Execute statement
+    logTransaction,                     // => Execute statement
   );                                    // => Output: Invalid donation: Fatimah - Rp5000.0
 
   // Inline function matching typedef
-  await processDonation(
-    'Ali',
-    150000.0,
+  await processDonation(                // => Wait for async operation
+    'Ali',                              // => Execute statement
+    150000.0,                           // => Execute statement
     (donor, amount) => amount > 0,      // => Inline validator: anonymous function
                                         // => Matches: DonationValidator signature
     (data) async {                      // => Inline processor: anonymous async
-      print('Custom processing: $data');
+      print('Custom processing: $data');  // => Execute statement
     },
   );                                    // => Output: Processing donation from Ali
                                         // =>         Custom processing: {donor: Ali, ...}
 
   // Typedef improves readability
-  List<ZakatCalculation> calculators = [
-    calculateStandardZakat,
-    calculateGoldZakat,
+  List<ZakatCalculation> calculators = [  // => Execute statement
+    calculateStandardZakat,             // => Execute statement
+    calculateGoldZakat,                 // => Execute statement
     (wealth) => wealth * 0.10,          // => Agriculture rate: 10%
   ];                                    // => List: functions matching typedef
                                         // => Type: List<ZakatCalculation>
 
-  double wealth = 5000000.0;
-  for (ZakatCalculation calc in calculators) {
+  double wealth = 5000000.0;            // => Execute statement
+  for (ZakatCalculation calc in calculators) {  // => Loop iteration
                                         // => Iterate: each calculator function
     print('Zakat: Rp${calc(wealth)}');  // => Call: function from list
   }                                     // => Output: Rp125000.0, Rp125000.0, Rp500000.0
@@ -3169,62 +3169,62 @@ Using cascade notation to perform multiple operations on the same object without
 - **Return value**: Returns target object, not last operation result
 
 ```dart
-class Donation {
+class Donation {                        // => Execute statement
   String? donor;                        // => Nullable: donor name
   double? amount;                       // => Nullable: donation amount
   String? category;                     // => Nullable: donation category
   DateTime? timestamp;                  // => Nullable: donation time
 
   void setDonor(String name) {          // => Setter method: assign donor
-    donor = name;
+    donor = name;                       // => Execute statement
   }
 
   void setAmount(double value) {        // => Setter method: assign amount
-    amount = value;
+    amount = value;                     // => Execute statement
   }
 
   void setCategory(String cat) {        // => Setter method: assign category
-    category = cat;
+    category = cat;                     // => Execute statement
   }
 
   void setTimestamp(DateTime time) {    // => Setter method: assign timestamp
-    timestamp = time;
+    timestamp = time;                   // => Execute statement
   }
 
   void log() {                          // => Method: log donation details
-    print('Donation: $donor - Rp$amount ($category) at $timestamp');
+    print('Donation: $donor - Rp$amount ($category) at $timestamp');  // => Execute statement
   }
 }
 
-class DonationBuilder {
+class DonationBuilder {                 // => Execute statement
   String _donor = '';                   // => Private field: builder pattern
-  double _amount = 0.0;
-  String _category = '';
+  double _amount = 0.0;                 // => Execute statement
+  String _category = '';                // => Execute statement
 
-  DonationBuilder withDonor(String donor) {
+  DonationBuilder withDonor(String donor) {  // => Execute statement
                                         // => Builder method: set donor
                                         // => Parameter: donor name string
     _donor = donor;                     // => Assign to private field
     return this;                        // => Return this: enable method chaining
   }
 
-  DonationBuilder withAmount(double amount) {
+  DonationBuilder withAmount(double amount) {  // => Execute statement
                                         // => Builder method: set amount
     _amount = amount;                   // => Store amount value
     return this;                        // => Return this: chain continues
   }
 
-  DonationBuilder withCategory(String category) {
+  DonationBuilder withCategory(String category) {  // => Execute statement
                                         // => Builder method: set category
     _category = category;               // => Store category value
     return this;                        // => Return this for chaining
   }
 
   Donation build() {                    // => Build method: create final object
-    return Donation()
+    return Donation()                   // => Return value
       ..donor = _donor                  // => Cascade: set multiple properties
-      ..amount = _amount
-      ..category = _category
+      ..amount = _amount                // => Execute statement
+      ..category = _category            // => Execute statement
       ..timestamp = DateTime.now();     // => Final property: set timestamp
   }                                     // => Return: configured Donation object
 }
@@ -3234,49 +3234,49 @@ void main() {                           // => Main function entry point
   // Without cascade (verbose, repetitive)
   Donation donation1 = Donation();      // => Create Donation instance
   donation1.setDonor('Ahmad');          // => Repetition: donation1 repeated
-  donation1.setAmount(100000.0);
-  donation1.setCategory('Zakat');
-  donation1.setTimestamp(DateTime.now());
+  donation1.setAmount(100000.0);        // => Execute statement
+  donation1.setCategory('Zakat');       // => Execute statement
+  donation1.setTimestamp(DateTime.now());  // => Execute statement
   donation1.log();                      // => Call log method: print details
 
   // With cascade notation (clean, fluent)
-  Donation donation2 = Donation()
+  Donation donation2 = Donation()       // => Execute statement
     ..setDonor('Fatimah')               // => Cascade: operates on Donation instance
                                         // => No repetition: target inferred
     ..setAmount(200000.0)               // => Each line: method on same object
-    ..setCategory('Sadaqah')
-    ..setTimestamp(DateTime.now())
+    ..setCategory('Sadaqah')            // => Execute statement
+    ..setTimestamp(DateTime.now())      // => Execute statement
     ..log();                            // => Final operation: log() called
                                         // => Return value: Donation instance (not void from log)
 
   // Cascade with field access
-  Donation donation3 = Donation()
+  Donation donation3 = Donation()       // => Execute statement
     ..donor = 'Ali'                     // => Direct field assignment
     ..amount = 150000.0                 // => Simpler than setter methods
-    ..category = 'Infaq'
+    ..category = 'Infaq'                // => Execute statement
     ..timestamp = DateTime.now();       // => Cascade: works with fields and methods
   donation3.log();                      // => Separate statement: no cascade
                                         // => Regular method call: not part of cascade chain
 
   // Null-aware cascade (?..
   Donation? nullableDonation = null;    // => Nullable: might be null
-  nullableDonation
+  nullableDonation                      // => Execute statement
     ?..setDonor('Umar')                 // => Null-aware cascade: no-op if null
     ?..setAmount(250000.0)              // => Safe: doesn't throw on null
     ?..log();                           // => Result: nothing happens (null safe)
 
   // Cascade returns target object
-  var result = Donation()
-    ..donor = 'Khadijah'
-    ..amount = 300000.0
+  var result = Donation()               // => Execute statement
+    ..donor = 'Khadijah'                // => Execute statement
+    ..amount = 300000.0                 // => Execute statement
     ..log();                            // => log() returns void
                                         // => But cascade returns Donation instance
-  print('Result type: ${result.runtimeType}');
+  print('Result type: ${result.runtimeType}');  // => Execute statement
                                         // => Output: Result type: Donation
                                         // => NOT void: cascade returns target
 
   // Builder pattern with cascade
-  Donation donation4 = DonationBuilder()
+  Donation donation4 = DonationBuilder()  // => Execute statement
                                         // => Create builder instance
     ..withDonor('Bilal')                // => Builder cascade: method chaining
     ..withAmount(175000.0)              // => Each method: returns builder
@@ -3290,7 +3290,7 @@ void main() {                           // => Main function entry point
                                         // => Type: List<int>
     ..add(100000)                       // => Cascade on list: add operations
     ..add(200000)                       // => Fluent: multiple adds
-    ..add(150000)
+    ..add(150000)                       // => Execute statement
     ..sort();                           // => sort(): void return
                                         // => Cascade: returns list
   print('Sorted amounts: $amounts');    // => Output: [100000, 150000, 200000]
@@ -3299,8 +3299,8 @@ void main() {                           // => Main function entry point
   StringBuffer buffer = StringBuffer()  // => Create StringBuffer instance
                                         // => Mutable string builder
     ..write('Donations: ')              // => Cascade: StringBuffer operations
-    ..write('Ahmad: Rp100000, ')
-    ..write('Fatimah: Rp200000');
+    ..write('Ahmad: Rp100000, ')        // => Execute statement
+    ..write('Fatimah: Rp200000');       // => Execute statement
   String result2 = buffer.toString();   // => Regular call: break cascade
                                         // => toString(): convert buffer to String
   print(result2);                       // => Output: Donations: Ahmad: Rp100000, Fatimah: Rp200000
@@ -3348,7 +3348,7 @@ const auditable = Auditable();          // => Constant instance: shorthand usage
                                         // => Use: @auditable instead of @Auditable()
 
 class Donation {                        // => Example class: using annotations
-  @ValidateAmount(minAmount: 10000, maxAmount: 10000000)
+  @ValidateAmount(minAmount: 10000, maxAmount: 10000000)  // => Execute statement
                                         // => Annotation on field: validation metadata
                                         // => Code generators: can read this metadata
                                         // => Runtime: available via reflection (mirrors)
@@ -3368,7 +3368,7 @@ class ZakatCalculator {                 // => Example class: deprecation pattern
                                         // => Formula: 2.5% Zakat rate
   }
 
-  @Deprecated('Use calculateZakat instead')
+  @Deprecated('Use calculateZakat instead')  // => Execute statement
                                         // => Custom message: deprecation reason
                                         // => Better: guides developers to new API
   double computeZakat(double wealth) {  // => Deprecated method with message
@@ -3392,21 +3392,21 @@ abstract class PaymentProcessor {       // => Abstract class: defines interface
   void processPayment(double amount);   // => Abstract method: must override
 }
 
-class CashPayment implements PaymentProcessor {
+class CashPayment implements PaymentProcessor {  // => Execute statement
                                         // => Implementation: cash payment
   @override                             // => Required: implements interface method
   void processPayment(double amount) {  // => Implementation: concrete method
                                         // => Parameter: payment amount
-    print('Processing cash: Rp$amount');
+    print('Processing cash: Rp$amount');  // => Execute statement
                                         // => Side effect: print payment
   }
 }
 
-class CardPayment implements PaymentProcessor {
+class CardPayment implements PaymentProcessor {  // => Execute statement
                                         // => Implementation: card payment
   @override                             // => Annotation: marks interface method
   void processPayment(double amount) {  // => Implementation: card processing
-    print('Processing card: Rp$amount');
+    print('Processing card: Rp$amount');  // => Execute statement
                                         // => Output: card payment details
   }
 
@@ -3419,43 +3419,43 @@ class CardPayment implements PaymentProcessor {
 void main() {                           // => Main function entry point
                                         // => Demonstrates annotation usage
   // Using class with annotations
-  Donation donation = Donation(150000.0, 'Ahmad');
+  Donation donation = Donation(150000.0, 'Ahmad');  // => Execute statement
                                         // => Create: donation instance
                                         // => Object: has annotated fields
                                         // => Metadata: available at runtime
-  print('Donation: ${donation.donor} - Rp${donation.amount}');
+  print('Donation: ${donation.donor} - Rp${donation.amount}');  // => Execute statement
                                         // => Output: Donation: Ahmad - Rp150000.0
 
   // Deprecated method usage (analyzer warning)
-  ZakatCalculator calculator = ZakatCalculator();
+  ZakatCalculator calculator = ZakatCalculator();  // => Execute statement
                                         // => Create: calculator instance
-  double zakat1 = calculator.calculate(10000000.0);
+  double zakat1 = calculator.calculate(10000000.0);  // => Execute statement
                                         // => Warning: calculate is deprecated
                                         // => IDE: shows strikethrough
   print('Zakat (old): Rp$zakat1');      // => Output: Zakat (old): Rp250000.0
 
-  double zakat2 = calculator.computeZakat(10000000.0);
+  double zakat2 = calculator.computeZakat(10000000.0);  // => Execute statement
                                         // => Warning: Use calculateZakat instead
-  print('Zakat (deprecated): Rp$zakat2');
+  print('Zakat (deprecated): Rp$zakat2');  // => Execute statement
                                         // => Output: same result but deprecated
 
-  double zakat3 = calculator.calculateZakat(10000000.0);
+  double zakat3 = calculator.calculateZakat(10000000.0);  // => Execute statement
                                         // => No warning: current API
   print('Zakat (current): Rp$zakat3');  // => Output: Zakat (current): Rp250000.0
 
   // Override annotation benefits
-  PaymentProcessor cashPayment = CashPayment();
+  PaymentProcessor cashPayment = CashPayment();  // => Execute statement
                                         // => Polymorphism: interface type
   cashPayment.processPayment(100000.0); // => Call: overridden method
                                         // => Output: Processing cash: Rp100000.0
 
-  PaymentProcessor cardPayment = CardPayment();
+  PaymentProcessor cardPayment = CardPayment();  // => Execute statement
                                         // => Create: card payment instance
   cardPayment.processPayment(200000.0); // => Call: card implementation
                                         // => Output: Processing card: Rp200000.0
 
   // Custom annotation usage (metadata only, no runtime effect without reflection)
-  print('Donation annotation: ValidateAmount(10000-10000000)');
+  print('Donation annotation: ValidateAmount(10000-10000000)');  // => Execute statement
                                         // => Metadata: available for code generation
                                         // => Reflection: mirrors API can read annotations
                                         // => Build tools: can generate validation code
@@ -3492,47 +3492,47 @@ Using assert statements to validate assumptions during development, automaticall
 - **Documentation**: Express invariants and preconditions
 
 ```dart
-class Donation {
+class Donation {                        // => Execute statement
   final String donor;                   // => Donor name: must not be empty
   final double amount;                  // => Amount: must be positive
   final DateTime timestamp;             // => Timestamp: must not be future
 
-  Donation({
-    required this.donor,
-    required this.amount,
-    required this.timestamp,
-  }) : assert(donor.isNotEmpty, 'Donor name cannot be empty'),
+  Donation({                            // => Execute statement
+    required this.donor,                // => Execute statement
+    required this.amount,               // => Execute statement
+    required this.timestamp,            // => Execute statement
+  }) : assert(donor.isNotEmpty, 'Donor name cannot be empty'),  // => Execute statement
                                         // => Assert: precondition check
                                         // => Debug mode: throws AssertionError if false
                                         // => Release mode: completely removed
                                         // => Message: failure explanation
-       assert(amount > 0, 'Amount must be positive, got: $amount'),
+       assert(amount > 0, 'Amount must be positive, got: $amount'),  // => Execute statement
                                         // => Variable in message: shows actual value
-       assert(!timestamp.isAfter(DateTime.now()), 'Timestamp cannot be in future');
+       assert(!timestamp.isAfter(DateTime.now()), 'Timestamp cannot be in future');  // => Execute statement
                                         // => Invariant: timestamp constraint
 
   // Method with assertions
   void addBonus(double bonusPercent) {  // => Method: add bonus to donation
                                         // => Parameter: bonus percentage
-    assert(bonusPercent >= 0 && bonusPercent <= 100,
-        'Bonus percent must be between 0 and 100, got: $bonusPercent');
+    assert(bonusPercent >= 0 && bonusPercent <= 100,  // => Execute statement
+        'Bonus percent must be between 0 and 100, got: $bonusPercent');  // => Execute statement
                                         // => Precondition: valid percentage range
-    double bonus = amount * (bonusPercent / 100);
+    double bonus = amount * (bonusPercent / 100);  // => Execute statement
                                         // => Calculate: bonus amount
     print('Bonus: Rp$bonus');           // => Output: bonus value
   }
 }
 
-double calculateZakat(double wealth, double rate) {
+double calculateZakat(double wealth, double rate) {  // => Execute statement
                                         // => Function: calculate Zakat from wealth
                                         // => Parameters: wealth amount, Zakat rate
-  assert(wealth >= 0, 'Wealth cannot be negative: $wealth');
+  assert(wealth >= 0, 'Wealth cannot be negative: $wealth');  // => Execute statement
                                         // => Parameter validation: development check
-  assert(rate >= 0 && rate <= 1, 'Rate must be between 0 and 1: $rate');
+  assert(rate >= 0 && rate <= 1, 'Rate must be between 0 and 1: $rate');  // => Execute statement
                                         // => Rate constraint: percentage as decimal
 
   double nisab = 8500000.0;             // => Nisab: minimum wealth threshold (85g gold)
-  assert(nisab > 0, 'Nisab must be positive');
+  assert(nisab > 0, 'Nisab must be positive');  // => Execute statement
                                         // => Invariant: nisab constraint
 
   if (wealth < nisab) {                 // => Check: wealth below threshold
@@ -3540,15 +3540,15 @@ double calculateZakat(double wealth, double rate) {
   }
 
   double zakat = wealth * rate;         // => Calculate: wealth × rate
-  assert(zakat >= 0, 'Calculated Zakat cannot be negative: $zakat');
+  assert(zakat >= 0, 'Calculated Zakat cannot be negative: $zakat');  // => Execute statement
                                         // => Postcondition: result validation
-  assert(zakat <= wealth, 'Zakat cannot exceed wealth');
+  assert(zakat <= wealth, 'Zakat cannot exceed wealth');  // => Execute statement
                                         // => Sanity check: zakat ≤ wealth
 
   return zakat;                         // => Return: calculated Zakat amount
 }
 
-class DonationList {
+class DonationList {                    // => Execute statement
   final List<Donation> _donations = []; // => Internal list: donations
 
   void add(Donation donation) {         // => Method: add donation to list
@@ -3557,25 +3557,25 @@ class DonationList {
 
     _donations.add(donation);           // => Add: append to list
 
-    assert(_donations.length == oldLength + 1,
-        'List length should increase by 1');
+    assert(_donations.length == oldLength + 1,  // => Execute statement
+        'List length should increase by 1');  // => Execute statement
                                         // => Postcondition: verify add succeeded
-    assert(_donations.last == donation,
-        'Last element should be added donation');
+    assert(_donations.last == donation, // => Execute statement
+        'Last element should be added donation');  // => Execute statement
                                         // => Invariant: last element check
   }
 
   Donation operator [](int index) {     // => Index operator: get donation
-    assert(index >= 0, 'Index cannot be negative: $index');
+    assert(index >= 0, 'Index cannot be negative: $index');  // => Execute statement
                                         // => Precondition: valid index range
-    assert(index < _donations.length,
-        'Index out of bounds: $index >= ${_donations.length}');
+    assert(index < _donations.length,   // => Execute statement
+        'Index out of bounds: $index >= ${_donations.length}');  // => Execute statement
                                         // => Range check: prevent index error
     return _donations[index];           // => Return: donation at index
   }
 
   int get length {                      // => Getter: list length
-    assert(_donations.length >= 0, 'Length cannot be negative');
+    assert(_donations.length >= 0, 'Length cannot be negative');  // => Execute statement
                                         // => Invariant: sanity check (always true)
     return _donations.length;           // => Return: internal list length
   }
@@ -3585,11 +3585,11 @@ void main() {                           // => Main function entry point
                                         // => Demonstrates assertion usage
   // Valid donation (assertions pass in debug mode)
   Donation donation1 = Donation(        // => Create: valid donation instance
-    donor: 'Ahmad',
-    amount: 100000.0,
-    timestamp: DateTime.now(),
+    donor: 'Ahmad',                     // => Execute statement
+    amount: 100000.0,                   // => Execute statement
+    timestamp: DateTime.now(),          // => Execute statement
   );                                    // => All assertions pass
-  print('Valid donation: ${donation1.donor} - Rp${donation1.amount}');
+  print('Valid donation: ${donation1.donor} - Rp${donation1.amount}');  // => Execute statement
                                         // => Output: donation details
 
   // Assertions in method calls
@@ -3618,7 +3618,7 @@ void main() {                           // => Main function entry point
   // );
 
   // Function assertions
-  double zakat = calculateZakat(10000000.0, 0.025);
+  double zakat = calculateZakat(10000000.0, 0.025);  // => Execute statement
                                         // => Call: wealth=10M, rate=2.5%
                                         // => All assertions pass
   print('Zakat: Rp$zakat');             // => Output: Zakat: Rp250000.0
@@ -3638,13 +3638,13 @@ void main() {                           // => Main function entry point
 
   Donation retrieved = list[0];         // => Access: get first element
                                         // => Index assertions: valid range
-  print('Retrieved: ${retrieved.donor}');
+  print('Retrieved: ${retrieved.donor}');  // => Execute statement
                                         // => Output: Retrieved: Ahmad
 
   // Invalid index (fails in debug)
   // Donation invalid = list[10];      // ← AssertionError: Index out of bounds
 
-  print('All assertions passed (debug mode) or disabled (release mode)');
+  print('All assertions passed (debug mode) or disabled (release mode)');  // => Execute statement
                                         // => Summary: assertion behavior
 }
 ```
@@ -3679,99 +3679,99 @@ Using factory constructors to control instance creation and named constructors f
 - **Const constructor**: Creates compile-time constant
 
 ```dart
-class Donation {
-  final String donor;
-  final double amount;
-  final String category;
+class Donation {                        // => Execute statement
+  final String donor;                   // => Execute statement
+  final double amount;                  // => Execute statement
+  final String category;                // => Execute statement
 
   // Standard constructor
-  Donation(this.donor, this.amount, this.category);
+  Donation(this.donor, this.amount, this.category);  // => Execute statement
                                         // => Always creates: new instance
 
   // Named constructor for clarity
-  Donation.zakat(String donor, double amount)
+  Donation.zakat(String donor, double amount)  // => Execute statement
       : this(donor, amount, 'Zakat');  // => Delegates to standard constructor
                                         // => Category: automatically set to 'Zakat'
 
-  Donation.sadaqah(String donor, double amount)
-      : this(donor, amount, 'Sadaqah');
+  Donation.sadaqah(String donor, double amount)  // => Execute statement
+      : this(donor, amount, 'Sadaqah'); // => Execute statement
 
-  Donation.infaq(String donor, double amount)
-      : this(donor, amount, 'Infaq');
+  Donation.infaq(String donor, double amount)  // => Execute statement
+      : this(donor, amount, 'Infaq');   // => Execute statement
 
   // Factory constructor for validation
-  factory Donation.validated(String donor, double amount, String category) {
+  factory Donation.validated(String donor, double amount, String category) {  // => Execute statement
                                         // => Factory: can return null or cached instance
                                         // => Validation: check before creation
-    if (donor.isEmpty) {
-      throw ArgumentError('Donor cannot be empty');
+    if (donor.isEmpty) {                // => Conditional check
+      throw ArgumentError('Donor cannot be empty');  // => Execute statement
     }                                   // => Validation: donor check
-    if (amount <= 0) {
-      throw ArgumentError('Amount must be positive');
+    if (amount <= 0) {                  // => Conditional check
+      throw ArgumentError('Amount must be positive');  // => Execute statement
     }                                   // => Validation: amount check
 
-    return Donation(donor, amount, category);
+    return Donation(donor, amount, category);  // => Return value
                                         // => Create: only if validation passes
                                         // => Return: new instance
   }
 
   // Factory constructor with caching
-  static final Map<String, Donation> _cache = {};
+  static final Map<String, Donation> _cache = {};  // => Execute statement
                                         // => Static cache: shared across instances
 
-  factory Donation.cached(String key, String donor, double amount, String category) {
+  factory Donation.cached(String key, String donor, double amount, String category) {  // => Execute statement
                                         // => Factory: return cached if exists
     if (_cache.containsKey(key)) {      // => Check: key in cache
-      print('Returning cached donation: $key');
+      print('Returning cached donation: $key');  // => Execute statement
       return _cache[key]!;              // => Return: cached instance (not new)
     }
 
-    print('Creating new donation: $key');
-    Donation donation = Donation(donor, amount, category);
+    print('Creating new donation: $key');  // => Execute statement
+    Donation donation = Donation(donor, amount, category);  // => Execute statement
     _cache[key] = donation;             // => Cache: store instance
     return donation;                    // => Return: newly created
   }
 
-  @override
-  String toString() => '$category from $donor: Rp$amount';
+  @override                             // => Execute statement
+  String toString() => '$category from $donor: Rp$amount';  // => Execute statement
 }
 
 // Factory pattern for polymorphic creation
-abstract class PaymentMethod {
-  void process(double amount);
+abstract class PaymentMethod {          // => Execute statement
+  void process(double amount);          // => Execute statement
 
   // Factory constructor returns subclass instance
-  factory PaymentMethod.create(String type) {
+  factory PaymentMethod.create(String type) {  // => Execute statement
                                         // => Factory: polymorphic creation
                                         // => Return type: PaymentMethod (abstract)
                                         // => Actual type: Cash or Card (concrete)
-    switch (type) {
-      case 'cash':
+    switch (type) {                     // => Execute statement
+      case 'cash':                      // => Execute statement
         return CashPayment();           // => Return: CashPayment instance
-      case 'card':
+      case 'card':                      // => Execute statement
         return CardPayment();           // => Return: CardPayment instance
-      default:
-        throw ArgumentError('Unknown payment type: $type');
+      default:                          // => Execute statement
+        throw ArgumentError('Unknown payment type: $type');  // => Execute statement
     }                                   // => Pattern: factory decides concrete type
   }
 }
 
-class CashPayment implements PaymentMethod {
-  @override
-  void process(double amount) {
-    print('Processing cash payment: Rp$amount');
+class CashPayment implements PaymentMethod {  // => Execute statement
+  @override                             // => Execute statement
+  void process(double amount) {         // => Execute statement
+    print('Processing cash payment: Rp$amount');  // => Execute statement
   }
 }
 
-class CardPayment implements PaymentMethod {
-  @override
-  void process(double amount) {
-    print('Processing card payment: Rp$amount');
+class CardPayment implements PaymentMethod {  // => Execute statement
+  @override                             // => Execute statement
+  void process(double amount) {         // => Execute statement
+    print('Processing card payment: Rp$amount');  // => Execute statement
   }
 }
 
 // Singleton pattern with factory
-class DonationService {
+class DonationService {                 // => Execute statement
   static DonationService? _instance;    // => Static: shared instance
 
   // Private constructor prevents external instantiation
@@ -3780,14 +3780,14 @@ class DonationService {
 
   // Factory constructor returns singleton
   factory DonationService() {           // => Factory: return singleton
-    _instance ??= DonationService._internal();
+    _instance ??= DonationService._internal();  // => Execute statement
                                         // => Null-aware: create only if null
                                         // => ??=: assign if _instance is null
     return _instance!;                  // => Return: always same instance
   }
 
-  void processDonation(Donation donation) {
-    print('Service processing: $donation');
+  void processDonation(Donation donation) {  // => Execute statement
+    print('Service processing: $donation');  // => Execute statement
   }
 }
 
@@ -3795,62 +3795,62 @@ void main() {                           // => Main function entry point
                                         // => Demonstrates: factory and named constructors
   // Named constructors for clarity
   // => Named constructors improve API clarity and type safety
-  Donation donation1 = Donation.zakat('Ahmad', 100000.0);
+  Donation donation1 = Donation.zakat('Ahmad', 100000.0);  // => Execute statement
                                         // => Named constructor: clear intent
                                         // => Category: automatically 'Zakat'
                                         // => donation1 is new Donation instance
                                         // => Alternative to: Donation('Ahmad', 100000.0, 'Zakat')
   print(donation1);                     // => Output: Zakat from Ahmad: Rp100000.0
 
-  Donation donation2 = Donation.sadaqah('Fatimah', 200000.0);
+  Donation donation2 = Donation.sadaqah('Fatimah', 200000.0);  // => Execute statement
   print(donation2);                     // => Output: Sadaqah from Fatimah: Rp200000.0
 
   // Factory constructor with validation
   // => Factories enable validation before instance creation
-  try {
-    Donation donation3 = Donation.validated('Ali', 150000.0, 'Infaq');
+  try {                                 // => Execute statement
+    Donation donation3 = Donation.validated('Ali', 150000.0, 'Infaq');  // => Execute statement
                                         // => Validation passes: creates instance
     print(donation3);                   // => Output: Infaq from Ali: Rp150000.0
 
-    Donation donation4 = Donation.validated('', 100000.0, 'Zakat');
+    Donation donation4 = Donation.validated('', 100000.0, 'Zakat');  // => Execute statement
                                         // => Validation fails: empty donor
                                         // => Throws ArgumentError before creation
-  } catch (e) {
+  } catch (e) {                         // => Execute statement
     print('Validation error: $e');      // => Output: Validation error: Invalid argument(s): Donor cannot be empty
                                         // => Catches validation exception
   }
 
   // Factory constructor with caching
-  Donation cached1 = Donation.cached('donor1', 'Umar', 175000.0, 'Zakat');
+  Donation cached1 = Donation.cached('donor1', 'Umar', 175000.0, 'Zakat');  // => Execute statement
                                         // => Output: Creating new donation: donor1
   print('First call: $cached1');        // => Output: First call: Zakat from Umar: Rp175000.0
 
-  Donation cached2 = Donation.cached('donor1', 'Different', 999999.0, 'Different');
+  Donation cached2 = Donation.cached('donor1', 'Different', 999999.0, 'Different');  // => Execute statement
                                         // => Output: Returning cached donation: donor1
                                         // => Returns: same instance as cached1
   print('Second call: $cached2');       // => Output: Second call: Zakat from Umar: Rp175000.0
                                         // => Same values: cached instance
 
-  print('Same instance: ${identical(cached1, cached2)}');
+  print('Same instance: ${identical(cached1, cached2)}');  // => Execute statement
                                         // => Output: Same instance: true
                                         // => identical(): checks reference equality
 
   // Factory for polymorphic creation
-  PaymentMethod cash = PaymentMethod.create('cash');
+  PaymentMethod cash = PaymentMethod.create('cash');  // => Execute statement
                                         // => Factory: returns CashPayment instance
   cash.process(100000.0);               // => Output: Processing cash payment: Rp100000.0
 
-  PaymentMethod card = PaymentMethod.create('card');
+  PaymentMethod card = PaymentMethod.create('card');  // => Execute statement
                                         // => Factory: returns CardPayment instance
   card.process(200000.0);               // => Output: Processing card payment: Rp200000.0
 
   // Singleton pattern
-  DonationService service1 = DonationService();
+  DonationService service1 = DonationService();  // => Execute statement
                                         // => First call: creates instance
-  DonationService service2 = DonationService();
+  DonationService service2 = DonationService();  // => Execute statement
                                         // => Second call: returns same instance
 
-  print('Singleton: ${identical(service1, service2)}');
+  print('Singleton: ${identical(service1, service2)}');  // => Execute statement
                                         // => Output: Singleton: true
                                         // => Always same instance
 
@@ -3890,11 +3890,11 @@ Implementing custom behavior for operators (+, -, \*, ==, [], etc.) to make doma
 **Non-overloadable**: `&&`, `||`, `?.`, `..`, `?.` , `!`, `is`, `as`, `?`
 
 ```dart
-class Money {
+class Money {                           // => Execute statement
   final double amount;                  // => Amount: in IDR
   final String currency;                // => Currency: IDR, USD, etc.
 
-  const Money(this.amount, [this.currency = 'IDR']);
+  const Money(this.amount, [this.currency = 'IDR']);  // => Execute statement
                                         // => Constructor: amount required, currency optional
                                         // => Default: IDR
 
@@ -3903,67 +3903,67 @@ class Money {
                                         // => Parameter: other Money instance
                                         // => Return: new Money instance
     if (currency != other.currency) {   // => Validate: same currency
-      throw ArgumentError('Cannot add different currencies');
+      throw ArgumentError('Cannot add different currencies');  // => Execute statement
     }
-    return Money(amount + other.amount, currency);
+    return Money(amount + other.amount, currency);  // => Return value
                                         // => New instance: sum of amounts
                                         // => Immutable: original instances unchanged
   }
 
   // Arithmetic operator: subtraction
-  Money operator -(Money other) {
-    if (currency != other.currency) {
-      throw ArgumentError('Cannot subtract different currencies');
+  Money operator -(Money other) {       // => Execute statement
+    if (currency != other.currency) {   // => Conditional check
+      throw ArgumentError('Cannot subtract different currencies');  // => Execute statement
     }
-    return Money(amount - other.amount, currency);
+    return Money(amount - other.amount, currency);  // => Return value
   }
 
   // Arithmetic operator: multiplication (by scalar)
   Money operator *(double multiplier) { // => Parameter: numeric multiplier
                                         // => Use case: calculate percentage, multiples
-    return Money(amount * multiplier, currency);
+    return Money(amount * multiplier, currency);  // => Return value
   }
 
   // Arithmetic operator: division (by scalar)
-  Money operator /(double divisor) {
-    if (divisor == 0) {
-      throw ArgumentError('Cannot divide by zero');
+  Money operator /(double divisor) {    // => Execute statement
+    if (divisor == 0) {                 // => Conditional check
+      throw ArgumentError('Cannot divide by zero');  // => Execute statement
     }
-    return Money(amount / divisor, currency);
+    return Money(amount / divisor, currency);  // => Return value
   }
 
   // Comparison operator: equality
-  @override
+  @override                             // => Execute statement
   bool operator ==(Object other) {      // => Override: Object.operator==
                                         // => Parameter: Object (not Money)
                                         // => Must override hashCode too
-    if (identical(this, other)) return true;
+    if (identical(this, other)) return true;  // => Conditional check
                                         // => Same instance: always equal
     return other is Money &&            // => Type check: must be Money
         amount == other.amount &&       // => Compare: amount
         currency == other.currency;     // => Compare: currency
   }
 
-  @override
-  int get hashCode => Object.hash(amount, currency);
+  @override                             // => Execute statement
+  int get hashCode => Object.hash(amount, currency);  // => Execute statement
                                         // => Required: with operator==
                                         // => Hash: combination of fields
                                         // => Consistent: equal objects same hash
 
   // Comparison operator: less than
-  bool operator <(Money other) {
-    if (currency != other.currency) {
-      throw ArgumentError('Cannot compare different currencies');
+  bool operator <(Money other) {        // => Execute statement
+    if (currency != other.currency) {   // => Conditional check
+      throw ArgumentError('Cannot compare different currencies');  // => Execute statement
     }
-    return amount < other.amount;
+    return amount < other.amount;       // => Return value
   }
 
   // Comparison operator: greater than
-  bool operator >(Money other) {
-    if (currency != other.currency) {
-      throw ArgumentError('Cannot compare different currencies');
+  bool operator >(Money other) {        // => Execute statement
+    if (currency != other.currency) {   // => Conditional check
+      throw ArgumentError('Cannot compare different currencies');  // => Execute statement
     }
-    return amount > other.amount;
+    return amount > other.amount;       // => Return value
   }
 
   // Unary operator: negation
@@ -3972,12 +3972,12 @@ class Money {
     return Money(-amount, currency);    // => Negate: reverse sign
   }
 
-  @override
-  String toString() => '$currency $amount';
+  @override                             // => Execute statement
+  String toString() => '$currency $amount';  // => Execute statement
 }
 
-class DonationList {
-  final List<Money> _donations = [];
+class DonationList {                    // => Execute statement
+  final List<Money> _donations = [];    // => Execute statement
 
   // Index operator: read
   Money operator [](int index) {        // => Bracket operator: read access
@@ -3986,7 +3986,7 @@ class DonationList {
   }
 
   // Index operator: write
-  void operator []=(int index, Money donation) {
+  void operator []=(int index, Money donation) {  // => Execute statement
                                         // => Bracket operator: write access
                                         // => Usage: list[0] = donation
     _donations[index] = donation;       // => Set: donation at index
@@ -3995,35 +3995,35 @@ class DonationList {
   // Custom operator: addition (add donation)
   void operator +(Money donation) {     // => Custom meaning: add to list
                                         // => Usage: donationList + donation
-    _donations.add(donation);
+    _donations.add(donation);           // => Execute statement
   }
 
-  int get length => _donations.length;
+  int get length => _donations.length;  // => Execute statement
 
-  Money get total {
-    if (_donations.isEmpty) return Money(0);
-    Money sum = _donations[0];
-    for (int i = 1; i < _donations.length; i++) {
+  Money get total {                     // => Execute statement
+    if (_donations.isEmpty) return Money(0);  // => Conditional check
+    Money sum = _donations[0];          // => Execute statement
+    for (int i = 1; i < _donations.length; i++) {  // => Loop iteration
       sum = sum + _donations[i];        // => Use: overloaded + operator
     }
-    return sum;
+    return sum;                         // => Return value
   }
 }
 
-void main() {
+void main() {                           // => Execute statement
   // Arithmetic operators
-  Money donation1 = Money(100000);
-  Money donation2 = Money(200000);
+  Money donation1 = Money(100000);      // => Execute statement
+  Money donation2 = Money(200000);      // => Execute statement
 
   Money total = donation1 + donation2;  // => Use: overloaded + operator
                                         // => total: Money(300000, 'IDR')
   print('Total: $total');               // => Output: Total: IDR 300000.0
 
-  Money difference = donation2 - donation1;
+  Money difference = donation2 - donation1;  // => Execute statement
                                         // => Use: overloaded - operator
   print('Difference: $difference');     // => Output: Difference: IDR 100000.0
 
-  Money zakatRate = Money(10000000) * 0.025;
+  Money zakatRate = Money(10000000) * 0.025;  // => Execute statement
                                         // => Multiplication: calculate Zakat
   print('Zakat (2.5%): $zakatRate');    // => Output: Zakat (2.5%): IDR 250000.0
 
@@ -4031,30 +4031,30 @@ void main() {
   print('Split (3 ways): $split');      // => Output: Split (3 ways): IDR 200000.0
 
   // Comparison operators
-  Money amount1 = Money(150000);
-  Money amount2 = Money(150000);
-  Money amount3 = Money(200000);
+  Money amount1 = Money(150000);        // => Execute statement
+  Money amount2 = Money(150000);        // => Execute statement
+  Money amount3 = Money(200000);        // => Execute statement
 
-  print('amount1 == amount2: ${amount1 == amount2}');
+  print('amount1 == amount2: ${amount1 == amount2}');  // => Execute statement
                                         // => Output: true (same value)
-  print('amount1 == amount3: ${amount1 == amount3}');
+  print('amount1 == amount3: ${amount1 == amount3}');  // => Execute statement
                                         // => Output: false (different value)
 
-  print('amount1 < amount3: ${amount1 < amount3}');
+  print('amount1 < amount3: ${amount1 < amount3}');  // => Execute statement
                                         // => Output: true (150000 < 200000)
-  print('amount3 > amount1: ${amount3 > amount1}');
+  print('amount3 > amount1: ${amount3 > amount1}');  // => Execute statement
                                         // => Output: true (200000 > 150000)
 
   // Unary operator
-  Money debt = Money(500000);
+  Money debt = Money(500000);           // => Execute statement
   Money negated = -debt;                // => Unary: negate amount
   print('Negated: $negated');           // => Output: Negated: IDR -500000.0
 
   // Index operators
-  DonationList list = DonationList();
+  DonationList list = DonationList();   // => Execute statement
   list + Money(100000);                 // => Custom +: add to list
-  list + Money(200000);
-  list + Money(150000);
+  list + Money(200000);                 // => Execute statement
+  list + Money(150000);                 // => Execute statement
 
   print('First donation: ${list[0]}');  // => Index read: []
                                         // => Output: First donation: IDR 100000.0
@@ -4062,16 +4062,16 @@ void main() {
   list[1] = Money(250000);              // => Index write: []=
   print('Updated second: ${list[1]}');  // => Output: Updated second: IDR 250000.0
 
-  print('Total donations: ${list.total}');
+  print('Total donations: ${list.total}');  // => Execute statement
                                         // => Output: Total donations: IDR 500000.0
 
   // Operator chaining
-  Money result = Money(1000000) + Money(500000) - Money(200000);
+  Money result = Money(1000000) + Money(500000) - Money(200000);  // => Execute statement
                                         // => Chain: multiple operators
                                         // => result: 1300000
   print('Chained result: $result');     // => Output: Chained result: IDR 1300000.0
 
-  Money compound = Money(5000000) * 0.025 + Money(100000);
+  Money compound = Money(5000000) * 0.025 + Money(100000);  // => Execute statement
                                         // => Complex: multiplication then addition
                                         // => 125000 + 100000 = 225000
   print('Compound: $compound');         // => Output: Compound: IDR 225000.0
@@ -4117,10 +4117,10 @@ Using record types for lightweight, immutable, typed tuples without creating cus
 }                                       // => Immutable: can't modify fields
 
 // Function returning named record
-({String donor, double amount, String category}) getDonationDetails() {
+({String donor, double amount, String category}) getDonationDetails() {  // => Execute statement
                                         // => Named record: {name: type, ...}
                                         // => Field access: by name
-  return (
+  return (                              // => Return value
     donor: 'Fatimah',                   // => Named field: donor
     amount: 200000.0,                   // => Named field: amount
     category: 'Zakat',                  // => Named field: category
@@ -4128,30 +4128,30 @@ Using record types for lightweight, immutable, typed tuples without creating cus
 }
 
 // Function returning mixed record
-(int, String, {double amount, bool verified}) processDonation(String donor, double amount) {
+(int, String, {double amount, bool verified}) processDonation(String donor, double amount) {  // => Execute statement
                                         // => Mixed: positional + named
                                         // => Positional first, then named
   int id = donor.hashCode;              // => Generate: donation ID
-  String status = amount > 0 ? 'valid' : 'invalid';
+  String status = amount > 0 ? 'valid' : 'invalid';  // => Execute statement
 
-  return (
+  return (                              // => Return value
     id,                                 // => Positional field 1: id
     status,                             // => Positional field 2: status
     amount: amount,                     // => Named field: amount
     verified: amount >= 10000,          // => Named field: verified
-  );
+  );                                    // => Execute statement
 }
 
 // Function using record destructuring
-void printDonation((String, double) donation) {
+void printDonation((String, double) donation) {  // => Execute statement
                                         // => Parameter: record type
   var (donor, amount) = donation;       // => Destructure: extract fields
                                         // => donor: $1, amount: $2
-  print('Donor: $donor, Amount: Rp$amount');
+  print('Donor: $donor, Amount: Rp$amount');  // => Execute statement
 }
 
 // Record in data structures
-typedef DonationRecord = ({String donor, double amount, DateTime timestamp});
+typedef DonationRecord = ({String donor, double amount, DateTime timestamp});  // => Execute statement
                                         // => Typedef: name for record type
                                         // => Usage: reusable type alias
 
@@ -4160,7 +4160,7 @@ void main() {                           // => Main function entry point
   // Positional record
   var donation1 = getDonation();        // => Type: (String, double)
                                         // => var infers record type from return
-  print('Positional record: $donation1');
+  print('Positional record: $donation1');  // => Execute statement
                                         // => Output: (Ahmad, 100000.0)
                                         // => Records have automatic toString()
 
@@ -4169,7 +4169,7 @@ void main() {                           // => Main function entry point
                                         // => Positional fields numbered from $1
   double amount1 = donation1.$2;        // => Field 2: $2 accessor
                                         // => Type-safe field access
-  print('Donor: $donor1, Amount: Rp$amount1');
+  print('Donor: $donor1, Amount: Rp$amount1');  // => Execute statement
                                         // => Output: Donor: Ahmad, Amount: Rp100000.0
                                         // => Extracted values from record
 
@@ -4181,11 +4181,11 @@ void main() {                           // => Main function entry point
   String donor2 = donation2.donor;      // => Field: .donor accessor
   double amount2 = donation2.amount;    // => Field: .amount accessor
   String category2 = donation2.category;// => Field: .category accessor
-  print('$category2 from $donor2: Rp$amount2');
+  print('$category2 from $donor2: Rp$amount2');  // => Execute statement
                                         // => Output: Zakat from Fatimah: Rp200000.0
 
   // Mixed record
-  var result = processDonation('Ali', 150000.0);
+  var result = processDonation('Ali', 150000.0);  // => Execute statement
                                         // => Type: (int, String, {double amount, bool verified})
   print('Mixed record: $result');       // => Output: (hashcode, valid, amount: 150000.0, verified: true)
 
@@ -4193,71 +4193,71 @@ void main() {                           // => Main function entry point
   String status = result.$2;            // => Positional: $2
   double amount = result.amount;        // => Named: .amount
   bool verified = result.verified;      // => Named: .verified
-  print('ID: $id, Status: $status, Amount: Rp$amount, Verified: $verified');
+  print('ID: $id, Status: $status, Amount: Rp$amount, Verified: $verified');  // => Execute statement
 
   // Record destructuring
-  var (extractedDonor, extractedAmount) = getDonation();
+  var (extractedDonor, extractedAmount) = getDonation();  // => Execute statement
                                         // => Pattern matching: extract fields
-  print('Destructured: $extractedDonor - Rp$extractedAmount');
+  print('Destructured: $extractedDonor - Rp$extractedAmount');  // => Execute statement
 
   // Named record destructuring
-  var (donor: donorName, amount: donationAmount, category: cat) = getDonationDetails();
+  var (donor: donorName, amount: donationAmount, category: cat) = getDonationDetails();  // => Execute statement
                                         // => Named destructuring: extract by name
-  print('Named destructured: $cat from $donorName - Rp$donationAmount');
+  print('Named destructured: $cat from $donorName - Rp$donationAmount');  // => Execute statement
 
   // Record in collections
-  List<(String, double)> donations = [
-    ('Ahmad', 100000.0),
-    ('Fatimah', 200000.0),
-    ('Ali', 150000.0),
+  List<(String, double)> donations = [  // => Execute statement
+    ('Ahmad', 100000.0),                // => Execute statement
+    ('Fatimah', 200000.0),              // => Execute statement
+    ('Ali', 150000.0),                  // => Execute statement
   ];                                    // => List: of positional records
                                         // => Type: List<(String, double)>
 
-  for (var donation in donations) {
-    print('Donor: ${donation.$1}, Amount: Rp${donation.$2}');
+  for (var donation in donations) {     // => Loop iteration
+    print('Donor: ${donation.$1}, Amount: Rp${donation.$2}');  // => Execute statement
   }                                     // => Iterate: access positional fields
 
   // Record with typedef
-  DonationRecord record1 = (
-    donor: 'Umar',
-    amount: 175000.0,
-    timestamp: DateTime.now(),
+  DonationRecord record1 = (            // => Execute statement
+    donor: 'Umar',                      // => Execute statement
+    amount: 175000.0,                   // => Execute statement
+    timestamp: DateTime.now(),          // => Execute statement
   );                                    // => Type: DonationRecord (typedef)
 
-  print('Typedef record: ${record1.donor} - Rp${record1.amount}');
+  print('Typedef record: ${record1.donor} - Rp${record1.amount}');  // => Execute statement
 
   // Record equality (structural)
-  var rec1 = ('Ahmad', 100000.0);
-  var rec2 = ('Ahmad', 100000.0);
-  var rec3 = ('Fatimah', 100000.0);
+  var rec1 = ('Ahmad', 100000.0);       // => Execute statement
+  var rec2 = ('Ahmad', 100000.0);       // => Execute statement
+  var rec3 = ('Fatimah', 100000.0);     // => Execute statement
 
-  print('rec1 == rec2: ${rec1 == rec2}');
+  print('rec1 == rec2: ${rec1 == rec2}');  // => Execute statement
                                         // => Output: true (same structure and values)
-  print('rec1 == rec3: ${rec1 == rec3}');
+  print('rec1 == rec3: ${rec1 == rec3}');  // => Execute statement
                                         // => Output: false (different values)
 
   // Records are immutable
   // rec1.$1 = 'Different'; // ← Compile error: can't modify record fields
 
   // Record in switch expression (pattern matching)
-  String describeRecord((String, double) record) {
-    return switch (record) {
-      ('Ahmad', var amount) => 'Ahmad donated Rp$amount',
+  String describeRecord((String, double) record) {  // => Execute statement
+    return switch (record) {            // => Return value
+      ('Ahmad', var amount) => 'Ahmad donated Rp$amount',  // => Execute statement
                                         // => Pattern: match first field, bind second
-      (var donor, 200000.0) => '$donor donated exactly Rp200000',
+      (var donor, 200000.0) => '$donor donated exactly Rp200000',  // => Execute statement
                                         // => Pattern: bind first field, match second
-      (var donor, var amount) when amount > 100000 =>
-        '$donor donated large amount: Rp$amount',
+      (var donor, var amount) when amount > 100000 =>  // => Execute statement
+        '$donor donated large amount: Rp$amount',  // => Execute statement
                                         // => Guard: when clause for condition
       _ => 'Other donation',            // => Default: catch-all
     };
   }
 
-  print(describeRecord(('Ahmad', 100000.0)));
+  print(describeRecord(('Ahmad', 100000.0)));  // => Execute statement
                                         // => Output: Ahmad donated Rp100000.0
-  print(describeRecord(('Fatimah', 200000.0)));
+  print(describeRecord(('Fatimah', 200000.0)));  // => Execute statement
                                         // => Output: Fatimah donated exactly Rp200000.0
-  print(describeRecord(('Ali', 150000.0)));
+  print(describeRecord(('Ali', 150000.0)));  // => Execute statement
                                         // => Output: Ali donated large amount: Rp150000.0
 }
 ```

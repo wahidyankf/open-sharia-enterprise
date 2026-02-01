@@ -228,6 +228,7 @@ kubectl describe role pod-reader
 
 kubectl describe rolebinding read-pods-binding
 # => Shows: pod-reader-sa bound to pod-reader Role
+
 ```
 
 **Key Takeaway**: Use ServiceAccounts for Pod identity and RBAC for fine-grained permission control; follow principle of least privilege by granting only required permissions; prefer namespace-scoped Roles over cluster-wide ClusterRoles when possible; use `kubectl auth can-i` to verify permissions before deployment.
@@ -343,7 +344,6 @@ roleRef: # => WHAT permissions to grant (immutable)
 ```yaml
 # Pattern 1: ClusterRole + ClusterRoleBinding = cluster-wide access
 # => ServiceAccount can access resources in ALL namespaces
-# => Example: monitoring all Pods across all namespaces
 
 # Pattern 2: ClusterRole + RoleBinding = namespace-specific access
 apiVersion: rbac.authorization.k8s.io/v1
@@ -364,8 +364,6 @@ roleRef:
     # => Permissions limited to production namespace
   apiGroup: rbac.authorization.k8s.io
 # => Result: limited-reader-sa can ONLY access Pods in production namespace
-# => Cannot access nodes/PVs (cluster-scoped resources ignore namespace binding)
-# => Useful for: reusing common permission sets per-namespace
 ```
 
 **Verification commands**:
@@ -390,6 +388,7 @@ kubectl describe clusterrole node-reader
 
 kubectl describe clusterrolebinding read-nodes-global
 # => Shows: cluster-reader-sa bound to node-reader ClusterRole globally
+
 ```
 
 **Common ClusterRole use cases**:
@@ -397,19 +396,15 @@ kubectl describe clusterrolebinding read-nodes-global
 ```yaml
 # Use Case 1: Monitoring (read-only across all namespaces)
 # => Prometheus, Datadog, New Relic
-# => Needs: list/watch Pods, Services, Endpoints globally
 
 # Use Case 2: Node management
 # => Node auto-scalers (Cluster Autoscaler)
-# => Needs: get/list/watch/update nodes
 
 # Use Case 3: PersistentVolume administration
 # => Storage operators (Rook, OpenEBS)
-# => Needs: create/delete/update PVs cluster-wide
 
 # Use Case 4: Cross-namespace operators
 # => cert-manager, ingress-nginx, ArgoCD
-# => Needs: manage CRDs and resources across all namespaces
 ```
 
 **Key Takeaway**: Use ClusterRoles for cluster-wide resources like nodes and PersistentVolumes or cross-namespace access; combine ClusterRole with RoleBinding to limit cluster-wide permissions to specific namespaces; ClusterRole + ClusterRoleBinding grants cluster-wide access while ClusterRole + RoleBinding limits to single namespace.
@@ -446,9 +441,6 @@ aggregationRule: # => Defines aggregation behavior
           # => Auto-updates when matching ClusterRoles change
 rules: [] # => Auto-populated by RBAC aggregation controller
   # => DO NOT manually add rules here
-  # => Controller overwrites manual edits
-  # => Rules merged from ALL matching child ClusterRoles
-  # => Updates in real-time when child ClusterRoles change
 
 ---
 # Child ClusterRole 1 (defines Pod permissions)
@@ -550,8 +542,6 @@ rules:
 #     resources: ["pods", "nodes"]
 #     verbs: ["get", "list"]
 # => Combined from monitoring-pods + monitoring-metrics + monitoring-services
-# => Updates automatically when child ClusterRoles change
-# => No manual intervention needed
 ```
 
 **How to extend aggregated ClusterRole**:
@@ -571,11 +561,6 @@ rules:
 
 # Step 2: Apply child ClusterRole
 # => kubectl apply -f monitoring-configmaps.yaml
-# => Aggregation controller detects new ClusterRole
-# => Automatically merges rules into monitoring-aggregated
-# => NO need to update parent ClusterRole
-# => NO need to update existing RoleBindings
-# => Extension propagates immediately to all users of parent role
 ```
 
 **Built-in aggregated ClusterRoles** (Kubernetes defaults):
@@ -583,16 +568,12 @@ rules:
 ```yaml
 # admin role (namespace admin permissions)
 # => Aggregation label: rbac.authorization.k8s.io/aggregate-to-admin: "true"
-# => CRDs can extend by adding this label
-# => Enables CRD management permissions in admin role
 
 # edit role (namespace edit permissions)
 # => Aggregation label: rbac.authorization.k8s.io/aggregate-to-edit: "true"
-# => Users can edit resources but not view secrets
 
 # view role (namespace read-only permissions)
 # => Aggregation label: rbac.authorization.k8s.io/aggregate-to-view: "true"
-# => Read-only access to most resources
 
 # Example: Extend built-in view role with custom CRD
 apiVersion: rbac.authorization.k8s.io/v1
@@ -606,7 +587,6 @@ rules:
     resources: ["databases"] # => Custom resource
     verbs: ["get", "list", "watch"] # => Read-only
 # => All users with view role now see databases CRD
-# => Automatic integration with existing RBAC
 ```
 
 **Verification**:
@@ -623,7 +603,6 @@ kubectl apply -f monitoring-metrics.yaml
 # View aggregated ClusterRole (after children created)
 kubectl get clusterrole monitoring-aggregated -o yaml
 # => rules: [pods, pods/log, pods/status (get/list/watch), metrics.k8s.io/pods, nodes (get/list)]
-# => Automatically populated
 
 # Test aggregation by adding new child
 kubectl label clusterrole some-existing-role rbac.example.com/aggregate-to-monitoring=true
@@ -632,6 +611,7 @@ kubectl label clusterrole some-existing-role rbac.example.com/aggregate-to-monit
 # Test aggregation by removing label
 kubectl label clusterrole monitoring-services rbac.example.com/aggregate-to-monitoring-
 # => monitoring-services rules immediately removed from monitoring-aggregated
+
 ```
 
 **Key Takeaway**: Use aggregated ClusterRoles for modular permission management; add new permissions by creating ClusterRoles with matching labels; built-in roles like admin, edit, view use aggregation for extensibility; aggregation enables zero-downtime permission updates without modifying parent ClusterRole or existing bindings.
@@ -710,10 +690,6 @@ spec:
 
 # Security best practices:
 # => runAsNonRoot: true (prevent root exploits)
-# => readOnlyRootFilesystem: true (minimize attack surface)
-# => allowPrivilegeEscalation: false (prevent privilege escalation)
-# => Drop ALL capabilities, add only required (least privilege)
-# => fsGroup for volume permissions (multi-container Pods)
 
 **Key Takeaway**: Always run containers as non-root with read-only root filesystem; drop all capabilities and add only required ones; use SecurityContext to enforce defense-in-depth security practices.
 
@@ -724,6 +700,7 @@ spec:
 ### Example 62: PodSecurityPolicy (Deprecated)
 
 PodSecurityPolicy (PSP) enforces cluster-wide security standards for Pods. PSP is deprecated in Kubernetes 1.21+ and removed in 1.25+, replaced by Pod Security Admission.
+
 
 ```yaml
 # NOTE: PSP deprecated, use Pod Security Standards instead
@@ -797,13 +774,10 @@ resources: # => Resource types to encrypt
         # => Encrypting increases etcd overhead
     providers: # => Encryption providers (tried in order)
       # => First provider encrypts new data
-      # => Subsequent providers decrypt old data (migration)
 
       # Primary encryption provider (AES-CBC)
       - aescbc: # => AES-CBC with PKCS#7 padding
           # => Industry-standard symmetric encryption
-          # => 256-bit key strength
-          # => CPU-based encryption (no hardware required)
           keys: # => Encryption keys (can have multiple for rotation)
             - name:
                 key1 # => Key identifier (arbitrary name)
@@ -827,9 +801,6 @@ resources: # => Resource types to encrypt
       # Fallback provider (no encryption)
       - identity: {} # => No-op encryption provider
           # => Stores data in plaintext
-          # => REQUIRED for reading unencrypted existing data
-          # => Must be last in provider list
-          # => Enables gradual encryption migration
 ```
 
 **Setup steps** (apply encryption to cluster):
@@ -838,7 +809,6 @@ resources: # => Resource types to encrypt
 # Step 1: Generate encryption key (256-bit = 32 bytes)
 head -c 32 /dev/urandom | base64
 # => Output: ySPsowMmLdOJJHvQ7g5G2YQffQhBdVxfRPEADqpYZ9s=
-# => Copy this key to encryption-config.yaml
 
 # Step 2: Create encryption config file on control plane node
 sudo cat > /etc/kubernetes/encryption-config.yaml <<EOF
@@ -855,32 +825,23 @@ resources:
       - identity: {}
 EOF
 # => File created at /etc/kubernetes/encryption-config.yaml
-# => Secure file permissions: chmod 600 /etc/kubernetes/encryption-config.yaml
-# => Only root can read (prevents key theft)
 
 # Step 3: Update kube-apiserver configuration
 sudo vi /etc/kubernetes/manifests/kube-apiserver.yaml
 # => Add flag: --encryption-provider-config=/etc/kubernetes/encryption-config.yaml
-# => Add volume mount for encryption config file
-# => Static Pod manifest auto-restarts kube-apiserver
 
 # Step 4: Verify kube-apiserver restarted
 kubectl get pods -n kube-system | grep kube-apiserver
 # => kube-apiserver-controlplane  1/1  Running  (recent restart time)
-# => If CrashLoopBackOff: check encryption config syntax
 
 # Step 5: Encrypt ALL existing Secrets (re-write to trigger encryption)
 kubectl get secrets --all-namespaces -o json | kubectl replace -f -
 # => Reads all Secrets from etcd (decrypted if encrypted with old key)
-# => Writes back with new encryption provider (key1)
-# => Existing Secrets now encrypted at rest in etcd
-# => May take several minutes for large clusters
 
 # Step 6: Verify encryption (check etcd directly)
 ETCDCTL_API=3 etcdctl get /registry/secrets/default/my-secret --print-value-only
 # => Before encryption: plaintext "password123" visible
-# => After encryption: binary encrypted data (unreadable)
-# => Decryption happens automatically when kubectl get secret
+
 ```
 
 **Alternative encryption providers**:
@@ -890,8 +851,6 @@ ETCDCTL_API=3 etcdctl get /registry/secrets/default/my-secret --print-value-only
 providers:
   - aesgcm: # => AES-GCM authenticated encryption
             # => Faster than AES-CBC (hardware acceleration)
-            # => Provides authentication (detects tampering)
-            # => Requires careful nonce management (counter-based)
       keys:
         - name: key1
           secret: <base64-encoded-32-byte-key> # => 256-bit key
@@ -901,14 +860,11 @@ providers:
 providers:
   - kms: # => External Key Management Service
          # => Keys stored outside cluster (AWS KMS, GCP KMS, Azure Key Vault)
-         # => Centralized key management and rotation
-         # => Audit logging for compliance (PCI-DSS, SOC 2)
       name: aws-encryption-provider # => KMS provider name
       endpoint: unix:///var/run/kmsplugin/socket.sock # => KMS plugin socket
                                                        # => Requires aws-encryption-provider daemonset
       cachesize: 1000 # => Cache decrypted keys (performance)
                       # => Reduces KMS API calls
-                      # => Trade-off: memory usage vs latency
       timeout: 3s # => KMS request timeout
                   # => Prevents kube-apiserver hang if KMS unavailable
   - identity: {} # => Fallback if KMS unavailable (disaster recovery)
@@ -917,12 +873,11 @@ providers:
 providers:
   - secretbox: # => XSalsa20-Poly1305 encryption
                # => Modern authenticated encryption
-               # => Requires NaCl library
-               # => Less common in Kubernetes
       keys:
         - name: key1
           secret: <base64-encoded-32-byte-key>
   - identity: {}
+
 ```
 
 **Key rotation procedure** (zero-downtime):
@@ -938,7 +893,6 @@ providers:
           secret: <base64-encoded-old-key>
   - identity: {}
 # => New Secrets encrypted with key2
-# => Existing Secrets still readable with key1
 
 # Step 2: Apply config and restart kube-apiserver
 # => kubectl apply and wait for restart
@@ -955,6 +909,7 @@ providers:
           secret: <base64-encoded-new-key>
   - identity: {}
 # => Old key removed safely (all data re-encrypted)
+
 ```
 
 **Verification**:
@@ -970,12 +925,11 @@ kubectl create secret generic test-encryption --from-literal=key=value
 # Read from etcd directly (encrypted)
 ETCDCTL_API=3 etcdctl get /registry/secrets/default/test-encryption --print-value-only | hexdump -C
 # => Binary encrypted data (k8s:enc:aescbc:v1:key1: prefix)
-# => Unreadable without encryption key
 
 # Read via kubectl (automatically decrypted)
 kubectl get secret test-encryption -o jsonpath='{.data.key}' | base64 -d
 # => Output: value (decrypted)
-# => kube-apiserver decrypts using encryption config
+
 ```
 
 **Key Takeaway**: Enable encryption at rest for production clusters storing sensitive data; use KMS providers (AWS KMS, GCP KMS) for enterprise key management and audit logging; rotate encryption keys periodically following security policies; always keep identity provider as fallback for disaster recovery.
@@ -1099,14 +1053,9 @@ spec:
 ```yaml
 # Allowed ingress (TO backend Pods):
 # => frontend Pods → backend:8080/TCP ✓
-# => database Pods → backend:8080/TCP ✓
-# => Any other source → backend ✗ (denied)
 
 # Allowed egress (FROM backend Pods):
 # => backend → database:5432/TCP ✓
-# => backend → kube-dns:53/UDP ✓ (DNS)
-# => backend → internet ✗ (denied, no egress rule)
-# => backend → frontend ✗ (denied, no egress rule)
 ```
 
 **Testing the NetworkPolicy**:
@@ -1121,35 +1070,30 @@ kubectl run external --image=busybox --labels="app=external" -- sleep 3600
 # Apply NetworkPolicy
 kubectl apply -f backend-network-policy.yaml
 # => NetworkPolicy created
-# => CNI plugin enforces rules immediately
 
 # Test 1: frontend → backend:8080 (ALLOWED)
 kubectl exec frontend -- wget -O- --timeout=2 backend:8080
 # => SUCCESS: HTML response from nginx
-# => Ingress rule permits frontend → backend:8080
 
 # Test 2: external → backend:8080 (DENIED)
 kubectl exec external -- wget -O- --timeout=2 backend:8080
 # => TIMEOUT: no response
-# => NetworkPolicy denies traffic (no matching ingress rule)
 
 # Test 3: backend → database:5432 (ALLOWED)
 kubectl exec backend -- nc -zv database 5432
 # => SUCCESS: connection established
-# => Egress rule permits backend → database:5432
 
 # Test 4: backend → external (DENIED if no rule)
 kubectl exec backend -- wget -O- --timeout=2 external:8080
 # => TIMEOUT: no response
-# => NetworkPolicy denies traffic (no matching egress rule)
 
 # Verify NetworkPolicy applied
 kubectl describe networkpolicy backend-network-policy
 # => Shows: podSelector, ingress rules, egress rules
-# => Affected Pods: backend Pods
 
 kubectl get pods -l app=backend -o wide
 # => Shows backend Pods subject to NetworkPolicy
+
 ```
 
 **NetworkPolicy requirements**:
@@ -1157,24 +1101,15 @@ kubectl get pods -l app=backend -o wide
 ```yaml
 # Requirement 1: CNI plugin with NetworkPolicy support
 # => Supported: Calico, Cilium, Weave Net, Antrea, Romana
-# => NOT supported: Flannel (default), kubenet
-# => Check: kubectl get pods -n kube-system | grep calico
 
 # Requirement 2: Pods must have labels
 # => NetworkPolicy selects Pods by labels
-# => No labels = no NetworkPolicy applied
-# => Label changes = NetworkPolicy re-evaluated
 
 # Requirement 3: Namespace-scoped
 # => NetworkPolicies don't cross namespaces
-# => Use namespaceSelector for cross-namespace traffic
-# => Each namespace needs own NetworkPolicies
 
 # Behavior notes:
 # => Without NetworkPolicy: ALL traffic allowed (permissive)
-# => With NetworkPolicy: Default DENY, explicit ALLOW required
-# => NetworkPolicy is additive (multiple policies combine with OR)
-# => Applies to Pod IPs, NOT Service IPs (Service → Pod translation happens)
 ```
 
 **Key Takeaway**: NetworkPolicies implement pod-to-pod firewall rules using label selectors; start with deny-all policy and add explicit allow rules; requires CNI plugin with NetworkPolicy support (Calico, Cilium, Weave); remember to allow DNS egress for service discovery.
@@ -1213,7 +1148,6 @@ metadata:
 spec:
   podSelector: {} # => Empty selector = ALL Pods in namespace
     # => Every Pod in default namespace affected
-    # => New Pods automatically inherit policy
   policyTypes:
     - Ingress # => Declares Ingress policy (default deny)
       # => NO ingress rules = deny all ingress
@@ -1287,8 +1221,6 @@ spec:
         - protocol: TCP
           port: 443 # => HTTPS for kubelet → API server
   # => Result: Deny all EXCEPT DNS and API access
-  # => Pods can resolve names but can't connect to resolved IPs
-  # => Must add explicit allow rules for application traffic
 ```
 
 **Deployment workflow** (safe default deny rollout):
@@ -1332,6 +1264,7 @@ EOF
 # Step 6: Retry connection
 kubectl run test-client -n test-isolation --image=busybox --rm -it -- wget -O- test-app
 # => SUCCESS (now allowed)
+
 ```
 
 **Key Takeaway**: Apply default deny NetworkPolicies at namespace level for zero-trust security; always allow DNS egress to prevent breaking service discovery; create explicit allow rules for required traffic only; test thoroughly in non-production namespace before production rollout.
@@ -1390,13 +1323,9 @@ spec:
 
 # Namespace isolation patterns:
 # => Production namespace: allow only from prod namespaces
-# => Development namespace: allow from dev namespaces
-# => Shared services: allow from multiple namespaces
 
 # Label namespaces for NetworkPolicy:
 # => kubectl label namespace frontend-ns environment=frontend
-# => kubectl label namespace backend-ns environment=backend
-# => kubectl label namespace prod-ns environment=production
 ```
 
 **Key Takeaway**: Use namespaceSelector for namespace-level isolation; label namespaces to define trust boundaries; combine podSelector and namespaceSelector for fine-grained cross-namespace access control.
@@ -1513,13 +1442,6 @@ spec:
 
 # Egress control use cases:
 # => Restrict outbound to approved APIs
-# => Third-party service whitelist
-# => Prevent data exfiltration
-# => Block unauthorized data transfer
-# => Control cloud provider API access
-# => AWS/GCP API restrictions
-# => Block unwanted internet access
-# => Security compliance
 ```
 
 **Key Takeaway**: Control egress traffic to external services using ipBlock; always allow DNS (port 53) for name resolution; use CIDR ranges to restrict outbound access to approved IP addresses and services.
@@ -1664,12 +1586,6 @@ spec:
 
 # Multiple selector behavior:
 # => Multiple items in from/to are OR'd (any match allows)
-# => Rules 1, 2, 3 are independent (OR logic)
-# => ANY rule matching allows traffic
-# => Multiple selectors in same item are AND'd (all must match)
-# => podSelector + namespaceSelector in same item = both required
-# => Example: podSelector AND namespaceSelector in same item
-# => Narrows selection to specific Pods in specific namespace
 ```
 
 **Key Takeaway**: Combine multiple selectors for complex traffic rules; understand OR (multiple from/to items) vs AND (multiple selectors in same item) semantics; test policies thoroughly in non-production before applying to production.
@@ -1825,14 +1741,11 @@ spec:
       subresources:
         status: {} # => Enable status subresource
           # => Separate /status endpoint
-          # => Controllers update status independently
-          # => Users can't modify status via main resource
         scale: # => Enable scale subresource
           specReplicasPath: .spec.replicas # => Path to replica count in spec
           statusReplicasPath: .status.readyReplicas # => Path in status
           labelSelectorPath: .status.labelSelector # => Label selector path
           # => Enables: kubectl scale database/production-db --replicas=5
-          # => Integrates with HorizontalPodAutoscaler
 
       # Additional printer columns (kubectl get output)
       additionalPrinterColumns:
@@ -1885,12 +1798,10 @@ spec:
 # Create CRD (defines new resource type)
 kubectl apply -f database-crd.yaml
 # => customresourcedefinition.apiextensions.k8s.io/databases.example.com created
-# => API server now recognizes Database resources
 
 # Verify CRD created
 kubectl get crd databases.example.com
 # => NAME                      CREATED AT
-# => databases.example.com     2025-01-31T10:00:00Z
 
 # Check CRD details
 kubectl describe crd databases.example.com
@@ -1899,12 +1810,10 @@ kubectl describe crd databases.example.com
 # Create custom resource instance
 kubectl apply -f production-db.yaml
 # => database.example.com/production-db created
-# => Stored in etcd like built-in resources
 
 # List custom resources
 kubectl get databases
 # => NAME             ENGINE     VERSION   REPLICAS   READY   PHASE
-# => production-db    postgres   15        3          0       Pending
 
 # Get specific resource
 kubectl get database production-db -o yaml
@@ -1921,7 +1830,6 @@ kubectl describe database production-db
 # Update resource (change replicas)
 kubectl patch database production-db --type=merge -p '{"spec":{"replicas":5}}'
 # => database.example.com/production-db patched
-# => Validation ensures replicas <= 10
 
 # Update status (requires status subresource)
 kubectl patch database production-db --subresource=status --type=merge -p '{"status":{"phase":"Running","readyReplicas":5}}'
@@ -1930,7 +1838,6 @@ kubectl patch database production-db --subresource=status --type=merge -p '{"sta
 # Scale resource (requires scale subresource)
 kubectl scale database production-db --replicas=7
 # => database.example.com/production-db scaled
-# => Uses scale subresource path
 
 # Delete custom resource
 kubectl delete database production-db
@@ -1939,7 +1846,7 @@ kubectl delete database production-db
 # Delete CRD (removes ALL instances!)
 kubectl delete crd databases.example.com
 # => customresourcedefinition.apiextensions.k8s.io "databases.example.com" deleted
-# => WARNING: Deletes all Database resources cluster-wide
+
 ```
 
 **CRD validation examples**:
@@ -1996,6 +1903,7 @@ spec:
   replicas: 100  # Exceeds maximum: 10
 EOF
 # => Error: spec.replicas must be <= 10
+
 ```
 
 **Key Takeaway**: Use CRDs to extend Kubernetes with domain-specific resources; define comprehensive OpenAPI schema with validation rules (required, enum, min/max, patterns); enable subresources (status, scale) for standard Kubernetes patterns; add printer columns for better kubectl output; implement controllers (operators) to reconcile custom resources to desired state.
@@ -2095,8 +2003,6 @@ spec:
         # => Subresources enable kubectl integration
         status: {} # => Enable status subresource
           # => Status updates separate from spec
-          # => Separate /status endpoint
-          # => Controllers update status independently
         scale: # => Enable scale subresource
           # => Enables kubectl scale and HPA integration
           specReplicasPath:
@@ -2110,11 +2016,6 @@ spec:
 
 # Subresource benefits:
 # => status: separate permissions (controller updates, users read-only)
-# => RBAC separation for spec vs status
-# => scale: kubectl scale integration
-# => Standard kubectl commands work
-# => kubectl get applications shows AVAILABLE replicas
-# => HorizontalPodAutoscaler support
 ```
 
 **Key Takeaway**: Enable status subresource for separation of spec and status updates; enable scale subresource for kubectl scale integration; subresources follow standard Kubernetes patterns improving UX.
@@ -2151,7 +2052,6 @@ graph TD
 
 # 1. Watch custom resources
 # => watch Database resources
-# => on create/update/delete events
 
 # 2. Reconcile loop
 # func reconcile(db *Database) error {
@@ -2177,22 +2077,12 @@ graph TD
 
 # Operator responsibilities:
 # => Create StatefulSet for Database
-# => Create Service for Database
-# => Create PVCs for persistence
-# => Handle backups (CronJob)
-# => Handle upgrades (rolling update)
-# => Update status with current state
 
 # Operator frameworks:
 # => Operator SDK (Red Hat)
-# => Kubebuilder (Kubernetes SIG)
-# => KUDO (Kubernetes Universal Declarative Operator)
 
 # Example Database operator actions:
 # => spec.replicas=3 → creates StatefulSet with 3 replicas
-# => spec.version="15" → updates image to postgres:15
-# => spec.backup=true → creates CronJob for backups
-# => status.phase → Running/Pending/Failed
 ```
 
 **Key Takeaway**: Operators automate operational tasks by watching custom resources and reconciling state; use operator frameworks (Operator SDK, Kubebuilder) for production operators; operators enable self-service platforms and complex application lifecycle management.
@@ -2208,9 +2098,6 @@ Operator Lifecycle Manager manages operator installation, upgrades, and dependen
 ```yaml
 # Install OLM:
 # => curl -sL https://github.com/operator-framework/operator-lifecycle-manager/releases/download/v0.25.0/install.sh | bash -s v0.25.0
-# => Installs OLM components in cluster
-# => Creates olm and operators namespaces
-# => OLM manages operator lifecycle
 
 # Operator CSV (ClusterServiceVersion)
 apiVersion:
@@ -2338,19 +2225,9 @@ spec:
 
 # Install operator via OLM:
 # => kubectl create -f database-operator-csv.yaml
-# => OLM processes CSV
-# => OLM creates Deployment, ServiceAccount, RBAC
-# => Automatic RBAC generation from CSV
-# => Operator starts managing Database resources
-# => Controller watches for Database CRs
 
 # Upgrade operator:
 # => Create new CSV with version v1.1.0
-# => Update spec and image reference
-# => OLM performs rolling update
-# => Gradual transition to new version
-# => Old CSV remains for rollback
-# => Supports version downgrades
 ```
 
 **Key Takeaway**: Use OLM for production operator management; OLM handles installation, upgrades, RBAC, and dependencies automatically; publish operators to OperatorHub for community distribution.
@@ -2464,12 +2341,10 @@ webhooks:
 #     => Matches request UID
 #     "allowed": true/false,         # => Allow or reject
 #     => true: admit request
-#     => false: reject request
 #     "status": {
 #       => Rejection details (if allowed=false)
 #       "message": "Rejection reason"
 #       => Human-readable error message
-#       => Shown to kubectl user
 #     }
 #   }
 # }
@@ -2540,24 +2415,13 @@ webhooks:
 #     => Must allow for mutation
 #     "patchType": "JSONPatch",
 #     => Patch format type
-#     => JSONPatch RFC 6902
 #     "patch": "<base64-json-patch>"  # => JSON Patch to apply
 #     => Base64-encoded patch operations
-#     => Example: [{"op":"add","path":"/spec/containers/0/env","value":[...]}]
 #   }
 # }
 
 # Common webhook use cases:
 # => Validation: enforce naming conventions, require labels
-# => Prevents non-compliant resources
-# => Validation: enforce image registry restrictions
-# => Only allows approved registries
-# => Mutation: inject sidecars, add default resource limits
-# => Automatically adds logging/monitoring sidecars
-# => Mutation: add default labels and annotations
-# => Ensures consistent metadata
-# => Policy: prevent privileged Pods, enforce security contexts
-# => Security policy enforcement
 ```
 
 **Key Takeaway**: Use validating webhooks for custom policy enforcement beyond built-in admission controllers; use mutating webhooks for automatic resource modification like sidecar injection; webhook failures block API requests by default (set failurePolicy for control).
@@ -2592,7 +2456,6 @@ graph TD
 ```yaml
 # Chart directory structure
 # => Helm chart directory layout
-# => Standard chart organization
 my-app/ # => Chart root directory
   # => Contains all chart files
 ├── Chart.yaml # => Chart metadata
@@ -2616,7 +2479,6 @@ my-app/ # => Chart root directory
 
 # Chart.yaml
 # => Chart metadata file
-# => Defines chart properties
 apiVersion: v2 # => Chart API version
   # => v2 for Helm 3
 name: my-app # => Chart name
@@ -2625,13 +2487,10 @@ description: A Helm chart for my application # => Chart description
   # => Human-readable summary
 type: application # => Chart type
   # => application or library
-  # => application: deployable chart
 version: 1.0.0 # => Chart version
   # => Semantic versioning
-  # => Incremented on chart changes
 appVersion: "1.24" # => Application version
   # => Version of deployed application
-  # => Independent from chart version
 keywords: # => Search keywords
   # => For chart repositories
 - application # => Keyword: application
@@ -2647,7 +2506,6 @@ maintainers: # => Chart maintainers
 
 # values.yaml
 # => Default values for chart
-# => Base configuration template
 replicaCount: 3 # => Default replica count
   # => Production default
 image: # => Container image settings
@@ -2671,7 +2529,6 @@ ingress: # => Ingress configuration
 
 # templates/deployment.yaml
 # => Deployment template
-# => Go template with .Values substitution
 apiVersion: apps/v1 # => Deployment API version
   # => Stable apps API
 kind: Deployment # => Resource type
@@ -2680,7 +2537,6 @@ metadata: # => Deployment metadata
   # => Name and labels
   name: {{ include "my-app.fullname" . }} # => Dynamic name
     # => Template helper function
-    # => Generates full name (release + chart)
   labels: # => Deployment labels
     # => Standard label set
     {{- include "my-app.labels" . | nindent 4 }}
@@ -2690,7 +2546,6 @@ spec: # => Deployment specification
   # => Desired state
   replicas: {{ .Values.replicaCount }} # => Replica count from values
     # => .Values.replicaCount substitution
-    # => Default: 3
   selector: # => Pod selector
     # => Matches pods by labels
     matchLabels: # => Label selector
@@ -2713,11 +2568,9 @@ spec: # => Deployment specification
         # => Single container
       - name: {{ .Chart.Name }} # => Container name
           # => From Chart.yaml name field
-          # => .Chart.Name = my-app
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           # => Image with tag
           # => Combines repository + tag
-          # => Example: nginx:1.24
         ports: # => Container ports
           # => Exposed ports
         - containerPort: 80 # => HTTP port
@@ -2725,18 +2578,7 @@ spec: # => Deployment specification
 
 # Helm commands:
 # => Common Helm CLI operations
-# => helm create my-app                    # Generate chart scaffold
-# => Creates new chart directory with templates
-# => helm install my-release my-app        # Install chart
-# => Deploys chart as release "my-release"
-# => helm upgrade my-release my-app        # Upgrade release
-# => Updates existing release with new chart
-# => helm rollback my-release 1            # Rollback to revision 1
-# => Reverts to previous release revision
-# => helm uninstall my-release             # Uninstall release
-# => Deletes all release resources
-# => helm list                             # List releases
-# => Shows all deployed releases
+
 ```
 
 **Key Takeaway**: Use Helm for repeatable application deployments with configuration management; separate chart version (Chart.yaml) from app version (appVersion); parameterize manifests using values.yaml for environment-specific deployments.
@@ -2767,7 +2609,6 @@ graph TD
 ```yaml
 # values.yaml (default values)
 # => Default values for Helm chart
-# => Base configuration template
 global: # => Global values shared across templates
   # => Available in all templates via .Values.global
   environment: production # => Default environment setting
@@ -2797,14 +2638,12 @@ resources: # => Resource limits and requests
 
 # values-dev.yaml (environment override)
 # => Development environment overrides
-# => Merges with values.yaml defaults
 global: # => Override global values
   # => Replaces production defaults
   environment: development # => Dev environment setting
     # => Overrides global.environment
 replicaCount: 1 # => Override for dev
   # => Single replica for development
-  # => Saves resources in dev environment
 resources: # => Override resource settings
   # => Lower limits for dev
   requests: # => Reduced dev requests
@@ -2816,7 +2655,6 @@ resources: # => Override resource settings
 
 # templates/deployment.yaml
 # => Helm template for Deployment
-# => Uses .Values for dynamic configuration
 apiVersion: apps/v1 # => Deployment API version
   # => Stable apps API
 kind: Deployment # => Deployment resource type
@@ -2825,12 +2663,10 @@ metadata: # => Deployment metadata
   # => Name and labels
   name: {{ .Release.Name }}-app # => Dynamic name from release
     # => .Release.Name injected by Helm
-    # => Example: dev-release-app
 spec: # => Deployment specification
   # => Desired state definition
   replicas: {{ .Values.replicaCount }} # => Replica count from values
     # => Production: 3, Dev: 1 (from values files)
-    # => Template variable substitution
   template: # => Pod template
     # => Defines pod specification
     spec: # => Pod spec
@@ -2842,7 +2678,6 @@ spec: # => Deployment specification
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           # => Dynamic image reference
           # => Combines repository + tag
-          # => Example: nginx:1.24
         env: # => Environment variables
           # => Container environment
         - name: ENVIRONMENT # => Environment variable name
@@ -2859,31 +2694,19 @@ spec: # => Deployment specification
 
 # Helm install with overrides:
 # => helm install dev-release my-app -f values-dev.yaml
-# => Install release using values file
-# => -f values-dev.yaml: load override file
-# => Uses values-dev.yaml, merges with values.yaml
-# => Merge order: values.yaml base + values-dev.yaml overlay
-# => replicaCount=1, environment=development
-# => Final merged values
 
 # Override via --set flag:
 # => helm install prod-release my-app --set replicaCount=5
-# => --set flag for command-line overrides
-# => --set overrides values.yaml
-# => Highest precedence override mechanism
-# => replicaCount=5 replaces default 3
 
 # Override precedence (highest to lowest):
 # => Helm value precedence hierarchy
 # 1. --set flags
 # => CLI --set has highest priority
-# => Overrides all file-based values
 # 2. -f values-file.yaml (last file wins)
 # => Multiple -f files merge left-to-right
-# => Last file's values win conflicts
 # 3. values.yaml (default)
 # => Lowest priority: base defaults
-# => Overridden by -f and --set
+
 ```
 
 **Key Takeaway**: Use values.yaml for defaults and environment-specific values files for overrides; leverage --set for one-off changes; understand value precedence to predict final configuration.
@@ -2928,8 +2751,6 @@ redis:
 
 # Update dependencies:
 # => helm dependency update
-# => Downloads charts to charts/ directory
-# => Creates Chart.lock with exact versions
 
 # Chart.lock
 dependencies:
@@ -2942,11 +2763,10 @@ dependencies:
 
 # Install with dependencies:
 # => helm install my-release web-application
-# => Installs web-application + postgresql
-# => redis not installed (enabled: false)
 
 # Override dependency values:
 # => helm install my-release web-application --set postgresql.auth.password=newsecret
+
 ```
 
 **Key Takeaway**: Use chart dependencies for composable applications; lock dependency versions with Chart.lock for reproducible deployments; use conditions to enable/disable optional dependencies per environment.
@@ -2980,7 +2800,6 @@ graph TD
 ```yaml
 # templates/db-migration-job.yaml
 # => Helm hook Job template
-# => Runs database migrations before upgrade
 apiVersion: batch/v1 # => Job API version
   # => Batch API for one-time tasks
 kind: Job # => Job resource type
@@ -3009,7 +2828,6 @@ spec: # => Job specification
       # => Container and restart policy
       restartPolicy: Never # => Never restart failed Pods
         # => Job handles failures
-        # => Failed Pods preserved for debugging
       containers: # => Container list
         # => Migration container
       - name: migrate # => Container name
@@ -3035,24 +2853,6 @@ spec: # => Job specification
 
 # Available hooks:
 # => Helm lifecycle hooks
-# => pre-install: before install
-# => Runs before any install resources
-# => post-install: after install
-# => Runs after install resources created
-# => pre-delete: before delete
-# => Cleanup before resource deletion
-# => post-delete: after delete
-# => Final cleanup after deletion
-# => pre-upgrade: before upgrade
-# => Runs before upgrade (example above)
-# => post-upgrade: after upgrade
-# => Validation after upgrade
-# => pre-rollback: before rollback
-# => Prepare for rollback
-# => post-rollback: after rollback
-# => Cleanup after rollback
-# => test: helm test command
-# => Runs on helm test invocation
 
 # Hook execution order:
 # => Hook weight determines execution sequence
@@ -3062,19 +2862,10 @@ spec: # => Job specification
 # => Filename sorting for tied weights
 # 3. Main resources deployed after hooks succeed
 # => Hooks must complete successfully
-# => Failed hooks block deployment
 
 # Hook deletion policies:
 # => Control when hooks are cleaned up
-# => before-hook-creation: delete previous hook before new one
-# => Cleanup old Job before creating new
-# => Prevents resource accumulation
-# => hook-succeeded: delete after successful execution
-# => Remove successful hook Jobs
-# => Keep failed Jobs for debugging
-# => hook-failed: delete after failed execution
-# => Remove failed Jobs automatically
-# => Useful for transient failures
+
 ```
 
 **Key Takeaway**: Use Helm hooks for lifecycle tasks like database migrations, backups, or cleanup; set appropriate hook-delete-policy to prevent accumulation of hook resources; verify hook success before main release continues.
@@ -3090,7 +2881,6 @@ Helm tests validate release deployments using Pods with test annotations. Tests 
 ```yaml
 # templates/tests/test-connection.yaml
 # => Helm test Pod template
-# => Validates service connectivity
 apiVersion: v1 # => Pod API version
   # => Core v1 API
 kind: Pod # => Pod resource type
@@ -3108,7 +2898,6 @@ spec: # => Pod specification
   # => Container and restart policy
   restartPolicy: Never # => Never restart test Pod
     # => Run once, preserve exit code
-    # => Success/failure determines test result
   containers: # => Container list
     # => Test container
   - name: wget # => Container name
@@ -3129,41 +2918,13 @@ spec: # => Pod specification
 
 # Run tests:
 # => Execute Helm tests for release
-# => helm test my-release
-# => Runs all Pods with test annotation
-# => Helm creates test Pods
-# => Runs Pods with helm.sh/hook: test annotation
-# => Collects exit codes
-# => Shows test results (passed/failed)
-# => Displays pass/fail summary
 
 # Example test output:
 # => Successful test execution output
-# => NAME: my-release
-# => Release name
-# => NAMESPACE: default
-# => Namespace where release deployed
-# => STATUS: deployed
-# => Release status
-# => TEST SUITE:     my-release-test-connection
-# => Test Pod name
-# => Last Started:   Mon Dec 30 00:00:00 2025
-# => Test start timestamp
-# => Last Completed: Mon Dec 30 00:00:05 2025
-# => Test completion timestamp
-# => Phase:          Succeeded
-# => Test result: Succeeded or Failed
 
 # Common test scenarios:
 # => Typical Helm test use cases
-# => Connection test: verify service reachable
-# => Tests internal DNS and service endpoints
-# => Health check: verify application healthy
-# => Tests /health or /ready endpoints
-# => Data validation: verify database migrations succeeded
-# => Queries database for expected schema
-# => Integration test: verify dependencies connected
-# => Tests external API or database connectivity
+
 ```
 
 **Key Takeaway**: Implement Helm tests to validate releases post-deployment; include tests in CI/CD pipelines to catch deployment issues early; tests provide confidence in production rollouts.
@@ -3197,7 +2958,6 @@ graph TD
 ```yaml
 # GitOps repository structure
 # => Typical GitOps repository layout
-# => Separates apps, infrastructure, cluster configs
 gitops-repo/ # => Git repository root
   # => Single source of truth
 ├── apps/ # => Application manifests
@@ -3252,18 +3012,6 @@ gitops-repo/ # => Git repository root
 
 # GitOps benefits:
 # => Advantages of GitOps approach
-# => Single source of truth (Git)
-# => All cluster state in Git repository
-# => Audit trail (Git history)
-# => Complete change history with authors
-# => Rollback via Git revert
-# => Simple git revert for instant rollback
-# => Declarative infrastructure
-# => Desired state defined, not imperative steps
-# => Automated deployment
-# => No manual kubectl commands
-# => Environment parity (same process for all envs)
-# => Dev, staging, prod use identical workflow
 
 # GitOps principles:
 # => Core principles of GitOps
@@ -3277,6 +3025,7 @@ gitops-repo/ # => Git repository root
 # => Continuous sync without human intervention
 # 5. Auditable: Git log provides audit trail
 # => Who changed what and when
+
 ```
 
 **Key Takeaway**: GitOps treats Git as single source of truth for cluster state; separate application manifests by environment (production, staging); use GitOps operators like ArgoCD for continuous synchronization and drift detection.
@@ -3292,28 +3041,15 @@ ArgoCD is a declarative GitOps continuous delivery tool for Kubernetes. ArgoCD m
 ```yaml
 # Install ArgoCD:
 # => ArgoCD installation steps
-# => kubectl create namespace argocd
-# => Create dedicated namespace
-# => kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-# => Install ArgoCD manifests
-# => Deploys ArgoCD components
 
 # Access ArgoCD UI:
 # => Port-forward to ArgoCD server
-# => kubectl port-forward svc/argocd-server -n argocd 8080:443
-# => Forward local 8080 to ArgoCD HTTPS port
-# => https://localhost:8080
-# => Access UI via browser
 
 # Get admin password:
 # => Retrieve initial admin password
-# => kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
-# => Extract base64-encoded password
-# => Use for first login
 
 # ArgoCD Application CRD
 # => ArgoCD Application resource
-# => Defines GitOps application
 apiVersion:
   argoproj.io/v1alpha1 # => ArgoCD API version
   # => ArgoCD custom resource API
@@ -3377,21 +3113,9 @@ spec: # => Application specification
 
 # Apply Application:
 # => Create ArgoCD Application resource
-# => kubectl apply -f my-app-application.yaml
-# => Registers app with ArgoCD
-# => ArgoCD starts syncing repository to cluster
-# => Begins continuous reconciliation
 
 # ArgoCD CLI:
 # => ArgoCD command-line operations
-# => argocd login localhost:8080
-# => Login to ArgoCD server
-# => argocd app list
-# => List all applications
-# => argocd app sync my-app
-# => Manually trigger sync
-# => argocd app rollback my-app
-# => Rollback to previous version
 ```
 
 **Key Takeaway**: Install ArgoCD for GitOps-based deployment automation; define Applications pointing to Git repositories; enable automated sync with selfHeal for drift correction; ArgoCD provides UI and CLI for application management.
@@ -3508,35 +3232,15 @@ spec: # => Application specification
 # => Different ArgoCD sync approaches
 # 1. Manual sync (no automated section)
 # => No automated sync policy
-#    => argocd app sync my-app
-#    => Requires manual sync command
-#    => Sync only on demand
-#    => Full control, no automation
 
 # 2. Automated sync (automated: {})
 # => Basic automated sync
-#    => Auto-sync on Git changes
-#    => Deploys automatically on commit
-#    => Manual intervention on drift
-#    => Alerts on manual changes but doesn't revert
 
 # 3. Automated with selfHeal
 # => Automated sync with drift correction
-#    => Auto-sync on Git changes
-#    => Deploys on commit
-#    => Auto-sync on cluster drift
-#    => Reverts manual kubectl changes
-#    => Prevents manual changes
-#    => Enforces Git as source of truth
 
 # 4. Automated with prune
 # => Automated sync with cleanup
-#    => Auto-sync + delete orphaned resources
-#    => Deploys changes + removes orphans
-#    => Resources in cluster but not Git deleted
-#    => Keeps cluster clean
-#    => Enforces Git as source of truth
-#    => Complete state reconciliation
 ```
 
 **Key Takeaway**: Use automated sync with selfHeal for production to prevent configuration drift; enable prune to remove orphaned resources; configure retry with backoff for resilience against transient failures.
@@ -3573,7 +3277,6 @@ spec: # => Project specification
     # => Whitelist of allowed repos
     - https://github.com/example/gitops-repo # => Allowed source repositories
       # => Applications can only use this repo
-      # => Prevents unauthorized code sources
   destinations: # => Allowed deployment targets
     # => Whitelist of clusters/namespaces
     - namespace:
@@ -3667,14 +3370,6 @@ spec: # => Application specification
 
 # Project restrictions:
 # => How projects enforce policies
-# => Applications must use allowed source repos
-# => sourceRepos whitelist enforced
-# => Applications must target allowed destinations
-# => destinations whitelist enforced
-# => Applications cannot create blacklisted resources
-# => Resource blacklist/whitelist enforced
-# => RBAC enforces user/group permissions
-# => Policies control who can do what
 ```
 
 **Key Takeaway**: Use ArgoCD Projects for multi-team environments to enforce repository, cluster, and resource restrictions; configure RBAC roles for granular access control; projects prevent accidental changes to critical resources.
@@ -3804,14 +3499,6 @@ spec: # => ApplicationSet specification
 
 # Use cases:
 # => Common ApplicationSet patterns
-# => Deploy same app to multiple clusters
-# => Multi-cluster deployment (example above)
-# => Deploy multiple apps from Git directory structure
-# => One Application per Git subdirectory
-# => Multi-tenant deployments (one app per tenant)
-# => Generate Application per tenant/customer
-# => Progressive rollout across cluster fleet
-# => Staged deployment to clusters sequentially
 
 # Git directory generator example:
 # => Git generator configuration
@@ -3926,13 +3613,9 @@ data:
 
 # Tracing with Jaeger
 # => kubectl create -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/main/deploy/crds/jaegertracing.io_jaegers_crd.yaml
-# => kubectl create -n observability -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/main/deploy/service_account.yaml
 
 # Observability pillars:
 # => Metrics: Prometheus (time-series data)
-# => Logs: Loki (log aggregation)
-# => Traces: Jaeger (distributed tracing)
-# => Dashboards: Grafana (visualization)
 ```
 
 **Key Takeaway**: Implement three pillars of observability (metrics, logs, traces) for production clusters; use Prometheus for metrics, Loki for logs, and Jaeger for traces; create Grafana dashboards for visualization and alerting.

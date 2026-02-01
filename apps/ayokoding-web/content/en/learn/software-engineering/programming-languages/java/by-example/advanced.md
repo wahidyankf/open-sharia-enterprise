@@ -1257,94 +1257,63 @@ Modules provide stronger encapsulation than packages, enabling better dependency
 
 ```java
 // module-info.java in com.example.myapp module
-module com.example.myapp {      // => Module declaration (must match directory structure)
-                                 // => File: module-info.java at module root
-                                 // => Module name: com.example.myapp (follows reverse domain convention)
+module com.example.myapp {      // => Module declaration (file: module-info.java at module root)
+                                 // => Module name: com.example.myapp (reverse domain convention)
     // Require other modules
-    requires java.base;          // => Dependency on java.base module
-                                 // => Implicit: all modules automatically require java.base
-                                 // => Contains core classes: Object, String, System, etc.
-    requires java.sql;           // => Explicit dependency on SQL module
-                                 // => Adds JDBC classes: Connection, Statement, etc.
+    requires java.base;          // => Dependency on java.base (implicit, all modules auto-require)
+                                 // => Contains core classes: Object, String, System
+    requires java.sql;           // => Explicit dependency on SQL module (JDBC classes)
                                  // => Module graph: myapp → java.sql → java.base
-    requires transitive java.logging;
-                                 // => Transitive dependency on logging module
-                                 // => Modules requiring myapp also get java.logging
-                                 // => Implied readability: propagates dependency to consumers
+    requires transitive java.logging;  // => Transitive dependency (modules requiring myapp also get java.logging)
+                                 // => Implied readability propagates dependency to consumers
 
     // Export packages (make them accessible to other modules)
-    exports com.example.myapp.api;
-                                 // => Makes api package public to all modules
-                                 // => Classes in api package accessible via import
+    exports com.example.myapp.api;  // => Makes api package public to all modules
                                  // => Non-exported packages remain internal (strong encapsulation)
-    exports com.example.myapp.internal to com.example.test;
-                                 // => Qualified export: only to com.example.test module
-                                 // => internal package accessible ONLY to test module
+    exports com.example.myapp.internal to com.example.test;  // => Qualified export: only to com.example.test module
                                  // => Enables white-box testing of internals
 
     // Open packages for reflection (for frameworks like Spring, Hibernate)
-    opens com.example.myapp.model;
-                                 // => Allows deep reflection on model package
-                                 // => Frameworks can access private fields/methods via reflection
-                                 // => Needed for serialization, DI, ORM frameworks
-    opens com.example.myapp.entity to org.hibernate.orm;
-                                 // => Qualified open: reflection only for Hibernate
-                                 // => Restricts reflection access to specific framework
+    opens com.example.myapp.model;  // => Allows deep reflection on model package
+                                 // => Frameworks can access private fields/methods (needed for serialization, DI, ORM)
+    opens com.example.myapp.entity to org.hibernate.orm;  // => Qualified open: reflection only for Hibernate
                                  // => More secure than unconditional opens
 
     // Provide service implementation
-    provides com.example.myapp.api.Service
-                                 // => Service provider declaration (SPI)
-                                 // => Service interface: com.example.myapp.api.Service
-        with com.example.myapp.impl.ServiceImpl;
-                                 // => Implementation class: ServiceImpl
-                                 // => ServiceLoader can discover this implementation
+    provides com.example.myapp.api.Service  // => Service provider declaration (SPI)
+        with com.example.myapp.impl.ServiceImpl;  // => ServiceLoader can discover this implementation
                                  // => Enables plugin architecture
 
     // Use service
-    uses com.example.myapp.api.Service;
-                                 // => Service consumer declaration
+    uses com.example.myapp.api.Service;  // => Service consumer declaration
                                  // => Declares module will use ServiceLoader for Service
-                                 // => Not required but documents service usage
 }
 
 // Without modules (pre-Java 9), all public classes are globally accessible
-                                 // => Classpath: all public classes accessible everywhere
-                                 // => No encapsulation beyond public/private/protected
+                                 // => Classpath: no encapsulation beyond public/private/protected
 // With modules, only exported packages are accessible
                                  // => Module system: strong encapsulation at package level
-                                 // => Public classes in non-exported packages are inaccessible
 
 // Checking module from code
-Module module = String.class.getModule();
-                                 // => Gets module containing String class
+Module module = String.class.getModule();  // => Gets module containing String class
                                  // => Module reflection API (java.lang.Module)
-System.out.println(module.getName());
-                                 // => Prints: "java.base"
+System.out.println(module.getName());  // => Output: "java.base"
                                  // => String is in java.base module (core module)
-System.out.println(module.isNamed());
-                                 // => Prints: true
-                                 // => Named module: has explicit module-info.java
-                                 // => Unnamed module: classpath code (no module-info)
+System.out.println(module.isNamed());  // => Output: true
+                                 // => Named module (has module-info.java), vs unnamed module (classpath code)
 
 // Unnamed module (classpath code)
                                  // => Code on classpath runs in unnamed module
-                                 // => Unnamed module can read all named modules
-                                 // => Named modules cannot read unnamed module (one-way)
+                                 // => Unnamed module can read all named modules (one-way)
 // Code on classpath runs in unnamed module, can access all modules
-                                 // => Enables gradual migration: mix classpath and modules
-                                 // => Unnamed module exports all packages (for compatibility)
+                                 // => Enables gradual migration (mix classpath and modules)
 
 // Module layers and layers
-ModuleLayer bootLayer = ModuleLayer.boot();
-                                 // => Boot layer: contains platform modules (java.base, etc.)
-                                 // => All application modules in boot layer by default
+ModuleLayer bootLayer = ModuleLayer.boot();  // => Boot layer contains platform modules (java.base, etc.)
                                  // => ModuleLayer: container for set of modules
-Set<Module> modules = bootLayer.modules();
-                                 // => Gets all modules in boot layer
+Set<Module> modules = bootLayer.modules();  // => Gets all modules in boot layer
                                  // => Returns Set<Module> (platform + application)
-modules.forEach(m -> System.out.println(m.getName()));
-                                 // => Prints all module names in boot layer
+modules.forEach(m -> System.out.println(m.getName()));  // => Prints all module names in boot layer
                                  // => Output: java.base, java.sql, com.example.myapp, etc.
 
 // Creating custom runtime images with jlink
@@ -1368,31 +1337,17 @@ public class PublicService {     // => Public class in exported package
 }
 
 // In com.example.myapp.internal package (not exported):
-package com.example.myapp.internal;
-                                 // => Non-exported package (internal implementation)
-public class InternalUtil {      // => Public class BUT in non-exported package
-                                 // => NOT accessible: even though public, package not exported
+package com.example.myapp.internal;  // => Non-exported package (internal implementation)
+public class InternalUtil {      // => Public BUT in non-exported package (not accessible outside module)
     // NOT accessible to other modules, even though public
                                  // => Strong encapsulation: public doesn't mean globally accessible
-    // Stronger encapsulation than package-private
-                                 // => Package-private: accessible in same package
-                                 // => Non-exported public: not accessible outside module
 }
 
 // Module benefits:
-// 1. Reliable configuration: missing dependencies detected at startup
-                                 // => Module system validates dependencies at startup
-                                 // => Fail fast: missing module causes immediate error
-                                 // => vs classpath: NoClassDefFoundError at runtime
-// 2. Strong encapsulation: internal packages truly internal
-                                 // => Non-exported packages inaccessible (even public classes)
-                                 // => Prevents accidental internal API usage
-// 3. Scalable: module graph prevents accidental dependencies
-                                 // => Explicit requires: no hidden dependencies
-                                 // => Prevents circular dependencies (compile error)
-// 4. Smaller deployments: jlink creates custom runtime images
-                                 // => Include only needed modules
-                                 // => Reduces deployment size significantly
+// 1. Reliable configuration: missing dependencies detected at startup  // => Fail fast vs classpath NoClassDefFoundError
+// 2. Strong encapsulation: internal packages truly internal  // => Non-exported packages inaccessible
+// 3. Scalable: module graph prevents accidental dependencies  // => Explicit requires, no circular deps
+// 4. Smaller deployments: jlink creates custom runtime images  // => Include only needed modules
 ```
 
 **Key Takeaway**: Modules provide stronger encapsulation via `module-info.java`. `requires` declares dependencies, `exports` makes packages accessible. `opens` allows deep reflection. `transitive` propagates dependencies. Modules enable reliable configuration and smaller runtime images with jlink.
@@ -1409,112 +1364,72 @@ public class InternalUtil {      // => Public class BUT in non-exported package
 
 ```java
 // var for local variables (Java 10+)
-var message = "Hello";           // => Compiler infers type from initializer
-                                 // => Inferred type: String (from string literal)
-                                 // => Equivalent to: String message = "Hello";
-                                 // => Still statically typed (compile-time inference)
-var count = 42;                  // => Inferred as int (integer literal)
-                                 // => Not Integer (wrapper): primitives preferred for literals
-var price = 19.99;               // => Inferred as double (floating-point literal)
-                                 // => Not float: double is default for decimals
+var message = "Hello";           // => Inferred type: String (still statically typed at compile time)
+var count = 42;                  // => Inferred as int (not Integer wrapper)
+var price = 19.99;               // => Inferred as double (default for decimals)
 
 // Works with generics (reduces verbosity)
-var list = new ArrayList<String>();
-                                 // => Inferred as ArrayList<String>
-                                 // => Right side specifies generic type explicitly
+var list = new ArrayList<String>();  // => Inferred as ArrayList<String>
                                  // => Removes redundant type declaration on left
-var map = new HashMap<String, Integer>();
-                                 // => Inferred as HashMap<String, Integer>
-                                 // => Complex generic type: var improves readability
+var map = new HashMap<String, Integer>();  // => Inferred as HashMap<String, Integer>
 
 // Diamond operator with var
-var names = new ArrayList<>();   // => Diamond operator <> with no type argument
-                                 // => Inferred as ArrayList<Object> (default generic)
-                                 // => Be careful! Loses type safety without explicit generic
+var names = new ArrayList<>();   // => Inferred as ArrayList<Object> (loses type safety!)
+                                 // => Be careful without explicit generic
 var scores = List.of(95, 87, 92);// => Inferred as List<Integer>
-                                 // => List.of() factory method provides Integer elements
-                                 // => Type inference from method return and arguments
+                                 // => Type from method return and arguments
 
 // var in loops
-var numbers = List.of(1, 2, 3, 4, 5);
-                                 // => Inferred as List<Integer>
-for (var num : numbers) {        // => Enhanced for loop with var
-                                 // => num inferred as Integer (from List<Integer>)
-                                 // => Compiler knows collection element type
+var numbers = List.of(1, 2, 3, 4, 5);  // => List<Integer>
+for (var num : numbers) {        // => num inferred as Integer from collection element type
     System.out.println(num);     // => Output: 1, 2, 3, 4, 5
 }
 
-for (var i = 0; i < 10; i++) {   // => Traditional for loop with var
-                                 // => i inferred as int (from literal 0)
-                                 // => Loop counter: int is appropriate
+for (var i = 0; i < 10; i++) {   // => i inferred as int from literal 0
     System.out.println(i);       // => Output: 0, 1, 2, ..., 9
 }
 
 // var with streams
-var stream = numbers.stream()    // => Stream<Integer> from List<Integer>
+var stream = numbers.stream()    // => Inferred type: Stream<Integer>
     .filter(n -> n > 2)          // => Filter keeps Integer type
-    .map(n -> n * 2);            // => Map returns Integer (int * int = int)
-                                 // => Inferred type: Stream<Integer>
-                                 // => var avoids verbose Stream<Integer> declaration
+    .map(n -> n * 2);            // => var avoids verbose Stream<Integer> declaration
 
 // When var improves readability
-var userRepository = new UserRepositoryImpl();
-                                 // => Type obvious from right side: UserRepositoryImpl
-                                 // => Constructor name clearly indicates type
+var userRepository = new UserRepositoryImpl();  // => Type obvious from constructor name
                                  // => var eliminates redundancy
-var configuration = ConfigurationLoader.load("config.json");
-                                 // => Type from method return: Configuration (presumably)
-                                 // => Method name suggests return type
+var configuration = ConfigurationLoader.load("config.json");  // => Type clear from method name
 
 // When var reduces readability (avoid these)
-var data = process();            // => What type is data? Not obvious from method name
-                                 // => Need to check process() signature
-                                 // => Avoid var when type unclear: reduces code clarity
-var x = calculate(y);            // => What is x? Single-letter name + unclear method
+var data = process();            // => What type is data? Not obvious, reduces clarity
+                                 // => Avoid var when type unclear
+var x = calculate(y);            // => Double readability problem: vague name + var
                                  // => Need to check calculate() return type
-                                 // => Double readability problem: vague name + var
 
 // var limitations
 // Cannot use without initializer
 // var x;                        // => ERROR: cannot infer type without initializer
-                                 // => Compiler needs right-hand side to infer type
-                                 // => Inference requires assignment
 
 // Cannot use with null
-// var name = null;              // => ERROR: cannot infer from null
-                                 // => null has no specific type (compatible with all reference types)
-                                 // => Ambiguous: could be any reference type
+// var name = null;              // => ERROR: null has no specific type (ambiguous)
 
 // Cannot use for fields
 class Example {
     // var field = "value";       // => ERROR: var only for local variables
-                                 // => Fields require explicit type declaration
-                                 // => Class structure clarity: types should be visible
 }
 
 // Cannot use for method parameters
-// void method(var param) {}     // => ERROR: var not allowed for parameters
-                                 // => Method signatures require explicit types
-                                 // => API contract: parameter types must be explicit
+// void method(var param) {}     // => ERROR: method signatures require explicit types
 
 // Cannot use for method return types
-// var getValue() { return 42; } // => ERROR: var not allowed for return types
-                                 // => Return type must be explicit in signature
-                                 // => Method contract: return type must be declared
+// var getValue() { return 42; } // => ERROR: return type must be explicit
 
 // var with method references
-var comparator = Comparator.comparing(String::length);
-                                 // => Inferred as Comparator<String>
-                                 // => Method reference String::length returns int
-                                 // => Comparator.comparing() returns Comparator<String>
+var comparator = Comparator.comparing(String::length);  // => Inferred as Comparator<String>
 
 // var doesn't change semantics, only reduces verbosity
-var text = "Hello";              // => Still statically typed as String
-                                 // => Type locked at compile time
+var text = "Hello";              // => Still statically typed as String (type locked at compile time)
                                  // => Not dynamic typing (like JavaScript var)
-// text = 42;                    // => ERROR: incompatible types (int cannot be String)
-                                 // => Type checking enforced at compile time
-                                 // => var doesn't weaken type safety
+// text = 42;                    // => ERROR: incompatible types (var doesn't weaken type safety)
 
 // Best practices
 // ✅ Use var when type is obvious from right-hand side
@@ -1775,22 +1690,22 @@ strong = null;                   // => Removes strong reference
                                  // => Object now eligible for GC
 
 // Soft reference - memory-sensitive caching
-class ImageCache {
-    private Map<String, SoftReference<byte[]>> cache = new HashMap<>();
+class ImageCache {              // => Cache implementation using soft references
+    private Map<String, SoftReference<byte[]>> cache = new HashMap<>();  // => Cache storage
                                  // => Map keys = cache keys (String)
                                  // => Map values = SoftReference wrapping byte[] images
 
-    public void addImage(String key, byte[] image) {
-        cache.put(key, new SoftReference<>(image));
+    public void addImage(String key, byte[] image) {  // => Adds image to cache
+        cache.put(key, new SoftReference<>(image));   // => Stores soft-referenced image
                                  // => Wraps image in SoftReference
                                  // => GC can collect image if memory pressure
     }
 
-    public byte[] getImage(String key) {
-        SoftReference<byte[]> ref = cache.get(key);
+    public byte[] getImage(String key) {  // => Retrieves image from cache
+        SoftReference<byte[]> ref = cache.get(key);  // => Gets SoftReference for key
                                  // => Retrieves SoftReference from map
         if (ref != null) {       // => Check if key exists in cache
-            byte[] image = ref.get();
+            byte[] image = ref.get();  // => Extracts byte[] from reference
                                  // => Extract wrapped image
                                  // => Returns null if GC collected it
             if (image != null) {
@@ -4942,117 +4857,154 @@ graph TD
 
 ```java
 // Traditional platform thread (heavyweight)
-Thread platformThread = new Thread(() -> {
-    System.out.println("Platform thread: " + Thread.currentThread());
-});
-platformThread.start();
+Thread platformThread = new Thread(() -> {                             // => Creates platform thread
+    System.out.println("Platform thread: " + Thread.currentThread());  // => Output: Platform thread: Thread[Thread-0,5,main]
+});                                                                     // => Maps 1:1 to OS thread (heavyweight)
+platformThread.start();                                                // => Starts thread execution
 
 // Virtual thread (lightweight, Java 21+)
-Thread virtualThread = Thread.ofVirtual().start(() -> {
-    System.out.println("Virtual thread: " + Thread.currentThread());
-});
+Thread virtualThread = Thread.ofVirtual().start(() -> {                // => Creates and starts virtual thread
+    System.out.println("Virtual thread: " + Thread.currentThread());   // => Output: Virtual thread: VirtualThread[#21]/runnable@ForkJoinPool-1-worker-1
+});                                                                     // => M:N mapping to carrier threads (lightweight)
 
 // Create virtual thread with name
-Thread namedVirtual = Thread.ofVirtual()
-    .name("my-virtual-thread")
-    .start(() -> {
-        System.out.println(Thread.currentThread().getName());
+Thread namedVirtual = Thread.ofVirtual()                               // => Builder for virtual thread
+    .name("my-virtual-thread")                                         // => Sets thread name
+    .start(() -> {                                                     // => Starts named virtual thread
+        System.out.println(Thread.currentThread().getName());          // => Output: my-virtual-thread
     });
 
 // Executor for virtual threads
-ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
-executor.submit(() -> {
-    System.out.println("Task in virtual thread");
-});
-executor.close(); // Auto-closes when all tasks complete
+ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor(); // => Creates executor that spawns virtual thread per task
+executor.submit(() -> {                                                 // => Submits task to executor
+    System.out.println("Task in virtual thread");                       // => Output: Task in virtual thread
+});                                                                      // => Task runs in virtual thread
+executor.close();                                                        // => Auto-closes when all tasks complete (Java 19+ AutoCloseable)
 
 // Massive concurrency with virtual threads
-// Platform threads: 1000s max (each ~1MB stack)
-// Virtual threads: millions possible (each ~1KB)
+// => Platform threads: 1000s max (each ~1MB stack, OS limit)
+// => Virtual threads: millions possible (each ~1KB, JVM-managed)
 
 try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+                                 // => Creates executor for virtual threads
+                                 // => Auto-closeable (try-with-resources)
+                                 // => Each submit() creates new virtual thread (no pooling)
     for (int i = 0; i < 1_000_000; i++) {
-        int taskId = i;
-        executor.submit(() -> {
-            // 1 million concurrent tasks!
+                                 // => 1 million iterations (would crash with platform threads)
+        int taskId = i;          // => Capture loop variable for lambda
+        executor.submit(() -> {  // => Creates virtual thread per task
+                                 // => Virtual thread is cheap (~1KB overhead)
+                                 // => Million virtual threads map to ~N carrier threads
             System.out.println("Task " + taskId);
-        });
+                                 // => Output: "Task 0", "Task 1", etc.
+                                 // => Output order non-deterministic (concurrent execution)
+        });                      // => Task submitted, thread created immediately
     }
-} // Auto-waits for completion
+} // => Auto-waits for completion (try-with-resources close)
+  // => All 1 million tasks complete before exiting block
+  // => No manual shutdown needed
 
 // Virtual threads excel at I/O-bound work
 ExecutorService ioExecutor = Executors.newVirtualThreadPerTaskExecutor();
-ioExecutor.submit(() -> {
-    // Blocking I/O doesn't block platform thread
+                                 // => Executor for I/O-bound tasks
+ioExecutor.submit(() -> {        // => Submits I/O task in virtual thread
     String data = httpClient.get("https://api.example.com");
-    // Virtual thread unmounts from carrier while waiting
-    System.out.println(data);
-});
+                                 // => Blocking I/O call (waits for network response)
+                                 // => Virtual thread UNMOUNTS from carrier thread during wait
+                                 // => Carrier thread freed to run other virtual threads
+                                 // => Virtual thread REMOUNTS when I/O completes
+                                 // => data = HTTP response body (after network wait)
+    System.out.println(data);    // => Output: [response data]
+});                              // => Virtual thread lifecycle: create → mount → unmount → remount → complete
+// => Carrier thread never blocks (handles other virtual threads during I/O)
 
-// Structured concurrency (preview feature)
+// Structured concurrency (preview feature, Java 21+)
+// => Scoped thread lifetime management (parent-child relationship)
+// => Ensures child tasks complete before parent continues
 /*
 try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+                                 // => Creates scope with fail-fast policy
+                                 // => Scope shuts down if any subtask fails
+                                 // => Auto-closeable (ensures cleanup)
     Future<String> user = scope.fork(() -> fetchUser(userId));
+                                 // => Forks subtask to fetch user (runs in virtual thread)
+                                 // => Returns Future for result
     Future<String> orders = scope.fork(() -> fetchOrders(userId));
+                                 // => Forks subtask to fetch orders (parallel with user)
+                                 // => Both tasks run concurrently
 
-    scope.join(); // Wait for both
-    scope.throwIfFailed(); // Propagate exceptions
+    scope.join();                // => Waits for both subtasks to complete
+                                 // => Blocks until all forked tasks finish
+    scope.throwIfFailed();       // => Propagates exception if any subtask failed
+                                 // => Fails fast (cancels other tasks on first failure)
 
     return new UserData(user.resultNow(), orders.resultNow());
-}
+                                 // => resultNow() returns completed result (no blocking)
+                                 // => Both results guaranteed available after join()
+}                                // => Scope closed, all subtasks guaranteed complete
 */
 
 // Virtual thread characteristics
-// 1. Cheap to create (millions possible)
-// 2. Unmount from carrier thread when blocking
-// 3. No thread pooling needed (create per-task)
-// 4. Same Thread API, different implementation
+// => 1. Cheap to create (millions possible, minimal overhead)
+// => 2. Unmount from carrier thread when blocking (I/O, sleep, locks)
+// => 3. No thread pooling needed (create per-task, lightweight)
+// => 4. Same Thread API, different implementation (drop-in replacement)
 
 // When virtual threads excel
-// - High concurrency I/O (web servers, database queries)
-// - Blocking I/O operations (network, file)
-// - Simplifies async code (no callbacks)
+// => - High concurrency I/O (web servers, database queries, API calls)
+// => - Blocking I/O operations (network, file, database)
+// => - Simplifies async code (no callbacks, futures, reactive)
 
 // When virtual threads DON'T help
-// - CPU-bound work (same cores available)
-// - Synchronized blocks (pins carrier thread)
-// - Native code (JNI pins carrier thread)
+// => - CPU-bound work (same cores available, no benefit)
+// => - Synchronized blocks (pins carrier thread, defeats purpose)
+// => - Native code (JNI pins carrier thread, blocks carrier)
 
-// Pinning (carrier thread blocked)
-synchronized (lock) {
-    // Blocks carrier thread (bad for virtual threads)
-    Thread.sleep(1000);
-}
+// Pinning (carrier thread blocked, BAD)
+Object lock = new Object();      // => Shared lock object
+synchronized (lock) {            // => Synchronized block pins carrier thread
+                                 // => Virtual thread CANNOT unmount during synchronized
+                                 // => Carrier thread blocked for entire duration
+    Thread.sleep(1000);          // => Blocks carrier thread (defeats virtual thread benefit)
+                                 // => Sleep doesn't unmount (pinned by synchronized)
+}                                // => Carrier thread unavailable to other virtual threads
 
 // Solution: use ReentrantLock instead
-ReentrantLock lock = new ReentrantLock();
-lock.lock();
+ReentrantLock reentrantLock = new ReentrantLock();
+                                 // => ReentrantLock allows unmounting (virtual thread friendly)
+reentrantLock.lock();            // => Acquires lock (virtual thread can unmount if needed)
+                                 // => Virtual thread unmounts if lock unavailable
 try {
-    // Doesn't pin carrier thread
-    Thread.sleep(1000);
+    Thread.sleep(1000);          // => Sleep unmounts virtual thread (frees carrier)
+                                 // => Carrier thread available to other virtual threads
 } finally {
-    lock.unlock();
+    reentrantLock.unlock();      // => Release lock (always in finally)
+                                 // => Ensures lock released even on exception
 }
 
 // Thread.sleep() with virtual threads
-Thread.sleep(1000); // Virtual thread unmounts, doesn't block carrier
+Thread.sleep(1000);              // => Virtual thread unmounts from carrier (doesn't block)
+                                 // => Carrier thread freed for other virtual threads
+                                 // => Virtual thread remounts after 1000ms
 
 // Comparing platform vs virtual threads
-// Platform: 1-1 mapping to OS thread, expensive, limited
-// Virtual: M-N mapping to carrier threads, cheap, millions
+// => Platform: 1-1 mapping to OS thread, expensive (~1MB stack), limited (1000s)
+// => Virtual: M-N mapping to carrier threads, cheap (~1KB), millions possible
 
 // Migration from platform to virtual threads
-// Old
-ExecutorService old = Executors.newFixedThreadPool(10);
+ExecutorService oldExecutor = Executors.newFixedThreadPool(10);
+                                 // => Old: 10 platform threads (heavyweight, pooled)
+                                 // => Limits concurrency to 10 tasks
 
-// New
-ExecutorService newEx = Executors.newVirtualThreadPerTaskExecutor();
-
-// Code unchanged, just swap executor
+ExecutorService newExecutor = Executors.newVirtualThreadPerTaskExecutor();
+                                 // => New: virtual thread per task (lightweight, no limit)
+                                 // => Same ExecutorService API, different implementation
+                                 // => Code unchanged, just swap executor
 
 // Virtual thread debugging
-// jcmd <pid> Thread.dump_to_file -format=json <file>
-// Virtual threads visible in thread dumps
+// => jcmd <pid> Thread.dump_to_file -format=json <file>
+// => Virtual threads visible in thread dumps (JFR events)
+// => Carrier thread mapping visible for debugging pinning issues
 ```
 
 **Key Takeaway**: Virtual threads are lightweight (millions possible) with M:N mapping to platform threads. Ideal for I/O-bound workloads—unmount from carrier when blocking. Create per-task with `Thread.ofVirtual()` or `Executors.newVirtualThreadPerTaskExecutor()`. Avoid synchronized blocks (pins carrier), use `ReentrantLock`. Simplifies concurrency without callbacks.
@@ -5070,138 +5022,176 @@ Modern Java emphasizes immutability, composition, type safety, and simplicity. R
 ```java
 // Prefer composition over inheritance
 // Bad - inheritance for code reuse
-class Stack extends ArrayList {
-    // Inherits methods that break stack semantics (add at index, etc.)
+class Stack extends ArrayList {                                      // => Inherits 20+ ArrayList methods
+    // Inherits methods that break stack semantics (add at index, etc.)  // => Violates encapsulation (stack = LIFO only)
 }
 
 // Good - composition
-class Stack {
-    private List items = new ArrayList<>();
+class Stack {                                                        // => Composition-based design
+    private List items = new ArrayList<>();                         // => Delegates to internal list
 
-    public void push(Object item) { items.add(item); }
-    public Object pop() { return items.remove(items.size() - 1); }
-    // Only expose stack operations
+    public void push(Object item) { items.add(item); }             // => Only LIFO push operation
+    public Object pop() { return items.remove(items.size() - 1); } // => Only LIFO pop operation
+    // Only expose stack operations                                  // => Prevents misuse (no add at index)
 }
 
 // Use streams judiciously (readability vs performance)
 // Stream: readable, potential parallelization
-List<String> names = users.stream()
-    .filter(u -> u.isActive())
-    .map(User::getName)
-    .collect(Collectors.toList());
+List<String> names = users.stream()                                 // => Creates stream from users list
+    .filter(u -> u.isActive())                                      // => Filters active users only
+    .map(User::getName)                                             // => Extracts names
+    .collect(Collectors.toList());                                  // => names = ["Alice", "Bob", "Charlie"]
 
 // For-loop: faster for simple operations
-List<String> names2 = new ArrayList<>();
-for (User u : users) {
-    if (u.isActive()) {
-        names2.add(u.getName());
-    }
-}
+List<String> names2 = new ArrayList<>();                            // => names2 = [] (empty)
+for (User u : users) {                                              // => Iterates each user
+    if (u.isActive()) {                                             // => Checks active status
+        names2.add(u.getName());                                    // => Adds name to list
+    }                                                                // => Faster for small collections
+}                                                                    // => names2 = ["Alice", "Bob", "Charlie"]
 
 // Leverage records for data carriers
-record Point(int x, int y) {}
-record Person(String name, int age) {}
+record Point(int x, int y) {}                                       // => Compact data class (Java 16+)
+record Person(String name, int age) {}                              // => Auto-generates constructor, getters, equals, hashCode, toString
 
-Point p = new Point(10, 20);
-// Auto-generated: constructor, getters, equals, hashCode, toString
+Point p = new Point(10, 20);                                        // => p.x() = 10, p.y() = 20
+// Auto-generated: constructor, getters, equals, hashCode, toString  // => p.toString() = "Point[x=10, y=20]"
 
 // Sealed classes for domain modeling
-sealed interface Result permits Success, Failure {}
-record Success(String data) implements Result {}
-record Failure(String error) implements Result {}
+sealed interface Result permits Success, Failure {}                 // => Only Success/Failure can implement Result
+record Success(String data) implements Result {}                    // => Success case
+record Failure(String error) implements Result {}                   // => Failure case
 
 // Pattern matching for cleaner code
-String message = switch (result) {
-    case Success(String data) -> "Success: " + data;
-    case Failure(String error) -> "Error: " + error;
-};
+String message = switch (result) {                                  // => Exhaustive pattern matching
+    case Success(String data) -> "Success: " + data;                // => Destructures Success record
+    case Failure(String error) -> "Error: " + error;                // => Destructures Failure record
+};                                                                   // => message = "Success: OK" or "Error: Failed"
 
 // Immutability by default
 // Bad - mutable
-class MutablePoint {
-    public int x, y;
+class MutablePoint {                                                 // => Public fields = mutable
+    public int x, y;                                                 // => Can be changed: p.x = 999
 }
 
 // Good - immutable
-record ImmutablePoint(int x, int y) {}
+record ImmutablePoint(int x, int y) {}                              // => Final fields, no setters
+                                                                     // => Cannot change after creation
 
 // Explicit nullability with Optional
 // Bad - null return
-public User findUser(Long id) {
-    return null; // Implicit null
+public User findUser(Long id) {                                     // => Returns User or null (implicit)
+    return null;                                                     // => Caller must check for null manually
 }
 
 // Good - Optional
-public Optional<User> findUser(Long id) {
-    return Optional.ofNullable(repository.find(id));
-}
+public Optional<User> findUser(Long id) {                           // => Returns Optional<User> (explicit nullability)
+    return Optional.ofNullable(repository.find(id));                // => Wraps nullable value
+}                                                                    // => Caller forced to handle empty case
 
-user.ifPresent(u -> System.out.println(u.getName()));
+user.ifPresent(u -> System.out.println(u.getName()));               // => Only prints if user present
+                                                                     // => Output: "Alice" (if user exists)
 
 // Use var for obvious types
-var users = userRepository.findAll(); // Type obvious from method name
-var count = users.size(); // Type obvious
+var users = userRepository.findAll();
+                                 // => Type inferred: List<User> (obvious from method return type)
+                                 // => Compiler resolves type at compile time (not runtime)
+                                 // => users is List<User> (static typing preserved)
+var count = users.size();        // => Type inferred: int (obvious from List.size() return type)
+                                 // => count is int (static typing)
 
 // Testing as first-class activity
-@Test
-void shouldCreateUser() {
-    // Arrange
+@Test                            // => JUnit test annotation (marks method as test)
+void shouldCreateUser() {        // => Test method (void return, descriptive name)
+                                 // => Naming: should[Action] describes expected behavior
+    // Arrange                   // => Setup phase: prepare test data
     User user = new User("Alice", "alice@example.com");
+                                 // => user = User[name=Alice, email=alice@example.com]
+                                 // => Test data created
 
-    // Act
-    userService.create(user);
+    // Act                       // => Execution phase: invoke system under test
+    userService.create(user);    // => Calls create method (operation being tested)
+                                 // => Persists user to repository
 
-    // Assert
+    // Assert                    // => Verification phase: check expected outcome
     User saved = userRepository.find(user.getId());
+                                 // => Retrieves user from repository
+                                 // => saved should match original user
     assertEquals("Alice", saved.getName());
+                                 // => Verifies name persisted correctly
+                                 // => Test fails if names don't match
 }
 
-// Modern module organization
-// module-info.java
-module com.example.app {
-    requires java.sql;
-    exports com.example.app.api;
+// Modern module organization (Java 9+)
+// => module-info.java defines module boundaries
+// => Encapsulation at module level (stronger than package-private)
+module com.example.app {         // => Declares module com.example.app
+    requires java.sql;           // => Declares dependency on java.sql module
+                                 // => Module system enforces at compile/runtime
+    exports com.example.app.api; // => Makes api package accessible to other modules
+                                 // => Internal packages hidden by default
     opens com.example.app.entity to org.hibernate.orm;
-}
+                                 // => Allows reflective access to entity package
+                                 // => Required for Hibernate to access private fields
+}                                // => Module provides strong encapsulation
 
 // Prefer method references over lambdas
-// Lambda
+// => Lambda: verbose, explicit parameter
 users.forEach(u -> System.out.println(u));
+                                 // => Lambda receives User u, prints u
+                                 // => Output: [User@123, User@456, ...]
 
-// Method reference (cleaner)
+// => Method reference: cleaner, same behavior
 users.forEach(System.out::println);
+                                 // => Method reference (::) to println
+                                 // => Equivalent to u -> System.out.println(u)
+                                 // => Output: [User@123, User@456, ...]
 
 // Use try-with-resources for AutoCloseable
 try (var reader = new BufferedReader(new FileReader("file.txt"))) {
-    return reader.readLine();
-} // Auto-closed
+                                 // => Creates BufferedReader (implements AutoCloseable)
+                                 // => try-with-resources ensures reader.close() called
+                                 // => Automatic cleanup even on exception
+    return reader.readLine();    // => Reads first line from file
+                                 // => Returns line (reader auto-closed after return)
+} // => reader.close() called here (automatic)
+  // => Prevents resource leaks
 
 // Avoid premature optimization
-// 1. Write clear code first
-// 2. Profile to find bottlenecks
-// 3. Optimize where measurements prove necessary
+// => 1. Write clear code first (readability priority)
+// => 2. Profile to find bottlenecks (measure, don't guess)
+// => 3. Optimize where measurements prove necessary (data-driven)
+// => "Premature optimization is the root of all evil" - Donald Knuth
 
 // Document public APIs
 /**
  * Calculates the sum of two integers.
- *
- * @param a the first integer
- * @param b the second integer
- * @return the sum of a and b
- */
-public int add(int a, int b) {
-    return a + b;
+ *                                 // => Javadoc comment for public API
+ * @param a the first integer     // => Parameter documentation
+ * @param b the second integer    // => Parameter documentation
+ * @return the sum of a and b     // => Return value documentation
+ */                               // => Generates HTML documentation (javadoc tool)
+public int add(int a, int b) {   // => Public API method
+    return a + b;                // => Returns sum (a + b)
 }
 
 // Use enums for type-safe constants
 enum Status { PENDING, APPROVED, REJECTED }
+                                 // => Type-safe enumeration (compile-time checked)
+                                 // => Status.PENDING, Status.APPROVED, Status.REJECTED
+                                 // => Prevents invalid values (no magic strings)
 
-// Modern exception handling
+// Modern exception handling (multi-catch, Java 7+)
 try {
-    riskyOperation();
+    riskyOperation();            // => May throw IOException or SQLException
+                                 // => Calls operation that might fail
 } catch (IOException | SQLException e) {
-    // Multi-catch
+                                 // => Multi-catch: handles both exception types
+                                 // => Single catch block instead of two separate blocks
+                                 // => e is final (cannot reassign)
     logger.error("Operation failed", e);
+                                 // => Logs error with exception stacktrace
+                                 // => Same handler for both exception types
 }
 
 // Text blocks for multi-line strings (Java 15+)
@@ -5210,26 +5200,37 @@ String json = """
         "name": "Alice",
         "age": 30
     }
-    """;
+    """;                         // => Text block (multi-line string literal)
+                                 // => Preserves formatting (no escape sequences)
+                                 // => Automatic indentation handling
+                                 // => json = "{\n    \"name\": \"Alice\",\n    \"age\": 30\n}\n"
 
 // Switch expressions (Java 14+)
-int numLetters = switch (day) {
+int numLetters = switch (day) {  // => Switch as expression (returns value)
+                                 // => Exhaustiveness checked at compile time
     case MONDAY, FRIDAY, SUNDAY -> 6;
-    case TUESDAY -> 7;
+                                 // => Multiple cases with arrow syntax
+                                 // => Returns 6 (implicit break)
+    case TUESDAY -> 7;           // => Single case, returns 7
     default -> throw new IllegalArgumentException();
-};
+                                 // => Default required for exhaustiveness (unless all cases covered)
+                                 // => Throws exception for unexpected values
+};                               // => numLetters assigned result (6 or 7 or exception)
 
 // Helpful NullPointerExceptions (Java 14+)
-// Shows which variable was null in chain
-// user.getAddress().getStreet() => "Cannot invoke getStreet() because getAddress() returned null"
+// => JVM shows WHICH reference was null in call chain
+// => Example: user.getAddress().getStreet()
+// => Old message: "NullPointerException" (unhelpful)
+// => New message: "Cannot invoke getStreet() because getAddress() returned null"
+// => Identifies exact null point in chain (debugging aid)
 
 // Modern Java philosophy
-// - Immutability reduces bugs
-// - Composition over inheritance
-// - Explicit over implicit (Optional, sealed classes)
-// - Type safety (records, sealed classes, pattern matching)
-// - Simplicity (avoid over-engineering)
-// - Testing and observability built-in
+// => - Immutability reduces bugs (fewer side effects, safer concurrency)
+// => - Composition over inheritance (flexible, avoids fragile base class)
+// => - Explicit over implicit (Optional vs null, sealed classes vs open hierarchies)
+// => - Type safety (records, sealed classes, pattern matching prevent runtime errors)
+// => - Simplicity (avoid over-engineering, YAGNI principle)
+// => - Testing and observability built-in (JUnit, JFR, monitoring)
 ```
 
 **Key Takeaway**: Modern Java emphasizes immutability (records, final), composition over inheritance, type safety (sealed classes, pattern matching), and explicitness (Optional). Use streams for readability, records for data, sealed classes for modeling. Testing essential. Avoid premature optimization—profile first. Simplicity over complexity.
