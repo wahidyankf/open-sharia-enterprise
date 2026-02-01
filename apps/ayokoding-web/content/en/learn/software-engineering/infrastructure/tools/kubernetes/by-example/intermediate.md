@@ -2103,60 +2103,126 @@ spec:
 Local PersistentVolumes use node-local storage (SSDs, NVMe) for high-performance workloads requiring low latency. Pods using local volumes are bound to specific nodes.
 
 ```yaml
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
+apiVersion:
+  storage.k8s.io/v1 # => Storage API version
+  # => Stable storage API
+kind:
+  StorageClass # => StorageClass for local volumes
+  # => Defines storage provisioning policy
 metadata:
-  name: local-storage
+  # => StorageClass metadata
+  name:
+    local-storage # => StorageClass name
+    # => Referenced by PV and PVC
 provisioner:
-  kubernetes.io/no-provisioner
-  # => No dynamic provisioning
+  # => Provisioner configuration
+  kubernetes.io/no-provisioner # => No dynamic provisioning
   # => PVs must be created manually
+  # => Static provisioning only
 volumeBindingMode:
-  WaitForFirstConsumer
-  # => Essential for local volumes
+  # => Volume binding behavior
+  WaitForFirstConsumer # => Essential for local volumes
   # => Ensures Pod scheduled on node with PV
+  # => Delays PVC binding until Pod creation
+  # => Prevents scheduling conflicts
 
 ---
-apiVersion: v1
-kind: PersistentVolume
+apiVersion:
+  v1 # => Core Kubernetes API
+  # => Stable PV API
+kind:
+  PersistentVolume # => PersistentVolume resource
+  # => Represents node-local storage
 metadata:
-  name: local-pv
+  # => PV metadata
+  name:
+    local-pv # => PV identifier
+    # => Unique cluster-wide name
 spec:
+  # => PV specification
   capacity:
-    storage: 100Gi
+    # => Storage capacity
+    storage:
+      100Gi # => 100 GiB capacity
+      # => Size of local disk
   accessModes:
+    # => Access mode restrictions
     - ReadWriteOnce # => Local volumes always ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: local-storage
+      # => Single node mount only
+      # => Cannot be shared across nodes
+  persistentVolumeReclaimPolicy:
+    Retain # => Reclaim policy
+    # => PV retained after PVC deletion
+    # => Manual cleanup required
+  storageClassName:
+    local-storage # => StorageClass reference
+    # => Links to StorageClass above
   local:
-    path: /mnt/disks/ssd1 # => Path on node
+    # => Local volume configuration
+    path:
+      /mnt/disks/ssd1 # => Path on node
+      # => Node filesystem mount point
+      # => Must exist before PV creation
   nodeAffinity: # => Required for local volumes
+    # => Node affinity rules
+    # => Binds PV to specific node
     required:
+      # => Required node selector
       nodeSelectorTerms:
+        # => Node selector terms
         - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
+            # => Match expression list
+            - key:
+                kubernetes.io/hostname # => Node hostname label
+                # => Standard Kubernetes label
+              operator:
+                In # => Operator type
+                # => Must match one of values
               values:
+                # => Allowed node names
                 - node-1 # => PV available only on node-1
+                  # => Restricts to single node
+                  # => Pod must schedule here
 
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
+apiVersion:
+  v1 # => Core Kubernetes API
+  # => Stable PVC API
+kind:
+  PersistentVolumeClaim # => PVC resource
+  # => Claims the local PV
 metadata:
-  name: local-pvc
+  # => PVC metadata
+  name:
+    local-pvc # => PVC identifier
+    # => Referenced by Pod volumes
 spec:
+  # => PVC specification
   accessModes:
-    - ReadWriteOnce
-  storageClassName: local-storage
+    # => Requested access modes
+    - ReadWriteOnce # => Single node access
+      # => Must match PV access mode
+  storageClassName:
+    local-storage # => StorageClass reference
+    # => Links to StorageClass
+    # => Filters matching PVs
   resources:
+    # => Storage resource request
     requests:
-      storage: 100Gi
+      # => Minimum capacity request
+      storage:
+        100Gi # => Request 100 GiB
+        # => Must match PV capacity
 
 # Local PV behavior:
 # => Pod using local-pvc scheduled on node-1 (PV location)
+# => Node affinity enforces Pod placement
 # => No cross-node portability (Pod stuck on node-1)
+# => Pod cannot migrate to different node
 # => Highest performance (local SSD/NVMe)
+# => Sub-millisecond latency
 # => Risk: node failure means data loss (use replication)
+# => Application-level HA required
 ```
 
 **Key Takeaway**: Use local PersistentVolumes for latency-sensitive workloads like databases; understand trade-off between performance and availability; implement application-level replication for fault tolerance.

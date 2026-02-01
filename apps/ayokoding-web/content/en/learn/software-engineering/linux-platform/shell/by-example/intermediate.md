@@ -20,109 +20,59 @@ The `sed` (stream editor) command performs text transformations on files or stre
 ```bash
 # Basic substitution (first occurrence per line)
 echo "hello world" | sed 's/world/universe/'
-                                # => Creates new stream from echo output
-                                # => sed processes line-by-line
-                                # => 's/world/universe/' is substitution command
-                                # => s: substitute, /world/: pattern to find
-                                # => /universe/: replacement text
-                                # => Matches only FIRST occurrence per line
-                                # => Output: hello universe
-                                # => Stream editor modifies text in-flight
+                                # => s/world/universe/: substitute pattern
+                                # => Replaces first "world" with "universe"
 
 # Global substitution (all occurrences)
 echo "foo bar foo" | sed 's/foo/baz/g'
-                                # => Input: "foo bar foo"
                                 # => g flag: global replacement
-                                # => Without g: only first "foo" replaced
-                                # => With g: ALL occurrences replaced
-                                # => Output: baz bar baz
+                                # => Replaces ALL "foo" with "baz"
 
 # Substitute in file (preview)
-sed 's/old/new/g' file.txt      # => Reads file.txt line-by-line
-                                # => Applies substitution to each line
-                                # => Prints transformed output to stdout
-                                # => Original file.txt UNCHANGED (safe preview)
+sed 's/old/new/g' file.txt      # => Prints modified output to stdout
+                                # => Original file unchanged (safe preview)
 
 # In-place editing
-sed -i 's/old/new/g' file.txt   # => -i: in-place mode
-                                # => Modifies file.txt DIRECTLY
-                                # => NO backup created
-                                # => DANGEROUS: no undo if wrong!
-                                # => Use only when certain
-                                # => Overwrites original file permanently
+sed -i 's/old/new/g' file.txt   # => -i: modifies file directly
+                                # => No backup created
 
 # In-place with backup
 sed -i.bak 's/old/new/g' file.txt
-                                # => -i.bak: in-place with backup extension
-                                # => Creates file.txt.bak (original content)
+                                # => Creates file.txt.bak backup
                                 # => Then modifies file.txt
-                                # => Safer: can restore from .bak
-                                # => Production best practice
-                                # => Backup extension can be any string
 
 # Delete lines matching pattern
-sed '/^#/d' file.txt            # => /^#/: regex pattern (lines starting with #)
-                                # => d: delete command
-                                # => ^: start of line anchor
+sed '/^#/d' file.txt            # => /^#/d: delete lines starting with #
                                 # => Removes comment lines
-                                # => Prints remaining lines to stdout
-                                # => Filters out comments from output
 
 # Delete line number
-sed '3d' file.txt               # => 3: line number (third line)
-                                # => d: delete command
-                                # => Deletes specific line by number
-                                # => Removes only line 3
-                                # => Other lines unchanged
+sed '3d' file.txt               # => 3d: delete line 3
 
 # Delete range
-sed '2,5d' file.txt             # => 2,5: line range (lines 2 through 5 inclusive)
-                                # => d: delete command
-                                # => Removes lines 2, 3, 4, 5
-                                # => Lines 1, 6+ remain
+sed '2,5d' file.txt             # => 2,5d: delete lines 2-5
 
 # Print specific lines
-sed -n '1,10p' file.txt         # => -n: suppress automatic printing
-                                # => 1,10: line range (1 through 10)
-                                # => p: print command (explicit print)
-                                # => Without -n: prints all + specified lines (duplication)
-                                # => With -n: prints ONLY specified lines
+sed -n '1,10p' file.txt         # => -n: suppress default output
+                                # => 1,10p: print lines 1-10 only
 
 # Multiple operations
 sed -e 's/foo/bar/g' -e 's/baz/qux/g' file.txt
-                                # => -e: expression flag (multiple commands)
-                                # => First -e: replace foo → bar globally
-                                # => Second -e: replace baz → qux globally
-                                # => Applied sequentially to each line
-                                # => Both transformations in single pass
+                                # => -e: chain multiple commands
+                                # => Applied sequentially per line
 
 # Practical: remove trailing whitespace
 sed 's/[[:space:]]*$//' file.txt
-                                # => [[:space:]]: character class (spaces, tabs, etc.)
-                                # => *: zero or more occurrences
-                                # => $: end of line anchor
-                                # => Matches trailing whitespace
-                                # => Replaces with empty string (removes)
-                                # => Cleans up messy files
+                                # => [[:space:]]*$: match trailing whitespace
+                                # => Replaces with empty string
 
 # Practical: comment out lines
-sed 's/^/# /' code.sh           # => s/^/# /: substitution command
-                                # => ^: start of line (zero-width)
-                                # => Replaces start with "# "
-                                # => Effectively adds "# " to beginning
+sed 's/^/# /' code.sh           # => s/^/# /: prepend "# " to each line
                                 # => Converts code to comments
 
 # Practical: extract email addresses
 sed -n 's/.*\([a-zA-Z0-9.]*@[a-zA-Z0-9.]*\).*/\1/p' contacts.txt
-                                # => -n: suppress default printing
-                                # => .*: match any characters before email
-                                # => \(...\): capture group (backreference)
-                                # => [a-zA-Z0-9.]*: username part
-                                # => @: literal @ symbol
-                                # => [a-zA-Z0-9.]*: domain part
-                                # => \1: reference to captured group
-                                # => p: print only matching lines
-                                # => Extracts email, discards rest of line
+                                # => \(...\): capture group for email
+                                # => \1: output captured email only
 ```
 
 **Key Takeaway**: Use `sed` for quick text transformations with `s/pattern/replacement/g` for global substitution, `/pattern/d` for deletion, and `-i.bak` for safe in-place editing - it's perfect for automated text processing in scripts.
@@ -153,93 +103,64 @@ ps aux | awk '{print $1, $11}'  # => ps aux: process listing with columns
 
 # Custom delimiter
 awk -F':' '{print $1}' /etc/passwd
-                                # => -F':': sets field separator to colon
-                                # => /etc/passwd format: username:password:uid:gid:...
+                                # => -F':': colon field separator
                                 # => $1: first field (username)
-                                # => Extracts usernames from each line
 
 # Field count
 echo "a b c d" | awk '{print NF}'
-                                # => NF: built-in variable (Number of Fields)
-                                # => Input has 4 space-separated fields
-                                # => Output: 4
+                                # => NF: Number of Fields variable
+                                # => Outputs: 4
 
 # Last field
 echo "a b c d" | awk '{print $NF}'
-                                # => $NF: references last field
-                                # => NF=4, so $NF is $4
-                                # => Useful when field count varies
-                                # => Output: d
+                                # => $NF: references last field dynamically
+                                # => Outputs: d
 
 # Pattern matching
 awk '/error/ {print $0}' logfile.txt
-                                # => /error/: regex pattern (line contains "error")
-                                # => {print $0}: action if pattern matches
-                                # => $0: entire line (all fields)
-                                # => Only prints lines containing "error"
-                                # => Acts like grep but allows further processing
+                                # => /error/: match pattern
+                                # => Prints lines containing "error"
 
 # Conditional actions
 awk '$3 > 100 {print $1, $3}' data.txt
-                                # => $3 > 100: numeric comparison condition
-                                # => Executes action block only if third field > 100
-                                # => {print $1, $3}: prints first and third fields
-                                # => Skips lines not meeting condition
+                                # => $3 > 100: condition on third field
+                                # => Prints first and third fields if true
 
 # BEGIN and END blocks
 awk 'BEGIN {sum=0} {sum+=$1} END {print sum}' numbers.txt
-                                # => BEGIN {sum=0}: runs ONCE before input
-                                # => Initializes sum variable to 0
-                                # => {sum+=$1}: runs for EACH line, adds first field
-                                # => END {print sum}: runs ONCE after all input
-                                # => Prints accumulated sum
+                                # => BEGIN: initialize before input
+                                # => {sum+=$1}: accumulate per line
+                                # => END: print final sum
 
 # Calculate average
 awk '{sum+=$1; count++} END {print sum/count}' numbers.txt
-                                # => {sum+=$1; count++}: for each line
-                                # => sum accumulates total, count tracks lines
-                                # => END {print sum/count}: calculates average
-                                # => Division performed after all input processed
+                                # => Accumulate sum and count
+                                # => END: calculate average
 
 # Multiple conditions
 awk '$1 == "error" && $2 > 100 {print}' log.txt
-                                # => $1 == "error": string equality check
                                 # => &&: logical AND operator
-                                # => $2 > 100: numeric comparison
                                 # => Both conditions must be true
-                                # => {print}: prints entire line ($0 implicit)
 
 # Formatted output
 awk '{printf "%-10s %5d\n", $1, $2}' data.txt
-                                # => printf: formatted print (like C printf)
+                                # => printf: formatted output
                                 # => %-10s: left-align string, width 10
-                                # => %5d: right-align integer, width 5
-                                # => \n: explicit newline
-                                # => $1, $2: values to format
 
 # Practical: sum disk usage
 du -b * | awk '{total+=$1} END {print total " bytes"}'
-                                # => du -b: disk usage in bytes
-                                # => {total+=$1}: accumulate first field (size)
-                                # => END: runs after all files processed
-                                # => String concatenation: total " bytes"
-                                # => Prints total size
+                                # => Accumulate disk usage sizes
+                                # => END: print total bytes
 
 # Practical: process CSV
 awk -F',' '{print $2, $3}' data.csv
-                                # => -F',': set field separator to comma
-                                # => CSV: comma-separated values
-                                # => $2, $3: second and third columns
-                                # => Extracts specific columns from CSV
+                                # => -F',': comma delimiter for CSV
+                                # => Extract columns 2 and 3
 
 # Practical: count occurrences
 awk '{count[$1]++} END {for (word in count) print word, count[word]}' words.txt
-                                # => count[$1]++: associative array (hash map)
-                                # => $1: first field used as key
-                                # => ++: increment count for that word
-                                # => END: after all input processed
-                                # => for (word in count): iterate over keys
-                                # => print word, count[word]: word and its frequency
+                                # => count[$1]++: associative array
+                                # => END: iterate and print frequencies
 ```
 
 **Key Takeaway**: Use `awk` for field-based text processing with `$1, $2, ...` for columns, `-F` for custom delimiters, and `BEGIN/END` blocks for initialization/summary - it's more powerful than `cut` and ideal for log analysis and data extraction.
@@ -870,96 +791,52 @@ chmod u+x script.sh             # => u+x: symbolic notation
                                 # => Other permissions unchanged
                                 # => Relative change (not absolute)
 
-chmod go-w file.txt             # => go-w: symbolic notation
-                                # => g: group, o: others
-                                # => -: remove permission
-                                # => w: write permission
-                                # => Removes write for group AND others
-                                # => Multiple targets in single command
+chmod go-w file.txt             # => go-w: remove write for group and others
 
-chmod a+r file.txt              # => a+r: symbolic notation
-                                # => a: all (user, group, others)
-                                # => +: add permission
-                                # => r: read permission
-                                # => Makes file readable by everyone
-                                # => Adds read for everyone
+chmod a+r file.txt              # => a+r: add read for all users
 
-chmod u=rwx,g=rx,o=r file.txt   # => Absolute symbolic notation
-                                # => u=rwx: set owner to rwx (discard previous)
-                                # => g=rx: set group to r-x
-                                # => o=r: set others to r--
+chmod u=rwx,g=rx,o=r file.txt   # => Set owner=rwx, group=rx, others=r
                                 # => Equivalent to chmod 754
 
 # Recursive permissions
-chmod -R 755 /var/www/html      # => -R: recursive flag
-                                # => Applies 755 to directory
-                                # => AND all subdirectories
-                                # => AND all files within
-                                # => Processes entire directory tree
+chmod -R 755 /var/www/html      # => -R: apply to directory tree recursively
 
 # Make script executable
-chmod +x deploy.sh              # => +x without user prefix
-                                # => Implies a+x (all users)
-                                # => Adds execute permission for owner, group, others
-                                # => Now can run: ./deploy.sh
+chmod +x deploy.sh              # => +x: add execute for all users
 
 # Change ownership
-chown alice file.txt            # => chown: change owner
-                                # => Changes owner to "alice"
+chown alice file.txt            # => Change owner to "alice"
                                 # => Requires root/sudo privileges
-                                # => Group unchanged
 
-chown alice:developers file.txt # => owner:group syntax
-                                # => Changes owner to "alice"
-                                # => AND group to "developers"
-                                # => Single command for both
+chown alice:developers file.txt # => Set owner=alice, group=developers
 
 # Change group only
-chgrp developers file.txt       # => chgrp: change group
-                                # => Changes group to "developers"
-                                # => Owner unchanged
-                                # => Alternative to chown :developers
+chgrp developers file.txt       # => Change group to "developers"
 
 # Recursive ownership
 chown -R www-data:www-data /var/www
-                                # => -R: recursive
-                                # => Changes owner to www-data
-                                # => AND group to www-data
-                                # => Applies to /var/www and ALL contents
+                                # => -R: recursive ownership change
 
 # Practical: web server permissions
 # Files: 644 (rw-r--r--)
 find /var/www/html -type f -exec chmod 644 {} \;
-                                # => find: search for files
-                                # => -type f: regular files only (not directories)
-                                # => -exec: execute command on each match
-                                # => chmod 644 {}: {} replaced with found file path
-                                # => \;: terminates -exec command
-                                # => Sets all files to 644
+                                # => -type f: regular files only
+                                # => -exec chmod 644 {}: apply 644 to each
 
 # Directories: 755 (rwxr-xr-x)
 find /var/www/html -type d -exec chmod 755 {} \;
                                 # => -type d: directories only
-                                # => chmod 755: rwxr-xr-x
-                                # => Directories need execute for cd access
-                                # => Sets all directories to 755
+                                # => Directories need execute for cd
 
 # Uploads directory (writable by web server)
 chmod 775 /var/www/html/uploads
-                                # => 775: rwxrwxr-x
-                                # => Owner: rwx, Group: rwx, Others: r-x
-                                # => Group (www-data) can write
+                                # => 775: rwxrwxr-x (group writable)
 chown www-data:www-data /var/www/html/uploads
-                                # => Web server process runs as www-data
-                                # => Needs ownership to write files
+                                # => Web server needs ownership to write
 
 # Practical: secure private key
-chmod 600 ~/.ssh/id_rsa         # => 600: rw-------
-                                # => Owner: rw- (read, write)
-                                # => Group: --- (no access)
-                                # => Others: --- (no access)
-                                # => SSH requires this for security
-                                # => Refuses to use key if permissions too open
+chmod 600 ~/.ssh/id_rsa         # => 600: rw------- (owner only)
+                                # => SSH requires restricted permissions
 ```
 
 **Key Takeaway**: Use octal notation (644, 755, 700) for absolute permission sets, symbolic notation (u+x, go-w) for relative changes - remember that 644 is standard for files, 755 for directories/executables, and 600 for private keys, and always verify permissions after changes.
@@ -974,78 +851,41 @@ Archiving combines multiple files into one file, while compression reduces file 
 
 ```bash
 # Create tar archive
-tar -cf archive.tar files/      # => tar: tape archive utility
-                                # => -c: create mode (new archive)
-                                # => -f archive.tar: output filename
-                                # => files/: directory to archive
-                                # => Creates uncompressed archive
+tar -cf archive.tar files/      # => -c: create mode
+                                # => -f: output filename
 
 # Create compressed tar (gzip)
-tar -czf archive.tar.gz files/  # => -c: create mode
-                                # => -z: compress with gzip
-                                # => -f archive.tar.gz: output filename
-                                # => Combines archiving + compression
+tar -czf archive.tar.gz files/  # => -z: compress with gzip
                                 # => Extension: .tar.gz or .tgz
-                                # => Faster compression, larger size
 
 # Create compressed tar (bzip2)
-tar -cjf archive.tar.bz2 files/ # => -c: create mode
-                                # => -j: compress with bzip2
-                                # => Better compression ratio than gzip
-                                # => Slower than gzip
-                                # => Extension: .tar.bz2 or .tbz2
+tar -cjf archive.tar.bz2 files/ # => -j: compress with bzip2 (better ratio)
 
 # Create compressed tar (xz)
-tar -cJf archive.tar.xz files/  # => -c: create mode
-                                # => -J: compress with xz
-                                # => Best compression ratio
-                                # => Slowest compression
-                                # => Extension: .tar.xz
+tar -cJf archive.tar.xz files/  # => -J: compress with xz (best ratio)
 
 # Extract tar archive
 tar -xf archive.tar             # => -x: extract mode
-                                # => -f archive.tar: input filename
-                                # => Extracts to current directory
-                                # => Preserves directory structure
 
 # Extract compressed tar
-tar -xzf archive.tar.gz         # => -x: extract mode
-                                # => -z: decompress with gzip
-                                # => Auto-detects compression in modern tar
-tar -xjf archive.tar.bz2        # => -x: extract mode
-                                # => -j: decompress with bzip2
+tar -xzf archive.tar.gz         # => -z: decompress with gzip
+tar -xjf archive.tar.bz2        # => -j: decompress with bzip2
 
 # Extract to specific directory
-tar -xzf archive.tar.gz -C /tmp # => -x: extract mode
-                                # => -z: gzip decompression
-                                # => -C /tmp: change to /tmp before extracting
-                                # => Extracts contents to /tmp/
+tar -xzf archive.tar.gz -C /tmp # => -C /tmp: extract to /tmp/
 
 # List archive contents
-tar -tzf archive.tar.gz         # => -t: list mode (table of contents)
-                                # => -z: gzip decompression
-                                # => Lists files without extracting
-                                # => Preview archive contents
+tar -tzf archive.tar.gz         # => -t: list contents without extracting
 
 # Verbose output
-tar -czfv backup.tar.gz data/   # => -c: create
-                                # => -z: gzip
-                                # => -f backup.tar.gz: filename
-                                # => -v: verbose (show files as processed)
-                                # => Prints each file while archiving
+tar -czfv backup.tar.gz data/   # => -v: verbose (show files as processed)
 
 # Exclude files
 tar -czf backup.tar.gz --exclude='*.log' --exclude='.git' project/
-                                # => --exclude='*.log': skip log files
-                                # => --exclude='.git': skip .git directory
-                                # => Multiple --exclude flags allowed
-                                # => Glob patterns supported
+                                # => --exclude: skip matched patterns
 
 # Compress existing file (gzip)
-gzip large_file.txt             # => gzip: compression utility
-                                # => Creates large_file.txt.gz
-                                # => Original file is REMOVED!
-                                # => Destructive by default
+gzip large_file.txt             # => Creates .gz, removes original
 
 # Preserve original
 gzip -k large_file.txt          # => -k: keep original file
@@ -1197,67 +1037,45 @@ ssh user@server 'ls /var/log'   # => ssh: secure shell
 
 # SSH with key
 ssh -i ~/.ssh/id_rsa user@server
-                                # => -i: identity file (private key path)
-                                # => ~/.ssh/id_rsa: typical SSH key location
-                                # => Key-based auth (no password prompt)
-                                # => More secure than password auth
+                                # => -i: identity file (private key)
+                                # => Key-based auth (no password)
 
 # Copy file to remote (scp)
 scp file.txt user@server:/path/to/destination
-                                # => scp: secure copy (over SSH)
-                                # => file.txt: local source
-                                # => user@server: remote destination
-                                # => :/path/to/destination: absolute path on server
-                                # => Transfers over encrypted SSH connection
+                                # => scp: secure copy over SSH
 
 # Copy from remote
 scp user@server:/path/to/file.txt local_dir/
-                                # => Source: remote (user@server:path)
-                                # => Destination: local (local_dir/)
-                                # => Downloads file to local machine
+                                # => Download file from remote
 
 # Copy directory recursively
 scp -r directory/ user@server:/path/
-                                # => -r: recursive (includes subdirectories)
-                                # => Copies entire directory tree
-                                # => Preserves structure
+                                # => -r: recursive copy
 
 # Rsync (better than scp for large transfers)
 rsync -avz /local/path/ user@server:/remote/path/
-                                # => rsync: remote sync (efficient transfer)
-                                # => -a: archive mode (preserves permissions, times)
-                                # => -v: verbose (show files)
+                                # => -a: archive mode
+                                # => -v: verbose
                                 # => -z: compress during transfer
-                                # => Only transfers changed files (delta sync)
-                                # => Resumes on interruption
-                                # => Faster than scp for updates
+                                # => Only transfers changed files
 
 # Practical: API health check
 if curl -f -s -o /dev/null https://api.example.com/health; then
-                                # => -f: fail on HTTP errors (4xx, 5xx)
-                                # => -s: silent (no progress)
+                                # => -f: fail on HTTP errors
+                                # => -s: silent mode
                                 # => -o /dev/null: discard output
-                                # => if: check exit code (0 = success)
-    echo "API is up"            # => Exit code 0: HTTP 2xx/3xx
+    echo "API is up"
 else
-    echo "API is down"          # => Exit code non-zero: HTTP 4xx/5xx or network error
+    echo "API is down"
 fi
 
 # Practical: download and extract
 curl -L https://releases.example.com/app.tar.gz | tar -xzf -
-                                # => curl -L: download with redirects
-                                # => Outputs to stdout (no -o flag)
-                                # => |: pipe to tar
-                                # => tar -xzf -: extract gzip from stdin
-                                # => One-liner: download and extract
+                                # => Download and extract in one command
 
 # Practical: remote backup
 ssh user@server 'tar -czf - /data' > backup.tar.gz
-                                # => ssh: execute remote command
-                                # => tar -czf - /data: create archive to stdout
-                                # => >: redirect stdout to local file
-                                # => Streams compressed data over SSH
-                                # => Creates local backup.tar.gz
+                                # => Stream remote archive to local file
 ```
 
 **Key Takeaway**: Use `curl` for API interactions and flexible HTTP requests, `wget` for downloading files with resume support, and `ssh/scp/rsync` for secure remote access and file transfer - remember that `curl` writes to stdout by default while `wget` saves to files.
@@ -1272,151 +1090,88 @@ Task scheduling automates recurring jobs with `cron` or one-time execution with 
 
 ```bash
 # View current user's crontab
-crontab -l                      # => crontab: cron table management
-                                # => -l: list mode
-                                # => Shows all scheduled jobs for current user
-                                # => Empty if no jobs scheduled
+crontab -l                      # => -l: list scheduled jobs
 
 # Edit crontab
-crontab -e                      # => -e: edit mode
-                                # => Opens editor ($EDITOR or vi)
-                                # => Syntax-checks on save
-                                # => Rejects invalid cron syntax
+crontab -e                      # => -e: edit mode (syntax-checked on save)
 
 # Crontab format
 # Minute Hour Day Month DayOfWeek Command
 # 0-59   0-23 1-31 1-12  0-6      (0=Sunday)
                                 # => Five time fields + command
-                                # => Minute: 0-59
-                                # => Hour: 0-23 (0 is midnight)
-                                # => Day: 1-31
-                                # => Month: 1-12
-                                # => DayOfWeek: 0-6 (0=Sunday, 6=Saturday)
-                                # => *: any value (wildcard)
                                 # => */n: every n units
-                                # => n,m,o: specific values (comma-separated)
-                                # => n-m: range of values
+                                # => n,m,o: comma-separated values
 
 # Examples of cron schedules:
-# 0 2 * * *    /backup.sh       # => 0: minute 0
-                                # => 2: hour 2 (2:00 AM)
-                                # => *: any day of month
-                                # => *: any month
-                                # => *: any day of week
-                                # => Daily at 2:00 AM
-# 30 */6 * * * /check.sh        # => 30: minute 30
-                                # => */6: every 6 hours (0, 6, 12, 18)
-                                # => Every 6 hours at :30 (00:30, 06:30, 12:30, 18:30)
-# 0 0 * * 0    /weekly.sh       # => 0 0: midnight (00:00)
-                                # => *: any day of month
-                                # => *: any month
-                                # => 0: Sunday
-                                # => Weekly on Sunday at midnight
-# 0 9 1 * *    /monthly.sh      # => 0 9: 9:00 AM
-                                # => 1: first day of month
-                                # => *: any month
-                                # => *: any day of week
-                                # => Monthly on 1st at 9:00 AM
-# */15 * * * * /monitor.sh      # => */15: every 15 minutes (0, 15, 30, 45)
-                                # => *: every hour
-                                # => Runs 96 times per day
+# 0 2 * * *    /backup.sh       # => Daily at 2:00 AM
+# 30 */6 * * * /check.sh        # => Every 6 hours at :30
+# 0 0 * * 0    /weekly.sh       # => Weekly on Sunday at midnight
+# 0 9 1 * *    /monthly.sh      # => Monthly on 1st at 9:00 AM
+# */15 * * * * /monitor.sh      # => Every 15 minutes
 
 # Practical crontab entries
 crontab -e                      # => Open editor to add:
 
 # Backup database daily at 2 AM
 0 2 * * * /usr/local/bin/backup_db.sh >> /var/log/backup.log 2>&1
-                                # => 0 2: 2:00 AM
-                                # => >>: append stdout to log
+                                # => >>: append output
                                 # => 2>&1: redirect stderr to stdout
-                                # => Both stdout and stderr logged
 
 # Clean temp files every Sunday at 3 AM
 0 3 * * 0 find /tmp -type f -mtime +7 -delete
                                 # => 0 3 * * 0: Sunday 3:00 AM
-                                # => find: search temp files
                                 # => -mtime +7: modified more than 7 days ago
-                                # => -delete: remove matching files
 
 # Check disk space every hour
 0 * * * * df -h | mail -s "Disk Report" admin@example.com
                                 # => 0 *: top of every hour
-                                # => df -h: disk free (human-readable)
-                                # => |: pipe to mail
-                                # => mail -s: send email with subject
 
 # Special cron strings
-@reboot    /startup.sh          # => @reboot: at system startup
-                                # => Runs once per boot
-                                # => Useful for service initialization
-@daily     /daily_task.sh       # => @daily: equivalent to 0 0 * * *
-                                # => Midnight every day
-@hourly    /hourly_task.sh      # => @hourly: equivalent to 0 * * * *
-                                # => Start of every hour
-@weekly    /weekly_task.sh      # => @weekly: equivalent to 0 0 * * 0
-                                # => Sunday midnight
-@monthly   /monthly_task.sh     # => @monthly: equivalent to 0 0 1 * *
-                                # => First of month midnight
+@reboot    /startup.sh          # => At system startup
+@daily     /daily_task.sh       # => Equivalent to 0 0 * * *
+@hourly    /hourly_task.sh      # => Equivalent to 0 * * * *
+@weekly    /weekly_task.sh      # => Equivalent to 0 0 * * 0
+@monthly   /monthly_task.sh     # => Equivalent to 0 0 1 * *
 
 # One-time task with at
-echo "/backup.sh" | at 14:30    # => at: one-time task scheduler
-                                # => 14:30: 2:30 PM
-                                # => Runs /backup.sh once at specified time
-                                # => Job removed after execution
+echo "/backup.sh" | at 14:30    # => Runs once at 2:30 PM
 
 # Schedule for specific date
 echo "/backup.sh" | at 2:00 AM 2025-12-31
-                                # => Specific date and time
-                                # => Natural language time accepted
-                                # => Runs once at 2025-12-31 02:00
+                                # => Runs once at specific date/time
 
 # List scheduled at jobs
-atq                             # => at queue
-                                # => Lists pending one-time jobs
-                                # => Shows job number, date/time, user
+atq                             # => Lists pending one-time jobs
 
 # Remove at job
-atrm 1                          # => at remove
-                                # => 1: job number (from atq)
-                                # => Cancels scheduled job
+atrm 1                          # => Cancels job number 1
 
 # Practical: maintenance script with logging
 #!/bin/bash
 # Add to crontab: 0 3 * * * /path/to/maintenance.sh
 
 LOGFILE="/var/log/maintenance.log"
-                                # => Log file path
 
-log() {                         # => Logging function
+log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "$LOGFILE"
-                                # => $(date ...): timestamp
-                                # => >>: append to log file
-                                # => Creates timestamped log entry
+                                # => Timestamped log entry
 }
 
-log "Starting maintenance"      # => Log start
+log "Starting maintenance"
 
 # Clean old logs (older than 30 days)
 find /var/log -name "*.log" -mtime +30 -delete
-                                # => find: search log directory
-                                # => -name "*.log": log files only
-                                # => -mtime +30: older than 30 days
-                                # => -delete: remove matching files
 log "Cleaned old logs"
 
 # Optimize database
 mysqlcheck --optimize --all-databases
-                                # => mysqlcheck: MySQL maintenance utility
-                                # => --optimize: optimize tables
-                                # => --all-databases: all databases
 log "Optimized databases"
 
 # Update package list
-apt-get update -qq              # => apt-get update: refresh package list
-                                # => -qq: quiet (minimal output)
+apt-get update -qq              # => -qq: quiet mode
 log "Updated package list"
 
-log "Maintenance completed"     # => Log completion
+log "Maintenance completed"
 ```
 
 **Key Takeaway**: Use cron for recurring tasks with `crontab -e` to edit schedules, and `at` for one-time execution - always redirect cron output to log files for debugging, and remember that cron runs with limited environment variables so use absolute paths.
@@ -1749,141 +1504,70 @@ The `find` command searches for files based on name, type, size, time, permissio
 
 ```bash
 # Find by name
-find /home -name "*.log"         # => find: search utility
-                                 # => /home: starting directory (search path)
-                                 # => -name: match filename pattern
-                                 # => "*.log": glob pattern (case-sensitive)
-                                 # => Searches recursively through all subdirectories
-                                 # => Finds all files ending with .log
+find /home -name "*.log"         # => -name: match filename pattern
+                                 # => Recursive search from /home
 
 # Case-insensitive name
-find /home -iname "readme*"      # => -iname: case-insensitive name match
-                                 # => "readme*": matches any case variation
-                                 # => Matches: README, readme, Readme, rEaDmE.txt
-                                 # => Useful for cross-platform file searches
+find /home -iname "readme*"      # => -iname: case-insensitive match
 
 # Find by type
-find /var -type f                # => -type f: filter by file type
-                                 # => f: regular files
-                                 # => Excludes directories, symlinks, devices
-                                 # => Searches entire /var directory tree
-                                 # => Returns only regular files
+find /var -type f                # => -type f: regular files only
 
 find /var -type d -name "log*"   # => -type d: directories only
-                                 # => -name "log*": directories starting with "log"
-                                 # => Combines type and name filters
-                                 # => Both conditions must match (AND logic)
 
 # Find by size
-find . -size +100M               # => .: current directory
-                                 # => -size: filter by file size
-                                 # => +100M: greater than 100 megabytes
-                                 # => +: greater than, -: less than, no prefix: exact
-                                 # => M: megabytes suffix
+find . -size +100M               # => +100M: greater than 100MB
 
-find . -size -1k                 # => -1k: less than 1 kilobyte
-                                 # => k: kilobytes, M: megabytes, G: gigabytes
-                                 # => c: bytes (default if no suffix)
-                                 # => Finds small files
+find . -size -1k                 # => -1k: less than 1KB
 
 # Find by time
-find . -mtime -7                 # => -mtime: modification time filter
-                                 # => -7: modified within last 7 days
-                                 # => -N: less than N days ago (recent)
-                                 # => +N: more than N days ago (old)
-                                 # => Time measured in 24-hour periods
+find . -mtime -7                 # => -mtime -7: modified within last 7 days
 
-find . -mmin -60                 # => -mmin: modification time in minutes
-                                 # => -60: modified within last 60 minutes
-                                 # => More precise than -mtime
-                                 # => Useful for recent changes
+find . -mmin -60                 # => -mmin -60: modified within last 60 minutes
 
-find . -atime +30                # => -atime: access time filter
-                                 # => +30: accessed more than 30 days ago
-                                 # => Identifies unused files
-                                 # => Useful for cleanup scripts
+find . -atime +30                # => -atime +30: accessed more than 30 days ago
 
 # Find by permissions
 find . -perm 755                 # => -perm 755: exact permission match
-                                 # => Must match exactly rwxr-xr-x
-                                 # => No partial matches
-find . -perm -u=x                # => -u=x: symbolic permission notation
-                                 # => -: all specified bits must be set
-                                 # => u=x: user has execute permission
-                                 # => Other permissions don't matter
-find . -perm /u=x                # => /: any of specified bits set
-                                 # => Matches if user OR group OR other has execute
-                                 # => More permissive than -
+find . -perm -u=x                # => -u=x: user has execute
+find . -perm /u=x                # => /: any specified bits set
 
 # Find and execute
 find . -name "*.tmp" -exec rm {} \;
-                                 # => -exec: execute command on each match
-                                 # => rm {}: command to run
-                                 # => {}: placeholder replaced with found file path
-                                 # => \;: terminates -exec command
-                                 # => Runs rm once PER FILE (can be slow)
+                                 # => -exec rm {}: execute command per file
+                                 # => \;: terminates -exec
 
 # Find with -exec (more efficient)
 find . -name "*.log" -exec grep "error" {} +
-                                 # => {}: placeholder for found files
-                                 # => +: passes MULTIPLE files to single command
-                                 # => Groups files together (fewer command invocations)
-                                 # => More efficient than \; for bulk operations
+                                 # => +: passes multiple files to single command
 
 # Combine conditions
-find . -name "*.py" -size +10k   # => Multiple predicates (implicit AND)
-                                 # => -name "*.py": must be Python file
-                                 # => -size +10k: AND larger than 10KB
-                                 # => Both conditions must be true
+find . -name "*.py" -size +10k   # => Implicit AND: both conditions required
 
 find . -name "*.py" -o -name "*.sh"
-                                 # => -o: logical OR operator
-                                 # => Matches Python files OR shell scripts
-                                 # => Either condition satisfies match
+                                 # => -o: logical OR
 
 # Negation
-find . -not -name "*.bak"        # => -not: logical negation
-                                 # => Excludes files matching pattern
-                                 # => Finds everything EXCEPT .bak files
-find . ! -name "*.bak"           # => !: alternative negation syntax
-                                 # => Identical to -not
-                                 # => Shorter notation
+find . -not -name "*.bak"        # => -not: exclude pattern
+find . ! -name "*.bak"           # => !: alternative negation
 
 # Limit depth
 find . -maxdepth 2 -name "*.conf"
-                                 # => -maxdepth 2: limit search depth
-                                 # => 1: current directory only
-                                 # => 2: current + one subdirectory level
-                                 # => Prevents deep recursion
-                                 # => Only search 2 levels deep
+                                 # => -maxdepth 2: search 2 levels deep only
 
 # Practical: clean old files
 find /tmp -type f -mtime +30 -delete
-                                 # => /tmp: temporary file directory
-                                 # => -type f: regular files only
-                                 # => -mtime +30: older than 30 days
                                  # => -delete: remove matching files
-                                 # => Automatic cleanup maintenance
 
 # Practical: find large files
 find / -type f -size +500M 2>/dev/null | head -20
-                                 # => /: search entire filesystem
-                                 # => -size +500M: larger than 500MB
                                  # => 2>/dev/null: suppress permission errors
-                                 # => |: pipe to head
-                                 # => head -20: show first 20 results
-                                 # => Disk space troubleshooting
 
 # Practical: fix permissions
 find /var/www -type f -exec chmod 644 {} +
-                                 # => -type f: files only
-                                 # => chmod 644: rw-r--r--
-                                 # => Files readable by all, writable by owner
+                                 # => Set files to 644
 find /var/www -type d -exec chmod 755 {} +
-                                 # => -type d: directories only
-                                 # => chmod 755: rwxr-xr-x
-                                 # => Directories executable (cd-able)
-                                 # => Web server permission standard
+                                 # => Set directories to 755
 ```
 
 **Key Takeaway**: Use `find` with `-name` for pattern matching, `-type` for file types, `-size` and `-mtime` for filtering, and `-exec` for actions - combine conditions with `-a` (and), `-o` (or), and `!` (not) for complex queries.
@@ -1988,39 +1672,25 @@ email="user@example.com"         # => Test email string
 if [[ "$email" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
                                  # => [[ ... =~ ... ]]: bash regex match
                                  # => ^: start anchor
-                                 # => [a-zA-Z0-9._%+-]+: username part
-                                 # => @: literal @
-                                 # => [a-zA-Z0-9.-]+: domain name
-                                 # => \.: literal dot
-                                 # => [a-zA-Z]{2,}: TLD (2+ letters)
-                                 # => $: end anchor
-    echo "Valid email"           # => Executed if pattern matches
+                                 # => Pattern matches email format
+    echo "Valid email"
 fi
 
 # Extract matched portion
 if [[ "$text" =~ ([0-9]+) ]]; then
                                  # => (...): capture group
-                                 # => [0-9]+: one or more digits
-                                 # => Parentheses capture matched text
     echo "Number found: ${BASH_REMATCH[1]}"
-                                 # => BASH_REMATCH: array of captures
-                                 # => [0]: full match, [1]: first group
+                                 # => BASH_REMATCH[1]: first captured group
 fi
 
 # Sed with regex
 sed 's/[0-9]\+/NUMBER/g' file.txt
-                                 # => s/pattern/replacement/g
-                                 # => [0-9]: digit class
-                                 # => \+: one or more (escaped in sed BRE)
                                  # => Replace digit sequences with "NUMBER"
 
 # Practical: validate IP address
-ip="192.168.1.1"                 # => Test IP string
+ip="192.168.1.1"
 if [[ "$ip" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
-                                 # => ([0-9]{1,3}\.){3}: three groups of digits.dot
-                                 # => [0-9]{1,3}: 1-3 digits (octet)
-                                 # => \.{3}: literal dot, repeated 3 times
-                                 # => [0-9]{1,3}$: final octet
+                                 # => ([0-9]{1,3}\.){3}: three octets with dots
                                  # => Format check only (doesn't validate ranges)
     echo "Valid IP format"
 fi
@@ -2029,17 +1699,11 @@ fi
 grep -oE "[0-9]+\.[0-9]+\.[0-9]+" file.txt
                                  # => -o: print only matched portion
                                  # => -E: extended regex
-                                 # => [0-9]+: one or more digits
-                                 # => \.: literal dot
                                  # => Pattern: X.Y.Z (semantic versioning)
-                                 # => Example matches: 1.2.3, 10.20.30
 
 # Practical: remove HTML tags
-sed 's/<[^>]*>//g' page.html     # => <: literal opening bracket
-                                 # => [^>]*: any characters except >
-                                 # => >: literal closing bracket
-                                 # => Matches entire tag: <tag attr="value">
-                                 # => Replaces with empty string (removes)
+sed 's/<[^>]*>//g' page.html     # => <[^>]*>: matches any HTML tag
+                                 # => Replaces with empty string
 ```
 
 **Key Takeaway**: Use anchors (`^$`) for position, character classes (`[]`) for sets, quantifiers (`*+?{}`) for repetition, and `-E` for extended regex - remember that `[[ =~ ]]` enables regex in bash with `BASH_REMATCH` for captures.
@@ -2056,88 +1720,56 @@ Bash arrays store multiple values in a single variable. They're essential for ha
 # Declare indexed array
 fruits=("apple" "banana" "cherry")
                                  # => (...): array literal syntax
-                                 # => Space-separated elements
-                                 # => fruits[0]="apple", fruits[1]="banana", fruits[2]="cherry"
                                  # => Zero-based indexing
 
 # Alternative declaration
-declare -a numbers               # => declare -a: explicit array declaration
-                                 # => -a: indexed array (default)
-numbers[0]=10                    # => Assign to index 0
-numbers[1]=20                    # => Assign to index 1
-numbers[2]=30                    # => Assign to index 2
-                                 # => Can assign to any index (sparse arrays allowed)
+declare -a numbers               # => declare -a: explicit array
+numbers[0]=10
+numbers[1]=20
+numbers[2]=30
 
 # Access elements
-echo "${fruits[0]}"              # => ${array[index]}: element access syntax
-                                 # => Curly braces required for array indexing
+echo "${fruits[0]}"              # => ${array[index]}: element access
                                  # => Output: apple
-echo "${fruits[1]}"              # => Access second element
-                                 # => Output: banana
+echo "${fruits[1]}"              # => Output: banana
 
 # Access all elements
 echo "${fruits[@]}"              # => @: all elements as separate words
-                                 # => Expands to: "apple" "banana" "cherry"
-                                 # => Preserves word splitting
                                  # => Output: apple banana cherry
 echo "${fruits[*]}"              # => *: all elements as single string
-                                 # => Joins with first char of IFS (default: space)
-                                 # => Expands to: "apple banana cherry"
-                                 # => Output: apple banana cherry
 
 # Array length
-echo "${#fruits[@]}"             # => #: length operator
-                                 # => ${#array[@]}: count of elements
-                                 # => Output: 3
+echo "${#fruits[@]}"             # => Count of elements (Output: 3)
 
 # Element length
-echo "${#fruits[0]}"             # => ${#array[index]}: string length of element
-                                 # => Length of "apple"
-                                 # => Output: 5
+echo "${#fruits[0]}"             # => String length of element (Output: 5)
 
 # Append elements
-fruits+=("date")                 # => +=(): append syntax
-                                 # => Adds element to end of array
-                                 # => fruits[3]="date"
-fruits+=("elderberry" "fig")     # => Append multiple elements
-                                 # => fruits[4]="elderberry", fruits[5]="fig"
+fruits+=("date")                 # => Append to end
+fruits+=("elderberry" "fig")     # => Append multiple
 
 # Slice array
-echo "${fruits[@]:1:2}"          # => ${array[@]:offset:length}: slice syntax
-                                 # => :1: start at index 1
-                                 # => :2: take 2 elements
+echo "${fruits[@]:1:2}"          # => ${array[@]:offset:length}
                                  # => Output: banana cherry
 
 # All indices
-echo "${!fruits[@]}"             # => !: indirection operator
-                                 # => ${!array[@]}: list of indices
-                                 # => Useful for sparse arrays with gaps
-                                 # => Output: 0 1 2 3 4 5
+echo "${!fruits[@]}"             # => List of indices (Output: 0 1 2 3 4 5)
 
 # Iterate over array
-for fruit in "${fruits[@]}"; do  # => "${array[@]}": quoted expansion (preserves spaces)
-                                 # => Each element becomes separate argument
-                                 # => Loop variable receives each element
+for fruit in "${fruits[@]}"; do  # => Quoted expansion preserves spaces
     echo "Fruit: $fruit"
 done
 
 # Iterate with index
-for i in "${!fruits[@]}"; do     # => "${!array[@]}": iterate over indices
-                                 # => i receives index (0, 1, 2, ...)
+for i in "${!fruits[@]}"; do     # => Iterate over indices
     echo "Index $i: ${fruits[$i]}"
-                                 # => Access element by index
 done
 
 # Remove element
-unset 'fruits[1]'                # => unset: delete variable/element
-                                 # => 'fruits[1]': quoted to prevent glob expansion
-                                 # => Removes element but LEAVES GAP in indices
-                                 # => fruits[0], fruits[2] exist, fruits[1] doesn't
+unset 'fruits[1]'                # => Delete element (leaves gap)
 
 # Copy array
-copy=("${fruits[@]}")            # => ("${array[@]}"): expansion into new array
-                                 # => Creates independent copy
-                                 # => Modifications to copy don't affect original
+copy=("${fruits[@]}")            # => Creates independent copy
 
 # Join elements
 IFS=','                          # => IFS: Internal Field Separator
@@ -2333,155 +1965,87 @@ echo "Error: ${errors[$exit_code]:-Unknown error}"
 Bash provides powerful string manipulation through parameter expansion, enabling substring extraction, replacement, and transformation without external commands.
 
 ```bash
-string="Hello, World!"           # => Test string for demonstrations
-                                 # => Contains 13 characters total
+string="Hello, World!"
 
 # String length
-echo "${#string}"                # => ${#var}: string length operator
-                                 # => #: prefix for length
-                                 # => Counts characters (13 chars including comma, space, exclamation)
-                                 # => Output: 13
-                                 # => Useful for validation and bounds checking
+echo "${#string}"                # => ${#var}: length (Output: 13)
 
 # Substring extraction
-echo "${string:0:5}"             # => ${var:offset:length}: substring syntax
-                                 # => :0: start at index 0 (first character)
-                                 # => :5: extract 5 characters
-                                 # => Zero-based indexing
+echo "${string:0:5}"             # => ${var:offset:length}
                                  # => Output: Hello
-                                 # => Extracts first word from string
 
-echo "${string:7}"               # => ${var:offset}: extract from offset to end
-                                 # => :7: start at index 7
-                                 # => Omitted length: to end of string
+echo "${string:7}"               # => Extract from offset to end
                                  # => Output: World!
 
-echo "${string: -6}"             # => ${var: -n}: negative offset (from end)
-                                 # => : -6: space before minus required
-                                 # => Last 6 characters
+echo "${string: -6}"             # => Negative offset from end
                                  # => Output: World!
 
 # Pattern removal (from start)
-file="backup.tar.gz"             # => Filename with multiple extensions
-                                 # => Common pattern for compressed archives
-echo "${file#*.}"                # => ${var#pattern}: remove shortest match from start
-                                 # => #: single hash (non-greedy)
-                                 # => *.: wildcard + dot pattern
-                                 # => Removes "backup."
+file="backup.tar.gz"
+echo "${file#*.}"                # => ${var#pattern}: remove shortest from start
                                  # => Output: tar.gz
-                                 # => Keeps all extensions after first dot
 
-echo "${file##*.}"               # => ${var##pattern}: remove longest match from start
-                                 # => ##: double hash (greedy)
-                                 # => *.: matches all up to last dot
-                                 # => Removes "backup.tar."
+echo "${file##*.}"               # => ${var##pattern}: remove longest from start
                                  # => Output: gz
-                                 # => Extracts final extension only
 
 # Pattern removal (from end)
-echo "${file%.*}"                # => ${var%pattern}: remove shortest match from end
-                                 # => %: single percent (non-greedy from end)
-                                 # => .*: dot + wildcard
-                                 # => Removes ".gz"
+echo "${file%.*}"                # => ${var%pattern}: remove shortest from end
                                  # => Output: backup.tar
 
-echo "${file%%.*}"               # => ${var%%pattern}: remove longest match from end
-                                 # => %%: double percent (greedy from end)
-                                 # => .*: matches from first dot to end
-                                 # => Removes ".tar.gz"
+echo "${file%%.*}"               # => ${var%%pattern}: remove longest from end
                                  # => Output: backup
 
 # Replacement
-text="foo bar foo baz"           # => Text with repeated pattern
+text="foo bar foo baz"
 echo "${text/foo/FOO}"           # => ${var/pattern/replacement}: replace first
-                                 # => /: single slash (replace once)
-                                 # => Replaces first "foo" only
                                  # => Output: FOO bar foo baz
 
 echo "${text//foo/FOO}"          # => ${var//pattern/replacement}: replace all
-                                 # => //: double slash (global replacement)
-                                 # => Replaces all occurrences of "foo"
                                  # => Output: FOO bar FOO baz
 
 # Replace at start/end
 echo "${text/#foo/START}"        # => ${var/#pattern/replacement}: replace at start
-                                 # => /#: slash + hash (anchor to start)
-                                 # => Only replaces if pattern at beginning
                                  # => Output: START bar foo baz
 
 echo "${text/%baz/END}"          # => ${var/%pattern/replacement}: replace at end
-                                 # => /%: slash + percent (anchor to end)
-                                 # => Only replaces if pattern at end
                                  # => Output: foo bar foo END
 
 # Case conversion (bash 4+)
-name="John Doe"                  # => Mixed case string
-echo "${name^^}"                 # => ${var^^}: uppercase all characters
-                                 # => ^^: double caret (all uppercase)
-                                 # => Requires bash 4.0+
+name="John Doe"
+echo "${name^^}"                 # => ${var^^}: uppercase all
                                  # => Output: JOHN DOE
 
-echo "${name,,}"                 # => ${var,,}: lowercase all characters
-                                 # => ,,: double comma (all lowercase)
+echo "${name,,}"                 # => ${var,,}: lowercase all
                                  # => Output: john doe
 
-echo "${name^}"                  # => ${var^}: uppercase first character
-                                 # => ^: single caret (first char only)
-                                 # => Rest of string unchanged
+echo "${name^}"                  # => ${var^}: uppercase first char
                                  # => Output: John doe
 
 # Default values
-echo "${undefined:-default}"     # => ${var:-default}: use default if unset/empty
-                                 # => :-: colon dash operator
-                                 # => Returns "default" without setting variable
-                                 # => Variable remains unset
+echo "${undefined:-default}"     # => ${var:-default}: use default if unset
                                  # => Output: default
-                                 # => Useful for function parameters
 
 echo "${undefined:=default}"     # => ${var:=default}: set and use default
-                                 # => :=: colon equals operator
-                                 # => Sets undefined="default"
-                                 # => Then returns value
                                  # => Output: default
-                                 # => Useful for initializing variables
 
 echo "${undefined:?Error message}"
-                                 # => ${var:?message}: error if unset/empty
-                                 # => :?: colon question operator
-                                 # => Prints error message to stderr
-                                 # => Exits with code 1
+                                 # => ${var:?message}: error if unset
 
 # Practical: extract filename
 path="/home/user/documents/file.txt"
-                                 # => Full file path
-                                 # => Unix-style path separators
-filename="${path##*/}"           # => Remove longest match up to last /
-                                 # => Extracts filename
-                                 # => Output: file.txt
-                                 # => Pure bash alternative to basename command
-dirname="${path%/*}"             # => Remove shortest match from last /
-                                 # => Extracts directory path
-                                 # => Output: /home/user/documents
-                                 # => Pure bash alternative to dirname command
-extension="${filename##*.}"      # => Get extension (after last dot)
-                                 # => Output: txt
-                                 # => File type identifier
-basename="${filename%.*}"        # => Get basename (before last dot)
-                                 # => Output: file
-                                 # => Filename without extension
+filename="${path##*/}"           # => Extract filename (Output: file.txt)
+dirname="${path%/*}"             # => Extract directory
+extension="${filename##*.}"      # => Get extension (Output: txt)
+basename="${filename%.*}"        # => Get basename (Output: file)
 
 # Practical: sanitize input
-user_input="Hello   World"       # => Input with multiple spaces
-clean="${user_input// /_}"       # => ${var//pattern/replacement}
-                                 # => //: replace all occurrences
-                                 # => " ": single space pattern
-                                 # => _: underscore replacement
+user_input="Hello   World"
+clean="${user_input// /_}"       # => Replace spaces with underscores
                                  # => Output: Hello___World
 
 # Practical: URL parsing
 url="https://example.com:8080/path"
-                                 # => Full URL string
-protocol="${url%%://*}"          # => Remove from :// onwards (greedy)
+protocol="${url%%://*}"          # => Extract protocol
                                  # => Output: https
 rest="${url#*://}"               # => Remove up to :// (protocol)
                                  # => Output: example.com:8080/path
@@ -2665,122 +2229,85 @@ The `date` command formats, parses, and calculates dates and times. It's essenti
 
 ```bash
 # Current date and time
-date                             # => date: display current date/time
-                                 # => Output: Thu Dec 30 14:30:00 UTC 2025
-                                 # => Default format includes day, month, date, time, timezone, year
+date                             # => Output: Thu Dec 30 14:30:00 UTC 2025
 
 # Custom format
-date +%Y-%m-%d                   # => +FORMAT: custom output format
-                                 # => %Y: 4-digit year, %m: month, %d: day
-                                 # => Output: 2025-12-30
-date +%H:%M:%S                   # => %H: hour (00-23), %M: minute, %S: second
-                                 # => Output: 14:30:00
-date "+%Y-%m-%d %H:%M:%S"        # => Combine date and time formats
-                                 # => Quote format string if it contains spaces
-                                 # => Output: 2025-12-30 14:30:00
+date +%Y-%m-%d                   # => Output: 2025-12-30
+date +%H:%M:%S                   # => Output: 14:30:00
+date "+%Y-%m-%d %H:%M:%S"        # => Output: 2025-12-30 14:30:00
 
 # Common format codes
-# %Y - 4-digit year (2025)       # => Full year with century
-# %m - Month 01-12               # => Zero-padded month number
-# %d - Day 01-31                 # => Zero-padded day of month
-# %H - Hour 00-23                # => 24-hour format
-# %M - Minute 00-59              # => Zero-padded minutes
-# %S - Second 00-59              # => Zero-padded seconds
-# %s - Unix timestamp (seconds since epoch)  # => Seconds since 1970-01-01 00:00:00 UTC
-# %F - Full date (%Y-%m-%d)      # => ISO 8601 date format shortcut
-# %T - Time (%H:%M:%S)           # => ISO 8601 time format shortcut
-# %a - Abbreviated weekday (Mon) # => 3-letter weekday name
-# %A - Full weekday (Monday)     # => Complete weekday name
-# %b - Abbreviated month (Dec)   # => 3-letter month name
-# %B - Full month (December)     # => Complete month name
+# %Y - 4-digit year (2025)
+# %m - Month 01-12
+# %d - Day 01-31
+# %H - Hour 00-23
+# %M - Minute 00-59
+# %S - Second 00-59
+# %s - Unix timestamp
+# %F - Full date (%Y-%m-%d)
+# %T - Time (%H:%M:%S)
+# %a - Abbreviated weekday (Mon)
+# %A - Full weekday (Monday)
+# %b - Abbreviated month (Dec)
+# %B - Full month (December)
 
 # ISO 8601 format
-date -Iseconds                   # => -I: ISO 8601 format option
-                                 # => seconds: include seconds and timezone
-                                 # => Output: 2025-12-30T14:30:00+00:00
+date -Iseconds                   # => Output: 2025-12-30T14:30:00+00:00
 
 # Unix timestamp
-date +%s                         # => %s: seconds since Unix epoch
-                                 # => Output: 1767106200
-                                 # => Useful for date arithmetic and comparisons
+date +%s                         # => Seconds since Unix epoch (1767106200)
 
 # Convert timestamp to date
-date -d @1767106200              # => -d: interpret date string
-                                 # => @: prefix indicates Unix timestamp
-                                 # => Converts timestamp to human-readable
-                                 # => Output: Thu Dec 30 14:30:00 UTC 2025
+date -d @1767106200              # => -d @: convert Unix timestamp
 
 # Date arithmetic
-date -d "tomorrow"               # => -d: parse relative date string
-                                 # => Output: tomorrow's date at current time
-date -d "yesterday"              # => Relative date: previous day
-                                 # => Output: yesterday's date at current time
-date -d "+7 days"                # => +N: add N units to current date
-                                 # => Output: 7 days from now
-date -d "-1 week"                # => -N: subtract N units from current date
-                                 # => Output: 1 week ago
-date -d "next Monday"            # => Natural language date parsing
-                                 # => Output: date of next Monday
-date -d "last Friday"            # => Natural language: previous occurrence
-                                 # => Output: date of last Friday
-date -d "+2 hours"               # => Time arithmetic: add hours
-                                 # => Output: 2 hours from now
-date -d "2025-12-25 +5 days"     # => Combine specific date with offset
-                                 # => Start from 2025-12-25, add 5 days
-                                 # => Output: 2025-12-30
+date -d "tomorrow"               # => Tomorrow's date
+date -d "yesterday"              # => Yesterday's date
+date -d "+7 days"                # => 7 days from now
+date -d "-1 week"                # => 1 week ago
+date -d "next Monday"            # => Date of next Monday
+date -d "last Friday"            # => Date of last Friday
+date -d "+2 hours"               # => 2 hours from now
+date -d "2025-12-25 +5 days"     # => 2025-12-30
 
 # Parse date string
-date -d "2025-12-30" +%s         # => Parse ISO date to Unix timestamp
-                                 # => Useful for date comparisons
-                                 # => Output: 1767360000
+date -d "2025-12-30" +%s         # => Parse to Unix timestamp
 
 # Practical: timestamped filename
 backup_file="backup_$(date +%Y%m%d_%H%M%S).tar.gz"
-                                 # => $(date ...): command substitution
-                                 # => Format: YYYYMMDD_HHMMSS
-                                 # => Creates sortable, unique filenames
-echo "$backup_file"              # => Output: backup_20251230_143000.tar.gz
+                                 # => Sortable, unique filename
+echo "$backup_file"              # => backup_20251230_143000.tar.gz
 
 # Practical: log with timestamp
 log_message() {
     echo "[$(date +%Y-%m-%d\ %H:%M:%S)] $1"
-                                 # => \: escape space in format string
-                                 # => $1: first function argument
-                                 # => Prefixes message with timestamp
+                                 # => Timestamped log entry
 }
-log_message "Script started"     # => Call function with message
-                                 # => Output: [2025-12-30 14:30:00] Script started
+log_message "Script started"
 
 # Practical: age of file in days
-file_time=$(stat -c %Y "$file")  # => stat -c %Y: file modification time in Unix timestamp
-                                 # => $file: file to check
-now=$(date +%s)                  # => Current time as Unix timestamp
+file_time=$(stat -c %Y "$file")  # => File modification timestamp
+now=$(date +%s)
 age_days=$(( (now - file_time) / 86400 ))
-                                 # => (( )): arithmetic evaluation
-                                 # => Subtract timestamps, divide by 86400 (seconds per day)
-echo "File is $age_days days old"  # => Output: File is 5 days old
+                                 # => Divide by 86400 (seconds per day)
+echo "File is $age_days days old"
 
 # Practical: elapsed time
-start_time=$(date +%s)           # => Record start time as timestamp
-# ... do work ...                # => Placeholder for operations to time
-end_time=$(date +%s)             # => Record end time as timestamp
-elapsed=$((end_time - start_time))  # => Calculate difference in seconds
-echo "Elapsed: ${elapsed}s"      # => Output: Elapsed: 42s
+start_time=$(date +%s)
+# ... do work ...
+end_time=$(date +%s)
+elapsed=$((end_time - start_time))
+echo "Elapsed: ${elapsed}s"
 
 # Practical: check if weekend
-day=$(date +%u)                  # => %u: day of week (1=Monday, 7=Sunday)
-                                 # => ISO 8601 weekday number
-if ((day >= 6)); then            # => (( )): arithmetic comparison
-                                 # => 6=Saturday, 7=Sunday
+day=$(date +%u)                  # => Day of week (1=Mon, 7=Sun)
+if ((day >= 6)); then            # => 6=Saturday, 7=Sunday
     echo "It's the weekend"
 fi
 
 # Practical: rotate logs by date
-current_month=$(date +%Y-%m)     # => Extract year-month for log grouping
-                                 # => Output: 2025-12
+current_month=$(date +%Y-%m)     # => Year-month: 2025-12
 mv app.log "app_${current_month}.log"
-                                 # => Rename log file with month suffix
-                                 # => Output: app_2025-12.log
 ```
 
 **Key Takeaway**: Use `date +FORMAT` for formatting, `date -d` for parsing and arithmetic, and `%s` for Unix timestamps - combine with filename suffixes for timestamped backups and logs.

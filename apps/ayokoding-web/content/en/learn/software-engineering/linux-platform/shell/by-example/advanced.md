@@ -19,77 +19,40 @@ Shell job control manages background processes, foreground/background switching,
 
 ```bash
 # Run command in background
-sleep 60 &                      # => Executes sleep command in background
-                                # => Shell immediately returns to prompt
-                                # => Output: [1] 12345
-                                # => [1] is job number, 12345 is PID
-                                # => & operator detaches from foreground
-                                # => Process continues running asynchronously
+sleep 60 &                      # => & detaches to background
+                                # => Output: [1] 12345 (job number + PID)
 
 # List background jobs
-jobs                            # => Shows all background jobs for current shell
+jobs                            # => Shows background jobs
                                 # => Output: [1]+ Running  sleep 60 &
-                                # => [1] is job number
-                                # => + indicates most recent job (current)
-                                # => - would indicate previous job
-                                # => Only shows jobs for this shell session
 
 # Bring job to foreground
 fg %1                           # => Brings job 1 to foreground
                                 # => %1 is job specifier (not PID)
-                                # => Shell now waits for job to complete
-                                # => Job receives terminal input/output
-                                # => Press Ctrl+Z to suspend, Ctrl+C to terminate
-                                # => Job takes over terminal control
 
 # Send foreground job to background
-sleep 120                       # => Start command in foreground
-                                # => Shell blocks until complete
-                                # => Terminal is occupied by this process
-                                # Press Ctrl+Z (suspend signal SIGTSTP)
-                                # => Output: [1]+ Stopped  sleep 120
-                                # => Job paused but still in memory
-                                # => Keyboard interrupt suspends execution
-bg %1                           # => Send job 1 to background
-                                # => Output: [1]+ sleep 120 &
-                                # => Job resumes execution in background
-                                # => Shell returns to prompt immediately
-                                # => Process continues without terminal
+sleep 120                       # => Start in foreground
+                                # Press Ctrl+Z to suspend
+bg %1                           # => Resume job 1 in background
 
 # Kill background job
-kill %1                         # => Send SIGTERM (signal 15) to job 1
-                                # => %1 references job number from job table
-                                # => Could also use PID: kill 12345
-                                # => Job terminates gracefully (cleanup allowed)
-                                # => Use kill -9 %1 for force kill (SIGKILL)
+kill %1                         # => Send SIGTERM to job 1
+                                # => Use kill -9 %1 for force kill
 
 # Wait for background jobs
 command1 &                      # => Start first background job
-                                # => Job 1 running in background
-                                # => Returns immediately to prompt
 command2 &                      # => Start second background job
-                                # => Job 2 running in background
-                                # => Both jobs executing in parallel
-                                # => Multiple processes running concurrently
 wait                            # => Wait for ALL background jobs
-                                # => Shell blocks until all jobs complete
-                                # => Returns exit code of last job to fail (or 0)
-                                # => Synchronization point for parallel tasks
+                                # => Synchronization point
 
 # Wait for specific job
 command &                       # => Start background job
-                                # => Output: [1] 12345
 wait %1                         # => Wait only for job 1
-                                # => Other background jobs continue
-                                # => Returns exit code of job 1
 
 # Disown job (continue after shell exit)
-sleep 600 &                     # => Start 10-minute background sleep
-                                # => Output: [1] 12346
-disown %1                       # => Remove job 1 from shell's job table
-                                # => Job no longer receives SIGHUP on logout
-                                # => Process continues after shell exits
-                                # => Can't use %1 anymore (not in job table)
+sleep 600 &                     # => Start background job
+disown %1                       # => Remove from job table
+                                # => Survives shell exit
 
 # Run command immune to hangup (SIGHUP)
 nohup ./long-running-script.sh &
@@ -118,96 +81,56 @@ Trap handlers execute code when signals are received, enabling cleanup on exit, 
 # Define cleanup function
 cleanup() {
     echo "Cleaning up..."         # => Print cleanup message
-                                  # => Executed when trap fires
-                                  # => Function runs on signal reception
     rm -f /tmp/script.$$.*        # => $$ expands to current PID
-                                  # => Removes files like /tmp/script.12345.tmp
-                                  # => -f prevents error if files don't exist
-                                  # => Wildcard * matches all temp files
-    echo "Done."                  # => Indicate cleanup complete
-                                  # => Final message before exit
+    echo "Done."
 }
 
 # Register trap for EXIT signal
-trap cleanup EXIT               # => Register cleanup function for EXIT
-                                # => EXIT fires when script exits (any reason)
-                                # => Runs on: normal exit, exit command, error
-                                # => Does NOT fire on kill -9 (SIGKILL)
-                                # => Always runs cleanup before termination
+trap cleanup EXIT               # => Cleanup runs on any exit
+                                # => Does NOT fire on kill -9
 
 # Trap interrupt (Ctrl+C)
 trap 'echo "Interrupted!"; exit 130' INT
-                                # => INT is SIGINT (signal number 2)
-                                # => Fired when user presses Ctrl+C
-                                # => Inline command: echo then exit
-                                # => Exit code 130 = 128 + signal_number(2)
-                                # => Standard convention for signal exits
-                                # => Allows custom interrupt handling
+                                # => INT is SIGINT (Ctrl+C)
+                                # => Exit code 130 = 128 + 2
 
 # Trap termination
 trap 'echo "Terminated!"; cleanup; exit 143' TERM
-                                # => TERM is SIGTERM (signal number 15)
-                                # => Default signal sent by kill command
-                                # => Calls cleanup function explicitly
-                                # => Exit code 143 = 128 + signal_number(15)
-                                # => Allows graceful shutdown
-                                # => Recommended for production scripts
+                                # => TERM is SIGTERM (kill command)
 
 # Ignore signal
-trap '' HUP                     # => HUP is SIGHUP (hangup signal)
-                                # => Empty string '' means ignore signal
-                                # => Signal sent when terminal disconnects
-                                # => Process continues running after hangup
+trap '' HUP                     # => Empty string ignores signal
 
 # Reset trap to default
-trap - INT                      # => - (dash) resets to default behavior
-                                # => INT will now terminate script (default)
-                                # => Use after critical section complete
+trap - INT                      # => - resets to default behavior
 
 # Multiple signals in one trap
 trap cleanup EXIT INT TERM      # => Same handler for 3 signals
-                                # => cleanup runs on EXIT, INT, or TERM
-                                # => Simplifies signal handling code
-                                # => All three trigger same cleanup logic
 
 # Temporary file with automatic cleanup
 temp_file=$(mktemp)             # => Create secure temp file
-                                # => Returns path like /tmp/tmp.XxX123
-                                # => Unique filename prevents conflicts
-trap "rm -f $temp_file" EXIT    # => Delete temp file on any exit
-                                # => Double quotes expand $temp_file now
-                                # => Trap captures specific filename
+trap "rm -f $temp_file" EXIT    # => Auto-delete on exit
 
 # Use temp file
-echo "data" > "$temp_file"      # => Write data to temp file
-                                # => temp_file contains "data\n"
+echo "data" > "$temp_file"
 # ... process data ...
-                                # => temp_file automatically deleted on exit
-                                # => No manual cleanup needed
+                                # => temp_file deleted on exit
 
 # Prevent Ctrl+C during critical section
-trap '' INT                     # => Ignore INT (Ctrl+C)
-                                # => User cannot interrupt during critical code
-# ... critical code ...         # => Database transaction, file update, etc.
-                                # => Ctrl+C pressed here has no effect
-trap - INT                      # => Restore default INT behavior
-                                # => Ctrl+C works again after critical section
+trap '' INT                     # => Ignore Ctrl+C
+# ... critical code ...
+trap - INT                      # => Restore Ctrl+C
 
 # Debugging trap (execute before each command)
 trap 'echo "Executing: $BASH_COMMAND"' DEBUG
-                                # => DEBUG trap fires before EVERY command
-                                # => $BASH_COMMAND contains command to execute
-                                # => Shows command with variable expansion
-                                # => Useful for script debugging/tracing
+                                # => Fires before EVERY command
 
 # Return trap (execute when function returns)
 function_with_trap() {
     trap 'echo "Function exiting"' RETURN
-                                # => RETURN trap fires when function returns
-                                # => Executes before function exit
-                                # => Scope limited to this function
-    # ... function code ...     # => Function body executes normally
-}                               # => RETURN trap fires here
+                                # => Fires when function returns
+    # ... function code ...
+}
                                 # => "Function exiting" printed
 ```
 
@@ -223,98 +146,51 @@ Bash parameter expansion provides powerful string manipulation, default values, 
 
 ```bash
 # Default values
-name=${USER:-"guest"}           # => If $USER is set and non-empty, use it
-                                # => If $USER is unset or empty, use "guest"
+name=${USER:-"guest"}           # => Use $USER if set, else "guest"
                                 # => :- tests for unset OR empty
-                                # => name="alice" if USER="alice"
-                                # => name="guest" if USER="" or unset
-                                # => Colon makes operator strict (tests empty)
 
-name=${USER-"guest"}            # => If $USER is set (even if empty), use it
-                                # => If $USER is unset, use "guest"
-                                # => - tests only for unset (not empty)
-                                # => name="" if USER="" (empty but set)
-                                # => name="guest" if USER is unset
-                                # => No colon = permissive (allows empty)
+name=${USER-"guest"}            # => Use $USER if set (even empty), else "guest"
+                                # => - tests only for unset
 
 # Assign default if unset
-name=${USER:="defaultuser"}     # => If $USER unset/empty, set both variables
-                                # => Sets $name to "defaultuser"
-                                # => ALSO sets $USER to "defaultuser"
-                                # => := assigns default to original variable
-                                # => Side effect: modifies environment
-                                # => Permanent assignment to source variable
+name=${USER:="defaultuser"}     # => Set both $name and $USER if unset
+                                # => := assigns to original variable
 
 # Error if unset
-name=${USER:?"USER not set"}    # => If $USER unset/empty, print error and exit
-                                # => Error message: "USER not set"
-                                # => Script exits with code 1
+name=${USER:?"USER not set"}    # => Exit with error if unset
                                 # => :? enforces required variables
-                                # => Prevents running with missing config
-                                # => Fail-fast for missing prerequisites
 
 # Use alternative value
-name=${USER:+"logged in"}       # => If $USER is set and non-empty, use "logged in"
-                                # => If $USER is unset or empty, use empty string
+name=${USER:+"logged in"}       # => If $USER set, use "logged in", else ""
                                 # => :+ is opposite of :-
-                                # => name="logged in" if USER="alice"
-                                # => name="" if USER="" or unset
 
 # String length
-file="document.txt"             # => Assign string to file variable
-                                # => Variable contains filename
-length=${#file}                 # => Get length of string
-                                # => Counts characters in $file
-                                # => length=12 ("document.txt" has 12 chars)
-                                # => # prefix operator for length
+file="document.txt"
+length=${#file}                 # => length=12 (character count)
 
 # Substring extraction
 path="/home/user/documents/file.txt"
-                                # => path contains 28-character string
-                                # => Full file path for testing
-${path:0:5}                     # => Start at index 0, extract 5 characters
-                                # => Result: "/home"
-                                # => Syntax: ${var:offset:length}
-                                # => Zero-based indexing
-${path:6:4}                     # => Start at index 6, extract 4 characters
-                                # => Result: "user"
-                                # => Index starts at 0
-                                # => Extracts username portion
-${path:11}                      # => Start at index 11, extract to end
-                                # => Result: "documents/file.txt"
-                                # => No length specified means "to end"
-${path: -8}                     # => Last 8 characters
-                                # => Result: "file.txt"
-                                # => SPACE before - is required
-                                # => Without space: interpreted as default value
+${path:0:5}                     # => Result: "/home" (offset 0, length 5)
+${path:6:4}                     # => Result: "user" (offset 6, length 4)
+${path:11}                      # => Result: "documents/file.txt" (to end)
+${path: -8}                     # => Result: "file.txt" (last 8 chars)
+                                # => SPACE before - required
 
 # Remove prefix pattern (shortest match)
-${path#*/}                      # => Remove shortest match of "*/" from start
-                                # => Pattern "*/" matches up to first /
+${path#*/}                      # => Remove shortest "*/" from start
                                 # => Result: "home/user/documents/file.txt"
-                                # => Single # removes shortest prefix
-                                # => Useful for removing one directory level
 
 # Remove prefix pattern (longest match)
-${path##*/}                     # => Remove longest match of "*/" from start
-                                # => Pattern "*/" matches up to last /
-                                # => Result: "file.txt"
-                                # => Double ## removes longest prefix
-                                # => Extracts filename from path (like basename)
+${path##*/}                     # => Remove longest "*/" from start
+                                # => Result: "file.txt" (like basename)
 
 # Remove suffix pattern (shortest match)
-${path%/*}                      # => Remove shortest match of "/*" from end
-                                # => Pattern "/*" matches from last /
-                                # => Result: "/home/user/documents"
-                                # => Single % removes shortest suffix
-                                # => Extracts directory path (like dirname)
+${path%/*}                      # => Remove shortest "/*" from end
+                                # => Result: "/home/user/documents" (like dirname)
 
 # Remove suffix pattern (longest match)
-${path%%/*}                     # => Remove longest match of "/*" from end
-                                # => Pattern "/*" matches from first /
+${path%%/*}                     # => Remove longest "/*" from end
                                 # => Result: "" (everything removed)
-                                # => Double %% removes longest suffix
-                                # => On "/home/user", removes from first /
 
 # Pattern replacement (first match)
 file="test.txt.backup"          # => file contains "test.txt.backup"
@@ -395,101 +271,51 @@ Process substitution creates temporary named pipes to use command output as file
 
 ```bash
 # Compare output of two commands
-diff <(ls dir1) <(ls dir2)      # => <(ls dir1) creates /dev/fd/63 (temp file descriptor)
-                                # => <(ls dir2) creates /dev/fd/62
-                                # => Shell runs: ls dir1 and ls dir2
-                                # => Pipes output to temp files
-                                # => diff reads from both file descriptors
-                                # => Shows differences between directory listings
-                                # => No manual temp file creation/cleanup needed
-                                # => Process substitution <() is bash extension
+diff <(ls dir1) <(ls dir2)      # => <() creates temp file descriptors
+                                # => No manual temp file creation needed
 
 # Process substitution as input
-while read line; do             # => Read loop reads line by line
-    echo "Line: $line"          # => Print each line with prefix
-                                # => Processes each line individually
+while read line; do
+    echo "Line: $line"
 done < <(find . -name "*.txt")  # => First < redirects input
-                                # => Second <(find...) creates file descriptor
-                                # => find runs, outputs to /dev/fd/63
-                                # => while loop reads from that descriptor
-                                # => Processes all .txt files found
-                                # => Double < syntax: redirection + substitution
+                                # => Second <() creates file descriptor
 
 # Multiple input sources
-paste <(seq 1 5) <(seq 10 14)   # => seq 1 5 outputs: 1\n2\n3\n4\n5
-                                # => seq 10 14 outputs: 10\n11\n12\n13\n14
-                                # => <(seq 1 5) becomes /dev/fd/63
-                                # => <(seq 10 14) becomes /dev/fd/62
-                                # => paste joins line by line with tab
-                                # => Output: "1\t10\n2\t11\n3\t12\n4\t13\n5\t14"
-                                # => Merges two command outputs side-by-side
+paste <(seq 1 5) <(seq 10 14)   # => Joins outputs side-by-side with tabs
 
 # Output redirection with process substitution
 echo "data" > >(tee file1.txt file2.txt)
-                                # => >(command) creates output file descriptor
-                                # => echo writes "data" to descriptor
-                                # => tee reads from that descriptor
-                                # => tee writes to file1.txt
-                                # => tee also writes to file2.txt
-                                # => Data written to two files simultaneously
-                                # => Output process substitution >() is bash extension
+                                # => >() creates output descriptor
+                                # => Writes to both files simultaneously
 
 # Join two sorted outputs
 join <(sort file1) <(sort file2)
-                                # => sort file1 outputs sorted lines to /dev/fd/63
-                                # => sort file2 outputs sorted lines to /dev/fd/62
-                                # => join reads from both descriptors
-                                # => Matches lines with common first field
-                                # => No intermediate temp files created
-                                # => Single command pipeline
+                                # => No intermediate temp files
 
 # Named pipes (FIFO)
 mkfifo /tmp/mypipe              # => Create FIFO special file
-                                # => File type 'p' (pipe)
-                                # => No actual disk storage used
                                 # => Acts as communication channel
-                                # => Visible in filesystem: ls -l shows prw-r--r--
-                                # => FIFO = First In First Out
 
 # Write to named pipe (background)
-cat file.txt > /tmp/mypipe &    # => Open pipe for writing
-                                # => cat blocks until reader connects
-                                # => & runs in background (non-blocking shell)
-                                # => Data waits in kernel buffer
-                                # => Writer process suspends until reader attaches
+cat file.txt > /tmp/mypipe &    # => Opens pipe for writing
+                                # => Blocks until reader connects
 
 # Read from named pipe
-cat < /tmp/mypipe               # => Open pipe for reading
-                                # => Connects to waiting writer
-                                # => Writer unblocks and sends data
-                                # => Reader receives and outputs data
-                                # => Both processes synchronized via pipe
+cat < /tmp/mypipe               # => Connects to waiting writer
                                 # => Data flows from writer to reader
 
 # Named pipe for inter-process communication
-mkfifo /tmp/logpipe             # => Create pipe for logging
+mkfifo /tmp/logpipe
 tail -f /tmp/logpipe &          # => Start reader in background
-                                # => tail -f follows pipe indefinitely
-                                # => Waits for data to arrive
 echo "Log message" > /tmp/logpipe
-                                # => Writer sends message to pipe
-                                # => tail receives and displays immediately
                                 # => IPC without network sockets
 
 # Cleanup named pipe
 rm /tmp/mypipe                  # => Remove FIFO from filesystem
-                                # => unlink() system call
-                                # => No disk space freed (none was used)
-                                # => File descriptor removed
-                                # => Same as removing regular file
 
 # Process substitution with tee (log and process)
 command | tee >(grep ERROR > errors.log) >(grep WARN > warnings.log)
-                                # => command output goes to tee
-                                # => tee sends to stdout (terminal)
-                                # => tee sends to first >(grep ERROR...)
-                                # => tee sends to second >(grep WARN...)
-                                # => grep ERROR filters and writes errors.log
+                                # => Splits output to multiple destinations
                                 # => grep WARN filters and writes warnings.log
                                 # => Three destinations from single output
                                 # => Parallel filtering to multiple files
@@ -877,13 +703,15 @@ Shell script performance matters for large-scale automation. Avoid external comm
 # Benchmark time measurement
 time_cmd() {
     local start=$(date +%s%N)   # => Nanosecond timestamp
-    "$@"                        # => Execute command
-    local end=$(date +%s%N)
+    "$@"                        # => Execute command passed as arguments
+    local end=$(date +%s%N)     # => End timestamp
     local duration=$(( (end - start) / 1000000 ))  # => Convert to milliseconds
     echo "Duration: ${duration}ms" >&2
+                                # => Output to stderr
 }
 
 time_cmd grep pattern large-file.txt
+                                # => Benchmark grep execution time
 
 # BAD: External command in loop (SLOW)
 count=0
@@ -900,12 +728,14 @@ done                            # => ~0.01 seconds (500x faster!)
 # BAD: Subshell for string manipulation (SLOW)
 for file in *.txt; do
     basename=$(basename "$file" .txt)  # => Fork basename command
+                                # => External process per iteration
 done
 
 # GOOD: Parameter expansion (FAST)
 for file in *.txt; do
     basename=${file%.txt}       # => Built-in parameter expansion
-    basename=${basename##*/}    # => Remove path
+    basename=${basename##*/}    # => Remove path component
+                                # => No external commands
 done
 
 # BAD: Reading file line-by-line with cat (SLOW)
@@ -1025,30 +855,32 @@ validate_filename() {
     # Check for path traversal
     if [[ "$filename" =~ \.\. ]]; then
         echo "Error: Path traversal detected" >&2
-        return 1
+        return 1                # => Reject path traversal attempts
     fi
 
     # Check for shell metacharacters
     if [[ "$filename" =~ [';|&$`<>(){}'] ]]; then
         echo "Error: Invalid characters in filename" >&2
-        return 1
+        return 1                # => Reject shell injection attempts
     fi
 
     # Whitelist approach (safest)
     if [[ ! "$filename" =~ ^[a-zA-Z0-9._-]+$ ]]; then
         echo "Error: Filename contains invalid characters" >&2
-        return 1
+        return 1                # => Only allow safe characters
     fi
 
-    return 0
+    return 0                    # => Validation passed
 }
 
 # BAD: Command injection vulnerability
 user_input="file.txt; rm -rf /"
 cat $user_input                 # => DANGEROUS: Executes "rm -rf /"!
+                                # => Unquoted variable splits on semicolon
 
 # GOOD: Quote variables
 cat "$user_input"               # => Safe: treats as literal filename
+                                # => No command injection possible
 
 # BAD: eval with user input (NEVER DO THIS)
 user_cmd="ls"
@@ -1276,95 +1108,110 @@ Real-world deployment scripts combine all advanced techniques: error handling, l
 # ====================
 # Configuration
 # ====================
-set -euo pipefail               # => Fail on: errors, undefined vars, pipe failures
-IFS=$'\n\t'                     # => Set field separator to newline/tab (safer)
+set -euo pipefail               # => Strict error handling
+                                # => -e: exit on error, -u: exit on undefined vars
+                                # => -o pipefail: exit on pipe failures
+IFS=$'\n\t'                     # => Field separator: newline/tab only
+                                # => Safer than default (space/tab/newline)
 
-APP_NAME="myapp"                # => Application name: myapp
-VERSION="${1:-}"                # => Version from first arg or empty
-DEPLOY_DIR="/opt/${APP_NAME}"   # => Deploy to /opt/myapp
-BACKUP_DIR="/var/backups/${APP_NAME}"  # => Backups in /var/backups/myapp
-LOG_FILE="/var/log/${APP_NAME}-deploy.log"  # => Log deployments
-MAX_BACKUPS=5                   # => Keep last 5 backups only
+APP_NAME="myapp"                # => Application identifier
+VERSION="${1:-}"                # => Version from CLI arg (required later)
+DEPLOY_DIR="/opt/${APP_NAME}"   # => Installation target
+BACKUP_DIR="/var/backups/${APP_NAME}"  # => Backup storage location
+LOG_FILE="/var/log/${APP_NAME}-deploy.log"  # => Audit trail
+MAX_BACKUPS=5                   # => Retention policy
 
 # ====================
 # Color output
 # ====================
-RED='\033[0;31m'                # => ANSI red for errors
-GREEN='\033[0;32m'              # => ANSI green for success
-YELLOW='\033[1;33m'             # => ANSI yellow for warnings
-NC='\033[0m'                    # => No color (reset)
+RED='\033[0;31m'                # => ANSI escape codes
+GREEN='\033[0;32m'              # => Terminal color control
+YELLOW='\033[1;33m'             # => Visual distinction by severity
+NC='\033[0m'                    # => Reset to default
 
 # ====================
 # Logging functions
 # ====================
 log() {
-    local level=$1              # => First arg: log level
-    shift                       # => Shift to get message args
-    local message="$*"          # => Remaining args as message
-    local timestamp=$(date +'%Y-%m-%d %H:%M:%S')  # => Current timestamp
+    local level=$1              # => Severity level
+    shift                       # => Remove first arg
+    local message="$*"          # => Concatenate remaining args
+    local timestamp=$(date +'%Y-%m-%d %H:%M:%S')
+                                # => ISO-style timestamp
 
     echo -e "${timestamp} [${level}] ${message}" | tee -a "$LOG_FILE"
-    # => Output to terminal AND append to log file
+                                # => tee: output to both stdout and file
+                                # => -a: append mode (preserve history)
 }
 
-log_info() { log "INFO" "$@"; }    # => Log info level
-log_warn() { echo -e "${YELLOW}$(log "WARN" "$@")${NC}"; }  # => Warnings in yellow
-log_error() { echo -e "${RED}$(log "ERROR" "$@")${NC}" >&2; }  # => Errors in red to stderr
-log_success() { echo -e "${GREEN}$(log "SUCCESS" "$@")${NC}"; }  # => Success in green
+log_info() { log "INFO" "$@"; }
+log_warn() { echo -e "${YELLOW}$(log "WARN" "$@")${NC}"; }
+                                # => Colored warnings
+log_error() { echo -e "${RED}$(log "ERROR" "$@")${NC}" >&2; }
+                                # => Errors to stderr
+log_success() { echo -e "${GREEN}$(log "SUCCESS" "$@")${NC}"; }
 
 # ====================
 # Error handling
 # ====================
 cleanup() {
-    local exit_code=$?          # => Capture exit code
+    local exit_code=$?          # => Capture script exit code
+                                # => $? must be first command in function
 
-    if [ $exit_code -ne 0 ]; then  # => If deployment failed
+    if [ $exit_code -ne 0 ]; then
         log_error "Deployment failed with exit code $exit_code"
         log_warn "Run '$0 rollback' to restore previous version"
-        # => Guide user to rollback
+                                # => User guidance for recovery
     fi
 
-    # Cleanup temp files
     [ -d "${TMPDIR:-}" ] && rm -rf "${TMPDIR:-}"
-    # => Remove temp dir if exists
+                                # => Conditional cleanup
+                                # => ${TMPDIR:-} prevents unbound var error
 }
 
-trap cleanup EXIT               # => Run cleanup on script exit
+trap cleanup EXIT               # => Guaranteed cleanup
+                                # => Fires on normal exit, errors, signals
 trap 'log_error "Interrupted"; exit 130' INT TERM
-# => Handle Ctrl+C gracefully with exit code 130
+                                # => Graceful interrupt handling
+                                # => Exit 130 = 128 + SIGINT(2)
 
 # ====================
 # Validation functions
 # ====================
 require_root() {
-    if [ "$(id -u)" -ne 0 ]; then  # => Check if UID is 0 (root)
+    if [ "$(id -u)" -ne 0 ]; then
+                                # => id -u: current user ID
+                                # => 0 = root
         log_error "This script must be run as root"
-        exit 1                  # => Exit if not root
+        exit 1
     fi
 }
 
 validate_version() {
-    local version=$1            # => Version string to validate
+    local version=$1
 
-    if [ -z "$version" ]; then  # => If version empty
+    if [ -z "$version" ]; then
         log_error "Version not specified"
         echo "Usage: $0 <version>" >&2
         exit 1
     fi
 
     if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-        # => Regex: version must be x.y.z format
+                                # => Semantic versioning regex
+                                # => Must match x.y.z pattern
         log_error "Invalid version format: $version (expected: x.y.z)"
         exit 1
     fi
 }
 
 check_dependencies() {
-    local deps=(curl tar systemctl)  # => Required commands
+    local deps=(curl tar systemctl)
+                                # => Required external commands
 
-    for cmd in "${deps[@]}"; do  # => Check each command
+    for cmd in "${deps[@]}"; do
         if ! command -v "$cmd" >/dev/null 2>&1; then
-            # => command -v: portable way to check if command exists
+                                # => command -v: portable command existence check
+                                # => Suppresses all output
             log_error "Required command not found: $cmd"
             exit 1
         fi
@@ -1378,46 +1225,52 @@ check_dependencies() {
 # ====================
 create_backup() {
     local backup_file="${BACKUP_DIR}/${APP_NAME}-$(date +%Y%m%d-%H%M%S).tar.gz"
-    # => Backup filename with timestamp: myapp-20250201-143025.tar.gz
+                                # => Timestamped filename
+                                # => Example: myapp-20250201-143025.tar.gz
 
     log_info "Creating backup: $backup_file"
 
-    mkdir -p "$BACKUP_DIR"      # => Ensure backup directory exists
+    mkdir -p "$BACKUP_DIR"      # => Create parent dirs if needed
+                                # => -p: no error if exists
 
-    if [ -d "$DEPLOY_DIR" ]; then  # => If app currently deployed
+    if [ -d "$DEPLOY_DIR" ]; then
         tar -czf "$backup_file" -C "$(dirname "$DEPLOY_DIR")" "$(basename "$DEPLOY_DIR")" 2>/dev/null || {
-            # => Create compressed archive of deploy dir
+                                # => -c: create, -z: gzip, -f: file
+                                # => -C: change to parent dir before archiving
+                                # => Preserves relative paths
             log_error "Backup failed"
-            return 1            # => Return error if tar fails
+            return 1
         }
 
         log_success "Backup created: $backup_file"
     else
         log_warn "No existing installation to backup"
-        # => First deployment, nothing to backup
+                                # => Fresh installation
     fi
 
-    # Cleanup old backups
-    cleanup_old_backups         # => Maintain backup retention policy
+    cleanup_old_backups         # => Enforce retention policy
 }
 
 cleanup_old_backups() {
     local backup_count=$(find "$BACKUP_DIR" -name "${APP_NAME}-*.tar.gz" | wc -l)
-    # => Count existing backups
+                                # => Count matching backups
 
-    if [ "$backup_count" -gt "$MAX_BACKUPS" ]; then  # => If exceeded limit
+    if [ "$backup_count" -gt "$MAX_BACKUPS" ]; then
         log_info "Cleaning up old backups (keeping last $MAX_BACKUPS)"
 
         find "$BACKUP_DIR" -name "${APP_NAME}-*.tar.gz" -type f -printf '%T@ %p\n' | \
-            # => Find backups with timestamp
+                                # => %T@: modification time (Unix epoch)
+                                # => Output: timestamp path
             sort -rn | \
-            # => Sort by timestamp descending (newest first)
+                                # => -r: reverse, -n: numeric
+                                # => Newest first
             tail -n +$((MAX_BACKUPS + 1)) | \
-            # => Get backups beyond limit
+                                # => Skip first MAX_BACKUPS lines
+                                # => Keeps newest, drops oldest
             cut -d' ' -f2 | \
-            # => Extract filenames
+                                # => Extract path column
             xargs rm -f
-            # => Delete old backups
+                                # => Delete old backups
 
         log_info "Old backups cleaned"
     fi
@@ -1427,44 +1280,48 @@ cleanup_old_backups() {
 # Deployment functions
 # ====================
 download_release() {
-    local version=$1            # => Version to download
+    local version=$1
     local download_url="https://releases.example.com/${APP_NAME}/${version}/${APP_NAME}-${version}.tar.gz"
-    # => Construct download URL
+                                # => URL construction from version
     local checksum_url="${download_url}.sha256"
-    # => Checksum file URL
+                                # => Integrity verification file
 
-    TMPDIR=$(mktemp -d)         # => Create temp directory
+    TMPDIR=$(mktemp -d)         # => Secure temp directory
+                                # => Returns /tmp/tmp.XXXXXX
     local archive="${TMPDIR}/${APP_NAME}.tar.gz"
     local checksum_file="${TMPDIR}/checksum.sha256"
 
     log_info "Downloading $APP_NAME version $version"
 
     # Download with retry
-    local max_attempts=3        # => Retry up to 3 times
+    local max_attempts=3        # => Network reliability tolerance
     local attempt=1
 
     while [ $attempt -le $max_attempts ]; do
         if curl -fsSL -o "$archive" "$download_url"; then
-            # => -f: fail on HTTP errors, -s: silent, -S: show errors, -L: follow redirects
-            break               # => Success, exit loop
+                                # => -f: fail on HTTP errors
+                                # => -s: silent, -S: show errors
+                                # => -L: follow redirects
+                                # => -o: output file
+            break               # => Download successful
         fi
 
         log_warn "Download attempt $attempt failed, retrying..."
-        ((attempt++))           # => Increment attempt counter
-        sleep 2                 # => Wait before retry
+        ((attempt++))
+        sleep 2                 # => Exponential backoff would be better
     done
 
-    if [ $attempt -gt $max_attempts ]; then  # => All retries exhausted
+    if [ $attempt -gt $max_attempts ]; then
         log_error "Download failed after $max_attempts attempts"
-        return 1
+        return 1                # => Abort deployment
     fi
 
     # Verify checksum
     log_info "Verifying checksum"
     curl -fsSL -o "$checksum_file" "$checksum_url"
-    # => Download checksum file
+                                # => Download expected hash
 
-    cd "$TMPDIR"
+    cd "$TMPDIR"                # => Change to temp dir for verification
     if ! sha256sum -c "$checksum_file"; then
         # => Verify archive integrity
         log_error "Checksum verification failed"
@@ -1691,33 +1548,37 @@ wait_for_container() {
 
     for ((i=1; i<=max_attempts; i++)); do
         status=$(docker inspect -f '{{.State.Health.Status}}' "$container" 2>/dev/null)
+                                # => Get health status from container
         if [ "$status" = "healthy" ]; then
             echo "Container is healthy"
-            return 0
+            return 0            # => Success exit
         fi
         echo "Waiting for container... ($i/$max_attempts)"
-        sleep 2
+        sleep 2                 # => Wait before retry
     done
     echo "Container failed to become healthy"
-    return 1
+    return 1                    # => Failure exit
 }
 
 # Execute command in running container
 docker exec -it myapp /bin/sh    # => Interactive shell
-docker exec myapp ls /app        # => Run command
+                                 # => -it: interactive terminal
+docker exec myapp ls /app        # => Run command non-interactively
 
 # Copy files to/from container
 docker cp config.json myapp:/app/config.json
+                                # => Copy local file to container
 docker cp myapp:/app/logs ./logs
+                                # => Copy container files to local
 
 # Container logs
 docker logs myapp                # => All logs
-docker logs -f myapp             # => Follow logs
+docker logs -f myapp             # => Follow logs (tail -f style)
 docker logs --tail 100 myapp     # => Last 100 lines
 
 # Cleanup
-docker stop myapp
-docker rm myapp
+docker stop myapp                # => Stop running container
+docker rm myapp                  # => Remove container
 docker rmi myapp:latest          # => Remove image
 
 # Practical: deployment script
@@ -1761,21 +1622,24 @@ The `kubectl` command manages Kubernetes clusters from shell scripts, enabling d
 kubectl cluster-info             # => Verify connectivity
 
 # Get resources
-kubectl get pods                 # => List pods
-kubectl get pods -o wide         # => With more details
+kubectl get pods                 # => List pods in default namespace
+kubectl get pods -o wide         # => With more details (node, IP)
 kubectl get pods -n production   # => Specific namespace
+                                 # => -n: namespace flag
 kubectl get all                  # => All resource types
 
 # Describe resource
-kubectl describe pod myapp-xxx   # => Detailed info
+kubectl describe pod myapp-xxx   # => Detailed info (events, status)
 
 # Apply configuration
-kubectl apply -f deployment.yaml # => Apply manifest
+kubectl apply -f deployment.yaml # => Apply manifest file
+                                 # => Creates or updates resources
 kubectl apply -f k8s/            # => Apply all files in directory
 
 # Delete resources
 kubectl delete -f deployment.yaml
-kubectl delete pod myapp-xxx
+                                 # => Delete resources from manifest
+kubectl delete pod myapp-xxx     # => Delete specific pod
 
 # Rollout management
 kubectl rollout status deployment/myapp
