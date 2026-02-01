@@ -17,7 +17,7 @@ func TestFormatText_NoBrokenLinks(t *testing.T) {
 	}
 
 	output := FormatText(result, false, false)
-	
+
 	if !strings.Contains(output, "✓ All links valid!") {
 		t.Errorf("Expected success message, got: %s", output)
 	}

@@ -57,7 +57,7 @@ func FormatText(result *ValidationResult, verbose, quiet bool) string {
 
 		for _, file := range files {
 			output.WriteString(fmt.Sprintf("\n### %s\n\n", file))
-			
+
 			// Sort links by line number
 			fileLinks := byFile[file]
 			sort.Slice(fileLinks, func(i, j int) bool {

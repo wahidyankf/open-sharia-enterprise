@@ -83,9 +83,9 @@ Hugo [path](/docs/page) should be skipped.
 
 	// Expected links (not skipped)
 	expected := map[string]int{
-		"../docs/README.md":            3,
-		"./file.md":                    3,
-		"../../governance/README.md":   14,
+		"../docs/README.md":          3,
+		"./file.md":                  3,
+		"../../governance/README.md": 14,
 	}
 
 	if len(links) != len(expected) {

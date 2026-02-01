@@ -32,12 +32,12 @@ type NamingViolation struct {
 
 // ValidationResult contains the complete results of a naming validation scan.
 type ValidationResult struct {
-	TotalFiles       int                              // Total number of files scanned
-	ValidFiles       int                              // Number of files that passed validation
-	ViolationCount   int                              // Total number of violations found
-	Violations       []NamingViolation                // All violations found
+	TotalFiles       int                                 // Total number of files scanned
+	ValidFiles       int                                 // Number of files that passed validation
+	ViolationCount   int                                 // Total number of violations found
+	Violations       []NamingViolation                   // All violations found
 	ViolationsByType map[ViolationType][]NamingViolation // Violations grouped by type
-	ScanDuration     time.Duration                    // Time taken for the scan
+	ScanDuration     time.Duration                       // Time taken for the scan
 }
 
 // ValidationOptions configures how the naming validation scan should be performed.
