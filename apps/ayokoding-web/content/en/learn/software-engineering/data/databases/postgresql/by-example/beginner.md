@@ -779,21 +779,37 @@ WHERE filters rows based on conditions. You can combine multiple conditions with
 
 ```sql
 CREATE DATABASE example_11;
+-- => Creates database for WHERE clause examples
 \c example_11;
+-- => Switches to example_11 database
+
 CREATE TABLE products (
     id SERIAL,
+    -- => id: auto-incrementing product identifier
     name VARCHAR(100),
+    -- => name: product name
     category VARCHAR(50),
+    -- => category: product category (Electronics, Furniture, Kitchen)
     price DECIMAL(10, 2),
+    -- => price: product price
     stock INTEGER
+    -- => stock: available inventory quantity
 );
+-- => Creates products table with 5 columns
+
 INSERT INTO products (name, category, price, stock)
 VALUES
     ('Laptop', 'Electronics', 999.99, 15),
+    -- => Row 1: Electronics product, price $999.99, 15 in stock
     ('Mouse', 'Electronics', 29.99, 50),
+    -- => Row 2: Electronics product, lower price, high stock
     ('Desk Chair', 'Furniture', 199.99, 8),
+    -- => Row 3: Furniture category, low stock
     ('Monitor', 'Electronics', 299.99, 0),
+    -- => Row 4: Electronics, OUT OF STOCK (stock=0)
     ('Coffee Mug', 'Kitchen', 12.99, 100);
+    -- => Row 5: Kitchen category, highest stock
+-- => Inserts 5 products across 3 categories
 -- Single condition
 SELECT name, price
 FROM products
@@ -877,21 +893,37 @@ ORDER BY sorts query results by one or more columns. Default is ascending (ASC),
 
 ```sql
 CREATE DATABASE example_12;
+-- => Creates database for ORDER BY examples
 \c example_12;
+-- => Switches to example_12 database
+
 CREATE TABLE employees (
     id SERIAL,
+    -- => id: auto-incrementing employee identifier
     name VARCHAR(100),
+    -- => name: employee name
     department VARCHAR(50),
+    -- => department: Engineering or Sales
     salary DECIMAL(10, 2),
+    -- => salary: annual salary
     hire_date DATE
+    -- => hire_date: date employee was hired
 );
+-- => Creates employees table with 5 columns
+
 INSERT INTO employees (name, department, salary, hire_date)
 VALUES
     ('Alice', 'Engineering', 95000, '2020-03-15'),
+    -- => Alice: Engineering, $95k, hired 2020
     ('Bob', 'Sales', 75000, '2019-06-01'),
+    -- => Bob: Sales, $75k (lowest salary)
     ('Charlie', 'Engineering', 105000, '2021-01-10'),
+    -- => Charlie: Engineering, $105k (highest salary)
     ('Diana', 'Sales', 80000, '2018-11-20'),
+    -- => Diana: Sales, $80k, earliest hire date
     ('Eve', 'Engineering', 95000, '2022-02-28');
+    -- => Eve: Engineering, $95k (same as Alice), latest hire date
+-- => Inserts 5 employees with varying salaries and hire dates
 -- Sort by salary ascending (default)
 SELECT name, salary
 FROM employees
@@ -1628,49 +1660,92 @@ NOT NULL prevents NULL values - critical for columns that must always have data.
 
 ```sql
 CREATE DATABASE example_20;
+-- => Creates database for NOT NULL and DEFAULT value examples
 \c example_20;
+-- => Switches to example_20 database
+
 CREATE TABLE articles (
     id SERIAL PRIMARY KEY,
-    title VARCHAR(200) NOT NULL,          -- => Title required
-    content TEXT NOT NULL,                -- => Content required
-    author VARCHAR(100) NOT NULL DEFAULT 'Anonymous', -- => Required but defaults to 'Anonymous'
-    status VARCHAR(20) DEFAULT 'draft',   -- => Optional, defaults to 'draft'
-    views INTEGER DEFAULT 0,              -- => Optional, defaults to 0
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- => Defaults to current time
-    is_published BOOLEAN DEFAULT false    -- => Defaults to false
+    -- => id: auto-incrementing primary key
+    title VARCHAR(200) NOT NULL,
+    -- => title: required field (NOT NULL prevents NULL values)
+    -- => Must provide value on INSERT (no default)
+    content TEXT NOT NULL,
+    -- => content: required text field (NOT NULL, no length limit)
+    author VARCHAR(100) NOT NULL DEFAULT 'Anonymous',
+    -- => author: required (NOT NULL) but has default value
+    -- => If not specified on INSERT, automatically becomes 'Anonymous'
+    status VARCHAR(20) DEFAULT 'draft',
+    -- => status: optional field (NULL allowed) with default 'draft'
+    views INTEGER DEFAULT 0,
+    -- => views: optional counter with default 0 (not NULL)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    -- => created_at: timestamp with automatic value (current time at insert)
+    is_published BOOLEAN DEFAULT false
+    -- => is_published: boolean flag with default false
 );
+-- => Table with mix of required fields and defaults
+
 -- Insert with all defaults
 INSERT INTO articles (title, content)
 VALUES ('First Article', 'This is the content');
--- => author='Anonymous', status='draft', views=0, created_at=now, is_published=false
+-- => Only provides title and content (required fields without defaults)
+-- => author: 'Anonymous' (NOT NULL + DEFAULT applied)
+-- => status: 'draft' (DEFAULT applied)
+-- => views: 0 (DEFAULT applied)
+-- => created_at: current timestamp (DEFAULT CURRENT_TIMESTAMP)
+-- => is_published: false (DEFAULT applied)
+
 SELECT * FROM articles;
--- => Verify all defaults applied
+-- => Returns 1 row with all default values filled in
+-- => Verifies defaults automatically applied
 
 -- Insert with explicit values (override defaults)
 INSERT INTO articles (title, content, author, status, views, is_published)
 VALUES ('Second Article', 'More content', 'Alice', 'published', 100, true);
--- => Explicit values used instead of defaults
+-- => Explicit values override defaults
+-- => author: 'Alice' (not 'Anonymous')
+-- => status: 'published' (not 'draft')
+-- => views: 100 (not 0)
+-- => is_published: true (not false)
 
 -- Invalid: NULL in NOT NULL column without default
 INSERT INTO articles (title, content, author)
 VALUES ('Third Article', NULL, 'Bob');
+-- => Attempts to insert NULL into content column
+-- => content has NOT NULL constraint (no default value)
 -- => ERROR: null value in column "content" violates not-null constraint
+-- => INSERT fails, transaction rolled back
 
 -- Alter table to add NOT NULL constraint
 CREATE TABLE comments (
     id SERIAL PRIMARY KEY,
+    -- => Auto-incrementing ID
     text TEXT
+    -- => text: initially allows NULL (no NOT NULL constraint)
 );
+-- => Creates table without NOT NULL on text column
+
 INSERT INTO comments (text) VALUES ('First comment');
-INSERT INTO comments (text) VALUES (NULL); -- => Allowed initially
+-- => Inserts comment with text value
+INSERT INTO comments (text) VALUES (NULL);
+-- => Inserts NULL into text column (allowed initially)
+-- => Table now contains: row 1 with text, row 2 with NULL
+
 -- Add NOT NULL constraint (fails if NULLs exist)
 ALTER TABLE comments ALTER COLUMN text SET NOT NULL;
+-- => Attempts to add NOT NULL constraint to existing column
 -- => ERROR: column "text" contains null values
+-- => Cannot add NOT NULL constraint when NULL values exist
+-- => Constraint addition fails
 
 -- Remove NULL values first, then add constraint
 DELETE FROM comments WHERE text IS NULL;
+-- => Deletes rows where text is NULL (row 2 deleted)
+-- => Table now contains only non-NULL values
 ALTER TABLE comments ALTER COLUMN text SET NOT NULL;
--- => Success
+-- => Successfully adds NOT NULL constraint
+-- => Future INSERTs must provide text value (NULL not allowed)
 ```
 
 **Key Takeaway**: NOT NULL enforces required fields - combine with DEFAULT to provide automatic values. DEFAULT reduces INSERT statement verbosity and ensures consistent initial values. Use CURRENT_TIMESTAMP for automatic timestamps, false for boolean flags, 0 for counters.
@@ -1705,24 +1780,44 @@ graph TD
 
 ```sql
 CREATE DATABASE example_21;
+-- => Creates database for INNER JOIN examples
 \c example_21;
+-- => Switches to example_21 database
+
 CREATE TABLE customers (
     id SERIAL PRIMARY KEY,
+    -- => id: auto-incrementing customer identifier (primary key)
     name VARCHAR(100)
+    -- => name: customer name (up to 100 characters)
 );
+-- => Creates customers table (parent table in relationship)
+
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
+    -- => id: auto-incrementing order identifier
     customer_id INTEGER,
+    -- => customer_id: foreign key linking to customers.id
+    -- => Determines which customer placed this order
     order_date DATE,
+    -- => order_date: date order was placed
     total DECIMAL(10, 2)
+    -- => total: order amount (10 digits total, 2 after decimal)
 );
+-- => Creates orders table (child table in relationship)
+-- => No foreign key constraint defined (for example simplicity)
+
 INSERT INTO customers (name)
 VALUES ('Alice'), ('Bob'), ('Charlie');
+-- => Inserts 3 customers
+-- => Alice: id=1, Bob: id=2, Charlie: id=3 (SERIAL auto-generated)
+
 INSERT INTO orders (customer_id, order_date, total)
 VALUES
-    (1, '2025-12-20', 150.00),  -- => Alice
-    (2, '2025-12-21', 200.00),  -- => Bob
-    (1, '2025-12-22', 300.00);  -- => Alice again
+    (1, '2025-12-20', 150.00),  -- => Alice's order (customer_id=1 references Alice)
+    (2, '2025-12-21', 200.00),  -- => Bob's order (customer_id=2 references Bob)
+    (1, '2025-12-22', 300.00);  -- => Alice's second order (same customer_id=1)
+-- => Inserts 3 orders: 2 for Alice, 1 for Bob
+-- => Charlie has no orders (important for demonstrating INNER JOIN behavior)
 -- Inner join: only customers with orders
 SELECT
     customers.name,
@@ -1771,17 +1866,31 @@ WHERE o.total > 150;
 -- Multiple joins
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
+    -- => id: product identifier
     name VARCHAR(100)
+    -- => name: product name
 );
+-- => Products catalog table
+
 CREATE TABLE order_items (
     order_id INTEGER,
+    -- => order_id: links to orders.id (which order)
     product_id INTEGER,
+    -- => product_id: links to products.id (which product)
     quantity INTEGER
+    -- => quantity: how many units ordered
 );
+-- => Junction table linking orders to products (many-to-many relationship)
+
 INSERT INTO products (name)
 VALUES ('Laptop'), ('Mouse'), ('Keyboard');
+-- => Inserts 3 products: Laptop (id=1), Mouse (id=2), Keyboard (id=3)
+
 INSERT INTO order_items (order_id, product_id, quantity)
 VALUES (1, 1, 1), (1, 2, 2), (2, 3, 1);
+-- => Order 1: contains 1 Laptop + 2 Mice
+-- => Order 2: contains 1 Keyboard
+-- => Creates items for orders (links orders to products)
 SELECT
     c.name AS customer,
     o.order_date,
@@ -1903,55 +2012,77 @@ RIGHT JOIN returns all rows from the right table, with matching rows from the le
 
 ```sql
 CREATE DATABASE example_23;
--- => Creates database 'example_23'
+-- => Creates database for RIGHT JOIN examples
 \c example_23;
 -- => Switches connection to example_23 database
+
 CREATE TABLE departments (
     name VARCHAR(100)
+    -- => name: department name (Engineering, Sales, etc.)
 );
+-- => Departments table (will be the RIGHT table in RIGHT JOIN)
+
 CREATE TABLE employees (
     name VARCHAR(100),
+    -- => name: employee name
     department_id INTEGER
+    -- => department_id: links to departments (but no FK constraint for example)
 );
+-- => Employees table (will be the LEFT table in RIGHT JOIN)
+
 INSERT INTO departments (name)
--- => INSERT into departments table begins
 VALUES ('Engineering'), ('Sales'), ('Marketing'), ('HR');
--- => Row data values follow
+-- => Inserts 4 departments
+-- => Engineering: id=1, Sales: id=2, Marketing: id=3, HR: id=4
+
 INSERT INTO employees (name, department_id)
--- => INSERT into employees table begins
 VALUES
--- => Row data values follow
-    ('Alice', 1),     -- => Engineering
-    ('Bob', 1),       -- => Engineering
-    ('Charlie', 2);   -- => Sales
+    ('Alice', 1),     -- => Alice works in Engineering (department_id=1)
+    ('Bob', 1),       -- => Bob works in Engineering (department_id=1)
+    ('Charlie', 2);   -- => Charlie works in Sales (department_id=2)
+-- => Inserts 3 employees
+-- => Marketing (id=3) and HR (id=4) have NO employees
+
 -- Right join: all departments, with employees if they exist
 SELECT
     d.name AS department,
+    -- => Department name from RIGHT table (departments)
     e.name AS employee
+    -- => Employee name from LEFT table (employees)
 FROM employees e
+-- => LEFT table in RIGHT JOIN
 RIGHT JOIN departments d ON e.department_id = d.id;
--- => Combines rows from multiple tables
--- => Engineering (Alice), Engineering (Bob), Sales (Charlie)
--- => Marketing (NULL), HR (NULL)
--- => All departments shown, NULLs where no employees
+-- => RIGHT JOIN: includes ALL rows from RIGHT table (departments)
+-- => ON e.department_id = d.id: join condition (match employee to department)
+-- => Result includes ALL 4 departments:
+-- =>   Engineering: Alice (matched)
+-- =>   Engineering: Bob (matched)
+-- =>   Sales: Charlie (matched)
+-- =>   Marketing: NULL (no matching employee, RIGHT table row included)
+-- =>   HR: NULL (no matching employee, RIGHT table row included)
 
 -- Find departments with NO employees
 SELECT d.name
+-- => Selects department name
 FROM employees e
 RIGHT JOIN departments d ON e.department_id = d.id
--- => Combines rows from multiple tables
+-- => RIGHT JOIN ensures ALL departments included
 WHERE e.id IS NULL;
--- => Filter condition for query
--- => Marketing, HR (departments without employees)
+-- => Filters to rows where employee.id is NULL (no match from LEFT table)
+-- => Result: Marketing, HR (departments without employees)
+-- => NULLs indicate departments with no employee matches
 
 -- Same query using LEFT JOIN (more common style)
 SELECT d.name
+-- => Same result, different syntax
 FROM departments d
+-- => Departments as LEFT table (was RIGHT table above)
 LEFT JOIN employees e ON e.department_id = d.id
--- => Combines rows from multiple tables
+-- => LEFT JOIN includes ALL departments (same as RIGHT JOIN above with tables swapped)
 WHERE e.id IS NULL;
--- => Filter condition for query
--- => Same result: Marketing, HR
+-- => Same filter: finds departments with no employees
+-- => Result: Marketing, HR
+-- => Demonstrates RIGHT JOIN = LEFT JOIN with reversed table order
 ```
 
 **Key Takeaway**: RIGHT JOIN includes all right table rows - less common than LEFT JOIN because you can rewrite it by swapping table order and using LEFT JOIN. Use LEFT JOIN for consistency and readability.
@@ -1968,55 +2099,78 @@ FULL JOIN returns all rows from both tables, with NULLs where no match exists. U
 
 ```sql
 CREATE DATABASE example_24;
--- => Creates database 'example_24'
+-- => Creates database for FULL JOIN examples
 \c example_24;
 -- => Switches connection to example_24 database
+
 CREATE TABLE authors (
     name VARCHAR(100)
+    -- => name: author name
 );
+-- => Authors table (some authors may have no books)
+
 CREATE TABLE books (
     title VARCHAR(200),
+    -- => title: book title
     author_id INTEGER
+    -- => author_id: links to authors.id (NULL if no author)
 );
+-- => Books table (some books may have no author)
+
 INSERT INTO authors (name)
--- => INSERT into authors table begins
 VALUES ('Alice'), ('Bob'), ('Charlie');
--- => Row data values follow
+-- => Inserts 3 authors
+-- => Alice: id=1, Bob: id=2, Charlie: id=3
+
 INSERT INTO books (title, author_id)
--- => INSERT into books table begins
 VALUES
--- => Row data values follow
-    ('Database Design', 1),    -- => Alice
-    ('SQL Mastery', 1),        -- => Alice
-    ('Orphan Book', NULL);     -- => No author
+    ('Database Design', 1),    -- => Alice's book (author_id=1 references Alice)
+    ('SQL Mastery', 1),        -- => Alice's second book
+    ('Orphan Book', NULL);     -- => Book with NO author (author_id=NULL)
+-- => Inserts 3 books
+-- => Alice has 2 books, Bob has 0 books, Charlie has 0 books
+-- => 1 book has no author (orphan)
+
 -- Full outer join: all authors and all books
 SELECT
     a.name AS author,
+    -- => Author name from authors table
     b.title AS book
+    -- => Book title from books table
 FROM authors a
 FULL JOIN books b ON a.id = b.author_id;
--- => Combines rows from multiple tables
--- => Alice (Database Design), Alice (SQL Mastery)
--- => Bob (NULL), Charlie (NULL) - authors without books
--- => NULL (Orphan Book) - book without author
+-- => FULL JOIN: includes ALL rows from BOTH tables
+-- => Matched rows: author.id = book.author_id
+-- => Unmatched left (authors): book columns become NULL
+-- => Unmatched right (books): author columns become NULL
+-- => Result includes 5 rows:
+-- =>   Alice + 'Database Design' (matched)
+-- =>   Alice + 'SQL Mastery' (matched)
+-- =>   Bob + NULL (author without books, book=NULL)
+-- =>   Charlie + NULL (author without books, book=NULL)
+-- =>   NULL + 'Orphan Book' (book without author, author=NULL)
 
 -- Find authors without books
 SELECT a.name
+-- => Selects author names
 FROM authors a
 FULL JOIN books b ON a.id = b.author_id
--- => Combines rows from multiple tables
+-- => FULL JOIN ensures all authors and books included
 WHERE b.id IS NULL;
--- => Filter condition for query
--- => Bob, Charlie
+-- => Filters to rows where book.id is NULL (no book match)
+-- => Result: Bob, Charlie (authors with no books)
+-- => Identifies authors who haven't written anything
 
 -- Find books without authors
 SELECT b.title
+-- => Selects book titles
 FROM authors a
 FULL JOIN books b ON a.id = b.author_id
--- => Combines rows from multiple tables
+-- => FULL JOIN includes all books (even those with author_id=NULL)
 WHERE a.id IS NULL;
--- => Filter condition for query
--- => Orphan Book
+-- => Filters to rows where author.id is NULL (no author match)
+-- => Result: 'Orphan Book' (book with no author)
+-- => Identifies books missing author attribution
 ```
 
 **Key Takeaway**: FULL JOIN returns all rows from both tables - use it to find orphans on both sides. Less common than LEFT/INNER joins but powerful for data quality audits (finding unmatched records).

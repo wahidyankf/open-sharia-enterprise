@@ -69,85 +69,27 @@ Java is statically typed with two categories: primitive types (stored on stack) 
 
 ```java
 // PRIMITIVE TYPES (8 total, stored on stack, cannot be null)
-// => Primitives are NOT objects (no methods, cannot be null)
-// => Stored directly in stack memory (fast access, no heap allocation)
-// => Stack memory auto-managed (no GC overhead for primitives)
-byte b = 127;                    // => b is 127 (type: byte)
-                                 // => 8-bit signed integer, range: -128 to 127
-                                 // => Smallest integer type (1 byte memory)
-                                 // => Overflow: byte b = 128 would cause compile error
-                                 // => Max value: Byte.MAX_VALUE (127), min: Byte.MIN_VALUE (-128)
-short s = 32000;                 // => s is 32000 (type: short)
-                                 // => 16-bit signed integer, range: -32,768 to 32,767
-                                 // => 2 bytes memory (larger than byte, smaller than int)
-                                 // => Used for memory optimization in large arrays
-int i = 42;                      // => i is 42 (type: int)
-                                 // => 32-bit signed integer (DEFAULT for whole numbers)
-                                 // => Most common integer type (4 bytes)
-                                 // => Range: -2,147,483,648 to 2,147,483,647
-                                 // => No suffix needed for int literals (default)
-long l = 1000000L;               // => l is 1000000 (type: long)
-                                 // => 64-bit signed integer, requires L suffix for literals
-                                 // => Without L suffix, compiler treats as int (may overflow)
-                                 // => 8 bytes (largest primitive integer type)
-                                 // => Range: -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
-float f = 3.14f;                 // => f is 3.14 (type: float, approximation due to binary representation)
-                                 // => 32-bit floating-point, requires f suffix for literals
-                                 // => Less precision than double (4 bytes, ~7 decimal digits precision)
-                                 // => Without f suffix: 3.14 treated as double (compile error)
-double d = 3.14159;              // => d is 3.14159 (type: double)
-                                 // => 64-bit floating-point (DEFAULT for decimal literals)
-                                 // => Higher precision than float (8 bytes, ~15 decimal digits precision)
-                                 // => Preferred for most calculations requiring decimals
-boolean bool = true;             // => bool is true (type: boolean)
-                                 // => Only true or false (NOT 0/1 like C/C++)
-                                 // => Cannot cast to int (unlike C: if(bool) compiles, if(1) doesn't)
-                                 // => 1 byte memory (though only needs 1 bit logically)
-                                 // => JVM implementation uses 1 byte for addressability
-char c = 'A';                    // => c is 'A' (type: char)
-                                 // => 16-bit Unicode character (single quotes only)
-                                 // => Numeric value: 65 (ASCII/Unicode code point)
-                                 // => Supports international characters beyond ASCII (2 bytes)
-                                 // => Can store Unicode from \u0000 to \uFFFF
+byte b = 127;                    // => b is 127 (type: byte, 8-bit signed, range: -128 to 127)
+short s = 32000;                 // => s is 32000 (type: short, 16-bit signed, range: -32,768 to 32,767)
+int i = 42;                      // => i is 42 (type: int, 32-bit signed, DEFAULT for whole numbers)
+long l = 1000000L;               // => l is 1000000 (type: long, 64-bit signed, requires L suffix)
+float f = 3.14f;                 // => f is 3.14 (type: float, 32-bit floating-point, requires f suffix)
+double d = 3.14159;              // => d is 3.14159 (type: double, 64-bit floating-point, DEFAULT for decimals)
+boolean bool = true;             // => bool is true (type: boolean, only true/false, NOT 0/1)
+char c = 'A';                    // => c is 'A' (type: char, 16-bit Unicode, value: 65)
 
-// REFERENCE TYPES (stored on heap, can be null)
-// => Reference variables hold memory addresses (pointers to heap objects)
-// => Objects allocated on heap (managed by garbage collector)
-// => Heap memory persists beyond method scope (unlike stack)
-// => Garbage collector reclaims unreachable objects automatically
-String str = "Hello";            // => str holds reference to String object in heap
-                                 // => str variable on stack (4/8 bytes depending on JVM)
-                                 // => "Hello" object on heap (object header + char array)
-                                 // => Literal "Hello" stored in string pool (shared memory optimization)
-                                 // => String pool avoids duplicate string objects (deduplication)
-                                 // => str points to pooled String instance
-int[] array = {1, 2, 3};         // => array holds reference to array object in heap
-                                 // => array.length is 3 (property, not method!)
-                                 // => Array elements stored contiguously in heap
-                                 // => Each element occupies 4 bytes (int size)
-                                 // => Total heap: object header + (3 × 4 bytes) + padding
+// REFERENCE TYPES (stored on heap, can be null, managed by GC)
+String str = "Hello";            // => str references String object on heap
+                                 // => Literal stored in string pool (shared memory optimization)
+int[] array = {1, 2, 3};         // => array references array object on heap (array.length is 3)
 
-// TYPE INFERENCE with var (Java 10+, local variables only)
-// => var keyword tells compiler to infer type from initializer
-// => Type determined at compile time (NOT runtime like JavaScript)
-// => Still statically typed (cannot reassign different type)
-// => Cannot use var without initializer: var x; ← compile error
-var num = 100;                   // => Type inferred as int at compile time (literal 100 is int)
-                                 // => num is 100 (type: int, inferred)
-                                 // => Equivalent to: int num = 100;
-                                 // => num = "text" ← compile error (cannot change type)
-var text = "World";              // => Type inferred as String at compile time
-                                 // => text is "World" (type: String, inferred)
-                                 // => Equivalent to: String text = "World";
-                                 // => Compiler analyzes initializer expression for type
+// TYPE INFERENCE with var (Java 10+, compile-time type inference)
+var num = 100;                   // => num is 100 (type: int, inferred from literal)
+var text = "World";              // => text is "World" (type: String, inferred from literal)
 
-System.out.println(i);           // => Calls println with int argument
-                                 // => Converts int to String automatically (Integer.toString())
-                                 // => Autoboxing: int → Integer → toString() → String
+System.out.println(i);           // => Autoboxes int → Integer → toString()
                                  // => Output: 42
-System.out.println(str);         // => Calls println with String argument
-                                 // => No conversion needed (already String)
-                                 // => Output: Hello
+System.out.println(str);         // => Output: Hello
 ```
 
 **Key Takeaway**: Java has 8 primitive types (stored on stack, cannot be null) and reference types (stored on heap, can be null). Use `var` for type inference in local variables while maintaining static type safety—the compiler infers types at compile time, not runtime.
@@ -335,34 +277,37 @@ graph TD
 ```java
 // FOR LOOP - known iteration count
 for (int i = 0; i < 5; i++) {    // => i starts at 0, increments until i < 5 is false
-                                 // => Loop structure: init; condition; increment
+                                 // => Loop structure: initialization; condition; increment
+                                 // => Condition checked before each iteration
     System.out.print(i + " ");   // => i is 0, 1, 2, 3, 4 (5 iterations total)
                                  // => Each iteration prints i followed by space
 }                                // => Output: 0 1 2 3 4
+                                 // => i goes out of scope after loop ends
 System.out.println();            // => Newline after loop (moves cursor to next line)
 
 // WHILE LOOP - condition-checked before each iteration
 int count = 0;                   // => count initialized to 0
-while (count < 3) {              // => Check condition first (may execute 0 times if false)
+while (count < 3) {              // => Check condition first (may execute 0 times if false initially)
                                  // => Loop continues while count < 3
     System.out.print(count + " ");
                                  // => Prints current value followed by space
     count++;                     // => Increment count (count becomes 1, 2, 3)
-                                 // => After count becomes 3, condition fails, loop exits
+                                 // => After count becomes 3, condition (3 < 3) fails, loop exits
 }                                // => Output: 0 1 2 (three iterations)
+                                 // => count is 3 after loop (still in scope)
 System.out.println();            // => Newline after loop
 
 // DO-WHILE LOOP - condition-checked after each iteration
 int num = 0;                     // => num initialized to 0 (starting value)
-do {                             // => Execute body first (always runs at least once)
-                                 // => Guarantees minimum one iteration even if condition false initially
+do {                             // => Execute body first (ALWAYS runs at least once)
+                                 // => Even if condition initially false: do { } while (false) runs once
     System.out.print(num + " ");
                                  // => First iteration: num is 0, prints "0 "
                                  // => Second iteration: num is 1, prints "1 "
                                  // => Third iteration: num is 2, prints "2 "
     num++;                       // => Increment after printing (num becomes 1, 2, 3)
                                  // => Post-increment ensures printed value is original
-} while (num < 3);               // => Check condition after execution (runs after num becomes 3)
+} while (num < 3);               // => Check condition after execution (checks after num becomes 3)
                                  // => Condition false (3 < 3 is false), loop exits
                                  // => Output: 0 1 2 (three iterations executed)
 System.out.println();            // => Newline after loop completes
@@ -372,11 +317,13 @@ int[] numbers = {10, 20, 30};    // => Array with 3 elements stored contiguously
                                  // => numbers.length is 3 (array property)
 for (int n : numbers) {          // => "for each n in numbers" (enhanced for-loop syntax)
                                  // => Compiler generates iterator code automatically
+                                 // => Read-only loop variable (modifying n doesn't affect array)
                                  // => First iteration: n = numbers[0] = 10
                                  // => Second iteration: n = numbers[1] = 20
                                  // => Third iteration: n = numbers[2] = 30
     System.out.print(n + " ");   // => Prints current element followed by space
                                  // => No manual index management (no i++, no array[i])
+                                 // => Cannot modify array elements (n is copy)
 }                                // => Output: 10 20 30 (all elements printed)
                                  // => Loop terminates automatically after last element
 ```
@@ -408,32 +355,41 @@ graph TD
 
 ```java
 // ARRAY DECLARATION AND INITIALIZATION
-int[] numbers = {1, 2, 3, 4, 5}; // => Inline initialization (size inferred)
+int[] numbers = {1, 2, 3, 4, 5}; // => Inline initialization (size inferred from elements)
                                  // => numbers.length is 5 (property, not method!)
+                                 // => Stored contiguously in heap memory
 int[] empty = new int[10];       // => Allocates 10 elements, all initialized to 0
-                                 // => Default values: 0 for int, false for boolean, null for objects
+                                 // => Default values: 0 for int, 0.0 for double, false for boolean, null for objects
+                                 // => empty.length is 10
 
 // ARRAY ACCESS
 int first = numbers[0];          // => first is 1 (arrays are 0-indexed)
+                                 // => Index range: 0 to length-1
 int last = numbers[numbers.length - 1];
                                  // => last is 5 (length-1 gets last element)
-numbers[2] = 99;                 // => numbers is now {1, 2, 99, 4, 5}
+                                 // => numbers[5] would throw ArrayIndexOutOfBoundsException
+numbers[2] = 99;                 // => Modifies element at index 2
+                                 // => numbers is now {1, 2, 99, 4, 5}
 
 // ARRAY UTILITIES (java.util.Arrays)
 import java.util.Arrays;
 
 int[] copy = Arrays.copyOf(numbers, numbers.length);
                                  // => Creates deep copy of numbers array
+                                 // => copy is {1, 2, 99, 4, 5} (independent from numbers)
 String str = Arrays.toString(numbers);
                                  // => str is "[1, 2, 99, 4, 5]" (readable string representation)
-Arrays.sort(numbers);            // => Sorts in-place: numbers becomes {1, 2, 4, 5, 99}
+                                 // => Useful for debugging (avoids default hashCode output)
+Arrays.sort(numbers);            // => Sorts in-place using dual-pivot quicksort
+                                 // => numbers becomes {1, 2, 4, 5, 99} (ascending order)
 
 // MULTIDIMENSIONAL ARRAYS
 int[][] matrix = {               // => 2D array (array of arrays)
-    {1, 2, 3},
-    {4, 5, 6}
-};
+    {1, 2, 3},                   // => matrix[0] is {1, 2, 3}
+    {4, 5, 6}                    // => matrix[1] is {4, 5, 6}
+};                               // => matrix.length is 2 (number of rows)
 int value = matrix[1][2];        // => value is 6 (row 1, column 2)
+                                 // => First index selects row, second selects column
 ```
 
 **Key Takeaway**: Arrays have fixed size determined at creation and use zero-based indexing. Access array length via `.length` property (not `.length()` method). Use `Arrays` utility class for common operations like sorting, copying, and string conversion—don't reinvent these operations.
@@ -574,38 +530,61 @@ graph TD
 
 ```java
 // SUPERCLASS (base class, parent class)
-class Animal {
-    public void makeSound() {
+class Animal {                   // => Superclass providing common behavior
+                                 // => All subclasses inherit this method
+    public void makeSound() {    // => Default implementation for all animals
+                                 // => Can be overridden by subclasses
         System.out.println("Some generic animal sound");
+                                 // => Output: Some generic animal sound
     }
 }
 
 // SUBCLASS (derived class, child class)
 class Dog extends Animal {       // => Dog inherits all fields/methods from Animal
+                                 // => "extends" keyword creates is-a relationship
+                                 // => Dog IS-A Animal (can use Dog wherever Animal expected)
     @Override                    // => Annotation: indicates intentional method override
+                                 // => Compiler verifies signature matches superclass method
+                                 // => Without @Override, typo creates new method instead
     public void makeSound() {    // => Overrides Animal's makeSound()
+                                 // => Method signature must match exactly
+                                 // => Access level must be same or more permissive (public here)
         System.out.println("Woof!");
+                                 // => Output: Woof! (replaces generic sound)
     }
 }
 
-class Cat extends Animal {
-    @Override
-    public void makeSound() {
+class Cat extends Animal {       // => Cat also extends Animal
+                                 // => Independent from Dog (sibling relationship)
+    @Override                    // => Verifies override contract
+    public void makeSound() {    // => Cat's custom implementation
         System.out.println("Meow!");
+                                 // => Output: Meow!
     }
 }
 
 // POLYMORPHISM - treating specific types through general type
-Animal animal1 = new Dog();      // => Dog object referenced as Animal (upcast)
+Animal animal1 = new Dog();      // => Dog object referenced as Animal type (upcast)
+                                 // => Compile-time type: Animal, runtime type: Dog
+                                 // => Upcast is implicit (safe, automatic)
 Animal animal2 = new Cat();      // => Cat object referenced as Animal
-animal1.makeSound();             // => Output: Woof! (Dog's method called, not Animal's)
-animal2.makeSound();             // => Output: Meow! (runtime polymorphism)
+                                 // => Both variables have Animal type, different runtime objects
+animal1.makeSound();             // => Calls Dog's makeSound() (not Animal's!)
+                                 // => Output: Woof! (dynamic method dispatch at runtime)
+                                 // => JVM determines actual object type and calls correct method
+animal2.makeSound();             // => Calls Cat's makeSound()
+                                 // => Output: Meow! (runtime polymorphism)
 
 // ARRAY OF POLYMORPHIC OBJECTS
 Animal[] animals = {new Dog(), new Cat(), new Dog()};
-for (Animal a : animals) {       // => Iterate using Animal type
+                                 // => Array of Animal type, holds subclass instances
+                                 // => animals[0] is Dog, animals[1] is Cat, animals[2] is Dog
+for (Animal a : animals) {       // => Iterate using Animal type (common interface)
+                                 // => Enhanced for-loop, a references each element
     a.makeSound();               // => Calls correct subclass method for each object
+                                 // => Runtime polymorphism selects Dog/Cat implementation
 }                                // => Output: Woof! Meow! Woof!
+                                 // => First and third are Dogs, middle is Cat
 ```
 
 **Key Takeaway**: Inheritance (`extends`) creates is-a relationships where subclasses inherit superclass members. Override methods with `@Override` annotation to customize behavior. Polymorphism lets you reference subclass objects via superclass type—method calls dynamically dispatch to the actual object's overridden method at runtime.
@@ -1041,52 +1020,70 @@ graph TD
 ```java
 // METHOD DEFINITION
 public static int add(int a, int b) {
-                                 // => public: accessible from anywhere
-                                 // => static: belongs to class (no object needed)
-                                 // => int: return type
-                                 // => add: method name
-                                 // => (int a, int b): parameter list
+                                 // => public: accessible from anywhere (any class)
+                                 // => static: belongs to class (call via ClassName.add(), no object needed)
+                                 // => int: return type (must return int value)
+                                 // => add: method name (follows camelCase convention)
+                                 // => (int a, int b): parameter list (formal parameters)
     return a + b;                // => return keyword sends value back to caller
+                                 // => Exits method immediately, no code after executes
 }
 
 // METHOD CALL
 int sum = add(5, 3);             // => sum is 8 (result of 5 + 3)
-                                 // => Arguments 5 and 3 are copied to parameters a and b
+                                 // => Arguments 5 and 3 are COPIED to parameters a and b
+                                 // => Actual arguments (5, 3) match formal parameters (a, b)
 
 // PASS-BY-VALUE for primitives
 public static void modifyPrimitive(int x) {
+                                 // => x is separate parameter variable (copy of argument)
     x = 100;                     // => Modifies local copy of parameter x, NOT original variable
-                                 // => Parameter x is separate variable with copied value
+                                 // => Parameter x is on method's stack frame
+                                 // => x disappears when method returns
 }
 
-int num = 10;                    // => num is 10 (primitive int on stack)
+int num = 10;                    // => num is 10 (primitive int on caller's stack)
 modifyPrimitive(num);            // => Copies value 10 to parameter x
                                  // => num still 10 after method returns (primitive pass-by-value)
+                                 // => Original num completely unaffected by x = 100
 
 // PASS-BY-VALUE for references (reference itself is copied)
 public static void modifyArray(int[] arr) {
+                                 // => arr is reference copy (points to same heap object)
     arr[0] = 999;                // => Modifies heap object (reference points to same array)
+                                 // => Changes visible to caller (shared object)
 }
 
 public static void reassignArray(int[] arr) {
-    arr = new int[]{100, 200};   // => Reassigns local reference copy (original unchanged)
+                                 // => arr is reference copy
+    arr = new int[]{100, 200};   // => Reassigns LOCAL reference copy (original unchanged)
+                                 // => Creates new array, assigns to local arr only
+                                 // => Caller's reference unaffected
 }
 
-int[] numbers = {1, 2, 3};
+int[] numbers = {1, 2, 3};       // => numbers references array on heap
 modifyArray(numbers);            // => numbers is [999, 2, 3] (heap object modified)
+                                 // => arr parameter points to same heap array
 reassignArray(numbers);          // => numbers still [999, 2, 3] (reference copy reassigned)
+                                 // => Local arr reassignment doesn't affect numbers
 
 // RETURN VALUES
 public static String greet(String name) {
-    return "Hello, " + name;     // => Return String object reference
+                                 // => Method returns String reference
+    return "Hello, " + name;     // => Return String object reference (concatenation result)
+                                 // => name parameter used in computation
 }
 
 String message = greet("Alice"); // => message is "Hello, Alice"
+                                 // => Returned reference assigned to message
 
 // VOID METHODS (no return value)
 public static void printMessage(String msg) {
+                                 // => void: no return value (performs side effect only)
     System.out.println(msg);     // => Side effect (output) instead of return value
+                                 // => Method executed for effect, not result
 }                                // => Implicit return at end (no return statement needed)
+                                 // => return; statement optional for void methods
 ```
 
 **Key Takeaway**: Java is strictly pass-by-value—primitives copy values, objects copy reference values (not the objects themselves). Modifying object contents via reference affects the original, but reassigning the reference variable does not. Methods can return values via `return` keyword or be `void` for side-effects-only methods.
@@ -1103,59 +1100,80 @@ Exceptions handle errors gracefully without crashing programs. Java distinguishe
 
 ```java
 // TRY-CATCH - handle exceptions
-try {                            // => Protected code block (exceptions caught)
+try {                            // => Protected code block (exceptions caught if thrown)
+                                 // => Normal execution until exception occurs
     int result = 10 / 0;         // => ArithmeticException: division by zero
+                                 // => Exception thrown, control jumps to catch block
     System.out.println(result);  // => Never executed (exception thrown above)
 } catch (ArithmeticException e) {// => Catch specific exception type
+                                 // => e parameter holds exception object
+                                 // => Only executes if ArithmeticException thrown
     System.out.println("Cannot divide by zero!");
-    // => Output: Cannot divide by zero!
-}
+                                 // => Output: Cannot divide by zero!
+}                                // => Program continues normally after catch
 
-// MULTIPLE CATCH blocks
+// MULTIPLE CATCH blocks (order matters: specific to general)
 try {
-    String text = null;
+    String text = null;          // => text references null (no object)
     System.out.println(text.length());
-                                 // => NullPointerException (text is null)
+                                 // => NullPointerException (cannot call method on null)
+                                 // => JVM throws NullPointerException automatically
 } catch (NullPointerException e) {
+                                 // => First catch: most specific exception
     System.out.println("Null reference!");
-    // => Output: Null reference!
-} catch (Exception e) {          // => Catch-all for remaining exceptions
+                                 // => Output: Null reference!
+} catch (Exception e) {          // => Second catch: general catch-all
+                                 // => Only executes if NOT NullPointerException
     System.out.println("Other error: " + e.getMessage());
+                                 // => Gets error message from exception object
 }
 
-// FINALLY block (always executes)
-Scanner scanner = null;
+// FINALLY block (always executes, even if exception or return)
+Scanner scanner = null;          // => Declare outside try (accessible in finally)
 try {
     scanner = new Scanner(System.in);
-    // ... use scanner ...
-} catch (Exception e) {
+                                 // => Create resource that needs cleanup
+    // ... use scanner ...       // => Resource usage here
+} catch (Exception e) {          // => Handle any exceptions
     System.out.println("Error: " + e);
 } finally {                      // => Executes whether exception thrown or not
-    if (scanner != null) {
+                                 // => Even executes if catch has return statement
+    if (scanner != null) {       // => Check scanner was created
         scanner.close();         // => Cleanup resources (always runs)
+                                 // => Prevents resource leaks
     }
 }
 
 // TRY-WITH-RESOURCES (Java 7+, automatic resource management)
 try (Scanner s = new Scanner(System.in)) {
                                  // => Resources declared in () auto-close after try
-    String input = s.nextLine();
+                                 // => s must implement AutoCloseable interface
+                                 // => Multiple resources: try (R1 r1 = ...; R2 r2 = ...)
+    String input = s.nextLine(); // => Use resource normally
+                                 // => input holds line read from console
 }                                // => Scanner.close() called automatically (even if exception)
+                                 // => Cleaner than manual finally block
 
 // THROWING EXCEPTIONS
 public static void checkAge(int age) throws IllegalArgumentException {
                                  // => throws declares method can throw exception
-    if (age < 0) {
+                                 // => Unchecked exception (doesn't require declaration)
+                                 // => Checked exceptions MUST be declared or caught
+    if (age < 0) {               // => Validate input
         throw new IllegalArgumentException("Age cannot be negative");
                                  // => throw keyword creates and throws exception
-    }
+                                 // => Method execution stops immediately
+    }                            // => If validation passes, method continues normally
 }
 
 try {
-    checkAge(-5);                // => Throws IllegalArgumentException
+    checkAge(-5);                // => Calls method with invalid age
+                                 // => Throws IllegalArgumentException immediately
 } catch (IllegalArgumentException e) {
+                                 // => Catches thrown exception
     System.out.println(e.getMessage());
-    // => Output: Age cannot be negative
+                                 // => getMessage() returns "Age cannot be negative"
+                                 // => Output: Age cannot be negative
 }
 ```
 
@@ -1610,62 +1628,84 @@ Access modifiers control visibility of classes, fields, and methods. Encapsulati
 // ACCESS MODIFIERS: public, private, protected, package-private (default)
 
 public class BankAccount {       // => public: accessible from any package
+                                 // => Only ONE public class per .java file
     // PRIVATE fields - hidden implementation details
     private String accountNumber; // => private: only accessible within this class
+                                 // => Cannot access from outside: account.accountNumber ← compile error
     private double balance;       // => Encapsulation: hide internal state
+                                 // => Data hiding prevents direct manipulation
 
     // PUBLIC constructor - exposed API
     public BankAccount(String accountNumber, double initialBalance) {
+                                 // => Public constructor allows external object creation
         this.accountNumber = accountNumber;
+                                 // => this.accountNumber = instance field, accountNumber = parameter
         this.balance = initialBalance;
+                                 // => Controlled initialization (private fields set via constructor)
     }
 
     // PUBLIC methods - exposed behavior
     public void deposit(double amount) {
-        if (amount > 0) {          // => Validation logic
-            balance += amount;     // => Can access private field
+                                 // => Public method: part of public API
+        if (amount > 0) {          // => Validation logic (encapsulation benefit)
+                                 // => Prevents invalid state (negative deposits)
+            balance += amount;     // => Can access private field from same class
+                                 // => Internal state modification through controlled API
         }
     }
 
     public boolean withdraw(double amount) {
+                                 // => Returns boolean indicating success/failure
         if (amount > 0 && balance >= amount) {
-            balance -= amount;
-            return true;           // => Success
+                                 // => Business logic validation
+            balance -= amount;     // => Modify private field
+            return true;           // => Success indicator
         }
-        return false;              // => Failure (insufficient funds)
+        return false;              // => Failure (insufficient funds or invalid amount)
     }
 
     public double getBalance() {   // => Getter method (read-only access to private field)
-        return balance;
+                                 // => Returns copy of balance (primitive, safe)
+                                 // => No setter: controlled modification via deposit/withdraw only
+        return balance;            // => Returns current balance value
     }
 
     // PRIVATE helper method - internal implementation
     private void logTransaction(String type, double amount) {
-                                   // => Only callable within this class
+                                 // => Only callable within this class
+                                 // => Helper method not exposed to external code
         System.out.println(type + ": $" + amount + ", Balance: $" + balance);
+                                 // => Can access all private fields
     }
 }
 
 // PACKAGE-PRIVATE (no modifier) - accessible within same package
-class PackageHelper {              // => No public keyword (package-private)
-    void helperMethod() {          // => Package-private method
-        // Accessible to classes in same package only
+class PackageHelper {              // => No public keyword: package-private class
+                                 // => Only classes in same package can use this
+    void helperMethod() {          // => Package-private method (no modifier)
+                                 // => Accessible to classes in same package only
+                                 // => Default access level when no modifier specified
     }
 }
 
 // PROTECTED - accessible in subclasses and same package
 class Animal {
-    protected String species;      // => Accessible in subclasses
+    protected String species;      // => Accessible in subclasses + same package
+                                 // => More permissive than private, less than public
 
     protected void makeSound() {   // => Subclasses can override
+                                 // => Accessible to subclasses even in different packages
         System.out.println("Generic sound");
+                                 // => Output: Generic sound
     }
 }
 
 class Dog extends Animal {
-    public void bark() {
+    public void bark() {           // => Public method in Dog class
         species = "Canine";        // => Can access protected field from superclass
+                                 // => Even though inherited from Animal
         makeSound();               // => Can call protected method
+                                 // => Calls inherited protected method
     }
 }
 
@@ -1757,55 +1797,71 @@ Enums define fixed sets of named constants with type safety. Unlike integer cons
 
 ```java
 // BASIC ENUM
-public enum Day {
+public enum Day {                // => Enum type declaration
     MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
 }                                // => Each name is an enum constant (public static final)
+                                 // => Constants implicitly numbered (MONDAY=0, TUESDAY=1, etc.)
+                                 // => Type-safe: cannot use int where Day expected
 
 // USAGE
-Day today = Day.MONDAY;          // => Type-safe constant
+Day today = Day.MONDAY;          // => Type-safe constant assignment
+                                 // => today can only be Day values, not arbitrary ints
 System.out.println(today);       // => Output: MONDAY (toString() returns name)
+                                 // => Automatic name() and toString() methods
 
 // SWITCH with enums
-switch (today) {
-    case MONDAY:
+switch (today) {                 // => Switch on enum type
+                                 // => Compile-time exhaustiveness checking possible
+    case MONDAY:                 // => No Day.MONDAY needed (type inferred)
         System.out.println("Start of week");
-        break;
+                                 // => Output: Start of week
+        break;                   // => Exit switch
     case FRIDAY:
         System.out.println("TGIF!");
+                                 // => Output: TGIF!
         break;
     default:
         System.out.println("Midweek");
+                                 // => Handles all other days
 }
 
 // ENUM with FIELDS and METHODS
-public enum Planet {
-    MERCURY(3.303e+23, 2.4397e6),
-    VENUS(4.869e+24, 6.0518e6),
-    EARTH(5.976e+24, 6.37814e6);
+public enum Planet {             // => Enum with state and behavior
+    MERCURY(3.303e+23, 2.4397e6),// => Constructor call with mass and radius
+    VENUS(4.869e+24, 6.0518e6),  // => Each constant has associated data
+    EARTH(5.976e+24, 6.37814e6); // => Semicolon required when adding members
 
-    private final double mass;   // => Enum can have fields
-    private final double radius;
+    private final double mass;   // => Enum can have fields (instance variables)
+                                 // => final: constants are immutable
+    private final double radius; // => Each enum constant has own mass/radius
 
     Planet(double mass, double radius) {
                                  // => Enum constructor (implicitly private)
-        this.mass = mass;
-        this.radius = radius;
-    }
+                                 // => Cannot instantiate enum externally: new Planet(...) ← compile error
+        this.mass = mass;        // => Initialize mass field
+        this.radius = radius;    // => Initialize radius field
+    }                            // => Constructor called once per constant
 
-    public double mass() {       // => Enum can have methods
-        return mass;
+    public double mass() {       // => Enum can have methods (accessor)
+                                 // => Returns mass field
+        return mass;             // => Returns this constant's mass value
     }
 
     public double surfaceGravity() {
+                                 // => Calculated method (computation from fields)
         final double G = 6.67300E-11;
+                                 // => Gravitational constant
         return G * mass / (radius * radius);
+                                 // => Returns surface gravity in m/s²
     }
 }
 
 // USAGE
-Planet earth = Planet.EARTH;
+Planet earth = Planet.EARTH;     // => References EARTH constant
+                                 // => earth.mass() returns 5.976e+24 kg
 double gravity = earth.surfaceGravity();
-                                 // => gravity is 9.802... m/s²
+                                 // => Calls method on enum constant
+                                 // => gravity is 9.802... m/s² (Earth's surface gravity)
 
 // ENUM METHODS
 Day[] allDays = Day.values();    // => Returns array of all enum constants

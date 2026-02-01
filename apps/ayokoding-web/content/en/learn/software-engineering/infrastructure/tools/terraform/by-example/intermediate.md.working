@@ -2470,21 +2470,17 @@ graph TD
 ```hcl
 terraform {
 # => Terraform configuration block
-# => Terraform configuration block
   required_version = ">= 1.0"
   # => Sets required_version
 }
 
 provider "local" {}
-# => Local provider for demonstration
 # => Provider configuration
 
 # Variable with list of ingress rules
 variable "ingress_rules" {
-# => Input variable for dynamic ingress rules
 # => Input variable
   type = list(object({
-# => List of objects with port, protocol, description fields
     port        = number
     # => Sets port
     protocol    = string
@@ -2513,7 +2509,6 @@ resource "local_file" "security_group" {
     Security Group Rules:
     ${join("\n", [
       for rule in var.ingress_rules :
-# => Iterate over each rule in the list
       "Port ${rule.port}/${rule.protocol}: ${rule.description}"
     ])}
   EOT
@@ -2526,21 +2521,16 @@ resource "local_file" "security_group" {
 #   name = "web-sg"
 #
 #   dynamic "ingress" {
-# => Dynamic block generates multiple ingress blocks
 #     for_each = var.ingress_rules
-# => Iterate over ingress_rules variable
 #     # => for_each iterates over var.ingress_rules list
 #     # => Creates one ingress block per list element
 #
 #     content {
-# => Nested content block defines ingress structure
 #       from_port   = ingress.value.port
-# => Access port from current iteration value
 #       # => ingress.value accesses current iteration element
 #       to_port     = ingress.value.port
 #       protocol    = ingress.value.protocol
 #       cidr_blocks = ["0.0.0.0/0"]
-# => Allow traffic from any IP address
 #       description = ingress.value.description
 #     }
 #     # => content block defines the nested block structure
@@ -2549,10 +2539,8 @@ resource "local_file" "security_group" {
 
 # Dynamic blocks with maps (key-value access)
 variable "egress_rules_map" {
-# => Map-based variable for egress rules
 # => Input variable
   type = map(object({
-# => Map with string keys and object values
     port     = number
     # => Sets port
     protocol = string
@@ -2575,7 +2563,6 @@ resource "local_file" "egress_config" {
     Egress Rules:
     ${join("\n", [
       for name, rule in var.egress_rules_map :
-# => Iterate map with key (name) and value (rule)
       "${name}: Port ${rule.port}/${rule.protocol}"
     ])}
   EOT
@@ -2584,10 +2571,8 @@ resource "local_file" "egress_config" {
 
 # Nested dynamic blocks
 variable "route_tables" {
-# => Nested list variable for route tables with routes
 # => Input variable
   type = list(object({
-# => List of objects with port, protocol, description fields
     name   = string
     # => Sets name
     routes = list(object({

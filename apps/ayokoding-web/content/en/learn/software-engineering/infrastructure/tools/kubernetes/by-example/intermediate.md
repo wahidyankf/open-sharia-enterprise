@@ -874,57 +874,96 @@ spec:
 Jobs run Pods to completion, suitable for batch processing, data migration, or one-time tasks. Unlike Deployments, Jobs terminate when tasks complete successfully and track completion status.
 
 ```yaml
-apiVersion: batch/v1
-kind: Job
+apiVersion: batch/v1 # => Batch API for Jobs
+kind: Job # => Job resource
 metadata:
-  name: data-migration # => Job name
+  name:
+    data-migration # => Job name
+    # => Unique identifier for batch task
 spec:
+  # => Job specification
   completions:
     1 # => Number of successful completions required
     # => Job completes after 1 successful Pod
     # => completions=5 requires 5 successful Pods
+    # => Total work items to process
   parallelism:
     1 # => Number of Pods running in parallel
     # => parallelism=3 runs 3 Pods simultaneously
     # => parallelism ≤ completions
+    # => Controls concurrency
   backoffLimit:
     3 # => Maximum retries before marking Job failed
     # => Retries with exponential backoff
     # => Default: 6 retries
+    # => Prevents infinite retry loops
   template:
+    # => Pod template for Job
     metadata:
       labels:
-        app: migration # => Pod labels for tracking
+        # => Pod labels
+        app:
+          migration # => Pod labels for tracking
+          # => Used for monitoring and querying
     spec:
+      # => Pod specification
       restartPolicy:
         Never # => Never or OnFailure (not Always)
         # => Always invalid for Jobs
         # => Never creates new Pod on failure
         # => OnFailure restarts container in same Pod
+        # => Required field for Jobs
       containers:
-        - name: migrator # => Container name
-          image: busybox:1.36 # => Lightweight Linux utilities
+        # => Container list
+        - name:
+            migrator # => Container name
+            # => Migration task executor
+          image:
+            busybox:1.36 # => Lightweight Linux utilities
+            # => Minimal image for shell scripts
           command:
+            # => Container command
             - sh # => Shell interpreter
             - -c # => Execute following script
             - | # => Multi-line script
+              # => Pipe preserves newlines
               echo "Starting data migration..."
+              # => Log start
               sleep 10
+              # => Simulate migration work
               echo "Migration completed successfully"
+              # => Log completion
               exit 0 # => Exit 0 signals success
                      # => Exit 1+ triggers retry (up to backoffLimit)
                      # => Job controller creates new Pod on failure
+                     # => Exit code determines success/failure
 
 # Job lifecycle:
 # => Pod created and runs to completion
+# => Job controller monitors exit code
 # => Exit 0 → Job marked Complete (completions: 1/1)
+# => Success increments completion counter
 # => Exit 1+ → Pod recreated (up to backoffLimit retries)
+# => Failure triggers retry logic
 # => Attempt 1 fails → wait 10s, retry
+# => Exponential backoff starts
 # => Attempt 2 fails → wait 20s, retry
+# => Backoff doubles each failure
 # => Attempt 3 fails → wait 40s, retry
+# => Maximum backoff interval
 # => After 3 failures → Job marked Failed (status.failed=3)
+# => Exceeds backoffLimit, Job stops
 # => kubectl get jobs shows: COMPLETIONS=1/1, DURATION=15s
+# => Shows completion ratio and time
 # => kubectl delete job data-migration  # Cleanup (removes Pods)
+# => Job and Pods both deleted
+
+# Completion calculation:
+# => completions=5, parallelism=2
+# => First 2 Pods created immediately
+# => Pod A completes → completions: 1/5, Pod C created
+# => Pod B completes → completions: 2/5, Pod D created
+# => Continue until completions: 5/5 → Job Complete
 ```
 
 **Key Takeaway**: Use Jobs for one-time or periodic batch tasks; set appropriate completions, parallelism, and backoffLimit based on workload requirements; Jobs do not support restartPolicy: Always.
@@ -958,47 +997,82 @@ graph TD
 ```
 
 ```yaml
-apiVersion: batch/v1
-kind: Job
+apiVersion: batch/v1 # => Batch API for Jobs
+kind: Job # => Job resource
 metadata:
-  name: parallel-processing # => Job name
+  name:
+    parallel-processing # => Job name
+    # => Parallel batch task
 spec:
+  # => Job specification
   completions:
     10 # => Total successful Pods required: 10
     # => Job completes after 10 Pods succeed
+    # => Work items to process
   parallelism:
     3 # => Run 3 Pods in parallel
     # => Creates Pods in batches: 3, then 3, then 3, then 1
     # => Maintains max 3 Pods running simultaneously
+    # => Controls concurrency
   template:
+    # => Pod template
     spec:
+      # => Pod specification
       restartPolicy:
         OnFailure # => Retry failed Pods within same Pod object
         # => Never creates new Pod for each retry
         # => Container restarts in same Pod
+        # => Reduces Pod churn
       containers:
-        - name: worker # => Container name
-          image: busybox:1.36 # => Lightweight Linux utilities
+        # => Container list
+        - name:
+            worker # => Container name
+            # => Task worker
+          image:
+            busybox:1.36 # => Lightweight Linux utilities
+            # => Minimal shell environment
           command:
+            # => Container command
             - sh # => Shell interpreter
             - -c # => Execute following script
             - | # => Multi-line script
+              # => Pipe preserves newlines
               TASK_ID=$((RANDOM % 1000))
+              # => Generate unique task ID
               echo "Processing task $TASK_ID"
+              # => Log start
               sleep $((5 + RANDOM % 10))
+              # => Simulate work (5-15 seconds)
               echo "Task $TASK_ID completed"
+              # => Log completion
               # => Simulates variable-duration work
               # => Each Pod processes independent task
+              # => Exit 0 implicit (success)
 
 # Parallel execution:
 # => Pods 1,2,3 start immediately (parallelism=3)
+# => Initial batch created
 # => Pod 1 completes (1/10) → Pod 4 starts (maintains parallelism=3)
+# => Completion triggers next Pod creation
 # => Pod 2 completes (2/10) → Pod 5 starts
+# => Continues replacing completed Pods
 # => Pod 3 completes (3/10) → Pod 6 starts
+# => Maintains 3 running Pods
 # => Continues until 10 successful completions
+# => Work queue pattern
 # => kubectl get pods shows 3 Running, 7 Completed
+# => Live state during execution
 # => kubectl get jobs shows: COMPLETIONS=7/10 (7 completed, 3 running)
+# => Progress tracking
 # => Job controller maintains parallelism by creating new Pods
+# => Automatic backfill on completion
+
+# Scaling parallelism:
+# => kubectl patch job parallel-processing -p '{"spec":{"parallelism":5}}'
+# => Increases concurrency to 5 Pods
+# => More Pods created immediately
+# => kubectl patch job parallel-processing -p '{"spec":{"parallelism":1}}'
+# => Reduces to 1 Pod (existing Pods finish, no new ones until count drops)
 ```
 
 **Key Takeaway**: Use parallel Jobs for distributed batch processing; adjust parallelism based on cluster capacity and completions based on total work items; consider work queue pattern for dynamic task distribution.
@@ -1031,55 +1105,94 @@ graph TD
 ```
 
 ```yaml
-apiVersion: batch/v1
-kind: CronJob
+apiVersion: batch/v1 # => Batch API for CronJobs
+kind: CronJob # => CronJob resource
 metadata:
-  name: backup-job # => CronJob name
+  name:
+    backup-job # => CronJob name
+    # => Scheduled backup task
 spec:
+  # => CronJob specification
   schedule:
     "0 2 * * *" # => Cron syntax: minute hour day month weekday
     # => "0 2 * * *" = 2:00 AM daily
     # => "*/5 * * * *" = every 5 minutes
     # => "0 */2 * * *" = every 2 hours
+    # => Standard Unix cron format
   concurrencyPolicy:
     Forbid # => Prevents concurrent Job runs
     # => Allow: permits concurrent executions
     # => Replace: cancels current and starts new
     # => Use Forbid for backups to prevent conflicts
+    # => Ensures single execution at a time
   successfulJobsHistoryLimit:
     3 # => Keeps 3 successful Jobs
     # => Older successful Jobs auto-deleted
     # => Limits resource consumption
+    # => Audit trail for recent runs
   failedJobsHistoryLimit:
     1 # => Keeps 1 failed Job
     # => Enables debugging recent failures
+    # => Only most recent failure kept
   jobTemplate:
+    # => Job template (nested Job spec)
     spec:
+      # => Job specification
       template:
+        # => Pod template (nested Pod spec)
         spec:
-          restartPolicy: OnFailure # => Retry on container failure
+          # => Pod specification
+          restartPolicy:
+            OnFailure # => Retry on container failure
+            # => Container restarts in same Pod
           containers:
-            - name: backup # => Container name
-              image: busybox:1.36 # => Lightweight Linux utilities
+            # => Container list
+            - name:
+                backup # => Container name
+                # => Backup executor
+              image:
+                busybox:1.36 # => Lightweight Linux utilities
+                # => Minimal shell environment
               command:
+                # => Container command
                 - sh # => Shell interpreter
                 - -c # => Execute following script
                 - | # => Multi-line script
+                  # => Pipe preserves newlines
                   echo "Starting backup at $(date)"
+                  # => Log start time
                   # Backup logic here
+                  # => Replace with actual backup commands
                   sleep 30
+                  # => Simulate backup duration
                   echo "Backup completed at $(date)"
+                  # => Log completion time
                   # => Simulates backup operation
+                  # => Exit 0 implicit (success)
 
 # CronJob behavior:
 # => Creates Job at scheduled time (2:00 AM daily)
+# => CronJob controller spawns Job
 # => Job creates Pod to run backup
+# => Job controller manages Pod lifecycle
 # => Pod completes → Job marked successful
+# => Success increments history
 # => After successfulJobsHistoryLimit (3), old Jobs deleted
+# => Automatic cleanup prevents accumulation
 # => Keeps: backup-job-27891234 (oldest), backup-job-27891235, backup-job-27891236 (newest)
+# => Rolling window of recent executions
 # => kubectl get cronjobs shows: SCHEDULE, SUSPEND, ACTIVE, LAST SCHEDULE
+# => Status overview
 # => kubectl create job --from=cronjob/backup-job manual-backup  # Manual trigger
+# => Run Job immediately outside schedule
 # => Suspend CronJob: kubectl patch cronjob backup-job -p '{"spec":{"suspend":true}}'
+# => Temporarily disable scheduling
+
+# Timezone handling:
+# => Default: Controller manager timezone (usually UTC)
+# => Kubernetes 1.25+: spec.timeZone field
+# => Set timezone: spec.timeZone: "America/New_York"
+# => Ensures consistent scheduling across daylight saving
 ```
 
 **Key Takeaway**: Use CronJobs for scheduled recurring tasks with appropriate concurrencyPolicy to handle overlapping executions; set history limits to prevent accumulation of completed Jobs.
@@ -1115,53 +1228,93 @@ graph TD
 ```yaml
 # First, install Ingress Controller (nginx example):
 # => kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.1/deploy/static/provider/cloud/deploy.yaml
+# => Installs nginx Ingress Controller
 # => Creates Ingress Controller Deployment and Service
 # => LoadBalancer Service exposes Ingress to external traffic
+# => Required prerequisite for Ingress resources
 
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: networking.k8s.io/v1 # => Networking API for Ingress
+kind: Ingress # => Ingress resource
 metadata:
-  name: app-ingress # => Ingress name
+  name:
+    app-ingress # => Ingress name
+    # => Routing rules identifier
   annotations:
+    # => Ingress Controller-specific annotations
     nginx.ingress.kubernetes.io/rewrite-target:
       / # => Rewrites /api/users → /users before forwarding
       # => Strips path prefix
       # => Backend receives /users
+      # => nginx-specific annotation
 spec:
+  # => Ingress specification
   ingressClassName:
     nginx # => Uses nginx Ingress Controller
     # => Required in Kubernetes 1.18+
     # => Multiple controllers can coexist
+    # => Selects which controller processes this Ingress
   rules:
+    # => Routing rules
     - host:
         app.example.com # => Host-based routing
         # => Matches Host header in requests
         # => DNS must point to Ingress Controller IP
+        # => Virtual hosting
       http:
+        # => HTTP routing rules
         paths:
-          - path: /api # => Path-based routing
+          # => Path-based routing
+          - path:
+              /api # => Path-based routing
+              # => Matches requests starting with /api
             pathType:
               Prefix # => Matches /api, /api/, /api/users
               # => Exact: exact match only
               # => ImplementationSpecific: controller-dependent
+              # => Prefix is most common
             backend:
+              # => Backend service routing
               service:
-                name: api-service # => Routes to api-service
+                name:
+                  api-service # => Routes to api-service
+                  # => Service name in same namespace
                 port:
-                  number: 80 # => Service port (not targetPort)
-          - path: /web # => Different path
-            pathType: Prefix # => Matches /web, /web/, /web/home
+                  number:
+                    80 # => Service port (not targetPort)
+                    # => Ingress routes to Service port
+          - path:
+              /web # => Different path
+              # => Separate routing rule
+            pathType:
+              Prefix # => Matches /web, /web/, /web/home
+              # => Prefix match type
             backend:
+              # => Backend service routing
               service:
-                name: web-service # => Routes to web-service
+                name:
+                  web-service # => Routes to web-service
+                  # => Different backend service
                 port:
-                  number: 80
+                  number:
+                    80 # => Service port
+                    # => Standard HTTP port
 
 # Access patterns:
 # => http://app.example.com/api/users → api-service (path rewritten to /users)
+# => Host matches, path /api matches, rewrite applied
 # => http://app.example.com/web/home → web-service (path rewritten to /home)
+# => Host matches, path /web matches, rewrite applied
 # => http://other.example.com/api → no match (404 from Ingress Controller)
+# => Host doesn't match (other.example.com ≠ app.example.com)
 # => Direct IP access http://INGRESS-IP/api → no match (host header doesn't match)
+# => IP address ≠ app.example.com hostname
+
+# Ingress Controller behavior:
+# => LoadBalancer Service receives external traffic
+# => Ingress Controller evaluates host and path
+# => Routes to backend Service based on rules
+# => Service forwards to Pods
+# => End-to-end: Client → LoadBalancer → Ingress Controller → Service → Pod
 ```
 
 **Key Takeaway**: Ingress provides cost-effective HTTP/HTTPS routing compared to multiple LoadBalancer Services; install an Ingress Controller first, then create Ingress resources for routing rules.
@@ -1177,46 +1330,85 @@ Ingress supports TLS termination using Secrets containing certificates and priva
 ```yaml
 # Create TLS Secret:
 # => kubectl create secret tls tls-secret --cert=tls.crt --key=tls.key
+# => Creates Kubernetes TLS Secret
 # => tls.crt: certificate file (public key)
 # => tls.key: private key file
 # => Secret type: kubernetes.io/tls
+# => Automatically validates TLS format
 
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: networking.k8s.io/v1 # => Networking API for Ingress
+kind: Ingress # => Ingress resource
 metadata:
-  name: tls-ingress # => Ingress name
+  name:
+    tls-ingress # => Ingress name
+    # => TLS-enabled routing
 spec:
-  ingressClassName: nginx # => Ingress Controller to use
+  # => Ingress specification
+  ingressClassName:
+    nginx # => Ingress Controller to use
+    # => nginx Ingress Controller
   tls:
+    # => TLS configuration
     - hosts:
+        # => Hosts for TLS
         - secure.example.com # => TLS applies to this host
           # => Certificate must match this domain
+          # => SAN (Subject Alternative Name) or CN (Common Name)
       secretName:
         tls-secret # => References TLS Secret
         # => Secret must exist in same namespace
         # => Contains tls.crt and tls.key
         # => Ingress Controller reads certificate from Secret
+        # => Auto-reloads on Secret update
   rules:
-    - host: secure.example.com # => Must match TLS hosts
+    # => Routing rules
+    - host:
+        secure.example.com # => Must match TLS hosts
+        # => Host consistency required
       http:
+        # => HTTP routing
         paths:
-          - path: / # => Root path
-            pathType: Prefix # => Matches all paths
+          # => Path rules
+          - path:
+              / # => Root path
+              # => Catch-all route
+            pathType:
+              Prefix # => Matches all paths
+              # => Root prefix matches everything
             backend:
+              # => Backend service
               service:
-                name: web-service # => Backend service
+                name:
+                  web-service # => Backend service
+                  # => Service in same namespace
                 port:
-                  number: 80 # => HTTP port (TLS already terminated)
-
+                  number:
+                    80 # => HTTP port (TLS already terminated)
+                    # => Plain HTTP to backend
 
 # TLS behavior:
 # => https://secure.example.com → TLS termination at Ingress Controller
+# => HTTPS request arrives
 # => Ingress Controller decrypts HTTPS, validates certificate
+# => TLS handshake at Ingress Controller
 # => Ingress Controller → web-service over HTTP (cluster-internal)
+# => Cluster network unencrypted
 # => Backend receives plain HTTP (no TLS overhead)
+# => Services don't need TLS configuration
 # => http://secure.example.com → redirected to HTTPS (nginx default)
+# => HTTP upgrade enforcement
 # => 301 Moved Permanently redirect
+# => Browser auto-redirects to HTTPS
 # => Certificate validation required for production (browsers check)
+# => Invalid cert → browser warning
+
+# cert-manager integration (automated certificates):
+# => Install cert-manager: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.yaml
+# => Creates ClusterIssuer for Let's Encrypt
+# => Add annotation: cert-manager.io/cluster-issuer: "letsencrypt-prod"
+# => cert-manager automatically provisions certificate
+# => Auto-renewal 30 days before expiration
+# => Zero manual certificate management
 ```
 
 **Key Takeaway**: Use TLS Ingress for production HTTPS; obtain certificates from Let's Encrypt via cert-manager for automated certificate management and renewal; TLS terminates at Ingress Controller, not backend Services.

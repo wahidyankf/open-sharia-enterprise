@@ -2265,134 +2265,195 @@ List partitioning divides tables by discrete values (categories, regions, status
 CREATE DATABASE example_73;
 -- => Creates database for list partitioning examples
 \c example_73;
--- => Switches to example_73
+-- => Switches to example_73 database
 
 CREATE TABLE orders (
     id BIGSERIAL,
+    -- => id: auto-incrementing 8-byte integer (handles billions of orders)
     customer_id INTEGER,
+    -- => customer_id: links to customers table
     region VARCHAR(50) NOT NULL,
+    -- => region: partition key column (MUST NOT be NULL)
+    -- => Determines which partition stores this row
     total DECIMAL(10, 2),
+    -- => total: order amount (10 digits total, 2 after decimal)
     created_at TIMESTAMP DEFAULT NOW()
+    -- => created_at: timestamp with default to current time
 ) PARTITION BY LIST (region);
--- => Parent table partitioned by region
--- => Each partition stores specific region(s)
+-- => PARTITION BY LIST: divides table by discrete region values
+-- => Parent table definition only (data stored in partitions)
+-- => Each partition holds rows matching specific region value(s)
 
 CREATE TABLE orders_us PARTITION OF orders
     FOR VALUES IN ('US', 'USA', 'United States');
-    -- => US partition accepts multiple region values
-    -- => Handles variations of US designation
+    -- => Creates US partition as child of orders table
+    -- => FOR VALUES IN: accepts multiple variations of US designation
+    -- => Rows with region='US', 'USA', or 'United States' go here
+    -- => Partition inherits schema from parent (same columns)
 
 CREATE TABLE orders_eu PARTITION OF orders
     FOR VALUES IN ('EU', 'Europe', 'UK', 'Germany', 'France');
     -- => EU partition for European regions
+    -- => Handles region='EU', 'Europe', 'UK', 'Germany', or 'France'
+    -- => Multiple countries can share one partition
 
 CREATE TABLE orders_asia PARTITION OF orders
     FOR VALUES IN ('Asia', 'China', 'Japan', 'India');
-    -- => Asia partition
+    -- => Asia partition for Asian regions
+    -- => Rows with these region values stored here
 
 CREATE TABLE orders_other PARTITION OF orders DEFAULT;
--- => Default partition for unspecified regions
+-- => DEFAULT partition catches all unspecified region values
+-- => If region doesn't match US, EU, or Asia partitions → goes to orders_other
+-- => Safety net preventing INSERT errors for unknown regions
 
 INSERT INTO orders (customer_id, region, total)
 VALUES
     (1001, 'US', 150.00),
+    -- => Row 1: region='US' → routed to orders_us partition
     (1002, 'Germany', 200.00),
+    -- => Row 2: region='Germany' → routed to orders_eu partition
     (1003, 'Japan', 175.00),
+    -- => Row 3: region='Japan' → routed to orders_asia partition
     (1004, 'Canada', 125.00),
-    -- => Routed to orders_other (Canada not in defined partitions)
+    -- => Row 4: region='Canada' → routed to orders_other (not in defined partitions)
     (1005, 'France', 220.00);
-    -- => 5 orders distributed across partitions
+    -- => Row 5: region='France' → routed to orders_eu partition
+-- => PostgreSQL automatically routes rows to correct partition
+-- => No manual partition management needed
 
 SELECT
     tableoid::regclass AS partition_name,
-    -- => Shows which partition stores each row
+    -- => tableoid: internal column showing which physical table stores row
+    -- => ::regclass: casts OID to table name (orders_us, orders_eu, etc.)
+    -- => Reveals partition routing for each row
     id,
+    -- => Order ID
     region,
+    -- => Region value that determined partition routing
     total
+    -- => Order total
 FROM orders
+-- => Query parent table (aggregates all partitions)
 ORDER BY id;
--- => partition_name column shows routing:
--- =>   orders_us: US row
--- =>   orders_eu: Germany, France rows
--- =>   orders_asia: Japan row
--- =>   orders_other: Canada row
+-- => Sorts by order ID
+-- => Output shows: partition_name | id | region | total
+-- =>   orders_us: Row with region='US'
+-- =>   orders_eu: Rows with region='Germany', 'France'
+-- =>   orders_asia: Row with region='Japan'
+-- =>   orders_other: Row with region='Canada'
 
 EXPLAIN ANALYZE
 SELECT * FROM orders WHERE region = 'Germany';
--- => Partition pruning:
--- =>   Seq Scan on orders_eu only
--- => PostgreSQL knows 'Germany' only in orders_eu partition
--- => Scans 1 partition instead of 4
+-- => EXPLAIN ANALYZE: shows query execution plan with actual timing
+-- => WHERE region = 'Germany': filters by partition key
+-- => Partition pruning: PostgreSQL knows 'Germany' only in orders_eu
+-- => Query plan: Seq Scan on orders_eu only (NOT all 4 partitions)
+-- => Scans 1 partition instead of 4 (75% less data scanned)
+-- => Performance optimization through partition elimination
 
 SELECT
     'orders_us' AS partition,
+    -- => Literal partition name for reporting
     COUNT(*) AS row_count,
+    -- => Counts rows in orders_us partition
     SUM(total) AS total_revenue
+    -- => Sums order totals for revenue calculation
 FROM orders_us
+-- => Queries US partition directly (not parent table)
 UNION ALL
 SELECT 'orders_eu', COUNT(*), SUM(total) FROM orders_eu
+-- => UNION ALL: combines results without deduplication
+-- => EU partition statistics
 UNION ALL
 SELECT 'orders_asia', COUNT(*), SUM(total) FROM orders_asia
+-- => Asia partition statistics
 UNION ALL
 SELECT 'orders_other', COUNT(*), SUM(total) FROM orders_other;
--- => Per-partition statistics
--- => Shows data distribution across regions
+-- => Other partition statistics
+-- => Result: Per-partition statistics showing data distribution
+-- => Example: orders_us: 1 row, $150 | orders_eu: 2 rows, $420
 
 CREATE INDEX idx_orders_us_customer ON orders_us(customer_id);
+-- => Creates B-tree index on customer_id in US partition only
+-- => Smaller index (only US orders) → faster lookups
 CREATE INDEX idx_orders_eu_customer ON orders_eu(customer_id);
+-- => Index on EU partition customer_id
 CREATE INDEX idx_orders_asia_customer ON orders_asia(customer_id);
--- => Partition-specific indexes
--- => Smaller, faster indexes than single-table index
+-- => Index on Asia partition customer_id
+-- => Partition-specific indexes: each smaller than single-table index
+-- => Faster maintenance (rebuilding small indexes vs one huge index)
 
 EXPLAIN ANALYZE
 SELECT *
 FROM orders
+-- => Query parent table (PostgreSQL routes to correct partition)
 WHERE region = 'US' AND customer_id = 1001;
--- => Partition pruning + index scan:
--- =>   Index Scan on orders_us
--- => Uses both partition pruning and index
+-- => WHERE region = 'US': partition pruning (eliminates EU, Asia, Other)
+-- => AND customer_id = 1001: uses idx_orders_us_customer index
+-- => Query plan: Index Scan using idx_orders_us_customer on orders_us
+-- => Combined optimization: partition pruning + index scan
+-- => Result: scans only US partition using index (fastest possible)
 
 CREATE TABLE products (
     id BIGSERIAL,
+    -- => Auto-incrementing product ID
     name VARCHAR(200),
+    -- => Product name (up to 200 characters)
     category VARCHAR(50) NOT NULL,
+    -- => Category: partition key (electronics, clothing, food)
     price DECIMAL(10, 2)
+    -- => Price with 2 decimal precision
 ) PARTITION BY LIST (category);
--- => Partition by product category
+-- => Second partitioning example using product category
+-- => Demonstrates partitioning on different column
 
 CREATE TABLE products_electronics PARTITION OF products
     FOR VALUES IN ('Electronics', 'Computers', 'Phones');
+    -- => Electronics partition for multiple electronics categories
 
 CREATE TABLE products_clothing PARTITION OF products
     FOR VALUES IN ('Clothing', 'Apparel', 'Fashion');
+    -- => Clothing partition for fashion-related categories
 
 CREATE TABLE products_food PARTITION OF products
     FOR VALUES IN ('Food', 'Groceries', 'Beverages');
+    -- => Food partition for consumables
 
 INSERT INTO products (name, category, price)
 VALUES
     ('Laptop', 'Electronics', 1200.00),
+    -- => Routed to products_electronics partition
     ('T-Shirt', 'Clothing', 25.00),
+    -- => Routed to products_clothing partition
     ('Coffee', 'Beverages', 12.00);
-    -- => Automatically routed to category partitions
+    -- => Routed to products_food partition
+-- => Automatic partition routing based on category value
 
 SELECT
     tableoid::regclass,
+    -- => Shows which partition stores each product
     name,
     category,
     price
 FROM products;
--- => Shows partition routing per product
+-- => Result reveals partition assignment per product
+-- => Laptop → products_electronics
+-- => T-Shirt → products_clothing
+-- => Coffee → products_food
 
 ALTER TABLE orders_eu ADD CONSTRAINT uk_eu_customer_id UNIQUE (customer_id);
--- => Partition-specific constraint
--- => Enforces uniqueness within EU partition only
+-- => Adds UNIQUE constraint to EU partition only
+-- => Enforces: no duplicate customer_id within orders_eu partition
 -- => Does NOT enforce global uniqueness across all partitions
+-- => Same customer_id can exist in orders_us AND orders_eu (different partitions)
 
 INSERT INTO orders (customer_id, region, total)
 VALUES (1002, 'Germany', 50.00);
--- => ERROR: duplicate key violation
--- => customer_id 1002 already in orders_eu partition
+-- => Attempts to insert customer_id=1002 into Germany (orders_eu partition)
+-- => ERROR: duplicate key value violates unique constraint "uk_eu_customer_id"
+-- => Reason: customer_id 1002 already exists in orders_eu partition
+-- => Partition-level constraint prevents duplicate within partition
 ```
 
 **Key Takeaway**: List partitioning organizes data by discrete values (regions, categories, tenants). Partition pruning optimizes queries filtering on partition key. Use DEFAULT partition to catch unspecified values.
@@ -3676,100 +3737,142 @@ LISTEN/NOTIFY enables real-time event notifications between database sessions - 
 
 ```sql
 CREATE DATABASE example_82;
--- => Creates database for LISTEN/NOTIFY examples
+-- => Creates database for LISTEN/NOTIFY event notification examples
 \c example_82;
--- => Switches to example_82
+-- => Switches to example_82 database
 
 -- Session 1 (Listener)
 LISTEN order_updates;
--- => Registers current session to receive notifications on 'order_updates' channel
--- => Channel name is arbitrary string
+-- => LISTEN: registers current session to receive notifications
+-- => Channel name: 'order_updates' (arbitrary string identifier)
+-- => Session now waits for notifications on this channel
+-- => Non-blocking: other queries can execute while listening
 
 -- Session 2 (Notifier)
 NOTIFY order_updates, 'New order #12345';
--- => Sends notification to 'order_updates' channel
--- => Payload: 'New order #12345' (max 8000 bytes)
--- => All sessions listening to channel receive notification
+-- => NOTIFY: sends notification to 'order_updates' channel
+-- => Payload: 'New order #12345' (optional message, max 8000 bytes)
+-- => Broadcasts to ALL sessions listening on 'order_updates' channel
+-- => Asynchronous: doesn't wait for listener response
 
 -- Session 1 receives:
--- => Asynchronous notification "order_updates" with payload "New order #12345"
+-- => Asynchronous notification "order_updates" received
+-- => Payload: "New order #12345"
+-- => Application can react immediately (cache invalidation, UI update, etc.)
 
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
+    -- => id: auto-incrementing order identifier
     customer_id INTEGER,
+    -- => customer_id: links to customer
     total DECIMAL(10, 2),
+    -- => total: order amount
     status VARCHAR(20),
+    -- => status: current order status (pending, shipped, etc.)
     created_at TIMESTAMP DEFAULT NOW()
+    -- => created_at: timestamp of order creation
 );
+-- => Orders table for demonstrating trigger-based notifications
 
 CREATE FUNCTION notify_order_change() RETURNS trigger AS $$
+-- => PL/pgSQL function that sends notifications on data changes
+-- => RETURNS trigger: function designed for trigger execution
 BEGIN
     IF (TG_OP = 'INSERT') THEN
+        -- => TG_OP: trigger variable containing operation type (INSERT/UPDATE/DELETE)
         PERFORM pg_notify('order_updates',
                           json_build_object('action', 'INSERT',
                                             'id', NEW.id,
                                             'total', NEW.total)::TEXT);
-        -- => Sends JSON payload with order details
-        -- => json_build_object creates JSON object
+        -- => pg_notify: sends notification to channel
+        -- => json_build_object: creates JSON from key-value pairs
+        -- => NEW: trigger variable with new row data
+        -- => ::TEXT: casts JSON to text (required for pg_notify payload)
+        -- => Payload: {"action":"INSERT","id":1,"total":250.00}
         RETURN NEW;
+        -- => RETURN NEW: required for AFTER INSERT trigger
     ELSIF (TG_OP = 'UPDATE') THEN
         PERFORM pg_notify('order_updates',
                           json_build_object('action', 'UPDATE',
                                             'id', NEW.id,
                                             'old_status', OLD.status,
                                             'new_status', NEW.status)::TEXT);
+        -- => OLD: trigger variable with original row data before update
+        -- => Sends both old and new status for comparison
         RETURN NEW;
+        -- => Returns modified row
     ELSIF (TG_OP = 'DELETE') THEN
         PERFORM pg_notify('order_updates',
                           json_build_object('action', 'DELETE',
                                             'id', OLD.id)::TEXT);
+        -- => DELETE uses OLD (no NEW row exists after deletion)
         RETURN OLD;
+        -- => Returns deleted row (required for AFTER DELETE trigger)
     END IF;
 END;
 $$ LANGUAGE plpgsql;
--- => Trigger function sends notifications on INSERT/UPDATE/DELETE
+-- => Trigger function sends notifications for all INSERT/UPDATE/DELETE operations
+-- => Application can react to database changes in real-time
 
 CREATE TRIGGER order_change_trigger
+-- => Creates trigger named order_change_trigger
 AFTER INSERT OR UPDATE OR DELETE ON orders
+-- => AFTER: trigger fires after operation completes
+-- => OR: listens for INSERT, UPDATE, and DELETE operations
 FOR EACH ROW
+-- => Executes once per affected row (not per statement)
 EXECUTE FUNCTION notify_order_change();
--- => Trigger fires after data changes
--- => Calls notify_order_change function
+-- => Calls notify_order_change function for each row change
+-- => Trigger now active: any change to orders table sends notification
 
 -- Session 1
 LISTEN order_updates;
--- => Listener ready
+-- => Session 1 registers to receive order_updates notifications
+-- => Ready to receive trigger-sent notifications
 
 -- Session 2
 INSERT INTO orders (customer_id, total, status)
 VALUES (1001, 250.00, 'pending');
--- => Inserts new order
+-- => Session 2 inserts new order (id=1 auto-generated)
+-- => Trigger fires: order_change_trigger executes notify_order_change
+-- => Notification sent to 'order_updates' channel
 
 -- Session 1 receives:
--- => Notification: {"action":"INSERT","id":1,"total":250.00}
+-- => Asynchronous notification: {"action":"INSERT","id":1,"total":250.00}
+-- => Application can update cache, send webhook, log event, etc.
+-- => Real-time notification without polling database
 
 -- Session 2
 UPDATE orders
 SET status = 'shipped'
+-- => Changes order status from 'pending' to 'shipped'
 WHERE id = 1;
--- => Updates order status
+-- => Updates order with id=1
+-- => Trigger fires: notify_order_change sends UPDATE notification
 
 -- Session 1 receives:
 -- => Notification: {"action":"UPDATE","id":1,"old_status":"pending","new_status":"shipped"}
+-- => Application knows order status changed (can notify customer)
 
 UNLISTEN order_updates;
--- => Unregisters from channel
--- => No longer receives notifications
+-- => Unregisters current session from 'order_updates' channel
+-- => Session no longer receives notifications on this channel
+-- => Other channels still active if listening
 
 UNLISTEN *;
--- => Unregisters from ALL channels
+-- => Unregisters from ALL channels at once
+-- => Session stops receiving notifications entirely
+-- => Wildcard operator clears all channel subscriptions
 
 LISTEN cache_invalidation;
--- => Listener for cache events
+-- => Registers for cache invalidation events
+-- => Different channel for different event types
 
 SELECT pg_notify('cache_invalidation', 'products');
--- => Notifies cache invalidation for products
--- => Application clears product cache
+-- => Sends notification using pg_notify function (not NOTIFY command)
+-- => pg_notify: function version allows use in SELECT/FROM clauses
+-- => Payload: 'products' indicates which cache to invalidate
+-- => Listeners can clear product cache in response
 
 CREATE TABLE audit_log (
     id SERIAL PRIMARY KEY,

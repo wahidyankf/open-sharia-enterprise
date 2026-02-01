@@ -36,91 +36,29 @@ graph TD
 ```
 
 ```elixir
-defmodule User do                     # => Define User module
-                                      # => Module represents database table
-  use Ecto.Schema                     # => Import schema DSL functions
-                                      # => Provides: schema/2, field/3, timestamps/1
-                                      # => Makes module an Ecto schema
-                                      # => Injects __using__/1 macro
-                                      # => Imports Ecto.Schema behavior
-                                      # => Enables schema DSL in module body
-                                      # => Configures module for Ecto operations
-                                      # => Blank line for readability
-                                      # => Visual separation from use statement
-                                      # => Schema definition begins
-  schema "users" do                   # => Declares schema block
-                                      # => Schema macro invocation
-                                      # => Map to "users" table in database
-                                      # => Generates __schema__/1, __schema__/2 functions
-                                      # => Automatically adds :id primary key (bigserial)
-                                      # => Table name stored as module metadata
-                                      # => Defines table-to-struct mapping
-    field :name, :string              # => Declares field :name
-                                      # => Field macro invocation
-                                      # => String column: name
-                                      # => Maps to VARCHAR in PostgreSQL
-                                      # => Default: nil if not provided
-    field :age, :integer              # => Declares field :age
-                                      # => Field macro invocation
-                                      # => Integer column: age
-                                      # => Maps to INTEGER in PostgreSQL
-                                      # => Default: nil if not provided
-    field :email, :string             # => Declares field :email
-                                      # => Field macro invocation
-                                      # => Email column (string type)
-                                      # => No email validation at schema level
-                                      # => Validation happens in changeset
-    timestamps()                      # => Calls timestamps/0 macro
-                                      # => Macro expands to field definitions
-                                      # => Macro adds 2 fields:
-                                      # => - inserted_at (naive_datetime)
-                                      # => - updated_at (naive_datetime)
+defmodule User do                     # => Define User module mapping to database table
+  use Ecto.Schema                     # => Import schema DSL (schema/2, field/3, timestamps/1)
+
+  schema "users" do                   # => Map to "users" table
+                                      # => Adds :id primary key automatically (bigserial)
+    field :name, :string              # => String column :name (maps to VARCHAR)
+    field :age, :integer              # => Integer column :age (maps to INTEGER)
+    field :email, :string             # => String column :email (no validation at schema level)
+    timestamps()                      # => Adds inserted_at and updated_at (naive_datetime)
                                       # => Auto-populated by Repo operations
-  end                                 # => Schema definition complete
-                                      # => Closes schema block
-end                                   # => Closes defmodule
-                                      # => User module compiled
-                                      # => Schema metadata available via User.__schema__/1
-                                      # => __schema__(:type, :name) returns :string
-                                      # => __schema__(:fields) returns [:id, :name, :age, :email, ...]
-                                      # => Module ready for use in queries
-                                      # => Can now create structs and query database
-                                      # => Blank line separates module from usage
-                                      # => Module definition ends
-# Create struct instance              # => Comment: demonstrates struct creation
-                                      # => Next line instantiates User struct
-                                      # => Shows in-memory struct usage
-                                      # => Demonstrates schema usage without database
-user = %User{name: "Alice", age: 30, email: "alice@example.com"}  # => Creates User struct with values
-                                      # => Uses struct literal syntax
-                                      # => Calls %User{} constructor
-                                      # => Instantiates User struct
-                                      # => Creates %User{} struct (in-memory)
-                                      # => Struct construction complete
-                                      # => id: nil (not set yet)
-                                      # => name: "Alice", age: 30, email: "alice@example.com"}
-                                      # => inserted_at: nil, updated_at: nil
-                                      # => Not persisted to database yet
-                                      # => Type: %User{} (Ecto schema struct)
-                                      # => Struct ready for inspection
-                                      # => Can access fields using dot notation
-                                      # => Fields accessible as struct.field_name
-IO.inspect(user.name)                 # => Calls IO.inspect/1
-                                      # => Inspects name field value
-                                      # => Access name field from struct
-                                      # => Field access via dot notation
+  end                                 # => Schema complete
+end                                   # => User module compiled, schema metadata available
+
+# Create struct instance
+user = %User{name: "Alice", age: 30, email: "alice@example.com"}
+                                      # => Creates User struct in memory (not persisted)
+                                      # => id: nil, name: "Alice", age: 30, email: "alice@example.com"
+                                      # => timestamps: nil (not set until database insert)
+
+IO.inspect(user.name)                 # => Access name field via dot notation
                                       # => Output: "Alice"
-                                      # => Prints to stdout
-IO.inspect(user.id)                   # => Calls IO.inspect/1
-                                      # => Inspects id field value
-                                      # => Access id field from struct
-                                      # => Field access via dot notation
-                                      # => Returns nil value
-                                      # => Output: nil
-                                      # => Prints nil to stdout
-                                      # => No database record exists yet
-                                      # => ID unassigned until Repo.insert/1
-                                      # => ID populated by database on insert
+IO.inspect(user.id)                   # => Access id field
+                                      # => Output: nil (ID assigned by database on Repo.insert/1)
 ```
 
 **Key Takeaway**: Schemas define the structure of your data and provide compile-time guarantees about field names and types, but creating a struct does not persist it to the database—you need Repo operations for that.
@@ -136,49 +74,29 @@ Repo.insert/1 persists a struct or changeset to the database, returning `{:ok, s
 ```elixir
 defmodule User do                     # => Define User module
   use Ecto.Schema                     # => Import schema DSL
-                                      # => Makes module an Ecto schema
 
   schema "users" do                   # => Map to "users" table
                                       # => Adds :id primary key automatically
     field :name, :string              # => String field: name
     field :age, :integer              # => Integer field: age
-    timestamps()                      # => Auto-managed timestamps
-                                      # => Adds inserted_at, updated_at
-  end                                 # => Schema definition complete
-end                                   # => User schema compiled
+    timestamps()                      # => Adds inserted_at, updated_at (auto-managed)
+  end
+end
 
 # Create struct
-                                                      # => Operation executes
-user = %User{name: "Bob", age: 25}    # => Instantiate User struct
-                                      # => Create %User{} struct in memory
-                                      # => user.id is nil (not assigned)
-                                      # => user.name is "Bob"
-                                      # => user.age is 25
-                                      # => In-memory only (not in database)
-                                      # => Type: %User{} (Ecto schema struct)
+user = %User{name: "Bob", age: 25}    # => Create %User{} struct in memory
+                                      # => user.id is nil, name is "Bob", age is 25
+                                      # => Not persisted to database yet
 
 # Insert into database
-                                                      # => Operation executes
-{:ok, saved_user} = Repo.insert(user) # => Pattern match on success tuple
-                                      # => Calls Repo.insert/1
-                                      # => Persists struct to database
+{:ok, saved_user} = Repo.insert(user) # => Calls Repo.insert/1, persists struct to database
                                       # => Returns {:ok, %User{}} tuple
-                                      # => saved_user.id is 1 (DB generated)
-                                      # => saved_user.name is "Bob" (unchanged)
+                                      # => saved_user.id is 1 (database-generated)
                                       # => SQL: INSERT INTO users (name, age, inserted_at, updated_at)
-                                      # =>      VALUES ('Bob', 25, NOW(), NOW())
-                                      # =>      RETURNING id, inserted_at, updated_at
-                                      # => Database populates id and timestamps
-                                      # => Transaction committed
+                                      # =>      VALUES ('Bob', 25, NOW(), NOW()) RETURNING id, inserted_at, updated_at
 
-IO.inspect(saved_user.id)             # => Calls IO.inspect/1
-                                      # => Access id field
-                                      # => Output: 1
-                                      # => Primary key assigned by database
-IO.inspect(saved_user.name)           # => Calls IO.inspect/1
-                                      # => Access name field
-                                      # => Output: "Bob"
-                                      # => Value unchanged from input
+IO.inspect(saved_user.id)             # => Output: 1 (primary key assigned by database)
+IO.inspect(saved_user.name)           # => Output: "Bob" (value unchanged from input)
 ```
 
 **Key Takeaway**: Repo.insert/1 persists data and returns the struct with database-generated fields (id, timestamps) populated, making it essential to capture the return value rather than using the original struct.
@@ -194,54 +112,32 @@ Repo.all/1 fetches all records matching a query, returning a list of structs. Th
 ```elixir
 defmodule User do                     # => Define User module
   use Ecto.Schema                     # => Import schema DSL
-                                      # => Makes module an Ecto schema
 
-  schema "users" do                   # => Map to "users" table
-                                      # => Auto-adds :id primary key
+  schema "users" do                   # => Map to "users" table, adds :id primary key
     field :name, :string              # => String field: name
     field :age, :integer              # => Integer field: age
-    timestamps()                      # => Auto-managed timestamps
-                                      # => Adds inserted_at, updated_at
-  end                                 # => Schema complete
-end                                   # => User schema compiled
+    timestamps()                      # => Adds inserted_at, updated_at (auto-managed)
+  end
+end
 
 # Insert test data
-                                                      # => Operation executes
 Repo.insert(%User{name: "Alice", age: 30})
-                                                      # => Database operation
-                                      # => Calls Repo.insert/1
-                                      # => Creates new user record
+                                      # => Calls Repo.insert/1, creates new user record
                                       # => Returns {:ok, %User{id: 1, name: "Alice", age: 30, ...}}
-                                      # => SQL: INSERT INTO users (name, age, inserted_at, updated_at)
-                                      # =>      VALUES ('Alice', 30, NOW(), NOW())
+                                      # => SQL: INSERT INTO users (name, age, inserted_at, updated_at) VALUES ('Alice', 30, NOW(), NOW())
 Repo.insert(%User{name: "Bob", age: 25})
-                                                      # => Database operation
-                                      # => Calls Repo.insert/1 again
-                                      # => Creates second user record
-                                      # => Returns {:ok, %User{id: 2, name: "Bob", age: 25, ...}}
-                                      # => SQL: INSERT INTO users (name, age, inserted_at, updated_at)
-                                      # =>      VALUES ('Bob', 25, NOW(), NOW())
-                                      # => Database now contains 2 users (id: 1, 2)
+                                      # => Creates second user (id: 2)
+                                      # => Database now contains 2 users
 
 # Fetch all users
-                                                      # => Operation executes
-users = Repo.all(User)                # => Calls Repo.all/1
-                                      # => Queries database for all users
+users = Repo.all(User)                # => Calls Repo.all/1, queries all users
                                       # => Returns list: [%User{id: 1, ...}, %User{id: 2, ...}]
-                                      # => SQL: SELECT id, name, age, inserted_at, updated_at FROM users
-                                      # => Loads all columns and rows
-                                      # => users is list with 2 elements (type: [%User{}])
+                                      # => SQL: SELECT * FROM users
 
-IO.inspect(length(users))             # => Calls length/1 on list
-                                      # => Output: 2
-                                      # => List contains 2 user structs
+IO.inspect(length(users))             # => Output: 2 (list contains 2 user structs)
 IO.inspect(Enum.map(users, & &1.name))
-                                                      # => Operation executes
-                                      # => Calls Enum.map/2
-                                      # => Extracts name field from each user
-                                      # => &1 is anonymous function parameter
+                                      # => Calls Enum.map/2, extracts name from each user
                                       # => Output: ["Alice", "Bob"]
-                                      # => List of names (type: [String.t()])
 ```
 
 **Key Takeaway**: Repo.all/1 always returns a list even when the table is empty (returns `[]`), making it safe to use without nil checks, but be aware it loads all matching records into memory.
@@ -257,49 +153,31 @@ Repo.get/2 fetches a record by primary key, returning the struct or nil if not f
 ```elixir
 defmodule User do                     # => Define User module
   use Ecto.Schema                     # => Import schema DSL
-                                      # => Makes module an Ecto schema
 
-  schema "users" do                   # => Map to "users" table
-                                      # => Auto-adds :id primary key
+  schema "users" do                   # => Map to "users" table, adds :id primary key
     field :name, :string              # => String field: name
-    timestamps()                      # => Auto-managed timestamps
-                                      # => Adds inserted_at, updated_at
-  end                                 # => Schema complete
-end                                   # => User schema compiled
+    timestamps()                      # => Adds inserted_at, updated_at (auto-managed)
+  end
+end
 
 # Insert test user
-                                                      # => Operation executes
 {:ok, user} = Repo.insert(%User{name: "Charlie"})
-                                                      # => Database operation
-                                      # => Calls Repo.insert/1
-                                      # => Persists to database
+                                      # => Calls Repo.insert/1, persists to database
                                       # => Returns {:ok, %User{id: 1, name: "Charlie", ...}}
-                                      # => user.id is 1 (assigned by database)
-                                      # => SQL: INSERT INTO users (name, inserted_at, updated_at)
-                                      # =>      VALUES ('Charlie', NOW(), NOW())
+                                      # => SQL: INSERT INTO users (name, inserted_at, updated_at) VALUES ('Charlie', NOW(), NOW())
 
 # Fetch by ID
-                                                      # => Operation executes
-found = Repo.get(User, 1)             # => Calls Repo.get/2
-                                      # => Queries by primary key (id)
+found = Repo.get(User, 1)             # => Calls Repo.get/2, queries by primary key
                                       # => found is %User{id: 1, name: "Charlie", ...}
                                       # => SQL: SELECT * FROM users WHERE id = 1
-                                      # => Returns struct or nil (not error tuple)
-                                      # => Uses primary key index (O(log n) lookup)
+                                      # => Returns struct or nil (uses primary key index)
 
-not_found = Repo.get(User, 999)       # => Calls Repo.get/2 with non-existent ID
-                                      # => Queries for ID that doesn't exist
+not_found = Repo.get(User, 999)       # => Queries for non-existent ID
                                       # => not_found is nil (no record found)
-                                      # => SQL: SELECT * FROM users WHERE id = 999
                                       # => Returns nil, not {:error, :not_found}
-                                      # => No exception raised
 
-IO.inspect(found.name)                # => Access name field
-                                      # => Output: "Charlie"
-                                      # => Safe access (found is %User{})
-IO.inspect(not_found)                 # => Output: nil
-                                      # => Must handle nil case
-                                      # => Pattern match or if/case required
+IO.inspect(found.name)                # => Output: "Charlie" (safe access)
+IO.inspect(not_found)                 # => Output: nil (must handle nil case)
 ```
 
 **Key Takeaway**: Repo.get/2 returns nil (not an error tuple) when the record doesn't exist, so you must handle nil explicitly; use Repo.get!/2 if you want it to raise on not found.
@@ -315,46 +193,30 @@ Repo.get!/2 fetches a record by primary key, raising Ecto.NoResultsError if not 
 ```elixir
 defmodule User do                     # => Define User module
   use Ecto.Schema                     # => Import schema DSL
-                                      # => Makes module an Ecto schema
 
-  schema "users" do                   # => Map to "users" table
-                                      # => Auto-adds :id primary key
+  schema "users" do                   # => Map to "users" table, adds :id primary key
     field :name, :string              # => String field: name
-    timestamps()                      # => Auto-managed timestamps
-                                      # => Adds inserted_at, updated_at
-  end                                 # => Schema complete
-end                                   # => User schema compiled
+    timestamps()                      # => Adds inserted_at, updated_at (auto-managed)
+  end
+end
 
 # Insert test user
-                                                      # => Operation executes
 {:ok, user} = Repo.insert(%User{name: "Diana"})
-                                                      # => Database operation
-                                      # => Calls Repo.insert/1
-                                      # => Persists to database
+                                      # => Calls Repo.insert/1, persists to database
                                       # => Returns {:ok, %User{id: 1, name: "Diana", ...}}
-                                      # => user.id is 1 (assigned by database)
 
 # Fetch with bang (raises on not found)
-                                                      # => Operation executes
-found = Repo.get!(User, 1)            # => Calls Repo.get!/2 (bang version)
-                                      # => Queries by primary key
+found = Repo.get!(User, 1)            # => Calls Repo.get!/2 (bang version), queries by primary key
                                       # => found is %User{id: 1, name: "Diana", ...}
                                       # => SQL: SELECT * FROM users WHERE id = 1
-                                      # => Raises Ecto.NoResultsError if not found
-                                      # => No nil return (raises exception instead)
+                                      # => Raises Ecto.NoResultsError if not found (no nil return)
 
 # This would raise Ecto.NoResultsError
-                                                      # => Operation executes
-# Repo.get!(User, 999)                # => Calls Repo.get!/2 with non-existent ID
-                                      # => SQL: SELECT * FROM users WHERE id = 999
-                                      # => Raises: Ecto.NoResultsError
-                                      # => Message: "no results found for query"
+# Repo.get!(User, 999)                # => Queries non-existent ID
+                                      # => Raises: Ecto.NoResultsError with message "no results found for query"
                                       # => Use when record MUST exist (fail-fast)
 
-IO.inspect(found.name)                # => Access name field
-                                      # => Output: "Diana"
-                                      # => Safe access (found guaranteed %User{})
-                                      # => No nil check needed
+IO.inspect(found.name)                # => Output: "Diana" (safe access, no nil check needed)
 ```
 
 **Key Takeaway**: Use Repo.get!/2 in controller actions or places where a missing record should halt execution, but prefer Repo.get/2 when you need to handle the not-found case gracefully.
@@ -370,58 +232,37 @@ Repo.get_by/2 fetches the first record matching given conditions, returning the 
 ```elixir
 defmodule User do                     # => Define User module
   use Ecto.Schema                     # => Import schema DSL
-                                      # => Makes module an Ecto schema
 
-  schema "users" do                   # => Map to "users" table
-                                      # => Auto-adds :id primary key
+  schema "users" do                   # => Map to "users" table, adds :id primary key
     field :email, :string             # => Email field (string type)
     field :name, :string              # => Name field
-    timestamps()                      # => Auto-managed timestamps
-                                      # => Adds inserted_at, updated_at
-  end                                 # => Schema complete
-end                                   # => User schema compiled
+    timestamps()                      # => Adds inserted_at, updated_at (auto-managed)
+  end
+end
 
 # Insert test users
-                                                      # => Operation executes
 Repo.insert(%User{name: "Eve", email: "eve@example.com"})
-                                                      # => Database operation
-                                      # => Calls Repo.insert/1
-                                      # => Creates first user
+                                      # => Calls Repo.insert/1, creates first user
                                       # => Returns {:ok, %User{id: 1, name: "Eve", email: "eve@example.com", ...}}
-                                      # => SQL: INSERT INTO users (name, email, inserted_at, updated_at)
-                                      # =>      VALUES ('Eve', 'eve@example.com', NOW(), NOW())
+                                      # => SQL: INSERT INTO users (name, email, inserted_at, updated_at) VALUES ('Eve', 'eve@example.com', NOW(), NOW())
 Repo.insert(%User{name: "Frank", email: "frank@example.com"})
-                                                      # => Database operation
-                                      # => Calls Repo.insert/1 again
-                                      # => Creates second user
-                                      # => Returns {:ok, %User{id: 2, name: "Frank", email: "frank@example.com", ...}}
-                                      # => Database now contains 2 users (id: 1, 2)
+                                      # => Creates second user (id: 2)
+                                      # => Database now contains 2 users
 
 # Fetch by email
-                                                      # => Operation executes
 found = Repo.get_by(User, email: "eve@example.com")
-                                                      # => Database operation
-                                      # => Calls Repo.get_by/2
-                                      # => Queries by email field (not primary key)
+                                      # => Calls Repo.get_by/2, queries by email field (not primary key)
                                       # => found is %User{id: 1, name: "Eve", email: "eve@example.com"}
                                       # => SQL: SELECT * FROM users WHERE email = 'eve@example.com' LIMIT 1
-                                      # => Returns first match only (LIMIT 1)
-                                      # => If index exists: O(log n), else: O(n) table scan
+                                      # => Returns first match only (requires index for O(log n))
 
 not_found = Repo.get_by(User, email: "unknown@example.com")
-                                                      # => Database operation
-                                      # => Calls Repo.get_by/2 with non-existent email
-                                      # => Queries for email that doesn't exist
+                                      # => Queries non-existent email
                                       # => not_found is nil (no match)
-                                      # => SQL: SELECT * FROM users WHERE email = 'unknown@example.com' LIMIT 1
                                       # => Returns nil (not error tuple)
 
-IO.inspect(found.name)                # => Access name field
-                                      # => Output: "Eve"
-                                      # => Safe access (found is %User{})
-IO.inspect(not_found)                 # => Output: nil
-                                      # => Must handle nil case
-                                      # => Pattern match or if/case required
+IO.inspect(found.name)                # => Output: "Eve" (safe access)
+IO.inspect(not_found)                 # => Output: nil (must handle nil case)
 ```
 
 **Key Takeaway**: Repo.get_by/2 returns only the first matching record, so add indexes on commonly queried fields and be aware that multiple matches will only return one.
@@ -502,45 +343,32 @@ Repo.delete/1 removes a record from the database, accepting either a struct or c
 
 ```elixir
 defmodule User do
-                                                      # => Module starts
   use Ecto.Schema                     # => Import schema DSL
 
   schema "users" do                   # => Map to "users" table
     field :name, :string              # => String field
-    timestamps()                      # => Auto-managed timestamps
+    timestamps()                      # => Adds inserted_at, updated_at (auto-managed)
   end
-                                                      # => Block ends
 end
-                                                      # => Block ends
-                                      # => User schema defined
 
 # Insert and delete user
-                                                      # => Operation executes
 {:ok, user} = Repo.insert(%User{name: "Henry"})
-                                                      # => Database operation
-                                      # => Persists to database
+                                      # => Calls Repo.insert/1, persists to database
                                       # => Returns {:ok, %User{id: 1, name: "Henry", ...}}
-                                      # => user.id is 1
 
 # Delete from database
-                                                      # => Operation executes
-{:ok, deleted} = Repo.delete(user)    # => Removes record from database
+{:ok, deleted} = Repo.delete(user)    # => Calls Repo.delete/1, removes record from database
                                       # => deleted is %User{id: 1, name: "Henry", ...}
                                       # => SQL: DELETE FROM users WHERE id = 1
-                                      # => Returns {:ok, struct} with deleted data
-                                      # => Struct still exists in memory (database removed)
+                                      # => Returns {:ok, struct} with deleted data (struct in memory, not database)
 
 # Verify deletion
-                                                      # => Operation executes
 not_found = Repo.get(User, 1)         # => Queries for deleted record
                                       # => not_found is nil (record no longer exists)
                                       # => SQL: SELECT * FROM users WHERE id = 1
-                                      # => Database returns no rows
 
-IO.inspect(deleted.name)              # => Output: "Henry"
-                                      # => Data accessible from returned struct
-IO.inspect(not_found)                 # => Output: nil
-                                      # => Confirms deletion successful
+IO.inspect(deleted.name)              # => Output: "Henry" (data accessible from returned struct)
+IO.inspect(not_found)                 # => Output: nil (confirms deletion successful)
 ```
 
 **Key Takeaway**: Repo.delete/1 returns the deleted struct, allowing you to access its data after deletion, but the struct is no longer persisted and subsequent Repo operations on it will fail.

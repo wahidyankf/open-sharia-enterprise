@@ -390,35 +390,58 @@ posts = from p in Post,                               # => Starts Ecto query for
 Isolate tenant data at the query level. Each query automatically scopes to tenant.
 
 ```elixir
-defmodule MyApp.Accounts do
-  def get_user(user_id, tenant_id) do
+defmodule MyApp.Accounts do                           # => Defines Accounts context for multi-tenancy
+                                                       # => Groups tenant-scoped user operations
+  def get_user(user_id, tenant_id) do                 # => Public function: get_user/2
+                                                       # => Params: user_id, tenant_id for isolation
     from(u in User, where: u.id == ^user_id and u.tenant_id == ^tenant_id)
-    |> Repo.one()
-  end
+                                                       # => Builds query filtering by BOTH user_id AND tenant_id
+                                                       # => Prevents cross-tenant data leakage
+                                                       # => WHERE users.id = ? AND users.tenant_id = ?
+    |> Repo.one()                                     # => Executes query, returns single user or nil
+                                                       # => Result: %User{} if found, nil if not found or wrong tenant
+  end                                                 # => End get_user/2 function
 
-  def create_user(attrs, tenant_id) do
-    %User{}
+  def create_user(attrs, tenant_id) do                # => Public function: create_user/2
+                                                       # => Params: attrs map, tenant_id for isolation
+    %User{}                                           # => Creates empty User struct
+                                                       # => %User{id: nil, tenant_id: nil, ...}
     |> User.changeset(attrs |> Map.put("tenant_id", tenant_id))
-    |> Repo.insert()
-  end
-end
+                                                       # => Adds tenant_id to attrs before validation
+                                                       # => E.g., %{"name" => "Alice", "tenant_id" => 123}
+                                                       # => Ensures user always belongs to correct tenant
+    |> Repo.insert()                                  # => Inserts user into database
+                                                       # => Returns {:ok, %User{}} or {:error, changeset}
+  end                                                 # => End create_user/2 function
+end                                                   # => End MyApp.Accounts module
 
 # Or use query prefix for schema-per-tenant
-defmodule MyApp.Repo do
-  def for_tenant(tenant_id) do
+defmodule MyApp.Repo do                               # => Alternative approach: schema-level isolation
+                                                       # => Each tenant has separate PostgreSQL schema
+  def for_tenant(tenant_id) do                        # => Public function: for_tenant/1
+                                                       # => Switches Repo to use tenant-specific schema
     # All queries run with prefix filter
-    Repo.put_dynamic_repo({__MODULE__, {tenant_id}})
-  end
-end
+    Repo.put_dynamic_repo({__MODULE__, {tenant_id}})  # => Sets dynamic repo prefix for current process
+                                                       # => All subsequent queries in this process use "tenant_#{tenant_id}" schema
+                                                       # => E.g., tenant_id=123 → queries use "tenant_123" schema
+  end                                                 # => End for_tenant/1 function
+end                                                   # => End MyApp.Repo module
 
 # Query scoped to tenant
-User
-|> where([u], u.tenant_id == ^tenant_id)
-|> Repo.all()
+User                                                  # => Starts with User schema
+|> where([u], u.tenant_id == ^tenant_id)              # => Filters by tenant_id column
+                                                       # => WHERE users.tenant_id = ?
+                                                       # => Ensures only this tenant's users returned
+|> Repo.all()                                         # => Executes query, returns list of users
+                                                       # => Result: [%User{tenant_id: 123}, %User{tenant_id: 123}]
+                                                       # => Never returns users from other tenants
 
 # Or with dynamic query prefix
-User
-|> Repo.all(prefix: "tenant_#{tenant_id}")
+User                                                  # => Starts with User schema
+|> Repo.all(prefix: "tenant_#{tenant_id}")            # => Queries from tenant-specific schema
+                                                       # => E.g., SELECT * FROM tenant_123.users
+                                                       # => Complete schema isolation (tenant_123, tenant_456, etc.)
+                                                       # => Each tenant has independent tables
 ```
 
 **Key Takeaway**: Always filter by tenant_id in queries. Use scopes (functions that return queries) to prevent tenant leaks. Consider separate schemas per tenant for complete isolation.
@@ -430,45 +453,83 @@ User
 Leverage PostgreSQL-specific features: JSONB, arrays, full-text search, custom types.
 
 ```elixir
-defmodule MyApp.Blog.Post do
-  schema "posts" do
-    field :title, :string
+defmodule MyApp.Blog.Post do                          # => Defines Post schema with PostgreSQL features
+                                                       # => Demonstrates JSONB, arrays, full-text search
+  schema "posts" do                                   # => Maps to "posts" table
+                                                       # => Auto-generates id, inserted_at, updated_at
+    field :title, :string                             # => Standard string field (VARCHAR)
+                                                       # => Will be accessible as post.title
     field :metadata, :map              # => JSONB in PostgreSQL
+                                                       # => Stores arbitrary JSON data efficiently
+                                                       # => E.g., %{"status" => "draft", "tags" => ["elixir"]}
     field :tags, {:array, :string}     # => Array type
+                                                       # => PostgreSQL native array: text[]
+                                                       # => E.g., ["elixir", "phoenix", "web"]
     field :search_vector, :string      # => Full-text search
-  end
-end
+                                                       # => Actually stored as tsvector type
+                                                       # => Preprocessed text for efficient searching
+  end                                                 # => End schema definition
+end                                                   # => End MyApp.Blog.Post module
 
 # Migration
-def change do
-  create table(:posts) do
-    add :title, :string
-    add :metadata, :jsonb, default: "{}"
-    add :tags, {:array, :string}, default: []
-    add :search_vector, :tsvector
+def change do                                         # => Migration function to create posts table
+                                                       # => Runs when executing mix ecto.migrate
+  create table(:posts) do                             # => Creates posts table
+                                                       # => Auto-adds id primary key
+    add :title, :string                               # => Adds title column (VARCHAR)
+                                                       # => Standard text field
+    add :metadata, :jsonb, default: "{}"              # => Adds metadata column (JSONB type)
+                                                       # => Default: empty JSON object {}
+                                                       # => Stores structured data without predefined schema
+    add :tags, {:array, :string}, default: []         # => Adds tags column (text[] array)
+                                                       # => Default: empty array []
+                                                       # => Native PostgreSQL array, not JSON
+    add :search_vector, :tsvector                     # => Adds search_vector column (tsvector type)
+                                                       # => Optimized for full-text search
+                                                       # => Stores preprocessed, indexed text
 
-    timestamps()
-  end
+    timestamps()                                      # => Adds inserted_at, updated_at columns
+                                                       # => Auto-managed by Ecto
+  end                                                 # => End table creation
 
   # GIN index for JSONB performance
-  create index(:posts, ["(metadata)"], using: :gin)
+  create index(:posts, ["(metadata)"], using: :gin)   # => Creates GIN index on metadata column
+                                                       # => GIN (Generalized Inverted Index) for JSONB
+                                                       # => Enables fast queries on JSON keys/values
+                                                       # => E.g., WHERE metadata->>'status' = 'published'
   # GIN index for full-text search
-  create index(:posts, [:search_vector], using: :gin)
-end
+  create index(:posts, [:search_vector], using: :gin) # => Creates GIN index on search_vector
+                                                       # => Enables fast full-text search
+                                                       # => Required for efficient @@ operator queries
+end                                                   # => End migration function
 
 # Query JSONB
-posts = from p in Post,
+posts = from p in Post,                               # => Starts Ecto query for Post
+                                                       # => p is alias for posts table
   where: fragment("? ->> ? = ?", p.metadata, "status", "published")
+                                                       # => JSONB query: metadata->>'status' = 'published'
+                                                       # => ->> extracts JSON field as text
+                                                       # => Finds posts where metadata has status="published"
+                                                       # => Result: posts with matching JSON property
 
 # Array operations
-posts = from p in Post,
-  where: fragment("? @> ?", p.tags, ^["elixir"])
+posts = from p in Post,                               # => Query for posts with specific tag
+                                                       # => Uses PostgreSQL array operators
+  where: fragment("? @> ?", p.tags, ^["elixir"])      # => Array contains operator @>
+                                                       # => Checks if tags array contains ["elixir"]
+                                                       # => E.g., ["elixir", "phoenix"] @> ["elixir"] = true
+                                                       # => Result: posts tagged with "elixir"
 
 # Full-text search
-results = from p in Post,
+results = from p in Post,                             # => Full-text search query
+                                                       # => Uses PostgreSQL tsvector and tsquery
   where: fragment("to_tsvector('english', ?) @@ plainto_tsquery('english', ?)",
-    p.title, ^search_term),
-  select: p
+    p.title, ^search_term),                           # => to_tsvector converts title to searchable form
+                                                       # => plainto_tsquery converts search term to query
+                                                       # => @@ matches tsvector against tsquery
+                                                       # => E.g., search_term="phoenix framework" finds titles with those words
+  select: p                                           # => Returns matching Post structs
+                                                       # => Result: posts matching search term
 ```
 
 **Key Takeaway**: Use :map for JSONB, {:array, :string} for arrays. Full-text search with tsvector. Use fragment/2 for database-specific SQL. Index JSONB and tsvector for performance.
@@ -539,58 +600,101 @@ IO.inspect(Repo.explain(:all, Post))
 Cache expensive operations to reduce database load and improve response time.
 
 ```elixir
-defmodule MyApp.CacheServer do
-  use GenServer
+defmodule MyApp.CacheServer do                        # => Defines in-memory cache GenServer
+                                                       # => Stores key-value pairs with TTL
+  use GenServer                                       # => Imports GenServer behavior
+                                                       # => Provides start_link, init, handle_call, etc.
 
-  def start_link(_opts) do
+  def start_link(_opts) do                            # => Public function: start_link/1
+                                                       # => Called by supervisor to start cache process
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
-  end
+                                                       # => Starts GenServer with empty map as initial state
+                                                       # => Registers process with module name
+                                                       # => Returns {:ok, pid}
+  end                                                 # => End start_link/1 function
 
-  def get_cache(key) do
-    GenServer.call(__MODULE__, {:get, key})
-  end
+  def get_cache(key) do                               # => Public API: get_cache/1
+                                                       # => Synchronous retrieval of cached value
+    GenServer.call(__MODULE__, {:get, key})           # => Sends synchronous message to cache process
+                                                       # => Blocks caller until response received
+                                                       # => Returns {:ok, value} or :not_found
+  end                                                 # => End get_cache/1 function
 
-  def set_cache(key, value, ttl_ms) do
+  def set_cache(key, value, ttl_ms) do                # => Public API: set_cache/3
+                                                       # => Asynchronous cache write with TTL
     GenServer.cast(__MODULE__, {:set, key, value, ttl_ms})
-  end
+                                                       # => Sends async message (fire-and-forget)
+                                                       # => Returns :ok immediately without blocking
+                                                       # => Value stored with expiration time
+  end                                                 # => End set_cache/3 function
 
-  @impl true
-  def init(state) do
-    {:ok, state}
-  end
+  @impl true                                          # => Implements GenServer callback
+  def init(state) do                                  # => Initializes GenServer state
+                                                       # => Called when process starts
+    {:ok, state}                                      # => Returns {:ok, initial_state}
+                                                       # => State is empty map %{}
+  end                                                 # => End init/1 callback
 
-  @impl true
-  def handle_call({:get, key}, _from, state) do
-    case Map.get(state, key) do
+  @impl true                                          # => Implements GenServer callback
+  def handle_call({:get, key}, _from, state) do       # => Handles synchronous get requests
+                                                       # => Pattern matches {:get, key} message
+    case Map.get(state, key) do                       # => Retrieves value from state map
+                                                       # => Result: {value, expires_at} or nil
       {value, expires_at} when expires_at > System.monotonic_time(:millisecond) ->
+                                                       # => Pattern match: value exists AND not expired
+                                                       # => Compares expiration time with current time
         {:reply, {:ok, value}, state}                 # => Cache hit, not expired
+                                                       # => Returns value to caller, keeps state unchanged
 
-      _ ->
+      _ ->                                            # => Catch-all: cache miss or expired
+                                                       # => Either key doesn't exist OR past expiration
         {:reply, :not_found, state}                   # => Cache miss or expired
-    end
+                                                       # => Returns :not_found to caller
+    end                                               # => End case statement
   end  # => Synchronous call, blocks caller until reply
 
-  @impl true
+  @impl true                                          # => Implements GenServer callback
   def handle_cast({:set, key, value, ttl_ms}, state) do
+                                                       # => Handles asynchronous set requests
+                                                       # => Pattern matches {:set, key, value, ttl_ms} message
     expires_at = System.monotonic_time(:millisecond) + ttl_ms  # => Calculate expiry
+                                                       # => Current monotonic time + TTL in milliseconds
+                                                       # => E.g., current=1000, ttl=5000 → expires_at=6000
     {:noreply, Map.put(state, key, {value, expires_at})}
+                                                       # => Updates state map with new cache entry
+                                                       # => Stores tuple {value, expires_at} as value
+                                                       # => Returns {:noreply, new_state}
   end  # => Asynchronous, returns immediately without blocking
-end
+end                                                   # => End MyApp.CacheServer module
 
 # Or use Cachex library
-defmodule MyApp.Blog do
-  def get_popular_posts do
-    case Cachex.get(:blog_cache, "popular_posts") do
-      {:ok, nil} ->
+defmodule MyApp.Blog do                               # => Example using Cachex library
+                                                       # => Production-ready caching solution
+  def get_popular_posts do                            # => Public function: get_popular_posts/0
+                                                       # => Caches expensive database query
+    case Cachex.get(:blog_cache, "popular_posts") do  # => Checks cache first
+                                                       # => :blog_cache is cache name (configured in app)
+                                                       # => "popular_posts" is cache key
+      {:ok, nil} ->                                   # => Cache miss: no cached value
+                                                       # => Need to fetch from database
         posts = Post |> where([p], p.likes > 100) |> Repo.all()
+                                                       # => Expensive database query
+                                                       # => SELECT * FROM posts WHERE likes > 100
+                                                       # => Returns list of popular posts
         Cachex.put(:blog_cache, "popular_posts", posts, ttl: :timer.minutes(60))
-        posts
+                                                       # => Stores result in cache with 60-minute TTL
+                                                       # => Future requests served from cache
+                                                       # => TTL: cache expires after 1 hour
+        posts                                         # => Returns posts to caller
+                                                       # => First request: slow (database query)
 
-      {:ok, posts} ->
-        posts
-    end
-  end
-end
+      {:ok, posts} ->                                 # => Cache hit: value exists in cache
+                                                       # => posts already fetched from cache
+        posts                                         # => Returns cached posts immediately
+                                                       # => Subsequent requests: fast (no database query)
+    end                                               # => End case statement
+  end                                                 # => End get_popular_posts/0 function
+end                                                   # => End MyApp.Blog module
 ```
 
 **Key Takeaway**: Cache expensive queries with TTL (time-to-live). Invalidate cache when data changes. Use Cachex for distributed caching. Cache at controller or service layer.
@@ -677,52 +781,90 @@ Monitor your application in real-time with LiveDashboard. View requests, Ecto st
 
 ```elixir
 # mix.exs
-defp deps do
+defp deps do                                          # => Dependency list for LiveDashboard
+                                                       # => Requires 3 libraries for monitoring
   [
-    {:phoenix_live_dashboard, "~> 0.7"},
-    {:telemetry_metrics, "~> 0.6"},
-    {:telemetry_poller, "~> 1.0"}
+    {:phoenix_live_dashboard, "~> 0.7"},              # => Main dashboard library
+                                                       # => Provides web UI for metrics/monitoring
+                                                       # => Version ~> 0.7 (compatible with 0.7.x)
+    {:telemetry_metrics, "~> 0.6"},                   # => Metrics aggregation library
+                                                       # => Collects and processes telemetry events
+                                                       # => Required by LiveDashboard
+    {:telemetry_poller, "~> 1.0"}                     # => Periodic metric collection
+                                                       # => Polls VM metrics (memory, processes, etc.)
+                                                       # => Runs collection tasks on interval
   ]
 end
 
 # lib/my_app_web/telemetry.ex
-defmodule MyAppWeb.Telemetry do
-  use Supervisor
+defmodule MyAppWeb.Telemetry do                       # => Defines Telemetry supervisor module
+                                                       # => Manages metric collection processes
+  use Supervisor                                      # => Imports Supervisor behavior
+                                                       # => Provides supervision functions
 
-  def start_link(arg) do
+  def start_link(arg) do                              # => Public function: start_link/1
+                                                       # => Called by application supervisor
     Supervisor.start_link(__MODULE__, arg, name: __MODULE__)
-  end
+                                                       # => Starts supervisor process
+                                                       # => Registers with module name
+                                                       # => Returns {:ok, pid}
+  end                                                 # => End start_link/1 function
 
-  @impl true
-  def init(_arg) do
-    children = [
+  @impl true                                          # => Implements Supervisor callback
+  def init(_arg) do                                   # => Initializes supervisor
+                                                       # => Defines child processes to supervise
+    children = [                                      # => List of child specifications
+                                                       # => Each child runs independently
       # Telemetry poller periodically collects metrics
       {:telemetry_poller, handlers: handle_metrics()},
-      {Phoenix.LiveDashboard.TelemetryListener, []}
-    ]
+                                                       # => Starts telemetry_poller process
+                                                       # => Calls handle_metrics() to get metric definitions
+                                                       # => Polls metrics on configured interval
+      {Phoenix.LiveDashboard.TelemetryListener, []}   # => Starts LiveDashboard listener
+                                                       # => Listens for telemetry events
+                                                       # => Updates dashboard UI in real-time
+    ]                                                 # => End children list
 
-    Supervisor.init(children, strategy: :one_for_one)
-  end
+    Supervisor.init(children, strategy: :one_for_one) # => Initializes supervisor with children
+                                                       # => Strategy :one_for_one: restart only failed child
+                                                       # => If poller crashes, restart poller (not listener)
+  end                                                 # => End init/1 callback
 
-  defp handle_metrics do
+  defp handle_metrics do                              # => Private function: handle_metrics/0
+                                                       # => Returns list of metrics to collect
     [
       # VM metrics
-      {:process_count, unit: {:byte, :kilobyte}},
-      {:memory, unit: {:byte, :kilobyte}},
+      {:process_count, unit: {:byte, :kilobyte}},     # => Metric: number of Erlang processes
+                                                       # => Unit conversion: bytes to kilobytes
+                                                       # => Monitors process count over time
+      {:memory, unit: {:byte, :kilobyte}},            # => Metric: total VM memory usage
+                                                       # => Converts bytes to KB for display
+                                                       # => Tracks memory consumption
       # Ecto metrics
-      {MyApp.Repo, [:repo, :adapter, :status], :ok},
+      {MyApp.Repo, [:repo, :adapter, :status], :ok},  # => Metric: database connection status
+                                                       # => Event: MyApp.Repo emits [:repo, :adapter, :status]
+                                                       # => Tracks connection health
       {MyApp.Repo, [:repo, :adapter, :connection_error], :ok}
-    ]
-  end
-end
+                                                       # => Metric: database connection errors
+                                                       # => Event: emitted when connection fails
+                                                       # => Monitors database issues
+    ]                                                 # => End metrics list
+  end                                                 # => End handle_metrics/0 function
+end                                                   # => End MyAppWeb.Telemetry module
 
 # router.ex
-import Phoenix.LiveDashboard.Router
+import Phoenix.LiveDashboard.Router                   # => Imports LiveDashboard routing macros
+                                                       # => Provides live_dashboard/2 macro
 
-scope "/" do
-  pipe_through :browser
-  live_dashboard "/dashboard"
-end
+scope "/" do                                          # => Defines root scope
+                                                       # => Routes accessible from /
+  pipe_through :browser                               # => Uses browser pipeline
+                                                       # => Applies session, CSRF, cookies
+  live_dashboard "/dashboard"                         # => Mounts LiveDashboard at /dashboard route
+                                                       # => Creates LiveView route
+                                                       # => Access at http://localhost:4000/dashboard
+                                                       # => Shows metrics, processes, Ecto stats in UI
+end                                                   # => End scope
 ```
 
 **Key Takeaway**: Phoenix LiveDashboard shows real-time metrics. Monitor request performance, database connections, memory usage, processes. Access at /dashboard.
@@ -791,47 +933,84 @@ Build self-contained release that runs without Elixir/Erlang installed. Configur
 
 ```elixir
 # mix.exs
-def project do
+def project do                                        # => Project configuration function
+                                                       # => Defines app metadata and release settings
   [
-    app: :my_app,
-    version: "0.1.0",
-    releases: [
-      prod: [
-        include_executables_for: [:unix],
-        steps: [:assemble, :tar]
+    app: :my_app,                                     # => Application name (atom)
+                                                       # => Used for release binary name
+    version: "0.1.0",                                 # => Current version string
+                                                       # => Follows semantic versioning
+    releases: [                                       # => Release configuration map
+                                                       # => Defines production release settings
+      prod: [                                         # => Release name: "prod"
+                                                       # => Can have multiple releases (prod, staging, etc.)
+        include_executables_for: [:unix],             # => Include Unix executables (start, stop scripts)
+                                                       # => Targets Linux/macOS platforms
+                                                       # => Excludes Windows executables
+        steps: [:assemble, :tar]                      # => Release build steps
+                                                       # => :assemble - builds release structure
+                                                       # => :tar - creates .tar.gz archive for deployment
       ]
     ]
   ]
 end
 
 # config/runtime.exs - Loaded at runtime, not compile time
-import Config
+import Config                                         # => Imports Config macros
+                                                       # => Enables config/2 function
 
-config :my_app, MyAppWeb.Endpoint,
+config :my_app, MyAppWeb.Endpoint,                    # => Configures Phoenix Endpoint
+                                                       # => Settings applied when release starts
   http: [ip: {0, 0, 0, 0}, port: String.to_integer(System.get_env("PORT") || "4000")],
+                                                       # => HTTP server configuration
   # => Bind to all interfaces (0.0.0.0) for Docker
+                                                       # => ip: {0,0,0,0} accepts connections from any IP
+                                                       # => port: reads PORT env var or defaults to 4000
+                                                       # => E.g., PORT=8080 → server listens on 8080
   secret_key_base: System.fetch_env!("SECRET_KEY_BASE"),  # => Read from env var
+                                                       # => Fetches SECRET_KEY_BASE environment variable
+                                                       # => Crashes if not set (fetch_env! requires it)
+                                                       # => Used for session encryption
   url: [host: System.get_env("PHX_HOST", "localhost"), port: 443, scheme: "https"]
+                                                       # => URL configuration for generated URLs
   # => HTTPS for production
+                                                       # => host: reads PHX_HOST or defaults to "localhost"
+                                                       # => port: 443 (standard HTTPS port)
+                                                       # => scheme: "https" (forces HTTPS URLs)
 
-if config_env() == :prod do
-  config :my_app, MyApp.Repo,
-    url: System.fetch_env!("DATABASE_URL"),
-    ssl: true,
-    socket_options: [:inet6]
-end
+if config_env() == :prod do                           # => Production-only configuration
+                                                       # => Only applies when MIX_ENV=prod
+  config :my_app, MyApp.Repo,                         # => Configures Ecto Repo for production
+                                                       # => Database connection settings
+    url: System.fetch_env!("DATABASE_URL"),           # => Reads DATABASE_URL from environment
+                                                       # => E.g., "ecto://user:pass@host/db"
+                                                       # => Crashes if DATABASE_URL not set
+    ssl: true,                                        # => Enables SSL for database connection
+                                                       # => Required for most cloud databases
+    socket_options: [:inet6]                          # => Enables IPv6 support
+                                                       # => Allows IPv6 database connections
+end                                                   # => End production config block
 
 # Build release
-# mix release
+# mix release                                         # => Command: builds default release
+                                                       # => Creates _build/prod/rel/my_app/ directory
+                                                       # => Packages app, dependencies, ERTS runtime
 
 # Or with custom name
-# mix release prod
+# mix release prod                                    # => Command: builds "prod" named release
+                                                       # => Uses prod release configuration from mix.exs
+                                                       # => Creates tarball for deployment
 
 # Run release
-# _build/prod/rel/my_app/bin/my_app start
+# _build/prod/rel/my_app/bin/my_app start             # => Command: starts release as daemon
+                                                       # => Runs in background
+                                                       # => Logs to _build/prod/rel/my_app/log/
 
 # Start in foreground
-# _build/prod/rel/my_app/bin/my_app foreground
+# _build/prod/rel/my_app/bin/my_app foreground        # => Command: starts release in foreground
+                                                       # => Logs to stdout/stderr
+                                                       # => Useful for Docker containers
+                                                       # => Ctrl+C stops the application
 ```
 
 **Key Takeaway**: Mix.Release builds independent package. config/runtime.exs loads at runtime. Set environment variables for secrets. Releases don't require Elixir installation.
@@ -864,41 +1043,78 @@ graph TD
 
 ```dockerfile
 # Dockerfile - Multi-stage build
-FROM elixir:1.14-alpine AS builder
+FROM elixir:1.14-alpine AS builder                   # => Stage 1: Builder image
+                                                       # => Uses Elixir 1.14 on Alpine Linux (minimal)
+                                                       # => AS builder: names this stage for later reference
 
-WORKDIR /app
+WORKDIR /app                                          # => Sets working directory to /app
+                                                       # => All subsequent commands run from /app
 
 # Install build dependencies
-RUN apk add --no-cache build-base git
+RUN apk add --no-cache build-base git                 # => Installs build tools
+                                                       # => build-base: gcc, make, etc. for native deps
+                                                       # => git: for git-based dependencies
+                                                       # => --no-cache: doesn't store package index (smaller image)
 
 # Copy source
-COPY mix.exs mix.lock ./
-RUN mix local.hex --force && mix local.rebar --force
-RUN mix deps.get
+COPY mix.exs mix.lock ./                              # => Copies dependency files first
+                                                       # => Enables Docker layer caching
+                                                       # => If mix.exs unchanged, deps layer cached
+RUN mix local.hex --force && mix local.rebar --force  # => Installs Hex package manager
+                                                       # => Installs Rebar build tool
+                                                       # => --force: non-interactive installation
+RUN mix deps.get                                      # => Downloads dependencies
+                                                       # => Fetches from Hex and Git sources
+                                                       # => Cached if mix.exs/mix.lock unchanged
 
-COPY . .
+COPY . .                                              # => Copies entire application code
+                                                       # => Runs AFTER deps.get for better caching
+                                                       # => Invalidates cache only when code changes
 
 # Compile release
-RUN MIX_ENV=prod mix release
+RUN MIX_ENV=prod mix release                          # => Builds production release
+                                                       # => MIX_ENV=prod: production optimizations
+                                                       # => Creates self-contained package
+                                                       # => Output: _build/prod/rel/my_app/
 
 # Runtime stage
-FROM alpine:latest
+FROM alpine:latest                                    # => Stage 2: Runtime image
+                                                       # => Minimal Alpine Linux (~5MB base)
+                                                       # => No Elixir, no build tools (small image)
 
-WORKDIR /app
+WORKDIR /app                                          # => Sets working directory
+                                                       # => Same as builder for consistency
 
 # Install runtime dependencies
-RUN apk add --no-cache openssl
+RUN apk add --no-cache openssl                        # => Installs OpenSSL library
+                                                       # => Required for HTTPS/SSL connections
+                                                       # => Only runtime dependency needed
 
 # Copy release from builder
-COPY --from=builder /app/_build/prod/rel/my_app ./
+COPY --from=builder /app/_build/prod/rel/my_app ./    # => Copies compiled release from builder stage
+                                                       # => --from=builder: references first stage
+                                                       # => Only copies final binary (not source)
+                                                       # => Dramatically reduces image size (50MB vs 500MB+)
 
-EXPOSE 4000
+EXPOSE 4000                                           # => Documents that container listens on port 4000
+                                                       # => Doesn't actually publish port (use docker run -p)
+                                                       # => Informational for users
 
 # Health check
 HEALTHCHECK --interval=10s --timeout=3s --start-period=40s --retries=3 \
-  CMD ["./bin/my_app", "eval", "MyApp.ready?"]
+                                                       # => Configures container health check
+                                                       # => --interval=10s: check every 10 seconds
+                                                       # => --timeout=3s: fail if check takes >3s
+                                                       # => --start-period=40s: grace period on startup
+                                                       # => --retries=3: mark unhealthy after 3 failures
+  CMD ["./bin/my_app", "eval", "MyApp.ready?"]        # => Health check command
+                                                       # => Evaluates Elixir expression MyApp.ready?
+                                                       # => Should return true when app ready
+                                                       # => Kubernetes uses this for liveness/readiness
 
-CMD ["./bin/my_app", "start"]
+CMD ["./bin/my_app", "start"]                         # => Default command when container starts
+                                                       # => Starts Phoenix application
+                                                       # => Runs in foreground (required for Docker)
 ```
 
 **Key Takeaway**: Multi-stage builds keep image small. Builder stage compiles, runtime stage runs. Use Alpine Linux for minimal footprint. Include health checks.
@@ -1042,47 +1258,92 @@ Separate configuration by environment. Use runtime configuration for secrets.
 
 ```elixir
 # config/config.exs - Common to all environments
-import Config
+import Config                                         # => Imports Config module
+                                                       # => Provides config/2 and config/3 macros
 
-config :logger, :console,
-  format: "$time $metadata[$level] $message\n"
+config :logger, :console,                             # => Configures Logger console backend
+                                                       # => Applies to all environments (dev, test, prod)
+  format: "$time $metadata[$level] $message\n"        # => Log format template
+                                                       # => $time: timestamp, $level: info/warn/error
+                                                       # => $message: log message, $metadata: custom data
 
 # config/dev.exs
-import Config
+import Config                                         # => Development environment config
+                                                       # => Only loaded when MIX_ENV=dev
 
-config :my_app, MyApp.Repo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  port: 5432,
-  database: "my_app_dev"
+config :my_app, MyApp.Repo,                           # => Ecto Repo configuration for dev
+                                                       # => Local PostgreSQL database
+  username: "postgres",                               # => Database username
+                                                       # => Default PostgreSQL user
+  password: "postgres",                               # => Database password
+                                                       # => Hardcoded OK for dev (never in prod!)
+  hostname: "localhost",                              # => Database host
+                                                       # => Connects to local PostgreSQL
+  port: 5432,                                         # => PostgreSQL default port
+                                                       # => Standard port number
+  database: "my_app_dev"                              # => Database name
+                                                       # => Separate database for development
 
-config :my_app, MyAppWeb.Endpoint,
-  debug_errors: true,
-  check_origin: false,
+config :my_app, MyAppWeb.Endpoint,                    # => Phoenix Endpoint configuration
+                                                       # => Dev-specific settings for fast iteration
+  debug_errors: true,                                 # => Shows detailed error pages
+                                                       # => Displays stack traces in browser
+                                                       # => NEVER enable in production!
+  check_origin: false,                                # => Disables WebSocket origin checking
+                                                       # => Allows connections from any origin in dev
+                                                       # => Required for LiveView development
   watchers: [esbuild: {Esbuild, :install_and_run, []}]
+                                                       # => File watchers for asset compilation
+                                                       # => Auto-rebuilds JS/CSS on file changes
+                                                       # => esbuild watches and compiles assets
 
 # config/test.exs
-import Config
+import Config                                         # => Test environment configuration
+                                                       # => Only loaded when MIX_ENV=test
 
-config :my_app, MyApp.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "my_app_test",
-  pool: Ecto.Adapters.SQL.Sandbox
+config :my_app, MyApp.Repo,                           # => Ecto Repo configuration for tests
+                                                       # => Separate database for test isolation
+  username: "postgres",                               # => Database username
+                                                       # => Same as dev for simplicity
+  password: "postgres",                               # => Database password
+                                                       # => Same as dev for simplicity
+  database: "my_app_test",                            # => Test database name
+                                                       # => Separate from dev database
+  pool: Ecto.Adapters.SQL.Sandbox                     # => Connection pool for tests
+                                                       # => Sandbox: wraps each test in transaction
+                                                       # => Auto-rollback after each test
+                                                       # => Ensures test isolation and cleanup
 
 # config/runtime.exs - Loaded at runtime
-import Config
+import Config                                         # => Runtime configuration
+                                                       # => Loaded when release starts (NOT at compile time)
+                                                       # => Enables environment-specific configuration
 
 database_url = System.get_env("DATABASE_URL") || "ecto://postgres:postgres@localhost/my_app_prod"
+                                                       # => Reads DATABASE_URL from environment
+                                                       # => Falls back to default for local prod
+                                                       # => E.g., "ecto://user:pass@host:5432/dbname"
+                                                       # => Production: set by deployment platform
 
-config :my_app, MyApp.Repo, url: database_url
+config :my_app, MyApp.Repo, url: database_url         # => Configures Repo with database URL
+                                                       # => Parses URL into connection params
+                                                       # => Overrides compile-time config
 
 secret_key_base = System.fetch_env!("SECRET_KEY_BASE")
+                                                       # => Reads SECRET_KEY_BASE from environment
+                                                       # => Crashes if not set (fetch_env! requires it)
+                                                       # => Used for encrypting sessions/cookies
+                                                       # => Generate with: mix phx.gen.secret
 
-config :my_app, MyAppWeb.Endpoint,
-  secret_key_base: secret_key_base,
+config :my_app, MyAppWeb.Endpoint,                    # => Endpoint runtime configuration
+                                                       # => Settings loaded when app starts
+  secret_key_base: secret_key_base,                   # => Sets secret from environment
+                                                       # => Required for session encryption
   url: [host: System.get_env("PHX_HOST", "localhost"), port: 443, scheme: "https"]
+                                                       # => URL configuration for generated links
+                                                       # => host: reads PHX_HOST or defaults to localhost
+                                                       # => port: 443 (HTTPS), scheme: "https"
+                                                       # => Affects url_for/3 and route helpers
 ```
 
 **Key Takeaway**: config/ files configure at compile time. config/runtime.exs loads at runtime (for secrets). Use environment variables for production secrets. Never commit secrets to git.
@@ -1120,33 +1381,62 @@ defmodule MyAppWeb.Router do
 end
 
 # Structured logging
-defmodule MyApp.Blog do
-  require Logger
+defmodule MyApp.Blog do                               # => Defines Blog context module
+                                                       # => Demonstrates structured logging patterns
+  require Logger                                      # => Imports Logger macros
+                                                       # => Enables compile-time logging optimization
 
-  def create_post(attrs) do
+  def create_post(attrs) do                           # => Public function: create_post/1
+                                                       # => Param: attrs map with post data
     Logger.info("Creating post", %{user_id: attrs["user_id"], title: attrs["title"]})
+                                                       # => Logs informational message with structured metadata
+                                                       # => First arg: string message
+                                                       # => Second arg: metadata map with context
+                                                       # => E.g., [info] Creating post user_id=123 title="Hello"
+                                                       # => Structured data parseable by log aggregators
 
-    case MyApp.Repo.insert(changeset) do
-      {:ok, post} ->
+    case MyApp.Repo.insert(changeset) do              # => Attempts to insert post into database
+                                                       # => Returns {:ok, post} or {:error, changeset}
+      {:ok, post} ->                                  # => Success case: post created
+                                                       # => post is inserted struct with ID
         Logger.info("Post created successfully", %{post_id: post.id})
-        {:ok, post}
+                                                       # => Logs success with post ID
+                                                       # => Metadata includes database-generated ID
+                                                       # => Enables tracking specific post through logs
+        {:ok, post}                                   # => Returns success tuple to caller
+                                                       # => Caller receives created post struct
 
-      {:error, changeset} ->
-        Logger.warning("Post creation failed", %{
-          errors: changeset.errors,
-          user_id: attrs["user_id"]
+      {:error, changeset} ->                          # => Failure case: validation errors
+                                                       # => changeset contains error details
+        Logger.warning("Post creation failed", %{     # => Logs warning (not error - expected case)
+                                                       # => Warning level: operation failed but handled
+          errors: changeset.errors,                   # => Includes validation errors
+                                                       # => E.g., [{:title, {"is required", []}}]
+          user_id: attrs["user_id"]                   # => Includes user context for debugging
+                                                       # => Helps correlate failures to users
         })
-        {:error, changeset}
-    end
-  rescue
-    e ->
-      Logger.error("Post creation crashed",
-        error: inspect(e),
+        {:error, changeset}                           # => Returns error tuple to caller
+                                                       # => Caller can display validation errors
+    end                                               # => End case statement
+  rescue                                              # => Rescue clause catches unexpected exceptions
+                                                       # => Only for crashes, not {:error, ...} returns
+    e ->                                              # => Binds exception to variable e
+                                                       # => e is exception struct (e.g., ArithmeticError)
+      Logger.error("Post creation crashed",           # => Logs error (unexpected crash)
+                                                       # => Error level: requires investigation
+        error: inspect(e),                            # => Logs exception details
+                                                       # => inspect/1 converts to readable string
+                                                       # => E.g., %ArithmeticError{message: "divide by zero"}
         stacktrace: Exception.format_stacktrace(__STACKTRACE__)
+                                                       # => Logs formatted stack trace
+                                                       # => __STACKTRACE__: built-in macro with call stack
+                                                       # => Shows file, line, function for each frame
       )
-      {:error, "Internal error"}
-  end
-end
+      {:error, "Internal error"}                      # => Returns generic error to caller
+                                                       # => Doesn't expose exception details to user
+                                                       # => Full details in logs/Sentry
+  end                                                 # => End rescue clause
+end                                                   # => End MyApp.Blog module
 ```
 
 **Key Takeaway**: Sentry captures production errors. Structured logging adds context. Use Logger.info/warn/error with metadata maps. Include request IDs for tracing.
@@ -1334,42 +1624,75 @@ Node.list()
 
 Route WebSocket connections to same server. Use load balancer affinity.
 
-```elixir
+```nginx
 # nginx.conf - Sticky sessions by IP
-upstream my_app {
-  server app1:4000;
-  server app2:4000;
-  server app3:4000;
+upstream my_app {                                     # => Defines upstream server group "my_app"
+                                                       # => Load balancer distributes requests across these
+  server app1:4000;                                   # => Backend server 1 at app1:4000
+                                                       # => Phoenix node 1
+  server app2:4000;                                   # => Backend server 2 at app2:4000
+                                                       # => Phoenix node 2
+  server app3:4000;                                   # => Backend server 3 at app3:4000
+                                                       # => Phoenix node 3
 
   hash $remote_addr consistent;  # => Sticky by IP
-}
+                                                       # => Routes same IP to same backend server
+                                                       # => consistent: uses consistent hashing
+                                                       # => Required for WebSocket persistence
+}                                                     # => End upstream block
 
-server {
-  listen 80;
-  server_name my_app.com;
+server {                                              # => Defines HTTP server block
+                                                       # => Handles incoming requests
+  listen 80;                                          # => Listens on port 80 (HTTP)
+                                                       # => Standard HTTP port
+  server_name my_app.com;                             # => Server domain name
+                                                       # => Only processes requests for my_app.com
 
-  location / {
-    proxy_pass http://my_app;
-    proxy_http_version 1.1;
+  location / {                                        # => Matches all paths (/)
+                                                       # => Applies to all routes
+    proxy_pass http://my_app;                         # => Proxies requests to my_app upstream
+                                                       # => Load balances across app1/app2/app3
+    proxy_http_version 1.1;                           # => Uses HTTP/1.1 protocol
+                                                       # => Required for WebSocket upgrades
 
     # WebSocket headers
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
+    proxy_set_header Upgrade $http_upgrade;           # => Forwards Upgrade header
+                                                       # => Enables WebSocket protocol upgrade
+                                                       # => $http_upgrade: request's Upgrade value
+    proxy_set_header Connection "upgrade";            # => Sets Connection header to "upgrade"
+                                                       # => Required for WebSocket handshake
+                                                       # => Tells backend to upgrade connection
 
     # Preserve client IP
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Real-IP $remote_addr;
-  }
-}
+                                                       # => Forwards client IP address
+                                                       # => Appends to X-Forwarded-For chain
+                                                       # => Phoenix reads from this header
+    proxy_set_header X-Real-IP $remote_addr;          # => Sets original client IP
+                                                       # => $remote_addr: nginx's client IP variable
+                                                       # => Phoenix uses for rate limiting/logging
+  }                                                   # => End location block
+}                                                     # => End server block
 
 # HAProxy.cfg - Also supports sticky sessions
-backend phoenix_nodes
-  balance roundrobin
-  cookie SERVERID insert indirect nocache
+backend phoenix_nodes                                 # => Defines HAProxy backend group
+                                                       # => Alternative to nginx for sticky sessions
+  balance roundrobin                                  # => Load balancing algorithm: round robin
+                                                       # => Distributes requests evenly (with cookie affinity)
+  cookie SERVERID insert indirect nocache             # => Cookie-based sticky sessions
+                                                       # => insert: HAProxy adds SERVERID cookie
+                                                       # => indirect: doesn't forward cookie to backend
+                                                       # => nocache: prevents caching of Set-Cookie
 
-  server node1 app1:4000 check cookie node1
-  server node2 app2:4000 check cookie node2
-  server node3 app3:4000 check cookie node3
+  server node1 app1:4000 check cookie node1           # => Backend server 1
+                                                       # => check: health checks enabled
+                                                       # => cookie node1: assigns cookie value "node1"
+                                                       # => Clients get SERVERID=node1 cookie
+  server node2 app2:4000 check cookie node2           # => Backend server 2
+                                                       # => Clients routed here get SERVERID=node2
+  server node3 app3:4000 check cookie node3           # => Backend server 3
+                                                       # => HAProxy routes based on cookie value
+                                                       # => WebSockets stay on same server
 ```
 
 **Key Takeaway**: WebSockets require persistent connections to same server. Use sticky sessions (by IP or cookie). Load balancer must preserve connection. Forward X-Forwarded-For headers.
@@ -1401,56 +1724,94 @@ graph TD
 
 ```bash
 # Blue-Green deployment with two releases
-#!/bin/bash
+#!/bin/bash                                           # => Bash script for blue-green deployment
+                                                       # => Zero-downtime deployment strategy
 
 # Current version (blue)
 BLUE_VERSION=$(aws ecs describe-services --cluster prod --services my-app | \
   jq -r '.services[0].taskDefinition' | \
-  grep -oP 'my-app:\K[^:]+')
+  grep -oP 'my-app:\K[^:]+')                          # => Gets current running version from AWS ECS
+                                                       # => Queries ECS service task definition
+                                                       # => Extracts version number from task definition
+                                                       # => E.g., "my-app:v1.2.3" → BLUE_VERSION="v1.2.3"
 
 # New version (green)
-GREEN_VERSION=$(git describe --tags --always)
+GREEN_VERSION=$(git describe --tags --always)        # => Gets new version from Git tags
+                                                       # => Uses latest Git tag or commit SHA
+                                                       # => E.g., "v1.3.0" or "abc123def"
 
 # Build and deploy green version
-mix release
+mix release                                           # => Builds Elixir production release
+                                                       # => Creates _build/prod/rel/my_app/
+                                                       # => Self-contained package
 
-docker build -t my-app:$GREEN_VERSION .
-docker tag my-app:$GREEN_VERSION my-app:green
-docker push my-app:green
+docker build -t my-app:$GREEN_VERSION .               # => Builds Docker image with new version tag
+                                                       # => Uses Dockerfile in current directory
+                                                       # => Tags image with GREEN_VERSION
+                                                       # => E.g., my-app:v1.3.0
+docker tag my-app:$GREEN_VERSION my-app:green         # => Tags image with "green" alias
+                                                       # => Creates second tag for same image
+                                                       # => my-app:green always points to latest deployment
+docker push my-app:green                              # => Pushes image to Docker registry
+                                                       # => Uploads to ECR/DockerHub
+                                                       # => Makes available to ECS cluster
 
 # Register new task definition
 aws ecs register-task-definition \
   --family my-app \
   --container-definitions "[{\"image\": \"my-app:$GREEN_VERSION\", ...}]"
+                                                       # => Registers new ECS task definition
+                                                       # => Task definition: container specs (image, CPU, memory)
+                                                       # => Creates new revision with green version
+                                                       # => E.g., my-app:47 (revision number increments)
 
 # Update service to use green
 aws ecs update-service \
   --cluster prod \
   --service my-app \
-  --task-definition my-app:$GREEN_VERSION
+  --task-definition my-app:$GREEN_VERSION             # => Updates ECS service to use new task definition
+                                                       # => Triggers deployment of green version
+                                                       # => ECS starts new tasks with green containers
+                                                       # => Blue tasks still running (zero downtime)
 
 # Wait for deployment
 aws ecs wait services-stable \
   --cluster prod \
-  --services my-app
+  --services my-app                                   # => Blocks until deployment completes
+                                                       # => Waits for all green tasks to be healthy
+                                                       # => Waits for old blue tasks to drain
+                                                       # => Timeout after 10 minutes if not stable
 
 # Test green version
-curl http://green.my-app.com/health/ready
+curl http://green.my-app.com/health/ready             # => Tests green version health endpoint
+                                                       # => Verifies application is responding
+                                                       # => Checks database connectivity
+                                                       # => Returns HTTP 200 if ready
 
-if [ $? -eq 0 ]; then
+if [ $? -eq 0 ]; then                                 # => Checks if curl succeeded (exit code 0)
+                                                       # => $? is exit code of previous command
   # Switch traffic from blue to green
   aws route53 change-resource-record-sets \
     --hosted-zone-id Z123 \
     --change-batch "[{\"Action\": \"UPSERT\", \"ResourceRecordSet\": {\"Name\": \"my-app.com\", \"Type\": \"A\", \"TTL\": 60, \"ResourceRecords\": [{\"Value\": \"green-alb.aws.com\"}]}}]"
+                                                       # => Updates DNS to point to green load balancer
+                                                       # => UPSERT: creates or updates DNS record
+                                                       # => Changes my-app.com A record to green ALB
+                                                       # => TTL 60s: DNS caches for 1 minute
+                                                       # => Traffic gradually shifts to green
 
-  echo "Deployment successful!"
+  echo "Deployment successful!"                       # => Logs success message
+                                                       # => Green version now serving production traffic
 else
   # Rollback to blue
   aws ecs update-service \
     --cluster prod \
     --service my-app \
-    --task-definition my-app:$BLUE_VERSION
-fi
+    --task-definition my-app:$BLUE_VERSION            # => Rolls back to blue version
+                                                       # => Updates service to use previous task definition
+                                                       # => Keeps blue running, stops green
+                                                       # => Fast rollback without re-deployment
+fi                                                    # => End if statement
 ```
 
 **Key Takeaway**: Blue-green keeps current version running while deploying new version. Switch traffic only after verification. Can rollback instantly. Zero-downtime deployments.
@@ -1488,41 +1849,73 @@ defmodule MyApp.EctoTypes.Money do
 end
 
 # Usage in schema
-defmodule MyApp.Shop.Product do
-  use Ecto.Schema
+defmodule MyApp.Shop.Product do                       # => Defines Product schema using custom Money type
+                                                       # => Demonstrates domain logic encapsulation
+  use Ecto.Schema                                     # => Imports Ecto.Schema macros
+                                                       # => Provides schema/2, field/3, etc.
 
-  schema "products" do
-    field :name, :string
+  schema "products" do                                # => Maps to "products" table
+                                                       # => Auto-generates id, inserted_at, updated_at
+    field :name, :string                              # => Standard string field for product name
+                                                       # => Will be accessible as product.name
     field :price, MyApp.EctoTypes.Money                # => Custom type
-    timestamps()
-  end
+                                                       # => Uses Money Ecto type defined above
+                                                       # => Handles validation, casting, db conversion
+                                                       # => Accessible as product.price (map with amount/currency)
+    timestamps()                                      # => Adds inserted_at, updated_at fields
+                                                       # => Auto-managed by Ecto
+  end                                                 # => End schema definition
 
-  def changeset(product, attrs) do
-    product
+  def changeset(product, attrs) do                    # => Public function: changeset/2
+                                                       # => Validates and casts product attributes
+    product                                           # => Starts with Product struct
+                                                       # => Either new %Product{} or existing from database
     |> cast(attrs, [:name, :price])                   # => Cast price with custom type
-    |> validate_required([:name, :price])
+                                                       # => Casts attrs to allowed fields
+                                                       # => price calls Money.cast/1 automatically
+                                                       # => Returns changeset
+    |> validate_required([:name, :price])             # => Validates required fields
+                                                       # => Adds errors if name or price missing
     |> validate_price()                               # => Domain validation
-  end
+                                                       # => Custom business rule validation
+  end                                                 # => End changeset/2 function
 
-  defp validate_price(changeset) do
-    case get_change(changeset, :price) do
-      %{amount: amount} when amount < 0 ->
+  defp validate_price(changeset) do                   # => Private function: validate_price/1
+                                                       # => Domain-specific validation logic
+    case get_change(changeset, :price) do             # => Gets changed price value
+                                                       # => Returns nil if price unchanged
+                                                       # => Returns money map if changed
+      %{amount: amount} when amount < 0 ->            # => Pattern match: negative price
+                                                       # => Guard: amount < 0
         add_error(changeset, :price, "must be positive")  # => Business rule
+                                                       # => Adds validation error
+                                                       # => Error: {:price, {"must be positive", []}}
+                                                       # => Prevents negative prices
 
-      _ ->
-        changeset
-    end
-  end
-end
+      _ ->                                            # => Catch-all: price valid or unchanged
+                                                       # => Either positive amount or nil
+        changeset                                     # => Returns unchanged changeset
+                                                       # => No validation errors
+    end                                               # => End case statement
+  end                                                 # => End validate_price/1 function
+end                                                   # => End MyApp.Shop.Product module
 
 # Create product
-%Product{}
-|> Product.changeset(%{
-  name: "Widget",
+%Product{}                                            # => Creates empty Product struct
+                                                       # => %Product{name: nil, price: nil}
+|> Product.changeset(%{                               # => Builds changeset with attributes
+                                                       # => Validates and casts input
+  name: "Widget",                                     # => Product name
+                                                       # => Simple string value
   price: %{"amount" => 19.99, "currency" => "USD"}    # => Input format
+                                                       # => Plain map (user input format)
+                                                       # => Money.cast/1 converts to internal format
 })
-|> Repo.insert()
+|> Repo.insert()                                      # => Inserts product into database
 # => Stores: {"amount": 19.99, "currency": "USD"} in database
+                                                       # => Money.dump/1 converts to JSONB
+                                                       # => Database column stores JSON
+                                                       # => Returns {:ok, %Product{}} on success
 ```
 
 **Key Takeaway**: Custom Ecto types encapsulate domain logic. Implement cast/1, load/1, dump/1, and type/0. Use Decimal for money to avoid floating-point errors.
@@ -1576,31 +1969,61 @@ defmodule MyApp.Blog do
   end
 
   # Window functions
-  def posts_with_rank do
-    from p in Post,
-      select: %{
-        post: p,
+  def posts_with_rank do                              # => Public function: posts_with_rank/0
+                                                       # => Uses PostgreSQL window functions
+    from p in Post,                                   # => Starts query from Post table
+                                                       # => p is alias for posts
+      select: %{                                      # => Selects map with post and ranking fields
+                                                       # => Returns list of maps, not Post structs
+        post: p,                                      # => Includes full post struct
+                                                       # => All post fields available
         row_number: fragment("ROW_NUMBER() OVER (ORDER BY ? DESC)", p.inserted_at),
+                                                       # => Window function: assigns sequential numbers
         # => Assign sequential number
+                                                       # => ROW_NUMBER(): 1, 2, 3... (no ties)
+                                                       # => OVER: defines window (all rows)
+                                                       # => ORDER BY inserted_at DESC: newest first
+                                                       # => E.g., newest post = 1, second newest = 2
         rank: fragment("RANK() OVER (ORDER BY ? DESC)", p.view_count)
+                                                       # => Window function: ranks by view count
         # => Rank by view count (ties get same rank)
-      }
-    |> Repo.all()
-  end
+                                                       # => RANK(): ties get same rank, next skips
+                                                       # => E.g., 1000 views = rank 1, 1000 views = rank 1, 500 views = rank 3
+                                                       # => ORDER BY view_count DESC: most views first
+      }                                               # => End select map
+    |> Repo.all()                                     # => Executes query
+                                                       # => Returns list of maps with post, row_number, rank
+  end                                                 # => End posts_with_rank/0 function
 
   # Common Table Expressions (CTEs)
-  def posts_with_comment_count do
-    comments_cte = from c in Comment,
-      group_by: c.post_id,
+  def posts_with_comment_count do                     # => Public function: posts_with_comment_count/0
+                                                       # => Demonstrates CTE (WITH clause) usage
+    comments_cte = from c in Comment,                 # => Defines CTE: counts comments per post
+                                                       # => c is alias for comments table
+      group_by: c.post_id,                            # => Groups comments by post_id
+                                                       # => Aggregates all comments for each post
       select: %{post_id: c.post_id, count: count(c.id)}
+                                                       # => Selects post_id and comment count
+                                                       # => count(c.id): number of comments
+                                                       # => Result: %{post_id: 1, count: 5}, %{post_id: 2, count: 3}
 
-    from p in Post,
+    from p in Post,                                   # => Main query from posts table
+                                                       # => Joins with CTE result
       left_join: c in subquery(comments_cte), on: c.post_id == p.id,
+                                                       # => LEFT JOIN with CTE subquery
+                                                       # => subquery: executes comments_cte inline
+                                                       # => LEFT JOIN: includes posts with 0 comments
+                                                       # => ON: matches post ID
       select: %{post: p, comment_count: coalesce(c.count, 0)}
-    |> Repo.all()
+                                                       # => Selects post and comment count
+                                                       # => coalesce(c.count, 0): returns 0 if NULL
+                                                       # => Handles posts with no comments (LEFT JOIN NULL)
+    |> Repo.all()                                     # => Executes query
     # => WITH comments AS (...) SELECT posts.*, COALESCE(comments.count, 0)
-  end
-end
+                                                       # => Generates SQL with CTE
+                                                       # => Result: [%{post: %Post{}, comment_count: 5}, ...]
+  end                                                 # => End posts_with_comment_count/0 function
+end                                                   # => End module
 ```
 
 **Key Takeaway**: Use fragment/1 for database-specific SQL. Supports full-text search, JSONB queries, window functions, and CTEs. Always use ^pinned parameters to prevent SQL injection.
@@ -1785,31 +2208,48 @@ defmodule MyAppWeb.DashboardLive do
   end
 
   # Render only changed sections
-  def render(assigns) do
-    ~H"""
+  def render(assigns) do                              # => Render callback: generates HTML
+                                                       # => Called whenever assigns change
+    ~H"""                                             # => HEEx template (HTML + Elixir)
+                                                       # => Compiled to efficient diff tracking
     <div>
       <.header time={@time} />                        # => Separate component
+                                                       # => Function component: header/1
+                                                       # => Only re-renders when @time changes
+                                                       # => Passes time={@time} as assign
 
-      <div id="posts" phx-update="stream">
+      <div id="posts" phx-update="stream">            # => Stream container for efficient list rendering
+                                                       # => phx-update="stream": only patches changed items
+                                                       # => No full list re-render on updates
         <%= for {dom_id, post} <- @streams.posts do %>
+                                                       # => Iterates over stream items
+                                                       # => dom_id: unique DOM ID per item
+                                                       # => post: actual post struct
           <.post_card id={dom_id} post={post} />      # => Component per post
+                                                       # => id={dom_id}: stable DOM ID for diffing
+                                                       # => Only changed posts re-render
         <% end %>
       </div>
 
       <.footer />                                     # => Static component
+                                                       # => Never re-renders (no dynamic assigns)
     </div>
     """
-  end
+  end                                                 # => End render/1 function
 
   # Function components for granular updates
-  def header(assigns) do
-    ~H"""
+  def header(assigns) do                              # => Function component: header/1
+                                                       # => Isolated template for header section
+    ~H"""                                             # => HEEx template
+                                                       # => LiveView diffs only this section
     <header>
       <time><%= @time %></time>                       # => Only this re-renders
+                                                       # => When @time changes, only <time> updates
+                                                       # => Rest of page unchanged (efficient)
     </header>
     """
-  end
-end
+  end                                                 # => End header/1 component
+end                                                   # => End MyAppWeb.DashboardLive module
 ```
 
 **Key Takeaway**: Use assign_new/3 for expensive one-time computation. Prefer streams over lists for collections. Debounce rapid events. Use push_event for client-side updates. Break templates into small function components.
@@ -2140,40 +2580,71 @@ defmodule MyAppWeb.UserSocket do
 end
 
 # Connection pooling for external services
-defmodule MyApp.External.APIClient do
-  use GenServer
+defmodule MyApp.External.APIClient do                # => Defines HTTP client with connection pooling
+                                                       # => Reuses connections for better performance
+  use GenServer                                       # => Imports GenServer behavior
+                                                       # => Manages connection pool lifecycle
 
-  def start_link(opts) do
+  def start_link(opts) do                             # => Public function: start_link/1
+                                                       # => Called by supervisor to start process
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
-  end
+                                                       # => Starts GenServer
+                                                       # => Registers with module name
+                                                       # => Returns {:ok, pid}
+  end                                                 # => End start_link/1 function
 
-  def init(_opts) do
+  def init(_opts) do                                  # => Initializes GenServer
+                                                       # => Sets up HTTP connection pool
     # Create connection pool
     {:ok, pool} = :hackney_pool.child_spec(:api_pool, [
+                                                       # => Creates Hackney connection pool
+                                                       # => Pool name: :api_pool
       timeout: 15_000,                                # => Connection timeout
+                                                       # => Max 15 seconds to establish connection
+                                                       # => Prevents hanging on slow servers
       max_connections: 100                            # => Pool size
-    ])
+                                                       # => Maximum 100 concurrent connections
+                                                       # => Reuses idle connections
+    ])                                                # => Returns pool child_spec
 
-    {:ok, %{pool: pool}}
-  end
+    {:ok, %{pool: pool}}                              # => Returns GenServer initial state
+                                                       # => Stores pool reference
+  end                                                 # => End init/1 callback
 
-  def get(path) do
-    url = "https://api.example.com" <> path
+  def get(path) do                                    # => Public API: get/1
+                                                       # => Makes HTTP GET request using pool
+    url = "https://api.example.com" <> path           # => Builds full URL
+                                                       # => E.g., path="/users" → "https://api.example.com/users"
     headers = [{"Authorization", "Bearer #{api_token()}"}]
+                                                       # => Sets request headers
+                                                       # => Authorization header with Bearer token
+                                                       # => api_token() fetches from config/env
 
     case :hackney.get(url, headers, "", [pool: :api_pool]) do
-      {:ok, 200, _headers, client_ref} ->
+                                                       # => Makes HTTP GET request
+                                                       # => Uses :api_pool for connection reuse
+                                                       # => Returns {:ok, status, headers, client_ref} or {:error, reason}
+      {:ok, 200, _headers, client_ref} ->             # => Success case: HTTP 200 OK
+                                                       # => client_ref: reference to read response body
         {:ok, body} = :hackney.body(client_ref)      # => Read response
+                                                       # => Reads full response body
+                                                       # => body is binary string (JSON)
         Jason.decode(body)                            # => Parse JSON
+                                                       # => Converts JSON string to Elixir map
+                                                       # => Returns {:ok, map} or {:error, reason}
 
-      {:ok, status, _headers, _client_ref} ->
-        {:error, {:http_error, status}}
+      {:ok, status, _headers, _client_ref} ->         # => Non-200 status code
+                                                       # => E.g., 404, 500, etc.
+        {:error, {:http_error, status}}               # => Returns error tuple with status
+                                                       # => E.g., {:error, {:http_error, 404}}
 
-      {:error, reason} ->
-        {:error, reason}
-    end
-  end
-end
+      {:error, reason} ->                             # => Network/connection error
+                                                       # => E.g., timeout, connection refused
+        {:error, reason}                              # => Returns error reason
+                                                       # => E.g., {:error, :timeout}
+    end                                               # => End case statement
+  end                                                 # => End get/1 function
+end                                                   # => End MyApp.External.APIClient module
 
 # Distribute WebSocket connections across nodes
 defmodule MyAppWeb.Presence do
@@ -2352,35 +2823,46 @@ defmodule MyAppWeb.Resolvers.Content do
 end
 
 # Router
-defmodule MyAppWeb.Router do
-  scope "/api" do
-    pipe_through :api
+defmodule MyAppWeb.Router do                          # => Defines Phoenix router
+                                                       # => Configures GraphQL endpoints
+  scope "/api" do                                     # => API scope under /api path
+                                                       # => All routes prefixed with /api
+    pipe_through :api                                 # => Uses API pipeline
+                                                       # => Accepts JSON, no session/CSRF
 
-    forward "/graphql", Absinthe.Plug,
+    forward "/graphql", Absinthe.Plug,                # => GraphQL query endpoint
+                                                       # => POST requests to /api/graphql
       schema: MyAppWeb.Schema                         # => GraphQL endpoint
+                                                       # => Uses schema defined above
+                                                       # => Handles queries, mutations, subscriptions
 
-    forward "/graphiql", Absinthe.Plug.GraphiQL,
-      schema: MyAppWeb.Schema,
+    forward "/graphiql", Absinthe.Plug.GraphiQL,      # => GraphQL IDE endpoint
+                                                       # => Browser-based query explorer
+      schema: MyAppWeb.Schema,                        # => Uses same schema
+                                                       # => Access at /api/graphiql in browser
       interface: :playground                          # => GraphQL IDE
-  end
-end
+                                                       # => Interactive query editor
+                                                       # => Shows schema documentation
+                                                       # => Only enable in dev/staging!
+  end                                                 # => End /api scope
+end                                                   # => End router
 
 # Example queries:
-# query {
-#   posts(limit: 5) {
-#     id
-#     title
-#     author { name }
-#     comments { body }
-#   }
-# }
+# query {                                             # => GraphQL query operation
+#   posts(limit: 5) {                                 # => Fetches up to 5 posts
+#     id                                              # => Request post ID
+#     title                                           # => Request post title
+#     author { name }                                 # => Nested query: author's name
+#     comments { body }                               # => Nested query: all comment bodies
+#   }                                                 # => Client chooses exact fields needed
+# }                                                   # => No over-fetching or under-fetching
 #
-# mutation {
-#   createPost(title: "Hello", body: "World") {
-#     id
-#     title
-#   }
-# }
+# mutation {                                          # => GraphQL mutation operation
+#   createPost(title: "Hello", body: "World") {       # => Creates new post with arguments
+#     id                                              # => Returns created post ID
+#     title                                           # => Returns created post title
+#   }                                                 # => Client specifies return fields
+# }                                                   # => Mutation triggers subscription
 ```
 
 **Key Takeaway**: Absinthe provides GraphQL for Phoenix. Define schema with queries, mutations, subscriptions. Clients request only needed fields. Use resolvers to load data. GraphiQL provides interactive API explorer.
@@ -2459,48 +2941,71 @@ defmodule MyApp.EventStore do
 end
 
 # Order aggregate
-defmodule MyApp.Orders.Order do
-  defstruct id: nil,
-            items: [],
-            status: :draft,
-            total: 0,
-            version: 0
+defmodule MyApp.Orders.Order do                       # => Defines Order aggregate (domain model)
+                                                       # => State rebuilt from events, not stored directly
+  defstruct id: nil,                                  # => Order ID field
+            items: [],                                # => List of order items
+            status: :draft,                           # => Order status (:draft, :placed, :shipped)
+            total: 0,                                 # => Total order amount
+            version: 0                                # => Event version counter
 
   # Apply event to state
   def apply_event(order, %Event{event_type: "OrderCreated", payload: payload}) do
-    %{order |
-      id: payload["id"],
-      items: [],
-      status: :draft,
-      total: 0
-    }
-  end
+                                                       # => Handles OrderCreated event
+                                                       # => Pattern matches event_type
+    %{order |                                         # => Updates order struct
+      id: payload["id"],                              # => Sets order ID from event
+      items: [],                                      # => Starts with empty items list
+      status: :draft,                                 # => Initial status is :draft
+      total: 0                                        # => Initial total is 0
+    }                                                 # => Returns updated order
+  end                                                 # => End OrderCreated handler
 
   def apply_event(order, %Event{event_type: "ItemAdded", payload: payload}) do
-    item = payload["item"]
-    %{order |
-      items: [item | order.items],
+                                                       # => Handles ItemAdded event
+                                                       # => Adds item to order
+    item = payload["item"]                            # => Extracts item from payload
+                                                       # => E.g., %{"name" => "Widget", "price" => 10}
+    %{order |                                         # => Updates order struct
+      items: [item | order.items],                    # => Prepends item to items list
+                                                       # => E.g., [new_item | existing_items]
       total: order.total + item["price"]              # => Update total
-    }
-  end
+                                                       # => Adds item price to running total
+                                                       # => E.g., total: 20 + 10 = 30
+    }                                                 # => Returns updated order
+  end                                                 # => End ItemAdded handler
 
   def apply_event(order, %Event{event_type: "OrderPlaced"}) do
+                                                       # => Handles OrderPlaced event
+                                                       # => Transitions order to placed status
     %{order | status: :placed}                        # => Change status
-  end
+                                                       # => Updates status field to :placed
+                                                       # => Order can no longer be modified
+  end                                                 # => End OrderPlaced handler
 
   def apply_event(order, %Event{event_type: "OrderShipped", payload: payload}) do
-    %{order |
-      status: :shipped,
-      tracking_number: payload["tracking_number"]
-    }
-  end
+                                                       # => Handles OrderShipped event
+                                                       # => Records shipment details
+    %{order |                                         # => Updates order struct
+      status: :shipped,                               # => Changes status to :shipped
+                                                       # => Final order status
+      tracking_number: payload["tracking_number"]     # => Adds tracking number from payload
+                                                       # => E.g., "TRACK123456"
+    }                                                 # => Returns updated order
+  end                                                 # => End OrderShipped handler
 
   # Rebuild state from events
-  def from_events(events) do
+  def from_events(events) do                          # => Public function: from_events/1
+                                                       # => Replays events to rebuild order state
     Enum.reduce(events, %__MODULE__{}, &apply_event(&2, &1))
+                                                       # => Reduces events list into order struct
+                                                       # => Starts with empty %Order{}
+                                                       # => Applies each event in order
     # => Replay all events to rebuild current state
-  end
-end
+                                                       # => E.g., [OrderCreated, ItemAdded, ItemAdded, OrderPlaced]
+                                                       # => Builds final order: %Order{id: 1, items: [..], status: :placed, total: 50}
+  end                                                 # => End from_events/1 function
+end                                                   # => End MyApp.Orders.Order module
 
 # Command handler
 defmodule MyApp.Orders.Commands do
@@ -2596,36 +3101,59 @@ Implement property-based testing and contract testing.
 
 ```elixir
 # Property-based testing with StreamData
-defmodule MyApp.BlogTest do
-  use ExUnit.Case
+defmodule MyApp.BlogTest do                           # => Test module for Blog context
+                                                       # => Uses property-based testing
+  use ExUnit.Case                                     # => Imports ExUnit test macros
+                                                       # => Provides test/2, assert/1, etc.
   use ExUnitProperties                                # => Property testing
+                                                       # => Imports property/2, check/2, generators
 
-  property "post title is always trimmed" do
+  property "post title is always trimmed" do          # => Property test: invariant over many inputs
+                                                       # => Tests 100 random inputs by default
     check all title <- string(:alphanumeric, min_length: 1, max_length: 100) do
+                                                       # => Generator: random alphanumeric strings
+                                                       # => min_length: 1, max_length: 100
+                                                       # => Runs test with 100 different titles
       # Generate random titles
       params = %{"title" => "  #{title}  "}          # => Add whitespace
-      changeset = Post.changeset(%Post{}, params)
+                                                       # => Surrounds title with spaces
+                                                       # => E.g., "  HelloWorld  "
+      changeset = Post.changeset(%Post{}, params)     # => Creates changeset
+                                                       # => Validates and casts params
 
-      if changeset.valid? do
+      if changeset.valid? do                          # => Only check if changeset valid
+                                                       # => Skips invalid inputs
         trimmed = Ecto.Changeset.get_change(changeset, :title)
+                                                       # => Gets :title change from changeset
+                                                       # => Should be trimmed value
         assert String.trim(title) == trimmed          # => Property: always trimmed
-      end
-    end
-  end
+                                                       # => Invariant: whitespace removed
+                                                       # => Fails if any input violates property
+      end                                             # => End if
+    end                                               # => End check
+  end                                                 # => End property test
 
   property "creating and deleting post is idempotent" do
-    check all title <- string(:printable) do
+                                                       # => Property test: operation reversibility
+                                                       # => Tests create → delete → verify cycle
+    check all title <- string(:printable) do          # => Generator: random printable strings
+                                                       # => Includes special chars, unicode
       # Create post
       {:ok, post} = MyApp.Blog.create_post(%{title: title, body: "test"})
+                                                       # => Creates post with random title
+                                                       # => Should succeed for all inputs
 
       # Delete post
-      {:ok, _} = MyApp.Blog.delete_post(post.id)
+      {:ok, _} = MyApp.Blog.delete_post(post.id)      # => Deletes created post
+                                                       # => Should succeed
 
       # Verify deleted
       assert MyApp.Blog.get_post(post.id) == nil      # => Property: delete works
-    end
-  end
-end
+                                                       # => Post no longer exists
+                                                       # => Invariant: create+delete = nothing
+    end                                               # => End check
+  end                                                 # => End property test
+end                                                   # => End MyApp.BlogTest module
 
 # Contract testing for APIs
 defmodule MyApp.API.ContractTest do
@@ -2684,112 +3212,184 @@ defmodule MyApp.API.ContractTest do
 end
 
 # Integration tests with setup
-defmodule MyAppWeb.PostLiveTest do
-  use MyAppWeb.ConnCase, async: true
-  import Phoenix.LiveViewTest
+defmodule MyAppWeb.PostLiveTest do                    # => LiveView integration test module
+                                                       # => Tests full user interactions
+  use MyAppWeb.ConnCase, async: true                  # => Uses conn test case
+                                                       # => async: true enables parallel test execution
+                                                       # => Faster test suite (isolated database)
+  import Phoenix.LiveViewTest                         # => Imports LiveView test helpers
+                                                       # => Provides live/2, render_click/2, etc.
 
-  setup do
+  setup do                                            # => Setup callback: runs before each test
+                                                       # => Creates test data
     # Setup test data
     user = insert(:user)                              # => Factory
+                                                       # => Creates test user with factory
+                                                       # => Uses ExMachina or similar
     posts = insert_list(3, :post, author: user)       # => Create 3 posts
+                                                       # => Creates 3 posts linked to user
+                                                       # => insert_list/3: factory helper
 
     {:ok, user: user, posts: posts}                   # => Return to test
-  end
+                                                       # => Makes user and posts available in test context
+                                                       # => Tests receive as %{user: user, posts: posts}
+  end                                                 # => End setup callback
 
   test "displays posts", %{conn: conn, posts: posts} do
-    {:ok, view, html} = live(conn, "/posts")
+                                                       # => Test function
+                                                       # => Receives conn and posts from setup
+    {:ok, view, html} = live(conn, "/posts")          # => Mounts LiveView at /posts
+                                                       # => view: LiveView test process
+                                                       # => html: initial rendered HTML
 
     # Assert all posts shown
-    for post <- posts do
+    for post <- posts do                              # => Iterates over test posts
+                                                       # => Checks each post rendered
       assert html =~ post.title                       # => Each title present
-    end
+                                                       # => =~ checks string contains title
+                                                       # => Fails if any post missing
+    end                                               # => End for loop
 
     # Test interaction
-    view
-    |> element("button", "Load More")
+    view                                              # => LiveView test process
+    |> element("button", "Load More")                 # => Finds <button>Load More</button>
+                                                       # => Selects element to interact with
     |> render_click()                                 # => Click button
+                                                       # => Triggers phx-click event
+                                                       # => Simulates user click
 
     assert has_element?(view, "[data-role=post]", count: 6)  # => 6 posts now
-  end
+                                                       # => Checks for 6 elements with data-role="post"
+                                                       # => Verifies "Load More" added 3 more posts
+  end                                                 # => End test
 
-  test "creates post", %{conn: conn} do
-    {:ok, view, _html} = live(conn, "/posts/new")
+  test "creates post", %{conn: conn} do               # => Test post creation flow
+                                                       # => Receives conn from setup
+    {:ok, view, _html} = live(conn, "/posts/new")     # => Mounts LiveView at /posts/new
+                                                       # => Opens post creation form
 
     # Fill form
-    view
+    view                                              # => LiveView test process
     |> form("#post-form", post: %{title: "", body: ""})
+                                                       # => Selects form by ID
+                                                       # => Sets form values (empty for validation test)
     |> render_change()                                # => Trigger validation
+                                                       # => Simulates phx-change event
+                                                       # => Triggers LiveView validation
 
     assert has_element?(view, ".error")               # => Shows errors
+                                                       # => Checks for error message elements
+                                                       # => Validates required field errors shown
 
     # Submit valid form
-    view
+    view                                              # => LiveView test process
     |> form("#post-form", post: %{title: "Test", body: "Content"})
+                                                       # => Fills form with valid data
+                                                       # => title: "Test", body: "Content"
     |> render_submit()                                # => Submit form
+                                                       # => Triggers phx-submit event
+                                                       # => Creates post in database
 
     assert_redirected(view, "/posts/1")               # => Redirects to show
-  end
-end
+                                                       # => Verifies redirect to post show page
+                                                       # => Post ID is 1 (first post in test)
+  end                                                 # => End test
+end                                                   # => End MyAppWeb.PostLiveTest module
 
 # Performance testing
-defmodule MyApp.PerformanceTest do
-  use ExUnit.Case
+defmodule MyApp.PerformanceTest do                    # => Performance test module
+                                                       # => Validates performance requirements
+  use ExUnit.Case                                     # => Imports ExUnit test macros
+                                                       # => Provides test/2, assert/1, etc.
 
-  @tag :performance
-  test "list posts performs under 100ms" do
+  @tag :performance                                   # => Tags test as performance test
+                                                       # => Can run selectively: mix test --only performance
+  test "list posts performs under 100ms" do           # => Performance test: query speed
+                                                       # => Validates 100ms requirement
     # Create test data
-    insert_list(100, :post)
+    insert_list(100, :post)                           # => Creates 100 test posts
+                                                       # => Realistic data volume
 
-    {time_us, _result} = :timer.tc(fn ->
+    {time_us, _result} = :timer.tc(fn ->              # => Measures execution time
+                                                       # => :timer.tc/1 returns {microseconds, result}
       MyApp.Blog.list_posts()                         # => Measure execution time
-    end)
+                                                       # => Function being benchmarked
+    end)                                              # => Returns {time_in_microseconds, function_result}
 
-    time_ms = time_us / 1000
+    time_ms = time_us / 1000                          # => Converts microseconds to milliseconds
+                                                       # => 1000 μs = 1 ms
     assert time_ms < 100, "Query took #{time_ms}ms, expected < 100ms"
-  end
+                                                       # => Fails if query takes ≥100ms
+                                                       # => Error message shows actual time
+  end                                                 # => End performance test
 
-  @tag :performance
-  test "N+1 query prevention" do
-    posts = insert_list(10, :post)
-    Enum.each(posts, fn post ->
-      insert_list(5, :comment, post: post)
-    end)
+  @tag :performance                                   # => Tags as performance test
+  test "N+1 query prevention" do                      # => Tests for N+1 query problem
+                                                       # => Validates preloading works
+    posts = insert_list(10, :post)                    # => Creates 10 test posts
+                                                       # => Base data for N+1 test
+    Enum.each(posts, fn post ->                       # => Iterates over posts
+                                                       # => Creates comments for each
+      insert_list(5, :comment, post: post)            # => Creates 5 comments per post
+                                                       # => Total: 50 comments
+    end)                                              # => End each
 
     # Count queries
-    query_count = count_queries(fn ->
+    query_count = count_queries(fn ->                 # => Counts database queries executed
+                                                       # => Uses telemetry to track
       MyApp.Blog.list_posts_with_comments()           # => Preload comments
-    end)
+                                                       # => Should use 2 queries (posts + comments)
+                                                       # => BAD: 11 queries (1 + 10 for each post)
+    end)                                              # => Returns total query count
 
     assert query_count == 2, "Expected 2 queries, got #{query_count}"
+                                                       # => Fails if more than 2 queries
     # => 1 for posts, 1 for comments (not 11!)
-  end
+                                                       # => Verifies preload prevents N+1
+  end                                                 # => End N+1 test
 
-  defp count_queries(fun) do
-    ref = make_ref()
-    :telemetry.attach(
-      "query-counter-#{ref}",
-      [:my_app, :repo, :query],
-      fn _event, _measurements, _metadata, acc ->
-        send(self(), {:query, acc + 1})
+  defp count_queries(fun) do                          # => Helper: counts queries during execution
+                                                       # => Uses telemetry to intercept queries
+    ref = make_ref()                                  # => Creates unique reference
+                                                       # => Used for telemetry handler ID
+    :telemetry.attach(                                # => Attaches telemetry handler
+                                                       # => Intercepts query events
+      "query-counter-#{ref}",                         # => Handler ID (unique per test)
+                                                       # => E.g., "query-counter-#Reference<0.1.2.3>"
+      [:my_app, :repo, :query],                       # => Event to listen for
+                                                       # => Emitted by Ecto on each query
+      fn _event, _measurements, _metadata, acc ->     # => Handler function
+                                                       # => Called for each query
+        send(self(), {:query, acc + 1})               # => Sends message with incremented count
+                                                       # => acc starts at 0, increments each query
       end,
-      0
+      0                                               # => Initial accumulator value
+                                                       # => Starting count is 0
     )
 
-    fun.()
+    fun.()                                            # => Executes function being measured
+                                                       # => Triggers database queries
 
-    count = receive_queries(0)
-    :telemetry.detach("query-counter-#{ref}")
-    count
-  end
+    count = receive_queries(0)                        # => Collects query count from messages
+                                                       # => Starts with count 0
+    :telemetry.detach("query-counter-#{ref}")         # => Removes telemetry handler
+                                                       # => Cleanup to prevent leaks
+    count                                             # => Returns total query count
+  end                                                 # => End count_queries/1 helper
 
-  defp receive_queries(count) do
-    receive do
+  defp receive_queries(count) do                      # => Helper: receives query count messages
+                                                       # => Recursively collects counts
+    receive do                                        # => Waits for messages
       {:query, new_count} -> receive_queries(new_count)
+                                                       # => Receives updated count
+                                                       # => Recursively waits for more
     after
       100 -> count                                    # => No more queries
-    end
-  end
-end
+                                                       # => Timeout after 100ms
+                                                       # => Returns final count
+    end                                               # => End receive
+  end                                                 # => End receive_queries/1 helper
+end                                                   # => End MyApp.PerformanceTest module
 ```
 
 **Key Takeaway**: Property-based testing validates invariants across random inputs. Contract testing ensures API stability. Integration tests verify full user flows. Performance tests catch regressions. Use async: true for parallel test execution.

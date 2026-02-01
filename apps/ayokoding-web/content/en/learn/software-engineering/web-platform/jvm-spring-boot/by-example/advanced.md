@@ -16,56 +16,77 @@ RestTemplate provides synchronous REST client capabilities with automatic JSON/X
 
 ```java
 @Configuration
+// => Annotation applied
 public class RestTemplateConfig {
+    // => Begins block
     @Bean // => Configure RestTemplate bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) { // => Inject autoconfigured builder
         return builder // => Customize RestTemplate
             .setConnectTimeout(Duration.ofSeconds(5))  // => Max time to establish TCP connection
             .setReadTimeout(Duration.ofSeconds(10))    // => Max time to read response after connection
             .defaultHeader("User-Agent", "SpringBootApp/1.0") // => Add User-Agent header to all requests
+            // => Executes method call
             .errorHandler(new DefaultResponseErrorHandler() {
+    // => Executes method
                 @Override // => Override default error handling
                 public void handleError(ClientHttpResponse response) throws IOException { // => Custom HTTP error handler
                     // => Custom error handling (replace default behavior)
                     if (response.getStatusCode().is5xxServerError()) { // => Check if status code is 500-599
                         throw new ServiceUnavailableException("Backend service down"); // => Throw custom exception for 5xx errors
+                        // => Assigns > Throw custom exception for 5xx errors to //
                     }
                     super.handleError(response); // => Delegate to default handler for non-5xx errors
+                    // => Assigns > Delegate to default handler for non-5xx errors to //
                 }
+                // => Block delimiter
             })
+            // => Code line
             .build();
+    // => Executes method
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 @Service
 @RequiredArgsConstructor
 public class UserApiClient {
+    // => Begins block
     private final RestTemplate restTemplate;
+    // => Declares restTemplate field of type final
     private static final String BASE_URL = "https://jsonplaceholder.typicode.com";
+    // => Assigns value to variable
 
     public User getUser(Long id) { // => Fetch user by ID
         return restTemplate.getForObject(BASE_URL + "/users/{id}", User.class, id); // => GET request, deserialize JSON to User, blocks until response
+        // => Assigns > GET request, deserialize JSON to User, blocks until response to //
     }
 
     public User createUser(User user) { // => Create new user
         return restTemplate.postForObject(BASE_URL + "/users", user, User.class); // => POST request with JSON body, return created user with ID
+        // => Assigns > POST request with JSON body, return created user with ID to //
     }
 
     public void updateUser(Long id, User user) { // => Update existing user
         restTemplate.put(BASE_URL + "/users/{id}", user, id); // => PUT request, void return (no response body expected)
+        // => Assigns > PUT request, void return (no response body expected) to //
     }
 
     public void deleteUser(Long id) { // => Delete user
         restTemplate.delete(BASE_URL + "/users/{id}", id); // => DELETE request, void return
+        // => Assigns > DELETE request, void return to //
     }
 
     public List<User> getAllUsers() { // => Fetch all users
         User[] users = restTemplate.getForObject(BASE_URL + "/users", User[].class); // => GET request, deserialize JSON array to User[]
         return users != null ? Arrays.asList(users) : Collections.emptyList(); // => Convert array to list, handle null response
+        // => Invokes asList() method
+        // => Result stored in !
     }
 }
 
 record User(Long id, String name, String email, String phone) {}
+    // => Executes method
 ```
 
 **Code (Kotlin)**:
@@ -152,21 +173,31 @@ WebClient provides reactive, non-blocking HTTP communication with backpressure s
 
 ```java
 @Configuration
+// => Annotation applied
 public class WebClientConfig {
+    // => Begins block
     @Bean // => Configure WebClient bean
     public WebClient webClient(WebClient.Builder builder) { // => Inject autoconfigured builder
         return builder // => Customize WebClient
             .baseUrl("https://jsonplaceholder.typicode.com") // => Base URL for all requests
             .defaultHeader(HttpHeaders.USER_AGENT, "SpringBoot-WebClient/1.0") // => Add User-Agent header
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE) // => Default Content-Type: application/json
+            // => Executes method call
             .build();
+    // => Executes method
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 @Service
+// => Annotation applied
 @RequiredArgsConstructor
+// => Annotation applied
 public class ReactiveUserClient {
+    // => Begins block
     private final WebClient webClient;
+    // => Declares webClient field of type final
 
     public Mono<User> getUser(Long id) { // => Fetch user by ID (reactive)
         return webClient.get() // => Create GET request
@@ -174,6 +205,7 @@ public class ReactiveUserClient {
             .retrieve() // => Execute request
             .bodyToMono(User.class) // => Deserialize response to Mono<User> (single value)
             .timeout(Duration.ofSeconds(5));  // => Fail if response not received within 5 seconds
+            // => Assigns > Fail if response not received within 5 seconds to //
     }
 
     public Flux<User> getAllUsers() { // => Fetch all users (reactive stream)
@@ -184,7 +216,9 @@ public class ReactiveUserClient {
             .onErrorResume(e -> { // => Fallback on error (circuit breaker pattern)
                 // => Return empty flux on error instead of failing
                 return Flux.empty(); // => Empty stream (no users)
+                // => Assigns > Empty stream (no users) to //
             });
+            // => Executes statement
     }
 
     public Mono<User> createUser(User user) { // => Create user (reactive)
@@ -193,6 +227,7 @@ public class ReactiveUserClient {
             .bodyValue(user) // => Serialize user to JSON body
             .retrieve() // => Execute request
             .bodyToMono(User.class); // => Deserialize created user from response
+            // => Assigns > Deserialize created user from response to //
     }
 }
 ```
@@ -291,33 +326,46 @@ Feign provides declarative REST client interfaces with automatic request/respons
 @SpringBootApplication
 @EnableFeignClients // => Enable component scanning for Feign clients
 public class Application { // => Main application class
+// => Defines Application class
     public static void main(String[] args) {
+    // => Begins block
         SpringApplication.run(Application.class, args);
+    // => Executes method
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 @FeignClient(name = "user-service", url = "https://jsonplaceholder.typicode.com") // => Declarative HTTP client (name for load balancing, url for direct connection)
 public interface UserFeignClient { // => Interface methods map to HTTP endpoints
     @GetMapping("/users/{id}") // => GET /users/{id} endpoint
     User getUser(@PathVariable Long id); // => Path variable injected into URL, returns deserialized User
+    // => Assigns > Path variable injected into URL, returns deserialized User to //
 
     @GetMapping("/users") // => GET /users endpoint
     List<User> getAllUsers(); // => Returns list of users (JSON array deserialized)
+    // => Assigns > Returns list of users (JSON array deserialized) to //
 
     @PostMapping("/users") // => POST /users endpoint
     User createUser(@RequestBody User user); // => Request body serialized to JSON, response deserialized to User
+    // => Assigns > Request body serialized to JSON, response deserialized to User to //
 
     @DeleteMapping("/users/{id}") // => DELETE /users/{id} endpoint
     void deleteUser(@PathVariable Long id); // => No response body expected
+    // => Assigns > No response body expected to //
 }
+// => Block delimiter
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    // => Begins block
     private final UserFeignClient userClient;
+    // => Declares userClient field of type final
 
     public User fetchUser(Long id) { // => Fetch user via Feign client
         return userClient.getUser(id);  // => Feign generates HTTP call implementation (blocks until response)
+        // => Assigns > Feign generates HTTP call implementation (blocks until response) to //
     }
 }
 
@@ -405,26 +453,41 @@ Service discovery allows microservices to find and communicate with each other w
 @SpringBootApplication
 @EnableDiscoveryClient // => Enable Eureka client registration
 public class Application { // => Main application class
+// => Defines Application class
     public static void main(String[] args) {
+    // => Begins block
         SpringApplication.run(Application.class, args);
+    // => Executes method
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 @RestController
+// => Annotation applied
 @RequestMapping("/api")
+    // => Executes method
 public class OrderController {
+    // => Begins block
     private final DiscoveryClient discoveryClient;
+    // => Declares discoveryClient field of type final
     private final RestTemplate restTemplate;
+    // => Declares restTemplate field of type final
 
     public OrderController(DiscoveryClient discoveryClient, // => Inject discovery client for querying service registry
                           @LoadBalanced RestTemplate restTemplate) { // => Load-balanced RestTemplate (resolves service names to instances)
+                          // => Annotation applied
         this.discoveryClient = discoveryClient;
+        // => Assigns discoveryClient to this.discoveryClient
         this.restTemplate = restTemplate;
+        // => Assigns restTemplate to this.restTemplate
     }
 
     @GetMapping("/services") // => Endpoint: GET /api/services
     public List<String> getServices() { // => Query Eureka registry
         return discoveryClient.getServices();  // => Returns service names (e.g., ["order-service", "user-service", "payment-service"])
+        // => Invokes > Returns service names () method
+        // => Result stored in //
     }
 
     @GetMapping("/order/{id}") // => Endpoint: GET /api/order/{id}
@@ -433,6 +496,7 @@ public class OrderController {
         User user = restTemplate.getForObject( // => Load-balanced HTTP call
             "http://user-service/api/users/{id}", User.class, id); // => "user-service" resolved by Eureka (round-robin load balancing)
         return new Order(id, user); // => Compose order response with user data
+        // => Assigns > Compose order response with user data to //
     }
 }
 
@@ -540,7 +604,9 @@ Actuator provides production-ready endpoints for monitoring, health checks, and 
 // pom.xml: spring-boot-starter-actuator
 
 @Component
+// => Annotation applied
 public class CustomHealthIndicator implements HealthIndicator {
+    // => Begins block
     @Override // => Implement HealthIndicator interface
     public Health health() { // => Custom health check logic
         boolean databaseUp = checkDatabaseConnection(); // => Check database connectivity
@@ -549,24 +615,37 @@ public class CustomHealthIndicator implements HealthIndicator {
                 .withDetail("database", "PostgreSQL") // => Add metadata to health response
                 .withDetail("version", "15.0") // => Database version detail
                 .build(); // => Build Health object
+                // => Assigns > Build Health object to //
         }
         return Health.down() // => Health status: DOWN
             .withDetail("error", "Database connection failed") // => Error detail for debugging
             .build(); // => Build Health object (triggers pod restart in Kubernetes)
+            // => Assigns > Build Health object (triggers pod restart in Kubernetes) to //
     }
+    // => Block delimiter
 
     private boolean checkDatabaseConnection() { // => Verify database connectivity
         return true;  // => Placeholder (production: execute SELECT 1 query)
+        // => Assigns > Placeholder (production: execute SELECT 1 query) to //
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 @RestController
+// => Annotation applied
 @RequestMapping("/api")
+    // => Executes method
 public class MetricsController {
+    // => Begins block
     @GetMapping("/process")
+    // => Executes method
     public String processRequest() {
+    // => Begins block
         return "Processed";
+    // => Returns result
     }
+    // => Block delimiter
 }
 
 // application.yml
@@ -663,39 +742,52 @@ Micrometer provides vendor-neutral metrics instrumentation for monitoring applic
 ```java
 @Service
 public class OrderMetricsService {
+    // => Begins block
     private final Counter orderCounter;
+    // => Declares orderCounter field of type final
     private final Gauge activeOrders;
+    // => Declares activeOrders field of type final
     private final Timer orderProcessingTimer;
+    // => Declares orderProcessingTimer field of type final
     private final AtomicInteger activeOrderCount = new AtomicInteger(0);
+    // => Creates new instance
 
     public OrderMetricsService(MeterRegistry registry) { // => Inject Micrometer registry
         this.orderCounter = Counter.builder("orders.created") // => Create counter metric
             .description("Total orders created") // => Metric description for monitoring dashboards
             .tag("type", "online") // => Tag for filtering/grouping (e.g., online vs in-store orders)
             .register(registry); // => Register metric with Micrometer
+            // => Assigns > Register metric with Micrometer to //
 
         this.activeOrders = Gauge.builder("orders.active", activeOrderCount, AtomicInteger::get) // => Create gauge metric (current value)
             .description("Active orders count") // => Metric description
             .register(registry); // => Register gauge (tracks activeOrderCount value)
+            // => Assigns > Register gauge (tracks activeOrderCount value) to //
 
         this.orderProcessingTimer = Timer.builder("orders.processing.time") // => Create timer metric (measures duration)
             .description("Order processing duration") // => Metric description
             .register(registry); // => Register timer (tracks min/max/mean/percentiles)
+            // => Assigns > Register timer (tracks min/max/mean/percentiles) to //
     }
 
     public void createOrder(Order order) { // => Process order creation
         orderCounter.increment();  // => Increment total orders counter (monotonic increase)
         activeOrderCount.incrementAndGet(); // => Increment active orders gauge
+        // => Assigns > Increment active orders gauge to //
 
         orderProcessingTimer.record(() -> { // => Measure execution time
             // => Timer tracks duration of lambda execution
             processOrder(order); // => Business logic
+            // => Assigns > Business logic to //
         });
+        // => Executes statement
 
         activeOrderCount.decrementAndGet(); // => Decrement active orders after processing complete
+        // => Assigns > Decrement active orders after processing complete to //
     }
 
     private void processOrder(Order order) {
+    // => Begins block
         // Processing logic
     }
 }
@@ -771,35 +863,60 @@ Distributed tracing tracks requests across microservices using trace and span ID
 // pom.xml: micrometer-tracing-bridge-brave, zipkin-reporter-brave
 
 @Configuration
+// => Annotation applied
 public class TracingConfig {
+    // => Begins block
     @Bean
+    // => Annotation applied
     public Sampler defaultSampler() {
+    // => Begins block
         return Sampler.ALWAYS_SAMPLE;  // => Sample all requests (production: use probability)
+        // => Assigns > Sample all requests (production: use probability) to //
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 @RestController
+// => Annotation applied
 @RequestMapping("/api")
+    // => Executes method
 @RequiredArgsConstructor
+// => Annotation applied
 public class OrderTracingController {
+    // => Begins block
     private final Tracer tracer;
+    // => Declares tracer field of type final
     private final RestTemplate restTemplate;
+    // => Declares restTemplate field of type final
 
     @GetMapping("/order/{id}")
+    // => Executes method
     public Order getOrder(@PathVariable Long id) {
+    // => Begins block
         Span span = tracer.nextSpan().name("get-order").start();
+        // => Sets span to string value
         try (Tracer.SpanInScope ws = tracer.withSpan(span)) {
+        // => Executes method call
             span.tag("order.id", id.toString());
+    // => Executes method
 
             // => Trace ID automatically propagated to downstream services
             User user = restTemplate.getForObject(
+            // => Code line
                 "http://user-service/api/users/{id}", User.class, id);
+    // => Begins block
 
             span.event("user-fetched");
+    // => Executes method
             return new Order(id, user); // => Compose order response with user data
+            // => Assigns > Compose order response with user data to //
         } finally {
+    // => Begins block
             span.end();
+    // => Executes method
         }
+        // => Block delimiter
     }
 }
 
@@ -907,41 +1024,73 @@ Structured logging outputs JSON format with Mapped Diagnostic Context (MDC) for 
 // pom.xml: logstash-logback-encoder
 
 @Component
+// => Annotation applied
 public class LoggingFilter implements Filter {
+    // => Begins block
     @Override
+    // => Annotation applied
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+    // => Executes method call
             throws IOException, ServletException {
+    // => Begins block
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        // => Calls ()
+        // => Stores result in httpRequest
 
         MDC.put("requestId", UUID.randomUUID().toString());
+    // => Executes method
         MDC.put("path", httpRequest.getRequestURI());
+    // => Executes method
         MDC.put("method", httpRequest.getMethod());
+    // => Executes method
 
         try {
+    // => Begins block
             chain.doFilter(request, response);
+    // => Executes method
         } finally {
+    // => Begins block
             MDC.clear();  // => Cleanup MDC
+            // => Assigns > Cleanup MDC to //
         }
+        // => Block delimiter
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 @RestController
+// => Annotation applied
 @Slf4j
+// => Annotation applied
 public class OrderLoggingController {
+    // => Begins block
     @PostMapping("/orders")
+    // => Executes method
     public Order createOrder(@RequestBody Order order) {
+    // => Begins block
         log.info("Creating order",
+        // => Code line
             kv("orderId", order.id()),
+    // => Executes method
             kv("userId", order.user().id()));  // => Structured key-value pairs
+            // => Assigns > Structured key-value pairs to //
 
         try {
+    // => Begins block
             // Process order
             log.info("Order created successfully");
+    // => Executes method
             return order;
+    // => Returns result
         } catch (Exception e) {
+    // => Executes method
             log.error("Order creation failed", e);
+    // => Executes method
             throw e;
+            // => Throws e;
         }
+        // => Block delimiter
     }
 }
 
@@ -1030,23 +1179,38 @@ Circuit breaker prevents cascading failures by stopping calls to failing service
 // pom.xml: spring-cloud-starter-circuitbreaker-resilience4j
 
 @Service
+// => Annotation applied
 @RequiredArgsConstructor
+// => Annotation applied
 public class UserServiceClient {
+    // => Begins block
     private final CircuitBreakerFactory circuitBreakerFactory;
+    // => Declares circuitBreakerFactory field of type final
     private final RestTemplate restTemplate;
+    // => Declares restTemplate field of type final
 
     public User getUser(Long id) {
+    // => Begins block
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("user-service");
+        // => Sets circuitBreaker to string value
 
         return circuitBreaker.run(
+    // => Returns result
             () -> restTemplate.getForObject("http://user-service/users/{id}", User.class, id),
+    // => Executes method
             throwable -> getFallbackUser(id)  // => Fallback on failure
+            // => Executes method call
         );
+        // => Executes statement
     }
+    // => Block delimiter
 
     private User getFallbackUser(Long id) {
+    // => Begins block
         return new User(id, "Fallback User", "fallback@example.com", null);
+    // => Returns value to caller
     }
+    // => Block delimiter
 }
 
 // application.yml
@@ -1061,6 +1225,7 @@ public class UserServiceClient {
 //         permittedNumberOfCallsInHalfOpenState: 3
 
 // Circuit Breaker States: CLOSED (normal) -> OPEN (failing) -> HALF_OPEN (testing) -> CLOSED
+// => Invokes // Circuit Breaker States: CLOSED()
 ```
 
 **Code (Kotlin)**:
@@ -1136,19 +1301,29 @@ Retry pattern automatically retries failed operations with exponential backoff t
 
 ```java
 @Service
+// => Annotation applied
 @RequiredArgsConstructor
+// => Annotation applied
 public class PaymentServiceClient {
+    // => Begins block
     private final RestTemplate restTemplate;
+    // => Declares restTemplate field of type final
 
     @Retry(name = "payment-service", fallbackMethod = "paymentFallback")
+    // => Annotation applied
     public Payment processPayment(PaymentRequest request) {
+    // => Begins block
         return restTemplate.postForObject(
+    // => Returns result
             "http://payment-service/payments", request, Payment.class);
+            // => Executes statement
     }
+    // => Block delimiter
 
     private Payment paymentFallback(PaymentRequest request, Exception e) { // => Fallback method signature must match original
         // => Fallback invoked after max retries exhausted (3 attempts)
         return new Payment(null, "FAILED", "Service unavailable"); // => Graceful degradation response
+        // => Assigns > Graceful degradation response to //
     }
 }
 
@@ -1166,9 +1341,12 @@ public class PaymentServiceClient {
 //           - java.lang.IllegalArgumentException
 
 // Retry sequence: 1s -> 2s -> 4s (exponential backoff)
+// => Invokes // Retry sequence: 1s -> 2s -> 4s()
 
 record PaymentRequest(Long orderId, BigDecimal amount) {}
+    // => Executes method
 record Payment(Long id, String status, String message) {}
+    // => Executes method
 ```
 
 **Code (Kotlin)**:
@@ -1231,26 +1409,37 @@ Rate limiting controls the number of requests a client can make within a time wi
 
 ```java
 @Service
+// => Annotation applied
 public class ApiRateLimitService {
+    // => Begins block
     @RateLimiter(name = "api-limiter", fallbackMethod = "rateLimitFallback") // => Apply rate limiting (10 req/sec from config)
     public ApiResponse callExternalApi(String endpoint) { // => Method protected by rate limiter
         // => If rate limit exceeded, fallback method invoked
         return new ApiResponse("success", "Data from " + endpoint); // => Normal response when within rate limit
+        // => Assigns > Normal response when within rate limit to //
     }
+    // => Block delimiter
 
     private ApiResponse rateLimitFallback(String endpoint, Exception e) { // => Fallback when rate limit exceeded
         return new ApiResponse("error", "Rate limit exceeded. Try again later."); // => Return 429-equivalent response
+        // => Assigns > Return 429-equivalent response to //
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 @RestController
+// => Annotation applied
 @RequiredArgsConstructor
 public class ApiController {
+    // => Begins block
     private final ApiRateLimitService apiService;
+    // => Declares apiService field of type final
 
     @GetMapping("/api/data") // => Endpoint: GET /api/data
     public ApiResponse getData() { // => Delegate to rate-limited service
         return apiService.callExternalApi("/external/endpoint"); // => Calls method protected by @RateLimiter
+        // => Assigns > Calls method protected by @RateLimiter to //
     }
 }
 
@@ -1266,6 +1455,7 @@ public class ApiController {
 // Allows 10 requests per second. Additional requests are rejected.
 
 record ApiResponse(String status, String message) {}
+    // => Executes method
 ```
 
 **Code (Kotlin)**:
@@ -1335,6 +1525,7 @@ Bulkhead pattern isolates resources using separate thread pools to prevent one f
 ```java
 @Service
 public class ReportService {
+    // => Begins block
     @Bulkhead(name = "report-generation", type = Bulkhead.Type.THREADPOOL, // => Isolate with dedicated thread pool
               fallbackMethod = "reportFallback") // => Fallback when bulkhead full
     public CompletableFuture<Report> generateReport(Long userId) { // => Async method (returns CompletableFuture)
@@ -1342,12 +1533,15 @@ public class ReportService {
         return CompletableFuture.supplyAsync(() -> { // => Execute asynchronously
             // => Heavy computation (CPU-intensive, long-running)
             return new Report(userId, "Monthly Report", LocalDateTime.now()); // => Generate report
+            // => Assigns > Generate report to //
         });
+        // => Executes statement
     }
 
     private CompletableFuture<Report> reportFallback(Long userId, Exception e) { // => Fallback when bulkhead exhausted
         return CompletableFuture.completedFuture( // => Return immediately completed future
             new Report(userId, "Cached Report", LocalDateTime.now().minusDays(1))); // => Return cached/stale report
+            // => Assigns > Return cached/stale report to //
     }
 }
 
@@ -1367,6 +1561,7 @@ public class ReportService {
 //         keepAliveDuration: 20s
 
 record Report(Long userId, String title, LocalDateTime generatedAt) {}
+    // => Executes method
 ```
 
 **Code (Kotlin)**:
@@ -1420,40 +1615,68 @@ Custom starters provide reusable auto-configuration modules that can be shared a
 
 // CustomProperties.java
 @ConfigurationProperties(prefix = "custom.feature")
+// => Annotation applied
 @Validated
+// => Annotation applied
 public class CustomProperties {
+    // => Begins block
     @NotBlank
+    // => Annotation applied
     private String apiKey;
+    // => Declares apiKey field of type String
     private boolean enabled = true;
+    // => Assigns true to enabled
     private Duration timeout = Duration.ofSeconds(30);
+    // => Calls ofSeconds()
+    // => Stores result in timeout
 
     // Getters/setters
 }
+// => Block delimiter
 
 // CustomService.java
 public class CustomService {
+    // => Begins block
     private final CustomProperties properties;
+    // => Declares properties field of type final
 
     public CustomService(CustomProperties properties) {
+    // => Begins block
         this.properties = properties;
+        // => Assigns properties to this.properties
     }
+    // => Block delimiter
 
     public String performAction() {
+    // => Begins block
         return "Action performed with API key: " + properties.getApiKey();
+    // => Returns value to caller
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 // CustomAutoConfiguration.java
 @Configuration
+// => Annotation applied
 @EnableConfigurationProperties(CustomProperties.class)
+    // => Executes method
 @ConditionalOnProperty(prefix = "custom.feature", name = "enabled", havingValue = "true")
+// => Annotation applied
 public class CustomAutoConfiguration {
+    // => Begins block
     @Bean
+    // => Annotation applied
     @ConditionalOnMissingBean
+    // => Annotation applied
     public CustomService customService(CustomProperties properties) {
+    // => Begins block
         return new CustomService(properties);
+    // => Returns value to caller
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 // META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
 // com.example.starter.CustomAutoConfiguration
@@ -1513,24 +1736,32 @@ Conditional beans allow selective bean creation based on classpath, properties, 
 
 ```java
 @Configuration
+// => Annotation applied
 public class ConditionalBeansConfig {
+    // => Begins block
     @Bean // => Define CacheService bean
     @ConditionalOnClass(name = "com.redis.RedisClient") // => Only create if Redis client JAR present
     public CacheService redisCacheService() { // => Redis-backed cache implementation
         return new RedisCacheService();  // => Created only when Redis available on classpath
+        // => Assigns > Created only when Redis available on classpath to //
     }
+    // => Block delimiter
 
     @Bean // => Alternative CacheService bean
     @ConditionalOnMissingClass("com.redis.RedisClient") // => Only create if Redis client NOT on classpath
     public CacheService memoryCacheService() { // => In-memory fallback implementation
         return new MemoryCacheService();  // => Created when Redis unavailable (dev/test environments)
+        // => Assigns > Created when Redis unavailable (dev/test environments) to //
     }
+    // => Block delimiter
 
     @Bean // => Optional feature bean
     @ConditionalOnProperty(name = "feature.advanced", havingValue = "true") // => Only create if property set to "true"
     public AdvancedFeature advancedFeature() { // => Advanced feature implementation
         return new AdvancedFeature();  // => Created based on application.yml configuration
+        // => Assigns > Created based on application.yml configuration to //
     }
+    // => Block delimiter
 
     @Bean // => Default DataSource bean
     @ConditionalOnMissingBean(DataSource.class) // => Only create if no other DataSource bean exists
@@ -1538,18 +1769,23 @@ public class ConditionalBeansConfig {
         return new EmbeddedDatabaseBuilder() // => Build in-memory database
             .setType(EmbeddedDatabaseType.H2) // => Use H2 database
             .build();  // => Auto-configured only when custom DataSource not provided
+            // => Assigns > Auto-configured only when custom DataSource not provided to //
     }
 
     @Bean // => JPA transaction manager
     @ConditionalOnBean(EntityManagerFactory.class) // => Only create if EntityManagerFactory bean exists
     public JpaTransactionManager transactionManager(EntityManagerFactory emf) { // => Create transaction manager
         return new JpaTransactionManager(emf);  // => Auto-configured when JPA/Hibernate present
+        // => Assigns > Auto-configured when JPA/Hibernate present to //
     }
 }
 
 interface CacheService {
+    // => Begins block
     void put(String key, Object value);
+    // => Executes method
     Object get(String key);
+    // => Executes method
 }
 ```
 
@@ -1602,28 +1838,40 @@ Configuration properties provide type-safe, validated, and IDE-friendly applicat
 public class MailProperties { // => Type-safe configuration class
     @NotBlank // => Validation: host cannot be null/empty
     private String host; // => SMTP server hostname
+    // => Assigns > SMTP server hostname to //
 
     @Min(1) // => Validation: port >= 1
     @Max(65535) // => Validation: port <= 65535
     private int port = 587; // => SMTP port (default 587 for TLS)
+    // => Assigns 587 // to port
 
     @Email // => Validation: valid email format required
     private String from; // => Sender email address
+    // => Assigns > Sender email address to //
 
     @Valid // => Cascade validation to nested object
     private Smtp smtp = new Smtp(); // => Nested SMTP auth configuration
+    // => Instantiates Smtp
+    // => Stores in smtp
 
     private Map<String, String> templates = new HashMap<>(); // => Email template mappings
+    // => Instantiates HashMap
+    // => Stores in templates
 
     public static class Smtp {
+    // => Begins block
         private boolean auth = true;
+        // => Assigns true to auth
         private boolean starttls = true;
+        // => Assigns true to starttls
 
         @NotBlank
         private String username;
+        // => Declares username field of type String
 
         @NotBlank
         private String password;
+        // => Declares password field of type String
 
         // Getters/setters
     }
@@ -1633,7 +1881,9 @@ public class MailProperties { // => Type-safe configuration class
 
 @Configuration
 @EnableConfigurationProperties(MailProperties.class)
+    // => Executes method
 public class MailConfig {
+    // => Begins block
     @Bean // => Configure mail sender bean
     public JavaMailSender mailSender(MailProperties props) { // => Inject validated properties
         JavaMailSenderImpl sender = new JavaMailSenderImpl(); // => Create mail sender
@@ -1642,6 +1892,7 @@ public class MailConfig {
         sender.setUsername(props.getSmtp().getUsername()); // => Configure SMTP auth username
         sender.setPassword(props.getSmtp().getPassword()); // => Configure SMTP auth password
         return sender; // => Fully configured mail sender bean
+        // => Assigns > Fully configured mail sender bean to //
     }
 }
 
@@ -1713,12 +1964,16 @@ Custom actuator endpoints expose application-specific operational data through t
 @Endpoint(id = "application-info") // => Custom actuator endpoint (id maps to /actuator/application-info)
 @Component // => Spring-managed bean
 public class ApplicationInfoEndpoint { // => Custom operational endpoint
+// => Defines ApplicationInfoEndpoint class
     private final ApplicationContext context;
+    // => Declares context field of type final
     private final Environment environment;
+    // => Declares environment field of type final
 
     public ApplicationInfoEndpoint(ApplicationContext context, Environment environment) { // => Constructor injection
         this.context = context; // => Application context for bean metadata
         this.environment = environment; // => Environment for active profiles/properties
+        // => Initializes environment with environment //
     }
 
     @ReadOperation // => Maps to GET /actuator/application-info
@@ -1734,16 +1989,19 @@ public class ApplicationInfoEndpoint { // => Custom operational endpoint
     public void updateSetting(@Selector String key, String value) { // => Path variable injection
         // => Custom write operation (modify runtime config)
         System.setProperty("app." + key, value); // => Update system property dynamically
+        // => Assigns > Update system property dynamically to //
     }
 
     @DeleteOperation // => Maps to DELETE /actuator/application-info/{cacheName}
     public void clearCache(@Selector String cacheName) { // => Path variable injection
         // => Custom delete operation (clear application cache)
         System.out.println("Clearing cache: " + cacheName); // => Placeholder (production: clear actual cache)
+        // => Assigns > Placeholder (production: clear actual cache) to //
     }
 }
 
 record ApplicationInfo(String name, String[] profiles, int beanCount, String javaVersion) {}
+    // => Executes method
 
 // application.yml
 // management:
@@ -1916,9 +2174,11 @@ Kubernetes health probes distinguish between liveness (restart if unhealthy) and
 @Component  // => Spring-managed component for auto-registration
 public class DatabaseHealthIndicator implements HealthIndicator {  // => Custom health check for database connectivity
     private final DataSource dataSource;  // => Injected HikariCP connection pool
+    // => Assigns > Injected HikariCP connection pool to //
 
     public DatabaseHealthIndicator(DataSource dataSource) {  // => Constructor injection
         this.dataSource = dataSource;  // => Store reference to connection pool
+        // => Initializes dataSource with dataSource  //
     }
 
     @Override  // => Implement HealthIndicator contract
@@ -1930,26 +2190,31 @@ public class DatabaseHealthIndicator implements HealthIndicator {  // => Custom 
                 return Health.up()  // => Return UP status if connection valid
                     .withDetail("database", "PostgreSQL")  // => Add metadata to health response
                     .build();  // => Build immutable Health object
+                    // => Assigns > Build immutable Health object to //
             }
         } catch (Exception e) {  // => Catch SQLException or connection pool errors
             return Health.down(e).build();  // => Return DOWN status with exception details
                                              // => Kubernetes will restart pod if liveness probe fails
         }
         return Health.down().build();  // => Return DOWN if connection invalid but no exception
+        // => Assigns > Return DOWN if connection invalid but no exception to //
     }
 }
 
 @Component  // => Spring-managed component
 public class ExternalApiHealthIndicator implements HealthIndicator {  // => Custom health check for external API dependency
     private final WebClient webClient;  // => Injected reactive HTTP client
+    // => Assigns > Injected reactive HTTP client to //
 
     public ExternalApiHealthIndicator(WebClient webClient) {  // => Constructor injection
         this.webClient = webClient;  // => Store reference to WebClient bean
+        // => Initializes webClient with webClient  //
     }
 
     @Override  // => Implement HealthIndicator contract
     public Health health() {  // => Called by Spring Boot Actuator to check external API health
         try {
+    // => Begins block
             webClient.get()  // => HTTP GET request
                 .uri("https://api.external.com/health")  // => External API health endpoint
                 .retrieve()  // => Execute request
@@ -2024,6 +2289,7 @@ Graceful shutdown ensures in-flight requests complete before application termina
 ```java
 @Configuration  // => Spring configuration class
 public class GracefulShutdownConfig {
+    // => Begins block
     @Bean  // => Define bean for Tomcat web server factory customization
     public TomcatServletWebServerFactory tomcatFactory() {  // => Customize embedded Tomcat server
         TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();  // => Create factory instance
@@ -2045,11 +2311,13 @@ public class GracefulShutdownConfig {
 @RestController  // => REST controller with @ResponseBody on all methods
 @Slf4j  // => Lombok annotation generates static logger field
 public class LongRunningController {
+    // => Begins block
     @PostMapping("/process")  // => Handle POST requests to /process
     public ResponseEntity<String> processLongRunning() {  // => Simulate long-running operation
         log.info("Started long-running request");  // => Log request start
 
         try {
+    // => Begins block
             Thread.sleep(5000);  // => Simulate 5-second operation (database query, external API call)
                                   // => During graceful shutdown, this request completes before termination
             log.info("Completed long-running request");  // => Log successful completion
@@ -2117,6 +2385,7 @@ Spring Cloud Config Server provides centralized configuration management for dis
 @EnableConfigServer  // => Enable Spring Cloud Config Server functionality
                       // => Exposes REST API endpoints: /{application}/{profile}/{label}
 public class ConfigServerApplication {
+    // => Begins block
     public static void main(String[] args) {  // => Application entry point
         SpringApplication.run(ConfigServerApplication.class, args);  // => Start embedded web server on port 8888
     }
@@ -2143,6 +2412,7 @@ public class ConfigServerApplication {
 @RefreshScope  // => Enable dynamic property refresh without application restart
                 // => Bean recreated when /actuator/refresh called, re-injecting properties
 public class ConfigClientController {
+    // => Begins block
     @Value("${app.message:default}")  // => Inject property from Config Server
                                        // => Fetches from config-repo/myapp/application.yml: app.message
                                        // => Default value "default" if property missing
@@ -2230,6 +2500,7 @@ Integrate Spring Boot with Kubernetes ConfigMaps for configuration and Secrets f
 @RestController  // => REST controller with @ResponseBody on all methods
 @RequestMapping("/api/k8s")  // => Base path for all endpoints in this controller
 public class K8sConfigController {
+    // => Begins block
     @Value("${app.environment}")  // => Inject property from Kubernetes ConfigMap
                                    // => ConfigMap key: app.environment
     private String environment; // => Value loaded from ConfigMap at startup and on refresh
@@ -2247,6 +2518,7 @@ public class K8sConfigController {
         return Map.of(  // => Immutable map with configuration details
             "environment", environment,  // => Show environment name (safe to expose)
             "dbPasswordLength", String.valueOf(dbPassword.length()), // Don't expose actual password! (Security best practice)
+    // => Executes method
                                                                       // => Shows password exists without revealing value
             "newUI", String.valueOf(newUI)  // => Show feature flag state
         );
@@ -2402,12 +2674,16 @@ Create an API gateway for routing, load balancing, and cross-cutting concerns.
 ```java
 // pom.xml: spring-cloud-starter-gateway  # => Add dependency for Spring Cloud Gateway
                                            # => Reactive API gateway built on Spring WebFlux
+                                           // => Code line
 
 @Configuration  // => Spring configuration class
+// => Annotation applied
 public class GatewayConfig {
+    // => Begins block
     @Bean  // => Define route configuration bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {  // => Inject DSL builder for routes
         return builder.routes()  // => Start route configuration (fluent API)
+        // => Returns builder.routes()  // => Start route configuration (fluent API)
             // User service routing
             .route("user-service", r -> r  // => Define route with ID "user-service"
                 .path("/api/users/**")  // => Match requests to /api/users/* (/** matches all sub-paths)
@@ -2430,12 +2706,15 @@ public class GatewayConfig {
             // => Configure route for order service endpoints
             .route("order-service", r -> r
                 .path("/api/orders/**") // => Match path pattern (/** matches all sub-paths)
+                // => Executes method call
                 .filters(f -> f
                     .stripPrefix(1) // => Remove /api prefix before forwarding
                     .rewritePath("/orders/(?<segment>.*)", "/${segment}") // => Rewrite /orders/123 to /123
                     .retry(c -> c.setRetries(3)) // => Retry failed requests 3 times
+                    // => Executes method call
                 )
                 .uri("lb://ORDER-SERVICE") // => Forward to order service instances
+                // => Executes method call
             )
             // => Configure rate-limited route
             .route("limited-route", r -> r
@@ -2443,28 +2722,37 @@ public class GatewayConfig {
                 .filters(f -> f.requestRateLimiter(c -> c // => Apply rate limiting filter
                     .setRateLimiter(redisRateLimiter()) // => Use Redis-based rate limiter
                     .setKeyResolver(new PrincipalNameKeyResolver())) // => Rate limit per authenticated user
+                    // => Executes method call
                 ))
                 .uri("lb://PUBLIC-SERVICE") // => Forward to public service
+                // => Executes method call
             )
             .build();
+    // => Executes method
     }
 
     @Bean
     public RedisRateLimiter redisRateLimiter() {
+    // => Begins block
         return new RedisRateLimiter(10, 20); // => 10 req/sec steady state, 20 req/sec burst capacity
+        // => Assigns > 10 req/sec steady state, 20 req/sec burst capacity to //
     }
 }
 
 // Global filters
 @Component
 public class AuthenticationGlobalFilter implements GlobalFilter, Ordered {
+    // => Begins block
     @Override // => Implement GlobalFilter interface
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) { // => Filter all requests
         String authHeader = exchange.getRequest().getHeaders().getFirst("Authorization"); // => Extract Authorization header
+        // => Invokes getRequest() method
+        // => Result stored in authHeader
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) { // => Missing or malformed auth header
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED); // => Return 401
             return exchange.getResponse().setComplete(); // => Complete response (no forwarding)
+            // => Assigns > Complete response (no forwarding) to //
         }
 
         // => Extract JWT from "Bearer {token}" format
@@ -2472,29 +2760,40 @@ public class AuthenticationGlobalFilter implements GlobalFilter, Ordered {
         if (!isValidToken(token)) { // => Validate JWT signature + expiration
             exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN); // => Return 403 (invalid token)
             return exchange.getResponse().setComplete(); // => Complete response
+            // => Assigns > Complete response to //
         }
 
         return chain.filter(exchange); // => Continue filter chain (authenticated)
+        // => Assigns > Continue filter chain (authenticated) to //
     }
 
     @Override // => Specify filter execution order
     public int getOrder() { // => Lower number = earlier execution
         return -100; // => Execute before other filters (authentication first)
+        // => Assigns > Execute before other filters (authentication first) to //
     }
 
     private boolean isValidToken(String token) { // => JWT validation logic
         return token != null && !token.isEmpty(); // => Placeholder (production: verify signature + claims)
+        // => Invokes isEmpty() method
+        // => Result stored in !
     }
 }
 
 // Fallback controller
 @RestController
 @RequestMapping("/fallback")
+    // => Executes method
 public class FallbackController {
+    // => Begins block
     @GetMapping("/users")
+    // => Executes method
     public ResponseEntity<Map<String, String>> userFallback() {
+    // => Begins block
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+    // => Returns value to caller
             .body(Map.of("error", "User service temporarily unavailable"));
+    // => Executes method
     }
 }
 ```
@@ -2587,50 +2886,78 @@ Implement event sourcing to persist all state changes as events for audit trails
 ```java
 // Event store
 @Entity
+// => Annotation applied
 public class DomainEvent {
+    // => Begins block
     @Id
+    // => Annotation applied
     @GeneratedValue
+    // => Annotation applied
     private Long id;
+    // => Declares id field of type Long
 
     private String aggregateId;
+    // => Declares aggregateId field of type String
     private String eventType;
+    // => Declares eventType field of type String
     private String payload; // JSON
+    // => Declares JSON field of type String
     private LocalDateTime occurredAt;
+    // => Declares occurredAt field of type LocalDateTime
     private int version;
+    // => Declares version field of type int
 
     // getters/setters
 }
+// => Block delimiter
 
 @Repository
+// => Annotation applied
 public interface EventStore extends JpaRepository<DomainEvent, Long> {
+    // => Begins block
     List<DomainEvent> findByAggregateIdOrderByVersionAsc(String aggregateId);
+    // => Executes method
 }
+// => Block delimiter
 
 // Domain aggregate
 public class Order {
+    // => Begins block
     private String id;
+    // => Declares id field of type String
     private String customerId;
+    // => Declares customerId field of type String
     private List<OrderItem> items = new ArrayList<>();
+    // => Creates new instance
     private OrderStatus status;
+    // => Declares status field of type OrderStatus
     private List<DomainEvent> uncommittedEvents = new ArrayList<>();
+    // => Creates new instance
 
     public void placeOrder(String customerId, List<OrderItem> items) { // => Place new order command
         this.id = UUID.randomUUID().toString(); // => Generate unique order ID
         this.customerId = customerId; // => Associate order with customer
         this.items = items; // => Store order items
         this.status = OrderStatus.PLACED; // => Set initial status
+        // => Initializes status with OrderStatus.PLACED //
 
         raiseEvent(new OrderPlacedEvent(id, customerId, items, LocalDateTime.now())); // => Create event representing state change
+        // => Assigns > Create event representing state change to //
     }
+    // => Block delimiter
 
     public void cancelOrder() { // => Cancel order command
         if (status == OrderStatus.SHIPPED) { // => Business rule validation
             throw new IllegalStateException("Cannot cancel shipped order"); // => Reject invalid state transition
+            // => Assigns > Reject invalid state transition to //
         }
+        // => Block delimiter
 
         this.status = OrderStatus.CANCELLED; // => Update current state
         raiseEvent(new OrderCancelledEvent(id, LocalDateTime.now())); // => Record cancellation event
+        // => Assigns > Record cancellation event to //
     }
+    // => Block delimiter
 
     private void raiseEvent(Object event) { // => Internal event creation
         DomainEvent domainEvent = new DomainEvent(); // => Create event entity
@@ -2639,16 +2966,20 @@ public class Order {
         domainEvent.setPayload(toJson(event)); // => Serialize event data to JSON
         domainEvent.setOccurredAt(LocalDateTime.now()); // => Event timestamp
         domainEvent.setVersion(uncommittedEvents.size() + 1); // => Optimistic concurrency version
+        // => Assigns > Optimistic concurrency version to //
 
         uncommittedEvents.add(domainEvent); // => Add to in-memory uncommitted events list
+        // => Assigns > Add to in-memory uncommitted events list to //
     }
 
     public static Order fromEvents(List<DomainEvent> events) { // => Rebuild aggregate from event history
         Order order = new Order(); // => Create empty aggregate
         for (DomainEvent event : events) { // => Replay all events in order
             order.apply(event); // => Apply each event to rebuild state
+            // => Assigns > Apply each event to rebuild state to //
         }
         return order; // => Fully reconstructed aggregate
+        // => Assigns > Fully reconstructed aggregate to //
     }
 
     private void apply(DomainEvent event) { // => Apply event to aggregate state
@@ -2659,49 +2990,64 @@ public class Order {
                 this.customerId = e.customerId(); // => Restore customer ID
                 this.items = e.items(); // => Restore order items
                 this.status = OrderStatus.PLACED; // => Restore status
+                // => Initializes status with OrderStatus.PLACED //
             }
             case "OrderCancelledEvent" -> { // => Handle cancellation event
                 this.status = OrderStatus.CANCELLED; // => Update status to cancelled
+                // => Initializes status with OrderStatus.CANCELLED //
             }
         }
     }
 
     public List<DomainEvent> getUncommittedEvents() {
+    // => Begins block
         return uncommittedEvents;
+    // => Returns result
     }
 }
 
 // Service
 @Service
 public class OrderService {
+    // => Begins block
     @Autowired
     private EventStore eventStore;
+    // => Declares eventStore field of type EventStore
 
     public void placeOrder(String customerId, List<OrderItem> items) { // => Command handler
         Order order = new Order(); // => Create new aggregate
         order.placeOrder(customerId, items); // => Execute command (generates events)
+        // => Assigns > Execute command (generates events) to //
 
         // => Persist events (not current state)
         eventStore.saveAll(order.getUncommittedEvents()); // => Persist cancellation event // => Save all generated events to event store
+        // => Assigns > Persist cancellation event // to //
     }
 
     public Order getOrder(String orderId) { // => Query handler
         List<DomainEvent> events = eventStore.findByAggregateIdOrderByVersionAsc(orderId); // => Load all events for order
         return Order.fromEvents(events); // => Rebuild aggregate by replaying events (event sourcing pattern)
+        // => Assigns > Rebuild aggregate by replaying events (event sourcing pattern) to //
     }
 
     public void cancelOrder(String orderId) { // => Cancellation command
         Order order = getOrder(orderId); // => Rebuild current state from events
         order.cancelOrder(); // => Execute cancellation (generates OrderCancelledEvent)
+        // => Assigns > Execute cancellation (generates OrderCancelledEvent) to //
 
         eventStore.saveAll(order.getUncommittedEvents()); // => Persist cancellation event
+        // => Assigns > Persist cancellation event to //
     }
 }
 
 record OrderPlacedEvent(String orderId, String customerId, List<OrderItem> items, LocalDateTime at) {}
+    // => Executes method
 record OrderCancelledEvent(String orderId, LocalDateTime at) {}
+    // => Executes method
 record OrderItem(String productId, int quantity, BigDecimal price) {}
+    // => Executes method
 enum OrderStatus { PLACED, SHIPPED, CANCELLED }
+    // => Begins block
 ```
 
 **Code (Kotlin)**:
@@ -2786,6 +3132,7 @@ public class OrderWriteModel {  // => Optimized for INSERTS/UPDATES (normalized 
 
 @Repository  // => Spring Data JPA repository for command operations
 public interface OrderCommandRepository extends JpaRepository<OrderWriteModel, String> {
+    // => Begins block
     // => Inherits save(), saveAll(), delete() methods for write operations
     // => No complex queries - write model focused on data integrity
 }
@@ -2808,6 +3155,7 @@ public class OrderReadModel {  // => Optimized for SELECT queries (denormalized,
 
 @Repository  // => Spring Data JPA repository for query operations
 public interface OrderQueryRepository extends JpaRepository<OrderReadModel, String> {
+    // => Begins block
     List<OrderReadModel> findByCustomerNameContaining(String name);  // => Search by customer name (no JOIN needed)
                                                                       // => Fast query using denormalized data
     List<OrderReadModel> findByStatusAndCreatedAtAfter(OrderStatus status, LocalDateTime after);  // => Recent orders by status
@@ -2896,7 +3244,9 @@ public class OrderReadModelUpdater {  // => Synchronizes read model with write m
 }
 
 record CreateOrderCommand(String customerId, BigDecimal totalAmount) {}
+    // => Executes method
 record OrderCreatedEvent(String orderId, String customerId, BigDecimal totalAmount) {}
+    // => Executes method
 ```
 
 **Code (Kotlin)**:
@@ -3225,8 +3575,11 @@ public class NativeApplication { // => Main application class (works identically
     @Bean // => Registers CommandLineRunner bean that executes after application startup
     public CommandLineRunner runner() { // => Demonstrates startup time measurement
         return args -> { // => Lambda executed once after context initialization
+        // => Returns args -> { // => Lambda executed once after context initialization
             System.out.println("Native application started in: " +
+            // => Console output
                 ManagementFactory.getRuntimeMXBean().getUptime() + "ms");
+    // => Executes method
             // => JVM: ~2000ms startup, Native: ~50ms startup (40x faster)
             // => Prints actual measured startup time to console
         };

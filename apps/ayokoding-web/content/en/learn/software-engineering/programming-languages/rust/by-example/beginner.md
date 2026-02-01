@@ -107,21 +107,28 @@ graph TD
 ```
 
 ```rust
-fn main() {
+fn main() {                          // => Function entry point
     let x = 5;                       // => x is 5 (type: i32)
                                      // => x stored at memory address A
-    println!("x = {}", x);           // => Output: x = 5
+                                     // => Immutable binding created
+    println!("x = {}", x);           // => Formats x into string template
+                                     // => Output: x = 5
 
-    let x = x + 1;                   // => Previous x (5) consumed
+    let x = x + 1;                   // => Previous x (5) consumed by expression
                                      // => New x is 6 (address A dropped)
                                      // => New x stored at address B
-    println!("x = {}", x);           // => Output: x = 6
+                                     // => Type remains i32 (shadowing preserves or changes type)
+    println!("x = {}", x);           // => Accesses new x binding (value 6)
+                                     // => Output: x = 6
 
     let x = "hello";                 // => New x is "hello" (type: &str)
-                                     // => Previous x (i32) dropped (address B)
+                                     // => Previous x (i32) dropped (address B freed)
                                      // => New x stored at address C
-    println!("x = {}", x);           // => Output: hello
+                                     // => Type changed from i32 to &str (shadowing allows this)
+    println!("x = {}", x);           // => Accesses final x binding (value "hello")
+                                     // => Output: hello
 }                                    // => Final x ("hello") dropped
+                                     // => All stack memory freed automatically
 ```
 
 **Key Takeaway**: Shadowing creates a new variable with the same name, allowing type changes and transformation pipelines while maintaining immutability. Each shadowing creates a completely new binding, unlike mutation which modifies existing memory.
@@ -142,7 +149,7 @@ Rust has scalar types (integers, floats, booleans, characters) and compound type
 - **Defaults**: i32 for integers, f64 for floats (better precision)
 
 ```rust
-fn main() {
+fn main() {                          // => Function entry point
     let integer: i32 = 42;           // => integer is 42 (type: i32, 4 bytes)
                                      // => Stored on stack at compile-time known address
     let float: f64 = 3.14;           // => float is 3.14 (type: f64, 8 bytes IEEE 754)
@@ -206,43 +213,59 @@ Functions use `fn` keyword with explicit parameter types and optional return typ
 **Return mechanisms**: Last expression without semicolon is returned (common). Explicit `return` keyword available (needed for early returns). Semicolon after final expression makes it a statement returning ().
 
 ```rust
-fn main() {
+fn main() {                          // => Program entry point
     let result = add(5, 7);          // => Calls add function with x=5, y=7
+                                     // => add evaluates and returns value
                                      // => result is 12 (type: i32, returned value)
-    println!("5 + 7 = {}", result);  // => Output: 5 + 7 = 12
+    println!("5 + 7 = {}", result);  // => Formats result into string template
+                                     // => Output: 5 + 7 = 12
 
     let greeting = greet("Alice");   // => Calls greet with name="Alice"
+                                     // => greet creates and returns String
                                      // => greeting is "Hello, Alice!" (type: String)
-    println!("{}", greeting);        // => Output: Hello, Alice!
+    println!("{}", greeting);        // => Prints greeting string
+                                     // => Output: Hello, Alice!
 
     print_sum(10, 20);               // => Calls print_sum with a=10, b=20
                                      // => Function returns () (unit type)
+                                     // => Side effect: prints to stdout
                                      // => Output: Sum is 30
 
     let doubled = double_explicit(5);// => Calls double_explicit with x=5
+                                     // => Uses explicit return keyword
                                      // => doubled is 10 (5 * 2)
-    println!("Doubled: {}", doubled);// => Output: Doubled: 10
-}
+    println!("Doubled: {}", doubled);// => Formats doubled value
+                                     // => Output: Doubled: 10
+}                                    // => All local variables dropped
+                                     // => Returns () implicitly
 
-fn add(x: i32, y: i32) -> i32 {
+fn add(x: i32, y: i32) -> i32 {     // => Function signature: takes two i32, returns i32
+                                     // => x=5, y=7 (values from caller)
     x + y                            // => Evaluates 5 + 7 = 12
                                      // => Returns 12 (expression without semicolon)
+                                     // => No explicit return keyword needed
 }
 
-fn greet(name: &str) -> String {
-    format!("Hello, {}!", name)      // => Creates String "Hello, Alice!"
+fn greet(name: &str) -> String {    // => Takes string slice reference, returns owned String
+                                     // => name="Alice" (borrowed reference)
+    format!("Hello, {}!", name)      // => format! macro creates String "Hello, Alice!"
                                      // => Returns String to caller (expression)
+                                     // => Ownership transferred to caller
 }
 
-fn print_sum(a: i32, b: i32) {
+fn print_sum(a: i32, b: i32) {      // => No return type annotation = returns ()
+                                     // => a=10, b=20 (values from caller)
     println!("Sum is {}", a + b);    // => Computes 10 + 20 = 30
+                                     // => Formats and prints result
                                      // => Output: Sum is 30
 }                                    // => Returns () implicitly (no return type annotation)
 
-fn double_explicit(x: i32) -> i32 {
+fn double_explicit(x: i32) -> i32 { // => Function signature: takes i32, returns i32
+                                     // => x=5 (value from caller)
     return x * 2;                    // => Computes 5 * 2 = 10
                                      // => Returns 10 with explicit return keyword
-}
+                                     // => return keyword useful for early returns
+}                                    // => Implicit return after explicit return
 ```
 
 **Key Takeaway**: Rust functions require explicit parameter and return types, and the final expression without semicolon serves as the return value, enabling concise function bodies. Expressions return values; statements (with semicolons) do not.
@@ -256,13 +279,15 @@ fn double_explicit(x: i32) -> i32 {
 `if` expressions in Rust can return values, making them useful for conditional assignment. All branches must return the same type. Unlike many languages, Rust doesn't need parentheses around conditions but requires braces for blocks.
 
 ```rust
-fn main() {
+fn main() {                          // => Program entry point
     let number = 7;                  // => number is 7 (i32)
                                      // => Stored on stack, known at compile-time
+                                     // => Value used throughout examples
 
     // if as statement (used for side effects like printing)
     // Conditions must be bool type (no truthy/falsy values)
-    if number < 5 {                  // => false (7 is not less than 5)
+    if number < 5 {                  // => Evaluates 7 < 5
+                                     // => Result: false (7 is not less than 5)
         println!("Less than 5");     // => Not executed
     } else if number < 10 {          // => true (7 is less than 10)
         println!("Between 5 and 10");// => Output: Between 5 and 10
@@ -335,84 +360,112 @@ fn main() {
 Rust has three loop types: `loop` (infinite), `while` (conditional), and `for` (iterator). Loops can return values via `break`. Rust's loop constructs are expressions, not just statements, enabling functional programming patterns.
 
 ```rust
-fn main() {
+fn main() {                          // => Program entry point
     // loop: infinite loop (must break explicitly)
     // Used when you don't know iterations in advance
     let mut counter = 0;             // => counter is 0 (i32, mutable)
+                                     // => Mutable because updated in loop
     let result = loop {              // => Start infinite loop
+                                     // => loop keyword creates unconditional loop
         counter += 1;                // => counter increments each iteration
                                      // => counter is 1, then 2, then 3, then 4, then 5
+                                     // => Shorthand for counter = counter + 1
         if counter == 5 {            // => Check condition each iteration
                                      // => false for 1, 2, 3, 4
                                      // => true when counter is 5
             break counter * 2;       // => Exit loop, return 10 to result
                                      // => break with value makes loop an expression
+                                     // => 5 * 2 = 10 becomes result value
         }                            // => Loop continues if condition false
-    };                               // => result is 10 (type: i32, inferred)
-    println!("Result: {}", result);  // => Output: Result: 10
+    };                               // => Semicolon ends let statement
+                                     // => result is 10 (type: i32, inferred)
+    println!("Result: {}", result);  // => Formats result into template
+                                     // => Output: Result: 10
 
     // while: conditional loop (condition checked before each iteration)
     // Used when iterations depend on a condition
     let mut n = 3;                   // => n is 3 (i32, mutable)
-    while n > 0 {                    // => Condition: true for 3, 2, 1; false for 0
+                                     // => Mutable for countdown
+    while n > 0 {                    // => Condition checked before each iteration
+                                     // => Condition: true for 3, 2, 1; false for 0
         println!("{}!", n);          // => Output: 3! (iteration 1)
                                      // => Output: 2! (iteration 2)
                                      // => Output: 1! (iteration 3)
         n -= 1;                      // => n becomes 2, then 1, then 0
+                                     // => Decrements by 1 each iteration
                                      // => When n is 0, loop exits
     }                                // => n is 0 after loop
-    println!("Liftoff!");            // => Output: Liftoff!
+                                     // => while returns () (unit type)
+    println!("Liftoff!");            // => Executes after loop completes
+                                     // => Output: Liftoff!
 
     // for: iterator loop (most common, safest)
     // Iterates over ranges, arrays, vectors, etc.
     for i in 1..4 {                  // => Range: 1, 2, 3 (4 excluded, half-open)
+                                     // => .. syntax creates range iterator
                                      // => i is 1 (first iteration)
                                      // => i is 2 (second iteration)
                                      // => i is 3 (third iteration)
-        println!("i = {}", i);       // => Output: i = 1
+        println!("i = {}", i);       // => Formats i value
+                                     // => Output: i = 1
                                      // => Output: i = 2
                                      // => Output: i = 3
     }                                // => i goes out of scope
+                                     // => for returns () (unit type)
 
     // Inclusive range (includes end)
     for j in 1..=3 {                 // => Range: 1, 2, 3 (3 included)
+                                     // => ..= syntax creates inclusive range
         println!("j = {}", j);       // => Output: j = 1, j = 2, j = 3
     }
 
     // Iterating over array
     let arr = [10, 20, 30];          // => arr is [10, 20, 30] (type: [i32; 3])
-    for element in arr {             // => element is 10, then 20, then 30
+                                     // => Fixed-size array of three elements
+    for element in arr {             // => Iterates by value (copies each element)
+                                     // => element is 10, then 20, then 30
         println!("Value: {}", element);
                                      // => Output: Value: 10
                                      // => Output: Value: 20
                                      // => Output: Value: 30
-    }
+    }                                // => Array ownership moved to loop
 
     // Reverse iteration
     for num in (1..4).rev() {        // => Reverse iterator: 3, 2, 1
                                      // => .rev() creates reverse iterator
-        println!("{}", num);         // => Output: 3, 2, 1
+                                     // => Parentheses required for method call
+        println!("{}", num);         // => Output: 3 (first iteration)
+                                     // => Output: 2 (second iteration)
+                                     // => Output: 1 (third iteration)
     }
 
     // Loop labels for nested loops
     'outer: loop {                   // => Label 'outer for outer loop
+                                     // => Labels enable breaking specific loop
         let mut inner_count = 0;     // => inner_count is 0
-        loop {                       // => Inner infinite loop
+                                     // => Declared inside outer loop
+        loop {                       // => Inner infinite loop (unlabeled)
             inner_count += 1;        // => Increments: 1, 2, 3, 4, 5, 6
-            if inner_count > 5 {     // => true when inner_count is 6
+                                     // => Continues until condition met
+            if inner_count > 5 {     // => Checks after each increment
+                                     // => true when inner_count is 6
                 break 'outer;        // => Break outer loop (not inner)
+                                     // => Without label, breaks inner only
             }
-        }
-    }
+        }                            // => Inner loop never breaks itself
+    }                                // => Outer loop exits via labeled break
 
     // continue skips to next iteration
-    for i in 0..5 {
-        if i == 2 {
+    for i in 0..5 {                  // => Range: 0, 1, 2, 3, 4
+                                     // => Iterates 5 times
+        if i == 2 {                  // => true when i is 2
             continue;                // => Skip rest of iteration when i is 2
+                                     // => Jump to next iteration immediately
         }
         println!("i: {}", i);        // => Output: i: 0, i: 1, i: 3, i: 4
+                                     // => Skipped when i is 2
     }                                // => i: 2 is skipped
-}
+}                                    // => All variables dropped
 ```
 
 **Key Takeaway**: Rust provides three loop constructs with `loop` for infinite loops that can return values, `while` for conditional iteration, and `for` for iterator-based iteration over ranges and collections. Use `for` loops for most cases as they're safer and more idiomatic than manual index manipulation.
@@ -1185,116 +1238,154 @@ graph TD
 // Define struct type (custom data structure)
 // Struct name: User (PascalCase convention)
 // Fields: each has name and type
-struct User {
+struct User {                        // => Declares new type named User
     username: String,                // => Owned String (heap-allocated)
+                                     // => Must be initialized on creation
     email: String,                   // => Owned String (heap-allocated)
+                                     // => Each instance owns its email
     sign_in_count: u64,              // => Copy type (stack-allocated)
+                                     // => 64-bit unsigned integer
     active: bool,                    // => Copy type (stack-allocated)
+                                     // => Boolean flag for user state
 }                                    // => Struct definition, no instance created yet
+                                     // => Zero runtime cost for definition
 
-fn main() {
+fn main() {                          // => Program entry point
     // Create struct instance (instantiation)
 
     // Initialize all fields (order doesn't matter)
-    let user1 = User {
+    let user1 = User {               // => Creates User instance
+                                     // => All fields MUST be initialized
         email: String::from("user@example.com"),
                                      // => email field owns this String
+                                     // => Allocates heap memory for string data
         username: String::from("user123"),
                                      // => username field owns this String
+                                     // => Each String owns its buffer
         active: true,                // => active is true (Copy type)
+                                     // => Stored directly in struct
         sign_in_count: 1,            // => sign_in_count is 1 (Copy type)
+                                     // => u64 value stored in struct
     };                               // => user1 owns all field data
                                      // => user1 type: User
                                      // => username and email on heap
                                      // => active and sign_in_count on stack
+                                     // => Struct itself on stack
 
     // Access struct fields using dot notation
     println!("Username: {}", user1.username);
                                      // => Borrow username field immutably
+                                     // => Dot notation accesses field
                                      // => Output: Username: user123
 
     println!("Email: {}", user1.email);
                                      // => Borrow email field immutably
+                                     // => Field access doesn't move data
                                      // => Output: Email: user@example.com
 
     // Structs are immutable by default
     // user1.active = false;         // => ERROR: user1 is not mutable
                                      // => Need mut keyword to modify
+                                     // => Compiler enforces immutability
 
     // Create mutable struct instance
-    let mut user_mut = User {
+    let mut user_mut = User {        // => mut keyword makes entire struct mutable
+                                     // => Cannot have partial mutability
         email: String::from("mut@example.com"),
+                                     // => New String allocation
         username: String::from("mutable"),
-        active: true,
-        sign_in_count: 1,
+                                     // => New String allocation
+        active: true,                // => Initial value
+        sign_in_count: 1,            // => Initial value
     };                               // => user_mut is mutable
+                                     // => All fields can be modified
 
     // Modify field (entire struct must be mutable)
     user_mut.sign_in_count += 1;     // => Increment to 2
+                                     // => Mutates field in place
                                      // => Cannot have individual fields mutable
                                      // => All or nothing mutability
 
     // Struct update syntax: create instance from another
 
     // Copy some fields, specify others
-    let mut user2 = User {
+    let mut user2 = User {           // => Creates new User instance
+                                     // => mut allows modifications
         email: String::from("another@example.com"),
                                      // => New email field (heap-allocated)
-        ..user1                      // => Copy remaining fields from user1
+                                     // => Overrides user1's email
+        ..user1                      // => Update syntax: copy remaining fields from user1
                                      // => username: moved from user1 (String, not Copy)
                                      // => active: copied from user1 (bool is Copy)
                                      // => sign_in_count: copied from user1 (u64 is Copy)
     };                               // => user2 owns email and username (moved)
                                      // => user1 is now PARTIALLY INVALID!
+                                     // => user1.username moved, other fields still valid
 
     // user1 is partially moved after update syntax
     // println!("{}", user1.username);// => ERROR: username was moved to user2
                                      // => user1.username no longer valid
+                                     // => Borrow checker prevents use
 
     // Can still use Copy fields from user1
     println!("User1 active: {}", user1.active);
+                                     // => Accesses Copy field (still valid)
                                      // => Output: User1 active: true
                                      // => Copy types weren't moved, just copied
 
     // Can still use user1.email (not moved)
     println!("User1 email: {}", user1.email);
+                                     // => email not part of update syntax
                                      // => Output: User1 email: user@example.com
                                      // => email field still valid (not in update syntax)
 
     // Modify user2 field
     user2.sign_in_count += 1;        // => Increment sign_in_count to 2
                                      // => user2 is mutable
+                                     // => Mutates field in place
     println!("Sign-ins: {}", user2.sign_in_count);
+                                     // => Formats sign_in_count value
                                      // => Output: Sign-ins: 2
 
     // Field init shorthand (when variable name matches field name)
     let username = String::from("shorthand");
                                      // => username variable created (type: String)
+                                     // => Variable name matches field name
     let email = String::from("short@example.com");
                                      // => email variable created (type: String)
+                                     // => Variable name matches field name
 
-    let user3 = User {
+    let user3 = User {               // => Creates User with shorthand syntax
         username,                    // => Shorthand for username: username
+                                     // => Moves username variable into struct
         email,                       // => Shorthand for email: email
-        active: true,
-        sign_in_count: 1,
+                                     // => Moves email variable into struct
+        active: true,                // => No shorthand (literal value)
+        sign_in_count: 1,            // => No shorthand (literal value)
     };                               // => username and email moved into user3
+                                     // => Cannot use username/email variables after this
 
     // Function returning struct instance
     fn build_user(email: String, username: String) -> User {
+                                     // => Takes ownership of parameters
                                      // => Returns User struct
-        User {
+        User {                       // => Creates User instance
             email,                   // => Field init shorthand
+                                     // => Moves email parameter into field
             username,                // => Field init shorthand
-            active: true,
-            sign_in_count: 1,
+                                     // => Moves username parameter into field
+            active: true,            // => Default value
+            sign_in_count: 1,        // => Default value
         }                            // => Return User instance (no semicolon)
+                                     // => Ownership transferred to caller
     }
 
-    let user4 = build_user(
+    let user4 = build_user(          // => Calls build_user function
         String::from("build@example.com"),
-        String::from("builder")
+                                     // => Creates String for email argument
+        String::from("builder")      // => Creates String for username argument
     );                               // => user4 is User instance from function
+                                     // => Owns returned struct
 
     // Ownership and structs:
     // - Struct owns its fields
@@ -1304,6 +1395,7 @@ fn main() {
 
 }                                    // => All users dropped
                                      // => Heap memory for Strings freed
+                                     // => Stack memory reclaimed
 ```
 
 **Key Takeaway**: Structs bundle related data with named fields, and struct update syntax (`..other_struct`) enables copying fields while respecting ownership and move semantics. Fields with Copy types are copied, non-Copy types (like String) are moved, potentially leaving the source struct partially invalid.

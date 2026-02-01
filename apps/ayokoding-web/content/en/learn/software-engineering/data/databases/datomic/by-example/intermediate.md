@@ -2284,59 +2284,110 @@ Build domain-specific indexes incrementally using transaction listeners (Datomic
 
 ```java
 // For Datomic Free, poll for new transactions periodically
+// => Datomic Pro/Cloud provide transaction listeners (push model)
+// => Free edition requires polling (pull model)
 
 // Track last processed transaction
 AtomicLong lastProcessedT = new AtomicLong(0);
+// => Stores basis-t of last processed transaction
+// => AtomicLong ensures thread-safe updates in concurrent environment
 
 void processNewTransactions(Connection conn) {
+    // => Function processes all transactions since last checkpoint
     Database db = conn.db();
+    // => Get current database value
     long currentT = db.basisT();
+    // => basis-t returns transaction ID of most recent transaction
+    // => Example: 13194139534313
     Database sinceDb = db.since(lastProcessedT.get());
+    // => Creates filtered database view containing only datoms added after checkpoint
+    // => since() filters by transaction ID - returns view of changes since that T
 
     // Process new datoms
     Object personAgeAttr = db.entid(":person/age");
+    // => Resolves :person/age keyword to numeric attribute ID
+    // => Example: :person/age → 73 (internal attribute ID)
     for (Object obj : sinceDb.datoms(Peer.EAVT)) {
+        // => Iterates all datoms in since-db using EAVT index
+        // => Only processes datoms added after lastProcessedT
         datomic.Datom datom = (datomic.Datom) obj;
+        // => Cast to Datom type for access to e, a, v, tx, added fields
         if (datom.a().equals(personAgeAttr)) {
+            // => Filter for age changes only
+            // => datom.a() returns attribute ID
             System.out.println("Age change detected: " + datom.e() + " -> " + datom.v());
+            // => Output: "Age change detected: 17592186045418 -> 35"
+            // => datom.e() is entity ID, datom.v() is new age value
         }
     }
 
     // Update checkpoint
     lastProcessedT.set(currentT);
+    // => Save current basis-t for next iteration
+    // => Next call to processNewTransactions only processes newer changes
 }
 
 // Run periodically (e.g., every second)
 // ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+// => Create single-threaded executor for periodic tasks
 // scheduler.scheduleAtFixedRate(() -> processNewTransactions(conn), 0, 1, TimeUnit.SECONDS);
+// => Run processNewTransactions every 1 second
+// => Initial delay: 0 seconds (start immediately)
 
 // Example output after age change:
 // Age change detected: 17592186045418 -> 35
+// => Shows entity ID 17592186045418 age changed to 35
 ```
 
 **Clojure Code**:
 
 ```clojure
 ;; For Datomic Free, poll for new transactions periodically
+;; => Datomic Pro/Cloud provide transaction listeners (push model)
+;; => Free edition requires polling (pull model)
 
 (def last-processed-t (atom 0))
+;; => Creates atom holding basis-t of last processed transaction
+;; => Atoms provide thread-safe state management
+;; => Initial value: 0 (process all transactions on first run)
 
 (defn process-new-transactions [conn]
+  ;; => Function processes all transactions since last checkpoint
   (let [db (d/db conn)
+        ;; => Get current database value
         current-t (d/basis-t db)
+        ;; => basis-t returns transaction ID of most recent transaction
+        ;; => Example: 13194139534313
         since-db (d/since db @last-processed-t)]
+        ;; => Creates filtered database view containing only datoms added after checkpoint
+        ;; => @last-processed-t derefs atom to get checkpoint T value
+        ;; => since() returns view of changes since that T
     ;; Process new datoms
     (doseq [datom (d/datoms since-db :eavt)]
+      ;; => Iterates all datoms in since-db using EAVT index
+      ;; => Only processes datoms added after last-processed-t
+      ;; => Each datom is map with keys :e, :a, :v, :tx, :added
       (when (= (:a datom) (d/entid db :person/age))
+        ;; => Filter for age changes only
+        ;; => (:a datom) returns attribute ID
+        ;; => (d/entid db :person/age) resolves :person/age keyword to ID
+        ;; => Example: :person/age → 73 (internal attribute ID)
         (println "Age change detected:" (:e datom) "->" (:v datom))))
+        ;; => Output: "Age change detected: 17592186045418 -> 35"
+        ;; => (:e datom) is entity ID, (:v datom) is new age value
     ;; Update checkpoint
     (reset! last-processed-t current-t)))
+    ;; => Save current basis-t for next iteration
+    ;; => reset! updates atom value
+    ;; => Next call to process-new-transactions only processes newer changes
 
 ;; Run periodically (e.g., every second)
 ;; (process-new-transactions conn)
+;; => Call function manually or schedule with core.async/go-loop
 
 ;; Example output after age change:
 ;; Age change detected: 17592186045418 -> 35
+;; => Shows entity ID 17592186045418 age changed to 35
 ```
 
 **Key Takeaway**: Use `since` and `basis-t` to process new transactions incrementally. Build domain-specific indexes, caches, or trigger side effects from database changes.

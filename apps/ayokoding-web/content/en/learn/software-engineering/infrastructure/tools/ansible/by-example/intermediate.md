@@ -413,22 +413,31 @@ dependencies: # => List of required roles
 # Common role tasks
 # => Provides baseline system configuration
 # => Executed as dependency by other roles
+# => Shared foundation for all dependent roles
 
 - name: Update package cache # => Refresh package metadata
   ansible.builtin.apt: # => Debian/Ubuntu package manager
+    # => APT module provides cache management
     update_cache: true # => Run apt-get update
+    # => Refreshes package index from repositories
     cache_valid_time: 3600 # => Skip if updated within 1 hour
-    # => Prevents redundant updates
+    # => Prevents redundant updates (performance optimization)
   when: ansible_os_family == "Debian" # => Only on Debian-based systems
+  # => Conditional ensures APT only runs on Debian/Ubuntu
   # => changed: [host] if cache refreshed
   # => ok: [host] if cache fresh (within 3600 seconds)
 
 - name: Install common packages # => Base utility installation
   ansible.builtin.package: # => OS-agnostic package module
-    name: # => Package list
-      - curl # => HTTP client
+    # => Cross-platform package installation
+    name: # => Package list (YAML array)
+      # => Multiple packages installed in single transaction
+      - curl # => HTTP client utility
+      # => Required for downloading files
       - vim # => Text editor
-      - git # => Version control
+      # => Standard editor for configuration files
+      - git # => Version control system
+      # => Essential for deployment workflows
     state: present # => Ensure all packages installed
   # => changed: [host] if any package newly installed
   # => ok: [host] if all packages already present
@@ -441,12 +450,15 @@ dependencies: # => List of required roles
 # Firewall role tasks
 # => Configures UFW (Uncomplicated Firewall)
 # => Executed as dependency before application roles
+# => Security layer for network access
 
 - name: Install UFW # => Install firewall package
   ansible.builtin.package: # => Package module
     name: ufw # => Uncomplicated Firewall
+    # => Frontend for iptables
     state: present # => Ensure installed
   when: ansible_os_family == "Debian" # => Debian/Ubuntu only
+  # => UFW is Debian-specific tool
   # => changed: [host] if UFW newly installed
   # => ok: [host] if UFW already present
 
@@ -454,7 +466,9 @@ dependencies: # => List of required roles
   community.general.ufw: # => UFW management module
     rule: allow # => Allow connection
     port: "22" # => SSH port
+    # => String format required
     proto: tcp # => TCP protocol
+    # => SSH uses TCP
   # => MUST execute before enabling firewall
   # => Prevents SSH lockout on remote systems
   # => changed: [host] if rule added
@@ -465,9 +479,10 @@ dependencies: # => List of required roles
     rule: allow # => Allow incoming connections
     port: "{{ item }}" # => Port from loop iteration
     # => First iteration: 5432 (PostgreSQL)
+    # => Variable substitution
     proto: tcp # => TCP protocol
   loop: "{{ allowed_ports }}" # => Variable from database role
-  # => allowed_ports defined in database/meta/main.yml
+  # => allowed_ports from database/meta/main.yml
   # => Iterates: [5432]
   # => changed: [host] if rule added
   # => ok: [host] if rule exists
@@ -475,6 +490,7 @@ dependencies: # => List of required roles
 - name: Enable UFW # => Activate firewall
   community.general.ufw: # => UFW module
     state: enabled # => Enable and start firewall
+    # => Activates configured rules
   # => Activates all configured rules
   # => changed: [host] if UFW disabled
   # => ok: [host] if UFW already enabled
@@ -486,11 +502,12 @@ dependencies: # => List of required roles
 ---
 # Database role tasks (executes AFTER dependencies)
 # => Runs 3rd: After common (1st) and firewall (2nd)
-# => Dependencies guarantee system ready for database
+# => Dependencies guarantee system ready
 
 - name: Install PostgreSQL # => Database package installation
   ansible.builtin.package: # => Package module
     name: postgresql # => PostgreSQL database
+    # => Relational database system
     state: present # => Ensure installed
   # => Executes after common role installed base packages
   # => Executes after firewall role opened port 5432
@@ -501,8 +518,10 @@ dependencies: # => List of required roles
   ansible.builtin.service: # => Service module
     name: postgresql # => PostgreSQL service name
     state: started # => Ensure service running
-    enabled: true # => Enable on boot (systemctl enable)
-  # => Service starts with port 5432 already open (firewall dependency)
+    # => Starts if stopped
+    enabled: true # => Enable on boot
+    # => Creates systemctl symlink
+  # => Service starts with port 5432 open (firewall dependency)
   # => changed: [host] if service stopped or disabled
   # => ok: [host] if service already running and enabled
 ```

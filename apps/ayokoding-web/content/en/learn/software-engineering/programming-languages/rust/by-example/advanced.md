@@ -563,146 +563,213 @@ graph TD
 
 ```rust
 macro_rules! vec_from {              // => Define declarative macro named "vec_from"
+                                     // => macro_rules! is Rust's declarative macro system
     ( $( $x:expr ),* ) => {          // => Pattern: match comma-separated expressions
                                      // => $(...),* means: repeat pattern for each comma-separated item
                                      // => $x:expr captures each expression (type: expr fragment)
+                                     // => , after $x means literal comma separator
+                                     // => * means zero or more repetitions
         {                            // => Expansion block: generated code
+                                     // => Braces create expression block
             let mut temp_vec = Vec::new(); // => Create empty Vec<T> (type inferred from usage)
+                                     // => Mutable because push mutates
             $(                       // => Repetition: repeat for each captured $x
+                                     // => Matches * from pattern
                 temp_vec.push($x);   // => Push each expression into vector
+                                     // => $x replaced with captured expression
             )*                       // => End repetition block
+                                     // => Generates one push per input item
             temp_vec                 // => Return the constructed vector
+                                     // => Expression without semicolon (return value)
         }
-    };
-}
+    };                               // => Pattern-expansion pair ends
+}                                    // => Macro definition complete
 
-fn main() {
+fn main() {                          // => Program entry point
     let v = vec_from![1, 2, 3];      // => Macro invocation: matches pattern with $x = 1, 2, 3
+                                     // => Square brackets [] used for macro call
                                      // => Expands to: { let mut temp_vec = Vec::new();
                                      // =>              temp_vec.push(1);
                                      // =>              temp_vec.push(2);
                                      // =>              temp_vec.push(3);
                                      // =>              temp_vec }
                                      // => Type inference: Vec<i32> from pushed integers
-    println!("{:?}", v);             // => Output: [1, 2, 3]
+                                     // => Expansion happens at compile time
+    println!("{:?}", v);             // => Debug formatting for vector
+                                     // => Output: [1, 2, 3]
 
     let v2 = vec_from!["a", "b"];    // => Same macro with different types
+                                     // => Pattern matches any expression type
                                      // => Type inference: Vec<&str> from pushed strings
-    println!("{:?}", v2);            // => Output: ["a", "b"]
+    println!("{:?}", v2);            // => Debug formatting
+                                     // => Output: ["a", "b"]
                                      // => Macro is generic through type inference
-}
+}                                    // => Vectors dropped, memory freed
 
 // Common pattern: DSL creation (Domain-Specific Language)
 macro_rules! hashmap {               // => Macro for HashMap literal syntax
+                                     // => Creates DSL for hashmap initialization
     ( $( $key:expr => $val:expr ),* ) => {
                                      // => Pattern: key => value pairs, comma-separated
                                      // => $key:expr captures key expression
                                      // => $val:expr captures value expression
                                      // => => is custom separator token (part of pattern)
-        {
+                                     // => Allows custom syntax in Rust
+        {                            // => Expansion block
             let mut map = std::collections::HashMap::new();
                                      // => Create empty HashMap (types inferred)
+                                     // => std::collections::HashMap is full path
             $(                       // => Repeat for each key-value pair
+                                     // => Matches * from pattern
                 map.insert($key, $val); // => Insert each pair into map
+                                     // => $key and $val replaced
             )*                       // => End repetition
+                                     // => Generates one insert per pair
             map                      // => Return constructed map
+                                     // => Ownership transferred to caller
         }
     };
 }
 
-fn use_hashmap_macro() {
+fn use_hashmap_macro() {             // => Function demonstrating hashmap macro
     let map = hashmap![               // => Macro call with key => value syntax
+                                     // => DSL syntax looks native to Rust
         "a" => 1,                     // => First pair: "a" (key) => 1 (value)
+                                     // => Comma separates pairs
         "b" => 2                      // => Second pair: "b" => 2
+                                     // => No trailing comma (optional)
     ];                                // => Type: HashMap<&str, i32>
-    println!("{:?}", map);            // => Output: {"a": 1, "b": 2} (or {"b": 2, "a": 1})
+                                     // => Type inference from usage
+    println!("{:?}", map);            // => Debug formatting for HashMap
+                                     // => Output: {"a": 1, "b": 2} (or {"b": 2, "a": 1})
                                       // => HashMap iteration order is not guaranteed
 
     // Using with different types
     let map2 = hashmap![              // => Same macro, different types
+                                     // => Macro is type-generic
         1 => "one",                   // => Type: HashMap<i32, &str>
-        2 => "two"
+                                     // => Key type i32, value type &str
+        2 => "two"                    // => Second pair
     ];
-    println!("{:?}", map2);           // => Output: {1: "one", 2: "two"}
-}
+    println!("{:?}", map2);           // => Debug formatting
+                                     // => Output: {1: "one", 2: "two"}
+}                                    // => Maps dropped, memory freed
 
 // Multiple pattern arms (like match expressions)
-macro_rules! create_function {
-    ($func_name:ident) => {           // => Single identifier pattern
+macro_rules! create_function {       // => Macro with multiple patterns
+                                     // => Works like match expression
+    ($func_name:ident) => {           // => First arm: Single identifier pattern
+                                      // => Matches function name only (no args)
                                       // => $func_name:ident captures function name
         fn $func_name() {             // => Generate function with captured name
+                                     // => No parameters
             println!("Called function {:?}()", stringify!($func_name));
                                       // => stringify! converts ident to string literal
+                                      // => Compile-time token-to-string conversion
         }
     };
 
     ($func_name:ident, $($arg:ident : $arg_type:ty),*) => {
-                                      // => Pattern with parameters
+                                      // => Second arm: Pattern with parameters
                                       // => $arg:ident for parameter names
                                       // => $arg_type:ty for parameter types
+                                      // => ty fragment matches type syntax
         fn $func_name($($arg: $arg_type),*) {
                                       // => Generate function signature
+                                      // => Repeats parameters
             println!("Called function {:?} with args", stringify!($func_name));
+                                      // => Generic message (doesn't print args)
         }
     };
 }
 
-create_function!(foo);                // => Expands to: fn foo() { println!(...); }
-create_function!(bar, x: i32, y: i32); // => Expands to: fn bar(x: i32, y: i32) { println!(...); }
+create_function!(foo);                // => Matches first arm (no args)
+                                     // => Expands to: fn foo() { println!(...); }
+create_function!(bar, x: i32, y: i32); // => Matches second arm (has args)
+                                     // => Expands to: fn bar(x: i32, y: i32) { println!(...); }
 
-fn test_created_functions() {
-    foo();                            // => Output: Called function "foo"()
-    bar(1, 2);                        // => Output: Called function "bar" with args
-}
+fn test_created_functions() {       // => Function to test generated functions
+    foo();                            // => Calls generated foo function
+                                     // => Output: Called function "foo"()
+    bar(1, 2);                        // => Calls generated bar with arguments
+                                     // => Output: Called function "bar" with args
+}                                    // => Generated functions are real Rust functions
 
 // Demonstrating fragment specifiers
-macro_rules! show_fragments {
+macro_rules! show_fragments {        // => Macro showing different fragment types
+                                     // => Multiple arms for different patterns
     ($e:expr) => {                    // => expr: expression (1+2, foo(), etc.)
+                                     // => Matches any valid Rust expression
         println!("Expression: {}", $e);
+                                     // => Evaluates and prints expression
     };
     ($i:ident) => {                   // => ident: identifier (variable/function name)
+                                     // => Matches bare identifiers only
         println!("Identifier: {}", stringify!($i));
+                                     // => Converts identifier to string
     };
     ($t:ty) => {                      // => ty: type (i32, String, etc.)
+                                     // => Matches type syntax
         println!("Type: {}", stringify!($t));
+                                     // => Type converted to string
     };
     ($p:pat) => {                     // => pat: pattern (match arm patterns)
+                                     // => Matches pattern syntax
         println!("Pattern: {}", stringify!($p));
+                                     // => Pattern converted to string
     };
     ($($x:tt)*) => {                  // => tt: token tree (any token sequence)
+                                     // => Most permissive fragment
+                                     // => Matches any valid tokens
         println!("Token tree: {}", stringify!($($x)*));
+                                     // => Entire token sequence to string
     };
 }
 
 // Advanced: recursive macros
-macro_rules! count {
+macro_rules! count {                 // => Recursive macro for compile-time counting
+                                     // => Demonstrates macro recursion
     () => { 0 };                      // => Base case: empty input = 0
+                                     // => Terminates recursion
     ($head:expr) => { 1 };            // => Single element = 1
-    ($head:expr, $($tail:expr),*) => { // => Multiple elements
+                                     // => Second base case
+    ($head:expr, $($tail:expr),*) => { // => Multiple elements (recursive case)
+                                     // => $head is first element
+                                     // => $tail captures rest
         1 + count!($($tail),*)        // => 1 + count of tail (recursive expansion)
+                                     // => Macro calls itself
     };                                // => Compile-time recursion (expanded by compiler)
-}
+}                                    // => Recursion depth limited by compiler
 
-fn test_count() {
+fn test_count() {                    // => Function testing count macro
     let n1 = count!();                // => 0 (empty)
+                                     // => Matches first base case
     let n2 = count!(1);               // => 1 (single element)
+                                     // => Matches second base case
     let n3 = count!(1, 2, 3);         // => 3 (1 + count!(2, 3) = 1 + 1 + 1)
+                                     // => Recursively expands: 1 + (1 + (1 + 0))
     println!("Counts: {}, {}, {}", n1, n2, n3);
+                                      // => Formats all count results
                                       // => Output: Counts: 0, 1, 3
-}
+}                                    // => All compile-time work, zero runtime cost
 
 // Hygiene: macros have lexical scope hygiene
-macro_rules! make_binding {
-    ($name:ident, $value:expr) => {
+macro_rules! make_binding {          // => Macro demonstrating hygiene
+                                     // => Hygiene prevents variable capture
+    ($name:ident, $value:expr) => {  // => Captures binding name and value
         let $name = $value;           // => Create binding in macro invocation scope
+                                     // => Binding visible at call site
     };
 }
 
-fn test_hygiene() {
+fn test_hygiene() {                  // => Function testing macro hygiene
     make_binding!(x, 42);             // => Expands to: let x = 42; (in this scope)
-    println!("x = {}", x);            // => Output: x = 42 (x is accessible here)
+                                     // => Creates x in this function's scope
+    println!("x = {}", x);            // => x is accessible in this scope
+                                     // => Output: x = 42 (x is accessible here)
                                       // => Hygiene: intermediate variables in macro don't leak
-}
+                                     // => Unlike C macros, no unexpected captures
+}                                    // => x dropped, scope ends
 ```
 
 **Key Takeaway**: `macro_rules!` enables compile-time code generation through pattern matching on token trees, reducing boilerplate and creating domain-specific syntax within Rust.
@@ -1129,141 +1196,224 @@ gantt
 ```rust
 use tokio::time::{sleep, Duration};  // => Async sleep (non-blocking)
                                      // => Import Tokio's time utilities for async delays
+                                     // => tokio::time::sleep is async equivalent of std::thread::sleep
 
 async fn task1() -> u32 {            // => First async task
+                                     // => async keyword makes function return Future
                                      // => Returns Future<Output = u32> when called
+                                     // => Function doesn't run until awaited
     sleep(Duration::from_millis(100)).await;
                                      // => Sleep 100ms (yields to runtime)
+                                     // => .await suspends this future
                                      // => Suspends execution, allows other tasks to run
+                                     // => Non-blocking: thread can do other work
     println!("Task 1 done");         // => Prints after 100ms
+                                     // => Resumes execution after sleep completes
     1                                // => Returns 1
+                                     // => Return value wrapped in Future
 }
 
 async fn task2() -> u32 {            // => Second async task (faster)
                                      // => Returns Future<Output = u32> when called
+                                     // => Identical pattern to task1
     sleep(Duration::from_millis(50)).await;
                                      // => Sleep 50ms (yields to runtime)
+                                     // => Shorter duration than task1
                                      // => Finishes in half the time of task1
     println!("Task 2 done");         // => Prints after 50ms
+                                     // => Will print before task1
     2                                // => Returns 2
+                                     // => Different return value
 }
 
-#[tokio::main]                       // => Creates Tokio multi-threaded runtime
+#[tokio::main]                       // => Attribute macro: Creates Tokio multi-threaded runtime
+                                     // => Transforms main into async context
                                      // => Enables async/await in main function
+                                     // => Equivalent to tokio::runtime::Builder setup
 async fn main() {                    // => main is now async, returns Future<Output = ()>
+                                     // => Attribute makes this the entry point
     // tokio::join! runs futures concurrently on SAME task/thread
     let (r1, r2) = tokio::join!(task1(), task2());
+                                     // => tokio::join! is macro for concurrent execution
+                                     // => Calls task1() and task2() to create futures
                                      // => Start both tasks at time 0
                                      // => Macro polls both futures cooperatively
+                                     // => Destructures results into (r1, r2) tuple
                                      // => t=0ms: both tasks start sleeping
+                                     // => Runtime schedules both futures
                                      // => t=50ms: task2 completes, prints "Task 2 done"
                                      // => task1 still sleeping (50ms remaining)
                                      // => t=100ms: task1 completes, prints "Task 1 done"
                                      // => Total time: 100ms (not 150ms - concurrent!)
+                                     // => Concurrent execution saves 50ms
                                      // => Output order: "Task 2 done" (first), then "Task 1 done"
                                      // => r1 = 1, r2 = 2 (both values available)
                                      // => Type: (u32, u32) from join! destructuring
 
     println!("Results: {} + {} = {}", r1, r2, r1 + r2);
+                                     // => Formats results into string
                                      // => Output: Results: 1 + 2 = 3
                                      // => Both tasks completed, sum computed
 }                                    // => Runtime shuts down after main returns
+                                     // => All async tasks must complete before exit
 
 // Demonstrating join! behavior with multiple tasks
-async fn multi_join() {
-    use std::time::Instant;
+async fn multi_join() {              // => Function demonstrating multiple concurrent tasks
+                                     // => Shows join! scales to many futures
+    use std::time::Instant;          // => Import for timing measurement
+                                     // => Instant tracks elapsed time
 
     async fn work(id: u32, ms: u64) -> u32 {
+                                     // => Generic async work function
+                                     // => id identifies task, ms is duration
         sleep(Duration::from_millis(ms)).await;
+                                     // => Sleeps for specified milliseconds
+                                     // => Yields to runtime during sleep
         println!("Task {} done ({}ms)", id, ms);
-        id
+                                     // => Prints when task completes
+                                     // => Order depends on sleep duration
+        id                           // => Returns task id
+                                     // => Value collected by join!
     }
 
-    let start = Instant::now();
-    let (a, b, c, d) = tokio::join!(
+    let start = Instant::now();      // => Record start time
+                                     // => For measuring concurrent execution time
+    let (a, b, c, d) = tokio::join!(  // => Join 4 futures concurrently
+                                     // => Returns tuple of 4 results
         work(1, 100),                // => Sleeps 100ms
+                                     // => Second longest task
         work(2, 50),                 // => Sleeps 50ms (finishes first)
+                                     // => Shortest duration
         work(3, 75),                 // => Sleeps 75ms
+                                     // => Medium duration
         work(4, 120),                // => Sleeps 120ms (finishes last)
+                                     // => Longest duration determines total time
     );                               // => All run concurrently
+                                     // => join! polls all futures in rotation
                                      // => Total time: max(100, 50, 75, 120) = 120ms
                                      // => NOT 100+50+75+120 = 345ms (would be sequential)
-    let elapsed = start.elapsed();
+                                     // => Concurrent execution is 2.87x faster
+    let elapsed = start.elapsed();   // => Calculate elapsed time
+                                     // => Duration from start to now
     println!("Completed {} tasks in {:?}", a+b+c+d, elapsed);
+                                     // => a=1, b=2, c=3, d=4 from work() returns
                                      // => Output: Completed 10 tasks in ~120ms
                                      // => 10 = 1+2+3+4 (all tasks completed)
-}
+}                                    // => Demonstrates concurrent efficiency gain
 
 // Comparing join! vs spawn (different concurrency models)
-async fn join_vs_spawn() {
+async fn join_vs_spawn() {          // => Demonstrates two concurrency patterns
+                                     // => join! vs spawn comparison
     // tokio::join! - same task, cooperative concurrency
-    let (r1, r2) = tokio::join!(
+    let (r1, r2) = tokio::join!(     // => Concurrent execution on same task
+                                     // => Cooperative multitasking
         async { sleep(Duration::from_millis(10)).await; 1 },
+                                     // => Inline async block
+                                     // => Sleeps 10ms, returns 1
         async { sleep(Duration::from_millis(10)).await; 2 },
+                                     // => Second inline async block
+                                     // => Sleeps 10ms, returns 2
     );                               // => Both run on SAME async task
                                      // => Yields between tasks when awaiting
                                      // => Single-threaded concurrency (like async/await in JS)
+                                     // => Results: r1=1, r2=2
     println!("join!: {} + {}", r1, r2);
+                                     // => Output: join!: 1 + 2
 
     // tokio::spawn - separate tasks, can run on different threads
-    let h1 = tokio::spawn(async {
+    let h1 = tokio::spawn(async {    // => Spawns INDEPENDENT task
+                                     // => Returns JoinHandle<T>
         sleep(Duration::from_millis(10)).await;
-        1
+                                     // => Sleep in separate task
+        1                            // => Task returns 1
     });                              // => Spawns independent task (like thread::spawn)
-    let h2 = tokio::spawn(async {
+                                     // => Task scheduled on runtime thread pool
+    let h2 = tokio::spawn(async {    // => Spawns SECOND independent task
         sleep(Duration::from_millis(10)).await;
-        2
+                                     // => Sleep in another separate task
+        2                            // => Task returns 2
     });                              // => Spawns another independent task
                                      // => Can run on different OS threads (if multi-threaded runtime)
-    let r1 = h1.await.unwrap();      // => Wait for task 1 (JoinHandle)
-    let r2 = h2.await.unwrap();      // => Wait for task 2 (JoinHandle)
+                                     // => Both tasks can execute truly parallel on different cores
+    let r1 = h1.await.unwrap();      // => Wait for task 1 completion
+                                     // => JoinHandle::await returns Result<T, JoinError>
+                                     // => unwrap() panics if task panicked
+    let r2 = h2.await.unwrap();      // => Wait for task 2 completion
+                                     // => Both tasks already running concurrently
     println!("spawn: {} + {}", r1, r2);
-}
+                                     // => Output: spawn: 1 + 2
+}                                    // => join! for same-task concurrency, spawn for independent tasks
 
 // Error handling with join!
-async fn join_with_errors() {
+async fn join_with_errors() {       // => Demonstrates error handling with concurrent futures
+                                     // => join! doesn't short-circuit on error
     async fn may_fail(id: u32) -> Result<u32, &'static str> {
+                                     // => Async function returning Result
+                                     // => Simulates fallible async operation
         sleep(Duration::from_millis(10)).await;
-        if id == 2 {
+                                     // => Simulate async work
+        if id == 2 {                 // => Conditional failure
             Err("Task 2 failed!")    // => Second task returns error
+                                     // => Error case
         } else {
             Ok(id)                   // => Other tasks succeed
+                                     // => Success case returns id
         }
     }
 
-    let (r1, r2, r3) = tokio::join!(
+    let (r1, r2, r3) = tokio::join!( // => Join three potentially-failing futures
+                                     // => Each result is independent Result<T, E>
         may_fail(1),                 // => Ok(1)
+                                     // => First task succeeds
         may_fail(2),                 // => Err("Task 2 failed!")
+                                     // => Second task fails
         may_fail(3),                 // => Ok(3)
+                                     // => Third task succeeds
     );                               // => All complete, even if some fail
                                      // => join! waits for ALL futures (not short-circuit)
+                                     // => Type: (Result<u32, &str>, Result<u32, &str>, Result<u32, &str>)
 
     println!("Results: {:?}, {:?}, {:?}", r1, r2, r3);
+                                     // => Debug formatting for all results
                                      // => Output: Results: Ok(1), Err("Task 2 failed!"), Ok(3)
                                      // => All results available (error doesn't cancel others)
-}
+}                                    // => Caller must handle each Result independently
 
 // try_join! - short-circuit on error
-async fn try_join_example() {
+async fn try_join_example() {       // => Demonstrates try_join! error handling
+                                     // => Different from join!: short-circuits on first error
     async fn may_fail(id: u32) -> Result<u32, &'static str> {
+                                     // => Async function returning Result
+                                     // => Variable sleep duration based on id
         sleep(Duration::from_millis(10 * id as u64)).await;
+                                     // => Sleep duration: id * 10ms
+                                     // => id=1: 10ms, id=2: 20ms, id=3: 30ms
         if id == 2 { Err("Failed!") } else { Ok(id) }
+                                     // => Task 2 fails, others succeed
     }
 
     // try_join! returns Result - Err if ANY future fails
-    let result = tokio::try_join!(
+    let result = tokio::try_join!(   // => Returns Result<(T, U, V), E>
+                                     // => Short-circuits on first error
         may_fail(1),                 // => Ok(1) after 10ms
+                                     // => First task succeeds
         may_fail(2),                 // => Err("Failed!") after 20ms
+                                     // => Second task fails
         may_fail(3),                 // => Would be Ok(3), but never checked
+                                     // => Third task still runs (futures concurrent)
     );                               // => Returns Err as soon as may_fail(2) fails
+                                     // => Type: Result<(u32, u32, u32), &'static str>
                                      // => Other futures still run but result ignored
 
-    match result {
+    match result {                   // => Pattern match on Result
         Ok((a, b, c)) => println!("All succeeded: {}, {}, {}", a, b, c),
+                                     // => This branch never executes (task 2 fails)
         Err(e) => println!("One failed: {}", e),
+                                     // => This branch executes
+                                     // => e is "Failed!" from may_fail(2)
                                      // => Output: One failed: Failed!
     }
-}
+}                                    // => try_join! for fail-fast concurrent operations
 ```
 
 **Key Takeaway**: `tokio::join!` enables concurrent execution of multiple futures within a single task, yielding to the runtime while waiting and resuming when ready without thread spawning overhead.
