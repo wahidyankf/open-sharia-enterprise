@@ -31,10 +31,12 @@ graph TD
 ```
 
 ```python
-class ValidatedMeta(type):
+class ValidatedMeta(type):                    # => Define metaclass (inherits from type)
+                                               # => Controls class creation behavior
     """Metaclass that validates class attributes"""
 
-    def __new__(mcs, name, bases, namespace):
+    def __new__(mcs, name, bases, namespace):  # => Override class creation
+                                               # => Called when class DEFINED (not instantiated)
         """Called when class is DEFINED (not instantiated)"""
         # => mcs: metaclass itself (ValidatedMeta)
         # => name: class name being created (string)
@@ -44,36 +46,47 @@ class ValidatedMeta(type):
         # Validate required methods exist
         if name != 'Base' and 'validate' not in namespace:  # => Check for 'validate' method
                                                              # => Skip Base class itself
+                                                             # => Prevents circular validation
             raise TypeError(f"{name} must implement 'validate' method")  # => Fail at definition time
+                                                                          # => Caught before instantiation
 
         # Create class normally
         cls = super().__new__(mcs, name, bases, namespace)  # => Calls type.__new__
                                                              # => Creates actual class object
+                                                             # => Returns class (not instance)
         return cls                                           # => Return new class
+                                                             # => Class now available for use
 
-class Base(metaclass=ValidatedMeta):
+class Base(metaclass=ValidatedMeta):          # => Specify metaclass via metaclass=
+                                               # => ValidatedMeta.__new__ called
     """Base class using metaclass"""
-    pass                                      # => ValidatedMeta.__new__ called
+    pass                                       # => No 'validate' method
                                                # => name='Base', skipped validation
-                                               # => Base class created
+                                               # => Base class created successfully
 
-class User(Base):
+class User(Base):                             # => Inherits from Base
+                                               # => Inherits ValidatedMeta metaclass
     """Valid subclass with required method"""
-    def validate(self):
-        return True                           # => Required method present
+    def validate(self):                        # => Define required method
+        return True                            # => Simple validation logic
+                                               # => Required method present
                                                # => ValidatedMeta.__new__ called
                                                # => name='User', has 'validate'
                                                # => User class created successfully
 
-# class Invalid(Base):                        # => ValidatedMeta.__new__ called
-#     pass                                     # => name='Invalid', NO 'validate'
+# class Invalid(Base):                        # => Would inherit ValidatedMeta
+                                               # => ValidatedMeta.__new__ called
+#     pass                                     # => NO 'validate' method defined
+                                               # => name='Invalid', NO 'validate'
                                                # => TypeError: Invalid must implement 'validate' method
                                                # => Class definition FAILS (not instantiation)
 
 # Metaclass runs at CLASS DEFINITION time
 user = User()                                 # => Normal instantiation
                                                # => Validation already done at definition
-print(user.validate())                        # => Output: True
+                                               # => No validation overhead at runtime
+print(user.validate())                        # => Calls validate method
+                                               # => Output: True
 ```
 
 **Key Takeaway**: Metaclasses intercept class creation enabling framework-level validation and customization.
@@ -108,46 +121,58 @@ graph TD
 ```
 
 ```python
-class Plugin:
+class Plugin:                                 # => Define base class with registration
+                                               # => Provides __init_subclass__ hook
     """Base class with automatic subclass registration"""
-    plugins = {}                              # => Class-level registry
+    plugins = {}                              # => Class-level registry (dict)
                                                # => Shared across all subclasses
+                                               # => Stores {name: class} mappings
 
-    def __init_subclass__(cls, plugin_name=None, **kwargs):
+    def __init_subclass__(cls, plugin_name=None, **kwargs):  # => Hook called at subclass definition
+                                                              # => Receives custom kwargs from class statement
         """Called when subclass is DEFINED"""
         # => cls: the subclass being created (PDFPlugin, CSVPlugin, etc.)
         # => plugin_name: custom kwarg from class definition
-        # => kwargs: other custom kwargs
+        # => kwargs: other custom kwargs (passed to super)
 
         super().__init_subclass__(**kwargs)   # => Call parent __init_subclass__
                                                # => Required for cooperative inheritance
-        if plugin_name:                       # => If plugin_name provided
+                                               # => Enables multiple inheritance chains
+        if plugin_name:                       # => If plugin_name provided (not None)
+                                               # => Allows optional registration
             cls.plugins[plugin_name] = cls     # => Register in global registry
                                                # => Key: 'pdf', Value: PDFPlugin class
-            print(f"Registered plugin: {plugin_name}")  # => Output: Registered plugin: pdf
+                                               # => Makes class discoverable by name
+            print(f"Registered plugin: {plugin_name}")  # => Confirmation output
+                                                         # => Output: Registered plugin: pdf
 
-class PDFPlugin(Plugin, plugin_name='pdf'):
+class PDFPlugin(Plugin, plugin_name='pdf'):   # => Subclass with custom kwarg
+                                               # => plugin_name passed to __init_subclass__
     """Automatically registered as 'pdf'"""
-    # => At definition time:
+    # => At definition time (not instantiation):
     # => __init_subclass__(PDFPlugin, plugin_name='pdf') called
     # => Plugin.plugins['pdf'] = PDFPlugin
     # => Output: Registered plugin: pdf
-    pass
+    pass                                       # => No body needed for registration
 
-class CSVPlugin(Plugin, plugin_name='csv'):
+class CSVPlugin(Plugin, plugin_name='csv'):   # => Second subclass registration
+                                               # => Same pattern, different name
     # => At definition time:
     # => __init_subclass__(CSVPlugin, plugin_name='csv') called
     # => Plugin.plugins['csv'] = CSVPlugin
     # => Output: Registered plugin: csv
-    pass
+    pass                                       # => Minimal implementation
 
 # Access registered plugins
 print(Plugin.plugins)                         # => Access class-level registry
+                                               # => Contains all registered classes
                                                # => Output: {'pdf': <class 'PDFPlugin'>, 'csv': <class 'CSVPlugin'>}
 
 # Factory pattern usage
 plugin_class = Plugin.plugins['pdf']          # => Get PDFPlugin class from registry
+                                               # => Returns class object (not instance)
 instance = plugin_class()                     # => Instantiate PDFPlugin
+                                               # => Creates PDFPlugin instance
 ```
 
 **Key Takeaway**: **init_subclass** simplifies common metaclass patterns with cleaner syntax.
@@ -180,43 +205,59 @@ graph TD
 ```
 
 ```python
-class Positive:
+class Positive:                               # => Define descriptor class
+                                               # => Implements __get__ and __set__
     """Descriptor that enforces positive values"""
 
-    def __init__(self, name):
+    def __init__(self, name):                 # => Descriptor constructor
+                                               # => Called when descriptor created
         self.name = name                      # => Store attribute name
                                                # => Used as key in instance __dict__
+                                               # => Example: 'balance'
 
-    def __get__(self, obj, objtype=None):
+    def __get__(self, obj, objtype=None):     # => Descriptor get protocol
+                                               # => Called on attribute access
         """Called when accessing attribute (acc.balance)"""
         if obj is None:                       # => Accessed on class (Account.balance)
             return self                        # => Return descriptor itself
+                                               # => Allows introspection
         return obj.__dict__.get(self.name, 0)  # => Get value from instance dict
                                                # => Default to 0 if not set
+                                               # => Avoids KeyError
 
-    def __set__(self, obj, value):
+    def __set__(self, obj, value):            # => Descriptor set protocol
+                                               # => Called on attribute assignment
         """Called when setting attribute (acc.balance = X)"""
         if value < 0:                         # => Validation check
+                                               # => Enforces business rule
             raise ValueError(f"{self.name} must be positive")  # => Reject negative
+                                                                # => Fails fast at assignment
         obj.__dict__[self.name] = value        # => Store in instance dict
                                                # => Key: 'balance', Value: value
+                                               # => Bypasses descriptor recursion
 
-class Account:
+class Account:                                # => Use descriptor in class
+                                               # => balance becomes managed attribute
     """Account class using descriptor for balance validation"""
     balance = Positive('balance')             # => Class-level descriptor instance
                                                # => Intercepts all balance access
+                                               # => Applies to all Account instances
 
-    def __init__(self, balance):
-        self.balance = balance                # => Calls Positive.__set__(self, balance)
+    def __init__(self, balance):              # => Account constructor
+        self.balance = balance                # => Assignment triggers __set__
+                                               # => Calls Positive.__set__(self, balance)
                                                # => Validates before storing
 
-acc = Account(100)                            # => Calls __init__(100)
+acc = Account(100)                            # => Create Account instance
+                                               # => Calls __init__(100)
                                                # => __set__ called, validates 100 >= 0
                                                # => Stores in acc.__dict__['balance']
-print(acc.balance)                            # => Calls __get__
+print(acc.balance)                            # => Access balance attribute
+                                               # => Calls __get__
                                                # => Returns acc.__dict__['balance']
                                                # => Output: 100
-# acc.balance = -50                           # => Calls __set__(-50)
+# acc.balance = -50                           # => Would trigger __set__(-50)
+                                               # => Calls __set__(-50)
                                                # => Raises ValueError: balance must be positive
 ```
 
@@ -229,48 +270,67 @@ print(acc.balance)                            # => Calls __get__
 Properties use descriptors internally for computed attributes.
 
 ```python
-class Circle:
+class Circle:                                 # => Define class with property-based API
+                                               # => Uses descriptors internally
     """Circle with computed area using property"""
 
-    def __init__(self, radius):
+    def __init__(self, radius):               # => Constructor
+                                               # => Accepts initial radius
         self._radius = radius                 # => Store in private attribute
                                                # => Uses setter validation via @radius.setter
+                                               # => Convention: leading underscore = internal
 
-    @property
-    def radius(self):
+    @property                                 # => Decorator creates property descriptor
+                                               # => Replaces radius with property object
+    def radius(self):                         # => Getter method
+                                               # => Called on c.radius access
         """Getter for radius"""
         return self._radius                   # => Return stored value
                                                # => Called when accessing c.radius
+                                               # => No computation needed
 
-    @radius.setter
-    def radius(self, value):
+    @radius.setter                            # => Add setter to property
+                                               # => Uses @<property_name>.setter syntax
+    def radius(self, value):                  # => Setter method
+                                               # => Called on c.radius = value
         """Setter with validation"""
         if value < 0:                         # => Validation check
-            raise ValueError("Radius must be non-negative")
+                                               # => Enforces domain rule
+            raise ValueError("Radius must be non-negative")  # => Reject invalid state
         self._radius = value                  # => Update private storage
                                                # => Called when setting c.radius = X
+                                               # => Maintains invariant
 
-    @property
-    def area(self):
+    @property                                 # => Second property (read-only)
+                                               # => No setter defined
+    def area(self):                           # => Computed property getter
+                                               # => Called on c.area access
         """Computed property (read-only)"""
         return 3.14159 * self._radius ** 2    # => Calculate dynamically
                                                # => No setter defined → read-only
                                                # => Always reflects current radius
+                                               # => Lazy evaluation on access
 
-c = Circle(5)                                 # => Creates circle with radius 5
+c = Circle(5)                                 # => Create Circle instance
+                                               # => Creates circle with radius 5
                                                # => Stores in c._radius = 5
-print(c.radius)                               # => Calls radius getter
+print(c.radius)                               # => Access radius property
+                                               # => Calls radius getter
                                                # => Returns 5
                                                # => Output: 5
-print(c.area)                                 # => Calls area getter
+print(c.area)                                 # => Access computed area
+                                               # => Calls area getter
                                                # => Computes 3.14159 * 5^2
                                                # => Output: 78.53975
-c.radius = 10                                 # => Calls radius setter
+c.radius = 10                                 # => Assign new radius
+                                               # => Calls radius setter
                                                # => Validates 10 >= 0
                                                # => Updates c._radius = 10
-print(c.area)                                 # => Recomputed with new radius
+print(c.area)                                 # => Area automatically updated
+                                               # => Recomputed with new radius
                                                # => Output: 314.159
-# c.area = 100                                # => AttributeError: can't set attribute
+# c.area = 100                                # => Would fail assignment
+                                               # => AttributeError: can't set attribute
                                                # => No setter defined for area
 ```
 
@@ -309,21 +369,28 @@ sequenceDiagram
 ```
 
 ```python
-import asyncio
+import asyncio                                # => Import async framework
+                                               # => Provides event loop and primitives
 
-async def fetch_data(url):
+async def fetch_data(url):                    # => Define async function (coroutine)
+                                               # => Uses async keyword
     """Simulated async HTTP request"""
     print(f"Fetching {url}...")              # => Output: Fetching https://api1.com...
                                                # => Does NOT block other coroutines
-    await asyncio.sleep(1)                    # => Simulate I/O (yields control)
+                                               # => Runs synchronously until await
+    await asyncio.sleep(1)                    # => Yield control during I/O
+                                               # => Simulate I/O (yields control)
                                                # => Event loop switches to other tasks
                                                # => NOT time.sleep (which blocks entire thread)
-    print(f"Completed {url}")                 # => Output: Completed https://api1.com
+    print(f"Completed {url}")                 # => Resume after I/O complete
+                                               # => Output: Completed https://api1.com
                                                # => After 1 second I/O wait
-    return f"Data from {url}"                 # => Return result string
+    return f"Data from {url}"                 # => Return coroutine result
+                                               # => Return result string
                                                # => Becomes result in gather list
 
-async def main():
+async def main():                             # => Main async function
+                                               # => Entry point for async execution
     """Run multiple async operations concurrently"""
     # Sequential (slow) - NOT concurrent
     # result1 = await fetch_data("https://api1.com")  # => Wait 1s for api1
@@ -333,16 +400,23 @@ async def main():
     # Concurrent (fast) - ALL run simultaneously
     results = await asyncio.gather(           # => Schedule all coroutines concurrently
                                                # => Waits for ALL to complete
-        fetch_data("https://api1.com"),       # => Starts immediately
-        fetch_data("https://api2.com"),       # => Starts immediately (parallel)
-        fetch_data("https://api3.com")        # => Starts immediately (parallel)
-    )                                         # => Total time: 1 second (max of 3x 1s operations)
+                                               # => Returns list of results
+        fetch_data("https://api1.com"),       # => First coroutine
+                                               # => Starts immediately
+        fetch_data("https://api2.com"),       # => Second coroutine
+                                               # => Starts immediately (parallel)
+        fetch_data("https://api3.com")        # => Third coroutine
+                                               # => Starts immediately (parallel)
+    )                                         # => All 3 run concurrently
+                                               # => Total time: 1 second (max of 3x 1s operations)
                                                # => Results collected in order
-    print(results)                            # => Output: ['Data from https://api1.com', 'Data from https://api2.com', 'Data from https://api3.com']
+    print(results)                            # => Print results list
+                                               # => Output: ['Data from https://api1.com', 'Data from https://api2.com', 'Data from https://api3.com']
                                                # => List preserves call order
 
 # Run the event loop
-asyncio.run(main())                           # => Creates event loop
+asyncio.run(main())                           # => Bootstrap async execution
+                                               # => Creates event loop
                                                # => Runs main() coroutine until completion
                                                # => Closes event loop
                                                # => Total execution: ~1 second
@@ -387,52 +461,70 @@ graph TD
 ```
 
 ```python
-import asyncio
+import asyncio                                # => Import async framework
+                                               # => Provides create_task and wait
 
-async def process_item(item, delay):
+async def process_item(item, delay):          # => Define async worker function
+                                               # => Accepts item and delay params
     """Process single item"""
-    await asyncio.sleep(delay)                # => Simulate async work
+    await asyncio.sleep(delay)                # => Simulate async work (I/O)
+                                               # => Yields control during delay
     return f"Processed {item}"                # => Return result after delay
+                                               # => Returns string
 
-async def main():
+async def main():                             # => Main async function
+                                               # => Demonstrates task control
     # Create tasks (start immediately)
-    task1 = asyncio.create_task(process_item("A", 2))  # => Schedules coroutine on event loop
+    task1 = asyncio.create_task(process_item("A", 2))  # => Create task from coroutine
+                                                        # => Schedules coroutine on event loop
                                                         # => Starts running immediately
                                                         # => 2 second delay
-    task2 = asyncio.create_task(process_item("B", 1))  # => Starts in parallel
+    task2 = asyncio.create_task(process_item("B", 1))  # => Create second task
+                                                        # => Starts in parallel
                                                         # => 1 second delay
+                                                        # => Both tasks concurrent
 
     # Do other work while tasks run
-    print("Tasks running in background...")    # => Output: Tasks running in background...
+    print("Tasks running in background...")    # => Print to stdout
+                                                 # => Output: Tasks running in background...
                                                  # => Both tasks executing concurrently
-    await asyncio.sleep(0.5)                    # => Main coroutine sleeps 0.5s
+    await asyncio.sleep(0.5)                    # => Yield control for 0.5s
+                                                 # => Main coroutine sleeps 0.5s
                                                  # => Tasks continue running
-    print("Still working...")                   # => Output: Still working...
+    print("Still working...")                   # => Print after 0.5s
+                                                 # => Output: Still working...
                                                  # => After 0.5s total elapsed
 
     # Wait for completion
-    result1 = await task1                       # => Wait for task1 to finish
+    result1 = await task1                       # => Await task completion
+                                                 # => Wait for task1 to finish
                                                  # => Already running for ~0.5s
                                                  # => Waits remaining ~1.5s
-    result2 = await task2                       # => Wait for task2
+    result2 = await task2                       # => Await second task
+                                                 # => Wait for task2
                                                  # => Already completed (1s < 2s)
                                                  # => Returns immediately
-    print(result1, result2)                     # => Output: Processed A Processed B
+    print(result1, result2)                     # => Print both results
+                                                 # => Output: Processed A Processed B
 
     # Wait for first completion
-    tasks = [
+    tasks = [                                   # => Create task list
         asyncio.create_task(process_item(f"Item{i}", i))  # => Create 3 tasks
         for i in range(1, 4)                    # => Item1 (1s), Item2 (2s), Item3 (3s)
+                                                 # => List comprehension
     ]                                           # => All start immediately
-    done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+                                                 # => All 3 concurrent
+    done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)  # => Wait for ANY completion
                                                  # => Wait until ANY task completes
                                                  # => Returns after 1 second (Item1 done)
                                                  # => done: set of completed tasks
                                                  # => pending: set of still-running tasks
-    print(f"First completed: {done.pop().result()}")  # => Get result from completed task
+    print(f"First completed: {done.pop().result()}")  # => Extract result from done set
+                                                       # => Get result from completed task
                                                        # => Output: First completed: Processed Item1
 
-asyncio.run(main())                             # => Run event loop with main()
+asyncio.run(main())                             # => Bootstrap async execution
+                                                 # => Run event loop with main()
 ```
 
 **Key Takeaway**: Tasks provide fine-grained control over concurrent coroutines with early cancellation and result access.
@@ -444,41 +536,58 @@ asyncio.run(main())                             # => Run event loop with main()
 Async context managers handle async resource acquisition and cleanup.
 
 ```python
-import asyncio
+import asyncio                                # => Import async framework
+                                               # => Provides sleep and run
 
-class AsyncResource:
+class AsyncResource:                          # => Define async context manager
+                                               # => Implements __aenter__ and __aexit__
     """Async context manager for resource management"""
 
-    async def __aenter__(self):
+    async def __aenter__(self):               # => Async entry point (setup)
+                                               # => Called on async with statement
         """Async enter (setup)"""
-        print("Acquiring resource...")        # => Output: Acquiring resource...
-        await asyncio.sleep(1)                # => Simulate async I/O (network, database)
+        print("Acquiring resource...")        # => Print status message
+                                               # => Output: Acquiring resource...
+        await asyncio.sleep(1)                # => Yield during I/O
+                                               # => Simulate async I/O (network, database)
                                                # => Yields control to event loop
         self.resource = "RESOURCE"            # => Store acquired resource
-        return self.resource                  # => Return value bound to 'as' variable
+                                               # => Set instance state
+        return self.resource                  # => Return value to 'as' clause
+                                               # => Return value bound to 'as' variable
                                                # => Returns "RESOURCE"
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, exc_type, exc_val, exc_tb):  # => Async exit point (cleanup)
+                                                            # => Called when block exits
         """Async exit (cleanup)"""
-        print("Releasing resource...")        # => Output: Releasing resource...
-        await asyncio.sleep(0.5)              # => Async cleanup operation
+        print("Releasing resource...")        # => Print cleanup status
+                                               # => Output: Releasing resource...
+        await asyncio.sleep(0.5)              # => Yield during cleanup
+                                               # => Async cleanup operation
                                                # => Yields control during cleanup
-        self.resource = None                  # => Clear resource reference
-        return False                          # => Return False → propagate exceptions
+        self.resource = None                  # => Release resource reference
+                                               # => Clear resource reference
+        return False                          # => Control exception propagation
+                                               # => Return False → propagate exceptions
                                                # => Return True → suppress exceptions
 
-async def main():
-    async with AsyncResource() as res:        # => Calls __aenter__
+async def main():                             # => Main async function
+                                               # => Demonstrates async with usage
+    async with AsyncResource() as res:        # => Enter async context
+                                               # => Calls __aenter__
                                                # => Waits for async setup to complete
                                                # => res = "RESOURCE"
-        print(f"Using {res}")                 # => Output: Using RESOURCE
-        await asyncio.sleep(0.1)              # => Do work with resource
-    # => Block exits here
+        print(f"Using {res}")                 # => Use acquired resource
+                                               # => Output: Using RESOURCE
+        await asyncio.sleep(0.1)              # => Simulate work
+                                               # => Do work with resource
+    # => Block exits here (automatic cleanup)
     # => Calls __aexit__(None, None, None)
     # => Waits for async cleanup
     # => Guaranteed cleanup even if exception occurs
 
-asyncio.run(main())                           # => Start event loop
+asyncio.run(main())                           # => Bootstrap async execution
+                                               # => Start event loop
                                                # => Run main() coroutine
                                                # => Complete execution order:
                                                # => 1. Acquiring resource... (1s wait)
@@ -515,47 +624,60 @@ graph TD
 ```
 
 ```python
-from typing import Protocol
+from typing import Protocol                   # => Import Protocol class
+                                               # => Enables structural subtyping
 
-class Drawable(Protocol):
+class Drawable(Protocol):                     # => Define protocol (interface)
+                                               # => Inherits from Protocol
     """Protocol for drawable objects"""
-    def draw(self) -> str:
+    def draw(self) -> str:                    # => Define required method signature
+                                               # => Must return string
         """Must have draw method returning string"""
         ...                                   # => Protocol methods use ... (ellipsis)
                                                # => No implementation required
-                                               # => Defines interface contract
+                                               # => Defines interface contract only
 
-class Circle:
+class Circle:                                 # => Implement protocol implicitly
+                                               # => No inheritance needed
     """Implicitly implements Drawable (no inheritance needed)"""
-    def draw(self) -> str:
+    def draw(self) -> str:                    # => Define draw method
+                                               # => Matches protocol signature
         return "Drawing circle"               # => Has draw() -> str signature
                                                # => Matches Drawable protocol
                                                # => No explicit inheritance required
 
-class Square:
+class Square:                                 # => Another protocol implementation
+                                               # => Also implicit
     """Another class matching Drawable protocol"""
-    def draw(self) -> str:
+    def draw(self) -> str:                    # => Same signature as protocol
         return "Drawing square"               # => Also has draw() -> str
                                                # => Implicitly implements Drawable
                                                # => Structural typing (duck typing)
 
-def render(obj: Drawable) -> None:
+def render(obj: Drawable) -> None:            # => Type hint with protocol
+                                               # => Accepts any Drawable-compatible type
     """Accepts any object with draw() method"""
     # => Type checker verifies obj has draw() -> str
     # => No runtime check (duck typing at runtime)
-    print(obj.draw())                         # => Calls draw() method
+    # => Static verification only
+    print(obj.draw())                         # => Call protocol method
+                                               # => Calls draw() method
                                                # => Structural typing enables this
 
-render(Circle())                              # => Creates Circle instance
+render(Circle())                              # => Pass Circle instance
+                                               # => Creates Circle instance
                                                # => mypy: ✓ Circle has draw() -> str
                                                # => Output: Drawing circle
-render(Square())                              # => Creates Square instance
+render(Square())                              # => Pass Square instance
+                                               # => Creates Square instance
                                                # => mypy: ✓ Square has draw() -> str
                                                # => Output: Drawing square
 
-# class Triangle:                             # => Class without draw() method
+# class Triangle:                             # => Non-compliant class
+                                               # => Class without draw() method
 #     pass
-# render(Triangle())                          # => mypy error: Triangle has no attribute 'draw'
+# render(Triangle())                          # => Would fail type check
+                                               # => mypy error: Triangle has no attribute 'draw'
                                                # => Static type checking catches this
                                                # => Runtime would raise AttributeError
 ```
@@ -598,45 +720,63 @@ graph TD
 ```
 
 ```python
-from typing import TypeVar, Generic, List
+from typing import TypeVar, Generic, List    # => Import typing utilities
+                                               # => TypeVar for type parameters
+                                               # => Generic for generic classes
 
 T = TypeVar('T')                              # => Declare type variable T
                                                # => Placeholder for any type
                                                # => Will be substituted with concrete type
+                                               # => Single letter convention (T, U, V)
 
-class Stack(Generic[T]):
+class Stack(Generic[T]):                      # => Define generic class
+                                               # => Generic[T] makes this parameterized
     """Generic stack for any type T"""
     # => Generic[T] makes this a generic class
     # => T will be bound to specific type at usage
+    # => Example: Stack[int], Stack[str]
 
-    def __init__(self) -> None:
-        self._items: List[T] = []             # => Type-safe list
+    def __init__(self) -> None:               # => Constructor
+                                               # => No type parameter needed here
+        self._items: List[T] = []             # => Type-safe internal list
                                                # => Type checker knows this is List[T]
+                                               # => T inferred from class usage
 
-    def push(self, item: T) -> None:
+    def push(self, item: T) -> None:          # => Push method with type T
+                                               # => Parameter type matches class type
         """Push item of type T onto stack"""
-        self._items.append(item)              # => item must match type T
+        self._items.append(item)              # => Add to internal list
+                                               # => item must match type T
                                                # => Type checker validates this
 
-    def pop(self) -> T:
+    def pop(self) -> T:                       # => Pop method returns type T
+                                               # => Return type matches class type
         """Pop and return item of type T"""
-        return self._items.pop()              # => Return type is T
+        return self._items.pop()              # => Remove and return last item
+                                               # => Return type is T
                                                # => Preserves type information
 
 # Type-specific stacks
-int_stack: Stack[int] = Stack()               # => T bound to int
+int_stack: Stack[int] = Stack()               # => Instantiate with int type
+                                               # => T bound to int
                                                # => Type checker knows _items is List[int]
                                                # => push() expects int, pop() returns int
-int_stack.push(1)                             # => mypy: ✓ Argument is int
-int_stack.push(2)                             # => mypy: ✓ Argument is int
-# int_stack.push("text")                      # => mypy error: Expected int, got str
+int_stack.push(1)                             # => Push integer
+                                               # => mypy: ✓ Argument is int
+int_stack.push(2)                             # => Push another integer
+                                               # => mypy: ✓ Argument is int
+# int_stack.push("text")                      # => Would fail type check
+                                               # => mypy error: Expected int, got str
                                                # => Static type checking prevents this
 
-str_stack: Stack[str] = Stack()               # => T bound to str
+str_stack: Stack[str] = Stack()               # => Instantiate with str type
+                                               # => T bound to str
                                                # => Separate instance with different type
                                                # => push() expects str, pop() returns str
-str_stack.push("hello")                       # => mypy: ✓ Argument is str
-result: str = str_stack.pop()                 # => mypy: ✓ Return type is str
+str_stack.push("hello")                       # => Push string
+                                               # => mypy: ✓ Argument is str
+result: str = str_stack.pop()                 # => Pop with type safety
+                                               # => mypy: ✓ Return type is str
                                                # => result is "hello"
 ```
 
@@ -649,59 +789,79 @@ result: str = str_stack.pop()                 # => mypy: ✓ Return type is str
 Identify performance bottlenecks using cProfile for function-level timing.
 
 ```python
-import cProfile
-import pstats
+import cProfile                               # => Import profiling module
+                                               # => C-based profiler (fast)
+import pstats                                 # => Import statistics formatter
+                                               # => Analyzes profiler output
 
-def fibonacci(n):
+def fibonacci(n):                             # => Define recursive function
+                                               # => Classic inefficient implementation
     """Inefficient recursive Fibonacci"""
     if n < 2:                                 # => Base case check
                                                # => True for n=0 or n=1
+                                               # => Terminates recursion
         return n                               # => Returns 0 for n=0, 1 for n=1
                                                # => Stops recursion
+                                               # => No further calls
     return fibonacci(n-1) + fibonacci(n-2)     # => Two recursive calls per invocation
                                                # => fibonacci(24) calls fibonacci(23) + fibonacci(22)
                                                # => Exponential time: O(2^n)
                                                # => MASSIVE duplicate computation
+                                               # => Many values recomputed thousands of times
 
-def calculate_sequence():
+def calculate_sequence():                     # => Define wrapper function
+                                               # => Groups multiple calls for profiling
     """Calculate multiple Fibonacci numbers"""
-    results = [fibonacci(i) for i in range(25)]  # => Calls fibonacci(0), fibonacci(1), ..., fibonacci(24)
+    results = [fibonacci(i) for i in range(25)]  # => List comprehension
+                                                  # => Calls fibonacci(0), fibonacci(1), ..., fibonacci(24)
                                                   # => fibonacci(24) alone makes ~46,368 recursive calls
                                                   # => Total across all: 150,000+ function calls
-    return results                            # => Returns [0, 1, 1, 2, 3, 5, 8, ...]
+    return results                            # => Returns computed list
+                                               # => Returns [0, 1, 1, 2, 3, 5, 8, ...]
                                                # => List of first 25 Fibonacci numbers
 
 # Profile function execution
-profiler = cProfile.Profile()                 # => Create profiler object
+profiler = cProfile.Profile()                 # => Create profiler instance
+                                               # => Create profiler object
                                                # => Low-overhead profiler (~5% slowdown)
-profiler.enable()                             # => Start profiling
+profiler.enable()                             # => Start recording calls
+                                               # => Start profiling
                                                # => Records all function calls from this point
                                                # => Tracks: function name, call count, time spent
-result = calculate_sequence()                 # => Execute code to profile
+result = calculate_sequence()                 # => Execute target code
+                                               # => Execute code to profile
                                                # => Profiler tracks EVERY fibonacci() call
                                                # => ~150,000 calls recorded
-profiler.disable()                            # => Stop profiling
+profiler.disable()                            # => Stop recording calls
+                                               # => Stop profiling
                                                # => Stops recording function calls
                                                # => All data stored in profiler object
 
 # Analyze and print statistics
-stats = pstats.Stats(profiler)                # => Create statistics object from profiler
+stats = pstats.Stats(profiler)                # => Create stats object
+                                               # => Create statistics object from profiler
                                                # => Provides sorting and formatting
 stats.sort_stats('cumulative')                # => Sort by cumulative time
+                                               # => Sort by cumulative time
                                                # => Cumulative: total time including subcalls
                                                # => Shows functions with most total time first
-stats.print_stats(10)                         # => Print top 10 slowest functions
+stats.print_stats(10)                         # => Print top 10 entries
+                                               # => Print top 10 slowest functions
                                                # => Output table with columns:
                                                # => ncalls, tottime, percall, cumtime, percall, filename:lineno(function)
 
 # Example output interpretation:
 # ncalls: 150049                              # => fibonacci() called 150,049 times!
                                                # => Massive number for just 25 calls
+                                               # => Shows recursion explosion
 # tottime: 0.05s                              # => Time in fibonacci() itself (excluding subcalls)
                                                # => Only the arithmetic and comparisons
+                                               # => Excludes recursive call time
 # cumtime: 0.05s                              # => Total time including ALL recursive subcalls
                                                # => Nearly identical to tottime (lightweight function)
+                                               # => Full execution time
 # filename:lineno(function)                   # => Source file location
+                                               # => Function identifier
 
 # Performance bottleneck identified:
 # => fibonacci() dominates execution with 150K+ calls
@@ -721,41 +881,56 @@ stats.print_stats(10)                         # => Print top 10 slowest function
 Track memory usage with memory_profiler to identify memory leaks.
 
 ```python
-from memory_profiler import profile
+from memory_profiler import profile           # => Import memory profiling decorator
+                                               # => Line-by-line memory tracking
 
-@profile                                      # => Decorator instruments function for memory profiling
+@profile                                      # => Decorator instruments function
+                                               # => Decorator instruments function for memory profiling
                                                # => Tracks line-by-line memory usage
                                                # => Adds ~2x slowdown during profiling
-def process_large_data():
+                                               # => Measures memory at each line
+def process_large_data():                     # => Define function to profile
+                                               # => Target function for analysis
     """Function that uses memory"""
-    data = [i ** 2 for i in range(1000000)]  # => Create list of 1 million integers
+    data = [i ** 2 for i in range(1000000)]  # => Create large list
+                                               # => Create list of 1 million integers
                                                # => Computes [0, 1, 4, 9, 16, ...]
                                                # => Each int ~28 bytes in Python
                                                # => Total: ~38 MiB for data
-    filtered = [x for x in data if x % 2 == 0]  # => Filter even numbers only
+                                               # => Major allocation event
+    filtered = [x for x in data if x % 2 == 0]  # => Create second large list
+                                               # => Filter even numbers only
                                                # => Creates SECOND list (not in-place)
                                                # => ~500,000 even numbers
                                                # => Additional ~37.7 MiB allocated
-    result = sum(filtered)                    # => Sum all filtered values
+                                               # => Peak memory here (both lists)
+    result = sum(filtered)                    # => Compute sum
+                                               # => Sum all filtered values
                                                # => Single integer result
                                                # => No additional memory allocation
-    return result                             # => Returns integer sum
+    return result                             # => Return sum value
+                                               # => Returns integer sum
                                                # => Lists remain in memory until GC
 
 # Run function with memory profiling
-# result = process_large_data()               # => Execute with @profile decorator active
+# result = process_large_data()               # => Execute profiled function
+                                               # => Execute with @profile decorator active
                                                # => Prints line-by-line memory report
+                                               # => Shows memory growth
 
 # Example output interpretation:
 # Line    Mem usage    Increment   Line Contents
 # ====    =========    =========   =============
 #     3     50.5 MiB     50.5 MiB   data = [...]          # => Initial allocation (38 MiB data + overhead)
                                                             # => Memory usage jumps significantly
+                                                            # => First major allocation
 #     4     88.2 MiB     37.7 MiB   filtered = [...]      # => Second large allocation
                                                             # => Additional 37.7 MiB for filtered list
                                                             # => Total: 88.2 MiB (both lists in memory)
+                                                            # => Peak memory usage point
 #     5     88.2 MiB      0.0 MiB   result = sum(...)     # => No new allocation
                                                             # => Just iterates and sums (O(1) space)
+                                                            # => Constant memory for sum
 
 # Memory optimization insights:
 # => Two large lists exist simultaneously (88 MiB total)
@@ -799,16 +974,22 @@ graph TD
 ```
 
 ```python
-import threading
-import time
+import threading                              # => Import threading module
+                                               # => Provides Thread class and sync primitives
+import time                                   # => Import time module
+                                               # => Provides sleep for simulation
 
-def download_file(url):
+def download_file(url):                       # => Define worker function
+                                               # => Runs in separate thread
     """Simulated file download"""
-    print(f"Downloading {url}...")            # => Output: Downloading url1...
-    time.sleep(2)                             # => Simulated I/O wait (network, disk)
+    print(f"Downloading {url}...")            # => Print start message
+                                               # => Output: Downloading url1...
+    time.sleep(2)                             # => Simulate I/O wait
+                                               # => Simulated I/O wait (network, disk)
                                                # => I/O operations RELEASE GIL
                                                # => Other threads can run during sleep
-    print(f"Completed {url}")                 # => Output: Completed url1
+    print(f"Completed {url}")                 # => Print completion message
+                                               # => Output: Completed url1
 
 # Sequential (slow): 6 seconds total
 # for url in ['url1', 'url2', 'url3']:       # => Execute one after another
@@ -816,23 +997,31 @@ def download_file(url):
                                                # => Total: 6 seconds
 
 # Concurrent with threads (fast): 2 seconds total
-threads = []                                  # => List to track threads
-for url in ['url1', 'url2', 'url3']:
-    thread = threading.Thread(target=download_file, args=(url,))  # => Create thread
+threads = []                                  # => Initialize thread list
+                                               # => List to track threads
+for url in ['url1', 'url2', 'url3']:          # => Iterate over URLs
+                                               # => Create thread for each URL
+    thread = threading.Thread(target=download_file, args=(url,))  # => Create Thread object
+                                               # => Create thread
                                                # => target: function to run
                                                # => args: tuple of function arguments
-    thread.start()                            # => Start thread immediately
+    thread.start()                            # => Launch thread
+                                               # => Start thread immediately
                                                # => All 3 threads run concurrently
                                                # => Each calls download_file() in parallel
-    threads.append(thread)                    # => Add to list for tracking
+    threads.append(thread)                    # => Store thread reference
+                                               # => Add to list for tracking
 
 # Wait for all threads to complete
-for thread in threads:
-    thread.join()                             # => Wait for this thread to finish
+for thread in threads:                        # => Iterate over threads
+                                               # => Join all threads
+    thread.join()                             # => Wait for thread completion
+                                               # => Wait for this thread to finish
                                                # => Blocks until thread completes
                                                # => Ensures all downloads complete
 
-print("All downloads complete")               # => Output: All downloads complete
+print("All downloads complete")               # => Print final message
+                                               # => Output: All downloads complete
                                                # => Total elapsed: ~2 seconds (not 6)
                                                # => 3x speedup from concurrent I/O
 ```
@@ -875,22 +1064,30 @@ graph TD
 ```
 
 ```python
-from concurrent.futures import ThreadPoolExecutor, as_completed
-import time
+from concurrent.futures import ThreadPoolExecutor, as_completed  # => Import executor and helper
+                                                                  # => ThreadPoolExecutor: thread pool management
+                                                                  # => as_completed: yield futures as they finish
+import time                                   # => Import time module
+                                               # => Provides sleep for simulation
 
-def process_task(task_id):
+def process_task(task_id):                    # => Define worker function
+                                               # => Accepts task identifier
     """Process single task"""
     time.sleep(1)                             # => Simulate I/O work
+                                               # => 1 second delay per task
     return f"Task {task_id} completed"        # => Return result string
+                                               # => Indicates completion
 
 # Thread pool with max 3 worker threads
-with ThreadPoolExecutor(max_workers=3) as executor:
+with ThreadPoolExecutor(max_workers=3) as executor:  # => Create thread pool
+                                                      # => max_workers=3: 3 threads max
     # => Creates thread pool with 3 worker threads
     # => Threads are reused for multiple tasks
     # => Context manager ensures cleanup
 
     # Submit tasks
-    futures = [executor.submit(process_task, i) for i in range(10)]
+    futures = [executor.submit(process_task, i) for i in range(10)]  # => Submit all tasks
+                                                                       # => List comprehension creates futures
     # => Submits 10 tasks to thread pool
     # => Returns list of Future objects
     # => Tasks queued and distributed to 3 workers
@@ -898,13 +1095,16 @@ with ThreadPoolExecutor(max_workers=3) as executor:
     # => Remaining 7 tasks wait in queue
 
     # Process as completed (not in submission order)
-    for future in as_completed(futures):      # => Yields futures as they complete
+    for future in as_completed(futures):      # => Iterate over completing futures
+                                               # => Yields futures as they complete
                                                # => NOT in submission order
                                                # => Returns first completed task first
-        result = future.result()              # => Get result from completed task
+        result = future.result()              # => Extract result value
+                                               # => Get result from completed task
                                                # => Blocks if future not done yet
                                                # => Returns "Task X completed"
-        print(result)                         # => Output: Task X completed
+        print(result)                         # => Print result
+                                               # => Output: Task X completed
                                                # => Order varies (depends on completion)
 
 # Context manager exit here
@@ -955,15 +1155,20 @@ graph TD
 ```
 
 ```python
-from multiprocessing import Pool
-import time
+from multiprocessing import Pool              # => Import process pool class
+                                               # => Manages worker processes
+import time                                   # => Import time module
+                                               # => For timing (not used in this example)
 
-def cpu_intensive_task(n):
+def cpu_intensive_task(n):                    # => Define CPU-bound function
+                                               # => Pure computation (no I/O)
     """CPU-bound computation"""
     total = 0                                 # => Initialize accumulator to 0
                                                # => Will store sum of squares
+                                               # => Counter variable
     for i in range(n):                        # => Loop 10 million times (n=10,000,000)
                                                # => Pure CPU computation (no I/O waits)
+                                               # => Compute intensive work
         total += i ** 2                       # => Compute square: i * i
                                                # => Add to accumulator
                                                # => CPU-bound: GIL blocks parallel execution in threads
@@ -971,7 +1176,8 @@ def cpu_intensive_task(n):
                                                # => Result: sum(i^2 for i in 0..9999999)
                                                # => = 333,333,283,333,335,000
 
-if __name__ == '__main__':                    # => Guard required for multiprocessing
+if __name__ == '__main__':                    # => Entry point guard
+                                               # => Guard required for multiprocessing
                                                # => Prevents recursive process spawning on Windows
                                                # => Entry point protection
     # Sequential (slow) - single core utilization
@@ -982,12 +1188,14 @@ if __name__ == '__main__':                    # => Guard required for multiproce
     # => Total time: ~4x single task time (e.g., 8 seconds)
 
     # Parallel with process pool (fast) - multi-core utilization
-    with Pool(processes=4) as pool:           # => Create process pool with 4 workers
+    with Pool(processes=4) as pool:           # => Create process pool
+                                               # => Create process pool with 4 workers
                                                # => Spawns 4 separate Python processes
                                                # => Each process: own Python interpreter + own GIL
                                                # => NO GIL contention (separate interpreters!)
                                                # => Context manager handles pool.close() + pool.join()
-        results = pool.map(cpu_intensive_task, [10**7] * 4)
+        results = pool.map(cpu_intensive_task, [10**7] * 4)  # => Distribute work across processes
+                                                              # => Map function to arguments
         # => pool.map(func, iterable) distributes work
         # => Argument list: [10000000, 10000000, 10000000, 10000000]
         # => Process 1: cpu_intensive_task(10**7) on CPU core 1
@@ -998,7 +1206,8 @@ if __name__ == '__main__':                    # => Guard required for multiproce
         # => Results serialized and returned as list
         # => Total time: ~1x single task time (4x speedup on 4-core CPU)
 
-    print(f"Results: {results}")              # => Output: [333333283333335000, 333333283333335000, 333333283333335000, 333333283333335000]
+    print(f"Results: {results}")              # => Print results list
+                                               # => Output: [333333283333335000, 333333283333335000, 333333283333335000, 333333283333335000]
                                                # => All 4 processes computed same sum
                                                # => List preserves order from input iterable
 
@@ -1043,37 +1252,52 @@ graph TD
 ```
 
 ```python
-import weakref
+import weakref                                # => Import weakref module
+                                               # => Provides weak reference support
 
-class LargeObject:
+class LargeObject:                            # => Define object class
+                                               # => Tracks creation and deletion
     """Object with lifecycle logging"""
-    def __init__(self, name):
-        self.name = name                      # => Store name
-        print(f"Created {name}")              # => Output: Created [name]
+    def __init__(self, name):                 # => Constructor
+                                               # => Accepts name parameter
+        self.name = name                      # => Store name attribute
+                                               # => Store name
+        print(f"Created {name}")              # => Log creation
+                                               # => Output: Created [name]
 
-    def __del__(self):
+    def __del__(self):                        # => Destructor method
+                                               # => Called by garbage collector
         """Destructor called during garbage collection"""
-        print(f"Deleted {self.name}")         # => Called when GC collects object
+        print(f"Deleted {self.name}")         # => Log deletion
+                                               # => Called when GC collects object
                                                # => Output: Deleted [name]
 
 # Strong reference (prevents GC)
-obj = LargeObject("Strong")                   # => Output: Created Strong
+obj = LargeObject("Strong")                   # => Create object with strong ref
+                                               # => Output: Created Strong
                                                # => obj reference count = 1
-ref = obj                                     # => Another strong reference
+ref = obj                                     # => Create second strong reference
+                                               # => Another strong reference
                                                # => obj reference count = 2
-del obj                                       # => Reference count = 1 (still in memory)
+del obj                                       # => Delete first reference
+                                               # => Reference count = 1 (still in memory)
                                                # => No deletion output (ref still holds it)
 
 # Weak reference (allows GC)
-obj2 = LargeObject("Weak")                    # => Output: Created Weak
+obj2 = LargeObject("Weak")                    # => Create object
+                                               # => Output: Created Weak
                                                # => obj2 reference count = 1
-weak_ref = weakref.ref(obj2)                  # => Create weak reference
+weak_ref = weakref.ref(obj2)                  # => Create weak reference wrapper
+                                               # => Create weak reference
                                                # => Does NOT increase reference count
-print(weak_ref())                             # => Output: <LargeObject object at 0x...>
+print(weak_ref())                             # => Call weak reference
+                                               # => Output: <LargeObject object at 0x...>
                                                # => Object still alive
-del obj2                                      # => Reference count = 0
+del obj2                                      # => Delete strong reference
+                                               # => Reference count = 0
                                                # => Output: Deleted Weak (GC immediately collects)
-print(weak_ref())                             # => Output: None
+print(weak_ref())                             # => Call weak reference again
+                                               # => Output: None
                                                # => Weak reference now dead (returns None)
 ```
 
@@ -1113,42 +1337,56 @@ graph TD
 ```
 
 ```python
-import asyncio
-from contextvars import ContextVar
+import asyncio                                # => Import async framework
+                                               # => Provides event loop and gather
+from contextvars import ContextVar            # => Import context variable class
+                                               # => Task-local storage for async
 
 # Global context variable
-request_id: ContextVar[str] = ContextVar('request_id', default='none')
+request_id: ContextVar[str] = ContextVar('request_id', default='none')  # => Declare context variable
+                                                                          # => Module-level declaration
 # => Declare module-level context variable
 # => Type: ContextVar[str]
 # => Default value: 'none' (if not set)
 
-async def process_request(req_id):
+async def process_request(req_id):           # => Define async worker function
+                                               # => Accepts request ID parameter
     """Process request with context"""
-    request_id.set(req_id)                    # => Set value for THIS task's context
+    request_id.set(req_id)                    # => Set context value
+                                               # => Set value for THIS task's context
                                                # => Isolated from other tasks
                                                # => Like thread-local but for async
-    await asyncio.sleep(0.1)                  # => Simulate async work
+    await asyncio.sleep(0.1)                  # => Yield control during I/O
+                                               # => Simulate async work
                                                # => Context preserved across await
-    current_id = request_id.get()             # => Get from THIS task's context
+    current_id = request_id.get()             # => Get context value
+                                               # => Get from THIS task's context
                                                # => Returns value set above
-    print(f"Processing request: {current_id}")  # => Output: Processing request: REQ-1
+    print(f"Processing request: {current_id}")  # => Print request ID
+                                                 # => Output: Processing request: REQ-1
                                                  # => Each task prints its own ID
 
-async def main():
+async def main():                             # => Main async function
+                                               # => Orchestrates concurrent tasks
     # Run concurrent tasks (each has own context)
-    await asyncio.gather(
-        process_request("REQ-1"),             # => Task 1 context: request_id = "REQ-1"
+    await asyncio.gather(                     # => Run tasks concurrently
+                                               # => Each task gets own context
+        process_request("REQ-1"),             # => First task
+                                               # => Task 1 context: request_id = "REQ-1"
                                                # => Runs concurrently
-        process_request("REQ-2"),             # => Task 2 context: request_id = "REQ-2"
+        process_request("REQ-2"),             # => Second task
+                                               # => Task 2 context: request_id = "REQ-2"
                                                # => Isolated from Task 1
-        process_request("REQ-3")              # => Task 3 context: request_id = "REQ-3"
+        process_request("REQ-3")              # => Third task
+                                               # => Task 3 context: request_id = "REQ-3"
                                                # => Isolated from Tasks 1 and 2
     )
     # => Each task maintains separate context value
     # => No interference between tasks
     # => Like thread-local storage but for async tasks
 
-asyncio.run(main())                           # => Run event loop
+asyncio.run(main())                           # => Bootstrap async execution
+                                               # => Run event loop
                                                # => Output (order may vary):
                                                # => Processing request: REQ-1
                                                # => Processing request: REQ-2
@@ -1164,41 +1402,56 @@ asyncio.run(main())                           # => Run event loop
 Class decorators modify classes enabling functionality injection.
 
 ```python
-def singleton(cls):
+def singleton(cls):                           # => Define class decorator
+                                               # => Accepts class as parameter
     """Decorator that makes class a singleton"""
-    instances = {}                                # => Cache for singleton instances
-                                                   # => Outer scope, preserved across calls
+    instances = {}                            # => Cache for singleton instances
+                                               # => Outer scope, preserved across calls
+                                               # => Closure variable
 
-    def get_instance(*args, **kwargs):
+    def get_instance(*args, **kwargs):        # => Wrapper function
+                                               # => Replaces class constructor
         """Wrapper that returns cached instance"""
-        if cls not in instances:              # => First call for this class
-            instances[cls] = cls(*args, **kwargs)  # => Create instance once
+        if cls not in instances:              # => First call check
+                                               # => First call for this class
+            instances[cls] = cls(*args, **kwargs)  # => Create and cache instance
+                                                   # => Create instance once
                                                    # => Call original __init__
                                                    # => Store in cache
-        return instances[cls]                      # => Return cached instance
-                                                   # => Same object every time
+        return instances[cls]                 # => Return cached instance
+                                               # => Return cached instance
+                                               # => Same object every time
 
-    return get_instance                            # => Replace class with wrapper function
+    return get_instance                       # => Return wrapper
+                                               # => Replace class with wrapper function
+                                               # => Class replaced by factory function
 
-@singleton                                         # => Database = singleton(Database)
-class Database:
+@singleton                                    # => Apply decorator
+                                               # => Database = singleton(Database)
+class Database:                               # => Define singleton class
+                                               # => Will be replaced by get_instance
     """Singleton database connection"""
-    def __init__(self):
-        print("Connecting to database...")    # => Output on first instantiation only
+    def __init__(self):                       # => Constructor (called once max)
+        print("Connecting to database...")    # => Log connection
+                                               # => Output on first instantiation only
                                                # => Called only once
 
-db1 = Database()                              # => First call
+db1 = Database()                              # => First instantiation
+                                               # => First call
                                                # => instances is empty
                                                # => Calls Database.__init__()
                                                # => Output: Connecting to database...
                                                # => Stores in instances[Database]
-db2 = Database()                              # => Second call
+db2 = Database()                              # => Second instantiation
+                                               # => Second call
                                                # => instances[Database] exists
                                                # => No __init__ call
                                                # => Returns cached instance
-print(db1 is db2)                             # => Compare object identity
+print(db1 is db2)                             # => Check identity
+                                               # => Compare object identity
                                                # => Output: True (exact same object)
-print(id(db1) == id(db2))                     # => Same memory address
+print(id(db1) == id(db2))                     # => Check memory address
+                                               # => Same memory address
                                                # => Output: True
 ```
 
@@ -1367,7 +1620,8 @@ safe_list = ast.literal_eval("[1, 2, 3]")    # => Output: [1, 2, 3]
 Abstract Syntax Tree module parses Python code for analysis and transformation.
 
 ```python
-import ast
+import ast                                    # => Import Abstract Syntax Tree module
+                                               # => Enables code parsing and transformation
 
 code = """
 def add(a, b):
@@ -1375,6 +1629,7 @@ def add(a, b):
 
 result = add(2, 3)
 """                                           # => Python source code as string
+                                               # => Triple-quoted multiline string
                                                # => Contains function definition + function call
 
 # Parse code into AST (Abstract Syntax Tree)
@@ -1382,30 +1637,41 @@ tree = ast.parse(code)                        # => Parse source to AST
                                                # => Returns Module node (root of tree)
                                                # => Tree structure: Module → [FunctionDef, Assign]
                                                # => Does NOT execute code (only parses syntax)
+                                               # => Safe for untrusted code analysis
 print(type(tree))                             # => Output: <class '_ast.Module'>
                                                # => Root node type
+                                               # => Top-level AST node
 
 # Walk AST nodes (breadth-first traversal)
 for node in ast.walk(tree):                   # => Iterate ALL nodes recursively
                                                # => Visits: Module, FunctionDef, arguments, Return, BinOp, Assign, Call, etc.
+                                               # => Depth-first traversal
     if isinstance(node, ast.FunctionDef):     # => Check if node is function definition
+                                               # => Type check for function definitions
         print(f"Function: {node.name}")       # => Access function name attribute
                                                # => Output: Function: add
-        print(f"  Arguments: {[arg.arg for arg in node.args.args]}")
+                                               # => node.name is string
+        print(f"  Arguments: {[arg.arg for arg in node.args.args]}")  # => Extract argument names
+                                                                        # => List comprehension over args
                                                # => Output:   Arguments: ['a', 'b']
                                                # => Extract parameter names
     elif isinstance(node, ast.Return):        # => Check if node is return statement
+                                               # => Detects 'return' keyword usage
         print("Found return statement")       # => Output: Found return statement
                                                # => Located return node in AST
     elif isinstance(node, ast.BinOp):         # => Binary operation (+ - * / etc.)
-        print(f"Binary operation: {type(node.op).__name__}")
+                                               # => Arithmetic or comparison operations
+        print(f"Binary operation: {type(node.op).__name__}")  # => Get operation type
+                                                                # => node.op is Add/Sub/Mult/Div etc.
                                                # => Output: Binary operation: Add
                                                # => Identifies 'a + b' as Add operation
 
 # Access specific node attributes
 func_def = tree.body[0]                       # => Get first statement (FunctionDef)
                                                # => tree.body is list of top-level statements
-print(f"Function defined at line: {func_def.lineno}")
+                                               # => Index 0 is first statement
+print(f"Function defined at line: {func_def.lineno}")  # => Access line number attribute
+                                                        # => func_def.lineno stores source line
                                                # => Output: Function defined at line: 2
                                                # => Line number in source code
 
@@ -1416,31 +1682,44 @@ compiled = compile(tree, "<string>", "exec")  # => Compile AST to bytecode
                                                # => mode: "exec" for statements
                                                # => Returns code object
 namespace = {}                                # => Empty namespace for execution
+                                               # => Dictionary to store variables
 exec(compiled, namespace)                     # => Execute bytecode in namespace
                                                # => Defines 'add' function
                                                # => Executes 'result = add(2, 3)'
                                                # => Stores result = 5 in namespace
 print(namespace['result'])                    # => Access 'result' variable
                                                # => Output: 5 (2 + 3)
+                                               # => Demonstrates successful execution
 
 # AST transformation example (code modification)
-class DoubleNumbers(ast.NodeTransformer):
+class DoubleNumbers(ast.NodeTransformer):     # => Define AST transformer class
+                                               # => Inherits from NodeTransformer
     """AST transformer that doubles numeric literals"""
-    def visit_Num(self, node):
+    def visit_Num(self, node):                # => Override visit_Num method
+                                               # => Called for each Num node
         """Visit Num nodes and double their value"""
         node.n *= 2                           # => Double the numeric value
                                                # => Modifies AST in place
+                                               # => Mutates node.n attribute
         return node                            # => Return modified node
+                                               # => Required for tree reconstruction
 
-tree2 = ast.parse("x = 10 + 5")               # => Parse source code
-DoubleNumbers().visit(tree2)                  # => Transform AST (10→20, 5→10)
+tree2 = ast.parse("x = 10 + 5")               # => Parse simple expression
+                                               # => Parse source code
+DoubleNumbers().visit(tree2)                  # => Apply transformation
+                                               # => Transform AST (10→20, 5→10)
                                                # => Modified tree: x = 20 + 10
-ast.fix_missing_locations(tree2)              # => Fix line numbers after transformation
+ast.fix_missing_locations(tree2)              # => Repair line number metadata
+                                               # => Fix line numbers after transformation
                                                # => Required for compilation
-compiled2 = compile(tree2, "<string>", "exec")
-namespace2 = {}
+compiled2 = compile(tree2, "<string>", "exec")  # => Compile transformed AST
+                                                 # => Creates bytecode from modified tree
+namespace2 = {}                               # => Fresh namespace
+                                               # => Isolated execution environment
 exec(compiled2, namespace2)                   # => Execute transformed code
-print(namespace2['x'])                        # => Output: 30 (20 + 10, not 15)
+                                               # => Runs modified bytecode
+print(namespace2['x'])                        # => Access result variable
+                                               # => Output: 30 (20 + 10, not 15)
                                                # => Demonstrates AST transformation power
 
 # Practical use cases:
@@ -1463,44 +1742,63 @@ Modern Python packaging uses pyproject.toml with setuptools or poetry.
 # pyproject.toml
 [build-system]
 # => Build system metadata
+# => Defines how to build package
 requires = ["setuptools>=45", "wheel"]        # => Required build tools
+                                               # => List of dependencies needed for build
 build-backend = "setuptools.build_meta"       # => Build backend implementation
+                                               # => Python module for build process
 
 [project]
 # => Project metadata section
+# => Core package information
 name = "mypackage"                            # => Package name on PyPI
+                                               # => Must be unique globally
 version = "0.1.0"                             # => Semantic version
+                                               # => Format: major.minor.patch
 description = "My awesome package"            # => Short description
+                                               # => One-line summary
 authors = [{name = "Your Name", email = "you@example.com"}]  # => Author info
+                                                               # => Array of author objects
 dependencies = [
     "requests>=2.28.0",                       # => Required runtime dependency
+                                               # => Version constraint: >= 2.28.0
     "numpy>=1.24.0"                           # => Another runtime dependency
+                                               # => Installed automatically with package
 ]
 
 [project.optional-dependencies]
 # => Optional dependency groups
+# => Groups for specific use cases
 dev = ["pytest>=7.0", "black>=22.0"]          # => Development dependencies
+                                               # => Not required for runtime
 
 [project.scripts]
 # => CLI entry points (creates executable commands)
+# => Defines command-line tools
 mytool = "mypackage.cli:main"                 # => mytool command → mypackage.cli.main()
+                                               # => Creates executable 'mytool' in PATH
 ```
 
 ```python
 # Build distribution
 # python -m build                             # => Creates dist/mypackage-0.1.0.tar.gz (source)
                                                # => Creates dist/mypackage-0.1.0-py3-none-any.whl (wheel)
+                                               # => Builds both source and wheel distributions
 
 # Install in development mode
 # pip install -e .                            # => Editable install (changes reflect immediately)
                                                # => Links to source directory
+                                               # => No need to rebuild after code changes
 
 # Install with optional dependencies
 # pip install -e ".[dev]"                     # => Install with dev dependencies
+                                               # => Includes pytest and black
+                                               # => Use quotes to prevent shell expansion
 
 # Publish to PyPI
 # twine upload dist/*                         # => Upload both .tar.gz and .whl to PyPI
                                                # => Requires PyPI account and token
+                                               # => Makes package available via 'pip install'
 ```
 
 **Key Takeaway**: pyproject.toml provides standardized packaging configuration for modern Python projects.
@@ -1563,44 +1861,67 @@ mock_db.query.assert_called_with("SELECT * FROM users")  # => Verify call argume
 Markers tag tests for selective execution and categorization.
 
 ```python
-import pytest
+import pytest                                 # => Import pytest framework
+                                               # => Provides @pytest.mark decorators
 
 @pytest.mark.slow                             # => Mark test as 'slow'
+                                               # => Decorator applies metadata to function
                                                # => Decorator applies metadata
-def test_long_running_operation():
+def test_long_running_operation():           # => Define test function
+                                               # => pytest auto-discovers via 'test_' prefix
     """Test marked as slow"""
-    import time
-    time.sleep(2)                             # => 2 second delay
+    import time                                # => Import time module
+                                               # => Needed for sleep function
+    time.sleep(2)                             # => Sleep for 2 seconds
+                                               # => 2 second delay
+                                               # => Simulates slow operation
     assert True                               # => Always passes
+                                               # => Validates test infrastructure
 
 @pytest.mark.unit                             # => Mark test as 'unit'
-def test_fast_unit():
+                                               # => Indicates unit test category
+def test_fast_unit():                         # => Define unit test function
+                                               # => Fast execution expected
     """Unit test (fast)"""
-    assert 1 + 1 == 2                         # => Fast test (~milliseconds)
+    assert 1 + 1 == 2                         # => Fast assertion
+                                               # => Fast test (~milliseconds)
+                                               # => No I/O or external dependencies
 
 @pytest.mark.integration                      # => Mark test as 'integration'
+                                               # => First marker on function
 @pytest.mark.slow                             # => Multiple markers allowed
+                                               # => Second marker on same function
                                                # => Has BOTH 'integration' AND 'slow'
-def test_database_integration():
+def test_database_integration():              # => Define integration test
+                                               # => Combines both marker categories
     """Integration test (slow)"""
-    assert True                               # => Marked for selective execution
+    assert True                               # => Simple assertion
+                                               # => Marked for selective execution
 
 # Run only specific markers:
-# pytest -m unit                              # => Run only tests with 'unit' marker
+# pytest -m unit                              # => Command: run unit tests only
+                                               # => Run only tests with 'unit' marker
                                                # => Skips slow and integration tests
-# pytest -m "not slow"                        # => Run all tests EXCEPT slow
+                                               # => Enables fast feedback during development
+# pytest -m "not slow"                        # => Command: exclude slow tests
+                                               # => Run all tests EXCEPT slow
                                                # => Runs only fast tests
-# pytest -m "slow and integration"            # => Run tests with BOTH markers
+                                               # => Uses boolean expression
+# pytest -m "slow and integration"            # => Command: both markers required
+                                               # => Run tests with BOTH markers
                                                # => Runs test_database_integration only
+                                               # => AND logic for marker filtering
 
 # Custom markers in pytest.ini or pyproject.toml:
-# [tool:pytest]
-# markers =
-#     slow: marks tests as slow (>1 second)
-#     unit: marks tests as unit tests
-#     integration: marks tests as integration tests
+# [tool:pytest]                               # => pytest configuration section
+# markers =                                   # => Marker registration list
+#     slow: marks tests as slow (>1 second)  # => Define 'slow' marker with description
+                                               # => Documents marker purpose for team
+#     unit: marks tests as unit tests         # => Define 'unit' marker
+#     integration: marks tests as integration tests  # => Define 'integration' marker
 # => Declares markers to avoid warnings
 # => Documents marker purpose
+# => Enables IDE/editor autocomplete
 ```
 
 **Key Takeaway**: Markers enable test categorization and selective execution for faster development workflows.
@@ -1614,56 +1935,82 @@ Implement singleton using module-level instance or metaclass.
 ```python
 # Approach 1: Module-level instance (simplest, most Pythonic)
 # database.py
-class _Database:
+class _Database:                              # => Define private class
+                                               # => Leading underscore indicates internal
     """Private database class"""
-    def __init__(self):
-        self.connection = "DB_CONNECTION"     # => Initialize once on import
+    def __init__(self):                       # => Constructor
+                                               # => Called once on module import
+        self.connection = "DB_CONNECTION"     # => Initialize connection
+                                               # => Initialize once on import
 
-database = _Database()                        # => Single instance created on module import
+database = _Database()                        # => Create single instance
+                                               # => Single instance created on module import
                                                # => Module imported once per Python process
                                                # => Subsequent imports reuse cached module
 
 # Usage: from database import database
 # => All imports get same 'database' object
 # => Python's module system provides singleton behavior
+# => Simplest and most Pythonic approach
 
 # Approach 2: __new__ method (explicit singleton)
-class Singleton:
+class Singleton:                              # => Define singleton class
+                                               # => Uses __new__ for instance control
     """Singleton using __new__"""
     _instance = None                          # => Class variable (shared)
+                                               # => Shared across all instances
 
-    def __new__(cls):
+    def __new__(cls):                         # => Override instance creation
+                                               # => Called before __init__
         """Control instance creation"""
-        if cls._instance is None:             # => First instantiation
+        if cls._instance is None:             # => First instantiation check
+                                               # => First instantiation
             cls._instance = super().__new__(cls)  # => Create instance once
-                                               # => Stores in class variable
+                                                   # => Create instance once
+                                                   # => Stores in class variable
         return cls._instance                   # => Return cached instance
+                                               # => Return cached instance
                                                # => Same object every time
 
-s1 = Singleton()                              # => First call creates instance
-s2 = Singleton()                              # => Second call returns cached
-print(s1 is s2)                               # => Output: True (same object)
+s1 = Singleton()                              # => First instantiation
+                                               # => First call creates instance
+s2 = Singleton()                              # => Second instantiation
+                                               # => Second call returns cached
+print(s1 is s2)                               # => Test object identity
+                                               # => Output: True (same object)
 
 # Approach 3: Metaclass (most flexible)
-class SingletonMeta(type):
+class SingletonMeta(type):                    # => Define singleton metaclass
+                                               # => Inherits from type
     """Metaclass implementing singleton pattern"""
     _instances = {}                           # => Cache for all singleton classes
+                                               # => Dictionary maps class to instance
 
-    def __call__(cls, *args, **kwargs):
+    def __call__(cls, *args, **kwargs):       # => Override class instantiation
+                                               # => Called when class called as function
         """Called when class is instantiated"""
-        if cls not in cls._instances:         # => First instantiation
-            cls._instances[cls] = super().__call__(*args, **kwargs)
+        if cls not in cls._instances:         # => First instantiation check
+                                               # => First instantiation
+            cls._instances[cls] = super().__call__(*args, **kwargs)  # => Create and cache instance
+                                                                      # => Calls __new__ then __init__
             # => Create instance with __new__ and __init__
             # => Store in metaclass cache
         return cls._instances[cls]             # => Return cached instance
+                                               # => Return cached instance
+                                               # => Same for all calls with this class
 
-class Logger(metaclass=SingletonMeta):
+class Logger(metaclass=SingletonMeta):        # => Apply singleton metaclass
+                                               # => Uses SingletonMeta for instance control
     """Logger using singleton metaclass"""
     pass                                      # => Singleton behavior from metaclass
+                                               # => No special implementation needed
 
-log1 = Logger()                               # => Creates instance
-log2 = Logger()                               # => Returns cached instance
-print(log1 is log2)                           # => Output: True
+log1 = Logger()                               # => Create logger instance
+                                               # => Creates instance
+log2 = Logger()                               # => Create second logger
+                                               # => Returns cached instance
+print(log1 is log2)                           # => Test identity
+                                               # => Output: True
 ```
 
 **Key Takeaway**: Python offers multiple singleton implementations; module-level instance is most Pythonic.
@@ -1759,24 +2106,35 @@ Embrace Python's EAFP (Easier to Ask Forgiveness than Permission) and duck typin
 ```python
 # EAFP: Easier to Ask for Forgiveness than Permission
 # Pythonic approach: Try operation, catch exceptions
-def process_file(filename):
+# Philosophy: Optimistic execution, handle failures as exceptions
+def process_file(filename):                   # => Define file processing function
+                                               # => Demonstrates EAFP pattern
     """EAFP approach (Pythonic)"""
-    try:
+    try:                                      # => Try block (optimistic execution)
+                                               # => Assume operation succeeds
         with open(filename) as f:             # => Try opening file directly
                                                # => No pre-checks (existence, permissions)
                                                # => Assumes success (optimistic)
+                                               # => Context manager handles cleanup
             return f.read()                    # => Read entire file contents
                                                # => Return as string
+                                               # => Returns on success
     except FileNotFoundError:                 # => Catch specific exception type
                                                # => Only if file doesn't exist
+                                               # => Specific error handling
         return "File not found"                # => Graceful error handling
                                                # => Return error message
+                                               # => User-friendly message
     except PermissionError:                   # => Catch permission denied
                                                # => Only if no read access
+                                               # => OS-level permission issue
         return "Permission denied"             # => Return different error message
+                                               # => Specific to permission issue
     except IOError as e:                      # => Catch other I/O errors
                                                # => Disk full, network issues, etc.
+                                               # => Catchall for other I/O problems
         return f"I/O error: {e}"               # => Return detailed error
+                                               # => Includes exception details
 
 # LBYL (Look Before You Leap) - less Pythonic, NOT recommended
 # import os
@@ -1794,33 +2152,46 @@ def process_file(filename):
 
 # Duck typing: "If it walks like a duck and quacks like a duck, it's a duck"
 # Accept any object with required behavior (no type checking)
-def print_items(items):
+# Philosophy: Interface over inheritance
+def print_items(items):                       # => Define generic function
+                                               # => No type restrictions
     """Accept any iterable (list, tuple, set, generator, custom class)"""
-    for item in items:                        # => Requires __iter__() method only
+    for item in items:                        # => Iterate over items
+                                               # => Requires __iter__() method only
                                                # => Duck typing: assumes iterable
                                                # => No isinstance() check
                                                # => No type annotation
         print(item)                            # => Output: item value
                                                # => Works for ANY object with __iter__
+                                               # => Polymorphic behavior
 
-print_items([1, 2, 3])                        # => Works: list has __iter__
+print_items([1, 2, 3])                        # => Pass list
+                                               # => Works: list has __iter__
                                                # => Output: 1
                                                # => Output: 2
                                                # => Output: 3
-print_items((1, 2, 3))                        # => Works: tuple has __iter__
+print_items((1, 2, 3))                        # => Pass tuple
+                                               # => Works: tuple has __iter__
                                                # => Output: 1, 2, 3
-print_items({1, 2, 3})                        # => Works: set has __iter__
+print_items({1, 2, 3})                        # => Pass set
+                                               # => Works: set has __iter__
                                                # => Output: 1, 2, 3 (unordered)
-print_items(x for x in range(3))              # => Works: generator has __iter__
+print_items(x for x in range(3))              # => Pass generator expression
+                                               # => Works: generator has __iter__
                                                # => Output: 0, 1, 2
-print_items("abc")                            # => Works: str has __iter__
+print_items("abc")                            # => Pass string
+                                               # => Works: str has __iter__
                                                # => Output: a, b, c
 
 # Custom class with __iter__ also works
-class MyIterable:
-    def __iter__(self):
+class MyIterable:                             # => Define custom iterable class
+                                               # => Implements iterator protocol
+    def __iter__(self):                       # => Implement __iter__ method
+                                               # => Required for iteration
         return iter([10, 20, 30])             # => Return iterator
-print_items(MyIterable())                     # => Works: has __iter__
+                                               # => Wraps list with iter()
+print_items(MyIterable())                     # => Pass custom class instance
+                                               # => Works: has __iter__
                                                # => Output: 10, 20, 30
 
 # Type checking reduces flexibility (anti-pattern)
@@ -1833,22 +2204,31 @@ print_items(MyIterable())                     # => Works: has __iter__
                                                # => Not Pythonic (rigid type requirements)
 
 # Better: Use protocols or abstract types for flexible type hints
-from typing import Iterable
-def print_items_typed(items: Iterable):       # => Generic iterable type
+from typing import Iterable                   # => Import Iterable type
+                                               # => Generic abstract type for iteration
+def print_items_typed(items: Iterable):       # => Define typed function
+                                               # => Generic iterable type
                                                # => Accepts ANY object with __iter__
                                                # => Type checker validates __iter__ presence
                                                # => Static type safety + runtime flexibility
-    for item in items:
+    for item in items:                        # => Iterate over items
+                                               # => Same runtime behavior as untyped
         print(item)                            # => Same behavior as duck typing
                                                # => Plus IDE autocomplete support
                                                # => Plus mypy validation
 
-print_items_typed([1, 2, 3])                  # => mypy: ✓ list is Iterable
-print_items_typed((1, 2, 3))                  # => mypy: ✓ tuple is Iterable
-print_items_typed({1, 2, 3})                  # => mypy: ✓ set is Iterable
-print_items_typed("abc")                      # => mypy: ✓ str is Iterable
-# print_items_typed(123)                      # => mypy error: int is not Iterable
+print_items_typed([1, 2, 3])                  # => Pass list
+                                               # => mypy: ✓ list is Iterable
+print_items_typed((1, 2, 3))                  # => Pass tuple
+                                               # => mypy: ✓ tuple is Iterable
+print_items_typed({1, 2, 3})                  # => Pass set
+                                               # => mypy: ✓ set is Iterable
+print_items_typed("abc")                      # => Pass string
+                                               # => mypy: ✓ str is Iterable
+# print_items_typed(123)                      # => Would pass int
+                                               # => mypy error: int is not Iterable
                                                # => Static type checking catches error
+                                               # => Compile-time vs runtime error
 
 # EAFP + Duck typing = Pythonic code
 # => Optimistic: Try operations, catch exceptions

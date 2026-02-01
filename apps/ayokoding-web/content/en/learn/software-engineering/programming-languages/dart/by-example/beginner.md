@@ -243,46 +243,72 @@ Conditional statements execute code blocks based on boolean conditions.
 ```dart
 void main() {
   double wealth = 50000000.0;           // => wealth stores 50 million
+                                        // => wealth is 50000000.0 (type: double)
   const double nisab = 85000000.0;      // => nisab is compile-time constant
-                                        // => Minimum Zakat threshold
+                                        // => Minimum Zakat threshold (85 million)
+                                        // => const means value fixed at compile time
 
   // Simple if statement
   if (wealth >= nisab) {                // => Condition evaluates to false
+                                        // => 50000000.0 >= 85000000.0 is false
+                                        // => Block skipped, execution jumps to line after }
     print('Zakat is obligatory');       // => Block not executed
   }                                     // => Execution continues after if
+                                        // => No else block, so continue to next statement
 
   // If-else statement
   if (wealth >= nisab) {                // => Condition: false
+                                        // => Same condition as above (50M < 85M)
     double zakat = wealth * 0.025;      // => Not executed
-    print('Pay Zakat: Rp$zakat');
+                                        // => Would calculate 2.5% if condition true
+    print('Pay Zakat: Rp$zakat');       // => Not executed
   } else {                              // => else block executes
+                                        // => Runs when if condition is false
     double shortfall = nisab - wealth;  // => shortfall stores 35000000.0
-    print('Below nisab by: Rp$shortfall');  // => Output: Below nisab by: Rp35000000.0
-  }
+                                        // => 85000000.0 - 50000000.0 = 35000000.0
+    print('Below nisab by: Rp$shortfall');
+                                        // => Output: Below nisab by: Rp35000000.0
+  }                                     // => End of if-else statement
 
   // If-else if-else chain
   String donorType;                     // => Variable to store result
+                                        // => donorType declared, not initialized yet (type: String)
   int annualDonation = 15000000;        // => annualDonation stores 15 million
+                                        // => annualDonation is 15000000 (type: int)
 
   if (annualDonation >= 50000000) {     // => First condition: false
-    donorType = 'Platinum';
-  } else if (annualDonation >= 20000000) {  // => Second condition: false
-    donorType = 'Gold';
-  } else if (annualDonation >= 10000000) {  // => Third condition: true
+                                        // => 15000000 >= 50000000 is false
+                                        // => Skip to next else if
+    donorType = 'Platinum';             // => Not executed
+  } else if (annualDonation >= 20000000) {
+                                        // => Second condition: false
+                                        // => 15000000 >= 20000000 is false
+                                        // => Skip to next else if
+    donorType = 'Gold';                 // => Not executed
+  } else if (annualDonation >= 10000000) {
+                                        // => Third condition: true
+                                        // => 15000000 >= 10000000 is true
+                                        // => Execute this block
     donorType = 'Silver';               // => donorType assigned 'Silver'
+                                        // => donorType now initialized with value
   } else {                              // => Not reached
-    donorType = 'Bronze';
-  }
+                                        // => Only executes if all conditions false
+    donorType = 'Bronze';               // => Not executed
+  }                                     // => End of if-else if-else chain
 
   print('Donor status: $donorType');    // => Output: Donor status: Silver
+                                        // => String interpolation displays donorType value
 
   // Ternary operator (conditional expression)
   String status = wealth >= nisab ? 'Obligatory' : 'Optional';
                                         // => Inline if-else expression
+                                        // => condition ? trueValue : falseValue
+                                        // => wealth >= nisab is false
                                         // => status stores 'Optional' (condition false)
 
   print('Zakat status: $status');       // => Output: Zakat status: Optional
-}
+                                        // => String interpolation displays status value
+}                                       // => End of main function
 ```
 
 **Key Takeaway**: Use `if-else` for branching logic. Conditions must evaluate to `bool`. Ternary operator `condition ? trueValue : falseValue` for simple assignments.
@@ -392,70 +418,123 @@ While loops execute code repeatedly while condition remains true.
 void main() {
   // While loop - checks condition before executing
   double balance = 10000000.0;          // => Initial balance: 10 million
+                                        // => balance stores 10000000.0 (type: double)
   int withdrawals = 0;                  // => Counter for withdrawals
+                                        // => withdrawals starts at 0 (type: int)
 
   print('Sadaqah withdrawals:');        // => Header
+                                        // => Output: Sadaqah withdrawals:
 
-  while (balance >= 500000.0) {         // => Check condition first
+  while (balance >= 500000.0) {         // => Check condition first (BEFORE executing block)
                                         // => Continues while balance >= 500000
+                                        // => Iteration 1: 10000000.0 >= 500000.0 = true
     double withdrawal = 500000.0;       // => Fixed withdrawal amount
+                                        // => withdrawal stores 500000.0 each iteration
     balance -= withdrawal;              // => Subtract from balance
                                         // => balance decreases each iteration
+                                        // => Iteration 1: 10000000.0 - 500000.0 = 9500000.0
     withdrawals++;                      // => Increment counter
+                                        // => Iteration 1: withdrawals becomes 1
     print('Withdrawal $withdrawals: Rp$withdrawal, Remaining: Rp$balance');
-  }                                     // => Loop exits when condition false
+                                        // => Output with current values
+                                        // => Iteration 1: Withdrawal 1: Rp500000.0, Remaining: Rp9500000.0
+  }                                     // => Loop exits when condition false (balance < 500000)
+                                        // => After 20 iterations, balance is 0.0
 
-  print('Total withdrawals: $withdrawals\n');  // => Output: 20 withdrawals
+  print('Total withdrawals: $withdrawals\n');
+                                        // => Output: Total withdrawals: 20
+                                        // => \n adds blank line
 
   // Do-while loop - executes first, then checks condition
   double donation = 0.0;                // => Start at zero
+                                        // => donation stores 0.0 (type: double)
   int attempts = 0;                     // => Counter
+                                        // => attempts starts at 0 (type: int)
 
   print('Donation collection:');        // => Header
+                                        // => Output: Donation collection:
 
-  do {                                  // => Execute block first
+  do {                                  // => Execute block first (BEFORE checking condition)
+                                        // => Guaranteed to run at least once
     donation += 100000.0;               // => Add 100000 to donation
+                                        // => Iteration 1: 0.0 + 100000.0 = 100000.0
+                                        // => Iteration 2: 100000.0 + 100000.0 = 200000.0
     attempts++;                         // => Increment counter
+                                        // => Iteration 1: attempts becomes 1
     print('Attempt $attempts: Collected Rp$donation');
+                                        // => Output current state
+                                        // => Iteration 1: Attempt 1: Collected Rp100000.0
   } while (donation < 500000.0);        // => Check condition after execution
                                         // => Loops 5 times total
+                                        // => Loop exits when donation >= 500000.0
 
-  print('Target reached after $attempts attempts\n');  // => Output: 5 attempts
+  print('Target reached after $attempts attempts\n');
+                                        // => Output: Target reached after 5 attempts
+                                        // => \n adds blank line
 
   // While loop with break
   int daysUntilRamadan = 10;            // => Countdown starts at 10
+                                        // => daysUntilRamadan stores 10 (type: int)
 
   print('Ramadan countdown:');          // => Header
+                                        // => Output: Ramadan countdown:
 
   while (true) {                        // => Infinite loop condition
+                                        // => true is always true - requires break to exit
     if (daysUntilRamadan == 0) {        // => Check if countdown reached zero
+                                        // => Evaluates to false for first 10 iterations
       print('Ramadan Mubarak!');        // => Final message
+                                        // => Executed when daysUntilRamadan == 0
       break;                            // => Exit loop immediately
-    }
-    print('$daysUntilRamadan days remaining');  // => Show days left
+                                        // => Jumps to first statement after while loop
+    }                                   // => End if block
+    print('$daysUntilRamadan days remaining');
+                                        // => Show days left
+                                        // => Iteration 1: 10 days remaining
     daysUntilRamadan--;                 // => Decrement counter
-  }                                     // => Loop exits via break
+                                        // => Iteration 1: daysUntilRamadan becomes 9
+  }                                     // => Loop exits via break (when counter reaches 0)
+                                        // => Execution continues here after break
 
   // While loop with continue
   int donors = 0;                       // => Counter
+                                        // => donors starts at 0 (type: int)
   int invalidCount = 0;                 // => Track invalid entries
+                                        // => invalidCount starts at 0 (type: int)
 
   print('\nProcessing donors:');        // => Header
+                                        // => \n adds blank line before output
+                                        // => Output: Processing donors:
 
-  while (donors < 5) {                  // => Process 5 valid donors
-    donors++;                           // => Increment donor number
+  while (donors < 5) {                  // => Process 5 donor entries
+                                        // => Loop while donors < 5
+    donors++;                           // => Increment donor number first
+                                        // => Iteration 1: donors becomes 1
 
     if (donors == 2 || donors == 4) {   // => Check for invalid donor numbers
+                                        // => Evaluates to true when donors is 2 or 4
+                                        // => Iteration 2: donors == 2 is true
       invalidCount++;                   // => Count invalid entry
+                                        // => Iteration 2: invalidCount becomes 1
       print('Donor $donors: Invalid (skipped)');
+                                        // => Output invalid donor
+                                        // => Iteration 2: Donor 2: Invalid (skipped)
       continue;                         // => Skip rest of iteration
-    }
+                                        // => Jumps to while condition, skips print below
+    }                                   // => End if block
 
-    print('Donor $donors: Processed successfully');  // => Process valid donor
+    print('Donor $donors: Processed successfully');
+                                        // => Process valid donor
+                                        // => Iteration 1: Donor 1: Processed successfully
+                                        // => Iteration 3: Donor 3: Processed successfully
   }                                     // => Loop continues
+                                        // => Exits when donors >= 5
 
-  print('Valid donors: ${donors - invalidCount}');  // => Output: 3 valid
-}
+  print('Valid donors: ${donors - invalidCount}');
+                                        // => donors = 5, invalidCount = 2
+                                        // => 5 - 2 = 3
+                                        // => Output: Valid donors: 3
+}                                       // => End of main function
 ```
 
 **Key Takeaway**: While loops check condition before execution. Do-while loops execute at least once. Use `break` to exit early, `continue` to skip iteration.
@@ -503,105 +582,151 @@ Switch statements match a value against multiple cases for multi-way branching.
 ```dart
 void main() {
   // Basic switch statement
-  String paymentType = 'Cash';          // => paymentType stores 'Cash'
+  String paymentType = 'Cash';          // => paymentType stores 'Cash' (type: String)
+                                        // => Variable for payment method
 
   switch (paymentType) {                // => Match paymentType against cases
-    case 'Cash':                        // => This case matches
+                                        // => Control jumps to matching case
+    case 'Cash':                        // => This case matches ('Cash' == 'Cash')
+                                        // => Execute statements in this block
       print('Cash payment received');   // => Output: Cash payment received
       print('No processing fee');       // => Second statement in case
+                                        // => Output: No processing fee
       break;                            // => Exit switch (required!)
+                                        // => Without break, execution falls through
 
     case 'Card':                        // => Not matched, skipped
-      print('Card payment received');
-      print('1% processing fee');
-      break;
+                                        // => paymentType is not 'Card'
+      print('Card payment received');   // => Not executed
+      print('1% processing fee');       // => Not executed
+      break;                            // => Exit point if this case matched
 
     case 'Transfer':                    // => Not matched, skipped
-      print('Bank transfer received');
-      print('No processing fee');
-      break;
+                                        // => paymentType is not 'Transfer'
+      print('Bank transfer received');  // => Not executed
+      print('No processing fee');       // => Not executed
+      break;                            // => Exit point if this case matched
 
     default:                            // => Executes if no case matches
-      print('Unknown payment type');
-      break;
-  }
+                                        // => Safety net for unexpected values
+      print('Unknown payment type');    // => Not executed (Cash matched)
+      break;                            // => Exit point for default case
+  }                                     // => End of switch statement
 
   // Switch with fall-through (multiple cases)
   int zakatMonth = 3;                   // => Month 3 (Ramadan)
+                                        // => zakatMonth stores 3 (type: int)
 
-  switch (zakatMonth) {                 // => Match zakatMonth
-    case 1:                             // => Not matched
-    case 2:                             // => Not matched
-    case 3:                             // => Matched! (Ramadan month)
+  switch (zakatMonth) {                 // => Match zakatMonth against cases
+                                        // => Evaluates to 3
+    case 1:                             // => Not matched (3 != 1)
+                                        // => Falls through to next case
+    case 2:                             // => Not matched (3 != 2)
+                                        // => Falls through to next case
+    case 3:                             // => Matched! (3 == 3)
+                                        // => Execute statements for cases 1, 2, or 3
       print('Ramadan - Zakat collection peak');
                                         // => Output: Ramadan - Zakat collection peak
+                                        // => Single implementation for 3 cases
       break;                            // => Exit switch
+                                        // => Execution continues after switch
 
-    case 9:                             // => Not matched
-    case 10:                            // => Not matched
+    case 9:                             // => Not matched (3 != 9)
+                                        // => Falls through to next case
+    case 10:                            // => Not matched (3 != 10)
+                                        // => Would execute next statement if matched
       print('Shawwal/Dhul Qadah - Normal collection');
-      break;
+                                        // => Not executed
+      break;                            // => Exit point if matched
 
-    default:
-      print('Regular month');
-      break;
-  }
+    default:                            // => Default case
+                                        // => Executes if zakatMonth not 1,2,3,9,10
+      print('Regular month');           // => Not executed (case 3 matched)
+      break;                            // => Exit point for default
+  }                                     // => End of second switch
 
   // Switch for categorization
   double donationAmount = 7500000.0;    // => donationAmount stores 7.5 million
-  String category;                      // => Variable to store result
+                                        // => donationAmount is 7500000.0 (type: double)
+  String category;                      // => Variable to store result (type: String)
+                                        // => Uninitialized, will be assigned in switch
 
   // Convert amount to category code
-  int level = (donationAmount ~/ 5000000).toInt();  // => Divide by 5M, truncate
-                                                     // => level stores 1
+  int level = (donationAmount ~/ 5000000).toInt();
+                                        // => Integer division: 7500000 ~/ 5000000 = 1
+                                        // => .toInt() ensures int type
+                                        // => level stores 1
 
-  switch (level) {                      // => Match level value
-    case 0:                             // => Not matched
-      category = 'Bronze (< 5M)';
-      break;
+  switch (level) {                      // => Match level value (1)
+                                        // => Switch on integer level
+    case 0:                             // => Not matched (1 != 0)
+                                        // => For donations < 5M
+      category = 'Bronze (< 5M)';       // => Not executed
+      break;                            // => Exit point if matched
 
-    case 1:                             // => Matched!
-      category = 'Silver (5M - 10M)';   // => category assigned
+    case 1:                             // => Matched! (1 == 1)
+                                        // => For donations 5M - 10M
+      category = 'Silver (5M - 10M)';   // => category assigned 'Silver (5M - 10M)'
+                                        // => category now initialized with value
       break;                            // => Exit switch
+                                        // => Skip remaining cases
 
-    case 2:
-      category = 'Gold (10M - 15M)';
-      break;
+    case 2:                             // => Not matched (1 != 2)
+                                        // => For donations 10M - 15M
+      category = 'Gold (10M - 15M)';    // => Not executed
+      break;                            // => Exit point if matched
 
-    default:
-      category = 'Platinum (> 15M)';
-      break;
-  }
+    default:                            // => Default case
+                                        // => For donations >= 15M
+      category = 'Platinum (> 15M)';    // => Not executed (case 1 matched)
+      break;                            // => Exit point for default
+  }                                     // => End of third switch
 
   print('Donor category: $category');   // => Output: Donor category: Silver (5M - 10M)
+                                        // => String interpolation displays category
 
   // Switch with enum-like string values
-  String zakatType = 'Wealth';          // => zakatType stores 'Wealth'
-  double rate;                          // => Variable for rate
+  String zakatType = 'Wealth';          // => zakatType stores 'Wealth' (type: String)
+                                        // => Variable for Zakat category
+  double rate;                          // => Variable for rate (type: double)
+                                        // => Uninitialized, assigned in switch
 
-  switch (zakatType) {                  // => Match zakatType
-    case 'Wealth':                      // => Matched!
+  switch (zakatType) {                  // => Match zakatType ('Wealth')
+                                        // => Switch on string value
+    case 'Wealth':                      // => Matched! ('Wealth' == 'Wealth')
+                                        // => Zakat on savings/investments
       rate = 0.025;                     // => 2.5% for wealth Zakat
+                                        // => rate stores 0.025 (type: double)
       print('Zakat al-Mal (Wealth): ${rate * 100}%');
+                                        // => 0.025 * 100 = 2.5
                                         // => Output: Zakat al-Mal (Wealth): 2.5%
-      break;
+      break;                            // => Exit switch
+                                        // => Skip remaining cases
 
-    case 'Agriculture':                 // => Not matched
+    case 'Agriculture':                 // => Not matched ('Wealth' != 'Agriculture')
+                                        // => Zakat on crops
       rate = 0.10;                      // => 10% for irrigated crops
+                                        // => Not executed
       print('Zakat al-Ziraah (Agriculture): ${rate * 100}%');
-      break;
+                                        // => Not executed
+      break;                            // => Exit point if matched
 
-    case 'Gold':                        // => Not matched
+    case 'Gold':                        // => Not matched ('Wealth' != 'Gold')
+                                        // => Zakat on precious metals
       rate = 0.025;                     // => 2.5% for gold/silver
+                                        // => Not executed
       print('Zakat on Gold/Silver: ${rate * 100}%');
-      break;
+                                        // => Not executed
+      break;                            // => Exit point if matched
 
-    default:
-      rate = 0.0;
-      print('Unknown Zakat type');
-      break;
-  }
-}
+    default:                            // => Default case
+                                        // => Executes if zakatType not recognized
+      rate = 0.0;                       // => 0% for unknown types
+                                        // => Not executed ('Wealth' matched)
+      print('Unknown Zakat type');      // => Not executed
+      break;                            // => Exit point for default
+  }                                     // => End of fourth switch
+}                                       // => End of main function
 ```
 
 **Key Takeaway**: Switch matches value against cases. Each case needs `break` to prevent fall-through. Multiple cases can share implementation. Use `default` for unmatched values.
@@ -1482,124 +1607,186 @@ Enums define fixed sets of named constant values for type safety.
 ```dart
 // Basic enum
 enum ZakatType {                        // => Enum declaration
+                                        // => Creates new type with fixed constants
   wealth,                               // => Enum value (constant)
+                                        // => Index 0
   agriculture,                          // => Each value has index (0, 1, 2...)
-  gold,
-  livestock,
+                                        // => Index 1
+  gold,                                 // => Index 2
+  livestock,                            // => Index 3
 }                                       // => Enum ends
+                                        // => Creates 4 constant values
 
 // Enum with enhanced features (Dart 2.17+)
 enum DonorTier {                        // => Enhanced enum
+                                        // => Can have fields, methods, constructors
   bronze(0, 5000000),                   // => Constructor call
+                                        // => Creates bronze with minAmount=0, maxAmount=5M
   silver(5000000, 10000000),            // => Each value has associated data
-  gold(10000000, 50000000),
+                                        // => Creates silver with minAmount=5M, maxAmount=10M
+  gold(10000000, 50000000),             // => Creates gold with minAmount=10M, maxAmount=50M
   platinum(50000000, double.infinity);  // => infinity for upper bound
+                                        // => Creates platinum with minAmount=50M, maxAmount=∞
 
   const DonorTier(this.minAmount, this.maxAmount);
                                         // => Const constructor
                                         // => Associates data with each value
+                                        // => this.minAmount assigns parameter to field
 
   final double minAmount;               // => Field for minimum amount
+                                        // => final means can't be changed after creation
   final double maxAmount;               // => Field for maximum amount
+                                        // => Each enum value has these fields
 
   // Method on enum
   bool inRange(double amount) {         // => Instance method
+                                        // => Can be called on any DonorTier value
     return amount >= minAmount && amount < maxAmount;
                                         // => Check if amount fits tier
-  }
+                                        // => Returns true if amount in range
+  }                                     // => End of inRange method
 
   // Static method
   static DonorTier fromAmount(double amount) {
                                         // => Static method (class-level)
+                                        // => Called on enum type, not instance
     for (var tier in DonorTier.values) {  // => Iterate all enum values
+                                          // => DonorTier.values = [bronze, silver, gold, platinum]
       if (tier.inRange(amount)) {       // => Check each tier
+                                        // => Call inRange method on current tier
         return tier;                    // => Return matching tier
-      }
-    }
+                                        // => Exit function early if match found
+      }                                 // => End if
+    }                                   // => End for loop
     return DonorTier.platinum;          // => Default if none match
-  }
-}
+                                        // => Fallback for amounts > all tiers
+  }                                     // => End of fromAmount method
+}                                       // => End of DonorTier enum
 
 void main() {
   // Use enum values
-  ZakatType currentType = ZakatType.wealth;  // => Assign enum value
-                                             // => Type-safe constant
+  ZakatType currentType = ZakatType.wealth;
+                                        // => Assign enum value
+                                        // => currentType stores ZakatType.wealth
+                                        // => Type-safe constant (can't assign invalid value)
 
   print('Zakat type: $currentType');    // => Output: Zakat type: ZakatType.wealth
+                                        // => toString() includes enum name
   print('Name: ${currentType.name}');   // => Output: Name: wealth
+                                        // => .name property returns string without enum type
   print('Index: ${currentType.index}'); // => Output: Index: 0
+                                        // => .index property returns position in enum
 
   // Switch on enum
   double rate;                          // => Variable for rate
+                                        // => Uninitialized, assigned in switch (type: double)
   switch (currentType) {                // => Switch on enum value
+                                        // => Match currentType (ZakatType.wealth)
     case ZakatType.wealth:              // => Match wealth value
+                                        // => This case matches (wealth == wealth)
       rate = 0.025;                     // => 2.5%
-      break;
-    case ZakatType.agriculture:
+                                        // => rate stores 0.025
+      break;                            // => Exit switch
+    case ZakatType.agriculture:         // => Not matched, skipped
       rate = 0.10;                      // => 10%
-      break;
-    case ZakatType.gold:
-      rate = 0.025;
-      break;
-    case ZakatType.livestock:
-      rate = 0.025;
-      break;
+                                        // => Not executed
+      break;                            // => Exit point if matched
+    case ZakatType.gold:                // => Not matched, skipped
+      rate = 0.025;                     // => Not executed
+      break;                            // => Exit point if matched
+    case ZakatType.livestock:           // => Not matched, skipped
+      rate = 0.025;                     // => Not executed
+      break;                            // => Exit point if matched
   }                                     // => Switch ends
+                                        // => rate is now 0.025
 
   print('Rate: ${rate * 100}%');        // => Output: Rate: 2.5%
+                                        // => 0.025 * 100 = 2.5
 
   // Access all enum values
   print('All Zakat types:');            // => Header
+                                        // => Output: All Zakat types:
   for (ZakatType type in ZakatType.values) {
                                         // => values contains all enum constants
+                                        // => ZakatType.values = [wealth, agriculture, gold, livestock]
                                         // => Iterate each value
     print('- ${type.name}');            // => Output name
-  }                                     // => 4 iterations
+                                        // => Iteration 1: - wealth
+                                        // => Iteration 2: - agriculture
+  }                                     // => 4 iterations total
+                                        // => Loop completes after all values
 
   // Enhanced enum with data
   DonorTier tier = DonorTier.gold;      // => Assign enhanced enum value
+                                        // => tier stores DonorTier.gold (with fields 10M-50M)
 
   print('Tier: ${tier.name}');          // => Output: Tier: gold
+                                        // => .name returns 'gold' string
   print('Min: Rp${tier.minAmount}');    // => Output: Min: Rp10000000.0
+                                        // => Access minAmount field from gold enum
   print('Max: Rp${tier.maxAmount}');    // => Output: Max: Rp50000000.0
+                                        // => Access maxAmount field from gold enum
 
   // Call enum method
   double amount = 15000000.0;           // => Test amount: 15M
+                                        // => amount stores 15000000.0 (type: double)
   bool fits = tier.inRange(amount);     // => Check if amount in gold tier
+                                        // => Calls inRange method on gold enum
+                                        // => 15M >= 10M && 15M < 50M = true
                                         // => fits stores true (10M-50M)
   print('$amount in ${tier.name}: $fits');
                                         // => Output: 15000000.0 in gold: true
+                                        // => String interpolation with multiple values
 
   // Use static method
   DonorTier auto = DonorTier.fromAmount(7500000.0);
                                         // => Find tier for 7.5M
+                                        // => Calls static method on DonorTier type
+                                        // => Loops through tiers, checks inRange
+                                        // => silver.inRange(7500000.0) returns true
                                         // => auto stores DonorTier.silver
   print('7.5M tier: ${auto.name}');     // => Output: 7.5M tier: silver
+                                        // => .name returns 'silver' string
 
   // Iterate enhanced enum
   print('All tiers:');                  // => Header
+                                        // => Output: All tiers:
   for (var t in DonorTier.values) {     // => Iterate all tiers
+                                        // => DonorTier.values = [bronze, silver, gold, platinum]
+                                        // => var infers type DonorTier
     print('${t.name}: Rp${t.minAmount} - Rp${t.maxAmount}');
-  }                                     // => 4 iterations
+                                        // => Output tier range
+                                        // => Iteration 1: bronze: Rp0.0 - Rp5000000.0
+                                        // => Iteration 2: silver: Rp5000000.0 - Rp10000000.0
+  }                                     // => 4 iterations total
+                                        // => Loop completes after all tiers
 
   // Enum comparison
-  bool isSameTier = tier == DonorTier.gold;  // => Enum equality
-                                             // => isSameTier stores true
+  bool isSameTier = tier == DonorTier.gold;
+                                        // => Enum equality
+                                        // => tier is DonorTier.gold
+                                        // => DonorTier.gold == DonorTier.gold is true
+                                        // => isSameTier stores true
   print('Is gold tier: $isSameTier');   // => Output: Is gold tier: true
+                                        // => String interpolation with bool value
 
   // Enum in collections
   Map<DonorTier, int> tierCounts = {    // => Map with enum keys
-    DonorTier.bronze: 50,
-    DonorTier.silver: 30,
-    DonorTier.gold: 15,
-    DonorTier.platinum: 5,
-  };
+                                        // => Key type: DonorTier, Value type: int
+    DonorTier.bronze: 50,               // => bronze tier has 50 donors
+    DonorTier.silver: 30,               // => silver tier has 30 donors
+    DonorTier.gold: 15,                 // => gold tier has 15 donors
+    DonorTier.platinum: 5,              // => platinum tier has 5 donors
+  };                                    // => Map literal creates Map<DonorTier, int>
 
   int goldCount = tierCounts[DonorTier.gold] ?? 0;
                                         // => Lookup by enum key
+                                        // => tierCounts[DonorTier.gold] returns 15
+                                        // => ?? 0 provides default if null (not needed here)
                                         // => goldCount stores 15
   print('Gold donors: $goldCount');     // => Output: Gold donors: 15
-}
+                                        // => String interpolation with int value
+}                                       // => End of main function
 ```
 
 **Key Takeaway**: Enums provide type-safe constants. Access via `EnumName.value`. Enhanced enums can have fields, methods, and constructors. Use `.values` for all enum constants. `.name` and `.index` provide metadata.

@@ -357,78 +357,55 @@ import (
 func main() {
     // Semaphore - allow 3 concurrent operations
     sem := make(chan struct{}, 3)               // => Capacity 3 = 3 concurrent slots
-                                                // => Buffered channel acts as counting semaphore
-                                                // => struct{} uses zero memory per token
-    var wg sync.WaitGroup                       // => WaitGroup to wait for all goroutines
-                                                // => Counter starts at 0
+                                                // => Buffered channel as counting semaphore
+    var wg sync.WaitGroup
 
-    for i := 1; i <= 10; i++ {                  // => Launch 10 goroutines total
-                                                // => i is 1,2,3...10
-        wg.Add(1)                               // => Increment counter before goroutine starts
-                                                // => Counter is now 1,2,3...10
-        go func(id int) {                       // => Spawn goroutine with operation id
-                                                // => id captured from i (avoids closure issue)
-            defer wg.Done()                     // => Decrement counter when goroutine completes
-                                                // => Always executes even if panic
+    for i := 1; i <= 10; i++ {                  // => Launch 10 goroutines
+        wg.Add(1)
+        go func(id int) {
+            defer wg.Done()
 
-            sem <- struct{}{}                   // => Acquire slot (blocks if all 3 slots full)
-                                                // => Blocks if len(sem) == 3
+            sem <- struct{}{}                   // => Acquire slot (blocks if all 3 full)
                                                 // => Only 3 goroutines can acquire simultaneously
             defer func() { <-sem }()            // => Release slot when done
-                                                // => Deferred: runs after operation completes
-                                                // => Allows waiting goroutines to proceed
 
             fmt.Printf("Operation %d running\n", id)
-                                                // => Output: Operation 1 running (one of first 3)
-                                                // => Output: Operation 2 running (one of first 3)
-                                                // => Output: Operation 3 running (one of first 3)
+                                                // => Output: Operations 1,2,3 first
                                                 // => Remaining wait for slot release
             // Simulate work
-        }(i)                                    // => Pass i as argument (prevents closure capture)
+        }(i)
     }
 
-    wg.Wait()                                   // => Block until counter reaches 0
-                                                // => Waits for all 10 goroutines to complete
-    fmt.Println("All operations complete")      // => Output: All operations complete
-                                                // => Printed after all goroutines exit
+    wg.Wait()
+    fmt.Println("All operations complete")
 }
 
 // Weighted semaphore - operations require different numbers of slots
-func weighSemaphore() {
+func weightedSemaphore() {
     sem := make(chan int, 10)                   // => Capacity 10 "units"
-                                                // => Can hold up to 10 int values
-                                                // => Not a counting semaphore (simplified example)
+                                                // => Simplified weighted example
 
     // Operation requiring 3 units
-    go func() {                                 // => Spawn goroutine for operation
-        n := 3                                  // => n is 3 (units required)
-        sem <- n                                // => Acquire 3 units (conceptual)
-                                                // => Actually sends int 3 to channel
-                                                // => Blocks if channel full (len(sem) == 10)
-        defer func() { <-sem }()                // => Release slot (receive from channel)
-                                                // => Deferred: runs when function exits
+    go func() {
+        n := 3
+        sem <- n                                // => Acquire 3 units (sends int 3)
+                                                // => Blocks if channel full
+        defer func() { <-sem }()
 
-        fmt.Println("Acquired 3 units")         // => Output: Acquired 3 units
-                                                // => Printed after successfully acquiring
+        fmt.Println("Acquired 3 units")
     }()
 
     // Operation requiring 7 units
-    go func() {                                 // => Spawn goroutine for operation
-        n := 7                                  // => n is 7 (units required)
-        sem <- n                                // => Acquire 7 units (conceptual)
-                                                // => Sends int 7 to channel
-                                                // => Blocks if channel full
-        defer func() { <-sem }()                // => Release slot when done
-                                                // => Deferred execution
+    go func() {
+        n := 7
+        sem <- n                                // => Acquire 7 units (sends int 7)
+        defer func() { <-sem }()
 
-        fmt.Println("Acquired 7 units")         // => Output: Acquired 7 units
-                                                // => Printed after successfully acquiring
+        fmt.Println("Acquired 7 units")
     }()
 
-    // Total capacity: 10 units, both operations can run concurrently
-                                                // => Note: This is simplified example
-                                                // => True weighted semaphore needs golang.org/x/sync/semaphore
-                                                // => Real implementation tracks actual weight consumption
+    // Total capacity: 10 units, both can run concurrently
+                                                // => Note: True weighted semaphore needs golang.org/x/sync/semaphore
 }
 ```
 
@@ -695,66 +672,42 @@ import (
 
 func main() {
     // Write binary data
-    buf := new(bytes.Buffer)                        // => buf is *bytes.Buffer (in-memory buffer)
-                                                    // => Implements io.Writer and io.Reader
-                                                    // => Starts empty (len=0)
+    buf := new(bytes.Buffer)                        // => In-memory buffer (implements io.Writer/Reader)
 
     // Write integer in big-endian format
-    binary.Write(buf, binary.BigEndian, int32(42))  // => 42 as 4 bytes, big-endian
-                                                    // => Writes [0x00 0x00 0x00 0x2A]
+    binary.Write(buf, binary.BigEndian, int32(42))  // => 42 as 4 bytes: [0x00 0x00 0x00 0x2A]
                                                     // => Big-endian: most significant byte first
-                                                    // => buf now has 4 bytes
     binary.Write(buf, binary.BigEndian, float32(3.14))
                                                     // => Float as 4 bytes (IEEE 754 format)
-                                                    // => Writes [0x40 0x48 0xF5 0xC3] (approx)
-                                                    // => buf now has 8 bytes
-    binary.Write(buf, binary.BigEndian, true)       // => Bool as 1 byte
-                                                    // => true writes 0x01, false writes 0x00
+    binary.Write(buf, binary.BigEndian, true)       // => Bool as 1 byte (0x01 for true)
                                                     // => buf now has 9 bytes total
 
     // Read back
-    reader := bytes.NewReader(buf.Bytes())          // => Create reader from buffer bytes
-                                                    // => reader is *bytes.Reader at position 0
-                                                    // => buf.Bytes() returns []byte slice
-    var num int32                                   // => num is 0 (zero value for int32)
-    var f float32                                   // => f is 0.0 (zero value for float32)
-    var b bool                                      // => b is false (zero value for bool)
+    reader := bytes.NewReader(buf.Bytes())          // => Create reader from buffer
+    var num int32
+    var f float32
+    var b bool
 
-    binary.Read(reader, binary.BigEndian, &num)     // => Read int32 from reader
-                                                    // => Reads 4 bytes, converts to int32
-                                                    // => num is now 42
-                                                    // => reader position advances to byte 4
-    binary.Read(reader, binary.BigEndian, &f)       // => Read float32 from reader
-                                                    // => Reads 4 bytes, converts to float32
-                                                    // => f is now 3.14 (approximately)
-                                                    // => reader position advances to byte 8
-    binary.Read(reader, binary.BigEndian, &b)       // => Read bool from reader
-                                                    // => Reads 1 byte, converts to bool
-                                                    // => b is now true
-                                                    // => reader position advances to byte 9 (EOF)
+    binary.Read(reader, binary.BigEndian, &num)     // => Read 4 bytes → num is 42
+    binary.Read(reader, binary.BigEndian, &f)       // => Read 4 bytes → f is 3.14
+    binary.Read(reader, binary.BigEndian, &b)       // => Read 1 byte → b is true
 
     fmt.Printf("Num: %d, Float: %f, Bool: %v\n", num, f, b)
                                                     // => Output: Num: 42, Float: 3.140000, Bool: true
-                                                    // => Demonstrates round-trip encoding/decoding
 
     // Endianness matters
-    smallBuf := new(bytes.Buffer)                   // => New empty buffer
+    smallBuf := new(bytes.Buffer)
     binary.Write(smallBuf, binary.LittleEndian, int16(256))
-                                                    // => 256 in decimal = 0x0100 in hex
-                                                    // => Little-endian: least significant byte first
-                                                    // => Writes [0x00 0x01] (low byte, high byte)
+                                                    // => 256 = 0x0100
+                                                    // => Little-endian: [0x00 0x01] (low byte first)
     fmt.Printf("Little-endian bytes: %v\n", smallBuf.Bytes())
                                                     // => Output: Little-endian bytes: [0 1]
-                                                    // => [0x00 0x01] as decimal
 
-    bigBuf := new(bytes.Buffer)                     // => New empty buffer
+    bigBuf := new(bytes.Buffer)
     binary.Write(bigBuf, binary.BigEndian, int16(256))
-                                                    // => 256 in decimal = 0x0100 in hex
-                                                    // => Big-endian: most significant byte first
-                                                    // => Writes [0x01 0x00] (high byte, low byte)
+                                                    // => Big-endian: [0x01 0x00] (high byte first)
     fmt.Printf("Big-endian bytes: %v\n", bigBuf.Bytes())
                                                     // => Output: Big-endian bytes: [1 0]
-                                                    // => [0x01 0x00] as decimal
                                                     // => Demonstrates endianness difference
 }
 ```
@@ -782,63 +735,37 @@ import (
 
 func main() {
     // SHA256 hash - integrity check
-    data := "Important message"                 // => data is string to hash
-                                                // => Fixed input produces fixed hash
+    data := "Important message"
     hash := sha256.Sum256([]byte(data))         // => Compute SHA-256 hash
-                                                // => []byte(data) converts string to bytes
-                                                // => hash is [32]byte array (256 bits)
+                                                // => hash is [32]byte (256 bits)
                                                 // => Deterministic: same input = same hash
     fmt.Printf("SHA256: %s\n", hex.EncodeToString(hash[:]))
-                                                // => hash[:] converts array to slice
-                                                // => hex.EncodeToString converts bytes to hex string
-                                                // => Output: SHA256: a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3
-                                                // => 64 hex characters (32 bytes * 2)
+                                                // => Output: 64 hex characters (32 bytes * 2)
 
     // HMAC - authentication
-    key := []byte("secret-key")                 // => key is secret shared key ([]byte)
-                                                // => Same key needed for signing and verification
+    key := []byte("secret-key")                 // => Shared secret key
     h := hmac.New(sha256.New, key)              // => Create HMAC-SHA256 hasher
-                                                // => sha256.New is hash function factory
-                                                // => h implements hash.Hash interface
     h.Write([]byte(data))                       // => Add data to hash
-                                                // => Can call Write multiple times
-                                                // => []byte(data) converts string to bytes
-    signature := hex.EncodeToString(h.Sum(nil)) // => Get signature as hex
-                                                // => h.Sum(nil) returns []byte signature
-                                                // => nil means no prefix bytes
-                                                // => signature is 64-character hex string
-    fmt.Println("HMAC:", signature)             // => Output: HMAC: <64 hex chars>
-                                                // => Unique for this data+key combination
+    signature := hex.EncodeToString(h.Sum(nil)) // => Get signature as hex (64 chars)
+    fmt.Println("HMAC:", signature)             // => Unique for this data+key combination
 
     // Verify HMAC
-    h2 := hmac.New(sha256.New, key)             // => Create new HMAC hasher
-                                                // => Same key and hash function
-    h2.Write([]byte(data))                      // => Hash same data
-                                                // => Should produce identical signature
-    if hmac.Equal(h.Sum(nil), h2.Sum(nil)) {    // => Compare HMAC values
-                                                // => hmac.Equal prevents timing attacks
-                                                // => Constant-time comparison
-                                                // => Returns true if signatures match
-        fmt.Println("HMAC valid")               // => Output: HMAC valid
-                                                // => Confirms data not tampered
+    h2 := hmac.New(sha256.New, key)             // => New hasher with same key
+    h2.Write([]byte(data))
+    if hmac.Equal(h.Sum(nil), h2.Sum(nil)) {    // => Constant-time comparison (prevents timing attacks)
+        fmt.Println("HMAC valid")               // => Data not tampered
     }
 
     // Random bytes - for tokens, nonces
-    token := make([]byte, 16)                   // => token is 16-byte slice (128 bits)
-                                                // => Initialized to zeros
-    _, err := rand.Read(token)                  // => Read 16 random bytes from crypto/rand
-                                                // => Cryptographically secure randomness
-                                                // => Fills token slice with random data
-                                                // => Returns (n int, err error)
-    if err != nil {                             // => Check for error (rare)
+    token := make([]byte, 16)                   // => 16-byte slice (128 bits)
+    _, err := rand.Read(token)                  // => Cryptographically secure random
+                                                // => Fills token with random data
+    if err != nil {
         fmt.Println("Error generating random:", err)
-                                                // => Output error if random generation fails
-        return                                  // => Exit function early
+        return
     }
     fmt.Printf("Random token: %s\n", hex.EncodeToString(token))
-                                                // => Convert random bytes to hex string
-                                                // => Output: Random token: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6 (example)
-                                                // => 32 hex characters (16 bytes * 2)
+                                                // => 32 hex chars (16 bytes * 2)
                                                 // => Different every time (unpredictable)
 }
 ```
@@ -1046,6 +973,7 @@ func betterMax[T interface{ int | float64 | string }](slice []T) T {
                                                 // => Enables > operator for these types
     if len(slice) == 0 {                        // => Check for empty slice
                                                 // => len(slice) returns 0 for empty
+                                                // => Prevents index out of range panic
         var zero T                              // => zero is zero value for type T
                                                 // => T=int: zero=0, T=string: zero=""
         return zero                             // => Return zero value
@@ -1231,51 +1159,77 @@ package main
 
 import (
     "fmt"
-    "golang.org/x/exp/constraints"
+    "golang.org/x/exp/constraints"                // => Standard constraints package
 )
+                                                    // => Provides Integer, Float, Ordered, Signed, Unsigned
 
 func main() {
     // Numbers constraint - int, float, complex types
-    fmt.Println("Sum ints:", sum([]int{1, 2, 3}))         // => 6
-    fmt.Println("Sum floats:", sum([]float64{1.5, 2.5})) // => 4.0
+    fmt.Println("Sum ints:", sum([]int{1, 2, 3}))         // => Calls sum with []int
+                                                           // => T inferred as int
+                                                           // => Output: Sum ints: 6
+    fmt.Println("Sum floats:", sum([]float64{1.5, 2.5})) // => Calls sum with []float64
+                                                           // => T inferred as float64
+                                                           // => Output: Sum floats: 4.0
 
     // Comparable constraint - can use == and !=
-    if contains([]string{"a", "b", "c"}, "b") {
-        fmt.Println("Found")
+    if contains([]string{"a", "b", "c"}, "b") {   // => Calls contains with string slice
+                                                    // => T inferred as string
+                                                    // => Returns true ("b" found)
+        fmt.Println("Found")                       // => Output: Found
     }
 
     // Custom constraint - combine types and interface
-    var m map[string]int = make(map[string]int)
-    m["key"] = 10
-    fmt.Println("Value:", getValue(m, "key")) // => 10
+    var m map[string]int = make(map[string]int)   // => Create map with string keys
+                                                    // => m is map[string]int
+    m["key"] = 10                                  // => Set value
+                                                    // => m is map[string:10]
+    fmt.Println("Value:", getValue(m, "key"))     // => Calls getValue with string key
+                                                    // => K inferred as string, V as int
+                                                    // => Output: Value: 10
 }
 
 // Ordered constraint - can use <, >, <=, >=, ==, !=
-func sum[T constraints.Integer](nums []T) T { // => Integer: int types
-    var total T
-    for _, n := range nums {
-        total += n
+func sum[T constraints.Integer](nums []T) T {    // => Generic function with Integer constraint
+                                                   // => T must be integer type (int, int64, etc.)
+                                                   // => nums is slice of T
+    var total T                                    // => total is zero value of T (0)
+    for _, n := range nums {                       // => n is each element
+                                                    // => First: n=1, Second: n=2, Third: n=3
+        total += n                                 // => Add to total
+                                                    // => total becomes 1, then 3, then 6
     }
-    return total
+    return total                                   // => Returns final sum (6 or 4.0)
 }
 
 // Comparable constraint - can use == and !=
-func contains[T comparable](slice []T, target T) bool { // => comparable
-    for _, item := range slice {
-        if item == target {     // => Works with any comparable type
-            return true
+func contains[T comparable](slice []T, target T) bool { // => Generic function
+                                                         // => T must support == and !=
+                                                         // => comparable is built-in constraint
+    for _, item := range slice {                  // => item is each element
+                                                    // => First: "a", Second: "b", Third: "c"
+        if item == target {                       // => Compare using ==
+                                                    // => Works because T is comparable
+                                                    // => "b" == "b" is true
+            return true                            // => Found match
         }
     }
-    return false
+    return false                                   // => No match found
 }
 
 // Custom constraint
-type MapKey interface { // => Custom constraint
-    comparable          // => Must satisfy comparable (can use ==)
+type MapKey interface {                           // => Custom constraint interface
+    comparable                                    // => Embeds comparable constraint
+                                                   // => Types must support == and !=
 }
+                                                   // => MapKey = comparable (same as built-in)
 
 func getValue[K MapKey, V any](m map[K]V, key K) V { // => Two type parameters
-    return m[key]
+                                                       // => K must satisfy MapKey (comparable)
+                                                       // => V can be any type
+                                                       // => m is map with K keys and V values
+    return m[key]                                  // => Access map by key
+                                                    // => Returns value of type V
 }
 ```
 
@@ -1320,71 +1274,98 @@ import "fmt"
 
 func main() {
     // Simple config without options
-    server1 := NewServer()
-    fmt.Println(server1)
+    server1 := NewServer()                    // => Creates server with defaults
+                                               // => server1.Host is "0.0.0.0"
+                                               // => server1.Port is 80
+                                               // => server1.Timeout is 10
+    fmt.Println(server1)                      // => Output: Server{Host: 0.0.0.0, Port: 80, Timeout: 10}
 
     // Config with options
-    server2 := NewServer(
-        WithHost("localhost"),    // => Functional option
-        WithPort(8080),           // => Functional option
-        WithTimeout(30),          // => Functional option
+    server2 := NewServer(                     // => Starts with defaults
+        WithHost("localhost"),                // => Functional option modifies Host
+                                               // => server2.Host becomes "localhost"
+        WithPort(8080),                       // => Functional option modifies Port
+                                               // => server2.Port becomes 8080
+        WithTimeout(30),                      // => Functional option modifies Timeout
+                                               // => server2.Timeout becomes 30
     )
-    fmt.Println(server2)
+                                               // => Final: Host=localhost, Port=8080, Timeout=30
+    fmt.Println(server2)                      // => Output: Server{Host: localhost, Port: 8080, Timeout: 30}
 
     // Mix options
-    server3 := NewServer(
-        WithPort(9000),
+    server3 := NewServer(                     // => Partial options usage
+        WithPort(9000),                       // => Only Port modified
+                                               // => server3.Port becomes 9000
         // WithHost uses default
-        WithTimeout(60),
+                                               // => server3.Host stays "0.0.0.0" (default)
+        WithTimeout(60),                      // => Timeout modified
+                                               // => server3.Timeout becomes 60
     )
-    fmt.Println(server3)
+                                               // => Final: Host=0.0.0.0 (default), Port=9000, Timeout=60
+    fmt.Println(server3)                      // => Output: Server{Host: 0.0.0.0, Port: 9000, Timeout: 60}
 }
 
-type Server struct {
-    Host    string
-    Port    int
-    Timeout int
+type Server struct {                          // => Configuration struct
+    Host    string                            // => Server hostname/IP
+    Port    int                               // => Server port number
+    Timeout int                               // => Connection timeout in seconds
 }
 
 // Functional option type
-type Option func(*Server) // => Option is function that modifies Server
+type Option func(*Server)                     // => Option is function that modifies Server
+                                               // => Takes *Server pointer to modify in-place
+                                               // => Returns nothing (side effects only)
 
 // Constructor
-func NewServer(opts ...Option) *Server { // => Variadic options
-    s := &Server{
-        Host:    "0.0.0.0",         // => Default values
-        Port:    80,
-        Timeout: 10,
+func NewServer(opts ...Option) *Server {     // => Variadic options parameter
+                                               // => opts can be 0 or more Option functions
+    s := &Server{                             // => Create Server with defaults
+        Host:    "0.0.0.0",                   // => Default: listen on all interfaces
+        Port:    80,                          // => Default: standard HTTP port
+        Timeout: 10,                          // => Default: 10 second timeout
     }
+                                               // => s is &Server{0.0.0.0, 80, 10}
 
-    for _, opt := range opts {
-        opt(s)                      // => Apply each option
+    for _, opt := range opts {                // => Iterate over option functions
+                                               // => opt is each Option function
+        opt(s)                                // => Call option function with server pointer
+                                               // => Modifies s in-place
     }
+                                               // => After all options applied, s has final config
 
-    return s
+    return s                                  // => Return configured server
 }
 
 // Option functions
-func WithHost(host string) Option { // => Returns Option function
-    return func(s *Server) {
-        s.Host = host              // => Modify server
+func WithHost(host string) Option {          // => Returns Option function (closure)
+                                               // => host is captured by closure
+    return func(s *Server) {                 // => Returned function modifies Server
+        s.Host = host                        // => Set Host field to captured host value
+                                               // => Modifies server in-place
     }
 }
+                                               // => Returns closure that sets Host field
 
-func WithPort(port int) Option {
-    return func(s *Server) {
-        s.Port = port
+func WithPort(port int) Option {             // => Returns Option function
+                                               // => port is captured by closure
+    return func(s *Server) {                 // => Returned function modifies Server
+        s.Port = port                        // => Set Port field to captured port value
     }
 }
+                                               // => Returns closure that sets Port field
 
-func WithTimeout(timeout int) Option {
-    return func(s *Server) {
-        s.Timeout = timeout
+func WithTimeout(timeout int) Option {       // => Returns Option function
+                                               // => timeout is captured by closure
+    return func(s *Server) {                 // => Returned function modifies Server
+        s.Timeout = timeout                  // => Set Timeout field to captured timeout value
     }
 }
+                                               // => Returns closure that sets Timeout field
 
-func (s Server) String() string {
+func (s Server) String() string {            // => Stringer interface implementation
+                                               // => s is value receiver (copy)
     return fmt.Sprintf("Server{Host: %s, Port: %d, Timeout: %d}", s.Host, s.Port, s.Timeout)
+                                               // => Returns formatted string representation
 }
 ```
 
@@ -1402,40 +1383,55 @@ The `//go:embed` directive embeds files into the binary at compile-time. Useful 
 package main
 
 import (
-    "embed"
+    "embed"                                  // => Package for embedded file systems
     "fmt"
 )
 
 func main() {
     // Embedded file
-    fmt.Println("HTML template:")
-    fmt.Println(string(htmlContent)) // => Content embedded at compile-time
+    fmt.Println("HTML template:")            // => Output: HTML template:
+    fmt.Println(string(htmlContent))         // => Content embedded at compile-time
+                                              // => htmlContent is []byte containing index.html
+                                              // => Converts to string and prints content
+                                              // => No file I/O at runtime
 
     // Embedded file system
-    entries, _ := fs.ReadDir("templates")
-    fmt.Println("Embedded files:", len(entries))
-    for _, entry := range entries {
-        fmt.Println("  -", entry.Name())
+    entries, _ := templates.ReadDir("templates") // => Read directory from embedded FS
+                                              // => entries is []fs.DirEntry
+                                              // => Contains all files in templates/ directory
+    fmt.Println("Embedded files:", len(entries)) // => Output: Embedded files: 2
+                                              // => Number of files in templates/ directory
+    for _, entry := range entries {          // => entry is each DirEntry
+        fmt.Println("  -", entry.Name())     // => Output: - index.html
+                                              // => Output: - style.css
     }
 
     // Read specific file from embedded FS
-    content, _ := fs.ReadFile(fs.FS(templates), "index.html")
-    fmt.Println("File content:", string(content))
+    content, _ := templates.ReadFile("templates/index.html") // => Read specific file
+                                              // => content is []byte
+                                              // => File read from embedded FS (no disk access)
+    fmt.Println("File content:", string(content)) // => Output: File content: [HTML content]
+                                              // => Converts to string and prints
 }
 
 // Single file
-//go:embed templates/index.html
-var htmlContent []byte // => Content embedded at compile-time
+//go:embed templates/index.html              // => Compiler directive
+var htmlContent []byte                       // => Content embedded at compile-time
+                                              // => htmlContent contains file bytes
+                                              // => File must exist at compile-time
+                                              // => No runtime file access needed
 
 // File system
-//go:embed templates/*
-var templates embed.FS // => Entire directory embedded
+//go:embed templates/*                       // => Embed entire directory
+var templates embed.FS                       // => Entire directory embedded
+                                              // => templates is embedded file system
+                                              // => Can use fs.FS interface methods
+                                              // => All files in templates/ included
 
 // String content
-//go:embed config.json
-var config string
-
-import "embed"
+//go:embed config.json                       // => Embed as string instead of []byte
+var config string                            // => config contains JSON as string
+                                              // => Alternative to []byte for text files
 ```
 
 **Key Takeaway**: `//go:embed path` embeds files into the binary. Single file type is `[]byte` or `string`. Directory type is `embed.FS`. Files are embedded at compile-time, no runtime file system access needed.
@@ -1450,41 +1446,37 @@ Build tags enable conditional compilation. Platform-specific code, feature flags
 
 ```go
 // file: server_unix.go
-//go:build unix || linux           // => Build constraint: compile only on Unix/Linux systems
-// +build unix linux                // => Legacy format (pre-Go 1.17 compatibility)
-                                    // => Multiple constraints joined with OR (either unix OR linux)
+//go:build unix || linux           // => Build constraint: compile only on Unix/Linux
+// +build unix linux                // => Legacy format (pre-Go 1.17)
 
 package main
 
 import "fmt"
 
-func getPlatform() string {         // => Function definition available only on Unix/Linux builds
-    return "Unix/Linux"             // => Compiled only on Unix/Linux
-                                    // => Returns platform identifier string
-}                                   // => On Windows, this function won't exist in binary
+func getPlatform() string {         // => Compiled only on Unix/Linux builds
+    return "Unix/Linux"
+}
 
 // file: server_windows.go
 //+build windows                    // => Build constraint: compile only on Windows
-                                    // => Without this tag, file is included in ALL builds
 
 package main
 
 import "fmt"
 
-func getPlatform() string {         // => Same function signature as Unix version
-    return "Windows"                // => Compiled only on Windows
-                                    // => Platform-specific implementation
-}                                   // => One implementation compiled per platform
+func getPlatform() string {         // => Compiled only on Windows builds
+    return "Windows"                // => Platform-specific implementation
+}
 
 // file: main.go
 package main                        // => No build tags: compiled on ALL platforms
 
-func main() {                       // => main function calls platform-specific getPlatform()
+func main() {
     fmt.Println("Platform:", getPlatform())
-                                    // => Platform-specific implementation
-                                    // => On Linux: prints "Platform: Unix/Linux"
-                                    // => On Windows: prints "Platform: Windows"
-}                                   // => Linker selects correct implementation at build time
+                                    // => On Linux: "Platform: Unix/Linux"
+                                    // => On Windows: "Platform: Windows"
+                                    // => Linker selects correct implementation
+}
 
 // Usage: go build                  // => Uses OS-specific files automatically
 // Usage: go build -tags=feature1   // => Enables 'feature1' tag
@@ -1492,17 +1484,15 @@ func main() {                       // => main function calls platform-specific 
 
 // Multiple tags in single file
 //go:build (linux || darwin) && !debug
-                                    // => Complex expression: (Linux OR macOS) AND NOT debug
-                                    // => Compiled only when: (on Linux OR on macOS) AND debug tag NOT set
-// +build linux darwin               // => Legacy format: must match //go:build logic
+                                    // => Complex: (Linux OR macOS) AND NOT debug
+// +build linux darwin               // => Legacy format
 // +build !debug                     // => Multiple lines joined with AND
 
 package main
 
-func shouldDebug() bool {           // => Function exists only in non-debug builds
-    return false                    // => Compiled on Linux/Mac without debug tag
-                                    // => debug tag would exclude this file from build
-}                                   // => Production build includes this, debug build doesn't
+func shouldDebug() bool {           // => Exists only in non-debug builds
+    return false
+}
 ```
 
 **Key Takeaway**: `//go:build expression` (Go 1.16+) controls compilation. `-tags flag` enables tags at build-time. Use for platform-specific code, feature flags, and integration tests that require external services.
@@ -1713,89 +1703,69 @@ package main
 
 import "testing"
 
-func TestUserService(t *testing.T) {                     // => Parent test function
-    // Parent test setup
-    users := setupTestData()                             // => Setup shared test data
-                                                         // => users is []*User with 2 elements
-                                                         // => Shared across all subtests in this parent
+func TestUserService(t *testing.T) {             // => Parent test function
+    users := setupTestData()                     // => Setup shared test data for all subtests
 
-    t.Run("GetUser", func(t *testing.T) {                // => Subtest group for GetUser functionality
-                                                         // => t.Run creates named subtest
-                                                         // => Reports as TestUserService/GetUser
-        t.Run("ExistingUser", func(t *testing.T) {       // => Nested subtest: existing user case
-                                                         // => Reports as TestUserService/GetUser/ExistingUser
-            user := findUser(users, 1)                   // => Find user with ID 1
-                                                         // => user is users[0] = {Name: "Alice", Age: 30}
-            if user.Name != "Alice" {                    // => Assert user name is "Alice"
+    t.Run("GetUser", func(t *testing.T) {        // => Subtest group: reports as TestUserService/GetUser
+        t.Run("ExistingUser", func(t *testing.T) { // => Nested: TestUserService/GetUser/ExistingUser
+            user := findUser(users, 1)           // => user is {Name: "Alice", Age: 30}
+            if user.Name != "Alice" {
                 t.Errorf("Expected Alice, got %s", user.Name)
-                                                         // => t.Errorf marks test failed but continues
-            }                                            // => Test passes if no errors
-        })                                               // => Subtest complete
+            }
+        })
 
-        t.Run("NonExistentUser", func(t *testing.T) {    // => Nested subtest: non-existent user case
-                                                         // => Reports as TestUserService/GetUser/NonExistentUser
-            user := findUser(users, 999)                 // => Find user with invalid ID 999
-                                                         // => user is nil (ID out of range)
-            if user != nil {                             // => Assert user is nil
-                t.Errorf("Expected nil, got %v", user)   // => Fail if non-nil returned
-            }                                            // => Test passes (user is nil as expected)
-        })                                               // => Subtest complete
-    })                                                   // => GetUser subtest group complete
-
-    t.Run("CreateUser", func(t *testing.T) {             // => Separate subtest group for CreateUser
-                                                         // => Reports as TestUserService/CreateUser
-        newUser := User{Name: "David", Age: 28}          // => Create new user struct
-                                                         // => newUser is User{Name: "David", Age: 28}
-        created := createUser(newUser)                   // => Call createUser function
-                                                         // => created is User{Name: "David", Age: 28}
-        if created.Name != "David" {                     // => Assert created user has correct name
-            t.Errorf("Expected David, got %s", created.Name)
-                                                         // => Fail if name doesn't match
-        }                                                // => Test passes
-    })                                                   // => CreateUser subtest complete
-}                                                        // => All subtests complete
-
-// Parallel subtests
-func TestParallel(t *testing.T) {                        // => Demonstrates parallel test execution
-    t.Run("Sequential", func(t *testing.T) {             // => Sequential subtest
-        // Parent doesn't use t.Parallel(), runs sequentially
-                                                         // => Runs in sequence with other non-parallel tests
-                                                         // => Can safely access shared mutable state
+        t.Run("NonExistentUser", func(t *testing.T) { // => Nested: TestUserService/GetUser/NonExistent
+            user := findUser(users, 999)         // => user is nil (invalid ID)
+            if user != nil {
+                t.Errorf("Expected nil, got %v", user)
+            }
+        })
     })
 
-    t.Run("Parallel", func(t *testing.T) {               // => Parallel subtest
-        t.Parallel()                                     // => Can run in parallel with other t.Parallel() tests
-                                                         // => Blocks until parent function completes
-                                                         // => Then runs concurrently with other parallel subtests
+    t.Run("CreateUser", func(t *testing.T) {     // => Separate group: TestUserService/CreateUser
+        newUser := User{Name: "David", Age: 28}
+        created := createUser(newUser)           // => created is User{Name: "David", Age: 28}
+        if created.Name != "David" {
+            t.Errorf("Expected David, got %s", created.Name)
+        }
+    })
+}
+
+// Parallel subtests
+func TestParallel(t *testing.T) {
+    t.Run("Sequential", func(t *testing.T) {     // => Runs sequentially, can access shared state
+        // Sequential test code
+    })
+
+    t.Run("Parallel", func(t *testing.T) {
+        t.Parallel()                             // => Runs in parallel with other t.Parallel() tests
+                                                  // => Must NOT access shared mutable state
         // Parallel test code
-                                                         // => Must NOT access shared mutable state
-    })                                                   // => Tests with t.Parallel() run faster in CI
+    })
 }
 
 type User struct {
-    Name string                                          // => User name field
-    Age  int                                             // => User age field
+    Name string
+    Age  int
 }
 
-func setupTestData() []*User {                           // => Test helper: creates test data
-    return []*User{                                      // => Returns slice of user pointers
-        {Name: "Alice", Age: 30},                        // => First test user
-        {Name: "Bob", Age: 25},                          // => Second test user
-    }                                                    // => Simulates database records
-}
-
-func findUser(users []*User, id int) *User {            // => Find user by ID (1-indexed)
-    if id > 0 && id <= len(users) {                      // => Check ID is in valid range
-                                                         // => id must be 1 or 2 for 2-element slice
-        return users[id-1]                               // => Convert 1-indexed to 0-indexed
-                                                         // => Returns user pointer
+func setupTestData() []*User {                   // => Returns test data: 2 users
+    return []*User{
+        {Name: "Alice", Age: 30},
+        {Name: "Bob", Age: 25},
     }
-    return nil                                           // => Return nil for invalid IDs
 }
 
-func createUser(u User) User {                           // => Create user (simplified for testing)
-    return u                                             // => Echo back user (real version would save to DB)
-}                                                        // => Returns created user
+func findUser(users []*User, id int) *User {    // => Find by ID (1-indexed)
+    if id > 0 && id <= len(users) {
+        return users[id-1]                       // => Returns user pointer
+    }
+    return nil                                   // => Returns nil for invalid ID
+}
+
+func createUser(u User) User {                   // => Simplified: echoes back user
+    return u
+}
 ```
 
 **Key Takeaway**: `t.Run()` creates subtests that report individually. Use for organizing tests into logical groups. `t.Parallel()` enables parallel execution for tests without shared state. Subtests can have separate setup/teardown.
@@ -1815,91 +1785,80 @@ import (
     "testing"
 )
 
-func TestUserRepository(t *testing.T) {                  // => Test function using mock
-    // Mock storage
-    mock := &MockStorage{                                // => Create mock implementation
-                                                         // => mock is *MockStorage (implements Storage interface)
-        data: map[int]User{                              // => Initialize mock's internal data
-            1: {ID: 1, Name: "Alice"},                   // => Seed with test user
-                                                         // => User with ID 1, Name "Alice"
-        },                                               // => No database needed - in-memory map
+func TestUserRepository(t *testing.T) {           // => Test using mock implementation
+    mock := &MockStorage{                         // => mock implements Storage interface
+        data: map[int]User{
+            1: {ID: 1, Name: "Alice"},            // => Seed test data (no database needed)
+        },
     }
 
-    repo := NewUserRepository(mock)                      // => Inject mock into repository
-                                                         // => repo.storage is Storage interface pointing to MockStorage
-                                                         // => Repository doesn't know it's a mock
+    repo := NewUserRepository(mock)               // => Inject mock into repository
+                                                   // => Repository doesn't know it's a mock
 
-    user, err := repo.Get(1)                             // => Call repository method
-                                                         // => Internally calls mock.Get(1)
-                                                         // => Returns User{ID: 1, Name: "Alice"}
-    if err != nil {                                      // => Check for errors
-        t.Errorf("Unexpected error: %v", err)            // => Should be nil (mock has no errors)
+    user, err := repo.Get(1)                      // => Internally calls mock.Get(1)
+                                                   // => Returns User{ID: 1, Name: "Alice"}
+    if err != nil {
+        t.Errorf("Unexpected error: %v", err)
     }
-    if user.Name != "Alice" {                            // => Assert user name
-        t.Errorf("Expected Alice, got %s", user.Name)    // => Verify mock returned correct data
-    }                                                    // => Test passes - mock behaves as expected
+    if user.Name != "Alice" {
+        t.Errorf("Expected Alice, got %s", user.Name)
+    }
 }
 
 type User struct {
-    ID   int                                             // => User ID field
-    Name string                                          // => User name field
+    ID   int
+    Name string
 }
 
 // Interface for testability
 type Storage interface {
-    Get(id int) (User, error)                            // => Get user by ID
-    Save(u User) error                                   // => Save user
-}                                                        // => Both Database and MockStorage implement this
+    Get(id int) (User, error)                     // => Both Database and MockStorage implement this
+    Save(u User) error
+}
 
 // Real storage
-type Database struct{}                                   // => Production implementation
-                                                         // => Would connect to real database
+type Database struct{}                            // => Production implementation
 
-func (d *Database) Get(id int) (User, error) {          // => Real implementation: query database
-    // Real database query                               // => Would execute: SELECT * FROM users WHERE id = ?
-    return User{}, nil                                   // => Placeholder: real version returns actual data
-}                                                        // => Involves network call, disk I/O, SQL parsing
+func (d *Database) Get(id int) (User, error) {   // => Real: executes database query
+    // Real database query                        // => SELECT * FROM users WHERE id = ?
+    return User{}, nil
+}
 
-func (d *Database) Save(u User) error {                 // => Real implementation: insert/update database
-    // Real database write                               // => Would execute: INSERT INTO users...
-    return nil                                           // => Placeholder: real version handles errors
-}                                                        // => Slow (network latency, disk writes)
+func (d *Database) Save(u User) error {          // => Real: writes to database
+    // Real database write                        // => Slow (network, disk I/O)
+    return nil
+}
 
 // Mock storage
 type MockStorage struct {
-    data map[int]User                                    // => In-memory storage for testing
-                                                         // => No external dependencies
-}                                                        // => Fast - no I/O, pure memory access
+    data map[int]User                             // => In-memory storage (fast, no dependencies)
+}
 
-func (m *MockStorage) Get(id int) (User, error) {       // => Mock implementation: lookup in map
-    if user, ok := m.data[id];  ok {                     // => Check if user exists in mock data
-                                                         // => ok is true if id exists in map
-        return user, nil                                 // => Return user from map
-                                                         // => Instant - no database query
+func (m *MockStorage) Get(id int) (User, error) { // => Mock: lookup in map
+    if user, ok := m.data[id]; ok {
+        return user, nil                          // => Instant (no database query)
     }
-    return User{}, nil                                   // => Return zero value if not found
-}                                                        // => Predictable - always returns same data
+    return User{}, nil
+}
 
-func (m *MockStorage) Save(u User) error {              // => Mock implementation: store in map
-    m.data[u.ID] = u                                     // => Add/update user in map
-                                                         // => No database write - just map assignment
-    return nil                                           // => Never fails (unlike real DB)
-}                                                        // => Tests run fast without DB setup/teardown
+func (m *MockStorage) Save(u User) error {       // => Mock: store in map
+    m.data[u.ID] = u                              // => No database write (just map assignment)
+    return nil                                    // => Fast, predictable
+}
 
 // Repository - depends on Storage interface
 type UserRepository struct {
-    storage Storage                                      // => Depend on interface
-                                                         // => Can be Database or MockStorage
-}                                                        // => Business logic layer
+    storage Storage                               // => Can be Database or MockStorage
+}
 
-func NewUserRepository(s Storage) *UserRepository {     // => Constructor injection
-    return &UserRepository{storage: s}                   // => Store injected storage
-}                                                        // => Accepts any Storage implementation
+func NewUserRepository(s Storage) *UserRepository { // => Constructor injection
+    return &UserRepository{storage: s}            // => Accepts any Storage implementation
+}
 
-func (r *UserRepository) Get(id int) (User, error) {    // => Repository method
-    return r.storage.Get(id)                             // => Delegate to injected storage
-                                                         // => Works with Database in production, MockStorage in tests
-}                                                        // => Same code path tested in both environments
+func (r *UserRepository) Get(id int) (User, error) {
+    return r.storage.Get(id)                      // => Delegates to injected storage
+                                                   // => Works with both implementations
+}
 ```
 
 **Key Takeaway**: Mock implementations satisfy interfaces. Inject mocks into code under test. Mocks enable testing without real external services. Use simple in-memory mocks for fast tests.
@@ -1921,62 +1880,45 @@ import (
 )
 
 // Run fuzzing: go test -fuzz=FuzzParseInt
-                                                         // => Fuzzer generates random inputs to find crashes
-func FuzzParseInt(f *testing.F) {                        // => Fuzz function (not regular test)
-                                                         // => f is *testing.F (fuzzing controller)
+                                                  // => Fuzzer generates random inputs to find crashes
+func FuzzParseInt(f *testing.F) {                 // => f is *testing.F (fuzzing controller)
     // Seed values - good test cases to always include
-    f.Add("0")                                           // => Seed corpus: add known-good test case
-                                                         // => Fuzzer always runs with "0" input
-    f.Add("42")                                          // => Add positive integer case
-    f.Add("-100")                                        // => Add negative integer case
-    f.Add("2147483647")                                  // => Add max int32 boundary case
-                                                         // => Fuzzer starts with these, then mutates
+    f.Add("0")                                    // => Seed corpus: known-good test cases
+    f.Add("42")                                   // => Fuzzer starts with these, then mutates
+    f.Add("-100")
+    f.Add("2147483647")                           // => Max int32 boundary case
 
-    f.Fuzz(func(t *testing.T, input string) {            // => Fuzz function receives generated inputs
-                                                         // => input is randomly generated string
-        // The fuzzer generates many values for input    // => Coverage-guided: generates inputs that explore new code paths
-        if len(input) == 0 {                             // => Check for empty string
-            return                                       // => Skip empty input
-                                                         // => Early return: don't test invalid inputs
+    f.Fuzz(func(t *testing.T, input string) {     // => input is randomly generated string
+                                                   // => Coverage-guided: explores new code paths
+        if len(input) == 0 {
+            return                                // => Skip empty input
         }
 
-        result, err := parseInt(input)                   // => Test with generated input
-                                                         // => Fuzzer calls this thousands of times with different inputs
-        _ = result                                       // => Ignore result (unused variable)
-        _ = err                                          // => Ignore error (unused variable)
+        result, err := parseInt(input)            // => Test with generated input
+        _ = result                                // => Fuzzer calls thousands of times
+        _ = err
         // No assertion - fuzzer looks for panics and crashes
-                                                         // => Fuzz test succeeds if no panic/crash occurs
-    })                                                   // => Fuzzer runs until timeout or finds crash
-}                                                        // => Command: go test -fuzz=FuzzParseInt
-
-// Fuzzing UTF-8 strings
-func FuzzValidUTF8(f *testing.F) {                       // => Fuzz test for UTF-8 validation
-    f.Add("hello")                                       // => Seed: ASCII string
-                                                         // => Fuzzer mutates: "hellp", "helo", etc.
-    f.Add("世界")                                         // => Seed: Multi-byte UTF-8 (Chinese characters)
-                                                         // => Fuzzer mutates: byte sequences, invalid UTF-8
-
-    f.Fuzz(func(t *testing.T, input string) {            // => Fuzz function for UTF-8 testing
-        // Fuzz will provide valid UTF-8 (f.Add only adds valid strings)
-                                                         // => f.Add seeds are valid UTF-8
-        // Fuzzer generates variations                   // => Mutations may create invalid UTF-8
-        if !utf8.ValidString(input) {                    // => Check if input is valid UTF-8
-                                                         // => utf8.ValidString returns false for invalid sequences
-            t.Errorf("Invalid UTF-8: %v", input)         // => Fail test if invalid UTF-8 generated
-                                                         // => Should NOT happen (fuzzer generates valid UTF-8 for string type)
-        }                                                // => Verifies fuzzer's string generator is correct
-    })                                                   // => Tests fuzzer's UTF-8 generation quality
+    })
 }
 
-func parseInt(s string) (int, error) {                  // => Simple parser for demonstration
-    // Simple parser for fuzzing                         // => Real parser would handle more cases
-    if s == "0" {                                        // => Check for "0" string
-        return 0, nil                                    // => Return zero value
-                                                         // => No error
+// Fuzzing UTF-8 strings
+func FuzzValidUTF8(f *testing.F) {
+    f.Add("hello")                                // => Seed: ASCII string
+    f.Add("世界")                                  // => Seed: Multi-byte UTF-8 characters
+
+    f.Fuzz(func(t *testing.T, input string) {
+        if !utf8.ValidString(input) {             // => Check if valid UTF-8
+            t.Errorf("Invalid UTF-8: %v", input)  // => Should NOT happen (fuzzer generates valid UTF-8)
+        }
+    })
+}
+
+func parseInt(s string) (int, error) {            // => Simple parser for demonstration
+    if s == "0" {
+        return 0, nil
     }
-    return 1, nil                                        // => Default: return 1
-                                                         // => Simplified logic (real parser would parse digits)
-}                                                        // => Fuzzer finds crashes in complex parsers
+    return 1, nil                                 // => Simplified (real parser would parse digits)
+}
 ```
 
 **Key Takeaway**: Fuzzing tests provide generated inputs. Seed values with `f.Add()` include important test cases. The `f.Fuzz()` function receives generated inputs. Fuzzer looks for panics and crashes in your code.
@@ -2023,15 +1965,15 @@ graph TD
 package main
 
 /*
-#include <stdio.h>
-#include <string.h>
+#include <stdio.h>                             // => C standard I/O library
+#include <string.h>                            // => C string functions (strlen)
 
-int add(int a, int b) {
-    return a + b;
+int add(int a, int b) {                        // => C function definition
+    return a + b;                              // => Returns sum of a and b
 }
 
-int strlen_c(const char* s) {
-    return strlen(s);
+int strlen_c(const char* s) {                  // => C function wrapper for strlen
+    return strlen(s);                          // => Returns string length
 }
 */
 import "C"                                      // => Pseudo-package for CGO
@@ -2173,51 +2115,39 @@ import (
 
 func main() {
     // Memory profiling
-    f, err := os.Create("mem.prof")                      // => Create profile file
-                                                         // => f is *os.File for writing profile data
-    if err != nil {                                      // => Check for file creation errors
-        panic(err)                                       // => Fatal error: can't profile without file
+    f, err := os.Create("mem.prof")               // => Create profile file
+    if err != nil {
+        panic(err)
     }
-    defer f.Close()                                      // => Ensure file closed when function exits
-                                                         // => Flushes buffered profile data to disk
+    defer f.Close()                               // => Ensure file closed and flushed
 
-    pprof.WriteHeapProfile(f)                            // => Capture heap profile (current memory state)
-                                                         // => Writes allocation data to mem.prof file
-                                                         // => Snapshots heap at this moment
+    pprof.WriteHeapProfile(f)                     // => Capture heap profile (current memory state)
+                                                   // => Snapshots heap allocations to mem.prof
 
-    // Run program: go run main.go                       // => Execute program to generate profiles
-    // Then analyze: go tool pprof mem.prof              // => Interactive profiler tool
-    // Commands in pprof:                                // => Profiler shell commands:
-    //   top         - shows top memory allocators       // => Lists functions allocating most memory
-    //   list        - shows source code with allocations // => Annotates source with allocation amounts
-    //   web         - generates graph (requires Graphviz) // => Visual call graph (needs graphviz installed)
+    // Run program: go run main.go
+    // Then analyze: go tool pprof mem.prof       // => Interactive profiler tool
+    // Commands in pprof:
+    //   top    - shows top memory allocators
+    //   list   - shows source code with allocations
+    //   web    - generates graph (requires Graphviz)
 
     // CPU profiling
-    cpuFile, _ := os.Create("cpu.prof")                  // => Create CPU profile file
-                                                         // => cpuFile is *os.File for CPU profile data
-    defer cpuFile.Close()                                // => Ensure CPU profile file closed
-                                                         // => Flushes CPU profile data
+    cpuFile, _ := os.Create("cpu.prof")
+    defer cpuFile.Close()
 
-    pprof.StartCPUProfile(cpuFile)                       // => Start profiling CPU usage
-                                                         // => Begins sampling CPU every 10ms
-                                                         // => Records function call stacks
-    defer pprof.StopCPUProfile()                         // => Stop profiling when function exits
-                                                         // => Writes collected CPU data to file
-                                                         // => MUST call Stop to finalize profile
+    pprof.StartCPUProfile(cpuFile)                // => Start profiling CPU usage
+                                                   // => Samples CPU every 10ms, records call stacks
+    defer pprof.StopCPUProfile()                  // => MUST call Stop to finalize profile
 
-    // Run expensive operation here
-    expensiveComputation()                               // => Execute work to profile
-                                                         // => Profiler records CPU time spent here
-}                                                        // => Deferred functions execute: Stop, Close files
+    expensiveComputation()                        // => Execute work to profile
+}
 
-func expensiveComputation() {                            // => Simulated expensive operation
-    // Simulation of work
-    for i := 0; i < 1000000; i++ {                       // => Loop 1 million times
-                                                         // => CPU profiler will show time spent here
-        _ = i * i                                        // => Compute square (discarded)
-                                                         // => Prevents compiler from optimizing away loop
-    }                                                    // => Profiler identifies this as hotspot
-}                                                        // => Real profiling finds actual bottlenecks
+func expensiveComputation() {
+    for i := 0; i < 1000000; i++ {                // => Loop 1 million times
+        _ = i * i                                 // => Prevents compiler optimization
+                                                   // => Profiler identifies this as hotspot
+    }
+}
 ```
 
 **Key Takeaway**: Use `pprof.WriteHeapProfile()` to capture memory allocations. Use `pprof.StartCPUProfile()` for CPU profiling. Analyze profiles with `go tool pprof`. Profile helps identify bottlenecks and memory leaks.
@@ -2239,56 +2169,42 @@ import (
 )
 
 func main() {
-    var counter int                                      // => Shared variable (no synchronization)
-                                                         // => counter will be accessed by 10 goroutines
-    var wg sync.WaitGroup                                // => WaitGroup to wait for goroutines
-                                                         // => Ensures all goroutines complete before exiting
+    var counter int                         // => Shared variable (no protection)
+    var wg sync.WaitGroup                   // => WaitGroup to wait for completion
 
     // Race condition - multiple goroutines modify counter without sync
-    for i := 0; i < 10; i++ {                            // => Spawn 10 goroutines
-        wg.Add(1)                                        // => Increment WaitGroup counter
-                                                         // => Tells WaitGroup to wait for 1 more goroutine
-        go func() {                                      // => Spawn goroutine (runs concurrently)
-            defer wg.Done()                              // => Decrement WaitGroup when goroutine exits
-                                                         // => Signals goroutine completion
-            counter++                                    // => DATA RACE! No synchronization
-                                                         // => Multiple goroutines read/write counter concurrently
-                                                         // => Read-modify-write is NOT atomic
-                                                         // => Race detector will flag this line
-        }()                                              // => Goroutine starts immediately
-    }                                                    // => 10 goroutines running concurrently
+    for i := 0; i < 10; i++ {               // => Spawn 10 concurrent goroutines
+        wg.Add(1)
+        go func() {
+            defer wg.Done()
+            counter++                       // => DATA RACE! Read-modify-write not atomic
+                                             // => Race detector will flag this line
+        }()
+    }
 
-    wg.Wait()                                            // => Block until all goroutines call Done()
-                                                         // => Waits for counter to reach 0
-    fmt.Println("Counter:", counter)                     // => Unpredictable value (should be 10, but race may lose increments)
+    wg.Wait()
+    fmt.Println("Counter:", counter)        // => Unpredictable (should be 10, race may lose increments)
 
-    // Run with: go run -race main.go              // => Enable race detector
-                                                         // => Instruments code to detect concurrent access
-    // Output includes race condition detection          // => Reports file:line where race occurred
-                                                         // => Shows goroutine stacks for both accesses
+    // Run with: go run -race main.go       // => Enables race detector
+                                             // => Reports file:line and goroutine stacks
 
     // Fixed version with mutex
-    var mu sync.Mutex                                    // => Mutex for synchronization
-                                                         // => Protects counter from concurrent access
-    counter = 0                                          // => Reset counter
+    var mu sync.Mutex                       // => Mutex for synchronization
+    counter = 0                             // => Reset counter
 
-    for i := 0; i < 10; i++ {                            // => Spawn 10 goroutines again
-        wg.Add(1)                                        // => Increment WaitGroup
-        go func() {                                      // => Goroutine with synchronization
-            defer wg.Done()                              // => Decrement WaitGroup on exit
-            mu.Lock()                                    // => Acquire lock (blocks if another goroutine holds it)
-                                                         // => Only one goroutine can hold lock at a time
-            counter++                                    // => Protected by mutex (safe concurrent access)
-                                                         // => No race: only one goroutine modifies at a time
-            mu.Unlock()                                  // => Release lock
-                                                         // => Allows waiting goroutines to acquire lock
-        }()                                              // => Goroutine starts
-    }                                                    // => All goroutines use mutex correctly
+    for i := 0; i < 10; i++ {
+        wg.Add(1)
+        go func() {
+            defer wg.Done()
+            mu.Lock()                       // => Acquire lock (blocks if held by another)
+            counter++                       // => Protected by mutex (safe)
+            mu.Unlock()                     // => Release lock
+        }()
+    }
 
-    wg.Wait()                                            // => Wait for all goroutines to complete
-    fmt.Println("Counter (safe):", counter)              // => Always 10 (race-free)
-                                                         // => Mutex ensures all increments happen correctly
-}                                                        // => Race detector shows no warnings for mutex version
+    wg.Wait()
+    fmt.Println("Counter (safe):", counter) // => Always 10 (race-free)
+}
 ```
 
 **Key Takeaway**: Run tests with `-race` flag to detect concurrent data access without synchronization. Race detector finds most (but not all) race conditions. Use mutexes, channels, or atomic operations to fix races.
