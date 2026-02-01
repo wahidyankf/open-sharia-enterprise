@@ -1033,7 +1033,7 @@ mix new url_shortener_app
 
 **Ready to build web applications?**
 
-- [Phoenix Framework Initial Setup](/en/learn/software-engineering/platform-web/elixir-phoenix/initial-setup) - Install and configure Phoenix web framework
+- [Phoenix Framework Initial Setup](/en/learn/software-engineering/platform-web/tools/elixir-phoenix/initial-setup) - Install and configure Phoenix web framework
 
 ## Practice Exercises
 

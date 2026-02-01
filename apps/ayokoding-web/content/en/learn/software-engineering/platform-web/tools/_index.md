@@ -1,0 +1,38 @@
+---
+title: "Tools"
+weight: 10000
+date: 2026-02-02T00:00:00+07:00
+draft: false
+---
+
+- [Overview](/en/learn/software-engineering/platform-web/tools/overview)
+- [Elixir Phoenix](/en/learn/software-engineering/platform-web/tools/elixir-phoenix)
+  - [Initial Setup](/en/learn/software-engineering/platform-web/tools/elixir-phoenix/initial-setup)
+  - [Overview](/en/learn/software-engineering/platform-web/tools/elixir-phoenix/overview)
+  - [Quick Start](/en/learn/software-engineering/platform-web/tools/elixir-phoenix/quick-start)
+  - [By Example](/en/learn/software-engineering/platform-web/tools/elixir-phoenix/by-example)
+- [Jvm Spring](/en/learn/software-engineering/platform-web/tools/jvm-spring)
+  - [Initial Setup](/en/learn/software-engineering/platform-web/tools/jvm-spring/initial-setup)
+  - [Overview](/en/learn/software-engineering/platform-web/tools/jvm-spring/overview)
+  - [Quick Start](/en/learn/software-engineering/platform-web/tools/jvm-spring/quick-start)
+  - [By Example](/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example)
+- [Jvm Spring Boot](/en/learn/software-engineering/platform-web/tools/jvm-spring-boot)
+  - [Initial Setup](/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/initial-setup)
+  - [Overview](/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/overview)
+  - [Quick Start](/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/quick-start)
+  - [By Example](/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example)
+- [Fe React](/en/learn/software-engineering/platform-web/tools/fe-react)
+  - [Initial Setup](/en/learn/software-engineering/platform-web/tools/fe-react/initial-setup)
+  - [Overview](/en/learn/software-engineering/platform-web/tools/fe-react/overview)
+  - [Quick Start](/en/learn/software-engineering/platform-web/tools/fe-react/quick-start)
+  - [By Example](/en/learn/software-engineering/platform-web/tools/fe-react/by-example)
+- [Fe Nextjs](/en/learn/software-engineering/platform-web/tools/fe-nextjs)
+  - [Initial Setup](/en/learn/software-engineering/platform-web/tools/fe-nextjs/initial-setup)
+  - [Overview](/en/learn/software-engineering/platform-web/tools/fe-nextjs/overview)
+  - [Quick Start](/en/learn/software-engineering/platform-web/tools/fe-nextjs/quick-start)
+  - [By Example](/en/learn/software-engineering/platform-web/tools/fe-nextjs/by-example)
+- [Elixir Phoenix Liveview](/en/learn/software-engineering/platform-web/tools/elixir-phoenix-liveview)
+  - [Initial Setup](/en/learn/software-engineering/platform-web/tools/elixir-phoenix-liveview/initial-setup)
+  - [Overview](/en/learn/software-engineering/platform-web/tools/elixir-phoenix-liveview/overview)
+  - [Quick Start](/en/learn/software-engineering/platform-web/tools/elixir-phoenix-liveview/quick-start)
+  - [By Example](/en/learn/software-engineering/platform-web/tools/elixir-phoenix-liveview/by-example)
