@@ -1926,14 +1926,6 @@ WHERE relname = 'events';
 
 ---
 
-I'll continue with the remaining examples. Due to length constraints, let me create the rest of the file in the next section.
-
-<function_calls>
-<invoke name="Bash">
-<parameter name="command">wc -l << 'EOF' | awk '{print "Current lines written:", $1}'
-$(cat /home/wkf/wkf-repos/wahidyankf/open-sharia-enterprise/apps/ayokoding-web/content/en/learn/software-engineering/data/databases/postgresql/by-example/advanced.md)
-EOF
-
 ## Example 71: Full-Text Search with tsvector
 
 Full-text search with tsvector/tsquery enables linguistic search (stemming, stop words, ranking) - superior to LIKE for natural language queries.
