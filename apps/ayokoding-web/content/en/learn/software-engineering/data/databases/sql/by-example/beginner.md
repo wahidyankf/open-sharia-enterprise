@@ -925,43 +925,90 @@ LIKE performs case-insensitive pattern matching with wildcards: `%` (any charact
 
 ```sql
 CREATE TABLE files (
-    id INTEGER,
-    filename TEXT,
-    size INTEGER,
-    extension TEXT
+    id INTEGER,                       -- => File identifier
+    filename TEXT,                    -- => File name with extension
+                                      -- => Mixed case for testing case sensitivity
+    size INTEGER,                     -- => File size in bytes
+    extension TEXT                    -- => File extension (separate column for convenience)
 );
+-- => Table for file metadata
+-- => Demonstrates pattern matching on text fields
 
 INSERT INTO files (id, filename, size, extension)
 VALUES
-    (1, 'report_2025.pdf', 1024, 'pdf'),
-    (2, 'image_001.jpg', 2048, 'jpg'),
-    (3, 'Report_Final.PDF', 512, 'PDF'),
-    (4, 'data_export.csv', 4096, 'csv'),
-    (5, 'photo_vacation.JPG', 3072, 'JPG');
+    (1, 'report_2025.pdf', 1024, 'pdf'),      -- => Lowercase filename, lowercase extension
+    (2, 'image_001.jpg', 2048, 'jpg'),        -- => Numeric pattern in filename
+    (3, 'Report_Final.PDF', 512, 'PDF'),      -- => Uppercase 'Report' and 'PDF'
+    (4, 'data_export.csv', 4096, 'csv'),      -- => Different file type
+    (5, 'photo_vacation.JPG', 3072, 'JPG');   -- => Uppercase extension
+-- => 5 files with varied case patterns
+-- => Rows 1 and 3 have same word 'report' (different case)
+-- => Extensions vary in case: pdf, PDF, jpg, JPG, csv
 
 -- LIKE: Case-insensitive, % matches any characters
 SELECT * FROM files WHERE filename LIKE '%report%';
+                                      -- => LIKE is case-insensitive in SQLite
+                                      -- => % matches zero or more characters
+                                      -- => %report% matches 'report' anywhere in filename
 -- => Returns rows 1, 3 (both 'report' and 'Report' match)
+-- => 'report_2025.pdf' matches (%report% finds 'report')
+-- => 'Report_Final.PDF' matches (%report% finds 'Report', case-insensitive)
+-- => Rows 2, 4, 5 excluded (no 'report' substring)
 
 -- LIKE: _ matches single character
 SELECT * FROM files WHERE filename LIKE 'image___%.jpg';
--- => Returns row 2 ('image_001.jpg' - 3 characters after 'image')
+                                      -- => _ (underscore) matches exactly ONE character
+                                      -- => 'image___' matches 'image' + 3 characters
+                                      -- => % matches remaining characters before '.jpg'
+                                      -- => Pattern: image + 3 chars + anything + .jpg
+-- => Returns row 2 ('image_001.jpg' - 3 characters '001' after 'image')
+-- => 'image_' = 'image_' (match)
+-- => '001' matches ___ (3 underscores = 3 characters)
+-- => '.jpg' matches %.jpg (% = empty, then .jpg literal)
+-- => Other rows don't start with 'image'
 
 -- LIKE: Match file extensions
 SELECT * FROM files WHERE filename LIKE '%.pdf';
+                                      -- => % matches filename before extension
+                                      -- => .pdf matches literal '.pdf'
+                                      -- => Case-insensitive: matches .pdf and .PDF
 -- => Returns rows 1, 3 (case-insensitive: both .pdf and .PDF)
+-- => Row 1: 'report_2025.pdf' ends with '.pdf'
+-- => Row 3: 'Report_Final.PDF' ends with '.PDF' (case-insensitive match)
+-- => Rows 2, 4, 5 excluded (wrong extensions)
 
 -- GLOB: Case-sensitive, * matches any characters
 SELECT * FROM files WHERE filename GLOB '*report*';
+                                      -- => GLOB is case-SENSITIVE
+                                      -- => * matches zero or more characters (like % in LIKE)
+                                      -- => *report* matches 'report' anywhere (exact case)
 -- => Returns row 1 only ('report' matches, 'Report' doesn't)
+-- => Row 1: 'report_2025.pdf' contains lowercase 'report' (match)
+-- => Row 3: 'Report_Final.PDF' contains uppercase 'Report' (NO match, case-sensitive)
+-- => Key difference from LIKE: GLOB distinguishes case
 
 -- GLOB: ? matches single character
 SELECT * FROM files WHERE filename GLOB 'photo_*.JPG';
+                                      -- => ? matches exactly ONE character (like _ in LIKE)
+                                      -- => * matches any characters
+                                      -- => Pattern: 'photo_' + any chars + '.JPG'
+                                      -- => Case-sensitive: .JPG must be uppercase
 -- => Returns row 5 ('photo_vacation.JPG')
+-- => 'photo_' matches literal
+-- => 'vacation' matches * (any characters)
+-- => '.JPG' matches literal (case-sensitive)
+-- => Would NOT match 'photo_vacation.jpg' (lowercase extension)
 
 -- NOT LIKE for exclusion
 SELECT * FROM files WHERE filename NOT LIKE '%.pdf';
--- => Returns rows 2, 4, 5 (excludes PDF files, but .PDF still matches due to case-insensitive)
+                                      -- => NOT inverts the match
+                                      -- => Excludes filenames ending with .pdf
+                                      -- => Case-insensitive: excludes both .pdf and .PDF
+-- => Returns rows 2, 4, 5 (excludes PDF files)
+-- => Row 1: 'report_2025.pdf' EXCLUDED (matches %.pdf)
+-- => Row 3: 'Report_Final.PDF' EXCLUDED (matches %.pdf, case-insensitive)
+-- => Rows 2, 4, 5 included (extensions: .jpg, .csv, .JPG don't match .pdf)
+-- => Note: .PDF excluded due to case-insensitive LIKE
 ```
 
 **Key Takeaway**: Use LIKE for case-insensitive pattern matching (`%` = any characters, `_` = one character). Use GLOB for case-sensitive matching (`*` = any characters, `?` = one character). LIKE is more common across SQL databases.
@@ -1331,60 +1378,91 @@ graph TD
 
 ```sql
 CREATE TABLE departments (
-    id INTEGER,
-    name TEXT
+    id INTEGER,                   -- => Department identifier
+    name TEXT                     -- => Department name
 );
+-- => Table for organizational departments
+-- => Will be LEFT table in LEFT JOIN
 
 CREATE TABLE employees (
-    id INTEGER,
-    name TEXT,
-    department_id INTEGER
+    id INTEGER,                   -- => Employee identifier
+    name TEXT,                    -- => Employee name
+    department_id INTEGER         -- => Foreign key to departments.id
+                                   -- => Nullable - employees can have no department
 );
+-- => Table for employee records
+-- => Will be RIGHT table in LEFT JOIN
 
 INSERT INTO departments (id, name)
 VALUES
-    (1, 'Engineering'),
-    (2, 'Sales'),
-    (3, 'Marketing');
+    (1, 'Engineering'),           -- => id=1, name='Engineering'
+    (2, 'Sales'),                 -- => id=2, name='Sales'
+    (3, 'Marketing');             -- => id=3, name='Marketing'
+-- => 3 departments inserted
+-- => Marketing has no employees (demonstrates LEFT JOIN behavior)
 
 INSERT INTO employees (id, name, department_id)
 VALUES
-    (1, 'Alice', 1),
-    (2, 'Bob', 1),
-    (3, 'Charlie', 2);
+    (1, 'Alice', 1),              -- => Alice in Engineering (dept 1)
+    (2, 'Bob', 1),                -- => Bob in Engineering (dept 1)
+    (3, 'Charlie', 2);            -- => Charlie in Sales (dept 2)
+-- => 3 employees inserted
+-- => No employee assigned to Marketing (dept 3)
+-- => Engineering has 2 employees, Sales has 1, Marketing has 0
 
 -- LEFT JOIN: All departments, even those without employees
 SELECT
-    d.name AS department,
-    e.name AS employee
-FROM departments d
-LEFT JOIN employees e ON d.id = e.department_id;
--- => Returns 4 rows:
+    d.name AS department,         -- => Department name from LEFT table
+    e.name AS employee            -- => Employee name from RIGHT table (NULL if no match)
+FROM departments d                -- => LEFT table (all rows preserved)
+LEFT JOIN employees e ON d.id = e.department_id;  -- => Join condition matches dept IDs
+                                                    -- => Keeps all departments even without matches
+-- => Returns 4 rows (3 matches + 1 unmatched):
+-- => Row 1: department='Engineering', employee='Alice' (match on id=1)
+-- => Row 2: department='Engineering', employee='Bob' (match on id=1)
+-- => Row 3: department='Sales', employee='Charlie' (match on id=2)
+-- => Row 4: department='Marketing', employee=NULL (no match, id=3 has no employees)
+-- => LEFT JOIN ensures all departments appear in results
+
+-- Count employees per department (including zero)
+SELECT
+    d.name AS department,         -- => Department name
+    COUNT(e.id) AS num_employees  -- => Count employee IDs (NULLs not counted)
+                                   -- => COUNT(e.id) counts only non-NULL values
+FROM departments d                -- => LEFT table
+LEFT JOIN employees e ON d.id = e.department_id  -- => Preserves all departments
+GROUP BY d.id, d.name;            -- => Group by department to get counts
+                                   -- => Each department gets one row
+-- => Returns 3 rows with counts:
+-- => Engineering: 2 (Alice, Bob)
+-- => Sales: 1 (Charlie)
+-- => Marketing: 0 (COUNT(e.id) returns 0 when all e.id are NULL)
+-- => LEFT JOIN with COUNT useful for "include zeros" reporting
+
+-- Filter for departments with no employees
+SELECT d.name AS department       -- => Department name only
+FROM departments d                -- => LEFT table
+LEFT JOIN employees e ON d.id = e.department_id  -- => Join to find matches
+WHERE e.id IS NULL;               -- => Filter to rows where RIGHT table has NULL
+                                   -- => NULL in e.id means no matching employee
+-- => Returns 1 row: 'Marketing'
+-- => Identifies departments without employees
+-- => IS NULL test on RIGHT table columns finds unmatched LEFT rows
+
+-- LEFT JOIN with WHERE on left table (filter before join)
+SELECT
+    d.name,                       -- => Department name
+    e.name AS employee            -- => Employee name (NULL if no match)
+FROM departments d                -- => LEFT table
+LEFT JOIN employees e ON d.id = e.department_id  -- => Join condition
+WHERE d.name IN ('Engineering', 'Sales');  -- => Filter on LEFT table columns
+                                            -- => Excludes Marketing before LEFT JOIN
+-- => Returns 3 rows:
 -- => Engineering, Alice
 -- => Engineering, Bob
 -- => Sales, Charlie
--- => Marketing, NULL (no employees in Marketing)
-
--- Count employees per department (including zero)
-SELECT d.name AS department, COUNT(e.id) AS num_employees
-FROM departments d
-LEFT JOIN employees e ON d.id = e.department_id
-GROUP BY d.id, d.name;
--- => Engineering: 2, Sales: 1, Marketing: 0
-
--- Filter for departments with no employees
-SELECT d.name AS department
-FROM departments d
-LEFT JOIN employees e ON d.id = e.department_id
-WHERE e.id IS NULL;
--- => Returns: Marketing
-
--- LEFT JOIN with WHERE on left table (filter before join)
-SELECT d.name, e.name AS employee
-FROM departments d
-LEFT JOIN employees e ON d.id = e.department_id
-WHERE d.name IN ('Engineering', 'Sales');
--- => Excludes Marketing department entirely
+-- => Marketing excluded by WHERE clause (filter on LEFT table reduces result set)
+-- => WHERE on LEFT table filters before preserving unmatched rows
 ```
 
 **Key Takeaway**: LEFT JOIN returns all rows from left table regardless of matches. Right table columns become NULL when no match exists. Use to find missing relationships (WHERE right.id IS NULL).
@@ -1987,65 +2065,103 @@ CASE expressions provide if-then-else logic within SQL. Use for conditional valu
 
 ```sql
 CREATE TABLE products (
-    id INTEGER PRIMARY KEY,
-    name TEXT,
-    price REAL,
-    stock INTEGER
+    id INTEGER PRIMARY KEY,       -- => Auto-incrementing product ID
+                                   -- => PRIMARY KEY ensures uniqueness
+    name TEXT,                     -- => Product name
+    price REAL,                    -- => Product price (floating point)
+    stock INTEGER                  -- => Quantity in stock
 );
+-- => Table for product inventory management
+-- => Stock levels used for CASE expression demonstrations
 
 INSERT INTO products (name, price, stock)
 VALUES
-    ('Laptop', 999.99, 5),
-    ('Mouse', 29.99, 0),
-    ('Keyboard', 79.99, 20),
-    ('Monitor', 299.99, 2);
+    ('Laptop', 999.99, 5),        -- => id=1, high price, mid stock
+    ('Mouse', 29.99, 0),           -- => id=2, low price, out of stock
+    ('Keyboard', 79.99, 20),       -- => id=3, mid price, high stock
+    ('Monitor', 299.99, 2);        -- => id=4, high price, low stock
+-- => 4 products with varying prices and stock levels
+-- => Different stock levels demonstrate CASE conditions
 
 -- Simple CASE: Categorize stock levels
 SELECT
-    name,
-    stock,
-    CASE
-        WHEN stock = 0 THEN 'Out of Stock'
-        WHEN stock < 5 THEN 'Low Stock'
-        ELSE 'In Stock'
-    END AS stock_status
+    name,                          -- => Product name column
+    stock,                         -- => Current stock quantity
+    CASE                           -- => CASE expression for conditional logic
+        WHEN stock = 0 THEN 'Out of Stock'    -- => Condition 1: exactly 0
+                                               -- => Returns string when true
+        WHEN stock < 5 THEN 'Low Stock'       -- => Condition 2: checked if first false
+                                               -- => 0 < stock < 5
+        ELSE 'In Stock'            -- => Default case: stock >= 5
+                                   -- => ELSE is optional but recommended
+    END AS stock_status            -- => Names the computed column
 FROM products;
--- => Returns:
--- => Laptop: Low Stock (stock=5 is not <5, so ELSE)
--- => Mouse: Out of Stock
--- => Keyboard: In Stock
--- => Monitor: Low Stock
+-- => Returns 4 rows with status labels:
+-- => Laptop: In Stock (stock=5, not <5, goes to ELSE)
+-- => Mouse: Out of Stock (stock=0, matches first WHEN)
+-- => Keyboard: In Stock (stock=20, goes to ELSE)
+-- => Monitor: Low Stock (stock=2, matches second WHEN)
+-- => CASE evaluates conditions in order, stops at first match
 
 -- CASE with calculations: Apply tiered discounts
 SELECT
-    name,
-    price,
-    CASE
-        WHEN price > 500 THEN price * 0.80  -- 20% discount
-        WHEN price > 100 THEN price * 0.90  -- 10% discount
-        ELSE price * 0.95                    -- 5% discount
-    END AS discounted_price
+    name,                          -- => Product name
+    price,                         -- => Original price
+    CASE                           -- => CASE for price-based discount tiers
+        WHEN price > 500 THEN price * 0.80  -- => 20% discount (multiply by 0.80)
+                                             -- => Applies to Laptop (999.99)
+        WHEN price > 100 THEN price * 0.90  -- => 10% discount (multiply by 0.90)
+                                             -- => Applies to Monitor (299.99)
+        ELSE price * 0.95          -- => 5% discount for all others
+                                   -- => Applies to Mouse, Keyboard
+    END AS discounted_price        -- => Computed discounted price
 FROM products;
--- => Laptop: 799.99, Mouse: 28.49, Keyboard: 75.99, Monitor: 269.99
+-- => Returns 4 rows with discounts:
+-- => Laptop: 999.99 → 799.99 (999.99 * 0.80, 20% off)
+-- => Mouse: 29.99 → 28.49 (29.99 * 0.95, 5% off)
+-- => Keyboard: 79.99 → 75.99 (79.99 * 0.95, 5% off)
+-- => Monitor: 299.99 → 269.99 (299.99 * 0.90, 10% off)
+-- => CASE enables tiered pricing logic in single query
 
 -- CASE in aggregation: Count by category
 SELECT
     COUNT(CASE WHEN stock = 0 THEN 1 END) AS out_of_stock,
+                                   -- => CASE returns 1 for stock=0, NULL otherwise
+                                   -- => COUNT counts non-NULL values
+                                   -- => Counts products with stock=0
     COUNT(CASE WHEN stock > 0 AND stock < 5 THEN 1 END) AS low_stock,
+                                   -- => Counts products with 0 < stock < 5
+                                   -- => Combines conditions with AND
     COUNT(CASE WHEN stock >= 5 THEN 1 END) AS in_stock
+                                   -- => Counts products with stock >= 5
+                                   -- => No ELSE means NULL for non-matches
 FROM products;
--- => Returns: out_of_stock=1, low_stock=1, in_stock=2
+-- => Returns single row with category counts:
+-- => out_of_stock=1 (Mouse)
+-- => low_stock=1 (Monitor, stock=2)
+-- => in_stock=2 (Laptop stock=5, Keyboard stock=20)
+-- => CASE in COUNT creates pivot-table-style aggregations
+-- => Counts filtered by different conditions in same query
 
 -- Searched CASE (no column after CASE keyword)
 SELECT
-    name,
-    CASE
-        WHEN price < 50 THEN 'Budget'
-        WHEN price < 200 THEN 'Mid-Range'
-        ELSE 'Premium'
-    END AS price_tier
+    name,                          -- => Product name
+    CASE                           -- => Searched CASE (no value after CASE)
+        WHEN price < 50 THEN 'Budget'       -- => Test condition directly
+                                             -- => Mouse qualifies (29.99)
+        WHEN price < 200 THEN 'Mid-Range'   -- => Second condition
+                                             -- => Keyboard qualifies (79.99)
+        ELSE 'Premium'             -- => Default for price >= 200
+                                   -- => Laptop, Monitor qualify
+    END AS price_tier              -- => Category label column
 FROM products;
--- => Mouse: Budget, Keyboard: Mid-Range, Laptop: Premium, Monitor: Premium
+-- => Returns 4 rows with price categories:
+-- => Mouse: Budget (price 29.99 < 50)
+-- => Keyboard: Mid-Range (price 79.99, 50 <= price < 200)
+-- => Laptop: Premium (price 999.99 >= 200)
+-- => Monitor: Premium (price 299.99 >= 200)
+-- => Searched CASE allows any boolean conditions
+-- => Different from simple CASE which compares single value
 ```
 
 **Key Takeaway**: CASE expressions add conditional logic to SELECT statements. Use WHEN-THEN for conditions, ELSE for defaults. Powerful for categorization, pivoting, and conditional aggregation.

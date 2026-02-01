@@ -1324,36 +1324,49 @@ class ZakatPayment {                    // => Class for Zakat payments
   String type;                          // => Zakat type
 
   // Default constructor
+  // => Shorthand syntax: this.field assigns constructor parameter to field
   ZakatPayment(this.donorName, this.amount, this.date, this.type);
                                         // => Standard constructor
+                                        // => Requires all 4 fields at construction
 
   // Named constructor for wealth Zakat
+  // => Named constructors enable domain-specific creation methods
   ZakatPayment.wealth(String name, double wealth)
                                         // => Named constructor syntax
+                                        // => ClassName.name(...) pattern
       : donorName = name,               // => Initialize donorName
         amount = wealth * 0.025,        // => Calculate amount (2.5%)
         date = DateTime.now(),          // => Set current date
         type = 'Wealth';                // => Set type
                                         // => Initializer list with :
+                                        // => Runs before constructor body
 
   // Named constructor for agriculture Zakat
+  // => Different calculation logic than wealth Zakat
   ZakatPayment.agriculture(String name, double harvest)
-      : donorName = name,
-        amount = harvest * 0.10,        // => 10% for agriculture
-        date = DateTime.now(),
-        type = 'Agriculture';
+      // => Takes harvest value as input
+      : donorName = name,               // => Same initialization pattern
+        amount = harvest * 0.10,        // => 10% for agriculture (higher rate)
+        date = DateTime.now(),          // => Current timestamp
+        type = 'Agriculture';           // => Identifies Zakat type
+                                        // => Each named constructor encapsulates business logic
 
   // Factory constructor (can return cached instances)
+  // => factory keyword enables returning existing instances or subtypes
   factory ZakatPayment.fromMap(Map<String, dynamic> map) {
                                         // => factory keyword
                                         // => Can return existing instance or subtype
+                                        // => Unlike regular constructors, can control what gets returned
     return ZakatPayment(                // => Create and return instance
-      map['donorName'] as String,       // => Extract from map
-      map['amount'] as double,
+      // => Calls default constructor internally
+      map['donorName'] as String,       // => Extract from map with type cast
+      map['amount'] as double,          // => Type cast ensures double
       DateTime.parse(map['date'] as String),
                                         // => Parse string to DateTime
-      map['type'] as String,
+                                        // => Handles date deserialization
+      map['type'] as String,            // => Extract type field
     );                                  // => Return created object
+                                        // => Factory enables custom construction logic
   }
 
   // Const constructor (compile-time constant objects)
@@ -1479,12 +1492,16 @@ class DonationAccount {                 // => Class for managing donations
   double get balance => _balance;       // => Expose balance as read-only
 
   // Setter for balance with validation
+  // => Setters enable validation before assignment
   set balance(double value) {           // => Setter method
+                                        // => Called like property: account.balance = value
     if (value < 0) {                    // => Validate input
+                                        // => Business rule: balance must be non-negative
       throw ArgumentError('Balance cannot be negative');
                                         // => Throw error for invalid value
+                                        // => Prevents invalid state
     }
-    _balance = value;                   // => Set private field
+    _balance = value;                   // => Set private field after validation
   }                                     // => Setter ends
 
   // Computed getter (no backing field)
@@ -1498,15 +1515,17 @@ class DonationAccount {                 // => Class for managing donations
   }                                     // => Return computed value
 
   // Getter with complex logic
+  // => Getters can contain business logic, not just field access
   String get status {                   // => Status based on balance
-    if (_balance >= 10000000) {
-      return 'Premium (>= 10M)';
-    } else if (_balance >= 5000000) {
-      return 'Standard (>= 5M)';
-    } else {
-      return 'Basic (< 5M)';
+                                        // => Called like property: account.status
+    if (_balance >= 10000000) {         // => Check premium threshold
+      return 'Premium (>= 10M)';        // => High-value account
+    } else if (_balance >= 5000000) {   // => Check standard threshold
+      return 'Standard (>= 5M)';        // => Mid-value account
+    } else {                            // => Below standard threshold
+      return 'Basic (< 5M)';            // => Low-value account
     }
-  }
+  }                                     // => Computed dynamically on each access
 
   void deposit(double amount) {         // => Method to add funds
     if (amount <= 0) {                  // => Validate amount
@@ -1976,25 +1995,35 @@ double calculateZakat(double wealth) {  // => Function that may throw
 
 void main() {
   // Basic try-catch
+  // => Exception handling prevents program crashes
   try {                                 // => Try block - may throw
+                                        // => Code that might fail goes here
     double zakat = calculateZakat(100000000.0);
                                         // => Call function that may throw
+                                        // => 100M > nisab, calculation succeeds
                                         // => zakat stores 2500000.0
     print('Zakat: Rp$zakat');           // => Output: Zakat: Rp2500000.0
+                                        // => Only executes if no exception thrown
   } catch (e) {                         // => Catch any exception
-    print('Error: $e');                 // => Handle error
+                                        // => e is exception object
+    print('Error: $e');                 // => Handle error gracefully
+                                        // => Not executed in this case (no exception)
   }                                     // => Continue execution
+                                        // => Program doesn't crash even if exception occurs
 
   // Catch specific exception type
+  // => on keyword catches specific exception types
   try {
     double zakat = calculateZakat(50000000.0);
-                                        // => Below nisab
+                                        // => 50M < 85M nisab (below threshold)
                                         // => Throws InsufficientFundsException
   } on InsufficientFundsException catch (e) {
-                                        // => Catch specific type
+                                        // => Catch specific type (most specific first)
+                                        // => e has type InsufficientFundsException
     print('Caught specific: $e');       // => Output: Caught specific: InsufficientFundsException: Wealth below nisab threshold
-  } catch (e) {                         // => Catch other types
-    print('Caught generic: $e');        // => Not executed
+                                        // => Handles this specific exception
+  } catch (e) {                         // => Catch other types (catch-all)
+    print('Caught generic: $e');        // => Not executed (exception already caught above)
   }
 
   // Multiple catch blocks
@@ -2011,6 +2040,7 @@ void main() {
   }
 
   // Finally block (always executes)
+  // => finally runs regardless of success or exception
   bool transactionStarted = false;      // => Track transaction state
 
   try {
@@ -2018,18 +2048,23 @@ void main() {
     print('Starting transaction...');   // => Output: Starting transaction...
 
     double zakat = calculateZakat(75000000.0);
-                                        // => Below nisab, throws exception
+                                        // => 75M < 85M nisab (below threshold)
+                                        // => Throws exception
 
-    print('Transaction completed');     // => Not executed
+    print('Transaction completed');     // => Not executed (exception thrown above)
   } catch (e) {
     print('Transaction failed: $e');    // => Handle error
-                                        // => Output: Transaction failed: ...
+                                        // => Output: Transaction failed: InsufficientFundsException...
   } finally {                           // => Always executes
-    if (transactionStarted) {
+                                        // => Runs even if exception caught
+                                        // => Used for cleanup (close files, release locks)
+    if (transactionStarted) {           // => Check if cleanup needed
       print('Cleaning up transaction');
                                         // => Output: Cleaning up transaction
+                                        // => Ensures resources released
     }
   }                                     // => Continue execution
+                                        // => finally guarantees cleanup happens
 
   // Rethrow exception
   void processPayment(double amount) {  // => Function that rethrows

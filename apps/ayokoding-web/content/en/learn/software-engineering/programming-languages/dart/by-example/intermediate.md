@@ -3553,23 +3553,29 @@ class DonationService {
 
 void main() {
   // Named constructors for clarity
+  // => Named constructors improve API clarity and type safety
   Donation donation1 = Donation.zakat('Ahmad', 100000.0);
                                         // => Named constructor: clear intent
                                         // => Category: automatically 'Zakat'
+                                        // => Alternative to: Donation('Ahmad', 100000.0, 'Zakat')
   print(donation1);                     // => Output: Zakat from Ahmad: Rp100000.0
 
   Donation donation2 = Donation.sadaqah('Fatimah', 200000.0);
   print(donation2);                     // => Output: Sadaqah from Fatimah: Rp200000.0
 
   // Factory constructor with validation
+  // => Factories enable validation before instance creation
   try {
     Donation donation3 = Donation.validated('Ali', 150000.0, 'Infaq');
+                                        // => Validation passes: creates instance
     print(donation3);                   // => Output: Infaq from Ali: Rp150000.0
 
     Donation donation4 = Donation.validated('', 100000.0, 'Zakat');
                                         // => Validation fails: empty donor
+                                        // => Throws ArgumentError before creation
   } catch (e) {
     print('Validation error: $e');      // => Output: Validation error: Invalid argument(s): Donor cannot be empty
+                                        // => Catches validation exception
   }
 
   // Factory constructor with caching

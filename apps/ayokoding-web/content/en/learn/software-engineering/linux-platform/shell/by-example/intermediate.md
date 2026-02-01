@@ -285,38 +285,51 @@ fi
 
 # Using getopts for option parsing
 while getopts "vho:f:" opt; do  # => getopts: POSIX-compliant option parser
+                                # => Built-in shell command for parsing options
                                 # => "vho:f:": option string
                                 # => v,h: flags (no argument)
                                 # => o:,f:: options requiring argument (colon suffix)
+                                # => Colon means option expects value
                                 # => opt: variable receiving matched option
+                                # => Loop processes each option in turn
     case $opt in                # => case statement matches option value
+                                # => $opt contains single option letter
         v)
             VERBOSE=true        # => -v flag detected
                                 # => Sets boolean variable
                                 # => No argument required
+                                # => Simple flag pattern
             ;;
         h)
             echo "Usage: $0 [-v] [-o output] -f file"
                                 # => -h flag: shows help
+                                # => Square brackets: optional arguments
+                                # => No brackets: required arguments
             exit 0              # => Exit code 0 (success)
                                 # => Help is not an error
+                                # => Script stops after showing help
             ;;
         o)
             OUTPUT="$OPTARG"    # => -o option detected
                                 # => $OPTARG: argument provided to option
+                                # => Set by getopts automatically
                                 # => Example: -o myfile → OUTPUT="myfile"
             ;;
         f)
             FILE="$OPTARG"      # => -f option detected
                                 # => Required for script logic
                                 # => Example: -f input.txt → FILE="input.txt"
+                                # => Stored for later validation
             ;;
         \?)
             echo "Invalid option: -$OPTARG"
                                 # => \?: unrecognized option
+                                # => Triggered by option not in string
                                 # => $OPTARG: the invalid option provided
+                                # => Example: -z → OPTARG="z"
             exit 1              # => Exit with error
                                 # => Prevents script from running with bad options
+                                # => Early termination on invalid input
             ;;
     esac
 done
@@ -355,19 +368,29 @@ EOF
 }
 
 COMPRESS=false                  # => Initialize variables with defaults
+                                # => Safe defaults before parsing
 VERBOSE=false                   # => Boolean flags default to false
+                                # => Prevents undefined variable errors
 EXCLUDE=""                      # => String option default to empty
+                                # => Empty string = not set
 
 while getopts "cve:h" opt; do   # => Parse options
+                                # => Loop processes each option
                                 # => c,v,h: flags (no argument)
                                 # => e:: option with required argument
+                                # => Colon after 'e' indicates argument needed
     case $opt in
         c) COMPRESS=true ;;     # => Set flag to true
+                                # => Compact syntax: single line
         v) VERBOSE=true ;;      # => Set flag to true
+                                # => Parallel pattern to 'c'
         e) EXCLUDE="$OPTARG" ;; # => Store argument value
+                                # => $OPTARG set by getopts
                                 # => Example: -e .log → EXCLUDE=".log"
         h) usage ;;             # => Call usage function (exits)
+                                # => Function terminates script
         ?) usage ;;             # => Invalid option: show usage and exit
+                                # => Catch-all for unrecognized options
     esac
 done
 
@@ -382,24 +405,33 @@ if [ $# -ne 2 ]; then           # => $#: count of remaining arguments
 fi
 
 SOURCE="$1"                     # => First positional argument
+                                # => After shift, $1 is first non-option arg
 DEST="$2"                       # => Second positional argument
+                                # => $2 is second non-option arg
 
 [ "$VERBOSE" = true ] && echo "Backing up $SOURCE to $DEST"
                                 # => [ ... ]: test condition
+                                # => Checks if VERBOSE flag is true
                                 # => &&: logical AND (execute if true)
+                                # => Right side only runs if left side succeeds
                                 # => Conditional one-liner
+                                # => Compact alternative to if statement
 
 if [ "$COMPRESS" = true ]; then # => Check compression flag
+                                # => Determines backup method
     tar -czf "$DEST/backup.tar.gz" "$SOURCE"
                                 # => tar: create compressed archive
                                 # => -c: create, -z: gzip, -f: filename
+                                # => Creates .tar.gz compressed file
 else
     cp -r "$SOURCE" "$DEST"     # => Copy recursively (no compression)
                                 # => -r: recursive (directories)
+                                # => Faster but larger
 fi
 
 [ "$VERBOSE" = true ] && echo "Backup complete"
                                 # => Conditional verbose output
+                                # => Only prints if -v flag was used
 ```
 
 **Key Takeaway**: Use `getopts` for standard option parsing with flags and arguments, validate all inputs before processing, and provide clear usage messages - always check `$#` for argument count and exit with non-zero status on errors.
@@ -1396,8 +1428,11 @@ Production scripts require robust error handling, logging, argument validation, 
 # Usage: ./backup_database.sh [-v] [-d database] [-o output_dir]
 #
                                 # => Shebang: specifies bash interpreter
+                                # => #!/bin/bash must be first line
                                 # => Header comments: documentation
+                                # => Script metadata block (standard format)
                                 # => Best practice: always document purpose and usage
+                                # => Makes script self-documenting
 
 # Strict error handling
 set -euo pipefail               # => set -e: exit on error
@@ -1427,8 +1462,11 @@ readonly RETENTION_DAYS=7       # => Constant: backup retention period
 
 # Global variables
 VERBOSE=false                   # => Boolean flag: default off
+                                # => Changed by -v option
 DATABASE=""                     # => Required argument: set by getopts
+                                # => Must be provided by user
 OUTPUT_DIR="$BACKUP_DIR"        # => Initialize from constant
+                                # => Can be overridden by -o option
 
 # Logging function
 log() {                         # => Centralized logging function
@@ -1495,8 +1533,11 @@ trap interrupted INT TERM       # => INT: Ctrl+C, TERM: kill command
 
 # Usage information
 usage() {                       # => Help function
+                                # => Called by -h option
     cat << EOF                  # => Here-document: multi-line string
+                                # => << EOF: start heredoc, terminated by EOF
 Usage: $SCRIPT_NAME [OPTIONS]   # => $SCRIPT_NAME: script filename
+                                # => Variables expanded in heredoc
 
 Automated database backup with compression and rotation.
 
@@ -1511,45 +1552,55 @@ Examples:
     $SCRIPT_NAME -v -d mydb -o /mnt/backup
 
 EOF
+                                # => EOF terminates heredoc (must be alone on line)
     exit 0                      # => Exit with success (help is not error)
+                                # => Help is successful operation
 }
 
 # Parse command line arguments
 parse_args() {                  # => Argument parsing function
+                                # => Processes script options
     while getopts "vd:o:h" opt; do
                                 # => getopts: POSIX option parser
                                 # => "vd:o:h": option string
                                 # => v,h: flags (no argument)
-                                # => d:,o:: require argument
+                                # => d:,o:: require argument (colon after letter)
         case $opt in            # => case: match option
+                                # => $opt contains current option letter
             v)
                 VERBOSE=true    # => -v flag: enable verbose
+                                # => Sets global VERBOSE variable
                 ;;
             d)
                 DATABASE="$OPTARG"
                                 # => -d option: database name
-                                # => $OPTARG: argument value
+                                # => $OPTARG: argument value (set by getopts)
                 ;;
             o)
                 OUTPUT_DIR="$OPTARG"
                                 # => -o option: output directory
+                                # => Overrides default BACKUP_DIR
                 ;;
             h)
                 usage           # => -h: show help and exit
+                                # => Calls usage() function
                 ;;
             \?)
                 error_exit "Invalid option: -$OPTARG"
-                                # => \?: invalid option
+                                # => \?: invalid option (not in option string)
+                                # => $OPTARG contains invalid option letter
                 ;;
             :)
                 error_exit "Option -$OPTARG requires an argument"
                                 # => :: missing required argument
+                                # => Triggered when d: or o: has no value
                 ;;
         esac
     done
 
     shift $((OPTIND-1))         # => Remove parsed options from arguments
-                                # => $OPTIND: next argument index
+                                # => $OPTIND: next argument index (set by getopts)
+                                # => Leaves only non-option arguments
 }
 
 # Validate arguments
@@ -1651,20 +1702,28 @@ backup_database() {             # => Core backup logic
 
 # Main execution
 main() {                        # => Main entry point function
+                                # => Orchestrates script execution flow
     log "INFO" "Starting $SCRIPT_NAME"
 
     parse_args "$@"             # => "$@": all script arguments
+                                # => Parse and set global variables
     validate_args               # => Validate after parsing
+                                # => Ensures required inputs provided
     check_prerequisites         # => Check dependencies
+                                # => Verify mysqldump and gzip available
 
     backup_database             # => Execute backup
+                                # => Core business logic
     rotate_backups              # => Clean old backups
+                                # => Maintains retention policy
 
     log "INFO" "$SCRIPT_NAME completed successfully"
 }
 
 # Run main function
 main "$@"                       # => Execute main with all script arguments
+                                # => "$@": preserves argument quoting
+                                # => Entry point of script execution
 ```
 
 **Key Takeaway**: Use `set -euo pipefail` for strict error handling, create dedicated logging and error functions, validate all inputs, provide usage documentation, and implement cleanup with trap - always use readonly for constants, check prerequisites before execution, and return meaningful exit codes.
@@ -2957,10 +3016,13 @@ Subshells run commands in isolated environments, while command grouping executes
 ```bash
 # Subshell with ( )
 (cd /tmp && ls)                  # => ( ): subshell creates isolated environment
+                                 # => Subshell is child process with separate state
                                  # => cd /tmp: changes directory in subshell only
                                  # => && ls: lists files if cd succeeds
+                                 # => Entire command runs in isolated scope
 pwd                              # => pwd: runs in parent shell
                                  # => Still in original directory (subshell isolated)
+                                 # => Subshell changes don't affect parent
 
 # Environment isolation
 VAR="parent"                     # => Set variable in parent shell
@@ -2973,9 +3035,12 @@ echo "Outside: $VAR"             # => Output: parent (original value preserved)
 # Command grouping with { }
 { echo "one"; echo "two"; } > output.txt
                                  # => { }: group commands (not subshell)
+                                 # => Groups multiple commands for single redirection
                                  # => Both echoes redirected to same file
                                  # => Note: space after {, semicolon before }
+                                 # => Syntax requires spaces and semicolons
                                  # => Runs in current shell context
+                                 # => No child process created (unlike subshell)
 
 # Key difference: grouping vs subshell
 { cd /tmp; ls; }                 # => { }: runs in current shell
@@ -2993,10 +3058,16 @@ echo "Outside: $VAR"             # => Output: parent (original value preserved)
 
 # Subshell for variable isolation
 total=0                          # => Initialize in parent shell
+                                 # => Variable accessible in current scope
 while read -r num; do            # => Loop in current shell
+                                 # => read -r: read line without backslash escaping
     ((total += num))             # => Modify total in current shell
+                                 # => Arithmetic expansion updates variable
 done < numbers.txt               # => < : redirect from file (no subshell)
+                                 # => File redirection doesn't create subshell
+                                 # => Loop runs in parent shell context
 echo "Total: $total"             # => Works: total modified in current shell
+                                 # => Variable changes persist after loop
 
 # Problematic: pipe creates subshell
 total=0                          # => Initialize in parent shell
@@ -3008,17 +3079,28 @@ echo "Total: $total"             # => Output: 0 (subshell changes don't persist!
 
 # Solution: process substitution
 total=0                          # => Initialize in parent shell
+                                 # => Variable in current scope
 while read -r num; do            # => Loop in current shell (not subshell)
+                                 # => No pipe, so no subshell created
     ((total += num))             # => Modifies total in current shell
+                                 # => Changes persist in parent scope
 done < <(cat numbers.txt)        # => < <(...): redirect from process substitution
+                                 # => <(...): creates named pipe (FIFO)
+                                 # => First <: redirect from named pipe
                                  # => Avoids subshell, preserves variable scope
+                                 # => Solves pipe subshell problem
 echo "Total: $total"             # => Works: total correctly modified
+                                 # => Variable changes visible in parent
 
 # Parallel execution
 (command1) & (command2) & (command3) &
                                  # => ( ): each command in separate subshell
+                                 # => Isolated environments prevent interference
                                  # => &: run each in background
+                                 # => Three commands execute concurrently
 wait                             # => Wait for all background jobs to complete
+                                 # => Blocks until all three finish
+                                 # => Ensures parallel work completes before continuing
 
 # Background subshell
 (                                # => Start subshell
@@ -3029,13 +3111,20 @@ echo "Continuing immediately"    # => Executes immediately (doesn't wait)
 
 # Practical: safe directory operations
 process_directory() {            # => Function definition
+                                 # => Takes directory path as argument
     (                            # => Subshell isolates directory change
+                                 # => Prevents affecting caller's directory
         cd "$1" || exit 1        # => Change to arg directory, exit subshell on error
+                                 # => ||: exit only subshell, not entire script
+                                 # => Error code 1 propagates to caller
         for file in *.txt; do    # => Loop over txt files in new directory
+                                 # => *.txt: glob expansion in target directory
             process "$file"      # => Process each file
+                                 # => Relative paths work (in correct directory)
         done
     )                            # => Subshell ends, directory change discarded
                                  # => Caller's directory unchanged
+                                 # => Safe pattern for directory operations
 }
 
 # Practical: temporary environment
@@ -3078,7 +3167,9 @@ Secure handling of temporary files prevents race conditions and ensures cleanup.
 tmpfile=$(mktemp)                # => mktemp: creates secure temporary file
                                  # => XXXXXXXXXX: replaced with random chars
                                  # => Output: /tmp/tmp.AbCd1234Ef
+                                 # => File created with 0600 permissions (owner-only)
 echo "Temp file: $tmpfile"       # => Random suffix prevents collisions
+                                 # => Prints full path to created file
 
 # Create with template
 tmpfile=$(mktemp /tmp/myapp.XXXXXX)
@@ -3098,12 +3189,17 @@ echo "Temp dir: $tmpdir"         # => Directory, not file
 
 # Cleanup on exit
 cleanup() {                      # => Cleanup function definition
+                                 # => Function will be called by trap
     rm -f "$tmpfile"             # => Remove temp file (if exists)
+                                 # => -f: force, no error if file doesn't exist
     rm -rf "$tmpdir"             # => Remove temp directory recursively
+                                 # => -r: recursive, -f: force
     echo "Cleaned up temp files"
+                                 # => Confirmation message
 }
 trap cleanup EXIT                # => trap: register cleanup for EXIT signal
                                  # => Runs on normal exit, error, or signal
+                                 # => Ensures cleanup happens automatically
 
 # Safer pattern with trap
 tmpfile=$(mktemp) || exit 1      # => Create temp file, exit if fails
@@ -3166,11 +3262,16 @@ tmpfiles+=("$(mktemp)")          # => Create second temp file, add to array
 
 # Practical: working directory
 workdir=$(mktemp -d) || exit 1   # => Create temp directory, exit on failure
+                                 # => || exit 1: stop script if mktemp fails
 trap 'rm -rf "$workdir"' EXIT    # => Register recursive cleanup
                                  # => rm -rf: removes directory and contents
+                                 # => Single quotes prevent early expansion
 cd "$workdir"                    # => Change to temp directory
+                                 # => All subsequent commands run in temp dir
 # All temp operations here...    # => Work in isolated directory
+                                 # => Safe workspace, no conflicts with other files
 # Automatic cleanup on exit      # => trap ensures removal
+                                 # => Directory deleted when script exits
 
 # DANGEROUS - don't do this!
 # rm -rf /tmp/$USER/*            # => DANGER: if $USER is empty, deletes /tmp/*!
@@ -3365,11 +3466,17 @@ graph TD
 ```bash
 # Common signals
 # SIGTERM (15) - Termination request (default kill)  # => Graceful shutdown signal
+                                 # => kill command default (kill PID)
 # SIGINT (2)   - Interrupt (Ctrl+C)  # => User keyboard interrupt
+                                 # => Standard terminal interruption
 # SIGHUP (1)   - Hangup (terminal closed)  # => Terminal disconnection
+                                 # => Often used for config reload
 # SIGKILL (9)  - Force kill (cannot be caught!)  # => Immediate termination
+                                 # => No cleanup possible (kernel terminates)
 # SIGUSR1 (10) - User-defined  # => Application-specific signal 1
+                                 # => Custom application behavior
 # SIGUSR2 (12) - User-defined  # => Application-specific signal 2
+                                 # => Another custom signal slot
 
 # Basic signal handler
 trap 'echo "Caught SIGINT"' INT  # => trap 'command' SIGNAL: register handler
@@ -3378,30 +3485,47 @@ trap 'echo "Caught SIGTERM"' TERM  # => TERM: SIGTERM signal name
 
 # Cleanup handler
 cleanup() {                      # => Cleanup function definition
+                                 # => Always runs on script exit
     echo "Cleaning up..."        # => Log cleanup start
+                                 # => Status message to user
     rm -f "$TEMPFILE"            # => Remove temporary files
+                                 # => -f: no error if file doesn't exist
     kill $(jobs -p) 2>/dev/null  # => jobs -p: list background job PIDs
+                                 # => $(...): command substitution
                                  # => kill: terminate background jobs
+                                 # => 2>/dev/null: suppress error messages
     echo "Cleanup complete"      # => Log cleanup completion
+                                 # => Final status message
 }
 trap cleanup EXIT                # => EXIT: pseudo-signal for script exit
                                  # => Catches normal exit, errors, signals
+                                 # => Guaranteed execution on any exit path
 
 # Graceful shutdown
 shutdown=false                   # => Flag for shutdown state
+                                 # => Boolean variable (false = continue)
 handle_signal() {                # => Signal handler function
+                                 # => Handles SIGTERM and SIGINT
     echo "Received shutdown signal"
+                                 # => Log signal reception
     shutdown=true                # => Set flag (doesn't exit immediately)
+                                 # => Allows current work to complete
 }
 trap handle_signal SIGTERM SIGINT  # => Register handler for multiple signals
+                                 # => Both signals trigger same handler
 
 # Main loop with graceful shutdown
 while [ "$shutdown" = false ]; do  # => Loop until shutdown flag set
+                                 # => Checks flag on each iteration
     echo "Working..."            # => Do work
+                                 # => Simulates actual processing
     sleep 1                      # => Brief pause
+                                 # => Allows signal handling between iterations
     # Check shutdown flag each iteration  # => Allows graceful completion
+                                 # => Loop exits cleanly when flag=true
 done
 echo "Shutting down gracefully"  # => Exit after loop completes
+                                 # => Confirmation of clean shutdown
 
 # Ignore signal
 trap '' SIGINT                   # => '': empty command ignores signal
@@ -3451,34 +3575,52 @@ trap load_config SIGHUP          # => SIGHUP: traditionally reload signal
 
 # Practical: service wrapper
 #!/bin/bash                      # => Service daemon script
+                                 # => Run as background service
 PIDFILE="/var/run/myservice.pid"  # => PID file for service
+                                 # => Allows stopping service later
 shutdown=false                   # => Shutdown flag
+                                 # => Controls main loop
 
 cleanup() {                      # => Cleanup on exit
+                                 # => Runs automatically via trap
     rm -f "$PIDFILE"             # => Remove PID file
+                                 # => Indicates service not running
     echo "[$(date)] Service stopped" >> /var/log/myservice.log
                                  # => Log stop time
+                                 # => Append to log file
 }
 
 handle_shutdown() {              # => Graceful shutdown handler
+                                 # => Called by SIGTERM or SIGINT
     echo "Shutdown requested"    # => Log request
+                                 # => User feedback
     shutdown=true                # => Set flag (doesn't exit immediately)
+                                 # => Allows current task to finish
 }
 
 trap cleanup EXIT                # => Register cleanup
+                                 # => Ensures PID file removed
 trap handle_shutdown SIGTERM SIGINT  # => Register shutdown handler
+                                 # => Handle both common termination signals
 
 echo $$ > "$PIDFILE"             # => Write service PID
+                                 # => $$: current process ID
 echo "[$(date)] Service started" >> /var/log/myservice.log
                                  # => Log start time
+                                 # => $(date): timestamp
 
 while [ "$shutdown" = false ]; do  # => Main service loop
+                                 # => Continues until signal received
     # Service work here          # => Process tasks
+                                 # => Placeholder for actual work
     process_queue                # => Handle queue items
+                                 # => Core service logic
     sleep 5                      # => Brief pause between iterations
+                                 # => Prevents busy-waiting
 done
 
 echo "[$(date)] Graceful shutdown complete"  # => Log graceful exit
+                                 # => Confirms clean termination
 
 # Practical: timeout with signal
 timeout_handler() {              # => Timeout handler
@@ -3526,7 +3668,9 @@ set +x                           # => +x: disable xtrace
 
 # Selective debugging
 set -x                           # => Enable tracing
+                                 # => All commands after this line will be traced
 problematic_function             # => Trace only this function
+                                 # => Function call will show expansion details
 set +x                           # => Disable tracing
                                  # => Debug specific section, not entire script
 
@@ -3750,15 +3894,21 @@ case "${ENVIRONMENT:-development}" in
                                  # => ${ENVIRONMENT:-development}: default to development
     production)                  # => Production configuration
         API_URL="https://api.example.com"
+                                 # => Production API endpoint (HTTPS required)
         DEBUG=false
+                                 # => Disable debugging in production
         ;;
     staging)                     # => Staging configuration
         API_URL="https://staging-api.example.com"
+                                 # => Staging API endpoint for testing
         DEBUG=true
+                                 # => Enable debugging in staging
         ;;
     *)                           # => Default: development configuration
         API_URL="http://localhost:3000"
+                                 # => Local development server
         DEBUG=true
+                                 # => Enable debugging in development
         ;;
 esac
 export API_URL DEBUG             # => Export both variables for child processes
