@@ -24,96 +24,151 @@ Spring's declarative transaction management ensures data consistency through ACI
 ```java
 // pom.xml
 <dependency>
+// => Code line
   <groupId>org.springframework.boot</groupId>
+  // => Code line
   <artifactId>spring-boot-starter-data-jpa</artifactId>
+  // => Code line
 </dependency>
+// => Code line
 
 // Domain model
 @Entity
+// => Annotation applied
 public class BankAccount {
+    // => Begins block
   @Id @GeneratedValue
+  // => Annotation applied
   private Long id;
+  // => Declares id field of type Long
   private String owner;
+  // => Declares owner field of type String
   private BigDecimal balance;
+  // => Declares balance field of type BigDecimal
   // constructors, getters, setters
 }
+// => Block delimiter
 
 @Entity
+// => Annotation applied
 public class TransferLog {
+    // => Begins block
   @Id @GeneratedValue
+  // => Annotation applied
   private Long id;
+  // => Declares id field of type Long
   private Long fromAccount;
+  // => Declares fromAccount field of type Long
   private Long toAccount;
+  // => Declares toAccount field of type Long
   private BigDecimal amount;
+  // => Declares amount field of type BigDecimal
   private LocalDateTime timestamp;
+  // => Declares timestamp field of type LocalDateTime
   // constructors, getters, setters
 }
+// => Block delimiter
 
 // Repository
 public interface AccountRepository extends JpaRepository<BankAccount, Long> {}
+    // => Begins block
 public interface TransferLogRepository extends JpaRepository<TransferLog, Long> {}
+    // => Begins block
 
 // Service with transactions
 @Service
+// => Annotation applied
 public class TransferService {
+    // => Begins block
   @Autowired private AccountRepository accountRepo;
   // => Injected repository for BankAccount CRUD operations
   @Autowired private TransferLogRepository logRepo;
   // => Injected repository for TransferLog audit trail
 
   @Transactional // Default: REQUIRED propagation, rollback on RuntimeException
+  // => Annotation applied
   public void transfer(Long fromId, Long toId, BigDecimal amount) {
+    // => Begins block
     BankAccount from = accountRepo.findById(fromId)
       // => Retrieves source account, throws IllegalArgumentException if not found
       .orElseThrow(() -> new IllegalArgumentException("Source not found"));
+    // => Executes method
     BankAccount to = accountRepo.findById(toId)
       // => Retrieves destination account for credit operation
       .orElseThrow(() -> new IllegalArgumentException("Destination not found"));
+    // => Executes method
 
     if (from.getBalance().compareTo(amount) < 0) {
+    // => Executes method
       throw new IllegalStateException("Insufficient funds"); // => Rollback entire transaction
+      // => Assigns > Rollback entire transaction to //
     }
+    // => Block delimiter
 
     from.setBalance(from.getBalance().subtract(amount));
+    // => Executes method
     // => Debits source account (new balance = old balance - amount)
     to.setBalance(to.getBalance().add(amount));
+    // => Executes method
     // => Credits destination account (new balance = old balance + amount)
     accountRepo.save(from);
+    // => Executes method
     // => Persists updated source account to database
     accountRepo.save(to);
+    // => Executes method
     // => Persists updated destination account to database
 
     // Log the transfer
     TransferLog log = new TransferLog();
+    // => Creates new instance
     log.setFromAccount(fromId);
+    // => Executes method
     log.setToAccount(toId);
+    // => Executes method
     log.setAmount(amount);
+    // => Executes method
     log.setTimestamp(LocalDateTime.now());
+    // => Executes method
     // => Records exact time of transfer for audit trail
     logRepo.save(log);
+    // => Executes method
     // => Persists transfer log entry (all-or-nothing with account updates)
 
     // If exception occurs here, ALL changes (both accounts + log) rollback
+    // => Invokes // If exception occurs here, ALL changes()
   }
+  // => Block delimiter
 }
+// => Block delimiter
 
 // Controller
 @RestController
+// => Annotation applied
 @RequestMapping("/api/transfers")
+    // => Executes method
 public class TransferController {
+    // => Begins block
   @Autowired private TransferService transferService;
+  // => Annotation applied
 
   @PostMapping
+  // => Annotation applied
   public ResponseEntity<String> transfer(
     @RequestParam Long fromId,
     @RequestParam Long toId,
     @RequestParam BigDecimal amount
   ) {
+    // => Begins block
     try {
+    // => Begins block
       transferService.transfer(fromId, toId, amount);
+    // => Executes method
       return ResponseEntity.ok("Transfer successful");
+    // => Returns value to caller
     } catch (Exception e) {
+    // => Executes method
       return ResponseEntity.badRequest().body(e.getMessage());
+    // => Returns value to caller
     }
   }
 }
@@ -287,20 +342,29 @@ Transaction isolation controls visibility of concurrent changes.
 
 ```java
 @Service
+// => Annotation applied
 public class InventoryService {
+    // => Begins block
   @Autowired private ProductRepository productRepo;
+  // => Annotation applied
 
   // READ_COMMITTED: Prevents dirty reads
   @Transactional(isolation = Isolation.READ_COMMITTED)
+  // => Annotation applied
   public int getStock(Long productId) {
+    // => Begins block
     Product p = productRepo.findById(productId).orElseThrow();
     // => Fetches product from database within transaction boundary
     return p.getStock(); // => Sees only committed data from other transactions
+    // => Assigns > Sees only committed data from other transactions to //
   }
+  // => Block delimiter
 
   // REPEATABLE_READ: Prevents non-repeatable reads
   @Transactional(isolation = Isolation.REPEATABLE_READ)
+  // => Annotation applied
   public void processOrder(Long productId, int quantity) {
+    // => Begins block
     Product p = productRepo.findById(productId).orElseThrow();
     // => Fetches product from database within transaction boundary
     int initialStock = p.getStock(); // => 100
@@ -308,19 +372,28 @@ public class InventoryService {
 
     // Simulate delay
     Thread.sleep(1000);
+    // => Executes method
 
     // Even if another transaction updates stock, this transaction still sees 100
     int currentStock = productRepo.findById(productId).get().getStock(); // => Still 100
+    // => Invokes findById() method
+    // => Result stored in currentStock
 
     if (currentStock >= quantity) {
+    // => Executes method
       p.setStock(currentStock - quantity);
+    // => Executes method
       productRepo.save(p);
+    // => Executes method
     }
+    // => Block delimiter
   }
 
   // SERIALIZABLE: Strictest isolation (rarely needed)
+  // => Invokes // SERIALIZABLE: Strictest isolation()
   @Transactional(isolation = Isolation.SERIALIZABLE)
   public void criticalOperation(Long productId) {
+    // => Begins block
     // Locks prevent concurrent access—transactions execute serially
   }
 }
@@ -425,6 +498,7 @@ Prevent lost updates with version-based concurrency control.
 ```java
 @Entity
 public class Product {
+    // => Begins block
   @Id @GeneratedValue
   private Long id;
   // => Primary key auto-generated by database
@@ -444,19 +518,23 @@ public class Product {
 
 @Service
 public class StockService {
+    // => Begins block
   @Autowired private ProductRepository productRepo;
   // => Injected JPA repository for Product CRUD operations
 
   @Transactional
   public void decreaseStock(Long productId, int quantity) {
+    // => Begins block
     Product product = productRepo.findById(productId).orElseThrow();
     // => Fetches product with current version (e.g., version=1)
     // => Throws exception if product not found
 
     product.setStock(product.getStock() - quantity);
+    // => Executes method
     // => Decreases stock: new stock = old stock - quantity
     // => Example: 100 - 5 = 95 (not yet persisted)
     productRepo.save(product);
+    // => Executes method
     // => SQL: UPDATE product SET stock=95, version=2 WHERE id=? AND version=1
     // => If version still 1 → success, version becomes 2
     // => If version changed to 2 by another transaction → OptimisticLockException
@@ -468,22 +546,30 @@ public class StockService {
   // Retry logic for conflicts
   @Transactional
   public void decreaseStockWithRetry(Long productId, int quantity) {
+    // => Begins block
     int maxRetries = 3;
+    // => Assigns value to variable
     // => Allow up to 3 attempts to handle concurrent updates gracefully
     for (int i = 0; i < maxRetries; i++) {
+    // => Executes method
       // => Attempt counter: i=0, i=1, i=2
       try {
+    // => Begins block
         Product product = productRepo.findById(productId).orElseThrow();
         // => Fetches latest version from database
         product.setStock(product.getStock() - quantity);
+    // => Executes method
         // => Calculates new stock quantity
         productRepo.save(product);
+    // => Executes method
         // => Attempts save with version check
         return; // Success
         // => Exit method if save succeeds (no exception thrown)
       } catch (OptimisticLockException e) {
+    // => Executes method
         // => Another transaction modified product since we read it
         if (i == maxRetries - 1) throw e; // Retries exhausted
+    // => Executes method
         // => On final retry (i=2), re-throw exception to caller
         // Retry with fresh data
         // => Loop continues, fetches updated version, tries again
@@ -593,6 +679,7 @@ spring.jpa.properties.hibernate.order_updates=true
 
 @Service
 public class BulkImportService {
+    // => Begins block
   @Autowired private ProductRepository productRepo;
   // => Injected JPA repository for Product operations
   @Autowired private EntityManager entityManager;
@@ -601,8 +688,10 @@ public class BulkImportService {
   // Inefficient: N+1 queries
   @Transactional
   public void importProductsSlow(List<Product> products) {
+    // => Begins block
     // => Example: 1000 products
     for (Product p : products) {
+    // => Executes method
       productRepo.save(p); // => 1000 products = 1000 INSERT statements
       // => Each save triggers immediate database roundtrip
       // => Total: 1000 network calls (very slow)
@@ -613,6 +702,7 @@ public class BulkImportService {
   // Better: Batch inserts
   @Transactional
   public void importProductsFast(List<Product> products) {
+    // => Begins block
     productRepo.saveAll(products); // => Batches 1000 products into 20 INSERTs (50 per batch)
     // => Hibernate groups inserts: batch_size=50
     // => Total: 20 network calls instead of 1000
@@ -622,17 +712,24 @@ public class BulkImportService {
   // Best: Manual batch flushing for large datasets
   @Transactional
   public void importProductsOptimal(List<Product> products) {
+    // => Begins block
     int batchSize = 50;
+    // => Assigns value to variable
     // => Process 50 entities at a time
     for (int i = 0; i < products.size(); i++) {
+    // => Executes method
       // => Iterate through all products
       entityManager.persist(products.get(i));
+    // => Executes method
       // => Queues entity for insert (not yet executed)
       if (i % batchSize == 0 && i > 0) {
+    // => Executes method
         // => Every 50 products: i=50, i=100, i=150...
         entityManager.flush(); // Force batch execution
+    // => Executes method
         // => Executes accumulated INSERTs: INSERT INTO product VALUES (...), (...), ...
         entityManager.clear(); // Free memory
+    // => Executes method
         // => Detaches entities from persistence context (prevents OutOfMemoryError)
         // => Crucial for processing 100,000+ entities
       }
@@ -644,8 +741,10 @@ public class BulkImportService {
   // Bulk update with JPQL
   @Transactional
   public void discountAllProducts(BigDecimal discountPercent) {
+    // => Begins block
     // => Example: discountPercent = 0.10 (10% discount)
     int updated = entityManager.createQuery(
+    // => Assigns value to variable
       "UPDATE Product p SET p.price = p.price * :factor"
       // => JPQL query: updates ALL products in single SQL statement
     ).setParameter("factor", BigDecimal.ONE.subtract(discountPercent))
@@ -799,15 +898,20 @@ Spring Boot auto-configures basic security by default.
 
 @RestController
 public class SecuredController {
+    // => Begins block
   @GetMapping("/public")
+    // => Executes method
   public String publicEndpoint() {
+    // => Begins block
     return "Accessible without auth"; // => Still requires login by default!
     // => Spring Security secures ALL endpoints unless explicitly permitted
     // => Returns 401 Unauthorized if no credentials provided
   }
 
   @GetMapping("/api/data")
+    // => Executes method
   public String securedEndpoint() {
+    // => Begins block
     return "Protected data"; // => Requires authentication
     // => HTTP Basic authentication required
     // => Returns data only if valid username/password provided
@@ -895,66 +999,94 @@ Configure users, passwords, and access rules.
 
 ```java
 @Configuration
+// => Annotation applied
 @EnableWebSecurity
+// => Annotation applied
 public class SecurityConfig {
+    // => Begins block
 
   @Bean
+  // => Annotation applied
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    // => Begins block
     http // => Configure HTTP security chain
       .authorizeHttpRequests(auth -> auth // => Define authorization rules
         .requestMatchers("/public/**").permitAll() // => Public endpoints (no auth required)
         .requestMatchers("/admin/**").hasRole("ADMIN") // => Admin endpoints (requires ADMIN role)
         .anyRequest().authenticated() // => All other endpoints require authentication
+        // => Executes method call
       )
       .formLogin(form -> form // => Configure form-based login
         .loginPage("/login") // => Custom login page URL
+        // => Executes method call
         .permitAll()
+    // => Executes method
       )
       .logout(logout -> logout.permitAll()); // => Enable logout endpoint
+      // => Assigns > Enable logout endpoint to //
 
     return http.build(); // => Build SecurityFilterChain bean
+    // => Assigns > Build SecurityFilterChain bean to //
   }
+  // => Block delimiter
 
   @Bean
+  // => Annotation applied
   public UserDetailsService userDetailsService() {
+    // => Begins block
     // => In-memory users (for demo—use database/LDAP in production)
     UserDetails user = User.builder() // => Create user with builder pattern
       .username("user") // => Username for authentication
       .password(passwordEncoder().encode("password123")) // => BCrypt-hashed password
       .roles("USER") // => Granted authority: ROLE_USER
       .build(); // => Immutable UserDetails object
+      // => Assigns > Immutable UserDetails object to //
 
     UserDetails admin = User.builder() // => Create admin user
       .username("admin") // => Admin username
       .password(passwordEncoder().encode("admin123")) // => BCrypt-hashed admin password
       .roles("ADMIN", "USER") // => Multiple roles: ROLE_ADMIN + ROLE_USER
       .build(); // => Admin has both USER and ADMIN privileges
+      // => Assigns > Admin has both USER and ADMIN privileges to //
 
     return new InMemoryUserDetailsManager(user, admin); // => Store users in memory (non-persistent)
+    // => Assigns > Store users in memory (non-persistent) to //
   }
 
   @Bean
   public PasswordEncoder passwordEncoder() {
+    // => Begins block
     return new BCryptPasswordEncoder(); // => BCrypt with automatic salt generation (industry standard)
+    // => Assigns > BCrypt with automatic salt generation (industry standard) to //
   }
 }
 
 // Controller
 @RestController
 public class ApiController {
+    // => Begins block
   @GetMapping("/public/hello")
+    // => Executes method
   public String publicHello() {
+    // => Begins block
     return "Public endpoint"; // => Accessible without login
+    // => Assigns > Accessible without login to //
   }
 
   @GetMapping("/api/user-data")
+    // => Executes method
   public String userData() {
+    // => Begins block
     return "User data"; // => Requires USER or ADMIN role
+    // => Assigns > Requires USER or ADMIN role to //
   }
 
   @GetMapping("/admin/dashboard")
+    // => Executes method
   public String adminDashboard() {
+    // => Begins block
     return "Admin dashboard"; // => Requires ADMIN role only
+    // => Assigns > Requires ADMIN role only to //
   }
 }
 ```
@@ -1084,36 +1216,54 @@ Secure individual methods with annotations.
 
 ```java
 @Configuration
+// => Annotation applied
 @EnableMethodSecurity // Enable method security annotations
+// => Annotation applied
 public class MethodSecurityConfig {}
+    // => Begins block
 
 @Service
+// => Annotation applied
 public class OrderService {
+    // => Begins block
   @Autowired private OrderRepository orderRepo;
+  // => Annotation applied
 
   @PreAuthorize("hasRole('USER')") // => Check role BEFORE method execution
   public List<Order> getMyOrders(String username) { // => username parameter from authenticated user
     return orderRepo.findByUsername(username); // => Query orders filtered by username
+    // => Assigns > Query orders filtered by username to //
   }
+  // => Block delimiter
 
   @PreAuthorize("hasRole('ADMIN')") // => ADMIN role required (throws AccessDeniedException if missing)
   public List<Order> getAllOrders() { // => Admin-only endpoint
     return orderRepo.findAll(); // => Returns ALL orders (no filtering)
+    // => Assigns > Returns ALL orders (no filtering) to //
   }
+  // => Block delimiter
 
   @PreAuthorize("#username == authentication.name") // => SpEL expression: method param matches authenticated username
+  // => Annotation applied
   public Order getOrder(String username, Long orderId) {
+    // => Begins block
     return orderRepo.findByIdAndUsername(orderId, username) // => Query with composite key
       .orElseThrow(() -> new AccessDeniedException("Not authorized")); // => Explicit access denial
+      // => Assigns > Explicit access denial to //
   }
+  // => Block delimiter
 
   @PreAuthorize("hasRole('ADMIN') or #order.username == authentication.name") // => Admin OR resource owner can update
+  // => Annotation applied
   public Order updateOrder(Order order) {
+    // => Begins block
     return orderRepo.save(order); // => Persist updated order (authorization already checked)
+    // => Assigns > Persist updated order (authorization already checked) to //
   }
 
   @PostAuthorize("returnObject.username == authentication.name") // => Check AFTER execution (compare returned order's owner)
   public Order loadOrder(Long orderId) {
+    // => Begins block
     return orderRepo.findById(orderId).orElseThrow(); // => Fetch order first
     // => THEN Spring verifies returnObject.username matches authentication.name
   }
@@ -1122,17 +1272,23 @@ public class OrderService {
 // Controller
 @RestController
 @RequestMapping("/api/orders")
+    // => Executes method
 public class OrderController {
+    // => Begins block
   @Autowired private OrderService orderService;
 
   @GetMapping("/my-orders") // => Endpoint: GET /api/orders/my-orders
   public List<Order> getMyOrders(@AuthenticationPrincipal UserDetails user) { // => Inject authenticated user
     return orderService.getMyOrders(user.getUsername()); // => Pass authenticated username to service layer
+    // => Assigns > Pass authenticated username to service layer to //
   }
 
   @GetMapping("/all")
+    // => Executes method
   public List<Order> getAllOrders() {
+    // => Begins block
     return orderService.getAllOrders(); // => Service method checks @PreAuthorize("hasRole('ADMIN')")
+    // => Sets // to string literal
   }
 }
 ```
@@ -1236,21 +1392,35 @@ Implement stateless authentication with JSON Web Tokens.
 ```java
 // pom.xml
 <dependency>
+// => Code line
   <groupId>io.jsonwebtoken</groupId>
+  // => Code line
   <artifactId>jjwt-api</artifactId>
+  // => Code line
   <version>0.12.3</version>
+  // => Code line
 </dependency>
+// => Code line
 <dependency>
+// => Code line
   <groupId>io.jsonwebtoken</groupId>
+  // => Code line
   <artifactId>jjwt-impl</artifactId>
+  // => Code line
   <version>0.12.3</version>
+  // => Code line
 </dependency>
+// => Code line
 
 // JWT utility class
 @Component
+// => Annotation applied
 public class JwtUtil {
+    // => Begins block
   private String secret = "mySecretKey1234567890123456789012"; // 256-bit key
+    // => Assigns value to variable
   private long expiration = 86400000; // 24 hours
+  // => Sets expiration to 86400000
 
   public String generateToken(String username) { // => Create JWT token for authenticated user
     return Jwts.builder() // => Start JWT builder
@@ -1261,6 +1431,7 @@ public class JwtUtil {
       .compact(); // => Serialize to Base64-encoded string
     // => Result format: header.payload.signature (JWT standard)
   }
+  // => Block delimiter
 
   public String extractUsername(String token) { // => Parse JWT and extract username
     return Jwts.parser() // => Create JWT parser
@@ -1269,16 +1440,23 @@ public class JwtUtil {
       .parseSignedClaims(token) // => Parse and validate JWT (throws if invalid/expired)
       .getPayload() // => Extract claims (payload section)
       .getSubject(); // => Get "sub" claim (username)
+      // => Sets // to string literal
   }
+  // => Block delimiter
 
   public boolean isTokenValid(String token, String username) { // => Comprehensive token validation
+  // => Executes method call
     try {
+    // => Begins block
       String extractedUser = extractUsername(token); // => Parse token (throws if tampered/invalid)
       return extractedUser.equals(username) && !isTokenExpired(token); // => Check username match + expiration
     } catch (Exception e) { // => Catch signature verification failures, malformed tokens
       return false; // => Invalid token
+      // => Assigns > Invalid token to //
     }
+    // => Block delimiter
   }
+  // => Block delimiter
 
   private boolean isTokenExpired(String token) { // => Check if token has expired
     Date expiration = Jwts.parser() // => Create parser
@@ -1288,65 +1466,90 @@ public class JwtUtil {
       .getPayload() // => Extract claims
       .getExpiration(); // => Get "exp" claim (expiration timestamp)
     return expiration.before(new Date()); // => Compare exp with current time
+    // => Assigns > Compare exp with current time to //
   }
+  // => Block delimiter
 }
+// => Block delimiter
 
 // JWT authentication filter
 @Component
+// => Annotation applied
 public class JwtAuthFilter extends OncePerRequestFilter {
+    // => Begins block
   @Autowired private JwtUtil jwtUtil; // => Inject JWT utility for token operations
   @Autowired private UserDetailsService userDetailsService; // => Inject user details service
+  // => Annotation applied
 
   @Override
+  // => Annotation applied
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    // => Executes method
     throws ServletException, IOException {
+    // => Begins block
 
     String header = request.getHeader("Authorization"); // => Extract Authorization header
     if (header != null && header.startsWith("Bearer ")) { // => Check for Bearer token format
       String token = header.substring(7); // => Remove "Bearer " prefix (7 chars)
       String username = jwtUtil.extractUsername(token); // => Parse JWT to extract username
+      // => Invokes extractUsername() method
+      // => Result stored in username
 
       if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) { // => Valid username + not already authenticated
         UserDetails user = userDetailsService.loadUserByUsername(username); // => Load user from database/cache
         if (jwtUtil.isTokenValid(token, username)) { // => Verify signature + expiration + username match
           UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken( // => Create Spring Security auth token
             user, null, user.getAuthorities() // => principal, credentials (null for JWT), authorities
+            // => Retrieves data
           );
           SecurityContextHolder.getContext().setAuthentication(auth); // => Set authentication in security context
+          // => Assigns > Set authentication in security context to //
         }
+        // => Block delimiter
       }
+      // => Block delimiter
     }
     chain.doFilter(request, response); // => Continue filter chain (with or without authentication)
+    // => Assigns > Continue filter chain (with or without authentication) to //
   }
+  // => Block delimiter
 }
 
 // Security config
 @Configuration
 @EnableWebSecurity
 public class JwtSecurityConfig {
+    // => Begins block
   @Autowired private JwtAuthFilter jwtAuthFilter;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    // => Begins block
     http
       .csrf(csrf -> csrf.disable()) // => Disable CSRF (not needed for stateless JWT APIs)
       .authorizeHttpRequests(auth -> auth // => Configure authorization
         .requestMatchers("/auth/**").permitAll() // => Public auth endpoints (login, register)
         .anyRequest().authenticated() // => All other endpoints require JWT
+        // => Executes method call
       )
       .sessionManagement(session -> session // => Configure session management
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // => No HTTP sessions (JWT is stateless)
+        // => Executes method call
       )
       .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // => Insert JWT filter before default auth filter
+      // => Assigns > Insert JWT filter before default auth filter to //
 
     return http.build(); // => Build SecurityFilterChain bean
+    // => Assigns > Build SecurityFilterChain bean to //
   }
 }
 
 // Auth controller
 @RestController
 @RequestMapping("/auth")
+    // => Executes method
 public class AuthController {
+    // => Begins block
   @Autowired private AuthenticationManager authManager; // => Spring Security authentication manager
   @Autowired private JwtUtil jwtUtil; // => Inject JWT utility
 
@@ -1357,6 +1560,7 @@ public class AuthController {
     ); // => If authentication fails, throws BadCredentialsException
     String token = jwtUtil.generateToken(request.getUsername()); // => Generate JWT for authenticated user
     return ResponseEntity.ok(token); // => Return JWT to client
+    // => Assigns > Return JWT to client to //
   }
 }
 
@@ -1543,63 +1747,102 @@ Enable social login with OAuth2 providers.
 ```java
 // pom.xml
 <dependency>
+// => Code execution
   <groupId>org.springframework.boot</groupId>
+  // => Code execution
   <artifactId>spring-boot-starter-oauth2-client</artifactId>
+  // => Code execution
 </dependency>
+// => Code execution
 
 // application.yml
 spring:
+// => Code execution
   security:
+  // => Code execution
     oauth2:
+    // => Code execution
       client:
+      // => Code execution
         registration:
+        // => Code execution
           google:
+          // => Code execution
             client-id: YOUR_GOOGLE_CLIENT_ID
+            // => Code execution
             client-secret: YOUR_GOOGLE_CLIENT_SECRET
+            // => Code execution
             scope:
+            // => Code line
               - email
+              // => Code line
               - profile
+              // => Code line
           github:
+          // => Code line
             client-id: YOUR_GITHUB_CLIENT_ID
+            // => Code line
             client-secret: YOUR_GITHUB_CLIENT_SECRET
+            // => Code line
             scope:
+            // => Code line
               - user:email
+              // => Code line
               - read:user
+              // => Code line
 
 // Security config
 @Configuration
+// => Annotation applied
 @EnableWebSecurity
+// => Annotation applied
 public class OAuth2Config {
+    // => Begins block
   @Bean
+  // => Annotation applied
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    // => Begins block
     http
       .authorizeHttpRequests(auth -> auth // => Configure URL authorization
         .requestMatchers("/", "/login", "/error").permitAll() // => Public pages
         .anyRequest().authenticated() // => All others require OAuth2 login
+        // => Executes method call
       )
       .oauth2Login(oauth2 -> oauth2 // => Configure OAuth2 login
         .loginPage("/login") // => Custom login page (links to Google/GitHub)
         .defaultSuccessUrl("/dashboard") // => Redirect after successful OAuth2 authentication
+        // => Executes method call
       );
+      // => Executes statement
 
     return http.build(); // => Build SecurityFilterChain bean
+    // => Assigns > Build SecurityFilterChain bean to //
   }
+  // => Block delimiter
 }
 
 // Controller
 @RestController
 public class ProfileController {
+    // => Begins block
   @GetMapping("/dashboard") // => Protected endpoint
   public String dashboard(@AuthenticationPrincipal OAuth2User principal) { // => Inject OAuth2 authenticated user
     String name = principal.getAttribute("name"); // => Extract "name" claim from provider
     String email = principal.getAttribute("email"); // => Extract "email" claim
+    // => Invokes getAttribute() method
+    // => Result stored in email
     return "Welcome, " + name + " (" + email + ")";
+    // => Returns value to caller
     // => Extracts user info from OAuth2 provider
   }
 
   @GetMapping("/user-info")
+    // => Executes method
   public Map<String, Object> userInfo(@AuthenticationPrincipal OAuth2User principal) {
+    // => Begins block
     return principal.getAttributes(); // => Complete OAuth2 profile (name, email, picture, etc.)
+    // => Invokes > Complete OAuth2 profile () method
+    // => Result stored in //
   }
 }
 
@@ -1871,46 +2114,76 @@ Test controllers in isolation without full context.
 
 ```java
 @WebMvcTest(ProductController.class) // Only load ProductController
+    // => Executes method
 public class ProductControllerUnitTest {
+    // => Begins block
   @Autowired private MockMvc mockMvc; // Simulates HTTP requests
+  // => Annotation applied
 
   @MockBean // Mock the service layer
+  // => Annotation applied
   private ProductService productService;
+  // => Declares productService field of type ProductService
 
   @Test
+  // => Annotation applied
   void testGetProduct() throws Exception {
+    // => Executes method
     // Arrange
     Product product = new Product(1L, "Laptop", 999.99);
+    // => Creates new instance
     when(productService.findById(1L)).thenReturn(Optional.of(product));
+    // => Executes method
 
     // Act & Assert
     mockMvc.perform(get("/api/products/1"))
+    // => Executes method
       .andExpect(status().isOk())
+    // => Executes method
       .andExpect(jsonPath("$.name").value("Laptop"))
+    // => Executes method
       .andExpect(jsonPath("$.price").value(999.99));
+    // => Executes method
     // => Tests controller logic without starting full app
   }
+  // => Block delimiter
 
   @Test
+  // => Annotation applied
   void testCreateProduct() throws Exception {
+    // => Executes method
     Product product = new Product("Mouse", 25.00);
+    // => Creates new instance
     when(productService.save(any(Product.class))).thenReturn(product);
+    // => Executes method
 
     mockMvc.perform(post("/api/products")
+    // => Executes method
         .contentType(MediaType.APPLICATION_JSON)
+    // => Executes method
         .content("{\"name\":\"Mouse\",\"price\":25.00}"))
+    // => Executes method
       .andExpect(status().isCreated())
+    // => Executes method
       .andExpect(jsonPath("$.name").value("Mouse"));
+    // => Executes method
   }
+  // => Block delimiter
 
   @Test
+  // => Annotation applied
   void testGetProductNotFound() throws Exception {
+    // => Executes method
     when(productService.findById(999L)).thenReturn(Optional.empty());
+    // => Executes method
 
     mockMvc.perform(get("/api/products/999"))
+    // => Executes method
       .andExpect(status().isNotFound());
+    // => Executes method
     // => Tests error handling
   }
+  // => Block delimiter
 }
 ```
 
@@ -2138,57 +2411,94 @@ Isolate units under test with mocks.
 
 ```java
 @ExtendWith(MockitoExtension.class) // Enable Mockito
+    // => Executes method
 public class OrderServiceUnitTest {
+    // => Begins block
   @Mock // Create mock
+  // => Annotation applied
   private OrderRepository orderRepo;
+  // => Declares orderRepo field of type OrderRepository
 
   @Mock
+  // => Annotation applied
   private PaymentService paymentService;
+  // => Declares paymentService field of type PaymentService
 
   @InjectMocks // Inject mocks into service
+  // => Annotation applied
   private OrderService orderService;
+  // => Declares orderService field of type OrderService
 
   @Test
+  // => Annotation applied
   void testProcessOrder() {
+    // => Executes method
     // Arrange
     Order order = new Order("user1", 100.00);
+    // => Creates new instance
     when(orderRepo.save(any(Order.class))).thenReturn(order);
+    // => Executes method
     when(paymentService.charge(anyString(), anyDouble())).thenReturn(true);
+    // => Executes method
 
     // Act
     Order result = orderService.processOrder(order);
+    // => Calls processOrder()
+    // => Stores result in result
 
     // Assert
     assertNotNull(result);
+    // => Executes method
     verify(orderRepo, times(1)).save(order); // Verify method called once
+    // => Executes method
     verify(paymentService, times(1)).charge("user1", 100.00);
+    // => Executes method
   }
+  // => Block delimiter
 
   @Test
+  // => Annotation applied
   void testProcessOrderPaymentFailure() {
+    // => Executes method
     Order order = new Order("user1", 100.00);
+    // => Creates new instance
     when(paymentService.charge(anyString(), anyDouble())).thenReturn(false);
+    // => Executes method
 
     assertThrows(PaymentException.class, () -> {
+    // => Executes method
       orderService.processOrder(order);
+    // => Executes method
     });
+    // => Executes statement
 
     verify(orderRepo, never()).save(any()); // Verify save never called
+    // => Executes method
     // => Tests failure scenarios
   }
 
   @Test
   void testArgumentCaptor() {
+    // => Executes method
     Order order = new Order("user1", 100.00);
+    // => Creates new instance
     when(paymentService.charge(anyString(), anyDouble())).thenReturn(true);
+    // => Executes method
 
     orderService.processOrder(order);
+    // => Executes method
 
     ArgumentCaptor<Order> captor = ArgumentCaptor.forClass(Order.class);
+    // => Calls forClass()
+    // => Stores result in captor
     verify(orderRepo).save(captor.capture());
+    // => Executes method
 
     Order captured = captor.getValue();
+    // => Calls getValue()
+    // => Stores result in captured
     assertEquals("PROCESSED", captured.getStatus());
+    // => Executes method
     // => Captures arguments passed to mocked methods
   }
 }
@@ -2290,24 +2600,32 @@ Transparent caching with Spring's cache abstraction.
 // => Activates @Cacheable, @CachePut, @CacheEvict, @Caching
 // => Creates CacheManager bean (default: ConcurrentMapCacheManager)
 public class Application {
+    // => Begins block
   public static void main(String[] args) {
+    // => Begins block
     SpringApplication.run(Application.class, args);
+    // => Executes method
   }
 }
 
 // Service with caching
 @Service
 public class ProductService {
+    // => Begins block
   @Autowired private ProductRepository productRepo;
   // => Injected repository for database operations
 
   @Cacheable("products") // Cache results by method arguments
+    // => Executes method
   // => Cache name: "products", key: method arguments (id)
   // => Cache key generated from argument: findById(1L) → key="1"
   public Product findById(Long id) {
+    // => Begins block
     System.out.println("Fetching from database: " + id);
+    // => Prints to console
     // => Only prints on cache miss (first call for given id)
     return productRepo.findById(id).orElseThrow();
+    // => Returns value to caller
     // First call: prints "Fetching..." and queries database
     // => Result stored in cache with key="1"
     // Subsequent calls: returns cached value, no database query
@@ -2318,7 +2636,9 @@ public class ProductService {
   // => Cache name: "products", key: SpEL expression #name (method parameter)
   // => findByName("Laptop") → cache key="Laptop"
   public List<Product> findByName(String name) {
+    // => Begins block
     System.out.println("Querying database for: " + name);
+    // => Prints to console
     // => Prints only on cache miss
     return productRepo.findByNameContaining(name);
     // => Queries database: SELECT * FROM product WHERE name LIKE '%Laptop%'
@@ -2493,68 +2813,118 @@ Use Redis as distributed cache backend.
 ```java
 // pom.xml
 <dependency>
+// => Code execution
   <groupId>org.springframework.boot</groupId>
+  // => Code execution
   <artifactId>spring-boot-starter-data-redis</artifactId>
+  // => Code execution
 </dependency>
+// => Code execution
 
 // application.yml
 spring:
+// => Code execution
   data:
+  // => Code execution
     redis:
+    // => Code execution
       host: localhost
+      // => Code execution
       port: 6379
+      // => Code execution
   cache:
+  // => Code execution
     type: redis
+    // => Code line
     redis:
+    // => Code line
       time-to-live: 600000 # 10 minutes in milliseconds
+      // => Code line
 
 // Redis config
 @Configuration
+// => Annotation applied
 @EnableCaching
+// => Annotation applied
 public class RedisCacheConfig {
+    // => Begins block
   @Bean
+  // => Annotation applied
   public CacheManager cacheManager(RedisConnectionFactory factory) {
+    // => Begins block
     RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+    // => Executes method call
       .entryTtl(Duration.ofMinutes(10)) // Cache expiration
+    // => Executes method
       .serializeKeysWith(
+      // => Code line
         RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer())
+    // => Executes method
       )
+      // => Code line
       .serializeValuesWith(
+      // => Code line
         RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer())
+    // => Executes method
       );
+      // => Executes statement
 
     return RedisCacheManager.builder(factory)
+    // => Returns value to caller
       .cacheDefaults(config)
+    // => Executes method
       .build();
+    // => Executes method
   }
+  // => Block delimiter
 }
+// => Block delimiter
 
 // Service (same annotations as Example 34)
+// => Invokes // Service()
 @Service
+// => Annotation applied
 public class UserService {
+    // => Begins block
   @Cacheable("users") // Now uses Redis instead of in-memory cache
+    // => Executes method
   public User findById(Long id) {
+    // => Begins block
     return userRepo.findById(id).orElseThrow();
+    // => Returns value to caller
   }
+  // => Block delimiter
 }
+// => Block delimiter
 
 // Direct Redis operations (without cache abstraction)
+// => Invokes // Direct Redis operations()
 @Service
+// => Annotation applied
 public class SessionService {
+    // => Begins block
   @Autowired private RedisTemplate<String, Object> redisTemplate;
+  // => Annotation applied
 
   public void saveSession(String sessionId, UserSession session) {
+    // => Begins block
     redisTemplate.opsForValue().set("session:" + sessionId, session, Duration.ofMinutes(30));
+    // => Executes method
     // => Key: "session:abc123", Value: serialized UserSession, TTL: 30 minutes
   }
+  // => Block delimiter
 
   public UserSession getSession(String sessionId) {
+    // => Begins block
     return (UserSession) redisTemplate.opsForValue().get("session:" + sessionId);
+    // => Returns value to caller
     // => Returns null if expired or not found
   }
 
   public void deleteSession(String sessionId) {
+    // => Begins block
     redisTemplate.delete("session:" + sessionId);
+    // => Executes method
   }
 }
 ```
@@ -2911,37 +3281,49 @@ Execute methods asynchronously with thread pools.
 // => Creates default TaskExecutor (SimpleAsyncTaskExecutor)
 // => Scans for @Async methods and wraps them in async proxies
 public class Application {
+    // => Begins block
   public static void main(String[] args) {
+    // => Begins block
     SpringApplication.run(Application.class, args);
+    // => Executes method
   }
 }
 
 // Async service
 @Service
 public class EmailService {
+    // => Begins block
   @Async // Runs in separate thread
   // => Method execution delegated to TaskExecutor thread pool
   // => Calling thread returns immediately (non-blocking)
   // => Default thread pool: unlimited threads (not production-ready)
   public void sendEmail(String to, String subject, String body) {
+    // => Begins block
     System.out.println("Sending email to " + to + " - Thread: " + Thread.currentThread().getName());
+    // => Prints to console
     // => Output: "Sending email to user@example.com - Thread: task-1"
     // => Shows execution in async thread (not HTTP request thread)
     // Simulate delay
     try { Thread.sleep(3000); } catch (InterruptedException e) {}
+    // => Executes method
     // => Simulates slow email sending operation (3 seconds)
     // => HTTP request thread already returned response (doesn't wait)
     System.out.println("Email sent to " + to);
+    // => Prints to console
     // => Prints 3 seconds after method call (asynchronously)
   }
 
   @Async
   public CompletableFuture<String> sendEmailWithResult(String to) {
+    // => Begins block
     System.out.println("Sending email - Thread: " + Thread.currentThread().getName());
+    // => Prints to console
     // => Executes in async thread pool
     try { Thread.sleep(2000); } catch (InterruptedException e) {}
+    // => Executes method
     // => 2-second delay simulating email sending
     return CompletableFuture.completedFuture("Email sent to " + to);
+    // => Returns value to caller
     // => Returns CompletableFuture for async result handling
     // => Caller can chain .thenApply(), .exceptionally(), .whenComplete()
     // => Allows non-blocking result processing
@@ -2949,11 +3331,15 @@ public class EmailService {
 
   @Async
   public CompletableFuture<Integer> processLargeFile(String filename) {
+    // => Begins block
     System.out.println("Processing " + filename);
+    // => Prints to console
     // => Output: "Processing file1.csv" (in async thread)
     try { Thread.sleep(5000); } catch (InterruptedException e) {}
+    // => Executes method
     // => 5-second delay simulating file processing
     return CompletableFuture.completedFuture(10000); // Processed 10000 records
+    // => Returns value to caller
     // => Returns count of processed records
     // => CompletableFuture allows caller to combine multiple async operations
   }
@@ -2962,7 +3348,9 @@ public class EmailService {
 // Controller
 @RestController
 @RequestMapping("/api/async")
+    // => Executes method
 public class AsyncController {
+    // => Begins block
   @Autowired private EmailService emailService;
   // => Injected service proxy (Spring wraps @Async methods)
 
@@ -3115,60 +3503,106 @@ Configure thread pools for async execution.
 
 ```java
 @Configuration
+// => Annotation applied
 @EnableAsync
+// => Annotation applied
 public class AsyncConfig implements AsyncConfigurer {
+    // => Begins block
 
   @Override
+  // => Annotation applied
   public Executor getAsyncExecutor() {
+    // => Begins block
     ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+    // => Creates new instance
     executor.setCorePoolSize(5); // Minimum threads
+    // => Executes method
     executor.setMaxPoolSize(10); // Maximum threads
+    // => Executes method
     executor.setQueueCapacity(100); // Queue size before rejecting tasks
+    // => Executes method
     executor.setThreadNamePrefix("async-"); // Thread naming
+    // => Executes method
     executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+    // => Executes method
     executor.initialize();
+    // => Executes method
     return executor;
+    // => Returns result
   }
+  // => Block delimiter
 
   // Custom executor for specific tasks
   @Bean(name = "emailExecutor")
+  // => Annotation applied
   public Executor emailExecutor() {
+    // => Begins block
     ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+    // => Creates new instance
     executor.setCorePoolSize(2);
+    // => Executes method
     executor.setMaxPoolSize(5);
+    // => Executes method
     executor.setQueueCapacity(50);
+    // => Executes method
     executor.setThreadNamePrefix("email-");
+    // => Executes method
     executor.initialize();
+    // => Executes method
     return executor;
+    // => Returns result
   }
+  // => Block delimiter
 
   @Bean(name = "reportExecutor")
+  // => Annotation applied
   public Executor reportExecutor() {
+    // => Begins block
     ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+    // => Creates new instance
     executor.setCorePoolSize(1);
+    // => Executes method
     executor.setMaxPoolSize(3);
+    // => Executes method
     executor.setQueueCapacity(20);
+    // => Executes method
     executor.setThreadNamePrefix("report-");
+    // => Executes method
     executor.initialize();
+    // => Executes method
     return executor;
+    // => Returns result
   }
+  // => Block delimiter
 }
+// => Block delimiter
 
 // Service with custom executors
 @Service
+// => Annotation applied
 public class NotificationService {
+    // => Begins block
   @Async("emailExecutor") // Use specific executor
+    // => Executes method
   public void sendEmailNotification(String to) {
+    // => Begins block
     System.out.println("Email thread: " + Thread.currentThread().getName());
+    // => Prints to console
     // => Thread name: email-1, email-2, etc.
   }
+  // => Block delimiter
 
   @Async("reportExecutor")
+    // => Executes method
   public CompletableFuture<Report> generateReport(Long id) {
+    // => Begins block
     System.out.println("Report thread: " + Thread.currentThread().getName());
+    // => Prints to console
     // => Thread name: report-1, report-2, etc.
     return CompletableFuture.completedFuture(new Report(id));
+    // => Returns value to caller
   }
+  // => Block delimiter
 }
 ```
 
@@ -3254,13 +3688,16 @@ Decouple components with Spring's event publishing mechanism.
 ```java
 // Custom event
 public class OrderPlacedEvent extends ApplicationEvent {
+    // => Begins block
   // => Custom event type extending Spring's ApplicationEvent
   // => All Spring events inherit from ApplicationEvent for type safety
   private final Order order;
   // => Immutable field (final) carrying event payload
 
   public OrderPlacedEvent(Object source, Order order) {
+    // => Begins block
     super(source);
+    // => Executes method
     // => source = event publisher (typically "this" from publishing service)
     // => Stored in ApplicationEvent.source field for traceability
     this.order = order;
@@ -3268,7 +3705,9 @@ public class OrderPlacedEvent extends ApplicationEvent {
   }
 
   public Order getOrder() {
+    // => Begins block
     return order;
+    // => Returns result
     // => Getter for event payload (accessed by listeners)
   }
 }
@@ -3276,19 +3715,23 @@ public class OrderPlacedEvent extends ApplicationEvent {
 // Event publisher
 @Service
 public class OrderService {
+    // => Begins block
   @Autowired private ApplicationEventPublisher eventPublisher;
   // => Injected publisher for broadcasting events to listeners
   @Autowired private OrderRepository orderRepo;
   // => Injected repository for database operations
 
   public Order placeOrder(Order order) {
+    // => Begins block
     order.setStatus("PLACED");
+    // => Executes method
     // => Sets order status to "PLACED"
     Order saved = orderRepo.save(order);
     // => Persists order to database (generates ID)
 
     // Publish event
     eventPublisher.publishEvent(new OrderPlacedEvent(this, saved));
+    // => Executes method
     // => Broadcasts event to ALL registered @EventListener methods
     // => this = event source (OrderService instance)
     // => saved = event payload (persisted Order object)
@@ -3297,6 +3740,7 @@ public class OrderService {
     // => With @Async: asynchronous execution (listeners run in thread pool)
 
     return saved;
+    // => Returns result
     // => Returns saved order to caller
     // => Publisher doesn't know about listeners (decoupling)
   }
@@ -3305,13 +3749,16 @@ public class OrderService {
 // Event listeners
 @Component
 public class EmailNotificationListener {
+    // => Begins block
   @EventListener // Subscribe to event
   // => Registers method as listener for OrderPlacedEvent
   // => Spring auto-detects event type from method parameter
   public void handleOrderPlaced(OrderPlacedEvent event) {
+    // => Begins block
     Order order = event.getOrder();
     // => Extracts order from event payload
     System.out.println("Sending confirmation email for order " + order.getId());
+    // => Prints to console
     // => Logs email sending operation
     // => Executes synchronously by default
     // => Runs in same thread as eventPublisher.publishEvent()
@@ -3321,12 +3768,15 @@ public class EmailNotificationListener {
 
 @Component
 public class InventoryListener {
+    // => Begins block
   @EventListener
   @Async // Make listener async
   // => Executes in separate thread from async executor
   // => placeOrder() returns immediately (doesn't wait for inventory update)
   public void handleOrderPlaced(OrderPlacedEvent event) {
+    // => Begins block
     System.out.println("Updating inventory - Thread: " + Thread.currentThread().getName());
+    // => Prints to console
     // => Output: "Updating inventory - Thread: async-1"
     // => Executes in background thread
     // => Non-blocking: order placement completes without waiting
@@ -3336,11 +3786,14 @@ public class InventoryListener {
 
 @Component
 public class AnalyticsListener {
+    // => Begins block
   @EventListener
   @Async
   // => Async listener: runs in parallel with InventoryListener
   public void handleOrderPlaced(OrderPlacedEvent event) {
+    // => Begins block
     System.out.println("Recording analytics for order " + event.getOrder().getId());
+    // => Prints to console
     // => Output: "Recording analytics for order 123"
     // => Runs in async thread (non-blocking)
     // => Multiple async listeners execute concurrently
@@ -3688,40 +4141,68 @@ WebSocket enables bidirectional, real-time communication between server and clie
 // pom.xml: spring-boot-starter-websocket
 
 @Configuration
+// => Annotation applied
 @EnableWebSocketMessageBroker
+// => Annotation applied
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+    // => Begins block
     @Override
+    // => Annotation applied
     public void configureMessageBroker(MessageBrokerRegistry config) {
+    // => Begins block
         config.enableSimpleBroker("/topic", "/queue"); // => Broadcast and P2P channels
+        // => Assigns > Broadcast and P2P channels to //
         config.setApplicationDestinationPrefixes("/app");
+    // => Executes method
     }
+    // => Block delimiter
 
     @Override
+    // => Annotation applied
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+    // => Begins block
         registry.addEndpoint("/ws")
+    // => Executes method
             .setAllowedOrigins("http://localhost:3000")
+    // => Executes method
             .withSockJS(); // => Fallback for browsers without WebSocket
+            // => Assigns > Fallback for browsers without WebSocket to //
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 @Controller
+// => Annotation applied
 public class ChatController {
+    // => Begins block
     @MessageMapping("/chat.send") // Client sends to /app/chat.send
+    // => Executes method
     @SendTo("/topic/messages") // Broadcast to all subscribers of /topic/messages
+    // => Executes method
     public ChatMessage sendMessage(ChatMessage message) {
+    // => Begins block
         message.setTimestamp(LocalDateTime.now());
+    // => Executes method
         return message; // => Broadcasts to all connected clients
+        // => Assigns > Broadcasts to all connected clients to //
     }
 
     @MessageMapping("/chat.private")
+    // => Executes method
     @SendToUser("/queue/private") // Send to specific user's queue
+    // => Executes method
     public ChatMessage sendPrivateMessage(ChatMessage message, Principal principal) {
+    // => Begins block
         message.setRecipient(principal.getName());
+    // => Executes method
         return message; // => Only recipient receives this
+        // => Assigns > Only recipient receives this to //
     }
 }
 
 record ChatMessage(String sender, String content, String recipient, LocalDateTime timestamp) {}
+    // => Executes method
 ```
 
 **Code (Kotlin)**:
@@ -3807,32 +4288,53 @@ SSE streams server updates to clients over HTTP, simpler than WebSocket for one-
 
 ```java
 @RestController
+// => Annotation applied
 @RequestMapping("/api/sse")
+    // => Executes method
 public class SseController {
+    // => Begins block
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    // => Annotation applied
     public Flux<ServerSentEvent<String>> streamEvents() {
+    // => Begins block
         return Flux.interval(Duration.ofSeconds(1))
+    // => Returns value to caller
             .map(seq -> ServerSentEvent.<String>builder()
+    // => Executes method
                 .id(String.valueOf(seq))
+    // => Executes method
                 .event("message")
+    // => Executes method
                 .data("Server time: " + LocalDateTime.now())
+    // => Executes method
                 .build()
+    // => Executes method
             );
         // => Sends event every second: data: Server time: 2024-12-24T10:00:00
     }
+    // => Block delimiter
 
     @GetMapping(value = "/stock-prices", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    // => Annotation applied
     public Flux<ServerSentEvent<StockPrice>> streamStockPrices() {
+    // => Begins block
         return Flux.interval(Duration.ofSeconds(2))
+    // => Returns value to caller
             .map(i -> ServerSentEvent.<StockPrice>builder()
+    // => Executes method
                 .data(new StockPrice("AAPL", 150.0 + Math.random() * 10))
+    // => Executes method
                 .build()
+    // => Executes method
             );
         // => Streams stock updates every 2 seconds
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 record StockPrice(String symbol, double price) {}
+    // => Executes method
 ```
 
 **Code (Kotlin)**:
@@ -3913,58 +4415,98 @@ Manage API evolution while maintaining backward compatibility through URL, heade
 ```java
 // Strategy 1: URL Path Versioning
 @RestController
+// => Annotation applied
 @RequestMapping("/api/v1/users")
+    // => Executes method
 public class UserV1Controller {
+    // => Begins block
     @GetMapping("/{id}")
+    // => Executes method
     public UserV1 getUser(@PathVariable Long id) {
+    // => Begins block
         return new UserV1(id, "Alice", "alice@example.com");
+    // => Returns value to caller
         // => /api/v1/users/1 returns version 1 format
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 @RestController
+// => Annotation applied
 @RequestMapping("/api/v2/users")
+    // => Executes method
 public class UserV2Controller {
+    // => Begins block
     @GetMapping("/{id}")
+    // => Executes method
     public UserV2 getUser(@PathVariable Long id) {
+    // => Begins block
         return new UserV2(id, "Alice", "Smith", "alice@example.com", "123-456-7890");
+    // => Returns value to caller
         // => /api/v2/users/1 returns version 2 format (added lastName, phone)
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 record UserV1(Long id, String name, String email) {}
+    // => Executes method
 record UserV2(Long id, String firstName, String lastName, String email, String phone) {}
+    // => Executes method
 
 // Strategy 2: Header Versioning
 @RestController
+// => Annotation applied
 @RequestMapping("/api/users")
+    // => Executes method
 public class UserHeaderVersionController {
+    // => Begins block
     @GetMapping(value = "/{id}", headers = "X-API-Version=1")
+    // => Annotation applied
     public UserV1 getUserV1(@PathVariable Long id) {
+    // => Begins block
         return new UserV1(id, "Alice", "alice@example.com");
+    // => Returns value to caller
         // => Header: X-API-Version: 1
     }
+    // => Block delimiter
 
     @GetMapping(value = "/{id}", headers = "X-API-Version=2")
+    // => Annotation applied
     public UserV2 getUserV2(@PathVariable Long id) {
+    // => Begins block
         return new UserV2(id, "Alice", "Smith", "alice@example.com", "123-456-7890");
+    // => Returns value to caller
         // => Header: X-API-Version: 2
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 // Strategy 3: Content Negotiation (Accept Header)
+// => Invokes // Strategy 3: Content Negotiation()
 @RestController
+// => Annotation applied
 @RequestMapping("/api/users")
+    // => Executes method
 public class UserContentNegotiationController {
+    // => Begins block
     @GetMapping(value = "/{id}", produces = "application/vnd.myapp.v1+json")
+    // => Annotation applied
     public UserV1 getUserV1(@PathVariable Long id) {
+    // => Begins block
         return new UserV1(id, "Alice", "alice@example.com");
+    // => Returns value to caller
         // => Header: Accept: application/vnd.myapp.v1+json
     }
+    // => Block delimiter
 
     @GetMapping(value = "/{id}", produces = "application/vnd.myapp.v2+json")
     public UserV2 getUserV2(@PathVariable Long id) {
+    // => Begins block
         return new UserV2(id, "Alice", "Smith", "alice@example.com", "123-456-7890");
+    // => Returns value to caller
         // => Header: Accept: application/vnd.myapp.v2+json
     }
 }
@@ -3972,13 +4514,20 @@ public class UserContentNegotiationController {
 // Strategy 4: Request Parameter Versioning
 @RestController
 @RequestMapping("/api/users")
+    // => Executes method
 public class UserParamVersionController {
+    // => Begins block
     @GetMapping("/{id}")
+    // => Executes method
     public Object getUser(@PathVariable Long id, @RequestParam(defaultValue = "1") int version) {
+    // => Assigns value to variable
         if (version == 2) {
+    // => Executes method
             return new UserV2(id, "Alice", "Smith", "alice@example.com", "123-456-7890");
+    // => Returns value to caller
         }
         return new UserV1(id, "Alice", "alice@example.com");
+    // => Returns value to caller
         // => /api/users/1?version=2
     }
 }
@@ -4099,72 +4648,120 @@ Create custom argument resolvers to extract and inject domain objects from reque
 ```java
 // Custom annotation
 @Target(ElementType.PARAMETER)
+    // => Executes method
 @Retention(RetentionPolicy.RUNTIME)
+    // => Executes method
 public @interface CurrentUser {}
+    // => Begins block
 
 // Argument resolver
 @Component
+// => Annotation applied
 public class CurrentUserArgumentResolver implements HandlerMethodArgumentResolver {
+    // => Begins block
     @Override
+    // => Annotation applied
     public boolean supportsParameter(MethodParameter parameter) {
+    // => Begins block
         return parameter.hasParameterAnnotation(CurrentUser.class)
+    // => Returns value to caller
             && parameter.getParameterType().equals(User.class);
+    // => Executes method
         // => Activates when @CurrentUser User parameter detected
     }
+    // => Block delimiter
 
     @Override
+    // => Annotation applied
     public Object resolveArgument(
+    // => Code line
         MethodParameter parameter,
+        // => Code line
         ModelAndViewContainer mavContainer,
+        // => Code line
         NativeWebRequest webRequest,
+        // => Code line
         WebDataBinderFactory binderFactory
+        // => Code line
     ) {
+    // => Begins block
         String authHeader = webRequest.getHeader("Authorization");
+    // => Assigns value to variable
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
+    // => Executes method
             String token = authHeader.substring(7);
+    // => Assigns value to variable
             return extractUserFromToken(token);
+    // => Returns value to caller
             // => Extracts user from JWT token
         }
+        // => Block delimiter
         return null;
+    // => Returns result
     }
+    // => Block delimiter
 
     private User extractUserFromToken(String token) {
+    // => Begins block
         return new User(1L, "alice", "alice@example.com");
+    // => Returns value to caller
         // => Simplified token parsing
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 // Register resolver
 @Configuration
+// => Annotation applied
 public class WebConfig implements WebMvcConfigurer {
+    // => Begins block
     @Autowired
+    // => Annotation applied
     private CurrentUserArgumentResolver currentUserArgumentResolver;
+    // => Declares currentUserArgumentResolver field of type CurrentUserArgumentResolver
 
     @Override
+    // => Annotation applied
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+    // => Begins block
         resolvers.add(currentUserArgumentResolver);
+    // => Executes method
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 // Usage in controller
 @RestController
+// => Annotation applied
 @RequestMapping("/api/profile")
+    // => Executes method
 public class ProfileController {
+    // => Begins block
     @GetMapping
+    // => Annotation applied
     public User getProfile(@CurrentUser User user) {
+    // => Begins block
         // user automatically resolved from JWT token
         return user; // => No need to manually parse Authorization header
+        // => Assigns > No need to manually parse Authorization header to //
     }
+    // => Block delimiter
 
     @PutMapping
     public User updateProfile(@CurrentUser User user, @RequestBody ProfileUpdate update) {
+    // => Begins block
         // Both user and request body available
         return user;
+    // => Returns result
     }
 }
 
 record User(Long id, String username, String email) {}
+    // => Executes method
 record ProfileUpdate(String email, String phone) {}
+    // => Executes method
 ```
 
 **Code (Kotlin)**:
@@ -4252,45 +4849,75 @@ Understand the differences and use cases for filters, interceptors, and AOP for 
 ```java
 // 1. Servlet Filter - Operates at servlet container level
 @Component
+// => Annotation applied
 @Order(1)
+    // => Executes method
 public class RequestResponseLoggingFilter implements Filter {
+    // => Begins block
     @Override
+    // => Annotation applied
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+    // => Executes method call
         throws IOException, ServletException {
+    // => Begins block
         HttpServletRequest req = (HttpServletRequest) request;
+        // => Calls ()
+        // => Stores result in req
         System.out.println("FILTER: Before request - " + req.getRequestURI());
+    // => Prints to console
         // => Executes before DispatcherServlet
 
         chain.doFilter(request, response); // => Continue filter chain (with or without authentication)
+        // => Assigns > Continue filter chain (with or without authentication) to //
 
         System.out.println("FILTER: After response");
+    // => Prints to console
         // => Executes after response sent
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 // 2. HandlerInterceptor - Operates at Spring MVC level
 @Component
+// => Annotation applied
 public class PerformanceInterceptor implements HandlerInterceptor {
+    // => Begins block
     @Override
+    // => Annotation applied
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    // => Begins block
         request.setAttribute("startTime", System.currentTimeMillis());
+    // => Executes method
         System.out.println("INTERCEPTOR: Before controller method");
+    // => Prints to console
         return true;
+    // => Returns result
         // => Executes after DispatcherServlet, before controller
     }
+    // => Block delimiter
 
     @Override
+    // => Annotation applied
     public void postHandle(HttpServletRequest request, HttpServletResponse response,
+    // => Code line
                           Object handler, ModelAndView modelAndView) {
+    // => Begins block
         System.out.println("INTERCEPTOR: After controller method, before view");
+    // => Prints to console
         // => Executes after controller, only if no exception
     }
+    // => Block delimiter
 
     @Override
+    // => Annotation applied
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
                                Object handler, Exception ex) {
+    // => Begins block
         long duration = System.currentTimeMillis() - (Long) request.getAttribute("startTime");
+    // => Assigns value to variable
         System.out.println("INTERCEPTOR: Request completed in " + duration + "ms");
+    // => Prints to console
         // => Always executes, even if exception occurred
     }
 }
@@ -4299,24 +4926,37 @@ public class PerformanceInterceptor implements HandlerInterceptor {
 @Aspect
 @Component
 public class LoggingAspect {
+    // => Begins block
     @Before("execution(* com.example.demo.service.*.*(..))")
+    // => Executes method
     public void logBefore(JoinPoint joinPoint) {
+    // => Begins block
         System.out.println("AOP: Before method - " + joinPoint.getSignature().getName());
+    // => Prints to console
         // => Executes before any service method
     }
 
     @AfterReturning(pointcut = "execution(* com.example.demo.service.*.*(..))", returning = "result")
+    // => Assigns value to variable
     public void logAfterReturning(JoinPoint joinPoint, Object result) {
+    // => Begins block
         System.out.println("AOP: Method returned - " + result);
+    // => Prints to console
         // => Executes after successful method execution
     }
 
     @Around("@annotation(org.springframework.transaction.annotation.Transactional)")
+    // => Executes method
     public Object logTransaction(ProceedingJoinPoint joinPoint) throws Throwable {
+    // => Begins block
         System.out.println("AOP: Transaction starting");
+    // => Prints to console
         Object result = joinPoint.proceed();
+    // => Assigns value to variable
         System.out.println("AOP: Transaction completed");
+    // => Prints to console
         return result;
+    // => Returns result
         // => Wraps @Transactional methods
     }
 }
@@ -4443,71 +5083,120 @@ Combine custom annotations with AOP for declarative cross-cutting concerns.
 ```java
 // Custom annotation
 @Target(ElementType.METHOD)
+    // => Executes method
 @Retention(RetentionPolicy.RUNTIME)
+    // => Executes method
 public @interface LogExecutionTime {}
+    // => Begins block
 
 // AOP Aspect
 @Aspect
+// => Annotation applied
 @Component
+// => Annotation applied
 @Slf4j
+// => Annotation applied
 public class ExecutionTimeAspect {
+    // => Begins block
     @Around("@annotation(LogExecutionTime)")
+    // => Executes method
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
+    // => Begins block
         long start = System.currentTimeMillis();
+        // => Calls currentTimeMillis()
+        // => Stores result in start
 
         Object result = joinPoint.proceed(); // => Execute method
+        // => Invokes proceed() method
+        // => Result stored in result
 
         long duration = System.currentTimeMillis() - start;
+        // => Calls currentTimeMillis()
+        // => Stores result in duration
         log.info("{} executed in {}ms", joinPoint.getSignature(), duration);
+    // => Executes method
         // => Logs: com.example.demo.service.UserService.findUser(..) executed in 45ms
 
         return result;
+    // => Returns result
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 // Custom audit annotation
 @Target(ElementType.METHOD)
+    // => Executes method
 @Retention(RetentionPolicy.RUNTIME)
+    // => Executes method
 public @interface Audit {
+    // => Begins block
     String action();
+    // => Executes method
 }
+// => Block delimiter
 
 @Aspect
+// => Annotation applied
 @Component
+// => Annotation applied
 public class AuditAspect {
+    // => Begins block
     @Autowired
+    // => Annotation applied
     private AuditLogRepository auditLogRepository;
+    // => Declares auditLogRepository field of type AuditLogRepository
 
     @AfterReturning("@annotation(audit)")
+    // => Executes method
     public void logAudit(JoinPoint joinPoint, Audit audit) {
+    // => Begins block
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    // => Assigns value to variable
         String methodName = joinPoint.getSignature().getName();
+    // => Assigns value to variable
 
         AuditLog log = new AuditLog(
+    // => Creates new instance
             username,
+            // => Code line
             audit.action(),
+    // => Executes method
             methodName,
+            // => Code line
             LocalDateTime.now()
+    // => Executes method
         );
+        // => Executes statement
         auditLogRepository.save(log);
+    // => Executes method
         // => Automatically logs all audited operations
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 // Usage in service
 @Service
+// => Annotation applied
 public class UserService {
+    // => Begins block
     @LogExecutionTime
     @Audit(action = "USER_CREATED")
     public User createUser(User user) {
+    // => Begins block
         // Method automatically timed and audited
         return userRepository.save(user);
+    // => Returns value to caller
     }
 
     @LogExecutionTime
     public List<User> findAll() {
+    // => Begins block
         // Only execution time logged (no audit)
+        // => Invokes // Only execution time logged()
         return userRepository.findAll();
+    // => Returns value to caller
     }
 }
 ```
@@ -4602,66 +5291,118 @@ Modify or enhance beans during initialization with BeanPostProcessor.
 ```java
 // Custom annotation for initialization
 @Target(ElementType.TYPE)
+    // => Executes method
 @Retention(RetentionPolicy.RUNTIME)
+    // => Executes method
 public @interface InitializeOnStartup {}
+    // => Begins block
 
 // Bean post processor
 @Component
+// => Annotation applied
 public class InitializationBeanPostProcessor implements BeanPostProcessor {
+    // => Begins block
     @Override
+    // => Annotation applied
     public Object postProcessBeforeInitialization(Object bean, String beanName) {
+    // => Begins block
         // Called before @PostConstruct
         if (bean.getClass().isAnnotationPresent(InitializeOnStartup.class)) {
+    // => Executes method
             System.out.println("Initializing bean: " + beanName);
+    // => Prints to console
         }
+        // => Block delimiter
         return bean;
+    // => Returns result
     }
+    // => Block delimiter
 
     @Override
+    // => Annotation applied
     public Object postProcessAfterInitialization(Object bean, String beanName) {
+    // => Begins block
         // Called after @PostConstruct
         if (bean instanceof CacheManager) {
+    // => Executes method
             System.out.println("CacheManager bean ready: " + beanName);
+    // => Prints to console
             ((CacheManager) bean).warmUpCache();
+    // => Executes method
             // => Automatically warm up cache after initialization
         }
+        // => Block delimiter
         return bean;
+    // => Returns result
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 // Auto-proxy creation example
 @Component
+// => Annotation applied
 public class PerformanceProxyBeanPostProcessor implements BeanPostProcessor {
+    // => Begins block
     @Override
+    // => Annotation applied
     public Object postProcessAfterInitialization(Object bean, String beanName) {
+    // => Begins block
         if (bean.getClass().getPackageName().startsWith("com.example.demo.service")) {
+    // => Executes method
             // Wrap service beans in performance monitoring proxy
             return createProxy(bean);
+    // => Returns value to caller
         }
+        // => Block delimiter
         return bean;
+    // => Returns result
     }
+    // => Block delimiter
 
     private Object createProxy(Object target) {
+    // => Begins block
         return Proxy.newProxyInstance(
+    // => Returns result
             target.getClass().getClassLoader(),
+    // => Executes method
             target.getClass().getInterfaces(),
+    // => Executes method
             (proxy, method, args) -> {
+    // => Executes method
                 long start = System.currentTimeMillis();
+                // => Calls currentTimeMillis()
+                // => Stores result in start
                 Object result = method.invoke(target, args);
+                // => Calls invoke()
+                // => Stores result in result
                 long duration = System.currentTimeMillis() - start;
+                // => Calls currentTimeMillis()
+                // => Stores result in duration
                 System.out.println(method.getName() + " took " + duration + "ms");
+    // => Prints to console
                 return result;
+    // => Returns result
             }
+            // => Block delimiter
         );
+        // => Executes statement
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 @InitializeOnStartup
+// => Annotation applied
 @Service
+// => Annotation applied
 public class DataPreloadService {
+    // => Begins block
     @PostConstruct
     public void init() {
+    // => Begins block
         System.out.println("Preloading data...");
+    // => Prints to console
     }
 }
 ```
@@ -4751,39 +5492,65 @@ Create a lightweight auto-configuration module for reusable functionality.
 ```java
 // 1. Create auto-configuration class
 @Configuration
+// => Annotation applied
 @ConditionalOnClass(EmailService.class)
+    // => Executes method
 @EnableConfigurationProperties(EmailProperties.class)
+    // => Executes method
 public class EmailAutoConfiguration {
+    // => Begins block
     @Bean
+    // => Annotation applied
     @ConditionalOnMissingBean
+    // => Annotation applied
     public EmailService emailService(EmailProperties properties) {
+    // => Begins block
         return new EmailService(properties);
+    // => Returns value to caller
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 // 2. Configuration properties
 @ConfigurationProperties(prefix = "app.email")
+// => Annotation applied
 public class EmailProperties {
+    // => Begins block
     private String host = "smtp.gmail.com";
+    // => Assigns value to variable
     private int port = 587;
+    // => Assigns value to variable
     private String username;
+    // => Declares username field of type String
     private String password;
+    // => Declares password field of type String
     // getters/setters
 }
+// => Block delimiter
 
 // 3. Service implementation
 public class EmailService {
+    // => Begins block
     private final EmailProperties properties;
+    // => Declares properties field of type final
 
     public EmailService(EmailProperties properties) {
+    // => Begins block
         this.properties = properties;
+        // => Assigns properties to this.properties
     }
+    // => Block delimiter
 
     public void sendEmail(String to, String subject, String body) {
+    // => Begins block
         System.out.println("Sending email to " + to + " via " + properties.getHost());
+    // => Prints to console
         // Actual email sending logic
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 // 4. Register auto-configuration
 // Create: META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
@@ -4795,14 +5562,22 @@ public class EmailService {
 // app.email.password=secret
 
 @Service
+// => Annotation applied
 public class NotificationService {
+    // => Begins block
     @Autowired
+    // => Annotation applied
     private EmailService emailService; // Automatically available!
+    // => Declares available! field of type EmailService
 
     public void notifyUser(String email) {
+    // => Begins block
         emailService.sendEmail(email, "Welcome", "Thanks for signing up!");
+    // => Executes method
     }
+    // => Block delimiter
 }
+// => Block delimiter
 ```
 
 **Code (Kotlin)**:
@@ -4880,65 +5655,106 @@ Use R2DBC for reactive, non-blocking database access.
 // pom.xml: spring-boot-starter-data-r2dbc, r2dbc-h2
 
 @Entity
+// => Annotation applied
 @Table(name = "products")
+// => Annotation applied
 public class Product {
+    // => Begins block
     @Id
+    // => Annotation applied
     private Long id;
+    // => Declares id field of type Long
     private String name;
+    // => Declares name field of type String
     private BigDecimal price;
+    // => Declares price field of type BigDecimal
     // getters/setters
 }
+// => Block delimiter
 
 // Reactive repository
 public interface ProductRepository extends ReactiveCrudRepository<Product, Long> {
+    // => Begins block
     Flux<Product> findByNameContaining(String name); // => Returns Flux (0..N items)
     Mono<Product> findByName(String name); // => Returns Mono (0..1 item)
+    // => Invokes > Returns Mono () method
+    // => Result stored in //
 
     @Query("SELECT * FROM products WHERE price > :minPrice")
+    // => Executes method
     Flux<Product> findExpensiveProducts(BigDecimal minPrice);
+    // => Executes method
 }
+// => Block delimiter
 
 @Service
+// => Annotation applied
 public class ProductService {
+    // => Begins block
     @Autowired
+    // => Annotation applied
     private ProductRepository productRepository;
+    // => Declares productRepository field of type ProductRepository
 
     public Flux<Product> getAllProducts() {
+    // => Begins block
         return productRepository.findAll();
+    // => Returns value to caller
         // => Non-blocking stream of products
     }
+    // => Block delimiter
 
     public Mono<Product> createProduct(Product product) {
+    // => Begins block
         return productRepository.save(product);
+    // => Returns value to caller
         // => Non-blocking save operation
     }
+    // => Block delimiter
 
     public Flux<Product> searchProducts(String keyword) {
+    // => Begins block
         return productRepository.findByNameContaining(keyword)
+    // => Returns value to caller
             .filter(p -> p.getPrice().compareTo(BigDecimal.ZERO) > 0)
+    // => Executes method
             .map(p -> {
+    // => Begins block
                 p.setName(p.getName().toUpperCase());
+    // => Executes method
                 return p;
+    // => Returns result
             });
         // => Reactive pipeline: fetch → filter → transform
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 @RestController
+// => Annotation applied
 @RequestMapping("/api/products")
+    // => Executes method
 public class ProductController {
+    // => Begins block
     @Autowired
+    // => Annotation applied
     private ProductService productService;
+    // => Declares productService field of type ProductService
 
     @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<Product> streamProducts() {
+    // => Begins block
         return productService.getAllProducts();
+    // => Returns value to caller
         // => Streams products as Server-Sent Events
     }
 
     @PostMapping
     public Mono<Product> createProduct(@RequestBody Product product) {
+    // => Begins block
         return productService.createProduct(product);
+    // => Returns value to caller
         // => Non-blocking POST handling
     }
 }
@@ -5050,87 +5866,145 @@ Handle composite primary keys with `@IdClass` or `@EmbeddedId`.
 ```java
 // Strategy 1: @IdClass
 @IdClass(OrderItemId.class)
+    // => Executes method
 @Entity
+// => Annotation applied
 public class OrderItem {
+    // => Begins block
     @Id
+    // => Annotation applied
     private Long orderId;
+    // => Declares orderId field of type Long
 
     @Id
+    // => Annotation applied
     private Long productId;
+    // => Declares productId field of type Long
 
     private int quantity;
+    // => Declares quantity field of type int
     private BigDecimal price;
+    // => Declares price field of type BigDecimal
 
     // Constructors, getters, setters
 }
+// => Block delimiter
 
 // Composite key class
 public class OrderItemId implements Serializable {
+    // => Begins block
     private Long orderId;
+    // => Declares orderId field of type Long
     private Long productId;
+    // => Declares productId field of type Long
 
     // Must have equals() and hashCode()
+    // => Invokes // Must have equals()
     @Override
+    // => Annotation applied
     public boolean equals(Object o) {
+    // => Begins block
         if (this == o) return true;
+    // => Returns value to caller
         if (!(o instanceof OrderItemId)) return false;
+    // => Returns value to caller
         OrderItemId that = (OrderItemId) o;
+        // => Calls ()
+        // => Stores result in that
         return Objects.equals(orderId, that.orderId) &&
+    // => Returns value to caller
                Objects.equals(productId, that.productId);
+    // => Executes method
     }
+    // => Block delimiter
 
     @Override
+    // => Annotation applied
     public int hashCode() {
+    // => Begins block
         return Objects.hash(orderId, productId);
+    // => Returns value to caller
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 // Repository with composite key
 public interface OrderItemRepository extends JpaRepository<OrderItem, OrderItemId> {
+    // => Begins block
     List<OrderItem> findByOrderId(Long orderId);
+    // => Executes method
 }
+// => Block delimiter
 
 // Usage
 OrderItemId id = new OrderItemId();
+    // => Creates new instance
 id.setOrderId(1L);
+    // => Executes method
 id.setProductId(100L);
+    // => Executes method
 Optional<OrderItem> item = orderItemRepository.findById(id);
+// => Calls findById()
+// => Stores result in item
 
 // Strategy 2: @EmbeddedId (recommended)
+// => Invokes // Strategy 2: @EmbeddedId()
 @Embeddable
+// => Annotation applied
 public class OrderItemKey implements Serializable {
+    // => Begins block
     private Long orderId;
+    // => Declares orderId field of type Long
     private Long productId;
+    // => Declares productId field of type Long
 
     // equals(), hashCode(), getters, setters
+    // => Invokes // equals()
 }
+// => Block delimiter
 
 @Entity
+// => Annotation applied
 public class OrderItemEmbedded {
+    // => Begins block
     @EmbeddedId
+    // => Annotation applied
     private OrderItemKey id;
+    // => Declares id field of type OrderItemKey
 
     private int quantity;
+    // => Declares quantity field of type int
     private BigDecimal price;
+    // => Declares price field of type BigDecimal
 
     // Access composite key fields
     public Long getOrderId() {
+    // => Begins block
         return id.getOrderId();
+    // => Returns value to caller
     }
 }
 
 // Repository
 public interface OrderItemEmbeddedRepository extends JpaRepository<OrderItemEmbedded, OrderItemKey> {
+    // => Begins block
     @Query("SELECT o FROM OrderItemEmbedded o WHERE o.id.orderId = :orderId")
     List<OrderItemEmbedded> findByOrderId(Long orderId);
+    // => Executes method
 }
 
 // Usage
 OrderItemKey key = new OrderItemKey(1L, 100L);
+    // => Creates new instance
 OrderItemEmbedded item = new OrderItemEmbedded();
+    // => Creates new instance
 item.setId(key);
+    // => Executes method
 item.setQuantity(5);
+    // => Executes method
 orderItemEmbeddedRepository.save(item);
+    // => Executes method
 ```
 
 **Code (Kotlin)**:

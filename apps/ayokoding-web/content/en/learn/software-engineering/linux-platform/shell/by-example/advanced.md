@@ -1917,20 +1917,27 @@ Git commands in scripts automate branching, merging, releases, and CI/CD workflo
 # Check if in git repository
 if ! git rev-parse --git-dir > /dev/null 2>&1; then
     # => git rev-parse --git-dir: returns .git directory path if in repo
+    # => > /dev/null 2>&1: suppress all output
     echo "Not a git repository"
+                                # => Error message to stderr
     exit 1                      # => Exit if not in git repo
+                                # => Prevents git commands from failing
 fi
 
 # Check for uncommitted changes
 if ! git diff-index --quiet HEAD --; then
     # => diff-index --quiet: exits 0 if no changes, 1 if changes exist
+    # => HEAD: compare against current commit
     echo "Uncommitted changes exist"
+                                # => Warn about dirty state
     exit 1                      # => Prevent operation on dirty working tree
+                                # => Ensures clean state
 fi
 
 # Get current branch
 current_branch=$(git branch --show-current)
 # => Returns current branch name (e.g., "main", "feature/new")
+                                # => Captures branch name in variable
 echo "Current branch: $current_branch"
 # => Output: Current branch: main
 

@@ -2773,87 +2773,146 @@ Here documents (heredocs) embed multi-line text directly in scripts, useful for 
 # Basic heredoc
 cat << EOF                       # => << EOF: start heredoc, EOF is delimiter
                                  # => cat: reads and outputs heredoc content
+                                 # => Heredoc continues until EOF marker
 This is a multi-line             # => Line 1: plain text preserved
+                                 # => Exact formatting maintained
 text block that preserves        # => Line 2: formatting maintained
+                                 # => Spaces and indentation kept
 formatting and line breaks.      # => Line 3: line breaks preserved
+                                 # => No escape sequences needed
 EOF                              # => EOF: ends heredoc (must be alone on line)
+                                 # => Marker must be leftmost, no spaces before
 
 # With variable expansion
 name="Alice"                     # => Variable assignment
+                                 # => Sets name for expansion demo
 cat << EOF                       # => Unquoted delimiter enables expansion
+                                 # => Variables and commands will be processed
 Hello, $name!                    # => $name: variable expanded to "Alice"
+                                 # => Output shows actual value
 Today is $(date +%A).            # => $(date +%A): command substitution executes
+                                 # => %A: weekday name format
                                  # => Output: Today is Thursday.
+                                 # => Command runs at heredoc processing time
 Your home is $HOME.              # => $HOME: environment variable expanded
+                                 # => Shows actual home directory path
 EOF
 
 # Literal (no expansion)
 cat << 'EOF'                     # => 'EOF': quoted delimiter prevents expansion
+                                 # => Single or double quotes work
+                                 # => Everything treated as literal text
 Variables like $HOME are NOT expanded.  # => $HOME displayed literally
+                                 # => Dollar sign preserved in output
 Commands like $(date) are NOT executed.  # => $(date) displayed literally
+                                 # => Parentheses preserved in output
 This is literal text.            # => All content treated as literal strings
+                                 # => Useful for generating scripts
 EOF
 
 # Indent suppression
 cat <<- EOF                      # => <<- : hyphen removes leading tabs
+                                 # => Allows indenting heredoc in script
  This text is indented with tabs.  # => Leading tab removed from output
+                                 # => Makes code more readable
  The - removes leading tabs.     # => Leading tab removed from output
+                                 # => Only tabs, not spaces
  Spaces are NOT removed.         # => Spaces preserved (only tabs removed)
+                                 # => Space indentation unaffected
 EOF
 
 # Write to file
 cat << EOF > config.txt          # => > config.txt: redirect heredoc to file
+                                 # => Creates or overwrites file
 server=localhost                 # => Configuration line 1
+                                 # => Key=value format
 port=8080                        # => Configuration line 2
+                                 # => Numeric value
 debug=true                       # => Configuration line 3
+                                 # => Boolean value
 EOF                              # => Creates/overwrites config.txt
+                                 # => File contains 3 lines
 
 # Append to file
 cat << EOF >> logfile.txt        # => >>: append heredoc to existing file
+                                 # => Preserves existing content
 [$(date)] Script executed        # => Timestamp with message
+                                 # => $(date): command substitution for timestamp
 EOF                              # => Adds to end of logfile.txt
+                                 # => Creates file if doesn't exist
 
 # Here string (single line)
 cat <<< "This is a here string"  # => <<<: here-string operator
                                  # => Single-line heredoc shortcut
+                                 # => Bash-specific feature
                                  # => Output: This is a here string
+                                 # => Newline automatically added
 
 # Variable from heredoc
 config=$(cat << EOF              # => $(cat << EOF): capture heredoc in variable
+                                 # => Command substitution captures output
 {                                # => JSON object start
+                                 # => Multiline JSON stored in variable
   "name": "myapp",               # => JSON field: name
+                                 # => Quotes preserved
   "version": "1.0.0"             # => JSON field: version
+                                 # => Formatting maintained
 }                                # => JSON object end
+                                 # => Entire structure captured
 EOF                              # => Heredoc delimiter
+                                 # => Ends multiline input
 )                                # => Close command substitution
+                                 # => Stores result in config variable
 echo "$config"                   # => Output: entire JSON as string
+                                 # => Quotes preserve newlines
 
 # Practical: SQL query
 mysql -u user -p database << EOF  # => mysql: execute SQL from heredoc
+                                 # => Heredoc as stdin to mysql
 SELECT id, name, email           # => SQL SELECT statement
+                                 # => Query fields
 FROM users                       # => SQL FROM clause
+                                 # => Table name
 WHERE active = 1                 # => SQL filter condition
+                                 # => Boolean filter
 ORDER BY name;                   # => SQL sort order
+                                 # => Alphabetical sorting
 EOF                              # => Multiline SQL without escaping
+                                 # => Cleaner than string concatenation
 
 # Practical: generate script
 cat << 'EOF' > deploy.sh         # => 'EOF': literal mode (no variable expansion)
+                                 # => Prevents $variables from expanding
 #!/bin/bash                      # => Shebang line preserved literally
+                                 # => Script header
 set -e                           # => Exit on error (literal text)
+                                 # => Error handling
 echo "Deploying..."              # => Echo command (literal text)
+                                 # => Status message
 git pull origin main             # => Git command (literal text)
+                                 # => Update code
 npm install                      # => NPM command (literal text)
+                                 # => Install dependencies
 npm run build                    # => Build command (literal text)
+                                 # => Compile application
 echo "Deployed successfully"     # => Success message (literal text)
+                                 # => Completion message
 EOF                              # => Creates executable script file
+                                 # => File ready to run
 chmod +x deploy.sh               # => Make generated script executable
+                                 # => Add execute permission
 
 # Practical: SSH with commands
 ssh user@server << 'EOF'         # => SSH with heredoc as remote commands
+                                 # => All commands sent to remote
 cd /var/www/html                 # => Remote: change directory
+                                 # => Navigate to web root
 git pull                         # => Remote: pull latest code
+                                 # => Update from repository
 sudo systemctl restart nginx     # => Remote: restart web server
+                                 # => Apply changes
 EOF                              # => All commands execute on remote server
+                                 # => Single SSH connection
 
 # Practical: email content
 sendmail recipient@example.com << EOF  # => sendmail: send email from heredoc

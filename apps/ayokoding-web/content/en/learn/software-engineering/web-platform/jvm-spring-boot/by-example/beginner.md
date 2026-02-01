@@ -45,10 +45,12 @@ graph TD
 
 ```java
 package com.example.demo;
+// => Package declaration
 
 // SpringApplication - launcher utility
 // @SpringBootApplication - meta-annotation combining @Configuration, @EnableAutoConfiguration, @ComponentScan
 import org.springframework.boot.SpringApplication;
+// => Import statement
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 // @SpringBootApplication combines three annotations:
@@ -57,17 +59,23 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 // 3. @ComponentScan - Scans current package and sub-packages for @Component classes
 @SpringBootApplication
 public class DemoApplication {
+    // => Begins block
 
     // Main method - Java application entry point
     // Spring Boot starts from here like any standard Java program
     public static void main(String[] args) {
+    // => Begins block
         // SpringApplication.run() does:
+        // => Invokes run()
         // 1. Creates ApplicationContext (Spring IoC container)
+        // => Invokes Creates ApplicationContext()
         // 2. Scans for @Component, @Service, @Repository, @Controller classes
         // 3. Auto-configures beans based on classpath dependencies
         // 4. Starts embedded Tomcat server (if spring-boot-starter-web present)
+        // => Invokes Starts embedded Tomcat server()
         // 5. Listens on port 8080 by default
         SpringApplication.run(DemoApplication.class, args);
+    // => Executes method
         // => Console output: "Tomcat started on port(s): 8080 (http)"
         // => Application now ready to serve HTTP requests
     }
@@ -121,40 +129,52 @@ Dependency Injection is Spring's core feature where the framework creates and in
 
 ```java
 package com.example.demo.service;
+// => Package declaration
 
 // @Component - Marks class as Spring-managed bean for component scanning
 // @Service - Specialization of @Component indicating service layer semantics
 import org.springframework.stereotype.Component;
+// => Import statement
 import org.springframework.stereotype.Service;
+// => Import statement
 
 // @Component makes Spring create singleton instance during application startup
 // Spring registers this bean in ApplicationContext under name "userRepository"
 @Component
 class UserRepository {
+    // => Begins block
 
     // Simple finder method simulating database access
     // In real app, this would query database via JPA/JDBC
     public String findUser(Long id) {
+    // => Begins block
         String result = "User" + id;
+    // => Assigns value to variable
         // => For id=123, returns "User123"
         return result;
+    // => Returns result
     }
 }
 
 // @Service is semantically identical to @Component
 // Indicates this class contains business logic (service layer)
+// => Invokes // Indicates this class contains business logic()
 // Spring creates singleton and enables transaction management via AOP
 @Service
 public class UserService {
+    // => Begins block
 
     // final field ensures immutability after construction
     // Cannot be reassigned after constructor completes
     private final UserRepository userRepository;
+    // => Declares userRepository field of type final
 
     // Constructor injection - Spring's recommended dependency injection method
     // @Autowired optional on single constructor (since Spring 4.3)
+    // => Invokes // @Autowired optional on single constructor()
     // Spring automatically finds UserRepository bean and passes it here
     public UserService(UserRepository userRepository) {
+    // => Begins block
         // Spring injects the singleton UserRepository instance
         // This assignment happens during ApplicationContext initialization
         this.userRepository = userRepository;
@@ -164,9 +184,12 @@ public class UserService {
     // Business method delegating to repository
     // This method is testable - can pass mock UserRepository in tests
     public String getUser(Long id) {
+    // => Begins block
         String user = userRepository.findUser(id);
+    // => Assigns value to variable
         // => For id=123, user is "User123"
         return user;
+    // => Returns result
     }
 }
 
@@ -175,9 +198,13 @@ public class UserService {
 // private UserRepository userRepository;
 // Problems:
 // 1. Cannot make field final (allows null state)
+// => Invokes Cannot make field final()
 // 2. Harder to test (requires reflection or Spring test context)
+// => Invokes Harder to test()
 // 3. Hides dependencies (not visible in constructor signature)
+// => Invokes Hides dependencies()
 // 4. Allows circular dependencies (constructor injection fails fast)
+// => Invokes Allows circular dependencies()
 ```
 
 **Code (Kotlin)**:
@@ -271,40 +298,57 @@ graph TD
 
 ```java
 package com.example.demo.config;
+// => Package declaration
 
 // JSR-250 annotations for lifecycle callbacks
 import jakarta.annotation.PostConstruct;
+// => Import statement
 import jakarta.annotation.PreDestroy;
+// => Import statement
 // Bean definition and scope configuration
 import org.springframework.context.annotation.Bean;
+// => Import statement
 import org.springframework.context.annotation.Configuration;
+// => Import statement
 import org.springframework.context.annotation.Scope;
+// => Import statement
 import org.springframework.stereotype.Component;
+// => Import statement
 
 // @Component with default singleton scope
 // Spring creates exactly one instance during application startup
 // Same instance shared across entire application lifecycle
 @Component
+// => Annotation applied
 public class DatabaseConnection {
+    // => Begins block
 
     // @PostConstruct called AFTER constructor and AFTER dependency injection
     // Use for initialization that requires injected dependencies
     // Called exactly once per bean instance
     @PostConstruct
+    // => Annotation applied
     public void init() {
+    // => Begins block
         // Initialization logic (connect to database, open resources)
+        // => Invokes // Initialization logic()
         System.out.println("Connecting to database...");
+    // => Prints to console
         // => Output appears during application startup
         // => Before any HTTP requests processed
     }
+    // => Block delimiter
 
     // @PreDestroy called during application shutdown
     // Spring calls this before destroying bean instance
     // Use for cleanup (close connections, flush caches, release resources)
+    // => Invokes // Use for cleanup()
     @PreDestroy
     public void cleanup() {
+    // => Begins block
         // Cleanup logic executed during graceful shutdown
         System.out.println("Closing database connection...");
+    // => Prints to console
         // => Output appears when Spring context shuts down
         // => Ensures connections closed properly
     }
@@ -314,17 +358,23 @@ public class DatabaseConnection {
 // Spring processes this during component scanning
 @Configuration
 class AppConfig {
+    // => Begins block
 
     // @Bean method creates Spring-managed bean
     // Method name becomes bean name unless overridden
     // @Scope("prototype") creates NEW instance every time bean requested
+    // => Invokes // @Scope()
     @Bean
     @Scope("prototype")
+    // => Executes method
     public RequestProcessor processor() {
+    // => Begins block
         RequestProcessor instance = new RequestProcessor();
+    // => Creates new instance
         // => New instance created on each injection or ApplicationContext.getBean() call
         // => NOT shared across injection points
         return instance;
+    // => Returns result
     }
 
     // @Bean without @Scope defaults to singleton
@@ -332,20 +382,26 @@ class AppConfig {
     // All injection points receive same shared instance
     @Bean
     public CacheManager cacheManager() {
+    // => Begins block
         CacheManager singleton = new CacheManager();
+    // => Creates new instance
         // => Single instance created during startup
         // => Cached and reused for entire application lifetime
         return singleton;
+    // => Returns result
     }
 }
 
 // Placeholder classes for demonstration
 class RequestProcessor {
+    // => Begins block
     // In real app: processes individual requests with request-scoped state
 }
 
 class CacheManager {
+    // => Begins block
     // In real app: manages application-wide cache (shared state)
+    // => Invokes // In real app: manages application-wide cache()
 }
 ```
 
@@ -452,51 +508,72 @@ Spring stereotypes (`@Component`, `@Service`, `@Repository`, `@Controller`) are 
 
 ```java
 package com.example.demo;
+// => Package declaration
 
 // Spring stereotype annotations
 import org.springframework.stereotype.Component;
+// => Import statement
 import org.springframework.stereotype.Repository;
+// => Import statement
 import org.springframework.stereotype.Service;
+// => Import statement
 import org.springframework.web.bind.annotation.RestController;
+// => Import statement
 
 // @Component - Generic stereotype for any Spring-managed component
 // Use when class doesn't fit other stereotypes (Service, Repository, Controller)
+// => Invokes // Use when class doesn't fit other stereotypes()
 @Component
+// => Annotation applied
 class EmailValidator {
+    // => Begins block
 
     // Validation logic example
     // In real app: comprehensive email format validation
     public boolean isValid(String email) {
+    // => Begins block
         boolean valid = email.contains("@");
         // => Returns true if email contains '@', false otherwise
         return valid;
+    // => Returns result
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 // @Repository - Data access layer stereotype
 // Enables Spring's DataAccessException translation
 // Spring converts database-specific exceptions (SQLException) to Spring exceptions
+// => Invokes // Spring converts database-specific exceptions()
 // Allows switching databases without changing exception handling code
 @Repository
+// => Annotation applied
 class UserRepository {
+    // => Begins block
     // In real app: JPA/JDBC code to query database
     // Spring translates PersistenceException/SQLException to DataAccessException
 }
+// => Block delimiter
 
 // @Service - Business logic layer stereotype
 // Indicates this class contains business rules and orchestration
 // Enables transaction management via @Transactional
 @Service
+// => Annotation applied
 class UserService {
+    // => Begins block
     // In real app: business logic coordinating repositories
     // Transaction boundaries typically placed here
 }
+// => Block delimiter
 
 // @RestController - Web layer stereotype
 // Combines @Controller (request handler) + @ResponseBody (JSON serialization)
+// => Invokes // Combines @Controller()
 // Methods return domain objects serialized to JSON automatically
 @RestController
 class UserController {
+    // => Begins block
     // In real app: handles HTTP requests and delegates to service layer
     // Returns JSON responses via Jackson auto-configuration
 }
@@ -610,47 +687,63 @@ import org.springframework.web.bind.annotation.RestController;
 // No view resolution - raw data returned as HTTP response body
 @RestController
 public class HelloController {
+    // => Begins block
 
     // @GetMapping maps HTTP GET requests to this method
     // Equivalent to @RequestMapping(method = RequestMethod.GET)
     // Accessible at GET http://localhost:8080/hello
     @GetMapping("/hello")
+    // => Executes method
     public String hello() {
+    // => Begins block
         String greeting = "Hello, Spring Boot!";
+    // => Assigns value to variable
         // => Returned string becomes HTTP response body
         // => Content-Type: text/plain
         return greeting;
+    // => Returns result
     }
 
     // @GetMapping returning domain object
     // Jackson automatically serializes User to JSON
     // Spring Boot auto-configures ObjectMapper for this
     @GetMapping("/user")
+    // => Executes method
     public User getUser() {
+    // => Begins block
         User user = new User("Alice", 30);
+    // => Creates new instance
         // => Jackson serializes to: {"name":"Alice","age":30}
         // => Content-Type: application/json
         return user;
+    // => Returns result
     }
 
     // @PostMapping maps HTTP POST requests
     // @RequestBody tells Spring to deserialize JSON request body to User object
     // Jackson reads JSON from request and creates User instance
     @PostMapping("/user")
+    // => Executes method
     public User createUser(@RequestBody User user) {
+    // => Begins block
         // user object already populated from JSON request body
         // => POST with {"name":"Bob","age":25} creates User(name="Bob", age=25)
 
         // Echoing back received user (in real app: save to database)
+        // => Invokes // Echoing back received user()
         return user;
+    // => Returns result
         // => Returns same JSON: {"name":"Bob","age":25}
     }
 }
 
 // Java 17 record - immutable data carrier
 // Compiler generates constructor, getters, equals(), hashCode(), toString()
+// => Invokes // Compiler generates constructor, getters, equals()
 // Perfect for DTOs (Data Transfer Objects)
+// => Invokes // Perfect for DTOs()
 record User(String name, int age) {
+    // => Executes method
     // => Jackson serializes fields to JSON properties
     // => name field becomes "name" JSON property
     // => age field becomes "age" JSON property
@@ -756,31 +849,43 @@ import org.springframework.web.bind.annotation.*;
 
 // @RestController returns JSON responses
 // @RequestMapping("/api/users") sets base path for all methods
+// => Invokes // @RequestMapping()
 @RestController
 @RequestMapping("/api/users")
+    // => Executes method
 public class UserController {
+    // => Begins block
 
     // @PathVariable extracts {id} from URL path
     // GET /api/users/123 maps to getUserById(123)
+    // => Invokes // GET /api/users/123 maps to getUserById()
     @GetMapping("/{id}")
+    // => Executes method
     public String getUserById(@PathVariable Long id) {
+    // => Begins block
         // id extracted from URL path segment
         // => For /api/users/123, id = 123L
         String response = "User ID: " + id;
+    // => Assigns value to variable
         // => Returns "User ID: 123"
         return response;
+    // => Returns result
     }
 
     // Multiple path variables in single URL
     // GET /api/users/123/posts/456
     @GetMapping("/{userId}/posts/{postId}")
+    // => Executes method
     public String getUserPost(@PathVariable Long userId, @PathVariable Long postId) {
+    // => Begins block
         // Both path variables extracted and type-converted to Long
         // => For /api/users/123/posts/456:
         //    userId = 123L, postId = 456L
         String response = "User " + userId + ", Post " + postId;
+    // => Assigns value to variable
         // => Returns "User 123, Post 456"
         return response;
+    // => Returns result
     }
 
     // @RequestParam extracts query parameters from URL
@@ -788,31 +893,43 @@ public class UserController {
     @GetMapping
     public String getUsers(
         @RequestParam(defaultValue = "0") int page,
+    // => Assigns value to variable
         @RequestParam(defaultValue = "10") int size
+    // => Assigns value to variable
     ) {
+    // => Begins block
         // defaultValue used when parameter not provided
         // => GET /api/users uses page=0, size=10
         // => GET /api/users?page=2&size=20 uses page=2, size=20
 
         String response = "Page " + page + ", Size " + size;
+    // => Assigns value to variable
         // => For ?page=0&size=20, returns "Page 0, Size 20"
         return response;
+    // => Returns result
     }
 
     // Optional query parameter with required=false
     // GET /api/users/search?name=Alice or GET /api/users/search
     @GetMapping("/search")
+    // => Executes method
     public String search(@RequestParam(required = false) String name) {
+    // => Assigns value to variable
         if (name == null) {
+    // => Executes method
             // No name parameter provided
             String noFilter = "No filter applied";
+    // => Assigns value to variable
             // => Returns when called as /api/users/search
             return noFilter;
+    // => Returns result
         }
 
         String filtered = "Searching for: " + name;
+    // => Assigns value to variable
         // => For ?name=Alice, returns "Searching for: Alice"
         return filtered;
+    // => Returns result
     }
 }
 ```
@@ -925,6 +1042,7 @@ import org.springframework.web.bind.annotation.*;
 // Immutable DTO for creating users
 // Java record generates constructor, getters, equals, hashCode automatically
 record CreateUserRequest(String username, String email) {
+    // => Executes method
     // => Jackson deserializes JSON {"username":"alice","email":"alice@example.com"}
     //    to CreateUserRequest(username="alice", email="alice@example.com")
 }
@@ -932,22 +1050,28 @@ record CreateUserRequest(String username, String email) {
 // Immutable DTO for user responses
 // Includes ID field that's generated server-side
 record UserResponse(Long id, String username, String email) {
+    // => Executes method
     // => Jackson serializes to {"id":1,"username":"alice","email":"alice@example.com"}
 }
 
 @RestController
 @RequestMapping("/api/users")
+    // => Executes method
 public class UserApiController {
+    // => Begins block
 
     // POST /api/users with JSON body
     // @RequestBody deserializes JSON to CreateUserRequest
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest request) {
+    // => Begins block
         // Jackson already deserialized JSON to request object
         // => request.username() and request.email() available
 
         // Simulate saving to database (in real app: use JPA repository)
+        // => Invokes // Simulate saving to database()
         UserResponse user = new UserResponse(1L, request.username(), request.email());
+    // => Creates new instance
         // => Created user with auto-generated ID=1
 
         // ResponseEntity builder for full HTTP response control
@@ -961,32 +1085,43 @@ public class UserApiController {
         // => Content-Type: application/json
         // => Body: {"id":1,"username":"alice","email":"alice@example.com"}
         return response;
+    // => Returns result
     }
 
     // GET /api/users/1
     // Returns existing user or 404
     @GetMapping("/{id}")
+    // => Executes method
     public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
+    // => Begins block
         // Simulate database lookup (in real app: use repository.findById())
+        // => Invokes // Simulate database lookup()
         UserResponse user = new UserResponse(id, "alice", "alice@example.com");
+    // => Creates new instance
 
         ResponseEntity<UserResponse> response = ResponseEntity.ok(user);
         // => Shorthand for .status(HttpStatus.OK).body(user)
         // => HTTP/1.1 200 OK
         // => Body: {"id":1,"username":"alice","email":"alice@example.com"}
         return response;
+    // => Returns result
     }
 
     // DELETE /api/users/1
     // Returns 204 No Content (successful deletion with no response body)
+    // => Invokes // Returns 204 No Content()
     @DeleteMapping("/{id}")
+    // => Executes method
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    // => Begins block
         // Simulate deletion (in real app: repository.deleteById(id))
+        // => Invokes // Simulate deletion()
 
         ResponseEntity<Void> response = ResponseEntity.noContent().build();
         // => HTTP/1.1 204 No Content
         // => No response body
         return response;
+    // => Returns result
     }
 }
 ```
@@ -1115,25 +1250,35 @@ import java.util.*;
 
 // Simple Product DTO
 record Product(Long id, String name, double price) {}
+    // => Executes method
 
 @RestController
 @RequestMapping("/api/products")
+    // => Executes method
 public class ProductController {
+    // => Begins block
 
     // In-memory storage (in real app: use JPA repository)
+    // => Invokes // In-memory storage()
     private final Map<Long, Product> products = new HashMap<>();
+    // => Creates new instance
     private Long nextId = 1L;
+    // => Assigns value to variable
 
     // POST - Create new resource
     // Returns 201 Created with Location header pointing to new resource
     @PostMapping
     public ResponseEntity<Product> create(@RequestBody Product product) {
+    // => Begins block
         // Generate ID for new product
         Long assignedId = nextId++;
+    // => Assigns value to variable
         // => First call: assignedId=1, nextId becomes 2
 
         Product created = new Product(assignedId, product.name(), product.price());
+    // => Creates new instance
         products.put(created.id(), created);
+    // => Executes method
         // => Stored in map: {1 -> Product(1, "Laptop", 999.99)}
 
         ResponseEntity<Product> response = ResponseEntity
@@ -1144,57 +1289,73 @@ public class ProductController {
         // => Location: /api/products/1
         // => Body: {"id":1,"name":"Laptop","price":999.99}
         return response;
+    // => Returns result
     }
 
     // GET - Retrieve resource
     // Returns 200 OK if found, 404 Not Found if not found
     @GetMapping("/{id}")
+    // => Executes method
     public ResponseEntity<Product> get(@PathVariable Long id) {
+    // => Begins block
         Product product = products.get(id);
         // => Lookup product by ID in map
 
         if (product == null) {
+    // => Executes method
             // Product not found - return 404
             ResponseEntity<Product> notFound = ResponseEntity.notFound().build();
             // => HTTP/1.1 404 Not Found
             // => No response body
             return notFound;
+    // => Returns result
         }
 
         ResponseEntity<Product> found = ResponseEntity.ok(product);
         // => HTTP/1.1 200 OK
         // => Body: {"id":1,"name":"Laptop","price":999.99}
         return found;
+    // => Returns result
     }
 
     // PUT - Update entire resource
     // Returns 200 OK with updated resource
     @PutMapping("/{id}")
+    // => Executes method
     public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody Product product) {
+    // => Begins block
         // Create updated product with provided ID
         Product updated = new Product(id, product.name(), product.price());
+    // => Creates new instance
         // => Replaces entire resource (PUT semantics)
 
         products.put(id, updated);
+    // => Executes method
         // => Updates map entry
 
         ResponseEntity<Product> response = ResponseEntity.ok(updated);
         // => HTTP/1.1 200 OK
         // => Body: {"id":1,"name":"Gaming Laptop","price":1299.99}
         return response;
+    // => Returns result
     }
 
     // DELETE - Remove resource
     // Returns 204 No Content (successful deletion)
+    // => Invokes // Returns 204 No Content()
     @DeleteMapping("/{id}")
+    // => Executes method
     public ResponseEntity<Void> delete(@PathVariable Long id) {
+    // => Begins block
         products.remove(id);
+    // => Executes method
         // => Removes entry from map (returns null if not found)
 
         ResponseEntity<Void> response = ResponseEntity.noContent().build();
         // => HTTP/1.1 204 No Content
         // => No response body (Void type)
         return response;
+    // => Returns result
     }
 }
 ```
@@ -1333,38 +1494,52 @@ Spring Boot supports content negotiation via the `Accept` header. Clients can re
 
 ```java
 package com.example.demo.controller;
+// => Package declaration
 
 // Spring MVC annotations
 import org.springframework.web.bind.annotation.GetMapping;
+// => Import statement
 import org.springframework.web.bind.annotation.RequestMapping;
+// => Import statement
 import org.springframework.web.bind.annotation.RestController;
+// => Import statement
 
 // Book DTO
 record Book(String title, String author) {}
+    // => Executes method
 
 @RestController
+// => Annotation applied
 @RequestMapping("/api/books")
+    // => Executes method
 public class BookController {
+    // => Begins block
 
     // Default content negotiation
     // Spring Boot auto-configures JSON via Jackson
     @GetMapping
     public Book getBook() {
+    // => Begins block
         Book book = new Book("Spring Boot in Action", "Craig Walls");
+    // => Creates new instance
         // => Jackson serializes to JSON by default
         // => Content-Type: application/json
         // => {"title":"Spring Boot in Action","author":"Craig Walls"}
         return book;
+    // => Returns result
     }
 
     // Explicit JSON production
     // produces attribute restricts supported media types
     @GetMapping(value = "/json", produces = "application/json")
     public Book getBookJson() {
+    // => Begins block
         Book book = new Book("Spring Boot in Action", "Craig Walls");
+    // => Creates new instance
         // => Only responds to requests with Accept: application/json
         // => Returns 406 Not Acceptable for other Accept headers
         return book;
+    // => Returns result
     }
 
     // Multiple content types support
@@ -1376,7 +1551,9 @@ public class BookController {
     // </dependency>
     @GetMapping(value = "/multi", produces = {"application/json", "application/xml"})
     public Book getBookMulti() {
+    // => Begins block
         Book book = new Book("Spring Boot in Action", "Craig Walls");
+    // => Creates new instance
 
         // Client sends Accept: application/json
         // => Spring returns JSON: {"title":"Spring Boot in Action","author":"Craig Walls"}
@@ -1388,6 +1565,7 @@ public class BookController {
         // => Spring returns 406 Not Acceptable (not in produces list)
 
         return book;
+    // => Returns result
     }
 }
 ```
@@ -1496,21 +1674,29 @@ graph TD
 
 ```java
 package com.example.demo.model;
+// => Package declaration
 
 // JPA annotations for entity mapping
 import jakarta.persistence.*;
+// => Import statement
 
 // @Entity marks this class as JPA entity
 // JPA will map this to database table
 @Entity
+// => Annotation applied
 @Table(name = "users")  // Maps to "users" table (optional if class name matches table)
+// => Annotation applied
 public class User {
+    // => Begins block
 
     // @Id marks primary key field
     // @GeneratedValue tells database to auto-generate values
     // IDENTITY strategy uses database auto-increment (MySQL, PostgreSQL)
+    // => Invokes // IDENTITY strategy uses database auto-increment()
     @Id
+    // => Annotation applied
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // => Annotation applied
     private Long id;
     // => Database generates: 1, 2, 3, ... automatically
 
@@ -1518,31 +1704,44 @@ public class User {
     // nullable=false -> NOT NULL constraint
     // unique=true -> UNIQUE constraint
     @Column(nullable = false, unique = true)
+    // => Annotation applied
     private String email;
     // => SQL: email VARCHAR(255) NOT NULL UNIQUE
 
     // No @Column means defaults (nullable, non-unique)
+    // => Invokes // No @Column means defaults()
     private String name;
     // => SQL: name VARCHAR(255)
 
     // JPA requires no-arg constructor (can be protected)
+    // => Invokes // JPA requires no-arg constructor()
     protected User() {}
+    // => Executes method
 
     // Public constructor for application code
     public User(String email, String name) {
+    // => Begins block
         this.email = email;
+        // => Assigns email to this.email
         this.name = name;
+        // => Assigns name to this.name
     }
 
     // Getters and setters required for JPA
     public Long getId() { return id; }
+    // => Begins block
     public void setId(Long id) { this.id = id; }
+    // => Assigns value to variable
 
     public String getEmail() { return email; }
+    // => Begins block
     public void setEmail(String email) { this.email = email; }
+    // => Assigns value to variable
 
     public String getName() { return name; }
+    // => Begins block
     public void setName(String name) { this.name = name; }
+    // => Assigns value to variable
 }
 ```
 
@@ -1720,10 +1919,12 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Long> {
+    // => Begins block
 
     // Derived query method - Spring parses method name into query
     // Naming convention: findBy<Property><Operation>
     List<User> findByEmailContaining(String email);
+    // => Executes method
     // => Spring generates: SELECT * FROM users WHERE email LIKE '%?%'
     // => For email="example", finds "user@example.com", "example@test.com"
     // => Returns List<User> (empty if no matches)
@@ -1733,6 +1934,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // :name is named parameter placeholder
     @Query("SELECT u FROM User u WHERE u.name = :name")
     List<User> findByName(@Param("name") String name);
+    // => Executes method
     // => SELECT * FROM users WHERE name = ?
     // => Named parameter :name bound to method parameter name
     // => Returns List<User> matching name exactly
@@ -1741,6 +1943,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // %:domain in JPQL becomes %? in SQL
     @Query("SELECT u FROM User u WHERE u.name = :name AND u.email LIKE %:domain")
     List<User> findByNameAndEmailDomain(@Param("name") String name, @Param("domain") String domain);
+    // => Executes method
     // => SELECT * FROM users WHERE name = ? AND email LIKE '%?'
     // => findByNameAndEmailDomain("Alice", "example.com") finds Alice with email ending in example.com
     // => Returns List<User>
@@ -1867,26 +2070,36 @@ graph TD
 
 ```java
 package com.example.demo.model;
+// => Package declaration
 
 // JPA relationship annotations
 import jakarta.persistence.*;
+// => Import statement
 // Java collections
 import java.util.List;
+// => Import statement
 
 // Parent entity in one-to-many relationship
 @Entity
+// => Annotation applied
 @Table(name = "users")
+// => Annotation applied
 public class User {
+    // => Begins block
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    // => Declares id field of type Long
 
     private String name;
+    // => Declares name field of type String
 
     // One user has many orders (one-to-many)
+    // => Invokes // One user has many orders()
     // mappedBy="user" means Order entity owns the relationship
     // Order.user field is the owning side (has foreign key)
+    // => Invokes user field is the owning side()
     // fetch=LAZY means orders loaded only when accessed (default for @OneToMany)
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Order> orders;
@@ -1894,31 +2107,43 @@ public class User {
     // => Foreign key user_id stored in orders table
     // => orders loaded lazily: SELECT * FROM orders WHERE user_id = ?
     //    only when user.getOrders() called
+    // => Invokes getOrders()
 
     // Getters/setters
     public Long getId() { return id; }
+    // => Begins block
     public void setId(Long id) { this.id = id; }
+    // => Assigns value to variable
 
     public String getName() { return name; }
+    // => Begins block
     public void setName(String name) { this.name = name; }
+    // => Assigns value to variable
 
     public List<Order> getOrders() { return orders; }
+    // => Begins block
     public void setOrders(List<Order> orders) { this.orders = orders; }
+    // => Assigns orders to this.orders
 }
 
 // Child entity in one-to-many relationship
 @Entity
 @Table(name = "orders")
 public class Order {
+    // => Begins block
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    // => Declares id field of type Long
 
     private String product;
+    // => Declares product field of type String
 
     // Many orders belong to one user (many-to-one)
+    // => Invokes // Many orders belong to one user()
     // Owning side of relationship (has foreign key column)
+    // => Invokes // Owning side of relationship()
     // fetch=LAZY means user loaded only when accessed (default for @ManyToOne is EAGER!)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")  // Foreign key column in orders table
@@ -1927,16 +2152,23 @@ public class Order {
     // => Foreign key constraint: FOREIGN KEY (user_id) REFERENCES users(id)
     // => user loaded lazily: SELECT * FROM users WHERE id = ?
     //    only when order.getUser() called
+    // => Invokes getUser()
 
     // Getters/setters
     public Long getId() { return id; }
+    // => Begins block
     public void setId(Long id) { this.id = id; }
+    // => Assigns value to variable
 
     public String getProduct() { return product; }
+    // => Begins block
     public void setProduct(String product) { this.product = product; }
+    // => Assigns value to variable
 
     public User getUser() { return user; }
+    // => Begins block
     public void setUser(User user) { this.user = user; }
+    // => Assigns user to this.user
 }
 
 // ANTI-PATTERN: EAGER fetching
@@ -1944,6 +2176,7 @@ public class Order {
 // private List<Order> orders;
 // Problems:
 // 1. Loads ALL orders every time user fetched (even if not needed)
+// => Invokes Loads ALL orders every time user fetched()
 // 2. Cannot paginate or filter orders
 // 3. Causes N+1 queries when fetching multiple users:
 //    SELECT * FROM users                  -- 1 query
@@ -1951,6 +2184,7 @@ public class Order {
 //    SELECT * FROM orders WHERE user_id=2
 //    ...
 // Solution: Use LAZY (default) and fetch joins when needed:
+// => Invokes // Solution: Use LAZY()
 // @Query("SELECT u FROM User u LEFT JOIN FETCH u.orders WHERE u.id = :id")
 ```
 
@@ -2063,20 +2297,26 @@ Always paginate large datasets to control memory usage. Spring Data JPA provides
 
 ```java
 package com.example.demo.repository;
+// => Package declaration
 
 // Entity class
 import com.example.demo.model.User;
+// => Import statement
 // Spring Data pagination
 import org.springframework.data.domain.Page;
+// => Import statement
 import org.springframework.data.domain.Pageable;
 // Spring Data JPA repository
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {
+    // => Begins block
 
     // Pageable parameter enables pagination and sorting
     // Spring generates query with LIMIT/OFFSET (or database equivalent)
+    // => Invokes // Spring generates query with LIMIT/OFFSET()
     Page<User> findByNameContaining(String name, Pageable pageable);
+    // => Executes method
     // => SELECT * FROM users WHERE name LIKE '%?%' LIMIT ? OFFSET ?
     // => Also executes: SELECT COUNT(*) FROM users WHERE name LIKE '%?%'
     //    to get total count for pagination metadata
@@ -2086,11 +2326,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 ```java
 package com.example.demo.controller;
+// => Package declaration
 
 // Entity class
 import com.example.demo.model.User;
+// => Import statement
 // Repository
 import com.example.demo.repository.UserRepository;
+// => Import statement
 // Spring Data pagination classes
 import org.springframework.data.domain.*;
 // Spring MVC annotations
@@ -2098,25 +2341,37 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
+    // => Executes method
 public class UserPageController {
+    // => Begins block
 
     private final UserRepository userRepository;
+    // => Declares userRepository field of type final
 
     // Constructor injection
     public UserPageController(UserRepository userRepository) {
+    // => Begins block
         this.userRepository = userRepository;
+        // => Assigns userRepository to this.userRepository
     }
 
     // GET /api/users?page=0&size=20&sort=name,asc
     // page: zero-based page number (default 0)
+    // => Invokes // page: zero-based page number()
     // size: number of records per page (default 10)
+    // => Invokes // size: number of records per page()
     // sort: property,direction (default id)
+    // => Invokes // sort: property,direction()
     @GetMapping
     public Page<User> getUsers(
         @RequestParam(defaultValue = "0") int page,
+    // => Assigns value to variable
         @RequestParam(defaultValue = "10") int size,
+    // => Assigns value to variable
         @RequestParam(defaultValue = "id") String sortBy
+    // => Assigns value to variable
     ) {
+    // => Begins block
         // Create Pageable object for pagination and sorting
         // PageRequest combines page number, size, and sort criteria
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
@@ -2131,12 +2386,17 @@ public class UserPageController {
         // - content: List<User> for current page
         // - totalElements: total records across all pages
         // - totalPages: number of pages (totalElements / size)
+        // => Invokes // - totalPages: number of pages()
         // - number: current page number (0-based)
+        // => Invokes // - number: current page number()
         // - size: records per page
         // - first: boolean (is this first page?)
+        // => Invokes // - first: boolean()
         // - last: boolean (is this last page?)
+        // => Invokes // - last: boolean()
 
         return result;
+    // => Returns result
         // => JSON response:
         // {
         //   "content": [{"id":1,"name":"Alice"}, ...],
@@ -2456,29 +2716,36 @@ spring.datasource.password=
 
 ```java
 package com.example.demo.config;
+// => Package declaration
 
 // @Value annotation for property injection
 import org.springframework.beans.factory.annotation.Value;
+// => Import statement
 // Spring stereotype
 import org.springframework.stereotype.Component;
+// => Import statement
 
 @Component
 public class AppProperties {
+    // => Begins block
 
     // @Value injects property value during bean creation
     // ${app.name} references property key from application.properties
     @Value("${app.name}")
+    // => Executes method
     private String appName;
     // => Field populated with "My Spring Boot App" at startup
     // => Happens during dependency injection phase
 
     @Value("${app.version}")
+    // => Executes method
     private String version;
     // => Populated with "1.0.0"
 
     // Default value with colon syntax: ${property:defaultValue}
     // If app.max-users not defined, uses 50
     @Value("${app.max-users:50}")
+    // => Executes method
     private int maxUsers;
     // => Uses 100 from properties
     // => Falls back to 50 if property missing
@@ -2486,9 +2753,12 @@ public class AppProperties {
 
     // Public method accessing injected properties
     public String getInfo() {
+    // => Begins block
         String info = appName + " v" + version + " (max users: " + maxUsers + ")";
+    // => Assigns value to variable
         // => "My Spring Boot App v1.0.0 (max users: 100)"
         return info;
+    // => Returns result
     }
 }
 ```
@@ -2598,48 +2868,64 @@ Use `@Configuration` classes to define beans for third-party libraries or comple
 
 ```java
 package com.example.demo.config;
+// => Package declaration
 
 // Configuration and bean definition annotations
 import org.springframework.context.annotation.Bean;
+// => Import statement
 import org.springframework.context.annotation.Configuration;
+// => Import statement
 // Third-party libraries
 import org.springframework.web.client.RestTemplate;
+// => Import statement
 import com.fasterxml.jackson.databind.ObjectMapper;
+// => Import statement
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 // @Configuration marks class as source of bean definitions
 // Spring processes this during component scanning
 @Configuration
 public class AppConfig {
+    // => Begins block
 
     // @Bean method creates Spring-managed bean
     // Method name becomes bean name ("restTemplate") unless overridden
+    // => Invokes // Method name becomes bean name()
     // Return type defines bean type for dependency injection
     @Bean
     public RestTemplate restTemplate() {
+    // => Begins block
         RestTemplate client = new RestTemplate();
+    // => Creates new instance
         // => Creates HTTP client
         // => Spring manages lifecycle (creation, destruction)
         // => Singleton by default (one instance shared)
         return client;
+    // => Returns result
     }
 
     // Custom ObjectMapper bean
     // Replaces Spring Boot's auto-configured ObjectMapper
     @Bean
     public ObjectMapper objectMapper() {
+    // => Begins block
         ObjectMapper mapper = new ObjectMapper();
+    // => Creates new instance
 
         // Enable pretty-printing for JSON output
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
+    // => Executes method
         // => JSON responses formatted with newlines and indentation
         // => Easier to debug API responses
 
         // Can configure other Jackson features:
         // mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        // => Invokes disable()
         // mapper.setSerializationInclusion(Include.NON_NULL);
+        // => Invokes setSerializationInclusion()
 
         return mapper;
+    // => Returns result
         // => This ObjectMapper used for all JSON serialization/deserialization
     }
 
@@ -2647,22 +2933,28 @@ public class AppConfig {
     // Spring automatically injects restTemplate parameter
     @Bean
     public ApiClient apiClient(RestTemplate restTemplate) {
+    // => Begins block
         // restTemplate parameter injected by Spring
         // => Spring finds RestTemplate bean defined above
         // => Passes it as constructor argument
 
         ApiClient client = new ApiClient(restTemplate);
+    // => Creates new instance
         // => Creates ApiClient with injected RestTemplate
         return client;
+    // => Returns result
     }
 }
 
 // Example third-party integration class
 class ApiClient {
+    // => Begins block
     private final RestTemplate restTemplate;
+    // => Declares restTemplate field of type final
 
     // Constructor accepting RestTemplate dependency
     public ApiClient(RestTemplate restTemplate) {
+    // => Begins block
         this.restTemplate = restTemplate;
         // => Injected RestTemplate available for HTTP calls
     }
@@ -2815,45 +3107,64 @@ logging.level.root=WARN
 
 ```java
 package com.example.demo.config;
+// => Package declaration
 
 // Configuration and bean annotations
 import org.springframework.context.annotation.Bean;
+// => Import statement
 import org.springframework.context.annotation.Configuration;
+// => Import statement
 import org.springframework.context.annotation.Profile;
+// => Import statement
 
 @Configuration
+// => Annotation applied
 public class DataSourceConfig {
+    // => Begins block
 
     // Bean active only when "dev" profile active
     // @Profile annotation controls bean creation based on active profiles
     @Bean
     @Profile("dev")
+    // => Executes method
     public DataSource devDataSource() {
+    // => Begins block
         DataSource ds = new H2DataSource();
+    // => Creates new instance
         // => Only created when --spring.profiles.active=dev
         // => Not created in prod profile
         return ds;
+    // => Returns result
     }
 
     // Bean active only when "prod" profile active
     @Bean
     @Profile("prod")
+    // => Executes method
     public DataSource prodDataSource() {
+    // => Begins block
         DataSource ds = new PostgresDataSource();
+    // => Creates new instance
         // => Only created when --spring.profiles.active=prod
         // => Not created in dev profile
         return ds;
+    // => Returns result
     }
 
     // Multiple profiles can be specified
     // @Profile({"dev", "staging"}) - active in dev OR staging
+    // => Invokes // @Profile()
     // @Profile("!prod") - active when prod NOT active
+    // => Invokes // @Profile()
 }
 
 // Placeholder classes for demonstration
 class H2DataSource {}
+    // => Begins block
 class PostgresDataSource {}
+    // => Begins block
 class DataSource {}
+    // => Begins block
 ```
 
 ```properties
@@ -3053,25 +3364,34 @@ graph TD
 
 ```java
 package com.example.demo.exception;
+// => Package declaration
 
 // Custom domain exception
 // Extends RuntimeException for unchecked exception (no throws declaration needed)
+// => Invokes // Extends RuntimeException for unchecked exception()
 public class ResourceNotFoundException extends RuntimeException {
+    // => Begins block
 
     // Constructor accepting error message
     public ResourceNotFoundException(String message) {
+    // => Begins block
         super(message);
+    // => Executes method
         // => Sets exception message accessible via getMessage()
     }
+    // => Block delimiter
 }
 ```
 
 ```java
 package com.example.demo.exception;
+// => Package declaration
 
 // HTTP response classes
 import org.springframework.http.HttpStatus;
+// => Import statement
 import org.springframework.http.ResponseEntity;
+// => Import statement
 // Exception handling annotations
 import org.springframework.web.bind.annotation.*;
 // Java time
@@ -3082,71 +3402,103 @@ import java.time.LocalDateTime;
 record ErrorResponse(
     String message,        // Human-readable error message
     int status,            // HTTP status code (404, 400, 500, etc.)
+    // => Executes method
     LocalDateTime timestamp // When error occurred
 ) {}
+    // => Begins block
 
 // @ControllerAdvice applies to ALL controllers globally
 // Centralized exception handling instead of try-catch in each controller
 @ControllerAdvice
 public class GlobalExceptionHandler {
+    // => Begins block
 
     // @ExceptionHandler catches specific exception type
     // When any controller throws ResourceNotFoundException, this method handles it
     @ExceptionHandler(ResourceNotFoundException.class)
+    // => Executes method
     public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex) {
+    // => Begins block
         // Create error response with exception details
         ErrorResponse error = new ErrorResponse(
+    // => Creates new instance
             ex.getMessage(),                    // => "User not found with id: 123"
             HttpStatus.NOT_FOUND.value(),       // => 404
             LocalDateTime.now()                  // => "2026-01-02T06:21:48"
+            // => Executes method call
         );
+        // => Executes statement
 
         ResponseEntity<ErrorResponse> response = ResponseEntity
             .status(HttpStatus.NOT_FOUND)       // => HTTP 404
             .body(error);                        // => JSON error response
+            // => Assigns > JSON error response to //
 
         // => HTTP/1.1 404 Not Found
         // => {"message":"User not found","status":404,"timestamp":"2026-01-02T06:21:48"}
         return response;
+    // => Returns result
     }
 
     // Handle validation errors (IllegalArgumentException)
+    // => Invokes // Handle validation errors()
     @ExceptionHandler(IllegalArgumentException.class)
+    // => Executes method
     public ResponseEntity<ErrorResponse> handleBadRequest(IllegalArgumentException ex) {
+    // => Begins block
         ErrorResponse error = new ErrorResponse(
+    // => Creates new instance
             ex.getMessage(),
+    // => Executes method
             HttpStatus.BAD_REQUEST.value(),      // => 400
+            // => Executes method call
             LocalDateTime.now()
+    // => Executes method
         );
+        // => Executes statement
 
         ResponseEntity<ErrorResponse> response = ResponseEntity
             .status(HttpStatus.BAD_REQUEST)      // => HTTP 400
+            // => Executes method call
             .body(error);
+    // => Executes method
 
         // => HTTP/1.1 400 Bad Request
         return response;
+    // => Returns result
     }
 
     // Catch-all handler for unexpected exceptions
     // Prevents stack traces leaking to clients
     @ExceptionHandler(Exception.class)
+    // => Executes method
     public ResponseEntity<ErrorResponse> handleGeneral(Exception ex) {
+    // => Begins block
         // Log full exception for debugging (not shown to client)
+        // => Invokes // Log full exception for debugging()
         // logger.error("Unexpected error", ex);
+        // => Invokes error()
 
         ErrorResponse error = new ErrorResponse(
+    // => Creates new instance
             "Internal server error",             // => Generic message (hide implementation details)
             HttpStatus.INTERNAL_SERVER_ERROR.value(),  // => 500
+            // => Executes method call
             LocalDateTime.now()
+    // => Executes method
         );
+        // => Executes statement
 
         ResponseEntity<ErrorResponse> response = ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)  // => HTTP 500
+            // => Executes method call
             .body(error);
+    // => Executes method
 
         // => HTTP/1.1 500 Internal Server Error
         // => Hides exception details (security best practice)
         return response;
+    // => Returns result
     }
 }
 ```
@@ -3295,64 +3647,86 @@ Use JSR-380 Bean Validation annotations (`@NotNull`, `@Size`, `@Email`, etc.) fo
 
 ```java
 package com.example.demo.dto;
+// => Package declaration
 
 // JSR-380 validation annotations
 import jakarta.validation.constraints.*;
+// => Import statement
 
 // Request DTO with validation constraints
 record CreateUserRequest(
+// => Code line
     // @NotBlank: not null, not empty, not whitespace
     // More strict than @NotNull (rejects "", "   ")
+    // => Invokes // More strict than @NotNull()
     @NotBlank(message = "Username is required")
+    // => Annotation applied
     @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+    // => Annotation applied
     String username,
     // => Validates: username != null && !username.isBlank() && 3 <= username.length() <= 50
 
     @NotBlank(message = "Email is required")
+    // => Annotation applied
     @Email(message = "Email must be valid")
+    // => Annotation applied
     String email,
     // => Validates: email != null && !email.isBlank() && matches email pattern
 
     @Min(value = 18, message = "Age must be at least 18")
+    // => Annotation applied
     @Max(value = 120, message = "Age must be at most 120")
+    // => Annotation applied
     int age
     // => Validates: 18 <= age <= 120
 ) {}
+    // => Begins block
 ```
 
 ```java
 package com.example.demo.controller;
+// => Package declaration
 
 // Validation annotations
 import jakarta.validation.Valid;
+// => Import statement
 // HTTP response
 import org.springframework.http.ResponseEntity;
+// => Import statement
 // Spring MVC annotations
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
+    // => Executes method
 public class UserValidationController {
+    // => Begins block
 
     // @Valid triggers JSR-380 validation on request body
     // Spring validates CreateUserRequest before method execution
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody CreateUserRequest request) {
+    // => Begins block
         // Validation process:
         // 1. Jackson deserializes JSON to CreateUserRequest object
         // 2. @Valid triggers validator to check constraints
         // 3a. If valid: method executes normally
         // 3b. If invalid: Spring throws MethodArgumentNotValidException
         //     (caught by @ControllerAdvice and returned as 400 Bad Request)
+        // => Invokes //()
 
         // If execution reaches here, validation passed
         // request.username() is guaranteed: not null, not blank, 3-50 chars
+        // => Invokes username()
         // request.email() is guaranteed: not null, not blank, valid email format
+        // => Invokes email()
         // request.age() is guaranteed: 18-120
+        // => Invokes age()
 
         ResponseEntity<?> response = ResponseEntity.ok(request);
         // => HTTP 200 OK with validated request echoed back
         return response;
+    // => Returns result
 
         // Example validation failure response (auto-generated by Spring):
         // => HTTP/1.1 400 Bad Request
@@ -3512,21 +3886,33 @@ import java.lang.annotation.*;
 
 // Custom validation annotation
 // @Target specifies where annotation can be used (fields, parameters)
+// => Invokes // @Target specifies where annotation can be used()
 // @Retention(RUNTIME) makes annotation available at runtime for validation
+// => Invokes // @Retention()
 // @Constraint links annotation to validator implementation
 @Target({ElementType.FIELD, ElementType.PARAMETER})
+    // => Executes method
 @Retention(RetentionPolicy.RUNTIME)
+    // => Executes method
 @Constraint(validatedBy = PasswordValidator.class)
+    // => Assigns value to variable
 public @interface ValidPassword {
+    // => Begins block
 
     // Default error message (can be overridden in @ValidPassword annotation)
+    // => Invokes // Default error message()
     String message() default "Password must contain at least one uppercase, one lowercase, and one digit";
+    // => Executes method
 
     // Required by JSR-380 spec (for validation groups)
+    // => Invokes // Required by JSR-380 spec()
     Class<?>[] groups() default {};
+    // => Executes method
 
     // Required by JSR-380 spec (for custom payload)
+    // => Invokes // Required by JSR-380 spec()
     Class<? extends Payload>[] payload() default {};
+    // => Executes method
 }
 ```
 
@@ -3540,37 +3926,48 @@ import jakarta.validation.ConstraintValidatorContext;
 // ConstraintValidator<AnnotationType, ValidatedType>
 // AnnotationType: @ValidPassword
 // ValidatedType: String (the field/parameter type being validated)
+// => Invokes // ValidatedType: String()
 public class PasswordValidator implements ConstraintValidator<ValidPassword, String> {
+    // => Begins block
 
     // Called once during validator initialization
     // Can extract annotation parameters for configuration
     @Override
     public void initialize(ValidPassword constraintAnnotation) {
+    // => Begins block
         // Initialization logic if needed
         // Can access annotation attributes: constraintAnnotation.message()
+        // => Invokes message()
     }
 
     // Called for each validation
     // value: the String being validated (password field value)
+    // => Invokes // value: the String being validated()
     // context: provides access to build custom error messages
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
+    // => Begins block
         if (password == null) {
+    // => Executes method
             // null values handled by @NotNull separately
             // Return false to fail validation, or true to allow null
             return false;
+    // => Returns result
         }
 
         // Check for at least one uppercase letter (A-Z)
+        // => Invokes // Check for at least one uppercase letter()
         boolean hasUppercase = password.chars().anyMatch(Character::isUpperCase);
         // => "Password123" has 'P' (uppercase) -> true
         // => "password123" has no uppercase -> false
 
         // Check for at least one lowercase letter (a-z)
+        // => Invokes // Check for at least one lowercase letter()
         boolean hasLowercase = password.chars().anyMatch(Character::isLowerCase);
         // => "Password123" has "assword" (lowercase) -> true
 
         // Check for at least one digit (0-9)
+        // => Invokes // Check for at least one digit()
         boolean hasDigit = password.chars().anyMatch(Character::isDigit);
         // => "Password123" has "123" (digits) -> true
 
@@ -3580,30 +3977,39 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Str
         // => "PASSWORD123" -> false (no lowercase)
 
         return valid;
+    // => Returns result
     }
 }
 ```
 
 ```java
 package com.example.demo.dto;
+// => Package declaration
 
 // Custom validator annotation
 import com.example.demo.validation.ValidPassword;
+// => Import statement
 // Standard validation annotations
 import jakarta.validation.constraints.NotBlank;
+// => Import statement
 
 // Request DTO using custom validator
 record ChangePasswordRequest(
+// => Code line
     @NotBlank
+    // => Annotation applied
     String oldPassword,
     // => Standard validation: not null, not blank
 
     @NotBlank
+    // => Annotation applied
     @ValidPassword  // Custom validator applied
+    // => Annotation applied
     String newPassword
     // => Validated by PasswordValidator
     // => Must be: not blank, have uppercase, have lowercase, have digit
 ) {}
+    // => Begins block
 ```
 
 **Code (Kotlin)**:
@@ -3743,41 +4149,59 @@ Organize exceptions into a hierarchy for different error scenarios in your domai
 
 ```java
 package com.example.demo.exception;
+// => Package declaration
 
 // Java collections for field errors
 import java.util.Map;
+// => Import statement
 
 // Base domain exception
 // Abstract class forces subclasses (cannot instantiate directly)
+// => Invokes // Abstract class forces subclasses()
 public abstract class DomainException extends RuntimeException {
+    // => Begins block
 
     // Error code for API responses (e.g., "USER_001", "PAYMENT_FAILED")
+    // => Invokes // Error code for API responses()
     private final String errorCode;
+    // => Declares errorCode field of type final
 
     // Constructor accepting error code and message
     public DomainException(String errorCode, String message) {
+    // => Begins block
         super(message);
+    // => Executes method
         // => Sets exception message
 
         this.errorCode = errorCode;
         // => Stores error code for structured error responses
     }
+    // => Block delimiter
 
     // Public getter for error code
     public String getErrorCode() {
+    // => Begins block
         return errorCode;
+    // => Returns result
         // => Used by @ControllerAdvice to build error responses
     }
+    // => Block delimiter
 }
+// => Block delimiter
 
 // Resource not found exception (404 errors)
+// => Invokes // Resource not found exception()
 // Extends DomainException to inherit error code functionality
 public class ResourceNotFoundException extends DomainException {
+    // => Begins block
 
     // Constructor accepting resource type and ID
     public ResourceNotFoundException(String resource, Long id) {
+    // => Begins block
         super(
+        // => Code line
             "NOT_FOUND",                                      // Error code
+            // => Code line
             resource + " not found with id: " + id            // Message
         );
         // => new ResourceNotFoundException("User", 123L)
@@ -3789,14 +4213,18 @@ public class ResourceNotFoundException extends DomainException {
 
 // Validation exception with field-level errors
 public class ValidationException extends DomainException {
+    // => Begins block
 
     // Map of field names to error messages
     // e.g., {"email": "Invalid format", "age": "Must be 18+"}
     private final Map<String, String> fieldErrors;
+    // => Declares fieldErrors field of type final
 
     // Constructor accepting field errors map
     public ValidationException(Map<String, String> fieldErrors) {
+    // => Begins block
         super("VALIDATION_ERROR", "Validation failed");
+    // => Executes method
         // => Fixed error code and message
 
         this.fieldErrors = fieldErrors;
@@ -3805,17 +4233,23 @@ public class ValidationException extends DomainException {
 
     // Public getter for field errors
     public Map<String, String> getFieldErrors() {
+    // => Begins block
         return fieldErrors;
+    // => Returns result
         // => Used by @ControllerAdvice to include field details in response
     }
 }
 
 // Business rule violation exception (422 errors)
+// => Invokes // Business rule violation exception()
 public class BusinessRuleException extends DomainException {
+    // => Begins block
 
     // Constructor for business rule violations
     public BusinessRuleException(String message) {
+    // => Begins block
         super("BUSINESS_RULE", message);
+    // => Executes method
         // => new BusinessRuleException("Insufficient balance")
         //    Creates exception with:
         //    - errorCode = "BUSINESS_RULE"
@@ -3826,61 +4260,84 @@ public class BusinessRuleException extends DomainException {
 
 ```java
 package com.example.demo.service;
+// => Package declaration
 
 // Custom exceptions
 import com.example.demo.exception.*;
+// => Import statement
 // Spring stereotype
 import org.springframework.stereotype.Service;
+// => Import statement
 // Java math for decimal calculations
 import java.math.BigDecimal;
+// => Import statement
 
 @Service
+// => Annotation applied
 public class OrderService {
+    // => Begins block
 
     // Business method with domain exception handling
     public void placeOrder(Long userId, BigDecimal amount) {
+    // => Begins block
         // Validate order amount
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+    // => Executes method
             throw new BusinessRuleException("Order amount must be positive");
+    // => Executes method
             // => Throws with errorCode="BUSINESS_RULE"
             // => Results in 422 Unprocessable Entity response
         }
 
         // Find user (simulate repository call)
+        // => Invokes // Find user()
         User user = userRepository.findById(userId)
+        // => Retrieves data
             .orElseThrow(() -> new ResourceNotFoundException("User", userId));
+    // => Executes method
         // => If user not found, throws ResourceNotFoundException
         // => Results in 404 Not Found response
 
         // Check business rule: sufficient balance
         if (user.getBalance().compareTo(amount) < 0) {
+    // => Executes method
             throw new BusinessRuleException("Insufficient balance for order");
+    // => Executes method
             // => Business logic violation
         }
 
         // Process order (simulation)
+        // => Invokes // Process order()
         // ...
     }
 }
 
 // Placeholder classes
 class User {
+    // => Begins block
     public BigDecimal getBalance() { return BigDecimal.valueOf(1000); }
+    // => Begins block
 }
 
 interface UserRepository {
+    // => Begins block
     java.util.Optional<User> findById(Long id);
+    // => Executes method
 }
 ```
 
 ```java
 package com.example.demo.exception;
+// => Package declaration
 
 // HTTP response
 import org.springframework.http.HttpStatus;
+// => Import statement
 import org.springframework.http.ResponseEntity;
+// => Import statement
 // Exception handling
 import org.springframework.web.bind.annotation.*;
+// => Import statement
 // Java collections
 import java.util.Map;
 
@@ -3889,64 +4346,92 @@ record ErrorDetail(
     String errorCode,           // Machine-readable error code
     String message,             // Human-readable message
     Map<String, String> details // Optional field-level details (for ValidationException)
+    // => Executes method
 ) {}
+    // => Begins block
 
 // Global handler for domain exceptions
 @ControllerAdvice
 public class DomainExceptionHandler {
+    // => Begins block
 
     // Handle resource not found (404)
+    // => Invokes // Handle resource not found()
     @ExceptionHandler(ResourceNotFoundException.class)
+    // => Executes method
     public ResponseEntity<ErrorDetail> handleNotFound(ResourceNotFoundException ex) {
+    // => Begins block
         ErrorDetail error = new ErrorDetail(
+    // => Creates new instance
             ex.getErrorCode(),    // => "NOT_FOUND"
             ex.getMessage(),      // => "User not found with id: 123"
             null                  // => No field details
         );
+        // => Executes statement
 
         ResponseEntity<ErrorDetail> response = ResponseEntity
             .status(HttpStatus.NOT_FOUND)  // => 404
+            // => Executes method call
             .body(error);
+    // => Executes method
 
         // => HTTP/1.1 404 Not Found
         // => {"errorCode":"NOT_FOUND","message":"User not found...","details":null}
         return response;
+    // => Returns result
     }
 
     // Handle validation errors (400)
+    // => Invokes // Handle validation errors()
     @ExceptionHandler(ValidationException.class)
+    // => Executes method
     public ResponseEntity<ErrorDetail> handleValidation(ValidationException ex) {
+    // => Begins block
         ErrorDetail error = new ErrorDetail(
+    // => Creates new instance
             ex.getErrorCode(),      // => "VALIDATION_ERROR"
             ex.getMessage(),        // => "Validation failed"
             ex.getFieldErrors()     // => {"email":"Invalid","age":"Must be 18+"}
+            // => Retrieves data
         );
+        // => Executes statement
 
         ResponseEntity<ErrorDetail> response = ResponseEntity
             .status(HttpStatus.BAD_REQUEST)  // => 400
+            // => Executes method call
             .body(error);
+    // => Executes method
 
         // => HTTP/1.1 400 Bad Request
         // => {"errorCode":"VALIDATION_ERROR","message":"...","details":{...}}
         return response;
+    // => Returns result
     }
 
     // Handle business rule violations (422)
+    // => Invokes // Handle business rule violations()
     @ExceptionHandler(BusinessRuleException.class)
+    // => Executes method
     public ResponseEntity<ErrorDetail> handleBusinessRule(BusinessRuleException ex) {
+    // => Begins block
         ErrorDetail error = new ErrorDetail(
+    // => Creates new instance
             ex.getErrorCode(),    // => "BUSINESS_RULE"
             ex.getMessage(),      // => "Insufficient balance"
             null                  // => No field details
         );
+        // => Executes statement
 
         ResponseEntity<ErrorDetail> response = ResponseEntity
             .status(HttpStatus.UNPROCESSABLE_ENTITY)  // => 422
+            // => Executes method call
             .body(error);
+    // => Executes method
 
         // => HTTP/1.1 422 Unprocessable Entity
         // => Indicates request valid but business rule failed
         return response;
+    // => Returns result
     }
 }
 ```
@@ -4131,14 +4616,19 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/files")
+    // => Executes method
 public class FileController {
+    // => Begins block
 
     // Upload directory path
     private final Path uploadDir = Paths.get("uploads");
+    // => Sets uploadDir to string value
 
     // Constructor ensures upload directory exists
     public FileController() throws IOException {
+    // => Begins block
         Files.createDirectories(uploadDir);
+    // => Executes method
         // => Creates "uploads" directory if not exists
         // => Throws IOException if creation fails (permissions, etc.)
     }
@@ -4146,21 +4636,30 @@ public class FileController {
     // Single file upload endpoint
     // Content-Type: multipart/form-data required
     @PostMapping("/upload")
+    // => Executes method
     public ResponseEntity<Map<String, String>> uploadFile(
         @RequestParam("file") MultipartFile file
+    // => Executes method
     ) throws IOException {
+    // => Begins block
         // @RequestParam("file") extracts file from multipart request
+        // => Invokes // @RequestParam()
         // MultipartFile provides methods: getOriginalFilename(), getSize(), getBytes(), transferTo()
+        // => Invokes // MultipartFile provides methods: getOriginalFilename()
 
         if (file.isEmpty()) {
+    // => Executes method
             // File part present but no content
             Map<String, String> error = Map.of("error", "File is empty");
+    // => Assigns value to variable
             return ResponseEntity.badRequest().body(error);
+    // => Returns value to caller
             // => HTTP 400 Bad Request
         }
 
         // Generate unique filename to prevent collisions
         String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+    // => Assigns value to variable
         // => For "document.pdf" uploaded at timestamp 1703433600000:
         //    filename = "1703433600000_document.pdf"
 
@@ -4168,41 +4667,56 @@ public class FileController {
         // => Resolves to: uploads/1703433600000_document.pdf
 
         file.transferTo(filePath);
+    // => Executes method
         // => Saves uploaded file to disk
         // => Efficient streaming (doesn't load entire file into memory)
 
         Map<String, String> response = Map.of(
+    // => Assigns value to variable
             "filename", filename,
             "size", String.valueOf(file.getSize()),           // => "15360" (bytes)
             "contentType", file.getContentType()              // => "application/pdf"
         );
 
         return ResponseEntity.ok(response);
+    // => Returns value to caller
         // => HTTP 200 OK
         // => {"filename":"1703433600000_document.pdf","size":"15360","contentType":"application/pdf"}
     }
 
     // Multiple file upload endpoint
     @PostMapping("/upload-multiple")
+    // => Executes method
     public ResponseEntity<List<String>> uploadMultipleFiles(
         @RequestParam("files") MultipartFile[] files
+    // => Executes method
     ) throws IOException {
+    // => Begins block
         // MultipartFile[] accepts multiple files with same form field name
 
         List<String> uploadedFiles = new ArrayList<>();
+    // => Creates new instance
 
         for (MultipartFile file : files) {
+    // => Executes method
             if (!file.isEmpty()) {
+    // => Executes method
                 // Generate unique filename for each file
                 String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+    // => Assigns value to variable
                 Path filePath = uploadDir.resolve(filename);
+                // => Calls resolve()
+                // => Stores result in filePath
                 file.transferTo(filePath);
+    // => Executes method
                 uploadedFiles.add(filename);
+    // => Executes method
                 // => Adds filename to result list
             }
         }
 
         return ResponseEntity.ok(uploadedFiles);
+    // => Returns value to caller
         // => HTTP 200 OK
         // => ["1703433600000_file1.jpg", "1703433601000_file2.png"]
     }
@@ -4210,28 +4724,35 @@ public class FileController {
     // File download endpoint
     // Streams file back to client
     @GetMapping("/download/{filename}")
+    // => Executes method
     public ResponseEntity<Resource> downloadFile(@PathVariable String filename) throws IOException {
+    // => Begins block
         Path filePath = uploadDir.resolve(filename).normalize();
         // => resolve() constructs path: uploads/filename
         // => normalize() removes ".." to prevent directory traversal attacks
 
         if (!Files.exists(filePath)) {
+    // => Executes method
             // File not found on disk
             return ResponseEntity.notFound().build();
+    // => Returns value to caller
             // => HTTP 404 Not Found
         }
 
         Resource resource = new UrlResource(filePath.toUri());
+    // => Creates new instance
         // => Wraps file as Spring Resource for streaming
         // => Doesn't load entire file into memory
 
         return ResponseEntity.ok()
+    // => Returns value to caller
             .contentType(MediaType.APPLICATION_OCTET_STREAM)  // => Binary download
             .header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + resource.getFilename() + "\"")
             // => Tells browser to download (not display inline)
             // => filename in quotes for proper handling
             .body(resource);
+    // => Executes method
         // => HTTP 200 OK
         // => Content-Disposition: attachment; filename="document.pdf"
         // => Streams file content
@@ -4239,17 +4760,24 @@ public class FileController {
 
     // List all uploaded files
     @GetMapping("/list")
+    // => Executes method
     public ResponseEntity<List<String>> listFiles() throws IOException {
+    // => Begins block
         List<String> files = Files.list(uploadDir)
+    // => Assigns value to variable
             // => Returns Stream<Path> of files in upload directory
             .map(Path::getFileName)
+    // => Executes method
             // => Extracts filename from full path
             .map(Path::toString)
+    // => Executes method
             // => Converts Path to String
             .toList();
+    // => Executes method
         // => Collects to List<String>
 
         return ResponseEntity.ok(files);
+    // => Returns value to caller
         // => HTTP 200 OK
         // => ["1703433600000_document.pdf", "1703433601000_image.jpg"]
     }
@@ -4460,7 +4988,9 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/demo")
+    // => Executes method
 public class LoggingController {
+    // => Begins block
 
     // Create logger for this class
     // LoggerFactory.getLogger(Class) creates logger named after fully qualified class name
@@ -4470,45 +5000,57 @@ public class LoggingController {
     // => Can be configured independently in application.properties
 
     @GetMapping("/process")
+    // => Executes method
     public String process(@RequestParam String data) {
+    // => Begins block
 
         // TRACE level - most verbose, rarely enabled even in dev
         // Use for very detailed debugging (method entry/exit, variable values)
         log.trace("TRACE: Processing started with data: {}", data);
+    // => Executes method
         // => Only logged if TRACE level enabled for this logger
         // => {} is placeholder replaced by data parameter (avoids string concatenation overhead)
 
         // DEBUG level - detailed information for debugging
         // Enabled in development, disabled in production
         log.debug("DEBUG: Validating input data: {}", data);
+    // => Executes method
         // => Logged in dev environments (logging.level.com.example=DEBUG)
         // => Not logged in prod (logging.level.root=INFO)
 
         // INFO level - general informational messages
         // Default production level - shows important events
         log.info("INFO: Processing request for data: {}", data);
+    // => Executes method
         // => Logged in all environments
         // => Use for: successful operations, business events, startup info
 
         // WARN level - potentially harmful situations
         // Something unexpected but application can continue
         log.warn("WARN: Processing time exceeded threshold for: {}", data);
+    // => Executes method
         // => Logged in all environments
         // => Use for: deprecated API usage, performance degradation, missing configs
 
         try {
+    // => Begins block
             if (data.equals("error")) {
+    // => Executes method
                 throw new IllegalArgumentException("Invalid data");
+    // => Executes method
             }
         } catch (Exception e) {
+    // => Executes method
             // ERROR level - error events that might allow app to continue
             // Third parameter (exception) logs full stack trace
             log.error("ERROR: Failed to process data: {}", data, e);
+    // => Executes method
             // => Logged in all environments with stack trace
             // => Use for: caught exceptions, recoverable errors, failed operations
         }
 
         return "Processed: " + data;
+    // => Returns result
     }
 }
 ```
@@ -4753,87 +5295,130 @@ Intercept HTTP requests and responses for cross-cutting concerns like logging, a
 
 ```java
 package com.example.demo.interceptor;
+// => Package declaration
 
 // Servlet API
 import jakarta.servlet.http.HttpServletRequest;
+// => Import statement
 import jakarta.servlet.http.HttpServletResponse;
+// => Import statement
 // SLF4J logging
 import org.slf4j.Logger;
+// => Import statement
 import org.slf4j.LoggerFactory;
+// => Import statement
 // Spring stereotype
 import org.springframework.stereotype.Component;
+// => Import statement
 // Spring MVC interceptor
 import org.springframework.web.servlet.HandlerInterceptor;
+// => Import statement
 import org.springframework.web.servlet.ModelAndView;
+// => Import statement
 
 @Component
+// => Annotation applied
 public class RequestLoggingInterceptor implements HandlerInterceptor {
+    // => Begins block
     private static final Logger log = LoggerFactory.getLogger(RequestLoggingInterceptor.class);
+    // => Calls getLogger()
+    // => Stores result in log
 
     // preHandle called BEFORE controller method execution
     // Return true to continue processing, false to stop
     @Override
+    // => Annotation applied
     public boolean preHandle(
+    // => Declaration
         HttpServletRequest request,
+        // => Code execution
         HttpServletResponse response,
+        // => Code execution
         Object handler
+        // => Code execution
     ) {
+    // => Begins block
         // Record request start time
         long startTime = System.currentTimeMillis();
+        // => Calls currentTimeMillis()
+        // => Stores result in startTime
         request.setAttribute("startTime", startTime);
+    // => Executes method
         // => Stored in request scope for later retrieval in afterCompletion()
 
         log.info("==> Incoming request: {} {} from {}",
             request.getMethod(),       // => "GET", "POST", etc.
             request.getRequestURI(),   // => "/api/users/123"
             request.getRemoteAddr()    // => "127.0.0.1" or client IP
+            // => Retrieves data
         );
         // => "==> Incoming request: GET /api/users from 127.0.0.1"
 
         return true;
+    // => Returns result
         // => true continues to next interceptor or controller
         // => false stops processing (returns response immediately)
     }
+    // => Block delimiter
 
     // postHandle called AFTER controller method execution, BEFORE view rendering
     // Only called if controller succeeds (no exception thrown)
+    // => Invokes // Only called if controller succeeds()
     @Override
+    // => Annotation applied
     public void postHandle(
+    // => Declaration
         HttpServletRequest request,
+        // => Code line
         HttpServletResponse response,
+        // => Code line
         Object handler,
+        // => Code line
         ModelAndView modelAndView
+        // => Code line
     ) {
+    // => Begins block
         log.debug("Controller method completed, status: {}", response.getStatus());
+    // => Executes method
         // => Called only if controller executed successfully
         // => Not called if exception thrown in controller
     }
+    // => Block delimiter
 
     // afterCompletion called AFTER response is sent
     // ALWAYS executed (even if exception occurred in controller)
+    // => Invokes // ALWAYS executed()
     @Override
+    // => Annotation applied
     public void afterCompletion(
         HttpServletRequest request,
         HttpServletResponse response,
         Object handler,
         Exception ex
     ) {
+    // => Begins block
         // Retrieve start time from request scope
         long startTime = (Long) request.getAttribute("startTime");
+    // => Assigns value to variable
         long duration = System.currentTimeMillis() - startTime;
         // => Calculate request processing time
 
         log.info("<== Completed: {} {} - Status: {} - Duration: {}ms",
             request.getMethod(),
+    // => Executes method
             request.getRequestURI(),
+    // => Executes method
             response.getStatus(),    // => 200, 404, 500, etc.
+            // => Retrieves data
             duration
         );
         // => "<== Completed: GET /api/users - Status: 200 - Duration: 45ms"
 
         if (ex != null) {
+    // => Executes method
             // Exception occurred during processing
             log.error("Request failed with exception", ex);
+    // => Executes method
             // => Logs full stack trace
         }
     }
@@ -4842,17 +5427,23 @@ public class RequestLoggingInterceptor implements HandlerInterceptor {
 
 ```java
 package com.example.demo.interceptor;
+// => Package declaration
 
 // Servlet API
 import jakarta.servlet.http.HttpServletRequest;
+// => Import statement
 import jakarta.servlet.http.HttpServletResponse;
+// => Import statement
 // Spring stereotype
 import org.springframework.stereotype.Component;
+// => Import statement
 // Spring MVC interceptor
 import org.springframework.web.servlet.HandlerInterceptor;
+// => Import statement
 
 @Component
 public class AuthenticationInterceptor implements HandlerInterceptor {
+    // => Begins block
 
     @Override
     public boolean preHandle(
@@ -4860,102 +5451,143 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         HttpServletResponse response,
         Object handler
     ) {
+    // => Begins block
         // Extract Authorization header
         String authHeader = request.getHeader("Authorization");
+    // => Assigns value to variable
         // => "Bearer eyJhbGciOiJIUzI1..." or null if not present
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+    // => Executes method
             // No authorization header or wrong format
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    // => Executes method
             // => Sets HTTP status to 401 Unauthorized
             return false;
+    // => Returns result
             // => Stops processing, returns 401 immediately
             // => Controller never executed
         }
 
         // Extract token from header
         String token = authHeader.substring(7);
+    // => Assigns value to variable
         // => "Bearer " is 7 characters
         // => Extracts token part: "eyJhbGciOiJIUzI1..."
 
         if (!isValidToken(token)) {
+    // => Executes method
             // Token validation failed (expired, invalid signature, etc.)
+            // => Invokes // Token validation failed()
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+    // => Executes method
             // => 403 Forbidden (authenticated but not authorized)
             return false;
+    // => Returns result
         }
 
         // Token valid - extract user information
         String userId = extractUserId(token);
+    // => Assigns value to variable
         request.setAttribute("userId", userId);
+    // => Executes method
         // => Store userId in request scope for controller access
 
         return true;
+    // => Returns result
         // => Continue to controller with authenticated request
     }
 
     // Simplified token validation (in real app: verify JWT signature, expiry)
+    // => Invokes // Simplified token validation()
     private boolean isValidToken(String token) {
+    // => Begins block
         return token != null && !token.isEmpty();
+        // => Calls isEmpty()
+        // => Stores result in !
     }
 
     // Simplified user ID extraction (in real app: parse JWT claims)
+    // => Invokes // Simplified user ID extraction()
     private String extractUserId(String token) {
+    // => Begins block
         return "user123";
+    // => Returns result
     }
 }
 ```
 
 ```java
 package com.example.demo.config;
+// => Package declaration
 
 // Interceptor classes
 import com.example.demo.interceptor.*;
+// => Import statement
 // Spring configuration
 import org.springframework.context.annotation.Configuration;
+// => Import statement
 // Spring MVC configuration
 import org.springframework.web.servlet.config.annotation.*;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+    // => Begins block
 
     private final RequestLoggingInterceptor loggingInterceptor;
+    // => Declares loggingInterceptor field of type final
     private final AuthenticationInterceptor authInterceptor;
+    // => Declares authInterceptor field of type final
 
     // Constructor injection of interceptors
     public WebConfig(
         RequestLoggingInterceptor loggingInterceptor,
         AuthenticationInterceptor authInterceptor
     ) {
+    // => Begins block
         this.loggingInterceptor = loggingInterceptor;
+        // => Assigns loggingInterceptor to this.loggingInterceptor
         this.authInterceptor = authInterceptor;
+        // => Assigns authInterceptor to this.authInterceptor
     }
 
     // Register interceptors with Spring MVC
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+    // => Begins block
 
         // Register logging interceptor for all requests
         registry.addInterceptor(loggingInterceptor)
+    // => Executes method
             .addPathPatterns("/**");
+    // => Executes method
         // => /** matches all paths (/, /api, /api/users, /api/users/123, etc.)
         // => Logs all incoming and outgoing requests
 
         // Register authentication interceptor for protected paths
         registry.addInterceptor(authInterceptor)
+    // => Executes method
             .addPathPatterns("/api/**")           // Include /api/** paths
+    // => Executes method
             .excludePathPatterns("/api/public/**"); // Exclude /api/public/** paths
+    // => Executes method
         // => /api/users requires authentication (matched by /api/**)
         // => /api/public/hello skipped (excluded by /api/public/**)
 
         // Execution order:
         // 1. loggingInterceptor.preHandle()
+        // => Invokes preHandle()
         // 2. authInterceptor.preHandle()
+        // => Invokes preHandle()
         // 3. Controller method
         // 4. authInterceptor.postHandle()
+        // => Invokes postHandle()
         // 5. loggingInterceptor.postHandle()
+        // => Invokes postHandle()
         // 6. loggingInterceptor.afterCompletion()
+        // => Invokes afterCompletion()
         // 7. authInterceptor.afterCompletion()
+        // => Invokes afterCompletion()
     }
 }
 ```
@@ -5152,20 +5784,26 @@ import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 public class CorsConfig {
+    // => Begins block
 
     @Bean
     public CorsFilter corsFilter() {
+    // => Begins block
         CorsConfiguration config = new CorsConfiguration();
+    // => Creates new instance
 
         // Allow specific origins (NEVER use "*" with credentials in production!)
         config.addAllowedOrigin("http://localhost:3000");
+    // => Executes method
         // => React dev server allowed
         // => Browser allows requests from http://localhost:3000
 
         config.addAllowedOrigin("http://localhost:4200");
+    // => Executes method
         // => Angular dev server allowed
 
         config.addAllowedOrigin("https://myapp.com");
+    // => Executes method
         // => Production frontend allowed
 
         // Security note: "*" with allowCredentials(true) is forbidden by CORS spec
@@ -5173,29 +5811,39 @@ public class CorsConfig {
 
         // Allow specific HTTP methods
         config.addAllowedMethod("GET");
+    // => Executes method
         config.addAllowedMethod("POST");
+    // => Executes method
         config.addAllowedMethod("PUT");
+    // => Executes method
         config.addAllowedMethod("DELETE");
+    // => Executes method
         config.addAllowedMethod("OPTIONS");
+    // => Executes method
         // => OPTIONS required for preflight requests
         // => Browser sends OPTIONS before POST/PUT/DELETE for security
 
         // Allow specific request headers
         config.addAllowedHeader("Authorization");
+    // => Executes method
         // => Allows Authorization: Bearer <token> header
 
         config.addAllowedHeader("Content-Type");
+    // => Executes method
         // => Allows Content-Type: application/json header
 
         config.addAllowedHeader("X-Requested-With");
+    // => Executes method
         // => Standard header sent by AJAX libraries
 
         // Expose headers to frontend JavaScript
         config.addExposedHeader("X-Total-Count");
+    // => Executes method
         // => Frontend can read response.headers.get("X-Total-Count")
         // => Used for pagination metadata
 
         config.addExposedHeader("X-Custom-Header");
+    // => Executes method
         // => Custom headers need explicit exposure
 
         // Allow credentials (cookies, authorization headers)
@@ -5223,76 +5871,110 @@ public class CorsConfig {
 
 ```java
 package com.example.demo.config;
+// => Package declaration
 
 // Spring configuration
 import org.springframework.context.annotation.Configuration;
+// => Import statement
 // Spring MVC configuration
 import org.springframework.web.servlet.config.annotation.*;
+// => Import statement
 
 @Configuration
+// => Annotation applied
 public class WebMvcConfig implements WebMvcConfigurer {
+    // => Begins block
 
     // Alternative CORS configuration via WebMvcConfigurer
     // Simpler than CorsFilter for basic cases
     @Override
+    // => Annotation applied
     public void addCorsMappings(CorsRegistry registry) {
+    // => Begins block
         registry.addMapping("/api/**")  // Apply to /api/** paths only
+    // => Executes method
             .allowedOrigins("http://localhost:3000", "https://myapp.com")
+    // => Executes method
             // => Only /api/** endpoints have CORS enabled
             // => Other endpoints (/, /health) not affected
 
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+    // => Executes method
             .allowedHeaders("*")
+    // => Executes method
             // => Allows all request headers (less secure than specific list)
 
             .exposedHeaders("X-Total-Count")
+    // => Executes method
             .allowCredentials(true)
+    // => Executes method
             .maxAge(3600);
+    // => Executes method
     }
 }
 ```
 
 ```java
 package com.example.demo.controller;
+// => Package declaration
 
 // Spring MVC annotations
 import org.springframework.web.bind.annotation.*;
+// => Import statement
 // Java collections
 import java.util.List;
+// => Import statement
 
 // Controller-level CORS configuration
 // Overrides global CORS configuration for this controller
 @RestController
+// => Annotation applied
 @RequestMapping("/api/products")
+    // => Executes method
 @CrossOrigin(
+// => Annotation applied
     origins = {"http://localhost:3000"},
+    // => Code line
     methods = {RequestMethod.GET, RequestMethod.POST},
+    // => Code line
     maxAge = 3600,
+    // => Code line
     allowCredentials = "true"
+    // => Code line
 )
+// => Code line
 public class ProductController {
+    // => Begins block
 
     @GetMapping
+    // => Annotation applied
     public List<Product> getProducts() {
+    // => Begins block
         // CORS headers automatically added to response
         // => Access-Control-Allow-Origin: http://localhost:3000
         // => Access-Control-Allow-Credentials: true
         return List.of(new Product(1L, "Laptop"));
+    // => Returns value to caller
     }
 
     // Method-level CORS (most specific - overrides controller-level)
+    // => Invokes // Method-level CORS()
     @PostMapping
     @CrossOrigin(origins = "*")  // Less restrictive for this endpoint only
+    // => Assigns value to variable
     public Product createProduct(@RequestBody Product product) {
+    // => Begins block
         // This endpoint allows ALL origins
         // => Access-Control-Allow-Origin: *
         // => No credentials allowed when origin is *
         return product;
+    // => Returns result
     }
 }
 
 // Product DTO
 record Product(Long id, String name) {}
+    // => Executes method
 ```
 
 ```yaml

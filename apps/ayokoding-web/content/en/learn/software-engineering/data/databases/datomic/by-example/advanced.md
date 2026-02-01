@@ -473,77 +473,145 @@ Coordinate transactions across multiple Datomic databases using application-leve
 
 ```java
 // Note: Datomic doesn't support distributed transactions across databases
+// => Each database has independent transaction log
 // Use application-level coordination (e.g., outbox pattern)
+// => Saga pattern, two-phase commit simulation, or eventual consistency
 
 // Two databases
 String uri1 = "datomic:mem://db1";
+// => First database URI (in-memory)
 String uri2 = "datomic:mem://db2";
+// => Second database URI (separate in-memory database)
 Peer.createDatabase(uri1);
+// => Creates first database
 Peer.createDatabase(uri2);
+// => Creates second database (independent of first)
 Connection conn1 = Peer.connect(uri1);
+// => Connection to first database
 Connection conn2 = Peer.connect(uri2);
+// => Connection to second database (separate connection object)
 
 // Application-level two-phase commit simulation
 Map distributedTransact(Connection conn1, List tx1, Connection conn2, List tx2) {
+    // => Function simulates coordinated transaction across two databases
+    // => conn1, tx1: first database and its transaction data
+    // => conn2, tx2: second database and its transaction data
     try {
         // Phase 1: Prepare (validate transactions)
         conn1.db().with(tx1);
+        // => Validates tx1 against conn1 database without committing
+        // => with() simulates transaction to check for conflicts/errors
+        // => Throws exception if validation fails
         conn2.db().with(tx2);
+        // => Validates tx2 against conn2 database without committing
+        // => Both validations must succeed before commit phase
 
         // Phase 2: Commit (both or neither)
         Map result1 = conn1.transact(tx1).get();
+        // => Commits tx1 to first database
+        // => .get() blocks until transaction completes
+        // => Returns transaction result map with :db-after, :tx-data, :tempids
         Map result2 = conn2.transact(tx2).get();
+        // => Commits tx2 to second database
+        // => WARNING: If this fails, tx1 already committed (no automatic rollback)
+        // => Returns transaction result map
 
         return Util.map(":success", true,
+                       // => Indicates both transactions succeeded
                        ":results", Util.list(result1, result2));
+                       // => Returns list of both transaction results
     } catch (Exception e) {
         // Rollback if either fails
+        // => LIMITATION: No automatic rollback if Phase 2 partially succeeds
+        // => Application must handle compensating transactions manually
         return Util.map(":success", false,
+                       // => Indicates failure
                        ":error", e.getMessage());
+                       // => Returns error message
     }
 }
 
 // Use with care - not true distributed transactions
 distributedTransact(
+    // => Attempts to coordinate transaction across two databases
     conn1, Util.list(Util.map(":person/name", "User in DB1")),
+    // => First transaction: add person to db1
     conn2, Util.list(Util.map(":project/name", "Project in DB2"))
+    // => Second transaction: add project to db2
 );
+// => WARNING: If second transaction fails after first succeeds,
+// => db1 has "User in DB1" but db2 has no "Project in DB2"
+// => Application must implement compensating transaction to undo
 ```
 
 **Clojure Code**:
 
 ```clojure
 ;; Note: Datomic doesn't support distributed transactions across databases
+;; => Each database has independent transaction log
 ;; Use application-level coordination (e.g., outbox pattern)
+;; => Saga pattern, two-phase commit simulation, or eventual consistency
 
 ;; Two databases
 (def uri-1 "datomic:mem://db1")
+;; => First database URI (in-memory)
 (def uri-2 "datomic:mem://db2")
+;; => Second database URI (separate in-memory database)
 (d/create-database uri-1)
+;; => Creates first database
 (d/create-database uri-2)
+;; => Creates second database (independent of first)
 (def conn-1 (d/connect uri-1))
+;; => Connection to first database
 (def conn-2 (d/connect uri-2))
+;; => Connection to second database (separate connection object)
 
 ;; Application-level two-phase commit simulation
 (defn distributed-transact [conn-1 tx-1 conn-2 tx-2]
+  ;; => Function simulates coordinated transaction across two databases
+  ;; => conn-1, tx-1: first database and its transaction data
+  ;; => conn-2, tx-2: second database and its transaction data
   (try
     ;; Phase 1: Prepare (validate transactions)
     (d/with (d/db conn-1) tx-1)
+    ;; => Validates tx-1 against conn-1 database without committing
+    ;; => with() simulates transaction to check for conflicts/errors
+    ;; => Throws exception if validation fails
     (d/with (d/db conn-2) tx-2)
+    ;; => Validates tx-2 against conn-2 database without committing
+    ;; => Both validations must succeed before commit phase
     ;; Phase 2: Commit (both or neither)
     (let [result-1 @(d/transact conn-1 tx-1)
+          ;; => Commits tx-1 to first database
+          ;; => @ blocks until transaction completes
+          ;; => Returns transaction result map with :db-after, :tx-data, :tempids
           result-2 @(d/transact conn-2 tx-2)]
+          ;; => Commits tx-2 to second database
+          ;; => WARNING: If this fails, tx-1 already committed (no automatic rollback)
+          ;; => Returns transaction result map
       {:success true
+       ;; => Indicates both transactions succeeded
        :results [result-1 result-2]})
+       ;; => Returns vector of both transaction results
     (catch Exception e
       ;; Rollback if either fails
+      ;; => LIMITATION: No automatic rollback if Phase 2 partially succeeds
+      ;; => Application must handle compensating transactions manually
       {:success false
+       ;; => Indicates failure
        :error (.getMessage e)})))
+       ;; => Returns error message
 
 ;; Use with care - not true distributed transactions
 (distributed-transact
+  ;; => Attempts to coordinate transaction across two databases
   conn-1 [{:person/name "User in DB1"}]
+  ;; => First transaction: add person to db1
   conn-2 [{:project/name "Project in DB2"}])
+  ;; => Second transaction: add project to db2
+;; => WARNING: If second transaction fails after first succeeds,
+;; => db1 has "User in DB1" but db2 has no "Project in DB2"
+;; => Application must implement compensating transaction to undo
 ```
 
 **Key Takeaway**: Datomic transactions are per-database. Use application-level coordination (saga pattern, outbox pattern) for cross-database atomicity.
@@ -641,76 +709,127 @@ Manage schema evolution across versions using additive schema changes and migrat
 ```java
 // Schema versioning attribute
 conn.transact(
+    // => Add schema version tracking attribute
     Util.list(
         Util.map(":db/ident", ":schema/version",
+                 // => Attribute name: :schema/version
                  ":db/valueType", ":db.type/long",
+                 // => Stores version number as long integer
                  ":db/cardinality", ":db.cardinality/one")
+                 // => Single version number per schema
     )
 ).get();
+// => Schema version attribute now available
 
 // Initial schema (v1)
 List schemaV1 = Util.list(
+    // => Version 1 schema with single full-name attribute
     Util.map(":db/ident", ":person/full-name",
+             // => Original attribute: :person/full-name
              ":db/valueType", ":db.type/string",
+             // => Stores full name as single string (e.g., "Alice Johnson")
              ":db/cardinality", ":db.cardinality/one")
+             // => Single full name per person
 );
 
 List combined = new ArrayList(schemaV1);
+// => Copy schemaV1 list to new ArrayList
 combined.add(Util.map(":db/ident", ":schema/version", ":schema/version", 1));
+// => Add version marker: schema version = 1
+// => Uses :db/ident as lookup ref to set :schema/version attribute value
 conn.transact(combined).get();
+// => Transacts v1 schema + version marker
+// => Database now has :person/full-name attribute and schema version 1
 
 // Schema v2: Split full-name into first-name and last-name
 List schemaV2 = Util.list(
+    // => Version 2 schema with split name attributes
     Util.map(":db/ident", ":person/first-name",
+             // => New attribute: :person/first-name
              ":db/valueType", ":db.type/string",
+             // => Stores first name as string
              ":db/cardinality", ":db.cardinality/one"),
+             // => Single first name per person
     Util.map(":db/ident", ":person/last-name",
+             // => New attribute: :person/last-name
              ":db/valueType", ":db.type/string",
+             // => Stores last name as string
              ":db/cardinality", ":db.cardinality/one")
+             // => Single last name per person
 );
 
 // Migration function
 void migrateV1ToV2(Connection conn) throws Exception {
+    // => Migrates data from v1 schema (full-name) to v2 schema (first-name + last-name)
     // Add new attributes
     conn.transact(schemaV2).get();
+    // => Adds :person/first-name and :person/last-name attributes
+    // => Additive schema change - doesn't remove :person/full-name
 
     // Transform data
     Database db = conn.db();
+    // => Get current database value
     Collection people = Peer.q(
+        // => Query all entities with :person/full-name
         "[:find ?e ?full-name " +
         " :where [?e :person/full-name ?full-name]]",
         db
     );
+    // => Returns collection of tuples: [[entity-id full-name], ...]
+    // => Example: [[17592186045418, "Alice Johnson"], [17592186045419, "Bob Smith"]]
 
     List txData = new ArrayList();
+    // => Accumulates transaction data for batch update
     for (Object obj : people) {
+        // => Iterate each person entity
         List tuple = (List) obj;
+        // => Extract tuple [entity-id, full-name]
         Object e = tuple.get(0);
+        // => Entity ID (e.g., 17592186045418)
         String fullName = (String) tuple.get(1);
+        // => Full name string (e.g., "Alice Johnson")
         String[] parts = fullName.split(" ");
+        // => Split on space: ["Alice", "Johnson"]
         String firstName = parts[0];
+        // => First part: "Alice"
         String lastName = parts.length > 1 ? parts[parts.length - 1] : parts[0];
+        // => Last part if exists, else use first part (handles single names)
+        // => Example: "Alice Johnson" → "Johnson", "Madonna" → "Madonna"
 
         txData.add(Util.map(":db/id", e,
+                           // => Target entity ID for update
                            ":person/first-name", firstName,
+                           // => Assert first name (e.g., "Alice")
                            ":person/last-name", lastName));
+                           // => Assert last name (e.g., "Johnson")
     }
+    // => txData now contains updates for all people
     conn.transact(txData).get();
+    // => Batch transaction adds :person/first-name and :person/last-name to all entities
+    // => Original :person/full-name remains (backward compatibility)
 
     // Update version
     conn.transact(Util.list(
         Util.map(":db/ident", ":schema/version", ":schema/version", 2)
+        // => Update schema version to 2 using :db/ident lookup ref
     )).get();
+    // => Schema version now 2
 }
 
 // Check current version
 Entity schemaVersionEntity = conn.db().entity(":schema/version");
+// => Fetch :schema/version entity using :db/ident lookup
 Integer currentVersion = (Integer) schemaVersionEntity.get(":schema/version");
+// => Get :schema/version attribute value
+// => Example: 1 (if v1), 2 (if v2), null (if unversioned)
 
 // Run migration if needed
 if (currentVersion < 2) {
+    // => Check if migration needed
     migrateV1ToV2(conn);
+    // => Execute migration to v2
 }
+// => Safe to run multiple times (idempotent if version check correct)
 ```
 
 **Clojure Code**:
@@ -718,54 +837,100 @@ if (currentVersion < 2) {
 ```clojure
 ;; Schema versioning attribute
 @(d/transact conn
+   ;; => Add schema version tracking attribute
    [{:db/ident       :schema/version
+     ;; => Attribute name: :schema/version
      :db/valueType   :db.type/long
+     ;; => Stores version number as long integer
      :db/cardinality :db.cardinality/one}])
+     ;; => Single version number per schema
+;; => Schema version attribute now available
 
 ;; Initial schema (v1)
 (def schema-v1
+  ;; => Version 1 schema with single full-name attribute
   [{:db/ident       :person/full-name
+    ;; => Original attribute: :person/full-name
     :db/valueType   :db.type/string
+    ;; => Stores full name as single string (e.g., "Alice Johnson")
     :db/cardinality :db.cardinality/one}])
+    ;; => Single full name per person
 
 @(d/transact conn (conj schema-v1 {:db/ident :schema/version :schema/version 1}))
+;; => Transacts v1 schema + version marker
+;; => conj adds version map to schema-v1 vector
+;; => {:db/ident :schema/version :schema/version 1} uses :db/ident as lookup ref
+;; => Database now has :person/full-name attribute and schema version 1
 
 ;; Schema v2: Split full-name into first-name and last-name
 (def schema-v2
+  ;; => Version 2 schema with split name attributes
   [{:db/ident       :person/first-name
+    ;; => New attribute: :person/first-name
     :db/valueType   :db.type/string
+    ;; => Stores first name as string
     :db/cardinality :db.cardinality/one}
+    ;; => Single first name per person
    {:db/ident       :person/last-name
+    ;; => New attribute: :person/last-name
     :db/valueType   :db.type/string
+    ;; => Stores last name as string
     :db/cardinality :db.cardinality/one}])
+    ;; => Single last name per person
 
 ;; Migration function
 (defn migrate-v1-to-v2 [conn]
+  ;; => Migrates data from v1 schema (full-name) to v2 schema (first-name + last-name)
   ;; Add new attributes
   @(d/transact conn schema-v2)
+  ;; => Adds :person/first-name and :person/last-name attributes
+  ;; => Additive schema change - doesn't remove :person/full-name
   ;; Transform data
   (let [db (d/db conn)
+        ;; => Get current database value
         people (d/q '[:find ?e ?full-name
+                      ;; => Query all entities with :person/full-name
                       :where [?e :person/full-name ?full-name]]
                     db)]
+        ;; => Returns set of tuples: #{[entity-id full-name], ...}
+        ;; => Example: #{[17592186045418 "Alice Johnson"] [17592186045419 "Bob Smith"]}
     @(d/transact conn
+       ;; => Batch transaction to add first-name and last-name to all people
        (for [[e full-name] people
+             ;; => Destructure each tuple: e = entity-id, full-name = string
              :let [parts (clojure.string/split full-name #" ")
+                   ;; => Split on space: ["Alice" "Johnson"]
                    first-name (first parts)
+                   ;; => First part: "Alice"
                    last-name (last parts)]]
+                   ;; => Last part: "Johnson" (handles single names: (last ["Madonna"]) → "Madonna")
          {:db/id e
+          ;; => Target entity ID for update
           :person/first-name first-name
+          ;; => Assert first name (e.g., "Alice")
           :person/last-name last-name})))
+          ;; => Assert last name (e.g., "Johnson")
+  ;; => All people now have :person/first-name and :person/last-name
+  ;; => Original :person/full-name remains (backward compatibility)
   ;; Update version
   @(d/transact conn [{:db/ident :schema/version :schema/version 2}]))
+  ;; => Update schema version to 2 using :db/ident lookup ref
+  ;; => Schema version now 2
 
 ;; Check current version
 (def current-version
+  ;; => Fetch current schema version
   (:schema/version (d/entity (d/db conn) :schema/version)))
+  ;; => (d/entity (d/db conn) :schema/version) fetches :schema/version entity using :db/ident lookup
+  ;; => (:schema/version ...) gets :schema/version attribute value
+  ;; => Example: 1 (if v1), 2 (if v2), nil (if unversioned)
 
 ;; Run migration if needed
 (when (< current-version 2)
+  ;; => Check if migration needed (current version less than 2)
   (migrate-v1-to-v2 conn))
+  ;; => Execute migration to v2
+;; => Safe to run multiple times (idempotent if version check correct)
 ```
 
 **Key Takeaway**: Schema evolution is additive in Datomic. Version your schema, write migration functions to transform data, and track schema version in database.

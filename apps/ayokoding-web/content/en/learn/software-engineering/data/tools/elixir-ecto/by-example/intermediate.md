@@ -37,74 +37,56 @@ graph TD
 
 ```elixir
 defmodule User do
-                                                      # => Module starts
-  use Ecto.Schema
-                                                      # => Imports Ecto
+  use Ecto.Schema                     # => Import schema DSL
 
-  schema "users" do
-                                                      # => Schema declaration
-    field :name, :string
-                                                      # => Field defined
-    has_many :posts, Post
-                                                      # => Operation executes
-    timestamps()
-                                                      # => Operation executes
+  schema "users" do                   # => Map to "users" table
+                                      # => Adds :id primary key automatically
+    field :name, :string              # => String field: name
+    has_many :posts, Post             # => One-to-many association with Post schema
+                                      # => Enables u.posts access and assoc(u, :posts) queries
+    timestamps()                      # => Adds inserted_at, updated_at
   end
-                                                      # => Block ends
 end
-                                                      # => Block ends
 
 defmodule Post do
-                                                      # => Module starts
-  use Ecto.Schema
-                                                      # => Imports Ecto
+  use Ecto.Schema                     # => Import schema DSL
 
-  schema "posts" do
-                                                      # => Schema declaration
-    field :title, :string
-                                                      # => Field defined
-    field :published, :boolean
-                                                      # => Field defined
-    belongs_to :user, User
-                                                      # => Operation executes
-    timestamps()
-                                                      # => Operation executes
+  schema "posts" do                   # => Map to "posts" table
+                                      # => Adds :id primary key automatically
+    field :title, :string             # => String field: title
+    field :published, :boolean        # => Boolean field: published (true/false)
+    belongs_to :user, User            # => Many-to-one association with User
+                                      # => Adds user_id foreign key field
+    timestamps()                      # => Adds inserted_at, updated_at
   end
-                                                      # => Block ends
 end
-                                                      # => Block ends
 
-import Ecto.Query
-                                                      # => Operation executes
+import Ecto.Query                     # => Import query DSL (from, join, where, select macros)
 
 # Insert test data
-                                                      # => Operation executes
 {:ok, user1} = Repo.insert(%User{name: "Alice"})
-                                                      # => Database operation
+                                      # => Calls Repo.insert/1
+                                      # => Create user1 (id: 1, name: "Alice")
 {:ok, user2} = Repo.insert(%User{name: "Bob"})
-                                                      # => Database operation
+                                      # => Create user2 (id: 2, name: "Bob")
 Repo.insert(%Post{title: "Published", published: true, user_id: user1.id})
-                                                      # => Database operation
+                                      # => Create published post for user1
 Repo.insert(%Post{title: "Draft", published: false, user_id: user2.id})
-                                                      # => Database operation
+                                      # => Create draft post for user2
 
 # Query users with published posts
-                                                      # => Operation executes
 query = from u in User,
-                                                      # => Value assigned
-  join: p in assoc(u, :posts),        # => Join posts table on user_id
-  where: p.published == true,         # => Filter by post.published
-  distinct: true,                     # => Remove duplicate users
-  select: u
-                                                      # => Operation executes
+  join: p in assoc(u, :posts),        # => INNER JOIN posts table on p.user_id = u.id
+  where: p.published == true,         # => Filter: only published posts
+  distinct: true,                     # => Remove duplicate users (has_many can duplicate)
+  select: u                           # => Return User structs
 
-users = Repo.all(query)               # => users is [%User{name: "Alice"}]
-                                      # => SQL: SELECT DISTINCT u.* FROM users u
-                                      # =>      INNER JOIN posts p ON p.user_id = u.id
-                                      # =>      WHERE p.published = TRUE
+users = Repo.all(query)               # => Execute query, fetch users
+                                      # => users is [%User{id: 1, name: "Alice"}]
+                                      # => SQL: SELECT DISTINCT u.* FROM users u INNER JOIN posts p ON p.user_id = u.id WHERE p.published = TRUE
 
-IO.inspect(length(users))             # => Output: 1
-IO.inspect(hd(users).name)            # => Output: "Alice"
+IO.inspect(length(users))             # => Output: 1 (only Alice has published posts)
+IO.inspect(hd(users).name)            # => Output: "Alice" (head of list)
 ```
 
 **Key Takeaway**: Use join queries when you need to filter parent records by child attributes, and always include distinct: true when joining has_many associations to avoid duplicate parent records.

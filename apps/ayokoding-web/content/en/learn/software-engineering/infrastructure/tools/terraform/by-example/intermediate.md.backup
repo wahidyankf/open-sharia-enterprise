@@ -2049,114 +2049,86 @@ output "provisioner_note" {
 ```hcl
 terraform {
   required_version = ">= 1.0"
-  # => Minimum Terraform version required
 }
 
 provider "local" {}
-# => Local provider for file operations
 
 # Simulate remote instance with local file
 resource "local_file" "instance" {
   filename = "instance-config.txt"
-  # => Local file representing remote instance
   content  = "Instance initialized"
-  # => Initial instance state
 
   # Simulated SSH connection (real example would use AWS EC2)
   connection {
-  # => SSH/WinRM connection configuration
     type        = "ssh"
-    # => Connection type: ssh (Linux) or winrm (Windows)
+    # => connection type: ssh (Linux) or winrm (Windows)
     host        = "192.168.1.100"
-    # => Target host IP address
+    # => Target host IP
     user        = "ubuntu"
-    # => SSH user account
+    # => SSH user
     private_key = file("~/.ssh/id_rsa")
-    # => SSH private key for authentication (reads ~/.ssh/id_rsa)
+    # => SSH private key for authentication
     # => Alternative: password = var.ssh_password
     timeout     = "2m"
-    # => Connection timeout (default: 5m)
+    # => Connection timeout
   }
-  # => Connection applies to all provisioners in this resource
 
   # inline commands (list of strings)
   provisioner "remote-exec" {
-  # => Provisioner runs after resource creation
     inline = [
-    # => List of commands executed sequentially
       "sudo apt-get update",
       # => Update package index on remote instance
       "sudo apt-get install -y nginx",
-      # => Install nginx web server (-y auto-confirms)
+      # => Install nginx
       "sudo systemctl start nginx",
-      # => Start nginx service immediately
+      # => Start nginx service
       "sudo systemctl enable nginx",
-      # => Enable nginx to start on boot
+      # => Enable nginx on boot
       "echo 'Setup complete' > /tmp/provisioned.txt",
-      # => Mark provisioning complete (creates marker file)
+      # => Mark provisioning complete
     ]
-    # => Each command runs sequentially on remote instance
+    # => Each command runs sequentially
     # => Failure stops execution (unless on_failure = continue)
   }
 
   # script from file
   provisioner "remote-exec" {
-  # => Second provisioner running after first completes
     script = "${path.module}/scripts/setup.sh"
     # => Upload and execute local script on remote instance
-    # => path.module resolves to current directory
-    # => Script must be executable (chmod +x setup.sh)
+    # => Script must be executable (chmod +x)
   }
 
   # scripts (multiple files)
   provisioner "remote-exec" {
-  # => Third provisioner for multiple script execution
     scripts = [
-    # => List of scripts executed in order
       "${path.module}/scripts/install-deps.sh",
-      # => First: Install dependencies
       "${path.module}/scripts/configure-app.sh",
-      # => Second: Configure application
       "${path.module}/scripts/start-services.sh",
-      # => Third: Start services
     ]
-    # => Each script must be executable
-    # => Scripts run sequentially, failure stops execution
+    # => Execute multiple scripts in order
   }
 }
 
 # Real-world example with AWS EC2 (concept only)
 # resource "aws_instance" "web" {
 #   ami           = "ami-12345678"
-#   # => Amazon Machine Image ID for EC2 instance
 #   instance_type = "t3.micro"
-#   # => Instance size (1 vCPU, 1GB RAM)
 #   key_name      = "my-key-pair"
-#   # => SSH key pair name registered in AWS
 #
 #   connection {
 #     type        = "ssh"
-#     # => SSH connection type
-#     host        = self.public_ip
-#     # => self.public_ip references instance's public IP after creation
+#     host        = self.public_ip      # => Reference resource attribute
 #     user        = "ec2-user"
-#     # => Default user for Amazon Linux AMIs
 #     private_key = file("~/.ssh/id_rsa")
-#     # => Local SSH private key file
 #   }
 #
 #   provisioner "remote-exec" {
 #     inline = [
 #       "sudo yum update -y",
-#       # => Update all packages on Amazon Linux
 #       "sudo yum install -y docker",
-#       # => Install Docker
 #       "sudo systemctl start docker",
-#       # => Start Docker daemon
 #       "sudo docker run -d -p 80:80 nginx:latest",
-#       # => Run nginx container (-d: detached, -p: port mapping)
 #     ]
-#     # => Commands provision Docker and nginx on new EC2 instance
 #   }
 # }
 ```
@@ -2470,21 +2442,17 @@ graph TD
 ```hcl
 terraform {
 # => Terraform configuration block
-# => Terraform configuration block
   required_version = ">= 1.0"
   # => Sets required_version
 }
 
 provider "local" {}
-# => Local provider for demonstration
 # => Provider configuration
 
 # Variable with list of ingress rules
 variable "ingress_rules" {
-# => Input variable for dynamic ingress rules
 # => Input variable
   type = list(object({
-# => List of objects with port, protocol, description fields
     port        = number
     # => Sets port
     protocol    = string
@@ -2513,7 +2481,6 @@ resource "local_file" "security_group" {
     Security Group Rules:
     ${join("\n", [
       for rule in var.ingress_rules :
-# => Iterate over each rule in the list
       "Port ${rule.port}/${rule.protocol}: ${rule.description}"
     ])}
   EOT
@@ -2526,21 +2493,16 @@ resource "local_file" "security_group" {
 #   name = "web-sg"
 #
 #   dynamic "ingress" {
-# => Dynamic block generates multiple ingress blocks
 #     for_each = var.ingress_rules
-# => Iterate over ingress_rules variable
 #     # => for_each iterates over var.ingress_rules list
 #     # => Creates one ingress block per list element
 #
 #     content {
-# => Nested content block defines ingress structure
 #       from_port   = ingress.value.port
-# => Access port from current iteration value
 #       # => ingress.value accesses current iteration element
 #       to_port     = ingress.value.port
 #       protocol    = ingress.value.protocol
 #       cidr_blocks = ["0.0.0.0/0"]
-# => Allow traffic from any IP address
 #       description = ingress.value.description
 #     }
 #     # => content block defines the nested block structure
@@ -2549,10 +2511,8 @@ resource "local_file" "security_group" {
 
 # Dynamic blocks with maps (key-value access)
 variable "egress_rules_map" {
-# => Map-based variable for egress rules
 # => Input variable
   type = map(object({
-# => Map with string keys and object values
     port     = number
     # => Sets port
     protocol = string
@@ -2575,7 +2535,6 @@ resource "local_file" "egress_config" {
     Egress Rules:
     ${join("\n", [
       for name, rule in var.egress_rules_map :
-# => Iterate map with key (name) and value (rule)
       "${name}: Port ${rule.port}/${rule.protocol}"
     ])}
   EOT
@@ -2584,10 +2543,8 @@ resource "local_file" "egress_config" {
 
 # Nested dynamic blocks
 variable "route_tables" {
-# => Nested list variable for route tables with routes
 # => Input variable
   type = list(object({
-# => List of objects with port, protocol, description fields
     name   = string
     # => Sets name
     routes = list(object({
