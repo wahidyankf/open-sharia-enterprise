@@ -2,13 +2,14 @@
 title: "Deliberate Problem-Solving"
 description: Think before coding - surface assumptions, tradeoffs, and confusion rather than hiding them
 category: principle
-subcategory: software-engineering
+subcategory: general
 tags:
   - problem-solving
   - communication
   - decision-making
   - clarity
 created: 2026-01-29
+updated: 2026-02-02
 ---
 
 # Deliberate Problem-Solving
@@ -157,9 +158,9 @@ Deliberate problem-solving ensures:
 
 ## Relationship to Other Principles
 
-- **[Explicit Over Implicit](./explicit-over-implicit.md)**: Stating assumptions makes implicit knowledge explicit
-- **[Simplicity Over Complexity](../general/simplicity-over-complexity.md)**: Suggesting simpler approaches aligns with minimizing complexity
-- **[Automation Over Manual](./automation-over-manual.md)**: Clear problem understanding enables effective automation
+- **[Explicit Over Implicit](../software-engineering/explicit-over-implicit.md)**: Stating assumptions makes implicit knowledge explicit
+- **[Simplicity Over Complexity](./simplicity-over-complexity.md)**: Suggesting simpler approaches aligns with minimizing complexity
+- **[Automation Over Manual](../software-engineering/automation-over-manual.md)**: Clear problem understanding enables effective automation
 
 ## Verification Checklist
 
