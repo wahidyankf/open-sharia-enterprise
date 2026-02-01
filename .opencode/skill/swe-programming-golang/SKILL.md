@@ -9,7 +9,7 @@ description: Go coding standards from authoritative docs/explanation/software-en
 
 Progressive disclosure of Go coding standards for agents writing Go code.
 
-**Authoritative Source**: [docs/explanation/software-engineering/programming-languages/golang/README.md](../../docs/explanation/software-engineering/programming-languages/golang/README.md)
+**Authoritative Source**: [docs/explanation/software-engineering/programming-languages/golang/README.md](../../../docs/explanation/software-engineering/programming-languages/golang/README.md)
 
 **Usage**: Auto-loaded for agents when writing Go code. Provides quick reference to idioms, best practices, and antipatterns.
 
@@ -183,9 +183,9 @@ defer cancel()
 
 For detailed guidance, refer to:
 
-- **[Idioms](../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__idioms.md)** - Go-specific patterns
-- **[Best Practices](../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__best-practices.md)** - Clean code standards
-- **[Anti-Patterns](../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__anti-patterns.md)** - Common mistakes
+- **[Idioms](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__idioms.md)** - Go-specific patterns
+- **[Best Practices](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__best-practices.md)** - Clean code standards
+- **[Anti-Patterns](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__anti-patterns.md)** - Common mistakes
 
 ## Related Skills
 
@@ -194,5 +194,5 @@ For detailed guidance, refer to:
 
 ## References
 
-- [Go README](../../docs/explanation/software-engineering/programming-languages/golang/README.md)
-- [Functional Programming](../../governance/development/pattern/functional-programming.md)
+- [Go README](../../../docs/explanation/software-engineering/programming-languages/golang/README.md)
+- [Functional Programming](../../../governance/development/pattern/functional-programming.md)

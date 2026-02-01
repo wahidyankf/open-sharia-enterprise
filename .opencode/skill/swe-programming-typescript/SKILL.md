@@ -9,7 +9,7 @@ description: TypeScript coding standards from authoritative docs/explanation/sof
 
 Progressive disclosure of TypeScript coding standards for agents writing TypeScript code.
 
-**Authoritative Source**: [docs/explanation/software-engineering/programming-languages/typescript/README.md](../../docs/explanation/software-engineering/programming-languages/typescript/README.md)
+**Authoritative Source**: [docs/explanation/software-engineering/programming-languages/typescript/README.md](../../../docs/explanation/software-engineering/programming-languages/typescript/README.md)
 
 **Usage**: Auto-loaded for agents when writing TypeScript code. Provides quick reference to idioms, best practices, and antipatterns.
 
@@ -132,9 +132,9 @@ it("should return user", () => {
 
 For detailed guidance, refer to:
 
-- **[Idioms](../../docs/explanation/software-engineering/programming-languages/typescript/ex-soen-prla-ty__idioms.md)** - TypeScript-specific patterns
-- **[Best Practices](../../docs/explanation/software-engineering/programming-languages/typescript/ex-soen-prla-ty__best-practices.md)** - Clean code standards
-- **[Anti-Patterns](../../docs/explanation/software-engineering/programming-languages/typescript/ex-soen-prla-ty__anti-patterns.md)** - Common mistakes
+- **[Idioms](../../../docs/explanation/software-engineering/programming-languages/typescript/ex-soen-prla-ty__idioms.md)** - TypeScript-specific patterns
+- **[Best Practices](../../../docs/explanation/software-engineering/programming-languages/typescript/ex-soen-prla-ty__best-practices.md)** - Clean code standards
+- **[Anti-Patterns](../../../docs/explanation/software-engineering/programming-languages/typescript/ex-soen-prla-ty__anti-patterns.md)** - Common mistakes
 
 ## Related Skills
 
@@ -143,5 +143,5 @@ For detailed guidance, refer to:
 
 ## References
 
-- [TypeScript README](../../docs/explanation/software-engineering/programming-languages/typescript/README.md)
-- [Functional Programming](../../governance/development/pattern/functional-programming.md)
+- [TypeScript README](../../../docs/explanation/software-engineering/programming-languages/typescript/README.md)
+- [Functional Programming](../../../governance/development/pattern/functional-programming.md)

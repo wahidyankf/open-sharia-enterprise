@@ -293,7 +293,18 @@ func validateSkillCount(repoRoot string) ValidationCheck {
 		}
 	}
 
-	opencodeCount := countMarkdownFiles(opencodeDir)
+	// Count skills in .opencode/skill (directories with SKILL.md)
+	opencodeCount := 0
+	if entries, err := os.ReadDir(opencodeDir); err == nil {
+		for _, entry := range entries {
+			if entry.IsDir() {
+				skillFile := filepath.Join(opencodeDir, entry.Name(), "SKILL.md")
+				if _, err := os.Stat(skillFile); err == nil {
+					opencodeCount++
+				}
+			}
+		}
+	}
 
 	if claudeCount == opencodeCount {
 		return ValidationCheck{
@@ -341,7 +352,8 @@ func validateSkillIdentity(repoRoot string) []ValidationCheck {
 			continue
 		}
 
-		opencodeFile := filepath.Join(opencodeDir, entry.Name()+".md")
+		// OpenCode skills are also in folders with SKILL.md
+		opencodeFile := filepath.Join(opencodeDir, entry.Name(), "SKILL.md")
 
 		check := validateSkillFile(entry.Name(), skillFile, opencodeFile)
 		checks = append(checks, check)

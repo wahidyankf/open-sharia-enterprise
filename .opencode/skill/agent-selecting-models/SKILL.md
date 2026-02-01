@@ -1,4 +1,5 @@
 ---
+name: agent-selecting-models
 description: Guidance for selecting appropriate AI model (sonnet vs haiku) based on task complexity, reasoning requirements, and performance needs. Use when implementing agents or justifying model selection.
 ---
 

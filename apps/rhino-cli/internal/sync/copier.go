@@ -64,8 +64,9 @@ func CopyAllSkills(repoRoot string, dryRun bool) (copied int, failed int, failed
 				continue
 			}
 
-			// Copy SKILL.md to .opencode/skill/{skill-name}.md
-			outputPath := filepath.Join(opencodeSkillDir, entry.Name()+".md")
+			// Copy SKILL.md to .opencode/skill/{skill-name}/SKILL.md
+			outputDir := filepath.Join(opencodeSkillDir, entry.Name())
+			outputPath := filepath.Join(outputDir, "SKILL.md")
 
 			if err := CopySkill(skillFile, outputPath, dryRun); err != nil {
 				failed++
@@ -75,8 +76,11 @@ func CopyAllSkills(repoRoot string, dryRun bool) (copied int, failed int, failed
 			}
 		} else if strings.HasSuffix(entry.Name(), ".md") && entry.Name() != "README.md" {
 			// Handle individual .md files in skills root (if any)
+			// Create folder structure for consistency
+			skillName := strings.TrimSuffix(entry.Name(), ".md")
 			inputPath := filepath.Join(claudeSkillsDir, entry.Name())
-			outputPath := filepath.Join(opencodeSkillDir, entry.Name())
+			outputDir := filepath.Join(opencodeSkillDir, skillName)
+			outputPath := filepath.Join(outputDir, "SKILL.md")
 
 			if err := CopySkill(inputPath, outputPath, dryRun); err != nil {
 				failed++

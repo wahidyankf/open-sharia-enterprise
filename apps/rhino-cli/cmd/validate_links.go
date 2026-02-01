@@ -82,7 +82,7 @@ func runValidateLinks(cmd *cobra.Command, args []string) error {
 	opts := links.ScanOptions{
 		RepoRoot:   repoRoot,
 		StagedOnly: validateLinksStagedOnly,
-		SkipPaths:  []string{},
+		SkipPaths:  []string{".opencode/skill/"}, // Exclude auto-generated skill files
 		Verbose:    verbose,
 		Quiet:      quiet,
 	}
