@@ -2566,7 +2566,7 @@ Automate cost optimization by identifying and remediating wasteful resource usag
 
 **Key Takeaway**: Automate cost optimization by periodically identifying and removing unused cloud resources.
 
-**Why It Matters**: Cost optimization automation prevents cloud waste accumulation. Orphaned EBS volumes cost $0.10/GB/month—1000 unused 100GB volumes = $10,000/month waste. Stopped instances still incur EBS and snapshot costs. Scheduled cleanup (weekly) continuously optimizes spend, reducing cloud costs 15-30% without manual auditing.
+**Why It Matters**: Cost optimization automation prevents cloud waste accumulation. Orphaned EBS volumes cost \$0.10/GB/month—1000 unused 100GB volumes = \$10,000/month waste. Stopped instances still incur EBS and snapshot costs. Scheduled cleanup (weekly) continuously optimizes spend, reducing cloud costs 15-30% without manual auditing.
 
 ---
 
