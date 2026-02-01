@@ -3808,58 +3808,100 @@ BDD scenarios run across multiple environments with environment-specific configu
 
 ```typescript
 // File: support/environment-config.ts
+// => Purpose: Environment-specific BDD test configuration
 interface EnvironmentConfig {
+  // => Interface: Configuration structure for each environment
   apiBaseUrl: string;
+  // => Field: API endpoint URL
   dbConnectionString: string;
+  // => Field: Database connection string
   timeout: number;
+  // => Field: HTTP request timeout in milliseconds
   retries: number;
+  // => Field: Number of retry attempts for failed requests
 }
 
 const environments: Record<string, EnvironmentConfig> = {
-  // => Config: Environment-specific settings
+  // => Record: Map of environment names to configurations
+  // => Type: Record<string, EnvironmentConfig>
+  // => Keys: "dev", "staging", "production"
 
   dev: {
+    // => Environment: Development configuration
     apiBaseUrl: "http://localhost:3000",
-    // => Dev: Local development server
+    // => URL: Local development server (port 3000)
+    // => Dev: No HTTPS, runs on localhost
     dbConnectionString: "postgresql://localhost/test_db",
+    // => DB: Local PostgreSQL database (test_db)
+    // => Dev: Isolated test database
     timeout: 10000,
+    // => Timeout: 10 seconds (generous for debugging)
+    // => Dev: Longer timeout for development
     retries: 0,
-    // => Dev: No retries for fast failure
+    // => Retries: No retries (fail fast in dev)
+    // => Dev: Developers want immediate failure feedback
   },
 
   staging: {
+    // => Environment: Staging configuration
     apiBaseUrl: "https://staging.example.com",
-    // => Staging: Staging environment URL
+    // => URL: Staging server (HTTPS)
+    // => Staging: Pre-production environment
     dbConnectionString: "postgresql://staging-db.example.com/app_db",
+    // => DB: Staging database (remote)
+    // => Staging: Mirrors production data structure
     timeout: 15000,
+    // => Timeout: 15 seconds (network latency)
+    // => Staging: Longer for remote server
     retries: 2,
-    // => Staging: Retry for flaky network
+    // => Retries: 2 retry attempts
+    // => Staging: Handle occasional network issues
+    // => Reason: Staging environment can be flaky
   },
 
   production: {
+    // => Environment: Production configuration
     apiBaseUrl: "https://api.example.com",
-    // => Production: Live production URL
+    // => URL: Live production API (HTTPS)
+    // => Production: Real customer-facing endpoint
     dbConnectionString: "postgresql://prod-db.example.com/app_db",
+    // => DB: Production database (live data)
+    // => Production: Read-only test access
     timeout: 5000,
-    // => Production: Strict timeout
+    // => Timeout: 5 seconds (strict)
+    // => Production: Fast failure for monitoring
+    // => SLA: Production should respond quickly
     retries: 0,
-    // => Production: No retries (fail fast)
+    // => Retries: No retries (fail fast)
+    // => Production: Clear failure signal for monitoring
+    // => Reason: Don't mask production issues with retries
   },
 };
 
 export function getConfig(): EnvironmentConfig {
-  // => Function: Get current environment config
+  // => Function: Get configuration for current environment
+  // => Returns: EnvironmentConfig object
   const env = process.env.TEST_ENV || "dev";
-  // => Environment: From TEST_ENV or default to dev
-  // => Example: TEST_ENV=staging npm test
+  // => Read: Environment variable TEST_ENV
+  // => Default: "dev" if TEST_ENV not set
+  // => Example: TEST_ENV=staging sets env="staging"
+  // => Example: No TEST_ENV sets env="dev"
 
   const config = environments[env];
+  // => Lookup: Get config from environments Record
+  // => Access: Record<string, EnvironmentConfig>[env]
+  // => Example: environments["staging"] → staging config object
   if (!config) {
+    // => Validate: Check if environment exists
     throw new Error(`Unknown environment: ${env}`);
+    // => Error: Fail fast if environment not configured
+    // => Example: TEST_ENV=typo throws "Unknown environment: typo"
   }
 
   return config;
-  // => Return: Environment-specific config
+  // => Return: Environment-specific configuration
+  // => Type: EnvironmentConfig
+  // => Usage: Steps can access apiBaseUrl, timeout, etc.
 }
 ```
 
@@ -4017,92 +4059,152 @@ BDD test reports aggregate metrics, trends, and failure analysis to provide acti
 
 ```typescript
 // File: scripts/generate-analytics-report.ts
+// => Purpose: Generate HTML analytics dashboard from BDD test results
 import { promises as fs } from "fs";
+// => Import: Node.js file system promises API
 import path from "path";
+// => Import: Path utilities for file operations
 
 interface TestResult {
+  // => Interface: Structure for individual test result
   feature: string;
+  // => Field: Feature file name
   scenario: string;
+  // => Field: Scenario description
   status: "passed" | "failed" | "skipped";
+  // => Field: Test outcome (union type)
   duration: number;
+  // => Field: Execution time in milliseconds
   steps: number;
+  // => Field: Number of Gherkin steps
   error?: string;
+  // => Field: Error message if failed (optional)
 }
 
 interface AnalyticsReport {
+  // => Interface: Complete analytics report structure
   summary: {
+    // => Object: Aggregated metrics
     total: number;
+    // => Metric: Total scenario count
     passed: number;
+    // => Metric: Passed scenario count
     failed: number;
+    // => Metric: Failed scenario count
     skipped: number;
+    // => Metric: Skipped scenario count
     passRate: number;
+    // => Metric: Percentage of passing scenarios
     totalDuration: number;
+    // => Metric: Total execution time in ms
     avgDuration: number;
+    // => Metric: Average scenario duration in ms
   };
   slowest: TestResult[];
+  // => Array: Top 10 slowest scenarios
   failures: TestResult[];
+  // => Array: All failed scenarios
   trends: {
+    // => Array: Historical pass rate data
     date: string;
+    // => Field: Date in YYYY-MM-DD format
     passRate: number;
+    // => Field: Pass rate percentage for that date
   }[];
 }
 
 async function generateAnalyticsReport(): Promise<void> {
-  // => Function: Generate analytics from test results
+  // => Function: Main entry point for analytics generation
+  // => Returns: Promise<void> (async operation)
   const reportPath = "reports/cucumber-report.json";
+  // => Path: Standard Cucumber JSON report location
   const rawData = await fs.readFile(reportPath, "utf-8");
+  // => Read: Load report file as UTF-8 string
+  // => Awaits: File system I/O completion
   const results: TestResult[] = JSON.parse(rawData);
-  // => Load: Cucumber JSON report
+  // => Parse: Convert JSON string to typed array
+  // => Type: TestResult[] (array of test results)
 
   const summary = {
+    // => Object: Initialize summary metrics
     total: results.length,
+    // => Count: Total number of scenarios
     passed: results.filter((r) => r.status === "passed").length,
+    // => Count: Filter and count passed scenarios
     failed: results.filter((r) => r.status === "failed").length,
+    // => Count: Filter and count failed scenarios
     skipped: results.filter((r) => r.status === "skipped").length,
+    // => Count: Filter and count skipped scenarios
     passRate: 0,
+    // => Placeholder: Will be calculated next
     totalDuration: results.reduce((sum, r) => sum + r.duration, 0),
+    // => Sum: Reduce to total duration (milliseconds)
     avgDuration: 0,
+    // => Placeholder: Will be calculated next
   };
-  // => Aggregate: Calculate summary metrics
 
   summary.passRate = (summary.passed / summary.total) * 100;
+  // => Calculate: Pass rate percentage (e.g., 85.5%)
+  // => Formula: (passed / total) * 100
   summary.avgDuration = summary.totalDuration / summary.total;
-  // => Calculate: Pass rate and average duration
+  // => Calculate: Average duration per scenario
+  // => Formula: total duration / total scenarios
 
   const slowest = results.sort((a, b) => b.duration - a.duration).slice(0, 10);
-  // => Identify: 10 slowest scenarios
+  // => Sort: Descending by duration (longest first)
+  // => Slice: Take top 10 slowest scenarios
+  // => Result: Array of 10 TestResult objects
 
   const failures = results.filter((r) => r.status === "failed");
-  // => Extract: Failed scenarios
+  // => Filter: Extract only failed scenarios
+  // => Result: Array of failed TestResult objects
 
   const analytics: AnalyticsReport = {
+    // => Object: Construct final analytics report
     summary,
+    // => Include: Calculated summary metrics
     slowest,
+    // => Include: Top 10 slowest scenarios
     failures,
+    // => Include: All failed scenarios
     trends: await loadTrends(),
-    // => Historical: Load trend data
+    // => Include: Historical trend data from file
+    // => Awaits: Async trend loading
   };
 
   await fs.writeFile("reports/analytics.json", JSON.stringify(analytics, null, 2));
-  // => Save: Analytics report
+  // => Write: Save analytics as formatted JSON
+  // => Format: 2-space indentation for readability
+  // => Awaits: File write completion
 
   await generateHTMLDashboard(analytics);
-  // => Generate: HTML dashboard
+  // => Generate: Create HTML dashboard from analytics
+  // => Awaits: HTML generation completion
 }
 
 async function loadTrends(): Promise<any[]> {
-  // => Function: Load historical trend data
+  // => Function: Load historical pass rate trends
+  // => Returns: Promise<any[]> (array of trend objects)
   try {
+    // => Try: Attempt to load existing trend data
     const trendData = await fs.readFile("reports/trends.json", "utf-8");
+    // => Read: Load trends file as UTF-8 string
+    // => Awaits: File system I/O
     return JSON.parse(trendData);
+    // => Parse: Convert JSON to array
+    // => Return: Array of {date, passRate} objects
   } catch {
+    // => Catch: Handle missing file gracefully
     return [];
-    // => Empty: No historical data yet
+    // => Return: Empty array if no historical data
+    // => First run: No trends available yet
   }
 }
 
 async function generateHTMLDashboard(analytics: AnalyticsReport): Promise<void> {
-  // => Function: Generate HTML dashboard
+  // => Function: Generate interactive HTML dashboard
+  // => Parameter: analytics (typed AnalyticsReport object)
+  // => Returns: Promise<void>
   const html = `
 <!DOCTYPE html>
 <html>
@@ -4184,14 +4286,25 @@ async function generateHTMLDashboard(analytics: AnalyticsReport): Promise<void> 
 </body>
 </html>
   `;
-  // => HTML: Dashboard with metrics and tables
+  // => Template: HTML string with embedded analytics data
+  // => Interpolation: ${} inserts dynamic values
+  // => Grid: 4-column responsive layout for metrics
+  // => Tables: Slowest scenarios and failures
+  // => Styling: Inline CSS for standalone file
 
   await fs.writeFile("reports/dashboard.html", html);
-  // => Save: HTML dashboard
+  // => Write: Save HTML to file system
+  // => Path: reports/dashboard.html
+  // => Awaits: File write completion
   console.log("✅ Analytics dashboard generated at reports/dashboard.html");
+  // => Output: Success message to console
+  // => Checkmark: Visual indicator of completion
 }
 
 generateAnalyticsReport().catch(console.error);
+// => Execute: Run main function
+// => Catch: Log any errors to console
+// => Top-level: Immediately invoked on script load
 ```
 
 **Package.json Scripts**:
@@ -4200,8 +4313,16 @@ generateAnalyticsReport().catch(console.error);
 {
   "scripts": {
     "test:bdd": "cucumber-js",
+    // => Script: Run Cucumber BDD tests
+    // => Executes: All .feature files with step definitions
     "test:bdd:analytics": "npm run test:bdd && node scripts/generate-analytics-report.ts",
+    // => Script: Run tests THEN generate analytics
+    // => Chain: && ensures report runs only if tests complete
+    // => Generates: analytics.json and dashboard.html
     "test:bdd:dashboard": "npm run test:bdd:analytics && open reports/dashboard.html"
+    // => Script: Run tests, generate analytics, open dashboard
+    // => Chain: Three-step automated workflow
+    // => Command: 'open' launches browser (macOS), use 'xdg-open' on Linux
   }
 }
 ```
@@ -4210,50 +4331,87 @@ generateAnalyticsReport().catch(console.error);
 
 ```yaml
 # File: .github/workflows/bdd-analytics.yml
+# => Purpose: GitHub Actions workflow for BDD analytics
 name: BDD Analytics
+# => Workflow: Display name in GitHub Actions UI
 
 on: [push]
+# => Trigger: Run on every push to any branch
 
 jobs:
   test-with-analytics:
+    # => Job: Single job combining tests and analytics
     runs-on: ubuntu-latest
+    # => Environment: Latest Ubuntu Linux runner
 
     steps:
       - uses: actions/checkout@v3
-
+      # => Step: Clone repository code
+      # => Action: Official GitHub checkout action v3
       - name: Run BDD tests
+        # => Step: Execute Cucumber tests
         run: npm run test:bdd
+        # => Command: npm script defined in package.json
         continue-on-error: true
+        # => Flag: Don't fail workflow if tests fail
+        # => Reason: We want analytics even if tests fail
 
       - name: Generate analytics
+        # => Step: Create analytics report from test results
         run: node scripts/generate-analytics-report.ts
+        # => Command: Execute TypeScript report generator
+        # => Requires: Test results in reports/cucumber-report.json
 
       - name: Upload dashboard
+        # => Step: Save HTML dashboard as artifact
         uses: actions/upload-artifact@v3
+        # => Action: Official artifact upload action v3
         with:
           name: test-dashboard
+          # => Artifact: Name for download in GitHub UI
           path: reports/dashboard.html
+          # => Path: File to upload
+          # => Retention: Default 90 days
 
       - name: Comment PR with metrics
+        # => Step: Post analytics to pull request
         uses: actions/github-script@v6
+        # => Action: Run JavaScript with GitHub API access
         with:
           script: |
             const fs = require('fs');
+            # => Import: Node.js file system module
             const analytics = JSON.parse(
               fs.readFileSync('reports/analytics.json', 'utf-8')
             );
+            # => Load: Read analytics JSON file
+            # => Parse: Convert to JavaScript object
 
             github.rest.issues.createComment({
+              # => API: GitHub REST API call
+              # => Endpoint: POST /repos/:owner/:repo/issues/:number/comments
               issue_number: context.issue.number,
+              # => Context: PR number from workflow context
               owner: context.repo.owner,
+              # => Context: Repository owner from workflow
               repo: context.repo.repo,
+              # => Context: Repository name from workflow
               body: `## 📊 BDD Test Results\n\n` +
+                    # => Markdown: Header with emoji
                     `- **Pass Rate**: ${analytics.summary.passRate.toFixed(1)}%\n` +
+                    # => Metric: Pass rate percentage (1 decimal)
                     `- **Total**: ${analytics.summary.total} scenarios\n` +
+                    # => Metric: Total scenario count
                     `- **Passed**: ${analytics.summary.passed} ✅\n` +
+                    # => Metric: Passed count with checkmark
                     `- **Failed**: ${analytics.summary.failed} ❌\n` +
+                    # => Metric: Failed count with X mark
                     `- **Avg Duration**: ${(analytics.summary.avgDuration / 1000).toFixed(2)}s\n`
+                    # => Metric: Average duration in seconds (converted from ms)
+                    # => Format: 2 decimal places (e.g., 1.23s)
             });
+            # => Post: Create comment on PR
+            # => Result: Team sees metrics without opening CI logs
 ```
 
 **Key Takeaway**: Test analytics aggregate BDD metrics (pass rate, duration, failures) into dashboards and trends, providing insights beyond individual test results to track quality over time.

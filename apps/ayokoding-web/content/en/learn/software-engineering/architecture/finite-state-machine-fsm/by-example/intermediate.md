@@ -59,28 +59,34 @@ type Event = "connect" | "disconnect" | "activity" | "pause"; // => Four events
 // => Events trigger state transitions
 
 class NetworkConnection {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: State = "Disconnected"; // => Initial: Disconnected
   // => FSM begins execution in Disconnected state
 
   getCurrentState(): State {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns current state
   }
 
   handleEvent(event: Event): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     // Parent-level transition: disconnect from ANY Connected substate
     if (this.state.startsWith("Connected.") && event === "disconnect") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       // => Check if in ANY Connected substate
       this.state = "Disconnected"; // => Exit all substates to Disconnected
-      console.log("Disconnected (from any substate)");
+      console.log("Disconnected (from any substate)"); // => Output for verification
+      // => Chained method calls or nested operations
       // => Debug/audit output
       // => Log for observability
       return; // => Parent transition handled
@@ -88,22 +94,29 @@ class NetworkConnection {
 
     // Substate-specific transitions
     if (this.state === "Disconnected" && event === "connect") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       this.state = "Connected.Idle"; // => Enter parent state at default substate
       // => Parent: Connected, Substate: Idle
     } else if (this.state === "Connected.Idle" && event === "activity") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "Connected.Active"; // => Idle → Active (within Connected)
     } else if (this.state === "Connected.Active" && event === "pause") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "Connected.Idle"; // => Active → Idle (within Connected)
     } else {
+      // => Statement execution
       // => Fallback branch
-      console.log(`Invalid transition: ${event} in ${this.state}`);
+      console.log(`Invalid transition: ${event} in ${this.state}`); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
@@ -115,16 +128,19 @@ const conn = new NetworkConnection(); // => state: "Disconnected"
 conn.handleEvent("connect"); // => Disconnected → Connected.Idle
 // => Processes events, triggers transitions
 console.log(conn.getCurrentState()); // => Output: Connected.Idle
+// => FSM state management logic
 // => Pure read, no side effects
 
 conn.handleEvent("activity"); // => Connected.Idle → Connected.Active
 // => Processes events, triggers transitions
 console.log(conn.getCurrentState()); // => Output: Connected.Active
+// => FSM state management logic
 // => Pure read, no side effects
 
 conn.handleEvent("disconnect"); // => Parent transition: Any Connected → Disconnected
 // => Processes events, triggers transitions
 console.log(conn.getCurrentState()); // => Output: Disconnected
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -146,75 +162,93 @@ type Event = "powerOn" | "started" | "stop" | "stopped" | "powerOff"; // => Five
 // => Events trigger state transitions
 
 class Machine {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: State = "Off"; // => Initial: Off
   // => FSM begins execution in Off state
 
   getCurrentState(): State {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   private onEnterParent(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("→ Entered On state (parent)"); // => Parent entry action
+    // => FSM state management logic
     // => Log for observability
     // => Example: Initialize resources
   }
 
   private onExitParent(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     console.log("← Exited On state (parent)"); // => Parent exit action
+    // => FSM state management logic
     // => Log for observability
     // => Example: Release resources
   }
 
   handleEvent(event: Event): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (this.state === "Off" && event === "powerOn") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       this.onEnterParent(); // => Entering parent state
       this.state = "On.Starting"; // => Enter at Starting substate
-      console.log("  → Entered Starting substate");
+      console.log("  → Entered Starting substate"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (this.state === "On.Starting" && event === "started") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
-      console.log("  ← Exited Starting substate");
+      console.log("  ← Exited Starting substate"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.state = "On.Running"; // => Starting → Running (within On)
-      console.log("  → Entered Running substate");
+      console.log("  → Entered Running substate"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (this.state === "On.Running" && event === "stop") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
-      console.log("  ← Exited Running substate");
+      console.log("  ← Exited Running substate"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.state = "On.Stopping"; // => Running → Stopping (within On)
-      console.log("  → Entered Stopping substate");
+      console.log("  → Entered Stopping substate"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (this.state === "On.Stopping" && event === "stopped") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
-      console.log("  ← Exited Stopping substate");
+      console.log("  ← Exited Stopping substate"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.onExitParent(); // => Exiting parent state
       this.state = "Off"; // => Exit parent to Off
     } else if (this.state.startsWith("On.") && event === "powerOff") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
-      console.log("  ← Exited current substate (emergency)");
+      console.log("  ← Exited current substate (emergency)"); // => Output for verification
+      // => Chained method calls or nested operations
       // => Debug/audit output
       // => Log for observability
       this.onExitParent(); // => Parent exit action
@@ -226,11 +260,13 @@ class Machine {
 // Usage
 const machine = new Machine(); // => state: "Off"
 machine.handleEvent("powerOn"); // => Off → On.Starting (parent entry + substate entry)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: → Entered On state (parent)
 // =>         → Entered Starting substate
 
 machine.handleEvent("started"); // => On.Starting → On.Running (substate transition)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: ← Exited Starting substate
 // =>         → Entered Running substate
@@ -289,55 +325,69 @@ type Event = "connect" | "login" | "checkout" | "cancel" | "networkError"; // =>
 // => Events trigger state transitions
 
 class ShoppingApp {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: State = "Offline"; // => Initial: Offline
   // => FSM begins execution in Offline state
 
   getCurrentState(): State {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   handleEvent(event: Event): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     // Level 1 parent transition: networkError exits ALL Online substates
     if (this.state.startsWith("Online.") && event === "networkError") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       // => Check if in any Online substate (any level deep)
       this.state = "Offline"; // => Exit all levels to Offline
-      console.log("Network error: Offline");
+      console.log("Network error: Offline"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
-      return;
+      return; // => Statement execution
     }
 
     // Regular transitions
     if (this.state === "Offline" && event === "connect") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       this.state = "Online.Guest"; // => Enter Online parent at Guest substate
     } else if (this.state === "Online.Guest" && event === "login") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "Online.Authenticated.Browsing"; // => Enter Authenticated parent at Browsing
       // => Now two levels deep: Online → Authenticated → Browsing
     } else if (this.state === "Online.Authenticated.Browsing" && event === "checkout") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "Online.Authenticated.Purchasing"; // => Browsing → Purchasing (within Authenticated)
     } else if (this.state === "Online.Authenticated.Purchasing" && event === "cancel") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "Online.Authenticated.Browsing"; // => Purchasing → Browsing
     } else {
+      // => Statement execution
       // => Fallback branch
-      console.log(`Invalid transition: ${event} in ${this.state}`);
+      console.log(`Invalid transition: ${event} in ${this.state}`); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
@@ -349,21 +399,27 @@ const app = new ShoppingApp(); // => state: "Offline"
 app.handleEvent("connect"); // => Offline → Online.Guest
 // => Processes events, triggers transitions
 console.log(app.getCurrentState()); // => Output: Online.Guest
+// => FSM state management logic
 // => Pure read, no side effects
 
 app.handleEvent("login"); // => Online.Guest → Online.Authenticated.Browsing (two levels deep)
+// => FSM state management logic
 // => Processes events, triggers transitions
 console.log(app.getCurrentState()); // => Output: Online.Authenticated.Browsing
+// => FSM state management logic
 // => Pure read, no side effects
 
 app.handleEvent("checkout"); // => Browsing → Purchasing (within Authenticated)
+// => FSM state management logic
 // => Processes events, triggers transitions
 console.log(app.getCurrentState()); // => Output: Online.Authenticated.Purchasing
+// => FSM state management logic
 // => Pure read, no side effects
 
 app.handleEvent("networkError"); // => Parent transition: exits ALL levels to Offline
 // => Processes events, triggers transitions
 console.log(app.getCurrentState()); // => Output: Offline
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -385,57 +441,73 @@ type Event = "play" | "loaded" | "buffered" | "pause"; // => Four events
 // => Events trigger state transitions
 
 interface StateConfig {
+  // => Type declaration defines structure
   // => Begin object/config definition
   defaultSubstate?: State; // => Default substate when entering parent
+  // => FSM state management logic
 }
 
 class VideoPlayer {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: State = "Stopped"; // => Initial: Stopped
   // => FSM begins execution in Stopped state
   private readonly stateConfig: Record<string, StateConfig> = {
+    // => State field: stores current FSM state privately
     // => Assign value
     // => Extended state (data beyond FSM state)
     // => Initialized alongside FSM state
     Playing: { defaultSubstate: "Playing.Loading" }, // => Playing defaults to Loading substate
+    // => FSM state management logic
   };
 
   getCurrentState(): State {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state; // => Returns state
   }
 
   handleEvent(event: Event): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (this.state === "Stopped" && event === "play") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
-      const defaultSubstate = this.stateConfig["Playing"].defaultSubstate!;
+      const defaultSubstate = this.stateConfig["Playing"].defaultSubstate!; // => State variable initialization
       // => Access instance property
       // => Initialize defaultSubstate
       this.state = defaultSubstate; // => Enter Playing at default substate (Loading)
-      console.log(`Entered Playing at default: ${this.state}`);
+      console.log(`Entered Playing at default: ${this.state}`); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (this.state === "Playing.Loading" && event === "loaded") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "Playing.Buffering"; // => Loading → Buffering
     } else if (this.state === "Playing.Buffering" && event === "buffered") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "Playing.Active"; // => Buffering → Active
     } else if (this.state.startsWith("Playing.") && event === "pause") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "Stopped"; // => Exit Playing from any substate
     } else {
+      // => Statement execution
       // => Fallback branch
-      console.log(`Invalid transition: ${event} in ${this.state}`);
+      console.log(`Invalid transition: ${event} in ${this.state}`); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
@@ -445,15 +517,18 @@ class VideoPlayer {
 // Usage
 const player = new VideoPlayer(); // => state: "Stopped"
 player.handleEvent("play"); // => Stopped → Playing.Loading (default substate)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: Entered Playing at default: Playing.Loading
 
 console.log(player.getCurrentState()); // => Output: Playing.Loading
+// => FSM state management logic
 // => Pure read, no side effects
 
 player.handleEvent("loaded"); // => Playing.Loading → Playing.Buffering
 // => Processes events, triggers transitions
 console.log(player.getCurrentState()); // => Output: Playing.Buffering
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -514,6 +589,7 @@ type Event = "mute" | "unmute" | "play" | "pause"; // => Events target specific 
 // => Events trigger state transitions
 
 class MediaPlayer {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private audioState: AudioState = "Muted"; // => Region 1: Audio
@@ -522,36 +598,48 @@ class MediaPlayer {
   // => Initialized alongside FSM state
 
   getCurrentState(): { audio: AudioState; video: VideoState } {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return { audio: this.audioState, video: this.videoState }; // => Returns both region states
+    // => FSM state management logic
   }
 
   handleEvent(event: Event): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     // Audio region transitions
     if (event === "unmute" && this.audioState === "Muted") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       this.audioState = "Playing"; // => Muted → Playing (audio region only)
     } else if (event === "mute" && this.audioState === "Playing") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.audioState = "Muted"; // => Playing → Muted (audio region only)
     }
     // Video region transitions
     else if (event === "play" && this.videoState === "Paused") {
+      // => Alternative conditional branch
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Begin object/config definition
       this.videoState = "Streaming"; // => Paused → Streaming (video region only)
     } else if (event === "pause" && this.videoState === "Streaming") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.videoState = "Paused"; // => Streaming → Paused (video region only)
     } else {
+      // => Statement execution
       // => Fallback branch
-      console.log(`Invalid transition: ${event} in audio=${this.audioState}, video=${this.videoState}`);
+      console.log(`Invalid transition: ${event} in audio=${this.audioState}, video=${this.videoState}`); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
@@ -561,21 +649,28 @@ class MediaPlayer {
 // Usage
 const player = new MediaPlayer(); // => audio: Muted, video: Paused
 console.log(player.getCurrentState()); // => Output: { audio: 'Muted', video: 'Paused' }
+// => FSM state management logic
 // => Pure read, no side effects
 
 player.handleEvent("play"); // => Video region: Paused → Streaming (audio unchanged)
+// => FSM state management logic
 // => Processes events, triggers transitions
 console.log(player.getCurrentState()); // => Output: { audio: 'Muted', video: 'Streaming' }
+// => FSM state management logic
 // => Pure read, no side effects
 
 player.handleEvent("unmute"); // => Audio region: Muted → Playing (video unchanged)
+// => FSM state management logic
 // => Processes events, triggers transitions
 console.log(player.getCurrentState()); // => Output: { audio: 'Playing', video: 'Streaming' }
+// => FSM state management logic
 // => Pure read, no side effects
 
 player.handleEvent("pause"); // => Video region: Streaming → Paused (audio unchanged)
+// => FSM state management logic
 // => Processes events, triggers transitions
 console.log(player.getCurrentState()); // => Output: { audio: 'Playing', video: 'Paused' }
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -599,6 +694,7 @@ type Event = "powerOn" | "powerOff" | "show" | "hide"; // => Events
 // => Events trigger state transitions
 
 class Device {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private powerState: PowerState = "Off"; // => Region 1: Power
@@ -607,43 +703,54 @@ class Device {
   // => Initialized alongside FSM state
 
   getCurrentState(): { power: PowerState; display: DisplayState } {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return { power: this.powerState, display: this.displayState };
+    return { power: this.powerState, display: this.displayState }; // => Returns value to caller
     // => Access instance property
     // => Return computed result
   }
 
   handleEvent(event: Event): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "powerOn" && this.powerState === "Off") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       this.powerState = "On"; // => Power: Off → On
       this.displayState = "Showing"; // => Cross-region: Force Display to Showing
-      console.log("Power on: Display forced to Showing");
+      console.log("Power on: Display forced to Showing"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "powerOff" && this.powerState === "On") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.powerState = "Off"; // => Power: On → Off
       this.displayState = "Hidden"; // => Cross-region: Force Display to Hidden
-      console.log("Power off: Display forced to Hidden");
+      console.log("Power off: Display forced to Hidden"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "show" && this.powerState === "On" && this.displayState === "Hidden") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.displayState = "Showing"; // => Display: Hidden → Showing (only if powered on)
     } else if (event === "hide" && this.powerState === "On" && this.displayState === "Showing") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.displayState = "Hidden"; // => Display: Showing → Hidden (only if powered on)
     } else {
+      // => Statement execution
       // => Fallback branch
-      console.log(`Invalid transition: ${event} in power=${this.powerState}, display=${this.displayState}`);
+      console.log(`Invalid transition: ${event} in power=${this.powerState}, display=${this.displayState}`); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
@@ -653,23 +760,28 @@ class Device {
 // Usage
 const device = new Device(); // => power: Off, display: Hidden
 console.log(device.getCurrentState()); // => Output: { power: 'Off', display: 'Hidden' }
+// => FSM state management logic
 // => Pure read, no side effects
 
 device.handleEvent("powerOn"); // => Power On → forces Display to Showing
 // => Processes events, triggers transitions
 // => Output: Power on: Display forced to Showing
 console.log(device.getCurrentState()); // => Output: { power: 'On', display: 'Showing' }
+// => FSM state management logic
 // => Pure read, no side effects
 
 device.handleEvent("hide"); // => Display: Showing → Hidden (independent)
+// => FSM state management logic
 // => Processes events, triggers transitions
 console.log(device.getCurrentState()); // => Output: { power: 'On', display: 'Hidden' }
+// => FSM state management logic
 // => Pure read, no side effects
 
 device.handleEvent("powerOff"); // => Power Off → forces Display to Hidden
 // => Processes events, triggers transitions
 // => Output: Power off: Display forced to Hidden
 console.log(device.getCurrentState()); // => Output: { power: 'Off', display: 'Hidden' }
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -695,6 +807,7 @@ type Event = "login" | "loadData" | "logout" | "clearData"; // => Events
 // => Events trigger state transitions
 
 class Application {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private authState: AuthState = "Unauthenticated"; // => Region 1: Auth
@@ -705,49 +818,62 @@ class Application {
   // => Initialized alongside FSM state
 
   getCurrentState(): { auth: AuthState; data: DataState; combined: CombinedState } {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return { auth: this.authState, data: this.dataState, combined: this.combinedState };
+    return { auth: this.authState, data: this.dataState, combined: this.combinedState }; // => Returns value to caller
     // => Access instance property
     // => Return computed result
   }
 
   private checkReadiness(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     // Join condition: BOTH regions must be in specific states
     if (this.authState === "Authenticated" && this.dataState === "Loaded") {
+      // => Conditional branch
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
       this.combinedState = "Ready"; // => Join: Auth+Data ready → App ready
-      console.log("Join: Application ready (auth + data complete)");
+      console.log("Join: Application ready (auth + data complete)"); // => Output for verification
+      // => Chained method calls or nested operations
       // => Debug/audit output
       // => Log for observability
     } else {
+      // => Statement execution
       // => Fallback branch
       this.combinedState = "NotReady"; // => Either region not ready → App not ready
     }
   }
 
   handleEvent(event: Event): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "login" && this.authState === "Unauthenticated") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       this.authState = "Authenticated"; // => Auth: Unauthenticated → Authenticated
       this.checkReadiness(); // => Check if join condition met
     } else if (event === "loadData" && this.dataState === "NotLoaded") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.dataState = "Loaded"; // => Data: NotLoaded → Loaded
       this.checkReadiness(); // => Check if join condition met
     } else if (event === "logout") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Alternative condition
       this.authState = "Unauthenticated"; // => Auth: reset
       this.checkReadiness(); // => Combined becomes NotReady
     } else if (event === "clearData") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Alternative condition
       this.dataState = "NotLoaded"; // => Data: reset
@@ -758,14 +884,16 @@ class Application {
 
 // Usage
 const app = new Application(); // => auth: Unauthenticated, data: NotLoaded, combined: NotReady
-console.log(app.getCurrentState());
+console.log(app.getCurrentState()); // => Output for verification
+// => Chained method calls or nested operations
 // => Query method: read current FSM state
 // => Pure read, no side effects
 // => Output: { auth: 'Unauthenticated', data: 'NotLoaded', combined: 'NotReady' }
 
 app.handleEvent("login"); // => Auth ready, but data not ready yet
 // => Processes events, triggers transitions
-console.log(app.getCurrentState());
+console.log(app.getCurrentState()); // => Output for verification
+// => Chained method calls or nested operations
 // => Query method: read current FSM state
 // => Pure read, no side effects
 // => Output: { auth: 'Authenticated', data: 'NotLoaded', combined: 'NotReady' }
@@ -773,14 +901,16 @@ console.log(app.getCurrentState());
 app.handleEvent("loadData"); // => Data ready → JOIN condition met!
 // => Processes events, triggers transitions
 // => Output: Join: Application ready (auth + data complete)
-console.log(app.getCurrentState());
+console.log(app.getCurrentState()); // => Output for verification
+// => Chained method calls or nested operations
 // => Query method: read current FSM state
 // => Pure read, no side effects
 // => Output: { auth: 'Authenticated', data: 'Loaded', combined: 'Ready' }
 
 app.handleEvent("logout"); // => Auth reset → Join broken
 // => Processes events, triggers transitions
-console.log(app.getCurrentState());
+console.log(app.getCurrentState()); // => Output for verification
+// => Chained method calls or nested operations
 // => Query method: read current FSM state
 // => Pure read, no side effects
 // => Output: { auth: 'Unauthenticated', data: 'Loaded', combined: 'NotReady' }
@@ -808,6 +938,7 @@ type Event = "start" | "completeA" | "completeB"; // => Events
 // => Events trigger state transitions
 
 class ParallelProcessor {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: "single" | "forked" = "single"; // => Mode: single state or forked regions
@@ -820,23 +951,31 @@ class ParallelProcessor {
   // => Initialized alongside FSM state
 
   getCurrentState(): any {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     if (this.state === "single") {
+      // => State-based guard condition
       // => Comparison check
       // => Guard condition: check current state is single
       // => Only execute if condition true
       return { mode: "single", state: this.singleState }; // => Single state active
+      // => FSM state management logic
     } else {
+      // => Statement execution
       // => Fallback branch
       return { mode: "forked", workerA: this.workerA, workerB: this.workerB }; // => Both regions active
+      // => FSM state management logic
     }
   }
 
   handleEvent(event: Event): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "start" && this.state === "single" && this.singleState === "Idle") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
@@ -845,22 +984,27 @@ class ParallelProcessor {
       this.singleState = null; // => Exit single state
       this.workerA = "ProcessingA"; // => Region A starts
       this.workerB = "ProcessingB"; // => Region B starts
-      console.log("Fork: Idle → ProcessingA + ProcessingB (parallel)");
+      console.log("Fork: Idle → ProcessingA + ProcessingB (parallel)"); // => Output for verification
+      // => Chained method calls or nested operations
       // => Debug/audit output
       // => Log for observability
     } else if (event === "completeA" && this.state === "forked" && this.workerA === "ProcessingA") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.workerA = "DoneA"; // => Region A completes
-      console.log("Worker A completed");
+      console.log("Worker A completed"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.checkCompletion(); // => Check if both regions done
     } else if (event === "completeB" && this.state === "forked" && this.workerB === "ProcessingB") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.workerB = "DoneB"; // => Region B completes
-      console.log("Worker B completed");
+      console.log("Worker B completed"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.checkCompletion(); // => Check if both regions done
@@ -868,8 +1012,11 @@ class ParallelProcessor {
   }
 
   private checkCompletion(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     if (this.workerA === "DoneA" && this.workerB === "DoneB") {
+      // => Conditional branch
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
@@ -878,7 +1025,7 @@ class ParallelProcessor {
       this.singleState = "Idle"; // => Return to Idle
       this.workerA = null; // => Clear region A
       this.workerB = null; // => Clear region B
-      console.log("Join: Both workers done → Idle");
+      console.log("Join: Both workers done → Idle"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
@@ -888,20 +1035,24 @@ class ParallelProcessor {
 // Usage
 const processor = new ParallelProcessor(); // => mode: single, state: Idle
 console.log(processor.getCurrentState()); // => Output: { mode: 'single', state: 'Idle' }
+// => FSM state management logic
 // => Pure read, no side effects
 
 processor.handleEvent("start"); // => Fork: Idle → ProcessingA + ProcessingB
 // => Processes events, triggers transitions
 // => Output: Fork: Idle → ProcessingA + ProcessingB (parallel)
-console.log(processor.getCurrentState());
+console.log(processor.getCurrentState()); // => Output for verification
+// => Chained method calls or nested operations
 // => Query method: read current FSM state
 // => Pure read, no side effects
 // => Output: { mode: 'forked', workerA: 'ProcessingA', workerB: 'ProcessingB' }
 
 processor.handleEvent("completeA"); // => Worker A done (B still processing)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: Worker A completed
-console.log(processor.getCurrentState());
+console.log(processor.getCurrentState()); // => Output for verification
+// => Chained method calls or nested operations
 // => Query method: read current FSM state
 // => Pure read, no side effects
 // => Output: { mode: 'forked', workerA: 'DoneA', workerB: 'ProcessingB' }
@@ -910,7 +1061,8 @@ processor.handleEvent("completeB"); // => Worker B done → JOIN back to Idle
 // => Processes events, triggers transitions
 // => Output: Worker B completed
 // =>         Join: Both workers done → Idle
-console.log(processor.getCurrentState());
+console.log(processor.getCurrentState()); // => Output for verification
+// => Chained method calls or nested operations
 // => Query method: read current FSM state
 // => Pure read, no side effects
 // => Output: { mode: 'single', state: 'Idle' }
@@ -963,6 +1115,7 @@ type Event = "disconnect" | "reconnect" | "login" | "logout"; // => Events for b
 // => Events trigger state transitions
 
 class System {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private connectivity: ConnectivityState = "Online"; // => Region 1: Connectivity
@@ -971,33 +1124,43 @@ class System {
   // => Initialized alongside FSM state
 
   getCurrentState(): { connectivity: ConnectivityState; auth: AuthState } {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return { connectivity: this.connectivity, auth: this.auth };
+    return { connectivity: this.connectivity, auth: this.auth }; // => Returns value to caller
     // => Access instance property
     // => Return computed result
   }
 
   handleEvent(event: Event): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     // Connectivity region
     if (event === "disconnect" && this.connectivity === "Online") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       this.connectivity = "Offline"; // => Online → Offline
     } else if (event === "reconnect" && this.connectivity === "Offline") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.connectivity = "Online"; // => Offline → Online
     }
     // Authentication region (independent of connectivity)
     else if (event === "login" && this.auth === "LoggedOut") {
+      // => Alternative conditional branch
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Begin object/config definition
       this.auth = "LoggedIn"; // => LoggedOut → LoggedIn
       // => Can login while Offline (credential caching)
     } else if (event === "logout" && this.auth === "LoggedIn") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.auth = "LoggedOut"; // => LoggedIn → LoggedOut
@@ -1008,16 +1171,21 @@ class System {
 // Usage
 const system = new System(); // => connectivity: Online, auth: LoggedOut
 console.log(system.getCurrentState()); // => Output: { connectivity: 'Online', auth: 'LoggedOut' }
+// => FSM state management logic
 // => Pure read, no side effects
 
 system.handleEvent("login"); // => Auth: LoggedOut → LoggedIn (connectivity unchanged)
+// => FSM state management logic
 // => Processes events, triggers transitions
 console.log(system.getCurrentState()); // => Output: { connectivity: 'Online', auth: 'LoggedIn' }
+// => FSM state management logic
 // => Pure read, no side effects
 
 system.handleEvent("disconnect"); // => Connectivity: Online → Offline (auth unchanged)
+// => FSM state management logic
 // => Processes events, triggers transitions
 console.log(system.getCurrentState()); // => Output: { connectivity: 'Offline', auth: 'LoggedIn' }
+// => FSM state management logic
 // => Pure read, no side effects
 // => Can be Offline + LoggedIn simultaneously
 ```
@@ -1042,6 +1210,7 @@ type Event = "activate" | "deactivate" | "reset"; // => Events
 // => Events trigger state transitions
 
 class MultiRegionSystem {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private region1: Region1State = "R1_Idle"; // => Region 1
@@ -1050,61 +1219,70 @@ class MultiRegionSystem {
   // => Initialized alongside FSM state
 
   getCurrentState(): { region1: Region1State; region2: Region2State } {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return { region1: this.region1, region2: this.region2 };
+    return { region1: this.region1, region2: this.region2 }; // => Returns value to caller
     // => Access instance property
     // => Return computed result
   }
 
   handleEvent(event: Event): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "activate") {
+      // => Event type guard condition
       // => Comparison check
       // => Event type check
       // Broadcast: activates BOTH regions
       if (this.region1 === "R1_Idle") {
+        // => Conditional branch
         // => Comparison check
         // => Conditional check
         // => Branch execution based on condition
         this.region1 = "R1_Active"; // => Region 1: Idle → Active
       }
       if (this.region2 === "R2_Idle") {
+        // => Conditional branch
         // => Comparison check
         // => Conditional check
         // => Branch execution based on condition
         this.region2 = "R2_Active"; // => Region 2: Idle → Active
       }
-      console.log("Broadcast: activated both regions");
+      console.log("Broadcast: activated both regions"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "deactivate") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Alternative condition
       // Broadcast: deactivates BOTH regions
       if (this.region1 === "R1_Active") {
+        // => Conditional branch
         // => Comparison check
         // => Conditional check
         // => Branch execution based on condition
         this.region1 = "R1_Idle"; // => Region 1: Active → Idle
       }
       if (this.region2 === "R2_Active") {
+        // => Conditional branch
         // => Comparison check
         // => Conditional check
         // => Branch execution based on condition
         this.region2 = "R2_Idle"; // => Region 2: Active → Idle
       }
-      console.log("Broadcast: deactivated both regions");
+      console.log("Broadcast: deactivated both regions"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "reset") {
+      // => Accessor: provides controlled state access
       // => Comparison check
       // => Alternative condition
       // Broadcast: resets ALL regions to initial states
       this.region1 = "R1_Idle"; // => Region 1 reset
       this.region2 = "R2_Idle"; // => Region 2 reset
-      console.log("Broadcast: reset all regions");
+      console.log("Broadcast: reset all regions"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
@@ -1113,7 +1291,8 @@ class MultiRegionSystem {
 
 // Usage
 const multiSystem = new MultiRegionSystem(); // => both regions: Idle
-console.log(multiSystem.getCurrentState());
+console.log(multiSystem.getCurrentState()); // => Output for verification
+// => Chained method calls or nested operations
 // => Query method: read current FSM state
 // => Pure read, no side effects
 // => Output: { region1: 'R1_Idle', region2: 'R2_Idle' }
@@ -1121,7 +1300,8 @@ console.log(multiSystem.getCurrentState());
 multiSystem.handleEvent("activate"); // => Broadcast: both regions activate
 // => Processes events, triggers transitions
 // => Output: Broadcast: activated both regions
-console.log(multiSystem.getCurrentState());
+console.log(multiSystem.getCurrentState()); // => Output for verification
+// => Chained method calls or nested operations
 // => Query method: read current FSM state
 // => Pure read, no side effects
 // => Output: { region1: 'R1_Active', region2: 'R2_Active' }
@@ -1129,7 +1309,8 @@ console.log(multiSystem.getCurrentState());
 multiSystem.handleEvent("reset"); // => Broadcast: reset all regions
 // => Processes events, triggers transitions
 // => Output: Broadcast: reset all regions
-console.log(multiSystem.getCurrentState());
+console.log(multiSystem.getCurrentState()); // => Output for verification
+// => Chained method calls or nested operations
 // => Query method: read current FSM state
 // => Pure read, no side effects
 // => Output: { region1: 'R1_Idle', region2: 'R2_Idle' }
@@ -1149,12 +1330,13 @@ Parallel regions can be conditionally activated based on configuration or runtim
 // Conditionally activate parallel regions
 type FeatureState = "Enabled" | "Disabled" | null; // => null = region not active
 // => Type system ensures only valid states used
-type Event = "enableFeatureA" | "enableFeatureB" | "disableFeatureA" | "disableFeatureB";
+type Event = "enableFeatureA" | "enableFeatureB" | "disableFeatureA" | "disableFeatureB"; // => Type declaration defines structure
 // => Assign value
 // => Defines event alphabet for FSM
 // => Events trigger state transitions
 
 class ConfigurableSystem {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private featureA: FeatureState = null; // => Region A: initially inactive
@@ -1163,70 +1345,82 @@ class ConfigurableSystem {
   // => Initialized alongside FSM state
 
   getCurrentState(): { featureA: FeatureState; featureB: FeatureState } {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return { featureA: this.featureA, featureB: this.featureB };
+    return { featureA: this.featureA, featureB: this.featureB }; // => Returns value to caller
     // => Access instance property
     // => Return computed result
   }
 
   handleEvent(event: Event): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "enableFeatureA") {
+      // => Event type guard condition
       // => Comparison check
       // => Event type check
       if (this.featureA === null) {
+        // => Conditional branch
         // => Comparison check
         // => Conditional check
         // => Branch execution based on condition
         this.featureA = "Disabled"; // => Activate region A at initial state
-        console.log("Feature A region activated");
+        console.log("Feature A region activated"); // => Output for verification
         // => Debug/audit output
         // => Log for observability
       }
       if (this.featureA === "Disabled") {
+        // => Conditional branch
         // => Comparison check
         // => Conditional check
         // => Branch execution based on condition
         this.featureA = "Enabled"; // => Disabled → Enabled
       }
     } else if (event === "disableFeatureA") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Alternative condition
       if (this.featureA === "Enabled") {
+        // => Conditional branch
         // => Comparison check
         // => Conditional check
         // => Branch execution based on condition
         this.featureA = "Disabled"; // => Enabled → Disabled
       }
     } else if (event === "enableFeatureB") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Alternative condition
       if (this.featureB === null) {
+        // => Conditional branch
         // => Comparison check
         // => Conditional check
         // => Branch execution based on condition
         this.featureB = "Disabled"; // => Activate region B
-        console.log("Feature B region activated");
+        console.log("Feature B region activated"); // => Output for verification
         // => Debug/audit output
         // => Log for observability
       }
       if (this.featureB === "Disabled") {
+        // => Conditional branch
         // => Comparison check
         // => Conditional check
         // => Branch execution based on condition
-        this.featureB = "Enabled";
+        this.featureB = "Enabled"; // => Statement execution
         // => Access instance property
       }
     } else if (event === "disableFeatureB") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Alternative condition
       if (this.featureB === "Enabled") {
+        // => Conditional branch
         // => Comparison check
         // => Conditional check
         // => Branch execution based on condition
-        this.featureB = "Disabled";
+        this.featureB = "Disabled"; // => Statement execution
         // => Access instance property
       }
     }
@@ -1235,7 +1429,9 @@ class ConfigurableSystem {
 
 // Usage
 const configSystem = new ConfigurableSystem(); // => both regions: null (inactive)
-console.log(configSystem.getCurrentState());
+// => FSM state management logic
+console.log(configSystem.getCurrentState()); // => Output for verification
+// => Chained method calls or nested operations
 // => Query method: read current FSM state
 // => Pure read, no side effects
 // => Output: { featureA: null, featureB: null }
@@ -1243,7 +1439,8 @@ console.log(configSystem.getCurrentState());
 configSystem.handleEvent("enableFeatureA"); // => Activate region A
 // => Processes events, triggers transitions
 // => Output: Feature A region activated
-console.log(configSystem.getCurrentState());
+console.log(configSystem.getCurrentState()); // => Output for verification
+// => Chained method calls or nested operations
 // => Query method: read current FSM state
 // => Pure read, no side effects
 // => Output: { featureA: 'Enabled', featureB: null }
@@ -1251,7 +1448,8 @@ console.log(configSystem.getCurrentState());
 configSystem.handleEvent("enableFeatureB"); // => Activate region B
 // => Processes events, triggers transitions
 // => Output: Feature B region activated
-console.log(configSystem.getCurrentState());
+console.log(configSystem.getCurrentState()); // => Output for verification
+// => Chained method calls or nested operations
 // => Query method: read current FSM state
 // => Pure read, no side effects
 // => Output: { featureA: 'Enabled', featureB: 'Enabled' }
@@ -1277,6 +1475,7 @@ type Event = "work" | "error" | "acknowledge" | "stop"; // => Events
 // => Events trigger state transitions
 
 class ResilientSystem {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private worker: WorkerState = "Stopped"; // => Region 1: Worker
@@ -1285,43 +1484,53 @@ class ResilientSystem {
   // => Initialized alongside FSM state
 
   getCurrentState(): { worker: WorkerState; monitor: MonitorState } {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return { worker: this.worker, monitor: this.monitor };
+    return { worker: this.worker, monitor: this.monitor }; // => Returns value to caller
     // => Access instance property
     // => Return computed result
   }
 
   handleEvent(event: Event): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "work" && this.worker === "Stopped") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       this.worker = "Working"; // => Worker starts
     } else if (event === "error" && this.worker === "Working") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.worker = "Error"; // => Worker errors
       this.monitor = "AlertSent"; // => Error propagates to Monitor region
-      console.log("Error propagated: Worker → Monitor");
+      console.log("Error propagated: Worker → Monitor"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "acknowledge" && this.monitor === "AlertSent") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.monitor = "Monitoring"; // => Monitor acknowledges alert
       // => Worker region unchanged (error persists)
     } else if (event === "stop") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Alternative condition
       this.worker = "Stopped"; // => Worker stops
       if (this.monitor === "AlertSent") {
+        // => Conditional branch
         // => Comparison check
         // => Conditional check
         // => Branch execution based on condition
         this.monitor = "Monitoring"; // => Monitor auto-clears alert on stop
-        console.log("Monitor cleared on worker stop");
+        console.log("Monitor cleared on worker stop"); // => Output for verification
         // => Debug/audit output
         // => Log for observability
       }
@@ -1331,14 +1540,16 @@ class ResilientSystem {
 
 // Usage
 const resilientSys = new ResilientSystem(); // => worker: Stopped, monitor: Monitoring
-console.log(resilientSys.getCurrentState());
+console.log(resilientSys.getCurrentState()); // => Output for verification
+// => Chained method calls or nested operations
 // => Query method: read current FSM state
 // => Pure read, no side effects
 // => Output: { worker: 'Stopped', monitor: 'Monitoring' }
 
 resilientSys.handleEvent("work"); // => Worker: Stopped → Working
 // => Processes events, triggers transitions
-console.log(resilientSys.getCurrentState());
+console.log(resilientSys.getCurrentState()); // => Output for verification
+// => Chained method calls or nested operations
 // => Query method: read current FSM state
 // => Pure read, no side effects
 // => Output: { worker: 'Working', monitor: 'Monitoring' }
@@ -1346,14 +1557,16 @@ console.log(resilientSys.getCurrentState());
 resilientSys.handleEvent("error"); // => Error propagates across regions
 // => Processes events, triggers transitions
 // => Output: Error propagated: Worker → Monitor
-console.log(resilientSys.getCurrentState());
+console.log(resilientSys.getCurrentState()); // => Output for verification
+// => Chained method calls or nested operations
 // => Query method: read current FSM state
 // => Pure read, no side effects
 // => Output: { worker: 'Error', monitor: 'AlertSent' }
 
 resilientSys.handleEvent("acknowledge"); // => Monitor clears, worker error persists
 // => Processes events, triggers transitions
-console.log(resilientSys.getCurrentState());
+console.log(resilientSys.getCurrentState()); // => Output for verification
+// => Chained method calls or nested operations
 // => Query method: read current FSM state
 // => Pure read, no side effects
 // => Output: { worker: 'Error', monitor: 'Monitoring' }
@@ -1361,7 +1574,8 @@ console.log(resilientSys.getCurrentState());
 resilientSys.handleEvent("stop"); // => Worker stops, monitor clears
 // => Processes events, triggers transitions
 // => Output: Monitor cleared on worker stop
-console.log(resilientSys.getCurrentState());
+console.log(resilientSys.getCurrentState()); // => Output for verification
+// => Chained method calls or nested operations
 // => Query method: read current FSM state
 // => Pure read, no side effects
 // => Output: { worker: 'Stopped', monitor: 'Monitoring' }
@@ -1414,6 +1628,7 @@ type Event = "powerOn" | "powerOff" | "resume" | "increase" | "decrease"; // => 
 // => Events trigger state transitions
 
 class BrightnessControl {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: State = "Off"; // => Current state
@@ -1422,66 +1637,81 @@ class BrightnessControl {
   // => Initialized alongside FSM state
 
   getCurrentState(): State {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return this.state;
+    return this.state; // => Returns value to caller
     // => Access instance property
     // => Return current state value
   }
 
   private saveHistory(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     if (this.state.startsWith("On.")) {
+      // => State-based guard condition
+      // => Chained method calls or nested operations
       // => Conditional check
       // => Branch execution based on condition
       this.history = this.state as any; // => Save current On substate
-      console.log(`History saved: ${this.history}`);
+      console.log(`History saved: ${this.history}`); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
   }
 
   handleEvent(event: Event): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "powerOn" && this.state === "Off") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       this.state = "On.Low"; // => Default: enter at Low
-      this.saveHistory();
+      this.saveHistory(); // => Method invocation
     } else if (event === "powerOff" && this.state.startsWith("On.")) {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.saveHistory(); // => Save before exiting
       this.state = "Off"; // => Exit to Off
     } else if (event === "resume" && this.state === "Off" && this.history) {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = this.history; // => Restore last On substate from history
-      console.log(`Resumed from history: ${this.state}`);
+      console.log(`Resumed from history: ${this.state}`); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "increase") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Alternative condition
-      if (this.state === "On.Low") this.state = "On.Medium";
+      if (this.state === "On.Low")
+        this.state = "On.Medium"; // => State-based guard condition
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
-      else if (this.state === "On.Medium") this.state = "On.High";
+      else if (this.state === "On.Medium") this.state = "On.High"; // => Alternative conditional branch
       // => Comparison check
-      this.saveHistory();
+      this.saveHistory(); // => Method invocation
     } else if (event === "decrease") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Alternative condition
-      if (this.state === "On.High") this.state = "On.Medium";
+      if (this.state === "On.High")
+        this.state = "On.Medium"; // => State-based guard condition
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
-      else if (this.state === "On.Medium") this.state = "On.Low";
+      else if (this.state === "On.Medium") this.state = "On.Low"; // => Alternative conditional branch
       // => Comparison check
-      this.saveHistory();
+      this.saveHistory(); // => Method invocation
     }
   }
 }
@@ -1492,30 +1722,37 @@ brightness.handleEvent("powerOn"); // => Off → On.Low
 // => Processes events, triggers transitions
 // => Output: History saved: On.Low
 console.log(brightness.getCurrentState()); // => Output: On.Low
+// => FSM state management logic
 // => Pure read, no side effects
 
 brightness.handleEvent("increase"); // => On.Low → On.Medium
 // => Processes events, triggers transitions
 // => Output: History saved: On.Medium
 console.log(brightness.getCurrentState()); // => Output: On.Medium
+// => FSM state management logic
 // => Pure read, no side effects
 
 brightness.handleEvent("increase"); // => On.Medium → On.High
 // => Processes events, triggers transitions
 // => Output: History saved: On.High
 console.log(brightness.getCurrentState()); // => Output: On.High
+// => FSM state management logic
 // => Pure read, no side effects
 
 brightness.handleEvent("powerOff"); // => On.High → Off (save High in history)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: History saved: On.High
 console.log(brightness.getCurrentState()); // => Output: Off
+// => FSM state management logic
 // => Pure read, no side effects
 
 brightness.handleEvent("resume"); // => Off → On.High (restore from history)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: Resumed from history: On.High
 console.log(brightness.getCurrentState()); // => Output: On.High
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -1537,6 +1774,7 @@ type Event = "powerOn" | "powerOff" | "resume" | "play" | "pause" | "nextSong"; 
 // => Events trigger state transitions
 
 class MusicPlayer {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: State = "Off"; // => Current state
@@ -1545,68 +1783,84 @@ class MusicPlayer {
   // => Initialized alongside FSM state
 
   getCurrentState(): State {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return this.state;
+    return this.state; // => Returns value to caller
     // => Access instance property
     // => Return current state value
   }
 
   private saveDeepHistory(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     if (this.state !== "Off") {
+      // => State-based guard condition
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
       this.deepHistory = this.state as any; // => Save complete state path
-      console.log(`Deep history saved: ${this.deepHistory}`);
+      console.log(`Deep history saved: ${this.deepHistory}`); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
   }
 
   handleEvent(event: Event): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "powerOn" && this.state === "Off") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       this.state = "On.Playing.Song1"; // => Default: enter at Song1
-      this.saveDeepHistory();
+      this.saveDeepHistory(); // => Method invocation
     } else if (event === "powerOff" && this.state !== "Off") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.saveDeepHistory(); // => Save before exiting
-      this.state = "Off";
+      this.state = "Off"; // => State transition execution
       // => Access instance property
       // => Transition: set state to Off
       // => State mutation (core FSM operation)
     } else if (event === "resume" && this.state === "Off" && this.deepHistory) {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = this.deepHistory; // => Restore complete state path
-      console.log(`Deep resume: ${this.state}`);
+      console.log(`Deep resume: ${this.state}`); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "pause" && this.state.startsWith("On.Playing")) {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
-      this.saveDeepHistory();
+      this.saveDeepHistory(); // => Method invocation
       this.state = "On.Paused"; // => Playing → Paused
     } else if (event === "play" && this.state === "On.Paused" && this.deepHistory?.startsWith("On.Playing")) {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = this.deepHistory; // => Resume exact playing state
-      console.log(`Resume play: ${this.state}`);
+      console.log(`Resume play: ${this.state}`); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "nextSong" && this.state === "On.Playing.Song1") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
-      this.state = "On.Playing.Song2";
+      this.state = "On.Playing.Song2"; // => State transition execution
       // => Access instance property
-      this.saveDeepHistory();
+      this.saveDeepHistory(); // => Method invocation
     }
   }
 }
@@ -1617,24 +1871,29 @@ player.handleEvent("powerOn"); // => Off → On.Playing.Song1
 // => Processes events, triggers transitions
 // => Output: Deep history saved: On.Playing.Song1
 console.log(player.getCurrentState()); // => Output: On.Playing.Song1
+// => FSM state management logic
 // => Pure read, no side effects
 
 player.handleEvent("nextSong"); // => Song1 → Song2
 // => Processes events, triggers transitions
 // => Output: Deep history saved: On.Playing.Song2
 console.log(player.getCurrentState()); // => Output: On.Playing.Song2
+// => FSM state management logic
 // => Pure read, no side effects
 
 player.handleEvent("pause"); // => Playing.Song2 → Paused
 // => Processes events, triggers transitions
 // => Output: Deep history saved: On.Playing.Song2
 console.log(player.getCurrentState()); // => Output: On.Paused
+// => FSM state management logic
 // => Pure read, no side effects
 
 player.handleEvent("play"); // => Paused → restore exact playing state (Song2)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: Resume play: On.Playing.Song2
 console.log(player.getCurrentState()); // => Output: On.Playing.Song2
+// => FSM state management logic
 // => Pure read, no side effects
 
 player.handleEvent("powerOff"); // => Save and power off
@@ -1644,6 +1903,7 @@ player.handleEvent("resume"); // => Resume full state path
 // => Processes events, triggers transitions
 // => Output: Deep resume: On.Playing.Song2
 console.log(player.getCurrentState()); // => Output: On.Playing.Song2
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -1665,6 +1925,7 @@ type Event = "start" | "pause" | "resume"; // => Events
 // => Events trigger state transitions
 
 class TimedHistory {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: State = "Idle"; // => Current state
@@ -1677,68 +1938,82 @@ class TimedHistory {
   // => Initialized alongside FSM state
 
   getCurrentState(): State {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return this.state;
+    return this.state; // => Returns value to caller
     // => Access instance property
     // => Return current state value
   }
 
   private saveHistory(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     this.history = this.state; // => Save state
     this.historyTimestamp = Date.now(); // => Save timestamp
-    console.log(`History saved: ${this.history} at ${this.historyTimestamp}`);
+    console.log(`History saved: ${this.history} at ${this.historyTimestamp}`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   private isHistoryValid(): boolean {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    if (!this.history || !this.historyTimestamp) return false;
+    if (!this.history || !this.historyTimestamp) return false; // => Conditional branch
+    // => Logical OR: either condition can be true
     // => Return computed result
     const elapsed = Date.now() - this.historyTimestamp; // => Time since save
     return elapsed < this.HISTORY_TIMEOUT; // => Valid if within timeout
   }
 
   handleEvent(event: Event): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "start" && this.state === "Idle") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
-      this.state = "Working";
+      this.state = "Working"; // => State transition execution
       // => Access instance property
       // => Transition: set state to Working
       // => State mutation (core FSM operation)
     } else if (event === "pause" && this.state === "Working") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.saveHistory(); // => Save Working state
-      this.state = "Paused";
+      this.state = "Paused"; // => State transition execution
       // => Access instance property
       // => Transition: set state to Paused
       // => State mutation (core FSM operation)
     } else if (event === "resume" && this.state === "Paused") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       if (this.isHistoryValid()) {
+        // => Conditional branch
+        // => Chained method calls or nested operations
         // => Conditional check
         // => Branch execution based on condition
         this.state = this.history!; // => Restore from history
-        console.log(`Resumed from history: ${this.state}`);
+        console.log(`Resumed from history: ${this.state}`); // => Output for verification
         // => Debug/audit output
         // => Log for observability
       } else {
+        // => Statement execution
         // => Fallback branch
         this.state = "Idle"; // => History expired → default state
-        console.log("History expired: reset to Idle");
+        console.log("History expired: reset to Idle"); // => Output for verification
         // => Debug/audit output
         // => Log for observability
       }
       this.history = null; // => Clear history after use
-      this.historyTimestamp = null;
+      this.historyTimestamp = null; // => Statement execution
       // => Access instance property
     }
   }
@@ -1749,26 +2024,31 @@ const timedFSM = new TimedHistory(); // => state: Idle
 timedFSM.handleEvent("start"); // => Idle → Working
 // => Processes events, triggers transitions
 console.log(timedFSM.getCurrentState()); // => Output: Working
+// => FSM state management logic
 // => Pure read, no side effects
 
 timedFSM.handleEvent("pause"); // => Working → Paused (save history)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: History saved: Working at [timestamp]
 console.log(timedFSM.getCurrentState()); // => Output: Paused
+// => FSM state management logic
 // => Pure read, no side effects
 
 // Resume immediately (within timeout)
 timedFSM.handleEvent("resume"); // => Paused → Working (history valid)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: Resumed from history: Working
 console.log(timedFSM.getCurrentState()); // => Output: Working
+// => FSM state management logic
 // => Pure read, no side effects
 
 // Pause again and wait for timeout
-timedFSM.handleEvent("pause");
+timedFSM.handleEvent("pause"); // => Event handler method
 // => Event handler: main FSM dispatch method
 // => Processes events, triggers transitions
-console.log("Waiting 6 seconds for history to expire...");
+console.log("Waiting 6 seconds for history to expire..."); // => Output for verification
 // => Debug/audit output
 // => Log for observability
 // (In real code: setTimeout or await delay)
@@ -1795,122 +2075,144 @@ type Event = "connect" | "disconnect" | "sync" | "reconnect"; // => Events
 // => Events trigger state transitions
 
 interface HistoryContext {
+  // => Type declaration defines structure
   // => Begin object/config definition
-  state: State;
-  timestamp: number;
+  state: State; // => Statement execution
+  timestamp: number; // => Statement execution
   networkQuality: "good" | "poor"; // => Additional context
 }
 
 class ConditionalHistory {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
-  private state: State = "Disconnected";
+  private state: State = "Disconnected"; // => State field: stores current FSM state privately
   // => Assign value
   // => Mutable state storage (single source of truth)
   // => FSM begins execution in Disconnected state
-  private history: HistoryContext | null = null;
+  private history: HistoryContext | null = null; // => Field declaration: class member variable
   // => Assign value
   // => Extended state (data beyond FSM state)
   // => Initialized alongside FSM state
 
   getCurrentState(): State {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return this.state;
+    return this.state; // => Returns value to caller
     // => Access instance property
     // => Return current state value
   }
 
   private saveHistory(networkQuality: "good" | "poor"): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     this.history = {
+      // => Statement execution
       // => Access instance property
       // => Begin object/config definition
-      state: this.state,
+      state: this.state, // => Statement execution
       // => Access instance property
-      timestamp: Date.now(),
+      timestamp: Date.now(), // => Method invocation
       networkQuality, // => Save additional context
     };
-    console.log(`History saved: ${this.state} (network: ${networkQuality})`);
+    console.log(`History saved: ${this.state} (network: ${networkQuality})`); // => Output for verification
+    // => Chained method calls or nested operations
     // => Debug/audit output
     // => Log for observability
   }
 
   private canRestoreHistory(currentNetworkQuality: "good" | "poor"): boolean {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    if (!this.history) return false;
+    if (!this.history) return false; // => Conditional branch
     // => Return computed result
 
     // Validation 1: Check timeout (5 seconds)
-    const elapsed = Date.now() - this.history.timestamp;
+    const elapsed = Date.now() - this.history.timestamp; // => Variable declaration and assignment
     // => Assign value
     // => Initialize elapsed
     if (elapsed > 5000) {
+      // => Conditional branch
       // => Conditional check
       // => Branch execution based on condition
-      console.log("History validation failed: timeout");
+      console.log("History validation failed: timeout"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
-      return false;
+      return false; // => Returns value to caller
       // => Return computed result
     }
 
     // Validation 2: Check network quality consistency
     if (this.history.networkQuality === "good" && currentNetworkQuality === "poor") {
+      // => Conditional branch
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Conditional check
       // => Branch execution based on condition
-      console.log("History validation failed: network degraded");
+      console.log("History validation failed: network degraded"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       return false; // => Don't restore "Syncing" if network is now poor
     }
 
-    console.log("History validation passed");
+    console.log("History validation passed"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
-    return true;
+    return true; // => Returns value to caller
     // => Return computed result
   }
 
   handleEvent(event: Event, networkQuality: "good" | "poor" = "good"): void {
+    // => Event handler method
     // => Assign value
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "connect" && this.state === "Disconnected") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
-      this.state = "Connected.Idle";
+      this.state = "Connected.Idle"; // => State transition execution
       // => Access instance property
     } else if (event === "sync" && this.state === "Connected.Idle") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
-      this.state = "Connected.Syncing";
+      this.state = "Connected.Syncing"; // => State transition execution
       // => Access instance property
-      this.saveHistory(networkQuality);
+      this.saveHistory(networkQuality); // => Method invocation
     } else if (event === "disconnect" && this.state.startsWith("Connected.")) {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.saveHistory(networkQuality); // => Save before disconnect
-      this.state = "Disconnected";
+      this.state = "Disconnected"; // => State transition execution
       // => Access instance property
       // => Transition: set state to Disconnected
       // => State mutation (core FSM operation)
     } else if (event === "reconnect" && this.state === "Disconnected") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       if (this.canRestoreHistory(networkQuality)) {
+        // => Conditional branch
+        // => Chained method calls or nested operations
         // => Conditional check
         // => Branch execution based on condition
         this.state = this.history!.state as State; // => Restore validated history
-        console.log(`Restored: ${this.state}`);
+        console.log(`Restored: ${this.state}`); // => Output for verification
         // => Debug/audit output
         // => Log for observability
       } else {
+        // => Statement execution
         // => Fallback branch
         this.state = "Connected.Idle"; // => Validation failed → default state
-        console.log("Fallback to default: Connected.Idle");
+        console.log("Fallback to default: Connected.Idle"); // => Output for verification
         // => Debug/audit output
         // => Log for observability
       }
@@ -1919,12 +2221,13 @@ class ConditionalHistory {
 }
 
 // Usage - Successful restoration
-const condFSM = new ConditionalHistory();
+const condFSM = new ConditionalHistory(); // => Instance creation via constructor
 // => Create new instance
 // => Initialize condFSM
 condFSM.handleEvent("connect"); // => Disconnected → Connected.Idle
 // => Processes events, triggers transitions
 condFSM.handleEvent("sync", "good"); // => Idle → Syncing (good network)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: History saved: Connected.Syncing (network: good)
 
@@ -1933,22 +2236,24 @@ condFSM.handleEvent("disconnect", "good"); // => Syncing → Disconnected
 // => Output: History saved: Connected.Syncing (network: good)
 
 condFSM.handleEvent("reconnect", "good"); // => Restore (validation passes)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: History validation passed
 // =>         Restored: Connected.Syncing
 console.log(condFSM.getCurrentState()); // => Output: Connected.Syncing
+// => FSM state management logic
 // => Pure read, no side effects
 
 // Usage - Failed restoration (network degraded)
-const condFSM2 = new ConditionalHistory();
+const condFSM2 = new ConditionalHistory(); // => Instance creation via constructor
 // => Create new instance
 // => Initialize condFSM2
-condFSM2.handleEvent("connect");
+condFSM2.handleEvent("connect"); // => Event handler method
 // => Event handler: main FSM dispatch method
 // => Processes events, triggers transitions
 condFSM2.handleEvent("sync", "good"); // => Save with good network
 // => Processes events, triggers transitions
-condFSM2.handleEvent("disconnect", "good");
+condFSM2.handleEvent("disconnect", "good"); // => Event handler method
 // => Event handler: main FSM dispatch method
 // => Processes events, triggers transitions
 condFSM2.handleEvent("reconnect", "poor"); // => Reconnect with poor network
@@ -1956,6 +2261,7 @@ condFSM2.handleEvent("reconnect", "poor"); // => Reconnect with poor network
 // => Output: History validation failed: network degraded
 // =>         Fallback to default: Connected.Idle
 console.log(condFSM2.getCurrentState()); // => Output: Connected.Idle
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -1974,6 +2280,7 @@ The State Pattern encapsulates state-specific behavior in separate classes, enab
 ```typescript
 // State Pattern: Each state is a class implementing State interface
 interface State {
+  // => Type declaration defines structure
   // => Begin object/config definition
   handle(context: TrafficLight): void; // => Each state handles its own transitions
   // => Processes events, triggers transitions
@@ -1981,83 +2288,103 @@ interface State {
 }
 
 class RedState implements State {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   handle(context: TrafficLight): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
-    console.log("Red light: Stop. Transitioning to Green...");
+    console.log("Red light: Stop. Transitioning to Green..."); // => Output for verification
     // => Debug/audit output
     // => Log for observability
     context.setState(new GreenState()); // => Red → Green
+    // => Traffic light state management
   }
   toString(): string {
+    // => Method invocation
     // => Begin object/config definition
     return "Red"; // => State name
   }
 }
 
 class GreenState implements State {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   handle(context: TrafficLight): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
-    console.log("Green light: Go. Transitioning to Yellow...");
+    console.log("Green light: Go. Transitioning to Yellow..."); // => Output for verification
     // => Debug/audit output
     // => Log for observability
     context.setState(new YellowState()); // => Green → Yellow
+    // => Traffic light state management
   }
   toString(): string {
+    // => Method invocation
     // => Begin object/config definition
-    return "Green";
+    return "Green"; // => Returns value to caller
     // => Return computed result
   }
 }
 
 class YellowState implements State {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   handle(context: TrafficLight): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
-    console.log("Yellow light: Caution. Transitioning to Red...");
+    console.log("Yellow light: Caution. Transitioning to Red..."); // => Output for verification
     // => Debug/audit output
     // => Log for observability
     context.setState(new RedState()); // => Yellow → Red
+    // => Traffic light state management
   }
   toString(): string {
+    // => Method invocation
     // => Begin object/config definition
-    return "Yellow";
+    return "Yellow"; // => Returns value to caller
     // => Return computed result
   }
 }
 
 class TrafficLight {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private state: State; // => Current state object
 
   constructor() {
+    // => Method invocation
     // => Begin object/config definition
     this.state = new RedState(); // => Initial state: Red
+    // => Traffic light state management
   }
 
   setState(state: State): void {
+    // => Accessor method definition
     // => Begin object/config definition
     this.state = state; // => Transition to new state
-    console.log(`State changed to: ${state.toString()}`);
+    // => FSM state management logic
+    console.log(`State changed to: ${state.toString()}`); // => Output for verification
+    // => Chained method calls or nested operations
     // => Debug/audit output
     // => Log for observability
   }
 
   next(): void {
+    // => Method invocation
     // => Begin object/config definition
     this.state.handle(this); // => Delegate to current state
     // => Processes events, triggers transitions
   }
 
   getCurrentState(): string {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
     return this.state.toString(); // => State name
@@ -2067,18 +2394,21 @@ class TrafficLight {
 // Usage
 const traffic = new TrafficLight(); // => state: Red
 console.log(`Current: ${traffic.getCurrentState()}`); // => Output: Current: Red
+// => FSM state management logic
 // => Pure read, no side effects
 
 traffic.next(); // => Red handles: Red → Green
 // => Output: Red light: Stop. Transitioning to Green...
 // =>         State changed to: Green
 console.log(`Current: ${traffic.getCurrentState()}`); // => Output: Current: Green
+// => FSM state management logic
 // => Pure read, no side effects
 
 traffic.next(); // => Green handles: Green → Yellow
 // => Output: Green light: Go. Transitioning to Yellow...
 // =>         State changed to: Yellow
 console.log(`Current: ${traffic.getCurrentState()}`); // => Output: Current: Yellow
+// => FSM state management logic
 // => Pure read, no side effects
 
 traffic.next(); // => Yellow handles: Yellow → Red
@@ -2099,138 +2429,167 @@ State classes can implement entry and exit actions, encapsulating state initiali
 ```typescript
 // State Pattern with lifecycle hooks
 interface StateWithLifecycle {
+  // => Type declaration defines structure
   // => Begin object/config definition
   onEnter(context: Application): void; // => Called when entering state
   onExit(context: Application): void; // => Called when exiting state
   handle(event: string, context: Application): void; // => Handle events
   // => Processes events, triggers transitions
-  getName(): string;
+  getName(): string; // => Accessor method definition
 }
 
 class LoadingState implements StateWithLifecycle {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   onEnter(context: Application): void {
+    // => Method invocation
     // => Begin object/config definition
     console.log("Loading: Initialize resources"); // => Entry action
     // => Log for observability
   }
 
   onExit(context: Application): void {
+    // => Method invocation
     // => Begin object/config definition
     console.log("Loading: Cleanup loaders"); // => Exit action
     // => Log for observability
   }
 
   handle(event: string, context: Application): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "loaded") {
+      // => Event type guard condition
       // => Comparison check
       // => Event type check
       context.transitionTo(new ReadyState()); // => Loading → Ready
+      // => FSM state management logic
     }
   }
 
   getName(): string {
+    // => Accessor method definition
     // => Begin object/config definition
-    return "Loading";
+    return "Loading"; // => Returns value to caller
     // => Return computed result
   }
 }
 
 class ReadyState implements StateWithLifecycle {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   onEnter(context: Application): void {
+    // => Method invocation
     // => Begin object/config definition
-    console.log("Ready: Application ready for use");
+    console.log("Ready: Application ready for use"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   onExit(context: Application): void {
+    // => Method invocation
     // => Begin object/config definition
-    console.log("Ready: Pausing operations");
+    console.log("Ready: Pausing operations"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   handle(event: string, context: Application): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "error") {
+      // => Event type guard condition
       // => Comparison check
       // => Event type check
       context.transitionTo(new ErrorState()); // => Ready → Error
+      // => FSM state management logic
     }
   }
 
   getName(): string {
+    // => Accessor method definition
     // => Begin object/config definition
-    return "Ready";
+    return "Ready"; // => Returns value to caller
     // => Return computed result
   }
 }
 
 class ErrorState implements StateWithLifecycle {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   onEnter(context: Application): void {
+    // => Method invocation
     // => Begin object/config definition
-    console.log("Error: Logging error, notifying user");
+    console.log("Error: Logging error, notifying user"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   onExit(context: Application): void {
+    // => Method invocation
     // => Begin object/config definition
-    console.log("Error: Clearing error state");
+    console.log("Error: Clearing error state"); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   handle(event: string, context: Application): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "retry") {
+      // => Event type guard condition
       // => Comparison check
       // => Event type check
       context.transitionTo(new LoadingState()); // => Error → Loading (retry)
+      // => FSM state management logic
     }
   }
 
   getName(): string {
+    // => Accessor method definition
     // => Begin object/config definition
-    return "Error";
+    return "Error"; // => Returns value to caller
     // => Return computed result
   }
 }
 
 class Application {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
-  private state: StateWithLifecycle;
+  private state: StateWithLifecycle; // => State field: stores current FSM state privately
   // => State variable declaration
 
   constructor() {
+    // => Method invocation
     // => Begin object/config definition
-    this.state = new LoadingState();
+    this.state = new LoadingState(); // => State transition execution
+    // => Constructor creates new object instance
     // => Create new instance
     this.state.onEnter(this); // => Execute entry action for initial state
   }
 
   transitionTo(newState: StateWithLifecycle): void {
+    // => Method invocation
     // => Begin object/config definition
-    console.log(`Transitioning: ${this.state.getName()} → ${newState.getName()}`);
+    console.log(`Transitioning: ${this.state.getName()} → ${newState.getName()}`); // => Output for verification
+    // => Chained method calls or nested operations
     // => Debug/audit output
     // => Log for observability
     this.state.onExit(this); // => Exit current state
     this.state = newState; // => Switch state
     this.state.onEnter(this); // => Enter new state
+    // => FSM state management logic
   }
 
   handleEvent(event: string): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     this.state.handle(event, this); // => Delegate to current state
@@ -2238,17 +2597,20 @@ class Application {
   }
 
   getCurrentState(): string {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return this.state.getName();
+    return this.state.getName(); // => Returns value to caller
     // => Return current state value
   }
 }
 
 // Usage
 const app = new Application(); // => state: Loading (onEnter executes)
+// => FSM state management logic
 // => Output: Loading: Initialize resources
 console.log(`Current: ${app.getCurrentState()}`); // => Output: Current: Loading
+// => FSM state management logic
 // => Pure read, no side effects
 
 app.handleEvent("loaded"); // => Loading → Ready
@@ -2257,6 +2619,7 @@ app.handleEvent("loaded"); // => Loading → Ready
 // =>         Loading: Cleanup loaders
 // =>         Ready: Application ready for use
 console.log(`Current: ${app.getCurrentState()}`); // => Output: Current: Ready
+// => FSM state management logic
 // => Pure read, no side effects
 
 app.handleEvent("error"); // => Ready → Error
@@ -2265,6 +2628,7 @@ app.handleEvent("error"); // => Ready → Error
 // =>         Ready: Pausing operations
 // =>         Error: Logging error, notifying user
 console.log(`Current: ${app.getCurrentState()}`); // => Output: Current: Error
+// => FSM state management logic
 // => Pure read, no side effects
 
 app.handleEvent("retry"); // => Error → Loading
@@ -2287,71 +2651,88 @@ State transitions can include guard conditions that determine if a transition is
 ```typescript
 // State Pattern with guard conditions
 interface GuardedState {
+  // => Type declaration defines structure
   // => Begin object/config definition
   canTransition(event: string, context: VendingMachine): boolean; // => Guard condition
   // => Returns boolean without changing state
-  handle(event: string, context: VendingMachine): void;
+  handle(event: string, context: VendingMachine): void; // => Event handler method
   // => Event handler: main FSM dispatch method
   // => Processes events, triggers transitions
-  getName(): string;
+  getName(): string; // => Accessor method definition
 }
 
 class IdleState implements GuardedState {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   canTransition(event: string, context: VendingMachine): boolean {
+    // => Method invocation
     // => Guard: validates transition possibility
     // => Returns boolean without changing state
     if (event === "insertCoin") {
+      // => Event type guard condition
       // => Comparison check
       // => Event type check
       return context.getBalance() < 100; // => Guard: allow only if balance < $1.00
     }
-    return false;
+    return false; // => Returns value to caller
     // => Return computed result
   }
 
   handle(event: string, context: VendingMachine): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "insertCoin" && this.canTransition(event, context)) {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Guard: validates transition possibility
       // => Returns boolean without changing state
       context.addBalance(25); // => Add $0.25
-      console.log(`Coin inserted. Balance: $${context.getBalance() / 100}`);
+      console.log(`Coin inserted. Balance: $${context.getBalance() / 100}`); // => Output for verification
+      // => Chained method calls or nested operations
       // => Debug/audit output
       // => Log for observability
       if (context.getBalance() >= 50) {
+        // => Conditional branch
+        // => Chained method calls or nested operations
         // => Comparison check
         // => Conditional check
         // => Branch execution based on condition
         // => Guard for state transition
         context.transitionTo(new ReadyState()); // => Idle → Ready (enough money)
+        // => FSM state management logic
       }
     } else if (!this.canTransition(event, context)) {
+      // => Method signature: defines function interface
+      // => Chained method calls or nested operations
       // => Guard: validates transition possibility
       // => Returns boolean without changing state
-      console.log("Guard failed: Balance limit reached");
+      console.log("Guard failed: Balance limit reached"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
   }
 
   getName(): string {
+    // => Accessor method definition
     // => Begin object/config definition
-    return "Idle";
+    return "Idle"; // => Returns value to caller
     // => Return computed result
   }
 }
 
 class ReadyState implements GuardedState {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   canTransition(event: string, context: VendingMachine): boolean {
+    // => Method invocation
     // => Guard: validates transition possibility
     // => Returns boolean without changing state
     if (event === "selectItem") {
+      // => Event type guard condition
       // => Comparison check
       // => Event type check
       return context.getBalance() >= 50; // => Guard: need at least $0.50
@@ -2360,117 +2741,143 @@ class ReadyState implements GuardedState {
   }
 
   handle(event: string, context: VendingMachine): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "selectItem" && this.canTransition(event, context)) {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Guard: validates transition possibility
       // => Returns boolean without changing state
       context.transitionTo(new DispensingState()); // => Ready → Dispensing
+      // => FSM state management logic
     } else if (event === "cancel") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Alternative condition
-      console.log(`Refunding $${context.getBalance() / 100}`);
+      console.log(`Refunding $${context.getBalance() / 100}`); // => Output for verification
+      // => Chained method calls or nested operations
       // => Debug/audit output
       // => Log for observability
-      context.resetBalance();
+      context.resetBalance(); // => Method invocation
       context.transitionTo(new IdleState()); // => Ready → Idle (cancel)
+      // => Workflow state progression
     } else {
+      // => Statement execution
       // => Fallback branch
-      console.log("Guard failed: Insufficient balance");
+      console.log("Guard failed: Insufficient balance"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
   }
 
   getName(): string {
+    // => Accessor method definition
     // => Begin object/config definition
-    return "Ready";
+    return "Ready"; // => Returns value to caller
     // => Return computed result
   }
 }
 
 class DispensingState implements GuardedState {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   canTransition(event: string, context: VendingMachine): boolean {
+    // => Method invocation
     // => Guard: validates transition possibility
     // => Returns boolean without changing state
     return event === "dispensed"; // => Only transition on dispensed
   }
 
   handle(event: string, context: VendingMachine): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
-    console.log("Dispensing item...");
+    console.log("Dispensing item..."); // => Output for verification
     // => Debug/audit output
     // => Log for observability
     context.deductItemCost(50); // => Deduct $0.50
     if (this.canTransition("dispensed", context)) {
+      // => Conditional branch
+      // => Chained method calls or nested operations
       // => Guard: validates transition possibility
       // => Returns boolean without changing state
       context.transitionTo(new IdleState()); // => Dispensing → Idle
+      // => Workflow state progression
     }
   }
 
   getName(): string {
+    // => Accessor method definition
     // => Begin object/config definition
-    return "Dispensing";
+    return "Dispensing"; // => Returns value to caller
     // => Return computed result
   }
 }
 
 class VendingMachine {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
-  private state: GuardedState;
+  private state: GuardedState; // => State field: stores current FSM state privately
   // => State variable declaration
   private balance = 0; // => Balance in cents
   // => Initialized alongside FSM state
 
   constructor() {
+    // => Method invocation
     // => Begin object/config definition
-    this.state = new IdleState();
+    this.state = new IdleState(); // => State transition execution
+    // => Constructor creates new object instance
     // => Create new instance
   }
 
   getBalance(): number {
+    // => Accessor method definition
     // => Begin object/config definition
-    return this.balance;
+    return this.balance; // => Returns value to caller
     // => Access instance property
     // => Return computed result
   }
 
   addBalance(amount: number): void {
+    // => Method invocation
     // => Begin object/config definition
-    this.balance += amount;
+    this.balance += amount; // => Statement execution
     // => Modify state data
     // => Update extended state data
   }
 
   deductItemCost(cost: number): void {
+    // => Method invocation
     // => Begin object/config definition
-    this.balance -= cost;
+    this.balance -= cost; // => Statement execution
     // => Modify state data
     // => Update extended state data
   }
 
   resetBalance(): void {
+    // => Method invocation
     // => Begin object/config definition
-    this.balance = 0;
+    this.balance = 0; // => Statement execution
     // => Access instance property
   }
 
   transitionTo(newState: GuardedState): void {
+    // => Method invocation
     // => Begin object/config definition
-    console.log(`Transition: ${this.state.getName()} → ${newState.getName()}`);
+    console.log(`Transition: ${this.state.getName()} → ${newState.getName()}`); // => Output for verification
+    // => Chained method calls or nested operations
     // => Debug/audit output
     // => Log for observability
-    this.state = newState;
+    this.state = newState; // => State transition execution
     // => Access instance property
   }
 
   handleEvent(event: string): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     this.state.handle(event, this); // => Delegate to state
@@ -2478,9 +2885,10 @@ class VendingMachine {
   }
 
   getCurrentState(): string {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return this.state.getName();
+    return this.state.getName(); // => Returns value to caller
     // => Return current state value
   }
 }
@@ -2488,26 +2896,33 @@ class VendingMachine {
 // Usage
 const vending = new VendingMachine(); // => state: Idle, balance: $0
 console.log(`Current: ${vending.getCurrentState()}`); // => Output: Current: Idle
+// => FSM state management logic
 // => Pure read, no side effects
 
 vending.handleEvent("insertCoin"); // => Add $0.25 (balance: $0.25)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: Coin inserted. Balance: $0.25
 console.log(`Balance: $${vending.getBalance() / 100}`); // => Output: Balance: $0.25
+// => FSM state management logic
 
 vending.handleEvent("insertCoin"); // => Add $0.25 (balance: $0.50) → Ready
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: Coin inserted. Balance: $0.5
 // =>         Transition: Idle → Ready
 console.log(`Current: ${vending.getCurrentState()}`); // => Output: Current: Ready
+// => FSM state management logic
 // => Pure read, no side effects
 
 vending.handleEvent("selectItem"); // => Ready → Dispensing (guard passes)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: Transition: Ready → Dispensing
 // =>         Dispensing item...
 // =>         Transition: Dispensing → Idle
 console.log(`Current: ${vending.getCurrentState()}`); // => Output: Current: Idle
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -2524,169 +2939,207 @@ State objects can access and modify context data, enabling stateful behavior bas
 ```typescript
 // State Pattern with shared context data
 interface ConnectionState {
+  // => Type declaration defines structure
   // => Begin object/config definition
-  handle(event: string, context: ConnectionContext): void;
+  handle(event: string, context: ConnectionContext): void; // => Event handler method
   // => Event handler: main FSM dispatch method
   // => Processes events, triggers transitions
-  getName(): string;
+  getName(): string; // => Accessor method definition
 }
 
 class DisconnectedState implements ConnectionState {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   handle(event: string, context: ConnectionContext): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "connect") {
+      // => Event type guard condition
       // => Comparison check
       // => Event type check
       context.incrementAttempts(); // => Track connection attempts
-      console.log(`Connection attempt ${context.getAttempts()}`);
+      console.log(`Connection attempt ${context.getAttempts()}`); // => Output for verification
+      // => Chained method calls or nested operations
       // => Debug/audit output
       // => Log for observability
 
       if (context.getAttempts() > 3) {
+        // => Conditional branch
+        // => Chained method calls or nested operations
         // => Conditional check
         // => Branch execution based on condition
         // => Check context data
-        console.log("Too many attempts. Backing off...");
+        console.log("Too many attempts. Backing off..."); // => Output for verification
         // => Debug/audit output
         // => Log for observability
         context.transitionTo(new BackoffState()); // => Disconnected → Backoff
+        // => FSM state management logic
       } else {
+        // => Statement execution
         // => Fallback branch
         context.transitionTo(new ConnectingState()); // => Disconnected → Connecting
+        // => FSM state management logic
       }
     }
   }
 
   getName(): string {
+    // => Accessor method definition
     // => Begin object/config definition
-    return "Disconnected";
+    return "Disconnected"; // => Returns value to caller
     // => Return computed result
   }
 }
 
 class ConnectingState implements ConnectionState {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   handle(event: string, context: ConnectionContext): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "success") {
+      // => Event type guard condition
       // => Comparison check
       // => Event type check
       context.resetAttempts(); // => Reset attempt counter
       context.transitionTo(new ConnectedState()); // => Connecting → Connected
+      // => FSM state management logic
     } else if (event === "failure") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Alternative condition
       context.transitionTo(new DisconnectedState()); // => Retry
+      // => FSM state management logic
     }
   }
 
   getName(): string {
+    // => Accessor method definition
     // => Begin object/config definition
-    return "Connecting";
+    return "Connecting"; // => Returns value to caller
     // => Return computed result
   }
 }
 
 class ConnectedState implements ConnectionState {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   handle(event: string, context: ConnectionContext): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "disconnect") {
+      // => Event type guard condition
       // => Comparison check
       // => Event type check
       context.transitionTo(new DisconnectedState()); // => Connected → Disconnected
+      // => FSM state management logic
     }
   }
 
   getName(): string {
+    // => Accessor method definition
     // => Begin object/config definition
-    return "Connected";
+    return "Connected"; // => Returns value to caller
     // => Return computed result
   }
 }
 
 class BackoffState implements ConnectionState {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   handle(event: string, context: ConnectionContext): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "retry") {
+      // => Event type guard condition
       // => Comparison check
       // => Event type check
       context.resetAttempts(); // => Reset counter after backoff
-      console.log("Backoff complete. Retrying...");
+      console.log("Backoff complete. Retrying..."); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       context.transitionTo(new DisconnectedState()); // => Backoff → Disconnected
+      // => FSM state management logic
     }
   }
 
   getName(): string {
+    // => Accessor method definition
     // => Begin object/config definition
-    return "Backoff";
+    return "Backoff"; // => Returns value to caller
     // => Return computed result
   }
 }
 
 class ConnectionContext {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
-  private state: ConnectionState;
+  private state: ConnectionState; // => State field: stores current FSM state privately
   // => State variable declaration
   private attempts = 0; // => Shared context data
   // => Initialized alongside FSM state
 
   constructor() {
+    // => Method invocation
     // => Begin object/config definition
-    this.state = new DisconnectedState();
+    this.state = new DisconnectedState(); // => State transition execution
+    // => Constructor creates new object instance
     // => Create new instance
   }
 
   getAttempts(): number {
+    // => Accessor method definition
     // => Begin object/config definition
     return this.attempts; // => Read context data
   }
 
   incrementAttempts(): void {
+    // => Method invocation
     // => Begin object/config definition
     this.attempts++; // => Modify context data
   }
 
   resetAttempts(): void {
+    // => Method invocation
     // => Begin object/config definition
-    this.attempts = 0;
+    this.attempts = 0; // => Statement execution
     // => Access instance property
   }
 
   transitionTo(newState: ConnectionState): void {
+    // => Method invocation
     // => Begin object/config definition
-    console.log(`Transition: ${this.state.getName()} → ${newState.getName()}`);
+    console.log(`Transition: ${this.state.getName()} → ${newState.getName()}`); // => Output for verification
+    // => Chained method calls or nested operations
     // => Debug/audit output
     // => Log for observability
-    this.state = newState;
+    this.state = newState; // => State transition execution
     // => Access instance property
   }
 
   handleEvent(event: string): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
-    this.state.handle(event, this);
+    this.state.handle(event, this); // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
   }
 
   getCurrentState(): string {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return this.state.getName();
+    return this.state.getName(); // => Returns value to caller
     // => Return current state value
   }
 }
@@ -2700,6 +3153,7 @@ conn.handleEvent("connect"); // => Attempt 1: Disconnected → Connecting
 // =>         Transition: Disconnected → Connecting
 
 conn.handleEvent("failure"); // => Connecting → Disconnected (retry)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: Transition: Connecting → Disconnected
 
@@ -2713,7 +3167,7 @@ conn.handleEvent("failure"); // => Retry again
 
 conn.handleEvent("connect"); // => Attempt 3
 // => Processes events, triggers transitions
-conn.handleEvent("failure");
+conn.handleEvent("failure"); // => Event handler method
 // => Event handler: main FSM dispatch method
 // => Processes events, triggers transitions
 
@@ -2724,10 +3178,12 @@ conn.handleEvent("connect"); // => Attempt 4: Too many → Backoff
 // =>         Transition: Disconnected → Backoff
 
 conn.handleEvent("retry"); // => Backoff → Disconnected (reset)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: Backoff complete. Retrying...
 // =>         Transition: Backoff → Disconnected
 console.log(`Attempts: ${conn.getAttempts()}`); // => Output: Attempts: 0
+// => FSM state management logic
 ```
 
 **Key Takeaway**: Context object stores shared data (attempts counter) that states read and modify. States make decisions based on accumulated context data, enabling stateful behavior beyond simple state transitions.
@@ -2743,185 +3199,222 @@ State Pattern can compose with Strategy Pattern - states can select different st
 ```typescript
 // State + Strategy Pattern composition
 interface PaymentStrategy {
+  // => Type declaration defines structure
   // => Begin object/config definition
   pay(amount: number): void; // => Strategy: how to pay
 }
 
 class CreditCardStrategy implements PaymentStrategy {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   pay(amount: number): void {
+    // => Method invocation
     // => Begin object/config definition
-    console.log(`Paid $${amount} via Credit Card`);
+    console.log(`Paid $${amount} via Credit Card`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 }
 
 class PayPalStrategy implements PaymentStrategy {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   pay(amount: number): void {
+    // => Method invocation
     // => Begin object/config definition
-    console.log(`Paid $${amount} via PayPal`);
+    console.log(`Paid $${amount} via PayPal`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 }
 
 interface CheckoutState {
+  // => Type declaration defines structure
   // => Begin object/config definition
-  handle(event: string, context: CheckoutProcess): void;
+  handle(event: string, context: CheckoutProcess): void; // => Event handler method
   // => Event handler: main FSM dispatch method
   // => Processes events, triggers transitions
-  getName(): string;
+  getName(): string; // => Accessor method definition
 }
 
 class SelectingPaymentState implements CheckoutState {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private strategy: PaymentStrategy | null = null; // => Selected payment strategy
   // => Initialized alongside FSM state
 
   handle(event: string, context: CheckoutProcess): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "selectCreditCard") {
+      // => Event type guard condition
       // => Comparison check
       // => Event type check
       this.strategy = new CreditCardStrategy(); // => Choose strategy
-      console.log("Payment method: Credit Card");
+      // => FSM state management logic
+      console.log("Payment method: Credit Card"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       context.setPaymentStrategy(this.strategy); // => Save to context
-      context.transitionTo(new ProcessingPaymentState());
+      context.transitionTo(new ProcessingPaymentState()); // => Method invocation
+      // => Constructor creates new object instance
     } else if (event === "selectPayPal") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Alternative condition
-      this.strategy = new PayPalStrategy();
+      this.strategy = new PayPalStrategy(); // => Method invocation
+      // => Constructor creates new object instance
       // => Create new instance
-      console.log("Payment method: PayPal");
+      console.log("Payment method: PayPal"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
-      context.setPaymentStrategy(this.strategy);
-      context.transitionTo(new ProcessingPaymentState());
+      context.setPaymentStrategy(this.strategy); // => Method invocation
+      context.transitionTo(new ProcessingPaymentState()); // => Method invocation
+      // => Constructor creates new object instance
     }
   }
 
   getName(): string {
+    // => Accessor method definition
     // => Begin object/config definition
-    return "SelectingPayment";
+    return "SelectingPayment"; // => Returns value to caller
     // => Return computed result
   }
 }
 
 class ProcessingPaymentState implements CheckoutState {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   handle(event: string, context: CheckoutProcess): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "confirm") {
+      // => Event type guard condition
       // => Comparison check
       // => Event type check
       const strategy = context.getPaymentStrategy(); // => Retrieve strategy
       if (strategy) {
+        // => Conditional branch
         // => Conditional check
         // => Branch execution based on condition
         strategy.pay(context.getAmount()); // => Execute payment via strategy
-        context.transitionTo(new CompletedState());
+        // => FSM state management logic
+        context.transitionTo(new CompletedState()); // => Method invocation
+        // => Constructor creates new object instance
       }
     } else if (event === "cancel") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Alternative condition
       context.transitionTo(new SelectingPaymentState()); // => Back to selection
+      // => FSM state management logic
     }
   }
 
   getName(): string {
+    // => Accessor method definition
     // => Begin object/config definition
-    return "ProcessingPayment";
+    return "ProcessingPayment"; // => Returns value to caller
     // => Return computed result
   }
 }
 
 class CompletedState implements CheckoutState {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   handle(event: string, context: CheckoutProcess): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
-    console.log("Checkout complete. No further actions.");
+    console.log("Checkout complete. No further actions."); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   getName(): string {
+    // => Accessor method definition
     // => Begin object/config definition
-    return "Completed";
+    return "Completed"; // => Returns value to caller
     // => Return computed result
   }
 }
 
 class CheckoutProcess {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
-  private state: CheckoutState;
+  private state: CheckoutState; // => State field: stores current FSM state privately
   // => State variable declaration
   private paymentStrategy: PaymentStrategy | null = null; // => Context: selected strategy
   // => Initialized alongside FSM state
-  private amount: number;
+  private amount: number; // => Field declaration: class member variable
   // => Extended state (data beyond FSM state)
 
   constructor(amount: number) {
+    // => Method invocation
     // => Begin object/config definition
-    this.amount = amount;
+    this.amount = amount; // => Statement execution
     // => Access instance property
-    this.state = new SelectingPaymentState();
+    this.state = new SelectingPaymentState(); // => State transition execution
+    // => Constructor creates new object instance
     // => Create new instance
   }
 
   getAmount(): number {
+    // => Accessor method definition
     // => Begin object/config definition
-    return this.amount;
+    return this.amount; // => Returns value to caller
     // => Access instance property
     // => Return computed result
   }
 
   setPaymentStrategy(strategy: PaymentStrategy): void {
+    // => Accessor method definition
     // => Begin object/config definition
-    this.paymentStrategy = strategy;
+    this.paymentStrategy = strategy; // => Statement execution
     // => Access instance property
   }
 
   getPaymentStrategy(): PaymentStrategy | null {
+    // => Accessor method definition
     // => Begin object/config definition
-    return this.paymentStrategy;
+    return this.paymentStrategy; // => Returns value to caller
     // => Access instance property
     // => Return computed result
   }
 
   transitionTo(newState: CheckoutState): void {
+    // => Method invocation
     // => Begin object/config definition
-    console.log(`Transition: ${this.state.getName()} → ${newState.getName()}`);
+    console.log(`Transition: ${this.state.getName()} → ${newState.getName()}`); // => Output for verification
+    // => Chained method calls or nested operations
     // => Debug/audit output
     // => Log for observability
-    this.state = newState;
+    this.state = newState; // => State transition execution
     // => Access instance property
   }
 
   handleEvent(event: string): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
-    this.state.handle(event, this);
+    this.state.handle(event, this); // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
   }
 
   getCurrentState(): string {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return this.state.getName();
+    return this.state.getName(); // => Returns value to caller
     // => Return current state value
   }
 }
@@ -2940,7 +3433,7 @@ checkout.handleEvent("confirm"); // => Execute payment via Credit Card strategy
 // =>         Transition: ProcessingPayment → Completed
 
 // Alternative flow with PayPal
-const checkout2 = new CheckoutProcess(200);
+const checkout2 = new CheckoutProcess(200); // => Instance creation via constructor
 // => Create new instance
 // => Initialize checkout2
 checkout2.handleEvent("selectPayPal"); // => Choose PayPal strategy
@@ -2994,132 +3487,152 @@ stateDiagram-v2
 
 ```typescript
 // Order Processing FSM
-type OrderState = "Draft" | "Submitted" | "Confirmed" | "Processing" | "Shipped" | "Delivered" | "Cancelled";
+type OrderState = "Draft" | "Submitted" | "Confirmed" | "Processing" | "Shipped" | "Delivered" | "Cancelled"; // => Type declaration defines structure
 // => Assign value
 // => Enum-like union type for state values
 // => Type system ensures only valid states used
-type OrderEvent = "submit" | "confirm" | "startProcessing" | "ship" | "deliver" | "cancel";
+type OrderEvent = "submit" | "confirm" | "startProcessing" | "ship" | "deliver" | "cancel"; // => Type declaration defines structure
 // => Assign value
 // => Defines event alphabet for FSM
 // => Events trigger state transitions
 
 interface Order {
+  // => Type declaration defines structure
   // => Begin object/config definition
-  id: string;
-  items: string[];
-  total: number;
+  id: string; // => Statement execution
+  items: string[]; // => Statement execution
+  total: number; // => Statement execution
 }
 
 class OrderProcessor {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
-  private state: OrderState = "Draft";
+  private state: OrderState = "Draft"; // => State field: stores current FSM state privately
   // => Assign value
   // => Mutable state storage (single source of truth)
   // => FSM begins execution in Draft state
-  private order: Order;
+  private order: Order; // => Field declaration: class member variable
   // => Extended state (data beyond FSM state)
 
   constructor(order: Order) {
+    // => Method invocation
     // => Begin object/config definition
-    this.order = order;
+    this.order = order; // => Statement execution
     // => Access instance property
-    console.log(`Order ${order.id} created in Draft state`);
+    console.log(`Order ${order.id} created in Draft state`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
 
   getCurrentState(): OrderState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return this.state;
+    return this.state; // => Returns value to caller
     // => Access instance property
     // => Return current state value
   }
 
   getOrder(): Order {
+    // => Accessor method definition
     // => Begin object/config definition
-    return this.order;
+    return this.order; // => Returns value to caller
     // => Access instance property
     // => Return computed result
   }
 
   handleEvent(event: OrderEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
-    const prevState = this.state;
+    const prevState = this.state; // => State variable initialization
     // => Access instance property
     // => Initialize prevState
 
     if (event === "submit" && this.state === "Draft") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
-      this.state = "Submitted";
+      this.state = "Submitted"; // => State transition execution
       // => Access instance property
       // => Transition: set state to Submitted
       // => State mutation (core FSM operation)
-      console.log(`Order submitted: ${this.order.items.length} items, $${this.order.total}`);
+      console.log(`Order submitted: ${this.order.items.length} items, $${this.order.total}`); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "confirm" && this.state === "Submitted") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
-      this.state = "Confirmed";
+      this.state = "Confirmed"; // => State transition execution
       // => Access instance property
       // => Transition: set state to Confirmed
       // => State mutation (core FSM operation)
-      console.log("Order confirmed: Payment authorized");
+      console.log("Order confirmed: Payment authorized"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "startProcessing" && this.state === "Confirmed") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
-      this.state = "Processing";
+      this.state = "Processing"; // => State transition execution
       // => Access instance property
       // => Transition: set state to Processing
       // => State mutation (core FSM operation)
-      console.log("Processing: Preparing items for shipment");
+      console.log("Processing: Preparing items for shipment"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "ship" && this.state === "Processing") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
-      this.state = "Shipped";
+      this.state = "Shipped"; // => State transition execution
       // => Access instance property
       // => Transition: set state to Shipped
       // => State mutation (core FSM operation)
-      console.log("Order shipped: Tracking number assigned");
+      console.log("Order shipped: Tracking number assigned"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "deliver" && this.state === "Shipped") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
-      this.state = "Delivered";
+      this.state = "Delivered"; // => State transition execution
       // => Access instance property
       // => Transition: set state to Delivered
       // => State mutation (core FSM operation)
-      console.log("Order delivered: Customer signed");
+      console.log("Order delivered: Customer signed"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "cancel" && ["Submitted", "Confirmed", "Processing"].includes(this.state)) {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
-      this.state = "Cancelled";
+      this.state = "Cancelled"; // => State transition execution
       // => Access instance property
       // => Transition: set state to Cancelled
       // => State mutation (core FSM operation)
-      console.log(`Order cancelled from ${prevState} state`);
+      console.log(`Order cancelled from ${prevState} state`); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else {
+      // => Statement execution
       // => Fallback branch
-      throw new Error(`Invalid transition: ${event} not allowed in ${this.state} state`);
+      throw new Error(`Invalid transition: ${event} not allowed in ${this.state} state`); // => Method invocation
+      // => Constructor creates new object instance
       // => Reject invalid operation
       // => Fail fast on FSM violation
     }
 
-    console.log(`Transition: ${prevState} → ${this.state}`);
+    console.log(`Transition: ${prevState} → ${this.state}`); // => Output for verification
     // => Debug/audit output
     // => Log for observability
   }
@@ -3127,12 +3640,13 @@ class OrderProcessor {
 
 // Usage
 const order = new OrderProcessor({
+  // => Instance creation via constructor
   // => Create new instance
   // => Initialize order
-  id: "ORD-001",
-  items: ["Widget A", "Widget B"],
-  total: 99.99,
-});
+  id: "ORD-001", // => Statement execution
+  items: ["Widget A", "Widget B"], // => Statement execution
+  total: 99.99, // => Statement execution
+}); // => Statement execution
 // => Output: Order ORD-001 created in Draft state
 
 order.handleEvent("submit"); // => Draft → Submitted
@@ -3156,6 +3670,7 @@ order.handleEvent("cancel"); // => Processing → Cancelled
 // =>         Transition: Processing → Cancelled
 
 console.log(`Final state: ${order.getCurrentState()}`); // => Output: Final state: Cancelled
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -3171,43 +3686,51 @@ Production orders integrate with inventory, using guards to validate stock befor
 
 ```typescript
 // Order FSM with inventory validation
-type OrderState = "Draft" | "Submitted" | "Confirmed" | "Shipped" | "OutOfStock";
+type OrderState = "Draft" | "Submitted" | "Confirmed" | "Shipped" | "OutOfStock"; // => Type declaration defines structure
 // => Assign value
 // => Enum-like union type for state values
 // => Type system ensures only valid states used
-type OrderEvent = "submit" | "confirm" | "ship";
+type OrderEvent = "submit" | "confirm" | "ship"; // => Type declaration defines structure
 // => Assign value
 // => Defines event alphabet for FSM
 // => Events trigger state transitions
 
 interface OrderItem {
+  // => Type declaration defines structure
   // => Begin object/config definition
-  sku: string;
-  quantity: number;
+  sku: string; // => Statement execution
+  quantity: number; // => Statement execution
 }
 
 class InventorySystem {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
   private stock: Record<string, number> = {
+    // => Field declaration: class member variable
     // => Assign value
     // => Extended state (data beyond FSM state)
     // => Initialized alongside FSM state
-    "SKU-A": 10,
-    "SKU-B": 5,
+    "SKU-A": 10, // => Statement execution
+    "SKU-B": 5, // => Statement execution
     "SKU-C": 0, // => Out of stock
   };
 
   checkAvailability(items: OrderItem[]): boolean {
+    // => Method invocation
     // => Begin object/config definition
     for (const item of items) {
+      // => Method invocation
       // => Iterate collection
       // => Begin object/config definition
       const available = this.stock[item.sku] || 0; // => Check stock
+      // => FSM state management logic
       if (available < item.quantity) {
+        // => Conditional branch
         // => Conditional check
         // => Branch execution based on condition
-        console.log(`Out of stock: ${item.sku} (need ${item.quantity}, have ${available})`);
+        console.log(`Out of stock: ${item.sku} (need ${item.quantity}, have ${available})`); // => Output for verification
+        // => Chained method calls or nested operations
         // => Debug/audit output
         // => Log for observability
         return false; // => Guard fails: insufficient stock
@@ -3217,12 +3740,15 @@ class InventorySystem {
   }
 
   reserveStock(items: OrderItem[]): void {
+    // => Method invocation
     // => Begin object/config definition
     for (const item of items) {
+      // => Method invocation
       // => Iterate collection
       // => Begin object/config definition
       this.stock[item.sku] -= item.quantity; // => Reserve inventory
-      console.log(`Reserved: ${item.quantity} × ${item.sku} (remaining: ${this.stock[item.sku]})`);
+      console.log(`Reserved: ${item.quantity} × ${item.sku} (remaining: ${this.stock[item.sku]})`); // => Output for verification
+      // => Chained method calls or nested operations
       // => Debug/audit output
       // => Log for observability
     }
@@ -3230,73 +3756,87 @@ class InventorySystem {
 }
 
 class InventoryAwareOrder {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
-  private state: OrderState = "Draft";
+  private state: OrderState = "Draft"; // => State field: stores current FSM state privately
   // => Assign value
   // => Mutable state storage (single source of truth)
   // => FSM begins execution in Draft state
-  private items: OrderItem[];
+  private items: OrderItem[]; // => Field declaration: class member variable
   // => Extended state (data beyond FSM state)
-  private inventory: InventorySystem;
+  private inventory: InventorySystem; // => Field declaration: class member variable
   // => Extended state (data beyond FSM state)
 
   constructor(items: OrderItem[], inventory: InventorySystem) {
+    // => Method invocation
     // => Begin object/config definition
-    this.items = items;
+    this.items = items; // => Statement execution
     // => Access instance property
-    this.inventory = inventory;
+    this.inventory = inventory; // => Statement execution
     // => Access instance property
   }
 
   getCurrentState(): OrderState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return this.state;
+    return this.state; // => Returns value to caller
     // => Access instance property
     // => Return current state value
   }
 
   handleEvent(event: OrderEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "submit" && this.state === "Draft") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       this.state = "Submitted"; // => Draft → Submitted (no guard)
-      console.log("Order submitted");
+      console.log("Order submitted"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "confirm" && this.state === "Submitted") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       // Guard: Check inventory before confirming
       if (this.inventory.checkAvailability(this.items)) {
+        // => Conditional branch
+        // => Chained method calls or nested operations
         // => Conditional check
         // => Branch execution based on condition
         this.inventory.reserveStock(this.items); // => Reserve stock
         this.state = "Confirmed"; // => Submitted → Confirmed
-        console.log("Order confirmed: Stock reserved");
+        console.log("Order confirmed: Stock reserved"); // => Output for verification
         // => Debug/audit output
         // => Log for observability
       } else {
+        // => Statement execution
         // => Fallback branch
         this.state = "OutOfStock"; // => Guard failed → OutOfStock
-        console.log("Order failed: Insufficient inventory");
+        console.log("Order failed: Insufficient inventory"); // => Output for verification
         // => Debug/audit output
         // => Log for observability
       }
     } else if (event === "ship" && this.state === "Confirmed") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "Shipped"; // => Confirmed → Shipped
-      console.log("Order shipped");
+      console.log("Order shipped"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else {
+      // => Statement execution
       // => Fallback branch
-      console.log(`Invalid transition: ${event} in ${this.state}`);
+      console.log(`Invalid transition: ${event} in ${this.state}`); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
@@ -3304,45 +3844,50 @@ class InventoryAwareOrder {
 }
 
 // Usage - Successful order
-const inventory = new InventorySystem();
+const inventory = new InventorySystem(); // => Instance creation via constructor
 // => Create new instance
 // => Initialize inventory
-const successOrder = new InventoryAwareOrder(
+const successOrder = new InventoryAwareOrder( // => Instance creation via constructor
   // => Create new instance
   // => Initialize successOrder
   [
-    { sku: "SKU-A", quantity: 2 },
-    { sku: "SKU-B", quantity: 1 },
-  ],
-  inventory,
-);
+    // => Statement execution
+    { sku: "SKU-A", quantity: 2 }, // => Statement execution
+    { sku: "SKU-B", quantity: 1 }, // => Statement execution
+  ], // => Statement execution
+  inventory, // => Statement execution
+); // => Statement execution
 
 successOrder.handleEvent("submit"); // => Draft → Submitted
 // => Processes events, triggers transitions
 // => Output: Order submitted
 
 successOrder.handleEvent("confirm"); // => Check inventory (passes)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: Reserved: 2 × SKU-A (remaining: 8)
 // =>         Reserved: 1 × SKU-B (remaining: 4)
 // =>         Order confirmed: Stock reserved
 
 console.log(successOrder.getCurrentState()); // => Output: Confirmed
+// => FSM state management logic
 // => Pure read, no side effects
 
 // Usage - Out of stock order
-const failOrder = new InventoryAwareOrder([{ sku: "SKU-C", quantity: 1 }], inventory);
+const failOrder = new InventoryAwareOrder([{ sku: "SKU-C", quantity: 1 }], inventory); // => Instance creation via constructor
 // => Create new instance
 // => Initialize failOrder
 
 failOrder.handleEvent("submit"); // => Draft → Submitted
 // => Processes events, triggers transitions
 failOrder.handleEvent("confirm"); // => Check inventory (fails)
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: Out of stock: SKU-C (need 1, have 0)
 // =>         Order failed: Insufficient inventory
 
 console.log(failOrder.getCurrentState()); // => Output: OutOfStock
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -3358,113 +3903,132 @@ Production orders handle timeouts - orders stuck in intermediate states too long
 
 ```typescript
 // Order FSM with timeouts
-type OrderState = "Submitted" | "PaymentPending" | "Confirmed" | "Expired";
+type OrderState = "Submitted" | "PaymentPending" | "Confirmed" | "Expired"; // => Type declaration defines structure
 // => Assign value
 // => Enum-like union type for state values
 // => Type system ensures only valid states used
-type OrderEvent = "authorize" | "timeout";
+type OrderEvent = "authorize" | "timeout"; // => Type declaration defines structure
 // => Assign value
 // => Defines event alphabet for FSM
 // => Events trigger state transitions
 
 class TimedOrder {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
-  private state: OrderState = "Submitted";
+  private state: OrderState = "Submitted"; // => State field: stores current FSM state privately
   // => Assign value
   // => Mutable state storage (single source of truth)
   // => FSM begins execution in Submitted state
-  private createdAt: number;
+  private createdAt: number; // => Field declaration: class member variable
   // => Extended state (data beyond FSM state)
   private readonly PAYMENT_TIMEOUT = 5000; // => 5 seconds (milliseconds)
   // => Initialized alongside FSM state
-  private timeoutHandle: NodeJS.Timeout | null = null;
+  private timeoutHandle: NodeJS.Timeout | null = null; // => Field declaration: class member variable
   // => Assign value
   // => Extended state (data beyond FSM state)
   // => Initialized alongside FSM state
 
   constructor() {
+    // => Method invocation
     // => Begin object/config definition
-    this.createdAt = Date.now();
+    this.createdAt = Date.now(); // => Method invocation
     // => Assign value
     this.startPaymentTimeout(); // => Start timeout on creation
   }
 
   getCurrentState(): OrderState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return this.state;
+    return this.state; // => Returns value to caller
     // => Access instance property
     // => Return current state value
   }
 
   private startPaymentTimeout(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     this.timeoutHandle = setTimeout(() => {
+      // => Event handler method
+      // => Chained method calls or nested operations
       // => Assign value
       // => Begin object/config definition
       if (this.state === "PaymentPending" || this.state === "Submitted") {
+        // => State-based guard condition
+        // => Logical OR: either condition can be true
         // => Comparison check
         // => Conditional check
         // => Branch execution based on condition
-        console.log("Payment timeout: No authorization received");
+        console.log("Payment timeout: No authorization received"); // => Output for verification
         // => Debug/audit output
         // => Log for observability
         this.handleEvent("timeout"); // => Auto-trigger timeout event
         // => Processes events, triggers transitions
       }
-    }, this.PAYMENT_TIMEOUT);
+    }, this.PAYMENT_TIMEOUT); // => Statement execution
     // => Access instance property
-    console.log(`Payment timeout scheduled (${this.PAYMENT_TIMEOUT}ms)`);
+    console.log(`Payment timeout scheduled (${this.PAYMENT_TIMEOUT}ms)`); // => Output for verification
+    // => Chained method calls or nested operations
     // => Debug/audit output
     // => Log for observability
   }
 
   private clearTimeoutIfNeeded(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     if (this.timeoutHandle) {
+      // => Event handler method
       // => Conditional check
       // => Branch execution based on condition
       clearTimeout(this.timeoutHandle); // => Cancel timeout
-      this.timeoutHandle = null;
+      this.timeoutHandle = null; // => Statement execution
       // => Access instance property
-      console.log("Timeout cancelled");
+      console.log("Timeout cancelled"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
   }
 
   handleEvent(event: OrderEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "authorize" && this.state === "Submitted") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       this.state = "PaymentPending"; // => Submitted → PaymentPending
-      console.log("Payment authorization started");
+      console.log("Payment authorization started"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "authorize" && this.state === "PaymentPending") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.clearTimeoutIfNeeded(); // => Stop timeout
       this.state = "Confirmed"; // => PaymentPending → Confirmed
-      console.log("Payment confirmed");
+      console.log("Payment confirmed"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "timeout" && ["Submitted", "PaymentPending"].includes(this.state)) {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
-      this.clearTimeoutIfNeeded();
+      this.clearTimeoutIfNeeded(); // => Method invocation
       this.state = "Expired"; // => Timeout → Expired
-      console.log("Order expired: Payment not completed in time");
+      console.log("Order expired: Payment not completed in time"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
   }
 
   cleanup(): void {
+    // => Method invocation
     // => Begin object/config definition
     this.clearTimeoutIfNeeded(); // => Cleanup resources
   }
@@ -3480,32 +4044,38 @@ quickOrder.handleEvent("authorize"); // => Submitted → PaymentPending
 
 // Authorize within timeout
 setTimeout(() => {
+  // => Accessor method definition
+  // => Chained method calls or nested operations
   // => Begin object/config definition
   quickOrder.handleEvent("authorize"); // => PaymentPending → Confirmed
   // => Processes events, triggers transitions
   // => Output: Timeout cancelled
   // =>         Payment confirmed
   console.log(`State: ${quickOrder.getCurrentState()}`); // => Output: State: Confirmed
+  // => FSM state management logic
   // => Pure read, no side effects
-  quickOrder.cleanup();
-}, 2000); // => 2 seconds (within 5-second timeout)
+  quickOrder.cleanup(); // => Method invocation
+}, 2000); // => Statement execution
 
 // Usage - Timeout expires
-const slowOrder = new TimedOrder();
+const slowOrder = new TimedOrder(); // => Instance creation via constructor
 // => Create new instance
 // => Initialize slowOrder
-console.log("Waiting for timeout to expire...");
+console.log("Waiting for timeout to expire..."); // => Output for verification
 // => Debug/audit output
 // => Log for observability
 // After 5 seconds, timeout fires automatically:
 // => Output: Payment timeout: No authorization received
 // =>         Order expired: Payment not completed in time
 setTimeout(() => {
+  // => Accessor method definition
+  // => Chained method calls or nested operations
   // => Begin object/config definition
   console.log(`State: ${slowOrder.getCurrentState()}`); // => Output: State: Expired
+  // => FSM state management logic
   // => Pure read, no side effects
-  slowOrder.cleanup();
-}, 6000);
+  slowOrder.cleanup(); // => Method invocation
+}, 6000); // => Statement execution
 ```
 
 **Key Takeaway**: Production FSMs handle timeouts using scheduled events that auto-trigger transitions if intermediate states persist too long. Timeouts prevent orders from getting stuck indefinitely.
@@ -3520,19 +4090,20 @@ Production orders implement compensation - if a step fails, FSM executes compens
 
 ```typescript
 // Order FSM with compensation (Saga pattern)
-type SagaState = "Initial" | "InventoryReserved" | "PaymentCharged" | "Completed" | "Compensating" | "Failed";
+type SagaState = "Initial" | "InventoryReserved" | "PaymentCharged" | "Completed" | "Compensating" | "Failed"; // => Type declaration defines structure
 // => Assign value
 // => Enum-like union type for state values
 // => Type system ensures only valid states used
-type SagaEvent = "reserveInventory" | "chargePayment" | "complete" | "fail";
+type SagaEvent = "reserveInventory" | "chargePayment" | "complete" | "fail"; // => Type declaration defines structure
 // => Assign value
 // => Defines event alphabet for FSM
 // => Events trigger state transitions
 
 class OrderSaga {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
-  private state: SagaState = "Initial";
+  private state: SagaState = "Initial"; // => State field: stores current FSM state privately
   // => Assign value
   // => Mutable state storage (single source of truth)
   // => FSM begins execution in Initial state
@@ -3540,29 +4111,35 @@ class OrderSaga {
   // => Initialized alongside FSM state
 
   getCurrentState(): SagaState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return this.state;
+    return this.state; // => Returns value to caller
     // => Access instance property
     // => Return current state value
   }
 
   private recordCompensation(action: () => void): void {
+    // => Method invocation
+    // => Chained method calls or nested operations
     // => Extended state (data beyond FSM state)
     // => Initialized alongside FSM state
     this.compensations.push(action); // => Add compensating action to stack
-    console.log(`Compensation recorded (total: ${this.compensations.length})`);
+    console.log(`Compensation recorded (total: ${this.compensations.length})`); // => Output for verification
+    // => Chained method calls or nested operations
     // => Debug/audit output
     // => Log for observability
   }
 
   private runCompensations(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
-    console.log("Running compensations...");
+    console.log("Running compensations..."); // => Output for verification
     // => Debug/audit output
     // => Log for observability
     // Execute compensations in reverse order (LIFO)
     while (this.compensations.length > 0) {
+      // => Method invocation
       // => Loop while condition true
       // => Begin object/config definition
       const compensate = this.compensations.pop()!; // => Get last compensation
@@ -3571,83 +4148,100 @@ class OrderSaga {
   }
 
   handleEvent(event: SagaEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "reserveInventory" && this.state === "Initial") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
-      console.log("Step 1: Reserving inventory...");
+      console.log("Step 1: Reserving inventory..."); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       // Simulate inventory reservation
       const reserved = true; // => Success
 
       if (reserved) {
+        // => Conditional branch
         // => Conditional check
         // => Branch execution based on condition
         this.state = "InventoryReserved"; // => Initial → InventoryReserved
         this.recordCompensation(() => {
+          // => Method invocation
+          // => Chained method calls or nested operations
           // => Begin object/config definition
-          console.log("  Compensating: Releasing inventory reservation");
+          console.log("  Compensating: Releasing inventory reservation"); // => Output for verification
           // => Debug/audit output
           // => Log for observability
-        });
-        console.log("Inventory reserved");
+        }); // => Statement execution
+        console.log("Inventory reserved"); // => Output for verification
         // => Debug/audit output
         // => Log for observability
       } else {
+        // => Statement execution
         // => Fallback branch
         this.handleEvent("fail"); // => Trigger failure
         // => Processes events, triggers transitions
       }
     } else if (event === "chargePayment" && this.state === "InventoryReserved") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
-      console.log("Step 2: Charging payment...");
+      console.log("Step 2: Charging payment..."); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       const charged = false; // => Simulate payment failure
 
       if (charged) {
+        // => Conditional branch
         // => Conditional check
         // => Branch execution based on condition
-        this.state = "PaymentCharged";
+        this.state = "PaymentCharged"; // => State transition execution
         // => Access instance property
         // => Transition: set state to PaymentCharged
         // => State mutation (core FSM operation)
         this.recordCompensation(() => {
+          // => Method invocation
+          // => Chained method calls or nested operations
           // => Begin object/config definition
-          console.log("  Compensating: Refunding payment");
+          console.log("  Compensating: Refunding payment"); // => Output for verification
           // => Debug/audit output
           // => Log for observability
-        });
-        console.log("Payment charged");
+        }); // => Statement execution
+        console.log("Payment charged"); // => Output for verification
         // => Debug/audit output
         // => Log for observability
       } else {
+        // => Statement execution
         // => Fallback branch
-        console.log("Payment failed!");
+        console.log("Payment failed!"); // => Output for verification
         // => Debug/audit output
         // => Log for observability
         this.handleEvent("fail"); // => Trigger failure (will compensate)
+        // => FSM state management logic
         // => Processes events, triggers transitions
       }
     } else if (event === "complete" && this.state === "PaymentCharged") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "Completed"; // => PaymentCharged → Completed
       this.compensations = []; // => Clear compensations (saga succeeded)
-      console.log("Order completed successfully");
+      console.log("Order completed successfully"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "fail") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Alternative condition
       this.state = "Compensating"; // => Enter compensating state
       this.runCompensations(); // => Execute all compensations
       this.state = "Failed"; // => Compensating → Failed
-      console.log("Order failed: All compensations executed");
+      console.log("Order failed: All compensations executed"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
@@ -3672,6 +4266,7 @@ saga.handleEvent("chargePayment"); // => Payment fails → Compensate
 // =>         Order failed: All compensations executed
 
 console.log(`Final state: ${saga.getCurrentState()}`); // => Output: Final state: Failed
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -3707,183 +4302,219 @@ stateDiagram-v2
 
 ```typescript
 // Authentication FSM
-type AuthState = "LoggedOut" | "Authenticating" | "LoggedIn" | "RefreshingToken";
+type AuthState = "LoggedOut" | "Authenticating" | "LoggedIn" | "RefreshingToken"; // => Type declaration defines structure
 // => Assign value
 // => Enum-like union type for state values
 // => Type system ensures only valid states used
-type AuthEvent = "login" | "success" | "failure" | "tokenExpiring" | "tokenRefreshed" | "refreshFailed" | "logout";
+type AuthEvent = "login" | "success" | "failure" | "tokenExpiring" | "tokenRefreshed" | "refreshFailed" | "logout"; // => Type declaration defines structure
 // => Assign value
 // => Defines event alphabet for FSM
 // => Events trigger state transitions
 
 interface User {
+  // => Type declaration defines structure
   // => Begin object/config definition
-  id: string;
-  token: string;
-  refreshToken: string;
+  id: string; // => Statement execution
+  token: string; // => Statement execution
+  refreshToken: string; // => Statement execution
 }
 
 class AuthenticationFlow {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
-  private state: AuthState = "LoggedOut";
+  private state: AuthState = "LoggedOut"; // => State field: stores current FSM state privately
   // => Assign value
   // => Mutable state storage (single source of truth)
   // => FSM begins execution in LoggedOut state
-  private user: User | null = null;
+  private user: User | null = null; // => Field declaration: class member variable
   // => Assign value
   // => Extended state (data beyond FSM state)
   // => Initialized alongside FSM state
-  private tokenRefreshHandle: NodeJS.Timeout | null = null;
+  private tokenRefreshHandle: NodeJS.Timeout | null = null; // => Field declaration: class member variable
   // => Assign value
   // => Extended state (data beyond FSM state)
   // => Initialized alongside FSM state
 
   getCurrentState(): AuthState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return this.state;
+    return this.state; // => Returns value to caller
     // => Access instance property
     // => Return current state value
   }
 
   getUser(): User | null {
+    // => Accessor method definition
     // => Begin object/config definition
-    return this.user;
+    return this.user; // => Returns value to caller
     // => Access instance property
     // => Return computed result
   }
 
   private scheduleTokenRefresh(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     this.tokenRefreshHandle = setTimeout(() => {
+      // => Event handler method
+      // => Chained method calls or nested operations
       // => Assign value
       // => Begin object/config definition
-      console.log("Token expiring soon...");
+      console.log("Token expiring soon..."); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.handleEvent("tokenExpiring"); // => Auto-trigger refresh
       // => Processes events, triggers transitions
-    }, 10000); // => 10 seconds (simulated token lifetime)
-    console.log("Token refresh scheduled (10s)");
+    }, 10000); // => Statement execution
+    console.log("Token refresh scheduled (10s)"); // => Output for verification
+    // => Chained method calls or nested operations
     // => Debug/audit output
     // => Log for observability
   }
 
   private clearTokenRefresh(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     if (this.tokenRefreshHandle) {
+      // => Event handler method
       // => Conditional check
       // => Branch execution based on condition
-      clearTimeout(this.tokenRefreshHandle);
-      this.tokenRefreshHandle = null;
+      clearTimeout(this.tokenRefreshHandle); // => Event handler method
+      this.tokenRefreshHandle = null; // => Statement execution
       // => Access instance property
     }
   }
 
   handleEvent(event: AuthEvent, data?: any): void {
+    // => Event handler method
+    // => Ternary: condition ? true_branch : false_branch
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "login" && this.state === "LoggedOut") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       this.state = "Authenticating"; // => LoggedOut → Authenticating
-      console.log("Authenticating user...");
+      console.log("Authenticating user..."); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       // Simulate async authentication
       setTimeout(() => {
+        // => Accessor method definition
+        // => Chained method calls or nested operations
         // => Begin object/config definition
         const success = true; // => Simulate success
         if (success) {
+          // => Conditional branch
           // => Conditional check
           // => Branch execution based on condition
           this.handleEvent("success", {
+            // => Event handler method
             // => Event handler: main FSM dispatch method
             // => Processes events, triggers transitions
-            id: "user123",
-            token: "jwt-token",
-            refreshToken: "refresh-token",
-          });
+            id: "user123", // => Statement execution
+            token: "jwt-token", // => Statement execution
+            refreshToken: "refresh-token", // => Statement execution
+          }); // => Statement execution
         } else {
+          // => Statement execution
           // => Fallback branch
-          this.handleEvent("failure");
+          this.handleEvent("failure"); // => Event handler method
           // => Event handler: main FSM dispatch method
           // => Processes events, triggers transitions
         }
-      }, 1000);
+      }, 1000); // => Statement execution
     } else if (event === "success" && this.state === "Authenticating") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.user = data; // => Store user data
       this.state = "LoggedIn"; // => Authenticating → LoggedIn
-      console.log(`Login successful: User ${this.user!.id}`);
+      console.log(`Login successful: User ${this.user!.id}`); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.scheduleTokenRefresh(); // => Start token refresh timer
     } else if (event === "failure" && this.state === "Authenticating") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "LoggedOut"; // => Authenticating → LoggedOut (failed)
-      console.log("Authentication failed");
+      console.log("Authentication failed"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "tokenExpiring" && this.state === "LoggedIn") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "RefreshingToken"; // => LoggedIn → RefreshingToken
-      console.log("Refreshing authentication token...");
+      console.log("Refreshing authentication token..."); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       // Simulate token refresh
       setTimeout(() => {
+        // => Accessor method definition
+        // => Chained method calls or nested operations
         // => Begin object/config definition
         const refreshSuccess = true; // => Simulate success
         if (refreshSuccess) {
+          // => Conditional branch
           // => Conditional check
           // => Branch execution based on condition
-          this.handleEvent("tokenRefreshed", { token: "new-jwt-token" });
+          this.handleEvent("tokenRefreshed", { token: "new-jwt-token" }); // => Event handler method
           // => Event handler: main FSM dispatch method
           // => Processes events, triggers transitions
         } else {
+          // => Statement execution
           // => Fallback branch
-          this.handleEvent("refreshFailed");
+          this.handleEvent("refreshFailed"); // => Event handler method
           // => Event handler: main FSM dispatch method
           // => Processes events, triggers transitions
         }
-      }, 1000);
+      }, 1000); // => Statement execution
     } else if (event === "tokenRefreshed" && this.state === "RefreshingToken") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.user!.token = data.token; // => Update token
       this.state = "LoggedIn"; // => RefreshingToken → LoggedIn
-      console.log("Token refreshed successfully");
+      console.log("Token refreshed successfully"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.scheduleTokenRefresh(); // => Reschedule next refresh
     } else if (event === "refreshFailed" && this.state === "RefreshingToken") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.user = null; // => Clear user
-      this.clearTokenRefresh();
+      this.clearTokenRefresh(); // => Method invocation
       this.state = "LoggedOut"; // => RefreshingToken → LoggedOut
-      console.log("Token refresh failed: Session expired");
+      console.log("Token refresh failed: Session expired"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "logout" && this.state === "LoggedIn") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.user = null; // => Clear user
       this.clearTokenRefresh(); // => Cancel token refresh
       this.state = "LoggedOut"; // => LoggedIn → LoggedOut
-      console.log("User logged out");
+      console.log("User logged out"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
   }
 
   cleanup(): void {
+    // => Method invocation
     // => Begin object/config definition
     this.clearTokenRefresh(); // => Cleanup timers
   }
@@ -3892,6 +4523,7 @@ class AuthenticationFlow {
 // Usage
 const auth = new AuthenticationFlow(); // => state: LoggedOut
 console.log(`Initial state: ${auth.getCurrentState()}`); // => Output: Initial state: LoggedOut
+// => FSM state management logic
 // => Pure read, no side effects
 
 auth.handleEvent("login"); // => LoggedOut → Authenticating
@@ -3908,14 +4540,17 @@ auth.handleEvent("login"); // => LoggedOut → Authenticating
 
 // Manual logout
 setTimeout(() => {
+  // => Accessor method definition
+  // => Chained method calls or nested operations
   // => Begin object/config definition
   auth.handleEvent("logout"); // => LoggedIn → LoggedOut
   // => Processes events, triggers transitions
   // => Output: User logged out
   console.log(`State: ${auth.getCurrentState()}`); // => Output: State: LoggedOut
+  // => FSM state management logic
   // => Pure read, no side effects
-  auth.cleanup();
-}, 15000);
+  auth.cleanup(); // => Method invocation
+}, 15000); // => Statement execution
 ```
 
 **Key Takeaway**: Authentication FSMs handle login flow, token refresh lifecycle, and logout. Automatic token refresh prevents session expiration, transitioning between LoggedIn and RefreshingToken states transparently.
@@ -3930,128 +4565,150 @@ Production auth flows support MFA, adding intermediate verification states befor
 
 ```typescript
 // Multi-Factor Authentication FSM
-type MFAState = "LoggedOut" | "PasswordVerified" | "AwaitingMFA" | "LoggedIn";
+type MFAState = "LoggedOut" | "PasswordVerified" | "AwaitingMFA" | "LoggedIn"; // => Type declaration defines structure
 // => Assign value
 // => Enum-like union type for state values
 // => Type system ensures only valid states used
-type MFAEvent = "submitPassword" | "requestMFA" | "submitMFA" | "mfaSuccess" | "mfaFail" | "logout";
+type MFAEvent = "submitPassword" | "requestMFA" | "submitMFA" | "mfaSuccess" | "mfaFail" | "logout"; // => Type declaration defines structure
 // => Assign value
 // => Defines event alphabet for FSM
 // => Events trigger state transitions
 
 class MFAFlow {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
-  private state: MFAState = "LoggedOut";
+  private state: MFAState = "LoggedOut"; // => State field: stores current FSM state privately
   // => Assign value
   // => Mutable state storage (single source of truth)
   // => FSM begins execution in LoggedOut state
-  private userId: string | null = null;
+  private userId: string | null = null; // => Field declaration: class member variable
   // => Assign value
   // => Extended state (data beyond FSM state)
   // => Initialized alongside FSM state
-  private mfaAttempts = 0;
+  private mfaAttempts = 0; // => Statement execution
   // => Assign value
   // => Extended state (data beyond FSM state)
   // => Initialized alongside FSM state
-  private readonly MAX_MFA_ATTEMPTS = 3;
+  private readonly MAX_MFA_ATTEMPTS = 3; // => Statement execution
   // => Assign value
   // => Extended state (data beyond FSM state)
   // => Initialized alongside FSM state
 
   getCurrentState(): MFAState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return this.state;
+    return this.state; // => Returns value to caller
     // => Access instance property
     // => Return current state value
   }
 
   handleEvent(event: MFAEvent, data?: any): void {
+    // => Event handler method
+    // => Ternary: condition ? true_branch : false_branch
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "submitPassword" && this.state === "LoggedOut") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       // Verify password
       const passwordValid = true; // => Simulate success
       if (passwordValid) {
+        // => Conditional branch
         // => Conditional check
         // => Branch execution based on condition
         this.userId = data.userId; // => Store user ID
         this.state = "PasswordVerified"; // => LoggedOut → PasswordVerified
-        console.log("Password verified. MFA required.");
+        console.log("Password verified. MFA required."); // => Output for verification
         // => Debug/audit output
         // => Log for observability
       } else {
+        // => Statement execution
         // => Fallback branch
-        console.log("Invalid password");
+        console.log("Invalid password"); // => Output for verification
         // => Debug/audit output
         // => Log for observability
       }
     } else if (event === "requestMFA" && this.state === "PasswordVerified") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "AwaitingMFA"; // => PasswordVerified → AwaitingMFA
-      console.log("MFA code sent to device. Awaiting verification...");
+      console.log("MFA code sent to device. Awaiting verification..."); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "submitMFA" && this.state === "AwaitingMFA") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       const codeValid = data.code === "123456"; // => Simulate verification
 
       if (codeValid) {
+        // => Conditional branch
         // => Conditional check
         // => Branch execution based on condition
-        this.handleEvent("mfaSuccess");
+        this.handleEvent("mfaSuccess"); // => Event handler method
         // => Event handler: main FSM dispatch method
         // => Processes events, triggers transitions
       } else {
+        // => Statement execution
         // => Fallback branch
         this.mfaAttempts++; // => Track failed attempts
-        console.log(`MFA failed. Attempts: ${this.mfaAttempts}/${this.MAX_MFA_ATTEMPTS}`);
+        console.log(`MFA failed. Attempts: ${this.mfaAttempts}/${this.MAX_MFA_ATTEMPTS}`); // => Output for verification
         // => Debug/audit output
         // => Log for observability
 
         if (this.mfaAttempts >= this.MAX_MFA_ATTEMPTS) {
+          // => Conditional branch
           // => Comparison check
           // => Conditional check
           // => Branch execution based on condition
           this.handleEvent("mfaFail"); // => Too many attempts
           // => Processes events, triggers transitions
         } else {
+          // => Statement execution
           // => Fallback branch
-          console.log("Try again.");
+          console.log("Try again."); // => Output for verification
           // => Debug/audit output
           // => Log for observability
         }
       }
     } else if (event === "mfaSuccess" && this.state === "AwaitingMFA") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "LoggedIn"; // => AwaitingMFA → LoggedIn
       this.mfaAttempts = 0; // => Reset attempts
-      console.log(`MFA successful. User ${this.userId} logged in.`);
+      console.log(`MFA successful. User ${this.userId} logged in.`); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "mfaFail" && this.state === "AwaitingMFA") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.userId = null; // => Clear user
       this.mfaAttempts = 0; // => Reset attempts
       this.state = "LoggedOut"; // => AwaitingMFA → LoggedOut (lockout)
-      console.log("MFA lockout: Too many failed attempts");
+      console.log("MFA lockout: Too many failed attempts"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "logout" && this.state === "LoggedIn") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
-      this.userId = null;
+      this.userId = null; // => Statement execution
       // => Access instance property
       this.state = "LoggedOut"; // => LoggedIn → LoggedOut
-      console.log("User logged out");
+      console.log("User logged out"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
@@ -4062,6 +4719,7 @@ class MFAFlow {
 const mfa = new MFAFlow(); // => state: LoggedOut
 
 mfa.handleEvent("submitPassword", { userId: "user123" }); // => LoggedOut → PasswordVerified
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: Password verified. MFA required.
 
@@ -4070,33 +4728,39 @@ mfa.handleEvent("requestMFA"); // => PasswordVerified → AwaitingMFA
 // => Output: MFA code sent to device. Awaiting verification...
 
 mfa.handleEvent("submitMFA", { code: "123456" }); // => Correct code → LoggedIn
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: MFA successful. User user123 logged in.
 console.log(`State: ${mfa.getCurrentState()}`); // => Output: State: LoggedIn
+// => FSM state management logic
 // => Pure read, no side effects
 
 // Usage - Failed MFA (too many attempts)
-const mfa2 = new MFAFlow();
+const mfa2 = new MFAFlow(); // => Instance creation via constructor
 // => Create new instance
 // => Initialize mfa2
-mfa2.handleEvent("submitPassword", { userId: "user456" });
+mfa2.handleEvent("submitPassword", { userId: "user456" }); // => Event handler method
 // => Event handler: main FSM dispatch method
 // => Processes events, triggers transitions
-mfa2.handleEvent("requestMFA");
+mfa2.handleEvent("requestMFA"); // => Event handler method
 // => Event handler: main FSM dispatch method
 // => Processes events, triggers transitions
 
 mfa2.handleEvent("submitMFA", { code: "wrong1" }); // => Attempt 1
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: MFA failed. Attempts: 1/3
 mfa2.handleEvent("submitMFA", { code: "wrong2" }); // => Attempt 2
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: MFA failed. Attempts: 2/3
 mfa2.handleEvent("submitMFA", { code: "wrong3" }); // => Attempt 3 → Lockout
+// => FSM state management logic
 // => Processes events, triggers transitions
 // => Output: MFA failed. Attempts: 3/3
 // =>         MFA lockout: Too many failed attempts
 console.log(`State: ${mfa2.getCurrentState()}`); // => Output: State: LoggedOut
+// => FSM state management logic
 // => Pure read, no side effects
 ```
 
@@ -4112,23 +4776,24 @@ Production auth flows handle session timeouts, requiring re-authentication for s
 
 ```typescript
 // Session timeout with re-authentication
-type SessionState = "LoggedOut" | "Active" | "Idle" | "RequiresReauth" | "Reauthenticating";
+type SessionState = "LoggedOut" | "Active" | "Idle" | "RequiresReauth" | "Reauthenticating"; // => Type declaration defines structure
 // => Assign value
 // => Enum-like union type for state values
 // => Type system ensures only valid states used
-type SessionEvent = "login" | "activity" | "timeout" | "sensitiveOp" | "reauth" | "reauthSuccess" | "logout";
+type SessionEvent = "login" | "activity" | "timeout" | "sensitiveOp" | "reauth" | "reauthSuccess" | "logout"; // => Type declaration defines structure
 // => Assign value
 // => Defines event alphabet for FSM
 // => Events trigger state transitions
 
 class SessionManager {
+  // => Class encapsulates FSM logic
   // => State machine implementation class
   // => Encapsulates state + transition logic
-  private state: SessionState = "LoggedOut";
+  private state: SessionState = "LoggedOut"; // => State field: stores current FSM state privately
   // => Assign value
   // => Mutable state storage (single source of truth)
   // => FSM begins execution in LoggedOut state
-  private activityTimeout: NodeJS.Timeout | null = null;
+  private activityTimeout: NodeJS.Timeout | null = null; // => Field declaration: class member variable
   // => Assign value
   // => Extended state (data beyond FSM state)
   // => Initialized alongside FSM state
@@ -4136,128 +4801,156 @@ class SessionManager {
   // => Initialized alongside FSM state
 
   getCurrentState(): SessionState {
+    // => Accessor method definition
     // => Query method: read current FSM state
     // => Pure read, no side effects
-    return this.state;
+    return this.state; // => Returns value to caller
     // => Access instance property
     // => Return current state value
   }
 
   private resetActivityTimer(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     this.clearActivityTimer(); // => Clear existing timer
     this.activityTimeout = setTimeout(() => {
+      // => Method invocation
+      // => Chained method calls or nested operations
       // => Assign value
       // => Begin object/config definition
-      console.log("Session idle timeout");
+      console.log("Session idle timeout"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.handleEvent("timeout"); // => Auto-trigger timeout
       // => Processes events, triggers transitions
-    }, this.IDLE_TIMEOUT);
+    }, this.IDLE_TIMEOUT); // => Statement execution
     // => Access instance property
-    console.log(`Activity timer reset (${this.IDLE_TIMEOUT}ms)`);
+    console.log(`Activity timer reset (${this.IDLE_TIMEOUT}ms)`); // => Output for verification
+    // => Chained method calls or nested operations
     // => Debug/audit output
     // => Log for observability
   }
 
   private clearActivityTimer(): void {
+    // => Method invocation
     // => Extended state (data beyond FSM state)
     if (this.activityTimeout) {
+      // => Conditional branch
       // => Conditional check
       // => Branch execution based on condition
-      clearTimeout(this.activityTimeout);
-      this.activityTimeout = null;
+      clearTimeout(this.activityTimeout); // => Method invocation
+      this.activityTimeout = null; // => Statement execution
       // => Access instance property
     }
   }
 
   handleEvent(event: SessionEvent): void {
+    // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
     if (event === "login" && this.state === "LoggedOut") {
+      // => Event type guard condition
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Event type check
       // => Combined (state, event) guard
       this.state = "Active"; // => LoggedOut → Active
-      console.log("User logged in");
+      console.log("User logged in"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.resetActivityTimer(); // => Start idle tracking
     } else if (event === "activity" && this.state === "Active") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
-      console.log("User activity detected");
+      console.log("User activity detected"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       this.resetActivityTimer(); // => Reset idle timer on activity
     } else if (event === "timeout" && this.state === "Active") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "Idle"; // => Active → Idle (no activity)
-      console.log("Session idle: Limited access");
+      console.log("Session idle: Limited access"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
-      this.clearActivityTimer();
+      this.clearActivityTimer(); // => Method invocation
     } else if (event === "activity" && this.state === "Idle") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "Active"; // => Idle → Active (activity resumes)
-      console.log("Activity resumed: Session active");
+      console.log("Activity resumed: Session active"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
-      this.resetActivityTimer();
+      this.resetActivityTimer(); // => Method invocation
     } else if (event === "sensitiveOp" && this.state === "Active") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "RequiresReauth"; // => Active → RequiresReauth
-      console.log("Sensitive operation: Re-authentication required");
+      console.log("Sensitive operation: Re-authentication required"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
-      this.clearActivityTimer();
+      this.clearActivityTimer(); // => Method invocation
     } else if (event === "sensitiveOp" && this.state === "Idle") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "RequiresReauth"; // => Idle → RequiresReauth
-      console.log("Sensitive operation from idle: Re-authentication required");
+      console.log("Sensitive operation from idle: Re-authentication required"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     } else if (event === "reauth" && this.state === "RequiresReauth") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "Reauthenticating"; // => RequiresReauth → Reauthenticating
-      console.log("Re-authenticating...");
+      console.log("Re-authenticating..."); // => Output for verification
       // => Debug/audit output
       // => Log for observability
       // Simulate re-auth
       setTimeout(() => {
+        // => Accessor method definition
+        // => Chained method calls or nested operations
         // => Begin object/config definition
-        this.handleEvent("reauthSuccess");
+        this.handleEvent("reauthSuccess"); // => Event handler method
         // => Event handler: main FSM dispatch method
         // => Processes events, triggers transitions
-      }, 1000);
+      }, 1000); // => Statement execution
     } else if (event === "reauthSuccess" && this.state === "Reauthenticating") {
+      // => Method signature: defines function interface
+      // => Logical AND: both conditions must be true
       // => Comparison check
       // => Alternative condition
       this.state = "Active"; // => Reauthenticating → Active
-      console.log("Re-authentication successful");
+      console.log("Re-authentication successful"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
-      this.resetActivityTimer();
+      this.resetActivityTimer(); // => Method invocation
     } else if (event === "logout") {
+      // => Method signature: defines function interface
       // => Comparison check
       // => Alternative condition
-      this.clearActivityTimer();
+      this.clearActivityTimer(); // => Method invocation
       this.state = "LoggedOut"; // => Any state → LoggedOut
-      console.log("User logged out");
+      console.log("User logged out"); // => Output for verification
       // => Debug/audit output
       // => Log for observability
     }
   }
 
   cleanup(): void {
+    // => Method invocation
     // => Begin object/config definition
-    this.clearActivityTimer();
+    this.clearActivityTimer(); // => Method invocation
   }
 }
 
@@ -4276,11 +4969,14 @@ session.handleEvent("activity"); // => Reset idle timer
 
 // Wait for idle timeout
 setTimeout(() => {
+  // => Accessor method definition
+  // => Chained method calls or nested operations
   // => Begin object/config definition
   // After 5 seconds idle:
   // => Output: Session idle timeout
   // =>         Session idle: Limited access
   console.log(`State: ${session.getCurrentState()}`); // => Output: State: Idle
+  // => FSM state management logic
   // => Pure read, no side effects
 
   // Try sensitive operation
@@ -4296,13 +4992,15 @@ setTimeout(() => {
   // =>         Activity timer reset (5000ms)
 
   setTimeout(() => {
+    // => Accessor method definition
+    // => Chained method calls or nested operations
     // => Begin object/config definition
-    session.handleEvent("logout");
+    session.handleEvent("logout"); // => Event handler method
     // => Event handler: main FSM dispatch method
     // => Processes events, triggers transitions
-    session.cleanup();
-  }, 2000);
-}, 6000);
+    session.cleanup(); // => Method invocation
+  }, 2000); // => Statement execution
+}, 6000); // => Statement execution
 ```
 
 **Key Takeaway**: Session FSMs track user activity, transitioning between Active (engaged) and Idle (no activity) states. Sensitive operations require re-authentication, transitioning to RequiresReauth state regardless of session activity.

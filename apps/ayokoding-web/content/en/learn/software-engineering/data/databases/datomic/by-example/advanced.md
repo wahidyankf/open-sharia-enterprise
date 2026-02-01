@@ -9,7 +9,7 @@ tags: ["datomic", "database", "tutorial", "by-example", "advanced", "expert", "d
 
 Master advanced Datomic with 20 expert-level examples. Explore client API, excision, performance tuning, distributed patterns, and production deployment strategies.
 
-## Example 61: Client API for Remote Access
+### Example 61: Client API for Remote Access
 
 The client API provides remote database access via HTTP or gRPC. Lighter-weight than peer library for microservices.
 
@@ -108,9 +108,11 @@ Map txResult = client.transact(
 
 **Key Takeaway**: Client API provides remote access to Datomic Cloud/Peer Server. Same query and transaction semantics as peer library, lighter resource footprint.
 
+**Why It Matters**: Client API enables language-agnostic Datomic access and scales to thousands of clients without peer memory overhead. Deploy services in containers or serverless functions without embedding full peer library. Gateway pattern separates query/transaction load from application tier.
+
 ---
 
-## Example 62: Excision for Data Deletion (GDPR Compliance)
+### Example 62: Excision for Data Deletion (GDPR Compliance)
 
 Excision permanently removes data from database history. Use for legal requirements like GDPR "right to be forgotten".
 
@@ -197,9 +199,11 @@ conn.transact(
 
 **Key Takeaway**: Excision (Pro/Cloud) permanently removes data from history. Use for GDPR compliance. Datomic Free uses soft deletes with boolean flags.
 
+**Why It Matters**: GDPR right-to-erasure requires truly deleting personal data, not just marking deleted. Excision removes facts from history and indexes while preserving transaction log continuity. Soft deletes (Free) maintain audit trails while hiding data from current queries.
+
 ---
 
-## Example 63: Analytical Queries with Aggregates
+### Example 63: Analytical Queries with Aggregates
 
 Combine multiple aggregates and grouping for analytical workloads.
 
@@ -284,9 +288,11 @@ public static class Percentile implements clojure.lang.IFn {
 
 **Key Takeaway**: Combine built-in and custom aggregates for analytics. Group by computed expressions for histograms and distribution analysis.
 
+**Why It Matters**: Complex analytics in-database reduces data transfer and leverages query optimization. Compute percentiles, moving averages, or distribution analyses where data lives. Build real-time dashboards querying production database directly without ETL to analytics warehouse.
+
 ---
 
-## Example 64: Streaming Large Result Sets
+### Example 64: Streaming Large Result Sets
 
 Process large query results as lazy sequences to avoid memory issues.
 
@@ -366,9 +372,11 @@ allPeople.stream()
 
 **Key Takeaway**: Query results are lazy sequences. Use `partition-all`, lazy transformations, and `take` to process large datasets with constant memory.
 
+**Why It Matters**: Lazy evaluation prevents memory exhaustion with million-row result sets. Process data incrementally - stream to S3, paginate API responses, or transform for ETL - without loading everything. Compose lazy transformations for memory-efficient pipelines.
+
 ---
 
-## Example 65: Custom Index for Query Optimization
+### Example 65: Custom Index for Query Optimization
 
 Build materialized views or custom indexes for frequently-accessed patterns.
 
@@ -453,9 +461,11 @@ void updateAgeIndex(Collection txData) {
 
 **Key Takeaway**: Build custom indexes for hot query paths. Materialize query results in memory for O(1) lookups. Update incrementally using transaction data.
 
+**Why It Matters**: Custom indexes optimize critical queries beyond what database indexes provide. Build specialized lookup structures (maps, sorted sets, tries) for exact access patterns. Incremental updates keep indexes fresh without full rebuilds. Balance memory cost against query performance.
+
 ---
 
-## Example 66: Distributed Transactions Across Databases
+### Example 66: Distributed Transactions Across Databases
 
 Coordinate transactions across multiple Datomic databases using application-level coordination.
 
@@ -538,9 +548,11 @@ distributedTransact(
 
 **Key Takeaway**: Datomic transactions are per-database. Use application-level coordination (saga pattern, outbox pattern) for cross-database atomicity.
 
+**Why It Matters**: Distributed transactions across databases introduce complexity and failure modes. Saga pattern provides eventual consistency with compensating transactions. Outbox pattern ensures reliable event publishing. Understand trade-offs between strong consistency and system availability.
+
 ---
 
-## Example 67: Performance Tuning with Memory Settings
+### Example 67: Performance Tuning with Memory Settings
 
 Optimize peer memory settings for query performance and cache hit rates.
 
@@ -616,9 +628,11 @@ Database cachedDb = dbCache.getCachedDb(conn, 1000);
 
 **Key Takeaway**: Tune peer memory settings for performance. Cache database values at application level to reduce connection overhead for read-heavy workloads.
 
+**Why It Matters**: Peer caching is critical for query performance. Larger memory-index-threshold keeps more datoms in memory. Database value caching eliminates connection latency for read-heavy apps. Monitor memory usage and tune based on working set size and query patterns.
+
 ---
 
-## Example 68: Schema Versioning and Migration
+### Example 68: Schema Versioning and Migration
 
 Manage schema evolution across versions using additive schema changes and migration functions.
 
@@ -756,9 +770,11 @@ if (currentVersion < 2) {
 
 **Key Takeaway**: Schema evolution is additive in Datomic. Version your schema, write migration functions to transform data, and track schema version in database.
 
+**Why It Matters**: Additive schema evolution eliminates downtime for schema changes. Add attributes anytime without blocking transactions. Migration functions transform legacy data lazily or proactively. Schema versioning enables gradual rollouts and backward compatibility during deployments.
+
 ---
 
-## Example 69: Monitoring and Alerting on Transaction Log
+### Example 69: Monitoring and Alerting on Transaction Log
 
 Monitor transaction log for anomalies, trigger alerts on suspicious patterns.
 
@@ -858,9 +874,11 @@ monitorSensitiveAttributes(conn, new HashSet<>(Arrays.asList(":person/email", ":
 
 **Key Takeaway**: Monitor transaction log for anomalies, large transactions, sensitive data changes. Essential for security, compliance, and operational visibility.
 
+**Why It Matters**: Transaction log monitoring provides real-time security and compliance oversight. Detect bulk data exfiltration, unusual access patterns, or policy violations immediately. Alert on sensitive attribute changes. Build audit dashboards showing who changed what when without impacting application performance.
+
 ---
 
-## Example 70: Backup and Point-in-Time Recovery
+### Example 70: Backup and Point-in-Time Recovery
 
 Create backups and restore to specific points in time.
 
@@ -933,9 +951,11 @@ Long count = (Long) Peer.q(
 
 **Key Takeaway**: Datomic Pro/Cloud support native backup. Datomic Free uses manual export or just queries historical database values. Immutability enables point-in-time queries without restore.
 
+**Why It Matters**: Immutability changes backup strategy - you're backing up append-only log, not mutable state. Point-in-time recovery is just querying as-of any timestamp. Backup validation becomes querying historical data. Test disaster recovery by querying backed-up database values.
+
 ---
 
-## Example 71: Integration with Message Queues
+### Example 71: Integration with Message Queues
 
 Publish database changes to message queues for downstream processing.
 
@@ -1036,9 +1056,11 @@ System.out.println(messageQueue);
 
 **Key Takeaway**: Process transaction results to publish change events to message queues. Enables event-driven architectures and downstream system integration.
 
+**Why It Matters**: Transaction-to-event translation enables microservice integration and CQRS patterns. Publish domain events to Kafka, SQS, or other queues for downstream processing. Transaction context guarantees exactly-once semantics - event published iff transaction succeeds.
+
 ---
 
-## Example 72: Multi-Version Concurrency Control (MVCC)
+### Example 72: Multi-Version Concurrency Control (MVCC)
 
 Understand Datomic's MVCC model: reads never block writes, writes never block reads.
 
@@ -1112,9 +1134,11 @@ Long newCount = (Long) Peer.q(
 
 **Key Takeaway**: Datomic uses MVCC - database values are immutable snapshots. Reads never block writes, writes never block reads. No read locks needed.
 
+**Why It Matters**: Lock-free reads eliminate read-write contention in concurrent systems. Long-running analytical queries don't impact transactional workload. No deadlocks from read locks. Snapshot isolation provides consistent reads without blocking - fundamental to Datomic's scalability.
+
 ---
 
-## Example 73: Optimizing Large Cardinality-Many Attributes
+### Example 73: Optimizing Large Cardinality-Many Attributes
 
 Handle attributes with thousands of values efficiently.
 
@@ -1227,9 +1251,11 @@ elapsed = System.currentTimeMillis() - start;
 
 **Key Takeaway**: Use `(limit :attr n)` in pull patterns for large cardinality-many attributes. Use count aggregates instead of materializing all values.
 
+**Why It Matters**: Limiting large cardinality-many sets prevents memory exhaustion and API timeout. Paginate results, show preview with "...and 1000 more", or just count. Especially critical for followers, tags, permissions, or any unbounded collection.
+
 ---
 
-## Example 74: Reactive Queries with Core.async
+### Example 74: Reactive Queries with Core.async
 
 Implement reactive queries that update automatically on database changes.
 
@@ -1329,9 +1355,11 @@ conn.transact(
 
 **Key Takeaway**: Implement reactive queries with core.async channels. Poll for database changes (Datomic Free) or use tx-report-queue (Pro/Cloud).
 
+**Why It Matters**: Reactive queries enable real-time UI updates and streaming analytics. Push database changes to WebSockets, update dashboards automatically, or trigger workflows on data changes. Core.async provides CSP-based concurrency model for building reactive systems.
+
 ---
 
-## Example 75: Access Control with Attribute-Level Filters
+### Example 75: Access Control with Attribute-Level Filters
 
 Implement attribute-level access control using database filters.
 
@@ -1420,9 +1448,11 @@ Map adminResult = (Map) Peer.pull(
 
 **Key Takeaway**: Use database filters for attribute-level access control. Filter sensitive attributes based on user roles without modifying queries.
 
+**Why It Matters**: Attribute-level filtering implements column-level security declaratively. Users see only attributes they're authorized for, transparently. Application queries unchanged - security layer wraps database value. Critical for multi-tenant SaaS, PII protection, and regulatory compliance.
+
 ---
 
-## Example 76: Debugging Queries with :explain
+### Example 76: Debugging Queries with :explain
 
 Understand query execution plans to optimize performance.
 
@@ -1510,9 +1540,11 @@ boolean usesUnique = queryUsesUniqueAttr(
 
 **Key Takeaway**: Datomic Pro offers query explanation. In Datomic Free, manually analyze queries for unique attribute usage and index selection.
 
+**Why It Matters**: Query explanation reveals optimization opportunities invisible from timing alone. See index selection, join strategies, and cardinality estimates. Identify missing unique constraints, suboptimal clause ordering, or opportunities for rules. Data-driven query optimization.
+
 ---
 
-## Example 77: Composite Entities with Component Attributes
+### Example 77: Composite Entities with Component Attributes
 
 Model complex aggregates using component attributes for lifecycle coupling.
 
@@ -1627,9 +1659,11 @@ Collection products = Peer.q(
 
 **Key Takeaway**: Component attributes couple entity lifecycles. Use for aggregate roots and their owned children (Order-OrderLine, BlogPost-Comments, etc).
 
+**Why It Matters**: Component semantics implement Domain-Driven Design aggregates naturally. Aggregate root retraction cascades to owned entities automatically. Models true ownership - blog post owns comments, order owns line items. Lifecycle coupling declarative, not procedural.
+
 ---
 
-## Example 78: Building Event Sourcing Systems
+### Example 78: Building Event Sourcing Systems
 
 Use Datomic's immutable log as event store for event sourcing architecture.
 
@@ -1771,9 +1805,11 @@ for (Object obj : events) {
 
 **Key Takeaway**: Datomic's transaction log is a natural event store. Record events as facts, replay by querying transactions in order. Immutability guarantees event history integrity.
 
+**Why It Matters**: Event sourcing becomes simple with Datomic - transaction log IS the event log. No separate event store needed. Replay history for projections, debug by examining exact historical state, or implement CQRS patterns naturally. Immutability guarantees events never change.
+
 ---
 
-## Example 79: Handling Schema Conflicts Across Teams
+### Example 79: Handling Schema Conflicts Across Teams
 
 Manage schema in multi-team environments using namespaced attributes and schema registries.
 
@@ -1892,9 +1928,11 @@ Collection result = Peer.q(
 
 **Key Takeaway**: Use namespaced attributes to avoid schema conflicts across teams. Establish namespace ownership conventions and document cross-service references.
 
+**Why It Matters**: Namespaced attributes enable schema federation in microservice architectures. Teams own their namespaces, evolve independently, share common entities. Avoid naming conflicts (user/name vs account/name). Document cross-service references for schema governance.
+
 ---
 
-## Example 80: Production Monitoring and Health Checks
+### Example 80: Production Monitoring and Health Checks
 
 Implement health checks and monitoring for production Datomic deployments.
 
@@ -2035,6 +2073,8 @@ Map metrics = collectMetrics(conn);
 ```
 
 **Key Takeaway**: Implement health checks with connection, query, and transaction tests. Collect metrics on entity counts, database size, and query performance for production monitoring.
+
+**Why It Matters**: Database health monitoring catches issues before users notice. Connection checks detect network partitions, query tests verify index health, transaction tests ensure write path works. Metrics track growth trends, identify performance degradation, and inform capacity planning.
 
 ---
 

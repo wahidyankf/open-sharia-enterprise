@@ -820,52 +820,132 @@ Server Actions are async functions that run on the server. They enable backend l
 
 ```typescript
 // app/donate/page.tsx
-// => Server Component (can use Server Actions directly)
+// => File location: app/donate/page.tsx
+// => Server Component (default, no 'use client')
+// => Can define and use Server Actions inline
+// => No API routes needed for form handling
 
-// => Server Action: async function with 'use server' directive
 async function handleDonation(formData: FormData) {
+  // => Server Action: async function handling form submission
+  // => Parameter: FormData object (browser API for form data)
+  // => FormData passed automatically by Next.js when form submits
+
   'use server';
-  // => 'use server' marks this as Server Action
-  // => Runs on server when form submitted
+  // => CRITICAL directive: marks function as Server Action
+  // => Must be first statement in function (before any code)
+  // => Without this: function would try to run on client (error)
+  // => With this: Next.js creates server endpoint automatically
+  // => Function body runs on server, never sent to browser
 
-  // => FormData API extracts form values
-  const name = formData.get('name') as string;      // => name is "Ahmad"
-  const amount = formData.get('amount') as string;  // => amount is "100000"
+  const name = formData.get('name') as string;
+  // => Extract 'name' field from form
+  // => formData.get() returns FormDataEntryValue (string | File | null)
+  // => 'as string' type assertion (we know it's string from input type="text")
+  // => For form: <input name="name" value="Ahmad" />
+  // =>   name is "Ahmad"
+  // => Field name must match input's name attribute
 
-  // => Server-side processing
+  const amount = formData.get('amount') as string;
+  // => Extract 'amount' field from form
+  // => For form: <input name="amount" value="100000" />
+  // =>   amount is "100000" (string, not number!)
+  // => input type="number" still returns string from FormData
+  // => Need parseInt() or Number() for math operations
+
   console.log(`Donation from ${name}: IDR ${amount}`);
-  // => Server console output: "Donation from Ahmad: IDR 100000"
+  // => Log to SERVER console (not browser console)
+  // => For name="Ahmad", amount="100000":
+  // =>   Server output: "Donation from Ahmad: IDR 100000"
+  // => Useful for debugging
+  // => Production: replace with proper logging
 
-  // => Could save to database here
   // await db.donations.create({ name, amount: parseInt(amount) });
+  // => Example database operation (commented out)
+  // => Server Actions can access database directly
+  // => No need for separate API route
+  // => Could use Prisma, Drizzle, or any database library
+  // => parseInt(amount) converts "100000" to 100000 (number)
 }
+// => Server Action ends
+// => Next.js generates server endpoint for this function
+// => Endpoint URL generated automatically (not visible in code)
+// => Form submission POSTs to this endpoint
 
 export default function DonatePage() {
+  // => Page component
+  // => Server Component (renders on server)
+
   return (
     <div>
-      <h1>Make a Donation</h1>
+      {/* => Page container */}
 
-      {/* => Form uses Server Action as action prop */}
+      <h1>Make a Donation</h1>
+      {/* => Page heading */}
+
       <form action={handleDonation}>
-        {/* => action accepts async function */}
+        {/* => Form element with Server Action */}
+        {/* => action prop accepts Server Action function */}
+        {/* => Traditional HTML: action="/api/donate" (URL string) */}
+        {/* => Next.js: action={handleDonation} (function reference) */}
+        {/* => On submit: Next.js POSTs form data to server endpoint */}
+        {/* => handleDonation executes on server */}
+        {/* => Progressive enhancement: works WITHOUT client JavaScript */}
+        {/* => If JS disabled: traditional form POST */}
+        {/* => If JS enabled: enhanced with client-side handling */}
 
         <label>
+          {/* => Label for name input */}
+
           Name:
+          {/* => Label text */}
+
           <input type="text" name="name" required />
-          {/* => name attribute required for FormData */}
+          {/* => Text input for donor name */}
+          {/* => type="text": single-line text input */}
+          {/* => name="name": CRITICAL - FormData key */}
+          {/* =>   formData.get('name') retrieves this value */}
+          {/* =>   Must match string in Server Action */}
+          {/* => required: HTML5 validation (must fill before submit) */}
+          {/* => Browser blocks submit if empty */}
         </label>
 
         <label>
+          {/* => Label for amount input */}
+
           Amount (IDR):
+          {/* => Label text with currency indicator */}
+
           <input type="number" name="amount" required />
+          {/* => Number input for donation amount */}
+          {/* => type="number": numeric input with spinner controls */}
+          {/* =>   Browser shows up/down arrows */}
+          {/* =>   Mobile keyboard shows numeric layout */}
+          {/* => name="amount": FormData key for amount */}
+          {/* => required: must fill before submit */}
+          {/* => Note: FormData.get('amount') returns STRING "100000" not number */}
         </label>
 
         <button type="submit">Donate</button>
-        {/* => Submit triggers Server Action */}
-        {/* => Works WITHOUT JavaScript (progressive enhancement) */}
+        {/* => Submit button */}
+        {/* => type="submit": triggers form submission */}
+        {/* => Click executes handleDonation on server */}
+        {/* => Works without JavaScript (native form submission) */}
+        {/* => With JavaScript: enhanced with loading states */}
       </form>
+      {/* => Form ends */}
+      {/* => Submission flow: */}
+      {/* =>   1. User fills name="Ahmad", amount="100000" */}
+      {/* =>   2. Clicks submit button */}
+      {/* =>   3. Browser creates FormData with { name: "Ahmad", amount: "100000" } */}
+      {/* =>   4. Next.js POSTs to server endpoint */}
+      {/* =>   5. handleDonation runs on server */}
+      {/* =>   6. Server logs donation */}
+      {/* =>   7. Page refreshes (default behavior) */}
     </div>
   );
+  // => Component returns form UI
+  // => Server Action enables backend logic without API routes
+  // => Progressive enhancement: works with or without JavaScript
 }
 ```
 
@@ -881,77 +961,192 @@ Server Actions should validate input before processing. Return validation errors
 
 ```typescript
 // app/zakat/calculate/page.tsx
+// => File location: app/zakat/calculate/page.tsx
 // => Server Component with validated Server Action
+// => Shows server-side validation pattern
 
-// => Type for validation result
 type ActionResult = {
   success: boolean;
+  // => Boolean flag indicating validation success
+  // => true: calculation succeeded
+  // => false: validation failed
+
   message?: string;
+  // => Optional error/success message
+  // => ?: means property may be undefined
+  // => Present for both success and error cases
+  // => Example: "Zakat calculated successfully" or "Invalid input"
+
   zakatAmount?: number;
+  // => Optional calculated zakat amount
+  // => Only present when success is true
+  // => Undefined when validation fails
+  // => Example: 2500000 (IDR 2.5 million)
 };
+// => Type defines contract for Server Action return value
+// => Enables type-safe result handling in Client Components
+// => All Server Action results should be serializable (JSON-compatible)
 
 async function calculateZakat(formData: FormData): Promise<ActionResult> {
+  // => Server Action with return type annotation
+  // => Promise<ActionResult>: async function returning ActionResult
+  // => FormData parameter receives form data
+
   'use server';
-  // => Server Action with validation and return value
+  // => Server Action directive
+  // => Function executes on server only
+  // => Can return values to client (serialized as JSON)
 
-  // => Extract form data
-  const wealthStr = formData.get('wealth') as string;  // => wealthStr is "100000000"
-  const wealth = parseInt(wealthStr);                  // => wealth is 100000000
+  const wealthStr = formData.get('wealth') as string;
+  // => Extract wealth input from form
+  // => formData.get() returns string | File | null
+  // => 'as string' assertion (we know it's string from type="number")
+  // => For input value "100000000":
+  // =>   wealthStr is "100000000" (string, not number)
 
-  // => Server-side validation
+  const wealth = parseInt(wealthStr);
+  // => Convert string to integer
+  // => parseInt("100000000") returns 100000000 (number)
+  // => parseInt("abc") returns NaN (Not a Number)
+  // => parseInt("") returns NaN
+  // => Need to validate for NaN
+
   if (isNaN(wealth)) {
-    // => Invalid input
+    // => Check if parsing failed
+    // => isNaN(100000000) is false (valid number)
+    // => isNaN(NaN) is true (invalid input)
+    // => Catches: empty string, non-numeric text, null
+
     return {
       success: false,
+      // => Validation failed
+
       message: 'Please enter a valid number',
+      // => User-friendly error message
+      // => Client can display this to user
     };
+    // => Return early: stops execution
+    // => Result sent back to client
   }
 
   if (wealth < 0) {
+    // => Validate non-negative
+    // => -100000 would fail this check
+    // => 0 passes (acceptable, no zakat due)
+
     return {
       success: false,
       message: 'Wealth cannot be negative',
+      // => Business logic validation
+      // => Negative wealth doesn't make sense
     };
+    // => Early return on validation failure
   }
 
-  // => Nisab threshold (85 grams gold * IDR 950,000)
-  const nisab = 85 * 950000;                           // => nisab is 80,750,000
+  const nisab = 85 * 950000;
+  // => Calculate nisab threshold
+  // => Nisab: minimum wealth requiring zakat
+  // => 85 grams gold (standard nisab measure)
+  // => 950000: gold price per gram in IDR
+  // => 85 * 950000 = 80,750,000 IDR
+  // => nisab is 80750000 (constant for this example)
 
   if (wealth < nisab) {
+    // => Check if wealth meets minimum threshold
+    // => wealth=50000000 < nisab=80750000: below threshold
+    // => wealth=100000000 > nisab=80750000: above threshold, zakat due
+
     return {
       success: false,
       message: `Wealth below nisab threshold (IDR ${nisab.toLocaleString()})`,
+      // => Template string with formatted nisab
+      // => nisab.toLocaleString() formats 80750000 as "80,750,000"
+      // => Message: "Wealth below nisab threshold (IDR 80,750,000)"
+      // => Informative: tells user the threshold
     };
+    // => Not an error, but no zakat due
+    // => Still returns success: false
   }
 
-  // => Calculate 2.5% zakat
-  const zakatAmount = wealth * 0.025;                  // => zakatAmount is 2,500,000
+  const zakatAmount = wealth * 0.025;
+  // => Calculate 2.5% zakat (Islamic standard rate)
+  // => For wealth=100000000:
+  // =>   zakatAmount = 100000000 * 0.025
+  // =>   zakatAmount = 2500000 (2.5 million IDR)
+  // => 0.025 = 2.5/100 = 2.5%
 
   return {
     success: true,
+    // => Validation passed, calculation succeeded
+
     message: 'Zakat calculated successfully',
+    // => Success message
+
     zakatAmount,
+    // => Shorthand for zakatAmount: zakatAmount
+    // => Includes calculated amount in result
+    // => Client can display this to user
+    // => Example: 2500000
   };
+  // => Success result with zakat amount
+  // => Client receives: { success: true, message: "...", zakatAmount: 2500000 }
 }
+// => Server Action ends
+// => Demonstrates complete validation workflow:
+// =>   1. Extract and parse input
+// =>   2. Validate format (NaN check)
+// =>   3. Validate business rules (negative, nisab)
+// =>   4. Perform calculation
+// =>   5. Return structured result
 
 export default function ZakatCalculatorPage() {
+  // => Page component
+  // => This is basic version (no result display)
+
   return (
     <div>
+      {/* => Page container */}
+
       <h1>Zakat Calculator</h1>
+      {/* => Page heading */}
 
       <form action={calculateZakat}>
+        {/* => Form calling validated Server Action */}
+        {/* => calculateZakat executes on server */}
+        {/* => Return value available via useFormState (intermediate example) */}
+
         <label>
+          {/* => Label for wealth input */}
+
           Total Wealth (IDR):
+          {/* => Label text with currency */}
+
           <input type="number" name="wealth" required />
+          {/* => Number input for wealth */}
+          {/* => name="wealth": matches formData.get('wealth') */}
+          {/* => required: client-side validation (first line of defense) */}
+          {/* => Server-side validation ALSO required (security) */}
+          {/* => Client validation can be bypassed (curl, disabled JS) */}
         </label>
 
         <button type="submit">Calculate</button>
+        {/* => Submit button triggers Server Action */}
+        {/* => Server validates and calculates */}
+        {/* => Result returned to client */}
       </form>
 
       {/* => Result display would use useFormState hook */}
       {/* => See intermediate examples for full implementation */}
+      {/* => useFormState returns [state, formAction] */}
+      {/* => state contains ActionResult */}
+      {/* => Can conditionally render: */}
+      {/* =>   {state.success && <p>Zakat: IDR {state.zakatAmount}</p>} */}
+      {/* =>   {!state.success && <p>Error: {state.message}</p>} */}
     </div>
   );
+  // => Component returns calculator UI
+  // => Demonstrates server-side validation importance
+  // => NEVER trust client-side validation alone
 }
 ```
 
@@ -967,55 +1162,142 @@ Server Actions can revalidate cached data after mutations. Use revalidatePath or
 
 ```typescript
 // app/actions.ts
+// => File location: app/actions.ts (root of app directory)
 // => Separate file for reusable Server Actions
+// => Multiple pages can import and use these actions
+// => Centralized location for data mutations
+
 'use server';
-// => 'use server' at top makes all exports Server Actions
+// => File-level 'use server' directive
+// => When at TOP of file (before imports):
+// =>   ALL exported functions are Server Actions
+// =>   No need to repeat 'use server' in each function
+// => Alternative: per-function 'use server' inside function body
+// => File-level: cleaner for files with only Server Actions
 
 import { revalidatePath } from 'next/cache';
-// => Import revalidation function from Next.js
+// => Import revalidation utility from Next.js
+// => revalidatePath: invalidates cache for specific route
+// => Forces Next.js to re-fetch data on next request
+// => Essential after data mutations (create, update, delete)
 
 export async function addPost(formData: FormData) {
-  // => Server Action that mutates data
-  const title = formData.get('title') as string;     // => title is "New Post"
-  const content = formData.get('content') as string; // => content is "Post content..."
+  // => Exported Server Action
+  // => 'export' makes it importable in other files
+  // => 'async' because database operations are asynchronous
+  // => No need for 'use server' here (covered by file-level directive)
 
-  // => Save to database
+  const title = formData.get('title') as string;
+  // => Extract title from form
+  // => For input: <input name="title" value="New Post" />
+  // =>   title is "New Post"
+
+  const content = formData.get('content') as string;
+  // => Extract content from form
+  // => For textarea: <textarea name="content">Post content...</textarea>
+  // =>   content is "Post content..."
+
   // await db.posts.create({ title, content });
-  console.log(`Created post: ${title}`);
-  // => Server output: "Created post: New Post"
+  // => Database mutation (commented for example)
+  // => In production: use Prisma, Drizzle, or other ORM
+  // => Example with Prisma:
+  // =>   await prisma.post.create({
+  // =>     data: { title, content, published: true }
+  // =>   });
+  // => Creates new post record in database
+  // => Returns created post object
 
-  // => Revalidate /posts route to show new post
+  console.log(`Created post: ${title}`);
+  // => Server-side logging
+  // => For title="New Post":
+  // =>   Server console: "Created post: New Post"
+  // => Confirms mutation executed
+  // => Production: use structured logging (Winston, Pino)
+
   revalidatePath('/posts');
-  // => Next.js re-renders /posts with fresh data
-  // => Cached version invalidated, new data fetched
+  // => CRITICAL: Invalidate cache for /posts route
+  // => Why needed: Next.js caches page renders for performance
+  // => After adding post, cache shows OLD data (missing new post)
+  // => revalidatePath('/posts'):
+  // =>   1. Marks /posts cache as stale
+  // =>   2. Next request to /posts triggers re-render
+  // =>   3. Fresh data fetched from database
+  // =>   4. New post appears in list
+  // => Without this: users see stale data until cache expires
+  // => Argument must be exact path string: '/posts', '/blog', etc.
 }
+// => Server Action ends
+// => Can be imported and used in any Server Component
+// => Enables code reuse across multiple forms
 
 // app/posts/new/page.tsx
+// => File location: app/posts/new/page.tsx
+// => Page for creating new posts
+// => Route: /posts/new
+
 import { addPost } from '@/app/actions';
-// => Import Server Action from actions file
+// => Import Server Action from centralized file
+// => '@/app' is alias for app directory (configured in tsconfig.json)
+// => Full path: /app/actions.ts
+// => Can import in multiple pages/components
 
 export default function NewPostPage() {
+  // => Page component for post creation
+
   return (
     <div>
+      {/* => Page container */}
+
       <h1>Create Post</h1>
+      {/* => Page heading */}
 
       <form action={addPost}>
-        {/* => Server Action from separate file */}
+        {/* => Form using imported Server Action */}
+        {/* => addPost defined in separate file */}
+        {/* => Same behavior as inline Server Action */}
+        {/* => Benefit: reusable across multiple components */}
 
         <label>
+          {/* => Title label */}
+
           Title:
+          {/* => Label text */}
+
           <input type="text" name="title" required />
+          {/* => Title input */}
+          {/* => name="title": matches formData.get('title') */}
+          {/* => required: client-side validation */}
         </label>
 
         <label>
+          {/* => Content label */}
+
           Content:
+          {/* => Label text */}
+
           <textarea name="content" required />
+          {/* => Multi-line text input for content */}
+          {/* => name="content": matches formData.get('content') */}
+          {/* => required: must fill before submit */}
         </label>
 
         <button type="submit">Publish</button>
+        {/* => Submit button */}
+        {/* => Triggers addPost Server Action */}
+        {/* => Flow: */}
+        {/* =>   1. User fills form */}
+        {/* =>   2. Clicks Publish */}
+        {/* =>   3. addPost executes on server */}
+        {/* =>   4. Post saved to database */}
+        {/* =>   5. /posts cache invalidated */}
+        {/* =>   6. User redirected (could use redirect() from next/navigation) */}
       </form>
+      {/* => Form ends */}
     </div>
   );
+  // => Component returns form UI
+  // => Uses imported Server Action for reusability
+  // => Could have multiple forms using same action
 }
 ```
 
@@ -1033,64 +1315,150 @@ Server Components can fetch multiple data sources in parallel using Promise.all.
 
 ```typescript
 // app/dashboard/page.tsx
+// => File location: app/dashboard/page.tsx
 // => Server Component with parallel data fetching
+// => Demonstrates performance optimization with Promise.all
 
-// => Define data fetch functions
 async function getUser() {
-  // => Simulated API call
-  await new Promise(resolve => setTimeout(resolve, 1000)); // => 1 second delay
+  // => Async function simulating user API call
+  // => In production: fetch('https://api.example.com/user')
+
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  // => Simulate network delay
+  // => new Promise(...) creates pending promise
+  // => setTimeout(resolve, 1000) resolves after 1000ms (1 second)
+  // => await pauses execution for 1 second
+  // => Mimics real API latency
+
   return { name: 'Ahmad', email: 'ahmad@example.com' };
-  // => Returns user data
+  // => Return user object
+  // => Structure: { name: string, email: string }
+  // => In production: await (await fetch(...)).json()
 }
+// => Function completes in ~1 second
 
 async function getDonations() {
-  await new Promise(resolve => setTimeout(resolve, 1000)); // => 1 second delay
+  // => Async function simulating donations API call
+
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  // => 1 second simulated delay
+
   return [
     { id: 1, amount: 100000 },
     { id: 2, amount: 250000 },
   ];
-  // => Returns donation array
+  // => Return donation array
+  // => Each item: { id: number, amount: number }
+  // => Example: 100000 = IDR 100,000
 }
+// => Function completes in ~1 second
 
 async function getStats() {
-  await new Promise(resolve => setTimeout(resolve, 1000)); // => 1 second delay
+  // => Async function simulating statistics API call
+
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  // => 1 second simulated delay
+
   return { totalDonations: 350000, donorCount: 2 };
-  // => Returns statistics
+  // => Return stats object
+  // => totalDonations: sum of all donations
+  // => donorCount: number of unique donors
+  // => Could be aggregated from database query
 }
+// => Function completes in ~1 second
 
 export default async function DashboardPage() {
-  // => Parallel data fetching with Promise.all
+  // => Page component (async Server Component)
+  // => 'async' keyword enables await in component body
+  // => Can fetch data directly without useEffect
+
   const [user, donations, stats] = await Promise.all([
-    getUser(),                              // => Fetches simultaneously
-    getDonations(),                         // => Not sequential
+    getUser(),
+    getDonations(),
     getStats(),
   ]);
-  // => All three requests complete in ~1 second (parallel)
-  // => Sequential would take ~3 seconds
+  // => PARALLEL data fetching with Promise.all
+  // => Promise.all([...]) accepts array of promises
+  // => Executes ALL promises SIMULTANEOUSLY
+  // => Waits for ALL to complete
+  // => Returns array of results (same order as input)
+  // => Timing:
+  // =>   T=0ms: All three fetch functions start
+  // =>   T=1000ms: All three complete (parallel execution)
+  // =>   Total time: ~1 second
+  // => Array destructuring: [user, donations, stats]
+  // =>   user = result from getUser() = { name: 'Ahmad', email: '...' }
+  // =>   donations = result from getDonations() = [{ id: 1, ... }, ...]
+  // =>   stats = result from getStats() = { totalDonations: 350000, ... }
+  // => SEQUENTIAL alternative (BAD):
+  // =>   const user = await getUser();       // Wait 1s
+  // =>   const donations = await getDonations();  // Wait 1s
+  // =>   const stats = await getStats();     // Wait 1s
+  // =>   Total: 3 seconds (3x slower!)
+  // => Promise.all is CRITICAL for performance
 
   return (
     <div>
+      {/* => Dashboard container */}
+
       <h1>Dashboard for {user.name}</h1>
+      {/* => Dynamic heading with user name */}
+      {/* => user.name is "Ahmad" */}
       {/* => Output: "Dashboard for Ahmad" */}
 
       <div>
+        {/* => Statistics section */}
+
         <h2>Statistics</h2>
+        {/* => Section heading */}
+
         <p>Total: IDR {stats.totalDonations.toLocaleString()}</p>
+        {/* => Total donations formatted */}
+        {/* => stats.totalDonations is 350000 */}
+        {/* => toLocaleString() formats as "350,000" */}
+        {/* => Output: "Total: IDR 350,000" */}
+
         <p>Donors: {stats.donorCount}</p>
+        {/* => Donor count */}
+        {/* => stats.donorCount is 2 */}
+        {/* => Output: "Donors: 2" */}
       </div>
 
       <div>
+        {/* => Donations section */}
+
         <h2>Recent Donations</h2>
+        {/* => Section heading */}
+
         <ul>
+          {/* => Unordered list */}
+
           {donations.map(donation => (
             <li key={donation.id}>
+              {/* => List item for each donation */}
+              {/* => key={donation.id}: React key for list items */}
+              {/* => Required for efficient re-rendering */}
+              {/* => Must be unique (id is unique) */}
+
               IDR {donation.amount.toLocaleString()}
+              {/* => Formatted donation amount */}
+              {/* => For donation { id: 1, amount: 100000 }: */}
+              {/* =>   Output: "IDR 100,000" */}
+              {/* => For donation { id: 2, amount: 250000 }: */}
+              {/* =>   Output: "IDR 250,000" */}
             </li>
           ))}
+          {/* => map() iterates donations array */}
+          {/* => Creates <li> for each donation */}
+          {/* => donations has 2 items = 2 <li> elements */}
         </ul>
       </div>
     </div>
   );
+  // => Component returns dashboard UI
+  // => All data fetched in parallel (fast)
+  // => Total page load: ~1 second (not 3 seconds)
+  // => Promise.all enables efficient data loading
 }
 ```
 
@@ -1106,56 +1474,135 @@ Next.js automatically deduplicates identical fetch requests in a single render p
 
 ```typescript
 // app/components/Header.tsx
-// => Server Component fetching user data
+// => File location: app/components/Header.tsx
+// => Server Component that fetches user data
+
 async function getUser() {
-  console.log('Fetching user data...');     // => Log to verify dedupe
+  // => Shared async function for fetching user
+  // => Used by multiple components
+
+  console.log('Fetching user data...');
+  // => Server console log
+  // => Used to verify deduplication behavior
+  // => Without dedupe: logs multiple times
+  // => With dedupe: logs only ONCE despite multiple calls
+
   const res = await fetch('https://api.example.com/user');
+  // => HTTP GET request to user API
+  // => fetch() returns Response object
+  // => await pauses until response received
+
   return res.json();
+  // => Parse JSON response body
+  // => Returns: { name: "Fatima", role: "admin" }
+  // => Async operation: await needed when calling
 }
+// => Function can be called multiple times in same render
+// => Next.js AUTOMATICALLY deduplicates identical requests
 
 export async function Header() {
-  const user = await getUser();             // => First call: actual fetch
+  // => Header component (async Server Component)
+  // => 'async' enables await inside component
+
+  const user = await getUser();
+  // => FIRST call to getUser() in this render pass
+  // => Next.js executes actual network request
+  // => Result cached for this render pass
   // => user is { name: "Fatima", role: "admin" }
 
   return (
     <header>
+      {/* => Header element */}
+
       <span>Welcome, {user.name}</span>
+      {/* => Greeting with user name */}
+      {/* => user.name is "Fatima" */}
       {/* => Output: "Welcome, Fatima" */}
     </header>
   );
+  // => Component returns header UI
+  // => Used user data from getUser()
 }
 
 // app/components/Sidebar.tsx
-// => Different component, same fetch function
+// => File location: app/components/Sidebar.tsx
+// => Different component, SAME fetch function
+
 export async function Sidebar() {
-  const user = await getUser();             // => Deduped: uses cached result
-  // => No second network request
-  // => user is { name: "Fatima", role: "admin" }
+  // => Sidebar component (async Server Component)
+
+  const user = await getUser();
+  // => SECOND call to getUser() in same render pass
+  // => Next.js detects DUPLICATE request
+  // => Request deduplication:
+  // =>   1. Checks if identical fetch already in progress/completed
+  // =>   2. Reuses cached result from Header's call
+  // =>   3. NO second network request made
+  // =>   4. Returns same user object instantly
+  // => user is { name: "Fatima", role: "admin" } (cached)
+  // => Timing:
+  // =>   Header's getUser(): 100ms network request
+  // =>   Sidebar's getUser(): 0ms (cached, instant)
+  // => console.log only appears ONCE in server console
 
   return (
     <aside>
+      {/* => Sidebar element */}
+
       <p>Role: {user.role}</p>
+      {/* => User role display */}
+      {/* => user.role is "admin" */}
       {/* => Output: "Role: admin" */}
     </aside>
   );
+  // => Component returns sidebar UI
+  // => Used SAME user data (deduped)
 }
 
 // app/page.tsx
-// => Parent component using both
+// => File location: app/page.tsx (homepage)
+// => Parent component rendering both Header and Sidebar
+
 import { Header } from './components/Header';
+// => Import Header component
+// => Relative path: ./components/Header.tsx
+
 import { Sidebar } from './components/Sidebar';
+// => Import Sidebar component
 
 export default function HomePage() {
+  // => Homepage component (Server Component)
+
   return (
     <div>
+      {/* => Page container */}
+
       <Header />
-      {/* => Fetches user data */}
+      {/* => Render Header component */}
+      {/* => Triggers getUser() call */}
+      {/* => Makes network request to API */}
+      {/* => Response cached for this render pass */}
 
       <Sidebar />
-      {/* => Reuses fetched user data (deduped) */}
-      {/* => Only ONE network request total */}
+      {/* => Render Sidebar component */}
+      {/* => Triggers getUser() call */}
+      {/* => Next.js detects duplicate fetch */}
+      {/* => REUSES cached response (no network request) */}
+      {/* => Instant return of user data */}
+
+      {/* => Total network requests: 1 (not 2) */}
+      {/* => Server console shows "Fetching user data..." only ONCE */}
+      {/* => Deduplication happens automatically (no code needed) */}
+      {/* => Works with: fetch(), database queries (with caching), etc. */}
     </div>
   );
+  // => Component returns page UI
+  // => Both components get user data efficiently
+  // => Request deduplication critical for performance:
+  // =>   - Prevents redundant network requests
+  // =>   - Reduces server load
+  // =>   - Faster page rendering
+  // =>   - Enables composition without performance penalty
 }
 ```
 
@@ -1173,49 +1620,108 @@ Create loading.tsx file to show instant loading states while page data fetches. 
 
 ```typescript
 // app/posts/loading.tsx
-// => Special file: shows while posts/page.tsx loads
-// => Next.js automatically wraps page in Suspense
+// => File location: app/posts/loading.tsx
+// => Special file: automatic loading UI for /posts route
+// => File name MUST be exactly "loading.tsx" (Next.js convention)
+// => Paired with app/posts/page.tsx (shows while page loads)
+// => Next.js automatically wraps page in <Suspense fallback={<Loading />}>
+
 export default function Loading() {
-  // => Rendered immediately while page fetches data
+  // => Loading component (regular React component)
+  // => No 'use client' needed (works as Server or Client Component)
+  // => Rendered IMMEDIATELY when user navigates to /posts
+  // => Shows while PostsPage fetches data
+  // => Replaced with actual page when data ready
+
   return (
     <div>
+      {/* => Loading UI container */}
+
       <h2>Loading Posts...</h2>
-      {/* => User sees this instantly */}
+      {/* => Loading message */}
+      {/* => User sees this INSTANTLY (no wait) */}
+      {/* => Improves perceived performance */}
 
       <div className="skeleton">
-        {/* => Skeleton loading UI */}
+        {/* => Skeleton UI container */}
+        {/* => Skeleton: placeholder mimicking final UI structure */}
+        {/* => Shows approximate layout while loading */}
+        {/* => className would need CSS: */}
+        {/* =>   .skeleton { animation: pulse 2s infinite; } */}
+
         <div className="skeleton-line" />
+        {/* => Skeleton line 1 (placeholder for first post) */}
+        {/* => CSS could show gray animated bar */}
+
         <div className="skeleton-line" />
+        {/* => Skeleton line 2 (placeholder for second post) */}
+
         <div className="skeleton-line" />
+        {/* => Skeleton line 3 (placeholder for third post) */}
       </div>
+      {/* => Skeleton mimics final post list structure */}
+      {/* => User sees approximate UI immediately */}
     </div>
   );
-  // => Replaced with actual page when data ready
+  // => Component returns loading UI
+  // => Next.js shows this during page data fetch
+  // => When page ready: React replaces this with PostsPage
+  // => Smooth transition: loading UI → actual content
 }
 
 // app/posts/page.tsx
-// => Server Component with slow data fetch
+// => File location: app/posts/page.tsx
+// => Page component for /posts route
+// => Paired with loading.tsx (loading UI while this loads)
+
 export default async function PostsPage() {
-  // => Simulated slow API
-  await new Promise(resolve => setTimeout(resolve, 2000)); // => 2 second delay
+  // => Page component (async Server Component)
+  // => Fetches data before rendering
+
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  // => Simulate slow network request
+  // => 2000ms = 2 seconds delay
+  // => In production: await fetch('https://api.example.com/posts')
+  // => During this 2 second wait:
+  // =>   - loading.tsx shows to user
+  // =>   - User sees "Loading Posts..." and skeleton
+  // =>   - NOT a blank screen (good UX)
 
   const posts = [
     { id: 1, title: 'Zakat Guide' },
     { id: 2, title: 'Murabaha Basics' },
   ];
+  // => Post data (normally from API or database)
+  // => Each post: { id: number, title: string }
 
   return (
     <div>
+      {/* => Posts page container */}
+
       <h2>Posts</h2>
+      {/* => Page heading */}
+
       <ul>
+        {/* => Post list */}
+
         {posts.map(post => (
           <li key={post.id}>{post.title}</li>
+          // => List item for each post
+          // => key={post.id}: React key for list rendering
+          // => Output for post 1: "Zakat Guide"
+          // => Output for post 2: "Murabaha Basics"
         ))}
       </ul>
     </div>
   );
-  // => Renders after 2 second delay
-  // => Replaces loading.tsx content
+  // => Component returns posts UI
+  // => Renders AFTER 2 second delay
+  // => React replaces loading.tsx with this content
+  // => User flow:
+  // =>   T=0s: Navigate to /posts
+  // =>   T=0s: loading.tsx shows immediately
+  // =>   T=2s: PostsPage replaces loading.tsx
+  // =>   T=2s: User sees actual posts
 }
 ```
 
@@ -1231,55 +1737,112 @@ Use React Suspense to show loading states for specific components rather than en
 
 ```typescript
 // app/dashboard/page.tsx
-import { Suspense } from 'react';
-// => Import Suspense from React
+// => File location: app/dashboard/page.tsx
+// => Demonstrates manual Suspense for granular loading
 
-// => Slow component (fetches data)
+import { Suspense } from 'react';
+// => Import Suspense component from React
+// => Suspense: React feature for showing fallback while async content loads
+// => Built into React (not Next.js specific)
+// => Enables partial page rendering (some content fast, some slow)
+
 async function DonationList() {
-  await new Promise(resolve => setTimeout(resolve, 2000)); // => 2 second delay
+  // => Async Server Component (fetches data)
+  // => Slow component: takes 2 seconds to render
+
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  // => Simulate 2 second API delay
+  // => In production: await fetch('/api/donations')
+  // => Component SUSPENDS during this wait
+  // => Suspense boundary shows fallback while waiting
 
   const donations = [
     { id: 1, amount: 100000 },
     { id: 2, amount: 250000 },
   ];
+  // => Donation data (normally from API)
+  // => Format: { id: number, amount: number }
 
   return (
     <ul>
+      {/* => Donation list */}
+
       {donations.map(d => (
         <li key={d.id}>IDR {d.amount.toLocaleString()}</li>
+        // => List item for each donation
+        // => d.amount.toLocaleString() formats number with commas
+        // => For d.amount=100000: "IDR 100,000"
+        // => For d.amount=250000: "IDR 250,000"
       ))}
     </ul>
   );
+  // => Component returns list after 2 second delay
 }
 
-// => Fast component (no data fetch)
 function QuickStats() {
-  // => Static content, renders immediately
+  // => Synchronous component (no data fetch)
+  // => Fast component: renders IMMEDIATELY (no await)
+  // => No async, no data loading
+
   return (
     <div>
+      {/* => Stats container */}
+
       <h2>Quick Stats</h2>
+      {/* => Section heading */}
+
       <p>Last updated: Now</p>
+      {/* => Timestamp */}
+      {/* => Static text (no API call needed) */}
+      {/* => Renders instantly */}
     </div>
   );
+  // => Component returns static content immediately
+  // => Renders in <1ms (no network request)
 }
 
 export default function DashboardPage() {
+  // => Dashboard page component
+
   return (
     <div>
+      {/* => Dashboard container */}
+
       <h1>Dashboard</h1>
+      {/* => Page heading */}
+      {/* => Renders immediately (static content) */}
 
-      {/* => QuickStats renders immediately */}
       <QuickStats />
+      {/* => Fast component renders IMMEDIATELY */}
+      {/* => Shows "Quick Stats" and timestamp instantly */}
+      {/* => User sees this at T=0s (no wait) */}
 
-      {/* => Suspense boundary for slow component */}
       <Suspense fallback={<p>Loading donations...</p>}>
-        {/* => Shows fallback while DonationList fetches data */}
+        {/* => Suspense boundary (React component) */}
+        {/* => Wraps slow component (DonationList) */}
+        {/* => fallback prop: UI to show while children load */}
+        {/* => fallback renders immediately at T=0s */}
+        {/* => Shows: "Loading donations..." */}
+
         <DonationList />
-        {/* => Replaced with actual list after 2 seconds */}
+        {/* => Slow component inside Suspense */}
+        {/* => Suspends for 2 seconds (await in DonationList) */}
+        {/* => While suspended: fallback shows */}
+        {/* => When ready: fallback replaced with DonationList */}
+        {/* => Transition at T=2s: "Loading donations..." → actual list */}
       </Suspense>
+      {/* => Suspense enables partial page rendering: */}
+      {/* =>   - Fast content (heading, QuickStats) shows immediately */}
+      {/* =>   - Slow content (DonationList) shows fallback, then actual data */}
+      {/* =>   - Better UX than waiting for entire page */}
     </div>
   );
-  // => Page partially rendered: QuickStats visible, donations loading
+  // => Component returns dashboard UI
+  // => Rendering timeline:
+  // =>   T=0s: Dashboard heading + QuickStats visible + "Loading donations..."
+  // =>   T=2s: "Loading donations..." → actual donation list
+  // => Without Suspense: entire page waits 2 seconds (blank screen)
+  // => With Suspense: fast content shows immediately (better UX)
 }
 ```
 
@@ -1297,55 +1860,127 @@ Create error.tsx to catch errors in page segments. Automatically wraps page in e
 
 ```typescript
 // app/posts/error.tsx
+// => File location: app/posts/error.tsx
+// => Special file: error boundary for /posts route
+// => File name MUST be exactly "error.tsx" (Next.js convention)
+// => Catches errors from app/posts/page.tsx
+
 'use client';
-// => Error boundaries MUST be Client Components
-// => Needs 'use client' directive
+// => REQUIRED: Error boundaries MUST be Client Components
+// => Why: error boundaries use React lifecycle methods (componentDidCatch)
+// => React lifecycle only works in Client Components
+// => Server Components cannot catch runtime errors
+// => onClick event handler also requires Client Component
 
 export default function Error({
   error,
   reset,
 }: {
-  error: Error & { digest?: string };      // => Error object with digest
-  reset: () => void;                        // => Function to retry
+  error: Error & { digest?: string };
+  // => error parameter: Error object from thrown error
+  // => Error type: standard JavaScript Error
+  // => { digest?: string }: extends Error with optional digest property
+  // => digest: unique error identifier (for logging/tracking)
+  // => Example: error.digest = "abc123def456"
+  // => Useful for correlating errors in logs
+
+  reset: () => void;
+  // => reset parameter: function to retry rendering
+  // => Signature: () => void (no parameters, no return value)
+  // => Calling reset():
+  // =>   1. Re-renders error boundary
+  // =>   2. Tries to render page again
+  // =>   3. Might succeed if error was transient
 }) {
-  // => error.message contains error text
-  // => error.digest is unique error identifier for logging
+  // => Error component receives error and reset props
+  // => error.message: "Failed to fetch posts"
+  // => error.digest: "xyz789" (unique ID)
 
   return (
     <div>
+      {/* => Error UI container */}
+
       <h2>Something went wrong!</h2>
       {/* => User-friendly error heading */}
+      {/* => Don't expose technical details in production */}
+      {/* => Generic message improves security */}
 
       <p>{error.message}</p>
       {/* => Display error message */}
-      {/* => Output: "Failed to fetch posts" */}
+      {/* => error.message from thrown Error */}
+      {/* => For: throw new Error('Failed to fetch posts') */}
+      {/* =>   Output: "Failed to fetch posts" */}
+      {/* => Production: sanitize message (don't leak sensitive info) */}
 
       <button onClick={reset}>
-        {/* => reset() retries the page render */}
+        {/* => Retry button */}
+        {/* => onClick handler (requires 'use client') */}
+        {/* => Click calls reset() function */}
+        {/* => reset() provided by Next.js automatically */}
+
         Try Again
+        {/* => Button text */}
       </button>
-      {/* => Click re-renders page, might succeed */}
+      {/* => Click behavior: */}
+      {/* =>   1. reset() called */}
+      {/* =>   2. Error boundary cleared */}
+      {/* =>   3. PostsPage re-rendered */}
+      {/* =>   4. If error transient (network glitch): might succeed */}
+      {/* =>   5. If error persistent: error.tsx shows again */}
     </div>
   );
+  // => Component returns error UI
+  // => Replaces page content when error occurs
+  // => Provides recovery mechanism (reset button)
 }
 
 // app/posts/page.tsx
-// => Server Component that might throw error
+// => File location: app/posts/page.tsx
+// => Page that might throw error
+// => Paired with error.tsx (catches errors from this page)
+
 export default async function PostsPage() {
-  // => Simulated error
-  const shouldFail = Math.random() > 0.5;   // => 50% chance of failure
+  // => Page component (async Server Component)
+
+  const shouldFail = Math.random() > 0.5;
+  // => Random boolean (50% chance true, 50% false)
+  // => Math.random() returns 0.0 to 0.999...
+  // => > 0.5: true for 0.5-0.999 (50% of range)
+  // => Simulates unreliable API (sometimes fails)
 
   if (shouldFail) {
+    // => 50% chance this executes
+
     throw new Error('Failed to fetch posts');
-    // => Error caught by error.tsx
+    // => Throw Error object with message
+    // => Error propagates up component tree
+    // => Caught by nearest error boundary (error.tsx)
+    // => error.tsx receives this Error object
+    // => error.message will be "Failed to fetch posts"
+    // => Page rendering stops here
   }
+  // => If shouldFail is true: error.tsx shows
+  // => If shouldFail is false: continue to return statement
 
   return (
     <div>
+      {/* => Success UI (only shows if no error) */}
+
       <h2>Posts</h2>
+      {/* => Page heading */}
+
       <p>Success! Posts loaded.</p>
+      {/* => Success message */}
+      {/* => Only visible when shouldFail is false */}
     </div>
   );
+  // => Component returns success UI
+  // => Only renders if error not thrown
+  // => Testing error boundary:
+  // =>   - Refresh page multiple times
+  // =>   - 50% see success UI
+  // =>   - 50% see error UI with "Try Again" button
+  // =>   - Click "Try Again": re-renders, new 50/50 chance
 }
 ```
 
@@ -1361,56 +1996,123 @@ Create not-found.tsx for custom 404 pages when resource doesn't exist. Use notFo
 
 ```typescript
 // app/products/[id]/not-found.tsx
-// => Custom 404 page for product routes
+// => File location: app/products/[id]/not-found.tsx
+// => Special file: custom 404 page for /products/[id] route
+// => File name MUST be exactly "not-found.tsx" (Next.js convention)
+// => Triggered when notFound() called or route doesn't match
+
 export default function ProductNotFound() {
-  // => Rendered when notFound() called or route doesn't exist
+  // => 404 component (regular React component)
+  // => No 'use client' needed (works as Server or Client Component)
+  // => Rendered when:
+  // =>   1. notFound() function called in page.tsx
+  // =>   2. Dynamic route doesn't match any file (no other triggers)
+
   return (
     <div>
+      {/* => 404 UI container */}
+
       <h2>Product Not Found</h2>
       {/* => Custom 404 heading */}
+      {/* => Better UX than generic "404 Page Not Found" */}
+      {/* => Context-specific: tells user it's a product issue */}
 
       <p>The product you're looking for doesn't exist.</p>
+      {/* => Explanatory message */}
+      {/* => Helps user understand what went wrong */}
 
       <a href="/products">
+        {/* => Navigation link */}
+        {/* => Use <a> (not Link) for simplicity in error pages */}
+        {/* => href="/products": back to product listing */}
+
         Back to Products
+        {/* => Link text */}
       </a>
-      {/* => Link back to valid route */}
+      {/* => Provides recovery path */}
+      {/* => User can navigate to valid route */}
     </div>
   );
+  // => Component returns custom 404 UI
+  // => HTTP 404 status code sent automatically
+  // => Better than throwing error (404 vs 500)
 }
 
 // app/products/[id]/page.tsx
-import { notFound } from 'next/navigation';
-// => Import notFound function
+// => File location: app/products/[id]/page.tsx
+// => Product detail page with programmatic 404
 
-// => Simulated database
+import { notFound } from 'next/navigation';
+// => Import notFound function from Next.js
+// => notFound(): triggers not-found.tsx rendering
+// => Function signature: () => never (never returns)
+// => Throws NEXT_NOT_FOUND symbol internally
+
 const products = [
   { id: '1', name: 'Murabaha' },
   { id: '2', name: 'Ijarah' },
 ];
+// => Simulated product database
+// => In production: fetch from real database
+// => Format: { id: string, name: string }[]
 
 export default function ProductPage({
   params,
 }: {
   params: { id: string };
+  // => Type annotation for params prop
+  // => params.id: string from [id] folder name
 }) {
-  // => Find product by ID
+  // => Component receives params from URL
+  // => For URL /products/1:
+  // =>   params is { id: "1" }
+
   const product = products.find(p => p.id === params.id);
+  // => Search for product matching URL parameter
+  // => Array.find() returns first matching element or undefined
+  // => For params.id="1":
+  // =>   product is { id: '1', name: 'Murabaha' }
+  // => For params.id="999" (not in array):
+  // =>   product is undefined
 
   if (!product) {
-    // => Product doesn't exist
-    notFound();
-    // => Triggers not-found.tsx rendering
-    // => Function does not return
-  }
+    // => Check if product not found
+    // => !product is true when product is undefined
+    // => Handles invalid product IDs gracefully
 
-  // => Product exists
+    notFound();
+    // => Call notFound() to trigger 404
+    // => Function throws NEXT_NOT_FOUND symbol
+    // => Next.js catches symbol and renders not-found.tsx
+    // => Execution STOPS here (never reaches return statement)
+    // => HTTP 404 status code sent
+    // => Browser URL stays /products/999 (no redirect)
+    // => Alternative to throwing Error (which gives 500 status)
+  }
+  // => After this if block: product is guaranteed to exist
+  // => TypeScript narrowing: product type is { id: string, name: string }
+
   return (
     <div>
+      {/* => Product detail UI */}
+
       <h1>{product.name}</h1>
+      {/* => Product name heading */}
+      {/* => For product { id: '1', name: 'Murabaha' }: */}
+      {/* =>   Output: "Murabaha" */}
+      {/* => product.name safe to access (not undefined) */}
+
       <p>Product ID: {product.id}</p>
+      {/* => Product ID display */}
+      {/* => Output: "Product ID: 1" */}
     </div>
   );
+  // => Component returns product details
+  // => Only renders when product found
+  // => User flow:
+  // =>   /products/1 → shows Murabaha details
+  // =>   /products/2 → shows Ijarah details
+  // =>   /products/999 → shows "Product Not Found" (404)
 }
 ```
 
@@ -1428,38 +2130,97 @@ Export metadata object from page to set title, description, and Open Graph tags.
 
 ```typescript
 // app/about/page.tsx
-import { Metadata } from 'next';
-// => Import Metadata type
+// => File location: app/about/page.tsx
+// => Page with static metadata for SEO
 
-// => Static metadata export
+import { Metadata } from 'next';
+// => Import Metadata type from Next.js
+// => Metadata: TypeScript interface for metadata object
+// => Provides type safety for metadata properties
+// => Not a runtime import (type-only)
+
 export const metadata: Metadata = {
-  // => metadata object defines page metadata
+  // => Export metadata object (MUST be named "metadata")
+  // => Type annotation: Metadata (provides autocomplete)
+  // => Static metadata: same for all requests
+  // => Next.js automatically generates <head> tags
+
   title: 'About Islamic Finance Platform',
-  // => <title> tag: "About Islamic Finance Platform"
+  // => Page title (required for good SEO)
+  // => Generates: <title>About Islamic Finance Platform</title>
+  // => Shows in:
+  // =>   - Browser tab
+  // =>   - Search engine results (Google title)
+  // =>   - Browser history
+  // =>   - Social media previews (if no openGraph.title)
+  // => Max length: ~60 characters for optimal display
 
   description: 'Learn about our Sharia-compliant financial education platform.',
-  // => <meta name="description"> for search engines
+  // => Meta description (important for SEO)
+  // => Generates: <meta name="description" content="...">
+  // => Shows in:
+  // =>   - Search engine snippets (Google description)
+  // =>   - Social media previews (if no openGraph.description)
+  // => Max length: ~155-160 characters for optimal display
+  // => Should summarize page content concisely
 
   openGraph: {
-    // => Open Graph tags for social media sharing
+    // => Open Graph protocol tags
+    // => Used by social media platforms (Facebook, LinkedIn, Discord)
+    // => Controls preview appearance when link shared
+    // => Generates multiple <meta property="og:*"> tags
+
     title: 'About Islamic Finance Platform',
-    // => og:title for Facebook, LinkedIn
+    // => og:title for social sharing
+    // => Generates: <meta property="og:title" content="...">
+    // => Can differ from page title (often same)
+    // => Shows as preview card title on Facebook, LinkedIn
 
     description: 'Sharia-compliant financial education',
-    // => og:description
+    // => og:description for social sharing
+    // => Generates: <meta property="og:description" content="...">
+    // => Shorter than meta description (concise for cards)
+    // => Shows as preview card description
 
     type: 'website',
-    // => og:type
+    // => og:type defines content type
+    // => Generates: <meta property="og:type" content="website">
+    // => Common types:
+    // =>   - "website": general website (default)
+    // =>   - "article": blog post, article
+    // =>   - "profile": user profile
+    // =>   - "video.movie": video content
+    // => Affects how social platforms display preview
   },
+  // => Could add more Open Graph properties:
+  // =>   images: [{ url: '/og-image.jpg', width: 1200, height: 630 }]
+  // =>   url: 'https://example.com/about'
+  // =>   siteName: 'Islamic Finance Platform'
 };
+// => Metadata object processed during build (static) or request (dynamic)
+// => Next.js injects generated tags into <head> section
+// => Improves SEO, social sharing, accessibility
 
 export default function AboutPage() {
+  // => Page component
+  // => metadata export separate from component
+
   return (
     <div>
+      {/* => Page content */}
+
       <h1>About Us</h1>
+      {/* => Page heading */}
+      {/* => Should match/relate to page title for SEO consistency */}
+
       <p>We provide Sharia-compliant financial education.</p>
+      {/* => Page description */}
+      {/* => Should expand on meta description */}
     </div>
   );
+  // => Component returns page UI
+  // => metadata injected in <head> automatically
+  // => No manual <Head> component needed (unlike Pages Router)
 }
 ```
 
@@ -1475,64 +2236,132 @@ Use generateMetadata function to create metadata based on dynamic route paramete
 
 ```typescript
 // app/products/[id]/page.tsx
-import { Metadata } from 'next';
+// => File location: app/products/[id]/page.tsx
+// => Dynamic route with dynamic metadata
 
-// => Simulated product data
+import { Metadata } from 'next';
+// => Import Metadata type for type safety
+
 const products = [
   { id: 'murabaha', name: 'Murabaha Financing', description: 'Cost-plus financing' },
   { id: 'ijarah', name: 'Ijarah Leasing', description: 'Islamic leasing' },
 ];
+// => Simulated product database
+// => In production: fetch from database in generateMetadata
+// => Format: { id: string, name: string, description: string }[]
 
-// => generateMetadata function for dynamic metadata
 export async function generateMetadata({
   params,
 }: {
   params: { id: string };
+  // => Type annotation for params
+  // => params.id: string from [id] folder
 }): Promise<Metadata> {
+  // => Function name MUST be "generateMetadata" (Next.js convention)
+  // => Return type: Promise<Metadata> (async function)
   // => Receives same params as page component
-  // => params.id is "murabaha" for /products/murabaha
+  // => Called BEFORE page component renders
+  // => For URL /products/murabaha:
+  // =>   params is { id: "murabaha" }
 
-  // => Fetch product data
   const product = products.find(p => p.id === params.id);
+  // => Find product matching URL parameter
+  // => For params.id="murabaha":
+  // =>   product is { id: 'murabaha', name: 'Murabaha Financing', ... }
+  // => For params.id="invalid":
+  // =>   product is undefined
+  // => In production:
+  // =>   const product = await db.products.findUnique({ where: { id: params.id } });
 
   if (!product) {
-    // => Product not found, use default metadata
+    // => Product not found, return fallback metadata
+
     return {
       title: 'Product Not Found',
+      // => Fallback title for invalid product IDs
+      // => Shows in browser tab: "Product Not Found"
     };
+    // => Could also return more fields:
+    // =>   description: 'The requested product does not exist'
+    // =>   robots: { index: false } (don't index 404 pages)
   }
+  // => After this if: product is guaranteed to exist
 
-  // => Return metadata for found product
   return {
+    // => Return metadata object for found product
+
     title: `${product.name} | Islamic Finance`,
-    // => title is "Murabaha Financing | Islamic Finance"
+    // => Dynamic title based on product name
+    // => Template string combines product name with site name
+    // => For product.name="Murabaha Financing":
+    // =>   title is "Murabaha Financing | Islamic Finance"
+    // => For product.name="Ijarah Leasing":
+    // =>   title is "Ijarah Leasing | Islamic Finance"
+    // => Pattern: "[Product Name] | [Site Name]" (common SEO pattern)
 
     description: product.description,
-    // => description is "Cost-plus financing"
+    // => Dynamic description from product data
+    // => For product.description="Cost-plus financing":
+    // =>   Generates: <meta name="description" content="Cost-plus financing">
+    // => Each product gets unique description (good for SEO)
 
     openGraph: {
+      // => Open Graph tags for social sharing
+
       title: product.name,
+      // => og:title is just product name (no site suffix)
+      // => For product.name="Murabaha Financing":
+      // =>   og:title is "Murabaha Financing"
+      // => Cleaner for social media cards
+
       description: product.description,
+      // => og:description from product
+      // => Shows in social media preview cards
     },
+    // => Could add product-specific Open Graph image:
+    // =>   images: [{ url: `/products/${params.id}.jpg` }]
   };
-  // => Metadata changes based on product ID
+  // => Metadata varies per product (dynamic)
+  // => Next.js generates different <head> tags for each URL
 }
+// => generateMetadata called once per request
+// => Result cached for production builds
+// => Next.js automatically deduplicates data fetching:
+// =>   If page component also calls products.find(), no duplicate work
 
 export default function ProductPage({
   params,
 }: {
   params: { id: string };
 }) {
+  // => Page component receives same params
+
   const product = products.find(p => p.id === params.id);
+  // => Same lookup as generateMetadata
+  // => In production: Next.js deduplicates if same fetch
+  // => Example:
+  // =>   generateMetadata: await fetch('/api/product/murabaha')
+  // =>   ProductPage: await fetch('/api/product/murabaha')
+  // =>   Result: only ONE network request (automatic dedupe)
 
   if (!product) return <p>Not found</p>;
+  // => Handle missing product
+  // => Could use notFound() instead for proper 404
 
   return (
     <div>
+      {/* => Product detail UI */}
+
       <h1>{product.name}</h1>
+      {/* => Product name heading */}
+      {/* => Should match metadata title for consistency */}
+
       <p>{product.description}</p>
+      {/* => Product description */}
     </div>
   );
+  // => Component returns product UI
+  // => Metadata already in <head> (generated by generateMetadata)
 }
 ```
 
@@ -1550,48 +2379,116 @@ Use next/image for automatic image optimization, lazy loading, and responsive si
 
 ```typescript
 // app/page.tsx
+// => File location: app/page.tsx (homepage)
+// => Demonstrates Image component for optimization
+
 import Image from 'next/image';
-// => Import Image from next/image (NOT img tag)
+// => Import Image component from next/image
+// => NOT 'next/images' (common typo)
+// => NOT regular <img> tag (no optimization)
+// => Image: Next.js wrapper for <img> with automatic optimization
 
 export default function HomePage() {
+  // => Homepage component
+
   return (
     <div>
-      <h1>Islamic Finance Products</h1>
+      {/* => Page container */}
 
-      {/* => Image component with optimization */}
+      <h1>Islamic Finance Products</h1>
+      {/* => Page heading */}
+
       <Image
         src="/mosque.jpg"
-        // => Image path in public/ folder
+        // => Image source path
+        // => Leading slash: public/ directory
+        // => Full path: public/mosque.jpg
+        // => Served at: http://localhost:3000/mosque.jpg
+        // => Can also use absolute URLs:
+        // =>   src="https://example.com/image.jpg"
+        // =>   (requires domains config in next.config.js)
 
         alt="Beautiful mosque with Islamic architecture"
-        // => REQUIRED: descriptive alt text for accessibility
+        // => REQUIRED: alternative text for image
+        // => Critical for:
+        // =>   - Screen readers (accessibility)
+        // =>   - SEO (search engines read alt text)
+        // =>   - Shows if image fails to load
+        // => Should be descriptive, concise
+        // => Bad: alt="image" (not descriptive)
+        // => Good: alt="Beautiful mosque with Islamic architecture"
+        // => Missing alt causes build warning
 
         width={800}
-        // => REQUIRED: image width in pixels
+        // => REQUIRED: image intrinsic width in pixels
+        // => NOT CSS width (actual image dimensions)
+        // => Used to calculate aspect ratio
+        // => Prevents Cumulative Layout Shift (CLS)
+        // => Example: 800px width
+        // => Required UNLESS using fill property
 
         height={600}
-        // => REQUIRED: image height in pixels
-        // => Prevents layout shift during loading
+        // => REQUIRED: image intrinsic height in pixels
+        // => NOT CSS height (actual image dimensions)
+        // => With width, maintains aspect ratio
+        // => Example: 600px height (4:3 aspect ratio)
+        // => Browser reserves space before image loads
+        // => Prevents content jumping (layout shift)
 
         priority
-        // => OPTIONAL: load image immediately (above-fold images)
-        // => Skips lazy loading for important images
+        // => OPTIONAL: prioritize image loading
+        // => Boolean flag (no value needed)
+        // => Disables lazy loading for this image
+        // => Image loads immediately (not on scroll)
+        // => Use for:
+        // =>   - Above-fold images (visible without scrolling)
+        // =>   - Hero images
+        // =>   - Logo, critical branding
+        // => Don't use for below-fold images (wastes bandwidth)
+        // => Generates <link rel="preload"> tag
       />
-      {/* => Next.js automatically: */}
-      {/* => - Optimizes image format (WebP, AVIF) */}
-      {/* => - Resizes based on device screen size */}
-      {/* => - Lazy loads (except priority images) */}
+      {/* => Next.js automatic optimizations: */}
+      {/* =>   1. Format conversion: JPEG/PNG → WebP/AVIF (smaller) */}
+      {/* =>   2. Responsive sizing: generates multiple sizes */}
+      {/* =>      srcset="mosque-640.jpg 640w, mosque-750.jpg 750w, ..." */}
+      {/* =>   3. Quality adjustment: default 75% quality */}
+      {/* =>   4. Lazy loading: loads when near viewport (except priority) */}
+      {/* =>   5. Cache optimization: serves from cache when possible */}
+      {/* => Result: 50-80% smaller file size, faster loads */}
 
-      {/* => Below-fold image with lazy loading */}
       <Image
         src="/finance-chart.png"
+        // => Second image (below-fold)
+        // => Path: public/finance-chart.png
+
         alt="Financial growth chart showing returns"
+        // => Descriptive alt text for accessibility
+
         width={600}
+        // => Image width: 600px
+
         height={400}
-        // => No priority prop: lazy loads when scrolled into view
+        // => Image height: 400px (3:2 aspect ratio)
+
+        // => NO priority prop
+        // => Image lazy loads (default behavior)
+        // => Loads when scrolled near (intersection observer)
+        // => Saves bandwidth for users who don't scroll
       />
+      {/* => Lazy loading behavior: */}
+      {/* =>   1. Image placeholder shows immediately (blank or blur) */}
+      {/* =>   2. When user scrolls near image (viewport margin) */}
+      {/* =>   3. Next.js triggers image load */}
+      {/* =>   4. Optimized image downloads */}
+      {/* =>   5. Image appears smoothly */}
     </div>
   );
+  // => Component returns homepage UI
+  // => Image component critical for performance:
+  // =>   - LCP (Largest Contentful Paint) improvement
+  // =>   - CLS (Cumulative Layout Shift) prevention
+  // =>   - Bandwidth reduction (smaller files)
+  // =>   - Automatic responsive images
 }
 ```
 
@@ -1607,49 +2504,133 @@ Use fill property for images that should fill their container (responsive width/
 
 ```typescript
 // app/gallery/page.tsx
+// => File location: app/gallery/page.tsx
+// => Demonstrates responsive images with fill property
+
 import Image from 'next/image';
+// => Import Image component
 
 export default function GalleryPage() {
+  // => Gallery page component
+
   return (
     <div>
-      <h1>Islamic Art Gallery</h1>
+      {/* => Page container */}
 
-      {/* => Container with defined dimensions */}
+      <h1>Islamic Art Gallery</h1>
+      {/* => Page heading */}
+
       <div style={{ position: 'relative', width: '100%', height: '400px' }}>
-        {/* => Parent MUST have position: relative */}
+        {/* => Image container with explicit dimensions */}
+        {/* => position: 'relative': REQUIRED for fill images */}
+        {/* =>   Why: fill images use position: absolute */}
+        {/* =>   Absolute positioning relative to nearest positioned ancestor */}
+        {/* =>   Without relative parent: image positions relative to <body> */}
+        {/* => width: '100%': container takes full width */}
+        {/* =>   Responsive: adapts to parent width */}
+        {/* => height: '400px': fixed height */}
+        {/* =>   Could also use viewport units: '50vh' */}
+        {/* => Container defines image display area */}
 
         <Image
           src="/islamic-calligraphy.jpg"
+          // => Image source path
+
           alt="Beautiful Arabic calligraphy"
+          // => Alt text for accessibility
+
           fill
-          // => fill makes image cover container
-          // => No width/height props needed
+          // => fill property: image fills container
+          // => Boolean flag (no value)
+          // => Replaces width/height props
+          // => Generates CSS:
+          // =>   position: absolute
+          // =>   width: 100%
+          // =>   height: 100%
+          // =>   inset: 0 (top/right/bottom/left: 0)
+          // => Image covers entire container
+          // => Responsive: resizes with container
 
           style={{ objectFit: 'cover' }}
-          // => objectFit controls how image fills container
-          // => 'cover': crops to fill, maintains aspect ratio
-          // => 'contain': fits inside, may have empty space
+          // => objectFit: CSS property controlling image scaling
+          // => 'cover': scales image to cover container
+          // =>   - Maintains aspect ratio
+          // =>   - Crops excess (may cut off edges)
+          // =>   - No empty space
+          // =>   Example: 16:9 image in 4:3 container
+          // =>     → Image scaled up, sides cropped
+          // => Alternative values:
+          // =>   'contain': fits image inside container
+          // =>     - Maintains aspect ratio
+          // =>     - No cropping
+          // =>     - May have empty space (letterboxing)
+          // =>   'fill': stretches to fit (distorts aspect ratio)
+          // =>   'none': original size (may overflow)
         />
-        {/* => Image automatically responsive to container size */}
+        {/* => Image automatically responsive */}
+        {/* => Container width changes → image resizes */}
+        {/* => No manual breakpoints needed */}
       </div>
 
-      {/* => Grid of responsive images */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+        {/* => Grid container for image gallery */}
+        {/* => display: 'grid': CSS Grid layout */}
+        {/* => gridTemplateColumns: 'repeat(3, 1fr)' */}
+        {/* =>   3 equal columns (1fr = 1 fraction of available space) */}
+        {/* => gap: '1rem': spacing between grid items */}
+
         {[1, 2, 3].map(id => (
+          // => Array [1, 2, 3] to create 3 grid items
+          // => map() iterates and returns JSX for each
+          // => id: 1, 2, 3 (used for key and image src)
+
           <div key={id} style={{ position: 'relative', aspectRatio: '16/9' }}>
-            {/* => aspectRatio maintains proportions */}
+            {/* => Grid item container */}
+            {/* => key={id}: React key for list items */}
+            {/* => position: 'relative': required for fill image */}
+            {/* => aspectRatio: '16/9': CSS aspect-ratio property */}
+            {/* =>   Maintains 16:9 proportion */}
+            {/* =>   Height automatically calculated from width */}
+            {/* =>   Example: width=300px → height=168.75px (300*9/16) */}
+            {/* =>   Responsive: height adjusts as width changes */}
+            {/* =>   Prevents layout shift (reserves space) */}
 
             <Image
               src={`/gallery-${id}.jpg`}
+              // => Dynamic image source
+              // => Template string: `/gallery-${id}.jpg`
+              // => For id=1: "/gallery-1.jpg"
+              // => For id=2: "/gallery-2.jpg"
+              // => For id=3: "/gallery-3.jpg"
+
               alt={`Gallery image ${id}`}
+              // => Dynamic alt text
+              // => For id=1: "Gallery image 1"
+              // => Production: use descriptive alt from database
+              // =>   alt={`${image.title} - ${image.description}`}
+
               fill
+              // => Image fills grid item container
+              // => Responsive to container size
+
               style={{ objectFit: 'cover' }}
+              // => Cover entire container, crop excess
+              // => All images same size (uniform grid)
             />
           </div>
         ))}
+        {/* => Result: 3-column grid of 16:9 images */}
+        {/* => Responsive: columns shrink on smaller screens */}
+        {/* => Images maintain aspect ratio */}
       </div>
     </div>
   );
+  // => Component returns gallery UI
+  // => fill property perfect for:
+  // =>   - Hero images (full viewport width)
+  // =>   - Background images
+  // =>   - Uniform grids (cards, galleries)
+  // =>   - Container-query responsive layouts
 }
 ```
 
@@ -1667,58 +2648,136 @@ Route Handlers are API endpoints in App Router. Create route.ts files to handle 
 
 ```typescript
 // app/api/zakat/route.ts
-// => API route at /api/zakat
-// => route.ts is special filename for Route Handlers
+// => File location: app/api/zakat/route.ts
+// => Route Handler (API endpoint) at /api/zakat
+// => File name MUST be "route.ts" or "route.js" (Next.js convention)
+// => NOT page.tsx (pages and routes are mutually exclusive in same folder)
 
 import { NextResponse } from 'next/server';
-// => Import NextResponse for typed responses
+// => Import NextResponse utility from Next.js
+// => NextResponse: helper for creating HTTP responses
+// => Extends standard Response with Next.js features
 
-// => GET handler: responds to GET /api/zakat
 export async function GET() {
-  // => Exported async function named after HTTP method
+  // => Route Handler for GET requests
+  // => Function name MUST match HTTP method: GET, POST, PUT, DELETE, PATCH, etc.
+  // => Export required (Next.js looks for exported HTTP method functions)
+  // => No parameters needed for simple GET (could add: request: NextRequest)
+  // => Async function: can await database queries, API calls
 
-  // => Calculate nisab (85 grams gold * price)
-  const goldPricePerGram = 950000;          // => IDR 950,000
-  const nisabGrams = 85;                    // => 85 grams
-  const nisabValue = nisabGrams * goldPricePerGram; // => 80,750,000 IDR
+  const goldPricePerGram = 950000;
+  // => Gold price per gram in IDR
+  // => Value: 950000 (IDR 950,000)
+  // => In production: fetch from live gold price API
 
-  // => Return JSON response
+  const nisabGrams = 85;
+  // => Nisab threshold: 85 grams of gold
+  // => Islamic standard for minimum wealth requiring zakat
+
+  const nisabValue = nisabGrams * goldPricePerGram;
+  // => Calculate total nisab value
+  // => 85 * 950000 = 80,750,000 IDR
+  // => Threshold for zakat obligation
+
   return NextResponse.json({
-    // => NextResponse.json() creates JSON response
+    // => Create JSON response with NextResponse.json()
+    // => Automatically sets Content-Type: application/json
+    // => Serializes object to JSON string
+    // => Alternative: new Response(JSON.stringify({}), { headers: { 'Content-Type': 'application/json' } })
+    // => NextResponse.json() is shorter, safer
+
     nisabGrams,
+    // => Shorthand for nisabGrams: nisabGrams
+    // => Value: 85
+
     goldPricePerGram,
+    // => Value: 950000
+
     nisabValue,
-    zakatRate: 0.025,                       // => 2.5%
+    // => Calculated value: 80750000
+
+    zakatRate: 0.025,
+    // => Zakat rate: 2.5% (0.025 as decimal)
+    // => Islamic standard rate
   });
-  // => Response: {"nisabGrams":85,"goldPricePerGram":950000,...}
+  // => Response body: {"nisabGrams":85,"goldPricePerGram":950000,"nisabValue":80750000,"zakatRate":0.025}
+  // => HTTP 200 status (default)
+  // => Headers: Content-Type: application/json
 }
+// => GET /api/zakat calls this function
+// => Could add other HTTP methods in same file:
+// =>   export async function POST(request: NextRequest) { ... }
+// =>   export async function PUT(request: NextRequest) { ... }
 
 // app/page.tsx
-// => Client Component consuming API
+// => File location: app/page.tsx (homepage)
+// => Client Component fetching from API route
+
 'use client';
+// => REQUIRED: Client Component for hooks (useState, useEffect)
 
 import { useState, useEffect } from 'react';
+// => Import React hooks
 
 export default function HomePage() {
+  // => Homepage component
+
   const [data, setData] = useState<any>(null);
+  // => State for API response data
+  // => Initial value: null (no data yet)
+  // => any type: should be typed properly in production
+  // => Better: useState<{ nisabGrams: number; goldPricePerGram: number; nisabValue: number; zakatRate: number } | null>(null)
 
   useEffect(() => {
-    // => Fetch from API route
+    // => Effect runs after component mounts
+    // => Fetches data from API route
+
     fetch('/api/zakat')
-      // => GET /api/zakat triggers GET handler
+      // => HTTP GET request to /api/zakat
+      // => Triggers GET function in route.ts
+      // => fetch() returns Promise<Response>
+
       .then(res => res.json())
+      // => Parse JSON response body
+      // => res.json() returns Promise<any>
+
       .then(setData);
+      // => Update state with response data
+      // => setData(parsedData)
+      // => Triggers re-render with data
+
   }, []);
+  // => Empty dependency array: runs once on mount
+  // => No re-runs on re-renders
 
   if (!data) return <p>Loading...</p>;
+  // => Show loading state while data is null
+  // => After fetch completes: data is not null, show actual content
 
   return (
     <div>
+      {/* => Main content (shows when data loaded) */}
+
       <h1>Nisab Information</h1>
+      {/* => Page heading */}
+
       <p>Nisab: {data.nisabGrams} grams</p>
+      {/* => Display nisab grams */}
+      {/* => data.nisabGrams is 85 */}
+      {/* => Output: "Nisab: 85 grams" */}
+
       <p>Value: IDR {data.nisabValue.toLocaleString()}</p>
+      {/* => Display nisab value formatted */}
+      {/* => data.nisabValue is 80750000 */}
+      {/* => toLocaleString() formats as "80,750,000" */}
+      {/* => Output: "Value: IDR 80,750,000" */}
     </div>
   );
+  // => Component returns UI with API data
+  // => Route Handler pattern enables:
+  // =>   - Backend logic (calculations, database queries)
+  // =>   - API endpoints for frontend consumption
+  // =>   - Alternative to separate backend server
 }
 ```
 
@@ -1734,43 +2793,92 @@ POST handlers receive Request object with body, headers, and URL. Extract JSON d
 
 ```typescript
 // app/api/donations/route.ts
+// => File location: app/api/donations/route.ts
+// => POST Route Handler for creating donations
+
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
-// => Import NextRequest for typed request
+// => Import NextRequest type for request parameter
+// => NextRequest extends standard Request with Next.js features
 
-// => POST handler: responds to POST /api/donations
 export async function POST(request: NextRequest) {
-  // => request parameter contains body, headers, etc.
+  // => POST handler for /api/donations
+  // => request parameter: NextRequest object
+  // => Contains: body, headers, cookies, URL, etc.
 
-  // => Parse JSON body
-  const body = await request.json(); // => body is { name: "Ahmad", amount: 100000 }
+  const body = await request.json();
+  // => Parse JSON body from request
+  // => request.json() returns Promise (must await)
+  // => For request body: {"name":"Ahmad","amount":100000}
+  // =>   body is { name: "Ahmad", amount: 100000 }
+  // => Throws error if body not valid JSON
 
-  // => Extract data
-  const { name, amount } = body; // => name is "Ahmad", amount is 100000
+  const { name, amount } = body;
+  // => Destructure data from body
+  // => name is "Ahmad" (string)
+  // => amount is 100000 (number)
 
-  // => Validation
   if (!name || !amount) {
+    // => Validation: check required fields
+    // => !name: true if name is null, undefined, or empty string
+    // => !amount: true if amount is 0, null, undefined
+
     return NextResponse.json(
       { error: "Name and amount required" },
-      { status: 400 }, // => HTTP 400 Bad Request
+      // => Error response body
+      // => Object with error message
+
+      { status: 400 },
+      // => HTTP 400 Bad Request status
+      // => Indicates client error (validation failure)
+      // => Alternative status codes:
+      // =>   422 Unprocessable Entity (semantic validation errors)
     );
+    // => Early return: stops execution
+    // => Client receives validation error
   }
 
-  // => Process donation (save to database)
   // await db.donations.create({ name, amount });
-  console.log(`Donation from ${name}: IDR ${amount}`);
+  // => Database mutation (commented)
+  // => In production: save donation to database
+  // => Example with Prisma:
+  // =>   const donation = await prisma.donation.create({
+  // =>     data: { name, amount, createdAt: new Date() }
+  // =>   });
 
-  // => Return success response
+  console.log(`Donation from ${name}: IDR ${amount}`);
+  // => Server-side logging
+  // => For name="Ahmad", amount=100000:
+  // =>   Output: "Donation from Ahmad: IDR 100000"
+
   return NextResponse.json(
     {
       success: true,
+      // => Success flag
+
       message: `Thank you ${name}!`,
-      donationId: Math.random().toString(36).substr(2, 9), // => Random ID
+      // => Personalized success message
+      // => For name="Ahmad": "Thank you Ahmad!"
+
+      donationId: Math.random().toString(36).substr(2, 9),
+      // => Generate random donation ID
+      // => Math.random(): 0.0 to 0.999... (number)
+      // => .toString(36): convert to base-36 string (0-9, a-z)
+      // =>   Example: 0.123 → "0.4fzyo82mvyr"
+      // => .substr(2, 9): take 9 characters starting at index 2
+      // =>   Skips "0." prefix, gets random string
+      // =>   Example: "4fzyo82mv"
+      // => Production: use UUID library (crypto.randomUUID())
     },
     {
-      status: 201, // => HTTP 201 Created
+      status: 201,
+      // => HTTP 201 Created status
+      // => Indicates resource successfully created
+      // => Standard for POST requests creating new resources
+      // => Alternative: 200 OK (also acceptable for POST)
     },
   );
+  // => Success response with donation details
 }
 ```
 

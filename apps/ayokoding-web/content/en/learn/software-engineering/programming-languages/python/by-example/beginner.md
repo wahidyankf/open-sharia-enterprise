@@ -208,43 +208,72 @@ graph TD
 ```python
 # String creation (single or double quotes)
 name = "Alice"                    # => name is "Alice" (type: str)
-greeting = 'Hello'                # => greeting is "Hello" (single quotes equivalent)
+                                  # => Double quotes standard convention
+greeting = 'Hello'                # => greeting is "Hello" (type: str)
+                                  # => Single quotes functionally identical
+                                  # => Use either consistently
 
 # String concatenation
-message = greeting + ", " + name  # => message is "Hello, Alice"
+message = greeting + ", " + name  # => + operator concatenates strings
+                                  # => Creates new string "Hello, Alice"
+                                  # => message is "Hello, Alice"
 print(message)                    # => Output: Hello, Alice
 
 # String repetition
-laugh = "ha" * 3                  # => laugh is "hahahaha"
+laugh = "ha" * 3                  # => * operator repeats string
+                                  # => laugh is "hahaha" (type: str)
 print(laugh)                      # => Output: hahaha
 
 # String methods (immutable - return new strings)
 text = "  Python Programming  "   # => text has leading/trailing spaces
-print(text.strip())               # => Output: Python Programming (spaces removed)
-print(text.upper())               # => Output:   PYTHON PROGRAMMING   (uppercase)
-print(text.lower())               # => Output:   python programming   (lowercase)
-print(text.replace("Python", "Go"))# => Output:   Go Programming   (replaced)
+                                  # => text is "  Python Programming  "
+print(text.strip())               # => strip() removes whitespace
+                                  # => Returns NEW string "Python Programming"
+                                  # => Output: Python Programming
+print(text.upper())               # => upper() converts to uppercase
+                                  # => Returns NEW string "  PYTHON PROGRAMMING  "
+                                  # => Output:   PYTHON PROGRAMMING
+print(text.lower())               # => lower() converts to lowercase
+                                  # => Returns NEW string "  python programming  "
+                                  # => Output:   python programming
+print(text.replace("Python", "Go"))# => replace() substitutes substring
+                                  # => Returns NEW string "  Go Programming  "
+                                  # => Output:   Go Programming
 
 # Original string unchanged (immutability)
-print(text)                       # => Output:   Python Programming   (unchanged!)
+print(text)                       # => text still has original value
+                                  # => Immutability guarantees no modifications
+                                  # => Output:   Python Programming
 
 # String splitting and joining
 words = "apple,banana,cherry"     # => words is "apple,banana,cherry"
-fruits = words.split(",")         # => fruits is ["apple", "banana", "cherry"] (list)
+fruits = words.split(",")         # => split() converts string to list
+                                  # => Delimiter is comma ","
+                                  # => fruits is ["apple", "banana", "cherry"]
 print(fruits)                     # => Output: ['apple', 'banana', 'cherry']
 
-joined = "-".join(fruits)         # => joined is "apple-banana-cherry"
+joined = "-".join(fruits)         # => join() converts list to string
+                                  # => Joins elements with "-" separator
+                                  # => joined is "apple-banana-cherry"
 print(joined)                     # => Output: apple-banana-cherry
 
 # String formatting (f-strings, Python 3.6+)
-age = 30                          # => age is 30
-print(f"{name} is {age} years old")# => Output: Alice is 30 years old
+age = 30                          # => age is 30 (type: int)
+print(f"{name} is {age} years old")# => f-string interpolates variables
+                                  # => Evaluates expressions inside {}
+                                  # => age auto-converts to string
+                                  # => Output: Alice is 30 years old
 
 # Multiline strings
 poem = """Line one
 Line two
-Line three"""                     # => poem is 3-line string
-print(poem)                       # => Output: (3 lines)
+Line three"""                     # => Triple quotes preserve newlines
+                                  # => poem is "Line one\nLine two\nLine three"
+                                  # => poem is 3-line string (type: str)
+print(poem)                       # => Prints each line separately
+                                  # => Output: Line one
+                                  # =>         Line two
+                                  # =>         Line three
 ```
 
 **Key Takeaway**: Strings are immutable - all string methods return new strings rather than modifying originals. Use f-strings for readable formatting and `split()`/`join()` for transforming between strings and lists.

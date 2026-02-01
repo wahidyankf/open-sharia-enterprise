@@ -56,9 +56,12 @@ import (
 func main() {
     plugin.Serve(&plugin.ServeOpts{
         ProviderFunc: provider.New,     // => Provider factory function
+        // => Configure ProviderFunc: provider.New,     //
     })
     // => Provider served as gRPC plugin
 }
+
+
 ```
 
 **Provider configuration** - `provider/provider.go`:
@@ -68,47 +71,75 @@ package provider
 
 import (
     "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+    // => schema package provides Terraform resource schema types
 )
 
 func New() *schema.Provider {
+    // => New() returns provider instance with schema and configuration
     return &schema.Provider{
+        // => Schema defines provider configuration arguments
         Schema: map[string]*schema.Schema{
             "api_url": {
-                Type:        schema.TypeString,
-                Required:    true,
+                // => api_url argument configuration
+                Type:        schema.TypeString,           // => Expects string value
+                // => Configure Type:        schema.TypeString,           //
+                Required:    true,                        // => Must be provided
+                // => Configure Required:    true,                        //
                 DefaultFunc: schema.EnvDefaultFunc("EXAMPLE_API_URL", nil),
-                Description: "API URL for provider",
+                // => Reads from EXAMPLE_API_URL env var if not set in config
+                Description: "API URL for provider",     // => Shown in docs
+                // => Configure Description: "API URL for provider",     //
             },
             "api_key": {
-                Type:        schema.TypeString,
-                Required:    true,
-                Sensitive:   true,
+                // => api_key argument for authentication
+                Type:        schema.TypeString,           // => Expects string value
+                // => Configure Type:        schema.TypeString,           //
+                Required:    true,                        // => Must be provided
+                // => Configure Required:    true,                        //
+                Sensitive:   true,                        // => Hidden in logs and plan output
+                // => Configure Sensitive:   true,                        //
                 DefaultFunc: schema.EnvDefaultFunc("EXAMPLE_API_KEY", nil),
-                Description: "API key for authentication",
+                // => Reads from EXAMPLE_API_KEY env var if not set
+                Description: "API key for authentication",// => Documentation string
+                // => Configure Description: "API key for authentication",//
             },
         },
 
         ResourcesMap: map[string]*schema.Resource{
-            "example_server": resourceServer(),  // => Register resources
+            // => ResourcesMap registers available resource types
+            "example_server": resourceServer(),  // => Register example_server resource
+            // => Users can now use resource "example_server" "name" { ... }
         },
 
         DataSourcesMap: map[string]*schema.Resource{
-            "example_info": dataSourceInfo(),    // => Register data sources
+            // => DataSourcesMap registers available data sources
+            "example_info": dataSourceInfo(),    // => Register example_info data source
+            // => Users can now use data "example_info" "name" { ... }
         },
 
-        ConfigureContextFunc: configureProvider,  // => Provider initialization
+        ConfigureContextFunc: configureProvider,  // => Provider initialization function
+        // => Called once at provider startup to create API client
     }
 }
 
 func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-    apiURL := d.Get("api_url").(string)
-    apiKey := d.Get("api_key").(string)
+    // => configureProvider initializes API client with provider config
+    // => d contains provider arguments (api_url, api_key)
+    apiURL := d.Get("api_url").(string)           // => Read api_url from config
+    // => Type assertion to string (Terraform stores as interface{})
+    apiKey := d.Get("api_key").(string)           // => Read api_key from config
+    // => Both values guaranteed present due to Required: true
 
     // Initialize API client
-    client := NewAPIClient(apiURL, apiKey)
+    client := NewAPIClient(apiURL, apiKey)        // => Create API client
+    // => client used by all resource CRUD operations
+    // => Returned as meta interface{} to resource functions
 
-    return client, nil
+    return client, nil                            // => Return client, no errors
+    // => nil diag.Diagnostics means success
 }
+
+
 ```
 
 **Resource implementation** - `provider/resource_server.go`:
@@ -118,30 +149,50 @@ package provider
 
 import (
     "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+    // => schema package provides resource schema and CRUD function types
 )
 
 func resourceServer() *schema.Resource {
+    // => resourceServer defines example_server resource schema and operations
     return &schema.Resource{
-        CreateContext: resourceServerCreate,
-        ReadContext:   resourceServerRead,
-        UpdateContext: resourceServerUpdate,
-        DeleteContext: resourceServerDelete,
+        // => CRUD function mapping (Terraform calls these during lifecycle)
+        CreateContext: resourceServerCreate,      // => Called on resource creation
+        // => Configure CreateContext: resourceServerCreate,      //
+        ReadContext:   resourceServerRead,        // => Called on refresh/plan/apply
+        // => Configure ReadContext:   resourceServerRead,        //
+        UpdateContext: resourceServerUpdate,      // => Called when attributes change
+        // => Configure UpdateContext: resourceServerUpdate,      //
+        DeleteContext: resourceServerDelete,      // => Called on resource destruction
+        // => Configure DeleteContext: resourceServerDelete,      //
 
+        // => Schema defines resource arguments and attributes
         Schema: map[string]*schema.Schema{
             "name": {
-                Type:     schema.TypeString,
-                Required: true,
-                Description: "Server name",
+                // => name attribute (user-provided)
+                Type:     schema.TypeString,          // => Expects string value
+                // => Configure Type:     schema.TypeString,          //
+                Required: true,                       // => Must be provided in config
+                // => Configure Required: true,                       //
+                Description: "Server name",          // => Documentation
+                // => Configure Description: "Server name",          //
             },
             "instance_type": {
-                Type:     schema.TypeString,
-                Required: true,
-                Description: "Instance type",
+                // => instance_type attribute (user-provided)
+                Type:     schema.TypeString,          // => Expects string value
+                // => Configure Type:     schema.TypeString,          //
+                Required: true,                       // => Must be provided in config
+                // => Configure Required: true,                       //
+                Description: "Instance type",        // => Documentation
+                // => Configure Description: "Instance type",        //
             },
             "status": {
-                Type:     schema.TypeString,
-                Computed: true,
-                Description: "Server status",
+                // => status attribute (API-provided)
+                Type:     schema.TypeString,          // => Expects string value
+                // => Configure Type:     schema.TypeString,          //
+                Computed: true,                       // => Set by provider, not user
+                // => Configure Computed: true,                       //
+                Description: "Server status",        // => Documentation
+                // => Computed values come from API responses
             },
         },
     }
@@ -149,69 +200,116 @@ func resourceServer() *schema.Resource {
 
 // CRUD operations
 func resourceServerCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-    client := meta.(*APIClient)
+    // => resourceServerCreate handles resource creation
+    // => d contains resource config (name, instance_type)
+    // => meta contains API client from configureProvider
+    client := meta.(*APIClient)                   // => Type assert to APIClient
+    // => client has CreateServer, GetServer, UpdateServer, DeleteServer methods
 
-    name := d.Get("name").(string)
-    instanceType := d.Get("instance_type").(string)
+    name := d.Get("name").(string)                // => Read name from config
+    // => d.Get() returns interface{}, type assert to string
+    instanceType := d.Get("instance_type").(string) // => Read instance_type from config
+    // => Both guaranteed present due to Required: true
 
     // Call external API to create resource
     server, err := client.CreateServer(name, instanceType)
+    // => POST /servers with {"name": "...", "instance_type": "..."}
+    // => Returns server object with ID and status
     if err != nil {
-        return diag.FromErr(err)
+        return diag.FromErr(err)                  // => Return error as diagnostic
+        // => Terraform shows error, doesn't create state entry
     }
 
     // Set resource ID (required)
-    d.SetId(server.ID)
+    d.SetId(server.ID)                            // => Set resource ID in state
+    // => ID identifies resource for future operations (read, update, delete)
+    // => Example: d.SetId("srv-abc123")
 
     // Set computed attributes
-    d.Set("status", server.Status)
+    d.Set("status", server.Status)                // => Set status in state
+    // => Example: server.Status might be "creating" or "running"
+    // => Terraform tracks this in state file
 
-    return nil
+    return nil                                    // => Success, no diagnostics
+    // => Resource created, state saved with ID and attributes
 }
 
 func resourceServerRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-    client := meta.(*APIClient)
+    // => resourceServerRead fetches current resource state from API
+    // => Called during refresh, plan, and apply to sync state
+    client := meta.(*APIClient)                   // => Type assert to APIClient
+    // => Configure client :
 
-    server, err := client.GetServer(d.Id())
+    server, err := client.GetServer(d.Id())       // => GET /servers/{id}
+    // => d.Id() returns resource ID from state (set in Create)
     if err != nil {
         if isNotFound(err) {
-            d.SetId("")  // => Resource deleted externally
-            return nil
+            d.SetId("")  // => Resource deleted externally (drift detected)
+            // => Empty ID signals Terraform to remove from state
+            // => Next plan will show resource needs recreation
+            return nil   // => Not an error, resource just doesn't exist
+            // => Configure return nil   //
         }
-        return diag.FromErr(err)
+        return diag.FromErr(err)                  // => API error (network, auth, etc.)
+        // => Configure return diag.FromErr(err)                  //
     }
 
-    d.Set("name", server.Name)
-    d.Set("instance_type", server.InstanceType)
-    d.Set("status", server.Status)
+    // Update state with API values
+    d.Set("name", server.Name)                    // => Sync name from API
+    // => Configure d.Set("name", server.Name)                    //
+    d.Set("instance_type", server.InstanceType)   // => Sync instance_type from API
+    // => Configure d.Set("instance_type", server.InstanceType)   //
+    d.Set("status", server.Status)                // => Sync status from API
+    // => If API values differ from state, Terraform detects drift
+    // => Example: Manual console changes show in plan
 
-    return nil
+    return nil                                    // => Success, state updated
+    // => Configure return nil                                    //
 }
 
 func resourceServerUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-    client := meta.(*APIClient)
+    // => resourceServerUpdate handles in-place resource updates
+    // => Only called when attributes change (not all changes supported)
+    client := meta.(*APIClient)                   // => Type assert to APIClient
+    // => Configure client :
 
-    if d.HasChange("instance_type") {
-        newType := d.Get("instance_type").(string)
+    if d.HasChange("instance_type") {             // => Check if instance_type changed
+        // => d.HasChange() compares config to state
+        newType := d.Get("instance_type").(string) // => Read new value from config
+        // => Example: changing "small" to "large"
         err := client.UpdateServer(d.Id(), newType)
+        // => PATCH /servers/{id} with {"instance_type": "large"}
+        // => API performs in-place update
         if err != nil {
-            return diag.FromErr(err)
+            return diag.FromErr(err)              // => Update failed
+            // => Terraform shows error, state unchanged
         }
     }
+    // => name changes would require ForceNew: true (recreate resource)
 
-    return resourceServerRead(ctx, d, meta)
+    return resourceServerRead(ctx, d, meta)       // => Refresh state after update
+    // => Ensures state matches updated resource
 }
 
 func resourceServerDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-    client := meta.(*APIClient)
+    // => resourceServerDelete handles resource destruction
+    // => Called during terraform destroy or resource removal
+    client := meta.(*APIClient)                   // => Type assert to APIClient
+    // => Configure client :
 
-    err := client.DeleteServer(d.Id())
+    err := client.DeleteServer(d.Id())            // => DELETE /servers/{id}
+    // => API destroys resource
     if err != nil {
-        return diag.FromErr(err)
+        return diag.FromErr(err)                  // => Delete failed
+        // => Terraform keeps resource in state, can retry
     }
+    // => No need to d.SetId("") - Terraform removes from state automatically
 
-    return nil
+    return nil                                    // => Success, resource destroyed
+    // => Terraform removes resource from state file
 }
+
+
 ```
 
 **Using custom provider**:
@@ -220,24 +318,44 @@ func resourceServerDelete(ctx context.Context, d *schema.ResourceData, meta inte
 terraform {
   required_providers {
     example = {
-      source  = "example.com/custom/example"
-      version = "~> 1.0"
+      source  = "example.com/custom/example"    # => Custom provider source
+      # => Format: hostname/namespace/name
+      # => For private registry or local development
+      version = "~> 1.0"                        # => Accept 1.x versions
+      # => ~> 1.0 allows 1.0.0, 1.1.0, but not 2.0.0
     }
   }
 }
 
 provider "example" {
-  api_url = "https://api.example.com"
-  api_key = var.api_key
+  # => Provider configuration block
+  # => Calls configureProvider() with these arguments
+  api_url = "https://api.example.com"           # => Sets api_url argument
+  # => Could use env var: EXAMPLE_API_URL instead
+  api_key = var.api_key                         # => Sets api_key from variable
+  # => Marked sensitive in provider schema, hidden in logs
+  # => Calls configureProvider() which returns API client
+  # => Client used by all resource operations
 }
 
 resource "example_server" "web" {
-  name          = "web-server"
-  instance_type = "large"
+  # => Creates example_server resource named "web"
+  # => Calls resourceServerCreate() during apply
+  name          = "web-server"                  # => Sets name argument
+  # => Passed to CreateServer API call
+  instance_type = "large"                       # => Sets instance_type argument
+  # => Determines server capacity/pricing
+  # => terraform plan shows: +example_server.web will be created
+  # => terraform apply calls client.CreateServer("web-server", "large")
+  # => State stores: ID, name, instance_type, status
 }
 
 output "server_status" {
-  value = example_server.web.status
+  # => Exposes computed status attribute
+  value = example_server.web.status             # => Read from state
+  # => status is Computed: true, set by API in Create/Read
+  # => Example output: server_status = "running"
+  # => Shown after terraform apply completes
 }
 ```
 
@@ -259,107 +377,174 @@ import (
     "context"
     "github.com/hashicorp/terraform-plugin-sdk/v2/diag"
     "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+    // => schema package provides data source schema types
 )
 
 func dataSourceInfo() *schema.Resource {
+    // => dataSourceInfo defines example_info data source schema
+    // => Data sources query existing resources without managing them
     return &schema.Resource{
         ReadContext: dataSourceInfoRead,
         // => Data sources only have Read operation (no Create/Update/Delete)
+        // => Called during terraform plan to fetch latest data
+        // => Re-runs every plan to ensure fresh data
 
         Schema: map[string]*schema.Schema{
+            // => Schema defines data source arguments and attributes
             "region": {
-                Type:        schema.TypeString,
-                Required:    true,
-                Description: "Region to query",
+                // => region argument (user-provided input)
+                Type:        schema.TypeString,           // => Expects string value
+                // => Configure Type:        schema.TypeString,           //
+                Required:    true,                        // => Must be provided
+                // => Configure Required:    true,                        //
+                Description: "Region to query",          // => Documentation
+                // => User specifies which region to query
             },
-            // => Input parameter
+            // => Input parameter - users provide this in config
 
             "endpoint": {
-                Type:        schema.TypeString,
-                Computed:    true,
-                Description: "API endpoint for region",
+                // => endpoint attribute (provider-computed output)
+                Type:        schema.TypeString,           // => Returns string value
+                // => Configure Type:        schema.TypeString,           //
+                Computed:    true,                        // => Set by provider, not user
+                // => Configure Computed:    true,                        //
+                Description: "API endpoint for region",  // => Documentation
+                // => Computed: true means read-only, provider sets value
             },
-            // => Computed: output only (provider calculates value)
+            // => Computed: output only (provider calculates value from API)
 
             "availability_zones": {
-                Type:        schema.TypeList,
-                Computed:    true,
+                // => availability_zones attribute (list output)
+                Type:        schema.TypeList,             // => Returns list of values
+                // => Configure Type:        schema.TypeList,             //
+                Computed:    true,                        // => Provider-computed
+                // => Configure Computed:    true,                        //
                 Elem:        &schema.Schema{Type: schema.TypeString},
-                Description: "List of availability zones",
+                // => Elem defines list element type (strings)
+                Description: "List of availability zones",// => Documentation
+                // => Example: ["us-west-2a", "us-west-2b", "us-west-2c"]
             },
-            // => TypeList with string elements
+            // => TypeList with string elements - array of availability zones
 
             "metadata": {
-                Type:        schema.TypeMap,
-                Computed:    true,
+                // => metadata attribute (map output)
+                Type:        schema.TypeMap,              // => Returns key-value map
+                // => Configure Type:        schema.TypeMap,              //
+                Computed:    true,                        // => Provider-computed
+                // => Configure Computed:    true,                        //
                 Elem:        &schema.Schema{Type: schema.TypeString},
-                Description: "Region metadata",
+                // => Elem defines map value type (string values)
+                Description: "Region metadata",          // => Documentation
+                // => Example: {"tier": "standard", "compliance": "hipaa"}
             },
-            // => TypeMap for key-value pairs
+            // => TypeMap for key-value pairs - flexible metadata storage
         },
     }
 }
 
 func dataSourceInfoRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-    client := meta.(*APIClient)
-    region := d.Get("region").(string)
-    // => Get input parameter
+    // => dataSourceInfoRead fetches region information from API
+    // => Called during terraform plan, runs every plan (not cached in state)
+    // => d contains data source config (region argument)
+    client := meta.(*APIClient)                       // => Type assert to APIClient
+    // => client from provider configuration
+    region := d.Get("region").(string)                // => Read region from config
+    // => Example: region = "us-west-2"
+    // => Get input parameter from user configuration
 
     // Query external API
-    info, err := client.GetRegionInfo(region)
+    info, err := client.GetRegionInfo(region)         // => GET /regions/us-west-2
+    // => Fetches endpoint, availability zones, metadata from API
+    // => Returns RegionInfo struct with all computed values
     if err != nil {
-        return diag.FromErr(err)
+        return diag.FromErr(err)                      // => API error (not found, auth, etc.)
+        // => Terraform shows error, plan fails
     }
+    // => info contains: Endpoint, AvailabilityZones, Metadata
 
     // Set computed values
-    d.SetId(region)
-    // => Data sources need ID (use region as unique identifier)
-    d.Set("endpoint", info.Endpoint)
-    // => Set computed string value
+    d.SetId(region)                                   // => Set data source ID
+    // => Data sources need ID for state tracking
+    // => Use region as unique identifier
+    // => Example: ID = "us-west-2"
+    d.Set("endpoint", info.Endpoint)                  // => Set computed endpoint
+    // => Set computed string value from API response
+    // => Example: endpoint = "https://api.us-west-2.example.com"
     d.Set("availability_zones", info.AvailabilityZones)
-    // => Set list value
-    d.Set("metadata", info.Metadata)
-    // => Set map value
+    // => Set computed list value from API response
+    // => Example: ["us-west-2a", "us-west-2b", "us-west-2c"]
+    d.Set("metadata", info.Metadata)                  // => Set computed map
+    // => Set map value from API response
+    // => Example: {"tier": "standard", "compliance": "hipaa"}
 
-    return nil
+    return nil                                        // => Success, values set
+    // => Data available for use in configuration
 }
+
 ```
 
 **Using data source**:
 
 ```hcl
 terraform {
+  # => Terraform configuration block
   required_providers {
+    # => Provider requirements
     example = {
-      source = "example.com/custom/example"
+      # => example provider configuration
+      source = "example.com/custom/example"    # => Custom provider source
+      # => Matches provider registration from Example 57
+      # => Format: hostname/namespace/name
     }
   }
 }
 
 provider "example" {
-  api_url = "https://api.example.com"
-  api_key = var.api_key
+  # => Provider configuration (calls configureProvider)
+  api_url = "https://api.example.com"          # => API base URL
+  api_key = var.api_key                        # => Authentication key
+  # => Initializes API client for data source queries
 }
 
 # Query region information via data source
 data "example_info" "us_west" {
-  region = "us-west-2"
-  # => Input parameter
+  # => Declares data source of type example_info named "us_west"
+  # => Calls dataSourceInfoRead during terraform plan
+  region = "us-west-2"                         # => Input parameter (Required: true)
+  # => Passed to client.GetRegionInfo("us-west-2")
+  # => Data source executes on EVERY plan (not cached)
+  # => Returns: endpoint, availability_zones, metadata
 }
+# => terraform plan queries API and displays computed values
+# => Example output:
+# =>   endpoint = "https://api.us-west-2.example.com"
+# =>   availability_zones = ["us-west-2a", "us-west-2b", "us-west-2c"]
+# =>   metadata = {"tier": "standard", "compliance": "hipaa"}
 
 # Use data source outputs in resources
 resource "local_file" "config" {
-  filename = "region-config.txt"
+  # => Create configuration file from data source outputs
+  filename = "region-config.txt"               # => Output file path
   content  = <<-EOT
     Endpoint: ${data.example_info.us_west.endpoint}
     AZs: ${jsonencode(data.example_info.us_west.availability_zones)}
     Metadata: ${jsonencode(data.example_info.us_west.metadata)}
   EOT
   # => data.example_info.us_west.* accesses computed values
+  # => References: data.TYPE.NAME.ATTRIBUTE
+  # => jsonencode converts list/map to JSON string
+  # => Creates dependency: resource waits for data source query
 }
+# => terraform apply creates file:
+# =>   Endpoint: https://api.us-west-2.example.com
+# =>   AZs: ["us-west-2a","us-west-2b","us-west-2c"]
+# =>   Metadata: {"compliance":"hipaa","tier":"standard"}
 
 output "region_endpoint" {
-  value = data.example_info.us_west.endpoint
+  # => Expose endpoint for use by other configurations
+  value = data.example_info.us_west.endpoint   # => Read from data source
+  # => Example: region_endpoint = "https://api.us-west-2.example.com"
+  # => Shown after terraform apply completes
 }
 ```
 
@@ -393,55 +578,97 @@ graph TD
 ```go
 // provider/resource_server_test.go
 package provider
+// => Test package for provider acceptance tests
 
 import (
-    "testing"
+    "testing"                                                   // => Go testing framework
     "github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+    // => resource package provides acceptance test framework
 )
 
 func TestAccResourceServer_basic(t *testing.T) {
+    // => TestAccResourceServer_basic tests full resource lifecycle
+    // => Function name pattern: TestAcc* for acceptance tests
+    // => Requires TF_ACC=1 environment variable to run
     resource.Test(t, resource.TestCase{
+        // => resource.Test runs acceptance test suite
+        // => Manages test lifecycle: apply, verify, destroy
         PreCheck:     func() { testAccPreCheck(t) },
         // => PreCheck validates environment (API keys, endpoints) before test
+        // => Runs once before all test steps
+        // => Fails fast if environment not ready
         Providers:    testAccProviders,
         // => Providers is map of providers to test
+        // => testAccProviders defined in provider_test.go setup
+        // => Maps provider name to provider instance
         CheckDestroy: testAccCheckServerDestroy,
         // => CheckDestroy verifies resources cleaned up after test
+        // => Runs after all steps complete
+        // => Ensures no orphaned resources remain
 
         Steps: []resource.TestStep{
+            // => Steps is sequence of configurations to apply
+            // => Each step: apply config → run checks → proceed
+            // => Tests full lifecycle: create → update → import
             {
+                // => Step 1: Create resource with basic configuration
                 Config: testAccResourceServerConfig_basic(),
                 // => Step 1: Apply basic configuration
+                // => Calls terraform apply with HCL from testAccResourceServerConfig_basic
+                // => Creates example_server.test resource
                 Check: resource.ComposeTestCheckFunc(
+                    // => ComposeTestCheckFunc runs multiple checks sequentially
+                    // => If any check fails, test fails immediately
                     testAccCheckServerExists("example_server.test"),
                     // => Verify resource was created
+                    // => Custom check: queries API to confirm resource exists
+                    // => Validates Terraform state matches reality
                     resource.TestCheckResourceAttr("example_server.test", "name", "test-server"),
                     // => Verify name attribute
+                    // => Checks state: example_server.test.name == "test-server"
+                    // => Validates Create operation set correct value
                     resource.TestCheckResourceAttr("example_server.test", "instance_type", "small"),
                     // => Verify instance_type attribute
+                    // => Checks state: example_server.test.instance_type == "small"
+                    // => Confirms config value persisted to state
                     resource.TestCheckResourceAttrSet("example_server.test", "status"),
                     // => Verify status is set (don't check exact value)
+                    // => Validates computed attribute exists
+                    // => Doesn't validate exact value (API-dependent)
                 ),
             },
             {
+                // => Step 2: Update resource to test Update operation
                 Config: testAccResourceServerConfig_updated(),
                 // => Step 2: Apply updated configuration
+                // => Calls terraform apply with instance_type changed to "large"
+                // => Tests in-place update (not recreate)
                 Check: resource.ComposeTestCheckFunc(
                     resource.TestCheckResourceAttr("example_server.test", "instance_type", "large"),
                     // => Verify update worked
+                    // => Confirms instance_type changed from "small" to "large"
+                    // => Validates Update operation worked
                 ),
             },
             {
+                // => Step 3: Test import functionality
                 ResourceName:      "example_server.test",
+                // => Name of resource to import
+                // => Must match resource from previous steps
                 ImportState:       true,
+                // => Enable import test
+                // => Runs terraform import for this resource
                 ImportStateVerify: true,
                 // => Step 3: Test import (verify exported state matches)
+                // => Validates imported state matches expected state
+                // => Ensures import implementation correct
             },
         },
     })
 }
 
 func testAccResourceServerConfig_basic() string {
+    // => testAccResourceServerConfig_basic returns HCL for initial resource
     return `
 resource "example_server" "test" {
   name          = "test-server"
@@ -449,9 +676,12 @@ resource "example_server" "test" {
 }
 `
     // => HCL configuration for test
+    // => Creates small instance for testing
+    // => Used in Step 1
 }
 
 func testAccResourceServerConfig_updated() string {
+    // => testAccResourceServerConfig_updated returns HCL for update test
     return `
 resource "example_server" "test" {
   name          = "test-server"
@@ -459,38 +689,69 @@ resource "example_server" "test" {
 }
 `
     // => Updated configuration (tests Update operation)
+    // => Changes instance_type: "small" → "large"
+    // => Used in Step 2 to test in-place updates
 }
 
 func testAccCheckServerExists(resourceName string) resource.TestCheckFunc {
+    // => testAccCheckServerExists verifies resource exists in external system
+    // => Returns TestCheckFunc that queries API
+    // => resourceName: "example_server.test"
     return func(s *terraform.State) error {
+        // => Returned function receives Terraform state
+        // => s contains all resources from apply
         rs, ok := s.RootModule().Resources[resourceName]
+        // => rs is resource state for example_server.test
+        // => ok is false if resource not in state
         if !ok {
             return fmt.Errorf("Resource not found: %s", resourceName)
+            // => Test fails: resource missing from state
         }
 
         client := testAccProvider.Meta().(*APIClient)
+        // => Get API client from provider metadata
+        // => client used to query external API
         _, err := client.GetServer(rs.Primary.ID)
+        // => Query API with resource ID from state
+        // => rs.Primary.ID is the d.SetId value from Create
         return err
         // => Verify resource exists in external system
+        // => err != nil means resource not found (test fails)
+        // => err == nil means resource exists (test passes)
     }
 }
 
 func testAccCheckServerDestroy(s *terraform.State) error {
+    // => testAccCheckServerDestroy runs after all test steps complete
+    // => Verifies all resources were destroyed
+    // => s contains final state before cleanup
     client := testAccProvider.Meta().(*APIClient)
+    // => Get API client to query external system
 
     for _, rs := range s.RootModule().Resources {
+        // => Iterate all resources in state
+        // => rs is each resource entry
         if rs.Type != "example_server" {
             continue
+            // => Skip non-example_server resources
+            // => Only validate our resource type
         }
 
         _, err := client.GetServer(rs.Primary.ID)
+        // => Query API: does resource still exist?
+        // => rs.Primary.ID is resource ID
         if err == nil {
             return fmt.Errorf("Server still exists: %s", rs.Primary.ID)
+            // => Test fails: resource not destroyed
+            // => Indicates CheckDestroy failed (orphaned resource)
         }
         // => Verify resource was destroyed
+        // => err != nil means resource deleted (good)
     }
 
     return nil
+    // => All resources destroyed successfully
+    // => Test cleanup validated
 }
 ```
 
@@ -522,22 +783,32 @@ Built-in validation ensures correct syntax and formatting before plan/apply. Thi
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 # Intentional errors for validation demonstration
 resource "local_file" "example" {
+# => Resource definition
   filename = "test.txt"
+  # => Sets filename
   content  = "Test content"
+  # => Sets content
 }
 
 # Missing required argument (will fail validation)
 resource "local_file" "invalid" {
+# => Resource definition
   filename = "invalid.txt"
   # content missing (required argument)
 }
+
+
+
 ```
 
 **Validation commands**:
@@ -592,6 +863,8 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Terraform validation passed"
+
+
 ```
 
 **Key Takeaway**: `terraform fmt` formats code to Terraform style (indentation, alignment). Use `-check` in CI to enforce formatting. `terraform validate` checks syntax, required arguments, type constraints. Validation runs without accessing remote state or providers (fast). Pre-commit hooks catch issues before push. Validation is free and immediate—always run before plan.
@@ -608,37 +881,53 @@ TFLint detects errors beyond `terraform validate`: unused variables, deprecated 
 
 ```hcl
 config {
+  # => TFLint global configuration
   module = true
   # => Enable linting of module calls
+  # => Validates modules called from root configuration
 }
 
 plugin "terraform" {
+  # => Core Terraform plugin for basic linting
   enabled = true
   # => Core Terraform linting rules
+  # => Activates terraform-specific rule checks
   preset  = "recommended"
+  # => Use recommended rule set (opinionated defaults)
 }
 
 plugin "aws" {
+  # => AWS provider plugin for cloud-specific rules
   enabled = true
+  # => Activate AWS linting rules
   version = "0.27.0"
+  # => Plugin version to use
   source  = "github.com/terraform-linters/tflint-ruleset-aws"
   # => AWS-specific rules (instance types, regions, deprecated resources)
+  # => GitHub repository for AWS ruleset
 }
 
 rule "terraform_unused_declarations" {
+  # => Rule for detecting unused declarations
   enabled = true
   # => Detect unused variables, outputs, locals
+  # => Helps clean up configuration clutter
 }
 
 rule "terraform_deprecated_syntax" {
+  # => Rule for deprecated HCL syntax
   enabled = true
   # => Warn about deprecated HCL syntax
+  # => Catches old patterns that should be updated
 }
 
 rule "terraform_naming_convention" {
+  # => Rule for consistent naming patterns
   enabled = true
+  # => Activate naming convention checks
   format  = "snake_case"
   # => Enforce snake_case naming
+  # => Variables, resources, modules must use underscores not camelCase
 }
 ```
 
@@ -646,32 +935,48 @@ rule "terraform_naming_convention" {
 
 ```hcl
 terraform {
+  # => Terraform configuration
   required_version = ">= 1.0"
+  # => Minimum version requirement
 }
 
 provider "local" {}
+# => Local provider for file operations
 
 variable "unused_var" {
+  # => Variable declared but never used
   type    = string
+  # => String type
   default = "never referenced"
+  # => Default value provided
   # => TFLint warning: unused variable
+  # => No resource or output references this
 }
 
 variable "ProdInstanceType" {
+  # => Variable with camelCase naming (violation)
   type = string
+  # => String type
   # => TFLint warning: variable should use snake_case
+  # => Correct name would be: prod_instance_type
 }
 
 resource "local_file" "example" {
+  # => Local file resource
   filename = "test.txt"
+  # => Output filename
   content  = var.ProdInstanceType
   # => References camelCase variable
+  # => References variable with naming violation
 }
 
 # Deprecated syntax
 locals {
+  # => Local values block
   list_example = "${list("a", "b", "c")}"
   # => TFLint warning: use ["a", "b", "c"] instead of list() function
+  # => list() function deprecated in Terraform 0.12+
+  # => Modern syntax: ["a", "b", "c"] (no function needed)
 }
 ```
 
@@ -726,6 +1031,7 @@ jobs:
 
       - name: Run TFLint
         run: tflint --format compact --minimum-failure-severity=warning
+        # => Configure run: tflint --format compact --minimum-failure-severity
 ```
 
 **Key Takeaway**: TFLint catches issues beyond `terraform validate`: unused variables, naming conventions, deprecated syntax, provider-specific errors. Configure with `.tflint.hcl`. Run `tflint --init` to download plugins. Use `--minimum-failure-severity=warning` in CI to enforce quality. Provider plugins (aws, google, azure) detect cloud-specific issues like invalid instance types or regions.
@@ -766,38 +1072,58 @@ require (
     github.com/gruntwork-io/terratest v0.46.0
     github.com/stretchr/testify v1.8.4
 )
+
+
 ```
 
 **Terraform configuration** - `examples/basic/main.tf`:
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 variable "filename" {
+# => Input variable
   type    = string
+  # => Sets type
   default = "test-output.txt"
+  # => Sets default
 }
 
 variable "content" {
+# => Input variable
   type = string
+  # => Sets type
 }
 
 resource "local_file" "test" {
+# => Resource definition
   filename = var.filename
+  # => Sets filename
   content  = var.content
+  # => Sets content
 }
 
 output "filename" {
+# => Output value
   value = local_file.test.filename
+  # => Sets value
 }
 
 output "content" {
+# => Output value
   value = local_file.test.content
+  # => Sets value
 }
+
+
+
 ```
 
 **Terratest test** - `test/basic_test.go`:
@@ -841,6 +1167,7 @@ func TestTerraformBasicExample(t *testing.T) {
 
     // Validate outputs
     outputFilename := terraform.Output(t, terraformOptions, "filename")
+    // => Configure outputFilename :
     outputContent := terraform.Output(t, terraformOptions, "content")
     // => Read Terraform outputs
 
@@ -850,6 +1177,7 @@ func TestTerraformBasicExample(t *testing.T) {
 
     // Validate actual infrastructure
     fileContent, err := os.ReadFile("../examples/basic/terratest-output.txt")
+    // => Configure fileContent, err :
     assert.NoError(t, err)
     assert.Equal(t, "Hello from Terratest!", string(fileContent))
     // => Verify file actually created with correct content
@@ -871,11 +1199,14 @@ func TestTerraformIdempotence(t *testing.T) {
 
     // Second apply should show no changes
     planOutput := terraform.Plan(t, terraformOptions)
+    // => Configure planOutput :
     assert.NotContains(t, planOutput, "will be created")
     assert.NotContains(t, planOutput, "will be updated")
     assert.NotContains(t, planOutput, "will be destroyed")
     // => Verify idempotence (second apply changes nothing)
 }
+
+
 ```
 
 **Running Terratest**:
@@ -933,10 +1264,12 @@ all_resources = filter tfplan.resource_changes as _, rc {
 
 # Check for required tags
 required_tags = ["Environment", "Owner", "CostCenter"]
+# => Sets required_tags
 
 # Validation function
 mandatory_tags = rule {
     all all_resources as _, resource {
+    # => Resource definition
         all required_tags as tag {
             resource.change.after.tags contains tag
         }
@@ -949,6 +1282,9 @@ main = rule {
     mandatory_tags
 }
 # => Policy fails if mandatory_tags rule fails
+
+
+
 ```
 
 **OPA policy** - `require_tags.rego`:
@@ -984,15 +1320,21 @@ deny[msg] {
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 # Compliant resource (has all required tags)
 resource "local_file" "compliant" {
+# => Resource definition
   filename = "compliant.txt"
+  # => Sets filename
   content  = "Valid"
+  # => Sets content
 
   # Simulated tags using local_file
   # (real clouds use tags = {...})
@@ -1000,10 +1342,13 @@ resource "local_file" "compliant" {
 
 # Non-compliant resource (missing tags)
 resource "local_file" "non_compliant" {
+# => Resource definition
   filename = "non-compliant.txt"
+  # => Sets filename
   content  = "Invalid"
   # => Missing Environment, Owner, CostCenter tags
 }
+
 ```
 
 **Policy validation workflow**:
@@ -1051,6 +1396,7 @@ jobs:
         run: |
           terraform init
           terraform plan -out=tfplan.binary
+          # => Configure terraform plan -out
           terraform show -json tfplan.binary > tfplan.json
 
       - name: Install OPA
@@ -1096,99 +1442,152 @@ graph TD
 
 ```hcl
 variable "server_name" {
+# => Input variable
   type        = string
+  # => Sets type
   description = "Server name"
+  # => Sets description
 
   validation {
     condition     = length(var.server_name) > 0
+    # => Sets condition
     error_message = "server_name cannot be empty"
+    # => Sets error_message
   }
 }
 
 variable "instance_type" {
+# => Input variable
   type    = string
+  # => Sets type
   default = "small"
+  # => Sets default
 }
 
 output "server_id" {
+# => Output value
   value = local_file.server.id
+  # => Sets value
 }
 
 output "server_name" {
+# => Output value
   value = var.server_name
+  # => Sets value
 }
 
 resource "local_file" "server" {
+# => Resource definition
   filename = "${var.server_name}-server.txt"
+  # => Sets filename
   content  = "Instance type: ${var.instance_type}"
+  # => Sets content
 }
+
+
+
 ```
 
 **Contract test** - `test/contract_test.go`:
 
 ```go
 package test
+// => Contract test package for web-server module
 
 import (
-    "testing"
-    "github.com/gruntwork-io/terratest/modules/terraform"
-    "github.com/stretchr/testify/assert"
+    "testing"                                                   // => Go testing framework
+    // => Configure testing"                                                   //
+    "github.com/gruntwork-io/terratest/modules/terraform"      // => Terratest Terraform helpers
+    // => Configure github.com/gruntwork-io/terratest/modules/terraform"      //
+    "github.com/stretchr/testify/assert"                       // => Assertion library
+    // => Configure github.com/stretchr/testify/assert"                       //
 )
 
 // Contract Test 1: Module accepts valid inputs
 func TestModuleAcceptsValidInputs(t *testing.T) {
+    // => Verify module applies successfully with valid inputs
+    // => Contract: module must accept documented input combinations
     terraformOptions := &terraform.Options{
+        // => Terraform configuration for test
         TerraformDir: "../modules/web-server",
+        // => Path to module under test
         Vars: map[string]interface{}{
+            // => Input variables (valid values)
             "server_name":   "web-01",
+            // => Valid server_name (non-empty string)
             "instance_type": "large",
+            // => Valid instance_type (overrides default)
         },
     }
 
     defer terraform.Destroy(t, terraformOptions)
+    // => Cleanup: destroy resources after test completes
     terraform.InitAndApply(t, terraformOptions)
+    // => terraform init && terraform apply -auto-approve
     // => Test passes if apply succeeds
     // => Contract: module accepts valid inputs without error
+    // => No assertions needed (failure = exception)
 }
 
 // Contract Test 2: Module rejects invalid inputs
 func TestModuleRejectsInvalidInputs(t *testing.T) {
+    // => Verify module validation catches invalid inputs
+    // => Contract: module must reject invalid inputs with clear errors
     terraformOptions := &terraform.Options{
         TerraformDir: "../modules/web-server",
         Vars: map[string]interface{}{
             "server_name": "",  // Empty (invalid)
+            // => Invalid input: empty string (validation should fail)
         },
     }
 
     _, err := terraform.InitAndApplyE(t, terraformOptions)
+    // => InitAndApplyE returns error instead of failing test
+    // => Allows testing expected failures
     assert.Error(t, err)
+    // => Verify apply failed (error is not nil)
     assert.Contains(t, err.Error(), "server_name cannot be empty")
+    // => Verify error message matches validation error
     // => Contract: module rejects invalid inputs with clear error
+    // => Error message must help user fix issue
 }
 
 // Contract Test 3: Module produces required outputs
 func TestModuleProducesRequiredOutputs(t *testing.T) {
+    // => Verify module exposes documented outputs
+    // => Contract: module must output server_id and server_name
     terraformOptions := &terraform.Options{
         TerraformDir: "../modules/web-server",
         Vars: map[string]interface{}{
             "server_name": "web-02",
+            // => Valid input for test
         },
     }
 
     defer terraform.Destroy(t, terraformOptions)
     terraform.InitAndApply(t, terraformOptions)
+    // => Apply module configuration
 
     // Verify output exists
     serverID := terraform.Output(t, terraformOptions, "server_id")
+    // => Read server_id output from state
+    // => terraform output server_id
     serverName := terraform.Output(t, terraformOptions, "server_name")
+    // => Read server_name output from state
 
     assert.NotEmpty(t, serverID)
+    // => Verify server_id is not empty string
+    // => Contract: server_id must have value
     assert.Equal(t, "web-02", serverName)
+    // => Verify server_name matches input
     // => Contract: module outputs server_id and server_name
+    // => Consumers can depend on these outputs existing
 }
 
 // Contract Test 4: Module is idempotent
 func TestModuleIdempotence(t *testing.T) {
+    // => Verify second apply produces no changes
+    // => Contract: module is idempotent (apply twice = apply once)
     terraformOptions := &terraform.Options{
         TerraformDir: "../modules/web-server",
         Vars: map[string]interface{}{
@@ -1198,35 +1597,53 @@ func TestModuleIdempotence(t *testing.T) {
 
     defer terraform.Destroy(t, terraformOptions)
     terraform.InitAndApply(t, terraformOptions)
+    // => First apply creates infrastructure
 
     // Second apply
     planOutput := terraform.Plan(t, terraformOptions)
+    // => terraform plan (should show no changes)
+    // => Returns plan output as string
     assert.Contains(t, planOutput, "No changes")
+    // => Verify plan shows "No changes. Your infrastructure matches..."
     // => Contract: module is idempotent (second apply changes nothing)
+    // => Prevents resource recreation on every apply
 }
 
 // Contract Test 5: Module handles updates correctly
 func TestModuleHandlesUpdates(t *testing.T) {
+    // => Verify module handles variable updates without unnecessary recreation
+    // => Contract: changing instance_type doesn't destroy/recreate server
     terraformOptions := &terraform.Options{
         TerraformDir: "../modules/web-server",
         Vars: map[string]interface{}{
             "server_name":   "web-04",
+            // => Server name (should not change)
             "instance_type": "small",
+            // => Initial instance type
         },
     }
 
     defer terraform.Destroy(t, terraformOptions)
     terraform.InitAndApply(t, terraformOptions)
+    // => First apply with instance_type = "small"
 
     // Update instance_type
     terraformOptions.Vars["instance_type"] = "large"
+    // => Change variable value
+    // => Simulates config update
     terraform.Apply(t, terraformOptions)
+    // => Second apply with instance_type = "large"
+    // => Should update in-place (not recreate)
 
     // Verify output unchanged (module handles in-place update)
     serverName := terraform.Output(t, terraformOptions, "server_name")
+    // => Read server_name output after update
     assert.Equal(t, "web-04", serverName)
+    // => Verify server_name unchanged
     // => Contract: module updates without replacing resources unnecessarily
-}
+    // => In-place updates preferred over destroy/create
+
+
 ```
 
 **Key Takeaway**: Contract tests validate module behavior without checking implementation. Test: valid inputs accepted, invalid inputs rejected, required outputs produced, idempotence, update handling. Contract tests document module expectations for consumers. Use `InitAndApplyE` (returns error) to test validation failures. Tests ensure module interface stability across versions.
@@ -1283,83 +1700,122 @@ infrastructure/
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 
   backend "s3" {
     # Production state in separate S3 bucket
     bucket         = "company-terraform-prod-state"
+    # => Sets bucket
     key            = "app/terraform.tfstate"
+    # => Sets key
     region         = "us-east-1"
+    # => Sets region
     encrypt        = true
+    # => Sets encrypt
     dynamodb_table = "terraform-prod-locks"
+    # => Sets dynamodb_table
   }
 
   required_providers {
+  # => Provider configuration
     aws = {
       source  = "hashicorp/aws"
+      # => Sets source
       version = "~> 5.0"
+      # => Sets version
     }
   }
 }
 
 provider "aws" {
+# => Provider configuration
   region = var.aws_region
+  # => Sets region
 
   # Production uses separate AWS account
   assume_role {
     role_arn = "arn:aws:iam::111111111111:role/TerraformProd"
+    # => Sets role_arn
   }
   # => Different IAM role than dev/staging
   # => Prevents cross-environment accidents
 }
 
 module "app" {
+# => Module configuration
   source = "../../modules/app"
+  # => Sets source
 
   environment    = "production"
+  # => Sets environment
   instance_count = 10
+  # => Sets instance_count
   instance_type  = "m5.large"
   # => Production-specific configuration
 }
 
 output "app_url" {
+# => Output value
   value = module.app.url
+  # => Sets value
 }
+
+
+
 ```
 
 **Dev directory** - `environments/dev/main.tf`:
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 
   backend "s3" {
     # Dev state in separate S3 bucket
     bucket         = "company-terraform-dev-state"
+    # => Sets bucket
     key            = "app/terraform.tfstate"
+    # => Sets key
     region         = "us-west-2"
+    # => Sets region
     encrypt        = true
+    # => Sets encrypt
     dynamodb_table = "terraform-dev-locks"
+    # => Sets dynamodb_table
   }
 }
 
 provider "aws" {
+# => Provider configuration
   region = var.aws_region
+  # => Sets region
 
   # Dev uses separate AWS account
   assume_role {
     role_arn = "arn:aws:iam::222222222222:role/TerraformDev"
+    # => Sets role_arn
   }
 }
 
 module "app" {
+# => Module configuration
   source = "../../modules/app"
+  # => Sets source
 
   environment    = "development"
+  # => Sets environment
   instance_count = 1
+  # => Sets instance_count
   instance_type  = "t3.micro"
   # => Dev-specific configuration
 }
+
+
+
 ```
 
 **Decision matrix**:
@@ -1401,82 +1857,112 @@ graph TD
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 
   required_providers {
+  # => Provider configuration
     aws = {
       source  = "hashicorp/aws"
+      # => Sets source
       version = "~> 5.0"
+      # => Sets version
     }
   }
 }
 
 # Primary region provider
 provider "aws" {
+# => Provider configuration
   alias  = "primary"
+  # => Sets alias
   region = "us-east-1"
   # => Primary region: main traffic
 }
 
 # Secondary region provider
 provider "aws" {
+# => Provider configuration
   alias  = "secondary"
+  # => Sets alias
   region = "us-west-2"
   # => Secondary region: failover
 }
 
 # Tertiary region provider (global distribution)
 provider "aws" {
+# => Provider configuration
   alias  = "tertiary"
+  # => Sets alias
   region = "eu-west-1"
   # => Tertiary region: Europe traffic
 }
 
 # Primary region resources
 module "app_primary" {
+# => Module configuration
   source = "./modules/app"
+  # => Sets source
 
   providers = {
     aws = aws.primary
+    # => Sets aws
   }
   # => Pass specific provider to module
 
   region         = "us-east-1"
+  # => Sets region
   environment    = "production"
+  # => Sets environment
   instance_count = 10
+  # => Sets instance_count
 }
 
 # Secondary region resources (disaster recovery)
 module "app_secondary" {
+# => Module configuration
   source = "./modules/app"
+  # => Sets source
 
   providers = {
     aws = aws.secondary
+    # => Sets aws
   }
 
   region         = "us-west-2"
+  # => Sets region
   environment    = "production"
+  # => Sets environment
   instance_count = 5
   # => Smaller capacity for failover
 }
 
 # Tertiary region resources (global distribution)
 module "app_tertiary" {
+# => Module configuration
   source = "./modules/app"
+  # => Sets source
 
   providers = {
     aws = aws.tertiary
+    # => Sets aws
   }
 
   region         = "eu-west-1"
+  # => Sets region
   environment    = "production"
+  # => Sets environment
   instance_count = 7
+  # => Sets instance_count
 }
 
 # Global resources (region-agnostic)
 # Created in primary region
 resource "aws_route53_zone" "main" {
+# => Resource definition
   provider = aws.primary
+  # => Sets provider
 
   name = "example.com"
   # => Route53 zone is global (serves all regions)
@@ -1484,57 +1970,84 @@ resource "aws_route53_zone" "main" {
 
 # Multi-region DNS routing (latency-based)
 resource "aws_route53_record" "app" {
+# => Resource definition
   provider = aws.primary
+  # => Sets provider
 
   zone_id        = aws_route53_zone.main.zone_id
+  # => Sets zone_id
   name           = "app.example.com"
+  # => Sets name
   type           = "A"
+  # => Sets type
   set_identifier = "primary"
+  # => Sets set_identifier
 
   latency_routing_policy {
     region = "us-east-1"
+    # => Sets region
   }
   # => Route to primary region based on latency
 
   alias {
     name                   = module.app_primary.load_balancer_dns
+    # => Sets name
     zone_id                = module.app_primary.load_balancer_zone_id
+    # => Sets zone_id
     evaluate_target_health = true
+    # => Sets evaluate_target_health
   }
 }
 
 resource "aws_route53_record" "app_secondary" {
+# => Resource definition
   provider = aws.primary
+  # => Sets provider
 
   zone_id        = aws_route53_zone.main.zone_id
+  # => Sets zone_id
   name           = "app.example.com"
+  # => Sets name
   type           = "A"
+  # => Sets type
   set_identifier = "secondary"
+  # => Sets set_identifier
 
   latency_routing_policy {
     region = "us-west-2"
+    # => Sets region
   }
 
   alias {
     name                   = module.app_secondary.load_balancer_dns
+    # => Sets name
     zone_id                = module.app_secondary.load_balancer_zone_id
+    # => Sets zone_id
     evaluate_target_health = true
+    # => Sets evaluate_target_health
   }
 }
 
 # Cross-region data replication
 resource "aws_s3_bucket_replication_configuration" "primary_to_secondary" {
+# => Resource definition
   provider = aws.primary
+  # => Sets provider
 
   bucket = module.app_primary.s3_bucket_id
+  # => Sets bucket
   role   = aws_iam_role.replication.arn
+  # => Sets role
 
   rule {
     id     = "replicate_all"
+    # => Sets id
     status = "Enabled"
+    # => Sets status
 
     destination {
       bucket        = module.app_secondary.s3_bucket_arn
+      # => Sets bucket
       storage_class = "STANDARD_IA"
       # => Replicate to secondary region for disaster recovery
     }
@@ -1542,13 +2055,21 @@ resource "aws_s3_bucket_replication_configuration" "primary_to_secondary" {
 }
 
 output "endpoints" {
+# => Output value
   value = {
     primary   = module.app_primary.endpoint
+    # => Sets primary
     secondary = module.app_secondary.endpoint
+    # => Sets secondary
     tertiary  = module.app_tertiary.endpoint
+    # => Sets tertiary
     global    = "app.example.com"
+    # => Sets global
   }
 }
+
+
+
 ```
 
 **Key Takeaway**: Multi-region deployment uses provider aliases (`alias = "primary"`) and passes specific providers to modules with `providers = { aws = aws.primary }`. Deploy identical infrastructure in multiple regions for high availability. Use Route53 latency-based routing to direct traffic to nearest region. Replicate data across regions with S3 replication, RDS read replicas, or DynamoDB global tables. Global resources (Route53, IAM) created once in primary region.
@@ -1580,46 +2101,68 @@ graph TD
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 variable "active_environment" {
+# => Input variable
   type        = string
+  # => Sets type
   description = "Active environment: blue or green"
+  # => Sets description
   default     = "blue"
+  # => Sets default
 
   validation {
     condition     = contains(["blue", "green"], var.active_environment)
+    # => Sets condition
     error_message = "active_environment must be blue or green"
+    # => Sets error_message
   }
 }
 
 variable "app_version" {
+# => Input variable
   type = map(string)
+  # => Sets type
   default = {
     blue  = "v1.0"
+    # => Sets blue
     green = "v2.0"
+    # => Sets green
   }
 }
 
 # Blue environment
 resource "local_file" "blue_app" {
+# => Resource definition
   filename = "blue-app.txt"
+  # => Sets filename
   content  = "App version: ${var.app_version["blue"]}\nStatus: ${var.active_environment == "blue" ? "ACTIVE" : "STANDBY"}"
+  # => Sets content
 }
 
 # Green environment
 resource "local_file" "green_app" {
+# => Resource definition
   filename = "green-app.txt"
+  # => Sets filename
   content  = "App version: ${var.app_version["green"]}\nStatus: ${var.active_environment == "green" ? "ACTIVE" : "STANDBY"}"
+  # => Sets content
 }
 
 # Load balancer (simulated with file showing routing)
 resource "local_file" "load_balancer" {
+# => Resource definition
   filename = "load-balancer-config.txt"
+  # => Sets filename
   content  = <<-EOT
+  # => Sets content
     Active Environment: ${var.active_environment}
     Traffic Routing: 100% -> ${var.active_environment}-app.txt
     App Version: ${var.app_version[var.active_environment]}
@@ -1628,25 +2171,37 @@ resource "local_file" "load_balancer" {
 }
 
 output "active_environment" {
+# => Output value
   value = var.active_environment
+  # => Sets value
 }
 
 output "active_version" {
+# => Output value
   value = var.app_version[var.active_environment]
+  # => Sets value
 }
 
 output "deployment_status" {
+# => Output value
   value = {
     blue = {
       version = var.app_version["blue"]
+      # => Sets version
       status  = var.active_environment == "blue" ? "ACTIVE (100% traffic)" : "STANDBY (0% traffic)"
+      # => Sets status
     }
     green = {
       version = var.app_version["green"]
+      # => Sets version
       status  = var.active_environment == "green" ? "ACTIVE (100% traffic)" : "STANDBY (0% traffic)"
+      # => Sets status
     }
   }
 }
+
+
+
 ```
 
 **Deployment workflow**:
@@ -1700,47 +2255,69 @@ Feature flags enable safe progressive rollouts: deploy to 1% of users, validate,
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 variable "new_feature_enabled" {
+# => Input variable
   type        = bool
+  # => Sets type
   description = "Enable new feature"
+  # => Sets description
   default     = false
+  # => Sets default
 }
 
 variable "new_feature_rollout_percentage" {
+# => Input variable
   type        = number
+  # => Sets type
   description = "Percentage of traffic to new feature (0-100)"
+  # => Sets description
   default     = 0
+  # => Sets default
 
   validation {
     condition     = var.new_feature_rollout_percentage >= 0 && var.new_feature_rollout_percentage <= 100
+    # => Sets condition
     error_message = "Rollout percentage must be 0-100"
+    # => Sets error_message
   }
 }
 
 # Old feature (stable)
 resource "local_file" "feature_v1" {
+# => Resource definition
   filename = "feature-v1.txt"
+  # => Sets filename
   content  = "Feature Version: 1.0 (Stable)\nTraffic: ${100 - var.new_feature_rollout_percentage}%"
+  # => Sets content
 }
 
 # New feature (experimental)
 resource "local_file" "feature_v2" {
+# => Resource definition
   count    = var.new_feature_enabled ? 1 : 0
   # => Only create if feature enabled
 
   filename = "feature-v2.txt"
+  # => Sets filename
   content  = "Feature Version: 2.0 (Experimental)\nTraffic: ${var.new_feature_rollout_percentage}%"
+  # => Sets content
 }
 
 # Load balancer configuration (weighted routing)
 resource "local_file" "load_balancer_weights" {
+# => Resource definition
   filename = "traffic-split.txt"
+  # => Sets filename
   content  = <<-EOT
+  # => Sets content
     Traffic Split Configuration:
     - Feature V1: ${100 - var.new_feature_rollout_percentage}% (${100 - var.new_feature_rollout_percentage} out of 100 requests)
     - Feature V2: ${var.new_feature_rollout_percentage}% (${var.new_feature_rollout_percentage} out of 100 requests)
@@ -1750,15 +2327,24 @@ resource "local_file" "load_balancer_weights" {
 }
 
 output "rollout_status" {
+# => Output value
   value = {
     new_feature_enabled = var.new_feature_enabled
+    # => Sets new_feature_enabled
     v1_traffic_pct      = 100 - var.new_feature_rollout_percentage
+    # => Sets v1_traffic_pct
     v2_traffic_pct      = var.new_feature_rollout_percentage
+    # => Sets v2_traffic_pct
     stage               = var.new_feature_rollout_percentage == 0 ? "Not started" : (
+    # => Sets stage
                           var.new_feature_rollout_percentage == 100 ? "Complete" : "In progress"
+                          # => Sets var.new_feature_rollout_percentage
                         )
   }
 }
+
+
+
 ```
 
 **Progressive rollout workflow**:
@@ -1836,35 +2422,47 @@ graph TD
 ```hcl
 # ❌ NEVER hardcode secrets
 variable "database_password" {
+# => Input variable
   default = "SuperSecret123!"  # EXPOSED IN CODE
+  # => Sets default
 }
 
 # ❌ NEVER use sensitive data in resources directly
 resource "local_file" "config" {
+# => Resource definition
   filename = "config.txt"
+  # => Sets filename
   content  = "DB_PASSWORD=SuperSecret123!"
   # => Secrets appear in state file (plain text)
   # => Secrets appear in plan output
   # => Secrets leak in logs
 }
+
 ```
 
 **Correct pattern - AWS Secrets Manager**:
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 
   required_providers {
+  # => Provider configuration
     aws = {
       source  = "hashicorp/aws"
+      # => Sets source
       version = "~> 5.0"
+      # => Sets version
     }
   }
 }
 
 provider "aws" {
+# => Provider configuration
   region = "us-west-2"
+  # => Sets region
 }
 
 # Store secret in Secrets Manager (one-time manual creation)
@@ -1874,11 +2472,13 @@ provider "aws" {
 
 # Reference secret from Secrets Manager (not stored in Terraform)
 data "aws_secretsmanager_secret" "db_password" {
+# => Data source
   name = "prod/database/password"
   # => Fetch secret metadata (not value)
 }
 
 data "aws_secretsmanager_secret_version" "db_password" {
+# => Data source
   secret_id = data.aws_secretsmanager_secret.db_password.id
   # => Fetch current secret value
   # => ⚠️ Value still appears in state (state encryption required)
@@ -1886,10 +2486,15 @@ data "aws_secretsmanager_secret_version" "db_password" {
 
 # Use secret in resource (marked sensitive)
 resource "aws_db_instance" "main" {
+# => Resource definition
   allocated_storage   = 20
+  # => Sets allocated_storage
   engine              = "postgres"
+  # => Sets engine
   instance_class      = "db.t3.micro"
+  # => Sets instance_class
   username            = "admin"
+  # => Sets username
   password            = data.aws_secretsmanager_secret_version.db_password.secret_string
   # => Secret value from Secrets Manager
   # => Never hardcoded in .tf files
@@ -1899,10 +2504,13 @@ resource "aws_db_instance" "main" {
 
 # Output secrets safely (marked sensitive)
 output "db_endpoint" {
+# => Output value
   value = aws_db_instance.main.endpoint
+  # => Sets value
 }
 
 output "db_password_arn" {
+# => Output value
   value = data.aws_secretsmanager_secret.db_password.arn
   # => Output secret ARN (safe), not password value
 }
@@ -1915,46 +2523,64 @@ output "db_password_arn" {
 
 # ✅ If must output (for debugging), mark sensitive
 output "db_password_debug" {
+# => Output value
   value     = data.aws_secretsmanager_secret_version.db_password.secret_string
+  # => Sets value
   sensitive = true
   # => sensitive = true hides value in plan/apply output
   # => Still visible in state file
 }
+
 ```
 
 **HashiCorp Vault integration**:
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_providers {
+  # => Provider configuration
     vault = {
       source  = "hashicorp/vault"
+      # => Sets source
       version = "~> 3.0"
+      # => Sets version
     }
   }
 }
 
 provider "vault" {
+# => Provider configuration
   address = "https://vault.example.com"
   # Authenticate via VAULT_TOKEN environment variable
 }
 
 # Read secret from Vault
 data "vault_generic_secret" "db_password" {
+# => Data source
   path = "secret/prod/database"
   # => Fetch secret from Vault KV store
 }
 
 resource "local_file" "config" {
+# => Resource definition
   filename = "app-config.txt"
+  # => Sets filename
   content  = <<-EOT
+  # => Sets content
     DB_HOST=db.example.com
+    # => Sets DB_HOST
     DB_USER=admin
+    # => Sets DB_USER
     DB_PASSWORD=${data.vault_generic_secret.db_password.data["password"]}
+    # => Sets DB_PASSWORD
   EOT
   # => Secret value from Vault
   # => Not hardcoded in Terraform
 }
+
+
+
 ```
 
 **Key Takeaway**: Store secrets in external secret stores (AWS Secrets Manager, HashiCorp Vault, Azure Key Vault). Reference secrets with data sources (`data.aws_secretsmanager_secret_version`). Never hardcode secrets in .tf files or variable defaults. Mark outputs `sensitive = true` to hide from logs. Secrets still appear in state file—encrypt state (S3 with KMS, Terraform Cloud encryption). Rotate secrets outside Terraform (Secrets Manager rotation, Vault dynamic secrets).
@@ -1987,65 +2613,119 @@ graph TD
 ```hcl
 # Terraform execution role (assumed by CI/CD)
 resource "aws_iam_role" "terraform_apply" {
+# => Terraform configuration block
+  # => IAM role for terraform apply operations
+  # => Assumed by GitHub Actions on main branch
   name = "TerraformApply"
+  # => Role name (visible in AWS console)
 
   assume_role_policy = jsonencode({
+    # => Trust policy defines who can assume this role
+    # => jsonencode converts map to JSON string
     Version = "2012-10-17"
+    # => IAM policy language version
     Statement = [{
+      # => List of policy statements (trust relationship)
       Effect = "Allow"
+      # => Grant permission to assume role
       Principal = {
+        # => Who can assume this role
         Federated = "arn:aws:iam::ACCOUNT_ID:oidc-provider/token.actions.githubusercontent.com"
+        # => GitHub OIDC provider (configured in AWS)
+        # => Enables keyless authentication from GitHub Actions
       }
       Action = "sts:AssumeRoleWithWebIdentity"
+      # => STS action for OIDC-based role assumption
+      # => Uses GitHub's OIDC token for authentication
       Condition = {
+        # => Additional constraints on role assumption
         StringEquals = {
+          # => Exact string match condition
           "token.actions.githubusercontent.com:sub" = "repo:my-org/infrastructure:ref:refs/heads/main"
+          # => Only GitHub Actions from main branch can assume this role
+          # => :sub claim identifies repository and branch
+          # => Prevents PRs or other branches from assuming write role
         }
       }
-      # => Only GitHub Actions from main branch can assume this role
     }]
   })
 }
 
 # Terraform apply policy (write permissions)
 resource "aws_iam_role_policy" "terraform_apply" {
+# => Terraform configuration block
+  # => Inline policy attached to terraform_apply role
+  # => Grants permissions for infrastructure changes
   name = "TerraformApplyPolicy"
+  # => Policy name
   role = aws_iam_role.terraform_apply.id
+  # => Attach to terraform_apply role
 
   policy = jsonencode({
+    # => Permissions policy (what role can do)
     Version = "2012-10-17"
+    # => Sets Version
     Statement = [
+    # => Sets Statement
       {
+        # => Statement 1: Resource management permissions
         Effect = "Allow"
+        # => Grant permissions
         Action = [
+          # => AWS API actions allowed
           "ec2:*",
+          # => All EC2 actions (instances, VPCs, subnets, etc.)
+          # => Wildcard grants full EC2 control
           "s3:*",
+          # => All S3 actions (buckets, objects, policies)
           "rds:*",
+          # => All RDS actions (databases, snapshots, etc.)
           "iam:GetRole",
+          # => Read IAM role details
           "iam:GetRolePolicy",
+          # => Read role policy details
           # => Minimal permissions for managed resources
+          # => IAM limited to read-only (no role creation/deletion)
         ]
         Resource = "*"
+        # => Apply to all resources (no restrictions)
+        # => Production should scope to specific resources
       },
       {
+        # => Statement 2: State file access
         Effect = "Allow"
+        # => Sets Effect
         Action = [
+          # => S3 actions for state operations
           "s3:GetObject",
+          # => Read state file
           "s3:PutObject",
+          # => Write state file (after apply)
           "s3:DeleteObject"
+          # => Delete old state versions
         ]
         Resource = "arn:aws:s3:::terraform-state-bucket/*"
         # => State file access
+        # => Scoped to terraform-state-bucket only
+        # => /* allows access to all objects in bucket
       },
       {
+        # => Statement 3: State locking
         Effect = "Allow"
+        # => Sets Effect
         Action = [
+          # => DynamoDB actions for state locks
           "dynamodb:GetItem",
+          # => Check lock status
           "dynamodb:PutItem",
+          # => Acquire lock (start apply)
           "dynamodb:DeleteItem"
+          # => Release lock (end apply)
         ]
         Resource = "arn:aws:dynamodb:us-west-2:ACCOUNT_ID:table/terraform-locks"
         # => State locking
+        # => Scoped to terraform-locks table only
+        # => Prevents concurrent applies
       }
     ]
   })
@@ -2053,58 +2733,96 @@ resource "aws_iam_role_policy" "terraform_apply" {
 
 # Terraform plan role (read-only permissions)
 resource "aws_iam_role" "terraform_plan" {
+# => Terraform configuration block
+  # => IAM role for terraform plan operations
+  # => Assumed by GitHub Actions from pull requests
   name = "TerraformPlan"
+  # => Role name (read-only variant)
 
   assume_role_policy = jsonencode({
+    # => Trust policy for plan role
     Version = "2012-10-17"
+    # => Sets Version
     Statement = [{
       Effect = "Allow"
+      # => Sets Effect
       Principal = {
         Federated = "arn:aws:iam::ACCOUNT_ID:oidc-provider/token.actions.githubusercontent.com"
+        # => Same OIDC provider as apply role
       }
       Action = "sts:AssumeRoleWithWebIdentity"
+      # => OIDC-based role assumption
       Condition = {
         StringEquals = {
           "token.actions.githubusercontent.com:sub" = "repo:my-org/infrastructure:pull_request"
+          # => GitHub Actions from pull requests use read-only role
+          # => :pull_request allows any PR in repository
+          # => Different condition from apply role (main branch only)
         }
       }
-      # => GitHub Actions from pull requests use read-only role
     }]
   })
 }
 
 # Terraform plan policy (read-only)
 resource "aws_iam_role_policy" "terraform_plan" {
+# => Terraform configuration block
+  # => Read-only policy for plan operations
+  # => Allows terraform plan but blocks apply
   name = "TerraformPlanPolicy"
+  # => Sets name
   role = aws_iam_role.terraform_plan.id
+  # => Attach to plan role
 
   policy = jsonencode({
     Version = "2012-10-17"
+    # => Sets Version
     Statement = [
+    # => Sets Statement
       {
+        # => Statement 1: Read-only AWS resource access
         Effect = "Allow"
+        # => Sets Effect
         Action = [
+          # => Read-only API actions
           "ec2:Describe*",
+          # => All EC2 Describe actions (no Create/Update/Delete)
           "s3:List*",
+          # => List S3 buckets and objects
           "s3:Get*",
+          # => Read S3 object content and metadata
           "rds:Describe*",
+          # => Read RDS database details
           "iam:Get*",
+          # => Read IAM role/policy details
           "iam:List*",
+          # => List IAM entities
           # => Read-only permissions for plan
+          # => Wildcards allow all read operations, no write
         ]
         Resource = "*"
+        # => Apply to all resources
       },
       {
+        # => Statement 2: State file read access
         Effect = "Allow"
+        # => Sets Effect
         Action = [
+        # => Sets Action
           "s3:GetObject"
+          # => Read state file only
+          # => No PutObject (can't modify state)
+          # => No DeleteObject (can't delete state)
         ]
         Resource = "arn:aws:s3:::terraform-state-bucket/*"
         # => Read state (no write)
+        # => Plan needs state to compare current vs desired
       }
+      # => Note: No DynamoDB permissions (plan doesn't lock state)
     ]
   })
 }
+
 ```
 
 **Using roles in Terraform**:
@@ -2112,23 +2830,37 @@ resource "aws_iam_role_policy" "terraform_plan" {
 ```hcl
 # Terraform configuration assumes appropriate role
 terraform {
+  # => Terraform configuration block
   required_version = ">= 1.0"
+  # => Minimum Terraform version
 
   backend "s3" {
+    # => S3 backend for state storage
     bucket         = "terraform-state-bucket"
+    # => S3 bucket name for state file
     key            = "prod/terraform.tfstate"
+    # => State file path within bucket
+    # => Organizes state by environment (prod/)
     region         = "us-west-2"
+    # => AWS region for S3 bucket
     role_arn       = "arn:aws:iam::ACCOUNT_ID:role/TerraformApply"
     # => Backend uses apply role (write access)
+    # => Role must have S3 GetObject/PutObject/DeleteObject permissions
+    # => Also needs DynamoDB permissions for state locking
   }
 }
 
 provider "aws" {
+  # => AWS provider configuration
   region = "us-west-2"
+  # => All resources created in us-west-2
 
   assume_role {
+    # => Assume IAM role for resource operations
     role_arn = "arn:aws:iam::ACCOUNT_ID:role/TerraformApply"
     # => Provider assumes role with appropriate permissions
+    # => Role has permissions for EC2, S3, RDS operations
+    # => CI/CD authenticates via OIDC, then assumes this role
   }
 }
 ```
@@ -2138,52 +2870,87 @@ provider "aws" {
 ```yaml
 # .github/workflows/terraform.yml
 name: Terraform
+# => Workflow name in GitHub Actions UI
 on:
+  # => Trigger conditions
   pull_request:
+    # => Run on pull requests
     branches: [main]
+    # => Only PRs targeting main branch
   push:
+    # => Run on direct pushes
     branches: [main]
+    # => Only pushes to main branch (after PR merge)
 
 jobs:
+  # => Job definitions
   plan:
+    # => Plan job for pull requests
     if: github.event_name == 'pull_request'
+    # => Only run on PRs (not pushes)
     runs-on: ubuntu-latest
+    # => GitHub-hosted Ubuntu runner
     permissions:
+      # => GitHub token permissions
       id-token: write # Required for OIDC
+      # => Write permission to generate OIDC tokens
+      # => Needed for AWS OIDC authentication
       contents: read
+      # => Read permission for repository checkout
     steps:
+      # => Sequential steps
       - uses: actions/checkout@v3
+        # => Check out repository code
       - uses: hashicorp/setup-terraform@v2
+        # => Install Terraform CLI
 
       - name: Configure AWS credentials
+        # => Authenticate to AWS using OIDC
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::ACCOUNT_ID:role/TerraformPlan
           # => PR uses read-only plan role
+          # => TerraformPlan role has Describe/List/Get permissions only
           aws-region: us-west-2
+          # => AWS region for API calls
 
       - name: Terraform Plan
+        # => Generate execution plan
         run: terraform plan
+        # => Plan shows what changes would be made
+        # => Read-only operation (no infrastructure changes)
 
   apply:
+    # => Apply job for main branch
     if: github.event_name == 'push'
+    # => Only run on push to main (after PR merge)
     runs-on: ubuntu-latest
     permissions:
       id-token: write
+      # => OIDC token generation
       contents: read
+      # => Repository read access
     steps:
       - uses: actions/checkout@v3
+        # => Check out merged code
       - uses: hashicorp/setup-terraform@v2
+        # => Install Terraform
 
       - name: Configure AWS credentials
+        # => Authenticate with elevated permissions
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::ACCOUNT_ID:role/TerraformApply
           # => Main branch uses write apply role
+          # => TerraformApply role has Create/Update/Delete permissions
+          # => Different role than plan (least privilege)
           aws-region: us-west-2
 
       - name: Terraform Apply
+        # => Apply infrastructure changes
         run: terraform apply -auto-approve
+        # => -auto-approve: no interactive prompt (CI environment)
+        # => Creates/updates/deletes resources
 ```
 
 **Key Takeaway**: Use separate IAM roles for `terraform plan` (read-only) and `terraform apply` (write). Plan role has Describe/List/Get permissions only. Apply role has Create/Update/Delete permissions. CI/CD assumes appropriate role based on event (pull request = plan, push to main = apply). Use OIDC for keyless authentication from GitHub Actions. Grant minimal permissions—only actions required for managed resources.
@@ -2215,19 +2982,27 @@ graph TD
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 # Terraform-managed resource
 resource "local_file" "managed" {
+# => Resource definition
   filename = "managed-file.txt"
+  # => Sets filename
   content  = "Terraform-managed content version 1.0"
+  # => Sets content
 }
 
 # Drift detection happens at terraform plan
 # Simulated drift: manual modification of file outside Terraform
+
+
 ```
 
 **Drift detection workflow**:
@@ -2288,6 +3063,7 @@ jobs:
 
       - name: Report Drift
         if: steps.plan.outputs.exitcode == '2'
+        # => Configure if: steps.plan.outputs.exitcode
         uses: actions/github-script@v6
         with:
           script: |
@@ -2304,6 +3080,7 @@ jobs:
 
       - name: Auto-Remediate (Optional)
         if: steps.plan.outputs.exitcode == '2' && github.event_name == 'schedule'
+        # => Configure if: steps.plan.outputs.exitcode
         run: terraform apply -auto-approve
         # => Optional: automatically fix drift (risky!)
 ```
@@ -2313,8 +3090,11 @@ jobs:
 ```hcl
 # Prevent manual modifications with lifecycle rules
 resource "local_file" "protected" {
+# => Resource definition
   filename = "protected-file.txt"
+  # => Sets filename
   content  = "Protected content"
+  # => Sets content
 
   lifecycle {
     prevent_destroy = true
@@ -2331,6 +3111,8 @@ resource "local_file" "protected" {
 # $ terraform import local_file.imported manual-file.txt
 # => Brings existing resource under Terraform management
 # => Future drift detected and remediable
+
+
 ```
 
 **Key Takeaway**: Drift detection uses `terraform plan` to compare actual state vs desired configuration. Use `plan -detailed-exitcode` in automation: exit code 2 means drift detected. Schedule periodic drift detection in CI/CD (every 6 hours). Remediate drift with `terraform apply` to restore desired state. Prevent drift by importing manually created resources, enforcing "Terraform-only" policy, and using read-only production access.
@@ -2367,146 +3149,236 @@ graph TD
 
 ```yaml
 name: Terraform CI/CD
+# => Workflow name displayed in GitHub Actions UI
 on:
+  # => Trigger conditions for workflow
   pull_request:
+    # => Run on pull requests targeting main branch
     branches: [main]
+    # => Only run if Terraform files changed
     paths:
       - "terraform/**"
+      # => Terraform configuration files
       - ".github/workflows/terraform.yml"
+      # => Workflow file itself
   push:
+    # => Run on direct pushes to main (after PR merge)
     branches: [main]
     paths:
       - "terraform/**"
+      # => Only Terraform changes trigger workflow
 
 permissions:
+  # => GitHub token permissions for workflow
   id-token: write # Required for OIDC
+  # => Write access to generate OIDC tokens for AWS authentication
   contents: read
+  # => Read access to checkout repository code
   pull-requests: write # Comment on PRs
+  # => Write access to post plan output as PR comment
 
 env:
+  # => Environment variables available to all jobs
   TF_VERSION: 1.6.0
+  # => Terraform version to install (hashicorp/setup-terraform)
   WORKING_DIR: ./terraform
+  # => Directory containing Terraform configuration
 
 jobs:
+  # => Jobs run in parallel unless dependencies specified
   validate:
+    # => First job: validate configuration without cloud access
     name: Validate
+    # => Display name in GitHub Actions UI
     runs-on: ubuntu-latest
+    # => Run on GitHub-hosted Ubuntu runner
     steps:
+      # => Sequential steps within job
       - uses: actions/checkout@v3
+        # => Check out repository code to runner
 
       - uses: hashicorp/setup-terraform@v2
+        # => Install Terraform CLI
         with:
           terraform_version: ${{ env.TF_VERSION }}
+          # => Install version 1.6.0 from env.TF_VERSION
 
       - name: Terraform fmt
+        # => Check code formatting
         run: terraform fmt -check -recursive
+        # => Fail if files not formatted (-check flag)
+        # => Check all .tf files recursively
         working-directory: ${{ env.WORKING_DIR }}
+        # => Run in ./terraform directory
 
       - name: Terraform Init
+        # => Initialize without remote backend
         run: terraform init -backend=false
+        # => Initialize providers without configuring state backend
+        # => Fast init for validation (no cloud access needed)
         working-directory: ${{ env.WORKING_DIR }}
 
       - name: Terraform Validate
+        # => Validate configuration syntax and logic
         run: terraform validate
+        # => Check for syntax errors, invalid references
+        # => Fails if configuration invalid
         working-directory: ${{ env.WORKING_DIR }}
 
       - name: TFLint
+        # => Install TFLint for advanced linting
         uses: terraform-linters/setup-tflint@v3
         with:
           tflint_version: latest
+          # => Install latest TFLint version
 
       - name: Run TFLint
+        # => Run TFLint checks
         run: tflint --init && tflint
+        # => --init: download plugins, tflint: run linting
+        # => Detects unused variables, deprecated syntax, etc.
         working-directory: ${{ env.WORKING_DIR }}
 
   plan:
+    # => Second job: generate Terraform plan for PR review
     name: Plan
     runs-on: ubuntu-latest
     needs: validate
+    # => Run AFTER validate job succeeds (dependency)
     if: github.event_name == 'pull_request'
+    # => Only run on pull requests (not pushes to main)
     outputs:
+      # => Job outputs accessible by other jobs
       plan_id: ${{ steps.plan.outputs.stdout }}
+      # => Plan output from terraform plan command
     steps:
       - uses: actions/checkout@v3
+        # => Check out repository code
 
       - uses: hashicorp/setup-terraform@v2
+        # => Install Terraform CLI
         with:
           terraform_version: ${{ env.TF_VERSION }}
+          # => Terraform configuration
 
       - name: Configure AWS Credentials
+        # => Authenticate to AWS using OIDC
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::ACCOUNT_ID:role/TerraformPlan
+          # => Assume IAM role with read-only permissions
+          # => Role configured for GitHub OIDC (no long-lived keys)
           aws-region: us-west-2
+          # => AWS region for API calls
 
       - name: Terraform Init
+        # => Initialize with remote backend
         run: terraform init
+        # => Initialize state backend and providers
+        # => Requires AWS credentials for S3 backend
         working-directory: ${{ env.WORKING_DIR }}
 
       - name: Terraform Plan
+        # => Generate execution plan
         id: plan
+        # => Step ID for referencing outputs
         run: terraform plan -no-color
+        # => -no-color: remove ANSI colors for clean PR comment
+        # => Outputs plan to stdout (captured by id: plan)
         working-directory: ${{ env.WORKING_DIR }}
         continue-on-error: true
+        # => Don't fail job if plan fails (handle in later step)
 
       - name: Comment PR
+        # => Post plan output as PR comment
         uses: actions/github-script@v6
         with:
           script: |
             const output = `### Terraform Plan 📝
+            # => Configure const output
 
             \`\`\`
             ${{ steps.plan.outputs.stdout }}
+            # => Output configuration
             \`\`\`
 
             **Plan Result:** ${{ steps.plan.outcome }}
             `;
+            # => Markdown template with plan output
+            # => steps.plan.outputs.stdout: plan text
+            # => steps.plan.outcome: success/failure
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
+              # => PR number from event context
               owner: context.repo.owner,
+              # => Repository owner
               repo: context.repo.repo,
+              # => Repository name
               body: output
+              # => Comment body (plan output)
             })
+            # => Posts comment to PR using GitHub API
 
       - name: Plan Status
+        # => Fail job if plan failed
         if: steps.plan.outcome == 'failure'
+        # => Only run if plan step failed
         run: exit 1
+        # => Fail job (blocks PR merge if required check)
 
   apply:
+    # => Third job: apply changes to infrastructure
     name: Apply
     runs-on: ubuntu-latest
     needs: validate
+    # => Run AFTER validate succeeds (parallel to plan)
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # => Only run on push to main branch (after PR merge)
     environment:
       name: production
       # => Requires manual approval in GitHub Settings
+      # => Admin must approve before apply runs (safety gate)
     steps:
       - uses: actions/checkout@v3
+        # => Check out merged code from main
 
       - uses: hashicorp/setup-terraform@v2
+        # => Install Terraform CLI
         with:
           terraform_version: ${{ env.TF_VERSION }}
+          # => Terraform configuration
 
       - name: Configure AWS Credentials
+        # => Authenticate with elevated permissions
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::ACCOUNT_ID:role/TerraformApply
+          # => Assume IAM role with write permissions
+          # => Different role than plan (least privilege)
           aws-region: us-west-2
 
       - name: Terraform Init
+        # => Initialize with remote backend
         run: terraform init
+        # => Load state from S3
         working-directory: ${{ env.WORKING_DIR }}
 
       - name: Terraform Apply
+        # => Apply infrastructure changes
         run: terraform apply -auto-approve
+        # => -auto-approve: no interactive prompt (CI environment)
+        # => Applies all changes from plan
         working-directory: ${{ env.WORKING_DIR }}
 
       - name: Notify Slack (Success)
+        # => Send success notification to team
         if: success()
+        # => Only run if apply succeeded
         uses: slackapi/slack-github-action@v1
         with:
           webhook-url: ${{ secrets.SLACK_WEBHOOK }}
+          # => Slack incoming webhook URL (stored as secret)
           payload: |
             {
               "text": "✅ Terraform apply succeeded for ${{ github.repository }}",
@@ -2520,9 +3392,12 @@ jobs:
                 }
               ]
             }
+            # => JSON payload with repository and commit info
 
       - name: Notify Slack (Failure)
+        # => Send failure notification to team
         if: failure()
+        # => Only run if apply failed
         uses: slackapi/slack-github-action@v1
         with:
           webhook-url: ${{ secrets.SLACK_WEBHOOK }}
@@ -2539,6 +3414,7 @@ jobs:
                 }
               ]
             }
+            # => JSON payload with failure details
 ```
 
 **Key Takeaway**: GitHub Actions CI/CD runs validate + plan on pull requests, apply on push to main. Use `environment: production` with manual approval gate for apply. Comment plan output on PRs for review. Use OIDC for keyless AWS authentication. Notify team on Slack for apply success/failure. Separate roles: TerraformPlan (read-only) for PRs, TerraformApply (write) for main branch. Format check, validate, lint run before plan.
@@ -2555,16 +3431,26 @@ GitLab CI/CD with Terraform Cloud backend enables collaborative infrastructure m
 
 ```hcl
 terraform {
+  # => Terraform configuration block
   required_version = ">= 1.0"
+  # => Minimum Terraform version
 
   cloud {
+    # => Terraform Cloud backend configuration
+    # => Replaces S3/local backend with managed service
     organization = "my-company"
+    # => Terraform Cloud organization name
+    # => Must match organization in Terraform Cloud
 
     workspaces {
+      # => Workspace configuration
       name = "production-infrastructure"
+      # => Workspace name in Terraform Cloud
+      # => State stored in this workspace
     }
   }
   # => Terraform Cloud backend (replaces S3/local backend)
+  # => Provides remote execution, state locking, team collaboration
 }
 ```
 
@@ -2572,65 +3458,118 @@ terraform {
 
 ```yaml
 variables:
+  # => Global variables for all jobs
   TF_VERSION: 1.6.0
+  # => Terraform version for Docker image
   TF_ROOT: ${CI_PROJECT_DIR}/terraform
+  # => Directory containing Terraform config
+  # => CI_PROJECT_DIR is GitLab's repo root path
 
 image:
+  # => Docker image for all jobs
   name: hashicorp/terraform:${TF_VERSION}
+  # => Official Terraform image with version 1.6.0
   entrypoint: [""]
+  # => Override default entrypoint (allows running arbitrary commands)
 
 stages:
+  # => Pipeline stages (run sequentially)
   - validate
+  # => Stage 1: syntax and format validation
   - plan
+  # => Stage 2: generate execution plan
   - apply
+  # => Stage 3: apply infrastructure changes
 
 cache:
+  # => Cache .terraform/ directory between jobs
   key: terraform-${CI_COMMIT_REF_SLUG}
+  # => Cache key includes branch name (separate cache per branch)
   paths:
     - ${TF_ROOT}/.terraform/
+    # => Cache provider plugins to avoid re-downloading
 
 before_script:
+  # => Commands run before each job's script
   - cd ${TF_ROOT}
+  # => Change to Terraform directory
   - export TF_TOKEN_app_terraform_io=${TERRAFORM_CLOUD_TOKEN}
   # => Authenticate with Terraform Cloud via environment variable
+  # => TERRAFORM_CLOUD_TOKEN stored as GitLab CI/CD variable
+  # => TF_TOKEN_app_terraform_io is Terraform CLI credential variable
 
 validate:
+  # => Validation job (fast, no cloud access)
   stage: validate
+  # => Runs in validate stage (first)
   script:
+    # => Commands to execute
     - terraform fmt -check -recursive
+    # => Check all files are formatted correctly
+    # => Fails if formatting needed
     - terraform init -backend=false
+    # => Initialize without backend (no Terraform Cloud connection)
+    # => Downloads providers only
     - terraform validate
+    # => Validate configuration syntax and logic
+    # => Fast validation without state access
   rules:
+    # => Conditions for running this job
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      # => Run on merge requests (PRs)
     - if: '$CI_COMMIT_BRANCH == "main"'
+      # => Run on pushes to main branch
 
 plan:
+  # => Plan job (generates execution plan)
   stage: plan
+  # => Runs in plan stage (after validate)
   script:
     - terraform init
+    # => Initialize with Terraform Cloud backend
+    # => Connects to remote state
     - terraform plan -out=tfplan
+    # => Generate plan and save to file
+    # => tfplan contains proposed changes
   artifacts:
+    # => Save plan file for apply job
     name: plan
+    # => Artifact name in GitLab UI
     paths:
       - ${TF_ROOT}/tfplan
+      # => Plan file to preserve
     expire_in: 1 week
+    # => Keep artifact for 1 week (auto-delete after)
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      # => Run on merge requests
     - if: '$CI_COMMIT_BRANCH == "main"'
+      # => Run on main branch commits
 
 apply:
+  # => Apply job (executes infrastructure changes)
   stage: apply
+  # => Runs in apply stage (after plan)
   script:
     - terraform init
+    # => Re-initialize (cache may have expired)
     - terraform apply -auto-approve
+    # => Apply changes without interactive prompt
+    # => -auto-approve needed for CI environment
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
+      # => Only run on main branch (not MRs)
   when: manual
   # => Requires manual trigger in GitLab UI
+  # => Operator must click "Play" button to run
+  # => Safety gate before production changes
   environment:
     name: production
+    # => Environment for tracking deployments
+    # => GitLab shows deployment history
   dependencies:
     - plan
+    # => Use artifacts from plan job (tfplan file)
 ```
 
 **Terraform Cloud benefits**:
@@ -2678,66 +3617,112 @@ graph TD
 
 ```yaml
 version: 3
+# => Atlantis configuration file version
 
 automerge: false
+# => Don't auto-merge PRs after successful apply
+# => Requires manual merge for extra safety
 delete_source_branch_on_merge: false
+# => Keep source branch after merge (manual cleanup)
 
 projects:
+  # => Project configurations (one per Terraform workspace)
   - name: production
+    # => Project name displayed in Atlantis UI
     dir: terraform/production
+    # => Directory containing Terraform configuration
     workspace: default
+    # => Terraform workspace name (default = no workspace)
     terraform_version: v1.6.0
+    # => Pin Terraform version for this project
+    # => Ensures consistent execution across team
     autoplan:
+      # => Auto-plan configuration
       when_modified:
+        # => File patterns that trigger auto-plan
         - "*.tf"
+        # => All Terraform config files
         - "*.tfvars"
+        # => Variable files
       enabled: true
     # => Auto-run plan when .tf files change
+    # => Plan runs automatically when PR opened/updated
 
     apply_requirements:
+      # => Requirements before apply can run
       - approved
+      # => PR must have approvals
       - mergeable
+      # => PR must be mergeable (no conflicts)
     # => Require PR approval before apply
+    # => Safety gate: can't apply unapproved changes
 
     workflow: production
     # => Use custom workflow (defined below)
+    # => References workflows.production
 
 workflows:
+  # => Custom workflow definitions
   production:
+    # => Workflow named "production" (used by projects)
     plan:
+      # => Plan stage configuration
       steps:
+        # => Steps run sequentially
         - init
+        # => Built-in step: terraform init
         - plan
+        # => Built-in step: terraform plan
 
     apply:
+      # => Apply stage configuration
       steps:
         - run: echo "Applying production infrastructure..."
+        # => Custom step: run arbitrary command
+        # => Logs message before apply
         - apply
+        # => Built-in step: terraform apply -auto-approve
         - run: echo "Notifying team..."
+        # => Custom step after apply
+        # => Could trigger notification webhook
 ```
 
 **Atlantis server configuration** - `repos.yaml`:
 
 ```yaml
 repos:
+  # => Repository-level configuration for Atlantis server
   - id: github.com/my-org/infrastructure
     # => GitHub repository to watch
+    # => Format: github.com/owner/repo
+    # => Atlantis monitors this repo for PRs
 
     allowed_overrides:
+      # => Project settings that can override server config
       - apply_requirements
+      # => Projects can customize approval requirements
       - workflow
+      # => Projects can use custom workflows
 
     allow_custom_workflows: true
+    # => Enable custom workflow definitions in atlantis.yaml
+    # => Projects can define steps beyond init/plan/apply
 
     pre_workflow_hooks:
+      # => Commands run before workflow starts
       - run: terraform fmt -check
       # => Run before workflow starts
+      # => Enforce code formatting before plan
+      # => Fails workflow if formatting incorrect
 
     post_workflow_hooks:
+      # => Commands run after workflow completes
       - run: |
           curl -X POST https://slack-webhook.example.com \
             -d '{"text":"Terraform apply completed for $PROJECT_NAME"}'
       # => Notify after apply
+      # => POST to Slack webhook with project name
+      # => $PROJECT_NAME is Atlantis environment variable
 ```
 
 **Atlantis usage in GitHub**:
@@ -2791,34 +3776,46 @@ Terraform executes resource operations in parallel for speed. Control parallelis
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 # Independent resources (execute in parallel)
 resource "local_file" "file1" {
+# => Resource definition
   filename = "file1.txt"
+  # => Sets filename
   content  = "File 1 content"
   # => Created in parallel with file2, file3
 }
 
 resource "local_file" "file2" {
+# => Resource definition
   filename = "file2.txt"
+  # => Sets filename
   content  = "File 2 content"
   # => Created in parallel with file1, file3
 }
 
 resource "local_file" "file3" {
+# => Resource definition
   filename = "file3.txt"
+  # => Sets filename
   content  = "File 3 content"
   # => Created in parallel with file1, file2
 }
 
 # Dependent resources (execute sequentially)
 resource "local_file" "config" {
+# => Resource definition
   filename = "config.txt"
+  # => Sets filename
   content  = "Config based on file1"
+  # => Sets content
 
   depends_on = [local_file.file1]
   # => Waits for file1 to complete before creating
@@ -2827,10 +3824,14 @@ resource "local_file" "config" {
 
 # ❌ Anti-pattern: Unnecessary dependencies
 resource "local_file" "bad_example" {
+# => Resource definition
   filename = "bad.txt"
+  # => Sets filename
   content  = "Unnecessary dependency"
+  # => Sets content
 
   depends_on = [
+  # => Sets depends_on
     local_file.file1,
     local_file.file2,
     local_file.file3,
@@ -2841,11 +3842,16 @@ resource "local_file" "bad_example" {
 
 # ✅ Good pattern: Only necessary dependencies
 resource "local_file" "good_example" {
+# => Resource definition
   filename = "good.txt"
+  # => Sets filename
   content  = local_file.file1.content
   # => Implicit dependency via reference
   # => Only waits for file1 (not file2, file3)
 }
+
+
+
 ```
 
 **Performance tuning**:
@@ -3036,10 +4042,14 @@ State file loss is catastrophic—implement automated backups and recovery proce
 ```hcl
 # S3 backend with versioning (recommended)
 terraform {
+# => Terraform configuration block
   backend "s3" {
     bucket = "terraform-state-backup"
+    # => Sets bucket
     key    = "prod/terraform.tfstate"
+    # => Sets key
     region = "us-west-2"
+    # => Sets region
 
     versioning = true
     # => CRITICAL: Enable S3 bucket versioning
@@ -3047,6 +4057,7 @@ terraform {
     # => Rollback possible
 
     dynamodb_table = "terraform-locks"
+    # => Sets dynamodb_table
     encrypt        = true
     # => State locking + encryption
   }
@@ -3054,7 +4065,9 @@ terraform {
 
 # S3 bucket configuration (separate Terraform project)
 resource "aws_s3_bucket" "terraform_state" {
+# => Terraform configuration block
   bucket = "terraform-state-backup"
+  # => Sets bucket
 
   lifecycle {
     prevent_destroy = true
@@ -3063,7 +4076,9 @@ resource "aws_s3_bucket" "terraform_state" {
 }
 
 resource "aws_s3_bucket_versioning" "terraform_state" {
+# => Terraform configuration block
   bucket = aws_s3_bucket.terraform_state.id
+  # => Sets bucket
 
   versioning_configuration {
     status = "Enabled"
@@ -3072,11 +4087,15 @@ resource "aws_s3_bucket_versioning" "terraform_state" {
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "terraform_state" {
+# => Terraform configuration block
   bucket = aws_s3_bucket.terraform_state.id
+  # => Sets bucket
 
   rule {
     id     = "expire-old-versions"
+    # => Sets id
     status = "Enabled"
+    # => Sets status
 
     noncurrent_version_expiration {
       noncurrent_days = 90
@@ -3086,6 +4105,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "terraform_state" {
 
     noncurrent_version_transition {
       noncurrent_days = 30
+      # => Sets noncurrent_days
       storage_class   = "GLACIER"
       # => Move old versions to Glacier (cheaper)
     }
@@ -3093,21 +4113,30 @@ resource "aws_s3_bucket_lifecycle_configuration" "terraform_state" {
 }
 
 resource "aws_s3_bucket_replication_configuration" "terraform_state" {
+# => Terraform configuration block
   bucket = aws_s3_bucket.terraform_state.id
+  # => Sets bucket
   role   = aws_iam_role.replication.arn
+  # => Sets role
 
   rule {
     id     = "replicate-state"
+    # => Sets id
     status = "Enabled"
+    # => Sets status
 
     destination {
       bucket        = aws_s3_bucket.disaster_recovery.arn
+      # => Sets bucket
       storage_class = "STANDARD_IA"
       # => Replicate to secondary region
       # => Protects against region failure
     }
   }
 }
+
+
+
 ```
 
 **Recovery procedures**:
@@ -3175,125 +4204,192 @@ Design Terraform for disaster recovery: replicate critical infrastructure across
 ```hcl
 # Multi-region infrastructure with workspace-based DR
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 variable "region" {
+# => Input variable
   description = "AWS region (primary: us-west-2, DR: us-east-1)"
+  # => Sets description
   type        = string
+  # => Sets type
 }
 
 variable "environment" {
+# => Input variable
   description = "Environment (prod-primary, prod-dr)"
+  # => Sets description
   type        = string
+  # => Sets type
 }
 
 provider "aws" {
+# => Provider configuration
   region = var.region
+  # => Sets region
 }
 
 # Critical infrastructure (must exist in both regions)
 resource "aws_vpc" "main" {
+# => Resource definition
   cidr_block = "10.0.0.0/16"
+  # => Sets cidr_block
 
   tags = {
     Name        = "${var.environment}-vpc"
+    # => Sets Name
     Environment = var.environment
+    # => Sets Environment
     Region      = var.region
+    # => Sets Region
   }
 }
 
 resource "aws_subnet" "public" {
+# => Resource definition
   vpc_id                  = aws_vpc.main.id
+  # => Sets vpc_id
   cidr_block              = "10.0.1.0/24"
+  # => Sets cidr_block
   availability_zone       = data.aws_availability_zones.available.names[0]
+  # => Sets availability_zone
   map_public_ip_on_launch = true
+  # => Sets map_public_ip_on_launch
 }
 
 data "aws_availability_zones" "available" {
+# => Data source
   state = "available"
+  # => Sets state
 }
 
 resource "aws_instance" "web" {
+# => Resource definition
   ami           = data.aws_ami.ubuntu.id
+  # => Sets ami
   instance_type = "t3.large"
+  # => Sets instance_type
   subnet_id     = aws_subnet.public.id
+  # => Sets subnet_id
 
   tags = {
     Name        = "${var.environment}-web"
+    # => Sets Name
     Environment = var.environment
+    # => Sets Environment
   }
 }
 
 data "aws_ami" "ubuntu" {
+# => Data source
   most_recent = true
+  # => Sets most_recent
   owners      = ["099720109477"] # Canonical
+  # => Sets owners
 
   filter {
     name   = "name"
+    # => Sets name
     values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+    # => Sets values
   }
 }
 
 # Database with cross-region read replica
 resource "aws_db_instance" "primary" {
+# => Resource definition
   identifier     = "${var.environment}-db"
+  # => Sets identifier
   engine         = "postgres"
+  # => Sets engine
   engine_version = "14.7"
+  # => Sets engine_version
   instance_class = "db.t3.medium"
+  # => Sets instance_class
 
   allocated_storage = 100
+  # => Sets allocated_storage
   storage_encrypted = true
+  # => Sets storage_encrypted
 
   db_subnet_group_name = aws_db_subnet_group.main.name
+  # => Sets db_subnet_group_name
 
   backup_retention_period = 7
   # => 7-day backups for point-in-time recovery
 
   skip_final_snapshot = false
+  # => Sets skip_final_snapshot
   final_snapshot_identifier = "${var.environment}-db-final-${formatdate("YYYYMMDD-hhmm", timestamp())}"
   # => Create snapshot on deletion
 }
 
 resource "aws_db_subnet_group" "main" {
+# => Resource definition
   name       = "${var.environment}-db-subnet"
+  # => Sets name
   subnet_ids = [aws_subnet.public.id]
+  # => Sets subnet_ids
 }
 
 # Route 53 health check for failover
 resource "aws_route53_health_check" "primary" {
+# => Resource definition
   fqdn              = aws_instance.web.public_dns
+  # => Sets fqdn
   port              = 80
+  # => Sets port
   type              = "HTTP"
+  # => Sets type
   resource_path     = "/health"
+  # => Sets resource_path
   failure_threshold = 3
+  # => Sets failure_threshold
   request_interval  = 30
+  # => Sets request_interval
 
   tags = {
     Name = "${var.environment}-health-check"
+    # => Sets Name
   }
 }
 
 # DNS failover configuration
 resource "aws_route53_record" "www" {
+# => Resource definition
   zone_id = data.aws_route53_zone.main.zone_id
+  # => Sets zone_id
   name    = "www.example.com"
+  # => Sets name
   type    = "A"
+  # => Sets type
   ttl     = 60
+  # => Sets ttl
 
   failover_routing_policy {
     type = var.environment == "prod-primary" ? "PRIMARY" : "SECONDARY"
+    # => Sets type
   }
 
   set_identifier = var.environment
+  # => Sets set_identifier
   health_check_id = var.environment == "prod-primary" ? aws_route53_health_check.primary.id : null
+  # => Sets health_check_id
 
   records = [aws_instance.web.public_ip]
+  # => Sets records
 }
 
 data "aws_route53_zone" "main" {
+# => Data source
   name = "example.com"
+  # => Sets name
 }
+
+
+
 ```
 
 **Workspace-based DR deployment**:
@@ -3348,75 +4444,107 @@ Manage multiple AWS accounts (dev, staging, prod) with organization-level Terraf
 ```hcl
 # AWS Organizations setup (management account)
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "aws" {
+# => Provider configuration
   region = "us-west-2"
+  # => Sets region
 }
 
 # Create organizational units
 resource "aws_organizations_organization" "main" {
+# => Resource definition
   feature_set = "ALL"
   # => Enables consolidated billing and policy features
 }
 
 resource "aws_organizations_organizational_unit" "environments" {
+# => Resource definition
   name      = "Environments"
+  # => Sets name
   parent_id = aws_organizations_organization.main.roots[0].id
+  # => Sets parent_id
 }
 
 # Development account
 resource "aws_organizations_account" "dev" {
+# => Resource definition
   name      = "Development"
+  # => Sets name
   email     = "aws-dev@example.com"
+  # => Sets email
   parent_id = aws_organizations_organizational_unit.environments.id
+  # => Sets parent_id
 
   tags = {
     Environment = "dev"
+    # => Sets Environment
   }
   # => Isolated account for development workloads
 }
 
 # Staging account
 resource "aws_organizations_account" "staging" {
+# => Resource definition
   name      = "Staging"
+  # => Sets name
   email     = "aws-staging@example.com"
+  # => Sets email
   parent_id = aws_organizations_organizational_unit.environments.id
+  # => Sets parent_id
 
   tags = {
     Environment = "staging"
+    # => Sets Environment
   }
 }
 
 # Production account
 resource "aws_organizations_account" "prod" {
+# => Resource definition
   name      = "Production"
+  # => Sets name
   email     = "aws-prod@example.com"
+  # => Sets email
   parent_id = aws_organizations_organizational_unit.environments.id
+  # => Sets parent_id
 
   tags = {
     Environment = "prod"
+    # => Sets Environment
   }
 }
 
 # Service control policy (SCP) for cost protection
 resource "aws_organizations_policy" "deny_expensive_instances" {
+# => Resource definition
   name        = "DenyExpensiveInstances"
+  # => Sets name
   description = "Prevent launching expensive EC2 instances"
+  # => Sets description
 
   content = jsonencode({
     Version = "2012-10-17"
+    # => Sets Version
     Statement = [
+    # => Sets Statement
       {
         Effect = "Deny"
+        # => Sets Effect
         Action = [
+        # => Sets Action
           "ec2:RunInstances"
         ]
         Resource = "arn:aws:ec2:*:*:instance/*"
+        # => Sets Resource
         Condition = {
           StringEquals = {
             "ec2:InstanceType" = [
+            # => Sets "ec2:InstanceType"
               "p3.16xlarge",
               "p3dn.24xlarge",
               "p4d.24xlarge",
@@ -3430,10 +4558,15 @@ resource "aws_organizations_policy" "deny_expensive_instances" {
 }
 
 resource "aws_organizations_policy_attachment" "dev_cost_policy" {
+# => Resource definition
   policy_id = aws_organizations_policy.deny_expensive_instances.id
+  # => Sets policy_id
   target_id = aws_organizations_account.dev.id
   # => Apply to dev account only (prod needs flexibility)
 }
+
+
+
 ```
 
 **Cross-account IAM roles**:
@@ -3441,67 +4574,119 @@ resource "aws_organizations_policy_attachment" "dev_cost_policy" {
 ```hcl
 # Management account role (assumed by engineers)
 resource "aws_iam_role" "cross_account_admin" {
-  name = "CrossAccountAdmin"
+# => Resource definition
+  # => IAM role in management account
+  # => Engineers assume this role to access other accounts
+  name = "CrossAccountAdmin"                   # => Role name
+  # => Sets name
 
   assume_role_policy = jsonencode({
-    Version = "2012-10-17"
+    # => Trust policy defining who can assume this role
+    Version = "2012-10-17"                     # => IAM policy version
+    # => Sets Version
     Statement = [{
-      Effect = "Allow"
+      Effect = "Allow"                         # => Allow assume role action
+      # => Sets Effect
       Principal = {
         AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+        # => Principal: root of current account (management account)
+        # => Example: arn:aws:iam::123456789012:root
+        # => Allows all IAM users/roles in management account
       }
-      Action = "sts:AssumeRole"
+      Action = "sts:AssumeRole"                # => STS AssumeRole action
+      # => AWS Security Token Service call to get temporary credentials
       Condition = {
         StringEquals = {
           "sts:ExternalId" = "terraform-assume-role"
+          # => Require external ID for added security
+          # => Prevents confused deputy problem
+          # => Terraform provides this ID when assuming role
         }
       }
     }]
   })
+  # => After creation: arn:aws:iam::MANAGEMENT_ACCOUNT:role/CrossAccountAdmin
 }
 
-data "aws_caller_identity" "current" {}
+data "aws_caller_identity" "current" {}        # => Fetch current account ID
+# => Returns: account_id, arn, user_id of caller
+# => Used in assume_role_policy to reference management account
 
 # Use cross-account role in Terraform
 provider "aws" {
-  alias  = "dev"
-  region = "us-west-2"
+# => Provider configuration
+  # => Provider alias for dev account
+  alias  = "dev"                               # => Alias to reference this provider
+  # => Use with: provider = aws.dev in resources
+  region = "us-west-2"                         # => AWS region for dev resources
+  # => Sets region
 
   assume_role {
+    # => AssumeRole configuration for cross-account access
     role_arn = "arn:aws:iam::${aws_organizations_account.dev.id}:role/OrganizationAccountAccessRole"
     # => Assume role in dev account
+    # => OrganizationAccountAccessRole auto-created by AWS Organizations
+    # => Example: arn:aws:iam::111111111111:role/OrganizationAccountAccessRole
+    # => Terraform uses temporary credentials from this role
   }
 }
 
 provider "aws" {
-  alias  = "prod"
-  region = "us-west-2"
+# => Provider configuration
+  # => Provider alias for prod account
+  alias  = "prod"                              # => Alias to reference this provider
+  # => Sets alias
+  region = "us-west-2"                         # => AWS region for prod resources
+  # => Sets region
 
   assume_role {
+    # => AssumeRole configuration for prod account
     role_arn = "arn:aws:iam::${aws_organizations_account.prod.id}:role/OrganizationAccountAccessRole"
     # => Assume role in prod account
+    # => Example: arn:aws:iam::222222222222:role/OrganizationAccountAccessRole
+    # => Separate temporary credentials for prod account
   }
 }
 
 # Deploy to dev account
 resource "aws_vpc" "dev_vpc" {
-  provider   = aws.dev
-  cidr_block = "10.0.0.0/16"
+# => Resource definition
+  # => VPC in dev account (isolated from prod)
+  provider   = aws.dev                         # => Use dev provider alias
+  # => Resource created in dev account (111111111111)
+  cidr_block = "10.0.0.0/16"                   # => Private IP range for dev
+  # => Supports 65,536 IP addresses
+  # => Non-overlapping with prod (10.1.0.0/16)
 
   tags = {
-    Name = "dev-vpc"
+    Name = "dev-vpc"                           # => VPC name tag
+    # => Visible in AWS console
   }
 }
+# => terraform apply creates VPC in dev account
+# => State tracks: vpc_id, cidr_block, tags
+# => Example: vpc-abc123def in account 111111111111
 
 # Deploy to prod account
 resource "aws_vpc" "prod_vpc" {
-  provider   = aws.prod
-  cidr_block = "10.1.0.0/16"
+# => Resource definition
+  # => VPC in prod account (isolated from dev)
+  provider   = aws.prod                        # => Use prod provider alias
+  # => Resource created in prod account (222222222222)
+  cidr_block = "10.1.0.0/16"                   # => Private IP range for prod
+  # => Supports 65,536 IP addresses
+  # => Non-overlapping with dev (10.0.0.0/16)
 
   tags = {
-    Name = "prod-vpc"
+    Name = "prod-vpc"                          # => VPC name tag
+    # => Sets Name
   }
 }
+# => terraform apply creates VPC in prod account
+# => State tracks both VPCs in single state file
+# => Example: vpc-xyz789ghi in account 222222222222
+# => Single Terraform run manages multi-account infrastructure
+
 ```
 
 **Key Takeaway**: AWS Organizations provides multi-account management with consolidated billing and service control policies (SCPs). Create separate accounts for dev, staging, prod environments (security and cost isolation). Use SCPs to enforce governance (deny expensive instances in dev). Cross-account IAM roles enable Terraform to manage multiple accounts from single codebase. Provider aliases (`provider "aws" { alias = "dev" }`) target specific accounts.
@@ -3666,127 +4851,202 @@ terraform-aws-vpc/
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 resource "aws_vpc" "main" {
+# => Resource definition
   cidr_block           = var.cidr_block
+  # => Sets cidr_block
   enable_dns_hostnames = var.enable_dns_hostnames
+  # => Sets enable_dns_hostnames
   enable_dns_support   = var.enable_dns_support
+  # => Sets enable_dns_support
 
   tags = merge(
+  # => Sets tags
     {
       Name = var.name
+      # => Sets Name
     },
     var.tags
   )
 }
 
 resource "aws_subnet" "public" {
+# => Resource definition
   count = length(var.public_subnets)
+  # => Sets count
 
   vpc_id                  = aws_vpc.main.id
+  # => Sets vpc_id
   cidr_block              = var.public_subnets[count.index]
+  # => Sets cidr_block
   availability_zone       = data.aws_availability_zones.available.names[count.index]
+  # => Sets availability_zone
   map_public_ip_on_launch = true
+  # => Sets map_public_ip_on_launch
 
   tags = merge(
+  # => Sets tags
     {
       Name = "${var.name}-public-${count.index + 1}"
+      # => Sets Name
       Type = "public"
+      # => Sets Type
     },
     var.tags
   )
 }
 
 resource "aws_subnet" "private" {
+# => Resource definition
   count = length(var.private_subnets)
+  # => Sets count
 
   vpc_id            = aws_vpc.main.id
+  # => Sets vpc_id
   cidr_block        = var.private_subnets[count.index]
+  # => Sets cidr_block
   availability_zone = data.aws_availability_zones.available.names[count.index]
+  # => Sets availability_zone
 
   tags = merge(
+  # => Sets tags
     {
       Name = "${var.name}-private-${count.index + 1}"
+      # => Sets Name
       Type = "private"
+      # => Sets Type
     },
     var.tags
   )
 }
 
 data "aws_availability_zones" "available" {
+# => Data source
   state = "available"
+  # => Sets state
 }
+
+
+
 ```
 
 **Module variables** - `variables.tf`:
 
 ```hcl
 variable "name" {
+# => Input variable
   description = "Name prefix for VPC resources"
+  # => Sets description
   type        = string
+  # => Sets type
 }
 
 variable "cidr_block" {
+# => Input variable
   description = "CIDR block for VPC"
+  # => Sets description
   type        = string
+  # => Sets type
   default     = "10.0.0.0/16"
+  # => Sets default
 }
 
 variable "public_subnets" {
+# => Input variable
   description = "List of public subnet CIDR blocks"
+  # => Sets description
   type        = list(string)
+  # => Sets type
   default     = ["10.0.1.0/24", "10.0.2.0/24"]
+  # => Sets default
 }
 
 variable "private_subnets" {
+# => Input variable
   description = "List of private subnet CIDR blocks"
+  # => Sets description
   type        = list(string)
+  # => Sets type
   default     = ["10.0.101.0/24", "10.0.102.0/24"]
+  # => Sets default
 }
 
 variable "enable_dns_hostnames" {
+# => Input variable
   description = "Enable DNS hostnames in VPC"
+  # => Sets description
   type        = bool
+  # => Sets type
   default     = true
+  # => Sets default
 }
 
 variable "enable_dns_support" {
+# => Input variable
   description = "Enable DNS support in VPC"
+  # => Sets description
   type        = bool
+  # => Sets type
   default     = true
+  # => Sets default
 }
 
 variable "tags" {
+# => Input variable
   description = "Additional tags for resources"
+  # => Sets description
   type        = map(string)
+  # => Sets type
   default     = {}
+  # => Sets default
 }
+
+
+
 ```
 
 **Module outputs** - `outputs.tf`:
 
 ```hcl
 output "vpc_id" {
+# => Output value
   description = "ID of the VPC"
+  # => Sets description
   value       = aws_vpc.main.id
+  # => Sets value
 }
 
 output "vpc_cidr_block" {
+# => Output value
   description = "CIDR block of the VPC"
+  # => Sets description
   value       = aws_vpc.main.cidr_block
+  # => Sets value
 }
 
 output "public_subnet_ids" {
+# => Output value
   description = "IDs of public subnets"
+  # => Sets description
   value       = aws_subnet.public[*].id
+  # => Sets value
 }
 
 output "private_subnet_ids" {
+# => Output value
   description = "IDs of private subnets"
+  # => Sets description
   value       = aws_subnet.private[*].id
+  # => Sets value
 }
+
+
+
 ```
 
 **Publishing to private registry**:
@@ -3810,40 +5070,57 @@ output "private_subnet_ids" {
 ```hcl
 # Public Terraform Registry
 module "vpc" {
+# => Module configuration
   source  = "terraform-aws-modules/vpc/aws"
+  # => Sets source
   version = "5.1.0"
   # => Uses public registry module
 
   name = "my-vpc"
+  # => Sets name
   cidr = "10.0.0.0/16"
+  # => Sets cidr
 
   azs             = ["us-west-2a", "us-west-2b"]
+  # => Sets azs
   public_subnets  = ["10.0.1.0/24", "10.0.2.0/24"]
+  # => Sets public_subnets
   private_subnets = ["10.0.101.0/24", "10.0.102.0/24"]
+  # => Sets private_subnets
 
   enable_nat_gateway = true
+  # => Sets enable_nat_gateway
 
   tags = {
     Environment = "prod"
+    # => Sets Environment
   }
 }
 
 # Private Terraform Cloud registry
 module "vpc" {
+# => Module configuration
   source  = "app.terraform.io/my-org/vpc/aws"
+  # => Sets source
   version = "1.0.0"
   # => Uses private registry module
 
   name = "my-vpc"
+  # => Sets name
   cidr = "10.0.0.0/16"
+  # => Sets cidr
 }
 
 # Git-based module (no registry)
 module "vpc" {
+# => Module configuration
   source = "git::https://github.com/my-org/terraform-aws-vpc.git?ref=v1.0.0"
   # => Direct Git reference with version tag
   # => No registry required
 }
+
+
+
 ```
 
 **Key Takeaway**: Module registries centralize reusable infrastructure patterns with versioning and documentation. Public registry (registry.terraform.io) for open-source modules, private registry (Terraform Cloud) for organization-specific modules. Semantic versioning (1.0.0) enables safe upgrades. Module structure: main.tf (resources), variables.tf (inputs), outputs.tf (outputs), README.md (documentation), examples/ (usage), tests/ (validation).
@@ -3932,41 +5209,62 @@ suites:
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "aws" {
+# => Provider configuration
   region = var.region
+  # => Sets region
 }
 
 variable "region" {
+# => Input variable
   type    = string
+  # => Sets type
   default = "us-west-2"
+  # => Sets default
 }
 
 # Module under test
 module "vpc" {
+# => Module configuration
   source = "../../.."
   # => References module at repository root
 
   name            = "test-vpc"
+  # => Sets name
   cidr_block      = "10.0.0.0/16"
+  # => Sets cidr_block
   public_subnets  = ["10.0.1.0/24", "10.0.2.0/24"]
+  # => Sets public_subnets
   private_subnets = ["10.0.101.0/24", "10.0.102.0/24"]
+  # => Sets private_subnets
 
   tags = {
     Environment = "test"
+    # => Sets Environment
     Purpose     = "kitchen-terraform"
+    # => Sets Purpose
   }
 }
 
 output "vpc_id" {
+# => Output value
   value = module.vpc.vpc_id
+  # => Sets value
 }
 
 output "public_subnet_ids" {
+# => Output value
   value = module.vpc.public_subnet_ids
+  # => Sets value
 }
+
+
+
 ```
 
 **InSpec tests** - `test/integration/default/controls/vpc_configuration.rb`:
@@ -4106,54 +5404,79 @@ terraform-monorepo/
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "aws" {
+# => Provider configuration
   region = "us-west-2"
+  # => Sets region
 }
 
 locals {
+# => Local values
   environment = "dev"
   # => Environment-specific local values
 }
 
 # Shared VPC module
 module "vpc" {
+# => Module configuration
   source = "../../modules/vpc"
+  # => Sets source
 
   name       = "${local.environment}-vpc"
+  # => Sets name
   cidr_block = "10.0.0.0/16"
+  # => Sets cidr_block
 
   public_subnets  = ["10.0.1.0/24", "10.0.2.0/24"]
+  # => Sets public_subnets
   private_subnets = ["10.0.101.0/24", "10.0.102.0/24"]
+  # => Sets private_subnets
 
   tags = {
     Environment = local.environment
+    # => Sets Environment
   }
 }
 
 # Compute resources
 module "compute" {
+# => Module configuration
   source = "../../modules/compute"
+  # => Sets source
 
   environment       = local.environment
+  # => Sets environment
   vpc_id            = module.vpc.vpc_id
+  # => Sets vpc_id
   subnet_ids        = module.vpc.public_subnet_ids
+  # => Sets subnet_ids
   instance_type     = "t3.micro"
   # => Small instances for dev
   min_size          = 1
+  # => Sets min_size
   max_size          = 2
+  # => Sets max_size
   desired_capacity  = 1
+  # => Sets desired_capacity
 }
 
 # Database
 module "database" {
+# => Data source
   source = "../../modules/database"
+  # => Sets source
 
   environment      = local.environment
+  # => Sets environment
   vpc_id           = module.vpc.vpc_id
+  # => Sets vpc_id
   subnet_ids       = module.vpc.private_subnet_ids
+  # => Sets subnet_ids
   instance_class   = "db.t3.micro"
   # => Small RDS for dev
   allocated_storage = 20
@@ -4162,60 +5485,86 @@ module "database" {
   backup_retention_period = 1
   # => 1-day backups for dev (cost optimization)
 }
+
+
+
 ```
 
 **Prod environment** - `environments/prod/main.tf`:
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "aws" {
+# => Provider configuration
   region = "us-west-2"
+  # => Sets region
 }
 
 locals {
+# => Local values
   environment = "prod"
+  # => Sets environment
 }
 
 # Same modules, different parameters
 module "vpc" {
+# => Module configuration
   source = "../../modules/vpc"
+  # => Sets source
 
   name       = "${local.environment}-vpc"
+  # => Sets name
   cidr_block = "10.1.0.0/16"
   # => Different CIDR for prod
 
   public_subnets  = ["10.1.1.0/24", "10.1.2.0/24", "10.1.3.0/24"]
+  # => Sets public_subnets
   private_subnets = ["10.1.101.0/24", "10.1.102.0/24", "10.1.103.0/24"]
   # => 3 subnets for multi-AZ
 
   tags = {
     Environment = local.environment
+    # => Sets Environment
   }
 }
 
 module "compute" {
+# => Module configuration
   source = "../../modules/compute"
+  # => Sets source
 
   environment       = local.environment
+  # => Sets environment
   vpc_id            = module.vpc.vpc_id
+  # => Sets vpc_id
   subnet_ids        = module.vpc.public_subnet_ids
+  # => Sets subnet_ids
   instance_type     = "t3.large"
   # => Larger instances for prod
   min_size          = 3
+  # => Sets min_size
   max_size          = 10
+  # => Sets max_size
   desired_capacity  = 5
   # => High availability for prod
 }
 
 module "database" {
+# => Data source
   source = "../../modules/database"
+  # => Sets source
 
   environment      = local.environment
+  # => Sets environment
   vpc_id           = module.vpc.vpc_id
+  # => Sets vpc_id
   subnet_ids       = module.vpc.private_subnet_ids
+  # => Sets subnet_ids
   instance_class   = "db.r5.2xlarge"
   # => Production-grade RDS
   allocated_storage = 1000
@@ -4226,6 +5575,9 @@ module "database" {
   multi_az                = true
   # => Multi-AZ for high availability
 }
+
+
+
 ```
 
 **Deployment workflow**:
@@ -4298,126 +5650,204 @@ graph TD
 
 ```hcl
 terraform {
+# => Terraform configuration block
+  # => Terraform configuration block
   required_version = ">= 1.0"
+  # => Minimum Terraform version required
 }
 
 variable "environment" {
+# => Input variable
+  # => Environment name (prod, dev, staging)
   type = string
+  # => Must be string value
 }
 
 variable "enable_auto_shutdown" {
+# => Input variable
+  # => Toggle auto-shutdown feature
   description = "Enable auto-shutdown for cost savings (non-prod only)"
+  # => Human-readable description
   type        = bool
+  # => Boolean variable (true/false)
   default     = false
+  # => Default: disabled (must opt-in for cost savings)
 }
 
 provider "aws" {
+# => Provider configuration
+  # => AWS provider configuration
   region = "us-west-2"
+  # => All resources created in us-west-2
 
   default_tags {
+    # => Tags applied to ALL resources automatically
     tags = {
       ManagedBy   = "Terraform"
+      # => Identifies infrastructure managed by Terraform
       Environment = var.environment
+      # => Environment name from variable (prod/dev/staging)
       CostCenter  = "Engineering"
       # => Default tags for cost allocation
+      # => AWS Cost Explorer groups by these tags
     }
   }
 }
 
 # Cost-optimized EC2 instances
 resource "aws_instance" "web" {
+# => Resource definition
+  # => EC2 instances with environment-based sizing
   count = var.environment == "prod" ? 3 : 1
   # => 3 instances for prod (HA), 1 for dev (cost savings)
+  # => Ternary: condition ? true_value : false_value
 
   ami           = data.aws_ami.ubuntu.id
+  # => Ubuntu AMI from data source (latest version)
   instance_type = var.environment == "prod" ? "t3.large" : "t3.micro"
   # => Large for prod, micro for dev
+  # => t3.micro: $0.0104/hour, t3.large: $0.0832/hour (8x cost)
 
   # Spot instances for dev (70% cost savings)
   instance_market_options {
+    # => Spot vs on-demand configuration
     market_type = var.environment == "dev" ? "spot" : null
     # => Spot for dev, on-demand for prod
+    # => null disables block (no market options for prod)
 
     dynamic "spot_options" {
+      # => Conditional nested block (only for dev)
       for_each = var.environment == "dev" ? [1] : []
+      # => for_each with [1] creates block, [] skips block
       content {
+        # => Spot instance configuration
         spot_instance_type             = "persistent"
+        # => Persistent spot (restart after interruption)
         instance_interruption_behavior = "stop"
         # => Stop (not terminate) on interruption
+        # => Preserves root volume for restart
       }
     }
   }
 
   tags = {
+    # => Instance-specific tags
     Name        = "${var.environment}-web-${count.index + 1}"
+    # => Name: dev-web-1, prod-web-1, prod-web-2, prod-web-3
+    # => count.index: 0, 1, 2 → +1 for human-readable numbering
     Environment = var.environment
+    # => Redundant with default_tags (shown for clarity)
     AutoShutdown = var.enable_auto_shutdown ? "enabled" : "disabled"
     # => Tag for auto-shutdown Lambda
+    # => Lambda queries instances with AutoShutdown=enabled
   }
 }
 
 data "aws_ami" "ubuntu" {
+# => Data source
+  # => Query latest Ubuntu AMI
   most_recent = true
+  # => Return newest AMI matching filter
   owners      = ["099720109477"]
+  # => Canonical's AWS account ID (Ubuntu official images)
 
   filter {
+    # => AMI name pattern matching
     name   = "name"
+    # => Filter by AMI name
     values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+    # => Ubuntu 22.04 LTS (Jammy Jellyfish) for amd64
+    # => * wildcard matches version suffix
   }
 }
 
 # Auto-shutdown Lambda (dev/staging only)
 resource "aws_lambda_function" "auto_shutdown" {
+# => Resource definition
+  # => Lambda function for scheduled instance stop/start
   count = var.enable_auto_shutdown ? 1 : 0
+  # => Create only if enable_auto_shutdown = true
+  # => 0 resources if disabled (no cost)
 
   filename      = "auto-shutdown.zip"
+  # => Lambda deployment package (Python code)
   function_name = "${var.environment}-auto-shutdown"
+  # => Function name: dev-auto-shutdown, staging-auto-shutdown
   role          = aws_iam_role.lambda_auto_shutdown[0].arn
+  # => IAM role for Lambda execution
+  # => [0] references first element (count = 1)
   handler       = "index.handler"
+  # => Entry point: index.py → handler function
   runtime       = "python3.11"
+  # => Python 3.11 runtime
 
   environment {
+    # => Environment variables for Lambda
     variables = {
       ENVIRONMENT = var.environment
+      # => Pass environment name to Lambda code
     }
   }
 
   tags = {
     Purpose = "Cost Optimization"
+    # => Tag for cost tracking
   }
 }
 
 resource "aws_iam_role" "lambda_auto_shutdown" {
+# => Resource definition
+  # => IAM role for Lambda execution
   count = var.enable_auto_shutdown ? 1 : 0
+  # => Create only if auto-shutdown enabled
   name  = "${var.environment}-lambda-auto-shutdown"
+  # => Role name with environment prefix
 
   assume_role_policy = jsonencode({
+    # => Trust policy (who can assume this role)
     Version = "2012-10-17"
+    # => Sets Version
     Statement = [{
       Effect = "Allow"
+      # => Sets Effect
       Principal = {
         Service = "lambda.amazonaws.com"
+        # => Lambda service can assume this role
       }
       Action = "sts:AssumeRole"
+      # => STS action for role assumption
     }]
   })
 }
 
 resource "aws_iam_role_policy" "lambda_auto_shutdown" {
+# => Resource definition
+  # => Inline policy for Lambda role
   count = var.enable_auto_shutdown ? 1 : 0
+  # => Sets count
   role  = aws_iam_role.lambda_auto_shutdown[0].id
+  # => Attach to Lambda role
 
   policy = jsonencode({
+    # => Permissions policy
     Version = "2012-10-17"
+    # => Sets Version
     Statement = [
+    # => Sets Statement
       {
         Effect = "Allow"
+        # => Sets Effect
         Action = [
+          # => EC2 permissions for stop/start
           "ec2:DescribeInstances",
+          # => Query instances with AutoShutdown tag
           "ec2:StopInstances",
+          # => Stop instances (shutdown)
           "ec2:StartInstances",
+          # => Start instances (startup)
         ]
         Resource = "*"
+        # => Apply to all instances (Lambda filters by tag)
       }
     ]
   })
@@ -4425,87 +5855,154 @@ resource "aws_iam_role_policy" "lambda_auto_shutdown" {
 
 # EventBridge schedule: shutdown at 7 PM, start at 8 AM (weekdays)
 resource "aws_cloudwatch_event_rule" "shutdown_schedule" {
+# => Resource definition
+  # => EventBridge rule for nightly shutdown
   count               = var.enable_auto_shutdown ? 1 : 0
+  # => Sets count
   name                = "${var.environment}-shutdown-schedule"
+  # => Sets name
   description         = "Stop instances at 7 PM weekdays"
+  # => Sets description
   schedule_expression = "cron(0 19 ? * MON-FRI *)"
   # => 7 PM UTC Monday-Friday
+  # => Cron format: minute hour day-of-month month day-of-week year
+  # => ? in day-of-month means "any" (required when day-of-week specified)
 }
 
 resource "aws_cloudwatch_event_target" "shutdown_lambda" {
+# => Resource definition
+  # => EventBridge target for shutdown rule
   count     = var.enable_auto_shutdown ? 1 : 0
+  # => Sets count
   rule      = aws_cloudwatch_event_rule.shutdown_schedule[0].name
+  # => Link to shutdown schedule rule
   target_id = "ShutdownLambda"
+  # => Unique target identifier
   arn       = aws_lambda_function.auto_shutdown[0].arn
+  # => Lambda function to invoke
 
   input = jsonencode({
+    # => Input passed to Lambda function
     action = "stop"
+    # => Lambda reads action and stops instances
   })
 }
 
 resource "aws_cloudwatch_event_rule" "startup_schedule" {
+# => Resource definition
+  # => EventBridge rule for morning startup
   count               = var.enable_auto_shutdown ? 1 : 0
+  # => Sets count
   name                = "${var.environment}-startup-schedule"
+  # => Sets name
   description         = "Start instances at 8 AM weekdays"
+  # => Sets description
   schedule_expression = "cron(0 8 ? * MON-FRI *)"
   # => 8 AM UTC Monday-Friday
+  # => 13-hour downtime (7 PM - 8 AM = 13 hours/day)
+  # => 65 hours/week offline (13 hours × 5 days)
 }
 
 resource "aws_cloudwatch_event_target" "startup_lambda" {
+# => Resource definition
+  # => EventBridge target for startup rule
   count     = var.enable_auto_shutdown ? 1 : 0
+  # => Sets count
   rule      = aws_cloudwatch_event_rule.startup_schedule[0].name
+  # => Link to startup schedule rule
   target_id = "StartupLambda"
+  # => Sets target_id
   arn       = aws_lambda_function.auto_shutdown[0].arn
+  # => Same Lambda function (handles stop and start)
 
   input = jsonencode({
     action = "start"
+    # => Lambda reads action and starts instances
   })
 }
 
 resource "aws_lambda_permission" "allow_eventbridge_shutdown" {
+# => Resource definition
+  # => Grant EventBridge permission to invoke Lambda
   count         = var.enable_auto_shutdown ? 1 : 0
+  # => Sets count
   statement_id  = "AllowExecutionFromEventBridgeShutdown"
+  # => Unique statement ID
   action        = "lambda:InvokeFunction"
+  # => Permission to invoke Lambda function
   function_name = aws_lambda_function.auto_shutdown[0].function_name
+  # => Lambda function to grant permission to
   principal     = "events.amazonaws.com"
+  # => EventBridge service
   source_arn    = aws_cloudwatch_event_rule.shutdown_schedule[0].arn
+  # => Only this specific EventBridge rule can invoke
 }
 
 resource "aws_lambda_permission" "allow_eventbridge_startup" {
+# => Resource definition
+  # => Grant EventBridge permission for startup rule
   count         = var.enable_auto_shutdown ? 1 : 0
+  # => Sets count
   statement_id  = "AllowExecutionFromEventBridgeStartup"
+  # => Sets statement_id
   action        = "lambda:InvokeFunction"
+  # => Sets action
   function_name = aws_lambda_function.auto_shutdown[0].function_name
+  # => Sets function_name
   principal     = "events.amazonaws.com"
+  # => Sets principal
   source_arn    = aws_cloudwatch_event_rule.startup_schedule[0].arn
+  # => Separate permission for startup rule
 }
 
 # Reserved capacity for prod (cost savings)
 resource "aws_ec2_capacity_reservation" "prod" {
+# => Resource definition
+  # => Reserved capacity for production instances
   count             = var.environment == "prod" ? 1 : 0
+  # => Only for production environment
   instance_type     = "t3.large"
+  # => Match production instance type
   instance_platform = "Linux/UNIX"
+  # => Operating system platform
   availability_zone = "us-west-2a"
+  # => Specific AZ for reservation
   instance_count    = 3
+  # => Reserve capacity for 3 instances
 
   tags = {
     Purpose = "Production Reserved Capacity"
+    # => Sets Purpose
   }
   # => 1-year/3-year commitment for cost savings
+  # => Reserved instances: ~30% savings vs on-demand
 }
 
 # Cost allocation tags (enforced)
 resource "aws_s3_bucket" "data" {
+# => Resource definition
+  # => S3 bucket with cost allocation tags
   bucket = "${var.environment}-company-data"
+  # => Bucket name with environment prefix
 
   tags = {
+    # => Cost allocation tags
     Environment = var.environment
+    # => Environment tag (prod/dev/staging)
     Project     = "DataPipeline"
+    # => Project identifier
     Owner       = "data-team@example.com"
+    # => Team responsible for costs
     CostCenter  = "DataEngineering"
     # => Required tags for cost allocation reports
+    # => AWS Cost Explorer groups costs by these tags
+    # => Finance can report: "DataEngineering spent $X this month"
   }
 }
+
+
+
+
 ```
 
 **Cost monitoring** - `cost-budget.tf`:
@@ -4513,23 +6010,38 @@ resource "aws_s3_bucket" "data" {
 ```hcl
 # AWS Budget for cost alerting
 resource "aws_budgets_budget" "monthly_cost" {
+  # => AWS Budget tracks spending and sends alerts
   name              = "${var.environment}-monthly-budget"
+  # => Budget name with environment prefix
   budget_type       = "COST"
+  # => Budget type: COST (total spending), USAGE, or RI_COVERAGE
   limit_amount      = var.environment == "prod" ? "10000" : "1000"
   # => $10k/month for prod, $1k/month for dev
+  # => Different limits per environment
   limit_unit        = "USD"
+  # => Currency unit (USD dollars)
   time_period_start = "2024-01-01_00:00"
+  # => Budget start date (YYYY-MM-DD_HH:MM format)
   time_unit         = "MONTHLY"
+  # => Reset budget every month
 
   notification {
+    # => Alert configuration when threshold exceeded
     comparison_operator        = "GREATER_THAN"
+    # => Trigger when actual cost > threshold
     threshold                  = 80
+    # => Threshold value (80% of limit)
     threshold_type             = "PERCENTAGE"
+    # => Threshold as percentage (not absolute amount)
     notification_type          = "ACTUAL"
+    # => Alert on actual costs (not forecasted)
     subscriber_email_addresses = ["team@example.com"]
+    # => Alert at 80% of budget
+    # => Email recipients for alerts
+    # => Sends email when prod cost > $8k or dev > $800
   }
-  # => Alert at 80% of budget
 }
+
 ```
 
 **Key Takeaway**: Cost optimization strategies: environment-based resource sizing (t3.micro for dev, t3.large for prod), spot instances for non-prod (70% savings), auto-shutdown for dev/staging (stop 7 PM, start 8 AM weekdays, 65% monthly savings), reserved capacity for prod (1-year commitment, 30% savings), cost allocation tags (Environment, Project, Owner, CostCenter). AWS Budgets alert at 80% of monthly limit. `default_tags` in provider ensure consistent tagging.

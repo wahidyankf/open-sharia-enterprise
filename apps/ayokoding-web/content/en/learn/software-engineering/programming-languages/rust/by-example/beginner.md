@@ -258,6 +258,7 @@ fn double_explicit(x: i32) -> i32 {
 ```rust
 fn main() {
     let number = 7;                  // => number is 7 (i32)
+                                     // => Stored on stack, known at compile-time
 
     // if as statement (used for side effects like printing)
     // Conditions must be bool type (no truthy/falsy values)
@@ -272,7 +273,8 @@ fn main() {
 
     // if as expression (returns a value)
     // All branches must return same type
-    let result = if number % 2 == 0 {// => number % 2 is 1 (not 0)
+    let result = if number % 2 == 0 {// => Evaluates 7 % 2 = 1
+                                     // => number % 2 is 1 (not 0)
                                      // => Condition is false
         "even"                       // => &str type (not returned)
     } else {
@@ -282,17 +284,19 @@ fn main() {
                                      // => result type: &str (inferred)
 
     println!("{} is {}", number, result);
+                                     // => Formats number (7) and result ("odd")
                                      // => Output: 7 is odd
 
     // if as expression for assignment (like ternary operator)
-    let x = 10;
-    let category = if x > 100 {      // => false
-        "large"
-    } else if x > 50 {               // => false
-        "medium"
+    let x = 10;                      // => x is 10 (i32)
+    let category = if x > 100 {      // => false (10 not > 100)
+        "large"                      // => Not returned
+    } else if x > 50 {               // => false (10 not > 50)
+        "medium"                     // => Not returned
     } else {
-        "small"                      // => category is "small"
-    };
+        "small"                      // => This branch executes
+                                     // => category is "small"
+    };                               // => category type: &str
 
     // Type mismatch example (won't compile):
     // let bad = if true {
@@ -302,7 +306,8 @@ fn main() {
     // };
 
     // No parentheses required around condition
-    if number > 0 {                  // => Parentheses optional (unlike C/Java)
+    if number > 0 {                  // => true (7 > 0)
+                                     // => Parentheses optional (unlike C/Java)
         println!("Positive");        // => Output: Positive
     }
 
@@ -312,7 +317,8 @@ fn main() {
     // }
 
     // Correct boolean check:
-    if number != 0 {                 // => Explicit comparison returns bool
+    if number != 0 {                 // => true (7 != 0)
+                                     // => Explicit comparison returns bool
         println!("Not zero");        // => Output: Not zero
     }
 }
@@ -374,7 +380,7 @@ fn main() {
     }
 
     // Iterating over array
-    let arr = [10, 20, 30];
+    let arr = [10, 20, 30];          // => arr is [10, 20, 30] (type: [i32; 3])
     for element in arr {             // => element is 10, then 20, then 30
         println!("Value: {}", element);
                                      // => Output: Value: 10
@@ -384,15 +390,16 @@ fn main() {
 
     // Reverse iteration
     for num in (1..4).rev() {        // => Reverse iterator: 3, 2, 1
+                                     // => .rev() creates reverse iterator
         println!("{}", num);         // => Output: 3, 2, 1
     }
 
     // Loop labels for nested loops
     'outer: loop {                   // => Label 'outer for outer loop
-        let mut inner_count = 0;
-        loop {
-            inner_count += 1;
-            if inner_count > 5 {
+        let mut inner_count = 0;     // => inner_count is 0
+        loop {                       // => Inner infinite loop
+            inner_count += 1;        // => Increments: 1, 2, 3, 4, 5, 6
+            if inner_count > 5 {     // => true when inner_count is 6
                 break 'outer;        // => Break outer loop (not inner)
             }
         }
@@ -1548,13 +1555,13 @@ Associated functions (static methods) don't take `self` and are called with `::`
 
 ```rust
 // Define struct
-struct Rectangle {
-    width: u32,
-    height: u32,
+struct Rectangle {                  // => Define Rectangle type
+    width: u32,                      // => Field: width (unsigned 32-bit)
+    height: u32,                     // => Field: height (unsigned 32-bit)
 }
 
 // Implementation block with methods AND associated functions
-impl Rectangle {
+impl Rectangle {                     // => Implementation block for Rectangle
     // Associated function (no self parameter)
     // Called with :: syntax (Type::function)
     // Often used as constructor
@@ -1562,6 +1569,7 @@ impl Rectangle {
                                      // => No self parameter (not a method)
                                      // => Called on type, not instance
                                      // => size: parameter for square dimension
+                                     // => Returns Rectangle type
         Rectangle {
             width: size,             // => Create Rectangle with equal sides
             height: size,            // => Makes a square
@@ -1572,32 +1580,40 @@ impl Rectangle {
     // Another associated function (constructor with validation)
     fn new(width: u32, height: u32) -> Rectangle {
                                      // => Common name for default constructor
+                                     // => Takes two u32 parameters
         Rectangle { width, height }  // => Field init shorthand
+                                     // => Equivalent: Rectangle { width: width, height: height }
                                      // => Return new Rectangle
     }
 
     // Associated function with Option return (fallible constructor)
     fn new_validated(width: u32, height: u32) -> Option<Rectangle> {
-                                     // => Returns Option (may fail)
-        if width > 0 && height > 0 { // => Validate dimensions
+                                     // => Returns Option<Rectangle> (may fail)
+                                     // => Some(Rectangle) if valid, None if invalid
+        if width > 0 && height > 0 { // => Validate dimensions (both must be > 0)
             Some(Rectangle { width, height })
-                                     // => Valid: return Some(Rectangle)
+                                     // => Valid: wrap Rectangle in Some
+                                     // => Return Some(Rectangle)
         } else {
             None                     // => Invalid: return None
+                                     // => No Rectangle created
         }
     }
 
     // Method (for comparison - has self parameter)
-    fn area(&self) -> u32 {          // => Method borrows self
-        self.width * self.height     // => Calculate area
+    fn area(&self) -> u32 {          // => Method borrows self immutably
+                                     // => &self: borrowed reference to instance
+        self.width * self.height     // => Access fields via self
+                                     // => Calculate and return area
     }
 
     // Associated function returning default value
-    fn default() -> Rectangle {      // => No parameters, returns default
+    fn default() -> Rectangle {      // => No parameters, returns default Rectangle
+                                     // => Factory method for default value
         Rectangle {
-            width: 1,
-            height: 1,
-        }                            // => 1x1 Rectangle
+            width: 1,                // => Default width: 1
+            height: 1,               // => Default height: 1
+        }                            // => Return 1x1 Rectangle
     }
 }
 
@@ -2065,17 +2081,21 @@ fn main() {
 
     // Using unwrap_or to provide default value
     let value = some_number.unwrap_or(0);
+    // => some_number is Some(5), so extract inner value
     // => value is 5 (extracted from Some(5))
     // => If some_number were None, value would be 0
 
     let default_value = absent.unwrap_or(10);
+    // => absent is None, so return default
     // => default_value is 10 (absent is None, so default used)
 
     // is_some() and is_none() for boolean checks
     let has_value = some_number.is_some();
+    // => Checks if variant is Some
     // => has_value is true (some_number is Some variant)
 
     let is_empty = absent.is_none();
+    // => Checks if variant is None
     // => is_empty is true (absent is None variant)
 }
 ```
@@ -2136,31 +2156,39 @@ fn main() {
     // Practical example - counting specific values
     let mut count = 0;
     // => count is i32, starts at 0
+    // => Mutable to allow incrementing
 
     let coin = Some("quarter");
     // => coin is Option<&str> containing "quarter"
+    // => String slice wrapped in Some variant
 
     if let Some("quarter") = coin {
+        // => Pattern Some("quarter") matches coin's value
         // => Pattern matches (coin is Some("quarter"))
         count += 1;
+        // => Increments count by 1
         // => count is now 1
     } else {
-        // => This block NOT executed
+        // => This block NOT executed (pattern matched)
         println!("Not a quarter");
     }
 
     println!("Count: {}", count);
+    // => Formats count into output string
     // => Output: Count: 1
 
     // Destructuring with if let
     let pair = Some((2, 4));
     // => pair is Option<(i32, i32)> containing tuple (2, 4)
+    // => Tuple has two i32 elements
 
     if let Some((x, y)) = pair {
+        // => Pattern destructures tuple from Some variant
         // => Pattern destructures tuple
-        // => x is bound to 2
-        // => y is bound to 4
+        // => x is bound to 2 (first tuple element)
+        // => y is bound to 4 (second tuple element)
         println!("x: {}, y: {}", x, y);
+        // => Formats both x and y into output
         // => Output: x: 2, y: 4
     }
 
@@ -2190,35 +2218,38 @@ fn main() {
 `Result<T, E>` represents operations that can succeed (`Ok(T)`) or fail (`Err(E)`). Rust has no exceptions, forcing explicit error handling. Every fallible operation must be handled through pattern matching or propagation.
 
 ```rust
-use std::fs::File;
-use std::io::ErrorKind;
+use std::fs::File;                   // => Import File type from standard library
+use std::io::ErrorKind;              // => Import ErrorKind enum for error classification
 
 fn main() {
     // Attempting to open a file - returns Result
-    let f = File::open("hello.txt");
+    let f = File::open("hello.txt"); // => Calls File::open with path "hello.txt"
     // => f is Result<File, std::io::Error>
     // => Ok(File) if file exists and readable
     // => Err(Error) if file doesn't exist or permission denied
 
     // Pattern matching on Result - nested for error kinds
-    let f = match f {
-        Ok(file) => {
+    let f = match f {                // => Match on Result value
+        Ok(file) => {                // => Pattern matches if f is Ok variant
             // => Branch executes if file opened successfully
-            // => file is File handle
+            // => file is File handle (extracted from Ok)
             println!("File opened successfully");
-            file
+                                     // => Prints success message to stdout
+            file                     // => Return file handle
             // => Return file handle from match expression
         }
-        Err(error) => {
+        Err(error) => {              // => Pattern matches if f is Err variant
             // => Branch executes if open failed
-            // => error is std::io::Error
+            // => error is std::io::Error (extracted from Err)
             // => Need to determine error type
 
             // Match on specific error kinds
-            match error.kind() {
+            match error.kind() {     // => Calls .kind() to get ErrorKind enum
                 ErrorKind::NotFound => {
+                                     // => Pattern matches NotFound variant
                     // => File doesn't exist
                     println!("File not found, creating...");
+                                     // => Informs user file will be created
                     // => Output: File not found, creating...
 
                     // Attempt to create file

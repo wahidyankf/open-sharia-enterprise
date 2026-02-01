@@ -42,53 +42,107 @@ graph TD
 ```
 
 ```elixir
-defmodule MyApp.Transfers do
-  def transfer_funds(from_account, to_account, amount) do
-    result =
-      Ecto.Multi.new()                                # => Start transaction pipeline
-      |> Ecto.Multi.update(
-        :debit,                                       # => Named operation
+defmodule MyApp.Transfers do                          # => Defines Transfers service module
+                                                       # => Groups money transfer operations
+  def transfer_funds(from_account, to_account, amount) do  # => Public function: transfer_funds/3
+                                                             # => Params: from_account, to_account, amount
+    result =                                          # => Binds result to Multi pipeline return
+                                                       # => Will be {:ok, map} or {:error, ...} tuple
+      Ecto.Multi.new()                                # => Creates empty Multi struct
+                                                       # => Multi accumulates operations to run in transaction
+      |> Ecto.Multi.update(                           # => Pipes Multi into update operation
+        :debit,                                       # => Named operation key :debit
+                                                       # => Can reference this result later as %{debit: ...}
         Ecto.Changeset.change(from_account, balance: from_account.balance - amount)
-      )  # => Deduct from source account
-      |> Ecto.Multi.update(
-        :credit,                                      # => Second operation
+                                                       # => Creates changeset subtracting amount from balance
+                                                       # => E.g., balance: 1000 - 50 = 950
+      )                                               # => Returns Multi with :debit operation added
+                                                       # => Multi now has 1 operation queued
+      |> Ecto.Multi.update(                           # => Adds second update operation
+        :credit,                                      # => Named operation key :credit
+                                                       # => Independent of :debit (parallel semantics)
         Ecto.Changeset.change(to_account, balance: to_account.balance + amount)
-      )  # => Add to destination account
+                                                       # => Creates changeset adding amount to balance
+                                                       # => E.g., balance: 500 + 50 = 550
+      )                                               # => Returns Multi with :debit and :credit queued
+                                                       # => Multi now has 2 operations
       |> Ecto.Multi.insert(:transaction_log, %TransactionLog{
-        from_id: from_account.id,
-        to_id: to_account.id,
-        amount: amount
-      })  # => Record transaction history
-      |> MyApp.Repo.transaction()                     # => Execute all or rollback
+                                                       # => Adds insert operation for audit log
+                                                       # => Named :transaction_log
+        from_id: from_account.id,                     # => Sets from_id field to source account ID
+                                                       # => E.g., from_id: 123
+        to_id: to_account.id,                         # => Sets to_id field to destination account ID
+                                                       # => E.g., to_id: 456
+        amount: amount                                # => Sets amount field to transferred amount
+                                                       # => E.g., amount: 50
+      })                                              # => Returns Multi with 3 operations total
+                                                       # => All operations ready to execute atomically
+      |> MyApp.Repo.transaction()                     # => Executes all operations in database transaction
+                                                       # => Returns {:ok, %{debit: ..., credit: ..., transaction_log: ...}} on success
+                                                       # => Returns {:error, failed_operation, changeset, changes_so_far} on failure
+                                                       # => Database commits all or rolls back all
 
-    case result do
-      {:ok, %{debit: from, credit: to, transaction_log: log}} ->
-        {:ok, from, to, log}                          # => All 3 operations committed
-        # => Database changes persisted atomically
+    case result do                                    # => Pattern match on transaction result
+                                                       # => Handles success and failure cases
+      {:ok, %{debit: from, credit: to, transaction_log: log}} ->  # => Success pattern match
+                                                                    # => Destructures map with all 3 results
+                                                                    # => from is updated from_account struct
+                                                                    # => to is updated to_account struct
+                                                                    # => log is inserted TransactionLog struct
+        {:ok, from, to, log}                          # => Returns success tuple with all results
+                                                       # => Caller receives all updated structs
+                                                       # => Database changes are committed permanently
 
-      {:error, :debit, changeset, _changes} ->
-        {:error, "Debit failed", changeset}           # => Rolled back before credit
-        # => No partial updates in database
+      {:error, :debit, changeset, _changes} ->        # => Failure pattern: :debit operation failed
+                                                       # => changeset contains validation errors
+                                                       # => _changes is empty map (no operations succeeded yet)
+        {:error, "Debit failed", changeset}           # => Returns error tuple with message
+                                                       # => Transaction rolled back before :credit ran
+                                                       # => Database unchanged (atomicity guaranteed)
 
-      {:error, failed_op, changeset, _changes} ->
-        {:error, "Operation failed: #{failed_op}", changeset}
-        # => All changes discarded, database unchanged
-    end
-  end
+      {:error, failed_op, changeset, _changes} ->     # => Catch-all failure pattern for any operation
+                                                       # => failed_op is operation name (:credit or :transaction_log)
+                                                       # => changeset has error details
+        {:error, "Operation failed: #{failed_op}", changeset}  # => Returns error with operation name
+                                                                 # => E.g., "Operation failed: credit"
+                                                                 # => All changes discarded, database rolled back
+    end                                               # => End case statement
+  end                                                 # => End transfer_funds/3 function
 
-  # Dependency between operations
-  def complex_transaction do
-    Ecto.Multi.new()
+  # Dependency between operations - sequential execution with references
+  def complex_transaction do                          # => Public function: complex_transaction/0
+                                                       # => No parameters, demonstrates dependent operations
+    Ecto.Multi.new()                                  # => Creates empty Multi struct
+                                                       # => Starting point for dependent operation chain
     |> Ecto.Multi.insert(:user, User.create_changeset(%{email: "user@example.com"}))
-    |> Ecto.Multi.insert(:profile, fn %{user: user} ->
-      Profile.create_changeset(user)
-    end)
-    |> Ecto.Multi.insert(:settings, fn %{user: user} ->
-      Settings.default_changeset(user)
-    end)
-    |> MyApp.Repo.transaction()
-  end
-end
+                                                       # => First operation: insert user
+                                                       # => Named :user (required for later references)
+                                                       # => Creates user with email "user@example.com"
+                                                       # => Returns Multi with :user operation queued
+    |> Ecto.Multi.insert(:profile, fn %{user: user} ->  # => Second operation: insert profile (DEPENDENT)
+                                                         # => Anonymous function receives %{user: user} from previous operations
+                                                         # => user is the inserted User struct from :user operation
+                                                         # => Sequential dependency: profile needs user.id
+      Profile.create_changeset(user)                  # => Creates profile changeset for inserted user
+                                                       # => Uses user struct to set foreign key
+                                                       # => E.g., profile.user_id = user.id
+    end)                                              # => Returns Multi with :user and :profile queued
+                                                       # => Multi now has 2 operations, :profile depends on :user
+    |> Ecto.Multi.insert(:settings, fn %{user: user} ->  # => Third operation: insert settings (DEPENDENT)
+                                                          # => Also receives %{user: user} from accumulated results
+                                                          # => user is same inserted User struct
+      Settings.default_changeset(user)                # => Creates default settings for user
+                                                       # => Uses user struct to set foreign key
+                                                       # => E.g., settings.user_id = user.id
+    end)                                              # => Returns Multi with all 3 operations queued
+                                                       # => Execution order: :user, then :profile, then :settings
+    |> MyApp.Repo.transaction()                       # => Executes operations in order within transaction
+                                                       # => If :user fails, :profile and :settings never run
+                                                       # => If :profile fails, :user is rolled back, :settings never runs
+                                                       # => Returns {:ok, %{user: ..., profile: ..., settings: ...}} on success
+                                                       # => Returns {:error, operation_name, changeset, partial_results} on failure
+  end                                                 # => End complex_transaction/0 function
+end                                                   # => End MyApp.Transfers module
 ```
 
 **Key Takeaway**: Ecto.Multi ensures all-or-nothing execution. Operations reference previous results with fn. Rollback happens automatically on any failure. Perfect for transfers, account creation, multi-step operations.
@@ -118,42 +172,85 @@ graph TD
 ```
 
 ```elixir
-defmodule MyApp.Accounts.User do
-  schema "users" do
-    field :email, :string
-    field :username, :string
-  end
+defmodule MyApp.Accounts.User do                      # => Defines User schema module
+                                                       # => Maps Elixir struct to "users" database table
+  schema "users" do                                   # => Defines schema for "users" table
+                                                       # => Auto-generates struct with id, inserted_at, updated_at
+    field :email, :string                             # => Declares email field, type :string (VARCHAR in DB)
+                                                       # => Will be in User struct as user.email
+    field :username, :string                          # => Declares username field, type :string
+                                                       # => Will be in User struct as user.username
+  end                                                 # => End schema definition
 
-  def registration_changeset(user, attrs) do
-    user
-    |> cast(attrs, [:email, :username])
-    |> unique_constraint(:email)                      # => Catch duplicate email
-    |> unique_constraint(:username)                   # => Catch duplicate username
-    |> assoc_constraint(:organization)                # => Validate FK exists
-  end  # => Converts DB errors to changeset errors
-end
+  def registration_changeset(user, attrs) do          # => Public function: registration_changeset/2
+                                                       # => Params: user struct, attrs map
+                                                       # => Returns changeset for user registration
+    user                                              # => Starts with User struct (empty or existing)
+                                                       # => E.g., %User{email: nil, username: nil}
+    |> cast(attrs, [:email, :username])               # => Casts attrs map to changeset with allowed fields
+                                                       # => Only :email and :username are whitelisted
+                                                       # => E.g., attrs = %{email: "alice@example.com", username: "alice"}
+                                                       # => Returns changeset with changes: %{email: "alice@example.com", username: "alice"}
+    |> unique_constraint(:email)                      # => Adds constraint check for unique email
+                                                       # => Does NOT query database yet (lazy)
+                                                       # => If Repo.insert finds duplicate email, catches constraint error
+                                                       # => Converts PostgreSQL UNIQUE violation to changeset error
+                                                       # => Error: {:email, {"has already been taken", [constraint: :unique]}}
+    |> unique_constraint(:username)                   # => Adds constraint check for unique username
+                                                       # => If Repo.insert finds duplicate username, catches error
+                                                       # => Prevents "ERROR: duplicate key value violates unique constraint"
+                                                       # => Converts to user-friendly changeset error
+    |> assoc_constraint(:organization)                # => Validates foreign key :organization_id exists in organizations table
+                                                       # => If organization_id points to non-existent record, catches FK violation
+                                                       # => Converts "violates foreign key constraint" to changeset error
+                                                       # => Error: {:organization, {"does not exist", [constraint: :assoc]}}
+  end                                                 # => Returns changeset with all constraints registered
+                                                       # => Constraints only validated when Repo.insert/update called
+end                                                   # => End MyApp.Accounts.User module
 
 # In your service
-defmodule MyApp.Accounts do
-  def register_user(attrs) do
-    case %User{}
-         |> User.registration_changeset(attrs)
-         |> Repo.insert() do
-      {:ok, user} ->
-        {:ok, user}
+defmodule MyApp.Accounts do                           # => Defines Accounts context module
+                                                       # => Groups user registration and management operations
+  def register_user(attrs) do                         # => Public function: register_user/1
+                                                       # => Param: attrs map with email, username
+                                                       # => Returns {:ok, user} or {:error, message}
+    case %User{}                                      # => Creates empty User struct
+                                                       # => %User{id: nil, email: nil, username: nil}
+         |> User.registration_changeset(attrs)        # => Builds changeset with validations
+                                                       # => Adds constraints for email, username, organization
+                                                       # => Returns changeset ready for insert
+         |> Repo.insert() do                          # => Attempts database INSERT
+                                                       # => If successful: returns {:ok, %User{id: 123, email: "...", ...}}
+                                                       # => If constraint violated: returns {:error, %Changeset{errors: [...]}}
+                                                       # => Constraint checks happen at database level
+      {:ok, user} ->                                  # => Pattern match on success case
+                                                       # => user is persisted User struct with database ID
+                                                       # => E.g., %User{id: 123, email: "alice@example.com", username: "alice"}
+        {:ok, user}                                   # => Returns success tuple with user struct
+                                                       # => Caller receives complete user record
 
-      {:error, %Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->           # => Pattern match on failure case
+                                                       # => changeset contains validation/constraint errors
+                                                       # => E.g., changeset.errors = [{:email, {"has already been taken", ...}}]
         # Check for constraint violations
         error_fields = Enum.map(changeset.errors, fn {field, {msg, _}} -> {field, msg} end)
+                                                       # => Maps errors to {field, message} tuples
+                                                       # => E.g., [{:email, "has already been taken"}, {:username, "..."}]
+                                                       # => Extracts field name and error message, discards metadata
 
         if Enum.any?(error_fields, fn {field, _} -> field == :email end) do
-          {:error, "Email already registered"}
-        else
-          {:error, "Registration failed"}
-        end
-    end
-  end
-end
+                                                       # => Checks if :email field has error
+                                                       # => Returns true if duplicate email constraint violated
+                                                       # => Returns false if email is valid
+          {:error, "Email already registered"}        # => Returns specific error for duplicate email
+                                                       # => User-friendly message for UI display
+        else                                          # => All other errors (username duplicate, FK violation, etc.)
+          {:error, "Registration failed"}             # => Returns generic error message
+                                                       # => Could inspect changeset.errors for specific details
+        end                                           # => End if statement
+    end                                               # => End case statement
+  end                                                 # => End register_user/1 function
+end                                                   # => End MyApp.Accounts module
 ```
 
 **Key Takeaway**: unique_constraint/2 catches database uniqueness violations. assoc_constraint/2 catches foreign key errors. Changesets provide user-friendly error messages without SQL errors exposed.
@@ -195,43 +292,93 @@ erDiagram
 ```
 
 ```elixir
-defmodule MyApp.Content.Post do
-  schema "posts" do
-    field :title, :string
+defmodule MyApp.Content.Post do                       # => Defines Post schema module
+                                                       # => Maps to "posts" database table
+  schema "posts" do                                   # => Defines schema for "posts" table
+                                                       # => Auto-generates id, inserted_at, updated_at
+    field :title, :string                             # => Declares title field, type :string
+                                                       # => Will be accessible as post.title
     many_to_many(:tags, MyApp.Tagging.Tag, join_through: "post_tags")
+                                                       # => Declares many-to-many relationship with Tag
+                                                       # => join_through: "post_tags" - uses post_tags join table
+                                                       # => Post can have many Tags, Tag can have many Posts
+                                                       # => Accessible as post.tags (list of Tag structs)
     many_to_many(:attachments, MyApp.Attachments.Attachment, join_through: "post_attachments")
-  end
-end
+                                                       # => Second many-to-many relationship with Attachment
+                                                       # => Uses post_attachments join table
+                                                       # => Demonstrates polymorphic-like pattern (Post has Tags AND Attachments)
+  end                                                 # => End schema definition
+end                                                   # => End MyApp.Content.Post module
 
-defmodule MyApp.Content.Comment do
-  schema "comments" do
-    field :body, :string
+defmodule MyApp.Content.Comment do                    # => Defines Comment schema module
+                                                       # => Maps to "comments" database table
+  schema "comments" do                                # => Defines schema for "comments" table
+                                                       # => Auto-generates id, inserted_at, updated_at
+    field :body, :string                              # => Declares body field for comment text
+                                                       # => Will be accessible as comment.body
     many_to_many(:tags, MyApp.Tagging.Tag, join_through: "comment_tags")
-  end
-end
+                                                       # => Declares many-to-many relationship with SAME Tag module
+                                                       # => Uses comment_tags join table (different from post_tags)
+                                                       # => Comment can have many Tags, Tag can belong to Posts AND Comments
+                                                       # => Polymorphic pattern: Tag shared across multiple entities
+  end                                                 # => End schema definition
+end                                                   # => End MyApp.Content.Comment module
 
 # Migration for join table
-def change do
-  create table(:post_tags) do
+def change do                                         # => Migration function to create join table
+                                                       # => Runs when executing mix ecto.migrate
+  create table(:post_tags) do                         # => Creates post_tags join table
+                                                       # => Auto-generates id, inserted_at, updated_at
     add :post_id, references(:posts, on_delete: :delete_all)
+                                                       # => Adds post_id foreign key column
+                                                       # => references(:posts) - points to posts.id
+                                                       # => on_delete: :delete_all - when post deleted, delete all post_tags rows
+                                                       # => Ensures referential integrity (CASCADE DELETE)
     add :tag_id, references(:tags, on_delete: :delete_all)
-    timestamps()
-  end
+                                                       # => Adds tag_id foreign key column
+                                                       # => references(:tags) - points to tags.id
+                                                       # => on_delete: :delete_all - when tag deleted, delete all post_tags rows
+                                                       # => Prevents orphaned join records
+    timestamps()                                      # => Adds inserted_at and updated_at timestamp columns
+                                                       # => Tracks when join record was created/updated
+  end                                                 # => End table creation
 
   create unique_index(:post_tags, [:post_id, :tag_id])
-end
+                                                       # => Creates unique composite index on (post_id, tag_id)
+                                                       # => Prevents duplicate Post-Tag associations
+                                                       # => E.g., can't link same Post to same Tag twice
+                                                       # => Also improves query performance for lookups
+end                                                   # => End migration function
 
 # Usage
-post = Post
-  |> Repo.preload(:tags)
-  |> Ecto.Changeset.change()
-  |> put_assoc(:tags, tags)
-  |> Repo.update()
+post = Post                                           # => Starts with Post module alias
+  |> Repo.preload(:tags)                              # => Loads associated tags from database
+                                                       # => Executes JOIN query: SELECT tags.* FROM tags JOIN post_tags ON...
+                                                       # => Returns post with post.tags populated (list of Tag structs)
+                                                       # => E.g., post.tags = [%Tag{id: 1, name: "elixir"}, %Tag{id: 2, name: "web"}]
+  |> Ecto.Changeset.change()                          # => Creates changeset from preloaded post
+                                                       # => Prepares post struct for updating associations
+                                                       # => Returns changeset with no changes yet
+  |> put_assoc(:tags, tags)                           # => Replaces post's tags with new tags list
+                                                       # => tags variable contains list of Tag structs
+                                                       # => Ecto will DELETE old post_tags rows and INSERT new ones
+                                                       # => E.g., tags = [%Tag{id: 3}, %Tag{id: 4}]
+  |> Repo.update()                                    # => Persists association changes to database
+                                                       # => Executes: DELETE FROM post_tags WHERE post_id = X
+                                                       # =>            INSERT INTO post_tags (post_id, tag_id) VALUES (X, 3), (X, 4)
+                                                       # => Returns {:ok, updated_post} with new associations
 
 # Query posts with specific tag
-posts = from p in Post,
-  join: t in assoc(p, :tags),
-  where: t.slug == "featured"
+posts = from p in Post,                               # => Starts Ecto query for Post table
+                                                       # => p is alias for posts table
+  join: t in assoc(p, :tags),                         # => INNER JOIN with tags through post_tags join table
+                                                       # => assoc(p, :tags) generates: JOIN post_tags ON post_tags.post_id = p.id
+                                                       # =>                            JOIN tags ON tags.id = post_tags.tag_id
+                                                       # => t is alias for tags table
+  where: t.slug == "featured"                         # => Filters for tag with slug = "featured"
+                                                       # => WHERE tags.slug = 'featured'
+                                                       # => Returns only posts that have the "featured" tag
+                                                       # => Result: list of Post structs [%Post{...}, ...]
 ```
 
 **Key Takeaway**: many_to_many/3 with join_through creates flexible relationships. Use put_assoc/3 to update related records. Query across relationships with join.

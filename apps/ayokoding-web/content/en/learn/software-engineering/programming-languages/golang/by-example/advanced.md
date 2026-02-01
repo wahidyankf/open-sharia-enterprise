@@ -356,56 +356,81 @@ import (
 
 func main() {
     // Semaphore - allow 3 concurrent operations
-    sem := make(chan struct{}, 3)               // => Capacity 3 = 3 concurrent slots
+    sem := make(chan struct{}, 3)
+                                                // => Capacity 3 = 3 concurrent slots
                                                 // => Buffered channel as counting semaphore
-    var wg sync.WaitGroup
+                                                // => struct{} uses zero memory (empty struct)
+    var wg sync.WaitGroup                       // => Tracks completion of all goroutines
+                                                // => wg initialized to zero value
 
-    for i := 1; i <= 10; i++ {                  // => Launch 10 goroutines
-        wg.Add(1)
-        go func(id int) {
-            defer wg.Done()
+    for i := 1; i <= 10; i++ {                  // => Launch 10 goroutines total
+                                                // => Only 3 can run simultaneously
+        wg.Add(1)                               // => Increment counter before spawning goroutine
+                                                // => Critical: Add before go keyword
+        go func(id int) {                       // => Goroutine function with id parameter
+                                                // => id is copy of i (avoids closure pitfall)
+            defer wg.Done()                     // => Decrement counter when goroutine exits
+                                                // => Always deferred to ensure execution
 
             sem <- struct{}{}                   // => Acquire slot (blocks if all 3 full)
                                                 // => Only 3 goroutines can acquire simultaneously
+                                                // => Send empty struct to channel
             defer func() { <-sem }()            // => Release slot when done
+                                                // => Receive from channel frees slot
+                                                // => Deferred to ensure release even on panic
 
             fmt.Printf("Operation %d running\n", id)
                                                 // => Output: Operations 1,2,3 first
                                                 // => Remaining wait for slot release
-            // Simulate work
-        }(i)
+                                                // => %d formats id as decimal
+            // Simulate work                    // => Real work would go here
+        }(i)                                    // => Pass i as argument to goroutine
+                                                // => Creates copy, safe for concurrent access
     }
 
-    wg.Wait()
-    fmt.Println("All operations complete")
+    wg.Wait()                                   // => Block until all 10 goroutines call Done()
+                                                // => Counter must reach 0
+    fmt.Println("All operations complete")      // => Output: All operations complete
+                                                // => Only prints after all goroutines finish
 }
 
 // Weighted semaphore - operations require different numbers of slots
-func weightedSemaphore() {
+func weightedSemaphore() {                      // => Example of weighted semaphore pattern
+                                                // => Different operations consume different resources
     sem := make(chan int, 10)                   // => Capacity 10 "units"
                                                 // => Simplified weighted example
+                                                // => Can hold 10 int values
 
     // Operation requiring 3 units
-    go func() {
-        n := 3
+    go func() {                                 // => First goroutine (lightweight operation)
+        n := 3                                  // => Requires 3 units of resource
+                                                // => n is number of units to acquire
         sem <- n                                // => Acquire 3 units (sends int 3)
                                                 // => Blocks if channel full
-        defer func() { <-sem }()
+                                                // => Simplified: real weighted needs more logic
+        defer func() { <-sem }()                // => Release 3 units (receives int)
+                                                // => Frees space in channel
 
-        fmt.Println("Acquired 3 units")
+        fmt.Println("Acquired 3 units")         // => Output: Acquired 3 units
+                                                // => Work happens here
     }()
 
     // Operation requiring 7 units
-    go func() {
-        n := 7
+    go func() {                                 // => Second goroutine (heavier operation)
+        n := 7                                  // => Requires 7 units of resource
+                                                // => Larger operation
         sem <- n                                // => Acquire 7 units (sends int 7)
-        defer func() { <-sem }()
+                                                // => Blocks if insufficient capacity
+        defer func() { <-sem }()                // => Release 7 units
+                                                // => Returns capacity to pool
 
-        fmt.Println("Acquired 7 units")
+        fmt.Println("Acquired 7 units")         // => Output: Acquired 7 units
     }()
 
     // Total capacity: 10 units, both can run concurrently
+                                                // => 3 + 7 = 10 (fits within capacity)
                                                 // => Note: True weighted semaphore needs golang.org/x/sync/semaphore
+                                                // => This is simplified demonstration
 }
 ```
 
@@ -673,42 +698,56 @@ import (
 func main() {
     // Write binary data
     buf := new(bytes.Buffer)                        // => In-memory buffer (implements io.Writer/Reader)
+                                                    // => new() allocates and returns pointer
 
     // Write integer in big-endian format
     binary.Write(buf, binary.BigEndian, int32(42))  // => 42 as 4 bytes: [0x00 0x00 0x00 0x2A]
                                                     // => Big-endian: most significant byte first
+                                                    // => int32 is always 4 bytes
     binary.Write(buf, binary.BigEndian, float32(3.14))
                                                     // => Float as 4 bytes (IEEE 754 format)
+                                                    // => Writes binary representation of float
     binary.Write(buf, binary.BigEndian, true)       // => Bool as 1 byte (0x01 for true)
-                                                    // => buf now has 9 bytes total
+                                                    // => buf now has 9 bytes total (4+4+1)
+                                                    // => All data serialized to bytes
 
     // Read back
     reader := bytes.NewReader(buf.Bytes())          // => Create reader from buffer
-    var num int32
-    var f float32
-    var b bool
+                                                    // => buf.Bytes() returns underlying byte slice
+    var num int32                                   // => Declare variables for reading
+                                                    // => Zero value: 0
+    var f float32                                   // => Zero value: 0.0
+    var b bool                                      // => Zero value: false
 
     binary.Read(reader, binary.BigEndian, &num)     // => Read 4 bytes → num is 42
+                                                    // => Requires pointer to write result
     binary.Read(reader, binary.BigEndian, &f)       // => Read 4 bytes → f is 3.14
+                                                    // => Reads from current position
     binary.Read(reader, binary.BigEndian, &b)       // => Read 1 byte → b is true
+                                                    // => Reader position advances automatically
 
     fmt.Printf("Num: %d, Float: %f, Bool: %v\n", num, f, b)
                                                     // => Output: Num: 42, Float: 3.140000, Bool: true
+                                                    // => All values deserialized correctly
 
     // Endianness matters
-    smallBuf := new(bytes.Buffer)
+    smallBuf := new(bytes.Buffer)                   // => New buffer for endianness demo
     binary.Write(smallBuf, binary.LittleEndian, int16(256))
-                                                    // => 256 = 0x0100
+                                                    // => 256 = 0x0100 (binary: 0000000100000000)
                                                     // => Little-endian: [0x00 0x01] (low byte first)
+                                                    // => int16 is 2 bytes
     fmt.Printf("Little-endian bytes: %v\n", smallBuf.Bytes())
                                                     // => Output: Little-endian bytes: [0 1]
+                                                    // => Byte order: low-to-high
 
-    bigBuf := new(bytes.Buffer)
+    bigBuf := new(bytes.Buffer)                     // => New buffer for big-endian
     binary.Write(bigBuf, binary.BigEndian, int16(256))
                                                     // => Big-endian: [0x01 0x00] (high byte first)
+                                                    // => Byte order: high-to-low
     fmt.Printf("Big-endian bytes: %v\n", bigBuf.Bytes())
                                                     // => Output: Big-endian bytes: [1 0]
                                                     // => Demonstrates endianness difference
+                                                    // => Same value, different byte order
 }
 ```
 
@@ -735,38 +774,52 @@ import (
 
 func main() {
     // SHA256 hash - integrity check
-    data := "Important message"
+    data := "Important message"                 // => Data to hash
+                                                // => String converted to bytes for hashing
     hash := sha256.Sum256([]byte(data))         // => Compute SHA-256 hash
                                                 // => hash is [32]byte (256 bits)
                                                 // => Deterministic: same input = same hash
     fmt.Printf("SHA256: %s\n", hex.EncodeToString(hash[:]))
                                                 // => Output: 64 hex characters (32 bytes * 2)
+                                                // => hash[:] converts array to slice
 
     // HMAC - authentication
-    key := []byte("secret-key")                 // => Shared secret key
+    key := []byte("secret-key")                 // => Shared secret key (known to both parties)
+                                                // => In production, use strong random key
     h := hmac.New(sha256.New, key)              // => Create HMAC-SHA256 hasher
+                                                // => sha256.New is hash function
     h.Write([]byte(data))                       // => Add data to hash
+                                                // => Can call Write multiple times
     signature := hex.EncodeToString(h.Sum(nil)) // => Get signature as hex (64 chars)
+                                                // => nil means append to nothing
     fmt.Println("HMAC:", signature)             // => Unique for this data+key combination
+                                                // => Output: HMAC: <64 hex chars>
 
     // Verify HMAC
     h2 := hmac.New(sha256.New, key)             // => New hasher with same key
-    h2.Write([]byte(data))
+                                                // => Must use same hash function
+    h2.Write([]byte(data))                      // => Hash same data
+                                                // => Produces same signature if data unchanged
     if hmac.Equal(h.Sum(nil), h2.Sum(nil)) {    // => Constant-time comparison (prevents timing attacks)
+                                                // => Never use == for crypto comparison
         fmt.Println("HMAC valid")               // => Data not tampered
+                                                // => Output: HMAC valid
     }
 
     // Random bytes - for tokens, nonces
     token := make([]byte, 16)                   // => 16-byte slice (128 bits)
+                                                // => Allocates space for random data
     _, err := rand.Read(token)                  // => Cryptographically secure random
                                                 // => Fills token with random data
-    if err != nil {
+                                                // => Uses /dev/urandom on Unix
+    if err != nil {                             // => Check for entropy source failure
         fmt.Println("Error generating random:", err)
-        return
+        return                                  // => Abort if random generation fails
     }
     fmt.Printf("Random token: %s\n", hex.EncodeToString(token))
                                                 // => 32 hex chars (16 bytes * 2)
                                                 // => Different every time (unpredictable)
+                                                // => Output: Random token: <random hex>
 }
 ```
 
@@ -1447,14 +1500,17 @@ Build tags enable conditional compilation. Platform-specific code, feature flags
 ```go
 // file: server_unix.go
 //go:build unix || linux           // => Build constraint: compile only on Unix/Linux
+                                    // => Syntax: //go:build followed by boolean expression
 // +build unix linux                // => Legacy format (pre-Go 1.17)
+                                    // => Both formats for compatibility
 
-package main
+package main                        // => Platform-specific file
 
-import "fmt"
+import "fmt"                        // => Standard imports work normally
 
 func getPlatform() string {         // => Compiled only on Unix/Linux builds
-    return "Unix/Linux"
+                                    // => One implementation per platform
+    return "Unix/Linux"             // => Returns platform identifier
 }
 
 // file: server_windows.go
@@ -1703,68 +1759,98 @@ package main
 
 import "testing"
 
-func TestUserService(t *testing.T) {             // => Parent test function
-    users := setupTestData()                     // => Setup shared test data for all subtests
+func TestUserService(t *testing.T) {
+                                        // => Parent test function
+                                        // => Contains all user service subtests
+    users := setupTestData()            // => Setup shared test data for all subtests
+                                        // => users is []*User with 2 elements
+                                        // => Shared across all subtests in this function
 
-    t.Run("GetUser", func(t *testing.T) {        // => Subtest group: reports as TestUserService/GetUser
-        t.Run("ExistingUser", func(t *testing.T) { // => Nested: TestUserService/GetUser/ExistingUser
-            user := findUser(users, 1)           // => user is {Name: "Alice", Age: 30}
-            if user.Name != "Alice" {
+    t.Run("GetUser", func(t *testing.T) {
+                                        // => Subtest group: reports as TestUserService/GetUser
+                                        // => Groups related GetUser tests together
+        t.Run("ExistingUser", func(t *testing.T) {
+                                        // => Nested: TestUserService/GetUser/ExistingUser
+                                        // => Test case: find user by valid ID
+            user := findUser(users, 1)  // => user is {Name: "Alice", Age: 30}
+                                        // => ID 1 returns first user (1-indexed)
+            if user.Name != "Alice" {   // => Assert user name is correct
                 t.Errorf("Expected Alice, got %s", user.Name)
-            }
+                                        // => t.Errorf marks test failed
+            }                           // => Test passes (user.Name is "Alice")
         })
 
-        t.Run("NonExistentUser", func(t *testing.T) { // => Nested: TestUserService/GetUser/NonExistent
-            user := findUser(users, 999)         // => user is nil (invalid ID)
-            if user != nil {
+        t.Run("NonExistentUser", func(t *testing.T) {
+                                        // => Nested: TestUserService/GetUser/NonExistent
+                                        // => Test case: find user by invalid ID
+            user := findUser(users, 999)
+                                        // => user is nil (invalid ID)
+                                        // => ID 999 exceeds user count (returns nil)
+            if user != nil {            // => Assert user is nil
                 t.Errorf("Expected nil, got %v", user)
-            }
+            }                           // => Test passes (user is nil)
         })
     })
 
-    t.Run("CreateUser", func(t *testing.T) {     // => Separate group: TestUserService/CreateUser
+    t.Run("CreateUser", func(t *testing.T) {
+                                        // => Separate group: TestUserService/CreateUser
+                                        // => Tests user creation functionality
         newUser := User{Name: "David", Age: 28}
-        created := createUser(newUser)           // => created is User{Name: "David", Age: 28}
-        if created.Name != "David" {
+                                        // => newUser is User{Name: "David", Age: 28}
+        created := createUser(newUser)  // => created is User{Name: "David", Age: 28}
+                                        // => createUser echoes back input
+        if created.Name != "David" {    // => Assert created user has correct name
             t.Errorf("Expected David, got %s", created.Name)
-        }
+        }                               // => Test passes (created.Name is "David")
     })
 }
 
 // Parallel subtests
-func TestParallel(t *testing.T) {
-    t.Run("Sequential", func(t *testing.T) {     // => Runs sequentially, can access shared state
-        // Sequential test code
+func TestParallel(t *testing.T) {   // => Test demonstrating parallel execution
+                                    // => Parent function for parallel subtests
+    t.Run("Sequential", func(t *testing.T) {
+                                    // => Runs sequentially, can access shared state
+                                    // => Does NOT call t.Parallel()
+                                    // => Executes before parallel subtests
+        // Sequential test code       // => Can safely access mutable shared data
     })
 
     t.Run("Parallel", func(t *testing.T) {
-        t.Parallel()                             // => Runs in parallel with other t.Parallel() tests
-                                                  // => Must NOT access shared mutable state
-        // Parallel test code
+                                    // => Parallel subtest group
+        t.Parallel()                // => Runs in parallel with other t.Parallel() tests
+                                    // => Must NOT access shared mutable state
+                                    // => Go test framework manages goroutine pool
+        // Parallel test code       // => Runs concurrently with other parallel subtests
     })
 }
 
-type User struct {
-    Name string
-    Age  int
+type User struct {              // => User data structure for tests
+    Name string                 // => User name field
+    Age  int                    // => User age field
 }
 
-func setupTestData() []*User {                   // => Returns test data: 2 users
-    return []*User{
+func setupTestData() []*User {  // => Returns test data: 2 users
+                                // => Pointer slice for shared references
+    return []*User{             // => Slice literal initialization
         {Name: "Alice", Age: 30},
-        {Name: "Bob", Age: 25},
+                                // => First user (ID 1)
+        {Name: "Bob", Age: 25}, // => Second user (ID 2)
     }
 }
 
-func findUser(users []*User, id int) *User {    // => Find by ID (1-indexed)
+func findUser(users []*User, id int) *User {
+                                // => Find by ID (1-indexed)
+                                // => users is slice of pointers
     if id > 0 && id <= len(users) {
-        return users[id-1]                       // => Returns user pointer
+                                // => Validate ID is within bounds (1 to len)
+        return users[id-1]      // => Returns user pointer (convert 1-indexed to 0-indexed)
     }
-    return nil                                   // => Returns nil for invalid ID
+    return nil                  // => Returns nil for invalid ID (out of range)
 }
 
-func createUser(u User) User {                   // => Simplified: echoes back user
-    return u
+func createUser(u User) User {  // => Simplified: echoes back user
+                                // => Production would save to database
+    return u                    // => Returns same user unchanged
 }
 ```
 
@@ -1785,79 +1871,113 @@ import (
     "testing"
 )
 
-func TestUserRepository(t *testing.T) {           // => Test using mock implementation
+func TestUserRepository(t *testing.T) {
+                                                   // => Test using mock implementation
+                                                   // => No real database required for testing
     mock := &MockStorage{                         // => mock implements Storage interface
-        data: map[int]User{
+                                                   // => Pointer to MockStorage struct
+        data: map[int]User{                       // => Initialize internal map with test data
             1: {ID: 1, Name: "Alice"},            // => Seed test data (no database needed)
+                                                   // => ID 1 maps to Alice
         },
     }
 
     repo := NewUserRepository(mock)               // => Inject mock into repository
                                                    // => Repository doesn't know it's a mock
+                                                   // => Dependency injection pattern
+                                                   // => repo uses Storage interface, not concrete type
 
     user, err := repo.Get(1)                      // => Internally calls mock.Get(1)
                                                    // => Returns User{ID: 1, Name: "Alice"}
-    if err != nil {
-        t.Errorf("Unexpected error: %v", err)
+                                                   // => No real database query executed
+    if err != nil {                               // => Check for errors
+        t.Errorf("Unexpected error: %v", err)     // => Fail test if error occurred
+                                                   // => %v formats error
     }
-    if user.Name != "Alice" {
+    if user.Name != "Alice" {                     // => Assert user name is correct
         t.Errorf("Expected Alice, got %s", user.Name)
-    }
+                                                   // => Fail test if name doesn't match
+    }                                             // => Test passes (user.Name is "Alice")
 }
 
-type User struct {
-    ID   int
-    Name string
+type User struct {                                // => User entity for testing
+    ID   int                                      // => User identifier
+    Name string                                   // => User name
 }
 
 // Interface for testability
-type Storage interface {
+type Storage interface {                          // => Abstraction for data storage
+                                                   // => Enables dependency injection
     Get(id int) (User, error)                     // => Both Database and MockStorage implement this
-    Save(u User) error
+                                                   // => Retrieve user by ID
+    Save(u User) error                            // => Store user
+                                                   // => Returns error if save fails
 }
 
 // Real storage
 type Database struct{}                            // => Production implementation
+                                                   // => Would contain connection pool, config
 
 func (d *Database) Get(id int) (User, error) {   // => Real: executes database query
+                                                   // => Receiver: *Database
     // Real database query                        // => SELECT * FROM users WHERE id = ?
-    return User{}, nil
+                                                   // => Slow (network latency, disk I/O)
+    return User{}, nil                            // => Placeholder return (actual DB query omitted)
 }
 
 func (d *Database) Save(u User) error {          // => Real: writes to database
-    // Real database write                        // => Slow (network, disk I/O)
-    return nil
+                                                   // => Receiver: *Database
+    // Real database write                        // => INSERT INTO users VALUES (...)
+                                                   // => Slow (network, disk I/O)
+    return nil                                    // => Placeholder return
 }
 
 // Mock storage
-type MockStorage struct {
+type MockStorage struct {                         // => Test double for Storage interface
+                                                   // => No external dependencies
     data map[int]User                             // => In-memory storage (fast, no dependencies)
+                                                   // => Map from ID to User
 }
 
-func (m *MockStorage) Get(id int) (User, error) { // => Mock: lookup in map
-    if user, ok := m.data[id]; ok {
+func (m *MockStorage) Get(id int) (User, error) {
+                                                   // => Mock: lookup in map
+                                                   // => Receiver: *MockStorage
+    if user, ok := m.data[id]; ok {               // => Check if ID exists in map
+                                                   // => ok is true if key exists
         return user, nil                          // => Instant (no database query)
+                                                   // => Return found user
     }
-    return User{}, nil
+    return User{}, nil                            // => Return zero value User if not found
 }
 
 func (m *MockStorage) Save(u User) error {       // => Mock: store in map
+                                                   // => Receiver: *MockStorage
     m.data[u.ID] = u                              // => No database write (just map assignment)
+                                                   // => Store user in map
     return nil                                    // => Fast, predictable
+                                                   // => Always succeeds in tests
 }
 
 // Repository - depends on Storage interface
-type UserRepository struct {
+type UserRepository struct {                      // => Business logic layer
+                                                   // => Coordinates storage operations
     storage Storage                               // => Can be Database or MockStorage
+                                                   // => Interface field enables dependency injection
 }
 
-func NewUserRepository(s Storage) *UserRepository { // => Constructor injection
+func NewUserRepository(s Storage) *UserRepository {
+                                                   // => Constructor injection
+                                                   // => s can be any Storage implementation
     return &UserRepository{storage: s}            // => Accepts any Storage implementation
+                                                   // => Returns pointer to new UserRepository
 }
 
 func (r *UserRepository) Get(id int) (User, error) {
+                                                   // => Retrieve user from storage
+                                                   // => Receiver: *UserRepository
     return r.storage.Get(id)                      // => Delegates to injected storage
                                                    // => Works with both implementations
+                                                   // => Calls Database.Get or MockStorage.Get
 }
 ```
 
@@ -1881,43 +2001,62 @@ import (
 
 // Run fuzzing: go test -fuzz=FuzzParseInt
                                                   // => Fuzzer generates random inputs to find crashes
+                                                  // => Command runs fuzzing until stopped (Ctrl+C)
 func FuzzParseInt(f *testing.F) {                 // => f is *testing.F (fuzzing controller)
+                                                  // => Function name must start with Fuzz
     // Seed values - good test cases to always include
     f.Add("0")                                    // => Seed corpus: known-good test cases
+                                                  // => Fuzzer starts with seeds
     f.Add("42")                                   // => Fuzzer starts with these, then mutates
-    f.Add("-100")
+                                                  // => Generates variations of seed inputs
+    f.Add("-100")                                 // => Negative number seed
+                                                  // => Tests edge case handling
     f.Add("2147483647")                           // => Max int32 boundary case
+                                                  // => Tests overflow scenarios
 
     f.Fuzz(func(t *testing.T, input string) {     // => input is randomly generated string
                                                    // => Coverage-guided: explores new code paths
-        if len(input) == 0 {
-            return                                // => Skip empty input
+                                                   // => Fuzzer mutates seeds and prior inputs
+        if len(input) == 0 {                      // => Check for empty string
+                                                   // => Early return to skip invalid input
+            return                                // => Skip empty input (not interesting)
         }
 
         result, err := parseInt(input)            // => Test with generated input
-        _ = result                                // => Fuzzer calls thousands of times
-        _ = err
+                                                   // => May receive bizarre strings
+        _ = result                                // => Fuzzer calls thousands of times per second
+                                                   // => Discard result (only checking for crashes)
+        _ = err                                   // => Discard error (fuzzer looks for panics)
         // No assertion - fuzzer looks for panics and crashes
+                                                   // => Fuzzing finds code that panics or crashes
     })
 }
 
 // Fuzzing UTF-8 strings
-func FuzzValidUTF8(f *testing.F) {
+func FuzzValidUTF8(f *testing.F) {                // => Test UTF-8 handling
+                                                  // => Ensures code handles all valid UTF-8
     f.Add("hello")                                // => Seed: ASCII string
+                                                  // => Simple ASCII characters
     f.Add("世界")                                  // => Seed: Multi-byte UTF-8 characters
+                                                  // => Chinese characters (3 bytes each)
 
-    f.Fuzz(func(t *testing.T, input string) {
+    f.Fuzz(func(t *testing.T, input string) {     // => Fuzzer generates UTF-8 strings
+                                                   // => Coverage-guided mutation
         if !utf8.ValidString(input) {             // => Check if valid UTF-8
+                                                   // => All generated strings should be valid
             t.Errorf("Invalid UTF-8: %v", input)  // => Should NOT happen (fuzzer generates valid UTF-8)
-        }
+                                                   // => Reports failure if invalid UTF-8 found
+        }                                         // => Test verifies utf8.ValidString always true
     })
 }
 
 func parseInt(s string) (int, error) {            // => Simple parser for demonstration
-    if s == "0" {
-        return 0, nil
+                                                  // => Production parser would handle all cases
+    if s == "0" {                                 // => Special case for zero
+        return 0, nil                             // => Return 0 and no error
     }
     return 1, nil                                 // => Simplified (real parser would parse digits)
+                                                  // => Always returns 1 for demo purposes
 }
 ```
 
@@ -2037,62 +2176,25 @@ Workspaces enable multi-module development. Develop multiple modules together wi
 
 ```go
 // go.work file (workspace configuration)
-// Filename: go.work
-// Location: project root directory
 go 1.21                    // => Minimum Go version for workspace
 
 use (                      // => Declare modules in this workspace
-    ./cmd/api              // => Include cmd/api module (relative path)
-                           // => Go uses local version instead of published
+    ./cmd/api              // => Include cmd/api module (local path)
     ./cmd/cli              // => Include cmd/cli module
-                           // => Changes reflected immediately in builds
-    ./libs/common          // => Include libs/common module
-                           // => Shared library for api and cli
-)                          // => All modules use local versions
+    ./libs/common          // => Include libs/common module (shared library)
+)
 
-// Directory structure demonstrates workspace layout:
+// Directory structure:
 // project/
-// ├── go.work            // => Workspace definition file (this file)
-//                        // => Created with: go work init ./cmd/api ./cmd/cli ./libs/common
-// ├── cmd/
-// │   ├── api/
-// │   │   ├── go.mod     // => Module: example.com/api
-//     │   │   └── main.go    // => Can import "example.com/common" (uses local libs/common)
-// │   └── cli/
-// │       ├── go.mod     // => Module: example.com/cli
-//         │       └── main.go    // => Can import "example.com/common" (uses local libs/common)
-// └── libs/
-//     └── common/
-//         ├── go.mod     // => Module: example.com/common
-//             └── util.go    // => Shared utilities used by api and cli
+// ├── go.work            // => Created with: go work init ./cmd/api ./cmd/cli ./libs/common
+// ├── cmd/api/go.mod     // => Module: example.com/api
+// ├── cmd/cli/go.mod     // => Module: example.com/cli
+// └── libs/common/go.mod // => Module: example.com/common (shared)
 
-// Benefits of workspace mode:
-// - Develop multiple modules together in single repository
-//                        // => Edit common/util.go, immediately available in api/main.go
-// - Changes in libs/common reflected immediately in cmd/api
-//                        // => No need to commit, tag, push libs/common first
-// - No need to publish intermediate versions to test integration
-//                        // => Test cross-module changes before publishing
-// - All modules tested together with: go test ./...
-//                        // => Ensures changes don't break dependent modules
-// - Build uses local versions: go build ./cmd/api
-//                        // => api binary uses local libs/common code
-// - Replace directive not needed for local development
-//                        // => Workspace replaces modules automatically
-
-// Workflow example:
-// 1. go work init ./cmd/api ./cmd/cli ./libs/common
-//                        // => Creates go.work file
-// 2. Edit libs/common/util.go (add new function)
-//                        // => Changes not yet committed
-// 3. Import new function in cmd/api/main.go
-//                        // => Uses local version immediately
-// 4. go test ./...       // => Tests all modules with local changes
-//                        // => Verifies integration before publishing
-// 5. go build ./cmd/api  // => Builds api with local libs/common
-//                        // => Binary includes unpublished changes
-// 6. Publish libs/common, update go.mod in api/cli
-//                        // => After testing, publish and update dependencies
+// Benefits:
+// - Develop multiple modules together without publishing intermediate versions
+// - Changes in libs/common reflected immediately in cmd/api and cmd/cli
+// - Test all modules together: go test ./...
 ```
 
 **Key Takeaway**: Workspaces allow multi-module development without publishing. Define workspace with `go.work` file. Use `use()` to include local modules. All modules use local versions instead of published versions.
@@ -2115,37 +2217,48 @@ import (
 
 func main() {
     // Memory profiling
-    f, err := os.Create("mem.prof")               // => Create profile file
-    if err != nil {
-        panic(err)
+    f, err := os.Create("mem.prof")               // => Create profile file in current directory
+                                                   // => Returns *os.File and error
+    if err != nil {                               // => Check if file creation failed
+        panic(err)                                // => Abort if cannot create profile
     }
     defer f.Close()                               // => Ensure file closed and flushed
+                                                   // => Deferred to guarantee cleanup
 
     pprof.WriteHeapProfile(f)                     // => Capture heap profile (current memory state)
                                                    // => Snapshots heap allocations to mem.prof
+                                                   // => Shows current memory usage
 
-    // Run program: go run main.go
+    // Run program: go run main.go               // => Execute to generate profile
     // Then analyze: go tool pprof mem.prof       // => Interactive profiler tool
+                                                   // => Opens REPL for profile analysis
     // Commands in pprof:
-    //   top    - shows top memory allocators
-    //   list   - shows source code with allocations
-    //   web    - generates graph (requires Graphviz)
+    //   top    - shows top memory allocators      // => Displays functions with most allocations
+    //   list   - shows source code with allocations // => Source-level view of allocations
+    //   web    - generates graph (requires Graphviz) // => Visual call graph
 
     // CPU profiling
-    cpuFile, _ := os.Create("cpu.prof")
-    defer cpuFile.Close()
+    cpuFile, _ := os.Create("cpu.prof")           // => Create CPU profile file
+                                                   // => Ignoring error for demo (bad practice)
+    defer cpuFile.Close()                         // => Ensure CPU profile written
 
     pprof.StartCPUProfile(cpuFile)                // => Start profiling CPU usage
                                                    // => Samples CPU every 10ms, records call stacks
+                                                   // => Begins recording which functions consume CPU
     defer pprof.StopCPUProfile()                  // => MUST call Stop to finalize profile
+                                                   // => Writes collected samples to file
 
     expensiveComputation()                        // => Execute work to profile
+                                                   // => CPU profiler captures where time spent
 }
 
-func expensiveComputation() {
+func expensiveComputation() {                     // => Function to profile CPU usage
+                                                   // => Demonstrates CPU profiling
     for i := 0; i < 1000000; i++ {                // => Loop 1 million times
+                                                   // => Creates measurable CPU load
         _ = i * i                                 // => Prevents compiler optimization
                                                    // => Profiler identifies this as hotspot
+                                                   // => Multiplication shows in CPU profile
     }
 }
 ```
@@ -2170,40 +2283,56 @@ import (
 
 func main() {
     var counter int                         // => Shared variable (no protection)
+                                             // => Accessed by multiple goroutines
     var wg sync.WaitGroup                   // => WaitGroup to wait for completion
+                                             // => Tracks goroutine completion
 
     // Race condition - multiple goroutines modify counter without sync
     for i := 0; i < 10; i++ {               // => Spawn 10 concurrent goroutines
-        wg.Add(1)
-        go func() {
-            defer wg.Done()
+                                             // => All access counter simultaneously
+        wg.Add(1)                           // => Increment WaitGroup counter
+                                             // => Before spawning goroutine
+        go func() {                         // => Goroutine closure
+                                             // => Shares counter variable (DANGER!)
+            defer wg.Done()                 // => Decrement WaitGroup when done
             counter++                       // => DATA RACE! Read-modify-write not atomic
                                              // => Race detector will flag this line
+                                             // => Multiple goroutines read/write simultaneously
         }()
     }
 
-    wg.Wait()
+    wg.Wait()                               // => Block until all goroutines finish
+                                             // => Wait for counter to reach 0
     fmt.Println("Counter:", counter)        // => Unpredictable (should be 10, race may lose increments)
+                                             // => Output varies: might be 7, 9, or 10
 
     // Run with: go run -race main.go       // => Enables race detector
                                              // => Reports file:line and goroutine stacks
+                                             // => Adds 5-10x overhead (dev/test only)
 
     // Fixed version with mutex
     var mu sync.Mutex                       // => Mutex for synchronization
-    counter = 0                             // => Reset counter
+                                             // => Protects critical section
+    counter = 0                             // => Reset counter to 0
+                                             // => Start fresh for safe version
 
-    for i := 0; i < 10; i++ {
-        wg.Add(1)
-        go func() {
-            defer wg.Done()
+    for i := 0; i < 10; i++ {               // => Spawn 10 goroutines again
+        wg.Add(1)                           // => Increment WaitGroup
+        go func() {                         // => Goroutine with mutex protection
+            defer wg.Done()                 // => Ensure Done() called
             mu.Lock()                       // => Acquire lock (blocks if held by another)
+                                             // => Only one goroutine in critical section
             counter++                       // => Protected by mutex (safe)
+                                             // => Read-modify-write is now atomic
             mu.Unlock()                     // => Release lock
+                                             // => Allow next goroutine to acquire
         }()
     }
 
-    wg.Wait()
+    wg.Wait()                               // => Wait for all goroutines to complete
     fmt.Println("Counter (safe):", counter) // => Always 10 (race-free)
+                                             // => Output: Counter (safe): 10
+                                             // => Deterministic result
 }
 ```
 

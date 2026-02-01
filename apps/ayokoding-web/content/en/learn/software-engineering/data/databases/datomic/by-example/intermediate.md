@@ -9,7 +9,7 @@ tags: ["datomic", "database", "tutorial", "by-example", "intermediate", "product
 
 Build on Datomic fundamentals with 30 production-ready examples. Learn advanced pull patterns, query optimization, custom transaction functions, index usage, and real-world application patterns.
 
-## Example 31: Pull API with Recursive Patterns
+### Example 31: Pull API with Recursive Patterns
 
 Pull patterns can recursively traverse entity graphs. Essential for tree structures and deep entity hierarchies.
 
@@ -105,9 +105,11 @@ Map result3 = (Map) Peer.pull(
 
 **Key Takeaway**: Pull API supports bounded (`{:attr N}`) and unbounded (`{:attr ...}`) recursion. Use it to traverse hierarchies without writing complex queries.
 
+**Why It Matters**: Recursive pull eliminates manual recursion code for nested structures like comment threads, org charts, and category trees. Bounded recursion prevents runaway queries in deep hierarchies. Single pull expression replaces dozens of lines of traversal logic.
+
 ---
 
-## Example 32: Pull Map Specifications for Aliasing
+### Example 32: Pull Map Specifications for Aliasing
 
 Pull patterns can rename attributes in results using map specifications. Useful for API responses and data shaping.
 
@@ -167,9 +169,11 @@ Map result2 = (Map) Peer.pull(
 
 **Key Takeaway**: Pull patterns support aliasing (`:as`), defaults, and limits. Use them to shape data precisely for application needs.
 
+**Why It Matters**: Advanced pull features enable precise API responses without post-processing. Aliases map database attributes to API field names, defaults handle missing values gracefully, and limits prevent accidentally loading massive collections. Shape perfect JSON responses in the database.
+
 ---
 
-## Example 33: Custom Aggregate Functions
+### Example 33: Custom Aggregate Functions
 
 Define custom aggregates beyond built-in `count`, `sum`, etc. Implement domain-specific calculations.
 
@@ -240,9 +244,11 @@ Collection results = Peer.q(
 
 **Key Takeaway**: Use namespaced functions as custom aggregates in queries. Aggregates receive collections of values and return summary results.
 
+**Why It Matters**: Custom aggregates implement domain-specific calculations - weighted averages, percentiles, standard deviations, or business metrics. Process data where it lives rather than in application memory. Leverage Clojure's functional programming for analytics in the database.
+
 ---
 
-## Example 34: Index Access with datoms API
+### Example 34: Index Access with datoms API
 
 Directly access Datomic indexes for low-level queries and performance optimization. Four indexes: EAVT, AEVT, AVET, VAET.
 
@@ -327,9 +333,11 @@ Iterable aevtDatoms = db.datoms(
 
 **Key Takeaway**: `datoms` API provides direct index access. Use EAVT for entity scans, AVET for value lookups, AEVT for attribute scans. Lower-level than queries but more control.
 
+**Why It Matters**: Direct index access enables efficient streaming over large result sets, implementing custom cursors, and building specialized indexes. When queries are too slow or memory-constrained, datoms API provides escape hatch with predictable performance characteristics.
+
 ---
 
-## Example 35: Index Range Queries
+### Example 35: Index Range Queries
 
 Index-range queries efficiently find datoms within value ranges. Essential for numeric, string, and temporal queries.
 
@@ -378,9 +386,11 @@ Iterable nameDatoms = db.indexRange(":person/name", "A", "B");
 
 **Key Takeaway**: `index-range` efficiently queries value ranges using indexes. Use it for numeric ranges, string prefixes, and temporal windows.
 
+**Why It Matters**: Index-range queries leverage sorted indexes for fast range scans - find "prices between 10 and 100", "names starting with A", or "dates in Q4". Much faster than filtering full result sets. Enables efficient autocomplete, range sliders, and time-based queries.
+
 ---
 
-## Example 36: Upsert with :db/unique :db.unique/identity
+### Example 36: Upsert with :db/unique :db.unique/identity
 
 Attributes marked `:db.unique/identity` enable upserts. Transactions automatically update existing entities or create new ones.
 
@@ -467,9 +477,11 @@ conn.transact(
 
 **Key Takeaway**: `:db.unique/identity` enables upserts. Transactions update existing entities if unique attribute matches, create new ones otherwise. Eliminates manual existence checks.
 
+**Why It Matters**: Identity upserts simplify ETL pipelines and data synchronization. Import external data idempotently - same transaction creates or updates depending on existence. No race conditions between check-and-insert operations. Natural keys become first-class identifiers.
+
 ---
 
-## Example 37: Batch Transactions for Performance
+### Example 37: Batch Transactions for Performance
 
 Batch multiple operations in single transactions for better performance and atomicity.
 
@@ -528,9 +540,11 @@ Object count = Peer.q(
 
 **Key Takeaway**: Batch operations in single transactions for performance and atomicity. Datomic handles thousands of datoms per transaction efficiently.
 
+**Why It Matters**: Batch transactions reduce coordination overhead and improve throughput. Import CSV files, synchronize APIs, or migrate data in chunks atomically. All-or-nothing semantics prevent partial updates. Single transaction log entry for entire batch improves audit efficiency.
+
 ---
 
-## Example 38: Retract Attribute Values Selectively
+### Example 38: Retract Attribute Values Selectively
 
 Retract specific values from cardinality-many attributes without removing the attribute entirely.
 
@@ -603,9 +617,11 @@ alice.get(":person/favorite-colors");
 
 **Key Takeaway**: `:db/retract` works on individual values of cardinality-many attributes. Add and retract specific set members without touching others.
 
+**Why It Matters**: Fine-grained set manipulation enables precise updates to tags, permissions, and category memberships. Remove specific tag without reading current set, adding all values, and writing back. Concurrent updates compose correctly through independent assertions and retractions.
+
 ---
 
-## Example 39: Transaction Functions for Complex Logic
+### Example 39: Transaction Functions for Complex Logic
 
 Transaction functions execute inside transactions with access to database value. Enable complex conditional logic.
 
@@ -674,9 +690,11 @@ alice.get(":person/age");
 
 **Key Takeaway**: Transaction functions enable complex conditional logic inside transactions. Define once, invoke by :db/ident. Functions see current database state.
 
+**Why It Matters**: Transaction functions encapsulate business logic that requires read-then-write atomicity - account transfers, inventory management, quota enforcement. Logic runs inside transaction context with latest database state, preventing race conditions and ensuring consistency without application-level locking.
+
 ---
 
-## Example 40: with for Speculative Transactions
+### Example 40: with for Speculative Transactions
 
 `with` applies transactions to database value without committing. Test transaction effects before committing.
 
@@ -769,9 +787,11 @@ try {
 
 **Key Takeaway**: `with` creates hypothetical database values by applying transactions speculatively. Use it for validation, testing, and what-if analysis.
 
+**Why It Matters**: Speculative transactions enable dry-run validation, schema change testing, and scenario analysis without affecting production data. Test migrations before applying, validate complex transactions before committing, or run A/B experiments on historical data. Pure functional database testing.
+
 ---
 
-## Example 41: Exploring Transaction Log
+### Example 41: Exploring Transaction Log
 
 The transaction log contains every transaction in chronological order. Essential for replication, auditing, event sourcing.
 
@@ -836,9 +856,11 @@ Iterable timeRangeTxs = log.txRange(txIdStart, txIdEnd);
 
 **Key Takeaway**: Transaction log provides append-only history of all transactions. Use `tx-range` to read transaction ranges for replication, auditing, and event processing.
 
+**Why It Matters**: Transaction log is the source of truth for all database changes. Build custom replication, event sourcing, or CDC pipelines by consuming transaction ranges. Replay history to rebuild derived views, implement cross-system synchronization, or create audit trails with perfect fidelity.
+
 ---
 
-## Example 42: Partial Queries with Blank Variables
+### Example 42: Partial Queries with Blank Variables
 
 Use `_` (blank/underscore) to pattern-match without binding variables. Improves query performance when values aren't needed.
 
@@ -892,9 +914,11 @@ Collection results2 = Peer.q(
 
 **Key Takeaway**: Use `_` to match patterns without binding values. Improves performance by avoiding unnecessary variable bindings.
 
+**Why It Matters**: Wildcard patterns optimize queries that only need to check existence or count occurrences without examining values. Reduces memory allocation and query planning complexity. Signal intent clearly - "I don't care about this value, just that it exists."
+
 ---
 
-## Example 43: Query Pagination with :offset and :limit
+### Example 43: Query Pagination with :offset and :limit
 
 Paginate large result sets using `:offset` and `:limit` in find specs (Datomic Pro/Cloud feature).
 
@@ -963,9 +987,11 @@ while (it.hasNext()) {
 
 **Key Takeaway**: Datomic Free requires application-level pagination. Datomic Pro/Cloud support `:offset` and `:limit` in queries for database-level pagination.
 
+**Why It Matters**: Pagination prevents memory exhaustion with large result sets. Application-level pagination works everywhere but requires loading full results. Database-level pagination (Pro/Cloud) reduces memory and network usage by filtering before transfer. Choose approach based on deployment environment.
+
 ---
 
-## Example 44: Full-Text Search Patterns
+### Example 44: Full-Text Search Patterns
 
 Datomic supports full-text search on string attributes marked with `:db/fulltext`.
 
@@ -1041,9 +1067,11 @@ Collection results = Peer.q(
 
 **Key Takeaway**: Mark attributes with `:db/fulltext true` for full-text search. Use `fulltext` predicate in queries to search text content.
 
+**Why It Matters**: Built-in full-text search eliminates dependency on external search engines for simple text queries. Combines full-text search with Datalog patterns - find "users who posted comments containing 'urgent' in last week". No synchronization lag between database and search index.
+
 ---
 
-## Example 45: Auditing with Transaction Times
+### Example 45: Auditing with Transaction Times
 
 Query transaction times to build audit trails. Every fact is timestamped with its transaction.
 
@@ -1112,9 +1140,11 @@ Collection results2 = Peer.q(
 
 **Key Takeaway**: Every fact is timestamped via transaction entity's `:db/txInstant`. Query transaction times for audit trails and change tracking.
 
+**Why It Matters**: Automatic timestamping provides millisecond-precision audit trails without application code. Answer "when was this changed" for any fact. Combine with transaction metadata (user, reason) for complete audit logs. Time-based queries enable trend analysis and compliance reporting.
+
 ---
 
-## Example 46: Cardinality-Many Refs for Many-to-Many
+### Example 46: Cardinality-Many Refs for Many-to-Many
 
 Combine cardinality-many with ref attributes to model many-to-many relationships.
 
@@ -1216,9 +1246,11 @@ Collection results2 = Peer.q(
 
 **Key Takeaway**: Cardinality-many ref attributes model many-to-many relationships naturally. Query in both directions using standard datalog patterns.
 
+**Why It Matters**: Many-to-many relationships don't require join tables - just cardinality-many reference attributes. Students have multiple classes, classes have multiple students, modeled with single attribute. Queries compose naturally without complex JOIN syntax.
+
 ---
 
-## Example 47: Attribute Predicates for Type Filtering
+### Example 47: Attribute Predicates for Type Filtering
 
 Filter entities by attribute presence to simulate entity types without explicit type attributes.
 
@@ -1280,9 +1312,11 @@ Collection results3 = Peer.q(
 
 **Key Takeaway**: Datomic is schema-flexible. Use attribute presence to identify entity types, or define explicit type attributes as needed.
 
+**Why It Matters**: Schema flexibility enables organic data model evolution and polymorphic entities. Start simple with implicit typing (if it has :person/name, it's a person), add explicit types later as needed. Mix entity types in same database without migrations or schema partitioning.
+
 ---
 
-## Example 48: Optimizing Queries with Index Selection
+### Example 48: Optimizing Queries with Index Selection
 
 Understand how Datomic selects indexes to optimize query performance.
 
@@ -1363,9 +1397,11 @@ elapsed = System.currentTimeMillis() - start;
 
 **Key Takeaway**: Query clause order affects performance. Start with most selective patterns, especially those using unique attributes or specific values. Datomic optimizes automatically but clause order helps.
 
+**Why It Matters**: Clause ordering reduces search space early, improving query performance. Starting with unique lookups or highly selective filters minimizes intermediate result sets. Understanding index use helps write efficient queries even though Datomic has a sophisticated optimizer.
+
 ---
 
-## Example 49: Entity Maps vs Explicit Transaction Data
+### Example 49: Entity Maps vs Explicit Transaction Data
 
 Choose between entity maps (convenient) and explicit datoms (precise control) for transactions.
 
@@ -1439,9 +1475,11 @@ conn.transact(
 
 **Key Takeaway**: Entity maps are concise for create/update operations. Explicit datoms provide precise control for retractions and conditional logic. Mix styles as needed.
 
+**Why It Matters**: Transaction syntax flexibility lets you choose the right tool for each use case. Entity maps for typical CRUD, datoms for precise control, transaction functions for complex logic. Mix syntaxes in single transaction as domain logic requires.
+
 ---
 
-## Example 50: Querying Across Time with Multiple Database Values
+### Example 50: Querying Across Time with Multiple Database Values
 
 Compare database states at different times using multiple database inputs.
 
@@ -1506,9 +1544,11 @@ Collection results = Peer.q(
 
 **Key Takeaway**: Query across multiple database values to compare states over time. Essential for audit logs, change detection, and temporal analysis.
 
+**Why It Matters**: Temporal comparison queries answer "what changed between deployments", "which entities were modified today", or "compare production to staging". Single query joins across time dimensions. Build change logs, diff views, and audit reports without complex application logic.
+
 ---
 
-## Example 51: Tuple Types for Composite Values
+### Example 51: Tuple Types for Composite Values
 
 Tuple types store fixed-size composite values in single attributes (Datomic Cloud/Pro feature).
 
@@ -1580,9 +1620,11 @@ Collection results = Peer.q(
 
 **Key Takeaway**: Datomic Free uses multiple attributes for composite values. Datomic Cloud/Pro offer tuple types for fixed-size composite attributes.
 
+**Why It Matters**: Composite attributes model multi-part identifiers (country+state, year+month), coordinates (lat+long), or version numbers efficiently. Tuple types (Pro/Cloud) enable atomic updates and unique constraints on composite keys. Choose approach based on Datomic edition.
+
 ---
 
-## Example 52: Query Bindings with Collections
+### Example 52: Query Bindings with Collections
 
 Bind collections in `:in` clause for parameterized queries over multiple values.
 
@@ -1656,9 +1698,11 @@ Collection results2 = Peer.q(
 
 **Key Takeaway**: Use `[[binding]]` for relations (multiple rows), `[binding]` for tuples (single row), `[binding ...]` for collections. Powerful for parameterized queries.
 
+**Why It Matters**: Binding forms enable passing structured data to queries - join with external tables, filter by multiple criteria sets, or implement batch lookups. Relation binding lets you query "find matches for these 100 user IDs" efficiently in single query.
+
 ---
 
-## Example 53: Conditional Retractions with CAS
+### Example 53: Conditional Retractions with CAS
 
 Use `:db/cas` to conditionally retract values, ensuring correctness in concurrent environments.
 
@@ -1751,9 +1795,11 @@ try {
 
 **Key Takeaway**: Use `:db/cas` with `nil` as new value for conditional retractions. Ensures safe concurrent operations.
 
+**Why It Matters**: Conditional retraction prevents removing facts that might have changed concurrently. Implement safe "delete if value is still X" operations. Critical for distributed systems where multiple processes might modify same entity - prevents lost updates during deletions.
+
 ---
 
-## Example 54: Database Filters for Tenant Isolation
+### Example 54: Database Filters for Tenant Isolation
 
 Database filters limit query visibility to subset of facts. Useful for multi-tenancy and security.
 
@@ -1837,9 +1883,11 @@ Collection results = Peer.q(
 
 **Key Takeaway**: Database filters restrict query visibility without changing underlying data. Essential for multi-tenancy, security, and data partitioning.
 
+**Why It Matters**: Database filters implement row-level security, tenant isolation, and soft deletes at database level. Application code queries normally while filters enforce access control transparently. Test features in production by filtering data subsets without affecting other users.
+
 ---
 
-## Example 55: Caching Database Values for Read Performance
+### Example 55: Caching Database Values for Read Performance
 
 Database values are immutable - cache them for read-heavy workloads without stale data risk.
 
@@ -1913,9 +1961,11 @@ getPersonByEmail(cachedDb, "new-person@example.com");
 
 **Key Takeaway**: Database values are immutable - cache them freely. Refresh cache when you need to see new transactions. Trade freshness for performance.
 
+**Why It Matters**: Immutable database values enable aggressive caching without invalidation complexity. Cache query results, entity views, or entire database values for maximum performance. Choose freshness-performance tradeoff explicitly per use case - real-time vs eventually-consistent reads.
+
 ---
 
-## Example 56: Query Statistics and Profiling
+### Example 56: Query Statistics and Profiling
 
 Understand query performance characteristics for optimization.
 
@@ -1996,9 +2046,11 @@ System.out.println("Query: " + elapsed + " msecs");
 
 **Key Takeaway**: Profile queries with `time` (Datomic Free) or query statistics (Pro/Cloud). Compare approaches to identify performance bottlenecks.
 
+**Why It Matters**: Query profiling reveals optimization opportunities - index usage, join order, unnecessary binding. Compare clause reordering, add strategic unique attributes, or switch to datoms API based on metrics. Data-driven performance tuning replaces guesswork.
+
 ---
 
-## Example 57: Entity Validation with Specs
+### Example 57: Entity Validation with Specs
 
 Use Clojure specs to validate entities before transactions.
 
@@ -2112,9 +2164,11 @@ void safeTransact(Connection conn, Map data) throws Exception {
 
 **Key Takeaway**: Use Clojure specs for entity validation before transactions. Catch data quality issues early and provide clear error messages.
 
+**Why It Matters**: Spec-based validation enforces business rules, data integrity constraints, and type safety before transactions commit. Generate human-readable error messages explaining validation failures. Specs double as documentation and enable generative testing of database operations.
+
 ---
 
-## Example 58: Composite Unique Constraints
+### Example 58: Composite Unique Constraints
 
 Ensure uniqueness across multiple attributes using transaction functions (Datomic lacks built-in composite unique constraints).
 
@@ -2218,9 +2272,11 @@ try {
 
 **Key Takeaway**: Implement composite unique constraints using transaction functions. Check for duplicates inside transaction before asserting data.
 
+**Why It Matters**: Composite uniqueness constraints enforce business rules like "one order per customer per product" or "unique email per tenant". Transaction functions check constraints atomically, preventing races. Declarative constraints not natively supported become simple functions.
+
 ---
 
-## Example 59: Incremental Index Building
+### Example 59: Incremental Index Building
 
 Build domain-specific indexes incrementally using transaction listeners (Datomic Pro/Cloud).
 
@@ -2285,9 +2341,11 @@ void processNewTransactions(Connection conn) {
 
 **Key Takeaway**: Use `since` and `basis-t` to process new transactions incrementally. Build domain-specific indexes, caches, or trigger side effects from database changes.
 
+**Why It Matters**: Incremental processing enables reactive systems and derived views. Update search indexes, send notifications, or maintain caches by processing only new transactions since last checkpoint. basis-t provides durable checkpoint - restart from any point after failures.
+
 ---
 
-## Example 60: Testing with In-Memory Databases
+### Example 60: Testing with In-Memory Databases
 
 Create disposable in-memory databases for tests. Fast, isolated, no cleanup required.
 
@@ -2360,6 +2418,8 @@ testPersonCreation();
 ```
 
 **Key Takeaway**: In-memory databases provide fast, isolated test environments. Create new database per test, no cleanup needed. Essential for reliable, reproducible testing.
+
+**Why It Matters**: In-memory testing eliminates test pollution, cleanup code, and shared state issues. Each test gets pristine database. Tests run in milliseconds without I/O. Parallel test execution becomes trivial. Test database operations with same confidence as pure functions.
 
 ---
 

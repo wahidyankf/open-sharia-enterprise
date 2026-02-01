@@ -16,8 +16,11 @@ Stubs replace dependencies with controlled implementations that return predeterm
 ```typescript
 // Red: Test user service without database
 test("getUserName returns name from repository", () => {
+  // => Test definition
   const userService = new UserService(); // => FAILS: needs repository
-  expect(userService.getUserName(1)).toBe("Alice");
+  // => UserService requires UserRepository dependency
+  expect(userService.getUserName(1)).toBe("Alice"); // => Expect name "Alice"
+  // => Test fails - no repository provided
 });
 ```
 
@@ -26,30 +29,44 @@ test("getUserName returns name from repository", () => {
 ```typescript
 interface UserRepository {
   // => Interface for dependency
-  findById(id: number): { id: number; name: string } | null;
+  // => Defines contract for repository
+  findById(id: number): { id: number; name: string } | null; // => Method signature
+  // => Returns user object or null
 }
 
 class StubUserRepository implements UserRepository {
   // => Stub implementation
+  // => Implements UserRepository interface
   findById(id: number): { id: number; name: string } | null {
-    // => Returns hardcoded data
+    // => Method implementation
+    // => Returns hardcoded data (stub behavior)
     return { id: 1, name: "Alice" }; // => Predetermined response
+    // => Always returns same user regardless of id
   }
 }
 
 class UserService {
+  // => Service under test
   constructor(private repository: UserRepository) {} // => Dependency injection
+  // => Repository injected via constructor
 
   getUserName(id: number): string {
+    // => Get name by user id
     const user = this.repository.findById(id); // => Calls stub
+    // => Delegates to injected repository
     return user ? user.name : "Unknown"; // => Returns name or default
+    // => Handles null case with fallback
   }
 }
 
 test("getUserName returns name from repository", () => {
+  // => Test with stub
   const stubRepo = new StubUserRepository(); // => Create stub
+  // => Stub provides controlled data
   const userService = new UserService(stubRepo); // => Inject stub
+  // => Pass stub to service constructor
   expect(userService.getUserName(1)).toBe("Alice"); // => Test passes
+  // => Stub returns "Alice", assertion succeeds
 });
 ```
 
@@ -81,9 +98,12 @@ graph LR
 
 ```typescript
 test("notifyUser sends email to correct address", () => {
+  // => Test email notification
   const notifier = new UserNotifier(); // => FAILS: needs email service
-  notifier.notifyUser(1, "Welcome!");
-  // Need to verify email was sent
+  // => UserNotifier requires EmailService dependency
+  notifier.notifyUser(1, "Welcome!"); // => Call notification method
+  // => Need to verify email was sent
+  // => Test fails - no way to verify interaction
 });
 ```
 
@@ -91,52 +111,80 @@ test("notifyUser sends email to correct address", () => {
 
 ```typescript
 interface EmailService {
-  send(to: string, message: string): void;
+  // => Email service contract
+  send(to: string, message: string): void; // => Method to send email
+  // => Takes recipient and message
 }
 
 class MockEmailService implements EmailService {
+  // => Mock implementation
+  // => Implements EmailService for testing
   calls: Array<{ to: string; message: string }> = []; // => Tracks calls
+  // => Array stores each send() invocation
 
   send(to: string, message: string): void {
+    // => Record send calls
     this.calls.push({ to, message }); // => Records interaction
+    // => Stores recipient and message for verification
   }
 
   wasCalled(): boolean {
+    // => Check if send was called
     return this.calls.length > 0; // => Verification helper
+    // => Returns true if any calls recorded
   }
 
   wasCalledWith(to: string, message: string): boolean {
+    // => Verify specific call
+    // => Check for exact arguments match
     return this.calls.some((call) => call.to === to && call.message === message);
+    // => Returns true if matching call found
   }
 }
 
 class UserNotifier {
+  // => Service under test
   constructor(
-    private emailService: EmailService,
-    private userRepo: UserRepository,
+    // => Constructor injection
+    private emailService: EmailService, // => Injected email service
+    private userRepo: UserRepository, // => Injected user repository
   ) {}
+  // => Both dependencies injected for testability
 
   notifyUser(userId: number, message: string): void {
+    // => Send notification
     const user = this.userRepo.findById(userId); // => Get user
+    // => Fetch user data from repository
     if (user) {
+      // => Check user exists
       this.emailService.send(user.email, message); // => Send email
+      // => Calls email service with user's address
     }
   }
 }
 
 test("notifyUser sends email to user address", () => {
+  // => Test notification
   const stubRepo = {
     // => Stub for user data
+    // => Inline stub object
     findById: (id: number) => ({ id, name: "Alice", email: "alice@example.com" }),
+    // => Returns predefined user
   };
   const mockEmail = new MockEmailService(); // => Mock for verification
-  const notifier = new UserNotifier(mockEmail, stubRepo);
+  // => Creates mock to track email calls
+  const notifier = new UserNotifier(mockEmail, stubRepo); // => Inject both
+  // => Pass mock email and stub repo
 
   notifier.notifyUser(1, "Welcome!"); // => Execute behavior
+  // => Call method under test
 
   expect(mockEmail.wasCalled()).toBe(true); // => Verify email sent
+  // => Assert send() was called
   expect(mockEmail.wasCalledWith("alice@example.com", "Welcome!")).toBe(true);
-}); // => Verify correct arguments
+  // => Verify correct arguments
+  // => Assert called with right email and message
+});
 ```
 
 **Key Takeaway**: Mocks verify behavior (method calls and arguments) while stubs provide data. Use mocks to test interactions between objects.
@@ -151,9 +199,12 @@ Spies wrap real implementations to track calls while preserving actual behavior.
 
 ```typescript
 test("processOrder logs order processing", () => {
+  // => Test logging behavior
   const processor = new OrderProcessor(); // => FAILS: needs to verify logging
-  processor.processOrder({ id: 1, total: 100 });
+  // => OrderProcessor requires Logger dependency
+  processor.processOrder({ id: 1, total: 100 }); // => Execute processing
   // Need to verify logger was called without replacing logger behavior
+  // => Test fails - can't verify logging without spy
 });
 ```
 
@@ -161,48 +212,74 @@ test("processOrder logs order processing", () => {
 
 ```typescript
 interface Logger {
-  log(message: string): void;
+  // => Logger contract
+  log(message: string): void; // => Log method signature
+  // => Takes message string
 }
 
 class ConsoleLogger implements Logger {
+  // => Real logger implementation
   log(message: string): void {
+    // => Actual logging
     console.log(message); // => Real implementation
+    // => Writes to console
   }
 }
 
 class SpyLogger implements Logger {
+  // => Spy implementation
+  // => Wraps real logger for tracking
   private realLogger: Logger; // => Wraps real logger
+  // => Delegates to actual implementation
   calls: string[] = []; // => Tracks calls
+  // => Array stores all logged messages
 
   constructor(realLogger: Logger) {
-    this.realLogger = realLogger;
+    // => Constructor takes real logger
+    this.realLogger = realLogger; // => Stores wrapped logger
+    // => Spy wraps the real implementation
   }
 
   log(message: string): void {
+    // => Spy log method
     this.calls.push(message); // => Record call
+    // => Track message for verification
     this.realLogger.log(message); // => Delegate to real logger
+    // => Preserve actual logging behavior
   }
 }
 
 class OrderProcessor {
-  constructor(private logger: Logger) {}
+  // => Service under test
+  constructor(private logger: Logger) {} // => Inject logger
+  // => Logger dependency injected
 
   processOrder(order: { id: number; total: number }): void {
+    // => Process order
     this.logger.log(`Processing order ${order.id}`); // => Log action
+    // => Log start of processing
     // ... processing logic ...
-    this.logger.log(`Order ${order.id} completed: $${order.total}`);
+    this.logger.log(`Order ${order.id} completed: $${order.total}`); // => Log completion
+    // => Log end of processing with total
   }
 }
 
 test("processOrder logs start and completion", () => {
+  // => Test logging
   const spyLogger = new SpyLogger(new ConsoleLogger()); // => Spy wraps real logger
-  const processor = new OrderProcessor(spyLogger);
+  // => Create spy that delegates to ConsoleLogger
+  const processor = new OrderProcessor(spyLogger); // => Inject spy
+  // => Pass spy logger to processor
 
-  processor.processOrder({ id: 1, total: 100 });
+  processor.processOrder({ id: 1, total: 100 }); // => Execute processing
+  // => Process order triggers logging
 
   expect(spyLogger.calls).toContain("Processing order 1"); // => Verify first log
+  // => Check start message was logged
   expect(spyLogger.calls).toContain("Order 1 completed: $100"); // => Verify second log
+  // => Check completion message was logged
   expect(spyLogger.calls.length).toBe(2); // => Verify call count
+  // => Assert exactly 2 log calls made
 });
 ```
 
@@ -218,9 +295,13 @@ Fakes are lightweight, working implementations that replace complex dependencies
 
 ```typescript
 test("createUser stores user in database", () => {
+  // => Test user creation
   const userService = new UserService(); // => FAILS: needs database
-  const user = userService.createUser("alice", "alice@example.com");
-  expect(userService.findById(user.id)).toEqual(user);
+  // => UserService requires Database dependency
+  const user = userService.createUser("alice", "alice@example.com"); // => Create user
+  // => Calls createUser method
+  expect(userService.findById(user.id)).toEqual(user); // => Verify persistence
+  // => Test fails - no database provided
 });
 ```
 
@@ -228,56 +309,86 @@ test("createUser stores user in database", () => {
 
 ```typescript
 interface Database {
-  insert(table: string, data: any): number;
-  findById(table: string, id: number): any;
+  // => Database contract
+  insert(table: string, data: any): number; // => Insert method
+  // => Takes table name and data, returns ID
+  findById(table: string, id: number): any; // => Find method
+  // => Takes table and ID, returns record
 }
 
 class FakeDatabase implements Database {
   // => Fake implementation
+  // => Simplified in-memory database
   private data: Map<string, Map<number, any>> = new Map(); // => In-memory storage
-  private nextId = 1;
+  // => Two-level map: table → (id → record)
+  private nextId = 1; // => ID counter
+  // => Auto-increment ID generator
 
   insert(table: string, data: any): number {
+    // => Insert record
     if (!this.data.has(table)) {
+      // => Check table exists
       this.data.set(table, new Map()); // => Create table if needed
+      // => Initialize table as empty Map
     }
     const id = this.nextId++; // => Generate ID
+    // => Increment counter and use value
     const record = { ...data, id }; // => Add ID to record
+    // => Spread data and add generated ID
     this.data.get(table)!.set(id, record); // => Store record
+    // => Save record in table by ID
     return id; // => Return generated ID
+    // => Return ID to caller
   }
 
   findById(table: string, id: number): any {
+    // => Find record
     return this.data.get(table)?.get(id); // => Retrieve record
+    // => Get table, then get record by ID
+    // => Returns undefined if table or ID not found
   }
 }
 
 class UserService {
-  constructor(private db: Database) {}
+  // => Service under test
+  constructor(private db: Database) {} // => Inject database
+  // => Database dependency injected
 
   createUser(name: string, email: string): { id: number; name: string; email: string } {
+    // => Create user
     const id = this.db.insert("users", { name, email }); // => Insert user
+    // => Call database insert method
     return { id, name, email }; // => Return created user
+    // => Return user object with generated ID
   }
 
   findById(id: number): any {
+    // => Find user by ID
     return this.db.findById("users", id); // => Retrieve user
+    // => Delegate to database findById
   }
 }
 
 test("createUser stores and retrieves user", () => {
+  // => Test persistence
   const fakeDb = new FakeDatabase(); // => Fake database
-  const userService = new UserService(fakeDb);
+  // => Create in-memory fake
+  const userService = new UserService(fakeDb); // => Inject fake
+  // => Pass fake to service
 
-  const user = userService.createUser("alice", "alice@example.com");
+  const user = userService.createUser("alice", "alice@example.com"); // => Create user
+  // => Call createUser method
 
   expect(user.id).toBe(1); // => Verify ID generated
+  // => First user gets ID 1
   expect(userService.findById(1)).toEqual({
     // => Verify stored correctly
-    id: 1,
-    name: "alice",
-    email: "alice@example.com",
+    // => Retrieve user by ID
+    id: 1, // => ID matches
+    name: "alice", // => Name persisted
+    email: "alice@example.com", // => Email persisted
   });
+  // => All fields stored correctly
 });
 ```
 
@@ -314,9 +425,13 @@ graph TD
 
 ```typescript
 class PaymentProcessor {
+  // => Untestable class
   process(amount: number): boolean {
+    // => Process payment
     const gateway = new PayPalGateway(); // => FAIL: Hard-coded dependency
+    // => Creates PayPalGateway directly - cannot mock
     return gateway.charge(amount); // => Cannot test without real PayPal
+    // => Calls real PayPal API - testing requires live service
   }
 }
 ```
@@ -325,50 +440,77 @@ class PaymentProcessor {
 
 ```typescript
 interface PaymentGateway {
-  charge(amount: number): boolean;
+  // => Payment gateway contract
+  charge(amount: number): boolean; // => Charge method signature
+  // => Returns success/failure boolean
 }
 
 class PayPalGateway implements PaymentGateway {
+  // => Real implementation
   charge(amount: number): boolean {
+    // => Actual PayPal integration
     // Real PayPal API call
+    // => Makes HTTP request to PayPal
     return true; // => Actual implementation
+    // => Returns API response
   }
 }
 
 class MockPaymentGateway implements PaymentGateway {
+  // => Mock for testing
+  // => Test double implementation
   chargeAttempts: number[] = []; // => Track calls
+  // => Records all charge attempts
 
   charge(amount: number): boolean {
+    // => Mock charge logic
     this.chargeAttempts.push(amount); // => Record attempt
+    // => Store amount for verification
     return amount < 1000; // => Mock logic: success under $1000
+    // => Simple rule for testing
   }
 }
 
 class PaymentProcessor {
+  // => Testable processor
   constructor(private gateway: PaymentGateway) {} // => Dependency injected
+  // => Gateway passed via constructor
 
   process(amount: number): boolean {
+    // => Process payment
     return this.gateway.charge(amount); // => Uses injected gateway
+    // => Delegates to injected dependency
   }
 }
 
 test("process charges correct amount", () => {
+  // => Test charging
   const mockGateway = new MockPaymentGateway(); // => Test double
+  // => Create mock gateway
   const processor = new PaymentProcessor(mockGateway); // => Inject mock
+  // => Pass mock to constructor
 
-  const result = processor.process(500);
+  const result = processor.process(500); // => Process $500
+  // => Call process method
 
   expect(result).toBe(true); // => Verify success
+  // => $500 < $1000, should succeed
   expect(mockGateway.chargeAttempts).toEqual([500]); // => Verify amount
+  // => Check correct amount was charged
 });
 
 test("process handles large amounts", () => {
-  const mockGateway = new MockPaymentGateway();
-  const processor = new PaymentProcessor(mockGateway);
+  // => Test failure case
+  const mockGateway = new MockPaymentGateway(); // => Create mock
+  // => Fresh mock for this test
+  const processor = new PaymentProcessor(mockGateway); // => Inject mock
+  // => Pass mock to processor
 
   const result = processor.process(1500); // => Over limit
+  // => $1500 >= $1000, should fail
 
   expect(result).toBe(false); // => Verify failure
+  // => Mock returns false for amounts >= $1000
 });
 ```
 
@@ -384,9 +526,12 @@ Promises represent asynchronous operations. TDD requires testing both resolution
 
 ```typescript
 test("fetchUser returns user data", async () => {
+  // => Async test
   // => FAILS: fetchUser not defined
-  const user = await fetchUser(1);
-  expect(user.name).toBe("Alice");
+  // => Function doesn't exist yet
+  const user = await fetchUser(1); // => Await promise
+  // => Will fail with "fetchUser is not defined"
+  expect(user.name).toBe("Alice"); // => Expected outcome
 });
 ```
 
@@ -394,14 +539,19 @@ test("fetchUser returns user data", async () => {
 
 ```typescript
 async function fetchUser(id: number): Promise<{ id: number; name: string }> {
-  // => Returns Promise
+  // => Async function
+  // => Returns Promise containing user object
   return { id, name: "Alice" }; // => Resolved value
+  // => Promise resolves immediately with object
 }
 
 test("fetchUser returns user data", async () => {
   // => async test function
+  // => Mark test as async to use await
   const user = await fetchUser(1); // => Await promise
+  // => Pauses test until promise resolves
   expect(user.name).toBe("Alice"); // => Assert on resolved value
+  // => Test passes - name is "Alice"
 });
 ```
 
@@ -409,23 +559,33 @@ test("fetchUser returns user data", async () => {
 
 ```typescript
 async function fetchUser(id: number): Promise<{ id: number; name: string }> {
+  // => Async with validation
   if (id <= 0) {
     // => Validation
+    // => Check for invalid ID
     throw new Error("Invalid user ID"); // => Promise rejection
+    // => Throwing in async function rejects promise
   }
   return { id, name: "Alice" }; // => Promise resolution
+  // => Returns resolved promise with user data
 }
 
 describe("fetchUser", () => {
+  // => Test suite
   test("resolves with user data for valid ID", async () => {
-    const user = await fetchUser(1);
-    expect(user).toEqual({ id: 1, name: "Alice" });
+    // => Success path
+    const user = await fetchUser(1); // => Await valid call
+    // => Promise resolves with user object
+    expect(user).toEqual({ id: 1, name: "Alice" }); // => Verify complete object
+    // => All fields match expected values
   });
 
   test("rejects with error for invalid ID", async () => {
     // => Test rejection
-    await expect(fetchUser(-1)).rejects.toThrow("Invalid user ID");
-  }); // => Expects promise rejection
+    // => Validates error handling path
+    await expect(fetchUser(-1)).rejects.toThrow("Invalid user ID"); // => Expect rejection
+    // => Promise should reject with specific error message
+  });
 });
 ```
 
@@ -441,8 +601,11 @@ Async/await makes asynchronous code readable but requires careful error handling
 
 ```typescript
 test("processData handles errors gracefully", async () => {
+  // => Test error handling
   const result = await processData("invalid"); // => FAILS: processData not defined
-  expect(result).toEqual({ success: false, error: "Invalid data" });
+  // => Function doesn't exist yet
+  expect(result).toEqual({ success: false, error: "Invalid data" }); // => Expected error response
+  // => Should return error object
 });
 ```
 
@@ -450,26 +613,39 @@ test("processData handles errors gracefully", async () => {
 
 ```typescript
 async function processData(data: string): Promise<{ success: boolean; error?: string }> {
+  // => Async with error handling
   try {
     // => Try block
+    // => Attempt operation
     if (data === "invalid") {
+      // => Validate input
       throw new Error("Invalid data"); // => Simulated error
+      // => Throws to trigger catch block
     }
     return { success: true }; // => Success case
+    // => Returns success object
   } catch (error) {
     // => Catch block
-    return { success: false, error: (error as Error).message };
-  } // => Error case
+    // => Handles any errors from try block
+    return { success: false, error: (error as Error).message }; // => Error response
+    // => Converts error to result object
+  }
 }
 
 test("processData returns success for valid data", async () => {
-  const result = await processData("valid");
-  expect(result).toEqual({ success: true });
+  // => Success path
+  const result = await processData("valid"); // => Call with valid input
+  // => Should execute try block successfully
+  expect(result).toEqual({ success: true }); // => Verify success
+  // => No error field present
 });
 
 test("processData handles errors gracefully", async () => {
-  const result = await processData("invalid");
-  expect(result).toEqual({ success: false, error: "Invalid data" });
+  // => Error path
+  const result = await processData("invalid"); // => Call with invalid input
+  // => Triggers error in try block
+  expect(result).toEqual({ success: false, error: "Invalid data" }); // => Verify error handling
+  // => Returns structured error response
 });
 ```
 
@@ -477,28 +653,43 @@ test("processData handles errors gracefully", async () => {
 
 ```typescript
 async function fetchAndProcess(id: number): Promise<{ data: string; processed: boolean }> {
+  // => Multi-step async
   const response = await fetch(`/api/data/${id}`); // => Async operation 1
+  // => HTTP request to API
   const rawData = await response.json(); // => Async operation 2
+  // => Parse JSON response
 
   if (!rawData.valid) {
-    throw new Error("Invalid response");
+    // => Validate response
+    throw new Error("Invalid response"); // => Reject invalid data
+    // => Error handling for bad response
   }
 
   return { data: rawData.content, processed: true }; // => Combined result
+  // => Returns processed data object
 }
 
 test("fetchAndProcess chains async operations", async () => {
+  // => Test chained async
   // Mock global fetch
   global.fetch = jest.fn(() =>
+    // => Create mock fetch
+    // => Returns mock promise
     Promise.resolve({
-      json: () => Promise.resolve({ valid: true, content: "test data" }),
+      // => Mock Response object
+      json: () => Promise.resolve({ valid: true, content: "test data" }), // => Mock JSON method
+      // => Returns promise with mock data
     }),
   ) as jest.Mock;
+  // => Type assertion for Jest mock
 
-  const result = await fetchAndProcess(1);
+  const result = await fetchAndProcess(1); // => Execute function
+  // => Calls mocked fetch
 
-  expect(result).toEqual({ data: "test data", processed: true });
+  expect(result).toEqual({ data: "test data", processed: true }); // => Verify result
+  // => Check processed output
   expect(fetch).toHaveBeenCalledWith("/api/data/1"); // => Verify fetch called
+  // => Assert correct URL used
 });
 ```
 
@@ -515,11 +706,15 @@ Callbacks represent older async patterns. TDD with callbacks requires done callb
 ```typescript
 test("readFile calls callback with data", (done) => {
   // => done parameter for async test
+  // => Jest provides done callback for async tests
   readFile("data.txt", (error, data) => {
+    // => Call function with callback
     // => FAILS: readFile not defined
-    expect(error).toBeNull();
-    expect(data).toBe("file contents");
+    // => Function doesn't exist yet
+    expect(error).toBeNull(); // => Expect no error
+    expect(data).toBe("file contents"); // => Expect data
     done(); // => Signal test completion
+    // => MUST call done() for async tests
   });
 });
 ```
@@ -529,18 +724,30 @@ test("readFile calls callback with data", (done) => {
 ```typescript
 function readFile(path: string, callback: (error: Error | null, data: string | null) => void): void {
   // => Callback signature
+  // => Function takes path and callback
+  // => Callback follows Node.js error-first pattern
   if (path.includes("error")) {
+    // => Simulate error condition
     callback(new Error("File not found"), null); // => Error case
+    // => Calls callback with error, null data
   } else {
+    // => Success path
     callback(null, "file contents"); // => Success case
+    // => Calls callback with null error, data
   }
 }
 
 test("readFile calls callback with data", (done) => {
+  // => Async test
   readFile("data.txt", (error, data) => {
+    // => Execute function
+    // => Callback invoked with results
     expect(error).toBeNull(); // => No error
+    // => Error parameter is null
     expect(data).toBe("file contents"); // => Has data
+    // => Data parameter contains content
     done(); // => Must call done() to pass
+    // => Signals async test completion
   });
 });
 ```
@@ -549,30 +756,48 @@ test("readFile calls callback with data", (done) => {
 
 ```typescript
 describe("readFile", () => {
+  // => Test suite
   test("calls callback with data on success", (done) => {
+    // => Success path
     readFile("data.txt", (error, data) => {
-      expect(error).toBeNull();
-      expect(data).toBe("file contents");
+      // => Valid path
+      // => Callback receives success result
+      expect(error).toBeNull(); // => No error occurred
+      expect(data).toBe("file contents"); // => Data returned
       done(); // => Signal completion
+      // => Test passes when done() called
     });
   });
 
   test("calls callback with error on failure", (done) => {
+    // => Error path
     readFile("error.txt", (error, data) => {
+      // => Error path triggers
+      // => Callback receives error result
       expect(error).toBeInstanceOf(Error); // => Has error
-      expect(error?.message).toBe("File not found");
+      // => Error object passed
+      expect(error?.message).toBe("File not found"); // => Correct error message
       expect(data).toBeNull(); // => No data
-      done();
+      // => Data is null on error
+      done(); // => Complete test
     });
   });
 
   test("handles callback errors properly", (done) => {
+    // => Test error handling
     readFile("data.txt", (error, data) => {
+      // => Execute operation
       try {
+        // => Wrap assertions in try
+        // => Catch assertion failures
         expect(data).toBe("file contents"); // => Assertion
+        // => Verify data content
         done(); // => Success path
+        // => Test passes
       } catch (assertionError) {
+        // => Handle assertion failure
         done(assertionError); // => Fail test with assertion error
+        // => Pass error to done() to fail test
       }
     });
   });
@@ -606,17 +831,27 @@ graph LR
 
 ```typescript
 test("debounce delays function call", (done) => {
+  // => Async test with done
   // => FAILS: debounce not defined
-  let called = false;
+  // => Function doesn't exist yet
+  let called = false; // => Track if function called
   const fn = debounce(() => {
-    called = true;
+    // => Create debounced function
+    // => FAILS - debounce undefined
+    called = true; // => Mark as called
   }, 1000); // => 1 second delay
+  // => Delays execution by 1000ms
 
-  fn();
+  fn(); // => Execute debounced function
+  // => Starts timer
   setTimeout(() => {
-    expect(called).toBe(true);
+    // => Check after delay
+    // => Wait for debounce to complete
+    expect(called).toBe(true); // => Should be called
     done(); // => Test takes 1+ seconds
+    // => SLOW - real timer delays test
   }, 1100);
+  // => Must wait full delay + buffer
 });
 ```
 
@@ -624,53 +859,82 @@ test("debounce delays function call", (done) => {
 
 ```typescript
 function debounce(fn: () => void, delay: number): () => void {
-  let timeoutId: NodeJS.Timeout | null = null;
+  // => Debounce function
+  // => Returns debounced version of fn
+  let timeoutId: NodeJS.Timeout | null = null; // => Timer reference
+  // => Stores current timeout ID
 
   return () => {
+    // => Returned function
+    // => Wraps original function
     if (timeoutId) clearTimeout(timeoutId); // => Clear existing timer
+    // => Cancel previous timer if exists
     timeoutId = setTimeout(fn, delay); // => Set new timer
+    // => Schedule function execution
   };
 }
 
 describe("debounce", () => {
+  // => Test suite
   beforeEach(() => {
+    // => Setup before each test
     jest.useFakeTimers(); // => Enable fake timers
+    // => Replace real timers with fake ones
   });
 
   afterEach(() => {
+    // => Cleanup after each test
     jest.useRealTimers(); // => Restore real timers
+    // => Reset to normal timers
   });
 
   test("delays function call by specified time", () => {
-    let called = false;
+    // => Test delay
+    let called = false; // => Track execution
     const fn = debounce(() => {
-      called = true;
-    }, 1000);
+      // => Create debounced fn
+      called = true; // => Mark called
+    }, 1000); // => 1 second delay
 
     fn(); // => Schedule call
+    // => Starts fake timer
     expect(called).toBe(false); // => Not called immediately
+    // => Function delayed
 
     jest.advanceTimersByTime(999); // => Fast-forward 999ms
+    // => Jump forward in fake time
     expect(called).toBe(false); // => Still not called
+    // => Delay not yet complete
 
     jest.advanceTimersByTime(1); // => Fast-forward 1ms (total 1000ms)
+    // => Complete the delay
     expect(called).toBe(true); // => Now called
+    // => Function executed after full delay
   }); // => Test runs instantly
+  // => No real waiting - fake timers
 
   test("cancels previous timer on rapid calls", () => {
-    let callCount = 0;
+    // => Test cancellation
+    let callCount = 0; // => Track call count
     const fn = debounce(() => {
-      callCount++;
-    }, 1000);
+      // => Debounced counter
+      callCount++; // => Increment on call
+    }, 1000); // => 1 second delay
 
     fn(); // => First call
-    jest.advanceTimersByTime(500);
+    // => Sets first timer
+    jest.advanceTimersByTime(500); // => Advance 500ms
     fn(); // => Second call (cancels first)
-    jest.advanceTimersByTime(500);
+    // => Clears first timer, sets new one
+    jest.advanceTimersByTime(500); // => Advance another 500ms
+    // => Total 500ms since second call
     expect(callCount).toBe(0); // => Neither fired yet
+    // => Second timer not complete
 
     jest.advanceTimersByTime(500); // => Complete second delay
+    // => Total 1000ms since second call
     expect(callCount).toBe(1); // => Only second call executed
+    // => First call was cancelled
   });
 });
 ```
@@ -687,9 +951,13 @@ HTTP requests need mocking in unit tests to avoid network dependencies. Mock fet
 
 ```typescript
 test("fetchUserData retrieves user from API", async () => {
+  // => Test async HTTP
   // => FAILS: fetchUserData not defined
-  const user = await fetchUserData(1);
-  expect(user.name).toBe("Alice");
+  // => Function doesn't exist yet
+  const user = await fetchUserData(1); // => Call function
+  // => Await async HTTP call
+  expect(user.name).toBe("Alice"); // => Expected result
+  // => Should return user object
 });
 ```
 
@@ -697,35 +965,52 @@ test("fetchUserData retrieves user from API", async () => {
 
 ```typescript
 async function fetchUserData(id: number): Promise<{ id: number; name: string }> {
+  // => Async HTTP function
   const response = await fetch(`/api/users/${id}`); // => HTTP call
+  // => Makes GET request to API
   return response.json(); // => Parse JSON
+  // => Returns parsed response body
 }
 
 describe("fetchUserData", () => {
+  // => Test suite
   beforeEach(() => {
+    // => Setup before each test
     global.fetch = jest.fn(); // => Mock fetch globally
+    // => Replace global fetch with Jest mock
   });
 
   afterEach(() => {
+    // => Cleanup after each test
     jest.restoreAllMocks(); // => Clean up mocks
+    // => Restore original fetch
   });
 
   test("retrieves user data from API", async () => {
+    // => Test success path
     (global.fetch as jest.Mock).mockResolvedValue({
       // => Mock response
-      json: async () => ({ id: 1, name: "Alice" }),
+      // => Setup mock to return resolved promise
+      json: async () => ({ id: 1, name: "Alice" }), // => Mock JSON method
+      // => Returns user data
     });
 
-    const user = await fetchUserData(1);
+    const user = await fetchUserData(1); // => Execute function
+    // => Calls mocked fetch
 
     expect(user).toEqual({ id: 1, name: "Alice" }); // => Verify result
+    // => Check returned user data
     expect(fetch).toHaveBeenCalledWith("/api/users/1"); // => Verify URL
+    // => Assert correct endpoint called
   });
 
   test("handles API errors", async () => {
-    (global.fetch as jest.Mock).mockRejectedValue(new Error("Network error"));
+    // => Test error handling
+    (global.fetch as jest.Mock).mockRejectedValue(new Error("Network error")); // => Mock error
+    // => Setup fetch to reject with error
 
-    await expect(fetchUserData(1)).rejects.toThrow("Network error");
+    await expect(fetchUserData(1)).rejects.toThrow("Network error"); // => Expect rejection
+    // => Promise should reject with error
   });
 });
 ```
@@ -734,43 +1019,65 @@ describe("fetchUserData", () => {
 
 ```typescript
 interface HttpClient {
-  get(url: string): Promise<any>;
+  // => HTTP client interface
+  get(url: string): Promise<any>; // => GET method signature
+  // => Returns promise with response
 }
 
 class FetchHttpClient implements HttpClient {
+  // => Real HTTP client
   async get(url: string): Promise<any> {
+    // => Real implementation
     const response = await fetch(url); // => Real fetch
-    return response.json();
+    // => Makes actual HTTP request
+    return response.json(); // => Parse response
+    // => Returns JSON data
   }
 }
 
 class MockHttpClient implements HttpClient {
+  // => Mock HTTP client
   responses: Map<string, any> = new Map(); // => Predefined responses
+  // => Stores URL → response mappings
 
   async get(url: string): Promise<any> {
+    // => Mock GET method
     if (this.responses.has(url)) {
+      // => Check for mock response
       return this.responses.get(url); // => Return mock data
+      // => Returns predefined response
     }
-    throw new Error(`No mock response for ${url}`);
+    throw new Error(`No mock response for ${url}`); // => Error if unmocked
+    // => Fails test if URL not mocked
   }
 }
 
 class UserService {
+  // => Service using HTTP client
   constructor(private http: HttpClient) {} // => Inject HTTP client
+  // => Dependency injection for testability
 
   async fetchUserData(id: number): Promise<{ id: number; name: string }> {
-    return this.http.get(`/api/users/${id}`);
+    // => Fetch user
+    return this.http.get(`/api/users/${id}`); // => Delegate to HTTP client
+    // => Uses injected client
   }
 }
 
 test("fetchUserData uses HTTP client", async () => {
-  const mockHttp = new MockHttpClient();
-  mockHttp.responses.set("/api/users/1", { id: 1, name: "Alice" });
+  // => Test with DI
+  const mockHttp = new MockHttpClient(); // => Create mock
+  // => Instantiate mock HTTP client
+  mockHttp.responses.set("/api/users/1", { id: 1, name: "Alice" }); // => Setup response
+  // => Configure mock for specific URL
 
-  const userService = new UserService(mockHttp);
-  const user = await userService.fetchUserData(1);
+  const userService = new UserService(mockHttp); // => Inject mock
+  // => Pass mock to service
+  const user = await userService.fetchUserData(1); // => Call method
+  // => Uses mocked HTTP client
 
-  expect(user).toEqual({ id: 1, name: "Alice" });
+  expect(user).toEqual({ id: 1, name: "Alice" }); // => Verify result
+  // => Check user data returned correctly
 });
 ```
 
@@ -786,10 +1093,15 @@ Database tests are faster with in-memory databases than real databases. In-memor
 
 ```typescript
 test("saveUser persists user to database", async () => {
+  // => Test persistence
   const userRepo = new UserRepository(); // => FAILS: needs database
-  await userRepo.save({ name: "Alice", email: "alice@example.com" });
-  const users = await userRepo.findAll();
-  expect(users).toHaveLength(1);
+  // => UserRepository requires database connection
+  await userRepo.save({ name: "Alice", email: "alice@example.com" }); // => Save user
+  // => Attempts to persist to database
+  const users = await userRepo.findAll(); // => Retrieve all users
+  // => Query database for users
+  expect(users).toHaveLength(1); // => Verify saved
+  // => Test fails - no database available
 });
 ```
 
@@ -797,63 +1109,97 @@ test("saveUser persists user to database", async () => {
 
 ```typescript
 interface User {
-  id?: number;
-  name: string;
-  email: string;
+  // => User entity
+  id?: number; // => Optional ID (generated on save)
+  name: string; // => User name
+  email: string; // => Email address
 }
 
 class InMemoryUserRepository {
+  // => In-memory implementation
+  // => Simulates database without I/O
   private users: User[] = []; // => In-memory storage
-  private nextId = 1;
+  // => Array stores all users
+  private nextId = 1; // => ID counter
+  // => Auto-increment ID generator
 
   async save(user: User): Promise<User> {
+    // => Save operation
     const savedUser = { ...user, id: this.nextId++ }; // => Add ID
+    // => Spread user and add generated ID
     this.users.push(savedUser); // => Store in memory
-    return savedUser;
+    // => Add to array
+    return savedUser; // => Return saved user
+    // => Includes generated ID
   }
 
   async findAll(): Promise<User[]> {
+    // => Query all users
     return [...this.users]; // => Return copy
+    // => Defensive copy prevents mutation
   }
 
   async findById(id: number): Promise<User | null> {
-    return this.users.find((u) => u.id === id) || null;
+    // => Find by ID
+    return this.users.find((u) => u.id === id) || null; // => Search array
+    // => Returns user or null if not found
   }
 
   async deleteAll(): Promise<void> {
+    // => Clear database
     this.users = []; // => Clear storage
-    this.nextId = 1;
+    // => Empty array
+    this.nextId = 1; // => Reset ID counter
+    // => Start from 1 again
   }
 }
 
 describe("UserRepository", () => {
-  let userRepo: InMemoryUserRepository;
+  // => Test suite
+  let userRepo: InMemoryUserRepository; // => Repository instance
+  // => Declare test-scoped variable
 
   beforeEach(() => {
+    // => Setup before each test
     userRepo = new InMemoryUserRepository(); // => Fresh repository
+    // => New instance for test isolation
   });
 
   test("saveUser persists user", async () => {
-    await userRepo.save({ name: "Alice", email: "alice@example.com" });
-    const users = await userRepo.findAll();
+    // => Test save
+    await userRepo.save({ name: "Alice", email: "alice@example.com" }); // => Save user
+    // => Persist to in-memory storage
+    const users = await userRepo.findAll(); // => Retrieve all
+    // => Query stored users
 
-    expect(users).toHaveLength(1);
-    expect(users[0].name).toBe("Alice");
+    expect(users).toHaveLength(1); // => Verify count
+    // => One user saved
+    expect(users[0].name).toBe("Alice"); // => Verify data
+    // => Name persisted correctly
   });
 
   test("findById retrieves correct user", async () => {
-    const saved = await userRepo.save({ name: "Alice", email: "alice@example.com" });
-    const found = await userRepo.findById(saved.id!);
+    // => Test query by ID
+    const saved = await userRepo.save({ name: "Alice", email: "alice@example.com" }); // => Save user
+    // => Returns user with generated ID
+    const found = await userRepo.findById(saved.id!); // => Find by ID
+    // => Query using generated ID
 
-    expect(found).toEqual(saved);
+    expect(found).toEqual(saved); // => Verify match
+    // => Retrieved user matches saved user
   });
 
   test("multiple saves maintain data", async () => {
-    await userRepo.save({ name: "Alice", email: "alice@example.com" });
-    await userRepo.save({ name: "Bob", email: "bob@example.com" });
+    // => Test multiple saves
+    await userRepo.save({ name: "Alice", email: "alice@example.com" }); // => Save first
+    // => Persist Alice
+    await userRepo.save({ name: "Bob", email: "bob@example.com" }); // => Save second
+    // => Persist Bob
 
-    const users = await userRepo.findAll();
-    expect(users).toHaveLength(2);
+    const users = await userRepo.findAll(); // => Retrieve all
+    // => Query all saved users
+    expect(users).toHaveLength(2); // => Verify count
+    // => Both users persisted
   });
 });
 ```
@@ -870,8 +1216,11 @@ Property-based testing generates random inputs to verify properties hold for all
 
 ```typescript
 test("reverse reverses strings", () => {
+  // => Traditional test
   expect(reverse("hello")).toBe("olleh"); // => FAILS: reverse not defined
-  expect(reverse("world")).toBe("dlrow");
+  // => Function doesn't exist yet
+  expect(reverse("world")).toBe("dlrow"); // => Second example
+  // => Tests another case
 });
 ```
 
@@ -879,7 +1228,9 @@ test("reverse reverses strings", () => {
 
 ```typescript
 function reverse(str: string): string {
-  return str.split("").reverse().join("");
+  // => Reverse function
+  return str.split("").reverse().join(""); // => Split, reverse, join
+  // => Converts to array, reverses, converts back
 }
 ```
 
@@ -887,37 +1238,60 @@ function reverse(str: string): string {
 
 ```typescript
 import fc from "fast-check"; // => Property-based testing library
+// => fast-check generates random test data
 
 describe("reverse", () => {
+  // => Test suite
   test("reversing twice returns original", () => {
+    // => Idempotence property
     fc.assert(
       // => Property assertion
+      // => Runs property check with generated inputs
       fc.property(
+        // => Define property
         fc.string(), // => Generate random strings
+        // => Creates arbitrary string values
         (str) => {
+          // => Property function
           const reversed = reverse(reverse(str)); // => Reverse twice
+          // => Apply function twice
           return reversed === str; // => Property: equals original
+          // => Reversing twice should restore original
         },
       ),
     ); // => Tests 100+ random strings
+    // => Default runs 100 test cases
   });
 
   test("length is preserved", () => {
+    // => Length invariant
     fc.assert(
+      // => Assert property
       fc.property(fc.string(), (str) => {
-        const reversed = reverse(str);
+        // => Generate and test
+        // => For each random string
+        const reversed = reverse(str); // => Reverse string
+        // => Apply function
         return reversed.length === str.length; // => Length property
+        // => Length must be preserved
       }),
     );
   });
 
   test("first char becomes last char", () => {
+    // => Position property
     fc.assert(
+      // => Property check
       fc.property(
+        // => Define property
         fc.string({ minLength: 1 }), // => Non-empty strings
+        // => Generate strings with at least 1 character
         (str) => {
-          const reversed = reverse(str);
+          // => Test function
+          const reversed = reverse(str); // => Reverse string
+          // => Apply reversal
           return str[0] === reversed[reversed.length - 1]; // => Position property
+          // => First char should become last char
         },
       ),
     );

@@ -71,50 +71,78 @@ A Dockerfile defines the steps to build a container image. Each instruction crea
 # Base image with Node.js runtime
 FROM node:18-alpine
 # => Official Node.js 18 on Alpine Linux (~40MB, minimal footprint)
+# => Alpine is lightweight Linux distribution optimized for containers
 
 # Set working directory
 WORKDIR /app
-# => Creates /app, all subsequent commands run here
+# => Creates /app directory if it doesn't exist
+# => All subsequent commands (COPY, RUN, CMD) execute in /app context
 
 # Copy application file
 COPY server.js .
-# => Copies server.js to /app/
+# => Copies server.js from build context to /app/
+# => Creates new layer with server.js file content
 
 # Expose port (documentation only)
 EXPOSE 3000
-# => Documents port 3000, does NOT publish (use -p flag at runtime)
+# => Documents that port 3000 is intended to be published
+# => Does NOT actually publish port (use -p flag at runtime)
+# => Metadata for documentation and automated tools
 
 # Default command
 CMD ["node", "server.js"]
-# => Runs when container starts, can be overridden
+# => Runs when container starts, can be overridden with docker run arguments
+# => Exec form (JSON array) is preferred over shell form
+# => Starts Node.js runtime executing server.js
 ```
 
 ```javascript
 // File: server.js
 const http = require("http");
+// => Imports Node.js built-in HTTP module (no npm install needed)
+// => http provides low-level HTTP server functionality
 
 const server = http.createServer((req, res) => {
+  // => Creates HTTP server with request handler callback
+  // => req: IncomingMessage object with request data
+  // => res: ServerResponse object for sending response
   res.writeHead(200, { "Content-Type": "text/plain" });
+  // => Sends HTTP 200 OK status code
+  // => Sets Content-Type header to text/plain
   res.end("Hello from Docker!\n");
+  // => Sends response body "Hello from Docker!"
+  // => Closes connection after sending data
 });
+// => server is HTTP server object ready to accept connections
 
 server.listen(3000, () => {
+  // => Binds server to port 3000 on all network interfaces
+  // => Callback executes when server successfully starts listening
   console.log("Server running on port 3000");
+  // => Output to console: Server running on port 3000
+  // => Confirms server started successfully
 });
 ```
 
 ```bash
 # Build image
 docker build -t my-node-app .
-# => Executes Dockerfile steps, creates image tagged "my-node-app:latest"
+# => Executes Dockerfile steps in current directory (.)
+# => Tags resulting image as "my-node-app:latest"
+# => Creates layered image from FROM, WORKDIR, COPY, EXPOSE, CMD instructions
 
 # Run container with port mapping
 docker run -p 3000:3000 my-node-app
-# => Maps host:3000 to container:3000, starts server
+# => Creates container from my-node-app image
+# => Maps host port 3000 to container port 3000 (-p host:container)
+# => Starts server, blocks terminal showing logs
+# => Container runs in foreground (use -d for background)
 
 # Test from host (in another terminal)
 curl http://localhost:3000
+# => Sends HTTP GET request to localhost:3000 (mapped to container)
 # => Output: Hello from Docker!
+# => Confirms server responding correctly through port mapping
 ```
 
 **Key Takeaway**: Dockerfiles build images layer by layer. Use specific base images (like alpine variants) to minimize image size, and leverage EXPOSE for documentation while using `-p` flag for actual port publishing.
@@ -150,31 +178,53 @@ graph TD
 # File: Dockerfile
 
 FROM node:18-alpine
+# => Base image with Node.js 18 on Alpine Linux
 WORKDIR /app
+# => Creates /app and sets as working directory
 
 # Copy package files first (separate layer for caching)
 COPY package*.json ./
+# => Copies package.json and package-lock.json to /app/
+# => Glob pattern matches both files
 # => This layer cached unless package files change
+# => Positioned early to maximize cache hits
 
 # Install dependencies
 RUN npm ci --only=production
-# => Installs exact versions, skips devDependencies, creates node_modules/ layer
+# => npm ci: Clean install from package-lock.json (reproducible)
+# => --only=production: Skips devDependencies (smaller image)
+# => Installs exact versions specified in lock file
+# => Creates node_modules/ directory layer
 
 # Copy source code (changes frequently)
 COPY . .
+# => Copies all files from build context to /app/
 # => Separate layer allows rebuilding without reinstalling dependencies
+# => Source changes don't invalidate dependency cache
 
 EXPOSE 8080
+# => Documents port 8080 for application
+
 CMD ["node", "app.js"]
+# => Starts Node.js runtime executing app.js
 ```
 
 ```json
 // File: package.json
 {
   "name": "docker-app",
+  // => Package name identifier for npm registry
+  // => Referenced in imports and scripts
   "version": "1.0.0",
+  // => Semantic version number (major.minor.patch)
+  // => Tracked for releases and compatibility
   "dependencies": {
+    // => Production dependencies (installed in container)
+    // => Required for application runtime
     "express": "^4.18.0"
+    // => Express.js web framework
+    // => ^4.18.0: Allows updates to 4.x.x (semantic versioning)
+    // => Compatible with Node.js 18
   }
 }
 ```
@@ -182,27 +232,53 @@ CMD ["node", "app.js"]
 ```javascript
 // File: app.js
 const express = require("express");
+// => Imports Express.js framework from node_modules/
+// => Loaded via npm dependency installed by RUN npm ci
 const app = express();
+// => Creates Express application instance
+// => app handles routing, middleware, and HTTP server functionality
 
 app.get("/", (req, res) => {
+  // => Defines route handler for GET requests to root path "/"
+  // => req: Request object with headers, query params, body
+  // => res: Response object for sending data back
   res.send("Express app running in Docker!");
+  // => Sends text response "Express app running in Docker!"
+  // => Express auto-sets Content-Type: text/html
 });
+// => Routes registered: GET /
+// => Application ready to handle requests
 
 app.listen(8080, () => {
+  // => Starts HTTP server listening on port 8080
+  // => Binds to all network interfaces (0.0.0.0)
+  // => Callback executes when server successfully starts
   console.log("App listening on port 8080");
+  // => Output to container logs: App listening on port 8080
+  // => Visible via docker logs command
 });
 ```
 
 ```bash
 # First build (installs dependencies)
 docker build -t my-express-app .
-# => Executes all steps, npm ci takes ~30 seconds, total build time: ~35 seconds
+# => Executes Dockerfile steps: FROM, WORKDIR, COPY, RUN, COPY, EXPOSE, CMD
+# => RUN npm ci downloads packages from npm registry (~30 seconds)
+# => Total build time: ~35 seconds (includes downloads, extraction, installation)
+# => Creates layered image tagged my-express-app:latest
 
 # Modify app.js and rebuild
 echo "// Updated" >> app.js
+# => Appends comment to app.js (simulates source code change)
 docker build -t my-express-app .
-# => Steps 1-4 cached (package files unchanged), only COPY . . rebuilds
-# => Build time: ~2 seconds (dependency layer reused!)
+# => Step 1 (FROM): Uses cached base image
+# => Step 2 (WORKDIR): Uses cached layer
+# => Step 3 (COPY package*.json): Uses cached layer (files unchanged)
+# => Step 4 (RUN npm ci): Uses cached node_modules/ layer (HUGE time save!)
+# => Step 5 (COPY . .): Rebuilds (app.js changed)
+# => Steps 6-7 (EXPOSE, CMD): Rebuilds (lightweight metadata)
+# => Build time: ~2 seconds (only copying source, no npm install!)
+# => Cache efficiency: 93% time reduction (35s → 2s)
 ```
 
 **Key Takeaway**: Copy dependency manifests before source code to leverage Docker's layer caching. This dramatically speeds up builds when only source code changes, as dependencies aren't reinstalled.
@@ -219,17 +295,24 @@ ARG instructions define build-time variables that can be passed during image bui
 # File: Dockerfile
 
 FROM node:18-alpine
+# => Base image with Node.js 18
 
 # Define build argument with default value
 ARG NODE_ENV=production
-# => Available during build, default "production" if not overridden
+# => ARG available during build process only
+# => Default value "production" if not overridden via --build-arg
+# => Not persisted in final image (security benefit)
 
 # Use build argument during build
 RUN echo "Building for environment: $NODE_ENV"
-# => Outputs during build execution
+# => Outputs build-time value to build logs
+# => Example output: "Building for environment: production"
+# => Useful for debugging build configuration
 
 WORKDIR /app
+# => Sets working directory to /app
 COPY package*.json ./
+# => Copies package files for dependency installation
 
 # Conditional dependency installation based on build arg
 RUN if [ "$NODE_ENV" = "development" ]; then \
@@ -237,30 +320,50 @@ RUN if [ "$NODE_ENV" = "development" ]; then \
     else \
       npm ci --only=production; \
     fi
-# => Installs all deps for dev, skips devDependencies for prod
+# => Shell if-else statement for conditional installation
+# => development: Installs all deps (devDependencies + dependencies)
+# => production: Installs only dependencies (smaller image)
+# => npm ci uses package-lock.json for reproducibility
 
 COPY . .
+# => Copies application source code
 
 # Convert ARG to ENV for runtime access
 ENV NODE_ENV=$NODE_ENV
-# => Makes variable available at runtime (ARG alone wouldn't persist)
+# => Assigns ARG value to ENV variable (persists in image)
+# => Makes NODE_ENV available to running container processes
+# => ARG alone wouldn't be accessible at runtime
+# => Common pattern for build-time → runtime variable transfer
 
 EXPOSE 8080
+# => Documents application port
+
 CMD ["node", "app.js"]
+# => Starts Node.js application
 ```
 
 ```bash
 # Build with default ARG value (production)
 docker build -t my-app:prod .
-# => Uses default NODE_ENV=production, installs production deps only
+# => Uses default NODE_ENV=production from Dockerfile
+# => RUN if-else executes npm ci --only=production
+# => Installs production dependencies only (smaller image)
+# => ENV NODE_ENV=production persisted in image
 
 # Build with custom ARG value (development)
 docker build --build-arg NODE_ENV=development -t my-app:dev .
-# => Overrides to "development", installs all deps including devDependencies
+# => --build-arg overrides default NODE_ENV to "development"
+# => RUN if-else executes npm ci (all dependencies)
+# => Installs devDependencies + dependencies
+# => ENV NODE_ENV=development persisted in image
+# => Creates different image variant from same Dockerfile
 
 # Inspect environment variables in running container
 docker run --rm my-app:prod printenv NODE_ENV
-# => Output: production (ENV persists at runtime)
+# => Runs container from my-app:prod image
+# => printenv outputs environment variable value
+# => Output: production
+# => ENV variable persists at runtime (ARG would not)
 ```
 
 **Key Takeaway**: Use ARG for build-time configuration that can vary between builds. Convert ARG to ENV if the value needs to be available at runtime. ARG values don't persist in the final image, improving security.
@@ -294,57 +397,85 @@ graph TD
 # File: Dockerfile
 
 FROM node:18-alpine
+# => Base image with Node.js 18
 WORKDIR /app
+# => Sets working directory to /app
 
 # Set environment variables (persist at runtime)
 ENV NODE_ENV=production
-# => Sets NODE_ENV for all RUN, CMD, and ENTRYPOINT instructions
-# => Available in running container
+# => Sets NODE_ENV=production in image and running containers
+# => Available during RUN commands (build-time)
+# => Persists in final image (runtime)
+# => Affects npm behavior, application logic, and debugging tools
 
 ENV PORT=3000
-# => Application port configuration
+# => Sets PORT=3000 for application binding
+# => Common pattern: separate port from code for flexibility
 
 ENV LOG_LEVEL=info
-# => Application logging configuration
+# => Sets LOG_LEVEL=info for application logging configuration
+# => Typical values: debug, info, warn, error
 
 COPY package*.json ./
+# => Copies package files for dependency installation
 RUN npm ci --only=production
-# => npm respects NODE_ENV variable during installation
+# => npm ci respects NODE_ENV=production
+# => Skips devDependencies automatically
+# => --only=production explicit for clarity
 
 COPY . .
+# => Copies application source code
 
 EXPOSE $PORT
-# => Uses PORT variable value (expands to 3000)
+# => Variable expansion: $PORT becomes 3000
+# => Documents that container listens on port 3000
+# => Metadata only (doesn't publish port)
 
 CMD ["node", "server.js"]
-# => Application reads ENV variables at runtime
+# => Starts Node.js application
+# => server.js reads ENV variables via process.env
 ```
 
 ```javascript
 // File: server.js
 const http = require("http");
+// => Imports Node.js HTTP module
 
 // Read environment variables
-const port = process.env.PORT || 3000; // => 3000 from ENV PORT
-const nodeEnv = process.env.NODE_ENV || "dev"; // => "production" from ENV NODE_ENV
-const logLevel = process.env.LOG_LEVEL || "debug"; // => "info" from ENV LOG_LEVEL
+const port = process.env.PORT || 3000;
+// => Reads PORT from environment, defaults to 3000
+// => port is 3000 (from ENV PORT in Dockerfile)
+const nodeEnv = process.env.NODE_ENV || "dev";
+// => Reads NODE_ENV from environment, defaults to "dev"
+// => nodeEnv is "production" (from ENV NODE_ENV)
+const logLevel = process.env.LOG_LEVEL || "debug";
+// => Reads LOG_LEVEL from environment, defaults to "debug"
+// => logLevel is "info" (from ENV LOG_LEVEL)
 
-console.log(`Environment: ${nodeEnv}`); // => Output: Environment: production
-console.log(`Log Level: ${logLevel}`); // => Output: Log Level: info
+console.log(`Environment: ${nodeEnv}`);
+// => Output: Environment: production
+console.log(`Log Level: ${logLevel}`);
+// => Output: Log Level: info
 
 const server = http.createServer((req, res) => {
+  // => Creates HTTP server with request handler
   res.writeHead(200, { "Content-Type": "application/json" });
+  // => Sends HTTP 200 with JSON content type
   res.end(
     JSON.stringify({
       env: nodeEnv,
       port: port,
       logLevel: logLevel,
     }),
+    // => Serializes object to JSON string
   );
+  // => Sends JSON response: {"env":"production","port":3000,"logLevel":"info"}
 });
 
 server.listen(port, () => {
-  console.log(`Server on port ${port}`); // => Output: Server on port 3000
+  // => Binds server to port (3000)
+  console.log(`Server on port ${port}`);
+  // => Output: Server on port 3000
 });
 ```
 
@@ -381,44 +512,71 @@ LABEL instructions add metadata to images as key-value pairs. Labels document im
 # File: Dockerfile
 
 FROM python:3.11-slim
+# => Official Python 3.11 slim variant (Debian-based, ~120MB)
+# => Slim omits build tools, smaller than standard python:3.11 (~900MB)
 
 # Add metadata labels
 LABEL maintainer="devops@example.com"
+# => Contact email for image maintainers
+# => Queryable via docker inspect
 LABEL version="1.0.0"
+# => Image version for tracking releases
 LABEL description="Python web application with Flask"
+# => Human-readable description of image purpose
 LABEL org.opencontainers.image.source="https://github.com/example/repo"
-# => OCI standard labels for source and licensing
+# => OCI standard label for source repository
+# => Used by registries for linking to source code
 LABEL org.opencontainers.image.licenses="MIT"
+# => OCI standard label for license information
+# => Critical for compliance and legal auditing
 
 WORKDIR /app
+# => Sets working directory to /app
 
 COPY requirements.txt .
+# => Copies Python dependencies file
 RUN pip install --no-cache-dir -r requirements.txt
-# => --no-cache-dir reduces image size
+# => Installs Python packages from requirements.txt
+# => --no-cache-dir prevents caching pip downloads
+# => Reduces image size by ~20-40% for typical applications
 
 COPY app.py .
+# => Copies Flask application source
 
 EXPOSE 5000
+# => Documents Flask default port 5000
 CMD ["python", "app.py"]
+# => Starts Python interpreter running Flask app
 ```
 
 ```python
 # File: app.py
 from flask import Flask
+# => Imports Flask web framework
 
 app = Flask(__name__)
+# => Creates Flask application instance
+# => app is Flask object configured for this module
 
 @app.route('/')
+# => Decorates function to handle GET requests to root path
 def hello():
+    # => Route handler function
     return 'Flask app in Docker!'
+    # => Returns plain text response
 
 if __name__ == '__main__':
+    # => Runs only when script executed directly (not imported)
     app.run(host='0.0.0.0', port=5000)
+    # => Starts Flask development server
+    # => host='0.0.0.0' binds to all interfaces (required for Docker)
+    # => port=5000 listens on port 5000
 ```
 
 ```txt
 # File: requirements.txt
 Flask==2.3.0
+# => Exact Flask version 2.3.0 (production dependency)
 ```
 
 ```bash
@@ -527,56 +685,80 @@ stateDiagram-v2
 ```bash
 # Create container without starting it
 docker create --name my-nginx -p 8080:80 nginx:alpine
-# => Creates container in "Created" state
-# => Container ID: def456ghi789
-# => Port mapping configured but not active yet
+# => Pulls nginx:alpine image if not cached
+# => Creates container in "Created" state (not running)
+# => Assigns name "my-nginx" for easy reference
+# => Container ID: def456ghi789 (generated)
+# => Port mapping 8080:80 configured but inactive until started
 
 # List all containers (including created/stopped)
 docker ps -a
+# => -a flag shows containers in all states (Created, Running, Exited)
+# => Without -a, only Running containers shown
 # => CONTAINER ID   IMAGE         STATUS    PORTS                  NAMES
 # => def456ghi789   nginx:alpine  Created   0.0.0.0:8080->80/tcp   my-nginx
 
 # Start created container
 docker start my-nginx
-# => Transitions container to "Running" state
-# => Port 8080 now accessible
+# => Transitions container from "Created" to "Running" state
+# => Executes CMD/ENTRYPOINT from image
+# => Port 8080 now accessible on host
+# => Starts nginx web server process
 
 # Check running containers only
 docker ps
+# => Shows only Running containers (default behavior)
 # => CONTAINER ID   IMAGE         STATUS        PORTS                  NAMES
 # => def456ghi789   nginx:alpine  Up 5 seconds  0.0.0.0:8080->80/tcp   my-nginx
 
 # Pause running container (freezes all processes)
 docker pause my-nginx
-# => Suspends processes, requests hang, container still exists
+# => Uses cgroup freezer to suspend all processes
+# => Container remains in Running state but frozen
+# => Requests to port 8080 hang (not refused)
+# => Useful for troubleshooting without losing container state
 
 # Unpause container
 docker unpause my-nginx
-# => Resumes processes, returns to Running state
+# => Resumes all frozen processes
+# => Returns to normal Running state
+# => Pending requests complete
 
 # Stop container gracefully (SIGTERM, then SIGKILL after 10s)
 docker stop my-nginx
-# => Sends SIGTERM, waits 10s, then SIGKILL if needed, state becomes Exited
+# => Sends SIGTERM signal to main process (graceful shutdown)
+# => Waits 10 seconds (default timeout)
+# => Sends SIGKILL if process still running after timeout
+# => Container state becomes "Exited"
 
 # Restart stopped container
 docker restart my-nginx
-# => Equivalent to docker stop + docker start
+# => Equivalent to: docker stop my-nginx && docker start my-nginx
+# => Graceful stop followed by start
 
 # Stop container with custom timeout
 docker stop -t 30 my-nginx
-# => Waits 30 seconds before SIGKILL (instead of default 10)
+# => -t 30 sets timeout to 30 seconds instead of default 10
+# => Useful for applications needing longer graceful shutdown
+# => Example: databases flushing writes
 
 # Kill container immediately (SIGKILL, no graceful shutdown)
 docker kill my-nginx
-# => Immediate SIGKILL, use when container doesn't respond
+# => Sends SIGKILL signal immediately (force termination)
+# => No graceful shutdown opportunity
+# => Use when container doesn't respond to docker stop
 
 # Remove stopped container
 docker rm my-nginx
-# => Deletes container, cannot be restarted
+# => Deletes container filesystem and metadata
+# => Container must be stopped first (or use -f flag)
+# => Cannot be restarted after removal
 
 # Remove running container (force)
 docker rm -f my-nginx
-# => Stops (SIGKILL) and removes in one command (use with caution)
+# => -f flag combines docker kill + docker rm
+# => Stops (SIGKILL) and removes in single command
+# => Use with caution (no graceful shutdown)
 ```
 
 **Key Takeaway**: Use `docker stop` for graceful shutdown (allows cleanup), and `docker kill` only when necessary. Always remove stopped containers to free disk space and avoid name conflicts.
@@ -725,58 +907,83 @@ graph TD
 ```bash
 # Run container with single port mapping
 docker run -d --name web1 -p 8080:80 nginx:alpine
-# => Maps host:8080 to container:80 (TCP default), accessible at localhost:8080
+# => -d runs in background (detached mode)
+# => -p 8080:80 maps host port 8080 to container port 80
+# => Format: -p <host-port>:<container-port>
+# => TCP protocol assumed (default)
+# => Accessible at http://localhost:8080
 
 # Run with specific host IP
 docker run -d --name web2 -p 127.0.0.1:8081:80 nginx:alpine
-# => Only accessible from localhost (not external network)
+# => Binds to localhost interface only (not 0.0.0.0)
+# => Format: -p <host-ip>:<host-port>:<container-port>
+# => Not accessible from external network
+# => Security: prevents external access
 
 # Run with random host port
 docker run -d --name web3 -p 80 nginx:alpine
-# => Docker assigns random available host port
+# => Omits host port, Docker assigns random available port
+# => Typical range: 32768-60999 (ephemeral port range)
+# => Useful for avoiding port conflicts
 
 docker port web3
-# => 80/tcp -> 0.0.0.0:32768 (shows assigned random port)
+# => Shows port mapping for container web3
+# => Output: 80/tcp -> 0.0.0.0:32768
+# => Random port 32768 assigned by Docker
 
 # Map multiple ports
 docker run -d --name app \
   -p 8080:80 \
   -p 8443:443 \
   nginx:alpine
-# => HTTP on 8080, HTTPS on 8443
+# => Multiple -p flags map different ports
+# => HTTP traffic on host:8080 → container:80
+# => HTTPS traffic on host:8443 → container:443
 
 # Map UDP port
 docker run -d --name dns-server -p 53:53/udp my-dns-image
-# => Maps UDP port 53 (requires /udp suffix, default is /tcp)
+# => /udp suffix specifies UDP protocol
+# => Without suffix, TCP assumed
+# => DNS uses UDP (and TCP), this maps UDP variant
 
 # Map both TCP and UDP for same port
 docker run -d --name multi-protocol \
   -p 8080:8080/tcp \
   -p 8080:8080/udp \
   my-app
-# => Same port number, different protocols
+# => Same port number (8080) mapped for both protocols
+# => Separate -p flags for each protocol
+# => Common for services using both (like DNS)
 
 # Expose all EXPOSE'd ports with random host ports
 docker run -d --name auto-ports -P nginx:alpine
-# => -P (capital P) publishes all EXPOSE'd ports
-# => Docker assigns random host ports
+# => -P (capital P) auto-publishes all EXPOSE'd ports in Dockerfile
+# => Docker assigns random host ports automatically
+# => Useful for quick testing without specifying ports
 
 docker port auto-ports
-# => 80/tcp -> 0.0.0.0:32769
-# => Shows automatically assigned port
+# => Lists all published ports and their host mappings
+# => Output: 80/tcp -> 0.0.0.0:32769
+# => Shows randomly assigned host port 32769
 
 # Check port mapping for running container
 docker inspect --format='{{range $p, $conf := .NetworkSettings.Ports}}{{$p}} -> {{(index $conf 0).HostPort}}{{println}}{{end}}' web1
-# => 80/tcp -> 8080
+# => Inspects container and extracts port mappings using Go template
+# => Iterates through NetworkSettings.Ports
+# => Output: 80/tcp -> 8080
 
 # Test connection from host
 curl http://localhost:8080
+# => Sends HTTP GET request to mapped port on localhost
+# => Routes through Docker bridge network to container:80
 # => Output: <!DOCTYPE html>... (nginx welcome page)
 
 # View network connections
 netstat -tlnp | grep 8080
-# => tcp6    0    0 :::8080    :::*    LISTEN    1234/docker-proxy
-# => Shows docker-proxy listening on port 8080
+# => Shows listening TCP ports with process info
+# => Output: tcp6    0    0 :::8080    :::*    LISTEN    1234/docker-proxy
+# => docker-proxy process handles port forwarding
+# => Listens on all interfaces (:::8080 for IPv6)
 ```
 
 **Key Takeaway**: Use `-p HOST:CONTAINER` for explicit port mapping and `-P` for automatic mapping. Bind to `127.0.0.1` to restrict access to localhost only. Remember to specify `/udp` for UDP ports.
@@ -805,16 +1012,22 @@ graph TD
 ```bash
 # Create named volume explicitly
 docker volume create my-data
-# => my-data
-# => Creates volume in /var/lib/docker/volumes/
+# => Creates new volume named "my-data"
+# => Output: my-data (volume name confirmation)
+# => Actual data stored in /var/lib/docker/volumes/my-data/_data
+# => Uses "local" driver (stores on host filesystem)
 
 # List volumes
 docker volume ls
+# => Shows all Docker volumes on system
+# => Output format:
 # => DRIVER    VOLUME NAME
 # => local     my-data
 
 # Inspect volume details
 docker volume inspect my-data
+# => Returns JSON metadata about volume
+# => Output:
 # => [
 # =>   {
 # =>     "CreatedAt": "2025-12-29T10:30:00Z",
@@ -830,8 +1043,10 @@ docker run -d --name db \
   -v my-data:/var/lib/postgresql/data \
   -e POSTGRES_PASSWORD=secret \
   postgres:15-alpine
-# => Mounts my-data volume to /var/lib/postgresql/data
-# => Database files persist in volume
+# => -v my-data:/var/lib/postgresql/data mounts named volume
+# => Volume path on left (my-data), container path on right (/var/lib/postgresql/data)
+# => Database files persist in volume (survives container removal)
+# => -e sets PostgreSQL password environment variable
 
 # Write data to database (survives container removal)
 docker exec -it db psql -U postgres -c "CREATE DATABASE testdb;"
@@ -912,7 +1127,11 @@ graph TD
 ```bash
 # Prepare application files on host
 mkdir -p ~/myapp
+# => Creates directory ~/myapp on host filesystem
+# => -p flag creates parent directories if needed (no error if exists)
 cd ~/myapp
+# => Changes current working directory to ~/myapp
+# => All subsequent file operations occur in this directory
 
 cat > server.js << 'EOF'
 const http = require('http');
@@ -929,10 +1148,16 @@ server.listen(3000, () => {
   console.log('Server listening on port 3000');
 });
 EOF
-# => Creates server.js in current directory
+# => Creates server.js file using heredoc (<<'EOF') syntax
+# => File reads message.txt from /app directory in container
+# => Synchronous file read (fs.readFileSync) on each request
+# => Allows hot-reloading when message.txt changes on host
+# => No need to restart server when message.txt updated
 
 echo "Hello from bind mount!" > message.txt
-# => Creates message.txt with initial content
+# => Creates message.txt with initial content "Hello from bind mount!"
+# => This file will be bind-mounted into container at /app/message.txt
+# => Server reads this file on each HTTP request
 
 cat > package.json << 'EOF'
 {
@@ -941,7 +1166,9 @@ cat > package.json << 'EOF'
   "main": "server.js"
 }
 EOF
-# => Creates package.json
+# => Creates minimal package.json for Node.js application
+# => "main" field defines entry point as server.js
+# => No dependencies listed (uses only Node.js built-in modules)
 
 # Run container with bind mount (absolute path required)
 docker run -d --name dev-app \
@@ -950,22 +1177,35 @@ docker run -d --name dev-app \
   -p 3000:3000 \
   node:18-alpine \
   node server.js
-# => Mounts current directory to /app in container
-# => $(pwd) expands to absolute path (required for -v)
-# => -w sets working directory to /app
+# => -v "$(pwd)":/app mounts current host directory to /app in container
+# => $(pwd) command substitution expands to absolute path (e.g., /home/user/myapp)
+# => Bind mounts require absolute paths (relative paths fail)
+# => Host files visible in container at /app/
+# => -w /app sets working directory to /app
+# => -p 3000:3000 maps port for accessing server
+# => node server.js starts application reading mounted files
 
 # Test initial response
 curl http://localhost:3000
+# => Sends HTTP GET request to containerized server on port 3000
+# => Request routed through port mapping to container
+# => Server reads message.txt from bind-mounted directory
 # => Output: Hello from bind mount!
+# => Confirms bind mount working correctly
 
 # Update message.txt on host (WITHOUT restarting container)
 echo "Updated message!" > message.txt
-# => Changes file on host filesystem
+# => Overwrites message.txt on host filesystem with new content
+# => Changes immediately visible inside container (live bind mount)
+# => No container restart needed (unlike COPY in Dockerfile which requires rebuild)
+# => Key advantage of bind mounts for development
 
 # Test updated response (no container restart needed!)
 curl http://localhost:3000
+# => Sends another HTTP GET request
+# => Server reads updated message.txt from bind mount
 # => Output: Updated message!
-# => Container reads updated file immediately
+# => Demonstrates real-time file synchronization between host and container
 
 # Bind mount with read-only access
 docker run -d --name readonly-app \
@@ -974,13 +1214,18 @@ docker run -d --name readonly-app \
   -p 3001:3000 \
   node:18-alpine \
   node server.js
-# => :ro makes bind mount read-only
-# => Container cannot modify host files
+# => :ro suffix makes bind mount read-only (prevents writes)
+# => Container can read files but cannot create, modify, or delete
+# => Protects host filesystem from container modifications
+# => Useful for configuration files or source code
 
 # Try to write from container (fails with read-only mount)
 docker exec readonly-app sh -c 'echo "test" > /app/test.txt'
-# => sh: can't create /app/test.txt: Read-only file system
-# => Write operation denied
+# => docker exec runs command inside running readonly-app container
+# => Attempts to create test.txt inside read-only mounted /app directory
+# => Error output: sh: can't create /app/test.txt: Read-only file system
+# => Write operation denied by read-only mount protection
+# => Container can still write to non-mounted paths (like /tmp)
 
 # Bind mount with specific user permissions
 docker run -d --name owned-app \
@@ -990,12 +1235,20 @@ docker run -d --name owned-app \
   -p 3002:3000 \
   node:18-alpine \
   node server.js
-# => Runs container as current user (not root)
-# => Files created in container have host user ownership
+# => -u $(id -u):$(id -g) runs container as current host user
+# => $(id -u) expands to current user ID (e.g., 1000)
+# => $(id -g) expands to current group ID (e.g., 1000)
+# => Container runs as UID:GID instead of root (UID 0)
+# => Files created in container owned by host user (no permission issues)
+# => Prevents root-owned files appearing on host filesystem
 
 # Clean up
 docker stop dev-app readonly-app owned-app
+# => Stops all three containers gracefully (SIGTERM signal)
+# => Waits for containers to shutdown cleanly
 docker rm dev-app readonly-app owned-app
+# => Removes stopped containers and their metadata
+# => Bind-mounted files remain on host (not deleted with container)
 ```
 
 **Key Takeaway**: Use bind mounts for development workflows requiring live code updates. Always use absolute paths with `-v` flag. Add `:ro` suffix for read-only access. For production, prefer named volumes over bind mounts for better portability and security.
@@ -1197,7 +1450,10 @@ Containers on the same network communicate using container names as hostnames. D
 ```bash
 # Create application network
 docker network create app-network
-# => Network for frontend, backend, database
+# => Creates user-defined bridge network named "app-network"
+# => Enables container-to-container communication via container names
+# => Provides automatic DNS resolution for service discovery
+# => Network for frontend, backend, database communication
 
 # Start PostgreSQL database
 docker run -d --name database \
@@ -1206,37 +1462,54 @@ docker run -d --name database \
   -e POSTGRES_PASSWORD=apppass \
   -e POSTGRES_DB=appdb \
   postgres:15-alpine
-# => Database accessible at hostname "database"
+# => Starts PostgreSQL 15 database container
+# => --network app-network connects to custom network
+# => Container name "database" becomes DNS hostname
+# => Database accessible at hostname "database" from other containers
+# => Environment variables configure PostgreSQL user, password, database
 
 # Start Node.js backend API
 cat > backend.js << 'EOF'
 const express = require('express');
+// => Imports Express framework
 const { Pool } = require('pg');
+// => Imports PostgreSQL client Pool from pg library
 
 const pool = new Pool({
-  host: 'database',              // Container name as hostname
-  user: 'appuser',
-  password: 'apppass',
-  database: 'appdb',
-  port: 5432,
+  // => Creates connection pool for PostgreSQL
+  host: 'database',              // => Container name as hostname (Docker DNS)
+  user: 'appuser',              // => Database username
+  password: 'apppass',          // => Database password
+  database: 'appdb',            // => Database name
+  port: 5432,                   // => PostgreSQL default port
 });
+// => pool manages reusable database connections
 
 const app = express();
+// => Creates Express application instance
 
 app.get('/api/status', async (req, res) => {
+  // => Defines async route handler for GET /api/status
   try {
     const result = await pool.query('SELECT NOW()');
+    // => Executes SQL query to get current database timestamp
+    // => result.rows is array of row objects
     res.json({
       status: 'ok',
       database_time: result.rows[0].now,
+      // => Sends JSON response with database time
     });
   } catch (err) {
+    // => Catches database connection or query errors
     res.status(500).json({ error: err.message });
+    // => Sends HTTP 500 with error message
   }
 });
 
 app.listen(3000, () => {
+  // => Starts server on port 3000
   console.log('Backend API listening on port 3000');
+  // => Output: Backend API listening on port 3000
 });
 EOF
 # => Backend connects to database using "database" hostname
@@ -1248,13 +1521,18 @@ RUN npm install express pg
 COPY backend.js .
 CMD ["node", "backend.js"]
 EOF
-# => Builds backend image
+# => Builds backend image from inline Dockerfile
+# => -f- reads Dockerfile from stdin (heredoc)
+# => Installs express (web framework) and pg (PostgreSQL client)
+# => Tags image as my-backend
 
 docker run -d --name backend \
   --network app-network \
   my-backend
-# => Backend can resolve "database" hostname
-# => Not exposing port yet (internal only)
+# => Starts backend container on app-network
+# => Backend can resolve "database" hostname via Docker DNS
+# => Not exposing port to host (internal communication only)
+# => Frontend will communicate with backend:3000
 
 # Test backend to database connection
 docker exec backend wget -qO- http://localhost:3000/api/status
@@ -1264,13 +1542,21 @@ docker exec backend wget -qO- http://localhost:3000/api/status
 # Start Nginx frontend
 cat > nginx.conf << 'EOF'
 server {
+    # => Nginx server block configuration
     listen 80;
+    # => Listens on port 80 (HTTP)
     location /api/ {
-        proxy_pass http://backend:3000/api/;  # Container name as hostname
+        # => Proxy all requests starting with /api/
+        proxy_pass http://backend:3000/api/;
+        # => Forwards to backend container on port 3000
+        # => Uses container name "backend" (Docker DNS resolves to IP)
     }
     location / {
+        # => Handles all other requests (root path)
         return 200 'Frontend served by Nginx\n';
+        # => Returns HTTP 200 with plain text response
         add_header Content-Type text/plain;
+        # => Sets response content type header
     }
 }
 EOF
@@ -1280,8 +1566,11 @@ docker run -d --name frontend \
   -p 8080:80 \
   -v "$(pwd)/nginx.conf:/etc/nginx/conf.d/default.conf:ro" \
   nginx:alpine
-# => Frontend proxies /api/ requests to backend:3000
-# => Uses container name "backend" in nginx config
+# => Starts Nginx frontend container on app-network
+# => -p 8080:80 exposes frontend to host on port 8080
+# => Bind-mounts custom nginx.conf (read-only)
+# => Frontend proxies /api/ requests to backend:3000 via DNS
+# => Uses container name "backend" in nginx config (Docker resolves to IP)
 
 # Test full stack: frontend -> backend -> database
 curl http://localhost:8080/api/status
@@ -1290,14 +1579,20 @@ curl http://localhost:8080/api/status
 
 # Verify DNS resolution inside containers
 docker exec frontend nslookup backend
+# => Runs nslookup command inside frontend container
+# => Queries Docker's embedded DNS server (127.0.0.11)
+# => Output shows:
 # => Server:    127.0.0.11 (Docker DNS)
 # => Name:      backend
-# => Address:   172.19.0.3
+# => Address:   172.19.0.3 (backend container's IP on app-network)
 
 docker exec backend nslookup database
+# => Queries DNS from backend container perspective
+# => Docker DNS resolves "database" hostname
+# => Output shows:
 # => Server:    127.0.0.11
 # => Name:      database
-# => Address:   172.19.0.2
+# => Address:   172.19.0.2 (database container's IP)
 
 # Check network connectivity between containers
 docker exec frontend ping -c 1 backend
@@ -1331,7 +1626,11 @@ POSTGRES_PASSWORD=mypassword
 POSTGRES_DB=mydb
 POSTGRES_HOST_AUTH_METHOD=scram-sha-256
 EOF
-# => Stores database configuration in file
+# => Creates database.env file with environment variables
+# => Format: KEY=value (one per line)
+# => Stores database configuration separate from command
+# => Easier to manage multiple variables
+# => Can version control without exposing secrets (using .env.example pattern)
 
 cat > app.env << 'EOF'
 NODE_ENV=production
@@ -1339,18 +1638,28 @@ LOG_LEVEL=info
 API_KEY=secret-key-12345
 DATABASE_URL=postgresql://myuser:mypassword@db:5432/mydb
 EOF
-# => Stores application configuration in file
+# => Creates app.env file with application variables
+# => Contains configuration and secrets
+# => DATABASE_URL uses "db" hostname (Docker DNS will resolve)
+# => Keeps sensitive data (API_KEY) out of Dockerfile
 
 # Start database with env file
 docker run -d --name db \
   --env-file database.env \
   --network app-net \
   postgres:15-alpine
-# => Loads all variables from database.env
-# => Equivalent to multiple -e flags
+# => --env-file loads all KEY=value pairs from database.env
+# => Reads file from host filesystem
+# => Sets each variable as environment variable in container
+# => Equivalent to multiple -e POSTGRES_USER=myuser -e POSTGRES_PASSWORD=... flags
+# => Cleaner syntax for managing many variables
 
 # Verify environment variables loaded
 docker exec db printenv | grep POSTGRES
+# => docker exec runs command inside db container
+# => printenv lists all environment variables
+# => grep POSTGRES filters to show only POSTGRES* variables
+# => Output confirms variables from database.env loaded correctly:
 # => POSTGRES_USER=myuser
 # => POSTGRES_PASSWORD=mypassword
 # => POSTGRES_DB=mydb
@@ -1362,7 +1671,10 @@ docker run -d --name app \
   --network app-net \
   -p 3000:3000 \
   my-app-image
-# => Loads all variables from app.env
+# => Loads all variables from app.env into container environment
+# => Application reads NODE_ENV, LOG_LEVEL, API_KEY, DATABASE_URL via process.env
+# => Connects to database using DATABASE_URL (uses "db" hostname)
+# => Exposes application on host port 3000
 
 # Override specific variables while using env file
 docker run -d --name app-dev \
@@ -1372,16 +1684,21 @@ docker run -d --name app-dev \
   --network app-net \
   -p 3001:3000 \
   my-app-image
-# => Loads app.env, then overrides NODE_ENV and LOG_LEVEL
+# => First loads app.env (production config)
+# => Then -e NODE_ENV=development overrides NODE_ENV value
+# => Then -e LOG_LEVEL=debug overrides LOG_LEVEL value
 # => -e flag takes precedence over --env-file
+# => Pattern: base config in file, environment-specific overrides via -e
 
 # Use multiple env files
 docker run -d --name app-multi \
   --env-file common.env \
   --env-file production.env \
   my-app-image
-# => Loads variables from both files
+# => Multiple --env-file flags load variables from each file
+# => Files processed in order: common.env first, then production.env
 # => Later files override earlier ones if keys conflict
+# => Pattern: common.env (shared), production.env (environment-specific)
 
 # Template env file for documentation
 cat > .env.example << 'EOF'
@@ -1399,8 +1716,12 @@ API_KEY=your-api-key-here
 ENABLE_CACHE=true
 ENABLE_METRICS=false
 EOF
-# => Template for developers (commit to version control)
+# => Creates .env.example as documentation template
+# => Shows required variables with placeholder values
+# => Commit .env.example to version control (safe to share)
+# => Developers copy to .env and fill real values
 # => Actual .env file (with secrets) goes in .gitignore
+# => Prevents accidentally committing sensitive data
 
 # Create .gitignore to prevent committing secrets
 cat > .gitignore << 'EOF'
@@ -1434,81 +1755,123 @@ Docker Compose defines multi-container applications in YAML files. It simplifies
 
 version: "3.8"
 # => Compose file format version (3.8 is widely compatible)
+# => Specifies feature set available in this compose file
 
 services:
   # Database service
   db:
+    # => Service name "db" becomes DNS hostname for other services
     image: postgres:15-alpine
-    # => Uses official PostgreSQL 15 image
+    # => Uses official PostgreSQL 15 image from Docker Hub
+    # => alpine variant for smaller size (~80MB vs ~300MB)
     container_name: my-postgres
-    # => Custom container name (default: project_db_1)
+    # => Custom container name instead of generated name
+    # => Default would be: <project>_db_1
+    # => Enables predictable container naming
     environment:
+      # => Environment variables section
       POSTGRES_USER: appuser
+      # => PostgreSQL username (appuser)
       POSTGRES_PASSWORD: apppass
+      # => PostgreSQL password (apppass)
       POSTGRES_DB: appdb
-      # => Environment variables passed to container
+      # => Initial database name (appdb)
+      # => All three variables configure PostgreSQL on first start
     volumes:
       - db-data:/var/lib/postgresql/data
-      # => Named volume for database persistence
+      # => Mounts named volume "db-data" to PostgreSQL data directory
+      # => Data persists across container restarts and removals
+      # => Volume defined in volumes section below
     networks:
       - backend
-      # => Connects to backend network
+      # => Connects db service to backend network
+      # => Isolates database from frontend network
     restart: unless-stopped
-    # => Restart policy: always restart unless explicitly stopped
+    # => Restart policy: always restart unless explicitly stopped by user
+    # => Options: no, always, on-failure, unless-stopped
 
   # Backend API service
   api:
+    # => Service name "api" becomes DNS hostname
     build:
+      # => Build configuration instead of using pre-built image
       context: ./api
+      # => Build context directory (where source files are)
       dockerfile: Dockerfile
-      # => Builds image from ./api/Dockerfile
+      # => Dockerfile path relative to context (./api/Dockerfile)
+      # => Compose builds image automatically on first up/build command
     container_name: my-api
+    # => Custom container name: my-api
     environment:
+      # => Environment variables for API configuration
       DATABASE_URL: postgresql://appuser:apppass@db:5432/appdb
-      # => Database connection using service name "db"
+      # => Connection string uses "db" hostname (DNS resolves to db service IP)
+      # => Format: postgresql://user:pass@host:port/database
     depends_on:
       - db
-      # => Ensures db starts before api
-      # => NOTE: Does NOT wait for db to be ready, only started
+      # => Ensures db service starts before api service
+      # => NOTE: Only checks container started, NOT that PostgreSQL ready
+      # => Application should implement retry logic for db connection
     networks:
       - backend
+      # => Connects to backend network (can access db service)
       - frontend
-      # => Connects to both networks for db and web communication
+      # => Also connects to frontend network (can be accessed by web service)
+      # => Bridges between frontend and backend layers
     restart: unless-stopped
+    # => Restart policy matches db service
 
   # Web frontend service
   web:
+    # => Service name "web" for frontend
     image: nginx:alpine
-    # => Uses official Nginx alpine image
+    # => Uses official Nginx alpine image (pre-built, no build needed)
+    # => Nginx serves static files and proxies API requests
     container_name: my-web
+    # => Custom container name: my-web
     ports:
       - "8080:80"
-      # => Maps host port 8080 to container port 80
+      # => Publishes host port 8080 to container port 80
+      # => Format: "host:container" or "host:container/protocol"
+      # => Accessible from outside Docker at http://localhost:8080
     volumes:
       - ./web/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      # => Mounts nginx config as read-only
+      # => Bind-mounts custom nginx configuration file
+      # => :ro suffix makes mount read-only
       - ./web/html:/usr/share/nginx/html:ro
-      # => Mounts static files as read-only
+      # => Bind-mounts static HTML/CSS/JS files
+      # => Read-only prevents container from modifying source files
     depends_on:
       - api
-      # => Ensures api starts before web
+      # => Ensures api service starts before web service
+      # => Web service likely proxies requests to api service
     networks:
       - frontend
-      # => Connects only to frontend network (no direct db access)
+      # => Connects only to frontend network
+      # => Cannot directly access db service (network isolation)
+      # => Must go through api service for database operations
     restart: unless-stopped
+    # => Consistent restart policy across all services
 
 networks:
+  # => Networks section defines custom networks
   frontend:
+    # => Frontend network for public-facing services
     driver: bridge
-    # => Custom bridge network for frontend services
+    # => Bridge driver creates isolated network
+    # => Services can communicate via service names (DNS)
   backend:
+    # => Backend network for internal services
     driver: bridge
-    # => Custom bridge network for backend services
-    # => Separates frontend and backend layers
+    # => Isolates backend services from frontend
+    # => Only api service bridges both networks
 
 volumes:
+  # => Volumes section defines named volumes
   db-data:
-    # => Named volume managed by Docker
+    # => Named volume "db-data" for PostgreSQL persistence
+    # => Docker manages volume lifecycle
+    # => Data survives docker-compose down (unless -v flag used)
     # => Persists database data across container recreations
 ```
 
@@ -1593,45 +1956,68 @@ Docker Compose can build custom images from Dockerfiles during `docker compose u
 # File: docker-compose.yml
 
 version: "3.8"
+# => Compose file format version
 
 services:
   app:
+    # => Production service configuration
     build:
+      # => Build configuration section
       context: .
-      # => Build context is current directory
-      # => All files in this directory available to COPY/ADD
+      # => Build context is current directory (where docker-compose.yml is)
+      # => All files in this directory available to COPY/ADD in Dockerfile
+      # => .dockerignore filters what's sent to build context
       dockerfile: Dockerfile.prod
-      # => Uses Dockerfile.prod instead of default Dockerfile
+      # => Uses Dockerfile.prod instead of default "Dockerfile"
+      # => Allows multiple Dockerfiles for different environments
       args:
+        # => Build arguments section (ARG in Dockerfile)
         - NODE_VERSION=18
+        # => Passes NODE_VERSION=18 to Dockerfile ARG
         - BUILD_DATE=2025-12-29
-        # => Build arguments passed to Dockerfile
+        # => Passes BUILD_DATE to Dockerfile
+        # => Args only available during build, not at runtime
       target: production
-      # => Builds only up to "production" stage (multi-stage builds)
+      # => Builds only up to "production" stage in multi-stage Dockerfile
+      # => Skips development/test stages
     image: my-app:latest
     # => Tags built image as my-app:latest
+    # => Stores image for reuse (docker-compose up won't rebuild unless changed)
     ports:
       - "3000:3000"
+      # => Maps host:3000 to container:3000
     environment:
+      # => Runtime environment variables
       NODE_ENV: production
+      # => Sets NODE_ENV for running application
 
   dev-app:
+    # => Development service configuration
     build:
       context: .
+      # => Same build context as production
       dockerfile: Dockerfile.prod
+      # => Same Dockerfile but different target
       args:
         NODE_VERSION: 18
+        # => Same Node version for consistency
       target: development
       # => Builds development stage from same Dockerfile
+      # => May include dev dependencies, debugging tools
     image: my-app:dev
-    # => Different image tag for development
+    # => Different image tag for development variant
+    # => Prevents overwriting production image
     volumes:
       - .:/app
-      # => Bind mount for live code reloading
+      # => Bind mount current directory to /app
+      # => Enables live code reloading without rebuilding
+      # => Changes on host immediately visible in container
     ports:
       - "3001:3000"
+      # => Different host port (3001) to run alongside production
     environment:
       NODE_ENV: development
+      # => Sets development mode for application
 ```
 
 ```dockerfile
@@ -1733,40 +2119,61 @@ Docker Compose supports multiple ways to pass environment variables: inline in c
 # File: docker-compose.yml
 
 version: "3.8"
+# => Compose file format version
 
 services:
   app:
+    # => Application service definition
     image: my-app:latest
+    # => Uses pre-built image
     environment:
+      # => Environment variables section
       # Method 1: Inline key-value pairs
       NODE_ENV: production
+      # => Hard-coded value: production
       LOG_LEVEL: info
+      # => Hard-coded value: info
       # Method 2: Value from .env file or host environment
       DATABASE_URL:
-      # => If no value specified, reads from .env or host
+      # => Empty value means read from .env file or host environment
+      # => Compose looks for DATABASE_URL in .env, .env.local, or shell
       # Method 3: Default value with substitution
       API_TIMEOUT: ${API_TIMEOUT:-5000}
-      # => Uses API_TIMEOUT from .env, or defaults to 5000
+      # => ${VAR:-default} syntax: uses VAR if set, otherwise 5000
+      # => Reads API_TIMEOUT from environment, defaults to 5000
       PORT: ${PORT:-3000}
-      # => Uses PORT from .env, or defaults to 3000
+      # => Reads PORT from environment, defaults to 3000
+      # => Allows environment-specific port configuration
     env_file:
+      # => Load variables from external files
       - .env
+      # => Loads .env first (base configuration)
       - .env.local
-      # => Loads variables from files (later files override earlier)
+      # => Loads .env.local second (overrides .env)
+      # => Later files override earlier files for same keys
     ports:
       - "${PORT:-3000}:3000"
       # => Port mapping uses variable substitution
+      # => Host port from $PORT or 3000, container port 3000
+      # => Enables dynamic port assignment
 
   db:
+    # => Database service definition
     image: postgres:15-alpine
+    # => PostgreSQL 15 Alpine image
     environment:
+      # => Database environment variables
       POSTGRES_USER: ${DB_USER}
+      # => Required: reads DB_USER from environment
+      # => No default, will fail if DB_USER not set
       POSTGRES_PASSWORD: ${DB_PASSWORD}
+      # => Required: reads DB_PASSWORD from environment
       POSTGRES_DB: ${DB_NAME:-myapp}
-      # => Required variables (fail if not set)
+      # => Reads DB_NAME from environment, defaults to "myapp"
     env_file:
       - database.env
-      # => Additional database-specific variables
+      # => Additional database-specific variables from file
+      # => Can contain connection pool settings, timeouts, etc.
 ```
 
 ```bash

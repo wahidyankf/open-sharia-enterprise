@@ -49,33 +49,51 @@ project/
 
 ```hcl
 variable "bucket_prefix" {
+# => Input variable
   description = "Prefix for bucket name"
+  # => Sets description
   type        = string
+  # => Sets type
 }
 
 variable "environment" {
+# => Input variable
   description = "Environment name"
+  # => Sets description
   type        = string
+  # => Sets type
 }
 
 variable "tags" {
+# => Input variable
   description = "Resource tags"
+  # => Sets description
   type        = map(string)
+  # => Sets type
   default     = {}
+  # => Sets default
 }
+
+
+
 ```
 
 **Module code** - `modules/storage/main.tf`:
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 # Module creates local file (simulating cloud storage)
 resource "local_file" "bucket" {
+# => Resource definition
   filename = "${var.bucket_prefix}-${var.environment}-bucket.txt"
+  # => Sets filename
   content  = <<-EOT
+  # => Sets content
     Bucket: ${var.bucket_prefix}-${var.environment}
     Environment: ${var.environment}
     Tags: ${jsonencode(var.tags)}
@@ -84,82 +102,126 @@ resource "local_file" "bucket" {
 }
 
 resource "local_file" "bucket_policy" {
+# => Resource definition
   filename = "${var.bucket_prefix}-${var.environment}-policy.txt"
+  # => Sets filename
   content  = "Bucket policy for ${local_file.bucket.filename}"
+  # => Sets content
 }
+
+
+
 ```
 
 **Module code** - `modules/storage/outputs.tf`:
 
 ```hcl
 output "bucket_name" {
+# => Output value
   description = "Name of the bucket"
+  # => Sets description
   value       = local_file.bucket.filename
+  # => Sets value
 }
 
 output "bucket_id" {
+# => Output value
   description = "ID of the bucket"
+  # => Sets description
   value       = local_file.bucket.id
+  # => Sets value
 }
 
 output "policy_name" {
+# => Output value
   description = "Name of the policy file"
+  # => Sets description
   value       = local_file.bucket_policy.filename
+  # => Sets value
 }
+
+
+
 ```
 
 **Root configuration** - `main.tf`:
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 # Call module with inputs
 module "dev_storage" {
+# => Module configuration
   source = "./modules/storage"             # => Relative path to module
+  # => Sets source
 
   bucket_prefix = "myapp"                  # => Pass to var.bucket_prefix
+  # => Sets bucket_prefix
   environment   = "development"            # => Pass to var.environment
+  # => Sets environment
 
   tags = {
     Team      = "platform"
+    # => Sets Team
     ManagedBy = "Terraform"
+    # => Sets ManagedBy
   }
   # => Module inputs passed as arguments
 }
 
 # Call same module with different inputs
 module "prod_storage" {
+# => Module configuration
   source = "./modules/storage"
+  # => Sets source
 
   bucket_prefix = "myapp"
+  # => Sets bucket_prefix
   environment   = "production"
+  # => Sets environment
 
   tags = {
     Team      = "platform"
+    # => Sets Team
     ManagedBy = "Terraform"
+    # => Sets ManagedBy
     Critical  = "true"
+    # => Sets Critical
   }
 }
 
 # Use module outputs
 output "dev_bucket" {
+# => Output value
   value = module.dev_storage.bucket_name   # => Reference module output
+  # => Sets value
 }
 
 output "prod_bucket" {
+# => Output value
   value = module.prod_storage.bucket_name
+  # => Sets value
 }
 
 output "all_buckets" {
+# => Output value
   value = {
     dev  = module.dev_storage.bucket_name
+    # => Sets dev
     prod = module.prod_storage.bucket_name
+    # => Sets prod
   }
 }
+
+
+
 ```
 
 **Usage**:
@@ -196,49 +258,68 @@ Modules can be sourced from Git repositories with version pinning using tags, br
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 # Module from Git tag (recommended for production)
 module "storage_v1" {
+# => Module configuration
   source = "git::https://github.com/example/terraform-modules.git//storage?ref=v1.2.3"
   # => source uses Git URL with subdirectory (//storage) and tag (ref=v1.2.3)
   # => terraform init clones repository and checks out v1.2.3 tag
   # => Changes to module repository don't affect this configuration until ref updated
 
   bucket_prefix = "app-v1"
+  # => Sets bucket_prefix
   environment   = "production"
+  # => Sets environment
 }
 
 # Module from Git branch (for testing new features)
 module "storage_dev" {
+# => Module configuration
   source = "git::https://github.com/example/terraform-modules.git//storage?ref=feature/new-policy"
   # => ref=feature/new-policy tracks branch (updates with branch changes)
   # => terraform get -update pulls latest branch commits
 
   bucket_prefix = "app-dev"
+  # => Sets bucket_prefix
   environment   = "development"
+  # => Sets environment
 }
 
 # Module from commit SHA (immutable reference)
 module "storage_stable" {
+# => Module configuration
   source = "git::https://github.com/example/terraform-modules.git//storage?ref=abc123def456"
   # => ref=abc123def456 uses exact commit (fully immutable)
   # => Guarantees exact module code, even if tags are moved
 
   bucket_prefix = "app-stable"
+  # => Sets bucket_prefix
   environment   = "staging"
+  # => Sets environment
 }
 
 output "module_sources" {
+# => Output value
   value = {
     v1     = "Tag v1.2.3 (production-safe)"
+    # => Sets v1
     dev    = "Branch feature/new-policy (tracking latest)"
+    # => Sets dev
     stable = "Commit abc123def456 (immutable)"
+    # => Sets stable
   }
 }
+
+
+
 ```
 
 **Key Takeaway**: Use Git tags (`ref=v1.2.3`) for production modules to control updates explicitly. Branches track latest changes for development environments. Commit SHAs provide immutable references for critical stability. Always version modules to prevent unexpected changes.
@@ -254,8 +335,11 @@ Module variables can include validation rules to catch configuration errors at p
 ```hcl
 # modules/validated-storage/variables.tf
 variable "environment" {
+# => Input variable
   description = "Environment name"
+  # => Sets description
   type        = string
+  # => Sets type
 
   validation {
     condition     = contains(["dev", "staging", "prod"], var.environment)
@@ -267,57 +351,79 @@ variable "environment" {
 }
 
 variable "bucket_name" {
+# => Input variable
   description = "S3 bucket name"
+  # => Sets description
   type        = string
+  # => Sets type
 
   validation {
     condition     = can(regex("^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$", var.bucket_name))
     # => can() returns true if regex succeeds, false if it errors
     # => regex validates DNS-compliant bucket names (3-63 chars, lowercase)
     error_message = "Bucket name must be 3-63 characters, lowercase letters, numbers, hyphens."
+    # => Sets error_message
   }
 
   validation {
     condition     = !can(regex("^xn--", var.bucket_name))
     # => Second validation ensures name doesn't start with xn-- (reserved prefix)
     error_message = "Bucket name cannot start with xn-- (reserved for Punycode)."
+    # => Sets error_message
   }
 }
 
 variable "retention_days" {
+# => Input variable
   description = "Data retention in days"
+  # => Sets description
   type        = number
+  # => Sets type
 
   validation {
     condition     = var.retention_days >= 1 && var.retention_days <= 365
     # => Numeric range validation
     error_message = "Retention must be between 1 and 365 days."
+    # => Sets error_message
   }
 }
 
 # modules/validated-storage/main.tf
 resource "local_file" "bucket" {
+# => Resource definition
   filename = "${var.bucket_name}-${var.environment}.txt"
   # => All variables validated before this resource executes
   content  = "Retention: ${var.retention_days} days"
+  # => Sets content
 }
+
+
+
+
 ```
 
 **Root configuration**:
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 module "storage" {
   source = "./modules/validated-storage"
+  # => Sets source
 
   environment     = "prod"          # => Valid: in allowed list
+  # => Sets environment
   bucket_name     = "my-app-data"   # => Valid: matches regex
+  # => Sets bucket_name
   retention_days  = 90              # => Valid: within range
+  # => Sets retention_days
 }
 
 # This would fail validation at plan time:
@@ -327,6 +433,8 @@ module "storage" {
 #   bucket_name     = "MyBucket"    # => Error: uppercase not allowed
 #   retention_days  = 400           # => Error: exceeds 365 day maximum
 # }
+
+
 ```
 
 **Key Takeaway**: Module validation rules enforce constraints at `terraform plan` time using `validation` blocks with `condition` and `error_message`. Use `can()` for regex validation and `contains()` for allowlist checks. Validation prevents invalid configurations from reaching `apply` phase.
@@ -357,48 +465,70 @@ graph TD
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 # Layer 1: Network module (no dependencies)
 module "network" {
+# => Module configuration
   source = "./modules/network"
+  # => Sets source
 
   vpc_name = "main-vpc"
+  # => Sets vpc_name
   cidr     = "10.0.0.0/16"
+  # => Sets cidr
 }
 
 # Layer 2: Compute module (depends on network outputs)
 module "compute" {
+# => Module configuration
   source = "./modules/compute"
+  # => Sets source
 
   vpc_id    = module.network.vpc_id        # => Implicit dependency via output reference
+  # => Sets vpc_id
   subnet_id = module.network.subnet_id     # => Terraform creates network before compute
+  # => Sets subnet_id
 
   instance_count = 3
+  # => Sets instance_count
 }
 
 # Layer 2: Database module (parallel to compute, depends on network)
 module "database" {
+# => Data source
   source = "./modules/database"
+  # => Sets source
 
   vpc_id    = module.network.vpc_id
+  # => Sets vpc_id
   subnet_id = module.network.private_subnet_id
+  # => Sets subnet_id
 
   db_name = "appdb"
+  # => Sets db_name
 }
 
 # Layer 3: Monitoring module (depends on compute and database)
 module "monitoring" {
+# => Module configuration
   source = "./modules/monitoring"
+  # => Sets source
 
   compute_endpoints  = module.compute.instance_ips    # => Depends on compute
+  # => Sets compute_endpoints
   database_endpoint  = module.database.connection_url # => Depends on database
+  # => Sets database_endpoint
 
   # Explicit dependency when outputs don't capture relationship
   depends_on = [
+  # => Sets depends_on
     module.compute,
     module.database,
   ]
@@ -408,23 +538,32 @@ module "monitoring" {
 
 # Cross-layer outputs
 output "infrastructure_map" {
+# => Output value
   value = {
     network = {
       vpc_id    = module.network.vpc_id
+      # => Sets vpc_id
       subnet_id = module.network.subnet_id
+      # => Sets subnet_id
     }
     compute = {
       instance_ips = module.compute.instance_ips
+      # => Sets instance_ips
     }
     database = {
       url = module.database.connection_url
+      # => Sets url
     }
     monitoring = {
       dashboard_url = module.monitoring.dashboard_url
+      # => Sets dashboard_url
     }
   }
   # => Single output capturing entire infrastructure state
 }
+
+
+
 ```
 
 **Key Takeaway**: Module dependencies are implicit through output references (Terraform detects `module.network.vpc_id` usage) or explicit with `depends_on` meta-argument. Layer infrastructure with independent modules at bottom (network) and dependent modules above (compute, database, monitoring). Explicit `depends_on` ensures ordering when outputs don't capture relationships.
@@ -439,62 +578,86 @@ Modules support `count` and `for_each` meta-arguments to create multiple instanc
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 # Module with count (indexed instances)
 module "regional_storage_count" {
+# => Module configuration
   source = "./modules/storage"
+  # => Sets source
   count  = 3                               # => Create 3 module instances
   # => count creates module.regional_storage_count[0], [1], [2]
 
   bucket_prefix = "region-${count.index}"  # => count.index is 0, 1, 2
   # => Produces: region-0, region-1, region-2
   environment   = "production"
+  # => Sets environment
 }
 
 # Module with for_each (named instances)
 module "regional_storage_map" {
+# => Module configuration
   source = "./modules/storage"
+  # => Sets source
 
   for_each = {
     us-east = { location = "us-east-1", tier = "standard" }
+    # => Sets us-east
     eu-west = { location = "eu-west-1", tier = "premium" }
+    # => Sets eu-west
     ap-south = { location = "ap-south-1", tier = "standard" }
+    # => Sets ap-south
   }
   # => for_each creates module.regional_storage_map["us-east"], ["eu-west"], ["ap-south"]
   # => each.key is "us-east", "eu-west", "ap-south"
   # => each.value is the map value
 
   bucket_prefix = "app-${each.key}"        # => each.key references map key
+  # => Sets bucket_prefix
   environment   = each.value.tier          # => each.value.tier references nested attribute
+  # => Sets environment
 
   tags = {
     Location = each.value.location
+    # => Sets Location
     Tier     = each.value.tier
+    # => Sets Tier
   }
 }
 
 # for_each with set (unique region names)
 variable "regions" {
+# => Input variable
   type    = set(string)
+  # => Sets type
   default = ["us-west-2", "eu-central-1", "ap-northeast-1"]
+  # => Sets default
 }
 
 module "regional_storage_set" {
+# => Module configuration
   source   = "./modules/storage"
+  # => Sets source
   for_each = var.regions                   # => for_each works with sets
   # => Creates module.regional_storage_set["us-west-2"], ["eu-central-1"], ["ap-northeast-1"]
 
   bucket_prefix = "backup-${each.key}"     # => each.key is set element
+  # => Sets bucket_prefix
   environment   = "production"
+  # => Sets environment
 }
 
 # Accessing module outputs with count
 output "count_bucket_names" {
+# => Output value
   value = [
+  # => Sets value
     for i in range(3) : module.regional_storage_count[i].bucket_name
   ]
   # => Output: ["region-0-production-bucket.txt", "region-1-...", "region-2-..."]
@@ -502,11 +665,16 @@ output "count_bucket_names" {
 
 # Accessing module outputs with for_each
 output "map_bucket_names" {
+# => Output value
   value = {
     for k, m in module.regional_storage_map : k => m.bucket_name
+    # => Sets for k, m in module.regional_storage_map : k
   }
   # => Output: {us-east = "app-us-east-premium-bucket.txt", eu-west = ..., ap-south = ...}
 }
+
+
+
 ```
 
 **Key Takeaway**: Use `count` for indexed module instances when order matters or quantity is dynamic. Use `for_each` with maps or sets for named instances with different configurations per region/environment. Access count outputs with `module.name[index]` and for_each outputs with `module.name[key]`. for_each is preferred for production (stable references).
@@ -521,22 +689,30 @@ Public and private Terraform Registry modules enable sharing reusable infrastruc
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 
   required_providers {
+  # => Provider configuration
     aws = {
       source  = "hashicorp/aws"
+      # => Sets source
       version = "~> 5.0"
+      # => Sets version
     }
   }
 }
 
 provider "aws" {
+# => Provider configuration
   region = "us-west-2"
+  # => Sets region
 }
 
 # Public registry module (Terraform Registry: registry.terraform.io)
 module "vpc_public" {
+# => Module configuration
   source  = "terraform-aws-modules/vpc/aws"
   # => source format: NAMESPACE/NAME/PROVIDER
   # => Resolves to: registry.terraform.io/terraform-aws-modules/vpc/aws
@@ -545,24 +721,34 @@ module "vpc_public" {
   # => terraform init downloads version 5.1.0 from registry
 
   name = "production-vpc"
+  # => Sets name
   cidr = "10.0.0.0/16"
+  # => Sets cidr
 
   azs             = ["us-west-2a", "us-west-2b", "us-west-2c"]
+  # => Sets azs
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+  # => Sets private_subnets
   public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
+  # => Sets public_subnets
 
   enable_nat_gateway = true
+  # => Sets enable_nat_gateway
   enable_vpn_gateway = false
+  # => Sets enable_vpn_gateway
 
   tags = {
     Environment = "production"
+    # => Sets Environment
     ManagedBy   = "Terraform"
+    # => Sets ManagedBy
   }
   # => Module inputs documented in registry UI
 }
 
 # Private registry module (Terraform Cloud/Enterprise)
 module "internal_app" {
+# => Module configuration
   source  = "app.terraform.io/my-org/app-module/aws"
   # => Private registry requires organization prefix (app.terraform.io/my-org)
   # => Authenticated via TF_TOKEN_app_terraform_io environment variable
@@ -570,23 +756,32 @@ module "internal_app" {
   # => ~> 2.1 allows 2.1.x (patch updates), blocks 2.2.0 (minor updates)
 
   app_name    = "payment-service"
+  # => Sets app_name
   environment = "production"
+  # => Sets environment
 }
 
 # Version constraints
 module "versioned_example" {
+# => Module configuration
   source  = "terraform-aws-modules/s3-bucket/aws"
+  # => Sets source
   version = ">= 3.0, < 4.0"
   # => Allows any 3.x version, blocks 4.0 (major version upgrade)
   # => Multiple constraints combined with commas
 
   bucket = "my-versioned-bucket"
+  # => Sets bucket
 }
 
 output "vpc_id" {
+# => Output value
   value = module.vpc_public.vpc_id
   # => Public module outputs documented in registry
 }
+
+
+
 ```
 
 **Key Takeaway**: Public registry modules use `NAMESPACE/NAME/PROVIDER` format and resolve to `registry.terraform.io`. Private registry modules require organization prefix (`app.terraform.io/ORG`). Always specify `version` constraint to control updates. Use semantic versioning: `~> 1.2` (allow patch), `>= 1.0, < 2.0` (allow minor).
@@ -602,29 +797,38 @@ Modules don't have to create resources—data-only modules encapsulate complex d
 ```hcl
 # modules/data-lookup/variables.tf
 variable "environment" {
+# => Input variable
   type = string
+  # => Sets type
 }
 
 variable "region" {
+# => Input variable
   type = string
+  # => Sets type
 }
 
 # modules/data-lookup/main.tf
 # Data-only module performs lookups without creating resources
 data "local_file" "config" {
+# => Data source
   filename = "${path.module}/configs/${var.environment}-${var.region}.json"
   # => path.module refers to module directory (not root)
 }
 
 locals {
+# => Local values
   # Parse JSON configuration
   config = jsondecode(data.local_file.config.content)
+  # => Sets config
 
   # Compute derived values
   subnet_count = length(local.config.availability_zones)
+  # => Sets subnet_count
 
   # Complex transformations
   subnet_cidrs = [
+  # => Sets subnet_cidrs
     for i, az in local.config.availability_zones :
     cidrsubnet(local.config.vpc_cidr, 8, i)
   ]
@@ -632,56 +836,84 @@ locals {
 
 # modules/data-lookup/outputs.tf
 output "vpc_cidr" {
+# => Output value
   value = local.config.vpc_cidr
+  # => Sets value
 }
 
 output "availability_zones" {
+# => Output value
   value = local.config.availability_zones
+  # => Sets value
 }
 
 output "subnet_cidrs" {
+# => Output value
   value = local.subnet_cidrs
   # => Computed subnet CIDRs (not in source config)
 }
 
 output "instance_type" {
+# => Output value
   value = local.config.compute.instance_type
+  # => Sets value
 }
+
+
+
 ```
 
 **Root configuration**:
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 # Data-only module call (no resources created)
 module "prod_config" {
+# => Module configuration
   source = "./modules/data-lookup"
+  # => Sets source
 
   environment = "production"
+  # => Sets environment
   region      = "us-west-2"
+  # => Sets region
 }
 
 # Use module outputs to configure resources
 resource "local_file" "deployment_manifest" {
+# => Resource definition
   filename = "deployment.txt"
+  # => Sets filename
   content  = <<-EOT
+  # => Sets content
     VPC CIDR: ${module.prod_config.vpc_cidr}
+    # => Module configuration
     AZs: ${jsonencode(module.prod_config.availability_zones)}
+    # => Module configuration
     Subnets: ${jsonencode(module.prod_config.subnet_cidrs)}
+    # => Module configuration
     Instance Type: ${module.prod_config.instance_type}
+    # => Module configuration
   EOT
   # => All values from data-only module
 }
 
 output "computed_subnets" {
+# => Output value
   value = module.prod_config.subnet_cidrs
   # => Reusable subnet calculation from module
 }
+
+
+
 ```
 
 **Key Takeaway**: Data-only modules use `data` sources and `locals` without `resource` blocks. They encapsulate complex lookups, JSON/YAML parsing, and computed values. Useful for centralizing environment-specific configurations or multi-step data transformations that are reused across multiple root configurations.
@@ -805,12 +1037,17 @@ graph TD
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 
   required_providers {
+  # => Provider configuration
     aws = {
       source  = "hashicorp/aws"
+      # => Sets source
       version = "~> 5.0"
+      # => Sets version
     }
   }
 
@@ -835,10 +1072,13 @@ terraform {
 }
 
 provider "aws" {
+# => Provider configuration
   region = "us-west-2"
+  # => Sets region
 }
 
 resource "aws_s3_bucket" "example" {
+# => Resource definition
   bucket = "my-app-bucket"
   # => Resource managed via S3 backend state
 }
@@ -850,6 +1090,7 @@ resource "aws_s3_bucket" "example" {
 # 4. Writes updated state to S3
 # 5. Releases lock in DynamoDB
 # => If another user runs terraform apply, they wait for lock or fail
+
 ```
 
 **Backend initialization**:
@@ -916,20 +1157,28 @@ graph TD
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 
   required_providers {
+  # => Provider configuration
     aws = {
       source  = "hashicorp/aws"
+      # => Sets source
       version = "~> 5.0"
+      # => Sets version
     }
   }
 
   backend "s3" {
     # Static config in HCL
     region         = "us-west-2"
+    # => Sets region
     encrypt        = true
+    # => Sets encrypt
     dynamodb_table = "terraform-state-locks"
+    # => Sets dynamodb_table
 
     # bucket and key left unspecified (provided at init time)
     # => Enables reusing same configuration across environments
@@ -937,12 +1186,19 @@ terraform {
 }
 
 provider "aws" {
+# => Provider configuration
   region = "us-west-2"
+  # => Sets region
 }
 
 resource "aws_s3_bucket" "app" {
+# => Resource definition
   bucket = "my-application-bucket"
+  # => Sets bucket
 }
+
+
+
 ```
 
 **Backend configuration file** - `backend-prod.hcl`:
@@ -958,8 +1214,10 @@ key    = "production/app/terraform.tfstate"
 
 ```hcl
 bucket = "mycompany-terraform-state"
+# => Sets bucket
 key    = "staging/app/terraform.tfstate"
 # => Same bucket, different key (staging vs production)
+
 ```
 
 **Backend initialization with partial config**:
@@ -1017,81 +1275,114 @@ graph TD
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 
   backend "s3" {
     bucket = "mycompany-terraform-state"
+    # => Sets bucket
     key    = "network/terraform.tfstate"
+    # => Sets key
     region = "us-west-2"
+    # => Sets region
   }
 }
 
 provider "local" {}
+# => Provider configuration
 
 # Network resources (simulated with local files)
 resource "local_file" "vpc" {
+# => Resource definition
   filename = "vpc-config.txt"
+  # => Sets filename
   content  = "VPC ID: vpc-12345"
+  # => Sets content
 }
 
 # Outputs made available to other stacks
 output "vpc_id" {
+# => Output value
   value       = "vpc-12345"
+  # => Sets value
   description = "VPC identifier"
   # => Output stored in state file
   # => Readable by terraform_remote_state
 }
 
 output "subnet_ids" {
+# => Output value
   value = ["subnet-a", "subnet-b", "subnet-c"]
+  # => Sets value
 }
+
+
+
 ```
 
 **Application stack** - `application/main.tf`:
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 
   backend "s3" {
     bucket = "mycompany-terraform-state"
+    # => Sets bucket
     key    = "application/terraform.tfstate"
     # => Different state file than network stack
     region = "us-west-2"
+    # => Sets region
   }
 }
 
 provider "local" {}
+# => Provider configuration
 
 # Read outputs from network stack
 data "terraform_remote_state" "network" {
+# => Terraform configuration block
   backend = "s3"
   # => Backend type must match network stack backend
 
   config = {
     bucket = "mycompany-terraform-state"
+    # => Sets bucket
     key    = "network/terraform.tfstate"
     # => Path to network stack state file
     region = "us-west-2"
+    # => Sets region
   }
   # => Reads network stack outputs without modifying network stack
 }
 
 # Use remote state outputs
 resource "local_file" "app_config" {
+# => Resource definition
   filename = "app-config.txt"
+  # => Sets filename
   content  = <<-EOT
+  # => Sets content
     VPC ID: ${data.terraform_remote_state.network.outputs.vpc_id}
+    # => Terraform configuration block
     Subnets: ${jsonencode(data.terraform_remote_state.network.outputs.subnet_ids)}
+    # => Terraform configuration block
   EOT
   # => data.terraform_remote_state.network.outputs accesses network stack outputs
   # => Application stack depends on network stack via data source
 }
 
 output "network_vpc_id" {
+# => Output value
   value = data.terraform_remote_state.network.outputs.vpc_id
   # => Re-export network output for downstream consumers
 }
+
+
+
 ```
 
 **Key Takeaway**: `terraform_remote_state` data source reads outputs from another Terraform state file. Configure with `backend` type and `config` matching source state location. Access outputs via `data.terraform_remote_state.NAME.outputs.OUTPUT_NAME`. Enables stack separation where network, compute, and database layers have independent state files but share data via outputs.
@@ -1123,15 +1414,22 @@ graph TD
 
 ```hcl
 terraform {
+  # => Terraform configuration block
   required_version = ">= 1.0"
   # => No backend block (defaults to local)
+  # => Local backend: terraform.tfstate in current directory
 }
 
 provider "local" {}
+# => Local provider for file operations
 
 resource "local_file" "data" {
+  # => File resource to demonstrate state tracking
   filename = "data.txt"
+  # => Output file path
   content  = "Important data"
+  # => File content
+  # => State will track this resource
 }
 ```
 
@@ -1147,23 +1445,34 @@ resource "local_file" "data" {
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 
   # Add S3 backend configuration
   backend "s3" {
     bucket = "mycompany-terraform-state"
+    # => Sets bucket
     key    = "migrated/terraform.tfstate"
+    # => Sets key
     region = "us-west-2"
+    # => Sets region
   }
 }
 
 provider "local" {}
+# => Provider configuration
 
 resource "local_file" "data" {
+# => Resource definition
   filename = "data.txt"
+  # => Sets filename
   content  = "Important data"
   # => Same resource, new backend
 }
+
+
+
 ```
 
 **State migration**:
@@ -1193,13 +1502,17 @@ resource "local_file" "data" {
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 
   backend "s3" {
     bucket = "new-terraform-state-bucket"
     # => Changed from mycompany-terraform-state
     key    = "migrated/terraform.tfstate"
+    # => Sets key
     region = "us-west-2"
+    # => Sets region
   }
 }
 
@@ -1207,6 +1520,7 @@ terraform {
 # => Backend type remains "s3"
 # => Do you want to copy existing state to the new backend? (yes/no): yes
 # => State migrated from old S3 bucket to new S3 bucket
+
 ```
 
 **Key Takeaway**: State migration with `terraform init -migrate-state` copies state from old backend to new backend while preserving resource tracking. Always backup state before migration. Local state file remains after migration (manual cleanup required). Migration works between any backend types (local→S3, S3→Azure, etc).
@@ -1236,31 +1550,43 @@ graph TD
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 # terraform.workspace contains current workspace name
 resource "local_file" "environment_config" {
+# => Resource definition
   filename = "${terraform.workspace}-config.txt"
   # => terraform.workspace is "default", "dev", "staging", or "prod"
   # => Creates: default-config.txt, dev-config.txt, etc.
 
   content  = <<-EOT
+  # => Sets content
     Environment: ${terraform.workspace}
+    # => Terraform configuration block
     Workspace: ${terraform.workspace}
+    # => Terraform configuration block
     Instance Count: ${terraform.workspace == "prod" ? 5 : 2}
+    # => Sets Instance Count: ${terraform.workspace
   EOT
   # => Conditional: prod workspace gets 5 instances, others get 2
 }
 
 # Environment-specific variables using workspace
 locals {
+# => Local values
   instance_count = {
     dev     = 1
+    # => Sets dev
     staging = 2
+    # => Sets staging
     prod    = 5
+    # => Sets prod
   }
 
   current_instance_count = lookup(local.instance_count, terraform.workspace, 1)
@@ -1269,12 +1595,19 @@ locals {
 }
 
 output "workspace_info" {
+# => Output value
   value = {
     workspace       = terraform.workspace
+    # => Sets workspace
     instance_count  = local.current_instance_count
+    # => Sets instance_count
     config_file     = local_file.environment_config.filename
+    # => Sets config_file
   }
 }
+
+
+
 ```
 
 **Workspace commands**:
@@ -1348,30 +1681,45 @@ Workspaces have limitations for production use. Directory-based separation is of
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 
   backend "s3" {
     bucket         = "mycompany-terraform-state"
+    # => Sets bucket
     key            = "app/terraform.tfstate"
     # => All workspaces share same key (state isolated via workspace prefix)
     region         = "us-west-2"
+    # => Sets region
     workspace_key_prefix = "workspaces"
     # => State keys: workspaces/dev/app/terraform.tfstate, workspaces/prod/app/terraform.tfstate
   }
 }
 
 provider "local" {}
+# => Provider configuration
 
 variable "instance_count" {
+# => Input variable
   type = number
+  # => Sets type
 }
 
 # Workspace-based resource configuration
 resource "local_file" "instances" {
+# => Resource definition
   count    = var.instance_count
+  # => Sets count
   filename = "${terraform.workspace}-instance-${count.index}.txt"
+  # => Sets filename
   content  = "Instance ${count.index} in ${terraform.workspace}"
+  # => Sets content
 }
+
+
+
+
 ```
 
 **Variable files per workspace**:
@@ -1379,12 +1727,16 @@ resource "local_file" "instances" {
 ```hcl
 # dev.tfvars
 instance_count = 1
+# => instance_count set to 1
 
 # staging.tfvars
 instance_count = 2
+# => instance_count set to 2
 
 # prod.tfvars
 instance_count = 5
+# => instance_count set to 5
+
 ```
 
 **Usage**:
@@ -1423,7 +1775,9 @@ infrastructure/
 ```hcl
 # production/main.tf
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 
   backend "s3" {
     # Production-specific backend config
@@ -1432,19 +1786,27 @@ terraform {
 
 # Different AWS provider configuration per directory
 provider "aws" {
+# => Provider configuration
   region  = "us-east-1"
   # Production account with restricted IAM roles
   assume_role {
     role_arn = "arn:aws:iam::111111111111:role/TerraformProduction"
+    # => Sets role_arn
   }
 }
 
 # Production-specific resources (no workspace conditionals needed)
 resource "aws_instance" "app" {
+# => Resource definition
   count         = var.instance_count
+  # => Sets count
   instance_type = "m5.large"      # => Production instance type
   # => No workspace-based conditionals
 }
+
+
+
+
 ```
 
 **Key Takeaway**: Workspaces suitable for similar environments (dev/staging sharing configurations). Directory separation preferred for production isolation where different AWS accounts, IAM roles, backend configs, or compliance requirements exist. Workspaces reduce code duplication but share backend config and variable files. Directories provide complete isolation with independent configurations.
@@ -1459,12 +1821,17 @@ S3 backend supports `workspace_key_prefix` to customize workspace state file pat
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 
   backend "s3" {
     bucket = "mycompany-terraform-state"
+    # => Sets bucket
     key    = "application/terraform.tfstate"
+    # => Sets key
     region = "us-west-2"
+    # => Sets region
 
     workspace_key_prefix = "environments"
     # => Workspace state paths:
@@ -1476,11 +1843,16 @@ terraform {
 }
 
 provider "local" {}
+# => Provider configuration
 
 resource "local_file" "environment_marker" {
+# => Resource definition
   filename = "${terraform.workspace}-marker.txt"
+  # => Sets filename
   content  = "Environment: ${terraform.workspace}"
+  # => Sets content
 }
+
 ```
 
 **State file organization in S3**:
@@ -1547,14 +1919,20 @@ graph TD
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 resource "local_file" "deployment_marker" {
+# => Resource definition
   filename = "deployment.txt"
+  # => Sets filename
   content  = "Deployed at: ${timestamp()}"
+  # => Sets content
 
   # local-exec runs on Terraform executor machine
   provisioner "local-exec" {
@@ -1579,14 +1957,18 @@ resource "local_file" "deployment_marker" {
   # Runs when resource is DESTROYED
   provisioner "local-exec" {
     when    = destroy
+    # => Sets when
     command = "echo 'File deleted: ${self.filename}' >> deployment.log"
     # => when = destroy executes on terraform destroy
   }
 }
 
 resource "local_file" "build_artifact" {
+# => Resource definition
   filename = "build/artifact.txt"
+  # => Sets filename
   content  = "Build output"
+  # => Sets content
 
   provisioner "local-exec" {
     command     = "mkdir -p build && echo 'Build started' > build/log.txt"
@@ -1601,13 +1983,16 @@ resource "local_file" "build_artifact" {
 
     environment = {
       DEPLOY_ENV = "production"
+      # => Sets DEPLOY_ENV
       API_KEY    = var.api_key
+      # => Sets API_KEY
     }
     # => environment sets environment variables for command
   }
 
   provisioner "local-exec" {
     command     = "exit 1"  # Simulate failure
+    # => Sets command
     on_failure  = continue
     # => on_failure = continue allows resource creation to succeed despite provisioner failure
     # => Default: on_failure = fail (resource creation fails if provisioner fails)
@@ -1615,14 +2000,23 @@ resource "local_file" "build_artifact" {
 }
 
 variable "api_key" {
+# => Input variable
   type      = string
+  # => Sets type
   default   = "test-key-12345"
+  # => Sets default
   sensitive = true
+  # => Sets sensitive
 }
 
 output "provisioner_note" {
+# => Output value
   value = "local-exec ran commands on Terraform executor machine"
+  # => Sets value
 }
+
+
+
 ```
 
 **Key Takeaway**: `local-exec` provisioner runs commands locally (not on resources). Use `command` for shell commands, `working_dir` for execution directory, `environment` for env vars, `when = destroy` for cleanup. Provisioners run during resource creation (default) or destruction. Set `on_failure = continue` to allow resource success despite provisioner failure.
@@ -1734,21 +2128,31 @@ resource "local_file" "instance" {
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 resource "local_file" "instance_marker" {
+# => Resource definition
   filename = "instance.txt"
+  # => Sets filename
   content  = "Instance created"
+  # => Sets content
 
   # Simulated connection (real-world: AWS EC2, Azure VM)
   connection {
     type        = "ssh"
+    # => Sets type
     host        = "192.168.1.100"
+    # => Sets host
     user        = "ubuntu"
+    # => Sets user
     private_key = file("~/.ssh/id_rsa")
+    # => Sets private_key
   }
 
   # Upload single file
@@ -1764,7 +2168,9 @@ resource "local_file" "instance_marker" {
   provisioner "file" {
     content     = templatefile("${path.module}/templates/config.tpl", {
       app_name = "myapp"
+      # => Sets app_name
       port     = 8080
+      # => Sets port
     })
     # => content instead of source (generated content)
     destination = "/etc/myapp/config.json"
@@ -1791,47 +2197,66 @@ resource "local_file" "instance_marker" {
 
 # Typical usage: Upload app code and start service
 resource "local_file" "app_server" {
+# => Resource definition
   filename = "server.txt"
+  # => Sets filename
   content  = "App server"
+  # => Sets content
 
   connection {
     type        = "ssh"
+    # => Sets type
     host        = "192.168.1.100"
+    # => Sets host
     user        = "ubuntu"
+    # => Sets user
     private_key = file("~/.ssh/id_rsa")
+    # => Sets private_key
   }
 
   # Step 1: Upload application files
   provisioner "file" {
     source      = "${path.module}/dist/"
+    # => Sets source
     destination = "/opt/app"
+    # => Sets destination
   }
 
   # Step 2: Upload systemd service file
   provisioner "file" {
     content     = <<-EOT
+    # => Sets content
       [Unit]
       Description=My Application
+      # => Sets Description
 
       [Service]
       ExecStart=/opt/app/server
+      # => Sets ExecStart
       Restart=always
+      # => Sets Restart
 
       [Install]
       WantedBy=multi-user.target
+      # => Sets WantedBy
     EOT
     destination = "/etc/systemd/system/myapp.service"
+    # => Sets destination
   }
 
   # Step 3: Enable and start service
   provisioner "remote-exec" {
     inline = [
+    # => Sets inline
       "sudo systemctl daemon-reload",
       "sudo systemctl enable myapp",
       "sudo systemctl start myapp",
     ]
   }
 }
+
+
+
 ```
 
 **Key Takeaway**: `file` provisioner uploads files (`source`) or generated content (`content`) to remote `destination`. Trailing slash in source (`scripts/`) uploads directory contents; without trailing slash (`scripts`) uploads directory itself. Combine with `remote-exec` for multi-step provisioning (upload files, then execute setup commands). Requires `connection` block with SSH/WinRM credentials.
@@ -1846,26 +2271,37 @@ resource "local_file" "app_server" {
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 
   required_providers {
+  # => Provider configuration
     null = {
       source  = "hashicorp/null"
+      # => Sets source
       version = "~> 3.0"
+      # => Sets version
     }
   }
 }
 
 provider "null" {}
+# => Provider configuration
 provider "local" {}
+# => Provider configuration
 
 resource "local_file" "config" {
+# => Resource definition
   filename = "app-config.txt"
+  # => Sets filename
   content  = "Config version: 1.0"
+  # => Sets content
 }
 
 # null_resource with triggers for re-execution
 resource "null_resource" "deploy_notification" {
+# => Resource definition
   # triggers force re-execution when values change
   triggers = {
     config_content = local_file.config.content
@@ -1881,6 +2317,7 @@ resource "null_resource" "deploy_notification" {
 
   provisioner "local-exec" {
     command = <<-EOT
+    # => Sets command
       curl -X POST https://api.example.com/deploy \
         -H "Content-Type: application/json" \
         -d '{"config": "${local_file.config.content}", "trigger": "${self.triggers.deployment_id}"}'
@@ -1891,6 +2328,7 @@ resource "null_resource" "deploy_notification" {
 
 # null_resource for time-based actions
 resource "null_resource" "database_backup" {
+# => Resource definition
   triggers = {
     backup_schedule = timestamp()
     # => timestamp() evaluated at plan time
@@ -1899,22 +2337,31 @@ resource "null_resource" "database_backup" {
 
   provisioner "local-exec" {
     command = "python3 scripts/backup-database.py"
+    # => Sets command
   }
 }
 
 # null_resource for depends_on orchestration
 resource "local_file" "app_binary" {
+# => Resource definition
   filename = "app-binary.txt"
+  # => Sets filename
   content  = "Binary v2.0"
+  # => Sets content
 }
 
 resource "local_file" "app_config_file" {
+# => Resource definition
   filename = "app-config-final.txt"
+  # => Sets filename
   content  = "Config for binary"
+  # => Sets content
 }
 
 resource "null_resource" "app_deployment" {
+# => Resource definition
   depends_on = [
+  # => Sets depends_on
     local_file.app_binary,
     local_file.app_config_file,
   ]
@@ -1922,21 +2369,30 @@ resource "null_resource" "app_deployment" {
 
   triggers = {
     binary_content = local_file.app_binary.content
+    # => Sets binary_content
     config_content = local_file.app_config_file.content
+    # => Sets config_content
   }
   # => Re-deploy when binary or config changes
 
   provisioner "local-exec" {
     command = "echo 'Deploying app with binary and config' >> deployment.log"
+    # => Sets command
   }
 }
 
 output "deployment_info" {
+# => Output value
   value = {
     deploy_trigger_id = null_resource.deploy_notification.triggers.deployment_id
+    # => Sets deploy_trigger_id
     note              = "null_resource ran provisioners without creating infrastructure"
+    # => Sets note
   }
 }
+
+
+
 ```
 
 **Key Takeaway**: `null_resource` runs provisioners without managing infrastructure. Use `triggers` map to control when provisioners re-run (any value change re-creates resource). Common triggers: file content hashes, timestamps, version numbers. Combine with `depends_on` to orchestrate provisioner execution order. Useful for notifications, deployments, or actions external to Terraform's resource model.
@@ -1968,29 +2424,43 @@ graph TD
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 # Variable with list of ingress rules
 variable "ingress_rules" {
+# => Input variable
   type = list(object({
     port        = number
+    # => Sets port
     protocol    = string
+    # => Sets protocol
     description = string
+    # => Sets description
   }))
   default = [
+  # => Sets default
     { port = 80, protocol = "tcp", description = "HTTP" },
+    # => Sets { port
     { port = 443, protocol = "tcp", description = "HTTPS" },
+    # => Sets { port
     { port = 22, protocol = "tcp", description = "SSH" },
+    # => Sets { port
   ]
 }
 
 # Simulated security group with dynamic blocks
 resource "local_file" "security_group" {
+# => Resource definition
   filename = "security-group.txt"
+  # => Sets filename
   content  = <<-EOT
+  # => Sets content
     Security Group Rules:
     ${join("\n", [
       for rule in var.ingress_rules :
@@ -2024,19 +2494,27 @@ resource "local_file" "security_group" {
 
 # Dynamic blocks with maps (key-value access)
 variable "egress_rules_map" {
+# => Input variable
   type = map(object({
     port     = number
+    # => Sets port
     protocol = string
+    # => Sets protocol
   }))
   default = {
     http  = { port = 80, protocol = "tcp" }
+    # => Sets http
     https = { port = 443, protocol = "tcp" }
+    # => Sets https
   }
 }
 
 resource "local_file" "egress_config" {
+# => Resource definition
   filename = "egress-config.txt"
+  # => Sets filename
   content  = <<-EOT
+  # => Sets content
     Egress Rules:
     ${join("\n", [
       for name, rule in var.egress_rules_map :
@@ -2048,33 +2526,48 @@ resource "local_file" "egress_config" {
 
 # Nested dynamic blocks
 variable "route_tables" {
+# => Input variable
   type = list(object({
     name   = string
+    # => Sets name
     routes = list(object({
       destination = string
+      # => Sets destination
       target      = string
+      # => Sets target
     }))
   }))
   default = [
+  # => Sets default
     {
       name = "public"
+      # => Sets name
       routes = [
+      # => Sets routes
         { destination = "0.0.0.0/0", target = "igw-123" },
+        # => Sets { destination
         { destination = "10.0.0.0/16", target = "local" },
+        # => Sets { destination
       ]
     },
     {
       name = "private"
+      # => Sets name
       routes = [
+      # => Sets routes
         { destination = "0.0.0.0/0", target = "nat-456" },
+        # => Sets { destination
       ]
     },
   ]
 }
 
 resource "local_file" "route_tables" {
+# => Resource definition
   filename = "route-tables.txt"
+  # => Sets filename
   content  = <<-EOT
+  # => Sets content
     Route Tables:
     ${join("\n\n", [
       for rt in var.route_tables :
@@ -2086,6 +2579,9 @@ resource "local_file" "route_tables" {
   EOT
   # => Nested iteration: outer loop for route tables, inner loop for routes
 }
+
+
+
 ```
 
 **Key Takeaway**: Dynamic blocks use `dynamic "BLOCK_NAME"` with `for_each` to generate nested blocks from collections. Access iteration elements via `BLOCK_NAME.value` (for lists) or `BLOCK_NAME.key`/`BLOCK_NAME.value` (for maps). Nest dynamic blocks for multi-level iteration. Eliminates repetitive block definitions while maintaining Terraform's declarative syntax.
@@ -2100,45 +2596,64 @@ Advanced `for_each` patterns enable complex resource generation with map transfo
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 # Map of environments with nested configuration
 variable "environments" {
+# => Input variable
   type = map(object({
     region       = string
+    # => Sets region
     instance_count = number
+    # => Sets instance_count
     tags         = map(string)
+    # => Sets tags
   }))
   default = {
     dev = {
       region         = "us-west-2"
+      # => Sets region
       instance_count = 1
+      # => Sets instance_count
       tags           = { tier = "development" }
+      # => Sets tags
     }
     staging = {
       region         = "us-east-1"
+      # => Sets region
       instance_count = 2
+      # => Sets instance_count
       tags           = { tier = "pre-production" }
+      # => Sets tags
     }
     prod = {
       region         = "eu-west-1"
+      # => Sets region
       instance_count = 5
+      # => Sets instance_count
       tags           = { tier = "production", critical = "true" }
+      # => Sets tags
     }
   }
 }
 
 # for_each with map
 resource "local_file" "environment_configs" {
+# => Resource definition
   for_each = var.environments
   # => each.key is "dev", "staging", "prod"
   # => each.value is the environment object
 
   filename = "${each.key}-config.txt"
+  # => Sets filename
   content  = <<-EOT
+  # => Sets content
     Environment: ${each.key}
     Region: ${each.value.region}
     Instance Count: ${each.value.instance_count}
@@ -2148,10 +2663,12 @@ resource "local_file" "environment_configs" {
 
 # Map transformation with for expression
 locals {
+# => Local values
   # Create map of production environments only (filtering)
   prod_environments = {
     for k, v in var.environments :
     k => v
+    # => Sets k
     if contains(keys(v.tags), "critical")
     # => Filters to environments with "critical" tag
     # => Result: { prod = { region = "eu-west-1", ... } }
@@ -2167,28 +2684,37 @@ locals {
 
   # Create flat list from map
   all_tags = flatten([
+  # => Sets all_tags
     for env_name, env in var.environments : [
       for tag_key, tag_value in env.tags :
       "${env_name}:${tag_key}=${tag_value}"
+      # => Sets "${env_name}:${tag_key}
     ]
   ])
   # => Result: ["dev:tier=development", "staging:tier=pre-production", ...]
 }
 
 resource "local_file" "prod_only" {
+# => Resource definition
   for_each = local.prod_environments
   # => Only creates resources for production environments
 
   filename = "${each.key}-prod.txt"
+  # => Sets filename
   content  = "Production environment in ${each.value.region}"
+  # => Sets content
 }
 
 # Cross-resource references with for_each
 resource "local_file" "instance_markers" {
+# => Resource definition
   for_each = var.environments
+  # => Sets for_each
 
   filename = "${each.key}-instances.txt"
+  # => Sets filename
   content  = <<-EOT
+  # => Sets content
     Environment: ${each.key}
     Config File: ${local_file.environment_configs[each.key].filename}
     Instances: ${each.value.instance_count}
@@ -2199,27 +2725,39 @@ resource "local_file" "instance_markers" {
 
 # for_each with set conversion
 variable "region_list" {
+# => Input variable
   type    = list(string)
+  # => Sets type
   default = ["us-west-2", "us-east-1", "eu-west-1", "us-west-2"]
   # => Note duplicate "us-west-2"
 }
 
 resource "local_file" "regional_files" {
+# => Resource definition
   for_each = toset(var.region_list)
   # => toset() converts list to set, removing duplicates
   # => each.key is "us-west-2", "us-east-1", "eu-west-1" (no duplicate)
 
   filename = "region-${each.key}.txt"
+  # => Sets filename
   content  = "Region: ${each.key}"
+  # => Sets content
 }
 
 output "created_environments" {
+# => Output value
   value = {
     all        = keys(local_file.environment_configs)
+    # => Sets all
     prod_only  = keys(local_file.prod_only)
+    # => Sets prod_only
     all_tags   = local.all_tags
+    # => Sets all_tags
   }
 }
+
+
+
 ```
 
 **Key Takeaway**: Use `for_each` with maps for named resource instances. Transform maps with `for` expressions: filter with `if`, extract values, or flatten nested structures. Convert lists to sets with `toset()` to remove duplicates. Reference for_each resources with `resource_type.name[key]` syntax. Map-based for_each provides stable resource addresses (adding/removing middle elements doesn't renumber others).
@@ -2234,92 +2772,134 @@ Combine `count` or `for_each` with conditionals to create resources only when co
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 # Feature flags
 variable "enable_monitoring" {
+# => Input variable
   type    = bool
+  # => Sets type
   default = true
+  # => Sets default
 }
 
 variable "enable_logging" {
+# => Input variable
   type    = bool
+  # => Sets type
   default = false
+  # => Sets default
 }
 
 variable "environment" {
+# => Input variable
   type    = string
+  # => Sets type
   default = "production"
+  # => Sets default
 }
 
 # count = 0 or 1 pattern for conditional creation
 resource "local_file" "monitoring_config" {
+# => Resource definition
   count    = var.enable_monitoring ? 1 : 0
   # => count = 1 creates resource, count = 0 skips creation
   # => Ternary: condition ? true_value : false_value
 
   filename = "monitoring.txt"
+  # => Sets filename
   content  = "Monitoring enabled"
+  # => Sets content
 }
 
 resource "local_file" "logging_config" {
+# => Resource definition
   count    = var.enable_logging ? 1 : 0
+  # => Sets count
 
   filename = "logging.txt"
+  # => Sets filename
   content  = "Logging enabled"
+  # => Sets content
 }
 
 # for_each = {} (empty map) skips creation
 resource "local_file" "prod_only_resource" {
+# => Resource definition
   for_each = var.environment == "production" ? { enabled = true } : {}
   # => for_each with non-empty map creates resource
   # => for_each with empty map {} creates zero resources
 
   filename = "production-feature.txt"
+  # => Sets filename
   content  = "Production-only feature"
+  # => Sets content
 }
 
 # Conditional with complex logic
 locals {
+# => Local values
   # Create backup only in production OR if explicitly enabled
   create_backup = var.environment == "production" || var.enable_backup
+  # => Sets create_backup
 
   # Multiple conditions
   high_availability_enabled = (
+  # => Sets high_availability_enabled
     var.environment == "production" &&
+    # => Sets var.environment
     var.instance_count >= 3
+    # => Sets var.instance_count >
   )
 }
 
 variable "enable_backup" {
+# => Input variable
   type    = bool
+  # => Sets type
   default = false
+  # => Sets default
 }
 
 variable "instance_count" {
+# => Input variable
   type    = number
+  # => Sets type
   default = 5
+  # => Sets default
 }
 
 resource "local_file" "backup_config" {
+# => Resource definition
   count = local.create_backup ? 1 : 0
+  # => Sets count
 
   filename = "backup.txt"
+  # => Sets filename
   content  = "Backup enabled for ${var.environment}"
+  # => Sets content
 }
 
 resource "local_file" "ha_config" {
+# => Resource definition
   count = local.high_availability_enabled ? 1 : 0
+  # => Sets count
 
   filename = "high-availability.txt"
+  # => Sets filename
   content  = "HA enabled with ${var.instance_count} instances"
+  # => Sets content
 }
 
 # Referencing conditional resources (safe access)
 output "monitoring_file" {
+# => Output value
   value = length(local_file.monitoring_config) > 0 ? local_file.monitoring_config[0].filename : "Not enabled"
   # => length() checks if resource was created
   # => [0] accesses first element if count = 1
@@ -2327,6 +2907,7 @@ output "monitoring_file" {
 }
 
 output "prod_feature_file" {
+# => Output value
   value = length(keys(local_file.prod_only_resource)) > 0 ? local_file.prod_only_resource["enabled"].filename : "Not created"
   # => keys() returns map keys, length checks if non-empty
   # => ["enabled"] accesses for_each resource by key
@@ -2334,25 +2915,41 @@ output "prod_feature_file" {
 
 # Alternative: one_of pattern (create monitoring OR logging, not both)
 variable "telemetry_type" {
+# => Input variable
   type    = string
+  # => Sets type
   default = "monitoring"
+  # => Sets default
   validation {
     condition     = contains(["monitoring", "logging", "none"], var.telemetry_type)
+    # => Sets condition
     error_message = "telemetry_type must be monitoring, logging, or none"
+    # => Sets error_message
   }
 }
 
 resource "local_file" "monitoring_alt" {
+# => Resource definition
   count = var.telemetry_type == "monitoring" ? 1 : 0
+  # => Sets count
   filename = "monitoring-alt.txt"
+  # => Sets filename
   content  = "Monitoring"
+  # => Sets content
 }
 
 resource "local_file" "logging_alt" {
+# => Resource definition
   count = var.telemetry_type == "logging" ? 1 : 0
+  # => Sets count
   filename = "logging-alt.txt"
+  # => Sets filename
   content  = "Logging"
+  # => Sets content
 }
+
+
+
 ```
 
 **Key Takeaway**: Use `count = condition ? 1 : 0` for boolean feature flags. Use `for_each = condition ? { key = value } : {}` for map-based conditional creation. Complex conditions belong in `locals` for readability. Reference conditional count resources with `resource[0]` after checking `length(resource) > 0`. Reference conditional for_each with `resource[key]` after checking `length(keys(resource)) > 0`.
@@ -2451,20 +3048,25 @@ resource "local_file" "imported" {
 # Declarative import (experimental, Terraform 1.5+)
 import {
   to = local_file.imported_declarative
+  # => Sets to
   id = "existing-file-2.txt"
   # => to specifies target resource address
   # => id specifies provider resource identifier
 }
 
 resource "local_file" "imported_declarative" {
+# => Resource definition
   filename = "existing-file-2.txt"
+  # => Sets filename
   content  = "Content"
+  # => Sets content
 }
 
 # $ terraform plan
 # => Shows import will occur
 # $ terraform apply
 # => Imports resource into state
+
 ```
 
 **Key Takeaway**: `terraform import` adds existing resources to state using `terraform import RESOURCE_ADDRESS RESOURCE_ID`. Write configuration matching existing resource, import to state, then verify with `terraform plan` (should show no changes). Use `terraform state show` to inspect imported attributes. Import blocks (Terraform 1.5+) enable declarative imports in configuration. Import doesn't create resources—it only updates state.
@@ -2585,27 +3187,43 @@ moved {
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 resource "local_file" "app_config" {
+# => Resource definition
   filename = "app-config.txt"
+  # => Sets filename
   content  = "Application configuration"
+  # => Sets content
 }
 
 resource "local_file" "db_config" {
+# => Resource definition
   filename = "db-config.txt"
+  # => Sets filename
   content  = "Database configuration"
+  # => Sets content
 }
 
 module "storage" {
+# => Module configuration
   source = "./modules/storage"
+  # => Sets source
 
   bucket_prefix = "myapp"
+  # => Sets bucket_prefix
   environment   = "production"
+  # => Sets environment
 }
+
+
+
 ```
 
 **State commands**:
@@ -2666,16 +3284,25 @@ module "storage" {
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 # Original resource (before rename)
 resource "local_file" "old_name" {
+# => Resource definition
   filename = "data.txt"
+  # => Sets filename
   content  = "Important data"
+  # => Sets content
 }
+
+
+
 ```
 
 **Renaming with state mv**:
@@ -2762,20 +3389,32 @@ module "app" {
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 resource "local_file" "managed" {
+# => Resource definition
   filename = "managed.txt"
+  # => Sets filename
   content  = "Terraform-managed"
+  # => Sets content
 }
 
 resource "local_file" "unmanaged" {
+# => Resource definition
   filename = "unmanaged.txt"
+  # => Sets filename
   content  = "Will be removed from state"
+  # => Sets content
 }
+
+
+
 ```
 
 **Remove resource from state**:
@@ -2866,14 +3505,20 @@ resource "local_file" "unmanaged" {
 
 ```hcl
 terraform {
+# => Terraform configuration block
   required_version = ">= 1.0"
+  # => Sets required_version
 }
 
 provider "local" {}
+# => Provider configuration
 
 resource "local_file" "app_config" {
+# => Resource definition
   filename = "app-config.txt"
+  # => Sets filename
   content  = "Version 1.0"
+  # => Sets content
 
   provisioner "local-exec" {
     command = "echo 'Deployed at ${timestamp()}' >> deploy.log"
@@ -2882,9 +3527,15 @@ resource "local_file" "app_config" {
 }
 
 resource "local_file" "database_seed" {
+# => Resource definition
   filename = "seed.txt"
+  # => Sets filename
   content  = "Initial data"
+  # => Sets content
 }
+
+
+
 ```
 
 **Force recreation with -replace**:

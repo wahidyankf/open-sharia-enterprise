@@ -2901,117 +2901,161 @@ flowchart TD
 Implement multi-tenancy to serve multiple customers from a single application instance.
 
 ```java
-// Strategy 1: Shared Database, Separate Schemas
-@Configuration
-public class MultiTenantDataSourceConfig {
-    @Bean
-    public DataSource dataSource() {
-        return new TenantAwareDataSource();
+// Strategy 1: Shared Database, Separate Schemas (schema-per-tenant isolation)
+@Configuration // => Spring configuration for multi-tenant data source routing
+public class MultiTenantDataSourceConfig { // => Configures tenant-aware data source switching
+    @Bean // => Registers DataSource bean that routes to different schemas based on tenant
+    public DataSource dataSource() { // => Returns routing data source implementation
+        return new TenantAwareDataSource(); // => Custom data source that switches schemas per request
+        // => Single connection pool, multiple schemas (tenant_1, tenant_2, etc.)
     }
 }
 
 public class TenantAwareDataSource extends AbstractRoutingDataSource {
-    @Override
-    protected Object determineCurrentLookupKey() {
-        return TenantContext.getCurrentTenant();
-        // => Returns "tenant1", "tenant2", etc.
+    // => AbstractRoutingDataSource: Spring's dynamic data source routing mechanism
+    // => Routes each database connection to different target based on lookup key
+    @Override // => Override to provide tenant-specific routing key
+    protected Object determineCurrentLookupKey() { // => Called for each database operation
+        return TenantContext.getCurrentTenant(); // => Returns current tenant ID from ThreadLocal
+        // => Returns "tenant1", "tenant2", etc. (determines which schema to use)
+        // => Example: tenant1 → uses schema "tenant_1", tenant2 → uses schema "tenant_2"
+        // => Queries automatically prefixed: SELECT * FROM tenant_1.products
     }
 }
 
-@Component
-public class TenantContext {
+@Component // => Spring-managed bean for tenant context management
+public class TenantContext { // => Thread-safe tenant ID storage using ThreadLocal
     private static final ThreadLocal<String> CURRENT_TENANT = new ThreadLocal<>();
+    // => ThreadLocal: Each HTTP request thread has isolated tenant ID
+    // => Prevents tenant data leaking between concurrent requests
+    // => Example: Request A (tenant1) and Request B (tenant2) execute simultaneously without interference
 
-    public static void setCurrentTenant(String tenant) {
-        CURRENT_TENANT.set(tenant);
+    public static void setCurrentTenant(String tenant) { // => Sets tenant ID for current request thread
+        CURRENT_TENANT.set(tenant); // => Stores tenant ID in thread-local storage
+        // => Called by TenantInterceptor after extracting X-Tenant-ID header
     }
 
-    public static String getCurrentTenant() {
-        return CURRENT_TENANT.get();
+    public static String getCurrentTenant() { // => Retrieves tenant ID for current request thread
+        return CURRENT_TENANT.get(); // => Returns tenant ID (e.g., "tenant1")
+        // => Used by TenantAwareDataSource to route database queries
     }
 
-    public static void clear() {
-        CURRENT_TENANT.remove();
+    public static void clear() { // => Removes tenant ID from thread-local storage
+        CURRENT_TENANT.remove(); // => Prevents memory leaks in thread pools
+        // => Called after request completes (in TenantInterceptor.afterCompletion)
     }
 }
 
-// Tenant interceptor
-@Component
+// Tenant interceptor (extracts tenant ID from HTTP header)
+@Component // => Spring-managed interceptor bean
 public class TenantInterceptor implements HandlerInterceptor {
-    @Override
+    // => HandlerInterceptor: intercepts HTTP requests before/after controller execution
+    // => Executes for every incoming HTTP request
+    @Override // => Executes BEFORE controller method
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        String tenantId = request.getHeader("X-Tenant-ID");
+        // => Extracts tenant ID from request and sets in ThreadLocal
+        String tenantId = request.getHeader("X-Tenant-ID"); // => Read custom header: X-Tenant-ID
+        // => Client must send header: X-Tenant-ID: tenant1
+        // => Example: curl -H "X-Tenant-ID: tenant1" http://localhost:8080/api/products
 
-        if (tenantId == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return false;
+        if (tenantId == null) { // => Validate tenant ID presence (required for all requests)
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // => Return 400 Bad Request
+            return false; // => Stop request processing (controller not invoked)
+            // => Security: prevents untenanted access (no default tenant allowed)
         }
 
-        TenantContext.setCurrentTenant(tenantId);
-        return true;
+        TenantContext.setCurrentTenant(tenantId); // => Store tenant ID in ThreadLocal for this request
+        // => Makes tenant ID available to TenantAwareDataSource during database queries
+        return true; // => Continue to controller (tenant context initialized)
     }
 
-    @Override
+    @Override // => Executes AFTER controller completes (even if exception thrown)
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
                                Object handler, Exception ex) {
-        TenantContext.clear();
+        // => Cleanup: remove tenant ID from ThreadLocal
+        TenantContext.clear(); // => Prevents memory leak in thread pool
+        // => Critical: thread pools reuse threads, must clear tenant ID after each request
+        // => Without this: tenant1 request might see tenant2 data on thread reuse!
     }
 }
 
-// Strategy 2: Discriminator Column (Shared Schema)
-@Entity
+// Strategy 2: Discriminator Column (Shared Schema - all tenants in same table)
+@Entity // => JPA entity for products table (shared across all tenants)
 @FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantId", type = String.class))
+// => Defines Hibernate filter with parameter (applied at query time, not compile time)
+// => Filter name: "tenantFilter", parameter: tenantId (String type)
 @Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
-public class Product {
-    @Id
-    @GeneratedValue
-    private Long id;
+// => Applies filter condition to all queries: WHERE tenant_id = :tenantId
+// => Automatically added to SELECT/UPDATE/DELETE queries for this entity
+// => Prevents tenant1 from accessing tenant2 data (application-level row security)
+public class Product { // => Product entity with tenant discriminator column
+    @Id // => Primary key
+    @GeneratedValue // => Auto-generated ID (sequence or identity)
+    private Long id; // => Product ID (unique across all tenants)
 
-    private String tenantId; // Discriminator column
-    private String name;
-    private BigDecimal price;
+    private String tenantId; // Discriminator column (identifies which tenant owns this row)
+    // => Example values: "tenant1", "tenant2", "tenant3"
+    // => Must be set explicitly when creating product
+    // => Index this column for query performance!
+    private String name; // => Product name (e.g., "Laptop", "Phone")
+    private BigDecimal price; // => Product price (e.g., 999.99)
 
-    // getters/setters
+    // getters/setters (omitted for brevity)
 }
 
-@Repository
+@Repository // => Spring Data JPA repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    // Automatically filtered by tenant
+    // => Automatically filtered by tenant when tenantFilter enabled
+    // => findAll() executes: SELECT * FROM product WHERE tenant_id = 'tenant1'
+    // => No manual filtering needed - Hibernate filter handles it transparently
 }
 
-// Enable filter in session
-@Component
-@Aspect
-public class TenantFilterAspect {
-    @PersistenceContext
-    private EntityManager entityManager;
+// Enable filter in session (AOP aspect intercepts all repository calls)
+@Component // => Spring-managed AOP aspect
+@Aspect // => Aspect-Oriented Programming: cross-cutting concern (tenant filtering)
+public class TenantFilterAspect { // => Automatically enables Hibernate tenant filter before repository calls
+    @PersistenceContext // => Inject JPA EntityManager
+    private EntityManager entityManager; // => Used to access Hibernate Session
 
-    @Before("execution(* com.example.demo.repository.*.*(..))")
-    public void enableTenantFilter() {
-        String tenantId = TenantContext.getCurrentTenant();
-        Session session = entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("tenantFilter");
-        filter.setParameter("tenantId", tenantId);
+    @Before("execution(* com.example.demo.repository.*.*(..))") // => Pointcut: intercept ALL repository method calls
+    // => Executes BEFORE every repository method (findAll, save, findById, etc.)
+    public void enableTenantFilter() { // => Enables Hibernate filter with current tenant ID
+        String tenantId = TenantContext.getCurrentTenant(); // => Get tenant ID from ThreadLocal (set by TenantInterceptor)
+        // => Example: tenantId = "tenant1"
+        Session session = entityManager.unwrap(Session.class); // => Get Hibernate Session from JPA EntityManager
+        // => Unwrap: JPA EntityManager → Hibernate Session (access Hibernate-specific features)
+        Filter filter = session.enableFilter("tenantFilter"); // => Enable "tenantFilter" defined on Product entity
+        // => Must be enabled per session (not persistent across requests)
+        filter.setParameter("tenantId", tenantId); // => Set :tenantId parameter in filter condition
+        // => Results in WHERE clause: WHERE tenant_id = 'tenant1'
+        // => All subsequent queries in this session filtered to current tenant
     }
 }
 
-// Usage in controller
-@RestController
-@RequestMapping("/api/products")
-public class ProductController {
-    @Autowired
-    private ProductRepository productRepository;
+// Usage in controller (tenant filtering transparent to controller logic)
+@RestController // => REST controller with automatic JSON serialization
+@RequestMapping("/api/products") // => Base path: /api/products
+public class ProductController { // => Product CRUD operations with automatic tenant filtering
+    @Autowired // => Inject ProductRepository
+    private ProductRepository productRepository; // => Repository with automatic tenant filtering
 
-    @GetMapping
-    public List<Product> getProducts() {
-        // Automatically filtered by tenant from X-Tenant-ID header
-        return productRepository.findAll();
+    @GetMapping // => Endpoint: GET /api/products
+    public List<Product> getProducts() { // => Fetch all products for current tenant
+        // => TenantFilterAspect intercepts this call, enables Hibernate filter
+        // => Automatically filtered by tenant from X-Tenant-ID header
+        return productRepository.findAll(); // => Executes: SELECT * FROM product WHERE tenant_id = 'tenant1'
+        // => Returns only current tenant's products (tenant2 data invisible)
+        // => No manual filtering needed - Hibernate filter handles it transparently
     }
 
-    @PostMapping
-    public Product createProduct(@RequestBody Product product) {
-        product.setTenantId(TenantContext.getCurrentTenant());
-        return productRepository.save(product);
+    @PostMapping // => Endpoint: POST /api/products
+    public Product createProduct(@RequestBody Product product) { // => Create new product for current tenant
+        product.setTenantId(TenantContext.getCurrentTenant()); // => Set tenant ID explicitly (must set before save!)
+        // => Critical: Without this, product saved without tenant_id (security violation!)
+        // => Example: tenant ID = "tenant1" → product.tenant_id = "tenant1"
+        return productRepository.save(product); // => Persists product with tenant_id column
+        // => INSERT INTO product (name, price, tenant_id) VALUES (?, ?, 'tenant1')
+        // => Future queries by tenant1 will include this product
     }
 }
 ```
@@ -3019,36 +3063,68 @@ public class ProductController {
 **Code (Kotlin)**:
 
 ```kotlin
-@Component
-class TenantContext {
-  companion object {
-    private val tenantId = ThreadLocal<String>()
-    fun setTenantId(id: String) = tenantId.set(id)
-    fun getTenantId(): String = tenantId.get() ?: "default"
-    fun clear() = tenantId.remove()
+@Component  // => Spring-managed bean for tenant context
+class TenantContext {  // => Thread-safe tenant ID storage using Kotlin companion object
+  companion object {  // => Kotlin's static member equivalent (singleton within class)
+    private val tenantId = ThreadLocal<String>()  // => ThreadLocal for request isolation
+    // => Each HTTP request thread has isolated tenant ID
+    // => Prevents tenant data leaking between concurrent requests
+
+    fun setTenantId(id: String) = tenantId.set(id)  // => Expression body (single-line function)
+    // => Sets tenant ID for current request thread
+    // => Called by TenantFilter after extracting X-Tenant-ID header
+
+    fun getTenantId(): String = tenantId.get() ?: "default"  // => Elvis operator: return "default" if null
+    // => Retrieves tenant ID for current request thread
+    // => Used by MultiTenantHikariDataSource to route database queries
+
+    fun clear() = tenantId.remove()  // => Expression body for cleanup
+    // => Removes tenant ID from thread-local storage (prevents memory leaks)
+    // => Called after request completes in TenantFilter.doFilter finally block
   }
 }
 
-@Component
-@Order(1)
-class TenantFilter : Filter {
+@Component  // => Spring Filter bean (alternative to HandlerInterceptor)
+@Order(1)  // => Execute first in filter chain (before security filters)
+class TenantFilter : Filter {  // => Servlet Filter interface for tenant ID extraction
   override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
+    // => Executes for every HTTP request (before controller)
     val tenantId = (request as HttpServletRequest).getHeader("X-Tenant-ID") ?: "default"
-    TenantContext.setTenantId(tenantId)
-    try { chain.doFilter(request, response) }
-    finally { TenantContext.clear() }
+    // => Smart cast: ServletRequest → HttpServletRequest
+    // => Elvis operator: use "default" if X-Tenant-ID header missing
+    // => Example: Header "X-Tenant-ID: tenant1" → tenantId = "tenant1"
+    TenantContext.setTenantId(tenantId)  // => Store tenant ID in ThreadLocal
+    try {
+      chain.doFilter(request, response)  // => Continue filter chain and invoke controller
+      // => All database queries use this tenant ID during controller execution
+    }
+    finally {
+      TenantContext.clear()  // => Cleanup: remove tenant ID from ThreadLocal
+      // => Critical: prevents memory leak in thread pools (thread reuse)
+      // => Finally block: executes even if exception thrown during request processing
+    }
   }
 }
 
 abstract class MultiTenantHikariDataSource : HikariDataSource() {
-  override fun getConnection(): Connection {
-    val tenantId = TenantContext.getTenantId()
-    schema = "tenant_$tenantId"
-    return super.getConnection()
+  // => Extends HikariCP connection pool for schema-per-tenant routing
+  // => Abstract: must be extended with tenant-specific schema mapping configuration
+  override fun getConnection(): Connection {  // => Intercept connection acquisition
+    val tenantId = TenantContext.getTenantId()  // => Get tenant ID from ThreadLocal
+    // => Example: tenantId = "tenant1"
+    schema = "tenant_$tenantId"  // => Set schema on connection (HikariCP property)
+    // => Example: schema = "tenant_tenant1" → all queries use this schema
+    // => PostgreSQL: SET search_path TO tenant_tenant1
+    return super.getConnection()  // => Return connection with schema set
+    // => All queries on this connection automatically prefixed: SELECT * FROM tenant_tenant1.products
   }
 }
 
-// Kotlin-specific: Use companion object for ThreadLocal, expression body for getTenantId
+// Kotlin-specific: Use companion object for ThreadLocal (static members), expression body for single-line functions
+// => companion object: singleton within class (like Java static members but more powerful)
+// => Expression body (= syntax): concise for single-expression functions
+// => Elvis operator (?:): null safety with default values
+// => Smart cast: automatic type conversion after type check (as HttpServletRequest)
 ```
 
 **Key Takeaway**: Choose multi-tenancy strategy based on isolation needs—separate databases for strong isolation, separate schemas for moderate isolation, or discriminator columns for maximum resource sharing with application-level filtering.
@@ -3063,33 +3139,37 @@ Compile Spring Boot applications to native executables for faster startup and lo
 
 ```java
 // Standard Spring Boot application
-@SpringBootApplication
-public class NativeApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(NativeApplication.class, args);
+@SpringBootApplication // => Enables auto-configuration, component scanning, and configuration properties
+public class NativeApplication { // => Main application class (works identically in JVM and native modes)
+    public static void main(String[] args) { // => Application entry point
+        SpringApplication.run(NativeApplication.class, args); // => Bootstraps Spring Boot application
+        // => In native mode: instant startup (~50ms), in JVM mode: slower startup (~2000ms)
     }
 
-    @Bean
-    public CommandLineRunner runner() {
-        return args -> {
+    @Bean // => Registers CommandLineRunner bean that executes after application startup
+    public CommandLineRunner runner() { // => Demonstrates startup time measurement
+        return args -> { // => Lambda executed once after context initialization
             System.out.println("Native application started in: " +
                 ManagementFactory.getRuntimeMXBean().getUptime() + "ms");
-            // => JVM: ~2000ms, Native: ~50ms
+            // => JVM: ~2000ms startup, Native: ~50ms startup (40x faster)
+            // => Prints actual measured startup time to console
         };
     }
 }
 
-@RestController
-@RequestMapping("/api/native")
-public class NativeController {
-    @GetMapping("/info")
-    public Map<String, Object> getInfo() {
-        return Map.of(
-            "runtime", System.getProperty("java.vm.name"),
-            "memoryUsed", Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory(),
-            "startupTime", ManagementFactory.getRuntimeMXBean().getUptime()
+@RestController // => Enables REST endpoints with automatic JSON serialization
+@RequestMapping("/api/native") // => Base path for all endpoints in this controller
+public class NativeController { // => Exposes runtime information endpoint
+    @GetMapping("/info") // => Endpoint: GET /api/native/info
+    public Map<String, Object> getInfo() { // => Returns runtime metrics as JSON
+        return Map.of( // => Creates immutable map with runtime information
+            "runtime", System.getProperty("java.vm.name"), // => VM name (e.g., "Substrate VM" for native, "OpenJDK 64-Bit Server VM" for JVM)
+            "memoryUsed", Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory(), // => Current memory usage in bytes
+            // => Native: ~10-50MB memory usage, JVM: ~100-200MB memory usage (10x reduction)
+            "startupTime", ManagementFactory.getRuntimeMXBean().getUptime() // => Milliseconds since application start
+            // => Native: ~50ms, JVM: ~2000ms
         );
-        // => Native uses ~10-50MB vs JVM ~100-200MB
+        // => Response example: {"runtime": "Substrate VM", "memoryUsed": 15728640, "startupTime": 52}
     }
 }
 ```
@@ -3100,6 +3180,7 @@ public class NativeController {
     <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-web</artifactId>
+        <!-- => Standard Spring Boot web dependency (works in both JVM and native modes) -->
     </dependency>
 </dependencies>
 
@@ -3108,15 +3189,22 @@ public class NativeController {
         <plugin>
             <groupId>org.graalvm.buildtools</groupId>
             <artifactId>native-maven-plugin</artifactId>
+            <!-- => GraalVM native image compilation plugin -->
+            <!-- => Analyzes application at build time, compiles to native binary -->
         </plugin>
         <plugin>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-maven-plugin</artifactId>
+            <!-- => Spring Boot build plugin with native image support -->
             <configuration>
                 <image>
                     <builder>paketobuildpacks/builder-jammy-tiny:latest</builder>
+                    <!-- => Paketo buildpack for native image compilation in Docker -->
+                    <!-- => Ubuntu Jammy base with minimal dependencies -->
                     <env>
                         <BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
+                        <!-- => Environment variable: enables native image build -->
+                        <!-- => Without this, builds standard JVM Docker image -->
                     </env>
                 </image>
             </configuration>
@@ -3126,27 +3214,42 @@ public class NativeController {
 ```
 
 ```bash
-# Build native image
+# Build native image (local compilation)
 ./mvnw -Pnative native:compile
+# => Activates 'native' profile, compiles to native executable
+# => Build time: 5-10 minutes (analyzes entire classpath at compile time)
+# => Output: ./target/myapp (standalone executable, no JVM required)
 
-# Or with Docker
+# Or with Docker (recommended for reproducible builds)
 ./mvnw spring-boot:build-image -Pnative
+# => Builds native image inside Docker container using Paketo buildpacks
+# => Ensures consistent build environment across different machines
+# => Output: Docker image with native executable
 
 # Run native executable
 ./target/myapp
+# => Launches application instantly without JVM startup overhead
+# => No classloading, no JIT compilation, no warmup period
 
 # Startup comparison:
-# JVM:    ~2000ms, ~200MB RAM
-# Native: ~50ms,   ~20MB RAM (40x faster, 10x less memory)
+# JVM:    ~2000ms startup, ~200MB RAM (includes JVM overhead)
+# Native: ~50ms startup,   ~20MB RAM (40x faster startup, 10x less memory)
+# => Native image trades build time (10 minutes) for runtime performance
 ```
 
 ```yaml
-# application.yml - Optimize for native
+# application.yml - Optimize for native image compilation
 spring:
   aot:
     enabled: true
+    # => Ahead-Of-Time compilation mode (analyzes beans at build time, not runtime)
+    # => Generates optimized initialization code during native image build
+    # => Required for native image support (reduces runtime reflection)
   main:
     lazy-initialization: true
+    # => Defers bean initialization until first use (reduces startup time)
+    # => In native mode: further reduces memory footprint
+    # => Trade-off: first request slower, but instant application start
 ```
 
 **Code (Kotlin)**:
@@ -3154,29 +3257,39 @@ spring:
 ```kotlin
 // build.gradle.kts
 plugins {
-  id("org.springframework.boot") version "3.2.0"
-  id("org.graalvm.buildtools.native") version "0.9.28"
-  kotlin("jvm") version "1.9.21"
-  kotlin("plugin.spring") version "1.9.21"
+  id("org.springframework.boot") version "3.2.0"  // => Spring Boot Gradle plugin
+  id("org.graalvm.buildtools.native") version "0.9.28"  // => GraalVM native image plugin for Gradle
+  // => Provides nativeCompile task for building native executables
+  kotlin("jvm") version "1.9.21"  // => Kotlin JVM compiler plugin
+  kotlin("plugin.spring") version "1.9.21"  // => Kotlin Spring plugin (makes classes open for proxying)
+  // => Required for Spring's CGLIB proxies in Kotlin (classes are final by default)
 }
 
-@SpringBootApplication
-open class NativeApplication
+@SpringBootApplication  // => Enables auto-configuration, component scanning, and configuration
+open class NativeApplication  // => Must be 'open' for Spring CGLIB proxies
+// => In native mode: Spring AOT processes this at build time
 
-fun main(args: Array<String>) {
-  runApplication<NativeApplication>(*args)
+fun main(args: Array<String>) {  // => Application entry point
+  runApplication<NativeApplication>(*args)  // => Kotlin extension function for SpringApplication.run
+  // => Starts Spring Boot application (instant in native mode)
 }
 
-@RestController
-class HelloController {
-  @GetMapping("/hello")
-  fun hello() = "Hello from Native Image!"
+@RestController  // => REST controller with automatic JSON serialization
+class HelloController {  // => Simple endpoint demonstrating native image functionality
+  @GetMapping("/hello")  // => Endpoint: GET /hello
+  fun hello() = "Hello from Native Image!"  // => Expression body (single-line function)
+  // => Returns plain text response
+  // => In native mode: no warmup, instant first response
 }
 
 // Build: ./gradlew nativeCompile
-// Startup: 0.05s vs 2s JVM, Memory: 20MB vs 200MB JVM
+// => Compiles to native executable in build/native/nativeCompile/
+// Startup: 0.05s vs 2s JVM (40x faster), Memory: 20MB vs 200MB JVM (10x reduction)
+// => Native image ideal for serverless functions (AWS Lambda, Google Cloud Functions)
 
-// Kotlin-specific: Same Gradle Native plugin configuration
+// Kotlin-specific: Same Gradle Native plugin configuration as Java
+// => Kotlin code compiles to same bytecode, native image process identical
+// => Kotlin's 'open' keyword required for Spring proxies (Java doesn't need this)
 ```
 
 **Key Takeaway**: GraalVM native images provide instant startup (~50ms vs ~2s) and minimal memory footprint (~20MB vs ~200MB)—ideal for serverless, containers, and microservices, but with longer build times and reflection/proxy limitations.
@@ -3191,34 +3304,38 @@ Expose flexible GraphQL APIs for efficient data fetching.
 
 ```java
 // pom.xml: spring-boot-starter-graphql
+// => Includes GraphQL Java implementation, Spring GraphQL integration, and GraphiQL UI
 
 // Domain model
-@Entity
-public class Author {
-    @Id
-    @GeneratedValue
-    private Long id;
-    private String name;
+@Entity // => JPA entity persisted to database
+public class Author { // => Represents author with one-to-many relationship to books
+    @Id // => Primary key field
+    @GeneratedValue // => Auto-generated ID (database sequence or identity column)
+    private Long id; // => Author ID (e.g., 1, 2, 3...)
+    private String name; // => Author name (e.g., "Martin Fowler")
 
-    @OneToMany(mappedBy = "author")
-    private List<Book> books;
+    @OneToMany(mappedBy = "author") // => One author has many books
+    // => mappedBy: "author" field in Book entity owns the relationship
+    // => Lazy-loaded by default (books fetched only when accessed)
+    private List<Book> books; // => List of books written by this author
 
-    // getters/setters
+    // getters/setters (omitted for brevity)
 }
 
-@Entity
-public class Book {
-    @Id
-    @GeneratedValue
-    private Long id;
-    private String title;
-    private int pages;
+@Entity // => JPA entity for books table
+public class Book { // => Represents book with many-to-one relationship to author
+    @Id // => Primary key
+    @GeneratedValue // => Auto-generated book ID
+    private Long id; // => Book ID (e.g., 1, 2, 3...)
+    private String title; // => Book title (e.g., "Refactoring")
+    private int pages; // => Number of pages (e.g., 450)
 
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    private Author author;
+    @ManyToOne // => Many books belong to one author
+    @JoinColumn(name = "author_id") // => Foreign key column: author_id references authors table
+    // => Eager-loaded by default (author fetched with book)
+    private Author author; // => Author who wrote this book
 
-    // getters/setters
+    // getters/setters (omitted for brevity)
 }
 
 // GraphQL schema (schema.graphqls in resources/graphql/)
@@ -3246,88 +3363,121 @@ public class Book {
 // }
 
 // Controller (Query resolvers)
-@Controller
-public class BookController {
-    @Autowired
-    private BookRepository bookRepository;
+@Controller // => GraphQL controller (not @RestController - handles GraphQL requests, not REST)
+public class BookController { // => Contains query and mutation resolvers for GraphQL schema
+    @Autowired // => Inject BookRepository for database operations
+    private BookRepository bookRepository; // => JPA repository for Book entity
 
-    @Autowired
-    private AuthorRepository authorRepository;
+    @Autowired // => Inject AuthorRepository for database operations
+    private AuthorRepository authorRepository; // => JPA repository for Author entity
 
-    @QueryMapping
-    public Book bookById(@Argument Long id) {
-        return bookRepository.findById(id).orElse(null);
-        // => Resolves Query.bookById
+    @QueryMapping // => Maps to "bookById" query in GraphQL schema (method name matches schema field)
+    public Book bookById(@Argument Long id) { // => @Argument binds GraphQL argument "id" to parameter
+        return bookRepository.findById(id).orElse(null); // => Fetches book by ID, returns null if not found
+        // => Resolves Query.bookById(id: ID!): Book
+        // => GraphQL query: { bookById(id: 1) { title } }
     }
 
-    @QueryMapping
-    public List<Book> books() {
-        return bookRepository.findAll();
-        // => Resolves Query.books
+    @QueryMapping // => Maps to "books" query in GraphQL schema
+    public List<Book> books() { // => Returns all books (no arguments)
+        return bookRepository.findAll(); // => Fetches all books from database
+        // => Resolves Query.books: [Book]
+        // => GraphQL query: { books { id title pages } }
     }
 
-    @QueryMapping
-    public List<Author> authors() {
-        return authorRepository.findAll();
+    @QueryMapping // => Maps to "authors" query in GraphQL schema
+    public List<Author> authors() { // => Returns all authors
+        return authorRepository.findAll(); // => Fetches all authors from database
+        // => Resolves Query.authors: [Author]
+        // => GraphQL query: { authors { id name books { title } } }
     }
 
-    @MutationMapping
+    @MutationMapping // => Maps to "createBook" mutation in GraphQL schema
     public Book createBook(@Argument String title, @Argument int pages, @Argument Long authorId) {
-        Author author = authorRepository.findById(authorId).orElseThrow();
+        // => @Argument binds GraphQL arguments (title, pages, authorId) to parameters
+        Author author = authorRepository.findById(authorId).orElseThrow(); // => Fetch author by ID, throw exception if not found
+        // => Ensures author exists before creating book (referential integrity)
 
-        Book book = new Book();
-        book.setTitle(title);
-        book.setPages(pages);
-        book.setAuthor(author);
+        Book book = new Book(); // => Create new Book instance
+        book.setTitle(title); // => Set title from GraphQL argument
+        book.setPages(pages); // => Set pages from GraphQL argument
+        book.setAuthor(author); // => Set author relationship (foreign key)
 
-        return bookRepository.save(book);
-        // => Resolves Mutation.createBook
+        return bookRepository.save(book); // => Persist book to database, returns saved book with generated ID
+        // => Resolves Mutation.createBook(title: String!, pages: Int!, authorId: ID!): Book
+        // => GraphQL mutation: mutation { createBook(title: "Spring Boot", pages: 500, authorId: 1) { id title } }
     }
 
-    @SchemaMapping(typeName = "Book", field = "author")
-    public Author getAuthor(Book book) {
-        return book.getAuthor();
-        // => Resolves Book.author field (N+1 query risk!)
+    @SchemaMapping(typeName = "Book", field = "author") // => Custom field resolver for Book.author
+    // => Called when GraphQL query requests { books { author { name } } }
+    public Author getAuthor(Book book) { // => Resolves nested author field for each book
+        return book.getAuthor(); // => Fetches author for this specific book
+        // => Resolves Book.author field
+        // => WARNING: N+1 query problem! If fetching 100 books, this executes 1 + 100 = 101 queries
+        // => Solution: Use DataLoader for batch loading (see below)
     }
 }
 
-// Optimize N+1 with DataLoader
-@Configuration
-public class DataLoaderConfig {
-    @Bean
+// Optimize N+1 with DataLoader (batch loading pattern)
+@Configuration // => Spring configuration class for GraphQL DataLoader
+public class DataLoaderConfig { // => Configures batch loading to prevent N+1 query problem
+    @Bean // => Registers BatchLoaderRegistry bean
     public BatchLoaderRegistry batchLoaderRegistry(AuthorRepository authorRepository) {
+        // => Inject AuthorRepository for batch fetching authors
         return registry -> registry.forTypePair(Long.class, Author.class)
+            // => Register batch loader for (Long authorId → Author) mapping
             .registerBatchLoader((authorIds, env) -> {
+                // => Batch loader receives list of author IDs collected during GraphQL query execution
+                // => Instead of N queries (one per book), executes 1 query with WHERE id IN (1, 2, 3...)
                 List<Author> authors = authorRepository.findAllById(authorIds);
-                return Mono.just(authors); // Batch load authors
+                // => Fetches all authors in single query: SELECT * FROM authors WHERE id IN (?)
+                // => Example: authorIds = [1, 2, 3] → fetches 3 authors in 1 query
+                return Mono.just(authors); // Batch load authors (reactive wrapper for GraphQL execution)
+                // => Returns reactive publisher containing list of authors
+                // => GraphQL framework maps authors back to their corresponding books automatically
+                // => Performance: 100 books → 2 queries (1 for books, 1 for authors) instead of 101 queries
             });
     }
 }
 ```
 
 ```graphql
-# Query example
+# Query example - Fetch all books with nested author data
 query {
   books {
-    id
-    title
-    pages
+    # => Calls bookController.books() resolver
+    id # => Book ID (returned from database)
+    title # => Book title
+    pages # => Number of pages
     author {
-      name
+      # => Nested author object (triggers Book.author field resolver)
+      # => Without DataLoader: N+1 query problem (1 query for books + N queries for authors)
+      # => With DataLoader: 2 queries total (1 for books, 1 batched query for all authors)
+      name # => Author name
     }
   }
 }
+# => Response: [
+#      {"id": "1", "title": "Refactoring", "pages": 450, "author": {"name": "Martin Fowler"}},
+#      {"id": "2", "title": "Clean Code", "pages": 464, "author": {"name": "Robert C. Martin"}}
+#    ]
 
-# Mutation example
+# Mutation example - Create new book and return result with author
 mutation {
   createBook(title: "Spring Boot Guide", pages: 500, authorId: 1) {
-    id
-    title
+    # => Calls bookController.createBook() resolver with arguments
+    # => Validates authorId exists, creates book, persists to database
+    id # => Generated book ID (returned after save)
+    title # => Echoes back the title we just created
     author {
-      name
+      # => Nested author object for the book we created
+      name # => Author name (fetched from database by authorId)
     }
   }
 }
+# => Response: {"id": "3", "title": "Spring Boot Guide", "author": {"name": "Martin Fowler"}}
+# => Benefit: Single request creates book and returns complete object graph (book + author)
+# => REST equivalent: POST /books → GET /books/3 → GET /authors/1 (3 requests vs 1 GraphQL mutation)
 ```
 
 ```mermaid
@@ -3526,111 +3676,175 @@ class CoroutineBookController(
 Implement Saga pattern for managing distributed transactions across microservices.
 
 ```java
-// Order Saga Orchestrator
-@Service
-public class OrderSaga {
-    @Autowired
-    private RestTemplate restTemplate;
+// Order Saga Orchestrator (Orchestration-based Saga pattern)
+@Service // => Spring service bean for saga orchestration logic
+public class OrderSaga { // => Central coordinator that manages distributed transaction across microservices
+    // => Saga Pattern: No distributed ACID transactions - instead use local transactions + compensation
+    @Autowired // => Inject RestTemplate for synchronous HTTP calls to microservices
+    private RestTemplate restTemplate; // => Used to call inventory-service and payment-service
 
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+    @Autowired // => Inject KafkaTemplate for publishing events
+    private KafkaTemplate<String, String> kafkaTemplate; // => Event bus for order lifecycle events
 
-    public void processOrder(OrderRequest request) {
-        String orderId = UUID.randomUUID().toString();
+    public void processOrder(OrderRequest request) { // => Main saga execution: orchestrates 4 steps
+        // => Called by OrderController when user places order
+        String orderId = UUID.randomUUID().toString(); // => Generate unique order ID (e.g., "a1b2c3d4-...")
+        // => Used to track saga execution and correlate compensation operations
 
         try {
-            // Step 1: Reserve inventory
+            // Step 1: Reserve inventory (local transaction in inventory-service)
             ReservationResponse reservation = reserveInventory(request.productId(), request.quantity());
+            // => Calls inventory-service: POST /api/reservations
+            // => Reserves products, returns reservationId if successful
+            // => If fails: throws SagaException, triggers compensation
 
-            // Step 2: Process payment
+            // Step 2: Process payment (local transaction in payment-service)
             PaymentResponse payment = processPayment(request.customerId(), request.totalAmount());
+            // => Calls payment-service: POST /api/payments
+            // => Charges customer credit card, returns transactionId if successful
+            // => If fails: compensate() cancels inventory reservation from Step 1
 
-            // Step 3: Create order
+            // Step 3: Create order (local transaction in order-service)
             createOrder(orderId, request, reservation.reservationId(), payment.transactionId());
+            // => Persists order to database with references to reservation and payment
+            // => If fails: compensate() refunds payment and cancels inventory
 
-            // Step 4: Send notification
+            // Step 4: Send notification (non-critical step, can fail without rollback)
             sendNotification(request.customerId(), "Order " + orderId + " placed successfully");
+            // => Sends email/SMS to customer about successful order
+            // => If fails: saga still considered successful (notification retry handled separately)
 
             kafkaTemplate.send("order-events", "OrderCompleted", orderId);
+            // => Publish success event to Kafka topic for analytics/auditing
+            // => Event: {"topic": "order-events", "key": "OrderCompleted", "value": orderId}
         } catch (Exception e) {
-            // Compensating transactions (rollback)
-            compensate(orderId, e);
+            // Compensating transactions (rollback) - undo completed steps in reverse order
+            compensate(orderId, e); // => Executes compensation logic (cancel inventory, refund payment)
+            // => Saga fails: ALL completed steps reversed, system returns to consistent state
+            // => Example: If payment fails, inventory reservation canceled automatically
         }
     }
 
     private ReservationResponse reserveInventory(String productId, int quantity) {
+        // => Step 1 helper: Reserve inventory in inventory microservice
         ResponseEntity<ReservationResponse> response = restTemplate.postForEntity(
-            "http://inventory-service/api/reservations",
-            new ReservationRequest(productId, quantity),
-            ReservationResponse.class
+            // => Synchronous HTTP POST call to inventory-service
+            "http://inventory-service/api/reservations", // => Service discovery resolves this URL
+            // => Example: http://inventory-service-pod-1:8080/api/reservations
+            new ReservationRequest(productId, quantity), // => Request body: {productId: "ABC", quantity: 2}
+            // => JSON serialized automatically by RestTemplate
+            ReservationResponse.class // => Expected response type (deserialized from JSON)
+            // => Response: {reservationId: "r123", success: true}
         );
 
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new SagaException("Inventory reservation failed");
+        if (!response.getStatusCode().is2xxSuccessful()) { // => Check HTTP status code
+            // => Success: 200-299, Failure: 400-599
+            throw new SagaException("Inventory reservation failed"); // => Triggers compensation
+            // => Saga fails immediately - no further steps executed
         }
 
-        return response.getBody();
+        return response.getBody(); // => Returns ReservationResponse with reservationId
+        // => reservationId used to cancel reservation if later steps fail
     }
 
     private PaymentResponse processPayment(String customerId, BigDecimal amount) {
+        // => Step 2 helper: Process payment in payment microservice
         ResponseEntity<PaymentResponse> response = restTemplate.postForEntity(
-            "http://payment-service/api/payments",
-            new PaymentRequest(customerId, amount),
-            PaymentResponse.class
+            // => Synchronous HTTP POST call to payment-service
+            "http://payment-service/api/payments", // => Service discovery resolves this URL
+            // => Blocks until payment processed (can take 1-5 seconds for external payment gateway)
+            new PaymentRequest(customerId, amount), // => Request body: {customerId: "C123", amount: 99.99}
+            // => Calls external payment gateway (Stripe, PayPal, etc.)
+            PaymentResponse.class // => Expected response: {transactionId: "tx456", success: true}
+            // => transactionId used to refund payment if later steps fail
         );
 
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new SagaException("Payment processing failed");
+        if (!response.getStatusCode().is2xxSuccessful()) { // => Check payment success
+            throw new SagaException("Payment processing failed"); // => Triggers compensation
+            // => Automatically cancels inventory reservation (compensate() method)
+            // => Customer not charged, inventory not reserved - consistent state
         }
 
-        return response.getBody();
+        return response.getBody(); // => Returns PaymentResponse with transactionId
     }
 
     private void compensate(String orderId, Exception cause) {
-        // Cancel inventory reservation
+        // => Compensating transactions: undo completed saga steps in reverse order
+        // => Called when any saga step fails - ensures data consistency across services
+        // Cancel inventory reservation (compensate Step 1)
         restTemplate.delete("http://inventory-service/api/reservations/" + orderId);
+        // => DELETE request to inventory-service
+        // => Releases reserved products back to available inventory
+        // => Example: DELETE /api/reservations/a1b2c3d4 → inventory.reserved_quantity -= 2
 
-        // Refund payment
+        // Refund payment (compensate Step 2)
         restTemplate.postForEntity(
-            "http://payment-service/api/refunds",
-            new RefundRequest(orderId),
-            Void.class
+            "http://payment-service/api/refunds", // => Refund endpoint
+            // => Calls external payment gateway to reverse charge
+            new RefundRequest(orderId), // => Request body: {orderId: "a1b2c3d4"}
+            // => Payment gateway processes refund (can take 3-5 business days)
+            Void.class // => No response body expected (fire-and-forget)
         );
 
-        // Publish failure event
+        // Publish failure event (notify other services of saga failure)
         kafkaTemplate.send("order-events", "OrderFailed", orderId);
+        // => Event: {topic: "order-events", key: "OrderFailed", value: "a1b2c3d4"}
+        // => Other services listening to this topic can take action (analytics, alerting, etc.)
+        // => Saga pattern: eventual consistency through events
     }
 }
 
-// Choreography-based Saga (alternative)
-@Service
-public class InventoryService {
-    @KafkaListener(topics = "order-created")
-    public void handleOrderCreated(String orderId) {
+// Choreography-based Saga (alternative approach - no central orchestrator)
+// => Services communicate through events, each service listens and reacts
+// => More decoupled than orchestration, but harder to understand overall flow
+@Service // => Inventory microservice (separate deployment)
+public class InventoryService { // => Listens to order events and manages inventory
+    @KafkaListener(topics = "order-created") // => Subscribe to "order-created" Kafka topic
+    // => Triggered when OrderService publishes "order-created" event
+    // => Event-driven: no direct coupling to OrderService
+    public void handleOrderCreated(String orderId) { // => Event handler for new orders
+        // => Receives order ID from Kafka message
         try {
-            reserveInventory(orderId);
-            kafkaTemplate.send("inventory-reserved", orderId);
+            reserveInventory(orderId); // => Local transaction: update inventory_reserved table
+            // => Decrements available inventory for products in order
+            kafkaTemplate.send("inventory-reserved", orderId); // => Publish success event
+            // => Next service (PaymentService) listens to this event and proceeds
+            // => Saga progresses through event chain: order-created → inventory-reserved → payment-completed
         } catch (Exception e) {
-            kafkaTemplate.send("inventory-reservation-failed", orderId);
+            kafkaTemplate.send("inventory-reservation-failed", orderId); // => Publish failure event
+            // => Triggers compensation in other services (cancel order, don't charge payment)
+            // => Saga fails gracefully through event propagation
         }
     }
 
-    @KafkaListener(topics = "order-cancelled")
-    public void handleOrderCancelled(String orderId) {
-        releaseInventory(orderId);
+    @KafkaListener(topics = "order-cancelled") // => Subscribe to "order-cancelled" topic
+    // => Compensation event: undo inventory reservation
+    public void handleOrderCancelled(String orderId) { // => Rollback handler
+        releaseInventory(orderId); // => Local transaction: restore available inventory
+        // => Increments inventory back (compensating transaction)
+        // => Example: reserved 5 units → releases 5 units back to available_quantity
     }
 }
 
-@Service
-public class PaymentService {
-    @KafkaListener(topics = "inventory-reserved")
-    public void handleInventoryReserved(String orderId) {
+@Service // => Payment microservice (separate deployment)
+public class PaymentService { // => Listens to inventory events and processes payments
+    @KafkaListener(topics = "inventory-reserved") // => Subscribe to "inventory-reserved" topic
+    // => Only triggered AFTER InventoryService successfully reserves inventory
+    // => Event-driven coordination: no direct call from InventoryService
+    public void handleInventoryReserved(String orderId) { // => Event handler for reserved inventory
+        // => Proceeds to payment only if inventory successfully reserved
         try {
-            processPayment(orderId);
-            kafkaTemplate.send("payment-completed", orderId);
+            processPayment(orderId); // => Local transaction: charge customer, store payment record
+            // => Calls external payment gateway (Stripe, PayPal)
+            kafkaTemplate.send("payment-completed", orderId); // => Publish success event
+            // => Final step: OrderService listens to this and marks order as confirmed
+            // => Saga completes successfully through event chain
         } catch (Exception e) {
-            kafkaTemplate.send("payment-failed", orderId);
+            kafkaTemplate.send("payment-failed", orderId); // => Publish payment failure event
+            // => OrderService listens and marks order as failed
             kafkaTemplate.send("order-cancelled", orderId); // Trigger compensation
+            // => Triggers InventoryService.handleOrderCancelled() to release inventory
+            // => Choreography-based compensation: failure event triggers rollback cascade
         }
     }
 }
@@ -3899,131 +4113,219 @@ class CoroutineOrderSaga(
 Optimize Spring Boot applications for production performance.
 
 ```java
-// JVM tuning
-// -Xms512m -Xmx2g              # Heap size (min 512MB, max 2GB)
-// -XX:MaxMetaspaceSize=256m    # Metaspace limit
-// -XX:+UseG1GC                 # G1 garbage collector
-// -XX:MaxGCPauseMillis=200     # GC pause target
-// -XX:+HeapDumpOnOutOfMemoryError  # Dump on OOM
-// -Xlog:gc*:file=gc.log        # GC logging
+// JVM tuning (command-line arguments for java command)
+// -Xms512m -Xmx2g              # Heap size: min 512MB, max 2GB
+// => -Xms: initial heap size (prevents repeated heap expansion during startup)
+// => -Xmx: maximum heap size (prevents OutOfMemoryError until 2GB consumed)
+// => Rule of thumb: Xms = Xmx for predictable memory usage (no heap resizing)
+// -XX:MaxMetaspaceSize=256m    # Metaspace limit (class metadata storage)
+// => Metaspace: off-heap memory for class definitions and methods
+// => Default: unlimited (can cause native memory exhaustion)
+// => 256MB sufficient for most Spring Boot apps (~10,000 classes)
+// -XX:+UseG1GC                 # G1 garbage collector (low-latency GC)
+// => G1GC: Garbage-First collector optimized for <200ms pause times
+// => Alternative to Parallel GC (higher throughput but longer pauses)
+// => Best for applications requiring predictable latency
+// -XX:MaxGCPauseMillis=200     # GC pause target: 200ms maximum
+// => G1GC tries to keep stop-the-world pauses under 200ms
+// => Trade-off: Lower pause target → more frequent GC cycles
+// -XX:+HeapDumpOnOutOfMemoryError  # Dump heap to file on OOM
+// => Creates heap dump file (java_pid<pid>.hprof) for post-mortem analysis
+// => Analyze with Eclipse MAT or VisualVM to find memory leaks
+// -Xlog:gc*:file=gc.log        # GC logging to file
+// => Logs all GC events (minor, major, pause times) to gc.log
+// => Analyze with GCViewer or GCEasy for performance tuning
 
-// Spring Boot optimizations
-@Configuration
-public class PerformanceConfig {
-    // Connection pool tuning
-    @Bean
-    public HikariConfig hikariConfig() {
-        HikariConfig config = new HikariConfig();
-        config.setMaximumPoolSize(20); // Max DB connections
-        config.setMinimumIdle(5);      // Minimum idle connections
-        config.setConnectionTimeout(30000);
-        config.setIdleTimeout(600000);
-        config.setMaxLifetime(1800000);
-        return config;
+// Spring Boot optimizations (production configuration)
+@Configuration // => Spring configuration class for performance tuning beans
+public class PerformanceConfig { // => Configures connection pools, thread pools, HTTP clients
+    // Connection pool tuning (HikariCP - fastest JDBC connection pool)
+    @Bean // => Registers HikariConfig bean for data source configuration
+    public HikariConfig hikariConfig() { // => Configures database connection pool
+        HikariConfig config = new HikariConfig(); // => Create HikariCP configuration
+        config.setMaximumPoolSize(20); // Max DB connections (20 concurrent database queries)
+        // => Trade-off: Higher pool size → more DB connections but higher memory usage
+        // => Rule: maxPoolSize = (core_count * 2) + effective_spindle_count
+        config.setMinimumIdle(5);      // Minimum idle connections (always kept alive)
+        // => Prevents connection creation latency for sudden traffic spikes
+        // => 5 idle connections ready for immediate use
+        config.setConnectionTimeout(30000); // Max wait for connection from pool: 30 seconds
+        // => If all 20 connections busy, request waits up to 30s for available connection
+        // => Throws SQLException if timeout exceeded (prevents indefinite blocking)
+        config.setIdleTimeout(600000); // Idle connection lifetime: 10 minutes (600,000ms)
+        // => Closes connections idle for >10 minutes to free database resources
+        // => Balance: Too low → frequent connection churn, Too high → idle connections waste DB memory
+        config.setMaxLifetime(1800000); // Max connection lifetime: 30 minutes (1,800,000ms)
+        // => Forces connection refresh every 30 minutes (prevents stale connections)
+        // => Should be < database's connection timeout (e.g., MySQL wait_timeout=28800s)
+        return config; // => Returns configured HikariCP settings
     }
 
-    // Async executor tuning
-    @Bean
-    public TaskExecutor taskExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
-        executor.setMaxPoolSize(50);
-        executor.setQueueCapacity(100);
-        executor.setThreadNamePrefix("async-");
+    // Async executor tuning (thread pool for @Async methods)
+    @Bean // => Registers TaskExecutor bean for asynchronous method execution
+    public TaskExecutor taskExecutor() { // => Configures thread pool for background tasks
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor(); // => Spring's thread pool executor
+        executor.setCorePoolSize(10); // Core threads: always alive (10 threads minimum)
+        // => Core threads handle baseline async load (email sending, log processing)
+        executor.setMaxPoolSize(50); // Max threads: created on demand up to 50
+        // => Extra threads created when queue full (handle traffic spikes)
+        // => Destroyed after idle timeout (default: 60s)
+        executor.setQueueCapacity(100); // Task queue capacity: 100 pending tasks
+        // => Tasks queued when all core threads busy
+        // => When queue full AND <50 threads, creates new thread
+        // => When queue full AND =50 threads, applies rejection policy
+        executor.setThreadNamePrefix("async-"); // Thread naming: async-1, async-2, ...
+        // => Helpful for debugging thread dumps and logs
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.initialize();
-        return executor;
+        // => Rejection policy: caller thread executes task when pool saturated
+        // => Alternative policies: AbortPolicy (throw exception), DiscardPolicy (silently drop)
+        // => CallerRunsPolicy provides backpressure (slows down caller)
+        executor.initialize(); // => Initialize thread pool (starts core threads)
+        return executor; // => Returns configured thread pool executor
     }
 
-    // HTTP client tuning
-    @Bean
-    public RestTemplate restTemplate() {
+    // HTTP client tuning (RestTemplate with connection/read timeouts)
+    @Bean // => Registers RestTemplate bean for HTTP calls to external services
+    public RestTemplate restTemplate() { // => Configures HTTP client with timeouts
         HttpComponentsClientHttpRequestFactory factory =
-            new HttpComponentsClientHttpRequestFactory();
-        factory.setConnectTimeout(5000);
-        factory.setReadTimeout(10000);
+            new HttpComponentsClientHttpRequestFactory(); // => Apache HttpClient factory
+        // => Provides connection pooling and timeout configuration
+        factory.setConnectTimeout(5000); // Connection timeout: 5 seconds
+        // => Max time to establish TCP connection to remote server
+        // => Prevents indefinite blocking on network issues
+        factory.setReadTimeout(10000); // Read timeout: 10 seconds
+        // => Max time to read response after connection established
+        // => Prevents hanging on slow external APIs
 
-        return new RestTemplate(factory);
+        return new RestTemplate(factory); // => Returns RestTemplate with configured timeouts
+        // => HTTP calls fail fast instead of blocking indefinitely
     }
 }
 
-// Caching strategy
-@Service
-public class ProductService {
-    @Cacheable(value = "products", key = "#id")
-    public Product getProduct(Long id) {
-        // Expensive operation cached
-        return productRepository.findById(id).orElseThrow();
+// Caching strategy (Spring Cache abstraction with annotations)
+@Service // => Spring service bean with caching enabled
+public class ProductService { // => Example service demonstrating caching annotations
+    @Cacheable(value = "products", key = "#id") // => Cache GET operations
+    // => value: cache name (multiple caches supported)
+    // => key: cache key expression (SpEL: #id evaluates to method parameter)
+    public Product getProduct(Long id) { // => Cached method (expensive database query)
+        // Expensive operation cached (first call: DB query, subsequent calls: cache hit)
+        return productRepository.findById(id).orElseThrow(); // => Database query (only on cache miss)
+        // => Cache hit: returns cached Product without database access (100x faster)
+        // => Cache miss: queries database, stores result in cache
+        // => Example: getProduct(1) → DB query (200ms), getProduct(1) → cache hit (2ms)
     }
 
-    @CachePut(value = "products", key = "#product.id")
-    public Product updateProduct(Product product) {
-        return productRepository.save(product);
+    @CachePut(value = "products", key = "#product.id") // => Update cache on PUT operations
+    // => Always executes method AND updates cache with result
+    // => Ensures cache stays synchronized with database after updates
+    public Product updateProduct(Product product) { // => Update method that refreshes cache
+        return productRepository.save(product); // => Updates database AND cache
+        // => After save, cache[product.id] = updated product
+        // => Next getProduct(product.id) returns updated version from cache
     }
 
-    @CacheEvict(value = "products", key = "#id")
-    public void deleteProduct(Long id) {
-        productRepository.deleteById(id);
+    @CacheEvict(value = "products", key = "#id") // => Remove from cache on DELETE
+    // => Evicts cache entry to prevent serving stale data after deletion
+    public void deleteProduct(Long id) { // => Delete method that invalidates cache
+        productRepository.deleteById(id); // => Deletes from database
+        // => Cache entry removed: cache[id] = null
+        // => Next getProduct(id) throws exception (entity not found) instead of returning stale cached product
     }
 }
 
-// Lazy initialization
-@SpringBootApplication
-@EnableCaching
-public class Application {
-    public static void main(String[] args) {
-        System.setProperty("spring.main.lazy-initialization", "true");
-        // => Faster startup, but slower first request
-        SpringApplication.run(Application.class, args);
+// Lazy initialization (defer bean creation until first use)
+@SpringBootApplication // => Main Spring Boot application class
+@EnableCaching // => Enables Spring Cache abstraction (required for @Cacheable/@CachePut/@CacheEvict)
+// => Configures cache manager and AOP proxies for caching annotations
+public class Application { // => Application entry point with lazy initialization
+    public static void main(String[] args) { // => Main method
+        System.setProperty("spring.main.lazy-initialization", "true"); // => Enable lazy bean initialization
+        // => Faster startup: beans created on first use instead of eagerly at startup
+        // => Trade-off: Faster startup (2s → 0.5s) BUT slower first request (100ms → 500ms)
+        // => Useful for serverless functions, development, fast iteration
+        // => Production: typically disabled (eager initialization detects errors at startup)
+        SpringApplication.run(Application.class, args); // => Start Spring Boot application
     }
 }
 
-// Actuator metrics
-@Component
-public class PerformanceMetrics {
-    private final MeterRegistry registry;
+// Actuator metrics (Micrometer integration for application monitoring)
+@Component // => Spring-managed component for custom metrics
+public class PerformanceMetrics { // => Custom metrics recording business operations
+    private final MeterRegistry registry; // => Micrometer meter registry (Prometheus, Graphite, etc.)
+    // => Registry collects metrics and exports to monitoring systems
 
-    public PerformanceMetrics(MeterRegistry registry) {
-        this.registry = registry;
+    public PerformanceMetrics(MeterRegistry registry) { // => Constructor injection
+        this.registry = registry; // => Inject meter registry from Spring Boot Actuator
+        // => Auto-configured by spring-boot-starter-actuator dependency
     }
 
-    public void recordOrderProcessing(long durationMs) {
+    public void recordOrderProcessing(long durationMs) { // => Record timer metric for order processing
         registry.timer("order.processing.time").record(durationMs, TimeUnit.MILLISECONDS);
+        // => Timer metric: tracks count, total time, max time, percentiles
+        // => Example: order.processing.time{count=1000, mean=250ms, max=2000ms, p95=800ms}
+        // => Prometheus query: histogram_quantile(0.95, rate(order_processing_time_bucket[5m]))
     }
 
-    public void incrementErrorCount() {
-        registry.counter("orders.errors").increment();
+    public void incrementErrorCount() { // => Increment counter metric for errors
+        registry.counter("orders.errors").increment(); // => Counter metric: monotonically increasing count
+        // => Example: orders.errors{count=42} → tracks total errors since application start
+        // => Prometheus query: rate(orders_errors_total[5m]) → errors per second over 5-minute window
+        // => Alert: orders_errors_total > 100 → trigger PagerDuty notification
     }
 }
 ```
 
 ```yaml
-# application-prod.yml
+# application-prod.yml (production environment configuration)
 spring:
-  jpa:
+  jpa: # JPA/Hibernate performance tuning
     properties:
       hibernate:
         jdbc:
-          batch_size: 20 # Batch inserts
-          fetch_size: 50
-        order_inserts: true
-        order_updates: true
+          batch_size: 20 # Batch inserts: group 20 INSERT statements into single round-trip
+          # => Without batching: 100 inserts = 100 database round-trips (2000ms)
+          # => With batching: 100 inserts = 5 batches (200ms) - 10x faster
+          fetch_size: 50 # JDBC fetch size: retrieve 50 rows per ResultSet fetch
+          # => Reduces database round-trips for large result sets
+          # => Trade-off: Higher fetch size → more memory, fewer round-trips
+        order_inserts: true # Order INSERT statements by entity type (enables batching)
+        # => Hibernate groups consecutive inserts of same entity type
+        # => Example: Product, Product, Order, Product → Product, Product, Product, Order (batched)
+        order_updates: true # Order UPDATE statements by entity type (enables batching)
     hibernate:
       ddl-auto: none # Don't auto-create schema in production
+      # => Development: ddl-auto: update (auto-creates/updates schema)
+      # => Production: ddl-auto: none (use Flyway/Liquibase for migrations)
+      # => Prevents accidental schema changes in production
 
-server:
+server: # Embedded Tomcat server tuning
   tomcat:
     threads:
-      max: 200 # Max request threads
-      min-spare: 10
-    max-connections: 10000
-    accept-count: 100
+      max: 200 # Max request threads (200 concurrent HTTP requests)
+      # => Each thread handles one HTTP request
+      # => More threads → higher concurrency but more memory (1MB per thread stack)
+      # => Rule: max threads = expected peak concurrency
+      min-spare: 10 # Minimum idle threads (always ready for requests)
+      # => Pre-creates 10 threads at startup (avoids thread creation latency)
+    max-connections:
+      10000 # Max TCP connections accepted
+      # => Tomcat accepts up to 10,000 connections
+      # => Connections wait in queue if all threads busy
+      # => Prevents connection rejections during traffic spikes
+    accept-count:
+      100 # Connection queue size (pending connections)
+      # => When all threads busy AND all connections allocated, new connections queued
+      # => Queue full: connection rejected (TCP RST)
 
-management:
+management: # Spring Boot Actuator configuration
   metrics:
     export:
       prometheus:
-        enabled: true
+        enabled: true # Enable Prometheus metrics exporter
+        # => Exposes /actuator/prometheus endpoint with metrics in Prometheus format
+        # => Prometheus scrapes this endpoint every 15s
+        # => Metrics: JVM memory, GC, HTTP requests, database connections, etc.
 ```
 
 **Code (Kotlin)**:
@@ -4196,131 +4498,226 @@ management:
 Integrate comprehensive observability with metrics, logs, and traces.
 
 ```java
-// pom.xml:
-// spring-boot-starter-actuator
-// micrometer-registry-prometheus
-// micrometer-tracing-bridge-brave
-// zipkin-reporter-brave
+// pom.xml dependencies for observability stack:
+// spring-boot-starter-actuator - Spring Boot Actuator (metrics, health checks, endpoints)
+// => Provides /actuator endpoints for monitoring
+// micrometer-registry-prometheus - Prometheus metrics exporter
+// => Formats metrics in Prometheus text format for scraping
+// micrometer-tracing-bridge-brave - Brave (Zipkin) tracing integration
+// => Enables distributed tracing with automatic instrumentation
+// zipkin-reporter-brave - Zipkin trace reporter
+// => Sends traces to Zipkin server for visualization
 
-@SpringBootApplication
-public class ObservableApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(ObservableApplication.class, args);
+@SpringBootApplication // => Main Spring Boot application with observability enabled
+public class ObservableApplication { // => Application automatically instrumented with metrics and tracing
+    public static void main(String[] args) { // => Application entry point
+        SpringApplication.run(ObservableApplication.class, args); // => Starts application with auto-configured observability
+        // => Auto-configures: Micrometer metrics, Brave tracing, Actuator endpoints
+        // => Exposes: /actuator/prometheus (metrics), /actuator/health (health checks)
     }
 }
 
-// Custom metrics
-@RestController
-@RequestMapping("/api/orders")
-public class OrderController {
-    private final Counter orderCounter;
-    private final Timer orderTimer;
+// Custom metrics (Micrometer Counter and Timer)
+@RestController // => REST controller with custom metrics
+@RequestMapping("/api/orders") // => Base path: /api/orders
+public class OrderController { // => Controller demonstrating custom metrics collection
+    private final Counter orderCounter; // => Counter metric: monotonically increasing count
+    // => Tracks total orders created since application start
+    private final Timer orderTimer; // => Timer metric: tracks duration and percentiles
+    // => Tracks order processing time (count, total time, percentiles)
 
-    public OrderController(MeterRegistry registry) {
-        this.orderCounter = Counter.builder("orders.created")
-            .description("Total orders created")
-            .tags("service", "order-service")
-            .register(registry);
+    public OrderController(MeterRegistry registry) { // => Constructor injection of MeterRegistry
+        // => MeterRegistry: Micrometer's registry for all metrics (auto-configured by Spring Boot)
+        this.orderCounter = Counter.builder("orders.created") // => Build Counter metric
+            // => Metric name: orders.created (Prometheus: orders_created_total)
+            .description("Total orders created") // => Human-readable description
+            // => Appears in Prometheus UI and Grafana dashboards
+            .tags("service", "order-service") // => Tags for metric filtering
+            // => Prometheus query: orders_created_total{service="order-service"}
+            // => Allows grouping by service in multi-service deployments
+            .register(registry); // => Register counter with MeterRegistry
+            // => Metric now collected and exported to Prometheus
 
-        this.orderTimer = Timer.builder("orders.processing.time")
-            .description("Order processing duration")
-            .publishPercentiles(0.5, 0.95, 0.99)
-            .register(registry);
+        this.orderTimer = Timer.builder("orders.processing.time") // => Build Timer metric
+            // => Metric name: orders.processing.time (Prometheus: orders_processing_time_seconds)
+            .description("Order processing duration") // => Timer description
+            .publishPercentiles(0.5, 0.95, 0.99) // => Publish percentiles: p50, p95, p99
+            // => p50 (median): 50% of requests faster than this
+            // => p95: 95% of requests faster than this (outlier detection)
+            // => p99: 99% of requests faster than this (tail latency)
+            // => Example: p50=100ms, p95=500ms, p99=2000ms
+            .register(registry); // => Register timer with MeterRegistry
+            // => Collects count, total time, max time, percentiles
     }
 
-    @PostMapping
+    @PostMapping // => Endpoint: POST /api/orders
     public ResponseEntity<Order> createOrder(@RequestBody OrderRequest request) {
-        return orderTimer.record(() -> {
-            Order order = processOrder(request);
-            orderCounter.increment();
-            return ResponseEntity.ok(order);
+        // => Create order with automatic timing
+        return orderTimer.record(() -> { // => Timer.record(): measures execution time
+            // => Starts timer, executes lambda, stops timer, records duration
+            Order order = processOrder(request); // => Process order (business logic)
+            // => All code inside lambda is timed
+            orderCounter.increment(); // => Increment counter: orders.created++
+            // => Example: orders.created = 1000 → 1001
+            return ResponseEntity.ok(order); // => Return 200 OK with order
+            // => Timer records: duration=250ms, orders.processing.time{count=1001, mean=245ms, p95=800ms}
         });
-        // => Metrics: orders.created (count), orders.processing.time (percentiles)
+        // => Metrics exported to Prometheus: orders_created_total, orders_processing_time_seconds_*
+        // => Grafana query: rate(orders_created_total[5m]) → orders per second
     }
 }
 
-// Distributed tracing
-@Service
-public class OrderService {
-    @Autowired
-    private RestTemplate restTemplate; // Auto-instrumented for tracing
+// Distributed tracing (Brave/Zipkin integration)
+@Service // => Spring service bean with distributed tracing
+public class OrderService { // => Service demonstrating trace propagation across microservices
+    @Autowired // => Inject RestTemplate
+    private RestTemplate restTemplate; // Auto-instrumented for tracing (Spring Boot auto-configures TracingClientHttpRequestInterceptor)
+    // => Every HTTP call automatically creates child span and propagates trace context
+    // => Trace context propagated via HTTP headers: X-B3-TraceId, X-B3-SpanId, X-B3-Sampled
 
-    @NewSpan("process-order") // Custom span
-    public Order processOrder(OrderRequest request) {
-        // Trace ID automatically propagated to downstream services
+    @NewSpan("process-order") // Custom span annotation (creates new span within trace)
+    // => Span name: "process-order" (visible in Zipkin UI)
+    // => Captures method execution time and tags (success/failure)
+    public Order processOrder(OrderRequest request) { // => Method with custom span
+        // Trace ID automatically propagated to downstream services via HTTP headers
+        // => Trace context: {traceId: "abc123def456", spanId: "span1", parentSpanId: null}
+        // => All child spans share same traceId (correlates requests across services)
+
         PaymentResponse payment = restTemplate.postForObject(
-            "http://payment-service/api/payments",
-            request,
-            PaymentResponse.class
+            "http://payment-service/api/payments", // => HTTP call to payment microservice
+            // => Creates child span: "POST http://payment-service/api/payments"
+            // => Adds HTTP headers: X-B3-TraceId=abc123def456, X-B3-SpanId=span2, X-B3-ParentSpanId=span1
+            // => payment-service receives trace context and continues trace
+            request, // => Request body (OrderRequest)
+            PaymentResponse.class // => Expected response type
+            // => Span captures: HTTP method, URL, status code, duration
         );
 
         InventoryResponse inventory = restTemplate.postForObject(
-            "http://inventory-service/api/reserve",
-            request,
-            InventoryResponse.class
+            "http://inventory-service/api/reserve", // => HTTP call to inventory microservice
+            // => Creates another child span: "POST http://inventory-service/api/reserve"
+            // => Same traceId (abc123def456), new spanId (span3), parentSpanId=span1
+            // => inventory-service receives trace context (trace continues)
+            request, // => Request body
+            InventoryResponse.class // => Expected response
+            // => Span captures: HTTP method, URL, status code, duration
+            // => Zipkin UI shows: process-order → payment-service call → inventory-service call (waterfall view)
         );
 
-        return new Order(UUID.randomUUID().toString(), request.customerId());
+        return new Order(UUID.randomUUID().toString(), request.customerId()); // => Create order
+        // => Span completes: process-order span closed with duration (e.g., 450ms)
+        // => Trace sent to Zipkin: {traceId, spans[process-order, payment-call, inventory-call], timestamps}
+        // => Zipkin visualizes: order-service → payment-service (200ms) → inventory-service (250ms) total: 450ms
     }
 }
 
-// Structured logging
-@Component
+// Structured logging (SLF4J with MDC for trace context)
+@Component // => Spring Filter component for request logging
 public class RequestLoggingFilter extends OncePerRequestFilter {
+    // => OncePerRequestFilter: ensures filter executes once per request (not multiple times for forwards/includes)
     private static final Logger log = LoggerFactory.getLogger(RequestLoggingFilter.class);
+    // => SLF4J logger (uses Logback in Spring Boot by default)
+    // => Logback configured for JSON logging in production (structured logs)
 
-    @Override
+    @Override // => Override doFilterInternal to add trace context to logs
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                    FilterChain filterChain) throws ServletException, IOException {
-        String traceId = Tracer.currentSpan().context().traceId();
+        // => Executes for every HTTP request before controller
+        String traceId = Tracer.currentSpan().context().traceId(); // => Get current trace ID from Brave
+        // => Tracer.currentSpan(): access current tracing span
+        // => traceId: unique ID correlating all logs for this request across services
+        // => Example: traceId = "abc123def456789" (shared by order-service, payment-service, inventory-service)
 
-        MDC.put("traceId", traceId);
-        MDC.put("spanId", Tracer.currentSpan().context().spanId());
-        MDC.put("path", request.getRequestURI());
+        MDC.put("traceId", traceId); // => Add traceId to Mapped Diagnostic Context (MDC)
+        // => MDC: thread-local key-value store for log context
+        // => All log statements in this thread automatically include traceId
+        MDC.put("spanId", Tracer.currentSpan().context().spanId()); // => Add spanId to MDC
+        // => spanId: unique ID for this specific operation within trace
+        MDC.put("path", request.getRequestURI()); // => Add request path to MDC
+        // => Example: path = "/api/orders"
+        // => MDC context: {traceId: "abc123", spanId: "span1", path: "/api/orders"}
 
         try {
-            filterChain.doFilter(request, response);
+            filterChain.doFilter(request, response); // => Continue filter chain and execute controller
+            // => All logs during request processing include MDC context
         } finally {
             log.info("Request completed: {} {} - Status: {}",
-                request.getMethod(),
-                request.getRequestURI(),
-                response.getStatus()
+                request.getMethod(), // => HTTP method (GET, POST, PUT, DELETE)
+                request.getRequestURI(), // => Request path
+                response.getStatus() // => HTTP status code (200, 404, 500, etc.)
             );
-            // => {"traceId":"abc123","spanId":"def456","path":"/api/orders","level":"INFO",...}
+            // => Structured log output (JSON format with MDC context):
+            // => {"timestamp":"2026-02-01T10:00:00.000Z","level":"INFO","thread":"http-nio-8080-exec-1",
+            //     "logger":"RequestLoggingFilter","traceId":"abc123","spanId":"span1","path":"/api/orders",
+            //     "message":"Request completed: POST /api/orders - Status: 200"}
+            // => Elasticsearch/Loki query: {traceId="abc123"} → finds ALL logs for this request across services
+            // => Correlate request flow: order-service → payment-service → inventory-service using traceId
 
-            MDC.clear();
+            MDC.clear(); // => Clear MDC context (prevent memory leak in thread pools)
+            // => Critical: thread pools reuse threads, must clear MDC after each request
+            // => Without this: next request on same thread inherits previous request's MDC context!
         }
     }
 }
 ```
 
 ```yaml
-# application.yml - Observability configuration
-management:
-  endpoints:
+# application.yml - Observability configuration (Three Pillars: Metrics, Logs, Traces)
+management: # Spring Boot Actuator management configuration
+  endpoints: # Actuator endpoints configuration
     web:
       exposure:
-        include: health,prometheus,metrics,info
-  metrics:
+        include: health,prometheus,metrics,info # Expose specific endpoints
+        # => health: /actuator/health (liveness/readiness probes for Kubernetes)
+        # => prometheus: /actuator/prometheus (metrics in Prometheus format)
+        # => metrics: /actuator/metrics (list all available metrics)
+        # => info: /actuator/info (application information)
+  metrics: # Micrometer metrics configuration
     export:
       prometheus:
-        enabled: true
-    distribution:
+        enabled: true # Enable Prometheus metrics exporter
+        # => Exposes /actuator/prometheus endpoint
+        # => Prometheus server scrapes this endpoint every 15s (configurable in Prometheus)
+        # => Metrics format: # HELP, # TYPE, metric_name{labels} value timestamp
+    distribution: # Histogram/percentile configuration
       percentiles-histogram:
-        http.server.requests: true
-  tracing:
+        http.server.requests: true # Enable percentiles for HTTP request duration
+        # => Generates histogram buckets for percentile calculation
+        # => Percentiles: p50, p75, p95, p99 (50th, 75th, 95th, 99th percentile)
+        # => Example: p95 = 500ms means 95% of requests complete in <500ms
+        # => SLO: p95 < 500ms (95% of users get response in <500ms)
+  tracing: # Distributed tracing configuration
     sampling:
-      probability: 1.0 # 100% sampling (reduce in production)
-  zipkin:
+      probability: 1.0 # 100% sampling (trace every request)
+      # => Production: reduce to 0.1 (10% sampling) to reduce overhead
+      # => Trade-off: Lower sampling → less overhead but miss some traces
+      # => Example: 1.0 = trace all requests, 0.1 = trace 1 in 10 requests
+  zipkin: # Zipkin trace reporter configuration
     tracing:
-      endpoint: http://localhost:9411/api/v2/spans
+      endpoint: http://localhost:9411/api/v2/spans # Zipkin collector endpoint
+      # => Sends traces to Zipkin server for storage and visualization
+      # => Zipkin UI: http://localhost:9411 (view trace waterfall diagrams)
+      # => Production: point to actual Zipkin/Jaeger server (e.g., http://zipkin.prod:9411)
 
-logging:
+logging: # Logging configuration (SLF4J/Logback)
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{traceId},%X{spanId}] %logger{36} - %msg%n"
+    # => Log pattern with trace context
+    # => %d: timestamp (2026-02-01 10:00:00)
+    # => %thread: thread name (http-nio-8080-exec-1)
+    # => %X{traceId}: MDC traceId (from RequestLoggingFilter)
+    # => %X{spanId}: MDC spanId (from RequestLoggingFilter)
+    # => %logger: logger name (com.example.OrderService)
+    # => %msg: log message
+    # => Example: "2026-02-01 10:00:00 [http-nio-8080-exec-1] INFO [abc123,span1] OrderService - Order created"
+    # => grep "abc123" logs/*.log → finds ALL logs for trace abc123
   level:
-    root: INFO
-    com.example.demo: DEBUG
+    root: INFO # Root logger level (all packages default to INFO)
+    # => INFO: informational messages (request logs, startup messages)
+    # => Lower levels: TRACE, DEBUG (more verbose, not logged)
+    com.example.demo: DEBUG # Application-specific package logging level
+    # => DEBUG: detailed debugging information for application code
+    # => Production: set to INFO (reduce log volume)
 ```
 
 ```yaml

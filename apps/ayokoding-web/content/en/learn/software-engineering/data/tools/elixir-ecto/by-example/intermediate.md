@@ -37,40 +37,66 @@ graph TD
 
 ```elixir
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     has_many :posts, Post
+                                                      # => Operation executes
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 defmodule Post do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "posts" do
+                                                      # => Schema declaration
     field :title, :string
+                                                      # => Field defined
     field :published, :boolean
+                                                      # => Field defined
     belongs_to :user, User
+                                                      # => Operation executes
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 import Ecto.Query
+                                                      # => Operation executes
 
 # Insert test data
+                                                      # => Operation executes
 {:ok, user1} = Repo.insert(%User{name: "Alice"})
+                                                      # => Database operation
 {:ok, user2} = Repo.insert(%User{name: "Bob"})
+                                                      # => Database operation
 Repo.insert(%Post{title: "Published", published: true, user_id: user1.id})
+                                                      # => Database operation
 Repo.insert(%Post{title: "Draft", published: false, user_id: user2.id})
+                                                      # => Database operation
 
 # Query users with published posts
+                                                      # => Operation executes
 query = from u in User,
+                                                      # => Value assigned
   join: p in assoc(u, :posts),        # => Join posts table on user_id
   where: p.published == true,         # => Filter by post.published
   distinct: true,                     # => Remove duplicate users
   select: u
+                                                      # => Operation executes
 
 users = Repo.all(query)               # => users is [%User{name: "Alice"}]
                                       # => SQL: SELECT DISTINCT u.* FROM users u
@@ -114,37 +140,61 @@ graph TD
 
 ```elixir
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     has_many :posts, Post
+                                                      # => Operation executes
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 defmodule Post do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "posts" do
+                                                      # => Schema declaration
     field :title, :string
+                                                      # => Field defined
     belongs_to :user, User
+                                                      # => Operation executes
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 import Ecto.Query
+                                                      # => Operation executes
 
 # Insert test data
+                                                      # => Operation executes
 {:ok, user_with_posts} = Repo.insert(%User{name: "Charlie"})
+                                                      # => Database operation
 {:ok, user_no_posts} = Repo.insert(%User{name: "Diana"})
+                                                      # => Database operation
 Repo.insert(%Post{title: "Post 1", user_id: user_with_posts.id})
+                                                      # => Database operation
 
 # Find users without posts using left join
+                                                      # => Operation executes
 query = from u in User,
+                                                      # => Value assigned
   left_join: p in assoc(u, :posts),   # => Left join (includes users without posts)
   where: is_nil(p.id),                # => Filter for users with no posts
   select: u
+                                                      # => Operation executes
 
 users_without_posts = Repo.all(query) # => users_without_posts is [%User{name: "Diana"}]
                                       # => SQL: SELECT u.* FROM users u
@@ -152,8 +202,10 @@ users_without_posts = Repo.all(query) # => users_without_posts is [%User{name: "
                                       # =>      WHERE p.id IS NULL
 
 IO.inspect(length(users_without_posts))
+                                                      # => Operation executes
                                       # => Output: 1
 IO.inspect(hd(users_without_posts).name)
+                                                      # => Operation executes
                                       # => Output: "Diana"
 ```
 
@@ -188,25 +240,41 @@ graph TD
 
 ```elixir
 defmodule Post do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "posts" do
+                                                      # => Schema declaration
     field :title, :string
+                                                      # => Field defined
     field :category, :string
+                                                      # => Field defined
     field :views, :integer
+                                                      # => Field defined
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 import Ecto.Query
+                                                      # => Operation executes
 
 # Insert test data
+                                                      # => Operation executes
 Repo.insert(%Post{title: "Tech 1", category: "tech", views: 100})
+                                                      # => Database operation
 Repo.insert(%Post{title: "Tech 2", category: "tech", views: 200})
+                                                      # => Database operation
 Repo.insert(%Post{title: "Sports 1", category: "sports", views: 150})
+                                                      # => Database operation
 
 # Count posts per category
+                                                      # => Operation executes
 query = from p in Post,
+                                                      # => Value assigned
   group_by: p.category,               # => Group by category field
   select: {p.category, count(p.id)}   # => Select category and count
 
@@ -216,8 +284,11 @@ results = Repo.all(query)             # => results is [{"tech", 2}, {"sports", 1
                                       # =>      GROUP BY category
 
 # Sum views per category
+                                                      # => Operation executes
 sum_query = from p in Post,
+                                                      # => Value assigned
   group_by: p.category,
+                                                      # => Operation executes
   select: {p.category, sum(p.views)}  # => Sum views per category
 
 sums = Repo.all(sum_query)            # => sums is [{"tech", 300}, {"sports", 150}]
@@ -240,28 +311,46 @@ The having clause filters groups after aggregation, unlike where which filters b
 
 ```elixir
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     field :country, :string
+                                                      # => Field defined
     field :age, :integer
+                                                      # => Field defined
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 import Ecto.Query
+                                                      # => Operation executes
 
 # Insert test data
+                                                      # => Operation executes
 Repo.insert(%User{name: "Eve", country: "USA", age: 25})
+                                                      # => Database operation
 Repo.insert(%User{name: "Frank", country: "USA", age: 30})
+                                                      # => Database operation
 Repo.insert(%User{name: "Grace", country: "UK", age: 28})
+                                                      # => Database operation
 
 # Count users per country, only countries with 2+ users
+                                                      # => Operation executes
 query = from u in User,
+                                                      # => Value assigned
   group_by: u.country,
+                                                      # => Operation executes
   having: count(u.id) >= 2,           # => Filter groups with count >= 2
   select: {u.country, count(u.id)}
+                                                      # => Operation executes
 
 results = Repo.all(query)             # => results is [{"USA", 2}]
                                       # => SQL: SELECT country, COUNT(id)
@@ -270,10 +359,14 @@ results = Repo.all(query)             # => results is [{"USA", 2}]
                                       # =>      HAVING COUNT(id) >= 2
 
 # Average age per country, only countries with avg >= 27
+                                                      # => Value assigned
 avg_query = from u in User,
+                                                      # => Value assigned
   group_by: u.country,
+                                                      # => Operation executes
   having: avg(u.age) >= 27,           # => Filter by average age
   select: {u.country, avg(u.age)}
+                                                      # => Operation executes
 
 avg_results = Repo.all(avg_query)     # => avg_results is [{"USA", Decimal("27.5")}, {"UK", Decimal("28.0")}]
                                       # => SQL: SELECT country, AVG(age)
@@ -314,30 +407,49 @@ graph TD
 
 ```elixir
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     field :balance, :decimal
+                                                      # => Field defined
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 # Insert test users
+                                                      # => Operation executes
 {:ok, alice} = Repo.insert(%User{name: "Alice", balance: Decimal.new("100.00")})
+                                                      # => Database operation
 {:ok, bob} = Repo.insert(%User{name: "Bob", balance: Decimal.new("50.00")})
+                                                      # => Database operation
 
 # Transfer money in transaction
+                                                      # => Operation executes
 result = Repo.transaction(fn ->
+                                                      # => Database operation
   # Deduct from Alice
+                                                      # => Operation executes
   alice_changeset = Ecto.Changeset.change(alice, balance: Decimal.sub(alice.balance, Decimal.new("30.00")))
+                                                      # => Value assigned
   {:ok, alice_updated} = Repo.update(alice_changeset)
+                                                      # => Database operation
                                       # => alice_updated.balance is Decimal("70.00")
                                       # => SQL: UPDATE users SET balance = 70.00 WHERE id = 1
 
   # Add to Bob
+                                                      # => Operation executes
   bob_changeset = Ecto.Changeset.change(bob, balance: Decimal.add(bob.balance, Decimal.new("30.00")))
+                                                      # => Value assigned
   {:ok, bob_updated} = Repo.update(bob_changeset)
+                                                      # => Database operation
                                       # => bob_updated.balance is Decimal("80.00")
                                       # => SQL: UPDATE users SET balance = 80.00 WHERE id = 2
 
@@ -345,6 +457,7 @@ result = Repo.transaction(fn ->
 end)                                  # => SQL: BEGIN; ... COMMIT;
 
 {:ok, {alice_final, bob_final}} = result
+                                                      # => Value assigned
                                       # => result is {:ok, {alice_updated, bob_updated}}
 
 IO.inspect(alice_final.balance)       # => Output: #Decimal<70.00>
@@ -363,36 +476,56 @@ Repo.rollback/1 manually aborts a transaction, causing Repo.transaction/1 to ret
 
 ```elixir
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     field :balance, :decimal
+                                                      # => Field defined
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 # Insert test user
+                                                      # => Operation executes
 {:ok, user} = Repo.insert(%User{name: "Charlie", balance: Decimal.new("50.00")})
+                                                      # => Database operation
 
 # Attempt withdrawal with insufficient funds
+                                                      # => Operation executes
 result = Repo.transaction(fn ->
+                                                      # => Database operation
   withdrawal = Decimal.new("100.00")  # => Attempting to withdraw 100
 
   if Decimal.lt?(user.balance, withdrawal) do
+                                                      # => Operation executes
     Repo.rollback(:insufficient_funds) # => Manually rollback transaction
                                       # => SQL: ROLLBACK
   else
+                                                      # => Operation executes
     changeset = Ecto.Changeset.change(user, balance: Decimal.sub(user.balance, withdrawal))
+                                                      # => Value assigned
     {:ok, updated} = Repo.update(changeset)
+                                                      # => Database operation
     updated
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end)
+                                                      # => Block ends
 
 {:error, reason} = result             # => result is {:error, :insufficient_funds}
                                       # => No changes committed to database
 
 # Verify balance unchanged
+                                                      # => Operation executes
 unchanged = Repo.get(User, user.id)   # => unchanged.balance is still Decimal("50.00")
 
 IO.inspect(result)                    # => Output: {:error, :insufficient_funds}
@@ -427,43 +560,72 @@ graph TD
 
 ```elixir
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     has_many :posts, Post
+                                                      # => Operation executes
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 defmodule Post do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "posts" do
+                                                      # => Schema declaration
     field :title, :string
+                                                      # => Field defined
     belongs_to :user, User
+                                                      # => Operation executes
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 alias Ecto.Multi
+                                                      # => Operation executes
 
 # Build multi operation
+                                                      # => Operation executes
 multi =
+                                                      # => Value assigned
   Multi.new()
+                                                      # => Operation executes
   |> Multi.insert(:user, %User{name: "Diana"})
+                                                      # => Operation executes
                                       # => Named operation :user
   |> Multi.insert(:post, fn %{user: user} ->
+                                                      # => Operation executes
     %Post{title: "First Post", user_id: user.id}
+                                                      # => Operation executes
                                       # => Reference :user result
   end)
+                                                      # => Block ends
   |> Multi.run(:count_posts, fn _repo, %{user: user} ->
+                                                      # => Operation executes
     count = Repo.aggregate(Post, :count, :id)
+                                                      # => Database operation
     {:ok, count}                      # => Must return {:ok, value} or {:error, value}
   end)
+                                                      # => Block ends
 
 # Execute multi
+                                                      # => Operation executes
 {:ok, results} = Repo.transaction(multi)
+                                                      # => Database operation
                                       # => results is %{user: %User{...}, post: %Post{...}, count_posts: 1}
                                       # => SQL: BEGIN; INSERT users ...; INSERT posts ...; SELECT COUNT(*) ...; COMMIT;
 
@@ -509,44 +671,74 @@ graph TD
 
 ```elixir
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     field :premium, :boolean
+                                                      # => Field defined
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 defmodule Subscription do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "subscriptions" do
+                                                      # => Schema declaration
     field :plan, :string
+                                                      # => Field defined
     belongs_to :user, User
+                                                      # => Operation executes
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 alias Ecto.Multi
+                                                      # => Operation executes
 
 # Create user and conditionally add subscription
+                                                      # => Operation executes
 multi =
+                                                      # => Value assigned
   Multi.new()
+                                                      # => Operation executes
   |> Multi.insert(:user, %User{name: "Eve", premium: true})
+                                                      # => Operation executes
   |> Multi.run(:subscription, fn _repo, %{user: user} ->
+                                                      # => Operation executes
     if user.premium do               # => Conditional logic
       changeset = %Subscription{plan: "premium", user_id: user.id}
+                                                      # => Value assigned
       case Repo.insert(changeset) do
+                                                      # => Database operation
         {:ok, sub} -> {:ok, sub}     # => Insert subscription
         {:error, cs} -> {:error, cs}
+                                                      # => Operation executes
       end
+                                                      # => Block ends
     else
+                                                      # => Operation executes
       {:ok, nil}                     # => Skip subscription for non-premium
     end
+                                                      # => Block ends
   end)
+                                                      # => Block ends
 
 {:ok, results} = Repo.transaction(multi)
+                                                      # => Database operation
                                       # => results.user.premium is true
                                       # => results.subscription is %Subscription{plan: "premium"}
 
@@ -565,36 +757,54 @@ Migrations define schema changes to the database. The create table macro creates
 
 ```elixir
 defmodule Repo.Migrations.CreateUsers do
+                                                      # => Module starts
   use Ecto.Migration
+                                                      # => Imports Ecto
 
   def change do
+                                                      # => Operation executes
     create table(:users) do            # => Create users table
       add :name, :string, null: false  # => String column, not null
       add :email, :string, null: false # => Email column, not null
       add :age, :integer               # => Integer column, nullable
       add :active, :boolean, default: true
+                                                      # => Operation executes
                                        # => Boolean with default value
 
       timestamps()                     # => Add inserted_at, updated_at (type: naive_datetime_usec)
     end
+                                                      # => Block ends
 
     create unique_index(:users, [:email])
+                                                      # => Operation executes
                                        # => Unique constraint on email
                                        # => Prevents duplicate emails
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 # Run migration: mix ecto.migrate
+                                                      # => Operation executes
 # => SQL: CREATE TABLE users (
 #          id BIGSERIAL PRIMARY KEY,
+                                                      # => Operation executes
 #          name VARCHAR(255) NOT NULL,
+                                                      # => Operation executes
 #          email VARCHAR(255) NOT NULL,
+                                                      # => Operation executes
 #          age INTEGER,
+                                                      # => Operation executes
 #          active BOOLEAN DEFAULT TRUE,
+                                                      # => Operation executes
 #          inserted_at TIMESTAMP NOT NULL,
+                                                      # => Operation executes
 #          updated_at TIMESTAMP NOT NULL
+                                                      # => Operation executes
 #        );
+                                                      # => Operation executes
 #        CREATE UNIQUE INDEX users_email_index ON users(email);
+                                                      # => Operation executes
 ```
 
 **Key Takeaway**: Migrations are reversible by default (change/0 function), and timestamps/0 automatically adds inserted_at and updated_at columns with proper types and constraints.
@@ -626,21 +836,30 @@ graph TD
 
 ```elixir
 defmodule Repo.Migrations.AddBioToUsers do
+                                                      # => Module starts
   use Ecto.Migration
+                                                      # => Imports Ecto
 
   def change do
+                                                      # => Operation executes
     alter table(:users) do             # => Modify existing users table
       add :bio, :text                  # => Add bio column (type: text, nullable)
       add :country, :string, size: 2   # => String column with length limit
                                        # => size: 2 for country code (e.g., "US")
     end
+                                                      # => Block ends
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 # Run migration: mix ecto.migrate
+                                                      # => Operation executes
 # => SQL: ALTER TABLE users
 #         ADD COLUMN bio TEXT,
+                                                      # => Operation executes
 #         ADD COLUMN country VARCHAR(2);
+                                                      # => Operation executes
 ```
 
 **Key Takeaway**: alter table is non-destructive by default, and you can add multiple columns in a single migration for atomic schema changes.
@@ -655,25 +874,35 @@ Indexes improve query performance on frequently searched columns. Use create ind
 
 ```elixir
 defmodule Repo.Migrations.AddIndexesToUsers do
+                                                      # => Module starts
   use Ecto.Migration
+                                                      # => Imports Ecto
 
   def change do
+                                                      # => Operation executes
     create index(:users, [:country])   # => Simple index on country column
                                        # => Speeds up queries filtering by country
 
     create index(:users, [:name, :country])
+                                                      # => Operation executes
                                        # => Composite index on name and country
                                        # => Optimizes queries filtering by both
 
     create index(:users, [:email], unique: true)
+                                                      # => Operation executes
                                        # => Unique index (if not already exists)
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 # Run migration: mix ecto.migrate
+                                                      # => Operation executes
 # => SQL: CREATE INDEX users_country_index ON users(country);
 #         CREATE INDEX users_name_country_index ON users(name, country);
+                                                      # => Operation executes
 #         CREATE UNIQUE INDEX users_email_index ON users(email);
+                                                      # => Operation executes
 ```
 
 **Key Takeaway**: Add indexes on foreign keys and frequently queried columns, but avoid over-indexing as each index adds overhead to inserts and updates.
@@ -688,34 +917,55 @@ Foreign key constraints ensure referential integrity by validating that referenc
 
 ```elixir
 defmodule Repo.Migrations.CreatePosts do
+                                                      # => Module starts
   use Ecto.Migration
+                                                      # => Imports Ecto
 
   def change do
+                                                      # => Operation executes
     create table(:posts) do
+                                                      # => Operation executes
       add :title, :string, null: false
+                                                      # => Operation executes
       add :content, :text
+                                                      # => Operation executes
       add :user_id, references(:users, on_delete: :delete_all)
+                                                      # => Operation executes
                                        # => Foreign key to users.id
                                        # => on_delete: :delete_all cascades deletes
 
       timestamps()
+                                                      # => Operation executes
     end
+                                                      # => Block ends
 
     create index(:posts, [:user_id])   # => Index foreign key for join performance
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 # Run migration: mix ecto.migrate
+                                                      # => Operation executes
 # => SQL: CREATE TABLE posts (
 #          id BIGSERIAL PRIMARY KEY,
+                                                      # => Operation executes
 #          title VARCHAR(255) NOT NULL,
+                                                      # => Operation executes
 #          content TEXT,
+                                                      # => Operation executes
 #          user_id BIGINT,
+                                                      # => Operation executes
 #          inserted_at TIMESTAMP NOT NULL,
+                                                      # => Operation executes
 #          updated_at TIMESTAMP NOT NULL,
+                                                      # => Operation executes
 #          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                                                      # => Operation executes
 #        );
+                                                      # => Operation executes
 #        CREATE INDEX posts_user_id_index ON posts(user_id);
+                                                      # => Operation executes
 ```
 
 **Key Takeaway**: Always add an index on foreign key columns for join performance, and choose appropriate on_delete strategy (nilify_all, delete_all, nothing, or restrict).
@@ -744,34 +994,52 @@ graph TD
 
 ```elixir
 defmodule Address do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   embedded_schema do                   # => Not persisted to its own table
     field :street, :string
+                                                      # => Field defined
     field :city, :string
+                                                      # => Field defined
     field :zip, :string
+                                                      # => Field defined
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     embeds_one :address, Address       # => Embedded as JSON in users table
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 # Create user with embedded address
+                                                      # => Operation executes
 address = %Address{street: "123 Main St", city: "NYC", zip: "10001"}
+                                                      # => Value assigned
 user = %User{name: "Frank", address: address}
+                                                      # => Value assigned
 
 {:ok, saved} = Repo.insert(user)      # => saved.address is %Address{...}
                                       # => SQL: INSERT INTO users (name, address, ...)
                                       # =>      VALUES ('Frank', '{"street":"123 Main St",...}', ...)
 
 # Fetch user with embedded address
+                                                      # => Operation executes
 loaded = Repo.get(User, saved.id)     # => loaded.address is %Address{...} (deserialized)
 
 IO.inspect(loaded.address.city)       # => Output: "NYC"
@@ -811,52 +1079,88 @@ graph TD
 
 ```elixir
 defmodule Phone do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   embedded_schema do
+                                                      # => Schema declaration
     field :type, :string               # => "mobile", "home", "work"
     field :number, :string
+                                                      # => Field defined
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
   import Ecto.Changeset
+                                                      # => Operation executes
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     embeds_many :phones, Phone         # => Array of phone numbers as JSON
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 
   def changeset(user, params \\ %{}) do
+                                                      # => Operation executes
     user
+                                                      # => Operation executes
     |> cast(params, [:name])
+                                                      # => Operation executes
     |> cast_embed(:phones, with: &Phone.changeset/2)
+                                                      # => Operation executes
                                        # => Cast embedded phones
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 defmodule Phone do
+                                                      # => Module starts
   import Ecto.Changeset
+                                                      # => Operation executes
 
   def changeset(phone, params) do
+                                                      # => Operation executes
     phone
+                                                      # => Operation executes
     |> cast(params, [:type, :number])
+                                                      # => Operation executes
     |> validate_required([:type, :number])
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 # Create user with multiple phones
+                                                      # => Operation executes
 params = %{
+                                                      # => Value assigned
   name: "Grace",
+                                                      # => Operation executes
   phones: [
+                                                      # => Operation executes
     %{type: "mobile", number: "555-1234"},
+                                                      # => Operation executes
     %{type: "home", number: "555-5678"}
+                                                      # => Operation executes
   ]
+                                                      # => Operation executes
 }
+                                                      # => Operation executes
 
 changeset = User.changeset(%User{}, params)
+                                                      # => Value assigned
 {:ok, saved} = Repo.insert(changeset) # => saved.phones is [%Phone{...}, %Phone{...}]
                                       # => SQL: INSERT INTO users (name, phones, ...)
                                       # =>      VALUES ('Grace', '[{"type":"mobile",...},...]', ...)
@@ -877,47 +1181,74 @@ Ecto supports composite primary keys by setting @primary_key false and manually 
 
 ```elixir
 defmodule UserRole do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   @primary_key false                   # => Disable auto-generated primary key
   schema "user_roles" do
+                                                      # => Schema declaration
     field :user_id, :integer, primary_key: true
+                                                      # => Field defined
                                        # => Part of composite key
     field :role_id, :integer, primary_key: true
+                                                      # => Field defined
                                        # => Part of composite key
     field :assigned_at, :naive_datetime
+                                                      # => Field defined
 
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 # Migration for composite key table
+                                                      # => Operation executes
 defmodule Repo.Migrations.CreateUserRoles do
+                                                      # => Module starts
   use Ecto.Migration
+                                                      # => Imports Ecto
 
   def change do
+                                                      # => Operation executes
     create table(:user_roles, primary_key: false) do
+                                                      # => Operation executes
       add :user_id, :integer, primary_key: true
+                                                      # => Operation executes
       add :role_id, :integer, primary_key: true
+                                                      # => Operation executes
       add :assigned_at, :naive_datetime
+                                                      # => Operation executes
 
       timestamps()
+                                                      # => Operation executes
     end
+                                                      # => Block ends
 
     create unique_index(:user_roles, [:user_id, :role_id])
+                                                      # => Operation executes
                                        # => Enforce uniqueness on composite key
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 # Insert record
+                                                      # => Operation executes
 {:ok, ur} = Repo.insert(%UserRole{user_id: 1, role_id: 5, assigned_at: NaiveDateTime.utc_now()})
+                                                      # => Database operation
                                       # => ur has composite key (user_id: 1, role_id: 5)
 
 # Fetch by composite key
+                                                      # => Operation executes
 found = Repo.get_by(UserRole, user_id: 1, role_id: 5)
+                                                      # => Database operation
                                       # => found is %UserRole{user_id: 1, role_id: 5}
 
 IO.inspect({found.user_id, found.role_id})
+                                                      # => Operation executes
                                       # => Output: {1, 5}
 ```
 
@@ -933,44 +1264,68 @@ Ecto supports custom primary key types like UUID, string, or binary_id. Set @pri
 
 ```elixir
 defmodule Article do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   @primary_key {:uuid, :binary_id, autogenerate: true}
+                                                      # => Operation executes
                                        # => UUID primary key (auto-generated)
   @foreign_key_type :binary_id         # => Foreign keys also use binary_id
 
   schema "articles" do
+                                                      # => Schema declaration
     field :title, :string
+                                                      # => Field defined
     belongs_to :author, User, type: :binary_id
+                                                      # => Operation executes
                                        # => Foreign key is binary_id (UUID)
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 # Migration for UUID primary key
+                                                      # => Operation executes
 defmodule Repo.Migrations.CreateArticles do
+                                                      # => Module starts
   use Ecto.Migration
+                                                      # => Imports Ecto
 
   def change do
+                                                      # => Operation executes
     create table(:articles, primary_key: false) do
+                                                      # => Operation executes
       add :uuid, :binary_id, primary_key: true
+                                                      # => Operation executes
                                        # => UUID as primary key
       add :title, :string
+                                                      # => Operation executes
       add :author_id, references(:users, type: :binary_id)
+                                                      # => Operation executes
                                        # => Foreign key references UUID
 
       timestamps()
+                                                      # => Operation executes
     end
+                                                      # => Block ends
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 # Insert article
+                                                      # => Operation executes
 {:ok, article} = Repo.insert(%Article{title: "UUID Article"})
+                                                      # => Database operation
                                       # => article.uuid is auto-generated UUID
                                       # => article.uuid is <<...>> (binary)
 
 IO.inspect(article.uuid)              # => Output: <<193, 44, 15, ...>> (binary UUID)
 IO.inspect(Ecto.UUID.cast!(article.uuid))
+                                                      # => Operation executes
                                       # => Output: "c12c0f3a-..." (string format)
 ```
 
@@ -999,62 +1354,102 @@ graph TD
 
 ```elixir
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     many_to_many :skills, Skill, join_through: "user_skills"
+                                                      # => Operation executes
                                        # => Join through user_skills table
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 defmodule Skill do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "skills" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     many_to_many :users, User, join_through: "user_skills"
+                                                      # => Operation executes
                                        # => Bidirectional association
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 # Migration for join table
+                                                      # => Operation executes
 defmodule Repo.Migrations.CreateUserSkills do
+                                                      # => Module starts
   use Ecto.Migration
+                                                      # => Imports Ecto
 
   def change do
+                                                      # => Operation executes
     create table(:user_skills) do
+                                                      # => Operation executes
       add :user_id, references(:users, on_delete: :delete_all)
+                                                      # => Operation executes
       add :skill_id, references(:skills, on_delete: :delete_all)
+                                                      # => Operation executes
 
       timestamps()
+                                                      # => Operation executes
     end
+                                                      # => Block ends
 
     create unique_index(:user_skills, [:user_id, :skill_id])
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 # Create user and skills
+                                                      # => Operation executes
 {:ok, user} = Repo.insert(%User{name: "Henry"})
+                                                      # => Database operation
 {:ok, elixir} = Repo.insert(%Skill{name: "Elixir"})
+                                                      # => Database operation
 {:ok, postgres} = Repo.insert(%Skill{name: "PostgreSQL"})
+                                                      # => Database operation
 
 # Associate user with skills (manual join table insert)
+                                                      # => Operation executes
 Repo.insert_all("user_skills", [
+                                                      # => Database operation
   %{user_id: user.id, skill_id: elixir.id, inserted_at: NaiveDateTime.utc_now(), updated_at: NaiveDateTime.utc_now()},
+                                                      # => Operation executes
   %{user_id: user.id, skill_id: postgres.id, inserted_at: NaiveDateTime.utc_now(), updated_at: NaiveDateTime.utc_now()}
+                                                      # => Operation executes
 ])
+                                                      # => Operation executes
 
 # Preload skills
+                                                      # => Operation executes
 user_with_skills = Repo.preload(user, :skills)
+                                                      # => Database operation
                                       # => user_with_skills.skills is [%Skill{name: "Elixir"}, ...]
                                       # => SQL: SELECT s.* FROM skills s
                                       # =>      INNER JOIN user_skills us ON us.skill_id = s.id
                                       # =>      WHERE us.user_id = 1
 
 IO.inspect(length(user_with_skills.skills))
+                                                      # => Operation executes
                                       # => Output: 2
 ```
 
@@ -1086,49 +1481,80 @@ graph TD
 
 ```elixir
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
   import Ecto.Changeset
+                                                      # => Operation executes
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     many_to_many :skills, Skill, join_through: "user_skills", on_replace: :delete
+                                                      # => Operation executes
                                        # => on_replace: :delete removes old associations
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 
   def changeset(user, params \\ %{}) do
+                                                      # => Operation executes
     user
+                                                      # => Operation executes
     |> cast(params, [:name])
+                                                      # => Operation executes
     |> put_assoc(:skills, params[:skills] || [])
+                                                      # => Operation executes
                                        # => Replace all skills
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 defmodule Skill do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "skills" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 # Create user and skills
+                                                      # => Operation executes
 {:ok, user} = Repo.insert(%User{name: "Iris"})
+                                                      # => Database operation
 {:ok, elixir} = Repo.insert(%Skill{name: "Elixir"})
+                                                      # => Database operation
 {:ok, postgres} = Repo.insert(%Skill{name: "PostgreSQL"})
+                                                      # => Database operation
 
 # Associate skills via changeset
+                                                      # => Operation executes
 changeset = User.changeset(user, %{skills: [elixir, postgres]})
+                                                      # => Value assigned
 {:ok, updated} = Repo.update(changeset)
+                                                      # => Database operation
                                       # => Inserts into user_skills join table
                                       # => SQL: INSERT INTO user_skills (user_id, skill_id) VALUES (1, 1), (1, 2)
 
 # Preload and verify
+                                                      # => Operation executes
 user_with_skills = Repo.preload(updated, :skills)
+                                                      # => Database operation
                                       # => user_with_skills.skills is [%Skill{name: "Elixir"}, ...]
 
 IO.inspect(length(user_with_skills.skills))
+                                                      # => Operation executes
                                       # => Output: 2
 ```
 
@@ -1144,60 +1570,98 @@ cast_assoc/3 casts nested association params through changesets, enabling valida
 
 ```elixir
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
   import Ecto.Changeset
+                                                      # => Operation executes
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     has_many :posts, Post              # => One-to-many association
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 
   def changeset(user, params \\ %{}) do
+                                                      # => Operation executes
     user
+                                                      # => Operation executes
     |> cast(params, [:name])
+                                                      # => Operation executes
     |> cast_assoc(:posts)              # => Cast nested posts params
                                        # => Calls Post.changeset for each post
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 defmodule Post do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
   import Ecto.Changeset
+                                                      # => Operation executes
 
   schema "posts" do
+                                                      # => Schema declaration
     field :title, :string
+                                                      # => Field defined
     belongs_to :user, User
+                                                      # => Operation executes
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 
   def changeset(post, params \\ %{}) do
+                                                      # => Operation executes
     post
+                                                      # => Operation executes
     |> cast(params, [:title])
+                                                      # => Operation executes
     |> validate_required([:title])
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 # Create user with nested posts
+                                                      # => Operation executes
 params = %{
+                                                      # => Value assigned
   name: "Jack",
+                                                      # => Operation executes
   posts: [
+                                                      # => Operation executes
     %{title: "First Post"},
+                                                      # => Operation executes
     %{title: "Second Post"}
+                                                      # => Operation executes
   ]
+                                                      # => Operation executes
 }
+                                                      # => Operation executes
 
 changeset = User.changeset(%User{}, params)
+                                                      # => Value assigned
 {:ok, user} = Repo.insert(changeset)  # => Inserts user and both posts
                                       # => SQL: INSERT INTO users (name) VALUES ('Jack');
                                       # =>      INSERT INTO posts (title, user_id) VALUES ('First Post', 1);
                                       # =>      INSERT INTO posts (title, user_id) VALUES ('Second Post', 1);
 
 # Preload posts
+                                                      # => Operation executes
 user_with_posts = Repo.preload(user, :posts)
+                                                      # => Database operation
                                       # => user_with_posts.posts has 2 posts
 
 IO.inspect(length(user_with_posts.posts))
+                                                      # => Operation executes
                                       # => Output: 2
 ```
 
@@ -1231,45 +1695,76 @@ graph TD
 
 ```elixir
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     field :age, :integer
+                                                      # => Field defined
     has_many :posts, Post
+                                                      # => Operation executes
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 defmodule Post do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "posts" do
+                                                      # => Schema declaration
     field :title, :string
+                                                      # => Field defined
     field :published, :boolean
+                                                      # => Field defined
     belongs_to :user, User
+                                                      # => Operation executes
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 import Ecto.Query
+                                                      # => Operation executes
 
 # Insert test data
+                                                      # => Operation executes
 {:ok, user1} = Repo.insert(%User{name: "Kate", age: 30})
+                                                      # => Database operation
 {:ok, user2} = Repo.insert(%User{name: "Liam", age: 25})
+                                                      # => Database operation
 Repo.insert(%Post{title: "Published", published: true, user_id: user1.id})
+                                                      # => Database operation
 Repo.insert(%Post{title: "Draft", published: false, user_id: user2.id})
+                                                      # => Database operation
 
 # Subquery: users with published posts
+                                                      # => Operation executes
 published_users_subquery = from p in Post,
+                                                      # => Value assigned
   where: p.published == true,
+                                                      # => Value assigned
   select: p.user_id                   # => Subquery returns user IDs
 
 # Main query using subquery
+                                                      # => Operation executes
 query = from u in User,
+                                                      # => Value assigned
   where: u.id in subquery(published_users_subquery),
+                                                      # => Operation executes
                                       # => Filter users by subquery results
   select: u
+                                                      # => Operation executes
 
 users = Repo.all(query)               # => users is [%User{name: "Kate"}]
                                       # => SQL: SELECT * FROM users
@@ -1291,26 +1786,42 @@ fragment/1 allows you to inject raw SQL into queries when Ecto's DSL doesn't sup
 
 ```elixir
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     field :email, :string
+                                                      # => Field defined
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 import Ecto.Query
+                                                      # => Operation executes
 
 # Insert test data
+                                                      # => Operation executes
 Repo.insert(%User{name: "Mia", email: "mia@EXAMPLE.com"})
+                                                      # => Database operation
 Repo.insert(%User{name: "Noah", email: "noah@example.COM"})
+                                                      # => Database operation
 
 # Case-insensitive email search using fragment
+                                                      # => Operation executes
 email_query = from u in User,
+                                                      # => Value assigned
   where: fragment("LOWER(?)", u.email) == "mia@example.com",
+                                                      # => Value assigned
                                       # => Raw SQL: LOWER(email)
   select: u
+                                                      # => Operation executes
 
 users = Repo.all(email_query)         # => users is [%User{name: "Mia"}]
                                       # => SQL: SELECT * FROM users WHERE LOWER(email) = 'mia@example.com'
@@ -1330,36 +1841,57 @@ distinct ensures the query returns unique rows, essential when joining has_many 
 
 ```elixir
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     field :country, :string
+                                                      # => Field defined
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 import Ecto.Query
+                                                      # => Operation executes
 
 # Insert test data with duplicates
+                                                      # => Operation executes
 Repo.insert(%User{name: "Olivia", country: "USA"})
+                                                      # => Database operation
 Repo.insert(%User{name: "Paul", country: "USA"})
+                                                      # => Database operation
 Repo.insert(%User{name: "Quinn", country: "UK"})
+                                                      # => Database operation
 
 # Get distinct countries
+                                                      # => Operation executes
 query = from u in User,
+                                                      # => Value assigned
   distinct: true,                     # => Remove duplicate rows
   select: u.country,
+                                                      # => Operation executes
   order_by: u.country
+                                                      # => Operation executes
 
 countries = Repo.all(query)           # => countries is ["UK", "USA"]
                                       # => SQL: SELECT DISTINCT country FROM users ORDER BY country
 
 # Distinct on specific field
+                                                      # => Field defined
 distinct_query = from u in User,
+                                                      # => Value assigned
   distinct: [desc: u.country],        # => Distinct by country (keep first per country)
   select: {u.name, u.country},
+                                                      # => Operation executes
   order_by: [desc: u.country, asc: u.name]
+                                                      # => Operation executes
 
 results = Repo.all(distinct_query)    # => results is [{"Olivia", "USA"}, {"Quinn", "UK"}]
                                       # => SQL: SELECT DISTINCT ON (country) name, country
@@ -1381,38 +1913,60 @@ lock/2 adds row-level locking to queries, preventing concurrent modifications du
 
 ```elixir
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     field :balance, :decimal
+                                                      # => Field defined
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 import Ecto.Query
+                                                      # => Operation executes
 
 # Insert test user
+                                                      # => Operation executes
 {:ok, user} = Repo.insert(%User{name: "Ruby", balance: Decimal.new("100.00")})
+                                                      # => Database operation
 
 # Lock user row during transaction
+                                                      # => Operation executes
 Repo.transaction(fn ->
+                                                      # => Database operation
   # Lock row for update
+                                                      # => Operation executes
   query = from u in User,
+                                                      # => Value assigned
     where: u.id == ^user.id,
+                                                      # => Value assigned
     lock: "FOR UPDATE"                # => Acquire exclusive lock on row
                                       # => Other transactions wait until this commits
 
   locked_user = Repo.one(query)       # => SQL: SELECT * FROM users WHERE id = 1 FOR UPDATE
 
   # Perform update with guaranteed isolation
+                                                      # => Operation executes
   changeset = Ecto.Changeset.change(locked_user, balance: Decimal.sub(locked_user.balance, Decimal.new("50.00")))
+                                                      # => Value assigned
   {:ok, updated} = Repo.update(changeset)
+                                                      # => Database operation
 
   updated
+                                                      # => Operation executes
 end)
+                                                      # => Block ends
 
 IO.inspect("Lock acquired and balance updated")
+                                                      # => Operation executes
                                       # => Output: "Lock acquired and balance updated"
 ```
 
@@ -1428,25 +1982,40 @@ select_merge/2 adds fields to an existing select, useful for computing derived v
 
 ```elixir
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "users" do
+                                                      # => Schema declaration
     field :first_name, :string
+                                                      # => Field defined
     field :last_name, :string
+                                                      # => Field defined
     field :age, :integer
+                                                      # => Field defined
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 import Ecto.Query
+                                                      # => Operation executes
 
 # Insert test data
+                                                      # => Operation executes
 Repo.insert(%User{first_name: "Sam", last_name: "Smith", age: 30})
+                                                      # => Database operation
 
 # Select with computed field
+                                                      # => Field defined
 query = from u in User,
+                                                      # => Value assigned
   select: %{id: u.id, age: u.age}     # => Initial select
   |> select_merge(%{full_name: fragment("? || ' ' || ?", u.first_name, u.last_name)})
+                                                      # => Operation executes
                                       # => Add computed full_name field
 
 results = Repo.all(query)             # => results is [%{id: 1, age: 30, full_name: "Sam Smith"}]
@@ -1468,32 +2037,54 @@ Window functions perform calculations across rows related to the current row. Us
 
 ```elixir
 defmodule Sale do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "sales" do
+                                                      # => Schema declaration
     field :region, :string
+                                                      # => Field defined
     field :amount, :decimal
+                                                      # => Field defined
     field :date, :date
+                                                      # => Field defined
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 import Ecto.Query
+                                                      # => Operation executes
 
 # Insert test data
+                                                      # => Operation executes
 Repo.insert(%Sale{region: "East", amount: Decimal.new("100"), date: ~D[2024-01-01]})
+                                                      # => Database operation
 Repo.insert(%Sale{region: "East", amount: Decimal.new("200"), date: ~D[2024-01-02]})
+                                                      # => Database operation
 Repo.insert(%Sale{region: "West", amount: Decimal.new("150"), date: ~D[2024-01-01]})
+                                                      # => Database operation
 
 # Running total per region using window function
+                                                      # => Operation executes
 query = from s in Sale,
+                                                      # => Value assigned
   select: %{
+                                                      # => Operation executes
     region: s.region,
+                                                      # => Operation executes
     amount: s.amount,
+                                                      # => Operation executes
     running_total: over(sum(s.amount), partition_by: s.region, order_by: s.date)
+                                                      # => Operation executes
                                       # => SUM(amount) OVER (PARTITION BY region ORDER BY date)
   },
+                                                      # => Operation executes
   order_by: [s.region, s.date]
+                                                      # => Operation executes
 
 results = Repo.all(query)             # => results with running totals per region
                                       # => SQL: SELECT region, amount,
@@ -1501,11 +2092,16 @@ results = Repo.all(query)             # => results with running totals per regio
                                       # =>      FROM sales ORDER BY region, date
 
 IO.inspect(results)
+                                                      # => Operation executes
 # => Output: [
 #      %{region: "East", amount: #Decimal<100>, running_total: #Decimal<100>},
+                                                      # => Operation executes
 #      %{region: "East", amount: #Decimal<200>, running_total: #Decimal<300>},
+                                                      # => Operation executes
 #      %{region: "West", amount: #Decimal<150>, running_total: #Decimal<150>}
+                                                      # => Operation executes
 #    ]
+                                                      # => Operation executes
 ```
 
 **Key Takeaway**: Window functions compute aggregates without collapsing rows (unlike GROUP BY), and partition_by divides rows into groups while order_by defines the calculation order within each partition.
@@ -1532,34 +2128,56 @@ graph TD
 
 ```elixir
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     field :age, :integer
+                                                      # => Field defined
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 import Ecto.Query
+                                                      # => Operation executes
 
 # Insert test data
+                                                      # => Operation executes
 Repo.insert(%User{name: "Tina", age: 25})
+                                                      # => Database operation
 Repo.insert(%User{name: "Uma", age: 35})
+                                                      # => Database operation
 Repo.insert(%User{name: "Victor", age: 30})
+                                                      # => Database operation
 
 # Define CTE for users over 25
+                                                      # => Operation executes
 young_users_cte = from u in User,
+                                                      # => Value assigned
   where: u.age > 25,
+                                                      # => Operation executes
   select: %{id: u.id, name: u.name, age: u.age}
+                                                      # => Operation executes
 
 # Main query using CTE
+                                                      # => Operation executes
 query = User
+                                                      # => Value assigned
   |> with_cte("young_users", as: ^young_users_cte)
+                                                      # => Operation executes
                                       # => Define CTE named "young_users"
   |> join(:inner, [u], y in "young_users", on: u.id == y.id)
+                                                      # => Value assigned
                                       # => Join with CTE
   |> select([u, y], {u.name, y.age})
+                                                      # => Operation executes
 
 results = Repo.all(query)             # => results is [{"Uma", 35}, {"Victor", 30}]
                                       # => SQL: WITH young_users AS (
@@ -1583,31 +2201,49 @@ Repo.insert_all/3 inserts multiple records in a single SQL statement, far more e
 
 ```elixir
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     field :age, :integer
+                                                      # => Field defined
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 # Prepare batch data
+                                                      # => Operation executes
 now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+                                                      # => Value assigned
 users = [
+                                                      # => Value assigned
   %{name: "Wendy", age: 28, inserted_at: now, updated_at: now},
+                                                      # => Block ends
   %{name: "Xavier", age: 32, inserted_at: now, updated_at: now},
+                                                      # => Operation executes
   %{name: "Yara", age: 27, inserted_at: now, updated_at: now}
+                                                      # => Operation executes
 ]
+                                                      # => Operation executes
 
 # Batch insert
+                                                      # => Operation executes
 {count, _} = Repo.insert_all(User, users)
+                                                      # => Database operation
                                       # => count is 3
                                       # => SQL: INSERT INTO users (name, age, inserted_at, updated_at)
                                       # =>      VALUES ('Wendy', 28, ...), ('Xavier', 32, ...), ('Yara', 27, ...)
                                       # => Single SQL statement for all inserts
 
 # Verify inserts
+                                                      # => Operation executes
 all_users = Repo.all(User)            # => all_users has 3 users
 
 IO.inspect(count)                     # => Output: 3
@@ -1626,22 +2262,36 @@ The returning option in insert_all/3 returns inserted records instead of nil, us
 
 ```elixir
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 # Batch insert with returning
+                                                      # => Operation executes
 now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+                                                      # => Value assigned
 users = [
+                                                      # => Value assigned
   %{name: "Zane", inserted_at: now, updated_at: now},
+                                                      # => Operation executes
   %{name: "Amy", inserted_at: now, updated_at: now}
+                                                      # => Operation executes
 ]
+                                                      # => Operation executes
 
 {count, inserted_users} = Repo.insert_all(User, users, returning: [:id, :name])
+                                                      # => Database operation
                                       # => count is 2
                                       # => inserted_users is [%{id: 1, name: "Zane"}, %{id: 2, name: "Amy"}]
                                       # => SQL: INSERT INTO users (name, ...) VALUES ('Zane', ...), ('Amy', ...)
@@ -1663,20 +2313,28 @@ Ecto allows querying without schemas by using table names as strings, useful for
 
 ```elixir
 import Ecto.Query
+                                                      # => Operation executes
 
 # Assume users table exists with columns: id, name, age
+                                                      # => Operation executes
 
 # Schemaless query (no User schema needed)
+                                                      # => Schema declaration
 query = from u in "users",            # => Query string table name directly
   where: u.age > 25,
+                                                      # => Operation executes
   select: %{id: u.id, name: u.name, age: u.age}
+                                                      # => Operation executes
 
 results = Repo.all(query)             # => results is list of maps (not structs)
                                       # => SQL: SELECT id, name, age FROM users WHERE age > 25
 
 # Schemaless insert
+                                                      # => Operation executes
 now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+                                                      # => Value assigned
 {1, _} = Repo.insert_all("users", [%{name: "Bob", age: 40, inserted_at: now, updated_at: now}])
+                                                      # => Database operation
                                       # => Insert without schema definition
 
 IO.inspect(results)                   # => Output: [%{id: 1, name: "...", age: ...}, ...]
@@ -1694,32 +2352,49 @@ Query prefixes enable querying specific database schemas (PostgreSQL) or databas
 
 ```elixir
 defmodule User do
+                                                      # => Module starts
   use Ecto.Schema
+                                                      # => Imports Ecto
 
   schema "users" do
+                                                      # => Schema declaration
     field :name, :string
+                                                      # => Field defined
     timestamps()
+                                                      # => Operation executes
   end
+                                                      # => Block ends
 end
+                                                      # => Block ends
 
 import Ecto.Query
+                                                      # => Operation executes
 
 # Query with prefix (PostgreSQL schema or MySQL database)
+                                                      # => Schema declaration
 query = from u in User,
+                                                      # => Value assigned
   select: u
+                                                      # => Operation executes
 
 # Query tenant1 schema
+                                                      # => Schema declaration
 tenant1_users = Repo.all(query, prefix: "tenant1")
+                                                      # => Database operation
                                       # => SQL: SELECT * FROM tenant1.users
                                       # => Query tenant1 schema
 
 # Query tenant2 schema
+                                                      # => Schema declaration
 tenant2_users = Repo.all(query, prefix: "tenant2")
+                                                      # => Database operation
                                       # => SQL: SELECT * FROM tenant2.users
                                       # => Query tenant2 schema
 
 # Insert with prefix
+                                                      # => Operation executes
 {:ok, user} = Repo.insert(%User{name: "Tenant User"}, prefix: "tenant1")
+                                                      # => Database operation
                                       # => SQL: INSERT INTO tenant1.users (name, ...) VALUES ('Tenant User', ...)
 
 IO.inspect(length(tenant1_users))     # => Output: count from tenant1 schema

@@ -417,37 +417,37 @@ Dispatchers control which thread pool executes coroutines.
 ```kotlin
 import kotlinx.coroutines.*
 
-fun main() = runBlocking {
+fun main() = runBlocking {           // => Blocks main thread until complete
     // Default dispatcher (CPU-intensive work)
-    launch(Dispatchers.Default) {
+    launch(Dispatchers.Default) {   // => Launch coroutine on Default dispatcher
         // => Uses Default thread pool (CPU cores threads)
 
         val threadName = Thread.currentThread().name
         // => e.g., "DefaultDispatcher-worker-1"
-
+                                     // => Thread name includes pool and worker number
         println("Default: $threadName")
         // => Output: Default: DefaultDispatcher-worker-1
 
-        repeat(3) { i ->
+        repeat(3) { i ->             // => Repeat 3 times
             println("CPU work $i")
             // => Output: CPU work 0, CPU work 1, CPU work 2
-            delay(100)
+            delay(100)               // => Suspend for 100ms
             // => Thread released during delay, may resume on different thread
         }
     }
 
     // IO dispatcher (I/O operations, larger pool)
-    launch(Dispatchers.IO) {
+    launch(Dispatchers.IO) {         // => Launch coroutine on IO dispatcher
         // => Uses IO thread pool (64+ threads)
 
         val threadName = Thread.currentThread().name
         println("IO: $threadName")
         // => Output: IO: DefaultDispatcher-worker-2
 
-        delay(500)
+        delay(500)                   // => Suspend for 500ms
         // => Simulates I/O operation (file read, HTTP request)
 
-        println("IO complete")
+        println("IO complete")       // => Print completion message
         // => Output: IO complete
     }
 
@@ -3269,42 +3269,38 @@ fun main() {
 Contracts inform the compiler about function behavior, enabling smart casts and improved type inference.
 
 ```kotlin
-                                             // => Contracts are experimental API (require @OptIn)
+import kotlin.contracts.*
 
-// Contract: returns(true) implies non-null
-@OptIn(ExperimentalContracts::class)         // => Opt-in required for experimental contracts API
-fun String?.isNotNullOrEmpty(): Boolean {    // => Extension on nullable String (String?)
+@OptIn(ExperimentalContracts::class)
+fun String?.isNotNullOrEmpty(): Boolean {
+    contract {
         returns(true) implies (this@isNotNullOrEmpty != null)
-                                             // => this@isNotNullOrEmpty labels the receiver explicitly
     }
     return this != null && this.isNotEmpty()
 }
 
-// Contract: returns() implies non-null (throws otherwise)
 @OptIn(ExperimentalContracts::class)
 fun <T> T?.requireNotNull(message: String = "Value is null"): T {
-                                             // => Generic extension on nullable T (T?)
-    contract {                               // => Contract block
+    contract {
         returns() implies (this@requireNotNull != null)
     }
     return this ?: throw IllegalArgumentException(message)
-                                             // => Otherwise return this (now smart-cast to T)
 }
 
-// Contract: callsInPlace exactly once
 @OptIn(ExperimentalContracts::class)
-                                             // => Generic return type R
+inline fun <R> runOnce(block: () -> R): R {
+    contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-                                             // => Not zero times, not multiple times, exactly once
     }
+    return block()
 }
 
-// Function demonstrating smart cast from contract
-fun processText(text: String?) {             // => text is nullable String (String?)
-        // Compiler knows text is non-null here due to contract
-        println(text.uppercase())            // => No null check needed (text smart-cast to String)
+fun processText(text: String?) {
+    if (text.isNotNullOrEmpty()) {       // => Contract enables smart cast
+        println(text.uppercase())        // => text smart-cast to String
+        println("Length: ${text.length}")// => No null check needed
     } else {
-        println("Text is null or empty")     // => text is null OR empty string
+        println("Text is null or empty")
     }
 }
 

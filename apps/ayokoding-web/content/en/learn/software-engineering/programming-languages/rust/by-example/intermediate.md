@@ -2072,12 +2072,16 @@ fn main() {
                                      // => rx (receiver): Receiver<T> for receiving
                                      // => Channel is unbounded (grows as needed)
                                      // => T inferred from first send() or recv()
+                                     // => Creates new FIFO queue in heap
 
-    println!("Channel created");     // => Output: Channel created
+    println!("Channel created");     // => Prints to stdout
+                                     // => Output: Channel created
 
     // Spawning sender thread
-    thread::spawn(move || {          // => move captures tx (ownership transfer)
+    thread::spawn(move || {          // => spawn() creates new OS thread
+                                     // => move captures tx (ownership transfer)
                                      // => rx remains in main thread
+                                     // => Closure runs concurrently
         let messages = vec![         // => Vector of messages to send
             String::from("hello"),   // => Each message is owned String
             String::from("from"),
@@ -2426,34 +2430,48 @@ use std::thread;                     // => Mutex for synchronized access
 fn main() {
     // Creating thread-safe shared mutable state
     let counter = Arc::new(Mutex::new(0));
+                                     // => Mutex::new(0) wraps i32 in Mutex
+                                     // => Arc::new() wraps Mutex in Arc
                                      // => counter type: Arc<Mutex<i32>>
                                      // => Arc: atomic reference counting (thread-safe Rc)
                                      // => Mutex: interior mutability with locking
                                      // => Pattern: shared mutable state (multi-threaded)
                                      // => Arc strong_count: 1 initially
+                                     // => Heap-allocated: Arc + Mutex + i32
     let mut handles = vec![];        // => Store thread handles
+                                     // => Type: Vec<JoinHandle<()>>
 
     println!("Initial count: {}", *counter.lock().unwrap());
+                                     // => counter.lock() acquires mutex
+                                     // => .unwrap() handles potential poison error
                                      // => lock() through Arc (deref to Mutex)
+                                     // => * dereferences MutexGuard to access i32
                                      // => Output: Initial count: 0
 
     // Spawning 10 threads that share counter
     for i in 0..10 {                 // => Create 10 threads
+                                     // => i ranges from 0 to 9
         let counter = Arc::clone(&counter);
+                                     // => Arc::clone increments reference count atomically
                                      // => Arc::clone increments reference count
                                      // => counter moved into closure
                                      // => Each thread gets Arc pointing to same Mutex
                                      // => Arc strong_count increments: 2, 3, 4, ..., 11
+                                     // => Clones Arc pointer, not underlying data
         let handle = thread::spawn(move || {
+                                     // => spawn() creates new OS thread
                                      // => move transfers Arc ownership to thread
                                      // => Closure owns this Arc clone
+                                     // => Thread runs concurrently
             let mut num = counter.lock().unwrap();
                                      // => Deref Arc to get &Mutex
                                      // => lock() acquires mutex (blocks if held)
+                                     // => unwrap() handles PoisonError
                                      // => num type: MutexGuard<i32>
                                      // => Only ONE thread can hold lock at a time
             *num += 1;               // => Deref MutexGuard to get &mut i32
                                      // => Increment counter atomically
+                                     // => Modifies shared state safely
                                      // => Other threads blocked until lock released
             println!("Thread {} incremented to {}", i, *num);
                                      // => Output order non-deterministic
@@ -2909,28 +2927,43 @@ use std::error::Error;              // => Error trait for error types
 
 // Custom error enum with multiple variants
 #[derive(Debug)]                     // => Debug trait for {:?} formatting
+                                     // => Auto-derives Debug implementation
 enum AppError {                      // => AppError: enum for domain errors
+                                     // => Sum type with 4 variants
     Io(std::io::Error),              // => Wrap I/O errors
+                                     // => Holds original io::Error
     Parse(std::num::ParseIntError),  // => Wrap parse errors
+                                     // => Holds original ParseIntError
     Custom(String),                  // => Custom error messages
+                                     // => Holds owned String
     Validation(String),              // => Validation errors
+                                     // => Holds error description
 }                                    // => Each variant holds error details
 
 // Implement Display for user-friendly error messages
 impl fmt::Display for AppError {    // => Display trait for {} formatting
+                                     // => Required for Error trait
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+                                     // => self: error instance to format
                                      // => fmt: format error message
                                      // => f: formatter reference
                                      // => Result: formatting succeeded or failed
+                                     // => Returns fmt::Result (Ok or Err)
         match self {                 // => Pattern match on error variant
+                                     // => Extract variant data
             AppError::Io(e) => write!(f, "IO error: {}", e),
+                                     // => e: wrapped io::Error
                                      // => Delegate to wrapped error's Display
+                                     // => write! macro formats output
                                      // => Output: IO error: No such file
             AppError::Parse(e) => write!(f, "Parse error: {}", e),
+                                     // => e: wrapped ParseIntError
                                      // => Output: Parse error: invalid digit
             AppError::Custom(s) => write!(f, "Error: {}", s),
+                                     // => s: custom message String
                                      // => Output: Error: custom message
             AppError::Validation(s) => write!(f, "Validation error: {}", s),
+                                     // => s: validation message
                                      // => Output: Validation error: message
         }
     }
@@ -2940,6 +2973,7 @@ impl fmt::Display for AppError {    // => Display trait for {} formatting
 impl Error for AppError {}           // => Marks AppError as standard error type
                                      // => Enables ? operator and error handling
                                      // => source() method uses default implementation
+                                     // => Empty impl uses default trait methods
 
 // Implement From for automatic io::Error conversion
 impl From<std::io::Error> for AppError {
@@ -3251,31 +3285,45 @@ Rust's built-in test framework uses `#[test]` attribute and `cargo test` command
 ```rust
 // Public functions to test
 pub fn add(a: i32, b: i32) -> i32 { // => Public function for addition
+                                     // => Parameters: a, b (both i32)
     a + b                            // => Return sum
+                                     // => Expression (no semicolon) returns value
 }
 
 pub fn subtract(a: i32, b: i32) -> i32 {
                                      // => Subtraction function
+                                     // => Returns difference
     a - b                            // => Return difference
+                                     // => Computes a minus b
 }
 
 pub fn multiply(a: i32, b: i32) -> i32 {
                                      // => Multiplication function
+                                     // => Returns product of a and b
     a * b                            // => Return product
+                                     // => Computes a times b
 }
 
 pub fn divide(a: i32, b: i32) -> Result<i32, String> {
                                      // => Division with error handling
+                                     // => Returns Result for fallible operation
     if b == 0 {                      // => Check for division by zero
+                                     // => Condition: b equals 0
         Err(String::from("Division by zero"))
+                                     // => Create error String
                                      // => Return error
+                                     // => Prevents divide-by-zero crash
     } else {
         Ok(a / b)                    // => Return quotient
+                                     // => Integer division (truncates)
+                                     // => Wrap result in Ok variant
     }
 }
 
 pub fn is_even(n: i32) -> bool {    // => Check if number is even
+                                     // => Returns true or false
     n % 2 == 0                       // => Return true if divisible by 2
+                                     // => Modulo operator checks remainder
 }
 
 // Test module (compiled only for tests)
