@@ -37,10 +37,10 @@ graph TD
     H --> I[DOM: Remove article#posts-123]
 
     style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#fff
     style E fill:#029E73,color:#fff
     style F fill:#0173B2,color:#fff
-    style I fill:#CC78BC,color:#000
+    style I fill:#CC78BC,color:#fff
 ```
 
 ```elixir
@@ -223,9 +223,9 @@ graph TD
     G --> H[Complete]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#CC78BC,color:#000
+    style F fill:#CC78BC,color:#fff
     style H fill:#029E73,color:#fff
 ```
 
@@ -656,7 +656,7 @@ graph TD
     F --> G
 
     style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
     style F fill:#029E73,color:#fff
@@ -963,7 +963,7 @@ graph TD
     H --> I[assign current_user]
 
     style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#fff
     style D fill:#029E73,color:#fff
     style I fill:#029E73,color:#fff
 ```
@@ -1207,9 +1207,9 @@ graph TD
     J --> L[Controller action]
 
     style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#fff
     style H fill:#029E73,color:#fff
-    style K fill:#CA9161,color:#000
+    style K fill:#CA9161,color:#fff
 ```
 
 ```elixir
@@ -1750,7 +1750,7 @@ graph TD
     E --> F
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style F fill:#029E73,color:#fff
 ```
 

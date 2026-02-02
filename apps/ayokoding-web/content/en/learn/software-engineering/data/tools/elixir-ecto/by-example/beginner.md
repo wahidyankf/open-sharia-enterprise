@@ -31,8 +31,8 @@ graph TD
 
     style A fill:#0173B2,color:#fff
     style B fill:#029E73,color:#fff
-    style C fill:#CC78BC,color:#000
-    style D fill:#CC78BC,color:#000
+    style C fill:#CC78BC,color:#fff
+    style D fill:#CC78BC,color:#fff
 ```
 
 ```elixir
@@ -393,8 +393,8 @@ graph TD
     E --> F
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#CA9161,color:#fff
     style F fill:#029E73,color:#fff
@@ -471,11 +471,11 @@ graph TD
     F --> H[Return Error Tuple]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#CA9161,color:#fff
-    style F fill:#DE8F05,color:#000
+    style F fill:#DE8F05,color:#fff
     style G fill:#029E73,color:#fff
     style H fill:#CA9161,color:#fff
 ```
@@ -768,11 +768,11 @@ graph TD
     F --> G[Return Error Tuple]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#CA9161,color:#fff
-    style F fill:#DE8F05,color:#000
+    style F fill:#DE8F05,color:#fff
     style G fill:#CA9161,color:#fff
 ```
 
@@ -853,10 +853,10 @@ graph TD
     E --> F[Results List]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
-    style D fill:#CC78BC,color:#000
-    style E fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#DE8F05,color:#fff
     style F fill:#029E73,color:#fff
 ```
 
@@ -928,8 +928,8 @@ graph TD
     D --> E[Reduced Memory]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
 ```
@@ -1419,7 +1419,7 @@ graph TD
     B --> C[Return User with Posts]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
 ```
 
@@ -1881,9 +1881,9 @@ graph TD
     D --> E
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#CC78BC,color:#000
+    style D fill:#CC78BC,color:#fff
     style E fill:#029E73,color:#fff
 ```
 

@@ -187,13 +187,13 @@ graph TD
     H -->|Yes| I[Execute Logic]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
     style D fill:#029E73,color:#fff
-    style E fill:#DE8F05,color:#000
-    style F fill:#CC78BC,color:#000
+    style E fill:#DE8F05,color:#fff
+    style F fill:#CC78BC,color:#fff
     style G fill:#029E73,color:#fff
-    style H fill:#DE8F05,color:#000
+    style H fill:#DE8F05,color:#fff
     style I fill:#0173B2,color:#fff
 ```
 
@@ -728,12 +728,12 @@ graph TD
     G --> H[Sum for Octal]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#CC78BC,color:#000
-    style G fill:#DE8F05,color:#000
+    style F fill:#CC78BC,color:#fff
+    style G fill:#DE8F05,color:#fff
     style H fill:#0173B2,color:#fff
 ```
 
@@ -1595,10 +1595,10 @@ graph TD
     E --> J[^ $ - position]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#CC78BC,color:#000
-    style E fill:#CA9161,color:#000
+    style D fill:#CC78BC,color:#fff
+    style E fill:#CA9161,color:#fff
 ```
 
 ```bash
@@ -3081,9 +3081,9 @@ graph TD
     D --> H[Terminate/Ignore/Core]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style G fill:#CC78BC,color:#000
+    style G fill:#CC78BC,color:#fff
 ```
 
 ```bash

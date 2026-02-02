@@ -25,9 +25,9 @@ stateDiagram-v2
     Failed --> [*]
 
     classDef idleState fill:#0173B2,stroke:#000,color:#fff
-    classDef processingState fill:#DE8F05,stroke:#000,color:#000
+    classDef processingState fill:#DE8F05,stroke:#000,color:#fff
     classDef completeState fill:#029E73,stroke:#000,color:#fff
-    classDef failedState fill:#CC78BC,stroke:#000,color:#000
+    classDef failedState fill:#CC78BC,stroke:#000,color:#fff
 
     class Idle idleState
     class Processing processingState
@@ -58,7 +58,7 @@ stateDiagram-v2
     On --> Off: toggle
 
     classDef offState fill:#0173B2,stroke:#000,color:#fff
-    classDef onState fill:#DE8F05,stroke:#000,color:#000
+    classDef onState fill:#DE8F05,stroke:#000,color:#fff
 
     class Off offState
     class On onState
@@ -139,9 +139,9 @@ stateDiagram-v2
     Green --> Yellow: timer
     Yellow --> Red: timer
 
-    classDef redState fill:#CC78BC,stroke:#000,color:#000
+    classDef redState fill:#CC78BC,stroke:#000,color:#fff
     classDef greenState fill:#029E73,stroke:#000,color:#fff
-    classDef yellowState fill:#DE8F05,stroke:#000,color:#000
+    classDef yellowState fill:#DE8F05,stroke:#000,color:#fff
 
     class Red redState
     class Green greenState
@@ -249,9 +249,9 @@ stateDiagram-v2
     Stopped --> [*]
 
     classDef idleState fill:#0173B2,stroke:#000,color:#fff
-    classDef runningState fill:#DE8F05,stroke:#000,color:#000
+    classDef runningState fill:#DE8F05,stroke:#000,color:#fff
     classDef pausedState fill:#029E73,stroke:#000,color:#fff
-    classDef stoppedState fill:#CC78BC,stroke:#000,color:#000
+    classDef stoppedState fill:#CC78BC,stroke:#000,color:#fff
 
     class Idle idleState
     class Running runningState
@@ -379,7 +379,7 @@ stateDiagram-v2
     Locked --> Unlocked: correct_code
     Unlocked --> Locked: lock
 
-    classDef lockedState fill:#CC78BC,stroke:#000,color:#000
+    classDef lockedState fill:#CC78BC,stroke:#000,color:#fff
     classDef unlockedState fill:#029E73,stroke:#000,color:#fff
 
     class Locked lockedState
@@ -501,8 +501,8 @@ stateDiagram-v2
 
     classDef pendingState fill:#0173B2,stroke:#000,color:#fff
     classDef approvedState fill:#029E73,stroke:#000,color:#fff
-    classDef rejectedState fill:#CC78BC,stroke:#000,color:#000
-    classDef cancelledState fill:#DE8F05,stroke:#000,color:#000
+    classDef rejectedState fill:#CC78BC,stroke:#000,color:#fff
+    classDef cancelledState fill:#DE8F05,stroke:#000,color:#fff
 
     class Pending pendingState
     class Approved approvedState
@@ -718,7 +718,7 @@ stateDiagram-v2
 
     classDef editingState fill:#0173B2,stroke:#000,color:#fff
     classDef publishedState fill:#029E73,stroke:#000,color:#fff
-    classDef archivedState fill:#DE8F05,stroke:#000,color:#000
+    classDef archivedState fill:#DE8F05,stroke:#000,color:#fff
 
     class Editing editingState
     class Published publishedState

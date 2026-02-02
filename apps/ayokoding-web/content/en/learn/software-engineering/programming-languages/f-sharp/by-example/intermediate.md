@@ -704,7 +704,7 @@ graph TD
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Code**:
@@ -1728,8 +1728,8 @@ graph TD
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CC78BC,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Code**:

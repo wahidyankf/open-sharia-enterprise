@@ -683,7 +683,7 @@ graph TD
     style C fill:#029E73,stroke:#000,color:#fff
     style D fill:#CC78BC,stroke:#000,color:#fff
     style E fill:#CA9161,stroke:#000,color:#fff
-    style F fill:#CA9161,stroke:#000,color:#000
+    style F fill:#CA9161,stroke:#000,color:#fff
     style G fill:#CA9161,stroke:#000,color:#fff
 ```
 

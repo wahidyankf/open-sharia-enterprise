@@ -1703,7 +1703,7 @@ classDiagram
     Donor <|-- CorporateDonor
 
     style Donor fill:#0173B2,stroke:#000,color:#fff
-    style PremiumDonor fill:#DE8F05,stroke:#000,color:#000
+    style PremiumDonor fill:#DE8F05,stroke:#000,color:#fff
     style CorporateDonor fill:#029E73,stroke:#000,color:#fff
 ```
 
@@ -2095,9 +2095,9 @@ classDiagram
     Auditable <|.. Transaction : implements
 
     style Timestamped fill:#0173B2,stroke:#000,color:#fff
-    style Auditable fill:#DE8F05,stroke:#000,color:#000
+    style Auditable fill:#DE8F05,stroke:#000,color:#fff
     style Donation fill:#029E73,stroke:#000,color:#fff
-    style Transaction fill:#CC78BC,stroke:#000,color:#000
+    style Transaction fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **implements vs extends**:

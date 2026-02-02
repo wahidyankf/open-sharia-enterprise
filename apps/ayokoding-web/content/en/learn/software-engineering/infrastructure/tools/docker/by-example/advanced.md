@@ -157,11 +157,11 @@ graph TD
     D --> E["Database<br/>1 replica on worker1"]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C1 fill:#029E73,color:#fff
     style C2 fill:#029E73,color:#fff
     style C3 fill:#029E73,color:#fff
-    style E fill:#CC78BC,color:#000
+    style E fill:#CC78BC,color:#fff
 ```
 
 ```yaml
@@ -343,7 +343,7 @@ graph TD
     D2 --> E2["Container<br/>/run/secrets/api_key"]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#0173B2,color:#fff
     style E1 fill:#029E73,color:#fff
     style E2 fill:#029E73,color:#fff
@@ -710,8 +710,8 @@ graph TD
     F --> G["Deploy to Production"]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style D fill:#CC78BC,color:#000
+    style B fill:#DE8F05,color:#fff
+    style D fill:#CC78BC,color:#fff
     style G fill:#029E73,color:#fff
 ```
 
@@ -1265,9 +1265,9 @@ graph TD
     B --> G["Registry UI<br/>Port 8080"]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
-    style D fill:#CC78BC,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
+    style D fill:#CC78BC,color:#fff
     style E2 fill:#029E73,color:#fff
 ```
 
@@ -1431,8 +1431,8 @@ graph TD
     H --> I["Create Release"]
 
     style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
-    style E fill:#CC78BC,color:#000
+    style C fill:#DE8F05,color:#fff
+    style E fill:#CC78BC,color:#fff
     style G fill:#029E73,color:#fff
     style H fill:#029E73,color:#fff
 ```
@@ -1623,7 +1623,7 @@ graph TD
     H --> I["Start Containers"]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style I fill:#029E73,color:#fff
 ```
 
@@ -1860,7 +1860,7 @@ graph TD
     H --> I["Place Containers"]
 
     style A fill:#0173B2,color:#fff
-    style H fill:#DE8F05,color:#000
+    style H fill:#DE8F05,color:#fff
     style I fill:#029E73,color:#fff
 ```
 
@@ -2039,9 +2039,9 @@ graph TD
     F --> I["Restore Previous Version"]
 
     style A fill:#0173B2,color:#fff
-    style D fill:#DE8F05,color:#000
+    style D fill:#DE8F05,color:#fff
     style H fill:#029E73,color:#fff
-    style F fill:#CC78BC,color:#000
+    style F fill:#CC78BC,color:#fff
 ```
 
 ```bash
@@ -2210,7 +2210,7 @@ graph TD
     G --> H["Jaeger UI<br/>Query & Visualize"]
 
     style A fill:#0173B2,color:#fff
-    style F fill:#DE8F05,color:#000
+    style F fill:#DE8F05,color:#fff
     style H fill:#029E73,color:#fff
 ```
 
@@ -3171,7 +3171,7 @@ graph TD
     E --> G
 
     style B fill:#0173B2,color:#fff
-    style F fill:#DE8F05,color:#000
+    style F fill:#DE8F05,color:#fff
     style G fill:#029E73,color:#fff
 ```
 
@@ -3737,9 +3737,9 @@ graph TD
     E --> I["Email"]
 
     style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#fff
     style D fill:#029E73,color:#fff
-    style E fill:#CC78BC,color:#000
+    style E fill:#CC78BC,color:#fff
 ```
 
 ```yaml

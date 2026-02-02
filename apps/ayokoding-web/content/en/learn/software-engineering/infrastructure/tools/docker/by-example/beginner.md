@@ -169,8 +169,8 @@ graph TD
     D -.->|Reuses cached layer| E
 
     style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
-    style D fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#fff
+    style D fill:#DE8F05,color:#fff
     style F fill:#029E73,color:#fff
 ```
 
@@ -389,7 +389,7 @@ graph TD
     D -.->|Available in container| G["process.env.PORT"]
 
     style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#fff
     style E fill:#029E73,color:#fff
 ```
 
@@ -678,8 +678,8 @@ stateDiagram-v2
 
     style Created fill:#0173B2,color:#fff
     style Running fill:#029E73,color:#fff
-    style Paused fill:#DE8F05,color:#000
-    style Stopped fill:#CC78BC,color:#000
+    style Paused fill:#DE8F05,color:#fff
+    style Stopped fill:#CC78BC,color:#fff
 ```
 
 ```bash
@@ -900,7 +900,7 @@ graph TD
     B --> C["Container<br/>172.17.0.2:80"]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
 ```
 
@@ -1004,7 +1004,7 @@ graph TD
     B --> D["Host Filesystem<br/>/var/lib/docker/volumes/my-data"]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#0173B2,color:#fff
     style D fill:#029E73,color:#fff
 ```
@@ -1121,7 +1121,7 @@ graph TD
 
     style A fill:#0173B2,color:#fff
     style B fill:#029E73,color:#fff
-    style D fill:#DE8F05,color:#000
+    style D fill:#DE8F05,color:#fff
 ```
 
 ```bash
@@ -1350,7 +1350,7 @@ graph TD
     D -.->|"DNS: db"| E
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
@@ -2624,9 +2624,9 @@ graph TD
 
     style A fill:#0173B2,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#DE8F05,color:#000
-    style E fill:#CC78BC,color:#000
-    style F fill:#CC78BC,color:#000
+    style D fill:#DE8F05,color:#fff
+    style E fill:#CC78BC,color:#fff
+    style F fill:#CC78BC,color:#fff
 ```
 
 ```bash

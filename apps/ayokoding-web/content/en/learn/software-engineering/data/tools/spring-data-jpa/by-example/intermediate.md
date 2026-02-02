@@ -23,11 +23,11 @@ graph TD
     F --> G[Return Entity]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#CC78BC,stroke:#000,color:#000
-    style C fill:#DE8F05,stroke:#000,color:#000
-    style D fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#CC78BC,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
+    style D fill:#DE8F05,stroke:#000,color:#fff
     style E fill:#029E73,stroke:#000,color:#fff
-    style F fill:#CA9161,stroke:#000,color:#000
+    style F fill:#CA9161,stroke:#000,color:#fff
     style G fill:#029E73,stroke:#000,color:#fff
 ```
 
@@ -177,10 +177,10 @@ graph TD
     E -->|false| G[Keep Cache]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#CC78BC,stroke:#000,color:#000
-    style C fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#CC78BC,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
     style D fill:#029E73,stroke:#000,color:#fff
-    style E fill:#CA9161,stroke:#000,color:#000
+    style E fill:#CA9161,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
     style G fill:#029E73,stroke:#000,color:#fff
 ```
@@ -258,12 +258,12 @@ graph TD
     F --> H[Unmanaged DTO]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#CC78BC,stroke:#000,color:#000
-    style C fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#CC78BC,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
     style D fill:#029E73,stroke:#000,color:#fff
-    style E fill:#CA9161,stroke:#000,color:#000
+    style E fill:#CA9161,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
-    style G fill:#DE8F05,stroke:#000,color:#000
+    style G fill:#DE8F05,stroke:#000,color:#fff
     style H fill:#029E73,stroke:#000,color:#fff
 ```
 
@@ -527,12 +527,12 @@ graph TD
     H --> I[Execute Query]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#CC78BC,stroke:#000,color:#000
-    style C fill:#DE8F05,stroke:#000,color:#000
-    style D fill:#DE8F05,stroke:#000,color:#000
-    style E fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#CC78BC,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
+    style D fill:#DE8F05,stroke:#000,color:#fff
+    style E fill:#DE8F05,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
-    style G fill:#CA9161,stroke:#000,color:#000
+    style G fill:#CA9161,stroke:#000,color:#fff
     style H fill:#029E73,stroke:#000,color:#fff
     style I fill:#0173B2,stroke:#000,color:#fff
 ```
@@ -647,10 +647,10 @@ graph TD
     F --> G[Return Page Object]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#CC78BC,stroke:#000,color:#000
-    style C fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#CC78BC,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
     style D fill:#029E73,stroke:#000,color:#fff
-    style E fill:#CA9161,stroke:#000,color:#000
+    style E fill:#CA9161,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
     style G fill:#0173B2,stroke:#000,color:#fff
 ```
@@ -984,10 +984,10 @@ graph TD
     D -->|hasNext = false| G[End of Data]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#CC78BC,stroke:#000,color:#000
-    style C fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#CC78BC,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
     style D fill:#029E73,stroke:#000,color:#fff
-    style E fill:#CA9161,stroke:#000,color:#000
+    style E fill:#CA9161,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
     style G fill:#0173B2,stroke:#000,color:#fff
 ```
@@ -1085,9 +1085,9 @@ graph TD
     B --> D[student_id, course_id]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#CC78BC,stroke:#000,color:#000
+    style B fill:#CC78BC,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#DE8F05,stroke:#000,color:#000
+    style D fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 ```java
@@ -1341,13 +1341,13 @@ graph TD
     H --> I[Total: 101 Queries]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#CC78BC,stroke:#000,color:#000
-    style C fill:#DE8F05,stroke:#000,color:#000
-    style D fill:#CA9161,stroke:#000,color:#000
-    style E fill:#DE8F05,stroke:#000,color:#000
-    style F fill:#CA9161,stroke:#000,color:#000
-    style G fill:#DE8F05,stroke:#000,color:#000
-    style H fill:#CA9161,stroke:#000,color:#000
+    style B fill:#CC78BC,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
+    style D fill:#CA9161,stroke:#000,color:#fff
+    style E fill:#DE8F05,stroke:#000,color:#fff
+    style F fill:#CA9161,stroke:#000,color:#fff
+    style G fill:#DE8F05,stroke:#000,color:#fff
+    style H fill:#CA9161,stroke:#000,color:#fff
     style I fill:#029E73,stroke:#000,color:#fff
 ```
 
@@ -1544,14 +1544,14 @@ graph TD
     H --> I[Child Deleted]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#CC78BC,stroke:#000,color:#000
+    style B fill:#CC78BC,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
     style D fill:#0173B2,stroke:#000,color:#fff
-    style E fill:#CA9161,stroke:#000,color:#000
-    style F fill:#DE8F05,stroke:#000,color:#000
+    style E fill:#CA9161,stroke:#000,color:#fff
+    style F fill:#DE8F05,stroke:#000,color:#fff
     style G fill:#0173B2,stroke:#000,color:#fff
-    style H fill:#CC78BC,stroke:#000,color:#000
-    style I fill:#DE8F05,stroke:#000,color:#000
+    style H fill:#CC78BC,stroke:#000,color:#fff
+    style I fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 ```java
@@ -1792,11 +1792,11 @@ graph TD
     F --> G[Suspend Outer TX]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#CC78BC,stroke:#000,color:#000
+    style B fill:#CC78BC,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#DE8F05,stroke:#000,color:#000
+    style D fill:#DE8F05,stroke:#000,color:#fff
     style E fill:#0173B2,stroke:#000,color:#fff
-    style F fill:#CA9161,stroke:#000,color:#000
+    style F fill:#CA9161,stroke:#000,color:#fff
     style G fill:#029E73,stroke:#000,color:#fff
 ```
 
@@ -2412,11 +2412,11 @@ graph TD
     G --> H[Outer TX Commits]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#CC78BC,stroke:#000,color:#000
-    style C fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#CC78BC,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
     style D fill:#029E73,stroke:#000,color:#fff
-    style E fill:#CA9161,stroke:#000,color:#000
-    style F fill:#CA9161,stroke:#000,color:#000
+    style E fill:#CA9161,stroke:#000,color:#fff
+    style F fill:#CA9161,stroke:#000,color:#fff
     style G fill:#029E73,stroke:#000,color:#fff
     style H fill:#0173B2,stroke:#000,color:#fff
 ```
@@ -2647,10 +2647,10 @@ graph TD
     G --> H[TX2 Write Proceeds]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#CC78BC,stroke:#000,color:#000
+    style B fill:#CC78BC,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#DE8F05,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#000
+    style D fill:#DE8F05,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
     style G fill:#029E73,stroke:#000,color:#fff
     style H fill:#0173B2,stroke:#000,color:#fff

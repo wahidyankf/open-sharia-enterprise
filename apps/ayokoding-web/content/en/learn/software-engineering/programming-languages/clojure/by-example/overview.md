@@ -278,7 +278,7 @@ graph TD
     B --> D["age → 30"]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
 ```

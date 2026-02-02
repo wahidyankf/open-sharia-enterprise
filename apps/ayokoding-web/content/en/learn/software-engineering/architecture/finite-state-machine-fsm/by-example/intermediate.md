@@ -29,9 +29,9 @@ stateDiagram-v2
     Connected --> Disconnected: disconnect
 
     classDef disconnectedState fill:#0173B2,stroke:#000,color:#fff
-    classDef connectedState fill:#DE8F05,stroke:#000,color:#000
+    classDef connectedState fill:#DE8F05,stroke:#000,color:#fff
     classDef idleState fill:#029E73,stroke:#000,color:#fff
-    classDef activeState fill:#CC78BC,stroke:#000,color:#000
+    classDef activeState fill:#CC78BC,stroke:#000,color:#fff
 
     class Disconnected disconnectedState
     class Connected connectedState
@@ -303,9 +303,9 @@ stateDiagram-v2
     Online --> Offline: networkError
 
     classDef offlineState fill:#0173B2,stroke:#000,color:#fff
-    classDef onlineState fill:#DE8F05,stroke:#000,color:#000
+    classDef onlineState fill:#DE8F05,stroke:#000,color:#fff
     classDef guestState fill:#029E73,stroke:#000,color:#fff
-    classDef authState fill:#CC78BC,stroke:#000,color:#000
+    classDef authState fill:#CC78BC,stroke:#000,color:#fff
     classDef browseState fill:#CA9161,stroke:#000,color:#fff
 
     class Offline offlineState
@@ -561,7 +561,7 @@ stateDiagram-v2
     }
 
     classDef audioState fill:#0173B2,stroke:#000,color:#fff
-    classDef videoState fill:#DE8F05,stroke:#000,color:#000
+    classDef videoState fill:#DE8F05,stroke:#000,color:#fff
 
     class Audio,Muted,Playing audioState
     class Video,Paused,Streaming videoState
@@ -1097,7 +1097,7 @@ stateDiagram-v2
     }
 
     classDef connectState fill:#0173B2,stroke:#000,color:#fff
-    classDef authState fill:#DE8F05,stroke:#000,color:#000
+    classDef authState fill:#DE8F05,stroke:#000,color:#fff
 
     class Connectivity,Online,Offline connectState
     class Authentication,LoggedOut,LoggedIn authState
@@ -1610,7 +1610,7 @@ stateDiagram-v2
     Off --> historyState: resume
 
     classDef offState fill:#0173B2,stroke:#000,color:#fff
-    classDef onState fill:#DE8F05,stroke:#000,color:#000
+    classDef onState fill:#DE8F05,stroke:#000,color:#fff
     classDef levelState fill:#029E73,stroke:#000,color:#fff
 
     class Off offState
@@ -3474,8 +3474,8 @@ stateDiagram-v2
 
     classDef draftState fill:#0173B2,stroke:#000,color:#fff
     classDef activeState fill:#029E73,stroke:#000,color:#fff
-    classDef terminalState fill:#DE8F05,stroke:#000,color:#000
-    classDef cancelledState fill:#CC78BC,stroke:#000,color:#000
+    classDef terminalState fill:#DE8F05,stroke:#000,color:#fff
+    classDef cancelledState fill:#CC78BC,stroke:#000,color:#fff
 
     class Draft draftState
     class Submitted,Confirmed,Processing,Shipped activeState
@@ -4290,7 +4290,7 @@ stateDiagram-v2
     LoggedIn --> LoggedOut: logout
 
     classDef loggedOutState fill:#0173B2,stroke:#000,color:#fff
-    classDef authState fill:#DE8F05,stroke:#000,color:#000
+    classDef authState fill:#DE8F05,stroke:#000,color:#fff
     classDef loggedInState fill:#029E73,stroke:#000,color:#fff
 
     class LoggedOut loggedOutState

@@ -35,7 +35,7 @@ graph TD
     B -.->|Anti-Corruption Layer| C
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
 ```
 

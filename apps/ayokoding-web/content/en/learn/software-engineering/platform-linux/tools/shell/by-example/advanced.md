@@ -3674,8 +3674,8 @@ graph TD
     J --> K[Complete]
 
     style A fill:#0173B2,color:#fff
-    style D fill:#CC78BC,color:#000
-    style H fill:#CC78BC,color:#000
+    style D fill:#CC78BC,color:#fff
+    style H fill:#CC78BC,color:#fff
     style K fill:#029E73,color:#fff
 ```
 

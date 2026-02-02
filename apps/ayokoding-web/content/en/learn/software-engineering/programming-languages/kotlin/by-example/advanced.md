@@ -21,10 +21,10 @@ graph TD
     B --> C[Cancels ALL siblings]
     C --> D[Parent scope fails]
 
-    style A fill:#DE8F05,color:#000
-    style B fill:#CA9161,color:#000
-    style C fill:#CA9161,color:#000
-    style D fill:#CA9161,color:#000
+    style A fill:#DE8F05,color:#fff
+    style B fill:#CA9161,color:#fff
+    style C fill:#CA9161,color:#fff
+    style D fill:#CA9161,color:#fff
 ```
 
 **Supervisor Isolation:**
@@ -36,7 +36,7 @@ graph TD
     G --> H[Parent scope survives]
 
     style E fill:#0173B2,color:#fff
-    style F fill:#DE8F05,color:#000
+    style F fill:#DE8F05,color:#fff
     style G fill:#029E73,color:#fff
     style H fill:#029E73,color:#fff
 ```
@@ -207,10 +207,10 @@ graph TD
     A --> E[ExceptionHandler<br/>Error handling]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#CC78BC,color:#000
-    style E fill:#CA9161,color:#000
+    style D fill:#CC78BC,color:#fff
+    style E fill:#CA9161,color:#fff
 ```
 
 **Job Hierarchy:**
@@ -221,11 +221,11 @@ graph TD
     B --> G[Child Job 2]
     H[cancel parent] --> I[Auto-cancel children]
 
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style F fill:#029E73,color:#fff
     style G fill:#029E73,color:#fff
-    style H fill:#CA9161,color:#000
-    style I fill:#CA9161,color:#000
+    style H fill:#CA9161,color:#fff
+    style I fill:#CA9161,color:#fff
 ```
 
 ```kotlin
@@ -388,8 +388,8 @@ graph TD
     A[launch exception] --> B[Propagates to parent]
     B --> C[CoroutineExceptionHandler]
 
-    style A fill:#CA9161,color:#000
-    style B fill:#DE8F05,color:#000
+    style A fill:#CA9161,color:#fff
+    style B fill:#DE8F05,color:#fff
     style C fill:#0173B2,color:#fff
 ```
 
@@ -401,9 +401,9 @@ graph TD
     E --> F[await throws]
     F --> G[try-catch required]
 
-    style D fill:#CA9161,color:#000
-    style E fill:#DE8F05,color:#000
-    style F fill:#CC78BC,color:#000
+    style D fill:#CA9161,color:#fff
+    style E fill:#DE8F05,color:#fff
+    style F fill:#CC78BC,color:#fff
     style G fill:#0173B2,color:#fff
 ```
 
@@ -1588,10 +1588,10 @@ graph TD
     F --> G[User Object]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#CC78BC,color:#000
-    style F fill:#CC78BC,color:#000
+    style D fill:#CC78BC,color:#fff
+    style F fill:#CC78BC,color:#fff
     style G fill:#0173B2,color:#fff
 ```
 
@@ -2068,12 +2068,12 @@ graph TD
     Response --> Client
 
     style Client fill:#0173B2,color:#fff
-    style Request fill:#CC78BC,color:#000
-    style Header fill:#DE8F05,color:#000
+    style Request fill:#CC78BC,color:#fff
+    style Header fill:#DE8F05,color:#fff
     style JSON fill:#029E73,color:#fff
-    style Deserialize fill:#CC78BC,color:#000
+    style Deserialize fill:#CC78BC,color:#fff
     style Handler fill:#0173B2,color:#fff
-    style Serialize fill:#CC78BC,color:#000
+    style Serialize fill:#CC78BC,color:#fff
     style Response fill:#029E73,color:#fff
 ```
 
@@ -2286,12 +2286,12 @@ graph TD
     F -->|Right| H[Process User]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#CC78BC,color:#000
-    style C fill:#DE8F05,color:#000
-    style D fill:#DE8F05,color:#000
+    style B fill:#CC78BC,color:#fff
+    style C fill:#DE8F05,color:#fff
+    style D fill:#DE8F05,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#CC78BC,color:#000
-    style G fill:#CA9161,color:#000
+    style F fill:#CC78BC,color:#fff
+    style G fill:#CA9161,color:#fff
     style H fill:#029E73,color:#fff
 ```
 
@@ -2313,12 +2313,12 @@ graph TD
     PropagateE2 --> Result2
 
     style Start fill:#0173B2,color:#fff
-    style Map fill:#CC78BC,color:#000
+    style Map fill:#CC78BC,color:#fff
     style Transform fill:#029E73,color:#fff
-    style PropagateE1 fill:#DE8F05,color:#000
-    style FlatMap fill:#CC78BC,color:#000
+    style PropagateE1 fill:#DE8F05,color:#fff
+    style FlatMap fill:#CC78BC,color:#fff
     style Chain fill:#029E73,color:#fff
-    style PropagateE2 fill:#DE8F05,color:#000
+    style PropagateE2 fill:#DE8F05,color:#fff
     style Result2 fill:#0173B2,color:#fff
 ```
 
@@ -2583,10 +2583,10 @@ graph TD
     CheckAll --> AllErrors[Return ALL<br/>errors]
 
     style Input fill:#0173B2,color:#fff
-    style Strategy fill:#CC78BC,color:#000
-    style FailFast fill:#DE8F05,color:#000
-    style FirstError fill:#DE8F05,color:#000
-    style OneError fill:#DE8F05,color:#000
+    style Strategy fill:#CC78BC,color:#fff
+    style FailFast fill:#DE8F05,color:#fff
+    style FirstError fill:#DE8F05,color:#fff
+    style OneError fill:#DE8F05,color:#fff
     style Accumulate fill:#029E73,color:#fff
     style CheckAll fill:#029E73,color:#fff
     style AllErrors fill:#029E73,color:#fff
@@ -2611,12 +2611,12 @@ graph TD
     style V1 fill:#0173B2,color:#fff
     style V2 fill:#0173B2,color:#fff
     style V3 fill:#0173B2,color:#fff
-    style Zip fill:#CC78BC,color:#000
-    style Check fill:#DE8F05,color:#000
+    style Zip fill:#CC78BC,color:#fff
+    style Check fill:#DE8F05,color:#fff
     style Combine fill:#029E73,color:#fff
-    style Errors fill:#DE8F05,color:#000
+    style Errors fill:#DE8F05,color:#fff
     style Result fill:#029E73,color:#fff
-    style Invalid fill:#DE8F05,color:#000
+    style Invalid fill:#DE8F05,color:#fff
 ```
 
 ```kotlin

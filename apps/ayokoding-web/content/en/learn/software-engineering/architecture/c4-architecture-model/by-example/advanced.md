@@ -76,10 +76,10 @@ classDiagram
 
     style Order fill:#0173B2,stroke:#000,color:#fff
     style OrderLine fill:#029E73,stroke:#000,color:#fff
-    style OrderStatus fill:#DE8F05,stroke:#000,color:#000
-    style Money fill:#CC78BC,stroke:#000,color:#000
-    style CustomerId fill:#CA9161,stroke:#000,color:#000
-    style ProductId fill:#CA9161,stroke:#000,color:#000
+    style OrderStatus fill:#DE8F05,stroke:#000,color:#fff
+    style Money fill:#CC78BC,stroke:#000,color:#fff
+    style CustomerId fill:#CA9161,stroke:#000,color:#fff
+    style ProductId fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -234,12 +234,12 @@ classDiagram
     PostgresProductRepository --> Product : returns
     CachedProductRepository --> Product : returns
 
-    style IProductRepository fill:#DE8F05,stroke:#000,color:#000
+    style IProductRepository fill:#DE8F05,stroke:#000,color:#fff
     style CachedProductRepository fill:#0173B2,stroke:#000,color:#fff
     style PostgresProductRepository fill:#029E73,stroke:#000,color:#fff
-    style ICache fill:#CC78BC,stroke:#000,color:#000
-    style RedisCache fill:#CA9161,stroke:#000,color:#000
-    style Product fill:#DE8F05,stroke:#000,color:#000
+    style ICache fill:#CC78BC,stroke:#000,color:#fff
+    style RedisCache fill:#CA9161,stroke:#000,color:#fff
+    style Product fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -297,7 +297,7 @@ sequenceDiagram
     OrderService->>OrderService: updateOrderStatus(CONFIRMED)
 
     style OrderService fill:#0173B2,stroke:#000,color:#fff
-    style EventBus fill:#DE8F05,stroke:#000,color:#000
+    style EventBus fill:#DE8F05,stroke:#000,color:#fff
     style InventoryService fill:#029E73,stroke:#000,color:#fff
     style EmailService fill:#029E73,stroke:#000,color:#fff
     style AnalyticsService fill:#029E73,stroke:#000,color:#fff
@@ -582,12 +582,12 @@ graph TD
     USQueue -.->|"MirrorMaker"| APQueue
 
     style GLB fill:#0173B2,stroke:#000,color:#fff
-    style USLB fill:#DE8F05,stroke:#000,color:#000
-    style EULB fill:#DE8F05,stroke:#000,color:#000
-    style APLB fill:#DE8F05,stroke:#000,color:#000
+    style USLB fill:#DE8F05,stroke:#000,color:#fff
+    style EULB fill:#DE8F05,stroke:#000,color:#fff
+    style APLB fill:#DE8F05,stroke:#000,color:#fff
     style USDB fill:#029E73,stroke:#000,color:#fff
-    style EUDB fill:#CA9161,stroke:#000,color:#000
-    style APDB fill:#CA9161,stroke:#000,color:#000
+    style EUDB fill:#CA9161,stroke:#000,color:#fff
+    style APDB fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -660,17 +660,17 @@ graph TD
     PaymentProxy <--> PaymentApp
     InventoryProxy <--> InventoryApp
 
-    style User fill:#CC78BC,stroke:#000,color:#000
-    style IngressGateway fill:#DE8F05,stroke:#000,color:#000
+    style User fill:#CC78BC,stroke:#000,color:#fff
+    style IngressGateway fill:#DE8F05,stroke:#000,color:#fff
     style OrderProxy fill:#029E73,stroke:#000,color:#fff
     style PaymentProxy fill:#029E73,stroke:#000,color:#fff
     style InventoryProxy fill:#029E73,stroke:#000,color:#fff
     style OrderApp fill:#0173B2,stroke:#000,color:#fff
     style PaymentApp fill:#0173B2,stroke:#000,color:#fff
     style InventoryApp fill:#0173B2,stroke:#000,color:#fff
-    style Pilot fill:#CA9161,stroke:#000,color:#000
-    style Citadel fill:#CA9161,stroke:#000,color:#000
-    style Mixer fill:#CA9161,stroke:#000,color:#000
+    style Pilot fill:#CA9161,stroke:#000,color:#fff
+    style Citadel fill:#CA9161,stroke:#000,color:#fff
+    style Mixer fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -747,14 +747,14 @@ graph TD
     ReadAPI --> ReadDB2
     ReadAPI --> ReadDB3
 
-    style User fill:#CC78BC,stroke:#000,color:#000
+    style User fill:#CC78BC,stroke:#000,color:#fff
     style WriteAPI fill:#0173B2,stroke:#000,color:#fff
     style ReadAPI fill:#0173B2,stroke:#000,color:#fff
-    style EventStore fill:#DE8F05,stroke:#000,color:#000
+    style EventStore fill:#DE8F05,stroke:#000,color:#fff
     style EventBus fill:#029E73,stroke:#000,color:#fff
-    style ReadDB1 fill:#CA9161,stroke:#000,color:#000
-    style ReadDB2 fill:#CA9161,stroke:#000,color:#000
-    style ReadDB3 fill:#CA9161,stroke:#000,color:#000
+    style ReadDB1 fill:#CA9161,stroke:#000,color:#fff
+    style ReadDB2 fill:#CA9161,stroke:#000,color:#fff
+    style ReadDB3 fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -839,8 +839,8 @@ graph TD
     Metrics -->|"Compare metrics"| BlueAPI1
     Metrics -->|"Compare metrics"| GreenAPI1
 
-    style User fill:#CC78BC,stroke:#000,color:#000
-    style LB fill:#DE8F05,stroke:#000,color:#000
+    style User fill:#CC78BC,stroke:#000,color:#fff
+    style LB fill:#DE8F05,stroke:#000,color:#fff
     style BlueAPI1 fill:#0173B2,stroke:#000,color:#fff
     style BlueAPI2 fill:#0173B2,stroke:#000,color:#fff
     style BlueAPI3 fill:#0173B2,stroke:#000,color:#fff
@@ -941,11 +941,11 @@ graph TD
     Dashboard -->|"Validate resilience"| ChaosController
 
     style ChaosController fill:#0173B2,stroke:#000,color:#fff
-    style LatencyInjection fill:#DE8F05,stroke:#000,color:#000
-    style PodKill fill:#DE8F05,stroke:#000,color:#000
-    style NetworkPartition fill:#DE8F05,stroke:#000,color:#000
+    style LatencyInjection fill:#DE8F05,stroke:#000,color:#fff
+    style PodKill fill:#DE8F05,stroke:#000,color:#fff
+    style NetworkPartition fill:#DE8F05,stroke:#000,color:#fff
     style Metrics fill:#029E73,stroke:#000,color:#fff
-    style SLOTracker fill:#CC78BC,stroke:#000,color:#000
+    style SLOTracker fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1031,10 +1031,10 @@ graph TD
     BatchView --> Reports
 
     style Kafka fill:#0173B2,stroke:#000,color:#fff
-    style SparkBatch fill:#DE8F05,stroke:#000,color:#000
+    style SparkBatch fill:#DE8F05,stroke:#000,color:#fff
     style FlinkStream fill:#029E73,stroke:#000,color:#fff
-    style BatchView fill:#CC78BC,stroke:#000,color:#000
-    style RealtimeView fill:#CA9161,stroke:#000,color:#000
+    style BatchView fill:#CC78BC,stroke:#000,color:#fff
+    style RealtimeView fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1130,9 +1130,9 @@ graph TD
     style IngressController fill:#0173B2,stroke:#000,color:#fff
     style TenantAAPI fill:#029E73,stroke:#000,color:#fff
     style TenantBAPI fill:#029E73,stroke:#000,color:#fff
-    style TenantCAPI fill:#DE8F05,stroke:#000,color:#000
-    style ResourceQuota fill:#CC78BC,stroke:#000,color:#000
-    style NetworkPolicy fill:#CA9161,stroke:#000,color:#000
+    style TenantCAPI fill:#DE8F05,stroke:#000,color:#fff
+    style ResourceQuota fill:#CC78BC,stroke:#000,color:#fff
+    style NetworkPolicy fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1206,9 +1206,9 @@ graph TD
 
     style WebBFF fill:#0173B2,stroke:#000,color:#fff
     style MobileBFF fill:#029E73,stroke:#000,color:#fff
-    style WatchBFF fill:#DE8F05,stroke:#000,color:#000
-    style PartnerBFF fill:#CC78BC,stroke:#000,color:#000
-    style UserService fill:#CA9161,stroke:#000,color:#000
+    style WatchBFF fill:#DE8F05,stroke:#000,color:#fff
+    style PartnerBFF fill:#CC78BC,stroke:#000,color:#fff
+    style UserService fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1286,9 +1286,9 @@ graph TD
     style AuthService fill:#029E73,stroke:#000,color:#fff
     style OrderService fill:#029E73,stroke:#000,color:#fff
     style ProductService fill:#029E73,stroke:#000,color:#fff
-    style MonolithApp fill:#DE8F05,stroke:#000,color:#000
-    style AuthModule fill:#CA9161,stroke:#000,color:#000
-    style PaymentModule fill:#CC78BC,stroke:#000,color:#000
+    style MonolithApp fill:#DE8F05,stroke:#000,color:#fff
+    style AuthModule fill:#CA9161,stroke:#000,color:#fff
+    style PaymentModule fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1349,9 +1349,9 @@ graph TD
     end
 
     style OrderServiceC fill:#0173B2,stroke:#000,color:#fff
-    style EventBusC fill:#DE8F05,stroke:#000,color:#000
+    style EventBusC fill:#DE8F05,stroke:#000,color:#fff
     style SagaOrchestrator fill:#029E73,stroke:#000,color:#fff
-    style PaymentServiceO fill:#CC78BC,stroke:#000,color:#000
+    style PaymentServiceO fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1416,9 +1416,9 @@ graph TD
     end
 
     style PathAPI fill:#0173B2,stroke:#000,color:#fff
-    style ServiceV1 fill:#DE8F05,stroke:#000,color:#000
+    style ServiceV1 fill:#DE8F05,stroke:#000,color:#fff
     style ServiceV2 fill:#029E73,stroke:#000,color:#fff
-    style GraphQLAPI fill:#CC78BC,stroke:#000,color:#000
+    style GraphQLAPI fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1520,10 +1520,10 @@ graph TD
     Monitoring -.->|"Alerts on 80% saturation"| CriticalThreads
 
     style RequestRouter fill:#0173B2,stroke:#000,color:#fff
-    style CriticalThreads fill:#DE8F05,stroke:#000,color:#000
+    style CriticalThreads fill:#DE8F05,stroke:#000,color:#fff
     style StandardThreads fill:#029E73,stroke:#000,color:#fff
-    style AnalyticsThreads fill:#CC78BC,stroke:#000,color:#000
-    style CircuitBreaker fill:#CA9161,stroke:#000,color:#000
+    style AnalyticsThreads fill:#CC78BC,stroke:#000,color:#fff
+    style CircuitBreaker fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1607,10 +1607,10 @@ graph TD
     ScenarioSpike -.->|"Triggers burst scale"| ScalingDecision
 
     style MetricsAggregator fill:#0173B2,stroke:#000,color:#fff
-    style ScalingPolicy fill:#DE8F05,stroke:#000,color:#000
+    style ScalingPolicy fill:#DE8F05,stroke:#000,color:#fff
     style Pod1 fill:#029E73,stroke:#000,color:#fff
-    style Pod4 fill:#CC78BC,stroke:#000,color:#000
-    style ScenarioSpike fill:#CA9161,stroke:#000,color:#000
+    style Pod4 fill:#CC78BC,stroke:#000,color:#fff
+    style ScenarioSpike fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1698,9 +1698,9 @@ graph TD
     Multiplexing -.->|"Efficiency gain"| PgBouncer
 
     style PgBouncer fill:#0173B2,stroke:#000,color:#fff
-    style PrimaryDB fill:#DE8F05,stroke:#000,color:#000
+    style PrimaryDB fill:#DE8F05,stroke:#000,color:#fff
     style Replica1 fill:#029E73,stroke:#000,color:#fff
-    style Multiplexing fill:#CC78BC,stroke:#000,color:#000
+    style Multiplexing fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1794,9 +1794,9 @@ graph TD
     WarmPerformance -.->|"Improvement"| PerformanceGain
 
     style WarmingJob fill:#0173B2,stroke:#000,color:#fff
-    style RedisCluster fill:#DE8F05,stroke:#000,color:#000
+    style RedisCluster fill:#DE8F05,stroke:#000,color:#fff
     style CacheWriter fill:#029E73,stroke:#000,color:#fff
-    style PerformanceGain fill:#CC78BC,stroke:#000,color:#000
+    style PerformanceGain fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1885,9 +1885,9 @@ graph TD
     OriginLB -.->|"Metrics"| CacheHitRatio
 
     style EdgeUS fill:#0173B2,stroke:#000,color:#fff
-    style ShieldUS fill:#DE8F05,stroke:#000,color:#000
+    style ShieldUS fill:#DE8F05,stroke:#000,color:#fff
     style OriginLB fill:#029E73,stroke:#000,color:#fff
-    style CacheHitRatio fill:#CC78BC,stroke:#000,color:#000
+    style CacheHitRatio fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1980,10 +1980,10 @@ graph TD
     AuditLog --> SIEM
 
     style IDP fill:#0173B2,stroke:#000,color:#fff
-    style SPIFFE fill:#DE8F05,stroke:#000,color:#000
+    style SPIFFE fill:#DE8F05,stroke:#000,color:#fff
     style OPA fill:#029E73,stroke:#000,color:#fff
-    style DB fill:#CC78BC,stroke:#000,color:#000
-    style SIEM fill:#CA9161,stroke:#000,color:#000
+    style DB fill:#CC78BC,stroke:#000,color:#fff
+    style SIEM fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -2094,10 +2094,10 @@ graph TD
     EUAPI -.->|"All connections"| EncryptionInTransit
 
     style ConsentService fill:#0173B2,stroke:#000,color:#fff
-    style DataMapping fill:#DE8F05,stroke:#000,color:#000
+    style DataMapping fill:#DE8F05,stroke:#000,color:#fff
     style DeletionWorker fill:#029E73,stroke:#000,color:#fff
-    style RightToErasure fill:#CC78BC,stroke:#000,color:#000
-    style DeletionAudit fill:#CA9161,stroke:#000,color:#000
+    style RightToErasure fill:#CC78BC,stroke:#000,color:#fff
+    style DeletionAudit fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -2204,10 +2204,10 @@ graph TD
     SecretRevocation -.->|"Flow step 4"| PostgreSQL
 
     style Vault1 fill:#0173B2,stroke:#000,color:#fff
-    style DatabaseEngine fill:#DE8F05,stroke:#000,color:#000
+    style DatabaseEngine fill:#DE8F05,stroke:#000,color:#fff
     style DynamicCreds fill:#029E73,stroke:#000,color:#fff
-    style AuditLog fill:#CC78BC,stroke:#000,color:#000
-    style SecretRotation fill:#CA9161,stroke:#000,color:#000
+    style AuditLog fill:#CC78BC,stroke:#000,color:#fff
+    style SecretRotation fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -2314,10 +2314,10 @@ graph TD
     ContinuousAssessment -.->|"Validates controls"| CC5
 
     style OPAPolicies fill:#0173B2,stroke:#000,color:#fff
-    style ComplianceScanner fill:#DE8F05,stroke:#000,color:#000
+    style ComplianceScanner fill:#DE8F05,stroke:#000,color:#fff
     style AutoRemediation fill:#029E73,stroke:#000,color:#fff
-    style EvidenceStorage fill:#CC78BC,stroke:#000,color:#000
-    style ContinuousAssessment fill:#CA9161,stroke:#000,color:#000
+    style EvidenceStorage fill:#CC78BC,stroke:#000,color:#fff
+    style ContinuousAssessment fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:

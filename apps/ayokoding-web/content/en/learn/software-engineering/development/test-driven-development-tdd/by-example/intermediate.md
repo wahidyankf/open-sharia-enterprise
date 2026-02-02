@@ -417,8 +417,8 @@ graph TD
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Red: Hard-coded dependency (untestable)**
@@ -1794,7 +1794,7 @@ stateDiagram-v2
 
     style Draft fill:#0173B2,color:#fff
     style Published fill:#029E73,color:#fff
-    style Archived fill:#CC78BC,color:#000
+    style Archived fill:#CC78BC,color:#fff
 ```
 
 **Red: Test state transitions**

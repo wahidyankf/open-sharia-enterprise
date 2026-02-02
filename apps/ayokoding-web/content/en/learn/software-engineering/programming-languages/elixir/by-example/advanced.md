@@ -1953,7 +1953,7 @@ graph TD
     style Runtime fill:#DE8F05,color:#fff
     style ENV fill:#CC78BC,color:#fff
     style App fill:#CA9161,color:#fff
-    style Warning fill:#CC78BC,color:#000
+    style Warning fill:#CC78BC,color:#fff
     style UseRuntime fill:#029E73,color:#fff
 ```
 

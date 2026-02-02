@@ -196,9 +196,9 @@ graph TD
     G -.-> H
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#DE8F05,color:#000
-    style D fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#DE8F05,color:#fff
+    style D fill:#DE8F05,color:#fff
     style E fill:#029E73,color:#fff
     style F fill:#029E73,color:#fff
     style G fill:#029E73,color:#fff
@@ -300,12 +300,12 @@ graph TD
     F -->|No| J[Return Result]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#DE8F05,color:#000
-    style G fill:#CC78BC,color:#000
+    style F fill:#DE8F05,color:#fff
+    style G fill:#CC78BC,color:#fff
     style H fill:#029E73,color:#fff
     style I fill:#029E73,color:#fff
     style J fill:#029E73,color:#fff
@@ -427,10 +427,10 @@ graph TD
     H --> I
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#DE8F05,color:#fff
     style D fill:#029E73,color:#fff
-    style E fill:#DE8F05,color:#000
+    style E fill:#DE8F05,color:#fff
     style F fill:#029E73,color:#fff
     style G fill:#029E73,color:#fff
     style H fill:#CA9161,color:#fff
@@ -658,10 +658,10 @@ graph TD
     E -->|No| F[Exit Loop]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#CC78BC,color:#000
-    style E fill:#DE8F05,color:#000
+    style D fill:#CC78BC,color:#fff
+    style E fill:#DE8F05,color:#fff
     style F fill:#0173B2,color:#fff
 ```
 
@@ -753,11 +753,11 @@ graph LR
 
     M5 --> M4 --> M3 --> M2 --> M1
 
-    style M5 fill:#DE8F05,color:#000
-    style M4 fill:#DE8F05,color:#000
-    style M3 fill:#DE8F05,color:#000
-    style M2 fill:#DE8F05,color:#000
-    style M1 fill:#DE8F05,color:#000
+    style M5 fill:#DE8F05,color:#fff
+    style M4 fill:#DE8F05,color:#fff
+    style M3 fill:#DE8F05,color:#fff
+    style M2 fill:#DE8F05,color:#fff
+    style M1 fill:#DE8F05,color:#fff
 ```
 
 Python lists support both positive indexing (starting from 0) and negative indexing (counting from the end starting at -1). Both index systems refer to the same list elements.
@@ -1028,15 +1028,15 @@ graph TD
     F --> J[Return True/False]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
     style F fill:#029E73,color:#fff
-    style G fill:#CC78BC,color:#000
-    style H fill:#CC78BC,color:#000
-    style I fill:#CC78BC,color:#000
-    style J fill:#CC78BC,color:#000
+    style G fill:#CC78BC,color:#fff
+    style H fill:#CC78BC,color:#fff
+    style I fill:#CC78BC,color:#fff
+    style J fill:#CC78BC,color:#fff
 ```
 
 ```python
@@ -1365,15 +1365,15 @@ graph TD
     H -->|No| J[NameError]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#DE8F05,color:#000
+    style D fill:#DE8F05,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#DE8F05,color:#000
+    style F fill:#DE8F05,color:#fff
     style G fill:#029E73,color:#fff
-    style H fill:#DE8F05,color:#000
+    style H fill:#DE8F05,color:#fff
     style I fill:#029E73,color:#fff
-    style J fill:#CC78BC,color:#000
+    style J fill:#CC78BC,color:#fff
 ```
 
 ```python
@@ -1880,13 +1880,13 @@ graph TD
     G --> I[Continue Execution]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#DE8F05,color:#000
+    style D fill:#DE8F05,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#CC78BC,color:#000
+    style F fill:#CC78BC,color:#fff
     style G fill:#029E73,color:#fff
-    style H fill:#CC78BC,color:#000
+    style H fill:#CC78BC,color:#fff
     style I fill:#0173B2,color:#fff
 ```
 
@@ -2671,9 +2671,9 @@ graph TD
     style A fill:#0173B2,color:#fff
     style B fill:#029E73,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#CC78BC,color:#000
-    style E fill:#CC78BC,color:#000
-    style F fill:#CC78BC,color:#000
+    style D fill:#CC78BC,color:#fff
+    style E fill:#CC78BC,color:#fff
+    style F fill:#CC78BC,color:#fff
 ```
 
 ```python
@@ -3605,9 +3605,9 @@ graph TD
 
     style A fill:#0173B2,color:#fff
     style B fill:#029E73,color:#fff
-    style C fill:#DE8F05,color:#000
-    style D fill:#CC78BC,color:#000
-    style E fill:#CC78BC,color:#000
+    style C fill:#DE8F05,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#CC78BC,color:#fff
 ```
 
 ```python

@@ -32,14 +32,14 @@ graph TD
     H --> I
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#CA9161,color:#000
-    style E fill:#CC78BC,color:#000
-    style F fill:#CC78BC,color:#000
-    style G fill:#CC78BC,color:#000
-    style H fill:#CC78BC,color:#000
-    style I fill:#DE8F05,color:#000
+    style D fill:#CA9161,color:#fff
+    style E fill:#CC78BC,color:#fff
+    style F fill:#CC78BC,color:#fff
+    style G fill:#CC78BC,color:#fff
+    style H fill:#CC78BC,color:#fff
+    style I fill:#DE8F05,color:#fff
 ```
 
 ```rust
@@ -186,10 +186,10 @@ graph TD
     E -->|Can be called from C| F[C Code]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#0173B2,color:#fff
-    style E fill:#DE8F05,color:#000
+    style E fill:#DE8F05,color:#fff
     style F fill:#029E73,color:#fff
 ```
 
@@ -553,12 +553,12 @@ graph TD
     G[Expansion: temp_vec.push$x*] -->|Template| C
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#DE8F05,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#CC78BC,color:#000
-    style G fill:#CC78BC,color:#000
+    style F fill:#CC78BC,color:#fff
+    style G fill:#CC78BC,color:#fff
 ```
 
 ```rust
@@ -925,12 +925,12 @@ graph TD
     G --> D
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#CC78BC,color:#000
-    style E fill:#CA9161,color:#000
+    style D fill:#CC78BC,color:#fff
+    style E fill:#CA9161,color:#fff
     style F fill:#029E73,color:#fff
-    style G fill:#DE8F05,color:#000
+    style G fill:#DE8F05,color:#fff
 ```
 
 ```rust
@@ -1605,11 +1605,11 @@ graph TD
     E --> F[Other branches cancelled]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#CA9161,color:#000
+    style B fill:#CA9161,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#DE8F05,color:#000
+    style D fill:#DE8F05,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#CC78BC,color:#000
+    style F fill:#CC78BC,color:#fff
 ```
 
 ```rust
@@ -2214,13 +2214,13 @@ graph TD
     J[!Unpin Types: async futures] -->|Cannot move| K[Pin::new_unchecked unsafe]
 
     style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
-    style D fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#fff
+    style D fill:#DE8F05,color:#fff
     style E fill:#029E73,color:#fff
     style F fill:#029E73,color:#fff
     style G fill:#029E73,color:#fff
-    style H fill:#CC78BC,color:#000
-    style J fill:#CA9161,color:#000
+    style H fill:#CC78BC,color:#fff
+    style J fill:#CA9161,color:#fff
 ```
 
 ```rust
@@ -3813,12 +3813,12 @@ graph TD
 
     style A fill:#0173B2,color:#fff
     style B fill:#029E73,color:#fff
-    style C fill:#DE8F05,color:#000
-    style D fill:#CA9161,color:#000
-    style E fill:#CC78BC,color:#000
+    style C fill:#DE8F05,color:#fff
+    style D fill:#CA9161,color:#fff
+    style E fill:#CC78BC,color:#fff
     style F fill:#029E73,color:#fff
-    style G fill:#DE8F05,color:#000
-    style H fill:#CA9161,color:#000
+    style G fill:#DE8F05,color:#fff
+    style H fill:#CA9161,color:#fff
 ```
 
 ```rust

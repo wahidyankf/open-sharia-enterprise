@@ -58,8 +58,8 @@ graph TD
     C --> E["[1 2 3]"]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#DE8F05,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
 ```
@@ -175,8 +175,8 @@ graph TD
     B --> E[Variadic with &]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#DE8F05,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
 ```
@@ -536,10 +536,10 @@ graph TD
     E --> B
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
     style D fill:#029E73,color:#fff
-    style E fill:#CA9161,color:#000
+    style E fill:#CA9161,color:#fff
 ```
 
 ```clojure
@@ -677,11 +677,11 @@ graph TD
     F --> G["30"]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CA9161,color:#000
-    style D fill:#DE8F05,color:#000
-    style E fill:#CA9161,color:#000
-    style F fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CA9161,color:#fff
+    style D fill:#DE8F05,color:#fff
+    style E fill:#CA9161,color:#fff
+    style F fill:#DE8F05,color:#fff
     style G fill:#029E73,color:#fff
 ```
 
@@ -1485,8 +1485,8 @@ graph TD
     C --> D[str: 12]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#DE8F05,color:#fff
     style D fill:#029E73,color:#fff
 ```
 
@@ -2124,9 +2124,9 @@ graph TD
     C --> D[Remainder: 7 8 dropped]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#CC78BC,color:#000
+    style D fill:#CC78BC,color:#fff
 ```
 
 ```clojure
