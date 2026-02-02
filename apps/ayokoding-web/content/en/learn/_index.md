@@ -11,6 +11,7 @@ weight: 10
   - [Programming Languages](/en/learn/software-engineering/programming-languages)
   - [Data](/en/learn/software-engineering/data)
   - [Automation Testing](/en/learn/software-engineering/automation-testing)
+  - [Automation Tools](/en/learn/software-engineering/automation-tools)
   - [Infrastructure](/en/learn/software-engineering/infrastructure)
   - [Networking](/en/learn/software-engineering/networking)
   - [System Design](/en/learn/software-engineering/system-design)
