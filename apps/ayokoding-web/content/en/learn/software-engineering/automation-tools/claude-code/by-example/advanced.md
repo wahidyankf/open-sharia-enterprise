@@ -1395,12 +1395,12 @@ Configure Claude for monorepo workflows with workspace-aware context. Claude und
 
 ```mermaid
 graph TD
-    A[Nx Monorepo] -->|Libraries| B[@company/core]
-    A -->|Libraries| C[@company/auth]
-    A -->|Libraries| D[@company/ui]
-    A -->|Apps| E[@company/web]
-    A -->|Apps| F[@company/api]
-    A -->|Apps| G[@company/mobile]
+    A[Nx Monorepo] -->|Libraries| B["@company/core"]
+    A -->|Libraries| C["@company/auth"]
+    A -->|Libraries| D["@company/ui"]
+    A -->|Apps| E["@company/web"]
+    A -->|Apps| F["@company/api"]
+    A -->|Apps| G["@company/mobile"]
     E -->|imports| B
     E -->|imports| C
     E -->|imports| D
