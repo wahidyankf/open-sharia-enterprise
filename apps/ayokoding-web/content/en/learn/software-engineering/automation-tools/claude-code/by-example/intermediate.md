@@ -1104,7 +1104,7 @@ You: Commit with that message
 Generate comprehensive PR descriptions from branch commits. Claude analyzes commit history and creates structured PR summary.
 
 ```mermaid
-graph LR
+graph TD
     A[Branch Commits] -->|Analyze| B[5 Commits]
     A -->|Diff| C[12 Files Changed]
     B -->|Categorize| D[Features + Fixes]
@@ -1393,7 +1393,7 @@ You: Analyze src/services/search.ts for performance issues and suggest optimizat
 Audit frontend code for accessibility issues. Claude identifies WCAG violations and suggests fixes for keyboard navigation, ARIA labels, and color contrast.
 
 ```mermaid
-graph LR
+graph TD
     A[Scan Components] -->|Identify Issues| B[Keyboard Nav]
     A -->|Identify Issues| C[ARIA Labels]
     A -->|Identify Issues| D[Color Contrast]
