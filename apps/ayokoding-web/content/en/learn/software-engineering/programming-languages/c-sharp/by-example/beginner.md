@@ -156,20 +156,25 @@ C# `if` statements control execution flow based on boolean conditions. Unlike F#
 ```csharp
 // Example 5: Control Flow - If Statements
 int x = 10;                  // => x is 10 (positive integer)
+                             // => Will be tested in conditional branches
 
 if (x > 0)                   // => Condition: x > 0 evaluates to true
 {                            // => Braces define code block
+                             // => Required for multi-line blocks
     Console.WriteLine("Positive");
                              // => Executes when condition is true
                              // => Outputs: Positive
+                             // => First matching branch wins
 }
 else if (x < 0)              // => Additional condition (not evaluated here)
 {                            // => Would execute if x < 0
+                             // => Skipped when previous condition matched
     Console.WriteLine("Negative");
                              // => Not executed (x is positive)
 }
 else                         // => Default case (not executed)
 {                            // => Executes when neither above condition true
+                             // => Catch-all for remaining cases
     Console.WriteLine("Zero");
                              // => Not executed (first condition was true)
 }
@@ -179,6 +184,7 @@ string description = x > 0 ? "positive" : "non-positive";
                              // => condition ? true-value : false-value
                              // => Returns "positive" (x > 0 is true)
                              // => description is "positive"
+                             // => Ternary returns value (expression not statement)
 
 Console.WriteLine(description);
                              // => Outputs: positive
@@ -362,6 +368,7 @@ Func<int, int> double = x => x * 2;
                              // => Func<int, int>: type of function (int -> int)
                              // => x is parameter (type inferred as int)
                              // => x * 2 is expression body
+                             // => Creates inline function without separate method declaration
 
 int result = double(5);      // => Invoke lambda like method
                              // => result is 10
@@ -391,6 +398,19 @@ Console.WriteLine($"{result}, {sum}, {squared}");
 ## Example 11: Classes and Objects
 
 Classes define object templates with fields, properties, and methods. They're C#'s primary abstraction mechanism.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+graph TD
+    A[Person Class<br/>Template]:::blue --> B[alice Instance<br/>Name: Alice<br/>Age: 30]:::orange
+    A --> C[bob Instance<br/>Name: Bob<br/>Age: 25]:::teal
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
+```
+
+**Code**:
 
 ```csharp
 // Example 11: Classes and Objects
@@ -632,6 +652,22 @@ Console.WriteLine(string.Join(", ", names));
 
 Dictionaries provide key-value storage with O(1) average lookup time, essential for caching and mapping scenarios.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+graph LR
+    A["Dictionary<string, int>"]:::blue
+    A --> B["Alice → 30"]:::orange
+    A --> C["Bob → 25"]:::teal
+    A --> D["Charlie → 35"]:::orange
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#DE8F05,stroke:#000,color:#000
+```
+
+**Code**:
+
 ```csharp
 // Example 16: Collections - Dictionary<TKey, TValue>
 Dictionary<string, int> ages = new Dictionary<string, int>();
@@ -731,6 +767,19 @@ Console.WriteLine(string.Join(", ", uniqueNumbers));
 
 LINQ (Language Integrated Query) provides functional operations on collections through extension methods and query syntax.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+graph LR
+    A[Source: 1,2,3,4,5,6,7,8,9,10]:::blue -->|Where n % 2 == 0| B[Filtered: 2,4,6,8,10]:::orange
+    B -->|ToList| C[Result List]:::teal
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
+```
+
+**Code**:
+
 ```csharp
 // Example 18: LINQ - Where (Filtering)
 List<int> numbers = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
@@ -767,6 +816,19 @@ Console.WriteLine(string.Join(", ", result));
 ## Example 19: LINQ - Select (Mapping)
 
 Select transforms each element in a collection, projecting to a new type or value.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+graph LR
+    A[Source: 1,2,3,4,5]:::blue -->|Select n => n * 2| B[Transformed: 2,4,6,8,10]:::orange
+    B -->|ToList| C[Result List]:::teal
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
+```
+
+**Code**:
 
 ```csharp
 // Example 19: LINQ - Select (Mapping)
@@ -1071,9 +1133,11 @@ int x = 10;                  // => Value type (int is struct)
 
 int y = x;                   // => COPY: y gets copy of x's value
                              // => y is 10 (independent copy)
+                             // => Value types create independent copies on assignment
 
 x = 20;                      // => Modify x
                              // => x is 20, y remains 10 (no connection)
+                             // => Demonstrates value type independence
 
 Console.WriteLine($"x={x}, y={y}");
                              // => Outputs: x=20, y=10

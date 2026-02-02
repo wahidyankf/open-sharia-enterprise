@@ -488,6 +488,23 @@ printRecord product
 
 Statically Resolved Type Parameters (SRTP) enable compile-time polymorphism through inline functions and type constraints.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+graph TD
+    A[Generic Code<br/>inline add]:::blue --> B[Compile Time<br/>Type Resolution]:::orange
+    B --> C[int + int]:::teal
+    B --> D[float + float]:::teal
+    B --> E[string + string]:::teal
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#029E73,stroke:#000,color:#fff
+    style E fill:#029E73,stroke:#000,color:#fff
+```
+
+**Code**:
+
 ```fsharp
 // Example 68: Advanced Type Constraints with SRTP
 let inline add x y =
@@ -724,6 +741,19 @@ printfn "Is 10 even? %b" (10.IsEven())
 
 Units of measure provide compile-time dimensional analysis, preventing unit conversion errors in calculations.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+graph LR
+    A[100.0 meter]:::blue --> B[/ time<br/>5.0 second]:::orange
+    B --> C[20.0 meter/second]:::teal
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#029E73,stroke:#000,color:#fff
+```
+
+**Code**:
+
 ```fsharp
 // Example 72: Units of Measure - Type-Safe Calculations
 [<Measure>] type meter
@@ -872,6 +902,23 @@ printfn "Result: %s" result
 ## Example 74: GADTs Emulation with Discriminated Unions
 
 F# emulates Generalized Algebraic Data Types (GADTs) using discriminated unions with type constraints.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+graph TD
+    A[Expr Tree]:::blue --> B[TLit 10]:::orange
+    A --> C[TAdd]:::orange
+    C --> D[TLit 20]:::teal
+    C --> E[Eval: 30]:::teal
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
+    style D fill:#029E73,stroke:#000,color:#fff
+    style E fill:#029E73,stroke:#000,color:#fff
+```
+
+**Code**:
 
 ```fsharp
 // Example 74: GADTs Emulation with Discriminated Unions
@@ -1027,6 +1074,21 @@ printfn "User 3: %s" user3
 ## Example 76: Event Sourcing Pattern
 
 Event sourcing stores state changes as immutable events, enabling complete audit trails and time travel debugging.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph LR
+    A[AccountCreated<br/>1000.0]:::blue --> B[MoneyDeposited<br/>+500]:::orange
+    B --> C[MoneyWithdrawn<br/>-200]:::teal
+    C --> D[Current State<br/>1300.0]:::purple
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Code**:
 
 ```fsharp
 // Example 76: Event Sourcing Pattern

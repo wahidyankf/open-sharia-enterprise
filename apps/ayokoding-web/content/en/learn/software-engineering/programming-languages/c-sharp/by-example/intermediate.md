@@ -39,12 +39,15 @@ graph TD
 interface IShape          // => Interface defines contract
 {                         // => I prefix is naming convention
                           // => Defines behavior without implementation
+                          // => Cannot contain implementation details
     double GetArea();     // => All implementers MUST provide this method
                           // => No implementation in interface (only signature)
+                          // => Return type double for area calculation
 }
 
 class Circle : IShape     // => Circle implements IShape contract
 {                         // => ":" denotes interface implementation
+                          // => Circle must implement all IShape members
     private double radius;// => Private field
                           // => Encapsulation principle (hide data)
                           // => Only accessible within class
@@ -52,6 +55,7 @@ class Circle : IShape     // => Circle implements IShape contract
     public Circle(double r)
     {                     // => Constructor with radius parameter
                           // => r is double parameter
+                          // => Initializes object state
         radius = r;       // => Initialize radius field
                           // => radius is now equal to r
     }
@@ -190,7 +194,7 @@ animal2.MakeSound();      // => Calls Cat.MakeSound()
 
 Abstract classes combine interface contracts (abstract methods) with shared implementation (concrete methods). They cannot be instantiated directly.
 
-```msharp
+```csharp
 // Example 33: Abstract Classes
 abstract class Shape      // => abstract prevents direct instantiation
 {                         // => Can't do: new Shape()
@@ -362,6 +366,7 @@ async Task<string> FetchUser(int id)
 
 async Task<string> FetchOrders(int userId)
 {                         // => Async method for orders
+                          // => Independent operation (runs in parallel)
     await Task.Delay(500);// => 500ms delay (simulates database query)
     return $"Orders for {userId}";
                           // => Returns orders string
@@ -369,6 +374,7 @@ async Task<string> FetchOrders(int userId)
 
 async Task<string> FetchProfile(int userId)
 {                         // => Async method for profile
+                          // => Third parallel operation
     await Task.Delay(500);// => 500ms delay (simulates API call)
     return $"Profile for {userId}";
                           // => Returns profile string
@@ -378,6 +384,7 @@ var userTask = FetchUser(1);
                           // => Starts immediately
                           // => Returns Task<string> (not yet complete)
                           // => Does NOT await (task runs in background)
+                          // => Execution continues while task executes
 
 var ordersTask = FetchOrders(1);
                           // => Starts immediately (parallel to userTask)
@@ -722,10 +729,12 @@ var groupedByCategory = products.GroupBy(p => p.Category);
                           // => Lambda: p => p.Category is key selector
                           // => Returns IEnumerable<IGrouping<string, Product>>
                           // => Each group has Key (category) and elements (products)
+                          // => Lazy evaluation (not executed until enumerated)
 
 foreach (var group in groupedByCategory)
 {                         // => Iterate through groups
                           // => group is IGrouping<string, Product>
+                          // => Triggers GroupBy execution
     Console.WriteLine($"\nCategory: {group.Key}");
                           // => group.Key is category name (string)
                           // => Output: Category: Electronics
@@ -734,6 +743,7 @@ foreach (var group in groupedByCategory)
     foreach (var product in group)
     {                     // => Iterate through products in group
                           // => product is Product type
+                          // => Nested enumeration within group
         Console.WriteLine($"  - {product.Name}: ${product.Price}");
                           // => Output:   - Laptop: $999.99
                           // =>           - Mouse: $29.99
@@ -2532,38 +2542,46 @@ Aggregate operations reduce collections to single values using custom accumulati
 ```csharp
 // Example 60: LINQ Aggregate Operations
 var numbers = new List<int> { 1, 2, 3, 4, 5 };
+                          // => Source collection for aggregation
 
 // Sum with Aggregate
 int sum = numbers.Aggregate(0, (accumulator, current) =>
 {                         // => Aggregate(seed, func)
                           // => seed is initial accumulator value (0)
                           // => func: (accumulator, current) => new accumulator
+                          // => Lambda with two parameters
     return accumulator + current;
                           // => Iteration 1: 0 + 1 = 1
                           // => Iteration 2: 1 + 2 = 3
                           // => Iteration 3: 3 + 3 = 6
                           // => Iteration 4: 6 + 4 = 10
                           // => Iteration 5: 10 + 5 = 15
-});
+});                       // => Final accumulator is result
+                          // => sum is 15 (type: int)
 
 Console.WriteLine(sum);   // => Output: 15
 
 // Product
 int product = numbers.Aggregate(1, (acc, current) => acc * current);
                           // => 1 * 1 * 2 * 3 * 4 * 5 = 120
+                          // => Seed is 1 (multiplicative identity)
+                          // => Expression lambda (concise form)
 
 Console.WriteLine(product);
                           // => Output: 120
 
 // String concatenation
 var words = new List<string> { "Hello", "World", "From", "C#" };
+                          // => String collection for building sentence
 
 string sentence = words.Aggregate("", (acc, word) =>
 {                         // => Build string progressively
+                          // => Seed is empty string
     return acc == "" ? word : $"{acc} {word}";
                           // => First word: no space
                           // => Subsequent words: add space
-});
+                          // => Ternary handles special case
+});                       // => sentence contains joined result
 
 Console.WriteLine(sentence);
                           // => Output: Hello World From C#

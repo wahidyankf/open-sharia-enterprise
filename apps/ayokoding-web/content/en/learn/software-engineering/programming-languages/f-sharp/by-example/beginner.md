@@ -33,7 +33,6 @@ graph TD
 ```fsharp
 // Example 1: Hello World and F# Interactive
 // => F# uses // for single-line comments
-// => (* ... *) for multi-line comments
 
 printfn "Hello, World!"  // => printfn prints to stdout with newline
                           // => Outputs: Hello, World!
