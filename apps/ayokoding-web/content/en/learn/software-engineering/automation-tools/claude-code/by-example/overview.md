@@ -3,11 +3,11 @@ title: "Overview"
 date: 2026-02-02T00:00:00+07:00
 draft: false
 weight: 10000000
-description: "Learn Claude Code through 85 heavily annotated examples covering 95% of AI-assisted development workflows"
-tags: ["claude-code", "by-example", "tutorial", "examples", "code-first", "ai-assisted"]
+description: "Learn Claude Code CLI through 85 heavily annotated examples: interactive mode, print mode (`-p`), npm scripts, git hooks, CI/CD integration, and custom agents (95% coverage)"
+tags: ["claude-code", "by-example", "tutorial", "cli", "automation", "ci-cd", "agents"]
 ---
 
-**Learn Claude Code by doing.** This by-example tutorial teaches AI-assisted development through 85 heavily annotated, self-contained examples achieving 95% coverage of Claude Code capabilities. If you're an experienced developer who prefers learning through working examples rather than narrative explanations, this is your path.
+**Learn the Claude Code CLI by doing.** This by-example tutorial teaches the `claude` command - the AI coding assistant you control from the terminal - through 85 heavily annotated, self-contained examples achieving 95% coverage. Master interactive usage, non-interactive automation (`-p` flag), npm scripts, git hooks, GitHub Actions, and custom agent patterns.
 
 ## What is By Example?
 
@@ -19,9 +19,9 @@ By Example is a **code-first learning approach** designed for experienced develo
 
 ### Structure
 
-- **[Beginner](/en/learn/software-engineering/automation-tools/claude-code/by-example/beginner)** (Examples 1-30): Essential commands and basic workflows - 0-40% coverage
-- **[Intermediate](/en/learn/software-engineering/automation-tools/claude-code/by-example/intermediate)** (Examples 31-60): Production patterns and advanced features - 40-75% coverage
-- **[Advanced](/en/learn/software-engineering/automation-tools/claude-code/by-example/advanced)** (Examples 61-85): Expert mastery and optimization - 75-95% coverage
+- **[Beginner](/en/learn/software-engineering/automation-tools/claude-code/by-example/beginner)** (Examples 1-30): `claude` command fundamentals, interactive mode, print mode (`-p`), npm scripts, git hooks - 0-40% coverage
+- **[Intermediate](/en/learn/software-engineering/automation-tools/claude-code/by-example/intermediate)** (Examples 31-60): GitHub Actions, CI/CD pipelines, multi-language subprocess integration (Python/Node/Java/Go) - 40-75% coverage
+- **[Advanced](/en/learn/software-engineering/automation-tools/claude-code/by-example/advanced)** (Examples 61-85): Custom agents (`--agents`), MCP servers, production orchestration, configuration management - 75-95% coverage
 
 ### Example Format
 

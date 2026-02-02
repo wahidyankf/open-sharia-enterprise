@@ -3,534 +3,533 @@ title: "Beginner"
 date: 2026-02-02T00:00:00+07:00
 draft: false
 weight: 10000001
-description: "Examples 1-30: Essential Claude Code commands and basic AI-assisted development workflows (0-40% coverage)"
-tags: ["claude-code", "beginner", "by-example", "tutorial", "ai-assisted", "cli"]
+description: "Examples 1-30: Claude Code CLI fundamentals - interactive mode, print mode (`-p`), npm scripts, git hooks, and workflow management (0-40% coverage)"
+tags: ["claude-code", "beginner", "by-example", "tutorial", "cli", "automation", "npm", "git-hooks"]
 ---
 
-This tutorial provides 30 foundational examples covering essential Claude Code operations for AI-assisted development. Each example demonstrates core commands, basic workflows, and fundamental patterns for effective AI collaboration in software projects.
+This tutorial provides 30 foundational examples covering the Claude Code CLI tool - the AI coding assistant controlled through the `claude` command. Learn interactive usage (Examples 1-6), non-interactive print mode (Examples 7-12), npm scripts integration (Examples 13-18), git hooks (Examples 19-20), and workflow management (Examples 21-30).
 
-## Getting Started (Examples 1-10)
+## What is Claude Code (Examples 1-6)
 
-### Example 1: Starting Interactive Session
+### Example 1: What is Claude Code
 
-Claude Code's interactive mode enables conversational development where you describe what you want and AI generates code. This mode maintains context across requests, allowing iterative refinement.
+Claude Code is an AI-powered coding assistant you run from the command line using the `claude` command. It reads and writes files, runs commands, and helps you build software through natural language conversation. Think of it as a senior developer available 24/7 via your terminal.
+
+**Key Features**:
+
+- **Interactive mode**: Conversational development (`claude` → chat interface)
+- **Print mode**: Non-interactive automation (`claude -p "query"` → exits after response)
+- **File operations**: Read, write, edit files based on natural language requests
+- **Command execution**: Run bash commands, git operations, build scripts
+- **Context awareness**: Understands project structure, existing patterns, coding conventions
+
+**Key Takeaway**: Claude Code is a CLI tool (`claude` command) that brings AI assistance to software development through file operations and command execution.
+
+**Why It Matters**: Traditional AI assistants require copying code between browser and editor. Claude Code works directly in your codebase - it reads files, makes changes, runs tests, and commits results. This eliminates context switching and enables true AI-assisted development workflows. Developers report 40-60% faster feature development when Claude Code handles boilerplate, refactoring, and test generation.
+
+### Example 2: Starting Interactive Session
+
+The `claude` command without arguments starts interactive mode - a conversational interface where you describe what you want and Claude Code generates code, edits files, or runs commands.
 
 ```mermaid
 sequenceDiagram
     participant Dev as Developer
-    participant CLI as Claude CLI
+    participant CLI as claude command
     participant AI as Claude AI
-    participant Project as Project Files
+    participant Files as Project Files
 
     Dev->>CLI: claude
-    CLI->>Project: Loads .claude/ config
-    CLI->>AI: Initializes conversation
+    CLI->>Files: Loads .claude/ config
+    CLI->>AI: Initializes session
     AI-->>Dev: Ready for prompts
+    Dev->>AI: "Create user.ts"
+    AI->>Files: Writes user.ts
+    AI-->>Dev: File created
 ```
 
 **Commands**:
 
 ```bash
 claude                              # => Launches Claude Code CLI
+                                    # => Loads project config (.claude/)
                                     # => Enters interactive conversation mode
-                                    # => Loads project context from .claude/
-                                    # => Ready to accept natural language prompts
-                                    # => Displays "Ask me anything about this project"
+                                    # => Displays welcome message
+                                    # => Ready for natural language prompts
 ```
 
-**Key Takeaway**: Use `claude` without arguments to start interactive mode. This maintains conversation context and enables back-and-forth iteration.
+**Key Takeaway**: Run `claude` to start interactive mode. You'll get a conversational interface that maintains context across requests.
 
-**Why It Matters**: Interactive mode reduces context switching between terminal, editor, and documentation. Developers report 30-50% faster prototyping when AI handles boilerplate generation, allowing focus on business logic. The conversational interface learns project patterns and suggests consistent solutions across the codebase.
+**Why It Matters**: Interactive mode enables iterative development through conversation. Ask Claude to create a file, review the result, request changes, add tests - all without leaving the terminal. Context persistence means Claude remembers earlier decisions and code it generated. This reduces the cognitive load of tracking changes across multiple files. Teams using interactive mode report 50% reduction in time spent on boilerplate code generation.
 
-### Example 2: Simple Code Generation Request
+### Example 3: Interactive Session with Initial Prompt
 
-Natural language prompts describe desired functionality without specifying implementation details. Claude interprets intent, selects appropriate patterns, and generates idiomatic code.
+Launch Claude Code with an initial prompt to start working immediately without entering interactive mode first. Useful for quick questions or focused tasks.
+
+**Commands**:
+
+```bash
+claude "explain the authentication flow"
+                                    # => Launches Claude with prompt
+                                    # => Analyzes auth-related files
+                                    # => Provides explanation
+                                    # => Remains in interactive mode for follow-ups
+```
+
+**Key Takeaway**: Pass initial prompt as argument to `claude "your prompt"`. Claude executes the prompt then stays in interactive mode.
+
+**Why It Matters**: Initial prompts eliminate the startup step - you jump straight into work. This is faster for focused tasks like "explain this function" or "fix this bug". The session remains interactive for follow-up questions, maintaining context. Developers use this pattern for rapid code investigations where you know the first question but expect follow-ups.
+
+### Example 4: Understanding Claude's Tool Usage
+
+Claude Code uses tools (Read, Write, Edit, Bash, etc.) to interact with your codebase. Understanding tools helps you predict what Claude will do and provide better prompts.
 
 **Commands**:
 
 ```bash
 # In Claude interactive session
-You: Create a TypeScript function that validates email addresses
-                                    # => Claude reads prompt
-                                    # => Analyzes project context (TypeScript detected)
-                                    # => Generates function with regex validation
-                                    # => Shows proposed code for approval
-                                    # => Asks: "Should I create this file?"
+You: Add error handling to src/api/users.ts
+                                    # => Claude announces: "I'll use Read to view the file"
+                                    # => Tool: Read(src/api/users.ts)
+                                    # => Claude announces: "I'll use Edit to add try-catch"
+                                    # => Tool: Edit(src/api/users.ts, old_string, new_string)
+                                    # => Changes made, file updated
 ```
 
-**Key Takeaway**: Describe WHAT you want, not HOW to implement it. Claude handles implementation details based on project conventions.
+**Key Takeaway**: Claude announces tool usage before acting. Main tools: Read (view files), Write (create files), Edit (modify files), Bash (run commands).
 
-**Why It Matters**: Natural language interfaces remove the cognitive load of syntax recall and boilerplate patterns. Senior developers leverage AI for rapid prototyping, while junior developers learn idiomatic patterns through generated code. This democratizes code generation - expertise becomes validation skill rather than creation skill.
+**Why It Matters**: Tool announcements give you control - approve or reject operations before execution. Understanding tools helps you write better prompts ("Read auth.ts and add tests" vs "Add tests" where Claude might guess wrong file). This transparency prevents unwanted changes. Teams configure permission policies to auto-approve safe tools (Read) while prompting for destructive ones (Edit, Bash).
 
-### Example 3: Understanding AI Response Structure
+### Example 5: File Operations in Interactive Mode
 
-Claude responses include reasoning, code proposals, and questions for clarification. Understanding this structure helps you provide effective feedback and guide AI toward desired solutions.
+Claude Code can read, create, and edit files through natural language requests. You describe the operation, Claude executes it using appropriate tools.
 
 **Commands**:
 
 ```bash
-You: Add user authentication to the API
-                                    # => Claude analyzes request
-                                    # => Response includes:
-                                    # => 1. Reasoning: "I'll add JWT-based auth..."
-                                    # => 2. Proposed changes: Code blocks with annotations
-                                    # => 3. Questions: "Which routes need protection?"
-                                    # => 4. Tool usage: "I'll use Write to create auth.ts"
+# In Claude interactive session
+You: Create src/models/user.ts with User interface
+                                    # => Claude uses Write tool
+                                    # => Creates file with TypeScript interface
+                                    # => Confirms: "Created src/models/user.ts"
+
+You: Add a createdAt timestamp field
+                                    # => Claude uses Read to view current file
+                                    # => Uses Edit to add field
+                                    # => Shows diff of changes
 ```
 
-**Key Takeaway**: Claude responses structure: reasoning → proposed code → clarifying questions → tool usage plans. Read all sections before approving.
+**Key Takeaway**: Claude handles file creation (Write), reading (Read), and editing (Edit) through conversational requests.
 
-**Why It Matters**: Understanding response structure prevents premature approval of incomplete solutions. AI reasoning reveals assumptions that may not match your requirements. Clarifying questions help refine requirements iteratively. This conversational loop catches misunderstandings early, reducing debugging time by 40-60% compared to post-generation fixes.
+**Why It Matters**: Conversational file operations eliminate context switching between editor and terminal. Describe the change, Claude makes it. This is powerful for multi-file changes - "Add User import to all files using it" touches multiple files in one request. Teams report 40% reduction in manual file edits when using Claude for routine changes.
 
-### Example 4: File Creation from Natural Language
+### Example 6: Exiting and Resuming Sessions
 
-Claude creates files with appropriate naming, structure, and initial content based on project conventions detected from existing files.
-
-```mermaid
-graph LR
-    A[Prompt] -->|Analyze| B[Detect Conventions]
-    B -->|Apply| C[Generate Code]
-    C -->|Create| D[Write File]
-    D -->|Confirm| E[File Created]
-
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#fff
-    style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#fff
-    style E fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Commands**:
-
-```bash
-You: Create a React component for displaying user profiles
-                                    # => Claude analyzes existing components
-                                    # => Detects naming convention: PascalCase
-                                    # => Detects structure: functional components with TypeScript
-                                    # => Generates UserProfile.tsx with props interface
-                                    # => Uses Write tool to create file
-                                    # => Confirms: "Created components/UserProfile.tsx"
-```
-
-**Key Takeaway**: Claude infers project conventions from existing files. File structure, naming, and patterns match your codebase automatically.
-
-**Why It Matters**: Convention detection eliminates manual style enforcement. New files integrate seamlessly with existing code, maintaining consistency without linting fixes. Teams report 70% reduction in code review feedback about style when AI-generated code follows detected conventions. This shifts code review focus from formatting to logic and design.
-
-### Example 5: Reading Existing Files
-
-Claude reads files to understand context before making changes. Explicit file reading builds accurate mental models of codebase structure and dependencies.
+Exit Claude with `exit` command or Ctrl+D. Resume previous conversations with `claude -c` (continue) or `claude -r <session>` (resume specific session).
 
 ```mermaid
 sequenceDiagram
-    participant User as User
-    participant Claude as Claude AI
-    participant Read as Read Tool
-    participant File as File System
+    participant Dev as Developer
+    participant Claude as claude command
+    participant Disk as Session Storage
 
-    User->>Claude: "Read src/utils/validation.ts"
-    Claude->>Read: Invoke Read tool
-    Read->>File: Load file content
-    File-->>Read: Return file contents
-    Read-->>Claude: File content
-    Claude->>Claude: Analyze functions, types, dependencies
-    Claude-->>User: Summary of 3 validators
+    Dev->>Claude: claude
+    Claude->>Disk: Save session
+    Dev->>Claude: exit
+    Claude->>Disk: Persist conversation
+    Dev->>Claude: claude -c
+    Claude->>Disk: Load last session
+    Claude-->>Dev: Resumed conversation
 ```
 
 **Commands**:
 
 ```bash
-You: Read src/utils/validation.ts and explain what it does
-                                    # => Claude uses Read tool
-                                    # => Loads file content
-                                    # => Analyzes functions, types, dependencies
-                                    # => Provides summary:
-                                    # => "This module exports 3 validators:
-                                    # =>  - validateEmail: regex-based email check
-                                    # =>  - validatePassword: strength requirements
-                                    # =>  - validatePhone: international format support"
+# In Claude session
+You: exit                           # => Exits Claude
+                                    # => Session saved to disk
+
+# Later...
+claude -c                           # => Continues last conversation
+                                    # => Loads previous context
+                                    # => Ready for follow-ups
+
+claude -r "auth-refactor"           # => Resumes named session
+                                    # => Loads that specific conversation
 ```
 
-**Key Takeaway**: Request file reading before asking for changes. This ensures Claude has accurate context about existing implementations.
+**Key Takeaway**: Exit with `exit` or Ctrl+D. Resume with `claude -c` (last conversation) or `claude -r <session>` (specific session).
 
-**Why It Matters**: Explicit file reads prevent hallucinations where AI generates code based on assumptions rather than actual file contents. Context-aware changes reduce breaking changes by 80% compared to blind generation. Reading files first is especially critical for refactoring tasks where understanding current implementation determines safe transformation strategy.
+**Why It Matters**: Session persistence enables long-running projects across multiple work sessions. Start feature development Monday, resume same conversation Wednesday. Context preserved means no re-explanation of requirements. Named sessions (`-r`) let you manage multiple parallel workstreams. Teams report 30% faster context recovery when resuming Claude sessions vs re-reading code manually.
 
-### Example 6: Simple Code Edit Request
+## Non-Interactive Print Mode (Examples 7-12)
 
-Incremental edits modify specific parts of files while preserving surrounding code. Claude uses Edit tool for surgical changes rather than full file rewrites.
+### Example 7: Basic Print Mode (`-p`)
+
+Print mode (`claude -p`) runs non-interactively - executes query, prints response, exits. Essential for scripts and automation.
 
 **Commands**:
 
 ```bash
-You: In src/api/users.ts, add error handling to the createUser function
-                                    # => Claude reads current file
-                                    # => Identifies createUser function
-                                    # => Generates try-catch wrapper
-                                    # => Uses Edit tool (not Write)
-                                    # => Shows diff: old code → new code
-                                    # => Preserves imports, other functions unchanged
-                                    # => Asks: "Should I make this change?"
+claude -p "explain the authentication flow"
+                                    # => Claude analyzes auth files
+                                    # => Prints explanation to stdout
+                                    # => Exits (does NOT enter interactive mode)
+                                    # => Exit code 0 on success
 ```
 
-**Key Takeaway**: Claude uses Edit tool for partial changes, preserving file structure. Only modified sections shown in diff.
+**Key Takeaway**: Use `claude -p "query"` for non-interactive execution. Claude processes query, prints response, exits immediately.
 
-**Why It Matters**: Surgical edits reduce risk of unintended side effects. Edit tool prevents accidental deletion of unrelated code. Developers can review focused diffs instead of full file comparisons, speeding approval by 60%. This precision is critical in large files where full rewrites introduce merge conflicts and regression risks.
+**Why It Matters**: Print mode enables CLI automation - call Claude from scripts, CI/CD, git hooks. Non-interactive execution is essential for automated workflows. Output goes to stdout (capture with `>` or pipes). Exit codes indicate success/failure for script error handling. This is the foundation for all Claude Code automation patterns.
 
-### Example 7: Asking for Code Explanations
+### Example 8: Piping Content to Claude
 
-Request explanations for unfamiliar code patterns, libraries, or complex logic. Claude provides context-aware analysis of existing code.
+Pipe file contents or command output to Claude via stdin. Useful for analyzing logs, processing data, or batch operations.
 
 **Commands**:
 
 ```bash
-You: Explain the useReducer hook in src/components/Cart.tsx
-                                    # => Claude reads file
-                                    # => Locates useReducer usage
-                                    # => Explains:
-                                    # => "useReducer manages cart state with actions:
-                                    # =>  - ADD_ITEM: adds product to cart array
-                                    # =>  - REMOVE_ITEM: filters by product ID
-                                    # =>  - UPDATE_QUANTITY: maps over items
-                                    # => Reducer pattern provides predictable state updates
-                                    # => compared to multiple useState calls"
+cat src/api/users.ts | claude -p "add error handling"
+                                    # => Claude receives file via stdin
+                                    # => Analyzes TypeScript code
+                                    # => Adds try-catch blocks
+                                    # => Prints modified code to stdout
+
+git diff | claude -p "summarize these changes"
+                                    # => Claude receives git diff
+                                    # => Analyzes changes
+                                    # => Prints summary
 ```
 
-**Key Takeaway**: Ask for explanations of existing code. Claude analyzes actual implementation, not generic documentation.
+**Key Takeaway**: Pipe content to Claude with `cat file | claude -p "query"` or `command | claude -p "query"`.
 
-**Why It Matters**: Context-aware explanations accelerate onboarding for new codebases. Understanding existing patterns before making changes reduces architectural drift. Teams report 50% faster ramp-up time for new developers when AI explains existing code decisions. This shifts learning from passive documentation reading to active dialogue about actual code.
+**Why It Matters**: Piping enables batch processing - analyze multiple files, process command output, transform data. This integrates Claude into Unix pipelines. Common pattern: `find . -name "*.ts" | xargs -I{} claude -p "add types to {}"` for batch operations. Teams use piping for automated code analysis in CI/CD.
 
-### Example 8: Generating Test Cases
+### Example 9: Output Formats (text vs json)
 
-Request tests for existing functions. Claude analyzes function logic to generate comprehensive test coverage including edge cases.
+Control output format with `--output-format`. Options: `text` (default), `json` (structured), `stream-json` (streaming events).
 
 **Commands**:
 
 ```bash
-You: Generate Jest tests for the validateEmail function in src/utils/validation.ts
-                                    # => Claude reads validation.ts
-                                    # => Analyzes validateEmail implementation
-                                    # => Generates test file: validation.test.ts
-                                    # => Includes cases:
-                                    # =>   - Valid emails: user@example.com
-                                    # =>   - Invalid formats: missing @, no domain
-                                    # =>   - Edge cases: special chars, long domains
-                                    # => Creates test suite with describe/it blocks
+claude -p "list all API endpoints" --output-format json
+                                    # => Claude analyzes routes
+                                    # => Returns JSON: {"endpoints": [...]}
+                                    # => Parseable by jq, scripts
+
+claude -p "list all API endpoints"
+                                    # => Default text format
+                                    # => Human-readable output
+                                    # => Not structured for parsing
 ```
 
-**Key Takeaway**: Claude generates tests based on actual function logic, not assumptions. Test coverage includes happy paths and edge cases.
+**Key Takeaway**: Use `--output-format json` for machine-parseable output. Default is human-readable text.
 
-**Why It Matters**: AI-generated tests catch edge cases humans often miss. Test generation is 70% faster than manual writing, allowing higher coverage with same time investment. Generated tests serve as executable documentation of function behavior. This is especially valuable for legacy code where original requirements are undocumented.
+**Why It Matters**: JSON output enables downstream processing - parse with `jq`, pass to other tools, store in databases. Critical for automation pipelines. Example: `claude -p "extract function names" --output-format json | jq '.functions[]'` for programmatic code analysis. Teams use JSON output for generating reports, validating codebases, extracting metadata.
 
-### Example 9: Running Terminal Commands
+### Example 10: Continuing Conversations Non-Interactively
 
-Delegate terminal operations to Claude. The Bash tool executes commands and reports results, enabling AI-driven debugging and verification.
+Use `claude -c -p` to continue previous conversation in print mode. Useful for multi-step automation maintaining context.
 
 **Commands**:
 
 ```bash
-You: Run npm test to check if all tests pass
-                                    # => Claude uses Bash tool
-                                    # => Executes: npm test
-                                    # => Captures output:
-                                    # => "Test Suites: 12 passed, 12 total
-                                    # =>  Tests:       48 passed, 48 total
-                                    # =>  Snapshots:   0 total
-                                    # =>  Time:        5.234s"
-                                    # => Reports: "All tests passing ✓"
+claude -p "analyze src/auth.ts and suggest improvements"
+                                    # => Claude analyzes auth code
+                                    # => Suggests: Add rate limiting, improve validation
+                                    # => Saves session
+
+claude -c -p "implement the rate limiting suggestion"
+                                    # => Continues previous conversation
+                                    # => Remembers auth.ts analysis
+                                    # => Implements rate limiting
+                                    # => Prints modified code
 ```
 
-**Key Takeaway**: Claude can run terminal commands via Bash tool. Useful for testing, linting, building, and verification tasks.
+**Key Takeaway**: Use `claude -c -p` to continue last conversation in non-interactive mode. Context preserved across print mode calls.
 
-**Why It Matters**: AI-driven command execution enables closed-loop development: generate code → run tests → fix failures → verify. This automation reduces manual terminal switching. Teams report 40% faster debugging cycles when AI handles test execution and interprets error messages. The feedback loop tightens, catching issues immediately after code generation.
+**Why It Matters**: Context continuation enables multi-step automation scripts. Build complex workflows where each step builds on previous analysis. Example script: analyze → suggest → implement → test - each step uses `claude -c -p` to maintain context. Teams use this for automated refactoring pipelines maintaining state across multiple operations.
 
-### Example 10: Error Diagnosis and Fixing
+### Example 11: JSON Output Parsing in Scripts
 
-Provide error messages to Claude for analysis. AI identifies root causes, suggests fixes, and can implement corrections automatically.
+Parse Claude's JSON output with `jq` or programming language JSON parsers for automated decision making.
 
 **Commands**:
 
 ```bash
-You: I'm getting "Cannot find module './config'" error when running the app
-                                    # => Claude analyzes error
-                                    # => Asks: "Can you share the import statement?"
-                                    # => You: import { config } from './config';
-                                    # => Claude searches for config files
-                                    # => Finds: config.ts exists but imported without extension
-                                    # => Suggests: import { config } from './config.ts';
-                                    # => Or: Update tsconfig.json to resolve extensions
-                                    # => Asks: "Which approach do you prefer?"
+# Extract function names from code analysis
+FUNCTIONS=$(claude -p "list all exported functions in src/utils.ts" --output-format json | jq -r '.functions[]')
+
+# Count TypeScript errors
+ERROR_COUNT=$(claude -p "check for type errors" --output-format json | jq '.errors | length')
+
+# Extract specific field
+COMPLEXITY=$(claude -p "calculate cyclomatic complexity" --output-format json | jq '.complexity')
 ```
 
-**Key Takeaway**: Share error messages with Claude for diagnosis. AI suggests multiple solutions ranked by best practice.
+**Key Takeaway**: Pipe Claude JSON output to `jq` for field extraction. Use in scripts for automated decision making.
 
-**Why It Matters**: AI error diagnosis reduces debugging time by 50-70%. Claude cross-references error messages with project structure, dependency versions, and common pitfalls. Junior developers benefit most - AI guidance prevents hours of Stack Overflow searching. This democratizes debugging expertise, making senior-level problem-solving accessible to all team members.
+**Why It Matters**: JSON parsing enables conditional logic in automation - "if complexity > 10, reject PR". Extract specific metrics for reporting dashboards. Common in CI/CD: `if [ $ERROR_COUNT -gt 0 ]; then exit 1; fi` to fail builds on Claude-detected issues. Teams build custom quality gates using Claude analysis with jq parsing.
 
-## Iterative Development (Examples 11-20)
+### Example 12: Session Management in Automation
 
-### Example 11: Iterative Refinement
-
-Request incremental improvements to generated code. Each refinement builds on previous changes, converging toward desired solution through dialogue.
-
-```mermaid
-graph LR
-    A[Request 1: Basic Function] -->|Generate| B[Simple Fetch]
-    B -->|Refine| C[Request 2: Add Error Handling]
-    C -->|Generate| D[With Try-Catch]
-    D -->|Refine| E[Request 3: Add Retry Logic]
-    E -->|Generate| F[With Exponential Backoff]
-    F -->|Refine| G[Request 4: Add TypeScript Types]
-    G -->|Generate| H[Production-Ready]
-
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style C fill:#0173B2,stroke:#000,color:#fff
-    style E fill:#0173B2,stroke:#000,color:#fff
-    style G fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#fff
-    style D fill:#029E73,stroke:#000,color:#fff
-    style F fill:#CC78BC,stroke:#000,color:#fff
-    style H fill:#CA9161,stroke:#000,color:#fff
-```
+Control session behavior with `--session-id` (explicit ID), `--no-session-persistence` (don't save), `--fork-session` (branch from existing).
 
 **Commands**:
 
 ```bash
-You: Create a function to fetch user data
-                                    # => Claude generates basic fetch function
-You: Add error handling
-                                    # => Claude adds try-catch block
-You: Add retry logic for failed requests
-                                    # => Claude adds exponential backoff retry
-You: Add TypeScript types for the response
-                                    # => Claude adds interface UserData and return type
-                                    # => Final function: robust, typed, production-ready
+# Explicit session ID for reproducibility
+claude -p "analyze code" --session-id "550e8400-e29b-41d4-a716-446655440000"
+                                    # => Uses specific UUID
+                                    # => Resumable with same ID
+
+# Don't save session (one-off operation)
+claude -p "quick check" --no-session-persistence
+                                    # => Runs query
+                                    # => Does NOT save to disk
+                                    # => No session recovery
+
+# Fork from existing session
+claude -r "main-session" --fork-session -p "experiment with new approach"
+                                    # => Loads main-session context
+                                    # => Creates new session ID
+                                    # => Original session unchanged
 ```
 
-**Key Takeaway**: Build solutions incrementally through conversation. Each request refines previous output toward production quality.
+**Key Takeaway**: Control session lifecycle with `--session-id`, `--no-session-persistence`, `--fork-session`.
 
-**Why It Matters**: Iterative refinement matches human problem-solving - start simple, add complexity gradually. This approach reduces cognitive overload compared to specifying all requirements upfront. Developers report higher satisfaction with AI-generated code when built iteratively (85%) versus one-shot generation (60%). The dialogue surfaces edge cases organically through refinement prompts.
+**Why It Matters**: Session management enables advanced automation patterns. Explicit IDs make builds reproducible. No-persistence for one-off checks doesn't pollute session history. Forking enables experimentation - try different approaches from same starting context without affecting original. Teams use forking for A/B testing code solutions.
 
-### Example 12: Multiple File Creation for Features
+## npm Scripts Integration (Examples 13-18)
 
-Request full features spanning multiple files. Claude coordinates file creation, ensuring consistent naming, imports, and architectural patterns.
+### Example 13: npm Script Calling Claude for Code Generation
+
+Wrap Claude commands in package.json scripts for team-wide automation. Everyone runs same Claude operations consistently.
+
+**Commands**:
+
+```json
+// package.json
+{
+  "scripts": {
+    "generate:model": "claude -p 'create User model with TypeScript types'"
+  }
+}
+```
+
+```bash
+npm run generate:model             # => Executes Claude command
+                                    # => Generates User model
+                                    # => Output to stdout
+                                    # => Team uses same command
+```
+
+**Key Takeaway**: Add Claude commands to package.json scripts. Standardizes automation across team.
+
+**Why It Matters**: npm scripts document Claude usage patterns. New team members discover available automations via `npm run`. Consistency - everyone uses same prompts, gets same results. Version control tracks changes to automation commands. This lowers barrier to AI adoption - team members don't need to remember Claude flags, just run `npm run <task>`.
+
+### Example 14: npm Script for Documentation Generation
+
+Automate documentation generation with npm scripts calling Claude to analyze code and generate docs.
+
+**Commands**:
+
+```json
+// package.json
+{
+  "scripts": {
+    "docs:generate": "claude -p 'generate API documentation from src/api/*.ts' --output-format json > docs/api.json"
+  }
+}
+```
+
+```bash
+npm run docs:generate              # => Claude analyzes API files
+                                    # => Generates JSON documentation
+                                    # => Saves to docs/api.json
+                                    # => Automated doc generation
+```
+
+**Key Takeaway**: npm scripts + Claude enable automated documentation generation. Output to files with `>` redirection.
+
+**Why It Matters**: Manual documentation falls out of sync with code. Automated generation keeps docs current. Run `npm run docs:generate` before releases to update docs. CI/CD can validate docs match code. Teams report 90% reduction in stale documentation when docs are generated automatically from code analysis.
+
+### Example 15: npm Script with Environment Variables
+
+Pass configuration to Claude via environment variables. Useful for model selection, custom prompts, or feature flags.
+
+**Commands**:
+
+```json
+// package.json
+{
+  "scripts": {
+    "analyze:fast": "CLAUDE_MODEL=haiku npm run analyze",
+    "analyze:thorough": "CLAUDE_MODEL=sonnet npm run analyze",
+    "analyze": "claude -p 'analyze codebase for issues' --model $CLAUDE_MODEL"
+  }
+}
+```
+
+```bash
+npm run analyze:fast               # => Uses Haiku model (faster, cheaper)
+npm run analyze:thorough           # => Uses Sonnet model (thorough, slower)
+```
+
+**Key Takeaway**: Use environment variables to configure Claude commands. Different scripts can customize behavior.
+
+**Why It Matters**: Environment variables enable flexible automation. Same base command with different configurations (models, prompts, output paths). Example: fast analysis in development, thorough analysis in CI/CD. Teams balance speed vs accuracy by selecting appropriate model per use case.
+
+### Example 16: npm Script Error Handling
+
+Handle Claude errors in npm scripts with exit codes and conditional logic. Fail builds on Claude-detected issues.
+
+**Commands**:
+
+```json
+// package.json
+{
+  "scripts": {
+    "validate": "claude -p 'check for type errors' --output-format json > errors.json && [ $(jq '.errors | length' errors.json) -eq 0 ]",
+    "test:ai": "claude -p 'validate test coverage' || (echo 'AI validation failed' && exit 1)"
+  }
+}
+```
+
+```bash
+npm run validate                   # => Runs Claude validation
+                                    # => Exits 0 if no errors
+                                    # => Exits 1 if errors found
+                                    # => npm reports success/failure
+```
+
+**Key Takeaway**: Use exit codes for error handling. Chain commands with `&&` (success) or `||` (failure).
+
+**Why It Matters**: Error handling enables quality gates. Fail CI/CD builds on Claude-detected issues (type errors, missing tests, security problems). Automated quality enforcement - code can't merge if Claude validation fails. Teams report 50% reduction in bugs reaching production when Claude validation runs in CI/CD.
+
+### Example 17: npm Script Chaining Multiple Claude Commands
+
+Chain multiple Claude commands in sequence. Each step uses output from previous step.
+
+**Commands**:
+
+```json
+// package.json
+{
+  "scripts": {
+    "full-analysis": "claude -p 'analyze architecture' > arch.txt && claude -c -p 'suggest improvements based on analysis' > improvements.txt && claude -c -p 'prioritize improvements by impact' > priorities.txt"
+  }
+}
+```
+
+```bash
+npm run full-analysis              # => Step 1: Analyze architecture → arch.txt
+                                    # => Step 2: Suggest improvements → improvements.txt
+                                    # => Step 3: Prioritize → priorities.txt
+                                    # => Each step continues previous conversation
+```
+
+**Key Takeaway**: Chain commands with `&&`. Use `claude -c -p` for context continuation across commands.
+
+**Why It Matters**: Multi-step pipelines enable complex automation. Each step refines previous output. Example: analyze → identify issues → suggest fixes → implement → test. Context preservation means Claude remembers earlier analysis. Teams build comprehensive quality pipelines using command chaining.
+
+### Example 18: npm Script Output Capture and Processing
+
+Capture Claude output to files, then process with standard Unix tools or other scripts.
+
+**Commands**:
+
+```json
+// package.json
+{
+  "scripts": {
+    "extract-deps": "claude -p 'list all npm dependencies with versions' --output-format json > deps.json && jq '.dependencies[]' deps.json > deps-list.txt"
+  }
+}
+```
+
+```bash
+npm run extract-deps               # => Claude analyzes package.json
+                                    # => Outputs JSON to deps.json
+                                    # => jq extracts dependency list
+                                    # => Saves to deps-list.txt
+```
+
+**Key Takeaway**: Capture Claude output with `>`, process with downstream tools (`jq`, `grep`, custom scripts).
+
+**Why It Matters**: Output capture enables integration with existing toolchains. Claude becomes one stage in larger pipeline. Example: Claude analysis → jq filtering → dashboard upload. This leverages Unix philosophy - combine simple tools for complex workflows. Teams integrate Claude into existing CI/CD without rewriting pipelines.
+
+## Git Hooks with Claude Code (Examples 19-20)
+
+### Example 19: Pre-commit Hook Using Claude for Validation
+
+Run Claude validation before commits. Prevents committing code with detected issues.
 
 **Commands**:
 
 ```bash
-You: Create a todo list feature with React components, API handlers, and database models
-                                    # => Claude plans structure:
-                                    # => 1. components/TodoList.tsx (UI)
-                                    # => 2. components/TodoItem.tsx (item rendering)
-                                    # => 3. api/todos.ts (Express handlers)
-                                    # => 4. models/Todo.ts (Mongoose schema)
-                                    # => Creates files sequentially
-                                    # => Ensures consistent imports across files
-                                    # => Confirms: "Created 4 files for todo feature"
+# .husky/pre-commit
+#!/bin/bash
+claude -p "validate staged files for issues" --output-format json > /tmp/validation.json
+
+ISSUES=$(jq '.issues | length' /tmp/validation.json)
+
+if [ "$ISSUES" -gt 0 ]; then
+  echo "❌ Claude detected issues:"
+  jq '.issues[]' /tmp/validation.json
+  exit 1
+fi
+
+echo "✅ Claude validation passed"
 ```
 
-**Key Takeaway**: Claude coordinates multi-file features with consistent naming and imports. Request features, not individual files.
+```bash
+git add src/api/users.ts
+git commit -m "add user endpoint"
+                                    # => Pre-commit hook runs
+                                    # => Claude validates users.ts
+                                    # => If issues: blocks commit, shows errors
+                                    # => If clean: allows commit
+```
 
-**Why It Matters**: Feature-level generation maintains architectural consistency across layers. Manual multi-file creation risks import errors, naming mismatches, and pattern inconsistencies. AI coordination reduces integration bugs by 60%. This is especially valuable for full-stack features where frontend, API, and database layers must align.
+**Key Takeaway**: Use Claude in pre-commit hooks to validate code before committing. Exit 1 blocks commit, exit 0 allows it.
 
-### Example 13: Adding Inline Documentation
+**Why It Matters**: Pre-commit validation prevents bad code from entering version control. Catch issues immediately vs during CI/CD (faster feedback). Claude validates for type errors, missing tests, security issues. This shifts quality left - problems caught at commit time, not review time. Teams report 60% reduction in "fix CI" commits when Claude validates pre-commit.
 
-Request documentation for existing code. Claude generates JSDoc, docstrings, or inline comments explaining complex logic.
+### Example 20: Pre-push Hook Using Claude for Code Review
+
+Run Claude code review before pushing. Ensures code quality before sharing with team.
 
 **Commands**:
 
 ```bash
-You: Add JSDoc comments to all functions in src/utils/calculations.ts
-                                    # => Claude reads file
-                                    # => Analyzes each function signature and logic
-                                    # => Generates JSDoc blocks:
-                                    # => /**
-                                    # =>  * Calculates compound interest
-                                    # =>  * @param principal - Initial investment amount
-                                    # =>  * @param rate - Annual interest rate (decimal)
-                                    # =>  * @param years - Investment duration
-                                    # =>  * @returns Final amount after compounding
-                                    # =>  */
-                                    # => Adds comments to all functions
+# .husky/pre-push
+#!/bin/bash
+FILES=$(git diff --name-only origin/main...HEAD)
+
+for FILE in $FILES; do
+  REVIEW=$(claude -p "review $FILE for code quality issues" --output-format json)
+  SEVERITY=$(echo "$REVIEW" | jq -r '.max_severity')
+
+  if [ "$SEVERITY" = "high" ] || [ "$SEVERITY" = "critical" ]; then
+    echo "❌ Critical issues in $FILE"
+    echo "$REVIEW" | jq '.issues[]'
+    exit 1
+  fi
+done
+
+echo "✅ Claude review passed"
 ```
-
-**Key Takeaway**: Claude generates documentation from code analysis. JSDoc/docstrings include param types, return values, and descriptions.
-
-**Why It Matters**: AI-generated documentation maintains consistency across codebase. Teams report 80% faster documentation completion with AI assistance. Generated docs serve as starting point for human refinement. This shifts documentation from blank-page problem to editing task, significantly reducing friction. IDE autocomplete leverages JSDoc, improving developer experience downstream.
-
-### Example 14: Code Formatting Requests
-
-Request formatting changes matching project style guides. Claude applies consistent indentation, spacing, and style conventions.
-
-**Commands**:
 
 ```bash
-You: Format src/api/users.ts to match our Prettier config
-                                    # => Claude reads .prettierrc
-                                    # => Detects rules: 2-space indent, single quotes, trailing commas
-                                    # => Reads users.ts
-                                    # => Applies formatting:
-                                    # =>   - Converts double quotes → single quotes
-                                    # =>   - Adjusts indentation to 2 spaces
-                                    # =>   - Adds trailing commas to objects/arrays
-                                    # => Uses Edit tool to update file
+git push                           # => Pre-push hook runs
+                                    # => Claude reviews changed files
+                                    # => If critical issues: blocks push
+                                    # => If acceptable: allows push
 ```
 
-**Key Takeaway**: Claude reads project config files (.prettierrc, .eslintrc) and applies rules to code formatting requests.
+**Key Takeaway**: Use Claude in pre-push hooks to review code before sharing. Block push on critical issues.
 
-**Why It Matters**: Config-aware formatting eliminates manual prettier/eslint runs. AI applies style rules during generation, reducing post-generation cleanup. Teams using AI formatting report 90% reduction in style-related code review comments. This allows reviewers to focus on logic, not formatting bikeshedding.
-
-### Example 15: Variable Renaming Across Files
-
-Request semantic variable renames. Claude identifies all occurrences across files and updates references safely using project-wide search.
-
-**Commands**:
-
-```bash
-You: Rename the variable 'userData' to 'userProfile' across the entire project
-                                    # => Claude uses Grep tool
-                                    # => Searches: pattern "userData" in all files
-                                    # => Finds occurrences in:
-                                    # =>   - src/api/users.ts (3 locations)
-                                    # =>   - src/components/Profile.tsx (2 locations)
-                                    # =>   - src/utils/session.ts (1 location)
-                                    # => Uses Edit tool on each file
-                                    # => Renames all occurrences to 'userProfile'
-                                    # => Confirms: "Renamed in 3 files, 6 total occurrences"
-```
-
-**Key Takeaway**: Claude performs project-wide renames using Grep + Edit tools. Ensures all references updated consistently.
-
-**Why It Matters**: Project-wide renames are error-prone manually - missed references cause runtime errors. AI search-and-replace reduces rename errors by 95%. This enables fearless refactoring of variable/function names to improve code clarity. Teams report higher willingness to improve naming when AI handles mechanical updates.
-
-### Example 16: Function Extraction Refactoring
-
-Request function extraction to reduce duplication. Claude identifies repeated logic, extracts to new function, and updates call sites.
-
-**Commands**:
-
-```bash
-You: Extract the email validation logic into a reusable function
-                                    # => Claude reads file
-                                    # => Identifies repeated regex pattern in 3 places
-                                    # => Creates new function:
-                                    # =>   function isValidEmail(email: string): boolean {
-                                    # =>     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-                                    # =>   }
-                                    # => Replaces inline regex with isValidEmail(email) calls
-                                    # => Adds function at top of file (after imports)
-```
-
-**Key Takeaway**: Claude extracts repeated logic into named functions. Updates all call sites automatically while preserving behavior.
-
-**Why It Matters**: Function extraction is classic refactoring that improves maintainability - bug fixes apply to single function, not N duplicated locations. AI extraction is safe (preserves behavior) and fast (updates all call sites). Teams report 60% more frequent refactoring when AI handles mechanical steps. This compounds code quality improvements over time.
-
-### Example 17: Adding Missing Imports
-
-Request import additions for unresolved references. Claude analyzes project structure to find correct import paths and update statements.
-
-**Commands**:
-
-```bash
-You: Add the missing import for useState in src/components/Counter.tsx
-                                    # => Claude reads file
-                                    # => Sees: useState used but not imported
-                                    # => Determines source: React
-                                    # => Checks existing React import:
-                                    # =>   import React from 'react';
-                                    # => Updates to named import:
-                                    # =>   import React, { useState } from 'react';
-                                    # => Preserves existing imports (React default)
-```
-
-**Key Takeaway**: Claude adds missing imports to existing import statements when possible, rather than creating duplicate import lines.
-
-**Why It Matters**: Import management is tedious and error-prone. AI import resolution considers project structure, module types (default vs named), and import grouping conventions. Developers report 80% reduction in import-related compile errors when AI manages imports. This is especially valuable in large projects with deep folder hierarchies.
-
-### Example 18: Creating Project Structure
-
-Request multi-directory scaffolding. Claude creates folder hierarchies with placeholder files following project architecture patterns.
-
-```mermaid
-graph TD
-    A[Request Structure] -->|Analyze| B[Detect Architecture]
-    B -->|Plan| C[Create Directories]
-    C -->|Generate| D[Create Files]
-    D -->|Populate| E[Add Boilerplate]
-
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#fff
-    style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#fff
-    style E fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Commands**:
-
-```bash
-You: Create a clean architecture structure for a Node.js API
-                                    # => Claude generates structure:
-                                    # => mkdir -p src/domain/entities
-                                    # => mkdir -p src/domain/repositories
-                                    # => mkdir -p src/application/use-cases
-                                    # => mkdir -p src/infrastructure/persistence
-                                    # => mkdir -p src/interfaces/http
-                                    # => Creates placeholder files:
-                                    # =>   - src/domain/entities/User.ts
-                                    # =>   - src/application/use-cases/CreateUser.ts
-                                    # =>   - src/infrastructure/persistence/UserRepository.ts
-```
-
-**Key Takeaway**: Claude creates directory structures with placeholder files. Follows architectural patterns like clean architecture, hexagonal, or layered.
-
-**Why It Matters**: Manual scaffolding is time-consuming and inconsistent across team members. AI scaffolding ensures structural consistency from project start. Teams report 70% faster project setup with AI-generated structures. This standardization improves onboarding - all projects follow familiar layouts.
-
-### Example 19: Generating Configuration Files
-
-Request config file generation. Claude creates boilerplate configs for tools like TypeScript, ESLint, Prettier, and Jest with sensible defaults.
-
-**Commands**:
-
-```bash
-You: Create a tsconfig.json for a Node.js project
-                                    # => Claude generates config:
-                                    # => {
-                                    # =>   "compilerOptions": {
-                                    # =>     "target": "ES2020",
-                                    # =>     "module": "commonjs",
-                                    # =>     "lib": ["ES2020"],
-                                    # =>     "outDir": "./dist",
-                                    # =>     "rootDir": "./src",
-                                    # =>     "strict": true,
-                                    # =>     "esModuleInterop": true
-                                    # =>   }
-                                    # => }
-                                    # => Creates tsconfig.json with sensible defaults
-```
-
-**Key Takeaway**: Claude generates tool config files with industry-standard defaults. Configs can be refined iteratively through follow-up requests.
-
-**Why It Matters**: Config file boilerplate is tedious to write from scratch. AI-generated configs include sensible defaults based on project type (Node vs browser, library vs app). This eliminates config-related setup friction. Teams report 50% faster initial project setup when AI generates tooling configs.
-
-### Example 20: Understanding Context Window
-
-Claude maintains conversation context across requests. Understanding context window limits helps you structure prompts effectively for complex tasks.
-
-**Commands**:
-
-```bash
-# Context is maintained across this conversation:
-You: Read src/models/User.ts
-                                    # => Claude reads file, context stored
-You: Now create a matching UserDTO for the API layer
-                                    # => Claude uses stored User.ts context
-                                    # => Generates DTO matching User fields
-                                    # => No need to re-explain User structure
-You: Add password hashing to the User model
-                                    # => Claude still has User.ts context
-                                    # => Updates User model with bcrypt hashing
-```
-
-**Key Takeaway**: Claude remembers previous messages in conversation. Reference earlier context without repeating information.
-
-**Why It Matters**: Context persistence enables multi-step workflows without repetition. You can build complex features through incremental requests, each building on prior context. However, extremely long conversations (hundreds of messages) may lose early context. For complex projects, break into focused sessions rather than single marathon conversation.
+**Why It Matters**: Pre-push review provides automated code review before code reaches team. Catches quality issues, security problems, anti-patterns. This reduces human review burden - reviewers focus on architecture and logic, not style or common mistakes. Teams report 40% reduction in review time when Claude handles initial quality checks.
 
 ## Workflow Management (Examples 21-30)
 

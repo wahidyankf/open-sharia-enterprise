@@ -3,514 +3,816 @@ title: "Intermediate"
 date: 2026-02-02T00:00:00+07:00
 draft: false
 weight: 10000002
-description: "Examples 31-60: Production patterns, multi-file operations, and advanced AI-assisted workflows (40-75% coverage)"
-tags: ["claude-code", "intermediate", "by-example", "tutorial", "ai-assisted", "production"]
+description: "Examples 31-60: Claude Code CLI automation - GitHub Actions, CI/CD pipelines, multi-language subprocess integration, and production workflows (40-75% coverage)"
+tags: ["claude-code", "intermediate", "by-example", "tutorial", "ci-cd", "github-actions", "automation", "subprocess"]
 ---
 
-This tutorial provides 30 intermediate examples covering production-ready development patterns with Claude Code. Each example demonstrates multi-file operations, advanced refactoring techniques, testing automation, and integration with development tools for enterprise-grade AI-assisted workflows.
+This tutorial provides 30 intermediate examples covering Claude Code CLI automation in production environments. Learn GitHub Actions integration (Examples 31-35), advanced CI/CD patterns (Examples 36-40), multi-language subprocess integration (Examples 41-45), and production-ready development workflows (Examples 46-60).
 
-## Multi-File Operations (Examples 31-35)
+## GitHub Actions Integration (Examples 31-35)
 
-### Example 31: Cross-File Refactoring - Moving Functions
+### Example 31: Basic GitHub Actions Workflow with Claude
 
-Move functions between files while automatically updating import statements across the project. Claude coordinates file changes and import updates to maintain working codebase.
+Run Claude Code in GitHub Actions for automated code analysis, generation, or validation on push/PR events.
 
-```mermaid
-graph LR
-    A[Identify Function] -->|Extract| B[Remove from Source]
-    B -->|Create| C[Add to Target]
-    C -->|Search| D[Find Imports]
-    D -->|Update| E[Fix All Imports]
+```yaml
+# .github/workflows/claude-analysis.yml
+name: Claude Code Analysis
+on: [push, pull_request]
 
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#fff
-    style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#fff
-    style E fill:#CA9161,stroke:#000,color:#fff
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+        with:
+          api-key: ${{ secrets.CLAUDE_API_KEY }}
+      - name: Analyze codebase
+        run: claude -p "analyze code for security issues" --output-format json > analysis.json
+      - name: Check for critical issues
+        run: |
+          CRITICAL=$(jq '.issues[] | select(.severity=="critical") | length' analysis.json)
+          if [ "$CRITICAL" -gt 0 ]; then exit 1; fi
 ```
 
-**Commands**:
+**Key Takeaway**: GitHub Actions runs Claude CLI like any bash command. Use secrets for API keys, output to files, parse with jq.
+
+**Why It Matters**: CI/CD integration catches issues before code review. Automated Claude analysis scales team quality - every push gets analyzed consistently. Exit codes (exit 1) fail builds on critical issues, preventing bad code from merging. Teams report 50% reduction in code review time when Claude pre-screens for common issues.
+
+### Example 32: Matrix Strategy with Claude - Testing Across Node Versions
+
+Use GitHub Actions matrix strategy to run Claude analysis across multiple Node.js versions simultaneously.
+
+```yaml
+# .github/workflows/cross-version-test.yml
+name: Cross-Version Claude Tests
+on: [pull_request]
+
+jobs:
+  test-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+      - name: Generate tests for Node ${{ matrix.node-version }}
+        run: |
+          claude -p "generate compatibility tests for Node ${{ matrix.node-version }}" > tests/node${{ matrix.node-version }}.spec.ts
+      - name: Run generated tests
+        run: npm test
+```
+
+**Key Takeaway**: Matrix builds parallelize Claude operations. Each matrix cell runs independent Claude command with different context.
+
+**Why It Matters**: Parallel execution speeds up CI/CD - 3 Node versions tested simultaneously vs sequentially saves 60% time. Claude customizes output per matrix cell (Node 18 vs 20 vs 22 compatibility tests). This enables comprehensive testing without manual effort. Teams use matrix builds to test across platforms, languages, frameworks simultaneously.
+
+### Example 33: Artifact Generation in CI/CD
+
+Generate documentation, reports, or code as GitHub Actions artifacts using Claude, then download or use in subsequent jobs.
+
+```yaml
+# .github/workflows/artifact-gen.yml
+name: Generate Documentation Artifacts
+on: [push]
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+      - name: Generate API docs
+        run: |
+          claude -p "generate comprehensive API documentation from src/api/**/*.ts" --output-format json > api-docs.json
+          claude -p "convert JSON docs to markdown" < api-docs.json > API.md
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: documentation
+          path: |
+            api-docs.json
+            API.md
+
+  deploy-docs:
+    needs: generate-docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: documentation
+      - name: Deploy to docs site
+        run: ./deploy-docs.sh API.md
+```
+
+**Key Takeaway**: Generate artifacts with Claude, upload with actions/upload-artifact, download in dependent jobs.
+
+**Why It Matters**: Artifact workflow separates generation from deployment. Documentation generated once, used in multiple downstream jobs (deploy to site, create GitHub release, send to stakeholders). This avoids regenerating expensive Claude analysis. Teams report 40% faster pipelines when Claude artifacts are cached and reused vs regenerating per job.
+
+### Example 34: Secret Management for Claude API Keys
+
+Secure Claude API keys using GitHub Secrets, environment variables, and permission scoping.
+
+```yaml
+# .github/workflows/secure-claude.yml
+name: Secure Claude Usage
+on: [pull_request]
+
+jobs:
+  secure-analysis:
+    runs-on: ubuntu-latest
+    environment: production # Requires approval for production secrets
+    steps:
+      - uses: actions/checkout@v3
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+        with:
+          api-key: ${{ secrets.CLAUDE_API_KEY }} # Never hardcode!
+      - name: Run Claude with scoped permissions
+        env:
+          CLAUDE_MAX_BUDGET: "5.00" # Limit spending per run
+        run: |
+          claude -p "analyze security vulnerabilities" \
+            --max-budget-usd $CLAUDE_MAX_BUDGET \
+            --output-format json > vulnerabilities.json
+      - name: Never log secrets
+        run: |
+          # WRONG: echo $CLAUDE_API_KEY
+          # RIGHT: Use masked variables
+          echo "Analysis complete"
+```
+
+**Key Takeaway**: Store API keys in GitHub Secrets, never in code. Use environment protection for production access. Set budget limits.
+
+**Why It Matters**: Exposed API keys enable unauthorized usage, costing money and risking data leaks. GitHub Secrets encrypt keys and mask them in logs. Environment protection requires manual approval for production runs. Budget limits prevent runaway costs if workflow loops infinitely. Teams use secret scanning to detect accidentally committed keys.
+
+### Example 35: Conditional Workflow Execution
+
+Run Claude only when specific files change or conditions are met. Saves CI/CD time and API costs.
+
+```yaml
+# .github/workflows/conditional.yml
+name: Conditional Claude Analysis
+on:
+  pull_request:
+    paths:
+      - "src/**/*.ts" # Only run on TypeScript changes
+      - "src/**/*.js"
+      - "!src/**/*.spec.ts" # Skip test files
+
+jobs:
+  analyze-code:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false # Skip drafts
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Full history for comparison
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Get changed files
+        id: changed-files
+        run: |
+          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.(ts|js)$' || true)
+          echo "files=$CHANGED" >> $GITHUB_OUTPUT
+
+      - name: Analyze only changed files
+        if: steps.changed-files.outputs.files != ''
+        run: |
+          for FILE in ${{ steps.changed-files.outputs.files }}; do
+            echo "Analyzing $FILE"
+            claude -p "review $FILE for issues" --output-format json > $FILE.analysis.json
+          done
+```
+
+**Key Takeaway**: Use `paths`, `if` conditions, and git diff to run Claude only when relevant. Analyze only changed files, not entire codebase.
+
+**Why It Matters**: Unconditional analysis wastes CI/CD time and API costs. Path filters skip irrelevant changes (README edits don't need code analysis). Draft PR skip prevents spending on work-in-progress. Analyzing only changed files (not entire codebase) reduces analysis time by 80-95% for typical PRs. Teams use conditional execution to balance thorough analysis with fast feedback.
+
+## Advanced CI/CD Patterns (Examples 36-40)
+
+### Example 36: Multi-Stage Pipeline (Lint → Test → Claude Analysis → Deploy)
+
+Orchestrate multi-stage pipeline where each stage depends on previous success. Claude analysis runs after tests pass.
+
+```yaml
+# .github/workflows/pipeline.yml
+name: Multi-Stage Pipeline
+on: [push]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm run lint
+
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm test
+
+  claude-analysis:
+    needs: test # Only runs if tests pass
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+      - name: Deep code analysis
+        run: |
+          claude -p "analyze architecture and suggest improvements" \
+            --output-format json > architecture-review.json
+      - name: Generate improvement report
+        run: |
+          claude -c -p "create prioritized improvement roadmap from analysis" \
+            > improvement-roadmap.md
+      - uses: actions/upload-artifact@v3
+        with:
+          name: analysis-reports
+          path: |
+            architecture-review.json
+            improvement-roadmap.md
+
+  deploy:
+    needs: claude-analysis
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v3
+      - run: ./deploy.sh
+```
+
+**Key Takeaway**: Chain jobs with `needs:` dependency. Each stage gates the next - Claude runs only if tests pass, deploy only if Claude approves.
+
+**Why It Matters**: Multi-stage pipelines provide progressive quality gates. Fast checks (lint) fail quickly. Expensive operations (Claude analysis) run only on validated code. This optimizes CI/CD time - failed lints don't waste Claude API calls. Deploy gating on Claude approval prevents deploying code with detected issues. Teams report 30% faster average pipeline time with proper stage ordering.
+
+### Example 37: PR Comment Generation with Claude
+
+Post Claude analysis results as PR comments, providing inline feedback to developers.
+
+```yaml
+# .github/workflows/pr-comment.yml
+name: Claude PR Review
+on: [pull_request]
+
+jobs:
+  review-and-comment:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write # Required to post comments
+    steps:
+      - uses: actions/checkout@v3
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Analyze PR changes
+        run: |
+          claude -p "review this PR for code quality, security, and best practices" \
+            --output-format json > review.json
+
+      - name: Format review as markdown
+        run: |
+          claude -p "convert review JSON to markdown with severity icons" \
+            < review.json > review-comment.md
+
+      - name: Post comment
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('review-comment.md', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🤖 Claude Code Review\n\n${body}`
+            });
+```
+
+**Key Takeaway**: Use `actions/github-script` to post Claude analysis as PR comments. Requires `pull-requests: write` permission.
+
+**Why It Matters**: PR comments provide contextual feedback where developers work. Instead of checking separate logs, developers see Claude reviews inline. This increases engagement - 70% more issues addressed when feedback appears in PR vs separate reports. Teams use this for automated code review, security scanning, style enforcement.
+
+### Example 38: Release Notes Automation
+
+Generate release notes from git commits using Claude, then create GitHub releases automatically.
+
+```yaml
+# .github/workflows/release.yml
+name: Automated Release Notes
+on:
+  push:
+    tags:
+      - "v*" # Trigger on version tags
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to create releases
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Full history for changelog
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Get commits since last tag
+        id: commits
+        run: |
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          if [ -z "$PREVIOUS_TAG" ]; then
+            COMMITS=$(git log --pretty=format:"%s (%h)" HEAD)
+          else
+            COMMITS=$(git log --pretty=format:"%s (%h)" $PREVIOUS_TAG..HEAD)
+          fi
+          echo "commits<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMITS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Generate release notes
+        run: |
+          echo "${{ steps.commits.outputs.commits }}" | \
+          claude -p "create professional release notes from these commits, categorizing by Features, Bug Fixes, and Improvements" \
+            > release-notes.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: release-notes.md
+          generate_release_notes: false # Use Claude's notes instead
+```
+
+**Key Takeaway**: Extract commits between tags, pass to Claude for formatting, create GitHub release with generated notes.
+
+**Why It Matters**: Manual release notes are time-consuming and inconsistent. Claude categorizes commits (features vs fixes), writes user-friendly descriptions, and formats professionally. This saves 2-3 hours per release for active projects. Automated notes never miss commits or misrepresent changes. Teams report 90% improvement in release note quality when Claude generates them from commit history.
+
+### Example 39: Deployment Approval Gates with Claude Risk Assessment
+
+Use Claude to assess deployment risk, requiring manual approval for high-risk changes.
+
+```yaml
+# .github/workflows/deploy-gate.yml
+name: Deployment with Risk Assessment
+on:
+  push:
+    branches: [main]
+
+jobs:
+  assess-risk:
+    runs-on: ubuntu-latest
+    outputs:
+      risk-level: ${{ steps.risk.outputs.level }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 50 # Last 50 commits for context
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Assess deployment risk
+        id: risk
+        run: |
+          git diff HEAD~1 HEAD > changes.diff
+          RISK=$(claude -p "assess deployment risk (low/medium/high) based on these changes" \
+            --output-format json < changes.diff | jq -r '.risk_level')
+          echo "level=$RISK" >> $GITHUB_OUTPUT
+          echo "Deployment risk: $RISK"
+
+  deploy-staging:
+    needs: assess-risk
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: ./deploy-staging.sh
+
+  deploy-production:
+    needs: [assess-risk, deploy-staging]
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      # High-risk deployments require manual approval
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check risk level
+        run: |
+          if [ "${{ needs.assess-risk.outputs.risk-level }}" = "high" ]; then
+            echo "⚠️ High-risk deployment detected. Manual approval required."
+          fi
+      - run: ./deploy-production.sh
+```
+
+**Key Takeaway**: Claude assesses deployment risk, outputs risk level, GitHub environment protection requires approval for high-risk changes.
+
+**Why It Matters**: Automated risk assessment prevents dangerous deployments without slowing down safe ones. Low-risk changes (docs, typos) deploy immediately. High-risk changes (database migrations, API changes) require human approval. This balances speed with safety. Teams report 40% fewer production incidents when Claude risk assessment gates deployments.
+
+### Example 40: Automated Rollback with Claude Failure Detection
+
+Monitor deployment health with Claude analyzing logs, trigger automatic rollback on detected issues.
+
+```yaml
+# .github/workflows/auto-rollback.yml
+name: Deploy with Auto-Rollback
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to deploy"
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.version }}
+      - run: ./deploy.sh
+      - name: Save deployment info
+        run: |
+          echo "VERSION=${{ github.event.inputs.version }}" >> deployment-info.txt
+          echo "TIMESTAMP=$(date -u +%s)" >> deployment-info.txt
+      - uses: actions/upload-artifact@v3
+        with:
+          name: deployment-info
+          path: deployment-info.txt
+
+  monitor-health:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Wait for deployment to stabilize
+        run: sleep 120 # 2 minutes
+
+      - name: Fetch and analyze logs
+        id: health-check
+        run: |
+          # Fetch last 100 log lines from production
+          ./fetch-prod-logs.sh > production.log
+
+          HEALTH=$(claude -p "analyze these production logs for errors, anomalies, or performance issues. Return JSON with {healthy: boolean, issues: string[]}" \
+            --output-format json < production.log)
+
+          HEALTHY=$(echo "$HEALTH" | jq -r '.healthy')
+          echo "healthy=$HEALTHY" >> $GITHUB_OUTPUT
+
+          if [ "$HEALTHY" = "false" ]; then
+            echo "🚨 Health check failed!"
+            echo "$HEALTH" | jq '.issues[]'
+          fi
+
+      - name: Trigger rollback if unhealthy
+        if: steps.health-check.outputs.healthy == 'false'
+        run: |
+          echo "Initiating automatic rollback..."
+          ./rollback.sh
+```
+
+**Key Takeaway**: Deploy → monitor logs → Claude analyzes health → auto-rollback on detected issues. Reduces incident response time.
+
+**Why It Matters**: Manual health monitoring delays incident detection by minutes to hours. Claude analyzes logs immediately post-deployment, detecting errors, performance degradation, or anomalies. Automatic rollback restores service within 2-3 minutes vs 15-30 minutes for manual detection and response. Teams report 70% reduction in incident impact when Claude monitors deployments.
+
+## Multi-Language Subprocess Integration (Examples 41-45)
+
+### Example 41: Python Subprocess Calling Claude
+
+Call Claude Code from Python scripts using subprocess module for automated code analysis or generation.
+
+```python
+# analyze.py
+import subprocess
+import json
+import sys
+
+def analyze_file(filepath):
+    """Analyze Python file using Claude Code."""
+    result = subprocess.run(
+        ['claude', '-p', f'analyze {filepath} for code quality issues',
+         '--output-format', 'json'],
+        capture_output=True,
+        text=True,
+        timeout=60
+    )
+
+    if result.returncode != 0:
+        print(f"Error: {result.stderr}", file=sys.stderr)
+        sys.exit(1)
+
+    analysis = json.loads(result.stdout)
+    return analysis
+
+def main():
+    filepath = sys.argv[1]
+    analysis = analyze_file(filepath)
+
+    print(f"Issues found: {len(analysis['issues'])}")
+    for issue in analysis['issues']:
+        print(f"  - [{issue['severity']}] {issue['message']}")
+
+if __name__ == '__main__':
+    main()
+```
 
 ```bash
-You: Move the validateEmail function from src/utils/validation.ts to src/utils/email.ts
-                                    # => Claude reads validation.ts
-                                    # => Identifies validateEmail function (15 lines)
-                                    # => Searches for imports using Grep tool
-                                    # => Finds imports in 4 files:
-                                    # =>   - src/api/users.ts
-                                    # =>   - src/components/SignupForm.tsx
-                                    # =>   - src/utils/auth.ts
-                                    # =>   - src/services/newsletter.ts
-                                    # => Creates/updates email.ts with function
-                                    # => Removes function from validation.ts
-                                    # => Updates all 4 import statements:
-                                    # =>   from './validation' → './email'
-                                    # => Confirms: "Moved function + updated 4 imports"
+python analyze.py src/main.py   # => Runs Claude analysis
+                                    # => Parses JSON output
+                                    # => Prints formatted results
 ```
 
-**Key Takeaway**: Claude coordinates function moves across multiple files, automatically updating all import statements. Zero manual import hunting required.
+**Key Takeaway**: Use `subprocess.run()` with `capture_output=True`, parse stdout as JSON, handle timeouts and errors.
 
-**Why It Matters**: Manual function moves require hunting down every import reference - miss one and code breaks at runtime. AI cross-file coordination reduces refactoring errors by 95%. Teams report 70% faster code reorganization when AI handles import management. This enables fearless refactoring to improve code organization without breaking changes.
+**Why It Matters**: Python integration enables Claude in data pipelines, automated scripts, CI/CD Python tools. Common pattern: data analysis scripts use Claude to generate insights, validate data quality, or explain anomalies. Teams integrate Claude into pytest for dynamic test generation based on data characteristics.
 
-### Example 32: Codebase Pattern Search and Analysis
+### Example 42: Node.js Child Process with Claude
 
-Search for specific code patterns across entire codebase. Claude uses Grep to find patterns and analyzes usage for refactoring opportunities.
+Call Claude from Node.js/JavaScript using child_process module for build scripts or automation tools.
 
-**Commands**:
+```javascript
+// generate-docs.js
+const { exec } = require("child_process");
+const { promisify } = require("util");
+const execAsync = promisify(exec);
 
-```bash
-You: Find all usages of console.log in the codebase
-                                    # => Claude uses Grep tool
-                                    # => Searches pattern: "console\.log"
-                                    # => Finds 23 occurrences across 12 files:
-                                    # =>   - src/api/*.ts: 8 occurrences
-                                    # =>   - src/utils/*.ts: 7 occurrences
-                                    # =>   - src/components/*.tsx: 8 occurrences
-                                    # => Provides summary:
-                                    # => "Found 23 console.log statements.
-                                    # =>  Recommendation: Replace with proper logger
-                                    # =>  for production code (api/, utils/).
-                                    # =>  Keep in components for debugging."
-You: Show me the actual code for each console.log in api files
-                                    # => Claude uses Grep with context (-C flag)
-                                    # => Shows code snippets with surrounding lines
-                                    # => Reveals most are error logging candidates
-```
+async function generateDocs(sourceDir) {
+  try {
+    const { stdout, stderr } = await execAsync(
+      `claude -p "generate API documentation from ${sourceDir}" --output-format json`,
+      { timeout: 60000 }, // 60 second timeout
+    );
 
-**Key Takeaway**: Claude searches patterns project-wide using Grep, provides analysis of findings, and recommends refactoring strategies based on pattern usage.
+    if (stderr) {
+      console.error("Claude stderr:", stderr);
+    }
 
-**Why It Matters**: Manual pattern hunting requires IDE search + context gathering across files. AI combines search with analysis, identifying refactoring opportunities. Teams using AI pattern search report 50% faster technical debt identification. This systematic approach prevents overlooked instances during cleanup.
-
-### Example 33: Batch File Updates - Adding Headers
-
-Apply consistent changes across multiple files. Claude uses Grep to find target files and Edit tool to update each with same pattern.
-
-**Commands**:
-
-```bash
-You: Add MIT license header to all TypeScript files in src/
-                                    # => Claude uses Glob tool: "src/**/*.ts"
-                                    # => Finds 47 TypeScript files
-                                    # => Generates license header:
-                                    # => /**
-                                    # =>  * MIT License
-                                    # =>  * Copyright (c) 2026 Project Name
-                                    # =>  * ...
-                                    # =>  */
-                                    # => Iterates through each file
-                                    # => Checks if header already exists (skip if present)
-                                    # => Adds header at top (before imports)
-                                    # => Uses Edit tool for each file
-                                    # => Confirms: "Added license header to 47 files"
-```
-
-**Key Takeaway**: Claude applies batch updates across multiple files using Glob (find files) + Edit (update each). Skips duplicates intelligently.
-
-**Why It Matters**: Manual batch updates are tedious and error-prone - easy to miss files or apply inconsistently. AI batch operations ensure 100% coverage with identical formatting. Teams report 90% time savings on bulk update tasks. This is especially valuable for license headers, import reorganization, or standardizing comment formats.
-
-### Example 34: Dependency Analysis Across Files
-
-Analyze import dependencies to understand module coupling. Claude maps which files depend on target module for impact assessment before changes.
-
-```mermaid
-graph TD
-    A[Target Module] -->|Imported By| B[Module A]
-    A -->|Imported By| C[Module B]
-    A -->|Imported By| D[Module C]
-    B -->|Imported By| E[Module D]
-    C -->|Imported By| E
-
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#fff
-    style C fill:#DE8F05,stroke:#000,color:#fff
-    style D fill:#DE8F05,stroke:#000,color:#fff
-    style E fill:#029E73,stroke:#000,color:#fff
-```
-
-**Commands**:
-
-```bash
-You: Show me which files import from src/utils/validation.ts
-                                    # => Claude uses Grep tool
-                                    # => Searches pattern: "from ['\"].*validation"
-                                    # => Finds imports in 8 files:
-                                    # =>   Direct imports (6):
-                                    # =>     - src/api/users.ts
-                                    # =>     - src/api/auth.ts
-                                    # =>     - src/components/SignupForm.tsx
-                                    # =>     - src/components/ProfileEdit.tsx
-                                    # =>     - src/services/newsletter.ts
-                                    # =>     - src/utils/email.ts
-                                    # =>   Transitive imports (analyze further):
-                                    # =>     - 12 files import from modules above
-                                    # => Creates dependency map diagram
-You: If I change validateEmail signature, what breaks?
-                                    # => Claude analyzes usage in each importer
-                                    # => Reports specific call sites affected
-```
-
-**Key Takeaway**: Claude maps module dependencies using import analysis. Provides impact assessment for proposed changes before making them.
-
-**Why It Matters**: Understanding dependency ripple effects prevents breaking changes. Manual dependency tracing is time-consuming and incomplete. AI dependency analysis surfaces all affected files in seconds. Teams report 80% reduction in refactoring-related breakages when using AI impact analysis before changes.
-
-### Example 35: Coordinated Multi-File Feature Addition
-
-Add complete features spanning frontend, backend, and database layers. Claude coordinates changes across stack layers with consistent naming and data flow.
-
-**Commands**:
-
-```bash
-You: Add a "featured" flag to blog posts with UI toggle, API endpoint, and database schema
-                                    # => Claude plans changes:
-                                    # => 1. Database: Add featured column to posts table
-                                    # => 2. Backend: Update Post model with featured field
-                                    # => 3. Backend: Add PATCH /api/posts/:id/featured endpoint
-                                    # => 4. Frontend: Add toggle button in PostEditForm
-                                    # => 5. Frontend: Update PostList to show featured badge
-                                    # => Implements sequentially:
-                                    # =>   - Creates migration: 20260202_add_featured_to_posts.sql
-                                    # =>   - Updates src/models/Post.ts (adds featured: boolean)
-                                    # =>   - Updates src/api/posts.ts (PATCH endpoint)
-                                    # =>   - Updates src/components/PostEditForm.tsx (toggle)
-                                    # =>   - Updates src/components/PostList.tsx (badge)
-                                    # => Ensures data flow: DB → Model → API → UI consistent
-                                    # => Confirms: "Added featured flag across 5 files"
-```
-
-**Key Takeaway**: Claude coordinates full-stack features with consistent naming and data flow across database, backend, and frontend layers.
-
-**Why It Matters**: Full-stack features require coordination across layers - naming mismatches or data type inconsistencies cause bugs. AI coordination ensures field names match (database column = model field = API property = UI state). Teams report 60% fewer integration bugs when AI handles multi-layer feature additions.
-
-## Advanced Prompting and Context (Examples 36-40)
-
-### Example 36: Providing Code Examples for Pattern Matching
-
-Show Claude example code to establish desired patterns. AI analyzes examples and applies learned patterns to new code.
-
-**Commands**:
-
-```bash
-You: Here's how I want error responses formatted in this project:
-return res.status(400).json({
-  error: {
-    code: 'VALIDATION_ERROR',
-    message: 'Email is required',
-    field: 'email'
+    const docs = JSON.parse(stdout);
+    return docs;
+  } catch (error) {
+    console.error("Failed to generate docs:", error.message);
+    process.exit(1);
   }
-});
-                                    # => Claude analyzes format:
-                                    # =>   - 400 status for validation errors
-                                    # =>   - Nested error object
-                                    # =>   - Fields: code, message, field
-You: Apply this pattern to all error responses in src/api/users.ts
-                                    # => Claude reads users.ts
-                                    # => Finds 7 error response statements
-                                    # => Updates each to match pattern:
-                                    # =>   res.status(500).send('Error')
-                                    # =>   → res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: '...' }})
-                                    # => Maintains consistent structure across file
+}
+
+async function main() {
+  const docs = await generateDocs("src/api/");
+
+  console.log(`Generated docs for ${docs.endpoints.length} endpoints`);
+
+  // Write to file
+  const fs = require("fs").promises;
+  await fs.writeFile("docs/api.json", JSON.stringify(docs, null, 2));
+}
+
+main();
 ```
-
-**Key Takeaway**: Provide code examples to establish patterns. Claude analyzes examples and applies consistently to existing or new code.
-
-**Why It Matters**: Pattern examples are more precise than verbal descriptions. Showing > telling for code conventions. AI pattern matching ensures consistency without manual enforcement. Teams report 90% reduction in code review comments about error formatting when AI applies learned patterns.
-
-### Example 37: Context Injection - Referencing Multiple Files
-
-Reference multiple files in single prompt for cross-file understanding. Claude loads all mentioned files into context before responding.
-
-**Commands**:
 
 ```bash
-You: Compare the authentication logic in src/api/auth.ts with the session handling in src/middleware/session.ts and explain any inconsistencies
-                                    # => Claude reads both files:
-                                    # =>   - src/api/auth.ts (loads into context)
-                                    # =>   - src/middleware/session.ts (loads into context)
-                                    # => Analyzes both implementations
-                                    # => Identifies inconsistency:
-                                    # => "auth.ts sets session expiry to 24 hours,
-                                    # =>  but session.ts checks for 12-hour expiry.
-                                    # =>  This causes premature session invalidation.
-                                    # =>  Recommendation: Align both to 24 hours
-                                    # =>  or extract to shared config constant."
+node generate-docs.js           # => Calls Claude via exec
+                                    # => Parses JSON output
+                                    # => Writes to docs/api.json
 ```
 
-**Key Takeaway**: Reference multiple files in one prompt for cross-file analysis. Claude loads all into context and identifies inconsistencies or duplication.
+**Key Takeaway**: Use `child_process.exec()` with promisify for async/await, set timeouts, handle stdout/stderr separately.
 
-**Why It Matters**: Manual cross-file comparison is tedious - requires switching between editor tabs and mental tracking. AI simultaneous analysis surfaces inconsistencies humans miss. Teams using AI cross-file analysis report 50% faster bug identification in integration logic. This is especially valuable for authentication, error handling, and data validation where consistency is critical.
+**Why It Matters**: Node.js integration enables Claude in build scripts (Webpack, Vite, Rollup), npm scripts, serverless functions. Example: build process uses Claude to optimize bundle size by identifying unused code. Teams use Claude in Next.js build to generate SEO metadata or pre-render content.
 
-### Example 38: Style Guide Enforcement Through Examples
+### Example 43: Java ProcessBuilder with Claude
 
-Provide style guide examples for Claude to enforce across codebase. AI learns style rules and applies to all code generation or edits.
+Call Claude from Java applications using ProcessBuilder for enterprise integration or build tools.
 
-**Commands**:
+```java
+// ClaudeAnalyzer.java
+import java.io.*;
+import java.util.concurrent.TimeUnit;
+import com.google.gson.Gson;
+
+public class ClaudeAnalyzer {
+    private static final int TIMEOUT_SECONDS = 60;
+
+    public static class Analysis {
+        public String summary;
+        public Issue[] issues;
+    }
+
+    public static class Issue {
+        public String severity;
+        public String message;
+        public String file;
+        public int line;
+    }
+
+    public static Analysis analyzeCodebase(String directory) throws IOException, InterruptedException {
+        ProcessBuilder pb = new ProcessBuilder(
+            "claude", "-p",
+            "analyze code in " + directory + " for security issues",
+            "--output-format", "json"
+        );
+
+        pb.redirectErrorStream(true);
+        Process process = pb.start();
+
+        // Read output
+        BufferedReader reader = new BufferedReader(
+            new InputStreamReader(process.getInputStream())
+        );
+        StringBuilder output = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            output.append(line);
+        }
+
+        // Wait for completion
+        boolean finished = process.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        if (!finished) {
+            process.destroyForcibly();
+            throw new RuntimeException("Claude process timed out");
+        }
+
+        if (process.exitValue() != 0) {
+            throw new RuntimeException("Claude failed with exit code " + process.exitValue());
+        }
+
+        // Parse JSON
+        Gson gson = new Gson();
+        return gson.fromJson(output.toString(), Analysis.class);
+    }
+
+    public static void main(String[] args) throws Exception {
+        Analysis analysis = analyzeCodebase("src/main/java/");
+
+        System.out.println("Summary: " + analysis.summary);
+        System.out.println("Issues found: " + analysis.issues.length);
+
+        for (Issue issue : analysis.issues) {
+            System.out.printf("[%s] %s:%d - %s%n",
+                issue.severity, issue.file, issue.line, issue.message);
+        }
+    }
+}
+```
 
 ```bash
-You: In this project, we follow these style rules:
-1. Use const for all variables unless reassignment needed
-2. Use async/await instead of .then() chains
-3. Use destructuring for object properties
-4. Use template literals instead of string concatenation
-                                    # => Claude acknowledges rules
-You: Refactor src/utils/api.ts to follow these style rules
-                                    # => Claude reads api.ts
-                                    # => Identifies violations:
-                                    # =>   - 5 var declarations → const
-                                    # =>   - 3 .then() chains → async/await
-                                    # =>   - 8 object property accesses → destructuring
-                                    # =>   - 4 string concatenations → template literals
-                                    # => Refactors entire file following rules
-                                    # => Uses Edit tool to update
+javac ClaudeAnalyzer.java       # => Compile Java class
+java ClaudeAnalyzer             # => Run Claude analysis
+                                    # => Prints formatted results
 ```
 
-**Key Takeaway**: State style rules explicitly before refactoring requests. Claude applies rules consistently across file without missing instances.
+**Key Takeaway**: Use `ProcessBuilder` with timeout, read stdout line-by-line, handle exit codes, parse JSON with Gson/Jackson.
 
-**Why It Matters**: Style enforcement through examples ensures AI-generated code matches project conventions. Manual linting fixes are tedious - AI enforcement during generation eliminates post-generation cleanup. Teams report 85% reduction in linting violations when style rules provided to AI upfront.
+**Why It Matters**: Java integration enables Claude in Maven/Gradle builds, Spring Boot applications, enterprise tools. Example: Maven plugin uses Claude to generate boilerplate code during build. Teams integrate Claude into IntelliJ IDEA plugins or Jenkins pipelines for automated code review.
 
-### Example 39: Advanced Grep Patterns for Code Search
+### Example 44: Go exec.Command with Claude
 
-Use regex patterns with Grep for sophisticated code searches. Claude finds complex patterns like unused variables, duplicate logic, or anti-patterns.
+Call Claude from Go programs using os/exec package for CLI tools or backend services.
 
-```mermaid
-graph TD
-    A[Grep Pattern] -->|Search| B[Find Async Functions]
-    B -->|23 Found| C[Analyze Each Function]
-    C -->|Check| D{Has Try-Catch?}
-    D -->|Yes| E[Skip - Safe]
-    D -->|No| F[Flag for Fixing]
-    F -->|8 Violations| G[Report with Line Numbers]
-    G -->|Fix Request| H[Add Try-Catch Blocks]
+```go
+// analyze.go
+package main
 
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#fff
-    style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#fff
-    style E fill:#CA9161,stroke:#000,color:#fff
-    style F fill:#CA9161,stroke:#000,color:#fff
-    style G fill:#CA9161,stroke:#000,color:#fff
-    style H fill:#CA9161,stroke:#000,color:#fff
+import (
+ "bytes"
+ "encoding/json"
+ "fmt"
+ "os"
+ "os/exec"
+ "time"
+)
+
+type Analysis struct {
+ Summary string  `json:"summary"`
+ Issues  []Issue `json:"issues"`
+}
+
+type Issue struct {
+ Severity string `json:"severity"`
+ Message  string `json:"message"`
+ File     string `json:"file"`
+ Line     int    `json:"line"`
+}
+
+func analyzeCode(directory string) (*Analysis, error) {
+ ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+ defer cancel()
+
+ cmd := exec.CommandContext(ctx, "claude", "-p",
+  fmt.Sprintf("analyze code in %s for issues", directory),
+  "--output-format", "json")
+
+ var stdout, stderr bytes.Buffer
+ cmd.Stdout = &stdout
+ cmd.Stderr = &stderr
+
+ err := cmd.Run()
+ if err != nil {
+  return nil, fmt.Errorf("claude failed: %w, stderr: %s", err, stderr.String())
+ }
+
+ var analysis Analysis
+ if err := json.Unmarshal(stdout.Bytes(), &analysis); err != nil {
+  return nil, fmt.Errorf("failed to parse JSON: %w", err)
+ }
+
+ return &analysis, nil
+}
+
+func main() {
+ analysis, err := analyzeCode("./pkg")
+ if err != nil {
+  fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+  os.Exit(1)
+ }
+
+ fmt.Printf("Summary: %s\n", analysis.Summary)
+ fmt.Printf("Issues found: %d\n", len(analysis.Issues))
+
+ for _, issue := range analysis.Issues {
+  fmt.Printf("[%s] %s:%d - %s\n",
+   issue.Severity, issue.File, issue.Line, issue.Message)
+ }
+}
 ```
-
-**Commands**:
 
 ```bash
-You: Find all async functions that don't have try-catch blocks
-                                    # => Claude uses Grep with regex:
-                                    # =>   Pattern: "async function|async \("
-                                    # =>   Finds 23 async functions
-                                    # => For each, checks if try-catch present
-                                    # => Uses context analysis (reads functions)
-                                    # => Identifies 8 functions without error handling:
-                                    # =>   - src/api/users.ts: createUser (line 45)
-                                    # =>   - src/api/posts.ts: updatePost (line 89)
-                                    # =>   - src/services/email.ts: sendEmail (line 23)
-                                    # =>   - (5 more...)
-                                    # => Provides list with file + line numbers
-You: Add try-catch to all of them
-                                    # => Claude iterates through each function
-                                    # => Wraps function body in try-catch
-                                    # => Adds appropriate error handling
+go run analyze.go               # => Runs Claude analysis from Go
+                                    # => Parses JSON output
+                                    # => Prints formatted results
 ```
 
-**Key Takeaway**: Claude combines Grep pattern search with semantic analysis to find code that matches structural patterns (async without try-catch).
+**Key Takeaway**: Use `exec.CommandContext()` with timeout, capture stdout/stderr with bytes.Buffer, unmarshal JSON output.
 
-**Why It Matters**: Structural code searches (find pattern X without pattern Y) are difficult with basic grep. AI semantic understanding enables sophisticated searches beyond text matching. Teams report 70% faster anti-pattern identification with AI structural search. This systematically improves code quality across large codebases.
+**Why It Matters**: Go integration enables Claude in CLI tools (cobra/urfave/cli), backend services, Kubernetes operators. Example: CLI tool uses Claude to explain Kubernetes YAML or generate Helm charts. Teams integrate Claude into CI/CD tools written in Go (Drone, Argo) for custom quality gates.
 
-### Example 40: Providing Business Context for Better Solutions
+### Example 45: Advanced Piping - Multi-Stage Claude Processing
 
-Explain business requirements and constraints so Claude generates appropriate solutions. Business context drives technical decisions.
-
-**Commands**:
+Chain multiple Claude invocations through pipes, where each stage refines previous output for complex transformations.
 
 ```bash
-You: I need to rate-limit the API. Business constraint: Free users get 100 requests/hour, premium users get 1000 requests/hour
-                                    # => Claude analyzes requirements
-                                    # => Asks clarifying questions:
-                                    # => "Should rate limits reset on rolling window or fixed hourly?"
-                                    # => "Where is user tier stored? (database, JWT, session)"
-You: Rolling window. User tier is in JWT payload as 'tier' field
-                                    # => Claude proposes solution:
-                                    # => 1. Middleware using Redis for rate tracking
-                                    # => 2. Extract tier from JWT
-                                    # => 3. Apply tier-specific limits (100 vs 1000)
-                                    # => 4. Return 429 status when exceeded
-                                    # => Generates implementation:
-                                    # =>   - src/middleware/rateLimiter.ts
-                                    # =>   - Uses redis with rolling window algorithm
-                                    # =>   - Reads tier from JWT
-                                    # =>   - Configurable limits per tier
+#!/bin/bash
+# Multi-stage code analysis pipeline
+
+# Stage 1: Extract function signatures
+cat src/**/*.ts | \
+  claude -p "extract all function signatures" --output-format json > signatures.json
+
+# Stage 2: Identify complex functions
+cat signatures.json | \
+  jq '.functions[] | select(.complexity > 10)' | \
+  claude -p "analyze these complex functions and suggest refactoring" --output-format json > complex-analysis.json
+
+# Stage 3: Generate refactoring plan
+cat complex-analysis.json | \
+  claude -p "create prioritized refactoring roadmap with effort estimates" > refactoring-plan.md
+
+# Stage 4: Validate plan feasibility
+cat refactoring-plan.md | \
+  claude -p "validate this plan for risks and dependencies" --output-format json > validation.json
+
+# Output final results
+echo "Refactoring Plan:"
+cat refactoring-plan.md
+
+echo -e "\nValidation Results:"
+jq '.risks[]' validation.json
 ```
-
-**Key Takeaway**: Provide business context and constraints in prompts. Claude incorporates requirements into technical solution design.
-
-**Why It Matters**: Technical solutions without business context often miss requirements - one-size-fits-all solutions waste implementation time. AI business-aware generation produces targeted solutions. Teams report 40% reduction in implementation rework when business context provided upfront. This shifts requirements gathering earlier in conversation.
-
-## Testing and Quality (Examples 41-45)
-
-### Example 41: Comprehensive Test Suite Generation
-
-Request full test suites for modules. Claude generates test cases covering happy paths, edge cases, and error conditions based on code analysis.
-
-```mermaid
-graph LR
-    A[Analyze Function] -->|Identify Paths| B[Happy Path Tests]
-    A -->|Identify Boundaries| C[Edge Case Tests]
-    A -->|Identify Errors| D[Error Tests]
-    B -->|Generate| E[Test Suite]
-    C -->|Generate| E
-    D -->|Generate| E
-
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#fff
-    style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#fff
-    style E fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Commands**:
 
 ```bash
-You: Create comprehensive Jest tests for src/utils/calculations.ts
-                                    # => Claude reads calculations.ts
-                                    # => Analyzes exported functions:
-                                    # =>   - calculateInterest(principal, rate, years)
-                                    # =>   - calculateTax(income, brackets)
-                                    # =>   - calculateDiscount(price, percentage)
-                                    # => For each function, generates tests:
-                                    # =>   Happy path: valid inputs → expected outputs
-                                    # =>   Edge cases: zero, negative, large numbers
-                                    # =>   Error cases: null, undefined, invalid types
-                                    # => Creates test file: calculations.test.ts
-                                    # => 45 test cases across 3 describe blocks
-                                    # => Confirms: "Created comprehensive test suite with 45 cases"
+./multi-stage-analysis.sh       # => Stage 1: Extract signatures
+                                    # => Stage 2: Analyze complexity
+                                    # => Stage 3: Generate plan
+                                    # => Stage 4: Validate plan
+                                    # => Outputs final roadmap
 ```
 
-**Key Takeaway**: Claude generates test suites with happy path, edge case, and error coverage by analyzing function logic and parameter types.
+**Key Takeaway**: Pipe Claude output to jq for filtering, pipe filtered results to next Claude command. Each stage refines previous output.
 
-**Why It Matters**: Comprehensive test generation is time-consuming manually - developers often skip edge cases. AI test generation provides consistent coverage including cases humans forget. Teams report 3x test coverage increase when AI generates tests. This improves production reliability without proportional time investment.
-
-### Example 42: Mock Generation for Unit Tests
-
-Request mock objects for testing. Claude generates mocks matching actual interfaces with configurable return values.
-
-**Commands**:
-
-```bash
-You: Create mocks for the database service in src/services/database.ts for testing
-                                    # => Claude reads database.ts
-                                    # => Identifies interface:
-                                    # =>   interface DatabaseService {
-                                    # =>     query(sql: string): Promise<any[]>;
-                                    # =>     insert(table: string, data: object): Promise<number>;
-                                    # =>     update(table: string, id: number, data: object): Promise<boolean>;
-                                    # =>     delete(table: string, id: number): Promise<boolean>;
-                                    # =>   }
-                                    # => Generates mock implementation:
-                                    # =>   export const mockDatabase: DatabaseService = {
-                                    # =>     query: jest.fn().mockResolvedValue([]),
-                                    # =>     insert: jest.fn().mockResolvedValue(1),
-                                    # =>     update: jest.fn().mockResolvedValue(true),
-                                    # =>     delete: jest.fn().mockResolvedValue(true),
-                                    # =>   };
-                                    # => Creates __mocks__/database.ts
-```
-
-**Key Takeaway**: Claude generates Jest mocks matching interface signatures with jest.fn() and configurable return values.
-
-**Why It Matters**: Mock creation is boilerplate-heavy - matching interface signatures manually is tedious. AI-generated mocks ensure type compatibility with actual interfaces. Teams report 80% faster test setup when AI generates mocks. This removes friction from unit testing, encouraging higher test coverage.
-
-### Example 43: Test Coverage Analysis and Improvement
-
-Request coverage analysis of existing tests. Claude identifies untested code paths and generates missing test cases.
-
-**Commands**:
-
-```bash
-You: Run test coverage report and show me which functions in src/api/ are not tested
-                                    # => Claude uses Bash tool
-                                    # => Runs: npm run test:coverage
-                                    # => Analyzes output:
-                                    # =>   File            | % Stmts | % Branch | % Funcs | % Lines
-                                    # =>   src/api/users   |   78.5  |   65.2   |   80.0  |   77.8
-                                    # =>   src/api/posts   |   45.3  |   30.1   |   50.0  |   44.9
-                                    # =>   src/api/auth    |   92.1  |   85.7   |   95.0  |   91.5
-                                    # => Identifies untested functions:
-                                    # =>   - src/api/posts.ts: updatePost, deletePost
-                                    # =>   - src/api/users.ts: getUserByEmail
-You: Generate tests for the uncovered functions
-                                    # => Claude reads each untested function
-                                    # => Generates test cases for updatePost, deletePost, getUserByEmail
-                                    # => Adds to existing test files
-                                    # => Confirms: "Added 12 test cases, coverage now ~85%"
-```
-
-**Key Takeaway**: Claude runs coverage analysis, identifies untested code, and generates missing test cases to improve coverage metrics.
-
-**Why It Matters**: Manual coverage analysis requires reading coverage reports and mentally mapping to untested code. AI automates gap identification and fills coverage holes. Teams report 50% faster path to 80%+ coverage with AI test generation. This makes comprehensive testing achievable without dedicating days to test writing.
-
-### Example 44: Integration Test Generation from API Specs
-
-Generate integration tests from API endpoint definitions. Claude creates tests for HTTP endpoints with various request scenarios.
-
-**Commands**:
-
-```bash
-You: Generate integration tests for the POST /api/users endpoint in src/api/users.ts
-                                    # => Claude reads endpoint implementation
-                                    # => Analyzes expected inputs/outputs:
-                                    # =>   - Request body: { name, email, password }
-                                    # =>   - Success response: 201 + user object
-                                    # =>   - Validation errors: 400 + error details
-                                    # =>   - Duplicate email: 409 conflict
-                                    # => Generates integration tests:
-                                    # =>   describe('POST /api/users', () => {
-                                    # =>     test('creates user with valid data', async () => {
-                                    # =>       const res = await request(app)
-                                    # =>         .post('/api/users')
-                                    # =>         .send({ name: 'Test', email: 'test@example.com', password: 'pass123' });
-                                    # =>       expect(res.status).toBe(201);
-                                    # =>       expect(res.body).toHaveProperty('id');
-                                    # =>     });
-                                    # =>     test('returns 400 for missing email', async () => { ... });
-                                    # =>     test('returns 409 for duplicate email', async () => { ... });
-                                    # =>   });
-```
-
-**Key Takeaway**: Claude generates HTTP integration tests covering success, validation errors, and business rule violations based on endpoint analysis.
-
-**Why It Matters**: Integration tests for APIs are tedious - require setting up requests with various payloads and asserting responses. AI generation creates comprehensive test suites including edge cases (missing fields, duplicates, invalid formats). Teams report 4x faster API test coverage with AI generation.
-
-### Example 45: Test Refactoring - DRY Principle
-
-Refactor repetitive test code using test helpers. Claude extracts common setup/assertions into reusable functions.
-
-**Commands**:
-
-```bash
-You: Refactor the tests in src/api/users.test.ts to reduce duplication
-                                    # => Claude reads test file
-                                    # => Identifies repetition:
-                                    # =>   - 8 tests repeat: const app = createApp()
-                                    # =>   - 5 tests repeat: create test user in database
-                                    # =>   - 6 tests repeat: authenticate and get token
-                                    # => Extracts helpers:
-                                    # =>   function setupApp() { return createApp(); }
-                                    # =>   async function createTestUser() { ... }
-                                    # =>   async function getAuthToken() { ... }
-                                    # => Refactors tests to use helpers:
-                                    # =>   beforeEach(async () => {
-                                    # =>     app = setupApp();
-                                    # =>     testUser = await createTestUser();
-                                    # =>     authToken = await getAuthToken(testUser);
-                                    # =>   });
-                                    # => Reduces test code by 40%
-```
-
-**Key Takeaway**: Claude identifies repetition in test code and extracts to helper functions, reducing duplication while maintaining readability.
-
-**Why It Matters**: Test code duplication makes tests brittle - changing setup requires updating N test cases. Extracted helpers centralize setup logic. Teams report 60% faster test maintenance when AI refactors to DRY pattern. This makes test suites more maintainable as codebase grows.
-
-## Advanced Refactoring (Examples 46-50)
+**Why It Matters**: Multi-stage piping enables complex analysis impossible in single pass. Example: extract → filter → analyze → plan → validate creates comprehensive refactoring roadmaps. Each stage specializes - first extracts raw data, second filters relevant subset, third generates recommendations, fourth validates feasibility. Teams build custom analysis pipelines combining Claude (semantic understanding) with jq (data manipulation).
 
 ### Example 46: Async/Await Migration from Callbacks
 

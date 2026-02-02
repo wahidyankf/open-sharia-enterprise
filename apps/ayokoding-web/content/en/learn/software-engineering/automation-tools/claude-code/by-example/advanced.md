@@ -3,499 +3,461 @@ title: "Advanced"
 date: 2026-02-02T00:00:00+07:00
 draft: false
 weight: 10000003
-description: "Examples 61-85: Expert techniques, complex workflows, and production optimization strategies (75-95% coverage)"
-tags: ["claude-code", "advanced", "by-example", "tutorial", "expert", "optimization"]
+description: "Examples 61-85: Claude Code CLI agent patterns - custom agents, MCP integration, production orchestration, and expert optimization (75-95% coverage)"
+tags: ["claude-code", "advanced", "by-example", "tutorial", "agents", "mcp", "orchestration", "production"]
 ---
 
-This tutorial provides 25 advanced examples covering expert-level Claude Code capabilities for enterprise development. Each example demonstrates sophisticated architecture patterns, monorepo workflows, infrastructure automation, and production optimization techniques for scaling AI-assisted development to complex codebases.
+This tutorial provides 25 advanced examples covering expert-level Claude Code CLI capabilities. Learn custom agent development (Examples 61-65), production orchestration patterns (Examples 66-70), and advanced optimization techniques (Examples 71-85) for enterprise-scale AI automation.
 
-## Large Codebase Navigation (Examples 61-65)
+## Custom Agents and MCP Integration (Examples 61-65)
 
-### Example 61: Strategic File Search with Glob Patterns
+### Example 61: Defining Custom Agents with --agents JSON
 
-Navigate large codebases efficiently using glob patterns to find files by name patterns. Claude uses Glob tool to search across thousands of files instantly.
-
-```mermaid
-graph LR
-    A[Glob Pattern] -->|Search| B[Match Files]
-    B -->|Filter| C[By Extension]
-    B -->|Filter| D[By Directory]
-    C -->|Results| E[File List]
-    D -->|Results| E
-
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#fff
-    style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#029E73,stroke:#000,color:#fff
-    style E fill:#CC78BC,stroke:#000,color:#fff
-```
+Create custom subagents dynamically using the `--agents` flag with JSON definitions specifying behavior, tools, and model.
 
 **Commands**:
 
 ```bash
-You: Find all React components in the features directory
-                                    # => Claude uses Glob tool
-                                    # => Pattern: "src/features/**/*.tsx"
-                                    # => Searches across entire features/ tree
-                                    # => Returns matches:
-                                    # =>   - src/features/auth/LoginForm.tsx
-                                    # =>   - src/features/auth/SignupForm.tsx
-                                    # =>   - src/features/dashboard/UserProfile.tsx
-                                    # =>   - src/features/dashboard/Stats.tsx
-                                    # =>   - (127 more files...)
-                                    # => Sorted by modification time (recent first)
-You: Now find all test files for those components
-                                    # => Pattern: "src/features/**/*.test.tsx"
-                                    # => Finds corresponding test files
+claude --agents '{
+  "code-reviewer": {
+    "description": "Expert code reviewer. Use proactively after code changes.",
+    "prompt": "You are a senior code reviewer. Focus on security, performance, and best practices.",
+    "tools": ["Read", "Grep", "Glob"],
+    "model": "sonnet"
+  },
+  "debugger": {
+    "description": "Debugging specialist for errors and test failures.",
+    "prompt": "You are an expert debugger. Analyze errors, identify root causes, provide fixes.",
+    "tools": ["Read", "Bash", "Grep"],
+    "model": "sonnet"
+  }
+}' \
+  "Review the API code and debug any test failures"
+                                    # => Claude has access to two custom agents
+                                    # => Can invoke code-reviewer for reviews
+                                    # => Can invoke debugger for test failures
+                                    # => Each agent has specialized tools and prompts
 ```
 
-**Key Takeaway**: Use glob patterns (`**/*.tsx`) to find files efficiently. Claude's Glob tool searches entire directory trees matching name patterns instantly.
+**Key Takeaway**: Define custom agents with `--agents` JSON containing description, prompt, tools array, and model. Agents specialize for specific tasks.
 
-**Why It Matters**: Large codebases (10,000+ files) make manual file searching impractical. Glob searches complete in milliseconds regardless of codebase size. Teams working on monorepos report 80% faster file discovery with glob patterns versus IDE search. This is essential for understanding code organization in unfamiliar projects or finding all instances of specific file types.
+**Why It Matters**: Custom agents enable task specialization - reviewer focuses on code quality, debugger handles errors. Tool restriction (reviewer can't run Bash) prevents inappropriate actions. Model selection balances cost vs capability. Teams define organization-wide agents for consistent code review, security scanning, documentation generation. This codifies best practices into reusable agent definitions.
 
-### Example 62: Context Window Optimization for Large Files
+### Example 62: Subagent Delegation Patterns
 
-Manage context window limits when working with large files. Claude reads specific sections using offset/limit parameters to avoid loading entire files.
+Main Claude session delegates specialized tasks to subagents, which work autonomously then return results.
 
 **Commands**:
 
 ```bash
-You: Read the first 100 lines of src/services/legacy-processor.ts
-                                    # => Claude uses Read tool with limit
-                                    # => Parameters: file_path, limit: 100
-                                    # => Reads lines 1-100 only
-                                    # => Shows: imports, types, first few functions
-                                    # => Avoids loading entire 2000-line file
-You: Now read lines 500-600
-                                    # => Uses Read with offset: 500, limit: 100
-                                    # => Shows middle section without reloading start
-You: Search for the processData function specifically
-                                    # => Uses Grep to locate function
-                                    # => Pattern: "function processData"
-                                    # => Finds at line 834
-                                    # => Reads lines 834-900 with context
+# Main Claude session
+You: Analyze this codebase for security issues and performance problems
+
+Claude: I'll delegate this to specialized agents:
+  1. Invoking security-scanner agent for vulnerability analysis
+  2. Invoking performance-analyzer agent for bottleneck detection
+
+# security-scanner agent (runs in isolation)
+# => Reads code files
+# => Identifies: SQL injection risk in api/users.ts:45
+# => Identifies: Missing input validation in api/posts.ts:67
+# => Returns report to main session
+
+# performance-analyzer agent (runs in isolation)
+# => Analyzes algorithms
+# => Identifies: O(n²) loop in utils/search.ts:23
+# => Identifies: Unnecessary re-renders in components/List.tsx
+# => Returns report to main session
+
+Claude: [Consolidates reports from both agents]
+  Security Issues:
+    - SQL injection risk (CRITICAL)
+    - Missing validation (HIGH)
+  Performance Issues:
+    - O(n²) complexity (MEDIUM)
+    - Unnecessary re-renders (LOW)
 ```
 
-**Key Takeaway**: Use Read tool with offset/limit parameters to work with large files efficiently. Grep first to locate sections, then Read with context.
+**Key Takeaway**: Main session spawns specialized subagents for focused tasks. Each works independently with constrained tools, returns results to main session.
 
-**Why It Matters**: Large files (1000+ lines) consume context window tokens quickly. Strategic reading (locate first, read section) preserves context for multiple files. Teams report 3x more files analyzable in single conversation when using targeted reading. This is critical for legacy codebases with monolithic files or generated code files.
+**Why It Matters**: Delegation enables parallel expertise - security and performance analyzed simultaneously. Subagent isolation prevents cross-contamination (security agent doesn't modify code). Results aggregation provides comprehensive analysis. Teams use delegation for multi-faceted code reviews where different experts (security, performance, accessibility) evaluate independently.
 
-### Example 63: Dependency Graph Analysis in Monorepos
+### Example 63: MCP Server Integration (--mcp-config)
 
-Analyze module dependencies across monorepo packages. Claude maps imports to understand coupling between packages and identify circular dependencies.
-
-```mermaid
-graph TD
-    A["@company/auth"] -->|imports| B["@company/core"]
-    C["@company/api"] -->|imports| A
-    C -->|imports| B
-    D["@company/ui"] -->|imports| A
-    D -->|imports| B
-    E["@company/mobile"] -->|imports| C
-    E -->|imports| D
-
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#fff
-    style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#fff
-    style E fill:#CA9161,stroke:#000,color:#fff
-```
+Integrate Model Context Protocol (MCP) servers to extend Claude's capabilities with custom tools, data sources, or APIs.
 
 **Commands**:
 
 ```bash
-You: Analyze dependencies between packages in this Nx monorepo
-                                    # => Claude scans package.json files
-                                    # => Reads: packages/*/package.json
-                                    # => Identifies workspace dependencies:
-                                    # =>   @company/auth depends on:
-                                    # =>     - @company/core (internal)
-                                    # =>     - react (external)
-                                    # =>   @company/api depends on:
-                                    # =>     - @company/auth (internal)
-                                    # =>     - @company/core (internal)
-                                    # =>     - express (external)
-                                    # => Creates dependency graph
-                                    # => Identifies issues:
-                                    # =>   "⚠ Circular dependency detected:
-                                    # =>    @company/api → @company/auth → @company/api"
-You: Show me the import causing the circular dependency
-                                    # => Uses Grep to find cross-imports
-                                    # => Shows exact import statements
-```
-
-**Key Takeaway**: Claude analyzes package.json dependencies across monorepo to map coupling. Detects circular dependencies and provides import-level details.
-
-**Why It Matters**: Monorepo dependency management is complex - circular dependencies cause build failures and runtime issues. Manual dependency auditing is tedious across dozens of packages. AI dependency analysis identifies architectural violations in seconds. Teams report 60% reduction in circular dependency bugs when AI audits run before major refactors.
-
-### Example 64: Architecture Pattern Enforcement
-
-Enforce architectural boundaries using layer analysis. Claude validates that code follows architecture rules (e.g., domain layer doesn't import infrastructure).
-
-**Commands**:
-
-```bash
-You: Verify that our domain layer (src/domain/) doesn't import from infrastructure layer (src/infrastructure/)
-                                    # => Claude uses Grep across domain files
-                                    # => Pattern: "from ['\"].*infrastructure" in src/domain/
-                                    # => Searches all imports in domain files
-                                    # => Result: "✓ No violations found"
-You: Check if API layer bypasses service layer
-                                    # => Pattern: database imports in src/api/
-                                    # => Searches: "from ['\"].*database" in src/api/
-                                    # => Finds violation:
-                                    # =>   "⚠ src/api/users.ts:5 imports database directly
-                                    # =>    Should go through service layer"
-You: Fix this violation by adding service layer
-                                    # => Claude creates src/services/UserService.ts
-                                    # => Moves database logic from API to service
-                                    # => Updates src/api/users.ts to import service
-```
-
-**Key Takeaway**: Use Grep to enforce architectural layer rules. Search for forbidden import patterns between layers to detect violations.
-
-**Why It Matters**: Architecture violations accumulate over time, degrading maintainability. Manual architectural reviews miss violations. AI layer validation runs in seconds, catching violations immediately. Teams using AI architecture enforcement report 70% fewer layer violations in code review. This compounds into better long-term architecture adherence.
-
-### Example 65: Custom Prompt Templates for Repetitive Tasks
-
-Create reusable prompt templates for common patterns. Store templates in project notes or reference them conversationally for consistent results.
-
-**Commands**:
-
-```bash
-You: Create a new API endpoint following our standard pattern. Template:
-1. Route handler in src/api/[resource].ts
-2. Zod validation schema for request body
-3. Service function in src/services/[Resource]Service.ts
-4. Database query in src/database/repositories/[Resource]Repository.ts
-5. Jest integration test in src/api/[resource].test.ts
-Apply this for creating a "tasks" resource.
-                                    # => Claude follows template structure
-                                    # => Creates 5 files:
-                                    # =>   1. src/api/tasks.ts (route handlers)
-                                    # =>   2. Adds Zod schemas for request validation
-                                    # =>   3. src/services/TaskService.ts (business logic)
-                                    # =>   4. src/database/repositories/TaskRepository.ts
-                                    # =>   5. src/api/tasks.test.ts (integration tests)
-                                    # => Ensures consistent patterns across layers
-You: Apply this same template for "comments" resource
-                                    # => Claude remembers template from context
-                                    # => Creates same 5-file structure for comments
-```
-
-**Key Takeaway**: Define multi-step templates in prompts. Claude applies template structure consistently to different resources, maintaining architectural patterns.
-
-**Why It Matters**: Repetitive development tasks (CRUD endpoints, page components) benefit from templating. Template-driven generation ensures consistency across resources - same patterns, naming, structure. Teams report 50% faster feature scaffolding with reusable templates. This standardization improves onboarding - all endpoints follow familiar patterns.
-
-## Advanced Refactoring Patterns (Examples 66-70)
-
-### Example 66: Technical Debt Detection and Prioritization
-
-Systematically identify technical debt. Claude scans for anti-patterns, outdated dependencies, and code smells, then prioritizes by impact.
-
-```mermaid
-graph TD
-    A[Scan Codebase] -->|Check| B[Outdated Dependencies]
-    A -->|Check| C[Code Smells]
-    A -->|Check| D[Test Coverage]
-    A -->|Check| E[Deprecated APIs]
-    B -->|Found| F[2 HIGH, 1 MEDIUM]
-    C -->|Found| G[23 LOW, 8 MEDIUM, 5 MEDIUM]
-    D -->|Found| H[45% Coverage - HIGH]
-    E -->|Found| I[componentWillMount - HIGH]
-    F -->|Prioritize| J[Technical Debt Report]
-    G -->|Prioritize| J
-    H -->|Prioritize| J
-    I -->|Prioritize| J
-
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#fff
-    style C fill:#DE8F05,stroke:#000,color:#fff
-    style D fill:#DE8F05,stroke:#000,color:#fff
-    style E fill:#DE8F05,stroke:#000,color:#fff
-    style F fill:#029E73,stroke:#000,color:#fff
-    style G fill:#029E73,stroke:#000,color:#fff
-    style H fill:#029E73,stroke:#000,color:#fff
-    style I fill:#029E73,stroke:#000,color:#fff
-    style J fill:#CC78BC,stroke:#000,color:#fff
-```
-
-**Commands**:
-
-```bash
-You: Scan the codebase for technical debt and prioritize fixes
-                                    # => Claude performs multiple checks:
-                                    # => 1. Outdated dependencies (package.json)
-                                    # =>    - react: 17.0.2 (latest: 18.3.1) - HIGH
-                                    # =>    - express: 4.17.1 (latest: 4.21.2) - MEDIUM
-                                    # => 2. Code smells (Grep patterns)
-                                    # =>    - 23 console.log statements - LOW
-                                    # =>    - 8 any types in TypeScript - MEDIUM
-                                    # =>    - 5 functions over 100 lines - MEDIUM
-                                    # => 3. Missing tests (coverage analysis)
-                                    # =>    - src/services/ has 45% coverage - HIGH
-                                    # => 4. Deprecated API usage
-                                    # =>    - componentWillMount (React 17) - HIGH
-                                    # => Generates prioritized report:
-                                    # => # Technical Debt Report
-                                    # => ## HIGH Priority (address within 1 sprint)
-                                    # => - Upgrade React 17 → 18 (breaking changes)
-                                    # => - Increase service layer test coverage to 80%
-                                    # => - Remove componentWillMount lifecycle hooks
-                                    # => ## MEDIUM Priority (address within 1 month)
-                                    # => - (list continues...)
-```
-
-**Key Takeaway**: Claude combines dependency analysis, code pattern searches, and test coverage to generate comprehensive technical debt inventory with priority ratings.
-
-**Why It Matters**: Technical debt is invisible until it causes problems. Systematic scanning surfaces debt before it becomes critical. AI analysis is objective - prioritizes by actual impact, not recency bias. Teams using AI debt detection report 40% better debt paydown planning. This prevents accumulation of silent quality erosion.
-
-### Example 67: Legacy Code Modernization Strategy
-
-Plan and execute legacy code migration. Claude analyzes legacy patterns, proposes modern alternatives, and migrates incrementally.
-
-**Before - legacy callback pattern**:
-
-```javascript
-function fetchUserData(userId, callback) {
-  db.query("SELECT * FROM users WHERE id = ?", [userId], (err, results) => {
-    // => Error-first callback pattern (pre-Promise era)
-    if (err) {
-      // => Manual error propagation via callback
-      callback(err, null);
-      return;
+# Define MCP servers in config file
+cat > mcp-config.json <<EOF
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "database": {
+      "command": "node",
+      "args": ["./mcp-servers/database-server.js"],
+      "env": {
+        "DB_CONNECTION_STRING": "${DATABASE_URL}"
+      }
     }
-    // => Nested callbacks lead to "callback hell"
-    callback(null, results[0]);
-  });
-}
-
-// Usage creates deep nesting
-fetchUserData(1, (err, user) => {
-  // => First callback level
-  if (err) return handleError(err);
-  fetchUserPosts(user.id, (err, posts) => {
-    // => Second callback level (nesting begins)
-    if (err) return handleError(err);
-    fetchPostComments(posts[0].id, (err, comments) => {
-      // => Third callback level ("callback hell")
-      if (err) return handleError(err);
-      render(user, posts, comments);
-    });
-  });
-});
-```
-
-**Text explanation**: Legacy callback pattern uses error-first callbacks. Deep nesting (callback hell) makes code difficult to read and maintain. Error handling repeats at each level.
-
-**After - modern async/await pattern**:
-
-```javascript
-async function fetchUserData(userId) {
-  // => Returns Promise, enables async/await
-  try {
-    const results = await db.query("SELECT * FROM users WHERE id = ?", [userId]);
-    // => await pauses execution, no callback needed
-    return results[0];
-    // => Direct return, no callback parameter
-  } catch (err) {
-    // => Single error handler for function
-    throw err;
-    // => Error propagates to caller
   }
 }
+EOF
 
-// Usage is linear, readable
-async function renderUserPage(userId) {
-  try {
-    const user = await fetchUserData(userId);
-    // => Linear flow, no nesting
-    const posts = await fetchUserPosts(user.id);
-    // => Each await is sequential, readable
-    const comments = await fetchPostComments(posts[0].id);
-    // => No callback hell, flat structure
-    render(user, posts, comments);
-  } catch (err) {
-    // => Single error handler for all operations
-    handleError(err);
-  }
+# Use MCP servers
+claude --mcp-config ./mcp-config.json \
+  "Analyze recent GitHub issues and cross-reference with database error logs"
+                                    # => Loads github MCP server
+                                    # => Loads database MCP server
+                                    # => Claude can now:
+                                    #    - Query GitHub API via MCP
+                                    #    - Query database via MCP
+                                    #    - Correlate issues with errors
+```
+
+**Key Takeaway**: MCP servers extend Claude with custom tools (APIs, databases, services). Configure with --mcp-config JSON file.
+
+**Why It Matters**: MCP unlocks domain-specific integrations - GitHub for issue tracking, databases for data analysis, internal APIs for company systems. This transforms Claude from general assistant to domain expert with access to proprietary tools. Teams build MCP servers for Jira, Slack, monitoring systems, enabling Claude to operate across entire development ecosystem.
+
+### Example 64: System Prompt Customization (--system-prompt, --append-system-prompt)
+
+Customize Claude's behavior by replacing or extending system prompt with project-specific instructions.
+
+**Commands**:
+
+```bash
+# Replace entire system prompt (complete control)
+claude --system-prompt "You are a TypeScript expert who only writes type-safe code with comprehensive JSDoc comments. Never use 'any' type. Always include error handling." \
+  "Create user authentication module"
+                                    # => Overrides default Claude behavior
+                                    # => Enforces: TypeScript, no 'any', JSDoc, error handling
+                                    # => Generated code follows custom rules
+
+# Append to system prompt (keep defaults, add requirements)
+claude --append-system-prompt "Always use functional programming patterns. Prefer immutability and pure functions." \
+  "Refactor this class-based code to functional style"
+                                    # => Keeps default Claude capabilities
+                                    # => Adds: FP preference, immutability requirement
+                                    # => More flexible than full replacement
+
+# Load prompt from file (version-controlled prompts)
+cat > project-prompt.txt <<EOF
+Project Conventions:
+- Use Prettier for formatting (2 spaces, single quotes)
+- Prefix private functions with underscore
+- Write tests in /tests directory matching file structure
+- Follow Conventional Commits for messages
+EOF
+
+claude --append-system-prompt-file ./project-prompt.txt \
+  "Add new feature for user notifications"
+                                    # => Loads project conventions from file
+                                    # => All generated code follows team standards
+                                    # => Conventions version-controlled, team-shared
+```
+
+**Key Takeaway**: Use `--system-prompt` for complete control, `--append-system-prompt` to add requirements. Load from file for version-controlled team conventions.
+
+**Why It Matters**: Custom prompts enforce team standards automatically. New developers get consistent code generation following project conventions. This eliminates "style doesn't match existing code" review comments. Teams version-control prompt files - updating team standards means updating one file, not retraining developers.
+
+### Example 65: Tool Restriction and Permission Control
+
+Restrict which tools Claude can use to prevent unintended operations in automation contexts.
+
+**Commands**:
+
+```bash
+# Allow only read operations (safe for analysis)
+claude --tools "Read,Grep,Glob" \
+  --dangerously-skip-permissions \
+  "Analyze codebase architecture"
+                                    # => Claude can Read, Grep, Glob
+                                    # => Cannot Write, Edit, Bash (modification tools)
+                                    # => Safe for automated analysis
+
+# Disable all tools except specified
+claude --tools "Read" \
+  "Explain this codebase"
+                                    # => Only Read tool available
+                                    # => Cannot search, modify, or run commands
+                                    # => Maximum safety for read-only operations
+
+# Allowed vs disallowed tools
+claude --allowedTools "Bash(git status)" "Bash(git diff)" "Read" \
+       --disallowedTools "Bash(git push)" "Bash(rm *)" "Write" \
+  "Review changes and suggest improvements"
+                                    # => Allowed: git status, git diff, Read
+                                    # => Blocked: git push, rm, Write
+                                    # => Fine-grained permission control
+
+# No tools (chat-only mode)
+claude --tools "" \
+  "Explain dependency injection pattern"
+                                    # => No tool access
+                                    # => Pure conversation mode
+                                    # => Cannot interact with files/commands
+```
+
+**Key Takeaway**: Use `--tools` to restrict available tools, `--allowedTools` for specific permissions, `--disallowedTools` to block dangerous operations.
+
+**Why It Matters**: Tool restriction prevents automation accidents - read-only analysis can't modify code. Permission policies enforce least-privilege principle. Example: CI/CD analysis uses --tools "Read,Grep,Glob" preventing accidental commits. Teams define permission profiles (read-only, read-write-no-bash, full-access) for different automation contexts.
+
+## Production Orchestration Patterns (Examples 66-70)
+
+### Example 66: Complex Multi-Agent Workflows
+
+Orchestrate multiple Claude invocations in sequence, each building on previous results for complex transformations.
+
+**Commands**:
+
+```bash
+#!/bin/bash
+# multi-agent-workflow.sh - Complex codebase modernization
+
+# Agent 1: Architecture Analysis
+echo "Stage 1: Architecture Analysis"
+claude -p "analyze codebase architecture and identify legacy patterns" \
+  --output-format json > architecture-analysis.json
+
+# Agent 2: Migration Planning (uses Agent 1 results)
+echo "Stage 2: Migration Planning"
+cat architecture-analysis.json | \
+  claude -c -p "create migration plan for identified legacy patterns" \
+  --output-format json > migration-plan.json
+
+# Agent 3: Risk Assessment (uses Agent 2 results)
+echo "Stage 3: Risk Assessment"
+cat migration-plan.json | \
+  claude -c -p "assess migration risks and identify blockers" \
+  --output-format json > risk-assessment.json
+
+# Agent 4: Prioritization (consolidates all previous)
+echo "Stage 4: Prioritization"
+jq -s '.' architecture-analysis.json migration-plan.json risk-assessment.json | \
+  claude -p "create prioritized execution roadmap balancing impact vs risk" \
+  > final-roadmap.md
+
+echo "✅ Multi-agent workflow complete"
+cat final-roadmap.md
+```
+
+**Key Takeaway**: Chain multiple Claude invocations, each specialized for one stage. Use `claude -c -p` to maintain context across calls.
+
+**Why It Matters**: Complex problems require multi-step analysis - architecture → plan → risks → prioritization. Each agent specializes (analyzer finds patterns, planner creates steps, assessor evaluates risks, prioritizer balances tradeoffs). Sequential processing enables depth impossible in single pass. Teams use multi-agent workflows for migration planning, refactoring roadmaps, technical debt remediation.
+
+### Example 67: Session Forking for Parallel Experiments
+
+Fork sessions to explore multiple approaches from same starting context without affecting original.
+
+**Commands**:
+
+```bash
+# Original session: Analyze authentication system
+claude -p "analyze authentication system in src/auth/" \
+  --session-id "auth-analysis-main" \
+  --output-format json > auth-analysis.json
+
+# Fork 1: Experiment with JWT approach
+claude -r "auth-analysis-main" --fork-session \
+  --session-id "auth-experiment-jwt" \
+  -p "design JWT-based authentication implementation" \
+  > jwt-design.md
+
+# Fork 2: Experiment with session-based approach
+claude -r "auth-analysis-main" --fork-session \
+  --session-id "auth-experiment-session" \
+  -p "design session-based authentication implementation" \
+  > session-design.md
+
+# Fork 3: Experiment with OAuth integration
+claude -r "auth-analysis-main" --fork-session \
+  --session-id "auth-experiment-oauth" \
+  -p "design OAuth 2.0 authentication implementation" \
+  > oauth-design.md
+
+# Compare results
+echo "=== JWT Approach ===" && cat jwt-design.md
+echo "=== Session Approach ===" && cat session-design.md
+echo "=== OAuth Approach ===" && cat oauth-design.md
+
+# Original session unchanged
+claude -r "auth-analysis-main" \
+  "summarize the original auth analysis"
+```
+
+**Key Takeaway**: Use `--fork-session` with `-r` to branch from existing session. Each fork experiments independently, original preserved.
+
+**Why It Matters**: Forking enables A/B/C testing of solutions. Explore JWT vs session vs OAuth from same analysis baseline. Compare approaches without losing original context. This accelerates decision-making - see all options before committing. Teams fork sessions for architecture decisions, technology evaluations, migration strategies.
+
+### Example 68: Production Monitoring with Claude
+
+Monitor production logs and metrics using Claude for intelligent anomaly detection and root cause analysis.
+
+**Commands**:
+
+```bash
+#!/bin/bash
+# production-monitor.sh - Continuous monitoring
+
+while true; do
+  # Fetch latest logs
+  kubectl logs deployment/api --since=5m > /tmp/recent-logs.txt
+
+  # Fetch metrics
+  curl -s http://prometheus:9090/api/v1/query?query=api_error_rate > /tmp/metrics.json
+
+  # Analyze with Claude
+  ANALYSIS=$(cat /tmp/recent-logs.txt /tmp/metrics.json | \
+    claude -p "analyze logs and metrics for anomalies, errors, or performance degradation. Return JSON: {healthy: bool, issues: [], severity: string}" \
+    --output-format json \
+    --no-session-persistence)
+
+  # Check health
+  HEALTHY=$(echo "$ANALYSIS" | jq -r '.healthy')
+  SEVERITY=$(echo "$ANALYSIS" | jq -r '.severity')
+
+  if [ "$HEALTHY" = "false" ]; then
+    echo "⚠️ ALERT: $SEVERITY severity issues detected"
+    echo "$ANALYSIS" | jq '.issues[]'
+
+    # Notify team (Slack, PagerDuty, etc.)
+    ./send-alert.sh "$ANALYSIS"
+
+    if [ "$SEVERITY" = "critical" ]; then
+      echo "🚨 CRITICAL: Triggering incident response"
+      ./trigger-incident.sh
+    fi
+  else
+    echo "✅ System healthy ($(date))"
+  fi
+
+  sleep 300  # Check every 5 minutes
+done
+```
+
+**Key Takeaway**: Continuously monitor logs/metrics with Claude in loop. Claude detects anomalies, classifies severity, triggers alerts for non-healthy states.
+
+**Why It Matters**: Claude understands semantic patterns traditional monitoring misses - "increasing latency" + "database timeout errors" = database connectivity issue. Intelligent alerting reduces noise (only alert on real problems, not threshold crossings). Root cause correlation across multiple signals (logs + metrics) identifies issues faster. Teams use Claude monitoring to supplement Datadog/Prometheus with semantic anomaly detection.
+
+### Example 69: Error Recovery Patterns in Automation
+
+Handle Claude errors gracefully in automation with retries, fallbacks, and degradation strategies.
+
+**Commands**:
+
+```bash
+#!/bin/bash
+# robust-claude-automation.sh
+
+MAX_RETRIES=3
+RETRY_DELAY=5
+
+function call_claude_with_retry() {
+  local prompt="$1"
+  local attempt=0
+
+  while [ $attempt -lt $MAX_RETRIES ]; do
+    attempt=$((attempt + 1))
+    echo "Attempt $attempt of $MAX_RETRIES..."
+
+    # Call Claude with timeout
+    if OUTPUT=$(timeout 60 claude -p "$prompt" --output-format json 2>&1); then
+      # Success
+      echo "$OUTPUT"
+      return 0
+    else
+      EXIT_CODE=$?
+      echo "❌ Attempt $attempt failed (exit code: $EXIT_CODE)"
+
+      if [ $attempt -lt $MAX_RETRIES ]; then
+        echo "Retrying in $RETRY_DELAY seconds..."
+        sleep $RETRY_DELAY
+        RETRY_DELAY=$((RETRY_DELAY * 2))  # Exponential backoff
+      fi
+    fi
+  done
+
+  # All retries failed - fallback strategy
+  echo "⚠️ All retries failed. Using fallback..."
+  echo '{"error": "Claude unavailable", "fallback": true}' > fallback-result.json
+  return 1
 }
+
+# Use the robust function
+if call_claude_with_retry "analyze code quality"; then
+  echo "✅ Analysis successful"
+else
+  echo "❌ Analysis failed after retries, using fallback"
+fi
 ```
 
-**Text explanation**: Modern async/await eliminates callback hell. Linear flow improves readability. Single try-catch handles errors for entire function. Code resembles synchronous logic but remains non-blocking.
+**Key Takeaway**: Wrap Claude calls in retry logic with exponential backoff. Implement timeouts and fallback strategies for automation resilience.
+
+**Why It Matters**: Network failures, API rate limits, service outages happen in production. Retry logic with backoff handles transient failures gracefully. Timeouts prevent hanging pipelines. Fallback strategies (cached results, degraded functionality) maintain availability when Claude is down. Teams use error recovery in CI/CD to prevent single Claude failure from blocking deployments.
+
+### Example 70: Advanced Configuration Management for Production
+
+Manage Claude configuration across environments (dev/staging/prod) with profiles, secrets, and feature flags.
 
 **Commands**:
 
 ```bash
-You: Analyze src/services/legacy.ts and propose modernization strategy
-                                    # => Claude reads legacy.ts
-                                    # => Identifies patterns:
-                                    # =>   - 15 callback-based functions
-                                    # =>   - 8 var declarations (should be const/let)
-                                    # =>   - 5 .then() promise chains
-                                    # =>   - No TypeScript types
-                                    # => Proposes migration plan:
-                                    # => 1. Add TypeScript types (no behavior change)
-                                    # => 2. Convert var → const/let (safe refactor)
-                                    # => 3. Wrap callbacks in Promises (enables async/await)
-                                    # => 4. Convert to async/await (improves readability)
-                                    # => 5. Add error handling (improves robustness)
-You: Execute phase 1 - add TypeScript types
-                                    # => Claude adds types incrementally
-                                    # => No behavior changes, just type annotations
-                                    # => Verifies with: npm run typecheck
+# config/claude-dev.json (development profile)
+{
+  "model": "haiku",
+  "maxBudgetUsd": "1.00",
+  "allowedTools": ["Read", "Write", "Edit", "Bash", "Grep", "Glob"],
+  "appendSystemPrompt": "Development mode: prioritize speed over thoroughness"
+}
+
+# config/claude-staging.json (staging profile)
+{
+  "model": "sonnet",
+  "maxBudgetUsd": "5.00",
+  "allowedTools": ["Read", "Grep", "Glob"],
+  "appendSystemPrompt": "Staging validation: thorough analysis required"
+}
+
+# config/claude-prod.json (production profile)
+{
+  "model": "sonnet",
+  "maxBudgetUsd": "10.00",
+  "allowedTools": ["Read", "Grep"],
+  "appendSystemPrompt": "Production analysis: maximum safety, read-only operations"
+}
+
+# Usage with environment selection
+ENV="${DEPLOY_ENV:-dev}"
+CONFIG_FILE="config/claude-${ENV}.json"
+
+# Load config and run Claude
+MODEL=$(jq -r '.model' "$CONFIG_FILE")
+BUDGET=$(jq -r '.maxBudgetUsd' "$CONFIG_FILE")
+TOOLS=$(jq -r '.allowedTools | join(",")' "$CONFIG_FILE")
+PROMPT=$(jq -r '.appendSystemPrompt' "$CONFIG_FILE")
+
+claude --model "$MODEL" \
+       --max-budget-usd "$BUDGET" \
+       --tools "$TOOLS" \
+       --append-system-prompt "$PROMPT" \
+       -p "analyze security vulnerabilities"
+
+# Output depends on environment:
+# - DEV: Fast analysis (haiku), can modify code ($1 budget)
+# - STAGING: Thorough analysis (sonnet), read-only ($5 budget)
+# - PROD: Maximum analysis (sonnet), strictest read-only ($10 budget)
 ```
 
-**Key Takeaway**: Claude proposes phased migration strategies: types → safe refactors → pattern modernization. Each phase is independently testable.
+**Key Takeaway**: Define environment-specific configuration profiles in JSON. Load dynamically based on environment variable.
 
-**Why It Matters**: Big-bang legacy rewrites fail 80% of the time. Incremental migration reduces risk through small, verifiable steps. AI migration planning identifies safe refactoring sequence based on dependency analysis. Teams report 60% higher legacy migration success rate with phased AI-guided approach.
-
-### Example 68: Breaking Change Detection Before Deployment
-
-Detect breaking API changes before deploying. Claude compares current branch with main to identify signature changes, removed endpoints, or incompatible responses.
-
-```mermaid
-graph LR
-    A[Current Branch] -->|Compare| C[Diff Analysis]
-    B[Main Branch] -->|Compare| C
-    C -->|Detect| D[Signature Changes]
-    C -->|Detect| E[Removed Endpoints]
-    C -->|Detect| F[Schema Changes]
-    D -->|Report| G[Breaking Changes]
-    E -->|Report| G
-    F -->|Report| G
-
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#fff
-    style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#fff
-    style E fill:#CC78BC,stroke:#000,color:#fff
-    style F fill:#CC78BC,stroke:#000,color:#fff
-    style G fill:#CA9161,stroke:#000,color:#fff
-```
-
-**Commands**:
-
-```bash
-You: Compare API endpoints between current branch and main to detect breaking changes
-                                    # => Claude runs: git diff main...HEAD
-                                    # => Focuses on src/api/ directory
-                                    # => Analyzes changes:
-                                    # => ✓ Safe changes:
-                                    # =>   - Added field: user.lastLogin (optional)
-                                    # =>   - New endpoint: POST /api/tasks
-                                    # => ⚠ Breaking changes detected:
-                                    # =>   - Removed endpoint: GET /api/users/search
-                                    # =>     Impact: Frontend uses this for user lookup
-                                    # =>   - Changed signature: POST /api/posts
-                                    # =>     Before: { title, content }
-                                    # =>     After:  { title, content, authorId } (required)
-                                    # =>     Impact: Existing clients missing authorId will fail
-                                    # =>   - Renamed field: post.created_at → post.createdAt
-                                    # =>     Impact: JSON responses incompatible
-                                    # => Generates migration guide for clients
-```
-
-**Key Takeaway**: Claude compares git branches to detect API breaking changes: removed endpoints, required fields, renamed properties. Provides client impact analysis.
-
-**Why It Matters**: Breaking changes cause production incidents when clients fail after deployment. Manual breaking change detection is unreliable - requires remembering all API contracts. AI diff analysis identifies breaking changes deterministically. Teams report 90% reduction in post-deployment client breakages with AI pre-deployment checks.
-
-### Example 69: Backward Compatibility Analysis and Versioning
-
-Ensure backward compatibility through API versioning. Claude analyzes proposed changes and suggests versioning strategy to maintain old clients.
-
-**Commands**:
-
-```bash
-You: I need to change the POST /api/users endpoint to require email verification. How can I do this without breaking existing clients?
-                                    # => Claude analyzes current endpoint
-                                    # => Reads src/api/users.ts
-                                    # => Current: POST /api/users immediately activates account
-                                    # => Proposed: POST /api/users sends verification email first
-                                    # => Breaking change: signup flow changes
-                                    # => Suggests versioning strategies:
-                                    # => Option 1: API Version Header
-                                    # =>   - Add header: API-Version: 2
-                                    # =>   - Old clients (no header): v1 behavior (immediate activation)
-                                    # =>   - New clients (header: 2): v2 behavior (email verification)
-                                    # => Option 2: URL Versioning
-                                    # =>   - Keep: POST /api/v1/users (old behavior)
-                                    # =>   - Add:  POST /api/v2/users (new behavior)
-                                    # =>   - Route both to same handler with version flag
-                                    # => Option 3: Feature Flag
-                                    # =>   - Add: requireEmailVerification boolean in request
-                                    # =>   - Default false (old behavior), opt-in true (new)
-                                    # => Recommends Option 1 (header-based) for clean migration
-You: Implement Option 1 with header-based versioning
-                                    # => Creates middleware: src/middleware/apiVersion.ts
-                                    # => Detects API-Version header, defaults to 1
-                                    # => Updates users.ts with version branches
-                                    # => Adds tests for both v1 and v2 behaviors
-```
-
-**Key Takeaway**: Claude proposes backward-compatible versioning strategies when breaking changes needed. Implements version routing maintaining old client support.
-
-**Why It Matters**: Breaking existing clients destroys trust and causes support burden. Versioning allows innovation while maintaining compatibility. AI versioning strategies consider multiple approaches (headers, URLs, flags) with tradeoffs. Teams report 70% reduction in client breakage complaints after implementing AI-suggested versioning.
-
-### Example 70: Microservices Orchestration Code Generation
-
-Generate orchestration code for microservices communication. Claude creates service clients, error handling, retry logic, and circuit breakers.
-
-**Commands**:
-
-```bash
-You: Create a service client for calling the user-service microservice with retries and circuit breaker
-                                    # => Claude generates client code:
-                                    # => import CircuitBreaker from 'opossum';
-                                    # => import axios from 'axios';
-                                    # =>
-                                    # => // Circuit breaker config
-                                    # => const breakerOptions = {
-                                    # =>   timeout: 3000,           // => 3s timeout per request
-                                    # =>   errorThresholdPercentage: 50,  // => Trip at 50% errors
-                                    # =>   resetTimeout: 30000     // => Try again after 30s
-                                    # => };
-                                    # =>
-                                    # => // HTTP client with retries
-                                    # => async function callUserService(endpoint, data) {
-                                    # =>   const maxRetries = 3;   // => Retry failed requests 3 times
-                                    # =>   let lastError;
-                                    # =>
-                                    # =>   for (let attempt = 1; attempt <= maxRetries; attempt++) {
-                                    # =>     try {
-                                    # =>       const response = await axios.post(
-                                    # =>         `${USER_SERVICE_URL}${endpoint}`,
-                                    # =>         data,
-                                    # =>         { timeout: 3000 }  // => 3s per attempt
-                                    # =>       );
-                                    # =>       return response.data;  // => Success, return data
-                                    # =>     } catch (error) {
-                                    # =>       lastError = error;
-                                    # =>       if (attempt < maxRetries) {
-                                    # =>         // => Exponential backoff: 100ms, 200ms, 400ms
-                                    # =>         await sleep(100 * Math.pow(2, attempt - 1));
-                                    # =>       }
-                                    # =>     }
-                                    # =>   }
-                                    # =>   throw lastError;  // => All retries failed
-                                    # => }
-                                    # =>
-                                    # => // Wrap with circuit breaker
-                                    # => const breaker = new CircuitBreaker(callUserService, breakerOptions);
-                                    # =>
-                                    # => // Export wrapped client
-                                    # => export const userServiceClient = {
-                                    # =>   createUser: (data) => breaker.fire('/users', data),
-                                    # =>   getUser: (id) => breaker.fire(`/users/${id}`)
-                                    # => };
-                                    # => Creates src/clients/userServiceClient.ts
-```
-
-**Key Takeaway**: Claude generates production-grade service clients with retries (exponential backoff), timeouts, and circuit breakers to handle microservices failures gracefully.
-
-**Why It Matters**: Microservices reliability requires retry logic, circuit breakers, and timeout handling. Manual implementation is error-prone - easy to create infinite retry loops or missing error cases. AI-generated clients follow best practices (exponential backoff, circuit breaking). Teams report 50% fewer microservices communication bugs with AI-generated clients.
-
-## Infrastructure as Code (Examples 71-75)
+**Why It Matters**: Different environments have different requirements. Development prioritizes speed and flexibility (haiku model, write access). Staging balances thoroughness and safety (sonnet, read-only). Production maximizes safety and quality (sonnet, strictest permissions, highest budget). Configuration as code enables consistent Claude behavior across environments. Teams version-control configs, review changes like code, deploy configuration updates through CI/CD.
 
 ### Example 71: Docker Optimization for Multi-Stage Builds
 
