@@ -106,9 +106,9 @@ graph TD
     D --> E[Output/Exit Code]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#CC78BC,color:#000
+    style D fill:#CC78BC,color:#fff
     style E fill:#0173B2,color:#fff
 ```
 
@@ -282,7 +282,7 @@ graph TD
     B -->|Real-time Updates| G[tail -f]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
@@ -442,12 +442,12 @@ graph TD
     G --> H[Sum for Octal]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#CC78BC,color:#000
-    style G fill:#DE8F05,color:#000
+    style F fill:#CC78BC,color:#fff
+    style G fill:#DE8F05,color:#fff
     style H fill:#0173B2,color:#fff
 ```
 
@@ -536,13 +536,13 @@ graph TD
     H --> A
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
-    style E fill:#CC78BC,color:#000
+    style E fill:#CC78BC,color:#fff
     style F fill:#029E73,color:#fff
     style G fill:#0173B2,color:#fff
-    style H fill:#DE8F05,color:#000
+    style H fill:#DE8F05,color:#fff
 ```
 
 ```bash
@@ -882,9 +882,9 @@ graph TD
     D --> E[Execute Outer Command]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#CC78BC,color:#000
+    style D fill:#CC78BC,color:#fff
     style E fill:#0173B2,color:#fff
 ```
 
@@ -1351,11 +1351,11 @@ graph TD
     G --> H
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#DE8F05,color:#000
+    style D fill:#DE8F05,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#DE8F05,color:#000
+    style F fill:#DE8F05,color:#fff
     style G fill:#029E73,color:#fff
     style H fill:#0173B2,color:#fff
 ```
@@ -1800,12 +1800,12 @@ graph TD
     G --> H
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#DE8F05,color:#000
+    style D fill:#DE8F05,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#DE8F05,color:#000
-    style G fill:#CC78BC,color:#000
+    style F fill:#DE8F05,color:#fff
+    style G fill:#CC78BC,color:#fff
     style H fill:#0173B2,color:#fff
 ```
 

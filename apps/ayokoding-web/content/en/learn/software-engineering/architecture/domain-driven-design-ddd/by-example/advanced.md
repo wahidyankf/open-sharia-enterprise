@@ -35,10 +35,10 @@ graph LR
     E --> F[Rebuild State]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
     style F fill:#0173B2,stroke:#000,color:#fff
 ```
 
@@ -1455,12 +1455,12 @@ graph TD
     C --> H
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
     style F fill:#0173B2,stroke:#000,color:#fff
-    style G fill:#DE8F05,stroke:#000,color:#000
+    style G fill:#DE8F05,stroke:#000,color:#fff
     style H fill:#029E73,stroke:#000,color:#fff
 ```
 
@@ -2748,10 +2748,10 @@ graph TD
     D -.->|Failure| H[Refund Payment]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
     style F fill:#E73F51,stroke:#000,color:#fff
     style G fill:#E73F51,stroke:#000,color:#fff
     style H fill:#E73F51,stroke:#000,color:#fff

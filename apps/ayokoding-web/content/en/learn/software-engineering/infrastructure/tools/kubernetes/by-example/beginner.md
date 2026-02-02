@@ -39,8 +39,8 @@ graph TD
     D --> E[Pod Running]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#DE8F05,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#0173B2,color:#fff
 ```
@@ -138,8 +138,8 @@ graph TD
     style A fill:#0173B2,color:#fff
     style B fill:#029E73,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#DE8F05,color:#000
-    style E fill:#CC78BC,color:#000
+    style D fill:#DE8F05,color:#fff
+    style E fill:#CC78BC,color:#fff
 ```
 
 ```yaml
@@ -380,11 +380,11 @@ graph TD
     F -->|No| H[Restart Init 2]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style D fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
+    style D fill:#DE8F05,color:#fff
     style G fill:#029E73,color:#fff
-    style E fill:#CC78BC,color:#000
-    style H fill:#CC78BC,color:#000
+    style E fill:#CC78BC,color:#fff
+    style H fill:#CC78BC,color:#fff
 ```
 
 ```yaml
@@ -513,7 +513,7 @@ graph TD
     B --> E[Pod: web-app-xxxxx-3]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
@@ -670,11 +670,11 @@ graph TD
     F -->|No| D
     F -->|Yes| G[Old ReplicaSet<br/>0 Pods, kept for rollback]
 
-    style A fill:#CC78BC,color:#000
+    style A fill:#CC78BC,color:#fff
     style C fill:#0173B2,color:#fff
     style D fill:#029E73,color:#fff
-    style E fill:#DE8F05,color:#000
-    style G fill:#CA9161,color:#000
+    style E fill:#DE8F05,color:#fff
+    style G fill:#CA9161,color:#fff
 ```
 
 ```yaml
@@ -903,7 +903,7 @@ graph TD
     A --> D[Pod: web-3<br/>10.244.2.7:8080]
     E[Client Pod<br/>in cluster] --> A
 
-    style A fill:#DE8F05,color:#000
+    style A fill:#DE8F05,color:#fff
     style B fill:#0173B2,color:#fff
     style C fill:#0173B2,color:#fff
     style D fill:#0173B2,color:#fff
@@ -966,10 +966,10 @@ graph TD
     C --> E[Pod: app-2]
     F[Another Node IP:31000] --> C
 
-    style A fill:#CC78BC,color:#000
-    style B fill:#DE8F05,color:#000
-    style F fill:#DE8F05,color:#000
-    style C fill:#DE8F05,color:#000
+    style A fill:#CC78BC,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style C fill:#DE8F05,color:#fff
     style D fill:#0173B2,color:#fff
     style E fill:#0173B2,color:#fff
 ```
@@ -1313,8 +1313,8 @@ graph TD
     B --> C[File: default.conf<br/>Contains nginx config]
     C --> D[nginx Container<br/>Reads config from file]
 
-    style A fill:#CC78BC,color:#000
-    style B fill:#DE8F05,color:#000
+    style A fill:#CC78BC,color:#fff
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#0173B2,color:#fff
 ```
@@ -1736,10 +1736,10 @@ graph TD
     B -->|Yes| D[Pod: web-2<br/>app=web, env=prod]
     B -->|No| E[Pod: api-1<br/>app=api, env=prod]
 
-    style A fill:#DE8F05,color:#000
+    style A fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
-    style E fill:#CC78BC,color:#000
+    style E fill:#CC78BC,color:#fff
 ```
 
 ```yaml

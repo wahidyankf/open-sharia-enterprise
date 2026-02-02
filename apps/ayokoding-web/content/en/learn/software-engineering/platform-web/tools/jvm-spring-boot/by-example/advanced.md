@@ -305,10 +305,10 @@ flowchart LR
     E --> F[Callback on Response]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
 ```
 
@@ -586,10 +586,10 @@ flowchart TD
     C -->|Call| D
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Takeaway**: Eureka enables service discovery—microservices register with Eureka Server and discover other services by name instead of hardcoded URLs, enabling dynamic scaling and failover.
@@ -2120,12 +2120,12 @@ flowchart TD
     F --> G
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
     style F fill:#0173B2,stroke:#000,color:#fff
-    style G fill:#DE8F05,stroke:#000,color:#000
+    style G fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Note**: Dockerfile syntax is identical for Kotlin Spring Boot applications. The layered JAR extraction and multi-stage build process works the same way for both Java and Kotlin compiled JARs.
@@ -2628,9 +2628,9 @@ graph TD
 
     style K8s fill:#0173B2,color:#fff
     style CM fill:#029E73,color:#fff
-    style Secret fill:#DE8F05,color:#000
-    style Pod1 fill:#CC78BC,color:#000
-    style App1 fill:#CA9161,color:#000
+    style Secret fill:#DE8F05,color:#fff
+    style Pod1 fill:#CC78BC,color:#fff
+    style App1 fill:#CA9161,color:#fff
 ```
 
 **Code (Kotlin)**:
@@ -2840,9 +2840,9 @@ flowchart TD
 
     style Client fill:#0173B2,color:#fff
     style Gateway fill:#029E73,color:#fff
-    style UserService fill:#DE8F05,color:#000
-    style OrderService fill:#CC78BC,color:#000
-    style ProductService fill:#CA9161,color:#000
+    style UserService fill:#DE8F05,color:#fff
+    style OrderService fill:#CC78BC,color:#fff
+    style ProductService fill:#CA9161,color:#fff
     style Filters fill:#0173B2,color:#fff
 ```
 
@@ -3309,10 +3309,10 @@ flowchart TD
     ReadSync --> ReadDB
 
     style UI fill:#0173B2,color:#fff
-    style CommandAPI fill:#DE8F05,color:#000
+    style CommandAPI fill:#DE8F05,color:#fff
     style QueryAPI fill:#029E73,color:#fff
-    style WriteDB fill:#CC78BC,color:#000
-    style ReadDB fill:#CA9161,color:#000
+    style WriteDB fill:#CC78BC,color:#fff
+    style ReadDB fill:#CA9161,color:#fff
     style EventBus fill:#0173B2,color:#fff
 ```
 
@@ -3926,9 +3926,9 @@ graph TD
 
     style Client fill:#0173B2,color:#fff
     style Gateway fill:#029E73,color:#fff
-    style Resolver fill:#DE8F05,color:#000
-    style Repo1 fill:#CC78BC,color:#000
-    style Repo2 fill:#CA9161,color:#000
+    style Resolver fill:#DE8F05,color:#fff
+    style Repo1 fill:#CC78BC,color:#fff
+    style Repo2 fill:#CA9161,color:#fff
     style DB fill:#0173B2,color:#fff
 ```
 
@@ -5192,10 +5192,10 @@ graph TD
     Grafana -->|Dashboards| User[Developer]
 
     style App fill:#0173B2,color:#fff
-    style Prometheus fill:#DE8F05,color:#000
+    style Prometheus fill:#DE8F05,color:#fff
     style Zipkin fill:#029E73,color:#fff
-    style Loki fill:#CC78BC,color:#000
-    style Grafana fill:#CA9161,color:#000
+    style Loki fill:#CC78BC,color:#fff
+    style Grafana fill:#CA9161,color:#fff
     style User fill:#0173B2,color:#fff
 ```
 

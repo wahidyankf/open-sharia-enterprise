@@ -33,9 +33,9 @@ stateDiagram-v2
     Rejected --> [*]
 
     classDef draftState fill:#0173B2,stroke:#000,color:#fff
-    classDef checkState fill:#DE8F05,stroke:#000,color:#000
+    classDef checkState fill:#DE8F05,stroke:#000,color:#fff
     classDef reviewState fill:#029E73,stroke:#000,color:#fff
-    classDef approvalState fill:#CC78BC,stroke:#000,color:#000
+    classDef approvalState fill:#CC78BC,stroke:#000,color:#fff
     classDef finalState fill:#CA9161,stroke:#000,color:#fff
 
     class Draft draftState

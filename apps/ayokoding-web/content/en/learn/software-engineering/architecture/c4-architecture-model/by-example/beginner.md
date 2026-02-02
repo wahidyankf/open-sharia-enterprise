@@ -27,9 +27,9 @@ graph TD
     C -->|zoom in| D
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -58,7 +58,7 @@ graph LR
     B -->|"Processes payments"| C
     B -->|"Sends notifications"| D
 
-    style A fill:#CC78BC,stroke:#000,color:#000
+    style A fill:#CC78BC,stroke:#000,color:#fff
     style B fill:#0173B2,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
     style D fill:#029E73,stroke:#000,color:#fff
@@ -91,7 +91,7 @@ graph TD
     Person -->|HTTPS| System
     System -->|API| ExtSystem
 
-    style Person fill:#CC78BC,stroke:#000,color:#000
+    style Person fill:#CC78BC,stroke:#000,color:#fff
     style System fill:#0173B2,stroke:#000,color:#fff
     style ExtSystem fill:#029E73,stroke:#000,color:#fff
 ```
@@ -128,9 +128,9 @@ graph LR
     Admin -->|"Adds products<br/>Updates inventory"| ECommerce
     Support -->|"Views orders<br/>Issues refunds"| ECommerce
 
-    style Customer fill:#CC78BC,stroke:#000,color:#000
-    style Admin fill:#CC78BC,stroke:#000,color:#000
-    style Support fill:#CC78BC,stroke:#000,color:#000
+    style Customer fill:#CC78BC,stroke:#000,color:#fff
+    style Admin fill:#CC78BC,stroke:#000,color:#fff
+    style Support fill:#CC78BC,stroke:#000,color:#fff
     style ECommerce fill:#0173B2,stroke:#000,color:#fff
 ```
 
@@ -162,7 +162,7 @@ graph LR
     Auth -->|"3. Token"| App
     App -->|"4. Access granted"| User
 
-    style User fill:#CC78BC,stroke:#000,color:#000
+    style User fill:#CC78BC,stroke:#000,color:#fff
     style App fill:#0173B2,stroke:#000,color:#fff
     style Auth fill:#029E73,stroke:#000,color:#fff
 ```
@@ -199,10 +199,10 @@ graph TD
     AdminPanel -->|"Reads/Writes customer data"| SharedDB
     ReportingSystem -->|"Reads customer data"| SharedDB
 
-    style Admin fill:#CC78BC,stroke:#000,color:#000
+    style Admin fill:#CC78BC,stroke:#000,color:#fff
     style AdminPanel fill:#0173B2,stroke:#000,color:#fff
     style ReportingSystem fill:#0173B2,stroke:#000,color:#fff
-    style SharedDB fill:#DE8F05,stroke:#000,color:#000
+    style SharedDB fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -233,10 +233,10 @@ graph LR
     OrderService -->|"Publishes order.created event"| MessageQueue
     MessageQueue -->|"Subscribes to order events"| InventoryService
 
-    style User fill:#CC78BC,stroke:#000,color:#000
+    style User fill:#CC78BC,stroke:#000,color:#fff
     style OrderService fill:#0173B2,stroke:#000,color:#fff
     style InventoryService fill:#0173B2,stroke:#000,color:#fff
-    style MessageQueue fill:#DE8F05,stroke:#000,color:#000
+    style MessageQueue fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -271,7 +271,7 @@ graph TD
     RideApp -->|"Processes payment"| Payment
     RideApp -->|"Sends confirmation"| SMS
 
-    style User fill:#CC78BC,stroke:#000,color:#000
+    style User fill:#CC78BC,stroke:#000,color:#fff
     style RideApp fill:#0173B2,stroke:#000,color:#fff
     style Maps fill:#029E73,stroke:#000,color:#fff
     style Payment fill:#029E73,stroke:#000,color:#fff
@@ -318,12 +318,12 @@ graph TD
     APIGateway -->|"Customer data"| CRM
     APIGateway -->|"Billing data"| BillingSystem
 
-    style Customer fill:#CC78BC,stroke:#000,color:#000
+    style Customer fill:#CC78BC,stroke:#000,color:#fff
     style WebPortal fill:#0173B2,stroke:#000,color:#fff
     style MobileApp fill:#0173B2,stroke:#000,color:#fff
     style APIGateway fill:#0173B2,stroke:#000,color:#fff
-    style CRM fill:#DE8F05,stroke:#000,color:#000
-    style BillingSystem fill:#DE8F05,stroke:#000,color:#000
+    style CRM fill:#DE8F05,stroke:#000,color:#fff
+    style BillingSystem fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -358,7 +358,7 @@ graph LR
     TravelBookingSystem -->|"Books hotels"| HotelAPI
     TravelBookingSystem -->|"Submits expenses"| ExpenseSystem
 
-    style Employee fill:#CC78BC,stroke:#000,color:#000
+    style Employee fill:#CC78BC,stroke:#000,color:#fff
     style TravelBookingSystem fill:#0173B2,stroke:#000,color:#fff
     style AirlineAPI fill:#029E73,stroke:#000,color:#fff
     style HotelAPI fill:#029E73,stroke:#000,color:#fff
@@ -397,7 +397,7 @@ graph LR
     NewsAPI -->|"News events (SSE)"| TradingPlatform
     TradingPlatform -->|"Trade validation"| RiskEngine
 
-    style Trader fill:#CC78BC,stroke:#000,color:#000
+    style Trader fill:#CC78BC,stroke:#000,color:#fff
     style TradingPlatform fill:#0173B2,stroke:#000,color:#fff
     style MarketDataFeed fill:#029E73,stroke:#000,color:#fff
     style NewsAPI fill:#029E73,stroke:#000,color:#fff
@@ -439,10 +439,10 @@ graph TD
     Auditor -->|"Reviews logs"| AuditLog
     AuditLog -->|"Daily reports"| RegulatoryReporting
 
-    style Customer fill:#CC78BC,stroke:#000,color:#000
-    style Auditor fill:#CC78BC,stroke:#000,color:#000
+    style Customer fill:#CC78BC,stroke:#000,color:#fff
+    style Auditor fill:#CC78BC,stroke:#000,color:#fff
     style BankingApp fill:#0173B2,stroke:#000,color:#fff
-    style AuditLog fill:#DE8F05,stroke:#000,color:#000
+    style AuditLog fill:#DE8F05,stroke:#000,color:#fff
     style ComplianceEngine fill:#029E73,stroke:#000,color:#fff
     style RegulatoryReporting fill:#029E73,stroke:#000,color:#fff
 ```
@@ -479,10 +479,10 @@ graph TD
     WebApp -->|"JSON/HTTPS<br/>API calls"| APIServer
     APIServer -->|"SQL<br/>Reads/Writes"| Database
 
-    style User fill:#CC78BC,stroke:#000,color:#000
+    style User fill:#CC78BC,stroke:#000,color:#fff
     style WebApp fill:#0173B2,stroke:#000,color:#fff
     style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style Database fill:#DE8F05,stroke:#000,color:#000
+    style Database fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -518,11 +518,11 @@ graph TD
     APIServer -->|"Store file<br/>S3 API"| BlobStorage
     WebApp -->|"Direct download<br/>Pre-signed URLs"| BlobStorage
 
-    style User fill:#CC78BC,stroke:#000,color:#000
+    style User fill:#CC78BC,stroke:#000,color:#fff
     style WebApp fill:#0173B2,stroke:#000,color:#fff
     style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style Database fill:#DE8F05,stroke:#000,color:#000
-    style BlobStorage fill:#DE8F05,stroke:#000,color:#000
+    style Database fill:#DE8F05,stroke:#000,color:#fff
+    style BlobStorage fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -559,12 +559,12 @@ graph TD
     Worker -->|"Read/Write data<br/>SQL"| Database
     APIServer -->|"Read/Write data<br/>SQL"| Database
 
-    style User fill:#CC78BC,stroke:#000,color:#000
+    style User fill:#CC78BC,stroke:#000,color:#fff
     style WebApp fill:#0173B2,stroke:#000,color:#fff
     style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style JobQueue fill:#DE8F05,stroke:#000,color:#000
+    style JobQueue fill:#DE8F05,stroke:#000,color:#fff
     style Worker fill:#0173B2,stroke:#000,color:#fff
-    style Database fill:#DE8F05,stroke:#000,color:#000
+    style Database fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -602,11 +602,11 @@ graph TD
     Database -->|"Product data"| APIServer
     APIServer -->|"3. Update cache<br/>Redis protocol"| Cache
 
-    style User fill:#CC78BC,stroke:#000,color:#000
+    style User fill:#CC78BC,stroke:#000,color:#fff
     style WebApp fill:#0173B2,stroke:#000,color:#fff
     style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style Cache fill:#DE8F05,stroke:#000,color:#000
-    style Database fill:#DE8F05,stroke:#000,color:#000
+    style Cache fill:#DE8F05,stroke:#000,color:#fff
+    style Database fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -640,11 +640,11 @@ graph TD
     User -->|"GET /api/*<br/>HTTPS"| APIServer
     APIServer -->|"Queries<br/>MongoDB protocol"| Database
 
-    style User fill:#CC78BC,stroke:#000,color:#000
+    style User fill:#CC78BC,stroke:#000,color:#fff
     style CDN fill:#029E73,stroke:#000,color:#fff
     style WebApp fill:#0173B2,stroke:#000,color:#fff
     style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style Database fill:#DE8F05,stroke:#000,color:#000
+    style Database fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -684,12 +684,12 @@ graph TD
     PrimaryDB -.->|"Replication"| ReplicaDB1
     PrimaryDB -.->|"Replication"| ReplicaDB2
 
-    style User fill:#CC78BC,stroke:#000,color:#000
+    style User fill:#CC78BC,stroke:#000,color:#fff
     style WebApp fill:#0173B2,stroke:#000,color:#fff
     style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style PrimaryDB fill:#DE8F05,stroke:#000,color:#000
-    style ReplicaDB1 fill:#CA9161,stroke:#000,color:#000
-    style ReplicaDB2 fill:#CA9161,stroke:#000,color:#000
+    style PrimaryDB fill:#DE8F05,stroke:#000,color:#fff
+    style ReplicaDB1 fill:#CA9161,stroke:#000,color:#fff
+    style ReplicaDB2 fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -729,13 +729,13 @@ graph TD
     ShardRouter -->|"Shard 2 queries"| Shard2
     ShardRouter -->|"Shard 3 queries"| Shard3
 
-    style User fill:#CC78BC,stroke:#000,color:#000
+    style User fill:#CC78BC,stroke:#000,color:#fff
     style WebApp fill:#0173B2,stroke:#000,color:#fff
     style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style ShardRouter fill:#DE8F05,stroke:#000,color:#000
-    style Shard1 fill:#CA9161,stroke:#000,color:#000
-    style Shard2 fill:#CA9161,stroke:#000,color:#000
-    style Shard3 fill:#CA9161,stroke:#000,color:#000
+    style ShardRouter fill:#DE8F05,stroke:#000,color:#fff
+    style Shard1 fill:#CA9161,stroke:#000,color:#fff
+    style Shard2 fill:#CA9161,stroke:#000,color:#fff
+    style Shard3 fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -780,12 +780,12 @@ graph TD
     WriteDB -->|"Change events"| EventBus
     EventBus -->|"Update views"| ReadDB
 
-    style User fill:#CC78BC,stroke:#000,color:#000
+    style User fill:#CC78BC,stroke:#000,color:#fff
     style WebApp fill:#0173B2,stroke:#000,color:#fff
     style WriteAPI fill:#0173B2,stroke:#000,color:#fff
     style ReadAPI fill:#0173B2,stroke:#000,color:#fff
-    style WriteDB fill:#DE8F05,stroke:#000,color:#000
-    style ReadDB fill:#CA9161,stroke:#000,color:#000
+    style WriteDB fill:#DE8F05,stroke:#000,color:#fff
+    style ReadDB fill:#CA9161,stroke:#000,color:#fff
     style EventBus fill:#029E73,stroke:#000,color:#fff
 ```
 
@@ -830,14 +830,14 @@ graph TD
     APIServer -->|"Tenant B queries"| DBTenantB
     APIServer -->|"Tenant C queries"| DBTenantC
 
-    style TenantA fill:#CC78BC,stroke:#000,color:#000
-    style TenantB fill:#CC78BC,stroke:#000,color:#000
-    style TenantC fill:#CC78BC,stroke:#000,color:#000
+    style TenantA fill:#CC78BC,stroke:#000,color:#fff
+    style TenantB fill:#CC78BC,stroke:#000,color:#fff
+    style TenantC fill:#CC78BC,stroke:#000,color:#fff
     style WebApp fill:#0173B2,stroke:#000,color:#fff
     style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style DBTenantA fill:#CA9161,stroke:#000,color:#000
-    style DBTenantB fill:#CA9161,stroke:#000,color:#000
-    style DBTenantC fill:#CA9161,stroke:#000,color:#000
+    style DBTenantA fill:#CA9161,stroke:#000,color:#fff
+    style DBTenantB fill:#CA9161,stroke:#000,color:#fff
+    style DBTenantC fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -875,11 +875,11 @@ graph TD
     APIServer -->|"Write metrics<br/>InfluxDB line protocol"| TimeSeriesDB
     APIServer -->|"Read/Write config<br/>SQL"| TransactionalDB
 
-    style User fill:#CC78BC,stroke:#000,color:#000
+    style User fill:#CC78BC,stroke:#000,color:#fff
     style WebApp fill:#0173B2,stroke:#000,color:#fff
     style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style TransactionalDB fill:#DE8F05,stroke:#000,color:#000
-    style TimeSeriesDB fill:#CA9161,stroke:#000,color:#000
+    style TransactionalDB fill:#DE8F05,stroke:#000,color:#fff
+    style TimeSeriesDB fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -927,14 +927,14 @@ graph TD
     ProductService -->|Uses| ProductRepository
 
     style APIServer fill:#0173B2,stroke:#000,color:#fff
-    style AuthController fill:#DE8F05,stroke:#000,color:#000
-    style UserController fill:#DE8F05,stroke:#000,color:#000
-    style ProductController fill:#DE8F05,stroke:#000,color:#000
+    style AuthController fill:#DE8F05,stroke:#000,color:#fff
+    style UserController fill:#DE8F05,stroke:#000,color:#fff
+    style ProductController fill:#DE8F05,stroke:#000,color:#fff
     style AuthService fill:#029E73,stroke:#000,color:#fff
     style UserService fill:#029E73,stroke:#000,color:#fff
     style ProductService fill:#029E73,stroke:#000,color:#fff
-    style UserRepository fill:#CC78BC,stroke:#000,color:#000
-    style ProductRepository fill:#CC78BC,stroke:#000,color:#000
+    style UserRepository fill:#CC78BC,stroke:#000,color:#fff
+    style ProductRepository fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -984,13 +984,13 @@ graph TD
     DataStore -->|Uses| APIClient
 
     style WebApp fill:#0173B2,stroke:#000,color:#fff
-    style AppShell fill:#DE8F05,stroke:#000,color:#000
+    style AppShell fill:#DE8F05,stroke:#000,color:#fff
     style AuthModule fill:#029E73,stroke:#000,color:#fff
     style DashboardModule fill:#029E73,stroke:#000,color:#fff
     style SettingsModule fill:#029E73,stroke:#000,color:#fff
-    style APIClient fill:#CC78BC,stroke:#000,color:#000
-    style AuthStore fill:#CA9161,stroke:#000,color:#000
-    style DataStore fill:#CA9161,stroke:#000,color:#000
+    style APIClient fill:#CC78BC,stroke:#000,color:#fff
+    style AuthStore fill:#CA9161,stroke:#000,color:#fff
+    style DataStore fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1039,14 +1039,14 @@ graph TD
     ImageHandler -->|Uses| Logger
 
     style Worker fill:#0173B2,stroke:#000,color:#fff
-    style JobDispatcher fill:#DE8F05,stroke:#000,color:#000
+    style JobDispatcher fill:#DE8F05,stroke:#000,color:#fff
     style EmailHandler fill:#029E73,stroke:#000,color:#fff
     style ReportHandler fill:#029E73,stroke:#000,color:#fff
     style ImageHandler fill:#029E73,stroke:#000,color:#fff
-    style EmailService fill:#CC78BC,stroke:#000,color:#000
-    style PDFService fill:#CC78BC,stroke:#000,color:#000
-    style ImageService fill:#CC78BC,stroke:#000,color:#000
-    style Logger fill:#CA9161,stroke:#000,color:#000
+    style EmailService fill:#CC78BC,stroke:#000,color:#fff
+    style PDFService fill:#CC78BC,stroke:#000,color:#fff
+    style ImageService fill:#CC78BC,stroke:#000,color:#fff
+    style Logger fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1088,12 +1088,12 @@ graph TD
     OrderBusinessLogic -->|Uses| PaymentClient
 
     style OrderService fill:#0173B2,stroke:#000,color:#fff
-    style OrderAPI fill:#DE8F05,stroke:#000,color:#000
-    style OrderEventHandler fill:#DE8F05,stroke:#000,color:#000
+    style OrderAPI fill:#DE8F05,stroke:#000,color:#fff
+    style OrderEventHandler fill:#DE8F05,stroke:#000,color:#fff
     style OrderBusinessLogic fill:#029E73,stroke:#000,color:#fff
-    style OrderRepository fill:#CC78BC,stroke:#000,color:#000
-    style EventPublisher fill:#CA9161,stroke:#000,color:#000
-    style PaymentClient fill:#CA9161,stroke:#000,color:#000
+    style OrderRepository fill:#CC78BC,stroke:#000,color:#fff
+    style EventPublisher fill:#CA9161,stroke:#000,color:#fff
+    style PaymentClient fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1143,13 +1143,13 @@ graph TD
     TaxPlugin -.->|Implements| PluginInterface
 
     style CoreApp fill:#0173B2,stroke:#000,color:#fff
-    style PluginRegistry fill:#DE8F05,stroke:#000,color:#000
-    style CoreLogic fill:#DE8F05,stroke:#000,color:#000
-    style PluginLoader fill:#DE8F05,stroke:#000,color:#000
+    style PluginRegistry fill:#DE8F05,stroke:#000,color:#fff
+    style CoreLogic fill:#DE8F05,stroke:#000,color:#fff
+    style PluginLoader fill:#DE8F05,stroke:#000,color:#fff
     style PaymentPlugin fill:#029E73,stroke:#000,color:#fff
     style ShippingPlugin fill:#029E73,stroke:#000,color:#fff
     style TaxPlugin fill:#029E73,stroke:#000,color:#fff
-    style PluginInterface fill:#CC78BC,stroke:#000,color:#000
+    style PluginInterface fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1189,7 +1189,7 @@ graph LR
     APIGateway -->|"Route to<br/>OrderService"| OrderService
 
     style MobileApp fill:#0173B2,stroke:#000,color:#fff
-    style APIGateway fill:#DE8F05,stroke:#000,color:#000
+    style APIGateway fill:#DE8F05,stroke:#000,color:#fff
     style UserService fill:#029E73,stroke:#000,color:#fff
     style OrderService fill:#029E73,stroke:#000,color:#fff
 ```
@@ -1230,7 +1230,7 @@ graph TD
     GraphQLServer -->|"GET /orders/:id"| OrderService
 
     style WebApp fill:#0173B2,stroke:#000,color:#fff
-    style GraphQLServer fill:#DE8F05,stroke:#000,color:#000
+    style GraphQLServer fill:#DE8F05,stroke:#000,color:#fff
     style UserService fill:#029E73,stroke:#000,color:#fff
     style ProductService fill:#029E73,stroke:#000,color:#fff
     style OrderService fill:#029E73,stroke:#000,color:#fff
@@ -1273,7 +1273,7 @@ graph TD
     style InventoryService fill:#029E73,stroke:#000,color:#fff
     style EmailService fill:#029E73,stroke:#000,color:#fff
     style AnalyticsService fill:#029E73,stroke:#000,color:#fff
-    style EventBus fill:#DE8F05,stroke:#000,color:#000
+    style EventBus fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Key Elements**:

@@ -30,8 +30,8 @@ graph TD
     C --> D[Return Users]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
     style D fill:#029E73,color:#fff
 ```
 
@@ -113,8 +113,8 @@ graph TD
 
     style A fill:#0173B2,color:#fff
     style C fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style D fill:#CC78BC,color:#000
+    style B fill:#DE8F05,color:#fff
+    style D fill:#CC78BC,color:#fff
     style E fill:#029E73,color:#fff
     style F fill:#CA9161,color:#fff
     style G fill:#029E73,color:#fff
@@ -213,10 +213,10 @@ graph TD
     E --> F[Aggregated Results]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
-    style D fill:#CC78BC,color:#000
-    style E fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#DE8F05,color:#fff
     style F fill:#029E73,color:#fff
 ```
 
@@ -380,11 +380,11 @@ graph TD
     D -->|No| F[Rollback]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#DE8F05,color:#000
-    style D fill:#CC78BC,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#DE8F05,color:#fff
+    style D fill:#CC78BC,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#CA9161,color:#000
+    style F fill:#CA9161,color:#fff
 ```
 
 ```elixir
@@ -534,9 +534,9 @@ graph TD
     D --> E[Repo.transaction]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#DE8F05,color:#000
-    style D fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#DE8F05,color:#fff
+    style D fill:#DE8F05,color:#fff
     style E fill:#029E73,color:#fff
 ```
 
@@ -641,12 +641,12 @@ graph TD
     G -->|No| I[Rollback All]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#DE8F05,color:#000
-    style G fill:#CC78BC,color:#000
+    style F fill:#DE8F05,color:#fff
+    style G fill:#CC78BC,color:#fff
     style H fill:#029E73,color:#fff
     style I fill:#CA9161,color:#fff
 ```
@@ -810,7 +810,7 @@ graph TD
     E -.-> A
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#CA9161,color:#fff
@@ -969,8 +969,8 @@ graph TD
     C --> D[Stored as JSON<br/>in users.profile column]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
     style D fill:#029E73,color:#fff
 ```
 
@@ -1051,8 +1051,8 @@ graph TD
     F --> G
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
     style F fill:#029E73,color:#fff
@@ -1331,7 +1331,7 @@ graph TD
 
     style A fill:#0173B2,color:#fff
     style B fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#fff
 ```
 
 ```elixir
@@ -1455,7 +1455,7 @@ graph TD
     D --> E[Parent with New Associations]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#CA9161,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
@@ -1668,10 +1668,10 @@ graph TD
     E --> F[Final Results]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CC78BC,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CC78BC,color:#fff
     style D fill:#0173B2,color:#fff
-    style E fill:#DE8F05,color:#000
+    style E fill:#DE8F05,color:#fff
     style F fill:#029E73,color:#fff
 ```
 
@@ -2104,7 +2104,7 @@ graph TD
     B --> C[Execute Combined Query]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
 ```
 

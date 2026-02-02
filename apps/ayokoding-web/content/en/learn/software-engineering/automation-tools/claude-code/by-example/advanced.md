@@ -24,10 +24,10 @@ graph LR
     D -->|Results| E
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
     style D fill:#029E73,stroke:#000,color:#fff
-    style E fill:#CC78BC,stroke:#000,color:#000
+    style E fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Commands**:
@@ -86,19 +86,19 @@ Analyze module dependencies across monorepo packages. Claude maps imports to und
 
 ```mermaid
 graph TD
-    A[@company/auth] -->|imports| B[@company/core]
-    C[@company/api] -->|imports| A
+    A["@company/auth"] -->|imports| B["@company/core"]
+    C["@company/api"] -->|imports| A
     C -->|imports| B
-    D[@company/ui] -->|imports| A
+    D["@company/ui"] -->|imports| A
     D -->|imports| B
-    E[@company/mobile] -->|imports| C
+    E["@company/mobile"] -->|imports| C
     E -->|imports| D
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Commands**:
@@ -209,15 +209,15 @@ graph TD
     I -->|Prioritize| J
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
-    style C fill:#DE8F05,stroke:#000,color:#000
-    style D fill:#DE8F05,stroke:#000,color:#000
-    style E fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
+    style D fill:#DE8F05,stroke:#000,color:#fff
+    style E fill:#DE8F05,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
     style G fill:#029E73,stroke:#000,color:#fff
     style H fill:#029E73,stroke:#000,color:#fff
     style I fill:#029E73,stroke:#000,color:#fff
-    style J fill:#CC78BC,stroke:#000,color:#000
+    style J fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Commands**:
@@ -366,12 +366,12 @@ graph LR
     F -->|Report| G
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CC78BC,stroke:#000,color:#000
-    style F fill:#CC78BC,stroke:#000,color:#000
-    style G fill:#CA9161,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CC78BC,stroke:#000,color:#fff
+    style F fill:#CC78BC,stroke:#000,color:#fff
+    style G fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Commands**:
@@ -653,11 +653,11 @@ graph LR
     E -->|Results| F
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
     style D fill:#029E73,stroke:#000,color:#fff
     style E fill:#029E73,stroke:#000,color:#fff
-    style F fill:#CC78BC,stroke:#000,color:#000
+    style F fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Commands**:
@@ -944,11 +944,11 @@ graph TD
     E -->|Report| F
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
-    style C fill:#DE8F05,stroke:#000,color:#000
-    style D fill:#DE8F05,stroke:#000,color:#000
-    style E fill:#DE8F05,stroke:#000,color:#000
-    style F fill:#CC78BC,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
+    style D fill:#DE8F05,stroke:#000,color:#fff
+    style E fill:#DE8F05,stroke:#000,color:#fff
+    style F fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Commands**:
@@ -1127,14 +1127,14 @@ graph TD
     H -->|Result| I
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
     style D fill:#029E73,stroke:#000,color:#fff
     style E fill:#029E73,stroke:#000,color:#fff
-    style F fill:#CC78BC,stroke:#000,color:#000
-    style G fill:#CC78BC,stroke:#000,color:#000
-    style H fill:#CC78BC,stroke:#000,color:#000
-    style I fill:#CA9161,stroke:#000,color:#000
+    style F fill:#CC78BC,stroke:#000,color:#fff
+    style G fill:#CC78BC,stroke:#000,color:#fff
+    style H fill:#CC78BC,stroke:#000,color:#fff
+    style I fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Commands**:
@@ -1192,15 +1192,15 @@ graph TD
     I -->|Notifies| J[Clients of Sunset]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
     style D fill:#029E73,stroke:#000,color:#fff
-    style E fill:#CC78BC,stroke:#000,color:#000
-    style F fill:#CA9161,stroke:#000,color:#000
-    style G fill:#CA9161,stroke:#000,color:#000
-    style H fill:#CA9161,stroke:#000,color:#000
-    style I fill:#CA9161,stroke:#000,color:#000
-    style J fill:#CA9161,stroke:#000,color:#000
+    style E fill:#CC78BC,stroke:#000,color:#fff
+    style F fill:#CA9161,stroke:#000,color:#fff
+    style G fill:#CA9161,stroke:#000,color:#fff
+    style H fill:#CA9161,stroke:#000,color:#fff
+    style I fill:#CA9161,stroke:#000,color:#fff
+    style J fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Commands**:
@@ -1327,13 +1327,13 @@ graph LR
     G -->|Add Migration Guide| H
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
     style D fill:#029E73,stroke:#000,color:#fff
     style E fill:#029E73,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
-    style G fill:#CC78BC,stroke:#000,color:#000
-    style H fill:#CA9161,stroke:#000,color:#000
+    style G fill:#CC78BC,stroke:#000,color:#fff
+    style H fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Commands**:
@@ -1410,9 +1410,9 @@ graph TD
     G -->|imports| D
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
-    style C fill:#DE8F05,stroke:#000,color:#000
-    style D fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
+    style D fill:#DE8F05,stroke:#000,color:#fff
     style E fill:#029E73,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
     style G fill:#029E73,stroke:#000,color:#fff

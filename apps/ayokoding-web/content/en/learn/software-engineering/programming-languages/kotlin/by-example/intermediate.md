@@ -1082,9 +1082,9 @@ graph TD
     SHE[emit event] --> SHF1
     Note2[No state retention<br/>events broadcasted]
 
-    style SHF1 fill:#DE8F05,color:#000
-    style SHFC1 fill:#CC78BC,color:#000
-    style SHFC2 fill:#CC78BC,color:#000
+    style SHF1 fill:#DE8F05,color:#fff
+    style SHFC1 fill:#CC78BC,color:#fff
+    style SHFC2 fill:#CC78BC,color:#fff
 ```
 
 **Implementation Pattern:**
@@ -1695,12 +1695,12 @@ graph TD
     N -->|false| P[Property Unchanged]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
-    style I fill:#CC78BC,color:#000
-    style M fill:#CC78BC,color:#000
-    style F fill:#CA9161,color:#000
+    style I fill:#CC78BC,color:#fff
+    style M fill:#CC78BC,color:#fff
+    style F fill:#CA9161,color:#fff
 ```
 
 ```kotlin

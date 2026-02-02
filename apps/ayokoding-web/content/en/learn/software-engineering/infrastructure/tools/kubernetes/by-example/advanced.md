@@ -42,10 +42,10 @@ graph TD
     E -->|No| G[Deny: 403 Forbidden]
 
     style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
-    style D fill:#CA9161,color:#000
+    style C fill:#DE8F05,color:#fff
+    style D fill:#CA9161,color:#fff
     style F fill:#029E73,color:#fff
-    style G fill:#CC78BC,color:#000
+    style G fill:#CC78BC,color:#fff
 ```
 
 ```yaml
@@ -953,8 +953,8 @@ graph TD
 
     style A fill:#0173B2,color:#fff
     style B fill:#029E73,color:#fff
-    style C fill:#CC78BC,color:#000
-    style D fill:#DE8F05,color:#000
+    style C fill:#CC78BC,color:#fff
+    style D fill:#DE8F05,color:#fff
 ```
 
 ```yaml
@@ -1132,10 +1132,10 @@ graph TD
     D -->|external → backend| F[Denied]
     D -->|frontend → database| F
 
-    style A fill:#CC78BC,color:#000
-    style C fill:#DE8F05,color:#000
+    style A fill:#CC78BC,color:#fff
+    style C fill:#DE8F05,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#CC78BC,color:#000
+    style F fill:#CC78BC,color:#fff
 ```
 
 ```yaml
@@ -1290,9 +1290,9 @@ graph TD
 
     style A fill:#0173B2,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#CC78BC,color:#000
+    style D fill:#CC78BC,color:#fff
     style G fill:#029E73,color:#fff
-    style H fill:#CC78BC,color:#000
+    style H fill:#CC78BC,color:#fff
 ```
 
 ```yaml
@@ -1611,7 +1611,7 @@ graph TD
     F --> G[Accepted by API server]
 
     style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#fff
     style D fill:#029E73,color:#fff
 ```
 
@@ -2041,8 +2041,8 @@ graph TD
     G --> A
 
     style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
-    style D fill:#CA9161,color:#000
+    style C fill:#DE8F05,color:#fff
+    style D fill:#CA9161,color:#fff
     style F fill:#029E73,color:#fff
 ```
 
@@ -2253,10 +2253,10 @@ graph TD
     G -->|Invalid| I[Reject: 403]
 
     style B fill:#0173B2,color:#fff
-    style E fill:#DE8F05,color:#000
-    style G fill:#CA9161,color:#000
+    style E fill:#DE8F05,color:#fff
+    style G fill:#CA9161,color:#fff
     style H fill:#029E73,color:#fff
-    style I fill:#CC78BC,color:#000
+    style I fill:#CC78BC,color:#fff
 ```
 
 ```yaml
@@ -2448,8 +2448,8 @@ graph TD
     A --> H[charts/<br/>dependencies]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CA9161,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CA9161,color:#fff
     style D fill:#029E73,color:#fff
 ```
 
@@ -2600,9 +2600,9 @@ graph TD
     B --> E[Final values]
     E --> F[Template rendering]
 
-    style A fill:#CC78BC,color:#000
-    style C fill:#CA9161,color:#000
-    style D fill:#DE8F05,color:#000
+    style A fill:#CC78BC,color:#fff
+    style C fill:#CA9161,color:#fff
+    style D fill:#DE8F05,color:#fff
     style E fill:#029E73,color:#fff
 ```
 
@@ -2791,10 +2791,10 @@ graph TD
     G --> H[Cleanup old resources]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CA9161,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CA9161,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#CC78BC,color:#000
+    style F fill:#CC78BC,color:#fff
 ```
 
 ```yaml
@@ -2950,8 +2950,8 @@ graph TD
     F --> G[Deployment updated]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style E fill:#CA9161,color:#000
+    style B fill:#DE8F05,color:#fff
+    style E fill:#CA9161,color:#fff
     style G fill:#029E73,color:#fff
 ```
 
@@ -3141,7 +3141,7 @@ graph TD
     G --> I[Cluster matches Git]
 
     style B fill:#0173B2,color:#fff
-    style D fill:#DE8F05,color:#000
+    style D fill:#DE8F05,color:#fff
     style G fill:#029E73,color:#fff
     style I fill:#029E73,color:#fff
 ```
@@ -3394,7 +3394,7 @@ graph TD
     E --> H[Application: staging-app]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style F fill:#029E73,color:#fff
     style G fill:#029E73,color:#fff
     style H fill:#029E73,color:#fff
@@ -3543,9 +3543,9 @@ graph TD
     G --> H
 
     style A fill:#0173B2,color:#fff
-    style E fill:#DE8F05,color:#000
-    style F fill:#CA9161,color:#000
-    style G fill:#CC78BC,color:#000
+    style E fill:#DE8F05,color:#fff
+    style F fill:#CA9161,color:#fff
+    style G fill:#CC78BC,color:#fff
     style H fill:#029E73,color:#fff
 ```
 

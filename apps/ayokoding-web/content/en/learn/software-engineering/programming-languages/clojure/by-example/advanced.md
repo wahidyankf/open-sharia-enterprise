@@ -29,11 +29,11 @@ graph TD
     I --> J
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style D fill:#DE8F05,color:#000
-    style F fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
+    style D fill:#DE8F05,color:#fff
+    style F fill:#DE8F05,color:#fff
     style H fill:#029E73,color:#fff
-    style J fill:#CC78BC,color:#000
+    style J fill:#CC78BC,color:#fff
 ```
 
 ```clojure
@@ -95,10 +95,10 @@ graph TD
     G --> F
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style E fill:#DE8F05,color:#000
-    style F fill:#CC78BC,color:#000
+    style E fill:#DE8F05,color:#fff
+    style F fill:#CC78BC,color:#fff
 ```
 
 ```clojure
@@ -190,10 +190,10 @@ graph TD
     D --> H[Fast: Direct Invoke]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#CA9161,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#CA9161,color:#fff
     style D fill:#029E73,color:#fff
-    style G fill:#CA9161,color:#000
+    style G fill:#CA9161,color:#fff
     style H fill:#029E73,color:#fff
 ```
 
@@ -347,9 +347,9 @@ graph TD
     H --> I[Final Result]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style G fill:#029E73,color:#fff
-    style H fill:#CC78BC,color:#000
+    style H fill:#CC78BC,color:#fff
     style I fill:#029E73,color:#fff
 ```
 
@@ -440,7 +440,7 @@ graph TD
     I --> D
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style F fill:#029E73,color:#fff
     style I fill:#029E73,color:#fff
 ```
@@ -515,7 +515,7 @@ graph TD
 
     style A fill:#0173B2,color:#fff
     style E fill:#0173B2,color:#fff
-    style F fill:#DE8F05,color:#000
+    style F fill:#DE8F05,color:#fff
     style G fill:#029E73,color:#fff
 ```
 
@@ -593,8 +593,8 @@ graph TD
     G --> E
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#DE8F05,color:#fff
     style D fill:#029E73,color:#fff
     style F fill:#029E73,color:#fff
 ```
@@ -973,10 +973,10 @@ graph TD
     K -->|No| M[Counterexample Found]
 
     style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
-    style G fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#fff
+    style G fill:#DE8F05,color:#fff
     style L fill:#029E73,color:#fff
-    style M fill:#CC78BC,color:#000
+    style M fill:#CC78BC,color:#fff
 ```
 
 ```clojure
@@ -1111,7 +1111,7 @@ graph TD
     M --> N[Memory Delta]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style F fill:#029E73,color:#fff
     style I fill:#029E73,color:#fff
     style N fill:#029E73,color:#fff
@@ -1182,9 +1182,9 @@ graph TD
     C --> J[Instant: 0ms]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#CA9161,color:#000
+    style D fill:#CA9161,color:#fff
     style F fill:#029E73,color:#fff
 ```
 
@@ -1492,10 +1492,10 @@ graph TD
     J --> K[Monitor & Alert]
 
     style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#fff
     style F fill:#029E73,color:#fff
     style J fill:#029E73,color:#fff
-    style K fill:#CC78BC,color:#000
+    style K fill:#CC78BC,color:#fff
 ```
 
 ```clojure

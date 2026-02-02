@@ -24,13 +24,13 @@ graph TD
     E --> H[Exception]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#CC78BC,color:#000
-    style G fill:#CC78BC,color:#000
-    style H fill:#CA9161,color:#000
+    style F fill:#CC78BC,color:#fff
+    style G fill:#CC78BC,color:#fff
+    style H fill:#CA9161,color:#fff
 ```
 
 ```clojure
@@ -81,16 +81,16 @@ graph TD
     G --> K[New Square Instance]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#DE8F05,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
     style F fill:#029E73,color:#fff
     style G fill:#029E73,color:#fff
-    style H fill:#CC78BC,color:#000
-    style I fill:#CC78BC,color:#000
-    style J fill:#CC78BC,color:#000
-    style K fill:#CC78BC,color:#000
+    style H fill:#CC78BC,color:#fff
+    style I fill:#CC78BC,color:#fff
+    style J fill:#CC78BC,color:#fff
+    style K fill:#CC78BC,color:#fff
 ```
 
 ```clojure
@@ -396,10 +396,10 @@ graph TD
     style A fill:#0173B2,color:#fff
     style B fill:#0173B2,color:#fff
     style C fill:#0173B2,color:#fff
-    style Q fill:#DE8F05,color:#000
+    style Q fill:#DE8F05,color:#fff
     style T fill:#029E73,color:#fff
-    style S1 fill:#CC78BC,color:#000
-    style R fill:#CA9161,color:#000
+    style S1 fill:#CC78BC,color:#fff
+    style R fill:#CA9161,color:#fff
 ```
 
 ```clojure
@@ -461,11 +461,11 @@ graph TD
 
     style P1 fill:#0173B2,color:#fff
     style P2 fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#fff
     style C1 fill:#029E73,color:#fff
     style C2 fill:#029E73,color:#fff
-    style B fill:#CC78BC,color:#000
-    style BUF fill:#CA9161,color:#000
+    style B fill:#CC78BC,color:#fff
+    style BUF fill:#CA9161,color:#fff
 ```
 
 ```clojure
@@ -688,8 +688,8 @@ graph TD
     R4 --> R5[Lazy Seq 2]
     R5 --> R6[Final Result]
 
-    style R3 fill:#CA9161,color:#000
-    style R5 fill:#CA9161,color:#000
+    style R3 fill:#CA9161,color:#fff
+    style R5 fill:#CA9161,color:#fff
 ```
 
 **Transducers (Single Pass, No Intermediates):**
@@ -703,7 +703,7 @@ graph TD
 
     style TX fill:#029E73,color:#fff
     style T2 fill:#0173B2,color:#fff
-    style T3 fill:#DE8F05,color:#000
+    style T3 fill:#DE8F05,color:#fff
 ```
 
 ```clojure
@@ -833,15 +833,15 @@ graph TD
     C -.->|Rest| K[Still Lazy]
 
     style A fill:#0173B2,color:#fff
-    style C fill:#CA9161,color:#000
-    style D fill:#DE8F05,color:#000
+    style C fill:#CA9161,color:#fff
+    style D fill:#DE8F05,color:#fff
     style E fill:#029E73,color:#fff
     style F fill:#029E73,color:#fff
     style G fill:#029E73,color:#fff
     style H fill:#029E73,color:#fff
     style I fill:#029E73,color:#fff
-    style J fill:#CC78BC,color:#000
-    style K fill:#CA9161,color:#000
+    style J fill:#CC78BC,color:#fff
+    style K fill:#CA9161,color:#fff
 ```
 
 ```clojure

@@ -2159,11 +2159,11 @@ graph TD
     WG -->|All done| Main
 
     style Main fill:#0173B2,color:#fff
-    style JobChan fill:#DE8F05,color:#000
+    style JobChan fill:#DE8F05,color:#fff
     style W1 fill:#029E73,color:#fff
     style W2 fill:#029E73,color:#fff
     style W3 fill:#029E73,color:#fff
-    style WG fill:#CC78BC,color:#000
+    style WG fill:#CC78BC,color:#fff
 ```
 
 **Code**:

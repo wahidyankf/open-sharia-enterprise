@@ -24,9 +24,9 @@ graph TD
     F --> C
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#CC78BC,color:#000
+    style F fill:#CC78BC,color:#fff
 ```
 
 **Component module**:
@@ -174,9 +174,9 @@ graph TD
     C -->|update/2 called| D[Re-render Component B]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#CC78BC,color:#000
+    style D fill:#CC78BC,color:#fff
 ```
 
 **Selector component**:
@@ -675,10 +675,10 @@ graph TD
     B --> E[ButtonComponent]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
-    style E fill:#CC78BC,color:#000
+    style E fill:#CC78BC,color:#fff
 ```
 
 **Input component** (presentational):

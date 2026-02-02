@@ -36,9 +36,9 @@ graph TD
     H --> J[Return {:error, failed_op}]
 
     style A fill:#0173B2,color:#fff
-    style E fill:#DE8F05,color:#000
+    style E fill:#DE8F05,color:#fff
     style G fill:#029E73,color:#fff
-    style H fill:#CA9161,color:#000
+    style H fill:#CA9161,color:#fff
 ```
 
 ```elixir
@@ -166,9 +166,9 @@ graph TD
     F --> H[Return {:ok, user}]
 
     style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#fff
     style F fill:#029E73,color:#fff
-    style G fill:#CA9161,color:#000
+    style G fill:#CA9161,color:#fff
 ```
 
 ```elixir
@@ -555,7 +555,7 @@ graph TD
     H --> I[Query 2: SELECT * FROM authors WHERE id IN]
     I --> J[Total: 2 queries]
 
-    style A fill:#CA9161,color:#000
+    style A fill:#CA9161,color:#fff
     style G fill:#029E73,color:#fff
     style J fill:#029E73,color:#fff
 ```
@@ -718,9 +718,9 @@ graph TD
     H --> D
 
     style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#fff
     style G fill:#029E73,color:#fff
-    style H fill:#CC78BC,color:#000
+    style H fill:#CC78BC,color:#fff
 ```
 
 ```elixir
@@ -1036,7 +1036,7 @@ graph TD
     J --> K[Final image 50MB]
 
     style A fill:#0173B2,color:#fff
-    style F fill:#DE8F05,color:#000
+    style F fill:#DE8F05,color:#fff
     style G fill:#029E73,color:#fff
     style K fill:#029E73,color:#fff
 ```
@@ -1142,9 +1142,9 @@ graph TD
 
     style A fill:#0173B2,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#CA9161,color:#000
+    style F fill:#CA9161,color:#fff
     style J fill:#029E73,color:#fff
-    style K fill:#CC78BC,color:#000
+    style K fill:#CC78BC,color:#fff
 ```
 
 ```elixir
@@ -1556,7 +1556,7 @@ graph TD
     style B fill:#029E73,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
-    style F fill:#DE8F05,color:#000
+    style F fill:#DE8F05,color:#fff
 ```
 
 ```elixir
@@ -1716,10 +1716,10 @@ graph TD
     H --> I[Rollback available]
 
     style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#CA9161,color:#000
-    style I fill:#CC78BC,color:#000
+    style F fill:#CA9161,color:#fff
+    style I fill:#CC78BC,color:#fff
 ```
 
 ```bash

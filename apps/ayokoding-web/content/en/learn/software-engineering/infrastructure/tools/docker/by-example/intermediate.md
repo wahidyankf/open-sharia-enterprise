@@ -29,7 +29,7 @@ graph TD
     G --> H["Final Image<br/>120MB #40;73% smaller#41;"]
 
     style A fill:#0173B2,color:#fff
-    style D fill:#DE8F05,color:#000
+    style D fill:#DE8F05,color:#fff
     style E fill:#0173B2,color:#fff
     style H fill:#029E73,color:#fff
 ```
@@ -455,7 +455,7 @@ graph TD
     F --> G["Secret Removed<br/>NOT in image layer"]
 
     style A fill:#0173B2,color:#fff
-    style D fill:#DE8F05,color:#000
+    style D fill:#DE8F05,color:#fff
     style G fill:#029E73,color:#fff
 ```
 
@@ -580,7 +580,7 @@ graph TD
 
     style A fill:#0173B2,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#DE8F05,color:#000
+    style D fill:#DE8F05,color:#fff
     style G fill:#029E73,color:#fff
 ```
 
@@ -711,7 +711,7 @@ graph TD
 
     style A fill:#0173B2,color:#fff
     style D fill:#029E73,color:#fff
-    style G fill:#CC78BC,color:#000
+    style G fill:#CC78BC,color:#fff
 ```
 
 ```yaml
@@ -947,8 +947,8 @@ graph TD
     style C fill:#029E73,color:#fff
     style F fill:#029E73,color:#fff
     style H fill:#0173B2,color:#fff
-    style I fill:#CC78BC,color:#000
-    style J fill:#CC78BC,color:#000
+    style I fill:#CC78BC,color:#fff
+    style J fill:#CC78BC,color:#fff
 ```
 
 ```yaml
@@ -1112,7 +1112,7 @@ graph TD
     A --> E["Remaining: 1.0 core<br/>Available for bursting"]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
 ```
@@ -1245,8 +1245,8 @@ graph TD
     E -->|Swap Available| G["Use Swap<br/>Performance Degraded"]
 
     style C fill:#029E73,color:#fff
-    style D fill:#DE8F05,color:#000
-    style F fill:#CC78BC,color:#000
+    style D fill:#DE8F05,color:#fff
+    style F fill:#CC78BC,color:#fff
 ```
 
 ```yaml
@@ -1538,7 +1538,7 @@ graph TD
     D --> E["Kibana<br/>Visualization"]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C3 fill:#029E73,color:#fff
     style C4 fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
@@ -2133,7 +2133,7 @@ graph TD
 
     style A fill:#0173B2,color:#fff
     style D fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#fff
     style E fill:#029E73,color:#fff
 ```
 

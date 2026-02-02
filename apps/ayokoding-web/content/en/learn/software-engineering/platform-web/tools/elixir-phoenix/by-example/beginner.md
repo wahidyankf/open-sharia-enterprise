@@ -35,12 +35,12 @@ graph TD
     E --> G[WebSocket Handler]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
-    style C fill:#DE8F05,color:#000
-    style D fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
+    style C fill:#DE8F05,color:#fff
+    style D fill:#DE8F05,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#CC78BC,color:#000
-    style G fill:#CC78BC,color:#000
+    style F fill:#CC78BC,color:#fff
+    style G fill:#CC78BC,color:#fff
 ```
 
 ```elixir
@@ -135,9 +135,9 @@ graph TD
     H --> I[Response]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style H fill:#CC78BC,color:#000
+    style H fill:#CC78BC,color:#fff
     style I fill:#0173B2,color:#fff
 ```
 
@@ -281,10 +281,10 @@ graph TD
     F --> I[Controller Action]
 
     style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#000
+    style C fill:#DE8F05,color:#fff
     style F fill:#029E73,color:#fff
-    style G fill:#CA9161,color:#000
-    style H fill:#CC78BC,color:#000
+    style G fill:#CA9161,color:#fff
+    style H fill:#CC78BC,color:#fff
     style I fill:#029E73,color:#fff
 ```
 
@@ -507,10 +507,10 @@ graph TD
     I --> D
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style D fill:#029E73,color:#fff
-    style F fill:#CC78BC,color:#000
-    style H fill:#DE8F05,color:#000
+    style F fill:#CC78BC,color:#fff
+    style H fill:#DE8F05,color:#fff
 ```
 
 ```elixir
@@ -1559,7 +1559,7 @@ graph TD
     B --> G[DELETE :id/delete - remove comment]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff

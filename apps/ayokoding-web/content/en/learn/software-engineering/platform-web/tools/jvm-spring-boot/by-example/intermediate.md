@@ -484,8 +484,8 @@ graph TD
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#DE8F05,stroke:#000,color:#000
-    style E fill:#CC78BC,stroke:#000,color:#000
+    style D fill:#DE8F05,stroke:#000,color:#fff
+    style E fill:#CC78BC,stroke:#000,color:#fff
     style I fill:#029E73,stroke:#000,color:#fff
 ```
 
@@ -1202,10 +1202,10 @@ flowchart TD
     K --> F
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
-    style G fill:#CC78BC,stroke:#000,color:#000
-    style L fill:#CC78BC,stroke:#000,color:#000
+    style G fill:#CC78BC,stroke:#000,color:#fff
+    style L fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 ---
@@ -2799,9 +2799,9 @@ flowchart TD
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style E fill:#DE8F05,stroke:#000,color:#000
-    style K fill:#CC78BC,stroke:#000,color:#000
-    style O fill:#CA9161,stroke:#000,color:#000
+    style E fill:#DE8F05,stroke:#000,color:#fff
+    style K fill:#CC78BC,stroke:#000,color:#fff
+    style O fill:#CA9161,stroke:#000,color:#fff
 ```
 
 ---
@@ -3258,9 +3258,9 @@ graph TD
     L --> M[No Database Overload]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style C fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#000
-    style F fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
+    style F fill:#DE8F05,stroke:#000,color:#fff
     style J fill:#029E73,stroke:#000,color:#fff
     style M fill:#029E73,stroke:#000,color:#fff
 ```
@@ -4398,8 +4398,8 @@ flowchart LR
 
     style Server fill:#0173B2,color:#fff
     style C1 fill:#029E73,color:#fff
-    style C2 fill:#DE8F05,color:#000
-    style C3 fill:#CC78BC,color:#000
+    style C2 fill:#DE8F05,color:#fff
+    style C3 fill:#CC78BC,color:#fff
 ```
 
 **Key Takeaway**: SSE provides unidirectional server-to-client streaming over HTTP—simpler than WebSocket for use cases like live dashboards, notifications, and progress updates where bidirectional communication isn't needed.
@@ -4630,9 +4630,9 @@ graph TD
 
     style Client fill:#0173B2,color:#fff
     style V1 fill:#029E73,color:#fff
-    style V2 fill:#DE8F05,color:#000
-    style R1 fill:#CC78BC,color:#000
-    style R2 fill:#CA9161,color:#000
+    style V2 fill:#DE8F05,color:#fff
+    style R1 fill:#CC78BC,color:#fff
+    style R2 fill:#CA9161,color:#fff
 ```
 
 **Key Takeaway**: Choose versioning strategy based on client capabilities—URL versioning is most visible and cacheable, header versioning keeps URLs clean, content negotiation follows REST standards, and parameter versioning is simplest for internal APIs.
@@ -5062,10 +5062,10 @@ flowchart TD
     FilterAfter --> Response[HTTP Response]
 
     style Request fill:#0173B2,color:#fff
-    style Filter fill:#DE8F05,color:#000
+    style Filter fill:#DE8F05,color:#fff
     style DispatcherServlet fill:#029E73,color:#fff
-    style InterceptorPre fill:#CC78BC,color:#000
-    style AOP_Before fill:#CA9161,color:#000
+    style InterceptorPre fill:#CC78BC,color:#fff
+    style AOP_Before fill:#CA9161,color:#fff
     style Controller fill:#0173B2,color:#fff
     style Response fill:#029E73,color:#fff
 ```

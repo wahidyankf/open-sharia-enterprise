@@ -98,13 +98,13 @@ graph TD
     F --> H[x: &str = hello at Address C]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#CA9161,color:#000
-    style E fill:#DE8F05,color:#000
+    style D fill:#CA9161,color:#fff
+    style E fill:#DE8F05,color:#fff
     style F fill:#029E73,color:#fff
-    style G fill:#CA9161,color:#000
-    style H fill:#CC78BC,color:#000
+    style G fill:#CA9161,color:#fff
+    style H fill:#CC78BC,color:#fff
 ```
 
 ```rust
@@ -487,9 +487,9 @@ graph TD
     C -->|No| B
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#CA9161,color:#000
+    style D fill:#CA9161,color:#fff
 ```
 
 ```rust
@@ -568,11 +568,11 @@ graph TD
     F --> G[Memory freed once]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#DE8F05,color:#000
-    style E fill:#CA9161,color:#000
-    style F fill:#CC78BC,color:#000
+    style D fill:#DE8F05,color:#fff
+    style E fill:#CA9161,color:#fff
+    style F fill:#CC78BC,color:#fff
     style G fill:#029E73,color:#fff
 ```
 
@@ -763,11 +763,11 @@ graph TD
     B --> F[s dropped]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#CC78BC,color:#000
+    style D fill:#CC78BC,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#CA9161,color:#000
+    style F fill:#CA9161,color:#fff
 ```
 
 ```rust
@@ -865,13 +865,13 @@ graph TD
     H --> I[Only ONE mutable ref at a time]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
-    style D fill:#CC78BC,color:#000
-    style E fill:#DE8F05,color:#000
-    style F fill:#CA9161,color:#000
+    style D fill:#CC78BC,color:#fff
+    style E fill:#DE8F05,color:#fff
+    style F fill:#CA9161,color:#fff
     style G fill:#029E73,color:#fff
-    style H fill:#CC78BC,color:#000
+    style H fill:#CC78BC,color:#fff
     style I fill:#0173B2,color:#fff
 ```
 
@@ -979,15 +979,15 @@ graph TD
     I --> J[No other references]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
     style F fill:#029E73,color:#fff
-    style G fill:#CC78BC,color:#000
-    style H fill:#CC78BC,color:#000
-    style I fill:#CC78BC,color:#000
-    style J fill:#CC78BC,color:#000
+    style G fill:#CC78BC,color:#fff
+    style H fill:#CC78BC,color:#fff
+    style I fill:#CC78BC,color:#fff
+    style J fill:#CC78BC,color:#fff
 ```
 
 ```rust
@@ -1226,13 +1226,13 @@ graph TD
     D --> H[Heap: 'user@example.com' bytes]
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
-    style E fill:#CC78BC,color:#000
-    style F fill:#CC78BC,color:#000
-    style G fill:#CA9161,color:#000
-    style H fill:#CA9161,color:#000
+    style E fill:#CC78BC,color:#fff
+    style F fill:#CC78BC,color:#fff
+    style G fill:#CA9161,color:#fff
+    style H fill:#CA9161,color:#fff
 ```
 
 ```rust
@@ -1803,12 +1803,12 @@ graph TD
     F --> G
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
-    style E fill:#CC78BC,color:#000
-    style F fill:#CC78BC,color:#000
-    style G fill:#CA9161,color:#000
+    style E fill:#CC78BC,color:#fff
+    style F fill:#CC78BC,color:#fff
+    style G fill:#CA9161,color:#fff
 ```
 
 ```rust
@@ -1948,11 +1948,11 @@ graph TD
     E --> F
 
     style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#000
+    style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
     style E fill:#029E73,color:#fff
-    style F fill:#CC78BC,color:#000
+    style F fill:#CC78BC,color:#fff
 ```
 
 ```rust

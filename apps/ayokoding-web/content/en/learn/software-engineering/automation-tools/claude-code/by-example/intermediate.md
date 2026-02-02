@@ -23,10 +23,10 @@ graph LR
     D -->|Update| E[Fix All Imports]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Commands**:
@@ -121,9 +121,9 @@ graph TD
     C -->|Imported By| E
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
-    style C fill:#DE8F05,stroke:#000,color:#000
-    style D fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
+    style D fill:#DE8F05,stroke:#000,color:#fff
     style E fill:#029E73,stroke:#000,color:#fff
 ```
 
@@ -282,13 +282,13 @@ graph TD
     G -->|Fix Request| H[Add Try-Catch Blocks]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#000
-    style F fill:#CA9161,stroke:#000,color:#000
-    style G fill:#CA9161,stroke:#000,color:#000
-    style H fill:#CA9161,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
+    style F fill:#CA9161,stroke:#000,color:#fff
+    style G fill:#CA9161,stroke:#000,color:#fff
+    style H fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Commands**:
@@ -361,10 +361,10 @@ graph LR
     D -->|Generate| E
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Commands**:
@@ -681,10 +681,10 @@ graph TD
     C -->|Still Used| E[Keep Code]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Commands**:
@@ -815,15 +815,15 @@ graph LR
     F -->|Sections| J[Breaking Changes]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
-    style C fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
     style D fill:#029E73,stroke:#000,color:#fff
     style E fill:#029E73,stroke:#000,color:#fff
-    style F fill:#CC78BC,stroke:#000,color:#000
-    style G fill:#CA9161,stroke:#000,color:#000
-    style H fill:#CA9161,stroke:#000,color:#000
-    style I fill:#CA9161,stroke:#000,color:#000
-    style J fill:#CA9161,stroke:#000,color:#000
+    style F fill:#CC78BC,stroke:#000,color:#fff
+    style G fill:#CA9161,stroke:#000,color:#fff
+    style H fill:#CA9161,stroke:#000,color:#fff
+    style I fill:#CA9161,stroke:#000,color:#fff
+    style J fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Commands**:
@@ -1002,9 +1002,9 @@ You: Create an architecture diagram showing the layers of this application
                                     # =>     C -->|schema| D
                                     # =>
                                     # =>     style A fill:#0173B2,stroke:#000,color:#fff
-                                    # =>     style B fill:#DE8F05,stroke:#000,color:#000
+                                    # =>     style B fill:#DE8F05,stroke:#000,color:#fff
                                     # =>     style C fill:#029E73,stroke:#000,color:#fff
-                                    # =>     style D fill:#CC78BC,stroke:#000,color:#000
+                                    # =>     style D fill:#CC78BC,stroke:#000,color:#fff
                                     # => Adds to docs/architecture.md
 ```
 
@@ -1100,10 +1100,10 @@ graph LR
     D -->|Generate Fixes| E
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Commands**:

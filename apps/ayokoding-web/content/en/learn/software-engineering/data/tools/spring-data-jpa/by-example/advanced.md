@@ -93,9 +93,9 @@ graph TD
     style B fill:#029E73,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
     style D fill:#029E73,stroke:#000,color:#fff
-    style E fill:#DE8F05,stroke:#000,color:#000
-    style F fill:#DE8F05,stroke:#000,color:#000
-    style G fill:#CC78BC,stroke:#000,color:#000
+    style E fill:#DE8F05,stroke:#000,color:#fff
+    style F fill:#DE8F05,stroke:#000,color:#fff
+    style G fill:#CC78BC,stroke:#000,color:#fff
     style H fill:#0173B2,stroke:#000,color:#fff
 ```
 
@@ -393,9 +393,9 @@ graph TD
     style C fill:#029E73,stroke:#000,color:#fff
     style D fill:#029E73,stroke:#000,color:#fff
     style E fill:#029E73,stroke:#000,color:#fff
-    style F fill:#DE8F05,stroke:#000,color:#000
-    style G fill:#DE8F05,stroke:#000,color:#000
-    style H fill:#CC78BC,stroke:#000,color:#000
+    style F fill:#DE8F05,stroke:#000,color:#fff
+    style G fill:#DE8F05,stroke:#000,color:#fff
+    style H fill:#CC78BC,stroke:#000,color:#fff
     style I fill:#0173B2,stroke:#000,color:#fff
 ```
 
@@ -986,10 +986,10 @@ graph TD
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#029E73,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#DE8F05,stroke:#000,color:#000
-    style E fill:#DE8F05,stroke:#000,color:#000
-    style F fill:#CC78BC,stroke:#000,color:#000
-    style G fill:#CC78BC,stroke:#000,color:#000
+    style D fill:#DE8F05,stroke:#000,color:#fff
+    style E fill:#DE8F05,stroke:#000,color:#fff
+    style F fill:#CC78BC,stroke:#000,color:#fff
+    style G fill:#CC78BC,stroke:#000,color:#fff
     style H fill:#029E73,stroke:#000,color:#fff
     style I fill:#0173B2,stroke:#000,color:#fff
 ```
@@ -1435,15 +1435,15 @@ graph TD
     F --> J[TypedQuery DTO]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#CC78BC,stroke:#000,color:#000
+    style B fill:#CC78BC,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
     style D fill:#029E73,stroke:#000,color:#fff
     style E fill:#029E73,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
-    style G fill:#DE8F05,stroke:#000,color:#000
-    style H fill:#DE8F05,stroke:#000,color:#000
-    style I fill:#DE8F05,stroke:#000,color:#000
-    style J fill:#DE8F05,stroke:#000,color:#000
+    style G fill:#DE8F05,stroke:#000,color:#fff
+    style H fill:#DE8F05,stroke:#000,color:#fff
+    style I fill:#DE8F05,stroke:#000,color:#fff
+    style J fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 ```java
@@ -1625,8 +1625,8 @@ graph TD
     style B fill:#029E73,stroke:#000,color:#fff
     style C fill:#0173B2,stroke:#000,color:#fff
     style D fill:#029E73,stroke:#000,color:#fff
-    style E fill:#DE8F05,stroke:#000,color:#000
-    style F fill:#CC78BC,stroke:#000,color:#000
+    style E fill:#DE8F05,stroke:#000,color:#fff
+    style F fill:#CC78BC,stroke:#000,color:#fff
     style G fill:#029E73,stroke:#000,color:#fff
     style H fill:#0173B2,stroke:#000,color:#fff
 ```
@@ -1872,13 +1872,13 @@ graph TD
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#029E73,stroke:#000,color:#fff
-    style C fill:#CC78BC,stroke:#000,color:#000
-    style D fill:#DE8F05,stroke:#000,color:#000
-    style E fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#CC78BC,stroke:#000,color:#fff
+    style D fill:#DE8F05,stroke:#000,color:#fff
+    style E fill:#DE8F05,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
     style G fill:#029E73,stroke:#000,color:#fff
     style H fill:#0173B2,stroke:#000,color:#fff
-    style I fill:#CA9161,stroke:#000,color:#000
+    style I fill:#CA9161,stroke:#000,color:#fff
     style J fill:#0173B2,stroke:#000,color:#fff
 ```
 
@@ -2394,9 +2394,9 @@ graph TD
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#029E73,stroke:#000,color:#fff
-    style C fill:#DE8F05,stroke:#000,color:#000
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CC78BC,stroke:#000,color:#000
+    style C fill:#DE8F05,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CC78BC,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
     style G fill:#029E73,stroke:#000,color:#fff
     style H fill:#0173B2,stroke:#000,color:#fff
@@ -2536,13 +2536,13 @@ graph TD
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#029E73,stroke:#000,color:#fff
-    style C fill:#DE8F05,stroke:#000,color:#000
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CC78BC,stroke:#000,color:#000
+    style C fill:#DE8F05,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CC78BC,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
-    style G fill:#CA9161,stroke:#000,color:#000
+    style G fill:#CA9161,stroke:#000,color:#fff
     style H fill:#029E73,stroke:#000,color:#fff
-    style I fill:#CA9161,stroke:#000,color:#000
+    style I fill:#CA9161,stroke:#000,color:#fff
     style J fill:#0173B2,stroke:#000,color:#fff
 ```
 
@@ -2716,10 +2716,10 @@ graph TD
     I --> L[@PostRemove]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#CC78BC,stroke:#000,color:#000
-    style C fill:#DE8F05,stroke:#000,color:#000
-    style D fill:#DE8F05,stroke:#000,color:#000
-    style E fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#CC78BC,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
+    style D fill:#DE8F05,stroke:#000,color:#fff
+    style E fill:#DE8F05,stroke:#000,color:#fff
     style F fill:#029E73,stroke:#000,color:#fff
     style G fill:#029E73,stroke:#000,color:#fff
     style H fill:#029E73,stroke:#000,color:#fff
@@ -3331,13 +3331,13 @@ graph TD
     E --> I[1 Query with JOIN]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#CA9161,stroke:#000,color:#000
-    style C fill:#CA9161,stroke:#000,color:#000
+    style B fill:#CA9161,stroke:#000,color:#fff
+    style C fill:#CA9161,stroke:#000,color:#fff
     style D fill:#029E73,stroke:#000,color:#fff
     style E fill:#029E73,stroke:#000,color:#fff
-    style F fill:#DE8F05,stroke:#000,color:#000
-    style G fill:#DE8F05,stroke:#000,color:#000
-    style H fill:#CC78BC,stroke:#000,color:#000
+    style F fill:#DE8F05,stroke:#000,color:#fff
+    style G fill:#DE8F05,stroke:#000,color:#fff
+    style H fill:#CC78BC,stroke:#000,color:#fff
     style I fill:#0173B2,stroke:#000,color:#fff
 ```
 

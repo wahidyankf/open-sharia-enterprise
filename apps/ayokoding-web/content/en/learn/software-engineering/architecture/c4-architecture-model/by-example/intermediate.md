@@ -46,14 +46,14 @@ graph TD
     OrderModule -.->|"Anti-corruption layer"| UserModule
 
     style MonolithApp fill:#0173B2,stroke:#000,color:#fff
-    style APIGatewayModule fill:#DE8F05,stroke:#000,color:#000
+    style APIGatewayModule fill:#DE8F05,stroke:#000,color:#fff
     style UserModule fill:#029E73,stroke:#000,color:#fff
     style OrderModule fill:#029E73,stroke:#000,color:#fff
     style ProductModule fill:#029E73,stroke:#000,color:#fff
-    style SharedKernel fill:#CC78BC,stroke:#000,color:#000
-    style UserDB fill:#CA9161,stroke:#000,color:#000
-    style OrderDB fill:#CA9161,stroke:#000,color:#000
-    style ProductDB fill:#CA9161,stroke:#000,color:#000
+    style SharedKernel fill:#CC78BC,stroke:#000,color:#fff
+    style UserDB fill:#CA9161,stroke:#000,color:#fff
+    style OrderDB fill:#CA9161,stroke:#000,color:#fff
+    style ProductDB fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -99,12 +99,12 @@ graph TD
     QueryHandler -->|"Reads from"| ReadModel
 
     style OrderService fill:#0173B2,stroke:#000,color:#fff
-    style CommandHandler fill:#DE8F05,stroke:#000,color:#000
+    style CommandHandler fill:#DE8F05,stroke:#000,color:#fff
     style EventStore fill:#029E73,stroke:#000,color:#fff
-    style EventHandler fill:#DE8F05,stroke:#000,color:#000
-    style Aggregate fill:#CC78BC,stroke:#000,color:#000
-    style ReadModel fill:#CA9161,stroke:#000,color:#000
-    style QueryHandler fill:#DE8F05,stroke:#000,color:#000
+    style EventHandler fill:#DE8F05,stroke:#000,color:#fff
+    style Aggregate fill:#CC78BC,stroke:#000,color:#fff
+    style ReadModel fill:#CA9161,stroke:#000,color:#fff
+    style QueryHandler fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -161,12 +161,12 @@ graph TD
     style RESTAdapter fill:#029E73,stroke:#000,color:#fff
     style GraphQLAdapter fill:#029E73,stroke:#000,color:#fff
     style MessageAdapter fill:#029E73,stroke:#000,color:#fff
-    style InputPort fill:#DE8F05,stroke:#000,color:#000
-    style BusinessLogic fill:#CC78BC,stroke:#000,color:#000
-    style OutputPort fill:#DE8F05,stroke:#000,color:#000
-    style PostgreSQLAdapter fill:#CA9161,stroke:#000,color:#000
-    style MongoDBAdapter fill:#CA9161,stroke:#000,color:#000
-    style EventPublisher fill:#CA9161,stroke:#000,color:#000
+    style InputPort fill:#DE8F05,stroke:#000,color:#fff
+    style BusinessLogic fill:#CC78BC,stroke:#000,color:#fff
+    style OutputPort fill:#DE8F05,stroke:#000,color:#fff
+    style PostgreSQLAdapter fill:#CA9161,stroke:#000,color:#fff
+    style MongoDBAdapter fill:#CA9161,stroke:#000,color:#fff
+    style EventPublisher fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -214,13 +214,13 @@ graph TD
     CircuitBreaker -->|"Records metrics"| MetricsCollector
 
     style ServiceA fill:#0173B2,stroke:#000,color:#fff
-    style APIController fill:#DE8F05,stroke:#000,color:#000
+    style APIController fill:#DE8F05,stroke:#000,color:#fff
     style BusinessLogic fill:#029E73,stroke:#000,color:#fff
-    style CircuitBreaker fill:#CC78BC,stroke:#000,color:#000
-    style ServiceBClient fill:#CA9161,stroke:#000,color:#000
+    style CircuitBreaker fill:#CC78BC,stroke:#000,color:#fff
+    style ServiceBClient fill:#CA9161,stroke:#000,color:#fff
     style FallbackHandler fill:#029E73,stroke:#000,color:#fff
-    style Cache fill:#CA9161,stroke:#000,color:#000
-    style MetricsCollector fill:#CA9161,stroke:#000,color:#000
+    style Cache fill:#CA9161,stroke:#000,color:#fff
+    style MetricsCollector fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -270,13 +270,13 @@ graph TD
     CompensationHandler -.->|"Release inventory"| InventoryClient
 
     style OrderService fill:#0173B2,stroke:#000,color:#fff
-    style SagaOrchestrator fill:#DE8F05,stroke:#000,color:#000
+    style SagaOrchestrator fill:#DE8F05,stroke:#000,color:#fff
     style SagaLog fill:#029E73,stroke:#000,color:#fff
-    style OrderManager fill:#CC78BC,stroke:#000,color:#000
-    style PaymentClient fill:#CA9161,stroke:#000,color:#000
-    style InventoryClient fill:#CA9161,stroke:#000,color:#000
-    style ShippingClient fill:#CA9161,stroke:#000,color:#000
-    style CompensationHandler fill:#DE8F05,stroke:#000,color:#000
+    style OrderManager fill:#CC78BC,stroke:#000,color:#fff
+    style PaymentClient fill:#CA9161,stroke:#000,color:#fff
+    style InventoryClient fill:#CA9161,stroke:#000,color:#fff
+    style ShippingClient fill:#CA9161,stroke:#000,color:#fff
+    style CompensationHandler fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -325,13 +325,13 @@ graph TD
     ResponseCache -->|"6. Cache miss"| BackendPool
 
     style Gateway fill:#0173B2,stroke:#000,color:#fff
-    style RequestRouter fill:#DE8F05,stroke:#000,color:#000
+    style RequestRouter fill:#DE8F05,stroke:#000,color:#fff
     style RateLimiter fill:#029E73,stroke:#000,color:#fff
-    style RateLimitStore fill:#CA9161,stroke:#000,color:#000
-    style AuthMiddleware fill:#CC78BC,stroke:#000,color:#000
+    style RateLimitStore fill:#CA9161,stroke:#000,color:#fff
+    style AuthMiddleware fill:#CC78BC,stroke:#000,color:#fff
     style QuotaManager fill:#029E73,stroke:#000,color:#fff
-    style ResponseCache fill:#CA9161,stroke:#000,color:#000
-    style BackendPool fill:#CA9161,stroke:#000,color:#000
+    style ResponseCache fill:#CA9161,stroke:#000,color:#fff
+    style BackendPool fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -384,13 +384,13 @@ graph TD
     CacheInvalidator -->|"Invalidate L2"| L2Cache
 
     style Service fill:#0173B2,stroke:#000,color:#fff
-    style APIHandler fill:#DE8F05,stroke:#000,color:#000
+    style APIHandler fill:#DE8F05,stroke:#000,color:#fff
     style L1Cache fill:#029E73,stroke:#000,color:#fff
-    style L2Cache fill:#CA9161,stroke:#000,color:#000
-    style CacheInvalidator fill:#CC78BC,stroke:#000,color:#000
-    style EventListener fill:#DE8F05,stroke:#000,color:#000
+    style L2Cache fill:#CA9161,stroke:#000,color:#fff
+    style CacheInvalidator fill:#CC78BC,stroke:#000,color:#fff
+    style EventListener fill:#DE8F05,stroke:#000,color:#fff
     style BusinessLogic fill:#029E73,stroke:#000,color:#fff
-    style Repository fill:#CA9161,stroke:#000,color:#000
+    style Repository fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -439,13 +439,13 @@ graph TD
     TenantAwareRepository -->|"Appends WHERE tenant_id"| ConnectionPool
 
     style MultiTenantApp fill:#0173B2,stroke:#000,color:#fff
-    style TenantResolver fill:#DE8F05,stroke:#000,color:#000
-    style TenantContext fill:#CC78BC,stroke:#000,color:#000
+    style TenantResolver fill:#DE8F05,stroke:#000,color:#fff
+    style TenantContext fill:#CC78BC,stroke:#000,color:#fff
     style APIController fill:#029E73,stroke:#000,color:#fff
-    style TenantValidator fill:#DE8F05,stroke:#000,color:#000
+    style TenantValidator fill:#DE8F05,stroke:#000,color:#fff
     style BusinessLogic fill:#029E73,stroke:#000,color:#fff
-    style TenantAwareRepository fill:#CA9161,stroke:#000,color:#000
-    style ConnectionPool fill:#CA9161,stroke:#000,color:#000
+    style TenantAwareRepository fill:#CA9161,stroke:#000,color:#fff
+    style ConnectionPool fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -509,18 +509,18 @@ graph TD
 
     RDS -.->|Replication| RDSReplica
 
-    style Internet fill:#CC78BC,stroke:#000,color:#000
-    style CloudFront fill:#DE8F05,stroke:#000,color:#000
-    style ALB fill:#DE8F05,stroke:#000,color:#000
+    style Internet fill:#CC78BC,stroke:#000,color:#fff
+    style CloudFront fill:#DE8F05,stroke:#000,color:#fff
+    style ALB fill:#DE8F05,stroke:#000,color:#fff
     style EC2_1 fill:#029E73,stroke:#000,color:#fff
     style EC2_2 fill:#029E73,stroke:#000,color:#fff
     style WebApp1 fill:#0173B2,stroke:#000,color:#fff
     style WebApp2 fill:#0173B2,stroke:#000,color:#fff
     style APIServer1 fill:#0173B2,stroke:#000,color:#fff
     style APIServer2 fill:#0173B2,stroke:#000,color:#fff
-    style RDS fill:#CA9161,stroke:#000,color:#000
-    style RDSReplica fill:#CA9161,stroke:#000,color:#000
-    style S3 fill:#CA9161,stroke:#000,color:#000
+    style RDS fill:#CA9161,stroke:#000,color:#fff
+    style RDSReplica fill:#CA9161,stroke:#000,color:#fff
+    style S3 fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -578,17 +578,17 @@ graph TD
     WorkerPods -->|Reads/Writes| PVC
     WorkerPods -->|Queries| ExternalDB
 
-    style Users fill:#CC78BC,stroke:#000,color:#000
-    style Ingress fill:#DE8F05,stroke:#000,color:#000
-    style ServiceMesh fill:#DE8F05,stroke:#000,color:#000
+    style Users fill:#CC78BC,stroke:#000,color:#fff
+    style Ingress fill:#DE8F05,stroke:#000,color:#fff
+    style ServiceMesh fill:#DE8F05,stroke:#000,color:#fff
     style FrontendService fill:#029E73,stroke:#000,color:#fff
     style FrontendPods fill:#0173B2,stroke:#000,color:#fff
     style APIService fill:#029E73,stroke:#000,color:#fff
     style APIPods fill:#0173B2,stroke:#000,color:#fff
     style WorkerService fill:#029E73,stroke:#000,color:#fff
     style WorkerPods fill:#0173B2,stroke:#000,color:#fff
-    style PVC fill:#CA9161,stroke:#000,color:#000
-    style ExternalDB fill:#CA9161,stroke:#000,color:#000
+    style PVC fill:#CA9161,stroke:#000,color:#fff
+    style ExternalDB fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -633,11 +633,11 @@ graph TD
     GreenEnv -->|Contains| GreenInstances
     GreenInstances -->|Connects| BlueDB
 
-    style Users fill:#CC78BC,stroke:#000,color:#000
-    style Router fill:#DE8F05,stroke:#000,color:#000
+    style Users fill:#CC78BC,stroke:#000,color:#fff
+    style Router fill:#DE8F05,stroke:#000,color:#fff
     style BlueEnv fill:#0173B2,stroke:#000,color:#fff
     style BlueInstances fill:#029E73,stroke:#000,color:#fff
-    style BlueDB fill:#CA9161,stroke:#000,color:#000
+    style BlueDB fill:#CA9161,stroke:#000,color:#fff
     style GreenEnv fill:#029E73,stroke:#000,color:#fff
     style GreenInstances fill:#029E73,stroke:#000,color:#fff
 ```
@@ -693,12 +693,12 @@ graph TD
     MetricsCollector -->|"Analysis"| AutomatedPromotion
     AutomatedPromotion -->|"Adjust weights"| TrafficSplitter
 
-    style Users fill:#CC78BC,stroke:#000,color:#000
-    style TrafficSplitter fill:#DE8F05,stroke:#000,color:#000
+    style Users fill:#CC78BC,stroke:#000,color:#fff
+    style TrafficSplitter fill:#DE8F05,stroke:#000,color:#fff
     style StableVersion fill:#0173B2,stroke:#000,color:#fff
     style CanaryVersion fill:#029E73,stroke:#000,color:#fff
-    style MetricsCollector fill:#CA9161,stroke:#000,color:#000
-    style AutomatedPromotion fill:#DE8F05,stroke:#000,color:#000
+    style MetricsCollector fill:#CA9161,stroke:#000,color:#fff
+    style AutomatedPromotion fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Canary Progression**:
@@ -778,8 +778,8 @@ graph TD
     EUWestApp -->|Cache| GlobalCache
     APSoutheastApp -->|Cache| GlobalCache
 
-    style GlobalUsers fill:#CC78BC,stroke:#000,color:#000
-    style Route53 fill:#DE8F05,stroke:#000,color:#000
+    style GlobalUsers fill:#CC78BC,stroke:#000,color:#fff
+    style Route53 fill:#DE8F05,stroke:#000,color:#fff
     style USEast fill:#0173B2,stroke:#000,color:#fff
     style EUWest fill:#0173B2,stroke:#000,color:#fff
     style APSoutheast fill:#0173B2,stroke:#000,color:#fff
@@ -789,10 +789,10 @@ graph TD
     style USEastApp fill:#029E73,stroke:#000,color:#fff
     style EUWestApp fill:#029E73,stroke:#000,color:#fff
     style APSoutheastApp fill:#029E73,stroke:#000,color:#fff
-    style USEastDB fill:#CA9161,stroke:#000,color:#000
-    style EUWestDB fill:#CA9161,stroke:#000,color:#000
-    style APSoutheastDB fill:#CA9161,stroke:#000,color:#000
-    style GlobalCache fill:#DE8F05,stroke:#000,color:#000
+    style USEastDB fill:#CA9161,stroke:#000,color:#fff
+    style EUWestDB fill:#CA9161,stroke:#000,color:#fff
+    style APSoutheastDB fill:#CA9161,stroke:#000,color:#fff
+    style GlobalCache fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -848,16 +848,16 @@ graph TD
     EventBridge -->|order.created| EmailFunction
     EmailFunction -->|Reads templates| S3
 
-    style Users fill:#CC78BC,stroke:#000,color:#000
-    style CloudFront fill:#DE8F05,stroke:#000,color:#000
-    style APIGateway fill:#DE8F05,stroke:#000,color:#000
+    style Users fill:#CC78BC,stroke:#000,color:#fff
+    style CloudFront fill:#DE8F05,stroke:#000,color:#fff
+    style APIGateway fill:#DE8F05,stroke:#000,color:#fff
     style AuthFunction fill:#0173B2,stroke:#000,color:#fff
     style UserFunction fill:#0173B2,stroke:#000,color:#fff
     style OrderFunction fill:#0173B2,stroke:#000,color:#fff
     style EventBridge fill:#029E73,stroke:#000,color:#fff
     style EmailFunction fill:#0173B2,stroke:#000,color:#fff
-    style DynamoDB fill:#CA9161,stroke:#000,color:#000
-    style S3 fill:#CA9161,stroke:#000,color:#000
+    style DynamoDB fill:#CA9161,stroke:#000,color:#fff
+    style S3 fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -916,16 +916,16 @@ graph TD
     OnPremDB -.->|"Daily sync"| S3
     AuroraDB -.->|"Replication"| S3
 
-    style OnPremises fill:#CA9161,stroke:#000,color:#000
+    style OnPremises fill:#CA9161,stroke:#000,color:#fff
     style OnPremApp fill:#029E73,stroke:#000,color:#fff
-    style OnPremDB fill:#DE8F05,stroke:#000,color:#000
-    style VPN fill:#CC78BC,stroke:#000,color:#000
+    style OnPremDB fill:#DE8F05,stroke:#000,color:#fff
+    style VPN fill:#CC78BC,stroke:#000,color:#fff
     style AWSCloud fill:#0173B2,stroke:#000,color:#fff
     style AWSVPC fill:#0173B2,stroke:#000,color:#fff
     style APIGateway fill:#029E73,stroke:#000,color:#fff
     style NewApps fill:#029E73,stroke:#000,color:#fff
-    style AuroraDB fill:#DE8F05,stroke:#000,color:#000
-    style S3 fill:#DE8F05,stroke:#000,color:#000
+    style AuroraDB fill:#DE8F05,stroke:#000,color:#fff
+    style S3 fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1220,14 +1220,14 @@ graph TD
     WebBFF -->|"Aggregates"| OrderService
     WebBFF -->|"Includes (more screen space)"| RecommendationService
 
-    style MobileApp fill:#CC78BC,stroke:#000,color:#000
-    style WebApp fill:#CC78BC,stroke:#000,color:#000
+    style MobileApp fill:#CC78BC,stroke:#000,color:#fff
+    style WebApp fill:#CC78BC,stroke:#000,color:#fff
     style MobileBFF fill:#0173B2,stroke:#000,color:#fff
     style WebBFF fill:#0173B2,stroke:#000,color:#fff
     style UserService fill:#029E73,stroke:#000,color:#fff
     style ProductService fill:#029E73,stroke:#000,color:#fff
     style OrderService fill:#029E73,stroke:#000,color:#fff
-    style RecommendationService fill:#CA9161,stroke:#000,color:#000
+    style RecommendationService fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1282,9 +1282,9 @@ graph TD
     LegacyDB -.->|"Data sync"| NewUserDB
     LegacyDB -.->|"Data sync"| NewOrderDB
 
-    style Users fill:#CC78BC,stroke:#000,color:#000
-    style Proxy fill:#DE8F05,stroke:#000,color:#000
-    style LegacyMonolith fill:#CA9161,stroke:#000,color:#000
+    style Users fill:#CC78BC,stroke:#000,color:#fff
+    style Proxy fill:#DE8F05,stroke:#000,color:#fff
+    style LegacyMonolith fill:#CA9161,stroke:#000,color:#fff
     style NewUserService fill:#0173B2,stroke:#000,color:#fff
     style NewOrderService fill:#0173B2,stroke:#000,color:#fff
     style LegacyDB fill:#029E73,stroke:#000,color:#fff
@@ -1354,16 +1354,16 @@ graph TD
     ServiceAProxy -.->|Metrics| Telemetry
     ServiceBProxy -.->|Metrics| Telemetry
 
-    style Users fill:#CC78BC,stroke:#000,color:#000
-    style IngressGateway fill:#DE8F05,stroke:#000,color:#000
+    style Users fill:#CC78BC,stroke:#000,color:#fff
+    style IngressGateway fill:#DE8F05,stroke:#000,color:#fff
     style ServiceA fill:#029E73,stroke:#000,color:#fff
     style ServiceAApp fill:#0173B2,stroke:#000,color:#fff
-    style ServiceAProxy fill:#CC78BC,stroke:#000,color:#000
+    style ServiceAProxy fill:#CC78BC,stroke:#000,color:#fff
     style ServiceB fill:#029E73,stroke:#000,color:#fff
     style ServiceBApp fill:#0173B2,stroke:#000,color:#fff
-    style ServiceBProxy fill:#CC78BC,stroke:#000,color:#000
-    style ControlPlane fill:#DE8F05,stroke:#000,color:#000
-    style Telemetry fill:#CA9161,stroke:#000,color:#000
+    style ServiceBProxy fill:#CC78BC,stroke:#000,color:#fff
+    style ControlPlane fill:#DE8F05,stroke:#000,color:#fff
+    style Telemetry fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1420,16 +1420,16 @@ graph TD
     QueryAPI -->|Reads| ReadDB1
     QueryAPI -->|Reads| ReadDB2
 
-    style Users fill:#CC78BC,stroke:#000,color:#000
+    style Users fill:#CC78BC,stroke:#000,color:#fff
     style CommandAPI fill:#0173B2,stroke:#000,color:#fff
     style QueryAPI fill:#0173B2,stroke:#000,color:#fff
     style CommandHandler fill:#029E73,stroke:#000,color:#fff
-    style EventStore fill:#DE8F05,stroke:#000,color:#000
+    style EventStore fill:#DE8F05,stroke:#000,color:#fff
     style EventBus fill:#029E73,stroke:#000,color:#fff
-    style Projector1 fill:#CA9161,stroke:#000,color:#000
-    style Projector2 fill:#CA9161,stroke:#000,color:#000
-    style ReadDB1 fill:#CA9161,stroke:#000,color:#000
-    style ReadDB2 fill:#CA9161,stroke:#000,color:#000
+    style Projector1 fill:#CA9161,stroke:#000,color:#fff
+    style Projector2 fill:#CA9161,stroke:#000,color:#fff
+    style ReadDB1 fill:#CA9161,stroke:#000,color:#fff
+    style ReadDB2 fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1478,14 +1478,14 @@ graph TD
 
     ApolloGateway -.->|"Stitches responses"| Clients
 
-    style Clients fill:#CC78BC,stroke:#000,color:#000
-    style ApolloGateway fill:#DE8F05,stroke:#000,color:#000
+    style Clients fill:#CC78BC,stroke:#000,color:#fff
+    style ApolloGateway fill:#DE8F05,stroke:#000,color:#fff
     style UserSubgraph fill:#0173B2,stroke:#000,color:#fff
     style ProductSubgraph fill:#0173B2,stroke:#000,color:#fff
     style OrderSubgraph fill:#0173B2,stroke:#000,color:#fff
-    style UserDB fill:#CA9161,stroke:#000,color:#000
-    style ProductDB fill:#CA9161,stroke:#000,color:#000
-    style OrderDB fill:#CA9161,stroke:#000,color:#000
+    style UserDB fill:#CA9161,stroke:#000,color:#fff
+    style ProductDB fill:#CA9161,stroke:#000,color:#fff
+    style OrderDB fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Example Federated Query**:
@@ -1573,14 +1573,14 @@ graph TD
     ServiceA3 -.->|"Unhealthy"| HealthCheck
     HealthCheck -.->|"Deregister Service A3"| ServiceRegistry
 
-    style APIGateway fill:#DE8F05,stroke:#000,color:#000
-    style ServiceRegistry fill:#CC78BC,stroke:#000,color:#000
+    style APIGateway fill:#DE8F05,stroke:#000,color:#fff
+    style ServiceRegistry fill:#CC78BC,stroke:#000,color:#fff
     style ServiceA1 fill:#0173B2,stroke:#000,color:#fff
     style ServiceA2 fill:#0173B2,stroke:#000,color:#fff
-    style ServiceA3 fill:#CA9161,stroke:#000,color:#000
+    style ServiceA3 fill:#CA9161,stroke:#000,color:#fff
     style ServiceB1 fill:#029E73,stroke:#000,color:#fff
     style ServiceB2 fill:#029E73,stroke:#000,color:#fff
-    style HealthCheck fill:#DE8F05,stroke:#000,color:#000
+    style HealthCheck fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1633,16 +1633,16 @@ graph TD
 
     JaegerUI -.->|Queries| TracingDB
 
-    style User fill:#CC78BC,stroke:#000,color:#000
+    style User fill:#CC78BC,stroke:#000,color:#fff
     style Frontend fill:#0173B2,stroke:#000,color:#fff
-    style Gateway fill:#DE8F05,stroke:#000,color:#000
+    style Gateway fill:#DE8F05,stroke:#000,color:#fff
     style ServiceA fill:#029E73,stroke:#000,color:#fff
     style ServiceB fill:#029E73,stroke:#000,color:#fff
     style ServiceC fill:#029E73,stroke:#000,color:#fff
-    style JaegerAgent fill:#CA9161,stroke:#000,color:#000
-    style JaegerCollector fill:#CA9161,stroke:#000,color:#000
-    style TracingDB fill:#CA9161,stroke:#000,color:#000
-    style JaegerUI fill:#DE8F05,stroke:#000,color:#000
+    style JaegerAgent fill:#CA9161,stroke:#000,color:#fff
+    style JaegerCollector fill:#CA9161,stroke:#000,color:#fff
+    style TracingDB fill:#CA9161,stroke:#000,color:#fff
+    style JaegerUI fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Trace Visualization**:
@@ -1723,15 +1723,15 @@ graph TD
     WebAPI -->|"Query result"| ResultCache
     WebAPI -->|"5. Return completed/pending"| Users
 
-    style Users fill:#CC78BC,stroke:#000,color:#000
+    style Users fill:#CC78BC,stroke:#000,color:#fff
     style WebAPI fill:#0173B2,stroke:#000,color:#fff
-    style JobQueue fill:#DE8F05,stroke:#000,color:#000
+    style JobQueue fill:#DE8F05,stroke:#000,color:#fff
     style HighPriorityWorkers fill:#029E73,stroke:#000,color:#fff
     style NormalPriorityWorkers fill:#029E73,stroke:#000,color:#fff
-    style LowPriorityWorkers fill:#CA9161,stroke:#000,color:#000
-    style ResultCache fill:#DE8F05,stroke:#000,color:#000
-    style NotificationService fill:#CC78BC,stroke:#000,color:#000
-    style Database fill:#CA9161,stroke:#000,color:#000
+    style LowPriorityWorkers fill:#CA9161,stroke:#000,color:#fff
+    style ResultCache fill:#DE8F05,stroke:#000,color:#fff
+    style NotificationService fill:#CC78BC,stroke:#000,color:#fff
+    style Database fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Elements**:
@@ -1791,14 +1791,14 @@ graph TD
 
     CacheWarmer -.->|"Preload popular items"| L2Cache
 
-    style Users fill:#CC78BC,stroke:#000,color:#000
-    style CDN fill:#DE8F05,stroke:#000,color:#000
+    style Users fill:#CC78BC,stroke:#000,color:#fff
+    style CDN fill:#DE8F05,stroke:#000,color:#fff
     style ApplicationServer fill:#0173B2,stroke:#000,color:#fff
     style L1Cache fill:#029E73,stroke:#000,color:#fff
     style L2Cache fill:#029E73,stroke:#000,color:#fff
     style L3Cache fill:#029E73,stroke:#000,color:#fff
-    style PrimaryDB fill:#CA9161,stroke:#000,color:#000
-    style CacheWarmer fill:#CC78BC,stroke:#000,color:#000
+    style PrimaryDB fill:#CA9161,stroke:#000,color:#fff
+    style CacheWarmer fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Cache Hierarchy Performance**:
@@ -1870,17 +1870,17 @@ graph TD
     DeployOrchestrator -.->|"4. Monitor errors"| LoadBalancer
     DeployOrchestrator -.->|"5. Deploy Green 2 & 3"| GreenInstance2
 
-    style LoadBalancer fill:#DE8F05,stroke:#000,color:#000
+    style LoadBalancer fill:#DE8F05,stroke:#000,color:#fff
     style BlueCluster fill:#0173B2,stroke:#000,color:#fff
     style BlueInstance1 fill:#029E73,stroke:#000,color:#fff
     style BlueInstance2 fill:#029E73,stroke:#000,color:#fff
     style BlueInstance3 fill:#029E73,stroke:#000,color:#fff
     style GreenCluster fill:#0173B2,stroke:#000,color:#fff
     style GreenInstance1 fill:#029E73,stroke:#000,color:#fff
-    style GreenInstance2 fill:#CA9161,stroke:#000,color:#000
-    style GreenInstance3 fill:#CA9161,stroke:#000,color:#000
-    style HealthCheck fill:#CC78BC,stroke:#000,color:#000
-    style DeployOrchestrator fill:#DE8F05,stroke:#000,color:#000
+    style GreenInstance2 fill:#CA9161,stroke:#000,color:#fff
+    style GreenInstance3 fill:#CA9161,stroke:#000,color:#fff
+    style HealthCheck fill:#CC78BC,stroke:#000,color:#fff
+    style DeployOrchestrator fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Deployment Phases**:
