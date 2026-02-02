@@ -26,11 +26,6 @@ sequenceDiagram
     CLI->>Project: Loads .claude/ config
     CLI->>AI: Initializes conversation
     AI-->>Dev: Ready for prompts
-
-    style Dev fill:#0173B2,stroke:#000,color:#fff
-    style CLI fill:#DE8F05,stroke:#000,color:#000
-    style AI fill:#029E73,stroke:#000,color:#fff
-    style Project fill:#CC78BC,stroke:#000,color:#000
 ```
 
 **Commands**:
@@ -99,10 +94,10 @@ graph LR
     D -->|Confirm| E[File Created]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Commands**:
@@ -139,11 +134,6 @@ sequenceDiagram
     Read-->>Claude: File content
     Claude->>Claude: Analyze functions, types, dependencies
     Claude-->>User: Summary of 3 validators
-
-    style User fill:#0173B2,stroke:#000,color:#fff
-    style Claude fill:#DE8F05,stroke:#000,color:#000
-    style Read fill:#029E73,stroke:#000,color:#fff
-    style File fill:#CC78BC,stroke:#000,color:#000
 ```
 
 **Commands**:
@@ -294,10 +284,10 @@ graph LR
     style C fill:#0173B2,stroke:#000,color:#fff
     style E fill:#0173B2,stroke:#000,color:#fff
     style G fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style D fill:#029E73,stroke:#000,color:#fff
-    style F fill:#CC78BC,stroke:#000,color:#000
-    style H fill:#CA9161,stroke:#000,color:#000
+    style F fill:#CC78BC,stroke:#000,color:#fff
+    style H fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Commands**:
@@ -466,10 +456,10 @@ graph TD
     D -->|Populate| E[Add Boilerplate]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Commands**:
@@ -689,12 +679,12 @@ graph TD
     F -->|Return| G[500 Error Response]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#DE8F05,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#000
+    style D fill:#CC78BC,stroke:#000,color:#fff
+    style E fill:#CA9161,stroke:#000,color:#fff
     style F fill:#CA9161,stroke:#000,color:#000
-    style G fill:#CA9161,stroke:#000,color:#000
+    style G fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Commands**:

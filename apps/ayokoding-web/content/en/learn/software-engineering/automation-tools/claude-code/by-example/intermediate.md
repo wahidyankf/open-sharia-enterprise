@@ -734,10 +734,6 @@ sequenceDiagram
     Claude->>Git: git commit -m "feat(api): ..."
     Git-->>Claude: Commit created
     Claude-->>User: Branch + commit confirmed
-
-    style User fill:#0173B2,stroke:#000,color:#fff
-    style Claude fill:#DE8F05,stroke:#000,color:#000
-    style Git fill:#029E73,stroke:#000,color:#fff
 ```
 
 **Commands**:
