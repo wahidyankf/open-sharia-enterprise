@@ -79,7 +79,7 @@ Spring Boot applications follow layered architecture with clear separation of co
 ### Three-Layer Architecture
 
 ```mermaid
-graph LR
+graph TD
     A[Controller Layer] -->|calls| B[Service Layer]
     B -->|calls| C[Repository Layer]
     C -->|queries| D[(Database)]

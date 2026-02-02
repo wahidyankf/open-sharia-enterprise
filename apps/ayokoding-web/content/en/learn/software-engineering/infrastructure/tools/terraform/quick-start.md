@@ -1095,7 +1095,7 @@ You've completed 10 essential Terraform touchpoints:
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
-graph LR
+graph TD
     A["Resources &<br/>Variables"] --> B["Outputs &<br/>Data"]
     B --> C["Provisioners &<br/>Modules"]
     C --> D["State &<br/>Workspaces"]

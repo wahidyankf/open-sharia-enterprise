@@ -213,7 +213,7 @@ Transactions add facts to the database. Each fact is an entity-attribute-value t
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     A["Transaction Data<br/>[{:person/name ...}]"]
     B["Transactor<br/>d/transact"]
     C["New Database Value<br/>db-after"]

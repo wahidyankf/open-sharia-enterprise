@@ -654,7 +654,7 @@ Dictionaries provide key-value storage with O(1) average lookup time, essential 
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-graph LR
+graph TD
     A["Dictionary<string, int>"]:::blue
     A --> B["Alice → 30"]:::orange
     A --> C["Bob → 25"]:::teal
@@ -769,7 +769,7 @@ LINQ (Language Integrated Query) provides functional operations on collections t
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-graph LR
+graph TD
     A[Source: 1,2,3,4,5,6,7,8,9,10]:::blue -->|Where n % 2 == 0| B[Filtered: 2,4,6,8,10]:::orange
     B -->|ToList| C[Result List]:::teal
 
@@ -819,7 +819,7 @@ Select transforms each element in a collection, projecting to a new type or valu
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-graph LR
+graph TD
     A[Source: 1,2,3,4,5]:::blue -->|Select n => n * 2| B[Transformed: 2,4,6,8,10]:::orange
     B -->|ToList| C[Result List]:::teal
 

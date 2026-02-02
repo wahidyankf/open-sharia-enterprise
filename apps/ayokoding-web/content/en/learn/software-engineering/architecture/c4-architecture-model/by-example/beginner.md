@@ -48,7 +48,7 @@ graph TD
 A System Context diagram shows your system (the focus) as a box in the center, surrounded by users and external systems it interacts with. This is the highest abstraction level, answering "What does this system do and who uses it?"
 
 ```mermaid
-graph LR
+graph TD
     A["Customer"]
     B["E-Commerce System"]
     C["Payment Gateway"]
@@ -117,7 +117,7 @@ graph TD
 Real systems serve multiple user types with different needs. This example shows how to represent distinct user personas in Context diagrams.
 
 ```mermaid
-graph LR
+graph TD
     Customer["[Person]<br/>Customer<br/>Browses and purchases"]
     Admin["[Person]<br/>Admin<br/>Manages catalog"]
     Support["[Person]<br/>Support Agent<br/>Handles issues"]
@@ -151,7 +151,7 @@ graph LR
 Authentication systems are critical dependencies for most applications. This example shows how to represent authentication flows in System Context diagrams.
 
 ```mermaid
-graph LR
+graph TD
     User["[Person]<br/>End User<br/>Uses application"]
 
     App["[Software System]<br/>Web Application<br/>Business application"]
@@ -222,7 +222,7 @@ graph TD
 Asynchronous communication via message queues is fundamental to modern distributed systems. This example shows event-driven architecture at Context level.
 
 ```mermaid
-graph LR
+graph TD
     User["[Person]<br/>Customer<br/>Places orders"]
 
     OrderService["[Software System]<br/>Order Service<br/>Manages orders"]
@@ -344,7 +344,7 @@ graph TD
 B2B systems integrate across organizational boundaries. This example shows how to represent partner systems and integration contracts.
 
 ```mermaid
-graph LR
+graph TD
     Employee["[Person]<br/>Employee<br/>Books travel"]
 
     TravelBookingSystem["[Software System]<br/>Travel Booking System<br/>Internal travel management"]
@@ -383,7 +383,7 @@ graph LR
 Systems consuming real-time data from external sources require special consideration. This example shows streaming data architecture at Context level.
 
 ```mermaid
-graph LR
+graph TD
     Trader["[Person]<br/>Trader<br/>Monitors market"]
 
     TradingPlatform["[Software System]<br/>Trading Platform<br/>Financial trading system"]
@@ -1174,7 +1174,7 @@ graph TD
 REST APIs are the most common integration pattern. This example shows RESTful service integration at Container level.
 
 ```mermaid
-graph LR
+graph TD
     MobileApp["[Container: Mobile App]<br/>iOS/Android<br/>Native app"]
 
     APIGateway["[Container: API Gateway]<br/>Kong/Nginx<br/>Request routing"]
