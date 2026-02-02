@@ -63,22 +63,27 @@ static class CachedService
     public static ValueTask<string> GetValueAsync(int id)
                          // => ValueTask<T> reduces allocations
                          // => Returns struct, not class
+                         // => Public API for value retrieval
     {
         if (_cache.TryGetValue(id, out var cached))
                          // => Check cache first
+                         // => TryGetValue pattern avoids exceptions
         {
             return ValueTask.FromResult(cached);
                          // => Cache hit: completed ValueTask
                          // => No Task allocation, no heap object
+                         // => Synchronous completion path
         }
 
         return new ValueTask<string>(FetchFromDatabaseAsync(id));
                          // => Cache miss: allocates Task only when needed
                          // => Wraps Task in ValueTask struct
+                         // => Asynchronous completion path
     }
 
     private static async Task<string> FetchFromDatabaseAsync(int id)
                          // => Simulates async database query
+                         // => Only invoked on cache misses
     {
         await Task.Delay(100);
                          // => Simulates query delay (100ms)
@@ -380,39 +385,48 @@ stackalloc allocates memory on the stack (ultra-fast, zero GC impact). ArrayPool
 // Example 65: stackalloc and ArrayPool for Buffer Management
 static void ProcessWithHeapAllocation()
                          // => Traditional approach with heap allocation
+                         // => Causes GC pressure
 {
     byte[] buffer = new byte[256];
                          // => Heap allocation creates garbage
                          // => GC must collect later
+                         // => Gen0 collection burden
     buffer[0] = 1;
                          // => Some processing
                          // => Buffer becomes garbage when method returns
+                         // => Not reused
 }
 
 static void ProcessWithStackAlloc()
                          // => Stack allocation approach
+                         // => Zero GC alternative
 {
     Span<byte> buffer = stackalloc byte[256];
                          // => Allocated on STACK (not heap)
                          // => No heap allocation, zero GC impact
+                         // => Limited to method scope
     buffer[0] = 1;
                          // => Use like normal array
                          // => Stack memory automatically reclaimed at method end
                          // => No garbage created
+                         // => Ideal for small, temporary buffers
 }
 
 static void ProcessWithArrayPool()
                          // => ArrayPool approach with reusable buffers
+                         // => Best for larger buffers
 {
     byte[] buffer = ArrayPool<byte>.Shared.Rent(256);
                          // => Rent buffer from shared pool
                          // => May return array >= 256 in size
                          // => Reuses previously returned arrays
                          // => One allocation per buffer (amortized across many uses)
+                         // => Thread-safe shared pool
     try
     {
         buffer[0] = 1;
                          // => Use buffer for processing
+                         // => try/finally ensures return
     }
     finally
     {
@@ -420,54 +434,69 @@ static void ProcessWithArrayPool()
                          // => Return buffer to pool for reuse
                          // => clearArray: true zeros memory for security
                          // => Buffer available for next Rent call
+                         // => Always return in finally block
     }
 }
 
 static int ParseNumbers(ReadOnlySpan<char> input)
                          // => stackalloc for small, known-size buffers
+                         // => Practical stack usage example
 {
     Span<int> results = stackalloc int[10];
                          // => Stack allocation (max 10 numbers)
+                         // => 40 bytes (10 * sizeof(int))
     int count = 0;
                          // => Track parsed count
+                         // => Results array index
     foreach (char c in input)
     {
         if (char.IsDigit(c))
                          // => Check if digit
+                         // => Filters non-numeric chars
         {
             results[count++] = c - '0';
                          // => Parse and store on stack
+                         // => '0' ASCII value subtraction
             if (count == 10) break;
                          // => Limit to 10 numbers
+                         // => Prevents overflow
         }
     }
     int sum = 0;
+                         // => Accumulator initialization
     for (int i = 0; i < count; i++)
     {
         sum += results[i];
                          // => Sum all parsed numbers
+                         // => Stack memory access
     }
     return sum;
                          // => Return total
+                         // => Stack freed automatically
 }
 
 static async Task ProcessLargeDataAsync(Stream stream)
                          // => Large buffer with ArrayPool
+                         // => Async I/O pattern
 {
     byte[] buffer = ArrayPool<byte>.Shared.Rent(1024 * 1024);
                          // => Rent 1MB buffer from pool
                          // => Too large for stack
+                         // => Reusable buffer for I/O
     try
     {
         int read = await stream.ReadAsync(buffer);
                          // => Use buffer for async I/O
+                         // => Awaits stream read
         Console.WriteLine($"Read {read} bytes");
                          // => Process 'read' bytes from buffer
+                         // => Actual bytes read may be less than 1MB
     }
     finally
     {
         ArrayPool<byte>.Shared.Return(buffer);
                          // => CRITICAL: always return to pool
+                         // => Enables buffer reuse
     }
 }
 
@@ -995,6 +1024,27 @@ if (reader.TryRead(out var message))
 
 SemaphoreSlim limits concurrent access to resources in async code. Use for rate limiting, connection pooling, and protecting resources with limited capacity.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+    A[SemaphoreSlim<br/>Count: 3]:::blue
+    B[Task 1<br/>Acquired]:::orange
+    C[Task 2<br/>Acquired]:::teal
+    D[Task 3<br/>Acquired]:::orange
+    E[Task 4<br/>Waiting...]:::purple
+
+    A --> B
+    A --> C
+    A --> D
+    A -.blocked.-> E
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#DE8F05,stroke:#000,color:#000
+    style E fill:#CC78BC,stroke:#000,color:#000
+```
+
 **Code**:
 
 ```csharp
@@ -1405,67 +1455,87 @@ P/Invoke (Platform Invocation) calls unmanaged C/C++ libraries from C#. Enables 
 ```csharp
 // Example 75: P/Invoke - Calling Native Code
 using System.Runtime.InteropServices;
+                         // => Required namespace for P/Invoke
 
 static class NativeMethods
                          // => Convention: static class for P/Invoke declarations
+                         // => Groups native method imports
 {
     [DllImport("kernel32.dll", SetLastError = true)]
                          // => DllImport attribute specifies native DLL
                          // => SetLastError = true enables Marshal.GetLastWin32Error()
+                         // => Windows kernel32 library
     public static extern bool Beep(uint frequency, uint duration);
                          // => extern indicates external (native) implementation
                          // => Maps to Beep function in kernel32.dll
                          // => Returns bool (Win32 BOOL)
+                         // => Parameters: uint for frequency/duration
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
                          // => CharSet specifies string encoding (Unicode/Ansi/Auto)
+                         // => Windows user32 library
     public static extern int MessageBox(IntPtr hWnd, string text, string caption, uint type);
                          // => IntPtr for handles/pointers
                          // => string marshaled automatically
+                         // => Returns int (button clicked)
 
     [DllImport("libc", EntryPoint = "strlen")]
                          // => Linux/macOS libc
                          // => EntryPoint specifies actual function name
+                         // => Cross-platform example
     public static extern int StrLen([MarshalAs(UnmanagedType.LPStr)] string str);
                          // => MarshalAs controls marshaling behavior
+                         // => LPSTR for null-terminated string
 }
 
 bool success = NativeMethods.Beep(800, 200);
                          // => Call native Beep function
                          // => 800 Hz for 200ms
+                         // => success indicates if call succeeded
 if (!success)
 {
     int error = Marshal.GetLastWin32Error();
                          // => Get Win32 error code
+                         // => Only valid with SetLastError = true
     Console.WriteLine($"Beep failed: {error}");
+                         // => Report error
 }
 
 NativeMethods.MessageBox(IntPtr.Zero, "Hello from C#!", "P/Invoke Demo", 0);
                          // => Show native Windows message box
                          // => IntPtr.Zero for no parent window
+                         // => 0 for MB_OK button
 
 [StructLayout(LayoutKind.Sequential)]
                          // => StructLayout controls memory layout
                          // => Sequential matches C struct layout
+                         // => Required for native interop
 struct Point
-{
+{                         // => Value type for Win32 POINT structure
     public int X;
+                         // => X coordinate
     public int Y;
+                         // => Y coordinate
 }
 
 static class NativeMethods2
-{
+{                         // => Additional native methods
     [DllImport("user32.dll")]
+                         // => GetCursorPos from user32.dll
     public static extern bool GetCursorPos(out Point point);
                          // => out parameter receives struct from native code
+                         // => point filled by native call
 }
 
 Point cursorPos;
+                         // => Uninitialized struct
 if (NativeMethods2.GetCursorPos(out cursorPos))
                          // => Get mouse cursor position via Win32 API
+                         // => cursorPos receives screen coordinates
 {
     Console.WriteLine($"Cursor: ({cursorPos.X}, {cursorPos.Y})");
                          // => Output: Cursor: (X, Y) [actual screen coordinates]
+                         // => Screen coordinates updated by native call
 }
 
 [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -2032,6 +2102,7 @@ var app = builder.Build();
 
 var activitySource = new ActivitySource("MyApp");
                          // => Create activity source for custom spans
+                         // => Name must match AddSource registration
 
 app.MapGet("/process", async () =>
 {
@@ -2494,6 +2565,18 @@ Console.WriteLine($"Parsed2: {GetValueOrDefault(parsed2, -1)}");
 ## Example 84: SemaphoreSlim vs lock Performance
 
 Comparing SemaphoreSlim (async-compatible) and lock (sync-only) for different concurrency scenarios. Understanding when to use each for optimal performance.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+graph LR
+    A[Synchronous Code]:::blue -->|Use| B[lock Statement<br/>Fast, Simple]:::orange
+    C[Async Code]:::blue -->|Use| D[SemaphoreSlim<br/>Async-Compatible]:::teal
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#0173B2,stroke:#000,color:#fff
+    style D fill:#029E73,stroke:#000,color:#fff
+```
 
 **Code**:
 
