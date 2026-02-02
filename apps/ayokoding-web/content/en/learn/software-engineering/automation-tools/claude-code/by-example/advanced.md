@@ -605,7 +605,7 @@ You: Generate Kubernetes manifests for deploying this Node.js API with 3 replica
 Optimize existing CI/CD pipelines for faster builds. Claude analyzes workflows and suggests parallelization, caching, and dependency optimization.
 
 ```mermaid
-graph LR
+graph TD
     A[Original Pipeline] -->|Analyze| B[Identify Bottlenecks]
     B -->|Optimize| C[Parallel Jobs]
     B -->|Optimize| D[Smart Caching]
@@ -1275,7 +1275,7 @@ You: Create a custom ESLint rule that prevents importing from infrastructure lay
 Generate release notes from git commits and PR descriptions. Claude categorizes changes (features, fixes, breaking), formats for users, and includes migration guides.
 
 ```mermaid
-graph LR
+graph TD
     A[Git Commits] -->|Analyze| B[47 Commits]
     B -->|Categorize| C[feat: 12]
     B -->|Categorize| D[fix: 23]
