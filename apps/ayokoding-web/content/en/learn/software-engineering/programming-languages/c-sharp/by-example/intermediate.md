@@ -683,7 +683,7 @@ postResponse.EnsureSuccessStatusCode();
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-graph LR
+graph TD
     A[Products]:::blue --> B[GroupBy Category]:::orange
     B --> C[Electronics: [...]<br/>Books: [...]<br/>Clothing: [...]]:::teal
 
@@ -784,7 +784,7 @@ foreach (var ct in categoryTotals)
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-graph LR
+graph TD
     A[Customers]:::blue --> C[Join on CustomerId]:::teal
     B[Orders]:::orange --> C
     C --> D[Customer-Order Pairs]:::teal
@@ -996,7 +996,7 @@ Delegates are type-safe function pointers that reference methods with matching s
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-graph LR
+graph TD
     A[Delegate Declaration]:::blue --> B[Points to Method]:::orange
     B --> C[Invoke via Delegate]:::teal
 

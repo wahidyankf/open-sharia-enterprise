@@ -27,7 +27,7 @@ This advanced-level tutorial completes Domain-Driven Design mastery through 25 a
 Event Sourcing stores all state changes as a sequence of events rather than storing current state. The event store is the single source of truth.
 
 ```mermaid
-graph LR
+graph TD
     A[Command] --> B[Aggregate]
     B --> C[New Events]
     C --> D[Event Store]

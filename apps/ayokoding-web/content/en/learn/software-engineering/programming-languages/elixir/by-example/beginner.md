@@ -853,7 +853,7 @@ The pipe operator `|>` takes the result of an expression and passes it as the fi
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     Input["'  hello  '<br/>(input)"] -->|"|>"| Trim["String.trim()<br/>Result: 'hello'"]
     Trim -->|"|>"| Upcase["String.upcase()<br/>Result: 'HELLO'"]
     Upcase --> Final["'HELLO'<br/>(output)"]

@@ -889,7 +889,7 @@ You've completed 10 essential Kubernetes touchpoints:
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
-graph LR
+graph TD
     A["Pods &<br/>Deployments"] --> B["Services &<br/>Config"]
     B --> C["Secrets &<br/>Namespaces"]
     C --> D["Labels &<br/>Scaling"]

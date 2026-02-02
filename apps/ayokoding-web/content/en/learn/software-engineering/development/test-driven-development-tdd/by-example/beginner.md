@@ -47,7 +47,7 @@ TDD follows a three-phase rhythm: Red (failing test), Green (passing test), Refa
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-graph LR
+graph TD
     A[Red: Write Failing Test]
     B[Green: Make It Pass]
     C[Refactor: Improve Design]

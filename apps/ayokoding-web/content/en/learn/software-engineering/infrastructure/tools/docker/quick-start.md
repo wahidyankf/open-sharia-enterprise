@@ -752,7 +752,7 @@ You've completed 10 essential Docker touchpoints:
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
-graph LR
+graph TD
     A["Containers &<br/>Dockerfiles"] --> B["Images &<br/>Ports"]
     B --> C["Volumes &<br/>Networks"]
     C --> D["Env Vars &<br/>Compose"]

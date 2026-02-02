@@ -38,7 +38,7 @@ Feature: Hello World                         # => Feature: High-level descriptio
 Given-When-Then is BDD's core pattern: Given sets up context, When triggers action, Then asserts outcome. Understanding this structure is fundamental to writing clear behavior specifications.
 
 ```mermaid
-graph LR
+graph TD
     A[Given: Setup State] --> B[When: Trigger Action]
     B --> C[Then: Verify Outcome]
 

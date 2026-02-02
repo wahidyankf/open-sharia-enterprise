@@ -14,7 +14,7 @@ This intermediate section advances your BDD skills through 30 examples covering 
 Page Object Model (POM) encapsulates page-specific UI logic in classes, separating locators and interactions from BDD scenarios for better maintainability.
 
 ```mermaid
-graph LR
+graph TD
     A[Gherkin Scenario] --> B[Step Definition]
     B --> C[Page Object]
     C --> D[Web Driver]

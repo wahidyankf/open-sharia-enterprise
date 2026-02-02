@@ -14,7 +14,7 @@ This advanced section covers enterprise-scale BDD through 27 examples demonstrat
 Testing interactions between microservices requires coordinating multiple services, managing service discovery, and verifying distributed behavior.
 
 ```mermaid
-graph LR
+graph TD
     A[Order Service] -->|HTTP| B[Payment Service]
     B -->|Event| C[Notification Service]
     A -->|Query| D[Inventory Service]
@@ -196,7 +196,7 @@ Then("notification email should be sent to {string}", async (email: string) => {
 Event-driven architectures use message brokers (Kafka, RabbitMQ) for asynchronous communication. BDD scenarios verify event production, consumption, and eventual consistency.
 
 ```mermaid
-graph LR
+graph TD
     A[Order Service] -->|Publish| B[Message Broker]
     B -->|Subscribe| C[Email Service]
     B -->|Subscribe| D[Analytics Service]
@@ -430,7 +430,7 @@ Then("email service should send confirmation to customer", async () => {
 SAGA pattern manages distributed transactions through orchestrated or choreographed compensation logic. BDD scenarios verify both success paths and failure rollback.
 
 ```mermaid
-graph LR
+graph TD
     A[Order Created] --> B[Reserve Inventory]
     B -->|Success| C[Process Payment]
     C -->|Success| D[Ship Order]

@@ -74,7 +74,7 @@ Understanding how Phoenix processes requests is fundamental.
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0ea5e9','primaryTextColor':'#1e293b','primaryBorderColor':'#0369a1','lineColor':'#64748b','secondaryColor':'#f97316','tertiaryColor':'#8b5cf6','background':'#ffffff','mainBkg':'#f1f5f9','secondBkg':'#e2e8f0'}}}%%
-graph LR
+graph TD
     Browser[Browser] --> Endpoint[Endpoint]
     Endpoint --> Router[Router]
     Router --> Pipeline[Pipeline/Plugs]

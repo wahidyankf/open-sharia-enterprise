@@ -39,7 +39,7 @@ This covers 5-30% of Spring Data JPA features - enough to build real application
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#0066cc','primaryTextColor':'#000','primaryBorderColor':'#003d7a','lineColor':'#0066cc','secondaryColor':'#e6f2ff','tertiaryColor':'#fff'}}}%%
-graph LR
+graph TD
     A["Initial Setup<br/>(0-5%)"] --> B["Quick Start<br/>(5-30%)"]
     B --> C["By-Example<br/>(30-95%)"]
     B --> D["Beginner Tutorial<br/>(0-40%)"]

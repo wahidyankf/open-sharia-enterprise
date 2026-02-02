@@ -462,7 +462,7 @@ This shows comprehensive pod information:
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
-graph LR
+graph TD
     A["kubectl apply"] --> B["Pending"]
     B --> C["Pulling Image"]
     C --> D["Creating Container"]

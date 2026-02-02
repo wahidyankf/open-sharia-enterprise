@@ -724,7 +724,7 @@ Lists are mutable, ordered sequences that can contain mixed types, support index
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     N0["Index: 0<br/>Value: 1"]
     N1["Index: 1<br/>Value: 2"]
     N2["Index: 2<br/>Value: 3"]
@@ -744,7 +744,7 @@ graph LR
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph LR
+graph TD
     M5["Index: -5<br/>Value: 1"]
     M4["Index: -4<br/>Value: 2"]
     M3["Index: -3<br/>Value: 3"]

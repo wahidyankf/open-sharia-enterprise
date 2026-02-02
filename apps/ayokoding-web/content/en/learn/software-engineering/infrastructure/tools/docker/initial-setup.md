@@ -436,7 +436,7 @@ Congratulations! You've run your first Docker container.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
-graph LR
+graph TD
     A["docker run hello-world"] --> B["Pull Image"]
     B --> C["Create Container"]
     C --> D["Start Container"]

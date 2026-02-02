@@ -115,7 +115,7 @@ IAsyncEnumerable enables streaming data processing - producing and consuming ite
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
-graph LR
+graph TD
     A["Producer<br/>yield return"]
     B["Item 1"]
     C["Item 2"]
@@ -932,7 +932,7 @@ Channels provide thread-safe queues for asynchronous producer-consumer scenarios
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
-graph LR
+graph TD
     A["Producer<br/>WriteAsync"]
     B["Bounded Channel<br/>Capacity Limit"]
     C["Consumer<br/>ReadAsync"]
@@ -1805,7 +1805,7 @@ Middleware processes HTTP requests in a pipeline, with each component choosing t
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
-graph LR
+graph TD
     A["Request"] --> B["Middleware 1<br/>Logging"]
     B --> C["Middleware 2<br/>Auth"]
     C --> D["Middleware 3<br/>Routing"]
@@ -2056,7 +2056,7 @@ OpenTelemetry provides distributed tracing, metrics, and logs for observability 
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
-graph LR
+graph TD
     A["Client Request"] --> B["Service A<br/>Span 1"]
     B --> C["Service B<br/>Span 2"]
     B --> D["Service C<br/>Span 3"]
@@ -2568,7 +2568,7 @@ Comparing SemaphoreSlim (async-compatible) and lock (sync-only) for different co
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-graph LR
+graph TD
     A[Synchronous Code]:::blue -->|Use| B[lock Statement<br/>Fast, Simple]:::orange
     C[Async Code]:::blue -->|Use| D[SemaphoreSlim<br/>Async-Compatible]:::teal
 

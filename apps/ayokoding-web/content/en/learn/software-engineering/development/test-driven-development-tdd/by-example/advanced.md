@@ -15,7 +15,7 @@ Characterization tests capture current behavior of legacy code without refactori
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-graph LR
+graph TD
     A[Legacy Code]
     B[Characterization Tests]
     C[Refactoring]

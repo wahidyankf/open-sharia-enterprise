@@ -80,7 +80,7 @@ Mocks verify that specific methods were called with expected arguments. Unlike s
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-graph LR
+graph TD
     A[Test Code]
     B[Mock Object]
     C[Verification]
@@ -814,7 +814,7 @@ Code with timers (setTimeout, setInterval) runs slowly in tests. Use fake timers
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-graph LR
+graph TD
     A[Real Timer]
     B[Fake Timer]
     C[Instant Test]
@@ -1655,7 +1655,7 @@ Event-driven code (EventEmitter, observers) requires testing that events are emi
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-graph LR
+graph TD
     A[Event Source]
     B[Event Emitter]
     C[Event Handler 1]

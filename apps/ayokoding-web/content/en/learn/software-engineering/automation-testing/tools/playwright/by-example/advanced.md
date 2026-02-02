@@ -257,7 +257,7 @@ Custom fixtures provide reusable test setup and teardown. They inject dependenci
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-graph LR
+graph TD
     A[Test Function]
     B[authenticatedPage Fixture]
     C[apiClient Fixture]
@@ -801,7 +801,7 @@ Network interception captures and modifies network requests. Request mocking rep
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-graph LR
+graph TD
     A[Browser]
     B[Playwright Intercept]
     C[Mock Response]

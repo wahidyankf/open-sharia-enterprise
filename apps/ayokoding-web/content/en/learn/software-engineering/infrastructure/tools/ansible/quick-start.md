@@ -746,7 +746,7 @@ You've completed 10 essential Ansible touchpoints:
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
-graph LR
+graph TD
     A["Playbooks &<br/>Inventory"] --> B["Modules &<br/>Variables"]
     B --> C["Facts &<br/>Handlers"]
     C --> D["Conditionals &<br/>Loops"]

@@ -743,7 +743,7 @@ Units of measure provide compile-time dimensional analysis, preventing unit conv
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-graph LR
+graph TD
     A[100.0 meter]:::blue --> B[/ time<br/>5.0 second]:::orange
     B --> C[20.0 meter/second]:::teal
 
@@ -1077,7 +1077,7 @@ Event sourcing stores state changes as immutable events, enabling complete audit
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
-graph LR
+graph TD
     A[AccountCreated<br/>1000.0]:::blue --> B[MoneyDeposited<br/>+500]:::orange
     B --> C[MoneyWithdrawn<br/>-200]:::teal
     C --> D[Current State<br/>1300.0]:::purple
