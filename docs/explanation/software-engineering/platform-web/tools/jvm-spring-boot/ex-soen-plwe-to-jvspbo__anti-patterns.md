@@ -1141,7 +1141,7 @@ class ZakatCalculationIntegrationTest {
 
 - **[Spring Boot Idioms](ex-soen-plwe-to-jvspbo__idioms.md)** - Correct patterns
 - **[Spring Boot Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md)** - Production standards
-- **[Java Anti-Patterns](../../../programming-languages/java/ex-soen-prla-ja__anti-patterns.md)** - Java mistakes
+- **[Java Anti-Patterns](../../../programming-languages/java/README.md)** - Java mistakes
 - **[Testing](ex-soen-plwe-to-jvspbo__testing.md)** - Testing strategies
 
 ---

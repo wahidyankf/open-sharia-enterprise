@@ -111,58 +111,48 @@ OSE Platform follows a three-tier Java versioning strategy:
 - Primitive types in patterns (when finalized)
 - Module import declarations (simplified module system)
 
-**See**: [Java 17 Release](./ex-soen-prla-ja__release-17.md), [Java 21 Release](./ex-soen-prla-ja__release-21.md), [Java 25 Release](./ex-soen-prla-ja__release-25.md)
+**See**: [Java Release Highlights](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/release-highlights) for detailed LTS feature documentation (Java 17, 21, 25)
 
-## Coding Standards Reference
+## OSE Platform Coding Standards (Authoritative)
 
-**Core Standards (MANDATORY)**:
+**MUST follow these mandatory standards for all Java code in OSE Platform:**
 
-1. **[Idioms](./ex-soen-prla-ja__idioms.md)** - MUST use idiomatic Java patterns (records, pattern matching, Optional, streams, virtual threads, try-with-resources, sealed classes)
+1. **[Coding Standards](./ex-soen-prla-ja__coding-standards.md)** - Naming conventions, package organization, Maven structure
+2. **[Framework Integration](./ex-soen-prla-ja__framework-integration.md)** - Spring Boot 4, Jakarta EE 11 configuration
+3. **[Testing Standards](./ex-soen-prla-ja__testing-standards.md)** - JUnit 6, AssertJ, Mockito, TestContainers, Cucumber
+4. **[Build Configuration](./ex-soen-prla-ja__build-configuration.md)** - Maven POM structure, dependency management
+5. **[Code Quality](./ex-soen-prla-ja__code-quality.md)** - Spotless, Error Prone, NullAway, Checkstyle
+6. **[Error Handling Standards](./ex-soen-prla-ja__error-handling-standards.md)** - OSE exception hierarchy, transaction atomicity
+7. **[Concurrency Standards](./ex-soen-prla-ja__concurrency-standards.md)** - Virtual threads, structured concurrency
+8. **[Performance Standards](./ex-soen-prla-ja__performance-standards.md)** - SLOs, JVM tuning, GC configuration
+9. **[Security Standards](./ex-soen-prla-ja__security-standards.md)** - OAuth2/JWT, RBAC, PII encryption
+10. **[API Standards](./ex-soen-prla-ja__api-standards.md)** - REST conventions, pagination, idempotency
+11. **[DDD Standards](./ex-soen-prla-ja__ddd-standards.md)** - Domain-Driven Design tactical patterns
 
-2. **[Best Practices](./ex-soen-prla-ja__best-practices.md)** - MUST follow clean code standards (focused methods 10-20 lines, intention-revealing names, immutability with final fields, comprehensive testing)
-
-3. **[Anti-Patterns](./ex-soen-prla-ja__anti-patterns.md)** - MUST NOT use problematic patterns (thread-unsafe SimpleDateFormat, unclosed resources, premature optimization, excessive abstraction, mutable shared state)
-
-**Specialized Standards (REQUIRED WHERE APPLICABLE)**:
-
-- **[Error Handling](./ex-soen-prla-ja__error-handling.md)** - Exception handling and resilience patterns
-- **[Type Safety](./ex-soen-prla-ja__type-safety.md)** - Sealed types, JSpecify, NullAway, Checker Framework for compile-time safety
-- **[Security](./ex-soen-prla-ja__security.md)** - OWASP guidelines, input validation, cryptography, secure coding
-- **[Performance](./ex-soen-prla-ja__performance.md)** - JVM tuning, GC optimization, profiling (JFR, async-profiler)
-- **[Concurrency](./ex-soen-prla-ja__concurrency-and-parallelism.md)** - Virtual threads, structured concurrency, thread safety
-- **[Functional Programming](./ex-soen-prla-ja__functional-programming.md)** - Pure functions, immutability, Vavr library, monads
-- **[Domain-Driven Design](./ex-soen-prla-ja__domain-driven-design.md)** - DDD tactical patterns (value objects, entities, aggregates, repositories, domain events)
-- **[Test-Driven Development](./ex-soen-prla-ja__test-driven-development.md)** - TDD workflow, JUnit 6, Mockito, AssertJ
-- **[Behavior-Driven Development](./ex-soen-prla-ja__behaviour-driven-development.md)** - BDD with Cucumber, Gherkin, Three Amigos
-- **[Interfaces and Polymorphism](./ex-soen-prla-ja__interfaces-and-polymorphism.md)** - Interface design, sealed interfaces, explicit polymorphism
-- **[Memory Management](./ex-soen-prla-ja__memory-management.md)** - JVM internals, GC algorithms (G1GC, ZGC, Shenandoah), memory optimization
-- **[Modules and Dependencies](./ex-soen-prla-ja__modules-and-dependencies.md)** - JPMS, Maven dependency management, reproducible builds
-- **[Web Services](./ex-soen-prla-ja__web-services.md)** - REST (Spring Boot, JAX-RS), GraphQL, gRPC, API security (JWT, OAuth2, RBAC)
-- **[Linting and Formatting](./ex-soen-prla-ja__linting-and-formatting.md)** - Spotless, Checkstyle, Error Prone, NullAway
+**Learning Java Fundamentals**: For universal Java concepts, idioms, and patterns referenced in these standards, see [AyoKoding Java Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/java)
 
 ## Documentation Structure
 
 ### Quick Reference
 
-**Mandatory Reading (All Java Developers)**:
+**Mandatory Standards (All Java Developers MUST follow)**:
 
-1. [Idioms](./ex-soen-prla-ja__idioms.md) - Modern Java patterns MUST be used
-2. [Best Practices](./ex-soen-prla-ja__best-practices.md) - Clean code standards MUST be followed
-3. [Anti-Patterns](./ex-soen-prla-ja__anti-patterns.md) - Problematic patterns MUST be avoided
+1. [Coding Standards](./ex-soen-prla-ja__coding-standards.md) - Naming, package structure, Maven organization
+2. [Framework Integration](./ex-soen-prla-ja__framework-integration.md) - Spring Boot 4, Jakarta EE 11 setup
+3. [Testing Standards](./ex-soen-prla-ja__testing-standards.md) - JUnit 6, AssertJ, TestContainers, Cucumber
 
-**Specialized Topics (Context-Dependent)**:
+**Context-Specific Standards (Apply when relevant)**:
 
-- **Security**: [Security](./ex-soen-prla-ja__security.md) - MUST follow for all code handling user input, authentication, cryptography
-- **Concurrency**: [Concurrency and Parallelism](./ex-soen-prla-ja__concurrency-and-parallelism.md) - MUST follow for multi-threaded code
-- **Domain Modeling**: [Domain-Driven Design](./ex-soen-prla-ja__domain-driven-design.md) - MUST follow for business domain implementations
-- **APIs**: [Web Services](./ex-soen-prla-ja__web-services.md) - MUST follow for REST/GraphQL/gRPC endpoints
-- **Testing**: [TDD](./ex-soen-prla-ja__test-driven-development.md), [BDD](./ex-soen-prla-ja__behaviour-driven-development.md) - MUST follow testing standards
+- **Security**: [Security Standards](./ex-soen-prla-ja__security-standards.md) - OAuth2, RBAC, encryption for user input/auth
+- **Concurrency**: [Concurrency Standards](./ex-soen-prla-ja__concurrency-standards.md) - Virtual threads for multi-threaded code
+- **Domain Modeling**: [DDD Standards](./ex-soen-prla-ja__ddd-standards.md) - Tactical patterns for business domains
+- **APIs**: [API Standards](./ex-soen-prla-ja__api-standards.md) - REST conventions for HTTP endpoints
+- **Performance**: [Performance Standards](./ex-soen-prla-ja__performance-standards.md) - SLOs, JVM tuning for optimization
+- **Error Handling**: [Error Handling Standards](./ex-soen-prla-ja__error-handling-standards.md) - Exception hierarchy for resilience
 
-**Release Documentation (Version-Specific)**:
+**Java Version Features**:
 
-- [Java 17 LTS](./ex-soen-prla-ja__release-17.md) - Baseline features (sealed classes, records, pattern matching preview)
-- [Java 21 LTS](./ex-soen-prla-ja__release-21.md) - Target features (virtual threads, finalized pattern matching)
-- [Java 25 LTS](./ex-soen-prla-ja__release-25.md) - Latest features (stream gatherers, compact headers)
+- [Java Release Highlights](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/release-highlights) - Java 17, 21, 25 LTS features
 
 ### Documentation Organization
 
@@ -171,27 +161,30 @@ OSE Platform follows a three-tier Java versioning strategy:
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 graph TD
-    A["Java Standards Index"]:::blue
-    B["Mandatory Standards"]:::orange
+    A["Java Standards Index<br/>(OSE Platform)"]:::blue
+    B["Core Standards"]:::orange
     C["Specialized Standards"]:::teal
-    D["Release Documentation"]:::purple
+    D["Learning Resources<br/>(AyoKoding)"]:::purple
 
     A --> B
     A --> C
     A --> D
 
-    B --> E["Idioms"]:::orange
-    B --> F["Best Practices"]:::orange
-    B --> G["Anti-Patterns"]:::orange
+    B --> E["Coding Standards"]:::orange
+    B --> F["Framework Integration"]:::orange
+    B --> G["Testing Standards"]:::orange
+    B --> H["Build & Quality"]:::orange
 
-    C --> H["Security"]:::teal
-    C --> I["Concurrency"]:::teal
-    C --> J["DDD"]:::teal
-    C --> K["Web Services"]:::teal
+    C --> I["Security Standards"]:::teal
+    C --> J["Concurrency Standards"]:::teal
+    C --> K["DDD Standards"]:::teal
+    C --> L["API Standards"]:::teal
+    C --> M["Performance Standards"]:::teal
+    C --> N["Error Handling"]:::teal
 
-    D --> L["Java 17 LTS"]:::purple
-    D --> M["Java 21 LTS"]:::purple
-    D --> N["Java 25 LTS"]:::purple
+    D --> O["By Example<br/>(157+ examples)"]:::purple
+    D --> P["In Practice<br/>(Best practices, TDD, BDD)"]:::purple
+    D --> Q["Release Highlights<br/>(Java 17, 21, 25)"]:::purple
 
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px

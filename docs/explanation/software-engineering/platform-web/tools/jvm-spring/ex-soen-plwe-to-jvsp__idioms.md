@@ -1830,7 +1830,7 @@ fun main() {
 ### Language Standards
 
 - **[Java](../../../programming-languages/java/README.md)** - Java language documentation
-- **[Java Idioms](../../../programming-languages/java/ex-soen-prla-ja__idioms.md)** - Java patterns
+- **[Java Idioms](../../../programming-languages/java/README.md)** - Java patterns
 
 ### Development Practices
 

@@ -1035,7 +1035,7 @@ Read [Spring Boot Anti-Patterns](ex-soen-plwe-to-jvspbo__anti-patterns.md) to pr
 Read complementary documentation:
 
 - [Domain-Driven Design](ex-soen-plwe-to-jvspbo__domain-driven-design.md)
-- [Java DDD Patterns](../../../programming-languages/java/ex-soen-prla-ja__domain-driven-design.md)
+- [Java DDD Patterns](../../../programming-languages/java/ex-soen-prla-ja__ddd-standards.md)
 - [Functional Programming](ex-soen-plwe-to-jvspbo__functional-programming.md)
 
 ## Code Examples from Platform
@@ -1296,10 +1296,10 @@ public class GlobalExceptionHandler {
 ### Java Language Standards
 
 - **[Java](../../../programming-languages/java/README.md)** - Core Java language documentation
-- **[Java Idioms](../../../programming-languages/java/ex-soen-prla-ja__idioms.md)** - Modern Java patterns
-- **[Java Best Practices](../../../programming-languages/java/ex-soen-prla-ja__best-practices.md)** - Java coding standards
-- **[Java Security](../../../programming-languages/java/ex-soen-prla-ja__security.md)** - Secure Java coding
-- **[Java Performance](../../../programming-languages/java/ex-soen-prla-ja__performance.md)** - JVM tuning
+- **[Java Idioms](../../../programming-languages/java/README.md)** - Modern Java patterns
+- **[Java Best Practices](../../../programming-languages/java/README.md)** - Java coding standards
+- **[Java Security](../../../programming-languages/java/ex-soen-prla-ja__security-standards.md)** - Secure Java coding
+- **[Java Performance](../../../programming-languages/java/ex-soen-prla-ja__performance-standards.md)** - JVM tuning
 
 ### Architecture Patterns
 

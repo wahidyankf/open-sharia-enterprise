@@ -134,9 +134,10 @@ Java is a primary language for backend services, particularly for domain-driven 
 
 **Key Documentation:**
 
-- [Java Idioms](./java/ex-soen-prla-ja__idioms.md) - Records, pattern matching, Optional, Stream API
-- [Java Best Practices](./java/ex-soen-prla-ja__best-practices.md) - Modern Java standards (2025-2026)
-- [Java Antipatterns](./java/ex-soen-prla-ja__anti-patterns.md) - Common mistakes to avoid
+- [Java OSE Standards](./java/README.md) - Authoritative coding standards for OSE Platform
+- [Java Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/java) - Complete Java tutorials and examples
+- [Java By Example](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/by-example) - 157+ annotated code examples
+- [Java In Practice](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/in-practice) - Best practices, anti-patterns, TDD, BDD, DDD
 
 **Use Java when you need:**
 
@@ -188,10 +189,10 @@ Languages in this documentation are chosen based on:
 
 ### For Backend Developers
 
-1. **Start with Java fundamentals** - Read [Java Idioms](./java/ex-soen-prla-ja__idioms.md)
-2. **Apply modern practices** - Read [Java Best Practices](./java/ex-soen-prla-ja__best-practices.md)
-3. **Avoid common pitfalls** - Read [Java Antipatterns](./java/ex-soen-prla-ja__anti-patterns.md)
-4. **Integrate with DDD** - Read [DDD and Java](../architecture/domain-driven-design-ddd/README.md)
+1. **Learn Java fundamentals** - [AyoKoding Java By Example](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/by-example)
+2. **Apply OSE standards** - [Java Coding Standards](./java/README.md)
+3. **Study best practices** - [Java In Practice](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/in-practice)
+4. **Integrate with DDD** - [DDD Standards](./java/ex-soen-prla-ja__ddd-standards.md)
 
 ### For Full-Stack Developers
 

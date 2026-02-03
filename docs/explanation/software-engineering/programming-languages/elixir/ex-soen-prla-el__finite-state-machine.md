@@ -1205,7 +1205,7 @@ end
 **Cross-Language**:
 
 - [Go Finite State Machines](../golang/ex-soen-prla-go__finite-state-machine.md) - Comparison with Go
-- [Java Finite State Machines](../java/ex-soen-prla-ja__finite-state-machine.md) - Comparison with Java
+- [Java Finite State Machines](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/by-example/advanced) - Comparison with Java
 
 **Principles**:
 

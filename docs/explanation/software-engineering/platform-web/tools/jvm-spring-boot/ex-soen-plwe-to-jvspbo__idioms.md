@@ -1060,7 +1060,7 @@ public class DevToolsConfig {
 - **[Spring Boot Anti-Patterns](ex-soen-plwe-to-jvspbo__anti-patterns.md)** - Common mistakes
 - **[Configuration](ex-soen-plwe-to-jvspbo__configuration.md)** - Configuration management
 - **[Dependency Injection](ex-soen-plwe-to-jvspbo__dependency-injection.md)** - DI patterns
-- **[Java Idioms](../../../programming-languages/java/ex-soen-prla-ja__idioms.md)** - Modern Java patterns
+- **[Java Idioms](../../../programming-languages/java/README.md)** - Modern Java patterns
 - **[Functional Programming](ex-soen-plwe-to-jvspbo__functional-programming.md)** - FP with Spring Boot
 
 ---
