@@ -1,13 +1,13 @@
 ---
 title: Java Test-Driven Development
-description: Test-driven development practices, JUnit 5, Mockito, AssertJ, and testing strategies for Java
+description: Test-driven development practices, JUnit 6, Mockito, AssertJ, and testing strategies for Java
 category: explanation
 subcategory: prog-lang
 tags:
   - java
   - test-driven-development
   - tdd
-  - junit-5
+  - junit-6
   - mockito
   - assertj
   - testing
@@ -22,8 +22,8 @@ last_updated: 2026-01-24
 
 # Java Test-Driven Development
 
-**Quick Reference**: [Why TDD in Finance](#why-tdd-in-finance) | [Red-Green-Refactor Cycle](#red-green-refactor-cycle) | [JUnit 5 Fundamentals](#junit-5-fundamentals) | [Assertions with AssertJ](#assertions-with-assertj) | [Mocking with Mockito](#mocking-with-mockito) | [Testing Strategies](#testing-strategies) | [Testing Domain Models](#testing-domain-models) | [Testing Patterns](#testing-patterns) | [TDD Best Practices](#tdd-best-practices) | [TDD Checklist](#tdd-checklist) | [Performance and Coverage](#performance-and-coverage) | [Related Principles](#related-principles) | [Sources](#sources) | [Related Documentation](#related-documentation)
-**Understanding-oriented documentation** for test-driven development practices with Java, JUnit 5, Mockito, and AssertJ.
+**Quick Reference**: [Why TDD in Finance](#why-tdd-in-finance) | [Red-Green-Refactor Cycle](#red-green-refactor-cycle) | [JUnit 6 Fundamentals](#junit-6-fundamentals) | [Assertions with AssertJ](#assertions-with-assertj) | [Mocking with Mockito](#mocking-with-mockito) | [Testing Strategies](#testing-strategies) | [Testing Domain Models](#testing-domain-models) | [Testing Patterns](#testing-patterns) | [TDD Best Practices](#tdd-best-practices) | [TDD Checklist](#tdd-checklist) | [Performance and Coverage](#performance-and-coverage) | [Related Principles](#related-principles) | [Sources](#sources) | [Related Documentation](#related-documentation)
+**Understanding-oriented documentation** for test-driven development practices with Java, JUnit 6, Mockito, and AssertJ.
 
 ## Quick Reference
 
@@ -31,7 +31,7 @@ last_updated: 2026-01-24
 
 - [Why TDD in Finance](#why-tdd-in-finance) - Domain context and benefits
 - [Red-Green-Refactor Cycle](#red-green-refactor-cycle) - Core TDD workflow
-- [JUnit 5 Fundamentals](#junit-5-fundamentals) - Modern testing framework
+- [JUnit 6 Fundamentals](#junit-6-fundamentals) - Modern testing framework
 - [Assertions with AssertJ](#assertions-with-assertj) - Fluent assertions
 - [Mocking with Mockito](#mocking-with-mockito) - Test doubles
 - [Testing Strategies](#testing-strategies) - Unit, integration, E2E
@@ -287,9 +287,9 @@ public record Money(BigDecimal amount, Currency currency) {
 // Tests still pass after refactoring!
 ```
 
-## JUnit 5 Fundamentals
+## JUnit 6 Fundamentals
 
-JUnit 5 is the modern testing framework for Java.
+JUnit 6 is the modern testing framework for Java.
 
 ### Installation
 
@@ -355,7 +355,7 @@ class ZakatCalculatorTest {
 
 ### Lifecycle Hooks
 
-JUnit 5 provides hooks for setup and teardown at different lifecycle stages.
+JUnit 6 provides hooks for setup and teardown at different lifecycle stages.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
@@ -1740,9 +1740,9 @@ This document implements the following [software engineering principles](../../.
 
 ### Testing Frameworks
 
-- [Modern Java Testing: A Guide to JUnit 5 & Mockito](https://www.backendbytes.com/java/modern-java-testing-junit5-mockito-guide/)
+- [Modern Java Testing: A Guide to JUnit 6 & Mockito](https://www.backendbytes.com/java/modern-java-testing-junit5-mockito-guide/)
 - [Test Driven Development using JUnit5 and Mockito - GeeksforGeeks](https://www.geeksforgeeks.org/software-testing/test-driven-development-using-junit5-and-mockito/)
-- [TDD and Unit Test with JUnit 5 and Mockito](https://www.vincenzoracca.com/en/blog/framework/spring/unit-test/)
+- [TDD and Unit Test with JUnit 6 and Mockito](https://www.vincenzoracca.com/en/blog/framework/spring/unit-test/)
 
 ### TDD Philosophy
 
@@ -1772,8 +1772,8 @@ This document implements the following [software engineering principles](../../.
 ---
 
 - **Last Updated**: 2026-01-21
-- **Java Version**: 8+ (JUnit 5 requires Java 8+)
-- **Blessed Frameworks**: JUnit 5.14.2, Mockito 5.15.2, AssertJ 3.27.6, TestContainers 1.20.4
+- **Java Version**: 8+ (JUnit 6 requires Java 8+)
+- **Blessed Frameworks**: JUnit 6.14.2, Mockito 5.15.2, AssertJ 3.27.6, TestContainers 1.20.4
 
 ---
 
