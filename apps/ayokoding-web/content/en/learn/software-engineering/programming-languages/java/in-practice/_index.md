@@ -20,6 +20,8 @@ layout: list
 - [Type Safety](/en/learn/software-engineering/programming-languages/java/in-practice/type-safety)
 - [Functional Programming](/en/learn/software-engineering/programming-languages/java/in-practice/functional-programming)
 - [Design Principles](/en/learn/software-engineering/programming-languages/java/in-practice/design-principles)
+- [Concurrency and Parallelism](/en/learn/software-engineering/programming-languages/java/in-practice/concurrency-and-parallelism)
+- [Dependency Injection](/en/learn/software-engineering/programming-languages/java/in-practice/dependency-injection)
 
 **Patterns & Practices**
 
@@ -29,6 +31,7 @@ layout: list
 
 **Integration & External Systems**
 
+- [Web Services and REST APIs](/en/learn/software-engineering/programming-languages/java/in-practice/web-services)
 - [JSON and API Integration](/en/learn/software-engineering/programming-languages/java/in-practice/json-and-api-integration)
 - [Working with SQL Databases](/en/learn/software-engineering/programming-languages/java/in-practice/sql-database)
 
@@ -45,3 +48,12 @@ layout: list
 - [Security Practices](/en/learn/software-engineering/programming-languages/java/in-practice/security-practices)
 - [Resilience Patterns](/en/learn/software-engineering/programming-languages/java/in-practice/resilience-patterns)
 - [Cloud-Native Patterns](/en/learn/software-engineering/programming-languages/java/in-practice/cloud-native-patterns)
+- [Performance Optimization](/en/learn/software-engineering/programming-languages/java/in-practice/performance)
+
+**DevOps & Deployment**
+
+- [Build Tools](/en/learn/software-engineering/programming-languages/java/in-practice/build-tools)
+- [Linting and Formatting](/en/learn/software-engineering/programming-languages/java/in-practice/linting-and-formatting)
+- [Logging](/en/learn/software-engineering/programming-languages/java/in-practice/logging)
+- [CI/CD Pipelines](/en/learn/software-engineering/programming-languages/java/in-practice/ci-cd)
+- [Docker and Kubernetes](/en/learn/software-engineering/programming-languages/java/in-practice/docker-and-kubernetes)
