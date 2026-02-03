@@ -225,7 +225,7 @@ For learning Java fundamentals and concepts referenced in these standards, see:
 ## Related Standards
 
 - [Java Framework Integration](./ex-soen-prla-ja__framework-integration.md) - Spring Boot and Jakarta EE standards
-- [Java Testing Standards](./ex-soen-prla-ja__testing-standards.md) - JUnit 5 and test naming conventions
+- [Java Testing Standards](./ex-soen-prla-ja__testing-standards.md) - JUnit 6 and test naming conventions
 - [Java Build Configuration](./ex-soen-prla-ja__build-configuration.md) - Maven POM structure
 - [Java Code Quality](./ex-soen-prla-ja__code-quality.md) - Automated quality tools
 

@@ -41,7 +41,7 @@ OSE Platform Java applications MUST use the following framework stack:
 
 **Testing Stack:**
 
-- **JUnit 5** (Jupiter) for unit testing
+- **JUnit 6** (Jupiter) for unit testing
 - **Mockito** for test doubles and mocking
 - **AssertJ** for fluent assertions
 - **TestContainers** for database/infrastructure integration testing
@@ -132,7 +132,7 @@ OSE Platform follows a three-tier Java versioning strategy:
 - **[Concurrency](./ex-soen-prla-ja__concurrency-and-parallelism.md)** - Virtual threads, structured concurrency, thread safety
 - **[Functional Programming](./ex-soen-prla-ja__functional-programming.md)** - Pure functions, immutability, Vavr library, monads
 - **[Domain-Driven Design](./ex-soen-prla-ja__domain-driven-design.md)** - DDD tactical patterns (value objects, entities, aggregates, repositories, domain events)
-- **[Test-Driven Development](./ex-soen-prla-ja__test-driven-development.md)** - TDD workflow, JUnit 5, Mockito, AssertJ
+- **[Test-Driven Development](./ex-soen-prla-ja__test-driven-development.md)** - TDD workflow, JUnit 6, Mockito, AssertJ
 - **[Behavior-Driven Development](./ex-soen-prla-ja__behaviour-driven-development.md)** - BDD with Cucumber, Gherkin, Three Amigos
 - **[Interfaces and Polymorphism](./ex-soen-prla-ja__interfaces-and-polymorphism.md)** - Interface design, sealed interfaces, explicit polymorphism
 - **[Memory Management](./ex-soen-prla-ja__memory-management.md)** - JVM internals, GC algorithms (G1GC, ZGC, Shenandoah), memory optimization
@@ -247,7 +247,7 @@ graph TD
 
 **Testing Automation (REQUIRED)**:
 
-- MUST write unit tests with JUnit 5 (target: >80% coverage for domain logic)
+- MUST write unit tests with JUnit 6 (target: >80% coverage for domain logic)
 - MUST use TestContainers for database integration tests (no mocked repositories)
 - SHOULD use Mockito sparingly (prefer real objects, use mocks for external dependencies)
 - SHOULD use property-based testing (jqwik) for complex domain logic
@@ -294,5 +294,5 @@ graph TD
 **Status**: Authoritative Standard (Mandatory Compliance)
 **Last Updated**: 2026-02-03
 **Java Version**: 17+ (baseline), 21+ (recommended), 25 LTS (recommended for new projects)
-**Framework Stack**: Spring Boot 4, Jakarta EE 11, JUnit 5, Mockito, TestContainers
+**Framework Stack**: Spring Boot 4, Jakarta EE 11, JUnit 6, Mockito, TestContainers
 **Maintainers**: Platform Architecture Team

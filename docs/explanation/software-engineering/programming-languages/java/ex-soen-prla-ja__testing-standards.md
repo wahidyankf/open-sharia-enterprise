@@ -1,12 +1,12 @@
 ---
 title: "Java Testing Standards"
-description: Authoritative OSE Platform testing standards (JUnit 5, AssertJ, Mockito, TestContainers, Cucumber BDD)
+description: Authoritative OSE Platform testing standards (JUnit 6, AssertJ, Mockito, TestContainers, Cucumber BDD)
 category: explanation
 subcategory: prog-lang
 tags:
   - java
   - testing
-  - junit5
+  - junit6
   - assertj
   - mockito
   - testcontainers
@@ -29,11 +29,11 @@ This document defines **authoritative testing standards** for Java development i
 
 **Target Audience**: OSE Platform Java developers, QA engineers, technical reviewers
 
-**Scope**: JUnit 5 setup, assertion libraries, mocking patterns, integration testing, BDD acceptance tests
+**Scope**: JUnit 6 setup, assertion libraries, mocking patterns, integration testing, BDD acceptance tests
 
-## JUnit 5 Setup
+## JUnit 6 Setup
 
-**MUST** use JUnit 5 Jupiter (not JUnit 4) for all unit and integration tests.
+**MUST** use JUnit 6 Jupiter (not JUnit 4) for all unit and integration tests.
 
 ### Test Class Naming
 
@@ -152,7 +152,7 @@ void shouldCalculateTaxCorrectly() {
 
 ## Mockito Patterns
 
-**MUST** use Mockito for test doubles with JUnit 5 extension.
+**MUST** use Mockito for test doubles with JUnit 6 extension.
 
 ### Mockito Setup
 

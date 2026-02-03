@@ -62,7 +62,7 @@ Java development follows the five software engineering principles from `governan
 - JaCoCo for automated test coverage
 - Checkstyle for code style enforcement
 - GitHub Actions CI/CD pipelines
-- JUnit 5 for automated testing
+- JUnit 6 for automated testing
 
 **PASS Example** (Automated Zakat Calculation Validation):
 
@@ -1479,7 +1479,7 @@ graph TB
     classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-**JUnit 5 Parameterized Tests** (Automate multiple test cases):
+**JUnit 6 Parameterized Tests** (Automate multiple test cases):
 
 ```java
 @ParameterizedTest
