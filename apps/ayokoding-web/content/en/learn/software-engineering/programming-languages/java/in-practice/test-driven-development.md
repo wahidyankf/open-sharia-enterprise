@@ -113,19 +113,19 @@ JUnit 5 organizes tests with clear structure using lifecycle hooks and annotatio
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 graph TD
-    Start([Test Suite Start]) --> BeforeAll[@BeforeAll<br/>Setup resources]:::purple
+    Start([Test Suite Start]) --> BeforeAll["#64;BeforeAll<br/>Setup resources"]:::purple
     BeforeAll --> Test1Start[Test 1]
 
-    Test1Start --> BeforeEach1[@BeforeEach<br/>Setup test data]:::blue
-    BeforeEach1 --> Execute1[@Test<br/>Execute test]:::teal
-    Execute1 --> AfterEach1[@AfterEach<br/>Cleanup test data]:::blue
+    Test1Start --> BeforeEach1["#64;BeforeEach<br/>Setup test data"]:::blue
+    BeforeEach1 --> Execute1["#64;Test<br/>Execute test"]:::teal
+    Execute1 --> AfterEach1["#64;AfterEach<br/>Cleanup test data"]:::blue
 
     AfterEach1 --> Test2Start[Test 2]
-    Test2Start --> BeforeEach2[@BeforeEach<br/>Setup test data]:::blue
-    BeforeEach2 --> Execute2[@Test<br/>Execute test]:::teal
-    Execute2 --> AfterEach2[@AfterEach<br/>Cleanup test data]:::blue
+    Test2Start --> BeforeEach2["#64;BeforeEach<br/>Setup test data"]:::blue
+    BeforeEach2 --> Execute2["#64;Test<br/>Execute test"]:::teal
+    Execute2 --> AfterEach2["#64;AfterEach<br/>Cleanup test data"]:::blue
 
-    AfterEach2 --> AfterAll[@AfterAll<br/>Release resources]:::purple
+    AfterEach2 --> AfterAll["#64;AfterAll<br/>Release resources"]:::purple
     AfterAll --> End([Test Suite End])
 
     classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
