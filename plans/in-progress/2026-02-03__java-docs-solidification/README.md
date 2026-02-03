@@ -53,6 +53,27 @@ Documentation evolved organically without clear separation between:
 2. **Bilingual Coverage**: Complete Indonesian (ID) navigation for migrated content
 3. **Cross-Reference**: Link docs/explanation style guide to ayokoding-web for learning resources
 
+## Git Workflow
+
+**Strategy**: Trunk Based Development (all work on `main` branch)
+
+**Rationale**:
+
+- 5-week plan with clear phase separation
+- Multiple agents working sequentially (not parallel branches)
+- Content migration benefits from continuous integration
+- Pre-commit hooks validate quality at each step
+
+**Commit Strategy**:
+
+- Small, frequent commits per task (e.g., "feat(ayokoding-web): migrate idioms to intermediate.md")
+- One commit per migration task (2.1, 2.2, etc.)
+- Split commits by domain (ayokoding-web vs docs/explanation)
+- Tag after each phase complete: `phase-1-complete`, `phase-2-complete`, `phase-3-complete`, `phase-4-complete`
+- Never squash during migration (preserve granular history for selective rollback)
+
+**Branch Policy**: No feature branches (99% of repository work uses trunk-based development per governance)
+
 ## Scope
 
 ### In Scope
@@ -166,13 +187,26 @@ Documentation evolved organically without clear separation between:
 
 ### Summary
 
-- **Total Lines**: ~48,822
+**Total Gross Lines**: ~51,853 (before removing duplicates and splits)
+**Total Net Lines**: ~48,822 (after accounting for splits and consolidation)
+
+**Destination Breakdown** (after splits):
+
 - **Universal → ayokoding-web**: ~32,000 lines (65%)
-  - by-example/: ~16,000 lines (33% of total)
-  - in-practice/: ~13,000 lines (27% of total)
-  - release-highlights/: ~3,000 lines (6% of total)
+  - Category 1 (pure universal): 23,513 lines
+  - Category 3 (universal parts): ~8,500 lines (estimated from mixed splits)
+  - Subtotal before consolidation: ~32,000 lines
+  - Will expand to ~42,000 with annotations, then consolidate back to ~32,000
 - **Style Guide → docs/explanation**: ~12,000 lines (25%)
-- **Remove/Consolidate**: ~4,800 lines (10%)
+  - Category 2 (pure style guide): 3,835 lines
+  - Category 3 (style guide parts): ~8,200 lines (estimated from mixed splits)
+  - Subtotal: ~12,000 lines
+- **Remove/Archive**: ~4,800 lines (10%)
+  - Outdated release files: ~700 lines (Java 8, 11, 14, 18, 22)
+  - Duplicate content after consolidation: ~4,100 lines
+  - Category 4 (Index): 1,584 lines rewritten (not counted in removal)
+
+**Note**: Mixed content files (Category 3) are split between destinations. Gross total counts source files before splits (51,853 lines). Net total accounts for splits and consolidation (48,822 lines). Final ayokoding-web content will expand due to heavy annotations (1.0-2.25 ratio PER EXAMPLE).
 
 ## Approach
 
@@ -301,7 +335,6 @@ Documentation evolved organically without clear separation between:
 - Files analyzed: 26
 - Total lines: ~48,822
 - Categories identified: 4 (Universal, Style Guide, Mixed, Index)
-- Time to complete: [To be filled]
 
 ---
 
@@ -452,6 +485,7 @@ Documentation evolved organically without clear separation between:
   - Confirm self-containment (copy-paste runnable within chapter scope)
   - Check diagram frequency (30-50% of examples have diagrams)
   - Verify color-blind friendly palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC)
+  - Verify "Why It Matters" sections 50-100 words (per by-example convention)
   - Agent: `apps__ayokoding-web__by-example-checker`
   - Fix violations: `apps__ayokoding-web__by-example-fixer`
 
@@ -484,7 +518,34 @@ Documentation evolved organically without clear separation between:
 - Annotation density (PER EXAMPLE): [Not measured]
 - Web validation: [0 features verified]
 - Bilingual navigation gaps: [To be filled]
-- Time to complete: [To be filled]
+
+### Phase 2 Gate Criteria (Must Pass to Proceed to Phase 3)
+
+**Content Migration** (BLOCKING):
+
+- ✅ 17/17 files migrated successfully (100% required)
+- ✅ 32,000+ lines in ayokoding-web (allow ±5% variance: 30,400-33,600 lines)
+- ✅ 2/2 new folders created (in-practice/, release-highlights/)
+- ✅ 4/4 navigation \_index.md files created
+
+**Quality Validation** (BLOCKING):
+
+- ✅ By-example compliance: ≥95% of examples pass all 7 criteria
+- ✅ Annotation density: ≥90% of examples meet 1.0-2.25 PER EXAMPLE
+- ✅ Web validation: Zero CRITICAL errors, ≤5 HIGH errors
+- ✅ Bilingual navigation: Zero gaps (all EN/ID pairs exist)
+
+**Markdown Quality** (BLOCKING):
+
+- ✅ Prettier: Zero violations
+- ✅ markdownlint: ≤10 LOW violations (zero CRITICAL/HIGH)
+
+**Non-Blocking Metrics** (track but don't block):
+
+- Total line count (track expansion due to annotations)
+- Diagram count (informational, 30-50% is guideline not gate)
+
+**Escalation**: If any BLOCKING criterion fails, stop Phase 3, fix issues, re-validate.
 
 ---
 
@@ -633,7 +694,42 @@ Documentation evolved organically without clear separation between:
 - Cross-references to governance/: [To be filled]
 - Java 25 LTS alignment: [Not validated]
 - Files removed from docs/explanation: [0/20 target]
-- Time to complete: [To be filled]
+
+### Phase 3 Gate Criteria (Must Pass to Proceed to Phase 4)
+
+**Style Guide Structure** (BLOCKING):
+
+- ✅ 6/6 style guide files created (README + 5 specific guides)
+- ✅ 12,000+ lines consolidated (allow ±10% variance: 10,800-13,200 lines)
+- ✅ 20/20 old files removed from docs/explanation
+- ✅ README.md rewritten as authoritative index
+
+**Principles Alignment** (BLOCKING):
+
+- ✅ All 5 software engineering principles referenced
+- ✅ Each principle linked to governance/principles/
+- ✅ Principle-driven directives present (e.g., immutability → records)
+- ✅ No contradictions with principles
+
+**Cross-References** (BLOCKING):
+
+- ✅ All links to ayokoding-web tested (zero broken)
+- ✅ All links to governance/ tested (zero broken)
+- ✅ "Learn more" sections point to ayokoding-web appropriately
+- ✅ Style guide assumes ayokoding-web knowledge (no re-explanation)
+
+**Markdown Quality** (BLOCKING):
+
+- ✅ Prettier: Zero violations
+- ✅ markdownlint: ≤10 LOW violations (zero CRITICAL/HIGH)
+- ✅ MUST/SHOULD/MAY directives used consistently
+
+**Non-Blocking Metrics** (track but don't block):
+
+- Java 25 LTS alignment (informational, validation in Phase 4)
+- Framework versions accuracy (informational, validation in Phase 4)
+
+**Escalation**: If any BLOCKING criterion fails, fix issues before Phase 4, re-validate.
 
 ---
 
@@ -705,6 +801,7 @@ Documentation evolved organically without clear separation between:
   - Self-containment (copy-paste runnable within chapter scope)
   - Diagram frequency (30-50% of examples)
   - Color-blind friendly palette verification
+  - "Why It Matters" sections 50-100 words (per by-example convention)
   - Level-based weight ordering
   - Bilingual navigation completeness (EN/ID)
   - Absolute path linking (no .md extension)
@@ -758,7 +855,48 @@ Documentation evolved organically without clear separation between:
 - Markdown quality violations: [Target: 0]
 - Gherkin acceptance criteria passed: [0/6]
 - Final validation checklist completed: [0/1]
-- Time to complete: [To be filled]
+
+### Phase 4 Gate Criteria (Must Pass for Plan Completion)
+
+**Content Validation** (BLOCKING):
+
+- ✅ Zero content loss (all 26 files accounted for)
+- ✅ Migration mapping documented and verified
+- ✅ Removed content justified in plan
+
+**Web Validation** (BLOCKING):
+
+- ✅ Java 25 LTS verified (WebSearch + WebFetch)
+- ✅ Spring Boot 4 and Jakarta EE 11 verified (WebSearch + WebFetch)
+- ✅ 10+ code examples compiled with javac 25
+- ✅ 5+ framework claims WebSearch-validated
+- ✅ 5+ API references WebFetch-verified
+
+**Link Validation** (BLOCKING):
+
+- ✅ Zero broken links (docs-link-general-checker)
+- ✅ All cross-references tested (docs ↔ ayokoding-web ↔ governance)
+- ✅ Navigation functional in all locations
+
+**Quality Validation** (BLOCKING):
+
+- ✅ Prettier: Zero violations
+- ✅ markdownlint: Zero CRITICAL/HIGH violations
+- ✅ WCAG AA compliance maintained
+- ✅ By-example compliance: ≥95% pass rate
+
+**Acceptance Criteria** (BLOCKING):
+
+- ✅ All 6 Gherkin scenarios passed
+- ✅ Final validation checklist complete (all 75+ items)
+
+**Sign-Off** (BLOCKING):
+
+- ✅ Platform documentation team approval
+- ✅ No CRITICAL or HIGH issues remaining
+- ✅ Plan ready to move to plans/done/
+
+**Escalation**: If any BLOCKING criterion fails, fix issues, re-validate before completion.
 
 ---
 
@@ -865,39 +1003,66 @@ Then markdown passes Prettier and markdownlint checks
   And diagrams use color-blind friendly palette
 ```
 
-## Timeline
+## Execution Milestones
 
-### Week 1: Planning & Analysis
+### Phase 1: Planning & Analysis
 
-- Complete content categorization matrix
-- Finalize migration mapping
-- Get stakeholder approval
+**Dependencies**: None
 
-### Week 2-3: ayokoding-web Migration
+**Deliverables**:
 
-- Migrate universal content to by-example tutorials
-- Validate annotation density
-- Update bilingual navigation
+- Categorization matrix complete
+- Migration mapping finalized
+- Stakeholder approval obtained
 
-### Week 4: docs/explanation Refinement
+**Completion Criteria**: Task 1.5 (stakeholder approval) complete
 
-- Extract and consolidate style guide content
-- Rewrite README.md as style guide index
-- Add cross-references
+### Phase 2: ayokoding-web Migration
 
-### Week 5: Quality Assurance
+**Dependencies**: Phase 1 complete
 
-- Validate acceptance criteria
-- Review and sign-off
-- Update related documentation
+**Deliverables**:
 
-**Total Duration**: ~5 weeks
+- 17 files migrated to ayokoding-web (universal + mixed content splits)
+- By-example compliance validated (annotation density 1.0-2.25 PER EXAMPLE)
+- Bilingual navigation complete (EN/ID pairs for all folders)
+- 2 new folders created (in-practice/, release-highlights/)
+
+**Completion Criteria**: All Phase 2 gate criteria passed (see Phase 2 Gate Criteria section)
+
+### Phase 3: docs/explanation Refinement
+
+**Dependencies**: Phase 2 complete
+
+**Deliverables**:
+
+- 6 style guide files created
+- Software engineering principles aligned
+- Cross-references validated (docs ↔ ayokoding-web ↔ governance)
+- Java 25 LTS alignment verified
+
+**Completion Criteria**: All Phase 3 gate criteria passed (see Phase 3 Gate Criteria section)
+
+### Phase 4: Quality Assurance
+
+**Dependencies**: Phase 3 complete
+
+**Deliverables**:
+
+- All 6 Gherkin acceptance criteria passed
+- Zero broken links
+- Markdown quality validated
+- Team sign-off obtained
+
+**Completion Criteria**: All Phase 4 gate criteria passed (see Final Validation Checklist)
+
+**Note**: Execute phases sequentially. Duration depends on content complexity and validation depth. No time estimates provided per repository principles.
 
 ## Dependencies
 
 ### Internal Dependencies
 
-- **Agents**: apps\_\_ayokoding-web\_\_by-example-maker, apps\_\_ayokoding-web\_\_by-example-checker, docs-maker, docs-checker
+- **Agents**: apps\_\_ayokoding-web\_\_by-example-maker, apps\_\_ayokoding-web\_\_by-example-checker, apps\_\_ayokoding-web\_\_by-example-fixer, apps\_\_ayokoding-web\_\_general-checker, apps\_\_ayokoding-web\_\_facts-checker, apps\_\_ayokoding-web\_\_general-maker, apps\_\_ayokoding-web\_\_navigation-maker, docs-maker, docs-checker, docs-link-general-checker
 - **Skills**: apps-ayokoding-web-developing-content, docs-creating-by-example-tutorials, docs-applying-diataxis-framework
 - **Conventions**: File naming, linking, markdown quality, Diátaxis framework
 
@@ -909,26 +1074,111 @@ Then markdown passes Prettier and markdownlint checks
 
 ### High Risks
 
-| Risk                                 | Impact | Mitigation                                                          |
-| ------------------------------------ | ------ | ------------------------------------------------------------------- |
-| Content loss during migration        | High   | Maintain categorization matrix, validate each file, version control |
-| Broken cross-references              | Medium | Use docs-link-general-checker, systematic link validation           |
-| Inconsistent style guide after split | Medium | Use clear MUST/SHOULD/MAY keywords, governance/ references          |
+| Risk                          | Impact | Mitigation                                                              | Owner         | Trigger                         | Detection                                    |
+| ----------------------------- | ------ | ----------------------------------------------------------------------- | ------------- | ------------------------------- | -------------------------------------------- |
+| Content loss during migration | High   | 1. Maintain categorization matrix<br>2. Validate each file<br>3. Git VC | plan-executor | Before each file deletion (2.x) | Line count comparison: source vs destination |
+| Broken cross-references       | Medium | 1. Use docs-link-general-checker<br>2. Systematic validation            | plan-executor | After Phase 2 and 3 complete    | Link checker returns non-zero broken links   |
+| Inconsistent style guide      | Medium | 1. MUST/SHOULD/MAY keywords<br>2. Reference governance/                 | docs-maker    | During Phase 3 execution        | docs-checker flags missing directives        |
 
 ### Medium Risks
 
-| Risk                          | Impact | Mitigation                                                     |
-| ----------------------------- | ------ | -------------------------------------------------------------- |
-| Annotation density violations | Medium | Use apps\_\_ayokoding-web\_\_by-example-checker for validation |
-| Bilingual navigation gaps     | Low    | Systematic EN/ID pair checking                                 |
-| Markdown quality issues       | Low    | Pre-commit hooks, automated linting                            |
+| Risk                          | Impact | Mitigation                          | Owner                        | Trigger                 | Detection                           |
+| ----------------------------- | ------ | ----------------------------------- | ---------------------------- | ----------------------- | ----------------------------------- |
+| Annotation density violations | Medium | by-example-checker validation       | by-example-checker           | After Phase 2 migration | <90% examples meet 1.0-2.25 density |
+| Bilingual navigation gaps     | Low    | Systematic EN/ID pair checking      | navigation-maker             | After Phase 2 complete  | Missing ID pairs in navigation      |
+| Markdown quality issues       | Low    | Pre-commit hooks, automated linting | Pre-commit hooks (automated) | On every commit         | Prettier/markdownlint failures      |
 
 ### Low Risks
 
-| Risk                                       | Impact | Mitigation                           |
-| ------------------------------------------ | ------ | ------------------------------------ |
-| Stakeholder disagreement on categorization | Low    | Collaborative review, clear criteria |
-| Timeline overrun                           | Low    | Phased approach, clear milestones    |
+| Risk                                       | Impact | Mitigation                           | Owner              | Trigger                 | Detection                      |
+| ------------------------------------------ | ------ | ------------------------------------ | ------------------ | ----------------------- | ------------------------------ |
+| Stakeholder disagreement on categorization | Low    | Collaborative review, clear criteria | Documentation team | During Phase 1 review   | Review feedback indicates gaps |
+| Phase duration uncertainty                 | Low    | Phased approach, clear milestones    | plan-executor      | Ongoing throughout plan | Milestone completion tracking  |
+
+### Risk Monitoring Plan
+
+**Frequency**: After each phase completion
+**Method**: Review risk detection metrics from above table
+**Escalation**: Block next phase if High risk materializes and mitigation fails
+
+## Rollback Strategy
+
+### Phase-Level Rollback
+
+**If Phase 2 migration fails validation**:
+
+1. Identify last known good commit (before Phase 2 starts - tag: `phase-1-complete`)
+2. Create rollback branch: `rollback/java-docs-phase2`
+3. Revert all Phase 2 commits via `git revert` (preserve history)
+4. Document failure reasons in plan (add Appendix D: Rollback Log)
+5. Revise Phase 2 approach based on learnings
+6. Restart Phase 2 with corrections
+
+**If Phase 3 style guide fails validation**:
+
+1. Revert Phase 3 commits only (Phase 2 ayokoding-web content preserved)
+2. Keep migrated universal content in ayokoding-web
+3. Restore original docs/explanation files temporarily
+4. Revise style guide extraction approach
+5. Restart Phase 3
+
+**If Phase 4 reveals fundamental issues**:
+
+1. Assess scope: Isolated issue or systemic problem?
+2. **Isolated**: Fix specific files (e.g., wrong version reference)
+3. **Systemic**: Rollback affected phases completely
+4. Document root cause analysis in plan
+5. Update plan before retry
+
+### Git Workflow for Rollback
+
+**Commit Strategy** (enables selective rollback):
+
+- One commit per major task (2.1, 2.2, 3.1, etc.)
+- Tag after each phase complete: `phase-1-complete`, `phase-2-complete`, `phase-3-complete`, `phase-4-complete`
+- Never squash during migration (preserve granular history)
+
+**Rollback Commands**:
+
+```bash
+# Rollback entire Phase 2
+git revert phase-1-complete..phase-2-complete
+
+# Rollback specific task (e.g., task 2.5)
+git log --oneline --grep="2.5:"
+git revert <commit-hash>
+```
+
+### Content Recovery
+
+**Before deletion** (tasks 2.x that remove files):
+
+1. Create `plans/in-progress/2026-02-03__java-docs-solidification/backup/` folder
+2. Copy original files before deletion
+3. Document mapping: original path → backup path (in Appendix D if created)
+4. Preserve backups until Phase 4 sign-off
+
+**Recovery procedure**:
+
+```bash
+# If rollback needed
+cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja__idioms.md \
+   docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__idioms.md
+```
+
+### Validation Checkpoints (No-Go Criteria)
+
+**Block Phase 3 if**:
+
+- Phase 2 creates >10 broken links
+- By-example compliance <80% of files pass
+- Web validation finds >5 CRITICAL errors
+
+**Block final sign-off if**:
+
+- Any Gherkin acceptance criteria fails
+- CRITICAL or HIGH issues remain unresolved
+- Stakeholders do not approve
 
 ## Final Validation Checklist
 
