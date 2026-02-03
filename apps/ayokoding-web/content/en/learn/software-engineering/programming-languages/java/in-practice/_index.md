@@ -27,6 +27,15 @@ layout: list
 - [Test-Driven Development](/en/learn/software-engineering/programming-languages/java/in-practice/test-driven-development)
 - [Behavior-Driven Development](/en/learn/software-engineering/programming-languages/java/in-practice/behavior-driven-development)
 
+**Integration & External Systems**
+
+- [JSON and API Integration](/en/learn/software-engineering/programming-languages/java/in-practice/json-and-api-integration)
+- [Working with SQL Databases](/en/learn/software-engineering/programming-languages/java/in-practice/sql)
+
+**Application Development**
+
+- [Building CLI Applications](/en/learn/software-engineering/programming-languages/java/in-practice/cli-app)
+
 **Architecture & Design**
 
 - [Domain-Driven Design](/en/learn/software-engineering/programming-languages/java/in-practice/domain-driven-design)

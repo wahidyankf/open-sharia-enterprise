@@ -99,8 +99,9 @@ JUnit 5 organizes tests with clear structure using lifecycle hooks and annotatio
 - `@Test`: Marks a test method
 - `@BeforeEach`: Runs before each test (setup)
 - `@AfterEach`: Runs after each test (cleanup)
-- `@DisplayName`: Provides readable test names
+- `@DisplayName`: Provides readable test names in reports
 - `@Disabled`: Temporarily disables a test
+- `@Timeout`: Fails test if execution exceeds time limit
 
 **Problem**: Tests need consistent setup and teardown for isolation.
 
@@ -157,6 +158,44 @@ Nested tests organize related test cases hierarchically using `@Nested` annotati
 **Problem**: Flat test structure makes it hard to see relationships between tests.
 
 **Solution**: Use `@Nested` classes to group related scenarios (e.g., "When created", "When processed").
+
+### Test Timeouts
+
+Timeout testing prevents hanging tests by failing if execution exceeds time limit using `@Timeout` annotation.
+
+**Pattern**: `@Timeout(value = 1, unit = TimeUnit.SECONDS)`
+
+**Use cases**:
+
+- **Performance regression**: Detect when code becomes unexpectedly slow
+- **Prevent hanging**: Fail fast instead of blocking CI pipeline
+- **Resource cleanup**: Ensure tests don't leak resources causing slowdowns
+
+**Problem**: Slow or hanging tests block CI pipeline and developer productivity.
+
+**Solution**: Add `@Timeout` to catch performance regressions and prevent infinite loops.
+
+**Trade-off**: Flaky on slow CI servers - set conservative limits or skip on CI.
+
+### Display Names
+
+Display names make test reports more readable using `@DisplayName` annotation for human-friendly test descriptions.
+
+**Pattern**: `@DisplayName("Should calculate discount when customer is VIP")`
+
+**Before**: Test reports show method names like `testCalculateDiscount_VipCustomer_ReturnsDiscountedPrice`
+**After**: Test reports show readable names like "Should calculate discount when customer is VIP"
+
+**Problem**: Method names must follow Java naming conventions making them less readable in reports.
+
+**Solution**: Use `@DisplayName` to separate code naming from test documentation.
+
+**Best practices**:
+
+- Use business language not technical jargon
+- Start with "Should" for behavior-driven style
+- Keep under 80 characters for readability
+- Describe expected behavior not implementation
 
 ## Assertions with AssertJ
 
@@ -287,6 +326,40 @@ Argument captors capture arguments passed to mock methods for detailed verificat
 **Problem**: Need to verify not just that method was called, but with what specific values.
 
 **Solution**: Use ArgumentCaptor to capture and inspect method arguments.
+
+### Argument Matchers
+
+Argument matchers provide flexible matching for stub configuration and verification when exact values aren't known or relevant.
+
+**Common matchers**:
+
+- `any()`: Matches any value (including null)
+- `anyString()`: Matches any String
+- `anyInt()`, `anyLong()`, `anyDouble()`: Matches any primitive
+- `startsWith(prefix)`: String starting with prefix
+- `endsWith(suffix)`: String ending with suffix
+- `contains(substring)`: String containing substring
+- `argThat(predicate)`: Custom predicate matching
+
+**Stubbing with matchers**:
+
+```java
+when(repository.findById(anyString())).thenReturn(defaultUser);
+when(repository.findByEmail(startsWith("admin"))).thenReturn(adminUser);
+```
+
+**Verification with matchers**:
+
+```java
+verify(repository).save(argThat(user -> user.getAge() > 18));
+verify(emailService).send(anyString(), contains("welcome"));
+```
+
+**Problem**: Testing with exact values is brittle - tests break when inputs change slightly.
+
+**Solution**: Use matchers to verify behavior patterns rather than exact values.
+
+**Warning**: Cannot mix matchers and exact values in same method call - use `eq()` for exact values when mixing.
 
 ### Spies
 
