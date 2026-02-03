@@ -3,7 +3,7 @@ title: "Design Principles"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: Master SOLID principles for maintainable, extensible object-oriented design in Java
-weight: 10000011
+weight: 10000003
 tags: ["java", "solid", "design-principles", "oop", "software-design"]
 ---
 
