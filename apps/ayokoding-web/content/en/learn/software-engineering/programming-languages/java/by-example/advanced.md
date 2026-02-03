@@ -3,7 +3,7 @@ title: "Advanced"
 date: 2026-01-02T05:01:35+07:00
 draft: false
 weight: 10000003
-description: "Examples 63-85: Expert mastery, performance, memory management, design patterns, reactive programming (75-95% coverage)"
+description: "Examples 60-82: Expert mastery, performance, memory management, design patterns, reactive programming (75-95% coverage)"
 tags:
   [
     "java",
@@ -29,7 +29,7 @@ tags:
 
 Master advanced Java concepts through 109 annotated code examples. Build on intermediate foundations to explore advanced concurrency, parallelism, virtual threads, JVM internals, memory management, garbage collection tuning, design patterns, profiling tools, finite state machines, performance optimization (JVM tuning, JFR, async-profiler, JMH), and modern Java features.
 
-## Example 63: Concurrent Collections
+## Example 60: Concurrent Collections
 
 Concurrent collections provide thread safety with better performance than synchronized wrappers. `ConcurrentHashMap` offers lock striping. `BlockingQueue` supports producer-consumer patterns.
 
@@ -211,7 +211,7 @@ consumer.start();                // => Start consumer thread, begins consuming i
 
 ---
 
-## Example 64: Atomic Variables
+## Example 61: Atomic Variables
 
 Atomic variables use hardware-level Compare-And-Swap (CAS) operations for lock-free concurrency. They provide better performance than synchronized blocks for simple state updates. Ideal for counters, flags, and references.
 
@@ -355,7 +355,7 @@ System.out.println("Final count: " + sharedCounter.get());
 
 ---
 
-## Example 65: CountDownLatch and CyclicBarrier
+## Example 62: CountDownLatch and CyclicBarrier
 
 `CountDownLatch` allows threads to wait until a set of operations completes. `CyclicBarrier` synchronizes threads at a common barrier point. Both coordinate multi-threaded workflows but serve different patterns.
 
@@ -522,7 +522,7 @@ for (int i = 0; i < 5; i++) {
 
 ---
 
-## Example 66: Fork/Join Framework
+## Example 63: Fork/Join Framework
 
 Fork/Join framework enables efficient parallel processing of recursive tasks. It uses work-stealing queues where idle threads steal work from busy threads. Powers parallel streams under the hood.
 
@@ -677,7 +677,7 @@ long parallelSum = java.util.stream.LongStream.range(1, 10001)
 
 ---
 
-## Example 67: Annotations and Reflection
+## Example 64: Annotations and Reflection
 
 Annotations add metadata to code for compile-time and runtime processing. Reflection inspects and manipulates code at runtime. Together they enable frameworks like Spring and JUnit to work their magic.
 
@@ -858,7 +858,7 @@ class Example {
 
 ---
 
-## Example 68: Enums with Behavior
+## Example 65: Enums with Behavior
 
 Enums are type-safe constants that can have fields, methods, and constant-specific behavior. They're more powerful than simple integer constants and integrate seamlessly with switch statements.
 
@@ -1039,7 +1039,7 @@ schedule.put(Day.WEDNESDAY, "Code review");
 
 ---
 
-## Example 69: Sealed Classes and Pattern Matching
+## Example 66: Sealed Classes and Pattern Matching
 
 Sealed classes restrict which classes can extend or implement them, enabling exhaustive pattern matching. Pattern matching eliminates casts and enables type-safe, concise code. Available in Java 17+.
 
@@ -1257,7 +1257,7 @@ String message = switch (result) {
 
 ---
 
-## Example 70: Modules (Java Platform Module System)
+## Example 67: Modules (Java Platform Module System)
 
 Modules provide stronger encapsulation than packages, enabling better dependency management and smaller runtime images. Defined via `module-info.java`, modules explicitly declare dependencies and exports.
 
@@ -1364,7 +1364,7 @@ public class InternalUtil {      // => Public BUT in non-exported package (not a
 
 ---
 
-## Example 71: var and Type Inference
+## Example 68: var and Type Inference
 
 `var` enables local variable type inference, reducing boilerplate while preserving static typing. The compiler infers types from initializers. Use for readability when types are obvious, avoid when clarity suffers.
 
@@ -1470,7 +1470,7 @@ var number = 1;                  // => Inferred as int, but could be long
 
 ---
 
-## Example 72: Garbage Collection Basics
+## Example 69: Garbage Collection Basics
 
 Garbage collection automatically reclaims memory from unreachable objects. The generational hypothesis (most objects die young) drives GC design. Understanding GC helps optimize application performance.
 
@@ -1680,7 +1680,7 @@ class Resource {
 
 ---
 
-## Example 73: Memory Management and Reference Types
+## Example 70: Memory Management and Reference Types
 
 Java provides four reference types to control GC behavior. Strong references prevent collection. Soft references enable memory-sensitive caches. Weak references allow collection despite references. Phantom references enable pre-mortem cleanup.
 
@@ -1861,7 +1861,7 @@ class MetadataCache {
 
 ---
 
-## Example 74: Performance Monitoring and Profiling
+## Example 71: Performance Monitoring and Profiling
 
 Java provides rich tools for monitoring and profiling applications. JMX exposes runtime metrics. JFR enables low-overhead production profiling. JMH provides accurate microbenchmarks. Profile before optimizing.
 
@@ -2002,7 +2002,7 @@ public void benchmarkMethod() {
 
 ---
 
-## Example 75: Common Performance Patterns
+## Example 72: Common Performance Patterns
 
 Choosing appropriate data structures and algorithms dramatically impacts performance. StringBuilder for string building. ArrayList for indexed access. HashMap for lookups. Lazy initialization for expensive objects. Profile before optimizing.
 
@@ -2196,7 +2196,7 @@ Map<String, String> cache = new LinkedHashMap<>(100, 0.75f, true) {
 
 ---
 
-## Example 76: Connection Pool Factory Pattern
+## Example 73: Connection Pool Factory Pattern
 
 Production database applications use connection pooling to reuse expensive database connections. This example demonstrates Singleton (pool manager), Factory (connection creation), and Builder (configuration) patterns in a real-world context.
 
@@ -2754,7 +2754,7 @@ pool.shutdown(); // Cleanup
 
 ---
 
-## Example 77: Strategy, Observer, Decorator
+## Example 74: Strategy, Observer, Decorator
 
 Behavioral patterns define communication between objects. Strategy encapsulates algorithms. Observer enables one-to-many notifications. Decorator adds responsibilities dynamically without subclassing.
 
@@ -3091,7 +3091,7 @@ System.out.println(coffee.cost()); // => 2.7
 
 ---
 
-## Example 78: Dependency Injection Basics
+## Example 75: Dependency Injection Basics
 
 Dependency Injection (DI) inverts control, allowing dependencies to be provided externally rather than created internally. Enhances testability, flexibility, and maintainability. Constructor injection preferred for required dependencies.
 
@@ -3314,7 +3314,7 @@ class EmailService implements NotificationService {
 
 ---
 
-## Example 79: Immutability Patterns
+## Example 76: Immutability Patterns
 
 Immutable objects cannot be modified after creation, providing inherent thread safety and simplicity. Use final fields, no setters, defensive copying for mutable components. Records automate immutable class creation.
 
@@ -3694,7 +3694,7 @@ thread.setContextClassLoader(new CustomClassLoader("/custom/path"));
 
 ---
 
-## Example 80: Virtual Threads (Project Loom, Java 21+)
+## Example 77: Virtual Threads (Project Loom, Java 21+)
 
 Virtual threads enable millions of lightweight threads with low overhead. M:N mapping to platform threads. Ideal for I/O-bound workloads. Simplifies concurrent code without callbacks. Available in Java 21+.
 
@@ -3877,7 +3877,7 @@ ExecutorService newExecutor = Executors.newVirtualThreadPerTaskExecutor();
 
 ---
 
-## Example 81: Modern Java Best Practices
+## Example 78: Modern Java Best Practices
 
 Modern Java emphasizes immutability, composition, type safety, and simplicity. Records for data, sealed classes for domain modeling, pattern matching for cleaner code. Testing and modularity are essential. Streams and Optional improve expressiveness.
 
@@ -4107,7 +4107,7 @@ int numLetters = switch (day) {  // => Switch as expression (returns value)
 
 Master Java's automatic memory management, garbage collection algorithms, JVM internals, and performance optimization techniques for building high-performance applications.
 
-## Example 82: JVM Memory Model and Regions
+## Example 79: JVM Memory Model and Regions
 
 The JVM divides memory into distinct regions: heap (shared object storage), stack (thread-local execution frames), metaspace (class metadata), and direct buffers (off-heap NIO). Understanding memory regions is essential for diagnosing memory issues and tuning performance.
 
@@ -4209,7 +4209,7 @@ ByteBuffer directBuffer = ByteBuffer.allocateDirect(1024);
 
 ---
 
-## Example 83: Garbage Collection with G1GC
+## Example 80: Garbage Collection with G1GC
 
 G1GC (Garbage First) is Java's default collector (since Java 9), designed for balanced throughput and predictable pause times. It divides the heap into regions and performs incremental collection, prioritizing high-garbage regions first.
 
@@ -4338,7 +4338,7 @@ public class G1Monitoring {
 
 ---
 
-## Example 84: Ultra-Low Latency with ZGC
+## Example 81: Ultra-Low Latency with ZGC
 
 ZGC is a scalable low-latency garbage collector designed for heaps up to 16TB with pause times under 10ms. It performs most GC work concurrently using colored pointers and load barriers, achieving sub-millisecond pauses even during heap compaction.
 
@@ -4503,7 +4503,7 @@ public class PaymentGateway {
 
 ---
 
-## Example 85: JVM Profiling with Java Flight Recorder (JFR)
+## Example 82: JVM Profiling with Java Flight Recorder (JFR)
 
 Java Flight Recorder (JFR) is a low-overhead profiling framework built into the JVM. It records runtime events (allocations, GC, locks, I/O) with minimal performance impact (<1% overhead), making it safe for production use.
 

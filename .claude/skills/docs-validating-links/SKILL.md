@@ -129,7 +129,7 @@ From: governance/conventions/formatting/linking.md (3 levels deep)
 
 **Error 4: Filename as link text**
 
-❌ FAIL: [ex-co__file-naming.md](../meta/file-naming.md)
+❌ FAIL: [ex-co\_\_file-naming.md](../meta/file-naming.md)
 ✅ PASS: [File Naming Convention](../meta/file-naming.md)
 
 **Criticality**: MEDIUM - Poor accessibility and readability
@@ -137,7 +137,7 @@ From: governance/conventions/formatting/linking.md (3 levels deep)
 
 **Error 5: Hugo link with .md extension**
 
-From: apps/ayokoding-web/content/learn/ai/_index.md
+From: apps/ayokoding-web/content/learn/ai/\_index.md
 ❌ FAIL: [Chat with PDF](/learn/ai/chat-with-pdf.md) ← Hugo omits .md
 ✅ PASS: [Chat with PDF](/learn/ai/chat-with-pdf)
 
@@ -146,7 +146,7 @@ From: apps/ayokoding-web/content/learn/ai/_index.md
 
 **Error 6: Hugo link using relative path**
 
-From: apps/ayokoding-web/content/learn/ai/_index.md
+From: apps/ayokoding-web/content/learn/ai/\_index.md
 ❌ FAIL: [Security](../security) ← Hugo needs absolute paths
 ✅ PASS: [Security](/learn/security)
 
@@ -184,12 +184,12 @@ From: apps/ayokoding-web/content/learn/ai/_index.md
 **Cache file format** (JSON):
 
 {
-  "https://diataxis.fr/": {
-    "status": "OK",
-    "http_code": 200,
-    "last_checked": "2026-01-25T13:30:00+07:00",
-    "ttl": 604800
-  }
+"https://diataxis.fr/": {
+"status": "OK",
+"http_code": 200,
+"last_checked": "2026-01-25T13:30:00+07:00",
+"ttl": 604800
+}
 }
 
 **Cache TTL recommendations**:
@@ -235,13 +235,13 @@ Hugo renders the same navigation content in different contexts (sidebar, mobile 
 
 ### Validation Differences: Hugo vs. Docs
 
-| Aspect | Docs/ Files | Hugo Content |
-|--------|-------------|--------------|
-| Extension | MUST include .md | MUST omit .md |
-| Path Type | Relative (../, ./) | Absolute (/path) |
-| Link Format | [Text](../file.md) | [Text](/path) |
-| Validation | Check file exists on filesystem | Check file exists in content/ tree |
-| Criticality | CRITICAL if missing .md | CRITICAL if includes .md |
+| Aspect      | Docs/ Files                     | Hugo Content                       |
+| ----------- | ------------------------------- | ---------------------------------- |
+| Extension   | MUST include .md                | MUST omit .md                      |
+| Path Type   | Relative (../, ./)              | Absolute (/path)                   |
+| Link Format | [Text](../file.md)              | [Text](/path)                      |
+| Validation  | Check file exists on filesystem | Check file exists in content/ tree |
+| Criticality | CRITICAL if missing .md         | CRITICAL if includes .md           |
 
 ## Checker Implementation Patterns
 
@@ -250,7 +250,7 @@ Hugo renders the same navigation content in different contexts (sidebar, mobile 
 Standard 5-step checker workflow:
 
 Step 0: Initialize Report
-Step 1: Discover Files (glob for *.md)
+Step 1: Discover Files (glob for \*.md)
 Step 2: Extract Links (parse markdown, categorize)
 Step 3: Validate Internal Links (file exists, format correct)
 Step 4: Validate External Links (HTTP request, cache results)

@@ -25,15 +25,35 @@ Common mistakes and pitfalls to avoid in Java development. Learn to recognize pr
 - Performance anti-patterns (N+1 queries, premature optimization)
 - Security anti-patterns (input validation, credential management)
 
+### Integration Patterns
+
+Working with external systems and data formats in production applications.
+
+**Topics covered:**
+
+- JSON processing with Jackson and alternatives
+- SQL database integration with JDBC and connection pooling
+- REST API client patterns
+- Transaction management and data integrity
+
+### Application Development
+
+Building complete applications with Java.
+
+**Topics covered:**
+
+- Command-line applications with argument parsing
+- Configuration management and exit codes
+- Native compilation with GraalVM
+- Testing strategies for different application types
+
 ### Future Topics
 
 Additional in-practice content will cover:
 
 - Best practices and idioms
 - Design patterns in Java
-- Testing strategies
 - Performance optimization approaches
-- Security considerations
 
 ## How This Differs from By-Example
 
