@@ -33,6 +33,15 @@ In-practice content follows a **progression from fundamentals to production fram
 - CLI apps (raw args[] → System streams → picocli)
 - BDD (manual Given-When-Then → Cucumber)
 - SQL (JDBC → HikariCP → JPA/Hibernate)
+- Web Services (HttpServer → Servlets → JAX-RS → Spring Boot REST)
+- Concurrency (Thread → ExecutorService → CompletableFuture → Virtual Threads)
+- Logging (java.util.logging → SLF4J → Logback)
+- Build Tools (javac/jar → Maven → Gradle)
+- Performance (JFR/VisualVM → JMH → APM tools)
+- Dependency Injection (Manual → JSR-330 → Spring DI)
+- CI/CD (Manual scripts → GitHub Actions → Jenkins)
+- Containerization (java -jar → Docker → Kubernetes)
+- Code Quality (Manual reviews → Checkstyle/PMD → SonarQube)
 
 ## Focus Areas
 
