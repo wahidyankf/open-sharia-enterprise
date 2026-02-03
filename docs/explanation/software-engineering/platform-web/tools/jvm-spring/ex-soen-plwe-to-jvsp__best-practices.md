@@ -1603,7 +1603,7 @@ class DonationReportGenerator(
 
 ### Language Standards
 
-- **[Java Best Practices](../../../programming-languages/java/ex-soen-prla-ja__best-practices.md)** - Java coding standards
+- **[Java Best Practices](../../../programming-languages/java/README.md)** - Java coding standards
 
 ### Development Practices
 

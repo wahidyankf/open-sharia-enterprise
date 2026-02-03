@@ -1498,8 +1498,8 @@ public class GlobalExceptionHandler {
 ### Language Standards
 
 - **[Java](../../../programming-languages/java/README.md)** - Core Java language documentation
-- **[Java Idioms](../../../programming-languages/java/ex-soen-prla-ja__idioms.md)** - Modern Java patterns
-- **[Java Best Practices](../../../programming-languages/java/ex-soen-prla-ja__best-practices.md)** - Java coding standards
+- **[Java Idioms](../../../programming-languages/java/README.md)** - Modern Java patterns
+- **[Java Best Practices](../../../programming-languages/java/README.md)** - Java coding standards
 
 ### Framework Documentation
 

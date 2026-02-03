@@ -2454,7 +2454,7 @@ func (p *DonationPayment) Approve() error {
 
 **Cross-Language**:
 
-- [Java Finite State Machines](../java/ex-soen-prla-ja__finite-state-machine.md) - Comparison with Java approach
+- [Java Finite State Machines](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/by-example/advanced) - Comparison with Java approach
 
 **Principles**:
 

@@ -1346,7 +1346,7 @@ public class NisabRateService {
 - **[Data Access](ex-soen-plwe-to-jvspbo__data-access.md)** - Spring Data JPA
 - **[Security](ex-soen-plwe-to-jvspbo__security.md)** - Spring Security
 - **[Testing](ex-soen-plwe-to-jvspbo__testing.md)** - Testing strategies
-- **[Java Best Practices](../../../programming-languages/java/ex-soen-prla-ja__best-practices.md)** - Java standards
+- **[Java Best Practices](../../../programming-languages/java/README.md)** - Java standards
 
 ---
 
