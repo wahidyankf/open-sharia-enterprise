@@ -11,6 +11,29 @@ tags: ["java", "in-practice", "overview"]
 
 In-practice content provides **conceptual guidance** for applying Java knowledge in real-world development scenarios. This section bridges the gap between learning syntax and building robust, maintainable applications.
 
+## Pedagogical Approach: Standard Library First
+
+In-practice content follows a **progression from fundamentals to production frameworks**:
+
+1. **Standard Library** - Learn built-in Java capabilities first (assert keyword, manual args[], System streams, JDBC)
+2. **Understand Limitations** - See why standard approaches become unmaintainable for complex applications
+3. **Production Frameworks** - Adopt industry-standard libraries with clear understanding of problems they solve
+
+**Why this approach?**
+
+- **Foundation first**: Understanding fundamentals makes framework features comprehensible
+- **Informed decisions**: Knowing trade-offs enables appropriate tool selection
+- **Problem awareness**: Seeing manual implementations reveals value of frameworks
+- **Framework independence**: Standard library knowledge remains relevant across tools
+
+**Topics teaching this progression**:
+
+- JSON processing (manual → javax.json → Jackson)
+- Testing (assert keyword → manual runners → JUnit 5)
+- CLI apps (raw args[] → System streams → picocli)
+- BDD (manual Given-When-Then → Cucumber)
+- SQL (JDBC → HikariCP → JPA/Hibernate)
+
 ## Focus Areas
 
 ### Anti-Patterns
@@ -27,25 +50,26 @@ Common mistakes and pitfalls to avoid in Java development. Learn to recognize pr
 
 ### Integration Patterns
 
-Working with external systems and data formats in production applications.
+Working with external systems and data formats in production applications. Content progresses from standard library fundamentals to production frameworks.
 
 **Topics covered:**
 
-- JSON processing with Jackson and alternatives
-- SQL database integration with JDBC and connection pooling
-- REST API client patterns
-- Transaction management and data integrity
+- JSON processing: Manual StringBuilder → javax.json → Jackson (production standard)
+- SQL database integration: JDBC fundamentals → HikariCP pooling → JPA/Hibernate ORM
+- REST API client patterns with standard HttpClient
+- Transaction management and data integrity with JDBC and JPA
 
 ### Application Development
 
-Building complete applications with Java.
+Building complete applications with Java. Content teaches fundamentals before introducing frameworks.
 
 **Topics covered:**
 
-- Command-line applications with argument parsing
+- Command-line applications: Manual args[] parsing → System streams → picocli framework
+- Testing: assert keyword → manual test runners → JUnit 5 + Mockito + AssertJ
+- BDD: Manual Given-When-Then structure → Cucumber + Gherkin
 - Configuration management and exit codes
 - Native compilation with GraalVM
-- Testing strategies for different application types
 
 ### Future Topics
 

@@ -21,9 +21,598 @@ JSON (JavaScript Object Notation) is the universal data interchange format for m
 
 **Problem**: Java lacks built-in JSON support. Manual string manipulation is error-prone and tedious. Parsing JSON requires extensive boilerplate code vulnerable to typos and runtime errors.
 
-**Solution**: Use dedicated JSON libraries for type-safe serialization/deserialization with minimal code.
+**Solution**: Progress from manual approaches to understand fundamentals, then leverage libraries for production use.
 
-## Jackson Overview
+## Approach Comparison
+
+Java offers multiple approaches for JSON processing, ranging from manual string manipulation to sophisticated libraries.
+
+| Approach                 | Abstraction Level | Type Safety | Performance | Production Ready | Use When                    |
+| ------------------------ | ----------------- | ----------- | ----------- | ---------------- | --------------------------- |
+| **Manual StringBuilder** | Low               | None        | Fast        | No               | Learning, trivial cases     |
+| **javax.json (JSON-P)**  | Medium            | Moderate    | Good        | Yes              | Standards compliance needed |
+| **Jackson**              | High              | Strong      | Excellent   | Yes              | Production applications     |
+| **Gson**                 | High              | Strong      | Good        | Yes              | Simpler API preference      |
+
+**Recommended progression**: Start with manual approach to understand JSON structure → Explore javax.json for specification-based approach → Use Jackson for production systems.
+
+## Manual JSON Serialization (Standard Library)
+
+Manual JSON construction teaches JSON structure fundamentals and reveals why libraries exist. Use StringBuilder for simple serialization and parsing.
+
+### Basic Object to JSON String
+
+Convert a simple Java object to JSON manually.
+
+**Pattern**:
+
+```java
+public class Person {
+    private String name;
+    private int age;
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public String toJson() {
+        return "{\"name\":\"" + name + "\",\"age\":" + age + "}";
+    }
+
+    public static void main(String[] args) {
+        Person person = new Person("Alice", 30);
+        String json = person.toJson();
+        System.out.println(json);
+        // Output: {"name":"Alice","age":30}
+    }
+}
+```
+
+**Before**: No JSON representation
+**After**: JSON string ready for transmission
+
+### Escaping Special Characters
+
+JSON requires escaping quotes, newlines, and control characters.
+
+**Pattern**:
+
+```java
+public class JsonEscaper {
+    public static String escape(String value) {
+        if (value == null) {
+            return "null";
+        }
+
+        StringBuilder escaped = new StringBuilder();
+        for (char c : value.toCharArray()) {
+            switch (c) {
+                case '"'  -> escaped.append("\\\"");
+                case '\\' -> escaped.append("\\\\");
+                case '\b' -> escaped.append("\\b");
+                case '\f' -> escaped.append("\\f");
+                case '\n' -> escaped.append("\\n");
+                case '\r' -> escaped.append("\\r");
+                case '\t' -> escaped.append("\\t");
+                default -> {
+                    if (c < 32 || c > 126) {
+                        escaped.append(String.format("\\u%04x", (int) c));
+                    } else {
+                        escaped.append(c);
+                    }
+                }
+            }
+        }
+        return escaped.toString();
+    }
+
+    public static void main(String[] args) {
+        String text = "Hello\n\"World\"";
+        String escaped = escape(text);
+        System.out.println("\"" + escaped + "\"");
+        // Output: "Hello\n\"World\""
+    }
+}
+```
+
+**Problem**: Raw strings contain characters that break JSON syntax.
+
+**Solution**: Escape quotes, backslashes, and control characters following JSON specification.
+
+### JSON Arrays and Collections
+
+Serialize lists to JSON arrays manually.
+
+**Pattern**:
+
+```java
+import java.util.*;
+
+public class JsonArraySerializer {
+    public static String toJsonArray(List<String> items) {
+        StringBuilder json = new StringBuilder("[");
+
+        for (int i = 0; i < items.size(); i++) {
+            json.append("\"").append(JsonEscaper.escape(items.get(i))).append("\"");
+            if (i < items.size() - 1) {
+                json.append(",");
+            }
+        }
+
+        json.append("]");
+        return json.toString();
+    }
+
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("Alice", "Bob", "Charlie");
+        String json = toJsonArray(names);
+        System.out.println(json);
+        // Output: ["Alice","Bob","Charlie"]
+    }
+}
+```
+
+**Before**: List of strings in memory
+**After**: JSON array string with proper comma separation
+
+### Nested Objects
+
+Handle nested object structures manually.
+
+**Pattern**:
+
+```java
+public class Address {
+    private String street;
+    private String city;
+
+    public Address(String street, String city) {
+        this.street = street;
+        this.city = city;
+    }
+
+    public String toJson() {
+        return "{\"street\":\"" + JsonEscaper.escape(street) +
+               "\",\"city\":\"" + JsonEscaper.escape(city) + "\"}";
+    }
+}
+
+public class PersonWithAddress {
+    private String name;
+    private Address address;
+
+    public PersonWithAddress(String name, Address address) {
+        this.name = name;
+        this.address = address;
+    }
+
+    public String toJson() {
+        return "{\"name\":\"" + JsonEscaper.escape(name) +
+               "\",\"address\":" + address.toJson() + "}";
+    }
+
+    public static void main(String[] args) {
+        Address addr = new Address("123 Main St", "New York");
+        PersonWithAddress person = new PersonWithAddress("Alice", addr);
+        String json = person.toJson();
+        System.out.println(json);
+        // Output: {"name":"Alice","address":{"street":"123 Main St","city":"New York"}}
+    }
+}
+```
+
+**Problem**: Objects contain other objects requiring nested JSON.
+
+**Solution**: Each object provides `toJson()` method, parent objects embed child JSON.
+
+### Parsing JSON String to Object
+
+Parse JSON manually using string operations.
+
+**Pattern**:
+
+```java
+public class SimpleJsonParser {
+    public static Person parsePerson(String json) {
+        // Remove outer braces
+        json = json.trim().substring(1, json.length() - 1);
+
+        String name = null;
+        int age = 0;
+
+        // Split by comma (naive approach, doesn't handle nested objects)
+        String[] pairs = json.split(",");
+
+        for (String pair : pairs) {
+            String[] keyValue = pair.split(":");
+            String key = keyValue[0].trim().replace("\"", "");
+            String value = keyValue[1].trim();
+
+            if (key.equals("name")) {
+                name = value.replace("\"", "");
+            } else if (key.equals("age")) {
+                age = Integer.parseInt(value);
+            }
+        }
+
+        return new Person(name, age);
+    }
+
+    public static void main(String[] args) {
+        String json = "{\"name\":\"Bob\",\"age\":25}";
+        Person person = parsePerson(json);
+        System.out.println("Name: " + person.getName() + ", Age: " + person.getAge());
+        // Output: Name: Bob, Age: 25
+    }
+}
+```
+
+**Warning**: This naive parser fails with nested objects, arrays, or commas in string values. Production parsing requires state machines or recursive descent parsers.
+
+### Edge Cases and Null Handling
+
+Handle null values, empty strings, and numbers correctly.
+
+**Pattern**:
+
+```java
+public class RobustJsonSerializer {
+    public static String toJson(String name, Integer age, String email) {
+        StringBuilder json = new StringBuilder("{");
+
+        json.append("\"name\":");
+        if (name == null) {
+            json.append("null");
+        } else {
+            json.append("\"").append(JsonEscaper.escape(name)).append("\"");
+        }
+
+        json.append(",\"age\":");
+        if (age == null) {
+            json.append("null");
+        } else {
+            json.append(age);
+        }
+
+        json.append(",\"email\":");
+        if (email == null) {
+            json.append("null");
+        } else if (email.isEmpty()) {
+            json.append("\"\"");
+        } else {
+            json.append("\"").append(JsonEscaper.escape(email)).append("\"");
+        }
+
+        json.append("}");
+        return json.toString();
+    }
+
+    public static void main(String[] args) {
+        System.out.println(toJson("Alice", 30, "alice@example.com"));
+        // Output: {"name":"Alice","age":30,"email":"alice@example.com"}
+
+        System.out.println(toJson(null, null, ""));
+        // Output: {"name":null,"age":null,"email":""}
+    }
+}
+```
+
+**Problem**: Null values and empty strings require different JSON representations.
+
+**Solution**: Check for null explicitly, serialize as `null` (unquoted) vs `""` (quoted empty string).
+
+### Why Manual Approach Doesn't Scale
+
+Manual JSON serialization becomes unmaintainable for production systems.
+
+**Limitations**:
+
+- **Parsing complexity**: Requires state machine or recursive parser for nested structures
+- **Error-prone**: Easy to miss escape sequences or introduce syntax errors
+- **No type safety**: All manual string manipulation, no compile-time checks
+- **Maintenance burden**: Every object needs custom serialization code
+- **No schema validation**: Can't verify JSON structure matches requirements
+- **Performance**: String concatenation inefficient for large objects
+
+**Real-world complexity**:
+
+```java
+// A production API response requires handling:
+// - Deeply nested objects (5+ levels)
+// - Collections of objects
+// - Date/time serialization (ISO-8601 format)
+// - BigDecimal for financial amounts
+// - Polymorphic types (subclass serialization)
+// - Circular reference detection
+// - Performance optimization (bytecode generation)
+
+// Manual approach would require 1000+ lines per entity.
+// Libraries solve this with annotations and reflection.
+```
+
+**When manual approach is acceptable**:
+
+- Educational purposes (understanding JSON structure)
+- Trivial single-object serialization (less than 5 fields)
+- No dependencies constraint (embedded systems)
+
+**For production**: Use javax.json or Jackson (covered next).
+
+## javax.json (JSON-P) - Standard API
+
+javax.json (JSON Processing API, JSON-P) is Java's standard specification for JSON processing, part of Jakarta EE (formerly Java EE).
+
+**Why javax.json matters**:
+
+- **Specification-based**: Part of Jakarta EE standard, not vendor-specific
+- **API independence**: Write against specification, swap implementations
+- **Government/enterprise compliance**: Required in regulated environments
+- **Streaming support**: Efficient processing of large JSON documents
+
+**Trade-off**: Verbose API compared to Jackson, requires external implementation.
+
+### Maven Dependency
+
+javax.json requires an implementation (specification alone doesn't provide code).
+
+**Maven** (reference implementation):
+
+```xml
+<dependency>
+    <groupId>org.glassfish</groupId>
+    <artifactId>jakarta.json</artifactId>
+    <version>2.0.1</version>
+</dependency>
+```
+
+**Alternative implementations**: Apache Johnzon, JSON-B.
+
+### Creating JSON Objects
+
+Build JSON objects with JsonObjectBuilder for type-safe construction.
+
+**Pattern**:
+
+```java
+import jakarta.json.*;
+import java.io.StringWriter;
+
+public class JsonObjectExample {
+    public static void main(String[] args) {
+        // Build JSON object
+        JsonObject person = Json.createObjectBuilder()
+            .add("name", "Alice")
+            .add("age", 30)
+            .add("email", "alice@example.com")
+            .build();
+
+        // Convert to string
+        StringWriter writer = new StringWriter();
+        Json.createWriter(writer).write(person);
+        String json = writer.toString();
+
+        System.out.println(json);
+        // Output: {"name":"Alice","age":30,"email":"alice@example.com"}
+    }
+}
+```
+
+**Before**: Manual StringBuilder with escaping
+**After**: Type-safe builder with automatic escaping
+
+### Creating JSON Arrays
+
+Build JSON arrays with JsonArrayBuilder.
+
+**Pattern**:
+
+```java
+import jakarta.json.*;
+import java.io.StringWriter;
+
+public class JsonArrayExample {
+    public static void main(String[] args) {
+        // Build JSON array
+        JsonArray names = Json.createArrayBuilder()
+            .add("Alice")
+            .add("Bob")
+            .add("Charlie")
+            .build();
+
+        // Convert to string
+        StringWriter writer = new StringWriter();
+        Json.createWriter(writer).write(names);
+        String json = writer.toString();
+
+        System.out.println(json);
+        // Output: ["Alice","Bob","Charlie"]
+    }
+}
+```
+
+**Problem**: Manual array construction requires comma management.
+
+**Solution**: JsonArrayBuilder handles comma separation automatically.
+
+### Nested Structures
+
+Create nested JSON structures with builder composition.
+
+**Pattern**:
+
+```java
+import jakarta.json.*;
+import java.io.StringWriter;
+
+public class NestedJsonExample {
+    public static void main(String[] args) {
+        // Build nested structure
+        JsonObject person = Json.createObjectBuilder()
+            .add("name", "Alice")
+            .add("age", 30)
+            .add("address", Json.createObjectBuilder()
+                .add("street", "123 Main St")
+                .add("city", "New York")
+                .add("zipCode", "10001"))
+            .add("phoneNumbers", Json.createArrayBuilder()
+                .add("555-1234")
+                .add("555-5678"))
+            .build();
+
+        // Convert to string
+        StringWriter writer = new StringWriter();
+        Json.createWriter(writer).write(person);
+        String json = writer.toString();
+
+        System.out.println(json);
+        // Output: {"name":"Alice","age":30,"address":{"street":"123 Main St",...},"phoneNumbers":["555-1234","555-5678"]}
+    }
+}
+```
+
+**Before**: Manual nesting requires careful string concatenation
+**After**: Builder composition handles nesting automatically
+
+### Reading JSON
+
+Parse JSON strings with JsonReader.
+
+**Pattern**:
+
+```java
+import jakarta.json.*;
+import java.io.StringReader;
+
+public class JsonReaderExample {
+    public static void main(String[] args) {
+        String jsonString = "{\"name\":\"Bob\",\"age\":25,\"email\":\"bob@example.com\"}";
+
+        // Parse JSON
+        JsonReader reader = Json.createReader(new StringReader(jsonString));
+        JsonObject person = reader.readObject();
+        reader.close();
+
+        // Extract values
+        String name = person.getString("name");
+        int age = person.getInt("age");
+        String email = person.getString("email");
+
+        System.out.println("Name: " + name + ", Age: " + age + ", Email: " + email);
+        // Output: Name: Bob, Age: 25, Email: bob@example.com
+    }
+}
+```
+
+**Before**: Manual string parsing with split operations
+**After**: Type-safe value extraction with JsonObject API
+
+### Navigating JSON with JsonPointer
+
+JsonPointer provides path-based navigation for nested structures (RFC 6901).
+
+**Pattern**:
+
+```java
+import jakarta.json.*;
+import java.io.StringReader;
+
+public class JsonPointerExample {
+    public static void main(String[] args) {
+        String jsonString = "{\"person\":{\"name\":\"Alice\",\"address\":{\"city\":\"New York\"}}}";
+
+        JsonReader reader = Json.createReader(new StringReader(jsonString));
+        JsonObject json = reader.readObject();
+        reader.close();
+
+        // Navigate with JsonPointer
+        JsonPointer pointer1 = Json.createPointer("/person/name");
+        JsonValue name = pointer1.getValue(json);
+        System.out.println("Name: " + ((JsonString) name).getString());
+        // Output: Name: Alice
+
+        JsonPointer pointer2 = Json.createPointer("/person/address/city");
+        JsonValue city = pointer2.getValue(json);
+        System.out.println("City: " + ((JsonString) city).getString());
+        // Output: City: New York
+    }
+}
+```
+
+**Problem**: Nested navigation requires multiple `getJsonObject()` calls.
+
+**Solution**: JsonPointer uses path strings for direct access (`/path/to/field`).
+
+### Handling Missing and Null Values
+
+Distinguish between missing fields, null values, and empty strings.
+
+**Pattern**:
+
+```java
+import jakarta.json.*;
+import java.io.StringReader;
+
+public class NullHandlingExample {
+    public static void main(String[] args) {
+        String jsonString = "{\"name\":\"Alice\",\"age\":null,\"email\":\"\"}";
+
+        JsonReader reader = Json.createReader(new StringReader(jsonString));
+        JsonObject person = reader.readObject();
+        reader.close();
+
+        // Check field presence
+        boolean hasName = person.containsKey("name");
+        boolean hasPhone = person.containsKey("phone");
+
+        System.out.println("Has name: " + hasName);        // true
+        System.out.println("Has phone: " + hasPhone);      // false
+
+        // Check null vs empty string
+        JsonValue ageValue = person.get("age");
+        boolean ageIsNull = ageValue.equals(JsonValue.NULL);
+
+        String email = person.getString("email", "default@example.com");
+
+        System.out.println("Age is null: " + ageIsNull);   // true
+        System.out.println("Email: " + email);             // ""
+    }
+}
+```
+
+**Problem**: JSON has three states: missing field, null value, empty string.
+
+**Solution**: `containsKey()` checks presence, `equals(JsonValue.NULL)` checks null, `getString()` extracts values.
+
+### javax.json vs Jackson Trade-offs
+
+| Feature                | javax.json (JSON-P)           | Jackson                           |
+| ---------------------- | ----------------------------- | --------------------------------- |
+| **Specification**      | Jakarta EE standard           | De facto community standard       |
+| **API Style**          | Builder-based, verbose        | Annotation-based, concise         |
+| **Object Mapping**     | Manual (no auto POJO mapping) | Automatic with ObjectMapper       |
+| **Performance**        | Good                          | Excellent (bytecode generation)   |
+| **Spring Integration** | Manual setup                  | Zero-configuration default        |
+| **Learning Curve**     | Moderate                      | Moderate                          |
+| **Streaming**          | Yes (JsonParser)              | Yes (StreamingAPI)                |
+| **When to Use**        | Standards compliance required | Production applications (default) |
+
+**javax.json strengths**:
+
+- Specification-based (vendor independence)
+- Required in Jakarta EE environments
+- Good for manual JSON construction
+
+**Jackson strengths**:
+
+- Spring Boot default (zero configuration)
+- Performance (bytecode generation)
+- Automatic POJO mapping (less boilerplate)
+- Rich annotation system
+
+**Recommendation**: Use javax.json when standards compliance is mandatory (government, regulated industries). Use Jackson for most production applications (better Spring integration, performance, less code).
+
+## Jackson - Production Standard (External Library)
 
 Jackson is Java's de facto standard for JSON processing, providing object mapping, streaming, and tree model APIs. It powers Spring Boot, JAX-RS, and most Java REST frameworks.
 
@@ -41,21 +630,6 @@ Jackson has three main APIs for different use cases:
 1. **ObjectMapper (Object Mapping)**: Convert POJOs to/from JSON automatically
 2. **JsonNode (Tree Model)**: Navigate JSON structure without predefined classes
 3. **Streaming API**: Memory-efficient processing for large JSON files
-
-## Standard Library Alternatives
-
-Java provides limited JSON support through `javax.json` (JSON-P), but it requires external implementations and is verbose.
-
-**Comparison**:
-
-| Approach                 | Pros                              | Cons                                       |
-| ------------------------ | --------------------------------- | ------------------------------------------ |
-| **Jackson**              | Fast, Spring default, annotations | External dependency, reflection-based      |
-| **Gson**                 | Simple API, older alternative     | Slower than Jackson, no Spring integration |
-| **javax.json (JSON-P)**  | Standard specification            | Verbose, requires external implementation  |
-| **Manual StringBuilder** | No dependencies                   | Error-prone, tedious, no type safety       |
-
-**Why Jackson wins**: Spring Boot's default choice makes it ubiquitous. Performance advantages (bytecode generation vs reflection) cement its dominance despite being an external library.
 
 ## Object Mapping Patterns
 

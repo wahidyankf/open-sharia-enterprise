@@ -86,7 +86,389 @@ Improve code quality while keeping tests green. Extract constants, improve namin
 **Before**: Code works but may be simple or duplicated
 **After**: Clean, maintainable code with tests still passing
 
-## JUnit 5 Fundamentals
+## Testing Approaches in Java
+
+Java provides multiple approaches for testing code, from built-in language features to sophisticated frameworks.
+
+| Approach                | Abstraction | Organization | Reporting | Production Ready | Use When                  |
+| ----------------------- | ----------- | ------------ | --------- | ---------------- | ------------------------- |
+| **assert keyword**      | Low         | Manual       | None      | No               | Learning, debugging       |
+| **Manual test runners** | Low         | Manual       | Basic     | No               | Simple scripts            |
+| **JUnit 5**             | High        | Automatic    | Rich      | Yes              | Production testing        |
+| **TestNG**              | High        | Automatic    | Rich      | Yes              | Complex test dependencies |
+
+**Recommended progression**: Start with assert keyword to understand testing fundamentals → Learn manual test runners to see framework value → Use JUnit 5 for production testing.
+
+## Built-in Testing with Standard Library
+
+Java's built-in testing capabilities teach fundamentals before introducing frameworks. Use assert keyword and manual test runners to understand testing basics.
+
+### Assert Keyword Basics
+
+Java provides the `assert` keyword for runtime assertions that verify program correctness.
+
+**Pattern**:
+
+```java
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+
+    public int divide(int a, int b) {
+        assert b != 0 : "Divisor cannot be zero";
+        return a / b;
+    }
+
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();
+
+        // Test addition
+        int result = calc.add(2, 3);
+        assert result == 5 : "Expected 2 + 3 = 5, got " + result;
+
+        // Test division
+        int quotient = calc.divide(10, 2);
+        assert quotient == 5 : "Expected 10 / 2 = 5, got " + quotient;
+
+        System.out.println("All assertions passed!");
+    }
+}
+```
+
+**Enabling assertions**: Assertions are disabled by default. Enable with `-ea` (enable assertions) flag.
+
+```bash
+# Run with assertions enabled
+java -ea Calculator
+
+# Run with assertions disabled (default)
+java Calculator
+```
+
+**Problem**: Assertions disabled by default means bugs can slip through.
+
+**Solution**: Always run tests with `-ea` flag during development and testing.
+
+### Assert Syntax and Messages
+
+Assert statements verify conditions and throw AssertionError if false.
+
+**Syntax**:
+
+```java
+// Simple assertion (no message)
+assert condition;
+
+// Assertion with message
+assert condition : "Error message";
+
+// Assertion with detailed message
+assert condition : String.format("Expected %d, got %d", expected, actual);
+```
+
+**Example**:
+
+```java
+public class StringUtils {
+    public static String reverse(String input) {
+        assert input != null : "Input cannot be null";
+        assert !input.isEmpty() : "Input cannot be empty";
+
+        StringBuilder reversed = new StringBuilder(input).reverse();
+        String result = reversed.toString();
+
+        // Post-condition: reversed string has same length
+        assert result.length() == input.length() : "Length mismatch after reversal";
+
+        return result;
+    }
+
+    public static void main(String[] args) {
+        assert reverse("hello").equals("olleh") : "Failed to reverse 'hello'";
+        assert reverse("Java").equals("avaJ") : "Failed to reverse 'Java'";
+
+        System.out.println("All string tests passed!");
+    }
+}
+```
+
+**Before**: No verification of correctness
+**After**: Runtime verification with clear error messages
+
+### Limitations of Assert Keyword
+
+Assert keyword has significant limitations for production testing.
+
+**Critical limitations**:
+
+1. **Disabled by default**: Assertions don't run in production unless explicitly enabled
+2. **No test discovery**: Must manually call test methods from main()
+3. **Poor failure reporting**: Only shows first failure, then stops execution
+4. **No test organization**: No way to group related tests
+5. **No setup/teardown**: No lifecycle hooks for test isolation
+6. **No test reporting**: No summary of passed/failed tests
+
+**Example showing limitations**:
+
+```java
+public class LimitationsExample {
+    public static void main(String[] args) {
+        // Limitation 1: First failure stops everything
+        assert 2 + 2 == 4 : "Math works";
+        assert 2 + 2 == 5 : "This fails and stops execution";
+        assert 3 + 3 == 6 : "Never reached due to previous failure";
+
+        // Limitation 2: No way to track passed vs failed
+        // Limitation 3: No organized test suites
+        // Limitation 4: No reporting (just exception or nothing)
+    }
+}
+```
+
+**When to use assertions**:
+
+- **Debugging**: Verify invariants during development
+- **Internal consistency**: Check preconditions and postconditions
+- **Learning**: Understand testing concepts before frameworks
+
+**When NOT to use assertions**:
+
+- **Production testing**: Frameworks provide organization and reporting
+- **Public API validation**: Use exceptions (IllegalArgumentException) instead
+- **Business logic errors**: Use exceptions, not assertions
+
+### Manual Test Runner Pattern
+
+Create simple test runner with main() method for organized testing without frameworks.
+
+**Pattern**:
+
+```java
+public class ManualTestRunner {
+    private int passed = 0;
+    private int failed = 0;
+
+    public void runTest(String testName, Runnable test) {
+        try {
+            test.run();
+            passed++;
+            System.out.println("✓ PASS: " + testName);
+        } catch (AssertionError e) {
+            failed++;
+            System.out.println("✗ FAIL: " + testName);
+            System.out.println("  Reason: " + e.getMessage());
+        } catch (Exception e) {
+            failed++;
+            System.out.println("✗ ERROR: " + testName);
+            System.out.println("  Exception: " + e.getMessage());
+        }
+    }
+
+    public void printSummary() {
+        System.out.println("\n" + "=".repeat(50));
+        System.out.println("Tests run: " + (passed + failed));
+        System.out.println("Passed: " + passed);
+        System.out.println("Failed: " + failed);
+        System.out.println("=".repeat(50));
+
+        if (failed > 0) {
+            System.exit(1);  // Non-zero exit code indicates failure
+        }
+    }
+
+    public static void main(String[] args) {
+        ManualTestRunner runner = new ManualTestRunner();
+
+        // Test Calculator
+        Calculator calc = new Calculator();
+
+        runner.runTest("Addition: 2 + 3 = 5", () -> {
+            assert calc.add(2, 3) == 5;
+        });
+
+        runner.runTest("Addition: negative numbers", () -> {
+            assert calc.add(-5, 3) == -2;
+        });
+
+        runner.runTest("Division: 10 / 2 = 5", () -> {
+            assert calc.divide(10, 2) == 5;
+        });
+
+        runner.runTest("Division by zero should fail", () -> {
+            try {
+                calc.divide(10, 0);
+                throw new AssertionError("Should have thrown exception");
+            } catch (AssertionError e) {
+                // Expected
+            }
+        });
+
+        runner.printSummary();
+    }
+}
+```
+
+**Output**:
+
+```
+✓ PASS: Addition: 2 + 3 = 5
+✓ PASS: Addition: negative numbers
+✓ PASS: Division: 10 / 2 = 5
+✗ FAIL: Division by zero should fail
+  Reason: Divisor cannot be zero
+
+==================================================
+Tests run: 4
+Passed: 3
+Failed: 1
+==================================================
+```
+
+**Before**: Assertions stop on first failure
+**After**: All tests run, summary shows pass/fail count
+
+### Exception-Based Verification
+
+Use try-catch blocks to verify exception throwing.
+
+**Pattern**:
+
+```java
+public class ExceptionTestingExample {
+    public static void testDivisionByZero() {
+        Calculator calc = new Calculator();
+
+        try {
+            calc.divide(10, 0);
+            throw new AssertionError("Expected AssertionError for division by zero");
+        } catch (AssertionError e) {
+            if (e.getMessage().contains("Divisor cannot be zero")) {
+                System.out.println("✓ PASS: Division by zero throws correct error");
+            } else {
+                throw new AssertionError("Wrong error message: " + e.getMessage());
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        testDivisionByZero();
+    }
+}
+```
+
+**Problem**: Verifying exception throwing requires verbose try-catch blocks.
+
+**Solution**: Frameworks provide cleaner exception assertions (shown later in JUnit 5).
+
+### Exit Codes for Pass/Fail
+
+Use System.exit() to signal test success or failure to calling processes.
+
+**Pattern**:
+
+```java
+public class ExitCodeExample {
+    public static void main(String[] args) {
+        boolean allTestsPassed = true;
+
+        // Run tests
+        try {
+            assert 2 + 2 == 4;
+            assert 3 * 3 == 9;
+            System.out.println("All tests passed!");
+        } catch (AssertionError e) {
+            System.err.println("Test failed: " + e.getMessage());
+            allTestsPassed = false;
+        }
+
+        // Exit with appropriate code
+        if (allTestsPassed) {
+            System.exit(0);  // Success
+        } else {
+            System.exit(1);  // Failure
+        }
+    }
+}
+```
+
+**Exit code conventions**:
+
+- `0`: Success (all tests passed)
+- `1`: Failure (one or more tests failed)
+- `2+`: Specific error codes (optional)
+
+**Use in CI/CD**:
+
+```bash
+# Run tests and check exit code
+java -ea ExitCodeExample
+if [ $? -eq 0 ]; then
+    echo "Tests passed, deploying..."
+else
+    echo "Tests failed, aborting deployment"
+    exit 1
+fi
+```
+
+**Before**: No signal to calling process about test results
+**After**: Exit codes enable CI/CD integration
+
+### Why We Need Testing Frameworks
+
+Built-in testing approaches fail for production testing due to missing features.
+
+**Critical missing features**:
+
+| Feature                    | assert keyword | Manual Runner | JUnit 5 |
+| -------------------------- | -------------- | ------------- | ------- |
+| **Test discovery**         | ✗ No           | ✗ No          | ✓ Yes   |
+| **Lifecycle hooks**        | ✗ No           | ✗ No          | ✓ Yes   |
+| **Parameterized**          | ✗ No           | ✗ No          | ✓ Yes   |
+| **Parallel tests**         | ✗ No           | ✗ No          | ✓ Yes   |
+| **Rich reporting**         | ✗ No           | △ Basic       | ✓ Yes   |
+| **IDE integration**        | ✗ No           | ✗ No          | ✓ Yes   |
+| **Build tool integration** | ✗ No           | ✗ No          | ✓ Yes   |
+| **Test organization**      | ✗ No           | △ Manual      | ✓ Yes   |
+
+**Production testing requirements**:
+
+- **Test discovery**: Automatically find and run all test methods
+- **Test isolation**: Each test runs with clean state (setup/teardown)
+- **Rich assertions**: Clear failure messages with expected vs actual
+- **Exception testing**: Verify exception types and messages easily
+- **Parameterized tests**: Run same test with multiple inputs
+- **Test organization**: Group related tests with @Nested
+- **Parallel execution**: Speed up test suites
+- **Build integration**: Maven/Gradle automatically run tests
+- **IDE integration**: Run tests from IDE, see failures inline
+
+**Example showing framework value**:
+
+```java
+// Manual approach: 20+ lines per test with try-catch, reporting, etc.
+public static void testAddition() {
+    try {
+        Calculator calc = new Calculator();
+        int result = calc.add(2, 3);
+        assert result == 5 : "Expected 5, got " + result;
+        System.out.println("✓ PASS: testAddition");
+    } catch (AssertionError e) {
+        System.out.println("✗ FAIL: testAddition - " + e.getMessage());
+    }
+}
+
+// JUnit 5 approach: 4 lines with automatic discovery, reporting, IDE integration
+@Test
+void testAddition() {
+    Calculator calc = new Calculator();
+    assertThat(calc.add(2, 3)).isEqualTo(5);
+}
+```
+
+**Conclusion**: Manual testing teaches fundamentals, but production testing requires frameworks for organization, automation, and tooling integration.
+
+## JUnit 5 - Testing Framework (External Library)
 
 JUnit 5 is the modern testing framework for Java, providing annotations, lifecycle hooks, and parameterized testing.
 
@@ -197,7 +579,7 @@ Display names make test reports more readable using `@DisplayName` annotation fo
 - Keep under 80 characters for readability
 - Describe expected behavior not implementation
 
-## Assertions with AssertJ
+## AssertJ - Fluent Assertions (External Library)
 
 AssertJ provides fluent, readable assertions that make test failures clear and expressive.
 
@@ -249,7 +631,7 @@ Custom assertions encapsulate domain-specific assertion logic for reusability an
 
 **Solution**: Create custom assertion classes extending `AbstractAssert` for domain objects.
 
-## Mocking with Mockito
+## Mockito - Mocking Framework (External Library)
 
 Mockito provides test doubles for isolating units under test by replacing dependencies with controlled mocks.
 

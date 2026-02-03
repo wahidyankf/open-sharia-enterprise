@@ -2,7 +2,7 @@
 title: "In Practice"
 date: 2025-12-12T00:00:00+07:00
 draft: false
-description: Practical guidance and real-world patterns for Java development
+description: Practical guidance and real-world patterns for Java development, progressing from standard library fundamentals to production frameworks
 weight: 100004
 type: docs
 layout: list
@@ -30,7 +30,7 @@ layout: list
 **Integration & External Systems**
 
 - [JSON and API Integration](/en/learn/software-engineering/programming-languages/java/in-practice/json-and-api-integration)
-- [Working with SQL Databases](/en/learn/software-engineering/programming-languages/java/in-practice/sql)
+- [Working with SQL Databases](/en/learn/software-engineering/programming-languages/java/in-practice/sql-database)
 
 **Application Development**
 

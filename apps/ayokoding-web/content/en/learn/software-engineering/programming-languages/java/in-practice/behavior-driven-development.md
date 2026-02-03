@@ -27,7 +27,183 @@ Feature: Zakat Calculation
 
 **Value**: Business stakeholders validate scenarios. Developers automate them. Regulators audit them.
 
-## BDD Three-Phase Cycle
+## BDD Principles Without Tools (Manual Approach)
+
+BDD principles can be applied manually using standard testing frameworks before introducing collaboration tools like Cucumber.
+
+### Given-When-Then in JUnit Tests
+
+Structure tests using Given-When-Then pattern with clear sections and comments.
+
+**Pattern**:
+
+```java
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class ZakatCalculatorBDDTest {
+
+    @Test
+    void shouldCalculateZakatForWealthAboveNisabAfterCompleteHaul() {
+        // GIVEN: A Zakat account with balance above nisab after complete haul
+        ZakatAccount account = new ZakatAccount("ACC-001");
+        account.setBalance(Money.usd(100_000));
+        account.setNisab(Money.usd(5_000));
+        account.setHaulStartDate(LocalDate.of(2025, 3, 1));
+
+        ZakatCalculator calculator = new ZakatCalculator();
+
+        // WHEN: I calculate Zakat after one lunar year
+        LocalDate calculationDate = LocalDate.of(2026, 3, 15);
+        ZakatCalculation result = calculator.calculate(account, calculationDate);
+
+        // THEN: Zakat should be 2.5% of zakatable wealth
+        assertEquals(Money.usd(2_375), result.getZakatAmount());
+        assertEquals(Money.usd(95_000), result.getZakatableWealth());
+    }
+
+    @Test
+    void shouldNotCalculateZakatWhenBalanceBelowNisab() {
+        // GIVEN: A Zakat account with balance below nisab
+        ZakatAccount account = new ZakatAccount("ACC-002");
+        account.setBalance(Money.usd(4_000));
+        account.setNisab(Money.usd(5_000));
+        account.setHaulStartDate(LocalDate.of(2025, 3, 1));
+
+        ZakatCalculator calculator = new ZakatCalculator();
+
+        // WHEN: I calculate Zakat
+        LocalDate calculationDate = LocalDate.of(2026, 3, 15);
+        ZakatCalculation result = calculator.calculate(account, calculationDate);
+
+        // THEN: No Zakat should be due
+        assertEquals(Money.usd(0), result.getZakatAmount());
+        assertEquals("Balance below nisab", result.getReason());
+    }
+}
+```
+
+**Before**: Tests without clear structure, mixed setup and assertions
+**After**: Clear Given-When-Then sections, business-readable test names
+
+### Descriptive Test Method Names
+
+Use descriptive method names that express business behavior, not technical implementation.
+
+**Good naming patterns**:
+
+```java
+// Pattern: shouldDoSomethingWhenCondition
+@Test
+void shouldCalculateZakatWhenWealthAboveNisab() { }
+
+@Test
+void shouldRejectDonationWhenAmountIsNegative() { }
+
+@Test
+void shouldSendReceiptWhenDonationIsCompleted() { }
+
+// Pattern: givenCondition_whenAction_thenOutcome
+@Test
+void givenBalanceAboveNisab_whenCalculatingZakat_thenReturnsTwoPointFivePercent() { }
+
+@Test
+void givenIncompleteHaul_whenCalculatingZakat_thenReturnsZero() { }
+```
+
+**Avoid technical names**:
+
+```java
+// BAD: Technical details, not business behavior
+@Test
+void testZakatCalculation() { }
+
+@Test
+void testCalculate_ReturnsCorrectValue() { }
+
+@Test
+void test1() { }
+```
+
+**Before**: Generic test names provide no context
+**After**: Descriptive names document expected behavior
+
+### Plain Text Scenarios as Comments
+
+Document scenarios as structured comments before automation.
+
+**Pattern**:
+
+```java
+public class DonationProcessingBDDTest {
+
+    /*
+     * Scenario: Donor makes a recurring donation
+     *
+     * Given a donor with ID "D-001"
+     *   And the donor has a valid payment method
+     * When the donor creates a recurring donation of "100 USD" monthly
+     * Then the donation should be scheduled
+     *   And the first payment should be processed immediately
+     *   And the next payment should be scheduled for next month
+     */
+    @Test
+    void shouldScheduleRecurringDonationAndProcessFirstPayment() {
+        // GIVEN
+        Donor donor = createDonor("D-001");
+        donor.addPaymentMethod(createValidCreditCard());
+
+        // WHEN
+        RecurringDonation donation = donationService.createRecurring(
+            donor.getId(),
+            Money.usd(100),
+            RecurrencePattern.MONTHLY
+        );
+
+        // THEN
+        assertEquals(DonationStatus.SCHEDULED, donation.getStatus());
+        assertNotNull(donation.getLastPaymentDate());
+        assertEquals(
+            LocalDate.now().plusMonths(1),
+            donation.getNextPaymentDate()
+        );
+    }
+}
+```
+
+**Before**: No specification before implementation
+**After**: Scenario documented as comment, then automated as test
+
+### Limitations of Manual BDD
+
+Manual BDD with JUnit lacks collaboration features that make BDD valuable.
+
+**Missing compared to Cucumber**:
+
+- **Business-readable language**: Gherkin is readable by non-technical stakeholders
+- **Living documentation**: Cucumber generates readable reports from scenarios
+- **Shared understanding**: Business and development collaborate on scenario wording
+- **Reusable steps**: Gherkin steps can be reused across scenarios
+- **Examples tables**: Scenario Outline reduces duplication
+- **Tags for organization**: Filter and organize scenarios by feature/priority
+- **External specification**: Scenarios live in .feature files, separate from code
+
+**When manual BDD is sufficient**:
+
+- Technical teams only (no business stakeholder involvement)
+- Simple domain logic (minimal scenarios)
+- Learning BDD concepts before tooling
+
+**Why Cucumber is the standard**:
+
+- **Collaboration**: Business stakeholders can read and validate scenarios
+- **Living documentation**: Always synchronized with code
+- **Discovery**: Scenarios drive conversation and reveal gaps in understanding
+- **Audit trail**: Scenarios document business rules for compliance/regulatory review
+
+**Conclusion**: Manual BDD teaches Given-When-Then structure, but production BDD requires collaboration tools like Cucumber to deliver full value: shared understanding, living documentation, and stakeholder engagement.
+
+## BDD Three-Phase Cycle (Cucumber & Gherkin)
 
 **Problem**: How do we move from vague requirements to executable tests?
 
