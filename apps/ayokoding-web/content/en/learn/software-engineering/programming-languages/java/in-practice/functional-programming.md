@@ -3,7 +3,7 @@ title: "Functional Programming"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: Master pure functions, immutability, and functional composition patterns in Java for cleaner, more maintainable code
-weight: 10000002
+weight: 10000004
 tags: ["java", "functional-programming", "pure-functions", "immutability", "streams", "lambdas"]
 ---
 

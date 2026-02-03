@@ -3,7 +3,7 @@ title: "Best Practices"
 date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Proven approaches and modern Java coding standards for maintainable, reliable software
-weight: 10000004
+weight: 10000001
 tags: ["java", "best-practices", "clean-code", "solid-principles", "code-quality"]
 ---
 
