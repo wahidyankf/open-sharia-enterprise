@@ -3,6 +3,8 @@ title: "By Example"
 date: 2026-01-01T21:53:25+07:00
 draft: false
 weight: 100003
+description: "Code-first Java learning through 157+ heavily annotated examples covering beginner to advanced topics"
+tags: ["java", "by-example", "tutorial", "code-first", "examples"]
 ---
 
 - [Overview](/en/learn/software-engineering/programming-languages/java/by-example/overview)
