@@ -42,6 +42,10 @@ In-practice content follows a **progression from fundamentals to production fram
 - CI/CD (Manual scripts → GitHub Actions → Jenkins)
 - Containerization (java -jar → Docker → Kubernetes)
 - Code Quality (Manual reviews → Checkstyle/PMD → SonarQube)
+- Messaging (JMS → Spring JMS → Kafka → Spring Cloud Stream)
+- Caching (Map-based → Caffeine → Redis → Spring Cache)
+- Authentication (Basic Auth → Session Auth → JWT → OAuth2/OIDC)
+- NoSQL (JDBC-style → Driver APIs → Spring Data NoSQL)
 
 ## Focus Areas
 
