@@ -35,7 +35,499 @@ Command-line applications are essential for automation, DevOps tooling, build sy
 
 **Recommendation**: Use picocli for production CLI applications - it's the modern standard with excellent GraalVM support.
 
-## Picocli Fundamentals
+**Recommended progression**: Start with raw args[] to understand CLI fundamentals → Learn System streams and exit codes → Use picocli for production CLIs.
+
+## CLI Building with Standard Library
+
+Java's standard library provides basic CLI building blocks through args[], System streams, and exit codes. Use these fundamentals before introducing frameworks.
+
+### Manual Argument Parsing
+
+Parse command-line arguments manually using the args[] array.
+
+**Basic pattern**:
+
+```java
+public class SimpleGreeter {
+    public static void main(String[] args) {
+        // Check argument count
+        if (args.length == 0) {
+            System.err.println("Error: Name argument required");
+            System.err.println("Usage: java SimpleGreeter <name>");
+            System.exit(1);
+        }
+
+        // Extract argument
+        String name = args[0];
+
+        // Use argument
+        System.out.println("Hello, " + name + "!");
+        System.exit(0);
+    }
+}
+```
+
+**Usage**:
+
+```bash
+java SimpleGreeter Alice
+# Output: Hello, Alice!
+
+java SimpleGreeter
+# Output: Error: Name argument required
+#         Usage: java SimpleGreeter <name>
+```
+
+**Before**: No argument validation
+**After**: Validated input with clear error messages
+
+### Parsing Options (Flags)
+
+Handle optional flags using string comparison and loops.
+
+**Pattern**:
+
+```java
+public class GreeterWithOptions {
+    public static void main(String[] args) {
+        String name = null;
+        int count = 1;
+        boolean verbose = false;
+
+        // Parse arguments
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+
+            if (arg.equals("-c") || arg.equals("--count")) {
+                // Next argument is the count value
+                if (i + 1 < args.length) {
+                    count = Integer.parseInt(args[++i]);
+                } else {
+                    System.err.println("Error: -c/--count requires a value");
+                    System.exit(1);
+                }
+            } else if (arg.equals("-v") || arg.equals("--verbose")) {
+                verbose = true;
+            } else if (arg.startsWith("-")) {
+                System.err.println("Error: Unknown option: " + arg);
+                System.exit(1);
+            } else {
+                // Positional argument (name)
+                name = arg;
+            }
+        }
+
+        // Validate required arguments
+        if (name == null) {
+            System.err.println("Error: Name argument required");
+            System.exit(1);
+        }
+
+        // Execute command
+        if (verbose) {
+            System.out.println("Greeting " + name + " " + count + " times");
+        }
+
+        for (int i = 0; i < count; i++) {
+            System.out.println("Hello, " + name + "!");
+        }
+
+        System.exit(0);
+    }
+}
+```
+
+**Usage**:
+
+```bash
+java GreeterWithOptions Alice
+# Output: Hello, Alice!
+
+java GreeterWithOptions Alice -c 3
+# Output: Hello, Alice!
+#         Hello, Alice!
+#         Hello, Alice!
+
+java GreeterWithOptions -v Alice --count 2
+# Output: Greeting Alice 2 times
+#         Hello, Alice!
+#         Hello, Alice!
+```
+
+**Problem**: Manual option parsing requires verbose if/else chains.
+
+**Solution**: Frameworks handle parsing automatically with annotations.
+
+### System.out vs System.err
+
+Distinguish between normal output and error messages using standard streams.
+
+**Pattern**:
+
+```java
+public class StreamExample {
+    public static void main(String[] args) {
+        // Normal output to stdout
+        System.out.println("Processing file: input.txt");
+        System.out.println("Found 100 records");
+
+        // Errors to stderr
+        System.err.println("Warning: Duplicate record at line 42");
+        System.err.println("Error: Invalid format at line 99");
+
+        // Status to stdout
+        System.out.println("Processing complete");
+    }
+}
+```
+
+**Running with stream redirection**:
+
+```bash
+# Redirect stdout to file, stderr to console
+java StreamExample > output.txt
+# Console shows: Warning: Duplicate record at line 42
+#                Error: Invalid format at line 99
+# output.txt contains: Processing file: input.txt
+#                      Found 100 records
+#                      Processing complete
+
+# Redirect both streams separately
+java StreamExample > output.txt 2> errors.txt
+# output.txt contains normal output
+# errors.txt contains error messages
+```
+
+**Stream conventions**:
+
+- **stdout (System.out)**: Normal program output, data, results
+- **stderr (System.err)**: Errors, warnings, diagnostic messages
+- **stdin (System.in)**: User input (covered next)
+
+**Problem**: Mixing output and errors makes filtering difficult.
+
+**Solution**: Use stdout for data, stderr for errors.
+
+### Reading User Input
+
+Read interactive input from stdin using BufferedReader.
+
+**Pattern**:
+
+```java
+import java.io.*;
+
+public class InteractiveCLI {
+    public static void main(String[] args) throws IOException {
+        BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in)
+        );
+
+        // Prompt for input
+        System.out.print("Enter your name: ");
+        String name = reader.readLine();
+
+        System.out.print("Enter your age: ");
+        String ageStr = reader.readLine();
+        int age = Integer.parseInt(ageStr);
+
+        // Process input
+        System.out.println("\nHello, " + name + "!");
+        System.out.println("You are " + age + " years old.");
+
+        reader.close();
+        System.exit(0);
+    }
+}
+```
+
+**Usage**:
+
+```bash
+java InteractiveCLI
+# Enter your name: Alice
+# Enter your age: 30
+#
+# Hello, Alice!
+# You are 30 years old.
+```
+
+**Input validation**:
+
+```java
+import java.io.*;
+
+public class ValidatedInput {
+    public static void main(String[] args) throws IOException {
+        BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in)
+        );
+
+        int age = -1;
+        while (age < 0 || age > 120) {
+            System.out.print("Enter your age (0-120): ");
+            try {
+                age = Integer.parseInt(reader.readLine());
+                if (age < 0 || age > 120) {
+                    System.err.println("Error: Age must be between 0 and 120");
+                }
+            } catch (NumberFormatException e) {
+                System.err.println("Error: Please enter a valid number");
+            }
+        }
+
+        System.out.println("Valid age entered: " + age);
+        reader.close();
+    }
+}
+```
+
+**Problem**: Manual validation requires try-catch and loops.
+
+**Solution**: Frameworks provide built-in type conversion and validation.
+
+### Exit Codes and Conventions
+
+Signal success or failure to calling processes using exit codes.
+
+**Pattern**:
+
+```java
+public class ExitCodeExample {
+    public static void main(String[] args) {
+        if (args.length == 0) {
+            System.err.println("Usage: java ExitCodeExample <file>");
+            System.exit(1);  // Error: Missing argument
+            return;
+        }
+
+        String filename = args[0];
+        java.io.File file = new java.io.File(filename);
+
+        if (!file.exists()) {
+            System.err.println("Error: File not found: " + filename);
+            System.exit(2);  // Error: File not found
+            return;
+        }
+
+        if (!file.canRead()) {
+            System.err.println("Error: Cannot read file: " + filename);
+            System.exit(3);  // Error: Permission denied
+            return;
+        }
+
+        // Process file successfully
+        System.out.println("Processing: " + filename);
+        // ... file processing logic ...
+        System.out.println("Success!");
+
+        System.exit(0);  // Success
+    }
+}
+```
+
+**Exit code conventions**:
+
+- **0**: Success (all operations completed)
+- **1**: General error (invalid arguments, logic errors)
+- **2**: Misuse of command (wrong arguments, missing file)
+- **3-125**: Custom application errors
+- **126**: Command cannot execute
+- **127**: Command not found
+- **128+N**: Fatal error signal N
+
+**Use in scripts**:
+
+```bash
+#!/bin/bash
+
+java ExitCodeExample myfile.txt
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -eq 0 ]; then
+    echo "Success!"
+elif [ $EXIT_CODE -eq 1 ]; then
+    echo "Usage error"
+elif [ $EXIT_CODE -eq 2 ]; then
+    echo "File not found"
+else
+    echo "Unknown error: $EXIT_CODE"
+fi
+```
+
+**Problem**: No standard way to signal different error types.
+
+**Solution**: Exit codes enable automation and error handling in scripts.
+
+### Complete Example: File Processor CLI
+
+Combine all standard library CLI patterns in realistic application.
+
+**Pattern**:
+
+```java
+import java.io.*;
+import java.nio.file.*;
+
+public class FileProcessorCLI {
+    public static void main(String[] args) {
+        // Parse arguments
+        if (args.length == 0) {
+            printUsage();
+            System.exit(1);
+        }
+
+        String inputFile = null;
+        String outputFile = null;
+        boolean verbose = false;
+
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+
+            if (arg.equals("-o") || arg.equals("--output")) {
+                if (i + 1 < args.length) {
+                    outputFile = args[++i];
+                } else {
+                    System.err.println("Error: -o/--output requires a file path");
+                    System.exit(1);
+                }
+            } else if (arg.equals("-v") || arg.equals("--verbose")) {
+                verbose = true;
+            } else if (arg.equals("-h") || arg.equals("--help")) {
+                printUsage();
+                System.exit(0);
+            } else if (arg.startsWith("-")) {
+                System.err.println("Error: Unknown option: " + arg);
+                printUsage();
+                System.exit(1);
+            } else {
+                inputFile = arg;
+            }
+        }
+
+        // Validate required arguments
+        if (inputFile == null) {
+            System.err.println("Error: Input file required");
+            printUsage();
+            System.exit(1);
+        }
+
+        // Process file
+        try {
+            processFile(inputFile, outputFile, verbose);
+            System.exit(0);  // Success
+        } catch (IOException e) {
+            System.err.println("Error processing file: " + e.getMessage());
+            System.exit(2);  // File error
+        }
+    }
+
+    private static void processFile(String inputPath, String outputPath, boolean verbose)
+            throws IOException {
+        if (verbose) {
+            System.out.println("Reading: " + inputPath);
+        }
+
+        // Read file
+        Path input = Paths.get(inputPath);
+        String content = Files.readString(input);
+
+        // Process (example: convert to uppercase)
+        String processed = content.toUpperCase();
+
+        // Write output
+        if (outputPath != null) {
+            Files.writeString(Paths.get(outputPath), processed);
+            if (verbose) {
+                System.out.println("Wrote: " + outputPath);
+            }
+        } else {
+            System.out.println(processed);
+        }
+
+        if (verbose) {
+            System.out.println("Processing complete");
+        }
+    }
+
+    private static void printUsage() {
+        System.out.println("Usage: java FileProcessorCLI [OPTIONS] <input-file>");
+        System.out.println();
+        System.out.println("Options:");
+        System.out.println("  -o, --output FILE   Write output to FILE instead of stdout");
+        System.out.println("  -v, --verbose       Show verbose output");
+        System.out.println("  -h, --help          Show this help message");
+    }
+}
+```
+
+**Usage examples**:
+
+```bash
+# Process file and print to stdout
+java FileProcessorCLI input.txt
+
+# Process file and write to output file
+java FileProcessorCLI input.txt -o output.txt
+
+# Verbose mode
+java FileProcessorCLI -v input.txt --output output.txt
+# Output: Reading: input.txt
+#         Wrote: output.txt
+#         Processing complete
+
+# Show help
+java FileProcessorCLI --help
+# Output: Usage: java FileProcessorCLI [OPTIONS] <input-file>
+#         ...
+```
+
+**Before**: Basic argument handling, no error handling
+**After**: Production-ready CLI with options, help, validation, error codes
+
+### Limitations of Standard Library Approach
+
+Manual CLI building becomes unmaintainable for complex applications.
+
+**Critical limitations**:
+
+- **Verbose parsing**: 50+ lines for basic option parsing
+- **No type conversion**: Manual parseInt(), parseDouble() everywhere
+- **No validation**: Must write custom validation logic
+- **No automatic help**: Help text manually synchronized with code
+- **No subcommands**: Difficult to organize complex CLIs (like git)
+- **Error-prone**: Easy to miss edge cases (missing values, invalid types)
+- **No auto-completion**: Cannot generate shell completion scripts
+- **Poor maintainability**: Changes require updating parsing logic and help text
+
+**Real-world complexity**:
+
+```java
+// A production CLI tool requires:
+// - Multiple subcommands (init, build, deploy, status)
+// - Options with short/long forms (-v/--verbose)
+// - Required vs optional parameters
+// - Type conversion (String, int, File, URL)
+// - Input validation (ranges, formats, file existence)
+// - Automatic help generation
+// - Version information
+// - Shell completion scripts
+// - Error messages with suggestions
+
+// Standard library approach would require 500+ lines of boilerplate.
+// Frameworks solve this with annotations and automatic generation.
+```
+
+**When standard library is acceptable**:
+
+- Simple utilities (1-2 arguments, no options)
+- Learning CLI fundamentals
+- No dependencies constraint (embedded systems)
+- Trivial automation scripts
+
+**For production**: Use picocli or Apache Commons CLI (covered next).
+
+## picocli - Modern CLI Framework (External Library)
 
 Picocli uses annotations to define CLI structure, handling parsing, validation, and help generation automatically.
 
