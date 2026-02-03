@@ -33,7 +33,9 @@ layout: list
 
 - [Web Services and REST APIs](/en/learn/software-engineering/programming-languages/java/in-practice/web-services)
 - [JSON and API Integration](/en/learn/software-engineering/programming-languages/java/in-practice/json-and-api-integration)
+- [Messaging and Event-Driven Architecture](/en/learn/software-engineering/programming-languages/java/in-practice/messaging)
 - [Working with SQL Databases](/en/learn/software-engineering/programming-languages/java/in-practice/sql-database)
+- [Working with NoSQL Databases](/en/learn/software-engineering/programming-languages/java/in-practice/nosql-databases)
 
 **Application Development**
 
@@ -45,7 +47,9 @@ layout: list
 
 **Production Systems**
 
+- [Authentication and Authorization](/en/learn/software-engineering/programming-languages/java/in-practice/authentication)
 - [Security Practices](/en/learn/software-engineering/programming-languages/java/in-practice/security-practices)
+- [Caching](/en/learn/software-engineering/programming-languages/java/in-practice/caching)
 - [Resilience Patterns](/en/learn/software-engineering/programming-languages/java/in-practice/resilience-patterns)
 - [Cloud-Native Patterns](/en/learn/software-engineering/programming-languages/java/in-practice/cloud-native-patterns)
 - [Performance Optimization](/en/learn/software-engineering/programming-languages/java/in-practice/performance)
