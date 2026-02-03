@@ -4,6 +4,7 @@ date: 2025-12-04T00:00:00+07:00
 draft: false
 weight: 100000
 description: Complete learning path from zero to expert Java development - 6 comprehensive tutorials covering 0-95% knowledge
+tags: ["java", "overview", "learning-path", "tutorial", "programming"]
 ---
 
 **Your complete journey from zero to expert Java developer.** This full set provides 6 comprehensive tutorials taking you from initial setup through expert-level mastery.
@@ -25,98 +26,90 @@ Before diving into comprehensive tutorials, get up and running:
 
 These foundational tutorials (0-30% coverage) prepare you for the complete learning path.
 
-## Complete Learning Path
+## Tutorial Organization
 
-### All Tutorials Complete
+Java tutorials are organized into three complementary paths. Choose the path that matches your learning style and goals.
 
-All 4 tutorials in the Java Full Set are now available:
+### 1. By Example - Code-First Learning
 
-#### Level 1: Beginner (0-60%)
+**[By Example](/en/learn/software-engineering/programming-languages/java/by-example)** provides 75-85 heavily annotated code examples achieving 95% language coverage efficiently.
 
-#### Level 2: Intermediate (60-85%)
+**When to use**:
 
-#### Level 3: Advanced (85-95%)
+- You learn best from working code
+- You want quick reference examples
+- You need to see concepts in action first
+- You prefer minimal narrative
 
-#### Cookbook: Practical Recipes (Reference)
+**Structure**: Each example includes runnable code with 1.0-2.25 annotation lines per code line, explaining values, states, and outputs using `// =>` notation. Examples progress from beginner to advanced.
 
----
+**Coverage**: Beginner (0-60%), Intermediate (60-85%), Advanced (85-95%)
 
-## Choose Your Path
+### 2. In Practice - Conceptual Guidance
 
-| Experience                   | Path                                     |
-| ---------------------------- | ---------------------------------------- |
-| **Beginner**                 | Beginner → Intermediate → Advanced       |
-| **Experienced, new to Java** | Beginner → Intermediate → Advanced       |
-| **Want production skills**   | Intermediate → Advanced                  |
-| **Seeking mastery**          | Advanced (+ reference earlier tutorials) |
-| **Need quick reference**     | Cookbook (+ tutorials as needed)         |
+**[In Practice](/en/learn/software-engineering/programming-languages/java/in-practice)** offers practical wisdom, design patterns, and architectural approaches for professional Java development.
 
----
+**When to use**:
 
-## Learning Recommendations
+- You need to understand WHY, not just HOW
+- You're building production systems
+- You want to avoid common pitfalls
+- You're learning software design principles
 
-### Start Here
+**Topics**:
 
-### Use Anytime
+- **Best Practices** - Production-ready patterns and approaches
+- **Anti-Patterns** - Common mistakes and how to avoid them
+- **Test-Driven Development (TDD)** - Writing tests first methodology
+- **Behavior-Driven Development (BDD)** - Specification by example
+- **Domain-Driven Design (DDD)** - Strategic and tactical patterns
 
----
+### 3. Release Highlights - Modern Java Features
 
-## Each Tutorial Includes
+**[Release Highlights](/en/learn/software-engineering/programming-languages/java/release-highlights)** summarizes major features from Java LTS releases over the last 5 years.
 
-- Clear learning objectives
-- Progressive difficulty
-- Working code examples
-- Hands-on exercises
-- Best practices
-- Cross-references
-- External resources
+**When to use**:
 
----
+- You're updating from older Java versions
+- You want to learn modern Java features
+- You need LTS migration guidance
+- You're curious about Java evolution
 
-## Topics Covered Across Full Set
+**Coverage**: Java 17 LTS (2021), Java 21 LTS (2023), Java 25 LTS (2025)
 
-The complete tutorial series covers:
+## Choose Your Learning Path
 
-**Fundamentals** (Initial Setup through Beginner):
+| Learning Style             | Recommended Path                                                |
+| -------------------------- | --------------------------------------------------------------- |
+| **Code-first learner**     | By Example → In Practice (as needed)                            |
+| **Conceptual learner**     | In Practice → By Example (for concrete examples)                |
+| **Migrating from old JDK** | Release Highlights → By Example (for modern syntax)             |
+| **Building production**    | In Practice (core) + By Example (reference)                     |
+| **Complete mastery**       | All three paths (By Example + In Practice + Release Highlights) |
 
-- Java installation and JDK setup
-- Variables, types, and type system
-- Classes, objects, and constructors
-- Methods and overloading
-- Control flow (if/else, switch, for, while)
-- Arrays and basic collections
-- Object-oriented programming (inheritance, polymorphism, encapsulation)
-- Interfaces and abstract classes
-- Exception handling (try-catch, checked exceptions)
-- File I/O and resource management
-- Packages and imports
-- Basic testing with JUnit
+## What Each Path Covers
 
-**Production Systems** (Intermediate):
+### By Example Topics
 
-- Design patterns (Singleton, Factory, Builder, Observer, Strategy)
-- SOLID principles and clean code
-- Advanced OOP (composition, delegation, decorators)
-- Collections framework deep-dive (List, Set, Map, Queue)
-- Streams API and functional programming
-- Concurrency (threads, ExecutorService, synchronization)
-- Build tools (Maven, Gradle)
-- Database access (JDBC, connection pooling)
-- Testing strategies (unit, integration, mocking)
-- Logging and debugging
+Organized by difficulty level with 75-85 annotated examples:
 
-**Expert Techniques** (Advanced):
+**Beginner (0-60%)**: Variables, types, classes, objects, methods, control flow, arrays, collections basics, OOP fundamentals, interfaces, exception handling, file I/O, packages
 
-- JVM internals (bytecode, class loading, memory model)
-- Garbage collection and tuning
-- Reflection and annotations
-- Dynamic proxies
-- Advanced concurrency (CompletableFuture, Fork/Join)
-- Performance profiling and optimization
-- Security best practices
-- System design patterns
-- Advanced generics and type system
-- Modular programming (Java Platform Module System)
+**Intermediate (60-85%)**: Design patterns, SOLID principles, advanced collections, streams API, functional programming, concurrency basics, build tools, database access, testing
+
+**Advanced (85-95%)**: JVM internals, garbage collection, reflection, annotations, dynamic proxies, advanced concurrency, performance tuning, security, system design, generics, modules
+
+### In Practice Topics
+
+**Best Practices**: SOLID principles, clean code, effective Java patterns, resource management, thread safety, testing strategies, logging, debugging
+
+**Anti-Patterns**: Common pitfalls (God objects, premature optimization, exception swallowing, String abuse, null handling mistakes, synchronization errors)
+
+**TDD**: Red-Green-Refactor cycle, test organization, mocking strategies, test-driven class design
+
+**BDD**: Given-When-Then specifications, Cucumber/JBehave, executable specifications, acceptance criteria
+
+**DDD**: Bounded contexts, aggregates, entities, value objects, repositories, domain events, strategic design
 
 ## What Makes Java Special
 
