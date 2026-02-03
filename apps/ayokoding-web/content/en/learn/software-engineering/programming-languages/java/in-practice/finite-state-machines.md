@@ -3,7 +3,7 @@ title: "Finite State Machines"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: Model complex state transitions using enum-based and class-based finite state machine patterns in Java
-weight: 10000008
+weight: 10000005
 tags: ["java", "fsm", "state-machine", "state-pattern", "design-patterns"]
 ---
 

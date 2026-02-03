@@ -3,7 +3,7 @@ title: "Anti-Patterns"
 date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Common Java mistakes and pitfalls to avoid - recognize and prevent problematic patterns in your codebase
-weight: 10000001
+weight: 10000006
 tags: ["java", "anti-patterns", "best-practices", "code-quality", "pitfalls"]
 ---
 

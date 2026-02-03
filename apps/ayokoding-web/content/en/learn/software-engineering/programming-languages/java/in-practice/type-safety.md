@@ -3,7 +3,7 @@ title: "Type Safety"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: Leverage Java's type system with records, Optional, sealed classes, and nullability annotations for compile-time safety
-weight: 10000007
+weight: 10000001
 tags: ["java", "type-safety", "records", "optional", "sealed-classes", "null-safety", "jspecify"]
 ---
 

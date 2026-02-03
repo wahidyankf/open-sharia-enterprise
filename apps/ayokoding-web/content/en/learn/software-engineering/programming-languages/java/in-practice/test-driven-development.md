@@ -3,7 +3,7 @@ title: "Test-Driven Development"
 date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Test-driven development principles, patterns, and practices for reliable Java applications using JUnit 5, Mockito, and AssertJ
-weight: 10000003
+weight: 10000007
 tags: ["java", "tdd", "test-driven-development", "junit-5", "mockito", "assertj", "testing"]
 ---
 
