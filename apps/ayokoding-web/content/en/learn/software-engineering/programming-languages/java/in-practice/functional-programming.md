@@ -75,6 +75,8 @@ public class Calculator {
 
 ## Functional Interfaces and Lambda Expressions
 
+**Foundation**: Lambda syntax, functional interfaces (Function, Predicate, Consumer, Supplier), and method references are covered in [by-example intermediate section](/en/learn/software-engineering/programming-languages/java/by-example/intermediate#lambdas-and-functional-interfaces). This guide focuses on production functional programming patterns and composition.
+
 **Problem**: Before Java 8, representing behavior as data required verbose anonymous inner classes, leading to boilerplate-heavy code.
 
 **Solution**: Functional interfaces (single abstract method) with lambda expressions provide concise syntax for behavior parameterization.
@@ -192,6 +194,8 @@ words.stream()
 ```
 
 ## Streams API - Declarative Collection Processing
+
+**Foundation**: Stream basics (filter, map, reduce, collect) are covered in [by-example intermediate section](/en/learn/software-engineering/programming-languages/java/by-example/intermediate#streams). This guide focuses on advanced stream patterns, lazy evaluation, and parallel processing.
 
 **Problem**: Imperative loops mix what to do with how to do it, creating verbose, hard-to-parallelize code.
 

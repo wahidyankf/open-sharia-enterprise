@@ -101,7 +101,9 @@ Java provides multiple approaches for testing code, from built-in language featu
 
 ## Built-in Testing with Standard Library
 
-Java's built-in testing capabilities teach fundamentals before introducing frameworks. Use assert keyword and manual test runners to understand testing basics.
+**Foundation**: Java's built-in testing capabilities (assert keyword, manual test runners, exception verification) are covered in [by-example beginner section](/en/learn/software-engineering/programming-languages/java/by-example/beginner#testing-basics). This guide focuses on production TDD with JUnit 5, Mockito, and professional testing patterns.
+
+For learning purposes, here's a brief summary of standard library testing:
 
 ### Assert Keyword Basics
 
@@ -1041,4 +1043,4 @@ See [Java Test-Driven Development Examples](/en/learn/software-engineering/progr
 
 **Last Updated**: 2025-12-12
 **Java Version**: 17+ (baseline), 21+ (recommended)
-**Framework Versions**: JUnit 5.14.2, Mockito 5.15.2, AssertJ 3.27.6, TestContainers 1.20.4
+**Framework Versions**: JUnit 5.10.1, Mockito 5.15.2, AssertJ 3.27.6, TestContainers 1.20.4
