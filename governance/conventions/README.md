@@ -71,7 +71,7 @@ Conventions are organized into 5 semantic categories:
 
 - **[formatting/](#formatting-8-conventions)** - Markdown formatting, syntax, visual elements (8 conventions)
 - **[writing/](#writing-5-conventions)** - Content quality, validation, writing standards (5 conventions)
-- **[structure/](#structure-3-conventions)** - Documentation organization, file naming, plans (3 conventions)
+- **[structure/](#structure-4-conventions)** - Documentation organization, file naming, plans (4 conventions)
 - **[tutorials/](#tutorials-7-conventions)** - Tutorial creation and structure conventions (7 conventions)
 - **[hugo/](#hugo-3-conventions)** - Hugo site content conventions (3 conventions)
 
@@ -100,13 +100,14 @@ Content quality standards, validation methodology, and writing guidelines.
 - [OSS Documentation](./writing/oss-documentation.md) - Standards for repository documentation files (README, CONTRIBUTING, ADRs, security) following open source best practices
 - [README Quality](./writing/readme-quality.md) - Quality standards for README.md files ensuring engagement, accessibility, and scannability. Defines problem-solution hooks, jargon elimination (plain language over corporate speak), acronym context requirements, benefits-focused language, navigation structure, and paragraph length limits. **Agents**: readme-maker, readme-checker
 
-## Structure (3 conventions)
+## Structure (4 conventions)
 
 Documentation organization frameworks, file naming, and project planning structure.
 
 - [Diataxis Framework](./structure/diataxis-framework.md) - Understanding the four-category documentation organization framework we use (Tutorials, How-To, Reference, Explanation)
 - [File Naming Convention](./structure/file-naming.md) - Systematic approach to naming files with hierarchical prefixes encoding directory structure
 - [Plans Organization](./structure/plans.md) - Standards for organizing project planning documents in plans/ folder including structure (ideas.md, backlog/, in-progress/, done/), naming patterns (YYYY-MM-DD\_\_identifier/), lifecycle stages, and project identifiers. Defines how plans move from ideas - backlog - in-progress - done
+- [Programming Language Documentation Separation](./structure/programming-language-docs-separation.md) - Establishes clear separation between repository-specific programming language style guides (docs/explanation/) and educational programming language content (ayokoding-web). Defines scope boundaries, prerequisite knowledge requirements, cross-referencing patterns, and DRY principle application. Applies to all programming languages (Java, Python, Golang, TypeScript, Elixir, Kotlin, Dart, Rust, Clojure, F#, C#)
 
 ## Tutorials (7 conventions)
 

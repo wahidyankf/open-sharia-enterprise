@@ -29,7 +29,7 @@ updated: 2026-01-29
 
 # Dart Programming Language Documentation
 
-**Quick Reference**: [Overview](#overview) | [Software Engineering Principles](#software-engineering-principles) | [Version Strategy](#dart-version-strategy) | [Dart in the Platform](#dart-in-the-platform) | [Dart Philosophy](#dart-philosophy) | [Documentation Structure](#documentation-structure) | [Learning Paths](#learning-paths) | [Code Examples](#code-examples) | [Tools & Ecosystem](#tools-and-ecosystem) | [Resources](#resources-and-references)
+**Quick Reference**: [Overview](#overview) | [Prerequisite Knowledge](#prerequisite-knowledge) | [Software Engineering Principles](#software-engineering-principles) | [Version Strategy](#dart-version-strategy) | [Dart in the Platform](#dart-in-the-platform) | [Dart Philosophy](#dart-philosophy) | [Documentation Structure](#documentation-structure) | [Learning Paths](#learning-paths) | [Code Examples](#code-examples) | [Tools & Ecosystem](#tools-and-ecosystem) | [Resources](#resources-and-references)
 
 ## Overview
 
@@ -56,6 +56,22 @@ Dart's design principles guide development:
 - **Sound null safety** - Eliminate null reference errors at compile time
 - **Strongly typed** - Static type system with type inference
 - **Single codebase** - Write once, deploy to mobile, web, desktop, server
+
+## Prerequisite Knowledge
+
+**REQUIRED**: This documentation assumes you have completed the AyoKoding Dart learning path. These are **OSE Platform-specific style guides**, not educational tutorials.
+
+**You MUST understand Dart fundamentals before using these standards:**
+
+- **[Dart Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/dart)** - Complete 0-95% language coverage
+- **[Dart By Example](https://ayokoding.com/en/learn/software-engineering/programming-languages/dart/by-example)** - 75-85 annotated code examples (beginner → advanced)
+- **[Dart In Practice](https://ayokoding.com/en/learn/software-engineering/programming-languages/dart/in-practice)** - Production patterns and design approaches
+
+**What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Dart knowledge in THIS codebase.
+
+**What this documentation does NOT cover**: Dart syntax, language fundamentals, generic patterns (those are in ayokoding-web).
+
+**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Coding Standards
 

@@ -56,6 +56,22 @@ The [Zen of Python (PEP 20)](https://peps.python.org/pep-0020/) guides Python de
 - **Readability counts** - Code is read more than written
 - **There should be one obvious way to do it** - Pythonic idioms over multiple approaches
 
+## Prerequisite Knowledge
+
+**REQUIRED**: This documentation assumes you have completed the AyoKoding Python learning path. These are **OSE Platform-specific style guides**, not educational tutorials.
+
+**You MUST understand Python fundamentals before using these standards:**
+
+- **[Python Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/python)** - Complete 0-95% language coverage
+- **[Python By Example](https://ayokoding.com/en/learn/software-engineering/programming-languages/python/by-example)** - 75-85 annotated code examples (beginner → advanced)
+- **[Python In Practice](https://ayokoding.com/en/learn/software-engineering/programming-languages/python/in-practice)** - Production patterns and design approaches
+
+**What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Python knowledge in THIS codebase.
+
+**What this documentation does NOT cover**: Python syntax, language fundamentals, generic patterns (those are in ayokoding-web).
+
+**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+
 ## Coding Standards
 
 **This documentation is the authoritative reference** for Python coding standards in the open-sharia-enterprise platform.

@@ -30,7 +30,7 @@ updated: 2026-01-25
 
 # Elixir Programming Language Documentation
 
-**Quick Reference**: [Overview](#overview) | [Principles](#software-engineering-principles) | [Documentation Structure](#documentation-structure) | [Version Strategy](#elixir-version-strategy) | [Learning Path](#learning-path) | [Tools & Ecosystem](#tools-and-ecosystem) | [Resources](#resources-and-references)
+**Quick Reference**: [Overview](#overview) | [Prerequisite Knowledge](#prerequisite-knowledge) | [Principles](#software-engineering-principles) | [Documentation Structure](#documentation-structure) | [Version Strategy](#elixir-version-strategy) | [Learning Path](#learning-path) | [Tools & Ecosystem](#tools-and-ecosystem) | [Resources](#resources-and-references)
 
 ## Overview
 
@@ -50,6 +50,22 @@ Elixir is a dynamic, functional programming language designed for building scala
 - **Erlang/OTP**: 27.2+ (json module, process labels, performance improvements)
 - **Phoenix**: 1.7.x (verified routes, Tailwind support, LiveView streams)
 - **Ecto**: 3.12.x (database toolkit with query composition)
+
+## Prerequisite Knowledge
+
+**REQUIRED**: This documentation assumes you have completed the AyoKoding Elixir learning path. These are **OSE Platform-specific style guides**, not educational tutorials.
+
+**You MUST understand Elixir fundamentals before using these standards:**
+
+- **[Elixir Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/elixir)** - Complete 0-95% language coverage
+- **[Elixir By Example](https://ayokoding.com/en/learn/software-engineering/programming-languages/elixir/by-example)** - 75-85 annotated code examples (beginner → advanced)
+- **[Elixir In Practice](https://ayokoding.com/en/learn/software-engineering/programming-languages/elixir/in-practice)** - Production patterns and design approaches
+
+**What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Elixir knowledge in THIS codebase.
+
+**What this documentation does NOT cover**: Elixir syntax, language fundamentals, generic patterns (those are in ayokoding-web).
+
+**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Coding Standards
 

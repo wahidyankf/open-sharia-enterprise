@@ -46,6 +46,22 @@ TypeScript is the primary language for OSE Platform development. It provides sta
 - **Ecosystem**: Vast npm ecosystem with TypeScript support for frameworks and libraries
 - **Developer Experience**: IntelliSense, type inference, and compile-time validation accelerate development
 
+## Prerequisite Knowledge
+
+**REQUIRED**: This documentation assumes you have completed the AyoKoding TypeScript learning path. These are **OSE Platform-specific style guides**, not educational tutorials.
+
+**You MUST understand TypeScript fundamentals before using these standards:**
+
+- **[TypeScript Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/typescript)** - Complete 0-95% language coverage
+- **[TypeScript By Example](https://ayokoding.com/en/learn/software-engineering/programming-languages/typescript/by-example)** - 75-85 annotated code examples (beginner → advanced)
+- **[TypeScript In Practice](https://ayokoding.com/en/learn/software-engineering/programming-languages/typescript/in-practice)** - Production patterns and design approaches
+
+**What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply TypeScript knowledge in THIS codebase.
+
+**What this documentation does NOT cover**: TypeScript syntax, language fundamentals, generic patterns (those are in ayokoding-web).
+
+**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+
 ## Coding Standards
 
 **This documentation is the authoritative reference** for TypeScript coding standards in the open-sharia-enterprise platform.
