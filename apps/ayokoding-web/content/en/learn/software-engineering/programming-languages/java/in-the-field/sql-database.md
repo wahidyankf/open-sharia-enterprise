@@ -1,5 +1,5 @@
 ---
-title: "Working with SQL Databases"
+title: "SQL Database"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: Comprehensive guide to SQL database integration in Java using JDBC, connection pooling, transactions, and testing strategies

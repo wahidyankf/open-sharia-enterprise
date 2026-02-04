@@ -1,5 +1,5 @@
 ---
-title: "CI/CD Pipelines"
+title: "Ci Cd"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: Comprehensive guide to continuous integration and deployment in Java from manual processes to automated pipelines

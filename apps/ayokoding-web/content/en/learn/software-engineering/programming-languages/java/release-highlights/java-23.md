@@ -1,5 +1,5 @@
 ---
-title: "Java 23 (September 2024)"
+title: "Java 23"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Java 23 release highlights - ZGC Generational by default, Markdown Documentation, Primitive Patterns, Module Imports, Class-File API, Stream Gatherers, Flexible Constructor Bodies"

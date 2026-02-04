@@ -1,5 +1,5 @@
 ---
-title: "Java 25 LTS (2025)"
+title: "Java 25 Lts"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: "Key highlights from Java 25 LTS release - stream gatherers, compact headers, and performance optimizations"

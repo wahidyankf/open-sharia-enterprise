@@ -1,5 +1,5 @@
 ---
-title: "Authentication and Authorization"
+title: "Authentication"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: Comprehensive guide to authentication and authorization in Java from HTTP fundamentals to OAuth2 and Spring Security

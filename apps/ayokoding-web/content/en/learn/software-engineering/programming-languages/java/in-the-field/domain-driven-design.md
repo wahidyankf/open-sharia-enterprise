@@ -1,5 +1,5 @@
 ---
-title: "Domain-Driven Design"
+title: "Domain Driven Design"
 date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Implementing domain-driven design tactical patterns with Java - value objects, entities, aggregates, domain events, repositories, and domain services

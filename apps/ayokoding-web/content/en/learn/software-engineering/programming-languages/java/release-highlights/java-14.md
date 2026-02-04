@@ -1,5 +1,5 @@
 ---
-title: "Java 14 (March 2020)"
+title: "Java 14"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Java 14 release highlights - Switch Expressions standard, Pattern Matching preview, Records preview, Text Blocks second preview, and helpful NullPointerExceptions"

@@ -1,5 +1,5 @@
 ---
-title: "Java 20 (March 2023)"
+title: "Java 20"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Java 20 release highlights - Virtual Threads second preview, Scoped Values incubator, Record Patterns second preview, Pattern Matching for switch fourth preview"

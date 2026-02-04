@@ -1,5 +1,5 @@
 ---
-title: "Building CLI Applications"
+title: "Cli App"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: Comprehensive guide to building command-line applications in Java with argument parsing, input/output handling, and native compilation
