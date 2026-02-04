@@ -453,17 +453,40 @@ public class KafkaConsumerExample {
 
 **Consumer Groups**:
 
-```
-Topic: orders (3 partitions)
-Consumer Group: order-processing-group (3 consumers)
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#029E73','secondaryColor':'#DE8F05','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart LR
+    T[Topic: orders<br/>3 partitions]
+    P0[Partition 0]
+    P1[Partition 1]
+    P2[Partition 2]
+    C1[Consumer 1]
+    C2[Consumer 2]
+    C3[Consumer 3]
+    CG[Consumer Group:<br/>order-processing-group]
 
-Partition 0 → Consumer 1
-Partition 1 → Consumer 2
-Partition 2 → Consumer 3
+    T -.-> P0
+    T -.-> P1
+    T -.-> P2
+    P0 -->|assigned to| C1
+    P1 -->|assigned to| C2
+    P2 -->|assigned to| C3
+    C1 -.-> CG
+    C2 -.-> CG
+    C3 -.-> CG
 
-SCALING: Add consumers up to partition count
-REBALANCING: Partitions redistributed when consumers join/leave
+    style T fill:#0173B2,stroke:#0173B2,color:#fff
+    style P0 fill:#029E73,stroke:#029E73,color:#fff
+    style P1 fill:#029E73,stroke:#029E73,color:#fff
+    style P2 fill:#029E73,stroke:#029E73,color:#fff
+    style C1 fill:#DE8F05,stroke:#DE8F05,color:#fff
+    style C2 fill:#DE8F05,stroke:#DE8F05,color:#fff
+    style C3 fill:#DE8F05,stroke:#DE8F05,color:#fff
+    style CG fill:#CC78BC,stroke:#CC78BC,color:#fff
 ```
+
+**SCALING**: Add consumers up to partition count
+**REBALANCING**: Partitions redistributed when consumers join/leave
 
 **Manual Offset Management**:
 
@@ -565,16 +588,30 @@ public class KafkaStreamsExample {
 
 **Partitions**: Physical subdivision for parallelism.
 
-```
-Topic: orders
-├── Partition 0: [msg0, msg3, msg6, ...]
-├── Partition 1: [msg1, msg4, msg7, ...]
-└── Partition 2: [msg2, msg5, msg8, ...]
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#029E73','secondaryColor':'#DE8F05','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    T[Topic: orders]
+    P0[Partition 0<br/>msg0, msg3, msg6, ...]
+    P1[Partition 1<br/>msg1, msg4, msg7, ...]
+    P2[Partition 2<br/>msg2, msg5, msg8, ...]
+    KR[Key Routing:<br/>hash key mod partition_count]
 
-KEY ROUTING: hash(key) % partition_count → partition
-ORDERING: Guaranteed within partition, NOT across partitions
-PARALLELISM: Consumers = partitions for max throughput
+    KR -->|determines| T
+    T --> P0
+    T --> P1
+    T --> P2
+
+    style T fill:#0173B2,stroke:#0173B2,color:#fff
+    style KR fill:#CC78BC,stroke:#CC78BC,color:#fff
+    style P0 fill:#029E73,stroke:#029E73,color:#fff
+    style P1 fill:#029E73,stroke:#029E73,color:#fff
+    style P2 fill:#029E73,stroke:#029E73,color:#fff
 ```
+
+**KEY ROUTING**: `hash(key) % partition_count → partition`
+**ORDERING**: Guaranteed within partition, NOT across partitions
+**PARALLELISM**: Consumers = partitions for max throughput
 
 **Creating Topic**:
 

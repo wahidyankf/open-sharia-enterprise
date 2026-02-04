@@ -39,14 +39,26 @@ Authentication (proving identity) and authorization (granting permissions) are f
 
 **Example flow**:
 
-```
-1. Authentication: User logs in with username/password
-   → System validates credentials
-   → System creates session with user ID
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#029E73','secondaryColor':'#DE8F05','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+sequenceDiagram
+    participant User
+    participant System
 
-2. Authorization: User requests DELETE /api/posts/123
-   → System checks if user owns post 123 OR has ADMIN role
-   → System grants or denies request
+    Note over User,System: 1. Authentication Phase
+    User->>System: Login (username/password)
+    System->>System: Validate credentials
+    System->>System: Create session with user ID
+    System-->>User: Session token
+
+    Note over User,System: 2. Authorization Phase
+    User->>System: DELETE /api/posts/123
+    System->>System: Check if user owns post 123<br/>OR has ADMIN role
+    alt Authorized
+        System-->>User: Grant access (200 OK)
+    else Unauthorized
+        System-->>User: Deny access (403 Forbidden)
+    end
 ```
 
 ## Basic Authentication (Standard Library)

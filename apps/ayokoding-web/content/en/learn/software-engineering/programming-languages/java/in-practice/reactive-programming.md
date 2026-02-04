@@ -166,25 +166,26 @@ public interface Processor<T, R> extends Subscriber<T>, Publisher<R> {
 
 **Example flow:**
 
-```
-Subscriber                          Publisher
-    |                                   |
-    |--- subscribe(subscriber) -------->|
-    |                                   |
-    |<-- onSubscribe(subscription) -----|
-    |                                   |
-    |--- request(10) ------------------>|
-    |                                   |
-    |<-- onNext(item1) -----------------|
-    |<-- onNext(item2) -----------------|
-    |    ...                            |
-    |<-- onNext(item10) ----------------|
-    |                                   |
-    |--- request(10) ------------------>|
-    |                                   |
-    |<-- onNext(item11) ----------------|
-    |    ...                            |
-    |<-- onComplete() ------------------|
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#029E73','secondaryColor':'#DE8F05','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+sequenceDiagram
+    participant Subscriber
+    participant Publisher
+
+    Subscriber->>Publisher: subscribe(subscriber)
+    Publisher->>Subscriber: onSubscribe(subscription)
+    Subscriber->>Publisher: request(10)
+    Publisher->>Subscriber: onNext(item1)
+    Publisher->>Subscriber: onNext(item2)
+    Publisher->>Subscriber: ...
+    Publisher->>Subscriber: onNext(item10)
+
+    Note over Subscriber: Processed 10 items,<br/>request more
+
+    Subscriber->>Publisher: request(10)
+    Publisher->>Subscriber: onNext(item11)
+    Publisher->>Subscriber: ...
+    Publisher->>Subscriber: onComplete()
 ```
 
 **Why this matters:** Understanding these contracts is essential for using reactive libraries correctly and debugging reactive code.
