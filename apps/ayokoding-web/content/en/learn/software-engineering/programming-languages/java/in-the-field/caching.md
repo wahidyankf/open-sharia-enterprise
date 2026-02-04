@@ -2073,10 +2073,10 @@ public class CacheWarmer {
 
 ## Related Content
 
-- [Performance](/en/learn/software-engineering/programming-languages/java/in-practice/performance) - Performance optimization patterns, profiling, JVM tuning
-- [Concurrency and Parallelism](/en/learn/software-engineering/programming-languages/java/in-practice/concurrency-and-parallelism) - Thread-safe caching patterns, ConcurrentHashMap usage
-- [NoSQL Databases](/en/learn/software-engineering/programming-languages/java/in-practice/nosql-databases) - Redis beyond caching (pub/sub, streams, data structures)
-- [Working with SQL Databases](/en/learn/software-engineering/programming-languages/java/in-practice/sql-database) - Query result caching strategies
+- [Performance](/en/learn/software-engineering/programming-languages/java/in-the-field/performance) - Performance optimization patterns, profiling, JVM tuning
+- [Concurrency and Parallelism](/en/learn/software-engineering/programming-languages/java/in-the-field/concurrency-and-parallelism) - Thread-safe caching patterns, ConcurrentHashMap usage
+- [NoSQL Databases](/en/learn/software-engineering/programming-languages/java/in-the-field/nosql-databases) - Redis beyond caching (pub/sub, streams, data structures)
+- [Working with SQL Databases](/en/learn/software-engineering/programming-languages/java/in-the-field/sql-database) - Query result caching strategies
 
 ---
 

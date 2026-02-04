@@ -1736,8 +1736,8 @@ Automatically detect security vulnerabilities in dependencies.
 
 ## Related Content
 
-- [Build Tools](/en/learn/software-engineering/programming-languages/java/in-practice/build-tools) - Maven and Gradle fundamentals for CI/CD
-- [Linting and Formatting](/en/learn/software-engineering/programming-languages/java/in-practice/linting-and-formatting) - Code quality tools in CI pipelines
-- [Docker and Kubernetes](/en/learn/software-engineering/programming-languages/java/in-practice/docker-and-kubernetes) - Container-based deployment strategies
-- [Cloud-Native Patterns](/en/learn/software-engineering/programming-languages/java/in-practice/cloud-native-patterns) - Twelve-Factor App principles for CI/CD
-- [Logging](/en/learn/software-engineering/programming-languages/java/in-practice/logging) - Structured logging for CI/CD observability
+- [Build Tools](/en/learn/software-engineering/programming-languages/java/in-the-field/build-tools) - Maven and Gradle fundamentals for CI/CD
+- [Linting and Formatting](/en/learn/software-engineering/programming-languages/java/in-the-field/linting-and-formatting) - Code quality tools in CI pipelines
+- [Docker and Kubernetes](/en/learn/software-engineering/programming-languages/java/in-the-field/docker-and-kubernetes) - Container-based deployment strategies
+- [Cloud-Native Patterns](/en/learn/software-engineering/programming-languages/java/in-the-field/cloud-native-patterns) - Twelve-Factor App principles for CI/CD
+- [Logging](/en/learn/software-engineering/programming-languages/java/in-the-field/logging) - Structured logging for CI/CD observability

@@ -1487,6 +1487,6 @@ public class MessagingMetrics {
 
 ## Related Content
 
-- [Concurrency and Parallelism](/en/learn/software-engineering/programming-languages/java/in-practice/concurrency-and-parallelism) - Async processing with CompletableFuture
-- [Resilience Patterns](/en/learn/software-engineering/programming-languages/java/in-practice/resilience-patterns) - Retry and circuit breaker for messaging
-- [Cloud-Native Patterns](/en/learn/software-engineering/programming-languages/java/in-practice/cloud-native-patterns) - Distributed systems and event-driven architecture
+- [Concurrency and Parallelism](/en/learn/software-engineering/programming-languages/java/in-the-field/concurrency-and-parallelism) - Async processing with CompletableFuture
+- [Resilience Patterns](/en/learn/software-engineering/programming-languages/java/in-the-field/resilience-patterns) - Retry and circuit breaker for messaging
+- [Cloud-Native Patterns](/en/learn/software-engineering/programming-languages/java/in-the-field/cloud-native-patterns) - Distributed systems and event-driven architecture

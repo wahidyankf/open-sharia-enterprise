@@ -1167,8 +1167,8 @@ jobs:
 
 ## Related Content
 
-- [Best Practices](/en/learn/software-engineering/programming-languages/java/in-practice/best-practices) - Coding standards and conventions
-- [Build Tools](/en/learn/software-engineering/programming-languages/java/in-practice/build-tools) - Maven and Gradle integration
-- [CI/CD Pipelines](/en/learn/software-engineering/programming-languages/java/in-practice/ci-cd) - Continuous integration patterns
-- [Security Practices](/en/learn/software-engineering/programming-languages/java/in-practice/security-practices) - Security vulnerability detection
-- [Test-Driven Development](/en/learn/software-engineering/programming-languages/java/in-practice/test-driven-development) - Test coverage metrics
+- [Best Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/best-practices) - Coding standards and conventions
+- [Build Tools](/en/learn/software-engineering/programming-languages/java/in-the-field/build-tools) - Maven and Gradle integration
+- [CI/CD Pipelines](/en/learn/software-engineering/programming-languages/java/in-the-field/ci-cd) - Continuous integration patterns
+- [Security Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/security-practices) - Security vulnerability detection
+- [Test-Driven Development](/en/learn/software-engineering/programming-languages/java/in-the-field/test-driven-development) - Test coverage metrics

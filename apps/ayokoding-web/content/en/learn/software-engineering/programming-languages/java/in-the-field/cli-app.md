@@ -824,8 +824,8 @@ class CsvTool implements Runnable {
 
 ### Core Java Topics
 
-- **[Java Best Practices](/en/learn/software-engineering/programming-languages/java/in-practice/best-practices)** - General coding standards
-- **[Test-Driven Development](/en/learn/software-engineering/programming-languages/java/in-practice/test-driven-development)** - Testing CLI apps
+- **[Java Best Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/best-practices)** - General coding standards
+- **[Test-Driven Development](/en/learn/software-engineering/programming-languages/java/in-the-field/test-driven-development)** - Testing CLI apps
 
 ### External Resources
 

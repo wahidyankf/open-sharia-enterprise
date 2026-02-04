@@ -1018,8 +1018,8 @@ Use JaCoCo for coverage reports and set appropriate targets per layer.
 
 ### Core Java Topics
 
-- **[Java Best Practices](/en/learn/software-engineering/programming-languages/java/in-practice/best-practices)** - General coding standards and principles
-- **[Java Anti-Patterns](/en/learn/software-engineering/programming-languages/java/in-practice/anti-patterns)** - Common mistakes to avoid
+- **[Java Best Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/best-practices)** - General coding standards and principles
+- **[Java Anti-Patterns](/en/learn/software-engineering/programming-languages/java/in-the-field/anti-patterns)** - Common mistakes to avoid
 
 ### Testing in Practice
 

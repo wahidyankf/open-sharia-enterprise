@@ -2002,13 +2002,13 @@ List<CompletableFuture<Void>> futures = numbers.stream()
     .collect(Collectors.toList());
 ```
 
-**See**: [Functional Programming](/en/learn/software-engineering/programming-languages/java/in-practice/functional-programming) for parallel stream patterns and best practices.
+**See**: [Functional Programming](/en/learn/software-engineering/programming-languages/java/in-the-field/functional-programming) for parallel stream patterns and best practices.
 
 ## Avoiding Anti-Patterns
 
 Common concurrency anti-patterns are documented in the anti-patterns guide.
 
-**See**: [Anti-Patterns](/en/learn/software-engineering/programming-languages/java/in-practice/anti-patterns) for detailed coverage of:
+**See**: [Anti-Patterns](/en/learn/software-engineering/programming-languages/java/in-the-field/anti-patterns) for detailed coverage of:
 
 - **Thread Leakage**: Creating threads without lifecycle management
 - **Race Conditions**: Unsynchronized shared mutable state
@@ -2183,7 +2183,7 @@ public class UnsafeCounter {
 
 ## Related Content
 
-- [Anti-Patterns](/en/learn/software-engineering/programming-languages/java/in-practice/anti-patterns) - Threading anti-patterns (deadlock, race conditions, thread leakage, busy waiting)
-- [Functional Programming](/en/learn/software-engineering/programming-languages/java/in-practice/functional-programming) - Parallel streams and immutable data structures
-- [Performance](/en/learn/software-engineering/programming-languages/java/in-practice/performance) - Thread pool tuning and concurrency optimization
-- [Best Practices](/en/learn/software-engineering/programming-languages/java/in-practice/best-practices) - Concurrency best practices and patterns
+- [Anti-Patterns](/en/learn/software-engineering/programming-languages/java/in-the-field/anti-patterns) - Threading anti-patterns (deadlock, race conditions, thread leakage, busy waiting)
+- [Functional Programming](/en/learn/software-engineering/programming-languages/java/in-the-field/functional-programming) - Parallel streams and immutable data structures
+- [Performance](/en/learn/software-engineering/programming-languages/java/in-the-field/performance) - Thread pool tuning and concurrency optimization
+- [Best Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/best-practices) - Concurrency best practices and patterns

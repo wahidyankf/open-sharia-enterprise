@@ -1284,8 +1284,8 @@ jobs:
 
 ## Related Content
 
-- [CI/CD Pipelines](/en/learn/software-engineering/programming-languages/java/in-practice/ci-cd) - Continuous integration and deployment patterns
-- [Linting and Formatting](/en/learn/software-engineering/programming-languages/java/in-practice/linting-and-formatting) - Code quality tools integration
-- [Security Practices](/en/learn/software-engineering/programming-languages/java/in-practice/security-practices) - Dependency vulnerability scanning
-- [Docker and Kubernetes](/en/learn/software-engineering/programming-languages/java/in-practice/docker-and-kubernetes) - Containerizing Java applications
-- [Building CLI Applications](/en/learn/software-engineering/programming-languages/java/in-practice/cli-app) - Creating command-line tools
+- [CI/CD Pipelines](/en/learn/software-engineering/programming-languages/java/in-the-field/ci-cd) - Continuous integration and deployment patterns
+- [Linting and Formatting](/en/learn/software-engineering/programming-languages/java/in-the-field/linting-and-formatting) - Code quality tools integration
+- [Security Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/security-practices) - Dependency vulnerability scanning
+- [Docker and Kubernetes](/en/learn/software-engineering/programming-languages/java/in-the-field/docker-and-kubernetes) - Containerizing Java applications
+- [Building CLI Applications](/en/learn/software-engineering/programming-languages/java/in-the-field/cli-app) - Creating command-line tools

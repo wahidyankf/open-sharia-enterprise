@@ -940,10 +940,10 @@ flux.publishOn(Schedulers.boundedElastic())
 
 ## Related Topics
 
-- [Concurrency and Parallelism](/en/learn/software-engineering/programming-languages/java/in-practice/concurrency-and-parallelism) - Thread-based concurrency vs reactive
-- [Web Services and REST APIs](/en/learn/software-engineering/programming-languages/java/in-practice/web-services) - Spring MVC vs Spring WebFlux
-- [Working with SQL Databases](/en/learn/software-engineering/programming-languages/java/in-practice/sql-database) - JDBC vs R2DBC
-- [Performance Optimization](/en/learn/software-engineering/programming-languages/java/in-practice/performance) - Measuring reactive vs imperative performance
+- [Concurrency and Parallelism](/en/learn/software-engineering/programming-languages/java/in-the-field/concurrency-and-parallelism) - Thread-based concurrency vs reactive
+- [Web Services and REST APIs](/en/learn/software-engineering/programming-languages/java/in-the-field/web-services) - Spring MVC vs Spring WebFlux
+- [Working with SQL Databases](/en/learn/software-engineering/programming-languages/java/in-the-field/sql-database) - JDBC vs R2DBC
+- [Performance Optimization](/en/learn/software-engineering/programming-languages/java/in-the-field/performance) - Measuring reactive vs imperative performance
 - [Testing](/en/learn/software-engineering/programming-languages/java/by-example/beginner/testing) - Testing reactive code patterns
 
 ## References

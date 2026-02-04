@@ -1155,11 +1155,11 @@ public class PaymentService {
 
 ## Related Topics
 
-- [Best Practices](/en/learn/software-engineering/programming-languages/java/in-practice/best-practices) - General Java coding standards
-- [Security Practices](/en/learn/software-engineering/programming-languages/java/in-practice/security-practices) - Secrets management and security
-- [CI/CD Pipelines](/en/learn/software-engineering/programming-languages/java/in-practice/ci-cd) - Environment-specific deployments
-- [Cloud-Native Patterns](/en/learn/software-engineering/programming-languages/java/in-practice/cloud-native-patterns) - 12-factor app implementation
-- [Docker and Kubernetes](/en/learn/software-engineering/programming-languages/java/in-practice/docker-and-kubernetes) - Container configuration
+- [Best Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/best-practices) - General Java coding standards
+- [Security Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/security-practices) - Secrets management and security
+- [CI/CD Pipelines](/en/learn/software-engineering/programming-languages/java/in-the-field/ci-cd) - Environment-specific deployments
+- [Cloud-Native Patterns](/en/learn/software-engineering/programming-languages/java/in-the-field/cloud-native-patterns) - 12-factor app implementation
+- [Docker and Kubernetes](/en/learn/software-engineering/programming-languages/java/in-the-field/docker-and-kubernetes) - Container configuration
 
 ## References
 

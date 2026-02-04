@@ -364,7 +364,7 @@ pack200/unpack200 compression tools removed (deprecated in Java 11).
 
 - [Java 15](/en/learn/software-engineering/programming-languages/java/release-highlights/java-15) - Next release
 - [Java 17 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-17) - Next LTS release
-- [Pattern Matching](/en/learn/software-engineering/programming-languages/java/in-practice/functional-programming) - In-practice guide
+- [Pattern Matching](/en/learn/software-engineering/programming-languages/java/in-the-field/functional-programming) - In-the-field guide
 - [Records](/en/learn/software-engineering/programming-languages/java/by-example/intermediate/records) - By-example tutorial
 
 ## References
