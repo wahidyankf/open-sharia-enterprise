@@ -1067,7 +1067,7 @@ spec:
 
 ### Health Probes
 
-Kubernetes uses probes to determine pod health and readiness. Reference: [Cloud-Native Patterns - Health Checks](/en/learn/software-engineering/programming-languages/java/in-practice/cloud-native-patterns).
+Kubernetes uses probes to determine pod health and readiness. Reference: [Cloud-Native Patterns - Health Checks](/en/learn/software-engineering/programming-languages/java/in-the-field/cloud-native-patterns).
 
 **Liveness probe**: Is the container running? Restart if fails.
 
@@ -1473,7 +1473,7 @@ kubectl port-forward pod/myapp-<pod-id> 5005:5005
 
 ## Configuration Management
 
-Externalize configuration to support multiple environments without code changes. Reference: [Cloud-Native Patterns - Configuration](/en/learn/software-engineering/programming-languages/java/in-practice/cloud-native-patterns).
+Externalize configuration to support multiple environments without code changes. Reference: [Cloud-Native Patterns - Configuration](/en/learn/software-engineering/programming-languages/java/in-the-field/cloud-native-patterns).
 
 ### Environment Variables
 
@@ -1639,13 +1639,13 @@ containers:
 
 ### External Configuration
 
-Reference: [Cloud-Native Patterns - Configuration](/en/learn/software-engineering/programming-languages/java/in-practice/cloud-native-patterns).
+Reference: [Cloud-Native Patterns - Configuration](/en/learn/software-engineering/programming-languages/java/in-the-field/cloud-native-patterns).
 
 Load configuration from external sources (Consul, etcd, Spring Cloud Config).
 
 ## Observability in Containers
 
-Monitor, trace, and debug containerized applications. Reference: [Cloud-Native Patterns - Metrics and Distributed Tracing](/en/learn/software-engineering/programming-languages/java/in-practice/cloud-native-patterns).
+Monitor, trace, and debug containerized applications. Reference: [Cloud-Native Patterns - Metrics and Distributed Tracing](/en/learn/software-engineering/programming-languages/java/in-the-field/cloud-native-patterns).
 
 ### Log Aggregation
 
@@ -1706,7 +1706,7 @@ kubectl logs -l app=myapp --all-containers=true
 
 ### Metrics Scraping
 
-Expose metrics in Prometheus format for monitoring systems. Reference: [Cloud-Native Patterns - Metrics](/en/learn/software-engineering/programming-languages/java/in-practice/cloud-native-patterns).
+Expose metrics in Prometheus format for monitoring systems. Reference: [Cloud-Native Patterns - Metrics](/en/learn/software-engineering/programming-languages/java/in-the-field/cloud-native-patterns).
 
 **Service annotations for Prometheus**:
 
@@ -1732,11 +1732,11 @@ spec:
 
 ### Distributed Tracing
 
-Correlate requests across microservices. Reference: [Cloud-Native Patterns - Distributed Tracing](/en/learn/software-engineering/programming-languages/java/in-practice/cloud-native-patterns).
+Correlate requests across microservices. Reference: [Cloud-Native Patterns - Distributed Tracing](/en/learn/software-engineering/programming-languages/java/in-the-field/cloud-native-patterns).
 
 ### Health Endpoints
 
-Expose health check endpoints for Kubernetes probes. Reference: [Cloud-Native Patterns - Health Checks](/en/learn/software-engineering/programming-languages/java/in-practice/cloud-native-patterns).
+Expose health check endpoints for Kubernetes probes. Reference: [Cloud-Native Patterns - Health Checks](/en/learn/software-engineering/programming-languages/java/in-the-field/cloud-native-patterns).
 
 **Spring Boot Actuator**:
 
@@ -2021,8 +2021,8 @@ kubectl set image deployment/myapp myapp=myapp:1.1
 
 ## Related Content
 
-- [Cloud-Native Patterns](/en/learn/software-engineering/programming-languages/java/in-practice/cloud-native-patterns) - Health checks, metrics, configuration, fault tolerance
-- [CI/CD Pipelines](/en/learn/software-engineering/programming-languages/java/in-practice/ci-cd) - Building Docker images in CI, automated deployments
-- [Build Tools](/en/learn/software-engineering/programming-languages/java/in-practice/build-tools) - Maven/Gradle Docker integration
-- [Logging](/en/learn/software-engineering/programming-languages/java/in-practice/logging) - Structured logging for container environments
-- [Security Practices](/en/learn/software-engineering/programming-languages/java/in-practice/security-practices) - Container security, image scanning
+- [Cloud-Native Patterns](/en/learn/software-engineering/programming-languages/java/in-the-field/cloud-native-patterns) - Health checks, metrics, configuration, fault tolerance
+- [CI/CD Pipelines](/en/learn/software-engineering/programming-languages/java/in-the-field/ci-cd) - Building Docker images in CI, automated deployments
+- [Build Tools](/en/learn/software-engineering/programming-languages/java/in-the-field/build-tools) - Maven/Gradle Docker integration
+- [Logging](/en/learn/software-engineering/programming-languages/java/in-the-field/logging) - Structured logging for container environments
+- [Security Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/security-practices) - Container security, image scanning

@@ -973,6 +973,6 @@ The key to avoiding anti-patterns is understanding the principles they violate a
 
 ## Related Resources
 
-- [Overview](/en/learn/software-engineering/programming-languages/java/in-practice/overview) - In-practice content introduction
+- [Overview](/en/learn/software-engineering/programming-languages/java/in-the-field/overview) - In-practice content introduction
 - [By Example](/en/learn/software-engineering/programming-languages/java/by-example) - Code-first tutorials
 - [Quick Start](/en/learn/software-engineering/programming-languages/java/quick-start) - Get started with Java

@@ -813,8 +813,8 @@ public class UserRepository {
 
 ### Core Java Topics
 
-- **[Java Best Practices](/en/learn/software-engineering/programming-languages/java/in-practice/best-practices)** - General coding standards
-- **[Test-Driven Development](/en/learn/software-engineering/programming-languages/java/in-practice/test-driven-development)** - Testing database code
+- **[Java Best Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/best-practices)** - General coding standards
+- **[Test-Driven Development](/en/learn/software-engineering/programming-languages/java/in-the-field/test-driven-development)** - Testing database code
 
 ### External Resources
 

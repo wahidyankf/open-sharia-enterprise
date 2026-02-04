@@ -1411,9 +1411,9 @@ Plan for data loss scenarios.
 
 ### Core Java Topics
 
-- **[Working with SQL Databases](/en/learn/software-engineering/programming-languages/java/in-practice/sql-database)** - SQL vs NoSQL comparison
-- **[Caching Strategies](/en/learn/software-engineering/programming-languages/java/in-practice/caching)** - Redis caching patterns
-- **[Performance Optimization](/en/learn/software-engineering/programming-languages/java/in-practice/performance)** - Indexing and optimization
+- **[Working with SQL Databases](/en/learn/software-engineering/programming-languages/java/in-the-field/sql-database)** - SQL vs NoSQL comparison
+- **[Caching Strategies](/en/learn/software-engineering/programming-languages/java/in-the-field/caching)** - Redis caching patterns
+- **[Performance Optimization](/en/learn/software-engineering/programming-languages/java/in-the-field/performance)** - Indexing and optimization
 
 ### External Resources
 

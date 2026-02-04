@@ -45,9 +45,9 @@ Java tutorials are organized into three complementary paths. Choose the path tha
 
 **Coverage**: Beginner (0-60%), Intermediate (60-85%), Advanced (85-95%)
 
-### 2. In Practice - Conceptual Guidance
+### 2. In the Field - Conceptual Guidance
 
-**[In Practice](/en/learn/software-engineering/programming-languages/java/in-practice)** offers practical wisdom, design patterns, and architectural approaches for professional Java development.
+**[In the Field](/en/learn/software-engineering/programming-languages/java/in-the-field)** offers practical wisdom, design patterns, and architectural approaches for professional Java development.
 
 **When to use**:
 
@@ -79,13 +79,13 @@ Java tutorials are organized into three complementary paths. Choose the path tha
 
 ## Choose Your Learning Path
 
-| Learning Style             | Recommended Path                                                |
-| -------------------------- | --------------------------------------------------------------- |
-| **Code-first learner**     | By Example → In Practice (as needed)                            |
-| **Conceptual learner**     | In Practice → By Example (for concrete examples)                |
-| **Migrating from old JDK** | Release Highlights → By Example (for modern syntax)             |
-| **Building production**    | In Practice (core) + By Example (reference)                     |
-| **Complete mastery**       | All three paths (By Example + In Practice + Release Highlights) |
+| Learning Style             | Recommended Path                                                 |
+| -------------------------- | ---------------------------------------------------------------- |
+| **Code-first learner**     | By Example → In the Field (as needed)                            |
+| **Conceptual learner**     | In the Field → By Example (for concrete examples)                |
+| **Migrating from old JDK** | Release Highlights → By Example (for modern syntax)              |
+| **Building production**    | In the Field (core) + By Example (reference)                     |
+| **Complete mastery**       | All three paths (By Example + In the Field + Release Highlights) |
 
 ## What Each Path Covers
 
@@ -99,7 +99,7 @@ Organized by difficulty level with 75-85 annotated examples:
 
 **Advanced (85-95%)**: JVM internals, garbage collection, reflection, annotations, dynamic proxies, advanced concurrency, performance tuning, security, system design, generics, modules
 
-### In Practice Topics
+### In the Field Topics
 
 **Best Practices**: SOLID principles, clean code, effective Java patterns, resource management, thread safety, testing strategies, logging, debugging
 

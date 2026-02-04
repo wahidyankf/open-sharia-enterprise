@@ -4,7 +4,7 @@ date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Practical guidance for applying Java concepts in real-world development
 weight: 10000000
-tags: ["java", "in-practice", "overview"]
+tags: ["java", "in-the-field", "overview"]
 ---
 
 ## What is In-Practice Content?
@@ -86,7 +86,7 @@ Building complete applications with Java. Content teaches fundamentals before in
 
 ### Future Topics
 
-Additional in-practice content will cover:
+Additional in-the-field content will cover:
 
 - Best practices and idioms
 - Design patterns in Java

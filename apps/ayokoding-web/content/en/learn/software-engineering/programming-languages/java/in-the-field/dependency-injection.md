@@ -1565,6 +1565,6 @@ Begin with constructor injection and interfaces using standard library. Introduc
 
 **Related content:**
 
-- [Design Principles](/en/learn/software-engineering/programming-languages/java/in-practice/design-principles) - Dependency Inversion Principle (DIP)
-- [Best Practices](/en/learn/software-engineering/programming-languages/java/in-practice/best-practices) - DI usage patterns
-- [Test-Driven Development](/en/learn/software-engineering/programming-languages/java/in-practice/test-driven-development) - Testing with DI
+- [Design Principles](/en/learn/software-engineering/programming-languages/java/in-the-field/design-principles) - Dependency Inversion Principle (DIP)
+- [Best Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/best-practices) - DI usage patterns
+- [Test-Driven Development](/en/learn/software-engineering/programming-languages/java/in-the-field/test-driven-development) - Testing with DI

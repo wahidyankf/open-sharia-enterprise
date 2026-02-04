@@ -946,9 +946,9 @@ producer.send(topic, message);
 
 ### Core Java Topics
 
-- **[Java Best Practices](/en/learn/software-engineering/programming-languages/java/in-practice/best-practices)** - General coding standards
-- **[Java Anti-Patterns](/en/learn/software-engineering/programming-languages/java/in-practice/anti-patterns)** - Common mistakes to avoid
-- **[Test-Driven Development](/en/learn/software-engineering/programming-languages/java/in-practice/test-driven-development)** - Testing JSON serialization
+- **[Java Best Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/best-practices)** - General coding standards
+- **[Java Anti-Patterns](/en/learn/software-engineering/programming-languages/java/in-the-field/anti-patterns)** - Common mistakes to avoid
+- **[Test-Driven Development](/en/learn/software-engineering/programming-languages/java/in-the-field/test-driven-development)** - Testing JSON serialization
 
 ### External Resources
 

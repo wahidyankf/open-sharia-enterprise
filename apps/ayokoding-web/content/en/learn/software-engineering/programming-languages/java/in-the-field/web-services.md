@@ -317,7 +317,7 @@ public class HelloServlet extends HttpServlet {
 }
 ```
 
-**See**: [JSON and API Integration](/en/learn/software-engineering/programming-languages/java/in-practice/json-and-api-integration) for JSON serialization with Jackson.
+**See**: [JSON and API Integration](/en/learn/software-engineering/programming-languages/java/in-the-field/json-and-api-integration) for JSON serialization with Jackson.
 
 ### Request Parameters
 
@@ -1392,7 +1392,7 @@ public class SecurityConfig {
 }
 ```
 
-**See**: [Security Practices](/en/learn/software-engineering/programming-languages/java/in-practice/security-practices) for comprehensive security guidelines.
+**See**: [Security Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/security-practices) for comprehensive security guidelines.
 
 ## Testing REST APIs
 
@@ -1462,8 +1462,8 @@ class UserControllerTest {
 
 ## Related Content
 
-- [JSON and API Integration](/en/learn/software-engineering/programming-languages/java/in-practice/json-and-api-integration) - JSON serialization with Jackson
-- [Security Practices](/en/learn/software-engineering/programming-languages/java/in-practice/security-practices) - API security and authentication
-- [Test-Driven Development](/en/learn/software-engineering/programming-languages/java/in-practice/test-driven-development) - Testing REST APIs
-- [Cloud-Native Patterns](/en/learn/software-engineering/programming-languages/java/in-practice/cloud-native-patterns) - Health checks and observability
-- [Docker and Kubernetes](/en/learn/software-engineering/programming-languages/java/in-practice/docker-and-kubernetes) - Deploying REST APIs
+- [JSON and API Integration](/en/learn/software-engineering/programming-languages/java/in-the-field/json-and-api-integration) - JSON serialization with Jackson
+- [Security Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/security-practices) - API security and authentication
+- [Test-Driven Development](/en/learn/software-engineering/programming-languages/java/in-the-field/test-driven-development) - Testing REST APIs
+- [Cloud-Native Patterns](/en/learn/software-engineering/programming-languages/java/in-the-field/cloud-native-patterns) - Health checks and observability
+- [Docker and Kubernetes](/en/learn/software-engineering/programming-languages/java/in-the-field/docker-and-kubernetes) - Deploying REST APIs

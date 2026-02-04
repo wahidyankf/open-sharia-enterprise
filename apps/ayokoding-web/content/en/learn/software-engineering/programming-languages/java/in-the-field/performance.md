@@ -920,7 +920,7 @@ public class OrderProcessor {
 
 Common performance mistakes are documented in anti-patterns guide.
 
-**See**: [Anti-Patterns](/en/learn/software-engineering/programming-languages/java/in-practice/anti-patterns) for detailed coverage of:
+**See**: [Anti-Patterns](/en/learn/software-engineering/programming-languages/java/in-the-field/anti-patterns) for detailed coverage of:
 
 - **Premature Optimization**: Optimizing without measurement
 - **N+1 Queries**: Multiple database queries in loop (see sql-database.md for solution)
@@ -1203,7 +1203,7 @@ Performance optimization for database operations.
 
 Connection pooling dramatically improves database performance.
 
-**See**: [Working with SQL Databases](/en/learn/software-engineering/programming-languages/java/in-practice/sql-database) for comprehensive HikariCP configuration.
+**See**: [Working with SQL Databases](/en/learn/software-engineering/programming-languages/java/in-the-field/sql-database) for comprehensive HikariCP configuration.
 
 **Key points**:
 
@@ -1276,7 +1276,7 @@ String sql = """
 // Single query returns all data
 ```
 
-**See**: [Anti-Patterns](/en/learn/software-engineering/programming-languages/java/in-practice/anti-patterns) for detailed N+1 query examples and solutions.
+**See**: [Anti-Patterns](/en/learn/software-engineering/programming-languages/java/in-the-field/anti-patterns) for detailed N+1 query examples and solutions.
 
 ### Index Usage
 
@@ -1425,9 +1425,9 @@ Test performance with realistic conditions.
 
 ## Related Content
 
-- [Anti-Patterns](/en/learn/software-engineering/programming-languages/java/in-practice/anti-patterns) - Performance anti-patterns (premature optimization, N+1 queries, excessive allocation)
-- [Working with SQL Databases](/en/learn/software-engineering/programming-languages/java/in-practice/sql-database) - Connection pooling with HikariCP, query optimization
-- [Concurrency and Parallelism](/en/learn/software-engineering/programming-languages/java/in-practice/concurrency-and-parallelism) - Thread pool sizing, parallel streams, virtual threads
+- [Anti-Patterns](/en/learn/software-engineering/programming-languages/java/in-the-field/anti-patterns) - Performance anti-patterns (premature optimization, N+1 queries, excessive allocation)
+- [Working with SQL Databases](/en/learn/software-engineering/programming-languages/java/in-the-field/sql-database) - Connection pooling with HikariCP, query optimization
+- [Concurrency and Parallelism](/en/learn/software-engineering/programming-languages/java/in-the-field/concurrency-and-parallelism) - Thread pool sizing, parallel streams, virtual threads
 
 ---
 

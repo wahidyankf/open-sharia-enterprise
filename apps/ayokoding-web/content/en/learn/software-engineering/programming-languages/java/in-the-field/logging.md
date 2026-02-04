@@ -299,7 +299,7 @@ public class PaymentService {
 | DEBUG | Detailed diagnostic information             | Method parameters, intermediate values |
 | TRACE | Very detailed debugging (usually disabled)  | Loop iterations, fine-grained flow     |
 
-**See**: [Best Practices](/en/learn/software-engineering/programming-languages/java/in-practice/best-practices) for comprehensive logging level guidelines with examples.
+**See**: [Best Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/best-practices) for comprehensive logging level guidelines with examples.
 
 ### Parameterized Messages
 
@@ -940,7 +940,7 @@ Output logs in JSON format for easy parsing by log aggregation systems (ELK, Spl
 
 Choose appropriate log levels based on message importance and frequency.
 
-**See**: [Best Practices - Logging Best Practices](/en/learn/software-engineering/programming-languages/java/in-practice/best-practices#logging-best-practices) for comprehensive logging level guidelines with detailed examples.
+**See**: [Best Practices - Logging Best Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/best-practices#logging-best-practices) for comprehensive logging level guidelines with detailed examples.
 
 **Quick reference**:
 
@@ -1027,7 +1027,7 @@ logger.debug("Processing payment with card: {}xxxx", creditCardNumber.substring(
 logger.info("Calling external service");
 ```
 
-**See**: [Security Practices](/en/learn/software-engineering/programming-languages/java/in-practice/security-practices) for comprehensive security guidelines.
+**See**: [Security Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/security-practices) for comprehensive security guidelines.
 
 ### Log Rotation and Retention
 
@@ -1340,8 +1340,8 @@ public class RequestHandlerTest {
 
 ## Related Content
 
-- [Best Practices](/en/learn/software-engineering/programming-languages/java/in-practice/best-practices) - Comprehensive logging level guidelines and patterns
-- [Security Practices](/en/learn/software-engineering/programming-languages/java/in-practice/security-practices) - Protecting sensitive data in logs
-- [Cloud-Native Patterns](/en/learn/software-engineering/programming-languages/java/in-practice/cloud-native-patterns) - Observability and distributed tracing
-- [Performance](/en/learn/software-engineering/programming-languages/java/in-practice/performance) - Performance optimization techniques
-- [Test-Driven Development](/en/learn/software-engineering/programming-languages/java/in-practice/test-driven-development) - Testing patterns
+- [Best Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/best-practices) - Comprehensive logging level guidelines and patterns
+- [Security Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/security-practices) - Protecting sensitive data in logs
+- [Cloud-Native Patterns](/en/learn/software-engineering/programming-languages/java/in-the-field/cloud-native-patterns) - Observability and distributed tracing
+- [Performance](/en/learn/software-engineering/programming-languages/java/in-the-field/performance) - Performance optimization techniques
+- [Test-Driven Development](/en/learn/software-engineering/programming-languages/java/in-the-field/test-driven-development) - Testing patterns

@@ -1037,8 +1037,8 @@ graph TD
 
 **Core Java Documentation**:
 
-- [Test-Driven Development](/en/learn/software-engineering/programming-languages/java/in-practice/test-driven-development) - TDD complements BDD
-- [Best Practices](/en/learn/software-engineering/programming-languages/java/in-practice/best-practices) - Java development standards
+- [Test-Driven Development](/en/learn/software-engineering/programming-languages/java/in-the-field/test-driven-development) - TDD complements BDD
+- [Best Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/best-practices) - Java development standards
 
 **External Resources**:
 

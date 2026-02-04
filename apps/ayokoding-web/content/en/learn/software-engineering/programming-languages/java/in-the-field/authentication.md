@@ -1923,6 +1923,6 @@ public class SecurityHeadersConfig {
 
 ## Related Content
 
-- [Security Practices](/en/learn/software-engineering/programming-languages/java/in-practice/security-practices) - General security patterns including input validation, cryptography, and OWASP Top 10
-- [Web Services and REST APIs](/en/learn/software-engineering/programming-languages/java/in-practice/web-services) - Building REST APIs that need authentication
-- [Resilience Patterns](/en/learn/software-engineering/programming-languages/java/in-practice/resilience-patterns) - Rate limiting and circuit breakers for authentication services
+- [Security Practices](/en/learn/software-engineering/programming-languages/java/in-the-field/security-practices) - General security patterns including input validation, cryptography, and OWASP Top 10
+- [Web Services and REST APIs](/en/learn/software-engineering/programming-languages/java/in-the-field/web-services) - Building REST APIs that need authentication
+- [Resilience Patterns](/en/learn/software-engineering/programming-languages/java/in-the-field/resilience-patterns) - Rate limiting and circuit breakers for authentication services
