@@ -505,16 +505,25 @@ java -jar myapp.jar --spring.profiles.active=prod,metrics,tracing
 
 **Architecture:**
 
-```
-Config Server (centralized)
-    |
-    +-- Git Repository (configuration files)
-    |
-    +-- Serves configuration to clients
-         |
-         +-- Service A
-         +-- Service B
-         +-- Service C
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#029E73','secondaryColor':'#DE8F05','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    CS[Config Server<br/>Centralized]
+    GIT[(Git Repository<br/>Configuration Files)]
+    SA[Service A]
+    SB[Service B]
+    SC[Service C]
+
+    GIT -->|Configuration source| CS
+    CS -->|Serves config| SA
+    CS -->|Serves config| SB
+    CS -->|Serves config| SC
+
+    style CS fill:#0173B2,stroke:#0173B2,color:#fff
+    style GIT fill:#029E73,stroke:#029E73,color:#fff
+    style SA fill:#DE8F05,stroke:#DE8F05,color:#fff
+    style SB fill:#DE8F05,stroke:#DE8F05,color:#fff
+    style SC fill:#DE8F05,stroke:#DE8F05,color:#fff
 ```
 
 ### Config Server Setup
