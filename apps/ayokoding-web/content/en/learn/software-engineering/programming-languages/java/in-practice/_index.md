@@ -28,6 +28,7 @@ layout: list
 - [Finite State Machines](/en/learn/software-engineering/programming-languages/java/in-practice/finite-state-machines)
 - [Test-Driven Development](/en/learn/software-engineering/programming-languages/java/in-practice/test-driven-development)
 - [Behavior-Driven Development](/en/learn/software-engineering/programming-languages/java/in-practice/behavior-driven-development)
+- [Reactive Programming](/en/learn/software-engineering/programming-languages/java/in-practice/reactive-programming)
 
 **Integration & External Systems**
 
@@ -40,6 +41,7 @@ layout: list
 **Application Development**
 
 - [Building CLI Applications](/en/learn/software-engineering/programming-languages/java/in-practice/cli-app)
+- [Configuration Management](/en/learn/software-engineering/programming-languages/java/in-practice/configuration)
 
 **Architecture & Design**
 
