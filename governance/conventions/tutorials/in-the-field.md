@@ -374,47 +374,70 @@ java Calculator      # => Assertions disabled (default, no checks)
 
 ```java
 import java.net.URI;
+// => URI class for parsing and validating URLs
 import java.net.http.HttpClient;
+// => HTTP client from Java 11+ standard library
 import java.net.http.HttpRequest;
+// => Immutable HTTP request builder
 import java.net.http.HttpResponse;
+// => HTTP response container
 // => Java 11+ standard library
 // => No external dependencies required
+// => Supports HTTP/1.1 and HTTP/2
 
 public class HttpExample {
+    // => Standard library HTTP example
+    // => Demonstrates basic GET request
+
     public static void main(String[] args) throws Exception {
+        // => main() throws Exception for simplicity
+        // => Production code should handle exceptions
         // => Synchronous blocking HTTP client
 
         HttpClient client = HttpClient.newHttpClient();
         // => Creates HTTP/2 client with default config
         // => Reusable for multiple requests
         // => Connection pooling built-in
+        // => Thread-safe (share across application)
 
         HttpRequest request = HttpRequest.newBuilder()
+            // => Builder pattern for request construction
             .uri(URI.create("https://api.example.com/users"))
             // => Validates URI format at runtime
             // => Supports HTTP/HTTPS protocols
+            // => URI.create() throws IllegalArgumentException if invalid
             .header("Accept", "application/json")
             // => Sets Accept header for JSON response
+            // => Multiple headers allowed
             .GET()
             // => HTTP GET method (also POST, PUT, DELETE)
+            // => Default method if not specified
             .build();
         // => Builds immutable request object
+        // => Cannot be modified after build()
 
         HttpResponse<String> response = client.send(
             request,
             HttpResponse.BodyHandlers.ofString()
         );
         // => Synchronous blocking call
+        // => Blocks current thread until response received
         // => BodyHandlers.ofString() reads response as String
         // => Handles connection, reading, closing automatically
+        // => Throws IOException on network error
 
         int statusCode = response.statusCode();
         // => statusCode is 200, 404, 500, etc.
+        // => HTTP status code from server
+        // => 2xx success, 4xx client error, 5xx server error
 
         String body = response.body();
         // => body is response body as String
         // => No automatic JSON parsing
+        // => Must parse manually or use library
     }
+    // => No connection cleanup needed
+    // => HttpClient handles resource management
 }
 ```
 
@@ -431,39 +454,60 @@ public class HttpExample {
 
 ```java
 import java.sql.*;
-// => JDBC standard library
+// => JDBC standard library (java.sql package)
+// => Included in Java SE, no external dependencies
 // => No ORM framework required
+// => Direct SQL execution
 
 public class DatabaseExample {
+    // => Standard library database example
+    // => Demonstrates basic JDBC query
+
     public static void main(String[] args) throws SQLException {
+        // => throws SQLException for simplicity
+        // => Production code should use try-catch
+        // => Or try-with-resources for auto-cleanup
+
         String url = "jdbc:postgresql://localhost:5432/mydb";
-        // => Database connection string
+        // => Database connection string (JDBC URL)
+        // => jdbc: protocol identifier
+        // => postgresql: database type (also mysql, oracle, h2)
+        // => localhost:5432: host and port
+        // => mydb: database name
         // => Contains host, port, database name
 
         Connection conn = DriverManager.getConnection(url, user, pass);
         // => conn is JDBC Connection (AutoCloseable)
+        // => DriverManager creates connection from URL
         // => Opens TCP connection to database
+        // => Authentication happens here
         // => Must be closed to prevent connection leak
+        // => One connection per query (no pooling)
 
         PreparedStatement stmt = conn.prepareStatement(
             "SELECT * FROM users WHERE id = ?");
         // => PreparedStatement prevents SQL injection
         // => ? is placeholder (parameter binding)
         // => Database pre-compiles query for performance
+        // => Can be reused with different parameters
+        // => Safer than string concatenation
 
         stmt.setLong(1, userId);
         // => Sets first parameter (1-indexed, not 0)
         // => Replaces ? with userId safely
         // => Database handles escaping
+        // => Type-safe setter (setLong, setString, etc.)
 
         ResultSet rs = stmt.executeQuery();
         // => rs contains query results
         // => Cursor initially before first row
         // => Must call next() to access data
+        // => Holds database resources until closed
 
         if (rs.next()) {
             // => next() advances cursor to first row
             // => Returns true if row exists, false if empty
+            // => Loop with while(rs.next()) for multiple rows
 
             User user = new User(
                 rs.getLong("id"),          // => Column by name
@@ -472,13 +516,19 @@ public class DatabaseExample {
             );
             // => Manual object mapping (tedious for large tables)
             // => Error-prone (typos in column names)
+            // => Repetitive for many entities
         }
 
         rs.close();   // => Release result set resources
         stmt.close(); // => Release statement resources
         conn.close(); // => Close database connection
         // => Failure to close causes connection leaks
+        // => Better: use try-with-resources
+        // => Production: connection pool manages lifecycle
     }
+    // => No connection pooling in standard library
+    // => New connection for every request
+    // => Connection creation is expensive (TCP handshake, auth)
 }
 ```
 
@@ -528,52 +578,66 @@ JUnit 5 is the industry-standard testing framework for Java, used by 89% of Java
 
 ```java
 import org.junit.jupiter.api.*;
+// => JUnit 5 API (org.junit.jupiter.api package)
+// => Includes @Test, @BeforeEach, @AfterEach annotations
 import static org.junit.jupiter.api.Assertions.*;
+// => Static import for assertion methods
+// => assertEquals, assertThrows, assertTrue, etc.
 // => JUnit 5 testing framework
 // => Provides test lifecycle and assertions
+// => Industry standard (89% of Java projects)
 
 class CalculatorTest {
     // => Test class naming: [ClassName]Test
     // => Must be in test source directory (src/test/java)
     // => Package-private visibility (no modifier needed)
+    // => JUnit doesn't require public modifier
+    // => Same package as Calculator class
 
     private Calculator calculator;
     // => Instance field shared across tests
     // => Reset before each test (test isolation)
+    // => Not static (new instance per test)
 
     @BeforeEach
     void setUp() {
         // => Runs before each test method
         // => Creates fresh Calculator instance
         // => Annotation from org.junit.jupiter.api
+        // => Test isolation pattern (clean state)
 
         calculator = new Calculator();
         // => Ensures test isolation
         // => Each test gets clean state
+        // => No shared state between tests
     }
 
     @Test
     void add_shouldReturnSum() {
         // => Test method naming: [method]_should[Behavior]
         // => @Test annotation marks test method
+        // => JUnit discovers and runs this method
         // => Must be void, no parameters
         // => Package-private or public visibility
 
         int result = calculator.add(2, 3);
         // => result is 5
         // => Invokes method under test
+        // => Arrange-Act-Assert pattern (Act phase)
 
         assertEquals(5, result, "2 + 3 should equal 5");
         // => Assertion: expected value first, actual second
         // => Third parameter: failure message (shown on failure)
         // => Throws AssertionFailedError if values differ
         // => Test passes if no exception thrown
+        // => Better error messages than assert keyword
     }
 
     @Test
     void divide_shouldThrowOnZeroDivisor() {
         // => Test exception handling
         // => Verifies correct error behavior
+        // => Negative test case (error path)
 
         assertThrows(ArithmeticException.class, () -> {
             calculator.divide(10, 0);
@@ -581,15 +645,22 @@ class CalculatorTest {
         // => Passes if lambda throws ArithmeticException
         // => Fails if different exception or no exception
         // => Lambda syntax for deferred execution
+        // => Captures exception for inspection
     }
 
     @AfterEach
     void tearDown() {
         // => Runs after each test method
         // => Cleanup resources if needed
+        // => Always executes (even if test fails)
+
         calculator = null;
         // => Release reference (GC eligible)
+        // => Optional for simple objects
     }
+    // => JUnit manages test lifecycle
+    // => Test runner discovers @Test methods
+    // => Reports: passed, failed, skipped
 }
 ```
 
@@ -618,66 +689,101 @@ mvn test
 
 ```java
 import okhttp3.*;
-// => OkHttp HTTP client library
+// => OkHttp HTTP client library (external dependency)
 // => Industry standard for resilient HTTP
+// => Supports HTTP/1.1, HTTP/2, WebSocket
+// => Maven: com.squareup.okhttp3:okhttp:4.12.0
 
 import java.util.concurrent.TimeUnit;
 // => For timeout configuration
+// => Java standard library time unit enum
+
+import java.io.IOException;
+// => Exception for network errors
 
 public class HttpClient {
+    // => Production HTTP client wrapper
+    // => Encapsulates OkHttp configuration
+
     private final OkHttpClient client;
+    // => OkHttpClient is thread-safe
+    // => Share single instance across application
+    // => Manages connection pool internally
 
     public HttpClient() {
         // => Constructor configures production client
+        // => Called once at application startup
+        // => Creates configured singleton
 
         this.client = new OkHttpClient.Builder()
+            // => Builder pattern for configuration
+            // => Immutable after build()
             .addInterceptor(new RetryInterceptor(3))
             // => Automatic retry up to 3 attempts
             // => Exponential backoff between retries
+            // => Prevents cascading failures
+            // => Custom interceptor (implements Interceptor)
             .addInterceptor(new LoggingInterceptor())
             // => Logs all requests/responses
             // => Interceptors run in order (retry → logging)
+            // => Useful for debugging production issues
             .connectTimeout(10, TimeUnit.SECONDS)
             // => Connection timeout (prevents hanging)
             // => Throws SocketTimeoutException after 10s
+            // => Applies to TCP handshake phase
             .readTimeout(30, TimeUnit.SECONDS)
             // => Read timeout for slow responses
             // => Applies to response body reading
+            // => 30s for large payloads
             .build();
         // => Builds configured client
         // => Connection pooling enabled by default
+        // => Max 5 idle connections, 5 minute keep-alive
     }
 
     public String get(String url) throws IOException {
         // => Synchronous GET request
         // => Throws IOException on network error
+        // => Blocks calling thread until response
 
         Request request = new Request.Builder()
+            // => Builder pattern for request construction
             .url(url)
             // => Validates URL format
+            // => Throws IllegalArgumentException if invalid
             .header("Accept", "application/json")
             // => Sets Accept header
+            // => Tells server we want JSON response
             .build();
         // => Builds immutable request
+        // => Cannot be modified after build()
 
         try (Response response = client.newCall(request).execute()) {
             // => try-with-resources auto-closes response body
             // => execute() is synchronous (blocks until response)
             // => newCall creates Call object (request executor)
+            // => Response must be closed to release connection
+            // => Connection returns to pool on close
 
             if (!response.isSuccessful()) {
                 // => Checks status code (200-299 is successful)
+                // => isSuccessful() returns false for 4xx, 5xx
                 throw new IOException("Unexpected code " + response);
                 // => Non-2xx throws IOException
+                // => Production: log error, trigger circuit breaker
             }
 
             return response.body().string();
             // => Reads entire response body as String
             // => body() returns ResponseBody (closeable)
             // => string() consumes and closes body
+            // => Entire response loaded into memory
         }
         // => response auto-closed by try-with-resources
+        // => Connection returned to pool for reuse
     }
+    // => No cleanup needed (OkHttpClient manages resources)
+    // => Connection pool evicts idle connections automatically
 }
 ```
 
@@ -696,80 +802,128 @@ public class HttpClient {
 import javax.persistence.*;
 // => JPA annotations (Java Persistence API)
 // => Standard interface, Hibernate is implementation
+// => javax.persistence package (JPA 2.x)
+// => Maven: org.hibernate:hibernate-core:5.6.15.Final
 
 @Entity
-@Table(name = "users")
 // => @Entity marks JPA entity (database-mapped class)
+// => Hibernate scans classpath for @Entity classes
+// => Creates table schema on startup (auto-DDL)
+@Table(name = "users")
 // => @Table specifies table name (defaults to class name)
+// => Optional if table name matches class name
+// => Can specify schema, catalog, unique constraints
 public class User {
+    // => Entity class represents database table row
+    // => Must have no-arg constructor (required by JPA)
+    // => Fields map to table columns
 
     @Id
+    // => @Id marks primary key field
+    // => Required for all JPA entities
+    // => Can be composite (multiple @Id fields)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // => @Id marks primary key
     // => @GeneratedValue auto-increment strategy
     // => IDENTITY uses database auto-increment
+    // => Database generates value on INSERT
+    // => Alternative: SEQUENCE, TABLE, AUTO
     private Long id;
+    // => Primary key type: Long (nullable wrapper)
+    // => null before persist, populated after INSERT
 
     @Column(nullable = false, unique = true, length = 50)
     // => Column constraints enforced by Hibernate
     // => nullable = false: NOT NULL constraint
     // => unique = true: UNIQUE constraint
     // => length = 50: VARCHAR(50)
+    // => Schema generation creates these constraints
     private String username;
+    // => username field maps to username column
+    // => @Column optional if field name matches column
 
     @Column(nullable = false, unique = true, length = 100)
+    // => Email column with constraints
+    // => length = 100: larger than username (email longer)
     private String email;
+    // => email field maps to email column
 
     // Constructors, getters, setters omitted for brevity
+    // => No-arg constructor required by JPA
+    // => Getters/setters required for property access
 }
 
 // Usage
 @Service
+// => Spring service component
+// => Business logic layer (not controller, not repository)
 public class UserService {
+    // => Service encapsulates entity operations
+    // => Transaction boundary (methods are transactional)
+
     @PersistenceContext
+    // => Injects EntityManager from Spring
+    // => Container-managed EntityManager
+    // => Thread-safe (proxy to request-scoped EntityManager)
     private EntityManager entityManager;
     // => EntityManager is JPA interface
     // => Injected by Spring/container
-    // => Manages entity lifecycle
+    // => Manages entity lifecycle (persist, merge, remove, find)
+    // => Provides L1 cache (persistence context)
 
     @Transactional
+    // => @Transactional wraps in database transaction
+    // => Commits on success, rolls back on exception
+    // => Required for any database write operation
     public User findById(Long id) {
-        // => @Transactional wraps in database transaction
-        // => Commits on success, rolls back on exception
+        // => Read operation (no transaction strictly required)
+        // => @Transactional enables L1 cache for lazy loading
+        // => Returns User with full data (including lazy fields)
 
         User user = entityManager.find(User.class, id);
         // => find() executes SELECT * FROM users WHERE id = ?
         // => Returns User object (automatic mapping)
         // => Caches result in L1 cache (EntityManager)
         // => Second find(id) hits cache (no SQL)
-        // => Returns null if not found
+        // => Returns null if not found (not exception)
 
         return user;
         // => Transaction commits when method returns
         // => L1 cache cleared after commit
+        // => User becomes detached (no longer tracked)
     }
 
     @Transactional
+    // => Transaction required for write operations
+    // => Rollback on RuntimeException
     public void save(User user) {
         // => Save new user to database
+        // => INSERT operation
 
         entityManager.persist(user);
         // => persist() adds entity to persistence context
-        // => INSERT executed on transaction commit
+        // => INSERT executed on transaction commit (not immediately)
         // => Auto-generated ID populated after commit
         // => Entity becomes managed (tracked for changes)
+        // => Flush happens before commit
     }
 
     @Transactional
+    // => Transaction required for update
     public void update(User user) {
         // => Update existing user
+        // => User is detached (from another request/session)
 
         User managed = entityManager.merge(user);
         // => merge() syncs detached entity with database
         // => Returns managed entity (tracked)
+        // => Loads current state from DB, applies changes
         // => UPDATE executed on commit if fields changed
         // => Hibernate dirty checking detects changes
+        // => Original user remains detached
     }
+    // => EntityManager lifecycle managed by Spring
+    // => No manual close() needed
+    // => Connection returned to pool after transaction
 }
 ```
 
@@ -853,141 +1007,186 @@ stateDiagram-v2
     class Refactor refactorState
 ````
 
-**Example 2: Authentication Flow Progression (Basic Auth → JWT → OAuth2)**
+**Example 2a: Authentication Flow - Standard Library (Basic Auth)**
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph TD
-    subgraph "Standard Library: Basic Auth"
-        A1[Client] -->|Username + Password<br/>Base64 encoded| A2[Server]
-        A2 -->|Validates credentials<br/>every request| A3[Database]
-        A3 -->|User found| A2
-        A2 -->|200 OK| A1
-    end
-
-    subgraph "Framework: JWT"
-        B1[Client] -->|Username + Password| B2[Auth Server]
-        B2 -->|Validates once| B3[Database]
-        B3 -->|User found| B2
-        B2 -->|JWT token<br/>signed, time-limited| B1
-        B1 -->|JWT in header| B4[App Server]
-        B4 -->|Verifies signature<br/>no DB hit| B1
-    end
-
-    subgraph "Production: OAuth2 OIDC"
-        C1[Client] -->|Redirect to login| C2[Identity Provider]
-        C2 -->|User authenticates| C2
-        C2 -->|Authorization code| C1
-        C1 -->|Code + client secret| C2
-        C2 -->|Access token + ID token<br/>JWT format| C1
-        C1 -->|Access token| C3[Resource Server]
-        C3 -->|Validates with IdP| C2
-        C2 -->|Token valid| C3
-        C3 -->|Protected resource| C1
-    end
+    A1[Client] -->|Username + Password<br/>Base64 encoded| A2[Server]
+    A2 -->|Validates credentials<br/>every request| A3[Database]
+    A3 -->|User found| A2
+    A2 -->|200 OK + Resource| A1
 
     style A1 fill:#0173B2,stroke:#000,color:#fff
     style A2 fill:#0173B2,stroke:#000,color:#fff
     style A3 fill:#0173B2,stroke:#000,color:#fff
+```
+
+**Limitation**: Database query on every request (high latency, database load).
+
+**Example 2b: Authentication Flow - Framework (JWT)**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+    B1[Client] -->|1. Username + Password| B2[Auth Server]
+    B2 -->|2. Validates once| B3[Database]
+    B3 -->|3. User found| B2
+    B2 -->|4. JWT token<br/>signed time-limited| B1
+    B1 -->|5. JWT in header| B4[App Server]
+    B4 -->|6. Verifies signature<br/>no DB hit| B4
+    B4 -->|7. Protected resource| B1
+
     style B1 fill:#DE8F05,stroke:#000,color:#fff
     style B2 fill:#DE8F05,stroke:#000,color:#fff
     style B3 fill:#DE8F05,stroke:#000,color:#fff
     style B4 fill:#DE8F05,stroke:#000,color:#fff
+```
+
+**Improvement**: Single database query during login, subsequent requests use cryptographic verification (fast, stateless).
+
+**Example 2c: Authentication Flow - Production (OAuth2 OIDC)**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+    C1[Client App] -->|1. Redirect to login| C2[Identity Provider<br/>Keycloak/Auth0]
+    C2 -->|2. User authenticates| C2
+    C2 -->|3. Authorization code| C1
+    C1 -->|4. Code + client secret| C2
+    C2 -->|5. Access token + ID token| C1
+    C1 -->|6. Access token in header| C3[Resource Server<br/>Your API]
+    C3 -->|7. Validates token with IdP| C2
+    C2 -->|8. Token valid| C3
+    C3 -->|9. Protected resource| C1
+
     style C1 fill:#029E73,stroke:#000,color:#fff
     style C2 fill:#029E73,stroke:#000,color:#fff
     style C3 fill:#029E73,stroke:#000,color:#fff
 ```
 
-**Example 3: Database Persistence Progression (JDBC → HikariCP → JPA/Hibernate)**
+**Production benefit**: Centralized identity management, single sign-on (SSO), third-party integrations, token refresh flows.
+
+**Example 3a: Database Persistence - Standard Library (JDBC)**
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph TD
-    subgraph "Standard Library: JDBC"
-        A1[Application] -->|DriverManager.getConnection| A2[Single Connection]
-        A2 -->|PreparedStatement| A3[Database]
-        A3 -->|ResultSet| A2
-        A2 -->|Manual mapping<br/>rs.getString| A1
-        A2 -->|close| A3
-        A1 -.->|New request<br/>new connection| A2
-    end
-
-    subgraph "Framework: HikariCP"
-        B1[Application] -->|dataSource.getConnection| B2[Connection Pool<br/>10 connections]
-        B2 -->|Reuse connection| B3[Database]
-        B3 -->|ResultSet| B2
-        B2 -->|Manual mapping| B1
-        B1 -->|close returns to pool| B2
-        B2 -.->|Pool maintains<br/>connections| B3
-    end
-
-    subgraph "Production: JPA/Hibernate"
-        C1[Application] -->|entityManager.find| C2[L1 Cache<br/>EntityManager]
-        C2 -->|Cache miss| C3[L2 Cache<br/>SessionFactory]
-        C3 -->|Cache miss| C4[HikariCP Pool]
-        C4 -->|SQL query| C5[Database]
-        C5 -->|ResultSet| C4
-        C4 -->|Automatic mapping| C3
-        C3 -->|Cache entity| C2
-        C2 -->|Return User object| C1
-        C1 -.->|Next find(id)<br/>hits L1 cache| C2
-    end
+    A1[Application] -->|DriverManager.getConnection| A2[Single Connection]
+    A2 -->|PreparedStatement| A3[Database]
+    A3 -->|ResultSet| A2
+    A2 -->|Manual mapping<br/>rs.getString| A1
+    A2 -->|close| A3
+    A1 -->|New request<br/>creates new connection| A2
 
     style A1 fill:#0173B2,stroke:#000,color:#fff
     style A2 fill:#0173B2,stroke:#000,color:#fff
     style A3 fill:#0173B2,stroke:#000,color:#fff
+```
+
+**Limitation**: Each request creates new database connection, causing connection overhead.
+
+**Example 3b: Database Persistence - Framework (HikariCP Connection Pool)**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+    B1[Application] -->|dataSource.getConnection| B2[Connection Pool<br/>10 connections]
+    B2 -->|Reuse connection| B3[Database]
+    B3 -->|ResultSet| B2
+    B2 -->|Manual mapping| B1
+    B1 -->|close returns to pool| B2
+    B2 -->|Pool maintains connections| B3
+
     style B1 fill:#DE8F05,stroke:#000,color:#fff
     style B2 fill:#DE8F05,stroke:#000,color:#fff
     style B3 fill:#DE8F05,stroke:#000,color:#fff
+```
+
+**Improvement**: Connection pooling eliminates connection creation overhead, but still requires manual object mapping.
+
+**Example 3c: Database Persistence - Production (JPA/Hibernate with Caching)**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+    C1[Application] -->|entityManager.find| C2[L1 Cache<br/>EntityManager]
+    C2 -->|Cache miss| C3[L2 Cache<br/>SessionFactory]
+    C3 -->|Cache miss| C4[HikariCP Pool]
+    C4 -->|SQL query| C5[Database]
+    C5 -->|ResultSet| C4
+    C4 -->|Automatic mapping| C3
+    C3 -->|Cache entity| C2
+    C2 -->|Return User object| C1
+
+    note1[Subsequent find calls<br/>hit L1 cache<br/>no database query]
+    C2 -.-> note1
+
     style C1 fill:#029E73,stroke:#000,color:#fff
     style C2 fill:#029E73,stroke:#000,color:#fff
     style C3 fill:#029E73,stroke:#000,color:#fff
     style C4 fill:#029E73,stroke:#000,color:#fff
     style C5 fill:#029E73,stroke:#000,color:#fff
+    style note1 fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-**Example 4: Containerization Progression (JAR → Docker → Kubernetes)**
+**Production benefit**: Multi-level caching (L1, L2) + connection pooling + automatic ORM mapping.
+
+**Example 4a: Containerization - Standard Library (JAR Deployment)**
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph TD
-    subgraph "Standard Library: JAR Deployment"
-        A1[Build with javac] -->|Compile .java to .class| A2[JAR file]
-        A2 -->|java -jar app.jar| A3[JVM Process]
-        A3 -->|Port 8080| A4[Host Machine]
-        A4 -.->|Shared dependencies<br/>version conflicts| A3
-    end
-
-    subgraph "Framework: Docker Container"
-        B1[Build with Maven] -->|Package JAR| B2[Dockerfile]
-        B2 -->|docker build| B3[Docker Image<br/>JRE + JAR + deps]
-        B3 -->|docker run -p 8080:8080| B4[Container Process]
-        B4 -->|Isolated filesystem<br/>network namespace| B5[Container Runtime]
-        B5 -.->|No dependency conflicts<br/>portable| B4
-    end
-
-    subgraph "Production: Kubernetes Orchestration"
-        C1[CI/CD Pipeline] -->|Build & push image| C2[Container Registry]
-        C2 -->|kubectl apply| C3[Deployment<br/>3 replicas]
-        C3 -->|Creates| C4[Pod 1]
-        C3 -->|Creates| C5[Pod 2]
-        C3 -->|Creates| C6[Pod 3]
-        C4 -->|Load balanced| C7[Service<br/>ClusterIP]
-        C5 -->|Load balanced| C7
-        C6 -->|Load balanced| C7
-        C7 -->|External traffic| C8[Ingress<br/>HTTPS endpoint]
-        C3 -.->|Auto-scaling<br/>rolling updates<br/>health checks| C4
-    end
+    A1[Build with javac] -->|Compile .java to .class| A2[JAR file]
+    A2 -->|java -jar app.jar| A3[JVM Process]
+    A3 -->|Listens on port 8080| A4[Host Machine]
+    A4 -->|Shared dependencies<br/>version conflicts| A3
 
     style A1 fill:#0173B2,stroke:#000,color:#fff
     style A2 fill:#0173B2,stroke:#000,color:#fff
     style A3 fill:#0173B2,stroke:#000,color:#fff
     style A4 fill:#0173B2,stroke:#000,color:#fff
+```
+
+**Limitation**: Dependency conflicts on host machine, manual deployment, no isolation.
+
+**Example 4b: Containerization - Framework (Docker)**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+    B1[Build with Maven] -->|mvn clean package| B2[JAR file]
+    B2 -->|Copy to Dockerfile| B3[Dockerfile]
+    B3 -->|docker build| B4[Docker Image<br/>JRE + JAR + deps]
+    B4 -->|docker run -p 8080:8080| B5[Container Process]
+    B5 -->|Isolated filesystem<br/>network namespace| B6[Container Runtime]
+
     style B1 fill:#DE8F05,stroke:#000,color:#fff
     style B2 fill:#DE8F05,stroke:#000,color:#fff
     style B3 fill:#DE8F05,stroke:#000,color:#fff
     style B4 fill:#DE8F05,stroke:#000,color:#fff
     style B5 fill:#DE8F05,stroke:#000,color:#fff
+    style B6 fill:#DE8F05,stroke:#000,color:#fff
+```
+
+**Improvement**: Application isolation, no dependency conflicts, portable across environments.
+
+**Example 4c: Containerization - Production (Kubernetes)**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+    C1[CI/CD Pipeline] -->|Build & push image| C2[Container Registry<br/>ECR/Docker Hub]
+    C2 -->|kubectl apply| C3[Deployment<br/>3 replicas]
+    C3 -->|Creates| C4[Pod 1]
+    C3 -->|Creates| C5[Pod 2]
+    C3 -->|Creates| C6[Pod 3]
+    C4 & C5 & C6 -->|Load balanced| C7[Service<br/>ClusterIP]
+    C7 -->|External traffic| C8[Ingress<br/>HTTPS endpoint]
+
+    note1[Auto-scaling<br/>Rolling updates<br/>Health checks<br/>Self-healing]
+    C3 -.-> note1
+
     style C1 fill:#029E73,stroke:#000,color:#fff
     style C2 fill:#029E73,stroke:#000,color:#fff
     style C3 fill:#029E73,stroke:#000,color:#fff
@@ -996,13 +1195,16 @@ graph TD
     style C6 fill:#029E73,stroke:#000,color:#fff
     style C7 fill:#029E73,stroke:#000,color:#fff
     style C8 fill:#029E73,stroke:#000,color:#fff
+    style note1 fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-**Example 5: CI/CD Pipeline Flow**
+**Production benefit**: High availability, auto-scaling, rolling updates, self-healing, load balancing.
+
+**Example 5: CI/CD Pipeline Flow (Vertical)**
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
-graph LR
+graph TD
     A[Developer commits] -->|git push| B[Source Control<br/>GitHub/GitLab]
     B -->|Webhook triggers| C[CI Server<br/>Jenkins/GitHub Actions]
 
@@ -1018,7 +1220,9 @@ graph LR
 
     K -->|Rollout| L[Load Balancer<br/>Route traffic]
     L -->|Monitoring| M[Observability<br/>Prometheus/Grafana]
-    M -.->|Rollback on failure| K
+
+    note1[Rollback on failure<br/>to previous version]
+    M -.-> note1
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#0173B2,stroke:#000,color:#fff
@@ -1033,57 +1237,85 @@ graph LR
     style K fill:#029E73,stroke:#000,color:#fff
     style L fill:#029E73,stroke:#000,color:#fff
     style M fill:#CC78BC,stroke:#000,color:#fff
+    style note1 fill:#CC78BC,stroke:#000,color:#fff
 ```
 
-**Example 6: Messaging Patterns (Point-to-Point vs Pub/Sub)**
+**Example 6a: Messaging - Point-to-Point (JMS Queue)**
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph TD
-    subgraph "Point-to-Point: JMS Queue"
-        A1[Producer 1] -->|Send message| A2[Queue<br/>OrderQueue]
-        A3[Producer 2] -->|Send message| A2
-        A2 -->|Consume once| A4[Consumer 1]
-        A2 -.->|Consumer 1 takes<br/>Consumer 2 waits| A5[Consumer 2]
-        A4 -.->|Message deleted<br/>after processing| A2
-    end
+    A1[Producer 1] -->|Send message| A2[Queue<br/>OrderQueue]
+    A3[Producer 2] -->|Send message| A2
+    A2 -->|Consume once| A4[Consumer 1]
+    A2 -->|Waits for Consumer 1| A5[Consumer 2]
 
-    subgraph "Pub/Sub: Kafka Topic"
-        B1[Producer 1] -->|Publish event| B2[Topic<br/>OrderEvents]
-        B3[Producer 2] -->|Publish event| B2
-        B2 -->|All subscribers receive| B4[Consumer Group 1<br/>Inventory Service]
-        B2 -->|All subscribers receive| B5[Consumer Group 2<br/>Email Service]
-        B2 -->|All subscribers receive| B6[Consumer Group 3<br/>Analytics Service]
-        B2 -.->|Messages retained<br/>for 7 days| B2
-    end
-
-    subgraph "Production: Kafka with Partitions"
-        C1[Producer] -->|Key-based routing| C2[Topic: Orders<br/>Partition 0]
-        C1 -->|Key-based routing| C3[Topic: Orders<br/>Partition 1]
-        C1 -->|Key-based routing| C4[Topic: Orders<br/>Partition 2]
-        C2 -->|Consumer 1| C5[Consumer Group]
-        C3 -->|Consumer 2| C5
-        C4 -->|Consumer 3| C5
-        C5 -.->|Parallel processing<br/>ordered within partition| C2
-    end
+    note1[Message deleted<br/>after processing<br/>Single consumer gets message]
+    A4 -.-> note1
 
     style A1 fill:#0173B2,stroke:#000,color:#fff
     style A2 fill:#0173B2,stroke:#000,color:#fff
     style A3 fill:#0173B2,stroke:#000,color:#fff
     style A4 fill:#0173B2,stroke:#000,color:#fff
     style A5 fill:#0173B2,stroke:#000,color:#fff
+    style note1 fill:#CC78BC,stroke:#000,color:#fff
+```
+
+**Use case**: Work queue distribution, only one consumer should process each message.
+
+**Example 6b: Messaging - Pub/Sub (Kafka Topic)**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+    B1[Producer 1] -->|Publish event| B2[Topic<br/>OrderEvents]
+    B3[Producer 2] -->|Publish event| B2
+    B2 -->|All subscribers receive| B4[Consumer Group 1<br/>Inventory Service]
+    B2 -->|All subscribers receive| B5[Consumer Group 2<br/>Email Service]
+    B2 -->|All subscribers receive| B6[Consumer Group 3<br/>Analytics Service]
+
+    note1[Messages retained<br/>for 7 days<br/>Multiple consumers get copy]
+    B2 -.-> note1
+
     style B1 fill:#DE8F05,stroke:#000,color:#fff
     style B2 fill:#DE8F05,stroke:#000,color:#fff
     style B3 fill:#DE8F05,stroke:#000,color:#fff
     style B4 fill:#DE8F05,stroke:#000,color:#fff
     style B5 fill:#DE8F05,stroke:#000,color:#fff
     style B6 fill:#DE8F05,stroke:#000,color:#fff
+    style note1 fill:#CC78BC,stroke:#000,color:#fff
+```
+
+**Use case**: Event broadcasting, multiple services need same events for different purposes.
+
+**Example 6c: Messaging - Production (Kafka Partitions)**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+    C1[Producer] -->|Key-based routing<br/>orderId % 3| C2[Topic: Orders<br/>Partition 0]
+    C1 -->|Key-based routing<br/>orderId % 3| C3[Topic: Orders<br/>Partition 1]
+    C1 -->|Key-based routing<br/>orderId % 3| C4[Topic: Orders<br/>Partition 2]
+    C2 -->|Assigned to| C5[Consumer 1]
+    C3 -->|Assigned to| C6[Consumer 2]
+    C4 -->|Assigned to| C7[Consumer 3]
+    C5 & C6 & C7 -->|Part of| C8[Consumer Group]
+
+    note1[Parallel processing<br/>Order preserved<br/>within partition]
+    C2 -.-> note1
+
     style C1 fill:#029E73,stroke:#000,color:#fff
     style C2 fill:#029E73,stroke:#000,color:#fff
     style C3 fill:#029E73,stroke:#000,color:#fff
     style C4 fill:#029E73,stroke:#000,color:#fff
     style C5 fill:#029E73,stroke:#000,color:#fff
+    style C6 fill:#029E73,stroke:#000,color:#fff
+    style C7 fill:#029E73,stroke:#000,color:#fff
+    style C8 fill:#029E73,stroke:#000,color:#fff
+    style note1 fill:#CC78BC,stroke:#000,color:#fff
 ```
+
+**Production benefit**: Parallel processing with ordering guarantees within partition, horizontal scalability.
 
 `````
 
@@ -1661,22 +1893,257 @@ content/
 **Weight assignment** (controls navigation order):
 
 ```yaml
-overview.md:           weight: 10000000  # First
-test-driven-development.md: weight: 10000001
-behavior-driven-development.md: weight: 10000002
-build-tools.md:        weight: 10000003
-# ... rest of topics in logical order
+overview.md:  weight: 10000000  # Always first (what is in-the-field)
+topic-1.md:   weight: 10000001  # First topic in pedagogical progression
+topic-2.md:   weight: 10000002  # Second topic
+# ... rest of topics following pedagogical progression
 ```
 
-**Logical ordering principles**:
+**Universal Pedagogical Ordering Principles**:
 
-1. Development practices (TDD, BDD)
-2. Build and deployment (build tools, CI/CD, Docker/K8s)
-3. Security (authentication, security practices)
-4. Data persistence (SQL, NoSQL)
-5. Integration (messaging, caching, web services)
-6. Patterns (DDD, DI, reactive programming)
-7. Quality (performance, logging, anti-patterns)
+Apply these principles to determine optimal topic progression for ANY domain (programming languages, DevOps, cloud platforms, databases, frameworks, etc.):
+
+### 1. **Foundation Layer** (10000000-1000000X)
+
+**What**: Essential tools, setup, and basic observability
+
+**Why first**: Can't practice production patterns without basic infrastructure
+
+**Domain examples**:
+
+- **Programming languages**: Build tools, linting, logging
+- **DevOps**: Version control, CI basics, monitoring fundamentals
+- **Cloud platforms**: Account setup, CLI tools, basic resource management
+- **Databases**: Installation, connection management, query basics
+
+**Principle**: Master tools before techniques
+
+### 2. **Quality Foundation** (1000000X-1000000Y)
+
+**What**: Testing, validation, and quality practices
+
+**Why second**: Establish quality mindset BEFORE writing production code
+
+**Domain examples**:
+
+- **Programming languages**: TDD, BDD, static analysis
+- **DevOps**: Infrastructure testing, policy validation, smoke tests
+- **Cloud platforms**: Resource validation, cost monitoring, compliance checks
+- **Databases**: Data validation, integrity constraints, backup verification
+
+**Principle**: Test-first mindset prevents technical debt
+
+### 3. **Core Concepts** (1000000Y-1000000Z)
+
+**What**: Fundamental patterns, principles, and best practices
+
+**Why third**: Establish proper design before complex implementations
+
+**Domain examples**:
+
+- **Programming languages**: Design principles (SOLID), idioms, type systems
+- **DevOps**: Infrastructure as Code principles, immutability, declarative config
+- **Cloud platforms**: Well-Architected Framework, cost optimization, tagging strategies
+- **Databases**: Normalization, indexing strategies, query optimization basics
+
+**Principle**: Understand fundamentals before frameworks
+
+### 4. **Security and Configuration** (1000000Z-1000000W)
+
+**What**: Authentication, authorization, secrets management, externalized configuration
+
+**Why fourth**: Never store data or deploy without proper security
+
+**Domain examples**:
+
+- **Programming languages**: Authentication flows, input validation, secret management
+- **DevOps**: Secrets management, RBAC, policy enforcement
+- **Cloud platforms**: IAM, encryption, network security, compliance
+- **Databases**: User management, encryption at rest/transit, audit logging
+
+**Principle**: Security before data and deployment
+
+### 5. **Data Management** (1000000W-1000000V)
+
+**What**: Persistence, state management, data flows
+
+**Why fifth**: Data handling requires security foundation from previous layer
+
+**Domain examples**:
+
+- **Programming languages**: SQL databases, NoSQL, caching, state management
+- **DevOps**: State backends, artifact storage, log aggregation
+- **Cloud platforms**: Object storage, managed databases, data lakes
+- **Databases**: Replication, sharding, partitioning, backup strategies
+
+**Principle**: Secure first, then persist
+
+### 6. **Integration Patterns** (1000000V-1000000U)
+
+**What**: System communication, APIs, messaging, inter-service patterns
+
+**Why sixth**: Integration builds on data management and core patterns
+
+**Domain examples**:
+
+- **Programming languages**: REST APIs, messaging queues, API clients, caching
+- **DevOps**: Service mesh, API gateways, event-driven pipelines
+- **Cloud platforms**: Load balancers, API Gateway, event buses, service discovery
+- **Databases**: Federation, change data capture (CDC), ETL pipelines
+
+**Principle**: Internal correctness before external integration
+
+### 7. **Advanced Patterns** (1000000U-1000000T)
+
+**What**: Complex scenarios, async patterns, advanced architectures
+
+**Why seventh**: Advanced patterns require solid grasp of fundamentals
+
+**Domain examples**:
+
+- **Programming languages**: Concurrency, reactive programming, resilience patterns
+- **DevOps**: GitOps, progressive delivery, chaos engineering
+- **Cloud platforms**: Multi-region, disaster recovery, auto-scaling strategies
+- **Databases**: Distributed transactions, eventual consistency, CQRS
+
+**Principle**: Complexity after simplicity
+
+### 8. **Deployment and Operations** (1000000T-1000000S)
+
+**What**: Containerization, orchestration, CI/CD, production deployments
+
+**Why eighth**: Deploy after having correct, tested code to deploy
+
+**Domain examples**:
+
+- **Programming languages**: Docker, Kubernetes, CI/CD pipelines, blue-green deployment
+- **DevOps**: Container orchestration, deployment strategies, rollback procedures
+- **Cloud platforms**: Compute services, container registries, serverless deployments
+- **Databases**: Migration strategies, zero-downtime deployments, rollback procedures
+
+**Principle**: Build correctly, then deploy reliably
+
+### 9. **Optimization and Observability** (1000000S-1000000R)
+
+**What**: Performance tuning, monitoring, profiling, cost optimization
+
+**Why ninth**: Optimize after correct implementation (premature optimization is evil)
+
+**Domain examples**:
+
+- **Programming languages**: Profiling, JVM tuning, memory optimization, benchmarking
+- **DevOps**: Pipeline optimization, resource right-sizing, cost analysis
+- **Cloud platforms**: Cost optimization, performance insights, reserved instances
+- **Databases**: Query optimization, index tuning, connection pooling
+
+**Principle**: Make it work, make it right, make it fast (in that order)
+
+### 10. **Meta Topics** (1000000R+)
+
+**What**: Anti-patterns, common mistakes, lessons learned, best practices synthesis
+
+**Why last**: Learn from mistakes after understanding correct patterns
+
+**Domain examples**:
+
+- **Programming languages**: Anti-patterns, code smells, refactoring strategies
+- **DevOps**: Pipeline anti-patterns, configuration drift pitfalls
+- **Cloud platforms**: Common architectural mistakes, cost pitfalls, security gotchas
+- **Databases**: Performance anti-patterns, schema design mistakes
+
+**Principle**: Understand correct patterns before recognizing incorrect ones
+
+### Pedagogical Progression Summary
+
+**Layer Dependencies** (can't skip):
+
+```
+Foundation → Quality → Core → Security → Data → Integration → Advanced → Deploy → Optimize → Meta
+```
+
+**Key Insights**:
+
+1. **Can't skip layers**: Need foundation before quality, security before data
+2. **Security early**: Always before persistence and deployment
+3. **Simple before complex**: Core patterns before advanced patterns
+4. **Deploy after build**: Infrastructure knowledge after having working code
+5. **Optimize last**: Performance tuning after correct, tested implementation
+
+### Domain-Specific Customization
+
+When creating in-the-field content for a new domain:
+
+1. **Identify domain foundation**: What tools/setup are prerequisite?
+2. **Map quality practices**: How does testing/validation work in this domain?
+3. **Extract core concepts**: What are fundamental patterns/principles?
+4. **Define security requirements**: Authentication, authorization, secrets
+5. **Specify data patterns**: How is state/data managed?
+6. **Outline integration**: How do systems communicate?
+7. **Advanced scenarios**: Domain-specific complex patterns
+8. **Deployment approach**: How to get to production?
+9. **Optimization targets**: Performance, cost, resource optimization
+10. **Common mistakes**: Domain-specific anti-patterns
+
+### Example: Java Programming Language
+
+See actual implementation in `/apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-the-field/`:
+
+```yaml
+# Foundation Layer (10000000-10000003)
+overview.md:                    weight: 10000000  # What is in-the-field
+build-tools.md:                 weight: 10000001  # Maven/Gradle
+linting-and-formatting.md:      weight: 10000002  # Code quality
+logging.md:                     weight: 10000003  # Observability
+
+# Quality Foundation (10000004-10000005)
+test-driven-development.md:     weight: 10000004
+behavior-driven-development.md: weight: 10000005
+
+# Core Concepts (10000006-10000009)
+design-principles.md:           weight: 10000006  # SOLID, DRY, YAGNI
+best-practices.md:              weight: 10000007  # Java idioms
+type-safety.md:                 weight: 10000008
+functional-programming.md:      weight: 10000009
+
+# Core Patterns (10000010-10000012)
+dependency-injection.md:        weight: 10000010
+domain-driven-design.md:        weight: 10000011
+finite-state-machines.md:       weight: 10000012
+
+# Security and Configuration (10000013-10000015)
+configuration.md:               weight: 10000013
+authentication.md:              weight: 10000014
+security-practices.md:          weight: 10000015
+
+# Data Management (10000016-10000017)
+sql-database.md:                weight: 10000016
+nosql-databases.md:             weight: 10000017
+
+# Integration Patterns (10000018-10000021)
+web-services.md:                weight: 10000018
+json-and-api-integration.md:    weight: 10000019
+messaging.md:                   weight: 10000020
+caching.md:                     weight: 10000021
+
+# Advanced Patterns (10000022-10000024)
+concurrency-and-parallelism.md: weight: 10000022
+reactive-programming.md:        weight: 10000023
+resilience-patterns.md:         weight: 10000024
+
+# Deployment and Operations (10000025-10000027)
+docker-and-kubernetes.md:       weight: 10000025
+ci-cd.md:                       weight: 10000026
+cloud-native-patterns.md:       weight: 10000027
+
+# Optimization (10000028-10000029)
+performance.md:                 weight: 10000028
+cli-app.md:                     weight: 10000029
+
+# Meta Topics (10000030)
+anti-patterns.md:               weight: 10000030
+```
+
+This Java example follows universal principles while adapting to language-specific concerns.
 
 ## Frontmatter Requirements
 

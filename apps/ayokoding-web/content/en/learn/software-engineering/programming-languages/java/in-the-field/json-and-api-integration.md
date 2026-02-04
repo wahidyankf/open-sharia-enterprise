@@ -3,7 +3,7 @@ title: "JSON and API Integration"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: Patterns for JSON processing and API integration using Jackson and standard alternatives
-weight: 10000013
+weight: 10000019
 tags: ["java", "json", "jackson", "api", "integration", "serialization"]
 ---
 

@@ -3,7 +3,7 @@ title: "Logging Best Practices"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: Comprehensive guide to logging in Java from standard library fundamentals to production logging frameworks
-weight: 10000018
+weight: 10000003
 tags: ["java", "logging", "slf4j", "logback", "log4j2", "best-practices"]
 ---
 

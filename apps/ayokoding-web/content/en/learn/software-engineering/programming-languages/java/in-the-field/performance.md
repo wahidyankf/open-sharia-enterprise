@@ -3,7 +3,7 @@ title: "Performance"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: Comprehensive guide to Java performance optimization from profiling fundamentals to JVM tuning and benchmarking
-weight: 10000020
+weight: 10000028
 tags: ["java", "performance", "jvm", "profiling", "optimization", "jfr", "jmh"]
 ---
 

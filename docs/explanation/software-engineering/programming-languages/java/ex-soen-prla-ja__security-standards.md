@@ -646,6 +646,24 @@ Before deploying financial services, verify:
 
 ---
 
-**Last Updated**: 2026-02-03
+## Related Documentation
+
+**API Security**:
+
+- [API Standards](./ex-soen-prla-ja__api-standards.md) - OAuth2, rate limiting, and REST API security patterns
+
+**Error Handling**:
+
+- [Error Handling Standards](./ex-soen-prla-ja__error-handling-standards.md) - Secure error messages and PII protection in exceptions
+
+**Concurrency**:
+
+- [Concurrency Standards](./ex-soen-prla-ja__concurrency-standards.md) - Thread-safe security context and concurrent authentication
+
+**Testing**:
+
+- [Testing Standards](./ex-soen-prla-ja__testing-standards.md) - Security testing patterns, penetration testing, and vulnerability scanning
+
+**Last Updated**: 2026-02-04
 
 **Status**: Active (mandatory for all OSE Platform Java services)

@@ -628,6 +628,24 @@ Before deploying DDD-based services, verify:
 
 ---
 
-**Last Updated**: 2026-02-03
+## Related Documentation
+
+**Project Structure**:
+
+- [Coding Standards](./ex-soen-prla-ja__coding-standards.md) - Domain package structure and hexagonal architecture layers
+
+**Error Handling**:
+
+- [Error Handling Standards](./ex-soen-prla-ja__error-handling-standards.md) - Domain exception patterns and aggregate validation errors
+
+**Testing**:
+
+- [Testing Standards](./ex-soen-prla-ja__testing-standards.md) - Aggregate testing patterns and domain event verification
+
+**Concurrency**:
+
+- [Concurrency Standards](./ex-soen-prla-ja__concurrency-standards.md) - Thread-safe aggregate design and optimistic locking
+
+**Last Updated**: 2026-02-04
 
 **Status**: Active (mandatory for all OSE Platform domain-driven services)

@@ -3,7 +3,7 @@ title: "Docker and Kubernetes"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: Comprehensive guide to containerizing and orchestrating Java applications from manual deployment to production Kubernetes
-weight: 10000023
+weight: 10000025
 tags: ["java", "docker", "kubernetes", "containerization", "deployment", "k8s"]
 ---
 

@@ -3,7 +3,7 @@ title: "Concurrency and Parallelism"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: Comprehensive guide to concurrency and parallelism in Java from thread fundamentals to virtual threads
-weight: 10000017
+weight: 10000022
 tags: ["java", "concurrency", "threads", "virtual-threads", "executorservice", "parallelism"]
 ---
 

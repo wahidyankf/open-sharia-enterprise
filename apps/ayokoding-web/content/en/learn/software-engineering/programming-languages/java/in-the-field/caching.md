@@ -3,7 +3,7 @@ title: "Caching"
 date: 2026-02-04T10:00:00+07:00
 draft: false
 description: Comprehensive guide to caching in Java from manual implementation to distributed caching with Redis and Spring Cache abstraction
-weight: 10000026
+weight: 10000021
 tags: ["java", "caching", "redis", "caffeine", "spring-cache", "performance"]
 ---
 
