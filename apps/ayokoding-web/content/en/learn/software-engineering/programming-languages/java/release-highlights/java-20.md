@@ -3,7 +3,7 @@ title: "Java 20 (March 2023)"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Java 20 release highlights - Virtual Threads second preview, Scoped Values incubator, Record Patterns second preview, Pattern Matching for switch fourth preview"
-weight: 1000005
+weight: 1000007
 tags: ["java", "java-20", "virtual-threads", "scoped-values", "record-patterns", "project-loom"]
 ---
 

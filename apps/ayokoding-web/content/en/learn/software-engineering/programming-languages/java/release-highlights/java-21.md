@@ -3,7 +3,7 @@ title: "Java 21 LTS (2023)"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: "Key highlights from Java 21 LTS release - virtual threads, sequenced collections, and pattern matching finalization"
-weight: 1000002
+weight: 1000008
 tags: ["java", "java-21", "lts", "virtual-threads", "concurrency", "pattern-matching"]
 ---
 

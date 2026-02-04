@@ -3,7 +3,7 @@ title: "Java 18 (March 2022)"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Java 18 release highlights - UTF-8 by default, Simple Web Server, Code Snippets in JavaDoc, Pattern Matching for switch second preview, and deprecate finalization"
-weight: 1000003
+weight: 1000005
 tags: ["java", "java-18", "utf-8", "simple-web-server", "javadoc-snippets", "pattern-matching-switch"]
 ---
 

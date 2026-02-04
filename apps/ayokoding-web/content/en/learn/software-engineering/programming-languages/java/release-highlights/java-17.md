@@ -3,7 +3,7 @@ title: "Java 17 LTS (2021)"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: "Key highlights from Java 17 LTS release - sealed classes, pattern matching preview, and platform improvements"
-weight: 1000001
+weight: 1000004
 tags: ["java", "java-17", "lts", "sealed-classes", "pattern-matching"]
 ---
 

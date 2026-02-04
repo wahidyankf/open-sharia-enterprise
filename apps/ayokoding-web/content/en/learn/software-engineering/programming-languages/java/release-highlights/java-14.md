@@ -3,7 +3,7 @@ title: "Java 14 (March 2020)"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Java 14 release highlights - Switch Expressions standard, Pattern Matching preview, Records preview, Text Blocks second preview, and helpful NullPointerExceptions"
-weight: 1000000
+weight: 1000001
 tags: ["java", "java-14", "switch-expressions", "pattern-matching", "records", "text-blocks"]
 ---
 
