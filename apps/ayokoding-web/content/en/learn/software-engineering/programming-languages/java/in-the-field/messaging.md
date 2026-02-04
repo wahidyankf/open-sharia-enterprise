@@ -3,7 +3,7 @@ title: "Messaging"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: Build asynchronous messaging systems with JMS, Kafka, RabbitMQ, and event-driven architectures
-weight: 10000025
+weight: 10000020
 tags: ["java", "messaging", "kafka", "rabbitmq", "jms", "event-driven", "async"]
 ---
 

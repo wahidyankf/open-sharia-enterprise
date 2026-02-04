@@ -421,7 +421,21 @@ These standards enforce the five software engineering principles:
    - AssertJ provides explicit, readable assertions (`assertThat(result).isNotNull().isEqualByComparingTo(expected)`)
    - `@ExtendWith(MockitoExtension.class)` makes mocking framework explicit
 
+## Related Documentation
+
+**Test Organization**:
+
+- [Coding Standards](./ex-soen-prla-ja__coding-standards.md) - Test class naming, package structure, and file organization
+
+**Domain Testing**:
+
+- [DDD Standards](./ex-soen-prla-ja__ddd-standards.md) - Aggregate testing patterns, domain event verification, and repository testing
+
+**Coverage Requirements**:
+
+- [Code Quality Standards](./ex-soen-prla-ja__code-quality.md) - JaCoCo coverage enforcement and quality gate thresholds
+
 ---
 
 **Maintainers**: Platform Documentation Team
-**Last Updated**: 2026-02-03
+**Last Updated**: 2026-02-04

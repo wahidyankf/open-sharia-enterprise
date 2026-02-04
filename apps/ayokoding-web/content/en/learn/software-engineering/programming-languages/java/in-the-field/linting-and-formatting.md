@@ -3,7 +3,7 @@ title: "Linting and Formatting"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: Comprehensive guide to code quality tools from manual reviews to automated linting, formatting, and static analysis
-weight: 10000024
+weight: 10000002
 tags: ["java", "code-quality", "checkstyle", "spotbugs", "pmd", "sonarqube"]
 ---
 

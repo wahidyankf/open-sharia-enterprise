@@ -491,6 +491,20 @@ Before deploying financial services, verify:
 
 ---
 
-**Last Updated**: 2026-02-03
+## Related Documentation
+
+**Concurrency**:
+
+- [Concurrency Standards](./ex-soen-prla-ja__concurrency-standards.md) - Virtual threads, async patterns, and thread pool configuration for performance
+
+**Build Configuration**:
+
+- [Build Configuration](./ex-soen-prla-ja__build-configuration.md) - JVM tuning parameters and GC configuration in Maven
+
+**Testing**:
+
+- [Testing Standards](./ex-soen-prla-ja__testing-standards.md) - Performance testing, load testing, and profiling patterns
+
+**Last Updated**: 2026-02-04
 
 **Status**: Active (mandatory for all OSE Platform Java services)

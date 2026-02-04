@@ -3,7 +3,7 @@ title: "Security Practices"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: Implement defense-in-depth security with input validation, encryption, authentication, and protection against OWASP Top 10 vulnerabilities
-weight: 10000010
+weight: 10000015
 tags: ["java", "security", "owasp", "cryptography", "input-validation", "authentication"]
 ---
 

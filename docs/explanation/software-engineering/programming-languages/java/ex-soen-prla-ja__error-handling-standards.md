@@ -464,6 +464,24 @@ Before deploying financial services, verify:
 
 ---
 
-**Last Updated**: 2026-02-03
+## Related Documentation
+
+**Domain Errors**:
+
+- [DDD Standards](./ex-soen-prla-ja__ddd-standards.md) - Domain exception hierarchy and aggregate validation errors
+
+**Security**:
+
+- [Security Standards](./ex-soen-prla-ja__security-standards.md) - Secure error messages and PII protection in error responses
+
+**API Responses**:
+
+- [API Standards](./ex-soen-prla-ja__api-standards.md) - HTTP error response format and status codes
+
+**Testing**:
+
+- [Testing Standards](./ex-soen-prla-ja__testing-standards.md) - Exception testing patterns with AssertJ and JUnit 6
+
+**Last Updated**: 2026-02-04
 
 **Status**: Active (mandatory for all OSE Platform Java services)

@@ -3,7 +3,7 @@ title: "Authentication and Authorization"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: Comprehensive guide to authentication and authorization in Java from HTTP fundamentals to OAuth2 and Spring Security
-weight: 10000027
+weight: 10000014
 tags: ["java", "authentication", "authorization", "oauth2", "jwt", "spring-security", "oidc", "security"]
 ---
 

@@ -522,6 +522,20 @@ Before deploying concurrent financial services, verify:
 
 ---
 
-**Last Updated**: 2026-02-03
+## Related Documentation
+
+**Performance**:
+
+- [Performance Standards](./ex-soen-prla-ja__performance-standards.md) - Thread pool sizing, async performance optimization, and JVM tuning
+
+**Testing**:
+
+- [Testing Standards](./ex-soen-prla-ja__testing-standards.md) - Concurrency testing patterns and race condition detection
+
+**Security**:
+
+- [Security Standards](./ex-soen-prla-ja__security-standards.md) - Thread-safe security context and concurrent authentication
+
+**Last Updated**: 2026-02-04
 
 **Status**: Active (mandatory for all OSE Platform Java services)

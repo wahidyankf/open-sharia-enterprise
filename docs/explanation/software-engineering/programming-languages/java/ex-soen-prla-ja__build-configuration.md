@@ -416,7 +416,21 @@ These standards enforce the five software engineering principles:
    - Maven Wrapper automatically downloads correct Maven version (no manual installation)
    - Private Nexus/Artifactory automatically caches and scans dependencies
 
+## Related Documentation
+
+**Project Structure**:
+
+- [Coding Standards](./ex-soen-prla-ja__coding-standards.md) - Maven module organization follows package structure conventions
+
+**Quality Tools**:
+
+- [Code Quality Standards](./ex-soen-prla-ja__code-quality.md) - Maven plugins for Spotless, Error Prone, JaCoCo configuration
+
+**Framework Setup**:
+
+- [Framework Integration](./ex-soen-prla-ja__framework-integration.md) - Spring Boot and Jakarta EE dependency management
+
 ---
 
 **Maintainers**: Platform Documentation Team
-**Last Updated**: 2026-02-03
+**Last Updated**: 2026-02-04

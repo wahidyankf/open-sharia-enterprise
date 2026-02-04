@@ -3,7 +3,7 @@ title: "Resilience Patterns"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: Build fault-tolerant systems with retry patterns, circuit breakers, and graceful degradation strategies
-weight: 10000011
+weight: 10000024
 tags: ["java", "resilience", "fault-tolerance", "retry", "circuit-breaker", "patterns"]
 ---
 

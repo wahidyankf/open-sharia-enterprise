@@ -366,5 +366,20 @@ These standards enforce the five software engineering principles:
 
 ---
 
+## Related Documentation
+
+**Project Organization**:
+
+- [Coding Standards](./ex-soen-prla-ja__coding-standards.md) - Package structure and hexagonal architecture conventions
+- [Build Configuration](./ex-soen-prla-ja__build-configuration.md) - Spring Boot and Jakarta EE dependency management
+
+**Domain Patterns**:
+
+- [DDD Standards](./ex-soen-prla-ja__ddd-standards.md) - Dependency injection for aggregates and domain services
+
+**Testing**:
+
+- [Testing Standards](./ex-soen-prla-ja__testing-standards.md) - Spring Test and TestContainers for integration testing
+
 **Maintainers**: Platform Documentation Team
-**Last Updated**: 2026-02-03
+**Last Updated**: 2026-02-04

@@ -3,7 +3,7 @@ title: "Dependency Injection"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: Master dependency injection from manual patterns to Spring Framework, building testable, flexible applications
-weight: 10000021
+weight: 10000010
 tags: ["java", "dependency-injection", "spring", "cdi", "jsr-330", "di"]
 ---
 

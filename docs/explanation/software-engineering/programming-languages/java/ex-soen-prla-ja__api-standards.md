@@ -620,6 +620,20 @@ Before deploying APIs, verify:
 
 ---
 
-**Last Updated**: 2026-02-03
+## Related Documentation
+
+**Security**:
+
+- [Security Standards](./ex-soen-prla-ja__security-standards.md) - OAuth2, JWT validation, rate limiting, and API authentication
+
+**Error Responses**:
+
+- [Error Handling Standards](./ex-soen-prla-ja__error-handling-standards.md) - HTTP error response format, status codes, and error message structure
+
+**Testing**:
+
+- [Testing Standards](./ex-soen-prla-ja__testing-standards.md) - API contract testing, REST API testing patterns, and integration tests
+
+**Last Updated**: 2026-02-04
 
 **Status**: Active (mandatory for all OSE Platform APIs)

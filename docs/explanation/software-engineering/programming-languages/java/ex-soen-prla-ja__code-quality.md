@@ -465,5 +465,19 @@ These standards enforce the five software engineering principles:
 
 ---
 
+## Related Documentation
+
+**Enforces**:
+
+- [Coding Standards](./ex-soen-prla-ja__coding-standards.md) - Checkstyle enforces naming and structure conventions
+
+**Build Setup**:
+
+- [Build Configuration](./ex-soen-prla-ja__build-configuration.md) - Maven plugin configuration for quality tools
+
+**Test Coverage**:
+
+- [Testing Standards](./ex-soen-prla-ja__testing-standards.md) - JaCoCo coverage requirements and reporting
+
 **Maintainers**: Platform Documentation Team
-**Last Updated**: 2026-02-03
+**Last Updated**: 2026-02-04

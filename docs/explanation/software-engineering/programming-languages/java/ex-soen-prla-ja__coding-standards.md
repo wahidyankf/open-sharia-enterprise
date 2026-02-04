@@ -241,7 +241,22 @@ These standards enforce the five software engineering principles:
    - One class per file (no nested public classes)
    - Clear separation of concerns (domain vs infrastructure vs API)
 
+## Related Documentation
+
+**Enforced by**:
+
+- [Code Quality Standards](./ex-soen-prla-ja__code-quality.md) - Checkstyle enforces these naming and structure conventions
+
+**Build Infrastructure**:
+
+- [Build Configuration](./ex-soen-prla-ja__build-configuration.md) - Maven module organization follows package structure defined here
+
+**Application**:
+
+- [Framework Integration](./ex-soen-prla-ja__framework-integration.md) - Spring/Jakarta EE package organization
+- [DDD Standards](./ex-soen-prla-ja__ddd-standards.md) - Domain package structure and hexagonal architecture
+
 ---
 
 **Maintainers**: Platform Documentation Team
-**Last Updated**: 2026-02-03
+**Last Updated**: 2026-02-04
