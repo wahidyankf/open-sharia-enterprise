@@ -37,87 +37,25 @@ REST (Representational State Transfer) APIs are the standard for building web se
 
 **Recommended progression**: Start with JDK HttpServer to understand HTTP fundamentals → Learn Servlet API for request/response handling → Explore JAX-RS annotations → Use Spring Boot REST for production.
 
-## HTTP Fundamentals
+## HTTP Fundamentals Quick Reference
 
-REST APIs build on HTTP protocol. Understanding HTTP is essential before using frameworks.
+**Foundation**: HTTP basics (request/response structure, methods, status codes) are covered in [by-example intermediate section](/en/learn/software-engineering/programming-languages/java/by-example/intermediate#http-client). This guide focuses on REST API design and framework usage.
 
-### HTTP Request Structure
+| Method  | Purpose         | Idempotent | Common Status Codes   |
+| ------- | --------------- | ---------- | --------------------- |
+| GET     | Retrieve        | Yes        | 200 (OK), 404         |
+| POST    | Create          | No         | 201 (Created), 400    |
+| PUT     | Replace         | Yes        | 200 (OK), 404         |
+| PATCH   | Update          | No         | 200 (OK), 404         |
+| DELETE  | Remove          | Yes        | 204 (No Content), 404 |
+| HEAD    | Get headers     | Yes        | 200 (OK)              |
+| OPTIONS | Allowed methods | Yes        | 200 (OK)              |
 
-**Components**:
+**Status code categories**:
 
-```
-POST /api/payments HTTP/1.1
-Host: example.com
-Content-Type: application/json
-Authorization: Bearer token123
-Content-Length: 85
-
-{"customerId":"customer-123","amount":100.50,"currency":"USD"}
-```
-
-**Parts**:
-
-- **Request Line**: Method, path, HTTP version
-- **Headers**: Metadata (content type, authorization, etc.)
-- **Body**: Request payload (optional, not for GET/DELETE)
-
-### HTTP Response Structure
-
-**Components**:
-
-```
-HTTP/1.1 201 Created
-Content-Type: application/json
-Location: /api/payments/payment-456
-Content-Length: 124
-
-{"id":"payment-456","customerId":"customer-123","amount":100.50,"currency":"USD","status":"completed"}
-```
-
-**Parts**:
-
-- **Status Line**: HTTP version, status code, reason phrase
-- **Headers**: Response metadata
-- **Body**: Response payload
-
-### HTTP Methods (Verbs)
-
-REST APIs use HTTP methods to indicate operation intent.
-
-**Standard methods**:
-
-| Method      | Purpose                   | Idempotent | Safe | Request Body | Response Body  |
-| ----------- | ------------------------- | ---------- | ---- | ------------ | -------------- |
-| **GET**     | Retrieve resource         | Yes        | Yes  | No           | Yes            |
-| **POST**    | Create resource           | No         | No   | Yes          | Yes            |
-| **PUT**     | Replace resource          | Yes        | No   | Yes          | Yes (optional) |
-| **PATCH**   | Partially update resource | No         | No   | Yes          | Yes (optional) |
-| **DELETE**  | Remove resource           | Yes        | No   | No (usually) | No (usually)   |
-| **HEAD**    | Get headers only          | Yes        | Yes  | No           | No             |
-| **OPTIONS** | Get allowed methods       | Yes        | Yes  | No           | Yes            |
-
-**Idempotent**: Same operation repeated multiple times produces same result
-**Safe**: Operation doesn't modify server state
-
-### HTTP Status Codes
-
-Choose appropriate status codes to indicate operation outcome.
-
-**Common codes**:
-
-| Code | Name                  | Meaning                             | Use When                             |
-| ---- | --------------------- | ----------------------------------- | ------------------------------------ |
-| 200  | OK                    | Request succeeded                   | GET, PUT, PATCH success              |
-| 201  | Created               | Resource created                    | POST success                         |
-| 204  | No Content            | Success, no response body           | DELETE success                       |
-| 400  | Bad Request           | Invalid request (client error)      | Validation failure                   |
-| 401  | Unauthorized          | Authentication required             | Missing/invalid credentials          |
-| 403  | Forbidden             | Insufficient permissions            | Valid auth, insufficient rights      |
-| 404  | Not Found             | Resource doesn't exist              | GET/PUT/DELETE non-existent resource |
-| 409  | Conflict              | Resource state conflict             | Concurrent modification              |
-| 422  | Unprocessable Entity  | Validation failed (semantic errors) | Business rule violation              |
-| 500  | Internal Server Error | Server error (not client's fault)   | Unexpected server exception          |
-| 503  | Service Unavailable   | Server temporarily unavailable      | Maintenance, overload                |
+- **2xx**: Success (200 OK, 201 Created, 204 No Content)
+- **4xx**: Client error (400 Bad Request, 401 Unauthorized, 404 Not Found)
+- **5xx**: Server error (500 Internal Error, 503 Unavailable)
 
 ## HTTP Server (JDK Built-in)
 

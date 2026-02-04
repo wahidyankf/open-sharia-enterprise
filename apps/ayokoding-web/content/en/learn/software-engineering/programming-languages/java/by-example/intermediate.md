@@ -157,90 +157,144 @@ Composition builds objects from reusable components rather than inheriting from 
 // Component interfaces
 interface Engine {                   // => Contract: all engines must implement start()
                                      // => Enables polymorphism across engine types
+                                     // => Interface = pure abstraction (no state)
     void start();                    // => No body: abstract by default in interfaces
+                                     // => Implementing classes provide behavior
+                                     // => Return type: void (no return value)
 }
 
 interface Transmission {             // => Contract: all transmissions must implement shift()
                                      // => Allows different shifting strategies
-    void shift(int gear);            // => Parameter: target gear number
+                                     // => Defines behavior without implementation
+    void shift(int gear);            // => Parameter: target gear number (int)
+                                     // => Method signature defines contract
+                                     // => Implementing classes handle shifting logic
 }
 
 // Component implementations
 class ElectricEngine implements Engine {
-    // => Concrete implementation of Engine interface
-    // => Electric motor behavior
+                                     // => Concrete implementation of Engine interface
+                                     // => Must implement all abstract methods (start())
+                                     // => Electric motor behavior
+                                     // => Type: implements Engine (can be used polymorphically)
     public void start() {
+                                     // => Override start() from Engine interface
+                                     // => @Override annotation implicit (interface methods)
         System.out.println("Electric motor starting silently");
-        // => Electric-specific: quiet startup
-        // => Output: "Electric motor starting silently"
+                                     // => Electric-specific: quiet startup
+                                     // => Calls System.out.println() with String argument
+                                     // => Output: "Electric motor starting silently"
     }
 }
 
 class GasEngine implements Engine {
-    // => Concrete implementation of Engine interface
-    // => Combustion engine behavior
+                                     // => Concrete implementation of Engine interface
+                                     // => Combustion engine behavior
+                                     // => Different implementation, same interface
     public void start() {
+                                     // => Override start() from Engine interface
+                                     // => Polymorphism: same method signature, different behavior
         System.out.println("Gas engine roaring to life");
-        // => Gas-specific: loud startup with ignition
-        // => Output: "Gas engine roaring to life"
+                                     // => Gas-specific: loud startup with ignition
+                                     // => Different output from ElectricEngine.start()
+                                     // => Output: "Gas engine roaring to life"
     }
 }
 
 class ManualTransmission implements Transmission {
-    // => Concrete implementation of Transmission interface
-    // => Manual gear control strategy
+                                     // => Concrete implementation of Transmission interface
+                                     // => Manual gear control strategy
+                                     // => Must implement shift(int gear) method
     public void shift(int gear) {
+                                     // => Override shift() from Transmission interface
+                                     // => Parameter gear: target gear number
         System.out.println("Manual shift to gear " + gear);
-        // => Driver controls each gear change
-        // => Output: "Manual shift to gear N"
+                                     // => String concatenation: "Manual shift to gear " + gear
+                                     // => gear converted to String automatically
+                                     // => Driver controls each gear change
+                                     // => Output: "Manual shift to gear N" (N = gear value)
     }
 }
 
 class AutomaticTransmission implements Transmission {
-    // => Concrete implementation of Transmission interface
-    // => Automatic gear control strategy
+                                     // => Concrete implementation of Transmission interface
+                                     // => Automatic gear control strategy
+                                     // => Different shifting logic from ManualTransmission
     public void shift(int gear) {
+                                     // => Override shift() from Transmission interface
+                                     // => Same signature as ManualTransmission.shift()
         System.out.println("Automatic shift to gear " + gear);
-        // => System determines shift timing
-        // => Output: "Automatic shift to gear N"
+                                     // => Concatenates string with gear number
+                                     // => System determines shift timing
+                                     // => Output: "Automatic shift to gear N" (automatic variant)
     }
 }
 
 // COMPOSED CLASS - has-a relationship
 class Car {                          // => Car contains components (composition)
+                                     // => Aggregates behavior from Engine and Transmission
+                                     // => No inheritance: uses delegation instead
     private final Engine engine;     // => HAS-A Engine (can be any Engine implementation)
                                      // => Final: cannot be reassigned after construction
+                                     // => Interface type: polymorphic (ElectricEngine or GasEngine)
     private final Transmission transmission;
                                      // => HAS-A Transmission (can be any Transmission type)
+                                     // => Final field: immutable reference after construction
+                                     // => Interface type: can be Manual or Automatic
 
     public Car(Engine engine, Transmission transmission) {
+                                     // => Constructor accepts interfaces (not concrete types)
                                      // => Dependency injection pattern
-        this.engine = engine;        // => Store engine reference
+                                     // => Caller provides components (inversion of control)
+        this.engine = engine;        // => Store engine reference in private field
+                                     // => Assigns parameter to instance field
         this.transmission = transmission;
-                                     // => Store transmission reference
+                                     // => Store transmission reference in private field
+                                     // => Both fields now initialized (final requirement met)
     }
 
     public void drive() {            // => Coordinate components
+                                     // => Orchestrates behavior of composed objects
+                                     // => Delegates to components (no own engine/shift logic)
         engine.start();              // => Delegate to composed engine
+                                     // => Polymorphic call: runtime type determines behavior
+                                     // => Could call ElectricEngine.start() or GasEngine.start()
         transmission.shift(1);       // => Shift to 1st gear
+                                     // => Delegates to transmission component
+                                     // => Passes gear=1 as argument
         transmission.shift(2);       // => Shift to 2nd gear
+                                     // => Sequential gear changes
+                                     // => Passes gear=2 as argument
     }
 }
 
 // USAGE - flexible assembly of behaviors
 Car electricAuto = new Car(new ElectricEngine(), new AutomaticTransmission());
-// => Mix electric engine + automatic transmission
+                                     // => Creates Car with specific component implementations
+                                     // => new ElectricEngine(): creates electric engine instance
+                                     // => new AutomaticTransmission(): creates automatic transmission
+                                     // => Mix electric engine + automatic transmission
+                                     // => Components passed to constructor (dependency injection)
 electricAuto.drive();
-// => Output: Electric motor starting silently
-// =>         Automatic shift to gear 1
-// =>         Automatic shift to gear 2
+                                     // => Calls drive() on electricAuto instance
+                                     // => Delegates to composed components
+                                     // => Executes: engine.start(), transmission.shift(1), shift(2)
+// => Output: Electric motor starting silently (from ElectricEngine.start())
+// =>         Automatic shift to gear 1 (from AutomaticTransmission.shift(1))
+// =>         Automatic shift to gear 2 (from AutomaticTransmission.shift(2))
 
 Car gasManual = new Car(new GasEngine(), new ManualTransmission());
-// => Mix gas engine + manual transmission
+                                     // => Creates Car with different component implementations
+                                     // => new GasEngine(): creates gas engine instance
+                                     // => new ManualTransmission(): creates manual transmission
+                                     // => Mix gas engine + manual transmission
+                                     // => Same Car class, different behaviors
 gasManual.drive();
-// => Output: Gas engine roaring to life
-// =>         Manual shift to gear 1
-// =>         Manual shift to gear 2
+                                     // => Calls drive() on gasManual instance
+                                     // => Same method, different behavior (polymorphism)
+// => Output: Gas engine roaring to life (from GasEngine.start())
+// =>         Manual shift to gear 1 (from ManualTransmission.shift(1))
+// =>         Manual shift to gear 2 (from ManualTransmission.shift(2))
 
 // CONTRAST: Inheritance approach (rigid, explosive class hierarchy)
 // => Would need: ElectricAutoCar, ElectricManualCar, GasAutoCar, GasManualCar
@@ -263,38 +317,54 @@ Java supports nested classes (static) and inner classes (non-static) that provid
 
 ```java
 public class OuterClass {            // => Outer class containing nested/inner classes
+                                     // => Demonstrates 4 types of nested classes
     private String outerField = "Outer field";
                                      // => Instance field accessible to inner classes
+                                     // => Private but accessible from inner (special rule)
     private static String staticField = "Static field";
                                      // => Static field accessible to all nested classes
+                                     // => Class-level variable (not instance-specific)
 
     // STATIC NESTED CLASS - independent of outer instance
     public static class StaticNested {
                                      // => Static: no implicit reference to outer instance
                                      // => Can instantiate without OuterClass instance
+                                     // => Like standalone class, but namespaced in OuterClass
         public void display() {      // => Method in static nested class
+                                     // => Can only access static outer members
             System.out.println(staticField);
                                      // => ✅ Can access static outer members
+                                     // => staticField is class-level (no instance needed)
                                      // => Output: "Static field"
             // System.out.println(outerField);
                                      // => ❌ ERROR: cannot access instance members
+                                     // => outerField requires OuterClass instance (not available)
         }
     }
 
     // INNER CLASS (non-static) - tied to outer instance
     public class Inner {             // => Non-static: holds implicit outer reference
                                      // => Cannot exist without OuterClass instance
+                                     // => Compiler adds hidden field: final OuterClass this$0
         private String innerField = "Inner field";
                                      // => Inner class can have own fields
+                                     // => Each Inner instance has its own innerField
 
         public void display() {
+                                     // => Method accessing both outer and inner state
             System.out.println(outerField);
                                      // => ✅ Accesses outer instance field
                                      // => Implicit: OuterClass.this.outerField
+                                     // => Uses hidden reference to outer instance
+                                     // => Output: "Outer field"
             System.out.println(staticField);
                                      // => ✅ Also accesses static members
+                                     // => Static members accessible from anywhere
+                                     // => Output: "Static field"
             System.out.println(innerField);
-                                     // => Accesses own field
+                                     // => Accesses own field (this.innerField)
+                                     // => Inner instance's own state
+                                     // => Output: "Inner field"
         }
 
         public void accessOuter() {
@@ -401,31 +471,56 @@ graph TD
 ```java
 import java.lang.reflect.*;
 // => Import reflection API classes
+// => Imports Class, Method, Field, Constructor types
+// => Enables runtime introspection and manipulation
 
 class Person {
     // => Simple class for reflection demonstration
+    // => Plain POJO with private/public members
+    // => Designed to show reflection capabilities
     private String name;
     // => Private field: not accessible without setAccessible()
+    // => Encapsulation: normal access blocked (getName() required)
+    // => Reflection can bypass with setAccessible(true)
     public int age;
     // => Public field: directly accessible via reflection
+    // => No getter needed (poor encapsulation practice)
+    // => Reflection reads/writes directly
 
     public Person() {}
-    // => Default constructor
+    // => Default constructor (no-arg constructor)
+    // => Required for reflection instantiation without parameters
+    // => Leaves fields uninitialized (name=null, age=0)
 
     public Person(String name, int age) {
         // => Parameterized constructor
+        // => Parameters: name (String), age (int)
+        // => Initializes all fields
         this.name = name;
+        // => Assigns parameter to private field
+        // => this.name refers to instance field, name refers to parameter
         this.age = age;
+        // => Assigns parameter to public field
+        // => Now: name=parameter, age=parameter (object initialized)
     }
 
     private void secretMethod() {
         // => Private method: needs setAccessible() to invoke
+        // => Encapsulation: not meant for external access
+        // => Reflection bypasses with setAccessible(true)
         System.out.println("Secret: " + name);
+        // => Prints private field value
+        // => Concatenates "Secret: " with name field
+        // => Output format: "Secret: [name value]"
     }
 
     public String getName() {
         // => Public getter method
+        // => Encapsulation: controlled access to private field
+        // => Return type: String (returns name field)
         return name;
+        // => Returns private name field value
+        // => Caller receives String or null (if uninitialized)
     }
 }
 
@@ -527,8 +622,13 @@ secretMethod.invoke(instance);   // => Invokes private method reflectively
 // LIST ALL METHODS
 for (Method method : clazz.getDeclaredMethods()) {
     // => Iterates all declared methods (public and private)
+    // => getDeclaredMethods() returns Method[] array of all methods
+    // => Includes: secretMethod (private), getName (public), constructors excluded
+    // => Each Method object contains method metadata (name, parameters, return type)
     System.out.println(method.getName());
-    // => Prints method names
+    // => Prints method names via Method.getName()
+    // => getName() returns String: method name only (not signature)
+    // => Output depends on declaration order in source file
 }
 // => Output: secretMethod
 // =>         getName
@@ -553,11 +653,27 @@ import java.lang.reflect.*;
 // DEFINE CUSTOM ANNOTATION
 @Retention(RetentionPolicy.RUNTIME)  // => Available at runtime via reflection
                                      // => Enables runtime inspection of annotation data
+                                     // => Retention policy determines when annotation accessible
+                                     // => SOURCE: discarded after compilation (compile-time only)
+                                     // => CLASS: stored in .class file but not available at runtime
+                                     // => RUNTIME: stored in .class and accessible via reflection
 @Target(ElementType.METHOD)          // => Can only be applied to methods
                                      // => Compile error if used on class/field
+                                     // => ElementType options: TYPE (class), FIELD, METHOD, PARAMETER, CONSTRUCTOR, etc.
+                                     // => Restricts where annotation can appear syntactically
 public @interface Test {             // => @interface keyword defines annotation type
+                                     // => Implicitly extends java.lang.annotation.Annotation
+                                     // => Name: Test (can be used as @Test in code)
+                                     // => Compiler generates interface with annotation methods
     String description() default "";  // => Annotation parameter with default value
+                                     // => Method-like syntax defines annotation attribute
+                                     // => Return type: String (parameter type)
+                                     // => default "": if not specified, uses empty string
+                                     // => Usage: @Test(description = "test name")
     int timeout() default 0;         // => Optional timeout parameter (milliseconds)
+                                     // => Return type: int (primitive type allowed)
+                                     // => default 0: no timeout if not specified
+                                     // => Usage: @Test(timeout = 1000)
 }
 
 // ANOTHER ANNOTATION
@@ -622,13 +738,26 @@ for (Method method : clazz.getDeclaredMethods()) {
         try {
             Object instance = clazz.getDeclaredConstructor().newInstance();
                                  // => Create new TestSuite instance via reflection
-                                 // => getDeclaredConstructor() finds no-arg constructor
-                                 // => newInstance() calls constructor, returns new object
+                                 // => getDeclaredConstructor() finds no-arg constructor (public TestSuite())
+                                 // => Returns Constructor<TestSuite> object wrapping constructor metadata
+                                 // => newInstance() calls constructor with no arguments
+                                 // => Creates new TestSuite instance (fresh object per test)
+                                 // => Returns Object (generic type, could cast to TestSuite)
+                                 // => Throws multiple checked exceptions (InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException)
             method.invoke(instance);  // => Execute test method on instance
                                  // => invoke() calls method dynamically (equivalent to instance.testAddition())
+                                 // => First parameter: target object (instance)
+                                 // => Varargs parameters: method arguments (none for these tests)
+                                 // => Executes method body, prints "Testing addition" or "Testing division"
+                                 // => Returns Object (method return value, null for void methods)
         } catch (Exception e) {
             System.out.println("Test failed: " + e.getMessage());
                                  // => Catch exceptions from method invocation
+                                 // => Handles InstantiationException (constructor fails)
+                                 // => Handles IllegalAccessException (access denied)
+                                 // => Handles InvocationTargetException (method threw exception)
+                                 // => e.getMessage() returns exception description
+                                 // => Output format: "Test failed: [exception message]"
         }
     }
 }
@@ -692,11 +821,15 @@ import java.util.*;
 // GENERIC METHOD - type parameter before return type
 public static <T> void printArray(T[] array) {
                                  // => <T> declares type parameter for this method
+                                 // => Type parameter scope: entire method body
                                  // => T can be any type (inferred from argument)
+                                 // => Enables one method implementation for all types
     for (T element : array) {    // => Enhanced for-loop iterates array elements
                                  // => Each element has type T (type-safe)
+                                 // => No casting needed (compiler knows type)
         System.out.print(element + " ");
                                  // => Prints element followed by space
+                                 // => Calls element.toString() implicitly
     }
     System.out.println();        // => Newline after all elements printed
 }
@@ -704,25 +837,40 @@ public static <T> void printArray(T[] array) {
 // BOUNDED TYPE PARAMETER - restricts to Number subclasses
 public static <T extends Number> double sum(List<T> numbers) {
                                  // => T must be Number or subclass (Integer, Double, etc.)
-    double total = 0;
-    for (T num : numbers) {
+                                 // => Upper bound enables calling Number methods
+                                 // => Without bound, would treat T as Object only
+    double total = 0;            // => Accumulator initialized to 0.0
+                                 // => Primitive double (not boxed Double)
+    for (T num : numbers) {      // => Iterates each element of type T
+                                 // => num guaranteed to be Number (or subclass)
         total += num.doubleValue();  // => Can call Number methods because of bound
+                                     // => Extracts double value from Number wrapper
+                                     // => Accumulates sum: total = total + num.doubleValue()
     }
-    return total;
+    return total;                // => Returns accumulated sum as double
+                                 // => Method signature guarantees double return
 }
 
 // MULTIPLE BOUNDS - must extend class AND implement interfaces
-interface Measurable {
-    double getMeasurement();
+interface Measurable {           // => Contract: all Measurable types provide getMeasurement()
+    double getMeasurement();     // => Abstract method returning numeric measurement
+                                 // => No default implementation
 }
 
 public static <T extends Number & Measurable> double average(List<T> items) {
                                  // => T must extend Number AND implement Measurable
-    double total = 0;
-    for (T item : items) {
+                                 // => Class bound comes first (Number), then interfaces
+                                 // => Enables calling both Number and Measurable methods
+                                 // => Intersection type: T satisfies both constraints
+    double total = 0;            // => Accumulator for sum
+    for (T item : items) {       // => Iterates each item of type T
+                                 // => item guaranteed to have both Number and Measurable methods
         total += item.getMeasurement();
+                                 // => Calls Measurable interface method
+                                 // => Accumulates measurements into total
     }
-    return total / items.size();
+    return total / items.size(); // => Divides sum by count for average
+                                 // => items.size() returns int, promoted to double
 }
 
 // USAGE
@@ -808,31 +956,51 @@ import java.util.*;
 // UNBOUNDED WILDCARD - unknown type
 public static void printList(List<?> list) {
                                  // => Accepts List of any type (?)
+                                 // => List<?> represents "List of unknown type"
+                                 // => More flexible than List<Object> (not same!)
     for (Object elem : list) {   // => Can only read as Object (safest supertype)
+                                 // => Cannot assume specific type (could be List<String>, List<Integer>, etc.)
+                                 // => elem type: Object (common supertype of all)
         System.out.print(elem + " ");
+                                 // => Prints element via toString() (Object method)
     }
-    System.out.println();
+    System.out.println();        // => Newline after all elements
     // list.add("x");            // => ERROR: cannot write to List<?>
+                                 // => Compiler prevents writes (unknown exact type)
 }
 
 // UPPER-BOUNDED WILDCARD - covariance (reading)
 public static double sumNumbers(List<? extends Number> numbers) {
                                  // => ? extends Number: accepts List<Integer>, List<Double>, etc.
-    double sum = 0;
+                                 // => Covariant: can read as Number or supertypes
+                                 // => Producer pattern: produces Number values for consumption
+    double sum = 0;              // => Accumulator initialized to 0.0
     for (Number num : numbers) { // => Can read as Number (upper bound)
+                                 // => num guaranteed to be Number or subclass
+                                 // => Safe to treat all elements as Number
         sum += num.doubleValue();// => Calls Number.doubleValue()
+                                 // => Works for Integer, Double, Long, etc.
+                                 // => Accumulates: sum = sum + num.doubleValue()
     }
-    return sum;
+    return sum;                  // => Returns total sum
     // numbers.add(1);           // => ERROR: cannot write (exact type unknown)
+                                 // => Could be List<Integer>, can't add Double
+                                 // => Compiler prevents type-unsafe writes
 }
 
 // LOWER-BOUNDED WILDCARD - contravariance (writing)
 public static void addIntegers(List<? super Integer> list) {
                                  // => ? super Integer: accepts List<Integer>, List<Number>, List<Object>
+                                 // => Contravariant: can write Integer values
+                                 // => Consumer pattern: consumes Integer values
     list.add(1);                 // => Can write Integer (safe for any supertype)
-    list.add(2);
+                                 // => Integer always compatible with Integer/Number/Object
+                                 // => list now contains 1 (type guaranteed compatible)
+    list.add(2);                 // => Adds another Integer to list
+                                 // => list now contains [1, 2]
     // Integer val = list.get(0); // => ERROR: can only read as Object
                                  // => Could be List<Number> or List<Object>
+                                 // => Compiler doesn't know exact type to return
 }
 
 // USAGE
@@ -898,60 +1066,175 @@ import java.util.*;
 
 // ArrayList - indexed access, dynamic size
 List<String> arrayList = new ArrayList<>();
-arrayList.add("A");              // => O(1) amortized, arrayList is ["A"]
-String value = arrayList.get(0); // => O(1) random access, value is "A"
-arrayList.remove(0);             // => O(n) due to shifting, arrayList is []
+                                 // => Creates empty ArrayList (backed by array)
+                                 // => Default capacity: 10 elements (grows when needed)
+                                 // => Internal: Object[] elementData array
+                                 // => Interface type: List<String> (can swap implementations)
+                                 // => Concrete type: ArrayList<String> (array-based implementation)
+arrayList.add("A");              // => O(1) amortized append operation
+                                 // => Adds to end of internal array (no shifting needed)
+                                 // => Increments size counter (now size=1)
+                                 // => If array full: creates larger array (1.5x growth), copies elements
+                                 // => arrayList is ["A"]
+String value = arrayList.get(0); // => O(1) random access by index
+                                 // => Direct array access: elementData[0]
+                                 // => Very fast (cache-friendly sequential memory)
+                                 // => No iteration needed (direct indexing)
+                                 // => value is "A"
+arrayList.remove(0);             // => O(n) due to element shifting
+                                 // => Removes element at index 0
+                                 // => All elements after index 0 shift left (System.arraycopy)
+                                 // => If had ["A", "B", "C"]: "B" moves to index 0, "C" moves to index 1
+                                 // => Expensive for large lists (copies n-1 elements)
+                                 // => arrayList is [] (now empty)
 
 // LinkedList - efficient insertion/deletion
 List<String> linkedList = new LinkedList<>();
-linkedList.add("A");             // => O(1) append
-linkedList.add(0, "B");          // => O(1) prepend, linkedList is ["B", "A"]
-String first = linkedList.get(0); // => O(n) traversal, first is "B"
+                                 // => Creates empty LinkedList (doubly-linked nodes)
+                                 // => Each node stores element + prev/next references
+linkedList.add("A");             // => O(1) append to tail
+                                 // => Updates tail pointer only
+linkedList.add(0, "B");          // => O(1) prepend to head
+                                 // => Updates head pointer only
+                                 // => linkedList is ["B", "A"]
+String first = linkedList.get(0); // => O(n) traversal from head
+                                 // => Must iterate through nodes
+                                 // => first is "B"
 
 // HashSet - unique elements, O(1) operations
 Set<String> hashSet = new HashSet<>();
-hashSet.add("A");                // => O(1) insert, hashSet is {"A"}
+                                 // => Creates empty HashSet (backed by HashMap internally)
+                                 // => Uses element.hashCode() for bucketing
+                                 // => Internal: HashMap<E, Object> (value is dummy PRESENT object)
+                                 // => Default capacity: 16 buckets, load factor: 0.75
+                                 // => No duplicate elements allowed (enforced by HashMap keys)
+hashSet.add("A");                // => O(1) insert using hash function
+                                 // => Calculates "A".hashCode() → finds bucket
+                                 // => Stores "A" as HashMap key (value=PRESENT)
+                                 // => If already exists: returns false (no duplicate added)
+                                 // => hashSet is {"A"}
 boolean contains = hashSet.contains("A");
-                                 // => O(1) lookup, contains is true
+                                 // => O(1) lookup using hash function
+                                 // => Calculates "A".hashCode() → checks bucket
+                                 // => Uses equals() to confirm match in bucket (handles collisions)
+                                 // => Average O(1), worst O(log n) if bucket becomes tree (Java 8+)
+                                 // => contains is true
 
 // TreeSet - sorted, O(log n) operations
 Set<Integer> treeSet = new TreeSet<>();
-treeSet.add(3);
-treeSet.add(1);                  // => Auto-sorted: treeSet is {1, 3}
-treeSet.add(2);                  // => treeSet is {1, 2, 3}
+                                 // => Creates empty TreeSet (backed by red-black tree)
+                                 // => Maintains sorted order using Comparable/Comparator
+                                 // => Elements must implement Comparable<T> or provide Comparator
+                                 // => Internal: TreeMap<E, Object> (self-balancing binary search tree)
+                                 // => Guarantees log(n) operations (height-balanced tree)
+treeSet.add(3);                  // => O(log n) insert with rebalancing
+                                 // => Compares 3 with existing elements (none, becomes root)
+                                 // => Tree structure: [3]
+                                 // => treeSet is {3}
+treeSet.add(1);                  // => Auto-sorted: inserts at correct position
+                                 // => Compares 1 < 3 → inserts as left child
+                                 // => Tree structure: [3, 1]
+                                 // => treeSet is {1, 3}
+treeSet.add(2);                  // => Maintains sorted order
+                                 // => Compares 2 < 3 → go left, 2 > 1 → inserts as right child of 1
+                                 // => Tree structure: [3, 1, 2] (may rebalance for optimal height)
+                                 // => treeSet is {1, 2, 3}
 System.out.println(treeSet);     // => Output: [1, 2, 3]
+                                 // => Iteration visits elements in sorted order
+                                 // => In-order traversal of tree (left → root → right)
+                                 // => Always sorted regardless of insertion order
 
 // HashMap - key-value pairs, O(1) operations
 Map<String, Integer> hashMap = new HashMap<>();
-hashMap.put("Alice", 30);        // => O(1) insert
-Integer age = hashMap.get("Alice"); // => O(1) lookup, age is 30
+                                 // => Creates empty HashMap (hash table implementation)
+                                 // => Default capacity: 16 buckets, load factor: 0.75
+                                 // => Internal: array of Node<K,V>[] buckets (linked lists or trees)
+                                 // => When load exceeds 0.75: rehashes to double capacity
+                                 // => Null keys/values allowed (one null key, multiple null values)
+hashMap.put("Alice", 30);        // => O(1) insert using key.hashCode()
+                                 // => Calculates "Alice".hashCode() → determines bucket index
+                                 // => Stores Entry<String, Integer>("Alice", 30) in bucket
+                                 // => If collision: chains entry (linked list or tree if many collisions)
+                                 // => Returns previous value (null if new key)
+                                 // => hashMap is {"Alice"=30}
+Integer age = hashMap.get("Alice"); // => O(1) lookup by key
+                                 // => Calculates "Alice".hashCode() → finds bucket
+                                 // => Iterates bucket entries, uses equals() to match key
+                                 // => Average O(1), worst O(log n) if bucket is tree (Java 8+)
+                                 // => Returns Integer value or null (if key not found)
+                                 // => age is 30
 
 // TreeMap - sorted by keys, O(log n) operations
 Map<String, Integer> treeMap = new TreeMap<>();
-treeMap.put("Charlie", 25);
-treeMap.put("Alice", 30);
+                                 // => Creates empty TreeMap (red-black tree implementation)
+                                 // => Keys sorted by natural order or Comparator
+                                 // => Keys must implement Comparable<K> or provide Comparator<K>
+                                 // => Internal: red-black tree (self-balancing BST)
+                                 // => Null keys not allowed (would cause NullPointerException on compare)
+treeMap.put("Charlie", 25);      // => O(log n) insert with balancing
+                                 // => Compares "Charlie" with existing keys (none, becomes root)
+                                 // => Creates Entry<String, Integer>("Charlie", 25)
+                                 // => Tree structure: ["Charlie"=25]
+treeMap.put("Alice", 30);        // => Keys maintained in sorted order
+                                 // => Compares "Alice" < "Charlie" → inserts left
+                                 // => Tree may rebalance (red-black tree invariants)
+                                 // => Tree structure: ["Charlie"=25, "Alice"=30]
 treeMap.put("Bob", 28);          // => Maintains sorted order by key
+                                 // => Compares "Bob" < "Charlie" → left, "Bob" > "Alice" → right of Alice
+                                 // => Tree inserts at correct position, rebalances if needed
+                                 // => Alphabetically: Alice < Bob < Charlie
 System.out.println(treeMap);     // => Output: {Alice=30, Bob=28, Charlie=25}
+                                 // => Iteration visits entries in key-sorted order
+                                 // => In-order traversal of tree (sorted keys)
+                                 // => toString() uses entrySet().iterator()
 
 // COLLECTIONS UTILITY METHODS
 List<Integer> numbers = Arrays.asList(3, 1, 4, 1, 5, 9);
-                                 // => numbers is [3, 1, 4, 1, 5, 9] (fixed-size list)
+                                 // => Arrays.asList() creates fixed-size list
+                                 // => Backed by array: cannot add/remove elements
+                                 // => Can modify elements (set operation allowed)
+                                 // => Returns List<Integer> (interface type)
+                                 // => Concrete type: Arrays.ArrayList (different from java.util.ArrayList)
+                                 // => numbers is [3, 1, 4, 1, 5, 9]
 
 Collections.sort(numbers);       // => In-place sort (mutates original)
+                                 // => Uses TimSort algorithm (hybrid merge/insertion sort)
+                                 // => Stable sort: preserves relative order of equal elements
+                                 // => O(n log n) time complexity (worst/average case)
+                                 // => Requires elements implement Comparable<T>
+                                 // => Overload: sort(List, Comparator) for custom ordering
                                  // => numbers is [1, 1, 3, 4, 5, 9]
 Collections.reverse(numbers);    // => In-place reversal
+                                 // => Swaps elements from ends toward middle
+                                 // => Front index increments, back index decrements until they meet
+                                 // => O(n) time complexity (n/2 swaps)
                                  // => numbers is [9, 5, 4, 3, 1, 1]
 Collections.shuffle(numbers);    // => Randomizes order (uses Random)
+                                 // => Fisher-Yates shuffle algorithm
+                                 // => Each element has equal probability at any position
+                                 // => Uses default Random instance (can provide custom Random)
+                                 // => O(n) time complexity
                                  // => numbers is [unpredictable order]
 
 int max = Collections.max(numbers); // => Finds maximum element
+                                 // => Iterates entire collection once
+                                 // => Uses Comparable.compareTo() to compare elements
+                                 // => O(n) time complexity (linear scan)
+                                 // => Throws NoSuchElementException if collection empty
                                  // => max is 9
 int min = Collections.min(numbers); // => Finds minimum element
+                                 // => Iterates entire collection once
+                                 // => Uses Comparable.compareTo() to compare elements
+                                 // => O(n) time complexity (linear scan)
                                  // => min is 1
 
 int frequency = Collections.frequency(numbers, 1);
-                                 // => Counts occurrences of 1
-                                 // => frequency is 2 (appears twice)
+                                 // => Counts occurrences of target element (1)
+                                 // => Iterates collection, compares each element with target
+                                 // => Uses equals() for comparison (null-safe)
+                                 // => O(n) time complexity (full iteration)
+                                 // => Works with any Collection type
+                                 // => frequency is 2 (1 appears twice)
 
 // IMMUTABLE COLLECTIONS (Java 9+)
 List<String> immutable = List.of("A", "B", "C");
@@ -997,86 +1280,158 @@ import java.util.*;
 // CONCURRENTHASHMAP - thread-safe without single lock
 ConcurrentHashMap<String, Integer> concurrentMap = new ConcurrentHashMap<>();
                                  // => concurrentMap is {} (empty, thread-safe map)
-                                 // => Uses segment-based locking (high concurrency)
+                                 // => Uses segment-based locking (Java 7) or CAS operations (Java 8+)
+                                 // => Default: 16 segments (Java 7), lock-free bins (Java 8+)
+                                 // => Multiple threads can write concurrently to different buckets
+                                 // => No global lock: high concurrency (10-100x vs synchronized)
 
 // Thread-safe operations
 concurrentMap.put("key", 1);     // => Thread-safe put without blocking all threads
+                                 // => Only locks affected bucket (fine-grained locking)
+                                 // => Other threads can access different buckets simultaneously
+                                 // => Returns previous value (null if new key)
                                  // => concurrentMap is {"key"=1}
 Integer value = concurrentMap.get("key");
                                  // => Thread-safe get (lock-free read in Java 8+)
+                                 // => No locking needed for reads (optimistic concurrency)
+                                 // => Uses volatile reads to see latest writes
                                  // => value is 1
 
 // ATOMIC OPERATIONS
 concurrentMap.putIfAbsent("key", 2);
                                  // => Only puts if key doesn't exist (atomic check-and-set)
+                                 // => Check and put happen atomically (no race condition)
+                                 // => Equivalent to: if (!map.containsKey(k)) map.put(k, v) but thread-safe
+                                 // => Key "key" already exists with value 1
                                  // => Returns 1 (key exists, not inserted)
                                  // => concurrentMap is {"key"=1} (unchanged)
 
 concurrentMap.computeIfAbsent("newKey", k -> k.length());
                                  // => Computes value atomically if key absent
-                                 // => Lambda: "newKey".length() returns 6
+                                 // => Lambda: k -> k.length() receives key as parameter
+                                 // => "newKey".length() returns 6 (String length)
+                                 // => Computation happens inside lock (atomic with insertion)
+                                 // => Only computes if key absent (avoids unnecessary work)
+                                 // => Returns computed value (6)
                                  // => concurrentMap is {"key"=1, "newKey"=6}
 
 concurrentMap.merge("key", 1, Integer::sum);
                                  // => Atomically updates: old value + new value
-                                 // => Merges 1 (existing) + 1 (new) = 2
+                                 // => Merge function: Integer::sum (equivalent to (old, new) -> old + new)
+                                 // => Retrieves existing value (1), adds new value (1)
+                                 // => Merges 1 (existing) + 1 (new) = 2 using Integer.sum()
+                                 // => Updates map atomically with merged result
+                                 // => Returns merged value (2)
                                  // => concurrentMap is {"key"=2, "newKey"=6}
 
 // COPYONWRITEARRAYLIST - reads without locking, writes copy entire array
 CopyOnWriteArrayList<String> cowList = new CopyOnWriteArrayList<>();
                                  // => cowList is [] (empty, optimized for reads)
+                                 // => Internal: volatile Object[] array reference
+                                 // => Every write creates new array (copy-on-write semantics)
+                                 // => Reads never block (no locks for iteration/get)
+                                 // => Best for read-heavy workloads (100:1 read:write ratio)
 cowList.add("A");                // => Creates new array copy with "A"
-                                 // => cowList is ["A"] (write expensive, read cheap)
+                                 // => Process: 1. Lock mutex, 2. Copy array, 3. Add element, 4. Swap reference, 5. Unlock
+                                 // => Old array: [], New array: ["A"]
+                                 // => Updates volatile reference atomically
+                                 // => cowList is ["A"] (write expensive O(n), read cheap O(1))
 cowList.add("B");                // => Every write copies array (O(n) write cost)
+                                 // => Old array: ["A"], New array: ["A", "B"]
+                                 // => Memory overhead: creates temporary arrays on each write
                                  // => cowList is ["A", "B"]
 
 // Safe iteration during concurrent modifications
 for (String item : cowList) {    // => Iteration uses snapshot (no ConcurrentModificationException)
+                                 // => Iterator holds reference to array snapshot at creation time
+                                 // => Snapshot array: ["A", "B"] (frozen at iterator creation)
                                  // => Iterates over: ["A", "B"]
     cowList.add("C");            // => Modifications don't affect ongoing iteration
-                                 // => Creates new array but iterator sees old snapshot
+                                 // => Creates new array: ["A", "B", "C"]
+                                 // => Updates volatile reference to new array
+                                 // => Iterator still sees old snapshot ["A", "B"]
+                                 // => Two iterations add "C" twice (once per loop iteration)
 }                                // => After loop: cowList is ["A", "B", "C", "C"]
+                                 // => Final array reference points to ["A", "B", "C", "C"]
 
 // BLOCKINGQUEUE - producer-consumer pattern
 BlockingQueue<String> queue = new LinkedBlockingQueue<>(10);
                                  // => queue capacity is 10 (blocks when full)
                                  // => Uses locks and conditions (thread coordination)
+                                 // => Internal: ReentrantLock + Condition for blocking/waiting
+                                 // => Two conditions: notEmpty (consumers wait), notFull (producers wait)
+                                 // => Bounded queue prevents memory overflow from fast producers
 
 // Producer thread
 new Thread(() -> {               // => Lambda creates producer thread
+                                 // => Runnable functional interface: () -> void
+                                 // => Thread executes lambda body when started
     try {
         queue.put("item");       // => Blocks if queue full (waits for space)
+                                 // => Acquires lock, checks if queue has space
+                                 // => If full: awaits notFull condition (releases lock, waits)
+                                 // => When space available: adds "item", signals notEmpty
                                  // => Wakes up consumers waiting for items
     } catch (InterruptedException e) {
+                                 // => InterruptedException thrown if thread interrupted while waiting
+                                 // => Happens when thread.interrupt() called
         e.printStackTrace();     // => Handle thread interruption
+                                 // => Prints stack trace to stderr
     }
 }).start();                      // => Start producer thread immediately
+                                 // => Invokes Thread.start() → runs lambda in new thread
 
 // Consumer thread
 new Thread(() -> {               // => Lambda creates consumer thread
+                                 // => Separate thread from producer (concurrent execution)
     try {
         String item = queue.take(); // => Blocks if queue empty (waits for item)
+                                 // => Acquires lock, checks if queue has elements
+                                 // => If empty: awaits notEmpty condition (releases lock, waits)
+                                 // => When item available: removes and returns item, signals notFull
                                  // => item is "item" (from producer)
         System.out.println("Consumed: " + item);
+                                 // => Prints consumed item
+                                 // => Concatenates "Consumed: " with item value
                                  // => Output: Consumed: item
     } catch (InterruptedException e) {
+                                 // => InterruptedException if thread interrupted during take()
         e.printStackTrace();     // => Handle thread interruption
+                                 // => Prints exception stack trace
     }
 }).start();                      // => Start consumer thread immediately
+                                 // => Both threads now running concurrently
 
 // CONCURRENTSKIPLISTMAP - sorted, concurrent alternative to TreeMap
 ConcurrentSkipListMap<Integer, String> skipListMap = new ConcurrentSkipListMap<>();
                                  // => skipListMap is {} (empty skip list, sorted + thread-safe)
-skipListMap.put(3, "three");     // => skipListMap is {3="three"}
-skipListMap.put(1, "one");       // => skipListMap is {1="one", 3="three"} (auto-sorted)
-skipListMap.put(2, "two");       // => skipListMap is {1="one", 2="two", 3="three"}
+                                 // => Skip list: probabilistic data structure with multiple layers
+                                 // => O(log n) operations like TreeMap but allows concurrent access
+                                 // => No global locks: uses CAS operations for updates
+                                 // => Maintains sorted order by key (natural ordering or Comparator)
+skipListMap.put(3, "three");     // => O(log n) concurrent insert
+                                 // => Finds position in skip list using multiple levels
+                                 // => Inserts at correct sorted position without global lock
+                                 // => skipListMap is {3="three"}
+skipListMap.put(1, "one");       // => Concurrent insert maintaining sort order
+                                 // => Compares 1 < 3 → inserts before 3
+                                 // => skipListMap is {1="one", 3="three"} (auto-sorted)
+skipListMap.put(2, "two");       // => Inserts between 1 and 3
+                                 // => Maintains sorted order: 1 < 2 < 3
+                                 // => skipListMap is {1="one", 2="two", 3="three"}
 System.out.println(skipListMap);  // => Output: {1=one, 2=two, 3=three} (sorted, thread-safe)
+                                 // => Iteration visits entries in sorted key order
+                                 // => Thread-safe iteration (snapshot-based)
 
 // CONTRAST: Synchronized wrapper (poor concurrency)
 Map<String, Integer> syncMap = Collections.synchronizedMap(new HashMap<>());
                                  // => syncMap is {} (wrapped HashMap)
+                                 // => Wrapper adds synchronized keyword to all methods
                                  // => Single lock for all operations (severe bottleneck)
                                  // => All threads block each other (no concurrency)
+                                 // => get() blocks put(), put() blocks other puts
+                                 // => Performance degrades linearly with thread count
+                                 // => Avoid in favor of ConcurrentHashMap
 ```
 
 **Key Takeaway**: Use ConcurrentHashMap for high-concurrency key-value access with fine-grained locking. CopyOnWriteArrayList suits read-heavy workloads where writes are rare. BlockingQueue enables producer-consumer patterns with thread-safe blocking operations. Avoid synchronized wrappers (Collections.synchronizedMap()) which use coarse-grained locking.
@@ -1116,80 +1471,137 @@ import java.util.stream.*;
 
 List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
                                  // => numbers is [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                                 // => Fixed-size list backed by array
+                                 // => Source data for stream operations
 
 // LAZY EVALUATION - intermediate operations don't execute until terminal operation
 Stream<Integer> stream = numbers.stream()
                                  // => Creates stream from list (no processing yet)
-                                 // => Pipeline defined but not executed
+                                 // => Stream is pipeline specification, not result
+                                 // => No elements traversed yet (lazy initialization)
+                                 // => Returns Stream<Integer> (interface type)
     .filter(n -> {
         System.out.println("Filter: " + n);
+                                 // => Side effect for demonstration (shows when executed)
+                                 // => In production: avoid side effects in filter
         return n % 2 == 0;       // => NOT executed yet (lazy intermediate operation)
+                                 // => Predicate: keeps even numbers, discards odd
                                  // => Defines filtering logic, doesn't apply it
+                                 // => Returns boolean: true keeps element, false discards
     })
     .map(n -> {
         System.out.println("Map: " + n);
+                                 // => Side effect for demonstration
+                                 // => Shows which elements reach map stage (only even numbers)
         return n * 2;            // => NOT executed yet (lazy intermediate operation)
+                                 // => Transformation function: doubles each element
                                  // => Defines mapping logic, doesn't apply it
+                                 // => Function<Integer, Integer>: transforms n to n*2
     });
 // => No output yet (no terminal operation)
 // => Stream pipeline defined but not executed
 // => No System.out.println calls made
+// => stream holds pipeline specification: source → filter → map
 
 List<Integer> result = stream.collect(Collectors.toList());
                                  // => Terminal operation triggers pipeline execution
-                                 // => Now executes filter and map for each element
+                                 // => Traverses source collection (numbers list)
+                                 // => Executes filter and map for each element in pipeline
+                                 // => Process per element: filter(1)→false(skip), filter(2)→true→map(2)→4
+                                 // => Collector accumulates results into ArrayList
 // => Output: Filter: 1, Filter: 2, Map: 2, Filter: 3, Filter: 4, Map: 4, ...
+// => Shows lazy evaluation: filter→map happen per element, not all filters then all maps
 // => result is [4, 8, 12, 16, 20] (even numbers doubled)
 
 // SHORT-CIRCUITING - stops processing when result determined
 Optional<Integer> first = numbers.stream()
                                  // => Creates new stream from numbers
+                                 // => Fresh stream (streams are single-use)
     .filter(n -> {
         System.out.println("Checking: " + n);
+                                 // => Side effect to demonstrate short-circuit behavior
+                                 // => Shows which elements get processed
         return n > 5;            // => Filter for n > 5
+                                 // => Predicate returns true for 6, 7, 8, 9, 10
     })
     .findFirst();                // => Short-circuits after first match
-                                 // => Stops immediately when match found
+                                 // => Terminal operation that stops early
+                                 // => Returns Optional<Integer> (may be empty if no match)
+                                 // => Stops immediately when match found (doesn't process remaining)
 // => Output: Checking: 1, Checking: 2, ..., Checking: 6
 // => Stops at 6 (first n > 5), doesn't process 7, 8, 9, 10
+// => Processes only 6 elements instead of all 10 (40% reduction)
 // => first is Optional[6]
 
 // PARALLEL STREAMS - splits work across threads
 long count = numbers.parallelStream()
                                  // => Splits collection across ForkJoinPool threads
+                                 // => Default ForkJoinPool.commonPool() (CPU cores - 1 threads)
+                                 // => Divides work into chunks (fork-join algorithm)
+                                 // => NOT always faster: overhead for small collections
     .filter(n -> n % 2 == 0)     // => Parallel filtering (each thread processes subset)
-                                 // => Filters: 2, 4, 6, 8, 10
+                                 // => Thread 1 might process [1,2,3], Thread 2 processes [4,5,6], etc.
+                                 // => Filters: 2, 4, 6, 8, 10 (order of processing not guaranteed)
+                                 // => Each thread maintains local result
     .count();                    // => Terminal operation: counts matches
                                  // => Parallel execution (order not guaranteed)
+                                 // => Combines local counts from each thread
                                  // => count is 5
 
 // OPTIMIZATION: limit() short-circuits infinite streams
 Stream.iterate(0, n -> n + 1)    // => Infinite stream: 0, 1, 2, 3, ... (unbounded)
-                                 // => Without limit(), would run forever
+                                 // => iterate(seed, function): seed=0, function increments
+                                 // => Generates: 0, 1, 2, 3, 4, 5, ... (never terminates without limit)
+                                 // => Without limit(), would run forever (memory overflow)
     .filter(n -> n % 2 == 0)     // => Even numbers: 0, 2, 4, 6, 8, ...
+                                 // => Predicate: n % 2 == 0 (keeps even, discards odd)
+                                 // => Filter is lazy: only processes when needed
     .limit(5)                    // => Take first 5: stops after 5 elements
-                                 // => Short-circuits infinite stream
+                                 // => Short-circuits infinite stream (prevents infinite loop)
+                                 // => Processes: 0(even)→keep, 1(odd)→skip, 2(even)→keep, ... until 5 evens
+                                 // => limit() is stateful but short-circuits
     .forEach(System.out::println);
                                  // => Terminal operation: prints each element
+                                 // => forEach() executes pipeline (triggers lazy operations)
+                                 // => Method reference: System.out::println (equivalent to n -> System.out.println(n))
 // => Output: 0, 2, 4, 6, 8 (stops, doesn't run forever)
 
 // PRIMITIVE STREAMS - avoid autoboxing overhead
 IntStream.range(1, 1000000)      // => Primitive int stream (no Integer objects)
-                                 // => range is [1, 2, ..., 999999]
+                                 // => range(start, end): generates [1, 2, ..., 999999] (exclusive end)
+                                 // => IntStream: primitive specialization (not Stream<Integer>)
+                                 // => Avoids boxing: no int→Integer conversions
+                                 // => Memory efficient: no wrapper objects (saves ~16 bytes per element)
     .filter(n -> n % 2 == 0)     // => Filters even numbers (no boxing)
+                                 // => IntPredicate: primitive specialization (not Predicate<Integer>)
+                                 // => Works directly with int primitives (no wrapper overhead)
     .sum();                      // => sum() on IntStream (no boxing/unboxing)
-                                 // => Returns int sum directly (efficient)
+                                 // => Specialized sum() for primitives (not available on Stream<Integer>)
+                                 // => Returns primitive int sum directly (efficient)
+                                 // => Avoids accumulation overhead from boxing/unboxing in loop
 
 // STATELESS vs STATEFUL operations
-numbers.stream()                 // => Creates stream from numbers
+numbers.stream()                 // => Creates stream from numbers [1, 2, ..., 10]
+                                 // => Source for demonstrating stateless vs stateful
     .filter(n -> n > 5)          // => Stateless: each element processed independently
+                                 // => No need to see other elements to decide
+                                 // => Predicate evaluates per element: 1>5? no, 6>5? yes
+                                 // => Allows streaming (process one at a time)
                                  // => Filters: 6, 7, 8, 9, 10
     .map(n -> n * 2)             // => Stateless: independent transformation
+                                 // => Each element mapped without knowledge of others
+                                 // => Function applies per element: 6*2=12, 7*2=14, etc.
+                                 // => No accumulation or comparison needed
                                  // => Maps to: 12, 14, 16, 18, 20
     .sorted()                    // => STATEFUL: requires all elements (breaks streaming)
-                                 // => Collects all before sorting (memory overhead)
+                                 // => Cannot sort without seeing all elements first
+                                 // => Collects all into memory: [12, 14, 16, 18, 20]
+                                 // => Sorts using natural order (Comparable)
+                                 // => Breaks laziness: must process entire stream before continuing
+                                 // => Memory overhead: stores all elements at once
     .collect(Collectors.toList());
                                  // => Terminal: collects to List
+                                 // => Accumulates sorted stream into ArrayList
                                  // => Result is [12, 14, 16, 18, 20] (sorted)
 ```
 
@@ -1231,105 +1643,180 @@ List<String> words = Arrays.asList("apple", "banana", "apricot", "blueberry", "a
 // COLLECTING TO COLLECTIONS
 List<String> list = words.stream()
                                  // => Creates stream from words list
+                                 // => Stream<String> for filtering and collecting
     .filter(w -> w.startsWith("a"))
+                                 // => Predicate: w.startsWith("a") tests first character
+                                 // => Tests: apple(true), banana(false), apricot(true), blueberry(false), avocado(true)
                                  // => Keeps: apple, apricot, avocado
     .collect(Collectors.toList());
-                                 // => Collects to ArrayList
+                                 // => Collects to ArrayList (default implementation)
+                                 // => Terminal operation: triggers pipeline execution
+                                 // => Accumulates filtered elements into mutable ArrayList
                                  // => list is [apple, apricot, avocado]
 
 Set<String> set = words.stream()
+                                 // => Creates new stream (streams single-use)
     .collect(Collectors.toSet());
                                  // => Collects to HashSet (unordered)
+                                 // => Removes duplicates (Set contract)
+                                 // => No ordering guarantee (HashSet uses hash table)
+                                 // => set is {apple, banana, apricot, blueberry, avocado} (order varies)
 
 // JOINING STRINGS
 String joined = words.stream()
+                                 // => Creates Stream<String> from words list
+                                 // => Stream contains: apple, banana, apricot, blueberry, avocado
     .collect(Collectors.joining(", "));
+                                 // => joining(delimiter) concatenates with delimiter
+                                 // => Delimiter: ", " (comma + space)
+                                 // => Joins all words with ", " between each
                                  // => joined is "apple, banana, apricot, blueberry, avocado"
 
 String prefixed = words.stream()
+                                 // => Creates new stream (streams are single-use)
     .collect(Collectors.joining(", ", "[", "]"));
                                  // => joining(delimiter, prefix, suffix)
+                                 // => Delimiter: ", ", Prefix: "[", Suffix: "]"
+                                 // => Wraps joined string with brackets
                                  // => prefixed is "[apple, banana, apricot, blueberry, avocado]"
 
 // GROUPING BY
 Map<Character, List<String>> grouped = words.stream()
+                                 // => Stream<String> for grouping operation
     .collect(Collectors.groupingBy(w -> w.charAt(0)));
-                                 // => Groups by first character
+                                 // => groupingBy() partitions by classification function
+                                 // => Lambda: w -> w.charAt(0) extracts first character
+                                 // => Groups words by first letter
+                                 // => Returns Map<Character, List<String>>
+                                 // => Groups: 'a' → [apple, apricot, avocado], 'b' → [banana, blueberry]
                                  // => {a=[apple, apricot, avocado], b=[banana, blueberry]}
 
 // COUNTING
 Map<Character, Long> counts = words.stream()
+                                 // => Stream<String> from words list
     .collect(Collectors.groupingBy(w -> w.charAt(0), Collectors.counting()));
-                                 // => Groups by first char, then counts each group
+                                 // => groupingBy() with downstream collector
+                                 // => First: group by w.charAt(0) (first character)
+                                 // => Then: count elements in each group
+                                 // => Groups: 'a' → [apple, apricot, avocado], 'b' → [banana, blueberry]
+                                 // => Counts: 'a' → 3, 'b' → 2
+                                 // => Result type: Map<Character, Long>
                                  // => {a=3, b=2}
 
 // PARTITIONING (boolean predicate)
 Map<Boolean, List<String>> partitioned = words.stream()
+                                 // => Stream<String> from words list
     .collect(Collectors.partitioningBy(w -> w.length() > 6));
-                                 // => Splits into true/false groups by length
+                                 // => partitioningBy() creates 2 groups: true/false
+                                 // => Predicate: w.length() > 6 (words longer than 6 chars)
+                                 // => true group: [apricot(7), blueberry(9), avocado(7)]
+                                 // => false group: [apple(5), banana(6)]
+                                 // => Always returns Map with both keys (even if empty)
                                  // => {false=[apple, banana], true=[apricot, blueberry, avocado]}
 
 // MAPPING WITHIN GROUPING
 Map<Character, List<Integer>> lengths = words.stream()
+                                 // => Stream<String> from words list
     .collect(Collectors.groupingBy(
-        w -> w.charAt(0),        // => Groups by first character
+        w -> w.charAt(0),        // => Groups by first character ('a' or 'b')
+                                 // => Classification function determines groups
         Collectors.mapping(String::length, Collectors.toList())
-                                 // => Transforms to word lengths
+                                 // => Downstream collector transforms elements
+                                 // => mapping() applies String::length to each word
+                                 // => Then collects results to List
+                                 // => 'a' group: apple→5, apricot→7, avocado→7
+                                 // => 'b' group: banana→6, blueberry→9
     ));
+                                 // => Result: Map<Character, List<Integer>>
                                  // => {a=[5, 7, 7], b=[6, 9]}
 
 // CUSTOM COLLECTOR - joining with custom logic
 String custom = words.stream()
+                                 // => Stream<String> from words list
     .collect(Collector.of(
                                  // => Creates custom collector (4 components)
+                                 // => Collector.of() factory method with 4 functions
+                                 // => Components: supplier, accumulator, combiner, finisher
         StringBuilder::new,      // => Supplier: creates StringBuilder container
+                                 // => Supplier<StringBuilder>: () -> new StringBuilder()
+                                 // => Creates mutable accumulation container
+                                 // => Called once per stream (or per parallel segment)
         (sb, s) -> sb.append(s).append(" "),
                                  // => Accumulator: appends word + space
+                                 // => BiConsumer<StringBuilder, String>: accumulates element into container
+                                 // => (container, element) -> { container mutation }
+                                 // => Called for each element in stream
+                                 // => Mutates sb: "apple " → "apple banana " → ...
         (sb1, sb2) -> sb1.append(sb2),
                                  // => Combiner: merges parallel results
+                                 // => BinaryOperator<StringBuilder>: combines two containers
+                                 // => Used in parallel streams to merge partial results
+                                 // => sb1 += sb2 (appends sb2 content to sb1)
+                                 // => Sequential streams don't call this
         StringBuilder::toString  // => Finisher: final transformation
                                  // => Function<StringBuilder, String>
                                  // => Converts mutable StringBuilder to immutable String
+                                 // => Called once at end to produce final result
     ));
                                  // => custom is "apple banana apricot blueberry avocado "
                                  // => Note: trailing space from append logic
+                                 // => Each word followed by space (including last)
 
 // REDUCING
 int totalLength = words.stream()
                                  // => Stream<String> from words
+                                 // => Source: [apple, banana, apricot, blueberry, avocado]
     .collect(Collectors.summingInt(String::length));
                                  // => summingInt() converts to int and sums
-                                 // => String::length method reference
+                                 // => ToIntFunction<String>: String::length extracts length
+                                 // => Maps each word to its length: apple→5, banana→6, etc.
+                                 // => Accumulates sum: 0 + 5 + 6 + 7 + 9 + 7
                                  // => apple(5) + banana(6) + apricot(7) + blueberry(9) + avocado(7)
+                                 // => Returns primitive int (not Integer wrapper)
                                  // => totalLength is 34 (sum of all word lengths)
 
 Optional<String> longest = words.stream()
                                  // => Stream<String> from words
+                                 // => Finds maximum element by comparison criteria
     .collect(Collectors.maxBy(Comparator.comparing(String::length)));
                                  // => maxBy() finds maximum by comparator
-                                 // => Comparator.comparing(String::length) compares by length
+                                 // => Comparator.comparing(String::length) creates comparator
+                                 // => Extracts length from each word, compares numerically
+                                 // => Compares: 5 vs 6 vs 7 vs 9 vs 7
                                  // => Finds word with maximum length
                                  // => blueberry has 9 characters (longest)
+                                 // => Returns Optional<String> (handles empty stream case)
                                  // => longest is Optional[blueberry]
-                                 // => Optional in case stream was empty
+                                 // => Optional in case stream was empty (would be Optional.empty())
 
 // TEEING (Java 12+) - apply two collectors and merge results
 Map<String, Object> stats = words.stream()
                                  // => Stream<String> from words
+                                 // => Single stream split to two collectors
     .collect(Collectors.teeing(
                                  // => teeing() applies 2 collectors, merges results
                                  // => Solves "one stream, two collectors" problem
+                                 // => Before Java 12: required stream duplication or separate passes
+                                 // => Components: downstream1, downstream2, merger function
         Collectors.counting(),   // => First collector: counts elements
+                                 // => Downstream collector 1: Collector<String, ?, Long>
+                                 // => Counts stream elements as Long
                                  // => Result: 5L (Long)
         Collectors.joining(","), // => Second collector: joins with comma
+                                 // => Downstream collector 2: Collector<String, ?, String>
+                                 // => Concatenates elements with "," delimiter
                                  // => Result: "apple,banana,apricot,blueberry,avocado"
         (count, joined) -> Map.of("count", count, "words", joined)
                                  // => Merger: BiFunction<Long, String, Map>
                                  // => Combines both collector results into single Map
+                                 // => Parameter 1: count (Long from counting())
+                                 // => Parameter 2: joined (String from joining())
+                                 // => Map.of() creates immutable Map with 2 entries
                                  // => Creates Map with 2 entries
     ));
                                  // => {count=5, words=apple,banana,apricot,blueberry,avocado}
                                  // => Single pass through stream produces both results
+                                 // => Efficient: no stream duplication or re-iteration needed
 ```
 
 **Key Takeaway**: Use built-in Collectors for common operations: toList(), toSet(), groupingBy(), partitioningBy(), joining(). Compose collectors with mapping(), counting(), summingInt() for complex aggregations. Create custom collectors via Collector.of() for specialized reduction logic.
@@ -1352,23 +1839,39 @@ import java.util.function.*;
 
 // 1. STATIC METHOD REFERENCE
 Function<String, Integer> parser1 = Integer::parseInt;
+                                 // => Method reference to static method
+                                 // => Integer::parseInt refers to Integer.parseInt(String)
                                  // => Equivalent to: s -> Integer.parseInt(s)
-int value = parser1.apply("123"); // => value is 123
+                                 // => Type: Function<String, Integer> (String → Integer)
+int value = parser1.apply("123"); // => Applies function to "123" string
+                                 // => Calls Integer.parseInt("123")
+                                 // => Parses string to int, boxes to Integer
+                                 // => value is 123
 
 // 2. INSTANCE METHOD REFERENCE (on particular object)
-String prefix = "Hello, ";
+String prefix = "Hello, ";       // => String object to bind to method reference
+                                 // => Specific instance (not any String)
 Function<String, String> greeter = prefix::concat;
+                                 // => Method reference to instance method on specific object
+                                 // => prefix::concat refers to prefix.concat(String)
+                                 // => Captures 'prefix' variable (bound method reference)
                                  // => Equivalent to: s -> prefix.concat(s)
 String greeting = greeter.apply("World");
+                                 // => Applies function to "World" argument
+                                 // => Calls prefix.concat("World")
+                                 // => Concatenates "Hello, " + "World"
                                  // => greeting is "Hello, World"
 
 // 3. INSTANCE METHOD REFERENCE (on arbitrary object)
 Function<String, Integer> lengthGetter = String::length;
+                                 // => Method reference to instance method on any String
+                                 // => String::length refers to any String's length() method
                                  // => Equivalent to: s -> s.length()
                                  // => Calls length() on parameter (not specific object)
                                  // => Type: Function<String, Integer>
 int length = lengthGetter.apply("test");
-                                 // => Applies function to "test" string
+                                 // => Applies function to "test" string argument
+                                 // => "test" becomes receiver object for length()
                                  // => "test".length() returns 4
                                  // => length is 4
 
@@ -1482,68 +1985,99 @@ import java.util.stream.Stream;
 // PATH OPERATIONS - modern file path abstraction
 Path path = Paths.get("data", "file.txt");
                                  // => Factory method creates Path object
-                                 // => Joins path components with system separator
+                                 // => Paths.get(String first, String... more) joins components
+                                 // => Joins path components with system separator (/ on Unix, \ on Windows)
                                  // => Creates path to data/file.txt
-                                 // => Type: Path (interface, implementation varies by OS)
+                                 // => Type: Path (interface, implementation varies by OS: UnixPath, WindowsPath, etc.)
+                                 // => This is relative path (not absolute from root)
 Path absolute = path.toAbsolutePath();
                                  // => Converts relative path to absolute
-                                 // => Prepends current working directory
-                                 // => Example: /home/user/project/data/file.txt
+                                 // => Prepends current working directory (System.getProperty("user.dir"))
+                                 // => Example: /home/user/project/data/file.txt (on Unix)
+                                 // => Example: C:\Users\user\project\data\file.txt (on Windows)
+                                 // => Returns new Path instance (doesn't modify original)
 Path parent = path.getParent();
                                  // => Extracts parent directory path
-                                 // => parent is "data"
+                                 // => Removes last component ("file.txt")
+                                 // => parent is "data" (Path object, not String)
+                                 // => Returns null if path has no parent (e.g., root or single component)
 Path filename = path.getFileName();
                                  // => Extracts file name component
-                                 // => filename is "file.txt"
+                                 // => Gets last component of path
+                                 // => filename is "file.txt" (Path object, not String)
+                                 // => Returns null for empty path
 
 // FILE OPERATIONS
 try {
     // Create file
     Files.createFile(path);      // => Creates empty file at path
                                  // => Throws FileAlreadyExistsException if file exists
-                                 // => Atomic operation (guaranteed by OS)
+                                 // => Throws NoSuchFileException if parent directory doesn't exist
+                                 // => Atomic operation (guaranteed by OS, file appears fully created or not at all)
+                                 // => Sets default file permissions based on OS
 
     // Write content
     String content = "Hello, NIO.2!";
                                  // => Content string to write
+                                 // => String literal in memory
     Files.writeString(path, content);
                                  // => Writes string to file using UTF-8
-                                 // => Overwrites existing content completely
-                                 // => Convenient for small text files
+                                 // => Java 11+ convenience method
+                                 // => Overwrites existing content completely (not append)
+                                 // => Creates file if doesn't exist
+                                 // => Convenient for small text files (entire content in memory)
+                                 // => Equivalent to: Files.write(path, content.getBytes(UTF_8))
 
     // Read content
     String read = Files.readString(path);
                                  // => Reads entire file into String
+                                 // => Java 11+ convenience method
                                  // => Uses UTF-8 encoding by default
                                  // => read is "Hello, NIO.2!"
                                  // => Suitable for small files (loads all into memory)
+                                 // => Large files: OutOfMemoryError risk
+                                 // => Equivalent to: new String(Files.readAllBytes(path), UTF_8)
 
     // Append content
     Files.writeString(path, "\nNew line", StandardOpenOption.APPEND);
                                  // => StandardOpenOption.APPEND: adds to end
-                                 // => "\n" creates new line before text
+                                 // => "\n" creates new line before text (platform-specific: \n on Unix, \r\n on Windows)
                                  // => Preserves existing content
+                                 // => Opens file, seeks to end, writes, closes
                                  // => File now contains 2 lines
+                                 // => Other options: CREATE, TRUNCATE_EXISTING, etc.
 
     // Read all lines
     List<String> lines = Files.readAllLines(path);
                                  // => Reads file, splits by line breaks
+                                 // => Detects \n, \r\n, or \r as line separators (platform-independent)
                                  // => Returns List<String> with each line
                                  // => lines is ["Hello, NIO.2!", "New line"]
-                                 // => Entire file loaded into memory
+                                 // => Entire file loaded into memory (ArrayList)
+                                 // => Line separators stripped from each line (not included)
 
     // STREAMING LINES (for large files)
     try (Stream<String> stream = Files.lines(path)) {
                                  // => Creates Stream<String> lazily reading lines
                                  // => Efficient for large files (doesn't load all into memory)
-                                 // => try-with-resources ensures stream closed
+                                 // => Reads lines on-demand as stream processes
+                                 // => Uses BufferedReader internally
+                                 // => try-with-resources ensures stream closed (CRITICAL: prevents resource leak)
+                                 // => Stream must be closed to release file handle
         stream.filter(line -> line.startsWith("Hello"))
                                  // => Filters lines starting with "Hello"
+                                 // => Lazy intermediate operation (doesn't execute until terminal)
+                                 // => Predicate: line.startsWith("Hello")
+                                 // => Tests: "Hello, NIO.2!" (true), "New line" (false)
                                  // => Keeps only: "Hello, NIO.2!"
               .forEach(System.out::println);
                                  // => Prints each matching line
+                                 // => Terminal operation (triggers stream processing)
+                                 // => Method reference: System.out::println
                                  // => Output: Hello, NIO.2!
     }                            // => Stream auto-closed here
+                                 // => try-with-resources calls stream.close()
+                                 // => Releases underlying BufferedReader and file handle
 
     // FILE METADATA
     boolean exists = Files.exists(path);
@@ -1591,38 +2125,55 @@ try {
 try {
     Path dir = Paths.get("mydir");
                                  // => Creates Path to directory "mydir"
+                                 // => Relative path from current directory
     Files.createDirectory(dir);  // => Creates single directory
-                                 // => Throws if parent doesn't exist
-                                 // => Throws if directory already exists
+                                 // => Throws NoSuchFileException if parent doesn't exist
+                                 // => Throws FileAlreadyExistsException if directory already exists
+                                 // => Atomic operation (directory fully created or not at all)
+                                 // => Sets default directory permissions
 
     Path nested = Paths.get("my/nested/dir");
                                  // => Path to deeply nested directory
+                                 // => Three-level hierarchy: my/nested/dir
     Files.createDirectories(nested);
                                  // => Creates all parent directories if needed
-                                 // => Creates "my", "my/nested", "my/nested/dir"
-                                 // => No error if directory already exists
+                                 // => Idempotent: doesn't fail if directories exist
+                                 // => Creates "my", "my/nested", "my/nested/dir" in sequence
+                                 // => Equivalent to: mkdir -p (Unix)
+                                 // => No error if directory already exists (unlike createDirectory)
 
     // LIST DIRECTORY CONTENTS
     try (Stream<Path> paths = Files.list(dir)) {
                                  // => Returns Stream<Path> of direct children
-                                 // => NOT recursive (only immediate children)
-                                 // => try-with-resources closes stream
+                                 // => NOT recursive (only immediate children, no subdirectories' contents)
+                                 // => Returns both files and subdirectories at this level
+                                 // => Order not guaranteed (depends on filesystem)
+                                 // => try-with-resources closes stream (releases directory handle)
         paths.forEach(System.out::println);
                                  // => Prints each child path
+                                 // => Method reference: System.out::println
                                  // => Output: one line per file/directory in mydir
+                                 // => Path printed as absolute or relative depending on dir
     }
 
     // WALK DIRECTORY TREE (recursive)
     try (Stream<Path> paths = Files.walk(nested)) {
                                  // => Returns Stream<Path> recursively traversing tree
                                  // => Includes all descendants (files and directories)
-                                 // => Depth-first traversal
+                                 // => Depth-first traversal (visits subdirectories before siblings)
+                                 // => Default: unlimited depth (visits entire tree)
+                                 // => Overload: Files.walk(path, maxDepth) limits depth
+                                 // => CRITICAL: Must close stream to release directory handles
         paths.filter(Files::isRegularFile)
                                  // => Filters to only regular files (not directories)
                                  // => Method reference to Files.isRegularFile(Path)
+                                 // => Predicate<Path>: returns true for files, false for directories
+                                 // => Excludes directories, symlinks, special files
              .forEach(System.out::println);
                                  // => Prints path of each file in tree
+                                 // => Method reference: System.out::println
                                  // => Output: all files in nested and subdirectories
+                                 // => Each file path printed on separate line
     }
 
 } catch (IOException e) {
@@ -1647,28 +2198,44 @@ Threads enable concurrent execution. Java provides Runnable interface for defini
 // RUNNABLE - task to execute in thread
 class PrintTask implements Runnable {
                                  // => Implements Runnable functional interface
+                                 // => Runnable has single method: void run()
+                                 // => Defines task to execute in thread
     private final String message;
                                  // => Immutable message field (thread-safe)
+                                 // => final: cannot be reassigned after construction
+                                 // => Each PrintTask instance has own message
 
     public PrintTask(String message) {
                                  // => Constructor initializes task
+                                 // => Parameter: message to print in loop
         this.message = message;  // => Stores message for run() method
+                                 // => Assigns constructor parameter to instance field
     }
 
     @Override
     public void run() {          // => Executed when thread starts
-                                 // => This code runs in separate thread
+                                 // => This code runs in separate thread (not main thread)
+                                 // => void return type (cannot return value from thread)
+                                 // => Exceptions thrown here don't propagate to caller
         for (int i = 0; i < 5; i++) {
-                                 // => Loop 5 times
+                                 // => Loop 5 times (iterations 0-4)
+                                 // => Each iteration prints and sleeps
             System.out.println(message + " " + i);
                                  // => Output: message + iteration number
+                                 // => Concatenates: "Thread-1 0", "Thread-1 1", etc.
+                                 // => System.out synchronized (thread-safe printing)
             try {
                 Thread.sleep(100); // => Pause 100ms (yields CPU to other threads)
-                                 // => Allows context switching
+                                 // => Puts thread in TIMED_WAITING state
+                                 // => Allows context switching (scheduler runs other threads)
+                                 // => Releases CPU but not locks
             } catch (InterruptedException e) {
                                  // => Thrown if thread interrupted during sleep
+                                 // => InterruptedException: checked exception
+                                 // => Happens when another thread calls interrupt()
                 e.printStackTrace();
-                                 // => Print stack trace
+                                 // => Print stack trace to stderr
+                                 // => Shows where interruption occurred
             }
         }
     }
@@ -1678,56 +2245,80 @@ class PrintTask implements Runnable {
 Thread thread1 = new Thread(new PrintTask("Thread-1"));
                                  // => Creates Thread with Runnable task
                                  // => PrintTask implements Runnable interface
+                                 // => Thread(Runnable target) constructor
                                  // => Thread not started yet (NEW state)
+                                 // => No OS resources allocated yet (lightweight)
 Thread thread2 = new Thread(new PrintTask("Thread-2"));
                                  // => Second independent thread
                                  // => Each has separate execution context
+                                 // => Different Runnable instance (different message)
+                                 // => Also in NEW state
 
 thread1.start();                 // => Starts thread (calls run() in new thread)
-                                 // => Creates OS thread, enters RUNNABLE state
+                                 // => Creates OS thread (allocates stack, registers with scheduler)
+                                 // => Transitions NEW → RUNNABLE state
                                  // => run() executes concurrently with main thread
+                                 // => Calling start() twice throws IllegalThreadStateException
 thread2.start();                 // => Starts second thread concurrently
                                  // => Both threads execute independently
+                                 // => Both compete for CPU time (scheduled by OS)
                                  // => Output interleaved (non-deterministic order)
                                  // => Example: Thread-1 0, Thread-2 0, Thread-1 1...
+                                 // => Order depends on scheduler (cannot predict)
 
 // WAIT FOR COMPLETION
 try {
     thread1.join();              // => Blocks until thread1 completes
                                  // => Main thread waits for thread1 to finish
+                                 // => Main thread enters WAITING state (releases CPU)
+                                 // => Resumes when thread1 terminates (enters TERMINATED state)
                                  // => Ensures thread1 done before proceeding
     thread2.join();              // => Blocks until thread2 completes
                                  // => Main thread waits for thread2 to finish
                                  // => Both threads guaranteed finished after this
+                                 // => Alternative: join(millisTimeout) waits max time
 } catch (InterruptedException e) {
                                  // => Thrown if waiting thread interrupted
+                                 // => Happens when another thread calls mainThread.interrupt()
+                                 // => InterruptedException: checked exception
     e.printStackTrace();         // => Print exception details
+                                 // => Shows which join() was interrupted
 }
 
 // LAMBDA SYNTAX (Java 8+)
 Thread thread3 = new Thread(() -> {
                                  // => Lambda implements Runnable.run()
+                                 // => Runnable is functional interface (single abstract method)
+                                 // => () -> { ... } syntax replaces anonymous class
                                  // => Concise syntax for simple tasks
     System.out.println("Lambda thread running");
                                  // => Output: Lambda thread running
+                                 // => Executes in separate thread when started
 });
 thread3.start();                 // => Starts thread executing lambda
                                  // => Lambda code runs in new thread
+                                 // => Much shorter than implementing Runnable class
 
 // THREAD PROPERTIES
 Thread current = Thread.currentThread();
                                  // => Gets reference to currently executing thread
+                                 // => Static method: returns thread that calls it
                                  // => In main: returns main thread
+                                 // => In thread1: would return thread1 reference
 String name = current.getName();
                                  // => Thread name (default: Thread-N)
                                  // => name might be "main" if in main thread
+                                 // => Can set custom name: thread.setName("CustomName")
 long id = current.getId();       // => Unique thread ID (positive long)
                                  // => Assigned by JVM, never reused
+                                 // => Monotonically increasing (1, 2, 3, ...)
                                  // => Example: 1 (main thread), 2, 3, ...
 int priority = current.getPriority();
                                  // => Priority hint for scheduler (1-10)
                                  // => Default: 5 (Thread.NORM_PRIORITY)
+                                 // => MIN_PRIORITY=1, NORM_PRIORITY=5, MAX_PRIORITY=10
                                  // => Higher priority MAY get more CPU time (not guaranteed)
+                                 // => OS scheduler has final say (priority is hint)
 ```
 
 **Key Takeaway**: Implement Runnable to define thread tasks, create Thread objects wrapping Runnable, and call start() to begin execution. Use join() to wait for thread completion. Never call run() directly—it executes in current thread without concurrency.
@@ -1766,32 +2357,49 @@ import java.util.concurrent.locks.*;
 
 // RACE CONDITION - unsafe shared state
 class UnsafeCounter {
-    private int count = 0;
+    private int count = 0;       // => Shared mutable state across threads
+                                 // => No synchronization protection
+                                 // => Multiple threads accessing same memory location
 
     public void increment() {
         count++;                 // => NOT thread-safe (read-modify-write race)
+                                 // => Actually 3 operations: read count, add 1, write count
+                                 // => Thread interleaving causes lost updates
+                                 // => Example: Thread1 reads 0, Thread2 reads 0, both write 1 (lost one increment)
+                                 // => Non-atomic operation (can be interrupted mid-execution)
     }
 
     public int getCount() {
-        return count;
+        return count;            // => Reads possibly stale/inconsistent value
+                                 // => No happens-before guarantee from writes
+                                 // => May read old cached value (CPU cache coherence issue)
+                                 // => No memory barrier (write visibility not guaranteed)
     }
 }
 
 // SYNCHRONIZED METHOD - thread-safe via intrinsic lock
 class SynchronizedCounter {
     private int count = 0;       // => Shared mutable state (requires synchronization)
+                                 // => Protected by synchronized methods below
 
     public synchronized void increment() {
-                                 // => synchronized keyword acquires intrinsic lock
+                                 // => synchronized keyword acquires intrinsic lock (monitor)
+                                 // => Locks on this instance (implicit: synchronized(this))
                                  // => Only one thread can execute this method at a time
-                                 // => Other threads block until lock released
+                                 // => Other threads block until lock released (BLOCKED state)
+                                 // => Guarantees atomicity and visibility
         count++;                 // => Thread-safe increment (read-modify-write)
                                  // => Lock ensures atomicity of this operation
+                                 // => Read, modify, write happen as single atomic unit
     }                            // => Lock automatically released on method exit
+                                 // => Even if exception thrown (finally-like semantics)
 
     public synchronized int getCount() {
                                  // => synchronized ensures visibility of count changes
+                                 // => Memory barrier: flushes CPU cache, reads from main memory
+                                 // => Acquires same intrinsic lock as increment()
         return count;            // => Returns current value (consistent read)
+                                 // => Sees all writes from previous synchronized increment() calls
     }
 }
 
@@ -1801,15 +2409,23 @@ class BlockCounter {
     private final Object lock = new Object();
                                  // => Explicit lock object (any Object works)
                                  // => final ensures lock reference never changes
+                                 // => Dedicated lock object (not this) prevents external locking
 
     public void increment() {
         // Non-critical code here executes without lock
+        // => Allows concurrent execution of non-critical sections
+        // => Better throughput than locking entire method
         synchronized(lock) {     // => Acquires lock on specific object
+                                 // => synchronized(Object) block syntax
                                  // => Only locks critical section (not entire method)
                                  // => Allows better concurrency vs method-level sync
+                                 // => Smaller critical section = less contention
             count++;             // => Critical section: thread-safe increment
+                                 // => Read-modify-write protected by lock
         }                        // => Lock automatically released here
+                                 // => Even if exception thrown
         // Non-critical code here executes without lock
+        // => Other threads can execute non-critical sections concurrently
     }
 }
 
@@ -1819,18 +2435,24 @@ class LockCounter {
     private final Lock lock = new ReentrantLock();
                                  // => Explicit Lock interface (more flexible than synchronized)
                                  // => "Reentrant" means same thread can acquire multiple times
+                                 // => Maintains acquisition count (lock count for reentrancy)
+                                 // => Supports fairness policy: new ReentrantLock(true)
 
     public void increment() {
         lock.lock();             // => Explicitly acquires lock
-                                 // => Blocks if another thread holds lock
+                                 // => Blocks if another thread holds lock (like synchronized)
+                                 // => Increments hold count if already owned by current thread
                                  // => Must manually unlock (unlike synchronized)
+                                 // => No automatic unlock (dangerous if forgotten)
         try {
             count++;             // => Critical section
                                  // => Thread-safe modification
+                                 // => Read-modify-write protected by lock
         } finally {
             lock.unlock();       // => MUST unlock in finally block
                                  // => Ensures unlock even if exception thrown
-                                 // => Failure to unlock causes deadlock
+                                 // => Decrements hold count (must unlock same number of times as locked)
+                                 // => Failure to unlock causes deadlock (all threads wait forever)
         }
     }
 }
@@ -1840,20 +2462,29 @@ class AtomicCounter {
     private final AtomicInteger count = new AtomicInteger(0);
                                  // => AtomicInteger provides thread-safe operations
                                  // => Uses compare-and-swap (CAS) hardware instructions
+                                 // => CAS: atomically compares expected value and updates if match
                                  // => Lock-free (no blocking, better performance)
+                                 // => No thread ever blocks waiting for lock
                                  // => Initialized to 0
+                                 // => Backed by volatile int field for visibility
 
     public void increment() {
         count.incrementAndGet(); // => Atomically increments and returns new value
                                  // => Thread-safe without synchronized/locks
                                  // => Equivalent to: ++count in thread-safe way
-                                 // => Uses CAS loop internally
+                                 // => Uses CAS loop internally:
+                                 // =>   1. Read current value
+                                 // =>   2. Compute new value (current + 1)
+                                 // =>   3. CAS: if current unchanged, write new value
+                                 // =>   4. If CAS fails (another thread modified), retry loop
+                                 // => Alternative: getAndIncrement() returns old value (count++)
     }
 
     public int getCount() {
         return count.get();      // => Atomically reads current value
                                  // => Thread-safe read operation
-                                 // => Returns int value
+                                 // => Reads volatile field (memory barrier, sees latest writes)
+                                 // => Returns int value (primitive, not Integer wrapper)
     }
 }
 
@@ -1970,12 +2601,17 @@ try {
 // SUBMIT MULTIPLE TASKS
 List<Callable<Integer>> tasks = Arrays.asList(
                                  // => Creates list of 3 Callable tasks
+                                 // => Each Callable<Integer> returns Integer result
+                                 // => Different sleep times simulate varying workloads
     () -> { Thread.sleep(500); return 1; },
-                                 // => Task 1: sleeps 500ms, returns 1
+                                 // => Lambda 1: sleeps 500ms, returns 1
+                                 // => Slowest task (takes 500 milliseconds)
     () -> { Thread.sleep(300); return 2; },
-                                 // => Task 2: sleeps 300ms, returns 2 (faster)
+                                 // => Lambda 2: sleeps 300ms, returns 2 (faster)
+                                 // => Medium-speed task
     () -> { Thread.sleep(100); return 3; }
-                                 // => Task 3: sleeps 100ms, returns 3 (fastest)
+                                 // => Lambda 3: sleeps 100ms, returns 3 (fastest)
+                                 // => Will complete first in race scenarios
 );
 
 try {
@@ -2034,22 +2670,29 @@ scheduler.scheduleAtFixedRate(() -> {
 // SHUTDOWN
 executor.shutdown();             // => Initiates graceful shutdown
                                  // => No new tasks accepted after this call
+                                 // => Throws RejectedExecutionException for new submissions
                                  // => Previously submitted tasks continue executing
                                  // => Doesn't block (returns immediately)
+                                 // => Essential for clean resource cleanup
 try {
     if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
                                  // => Waits up to 60 seconds for tasks to complete
-                                 // => Returns true if all tasks finished
-                                 // => Returns false if timeout occurred
-        executor.shutdownNow();  // => Force shutdown if timeout
+                                 // => Blocks current thread during wait
+                                 // => Returns true if all tasks finished within timeout
+                                 // => Returns false if timeout occurred (tasks still running)
+        executor.shutdownNow();  // => Force shutdown if timeout exceeded
                                  // => Attempts to stop executing tasks
+                                 // => Sends interrupt to threads running tasks
                                  // => Interrupts threads running tasks
                                  // => Returns list of tasks that never started
+                                 // => Last resort for hung tasks
     }
 } catch (InterruptedException e) {
                                  // => If current thread interrupted while waiting
+                                 // => InterruptedException thrown by awaitTermination()
     executor.shutdownNow();      // => Force shutdown on interruption
-                                 // => Propagates interrupt signal
+                                 // => Propagates interrupt signal to pool threads
+                                 // => Thread.currentThread().interrupt() recommended after
 }
 ```
 
@@ -2086,17 +2729,22 @@ CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
 // CHAINING OPERATIONS
 CompletableFuture<String> result = future
                                  // => Start with CompletableFuture<String> from above
+                                 // => Chain transformations on async result
     .thenApply(s -> s + " World")
                                  // => thenApply() transforms result when available
                                  // => Lambda: s -> s + " World"
+                                 // => Function<String, String> (String → String)
                                  // => Input: "Hello" (from previous stage)
-                                 // => Output: "Hello World"
+                                 // => Output: "Hello World" (concatenation)
                                  // => Returns CompletableFuture<String>
+                                 // => Non-blocking: schedules transformation
     .thenApply(String::toUpperCase);
                                  // => Method reference: transforms to uppercase
+                                 // => Second transformation in chain
                                  // => Input: "Hello World"
                                  // => Output: "HELLO WORLD"
                                  // => Returns CompletableFuture<String>
+                                 // => Entire chain executes asynchronously
 
 result.thenAccept(s -> System.out.println("Result: " + s));
                                  // => thenAccept() consumes result (no return value)
@@ -2108,18 +2756,24 @@ result.thenAccept(s -> System.out.println("Result: " + s));
 // COMBINING FUTURES
 CompletableFuture<Integer> future1 = CompletableFuture.supplyAsync(() -> 10);
                                  // => Creates async task returning 10
-                                 // => Runs in background thread
+                                 // => supplyAsync() uses ForkJoinPool.commonPool()
+                                 // => Runs in background thread immediately
+                                 // => Non-blocking: returns immediately
 CompletableFuture<Integer> future2 = CompletableFuture.supplyAsync(() -> 20);
                                  // => Creates second independent async task returning 20
-                                 // => Both futures execute concurrently
+                                 // => Separate task, not dependent on future1
+                                 // => Both futures execute concurrently (parallel)
+                                 // => Different threads may execute each
 
 CompletableFuture<Integer> combined = future1.thenCombine(future2, (a, b) -> a + b);
                                  // => thenCombine() waits for BOTH futures to complete
+                                 // => Combines results from two independent futures
                                  // => BiFunction: (a, b) -> a + b combines results
-                                 // => a = 10 (from future1)
-                                 // => b = 20 (from future2)
-                                 // => Result: 30
+                                 // => a = 10 (from future1), b = 20 (from future2)
+                                 // => Waits for slower of the two futures
+                                 // => Result: 30 (10 + 20)
                                  // => Returns CompletableFuture<Integer>
+                                 // => Type: BiFunction<Integer, Integer, Integer>
 combined.thenAccept(sum -> System.out.println("Sum: " + sum));
                                  // => sum is 30 (combined result)
                                  // => Output: Sum: 30
@@ -2127,13 +2781,18 @@ combined.thenAccept(sum -> System.out.println("Sum: " + sum));
 // SEQUENTIAL COMPOSITION
 CompletableFuture<String> sequential = CompletableFuture.supplyAsync(() -> "user123")
                                  // => First async operation: returns "user123"
+                                 // => Simulates fetching user ID
     .thenCompose(userId -> CompletableFuture.supplyAsync(() -> {
                                  // => Second async operation depends on first result
+                                 // => thenCompose() takes Function<String, CompletableFuture<String>>
                                  // => userId = "user123" from previous stage
+                                 // => Sequential dependency: waits for first future
         // Fetch user details based on userId
         return "User: " + userId;// => Returns "User: user123"
+                                 // => Simulates fetching user details
     }));                         // => thenCompose flattens nested CompletableFuture<CompletableFuture<String>> → CompletableFuture<String>
                                  // => Like flatMap for futures (avoids nesting)
+                                 // => Critical: use thenCompose, NOT thenApply (would nest futures)
 
 // EXCEPTION HANDLING
 CompletableFuture<String> withError = CompletableFuture.supplyAsync(() -> {
@@ -2570,54 +3229,92 @@ public String formatNew(Object obj) {
 
 // RECORD PATTERNS (Java 21+)
 record Point(int x, int y) {}
-                             // => Simple coordinate record
+                             // => Simple coordinate record (immutable)
+                             // => Two int components: x and y
+                             // => Auto-generates: constructor, accessors, equals, hashCode
 
 public String describePoint(Object obj) {
+                             // => Method parameter: Object (any type)
+                             // => Pattern matching extracts type and components
     return switch (obj) {
+                             // => Switch expression on obj
+                             // => Pattern matching with record destructuring
         case Point(int x, int y) when x == 0 && y == 0 ->
                              // => RECORD PATTERN: destructures Point into x, y
-                             // => Extracts fields in one step (no getters)
-                             // => Guard checks origin (0, 0)
-            "Origin";        // => Returns: "Origin"
+                             // => Pattern: Point(int x, int y) extracts components
+                             // => Extracts fields in one step (no getters needed)
+                             // => Guard: when x == 0 && y == 0 checks origin
+                             // => Both x and y must be 0
+            "Origin";        // => Returns: "Origin" for (0, 0)
 
         case Point(int x, int y) when x == y ->
-                             // => Destructures and checks diagonal
+                             // => Destructures Point, checks diagonal condition
+                             // => Guard: when x == y tests equality
+                             // => Matches points on y=x line
             "Diagonal at (" + x + ", " + y + ")";
-                             // => Returns: "Diagonal at (5, 5)"
+                             // => String concatenation with coordinates
+                             // => Returns: "Diagonal at (5, 5)" for Point(5, 5)
 
         case Point(int x, int y) when y == 0 ->
-                             // => Checks horizontal axis
+                             // => Checks horizontal axis (y coordinate is 0)
+                             // => Guard: when y == 0 checks x-axis
             "X-axis at x=" + x;
-                             // => Returns: "X-axis at x=10"
+                             // => Only shows x coordinate (y is 0)
+                             // => Returns: "X-axis at x=10" for Point(10, 0)
 
         case Point(int x, int y) ->
-                             // => General point
+                             // => General point (no guard, matches any Point)
+                             // => Fallback for points not matching specific cases
             "Point(" + x + ", " + y + ")";
-                             // => Returns: "Point(3, 7)"
+                             // => General format with both coordinates
+                             // => Returns: "Point(3, 7)" for Point(3, 7)
 
         default -> "Not a point";
+                             // => Matches non-Point objects
+                             // => Required for Object parameter (not exhaustive)
     };
 }
 
 // USAGE
 System.out.println(formatNew("hello"));
+                             // => Calls formatNew with String argument
+                             // => Matches: case String s
                              // => Output: String: hello
 System.out.println(formatNew(150));
+                             // => Calls formatNew with Integer 150
+                             // => Matches: case Integer i when i > 100
                              // => Output: Large Integer: 150
 System.out.println(formatNew(42));
+                             // => Calls formatNew with Integer 42
+                             // => Doesn't match i > 100 guard
+                             // => Falls through to: case Integer i
                              // => Output: Small Integer: 42
 System.out.println(formatNew(List.of(1, 2, 3)));
+                             // => Calls formatNew with List of 3 integers
+                             // => Matches: case List<?> list when !list.isEmpty()
                              // => Output: List of 3 items
 System.out.println(formatNew(null));
+                             // => Calls formatNew with null reference
+                             // => Matches: case null (explicit null handling)
                              // => Output: null
 System.out.println(formatNew(3.14));
+                             // => Calls formatNew with Double 3.14
+                             // => No matching case for Double type
+                             // => Falls to default case
                              // => Output: Unknown: Double
 
 Point origin = new Point(0, 0);
+                             // => Creates Point at origin coordinates
+                             // => Record constructor: Point(int x, int y)
 System.out.println(describePoint(origin));
+                             // => Calls describePoint with Point(0, 0)
+                             // => Matches: case Point(int x, int y) when x == 0 && y == 0
                              // => Output: Origin
 Point diagonal = new Point(5, 5);
+                             // => Creates Point on diagonal line (x == y)
 System.out.println(describePoint(diagonal));
+                             // => Calls describePoint with Point(5, 5)
+                             // => Matches: case Point(int x, int y) when x == y
                              // => Output: Diagonal at (5, 5)
 ```
 
@@ -2636,100 +3333,145 @@ Optional explicitly models presence/absence of values, eliminating NullPointerEx
 ```java
 // NULL-BASED APPROACH - error-prone
 public String findUserEmailOld(String userId) {
+                             // => Traditional null-based method signature
+                             // => No indication null is possible (documentation only)
     User user = database.findUser(userId);
                              // => Returns null if not found
                              // => Caller must remember to check
+                             // => Easy to forget: no compile-time safety
     if (user == null) {
         return null;         // => Null propagation continues
                              // => Caller must check again
+                             // => Chain of null checks required
     }
 
     String email = user.getEmail();
                              // => getEmail() might also return null
+                             // => Another hidden null possibility
     if (email == null) {
         return null;         // => Nested null checks proliferate
+                             // => 3 levels deep for simple operation
     }
 
     return email.toLowerCase();
                              // => Risk: NullPointerException if checks missed
+                             // => Fragile: any skipped check causes crash
 }
 
 // OPTIONAL APPROACH - null-safe
 public Optional<String> findUserEmail(String userId) {
+                             // => Method signature declares Optional<String>
+                             // => Compile-time indication: result might be absent
+                             // => Forces caller to handle both cases
     return database.findUserOptional(userId)
                              // => Returns Optional<User> (empty if not found)
                              // => Explicit: caller knows value might be absent
+                             // => No null: uses Optional.empty() instead
         .map(User::getEmail) // => map() transforms Optional<User> → Optional<String>
                              // => If user absent: returns Optional.empty() (short-circuits)
                              // => If user present: extracts email, wraps in Optional
                              // => Handles null email: returns Optional.empty()
+                             // => No explicit null check needed
         .map(String::toLowerCase);
                              // => Chains transformations safely
                              // => Optional<String> → Optional<String> (lowercase)
                              // => If email absent: returns Optional.empty()
+                             // => Entire chain null-safe (no NPE possible)
 }
 
 // CREATION
 Optional<String> present = Optional.of("value");
                              // => Creates Optional with non-null value
                              // => Throws NullPointerException if "value" is null
+                             // => Use when value guaranteed non-null
+                             // => present wraps "value" (type: Optional<String>)
 Optional<String> nullable = Optional.ofNullable(getValue());
                              // => Creates Optional from potentially null value
                              // => Returns Optional.empty() if getValue() returns null
+                             // => Returns Optional.of(value) if getValue() non-null
+                             // => Most common creation method (safe for unknowns)
 Optional<String> empty = Optional.empty();
                              // => Creates empty Optional explicitly
+                             // => Represents absence of value
+                             // => Singleton instance (same object reused)
 
 // TRANSFORMATION - map()
 Optional<String> upper = Optional.of("hello")
+                             // => Creates Optional<String> with "hello"
+                             // => Value present (not empty)
     .map(String::toUpperCase);
                              // => map() applies function if value present
+                             // => Method reference: String::toUpperCase
+                             // => Transforms "hello" → "HELLO"
                              // => Returns Optional<String> with "HELLO"
                              // => If empty: returns Optional.empty() (no function call)
+                             // => Type-safe transformation: Optional<String> → Optional<String>
 
 // FLAT MAPPING - flatMap()
 public Optional<String> getUserCity(String userId) {
+                             // => Method returns Optional<String> (city or empty)
     return database.findUserOptional(userId)
-                             // => Optional<User>
+                             // => Optional<User> (user or empty)
+                             // => First step in Optional chain
         .flatMap(user -> user.getAddress())
                              // => getAddress() returns Optional<Address>
                              // => flatMap() prevents Optional<Optional<Address>>
                              // => Flattens to Optional<Address>
+                             // => If user empty: short-circuits to Optional.empty()
         .flatMap(address -> address.getCity());
                              // => getCity() returns Optional<String>
+                             // => flatMap() flattens Optional<Optional<String>> → Optional<String>
                              // => Final result: Optional<String> (city)
+                             // => 3-level nested Optional chain without nesting types
 }
 
 // FILTERING - filter()
 Optional<String> longEmail = Optional.of("user@example.com")
+                             // => Creates Optional<String> with email
+                             // => Value: "user@example.com" (16 characters)
     .filter(email -> email.length() > 10);
                              // => filter() keeps value if predicate true
+                             // => Predicate: email.length() > 10
                              // => email.length() is 16 (> 10), so kept
                              // => Returns Optional<String> with "user@example.com"
+                             // => Type unchanged: Optional<String> → Optional<String>
 
 Optional<String> shortEmail = Optional.of("me@co")
+                             // => Creates Optional<String> with short email
+                             // => Value: "me@co" (5 characters)
     .filter(email -> email.length() > 10);
-                             // => email.length() is 5 (< 10), so filtered out
+                             // => Predicate: email.length() > 10
+                             // => email.length() is 5 (NOT > 10), so filtered out
                              // => Returns Optional.empty()
+                             // => Value discarded because predicate failed
 
 // TERMINAL OPERATIONS
 String result1 = Optional.of("value").orElse("default");
                              // => orElse() returns value if present, else default
+                             // => Optional contains "value", so returns "value"
                              // => Returns: "value"
                              // => CAVEAT: "default" is ALWAYS evaluated (even if not used)
+                             // => Inefficient if default is expensive to compute
 
 String result2 = Optional.empty().orElse("default");
-                             // => Optional is empty, returns default
+                             // => Optional is empty (no value)
+                             // => Falls back to default value
                              // => Returns: "default"
 
 String result3 = Optional.of("value").orElseGet(() -> expensiveDefault());
                              // => orElseGet() takes Supplier (lazy evaluation)
+                             // => Optional contains "value", so supplier not called
                              // => Only calls expensiveDefault() if Optional empty
                              // => Returns: "value" (supplier not called)
+                             // => Efficient: avoids expensive computation
 
 String result4 = Optional.empty()
+                             // => Empty Optional (no value present)
     .orElseThrow(() -> new IllegalStateException("Not found"));
                              // => orElseThrow() throws exception if empty
+                             // => Supplier creates exception only when needed
                              // => Throws: IllegalStateException("Not found")
+                             // => Use when absence is exceptional condition
 
 // PRESENCE CHECKS
 Optional<String> opt = Optional.of("test");
@@ -3038,10 +3780,12 @@ String sqlOld = "SELECT users.id, users.name, users.email\n" +
                 "JOIN orders ON users.id = orders.user_id\n" +
                 "WHERE orders.status = 'ACTIVE'\n" +
                 "ORDER BY users.name";
-                             // => Requires \n for newlines
-                             // => Requires + for concatenation
-                             // => Unreadable formatting
+                             // => Requires explicit \n for newlines
+                             // => Requires + operator for concatenation
+                             // => Each line needs quotes and +
+                             // => Unreadable formatting (no natural structure)
                              // => Easy to forget \n or +
+                             // => Error-prone: missing \n breaks SQL syntax
 
 // TEXT BLOCK (Java 17+)
 String sqlNew = """
@@ -3050,15 +3794,17 @@ String sqlNew = """
     JOIN orders ON users.id = orders.user_id
     WHERE orders.status = 'ACTIVE'
     ORDER BY users.name
-    """;                     // => Triple quotes delimit text block
-                             // => Automatic newline preservation
-                             // => No escape sequences needed
+    """;                     // => Triple quotes (""") delimit text block
+                             // => Opening """ must be followed by newline
+                             // => Automatic newline preservation (no \n needed)
+                             // => No escape sequences needed (except \ and """)
                              // => Closing """ determines indentation level
-                             // => All lines dedented to match closing """
+                             // => All lines dedented to match closing """ position
+                             // => Result: natural SQL formatting preserved
 
 // FORMATTING WITH TEXT BLOCKS
-String userId = "user123";
-String status = "ACTIVE";
+String userId = "user123";   // => Variable to inject into SQL
+String status = "ACTIVE";    // => Another variable for WHERE clause
 
 String formattedSql = """
     SELECT users.id, users.name, users.email
@@ -3066,11 +3812,15 @@ String formattedSql = """
     WHERE users.id = '%s'
     AND users.status = '%s'
     """.formatted(userId, status);
-                             // => formatted() replaces %s placeholders
-                             // => Returns: SELECT users.id, users.name, users.email
-                             //             FROM users
-                             //             WHERE users.id = 'user123'
-                             //             AND users.status = 'ACTIVE'
+                             // => formatted() method replaces %s placeholders
+                             // => First %s replaced with userId ("user123")
+                             // => Second %s replaced with status ("ACTIVE")
+                             // => Type-safe: requires exact number of arguments
+                             // => Returns multi-line string with substitutions:
+                             //    SELECT users.id, users.name, users.email
+                             //    FROM users
+                             //    WHERE users.id = 'user123'
+                             //    AND users.status = 'ACTIVE'
 
 // JSON TEMPLATE
 String jsonTemplate = """
@@ -3223,77 +3973,119 @@ The `var` keyword (Java 10+) infers local variable types from initializers, redu
 // TRADITIONAL TYPE DECLARATION - verbose
 Map<String, List<Employee>> employeesByDepartment =
     new HashMap<String, List<Employee>>();
-                             // => Type repeated 3 times
+                             // => Type repeated 3 times (left, right, diamond)
                              // => Redundant: right side has all type info
+                             // => 72 characters just for type declaration
+                             // => Error-prone: must keep left/right synchronized
 
 // VAR TYPE INFERENCE (Java 10+)
 var employeesByDept = new HashMap<String, List<Employee>>();
-                             // => Compiler infers Map<String, List<Employee>>
+                             // => Compiler infers Map<String, List<Employee>> from right
                              // => Type appears once (right side)
+                             // => Compile-time type checking (same as explicit)
                              // => Still strongly typed (not dynamic typing)
+                             // => 58 characters (19% shorter)
 
 // GOOD USAGE - type obvious from initializer
-var message = "Hello";       // => String (obvious)
-var count = 42;              // => int (obvious)
-var price = 19.99;           // => double (obvious)
+var message = "Hello";       // => String (obvious from string literal)
+                             // => Inferred type: java.lang.String
+var count = 42;              // => int (obvious from integer literal)
+                             // => Primitive type inferred, not Integer wrapper
+var price = 19.99;           // => double (obvious from decimal literal)
+                             // => Primitive double, not Double wrapper
 var names = new ArrayList<String>();
-                             // => ArrayList<String> (obvious)
+                             // => ArrayList<String> (obvious from constructor)
+                             // => Concrete type ArrayList, not interface List
 var numbers = List.of(1, 2, 3);
-                             // => List<Integer> (obvious from List.of)
+                             // => List<Integer> (obvious from List.of factory)
+                             // => Immutable list from varargs integers
+                             // => Interface type List, not concrete implementation
 
 // GOOD USAGE - diamond operator
 var employees = new ArrayList<Employee>();
-                             // => ArrayList<Employee> inferred from <>
+                             // => ArrayList<Employee> inferred from diamond <>
+                             // => Diamond operator <> uses left-side context
                              // => Before var: ArrayList<Employee> employees = new ArrayList<>();
+                             // => var + diamond: maximum brevity with type safety
 
 // GOOD USAGE - complex generic types
 var mapper = new HashMap<String, Function<Employee, String>>();
                              // => HashMap<String, Function<Employee, String>>
-                             // => Saves typing nested generics
+                             // => Saves typing deeply nested generics
+                             // => Without var: would repeat Function<Employee, String> twice
+                             // => Value: avoids complex generic type duplication
 
 // GOOD USAGE - streams
 var activeEmployees = employees.stream()
+                             // => Creates Stream<Employee> from employees
     .filter(Employee::isActive)
+                             // => Filters to active employees only
     .collect(Collectors.toList());
+                             // => Collects to List<Employee>
                              // => List<Employee> inferred from stream operations
-                             // => Clear from context
+                             // => Type clear from stream source and operations
+                             // => Clear from context without explicit type
 
 // GOOD USAGE - try-with-resources
 try (var reader = new BufferedReader(new FileReader("data.txt"))) {
-                             // => BufferedReader inferred
-                             // => Shorter than BufferedReader reader = ...
+                             // => BufferedReader inferred from constructor
+                             // => Shorter than BufferedReader reader = new BufferedReader(...)
+                             // => Reader auto-closes when block exits
+                             // => Type obvious from BufferedReader constructor
     var line = reader.readLine();
-                             // => String inferred from readLine()
+                             // => String inferred from readLine() return type
+                             // => Line contains file content or null if EOF
+} catch (IOException e) {    // => Handles file I/O exceptions
+                             // => Both file operations and auto-close can throw
 }
 
 // GOOD USAGE - loops
 for (var employee : employees) {
                              // => Employee inferred from employees collection
+                             // => Enhanced for-loop (for-each) iteration
+                             // => Type extracted from Iterable<Employee>
     System.out.println(employee.name());
+                             // => Calls name() on Employee (type-safe)
+                             // => Compiler knows employee is Employee
 }
 
-var entries = map.entrySet();
-for (var entry : entries) {  // => Map.Entry<String, Integer> inferred
+var entries = map.entrySet();// => Set<Map.Entry<K, V>> inferred from map
+                             // => Type: Set<Map.Entry<String, Integer>>
+for (var entry : entries) {  // => Map.Entry<String, Integer> inferred per iteration
+                             // => entry type extracted from entries Set
     System.out.println(entry.getKey() + ": " + entry.getValue());
+                             // => getKey() returns String, getValue() returns Integer
+                             // => Type-safe access to map entry components
 }
 
 // BAD USAGE - type not obvious
 var result = process();      // => What type is result?
                              // => Reader must check process() signature
+                             // => Method name "process" gives no type hint
                              // => Prefer explicit type for clarity
+                             // => Harms code review and maintenance
 
 var data = getData();        // => What is data?
                              // => Generic method name gives no hint
+                             // => Could be String, Object, custom type
+                             // => Forces IDE/documentation lookup
 
 // GOOD ALTERNATIVE - explicit type
 ProcessedData result = process();
                              // => Clear: result is ProcessedData
+                             // => Self-documenting code
+                             // => No IDE hover needed
 UserData data = getData();   // => Clear: data is UserData
+                             // => Type visible in code review/diff
 
 // BAD USAGE - null or generic initializers
 var value = null;            // => COMPILE ERROR: cannot infer from null
+                             // => null has no type information
+                             // => Must use explicit type or non-null initializer
 var list = new ArrayList<>();// => COMPILE ERROR: cannot infer generic type
-                             // => Must use: new ArrayList<String>()
+                             // => Diamond <> requires left-side type context
+                             // => var provides no context for <>
+                             // => Must use: new ArrayList<String>() with explicit type
 
 // BAD USAGE - method parameters (not allowed)
 // public void printMessage(var message) {
@@ -3307,25 +4099,35 @@ var list = new ArrayList<>();// => COMPILE ERROR: cannot infer generic type
 
 // LAMBDAS WITH VAR (Java 11+)
 BiFunction<Integer, Integer, Integer> add = (var x, var y) -> x + y;
-                             // => var in lambda parameters (all or none)
+                             // => var in lambda parameters (all or none rule)
+                             // => Cannot mix: (var x, int y) is COMPILE ERROR
                              // => Allows annotations: (@NotNull var x, @NotNull var y)
-                             // => Without var: (x, y) -> x + y (shorter)
-                             // => Use var if annotations needed
+                             // => Without var: (x, y) -> x + y (shorter, no annotations)
+                             // => Use var only when annotations needed
+                             // => Types inferred from BiFunction<Integer, Integer, Integer>
 
 // CHAIN READABILITY
 // BAD - too much var
-var a = getA();
-var b = a.getB();
-var c = b.getC();
+var a = getA();              // => What type is a? Unclear
+var b = a.getB();            // => What type is b? Must trace through a
+var c = b.getC();            // => What type is c? Must trace through a, b
 var d = c.getD();            // => Unclear: what are a, b, c, d?
+                             // => Cognitive overload tracing types
+                             // => Code review nightmare
 
 // GOOD - selective var
 UserAccount account = getAccount();
+                             // => Explicit: account is UserAccount
+                             // => Critical domain type deserves explicit declaration
 var transactions = account.getTransactions();
-                             // => List<Transaction> inferred (obvious)
+                             // => List<Transaction> inferred (obvious from method name)
+                             // => Method name indicates collection of transactions
 var recent = transactions.stream()
+                             // => Stream<Transaction> from transactions list
     .filter(t -> t.isRecent())
+                             // => Filters to recent transactions only
     .collect(Collectors.toList());
+                             // => Collects filtered stream to List<Transaction>
                              // => Type clear from stream operations
 
 // COMPARISON
@@ -3359,108 +4161,159 @@ Try-with-resources (Java 7+) automatically closes resources implementing AutoClo
 public void processFileOld(String path) throws IOException {
     BufferedReader reader = null;
                              // => Initialize to null for finally block
+                             // => Necessary for finally block scope
     try {
         reader = new BufferedReader(new FileReader(path));
-                             // => Opens file resource
+                             // => Opens file resource (acquires system handle)
+                             // => FileReader opens file, BufferedReader wraps it
                              // => Resource leak if exception before assignment
+                             // => Assignment happens AFTER constructor success
         String line = reader.readLine();
                              // => Read first line from file
+                             // => Returns String or null if EOF
         System.out.println(line);
                              // => Output: first line content
+                             // => Prints to console
     } finally {
         if (reader != null) {// => Manual null check required
+                             // => Prevents NullPointerException if reader never assigned
             try {
                 reader.close();
-                             // => Manual close in finally
+                             // => Manual close in finally block
+                             // => Releases file handle to OS
                              // => Another try-catch for close() exceptions
+                             // => close() itself can throw IOException
             } catch (IOException e) {
-                             // => Swallows close exception (bad)
+                             // => Swallows close exception (bad practice)
+                             // => Original exception takes precedence
                 e.printStackTrace();
+                             // => Prints close exception to stderr
             }
         }
     }                        // => 15 lines for simple file read
+                             // => Verbose, error-prone, nested try-catch
 }
 
 // TRY-WITH-RESOURCES (Java 7+)
 public void processFile(String path) throws IOException {
     try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
                              // => Resource declared in try(...) parentheses
+                             // => Syntax: try (Resource r = new Resource()) { ... }
                              // => Implements AutoCloseable (close() called automatically)
+                             // => Compiler generates finally block internally
                              // => Guaranteed close even if exception thrown
+                             // => Resource scope limited to try block
         String line = reader.readLine();
-                             // => Read file content
+                             // => Read file content (first line)
+                             // => Can throw IOException
         System.out.println(line);
                              // => Output: first line of file
-    }                        // => reader.close() called automatically here
+                             // => Prints line content to console
+    }                        // => reader.close() called automatically here (implicit finally)
+                             // => Close happens before catch/finally blocks
                              // => If exception in try body: close() still called
                              // => If close() throws: exception suppressed, original thrown
-}                            // => 6 lines (60% less code)
+                             // => Suppressed exceptions available via getSuppressed()
+}                            // => 6 lines (60% less code than manual approach)
+                             // => No null checks, no nested try-catch
 
 // MULTIPLE RESOURCES
 public void copyFile(String source, String dest) throws IOException {
     try (BufferedReader reader = new BufferedReader(new FileReader(source));
                              // => First resource: source file reader
+                             // => Opens source file for reading
+                             // => Must implement AutoCloseable
          BufferedWriter writer = new BufferedWriter(new FileWriter(dest))) {
                              // => Second resource: destination file writer
-                             // => Multiple resources separated by semicolon
+                             // => Opens dest file for writing (creates if doesn't exist)
+                             // => Multiple resources separated by semicolon (;)
+                             // => Can declare any number of resources
                              // => Closed in REVERSE order: writer, then reader
+                             // => Reverse order prevents dependencies breaking
                              // => Guaranteed cleanup even if reader/writer throws
 
-        String line;         // => Variable to hold each line
+        String line;         // => Variable to hold each line from source
+                             // => Declared outside loop for scope
         while ((line = reader.readLine()) != null) {
-                             // => Read each line until EOF
+                             // => Reads line, assigns to 'line', checks if null
+                             // => null indicates end of file (EOF)
+                             // => Loop continues while lines remain
+                             // => Idiomatic Java pattern: assign + test in while condition
             writer.write(line);
-                             // => Write to destination
-            writer.newLine();// => Add newline
-        }                    // => Automatic flush and close for both resources
-    }
+                             // => Write line to destination file
+                             // => Does not append newline (write raw content)
+            writer.newLine();// => Add platform-specific newline
+                             // => Uses system line separator (\n or \r\n)
+        }                    // => Loop exits at EOF (readLine() returns null)
+                             // => Automatic flush and close for both resources
+    }                        // => writer closed first (reverse order), then reader
+                             // => All data flushed to disk before close
 }
 
 // EFFECTIVELY FINAL RESOURCES (Java 9+)
 public void processExistingResource(BufferedReader reader) throws IOException {
                              // => reader parameter passed from caller
+                             // => Caller owns resource, method uses it
     // Java 7-8: must declare inside try
     // try (BufferedReader r = reader) { ... }
+                             // => Required dummy assignment in Java 7-8
 
     // Java 9+: can use effectively final variable
     try (reader) {           // => reader must be final or effectively final
-                             // => No reassignment needed
-                             // => Cleaner for resources from parameters
+                             // => "Effectively final": no reassignment after initialization
+                             // => No reassignment needed (cleaner syntax)
+                             // => Cleaner for resources from parameters/fields
         String line = reader.readLine();
-                             // => Read first line
+                             // => Read first line from reader
+                             // => Can throw IOException
         System.out.println(line);
-                             // => Output: line content
+                             // => Output: line content to console
     }                        // => reader.close() called automatically
+                             // => Caller's resource closed by method (careful!)
 }
 
 // CUSTOM AUTOCLOSEABLE RESOURCE
 class DatabaseConnection implements AutoCloseable {
                              // => Custom resource implementing AutoCloseable
-    private Connection conn;
+                             // => Contract: must provide close() method
+    private Connection conn; // => Underlying JDBC connection
+                             // => Private field encapsulates resource
 
     public DatabaseConnection(String url) throws SQLException {
+                             // => Constructor acquires resource
+                             // => throws SQLException if connection fails
         this.conn = DriverManager.getConnection(url);
-                             // => Opens database connection
+                             // => Opens database connection via JDBC
+                             // => Acquires connection from driver (resource allocation)
         System.out.println("Database connected");
+                             // => Output: Database connected (initialization complete)
     }
 
     public void executeQuery(String sql) throws SQLException {
+                             // => Executes SQL query on connection
         try (Statement stmt = conn.createStatement()) {
                              // => Nested try-with-resources
-                             // => Statement auto-closed
+                             // => Statement is also AutoCloseable
+                             // => Statement auto-closed after block
             stmt.execute(sql);
-                             // => Execute SQL query
-        }
+                             // => Execute SQL query via statement
+                             // => Can be SELECT, INSERT, UPDATE, DELETE, etc.
+        }                    // => stmt.close() called automatically here
     }
 
     @Override
     public void close() throws SQLException {
                              // => Called automatically by try-with-resources
+                             // => Contract method from AutoCloseable interface
+                             // => Releases acquired resource
         if (conn != null && !conn.isClosed()) {
                              // => Check connection is valid and open
-            conn.close();    // => Close underlying connection
+                             // => Prevents double-close (idempotent close)
+                             // => !conn.isClosed() ensures connection still open
+            conn.close();    // => Close underlying JDBC connection
+                             // => Returns connection to pool (if pooled)
             System.out.println("Database disconnected");
-                             // => Output: Database disconnected
+                             // => Output: Database disconnected (cleanup complete)
         }
     }
 }
@@ -3478,41 +4331,66 @@ public void queryDatabase(String sql) throws SQLException {
 // SUPPRESSED EXCEPTIONS
 public void demonstrateSuppressedExceptions() {
     try (var resource = new AutoCloseable() {
+                             // => Anonymous inner class implementing AutoCloseable
+                             // => Created inline for demonstration
         @Override
         public void close() throws Exception {
+                             // => Override close() method
+                             // => Will be called automatically by try-with-resources
             throw new Exception("Error during close");
                              // => close() throws exception
+                             // => Simulates close() failure scenario
         }
     }) {
         throw new Exception("Error in try block");
                              // => try block throws exception FIRST
+                             // => Original/primary exception
+                             // => close() called before catch, also throws
     } catch (Exception e) {
         System.out.println("Main exception: " + e.getMessage());
                              // => Output: Main exception: Error in try block
-                             // => Original exception preserved
+                             // => e is the original try block exception
+                             // => Original exception preserved (not lost)
 
         Throwable[] suppressed = e.getSuppressed();
                              // => getSuppressed() returns close() exceptions
+                             // => Array of exceptions suppressed during close
+                             // => Mechanism prevents losing close() errors
         System.out.println("Suppressed exceptions: " + suppressed.length);
                              // => Output: Suppressed exceptions: 1
+                             // => One exception from close() added as suppressed
         System.out.println("Suppressed: " + suppressed[0].getMessage());
                              // => Output: Suppressed: Error during close
+                             // => First suppressed exception is close() error
+                             // => Available for debugging resource cleanup issues
     }                        // => Close exceptions don't hide original exception
+                             // => Best of both worlds: primary + close() exceptions
 }
 
 // NESTED TRY-WITH-RESOURCES
 public void processNestedResources() throws IOException {
     try (var outer = new BufferedReader(new FileReader("outer.txt"))) {
-                             // => Outer resource
+                             // => Outer resource (longer lifetime)
+                             // => Opens outer.txt file for reading
+                             // => Remains open for entire outer try block
         String config = outer.readLine();
+                             // => Reads config value from outer file
+                             // => config contains filename to process
 
         try (var inner = new BufferedReader(new FileReader(config))) {
-                             // => Inner resource (nested try)
+                             // => Inner resource (shorter lifetime)
+                             // => Opens file named in config variable
+                             // => Nested try-with-resources (independent cleanup)
             String data = inner.readLine();
+                             // => Reads data from inner file
             System.out.println(data);
-        }                    // => inner.close() called here
-    }                        // => outer.close() called here
+                             // => Output: data content from inner file
+        }                    // => inner.close() called here (inner scope exits)
+                             // => Inner resource released first
+    }                        // => outer.close() called here (outer scope exits)
+                             // => Outer resource released second
                              // => Clean separation of resource lifetimes
+                             // => Each resource lives only as long as needed
 }
 
 // COMPARISON: OLD vs NEW
@@ -3552,44 +4430,52 @@ Builder pattern creates complex objects step-by-step, providing readable constru
 ```java
 // PROBLEM - complex constructor
 public class LoanAgreement {
-    private final String id;
-    private final String borrower;
-    private final String lender;
-    private final BigDecimal principal;
-    private final BigDecimal interestRate;
-    private final int termMonths;
-    private final LocalDate startDate;
-    private final String purpose;
-    private final boolean secured;
-    private final List<String> collateral;
+    private final String id;       // => Immutable field (final)
+    private final String borrower; // => Borrower identifier
+    private final String lender;   // => Lender identifier
+    private final BigDecimal principal; // => Loan amount
+    private final BigDecimal interestRate; // => Annual interest rate
+    private final int termMonths;  // => Loan term in months
+    private final LocalDate startDate; // => Loan start date
+    private final String purpose;  // => Loan purpose (optional)
+    private final boolean secured; // => Secured/unsecured flag
+    private final List<String> collateral; // => Collateral items (optional)
+                             // => 10 fields: some required, some optional
 
     // BAD: telescoping constructor
     public LoanAgreement(String id, String borrower, String lender,
                         BigDecimal principal, BigDecimal interestRate,
                         int termMonths, LocalDate startDate) {
+                             // => Constructor with 7 required parameters
+                             // => Delegates to main constructor
         this(id, borrower, lender, principal, interestRate,
              termMonths, startDate, null, false, List.of());
                              // => Calls overloaded constructor with defaults
+                             // => purpose=null, secured=false, collateral=[]
                              // => Hard to read: which parameter is which?
+                             // => Telescoping: multiple overloaded constructors
     }
 
     public LoanAgreement(String id, String borrower, String lender,
                         BigDecimal principal, BigDecimal interestRate,
                         int termMonths, LocalDate startDate, String purpose,
                         boolean secured, List<String> collateral) {
-                             // => 10 parameters (unreadable)
+                             // => 10 parameters (unreadable, unmaintainable)
                              // => Parameter order easy to mix up
                              // => No named parameters in Java
-        this.id = id;
-        this.borrower = borrower;
-        this.lender = lender;
-        this.principal = principal;
-        this.interestRate = interestRate;
-        this.termMonths = termMonths;
-        this.startDate = startDate;
-        this.purpose = purpose;
-        this.secured = secured;
+                             // => IDE required to know parameter positions
+        this.id = id;            // => Assigns id field
+        this.borrower = borrower; // => Assigns borrower field
+        this.lender = lender;    // => Assigns lender field
+        this.principal = principal; // => Assigns principal field
+        this.interestRate = interestRate; // => Assigns interest rate
+        this.termMonths = termMonths; // => Assigns term
+        this.startDate = startDate; // => Assigns start date
+        this.purpose = purpose;  // => Assigns optional purpose
+        this.secured = secured;  // => Assigns secured flag
         this.collateral = List.copyOf(collateral);
+                             // => Defensive copy of collateral list
+                             // => Ensures immutability (caller can't modify)
     }
 }
 
@@ -3610,33 +4496,47 @@ public class LoanAgreement {
     // PRIVATE CONSTRUCTOR - only builder can create
     private LoanAgreement(Builder builder) {
                              // => Accepts Builder, not individual fields
-                             // => Validation in one place
-        this.id = builder.id;
-        this.borrower = builder.borrower;
-        this.lender = builder.lender;
-        this.principal = builder.principal;
-        this.interestRate = builder.interestRate;
-        this.termMonths = builder.termMonths;
-        this.startDate = builder.startDate;
-        this.purpose = builder.purpose;
-        this.secured = builder.secured;
-        this.collateral = builder.collateral;
+                             // => Private: only Builder.build() can call
+                             // => Enforces builder pattern usage
+                             // => Validation in one place (not scattered)
+        this.id = builder.id;    // => Copies id from builder
+        this.borrower = builder.borrower; // => Copies borrower
+        this.lender = builder.lender; // => Copies lender
+        this.principal = builder.principal; // => Copies principal
+        this.interestRate = builder.interestRate; // => Copies interest rate
+        this.termMonths = builder.termMonths; // => Copies term
+        this.startDate = builder.startDate; // => Copies start date
+        this.purpose = builder.purpose; // => Copies optional purpose
+        this.secured = builder.secured; // => Copies secured flag
+        this.collateral = builder.collateral; // => Shares list reference (already defensive copied)
 
-        validate();          // => Centralized validation after construction
+        validate();          // => Centralized validation after all fields set
+                             // => Ensures object invariants before construction completes
+                             // => Throws if validation fails (object never created)
     }
 
     private void validate() {
+                             // => Business rule validation method
+                             // => Called from constructor (fail-fast)
         if (borrower == null || borrower.isBlank()) {
+                             // => Null check and empty check
             throw new IllegalArgumentException("Borrower required");
+                             // => Required field violation
         }
         if (principal.compareTo(BigDecimal.ZERO) <= 0) {
+                             // => BigDecimal comparison (can't use < operator)
+                             // => Ensures principal is positive
             throw new IllegalArgumentException("Principal must be positive");
+                             // => Business rule: no zero/negative loans
         }
         if (termMonths <= 0) {
+                             // => Primitive int comparison
             throw new IllegalArgumentException("Term must be positive");
+                             // => Business rule: loan must have duration
         }
                              // => Business rule validation
                              // => Fails fast before object fully constructed
+                             // => Prevents invalid objects from existing
     }
 
     // Getters
@@ -3647,88 +4547,117 @@ public class LoanAgreement {
 
     // BUILDER CLASS
     public static class Builder {
-                             // => Static nested class
+                             // => Static nested class (no outer instance reference)
                              // => Mutable fields (before building)
-        // Required fields
-        private String id;
-        private String borrower;
-        private String lender;
-        private BigDecimal principal;
-        private BigDecimal interestRate;
-        private int termMonths;
-        private LocalDate startDate;
+                             // => Fluent interface pattern (method chaining)
+        // Required fields (no defaults)
+        private String id;       // => Initially null (set via id() method)
+        private String borrower; // => Initially null (required)
+        private String lender;   // => Initially null (required)
+        private BigDecimal principal; // => Initially null (required)
+        private BigDecimal interestRate; // => Initially null (required)
+        private int termMonths;  // => Initially 0 (required, validated)
+        private LocalDate startDate; // => Initially null (required)
 
         // Optional fields with defaults
-        private String purpose = "";
-        private boolean secured = false;
-        private List<String> collateral = List.of();
+        private String purpose = ""; // => Default: empty string
+        private boolean secured = false; // => Default: unsecured loan
+        private List<String> collateral = List.of(); // => Default: empty immutable list
 
         // REQUIRED FIELD SETTERS - return this for chaining
         public Builder id(String id) {
-            this.id = id;    // => Sets id field
+                             // => Setter for required field
+            this.id = id;    // => Sets id field on builder
             return this;     // => Returns builder for method chaining
+                             // => Enables: builder.id(...).borrower(...)
         }
 
         public Builder borrower(String borrower) {
+                             // => Setter for required borrower field
             this.borrower = borrower;
-            return this;
+                             // => Stores borrower value
+            return this;     // => Returns this for chaining
         }
 
         public Builder lender(String lender) {
+                             // => Setter for required lender field
             this.lender = lender;
-            return this;
+                             // => Stores lender value
+            return this;     // => Returns this for chaining
         }
 
         public Builder principal(BigDecimal principal) {
+                             // => Setter for loan amount (required)
             this.principal = principal;
-            return this;
+                             // => Stores principal amount
+            return this;     // => Returns this for chaining
         }
 
         public Builder interestRate(BigDecimal interestRate) {
+                             // => Setter for interest rate (required)
             this.interestRate = interestRate;
-            return this;
+                             // => Stores annual interest rate
+            return this;     // => Returns this for chaining
         }
 
         public Builder termMonths(int termMonths) {
+                             // => Setter for loan term (required)
             this.termMonths = termMonths;
-            return this;
+                             // => Stores term duration in months
+            return this;     // => Returns this for chaining
         }
 
         public Builder startDate(LocalDate startDate) {
+                             // => Setter for loan start date (required)
             this.startDate = startDate;
-            return this;
+                             // => Stores loan start date
+            return this;     // => Returns this for chaining
         }
 
         // OPTIONAL FIELD SETTERS
         public Builder purpose(String purpose) {
+                             // => Setter for optional purpose field
             this.purpose = purpose;
+                             // => Overrides default empty string
             return this;     // => Optional: caller can skip this
+                             // => Returns this for chaining
         }
 
         public Builder secured(boolean secured) {
+                             // => Setter for optional secured flag
             this.secured = secured;
-            return this;
+                             // => Overrides default false
+            return this;     // => Returns this for chaining
         }
 
         public Builder collateral(List<String> collateral) {
+                             // => Setter for optional collateral list
             this.collateral = List.copyOf(collateral);
-                             // => Defensive copy (immutability)
-            return this;
+                             // => Defensive copy (prevents external modification)
+                             // => Creates immutable copy of input list
+                             // => Ensures builder immutability guarantee
+            return this;     // => Returns this for chaining
         }
 
         // BUILD METHOD - creates LoanAgreement
         public LoanAgreement build() {
-                             // => Terminal operation
+                             // => Terminal operation (ends chaining)
+                             // => Creates immutable LoanAgreement from builder
             return new LoanAgreement(this);
-                             // => Calls private constructor
+                             // => Calls private constructor with builder
+                             // => Passes entire builder (not individual fields)
                              // => Validation happens in constructor
+                             // => Throws if validation fails
         }
     }
 
     // FACTORY METHOD - creates builder
     public static Builder builder() {
-                             // => Static factory method
+                             // => Static factory method for builder creation
+                             // => Entry point for builder pattern
+                             // => Usage: LoanAgreement.builder().id(...).build()
         return new Builder();// => Returns new builder instance
+                             // => Builder has default values for optional fields
     }
 }
 

@@ -601,7 +601,7 @@ public class ContractService {
             return repository.save(contract);
 
         } catch (IllegalArgumentException e) {
-            logger.error("Invalid contract request: customerId={}, error={}",
+            logger.warn("Invalid contract request: customerId={}, error={}",
                 request.getCustomerId(), e.getMessage());
             throw new ContractValidationException(
                 "Cannot create contract: " + e.getMessage(), e);
