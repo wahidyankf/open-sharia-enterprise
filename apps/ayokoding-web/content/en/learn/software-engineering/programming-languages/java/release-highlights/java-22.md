@@ -3,7 +3,7 @@ title: "Java 22 (March 2024)"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Java 22 release highlights - Foreign Function & Memory API final, Unnamed Variables & Patterns, Launch Multi-File Programs, Stream Gatherers, String Templates second preview"
-weight: 1000006
+weight: 1000009
 tags: ["java", "java-22", "ffm-api", "unnamed-patterns", "stream-gatherers", "string-templates"]
 ---
 

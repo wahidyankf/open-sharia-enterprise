@@ -3,7 +3,7 @@ title: "Java 15 (September 2020)"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Java 15 release highlights - Text Blocks standard, Sealed Classes preview, ZGC and Shenandoah production-ready, Hidden Classes, and EdDSA cryptography"
-weight: 1000001
+weight: 1000002
 tags: ["java", "java-15", "text-blocks", "sealed-classes", "zgc", "shenandoah"]
 ---
 

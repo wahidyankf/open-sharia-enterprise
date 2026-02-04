@@ -3,7 +3,7 @@ title: "Java 19 (September 2022)"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Java 19 release highlights - Virtual Threads preview (Project Loom), Structured Concurrency, Record Patterns, Pattern Matching for switch third preview, and Foreign Function & Memory API"
-weight: 1000004
+weight: 1000006
 tags: ["java", "java-19", "virtual-threads", "project-loom", "structured-concurrency", "record-patterns"]
 ---
 

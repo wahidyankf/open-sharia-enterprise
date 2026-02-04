@@ -3,7 +3,7 @@ title: "Reactive Programming"
 date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Building asynchronous, non-blocking applications with reactive streams - from CompletableFuture fundamentals to production-ready Project Reactor and RxJava
-weight: 100016
+weight: 10000029
 tags: ["java", "reactive", "project-reactor", "rxjava", "webflux", "backpressure"]
 ---
 
