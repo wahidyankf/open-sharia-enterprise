@@ -1,5 +1,5 @@
 ---
-title: "Java 16 (March 2021)"
+title: "Java 16"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Java 16 release highlights - Pattern Matching and Records become standard, Packaging Tool final, Sealed Classes second preview, and significant GC improvements"

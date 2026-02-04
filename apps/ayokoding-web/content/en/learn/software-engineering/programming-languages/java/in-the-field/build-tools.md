@@ -1,5 +1,5 @@
 ---
-title: "Build Tools (Maven & Gradle)"
+title: "Build Tools"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: Comprehensive guide to Java build automation from manual compilation to Maven and Gradle

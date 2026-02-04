@@ -1,5 +1,5 @@
 ---
-title: "Java 15 (September 2020)"
+title: "Java 15"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Java 15 release highlights - Text Blocks standard, Sealed Classes preview, ZGC and Shenandoah production-ready, Hidden Classes, and EdDSA cryptography"

@@ -1,5 +1,5 @@
 ---
-title: "Working with NoSQL Databases"
+title: "NoSQL Databases"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: Comprehensive guide to NoSQL database integration in Java covering MongoDB, Redis, and Cassandra with native drivers and Spring Data abstractions

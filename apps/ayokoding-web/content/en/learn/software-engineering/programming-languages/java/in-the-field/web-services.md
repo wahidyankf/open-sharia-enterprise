@@ -1,5 +1,5 @@
 ---
-title: "Web Services and REST APIs"
+title: "Web Services"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: Comprehensive guide to building REST APIs in Java from HTTP fundamentals to Spring Boot REST

@@ -8,32 +8,14 @@ tags: ["java", "releases", "highlights", "lts"]
 ---
 
 - [Overview](/en/learn/software-engineering/programming-languages/java/release-highlights/overview)
-
-**LTS Releases**
-
-- [Java 17 LTS (September 2021)](/en/learn/software-engineering/programming-languages/java/release-highlights/java-17-lts)
-- [Java 21 LTS (September 2023)](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21-lts)
-- [Java 25 LTS (2025)](/en/learn/software-engineering/programming-languages/java/release-highlights/java-25-lts)
-
-**2020 Releases**
-
-- [Java 14 (March 2020)](/en/learn/software-engineering/programming-languages/java/release-highlights/java-14)
-- [Java 15 (September 2020)](/en/learn/software-engineering/programming-languages/java/release-highlights/java-15)
-
-**2021 Releases**
-
-- [Java 16 (March 2021)](/en/learn/software-engineering/programming-languages/java/release-highlights/java-16)
-
-**2022 Releases**
-
-- [Java 18 (March 2022)](/en/learn/software-engineering/programming-languages/java/release-highlights/java-18)
-- [Java 19 (September 2022)](/en/learn/software-engineering/programming-languages/java/release-highlights/java-19)
-
-**2023 Releases**
-
-- [Java 20 (March 2023)](/en/learn/software-engineering/programming-languages/java/release-highlights/java-20)
-
-**2024 Releases**
-
-- [Java 22 (March 2024)](/en/learn/software-engineering/programming-languages/java/release-highlights/java-22)
-- [Java 23 (September 2024)](/en/learn/software-engineering/programming-languages/java/release-highlights/java-23)
+- [Java 14](/en/learn/software-engineering/programming-languages/java/release-highlights/java-14)
+- [Java 15](/en/learn/software-engineering/programming-languages/java/release-highlights/java-15)
+- [Java 16](/en/learn/software-engineering/programming-languages/java/release-highlights/java-16)
+- [Java 17 Lts](/en/learn/software-engineering/programming-languages/java/release-highlights/java-17-lts)
+- [Java 18](/en/learn/software-engineering/programming-languages/java/release-highlights/java-18)
+- [Java 19](/en/learn/software-engineering/programming-languages/java/release-highlights/java-19)
+- [Java 20](/en/learn/software-engineering/programming-languages/java/release-highlights/java-20)
+- [Java 21 Lts](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21-lts)
+- [Java 22](/en/learn/software-engineering/programming-languages/java/release-highlights/java-22)
+- [Java 23](/en/learn/software-engineering/programming-languages/java/release-highlights/java-23)
+- [Java 25 Lts](/en/learn/software-engineering/programming-languages/java/release-highlights/java-25-lts)

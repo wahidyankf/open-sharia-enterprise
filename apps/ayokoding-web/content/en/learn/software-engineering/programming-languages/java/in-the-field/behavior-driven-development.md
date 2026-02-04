@@ -1,5 +1,5 @@
 ---
-title: "Behavior-Driven Development"
+title: "Behavior Driven Development"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: Practical guidance for implementing BDD with Cucumber, Gherkin, and collaborative testing patterns in Java projects

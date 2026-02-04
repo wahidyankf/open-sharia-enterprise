@@ -1,5 +1,5 @@
 ---
-title: "Logging Best Practices"
+title: "Logging"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: Comprehensive guide to logging in Java from standard library fundamentals to production logging frameworks

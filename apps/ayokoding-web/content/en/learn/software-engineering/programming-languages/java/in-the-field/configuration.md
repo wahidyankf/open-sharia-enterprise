@@ -1,5 +1,5 @@
 ---
-title: "Configuration Management"
+title: "Configuration"
 date: 2025-12-12T00:00:00+07:00
 draft: false
 description: Managing application configuration from properties files to Spring Cloud Config - environment variables, type-safe configuration, secrets management, and 12-factor principles

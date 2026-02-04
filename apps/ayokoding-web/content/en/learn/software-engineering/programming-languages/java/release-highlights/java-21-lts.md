@@ -1,5 +1,5 @@
 ---
-title: "Java 21 LTS (2023)"
+title: "Java 21 Lts"
 date: 2026-02-03T00:00:00+07:00
 draft: false
 description: "Key highlights from Java 21 LTS release - virtual threads, sequenced collections, and pattern matching finalization"
