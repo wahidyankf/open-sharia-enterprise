@@ -41,6 +41,22 @@ Go is used for high-performance services, CLI tools, and concurrent systems in t
 - Error handling patterns with explicit error returns
 - Web services with standard library and modern frameworks
 
+## Prerequisite Knowledge
+
+**REQUIRED**: This documentation assumes you have completed the AyoKoding Golang learning path. These are **OSE Platform-specific style guides**, not educational tutorials.
+
+**You MUST understand Go fundamentals before using these standards:**
+
+- **[Golang Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/golang)** - Complete 0-95% language coverage
+- **[Golang By Example](https://ayokoding.com/en/learn/software-engineering/programming-languages/golang/by-example)** - 75-85 annotated code examples (beginner → advanced)
+- **[Golang In Practice](https://ayokoding.com/en/learn/software-engineering/programming-languages/golang/in-practice)** - Production patterns and design approaches
+
+**What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Go knowledge in THIS codebase.
+
+**What this documentation does NOT cover**: Go syntax, language fundamentals, generic patterns (those are in ayokoding-web).
+
+**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+
 ## Coding Standards
 
 **This documentation is the authoritative reference** for Go coding standards in the open-sharia-enterprise platform.

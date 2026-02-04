@@ -16,6 +16,14 @@ created: 2026-02-03
 updated: 2026-02-03
 ---
 
+## Prerequisite Knowledge
+
+**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/java) before using these standards.
+
+**This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
+
+**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+
 # Java Error Handling Standards for OSE Platform
 
 **OSE-specific prescriptive standards** for error handling in Shariah-compliant financial applications. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).

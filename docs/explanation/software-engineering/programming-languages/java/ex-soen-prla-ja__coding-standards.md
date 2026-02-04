@@ -18,13 +18,21 @@ updated: 2026-02-03
 
 # Java Coding Standards
 
+## Prerequisite Knowledge
+
+**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/java) before using these standards.
+
+**This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
+
+**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+
 ## Purpose
 
 This document defines **authoritative coding standards** for Java development in the OSE Platform. These are prescriptive rules that MUST be followed across all Java projects to ensure consistency, maintainability, and alignment with platform architecture.
 
 **Target Audience**: OSE Platform Java developers, technical reviewers, automated code quality tools
 
-**Scope**: Naming conventions, package organization, project structure, code organization rules
+**Scope**: OSE Platform naming conventions, package organization, project structure, code organization rules
 
 ## Naming Conventions
 
@@ -208,19 +216,6 @@ These standards are enforced through:
 - **Code reviews** - Human verification of standards compliance
 
 See [Java Code Quality](./ex-soen-prla-ja__code-quality.md) for enforcement configuration.
-
-## Learning Resources
-
-For learning Java fundamentals and concepts referenced in these standards, see:
-
-- **[Java Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/java)** - Complete Java learning journey
-- **[Java By Example](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/by-example)** - 157+ annotated code examples covering basics through advanced topics
-  - **[Basic Examples](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/by-example/basic)** - Syntax, variables, control flow, OOP fundamentals
-  - **[Intermediate Examples](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/by-example/intermediate)** - Collections, generics, exceptions
-- **[Java In Practice](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/in-practice)** - Object-oriented design patterns and principles
-- **[Java Release Highlights](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/release-highlights)** - Java 17, 21, and 25 LTS features
-
-**Note**: These standards assume you've learned Java basics from ayokoding-web. We don't re-explain fundamental concepts here.
 
 ## Related Standards
 

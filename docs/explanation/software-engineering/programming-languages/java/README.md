@@ -58,18 +58,22 @@ OSE Platform Java applications MUST use the following framework stack:
 - **Recommended**: Java 21+ (SHOULD migrate to) - Virtual threads and structured concurrency
 - **Latest**: Java 25 LTS (RECOMMENDED for new projects) - Stream gatherers, scoped values, flexible constructors
 
-## Learning Java
+## Prerequisite Knowledge
 
-**IMPORTANT**: This document defines WHAT standards Java code MUST follow. To LEARN Java programming fundamentals and concepts referenced in these standards, see:
+**REQUIRED**: This documentation assumes you have completed the AyoKoding Java learning path. These are **OSE Platform-specific style guides**, not educational tutorials.
 
-**AyoKoding Java Learning Path**: <https://ayokoding.com/en/learn/software-engineering/programming-languages/java>
+**You MUST understand Java fundamentals before using these standards:**
 
-- **[Java Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/java)** - Complete Java learning journey
-- **[Java By Example](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/by-example)** - 157+ annotated code examples
-- **[Java In Practice](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/in-practice)** - Conceptual guidance and design patterns
-- **[Java Release Highlights](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/release-highlights)** - Java 17, 21, and 25 LTS features
+- **[Java Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/java)** - Complete 0-95% language coverage
+- **[Java By Example](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/by-example)** - 75-85 annotated code examples (beginner → advanced)
+- **[Java In Practice](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/in-practice)** - Production patterns and design approaches
+- **[Java Release Highlights](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/release-highlights)** - Java 17, 21, 25 LTS features
 
-**Note**: These standards assume you've learned Java basics from ayokoding-web. We don't re-explain fundamental concepts here - we enforce how to apply them correctly in OSE Platform.
+**What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Java knowledge in THIS codebase.
+
+**What this documentation does NOT cover**: Java syntax, language fundamentals, generic patterns (those are in ayokoding-web).
+
+**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Software Engineering Principles
 
@@ -129,8 +133,6 @@ OSE Platform follows a three-tier Java versioning strategy:
 10. **[API Standards](./ex-soen-prla-ja__api-standards.md)** - REST conventions, pagination, idempotency
 11. **[DDD Standards](./ex-soen-prla-ja__ddd-standards.md)** - Domain-Driven Design tactical patterns
 
-**Learning Java Fundamentals**: For universal Java concepts, idioms, and patterns referenced in these standards, see [AyoKoding Java Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/java)
-
 ## Documentation Structure
 
 ### Quick Reference
@@ -149,10 +151,6 @@ OSE Platform follows a three-tier Java versioning strategy:
 - **APIs**: [API Standards](./ex-soen-prla-ja__api-standards.md) - REST conventions for HTTP endpoints
 - **Performance**: [Performance Standards](./ex-soen-prla-ja__performance-standards.md) - SLOs, JVM tuning for optimization
 - **Error Handling**: [Error Handling Standards](./ex-soen-prla-ja__error-handling-standards.md) - Exception hierarchy for resilience
-
-**Java Version Features**:
-
-- [Java Release Highlights](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/release-highlights) - Java 17, 21, 25 LTS features
 
 ### Documentation Organization
 
