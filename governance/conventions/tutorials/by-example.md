@@ -147,6 +147,402 @@ Examples prioritize:
 - Beyond 85 becomes maintenance burden without proportional value gain
 - Range allows flexibility while maintaining quality bar
 
+## Core Features First Principle
+
+**Core Principle**: By-example tutorials MUST prioritize core/built-in/primitive features over external dependencies, abstractions, and third-party tools when teaching ANY technology (programming languages, frameworks, platforms).
+
+### Why This Matters
+
+Teaching core features first:
+
+- **Establishes fundamental understanding** before abstractions and extensions
+- **Keeps examples runnable** without dependency management (npm install, pip install, etc.)
+- **Reduces maintenance burden** - no version conflicts, breaking API changes from third-party tools
+- **Teaches portable knowledge** - core feature skills transfer across all projects using that technology
+- **Enables immediate experimentation** - learners can run code without setup
+- **Builds mental models** - understanding primitives reveals when abstractions add value
+
+**Production impact**: Understanding core capabilities prevents unnecessary dependencies and abstractions. Developers who learn JSON processing with standard library (Java's `java.util.json`) understand fundamentals before reaching for Jackson. Those who learn React state with `useState` make informed decisions about when Redux/Zustand add value. Engineers who understand Spring Core DI recognize when Spring Boot auto-configuration helps vs hinders debugging.
+
+### What to Prioritize
+
+**PASS: Use core/built-in features**:
+
+**For programming languages**:
+
+- Built-in language syntax and semantics
+- Standard library packages shipping with the language runtime
+- Core APIs requiring no installation (Java: `java.util.*`, `java.io.*`, Python: `json`, `os`, `sys`)
+- Platform-provided testing frameworks when part of standard toolchain
+
+**For frameworks**:
+
+- Core primitives and built-in features before third-party extensions
+- Framework-provided state management before external libraries
+- Native routing/navigation before routing libraries
+- Built-in HTTP clients before external client libraries
+
+**For platforms**:
+
+- Built-in capabilities and native APIs before add-ons
+- Platform-standard patterns before third-party abstractions
+- Core tooling before convenience wrappers
+
+**Examples**:
+
+**Programming Languages**:
+
+- JSON processing: Use `java.util.json` (Java 11+), `json` module (Python), `encoding/json` (Go)
+- HTTP clients: Use `java.net.http.HttpClient` (Java 11+), `urllib` (Python), `net/http` (Go)
+- Concurrency: Use `Thread`/`ExecutorService` (Java), `threading` (Python), goroutines (Go)
+- Testing basics: Use assertions before frameworks (`assert` in Python, manual checks in Java before JUnit)
+
+**React Framework**:
+
+- State management: Use `useState`, `useReducer`, `Context API` before Zustand, Redux, Jotai
+- Side effects: Use `useEffect` before external effect libraries
+- Form handling: Use controlled components with `useState` before React Hook Form, Formik
+- HTTP requests: Use `fetch` API with `useEffect` before React Query, SWR
+
+**Vue Framework**:
+
+- State management: Use `ref`, `reactive`, `computed` before Pinia, Vuex
+- Composition: Use Vue Composition API before external composables libraries
+- Routing: Use Vue Router (official) before third-party navigation libraries
+
+**Node.js Platform**:
+
+- HTTP servers: Use `http.createServer` before Express, Fastify, Koa
+- File operations: Use `fs` module before third-party file libraries
+- Path manipulation: Use `path` module before path utility libraries
+
+**Spring Framework**:
+
+- Dependency Injection: Use Spring Core `@Component`, `@Autowired` before Spring Boot auto-configuration
+- Configuration: Use explicit `@Configuration` classes before `application.properties` magic
+- Web: Understand `@Controller`, `@RequestMapping` before Spring Boot REST conventions
+
+### What to Avoid Initially
+
+**FAIL: Premature abstraction/extension introduction**:
+
+**Programming Languages**:
+
+- External frameworks requiring dependency installation (Spring, React, Django, Flask)
+- Third-party libraries not in standard distribution (Jackson, Gson, Requests, OkHttp)
+- Platform-specific extensions beyond core language (Android SDK when teaching Java)
+- Build tool configurations (Maven, Gradle) until necessary for production patterns
+
+**Frameworks**:
+
+- Third-party state management before framework primitives (Redux before React's useState/Context)
+- Third-party form libraries before native form handling
+- Third-party routing before understanding framework navigation
+- Third-party styling solutions before CSS basics
+
+**Platforms**:
+
+- Third-party abstractions before understanding platform capabilities
+- Convenience wrappers before core APIs
+- Auto-magic tools before manual configuration
+
+**Anti-pattern examples**:
+
+**Programming Language (Java)**:
+
+```java
+// FAIL: Teaching JSON with Jackson in beginner section
+import com.fasterxml.jackson.databind.ObjectMapper;  // External dependency
+
+ObjectMapper mapper = new ObjectMapper();
+String json = mapper.writeValueAsString(person);
+```
+
+```java
+// PASS: Teaching JSON with standard library first
+import java.util.Map;
+import java.io.StringWriter;
+import javax.json.Json;                               // Standard library (Java 11+)
+
+var writer = new StringWriter();
+Json.createWriter(writer).write(personMap);
+String json = writer.toString();
+```
+
+**React Framework**:
+
+```jsx
+// FAIL: Teaching state management with Redux before React primitives
+import { useDispatch, useSelector } from "react-redux"; // External dependency
+
+function Counter() {
+  const count = useSelector((state) => state.count); // Redux abstraction
+  const dispatch = useDispatch(); // Redux abstraction
+  return <button onClick={() => dispatch({ type: "INCREMENT" })}>Count: {count}</button>;
+}
+```
+
+```jsx
+// PASS: Teaching state management with React primitives first
+import { useState } from "react"; // Built-in React
+
+function Counter() {
+  const [count, setCount] = useState(0); // React primitive
+  return <button onClick={() => setCount(count + 1)}>Count: {count}</button>;
+}
+```
+
+**Spring Framework**:
+
+```java
+// FAIL: Teaching dependency injection with Spring Boot auto-configuration
+@SpringBootApplication                                   // Spring Boot magic
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);  // Auto-configuration hides DI
+    }
+}
+```
+
+```java
+// PASS: Teaching dependency injection with Spring Core first
+@Configuration                                           // Explicit Spring Core
+public class AppConfig {
+    @Bean
+    public UserService userService() {                   // Explicit bean definition
+        return new UserService(userRepository());        // Manual dependency wiring
+    }
+    @Bean
+    public UserRepository userRepository() {
+        return new UserRepository();
+    }
+}
+```
+
+**Node.js Platform**:
+
+```javascript
+// FAIL: Teaching HTTP servers with Express before understanding http module
+const express = require("express"); // External framework
+const app = express();
+app.get("/", (req, res) => res.send("Hello"));
+app.listen(3000);
+```
+
+```javascript
+// PASS: Teaching HTTP servers with built-in http module first
+const http = require("http"); // Built-in Node.js
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end("Hello");
+});
+server.listen(3000);
+```
+
+### When to Introduce External Dependencies/Abstractions
+
+**Permitted exceptions** - Introduce external dependencies/abstractions only when:
+
+1. **Critical production pattern cannot be demonstrated with core features**:
+   - **Languages**: Web frameworks (Spring Boot, FastAPI) for teaching REST API architecture, ORMs (Hibernate, SQLAlchemy) for database persistence patterns
+   - **React**: Complex async state management (React Query) for server caching patterns
+   - **Spring**: Spring Boot for microservices deployment patterns (after understanding Core DI)
+   - **Node.js**: Express for middleware architecture (after understanding http.createServer)
+
+2. **The external tool is industry-standard and unavoidable**:
+   - **Languages**: JUnit for Java testing (after teaching assertion basics), pytest for Python testing (after teaching unittest)
+   - **React**: React Router for multi-page apps (after understanding component navigation)
+   - **Vue**: Pinia for complex state (after understanding reactive primitives)
+
+3. **Core features lack essential capability**:
+   - **Languages**: Async HTTP in languages without built-in async HTTP client, advanced parsing where standard library is insufficient
+   - **Frameworks**: Features genuinely missing from framework primitives
+
+**When introducing external dependencies/abstractions**:
+
+- **Mark it explicitly**: "Note: This example uses external library X (requires installation)" OR "Note: This uses abstraction Y built on primitive Z"
+- **Explain why core features insufficient**: "While React's `useState` handles local state, Redux provides global state needed for..." OR "While `java.net.http` handles basic HTTP, Spring WebClient provides reactive streaming needed for..."
+- **Show installation/setup step**: Include dependency declaration and installation command
+- **Reference primitive foundation**: "This builds on `useState` (Example 10) by adding global state management"
+- **Prefer intermediate/advanced sections**: Keep beginner content focused on core features
+
+### Implementation in Coverage Levels
+
+**Beginner (0-40% coverage)**:
+
+- **100% core features** - Zero external dependencies or abstractions
+- **Languages**: Language syntax, core types, standard library modules
+- **Frameworks**: Framework primitives and built-in features
+- **Platforms**: Built-in capabilities and native APIs
+- Examples run immediately with base technology installed
+
+**Intermediate (40-75% coverage)**:
+
+- **Primarily core features** with selective external tool/abstraction introduction
+- Introduce production-critical frameworks/libraries when teaching architecture patterns
+- Always explain WHY core features alone insufficient
+- **Language example**: Teach basic HTTP with `java.net.http`, then Spring WebClient for reactive patterns
+- **React example**: Teach state with `useState`/`useReducer`, then Redux for complex global state
+- **Spring example**: Teach DI with Spring Core, then Spring Boot for deployment patterns
+
+**Advanced (75-95% coverage)**:
+
+- **Mixed core features and external tools** - Production ecosystem
+- Focus on when to choose external tools vs core features
+- Compare performance, complexity, maintenance trade-offs
+- **Language example**: `ExecutorService` vs Kotlin Coroutines vs Project Loom
+- **React example**: `useState` + Context vs Redux vs Zustand vs Jotai
+- **Node.js example**: `http.createServer` vs Express vs Fastify performance comparison
+
+### Java By-Example as Reference Implementation
+
+The Java by-example tutorial demonstrates this principle for programming languages:
+
+**Beginner section** (Examples 1-30):
+
+- ✅ JSON processing using standard library (`javax.json`) before Jackson
+- ✅ HTTP client using `java.net.http.HttpClient` (Java 11+)
+- ✅ Threading using `Thread` and `ExecutorService`
+- ✅ File I/O using `java.nio.file.*`
+- ✅ Testing with assertions before JUnit
+
+**Intermediate section** (Examples 31-50):
+
+- Introduces JUnit after teaching testing fundamentals
+- Uses Spring Boot for REST API patterns (complex production requirement)
+- Still prioritizes standard library for data structures, streams, concurrency
+
+**Advanced section** (Examples 51-75):
+
+- Compares standard library approaches with frameworks
+- Evaluates when frameworks add value vs complexity
+- Example: `ExecutorService` performance vs virtual threads (Project Loom)
+
+### Validation Criteria
+
+The ayokoding-web-by-example-checker validates:
+
+- **Beginner dependency count**: 0 external dependencies/abstractions (CRITICAL)
+- **Intermediate dependency justification**: Each external dependency has explicit "Why Not Core Features" explanation (HIGH)
+- **Dependency documentation**: Installation steps and version requirements present when dependencies introduced (MEDIUM)
+- **Coverage progression**: Core feature examples precede framework/library examples for same capability (MEDIUM)
+- **Abstraction foundation**: External abstractions reference primitive foundation they build upon (MEDIUM)
+
+### Comparison: Core Features vs External Tools
+
+**Teaching JSON Processing (Language)**:
+
+```markdown
+## PASS: Progressive Approach
+
+### Example 15: JSON with Standard Library (Beginner)
+
+Use Java 11+ `javax.json` for basic JSON operations...
+
+### Example 42: JSON with Jackson (Intermediate)
+
+When you need advanced features like polymorphic deserialization, Jackson provides...
+Note: Requires Maven dependency `com.fasterxml.jackson.core:jackson-databind:2.15.0`
+Builds on JSON fundamentals from Example 15.
+```
+
+```markdown
+## FAIL: Framework-First Approach
+
+### Example 15: JSON with Jackson (Beginner)
+
+Jackson is the industry standard for JSON in Java...
+(Learner must install dependencies, understand Maven, before learning JSON!)
+```
+
+**Teaching State Management (React)**:
+
+```markdown
+## PASS: Progressive Approach
+
+### Example 12: Local State with useState (Beginner)
+
+React's `useState` hook manages component-local state...
+
+### Example 35: Global State with Context API (Intermediate)
+
+Context API shares state across components without prop drilling...
+Builds on `useState` (Example 12) by adding global state capability.
+
+### Example 58: Redux for Complex State (Advanced)
+
+When state logic becomes complex with many actions and async flows, Redux provides...
+Note: Requires `npm install redux react-redux`
+Compare Redux overhead vs Context API (Example 35) - Redux justified when >10 state slices.
+```
+
+```markdown
+## FAIL: Framework-First Approach
+
+### Example 12: Redux for State Management (Beginner)
+
+Redux is the industry standard for React state...
+(External dependency before showing React's built-in state primitives!)
+```
+
+**Teaching HTTP Clients (Language)**:
+
+```markdown
+## PASS: Progressive Approach
+
+### Example 18: HTTP GET with HttpClient (Beginner)
+
+Java 11+ provides `java.net.http.HttpClient` for synchronous and asynchronous HTTP...
+
+### Example 45: Reactive HTTP with WebClient (Advanced)
+
+Spring WebClient enables reactive streaming for high-throughput services...
+Trade-off: Added complexity (Project Reactor) justified when handling >10K requests/sec
+```
+
+```markdown
+## FAIL: Framework-First Approach
+
+### Example 18: HTTP with OkHttp (Beginner)
+
+OkHttp is popular for HTTP requests...
+(External dependency before teaching standard library capabilities)
+```
+
+**Teaching Dependency Injection (Spring)**:
+
+```markdown
+## PASS: Progressive Approach
+
+### Example 8: Dependency Injection with Spring Core (Beginner)
+
+Spring Core `@Component` and `@Autowired` enable dependency injection...
+
+### Example 32: Spring Boot Auto-Configuration (Intermediate)
+
+Spring Boot auto-configures beans based on classpath and properties...
+Trade-off: Convenience vs explicit control. Use when defaults match requirements.
+Builds on explicit DI from Example 8.
+```
+
+```markdown
+## FAIL: Auto-Magic First Approach
+
+### Example 8: Spring Boot Application (Beginner)
+
+Spring Boot automatically configures everything...
+(Learner doesn't understand DI mechanism before seeing auto-magic!)
+```
+
+### Integration with Other Principles
+
+This principle aligns with:
+
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Start with simplest viable approach (core features)
+- **[Reproducibility First](../../principles/software-engineering/reproducibility.md)**: Core features work without dependency installation
+- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Teach fundamentals (core features) before advanced abstractions (external tools)
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Explicit about when and why external dependencies/abstractions introduced
+
 ## Example Structure
 
 Every example follows a **mandatory five-part format**:
