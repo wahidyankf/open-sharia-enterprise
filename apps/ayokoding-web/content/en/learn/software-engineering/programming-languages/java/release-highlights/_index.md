@@ -11,9 +11,9 @@ tags: ["java", "releases", "highlights", "lts"]
 
 **LTS Releases**
 
-- [Java 17 LTS (September 2021)](/en/learn/software-engineering/programming-languages/java/release-highlights/java-17)
-- [Java 21 LTS (September 2023)](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21)
-- [Java 25 LTS (2025)](/en/learn/software-engineering/programming-languages/java/release-highlights/java-25)
+- [Java 17 LTS (September 2021)](/en/learn/software-engineering/programming-languages/java/release-highlights/java-17-lts)
+- [Java 21 LTS (September 2023)](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21-lts)
+- [Java 25 LTS (2025)](/en/learn/software-engineering/programming-languages/java/release-highlights/java-25-lts)
 
 **2020 Releases**
 

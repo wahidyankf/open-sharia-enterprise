@@ -21,9 +21,9 @@ Oracle's Long-Term Support (LTS) strategy provides predictable, stable Java vers
 
 The three major LTS releases from the last 5 years:
 
-- **[Java 17 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-17)** (September 2021) - Sealed classes, pattern matching preview, enhanced PRNG
-- **[Java 21 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21)** (September 2023) - Virtual threads, sequenced collections, pattern matching finalized
-- **[Java 25 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-25)** (September 2025) - Stream gatherers, compact headers, performance optimizations
+- **[Java 17 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-17-lts)** (September 2021) - Sealed classes, pattern matching preview, enhanced PRNG
+- **[Java 21 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21-lts)** (September 2023) - Virtual threads, sequenced collections, pattern matching finalized
+- **[Java 25 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-25-lts)** (September 2025) - Stream gatherers, compact headers, performance optimizations
 
 ## LTS Cadence
 
@@ -116,10 +116,10 @@ Indonesian (`/id/`) translations for release highlights are **pending**. English
 
 **For production systems (LTS focus):**
 
-1. **[Java 17 Highlights](/en/learn/software-engineering/programming-languages/java/release-highlights/java-17)** - Foundation features (sealed classes, pattern matching preview)
-2. **[Java 21 Highlights](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21)** - Concurrency revolution (virtual threads)
-3. **[Java 25 Highlights](/en/learn/software-engineering/programming-languages/java/release-highlights/java-25)** - Performance optimization (compact headers, stream gatherers)
+1. **[Java 17 Highlights](/en/learn/software-engineering/programming-languages/java/release-highlights/java-17-lts)** - Foundation features (sealed classes, pattern matching preview)
+2. **[Java 21 Highlights](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21-lts)** - Concurrency revolution (virtual threads)
+3. **[Java 25 Highlights](/en/learn/software-engineering/programming-languages/java/release-highlights/java-25-lts)** - Performance optimization (compact headers, stream gatherers)
 
 **For comprehensive understanding (all releases):**
 
-Explore releases chronologically from [Java 14](/en/learn/software-engineering/programming-languages/java/release-highlights/java-14) through [Java 25](/en/learn/software-engineering/programming-languages/java/release-highlights/java-25) to see complete feature evolution and preview stages.
+Explore releases chronologically from [Java 14](/en/learn/software-engineering/programming-languages/java/release-highlights/java-14) through [Java 25](/en/learn/software-engineering/programming-languages/java/release-highlights/java-25-lts) to see complete feature evolution and preview stages.
