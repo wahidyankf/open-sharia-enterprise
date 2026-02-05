@@ -23,6 +23,45 @@ Messaging systems enable asynchronous communication between services, decoupling
 
 **Solution**: Understand each messaging system's strengths (NATS: lightweight pub/sub, RabbitMQ: work queues and routing, Kafka: durable event logs and streaming), choose based on requirements (latency, durability, ordering).
 
+## Pub/Sub Messaging Pattern
+
+```mermaid
+graph LR
+    Publisher1["Publisher<br/>(Order Service)"] -->|"Publish:<br/>order.created"| Broker["Message Broker<br/>(NATS/RabbitMQ/Kafka)"]
+    Publisher2["Publisher<br/>(Payment Service)"] -->|"Publish:<br/>payment.processed"| Broker
+
+    Broker -->|"Subscribe:<br/>order.*"| Subscriber1["Subscriber 1<br/>(Email Service)"]
+    Broker -->|"Subscribe:<br/>order.created"| Subscriber2["Subscriber 2<br/>(Inventory Service)"]
+    Broker -->|"Subscribe:<br/>order.*"| Subscriber3["Subscriber 3<br/>(Analytics Service)"]
+    Broker -->|"Subscribe:<br/>payment.*"| Subscriber4["Subscriber 4<br/>(Accounting Service)"]
+
+    Subscriber1 -->|"Send email"| Email["Email System"]
+    Subscriber2 -->|"Update stock"| Inventory["Inventory DB"]
+    Subscriber3 -->|"Track metrics"| Analytics["Analytics DB"]
+    Subscriber4 -->|"Record transaction"| Accounting["Accounting DB"]
+
+    style Publisher1 fill:#0173B2,stroke:#0173B2,color:#fff
+    style Publisher2 fill:#0173B2,stroke:#0173B2,color:#fff
+    style Broker fill:#DE8F05,stroke:#DE8F05,color:#fff
+    style Subscriber1 fill:#029E73,stroke:#029E73,color:#fff
+    style Subscriber2 fill:#029E73,stroke:#029E73,color:#fff
+    style Subscriber3 fill:#029E73,stroke:#029E73,color:#fff
+    style Subscriber4 fill:#029E73,stroke:#029E73,color:#fff
+    style Email fill:#CC78BC,stroke:#CC78BC,color:#fff
+    style Inventory fill:#CC78BC,stroke:#CC78BC,color:#fff
+    style Analytics fill:#CC78BC,stroke:#CC78BC,color:#fff
+    style Accounting fill:#CC78BC,stroke:#CC78BC,color:#fff
+```
+
+**Pub/Sub pattern**:
+
+- **Publishers**: Produce events without knowing consumers (Order Service, Payment Service)
+- **Message Broker**: Routes messages to interested subscribers (subject/topic-based)
+- **Subscribers**: Subscribe to patterns (order.\*, payment.\*) and receive matching events
+- **Decoupling**: Publishers don't know subscribers, subscribers don't know publishers
+- **Fan-out**: Single event delivered to multiple subscribers (Email, Inventory, Analytics)
+- **Asynchronous**: Publishers don't wait for subscriber processing (non-blocking)
+
 ## NATS: Lightweight Pub/Sub
 
 NATS is high-performance, cloud-native messaging system emphasizing simplicity and speed. Best for fire-and-forget pub/sub, service discovery, and request-reply patterns.

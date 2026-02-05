@@ -22,6 +22,60 @@ Domain-Driven Design (DDD) structures complex business domains through explicit 
 
 **Solution**: Model domain explicitly with value objects (immutable validated data), entities (identity-based objects), aggregates (consistency boundaries), and repositories (persistence abstraction).
 
+## DDD Building Blocks and Boundaries
+
+```mermaid
+graph TD
+    subgraph Aggregate1["Portfolio Aggregate (Consistency Boundary)"]
+        direction TB
+        PortfolioRoot["Portfolio<br/>(Aggregate Root)"]
+        Account1["Account<br/>(Entity)"]
+        Account2["Account<br/>(Entity)"]
+        Money1["Money<br/>(Value Object)"]
+        Money2["Money<br/>(Value Object)"]
+
+        PortfolioRoot -->|"contains"| Account1
+        PortfolioRoot -->|"contains"| Account2
+        Account1 -->|"has balance"| Money1
+        Account2 -->|"has balance"| Money2
+    end
+
+    subgraph Aggregate2["Zakat Obligation Aggregate (Consistency Boundary)"]
+        direction TB
+        ZakatRoot["Zakat Portfolio<br/>(Aggregate Root)"]
+        Obligation1["Obligation<br/>(Entity)"]
+        Obligation2["Obligation<br/>(Entity)"]
+        Nisab["Nisab<br/>(Value Object)"]
+
+        ZakatRoot -->|"contains"| Obligation1
+        ZakatRoot -->|"contains"| Obligation2
+        Obligation1 -->|"has threshold"| Nisab
+    end
+
+    Repository1["Portfolio Repository"] -.->|"persists"| Aggregate1
+    Repository2["Zakat Repository"] -.->|"persists"| Aggregate2
+
+    style PortfolioRoot fill:#0173B2,stroke:#0173B2,color:#fff
+    style Account1 fill:#DE8F05,stroke:#DE8F05,color:#fff
+    style Account2 fill:#DE8F05,stroke:#DE8F05,color:#fff
+    style Money1 fill:#029E73,stroke:#029E73,color:#fff
+    style Money2 fill:#029E73,stroke:#029E73,color:#fff
+    style ZakatRoot fill:#0173B2,stroke:#0173B2,color:#fff
+    style Obligation1 fill:#DE8F05,stroke:#DE8F05,color:#fff
+    style Obligation2 fill:#DE8F05,stroke:#DE8F05,color:#fff
+    style Nisab fill:#029E73,stroke:#029E73,color:#fff
+    style Repository1 fill:#CC78BC,stroke:#CC78BC,color:#fff
+    style Repository2 fill:#CC78BC,stroke:#CC78BC,color:#fff
+```
+
+**Aggregate pattern**:
+
+- **Aggregate Root** (Portfolio, Zakat Portfolio): Entry point for all modifications
+- **Entities** (Account, Obligation): Identity-based objects within aggregate
+- **Value Objects** (Money, Nisab): Immutable validated data
+- **Consistency Boundary**: Aggregate enforces invariants across entity graph
+- **Repository**: Persists entire aggregate as unit (atomic save/load)
+
 ## Standard Library Approach: Structs and Methods
 
 Go's standard library demonstrates DDD patterns through structs, methods, and composition. No classes or inheritance needed - just structs and interfaces.

@@ -3,11 +3,11 @@ title: "Overview"
 date: 2026-01-01T21:53:25+07:00
 draft: false
 weight: 10000000
-description: "Learn Java through 75 annotated code examples covering 95% of the language - ideal for experienced developers switching to Java"
+description: "Learn Java through 82 annotated code examples covering 95% of the language - ideal for experienced developers switching to Java"
 tags: ["java", "tutorial", "by-example", "examples", "code-first", "jvm", "oop"]
 ---
 
-**Want to quickly master Java through working examples?** This by-example guide teaches 95% of Java through 75 annotated code examples organized by complexity level.
+**Want to quickly master Java through working examples?** This by-example guide teaches 95% of Java through 82 annotated code examples organized by complexity level.
 
 ## What Is By-Example Learning?
 
@@ -27,8 +27,8 @@ Unlike narrative tutorials that build understanding through explanation and stor
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["Beginner<br/>Examples 1-30<br/>OOP Basics"] --> B["Intermediate<br/>Examples 31-50<br/>Practical Patterns"]
-    B --> C["Advanced<br/>Examples 51-75<br/>Complex Features"]
+    A["Beginner<br/>Examples 1-30<br/>OOP Basics"] --> B["Intermediate<br/>Examples 31-59<br/>Practical Patterns"]
+    B --> C["Advanced<br/>Examples 60-82<br/>Complex Features"]
 
     style A fill:#0173B2,color:#fff
     style B fill:#DE8F05,color:#fff
@@ -77,14 +77,14 @@ The 95% coverage goal maintains humility—no tutorial can cover everything. Thi
 
 Understanding where by-example fits in the tutorial ecosystem helps you choose the right learning path:
 
-| Tutorial Type    | Coverage                 | Approach                       | Target Audience        | When to Use                                          |
-| ---------------- | ------------------------ | ------------------------------ | ---------------------- | ---------------------------------------------------- |
-| **By Example**   | 95% through 75+ examples | Code-first, annotated examples | Experienced developers | Quick language pickup, reference, language switching |
-| **Quick Start**  | 5-30% touchpoints        | Hands-on project               | Newcomers to Java      | First taste, decide if worth learning                |
-| **Beginner**     | 0-60% comprehensive      | Narrative, explanatory         | Complete beginners     | Deep understanding, first programming language       |
-| **Intermediate** | 60-85%                   | Practical applications         | Past basics            | Production patterns, frameworks                      |
-| **Advanced**     | 85-95%                   | Complex systems                | Experienced Java devs  | JVM internals, distributed systems                   |
-| **Cookbook**     | Problem-oriented         | Recipe, solution-focused       | All levels             | Specific problems, common tasks                      |
+| Tutorial Type    | Coverage                | Approach                       | Target Audience        | When to Use                                          |
+| ---------------- | ----------------------- | ------------------------------ | ---------------------- | ---------------------------------------------------- |
+| **By Example**   | 95% through 82 examples | Code-first, annotated examples | Experienced developers | Quick language pickup, reference, language switching |
+| **Quick Start**  | 5-30% touchpoints       | Hands-on project               | Newcomers to Java      | First taste, decide if worth learning                |
+| **Beginner**     | 0-60% comprehensive     | Narrative, explanatory         | Complete beginners     | Deep understanding, first programming language       |
+| **Intermediate** | 60-85%                  | Practical applications         | Past basics            | Production patterns, frameworks                      |
+| **Advanced**     | 85-95%                  | Complex systems                | Experienced Java devs  | JVM internals, distributed systems                   |
+| **Cookbook**     | Problem-oriented        | Recipe, solution-focused       | All levels             | Specific problems, common tasks                      |
 
 **By Example vs. Quick Start**: By Example provides 95% coverage through examples vs. Quick Start's 5-30% through a single project. By Example is code-first reference; Quick Start is hands-on introduction.
 
@@ -160,7 +160,7 @@ You understand static typing and compilation. Java simplifies memory management:
 - **No header files**: Single compilation unit per class
 - **Platform independence**: Write once, run anywhere via JVM
 
-Focus on Examples 51-75 (JVM internals) and Examples 45-55 (concurrency) to leverage your systems knowledge.
+Focus on Examples 60-82 (JVM internals) and Examples 45-55 (concurrency) to leverage your systems knowledge.
 
 ### For Kotlin/Scala Developers
 
@@ -170,7 +170,7 @@ You know JVM semantics already. Java shows the foundation:
 - **No null safety**: Must check nulls manually (or use Optional)
 - **Traditional OOP**: No data classes, extension functions, or coroutines
 
-Focus on Examples 75-85 (modern Java features like records, sealed classes, pattern matching) to see Java catching up.
+Focus on Examples 60-82 (advanced features and JVM internals) to see modern Java capabilities.
 
 ## Code-First Philosophy
 
@@ -179,7 +179,7 @@ This tutorial prioritizes working code over theoretical discussion:
 - **No lengthy prose**: Concepts are demonstrated, not explained at length
 - **Runnable examples**: Every example compiles and runs in JShell or as standalone classes
 - **Learn by doing**: Understanding comes from running and modifying code
-- **Pattern recognition**: See the same patterns in different contexts across 75 examples
+- **Pattern recognition**: See the same patterns in different contexts across 82 examples
 
 If you prefer narrative explanations. By-example learning works best when you learn through experimentation.
 
@@ -188,7 +188,7 @@ If you prefer narrative explanations. By-example learning works best when you le
 Jump into the beginner examples to start learning Java through code:
 
 - [Beginner Examples (1-30)](/en/learn/software-engineering/programming-languages/java/by-example/beginner) - Basic syntax, OOP fundamentals, collections, control flow
-- [Intermediate Examples (31-60)](/en/learn/software-engineering/programming-languages/java/by-example/intermediate) - Advanced OOP, generics, functional programming, concurrency
-- [Advanced Examples (51-75)](/en/learn/software-engineering/programming-languages/java/by-example/advanced) - JVM internals, design patterns, modern Java features
+- [Intermediate Examples (31-59)](/en/learn/software-engineering/programming-languages/java/by-example/intermediate) - Advanced OOP, generics, functional programming, concurrency
+- [Advanced Examples (60-82)](/en/learn/software-engineering/programming-languages/java/by-example/advanced) - JVM internals, design patterns, modern Java features
 
 Each example is self-contained and runnable. Start with Example 1, or jump to topics that interest you most.

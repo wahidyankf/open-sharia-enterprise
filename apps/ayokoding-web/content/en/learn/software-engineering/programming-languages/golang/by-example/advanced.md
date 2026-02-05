@@ -1203,27 +1203,23 @@ type Container[T any] interface {                   // => Generic interface over
 
 ## Example 72: Constraints and Comparable
 
-Go provides standard constraints in `constraints` package. The `comparable` constraint enables `==` and `!=` operators. Custom constraints combine types and interfaces.
+Go provides built-in type constraints. The `comparable` constraint enables `==` and `!=` operators. Custom constraints combine types and interfaces using type unions.
 
 **Code**:
 
 ```go
 package main
 
-import (
-    "fmt"
-    "golang.org/x/exp/constraints"                // => Standard constraints package
-)
-                                                    // => Provides Integer, Float, Ordered, Signed, Unsigned
+import "fmt"
 
 func main() {
-    // Numbers constraint - int, float, complex types
+    // Integer constraint - int types only
     fmt.Println("Sum ints:", sum([]int{1, 2, 3}))         // => Calls sum with []int
                                                            // => T inferred as int
                                                            // => Output: Sum ints: 6
-    fmt.Println("Sum floats:", sum([]float64{1.5, 2.5})) // => Calls sum with []float64
-                                                           // => T inferred as float64
-                                                           // => Output: Sum floats: 4.0
+    fmt.Println("Sum int64:", sum([]int64{1, 2, 3}))     // => Calls sum with []int64
+                                                           // => T inferred as int64
+                                                           // => Output: Sum int64: 6
 
     // Comparable constraint - can use == and !=
     if contains([]string{"a", "b", "c"}, "b") {   // => Calls contains with string slice
@@ -1242,8 +1238,14 @@ func main() {
                                                     // => Output: Value: 10
 }
 
-// Ordered constraint - can use <, >, <=, >=, ==, !=
-func sum[T constraints.Integer](nums []T) T {    // => Generic function with Integer constraint
+// Integer constraint using type union
+type Integer interface {                          // => Custom constraint for integer types
+    ~int | ~int8 | ~int16 | ~int32 | ~int64 |    // => ~ means "underlying type"
+    ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 // => Accepts all integer types
+}
+                                                   // => Type union defines allowed types
+
+func sum[T Integer](nums []T) T {                // => Generic function with Integer constraint
                                                    // => T must be integer type (int, int64, etc.)
                                                    // => nums is slice of T
     var total T                                    // => total is zero value of T (0)
@@ -1252,7 +1254,7 @@ func sum[T constraints.Integer](nums []T) T {    // => Generic function with Int
         total += n                                 // => Add to total
                                                     // => total becomes 1, then 3, then 6
     }
-    return total                                   // => Returns final sum (6 or 4.0)
+    return total                                   // => Returns final sum (6)
 }
 
 // Comparable constraint - can use == and !=
@@ -1270,7 +1272,7 @@ func contains[T comparable](slice []T, target T) bool { // => Generic function
     return false                                   // => No match found
 }
 
-// Custom constraint
+// Custom constraint combining comparable
 type MapKey interface {                           // => Custom constraint interface
     comparable                                    // => Embeds comparable constraint
                                                    // => Types must support == and !=
@@ -1286,9 +1288,9 @@ func getValue[K MapKey, V any](m map[K]V, key K) V { // => Two type parameters
 }
 ```
 
-**Key Takeaway**: `constraints.Ordered` = types supporting comparison operators. `constraints.Integer` = integer types. `comparable` = types supporting `==` and `!=`. Custom constraints combine interfaces and types.
+**Key Takeaway**: Define custom constraints using type unions (`~int | ~int8 | ...`). `comparable` = types supporting `==` and `!=` (built-in). `~type` means "underlying type matches". Constraints enable operator usage in generic functions.
 
-**Why It Matters**: Type constraints enable generic functions to use operators (comparable for ==, constraints.Ordered for <>) while maintaining type safety, solving the pre-generics problem where generic code couldn't perform comparisons without reflection. The comparable constraint powers generic contains() functions and Set[T] implementations, while constraints.Ordered enables generic min/max/sort functions, providing operator support that interface{} could never offer.
+**Why It Matters**: Type constraints enable generic functions to use operators (comparable for ==, custom Integer for +/-/\*) while maintaining type safety, solving the pre-generics problem where generic code couldn't perform comparisons without reflection. The comparable constraint powers generic contains() functions and Set[T] implementations, while custom type union constraints enable generic sum/min/max functions, providing operator support that interface{} could never offer.
 
 ## Example 73: Options Pattern
 
@@ -2181,21 +2183,21 @@ go 1.21                    // => Minimum Go version for workspace
 use (                      // => Declare modules in this workspace
     ./cmd/api              // => Include cmd/api module (local path)
     ./cmd/cli              // => Include cmd/cli module
-    ./libs/common          // => Include libs/common module (shared library)
+    ./libs/common          // => Include libs/common shared library
 )
-
-// Directory structure:
-// project/
-// ├── go.work            // => Created with: go work init ./cmd/api ./cmd/cli ./libs/common
-// ├── cmd/api/go.mod     // => Module: example.com/api
-// ├── cmd/cli/go.mod     // => Module: example.com/cli
-// └── libs/common/go.mod // => Module: example.com/common (shared)
-
-// Benefits:
-// - Develop multiple modules together without publishing intermediate versions
-// - Changes in libs/common reflected immediately in cmd/api and cmd/cli
-// - Test all modules together: go test ./...
 ```
+
+**Directory structure**:
+
+```
+project/
+├── go.work            (created with: go work init ./cmd/api ./cmd/cli ./libs/common)
+├── cmd/api/go.mod     (module: example.com/api)
+├── cmd/cli/go.mod     (module: example.com/cli)
+└── libs/common/go.mod (module: example.com/common shared)
+```
+
+**Benefits**: Develop multiple modules together without publishing. Changes in libs/common reflected immediately in dependent modules. Test all modules together with `go test ./...`.
 
 **Key Takeaway**: Workspaces allow multi-module development without publishing. Define workspace with `go.work` file. Use `use()` to include local modules. All modules use local versions instead of published versions.
 

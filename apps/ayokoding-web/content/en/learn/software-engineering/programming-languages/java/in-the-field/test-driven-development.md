@@ -113,27 +113,47 @@ Java provides the `assert` keyword for runtime assertions that verify program co
 
 ```java
 public class Calculator {
+    // => Simple calculator for demonstration purposes
+
     public int add(int a, int b) {
+        // => Basic addition operation
         return a + b;
+        // => No validation (intentionally simple for learning)
     }
 
     public int divide(int a, int b) {
         assert b != 0 : "Divisor cannot be zero";
+        // => assert keyword: runtime check (disabled by default!)
+        // => Syntax: assert condition : errorMessage
+        // => Throws AssertionError if condition false AND assertions enabled
+        // => Only runs when JVM started with -ea flag
         return a / b;
+        // => Division proceeds if assertion passes
     }
 
     public static void main(String[] args) {
+        // => Manual test runner using main method
         Calculator calc = new Calculator();
+        // => Create instance to test
 
         // Test addition
         int result = calc.add(2, 3);
+        // => Execute method under test
         assert result == 5 : "Expected 2 + 3 = 5, got " + result;
+        // => Verify result equals expected value
+        // => AssertionError if result != 5
+        // => Message includes actual value for debugging
 
         // Test division
         int quotient = calc.divide(10, 2);
+        // => Test another operation
         assert quotient == 5 : "Expected 10 / 2 = 5, got " + quotient;
+        // => Same assertion pattern
+        // => String concatenation for diagnostic message
 
         System.out.println("All assertions passed!");
+        // => Success message (only reached if all assertions pass)
+        // => No automatic test reporting or aggregation
     }
 }
 ```
@@ -215,15 +235,34 @@ Assert keyword has significant limitations for production testing.
 
 ```java
 public class LimitationsExample {
+    // => Demonstrates why assert keyword insufficient for production testing
+
     public static void main(String[] args) {
+        // => Manual test runner in main method
         // Limitation 1: First failure stops everything
         assert 2 + 2 == 4 : "Math works";
+        // => This assertion passes (condition true)
+        // => Execution continues to next line
         assert 2 + 2 == 5 : "This fails and stops execution";
+        // => This assertion FAILS (2 + 2 != 5)
+        // => Throws AssertionError immediately
+        // => Halts entire program (no graceful handling)
+        // => Remaining assertions never executed
         assert 3 + 3 == 6 : "Never reached due to previous failure";
+        // => UNREACHABLE: previous assertion threw AssertionError
+        // => Cannot see if this test would pass or fail
+        // => No test summary or aggregate results
 
         // Limitation 2: No way to track passed vs failed
+        // => No counter or report of which tests succeeded
+        // => Binary outcome: all pass or first failure
         // Limitation 3: No organized test suites
+        // => No @Test annotation or automatic discovery
+        // => Must manually call all tests in main()
         // Limitation 4: No reporting (just exception or nothing)
+        // => Success: silent (just continues executing)
+        // => Failure: stack trace (not structured report)
+        // => No JUnit-style summary (X passed, Y failed)
     }
 }
 ```

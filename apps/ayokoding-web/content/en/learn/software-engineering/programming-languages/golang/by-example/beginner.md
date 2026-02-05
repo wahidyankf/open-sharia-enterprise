@@ -1178,86 +1178,43 @@ Go organizes code with packages. Every file starts with `package`, and a directo
 **Code**:
 
 ```go
-package main // => Every Go file must declare a package
-             // => package main creates executable
-             // => Other package names create libraries
+package main                    // => Executable package (vs library package)
 
 import (
-    "fmt"                       // => Standard library package for formatting
-                                 // => Import path: "fmt" (no version, in stdlib)
-                                 // => After import, use fmt.Function() syntax
-
-    "math"                      // => Standard library package for math operations
-                                 // => Provides constants (Pi, E) and functions (Sqrt, Pow)
+    "fmt"                       // => Formatting I/O
+    "math"                      // => Math constants and functions
 )
 
 func main() {
-    // Standard library packages available after import
-    fmt.Println("Pi:", math.Pi) // => Access exported constant from math package
-                                 // => math.Pi is 3.141592653589793
-                                 // => Package.Identifier syntax (qualified name)
-    // => Output: Pi: 3.141592653589793
+    fmt.Println("Pi:", math.Pi)              // => Pi: 3.141592653589793
+    fmt.Println("Sqrt(16):", math.Sqrt(16))  // => Sqrt(16): 4
 
-    fmt.Println("Sqrt(16):", math.Sqrt(16)) // => Call exported function from math
-                                             // => math.Sqrt returns float64
-                                             // => Sqrt(16) is 4.0
-    // => Output: Sqrt(16): 4
+    msg := PublicFunction()                  // => No prefix (same package)
+    fmt.Println(msg)                         // => callable from other packages
 
-    // Calling exported function from this package
-    msg := PublicFunction()     // => Call without package prefix (same package)
-                                 // => msg is "callable from other packages"
+    private := privateFunction()             // => Unexported but same package
+    fmt.Println(private)                     // => only callable within this package
 
-    fmt.Println(msg)            // => Print returned string
-    // => Output: callable from other packages
-
-    // Calling unexported function
-    private := privateFunction() // => Call unexported (same package, so allowed)
-                                  // => private is "only callable within this package"
-                                  // => From other packages, this would fail to compile
-
-    fmt.Println(private)        // => Print unexported function result
-    // => Output: only callable within this package
-
-    // Accessing unexported variable would fail
-    // fmt.Println(unexportedVar) // => ERROR if called from other package
-                                   // => Unexported identifiers invisible outside package
-
-    // Multiple imports can be used
-    pi := math.Pi               // => Assign constant to variable
-                                 // => pi is 3.141592653589793 (type: float64)
-
-    radius := 5.0               // => radius is 5.0
-    area := pi * radius * radius // => Calculate circle area
-                                  // => area is approximately 78.54
-
-    fmt.Printf("Circle area: %.2f\n", area) // => Print with 2 decimal places
-    // => Output: Circle area: 78.54
+    // Circle area calculation
+    pi := math.Pi
+    radius := 5.0
+    area := pi * radius * radius
+    fmt.Printf("Circle area: %.2f\n", area)  // => Circle area: 78.54
 }
 
-// Exported functions (capitalized)
-func PublicFunction() string {  // => Capital P - exported from this package
-                                 // => Visible to other packages importing this one
-                                 // => Public API of the package
-
-    return "callable from other packages" // => Return string literal
+// Exported function (capitalized)
+func PublicFunction() string {               // => Visible to other packages
+    return "callable from other packages"
 }
 
-// Unexported functions (lowercase)
-func privateFunction() string { // => Lowercase p - private to this package
-                                 // => Not visible outside this package
-                                 // => Internal implementation detail
-
-    return "only callable within this package" // => Return string
-                                                // => Only usable within same package
+// Unexported function (lowercase)
+func privateFunction() string {              // => Private to this package
+    return "only callable within this package"
 }
 
-// Exported constant
-const ExportedConst = 100       // => Capital E - exported
-                                 // => Other packages can access
-
-// Unexported constant
-const unexportedConst = 200     // => Lowercase u - unexported
-                                 // => Private to this package
+// Visibility via capitalization
+const ExportedConst = 100                    // => Public (Capital E)
+const unexportedConst = 200                  // => Private (lowercase u)
 ```
 
 **Key Takeaway**: `package main` declares an executable. Other packages are libraries. `import` makes packages available. Capitalization controls visibility: `Exported` is public, `unexported` is private to the package.
@@ -1504,109 +1461,52 @@ import "fmt"
 
 func main() {
     // Compound assignment operators
-    x := 10                    // => x is 10 (type: int)
-                                // => Initial value
+    x := 10
+    x += 5                     // => x = x + 5, now 15
+    fmt.Println(x)             // => 15
 
-    x += 5                     // => x = x + 5 (compound addition assignment)
-                                // => x is now 15 (10 + 5)
-                                // => Shorthand for x = x + 5
+    x -= 3                     // => x = x - 3, now 12
+    fmt.Println(x)             // => 12
 
-    fmt.Println(x)             // => Print current value
-    // => Output: 15
+    x *= 2                     // => x = x * 2, now 24
+    fmt.Println(x)             // => 24
 
-    x -= 3                     // => x = x - 3 (compound subtraction)
-                                // => x is now 12 (15 - 3)
+    x /= 4                     // => x = x / 4, now 6
+    fmt.Println(x)             // => 6
 
-    fmt.Println(x)             // => Print updated value
-    // => Output: 12
-
-    x *= 2                     // => x = x * 2 (compound multiplication)
-                                // => x is now 24 (12 * 2)
-
-    fmt.Println(x)             // => Print product
-    // => Output: 24
-
-    x /= 4                     // => x = x / 4 (compound division)
-                                // => x is now 6 (24 / 4, integer division)
-
-    fmt.Println(x)             // => Print quotient
-    // => Output: 6
-
-    x %= 4                     // => x = x % 4 (compound modulo)
-                                // => x is now 2 (6 % 4 = remainder of 6/4)
-
-    fmt.Println(x)             // => Print remainder
-    // => Output: 2
+    x %= 4                     // => x = x % 4, now 2 (remainder)
+    fmt.Println(x)             // => 2
 
     // Bitwise operators on integers
-    a := 12                    // => a is 12 (binary: 1100)
-                                // => 12 = 8 + 4 = 2³ + 2²
+    a := 12                    // => binary: 1100
+    b := 10                    // => binary: 1010
 
-    b := 10                    // => b is 10 (binary: 1010)
-                                // => 10 = 8 + 2 = 2³ + 2¹
-
-    fmt.Println(a & b)         // => Bitwise AND: 1100 & 1010 = 1000
-                                // => 1000 = 8 in decimal
-                                // => Only bits set in BOTH operands
-    // => Output: 8
-
-    fmt.Println(a | b)         // => Bitwise OR: 1100 | 1010 = 1110
-                                // => 1110 = 14 in decimal
-                                // => Bits set in EITHER operand
-    // => Output: 14
-
-    fmt.Println(a ^ b)         // => Bitwise XOR: 1100 ^ 1010 = 0110
-                                // => 0110 = 6 in decimal
-                                // => Bits set in ONE BUT NOT BOTH operands
-    // => Output: 6
-
-    fmt.Println(^a)            // => Bitwise NOT: ^1100 = ...11110011
-                                // => Inverts all bits (two's complement)
-                                // => -13 in decimal (signed integer)
-    // => Output: -13
+    fmt.Println(a & b)         // => AND: 1000 = 8 (bits in BOTH)
+    fmt.Println(a | b)         // => OR: 1110 = 14 (bits in EITHER)
+    fmt.Println(a ^ b)         // => XOR: 0110 = 6 (bits in ONE only)
+    fmt.Println(^a)            // => NOT: inverts all bits = -13
 
     // Bit shifting
-    fmt.Println(a << 1)        // => Left shift: 1100 << 1 = 11000
-                                // => 11000 = 24 in decimal
-                                // => Multiplies by 2¹ (left shift by 1)
-                                // => Each left shift multiplies by 2
-    // => Output: 24
-
-    fmt.Println(a >> 1)        // => Right shift: 1100 >> 1 = 0110
-                                // => 0110 = 6 in decimal
-                                // => Divides by 2¹ (right shift by 1)
-                                // => Each right shift divides by 2
-    // => Output: 6
+    fmt.Println(a << 1)        // => left shift: 11000 = 24 (multiply by 2)
+    fmt.Println(a >> 1)        // => right shift: 0110 = 6 (divide by 2)
 
     // Compound bitwise assignment
-    c := 5                     // => c is 5 (binary: 0101)
-                                // => 5 = 4 + 1 = 2² + 2⁰
-
-    c &= 3                     // => c = c & 3 (compound AND)
-                                // => 0101 & 0011 = 0001
-                                // => c is now 1
-
-    fmt.Println(c)             // => Print result
-    // => Output: 1
+    c := 5                     // => binary: 0101
+    c &= 3                     // => 0101 & 0011 = 0001, c now 1
+    fmt.Println(c)             // => 1
 
     // Practical use: flag manipulation
     const (
-        FlagRead  = 1 << 0     // => 0001 = 1
-        FlagWrite = 1 << 1     // => 0010 = 2
-        FlagExec  = 1 << 2     // => 0100 = 4
+        FlagRead  = 1 << 0     // => 1 (bit 0)
+        FlagWrite = 1 << 1     // => 2 (bit 1)
+        FlagExec  = 1 << 2     // => 4 (bit 2)
     )
 
-    permissions := FlagRead | FlagWrite // => 0001 | 0010 = 0011 = 3
-                                         // => Set read and write flags
+    permissions := FlagRead | FlagWrite    // => 3 (bits 0 and 1 set)
+    fmt.Println(permissions)               // => 3
 
-    fmt.Println(permissions)   // => Print combined flags
-    // => Output: 3
-
-    hasWrite := (permissions & FlagWrite) != 0 // => Check if write flag set
-                                                // => 0011 & 0010 = 0010 ≠ 0 → true
-
-    fmt.Println(hasWrite)      // => Print flag check result
-    // => Output: true
+    hasWrite := (permissions & FlagWrite) != 0 // => true (bit 1 is set)
+    fmt.Println(hasWrite)                      // => true
 }
 ```
 
@@ -2942,93 +2842,49 @@ package main
 import "fmt"
 
 func main() {
-    type Person struct {            // => Define struct type
-        Name string                 // => Field: Name (string)
-        Age  int                    // => Field: Age (int)
+    type Person struct {
+        Name string
+        Age  int
     }
 
-    p := Person{"Alice", 30}        // => Create Person instance
-                                    // => p.Name is "Alice", p.Age is 30
-    num := 255                      // => Integer for formatting demos
-                                    // => Binary: 11111111, Hex: FF, Octal: 377
-    pi := 3.14159                   // => Float for formatting demos
+    p := Person{"Alice", 30}
+    num := 255
+    pi := 3.14159
 
-    // Common formatting verbs for structs
-    fmt.Printf("%v\n", p)           // => %v: default format (values only)
-                                    // => Output: {Alice 30}
-    fmt.Printf("%+v\n", p)          // => %+v: include field names
-                                    // => Output: {Name:Alice Age:30}
-    fmt.Printf("%#v\n", p)          // => %#v: Go-syntax representation
-                                    // => Output: main.Person{Name:"Alice", Age:30}
-    fmt.Printf("%T\n", p)           // => %T: type of value
-                                    // => Output: main.Person
+    // Struct formatting verbs
+    fmt.Printf("%v\n", p)           // => {Alice 30} (default format)
+    fmt.Printf("%+v\n", p)          // => {Name:Alice Age:30} (with field names)
+    fmt.Printf("%#v\n", p)          // => main.Person{Name:"Alice", Age:30} (Go syntax)
+    fmt.Printf("%T\n", p)           // => main.Person (type)
 
     // Integer formatting verbs
-    fmt.Printf("%d\n", num)         // => %d: decimal (base 10)
-                                    // => 255 in decimal
-                                    // => Output: 255
-    fmt.Printf("%b\n", num)         // => %b: binary (base 2)
-                                    // => 255 = 11111111 in binary
-                                    // => Output: 11111111
-    fmt.Printf("%o\n", num)         // => %o: octal (base 8)
-                                    // => 255 = 377 in octal
-                                    // => Output: 377
-    fmt.Printf("%x\n", num)         // => %x: hexadecimal lowercase (base 16)
-                                    // => 255 = ff in hex
-                                    // => Output: ff
-    fmt.Printf("%X\n", num)         // => %X: hexadecimal uppercase
-                                    // => 255 = FF in hex
-                                    // => Output: FF
-    fmt.Printf("%c\n", num)         // => %c: character (Unicode code point)
-                                    // => 255 = ÿ character
-                                    // => Output: ÿ
+    fmt.Printf("%d\n", num)         // => 255 (decimal)
+    fmt.Printf("%b\n", num)         // => 11111111 (binary)
+    fmt.Printf("%o\n", num)         // => 377 (octal)
+    fmt.Printf("%x\n", num)         // => ff (hex lowercase)
+    fmt.Printf("%X\n", num)         // => FF (hex uppercase)
+    fmt.Printf("%c\n", num)         // => ÿ (character)
 
     // Float formatting verbs
-    fmt.Printf("%f\n", pi)          // => %f: decimal floating point
-                                    // => Default precision: 6 decimals
-                                    // => Output: 3.141590
-    fmt.Printf("%.2f\n", pi)        // => %.2f: 2 decimal places
-                                    // => Rounds to 2 decimals
-                                    // => Output: 3.14
-    fmt.Printf("%e\n", pi)          // => %e: scientific notation lowercase
-                                    // => Exponent format
-                                    // => Output: 3.141590e+00
-    fmt.Printf("%E\n", pi)          // => %E: scientific notation uppercase
-                                    // => Uppercase E
-                                    // => Output: 3.141590E+00
+    fmt.Printf("%f\n", pi)          // => 3.141590 (6 decimals default)
+    fmt.Printf("%.2f\n", pi)        // => 3.14 (2 decimals)
+    fmt.Printf("%e\n", pi)          // => 3.141590e+00 (scientific lowercase)
+    fmt.Printf("%E\n", pi)          // => 3.141590E+00 (scientific uppercase)
 
     // String formatting verbs
-    fmt.Printf("%s\n", "hello")     // => %s: plain string
-                                    // => Output: hello
-    fmt.Printf("%q\n", "hello")     // => %q: quoted string (Go syntax)
-                                    // => Adds double quotes
-                                    // => Output: "hello"
-    fmt.Printf("%10s\n", "hello")   // => %10s: width 10, right-aligned
-                                    // => Pads with spaces on left
-                                    // => Output: "     hello"
-    fmt.Printf("%-10s\n", "hello")  // => %-10s: width 10, left-aligned
-                                    // => Pads with spaces on right
-                                    // => Output: "hello     "
+    fmt.Printf("%s\n", "hello")     // => hello (plain)
+    fmt.Printf("%q\n", "hello")     // => "hello" (quoted)
+    fmt.Printf("%10s\n", "hello")   // =>      hello (width 10, right)
+    fmt.Printf("%-10s\n", "hello")  // => hello      (width 10, left)
 
-    // Pointer formatting
-    fmt.Printf("%p\n", &p)          // => %p: pointer address in hex
-                                    // => &p is address of p
-                                    // => Output: 0xc0000a0000 (example address)
+    // Pointer and boolean
+    fmt.Printf("%p\n", &p)          // => 0xc0000a0000 (pointer address)
+    fmt.Printf("%t\n", true)        // => true (boolean)
 
-    // Boolean formatting
-    fmt.Printf("%t\n", true)        // => %t: boolean (true/false)
-                                    // => Output: true
-
-    // Width and precision control
-    fmt.Printf("|%5d|\n", 42)       // => %5d: width 5, right-aligned
-                                    // => Pads with spaces: "   42"
-                                    // => Output: |   42|
-    fmt.Printf("|%-5d|\n", 42)      // => %-5d: width 5, left-aligned
-                                    // => Pads with spaces: "42   "
-                                    // => Output: |42   |
-    fmt.Printf("|%05d|\n", 42)      // => %05d: width 5, zero-padded
-                                    // => Pads with zeros: "00042"
-                                    // => Output: |00042|
+    // Width and precision
+    fmt.Printf("|%5d|\n", 42)       // => |   42| (width 5, right)
+    fmt.Printf("|%-5d|\n", 42)      // => |42   | (width 5, left)
+    fmt.Printf("|%05d|\n", 42)      // => |00042| (width 5, zero-pad)
 }
 ```
 

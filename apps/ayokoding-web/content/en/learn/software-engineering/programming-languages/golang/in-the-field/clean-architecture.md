@@ -22,6 +22,33 @@ Clean Architecture separates concerns into distinct layers with clear dependency
 
 **Solution**: Organize code into layers (domain, usecase, adapter) with dependency inversion through interfaces, ensuring inner layers never depend on outer layers.
 
+## Clean Architecture Dependency Rule
+
+```mermaid
+graph TD
+    Frameworks["Frameworks & Drivers Layer<br/>(HTTP, Database, External APIs)"] -->|"depends on"| Adapters["Interface Adapters Layer<br/>(Controllers, Presenters, Gateways)"]
+    Adapters -->|"depends on"| UseCases["Use Cases Layer<br/>(Application Business Rules)"]
+    UseCases -->|"depends on"| Domain["Domain Layer<br/>(Enterprise Business Rules)"]
+
+    Adapters -.->|"implements"| UseCasesPorts["Interfaces defined<br/>in Use Cases"]
+    UseCases -.->|"implements"| DomainPorts["Interfaces defined<br/>in Domain"]
+
+    style Frameworks fill:#CA9161,stroke:#CA9161,color:#fff
+    style Adapters fill:#CC78BC,stroke:#CC78BC,color:#fff
+    style UseCases fill:#029E73,stroke:#029E73,color:#fff
+    style Domain fill:#0173B2,stroke:#0173B2,color:#fff
+    style UseCasesPorts fill:#DE8F05,stroke:#DE8F05,color:#fff
+    style DomainPorts fill:#DE8F05,stroke:#DE8F05,color:#fff
+```
+
+**Dependency rule**:
+
+- **Domain Layer** (innermost): No dependencies on outer layers, only standard library
+- **Use Cases Layer**: Depends on Domain, defines repository interfaces (dependency inversion)
+- **Interface Adapters Layer**: Implements interfaces from Use Cases (controllers, presenters)
+- **Frameworks Layer** (outermost): Depends on all inner layers (HTTP, database, external APIs)
+- **Critical**: Dependencies always point inward (outer → inner, never inner → outer)
+
 ## Standard Library Approach: Package Organization
 
 Go's standard library demonstrates layer separation through package organization and interface boundaries. No external framework needed - just packages and interfaces.

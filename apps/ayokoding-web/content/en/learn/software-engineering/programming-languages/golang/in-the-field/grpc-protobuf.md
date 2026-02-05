@@ -23,6 +23,67 @@ gRPC is a high-performance RPC framework using Protocol Buffers (binary serializ
 
 **Solution**: Use gRPC for microservice communication (efficiency, type safety), REST for public APIs (browser support, simplicity). Master proto3 syntax before code generation.
 
+## gRPC Client-Server Communication
+
+```mermaid
+sequenceDiagram
+    participant Client as gRPC Client
+    participant Conn as Connection<br/>(HTTP/2)
+    participant Server as gRPC Server
+    participant Handler as Service Handler
+
+    Note over Client,Server: 1. Unary RPC (Request-Response)
+
+    Client->>Conn: GetUser(id: 1)
+    Conn->>Server: Serialized Request<br/>(Protobuf binary)
+    Server->>Handler: Deserialize + Invoke
+    Handler->>Handler: Process request<br/>(query database)
+    Handler-->>Server: User{id:1, name:"Alice"}
+    Server-->>Conn: Serialized Response<br/>(Protobuf binary)
+    Conn-->>Client: User object
+
+    Note over Client,Server: 2. Server Streaming (Stream Response)
+
+    Client->>Server: ListUsers(page: 1)
+    Server->>Handler: Invoke
+    loop For each user
+        Handler-->>Server: User object
+        Server-->>Client: Stream user<br/>(continuous)
+    end
+    Server-->>Client: EOF (stream complete)
+
+    Note over Client,Server: 3. Client Streaming (Stream Request)
+
+    loop For each user to create
+        Client->>Server: CreateUserRequest<br/>(stream)
+    end
+    Client->>Server: Close stream
+    Server->>Handler: Process all users
+    Handler-->>Server: CreateUsersResponse<br/>(all created users)
+    Server-->>Client: Final response
+
+    Note over Client,Server: 4. Bidirectional Streaming
+
+    par Client to Server
+        Client->>Server: ChatMessage<br/>(continuous)
+    and Server to Client
+        Server-->>Client: ChatMessage<br/>(continuous)
+    end
+
+    style Client fill:#0173B2,stroke:#0173B2,color:#fff
+    style Conn fill:#DE8F05,stroke:#DE8F05,color:#fff
+    style Server fill:#029E73,stroke:#029E73,color:#fff
+    style Handler fill:#CC78BC,stroke:#CC78BC,color:#fff
+```
+
+**gRPC communication patterns**:
+
+- **Unary RPC**: Single request → single response (like REST)
+- **Server Streaming**: Single request → stream of responses (real-time updates)
+- **Client Streaming**: Stream of requests → single response (bulk upload)
+- **Bidirectional Streaming**: Both directions stream concurrently (chat, real-time collaboration)
+- **HTTP/2 Multiplexing**: Multiple RPCs over single connection (efficient)
+
 ## Protocol Buffers First: Service Definition
 
 Protocol Buffers (proto3) is interface definition language for gRPC services. Define messages (data structures) and services (RPC methods) in `.proto` files, then generate Go code.
