@@ -16,3 +16,4 @@ layout: list
   - [Beginner](/en/learn/software-engineering/programming-languages/f-sharp/by-example/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-languages/f-sharp/by-example/intermediate)
   - [Advanced](/en/learn/software-engineering/programming-languages/f-sharp/by-example/advanced)
+- **In the Field** (Production implementation guides - coming soon)

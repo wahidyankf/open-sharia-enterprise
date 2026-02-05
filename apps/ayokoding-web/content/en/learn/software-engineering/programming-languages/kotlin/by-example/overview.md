@@ -3,11 +3,20 @@ title: "Overview"
 date: 2025-12-30T01:11:31+07:00
 draft: false
 weight: 10000000
-description: "Learn Kotlin through 80 annotated code examples covering 95% of the language - ideal for experienced developers switching to Kotlin"
-tags: ["kotlin", "tutorial", "by-example", "examples", "code-first", "jvm", "android"]
+description: "🔴 CRITICAL: Kotlin by-example is completely empty (0/85 examples) - under active development"
+tags: ["kotlin", "tutorial", "by-example", "examples", "code-first", "jvm", "android", "incomplete", "empty"]
 ---
 
-**Want to quickly master Kotlin through working examples?** This by-example guide teaches 95% of Kotlin through 80 annotated code examples organized by complexity level.
+🔴 **CRITICAL STATUS: COMPLETELY EMPTY** - This tutorial is currently under development with 0 out of 75-85 target examples. All three levels (beginner, intermediate, advanced) need to be created from scratch.
+
+**When complete**, this by-example guide will teach 95% of Kotlin through 75-85 annotated code examples organized by complexity level.
+
+**Current Progress**:
+
+- Beginner (0/27-30 examples) - Not started
+- Intermediate (0/20-30 examples) - Not started
+- Advanced (0/25-28 examples) - Not started
+- **Total: 0/85 examples** - 100% gap (highest priority)
 
 ## What Is By-Example Learning?
 
