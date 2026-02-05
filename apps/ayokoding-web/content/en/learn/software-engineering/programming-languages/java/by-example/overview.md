@@ -3,11 +3,11 @@ title: "Overview"
 date: 2026-01-01T21:53:25+07:00
 draft: false
 weight: 10000000
-description: "Learn Java through 82 annotated code examples covering 95% of the language - ideal for experienced developers switching to Java"
+description: "Learn Java through 84 annotated code examples covering 95% of the language - ideal for experienced developers switching to Java"
 tags: ["java", "tutorial", "by-example", "examples", "code-first", "jvm", "oop"]
 ---
 
-**Want to quickly master Java through working examples?** This by-example guide teaches 95% of Java through 82 annotated code examples organized by complexity level.
+**Want to quickly master Java through working examples?** This by-example guide teaches 95% of Java through 84 annotated code examples organized by complexity level.
 
 ## What Is By-Example Learning?
 
