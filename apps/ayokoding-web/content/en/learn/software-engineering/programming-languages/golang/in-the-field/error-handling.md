@@ -3,7 +3,7 @@ title: "Error Handling"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Error interface, error wrapping, errors.Is/As, and sentinel errors in Go"
-weight: 10000026
+weight: 1000026
 tags: ["golang", "error-handling", "errors", "sentinel-errors", "production"]
 ---
 

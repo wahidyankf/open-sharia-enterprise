@@ -3,7 +3,7 @@ title: "Code Generation"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "go:generate directive and code generation tools for Go"
-weight: 10000036
+weight: 1000036
 tags: ["golang", "code-generation", "tooling", "automation"]
 ---
 

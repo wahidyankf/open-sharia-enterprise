@@ -3,7 +3,7 @@ title: "Type System"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Named vs unnamed types, interface satisfaction, type assertions, and generics in Go"
-weight: 10000020
+weight: 1000020
 tags: ["golang", "type-system", "interfaces", "generics", "production"]
 ---
 

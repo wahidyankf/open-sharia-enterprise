@@ -3,7 +3,7 @@ title: "Build Compilation"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Cross-compilation, build optimization, and CGO considerations"
-weight: 10000084
+weight: 1000084
 tags: ["golang", "build", "compilation", "cross-compilation", "optimization"]
 ---
 

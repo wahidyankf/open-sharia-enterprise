@@ -3,7 +3,7 @@ title: "Logging Observability"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Structured logging with log package, slog (Go 1.21+), limitations, and production logging frameworks (zerolog/zap) plus observability fundamentals"
-weight: 10000058
+weight: 1000058
 tags: ["golang", "logging", "observability", "slog", "zerolog", "zap", "opentelemetry", "production"]
 ---
 

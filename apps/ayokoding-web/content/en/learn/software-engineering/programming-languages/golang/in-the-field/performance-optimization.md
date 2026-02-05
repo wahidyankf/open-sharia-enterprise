@@ -3,7 +3,7 @@ title: "Performance Optimization"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Performance optimization in Go: profiling with pprof, benchmarking, memory allocation reduction, escape analysis"
-weight: 10000074
+weight: 1000074
 tags: ["golang", "performance", "profiling", "pprof", "benchmarking", "optimization", "production"]
 ---
 

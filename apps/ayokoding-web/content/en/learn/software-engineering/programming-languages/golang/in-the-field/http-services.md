@@ -3,7 +3,7 @@ title: "Http Services"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Building HTTP servers and clients with net/http, limitations, and production frameworks (Gin/Echo)"
-weight: 10000042
+weight: 1000042
 tags: ["golang", "http", "web-services", "rest", "gin", "echo", "production"]
 ---
 

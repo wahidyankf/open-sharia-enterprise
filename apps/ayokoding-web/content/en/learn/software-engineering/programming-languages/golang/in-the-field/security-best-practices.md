@@ -3,7 +3,7 @@ title: "Security Best Practices"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Security best practices for Go: input validation, SQL injection prevention, password hashing, secrets management"
-weight: 10000068
+weight: 1000068
 tags: ["golang", "security", "validation", "sql-injection", "password-hashing", "secrets", "production"]
 ---
 

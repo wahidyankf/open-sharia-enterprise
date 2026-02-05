@@ -3,7 +3,7 @@ title: "Resilience Patterns"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Resilience patterns in Go: timeouts, retries, circuit breakers, and bulkheads for fault tolerance"
-weight: 10000072
+weight: 1000072
 tags: ["golang", "resilience", "circuit-breaker", "retry", "timeout", "fault-tolerance", "production"]
 ---
 

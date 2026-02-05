@@ -3,7 +3,7 @@ title: "Generics"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Type parameters, constraints, and when to use generics vs interfaces in Go"
-weight: 10000030
+weight: 1000030
 tags: ["golang", "generics", "type-parameters", "constraints", "production"]
 ---
 

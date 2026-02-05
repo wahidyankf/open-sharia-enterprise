@@ -3,7 +3,7 @@ title: "Domain Driven Design"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "DDD patterns in Go using value objects, entities, aggregates, and repositories with composition"
-weight: 10000062
+weight: 1000062
 tags: ["golang", "ddd", "domain-driven-design", "architecture", "design"]
 ---
 

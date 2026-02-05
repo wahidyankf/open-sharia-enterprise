@@ -3,7 +3,7 @@ title: "Configuration"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Configuration management with os.Getenv, godotenv for .env files, limitations, and production config frameworks (viper)"
-weight: 10000056
+weight: 1000056
 tags: ["golang", "configuration", "viper", "12-factor", "environment-variables", "production"]
 ---
 

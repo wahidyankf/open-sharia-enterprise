@@ -3,7 +3,7 @@ title: "Go Modules"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Dependency management with go.mod, semantic versioning, and workspace mode"
-weight: 10000082
+weight: 1000082
 tags: ["golang", "modules", "dependencies", "versioning"]
 ---
 

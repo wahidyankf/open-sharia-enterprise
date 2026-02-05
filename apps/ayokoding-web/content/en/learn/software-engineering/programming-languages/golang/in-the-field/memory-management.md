@@ -3,7 +3,7 @@ title: "Memory Management"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Memory management in Go: GC overview, stack vs heap allocation, escape analysis, memory profiling, GOMEMLIMIT tuning"
-weight: 10000076
+weight: 1000076
 tags: ["golang", "memory-management", "gc", "garbage-collection", "escape-analysis", "performance", "production"]
 ---
 

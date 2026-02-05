@@ -3,7 +3,7 @@ title: "Authentication Authorization"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Authentication and authorization patterns in Go: Basic Auth, JWT, OAuth2, and RBAC"
-weight: 10000066
+weight: 1000066
 tags: ["golang", "authentication", "authorization", "jwt", "oauth2", "security", "production"]
 ---
 
