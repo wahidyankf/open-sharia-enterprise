@@ -7,6 +7,7 @@ description: "Pola dan praktik produksi untuk pengembangan Go"
 tags: ["golang", "in-the-field", "production", "best-practices"]
 ---
 
+- [Ikhtisar](/id/belajar/software-engineering/programming-languages/golang/in-the-field/ikhtisar)
 - [Best Practices](/id/belajar/software-engineering/programming-languages/golang/in-the-field/best-practices)
 - [Anti Patterns](/id/belajar/software-engineering/programming-languages/golang/in-the-field/anti-patterns)
 - [Clean Architecture](/id/belajar/software-engineering/programming-languages/golang/in-the-field/clean-architecture)

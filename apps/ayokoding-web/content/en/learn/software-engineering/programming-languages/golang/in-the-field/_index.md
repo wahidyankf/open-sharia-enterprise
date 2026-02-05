@@ -7,6 +7,7 @@ description: "Production patterns and practices for Go development"
 tags: ["golang", "in-the-field", "production", "best-practices"]
 ---
 
+- [Overview](/en/learn/software-engineering/programming-languages/golang/in-the-field/overview)
 - [Best Practices](/en/learn/software-engineering/programming-languages/golang/in-the-field/best-practices)
 - [Anti Patterns](/en/learn/software-engineering/programming-languages/golang/in-the-field/anti-patterns)
 - [Type System](/en/learn/software-engineering/programming-languages/golang/in-the-field/type-system)
