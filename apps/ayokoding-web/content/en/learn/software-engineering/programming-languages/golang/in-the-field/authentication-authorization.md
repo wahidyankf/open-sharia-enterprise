@@ -22,6 +22,49 @@ Authentication (verifying identity) and authorization (verifying permissions) ar
 
 **Solution**: Start with net/http Basic Auth to understand fundamentals, identify limitations (no JWT, no sessions), then use production libraries (golang-jwt/jwt for tokens, OAuth2 packages) for comprehensive authentication.
 
+## JWT Authentication Flow
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant LoginHandler
+    participant Database
+    participant JWTMiddleware
+    participant ProtectedHandler
+
+    Client->>LoginHandler: POST /login<br/>(username, password)
+    LoginHandler->>Database: Validate credentials
+    Database-->>LoginHandler: User found + role
+    LoginHandler->>LoginHandler: Generate JWT<br/>(sign with secret)
+    LoginHandler-->>Client: {"token": "eyJhbGc..."}
+
+    Note over Client: Store token<br/>(HttpOnly cookie)
+
+    Client->>JWTMiddleware: GET /protected<br/>Authorization: Bearer eyJhbGc...
+    JWTMiddleware->>JWTMiddleware: Parse token<br/>Validate signature<br/>Check expiration
+    alt Token Valid
+        JWTMiddleware->>JWTMiddleware: Extract claims<br/>(username, role)
+        JWTMiddleware->>ProtectedHandler: Forward request<br/>(claims in context)
+        ProtectedHandler-->>Client: 200 OK<br/>Protected resource
+    else Token Invalid/Expired
+        JWTMiddleware-->>Client: 401 Unauthorized
+    end
+
+    style Client fill:#0173B2,stroke:#0173B2,color:#fff
+    style LoginHandler fill:#DE8F05,stroke:#DE8F05,color:#fff
+    style Database fill:#029E73,stroke:#029E73,color:#fff
+    style JWTMiddleware fill:#CC78BC,stroke:#CC78BC,color:#fff
+    style ProtectedHandler fill:#CA9161,stroke:#CA9161,color:#fff
+```
+
+**Authentication flow steps**:
+
+- **Login**: Client sends credentials, server validates, generates signed JWT
+- **Token storage**: Client stores token (HttpOnly cookie for XSS protection)
+- **Protected request**: Client sends token in Authorization header
+- **Validation**: Middleware verifies signature, expiration, extracts claims
+- **Authorization**: Handler checks claims (username, role) for access control
+
 ## Standard Library: Basic Authentication
 
 Go's net/http supports Basic Authentication through Authorization header parsing.

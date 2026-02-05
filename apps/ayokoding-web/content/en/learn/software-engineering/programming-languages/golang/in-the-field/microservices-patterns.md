@@ -22,6 +22,39 @@ Microservices decompose systems into independently deployable services, requirin
 
 **Solution**: Apply service discovery, circuit breakers, rate limiting, retries with backoff, health checks, and graceful shutdown patterns using Go's standard library and production-grade libraries.
 
+## Microservices Communication Flow
+
+```mermaid
+graph LR
+    Client["Client"] -->|"HTTP Request"| Gateway["API Gateway"]
+    Gateway -->|"Service Discovery"| Consul["Consul Registry"]
+    Consul -->|"Service Address"| Gateway
+    Gateway -->|"Circuit Breaker Check"| CB["Circuit Breaker"]
+    CB -->|"Closed State"| Payment["Payment Service"]
+    CB -->|"Open State"| Fallback["Fallback Response"]
+    Payment -->|"Create Invoice"| Invoice["Invoice Service"]
+    Payment -->|"Record Transaction"| Accounting["Accounting Service"]
+    Invoice -->|"Health Check"| Consul
+    Accounting -->|"Health Check"| Consul
+
+    style Client fill:#0173B2,stroke:#0173B2,color:#fff
+    style Gateway fill:#DE8F05,stroke:#DE8F05,color:#fff
+    style Consul fill:#029E73,stroke:#029E73,color:#fff
+    style CB fill:#CC78BC,stroke:#CC78BC,color:#fff
+    style Payment fill:#CA9161,stroke:#CA9161,color:#fff
+    style Invoice fill:#0173B2,stroke:#0173B2,color:#fff
+    style Accounting fill:#DE8F05,stroke:#DE8F05,color:#fff
+    style Fallback fill:#029E73,stroke:#029E73,color:#fff
+```
+
+**Flow explanation**:
+
+- **Client** sends request to **API Gateway** (single entry point)
+- **Gateway** queries **Consul** for service locations (dynamic discovery)
+- **Circuit Breaker** prevents cascading failures (fail fast when service unhealthy)
+- **Payment Service** coordinates invoice and accounting calls
+- Services register health status with **Consul** (automated health monitoring)
+
 ## Standard Library Approach: HTTP Services with Timeouts
 
 Go's standard library provides http.Server, http.Client, and context for building resilient HTTP services without external dependencies.

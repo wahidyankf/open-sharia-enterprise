@@ -22,6 +22,62 @@ Go's `net/http` package is production-grade HTTP implementation used by major co
 
 **Solution**: Start with `net/http` for fundamentals, recognize limitations (routing, middleware), then introduce production frameworks (Gin/Echo) with clear rationale for specific use cases.
 
+## HTTP Request Lifecycle with Middleware
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server
+    participant LoggerMW as Logger Middleware
+    participant AuthMW as Auth Middleware
+    participant RateLimitMW as Rate Limit Middleware
+    participant Handler
+
+    Client->>Server: HTTP Request<br/>(GET /api/users)
+    Server->>LoggerMW: Request enters chain
+    LoggerMW->>LoggerMW: Log request<br/>(method, path, timestamp)
+    LoggerMW->>AuthMW: next.ServeHTTP()
+    AuthMW->>AuthMW: Verify token<br/>Extract user ID
+    alt Token Valid
+        AuthMW->>RateLimitMW: next.ServeHTTP()<br/>(user ID in context)
+        RateLimitMW->>RateLimitMW: Check rate limit<br/>(user bucket)
+        alt Rate Limit OK
+            RateLimitMW->>Handler: next.ServeHTTP()
+            Handler->>Handler: Process request<br/>(query database)
+            Handler-->>RateLimitMW: Response
+            RateLimitMW-->>AuthMW: Response
+            AuthMW-->>LoggerMW: Response
+            LoggerMW->>LoggerMW: Log response<br/>(status, duration)
+            LoggerMW-->>Server: Response
+            Server-->>Client: 200 OK<br/>Response body
+        else Rate Limit Exceeded
+            RateLimitMW-->>AuthMW: 429 Too Many Requests
+            AuthMW-->>LoggerMW: 429
+            LoggerMW-->>Server: 429
+            Server-->>Client: 429 Too Many Requests
+        end
+    else Token Invalid
+        AuthMW-->>LoggerMW: 401 Unauthorized
+        LoggerMW-->>Server: 401
+        Server-->>Client: 401 Unauthorized
+    end
+
+    style Client fill:#0173B2,stroke:#0173B2,color:#fff
+    style Server fill:#DE8F05,stroke:#DE8F05,color:#fff
+    style LoggerMW fill:#029E73,stroke:#029E73,color:#fff
+    style AuthMW fill:#CC78BC,stroke:#CC78BC,color:#fff
+    style RateLimitMW fill:#CA9161,stroke:#CA9161,color:#fff
+    style Handler fill:#0173B2,stroke:#0173B2,color:#fff
+```
+
+**Middleware chain execution**:
+
+- **Logger**: First middleware logs request details (timing starts)
+- **Auth**: Validates token, adds user ID to context or returns 401
+- **Rate Limit**: Checks user's rate bucket, allows or returns 429
+- **Handler**: Business logic executes if all middleware passes
+- **Response**: Flows back through middleware chain (logging duration)
+
 ## Standard Library First: net/http Basics
 
 Go's `net/http` package provides HTTP server and client primitives. The core abstraction is `http.Handler`, an interface with a single method.

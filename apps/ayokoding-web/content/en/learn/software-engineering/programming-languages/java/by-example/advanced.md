@@ -3,7 +3,7 @@ title: "Advanced"
 date: 2026-01-02T05:01:35+07:00
 draft: false
 weight: 10000003
-description: "Examples 60-82: Expert mastery, performance, memory management, design patterns, reactive programming (75-95% coverage)"
+description: "Examples 60-84: Expert mastery, performance, memory management, design patterns, reactive programming (75-95% coverage)"
 tags:
   [
     "java",
@@ -4698,4 +4698,230 @@ class CustomEventExample {
 
 **Why It Matters** (100 words): JFR enables continuous production profiling without performance penalties. Traditional profilers (VisualVM, YourKit) add 10-50% overhead, making them unsuitable for production. JFR's <1% overhead allows always-on recording—capture issues as they happen (intermittent GC pauses, allocation spikes). The circular buffer (maxage, maxsize) keeps recent history without unbounded growth. JFR's event-based architecture records low-level JVM events (TLAB allocations, GC phases, lock acquisitions) invisible to other profilers. Analyzing JFR recordings in JMC reveals allocation hotspots (35% from BigDecimal constructor), premature promotion (survivors → old), and GC tuning opportunities. JFR is essential for diagnosing production memory issues.
 
----
+## Example 83: CompletableFuture Advanced Patterns
+
+CompletableFuture provides powerful exception handling, composition, and timeout mechanisms for asynchronous programming. Handle failures with `exceptionally()`, `handle()`, or `whenComplete()`. Combine futures with `thenCompose()` (sequential) or `thenCombine()` (parallel). Enforce timeouts with `orTimeout()` or `completeOnTimeout()`.
+
+**Exception handling methods:**
+
+```java
+import java.util.concurrent.*;
+
+class CompletableFutureAdvanced {
+
+    public static void main(String[] args) throws Exception {
+
+        // exceptionally: recover from exception
+        CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> {
+            // => Async task runs in ForkJoinPool.commonPool()
+            if (Math.random() > 0.5) throw new RuntimeException("Random failure");
+            // => 50% chance of exception (simulated failure)
+            return "Success";
+            // => Returns on success path
+        }).exceptionally(ex -> {
+            // => Fallback handler called ONLY on exception
+            // => ex is RuntimeException caught from supplyAsync
+            System.out.println("Recovering from: " + ex.getMessage());
+            // => Logs error for debugging
+            return "Recovered: " + ex.getMessage();
+            // => Returns fallback value (String type matches future)
+        });
+
+        System.out.println(future1.get());
+        // => Blocks until complete
+        // => Output: "Success" OR "Recovered: Random failure"
+
+        // handle: transform both success and failure paths
+        CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> {
+            // => Another async task
+            if (Math.random() > 0.5) throw new RuntimeException("Error");
+            // => 50% failure rate
+            return "Data";
+            // => Success path returns "Data"
+        }).handle((result, ex) -> {
+            // => Handler always called (success OR failure)
+            // => result is non-null on success (contains "Data")
+            // => ex is non-null on failure (contains RuntimeException)
+            if (ex != null) {
+                // => Exception path
+                return "Error: " + ex.getMessage();
+                // => Transforms exception to error string
+            }
+            return "Processed: " + result;
+            // => Success path transforms "Data" to "Processed: Data"
+        });
+
+        System.out.println(future2.get());
+        // => Blocks for result
+        // => Output: "Processed: Data" OR "Error: Error"
+
+        // whenComplete: side effects without transformation
+        CompletableFuture<String> future3 = CompletableFuture.supplyAsync(() -> "Result")
+            // => Returns immediately with "Result"
+            .whenComplete((result, ex) -> {
+                // => Side effect handler (doesn't change result/exception)
+                if (ex != null) {
+                    // => Exception case
+                    System.out.println("Failed: " + ex);
+                    // => Log failure (console output)
+                } else {
+                    // => Success case
+                    System.out.println("Completed: " + result);
+                    // => Log success with value
+                }
+                // => Original result/exception passes through unchanged
+            });
+
+        System.out.println(future3.get());
+        // => future3 still contains "Result" (whenComplete doesn't transform)
+        // => Console output: "Completed: Result"
+        // => Return output: "Result"
+    }
+}
+```
+
+**Key Takeaway**: CompletableFuture exception handling: `exceptionally()` recovers from failures (fallback values), `handle()` transforms both success and error paths (unified handler), `whenComplete()` adds side effects like logging without altering results.
+
+**Why It Matters** (50-100 words): Exception handling in async code is critical—unlike synchronous try-catch, async exceptions happen on different threads. CompletableFuture provides three strategies: `exceptionally()` for fallback values (return default on error), `handle()` for unified success/error transformation (single handler for both paths), `whenComplete()` for side effects (logging, metrics) without changing outcomes. These methods enable robust async pipelines that gracefully degrade (fallback to cached data), unify error handling (HTTP error codes from both success/failure), and maintain observability (log all completions). Mastering exception handling prevents silent failures in async systems.
+
+## Example 84: Custom Annotations with Retention Policies
+
+Custom annotations enable metadata-driven programming. Retention policies control annotation availability: `SOURCE` (compile-time only, like Lombok), `CLASS` (bytecode but not runtime, for instrumentation), `RUNTIME` (reflection-accessible, like Spring/JUnit). Use `@Target` to restrict annotation locations (TYPE, METHOD, FIELD, PARAMETER).
+
+**Validation framework with runtime annotations:**
+
+```java
+import java.lang.annotation.*;
+import java.lang.reflect.*;
+import java.util.*;
+
+// Retention policy: RUNTIME (accessible via reflection)
+@Retention(RetentionPolicy.RUNTIME)
+// => Annotation preserved in .class file AND available at runtime
+@Target(ElementType.FIELD)
+// => Can only be applied to fields (not methods/classes/parameters)
+@interface NotNull {
+    String message() default "Field cannot be null";
+    // => Annotation parameter with default value
+}
+
+@Retention(RetentionPolicy.RUNTIME)
+// => Runtime reflection access required for validation
+@Target(ElementType.FIELD)
+@interface Range {
+    int min();
+    // => Required parameter (no default)
+    int max();
+    String message() default "Value out of range";
+    // => Optional parameter (has default)
+}
+
+// Domain model with validation annotations
+class User {
+    @NotNull(message = "Username required")
+    // => Declarative constraint: username must not be null
+    private String username;
+
+    @Range(min = 18, max = 120, message = "Age must be 18-120")
+    // => Declarative constraint: age between 18-120
+    private int age;
+
+    public User(String username, int age) {
+        this.username = username;
+        // => May be null (validation happens later)
+        this.age = age;
+        // => May be out of range (validation decoupled from constructor)
+    }
+}
+
+// Validation framework using reflection
+class Validator {
+
+    public static List<String> validate(Object obj) throws IllegalAccessException {
+        // => Generic validator works on any annotated object
+        // => Takes any Object instance (User, Order, Product, etc.)
+        List<String> errors = new ArrayList<>();
+        // => Collects all validation errors across all fields
+        Class<?> clazz = obj.getClass();
+        // => Get runtime class of object (User.class, Order.class, etc.)
+        // => Reflection starts here: inspect class metadata
+
+        for (Field field : clazz.getDeclaredFields()) {
+            // => Iterate all fields (including private username, age, email)
+            // => getDeclaredFields() returns fields from THIS class only (no inheritance)
+            field.setAccessible(true);
+            // => Bypass private access modifier (reflection override)
+            // => Normally "private String username" is inaccessible
+            Object value = field.get(obj);
+            // => Read field value from object instance
+            // => For validUser, reads "alice" from username field, 25 from age
+
+            // Check @NotNull constraint
+            if (field.isAnnotationPresent(NotNull.class)) {
+                // => Field has @NotNull annotation (username has it)
+                // => isAnnotationPresent() checks if annotation exists on field
+                NotNull ann = field.getAnnotation(NotNull.class);
+                // => Retrieve annotation instance with metadata
+                // => ann.message() will be "Username required"
+                if (value == null) {
+                    // => Constraint violated (null not allowed)
+                    // => For invalidUser, username is null → violation
+                    errors.add(ann.message());
+                    // => Add custom error message to errors list
+                    // => errors now contains ["Username required"]
+                }
+            }
+
+            // Check @Range constraint
+            if (field.isAnnotationPresent(Range.class)) {
+                // => Field has @Range annotation (age field has it)
+                // => @Range(min=18, max=120)
+                Range ann = field.getAnnotation(Range.class);
+                // => Get annotation with min/max values
+                // => ann.min() returns 18, ann.max() returns 120
+                if (value instanceof Integer) {
+                    // => Type check (Range only applies to integers)
+                    // => age is int, so value is Integer (autoboxed)
+                    int intValue = (Integer) value;
+                    // => Unbox Integer to primitive int
+                    // => For invalidUser, intValue is 15
+                    if (intValue < ann.min() || intValue > ann.max()) {
+                        // => Value outside allowed range [18-120]
+                        // => 15 < 18 → violation
+                        errors.add(ann.message() + " [" + ann.min() + "-" + ann.max() + "]");
+                        // => Add descriptive error with range bounds
+                        // => errors now contains ["Username required", "Age must be 18-120 [18-120]"]
+                    }
+                }
+            }
+        }
+
+        return errors;
+        // => Returns empty list if valid (no violations)
+        // => Returns list of error messages if invalid (["Username required", ...])
+    }
+
+    public static void main(String[] args) throws Exception {
+        // Valid user (all constraints pass)
+        User validUser = new User("alice", 25);
+        // => username is "alice" (not null ✅), age is 25 (18-120 ✅)
+        List<String> errors1 = validate(validUser);
+        // => Runs reflection-based validation
+        System.out.println("Valid user errors: " + errors1);
+        // => Output: "Valid user errors: []" (empty list, no violations)
+
+        // Invalid user (multiple constraint violations)
+        User invalidUser = new User(null, 15);
+        // => username is null (@NotNull violation ❌)
+        // => age is 15 (@Range violation, <18 ❌)
+        List<String> errors2 = validate(invalidUser);
+        // => Validation finds two errors
+        System.out.println("Invalid user errors: " + errors2);
+        // => Output: "Invalid user errors: [Username required, Age must be 18-120 [18-120]]"
+    }
+}
+```
+
+**Key Takeaway**: Custom annotations with `@Retention(RUNTIME)` enable reflection-based processing at runtime (validation, dependency injection). `@Target` restricts annotation usage (FIELD, METHOD, TYPE). Reflection reads annotations via `getAnnotation()`, `isAnnotationPresent()` to implement frameworks.
+
+**Why It Matters** (50-100 words): Annotations enable declarative programming—constraints are metadata on fields (`@NotNull`, `@Range`), not scattered in business logic. Retention policies optimize for use cases: SOURCE for compile-time tools (Lombok generates getters/setters), CLASS for bytecode instrumentation (AOP), RUNTIME for frameworks (Spring reads `@Autowired`, JUnit reads `@Test`). Reflection-based validation separates constraint definition (annotations on User) from enforcement (Validator.validate), enabling reusable validation logic across all domain models. Annotation-driven design reduces boilerplate, centralizes configuration, and powers modern Java frameworks.
