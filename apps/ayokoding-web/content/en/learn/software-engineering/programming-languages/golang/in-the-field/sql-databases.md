@@ -3,7 +3,7 @@ title: "SQL Databases"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Working with SQL databases using database/sql, prepared statements, connection pooling, and ORMs (GORM/sqlx)"
-weight: 10000046
+weight: 1000046
 tags: ["golang", "sql", "database", "gorm", "sqlx", "postgresql", "mysql", "production"]
 ---
 

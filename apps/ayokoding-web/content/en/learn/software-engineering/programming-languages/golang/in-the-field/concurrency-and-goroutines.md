@@ -3,7 +3,7 @@ title: "Concurrency and Goroutines"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Goroutines, channels, select statements, and context for production concurrency"
-weight: 10000024
+weight: 1000024
 tags: ["golang", "concurrency", "goroutines", "channels", "context", "production"]
 ---
 

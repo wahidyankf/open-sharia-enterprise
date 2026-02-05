@@ -3,7 +3,7 @@ title: "Domain Driven Design"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Pola DDD di Go menggunakan value object, entity, aggregate, dan repository dengan composition"
-weight: 10000062
+weight: 1000062
 tags: ["golang", "ddd", "domain-driven-design", "arsitektur", "desain"]
 ---
 

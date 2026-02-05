@@ -3,7 +3,7 @@ title: "Microservices Patterns"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Pola desain service, komunikasi, dan resiliensi untuk microservices Go"
-weight: 10000064
+weight: 1000064
 tags: ["golang", "microservices", "distributed-systems", "arsitektur", "resiliensi"]
 ---
 

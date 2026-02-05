@@ -3,7 +3,7 @@ title: "Interface Design"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "io.Reader/Writer patterns, interface segregation, and small interfaces in Go"
-weight: 10000028
+weight: 1000028
 tags: ["golang", "interface-design", "io", "patterns", "production"]
 ---
 

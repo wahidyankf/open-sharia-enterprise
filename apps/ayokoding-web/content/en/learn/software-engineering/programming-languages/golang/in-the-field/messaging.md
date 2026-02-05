@@ -3,7 +3,7 @@ title: "Messaging"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Asynchronous messaging with NATS (pub/sub), RabbitMQ (work queues), and Kafka (event streaming)"
-weight: 10000052
+weight: 1000052
 tags: ["golang", "messaging", "nats", "rabbitmq", "kafka", "pubsub", "queue", "production"]
 ---
 

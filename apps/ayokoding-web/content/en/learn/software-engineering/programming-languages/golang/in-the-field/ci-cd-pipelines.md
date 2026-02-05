@@ -3,7 +3,7 @@ title: "Ci Cd Pipelines"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Automated testing, building, and deployment pipelines for Go"
-weight: 10000090
+weight: 1000090
 tags: ["golang", "ci-cd", "automation", "github-actions", "deployment"]
 ---
 

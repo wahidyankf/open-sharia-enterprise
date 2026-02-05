@@ -3,7 +3,7 @@ title: "Grpc Protobuf"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Building gRPC services with Protocol Buffers: service definition, server/client implementation, and streaming patterns"
-weight: 10000050
+weight: 1000050
 tags: ["golang", "grpc", "protobuf", "rpc", "microservices", "streaming", "production"]
 ---
 

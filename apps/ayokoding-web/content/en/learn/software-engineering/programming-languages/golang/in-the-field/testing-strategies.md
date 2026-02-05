@@ -3,7 +3,7 @@ title: "Testing Strategies"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Unit, integration, and table-driven testing patterns in Go"
-weight: 10000032
+weight: 1000032
 tags: ["golang", "testing", "tdd", "unit-testing", "integration-testing"]
 ---
 

@@ -3,7 +3,7 @@ title: "Docker Containerization"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Multi-stage builds, minimal images, and container optimization for Go"
-weight: 10000088
+weight: 1000088
 tags: ["golang", "docker", "containers", "deployment", "optimization"]
 ---
 

@@ -3,7 +3,7 @@ title: "Package Organization"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Project layout and package structure patterns for Go applications"
-weight: 10000034
+weight: 1000034
 tags: ["golang", "architecture", "package-structure", "project-layout"]
 ---
 

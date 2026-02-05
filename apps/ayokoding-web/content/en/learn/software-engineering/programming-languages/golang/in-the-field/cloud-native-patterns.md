@@ -3,7 +3,7 @@ title: "Cloud Native Patterns"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Cloud-native patterns in Go: 12-factor app principles, container optimization, health probes, graceful shutdown, stateless services"
-weight: 10000078
+weight: 1000078
 tags:
   ["golang", "cloud-native", "kubernetes", "docker", "12-factor", "health-checks", "graceful-shutdown", "production"]
 ---

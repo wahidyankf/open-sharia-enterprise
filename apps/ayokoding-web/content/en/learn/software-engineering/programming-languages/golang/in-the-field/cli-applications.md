@@ -3,7 +3,7 @@ title: "Cli Applications"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "Building command-line applications with flag package, limitations, and production CLI frameworks (cobra/urfave)"
-weight: 10000054
+weight: 1000054
 tags: ["golang", "cli", "command-line", "cobra", "urfave", "production"]
 ---
 

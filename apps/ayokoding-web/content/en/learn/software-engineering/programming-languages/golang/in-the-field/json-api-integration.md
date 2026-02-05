@@ -3,7 +3,7 @@ title: "JSON API Integration"
 date: 2026-02-04T00:00:00+07:00
 draft: false
 description: "JSON encoding/decoding with encoding/json, struct tags, API client patterns, and performance optimization with jsoniter"
-weight: 10000044
+weight: 1000044
 tags: ["golang", "json", "api", "rest", "encoding", "jsoniter", "production"]
 ---
 
