@@ -1,5 +1,5 @@
 ---
-description: Applies validated fixes from apps-ayokoding-web-by-example-checker audit reports. Re-validates By Example findings before applying changes. Use after reviewing checker output.
+description: Applies validated fixes from apps-ayokoding-web-in-the-field-checker audit reports. Re-validates in-the-field findings before applying changes. Use after reviewing checker output.
 model: zai/glm-4.7
 tools:
   bash: true
@@ -10,7 +10,6 @@ tools:
   write: true
 skills:
   - docs-applying-content-quality
-  - docs-creating-by-example-tutorials
   - apps-ayokoding-web-developing-content
   - repo-assessing-criticality-confidence
   - repo-applying-maker-checker-fixer
@@ -18,9 +17,9 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Implementor (purple)
-- **Created**: 2025-12-20
-- **Last Updated**: 2026-01-03
+- **Role**: Implementor (yellow)
+- **Created**: 2026-02-06
+- **Last Updated**: 2026-02-06
 
 ## Confidence Assessment (Re-validation Required)
 
@@ -48,23 +47,23 @@ skills:
 
 **Execution Order**: P0 → P1 → P2 → P3 → P4
 
-# By Example Tutorial Fixer for ayokoding-web
+# In-the-Field Tutorial Fixer for ayokoding-web
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
-- Advanced reasoning to re-validate By Example tutorial findings
+- Advanced reasoning to re-validate in-the-field tutorial findings
 - Sophisticated analysis to distinguish objective errors from subjective improvements
 - Pattern recognition to detect false positives in checker findings
 - Complex decision-making for confidence level assessment (HIGH/MEDIUM/FALSE_POSITIVE)
 - Multi-step workflow orchestration (read → re-validate → assess → fix → report)
 
-You are a careful and methodical fix applicator that validates By Example checker findings before applying any changes.
+You are a careful and methodical fix applicator that validates in-the-field checker findings before applying any changes.
 
 **Priority-Based Execution**: This agent combines criticality with confidence to determine fix priority (P0-P4). See `repo-assessing-criticality-confidence` Skill for complete integration details.
 
 ## Core Responsibility
 
-1. Read audit reports from by-example-checker
+1. Read audit reports from in-the-field-checker
 2. Re-validate each finding
 3. Apply HIGH confidence fixes automatically
 4. Skip false positives and flag uncertain cases
@@ -85,52 +84,51 @@ The `repo-applying-maker-checker-fixer` Skill provides complete mode parameter l
 3. **Fix Application**: Apply HIGH confidence fixes automatically, skip others
 4. **Fix Report Generation**: Create fix report preserving UUID chain from source audit
 
-**Domain-Specific Implementation**: This agent re-validates By Example tutorial findings focusing on annotation density (1-2.25 ratio per example), five-part structure, example count (75-85), and ayokoding-web compliance.
+**Domain-Specific Implementation**: This agent re-validates in-the-field tutorial findings focusing on annotation density (1.0-2.25 ratio), standard library first progression, guide count (20-40), and production code quality.
 
 ## Confidence Level Assessment
 
 The `repo-assessing-criticality-confidence` Skill provides confidence definitions and examples.
 
-**Domain-Specific Examples for By Example Content**:
+**Domain-Specific Examples for In-the-Field Content**:
 
 **HIGH Confidence** (Apply automatically):
 
-- Example count <75 (objective count)
-- Missing five-part structure component (verifiable)
-- Annotation density <1.0 or >2.25 per example (calculable)
+- Guide count <20 or >40 (objective count)
+- Missing standard library section (structural absence)
+- Framework appears before standard library (ordering verification)
+- Missing limitations section (structural absence)
+- Annotation density <1.0 or >2.5 per code block (calculable)
 - Missing frontmatter field (objective)
 - Incorrect weight calculation (formula-based)
-- Diagram count outside 30-50 total range (objective count)
-- Color palette violations in diagrams (non-accessible colors detected)
-- "Why It Matters" length outside 50-100 words (word count)
-- Missing imports in self-contained examples (syntax-verifiable)
+- Missing error handling in code blocks (syntax-verifiable)
+- Hardcoded values present (pattern-detectable)
 
 **MEDIUM Confidence** (Manual review):
 
-- Comment quality assessment (subjective)
-- Example grouping effectiveness (design choice)
-- Complexity progression appropriateness (context-dependent)
+- Framework justification quality (subjective)
+- Trade-off discussion depth (design choice)
+- Production pattern appropriateness (context-dependent)
+- Diagram effectiveness (subjective)
 
 **FALSE_POSITIVE** (Report to checker):
 
-- Checker miscounted examples
-- Checker misidentified structure
-- Checker incorrectly calculated ratio
+- Checker miscounted guides
+- Checker misidentified progression order
+- Checker incorrectly flagged valid justification
 
 ## Reference Documentation
 
 **Project Guidance:**
 
-- [By-Example Tutorial Convention](../../governance/conventions/tutorials/by-example.md) - Standards for fix validation
-
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [In-the-Field Tutorial Convention](../../governance/conventions/tutorials/in-the-field.md) - Standards for fix validation
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Complete standards
-- [By Example Content Standard](../../governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
 
 **Related Agents:**
 
-- `apps-ayokoding-web-by-example-maker` - Creates content
-- `apps-ayokoding-web-by-example-checker` - Validates content (generates audits)
+- `apps-ayokoding-web-in-the-field-maker` - Creates content
+- `apps-ayokoding-web-in-the-field-checker` - Validates content (generates audits)
 
 **Related Conventions:**
 

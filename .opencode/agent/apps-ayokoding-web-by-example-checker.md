@@ -28,7 +28,7 @@ skills:
 
 - Advanced reasoning to validate annotation density ratios (1-2.25 per example)
 - Sophisticated analysis of five-part structure compliance
-- Pattern recognition across 75-90 code examples
+- Pattern recognition across 75-85 code examples
 - Complex decision-making for example quality and coverage
 - Deep understanding of programming language pedagogy
 
@@ -102,6 +102,15 @@ The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specifi
 - Navigation depth (max 2 layers)
 - prev/next navigation
 
+### 7. Diagram Count Validation
+
+- **Total diagrams**: 30-50 across all levels (approximately 35-60% of 75-85 examples)
+- **Beginner**: 7-11 diagrams (25-37% of beginner examples)
+- **Intermediate**: 8-17 diagrams (30-60% of intermediate examples)
+- **Advanced**: 10-24 diagrams (40-86% of advanced examples)
+- **Color palette**: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+- **Appropriate usage**: Only for complex concepts (data flow, state machines, concurrency)
+
 ## Validation Process
 
 ## Workflow Overview
@@ -112,7 +121,7 @@ The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specifi
 2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
 3. **Final Step: Finalize Report**: Update status, add summary
 
-**Domain-Specific Validation** (By Example tutorials): The detailed workflow below implements annotation density (1-2.25 ratio), five-part structure, example count (75-90), and ayokoding-web compliance validation.
+**Domain-Specific Validation** (By Example tutorials): The detailed workflow below implements annotation density (1-2.25 ratio), five-part structure, example count (75-85), and ayokoding-web compliance validation.
 
 ### Step 0: Initialize Report File
 
@@ -131,7 +140,7 @@ For EACH example:
 - Calculate density: comment_count ÷ code_count
   - Example: 10 comments ÷ 5 code lines = 2.0 density ✅
   - NOT: 5 code lines ÷ 10 comments = 0.5 ❌ (inverted)
-- Flag if density < 1.0 (under-annotated) or > 2.25 (over-annotated)
+- Flag if density < 1.0 (under-annotated) or > 2.5 (over-annotated)
 
 #### Annotation Density Calculation Algorithm
 
@@ -162,7 +171,15 @@ density = 5 / 10 = 0.5  # This would incorrectly flag as FAIL
 
 ### Step 3: Validate Structure
 
-Check each example has all five parts (Context, Code, Output, Discussion).
+Check each example has all five parts:
+
+- Brief explanation present (2-3 sentences)
+- Diagram included when appropriate (complex concepts only)
+- Heavily annotated code with 1.0-2.5 density
+- Key takeaway present (1-2 sentences)
+- "Why It Matters" present (50-100 words)
+  - Flag if > 100 words (too verbose, excessive detail)
+    Check each example has all five parts (Context, Code, Output, Discussion).
 
 ### Step 4: Validate Grouping
 
@@ -170,7 +187,34 @@ Check thematic grouping and progressive complexity.
 
 ### Step 5: Validate ayokoding-web Compliance
 
-Check frontmatter, weights, linking, navigation.
+### Step 5.6: Validate Core Features First Principle
+
+**Beginner level** (CRITICAL validation):
+
+- Count external dependencies (imports not in standard library)
+- Flag if any external dependencies present (should be zero)
+- External dependency = requires installation (npm install, pip install, Maven, etc.)
+
+**Intermediate level** (HIGH validation):
+
+- Identify external dependencies
+- For each dependency, check for "Why Not Core Features" explanation
+- Flag if dependency introduced without justification
+
+**Advanced level** (MEDIUM validation):
+
+- Check for trade-off comparisons (core vs external)
+- Verify performance/complexity justifications present
+  Check frontmatter, weights, linking, navigation.
+
+### Step 5.5: Validate Diagram Count
+
+Count Mermaid diagrams across all tutorial files:
+
+- Total count should be 30-50 diagrams
+- Check distribution: beginner (7-11), intermediate (8-17), advanced (10-24)
+- Flag if total < 30 (insufficient visualization) or > 50 (over-diagrammed)
+- Verify color palette compliance (accessible colors only)
 
 ### Step 6: Finalize Report
 

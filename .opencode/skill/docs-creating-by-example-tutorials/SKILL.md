@@ -1,6 +1,6 @@
 ---
 name: docs-creating-by-example-tutorials
-description: Comprehensive guide for creating by-example tutorials - code-first learning path with 75-90 heavily annotated examples achieving 95% language coverage. Covers five-part example structure, annotation density standards (1.0-2.25 comments per code line PER EXAMPLE), self-containment rules, and multiple code blocks for comparisons. Essential for creating by-example tutorials for programming languages on educational platforms
+description: Comprehensive guide for creating by-example tutorials - code-first learning path with 75-85 heavily annotated examples achieving 95% language coverage. Covers five-part example structure, annotation density standards (1.0-2.25 comments per code line PER EXAMPLE), self-containment rules, and multiple code blocks for comparisons. Essential for creating by-example tutorials for programming languages on educational platforms
 ---
 
 # By-Example Tutorial Creation Skill
@@ -22,7 +22,7 @@ This Skill provides comprehensive guidance for creating **by-example tutorials**
 
 ### What is By-Example?
 
-**By-example tutorials** are a code-first learning path that achieves 95% language coverage through 75-90 heavily annotated, self-contained code examples.
+**By-example tutorials** are a code-first learning path that achieves 95% language coverage through 75-85 heavily annotated, self-contained code examples.
 
 **NOT a replacement for**:
 
@@ -422,7 +422,7 @@ try (BufferedReader reader = new BufferedReader(new FileReader("data.txt"))) {
 
 Before publishing by-example tutorial:
 
-- [ ] 75-90 examples total
+- [ ] 75-85 examples total
 - [ ] 95% language coverage achieved
 - [ ] Each example follows five-part structure
 - [ ] Annotation density 1.0-2.25 per example

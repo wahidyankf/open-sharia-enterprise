@@ -2442,14 +2442,14 @@ This convention implements and respects:
 
 ## Related Agents
 
-- [apps-ayokoding-web-general-maker](../../../.opencode/agent/apps-ayokoding-web-general-maker.md) - Creates in-the-field content
-- [apps-ayokoding-web-general-checker](../../../.opencode/agent/apps-ayokoding-web-general-checker.md) - Validates in-the-field standards
-- [apps-ayokoding-web-general-fixer](../../../.opencode/agent/apps-ayokoding-web-general-fixer.md) - Applies validated fixes
+- [apps-ayokoding-web-in-the-field-maker](../../../.opencode/agent/apps-ayokoding-web-in-the-field-maker.md) - Creates in-the-field content
+- [apps-ayokoding-web-in-the-field-checker](../../../.opencode/agent/apps-ayokoding-web-in-the-field-checker.md) - Validates in-the-field standards
+- [apps-ayokoding-web-in-the-field-fixer](../../../.opencode/agent/apps-ayokoding-web-in-the-field-fixer.md) - Applies validated fixes
 
 ## Related Workflows
 
-- [in-the-field-quality-gate](../../workflows/ayokoding-web/in-the-field-quality-gate.md) - Quality assurance workflow for in-the-field tutorials
+- [ayokoding-web-in-the-field-quality-gate](../../workflows/ayokoding-web/ayokoding-web-in-the-field-quality-gate.md) - Quality assurance workflow for in-the-field tutorials
 
 ## Related Skills
 
-- [docs-creating-in-the-field-tutorials](../../../.claude/skills/docs-creating-in-the-field-tutorials/SKILL.md) - Skill package for creating in-the-field tutorials
+- [docs-creating-in-the-field-tutorials](../../../.claude/skills/docs-creating-in-the-field-tutorials/SKILL.md) - Comprehensive in-the-field tutorial creation guidance
