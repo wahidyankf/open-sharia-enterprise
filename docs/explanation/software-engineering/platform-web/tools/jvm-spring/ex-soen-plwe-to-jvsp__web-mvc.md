@@ -646,6 +646,24 @@ class WebConfig : WebMvcConfigurer {
 - **[REST APIs](ex-soen-plwe-to-jvsp__rest-apis.md)** - RESTful services
 - **[Best Practices](ex-soen-plwe-to-jvsp__best-practices.md)** - Web development standards
 
+## See Also
+
+**OSE Explanation Foundation**:
+
+- [Java Web Standards](../../programming-languages/java/ex-soen-prla-ja__api-standards.md) - Java servlet baseline
+- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - MVC patterns
+- [Spring Framework REST APIs](./ex-soen-plwe-to-jvsp__rest-apis.md) - RESTful services
+- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Web standards
+
+**Hands-on Learning (AyoKoding)**:
+
+- [Spring By Example - Web MVC](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/web-mvc) - Code examples
+- [Spring In-the-Field - Web Applications](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/web-mvc) - Production patterns
+
+**Spring Boot Extension**:
+
+- [Spring Boot REST APIs](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__rest-apis.md) - Auto-configured web
+
 ---
 
 **Last Updated**: 2026-01-29

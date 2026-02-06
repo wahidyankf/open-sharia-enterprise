@@ -32,6 +32,36 @@ Spring Boot is an opinionated, production-ready framework for building Java appl
 
 This documentation covers Spring Boot 3.x (latest stable) with Java 17+ targeting microservices, REST APIs, and domain-driven design implementations.
 
+## Prerequisite Knowledge
+
+**REQUIRED Foundation - Spring Framework**:
+
+Spring Boot builds on Spring Framework and auto-configures Spring concepts. You MUST understand Spring Framework core before learning Spring Boot.
+
+**1. Master Spring Framework First**:
+
+- **[Spring Framework Explanation Docs](../jvm-spring/README.md)** - Understand manual Spring setup, IoC, DI, Bean lifecycle
+- **[Spring Framework Idioms](../jvm-spring/ex-soen-plwe-to-jvsp__idioms.md)** - Core Spring patterns and conventions
+- **[Spring Framework Configuration](../jvm-spring/ex-soen-plwe-to-jvsp__configuration.md)** - Manual Java config and XML setup
+- **[Spring Framework Dependency Injection](../jvm-spring/ex-soen-plwe-to-jvsp__dependency-injection.md)** - IoC container fundamentals
+
+**2. Learn Spring Boot Fundamentals**:
+
+You MUST complete the [AyoKoding Spring Boot Learning Path](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/) before using these standards.
+
+- [Spring Boot Initial Setup](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/initial-setup) - Environment and tooling setup
+- [Spring Boot Overview](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/overview) - Auto-configuration, starters, opinionated defaults
+- [Spring Boot By Example](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/) (85+ annotated examples) - Hands-on code learning
+- [Spring Boot In-the-Field](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/) (37 practical guides) - Production patterns
+
+**Separation of Concerns**: See [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md).
+
+**What this documentation covers**: OSE Platform Spring Boot standards, naming conventions, auto-configuration patterns, how to apply Spring Boot knowledge in THIS codebase.
+
+**What this documentation does NOT cover**: Spring Boot tutorials, basic auto-configuration concepts, generic patterns (those are in ayokoding-web).
+
+**This documentation is OSE Platform-specific explanation**, not Spring Boot tutorials.
+
 ## Framework Standards
 
 **This documentation is the authoritative reference** for Spring Boot usage standards in the open-sharia-enterprise platform.

@@ -456,6 +456,24 @@ Spring AOP only supports method execution join points. Cannot intercept field ac
 - **[Idioms](ex-soen-plwe-to-jvsp__idioms.md)** - Framework patterns
 - **[Data Access](ex-soen-plwe-to-jvsp__data-access.md)** - Transaction management
 
+## See Also
+
+**OSE Explanation Foundation**:
+
+- [Java Patterns](../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline patterns
+- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Spring patterns
+- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - AOP best practices
+- [Spring Framework Security](./ex-soen-plwe-to-jvsp__security.md) - Security aspects
+
+**Hands-on Learning (AyoKoding)**:
+
+- [Spring By Example - AOP](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/aop) - Code examples
+- [Spring In-the-Field - Cross-Cutting Concerns](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/aop) - Production aspects
+
+**Spring Boot Extension**:
+
+- [Spring Boot AOP](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__aop.md) - Auto-configured aspects
+
 ---
 
 **Last Updated**: 2026-01-29

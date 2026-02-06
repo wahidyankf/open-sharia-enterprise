@@ -2425,6 +2425,20 @@ Production deployment security checklist for Spring Boot applications.
 - Explore [Observability](ex-soen-plwe-to-jvspbo__observability.md) for security monitoring
 - Check [Configuration](ex-soen-plwe-to-jvspbo__configuration.md) for secrets management
 
+## See Also
+
+**OSE Explanation Foundation**:
+
+- [Spring Framework Security](../jvm-spring/ex-soen-plwe-to-jvsp__security.md) - Manual Spring security
+- [Java Security](../../programming-languages/java/ex-soen-prla-ja__security-standards.md) - Java security baseline
+- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Security patterns
+- [Spring Boot REST APIs](./ex-soen-plwe-to-jvspbo__rest-apis.md) - Securing APIs
+
+**Hands-on Learning (AyoKoding)**:
+
+- [Spring Boot By Example - Security](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/security) - Code examples
+- [Spring Boot In-the-Field - Authentication](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/security) - Production security
+
 ---
 
 **Last Updated**: 2026-01-26

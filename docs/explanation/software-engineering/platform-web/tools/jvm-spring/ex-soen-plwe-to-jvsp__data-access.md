@@ -627,6 +627,24 @@ public class MultiDataSourceConfig {
 - **[AOP](ex-soen-plwe-to-jvsp__aop.md)** - AOP for transactions
 - **[Best Practices](ex-soen-plwe-to-jvsp__best-practices.md)** - Transaction patterns
 
+## See Also
+
+**OSE Explanation Foundation**:
+
+- [Java Database Access](../../programming-languages/java/ex-soen-prla-ja__ddd-standards.md) - Java JDBC baseline
+- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Data access patterns
+- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Repository standards
+- [Spring Framework Performance](./ex-soen-plwe-to-jvsp__performance.md) - Query optimization
+
+**Hands-on Learning (AyoKoding)**:
+
+- [Spring By Example - Data Access](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/data-access) - Code examples
+- [Spring In-the-Field - Database Integration](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/data-access) - Production patterns
+
+**Spring Boot Extension**:
+
+- [Spring Boot Data Access](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__data-access.md) - Auto-configured repositories
+
 ---
 
 **Last Updated**: 2026-01-29

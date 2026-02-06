@@ -1,6 +1,6 @@
 ---
 title: Spring Framework Security
-description: Spring Security fundamentals covering architecture, authentication, authorization, filter chain, method security, password encoding, CSRF, session management, and security testing
+description: Spring Security fundamentals covering architecture, authentication, authorization, filter chain, method security, password encoding, CSRF, session management, OAuth2/JWT, CORS, and security testing
 category: explanation
 subcategory: platform-web
 tags:
@@ -8,12 +8,15 @@ tags:
   - spring-security
   - authentication
   - authorization
+  - oauth2
+  - jwt
   - java
   - kotlin
 principles:
   - explicit-over-implicit
+  - security-first
 created: 2026-01-29
-updated: 2026-01-29
+updated: 2026-02-06
 ---
 
 # Spring Framework Security
@@ -22,7 +25,7 @@ updated: 2026-01-29
 
 ## Overview
 
-Spring Security provides comprehensive security services for Java applications, including authentication, authorization, and protection against common exploits. This document covers Spring Security basics for Islamic finance applications.
+Spring Security provides comprehensive security services for Java applications, including authentication, authorization, and protection against common exploits. This document covers Spring Security basics for Islamic finance applications with detailed coverage of OAuth2, JWT, method-level security, CSRF/CORS protection, and password encoding strategies.
 
 **Version**: Spring Framework 6.1+, Spring Security 6.1+ (Java 17+, Kotlin 1.9+)
 
@@ -35,8 +38,10 @@ Spring Security provides comprehensive security services for Java applications, 
 - [Authorization](#authorization)
 - [Security Filter Chain](#security-filter-chain)
 - [Method Security](#method-security)
+- [OAuth2 and JWT](#oauth2-and-jwt)
 - [Password Encoding](#password-encoding)
 - [CSRF Protection](#csrf-protection)
+- [CORS Configuration](#cors-configuration)
 - [Session Management](#session-management)
 
 ## Spring Security Architecture
@@ -300,7 +305,151 @@ public class SecurityConfig {
 }
 ```
 
+### Custom Filter Chain Ordering
+
+**Java Example** (Zakat System with Multiple Authentication Mechanisms):
+
+```java
+@Configuration
+@EnableWebSecurity
+public class MultiAuthSecurityConfig {
+
+  @Bean
+  @Order(1)
+  public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
+    http
+      .securityMatcher("/api/**")
+      .authorizeHttpRequests(auth -> auth
+        .requestMatchers("/api/public/**").permitAll()
+        .anyRequest().authenticated()
+      )
+      .sessionManagement(session -> session
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+      )
+      .csrf(csrf -> csrf.disable())
+      .addFilterBefore(
+        new JwtAuthenticationFilter(),
+        UsernamePasswordAuthenticationFilter.class
+      );
+
+    return http.build();
+  }
+
+  @Bean
+  @Order(2)
+  public SecurityFilterChain formLoginSecurityFilterChain(HttpSecurity http) throws Exception {
+    http
+      .securityMatcher("/**")
+      .authorizeHttpRequests(auth -> auth
+        .requestMatchers("/login", "/register", "/css/**", "/js/**").permitAll()
+        .anyRequest().authenticated()
+      )
+      .formLogin(form -> form
+        .loginPage("/login")
+        .loginProcessingUrl("/login")
+        .defaultSuccessUrl("/dashboard")
+        .permitAll()
+      )
+      .logout(logout -> logout
+        .logoutUrl("/logout")
+        .logoutSuccessUrl("/login?logout")
+        .permitAll()
+      );
+
+    return http.build();
+  }
+}
+```
+
+**Kotlin Example**:
+
+```kotlin
+@Configuration
+@EnableWebSecurity
+class MultiAuthSecurityConfig {
+
+  @Bean
+  @Order(1)
+  fun apiSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    http {
+      securityMatcher("/api/**")
+      authorizeHttpRequests {
+        authorize("/api/public/**", permitAll)
+        authorize(anyRequest, authenticated)
+      }
+      sessionManagement {
+        sessionCreationPolicy = SessionCreationPolicy.STATELESS
+      }
+      csrf { disable() }
+    }
+
+    http.addFilterBefore(
+      JwtAuthenticationFilter(),
+      UsernamePasswordAuthenticationFilter::class.java
+    )
+
+    return http.build()
+  }
+
+  @Bean
+  @Order(2)
+  fun formLoginSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    http {
+      securityMatcher("/**")
+      authorizeHttpRequests {
+        authorize("/login", permitAll)
+        authorize("/register", permitAll)
+        authorize("/css/**", permitAll)
+        authorize("/js/**", permitAll)
+        authorize(anyRequest, authenticated)
+      }
+      formLogin {
+        loginPage = "/login"
+        loginProcessingUrl = "/login"
+        defaultSuccessUrl("/dashboard", true)
+      }
+      logout {
+        logoutUrl = "/logout"
+        logoutSuccessUrl = "/login?logout"
+      }
+    }
+
+    return http.build()
+  }
+}
+```
+
 ## Method Security
+
+### Enable Method Security
+
+**Java Example**:
+
+```java
+@Configuration
+@EnableMethodSecurity(
+  prePostEnabled = true,
+  securedEnabled = true,
+  jsr250Enabled = true
+)
+public class MethodSecurityConfig {
+  // Configuration for method-level security
+}
+```
+
+**Kotlin Example**:
+
+```kotlin
+@Configuration
+@EnableMethodSecurity(
+  prePostEnabled = true,
+  securedEnabled = true,
+  jsr250Enabled = true
+)
+class MethodSecurityConfig {
+  // Configuration for method-level security
+}
+```
 
 ### @PreAuthorize and @PostAuthorize
 
@@ -418,20 +567,687 @@ class DonationService(private val repository: DonationRepository) {
 }
 ```
 
-## Password Encoding
+### @Secured and JSR-250 Annotations
 
-**Java Example**:
+**Java Example** (Murabaha Contract Service):
 
 ```java
-@Configuration
-public class SecurityConfig {
+@Service
+public class MurabahaContractService {
+  private final MurabahaContractRepository repository;
 
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder(12);  // Strength factor 12
+  public MurabahaContractService(MurabahaContractRepository repository) {
+    this.repository = repository;
+  }
+
+  @Secured("ROLE_ADMIN")
+  public MurabahaContractResponse createContract(CreateContractRequest request) {
+    // Only admins can create Murabaha contracts
+    MurabahaContract contract = MurabahaContract.create(request);
+    repository.save(contract);
+    return toResponse(contract);
+  }
+
+  @RolesAllowed({"ROLE_ADMIN", "ROLE_AUDITOR"})
+  public List<MurabahaContractResponse> findAllContracts() {
+    // Admins and auditors can view all contracts
+    return repository.findAll().stream()
+      .map(this::toResponse)
+      .toList();
+  }
+
+  @PermitAll
+  public BigDecimal calculateMonthlyPayment(
+    BigDecimal assetCost,
+    BigDecimal profitRate,
+    int termMonths
+  ) {
+    // Public calculation endpoint
+    return MurabahaCalculator.calculateMonthlyPayment(
+      assetCost,
+      profitRate,
+      termMonths
+    );
+  }
+
+  private MurabahaContractResponse toResponse(MurabahaContract contract) {
+    return new MurabahaContractResponse(
+      contract.getId(),
+      contract.getAssetCost(),
+      contract.getProfitRate(),
+      contract.getTermMonths()
+    );
+  }
+}
+```
+
+### SpEL Expressions in Method Security
+
+**Java Example** (Zakat Calculation with Complex Authorization):
+
+```java
+@Service
+public class ZakatCalculationService {
+  private final ZakatCalculationRepository repository;
+  private final DonorRepository donorRepository;
+
+  public ZakatCalculationService(
+    ZakatCalculationRepository repository,
+    DonorRepository donorRepository
+  ) {
+    this.repository = repository;
+    this.donorRepository = donorRepository;
+  }
+
+  @PreAuthorize("""
+    hasRole('DONOR') and
+    @zakatSecurityService.isDonorEligible(#request.donorId) and
+    #request.amount >= @zakatConfigService.getMinimumNisab()
+    """)
+  public ZakatCalculationResponse calculate(CalculateZakatRequest request) {
+    // Complex authorization:
+    // - User must have DONOR role
+    // - Donor must be eligible (verified by service)
+    // - Amount must meet minimum nisab threshold
+    ZakatCalculation calculation = ZakatCalculation.calculate(request);
+    repository.save(calculation);
+    return toResponse(calculation);
+  }
+
+  @PreAuthorize("""
+    hasRole('DONOR') and
+    @zakatSecurityService.canAccessCalculation(#calculationId, authentication.name)
+    """)
+  public ZakatCalculationResponse getCalculation(String calculationId) {
+    // Verify user can access this specific calculation
+    return repository.findById(calculationId)
+      .map(this::toResponse)
+      .orElseThrow(() -> new CalculationNotFoundException(calculationId));
+  }
+
+  @PreFilter("filterObject.donorId == authentication.name or hasRole('ADMIN')")
+  @PostFilter("hasRole('ADMIN') or filterObject.donorId == authentication.name")
+  public List<ZakatCalculationResponse> getCalculations(
+    List<ZakatCalculation> calculations
+  ) {
+    // Pre-filter: Remove calculations user shouldn't see before processing
+    // Post-filter: Remove results user shouldn't see after processing
+    return calculations.stream()
+      .map(this::toResponse)
+      .toList();
+  }
+
+  private ZakatCalculationResponse toResponse(ZakatCalculation calculation) {
+    return new ZakatCalculationResponse(
+      calculation.getId(),
+      calculation.getAmount(),
+      calculation.getZakatDue()
+    );
   }
 }
 
+@Service
+public class ZakatSecurityService {
+
+  public boolean isDonorEligible(String donorId) {
+    // Check donor eligibility criteria
+    return true;
+  }
+
+  public boolean canAccessCalculation(String calculationId, String username) {
+    // Check if user can access this calculation
+    return true;
+  }
+}
+```
+
+**Kotlin Example**:
+
+```kotlin
+@Service
+class ZakatCalculationService(
+  private val repository: ZakatCalculationRepository,
+  private val donorRepository: DonorRepository
+) {
+
+  @PreAuthorize("""
+    hasRole('DONOR') and
+    @zakatSecurityService.isDonorEligible(#request.donorId) and
+    #request.amount >= @zakatConfigService.getMinimumNisab()
+    """)
+  fun calculate(request: CalculateZakatRequest): ZakatCalculationResponse {
+    val calculation = ZakatCalculation.calculate(request)
+    repository.save(calculation)
+    return calculation.toResponse()
+  }
+
+  @PreAuthorize("""
+    hasRole('DONOR') and
+    @zakatSecurityService.canAccessCalculation(#calculationId, authentication.name)
+    """)
+  fun getCalculation(calculationId: String): ZakatCalculationResponse {
+    return repository.findById(calculationId)
+      .map { it.toResponse() }
+      .orElseThrow { CalculationNotFoundException(calculationId) }
+  }
+
+  private fun ZakatCalculation.toResponse(): ZakatCalculationResponse =
+    ZakatCalculationResponse(id, amount, zakatDue)
+}
+
+@Service
+class ZakatSecurityService {
+
+  fun isDonorEligible(donorId: String): Boolean {
+    // Check donor eligibility criteria
+    return true
+  }
+
+  fun canAccessCalculation(calculationId: String, username: String): Boolean {
+    // Check if user can access this calculation
+    return true
+  }
+}
+```
+
+## OAuth2 and JWT
+
+### OAuth2 Resource Server Configuration
+
+**Java Example** (JWT-based Authentication):
+
+```java
+@Configuration
+@EnableWebSecurity
+public class OAuth2ResourceServerConfig {
+
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http
+      .authorizeHttpRequests(auth -> auth
+        .requestMatchers("/api/public/**").permitAll()
+        .requestMatchers("/api/zakat/**").hasAuthority("SCOPE_zakat:calculate")
+        .requestMatchers("/api/donations/**").hasAuthority("SCOPE_donations:manage")
+        .anyRequest().authenticated()
+      )
+      .oauth2ResourceServer(oauth2 -> oauth2
+        .jwt(jwt -> jwt
+          .jwtAuthenticationConverter(jwtAuthenticationConverter())
+        )
+      )
+      .sessionManagement(session -> session
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+      )
+      .csrf(csrf -> csrf.disable());
+
+    return http.build();
+  }
+
+  @Bean
+  public JwtAuthenticationConverter jwtAuthenticationConverter() {
+    JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter =
+      new JwtGrantedAuthoritiesConverter();
+    grantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
+    grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+
+    JwtAuthenticationConverter jwtAuthenticationConverter =
+      new JwtAuthenticationConverter();
+    jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(
+      grantedAuthoritiesConverter
+    );
+
+    return jwtAuthenticationConverter;
+  }
+
+  @Bean
+  public JwtDecoder jwtDecoder(
+    @Value("${jwt.public-key}") String publicKey
+  ) throws Exception {
+    // Configure JWT decoder with RSA public key
+    RSAPublicKey rsaPublicKey = parsePublicKey(publicKey);
+    return NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
+  }
+
+  private RSAPublicKey parsePublicKey(String publicKey) throws Exception {
+    byte[] encoded = Base64.getDecoder().decode(
+      publicKey.replaceAll("-----\\w+ PUBLIC KEY-----", "")
+        .replaceAll("\\s", "")
+    );
+    X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
+    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+    return (RSAPublicKey) keyFactory.generatePublic(keySpec);
+  }
+}
+```
+
+**Kotlin Example**:
+
+```kotlin
+@Configuration
+@EnableWebSecurity
+class OAuth2ResourceServerConfig {
+
+  @Bean
+  fun filterChain(http: HttpSecurity): SecurityFilterChain {
+    http {
+      authorizeHttpRequests {
+        authorize("/api/public/**", permitAll)
+        authorize("/api/zakat/**", hasAuthority("SCOPE_zakat:calculate"))
+        authorize("/api/donations/**", hasAuthority("SCOPE_donations:manage"))
+        authorize(anyRequest, authenticated)
+      }
+      oauth2ResourceServer {
+        jwt {
+          jwtAuthenticationConverter = jwtAuthenticationConverter()
+        }
+      }
+      sessionManagement {
+        sessionCreationPolicy = SessionCreationPolicy.STATELESS
+      }
+      csrf { disable() }
+    }
+
+    return http.build()
+  }
+
+  @Bean
+  fun jwtAuthenticationConverter(): JwtAuthenticationConverter {
+    val grantedAuthoritiesConverter = JwtGrantedAuthoritiesConverter().apply {
+      setAuthoritiesClaimName("roles")
+      setAuthorityPrefix("ROLE_")
+    }
+
+    return JwtAuthenticationConverter().apply {
+      setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter)
+    }
+  }
+
+  @Bean
+  fun jwtDecoder(
+    @Value("\${jwt.public-key}") publicKey: String
+  ): JwtDecoder {
+    val rsaPublicKey = parsePublicKey(publicKey)
+    return NimbusJwtDecoder.withPublicKey(rsaPublicKey).build()
+  }
+
+  private fun parsePublicKey(publicKey: String): RSAPublicKey {
+    val encoded = Base64.getDecoder().decode(
+      publicKey.replace("-----\\w+ PUBLIC KEY-----".toRegex(), "")
+        .replace("\\s".toRegex(), "")
+    )
+    val keySpec = X509EncodedKeySpec(encoded)
+    val keyFactory = KeyFactory.getInstance("RSA")
+    return keyFactory.generatePublic(keySpec) as RSAPublicKey
+  }
+}
+```
+
+### JWT Token Generation (Authorization Server)
+
+**Java Example** (Donation Portal JWT Issuer):
+
+```java
+@Service
+public class JwtTokenService {
+  private final RSAPrivateKey privateKey;
+  private final RSAPublicKey publicKey;
+  private final String issuer;
+
+  public JwtTokenService(
+    @Value("${jwt.private-key}") String privateKeyPem,
+    @Value("${jwt.public-key}") String publicKeyPem,
+    @Value("${jwt.issuer}") String issuer
+  ) throws Exception {
+    this.privateKey = parsePrivateKey(privateKeyPem);
+    this.publicKey = parsePublicKey(publicKeyPem);
+    this.issuer = issuer;
+  }
+
+  public String generateToken(DonorPrincipal donor) {
+    Instant now = Instant.now();
+    Instant expiry = now.plus(1, ChronoUnit.HOURS);
+
+    JWSSigner signer = new RSASSASigner(privateKey);
+
+    JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+      .subject(donor.getEmail())
+      .issuer(issuer)
+      .issueTime(Date.from(now))
+      .expirationTime(Date.from(expiry))
+      .claim("donorId", donor.getId())
+      .claim("roles", donor.getRoles())
+      .claim("scopes", List.of("zakat:calculate", "donations:manage"))
+      .build();
+
+    SignedJWT signedJWT = new SignedJWT(
+      new JWSHeader.Builder(JWSAlgorithm.RS256)
+        .keyID("ose-donation-key-2026")
+        .build(),
+      claimsSet
+    );
+
+    try {
+      signedJWT.sign(signer);
+      return signedJWT.serialize();
+    } catch (JOSEException e) {
+      throw new JwtGenerationException("Failed to generate JWT", e);
+    }
+  }
+
+  public String refreshToken(String token) {
+    try {
+      SignedJWT signedJWT = SignedJWT.parse(token);
+      JWSVerifier verifier = new RSASSAVerifier(publicKey);
+
+      if (!signedJWT.verify(verifier)) {
+        throw new InvalidTokenException("Invalid JWT signature");
+      }
+
+      JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
+
+      // Verify token is not expired by more than refresh window (7 days)
+      Date expiration = claims.getExpirationTime();
+      Instant expiryInstant = expiration.toInstant();
+      Instant refreshCutoff = Instant.now().minus(7, ChronoUnit.DAYS);
+
+      if (expiryInstant.isBefore(refreshCutoff)) {
+        throw new ExpiredTokenException("Token too old to refresh");
+      }
+
+      // Generate new token with same claims but new expiry
+      DonorPrincipal donor = new DonorPrincipal(
+        claims.getStringClaim("donorId"),
+        claims.getSubject(),
+        (List<String>) claims.getClaim("roles")
+      );
+
+      return generateToken(donor);
+    } catch (Exception e) {
+      throw new JwtRefreshException("Failed to refresh token", e);
+    }
+  }
+
+  private RSAPrivateKey parsePrivateKey(String privateKey) throws Exception {
+    byte[] encoded = Base64.getDecoder().decode(
+      privateKey.replaceAll("-----\\w+ PRIVATE KEY-----", "")
+        .replaceAll("\\s", "")
+    );
+    PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encoded);
+    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+    return (RSAPrivateKey) keyFactory.generatePrivate(keySpec);
+  }
+
+  private RSAPublicKey parsePublicKey(String publicKey) throws Exception {
+    byte[] encoded = Base64.getDecoder().decode(
+      publicKey.replaceAll("-----\\w+ PUBLIC KEY-----", "")
+        .replaceAll("\\s", "")
+    );
+    X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
+    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+    return (RSAPublicKey) keyFactory.generatePublic(keySpec);
+  }
+}
+```
+
+**Kotlin Example**:
+
+```kotlin
+@Service
+class JwtTokenService(
+  @Value("\${jwt.private-key}") privateKeyPem: String,
+  @Value("\${jwt.public-key}") publicKeyPem: String,
+  @Value("\${jwt.issuer}") private val issuer: String
+) {
+  private val privateKey: RSAPrivateKey = parsePrivateKey(privateKeyPem)
+  private val publicKey: RSAPublicKey = parsePublicKey(publicKeyPem)
+
+  fun generateToken(donor: DonorPrincipal): String {
+    val now = Instant.now()
+    val expiry = now.plus(1, ChronoUnit.HOURS)
+
+    val signer = RSASSASigner(privateKey)
+
+    val claimsSet = JWTClaimsSet.Builder()
+      .subject(donor.email)
+      .issuer(issuer)
+      .issueTime(Date.from(now))
+      .expirationTime(Date.from(expiry))
+      .claim("donorId", donor.id)
+      .claim("roles", donor.roles)
+      .claim("scopes", listOf("zakat:calculate", "donations:manage"))
+      .build()
+
+    val signedJWT = SignedJWT(
+      JWSHeader.Builder(JWSAlgorithm.RS256)
+        .keyID("ose-donation-key-2026")
+        .build(),
+      claimsSet
+    )
+
+    return try {
+      signedJWT.sign(signer)
+      signedJWT.serialize()
+    } catch (e: JOSEException) {
+      throw JwtGenerationException("Failed to generate JWT", e)
+    }
+  }
+
+  fun refreshToken(token: String): String {
+    return try {
+      val signedJWT = SignedJWT.parse(token)
+      val verifier = RSASSAVerifier(publicKey)
+
+      if (!signedJWT.verify(verifier)) {
+        throw InvalidTokenException("Invalid JWT signature")
+      }
+
+      val claims = signedJWT.jwtClaimsSet
+
+      // Verify token is not expired by more than refresh window (7 days)
+      val expiration = claims.expirationTime
+      val expiryInstant = expiration.toInstant()
+      val refreshCutoff = Instant.now().minus(7, ChronoUnit.DAYS)
+
+      if (expiryInstant.isBefore(refreshCutoff)) {
+        throw ExpiredTokenException("Token too old to refresh")
+      }
+
+      // Generate new token with same claims but new expiry
+      val donor = DonorPrincipal(
+        claims.getStringClaim("donorId"),
+        claims.subject,
+        claims.getClaim("roles") as List<String>
+      )
+
+      generateToken(donor)
+    } catch (e: Exception) {
+      throw JwtRefreshException("Failed to refresh token", e)
+    }
+  }
+
+  private fun parsePrivateKey(privateKey: String): RSAPrivateKey {
+    val encoded = Base64.getDecoder().decode(
+      privateKey.replace("-----\\w+ PRIVATE KEY-----".toRegex(), "")
+        .replace("\\s".toRegex(), "")
+    )
+    val keySpec = PKCS8EncodedKeySpec(encoded)
+    val keyFactory = KeyFactory.getInstance("RSA")
+    return keyFactory.generatePrivate(keySpec) as RSAPrivateKey
+  }
+
+  private fun parsePublicKey(publicKey: String): RSAPublicKey {
+    val encoded = Base64.getDecoder().decode(
+      publicKey.replace("-----\\w+ PUBLIC KEY-----".toRegex(), "")
+        .replace("\\s".toRegex(), "")
+    )
+    val keySpec = X509EncodedKeySpec(encoded)
+    val keyFactory = KeyFactory.getInstance("RSA")
+    return keyFactory.generatePublic(keySpec) as RSAPublicKey
+  }
+}
+```
+
+### OAuth2 Client Configuration
+
+**Java Example** (Zakat Portal as OAuth2 Client):
+
+```java
+@Configuration
+@EnableWebSecurity
+public class OAuth2ClientConfig {
+
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http
+      .authorizeHttpRequests(auth -> auth
+        .requestMatchers("/", "/login/**", "/error").permitAll()
+        .anyRequest().authenticated()
+      )
+      .oauth2Login(oauth2 -> oauth2
+        .loginPage("/login")
+        .defaultSuccessUrl("/dashboard")
+        .failureUrl("/login?error")
+        .userInfoEndpoint(userInfo -> userInfo
+          .userService(customOAuth2UserService())
+        )
+      )
+      .oauth2Client(Customizer.withDefaults());
+
+    return http.build();
+  }
+
+  @Bean
+  public OAuth2UserService<OAuth2UserRequest, OAuth2User> customOAuth2UserService() {
+    return new CustomOAuth2UserService();
+  }
+
+  @Bean
+  public ClientRegistrationRepository clientRegistrationRepository(
+    @Value("${oauth2.client.registration.ose.client-id}") String clientId,
+    @Value("${oauth2.client.registration.ose.client-secret}") String clientSecret,
+    @Value("${oauth2.client.provider.ose.authorization-uri}") String authorizationUri,
+    @Value("${oauth2.client.provider.ose.token-uri}") String tokenUri,
+    @Value("${oauth2.client.provider.ose.user-info-uri}") String userInfoUri
+  ) {
+    ClientRegistration registration = ClientRegistration.withRegistrationId("ose")
+      .clientId(clientId)
+      .clientSecret(clientSecret)
+      .scope("openid", "profile", "email", "zakat:calculate", "donations:manage")
+      .authorizationUri(authorizationUri)
+      .tokenUri(tokenUri)
+      .userInfoUri(userInfoUri)
+      .userNameAttributeName("email")
+      .clientName("OSE Platform")
+      .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+      .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
+      .build();
+
+    return new InMemoryClientRegistrationRepository(registration);
+  }
+}
+
+@Service
+class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+  private final DonorRepository donorRepository;
+
+  public CustomOAuth2UserService(DonorRepository donorRepository) {
+    this.donorRepository = donorRepository;
+  }
+
+  @Override
+  public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+    DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
+    OAuth2User oauth2User = delegate.loadUser(userRequest);
+
+    String email = oauth2User.getAttribute("email");
+    String name = oauth2User.getAttribute("name");
+
+    // Find or create donor
+    Donor donor = donorRepository.findByEmail(email)
+      .orElseGet(() -> {
+        Donor newDonor = Donor.create(email, name);
+        return donorRepository.save(newDonor);
+      });
+
+    // Return custom principal with donor information
+    return new DonorOAuth2User(oauth2User, donor);
+  }
+}
+```
+
+## Password Encoding
+
+### Encoder Selection and Configuration
+
+**Java Example** (Multi-Strategy Password Encoding):
+
+```java
+@Configuration
+public class PasswordEncodingConfig {
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    // Delegating encoder - supports multiple algorithms
+    Map<String, PasswordEncoder> encoders = new HashMap<>();
+
+    // Primary encoder: BCrypt (strength 12)
+    encoders.put("bcrypt", new BCryptPasswordEncoder(12));
+
+    // Alternative encoders for migration
+    encoders.put("pbkdf2", Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8());
+    encoders.put("argon2", Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8());
+    encoders.put("scrypt", SCryptPasswordEncoder.defaultsForSpringSecurity_v5_8());
+
+    // Legacy encoder (for old passwords, will be upgraded on next login)
+    encoders.put("sha256", new StandardPasswordEncoder());
+
+    // Default to BCrypt for new passwords
+    DelegatingPasswordEncoder delegatingEncoder = new DelegatingPasswordEncoder(
+      "bcrypt",
+      encoders
+    );
+
+    // Upgrade legacy passwords on successful authentication
+    delegatingEncoder.setDefaultPasswordEncoderForMatches(encoders.get("bcrypt"));
+
+    return delegatingEncoder;
+  }
+}
+```
+
+**Kotlin Example**:
+
+```kotlin
+@Configuration
+class PasswordEncodingConfig {
+
+  @Bean
+  fun passwordEncoder(): PasswordEncoder {
+    // Delegating encoder - supports multiple algorithms
+    val encoders = mapOf(
+      "bcrypt" to BCryptPasswordEncoder(12),
+      "pbkdf2" to Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8(),
+      "argon2" to Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8(),
+      "scrypt" to SCryptPasswordEncoder.defaultsForSpringSecurity_v5_8(),
+      "sha256" to StandardPasswordEncoder()
+    )
+
+    // Default to BCrypt for new passwords
+    val delegatingEncoder = DelegatingPasswordEncoder("bcrypt", encoders)
+
+    // Upgrade legacy passwords on successful authentication
+    delegatingEncoder.setDefaultPasswordEncoderForMatches(encoders["bcrypt"])
+
+    return delegatingEncoder
+  }
+}
+```
+
+### BCrypt Configuration
+
+**Java Example** (Donor Registration with BCrypt):
+
+```java
 @Service
 public class DonorRegistrationService {
   private final DonorRepository donorRepository;
@@ -445,8 +1261,12 @@ public class DonorRegistrationService {
     this.passwordEncoder = passwordEncoder;
   }
 
+  @Transactional
   public DonorResponse registerDonor(RegisterDonorRequest request) {
-    // Encode password before storing
+    // Validate password strength
+    validatePasswordStrength(request.password());
+
+    // Encode password with BCrypt (strength 12)
     String encodedPassword = passwordEncoder.encode(request.password());
 
     Donor donor = Donor.create(
@@ -457,6 +1277,25 @@ public class DonorRegistrationService {
 
     donorRepository.save(donor);
     return toResponse(donor);
+  }
+
+  private void validatePasswordStrength(String password) {
+    if (password.length() < 12) {
+      throw new WeakPasswordException("Password must be at least 12 characters");
+    }
+
+    boolean hasUpperCase = password.chars().anyMatch(Character::isUpperCase);
+    boolean hasLowerCase = password.chars().anyMatch(Character::isLowerCase);
+    boolean hasDigit = password.chars().anyMatch(Character::isDigit);
+    boolean hasSpecial = password.chars().anyMatch(ch ->
+      "!@#$%^&*()_+-=[]{}|;:,.<>?".indexOf(ch) >= 0
+    );
+
+    if (!(hasUpperCase && hasLowerCase && hasDigit && hasSpecial)) {
+      throw new WeakPasswordException(
+        "Password must contain uppercase, lowercase, digit, and special character"
+      );
+    }
   }
 
   private DonorResponse toResponse(Donor donor) {
@@ -470,59 +1309,90 @@ public class DonorRegistrationService {
 }
 ```
 
-**Kotlin Example**:
-
-```kotlin
-@Configuration
-class SecurityConfig {
-
-  @Bean
-  fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder(12)  // Strength factor 12
-}
-
-@Service
-class DonorRegistrationService(
-  private val donorRepository: DonorRepository,
-  private val passwordEncoder: PasswordEncoder
-) {
-
-  fun registerDonor(request: RegisterDonorRequest): DonorResponse {
-    // Encode password before storing
-    val encodedPassword = passwordEncoder.encode(request.password)
-
-    val donor = Donor.create(
-      request.email,
-      encodedPassword,
-      request.name
-    )
-
-    donorRepository.save(donor)
-    return donor.toResponse()
-  }
-
-  private fun Donor.toResponse(): DonorResponse = DonorResponse(
-    id,
-    email,
-    name,
-    createdAt
-  )
-}
-```
-
-## CSRF Protection
+### Argon2 Configuration (Recommended for New Systems)
 
 **Java Example**:
 
 ```java
 @Configuration
-public class SecurityConfig {
+public class Argon2PasswordEncodingConfig {
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    // Argon2 - Winner of Password Hashing Competition
+    // More secure than BCrypt for modern applications
+    return new Argon2PasswordEncoder(
+      16,   // Salt length in bytes
+      32,   // Hash length in bytes
+      1,    // Parallelism (number of threads)
+      65536, // Memory cost in KB (64 MB)
+      10    // Iterations
+    );
+  }
+}
+```
+
+**Kotlin Example**:
+
+```kotlin
+@Configuration
+class Argon2PasswordEncodingConfig {
+
+  @Bean
+  fun passwordEncoder(): PasswordEncoder {
+    // Argon2 - Winner of Password Hashing Competition
+    // More secure than BCrypt for modern applications
+    return Argon2PasswordEncoder(
+      16,     // Salt length in bytes
+      32,     // Hash length in bytes
+      1,      // Parallelism (number of threads)
+      65536,  // Memory cost in KB (64 MB)
+      10      // Iterations
+    )
+  }
+}
+```
+
+### PBKDF2 Configuration
+
+**Java Example**:
+
+```java
+@Configuration
+public class Pbkdf2PasswordEncodingConfig {
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    // PBKDF2 with HMAC-SHA256
+    return new Pbkdf2PasswordEncoder(
+      "",                        // Secret (empty for standard PBKDF2)
+      16,                        // Salt length in bytes
+      310000,                    // Iterations (OWASP recommendation 2023)
+      Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256
+    );
+  }
+}
+```
+
+## CSRF Protection
+
+### Token-Based CSRF
+
+**Java Example** (Form-Based Web Application):
+
+```java
+@Configuration
+@EnableWebSecurity
+public class CsrfSecurityConfig {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
       .csrf(csrf -> csrf
         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+        .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler())
       )
+      .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
       .authorizeHttpRequests(auth -> auth
         .anyRequest().authenticated()
       );
@@ -531,38 +1401,320 @@ public class SecurityConfig {
   }
 }
 
-// For stateless REST APIs, disable CSRF
+// Custom CSRF token request handler for SPAs
+final class SpaCsrfTokenRequestHandler extends CsrfTokenRequestAttributeHandler {
+  private final CsrfTokenRequestHandler delegate = new XorCsrfTokenRequestAttributeHandler();
+
+  @Override
+  public void handle(
+    HttpServletRequest request,
+    HttpServletResponse response,
+    Supplier<CsrfToken> csrfToken
+  ) {
+    this.delegate.handle(request, response, csrfToken);
+  }
+
+  @Override
+  public String resolveCsrfTokenValue(HttpServletRequest request, CsrfToken csrfToken) {
+    if (StringUtils.hasText(request.getHeader(csrfToken.getHeaderName()))) {
+      return super.resolveCsrfTokenValue(request, csrfToken);
+    }
+    return this.delegate.resolveCsrfTokenValue(request, csrfToken);
+  }
+}
+
+// Filter to ensure CSRF token is sent to client
+final class CsrfCookieFilter extends OncePerRequestFilter {
+
+  @Override
+  protected void doFilterInternal(
+    HttpServletRequest request,
+    HttpServletResponse response,
+    FilterChain filterChain
+  ) throws ServletException, IOException {
+    CsrfToken csrfToken = (CsrfToken) request.getAttribute("_csrf");
+    csrfToken.getToken(); // Force token generation
+    filterChain.doFilter(request, response);
+  }
+}
+```
+
+**Kotlin Example**:
+
+```kotlin
 @Configuration
+@EnableWebSecurity
+class CsrfSecurityConfig {
+
+  @Bean
+  fun filterChain(http: HttpSecurity): SecurityFilterChain {
+    http {
+      csrf {
+        csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse()
+        csrfTokenRequestHandler = SpaCsrfTokenRequestHandler()
+      }
+      authorizeHttpRequests {
+        authorize(anyRequest, authenticated)
+      }
+    }
+
+    http.addFilterAfter(CsrfCookieFilter(), BasicAuthenticationFilter::class.java)
+
+    return http.build()
+  }
+}
+
+// Custom CSRF token request handler for SPAs
+class SpaCsrfTokenRequestHandler : CsrfTokenRequestAttributeHandler() {
+  private val delegate = XorCsrfTokenRequestAttributeHandler()
+
+  override fun handle(
+    request: HttpServletRequest,
+    response: HttpServletResponse,
+    csrfToken: Supplier<CsrfToken>
+  ) {
+    delegate.handle(request, response, csrfToken)
+  }
+
+  override fun resolveCsrfTokenValue(
+    request: HttpServletRequest,
+    csrfToken: CsrfToken
+  ): String? {
+    return if (request.getHeader(csrfToken.headerName)?.isNotBlank() == true) {
+      super.resolveCsrfTokenValue(request, csrfToken)
+    } else {
+      delegate.resolveCsrfTokenValue(request, csrfToken)
+    }
+  }
+}
+
+// Filter to ensure CSRF token is sent to client
+class CsrfCookieFilter : OncePerRequestFilter() {
+
+  override fun doFilterInternal(
+    request: HttpServletRequest,
+    response: HttpServletResponse,
+    filterChain: FilterChain
+  ) {
+    val csrfToken = request.getAttribute("_csrf") as CsrfToken
+    csrfToken.token // Force token generation
+    filterChain.doFilter(request, response)
+  }
+}
+```
+
+### Stateless REST API (CSRF Disabled)
+
+**Java Example**:
+
+```java
+@Configuration
+@EnableWebSecurity
 public class RestApiSecurityConfig {
 
   @Bean
   public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
     http
-      .csrf(csrf -> csrf.disable())  // Disable for stateless APIs
+      .securityMatcher("/api/**")
+      .csrf(csrf -> csrf.disable())  // Disable for stateless REST APIs
+      .sessionManagement(session -> session
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+      )
       .authorizeHttpRequests(auth -> auth
         .anyRequest().authenticated()
-      );
+      )
+      .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
 
     return http.build();
   }
 }
 ```
 
-## Session Management
+## CORS Configuration
+
+### Global CORS Configuration
+
+**Java Example** (Zakat API with CORS):
+
+```java
+@Configuration
+@EnableWebSecurity
+public class CorsSecurityConfig {
+
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http
+      .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+      .csrf(csrf -> csrf.disable())
+      .authorizeHttpRequests(auth -> auth
+        .requestMatchers("/api/public/**").permitAll()
+        .anyRequest().authenticated()
+      );
+
+    return http.build();
+  }
+
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+
+    // Allowed origins
+    configuration.setAllowedOrigins(Arrays.asList(
+      "https://oseplatform.com",
+      "https://ayokoding.com",
+      "http://localhost:3000"  // Development
+    ));
+
+    // Allowed methods
+    configuration.setAllowedMethods(Arrays.asList(
+      "GET", "POST", "PUT", "DELETE", "OPTIONS"
+    ));
+
+    // Allowed headers
+    configuration.setAllowedHeaders(Arrays.asList(
+      "Authorization",
+      "Content-Type",
+      "X-Requested-With",
+      "Accept",
+      "X-CSRF-TOKEN"
+    ));
+
+    // Exposed headers (accessible to client)
+    configuration.setExposedHeaders(Arrays.asList(
+      "Authorization",
+      "X-Total-Count"
+    ));
+
+    // Allow credentials (cookies, authorization headers)
+    configuration.setAllowCredentials(true);
+
+    // Cache preflight response for 1 hour
+    configuration.setMaxAge(3600L);
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/api/**", configuration);
+
+    return source;
+  }
+}
+```
+
+**Kotlin Example**:
+
+```kotlin
+@Configuration
+@EnableWebSecurity
+class CorsSecurityConfig {
+
+  @Bean
+  fun filterChain(http: HttpSecurity): SecurityFilterChain {
+    http {
+      cors {
+        configurationSource = corsConfigurationSource()
+      }
+      csrf { disable() }
+      authorizeHttpRequests {
+        authorize("/api/public/**", permitAll)
+        authorize(anyRequest, authenticated)
+      }
+    }
+
+    return http.build()
+  }
+
+  @Bean
+  fun corsConfigurationSource(): CorsConfigurationSource {
+    val configuration = CorsConfiguration().apply {
+      // Allowed origins
+      allowedOrigins = listOf(
+        "https://oseplatform.com",
+        "https://ayokoding.com",
+        "http://localhost:3000"  // Development
+      )
+
+      // Allowed methods
+      allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
+
+      // Allowed headers
+      allowedHeaders = listOf(
+        "Authorization",
+        "Content-Type",
+        "X-Requested-With",
+        "Accept",
+        "X-CSRF-TOKEN"
+      )
+
+      // Exposed headers (accessible to client)
+      exposedHeaders = listOf("Authorization", "X-Total-Count")
+
+      // Allow credentials (cookies, authorization headers)
+      allowCredentials = true
+
+      // Cache preflight response for 1 hour
+      maxAge = 3600L
+    }
+
+    val source = UrlBasedCorsConfigurationSource()
+    source.registerCorsConfiguration("/api/**", configuration)
+
+    return source
+  }
+}
+```
+
+### Controller-Level CORS
 
 **Java Example**:
 
 ```java
+@RestController
+@RequestMapping("/api/v1/zakat")
+@CrossOrigin(
+  origins = {"https://oseplatform.com", "http://localhost:3000"},
+  methods = {RequestMethod.GET, RequestMethod.POST},
+  allowedHeaders = {"Authorization", "Content-Type"},
+  exposedHeaders = {"X-Total-Count"},
+  allowCredentials = "true",
+  maxAge = 3600
+)
+public class ZakatController {
+
+  @GetMapping("/nisab/current")
+  public ResponseEntity<NisabResponse> getCurrentNisab() {
+    // Controller-level CORS configuration applies
+    return ResponseEntity.ok(calculateNisab());
+  }
+
+  @PostMapping("/calculate")
+  @CrossOrigin(origins = "https://oseplatform.com")  // Method-level override
+  public ResponseEntity<ZakatCalculationResponse> calculateZakat(
+    @RequestBody @Valid CalculateZakatRequest request
+  ) {
+    // More restrictive CORS for sensitive operations
+    return ResponseEntity.ok(performCalculation(request));
+  }
+}
+```
+
+## Session Management
+
+### Stateful Session Configuration
+
+**Java Example** (Web Application with Sessions):
+
+```java
 @Configuration
-public class SecurityConfig {
+@EnableWebSecurity
+public class SessionSecurityConfig {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
       .sessionManagement(session -> session
         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-        .maximumSessions(1)
-        .maxSessionsPreventsLogin(true)
+        .maximumSessions(1)  // One session per user
+        .maxSessionsPreventsLogin(true)  // Block new login if session exists
+        .expiredUrl("/login?expired")
       )
       .authorizeHttpRequests(auth -> auth
         .anyRequest().authenticated()
@@ -570,17 +1722,105 @@ public class SecurityConfig {
 
     return http.build();
   }
-}
 
-// For stateless REST APIs
+  @Bean
+  public HttpSessionEventPublisher httpSessionEventPublisher() {
+    // Required for session registry to track concurrent sessions
+    return new HttpSessionEventPublisher();
+  }
+
+  @Bean
+  public SessionRegistry sessionRegistry() {
+    return new SessionRegistryImpl();
+  }
+}
+```
+
+**Kotlin Example**:
+
+```kotlin
 @Configuration
-public class RestApiSecurityConfig {
+@EnableWebSecurity
+class SessionSecurityConfig {
+
+  @Bean
+  fun filterChain(http: HttpSecurity): SecurityFilterChain {
+    http {
+      sessionManagement {
+        sessionCreationPolicy = SessionCreationPolicy.IF_REQUIRED
+        sessionConcurrency {
+          maximumSessions = 1  // One session per user
+          maxSessionsPreventsLogin = true  // Block new login if session exists
+          expiredUrl = "/login?expired"
+        }
+      }
+      authorizeHttpRequests {
+        authorize(anyRequest, authenticated)
+      }
+    }
+
+    return http.build()
+  }
+
+  @Bean
+  fun httpSessionEventPublisher(): HttpSessionEventPublisher {
+    // Required for session registry to track concurrent sessions
+    return HttpSessionEventPublisher()
+  }
+
+  @Bean
+  fun sessionRegistry(): SessionRegistry = SessionRegistryImpl()
+}
+```
+
+### Stateless REST API
+
+**Java Example**:
+
+```java
+@Configuration
+@EnableWebSecurity
+public class StatelessRestApiConfig {
 
   @Bean
   public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
     http
+      .securityMatcher("/api/**")
       .sessionManagement(session -> session
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // No sessions for REST APIs
+      )
+      .csrf(csrf -> csrf.disable())
+      .authorizeHttpRequests(auth -> auth
+        .requestMatchers("/api/public/**").permitAll()
+        .anyRequest().authenticated()
+      )
+      .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+
+    return http.build();
+  }
+}
+```
+
+### Session Fixation Protection
+
+**Java Example**:
+
+```java
+@Configuration
+@EnableWebSecurity
+public class SessionFixationProtectionConfig {
+
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http
+      .sessionManagement(session -> session
+        .sessionFixation(fixation -> fixation
+          .changeSessionId()  // Change session ID on authentication (default)
+          // Alternative strategies:
+          // .newSession()     // Create new session, don't copy attributes
+          // .migrateSession() // Create new session, copy attributes
+          // .none()           // No protection (not recommended)
+        )
       )
       .authorizeHttpRequests(auth -> auth
         .anyRequest().authenticated()
@@ -652,8 +1892,43 @@ class DonationControllerSecurityTest {
     mockMvc.perform(get("/api/v1/donations/all"))
       .andExpect(status().isOk());
   }
+
+  @Test
+  @WithMockUser(username = "donor@example.com", roles = "DONOR")
+  void getDonations_ownDonations_succeeds() throws Exception {
+    mockMvc.perform(get("/api/v1/donations/by-donor/donor@example.com"))
+      .andExpect(status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "other@example.com", roles = "DONOR")
+  void getDonations_otherDonations_returns403() throws Exception {
+    mockMvc.perform(get("/api/v1/donations/by-donor/donor@example.com"))
+      .andExpect(status().isForbidden());
+  }
 }
 ```
+
+## Mapping to OSE Platform Principles
+
+### Explicit Over Implicit
+
+**Applied in Security**:
+
+- ✅ Explicit `@PreAuthorize` annotations on methods
+- ✅ Explicit role and authority checks in filter chains
+- ✅ Explicit CORS and CSRF configuration
+- ❌ Avoid relying on default security rules without explicit configuration
+
+### Security First
+
+**Applied in Security**:
+
+- ✅ Strong password encoding (BCrypt strength 12, Argon2)
+- ✅ JWT signature verification with RSA keys
+- ✅ Method-level authorization with SpEL expressions
+- ✅ CSRF protection for stateful applications
+- ✅ Session fixation protection
 
 ## Related Documentation
 
@@ -663,8 +1938,35 @@ class DonationControllerSecurityTest {
 - **[Web MVC](ex-soen-plwe-to-jvsp__web-mvc.md)** - Web layer
 - **[REST APIs](ex-soen-plwe-to-jvsp__rest-apis.md)** - RESTful services
 
+### Spring Boot Security
+
+- **[Spring Boot Security](../../jvm-spring-boot/ex-soen-plwe-to-jvspbo__security.md)** - Auto-configuration, Actuator security
+
+### AyoKoding Learning Resources
+
+- **[Spring Security By Example](/software-engineering/platform-web/java-spring/by-example/)** - Hands-on security examples
+- **[Spring Security In The Field](/software-engineering/platform-web/java-spring/in-the-field/)** - Production security patterns
+
+## See Also
+
+**OSE Explanation Foundation**:
+
+- [Java Security](../../programming-languages/java/ex-soen-prla-ja__security-standards.md) - Java security baseline
+- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Security patterns
+- [Spring Framework REST APIs](./ex-soen-plwe-to-jvsp__rest-apis.md) - Securing APIs
+- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Security standards
+
+**Hands-on Learning (AyoKoding)**:
+
+- [Spring By Example - Security](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/security) - Code examples
+- [Spring In-the-Field - Authentication](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/security) - Production security
+
+**Spring Boot Extension**:
+
+- [Spring Boot Security](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__security.md) - Auto-configured security
+
 ---
 
-**Last Updated**: 2026-01-29
+**Last Updated**: 2026-02-06
 **Spring Framework Version**: 6.1+, Spring Security 6.1+ (Java 17+, Kotlin 1.9+)
 **Maintainers**: Platform Documentation Team

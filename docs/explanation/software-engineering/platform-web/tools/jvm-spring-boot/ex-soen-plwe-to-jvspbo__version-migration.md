@@ -144,6 +144,20 @@ public class SecurityConfig {
 - [ ] Test in staging environment
 - [ ] Update documentation
 
+## See Also
+
+**OSE Explanation Foundation**:
+
+- [Spring Framework Version Migration](../jvm-spring/ex-soen-plwe-to-jvsp__version-migration.md) - Spring version updates
+- [Java Version Migration](../../programming-languages/java/ex-soen-prla-ja__framework-integration.md) - Java version updates
+- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Modern patterns
+- [Spring Boot Best Practices](./ex-soen-plwe-to-jvspbo__best-practices.md) - Migration standards
+
+**Hands-on Learning (AyoKoding)**:
+
+- [Spring Boot By Example - Migration](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/migration) - Code examples
+- [Spring Boot In-the-Field - Version Upgrades](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/migration) - Production migration
+
 ---
 
 **Last Updated**: 2026-01-25

@@ -17,7 +17,7 @@ principles:
   - immutability
   - pure-functions
 created: 2026-01-29
-updated: 2026-01-29
+updated: 2026-02-06
 ---
 
 # Spring Framework Idioms
@@ -1817,6 +1817,24 @@ fun main() {
 }
 ```
 
+## See in Practice
+
+### AyoKoding Spring By-Example Resources
+
+Hands-on examples demonstrating Spring Framework idioms:
+
+- **[Spring IoC Container Examples](/software-engineering/platform-web/java-spring/by-example/)** - Bean definitions, DI patterns
+- **[Spring Configuration Examples](/software-engineering/platform-web/java-spring/by-example/)** - Java config, profiles, properties
+- **[Spring Bean Lifecycle Examples](/software-engineering/platform-web/java-spring/by-example/)** - Initialization, destruction, scopes
+
+### AyoKoding Spring In-The-Field Guides
+
+Production patterns using Spring Framework idioms:
+
+- **[Spring Application Architecture](/software-engineering/platform-web/java-spring/in-the-field/)** - Structuring Spring applications
+- **[Spring Configuration Management](/software-engineering/platform-web/java-spring/in-the-field/)** - Environment-specific config
+- **[Spring Dependency Injection Strategies](/software-engineering/platform-web/java-spring/in-the-field/)** - Constructor vs setter injection
+
 ## Related Documentation
 
 ### Core Spring Framework Documentation
@@ -1826,19 +1844,50 @@ fun main() {
 - **[Anti-Patterns](ex-soen-plwe-to-jvsp__anti-patterns.md)** - Common mistakes
 - **[Configuration](ex-soen-plwe-to-jvsp__configuration.md)** - Configuration approaches
 - **[Dependency Injection](ex-soen-plwe-to-jvsp__dependency-injection.md)** - IoC container deep-dive
+- **[Security](ex-soen-plwe-to-jvsp__security.md)** - Spring Security patterns
+- **[Performance](ex-soen-plwe-to-jvsp__performance.md)** - Optimization techniques
+- **[Observability](ex-soen-plwe-to-jvsp__observability.md)** - Monitoring and tracing
 
 ### Language Standards
 
 - **[Java](../../../programming-languages/java/README.md)** - Java language documentation
 - **[Java Idioms](../../../programming-languages/java/README.md)** - Java patterns
+- **[Kotlin](../../programming-languages/java/README.md)** - Kotlin language documentation
 
 ### Development Practices
 
 - **[Functional Programming](../../../../../../governance/development/pattern/functional-programming.md)** - FP principles
 - **[Test-Driven Development](../../../development/test-driven-development-tdd/README.md)** - TDD practices
 
+### OSE Platform Principles
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Configuration clarity
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Spring IoC automation
+- **[Immutability](../../../../../governance/principles/software-engineering/immutability.md)** - Immutable bean properties
+- **[Pure Functions](../../../../../governance/principles/software-engineering/pure-functions.md)** - Functional bean patterns
+
+## See Also
+
+**OSE Explanation Foundation**:
+
+- [Java Idioms](../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline patterns
+- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Production standards
+- [Spring Framework Configuration](./ex-soen-plwe-to-jvsp__configuration.md) - Configuration patterns
+- [Spring Framework Dependency Injection](./ex-soen-plwe-to-jvsp__dependency-injection.md) - DI deep dive
+
+**Hands-on Learning (AyoKoding)**:
+
+- [Spring By Example - Core Patterns](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/core-patterns) - Code examples
+- [Spring By Example - DI Patterns](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/dependency-injection) - Injection examples
+- [Spring In-the-Field - Application Setup](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/application-setup) - Real-world patterns
+- [Spring In-the-Field - Configuration Management](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/configuration) - Production config
+
+**Spring Boot Extension**:
+
+- [Spring Boot Idioms](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__idioms.md) - Auto-configured patterns
+
 ---
 
-**Last Updated**: 2026-01-29
+**Last Updated**: 2026-02-06
 **Spring Framework Version**: 6.1+ (Java 17+, Kotlin 1.9+)
 **Maintainers**: Platform Documentation Team

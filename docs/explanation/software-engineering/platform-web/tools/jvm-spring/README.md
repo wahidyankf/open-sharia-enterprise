@@ -34,6 +34,25 @@ Spring Framework is the foundational Java application framework that provides co
 
 This documentation covers Spring Framework 6.x (latest stable) with Java 17+ and Kotlin support, targeting enterprise applications and microservices architectures.
 
+## Prerequisite Knowledge
+
+**REQUIRED**: You MUST understand Spring Framework fundamentals from the [AyoKoding Spring Framework Learning Path](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/).
+
+**This documentation is OSE Platform-specific explanation**, not Spring Framework tutorials. We assume you have completed the learning content.
+
+**Before Reading These Docs**:
+
+- Complete [Spring Framework Initial Setup](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/initial-setup) - Environment and tooling setup
+- Understand [Spring Framework Overview](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/overview) - Core concepts (IoC, DI, AOP)
+- Work through [Spring Framework By Example](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/) (75+ annotated examples) - Hands-on code learning
+- Reference [Spring Framework In-the-Field](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/) (30 production guides) - Production patterns
+
+**Separation of Concerns**: See [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation between learning (ayokoding-web) and standards (this documentation).
+
+**What this documentation covers**: OSE Platform Spring Framework standards, naming conventions, framework integration patterns, how to apply Spring knowledge in THIS codebase.
+
+**What this documentation does NOT cover**: Spring Framework tutorials, basic IoC/DI concepts, generic patterns (those are in ayokoding-web).
+
 ## Framework Standards
 
 **This documentation is the authoritative reference** for Spring Framework usage standards in the open-sharia-enterprise platform.
