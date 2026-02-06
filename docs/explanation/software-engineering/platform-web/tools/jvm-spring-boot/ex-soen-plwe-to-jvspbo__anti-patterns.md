@@ -1141,7 +1141,7 @@ class ZakatCalculationIntegrationTest {
 
 - **[Spring Boot Idioms](ex-soen-plwe-to-jvspbo__idioms.md)** - Correct patterns
 - **[Spring Boot Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md)** - Production standards
-- **[Java Anti-Patterns](../../../programming-languages/java/README.md)** - Java mistakes
+- **[Java Anti-Patterns](../../../../programming-languages/java/README.md)** - Java mistakes
 - **[Testing](ex-soen-plwe-to-jvspbo__testing.md)** - Testing strategies
 
 ## See Also
@@ -1149,14 +1149,14 @@ class ZakatCalculationIntegrationTest {
 **OSE Explanation Foundation**:
 
 - [Spring Framework Anti-Patterns](../jvm-spring/ex-soen-plwe-to-jvsp__anti-patterns.md) - Manual Spring mistakes
-- [Java Anti-Patterns](../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline anti-patterns
+- [Java Anti-Patterns](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline anti-patterns
 - [Spring Boot Best Practices](./ex-soen-plwe-to-jvspbo__best-practices.md) - Recommended practices
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Correct patterns
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring Boot By Example - Common Mistakes](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/common-mistakes) - Code examples
-- [Spring Boot In-the-Field - Troubleshooting](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/troubleshooting) - Debugging patterns
+- [Spring Boot By Example - Common Mistakes](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/common-mistakes.md) - Code examples
+- [Spring Boot In-the-Field - Troubleshooting](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/troubleshooting.md) - Debugging patterns
 
 ---
 

@@ -2430,14 +2430,14 @@ Production deployment security checklist for Spring Boot applications.
 **OSE Explanation Foundation**:
 
 - [Spring Framework Security](../jvm-spring/ex-soen-plwe-to-jvsp__security.md) - Manual Spring security
-- [Java Security](../../programming-languages/java/ex-soen-prla-ja__security-standards.md) - Java security baseline
+- [Java Security](../../../programming-languages/java/ex-soen-prla-ja__security-standards.md) - Java security baseline
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Security patterns
 - [Spring Boot REST APIs](./ex-soen-plwe-to-jvspbo__rest-apis.md) - Securing APIs
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring Boot By Example - Security](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/security) - Code examples
-- [Spring Boot In-the-Field - Authentication](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/security) - Production security
+- [Spring Boot By Example - Security](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/security.md) - Code examples
+- [Spring Boot In-the-Field - Authentication](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/security.md) - Production security
 
 ---
 

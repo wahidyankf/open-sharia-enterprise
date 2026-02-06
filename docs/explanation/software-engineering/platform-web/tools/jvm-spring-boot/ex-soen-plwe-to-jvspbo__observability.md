@@ -1121,13 +1121,13 @@ public class ZakatCalculationService {
 **OSE Explanation Foundation**:
 
 - [Spring Framework Observability](../jvm-spring/ex-soen-plwe-to-jvsp__observability.md) - Manual Spring monitoring
-- [Java Monitoring](../../programming-languages/java/ex-soen-prla-ja__performance-standards.md) - Java JMX baseline
+- [Java Monitoring](../../../programming-languages/java/ex-soen-prla-ja__performance-standards.md) - Java JMX baseline
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Observability patterns
 - [Spring Boot Performance](./ex-soen-plwe-to-jvspbo__performance.md) - Performance metrics
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring Boot By Example - Observability](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/observability) - Code examples
-- [Spring Boot In-the-Field - Monitoring](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/observability) - Production monitoring
+- [Spring Boot By Example - Observability](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/observability.md) - Code examples
+- [Spring Boot In-the-Field - Monitoring](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/observability.md) - Production monitoring
 
 **Last Updated**: 2026-01-26

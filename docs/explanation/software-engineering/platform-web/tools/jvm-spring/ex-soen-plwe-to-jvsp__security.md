@@ -1951,15 +1951,15 @@ class DonationControllerSecurityTest {
 
 **OSE Explanation Foundation**:
 
-- [Java Security](../../programming-languages/java/ex-soen-prla-ja__security-standards.md) - Java security baseline
+- [Java Security](../../../programming-languages/java/ex-soen-prla-ja__security-standards.md) - Java security baseline
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Security patterns
 - [Spring Framework REST APIs](./ex-soen-plwe-to-jvsp__rest-apis.md) - Securing APIs
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Security standards
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - Security](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/security) - Code examples
-- [Spring In-the-Field - Authentication](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/security) - Production security
+- [Spring By Example - Security](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/security.md) - Code examples
+- [Spring In-the-Field - Authentication](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/security.md) - Production security
 
 **Spring Boot Extension**:
 

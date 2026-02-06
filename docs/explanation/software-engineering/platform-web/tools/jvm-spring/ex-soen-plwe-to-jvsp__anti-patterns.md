@@ -1228,15 +1228,15 @@ public class MurabahaContractService {
 
 **OSE Explanation Foundation**:
 
-- [Java Anti-Patterns](../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline anti-patterns
+- [Java Anti-Patterns](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline anti-patterns
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Recommended practices
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Correct patterns
 - [Spring Framework Dependency Injection](./ex-soen-plwe-to-jvsp__dependency-injection.md) - Proper DI usage
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - Common Mistakes](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/common-mistakes) - Code examples
-- [Spring In-the-Field - Debugging Issues](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/debugging) - Troubleshooting patterns
+- [Spring By Example - Common Mistakes](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/common-mistakes.md) - Code examples
+- [Spring In-the-Field - Debugging Issues](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/debugging.md) - Troubleshooting patterns
 
 **Spring Boot Extension**:
 

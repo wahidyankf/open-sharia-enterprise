@@ -640,15 +640,15 @@ class ModifyingTest {
 
 **OSE Explanation Foundation**:
 
-- [Java Testing](../../programming-languages/java/ex-soen-prla-ja__testing-standards.md) - Java test baseline
+- [Java Testing](../../../programming-languages/java/ex-soen-prla-ja__testing-standards.md) - Java test baseline
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Testing patterns
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Test standards
 - [Spring Framework Data Access](./ex-soen-plwe-to-jvsp__data-access.md) - Repository testing
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - Testing](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/testing) - Code examples
-- [Spring In-the-Field - Test Strategies](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/testing) - Production testing
+- [Spring By Example - Testing](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/testing.md) - Code examples
+- [Spring In-the-Field - Test Strategies](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/testing.md) - Production testing
 
 **Spring Boot Extension**:
 

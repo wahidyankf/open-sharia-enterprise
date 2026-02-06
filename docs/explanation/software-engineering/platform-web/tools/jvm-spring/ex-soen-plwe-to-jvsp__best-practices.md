@@ -1603,7 +1603,7 @@ class DonationReportGenerator(
 
 ### Language Standards
 
-- **[Java Best Practices](../../../programming-languages/java/README.md)** - Java coding standards
+- **[Java Best Practices](../../../../programming-languages/java/README.md)** - Java coding standards
 
 ### Development Practices
 
@@ -1614,16 +1614,16 @@ class DonationReportGenerator(
 
 **OSE Explanation Foundation**:
 
-- [Java Best Practices](../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline standards
+- [Java Best Practices](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline standards
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Core Spring patterns
 - [Spring Framework Anti-Patterns](./ex-soen-plwe-to-jvsp__anti-patterns.md) - Common mistakes to avoid
 - [Spring Framework Testing](./ex-soen-plwe-to-jvsp__testing.md) - Testing strategies
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - Best Practices](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/best-practices) - Code examples
-- [Spring In-the-Field - Production Setup](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/production-setup) - Real-world patterns
-- [Spring In-the-Field - Performance Tuning](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/performance) - Production optimization
+- [Spring By Example - Best Practices](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/best-practices.md) - Code examples
+- [Spring In-the-Field - Production Setup](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/production-setup.md) - Real-world patterns
+- [Spring In-the-Field - Performance Tuning](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/performance.md) - Production optimization
 
 **Spring Boot Extension**:
 

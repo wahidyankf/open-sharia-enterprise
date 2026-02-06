@@ -1638,7 +1638,7 @@ public class ThirdRunner implements ApplicationRunner {
 - **[Spring Boot Anti-Patterns](ex-soen-plwe-to-jvspbo__anti-patterns.md)** - Common mistakes
 - **[Configuration](ex-soen-plwe-to-jvspbo__configuration.md)** - Configuration management
 - **[Dependency Injection](ex-soen-plwe-to-jvspbo__dependency-injection.md)** - DI patterns
-- **[Java Idioms](../../../programming-languages/java/README.md)** - Modern Java patterns
+- **[Java Idioms](../../../../programming-languages/java/README.md)** - Modern Java patterns
 - **[Functional Programming](ex-soen-plwe-to-jvspbo__functional-programming.md)** - FP with Spring Boot
 
 ## See Also
@@ -1646,16 +1646,16 @@ public class ThirdRunner implements ApplicationRunner {
 **OSE Explanation Foundation**:
 
 - [Spring Framework Idioms](../jvm-spring/ex-soen-plwe-to-jvsp__idioms.md) - Manual Spring setup patterns
-- [Java Best Practices](../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline standards
+- [Java Best Practices](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline standards
 - [Spring Boot Configuration](./ex-soen-plwe-to-jvspbo__configuration.md) - Type-safe configuration patterns
 - [Spring Boot Dependency Injection](./ex-soen-plwe-to-jvspbo__dependency-injection.md) - DI best practices
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring Boot By Example - Core Patterns](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/core-patterns) - Code examples
-- [Spring Boot By Example - Auto-Configuration](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/auto-configuration) - Custom auto-config examples
-- [Spring Boot In-the-Field - Production Setup](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/production-setup) - Real-world patterns
-- [Spring Boot In-the-Field - Event-Driven Architecture](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/event-driven) - Domain events in production
+- [Spring Boot By Example - Core Patterns](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/core-patterns.md) - Code examples
+- [Spring Boot By Example - Auto-Configuration](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/auto-configuration.md) - Custom auto-config examples
+- [Spring Boot In-the-Field - Production Setup](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/production-setup.md) - Real-world patterns
+- [Spring Boot In-the-Field - Event-Driven Architecture](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/event-driven.md) - Domain events in production
 
 ---
 

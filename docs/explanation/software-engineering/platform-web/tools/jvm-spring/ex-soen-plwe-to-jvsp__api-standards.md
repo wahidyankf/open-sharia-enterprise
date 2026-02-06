@@ -724,11 +724,11 @@ public class DonationControllerV2 {
 For learning Spring Framework fundamentals and concepts referenced in these standards, see:
 
 - **[Spring Framework Learning Path](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring)** - Complete Spring learning journey
-- **[Spring By Example](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example)** - Annotated Spring code examples
-  - **[REST API Examples](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/rest-api)** - @RestController, @RequestMapping, ResponseEntity
-  - **[Validation Examples](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/validation)** - Bean Validation annotations
-  - **[HATEOAS Examples](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/hateoas)** - Hypermedia links
-- **[Spring In Practice](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-practice)** - API design patterns and best practices
+- **[Spring By Example](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example.md)** - Annotated Spring code examples
+  - **[REST API Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/rest-api.md)** - @RestController, @RequestMapping, ResponseEntity
+  - **[Validation Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/validation.md)** - Bean Validation annotations
+  - **[HATEOAS Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/hateoas.md)** - Hypermedia links
+- **[Spring In Practice](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-practice.md)** - API design patterns and best practices
 
 **Note**: These standards assume you've learned Spring basics from ayokoding-web. We don't re-explain fundamental concepts here.
 
@@ -770,15 +770,15 @@ Before deploying Spring REST APIs, verify:
 
 **OSE Explanation Foundation**:
 
-- [Java API Design](../../programming-languages/java/ex-soen-prla-ja__api-standards.md) - Java API baseline
+- [Java API Design](../../../programming-languages/java/ex-soen-prla-ja__api-standards.md) - Java API baseline
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - API patterns
 - [Spring Framework REST APIs](./ex-soen-plwe-to-jvsp__rest-apis.md) - REST implementation
 - [Spring Framework Security](./ex-soen-plwe-to-jvsp__security.md) - API security
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - API Design](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/api-design) - Code examples
-- [Spring In-the-Field - REST APIs](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/api-standards) - Production APIs
+- [Spring By Example - API Design](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/api-design.md) - Code examples
+- [Spring In-the-Field - REST APIs](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/api-standards.md) - Production APIs
 
 **Spring Boot Extension**:
 

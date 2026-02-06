@@ -47,12 +47,12 @@ Spring Boot builds on Spring Framework and auto-configures Spring concepts. You 
 
 **2. Learn Spring Boot Fundamentals**:
 
-You MUST complete the [AyoKoding Spring Boot Learning Path](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/) before using these standards.
+You MUST complete the [AyoKoding Spring Boot Learning Path](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/) before using these standards.
 
-- [Spring Boot Initial Setup](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/initial-setup) - Environment and tooling setup
-- [Spring Boot Overview](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/overview) - Auto-configuration, starters, opinionated defaults
-- [Spring Boot By Example](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/) (85+ annotated examples) - Hands-on code learning
-- [Spring Boot In-the-Field](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/) (37 practical guides) - Production patterns
+- [Spring Boot Initial Setup](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/initial-setup.md) - Environment and tooling setup
+- [Spring Boot Overview](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/overview.md) - Auto-configuration, starters, opinionated defaults
+- [Spring Boot By Example](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/) (85+ annotated examples) - Hands-on code learning
+- [Spring Boot In-the-Field](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/) (37 practical guides) - Production patterns
 
 **Separation of Concerns**: See [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md).
 
@@ -76,7 +76,7 @@ All Spring Boot applications MUST follow the patterns and practices documented h
 
 **For Agents**: Reference this documentation when building Spring Boot applications.
 
-**Language Standards**: Also follow [Java](../../../programming-languages/java/README.md) language standards.
+**Language Standards**: Also follow [Java](../../../../programming-languages/java/README.md) language standards.
 
 ### Quick Standards Reference
 
@@ -1065,7 +1065,7 @@ Read [Spring Boot Anti-Patterns](ex-soen-plwe-to-jvspbo__anti-patterns.md) to pr
 Read complementary documentation:
 
 - [Domain-Driven Design](ex-soen-plwe-to-jvspbo__domain-driven-design.md)
-- [Java DDD Patterns](../../../programming-languages/java/ex-soen-prla-ja__ddd-standards.md)
+- [Java DDD Patterns](../../../../programming-languages/java/ex-soen-prla-ja__ddd-standards.md)
 - [Functional Programming](ex-soen-plwe-to-jvspbo__functional-programming.md)
 
 ## Code Examples from Platform
@@ -1325,11 +1325,11 @@ public class GlobalExceptionHandler {
 
 ### Java Language Standards
 
-- **[Java](../../../programming-languages/java/README.md)** - Core Java language documentation
-- **[Java Idioms](../../../programming-languages/java/README.md)** - Modern Java patterns
-- **[Java Best Practices](../../../programming-languages/java/README.md)** - Java coding standards
-- **[Java Security](../../../programming-languages/java/ex-soen-prla-ja__security-standards.md)** - Secure Java coding
-- **[Java Performance](../../../programming-languages/java/ex-soen-prla-ja__performance-standards.md)** - JVM tuning
+- **[Java](../../../../programming-languages/java/README.md)** - Core Java language documentation
+- **[Java Idioms](../../../../programming-languages/java/README.md)** - Modern Java patterns
+- **[Java Best Practices](../../../../programming-languages/java/README.md)** - Java coding standards
+- **[Java Security](../../../../programming-languages/java/ex-soen-prla-ja__security-standards.md)** - Secure Java coding
+- **[Java Performance](../../../../programming-languages/java/ex-soen-prla-ja__performance-standards.md)** - JVM tuning
 
 ### Architecture Patterns
 
@@ -1631,7 +1631,7 @@ CMD ["./gradlew", "bootRun", "--no-daemon"]
 ### Platform Documentation
 
 - **[Libraries and Frameworks Index](../README.md)** - Parent frameworks documentation
-- **[Java Programming Language](../../../programming-languages/java/README.md)** - Java idioms and standards
+- **[Java Programming Language](../../../../programming-languages/java/README.md)** - Java idioms and standards
 - **[Software Design Index](../../README.md)** - Software documentation root
 - **[Monorepo Structure](../../../../../reference/re__monorepo-structure.md)** - Nx workspace organization
 

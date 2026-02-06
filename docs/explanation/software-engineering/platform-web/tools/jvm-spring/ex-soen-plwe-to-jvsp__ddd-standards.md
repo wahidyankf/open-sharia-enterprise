@@ -790,11 +790,11 @@ com.oseplatform.donation/
 For learning Spring Framework fundamentals and concepts referenced in these standards, see:
 
 - **[Spring Framework Learning Path](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring)** - Complete Spring learning journey
-- **[Spring By Example](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example)** - Annotated Spring code examples
-  - **[DDD Examples](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/ddd)** - Aggregates, repositories, domain events
-  - **[JPA Examples](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/jpa)** - @Entity, @Embeddable, relationships
-  - **[Event Examples](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/events)** - ApplicationEventPublisher, @EventListener
-- **[Spring In Practice](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-practice)** - DDD patterns and aggregate design
+- **[Spring By Example](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example.md)** - Annotated Spring code examples
+  - **[DDD Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/ddd.md)** - Aggregates, repositories, domain events
+  - **[JPA Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/jpa.md)** - @Entity, @Embeddable, relationships
+  - **[Event Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/events.md)** - ApplicationEventPublisher, @EventListener
+- **[Spring In Practice](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-practice.md)** - DDD patterns and aggregate design
 
 **Note**: These standards assume you've learned Spring basics from ayokoding-web. We don't re-explain fundamental concepts here.
 
@@ -836,15 +836,15 @@ Before deploying Spring DDD applications, verify:
 
 **OSE Explanation Foundation**:
 
-- [Java Domain Modeling](../../programming-languages/java/ex-soen-prla-ja__ddd-standards.md) - Java DDD baseline
+- [Java Domain Modeling](../../../programming-languages/java/ex-soen-prla-ja__ddd-standards.md) - Java DDD baseline
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - DDD patterns
 - [Spring Framework Data Access](./ex-soen-plwe-to-jvsp__data-access.md) - Repository implementation
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - DDD standards
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - Domain-Driven Design](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/ddd) - Code examples
-- [Spring In-the-Field - DDD Architecture](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/ddd) - Production DDD
+- [Spring By Example - Domain-Driven Design](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/ddd.md) - Code examples
+- [Spring In-the-Field - DDD Architecture](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/ddd.md) - Production DDD
 
 **Spring Boot Extension**:
 

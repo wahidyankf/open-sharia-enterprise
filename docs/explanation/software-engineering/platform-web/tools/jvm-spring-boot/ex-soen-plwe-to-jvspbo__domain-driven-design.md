@@ -1824,13 +1824,13 @@ public class MurabahaApplicationService {
 **OSE Explanation Foundation**:
 
 - [Spring Framework DDD Standards](../jvm-spring/ex-soen-plwe-to-jvsp__ddd-standards.md) - Manual Spring DDD
-- [Java Domain Modeling](../../programming-languages/java/ex-soen-prla-ja__ddd-standards.md) - Java DDD baseline
+- [Java Domain Modeling](../../../programming-languages/java/ex-soen-prla-ja__ddd-standards.md) - Java DDD baseline
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - DDD patterns
 - [Spring Boot Data Access](./ex-soen-plwe-to-jvspbo__data-access.md) - Repository implementation
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring Boot By Example - Domain-Driven Design](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/ddd) - Code examples
-- [Spring Boot In-the-Field - DDD Architecture](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/ddd) - Production DDD
+- [Spring Boot By Example - Domain-Driven Design](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/ddd.md) - Code examples
+- [Spring Boot In-the-Field - DDD Architecture](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/ddd.md) - Production DDD
 
 **Last Updated**: 2026-01-26

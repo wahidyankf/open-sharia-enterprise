@@ -1280,11 +1280,11 @@ ose:
 **OSE Explanation Foundation**:
 
 - [Spring Framework Configuration](../jvm-spring/ex-soen-plwe-to-jvsp__configuration.md) - Manual Spring configuration
-- [Java Configuration](../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java baseline configuration
+- [Java Configuration](../../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java baseline configuration
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Configuration patterns
 - [Spring Boot Best Practices](./ex-soen-plwe-to-jvspbo__best-practices.md) - Config standards
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring Boot By Example - Configuration](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/configuration) - Code examples
-- [Spring Boot In-the-Field - Environment Setup](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/configuration) - Production config
+- [Spring Boot By Example - Configuration](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/configuration.md) - Code examples
+- [Spring Boot In-the-Field - Environment Setup](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/configuration.md) - Production config

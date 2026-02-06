@@ -1361,15 +1361,15 @@ class DatabaseHealthIndicator(
 
 **OSE Explanation Foundation**:
 
-- [Java Monitoring](../../programming-languages/java/ex-soen-prla-ja__performance-standards.md) - Java JMX baseline
+- [Java Monitoring](../../../programming-languages/java/ex-soen-prla-ja__performance-standards.md) - Java JMX baseline
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Observability patterns
 - [Spring Framework Performance](./ex-soen-plwe-to-jvsp__performance.md) - Performance metrics
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Monitoring standards
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - Observability](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/observability) - Code examples
-- [Spring In-the-Field - Monitoring](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/observability) - Production monitoring
+- [Spring By Example - Observability](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/observability.md) - Code examples
+- [Spring In-the-Field - Monitoring](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/observability.md) - Production monitoring
 
 **Spring Boot Extension**:
 

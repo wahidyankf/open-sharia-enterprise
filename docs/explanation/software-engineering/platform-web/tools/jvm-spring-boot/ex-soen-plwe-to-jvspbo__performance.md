@@ -1505,11 +1505,11 @@ public class WaqfDonationBatchService {
 **OSE Explanation Foundation**:
 
 - [Spring Framework Performance](../jvm-spring/ex-soen-plwe-to-jvsp__performance.md) - Manual Spring optimization
-- [Java Performance](../../programming-languages/java/ex-soen-prla-ja__performance-standards.md) - Java JVM tuning
+- [Java Performance](../../../programming-languages/java/ex-soen-prla-ja__performance-standards.md) - Java JVM tuning
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Performance patterns
 - [Spring Boot Data Access](./ex-soen-plwe-to-jvspbo__data-access.md) - Query optimization
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring Boot By Example - Performance](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/performance) - Code examples
-- [Spring Boot In-the-Field - Optimization](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/performance) - Production tuning
+- [Spring Boot By Example - Performance](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/performance.md) - Code examples
+- [Spring Boot In-the-Field - Optimization](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/performance.md) - Production tuning

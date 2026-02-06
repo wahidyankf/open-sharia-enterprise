@@ -1345,11 +1345,11 @@ public class WaqfDonationService {
 **OSE Explanation Foundation**:
 
 - [Spring Framework Idioms](../jvm-spring/ex-soen-plwe-to-jvsp__idioms.md) - Spring FP patterns
-- [Java Functional Programming](../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java FP baseline
+- [Java Functional Programming](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java FP baseline
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - FP patterns
 - [Spring Boot WebFlux Reactive](./ex-soen-plwe-to-jvspbo__webflux-reactive.md) - Reactive FP
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring Boot By Example - Functional Programming](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/functional-programming) - Code examples
-- [Spring Boot In-the-Field - FP Patterns](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/functional-programming) - Production FP
+- [Spring Boot By Example - Functional Programming](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/functional-programming.md) - Code examples
+- [Spring Boot In-the-Field - FP Patterns](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/functional-programming.md) - Production FP

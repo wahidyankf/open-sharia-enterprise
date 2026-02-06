@@ -1294,15 +1294,15 @@ public class QueryPerformanceMonitoringService {
 
 **OSE Explanation Foundation**:
 
-- [Java Performance](../../programming-languages/java/ex-soen-prla-ja__performance-standards.md) - Java JVM tuning
+- [Java Performance](../../../programming-languages/java/ex-soen-prla-ja__performance-standards.md) - Java JVM tuning
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Performance patterns
 - [Spring Framework Data Access](./ex-soen-plwe-to-jvsp__data-access.md) - Query optimization
 - [Spring Framework Observability](./ex-soen-plwe-to-jvsp__observability.md) - Performance monitoring
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - Performance](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/performance) - Code examples
-- [Spring In-the-Field - Optimization](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/performance) - Production tuning
+- [Spring By Example - Performance](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/performance.md) - Code examples
+- [Spring In-the-Field - Optimization](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/performance.md) - Production tuning
 
 **Spring Boot Extension**:
 

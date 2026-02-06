@@ -1838,14 +1838,14 @@ Production guidelines for Spring Data JPA.
 **OSE Explanation Foundation**:
 
 - [Spring Framework Data Access](../jvm-spring/ex-soen-plwe-to-jvsp__data-access.md) - Manual Spring data access
-- [Java Database Access](../../programming-languages/java/ex-soen-prla-ja__ddd-standards.md) - Java JDBC baseline
+- [Java Database Access](../../../programming-languages/java/ex-soen-prla-ja__ddd-standards.md) - Java JDBC baseline
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Repository patterns
 - [Spring Boot Performance](./ex-soen-plwe-to-jvspbo__performance.md) - Query optimization
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring Boot By Example - Data Access](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/data-access) - Code examples
-- [Spring Boot In-the-Field - Database Integration](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/data-access) - Production patterns
+- [Spring Boot By Example - Data Access](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/data-access.md) - Code examples
+- [Spring Boot In-the-Field - Database Integration](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/data-access.md) - Production patterns
 
 ---
 
