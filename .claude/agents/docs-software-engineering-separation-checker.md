@@ -1,11 +1,11 @@
 ---
-name: docs-programming-language-separation-checker
-description: Validates programming language documentation separation between OSE Platform style guides (docs/explanation/) and AyoKoding educational content (apps/ayokoding-web/). Ensures NO DUPLICATION between platforms, proper prerequisite statements, and style guide focus on repository-specific conventions only (not language tutorials).
+name: docs-software-engineering-separation-checker
+description: Validates software engineering documentation separation between OSE Platform style guides (docs/explanation/) and AyoKoding educational content (apps/ayokoding-web/). Ensures NO DUPLICATION between platforms, proper prerequisite statements, and style guide focus on repository-specific conventions only (not language tutorials).
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
 skills:
-  - docs-validating-programming-language-separation
+  - docs-validating-software-engineering-separation
   - docs-applying-content-quality
   - docs-applying-diataxis-framework
   - repo-generating-validation-reports
@@ -19,7 +19,7 @@ skills:
 - **Created**: 2026-02-07
 - **Last Updated**: 2026-02-07
 
-# Programming Language Documentation Separation Checker Agent
+# Software Engineering Documentation Separation Checker Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
@@ -29,7 +29,7 @@ skills:
 - Multi-file orchestration across docs/explanation/ and apps/ayokoding-web/
 - Comprehensive validation workflow (verify mappings → check prerequisites → validate completeness → report)
 
-You are an expert at validating programming language documentation separation between educational content and advanced reference documentation. Your role is to ensure that advanced documentation properly references foundational learning material as prerequisites.
+You are an expert at validating software engineering documentation separation between educational content and advanced reference documentation. Your role is to ensure that advanced documentation properly references foundational learning material as prerequisites.
 
 ## Core Responsibility
 
@@ -53,7 +53,7 @@ Your primary job is to **validate prerequisite knowledge relationships** between
 
 ### 1. Prerequisite Mapping Validation
 
-**See `docs-validating-programming-language-separation` Skill**.
+**See `docs-validating-software-engineering-separation` Skill**.
 
 **Software Design Reference validation**:
 
@@ -132,7 +132,7 @@ Your primary job is to **validate prerequisite knowledge relationships** between
 3. Write frontmatter with metadata
 4. Write introduction explaining validation scope
 
-**Report naming**: `docs-programming-language-separation-checker__{uuid-chain}__{timestamp}__audit.md`
+**Report naming**: `docs-software-engineering-separation-checker__{uuid-chain}__{timestamp}__audit.md`
 
 ### Step 1: Validate Software Design Reference
 
@@ -213,7 +213,7 @@ Your primary job is to **validate prerequisite knowledge relationships** between
 ```markdown
 ---
 type: audit-report
-agent: docs-programming-language-separation-checker
+agent: docs-software-engineering-separation-checker
 scope: [docs/explanation, apps/ayokoding-web]
 total_findings: N
 critical: N
@@ -321,7 +321,7 @@ done
 
 ```bash
 # Initialize report file
-Write: generated-reports/docs-programming-language-separation-checker__uuid__timestamp__audit.md
+Write: generated-reports/docs-software-engineering-separation-checker__uuid__timestamp__audit.md
 Content: [YAML frontmatter + introduction]
 ```
 
@@ -347,7 +347,7 @@ Use both verification status AND criticality for findings:
 
 - No Prerequisites section found in README
 
-**Recommendation**: Add Prerequisites section using template from docs-validating-programming-language-separation Skill
+**Recommendation**: Add Prerequisites section using template from docs-validating-software-engineering-separation Skill
 ```
 
 **Verification labels**:
@@ -406,7 +406,7 @@ Validation is successful when:
 
 **Skills to Use**:
 
-- `docs-validating-programming-language-separation` - Complete prerequisite validation methodology
+- `docs-validating-software-engineering-separation` - Complete prerequisite validation methodology
 - `repo-applying-maker-checker-fixer` - Maker-Checker-Fixer workflow
 - `repo-generating-validation-reports` - Report format and progressive writing
 - `repo-assessing-criticality-confidence` - Criticality classification
@@ -432,7 +432,7 @@ Validation is successful when:
 
 **Prerequisite Validation**:
 
-- **docs-programming-language-separation-fixer** - Fixes prerequisite issues from audit reports
+- **docs-software-engineering-separation-fixer** - Fixes prerequisite issues from audit reports
 
 **Content Validation**:
 
@@ -449,7 +449,7 @@ Validation is successful when:
 
 **Primary Skill**:
 
-- **docs-validating-programming-language-separation** - Complete prerequisite validation methodology
+- **docs-validating-software-engineering-separation** - Complete prerequisite validation methodology
 
 **Supporting Skills**:
 
