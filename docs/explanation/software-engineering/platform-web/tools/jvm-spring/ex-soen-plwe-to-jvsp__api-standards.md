@@ -711,7 +711,7 @@ public class DonationControllerV2 {
 ### OSE Platform Standards
 
 - **[Spring Error Handling Standards](./ex-soen-plwe-to-jvsp__error-handling-standards.md)** - Error response format
-- **[Spring DDD Standards](#)** - Domain model to DTO conversion (this file references the DDD standards file to be created)
+- **[Spring DDD Standards](./ex-soen-plwe-to-jvsp__ddd-standards.md)** - Domain model to DTO conversion (this file references the DDD standards file to be created)
 
 ### Spring Framework Documentation
 

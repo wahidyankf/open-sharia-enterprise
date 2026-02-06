@@ -624,7 +624,7 @@ management.metrics.enable.jvm=true
 
 - **[Java Concurrency Standards](../../../../programming-languages/java/ex-soen-prla-ja__concurrency-standards.md)** - Java baseline concurrency requirements
 - **[Spring Error Handling Standards](./ex-soen-plwe-to-jvsp__error-handling-standards.md)** - Async exception handling
-- **[Spring API Standards](#)** - Async REST API patterns (this file references the API standards file to be created)
+- **[Spring API Standards](./ex-soen-plwe-to-jvsp__api-standards.md)** - Async REST API patterns (this file references the API standards file to be created)
 
 ### Spring Framework Documentation
 

@@ -12,7 +12,7 @@ principles_implemented:
   - explicit-over-implicit
   - documentation-first
 created: 2026-01-25
-updated: 2026-01-30
+updated: 2026-02-07
 ---
 
 # Software Design Reference
@@ -100,6 +100,63 @@ Frameworks covered:
 - DDD aggregate boundaries
 
 **Authority**: Authoritative technical reference, cited by agents and developers
+
+## Content Separation: Style Guides vs. Educational Content
+
+### Programming Language Documentation Separation
+
+Software design documentation in `docs/explanation/software-engineering/` contains **repository-specific style guides**, NOT educational content. Educational content lives in AyoKoding.
+
+**See**: [Programming Language Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md) for complete separation rules.
+
+**Critical Rule**: docs/explanation/ content **MUST NOT duplicate** AyoKoding educational content. Style guides focus exclusively on OSE Platform-specific conventions.
+
+**Relationship Pattern**:
+
+- **AyoKoding content** (`apps/ayokoding-web/content/en/learn/`) = Educational foundation (0-95% language coverage, by-example tutorials, in-the-field production guides)
+- **Docs/explanation content** (`docs/explanation/software-engineering/`) = OSE Platform style guides (repository-specific naming, framework choices, architecture patterns)
+
+### Specific Prerequisites
+
+The following `docs/explanation/` content assumes readers have completed the corresponding AyoKoding learning paths:
+
+| Advanced Reference (docs/explanation/)                                       | Prerequisite Learning (ayokoding-web)                                                                                                                                   |
+| ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [programming-languages/java/](./programming-languages/java/)                 | [learn/software-engineering/programming-languages/java/](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/)                 |
+| [programming-languages/golang/](./programming-languages/golang/)             | [learn/software-engineering/programming-languages/golang/](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/)             |
+| [programming-languages/elixir/](./programming-languages/elixir/)             | [learn/software-engineering/programming-languages/elixir/](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/)             |
+| [platform-web/tools/jvm-spring/](./platform-web/tools/jvm-spring/)           | [learn/software-engineering/platform-web/tools/jvm-spring/](../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/)           |
+| [platform-web/tools/jvm-spring-boot/](./platform-web/tools/jvm-spring-boot/) | [learn/software-engineering/platform-web/tools/jvm-spring-boot/](../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/) |
+
+### Content Types and Scope
+
+**AyoKoding Educational Content** (apps/ayokoding-web/) - Generic programming knowledge:
+
+- **Initial Setup** - Environment configuration, IDE setup
+- **Quick Start** - First programs, hello world
+- **By Example** - 75-85 annotated code examples (0-95% language coverage)
+- **In the Field** - 20-40 production implementation guides
+- **Overview** - Language/framework survey and features
+
+**OSE Platform Style Guides** (docs/explanation/) - Repository-specific standards:
+
+- **Coding Standards** - OSE Platform naming conventions, patterns
+- **API Standards** - OSE Platform interface design rules
+- **DDD Standards** - OSE Platform domain modeling patterns
+- **Security Standards** - OSE Platform security requirements
+- **Performance Standards** - OSE Platform optimization guidelines
+
+**Key Difference**: AyoKoding teaches languages/frameworks generically; docs/explanation/ defines how to use them in OSE Platform specifically.
+
+### Validation
+
+The `docs-programming-language-separation-checker` agent validates:
+
+- Prerequisite statements exist in docs/explanation READMEs (referencing AyoKoding)
+- No duplication between docs/explanation and AyoKoding educational content
+- Style guides focus on repository-specific conventions only
+- AyoKoding learning paths are complete (required prerequisite content exists)
+- Cross-references follow Programming Language Documentation Separation Convention
 
 ## For AI Agents
 
