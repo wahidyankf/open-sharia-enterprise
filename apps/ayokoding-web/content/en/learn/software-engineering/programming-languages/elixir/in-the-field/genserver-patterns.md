@@ -335,68 +335,115 @@ GenServer automatically handles:
 
 ```elixir
 # Manual process (verbose)
-send(pid, {:get, self()})
-receive do
-  {:reply, value} -> value
-after
-  5000 -> {:error, :timeout}
-end
+send(pid, {:get, self()})                    # => Send message to process
+                                             # => pid: Target process identifier
+                                             # => {:get, self()}: Message with return address
+receive do                                   # => Block and wait for response
+                                             # => Pattern match incoming messages
+  {:reply, value} -> value                   # => Match reply tuple
+                                             # => Extract and return value
+after                                        # => Timeout clause
+  5000 -> {:error, :timeout}                 # => 5 second maximum wait
+                                             # => Returns error if no reply
+end                                          # => Type: value | {:error, :timeout}
+                                             # => 9 lines of boilerplate per operation
 
 # GenServer (concise)
-GenServer.call(pid, :get)                    # => All boilerplate hidden
-                                             # => Timeout handled
-                                             # => Type-safe reply
+GenServer.call(pid, :get)                    # => Single line replaces 9 lines above
+                                             # => All boilerplate hidden
+                                             # => Timeout handled automatically
+                                             # => Type-safe reply guaranteed
+                                             # => Default 5s timeout
 ```
 
 **3. Built-in Lifecycle Hooks**
 
-```elixir
-@impl true
-def init(initial) do
-  # => Initialization logic
-  # => Validate state
-  # => Setup resources
-  {:ok, initial}
+````elixir
+@impl true                                   # => Marks GenServer callback implementation
+                                             # => Compiler verifies function signature
+def init(initial) do                         # => Called when GenServer starts
+                                             # => initial: Argument from start_link
+                                             # => Runs in GenServer process
+  # => Initialization logic                 # => Validate initial state
+  # => Validate state                       # => Setup external resources (connections, files)
+  # => Setup resources                      # => Register names or subscriptions
+  {:ok, initial}                             # => Success tuple
+                                             # => initial: Becomes process state
+                                             # => Type: {:ok, state} | {:stop, reason}
 end
 
-@impl true
-def terminate(reason, state) do
-  # => Cleanup on shutdown
-  # => Release resources
-  # => Persist state
-  :ok
+@impl true                                   # => Terminate callback implementation
+                                             # => Called on graceful shutdown
+def terminate(reason, state) do              # => reason: Why process is stopping
+                                             # => state: Current process state
+                                             # => Runs before process exits
+  # => Cleanup on shutdown                  # => Close database connections
+  # => Release resources                    # => Cancel timers or subscriptions
+  # => Persist state                        # => Save state to disk/database
+  :ok                                        # => Return value ignored
+                                             # => Process exits after this function
 end
-```
 
 **4. Clear Synchronous/Asynchronous Distinction**
 
 ```elixir
 # Synchronous: handle_call (waits for reply)
-@impl true
-def handle_call(:get, _from, state) do
-  {:reply, state, state}                     # => Caller blocks until reply
+@impl true                                   # => GenServer callback implementation
+                                             # => Required for handle_call pattern
+def handle_call(:get, _from, state) do       # => :get: Message pattern to match
+                                             # => _from: Caller PID (unused here)
+                                             # => state: Current process state
+                                             # => Runs in GenServer process
+  {:reply, state, state}                     # => Tuple: {:reply, reply_value, new_state}
+                                             # => First state: Value sent to caller
+                                             # => Second state: Updated process state
+                                             # => Caller blocks until reply
+                                             # => Type: {:reply, term(), term()}
 end
 
 # Asynchronous: handle_cast (fire and forget)
-@impl true
-def handle_cast(:reset, _state) do
-  {:noreply, 0}                              # => No reply sent
+@impl true                                   # => Callback for async messages
+                                             # => No reply expected
+def handle_cast(:reset, _state) do           # => :reset: Message pattern
+                                             # => _state: Current state (ignored)
+                                             # => Runs in GenServer process
+  {:noreply, 0}                              # => Tuple: {:noreply, new_state}
+                                             # => No reply sent
+                                             # => 0: Reset state to zero
                                              # => Caller continues immediately
+                                             # => Type: {:noreply, term()}
 end
-```
+````
 
 **5. Built-in Timeout Support**
 
 ```elixir
 # Server-side timeouts
-@impl true
+@impl true                                   # => GenServer callback
+                                             # => Handle synchronous call
 def handle_call(:long_operation, _from, state) do
-  result = expensive_computation()
-  {:reply, result, state, 10_000}            # => 10s timeout before hibernate
+                                             # => :long_operation: Message pattern
+                                             # => _from: Caller PID (unused)
+                                             # => state: Current GenServer state
+  result = expensive_computation()           # => Expensive blocking operation
+                                             # => result: Computation result
+                                             # => Type depends on computation
+  {:reply, result, state, 10_000}            # => Four-element reply tuple
+                                             # => result: Value sent to caller
+                                             # => state: Process state unchanged
+                                             # => 10_000: Hibernate after 10s idle
+                                             # => Reduces memory if no messages
+                                             # => Type: {:reply, term(), term(), timeout()}
 end
 
 # Client-side timeouts
-GenServer.call(pid, :get, 1000)              # => 1s timeout
+GenServer.call(pid, :get, 1000)              # => Synchronous call with custom timeout
+                                             # => pid: Target GenServer process
+                                             # => :get: Message to send
+                                             # => 1000: Wait maximum 1 second
+                                             # => Raises if timeout exceeded
+                                             # => Default timeout is 5000ms
+                                             # => Type: term() (or raises)
 ```
 
 ## Production Patterns
@@ -799,32 +846,63 @@ defmodule CacheServer do
   end
 
   # => Server callbacks
-  @impl true
-  def init(_opts) do
-    {:ok, %{}, 60_000}                       # => Empty map, 60s idle timeout
+  @impl true                                 # => GenServer init callback
+                                             # => Called on start_link
+  def init(_opts) do                         # => _opts: Initialization arguments (unused)
+                                             # => Runs once at startup
+    {:ok, %{}, 60_000}                       # => Three-element tuple
+                                             # => :ok: Successful initialization
+                                             # => %{}: Empty map as initial state
+                                             # => 60_000: Hibernate after 60s idle
                                              # => If no messages for 60s, timeout
+                                             # => Type: {:ok, state(), timeout()}
   end
 
-  @impl true
+  @impl true                                 # => Async message handler
+                                             # => No reply expected
   def handle_cast({:put, key, value}, cache) do
-    new_cache = Map.put(cache, key, value)
-    {:noreply, new_cache, 60_000}            # => Reset 60s timeout
+                                             # => {:put, key, value}: Message pattern
+                                             # => cache: Current cache state (map)
+                                             # => Runs in GenServer process
+    new_cache = Map.put(cache, key, value)   # => Add key-value pair to map
+                                             # => new_cache: Updated cache map
+                                             # => Immutable update (new map created)
+                                             # => Type: map()
+    {:noreply, new_cache, 60_000}            # => Three-element tuple
+                                             # => :noreply: No reply sent
+                                             # => new_cache: Updated state
+                                             # => 60_000: Reset 60s timeout
                                              # => Activity detected
+                                             # => Type: {:noreply, state(), timeout()}
   end
 
-  @impl true
+  @impl true                                 # => Sync message handler
+                                             # => Caller waits for reply
   def handle_call({:get, key}, _from, cache) do
+                                             # => {:get, key}: Message pattern with key
+                                             # => _from: Caller PID (unused)
+                                             # => cache: Current cache state
     {:reply, Map.get(cache, key), cache, 60_000}
-                                             # => Reset timeout on read
+                                             # => Four-element tuple
+                                             # => Map.get(cache, key): Value or nil
+                                             # => cache: State unchanged
+                                             # => 60_000: Reset timeout on read
+                                             # => Type: {:reply, term(), state(), timeout()}
   end
 
-  @impl true
-  def handle_info(:timeout, cache) do
-    # => 60s of inactivity
-    IO.puts("Cache idle, hibernating...")
-    {:noreply, cache, :hibernate}            # => Hibernate process
-                                             # => Garbage collect, minimize memory
+  @impl true                                 # => Handle info messages
+                                             # => For non-call/cast messages
+  def handle_info(:timeout, cache) do        # => :timeout: Sent after idle period
+                                             # => cache: Current state
+                                             # => Triggered by 60s idle
+    # => 60s of inactivity                   # => No messages received
+    IO.puts("Cache idle, hibernating...")     # => Log hibernation event
+                                             # => Output to console
+    {:noreply, cache, :hibernate}            # => Three-element tuple
+                                             # => cache: State preserved
+                                             # => :hibernate: Garbage collect, minimize memory
                                              # => Wakes on next message
+                                             # => Type: {:noreply, state(), :hibernate}
   end
 end
 ```

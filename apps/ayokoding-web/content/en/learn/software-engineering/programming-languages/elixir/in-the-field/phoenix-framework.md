@@ -43,23 +43,40 @@ defmodule MyPlug do
   import Plug.Conn                           # => Import Conn functions
                                              # => send_resp/3, put_resp_header/3, etc.
 
-  def init(opts), do: opts                   # => Plug initialization
+  def init(opts), do: opts                   # => Plug initialization callback
+                                             # => Called once at compile time
+                                             # => opts: Options passed to plug
                                              # => Returns options unchanged
+                                             # => Stored and passed to call/2
                                              # => Type: term() -> term()
 
-  def call(conn, _opts) do
+  def call(conn, _opts) do                   # => Request handling callback
+                                             # => Called for every HTTP request
+                                             # => conn: Connection struct with request data
+                                             # => _opts: Options from init/1 (unused)
     conn                                     # => Plug.Conn struct
-                                             # => Contains request data
-    |> put_resp_content_type("text/plain")   # => Set content type header
+                                             # => Contains: method, path, headers, params
+                                             # => Mutable through pipeline transformations
+    |> put_resp_content_type("text/plain")   # => Set Content-Type response header
+                                             # => "text/plain": MIME type for plain text
+                                             # => Updates conn.resp_headers
                                              # => Type: Plug.Conn.t()
-    |> send_resp(200, "Hello, World!")       # => Send HTTP 200 response
+    |> send_resp(200, "Hello, World!")       # => Send HTTP response to client
+                                             # => 200: HTTP OK status code
+                                             # => "Hello, World!": Response body
+                                             # => Marks conn as sent
                                              # => Returns updated conn
+                                             # => Type: Plug.Conn.t()
   end
 end
 
 # Start HTTP server with Plug.Cowboy
 {:ok, _} = Plug.Cowboy.http(MyPlug, [])      # => Starts Cowboy HTTP server
+                                             # => MyPlug: Module implementing Plug behavior
+                                             # => []: Empty options list (use defaults)
                                              # => Listens on port 4000 by default
+                                             # => Spawns supervised child processes
+                                             # => Returns process ID of server
                                              # => Type: {:ok, pid()}
 ```
 
@@ -74,28 +91,45 @@ defmodule MyRouter do
                                              # => Provides get, post, match, etc.
                                              # => Compiles route matching logic
 
-  plug :match                                # => Match request to route
+  plug :match                                # => Match incoming request to route
+                                             # => Examines conn.method and conn.path_info
+                                             # => Sets conn.private.plug_route if matched
                                              # => First plug in pipeline
-  plug :dispatch                             # => Dispatch to matched handler
+                                             # => Must run before :dispatch
+  plug :dispatch                             # => Execute matched route handler
+                                             # => Calls function for matched route
+                                             # => Halts if no match found
                                              # => Second plug in pipeline
+                                             # => Requires :match to run first
 
-  get "/hello" do
-    send_resp(conn, 200, "Hello!")           # => Handle GET /hello
-                                             # => conn: Current connection
-                                             # => 200: HTTP OK status
+  get "/hello" do                            # => Define GET route handler
+                                             # => Matches: GET requests to /hello
+                                             # => do block: Handler implementation
+    send_resp(conn, 200, "Hello!")           # => Send response to client
+                                             # => conn: Current connection struct
+                                             # => 200: HTTP OK status code
+                                             # => "Hello!": Response body text
                                              # => Returns updated conn
-  end                                        # => Type: Plug.Conn.t()
-
-  post "/api/users" do
-    send_resp(conn, 201, "User created")     # => Handle POST /api/users
-                                             # => 201: HTTP Created status
-                                             # => Plain text response
+                                             # => Type: Plug.Conn.t()
   end
 
-  match _ do
-    send_resp(conn, 404, "Not found")        # => Catch-all route
-                                             # => Matches any method, any path
-                                             # => 404: Not Found status
+  post "/api/users" do                       # => Define POST route handler
+                                             # => Matches: POST requests to /api/users
+                                             # => Typically for resource creation
+    send_resp(conn, 201, "User created")     # => Send creation response
+                                             # => 201: HTTP Created status
+                                             # => Indicates new resource created
+                                             # => Plain text response body
+                                             # => Type: Plug.Conn.t()
+  end
+
+  match _ do                                 # => Catch-all route handler
+                                             # => _ : Matches any method, any path
+                                             # => Runs if no other route matched
+    send_resp(conn, 404, "Not found")        # => Send not found response
+                                             # => 404: HTTP Not Found status
+                                             # => Standard error for missing resources
+                                             # => Type: Plug.Conn.t()
   end
 end
 ```
@@ -557,29 +591,50 @@ defmodule DonationPlatform.Campaigns do
                                              # => Type: {:ok, Campaign.t()} | {:error, :not_found}
   end
 
-  def create_campaign(attrs) do
-    # Validation and creation logic
-    campaign = %Campaign{
-      id: :rand.uniform(1000),
-      name: attrs["name"],
-      goal: attrs["goal"],
-      raised: 0
-    }
-    {:ok, campaign}                          # => Type: {:ok, Campaign.t()} | {:error, changeset}
+  def create_campaign(attrs) do              # => Create new campaign
+                                             # => attrs: Map with campaign attributes
+                                             # => Type: map() -> result tuple
+    # Validation and creation logic         # => Production: Would use Ecto changeset
+                                             # => Validate name, goal before insert
+    campaign = %Campaign{                    # => Create Campaign struct
+                                             # => All fields required (@enforce_keys)
+      id: :rand.uniform(1000),               # => Generate random ID (mock)
+                                             # => Production: Database auto-increment
+                                             # => Type: integer()
+      name: attrs["name"],                   # => Extract name from attributes
+                                             # => Type: String.t()
+      goal: attrs["goal"],                   # => Extract fundraising goal
+                                             # => Type: integer()
+      raised: 0                              # => Initialize raised amount to zero
+                                             # => New campaigns start with 0 donations
+    }                                        # => campaign: Complete Campaign struct
+                                             # => Type: Campaign.t()
+    {:ok, campaign}                          # => Return success tuple
+                                             # => Production: Save to database first
+                                             # => Type: {:ok, Campaign.t()} | {:error, changeset}
   end
 end
 
 # lib/donation_platform/campaigns/campaign.ex - Schema
 defmodule DonationPlatform.Campaigns.Campaign do
-  @enforce_keys [:id, :name, :goal, :raised]
-  defstruct [:id, :name, :goal, :raised]
+                                             # => Campaign schema definition
+                                             # => Represents campaign data structure
+  @enforce_keys [:id, :name, :goal, :raised] # => Compiler-enforced required keys
+                                             # => Compilation error if any missing
+                                             # => Must provide all 4 when creating struct
+  defstruct [:id, :name, :goal, :raised]    # => Define struct with 4 fields
+                                             # => Creates %Campaign{} type
+                                             # => All fields default to nil if not set
 
-  @type t :: %__MODULE__{
-    id: integer(),
-    name: String.t(),
-    goal: integer(),
-    raised: integer()
-  }
+  @type t :: %__MODULE__{                    # => Type specification for Campaign struct
+                                             # => __MODULE__: Current module (Campaign)
+                                             # => Dialyzer uses this for type checking
+    id: integer(),                           # => id field type: integer
+    name: String.t(),                        # => name field type: String
+    goal: integer(),                         # => goal field type: integer (fundraising target)
+    raised: integer()                        # => raised field type: integer (amount collected)
+  }                                          # => Type: Campaign.t()
+                                             # => Used in function specs
 end
 ```
 
@@ -595,33 +650,59 @@ defmodule DonationPlatformWeb.CampaignController do
   alias DonationPlatform.Campaigns           # => Import context
                                              # => Type: module()
 
-  def index(conn, _params) do
-    campaigns = Campaigns.list_campaigns()   # => Delegate to context
+  def index(conn, _params) do                # => List all campaigns (GET /api/campaigns)
+                                             # => conn: Connection struct
+                                             # => _params: Query params (unused)
+    campaigns = Campaigns.list_campaigns()   # => Delegate to context module
+                                             # => Business logic in context layer
                                              # => Type: [Campaign.t()]
-    json(conn, campaigns)
+    json(conn, campaigns)                    # => Render campaigns as JSON
+                                             # => Sets Content-Type: application/json
+                                             # => HTTP 200 OK (default)
+                                             # => Type: Plug.Conn.t()
   end
 
-  def show(conn, %{"id" => id}) do
-    case Campaigns.get_campaign(id) do
-      {:ok, campaign} ->
-        json(conn, campaign)
-      {:error, :not_found} ->
+  def show(conn, %{"id" => id}) do           # => Show single campaign (GET /api/campaigns/:id)
+                                             # => conn: Connection struct
+                                             # => Pattern match extracts "id" from params
+    case Campaigns.get_campaign(id) do       # => Attempt to fetch campaign
+                                             # => id: String from URL path
+                                             # => Returns: {:ok, campaign} | {:error, reason}
+      {:ok, campaign} ->                     # => Success branch: Campaign found
+                                             # => campaign: Campaign.t() struct
+        json(conn, campaign)                 # => Render campaign as JSON
+                                             # => HTTP 200 OK
+      {:error, :not_found} ->                # => Error branch: Campaign not found
+                                             # => :not_found: Error reason atom
         conn
-        |> put_status(:not_found)
+        |> put_status(:not_found)            # => Set HTTP 404 Not Found status
+                                             # => Updates conn.status
         |> json(%{error: "Campaign not found"})
+                                             # => Render error message as JSON
+                                             # => %{error: ...}: Error map structure
     end
   end
 
-  def create(conn, params) do
-    case Campaigns.create_campaign(params) do
-      {:ok, campaign} ->
+  def create(conn, params) do                # => Create campaign (POST /api/campaigns)
+                                             # => conn: Connection struct
+                                             # => params: Request body parsed as map
+    case Campaigns.create_campaign(params) do # => Delegate creation to context
+                                             # => Context handles validation
+                                             # => Returns: {:ok, campaign} | {:error, changeset}
+      {:ok, campaign} ->                     # => Success branch: Campaign created
+                                             # => campaign: Newly created Campaign.t()
         conn
-        |> put_status(:created)
-        |> json(campaign)
-      {:error, changeset} ->
+        |> put_status(:created)              # => Set HTTP 201 Created status
+                                             # => Indicates new resource created
+        |> json(campaign)                    # => Render created campaign as JSON
+                                             # => Returns campaign to client
+      {:error, changeset} ->                 # => Error branch: Validation failed
+                                             # => changeset: Ecto.Changeset with errors
         conn
-        |> put_status(:unprocessable_entity)
-        |> json(%{errors: changeset})
+        |> put_status(:unprocessable_entity) # => Set HTTP 422 Unprocessable Entity
+                                             # => Indicates invalid input data
+        |> json(%{errors: changeset})        # => Render validation errors as JSON
+                                             # => Client can display errors to user
     end
   end
 end

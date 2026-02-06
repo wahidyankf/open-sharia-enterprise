@@ -497,16 +497,36 @@ defmodule MyApp.Accounts.User do
   end
   # => Defines struct %User{id: ..., name: ..., email: ...}
 
-  def changeset(user, attrs) do
-    user
-    |> cast(attrs, [:name, :email])              # => Allow these fields to change
+  def changeset(user, attrs) do                  # => Validation pipeline function
+                                                 # => user: %User{} struct or empty struct
+                                                 # => attrs: Map of changes to apply
+                                                 # => Type: (User.t(), map()) -> Ecto.Changeset.t()
+    user                                         # => Start with user struct
+                                                 # => Base for changeset operations
+    |> cast(attrs, [:name, :email])              # => Cast attrs map to struct fields
+                                                 # => Only :name, :email allowed to change
+                                                 # => Filters unknown fields
                                                  # => attrs: %{name: "Alice", email: "..."}
-    |> validate_required([:name, :email])        # => Both required
-    |> validate_length(:name, min: 3)            # => Name >= 3 characters
-    |> validate_format(:email, ~r/@/)            # => Email contains @
+                                                 # => Returns: Ecto.Changeset.t()
+    |> validate_required([:name, :email])        # => Check both fields present
+                                                 # => Adds error if missing
+                                                 # => Both required (not null)
+                                                 # => Returns: Ecto.Changeset.t()
+    |> validate_length(:name, min: 3)            # => Name minimum 3 characters
+                                                 # => Adds error if shorter
+                                                 # => Name >= 3 characters
+                                                 # => Returns: Ecto.Changeset.t()
+    |> validate_format(:email, ~r/@/)            # => Email must contain @
+                                                 # => Regex pattern match
+                                                 # => Simple email validation
+                                                 # => Returns: Ecto.Changeset.t()
     |> unique_constraint(:email)                 # => Email unique in database
-  end
+                                                 # => Maps to database constraint
+                                                 # => Checked on insert/update
+                                                 # => Returns: Ecto.Changeset.t()
+  end                                            # => Final changeset with all validations
   # => Changeset: Data validation and transformation pipeline
+  # => Type: Ecto.Changeset.t()
 end
 ```
 
@@ -531,24 +551,43 @@ case MyApp.Repo.insert(changeset) do
 end
 
 # Read
-user = MyApp.Repo.get(User, 1)                   # => Get by primary key
-# => user: %User{id: 1, name: "Alice", ...}
-# => Returns: struct or nil
+user = MyApp.Repo.get(User, 1)                   # => Get by primary key (id = 1)
+                                                 # => User: Schema module
+                                                 # => 1: Primary key value
+# => user: %User{id: 1, name: "Alice", ...}     # => Returns struct if found
+# => Returns: struct or nil                     # => nil if not found
+                                                 # => Type: User.t() | nil
 
 user = MyApp.Repo.get_by(User, email: "alice@example.com")
-# => Get by field
-# => Returns: struct or nil
+                                                 # => Get by any field (not just id)
+                                                 # => User: Schema module
+                                                 # => email: Query condition
+# => Get by field                               # => Filters by email column
+# => Returns: struct or nil                     # => First matching record
+                                                 # => Type: User.t() | nil
 
 # Update
 changeset = User.changeset(user, %{name: "Alice Smith"})
+                                                 # => Create changeset with changes
+                                                 # => user: Existing user struct
+                                                 # => %{name: "Alice Smith"}: Changes to apply
+                                                 # => Runs all validations
+                                                 # => Type: Ecto.Changeset.t()
 {:ok, updated_user} = MyApp.Repo.update(changeset)
+                                                 # => Execute UPDATE query
+                                                 # => changeset: Validated changes
 # => updated_user: %User{id: 1, name: "Alice Smith", ...}
-# => Validations run automatically
+                                                 # => Success: Returns updated struct
+# => Validations run automatically             # => Changeset validates before update
+                                                 # => Type: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
 
 # Delete
-{:ok, deleted_user} = MyApp.Repo.delete(user)
-# => deleted_user: %User{id: 1, ...}
-# => Row removed from database
+{:ok, deleted_user} = MyApp.Repo.delete(user)    # => Execute DELETE query
+                                                 # => user: Struct to delete
+                                                 # => Must have primary key set
+# => deleted_user: %User{id: 1, ...}            # => Success: Returns deleted struct
+# => Row removed from database                  # => Physically removed from table
+                                                 # => Type: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
 ```
 
 ### Query DSL
@@ -646,18 +685,36 @@ defmodule MyApp.Accounts.User do
 end
 
 # Preload associations (avoid N+1)
-user = MyApp.Repo.get(User, 1)
-       |> MyApp.Repo.preload(:posts)             # => Load posts in single query
-# => user.posts: [%Post{}, %Post{}, ...]
+user = MyApp.Repo.get(User, 1)                   # => Fetch user by id
+                                                 # => user: %User{} struct
+                                                 # => user.posts: Not loaded (Ecto.Association.NotLoaded)
+       |> MyApp.Repo.preload(:posts)             # => Load associated posts
+                                                 # => Executes: SELECT * FROM posts WHERE user_id = 1
+                                                 # => Avoids N+1 query problem
+                                                 # => Load posts in single query
+                                                 # => Type: User.t() with posts loaded
+# => user.posts: [%Post{}, %Post{}, ...]        # => Loaded posts list
+                                                 # => Type: [Post.t()]
 # => One query: SELECT * FROM posts WHERE user_id = 1
+                                                 # => Efficient: Two total queries (user + posts)
+                                                 # => Not N+1: Doesn't query per post
 
 # Preload in query
-query = from u in User,
-        where: u.id == 1,
-        preload: [:posts]                        # => JOIN or separate query
+query = from u in User,                          # => Build query on User schema
+                                                 # => u: Query binding variable
+        where: u.id == 1,                        # => Filter by user id
+                                                 # => WHERE clause condition
+        preload: [:posts]                        # => Eager load posts association
+                                                 # => JOIN or separate query depending on adapter
+                                                 # => Loaded in same Repo call
+                                                 # => Type: Ecto.Query.t()
 
-user = MyApp.Repo.one(query)
-# => user.posts loaded
+user = MyApp.Repo.one(query)                     # => Execute query, return single result
+                                                 # => one: Expects 0 or 1 result
+                                                 # => Raises if multiple results
+# => user.posts loaded                          # => Posts already available
+                                                 # => No additional query needed
+                                                 # => Type: User.t() | nil
 ```
 
 ### Transactions with Ecto.Multi

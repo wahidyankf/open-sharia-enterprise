@@ -32,17 +32,15 @@ graph TD
 **Code**:
 
 ```go
-package main // => Entry point package - makes this an executable
+package main // => Entry point package (executable)
 
 import (
     "fmt" // => Standard library for formatted I/O
 )
 
-func main() { // => Entry point - runtime calls this on startup
+func main() {
     fmt.Println("Hello, World!") // => Output: Hello, World!
-                                  // => Println adds newline automatically
-                                  // => String literals use double quotes (not single)
-} // => Program exits after main() returns
+}
 ```
 
 **Key Takeaway**: Every executable Go program needs `package main` and a `func main()` entry point. The `import` statement brings standard library packages into scope.
@@ -51,9 +49,9 @@ func main() { // => Entry point - runtime calls this on startup
 
 ## Example 2: Variables and Types
 
-Go is statically typed but uses type inference - the compiler deduces types from initial values. Two ways to declare variables: explicit type with `var`, or short declaration with `:=` that infers the type.
+Go is statically typed but uses type inference - the compiler deduces types from initial values. Two ways to declare variables: explicit type with `var`, or short declaration with `:=` that infers the type. Go's zero values provide safe defaults for uninitialized variables: 0 for numbers, "" for strings, false for booleans.
 
-**Code**:
+**Short declaration with type inference**:
 
 ```go
 package main
@@ -61,35 +59,39 @@ package main
 import "fmt"
 
 func main() {
-    // Short declaration with type inference
-    x := 10                     // => 10 (type: int, inferred)
-    y := 3.14                   // => 3.14 (type: float64)
-                                 // => float64 is default for decimal literals
-    name := "Go"                // => "Go" (type: string)
-    isActive := true            // => true (type: bool)
+    x := 10                     // => x: 10 (type: int)
+    y := 3.14                   // => y: 3.14 (type: float64)
+    name := "Go"                // => name: "Go" (type: string)
+    isActive := true            // => isActive: true (type: bool)
 
     fmt.Println(x, y, name, isActive) // => Output: 10 3.14 Go true
-                                       // => Println separates values with spaces
+```
 
-    // Explicit type declaration
-    var count int = 5           // => 5 (explicit int type)
-    var message string          // => "" (zero value)
-                                 // => Empty string is safe (not nil)
-    var percentage float64      // => 0.0 (zero value)
+**Explicit type declaration**:
+
+```go
+    var count int = 5           // => count: 5 (explicit int)
+    var message string          // => message: "" (zero value)
+    var percentage float64      // => percentage: 0.0 (zero value)
 
     fmt.Println(count, message, percentage) // => Output: 5  0
-                                             // => Two spaces: empty string between count and percentage
+```
 
-    // Type conversion requires explicit cast
-    floatValue := 9.8           // => 9.8 (float64)
-    intValue := int(floatValue) // => 9 (truncates decimal)
-                                 // => No rounding - always truncates toward zero
+Note the two spaces in output - empty string between count and percentage.
+
+**Type conversion requires explicit cast**:
+
+```go
+    floatValue := 9.8           // => floatValue: 9.8
+    intValue := int(floatValue) // => intValue: 9 (truncates toward zero)
 
     fmt.Println(intValue) // => Output: 9
+```
 
-    // Multiple variable declaration
-    var a, b, c int       // => 0, 0, 0 (shared type, zero values)
-                           // => All three are int type
+**Multiple variable declaration**:
+
+```go
+    var a, b, c int       // => a, b, c: 0, 0, 0 (zero values)
 
     fmt.Println(a, b, c) // => Output: 0 0 0
 }
@@ -2135,7 +2137,9 @@ func main() {
 
 ## Example 26: Array vs Slice Deep Dive
 
-Arrays and slices have critical differences in behavior, especially when passing to functions. Arrays are values (copied), slices are references (shared). Understanding backing arrays prevents subtle bugs.
+Arrays and slices have critical differences in behavior, especially when passing to functions. Arrays are **value types** - they're copied when passed to functions. Slices are **reference types** - they share the backing array through a pointer. This fundamental difference affects how data is modified across function boundaries.
+
+**Key semantic difference**: When you pass an array, the function gets a complete copy. When you pass a slice, the function gets a header (pointer, length, capacity) that refers to the same underlying array. Modifying through the slice affects the original data.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
@@ -2153,7 +2157,7 @@ graph TD
     style C fill:#029E73,stroke:#000,color:#fff
 ```
 
-**Code**:
+**Array behavior (value semantics)**:
 
 ```go
 package main
@@ -2161,97 +2165,73 @@ package main
 import "fmt"
 
 func main() {
-    // Array - fixed size, value type
-    arr := [3]int{1, 2, 3}         // => Type: [3]int (size is part of type)
-                                    // => Array is value type (copied on assignment/pass)
-                                    // => arr has 3 elements: [1, 2, 3]
-    modifyArray(arr)                // => Pass array to function
-                                    // => Entire array copied (value semantics)
-                                    // => Function gets copy, not reference
+    arr := [3]int{1, 2, 3}         // => Type: [3]int, value: [1 2 3]
+    modifyArray(arr)                // => Function gets complete copy
     fmt.Println("After modifyArray:", arr)
-                                    // => arr unchanged: [1 2 3]
                                     // => Output: After modifyArray: [1 2 3]
+```
 
-    // Slice - dynamic size, reference type
-    slice := []int{1, 2, 3}         // => Type: []int (no size in type)
-                                    // => Slice is reference type (header + pointer to backing array)
-                                    // => slice: {ptr: &array, len: 3, cap: 3}
-    modifySlice(slice)              // => Pass slice to function
-                                    // => Slice header copied, but ptr points to same backing array
-                                    // => Function can modify backing array
+Function receives a complete copy, so modifications don't affect the original array.
+
+**Slice behavior (reference semantics)**:
+
+```go
+    slice := []int{1, 2, 3}         // => Type: []int, len: 3, cap: 3
+    modifySlice(slice)              // => Function gets header pointing to backing array
     fmt.Println("After modifySlice:", slice)
-                                    // => slice changed: [100 2 3]
                                     // => Output: After modifySlice: [100 2 3]
+```
 
-    // Slice capacity and backing array
-    s1 := make([]int, 3, 5)         // => make([]T, length, capacity)
-                                    // => Creates slice: len=3, cap=5
-                                    // => Backing array has 5 elements, only 3 accessible
-                                    // => s1: [0 0 0] (zero values)
+Function receives a header that shares the backing array, so modifications affect the original.
+
+**Reslicing creates shared backing arrays**:
+
+```go
+    s1 := make([]int, 3, 5)         // => len: 3, cap: 5, values: [0 0 0]
     fmt.Println("s1:", s1, "len:", len(s1), "cap:", cap(s1))
                                     // => Output: s1: [0 0 0] len: 3 cap: 5
 
-    s1[0] = 10                      // => Modify s1[0]: 0 → 10
-                                    // => s1 is now [10 0 0]
-    s2 := s1[0:2]                   // => Reslice: create new slice header
-                                    // => s2 points to same backing array as s1
-                                    // => s2: {ptr: s1.ptr, len: 2, cap: 5}
-                                    // => s2 accesses elements [0:2]: [10 0]
+    s1[0] = 10                      // => s1: [10 0 0]
+    s2 := s1[0:2]                   // => s2 shares backing array with s1
     fmt.Println("s2:", s2)          // => Output: s2: [10 0]
 
-    s2[0] = 99                      // => Modify s2[0]: 10 → 99
-                                    // => Modifies shared backing array
-                                    // => s1 and s2 both reference same array
-    fmt.Println("s1:", s1)          // => s1 affected: [99 0 0]
-                                    // => Output: s1: [99 0 0]
-                                    // => Demonstrates shared backing array!
+    s2[0] = 99                      // => Modifies shared backing array
+    fmt.Println("s1:", s1)          // => Output: s1: [99 0 0]
+```
 
-    // Append can reallocate when capacity exceeded
-    s3 := []int{1, 2}               // => Slice literal: len=2, cap=2
-                                    // => s3: {ptr: &[1,2], len: 2, cap: 2}
-    s4 := append(s3, 3, 4, 5)       // => Append 3 elements to s3
-                                    // => s3 capacity=2, need 5 total
-                                    // => append() allocates new backing array (larger capacity)
-                                    // => s3: still {ptr: &[1,2], len: 2, cap: 2}
-                                    // => s4: new {ptr: &[1,2,3,4,5], len: 5, cap: (likely 8)}
-    s4[0] = 100                     // => Modify s4[0]: 1 → 100
-                                    // => s4 has different backing array than s3
-    fmt.Println("s3:", s3)          // => s3 unaffected: [1 2]
-                                    // => Output: s3: [1 2]
-    fmt.Println("s4:", s4)          // => s4: [100 2 3 4 5]
-                                    // => Output: s4: [100 2 3 4 5]
+Reslicing creates a new slice header pointing to the same backing array. Modifications through either slice affect both.
 
-    // Copy to avoid sharing backing array
-    original := []int{1, 2, 3}      // => original: {ptr: &[1,2,3], len: 3, cap: 3}
+**Append may reallocate backing array when capacity exceeded**:
+
+```go
+    s3 := []int{1, 2}               // => len: 2, cap: 2
+    s4 := append(s3, 3, 4, 5)       // => Exceeds capacity, allocates new backing array
+    s4[0] = 100                     // => s4 has different backing array
+    fmt.Println("s3:", s3)          // => Output: s3: [1 2]
+    fmt.Println("s4:", s4)          // => Output: s4: [100 2 3 4 5]
+```
+
+When append exceeds capacity, it allocates a new backing array, so s3 and s4 are independent.
+
+**Use copy() for independent slice copies**:
+
+```go
+    original := []int{1, 2, 3}      // => original slice
     copied := make([]int, len(original))
-                                    // => Create new slice: len=3, cap=3
-                                    // => copied: {ptr: &[0,0,0], len: 3, cap: 3}
-    copy(copied, original)          // => copy(dst, src) built-in function
-                                    // => Copies values element-by-element
-                                    // => copied backing array becomes [1,2,3]
-                                    // => original and copied have separate arrays
-    copied[0] = 999                 // => Modify copied[0]: 1 → 999
-                                    // => Only affects copied's backing array
+                                    // => Allocate new backing array
+    copy(copied, original)          // => Copy elements to new array
+    copied[0] = 999                 // => Only affects copied's backing array
     fmt.Println("original:", original)
-                                    // => original unchanged: [1 2 3]
                                     // => Output: original: [1 2 3]
-    fmt.Println("copied:", copied)  // => copied: [999 2 3]
-                                    // => Output: copied: [999 2 3]
+    fmt.Println("copied:", copied)  // => Output: copied: [999 2 3]
 }
 
-func modifyArray(arr [3]int) {      // => Parameter: [3]int (value type)
-                                    // => arr is copy of caller's array
-                                    // => arr has own memory
-    arr[0] = 100                    // => Modify arr[0] in copy
-                                    // => Caller's array unchanged
+func modifyArray(arr [3]int) {      // => Parameter is complete copy
+    arr[0] = 100                    // => Modifies copy, not original
 }
 
-func modifySlice(slice []int) {     // => Parameter: []int (reference type)
-                                    // => slice header copied: {ptr, len, cap}
-                                    // => ptr points to same backing array as caller
-    slice[0] = 100                  // => Modify element via ptr
-                                    // => Modifies shared backing array
-                                    // => Caller sees change
+func modifySlice(slice []int) {     // => Parameter is header pointing to backing array
+    slice[0] = 100                  // => Modifies shared backing array
 }
 ```
 

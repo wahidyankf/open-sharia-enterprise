@@ -798,7 +798,9 @@ func main() {
 
 Coordinating multiple goroutines requires synchronization. `sync.WaitGroup` is the standard pattern - increment a counter for each goroutine, decrement when done, and wait for all to finish. Mutexes protect shared data from race conditions.
 
-**Code**:
+**Critical WaitGroup pattern**: Call `Add()` BEFORE spawning goroutines (not inside them - race condition). Use `defer Done()` to ensure counter decrements even if goroutine panics. Call `Wait()` to block until counter reaches zero.
+
+**WaitGroup coordinates multiple goroutines**:
 
 ```go
 package main
@@ -806,126 +808,86 @@ package main
 import (
     "fmt"
     "sync"
+    "time"
 )
 
 func main() {
-    // WaitGroup - coordinate multiple goroutines
-    var wg sync.WaitGroup // => WaitGroup is counter for active goroutines
-    // => wg internal counter starts at 0
-    // => WaitGroup is value type (pass by pointer to share state)
+    var wg sync.WaitGroup // => Counter starts at 0
 
-    for i := 0; i < 3; i++ {         // => Launch 3 goroutines
-        wg.Add(1)          // => Increment counter by 1 (now counter = i+1)
-        // => MUST call Add() before spawning goroutine
-        // => If Add() called inside goroutine, race condition possible
-        go func(id int) {  // => Launch goroutine with id parameter
-            defer wg.Done() // => Decrement counter when goroutine completes
-            // => defer ensures Done() called even if goroutine panics
-            // => Done() is shorthand for Add(-1)
+    for i := 0; i < 3; i++ {
+        wg.Add(1)          // => Increment counter before spawning
+        go func(id int) {  // => Pass i to avoid closure pitfall
+            defer wg.Done() // => Decrement when complete
             fmt.Printf("Worker %d processing\n", id)
-            // => Output: Worker [0-2] processing (order varies)
-            time.Sleep(100 * time.Millisecond) // => Simulate work (goroutine sleeps)
-            // => Goroutine pauses 100ms before completing
-        }(i)               // => Pass i as argument (avoids closure pitfall)
-        // => Without (i), all goroutines would see final i value (3)
-        // => With (i), each goroutine gets copy of current i
-    }                      // => After loop: wg counter is 3, 3 goroutines running
-
-    wg.Wait()              // => Block until counter reaches 0 (all Done() called)
-    // => Main goroutine blocks here waiting for all workers
-    // => When counter = 0, Wait() unblocks and continues
-    fmt.Println("All workers complete")
-    // => Output (order may vary):
-    // => Worker 0 processing
-    // => Worker 1 processing
-    // => Worker 2 processing
-    // => All workers complete
-
-    // Mutex - protect shared data from race conditions
-    var mu sync.Mutex      // => Mutex provides mutual exclusion lock
-    // => mu starts unlocked (available for first Lock() call)
-    var counter int        // => Shared variable (accessed by multiple goroutines)
-    // => counter is NOT safe for concurrent access without synchronization
-    var wg2 sync.WaitGroup // => Separate WaitGroup for this example
-
-    for i := 0; i < 5; i++ {         // => Launch 5 concurrent goroutines
-        wg2.Add(1)         // => Add 1 to wg2 counter (counter = i+1)
-        go func() {        // => Launch goroutine (no parameters needed)
-            defer wg2.Done() // => Ensure Done() called when goroutine completes
-            mu.Lock()       // => Acquire exclusive lock (blocks if another goroutine holds lock)
-            // => Only ONE goroutine can hold lock at a time
-            // => If lock held, Lock() blocks until lock released
-            counter++       // => Safely modify counter (no race condition)
-            // => counter++ is 3 operations: read, increment, write
-            // => Without mutex, counter++ would be racy (lost updates possible)
-            // => Mutex ensures atomic execution of counter++
-            mu.Unlock()     // => Release lock (other goroutines can now acquire)
-            // => Must unlock same goroutine that locked (not transferable)
-        }()                // => No closure variable issue (counter/mu are package-level)
-    }
-
-    wg2.Wait()             // => Wait for all 5 goroutines to complete
-    // => Blocks until wg2 counter reaches 0
-    fmt.Println("Counter:", counter) // => Output: Counter: 5 (all increments preserved)
-    // => Without mutex, counter might be < 5 (lost updates due to race)
-
-    // RWMutex - multiple readers OR single writer
-    var rwmu sync.RWMutex  // => RWMutex allows concurrent reads, exclusive writes
-    // => Optimizes for read-heavy workloads (many reads, few writes)
-    var data = "initial"   // => Shared data (string variable)
-    // => RWMutex has two lock modes: RLock (read) and Lock (write)
-    // => Read locks don't block each other, write lock blocks everything
-
-    // Multiple readers can run concurrently
-    var wg3 sync.WaitGroup // => WaitGroup for coordinating readers
-    for i := 0; i < 3; i++ {         // => Launch 3 concurrent readers
-        wg3.Add(1)         // => Increment wg3 counter
-        go func(id int) {  // => Launch reader goroutine with id
-            defer wg3.Done() // => Ensure Done() called when reader completes
-            rwmu.RLock()    // => Acquire READ lock (multiple readers allowed concurrently)
-            // => RLock does NOT block other RLock calls (readers don't block readers)
-            // => RLock DOES block Lock calls (writer must wait for readers)
-            // => Multiple readers can hold RLock simultaneously
-            fmt.Printf("Reader %d: %s\n", id, data)
-            // => Output: Reader [0-2]: initial (all see same value)
-            time.Sleep(10 * time.Millisecond) // => Hold read lock briefly (simulate read operation)
-            // => All readers hold lock concurrently during this sleep
-            rwmu.RUnlock()  // => Release read lock
-            // => When all RUnlock() called, writers can acquire Lock
+            time.Sleep(100 * time.Millisecond)
         }(i)
     }
 
-    wg3.Wait()             // => Wait for all readers to complete
-    // => Blocks until all 3 readers finish
-    // => Output (order may vary, all readers run concurrently):
-    // => Reader 0: initial
-    // => Reader 1: initial
-    // => Reader 2: initial
+    wg.Wait()              // => Block until counter = 0
+    fmt.Println("All workers complete")
+```
 
-    // Writer with RWMutex
-    var wg4 sync.WaitGroup // => WaitGroup for writer
-    wg4.Add(1)             // => Increment counter for 1 writer
-    go func() {            // => Launch writer goroutine
-        defer wg4.Done()   // => Ensure Done() called when writer completes
-        rwmu.Lock()        // => Acquire WRITE lock (exclusive, blocks all other locks)
-        // => Lock blocks until all RLocks released (waits for readers)
-        // => Lock blocks other Lock and RLock calls (exclusive access)
-        // => Only ONE writer can hold Lock at a time
-        data = "updated"   // => Safely modify data (no readers or writers interfere)
-        // => data changes from "initial" to "updated"
-        rwmu.Unlock()      // => Release write lock
-        // => Readers and writers can now acquire locks again
+**Mutex protects shared data**:
+
+```go
+    var mu sync.Mutex
+    var counter int
+    var wg2 sync.WaitGroup
+
+    for i := 0; i < 5; i++ {
+        wg2.Add(1)
+        go func() {
+            defer wg2.Done()
+            mu.Lock()       // => Acquire exclusive lock
+            counter++       // => Safe modification
+            mu.Unlock()     // => Release lock
+        }()
+    }
+
+    wg2.Wait()
+    fmt.Println("Counter:", counter) // => Output: Counter: 5
+```
+
+Without mutex, `counter++` would be racy (read, increment, write are separate operations).
+
+**RWMutex allows concurrent reads OR exclusive writes**:
+
+```go
+    var rwmu sync.RWMutex
+    var data = "initial"
+    var wg3 sync.WaitGroup
+
+    // Multiple readers run concurrently
+    for i := 0; i < 3; i++ {
+        wg3.Add(1)
+        go func(id int) {
+            defer wg3.Done()
+            rwmu.RLock()    // => Read lock (doesn't block other readers)
+            fmt.Printf("Reader %d: %s\n", id, data)
+            time.Sleep(10 * time.Millisecond)
+            rwmu.RUnlock()
+        }(i)
+    }
+
+    wg3.Wait()
+```
+
+Read locks allow concurrent access - all readers can hold RLock simultaneously.
+
+**Writer gets exclusive access**:
+
+```go
+    var wg4 sync.WaitGroup
+    wg4.Add(1)
+    go func() {
+        defer wg4.Done()
+        rwmu.Lock()        // => Write lock (exclusive, blocks all)
+        data = "updated"
+        rwmu.Unlock()
     }()
 
-    wg4.Wait()             // => Wait for writer to complete
-    // => Blocks until writer finishes
+    wg4.Wait()
     fmt.Println("Data after write:", data) // => Output: Data after write: updated
-    // => Confirms data was modified by writer
-
-    // CRITICAL: WaitGroup counter must never go negative
-    // var badWg sync.WaitGroup // => Create WaitGroup (counter = 0)
-    // badWg.Done()       // => PANIC: negative WaitGroup counter (Done called before Add)
-    // => Done() decrements counter: 0 - 1 = -1 (invalid, causes panic)
 }
 ```
 
