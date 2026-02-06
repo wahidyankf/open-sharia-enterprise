@@ -150,7 +150,7 @@ The following `docs/explanation/` content assumes readers have completed the cor
 
 ### Validation
 
-The `docs-programming-language-separation-checker` agent validates:
+The `docs-software-engineering-separation-checker` agent validates:
 
 - Prerequisite statements exist in docs/explanation READMEs (referencing AyoKoding)
 - No duplication between docs/explanation and AyoKoding educational content

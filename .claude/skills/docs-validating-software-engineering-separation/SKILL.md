@@ -1,13 +1,13 @@
 ---
-name: docs-validating-programming-language-separation
-description: Validates programming language documentation separation between OSE Platform style guides (docs/explanation/) and AyoKoding educational content (apps/ayokoding-web/). Ensures no duplication, proper prerequisite statements, and style guide focus on repository-specific conventions only.
+name: docs-validating-software-engineering-separation
+description: Validates software engineering documentation separation between OSE Platform style guides (docs/explanation/) and AyoKoding educational content (apps/ayokoding-web/). Ensures no duplication, proper prerequisite statements, and style guide focus on repository-specific conventions only.
 created: 2026-02-07
 updated: 2026-02-07
 ---
 
-# Validating Programming Language Documentation Separation
+# Validating Software Engineering Documentation Separation
 
-This Skill provides comprehensive guidance for validating the separation between repository-specific style guides (docs/explanation/software-engineering/) and educational content (apps/ayokoding-web/), as defined in the [Programming Language Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md).
+This Skill provides comprehensive guidance for validating the separation between repository-specific style guides (docs/explanation/software-engineering/) and educational content (apps/ayokoding-web/), as defined in the [Software Engineering Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md).
 
 ## Purpose
 
@@ -44,7 +44,7 @@ Use this Skill when:
 - **AyoKoding** = Educational (language syntax, by-example tutorials, generic patterns)
 - **docs/explanation/** = Style guides (OSE Platform naming, framework choices, repository patterns)
 
-See [Programming Language Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md) for complete rules.
+See [Software Engineering Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md) for complete rules.
 
 ## What to Validate
 
@@ -226,7 +226,7 @@ These are OSE Platform-specific style guides, not educational tutorials.
 
 ## Related Conventions
 
-**Primary**: [Programming Language Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md)
+**Primary**: [Software Engineering Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md)
 
 **Supporting**:
 
@@ -243,7 +243,7 @@ These are OSE Platform-specific style guides, not educational tutorials.
 
 ## Related Agents
 
-- docs-programming-language-separation-checker - Validates explicit relationships
-- docs-programming-language-separation-fixer - Fixes violations
+- docs-software-engineering-separation-checker - Validates explicit relationships
+- docs-software-engineering-separation-fixer - Fixes violations
 - docs-maker - Creates style guide content
 - apps-ayokoding-web-general-maker - Creates educational content
