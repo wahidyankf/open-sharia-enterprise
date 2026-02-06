@@ -924,6 +924,37 @@ BEFORE: donate called
 Donation: Ibrahim - $500.0
 ```
 
+**AOP Proxy Mechanism**:
+
+```mermaid
+sequenceDiagram
+    participant Client as Client Code
+    participant Proxy as Spring Proxy
+    participant Aspect as LoggingAspect
+    participant Target as DonationService (Target)
+
+    Client->>Proxy: donate("Ibrahim", 500.0)
+    Note over Proxy: Proxy intercepts call
+
+    Proxy->>Aspect: Execute @Before advice
+    Aspect->>Aspect: logBefore() method
+    Note over Aspect: BEFORE: donate called
+
+    Proxy->>Target: delegate to actual method
+    Target->>Target: donate() executes
+    Note over Target: Donation: Ibrahim - $500.0
+
+    Target-->>Proxy: method completes
+    Proxy-->>Client: return result
+
+    style Client fill:#0173B2,stroke:#000,color:#fff
+    style Proxy fill:#DE8F05,stroke:#000,color:#000
+    style Aspect fill:#029E73,stroke:#000,color:#fff
+    style Target fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Diagram Explanation**: This sequence diagram illustrates how Spring AOP creates a proxy that intercepts method calls, executes aspect advice (@Before) before delegating to the target method.
+
 **Key Takeaways**:
 
 - `@Aspect` marks classes as cross-cutting concerns
@@ -1153,6 +1184,35 @@ class PerformanceAspect {
 }
 ```
 
+**@Around Advice Execution Flow**:
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Proxy as Spring Proxy
+    participant Aspect as @Around Aspect
+    participant Target as Target Method
+
+    Client->>Proxy: Call method
+    Proxy->>Aspect: Enter @Around advice
+    Note over Aspect: Before logic<br/>(start timer)
+
+    Aspect->>Aspect: pjp.proceed()
+    Aspect->>Target: Execute target method
+    Target-->>Aspect: Return result
+
+    Note over Aspect: After logic<br/>(calculate duration)
+    Aspect-->>Proxy: Return modified/original result
+    Proxy-->>Client: Return to caller
+
+    style Client fill:#0173B2,stroke:#000,color:#fff
+    style Proxy fill:#DE8F05,stroke:#000,color:#000
+    style Aspect fill:#029E73,stroke:#000,color:#fff
+    style Target fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Diagram Explanation**: This sequence diagram shows how @Around advice wraps method execution, enabling before/after logic and control over method invocation via pjp.proceed().
+
 **Key Takeaways**:
 
 - @Around provides complete method wrapping
@@ -1364,6 +1424,29 @@ class AccountService {
 }
 ```
 
+**Transaction Lifecycle with @Transactional**:
+
+```mermaid
+graph TD
+    A[Method with @Transactional called] -->|Begin transaction| B[Transaction Started]
+    B --> C{Method executes}
+    C -->|Success| D[Commit transaction]
+    C -->|Unchecked Exception| E[Rollback transaction]
+    C -->|Checked Exception| D
+    D --> F[Changes persisted]
+    E --> G[Changes reverted]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#000
+    style E fill:#CA9161,stroke:#000,color:#fff
+    style F fill:#0173B2,stroke:#000,color:#fff
+    style G fill:#DE8F05,stroke:#000,color:#000
+```
+
+**Diagram Explanation**: This flow diagram shows how @Transactional manages transaction lifecycle - beginning transaction on method entry, committing on success, and rolling back on unchecked exceptions.
+
 **Key Takeaways**:
 
 - @Transactional enables ACID transactions
@@ -1447,6 +1530,35 @@ class OrderService {
 }
 ```
 
+**Transaction Propagation Comparison**:
+
+```mermaid
+graph TD
+    subgraph REQUIRED [REQUIRED - Join or Create]
+        A1[Outer Transaction exists?] -->|Yes| B1[Join existing transaction]
+        A1 -->|No| C1[Create new transaction]
+    end
+
+    subgraph REQUIRES_NEW [REQUIRES_NEW - Always New]
+        A2[Method called] --> B2[Suspend current transaction]
+        B2 --> C2[Create NEW independent transaction]
+        C2 --> D2[Commit/rollback independently]
+    end
+
+    subgraph MANDATORY [MANDATORY - Must Exist]
+        A3[Transaction exists?] -->|Yes| B3[Join existing]
+        A3 -->|No| C3[Throw Exception]
+    end
+
+    style B1 fill:#029E73,stroke:#000,color:#fff
+    style C1 fill:#DE8F05,stroke:#000,color:#000
+    style C2 fill:#CC78BC,stroke:#000,color:#000
+    style B3 fill:#029E73,stroke:#000,color:#fff
+    style C3 fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Diagram Explanation**: This diagram contrasts three propagation behaviors - REQUIRED (join or create), REQUIRES_NEW (always new independent), and MANDATORY (must exist or fail).
+
 **Key Takeaways**:
 
 - REQUIRED: Join or create (default)
@@ -1527,6 +1639,29 @@ class InventoryService {
     private fun checkStockInternal(): Int = 100
 }
 ```
+
+**Transaction Isolation Levels**:
+
+```mermaid
+graph TD
+    A[Transaction Isolation Levels] --> B[READ_UNCOMMITTED<br/>Fastest, Least Safe]
+    A --> C[READ_COMMITTED<br/>Prevents Dirty Reads]
+    A --> D[REPEATABLE_READ<br/>Prevents Non-Repeatable Reads]
+    A --> E[SERIALIZABLE<br/>Slowest, Most Safe]
+
+    B -.->|Allows| F[Dirty Reads<br/>Non-Repeatable Reads<br/>Phantom Reads]
+    C -.->|Allows| G[Non-Repeatable Reads<br/>Phantom Reads]
+    D -.->|Allows| H[Phantom Reads]
+    E -.->|Prevents| I[All Concurrency Issues]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#CA9161,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#000
+    style D fill:#029E73,stroke:#000,color:#fff
+    style E fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Diagram Explanation**: This diagram shows the spectrum of transaction isolation levels from fastest/least safe (READ_UNCOMMITTED) to slowest/most safe (SERIALIZABLE), with their concurrency trade-offs.
 
 **Key Takeaways**:
 
@@ -1866,6 +2001,39 @@ class DonationRepository(private val jdbc: JdbcTemplate) {
     }
 }
 ```
+
+**JdbcTemplate Query Execution Flow**:
+
+```mermaid
+sequenceDiagram
+    participant Service
+    participant JdbcTemplate
+    participant DataSource
+    participant Database
+    participant RowMapper
+
+    Service->>JdbcTemplate: query(sql, rowMapper)
+    JdbcTemplate->>DataSource: Get Connection
+    DataSource-->>JdbcTemplate: Connection
+
+    JdbcTemplate->>Database: Execute SQL query
+    Database-->>JdbcTemplate: ResultSet
+
+    loop For each row
+        JdbcTemplate->>RowMapper: mapRow(rs, rowNum)
+        RowMapper-->>JdbcTemplate: Mapped Object
+    end
+
+    JdbcTemplate-->>Service: List<T> results
+
+    style Service fill:#0173B2,stroke:#000,color:#fff
+    style JdbcTemplate fill:#DE8F05,stroke:#000,color:#000
+    style DataSource fill:#029E73,stroke:#000,color:#fff
+    style Database fill:#CC78BC,stroke:#000,color:#000
+    style RowMapper fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Diagram Explanation**: This sequence diagram illustrates JdbcTemplate's execution flow - obtaining connection, executing SQL, and mapping each ResultSet row to objects via RowMapper.
 
 **Key Takeaways**:
 
@@ -2235,6 +2403,37 @@ class ZakatController {
 }
 ```
 
+**Spring MVC Request Lifecycle**:
+
+```mermaid
+sequenceDiagram
+    participant Browser
+    participant DispatcherServlet
+    participant HandlerMapping
+    participant Controller
+    participant View
+
+    Browser->>DispatcherServlet: HTTP Request<br/>/zakat/calculate?amount=1000
+    DispatcherServlet->>HandlerMapping: Find handler for /zakat/calculate
+    HandlerMapping-->>DispatcherServlet: ZakatController.calculate()
+
+    DispatcherServlet->>Controller: Invoke calculate(1000)
+    Note over Controller: Extract @RequestParam<br/>Execute business logic
+    Controller-->>DispatcherServlet: Return "25.0" (@ResponseBody)
+
+    DispatcherServlet->>View: Serialize response
+    View-->>DispatcherServlet: JSON/String response
+    DispatcherServlet-->>Browser: HTTP Response<br/>Body: 25.0
+
+    style Browser fill:#0173B2,stroke:#000,color:#fff
+    style DispatcherServlet fill:#DE8F05,stroke:#000,color:#000
+    style HandlerMapping fill:#029E73,stroke:#000,color:#fff
+    style Controller fill:#CC78BC,stroke:#000,color:#000
+    style View fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Diagram Explanation**: This sequence diagram shows Spring MVC's request processing flow from browser through DispatcherServlet (front controller), handler mapping, controller execution, to response serialization.
+
 **Key Takeaways**:
 
 - @RequestParam for query parameters
@@ -2310,6 +2509,35 @@ class DonationApiController {
     }
 }
 ```
+
+**@RequestBody JSON Deserialization Flow**:
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant DispatcherServlet
+    participant Jackson as Jackson (JSON)
+    participant Controller
+
+    Client->>DispatcherServlet: POST /api/donations<br/>Content-Type: application/json<br/>{"donor":"Ali","amount":500}
+
+    DispatcherServlet->>Jackson: Deserialize JSON
+    Note over Jackson: Parse JSON string<br/>Map to DonationRequest fields
+    Jackson-->>DispatcherServlet: DonationRequest object
+
+    DispatcherServlet->>Controller: create(DonationRequest)
+    Note over Controller: request.donor = "Ali"<br/>request.amount = 500
+
+    Controller-->>DispatcherServlet: Return "Created"
+    DispatcherServlet-->>Client: HTTP 200<br/>Body: Created
+
+    style Client fill:#0173B2,stroke:#000,color:#fff
+    style DispatcherServlet fill:#DE8F05,stroke:#000,color:#000
+    style Jackson fill:#029E73,stroke:#000,color:#fff
+    style Controller fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Diagram Explanation**: This sequence diagram shows how @RequestBody triggers Jackson to deserialize JSON request body into Java/Kotlin objects before controller method invocation.
 
 **Key Takeaways**:
 
@@ -2482,6 +2710,33 @@ class FormController {
     }
 }
 ```
+
+**Bean Validation Integration Flow**:
+
+```mermaid
+graph TD
+    A[HTTP Request with JSON] --> B[@RequestBody + @Valid]
+    B --> C[Jackson deserializes JSON]
+    C --> D{Bean Validation}
+    D -->|All constraints pass| E[Method executes]
+    D -->|Constraint violation| F[MethodArgumentNotValidException]
+
+    E --> G[Return response]
+    F --> H[400 Bad Request with errors]
+
+    I[@NotBlank, @Min, @Max annotations] -.->|Define rules| D
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#000
+    style E fill:#0173B2,stroke:#000,color:#fff
+    style F fill:#CA9161,stroke:#000,color:#fff
+    style G fill:#029E73,stroke:#000,color:#fff
+    style H fill:#DE8F05,stroke:#000,color:#000
+```
+
+**Diagram Explanation**: This flow diagram shows Bean Validation integration - deserializing JSON, validating against constraints, and either proceeding to method execution or throwing exception with validation errors.
 
 **Key Takeaways**:
 

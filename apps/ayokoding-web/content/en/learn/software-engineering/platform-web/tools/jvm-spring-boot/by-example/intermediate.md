@@ -21,6 +21,57 @@ Learn intermediate Spring Boot patterns through 30 annotated examples covering p
 
 Spring's declarative transaction management ensures data consistency through ACID properties.
 
+**Spring Data JPA Auto-Configuration Flow**:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Starter["spring-boot-starter-data-jpa"] --> Hibernate["Hibernate JPA Provider"]
+    Starter --> DataSource["Auto-Configure DataSource"]
+    DataSource --> Pool["HikariCP Connection Pool"]
+    Hibernate --> EMF["EntityManagerFactory"]
+    Pool --> EMF
+    EMF --> Repos["JpaRepository Beans"]
+    Repos --> Ready["Ready for @Transactional"]
+
+    style Starter fill:#0173B2,color:#fff
+    style Hibernate fill:#DE8F05,color:#fff
+    style DataSource fill:#029E73,color:#fff
+    style Pool fill:#CC78BC,color:#fff
+    style EMF fill:#CA9161,color:#fff
+    style Repos fill:#0173B2,color:#fff
+    style Ready fill:#DE8F05,color:#fff
+```
+
+**Caption**: Spring Boot auto-configures JPA by detecting spring-boot-starter-data-jpa on classpath, creating DataSource, EntityManagerFactory, and repository beans automatically.
+
+**Multiple DataSources Configuration Pattern**:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Config["@Configuration Class"] --> Primary["@Primary DataSource"]
+    Config --> Secondary["Secondary DataSource"]
+    Primary --> PrimaryEMF["Primary EntityManagerFactory"]
+    Secondary --> SecondaryEMF["Secondary EntityManagerFactory"]
+    PrimaryEMF --> PrimaryRepos["@EnableJpaRepositories(basePackages=primary)"]
+    SecondaryEMF --> SecondaryRepos["@EnableJpaRepositories(basePackages=secondary)"]
+    PrimaryRepos --> PrimaryTx["Primary TransactionManager"]
+    SecondaryRepos --> SecondaryTx["Secondary TransactionManager"]
+
+    style Config fill:#0173B2,color:#fff
+    style Primary fill:#DE8F05,color:#fff
+    style Secondary fill:#029E73,color:#fff
+    style PrimaryEMF fill:#CC78BC,color:#fff
+    style SecondaryEMF fill:#CA9161,color:#fff
+    style PrimaryRepos fill:#0173B2,color:#fff
+    style SecondaryRepos fill:#DE8F05,color:#fff
+    style PrimaryTx fill:#029E73,color:#fff
+    style SecondaryTx fill:#CC78BC,color:#fff
+```
+
+**Caption**: Multiple datasources require separate DataSource, EntityManagerFactory, and TransactionManager beans with @Primary designating the default configuration.
+
 ```java
 // pom.xml
 <dependency>
@@ -333,6 +384,31 @@ sequenceDiagram
     deactivate S
 
 ```
+
+**Transaction Auto-Configuration Flow**:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Starter["spring-boot-starter-data-jpa"] --> TxStarter["Detects spring-tx on classpath"]
+    TxStarter --> Manager["Auto-Configure PlatformTransactionManager"]
+    Manager --> JpaManager["JpaTransactionManager Bean"]
+    JpaManager --> AOP["@EnableTransactionManagement"]
+    AOP --> Proxy["Create @Transactional Proxies"]
+    Proxy --> Interceptor["TransactionInterceptor"]
+    Interceptor --> Ready["Methods Wrapped with TX Logic"]
+
+    style Starter fill:#0173B2,color:#fff
+    style TxStarter fill:#DE8F05,color:#fff
+    style Manager fill:#029E73,color:#fff
+    style JpaManager fill:#CC78BC,color:#fff
+    style AOP fill:#CA9161,color:#fff
+    style Proxy fill:#0173B2,color:#fff
+    style Interceptor fill:#DE8F05,color:#fff
+    style Ready fill:#029E73,color:#fff
+```
+
+**Caption**: Spring Boot automatically configures transaction management by creating PlatformTransactionManager bean and enabling AOP proxies for @Transactional methods.
 
 ---
 
@@ -2364,6 +2440,7 @@ class ProductRepositoryTestContainersTest {
       registry.add("spring.datasource.url", postgres::getJdbcUrl)
       registry.add("spring.datasource.username", postgres::getUsername)
       registry.add("spring.datasource.password", postgres::getPassword)
+      // => Sets datasource password to "test"
     }
   }
 
@@ -2398,6 +2475,38 @@ class ProductRepositoryTestContainersTest {
 // Alternative with apply scope function for container configuration (as shown above)
 // TestContainers automatically manages container lifecycle (starts before tests, stops after)
 ```
+
+**Testcontainers Lifecycle with @DynamicPropertySource**:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant Test as Test Class
+    participant TC as @Testcontainers
+    participant Docker as Docker Engine
+    participant DPS as @DynamicPropertySource
+    participant Spring as Spring Context
+
+    Test->>TC: Test class initialized
+    TC->>Docker: Start PostgreSQL container
+    Docker-->>TC: Container started (random port)
+    TC->>DPS: Call static properties() method
+    DPS->>DPS: Get container JDBC URL/credentials
+    DPS->>Spring: Register dynamic properties
+    Spring->>Spring: Initialize ApplicationContext
+    Spring->>Spring: Configure DataSource with container URL
+    Spring-->>Test: Context ready
+    Test->>Test: Execute test methods
+    Test->>Spring: Use real PostgreSQL
+    Test->>TC: Tests complete
+    TC->>Docker: Stop and remove container
+    Docker-->>TC: Container cleaned up
+
+    Note over TC,Docker: Container lifecycle managed automatically
+    Note over DPS,Spring: Properties set BEFORE context init
+```
+
+**Caption**: @DynamicPropertySource dynamically configures Spring properties with Testcontainers URLs after container startup but before ApplicationContext initialization.
 
 **Key Takeaway**: TestContainers provides real databases for tests—eliminates mocking discrepancies between H2 and production databases.
 

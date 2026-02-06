@@ -731,6 +731,42 @@ class MetricsController {
 // }
 ```
 
+**Actuator Health Endpoint Aggregation**:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Request["GET /actuator/health"] --> Aggregator["HealthEndpointWebExtension"]
+    Aggregator --> Disk["DiskSpaceHealthIndicator"]
+    Aggregator --> DB["DataSourceHealthIndicator"]
+    Aggregator --> Custom["CustomHealthIndicator"]
+    Aggregator --> Ping["PingHealthIndicator"]
+    Disk --> Status1["UP/DOWN"]
+    DB --> Status2["UP/DOWN"]
+    Custom --> Status3["UP/DOWN"]
+    Ping --> Status4["UP"]
+    Status1 --> Combine["Aggregate Status"]
+    Status2 --> Combine
+    Status3 --> Combine
+    Status4 --> Combine
+    Combine --> Response["JSON Response with Status"]
+
+    style Request fill:#0173B2,color:#fff
+    style Aggregator fill:#DE8F05,color:#fff
+    style Disk fill:#029E73,color:#fff
+    style DB fill:#029E73,color:#fff
+    style Custom fill:#029E73,color:#fff
+    style Ping fill:#029E73,color:#fff
+    style Status1 fill:#CC78BC,color:#fff
+    style Status2 fill:#CC78BC,color:#fff
+    style Status3 fill:#CC78BC,color:#fff
+    style Status4 fill:#CC78BC,color:#fff
+    style Combine fill:#CA9161,color:#fff
+    style Response fill:#0173B2,color:#fff
+```
+
+**Caption**: Actuator aggregates health indicators into a single /actuator/health endpoint, returning DOWN if any indicator fails.
+
 **Key Takeaway**: Actuator exposes production-ready endpoints for monitoring—use custom `HealthIndicator` implementations to expose application-specific health checks beyond Spring Boot's auto-configured probes.
 
 **Why It Matters**: Actuator endpoints expose production-ready metrics (JVM memory, thread pools, database connections) and health checks (database connectivity, disk space) without custom instrumentation, integrating with monitoring tools (Prometheus, Grafana) via standardized formats. Production Kubernetes deployments use actuator health endpoints for liveness probes (restart unhealthy pods) and readiness probes (remove pods from load balancer rotation), enabling zero-downtime deployments where unhealthy instances stop receiving traffic before termination.
@@ -850,6 +886,36 @@ class OrderMetricsService(registry: MeterRegistry) {  // => Inject Micrometer re
 //   Counter.builder(name).tags(Tags.of(tags.map { Tag.of(it.key, it.value) })).register(this)
 // val orderCounter = registry.counter("orders.created", mapOf("type" to "online"))
 ```
+
+**Micrometer Metrics Flow to Prometheus**:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant App as Application Code
+    participant Meter as MeterRegistry
+    participant Prom as PrometheusMeterRegistry
+    participant Endpoint as /actuator/prometheus
+    participant Scraper as Prometheus Server
+
+    App->>Meter: counter.increment()
+    Meter->>Prom: Record metric
+    App->>Meter: gauge.set(value)
+    Meter->>Prom: Record metric
+    App->>Meter: timer.record { }
+    Meter->>Prom: Record duration
+
+    Note over Prom: Metrics accumulated in memory
+
+    Scraper->>Endpoint: GET /actuator/prometheus
+    Endpoint->>Prom: Read metrics
+    Prom-->>Endpoint: Format as Prometheus text
+    Endpoint-->>Scraper: # TYPE orders_created counter<br/>orders_created{type="online"} 42.0
+
+    Note over Scraper: Store time-series data
+```
+
+**Caption**: Micrometer records metrics in MeterRegistry, which formats them for /actuator/prometheus endpoint where Prometheus scrapes them periodically.
 
 **Key Takeaway**: Micrometer provides vendor-neutral instrumentation—use `Counter`, `Gauge`, and `Timer` to track business metrics and export to monitoring systems like Prometheus without vendor lock-in.
 
@@ -1726,6 +1792,39 @@ open class CustomAutoConfiguration {
 // Kotlin-specific: Use data class with var for @ConfigurationProperties binding, expression body for single-line methods
 ```
 
+**Custom Auto-Configuration Evaluation Order**:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Start["Spring Boot Startup"] --> Load["Load AutoConfiguration.imports"]
+    Load --> Config["Find CustomAutoConfiguration"]
+    Config --> Check1["@ConditionalOnProperty"]
+    Check1 --> Eval1{enabled=true?}
+    Eval1 -->|No| Skip1["Skip Configuration"]
+    Eval1 -->|Yes| Check2["@ConditionalOnMissingBean"]
+    Check2 --> Eval2{CustomService exists?}
+    Eval2 -->|Yes| Skip2["Skip Bean Creation"]
+    Eval2 -->|No| Create["Create CustomService Bean"]
+    Create --> Props["Bind @ConfigurationProperties"]
+    Props --> Register["Register in ApplicationContext"]
+
+    style Start fill:#0173B2,color:#fff
+    style Load fill:#DE8F05,color:#fff
+    style Config fill:#029E73,color:#fff
+    style Check1 fill:#CC78BC,color:#fff
+    style Eval1 fill:#CA9161,color:#fff
+    style Check2 fill:#CC78BC,color:#fff
+    style Eval2 fill:#CA9161,color:#fff
+    style Skip1 fill:#0173B2,color:#fff
+    style Skip2 fill:#0173B2,color:#fff
+    style Create fill:#DE8F05,color:#fff
+    style Props fill:#029E73,color:#fff
+    style Register fill:#CC78BC,color:#fff
+```
+
+**Caption**: Custom auto-configuration evaluates @Conditional annotations in order, skipping bean creation if conditions fail, enabling smart defaults with easy overrides.
+
 **Key Takeaway**: Create custom starters to encapsulate reusable auto-configuration—define `@ConfigurationProperties`, auto-configuration classes, and register in `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` for distribution.
 
 **Why It Matters**: Custom starters enable organizational best practices (logging format, metrics collection, security headers) to be shared across 50+ microservices through dependency inclusion, eliminating copy-paste configuration that diverges over time. Production platform teams create internal starters that auto-configure database connections with company-wide connection pool settings, distributed tracing with correlation ID propagation, and security headers (CSP, HSTS) that satisfy compliance requirements, reducing per-service configuration from 200 lines to zero.
@@ -2109,24 +2208,42 @@ java -Djarmode=layertools -jar target/myapp.jar list  # => List available layers
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-flowchart TD
-    A[Source Code] --> B[Maven Build]
-    B --> C[Layered JAR]
-    C --> D[Layer: Dependencies]
-    C --> E[Layer: Spring Boot Loader]
-    C --> F[Layer: Application]
-    D --> G[Docker Image]
-    E --> G
-    F --> G
+graph TD
+    JAR["myapp.jar<br/>(Layered JAR)"] --> Extract["java -Djarmode=layertools extract"]
+    Extract --> Layer1["Layer 1: dependencies/<br/>(50MB, rarely changes)"]
+    Extract --> Layer2["Layer 2: spring-boot-loader/<br/>(5MB, rarely changes)"]
+    Extract --> Layer3["Layer 3: snapshot-dependencies/<br/>(10MB, occasional changes)"]
+    Extract --> Layer4["Layer 4: application/<br/>(5MB, frequent changes)"]
 
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#fff
-    style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#fff
-    style E fill:#CA9161,stroke:#000,color:#fff
-    style F fill:#0173B2,stroke:#000,color:#fff
-    style G fill:#DE8F05,stroke:#000,color:#fff
+    Layer1 --> Docker1["COPY dependencies/ ./"]
+    Layer2 --> Docker2["COPY spring-boot-loader/ ./"]
+    Layer3 --> Docker3["COPY snapshot-dependencies/ ./"]
+    Layer4 --> Docker4["COPY application/ ./"]
+
+    Docker1 --> Image["Docker Image<br/>(Optimized Caching)"]
+    Docker2 --> Image
+    Docker3 --> Image
+    Docker4 --> Image
+
+    Image --> Cache["Layer 1-2: Cached<br/>(rarely invalidated)"]
+    Image --> Rebuild["Layer 4: Rebuilt<br/>(code changes)"]
+
+    style JAR fill:#0173B2,color:#fff
+    style Extract fill:#DE8F05,color:#fff
+    style Layer1 fill:#029E73,color:#fff
+    style Layer2 fill:#029E73,color:#fff
+    style Layer3 fill:#CC78BC,color:#fff
+    style Layer4 fill:#CA9161,color:#fff
+    style Docker1 fill:#0173B2,color:#fff
+    style Docker2 fill:#0173B2,color:#fff
+    style Docker3 fill:#DE8F05,color:#fff
+    style Docker4 fill:#029E73,color:#fff
+    style Image fill:#CC78BC,color:#fff
+    style Cache fill:#CA9161,color:#fff
+    style Rebuild fill:#CA9161,color:#fff
 ```
+
+**Caption**: Layered JARs separate dependencies (rarely change, 50MB) from application code (frequent changes, 5MB), enabling Docker layer caching for faster rebuilds.
 
 **Note**: Dockerfile syntax is identical for Kotlin Spring Boot applications. The layered JAR extraction and multi-stage build process works the same way for both Java and Kotlin compiled JARs.
 
