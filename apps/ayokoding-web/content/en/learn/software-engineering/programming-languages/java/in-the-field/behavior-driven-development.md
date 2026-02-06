@@ -39,46 +39,76 @@ Structure tests using Given-When-Then pattern with clear sections and comments.
 
 ```java
 import org.junit.jupiter.api.Test;
+// => JUnit 5 test framework annotations
 import static org.junit.jupiter.api.Assertions.*;
+// => Static import for assertion methods (assertEquals, assertNotNull, etc.)
 
 public class ZakatCalculatorBDDTest {
+// => BDD test class using Given-When-Then structure in JUnit
 
     @Test
+// => Mark method as test case
     void shouldCalculateZakatForWealthAboveNisabAfterCompleteHaul() {
+// => Descriptive name documents business behavior
+// => Pattern: should<Behavior>When<Condition>
         // GIVEN: A Zakat account with balance above nisab after complete haul
+// => Given section: setup preconditions
         ZakatAccount account = new ZakatAccount("ACC-001");
+// => Create account with unique identifier
         account.setBalance(Money.usd(100_000));
+// => Set balance to $100,000 (well above nisab)
+// => Money type: type-safe currency handling
         account.setNisab(Money.usd(5_000));
+// => Nisab threshold: $5,000 (minimum wealth for Zakat)
         account.setHaulStartDate(LocalDate.of(2025, 3, 1));
+// => Haul start: March 1, 2025 (one lunar year required)
 
         ZakatCalculator calculator = new ZakatCalculator();
+// => System under test: Zakat calculation engine
 
         // WHEN: I calculate Zakat after one lunar year
+// => When section: execute action under test
         LocalDate calculationDate = LocalDate.of(2026, 3, 15);
+// => Calculate on March 15, 2026 (more than one lunar year)
         ZakatCalculation result = calculator.calculate(account, calculationDate);
+// => Execute calculation with account and date
 
         // THEN: Zakat should be 2.5% of zakatable wealth
+// => Then section: verify expected outcomes
         assertEquals(Money.usd(2_375), result.getZakatAmount());
+// => Verify Zakat amount: $100,000 - $5,000 = $95,000 * 2.5% = $2,375
+// => Zakatable wealth excludes nisab amount
         assertEquals(Money.usd(95_000), result.getZakatableWealth());
+// => Verify zakatable wealth calculation
     }
 
     @Test
     void shouldNotCalculateZakatWhenBalanceBelowNisab() {
+// => Negative case: below threshold scenario
         // GIVEN: A Zakat account with balance below nisab
         ZakatAccount account = new ZakatAccount("ACC-002");
+// => Different account ID for this scenario
         account.setBalance(Money.usd(4_000));
+// => Balance $4,000 (below $5,000 nisab)
         account.setNisab(Money.usd(5_000));
+// => Same nisab threshold
         account.setHaulStartDate(LocalDate.of(2025, 3, 1));
+// => Haul period started (but irrelevant when below nisab)
 
         ZakatCalculator calculator = new ZakatCalculator();
+// => Same calculator instance
 
         // WHEN: I calculate Zakat
         LocalDate calculationDate = LocalDate.of(2026, 3, 15);
         ZakatCalculation result = calculator.calculate(account, calculationDate);
+// => Execute calculation even when below nisab
 
         // THEN: No Zakat should be due
         assertEquals(Money.usd(0), result.getZakatAmount());
+// => Verify zero Zakat when below nisab
         assertEquals("Balance below nisab", result.getReason());
+// => Verify explanatory reason for zero Zakat
+// => Business-readable message for audit trail
     }
 }
 ```
@@ -94,21 +124,35 @@ Use descriptive method names that express business behavior, not technical imple
 
 ```java
 // Pattern: shouldDoSomethingWhenCondition
+// => Most readable BDD test naming pattern
+// => Format: should<ExpectedBehavior>When<Condition>
 @Test
 void shouldCalculateZakatWhenWealthAboveNisab() { }
+// => Clear business behavior: "should calculate Zakat when wealth above nisab"
+// => Non-technical stakeholders can read test names
 
 @Test
 void shouldRejectDonationWhenAmountIsNegative() { }
+// => Negative case: rejection behavior
+// => "When" clause describes the condition triggering behavior
 
 @Test
 void shouldSendReceiptWhenDonationIsCompleted() { }
+// => Business outcome: receipt sent
+// => Test name documents expected system behavior
 
 // Pattern: givenCondition_whenAction_thenOutcome
+// => Alternative pattern with explicit Given-When-Then structure
+// => More verbose but very clear for complex scenarios
 @Test
 void givenBalanceAboveNisab_whenCalculatingZakat_thenReturnsTwoPointFivePercent() { }
+// => Given: precondition (balance above nisab)
+// => When: action (calculating Zakat)
+// => Then: expected outcome (2.5% rate)
 
 @Test
 void givenIncompleteHaul_whenCalculatingZakat_thenReturnsZero() { }
+// => Documents business rule: no Zakat before haul completes
 ```
 
 **Avoid technical names**:
@@ -117,12 +161,19 @@ void givenIncompleteHaul_whenCalculatingZakat_thenReturnsZero() { }
 // BAD: Technical details, not business behavior
 @Test
 void testZakatCalculation() { }
+// => Generic name: what kind of calculation? What scenario?
+// => No business context: stakeholders can't understand purpose
 
 @Test
 void testCalculate_ReturnsCorrectValue() { }
+// => "Correct value" is vague: what value? Under what conditions?
+// => Technical focus: "calculate" instead of business behavior
 
 @Test
 void test1() { }
+// => Worst case: numbered tests with no meaning
+// => Impossible to understand purpose without reading implementation
+// => Poor documentation: test name provides zero business value
 ```
 
 **Before**: Generic test names provide no context
@@ -136,6 +187,7 @@ Document scenarios as structured comments before automation.
 
 ```java
 public class DonationProcessingBDDTest {
+// => BDD test class with Gherkin-style documentation
 
     /*
      * Scenario: Donor makes a recurring donation
@@ -147,25 +199,44 @@ public class DonationProcessingBDDTest {
      *   And the first payment should be processed immediately
      *   And the next payment should be scheduled for next month
      */
+// => Gherkin scenario as block comment
+// => Documents expected behavior BEFORE implementation
+// => Business stakeholders can review scenario
+// => Becomes living documentation when automated
     @Test
     void shouldScheduleRecurringDonationAndProcessFirstPayment() {
+// => Test name matches scenario description
         // GIVEN
+// => Given section: setup preconditions
         Donor donor = createDonor("D-001");
+// => Create donor with specific ID from scenario
         donor.addPaymentMethod(createValidCreditCard());
+// => Setup valid payment method (precondition)
 
         // WHEN
+// => When section: execute the action under test
         RecurringDonation donation = donationService.createRecurring(
+// => Create recurring donation via service layer
             donor.getId(),
+// => Use donor ID from setup
             Money.usd(100),
+// => $100 monthly donation from scenario
             RecurrencePattern.MONTHLY
+// => Monthly recurrence pattern
         );
 
         // THEN
+// => Then section: verify all expected outcomes
         assertEquals(DonationStatus.SCHEDULED, donation.getStatus());
+// => Verify donation status is SCHEDULED (first assertion from scenario)
         assertNotNull(donation.getLastPaymentDate());
+// => Verify first payment processed (second assertion)
+// => Not null means payment happened immediately
         assertEquals(
             LocalDate.now().plusMonths(1),
+// => Next payment date is one month from now
             donation.getNextPaymentDate()
+// => Verify next payment scheduled (third assertion)
         );
     }
 }
@@ -435,13 +506,30 @@ Scenario: Require authentication for large donations
 
 ```java
 import org.junit.platform.suite.api.*;
+// => JUnit Platform Suite API for Cucumber integration
 
 @Suite
+// => Mark as test suite (JUnit 5 Platform)
 @IncludeEngines("cucumber")
+// => Include Cucumber engine for test execution
+// => Cucumber runs alongside JUnit tests
 @SelectClasspathResource("features")
+// => Scan features/ directory in test resources
+// => Cucumber finds .feature files automatically
+// => Path relative to src/test/resources
 @ConfigurationParameter(key = "cucumber.plugin", value = "pretty, html:target/cucumber-reports.html")
+// => Configure Cucumber plugins
+// => "pretty": colored console output with step details
+// => "html:target/cucumber-reports.html": HTML report generation
+// => Reports show passed/failed scenarios with screenshots
 @ConfigurationParameter(key = "cucumber.glue", value = "com.example.finance.bdd.steps")
+// => Glue code package: where step definitions live
+// => Cucumber scans this package for @Given/@When/@Then methods
+// => Must match step definition package structure
 public class CucumberTestRunner {
+// => Empty class: configuration via annotations
+// => JUnit Platform discovers and runs this suite
+// => Execute with: mvn test or IDE test runner
 }
 ```
 
@@ -476,39 +564,73 @@ src/
 
 ```java
 import io.cucumber.java.en.*;
+// => Cucumber annotations: @Given, @When, @Then, @And, @But
 import static org.assertj.core.api.Assertions.*;
+// => AssertJ fluent assertions (more readable than JUnit)
 
 public class DonationSteps {
+// => Step definition class for donation scenarios
+// => One class per domain concept (Donation, Zakat, etc.)
     private Donor donor;
+// => Instance variable: shared state across steps in same scenario
     private Money donationAmount;
+// => Captured donation amount for verification
     private DonationResult result;
+// => Result of donation operation for assertions
 
     @Given("a donor with ID {string}")
+// => @Given annotation matches Gherkin "Given" step
+// => {string}: parameter placeholder matching quoted text
+// => Cucumber extracts "D-001" from: Given a donor with ID "D-001"
     public void aDonorWithId(String donorId) {
+// => Method name: convention matches Gherkin text (optional)
+// => String donorId: extracted from {string} placeholder
         this.donor = testDataBuilder.createDonor(donorId);
+// => Create test donor with specified ID
+// => Store in instance variable for subsequent steps
     }
 
     @When("the donor makes a donation of {string}")
+// => @When annotation for action step
+// => {string}: captures donation amount (e.g., "100 USD")
     public void theDonorMakesADonation(String amountStr) {
+// => Parameter: string representation of money
         this.donationAmount = MoneyParser.parse(amountStr);
+// => Parse "100 USD" to Money object
+// => Type-safe money handling with currency
         this.result = donationService.createDonation(
+// => Execute actual business logic via service
             donor.getId(),
+// => Use donor from Given step
             donationAmount
+// => Use parsed amount
         );
+// => Store result for Then step assertions
     }
 
     @Then("the donation should be processed successfully")
+// => @Then annotation for assertion step
+// => No parameters: simple boolean check
     public void theDonationShouldBeProcessedSuccessfully() {
         assertThat(result.isSuccess()).isTrue();
+// => AssertJ assertion: fluent, readable
+// => Verify donation processing succeeded
     }
 
     @Then("the donation amount should be recorded as {string} after {string} fee")
+// => @Then with multiple parameters
+// => First {string}: net amount, second {string}: fee
     public void theDonationAmountShouldBeRecorded(String netAmountStr, String feeStr) {
+// => Two string parameters in order of appearance
         Money expectedNet = MoneyParser.parse(netAmountStr);
+// => Parse expected net amount
         Money expectedFee = MoneyParser.parse(feeStr);
+// => Parse expected fee
 
         assertThat(result.getDonation().getNetAmount()).isEqualTo(expectedNet);
+// => Verify net amount matches expectation
         assertThat(result.getDonation().getFee()).isEqualTo(expectedFee);
+// => Verify fee calculation correct
     }
 }
 ```
@@ -523,32 +645,56 @@ public class DonationSteps {
 
 ```java
 @Given("the following donation funds exist:")
+// => @Given step accepting data table from Gherkin
 public void theFollowingDonationFundsExist(DataTable dataTable) {
+// => DataTable parameter: Cucumber's table representation
+// => Automatically populated from Gherkin table
     List<Map<String, String>> rows = dataTable.asMaps();
+// => Convert table to list of maps
+// => Each map: column header → cell value
+// => First row: headers, remaining rows: data
 
     for (Map<String, String> row : rows) {
+// => Iterate each data row
         FundId fundId = FundId.of(row.get("Fund ID"));
+// => Extract "Fund ID" column value
+// => Convert string to FundId value object
         String fundName = row.get("Fund Name");
+// => Extract "Fund Name" column value
         String category = row.get("Category");
+// => Extract "Category" column value
 
         fundRepository.save(new Fund(fundId, fundName, category));
+// => Create and persist Fund entity
+// => Setup test data from Gherkin table
     }
 }
 
 // Alternative: Custom type with automatic transformation
+// => Type-safe approach using records
 @Given("the following donation funds exist:")
 public void theFollowingFundsExist(List<FundData> funds) {
+// => Cucumber automatically converts table to List<FundData>
+// => Requires data transformer registration
     funds.forEach(fund -> fundRepository.save(
+// => Lambda: process each FundData
         new Fund(fund.id(), fund.name(), fund.category())
+// => Convert FundData to Fund entity
     ));
 }
 
 // Custom data type
+// => Record: immutable data class (Java 16+)
 public record FundData(
     @CucumberTableColumn("Fund ID") FundId id,
+// => Map "Fund ID" column to id field
+// => Cucumber handles FundId conversion via custom parameter type
     @CucumberTableColumn("Fund Name") String name,
+// => Map "Fund Name" column to name field
     @CucumberTableColumn("Category") String category
+// => Map "Category" column to category field
 ) {}
+// => Cleaner than Map<String, String>: type-safe, compile-time checking
 ```
 
 **DataTable provides flexible access** to table rows as maps or custom objects.
@@ -561,14 +707,25 @@ public record FundData(
 
 ```java
 @Then("the receipt should contain:")
+// => @Then step accepting doc string (multi-line text)
 public void theReceiptShouldContain(String expectedReceipt) {
+// => String parameter: Cucumber passes doc string content
+// => Preserves newlines and formatting from Gherkin
     String actualReceipt = receiptGenerator.generate(zakatPayment);
+// => Generate actual receipt from payment object
 
     // Normalize whitespace for comparison
+// => Whitespace normalization: avoid fragile tests
     String normalizedExpected = expectedReceipt.trim().replaceAll("\\s+", " ");
+// => Remove leading/trailing whitespace
+// => Replace multiple spaces/newlines with single space
     String normalizedActual = actualReceipt.trim().replaceAll("\\s+", " ");
+// => Normalize actual output same way
+// => Focus on content, not formatting details
 
     assertThat(normalizedActual).contains(normalizedExpected);
+// => Verify actual contains expected content
+// => Contains (not equals): more flexible for dynamic data
 }
 ```
 
@@ -582,37 +739,66 @@ public void theReceiptShouldContain(String expectedReceipt) {
 
 ```java
 import io.cucumber.java.ParameterType;
+// => Cucumber annotation for custom parameter types
 
 public class ParameterTypes {
+// => Centralized parameter type definitions
+// => Cucumber scans and registers automatically
     @ParameterType("\\d+(?:,\\d{3})* [A-Z]{3}")
+// => Regex pattern matching money format
+// => \\d+(?:,\\d{3})*: number with optional thousand separators
+// => [A-Z]{3}: three-letter currency code (USD, EUR, etc.)
+// => Matches: "1,000 USD", "50 EUR", "100,000 USD"
     public Money money(String moneyStr) {
+// => Method name becomes parameter type: {money}
+// => moneyStr: matched string from Gherkin
         String[] parts = moneyStr.split(" ");
+// => Split "1,000 USD" into ["1,000", "USD"]
         String amountStr = parts[0].replace(",", "");
+// => Remove thousand separators: "1,000" → "1000"
         String currencyCode = parts[1];
+// => Extract currency code
 
         return Money.of(new BigDecimal(amountStr), currencyCode);
+// => Create Money value object
+// => BigDecimal for precise decimal arithmetic
     }
 
     @ParameterType("[A-Z]{2}-\\d+")
+// => Regex for donor ID format: "DO-001", "DO-123"
+// => Two uppercase letters, hyphen, digits
     public DonorId donorId(String id) {
+// => Parameter type name: {donorId}
         return DonorId.of(id);
+// => Convert string to DonorId value object
     }
 
     @ParameterType("\\d{4}-\\d{2}-\\d{2}")
+// => ISO date format: YYYY-MM-DD
     public LocalDate date(String dateStr) {
+// => Parameter type name: {date}
         return LocalDate.parse(dateStr);
+// => Parse ISO date to LocalDate
     }
 }
 
 // Usage in step definitions
+// => Custom types eliminate manual parsing
 @When("the donor makes a donation of {money}")
+// => {money}: custom parameter type (not {string})
 public void theDonorMakesADonation(Money amount) {
+// => Money parameter: already parsed by custom type
+// => No manual MoneyParser.parse() needed
     this.result = donationService.createDonation(donor.getId(), amount);
+// => Directly use Money object
 }
 
 @Given("a donor with ID {donorId}")
+// => {donorId}: custom parameter type
 public void aDonorWithId(DonorId donorId) {
+// => DonorId parameter: type-safe, no string parsing
     this.donor = testDataBuilder.createDonor(donorId);
+// => Clean step definition: focus on business logic
 }
 ```
 
@@ -626,34 +812,59 @@ public void aDonorWithId(DonorId donorId) {
 
 ```java
 import io.cucumber.java.*;
+// => Cucumber hook annotations: @Before, @After, @BeforeStep, @AfterStep
 
 public class Hooks {
+// => Centralized lifecycle hooks for scenarios
     private TestDataBuilder testDataBuilder;
+// => Test data builder for scenario setup
     private DatabaseCleaner databaseCleaner;
+// => Database cleanup utility
 
     @Before
+// => Runs before every scenario
+// => Order: @Before → scenario steps → @After
     public void setUp() {
         // Run before each scenario
+// => Setup executed before Given steps
         testDataBuilder.reset();
+// => Reset test data builder state
+// => Ensures clean state for each scenario
     }
 
     @After
+// => Runs after every scenario (success or failure)
     public void tearDown() {
         // Run after each scenario
+// => Cleanup executed after Then steps
         databaseCleaner.clean();
+// => Clean database for next scenario
+// => Prevents test pollution (scenario independence)
     }
 
     @Before("@database")
+// => Conditional hook: only runs for @database tagged scenarios
+// => Tag-based execution: selective setup
     public void setUpDatabase() {
         // Run only for scenarios tagged @database
+// => Expensive setup only when needed
         databaseCleaner.prepare();
+// => Prepare database schema or seed data
     }
 
     @AfterStep
+// => Runs after each Given/When/Then step
+// => Scenario parameter: access scenario metadata
     public void takeScreenshot(Scenario scenario) {
         // Run after each step
+// => Step-level hook for debugging
         if (scenario.isFailed()) {
+// => Check if current step failed
+// => Scenario.isFailed(): true when assertion fails
             // Take screenshot or log details
+// => Capture state at failure point
+// => Production: attach screenshot to Cucumber report
+// => scenario.attach(bytes, "image/png", "screenshot")
         }
     }
 }

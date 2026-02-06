@@ -1937,15 +1937,26 @@ Handle SIGTERM signals for zero-downtime deployments.
 
 ```java
 public class Application {
+// => Spring Boot application with graceful shutdown support
     public static void main(String[] args) {
+// => Entry point: starts Spring Boot application
         SpringApplication app = new SpringApplication(Application.class);
+// => Creates Spring application: configures context
         app.run(args);
+// => Starts application: launches embedded server, initializes beans
 
         // Graceful shutdown on SIGTERM
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+// => Shutdown hook: JVM calls this when receiving SIGTERM (Kubernetes pod termination)
+// => Lambda thread: executes cleanup asynchronously
             System.out.println("Received SIGTERM, shutting down gracefully...");
+// => Logs shutdown: indicates graceful termination started
             // Clean up resources
+// => Resource cleanup: close connections, flush buffers, finish in-flight requests
+// => Kubernetes context: happens after preStop hook, before SIGKILL timeout
         }));
+// => Registered with JVM: ensures cleanup before process termination
+// => Graceful shutdown: prevents abrupt connection drops, data loss
     }
 }
 ```

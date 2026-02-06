@@ -50,57 +50,84 @@ import java.util.function.Supplier;
 
 public class RetryWithBackoff {
     private final int maxAttempts;
+    // => Maximum retry attempts before giving up
     private final Duration initialDelay;
+    // => Starting delay (e.g., 1 second)
     private final double multiplier;
+    // => Exponential factor (e.g., 2.0 doubles each retry)
     private final Random random = new Random();
+    // => For jitter calculation (prevents thundering herd)
 
     public RetryWithBackoff(int maxAttempts, Duration initialDelay, double multiplier) {
         this.maxAttempts = maxAttempts;
+        // => Store: Max attempts (e.g., 5)
         this.initialDelay = initialDelay;
+        // => Store: Initial delay (e.g., 1s)
         this.multiplier = multiplier;
+        // => Store: Backoff multiplier (e.g., 2.0 for exponential)
     }
 
     public <T> T execute(Supplier<T> operation) {
         Exception lastException = null;
+        // => Track last failure for final exception
         long delay = initialDelay.toMillis();
+        // => Current delay in milliseconds (starts at initialDelay)
 
         for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            // => Loop: attempt 1, 2, 3... up to maxAttempts
             try {
-                return operation.get();  // SUCCESS
+                return operation.get();
+                // => TRY OPERATION: Call provided function
+                // => SUCCESS PATH: Return immediately (no more retries)
             } catch (Exception e) {
                 lastException = e;
+                // => FAILURE: Store exception
                 if (attempt == maxAttempts) {
-                    break;  // EXHAUSTED: No more retries
+                    break;
+                    // => EXHAUSTED: Last attempt failed, exit loop
                 }
 
-                // EXPONENTIAL BACKOFF with jitter
+                // => EXPONENTIAL BACKOFF with jitter
                 long jitter = (long) (delay * 0.1 * random.nextDouble());
+                // => JITTER: Random 0-10% of delay
+                // => Purpose: Prevents synchronized retries (thundering herd)
+                // => Example: 1000ms ± 100ms randomness
                 long sleepTime = delay + jitter;
+                // => TOTAL DELAY: base delay + random jitter
 
                 try {
                     Thread.sleep(sleepTime);
+                    // => WAIT: Sleep before next retry
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
+                    // => INTERRUPTED: Restore interrupt flag
                     throw new RuntimeException("Retry interrupted", ie);
+                    // => ABORT: Throw exception if interrupted
                 }
 
-                delay = (long) (delay * multiplier);  // INCREASE: 1s → 2s → 4s → 8s
+                delay = (long) (delay * multiplier);
+                // => EXPONENTIAL INCREASE: Multiply delay for next attempt
+                // => Example: 1s → 2s → 4s → 8s (with multiplier 2.0)
             }
         }
 
         throw new RuntimeException("Failed after " + maxAttempts + " attempts", lastException);
+        // => FINAL FAILURE: All retries exhausted, throw with last exception
     }
 }
 
-// USAGE
+// => USAGE EXAMPLE
 RetryWithBackoff retry = new RetryWithBackoff(
-    5,  // MAX 5 attempts
-    Duration.ofSeconds(1),  // START with 1 second
-    2.0  // DOUBLE each time
+    5,  // => MAX 5 attempts (1 initial + 4 retries)
+    Duration.ofSeconds(1),  // => START with 1 second delay
+    2.0  // => DOUBLE delay each time (exponential backoff)
 );
+// => Timing: 0s, 1s, 2s, 4s, 8s (total ~15s before final failure)
 
 String result = retry.execute(() -> {
-    return externalService.call();  // MIGHT FAIL TRANSIENTLY
+    return externalService.call();
+    // => Operation that MIGHT FAIL transiently
+    // => Network glitches, temporary overload, etc.
 });
 ```
 
@@ -213,35 +240,55 @@ import java.util.function.Supplier;
 
 public class CircuitBreaker {
     private enum State { CLOSED, OPEN, HALF_OPEN }
+    // => CLOSED: Normal operation (requests flow through)
+    // => OPEN: Circuit tripped (requests fail immediately)
+    // => HALF_OPEN: Testing (allow limited requests to check recovery)
 
     private final int failureThreshold;
+    // => How many failures before opening circuit (e.g., 5)
     private final Duration timeout;
+    // => How long to wait before testing recovery (e.g., 30 seconds)
     private final AtomicInteger failureCount = new AtomicInteger(0);
+    // => Thread-safe failure counter (atomic operations)
     private final AtomicReference<State> state = new AtomicReference<>(State.CLOSED);
+    // => Thread-safe state holder (starts CLOSED)
     private volatile Instant openedAt;
+    // => Timestamp when circuit opened (volatile for visibility)
 
     public CircuitBreaker(int failureThreshold, Duration timeout) {
         this.failureThreshold = failureThreshold;
+        // => Store: Failures needed to open circuit
         this.timeout = timeout;
+        // => Store: Wait time before attempting recovery
     }
 
     public <T> T execute(Supplier<T> operation) {
         if (state.get() == State.OPEN) {
-            // CHECK: Timeout elapsed?
+            // => CIRCUIT OPEN: Check if timeout elapsed
             if (Instant.now().isAfter(openedAt.plus(timeout))) {
-                state.set(State.HALF_OPEN);  // TRANSITION: Try one request
+                // => TIMEOUT ELAPSED: Time to test recovery
+                state.set(State.HALF_OPEN);
+                // => TRANSITION: OPEN → HALF_OPEN (allow test request)
             } else {
+                // => STILL OPEN: Timeout not elapsed, fail fast
                 throw new CircuitBreakerOpenException("Circuit breaker is OPEN");
+                // => FAST FAIL: No request to failing service (prevents overload)
             }
         }
 
         try {
-            T result = operation.get();  // EXECUTE
+            T result = operation.get();
+            // => EXECUTE OPERATION: Call underlying service
+            // => May throw exception if service fails
             onSuccess();
+            // => SUCCESS: Record successful execution
             return result;
+            // => Return: Operation result
         } catch (Exception e) {
             onFailure();
+            // => FAILURE: Record failed execution
             throw e;
+            // => Rethrow: Propagate exception to caller
         }
     }
 

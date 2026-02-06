@@ -124,21 +124,32 @@ end
 
 # Core services subtree
 defmodule Finance.CoreSupervisor do
-  use Supervisor
+  use Supervisor                                 # => Supervisor behavior
+                                                 # => Provides init/1 callback
 
   def start_link(init_arg) do
     Supervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
+                                                 # => Starts supervisor process
+                                                 # => Registers with module name
+                                                 # => Returns {:ok, pid}
   end
 
   def init(_init_arg) do
     children = [
-      {Finance.ZakatCalculator, []},             # => Zakat calculation
-      {Finance.DonationTracker, []},             # => Donation tracking
-      {Finance.TransactionSupervisor, []}        # => Nested: transaction workers
+      {Finance.ZakatCalculator, []},             # => Zakat calculation service
+                                                 # => First child in tree
+      {Finance.DonationTracker, []},             # => Donation tracking service
+                                                 # => Second child in tree
+      {Finance.TransactionSupervisor, []}        # => Nested: transaction workers pool
+                                                 # => Third child manages dynamic workers
     ]                                            # => Core financial services
                                                  # => TransactionSupervisor manages pool
+                                                 # => Three children total
 
     Supervisor.init(children, strategy: :one_for_one)
+                                                 # => :one_for_one strategy
+                                                 # => If child dies, restart only that child
+                                                 # => Returns {:ok, {supervisor_spec, children}}
   end
 end
 
@@ -146,24 +157,33 @@ end
 defmodule Finance.TransactionSupervisor do
   use DynamicSupervisor                          # => Dynamic child management
                                                  # => Start/stop children at runtime
+                                                 # => Provides start_child/2 interface
 
   def start_link(init_arg) do
     DynamicSupervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
+                                                 # => Starts dynamic supervisor process
+                                                 # => Registers with module name
+                                                 # => Returns {:ok, pid}
   end
 
   def init(_init_arg) do
     DynamicSupervisor.init(strategy: :one_for_one)
+                                                 # => Configure supervision strategy
                                                  # => Children started dynamically
                                                  # => Not in init/1
+                                                 # => Returns {:ok, state}
   end
 
   def start_transaction(transaction_data) do
     spec = {Finance.TransactionWorker, transaction_data}
-                                                 # => Child specification
+                                                 # => Child specification tuple
+                                                 # => Module: Finance.TransactionWorker
                                                  # => transaction_data: Worker init args
+                                                 # => Format: {module, args}
     DynamicSupervisor.start_child(__MODULE__, spec)
                                                  # => Starts supervised worker
-                                                 # => Returns {:ok, pid}
+                                                 # => Worker added to supervision tree
+                                                 # => Returns {:ok, pid} or {:error, reason}
   end
 end
 ```
@@ -268,41 +288,57 @@ end
 
 ```elixir
 defmodule Finance.DonationTracker do
-  use GenServer
+  use GenServer                                  # => GenServer behavior
+                                                 # => Provides init/1, handle_call/3 callbacks
 
   # Client API
   def start_link(user_id) do
     GenServer.start_link(__MODULE__, user_id, name: via_tuple(user_id))
-                                                 # => Registers with Registry
+                                                 # => Starts GenServer process
+                                                 # => Registers with Registry via via_tuple
                                                  # => Multiple instances (one per user)
+                                                 # => Returns {:ok, pid}
   end
 
   defp via_tuple(user_id) do
     {:via, Registry, {Finance.Registry, {__MODULE__, user_id}}}
-                                                 # => Registry-based name
-                                                 # => {module, user_id} as key
+                                                 # => Registry-based name tuple
+                                                 # => Format: {:via, Registry, {registry_name, key}}
+                                                 # => {module, user_id} as unique key
+                                                 # => Allows multiple instances per user
                                                  # => Unique per user
   end
 
   def track_donation(user_id, amount) do
     case Registry.lookup(Finance.Registry, {__MODULE__, user_id}) do
-      [{pid, _}] ->                              # => Process found
-        GenServer.call(pid, {:donate, amount})   # => Send message to process
+      [{pid, _}] ->                              # => Process found in registry
+                                                 # => pid: Process identifier
+                                                 # => _: Process value (unused)
+        GenServer.call(pid, {:donate, amount})   # => Send synchronous message to process
+                                                 # => Returns updated total
       [] ->                                      # => Process not found
-        {:error, :not_found}                     # => Return error
+                                                 # => Empty list from lookup
+        {:error, :not_found}                     # => Return not_found error
+                                                 # => User has no tracker process
     end
   end
 
   # Server callbacks
   def init(user_id) do
     state = %{user_id: user_id, total: 0}        # => Initial state: zero donations
-    {:ok, state}
+                                                 # => user_id: User identifier
+                                                 # => total: Accumulated donation amount
+    {:ok, state}                                 # => Return initial state tuple
   end
 
   def handle_call({:donate, amount}, _from, state) do
-    new_total = state.total + amount             # => Add donation
-    new_state = %{state | total: new_total}      # => Update total
+    new_total = state.total + amount             # => Add donation amount to total
+                                                 # => Accumulates user's donations
+    new_state = %{state | total: new_total}      # => Update state with new total
+                                                 # => Map update syntax
     {:reply, new_total, new_state}               # => Reply with new total
+                                                 # => Update process state
+                                                 # => Format: {:reply, response, new_state}
   end
 end
 
@@ -311,10 +347,16 @@ def start(_type, _args) do
   children = [
     {Registry, keys: :unique, name: Finance.Registry},
                                                  # => Registry for process lookup
-                                                 # => :unique - One value per key
+                                                 # => keys: :unique - One value per key
+                                                 # => name: Finance.Registry - Registry identifier
+                                                 # => Used by via_tuple for process registration
+                                                 # => Enables multiple named processes
     # ... other children
   ]
   Supervisor.start_link(children, strategy: :one_for_one)
+                                                 # => Starts application supervisor
+                                                 # => Registry started as first child
+                                                 # => Returns {:ok, pid}
 end
 ```
 

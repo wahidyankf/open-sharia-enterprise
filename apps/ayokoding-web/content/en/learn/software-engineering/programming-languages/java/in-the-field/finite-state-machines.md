@@ -44,45 +44,64 @@ This guide covers enum-based FSMs for simple cases and class-based FSMs for comp
 **Example transformation:**
 
 ```java
-// PROBLEMATIC: Boolean flag soup
+// => PROBLEMATIC: Boolean flag soup (anti-pattern)
 public class Order {
     private boolean pending = true;
     private boolean confirmed = false;
     private boolean shipped = false;
     private boolean delivered = false;
     private boolean cancelled = false;
+    // => PROBLEM 1: Can have contradictory states (pending=true, delivered=true)
+    // => PROBLEM 2: No compile-time guarantee only one state active
+    // => PROBLEM 3: No transition validation
 
-    // PROBLEM: Multiple flags can be true simultaneously!
-    // PROBLEM: No validation of transitions
     public void confirm() {
         pending = false;
+        // => Sets pending false
         confirmed = true;
+        // => Sets confirmed true
+        // => DANGER: What if someone forgets to set pending=false?
+        // => DANGER: No validation that current state is actually PENDING
     }
 }
 
-// SOLUTION: Enum-based FSM
+// => SOLUTION: Enum-based FSM (finite state machine)
 public class Order {
     public enum State {
         PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED
+        // => All possible states defined explicitly
+        // => GUARANTEE: Only ONE state at a time (enum property)
     }
 
     private State state = State.PENDING;
+    // => Single state field (not multiple booleans)
+    // => INITIAL STATE: PENDING
 
     public void confirm() {
         validateTransition(State.PENDING, State.CONFIRMED);
+        // => VALIDATE: Can only confirm if currently PENDING
+        // => THROWS: IllegalStateException if invalid transition
         state = State.CONFIRMED;
+        // => TRANSITION: PENDING → CONFIRMED
+        // => ATOMIC: State change is single assignment
     }
 
     public void ship() {
         validateTransition(State.CONFIRMED, State.SHIPPED);
+        // => VALIDATE: Can only ship if currently CONFIRMED
         state = State.SHIPPED;
+        // => TRANSITION: CONFIRMED → SHIPPED
     }
 
     private void validateTransition(State expected, State next) {
         if (state != expected) {
+            // => INVALID TRANSITION: Current state doesn't match expected
             throw new IllegalStateException(
                 "Cannot transition from " + state + " to " + next);
+            // => ERROR MESSAGE: Shows current and attempted transition
+            // => PREVENTS: Invalid state changes (e.g., DELIVERED → PENDING)
         }
+        // => VALID TRANSITION: Current state matches expected, allow change
     }
 }
 ```
@@ -171,52 +190,69 @@ public void transition(OrderState newState) {
 **Example:**
 
 ```java
-// STATE INTERFACE: Common operations
+// => STATE INTERFACE: Contract for all connection states
 public interface ConnectionState {
     void connect(Connection context);
+    // => Attempt to connect (behavior varies by state)
     void disconnect(Connection context);
+    // => Attempt to disconnect (behavior varies by state)
     void send(Connection context, String data);
+    // => Send data (behavior varies by state)
     String getStateName();
+    // => Return state name for debugging
 }
 
-// CONCRETE STATE: Disconnected
+// => CONCRETE STATE: Disconnected state implementation
 public class DisconnectedState implements ConnectionState {
     @Override
     public void connect(Connection context) {
         System.out.println("Connecting...");
-        context.setState(new ConnectedState());  // TRANSITION
+        // => STATE-SPECIFIC BEHAVIOR: Connecting is valid when disconnected
+        context.setState(new ConnectedState());
+        // => TRANSITION: Change state to ConnectedState
+        // => Context now holds ConnectedState instance
     }
 
     @Override
     public void disconnect(Connection context) {
         throw new IllegalStateException("Already disconnected");
+        // => INVALID OPERATION: Can't disconnect when already disconnected
+        // => STATE ENFORCEMENT: Prevents invalid operations
     }
 
     @Override
     public void send(Connection context, String data) {
         throw new IllegalStateException("Cannot send when disconnected");
+        // => INVALID OPERATION: Can't send data without connection
+        // => BUSINESS RULE: Enforced by state pattern
     }
 
     @Override
     public String getStateName() { return "DISCONNECTED"; }
+    // => Returns: "DISCONNECTED" for logging/debugging
 }
 
-// CONCRETE STATE: Connected
+// => CONCRETE STATE: Connected state implementation
 public class ConnectedState implements ConnectionState {
     @Override
     public void connect(Connection context) {
         throw new IllegalStateException("Already connected");
+        // => INVALID OPERATION: Can't connect when already connected
     }
 
     @Override
     public void disconnect(Connection context) {
         System.out.println("Disconnecting...");
-        context.setState(new DisconnectedState());  // TRANSITION
+        // => STATE-SPECIFIC BEHAVIOR: Disconnecting is valid when connected
+        context.setState(new DisconnectedState());
+        // => TRANSITION: Change state to DisconnectedState
     }
 
     @Override
     public void send(Connection context, String data) {
-        System.out.println("Sending: " + data);  // STATE-SPECIFIC BEHAVIOR
+        System.out.println("Sending: " + data);
+        // => STATE-SPECIFIC BEHAVIOR: Sending allowed in connected state
+        // => Example output: "Sending: Hello"
     }
 
     @Override

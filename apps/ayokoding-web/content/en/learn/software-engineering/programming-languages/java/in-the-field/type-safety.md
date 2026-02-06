@@ -74,11 +74,22 @@ public class PersonBean {
     }
 }
 
-// SOLUTION: Concise record
+// => SOLUTION: Concise record (automatic everything)
 public record Person(String name, int age) {
-    // COMPACT CONSTRUCTOR: validation
+    // => RECORD: Automatically generates:
+    // => - final fields (immutable)
+    // => - constructor Person(String name, int age)
+    // => - getters: name(), age() (not getName/getAge)
+    // => - equals() based on all fields
+    // => - hashCode() based on all fields
+    // => - toString() in format: Person[name=Alice, age=30]
+
+    // => COMPACT CONSTRUCTOR: Validation before field assignment
     public Person {
         if (age < 0) throw new IllegalArgumentException("Age must be non-negative");
+        // => VALIDATION: Enforces age >= 0 invariant
+        // => EXECUTES: Before fields assigned
+        // => IMMUTABILITY: Once created, cannot be changed
     }
 }
 ```
@@ -137,20 +148,35 @@ if (obj instanceof Person(String name, int age)) {
 **Comparison:**
 
 ```java
-// PROBLEMATIC: Implicit null handling
+// => PROBLEMATIC: Implicit null handling (defensive bloat)
 public String getUserEmail(String userId) {
-    User user = findUser(userId);  // MIGHT BE NULL
-    if (user == null) return null;  // PROPAGATES NULL
-    Address address = user.getAddress();  // MIGHT BE NULL
+    User user = findUser(userId);
+    // => IMPLICIT: Return type doesn't indicate user might be null
+    // => PROBLEM: Caller doesn't know to check for null
+    if (user == null) return null;
+    // => DEFENSIVE CHECK: Manual null validation
+    // => PROPAGATES NULL: Returns null if user not found
+    Address address = user.getAddress();
+    // => IMPLICIT: address might be null
     if (address == null) return null;
-    return address.getEmail();  // MIGHT BE NULL
+    // => NESTED CHECKS: Defensive code piles up
+    return address.getEmail();
+    // => IMPLICIT: email might be null
+    // => TOTAL: 3 potential null returns, unclear from signature
 }
 
-// SOLUTION: Explicit Optional chaining
+// => SOLUTION: Explicit Optional chaining (monadiccomposition)
 public Optional<String> getUserEmail(String userId) {
-    return findUser(userId)  // Optional<User>
-        .flatMap(User::getAddress)  // Optional<Address>
-        .flatMap(Address::getEmail);  // Optional<String>
+    // => EXPLICIT: Return type clearly indicates "might be absent"
+    return findUser(userId)
+        // => Returns: Optional<User> (explicit nullability)
+        .flatMap(User::getAddress)
+        // => flatMap: Chains Optional<Address> (flattens nested Optional)
+        // => If user absent: Short-circuits, returns empty
+        .flatMap(Address::getEmail);
+        // => flatMap: Chains Optional<String>
+        // => RESULT: Optional<String> (empty if any step fails)
+        // => NO NULL CHECKS: Monadic chaining handles absence
 }
 
 // USAGE

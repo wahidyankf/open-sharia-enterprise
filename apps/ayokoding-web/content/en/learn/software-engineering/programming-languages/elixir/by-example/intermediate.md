@@ -395,156 +395,195 @@ graph TD
 **Code**:
 
 ```elixir
-defmodule WithExamples do
+defmodule WithExamples do           # => Defines module for with expression examples
   # Simulate API functions (return tagged tuples)
-  def fetch_user(id) do
-    case id do
+  def fetch_user(id) do             # => Simulates database/API user fetch
+                                     # => Returns tagged tuple {:ok, user} or {:error, reason}
+    case id do                       # => Pattern matches on user id
       1 -> {:ok, %{id: 1, name: "Alice", account_id: 101}}
-      # => Success: returns {:ok, user_map}
+                                     # => Success: returns {:ok, user_map}
+                                     # => User 1 linked to account 101
       2 -> {:ok, %{id: 2, name: "Bob", account_id: 102}}
-      _ -> {:error, :user_not_found}
-      # => Failure: returns {:error, atom}
-    end
-  end
+                                     # => User 2 linked to account 102
+      _ -> {:error, :user_not_found}  # => Failure: returns {:error, atom}
+                                     # => Any other id returns error
+    end                              # => Ends case expression
+  end                                # => Ends fetch_user function
 
-  def fetch_account(account_id) do
-    case account_id do
+  def fetch_account(account_id) do  # => Simulates account data fetch
+                                     # => Takes account_id from user record
+    case account_id do               # => Pattern matches on account_id
       101 -> {:ok, %{id: 101, balance: 1000}}
+                                     # => Account 101 has balance 1000
       102 -> {:ok, %{id: 102, balance: 500}}
+                                     # => Account 102 has balance 500
       _ -> {:error, :account_not_found}
+                                     # => Unknown account returns error
     end
   end
 
-  def fetch_transactions(account_id) do
+  def fetch_transactions(account_id) do  # => Simulates transaction history fetch
+                                     # => Returns list of transaction maps
     case account_id do
       101 -> {:ok, [%{amount: 100}, %{amount: -50}]}
-      # => Returns list of transaction maps
-      102 -> {:ok, [%{amount: 200}]}
+                                     # => Returns list of transaction maps
+                                     # => Account 101 has 2 transactions
+      102 -> {:ok, [%{amount: 200}]}  # => Account 102 has 1 transaction
       _ -> {:error, :transactions_not_found}
+                                     # => Unknown account returns error
     end
   end
 
   # ❌ WITHOUT `with` - nested case statements (pyramid of doom)
-  def get_user_summary_nested(user_id) do
-    case fetch_user(user_id) do
-      # => Level 1 nesting
-      {:ok, user} ->
-        case fetch_account(user.account_id) do
-          # => Level 2 nesting
-          {:ok, account} ->
-            case fetch_transactions(account.id) do
-              # => Level 3 nesting (hard to read!)
-              {:ok, transactions} ->
+  def get_user_summary_nested(user_id) do  # => Traditional nested approach
+                                     # => Demonstrates problem with solves
+    case fetch_user(user_id) do      # => First API call
+                                     # => Level 1 nesting
+      {:ok, user} ->                 # => User fetch succeeded
+                                     # => Extracts user from {:ok, user} tuple
+        case fetch_account(user.account_id) do  # => Second API call (nested)
+                                     # => Level 2 nesting
+                                     # => Uses user.account_id from level 1
+          {:ok, account} ->          # => Account fetch succeeded
+                                     # => Extracts account from tuple
+            case fetch_transactions(account.id) do  # => Third API call (deeply nested)
+                                     # => Level 3 nesting (hard to read!)
+                                     # => Uses account.id from level 2
+              {:ok, transactions} -> # => All three fetches succeeded
+                                     # => Extracts transactions from tuple
                 {:ok, %{user: user, account: account, transactions: transactions}}
-              {:error, reason} ->
-                {:error, reason}
-                # => Must repeat error handling at each level
+                                     # => Builds success result map
+                                     # => Returns all three fetched values
+              {:error, reason} ->    # => Transaction fetch failed
+                {:error, reason}     # => Must repeat error handling at each level
             end
-          {:error, reason} ->
-            {:error, reason}
-            # => Duplicated error handling
+          {:error, reason} ->        # => Account fetch failed
+            {:error, reason}         # => Duplicated error handling
         end
-      {:error, reason} ->
-        {:error, reason}
-        # => Error handling repeated 3 times!
-    end
-  end
+      {:ok, reason} ->        # => User fetch failed
+        {:error, reason}             # => Error handling repeated 3 times!
+                                     # => Same pattern at every nesting level
+    end                              # => Ends deeply nested case expression
+  end                                # => Ends nested function
 
   # ✅ WITH `with` - clean happy path (linear, readable)
-  def get_user_summary(user_id) do
+  def get_user_summary(user_id) do  # => Clean version using with expression
+                                     # => Same logic, much more readable
     with {:ok, user} <- fetch_user(user_id),
-         # => Step 1: pattern match {:ok, user}
-         # => If matches: continue to step 2
-         # => If doesn't match: jump to else block
+                                     # => Step 1: pattern match {:ok, user}
+                                     # => Left side is pattern, right side is expression
+                                     # => If matches: continue to step 2
+                                     # => If doesn't match: jump to else block
          {:ok, account} <- fetch_account(user.account_id),
-         # => Step 2: uses user from step 1
-         # => Chain continues only if pattern matches
+                                     # => Step 2: uses user from step 1
+                                     # => user binding available from previous step
+                                     # => Chain continues only if pattern matches
          {:ok, transactions} <- fetch_transactions(account.id) do
-         # => Step 3: uses account from step 2
-         # => All patterns matched: execute do block
+                                     # => Step 3: uses account from step 2
+                                     # => account binding available from step 2
+                                     # => All patterns matched: execute do block
       # Happy path - all matches succeeded
-      {:ok, %{
-        user: user.name,
-        # => user binding from step 1
-        balance: account.balance,
-        # => account binding from step 2
+      {:ok, %{                       # => Builds success result
+        user: user.name,             # => user binding from step 1
+                                     # => Extracts name field from user map
+        balance: account.balance,    # => account binding from step 2
+                                     # => Extracts balance field
         transaction_count: length(transactions)
-        # => transactions binding from step 3
-      }}
-    else
-      # First mismatch jumps here (short-circuit)
+                                     # => transactions binding from step 3
+                                     # => Counts number of transactions
+      }}                             # => Returns {:ok, summary_map}
+    else                             # => Handles any pattern mismatch
+                                     # => First mismatch jumps here (short-circuit)
       {:error, :user_not_found} -> {:error, "User not found"}
-      # => Pattern match error from step 1
+                                     # => Pattern match error from step 1
+                                     # => Converts atom to user-friendly message
       {:error, :account_not_found} -> {:error, "Account not found"}
-      # => Pattern match error from step 2
+                                     # => Pattern match error from step 2
       {:error, :transactions_not_found} -> {:error, "Transactions not found"}
-      # => Pattern match error from step 3
-      # => Consolidated error handling in one place!
-    end
-  end
+                                     # => Pattern match error from step 3
+                                     # => Consolidated error handling in one place!
+    end                              # => Ends with expression
+  end                                # => Ends get_user_summary function
 
   # `with` can match any pattern (not just :ok/:error)
-  def complex_calculation(x) do
+  def complex_calculation(x) do      # => Demonstrates with for calculation chains
+                                     # => Shows pattern matching flexibility
     with {:ok, doubled} <- {:ok, x * 2},
-         # => x = 5 → {:ok, 10}
-         # => Matches pattern, doubled = 10
+                                     # => x = 5 → {:ok, 10}
+                                     # => Right side evaluates, left pattern matches
+                                     # => Matches pattern, doubled = 10
          {:ok, incremented} <- {:ok, doubled + 1},
-         # => {:ok, 11}, incremented = 11
+                                     # => {:ok, 11}, incremented = 11
+                                     # => Uses doubled from previous step
          {:ok, squared} <- {:ok, incremented * incremented} do
-         # => {:ok, 121}, squared = 121
-      {:ok, squared}
-      # => Returns {:ok, 121}
-    else
+                                     # => {:ok, 121}, squared = 121
+                                     # => Uses incremented from previous step
+      {:ok, squared}                 # => Returns {:ok, 121}
+                                     # => All steps succeeded, return final value
+    else                             # => Handles pattern mismatch (won't happen here)
       _ -> {:error, "calculation failed"}
-      # => Catch-all for any non-matching pattern
-    end
-  end
+                                     # => Catch-all for any non-matching pattern
+                                     # => Would execute if any step failed
+    end                              # => Ends with expression
+  end                                # => Ends complex_calculation function
 
   # Boolean guards in `with` (Elixir 1.3+)
-  def process_number(x) when is_integer(x) do
-    with true <- x > 0,
-         # => Matches true or jumps to else
-         # => Pattern: true <- boolean_expression
-         true <- x < 100 do
-         # => Second validation: x must be < 100
-      {:ok, "Valid number: #{x}"}
-      # => Both guards passed
-    else
+  def process_number(x) when is_integer(x) do  # => Function guard ensures integer
+                                     # => with can validate with boolean expressions
+    with true <- x > 0,              # => Matches true or jumps to else
+                                     # => Pattern: true <- boolean_expression
+                                     # => First validation: x must be positive
+         true <- x < 100 do          # => Second validation: x must be < 100
+                                     # => Both must match true to proceed
+      {:ok, "Valid number: #{x}"}    # => Both guards passed
+                                     # => String interpolation with validated x
+    else                             # => Handles guard failures
       false -> {:error, "Number out of range"}
-      # => Either guard failed (returned false)
-      # => Both failures use same pattern
-    end
-  end
-end
+                                     # => Either guard failed (returned false)
+                                     # => Both failures use same pattern
+                                     # => Unified error message for range violations
+    end                              # => Ends with expression
+  end                                # => Ends process_number function
+end                                  # => Ends WithExamples module
 
 # Happy path - all steps succeed
-WithExamples.get_user_summary(1)
+WithExamples.get_user_summary(1)  # => Calls with user_id 1
 # => Step 1: fetch_user(1) → {:ok, %{id: 1, name: "Alice", account_id: 101}}
+# => Pattern {:ok, user} matches, user bound to map
 # => Step 2: fetch_account(101) → {:ok, %{id: 101, balance: 1000}}
+# => Pattern {:ok, account} matches, account bound to map
 # => Step 3: fetch_transactions(101) → {:ok, [...]}
+# => Pattern {:ok, transactions} matches, all steps succeeded
 # => do block executes → {:ok, %{balance: 1000, transaction_count: 2, user: "Alice"}}
 
-WithExamples.get_user_summary(2)
+WithExamples.get_user_summary(2)  # => Calls with user_id 2
 # => User Bob, account 102, balance 500, 1 transaction
+# => All three with steps succeed
 # => {:ok, %{balance: 500, transaction_count: 1, user: "Bob"}}
 
 # Failure path - short-circuit at step 1
-WithExamples.get_user_summary(999)
+WithExamples.get_user_summary(999)  # => Calls with invalid user_id
 # => Step 1: fetch_user(999) → {:error, :user_not_found}
 # => Pattern {:ok, user} doesn't match → jumps to else
+# => Steps 2 and 3 never execute (short-circuit)
 # => else block: {:error, :user_not_found} matches → {:error, "User not found"}
 
 # Calculation chain
-WithExamples.complex_calculation(5)
+WithExamples.complex_calculation(5)  # => Demonstrates with for calculations
 # => Step 1: {:ok, 5 * 2} = {:ok, 10}
+# => Pattern matches, doubled = 10
 # => Step 2: {:ok, 10 + 1} = {:ok, 11}
+# => Pattern matches, incremented = 11
 # => Step 3: {:ok, 11 * 11} = {:ok, 121}
+# => Pattern matches, squared = 121
 # => {:ok, 121}
 
 # Boolean guard validation
-WithExamples.process_number(50)
+WithExamples.process_number(50)  # => Tests boolean guards in with
 # => Guard 1: 50 > 0 → true (matches)
+# => First pattern true <- true succeeds
 # => Guard 2: 50 < 100 → true (matches)
+# => Second pattern true <- true succeeds
 # => {:ok, "Valid number: 50"}
 
 WithExamples.process_number(150)
@@ -1010,10 +1049,13 @@ defmodule MyModule do
   @default_timeout 5000
   # => Computed once during compilation
   # => Inlined wherever used (zero runtime cost)
+  # => @default_timeout is 5000
   @version "1.0.0"
   # => String constant
+  # => @version is "1.0.0"
   @max_retries 3
   # => Integer constant
+  # => @max_retries is 3
 
   # Function documentation (special reserved attribute)
   @doc """
@@ -1039,14 +1081,18 @@ defmodule MyModule do
   # Computed at compile time (not runtime!)
   @languages ["Elixir", "Erlang", "LFE"]
   # => List created once during compilation
+  # => @languages is ["Elixir", "Erlang", "LFE"]
   @language_count length(@languages)
   # => length/1 executed at compile time!
   # => Result: 3 (computed once, inlined everywhere)
+  # => @language_count is 3
 
   def supported_languages, do: @languages
   # => Returns ["Elixir", "Erlang", "LFE"] (compile-time constant)
+  # => Inlines to ["Elixir", "Erlang", "LFE"] (no runtime lookup)
   def language_count, do: @language_count
   # => Returns 3 (compile-time computed)
+  # => Inlines to 3 (no runtime computation)
 
   # Module registration (declares implemented behaviour)
   @behaviour :gen_server
@@ -1067,13 +1113,17 @@ defmodule MyModule do
   # Attributes are scoped to next function definition
   @important true
   # => Attribute active for next function
+  # => @important is true (at this point)
   def func1, do: @important
   # => Returns true (attribute value when func1 defined)
+  # => Captures @important value true
 
   @important false
   # => Redefines @important for next function
+  # => @important is now false (at this point)
   def func2, do: @important
   # => Returns false (NEW value, doesn't affect func1!)
+  # => Captures @important value false
 
   # Custom attributes for metadata
   @deprecated_message "Use new_function/1 instead"
@@ -2023,14 +2073,19 @@ graph TD
 ```elixir
 defmodule MyApp.ValidationError do
   # => Custom exception with default values
+  # => defexception creates struct with __exception__: true field
   defexception message: "Validation failed", field: nil
   # => Fields: message (string), field (atom or nil)
+  # => field stores which field failed validation
 
   @impl true
+  # => Implements Exception protocol's message/1 callback
   def message(exception) do
     # => Exception protocol callback for formatted messages
+    # => Called when exception converted to string (e.g., in error logs)
     "Validation failed for field: #{exception.field}"
     # => Interpolates field name into message
+    # => Returns formatted string for display
   end
 end
 
@@ -2038,102 +2093,134 @@ defmodule MyApp.NotFoundError do
   # => Custom exception with list syntax (all fields default to nil)
   defexception [:resource, :id]
   # => Fields: resource (type), id (identifier)
+  # => Creates struct: %MyApp.NotFoundError{resource: nil, id: nil}
 
   @impl true
+  # => Implements Exception protocol message/1 callback
   def message(exception) do
     # => Custom message format
+    # => Builds 404-style error message from struct fields
     "#{exception.resource} with id #{exception.id} not found"
     # => Human-readable 404-style error
+    # => Returns: "User with id 999 not found"
   end
 end
 
 defmodule UserValidator do
   # => Validation module with bang functions (! means may raise)
+  # => Bang convention: function may raise exception on invalid input
 
   def validate_age!(age) when is_integer(age) and age >= 0 and age < 150, do: :ok
   # => Happy path: age is integer in valid range [0, 150)
-  # => Returns: :ok
+  # => Guard clause ensures: is_integer AND age >= 0 AND age < 150
+  # => Returns: :ok (validation passed)
 
   def validate_age!(age) when is_integer(age) do
     # => Integer but out of range (age < 0 or age >= 150)
+    # => Second clause matches when first guard fails
     raise MyApp.ValidationError, field: :age, message: "Age must be between 0 and 150, got: #{age}"
     # => Raises with specific error message
+    # => Keyword list populates exception struct fields
   end
 
   def validate_age!(_age) do
     # => Catch-all: not an integer
+    # => Third clause matches when type is wrong (string, float, etc.)
     raise MyApp.ValidationError, field: :age, message: "Age must be an integer"
+    # => Raises type error with descriptive message
   end
 
   def validate_email!(email) when is_binary(email) do
     # => Email validation (is_binary checks string type)
+    # => Guard ensures email is binary (string in Elixir)
     if String.contains?(email, "@") do
       :ok
       # => Success: email has @ symbol
+      # => Returns :ok atom (validation passed)
     else
       raise MyApp.ValidationError, field: :email, message: "Email must contain @"
       # => Basic validation (production would use regex)
+      # => Raises when @ missing from email string
     end
   end
 
   def validate_email!(_email) do
     # => Catch-all: email is not a string
+    # => Matches when email is integer, atom, list, etc.
     raise MyApp.ValidationError, field: :email, message: "Email must be a string"
+    # => Raises type error for non-string input
   end
 end
 
 UserValidator.validate_age!(30)
 # => Valid age: returns :ok
+# => 30 is integer in range [0, 150) - first clause matches
 
 UserValidator.validate_email!("alice@example.com")
 # => Valid email: returns :ok
+# => String contains @ - validation passes
 
 # Example: age validation failure (out of range)
 # UserValidator.validate_age!(200)
 # => Raises MyApp.ValidationError: "Age must be between 0 and 150, got: 200"
+# => Second clause raises because 200 >= 150
 
 # Example: age validation failure (wrong type)
 # UserValidator.validate_age!("30")
 # => Raises MyApp.ValidationError: "Age must be an integer"
+# => Third clause raises because "30" is string, not integer
 
 defmodule UserRepo do
   # => Repository demonstrating safe/bang function pairs
+  # => fetch/1 returns tuple, fetch!/1 raises exception
 
   def fetch(id) when id > 0 and id < 100 do
     # => Safe fetch: returns result tuple
+    # => Guard ensures ID in valid range (1-99)
     {:ok, %{id: id, name: "User #{id}"}}
     # => Success: {:ok, user_map}
+    # => Returns tagged tuple with user data
   end
 
   def fetch(_id), do: {:error, :not_found}
   # => Catch-all: invalid ID returns error tuple
+  # => Matches when id <= 0 or id >= 100
+  # => Returns: {:error, :not_found} for explicit error handling
 
   def fetch!(id) do
     # => Bang version: unwraps result or raises
+    # => Calls safe fetch/1, then pattern matches on result
     case fetch(id) do
       {:ok, user} -> user
       # => Success: unwrap tuple, return bare user map
+      # => Extracts user from {:ok, user} tuple
 
       {:error, :not_found} ->
         # => Failure: raise custom exception
+        # => Pattern matches error tuple from fetch/1
         raise MyApp.NotFoundError, resource: "User", id: id
         # => Exception message: "User with id <id> not found"
+        # => Keyword list populates exception struct
     end
   end
 end
 
 UserRepo.fetch(1)
 # => Returns: {:ok, %{id: 1, name: "User 1"}}
+# => ID in range [1, 99] - first clause returns success tuple
 
 UserRepo.fetch(999)
 # => Returns: {:error, :not_found}
+# => ID out of range - second clause returns error tuple
 
 UserRepo.fetch!(1)
 # => Returns: %{id: 1, name: "User 1"} (unwrapped)
+# => fetch!/1 calls fetch/1, unwraps {:ok, user} tuple
 
 # Example: bang function raising exception
 # UserRepo.fetch!(999)
 # => Raises MyApp.NotFoundError: "User with id 999 not found"
+# => fetch!/1 calls fetch/1, matches {:error, :not_found}, raises exception
 ```
 
 **Key Takeaway**: Raise exceptions for unexpected, unrecoverable errors. Define custom exceptions for domain-specific errors. Use the `!` convention: functions ending with `!` raise exceptions, non-bang versions return result tuples.
@@ -2637,59 +2724,82 @@ graph TD
 # Basic process monitoring (crash detection)
 pid = spawn(fn ->
   # => Spawns process that crashes after 1s
+  # => Spawned process runs in separate memory space
   :timer.sleep(1000)
+  # => Sleeps 1000ms (1 second) before crashing
   raise "Process crashed!"
   # => Raises RuntimeError, exits abnormally
+  # => Exit reason: {:error, %RuntimeError{message: "Process crashed!"}}
 end)
+# => pid: spawned process identifier (e.g., #PID<0.123.0>)
 
 ref = Process.monitor(pid)
 # => Starts monitoring (unidirectional: this watches pid)
 # => Returns: reference e.g. #Reference<0.1234.5678>
 # => Monitor doesn't crash monitoring process (unlike link)
+# => Reference uniquely identifies this monitor relationship
 
 receive do
   {:DOWN, ^ref, :process, ^pid, reason} ->
     # => Pattern: {:DOWN, ref, :process, pid, exit_reason}
     # => ^ref, ^pid: pin operators ensure correct monitor/process
+    # => Pin operators (^) match against captured values (not rebind)
     # => reason: crash reason (exception tuple + stacktrace)
+    # => reason structure: {:error, %RuntimeError{...}}
     IO.puts("Process #{inspect(pid)} exited with reason: #{inspect(reason)}")
+    # => Logs exit reason for debugging
 after
   2000 -> IO.puts("No exit message received")
   # => Timeout: 2s (safety net)
+  # => Matches if no :DOWN message within 2000ms
 end
 # => Monitor auto-removed after :DOWN received
+# => Cleanup: no manual demonitor needed
 
 # Monitoring normal exit
 pid = spawn(fn ->
   # => Process exits normally after 0.5s
+  # => Normal exit: function completes without raising
   :timer.sleep(500)
+  # => Sleeps 500ms (0.5 seconds)
   :ok  # Normal exit
   # => Exits with reason :normal
+  # => Last expression value becomes exit reason
 end)
+# => pid: normal-exit process identifier
 
 ref = Process.monitor(pid)
 # => Monitors normal and abnormal exits
+# => :DOWN sent for both normal and crash exits
 
 receive do
   {:DOWN, ^ref, :process, ^pid, reason} ->
     # => reason: :normal (not error tuple)
+    # => Normal exit reason is atom :normal, not exception tuple
     IO.puts("Process exited normally with reason: #{inspect(reason)}")
     # => Prints: "Process exited normally with reason: :normal"
+    # => inspect/1 converts atom to string representation
 after
   1000 -> IO.puts("No exit")
+  # => Timeout: 1s (should receive :DOWN within 500ms)
 end
+# => Monitor auto-removed after :DOWN received
 
 # Demonitor - stop monitoring
 pid = spawn(fn -> :timer.sleep(10_000) end)
 # => Long-running process (10s)
+# => Useful for testing manual demonitor
 ref = Process.monitor(pid)
 # => Start monitoring
+# => ref: monitor reference to remove later
 Process.demonitor(ref)  # Stop monitoring
 # => Removes monitor, no :DOWN message sent
 # => Process still runs, just not monitored
+# => Manual cleanup before process exits
 Process.exit(pid, :kill)  # Kill the process
 # => :kill: brutal termination (cannot be trapped)
 # => No :DOWN (already demonitored)
+# => Process killed but monitoring process doesn't receive :DOWN
 
 # Monitor multiple processes (parallel work tracker)
 pids = Enum.map(1..5, fn i ->
@@ -3687,18 +3797,23 @@ String.pad_trailing("42", 5, "0")
 # Regular expressions
 Regex.match?(~r/hello/, "hello world")
 # => true
+# => ~r/.../ is regex sigil syntax
 Regex.match?(~r/\d+/, "abc123")
 # => true (matches digits)
+# => \d+ matches one or more digits
 
 Regex.scan(~r/\d+/, "abc 123 def 456")
 # => [["123"], ["456"]] (all matches)
+# => Returns list of all pattern matches in string
 
 Regex.replace(~r/\d/, "Room 123", "X")
 # => "Room XXX"
+# => Replaces each digit with "X"
 
 ~r/(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/
 |> Regex.named_captures("Date: 2024-12-23")
 # => %{"year" => "2024", "month" => "12", "day" => "23"}
+# => Named capture groups: (?<name>pattern) extracts to map keys
 
 # String to number conversion
 String.to_integer("42")
@@ -4590,27 +4705,41 @@ Runtime configuration loads settings when the application starts (not compile ti
 
 ```elixir
 # config/runtime.exs - runs at application startup
+# => Executed when application starts (not at compile time)
 import Config
 # => Required for config/2 macro
+# => Imports Config.config/2 for configuration DSL
 
 config :my_app,
   # => Configures application :my_app
+  # => First arg: application atom, second arg: keyword list
   secret_key: System.get_env("SECRET_KEY") || raise("SECRET_KEY not set"),
   # => Reads SECRET_KEY env var, raises if missing (required config)
+  # => System.get_env/1 returns string or nil
+  # => || raise/1: fail-fast pattern for required secrets
   database_url: System.get_env("DATABASE_URL") || raise("DATABASE_URL not set"),
   # => Database connection string, required in production
+  # => Raises if DATABASE_URL env var not set
   port: String.to_integer(System.get_env("PORT") || "4000")
   # => HTTP port, defaults to 4000, converts string → integer
+  # => Environment variables are strings: "4000" → 4000
+  # => String.to_integer/1 converts to integer type
 
 if config_env() == :prod do
   # => Production-only config
+  # => config_env/0 returns current Mix environment (:dev, :test, :prod)
+  # => Guards production-specific settings
   config :my_app, MyApp.Repo,
     # => Ecto repo configuration
+    # => Second arg is module name (MyApp.Repo)
     url: System.get_env("DATABASE_URL"),
     # => Database URL
+    # => Overrides or extends :my_app config for MyApp.Repo
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
     # => Connection pool size, defaults to 10
+    # => String env var converted to integer
 end
+# => Config only applied if config_env() == :prod
 
 # Application reads runtime config
 defmodule MyApp.Application do
@@ -5432,28 +5561,38 @@ Use `|` to specify multiple possible types:
 ```elixir
 defmodule Calculator do
   @spec add(integer(), integer()) :: integer()
-  # => Spec: two integers → integer
+  # => Spec declares: two integers → integer
+  # => Dialyzer validates implementation matches this signature
   def add(a, b), do: a + b
   # => Returns: sum (integer)
+  # => Example: add(2, 3) => 5
 
   @spec divide(number(), number()) :: {:ok, float()} | {:error, atom()}
   # => Spec: union type (success OR error)
+  # => Union type: {:ok, float()} | {:error, atom()} means return one of two tuples
   def divide(_a, 0), do: {:error, :division_by_zero}
-  # => Returns: error tuple
+  # => Returns: error tuple when divisor is zero
+  # => Pattern match: 0 as divisor triggers this clause
   def divide(a, b), do: {:ok, a / b}
   # => Returns: success tuple with float
+  # => Normal case: wraps division result in :ok tuple
 
   @spec sum(list(number())) :: number()
   # => Spec: list of numbers → number
+  # => Accepts list of integers, floats, or mixed
   def sum(numbers), do: Enum.sum(numbers)
   # => Enum.sum: returns sum (integer or float)
+  # => Example: sum([1, 2, 3]) => 6
 
   @spec abs(integer()) :: integer()
-  # => Single spec covers all clauses
+  # => Single spec covers all function clauses
+  # => All clauses must match same return type
   def abs(n) when n < 0, do: -n
   # => Clause 1: negative → positive
+  # => Guard: when n < 0 only matches negative numbers
   def abs(n), do: n
   # => Clause 2: positive → unchanged
+  # => Fallthrough: matches positive and zero
 end
 
 defmodule User do
@@ -5464,67 +5603,88 @@ defmodule User do
     age: integer() | nil
   }
   # => Custom type: User.t with field types
+  # => @type t :: ... defines reusable type for this struct
 
   defstruct [:id, :name, :email, :age]
+  # => Defines struct with four fields
 
   @spec new(integer(), String.t(), String.t()) :: t()
   # => Returns: User.t custom type
+  # => Constructor function: creates new User struct
   def new(id, name, email) do
     %__MODULE__{id: id, name: name, email: email}
-    # => age defaults to nil
+    # => age defaults to nil (not provided)
+    # => %__MODULE__{} expands to %User{} at compile time
   end
 
   @spec update_age(t(), integer()) :: t()
   # => Spec: User.t, integer → User.t
+  # => Takes user struct and new age, returns updated struct
   def update_age(user, age) do
     %{user | age: age}
     # => Returns: updated User struct
+    # => Map update syntax: %{struct | field: new_value}
   end
 
   @spec display(t()) :: String.t()
   # => Spec: User.t → String
+  # => Pattern matches on struct fields in parameters
   def display(%__MODULE__{name: name, email: email}) do
     "#{name} (#{email})"
     # => Returns: formatted string
+    # => String interpolation: "Alice (alice@example.com)"
   end
 end
 
 defmodule StringHelper do
   @spec reverse(String.t()) :: String.t()
+  # => Spec: string → string
   def reverse(string), do: String.reverse(string)
   # => "hello" → "olleh"
+  # => String.reverse/1 reverses character order
 
   @spec split(String.t(), String.t()) :: list(String.t())
   # => Spec: string, separator → list of strings
+  # => Returns list of string parts
   def split(string, separator), do: String.split(string, separator)
   # => "a,b,c" split by "," → ["a", "b", "c"]
+  # => String.split/2 breaks string at separator
 
   @spec join(list(String.t()), String.t()) :: String.t()
   # => Spec: list of strings, separator → string
+  # => Inverse of split operation
   def join(parts, separator), do: Enum.join(parts, separator)
   # => ["a", "b", "c"] with "," → "a,b,c"
+  # => Enum.join/2 concatenates list elements with separator
 end
 
 # Custom type aliases
 @type result :: {:ok, String.t()} | {:error, atom()}
 # => Reusable type: success or error tuple
+# => Defines common result pattern for this module
 @type user_id :: integer()
 # => Semantic alias: clearer intent than raw integer()
+# => Type alias documents domain meaning
 @type user_map :: %{id: user_id(), name: String.t()}
 # => Map type with required keys
+# => Specifies exact map structure expected
 
 @spec find_user(user_id()) :: result()
 # => Uses custom types for readability
+# => Returns: {:ok, String.t()} | {:error, atom()}
 def find_user(id) when id > 0, do: {:ok, "User #{id}"}
 # => Valid id: returns success tuple
+# => Guard: id > 0 ensures positive ID
 def find_user(_id), do: {:error, :invalid_id}
 # => Invalid id: returns error tuple
+# => Fallthrough clause handles invalid IDs
 
 # mix dialyzer
 # => Runs static type analysis
-# => First run: builds PLT (slow)
+# => First run: builds PLT (Persistent Lookup Table - slow)
 # => Subsequent: fast incremental checks
 # => Reports: type mismatches, spec violations
+# => Example output: "Function returns {error, binary()} but spec says {error, atom()}"
 ```
 
 **Key Takeaway**: Use `@spec` to document function types. Define custom types with `@type`. Type specs enable Dialyzer to catch type errors and improve documentation. Common types: `integer()`, `String.t()`, `list(type)`, `map()`, `{:ok, type} | {:error, reason}`.

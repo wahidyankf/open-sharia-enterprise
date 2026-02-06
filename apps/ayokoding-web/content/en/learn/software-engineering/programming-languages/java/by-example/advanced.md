@@ -71,51 +71,40 @@ import java.util.*;
 
 // ConcurrentHashMap - thread-safe without blocking entire map
 ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>(); // => Empty map, uses lock striping for segments
+                                 // => Each segment has independent lock (parallel writes)
 
 // putIfAbsent - atomic operation (check + insert)
 Integer result1 = map.putIfAbsent("key1", 100);
-                                 // => Atomically checks if key1 exists (thread-safe)
-                                 // => CAS-based operation: check-then-act is atomic
-                                 // => Key doesn't exist, inserts key1=100 atomically
-                                 // => Returns null (previous value was null/absent)
-                                 // => No race condition: another thread cannot insert between check and insert
-System.out.println(map.get("key1")); // => 100 (key1 now maps to 100)
-                                 // => Volatile read: guarantees visibility across threads
+                                 // => Atomically checks if key1 exists, CAS-based operation
+                                 // => Key doesn't exist, inserts key1=100, returns null
+                                 // => Returns null when key was absent (insertion successful)
+System.out.println(map.get("key1")); // => 100 (key1 now maps to 100, volatile read)
 Integer existing = map.putIfAbsent("key1", 200);
-                                 // => Atomically checks if key1 exists (thread-safe check)
                                  // => Key exists with value 100, does NOT replace
-                                 // => Atomic constraint: insertion only if key absent
-                                 // => Returns 100 (existing value, map unchanged)
-                                 // => Thread-safe: no lost updates even with concurrent calls
+                                 // => Returns 100 (existing value, map unchanged, thread-safe)
 System.out.println(map.get("key1")); // => 100 (unchanged, still 100)
-                                 // => Key value remains 100 (atomic guarantee)
 
 // computeIfAbsent - compute value if absent
 Integer computed = map.computeIfAbsent("key2", k -> k.length() * 10);
-                                 // => Checks if key2 exists, it doesn't
-                                 // => Calls lambda with key: k="key2"
-                                 // => Computes "key2".length() = 4, then * 10 = 40
-                                 // => Inserts key2=40 atomically
-                                 // => Returns computed value 40
+                                 // => Checks if key2 exists, calls lambda: k="key2"
+                                 // => Computes "key2".length() = 4, then * 10 = 40, inserts key2=40
+                                 // => Atomic computation: only one thread computes value
 System.out.println(map.get("key2")); // => 40 (key2 now maps to 40)
 Integer recompute = map.computeIfAbsent("key2", k -> k.length() * 20);
-                                 // => Checks if key2 exists, it does (value is 40)
-                                 // => Lambda NOT called (optimization, key present)
-                                 // => Returns existing value 40 (map unchanged)
+                                 // => Key exists (value is 40), lambda NOT called, returns 40
+                                 // => Avoids redundant computation when key already present
 
 // merge - combine values atomically
 map.put("count", 1);                 // => Inserts count=1 into map
 Integer merged = map.merge("count", 5, (old, val) -> old + val);
-                                 // => Retrieves existing value: old=1
-                                 // => Calls lambda with old=1, val=5 (merge value)
-                                 // => Computes 1 + 5 = 6
-                                 // => Updates count=6 atomically
-                                 // => Returns merged result 6
+                                 // => Retrieves old=1, computes 1 + 5 = 6, updates count=6, returns 6
 System.out.println(map.get("count")); // => 6 (count now holds 6)
 
 // CopyOnWriteArrayList - thread-safe list, copy-on-write semantics
 CopyOnWriteArrayList<String> list = new CopyOnWriteArrayList<>(); // => Empty list, writes create new array copy
+                                 // => Optimized for read-heavy workloads (many reads, few writes)
 list.add("A"); // => Creates new internal array with ["A"]
+                                 // => Write operation copies entire array (expensive)
 list.add("B"); // => Creates new internal array with ["A", "B"]
 System.out.println(list.size()); // => 2
 
@@ -128,7 +117,9 @@ System.out.println(list.size()); // => 4 (A, B, C, C - two "C"s added during loo
 
 // ConcurrentLinkedQueue - non-blocking FIFO queue (lock-free)
 ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<>(); // => Empty queue, uses CAS operations
+                                 // => Lock-free: no thread blocking, uses atomic operations
 boolean offered1 = queue.offer("First"); // => true (element added to tail)
+                                 // => Non-blocking add operation
 boolean offered2 = queue.offer("Second"); // => true (element added after "First")
 System.out.println(queue.size()); // => 2 (weakly consistent size, may be stale in concurrent env)
 String head = queue.poll(); // => "First" (removed from head, queue now has ["Second"])
@@ -137,72 +128,37 @@ String head3 = queue.poll(); // => null (queue empty)
 
 // BlockingQueue - producer-consumer pattern with blocking coordination
 BlockingQueue<Integer> blockingQueue = new ArrayBlockingQueue<>(10);
-                                 // => Bounded queue, capacity 10 elements
-                                 // => ArrayBlockingQueue uses single ReentrantLock for put/take
-                                 // => Backed by array, FIFO ordering (first in, first out)
-                                 // => Thread-safe: no external synchronization needed
+                                 // => Bounded queue capacity 10, backed by array, FIFO ordering, thread-safe
 
 // Producer thread
-Thread producer = new Thread(() -> { // => Creates producer thread (not started yet)
-                                 // => Lambda implements Runnable.run() method
-                                 // => Closure captures blockingQueue reference
+Thread producer = new Thread(() -> { // => Creates producer thread (lambda implements Runnable)
     try {
         for (int i = 0; i < 5; i++) { // => Will produce items 0-4 (5 iterations)
-                                 // => i is loop counter (local variable per iteration)
-            blockingQueue.put(i); // => Blocks if queue full (capacity 10), waits until space available
-                                 // => put() blocks thread using Condition.await() if full
-                                 // => Wakes up when consumer calls take() (creates space)
-                                 // => Atomically inserts item and signals waiting consumers
+            blockingQueue.put(i); // => Blocks if queue full, waits until space available
             System.out.println("Produced: " + i);
-                                 // => Output: "Produced: 0", "Produced: 1", etc.
-                                 // => Print happens AFTER successful insertion
             Thread.sleep(100);   // => Simulate production work (100ms delay)
-                                 // => Yields CPU, allows other threads to run
-                                 // => InterruptedException if thread interrupted during sleep
         }
     } catch (InterruptedException e) {
-                                 // => Caught if Thread.interrupt() called during put() or sleep()
-        Thread.currentThread().interrupt();
-                                 // => Restore interrupted status (preserve interruption)
-                                 // => Allows caller to detect interruption later
+        Thread.currentThread().interrupt(); // => Restore interrupted status
     }
 }); // => Thread created but not running (must call start())
 
 // Consumer thread
-Thread consumer = new Thread(() -> { // => Creates consumer thread (not started yet)
-                                 // => Separate thread from producer (runs concurrently)
+Thread consumer = new Thread(() -> { // => Creates consumer thread (separate from producer)
     try {
         for (int i = 0; i < 5; i++) { // => Will consume 5 items (matches producer count)
-            Integer item = blockingQueue.take();
-                                 // => Blocks if queue empty, waits until item available
-                                 // => take() blocks thread using Condition.await() if empty
-                                 // => Wakes up when producer calls put() (adds item)
-                                 // => Atomically removes item and signals waiting producers
+            Integer item = blockingQueue.take(); // => Blocks if queue empty, waits until item available
             System.out.println("Consumed: " + item);
-                                 // => Output: "Consumed: 0", "Consumed: 1", etc.
-                                 // => item is Integer (autoboxed from queue)
-            Thread.sleep(150);   // => Simulate consumption work (150ms delay)
-                                 // => Slower than producer (150ms vs 100ms)
-                                 // => Creates backpressure: queue fills up over time
+            Thread.sleep(150);   // => Slower than producer (150ms vs 100ms), creates backpressure
         }
     } catch (InterruptedException e) {
-                                 // => Caught if interrupted during take() or sleep()
-        Thread.currentThread().interrupt();
-                                 // => Restore interrupted status
+        Thread.currentThread().interrupt(); // => Restore interrupted status
     }
 }); // => Thread created but not running (must call start())
 
 producer.start();                // => Start producer thread, begins producing items
-                                 // => Calls producer.run() in new thread
-                                 // => Producer thread now executing concurrently
 consumer.start();                // => Start consumer thread, begins consuming items
-                                 // => Calls consumer.run() in new thread
-                                 // => Consumer thread now executing concurrently
-// => Both threads run concurrently, queue coordinates between them
-// => BlockingQueue handles synchronization (no manual locks needed)
-// => Output order may vary due to concurrent execution and scheduling
-// => Typical pattern: producer may produce multiple before consumer starts
-// => Queue acts as buffer between producer and consumer speeds
+// => Both threads run concurrently, BlockingQueue coordinates between them
 ```
 
 **Key Takeaway**: `ConcurrentHashMap` provides thread-safe operations with lock striping. `CopyOnWriteArrayList` is safe for iteration-heavy workloads. `BlockingQueue` enables producer-consumer patterns with blocking operations. These collections offer better performance than `Collections.synchronizedXxx()` wrappers.
@@ -265,49 +221,23 @@ System.out.println(counter.get()); // => 12 (counter now 12)
 
 // compareAndSet - atomic compare-and-swap (CAS operation)
 boolean success = counter.compareAndSet(12, 20);
-                                 // => Hardware-level CAS instruction (CMPXCHG on x86)
-                                 // => Step 1: Read current value (12)
-                                 // => Step 2: Compare with expected (12)
-                                 // => Step 3: If equal, atomically set to 20
-                                 // => All 3 steps happen atomically (single CPU instruction)
-                                 // => true (current was 12, set to 20 atomically)
-                                 // => No race condition: no thread can modify between compare and set
-System.out.println(counter.get()); // => 20 (successfully updated)
-                                 // => Volatile read: guaranteed visibility
+                                 // => Hardware-level CAS (CMPXCHG): read (12), compare (12), set to 20 atomically
+                                 // => true (current was 12, set to 20, no race condition)
+System.out.println(counter.get()); // => 20 (successfully updated, volatile read)
 boolean failure = counter.compareAndSet(12, 30);
-                                 // => Attempts CAS with expected value 12
-                                 // => Step 1: Read current value (20, not 12)
-                                 // => Step 2: Compare with expected (20 != 12)
-                                 // => Step 3: Comparison fails, no update performed
-                                 // => false (current is 20, not 12, no update)
-                                 // => Atomic guarantee: all-or-nothing operation
+                                 // => CAS with expected 12, current is 20, comparison fails, no update
+                                 // => false (current is 20, not 12, atomic all-or-nothing)
 System.out.println(counter.get()); // => 20 (unchanged, CAS failed)
-                                 // => Value remains 20 (update rejected)
 
 // updateAndGet - atomic update with lambda function
 int updated = counter.updateAndGet(v -> v * 2);
-                                 // => CAS loop with function application
-                                 // => Iteration 1: Reads current value: v=20
-                                 // => Applies lambda: 20 * 2 = 40 (computes new value)
-                                 // => Attempts compareAndSet(20, 40)
-                                 // => If succeeds: returns 40
-                                 // => If fails (concurrent modification): retry with new value
-                                 // => Atomically sets counter to 40 using CAS
-                                 // => Returns new value 40 (post-update value)
-System.out.println(counter.get()); // => 40 (counter now 40)
-                                 // => Function successfully applied atomically
-// => Internally uses CAS loop: read, apply function, compareAndSet, retry if failed
-// => Retries if another thread modified counter between read and update
-// => Lock-free algorithm: no blocking, just retry on contention
-// => Eventually succeeds even under high contention (progress guarantee)
+                                 // => CAS loop: reads v=20, applies lambda (20*2=40), compareAndSet(20,40)
+                                 // => Retries if concurrent modification, returns 40 (lock-free)
+System.out.println(counter.get()); // => 40 (counter now 40, function applied atomically)
 
 // accumulateAndGet - atomic accumulation with binary operator
 int accumulated = counter.accumulateAndGet(5, (curr, update) -> curr + update);
-                                 // => Reads current value: curr=40
-                                 // => Calls lambda with curr=40, update=5
-                                 // => Computes 40 + 5 = 45
-                                 // => Atomically sets counter to 45 using CAS
-                                 // => Returns accumulated result 45
+                                 // => Reads curr=40, calls lambda (40+5=45), atomically sets to 45, returns 45
 System.out.println(counter.get()); // => 45 (counter now 45)
 
 // AtomicLong - for long values (same API as AtomicInteger)
@@ -333,8 +263,7 @@ System.out.println(ref.get()); // => "Java"
 AtomicInteger sharedCounter = new AtomicInteger(0); // => Shared between threads, starts at 0
 Runnable task = () -> { // => Each thread runs this task
     for (int i = 0; i < 1000; i++) {
-        sharedCounter.incrementAndGet(); // => Thread-safe atomic increment (CAS-based)
-        // => No synchronized block needed, no lock contention
+        sharedCounter.incrementAndGet(); // => Thread-safe atomic increment, no synchronized needed
     }
 }; // => Task increments counter 1000 times
 
@@ -345,8 +274,7 @@ t2.start(); // => Start thread 2 (runs concurrently)
 t1.join(); // => Wait for thread 1 to complete
 t2.join(); // => Wait for thread 2 to complete
 System.out.println("Final count: " + sharedCounter.get());
-// => Output: "Final count: 2000" (always correct, 1000 + 1000)
-// => With non-atomic int, result would be unpredictable (lost updates)
+// => Output: "Final count: 2000" (always correct, with non-atomic int would be unpredictable)
 ```
 
 **Key Takeaway**: Atomic variables use CAS for lock-free thread safety. Better performance than synchronized for simple operations. Use `incrementAndGet()` for post-increment, `getAndIncrement()` for pre-increment behavior. `compareAndSet()` enables atomic conditional updates.
@@ -389,33 +317,24 @@ import java.util.concurrent.*;
 // CountDownLatch - wait for multiple events
 CountDownLatch latch = new CountDownLatch(3);
                                  // => Creates latch with count = 3
-                                 // => Latch starts with internal counter at 3
                                  // => Thread calling await() blocks until count reaches 0
                                  // => One-time use: cannot reset after reaching 0
 
 // Worker threads count down
 for (int i = 0; i < 3; i++) {
                                  // => Creates 3 worker threads
-                                 // => Each thread will decrement latch counter
     int taskId = i;              // => Capture loop variable for lambda
                                  // => Effectively final for lambda closure
     new Thread(() -> {           // => Creates and starts new worker thread
-                                 // => Lambda runs in separate thread
         System.out.println("Task " + taskId + " starting");
                                  // => Output: "Task 0 starting", "Task 1 starting", etc.
-                                 // => Order non-deterministic (thread scheduling)
         try { Thread.sleep(1000); } catch (InterruptedException e) {}
                                  // => Simulates 1 second of work
-                                 // => Sleep may be interrupted (cooperative cancellation)
         System.out.println("Task " + taskId + " done");
                                  // => Output: "Task 0 done", etc. after ~1 second
-                                 // => Signals work completion
         latch.countDown();       // => Decrements latch counter by 1
-                                 // => Atomic operation: thread-safe decrement
                                  // => When counter reaches 0, releases all waiting threads
-                                 // => Does NOT block: decrements and returns immediately
     }).start();                  // => Starts thread execution
-                                 // => start() returns immediately (non-blocking)
 }
 
 // Main thread waits for all tasks
@@ -877,14 +796,11 @@ enum Day {                       // => Defines enum type Day
 
 Day today = Day.MONDAY;          // => References MONDAY constant
                                  // => Type-safe: can only assign Day enum values
-                                 // => Cannot be null unless explicitly assigned
 System.out.println(today);       // => Calls toString(): "MONDAY"
                                  // => Output: MONDAY
-                                 // => toString() returns constant name by default
 System.out.println(today.ordinal());
                                  // => Returns position in enum declaration (0-based)
                                  // => Output: 0 (MONDAY is first constant)
-                                 // => TUESDAY.ordinal() would be 1, etc.
 
 // Enum with fields and methods
 enum Planet {                    // => Enum with instance fields and methods
@@ -1257,114 +1173,149 @@ String message = switch (result) {
 
 ---
 
-## Example 67: Modules (Java Platform Module System)
+## Example 67: Module Basics (JPMS)
 
-Modules provide stronger encapsulation than packages, enabling better dependency management and smaller runtime images. Defined via `module-info.java`, modules explicitly declare dependencies and exports.
+Modules provide stronger encapsulation than packages via `module-info.java`. They explicitly declare dependencies (`requires`) and control visibility (`exports`, `opens`).
 
-**Code**:
+**module-info.java syntax**:
 
 ```java
-// module-info.java in com.example.myapp module
-module com.example.myapp {      // => Module declaration (file: module-info.java at module root)
-                                 // => Module name: com.example.myapp (reverse domain convention)
-    // Require other modules
-    requires java.base;          // => Dependency on java.base (implicit, all modules auto-require)
-                                 // => Contains core classes: Object, String, System
-    requires java.sql;           // => Explicit dependency on SQL module (JDBC classes)
-                                 // => Module graph: myapp → java.sql → java.base
-    requires transitive java.logging;  // => Transitive dependency (modules requiring myapp also get java.logging)
-                                 // => Implied readability propagates dependency to consumers
+// File: module-info.java (at module root, alongside src/)
+module com.example.myapp {      // => Module declaration (reverse domain naming)
 
-    // Export packages (make them accessible to other modules)
-    exports com.example.myapp.api;  // => Makes api package public to all modules
-                                 // => Non-exported packages remain internal (strong encapsulation)
-    exports com.example.myapp.internal to com.example.test;  // => Qualified export: only to com.example.test module
-                                 // => Enables white-box testing of internals
+    // Dependencies
+    requires java.sql;           // => Dependency on java.sql module (JDBC)
+                                 // => java.base is implicit (all modules auto-require it)
+    requires transitive java.logging; // => Transitive: modules requiring myapp also get java.logging
+                                 // => Propagates dependency to consumers
 
-    // Open packages for reflection (for frameworks like Spring, Hibernate)
-    opens com.example.myapp.model;  // => Allows deep reflection on model package
-                                 // => Frameworks can access private fields/methods (needed for serialization, DI, ORM)
-    opens com.example.myapp.entity to org.hibernate.orm;  // => Qualified open: reflection only for Hibernate
-                                 // => More secure than unconditional opens
+    // Public API
+    exports com.example.myapp.api; // => Makes api package accessible to all modules
+    exports com.example.myapp.internal to com.example.test; // => Qualified export: only for test module
 
-    // Provide service implementation
-    provides com.example.myapp.api.Service  // => Service provider declaration (SPI)
-        with com.example.myapp.impl.ServiceImpl;  // => ServiceLoader can discover this implementation
-                                 // => Enables plugin architecture
+    // Reflection access (for frameworks)
+    opens com.example.myapp.model; // => Allows deep reflection (Spring, Hibernate)
+                                 // => Needed for serialization, dependency injection
+    opens com.example.myapp.entity to org.hibernate.orm; // => Qualified open: only Hibernate
 
-    // Use service
-    uses com.example.myapp.api.Service;  // => Service consumer declaration
-                                 // => Declares module will use ServiceLoader for Service
+    // Service Provider Interface
+    provides com.example.myapp.api.Service // => Declares service implementation
+        with com.example.myapp.impl.ServiceImpl; // => ServiceLoader discovers this
+    uses com.example.myapp.api.Service; // => Declares module uses ServiceLoader for Service
 }
-
-// Without modules (pre-Java 9), all public classes are globally accessible
-                                 // => Classpath: no encapsulation beyond public/private/protected
-// With modules, only exported packages are accessible
-                                 // => Module system: strong encapsulation at package level
-
-// Checking module from code
-Module module = String.class.getModule();  // => Gets module containing String class
-                                 // => Module reflection API (java.lang.Module)
-System.out.println(module.getName());  // => Output: "java.base"
-                                 // => String is in java.base module (core module)
-System.out.println(module.isNamed());  // => Output: true
-                                 // => Named module (has module-info.java), vs unnamed module (classpath code)
-
-// Unnamed module (classpath code)
-                                 // => Code on classpath runs in unnamed module
-                                 // => Unnamed module can read all named modules (one-way)
-// Code on classpath runs in unnamed module, can access all modules
-                                 // => Enables gradual migration (mix classpath and modules)
-
-// Module layers and layers
-ModuleLayer bootLayer = ModuleLayer.boot();  // => Boot layer contains platform modules (java.base, etc.)
-                                 // => ModuleLayer: container for set of modules
-Set<Module> modules = bootLayer.modules();  // => Gets all modules in boot layer
-                                 // => Returns Set<Module> (platform + application)
-modules.forEach(m -> System.out.println(m.getName()));  // => Prints all module names in boot layer
-                                 // => Output: java.base, java.sql, com.example.myapp, etc.
-
-// Creating custom runtime images with jlink
-// jlink --module-path $JAVA_HOME/jmods:mods --add-modules com.example.myapp --output customjre
-                                 // => jlink tool creates custom JRE
-                                 // => --module-path: where to find modules
-                                 // => --add-modules: root module to include
-                                 // => Transitive closure: includes all dependencies
-// Creates minimal JRE with only required modules
-                                 // => Only includes modules needed by myapp
-                                 // => Smaller JRE: ~50MB vs ~300MB full JDK
-                                 // => Faster startup: fewer modules to load
-
-// Module visibility example
-// In com.example.myapp.api package (exported):
-package com.example.myapp.api;   // => Exported package (public API)
-public class PublicService {     // => Public class in exported package
-                                 // => Accessible: other modules can import and use
-    // Accessible to other modules
-                                 // => Methods, fields accessible per visibility (public/protected)
-}
-
-// In com.example.myapp.internal package (not exported):
-package com.example.myapp.internal;  // => Non-exported package (internal implementation)
-public class InternalUtil {      // => Public BUT in non-exported package (not accessible outside module)
-    // NOT accessible to other modules, even though public
-                                 // => Strong encapsulation: public doesn't mean globally accessible
-}
-
-// Module benefits:
-// 1. Reliable configuration: missing dependencies detected at startup  // => Fail fast vs classpath NoClassDefFoundError
-// 2. Strong encapsulation: internal packages truly internal  // => Non-exported packages inaccessible
-// 3. Scalable: module graph prevents accidental dependencies  // => Explicit requires, no circular deps
-// 4. Smaller deployments: jlink creates custom runtime images  // => Include only needed modules
 ```
 
-**Key Takeaway**: Modules provide stronger encapsulation via `module-info.java`. `requires` declares dependencies, `exports` makes packages accessible. `opens` allows deep reflection. `transitive` propagates dependencies. Modules enable reliable configuration and smaller runtime images with jlink.
+**Checking modules at runtime**:
 
-**Why It Matters**: Modules (JPMS) provide explicit dependencies (requires/exports), strong encapsulation (internal packages hidden), and improved security (reduced attack surface). They enable faster startup (optimized module graph), smaller deployments (jlink custom runtimes), and compile-time dependency checking. Understanding unnamed modules, automatic modules, and split packages enables gradual migration from classpath. Modules are essential for large codebases and library development—enforcing clean boundaries and preventing internal API usage. However, migration complexity and ecosystem maturity issues make modules optional for many applications. Use them for explicit dependency management and API protection.
+```java
+Module module = String.class.getModule(); // => Get module containing String class
+System.out.println(module.getName());  // => Output: "java.base"
+System.out.println(module.isNamed());  // => Output: true (named module vs unnamed/classpath)
+
+// Unnamed module (classpath code)
+// Code on classpath runs in unnamed module, can read all named modules (one-way)
+// Enables gradual migration (mix classpath and modules)
+```
+
+**Key Takeaway**: Modules use `module-info.java` to declare dependencies (`requires`, `requires transitive`), control visibility (`exports`, `opens`), and provide services (`provides`, `uses`). Non-exported packages are truly internal—even public classes aren't accessible outside the module.
+
+**Why It Matters**: Modules (Java 9+) provide explicit dependencies and strong encapsulation that classpath lacks. Before modules, all public classes were globally accessible—libraries couldn't hide internal implementation details. With modules, `exports` controls package visibility at compile-time, preventing accidental usage of internal APIs. `requires transitive` prevents dependency hell by making transitive dependencies explicit. However, migration complexity (unnamed modules, automatic modules, split packages) makes JPMS optional for many applications. Use modules for large codebases, library development, or when you need enforced API boundaries.
 
 ---
 
-## Example 68: var and Type Inference
+## Example 68: Module Visibility and JLink Custom Runtimes
+
+Modules enable strong encapsulation (non-exported packages hidden) and custom JRE creation with jlink (smaller deployments).
+
+**Strong encapsulation example**:
+
+**Exported package** (public API):
+
+```java
+// File: com/example/myapp/api/PublicService.java
+package com.example.myapp.api;   // => Exported in module-info.java
+                                 // => exports com.example.myapp.api; in module descriptor
+                                 // => Makes this package accessible to other modules
+
+public class PublicService {     // => Public class in exported package
+                                 // => Both "public" keyword AND exported package required
+                                 // => Accessible from outside module
+    public void serve() {        // => Other modules can import and use this
+                                 // => External code can call this method
+        System.out.println("Public API");
+                                 // => Output: Public API
+    }
+}
+```
+
+**Non-exported package** (internal implementation):
+
+```java
+// File: com/example/myapp/internal/InternalUtil.java
+package com.example.myapp.internal; // => NOT exported in module-info.java
+                                 // => No "exports" statement for this package
+                                 // => Module descriptor hides this package
+
+public class InternalUtil {      // => Public BUT in non-exported package
+                                 // => "public" modifier alone doesn't grant access
+                                 // => Module system overrides traditional Java visibility
+    public static void helper() { // => NOT accessible to other modules
+                                 // => External import fails at compile time
+                                 // => Strong encapsulation enforced by module layer
+        System.out.println("Internal helper");
+                                 // => Only callable within same module
+    }
+}
+// Other modules CANNOT import or use InternalUtil (compile error)
+// Strong encapsulation: public doesn't mean globally accessible
+// Module boundary trumps access modifiers
+```
+
+**JLink custom runtime images**:
+
+```bash
+# Create custom JRE with only required modules
+jlink --module-path $JAVA_HOME/jmods:mods \
+      # => Specifies module search path (platform modules + custom modules)
+      --add-modules com.example.myapp \
+      # => Includes com.example.myapp and ALL its dependencies
+      # => Resolves transitive closure (follows requires directives)
+      --output customjre
+      # => Output directory for custom runtime image
+
+# Result:
+# - Includes com.example.myapp and its dependencies (transitive closure)
+#   => Automatically includes java.base (always required)
+#   => Pulls in java.sql if myapp requires it
+# - Smaller JRE: ~50MB vs ~300MB full JDK
+#   => Only bundles needed modules, not entire platform
+# - Faster startup: fewer modules to load
+#   => Module graph resolution is faster with fewer modules
+# - Deployment: ship customjre/ folder with app (no separate JRE install)
+#   => Self-contained: customjre/bin/java runs application
+```
+
+**Module layers**:
+
+```java
+ModuleLayer bootLayer = ModuleLayer.boot(); // => Boot layer (platform + application modules)
+                                 // => Default layer loaded at JVM startup
+                                 // => Contains platform modules + classpath/module-path apps
+Set<Module> modules = bootLayer.modules(); // => All modules in boot layer
+                                 // => Returns Set<Module> with all loaded modules
+                                 // => Includes java.base, java.sql, user modules, etc.
+modules.forEach(m -> System.out.println(m.getName())); // => java.base, java.sql, com.example.myapp, etc.
+                                 // => Iterates and prints each module name
+                                 // => Output: module names from boot layer
+```
+
+**Key Takeaway**: Modules provide true encapsulation—non-exported packages are inaccessible even if classes are public. JLink creates custom JREs with only required modules, dramatically reducing deployment size. Module layers enable dynamic module loading and isolation.
+
+**Why It Matters**: Pre-modules, libraries couldn't hide internals—developers accessed internal APIs (like sun.misc.Unsafe), causing maintenance nightmares when internals changed. Modules enforce boundaries at compile-time. JLink revolutionizes deployment—instead of shipping 300MB JRE, create 50MB custom runtime with only needed modules (java.base, java.sql, etc.). Essential for containers (smaller Docker images), embedded systems (limited storage), and cloud deployments (faster cold starts). However, JLink requires modular app + dependencies—ecosystem adoption is gradual. Use modules for API protection and JLink for optimized deployments.
+
+---
+
+## Example 69: var and Type Inference
 
 `var` enables local variable type inference, reducing boilerplate while preserving static typing. The compiler infers types from initializers. Use for readability when types are obvious, avoid when clarity suffers.
 
@@ -1470,7 +1421,7 @@ var number = 1;                  // => Inferred as int, but could be long
 
 ---
 
-## Example 69: Garbage Collection Basics
+## Example 70: Garbage Collection Basics
 
 Garbage collection automatically reclaims memory from unreachable objects. The generational hypothesis (most objects die young) drives GC design. Understanding GC helps optimize application performance.
 
@@ -1680,7 +1631,7 @@ class Resource {
 
 ---
 
-## Example 70: Memory Management and Reference Types
+## Example 71: Memory Management and Reference Types
 
 Java provides four reference types to control GC behavior. Strong references prevent collection. Soft references enable memory-sensitive caches. Weak references allow collection despite references. Phantom references enable pre-mortem cleanup.
 
@@ -1861,7 +1812,7 @@ class MetadataCache {
 
 ---
 
-## Example 71: Performance Monitoring and Profiling
+## Example 72: Performance Monitoring and Profiling
 
 Java provides rich tools for monitoring and profiling applications. JMX exposes runtime metrics. JFR enables low-overhead production profiling. JMH provides accurate microbenchmarks. Profile before optimizing.
 
@@ -2002,7 +1953,7 @@ public void benchmarkMethod() {
 
 ---
 
-## Example 72: Common Performance Patterns
+## Example 73: Common Performance Patterns
 
 Choosing appropriate data structures and algorithms dramatically impacts performance. StringBuilder for string building. ArrayList for indexed access. HashMap for lookups. Lazy initialization for expensive objects. Profile before optimizing.
 
@@ -2196,7 +2147,7 @@ Map<String, String> cache = new LinkedHashMap<>(100, 0.75f, true) {
 
 ---
 
-## Example 73: Connection Pool Factory Pattern
+## Example 74: Connection Pool Factory Pattern
 
 Production database applications use connection pooling to reuse expensive database connections. This example demonstrates Singleton (pool manager), Factory (connection creation), and Builder (configuration) patterns in a real-world context.
 
@@ -2754,7 +2705,7 @@ pool.shutdown(); // Cleanup
 
 ---
 
-## Example 74: Strategy, Observer, Decorator
+## Example 75: Strategy, Observer, Decorator
 
 Behavioral patterns define communication between objects. Strategy encapsulates algorithms. Observer enables one-to-many notifications. Decorator adds responsibilities dynamically without subclassing.
 
@@ -3091,7 +3042,7 @@ System.out.println(coffee.cost()); // => 2.7
 
 ---
 
-## Example 75: Dependency Injection Basics
+## Example 76: Dependency Injection Basics
 
 Dependency Injection (DI) inverts control, allowing dependencies to be provided externally rather than created internally. Enhances testability, flexibility, and maintainability. Constructor injection preferred for required dependencies.
 
@@ -3314,7 +3265,7 @@ class EmailService implements NotificationService {
 
 ---
 
-## Example 76: Immutability Patterns
+## Example 77: Immutability Patterns
 
 Immutable objects cannot be modified after creation, providing inherent thread safety and simplicity. Use final fields, no setters, defensive copying for mutable components. Records automate immutable class creation.
 
@@ -3367,9 +3318,11 @@ final class ImmutablePoint {   // => final: class cannot be subclassed
 
 ImmutablePoint p1 = new ImmutablePoint(10, 20);
                                  // => Creates point at (10, 20)
+                                 // => p1 holds immutable instance
 ImmutablePoint p2 = p1.move(5, 5);
                                  // => Returns new ImmutablePoint(15, 25)
                                  // => p1 unchanged: (10, 20)
+                                 // => Functional style: transformation creates new object
 // p1 unchanged: (10, 20)       // => Immutability: original unmodified
 
 // Immutable class with mutable component - defensive copying
@@ -3694,7 +3647,7 @@ thread.setContextClassLoader(new CustomClassLoader("/custom/path"));
 
 ---
 
-## Example 77: Virtual Threads (Project Loom, Java 21+)
+## Example 78: Virtual Threads (Project Loom, Java 21+)
 
 Virtual threads enable millions of lightweight threads with low overhead. M:N mapping to platform threads. Ideal for I/O-bound workloads. Simplifies concurrent code without callbacks. Available in Java 21+.
 
@@ -3877,7 +3830,7 @@ ExecutorService newExecutor = Executors.newVirtualThreadPerTaskExecutor();
 
 ---
 
-## Example 78: Modern Java Best Practices
+## Example 79: Modern Java Best Practices
 
 Modern Java emphasizes immutability, composition, type safety, and simplicity. Records for data, sealed classes for domain modeling, pattern matching for cleaner code. Testing and modularity are essential. Streams and Optional improve expressiveness.
 
@@ -4107,7 +4060,7 @@ int numLetters = switch (day) {  // => Switch as expression (returns value)
 
 Master Java's automatic memory management, garbage collection algorithms, JVM internals, and performance optimization techniques for building high-performance applications.
 
-## Example 79: JVM Memory Model and Regions
+## Example 80: JVM Memory Model and Regions
 
 The JVM divides memory into distinct regions: heap (shared object storage), stack (thread-local execution frames), metaspace (class metadata), and direct buffers (off-heap NIO). Understanding memory regions is essential for diagnosing memory issues and tuning performance.
 
@@ -4209,7 +4162,7 @@ ByteBuffer directBuffer = ByteBuffer.allocateDirect(1024);
 
 ---
 
-## Example 80: Garbage Collection with G1GC
+## Example 81: Garbage Collection with G1GC
 
 G1GC (Garbage First) is Java's default collector (since Java 9), designed for balanced throughput and predictable pause times. It divides the heap into regions and performs incremental collection, prioritizing high-garbage regions first.
 
@@ -4338,7 +4291,7 @@ public class G1Monitoring {
 
 ---
 
-## Example 81: Ultra-Low Latency with ZGC
+## Example 82: Ultra-Low Latency with ZGC
 
 ZGC is a scalable low-latency garbage collector designed for heaps up to 16TB with pause times under 10ms. It performs most GC work concurrently using colored pointers and load barriers, achieving sub-millisecond pauses even during heap compaction.
 
@@ -4503,7 +4456,7 @@ public class PaymentGateway {
 
 ---
 
-## Example 82: JVM Profiling with Java Flight Recorder (JFR)
+## Example 83: JVM Profiling with Java Flight Recorder (JFR)
 
 Java Flight Recorder (JFR) is a low-overhead profiling framework built into the JVM. It records runtime events (allocations, GC, locks, I/O) with minimal performance impact (<1% overhead), making it safe for production use.
 
@@ -4515,35 +4468,52 @@ Java Flight Recorder (JFR) is a low-overhead profiling framework built into the 
 // java -XX:StartFlightRecording=duration=60s,filename=recording.jfr \
 //      -XX:FlightRecorderOptions=stackdepth=128 \
 //      MyApp
+// => Starts JFR when JVM launches (no code changes needed)
+// => Recording begins immediately at startup
 
 // => duration=60s: Record for 60 seconds then stop
+// => Automatically stops after 60 seconds
 // => filename=recording.jfr: Output file path
+// => Binary format, analyze with JMC
 // => stackdepth=128: Capture 128 stack frames (default: 64)
+// => Deeper stacks show full call chains (helps find root cause)
 // => Overhead: <1% CPU, <1% memory (safe for production)
+// => Minimal performance impact (sampling-based profiler)
 
 // Continuous recording (circular buffer)
 // java -XX:StartFlightRecording=maxage=6h,maxsize=500M,filename=recording.jfr \
 //      MyApp
+// => Continuous mode: never stops, runs indefinitely
+// => Circular buffer overwrites old events
 
 // => maxage=6h: Keep last 6 hours of events (circular buffer)
+// => Events older than 6h automatically discarded
 // => maxsize=500M: Max recording size 500MB (oldest events discarded)
+// => Whichever limit hits first (age or size) triggers eviction
 // => Always-on recording: capture issues as they happen
+// => No need to reproduce issues, events already captured
 
 // Starting JFR on running JVM (no restart)
 // Command: jcmd <pid> JFR.start duration=60s filename=recording.jfr
 // => Attaches to running process (PID)
+// => Get PID with: jps -l
 // => Starts recording for 60 seconds
 // => No JVM restart required (dynamic profiling)
+// => Useful for production troubleshooting
 
 // Stopping JFR recording
 // Command: jcmd <pid> JFR.stop filename=recording.jfr
 // => Stops ongoing recording
+// => Finalizes event collection
 // => Writes events to file
+// => Safe to analyze after stop completes
 
 // Dumping current recording without stopping
 // Command: jcmd <pid> JFR.dump filename=snapshot.jfr
 // => Captures snapshot of current recording
+// => Creates point-in-time copy
 // => Recording continues (non-destructive)
+// => Useful for periodic snapshots without stopping profiling
 
 import jdk.jfr.*;
 import java.nio.file.*;
@@ -4555,31 +4525,47 @@ class JFRProgrammatic {
         // Start recording programmatically
         Configuration config = Configuration.getConfiguration("profile");
                                          // => "profile" preset: detailed events
+                                         // => More events, higher overhead than "default"
                                          // => Alternative: "default" (lower overhead)
+                                         // => Presets defined in $JAVA_HOME/lib/jfr/
 
         Recording recording = new Recording(config);
                                          // => Creates new recording with config
+                                         // => Recording not started yet (inactive state)
 
         recording.setMaxAge(Duration.ofHours(1));
                                          // => Keep last 1 hour of events
+                                         // => Circular buffer evicts older events
         recording.setMaxSize(100 * 1024 * 1024);
                                          // => Max 100MB recording size
+                                         // => 100MB = 100 * 1024 * 1024 bytes
 
         recording.start();               // => Start recording events
+                                         // => Transitions to active state
                                          // => JFR begins capturing: GC, allocations, locks, I/O
+                                         // => Event collection happens in background
 
         try {
             // Run workload to profile
             processLargeDataset();       // => All events recorded: allocations, GC pauses, thread activity
+                                         // => JFR captures events during execution
 
         } finally {
             recording.stop();            // => Stop recording
+                                         // => Finalizes event collection
+                                         // => No more events captured after stop
 
             Path destination = Paths.get("recording-" + System.currentTimeMillis() + ".jfr");
+                                         // => Unique filename with timestamp
+                                         // => Example: recording-1609459200000.jfr
             recording.dump(destination); // => Write recording to file
+                                         // => Binary .jfr format
                                          // => File contains all captured events
+                                         // => Can be opened in JMC for analysis
 
             recording.close();           // => Cleanup: close recording
+                                         // => Releases resources
+                                         // => Recording instance no longer usable
         }
     }
 
@@ -4698,7 +4684,7 @@ class CustomEventExample {
 
 **Why It Matters** (100 words): JFR enables continuous production profiling without performance penalties. Traditional profilers (VisualVM, YourKit) add 10-50% overhead, making them unsuitable for production. JFR's <1% overhead allows always-on recording—capture issues as they happen (intermittent GC pauses, allocation spikes). The circular buffer (maxage, maxsize) keeps recent history without unbounded growth. JFR's event-based architecture records low-level JVM events (TLAB allocations, GC phases, lock acquisitions) invisible to other profilers. Analyzing JFR recordings in JMC reveals allocation hotspots (35% from BigDecimal constructor), premature promotion (survivors → old), and GC tuning opportunities. JFR is essential for diagnosing production memory issues.
 
-## Example 83: CompletableFuture Advanced Patterns
+## Example 84: CompletableFuture Advanced Patterns
 
 CompletableFuture provides powerful exception handling, composition, and timeout mechanisms for asynchronous programming. Handle failures with `exceptionally()`, `handle()`, or `whenComplete()`. Combine futures with `thenCompose()` (sequential) or `thenCombine()` (parallel). Enforce timeouts with `orTimeout()` or `completeOnTimeout()`.
 
@@ -4728,7 +4714,8 @@ class CompletableFutureAdvanced {
         });
 
         System.out.println(future1.get());
-        // => Blocks until complete
+        // => Blocks until complete (throws ExecutionException if unhandled)
+        // => exceptionally() already handled exception, so get() never throws
         // => Output: "Success" OR "Recovered: Random failure"
 
         // handle: transform both success and failure paths
@@ -4752,7 +4739,8 @@ class CompletableFutureAdvanced {
         });
 
         System.out.println(future2.get());
-        // => Blocks for result
+        // => Blocks for result (handle() transforms exception to String)
+        // => handle() already converted exception, so get() never throws
         // => Output: "Processed: Data" OR "Error: Error"
 
         // whenComplete: side effects without transformation
@@ -4784,7 +4772,7 @@ class CompletableFutureAdvanced {
 
 **Why It Matters** (50-100 words): Exception handling in async code is critical—unlike synchronous try-catch, async exceptions happen on different threads. CompletableFuture provides three strategies: `exceptionally()` for fallback values (return default on error), `handle()` for unified success/error transformation (single handler for both paths), `whenComplete()` for side effects (logging, metrics) without changing outcomes. These methods enable robust async pipelines that gracefully degrade (fallback to cached data), unify error handling (HTTP error codes from both success/failure), and maintain observability (log all completions). Mastering exception handling prevents silent failures in async systems.
 
-## Example 84: Custom Annotations with Retention Policies
+## Example 85: Custom Annotations with Retention Policies
 
 Custom annotations enable metadata-driven programming. Retention policies control annotation availability: `SOURCE` (compile-time only, like Lombok), `CLASS` (bytecode but not runtime, for instrumentation), `RUNTIME` (reflection-accessible, like Spring/JUnit). Use `@Target` to restrict annotation locations (TYPE, METHOD, FIELD, PARAMETER).
 
@@ -4797,12 +4785,18 @@ import java.util.*;
 
 // Retention policy: RUNTIME (accessible via reflection)
 @Retention(RetentionPolicy.RUNTIME)
-// => Annotation preserved in .class file AND available at runtime
+    // => Annotation preserved in .class file AND available at runtime
+    // => RetentionPolicy.RUNTIME: available via reflection
+    // => Alternative: SOURCE (Lombok), CLASS (bytecode only)
 @Target(ElementType.FIELD)
-// => Can only be applied to fields (not methods/classes/parameters)
+    // => Can only be applied to fields (not methods/classes/parameters)
+    // => ElementType.FIELD restricts usage to field declarations
 @interface NotNull {
+    // => Custom annotation definition
+    // => @interface declares annotation type (special interface)
     String message() default "Field cannot be null";
-    // => Annotation parameter with default value
+        // => Annotation parameter with default value
+        // => Can be overridden: @NotNull(message = "Custom msg")
 }
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -4849,9 +4843,12 @@ class Validator {
         for (Field field : clazz.getDeclaredFields()) {
             // => Iterate all fields (including private username, age, email)
             // => getDeclaredFields() returns fields from THIS class only (no inheritance)
+            // => For User class, iterates over [username field, age field]
+            // => Each iteration processes one field's annotations
             field.setAccessible(true);
             // => Bypass private access modifier (reflection override)
             // => Normally "private String username" is inaccessible
+            // => Required for private field access in validation
             Object value = field.get(obj);
             // => Read field value from object instance
             // => For validUser, reads "alice" from username field, 25 from age
@@ -4907,6 +4904,7 @@ class Validator {
         // => username is "alice" (not null ✅), age is 25 (18-120 ✅)
         List<String> errors1 = validate(validUser);
         // => Runs reflection-based validation
+        // => Checks username (not null ✅) and age (18-120 ✅)
         System.out.println("Valid user errors: " + errors1);
         // => Output: "Valid user errors: []" (empty list, no violations)
 

@@ -68,62 +68,118 @@ Implementing create, read, update, delete manually:
 defmodule UserRepository do
   # Create user
   def create(conn, name, email) do
+                                                 # => conn: Database connection process
+                                                 # => name: User name string
+                                                 # => email: User email string
     sql = "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id, name, email"
-                                                 # => RETURNING: Get inserted row
+                                                 # => $1, $2: Parameterized placeholders
+                                                 # => RETURNING: Get inserted row back
+                                                 # => Prevents second SELECT query
     case Postgrex.query(conn, sql, [name, email]) do
+                                                 # => Execute INSERT with parameters
+                                                 # => [name, email]: Bind to $1, $2
+                                                 # => Returns {:ok, result} or {:error, error}
       {:ok, %{rows: [[id, name, email]]}} ->
+                                                 # => Success: Extract inserted row
+                                                 # => rows: List of tuples [[1, "Alice", "alice@..."]]
+                                                 # => Pattern match extracts id, name, email
         {:ok, %{id: id, name: name, email: email}}
                                                  # => Manual map construction
                                                  # => No struct validation
+                                                 # => Type: {:ok, map()}
 
       {:error, %Postgrex.Error{} = error} ->
-        {:error, error.postgres.message}         # => Extract error message
+                                                 # => Database error (constraint violation, etc.)
+                                                 # => error.postgres: PostgreSQL error details
+        {:error, error.postgres.message}         # => Extract human-readable message
+                                                 # => Type: {:error, String.t()}
     end
   end
 
   # Read user by ID
   def get(conn, id) do
+                                                 # => conn: Database connection
+                                                 # => id: User ID to lookup
     sql = "SELECT id, name, email FROM users WHERE id = $1"
+                                                 # => $1: Parameterized ID placeholder
+                                                 # => Prevents SQL injection
     case Postgrex.query(conn, sql, [id]) do
+                                                 # => Execute SELECT with id parameter
       {:ok, %{rows: [[id, name, email]]}} ->
+                                                 # => Success: One row found
+                                                 # => Pattern match extracts fields
         {:ok, %{id: id, name: name, email: email}}
                                                  # => Manual map construction
+                                                 # => Type: {:ok, map()}
 
       {:ok, %{rows: []}} ->
-        {:error, :not_found}                     # => No rows returned
+                                                 # => Success but no matching row
+                                                 # => Empty result set
+        {:error, :not_found}                     # => Return not_found error
+                                                 # => Type: {:error, :not_found}
 
       {:error, error} ->
-        {:error, error}
+                                                 # => Database error (connection, syntax, etc.)
+        {:error, error}                          # => Pass through error
+                                                 # => Type: {:error, Postgrex.Error.t()}
     end
   end
 
   # Update user
   def update(conn, id, name, email) do
+                                                 # => conn: Database connection
+                                                 # => id: User ID to update
+                                                 # => name: New name value
+                                                 # => email: New email value
     sql = "UPDATE users SET name = $2, email = $3 WHERE id = $1 RETURNING id, name, email"
+                                                 # => $1: id, $2: name, $3: email
+                                                 # => RETURNING: Get updated row
     case Postgrex.query(conn, sql, [id, name, email]) do
+                                                 # => Execute UPDATE with 3 parameters
+                                                 # => Order matters: [id, name, email]
       {:ok, %{rows: [[id, name, email]]}} ->
+                                                 # => Success: Row updated
+                                                 # => Extract updated fields
         {:ok, %{id: id, name: name, email: email}}
+                                                 # => Return updated user map
+                                                 # => Type: {:ok, map()}
 
       {:ok, %{rows: []}} ->
-        {:error, :not_found}
+                                                 # => Success but no matching row
+                                                 # => ID doesn't exist
+        {:error, :not_found}                     # => Return not_found error
+                                                 # => Type: {:error, :not_found}
 
       {:error, error} ->
-        {:error, error}
+                                                 # => Database error
+        {:error, error}                          # => Pass through error
     end
   end
 
   # Delete user
   def delete(conn, id) do
+                                                 # => conn: Database connection
+                                                 # => id: User ID to delete
     sql = "DELETE FROM users WHERE id = $1"
+                                                 # => $1: id placeholder
+                                                 # => No RETURNING clause needed
     case Postgrex.query(conn, sql, [id]) do
+                                                 # => Execute DELETE with id parameter
       {:ok, %{num_rows: 1}} ->
-        :ok                                      # => Deleted successfully
+                                                 # => Success: One row deleted
+                                                 # => num_rows: Count of affected rows
+        :ok                                      # => Simple success atom
+                                                 # => Type: :ok
 
       {:ok, %{num_rows: 0}} ->
-        {:error, :not_found}                     # => No matching row
+                                                 # => Success but no row deleted
+                                                 # => ID doesn't exist
+        {:error, :not_found}                     # => Return not_found error
+                                                 # => Type: {:error, :not_found}
 
       {:error, error} ->
-        {:error, error}
+                                                 # => Database error
+        {:error, error}                          # => Pass through error
     end
   end
 end
@@ -161,22 +217,34 @@ This manual approach has serious production issues:
 # Cannot compose queries dynamically
 def find_users(conn, filters) do
   # Need to build SQL string manually
-  base_sql = "SELECT * FROM users WHERE 1=1"
+  base_sql = "SELECT * FROM users WHERE 1=1"   # => Base query with always-true condition
+                                                 # => Allows appending AND clauses
+                                                 # => Type: String.t()
 
   {sql, params} = Enum.reduce(filters, {base_sql, []}, fn
+                                                 # => Iterate over filter list
+                                                 # => Accumulator: {sql_string, params_list}
     {:name, name}, {sql, params} ->
       {sql <> " AND name = $#{length(params) + 1}", params ++ [name]}
-                                                 # => Manual parameter numbering
+                                                 # => Append name filter to SQL
+                                                 # => Manual parameter numbering ($1, $2, etc.)
                                                  # => SQL string concatenation
-                                                 # => Error-prone
+                                                 # => Error-prone: Off-by-one errors possible
+                                                 # => Returns: {updated_sql, updated_params}
 
     {:email, email}, {sql, params} ->
       {sql <> " AND email = $#{length(params) + 1}", params ++ [email]}
-  end)
+                                                 # => Append email filter to SQL
+                                                 # => Must track parameter position manually
+                                                 # => Returns: {updated_sql, updated_params}
+  end)                                           # => Final: {complete_sql, all_params}
 
   Postgrex.query(conn, sql, params)
-  # => Brittle, hard to maintain
-  # => No type safety
+  # => Execute dynamically built query
+  # => Brittle: Parameter numbering fragile
+  # => Hard to maintain: String manipulation
+  # => No type safety: Params are any()
+  # => No SQL injection protection if interpolated
 end
 ```
 
@@ -189,17 +257,29 @@ def create(conn, name, email) do
   cond do
     String.length(name) < 3 ->
       {:error, "Name too short"}               # => Manual validation logic
+                                                 # => Hard-coded length check
+                                                 # => No validation pipeline
 
     !String.contains?(email, "@") ->
       {:error, "Invalid email"}                # => String-based checks
+                                                 # => Naive email validation
+                                                 # => No format regex
 
     true ->
       # Only then insert
       sql = "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id, name, email"
+                                                 # => SQL INSERT statement
+                                                 # => $1, $2: Parameterized values
+                                                 # => RETURNING: Get inserted row
       Postgrex.query(conn, sql, [name, email])
+                                                 # => Execute insert
+                                                 # => No pre-validation at database layer
+                                                 # => Returns {:ok, result} or {:error, error}
   end
   # => Validation scattered across code
   # => No reusable validation rules
+  # => No validation composition
+  # => Error messages not standardized
 end
 ```
 
@@ -254,26 +334,40 @@ end
 # Manual transaction handling
 def transfer_funds(conn, from_id, to_id, amount) do
   Postgrex.query(conn, "BEGIN", [])              # => Start transaction
-  # => No automatic rollback
+                                                 # => Locks acquired on affected rows
+  # => No automatic rollback on error
+  # => Must manually track transaction state
 
   case Postgrex.query(conn, "UPDATE accounts SET balance = balance - $1 WHERE id = $2", [amount, from_id]) do
+                                                 # => Deduct from source account
+                                                 # => $1: amount to transfer
+                                                 # => $2: source account ID
     {:ok, _} ->
       case Postgrex.query(conn, "UPDATE accounts SET balance = balance + $1 WHERE id = $2", [amount, to_id]) do
+                                                 # => Add to destination account
+                                                 # => $1: amount to transfer
+                                                 # => $2: destination account ID
         {:ok, _} ->
           Postgrex.query(conn, "COMMIT", [])     # => Commit on success
-          :ok
+                                                 # => Both updates applied atomically
+          :ok                                    # => Return success
 
         {:error, _} ->
           Postgrex.query(conn, "ROLLBACK", [])   # => Rollback on error
-          {:error, :transfer_failed}
+                                                 # => First update reverted
+          {:error, :transfer_failed}             # => Return error
+
       end
 
     {:error, _} ->
-      Postgrex.query(conn, "ROLLBACK", [])
-      {:error, :insufficient_balance}
+      Postgrex.query(conn, "ROLLBACK", [])       # => Rollback first operation failure
+                                                 # => No changes applied
+      {:error, :insufficient_balance}            # => Return insufficient funds error
   end
   # => Verbose error handling
-  # => Easy to forget rollback
+  # => Easy to forget rollback in error paths
+  # => Nested case statements hard to maintain
+  # => Transaction state tracked manually
 end
 ```
 
@@ -485,23 +579,34 @@ MyApp.Repo.all(query)                            # => Compose dynamically
 
 # Dynamic filtering
 def find_users(filters) do
-  query = from u in User
+  query = from u in User                         # => Base query from User schema
+                                                 # => u: Query binding variable
 
   query = if name = filters[:name] do
-    where(query, [u], u.name == ^name)           # => ^ pin operator: Interpolate value
+                                                 # => Check if name filter provided
+                                                 # => name: Filter value if present
+    where(query, [u], u.name == ^name)           # => Add WHERE clause to query
+                                                 # => ^ pin operator: Interpolate value safely
+                                                 # => Returns: Updated query
   else
-    query
+    query                                        # => No name filter, return unchanged query
   end
 
   query = if email = filters[:email] do
-    where(query, [u], u.email == ^email)
+                                                 # => Check if email filter provided
+    where(query, [u], u.email == ^email)         # => Add email WHERE clause
+                                                 # => Compose with previous query
+                                                 # => Returns: Updated query
   else
-    query
+    query                                        # => No email filter, return unchanged
   end
 
   MyApp.Repo.all(query)
+  # => Execute composed query
   # => Builds WHERE clause conditionally
-  # => Safe interpolation
+  # => Safe interpolation with ^ operator
+  # => Type-safe: Ecto validates field types
+  # => Returns: [%User{}, ...] or []
 end
 ```
 

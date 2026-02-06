@@ -708,12 +708,15 @@ graph TD
 # Named GenServer - Singleton pattern (one instance per application)
 defmodule Cache do
   use GenServer  # => imports GenServer behavior
+  # => Defines callbacks: init/1, handle_call/3, handle_cast/2
 
   # Start with name registration
   def start_link(_opts) do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)  # => {:ok, #PID<...>} with name: Cache
     # => name: __MODULE__ registers process globally as Cache atom
     # => Now can reference as Cache instead of PID
+    # => Process registry maps :Cache → PID
+    # => %{} is initial state (empty map)
   end
 
   # Client API uses module name, not PID
@@ -721,15 +724,18 @@ defmodule Cache do
     GenServer.cast(__MODULE__, {:put, key, value})  # => :ok (sends async message to Cache process)
     # => __MODULE__ resolves to Cache atom (finds PID via process registry)
     # => No need to pass PID around!
+    # => cast/2 returns immediately (:ok), doesn't wait for reply
   end
 
   def get(key) do
     GenServer.call(__MODULE__, {:get, key})  # => returns value or nil
     # => Synchronous call to Cache process (found by name)
+    # => Blocks until handle_call returns reply
   end
 
   def delete(key) do
     GenServer.cast(__MODULE__, {:delete, key})  # => :ok (async delete)
+    # => Asynchronous, returns immediately
   end
 
   # Server Callbacks
@@ -1835,37 +1841,52 @@ defmodule MyApp.MixProject do
   def application do
     [
       extra_applications: [:logger],  # => include Logger app (built-in Elixir app)
+      # => extra_applications: dependencies NOT in deps() (built-in apps)
       mod: {MyApp.Application, []}    # => {Module, args} - application starts by calling Module.start/2 with args
+      # => mod tuple specifies callback module and start args
     ]
   end
   # => When you run "mix run", OTP starts MyApp.Application.start(:normal, [])
   # => extra_applications ensures Logger starts BEFORE MyApp
+  # => Application startup order: Logger → MyApp
 end
 
 # Application Module - OTP application behavior
 defmodule MyApp.Application do
   use Application  # => imports Application behavior (requires start/2 and stop/1 callbacks)
+  # => Makes this module an OTP application callback
 
   @impl true
+  # => Marks start/2 as Application behavior callback implementation
   def start(_type, _args) do
     # => _type is :normal (regular start), :takeover (distributed failover), or :failover (node takeover)
     # => _args is [] (from mod: {MyApp.Application, []})
+    # => This is the APPLICATION entry point (called by OTP)
 
     # Define supervision tree children
     children = [
       {Registry, keys: :unique, name: MyApp.Registry},  # => Registry child spec (process registry)
+      # => Registry for process discovery (maps names → PIDs)
       MyApp.Cache,  # => shorthand for {MyApp.Cache, []} (assumes start_link/1 function exists)
+      # => Cache GenServer (started with default args)
       {MyApp.Worker, 1},  # => Worker with arg=1
+      # => First worker instance (arg passed to start_link/1)
       {MyApp.Worker, 2}   # => Worker with arg=2
+      # => Second worker instance (different arg)
     ]
     # => Children start in ORDER: Registry → Cache → Worker 1 → Worker 2
+    # => List order determines startup sequence
 
     opts = [strategy: :one_for_one, name: MyApp.Supervisor]  # => supervisor options
+    # => :one_for_one: child crashes don't affect siblings
+    # => name: registers supervisor with atom name
     Supervisor.start_link(children, opts)  # => {:ok, #PID<...>} (starts root supervisor)
     # => This PID is the APPLICATION's root supervisor (if it crashes, application crashes)
+    # => Returns: {:ok, supervisor_pid}
   end
   # => start/2 MUST return {:ok, pid} or {:error, reason}
   # => The pid is the supervision tree root (OTP monitors it for application health)
+  # => If start/2 returns {:error, reason}, application fails to start
 
   @impl true
   def stop(_state) do
@@ -2097,14 +2118,18 @@ mix new my_app --umbrella  # => creates apps/ directory for child applications
 # =>   config/       (shared configuration)
 # =>   mix.exs       (umbrella project definition)
 # => --umbrella flag enables multi-app architecture
+# => Returns "* creating my_app/apps/"
 
 # Create child apps inside umbrella
 cd my_app/apps
 # => Navigate to apps directory
+# => Working directory now my_app/apps/
 mix new my_app_core  # => creates my_app_core app (business logic)
 # => Core domain app without dependencies
+# => Creates my_app_core/ directory with mix.exs, lib/, test/
 mix new my_app_web --sup  # => creates my_app_web app (web interface) with supervision tree
 # => --sup adds Application and Supervisor modules
+# => Creates my_app_web/ directory with supervision setup
 ```
 
 ```elixir
@@ -2165,23 +2190,29 @@ defmodule MyAppCore.Users do
   def list_users do
     # Business logic (no web dependencies, pure Elixir)
     [%{id: 1, name: "Alice"}, %{id: 2, name: "Bob"}]  # => returns user list
+    # => List of maps with id and name keys
   end
   # => Core app is INDEPENDENT - no Phoenix, no web concepts
   # => Can be used by: web app, CLI app, background workers, etc.
+  # => Function signature: list_users() -> [%{id: integer, name: string}]
 end
 
 # apps/my_app_web/lib/my_app_web/controllers/user_controller.ex - Web layer
 defmodule MyAppWeb.UserController do
   use MyAppWeb, :controller  # => imports Phoenix controller functionality
+  # => Makes conn, render, and other Phoenix macros available
 
   def index(conn, _params) do
     users = MyAppCore.Users.list_users()  # => calls core app function
     # => Web app DEPENDS on core app (declared in deps)
     # => Core app is OBLIVIOUS to web app (no reverse dependency)
+    # => users is [%{id: 1, name: "Alice"}, %{id: 2, name: "Bob"}]
     render(conn, "index.html", users: users)  # => renders view with data from core
+    # => Passes users to template for rendering
   end
 end
 # => Clear separation: Core = business logic, Web = presentation layer
+# => Core has zero knowledge of web layer (one-way dependency)
 
 # Running umbrella commands
 # From umbrella root (my_app/):
@@ -3481,8 +3512,6 @@ table = :ets.new(:my_table, [:set, :public])
 # Insert single key-value pair (tuple format)
 :ets.insert(table, {:key1, "value1"})  # => true
 # => Stores {:key1, "value1"} in table
-# => Returns true on success
-# => Format: {key, value} where key and value can be any term
 :ets.insert(table, {:key2, "value2"})  # => true
 
 # Bulk insert multiple entries (list of tuples)
@@ -3493,7 +3522,6 @@ table = :ets.new(:my_table, [:set, :public])
 # Lookup value by key
 :ets.lookup(table, :key1)  # => [{:key1, "value1"}]
 # => Returns LIST of matching tuples (always a list, even for :set)
-# => For :set tables: list has max 1 element
 # => Extract value: [{_key, value}] = :ets.lookup(...); value
 :ets.lookup(table, :missing)  # => []
 # => Empty list for non-existent keys (NOT nil or error)
@@ -3507,20 +3535,18 @@ table = :ets.new(:my_table, [:set, :public])
 # Delete entry by key
 :ets.delete(table, :key1)  # => true
 # => Removes {:key1, "updated"} from table
-# => Returns true even if key doesn't exist (idempotent)
 :ets.lookup(table, :key1)  # => []
 # => Verify deletion - key gone
 
 # :set table - unique keys (overwrite on duplicate)
 set_table = :ets.new(:set, [:set])  # => #Reference<...>
 # => [:set] is table type (default, but explicit is clearer)
-# => No access specifier = :protected (owner writes, all read)
 :ets.insert(set_table, {:a, 1})  # => true
 # => Inserts {:a, 1}
 :ets.insert(set_table, {:a, 2})  # => true (overwrites!)
 # => Replaces {:a, 1} with {:a, 2} (unique key constraint)
 :ets.lookup(set_table, :a)  # => [{:a, 2}]
-# => Only latest value stored (previous value discarded)
+# => Only latest value stored
 
 # :bag table - allows multiple values per key (NO exact duplicates)
 bag_table = :ets.new(:bag, [:bag])  # => #Reference<...>
@@ -3531,18 +3557,14 @@ bag_table = :ets.new(:bag, [:bag])  # => #Reference<...>
 # => Inserts {:a, 2} (doesn't overwrite, adds to list)
 :ets.lookup(bag_table, :a)  # => [{:a, 1}, {:a, 2}]
 # => Returns ALL tuples with key :a
-# => Order not guaranteed (ETS doesn't maintain insertion order for :bag)
 
 # Access control types
 public = :ets.new(:public, [:public])  # => #Reference<...>
 # => :public - ANY process can read AND write
-# => Use for shared caches accessible by all processes
 protected = :ets.new(:protected, [:protected])  # => #Reference<...>
 # => :protected - owner writes, ANY process reads (DEFAULT if not specified)
-# => Use for read-mostly data (config, lookups)
 private = :ets.new(:private, [:private])  # => #Reference<...>
 # => :private - ONLY owner process can access (read + write)
-# => Use for process-local caching
 
 # Named tables (reference by atom instead of reference)
 :ets.new(:named_table, [:named_table, :set, :public])  # => :named_table (atom!)
@@ -3550,7 +3572,6 @@ private = :ets.new(:private, [:private])  # => #Reference<...>
 # => Returns atom :named_table instead of #Reference<...>
 # => Only ONE table can have name :named_table at a time
 :ets.insert(:named_table, {:key, "value"})  # => true
-# => Use atom :named_table instead of reference
 :ets.lookup(:named_table, :key)  # => [{:key, "value"}]
 # => Lookup by atom name (convenient for global tables)
 
@@ -3715,62 +3736,91 @@ graph TD
 # Define behaviour (contract) with callbacks
 defmodule Parser do
   # @callback defines required function signature
+  # => Declares contract that implementing modules must fulfill
   @callback parse(String.t()) :: {:ok, any()} | {:error, String.t()}
   # => parse/1 must accept String, return {:ok, data} or {:error, message}
   # => String.t() is type spec for binary string
   # => any() means return value can be any type
+  # => :: separates function signature from return type
+  # => | means union type (either {:ok, any()} OR {:error, String.t()})
   @callback format(any()) :: String.t()
   # => format/1 must accept any type, return String
   # => Both callbacks REQUIRED - implementing modules must define both
+  # => Compiler verifies all @callback functions implemented
 end
 # => Parser behaviour defines contract for parse/format operations
 # => Modules implementing Parser can be used polymorphically
+# => Behaviour = interface/contract in other languages
 
 # Implement Parser behaviour with JSON
 defmodule JSONParser do
   @behaviour Parser  # => declares module implements Parser contract
   # => Compiler will verify parse/1 and format/1 are defined
   # => Missing callbacks trigger compile error
+  # => Compile-time safety: interface verification
 
   @impl true  # => marks this function as behaviour implementation
   # => @impl true enables compiler to verify signature matches @callback
+  # => Compiler ensures return type matches Parser.parse/1 spec
   def parse(string) do
+    # => Implements Parser.parse/1 for JSON format
     case Jason.decode(string) do  # => parse JSON using Jason library
+      # => Jason.decode/1 returns {:ok, map} or {:error, reason}
       {:ok, data} -> {:ok, data}  # => success: return parsed data
+      # => data: parsed Elixir map from JSON string
       {:error, _} -> {:error, "Invalid JSON"}  # => failure: return error message
+      # => _ discards Jason's specific error (returns generic message)
     end
   end
   # => {:ok, %{"name" => "Alice"}} for valid JSON
   # => {:error, "Invalid JSON"} for malformed JSON
+  # => Return type matches Parser @callback spec
 
   @impl true
+  # => Marks format/1 as Parser behaviour implementation
   def format(data) do
+    # => Implements Parser.format/1 for JSON format
     Jason.encode!(data)  # => convert Elixir data to JSON string
     # => Jason.encode! raises on error (bang version)
+    # => Bang functions (!): raise exception on error instead of returning tuple
   end
   # => %{"name" => "Alice"} → "{\"name\":\"Alice\"}"
+  # => Returns JSON string representation
 end
+# => JSONParser implements Parser contract fully
 
 # Implement Parser behaviour with CSV
 defmodule CSVParser do
   @behaviour Parser
+  # => Second implementation of same behaviour
+  # => Demonstrates polymorphism: multiple implementations of one contract
 
   @impl true
+  # => Implements Parser.parse/1 for CSV format
   def parse(string) do
+    # => CSV parsing (simplified, no proper CSV library)
     rows = String.split(string, "\n")  # => split by newline
     # => "Name,Age\nAlice,30" → ["Name,Age", "Alice,30"]
+    # => Each row is still raw string (not split by comma)
     {:ok, rows}  # => return as list of strings
+    # => Wraps result in {:ok, data} tuple (matches Parser contract)
   end
   # => Simplified CSV (no proper parsing, just split)
+  # => Production would use NimbleCSV library
 
   @impl true
+  # => Implements Parser.format/1 for CSV format
   def format(rows) do
+    # => CSV formatting: join rows with newline
     Enum.join(rows, "\n")  # => join rows with newline
     # => ["Name,Age", "Alice,30"] → "Name,Age\nAlice,30"
+    # => Returns CSV string representation
   end
+  # => Inverse of parse/1: list of strings → CSV string
 end
 # => Both JSONParser and CSVParser implement Parser contract
 # => Can be used interchangeably wherever Parser expected
+# => Polymorphism through behaviour contracts
 
 
 # Polymorphic function using behaviour

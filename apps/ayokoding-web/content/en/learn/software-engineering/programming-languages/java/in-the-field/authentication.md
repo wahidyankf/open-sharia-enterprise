@@ -100,60 +100,64 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-public class BasicAuthFilter implements Filter {
+public class BasicAuthFilter implements Filter {  // => Servlet filter intercepts ALL requests before reaching servlets
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        HttpServletRequest httpRequest = (HttpServletRequest) request;  // => Cast to HttpServletRequest for HTTP-specific methods
+        HttpServletResponse httpResponse = (HttpServletResponse) response;  // => Cast to HttpServletResponse for HTTP status codes
 
         // Extract Authorization header
-        String authHeader = httpRequest.getHeader("Authorization");
+        String authHeader = httpRequest.getHeader("Authorization");  // => Gets "Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=" header
+                                                                      // => authHeader is null if header missing
 
-        if (authHeader == null || !authHeader.startsWith("Basic ")) {
+        if (authHeader == null || !authHeader.startsWith("Basic ")) {  // => Checks both missing header AND wrong auth scheme
             // No credentials provided
-            sendUnauthorized(httpResponse);
-            return;
+            sendUnauthorized(httpResponse);  // => Sends 401 response with WWW-Authenticate header
+            return;  // => Stops filter chain - request never reaches servlet
         }
 
         // Decode credentials
-        String base64Credentials = authHeader.substring("Basic ".length());
-        byte[] decodedBytes = Base64.getDecoder().decode(base64Credentials);
-        String credentials = new String(decodedBytes, StandardCharsets.UTF_8);
+        String base64Credentials = authHeader.substring("Basic ".length());  // => Removes "Basic " prefix: "Basic dXNlcm5hbWU6cGFzc3dvcmQ=" → "dXNlcm5hbWU6cGFzc3dvcmQ="
+        byte[] decodedBytes = Base64.getDecoder().decode(base64Credentials);  // => Decodes Base64 to bytes: "dXNlcm5hbWU6cGFzc3dvcmQ=" → byte array
+        String credentials = new String(decodedBytes, StandardCharsets.UTF_8);  // => Converts bytes to string: byte array → "username:password"
+                                                                                 // => UTF_8 ensures proper character encoding
 
         // Split username:password
-        String[] parts = credentials.split(":", 2);
-        if (parts.length != 2) {
-            sendUnauthorized(httpResponse);
-            return;
+        String[] parts = credentials.split(":", 2);  // => Splits on first colon only: "username:password" → ["username", "password"]
+                                                      // => Limit 2 allows passwords containing colons
+        if (parts.length != 2) {  // => Validates format: rejects malformed credentials like "username" without password
+            sendUnauthorized(httpResponse);  // => Sends 401 for invalid credential format
+            return;  // => Stops processing
         }
 
-        String username = parts[0];
-        String password = parts[1];
+        String username = parts[0];  // => username is "admin"
+        String password = parts[1];  // => password is "secret" (plaintext - dangerous!)
 
         // Validate credentials (check against database)
-        if (validateCredentials(username, password)) {
+        if (validateCredentials(username, password)) {  // => Calls validation method (checks against stored hashes in production)
             // Store username in request attribute for downstream use
-            httpRequest.setAttribute("authenticated_user", username);
-            chain.doFilter(request, response);
-        } else {
-            sendUnauthorized(httpResponse);
+            httpRequest.setAttribute("authenticated_user", username);  // => Makes username available to servlets via request.getAttribute()
+            chain.doFilter(request, response);  // => Passes request to next filter or servlet
+        } else {  // => Invalid credentials
+            sendUnauthorized(httpResponse);  // => Sends 401 for authentication failure
         }
     }
 
     private void sendUnauthorized(HttpServletResponse response) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setHeader("WWW-Authenticate", "Basic realm=\"API\"");
-        response.setContentType("application/json");
-        response.getWriter().write("{\"error\":\"Authentication required\"}");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);  // => Sets HTTP 401 status code
+        response.setHeader("WWW-Authenticate", "Basic realm=\"API\"");  // => Browser shows login dialog with "API" realm name
+        response.setContentType("application/json");  // => Response body is JSON
+        response.getWriter().write("{\"error\":\"Authentication required\"}");  // => Writes error JSON to response body
     }
 
     private boolean validateCredentials(String username, String password) {
         // PRODUCTION: Check against database with hashed passwords
         // NEVER store plaintext passwords
-        return "admin".equals(username) && "secret".equals(password);
+        return "admin".equals(username) && "secret".equals(password);  // => HARDCODED for demo only - production MUST use bcrypt/Argon2 hash comparison
+                                                                        // => Checks both username AND password match
     }
 }
 ```
@@ -203,57 +207,61 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-@WebServlet("/login")
+@WebServlet("/login")  // => Maps servlet to /login URL path
 public class LoginServlet extends HttpServlet {
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)  // => Handles POST requests only (login form submissions)
             throws ServletException, IOException {
 
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+        String username = request.getParameter("username");  // => Extracts username from POST body parameter
+        String password = request.getParameter("password");  // => Extracts password from POST body parameter (plaintext over HTTPS only!)
 
         // Validate credentials
-        if (validateCredentials(username, password)) {
+        if (validateCredentials(username, password)) {  // => Checks username/password against database
             // Create session
-            HttpSession session = request.getSession(true);
+            HttpSession session = request.getSession(true);  // => Creates NEW session if none exists, returns existing session otherwise
+                                                              // => Session ID automatically sent as JSESSIONID cookie to client
 
             // Store user information in session
-            session.setAttribute("user_id", getUserId(username));
-            session.setAttribute("username", username);
-            session.setAttribute("roles", getUserRoles(username));
+            session.setAttribute("user_id", getUserId(username));  // => Stores user_id in server-side session (e.g., "user-123")
+            session.setAttribute("username", username);  // => Stores username in session (e.g., "admin")
+            session.setAttribute("roles", getUserRoles(username));  // => Stores roles array in session (e.g., ["USER", "ADMIN"])
+                                                                     // => These attributes persist across requests for this session
 
             // Configure session
-            session.setMaxInactiveInterval(30 * 60); // 30 minutes
+            session.setMaxInactiveInterval(30 * 60); // 30 minutes  // => Session expires after 30 minutes of inactivity
+                                                                     // => After expiry, user must re-authenticate
 
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"message\":\"Login successful\"}");
-        } else {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"error\":\"Invalid credentials\"}");
+            response.setStatus(HttpServletResponse.SC_OK);  // => Sets HTTP 200 status
+            response.setContentType("application/json");  // => Response is JSON format
+            response.getWriter().write("{\"message\":\"Login successful\"}");  // => Sends success JSON to client
+        } else {  // => Authentication failed
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);  // => Sets HTTP 401 status
+            response.setContentType("application/json");  // => Response is JSON format
+            response.getWriter().write("{\"error\":\"Invalid credentials\"}");  // => Sends error JSON to client
         }
     }
 
     private boolean validateCredentials(String username, String password) {
         // PRODUCTION: Check against database with hashed passwords
-        return "admin".equals(username) && checkPasswordHash(password);
+        return "admin".equals(username) && checkPasswordHash(password);  // => Compares username AND verifies password hash
+                                                                          // => Returns true only if both match
     }
 
     private String getUserId(String username) {
         // Fetch user ID from database
-        return "user-123";
+        return "user-123";  // => HARDCODED for demo - production queries: SELECT id FROM users WHERE username = ?
     }
 
     private String[] getUserRoles(String username) {
         // Fetch user roles from database
-        return new String[]{"USER", "ADMIN"};
+        return new String[]{"USER", "ADMIN"};  // => HARDCODED for demo - production queries: SELECT role FROM user_roles WHERE username = ?
     }
 
     private boolean checkPasswordHash(String password) {
         // PRODUCTION: Use bcrypt/Argon2 to verify password
-        return true;
+        return true;  // => INSECURE for demo - production: BCrypt.checkpw(password, storedHash)
     }
 }
 ```
@@ -261,29 +269,34 @@ public class LoginServlet extends HttpServlet {
 **Protected resource**:
 
 ```java
-@WebServlet("/api/protected")
+@WebServlet("/api/protected")  // => Maps to /api/protected URL
 public class ProtectedServlet extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)  // => Handles GET requests to protected resource
             throws ServletException, IOException {
 
         // Get session (false = don't create new session)
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession(false);  // => false parameter means: retrieve existing session ONLY, don't create new
+                                                           // => Returns null if no session exists (user not logged in)
+                                                           // => Returns session object if JSESSIONID cookie present and valid
 
-        if (session == null || session.getAttribute("user_id") == null) {
+        if (session == null || session.getAttribute("user_id") == null) {  // => Checks TWO conditions: session doesn't exist OR user_id not stored
+                                                                            // => Both indicate unauthenticated request
             // Not authenticated
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"error\":\"Authentication required\"}");
-            return;
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);  // => Sets HTTP 401 status
+            response.setContentType("application/json");  // => Response is JSON
+            response.getWriter().write("{\"error\":\"Authentication required\"}");  // => Sends error JSON
+            return;  // => Stops processing - doesn't execute code below
         }
 
         // Authenticated - proceed
-        String username = (String) session.getAttribute("username");
+        String username = (String) session.getAttribute("username");  // => Retrieves username stored during login
+                                                                       // => Cast required because getAttribute returns Object
+                                                                       // => username is "admin" (example)
 
-        response.setContentType("application/json");
-        response.getWriter().write("{\"message\":\"Hello, " + username + "\"}");
+        response.setContentType("application/json");  // => Response is JSON
+        response.getWriter().write("{\"message\":\"Hello, " + username + "\"}");  // => Sends personalized greeting: {"message":"Hello, admin"}
     }
 }
 ```
@@ -374,39 +387,44 @@ Cross-Site Request Forgery (CSRF) exploits authenticated sessions.
 **CSRF token pattern**:
 
 ```java
-@WebServlet("/api/transfer")
+@WebServlet("/api/transfer")  // => Maps to /api/transfer URL
 public class TransferServlet extends HttpServlet {
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)  // => Handles POST requests for money transfers
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession(false);  // => Gets existing session only (don't create new)
+                                                           // => Returns null if user not logged in
 
-        if (session == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+        if (session == null) {  // => No session means user not authenticated
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);  // => Sets HTTP 401 status
+            return;  // => Rejects request immediately
         }
 
         // Validate CSRF token
-        String sessionToken = (String) session.getAttribute("csrf_token");
-        String requestToken = request.getHeader("X-CSRF-Token");
+        String sessionToken = (String) session.getAttribute("csrf_token");  // => Gets CSRF token stored during login (server-side)
+                                                                             // => Example: "abc123def456" (generated by SecureRandom)
+        String requestToken = request.getHeader("X-CSRF-Token");  // => Gets CSRF token from request header (client-sent)
+                                                                   // => Legitimate app sends token, malicious site can't (same-origin policy)
 
-        if (sessionToken == null || !sessionToken.equals(requestToken)) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("{\"error\":\"CSRF token invalid\"}");
-            return;
+        if (sessionToken == null || !sessionToken.equals(requestToken)) {  // => Checks TWO conditions: token not generated OR tokens don't match
+                                                                            // => CSRF attack would fail here because attacker can't read token
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);  // => Sets HTTP 403 status (authenticated but not authorized)
+            response.getWriter().write("{\"error\":\"CSRF token invalid\"}");  // => Sends error JSON
+            return;  // => Rejects request - transfer not executed
         }
 
         // Process transfer (CSRF validation passed)
-        processTransfer(request);
+        processTransfer(request);  // => Executes transfer logic only if BOTH authentication AND CSRF checks pass
+                                    // => Prevents attacks from malicious sites
 
-        response.setStatus(HttpServletResponse.SC_OK);
+        response.setStatus(HttpServletResponse.SC_OK);  // => Sets HTTP 200 status for successful transfer
     }
 
     private void processTransfer(HttpServletRequest request) {
         // Transfer logic
-    }
+    }  // => Would extract amount, recipient, execute database transaction
 }
 ```
 
@@ -522,21 +540,25 @@ import java.util.List;
 
 public class JWTService {
 
-    private static final String SECRET = "your-secret-key-min-256-bits";
-    private static final Algorithm algorithm = Algorithm.HMAC256(SECRET);
+    private static final String SECRET = "your-secret-key-min-256-bits";  // => Secret key for HMAC signing (MUST be 256+ bits in production)
+                                                                            // => NEVER commit to source control - use environment variables
+    private static final Algorithm algorithm = Algorithm.HMAC256(SECRET);  // => HMAC-SHA256 algorithm (symmetric key)
+                                                                            // => Same secret signs AND verifies tokens
 
     public static String createToken(String userId, String username, List<String> roles) {
-        Instant now = Instant.now();
-        Instant expiration = now.plusSeconds(3600); // 1 hour
+        Instant now = Instant.now();  // => Current timestamp: 2024-02-03T10:00:00Z
+        Instant expiration = now.plusSeconds(3600); // 1 hour  // => Expiration: 2024-02-03T11:00:00Z
+                                                                // => Token invalid after this time
 
-        return JWT.create()
-            .withIssuer("my-app")
-            .withSubject(userId)
-            .withClaim("username", username)
-            .withClaim("roles", roles)
-            .withIssuedAt(Date.from(now))
-            .withExpiresAt(Date.from(expiration))
-            .sign(algorithm);
+        return JWT.create()  // => Starts builder for new JWT
+            .withIssuer("my-app")  // => "iss" claim identifies token issuer
+            .withSubject(userId)  // => "sub" claim is user identifier (e.g., "user-123")
+            .withClaim("username", username)  // => Custom claim: username (e.g., "alice")
+            .withClaim("roles", roles)  // => Custom claim: roles array (e.g., ["USER", "ADMIN"])
+            .withIssuedAt(Date.from(now))  // => "iat" claim: token creation time
+            .withExpiresAt(Date.from(expiration))  // => "exp" claim: token expiration time (validates automatically during verification)
+            .sign(algorithm);  // => Signs token with HMAC-SHA256, returns encoded JWT string
+                               // => Result: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLTEyMyIsIm5hbWUiOiJhbGljZSIsInJvbGVzIjpbIlVTRVIiLCJBRE1JTiJdLCJpYXQiOjE3MDY5NTQ0MDAsImV4cCI6MTcwNjk1ODAwMH0.signature"
     }
 }
 ```
@@ -599,37 +621,42 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 public class JWTService {
 
-    private static final String SECRET = "your-secret-key-min-256-bits";
-    private static final Algorithm algorithm = Algorithm.HMAC256(SECRET);
+    private static final String SECRET = "your-secret-key-min-256-bits";  // => Same secret used for signing
+    private static final Algorithm algorithm = Algorithm.HMAC256(SECRET);  // => HMAC-SHA256 algorithm for verification
 
     public static DecodedJWT validateToken(String token) {
         try {
-            JWTVerifier verifier = JWT.require(algorithm)
-                .withIssuer("my-app")
-                .build();
+            JWTVerifier verifier = JWT.require(algorithm)  // => Creates verifier with HMAC-SHA256 algorithm
+                .withIssuer("my-app")  // => Requires "iss" claim to match "my-app" (prevents tokens from other apps)
+                .build();  // => Builds configured verifier
 
-            return verifier.verify(token);
-            // Automatically checks:
-            // - Signature validity
-            // - Expiration (exp claim)
-            // - Not before (nbf claim)
-            // - Issuer (iss claim)
-        } catch (JWTVerificationException e) {
+            return verifier.verify(token);  // => Validates token: checks signature, expiration, issuer
+            // Automatically checks:  // => CRITICAL: All validations happen inside verify() call
+            // - Signature validity  // => Recalculates HMAC and compares with token signature (detects tampering)
+            // - Expiration (exp claim)  // => Checks current time < exp claim (rejects expired tokens)
+            // - Not before (nbf claim)  // => Checks current time >= nbf claim if present (prevents premature use)
+            // - Issuer (iss claim)  // => Checks iss claim == "my-app" (rejects tokens from other issuers)
+                                      // => Returns DecodedJWT object with validated claims
+        } catch (JWTVerificationException e) {  // => Catches ANY validation failure
             // Token invalid (expired, tampered, wrong signature)
-            return null;
+            return null;  // => Returns null for invalid tokens (expired, tampered, wrong signature)
+                          // => Caller should reject request
         }
     }
 
     public static String getUserId(DecodedJWT jwt) {
-        return jwt.getSubject();
+        return jwt.getSubject();  // => Extracts "sub" claim (user ID)
+                                   // => Returns "user-123" (example)
     }
 
     public static String getUsername(DecodedJWT jwt) {
-        return jwt.getClaim("username").asString();
+        return jwt.getClaim("username").asString();  // => Extracts custom "username" claim
+                                                      // => Returns "alice" (example)
     }
 
     public static List<String> getRoles(DecodedJWT jwt) {
-        return jwt.getClaim("roles").asList(String.class);
+        return jwt.getClaim("roles").asList(String.class);  // => Extracts custom "roles" claim as List<String>
+                                                             // => Returns ["USER", "ADMIN"] (example)
     }
 }
 ```
@@ -644,51 +671,55 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-public class JWTAuthFilter implements Filter {
+public class JWTAuthFilter implements Filter {  // => Servlet filter intercepts ALL requests
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        HttpServletRequest httpRequest = (HttpServletRequest) request;  // => Cast to HttpServletRequest
+        HttpServletResponse httpResponse = (HttpServletResponse) response;  // => Cast to HttpServletResponse
 
         // Extract Authorization header
-        String authHeader = httpRequest.getHeader("Authorization");
+        String authHeader = httpRequest.getHeader("Authorization");  // => Gets "Authorization: Bearer eyJhbGci..." header
+                                                                      // => authHeader is null if missing
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            sendUnauthorized(httpResponse);
-            return;
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {  // => Checks missing header OR wrong scheme (not "Bearer ")
+            sendUnauthorized(httpResponse);  // => Sends 401 response
+            return;  // => Stops filter chain
         }
 
         // Extract token
-        String token = authHeader.substring("Bearer ".length());
+        String token = authHeader.substring("Bearer ".length());  // => Removes "Bearer " prefix
+                                                                  // => token is "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLTEyMyIsIm5hbWUiOiJhbGljZSIsInJvbGVzIjpbIlVTRVIiLCJBRE1JTiJdLCJpYXQiOjE3MDY5NTQ0MDAsImV4cCI6MTcwNjk1ODAwMH0.signature"
 
         // Validate token
-        DecodedJWT jwt = JWTService.validateToken(token);
+        DecodedJWT jwt = JWTService.validateToken(token);  // => Validates signature, expiration, issuer
+                                                            // => Returns DecodedJWT if valid, null if invalid
 
-        if (jwt == null) {
-            sendUnauthorized(httpResponse);
-            return;
+        if (jwt == null) {  // => Token invalid (expired, tampered, wrong signature)
+            sendUnauthorized(httpResponse);  // => Sends 401 response
+            return;  // => Stops processing
         }
 
         // Extract claims
-        String userId = JWTService.getUserId(jwt);
-        String username = JWTService.getUsername(jwt);
-        List<String> roles = JWTService.getRoles(jwt);
+        String userId = JWTService.getUserId(jwt);  // => Extracts "sub" claim: "user-123"
+        String username = JWTService.getUsername(jwt);  // => Extracts "username" claim: "alice"
+        List<String> roles = JWTService.getRoles(jwt);  // => Extracts "roles" claim: ["USER", "ADMIN"]
 
         // Store in request attributes
-        httpRequest.setAttribute("user_id", userId);
-        httpRequest.setAttribute("username", username);
-        httpRequest.setAttribute("roles", roles);
+        httpRequest.setAttribute("user_id", userId);  // => Makes user_id available to servlets
+        httpRequest.setAttribute("username", username);  // => Makes username available to servlets
+        httpRequest.setAttribute("roles", roles);  // => Makes roles available for authorization checks
+                                                    // => Servlets access via request.getAttribute()
 
-        chain.doFilter(request, response);
+        chain.doFilter(request, response);  // => Passes request to next filter or servlet (authentication succeeded)
     }
 
     private void sendUnauthorized(HttpServletResponse response) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json");
-        response.getWriter().write("{\"error\":\"Invalid or expired token\"}");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);  // => Sets HTTP 401 status
+        response.setContentType("application/json");  // => Response is JSON
+        response.getWriter().write("{\"error\":\"Invalid or expired token\"}");  // => Sends error JSON
     }
 }
 ```
@@ -1096,36 +1127,40 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-@Configuration
-@EnableWebSecurity
+@Configuration  // => Marks class as Spring configuration
+@EnableWebSecurity  // => Enables Spring Security for application
 public class SecurityConfig {
 
-    @Bean
+    @Bean  // => Defines Spring bean for security filter chain
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/public/**").permitAll()
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
+        http  // => Configures HTTP security
+            .authorizeHttpRequests(auth -> auth  // => Defines authorization rules
+                .requestMatchers("/api/public/**").permitAll()  // => Allows anonymous access to /api/public/* URLs (no authentication required)
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")  // => Requires ADMIN role for /api/admin/* URLs (checks granted authorities for "ROLE_ADMIN")
+                .anyRequest().authenticated()  // => All other URLs require authentication (user logged in)
             )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .defaultSuccessUrl("/dashboard")
-                .permitAll()
+            .formLogin(form -> form  // => Configures form-based login
+                .loginPage("/login")  // => Custom login page URL (default is /login)
+                .defaultSuccessUrl("/dashboard")  // => Redirect to /dashboard after successful login
+                .permitAll()  // => Login page accessible without authentication
             )
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout")
-                .permitAll()
+            .logout(logout -> logout  // => Configures logout functionality
+                .logoutUrl("/logout")  // => POST to /logout to trigger logout
+                .logoutSuccessUrl("/login?logout")  // => Redirect to /login?logout after logout (shows logout message)
+                .permitAll()  // => Logout accessible without authentication
             )
-            .csrf(csrf -> csrf.disable()); // Disable for APIs, enable for web apps
+            .csrf(csrf -> csrf.disable()); // Disable for APIs, enable for web apps  // => Disables CSRF protection (ONLY for stateless JWT APIs)
+                                                                                     // => MUST keep enabled for session-based web apps (form-based login)
+                                                                                     // => Disabling exposes session-based apps to CSRF attacks
 
-        return http.build();
+        return http.build();  // => Builds configured SecurityFilterChain bean
     }
 
-    @Bean
+    @Bean  // => Defines Spring bean for password encoder
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder();  // => BCrypt password hashing with default cost factor (10 rounds = 2^10 iterations)
+                                              // => Automatically generates salt per password
+                                              // => Produces hash like: $2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy
     }
 }
 ```
@@ -1174,27 +1209,32 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-@Service
-public class CustomUserDetailsService implements UserDetailsService {
+@Service  // => Marks class as Spring service bean
+public class CustomUserDetailsService implements UserDetailsService {  // => Implements Spring Security interface for loading user data
 
-    private final UserRepository userRepository;
+    private final UserRepository userRepository;  // => Injected repository for database access
 
-    public CustomUserDetailsService(UserRepository userRepository) {
+    public CustomUserDetailsService(UserRepository userRepository) {  // => Constructor injection (Spring autowires UserRepository)
         this.userRepository = userRepository;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {  // => Spring Security calls this method during authentication
+                                                                                                 // => username is value from login form
+        User user = userRepository.findByUsername(username)  // => Queries database: SELECT * FROM users WHERE username = ?
+            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));  // => Throws exception if user doesn't exist (authentication fails)
+                                                                                                 // => Returns User entity if found
 
-        return org.springframework.security.core.userdetails.User.builder()
-            .username(user.getUsername())
-            .password(user.getPassword()) // Already hashed with BCrypt
-            .roles(user.getRoles().toArray(new String[0]))
-            .accountLocked(user.isLocked())
-            .disabled(!user.isActive())
-            .build();
+        return org.springframework.security.core.userdetails.User.builder()  // => Builds Spring Security UserDetails object
+            .username(user.getUsername())  // => Sets username (e.g., "alice")
+            .password(user.getPassword()) // Already hashed with BCrypt  // => Sets password hash from database (e.g., "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy")
+                                                                          // => Spring Security compares this hash with login password using BCryptPasswordEncoder
+            .roles(user.getRoles().toArray(new String[0]))  // => Sets roles (e.g., ["USER", "ADMIN"])
+                                                             // => Spring adds "ROLE_" prefix automatically: "ADMIN" → "ROLE_ADMIN"
+            .accountLocked(user.isLocked())  // => Sets account locked status (authentication fails if true)
+            .disabled(!user.isActive())  // => Sets disabled status (authentication fails if true)
+            .build();  // => Returns configured UserDetails object
+                       // => Spring Security uses this for authentication and authorization
     }
 }
 ```
@@ -1206,29 +1246,35 @@ public class CustomUserDetailsService implements UserDetailsService {
 ```java
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@Service
+@Service  // => Marks class as Spring service bean
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;  // => Injected repository for database access
+    private final PasswordEncoder passwordEncoder;  // => Injected BCryptPasswordEncoder bean
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {  // => Constructor injection (Spring autowires both dependencies)
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     public void createUser(String username, String rawPassword) {
-        String hashedPassword = passwordEncoder.encode(rawPassword);
+        String hashedPassword = passwordEncoder.encode(rawPassword);  // => Hashes password with BCrypt
+                                                                       // => rawPassword "secret123" → hashedPassword "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy"
+                                                                       // => Automatically generates unique salt per password
 
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(hashedPassword);
+        User user = new User();  // => Creates new user entity
+        user.setUsername(username);  // => Sets username (e.g., "alice")
+        user.setPassword(hashedPassword);  // => Stores HASHED password (NEVER store plaintext!)
 
-        userRepository.save(user);
+        userRepository.save(user);  // => Inserts into database: INSERT INTO users (username, password) VALUES (?, ?)
+                                     // => Only hash stored, plaintext password never persisted
     }
 
     public boolean verifyPassword(String rawPassword, String hashedPassword) {
-        return passwordEncoder.matches(rawPassword, hashedPassword);
+        return passwordEncoder.matches(rawPassword, hashedPassword);  // => Compares plaintext password with stored hash
+                                                                       // => rawPassword "secret123" + hashedPassword "$2a$10$..." → true if match
+                                                                       // => BCrypt extracts salt from hash, rehashes rawPassword, compares
+                                                                       // => Returns true if match, false if mismatch
     }
 }
 ```

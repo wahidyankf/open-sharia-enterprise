@@ -72,21 +72,30 @@ Plug.Conn provides HTTP abstraction, but no routing or lifecycle conventions.
 defmodule MyRouter do
   use Plug.Router                            # => Import router DSL
                                              # => Provides get, post, match, etc.
+                                             # => Compiles route matching logic
 
-  plug :match                                # => Match routes
-  plug :dispatch                             # => Dispatch to handlers
+  plug :match                                # => Match request to route
+                                             # => First plug in pipeline
+  plug :dispatch                             # => Dispatch to matched handler
+                                             # => Second plug in pipeline
 
   get "/hello" do
     send_resp(conn, 200, "Hello!")           # => Handle GET /hello
                                              # => conn: Current connection
+                                             # => 200: HTTP OK status
+                                             # => Returns updated conn
   end                                        # => Type: Plug.Conn.t()
 
   post "/api/users" do
     send_resp(conn, 201, "User created")     # => Handle POST /api/users
+                                             # => 201: HTTP Created status
+                                             # => Plain text response
   end
 
   match _ do
     send_resp(conn, 404, "Not found")        # => Catch-all route
+                                             # => Matches any method, any path
+                                             # => 404: Not Found status
   end
 end
 ```
@@ -98,83 +107,120 @@ Basic routing works, but lacks nested routes, resource conventions, parameter va
 ```elixir
 # Donation campaign REST API using Plug
 defmodule DonationAPI do
-  use Plug.Router                            # => Router DSL
-  import Plug.Conn                           # => Connection functions
+  use Plug.Router                            # => Import Router DSL
+                                             # => Provides get, post, match macros
+  import Plug.Conn                           # => Import Connection functions
+                                             # => send_resp, put_resp_content_type, etc.
 
-  plug Plug.Logger                           # => Request logging
-  plug :match
-  plug :dispatch
+  plug Plug.Logger                           # => Log all requests
+                                             # => Shows method, path, status, duration
+  plug :match                                # => Match route to handler
+  plug :dispatch                             # => Execute matched handler
 
   # List campaigns
   get "/api/campaigns" do
+                                             # => Matches: GET /api/campaigns
+                                             # => conn: Current connection
     campaigns = [
       %{id: 1, name: "Education Fund", goal: 10000, raised: 5500},
+                                             # => First campaign map
+                                             # => Fields: id, name, goal, raised
       %{id: 2, name: "Medical Aid", goal: 15000, raised: 12000}
+                                             # => Second campaign map
     ]                                        # => Hardcoded campaign data
                                              # => Type: [map()]
 
-    json = Jason.encode!(campaigns)          # => Encode to JSON
+    json = Jason.encode!(campaigns)          # => Encode list to JSON string
+                                             # => Jason: JSON library
                                              # => Type: String.t()
 
     conn
     |> put_resp_content_type("application/json")
-    |> send_resp(200, json)
+                                             # => Set Content-Type header
+                                             # => Client knows response is JSON
+    |> send_resp(200, json)                  # => Send HTTP 200 with JSON body
+                                             # => Returns: Plug.Conn.t()
   end
 
   # Get single campaign
   get "/api/campaigns/:id" do
+                                             # => Matches: GET /api/campaigns/123
+                                             # => :id captured as "id" variable
     id = String.to_integer(id)               # => Path parameter from router
+                                             # => Convert "123" string to 123 integer
                                              # => Type: integer()
 
     campaign = %{
-      id: id,
-      name: "Education Fund",
-      goal: 10000,
-      raised: 5500
+      id: id,                                # => Use converted integer ID
+      name: "Education Fund",                # => Hardcoded campaign name
+      goal: 10000,                           # => Fundraising goal in currency units
+      raised: 5500                           # => Amount raised so far
     }                                        # => Mock campaign lookup
+                                             # => Production: Repo.get(Campaign, id)
                                              # => Type: map()
 
-    json = Jason.encode!(campaign)
+    json = Jason.encode!(campaign)           # => Encode campaign map to JSON
+                                             # => Type: String.t()
 
     conn
     |> put_resp_content_type("application/json")
-    |> send_resp(200, json)
+                                             # => Set JSON content type
+    |> send_resp(200, json)                  # => Send HTTP 200 OK with campaign
   end
 
   # Create donation
   post "/api/campaigns/:id/donations" do
+                                             # => Matches: POST /api/campaigns/1/donations
+                                             # => id: Campaign ID from URL path
     {:ok, body, conn} = Plug.Conn.read_body(conn)
-                                             # => Read request body
+                                             # => Read raw request body
+                                             # => body: Binary JSON data
+                                             # => conn: Updated connection
                                              # => Type: {:ok, binary(), Plug.Conn.t()}
 
-    params = Jason.decode!(body)             # => Parse JSON body
+    params = Jason.decode!(body)             # => Parse JSON body to Elixir map
+                                             # => Expects {"amount": 100, "donor": "Alice"}
                                              # => Type: map()
 
     donation = %{
-      campaign_id: String.to_integer(id),
-      amount: params["amount"],
-      donor: params["donor"]
+      campaign_id: String.to_integer(id),    # => Convert campaign ID to integer
+                                             # => Type: integer()
+      amount: params["amount"],              # => Extract donation amount
+                                             # => Type: integer() or float()
+      donor: params["donor"]                 # => Extract donor name
+                                             # => Type: String.t()
     }                                        # => Create donation record
                                              # => Type: map()
 
     # Save to database (mock)
-    # Repo.insert(donation)
+    # Repo.insert(donation)                 # => Production: Save to database
+                                             # => Returns {:ok, donation} or {:error, changeset}
 
-    json = Jason.encode!(donation)
+    json = Jason.encode!(donation)           # => Encode donation to JSON
+                                             # => Type: String.t()
 
     conn
     |> put_resp_content_type("application/json")
+                                             # => Set JSON content type
     |> send_resp(201, json)                  # => HTTP 201 Created
+                                             # => 201: Resource created successfully
   end
 
   match _ do
-    send_resp(conn, 404, "Not found")
+                                             # => Catch-all for unmatched routes
+                                             # => Handles any method, any path
+    send_resp(conn, 404, "Not found")        # => HTTP 404 Not Found
+                                             # => Plain text response
   end
 end
 
 # Start server
 {:ok, _} = Plug.Cowboy.http(DonationAPI, [], port: 4000)
-                                             # => Starts on port 4000
+                                             # => Start Cowboy HTTP server
+                                             # => Module: DonationAPI
+                                             # => Options: [] (empty list)
+                                             # => Port: 4000 (localhost:4000)
+                                             # => Returns: {:ok, pid}
                                              # => No supervision tree
                                              # => Manual request handling
 ```
@@ -189,28 +235,50 @@ Manual route definition without RESTful conventions:
 
 ```elixir
 # Problem: Manual route patterns
-get "/api/campaigns" do                      # => List
+get "/api/campaigns" do                      # => List all campaigns (index action)
+                                             # => Must manually define route
+                                             # => No automatic route helper function
+                                             # => No convention-based naming
   # Handler code
 end
 
-get "/api/campaigns/:id" do                  # => Show
+get "/api/campaigns/:id" do                  # => Show single campaign (show action)
+                                             # => :id is path parameter
+                                             # => Must manually extract and validate
+                                             # => Must manually convert string to integer
+                                             # => No automatic 404 if not found
   # Handler code
 end
 
-post "/api/campaigns" do                     # => Create
+post "/api/campaigns" do                     # => Create new campaign (create action)
+                                             # => Must manually parse request body JSON
+                                             # => Must manually read_body from conn
+                                             # => No automatic validation or changesets
+                                             # => No automatic error handling
   # Handler code
 end
 
-put "/api/campaigns/:id" do                  # => Update
+put "/api/campaigns/:id" do                  # => Update existing campaign (update action)
+                                             # => Must manually handle both :id and body
+                                             # => Must manually merge params
+                                             # => No partial update support
+                                             # => No automatic conflict detection
   # Handler code
 end
 
-delete "/api/campaigns/:id" do               # => Delete
+delete "/api/campaigns/:id" do               # => Delete campaign (delete action)
+                                             # => Must manually verify :id exists
+                                             # => Must manually check foreign key constraints
+                                             # => No cascade delete handling
+                                             # => No soft delete support
   # Handler code
 end
-                                             # => Repetitive CRUD patterns
-                                             # => No resource helpers
-                                             # => Manual parameter extraction
+                                             # => Repetitive CRUD patterns for every resource
+                                             # => Every resource needs 5 manual routes
+                                             # => No resource helpers or path conventions
+                                             # => Manual parameter extraction every time
+                                             # => No automatic route naming (campaigns_path, etc.)
+                                             # => No nested resource support
 ```
 
 Phoenix provides `resources/4` macro for standard RESTful routes.
@@ -224,28 +292,44 @@ No structured middleware chain or lifecycle hooks:
 defmodule MyRouter do
   use Plug.Router
 
-  plug :authenticate                         # => Manual authentication
+  plug :authenticate                         # => Manual authentication plug
+                                             # => Must implement from scratch
   plug :check_csrf                           # => Manual CSRF protection
+                                             # => Must handle tokens, validation
   plug :load_user                            # => Manual user loading
-  plug :match
-  plug :dispatch
+                                             # => Must query database, handle sessions
+  plug :match                                # => Route matching
+  plug :dispatch                             # => Handler dispatch
 
-  # Must implement all middleware
+  # Must implement all middleware functions
   def authenticate(conn, _opts) do
     # Custom auth logic
+                                             # => Check session or JWT token
+                                             # => Verify credentials
+                                             # => Handle unauthorized access
+                                             # => Must return conn or halt pipeline
   end
 
   def check_csrf(conn, _opts) do
     # Custom CSRF logic
+                                             # => Validate CSRF token from request
+                                             # => Compare with session token
+                                             # => Reject if mismatch
+                                             # => Must handle GET vs POST differently
   end
 
   def load_user(conn, _opts) do
     # Custom user loading
+                                             # => Extract user ID from session
+                                             # => Query database for user record
+                                             # => Assign to conn.assigns
+                                             # => Handle user not found
   end
 end
-                                             # => No standardized patterns
-                                             # => Error-prone implementations
-                                             # => Fragile ordering
+                                             # => No standardized patterns or best practices
+                                             # => Error-prone implementations (security bugs)
+                                             # => Fragile ordering (must run in correct sequence)
+                                             # => No testing helpers for plug pipelines
 ```
 
 Phoenix provides structured pipeline system with built-in plugs.
@@ -257,9 +341,28 @@ No built-in WebSocket or real-time capabilities:
 ```elixir
 # Problem: Manual WebSocket handling
 # Must implement WebSocket protocol manually
+                                             # => Write handshake logic from scratch
+                                             # => Handle frame parsing manually
+                                             # => Manage connection lifecycle
+                                             # => No automatic reconnection
+
 # No pub/sub infrastructure
+                                             # => Must build message broadcasting system
+                                             # => Implement topic subscriptions manually
+                                             # => Handle race conditions in message delivery
+                                             # => No distributed pub/sub across nodes
+
 # No presence tracking
+                                             # => Cannot track "who's online" efficiently
+                                             # => Must implement custom presence logic
+                                             # => Handle network partitions manually
+                                             # => No conflict resolution for presence
+
 # Complex state synchronization
+                                             # => Client and server state drift easily
+                                             # => Must manually handle reconnection state
+                                             # => No automatic state reconciliation
+                                             # => Race conditions in concurrent updates
 ```
 
 Phoenix Channels provide production-ready real-time infrastructure.
@@ -271,8 +374,22 @@ No server-rendered interactivity without JavaScript:
 ```elixir
 # Problem: Full JavaScript SPA or full page reloads
 # Either write React/Vue frontend + JSON API
+                                             # => Requires separate frontend codebase
+                                             # => Duplicate validation logic
+                                             # => Complex build pipeline
+                                             # => API versioning challenges
+
 # Or use traditional server rendering with full page reloads
+                                             # => Every interaction reloads entire page
+                                             # => No real-time updates
+                                             # => Poor user experience
+                                             # => High bandwidth usage
+
 # No middle ground for simple interactivity
+                                             # => Cannot easily add real-time features
+                                             # => Simple updates require full SPA
+                                             # => Or accept page reload UX penalty
+                                             # => No server-side state management for UI
 ```
 
 Phoenix LiveView enables real-time interactivity with minimal JavaScript.
@@ -305,27 +422,35 @@ Phoenix generates complete project structure with routing, templates, assets.
 ```elixir
 # lib/donation_platform_web/router.ex
 defmodule DonationPlatformWeb.Router do
-  use DonationPlatformWeb, :router          # => Import Phoenix router
+  use DonationPlatformWeb, :router          # => Import Phoenix router macros
+                                             # => Provides pipeline, scope, resources
+                                             # => Sets up routing DSL
 
   pipeline :api do
     plug :accepts, ["json"]                  # => Accept JSON only
+                                             # => Rejects non-JSON requests with 406
                                              # => Type: [String.t()]
   end
 
   scope "/api", DonationPlatformWeb do
-    pipe_through :api                        # => Apply API pipeline
+    pipe_through :api                        # => Apply API pipeline to all routes
+                                             # => Runs :accepts plug
 
     resources "/campaigns", CampaignController, only: [:index, :show, :create]
-                                             # => Generate routes:
-                                             # => GET    /api/campaigns
-                                             # => GET    /api/campaigns/:id
-                                             # => POST   /api/campaigns
+                                             # => Generate standard RESTful routes:
+                                             # => GET    /api/campaigns (index)
+                                             # => GET    /api/campaigns/:id (show)
+                                             # => POST   /api/campaigns (create)
+                                             # => only: [:index, :show, :create] - Limit actions
                                              # => Type: routes list
+                                             # => Generates route helpers automatically
 
     resources "/campaigns", CampaignController do
       resources "/donations", DonationController, only: [:create]
-    end                                      # => Nested route:
+    end                                      # => Nested resource route:
                                              # => POST /api/campaigns/:campaign_id/donations
+                                             # => :campaign_id available in params
+                                             # => Represents parent resource
   end
 end
 ```
@@ -355,34 +480,47 @@ defmodule DonationPlatformWeb.CampaignController do
 
   # Show single campaign
   def show(conn, %{"id" => id}) do
+                                             # => Pattern match params map
+                                             # => id: String from URL path
     campaign = %{
-      id: String.to_integer(id),
-      name: "Education Fund",
-      goal: 10000,
-      raised: 5500,
-      donations: [
-        %{donor: "Ahmad", amount: 1000},
-        %{donor: "Fatima", amount: 2000}
+      id: String.to_integer(id),             # => Convert string ID to integer
+                                             # => Type: integer()
+      name: "Education Fund",                # => Campaign name
+      goal: 10000,                           # => Fundraising goal
+      raised: 5500,                          # => Amount raised so far
+      donations: [                           # => List of donations
+        %{donor: "Ahmad", amount: 1000},     # => First donation
+        %{donor: "Fatima", amount: 2000}     # => Second donation
       ]
     }                                        # => Mock campaign lookup
+                                             # => Production: Campaigns.get_campaign(id)
                                              # => Type: map()
 
-    json(conn, campaign)
+    json(conn, campaign)                     # => Render JSON response
+                                             # => Sets Content-Type: application/json
   end
 
   # Create campaign
   def create(conn, params) do
+                                             # => params: Request parameters map
+                                             # => Contains name, goal from body
     campaign = %{
-      id: :rand.uniform(1000),
-      name: params["name"],
-      goal: params["goal"],
-      raised: 0
+      id: :rand.uniform(1000),               # => Generate random ID
+                                             # => Production: Use database auto-increment
+      name: params["name"],                  # => Extract name from params
+                                             # => Type: String.t()
+      goal: params["goal"],                  # => Extract goal from params
+                                             # => Type: integer()
+      raised: 0                              # => Initialize raised to zero
     }                                        # => Mock campaign creation
+                                             # => Production: Campaigns.create_campaign(params)
                                              # => Type: map()
 
     conn
-    |> put_status(:created)                  # => HTTP 201 status
-    |> json(campaign)
+    |> put_status(:created)                  # => HTTP 201 Created status
+                                             # => Indicates new resource created
+    |> json(campaign)                        # => Render created campaign as JSON
+                                             # => Returns Plug.Conn.t()
   end
 end
 ```
@@ -517,109 +655,173 @@ Verified routes catch routing errors at compile time, not runtime.
 
 ```elixir
 # Full Phoenix API with context pattern
+# Demonstrates router, contexts, controllers working together
 
 # Router
 defmodule DonationPlatformWeb.Router do
-  use DonationPlatformWeb, :router
+  use DonationPlatformWeb, :router          # => Import Phoenix router macros
+                                            # => Provides pipeline, scope, resources
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug :accepts, ["json"]                 # => Accept only JSON content-type
+                                            # => Rejects HTML, XML, etc.
   end
 
   scope "/api", DonationPlatformWeb do
-    pipe_through :api
+    pipe_through :api                       # => Apply API pipeline to routes
+                                            # => All routes get JSON filtering
 
     resources "/campaigns", CampaignController, only: [:index, :show, :create] do
+                                            # => Generates 3 RESTful routes
+                                            # => index: GET /api/campaigns
+                                            # => show: GET /api/campaigns/:id
+                                            # => create: POST /api/campaigns
       post "/donations", DonationController, :create
+                                            # => Nested route inside campaigns resource
+                                            # => POST /api/campaigns/:campaign_id/donations
     end
   end
 end
 
 # Campaigns context
 defmodule DonationPlatform.Campaigns do
-  alias DonationPlatform.Campaigns.Campaign
+  alias DonationPlatform.Campaigns.Campaign # => Import Campaign schema
+                                            # => Type: module()
 
   def list_campaigns do
     # Mock data
     [
       %Campaign{id: 1, name: "Education Fund", goal: 10000, raised: 5500},
+                                            # => Campaign struct with 4 fields
+                                            # => Type: Campaign.t()
       %Campaign{id: 2, name: "Medical Aid", goal: 15000, raised: 12000}
-    ]
+                                            # => Second campaign
+    ]                                       # => Returns list of campaigns
+                                            # => Type: [Campaign.t()]
   end
 
   def get_campaign(id) when is_integer(id) do
+                                            # => Guard: id must be integer
+                                            # => Prevents invalid lookups
     campaign = %Campaign{id: id, name: "Education Fund", goal: 10000, raised: 5500}
-    {:ok, campaign}
+                                            # => Mock campaign lookup
+                                            # => Production: Repo.get(Campaign, id)
+    {:ok, campaign}                         # => Success tuple
+                                            # => Type: {:ok, Campaign.t()}
   end
   def get_campaign(_), do: {:error, :not_found}
+                                            # => Catch-all for non-integer ids
+                                            # => Type: {:error, :not_found}
 
   def create_campaign(%{"name" => name, "goal" => goal}) when is_binary(name) and is_integer(goal) do
+                                            # => Pattern match + guards validate input
+                                            # => name must be string, goal must be integer
     campaign = %Campaign{
-      id: :rand.uniform(1000),
-      name: name,
-      goal: goal,
-      raised: 0
-    }
-    {:ok, campaign}
+      id: :rand.uniform(1000),              # => Generate random ID
+                                            # => Production: Auto-incremented by DB
+      name: name,                           # => Use validated name
+      goal: goal,                           # => Use validated goal
+      raised: 0                             # => New campaigns start at 0 raised
+    }                                       # => Type: Campaign.t()
+    {:ok, campaign}                         # => Success tuple
+                                            # => Type: {:ok, Campaign.t()}
   end
   def create_campaign(_), do: {:error, :invalid_params}
+                                            # => Catch-all for invalid params
+                                            # => Type: {:error, :invalid_params}
 
   def add_donation(campaign_id, amount) when is_integer(campaign_id) and is_integer(amount) do
+                                            # => Guards validate both params are integers
     # Update campaign raised amount
     {:ok, %{campaign_id: campaign_id, new_raised: 5500 + amount}}
+                                            # => Mock calculation
+                                            # => Production: Update DB and return new balance
+                                            # => Type: {:ok, map()}
   end
 end
 
 # Campaign controller
 defmodule DonationPlatformWeb.CampaignController do
-  use DonationPlatformWeb, :controller
-  alias DonationPlatform.Campaigns
+  use DonationPlatformWeb, :controller     # => Import controller functions
+                                            # => json/2, put_status/2, etc.
+  alias DonationPlatform.Campaigns          # => Import Campaigns context
+                                            # => Type: module()
 
   def index(conn, _params) do
-    campaigns = Campaigns.list_campaigns()
-    json(conn, campaigns)
+                                            # => conn: Connection struct
+                                            # => _params: Unused query params
+    campaigns = Campaigns.list_campaigns()  # => Delegate to context
+                                            # => Type: [Campaign.t()]
+    json(conn, campaigns)                   # => Render JSON response
+                                            # => Automatically sets Content-Type
+                                            # => Returns: Plug.Conn.t()
   end
 
   def show(conn, %{"id" => id}) do
+                                            # => Pattern match extracts id from params
+                                            # => id: String from URL path
     case Campaigns.get_campaign(String.to_integer(id)) do
+                                            # => Convert string ID to integer
+                                            # => Pass to context function
       {:ok, campaign} ->
-        json(conn, campaign)
+                                            # => Success case: campaign found
+        json(conn, campaign)                # => Render campaign as JSON
+                                            # => HTTP 200 OK
       {:error, :not_found} ->
+                                            # => Error case: no matching campaign
         conn
-        |> put_status(:not_found)
+        |> put_status(:not_found)           # => Set HTTP 404 status
         |> json(%{error: "Campaign not found"})
+                                            # => Return error message as JSON
     end
   end
 
   def create(conn, params) do
+                                            # => params: Request body parsed as map
+                                            # => Contains "name", "goal" keys
     case Campaigns.create_campaign(params) do
+                                            # => Delegate creation to context
+                                            # => Context validates params
       {:ok, campaign} ->
+                                            # => Success: campaign created
         conn
-        |> put_status(:created)
-        |> json(campaign)
+        |> put_status(:created)             # => Set HTTP 201 Created
+        |> json(campaign)                   # => Return created campaign as JSON
       {:error, :invalid_params} ->
+                                            # => Error: validation failed
         conn
         |> put_status(:unprocessable_entity)
+                                            # => Set HTTP 422 Unprocessable Entity
         |> json(%{error: "Invalid parameters"})
+                                            # => Return error message
     end
   end
 end
 
 # Donation controller
 defmodule DonationPlatformWeb.DonationController do
-  use DonationPlatformWeb, :controller
-  alias DonationPlatform.Campaigns
+  use DonationPlatformWeb, :controller     # => Import controller functions
+  alias DonationPlatform.Campaigns          # => Import Campaigns context
 
   def create(conn, %{"campaign_id" => campaign_id, "amount" => amount}) do
+                                            # => Pattern match extracts campaign_id, amount
+                                            # => campaign_id: String from URL
+                                            # => amount: Integer from request body
     case Campaigns.add_donation(String.to_integer(campaign_id), amount) do
+                                            # => Convert campaign_id to integer
+                                            # => Pass both to context
       {:ok, result} ->
+                                            # => Success: donation added
         conn
-        |> put_status(:created)
-        |> json(result)
+        |> put_status(:created)             # => HTTP 201 Created
+        |> json(result)                     # => Return result with new balance
       {:error, reason} ->
+                                            # => Error: donation failed
+                                            # => reason: Error atom from context
         conn
         |> put_status(:unprocessable_entity)
-        |> json(%{error: reason})
+                                            # => HTTP 422
+        |> json(%{error: reason})           # => Return error reason
     end
   end
 end

@@ -45,19 +45,26 @@ This guide covers essential security patterns: input validation, cryptography, a
 ### SQL Injection Prevention
 
 ```java
-// VULNERABLE: SQL Injection
+// => VULNERABLE: SQL Injection via string concatenation
 public User findUser(String username) {
     String query = "SELECT * FROM users WHERE username = '" + username + "'";
-    // ATTACK: username = "admin' OR '1'='1"
-    // RESULT: SELECT * FROM users WHERE username = 'admin' OR '1'='1'
+    // => ATTACK: username = "admin' OR '1'='1"
+    // => Concatenation creates: SELECT * FROM users WHERE username = 'admin' OR '1'='1'
+    // => RESULT: Returns ALL users (OR '1'='1' is always true)
+    // => DANGER: Bypasses authentication completely
     return jdbcTemplate.queryForObject(query, userRowMapper);
+    // => Executes malicious SQL directly
 }
 
-// SECURE: Parameterized Queries
+// => SECURE: Parameterized Queries prevent injection
 public User findUser(String username) {
     String query = "SELECT * FROM users WHERE username = ?";
+    // => Placeholder: ? marks parameter position
     return jdbcTemplate.queryForObject(query, userRowMapper, username);
-    // Parameter binding prevents SQL injection
+    // => username passed as separate parameter (not concatenated)
+    // => Database treats username as DATA, not SQL code
+    // => SAFE: "admin' OR '1'='1" treated as literal string
+    // => Returns: Only user with exact username match
 }
 ```
 
@@ -169,40 +176,59 @@ import java.security.SecureRandom;
 
 public class SecureEncryption {
     private static final String ALGORITHM = "AES/GCM/NoPadding";
+    // => AES-256 with Galois/Counter Mode (authenticated encryption)
     private static final int GCM_IV_LENGTH = 12;  // 96 bits
+    // => Initialization Vector: 12 bytes recommended for GCM
     private static final int GCM_TAG_LENGTH = 128;  // 128 bits
+    // => Authentication tag: 128 bits for integrity verification
 
     public record EncryptedData(byte[] ciphertext, byte[] iv) {}
+    // => VALUE OBJECT: Holds encrypted data + IV (both needed for decryption)
 
     public static EncryptedData encrypt(byte[] plaintext, SecretKey key)
             throws GeneralSecurityException {
-        // RANDOM IV: Never reuse IV with same key
+        // => CRITICAL: Generate random IV for each encryption
         byte[] iv = new byte[GCM_IV_LENGTH];
         SecureRandom random = new SecureRandom();
+        // => SecureRandom: Cryptographically strong random number generator
         random.nextBytes(iv);
+        // => iv is now 12 random bytes (never reuse with same key!)
 
         Cipher cipher = Cipher.getInstance(ALGORITHM);
+        // => Get AES/GCM/NoPadding cipher instance
         GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
+        // => spec contains: tag length (128 bits) + IV (12 bytes)
         cipher.init(Cipher.ENCRYPT_MODE, key, spec);
+        // => Initialize cipher: ENCRYPT mode with key and GCM parameters
 
         byte[] ciphertext = cipher.doFinal(plaintext);
-        return new EncryptedData(ciphertext, iv);  // RETURN IV with ciphertext
+        // => Encrypt plaintext and append authentication tag
+        // => Output: encrypted data + 16-byte authentication tag
+        return new EncryptedData(ciphertext, iv);
+        // => RETURN: Both ciphertext and IV (IV not secret, needed for decryption)
     }
 
     public static byte[] decrypt(EncryptedData data, SecretKey key)
             throws GeneralSecurityException {
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH, data.iv());
+        // => Use SAME IV that was used for encryption
         cipher.init(Cipher.DECRYPT_MODE, key, spec);
+        // => Initialize cipher: DECRYPT mode with key and GCM parameters
 
         return cipher.doFinal(data.ciphertext());
-        // GCM verifies authenticity: throws exception if tampered
+        // => Decrypt and verify authentication tag
+        // => THROWS: AEADBadTagException if data tampered or wrong key
+        // => GCM provides: Confidentiality (encryption) + Integrity (authentication)
     }
 
     public static SecretKey generateKey() throws NoSuchAlgorithmException {
         KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-        keyGen.init(256);  // AES-256
+        // => Get AES key generator
+        keyGen.init(256);
+        // => Generate 256-bit key (AES-256)
         return keyGen.generateKey();
+        // => Returns: SecretKey suitable for AES-256 encryption
     }
 }
 ```
@@ -260,20 +286,31 @@ conn.setSSLSocketFactory(sc.getSocketFactory());
 import at.favre.lib.crypto.bcrypt.BCrypt;
 
 public class PasswordManager {
-    private static final int BCRYPT_COST = 12;  // 2^12 iterations
+    private static final int BCRYPT_COST = 12;
+    // => COST FACTOR: 2^12 = 4096 iterations
+    // => Higher cost = slower hashing = more secure against brute force
+    // => Cost 12: ~150-300ms per hash (balance security vs UX)
 
     public static String hashPassword(String plaintext) {
         return BCrypt.withDefaults()
             .hashToString(BCRYPT_COST, plaintext.toCharArray());
-        // SALT: Automatically generated and stored in hash
-        // OUTPUT: $2a$12$randomsalt...hashedpassword
+        // => Hashes password with 2^12 iterations
+        // => SALT: Automatically generated (random, unique per password)
+        // => Salt stored IN hash string (no separate storage needed)
+        // => OUTPUT FORMAT: $2a$12$[22-char salt][31-char hash]
+        // => Example: $2a$12$R9h/cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jWMUW
     }
 
     public static boolean verifyPassword(String plaintext, String hash) {
         BCrypt.Result result = BCrypt.verifyer()
             .verify(plaintext.toCharArray(), hash);
+        // => Extracts salt from hash string
+        // => Re-hashes plaintext with extracted salt
+        // => Compares hashes in constant time
         return result.verified;
-        // CONSTANT-TIME: Prevents timing attacks
+        // => Returns: true if plaintext matches, false otherwise
+        // => CONSTANT-TIME: Takes same time regardless of match
+        // => Prevents: Timing attacks (attacker can't guess by timing)
     }
 }
 ```
