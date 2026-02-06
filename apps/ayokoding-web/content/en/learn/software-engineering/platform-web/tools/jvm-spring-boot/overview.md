@@ -25,22 +25,36 @@ Spring Boot is an opinionated framework built on the Spring ecosystem that simpl
 
 Spring Boot is built on top of the Spring Framework and provides auto-configuration and opinionated defaults. To effectively use Spring Boot, you need to understand the core Spring concepts that Spring Boot builds upon.
 
-**Required Foundation**: [JVM Spring Framework](/en/learn/software-engineering/platform-web/jvm-spring)
+**Required Foundation**: [JVM Spring Framework](/en/learn/software-engineering/platform-web/tools/jvm-spring)
 
-Understanding these Spring Framework concepts is essential:
+## Foundation Concepts
 
-- **Inversion of Control (IoC)** - How Spring manages object lifecycles
-- **Dependency Injection** - Constructor injection, @Autowired, bean wiring
-- **Bean Configuration** - @Configuration, @Bean, @ComponentScan
-- **ApplicationContext** - The core Spring container
-- **Bean Lifecycle** - Initialization, destruction, scopes
-- **Aspect-Oriented Programming (AOP)** - Transaction management, cross-cutting concerns
-- **Spring Data Access** - JdbcTemplate, transaction management
-- **Spring MVC** - Web layer fundamentals, DispatcherServlet
+Understanding these Spring Framework concepts is essential before using Spring Boot:
+
+**Core Spring Concepts:**
+
+- **[Spring IoC Container](/en/learn/software-engineering/platform-web/tools/jvm-spring/overview#ioc-container)** - How Spring manages bean lifecycles and dependencies
+- **[Dependency Injection](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/dependency-injection)** - Constructor injection, @Autowired, bean wiring patterns
+- **[Java-Based Configuration](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/configuration)** - @Configuration, @Bean, component scanning
+- **[Bean Lifecycle](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/bean-lifecycle)** - Initialization hooks, destruction callbacks, bean scopes
+- **[Component Scanning](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/component-scanning)** - @Component, @Service, @Repository stereotypes
+
+**Data Access:**
+
+- **[Spring JDBC](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/spring-jdbc)** - JdbcTemplate for database access
+- **[Spring Data JPA](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/spring-data-jpa)** - Repository pattern and entity management
+- **[Transaction Management](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/transaction-management)** - @Transactional and propagation
+
+**Web Development:**
+
+- **[Spring MVC](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/spring-mvc)** - DispatcherServlet, controllers, view resolution
+- **[REST APIs](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/rest-apis)** - @RestController, ResponseEntity, content negotiation
 
 **Spring Boot adds**: Auto-configuration, embedded servers, starter dependencies, production-ready features (Actuator), and opinionated defaults on top of these core Spring concepts.
 
-**If you're new to Spring**, start with [JVM Spring Framework](/en/learn/software-engineering/platform-web/jvm-spring) to learn the foundational concepts, then return to Spring Boot to learn how it simplifies Spring application development.
+**Why This Matters**: Spring Boot auto-configures these concepts. Understanding manual Spring setup helps troubleshoot when auto-configuration doesn't match your needs.
+
+**If you're new to Spring**, start with [JVM Spring Framework](/en/learn/software-engineering/platform-web/tools/jvm-spring) to learn the foundational concepts, then return to Spring Boot to learn how it simplifies Spring application development.
 
 ## Platform Characteristics
 

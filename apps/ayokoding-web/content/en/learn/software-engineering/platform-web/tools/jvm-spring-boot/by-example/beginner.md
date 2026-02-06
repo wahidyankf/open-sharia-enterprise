@@ -20,6 +20,12 @@ tags:
 
 Learn Spring Boot fundamentals through 25 annotated code examples in both Java and Kotlin. Each example is self-contained, runnable, and heavily commented to show what each line does, expected outputs, and key takeaways.
 
+**Foundation Knowledge Required**: These examples build on Spring Framework concepts. If you're new to Spring, review:
+
+- [Spring Framework Dependency Injection](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/dependency-injection) - Understanding how Spring manages beans
+- [Spring Framework Configuration](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/configuration) - @Configuration and @Bean patterns
+- [Spring Framework Component Scanning](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/component-scanning) - How Spring discovers components
+
 ## Group 1: Core Spring Concepts
 
 ### Example 1: Spring Boot Application Starter
@@ -114,6 +120,59 @@ fun main(args: Array<String>) {
     // Note: *args spreads array to vararg parameter
 }
 ```
+
+**Auto-Configuration Process Diagram**:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Classpath["Classpath Scanning"] --> Conditions["Evaluate @Conditional Annotations"]
+    Conditions --> Check1["@ConditionalOnClass"]
+    Conditions --> Check2["@ConditionalOnMissingBean"]
+    Conditions --> Check3["@ConditionalOnProperty"]
+    Check1 --> Decide{All Conditions Met?}
+    Check2 --> Decide
+    Check3 --> Decide
+    Decide -->|Yes| CreateBean["Create Auto-Configured Bean"]
+    Decide -->|No| Skip["Skip Configuration"]
+    CreateBean --> Register["Register in ApplicationContext"]
+
+    style Classpath fill:#0173B2,color:#fff
+    style Conditions fill:#DE8F05,color:#fff
+    style Check1 fill:#029E73,color:#fff
+    style Check2 fill:#029E73,color:#fff
+    style Check3 fill:#029E73,color:#fff
+    style Decide fill:#CC78BC,color:#fff
+    style CreateBean fill:#CA9161,color:#fff
+    style Skip fill:#CA9161,color:#fff
+    style Register fill:#0173B2,color:#fff
+```
+
+**Caption**: Spring Boot auto-configuration evaluates conditional annotations on classpath classes to determine which beans to create automatically.
+
+**Embedded Tomcat Startup Sequence**:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant App as SpringApplication
+    participant Context as ApplicationContext
+    participant Tomcat as Embedded Tomcat
+    participant Ready as Application Ready
+
+    App->>Context: Create ApplicationContext
+    Context->>Context: Initialize beans
+    Context->>Tomcat: Detect spring-boot-starter-web
+    Tomcat->>Tomcat: Initialize ServletWebServerFactory
+    Tomcat->>Tomcat: Configure connectors (port 8080)
+    Tomcat->>Tomcat: Start Tomcat server
+    Tomcat-->>App: Server started on port 8080
+    App->>Ready: Publish ApplicationReadyEvent
+
+    Note over App,Ready: Total startup typically 2-5 seconds
+```
+
+**Caption**: Spring Boot automatically starts an embedded Tomcat server when spring-boot-starter-web is detected on the classpath.
 
 **Key Takeaway**: `@SpringBootApplication` combines three annotations for convention-over-configuration, eliminating XML and boilerplate setup code.
 
@@ -2853,6 +2912,59 @@ data class AppConfig(
 // Enable @ConfigurationProperties in main class or @Configuration:
 // @EnableConfigurationProperties(AppConfig::class)
 ```
+
+**@ConfigurationProperties Binding Process**:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Props["application.properties"] --> Scan["Spring Scans @ConfigurationProperties"]
+    Scan --> Match["Match prefix app.*"]
+    Match --> Bind1["Bind app.name → name property"]
+    Match --> Bind2["Bind app.version → version property"]
+    Match --> Bind3["Bind app.max-users → maxUsers property"]
+    Bind1 --> Validate["Validate @Validated constraints"]
+    Bind2 --> Validate
+    Bind3 --> Validate
+    Validate --> POJO["Type-Safe POJO Ready"]
+
+    style Props fill:#0173B2,color:#fff
+    style Scan fill:#DE8F05,color:#fff
+    style Match fill:#029E73,color:#fff
+    style Bind1 fill:#CC78BC,color:#fff
+    style Bind2 fill:#CC78BC,color:#fff
+    style Bind3 fill:#CC78BC,color:#fff
+    style Validate fill:#CA9161,color:#fff
+    style POJO fill:#0173B2,color:#fff
+```
+
+**Caption**: Spring Boot binds properties with matching prefix to POJO fields, with automatic type conversion and optional validation.
+
+**Application Properties Loading Hierarchy Diagram**:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Defaults["Built-in Defaults"] --> AppProps["application.properties"]
+    AppProps --> AppYml["application.yml"]
+    AppYml --> ProfileProps["application-{profile}.properties"]
+    ProfileProps --> EnvVars["Environment Variables"]
+    EnvVars --> CmdArgs["Command Line Arguments"]
+    CmdArgs --> FinalConfig["Final Configuration"]
+
+    Note1["Lowest Priority"] -.-> Defaults
+    Note2["Highest Priority"] -.-> CmdArgs
+
+    style Defaults fill:#0173B2,color:#fff
+    style AppProps fill:#DE8F05,color:#fff
+    style AppYml fill:#029E73,color:#fff
+    style ProfileProps fill:#CC78BC,color:#fff
+    style EnvVars fill:#CA9161,color:#fff
+    style CmdArgs fill:#0173B2,color:#fff
+    style FinalConfig fill:#DE8F05,color:#fff
+```
+
+**Caption**: Spring Boot loads properties from multiple sources, with later sources overriding earlier ones (command-line arguments have highest priority).
 
 **Key Takeaway**: Externalize configuration to `application.properties`. Use `@Value("${property:default}")` for injection with defaults. Never hardcode environment-specific values.
 

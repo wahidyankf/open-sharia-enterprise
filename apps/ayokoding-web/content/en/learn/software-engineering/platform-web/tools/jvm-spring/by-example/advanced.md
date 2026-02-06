@@ -484,6 +484,39 @@ class SecurityConfig {
 }
 ```
 
+**Spring Security Filter Chain**:
+
+```mermaid
+sequenceDiagram
+    participant Request
+    participant Filter1 as SecurityContextFilter
+    participant Filter2 as AuthenticationFilter
+    participant Filter3 as AuthorizationFilter
+    participant Controller
+
+    Request->>Filter1: Incoming HTTP request
+    Note over Filter1: Initialize security context
+
+    Filter1->>Filter2: Pass to authentication
+    Note over Filter2: Verify credentials<br/>(Basic Auth, JWT, etc.)
+
+    Filter2->>Filter3: Authenticated request
+    Note over Filter3: Check URL authorization<br/>/public/** → permitAll<br/>/api/** → authenticated
+
+    Filter3->>Controller: Authorized request
+    Note over Controller: Execute business logic
+
+    Controller-->>Request: HTTP response
+
+    style Request fill:#0173B2,stroke:#000,color:#fff
+    style Filter1 fill:#DE8F05,stroke:#000,color:#000
+    style Filter2 fill:#029E73,stroke:#000,color:#fff
+    style Filter3 fill:#CC78BC,stroke:#000,color:#000
+    style Controller fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Diagram Explanation**: This sequence diagram shows how Spring Security's filter chain processes requests through multiple security filters (context, authentication, authorization) before reaching the controller.
+
 **Key Takeaways**:
 
 - SecurityFilterChain configures security rules
@@ -642,6 +675,38 @@ class CustomUserDetailsService : UserDetailsService {
     }
 }
 ```
+
+**Custom UserDetailsService Authentication Flow**:
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Security as Spring Security
+    participant UserService as CustomUserDetailsService
+    participant Database
+
+    Client->>Security: Login with username/password
+    Security->>UserService: loadUserByUsername(username)
+
+    UserService->>Database: Query user by username
+    Database-->>UserService: User data (or not found)
+
+    alt User Found
+        UserService-->>Security: UserDetails object<br/>(username, password, roles)
+        Security->>Security: Validate password
+        Security-->>Client: Authentication success
+    else User Not Found
+        UserService-->>Security: UsernameNotFoundException
+        Security-->>Client: Authentication failure (401)
+    end
+
+    style Client fill:#0173B2,stroke:#000,color:#fff
+    style Security fill:#DE8F05,stroke:#000,color:#000
+    style UserService fill:#029E73,stroke:#000,color:#fff
+    style Database fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Diagram Explanation**: This sequence diagram shows how Spring Security delegates authentication to CustomUserDetailsService, which loads user data and returns UserDetails for password verification.
 
 **Key Takeaways**:
 
@@ -935,6 +1000,39 @@ class DonationCacheService {
 }
 ```
 
+**Cache Abstraction Lifecycle**:
+
+```mermaid
+stateDiagram-v2
+    [*] --> CacheMiss: getDonation(1) called
+    CacheMiss --> LoadFromDB: Key not in cache
+    LoadFromDB --> CacheStore: Store result
+    CacheStore --> CacheHit: Subsequent getDonation(1)
+
+    CacheHit --> CacheUpdate: updateDonation(1, data)
+    CacheUpdate --> CacheHit: @CachePut updates cache
+
+    CacheHit --> CacheEvict: deleteDonation(1)
+    CacheEvict --> [*]: @CacheEvict removes entry
+
+    note right of CacheMiss
+        @Cacheable checks cache
+        If miss, executes method
+    end note
+
+    note right of CacheUpdate
+        @CachePut always executes
+        Updates cached value
+    end note
+
+    note right of CacheEvict
+        @CacheEvict removes entry
+        Next access will be miss
+    end note
+```
+
+**Diagram Explanation**: This state diagram shows the cache lifecycle - from initial miss/load, through hits, updates via @CachePut, and eviction via @CacheEvict.
+
 **Key Takeaways**:
 
 - @Cacheable caches method results
@@ -1136,6 +1234,36 @@ class DonationEventListener {
     }
 }
 ```
+
+**ApplicationEvent Publishing Flow**:
+
+```mermaid
+sequenceDiagram
+    participant Service as DonationService
+    participant Publisher as ApplicationEventPublisher
+    participant Context as Spring Context
+    participant Listener1 as EmailListener
+    participant Listener2 as AuditListener
+
+    Service->>Publisher: publishEvent(DonationEvent)
+    Publisher->>Context: Broadcast event
+
+    Context->>Listener1: @EventListener invoked
+    Note over Listener1: Send email notification
+
+    Context->>Listener2: @EventListener invoked
+    Note over Listener2: Log audit record
+
+    Note over Service,Listener2: Decoupled - Service unaware of listeners
+
+    style Service fill:#0173B2,stroke:#000,color:#fff
+    style Publisher fill:#DE8F05,stroke:#000,color:#000
+    style Context fill:#029E73,stroke:#000,color:#fff
+    style Listener1 fill:#CC78BC,stroke:#000,color:#000
+    style Listener2 fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Diagram Explanation**: This sequence diagram shows Spring's event-driven architecture - services publish events through ApplicationEventPublisher, and multiple @EventListener methods receive events independently, enabling loose coupling.
 
 **Key Takeaways**:
 
@@ -1353,6 +1481,40 @@ class DatabaseService(type: String) {
     }
 }
 ```
+
+**Conditional Bean Registration Flow**:
+
+```mermaid
+graph TD
+    A[Spring scans @Bean methods] --> B{@Conditional annotations?}
+    B -->|@ConditionalOnProperty| C{Property matches?}
+    B -->|@ConditionalOnMissingBean| D{Bean exists?}
+    B -->|@ConditionalOnClass| E{Class in classpath?}
+
+    C -->|Yes| F[Register bean]
+    C -->|No| G[Skip bean]
+
+    D -->|No missing| F
+    D -->|Already exists| G
+
+    E -->|Present| F
+    E -->|Absent| G
+
+    F --> H[Bean available in context]
+    G --> I[Bean not registered]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#029E73,stroke:#000,color:#fff
+    style E fill:#029E73,stroke:#000,color:#fff
+    style F fill:#CC78BC,stroke:#000,color:#000
+    style G fill:#CA9161,stroke:#000,color:#fff
+    style H fill:#0173B2,stroke:#000,color:#fff
+    style I fill:#DE8F05,stroke:#000,color:#000
+```
+
+**Diagram Explanation**: This flow diagram shows how Spring evaluates @Conditional annotations during bean registration, enabling flexible auto-configuration based on properties, existing beans, or classpath contents.
 
 **Key Takeaways**:
 

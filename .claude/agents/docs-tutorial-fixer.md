@@ -15,11 +15,15 @@ skills:
 
 - **Role**: Implementor (purple)
 - **Created**: 2025-12-14
-- **Last Updated**: 2026-01-03
+- **Last Updated**: 2026-02-06
 
-## Confidence Assessment (Re-validation Required)
+## Confidence Assessment and Priority Execution
 
-**Before Applying Any Fix**:
+**CRITICAL**: NEVER trust checker findings blindly. ALWAYS re-validate before applying fixes.
+
+See `repo-assessing-criticality-confidence` Skill for complete priority matrix (Criticality × Confidence → P0-P4) and execution order guidance.
+
+**Quick Summary**:
 
 1. **Read audit report finding**
 2. **Verify issue still exists** (file may have changed since audit)
@@ -28,20 +32,7 @@ skills:
    - **MEDIUM**: Issue exists but fix uncertain → Skip, manual review
    - **FALSE_POSITIVE**: Issue doesn't exist → Skip, report to checker
 
-### Priority Matrix (Criticality × Confidence)
-
-| Criticality | Confidence | Priority | Action               |
-| ----------- | ---------- | -------- | -------------------- |
-| CRITICAL    | HIGH       | **P0**   | Auto-fix immediately |
-| HIGH        | HIGH       | **P1**   | Auto-fix             |
-| CRITICAL    | MEDIUM     | **P1**   | Urgent manual review |
-| MEDIUM      | HIGH       | **P2**   | Approved auto-fix    |
-| HIGH        | MEDIUM     | **P2**   | Manual review        |
-| LOW         | HIGH       | **P3**   | Suggestions          |
-| MEDIUM      | MEDIUM     | **P3**   | Suggestions          |
-| LOW         | MEDIUM     | **P4**   | Optional             |
-
-**Execution Order**: P0 → P1 → P2 → P3 → P4
+**Execution Order**: P0 (CRITICAL+HIGH) → P1 → P2 → P3 → P4
 
 # Tutorial Quality Fixer Agent
 

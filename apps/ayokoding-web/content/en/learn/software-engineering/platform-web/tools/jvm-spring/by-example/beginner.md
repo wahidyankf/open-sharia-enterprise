@@ -22,25 +22,37 @@ Demonstrates the most basic Spring setup - creating an ApplicationContext to man
 
 ```java
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+// => Annotation-based Spring container implementation
+// => Reads @Configuration classes to build application context
 import org.springframework.context.annotation.Configuration;
+// => Annotation marking configuration classes
+// => Spring processes these to discover bean definitions
 
 @Configuration  // => Marks this as Spring configuration class
                 // => Spring scans for @Bean methods here
+                // => Container processes this during initialization
 class AppConfig {
     // => Empty config for now, just bootstrapping Spring
+    // => No beans defined yet (will add in later examples)
 }
 
-public class Example01 {
-    public static void main(String[] args) {
+public class Example01 {  // => Main application entry point
+                          // => Demonstrates minimal Spring context creation
+    public static void main(String[] args) {  // => Application starts here
         // => Creates Spring IoC container from Java config
+        // => Scans AppConfig class for bean definitions
         AnnotationConfigApplicationContext context =
             new AnnotationConfigApplicationContext(AppConfig.class);
         // => context is now initialized, ready to manage beans
+        // => Container has processed @Configuration and registered definitions
 
         System.out.println("Spring Context ID: " + context.getId());
-        // => Output: Spring Context ID: [unique-id]
+        // => Prints unique context identifier
+        // => Output: Spring Context ID: org.springframework.context.annotation.AnnotationConfigApplicationContext@5fd0d5ae
 
         context.close();  // => Releases resources, calls bean destruction callbacks
+                          // => Shuts down container gracefully
+                          // => Triggers @PreDestroy methods if any beans defined
     }
 }
 ```
@@ -49,23 +61,35 @@ public class Example01 {
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
+// => Annotation-based Spring container implementation
+// => Reads @Configuration classes to build application context
 import org.springframework.context.annotation.Configuration
+// => Annotation marking configuration classes
+// => Spring processes these to discover bean definitions
 
 @Configuration  // => Marks this as Spring configuration class
                 // => Spring scans for @Bean methods here
+                // => Container processes this during initialization
 class AppConfig {
     // => Empty config for now, just bootstrapping Spring
+    // => No beans defined yet (will add in later examples)
 }
 
-fun main() {
+fun main() {  // => Application entry point for Kotlin
+              // => Demonstrates minimal Spring context creation
     // => Creates Spring IoC container from Kotlin config
+    // => Scans AppConfig class for bean definitions (::class.java gets Java class)
     val context = AnnotationConfigApplicationContext(AppConfig::class.java)
     // => context is now initialized, ready to manage beans
+    // => Container has processed @Configuration and registered definitions
 
     println("Spring Context ID: ${context.id}")
-    // => Output: Spring Context ID: [unique-id]
+    // => Prints unique context identifier
+    // => Output: Spring Context ID: org.springframework.context.annotation.AnnotationConfigApplicationContext@5fd0d5ae
 
     context.close()  // => Releases resources, calls bean destruction callbacks
+                     // => Shuts down container gracefully
+                     // => Triggers @PreDestroy methods if any beans defined
 }
 ```
 
@@ -74,6 +98,24 @@ fun main() {
 ```
 Spring Context ID: org.springframework.context.annotation.AnnotationConfigApplicationContext@5fd0d5ae
 ```
+
+**ApplicationContext Creation Flow**:
+
+```mermaid
+graph TD
+    A[AppConfig class] -->|@Configuration annotation| B[Spring scans configuration]
+    B --> C[ApplicationContext created]
+    C --> D[Bean definitions registered]
+    D --> E[Context ready to manage beans]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#000
+    style E fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Diagram Explanation**: This diagram illustrates how Spring transforms a @Configuration class into a fully initialized ApplicationContext that manages bean lifecycle.
 
 **Key Takeaways**:
 
@@ -96,39 +138,53 @@ Demonstrates defining a bean with `@Bean` and retrieving it from the context.
 
 ```java
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+// => Annotation-based Spring container implementation
 import org.springframework.context.annotation.Bean;
+// => Annotation marking factory methods for bean creation
 import org.springframework.context.annotation.Configuration;
+// => Annotation marking configuration classes
 
 class ZakatCalculator {  // => Simple POJO for Zakat calculations
-    public double calculateZakat(double wealth) {
-        return wealth * 0.025;  // => 2.5% of wealth
+                          // => Will be managed by Spring as a bean
+    public double calculateZakat(double wealth) {  // => Public method for calculation
+        return wealth * 0.025;  // => 2.5% of wealth (Zakat rate)
+                                 // => Result: wealth multiplied by 0.025
     }
 }
 
-@Configuration
+@Configuration  // => Marks this as Spring configuration class
+                // => Spring scans for @Bean methods here
 class AppConfig {
     @Bean  // => Tells Spring to manage this object as a bean
            // => Bean name defaults to method name: "zakatCalculator"
-    public ZakatCalculator zakatCalculator() {
-        return new ZakatCalculator();  // => Spring calls this to create bean
-        // => Bean stored in container, reused for subsequent requests
+           // => Spring calls this method during container initialization
+    public ZakatCalculator zakatCalculator() {  // => Factory method for ZakatCalculator bean
+        return new ZakatCalculator();  // => Creates new ZakatCalculator instance
+        // => Spring stores bean in container, reused for subsequent requests (singleton)
+        // => Returns reference to bean for dependency injection
     }
 }
 
-public class Example02 {
-    public static void main(String[] args) {
+public class Example02 {  // => Main application entry point
+                          // => Demonstrates bean definition and retrieval
+    public static void main(String[] args) {  // => Application starts here
         AnnotationConfigApplicationContext context =
             new AnnotationConfigApplicationContext(AppConfig.class);
-        // => Context initialized, zakatCalculator bean created
+        // => Context initialized, Spring processes @Configuration
+        // => zakatCalculator bean created and stored in container
 
         ZakatCalculator calc = context.getBean(ZakatCalculator.class);
-        // => Retrieves bean by type
-        // => calc references the singleton instance
+        // => Retrieves bean by type (ZakatCalculator.class)
+        // => calc references the singleton instance from container
+        // => Same instance returned for all getBean(ZakatCalculator.class) calls
 
-        double zakat = calc.calculateZakat(100000);  // => Calculates 2.5%
-        System.out.println("Zakat: " + zakat);       // => Output: Zakat: 2500.0
+        double zakat = calc.calculateZakat(100000);  // => Calculates 2.5% of 100000
+                                                       // => zakat is 2500.0
+        System.out.println("Zakat: " + zakat);       // => Prints result
+                                                      // => Output: Zakat: 2500.0
 
-        context.close();
+        context.close();  // => Releases resources, destroys beans
+                          // => Shuts down Spring container
     }
 }
 ```
@@ -137,37 +193,51 @@ public class Example02 {
 
 ```kotlin
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
+// => Annotation-based Spring container implementation
 import org.springframework.context.annotation.Bean
+// => Annotation marking factory methods for bean creation
 import org.springframework.context.annotation.Configuration
+// => Annotation marking configuration classes
 
 class ZakatCalculator {  // => Simple Kotlin class for Zakat calculations
-    fun calculateZakat(wealth: Double): Double {
-        return wealth * 0.025  // => 2.5% of wealth
+                          // => Will be managed by Spring as a bean
+    fun calculateZakat(wealth: Double): Double {  // => Function for calculation
+        return wealth * 0.025  // => 2.5% of wealth (Zakat rate)
+                                // => Result: wealth multiplied by 0.025
     }
 }
 
-@Configuration
+@Configuration  // => Marks this as Spring configuration class
+                // => Spring scans for @Bean methods here
 class AppConfig {
     @Bean  // => Tells Spring to manage this object as a bean
            // => Bean name defaults to method name: "zakatCalculator"
-    fun zakatCalculator(): ZakatCalculator {
-        return ZakatCalculator()  // => Spring calls this to create bean
-        // => Bean stored in container, reused for subsequent requests
+           // => Spring calls this method during container initialization
+    fun zakatCalculator(): ZakatCalculator {  // => Factory method for ZakatCalculator bean
+        return ZakatCalculator()  // => Creates new ZakatCalculator instance
+        // => Spring stores bean in container, reused for subsequent requests (singleton)
+        // => Returns reference to bean for dependency injection
     }
 }
 
-fun main() {
+fun main() {  // => Application entry point for Kotlin
+              // => Demonstrates bean definition and retrieval
     val context = AnnotationConfigApplicationContext(AppConfig::class.java)
-    // => Context initialized, zakatCalculator bean created
+    // => Context initialized, Spring processes @Configuration
+    // => zakatCalculator bean created and stored in container (::class.java gets Java class)
 
     val calc = context.getBean(ZakatCalculator::class.java)
-    // => Retrieves bean by type
-    // => calc references the singleton instance
+    // => Retrieves bean by type (ZakatCalculator::class.java)
+    // => calc references the singleton instance from container
+    // => Same instance returned for all getBean calls with this type
 
-    val zakat = calc.calculateZakat(100000.0)  // => Calculates 2.5%
-    println("Zakat: $zakat")                    // => Output: Zakat: 2500.0
+    val zakat = calc.calculateZakat(100000.0)  // => Calculates 2.5% of 100000.0
+                                                 // => zakat is 2500.0
+    println("Zakat: $zakat")                    // => Prints result
+                                                 // => Output: Zakat: 2500.0
 
-    context.close()
+    context.close()  // => Releases resources, destroys beans
+                     // => Shuts down Spring container
 }
 ```
 
@@ -310,6 +380,32 @@ fun main() {
 ```
 Saved: Ahmad: $500.0
 ```
+
+**Constructor Injection Flow**:
+
+```mermaid
+sequenceDiagram
+    participant Spring as Spring Container
+    participant Config as AppConfig
+    participant Repo as SadaqahRepository
+    participant Service as SadaqahService
+
+    Spring->>Config: Request sadaqahRepository bean
+    Config->>Repo: new SadaqahRepository()
+    Repo-->>Spring: Repository instance
+
+    Spring->>Config: Request sadaqahService bean
+    Config->>Service: new SadaqahService(repository)
+    Note over Service: Constructor receives repository
+    Service-->>Spring: Service instance with injected dependency
+
+    style Spring fill:#0173B2,stroke:#000,color:#fff
+    style Config fill:#DE8F05,stroke:#000,color:#000
+    style Repo fill:#029E73,stroke:#000,color:#fff
+    style Service fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Diagram Explanation**: This sequence diagram shows how Spring resolves dependencies by creating the repository bean first, then passing it to the service constructor during service bean creation.
 
 **Key Takeaways**:
 
@@ -927,6 +1023,26 @@ fun main() {
 Email sent: Thank you, Ali
 ```
 
+**Setter Injection Flow**:
+
+```mermaid
+graph TD
+    A[Spring creates NotificationService] -->|1. Constructor called| B[NotificationService instance]
+    B -->|2. emailService field null| C[Spring detects @Autowired setter]
+    C -->|3. Spring calls setter| D[setEmailService method]
+    D -->|4. Injects EmailService bean| E[emailService field populated]
+    E -->|5. Bean ready| F[Fully wired NotificationService]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#000
+    style E fill:#CA9161,stroke:#000,color:#fff
+    style F fill:#0173B2,stroke:#000,color:#fff
+```
+
+**Diagram Explanation**: This diagram illustrates the two-phase lifecycle of setter injection - object construction first, then dependency injection via setter method after construction completes.
+
 **Key Takeaways**:
 
 - Setter injection allows optional or changeable dependencies
@@ -1237,6 +1353,32 @@ fun main() {
 Cash payment: $100.0
 ```
 
+**@Qualifier Bean Selection**:
+
+```mermaid
+graph TD
+    A[Spring Container] -->|Detects multiple beans| B{PaymentProcessor beans}
+    B -->|@Qualifier cash| C[CashPayment bean]
+    B -->|@Qualifier card| D[CardPayment bean]
+
+    E[DonationService needs<br/>PaymentProcessor] -->|@Qualifier cash specified| F[Spring selects CashPayment]
+    F --> G[Injects cashProcessor bean]
+
+    H[Without @Qualifier] -->|Multiple beans found| I[NoUniqueBeanDefinitionException]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#029E73,stroke:#000,color:#fff
+    style E fill:#CC78BC,stroke:#000,color:#000
+    style F fill:#CA9161,stroke:#000,color:#fff
+    style G fill:#0173B2,stroke:#000,color:#fff
+    style H fill:#DE8F05,stroke:#000,color:#000
+    style I fill:#CA9161,stroke:#000,color:#fff
+```
+
+**Diagram Explanation**: This diagram shows how @Qualifier enables Spring to select the correct bean when multiple beans of the same type exist, preventing NoUniqueBeanDefinitionException.
+
 **Key Takeaways**:
 
 - `@Qualifier` disambiguates when multiple beans of same type exist
@@ -1469,6 +1611,36 @@ t1 ID: 3f8b4c9e-1234-5678-90ab-cdef12345678
 t2 ID: 7a2d1e5f-9876-5432-10fe-dcba87654321
 Same? false
 ```
+
+**Bean Scopes Comparison**:
+
+```mermaid
+graph TD
+    subgraph Singleton [Singleton Scope - Default]
+        A1[First getBean call] -->|Creates instance| B1[Bean Instance 1]
+        A2[Second getBean call] -->|Returns cached| B1
+        A3[Third getBean call] -->|Returns cached| B1
+    end
+
+    subgraph Prototype [Prototype Scope - @Scope prototype]
+        C1[First getBean call] -->|Creates new| D1[Bean Instance 1]
+        C2[Second getBean call] -->|Creates new| D2[Bean Instance 2]
+        C3[Third getBean call] -->|Creates new| D3[Bean Instance 3]
+    end
+
+    style A1 fill:#0173B2,stroke:#000,color:#fff
+    style A2 fill:#0173B2,stroke:#000,color:#fff
+    style A3 fill:#0173B2,stroke:#000,color:#fff
+    style B1 fill:#029E73,stroke:#000,color:#fff
+    style C1 fill:#DE8F05,stroke:#000,color:#000
+    style C2 fill:#DE8F05,stroke:#000,color:#000
+    style C3 fill:#DE8F05,stroke:#000,color:#000
+    style D1 fill:#CC78BC,stroke:#000,color:#000
+    style D2 fill:#CC78BC,stroke:#000,color:#000
+    style D3 fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Diagram Explanation**: This diagram contrasts singleton scope (one shared instance) with prototype scope (new instance per request), showing how each getBean call behaves differently.
 
 **Key Takeaways**:
 
@@ -1713,6 +1885,35 @@ Writing: Zakat record
 Closing context...
 @PreDestroy: Closing file handles
 ```
+
+**Bean Lifecycle with @PostConstruct and @PreDestroy**:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Created: Spring creates bean instance
+    Created --> DependenciesInjected: Inject dependencies via constructor/setter
+    DependenciesInjected --> PostConstructCalled: Call @PostConstruct method
+    PostConstructCalled --> Ready: Bean ready for use
+    Ready --> PreDestroyCalled: context.close() called
+    PreDestroyCalled --> [*]: Bean destroyed
+
+    note right of Created
+        Constructor executes
+        Dependencies may be null
+    end note
+
+    note right of PostConstructCalled
+        Initialization logic
+        Dependencies guaranteed available
+    end note
+
+    note right of PreDestroyCalled
+        Cleanup logic
+        Release resources
+    end note
+```
+
+**Diagram Explanation**: This state diagram shows the complete bean lifecycle from creation through destruction, highlighting when @PostConstruct (initialization) and @PreDestroy (cleanup) callbacks execute.
 
 **Key Takeaways**:
 
@@ -2271,6 +2472,32 @@ Host: localhost
 Port: 8080
 Timeout: 5000ms
 ```
+
+**@Value Property Resolution Flow**:
+
+```mermaid
+graph TD
+    A[@Value annotation] -->|Reads property key| B{Property exists?}
+    B -->|Yes| C[Use property value]
+    B -->|No| D{Default specified?}
+    D -->|Yes colon syntax| E[Use default value]
+    D -->|No| F[Throw exception]
+
+    C --> G[Type conversion]
+    E --> G
+    G --> H[Inject into field]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
+    style B fill:#DE8F05,stroke:#000,color:#000
+    style C fill:#029E73,stroke:#000,color:#fff
+    style D fill:#DE8F05,stroke:#000,color:#000
+    style E fill:#029E73,stroke:#000,color:#fff
+    style F fill:#CC78BC,stroke:#000,color:#000
+    style G fill:#CA9161,stroke:#000,color:#fff
+    style H fill:#0173B2,stroke:#000,color:#fff
+```
+
+**Diagram Explanation**: This flow diagram shows how Spring resolves @Value properties, checking for property existence, falling back to defaults if specified, and performing type conversion before injection.
 
 **Key Takeaways**:
 
