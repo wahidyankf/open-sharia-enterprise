@@ -1458,17 +1458,14 @@ class MyObject {
 
 // Objects created in Eden space (Young Gen)
 MyObject obj1 = new MyObject(); // => Allocated in Eden space (Young Generation)
-MyObject obj2 = new MyObject(); // => Also allocated in Eden space
-System.out.println("Created obj1 and obj2"); // => Both objects reachable via local variables
+MyObject obj2 = new MyObject(); // => Also in Eden
+System.out.println("Created obj1 and obj2"); // => Both reachable
 
 // obj1 becomes unreachable
-obj1 = null; // => obj1 now eligible for GC (no references), obj2 still reachable
-// => GC will reclaim obj1's memory during next Minor GC
+obj1 = null; // => obj1 eligible for GC, obj2 still reachable
 
 // Minor GC occurs when Eden fills
-// => Surviving objects move to Survivor S0 or S1
-// => After multiple survivals (age threshold, typically 15), promoted to Old Generation
-// => Objects that die young (majority) never leave Eden
+// => Survivors age in S0/S1, then promote to Old Gen
 
 // GC roots (always reachable, prevent GC):
 // 1. Local variables in active methods (stack references)
@@ -1481,8 +1478,7 @@ class MemoryLeakExample {
     private static List<byte[]> cache = new ArrayList<>(); // => Static field is GC root
 
     public static void addToCache(byte[] data) {
-        cache.add(data); // => Never removed, always reachable, grows indefinitely
-        // => Eventually leads to OutOfMemoryError: Java heap space
+        cache.add(data); // => Never removed → OutOfMemoryError
     }
 }
 
@@ -1490,12 +1486,11 @@ class MemoryLeakExample {
 import java.lang.ref.*;
 
 // Strong reference (default) - prevents GC
-String strongRef = new String("Will not be collected"); // => Object not collected while strongRef exists
-// => strongRef is GC root (local variable), prevents collection
+String strongRef = new String("Will not be collected"); // => GC root prevents collection
 
 // Soft reference - collected only if memory pressure
 SoftReference<String> softRef = new SoftReference<>(new String("Collected if needed"));
-// => Object inside SoftReference can be collected if JVM needs memory
+// => Collected under memory pressure
 String value = softRef.get(); // => May return null if object was collected
 if (value != null) {
     System.out.println(value); // => Only prints if object still in memory
@@ -1503,36 +1498,21 @@ if (value != null) {
 
 // Weak reference - collected at next GC
 WeakReference<String> weakRef = new WeakReference<>(new String("Collected soon"));
-// => Creates WeakReference wrapping new String object
-// => Object will be collected at next GC, regardless of memory pressure
-// => Useful for caches where entries can be discarded freely
-String weakValue = weakRef.get(); // => May return null after GC runs
-// => get() returns wrapped object if still alive, null if collected
-// => Check for null before using to avoid NullPointerException
+// => Collected at next GC (useful for caches)
+String weakValue = weakRef.get(); // => May return null
 System.out.println(weakValue); // => Prints string or throws NPE if collected
 // => If GC ran: null reference causes NPE
 // => If object alive: prints "Collected soon"
 
 // Phantom reference - for cleanup hooks
-ReferenceQueue<String> queue = new ReferenceQueue<>(); // => Queue for GC notifications
-// => ReferenceQueue receives references after object finalized
-// => Allows post-finalization cleanup actions
+ReferenceQueue<String> queue = new ReferenceQueue<>(); // => GC notifications
 PhantomReference<String> phantomRef = new PhantomReference<>(
-    new String("For cleanup"), queue // => Object for cleanup tracking
-    // => PhantomReference never prevents collection
-    // => Added to queue after object finalized, before memory reclaimed
+    new String("For cleanup"), queue
 );
-// => get() always returns null, used with ReferenceQueue for post-finalization cleanup
-// => Unlike finalize(), cleanup happens AFTER object finalized
-// => Useful for resource cleanup (file handles, native memory, off-heap resources)
-// => More reliable than finalize() for deterministic cleanup
+// => For post-finalization cleanup (more reliable than finalize())
 
 // System.gc() suggests GC (doesn't guarantee it)
-System.gc(); // => Hint to JVM to run GC, not a command (JVM may ignore)
-// => Triggers full GC (both young and old generations) if honored
-// => Never rely on System.gc() for deterministic cleanup
-// => JVM may disable via -XX:+DisableExplicitGC flag
-// => Expensive operation: pauses application threads
+System.gc(); // => Hint only (JVM may ignore, expensive if honored)
 
 // Monitoring GC (via JVM flags)
 // -XX:+PrintGCDetails - Print GC logs
@@ -1593,9 +1573,7 @@ import java.lang.ref.Cleaner;
 
 class Resource {
     private static final Cleaner cleaner = Cleaner.create();
-    // => Shared Cleaner instance for all Resource objects
-    // => Cleaner manages cleanup thread pool
-    // => Create once per class, reuse for all instances
+    // => Shared instance, manages cleanup threads
 
     private final Cleaner.Cleanable cleanable;
     // => Registration handle for this resource's cleanup action
@@ -1603,23 +1581,15 @@ class Resource {
 
     Resource() {
         this.cleanable = cleaner.register(this, new CleanupAction());
-        // => Registers cleanup action for this Resource instance
-        // => CleanupAction.run() invoked after Resource becomes unreachable
-        // => Cleaner tracks Resource via phantom reference
-        // => More reliable than finalize(): guaranteed cleanup order
+        // => Registers cleanup when Resource unreachable
     }
 
     private static class CleanupAction implements Runnable {
-        // => MUST be static: cannot hold reference to Resource
-        // => Non-static would prevent GC (circular reference)
+        // => MUST be static (avoid circular reference)
         @Override
         public void run() {
             // Cleanup code here
-            // => Invoked after Resource unreachable and finalized
-            // => Runs on Cleaner thread, not GC thread
-            // => Can release native resources, close file handles, etc.
             System.out.println("Resource cleaned up");
-            // => Prints when cleanup triggered (automatic or manual)
         }
     }
 }
@@ -4107,7 +4077,6 @@ class Account {                          // => Class metadata stored in Metaspac
     public Account(BigDecimal initial) { // => Constructor creates heap object
         this.balance = initial;          // => Object allocation path: TLAB → Eden → Heap
                                          // => TLAB: Thread-Local Allocation Buffer (fast, lock-free)
-                                         // => Eden: Young generation space for new objects
     }
 }
 
@@ -4115,44 +4084,31 @@ class Account {                          // => Class metadata stored in Metaspac
 public void processTransaction(BigDecimal amount) {
     // Stack frame created for processTransaction() method
     // => Contains: local variables, operand stack, frame data
-    // => Size: ~100-200 bytes per frame (varies by locals/parameters)
 
     Account acc = new Account(new BigDecimal("1000"));
                                          // => 'acc' reference stored on stack (8 bytes)
-                                         // => Account object stored on heap (shared, GC-managed)
-                                         // => BigDecimal object stored on heap
 
     BigDecimal fee = amount.multiply(new BigDecimal("0.01"));
                                          // => 'fee' reference on stack (thread-local, 8 bytes)
-                                         // => BigDecimal object on heap (16 byte header + fields)
-                                         // => Stack: fast LIFO allocation/deallocation
                                          // => Heap: slower allocation, GC-managed
 
     BigDecimal total = acc.balance.add(fee);
                                          // => 'total' reference on stack (thread-local)
-                                         // => New BigDecimal on heap (immutable, creates new object)
 
     // Stack frame destroyed when method returns
     // => Local variables (acc, fee, total) removed from stack
-    // => Heap objects remain (GC will collect if unreachable)
-    // => Stack deallocation: instant (pop frame)
     // => Heap deallocation: delayed (next GC cycle)
 }
 
 // Metaspace - class metadata storage
 // => Class structure: Account.class stored in Metaspace
-// => Method bytecode: processTransaction() bytecode in Metaspace
-// => Constants: String literals, numeric constants
 // => Metaspace uses native memory (not heap, grows dynamically)
-// => Tuning flags: -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=512m
 
 // Direct buffers - off-heap memory
 import java.nio.ByteBuffer;
 
 ByteBuffer directBuffer = ByteBuffer.allocateDirect(1024);
                                          // => Allocates 1KB off-heap (native memory)
-                                         // => Faster I/O: no copy between heap and OS buffers
-                                         // => Not managed by heap GC (separate lifecycle)
                                          // => Tuning: -XX:MaxDirectMemorySize=512m
 ```
 
@@ -4191,95 +4147,37 @@ graph TD
 **Code**:
 
 ```java
-// G1GC tuning for different workloads
-
-// Scenario 1: Low-latency transaction processing
-// Goal: <50ms GC pauses, consistent response times
-// JVM flags:
-// java -Xms16g -Xmx16g \              => Heap: 16GB (Xms=Xmx avoids resizing)
-//      -XX:+UseG1GC \                 => Enable G1GC (default Java 9+)
-//      -XX:MaxGCPauseMillis=50 \      => Target max pause: 50ms (SLA requirement)
-//      -XX:G1HeapRegionSize=8m \      => Region size: 8MB (16GB heap / 2048 regions)
-//      -XX:InitiatingHeapOccupancyPercent=35 \
-//                                     => Start concurrent marking at 35% heap occupancy
-//                                     => Earlier start → more frequent concurrent cycles
-//                                     => Prevents heap exhaustion (old gen growth)
-//      -XX:G1NewSizePercent=40 \      => Young gen: 40% of heap (6.4GB)
-//      -XX:G1MaxNewSizePercent=60 \   => Max young gen: 60% (9.6GB)
-//      -Xlog:gc*:file=gc-tx.log \     => GC logging to file (rotation recommended)
+// Low-latency configuration (transaction processing)
+// java -Xms16g -Xmx16g -XX:+UseG1GC -XX:MaxGCPauseMillis=50
+//      -XX:G1HeapRegionSize=8m -XX:InitiatingHeapOccupancyPercent=35
 //      TransactionProcessor
+// => 16GB heap, 8MB regions, <50ms pause target
+// => Early concurrent marking (IHOP 35%) prevents heap exhaustion
 
-// => Region structure with 8MB regions, 16GB heap:
-// => Total regions: 2048 (16GB / 8MB)
-// => Eden regions: ~800 (40% young gen, ~6.4GB)
-// => Survivor regions: ~50 (internal ratio ~8:1:1)
-// => Old regions: ~1150 (remaining heap after young gen)
-// => Humongous regions: objects >4MB (50% of region size)
-
-// Scenario 2: High-throughput batch processing
-// Goal: Maximize throughput, tolerate longer pauses
-// JVM flags:
-// java -Xms32g -Xmx32g \              => Larger heap for batch processing (32GB)
-//      -XX:+UseG1GC \                 => G1GC balances throughput and latency
-//      -XX:MaxGCPauseMillis=500 \     => Allow 500ms pauses (throughput priority)
-//                                     => Longer pauses → fewer GC cycles → higher throughput
-//      -XX:G1HeapRegionSize=32m \     => Larger regions (32GB / 1024 = 32MB regions)
-//                                     => Fewer regions → less GC overhead
-//      -XX:InitiatingHeapOccupancyPercent=50 \
-//                                     => Concurrent marking at 50% (later start)
-//                                     => Fewer concurrent cycles → more CPU for application
-//      -Xlog:gc*:file=gc-batch.log \  => GC logging
+// High-throughput configuration (batch processing)
+// java -Xms32g -Xmx32g -XX:+UseG1GC -XX:MaxGCPauseMillis=500
+//      -XX:G1HeapRegionSize=32m -XX:InitiatingHeapOccupancyPercent=50
 //      BatchProcessor
+// => 32GB heap, 32MB regions, 500ms pause tolerance
+// => Late concurrent marking (IHOP 50%) maximizes throughput
 
-// => Region structure with 32MB regions, 32GB heap:
-// => Total regions: 1024 (32GB / 32MB)
-// => Eden regions: ~400 (young gen sized by G1)
-// => Old regions: ~600 (remaining after young gen)
-// => Humongous objects: >16MB (50% of 32MB region size)
+// G1GC phases: Young GC (STW 10-50ms) → Concurrent Marking → Mixed GC → Full GC (avoid)
 
-// G1GC phases explained
-// 1. Young-Only GC (Evacuation Pause):
-//    => Stop-the-world event
-//    => Collects Eden regions (copies live objects to survivor/old)
-//    => Fast: typically 10-50ms (tuned by MaxGCPauseMillis)
-//    => Frequency: continuous (Eden fills frequently)
-
-// 2. Concurrent Marking Cycle:
-//    => Triggered when heap occupancy > InitiatingHeapOccupancyPercent
-//    => Marks live objects in old generation (concurrent with application)
-//    => Phases:
-//      a. Initial Mark (STW, <1ms) - marks roots
-//      b. Concurrent Mark - traces object graph (parallel with app)
-//      c. Remark (STW, 1-10ms) - finalizes marking
-//      d. Cleanup (STW, <1ms) - identifies empty regions
-
-// 3. Mixed GC:
-//    => Follows concurrent marking
-//    => Collects young regions + old regions with most garbage
-//    => "Garbage First" algorithm: prioritizes high-garbage regions
-//    => Multiple mixed GCs until heap occupancy decreases
-
-// 4. Full GC (fallback, avoid):
-//    => Stop-the-world compaction (expensive, ~1-5 seconds)
-//    => Triggered when heap exhausted (allocation failure)
-//    => Indicates tuning problem: increase heap or adjust IHOP
-
-// Monitoring G1GC performance
+// Monitoring G1GC
 import java.lang.management.*;
 
 public class G1Monitoring {
     public static void main(String[] args) {
         List<GarbageCollectorMXBean> gcBeans = ManagementFactory.getGarbageCollectorMXBeans();
-                                         // => Get GC MXBeans (JMX monitoring)
+        // => Get GC MXBeans for monitoring
 
         for (GarbageCollectorMXBean gcBean : gcBeans) {
-            System.out.println("GC Name: " + gcBean.getName());
-                                         // => "G1 Young Generation" or "G1 Old Generation"
-            System.out.println("Collection Count: " + gcBean.getCollectionCount());
-                                         // => Total GC count since JVM start
-            System.out.println("Collection Time: " + gcBean.getCollectionTime() + "ms");
-                                         // => Total GC time (sum of all pauses)
-                                         // => Throughput: (totalTime - gcTime) / totalTime
+            System.out.println("GC: " + gcBean.getName());
+            // => "G1 Young Generation" or "G1 Old Generation"
+            System.out.println("Count: " + gcBean.getCollectionCount());
+            // => Total collections since JVM start
+            System.out.println("Time: " + gcBean.getCollectionTime() + "ms");
+            // => Total pause time (calculate throughput)
         }
     }
 }
@@ -4321,98 +4219,35 @@ graph TD
 **Code**:
 
 ```java
-// ZGC for ultra-low latency payment processing
-// Goal: <10ms GC pauses, 99.99% uptime SLA
-
-// JVM flags (ZGC production configuration):
-// java -Xms32g -Xmx32g \              => Fixed heap: 32GB (no resizing overhead)
-//      -XX:+UseZGC \                  => Enable ZGC (production-ready Java 15+)
-//      -XX:ConcGCThreads=8 \          => Concurrent GC threads (typically cores/2)
-//                                     => More threads → faster concurrent phases
-//                                     => Trade-off: steals CPU from application
-//      -XX:ZCollectionInterval=10 \   => Min seconds between GC cycles
-//                                     => Prevents back-to-back GCs (rate limiting)
-//      -XX:ZAllocationSpikeTolerance=2 \
-//                                     => Allocation spike tolerance multiplier
-//                                     => Handles 2x normal allocation rate bursts
-//      -Xlog:gc*:file=gc-zgc.log \    => GC logging with timestamps
+// ZGC production configuration (ultra-low latency)
+// java -Xms32g -Xmx32g -XX:+UseZGC -XX:ConcGCThreads=8
+//      -XX:ZCollectionInterval=10 -XX:ZAllocationSpikeTolerance=2
 //      PaymentGateway
+// => 32GB heap, <10ms pauses, handles 2x allocation spikes
+// => Colored pointers + load barriers enable concurrent GC
 
-// ZGC phases (all mostly concurrent, <1ms STW)
-// 1. Pause Mark Start (STW, <1ms)
-//    => Scans thread stacks and roots
-//    => Very fast: only roots, not full heap traversal
-
-// 2. Concurrent Mark
-//    => Traces object graph in parallel with application
-//    => Uses load barriers: app reads trigger marking on access
-//    => Colored pointers encode metadata (3 bits: marked, remapped, finalizable)
-//    => No stop-the-world heap scan
-
-// 3. Pause Mark End (STW, <1ms)
-//    => Finalizes marking, handles weak references
-//    => Identifies garbage regions
-
-// 4. Concurrent Prepare for Relocation
-//    => Selects regions to compact
-//    => Builds forwarding tables
-
-// 5. Pause Relocate Start (STW, <1ms)
-//    => Relocates roots
-//    => Very fast: only roots, not object graph
-
-// 6. Concurrent Relocate
-//    => Moves live objects to new locations (compaction)
-//    => Runs parallel with application (load barriers handle references)
-//    => Updates references during relocation (no separate remap phase needed in Gen ZGC)
-
-// ZGC colored pointers (64-bit only, requires compressedOops=false)
-// Pointer structure (Linux x86-64):
-// [63:48] Unused (16 bits)
-// [47:46] Metadata (2 bits: marked0, marked1)
-// [45:0]  Object address (46 bits = 64TB addressable)
-
-// => Colored pointers encode GC state in pointer itself
-// => Load barriers check pointer metadata on every object access
-// => Cost: ~2-4% throughput overhead for load barriers
-// => Benefit: Sub-millisecond pauses even during compaction
+// ZGC phases (all mostly concurrent, <1ms STW):
+// 1. Pause Mark Start (STW <1ms) - scan roots
+// 2. Concurrent Mark - trace object graph
+// 3. Pause Mark End (STW <1ms) - finalize marking
+// 4. Pause Relocate Start (STW <1ms) - relocate roots
+// 5. Concurrent Relocate - move objects (concurrent)
 
 public class PaymentGateway {
-
-    // High-frequency payment processing (low latency critical)
     public PaymentResult processPayment(Payment payment) {
-        // ZGC enables consistent latency:
-        // => No GC pauses during payment processing
-        // => Application continues running during ZGC cycles
-        // => Load barriers: slight overhead (~2-4%) but no pauses
-
+        // => ZGC enables consistent sub-5ms latency
         PaymentResult result = new PaymentResult();
-                                         // => Allocation handled by ZGC
-                                         // => No allocation stalls (ZGC pages always available)
-
+        // => No allocation stalls (ZGC pages always available)
         result.setStatus(validate(payment));
-                                         // => Validation allocates error messages
-                                         // => ZGC allocates concurrently (no pause)
-
-        return result;                   // => Consistent sub-5ms latency
-                                         // => No latency spikes from GC pauses
+        // => No latency spikes from GC pauses
+        return result;
     }
 
-    // Generational ZGC (Java 21+) - recommended
-    // java -XX:+UseZGC \
-    //      -XX:+ZGenerational \          => Enable generational ZGC
-    //      -Xms64g -Xmx64g \             => Larger heap for generational benefits
-    //      -XX:ConcGCThreads=16 \        => More threads for large heap
-    //      PaymentGateway
-
-    // => Generational ZGC advantages:
-    // => - Higher throughput (10-25% improvement over non-generational)
-    // => - Lower CPU usage (less concurrent work, focuses on young gen)
-    // => - Better allocation rate handling (young gen collects frequently)
-    // => - Exploits generational hypothesis (most objects die young)
+    // Generational ZGC (Java 21+)
+    // java -XX:+UseZGC -XX:+ZGenerational -Xms64g -Xmx64g PaymentGateway
+    // => 10-25% higher throughput, exploits generational hypothesis
 
     private PaymentStatus validate(Payment payment) {
-        // Validation logic (may allocate error messages)
         return PaymentStatus.SUCCESS;
     }
 
@@ -4424,30 +4259,8 @@ public class PaymentGateway {
     private enum PaymentStatus { SUCCESS, FAILURE }
 }
 
-// ZGC performance characteristics
-// Before ZGC (G1GC, 32GB heap):
-// - Average GC pause: 150ms
-// - P99 GC pause: 400ms
-// - Max observed pause: 1200ms
-// - Throughput: 100%
-
-// After ZGC (32GB heap):
-// - Average GC pause: 2ms (75x better)
-// - P99 GC pause: 5ms (80x better)
-// - Max observed pause: 8ms (150x better)
-// - Throughput: 96-98% (load barrier overhead)
-
-// ZGC trade-offs
-// => Lower throughput: 2-5% overhead from load barriers
-// => Memory overhead: colored pointers, forwarding tables
-// => 64-bit only: requires 64-bit JVM (no 32-bit support)
-// => Heap size: works best with >8GB heaps (overhead amortized)
-
-// When to use ZGC
-// => Latency-critical applications (trading, real-time systems)
-// => Large heaps (>16GB) where G1GC pauses too long
-// => 99.99% SLA requirements (<10ms response times)
-// => Avoid for: small heaps (<4GB), throughput-critical batch jobs
+// Performance comparison: G1GC 150ms avg → ZGC 2ms avg (75x better)
+// Trade-off: 2-5% throughput overhead from load barriers
 ```
 
 **Key Takeaway**: ZGC achieves sub-10ms pauses for heaps up to 16TB using concurrent marking, relocation, and remapping. Colored pointers encode GC metadata in references. Load barriers enable concurrent operations. Generational ZGC (Java 21+) adds 10-25% throughput by exploiting generational hypothesis. Trade-off: 2-5% throughput overhead for ultra-low latency.
@@ -4469,51 +4282,28 @@ Java Flight Recorder (JFR) is a low-overhead profiling framework built into the 
 //      -XX:FlightRecorderOptions=stackdepth=128 \
 //      MyApp
 // => Starts JFR when JVM launches (no code changes needed)
-// => Recording begins immediately at startup
 
 // => duration=60s: Record for 60 seconds then stop
-// => Automatically stops after 60 seconds
-// => filename=recording.jfr: Output file path
-// => Binary format, analyze with JMC
-// => stackdepth=128: Capture 128 stack frames (default: 64)
-// => Deeper stacks show full call chains (helps find root cause)
-// => Overhead: <1% CPU, <1% memory (safe for production)
-// => Minimal performance impact (sampling-based profiler)
 
 // Continuous recording (circular buffer)
 // java -XX:StartFlightRecording=maxage=6h,maxsize=500M,filename=recording.jfr \
 //      MyApp
 // => Continuous mode: never stops, runs indefinitely
-// => Circular buffer overwrites old events
 
 // => maxage=6h: Keep last 6 hours of events (circular buffer)
-// => Events older than 6h automatically discarded
-// => maxsize=500M: Max recording size 500MB (oldest events discarded)
-// => Whichever limit hits first (age or size) triggers eviction
-// => Always-on recording: capture issues as they happen
-// => No need to reproduce issues, events already captured
 
 // Starting JFR on running JVM (no restart)
 // Command: jcmd <pid> JFR.start duration=60s filename=recording.jfr
 // => Attaches to running process (PID)
-// => Get PID with: jps -l
 // => Starts recording for 60 seconds
-// => No JVM restart required (dynamic profiling)
-// => Useful for production troubleshooting
 
 // Stopping JFR recording
 // Command: jcmd <pid> JFR.stop filename=recording.jfr
 // => Stops ongoing recording
-// => Finalizes event collection
-// => Writes events to file
-// => Safe to analyze after stop completes
 
 // Dumping current recording without stopping
 // Command: jcmd <pid> JFR.dump filename=snapshot.jfr
 // => Captures snapshot of current recording
-// => Creates point-in-time copy
-// => Recording continues (non-destructive)
-// => Useful for periodic snapshots without stopping profiling
 
 import jdk.jfr.*;
 import java.nio.file.*;
@@ -4525,47 +4315,29 @@ class JFRProgrammatic {
         // Start recording programmatically
         Configuration config = Configuration.getConfiguration("profile");
                                          // => "profile" preset: detailed events
-                                         // => More events, higher overhead than "default"
-                                         // => Alternative: "default" (lower overhead)
-                                         // => Presets defined in $JAVA_HOME/lib/jfr/
 
         Recording recording = new Recording(config);
                                          // => Creates new recording with config
-                                         // => Recording not started yet (inactive state)
 
         recording.setMaxAge(Duration.ofHours(1));
                                          // => Keep last 1 hour of events
-                                         // => Circular buffer evicts older events
         recording.setMaxSize(100 * 1024 * 1024);
                                          // => Max 100MB recording size
-                                         // => 100MB = 100 * 1024 * 1024 bytes
 
         recording.start();               // => Start recording events
-                                         // => Transitions to active state
-                                         // => JFR begins capturing: GC, allocations, locks, I/O
-                                         // => Event collection happens in background
 
         try {
             // Run workload to profile
             processLargeDataset();       // => All events recorded: allocations, GC pauses, thread activity
-                                         // => JFR captures events during execution
 
         } finally {
             recording.stop();            // => Stop recording
-                                         // => Finalizes event collection
-                                         // => No more events captured after stop
 
             Path destination = Paths.get("recording-" + System.currentTimeMillis() + ".jfr");
                                          // => Unique filename with timestamp
-                                         // => Example: recording-1609459200000.jfr
             recording.dump(destination); // => Write recording to file
-                                         // => Binary .jfr format
-                                         // => File contains all captured events
-                                         // => Can be opened in JMC for analysis
 
             recording.close();           // => Cleanup: close recording
-                                         // => Releases resources
-                                         // => Recording instance no longer usable
         }
     }
 
@@ -4577,7 +4349,6 @@ class JFRProgrammatic {
 // Analyzing JFR recordings with JDK Mission Control (JMC)
 // GUI tool: jmc recording.jfr
 // => Opens visual analysis tool
-// => Tabs: Overview, Memory, Threads, I/O, Events
 
 // Key JFR events for memory analysis:
 // 1. jdk.ObjectAllocationInNewTLAB
@@ -4657,7 +4428,6 @@ class CustomEventExample {
         event.processingTime = duration;
 
         event.commit();                  // => Commit event to JFR recording
-                                         // => Appears in JMC event browser
     }
 }
 
@@ -4678,6 +4448,7 @@ class CustomEventExample {
 // ✅ Memory allocation analysis (hotspots, leak suspects)
 // ✅ GC behavior analysis (pause times, frequency, heap usage)
 // ✅ Latency investigation (blocking events, lock contention)
+
 ```
 
 **Key Takeaway**: JFR (Java Flight Recorder) is a low-overhead (<1%) profiling framework for production use. It records GC events, allocations, locks, and I/O. Enable with -XX:StartFlightRecording or jcmd on running JVMs. Analyze with JMC (JDK Mission Control) to find allocation hotspots, GC issues, and performance bottlenecks. Custom events extend JFR.

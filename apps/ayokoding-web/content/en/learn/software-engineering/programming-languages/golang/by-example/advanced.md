@@ -1501,73 +1501,61 @@ Build tags enable conditional compilation. Platform-specific code, feature flags
 
 ```go
 // file: server_unix.go
-//go:build unix || linux           // => Build constraint: compile only on Unix/Linux
-                                    // => Syntax: //go:build followed by boolean expression
-                                    // => OR operator: matches any Unix-like system
-// +build unix linux                // => Legacy format (pre-Go 1.17)
-                                    // => Both formats for compatibility with older Go versions
+//go:build unix || linux           // => Compile only on Unix/Linux (OR matches any Unix-like)
+                                    // => Modern format (Go 1.17+)
+// +build unix linux                // => Legacy format (pre-Go 1.17) for compatibility
+                                    // => Both lines needed for backward compatibility
 
-package main                        // => Platform-specific file
-                                    // => Must be in same package as other platform files
+package main
 
-import "fmt"                        // => Standard imports work normally
-                                    // => Import paths same across all platform files
+import "fmt"
 
-func getPlatform() string {         // => Compiled only on Unix/Linux builds
-                                    // => One implementation per platform
-                                    // => Function signature must match across files
-    return "Unix/Linux"             // => Returns platform identifier
-                                    // => Unix-specific implementation
+func getPlatform() string {         // => Unix/Linux implementation
+                                    // => Only compiled on Unix/Linux systems
+    return "Unix/Linux"
 }
 
 // file: server_windows.go
-//+build windows                    // => Build constraint: compile only on Windows
-                                    // => Space between // and +build is optional
+//+build windows                    // => Compile only on Windows
+                                    // => Compiler skips this file on non-Windows
 
-package main                        // => Same package as Unix file
+package main
 
-import "fmt"                        // => Same imports as Unix file
+import "fmt"
 
-func getPlatform() string {         // => Compiled only on Windows builds
-                                    // => Same function name as Unix version
-    return "Windows"                // => Platform-specific implementation
-                                    // => Windows-specific return value
+func getPlatform() string {         // => Windows implementation
+                                    // => Different implementation, same function name
+    return "Windows"
 }
 
 // file: main.go
-package main                        // => No build tags: compiled on ALL platforms
-                                    // => Main file has no constraints
+package main                        // => No build tags: compiles on ALL platforms
 
-func main() {                       // => Entry point for application
+func main() {
     fmt.Println("Platform:", getPlatform())
-                                    // => On Linux: "Platform: Unix/Linux"
-                                    // => On Windows: "Platform: Windows"
-                                    // => Linker selects correct implementation
-                                    // => Only one getPlatform() linked per build
+                                    // => Linux: "Platform: Unix/Linux"
+                                    // => Windows: "Platform: Windows"
+                                    // => Linker selects correct implementation per OS
+                                    // => No runtime conditionals needed
 }
 
-// Usage: go build                  // => Uses OS-specific files automatically
-                                    // => Detects GOOS and GOARCH environment variables
-// Usage: go build -tags=feature1   // => Enables 'feature1' tag
+// Usage: go build                  // => Auto-selects OS-specific files (via GOOS/GOARCH)
+                                    // => GOOS and GOARCH set by environment
+// Usage: go build -tags=feature1   // => Enables custom 'feature1' tag
                                     // => Custom tags for feature flags
-// Usage: go run -tags="tag1,tag2"  // => Multiple tags (comma-separated)
-                                    // => All specified tags must be satisfied
+// Usage: go run -tags="tag1,tag2"  // => Multiple tags (all must be satisfied)
 
 // Multiple tags in single file
-//go:build (linux || darwin) && !debug
-                                    // => Complex: (Linux OR macOS) AND NOT debug
-                                    // => Parentheses group OR expression
-                                    // => NOT operator (!) excludes debug builds
-// +build linux darwin               // => Legacy format
-                                    // => Space-separated means OR
-// +build !debug                     // => Multiple lines joined with AND
-                                    // => Exclamation mark means NOT
+//go:build (linux || darwin) && !debug  // => (Linux OR macOS) AND NOT debug
+                                          // => Boolean expressions with ()
+// +build linux darwin               // => Legacy: space-separated = OR
+// +build !debug                     // => Legacy: multiple lines = AND
 
-package main                        // => Package for complex build tag example
+package main
 
 func shouldDebug() bool {           // => Exists only in non-debug builds
-                                    // => Excluded when -tags=debug is used
-    return false                    // => Returns false in production builds
+                                    // => Conditional compilation at build time
+    return false
 }
 ```
 
@@ -2196,20 +2184,23 @@ Workspaces enable multi-module development. Develop multiple modules together wi
 
 ```go
 // go.work file (workspace configuration)
-go 1.21                    // => Minimum Go version (workspace feature since Go 1.18)
+go 1.21                    // => Minimum Go version (workspaces added in Go 1.18)
+                            // => Workspace feature requires Go 1.18+
 
-use (                      // => Declare modules to include in workspace
-    ./cmd/api              // => Relative path from workspace root
-    ./cmd/cli              // => Each path must contain go.mod file
-    ./libs/common          // => Changes reflected immediately in dependent modules
+use (                      // => Declare modules (each must have go.mod)
+                            // => All modules use local versions
+    ./cmd/api              // => Changes reflected immediately in dependent modules
+                            // => Relative path from go.work location
+    ./cmd/cli
+    ./libs/common
 )
 
-// Create workspace: go work init ./cmd/api ./cmd/cli ./libs/common
-                           // => Generates go.work, scans paths for go.mod
-// Add module: go work use ./new-module
-                           // => Adds module to workspace, updates go.work
-// Remove module: go work edit -dropuse=./cmd/cli
-                           // => Removes from workspace (module still exists)
+// Create workspace: go work init ./cmd/api ./cmd/cli ./libs/common  (generates go.work)
+                                                                      // => Initializes workspace with modules
+// Add module: go work use ./new-module                              (adds to workspace)
+                                                                      // => Appends to use() block
+// Remove module: go work edit -dropuse=./cmd/cli                    (module still exists)
+                                                                      // => Removes from workspace, doesn't delete
 ```
 
 **Directory structure**:
