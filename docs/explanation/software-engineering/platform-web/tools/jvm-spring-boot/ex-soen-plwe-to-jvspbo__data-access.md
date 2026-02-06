@@ -1833,6 +1833,20 @@ Production guidelines for Spring Data JPA.
 - Explore [Performance](ex-soen-plwe-to-jvspbo__performance.md) for optimization techniques
 - Check [Observability](ex-soen-plwe-to-jvspbo__observability.md) for database monitoring
 
+## See Also
+
+**OSE Explanation Foundation**:
+
+- [Spring Framework Data Access](../jvm-spring/ex-soen-plwe-to-jvsp__data-access.md) - Manual Spring data access
+- [Java Database Access](../../programming-languages/java/ex-soen-prla-ja__ddd-standards.md) - Java JDBC baseline
+- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Repository patterns
+- [Spring Boot Performance](./ex-soen-plwe-to-jvspbo__performance.md) - Query optimization
+
+**Hands-on Learning (AyoKoding)**:
+
+- [Spring Boot By Example - Data Access](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/data-access) - Code examples
+- [Spring Boot In-the-Field - Database Integration](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/data-access) - Production patterns
+
 ---
 
 **Last Updated**: 2026-01-26

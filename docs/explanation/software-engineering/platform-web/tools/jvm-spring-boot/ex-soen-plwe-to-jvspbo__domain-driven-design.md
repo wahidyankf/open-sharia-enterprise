@@ -1819,4 +1819,18 @@ public class MurabahaApplicationService {
 - Explore [Testing](ex-soen-plwe-to-jvspbo__testing.md) for testing DDD components
 - Check [Performance](ex-soen-plwe-to-jvspbo__performance.md) for aggregate optimization
 
+## See Also
+
+**OSE Explanation Foundation**:
+
+- [Spring Framework DDD Standards](../jvm-spring/ex-soen-plwe-to-jvsp__ddd-standards.md) - Manual Spring DDD
+- [Java Domain Modeling](../../programming-languages/java/ex-soen-prla-ja__ddd-standards.md) - Java DDD baseline
+- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - DDD patterns
+- [Spring Boot Data Access](./ex-soen-plwe-to-jvspbo__data-access.md) - Repository implementation
+
+**Hands-on Learning (AyoKoding)**:
+
+- [Spring Boot By Example - Domain-Driven Design](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/ddd) - Code examples
+- [Spring Boot In-the-Field - DDD Architecture](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/ddd) - Production DDD
+
 **Last Updated**: 2026-01-26

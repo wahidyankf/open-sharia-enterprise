@@ -1499,3 +1499,17 @@ public class WaqfDonationBatchService {
 - Review [Observability](ex-soen-plwe-to-jvspbo__observability.md) for monitoring patterns
 - Explore [Configuration](ex-soen-plwe-to-jvspbo__configuration.md) for externalized config
 - Check [Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md) for production standards
+
+## See Also
+
+**OSE Explanation Foundation**:
+
+- [Spring Framework Performance](../jvm-spring/ex-soen-plwe-to-jvsp__performance.md) - Manual Spring optimization
+- [Java Performance](../../programming-languages/java/ex-soen-prla-ja__performance-standards.md) - Java JVM tuning
+- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Performance patterns
+- [Spring Boot Data Access](./ex-soen-plwe-to-jvspbo__data-access.md) - Query optimization
+
+**Hands-on Learning (AyoKoding)**:
+
+- [Spring Boot By Example - Performance](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/performance) - Code examples
+- [Spring Boot In-the-Field - Optimization](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/performance) - Production tuning

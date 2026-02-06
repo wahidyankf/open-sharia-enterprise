@@ -1116,4 +1116,18 @@ public class ZakatCalculationService {
 - Explore [Performance](ex-soen-plwe-to-jvspbo__performance.md) for performance optimization
 - Check [Configuration](ex-soen-plwe-to-jvspbo__configuration.md) for environment-specific settings
 
+## See Also
+
+**OSE Explanation Foundation**:
+
+- [Spring Framework Observability](../jvm-spring/ex-soen-plwe-to-jvsp__observability.md) - Manual Spring monitoring
+- [Java Monitoring](../../programming-languages/java/ex-soen-prla-ja__performance-standards.md) - Java JMX baseline
+- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Observability patterns
+- [Spring Boot Performance](./ex-soen-plwe-to-jvspbo__performance.md) - Performance metrics
+
+**Hands-on Learning (AyoKoding)**:
+
+- [Spring Boot By Example - Observability](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/observability) - Code examples
+- [Spring Boot In-the-Field - Monitoring](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/observability) - Production monitoring
+
 **Last Updated**: 2026-01-26

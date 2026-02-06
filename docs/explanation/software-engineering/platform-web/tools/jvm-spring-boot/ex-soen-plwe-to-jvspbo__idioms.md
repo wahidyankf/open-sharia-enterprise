@@ -1054,6 +1054,584 @@ public class DevToolsConfig {
 }
 ```
 
+### 12. Custom Auto-Configuration Patterns
+
+**Pattern**: Create reusable auto-configurations for domain-specific functionality.
+
+**Idiom**: `@Configuration` + `@ConditionalOnClass` + `@EnableConfigurationProperties` + `spring.factories`.
+
+**Domain Auto-Configuration**:
+
+```java
+@Configuration
+@ConditionalOnClass(ZakatCalculationService.class)
+@EnableConfigurationProperties(ZakatProperties.class)
+public class ZakatAutoConfiguration {
+    private final ZakatProperties properties;
+
+    public ZakatAutoConfiguration(ZakatProperties properties) {
+        this.properties = properties;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public NisabCalculator nisabCalculator() {
+        return new DefaultNisabCalculator(
+            properties.getGoldPriceSource(),
+            properties.getSilverPriceSource()
+        );
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ZakatRateProvider zakatRateProvider() {
+        return new StandardZakatRateProvider(properties.getRate());
+    }
+
+    @Bean
+    @ConditionalOnBean(NisabCalculator.class)
+    public ZakatCalculationService zakatCalculationService(
+        NisabCalculator nisabCalculator,
+        ZakatRateProvider rateProvider,
+        ZakatCalculationRepository repository
+    ) {
+        return new ZakatCalculationService(nisabCalculator, rateProvider, repository);
+    }
+}
+```
+
+**Configuration Properties for Auto-Configuration**:
+
+```java
+@ConfigurationProperties(prefix = "ose.zakat")
+@Validated
+public class ZakatProperties {
+
+    @NotNull
+    @DecimalMin("0.0")
+    @DecimalMax("1.0")
+    private BigDecimal rate = new BigDecimal("0.025");  // 2.5%
+
+    @NotBlank
+    private String goldPriceSource = "https://api.metals.live/v1/spot/gold";
+
+    @NotBlank
+    private String silverPriceSource = "https://api.metals.live/v1/spot/silver";
+
+    @NotNull
+    private NisabCalculationMode calculationMode = NisabCalculationMode.GOLD;
+
+    private boolean enableAutomaticCalculation = false;
+
+    // Getters and setters
+    public BigDecimal getRate() { return rate; }
+    public void setRate(BigDecimal rate) { this.rate = rate; }
+
+    public String getGoldPriceSource() { return goldPriceSource; }
+    public void setGoldPriceSource(String goldPriceSource) {
+        this.goldPriceSource = goldPriceSource;
+    }
+
+    public String getSilverPriceSource() { return silverPriceSource; }
+    public void setSilverPriceSource(String silverPriceSource) {
+        this.silverPriceSource = silverPriceSource;
+    }
+
+    public NisabCalculationMode getCalculationMode() { return calculationMode; }
+    public void setCalculationMode(NisabCalculationMode calculationMode) {
+        this.calculationMode = calculationMode;
+    }
+
+    public boolean isEnableAutomaticCalculation() { return enableAutomaticCalculation; }
+    public void setEnableAutomaticCalculation(boolean enableAutomaticCalculation) {
+        this.enableAutomaticCalculation = enableAutomaticCalculation;
+    }
+
+    public enum NisabCalculationMode {
+        GOLD, SILVER, MINIMUM
+    }
+}
+```
+
+**Auto-Configuration Ordering**:
+
+```java
+@Configuration
+@AutoConfigureBefore(DataSourceAutoConfiguration.class)
+public class CustomDataSourceAutoConfiguration {
+    // Runs before Spring Boot's DataSource auto-configuration
+}
+
+@Configuration
+@AutoConfigureAfter(DataSourceAutoConfiguration.class)
+public class DataSourceMonitoringAutoConfiguration {
+    // Runs after DataSource is configured
+}
+```
+
+**Register Auto-Configuration** (`META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`):
+
+```text
+com.oseplatform.autoconfigure.ZakatAutoConfiguration
+com.oseplatform.autoconfigure.MurabahaAutoConfiguration
+com.oseplatform.autoconfigure.DonationAutoConfiguration
+```
+
+**Using the Auto-Configuration**:
+
+```yaml
+ose:
+  zakat:
+    rate: 0.025
+    gold-price-source: https://api.metals.live/v1/spot/gold
+    calculation-mode: GOLD
+    enable-automatic-calculation: true
+```
+
+**Benefits**:
+
+- **Reusability**: Share configurations across multiple services
+- **Convention over Configuration**: Sensible defaults with override capability
+- **Discoverability**: IDE autocomplete for configuration properties
+- **Modularity**: Package domain logic with configuration
+
+### 13. Event-Driven Architecture Depth
+
+**Pattern**: Leverage Spring's event infrastructure for decoupled domain interactions.
+
+**Idiom**: `ApplicationEventPublisher` + `@EventListener` + `@TransactionalEventListener` + `@Async`.
+
+**Complex Domain Event**:
+
+```java
+public class ContractStatusChangedEvent {
+    private final String contractId;
+    private final ContractStatus previousStatus;
+    private final ContractStatus newStatus;
+    private final Instant changedAt;
+    private final String reason;
+
+    public ContractStatusChangedEvent(
+        String contractId,
+        ContractStatus previousStatus,
+        ContractStatus newStatus,
+        String reason
+    ) {
+        this.contractId = contractId;
+        this.previousStatus = previousStatus;
+        this.newStatus = newStatus;
+        this.changedAt = Instant.now();
+        this.reason = reason;
+    }
+
+    // Getters
+    public String getContractId() { return contractId; }
+    public ContractStatus getPreviousStatus() { return previousStatus; }
+    public ContractStatus getNewStatus() { return newStatus; }
+    public Instant getChangedAt() { return changedAt; }
+    public String getReason() { return reason; }
+}
+```
+
+**Asynchronous Event Processing**:
+
+```java
+@Component
+@EnableAsync
+public class AsyncEventHandler {
+    private final Logger logger = LoggerFactory.getLogger(AsyncEventHandler.class);
+    private final EmailService emailService;
+    private final AuditLogService auditService;
+
+    public AsyncEventHandler(EmailService emailService, AuditLogService auditService) {
+        this.emailService = emailService;
+        this.auditService = auditService;
+    }
+
+    @Async
+    @EventListener
+    public void sendContractStatusEmail(ContractStatusChangedEvent event) {
+        // Runs asynchronously, won't block transaction
+        logger.info("Sending status change email for contract: {}", event.getContractId());
+        emailService.sendContractStatusUpdate(
+            event.getContractId(),
+            event.getNewStatus()
+        );
+    }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void auditStatusChange(ContractStatusChangedEvent event) {
+        // Audit only after successful transaction
+        auditService.logStatusChange(
+            event.getContractId(),
+            event.getPreviousStatus(),
+            event.getNewStatus(),
+            event.getReason()
+        );
+    }
+}
+```
+
+**Event Ordering with @Order**:
+
+```java
+@Component
+public class OrderedEventHandlers {
+
+    @EventListener
+    @Order(1)
+    public void firstHandler(PaymentRecordedEvent event) {
+        // Executes first
+    }
+
+    @EventListener
+    @Order(2)
+    public void secondHandler(PaymentRecordedEvent event) {
+        // Executes second
+    }
+
+    @EventListener
+    @Order(3)
+    public void thirdHandler(PaymentRecordedEvent event) {
+        // Executes third
+    }
+}
+```
+
+**Transaction Boundary Awareness**:
+
+```java
+@Component
+public class TransactionAwareEventHandler {
+
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
+    public void beforeCommit(DonationReceivedEvent event) {
+        // Executes before transaction commits
+        // Still part of transaction, can cause rollback
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void afterCommit(DonationReceivedEvent event) {
+        // Executes after successful commit
+        // Safe for external integrations
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_ROLLBACK)
+    public void afterRollback(DonationReceivedEvent event) {
+        // Executes if transaction rolls back
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMPLETION)
+    public void afterCompletion(DonationReceivedEvent event) {
+        // Executes after commit OR rollback
+    }
+}
+```
+
+**Benefits**:
+
+- **Decoupling**: Components communicate without direct dependencies
+- **Transaction Safety**: `@TransactionalEventListener` ensures consistency
+- **Scalability**: `@Async` enables concurrent processing
+- **Flexibility**: Add/remove handlers without modifying publishers
+
+### 14. Conditional Bean Registration Strategies
+
+**Pattern**: Advanced conditional bean registration for flexible configuration.
+
+**Idiom**: Multiple `@Conditional*` annotations with custom conditions.
+
+**Property-Based Conditional**:
+
+```java
+@Configuration
+public class PaymentGatewayConfig {
+
+    @Bean
+    @ConditionalOnProperty(
+        name = "ose.payment.gateway.provider",
+        havingValue = "stripe"
+    )
+    public PaymentGateway stripeGateway(StripeProperties properties) {
+        return new StripePaymentGateway(properties);
+    }
+
+    @Bean
+    @ConditionalOnProperty(
+        name = "ose.payment.gateway.provider",
+        havingValue = "paypal"
+    )
+    public PaymentGateway paypalGateway(PayPalProperties properties) {
+        return new PayPalPaymentGateway(properties);
+    }
+
+    @Bean
+    @ConditionalOnProperty(
+        name = "ose.payment.gateway.provider",
+        havingValue = "mock",
+        matchIfMissing = true  // Default to mock if not specified
+    )
+    public PaymentGateway mockGateway() {
+        return new MockPaymentGateway();
+    }
+}
+```
+
+**Bean Presence Conditional**:
+
+```java
+@Configuration
+public class CachingConfig {
+
+    @Bean
+    @ConditionalOnBean(CacheManager.class)
+    public CachedZakatCalculationService cachedService(
+        ZakatCalculationService delegate,
+        CacheManager cacheManager
+    ) {
+        return new CachedZakatCalculationService(delegate, cacheManager);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(CacheManager.class)
+    public ZakatCalculationService noCacheService(
+        ZakatCalculationRepository repository,
+        NisabCalculator nisabCalculator
+    ) {
+        return new ZakatCalculationService(repository, nisabCalculator);
+    }
+}
+```
+
+**SpEL Expression Conditional**:
+
+```java
+@Configuration
+public class AdvancedConfig {
+
+    @Bean
+    @ConditionalOnExpression(
+        "${ose.features.advanced-analytics:false} and ${ose.features.ml-enabled:false}"
+    )
+    public AnalyticsService advancedAnalytics(MachineLearningService mlService) {
+        return new MLEnhancedAnalyticsService(mlService);
+    }
+
+    @Bean
+    @ConditionalOnExpression(
+        "!'${ose.deployment.environment}'.equals('production') or ${ose.debug.enabled:false}"
+    )
+    public DebugToolsConfiguration debugTools() {
+        return new DebugToolsConfiguration();
+    }
+}
+```
+
+**Custom Condition Implementation**:
+
+```java
+public class ShariahComplianceCondition implements Condition {
+
+    @Override
+    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+        Environment env = context.getEnvironment();
+
+        // Check if Shariah compliance is required
+        boolean complianceRequired = env.getProperty(
+            "ose.shariah.compliance.required",
+            Boolean.class,
+            false
+        );
+
+        // Check if certification is valid
+        String certificationExpiry = env.getProperty("ose.shariah.certification.expiry");
+        boolean certificationValid = certificationExpiry != null &&
+            LocalDate.parse(certificationExpiry).isAfter(LocalDate.now());
+
+        return complianceRequired && certificationValid;
+    }
+}
+
+@Configuration
+@Conditional(ShariahComplianceCondition.class)
+public class ShariahComplianceConfig {
+
+    @Bean
+    public InterestValidator interestValidator() {
+        return new StrictInterestValidator();
+    }
+
+    @Bean
+    public ContractValidator contractValidator() {
+        return new ShariahCompliantContractValidator();
+    }
+}
+```
+
+**Benefits**:
+
+- **Flexibility**: Adapt application behavior based on environment
+- **Modularity**: Enable/disable features without code changes
+- **Safety**: Prevent invalid bean combinations
+- **Testability**: Easily create different configurations for testing
+
+### 15. Spring Boot Lifecycle Hooks
+
+**Pattern**: Execute code at specific points in application lifecycle.
+
+**Idiom**: `ApplicationRunner`, `CommandLineRunner`, `@PostConstruct`, `@PreDestroy`, `@Order`.
+
+**ApplicationRunner vs CommandLineRunner**:
+
+```java
+@Component
+@Order(1)
+public class DatabaseInitializer implements ApplicationRunner {
+
+    private final DatabaseMigrationService migrationService;
+    private final Logger logger = LoggerFactory.getLogger(DatabaseInitializer.class);
+
+    public DatabaseInitializer(DatabaseMigrationService migrationService) {
+        this.migrationService = migrationService;
+    }
+
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        // Access to ApplicationArguments (named options, source args)
+        logger.info("Running database migrations...");
+
+        if (args.containsOption("skip-migration")) {
+            logger.info("Skipping migration (--skip-migration flag detected)");
+            return;
+        }
+
+        migrationService.runMigrations();
+        logger.info("Database migrations completed");
+    }
+}
+
+@Component
+@Order(2)
+public class DataSeeder implements CommandLineRunner {
+
+    private final ZakatCalculationRepository repository;
+    private final Logger logger = LoggerFactory.getLogger(DataSeeder.class);
+
+    public DataSeeder(ZakatCalculationRepository repository) {
+        this.repository = repository;
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        // Access to raw String[] arguments
+        logger.info("Seeding initial data...");
+
+        if (args.length > 0 && args[0].equals("--no-seed")) {
+            logger.info("Skipping data seeding");
+            return;
+        }
+
+        // Seed data
+        repository.save(createSampleCalculation());
+        logger.info("Data seeding completed");
+    }
+
+    private ZakatCalculation createSampleCalculation() {
+        return ZakatCalculation.calculate(
+            new BigDecimal("10000"),
+            new BigDecimal("5000"),
+            LocalDate.now()
+        );
+    }
+}
+```
+
+**Bean Lifecycle with @PostConstruct and @PreDestroy**:
+
+```java
+@Component
+public class CacheWarmer {
+
+    private final ZakatCalculationService zakatService;
+    private final CacheManager cacheManager;
+    private final Logger logger = LoggerFactory.getLogger(CacheWarmer.class);
+
+    public CacheWarmer(ZakatCalculationService zakatService, CacheManager cacheManager) {
+        this.zakatService = zakatService;
+        this.cacheManager = cacheManager;
+    }
+
+    @PostConstruct
+    public void warmCache() {
+        // Executes after dependency injection
+        logger.info("Warming cache with frequently accessed data...");
+
+        try {
+            // Pre-load common calculations
+            zakatService.preloadCommonNisabValues();
+            logger.info("Cache warming completed");
+        } catch (Exception e) {
+            logger.error("Cache warming failed", e);
+        }
+    }
+
+    @PreDestroy
+    public void cleanupCache() {
+        // Executes before bean destruction
+        logger.info("Flushing cache before shutdown...");
+
+        cacheManager.getCacheNames()
+            .forEach(cacheName -> {
+                Cache cache = cacheManager.getCache(cacheName);
+                if (cache != null) {
+                    cache.clear();
+                }
+            });
+
+        logger.info("Cache cleanup completed");
+    }
+}
+```
+
+**Lifecycle Ordering with @Order**:
+
+```java
+@Component
+@Order(1)
+public class FirstRunner implements ApplicationRunner {
+    @Override
+    public void run(ApplicationArguments args) {
+        // Executes first
+    }
+}
+
+@Component
+@Order(2)
+public class SecondRunner implements ApplicationRunner {
+    @Override
+    public void run(ApplicationArguments args) {
+        // Executes second
+    }
+}
+
+@Component
+@Order(3)
+public class ThirdRunner implements ApplicationRunner {
+    @Override
+    public void run(ApplicationArguments args) {
+        // Executes third
+    }
+}
+```
+
+**Benefits**:
+
+- **Initialization**: Execute startup logic after context is ready
+- **Cleanup**: Graceful shutdown with resource cleanup
+- **Ordering**: Control execution sequence with `@Order`
+- **Flexibility**: Choose between `ApplicationRunner` (structured args) or `CommandLineRunner` (raw args)
+
 ## Related Documentation
 
 - **[Spring Boot Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md)** - Production standards
@@ -1062,6 +1640,22 @@ public class DevToolsConfig {
 - **[Dependency Injection](ex-soen-plwe-to-jvspbo__dependency-injection.md)** - DI patterns
 - **[Java Idioms](../../../programming-languages/java/README.md)** - Modern Java patterns
 - **[Functional Programming](ex-soen-plwe-to-jvspbo__functional-programming.md)** - FP with Spring Boot
+
+## See Also
+
+**OSE Explanation Foundation**:
+
+- [Spring Framework Idioms](../jvm-spring/ex-soen-plwe-to-jvsp__idioms.md) - Manual Spring setup patterns
+- [Java Best Practices](../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline standards
+- [Spring Boot Configuration](./ex-soen-plwe-to-jvspbo__configuration.md) - Type-safe configuration patterns
+- [Spring Boot Dependency Injection](./ex-soen-plwe-to-jvspbo__dependency-injection.md) - DI best practices
+
+**Hands-on Learning (AyoKoding)**:
+
+- [Spring Boot By Example - Core Patterns](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/core-patterns) - Code examples
+- [Spring Boot By Example - Auto-Configuration](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/auto-configuration) - Custom auto-config examples
+- [Spring Boot In-the-Field - Production Setup](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/production-setup) - Real-world patterns
+- [Spring Boot In-the-Field - Event-Driven Architecture](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/event-driven) - Domain events in production
 
 ---
 

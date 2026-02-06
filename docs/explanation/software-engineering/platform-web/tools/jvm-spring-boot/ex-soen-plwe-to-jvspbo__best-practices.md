@@ -1348,6 +1348,20 @@ public class NisabRateService {
 - **[Testing](ex-soen-plwe-to-jvspbo__testing.md)** - Testing strategies
 - **[Java Best Practices](../../../programming-languages/java/README.md)** - Java standards
 
+## See Also
+
+**OSE Explanation Foundation**:
+
+- [Spring Framework Best Practices](../jvm-spring/ex-soen-plwe-to-jvsp__best-practices.md) - Manual Spring standards
+- [Java Best Practices](../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline standards
+- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Boot patterns
+- [Spring Boot Anti-Patterns](./ex-soen-plwe-to-jvspbo__anti-patterns.md) - Common mistakes
+
+**Hands-on Learning (AyoKoding)**:
+
+- [Spring Boot By Example - Best Practices](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/best-practices) - Code examples
+- [Spring Boot In-the-Field - Production Setup](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/production-setup) - Real-world patterns
+
 ---
 
 **Last Updated**: 2026-01-25

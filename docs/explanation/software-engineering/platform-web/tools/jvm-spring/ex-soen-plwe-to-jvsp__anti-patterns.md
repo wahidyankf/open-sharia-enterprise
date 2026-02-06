@@ -1224,6 +1224,24 @@ public class MurabahaContractService {
 - **[Code Quality Standards](../../../../../../governance/development/quality/code.md)** - Quality requirements
 - **[Functional Programming](../../../../../../governance/development/pattern/functional-programming.md)** - FP principles
 
+## See Also
+
+**OSE Explanation Foundation**:
+
+- [Java Anti-Patterns](../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline anti-patterns
+- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Recommended practices
+- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Correct patterns
+- [Spring Framework Dependency Injection](./ex-soen-plwe-to-jvsp__dependency-injection.md) - Proper DI usage
+
+**Hands-on Learning (AyoKoding)**:
+
+- [Spring By Example - Common Mistakes](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/common-mistakes) - Code examples
+- [Spring In-the-Field - Debugging Issues](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/debugging) - Troubleshooting patterns
+
+**Spring Boot Extension**:
+
+- [Spring Boot Anti-Patterns](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__anti-patterns.md) - Boot-specific mistakes
+
 ---
 
 **Last Updated**: 2026-01-29

@@ -1629,6 +1629,20 @@ Production guidelines for REST API design.
 - Explore [Observability](ex-soen-plwe-to-jvspbo__observability.md) for API monitoring
 - Check [Performance](ex-soen-plwe-to-jvspbo__performance.md) for optimization
 
+## See Also
+
+**OSE Explanation Foundation**:
+
+- [Spring Framework REST APIs](../jvm-spring/ex-soen-plwe-to-jvsp__rest-apis.md) - Manual Spring REST
+- [Java API Design](../../programming-languages/java/ex-soen-prla-ja__api-standards.md) - Java API baseline
+- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - REST patterns
+- [Spring Boot Security](./ex-soen-plwe-to-jvspbo__security.md) - API security
+
+**Hands-on Learning (AyoKoding)**:
+
+- [Spring Boot By Example - REST APIs](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/rest-apis) - Code examples
+- [Spring Boot In-the-Field - API Development](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/rest-apis) - Production APIs
+
 ---
 
 **Last Updated**: 2026-01-26

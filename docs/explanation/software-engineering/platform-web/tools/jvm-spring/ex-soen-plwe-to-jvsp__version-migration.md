@@ -550,6 +550,24 @@ class ZakatServiceTest {
 - [Jakarta EE 9 Migration](https://jakarta.ee/specifications/platform/9/)
 - [OpenRewrite Spring Boot 3 Migration](https://docs.openrewrite.org/recipes/java/spring/boot3)
 
+## See Also
+
+**OSE Explanation Foundation**:
+
+- [Java Version Migration](../../programming-languages/java/ex-soen-prla-ja__framework-integration.md) - Java version updates
+- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Modern patterns
+- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Migration standards
+- [Spring Framework Configuration](./ex-soen-plwe-to-jvsp__configuration.md) - Config updates
+
+**Hands-on Learning (AyoKoding)**:
+
+- [Spring By Example - Migration](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/migration) - Code examples
+- [Spring In-the-Field - Version Upgrades](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/migration) - Production migration
+
+**Spring Boot Extension**:
+
+- [Spring Boot Version Migration](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__version-migration.md) - Boot version updates
+
 ---
 
 **Last Updated**: 2026-01-29
