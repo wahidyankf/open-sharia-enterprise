@@ -3684,17 +3684,12 @@ The `var` keyword (Java 10+) infers local variable types from initializers, redu
 Map<String, List<Employee>> employeesByDepartment =
     new HashMap<String, List<Employee>>();
                              // => Type repeated 3 times (left, right, diamond)
-                             // => Redundant: right side has all type info
-                             // => 72 characters just for type declaration
                              // => Error-prone: must keep left/right synchronized
 
 // VAR TYPE INFERENCE (Java 10+)
 var employeesByDept = new HashMap<String, List<Employee>>();
                              // => Compiler infers Map<String, List<Employee>> from right
-                             // => Type appears once (right side)
-                             // => Compile-time type checking (same as explicit)
                              // => Still strongly typed (not dynamic typing)
-                             // => 58 characters (19% shorter)
 
 // GOOD USAGE - type obvious from initializer
 var message = "Hello";       // => String (obvious from string literal)
@@ -3705,24 +3700,17 @@ var price = 19.99;           // => double (obvious from decimal literal)
                              // => Primitive double, not Double wrapper
 var names = new ArrayList<String>();
                              // => ArrayList<String> (obvious from constructor)
-                             // => Concrete type ArrayList, not interface List
 var numbers = List.of(1, 2, 3);
                              // => List<Integer> (obvious from List.of factory)
-                             // => Immutable list from varargs integers
-                             // => Interface type List, not concrete implementation
 
 // GOOD USAGE - diamond operator
 var employees = new ArrayList<Employee>();
                              // => ArrayList<Employee> inferred from diamond <>
-                             // => Diamond operator <> uses left-side context
-                             // => Before var: ArrayList<Employee> employees = new ArrayList<>();
                              // => var + diamond: maximum brevity with type safety
 
 // GOOD USAGE - complex generic types
 var mapper = new HashMap<String, Function<Employee, String>>();
                              // => HashMap<String, Function<Employee, String>>
-                             // => Saves typing deeply nested generics
-                             // => Without var: would repeat Function<Employee, String> twice
                              // => Value: avoids complex generic type duplication
 
 // GOOD USAGE - streams
@@ -3732,19 +3720,14 @@ var activeEmployees = employees.stream()
                              // => Filters to active employees only
     .collect(Collectors.toList());
                              // => Collects to List<Employee>
-                             // => List<Employee> inferred from stream operations
-                             // => Type clear from stream source and operations
                              // => Clear from context without explicit type
 
 // GOOD USAGE - try-with-resources
 try (var reader = new BufferedReader(new FileReader("data.txt"))) {
                              // => BufferedReader inferred from constructor
-                             // => Shorter than BufferedReader reader = new BufferedReader(...)
-                             // => Reader auto-closes when block exits
                              // => Type obvious from BufferedReader constructor
     var line = reader.readLine();
                              // => String inferred from readLine() return type
-                             // => Line contains file content or null if EOF
 } catch (IOException e) {    // => Handles file I/O exceptions
                              // => Both file operations and auto-close can throw
 }
@@ -3752,11 +3735,8 @@ try (var reader = new BufferedReader(new FileReader("data.txt"))) {
 // GOOD USAGE - loops
 for (var employee : employees) {
                              // => Employee inferred from employees collection
-                             // => Enhanced for-loop (for-each) iteration
-                             // => Type extracted from Iterable<Employee>
     System.out.println(employee.name());
                              // => Calls name() on Employee (type-safe)
-                             // => Compiler knows employee is Employee
 }
 
 var entries = map.entrySet();// => Set<Map.Entry<K, V>> inferred from map
@@ -3765,37 +3745,27 @@ for (var entry : entries) {  // => Map.Entry<String, Integer> inferred per itera
                              // => entry type extracted from entries Set
     System.out.println(entry.getKey() + ": " + entry.getValue());
                              // => getKey() returns String, getValue() returns Integer
-                             // => Type-safe access to map entry components
 }
 
 // BAD USAGE - type not obvious
 var result = process();      // => What type is result?
                              // => Reader must check process() signature
-                             // => Method name "process" gives no type hint
-                             // => Prefer explicit type for clarity
                              // => Harms code review and maintenance
 
 var data = getData();        // => What is data?
                              // => Generic method name gives no hint
-                             // => Could be String, Object, custom type
-                             // => Forces IDE/documentation lookup
 
 // GOOD ALTERNATIVE - explicit type
 ProcessedData result = process();
                              // => Clear: result is ProcessedData
-                             // => Self-documenting code
-                             // => No IDE hover needed
 UserData data = getData();   // => Clear: data is UserData
                              // => Type visible in code review/diff
 
 // BAD USAGE - null or generic initializers
 var value = null;            // => COMPILE ERROR: cannot infer from null
                              // => null has no type information
-                             // => Must use explicit type or non-null initializer
 var list = new ArrayList<>();// => COMPILE ERROR: cannot infer generic type
                              // => Diamond <> requires left-side type context
-                             // => var provides no context for <>
-                             // => Must use: new ArrayList<String>() with explicit type
 
 // BAD USAGE - method parameters (not allowed)
 // public void printMessage(var message) {
@@ -3810,11 +3780,7 @@ var list = new ArrayList<>();// => COMPILE ERROR: cannot infer generic type
 // LAMBDAS WITH VAR (Java 11+)
 BiFunction<Integer, Integer, Integer> add = (var x, var y) -> x + y;
                              // => var in lambda parameters (all or none rule)
-                             // => Cannot mix: (var x, int y) is COMPILE ERROR
-                             // => Allows annotations: (@NotNull var x, @NotNull var y)
                              // => Without var: (x, y) -> x + y (shorter, no annotations)
-                             // => Use var only when annotations needed
-                             // => Types inferred from BiFunction<Integer, Integer, Integer>
 
 // CHAIN READABILITY
 // BAD - too much var
@@ -3823,35 +3789,28 @@ var b = a.getB();            // => What type is b? Must trace through a
 var c = b.getC();            // => What type is c? Must trace through a, b
 var d = c.getD();            // => Unclear: what are a, b, c, d?
                              // => Cognitive overload tracing types
-                             // => Code review nightmare
 
 // GOOD - selective var
 UserAccount account = getAccount();
                              // => Explicit: account is UserAccount
-                             // => Critical domain type deserves explicit declaration
 var transactions = account.getTransactions();
                              // => List<Transaction> inferred (obvious from method name)
-                             // => Method name indicates collection of transactions
 var recent = transactions.stream()
                              // => Stream<Transaction> from transactions list
     .filter(t -> t.isRecent())
                              // => Filters to recent transactions only
     .collect(Collectors.toList());
                              // => Collects filtered stream to List<Transaction>
-                             // => Type clear from stream operations
 
 // COMPARISON
 // BEFORE var
 Map<String, List<Transaction>> transactionsByUser =
     new HashMap<String, List<Transaction>>();
                              // => 83 characters
-                             // => Type repeated
 
 // AFTER var
 var transactionsByUser = new HashMap<String, List<Transaction>>();
                              // => 67 characters
-                             // => Type appears once
-                             // => Same type safety
 ```
 
 **Key Takeaway**: Use `var` when type is obvious from right side (constructors, method calls, literals). Avoid `var` when type is unclear (generic method names, complex return types). Never use for fields, parameters, or when initializer lacks type info (null, raw generics). `var` reduces verbosity, not type safety.
