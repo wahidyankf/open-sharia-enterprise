@@ -81,7 +81,7 @@ The `repo-applying-maker-checker-fixer` Skill provides complete mode parameter l
 3. **Fix Application**: Apply HIGH confidence fixes automatically, skip others
 4. **Fix Report Generation**: Create fix report preserving UUID chain from source audit
 
-**Domain-Specific Implementation**: This agent re-validates By Example tutorial findings focusing on annotation density (1-2.25 ratio per example), five-part structure, example count (75-90), and ayokoding-web compliance.
+**Domain-Specific Implementation**: This agent re-validates By Example tutorial findings focusing on annotation density (1-2.25 ratio per example), five-part structure, example count (75-85), and ayokoding-web compliance.
 
 ## Confidence Level Assessment
 

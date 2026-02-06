@@ -90,34 +90,10 @@ The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specifi
 
 ```bash
 # By Example tutorials live in by-example/ folder
-
-**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
-
-- Advanced reasoning to create well-structured By Example tutorials
-- Sophisticated content generation for 75-85 annotated code examples
-- Deep understanding of programming language pedagogy
-- Complex decision-making for annotation density (1-2.25 ratio per example)
-- Multi-step content creation orchestration
 apps/ayokoding-web/content/docs/[language]/by-example/[topic].md
 
 # Determine level (1-5) based on programming language structure
-
-**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
-
-- Advanced reasoning to create well-structured By Example tutorials
-- Sophisticated content generation for 75-85 annotated code examples
-- Deep understanding of programming language pedagogy
-- Complex decision-making for annotation density (1-2.25 ratio per example)
-- Multi-step content creation orchestration
 # Level determines weight: level * 100 + sequential
-
-**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
-
-- Advanced reasoning to create well-structured By Example tutorials
-- Sophisticated content generation for 75-85 annotated code examples
-- Deep understanding of programming language pedagogy
-- Complex decision-making for annotation density (1-2.25 ratio per example)
-- Multi-step content creation orchestration
 ```
 
 ### Step 2: Create Frontmatter
@@ -135,7 +111,7 @@ Brief overview of topic scope and example coverage.
 
 ### Step 4: Create Example Groups
 
-Group 75-90 examples thematically:
+Group 75-85 examples thematically:
 
 - Basic Operations (Examples 1-15)
 - Error Handling (Examples 16-30)
@@ -182,7 +158,7 @@ The `docs-applying-content-quality` Skill provides general content quality stand
 
 **By Example specific**:
 
-- 75-90 examples minimum
+- 75-85 examples total
 - 1-2.25 annotation ratio per example
 - Five-part structure for all examples
 - Progressive complexity
