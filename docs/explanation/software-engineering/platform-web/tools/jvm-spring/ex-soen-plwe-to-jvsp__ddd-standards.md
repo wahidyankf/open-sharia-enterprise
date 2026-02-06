@@ -22,7 +22,7 @@ updated: 2026-02-06
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Spring Framework fundamentals from [AyoKoding Spring Learning Path](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring) before using these standards.
+**REQUIRED**: You MUST understand Spring Framework fundamentals from [AyoKoding Spring Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring.md) before using these standards.
 
 **This document is OSE Platform-specific**, not a Spring tutorial. We define HOW to apply Spring in THIS codebase, not WHAT Spring is.
 
@@ -32,7 +32,7 @@ updated: 2026-02-06
 
 **OSE-specific prescriptive standards** for Domain-Driven Design in Spring-based Shariah-compliant financial applications. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).
 
-**Prerequisites**: Understanding of Spring Framework fundamentals from [AyoKoding Spring Framework](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring) and Domain-Driven Design concepts.
+**Prerequisites**: Understanding of Spring Framework fundamentals from [AyoKoding Spring Framework](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring.md) and Domain-Driven Design concepts.
 
 ## Purpose
 
@@ -789,7 +789,7 @@ com.oseplatform.donation/
 
 For learning Spring Framework fundamentals and concepts referenced in these standards, see:
 
-- **[Spring Framework Learning Path](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring)** - Complete Spring learning journey
+- **[Spring Framework Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring.md)** - Complete Spring learning journey
 - **[Spring By Example](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example.md)** - Annotated Spring code examples
   - **[DDD Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/ddd.md)** - Aggregates, repositories, domain events
   - **[JPA Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/jpa.md)** - @Entity, @Embeddable, relationships

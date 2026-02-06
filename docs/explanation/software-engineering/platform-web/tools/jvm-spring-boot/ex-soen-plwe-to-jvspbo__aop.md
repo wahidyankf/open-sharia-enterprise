@@ -30,7 +30,7 @@ related:
 
 **REQUIRED**: You MUST understand [Spring Framework AOP](../jvm-spring/ex-soen-plwe-to-jvsp__aop.md) before reading this document. This covers Spring Boot-specific AOP features and auto-configuration.
 
-**STRONGLY RECOMMENDED**: Complete [AyoKoding Spring Boot Learning Path](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot) for practical AOP experience.
+**STRONGLY RECOMMENDED**: Complete [AyoKoding Spring Boot Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot.md) for practical AOP experience.
 
 **This document is OSE Platform-specific**, not a Spring Boot tutorial. We define HOW to apply AOP in THIS platform, not WHAT AOP is.
 

@@ -756,7 +756,7 @@ Before starting, ensure you have:
 
 3. **Verify deployment**:
    - Check Vercel deployment status
-   - Visit <https://ayokoding.com/en/learn/swe/programming-languages/[language]/>
+   - Visit <../../apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/>
    - Navigate through tutorials
    - Test a few code examples
 

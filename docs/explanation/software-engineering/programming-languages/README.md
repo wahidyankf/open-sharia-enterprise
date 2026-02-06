@@ -135,9 +135,9 @@ Java is a primary language for backend services, particularly for domain-driven 
 **Key Documentation:**
 
 - [Java OSE Standards](./java/README.md) - Authoritative coding standards for OSE Platform
-- [Java Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/java) - Complete Java tutorials and examples
-- [Java By Example](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/by-example) - 157+ annotated code examples
-- [Java In Practice](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/in-practice) - Best practices, anti-patterns, TDD, BDD, DDD
+- [Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md) - Complete Java tutorials and examples
+- [Java By Example](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example.md) - 157+ annotated code examples
+- [Java In Practice](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-practice.md) - Best practices, anti-patterns, TDD, BDD, DDD
 
 **Use Java when you need:**
 
@@ -189,9 +189,9 @@ Languages in this documentation are chosen based on:
 
 ### For Backend Developers
 
-1. **Learn Java fundamentals** - [AyoKoding Java By Example](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/by-example)
+1. **Learn Java fundamentals** - [AyoKoding Java By Example](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example.md)
 2. **Apply OSE standards** - [Java Coding Standards](./java/README.md)
-3. **Study best practices** - [Java In Practice](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/in-practice)
+3. **Study best practices** - [Java In Practice](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-practice.md)
 4. **Integrate with DDD** - [DDD Standards](./java/ex-soen-prla-ja__ddd-standards.md)
 
 ### For Full-Stack Developers
