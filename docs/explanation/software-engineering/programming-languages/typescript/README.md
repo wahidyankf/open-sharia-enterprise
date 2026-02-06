@@ -52,9 +52,9 @@ TypeScript is the primary language for OSE Platform development. It provides sta
 
 **You MUST understand TypeScript fundamentals before using these standards:**
 
-- **[TypeScript Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/typescript)** - Complete 0-95% language coverage
-- **[TypeScript By Example](https://ayokoding.com/en/learn/software-engineering/programming-languages/typescript/by-example)** - 75-85 annotated code examples (beginner → advanced)
-- **[TypeScript In Practice](https://ayokoding.com/en/learn/software-engineering/programming-languages/typescript/in-practice)** - Production patterns and design approaches
+- **[TypeScript Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/typescript.md)** - Complete 0-95% language coverage
+- **[TypeScript By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/typescript/by-example.md)** - 75-85 annotated code examples (beginner → advanced)
+- **[TypeScript In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/typescript/in-practice.md)** - Production patterns and design approaches
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply TypeScript knowledge in THIS codebase.
 

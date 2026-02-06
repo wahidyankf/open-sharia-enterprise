@@ -31,7 +31,7 @@ related:
 
 **REQUIRED**: You MUST understand [Spring Framework Deployment](../jvm-spring/ex-soen-plwe-to-jvsp__deployment.md) before reading this document. This covers Spring Boot-specific deployment features built on top of Spring Framework.
 
-**STRONGLY RECOMMENDED**: Complete [AyoKoding Spring Boot Learning Path](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot) for practical deployment experience.
+**STRONGLY RECOMMENDED**: Complete [AyoKoding Spring Boot Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot.md) for practical deployment experience.
 
 **This document is OSE Platform-specific**, not a Spring Boot tutorial. We define HOW to deploy Spring Boot in THIS platform, not WHAT Spring Boot deployment is.
 

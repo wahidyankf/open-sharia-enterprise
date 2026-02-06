@@ -20,7 +20,7 @@ updated: 2026-02-03
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/java) before using these standards.
+**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md) before using these standards.
 
 **This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
 
@@ -30,7 +30,7 @@ updated: 2026-02-03
 
 **OSE-specific prescriptive standards** for Domain-Driven Design in Shariah-compliant financial applications. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).
 
-**Prerequisites**: Understanding of DDD fundamentals from [AyoKoding Java DDD](https://ayokoding.com/en/learn/software-engineering/programming-languages/java).
+**Prerequisites**: Understanding of DDD fundamentals from [AyoKoding Java DDD](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md).
 
 ## Purpose
 
@@ -581,7 +581,7 @@ class DonationTest {
 
 For learning Java fundamentals and concepts referenced in these standards, see:
 
-- **[Java Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/java)** - Complete Java learning journey
+- **[Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md)** - Complete Java learning journey
 - **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example.md)** - 157+ annotated code examples
   - **[Advanced Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/advanced.md)** - DDD aggregates, value objects, domain events, repositories, CQRS
 - **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-practice.md)** - Domain-Driven Design patterns and tactical patterns

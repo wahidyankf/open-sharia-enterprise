@@ -31,7 +31,7 @@ updated: 2026-02-05
 
 ## 📚 Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Elixir fundamentals from [AyoKoding Elixir Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/elixir) before using these standards.
+**REQUIRED**: You MUST understand Elixir fundamentals from [AyoKoding Elixir Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir.md) before using these standards.
 
 **This document is OSE Platform-specific**, not an Elixir tutorial. It assumes:
 
@@ -910,9 +910,9 @@ Testing standards are enforced through:
 
 For learning Elixir fundamentals and concepts referenced in these standards, see:
 
-- **[Elixir Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/elixir)** - Complete Elixir learning journey
-- **[Elixir By Example](https://ayokoding.com/en/learn/software-engineering/programming-languages/elixir/by-example)** - Annotated code examples
-- **[Elixir In Practice](https://ayokoding.com/en/learn/software-engineering/programming-languages/elixir/in-practice)** - TDD and BDD practices
+- **[Elixir Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir.md)** - Complete Elixir learning journey
+- **[Elixir By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/by-example.md)** - Annotated code examples
+- **[Elixir In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/in-practice.md)** - TDD and BDD practices
 
 **Note**: These standards assume you've learned Elixir basics from ayokoding-web. We don't re-explain fundamental concepts here.
 

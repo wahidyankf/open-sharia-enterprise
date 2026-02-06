@@ -64,7 +64,7 @@ OSE Platform Java applications MUST use the following framework stack:
 
 **You MUST understand Java fundamentals before using these standards:**
 
-- **[Java Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/java)** - Complete 0-95% language coverage
+- **[Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md)** - Complete 0-95% language coverage
 - **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example.md)** - 75-85 annotated code examples (beginner → advanced)
 - **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-practice.md)** - Production patterns and design approaches
 - **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights.md)** - Java 17, 21, 25 LTS features

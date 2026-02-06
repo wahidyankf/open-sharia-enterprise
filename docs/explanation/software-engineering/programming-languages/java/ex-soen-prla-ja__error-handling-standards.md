@@ -18,7 +18,7 @@ updated: 2026-02-03
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/java) before using these standards.
+**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md) before using these standards.
 
 **This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
 
@@ -28,7 +28,7 @@ updated: 2026-02-03
 
 **OSE-specific prescriptive standards** for error handling in Shariah-compliant financial applications. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).
 
-**Prerequisites**: Understanding of Java exception handling fundamentals from [AyoKoding Java Error Handling](https://ayokoding.com/en/learn/software-engineering/programming-languages/java).
+**Prerequisites**: Understanding of Java exception handling fundamentals from [AyoKoding Java Error Handling](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md).
 
 ## Purpose
 
@@ -419,7 +419,7 @@ void zakatShouldBeTwoPointFivePercent(
 
 For learning Java fundamentals and concepts referenced in these standards, see:
 
-- **[Java Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/java)** - Complete Java learning journey
+- **[Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md)** - Complete Java learning journey
 - **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example.md)** - 157+ annotated code examples
   - **[Intermediate Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/intermediate.md)** - Exception handling, try-catch-finally, custom exceptions
   - **[Advanced Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/advanced.md)** - Result types, functional error handling, resilience patterns

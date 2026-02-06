@@ -20,7 +20,7 @@ updated: 2026-02-03
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/java) before using these standards.
+**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md) before using these standards.
 
 **This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
 
@@ -30,7 +30,7 @@ updated: 2026-02-03
 
 **OSE-specific prescriptive standards** for API design in Shariah-compliant financial applications. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).
 
-**Prerequisites**: Understanding of REST, GraphQL, and gRPC fundamentals from [AyoKoding Java Web Services](https://ayokoding.com/en/learn/software-engineering/programming-languages/java).
+**Prerequisites**: Understanding of REST, GraphQL, and gRPC fundamentals from [AyoKoding Java Web Services](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md).
 
 ## Purpose
 
@@ -576,7 +576,7 @@ public class OpenApiConfig {
 
 For learning Java fundamentals and concepts referenced in these standards, see:
 
-- **[Java Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/java)** - Complete Java learning journey
+- **[Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md)** - Complete Java learning journey
 - **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example.md)** - 157+ annotated code examples
   - **[Advanced Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/advanced.md)** - REST APIs, GraphQL, gRPC, API versioning, pagination, error handling
 - **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-practice.md)** - API design patterns and best practices

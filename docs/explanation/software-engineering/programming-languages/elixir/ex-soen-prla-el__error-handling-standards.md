@@ -25,7 +25,7 @@ updated: 2026-02-05
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Elixir fundamentals from [AyoKoding Elixir Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/elixir) before using these standards.
+**REQUIRED**: You MUST understand Elixir fundamentals from [AyoKoding Elixir Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir.md) before using these standards.
 
 **This document is OSE Platform-specific**, not an Elixir tutorial. We define HOW to apply Elixir in THIS codebase, not WHAT Elixir is.
 
@@ -35,7 +35,7 @@ updated: 2026-02-05
 
 **OSE-specific prescriptive standards** for error handling in Elixir-based Shariah-compliant financial services. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).
 
-**Prerequisites**: Understanding of Elixir error handling fundamentals from [AyoKoding Elixir Error Handling](https://ayokoding.com/en/learn/software-engineering/programming-languages/elixir).
+**Prerequisites**: Understanding of Elixir error handling fundamentals from [AyoKoding Elixir Error Handling](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir.md).
 
 ## Purpose
 
@@ -843,11 +843,11 @@ end
 
 For learning Elixir fundamentals and concepts referenced in these standards, see:
 
-- **[Elixir Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/elixir)** - Complete Elixir learning journey
-- **[Elixir By Example](https://ayokoding.com/en/learn/software-engineering/programming-languages/elixir/by-example)** - Annotated code examples
-  - **[Intermediate Examples](https://ayokoding.com/en/learn/software-engineering/programming-languages/elixir/by-example/intermediate)** - Error handling, pattern matching, with construct
-  - **[Advanced Examples](https://ayokoding.com/en/learn/software-engineering/programming-languages/elixir/by-example/advanced)** - Supervision trees, GenServer, OTP patterns
-- **[Elixir In Practice](https://ayokoding.com/en/learn/software-engineering/programming-languages/elixir/in-practice)** - Error handling patterns and best practices
+- **[Elixir Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir.md)** - Complete Elixir learning journey
+- **[Elixir By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/by-example.md)** - Annotated code examples
+  - **[Intermediate Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/by-example/intermediate.md)** - Error handling, pattern matching, with construct
+  - **[Advanced Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/by-example/advanced.md)** - Supervision trees, GenServer, OTP patterns
+- **[Elixir In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/in-practice.md)** - Error handling patterns and best practices
 
 **Note**: These standards assume you've learned Elixir basics from ayokoding-web. We don't re-explain fundamental concepts here.
 

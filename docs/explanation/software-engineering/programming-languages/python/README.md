@@ -62,9 +62,9 @@ The [Zen of Python (PEP 20)](https://peps.python.org/pep-0020/) guides Python de
 
 **You MUST understand Python fundamentals before using these standards:**
 
-- **[Python Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/python)** - Complete 0-95% language coverage
-- **[Python By Example](https://ayokoding.com/en/learn/software-engineering/programming-languages/python/by-example)** - 75-85 annotated code examples (beginner → advanced)
-- **[Python In Practice](https://ayokoding.com/en/learn/software-engineering/programming-languages/python/in-practice)** - Production patterns and design approaches
+- **[Python Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/python.md)** - Complete 0-95% language coverage
+- **[Python By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/python/by-example.md)** - 75-85 annotated code examples (beginner → advanced)
+- **[Python In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/python/in-practice.md)** - Production patterns and design approaches
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Python knowledge in THIS codebase.
 

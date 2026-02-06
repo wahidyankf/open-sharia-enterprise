@@ -63,9 +63,9 @@ Dart's design principles guide development:
 
 **You MUST understand Dart fundamentals before using these standards:**
 
-- **[Dart Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/dart)** - Complete 0-95% language coverage
-- **[Dart By Example](https://ayokoding.com/en/learn/software-engineering/programming-languages/dart/by-example)** - 75-85 annotated code examples (beginner → advanced)
-- **[Dart In Practice](https://ayokoding.com/en/learn/software-engineering/programming-languages/dart/in-practice)** - Production patterns and design approaches
+- **[Dart Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart.md)** - Complete 0-95% language coverage
+- **[Dart By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart/by-example.md)** - 75-85 annotated code examples (beginner → advanced)
+- **[Dart In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart/in-practice.md)** - Production patterns and design approaches
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Dart knowledge in THIS codebase.
 

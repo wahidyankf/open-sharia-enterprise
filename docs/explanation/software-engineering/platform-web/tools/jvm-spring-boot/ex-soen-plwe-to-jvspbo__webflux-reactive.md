@@ -32,7 +32,7 @@ related:
 
 **REQUIRED**: You MUST understand blocking I/O and thread-per-request models before learning reactive programming. Review [Spring Boot REST APIs](ex-soen-plwe-to-jvspbo__rest-apis.md) for blocking model baseline.
 
-**STRONGLY RECOMMENDED**: Complete [AyoKoding Spring Boot Learning Path](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot) and [Reactive Programming module](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/reactive.md) for practical reactive experience.
+**STRONGLY RECOMMENDED**: Complete [AyoKoding Spring Boot Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot.md) and [Reactive Programming module](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/reactive.md) for practical reactive experience.
 
 **This document is OSE Platform-specific**, not a Spring Boot WebFlux tutorial. We define WHEN and HOW to use WebFlux in THIS platform, not WHAT WebFlux is.
 
