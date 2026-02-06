@@ -7,7 +7,7 @@ updated: 2026-02-07
 
 # Validating Software Engineering Documentation Separation
 
-This Skill provides comprehensive guidance for validating the separation between repository-specific style guides (docs/explanation/software-engineering/) and educational content (apps/ayokoding-web/), as defined in the [Software Engineering Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md).
+This Skill provides comprehensive guidance for validating the separation between repository-specific style guides (docs/explanation/software-engineering/) and educational content (apps/ayokoding-web/), as defined in the [Programming Language Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md).
 
 ## Purpose
 
@@ -44,7 +44,7 @@ Use this Skill when:
 - **AyoKoding** = Educational (language syntax, by-example tutorials, generic patterns)
 - **docs/explanation/** = Style guides (OSE Platform naming, framework choices, repository patterns)
 
-See [Software Engineering Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md) for complete rules.
+See [Programming Language Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md) for complete rules.
 
 ## What to Validate
 
@@ -226,7 +226,7 @@ These are OSE Platform-specific style guides, not educational tutorials.
 
 ## Related Conventions
 
-**Primary**: [Software Engineering Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md)
+**Primary**: [Programming Language Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md)
 
 **Supporting**:
 
