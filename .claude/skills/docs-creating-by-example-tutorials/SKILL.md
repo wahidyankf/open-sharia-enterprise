@@ -222,7 +222,7 @@ By-example tutorials are split into three difficulty levels:
 
 - **Coverage**: 0-40% of language features
 - **Focus**: Basic syntax, control flow, functions, simple data structures
-- **Annotation density**: 1.5-2.25 (higher for fundamentals)
+- **Annotation density**: 1.0-2.25 (higher for fundamentals)
 
 **Intermediate (Examples 16-35)**:
 

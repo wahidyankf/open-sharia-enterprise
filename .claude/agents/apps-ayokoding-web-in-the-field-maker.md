@@ -5,6 +5,7 @@ tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: blue
 skills:
+  - docs-creating-in-the-field-tutorials
   - docs-applying-content-quality
   - apps-ayokoding-web-developing-content
 ---

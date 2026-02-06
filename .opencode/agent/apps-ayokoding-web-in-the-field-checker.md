@@ -8,6 +8,7 @@ tools:
   read: true
   write: true
 skills:
+  - docs-creating-in-the-field-tutorials
   - docs-applying-content-quality
   - apps-ayokoding-web-developing-content
   - repo-generating-validation-reports
