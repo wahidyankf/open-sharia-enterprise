@@ -658,8 +658,8 @@ public class FinancialErrorAuditAspect {
 ### OSE Platform Standards
 
 - **[Java Error Handling Standards](../../../../programming-languages/java/ex-soen-prla-ja__error-handling-standards.md)** - Java baseline error handling requirements
-- **[Spring API Standards](#)** - REST API error response conventions (this file references the API standards file to be created)
-- **[Spring DDD Standards](#)** - Domain exception hierarchy patterns (this file references the DDD standards file to be created)
+- **[Spring API Standards](./ex-soen-plwe-to-jvsp__api-standards.md)** - REST API error response conventions (this file references the API standards file to be created)
+- **[Spring DDD Standards](./ex-soen-plwe-to-jvsp__ddd-standards.md)** - Domain exception hierarchy patterns (this file references the DDD standards file to be created)
 
 ### Spring Framework Documentation
 
